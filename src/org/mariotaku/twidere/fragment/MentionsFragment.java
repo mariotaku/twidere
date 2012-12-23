@@ -21,7 +21,7 @@ package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.adapter.CursorStatusesAdapter;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
-import org.mariotaku.twidere.util.TwitterWrapper;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -41,7 +41,7 @@ import android.widget.ListView;
 public class MentionsFragment extends CursorStatusesListFragment implements OnTouchListener {
 
 	private SharedPreferences mPreferences;
-	private TwitterWrapper mTwitterWrapper;
+	private AsyncTwitterWrapper mTwitterWrapper;
 
 	private ListView mListView;
 	private CursorStatusesAdapter mAdapter;

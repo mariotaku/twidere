@@ -125,8 +125,6 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 	private final ThreadPool mThreadPool;
 	private final PhotoView mPhotoView;
 
-	private final int mSize = 0;
-
 	private Path mItemPath;
 	private boolean mIsActive;
 	private boolean mNeedFullImage;
@@ -245,7 +243,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 	@Override
 	public ScreenNail getScreenNail(final int offset) {
 		final int index = mCurrentIndex + offset;
-		if (index < 0 || index >= mSize || !mIsActive) return null;
+		if (index < 0 || index >= 0 || !mIsActive) return null;
 		Utils.assertTrue(index >= mActiveStart && index < mActiveEnd);
 
 		final MediaItem item = getItem(index);
@@ -274,7 +272,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 
 	@Override
 	public boolean isEmpty() {
-		return mSize == 0;
+		return true;
 	}
 
 	@Override
@@ -360,11 +358,11 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 			fromIndex[i] = j < N ? j - SCREEN_NAIL_MAX : Integer.MAX_VALUE;
 		}
 
-		mPhotoView.notifyDataChange(fromIndex, -mCurrentIndex, mSize - 1 - mCurrentIndex);
+		mPhotoView.notifyDataChange(fromIndex, -mCurrentIndex, 0 - 1 - mCurrentIndex);
 	}
 
 	private MediaItem getItem(final int index) {
-		if (index < 0 || index >= mSize || !mIsActive) return null;
+		if (index < 0 || index >= 0 || !mIsActive) return null;
 		Utils.assertTrue(index >= mActiveStart && index < mActiveEnd);
 
 		if (index >= mContentStart && index < mContentEnd) return mData[index % DATA_CACHE_SIZE];
@@ -372,7 +370,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 	}
 
 	private MediaItem getItemInternal(final int index) {
-		if (index < 0 || index >= mSize) return null;
+		if (index < 0 || index >= 0) return null;
 		if (index >= mContentStart && index < mContentEnd) return mData[index % DATA_CACHE_SIZE];
 		return null;
 	}
@@ -613,8 +611,8 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 
 	private void updateSlidingWindow() {
 		// 1. Update the image window
-		int start = Utils.clamp(mCurrentIndex - IMAGE_CACHE_SIZE / 2, 0, Math.max(0, mSize - IMAGE_CACHE_SIZE));
-		int end = Math.min(mSize, start + IMAGE_CACHE_SIZE);
+		int start = Utils.clamp(mCurrentIndex - IMAGE_CACHE_SIZE / 2, 0, Math.max(0, 0 - IMAGE_CACHE_SIZE));
+		int end = Math.min(0, start + IMAGE_CACHE_SIZE);
 
 		if (mActiveStart == start && mActiveEnd == end) return;
 
@@ -622,8 +620,8 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 		mActiveEnd = end;
 
 		// 2. Update the data window
-		start = Utils.clamp(mCurrentIndex - DATA_CACHE_SIZE / 2, 0, Math.max(0, mSize - DATA_CACHE_SIZE));
-		end = Math.min(mSize, start + DATA_CACHE_SIZE);
+		start = Utils.clamp(mCurrentIndex - DATA_CACHE_SIZE / 2, 0, Math.max(0, 0 - DATA_CACHE_SIZE));
+		end = Math.min(0, start + DATA_CACHE_SIZE);
 		if (mContentStart > mActiveStart || mContentEnd < mActiveEnd
 				|| Math.abs(start - mContentStart) > MIN_LOAD_COUNT) {
 			for (int i = mContentStart; i < mContentEnd; ++i) {

@@ -40,10 +40,10 @@ import org.mariotaku.twidere.model.ListAction;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.ParcelableUserList;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.TwidereLinkify;
-import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
 import twitter4j.Twitter;
@@ -87,7 +87,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		LoaderCallbacks<UserListDetailsFragment.Response<UserList>>, Panes.Right {
 
 	private LazyImageLoader mProfileImageLoader;
-	private TwitterWrapper mTwitterWrapper;
+	private AsyncTwitterWrapper mTwitterWrapper;
 
 	private ImageView mProfileImageView;
 	private TextView mListNameView, mUserNameView, mDescriptionView, mErrorMessageView;
@@ -438,7 +438,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		private AutoCompleteTextView mEditText;
 		private String mText;
 		private long mAccountId;
-		private TwitterWrapper mTwitterWrapper;
+		private AsyncTwitterWrapper mTwitterWrapper;
 		private int mListId;
 		private AutoCompleteAdapter mUserAutoCompleteAdapter;
 
@@ -500,7 +500,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		private long mAccountId;
 		private int mListId;
 		private boolean mIsPublic;
-		private TwitterWrapper mTwitterWrapper;
+		private AsyncTwitterWrapper mTwitterWrapper;
 
 		@Override
 		public void onClick(final DialogInterface dialog, final int which) {

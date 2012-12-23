@@ -24,7 +24,7 @@ import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.DraftItem;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
-import org.mariotaku.twidere.util.TwitterWrapper;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -52,7 +52,7 @@ public class DraftsActivity extends BaseDialogWhenLargeActivity implements Loade
 		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener {
 
 	private ContentResolver mResolver;
-	private TwitterWrapper mTwitterWrapper;
+	private AsyncTwitterWrapper mTwitterWrapper;
 	private SharedPreferences mPreferences;
 
 	private DraftsAdapter mAdapter;

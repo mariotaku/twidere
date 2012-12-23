@@ -51,6 +51,7 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 
 	public abstract List<Status> getStatuses(Paging paging) throws TwitterException;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public SynchronizedStateSavedList<ParcelableStatus, Long> loadInBackground() {
 		final SynchronizedStateSavedList<ParcelableStatus, Long> data = getData();

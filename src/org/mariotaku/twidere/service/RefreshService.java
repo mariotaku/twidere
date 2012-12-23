@@ -32,7 +32,7 @@ import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.util.TwitterWrapper;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
 import android.app.AlarmManager;
 import android.app.NotificationManager;
@@ -54,7 +54,7 @@ public class RefreshService extends Service implements Constants {
 	private NotificationManager mNotificationManager;
 	private AlarmManager mAlarmManager;
 	private ContentResolver mResolver;
-	private TwitterWrapper mTwitterWrapper;
+	private AsyncTwitterWrapper mTwitterWrapper;
 
 	private PendingIntent mPendingRefreshHomeTimelineIntent, mPendingRefreshMentionsIntent,
 			mPendingRefreshDirectMessagesIntent;

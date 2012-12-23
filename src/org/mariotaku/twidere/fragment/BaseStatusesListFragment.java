@@ -36,9 +36,9 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.AsyncTaskManager;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
-import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
 import android.content.BroadcastReceiver;
@@ -72,7 +72,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 
 	private static final long TICKER_DURATION = 5000L;
 
-	private TwitterWrapper mTwitterWrapper;
+	private AsyncTwitterWrapper mTwitterWrapper;
 	private TwidereApplication mApplication;
 	private SharedPreferences mPreferences;
 	private AsyncTaskManager mAsyncTaskManager;

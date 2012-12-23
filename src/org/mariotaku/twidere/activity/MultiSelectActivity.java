@@ -31,9 +31,9 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.util.ArrayUtils;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ListUtils;
 import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
-import org.mariotaku.twidere.util.TwitterWrapper;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
@@ -55,7 +55,7 @@ import com.twitter.Extractor;
 public class MultiSelectActivity extends DualPaneActivity implements ActionMode.Callback {
 
 	private TwidereApplication mApplication;
-	private TwitterWrapper mTwitterWrapper;
+	private AsyncTwitterWrapper mTwitterWrapper;
 
 	private ActionMode mActionMode;
 

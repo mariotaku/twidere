@@ -41,9 +41,9 @@ import org.mariotaku.twidere.fragment.BaseDialogFragment;
 import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.util.ArrayUtils;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.BitmapDecodeHelper;
 import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
-import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.view.ColorView;
 
 import android.app.Activity;
@@ -103,7 +103,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	private static final String INTENT_KEY_CONTENT_MODIFIED = "content_modified";
 	private static final String INTENT_KEY_IS_NAVIGATE_UP = "is_navigate_up";
 
-	private TwitterWrapper mTwitterWrapper;
+	private AsyncTwitterWrapper mTwitterWrapper;
 	private LocationManager mLocationManager;
 	private SharedPreferences mPreferences;
 	private ParcelableLocation mRecentLocation;

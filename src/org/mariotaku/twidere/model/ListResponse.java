@@ -2,16 +2,20 @@ package org.mariotaku.twidere.model;
 
 import java.util.List;
 
-public class ListResponse<Data> {
+import android.os.Bundle;
 
-	public final long account_id;
+public class ListResponse<Data> extends SingleResponse<List<Data>> {
+
 	public final List<Data> list;
-	public final Exception exception;
 
-	public ListResponse(final long account_id, final List<Data> list, final Exception exception) {
-		this.account_id = account_id;
+	public ListResponse(final List<Data> list, final Exception exception) {
+		super(list, exception);
 		this.list = list;
-		this.exception = exception;
+	}
+
+	public ListResponse(final List<Data> list, final Exception exception, final Bundle extras) {
+		super(list, exception, extras);
+		this.list = list;
 	}
 
 }

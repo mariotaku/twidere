@@ -26,7 +26,7 @@ import static org.mariotaku.twidere.util.Utils.openTweetSearch;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
-import org.mariotaku.twidere.util.TwitterWrapper;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -46,7 +46,7 @@ import android.widget.ListView;
 public class TrendsFragment extends PullToRefreshListFragment implements LoaderCallbacks<Cursor>, Panes.Left {
 
 	private TwidereApplication mApplication;
-	private TwitterWrapper mTwitterWrapper;
+	private AsyncTwitterWrapper mTwitterWrapper;
 	private SharedPreferences mPreferences;
 
 	private TrendsAdapter mTrendsAdapter;

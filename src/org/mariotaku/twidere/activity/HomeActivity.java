@@ -41,8 +41,8 @@ import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.model.TabSpec;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ArrayUtils;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.SetHomeButtonEnabledAccessor;
-import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.view.ExtendedViewPager;
 import org.mariotaku.twidere.view.TabPageIndicator;
 
@@ -76,7 +76,7 @@ import edu.ucdavis.earlybird.ProfilingUtil;
 public class HomeActivity extends MultiSelectActivity implements OnClickListener, OnPageChangeListener {
 
 	private SharedPreferences mPreferences;
-	private TwitterWrapper mTwitterWrapper;
+	private AsyncTwitterWrapper mTwitterWrapper;
 	private TwidereApplication mApplication;
 	private NotificationManager mNotificationManager;
 

@@ -410,7 +410,7 @@ public final class Utils implements Constants {
 		return true;
 	}
 
-	public static int cancelRetweet(final TwitterWrapper wrapper, final ParcelableStatus status) {
+	public static int cancelRetweet(final AsyncTwitterWrapper wrapper, final ParcelableStatus status) {
 		if (wrapper == null || status == null) return -1;
 		if (status.my_retweet_id > 0)
 			return wrapper.destroyStatus(status.account_id, status.my_retweet_id);

@@ -1,8 +1,8 @@
 package org.mariotaku.twidere.provider;
 
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.PermissionManager;
-import org.mariotaku.twidere.util.TwitterWrapper;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -16,7 +16,7 @@ public class CommandProvider extends ContentProvider {
 	private Context mContext;
 	private PermissionManager mPermissionManager;
 	private PackageManager mPackageManager;
-	private TwitterWrapper mTwitterWrapper;
+	private AsyncTwitterWrapper mTwitterWrapper;
 
 	@Override
 	public int delete(final Uri uri, final String where, final String[] whereArgs) {

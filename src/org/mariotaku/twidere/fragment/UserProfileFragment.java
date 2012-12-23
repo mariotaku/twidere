@@ -23,22 +23,15 @@ import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStorageState;
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.clearUserColor;
-import static org.mariotaku.twidere.util.Utils.copyStream;
-import static org.mariotaku.twidere.util.Utils.createAlphaGradientBanner;
 import static org.mariotaku.twidere.util.Utils.createTakePhotoIntent;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
-import static org.mariotaku.twidere.util.Utils.getBestBannerType;
-import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
-import static org.mariotaku.twidere.util.Utils.getHttpClient;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getOriginalTwitterProfileImage;
-import static org.mariotaku.twidere.util.Utils.getProxy;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
-import static org.mariotaku.twidere.util.Utils.makeCachedUserContentValues;
 import static org.mariotaku.twidere.util.Utils.openIncomingFriendships;
 import static org.mariotaku.twidere.util.Utils.openSavedSearches;
 import static org.mariotaku.twidere.util.Utils.openTweetSearch;
@@ -53,9 +46,6 @@ import static org.mariotaku.twidere.util.Utils.openUserTimeline;
 import static org.mariotaku.twidere.util.Utils.setUserColor;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
@@ -63,18 +53,20 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.EditUserProfileActivity;
 import org.mariotaku.twidere.activity.SetColorActivity;
 import org.mariotaku.twidere.adapter.ListActionAdapter;
-import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.loader.ParcelableUserLoader;
+import org.mariotaku.twidere.loader.UserBannerImageLoader;
 import org.mariotaku.twidere.model.ListAction;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.model.SingleResponse;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
-import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 import org.mariotaku.twidere.view.ProfileNameBannerContainer;
 import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
@@ -82,9 +74,6 @@ import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
 import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.User;
-import twitter4j.http.HostAddressResolver;
-import twitter4j.http.HttpClientWrapper;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -93,9 +82,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -139,10 +126,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private TextView mNameView, mScreenNameView, mDescriptionView, mLocationView, mURLView, mCreatedAtView,
 			mTweetCount, mFollowersCount, mFriendsCount, mFollowingYouIndicator, mErrorMessageView;
 	private View mNameContainer, mProfileImageContainer, mDescriptionContainer, mLocationContainer, mURLContainer,
-			mTweetsContainer, mFollowersContainer, mFriendsContainer, mFollowContainer;
+			mTweetsContainer, mFollowersContainer, mFriendsContainer, mEditFollowContainer, mMoreOptionsContainer;
 	private ProfileNameBannerContainer mProfileNameBannerContainer;
 	private ProgressBar mFollowProgress, mMoreOptionsProgress;
-	private Button mFollowButton, mMoreOptionsButton, mRetryButton;
+	private Button mEditFollowButton, mMoreOptionsButton, mRetryButton;
 	private ColorLabelRelativeLayout mProfileNameContainer;
 	private ListView mListView;
 	private View mHeaderView;
@@ -162,8 +149,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	private long mUserId;
 	private String mScreenName;
+	private int mBannerWidth;
 
-	private TwitterWrapper mTwitterWrapper;
+	private AsyncTwitterWrapper mTwitterWrapper;
 
 	private PopupMenu mPopupMenu;
 
@@ -194,10 +182,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 	};
 
-	private final LoaderCallbacks<Response<ParcelableUser>> mUserInfoLoaderCallbacks = new LoaderCallbacks<Response<ParcelableUser>>() {
+	private final LoaderCallbacks<SingleResponse<ParcelableUser>> mUserInfoLoaderCallbacks = new LoaderCallbacks<SingleResponse<ParcelableUser>>() {
 
 		@Override
-		public Loader<Response<ParcelableUser>> onCreateLoader(final int id, final Bundle args) {
+		public Loader<SingleResponse<ParcelableUser>> onCreateLoader(final int id, final Bundle args) {
 			mListContainer.setVisibility(View.VISIBLE);
 			mErrorRetryContainer.setVisibility(View.GONE);
 			mErrorMessageView.setText(null);
@@ -206,23 +194,24 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 					&& (mUserId == mUser.user_id || mScreenName != null && mScreenName.equals(mUser.screen_name)));
 			setProgressBarIndeterminateVisibility(true);
 			final boolean omit_intent_extra = args != null ? args.getBoolean(INTENT_KEY_OMIT_INTENT_EXTRA, true) : true;
-			return new UserInfoLoader(getActivity(), mAccountId, mUserId, mScreenName, getArguments(),
-					omit_intent_extra, mUser);
+			return new ParcelableUserLoader(getActivity(), mAccountId, mUserId, mScreenName, getArguments(),
+					omit_intent_extra, mUser == null || !mUser.is_cache && mUserId != mUser.user_id);
 		}
 
 		@Override
-		public void onLoaderReset(final Loader<Response<ParcelableUser>> loader) {
+		public void onLoaderReset(final Loader<SingleResponse<ParcelableUser>> loader) {
 
 		}
 
 		@Override
-		public void onLoadFinished(final Loader<Response<ParcelableUser>> loader, final Response<ParcelableUser> data) {
+		public void onLoadFinished(final Loader<SingleResponse<ParcelableUser>> loader,
+				final SingleResponse<ParcelableUser> data) {
 			if (getActivity() == null) return;
-			if (data.value != null && data.value.user_id > 0) {
+			if (data.data != null && data.data.user_id > 0) {
 				setListShown(true);
-				displayUser(data.value);
+				displayUser(data.data);
 				mErrorRetryContainer.setVisibility(View.GONE);
-				if (data.value.is_cache) {
+				if (data.data.is_cache) {
 					getLoaderManager().restartLoader(LOADER_ID_USER, null, this);
 				}
 			} else if (mUser != null && mUser.is_cache
@@ -241,42 +230,45 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	};
 
-	private final LoaderCallbacks<Response<Relationship>> mFriendshipLoaderCallbacks = new LoaderCallbacks<Response<Relationship>>() {
+	private final LoaderCallbacks<SingleResponse<Relationship>> mFriendshipLoaderCallbacks = new LoaderCallbacks<SingleResponse<Relationship>>() {
 
 		@Override
-		public Loader<Response<Relationship>> onCreateLoader(final int id, final Bundle args) {
+		public Loader<SingleResponse<Relationship>> onCreateLoader(final int id, final Bundle args) {
 			final boolean user_is_me = mUserId == mAccountId;
 			mFollowingYouIndicator.setVisibility(View.GONE);
-			mFollowContainer.setVisibility(user_is_me ? View.GONE : View.VISIBLE);
-			mFollowButton.setVisibility(View.GONE);
+			mEditFollowContainer.setVisibility(View.VISIBLE);
+			mMoreOptionsContainer.setVisibility(user_is_me ? View.VISIBLE : View.GONE);
+			mEditFollowButton.setVisibility(user_is_me ? View.VISIBLE : View.GONE);
 			mFollowProgress.setVisibility(user_is_me ? View.GONE : View.VISIBLE);
 			mMoreOptionsButton.setVisibility(View.GONE);
 			mMoreOptionsProgress.setVisibility(user_is_me ? View.GONE : View.VISIBLE);
+			mEditFollowButton.setText(user_is_me ? R.string.edit : R.string.loading);
 			return new FriendshipLoader(getActivity(), mAccountId, mUserId);
 		}
 
 		@Override
-		public void onLoaderReset(final Loader<Response<Relationship>> loader) {
+		public void onLoaderReset(final Loader<SingleResponse<Relationship>> loader) {
 
 		}
 
 		@Override
-		public void onLoadFinished(final Loader<Response<Relationship>> loader, final Response<Relationship> data) {
+		public void onLoadFinished(final Loader<SingleResponse<Relationship>> loader,
+				final SingleResponse<Relationship> data) {
 			mFriendship = null;
 			if (mUser == null) return;
 			final boolean user_is_me = mAccountId == mUserId;
-			if (data.value != null) {
-				mFriendship = data.value;
-				final boolean followed_by_user = data.value.isTargetFollowingSource();
-				mFollowButton.setVisibility(View.VISIBLE);
-				if (data.value.isSourceFollowingTarget()) {
-					mFollowButton.setText(R.string.unfollow);
+			if (data.data != null) {
+				mFriendship = data.data;
+				final boolean followed_by_user = data.data.isTargetFollowingSource();
+				mEditFollowButton.setVisibility(View.VISIBLE);
+				if (data.data.isSourceFollowingTarget()) {
+					mEditFollowButton.setText(R.string.unfollow);
 				} else {
 					if (mUser.is_protected) {
-						mFollowButton.setText(mUser.is_follow_request_sent ? R.string.follow_request_sent
+						mEditFollowButton.setText(mUser.is_follow_request_sent ? R.string.follow_request_sent
 								: R.string.send_follow_request);
 					} else {
-						mFollowButton.setText(R.string.follow);
+						mEditFollowButton.setText(R.string.follow);
 					}
 				}
 				mFollowingYouIndicator.setVisibility(followed_by_user && !user_is_me ? View.VISIBLE : View.GONE);
@@ -285,22 +277,21 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				resolver.delete(CachedUsers.CONTENT_URI, where, null);
 				// I bet you don't want to see blocked user in your auto
 				// complete list.
-				if (!data.value.isSourceBlockingTarget()) {
+				if (!data.data.isSourceBlockingTarget()) {
 					final ContentValues cached_values = ParcelableUser.makeCachedUserContentValues(mUser);
 					if (cached_values != null) {
 						resolver.insert(CachedUsers.CONTENT_URI, cached_values);
 					}
 				}
 			}
-			mFollowContainer.setVisibility(data.value == null || user_is_me ? View.GONE : View.VISIBLE);
-			mMoreOptionsButton.setVisibility(data.value != null || user_is_me ? View.VISIBLE : View.GONE);
+			mEditFollowContainer.setVisibility(data.data == null && !user_is_me ? View.GONE : View.VISIBLE);
+			mMoreOptionsContainer.setVisibility(data.data == null && !user_is_me ? View.GONE : View.VISIBLE);
+			mMoreOptionsButton.setVisibility(data.data != null || user_is_me ? View.VISIBLE : View.GONE);
 			mFollowProgress.setVisibility(View.GONE);
 			mMoreOptionsProgress.setVisibility(View.GONE);
 		}
 
 	};
-
-	private static final String INTENT_KEY_WIDTH = "width";
 
 	private final LoaderCallbacks<Bitmap> mBannerImageCallback = new LoaderCallbacks<Bitmap>() {
 
@@ -308,8 +299,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		public Loader<Bitmap> onCreateLoader(final int id, final Bundle args) {
 			mProfileNameBannerContainer.setBanner(null);
 			final int def_width = getResources().getDisplayMetrics().widthPixels;
-			final int width = args.getInt(INTENT_KEY_WIDTH, def_width);
-			return new BannerImageLoader(getActivity(), mUser, width);
+			final int width = mBannerWidth > 0 ? mBannerWidth : def_width;
+			return new UserBannerImageLoader(getActivity(), mUser, width, true);
 		}
 
 		@Override
@@ -328,7 +319,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mUser = null;
 		mUserId = -1;
 		mAccountId = -1;
-		mProfileNameBannerContainer.setOnSizeChangedListener(null);
 		mAdapter.clear();
 		if (user == null || user.user_id <= 0 || getActivity() == null) return;
 		final LoaderManager lm = getLoaderManager();
@@ -393,7 +383,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		if (!user.is_cache) {
 			getFriendship();
 		}
-		mProfileNameBannerContainer.setOnSizeChangedListener(this);
+		getBannerImage();
 	}
 
 	public void getUserInfo(final long account_id, final long user_id, final String screen_name,
@@ -404,6 +394,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		final LoaderManager lm = getLoaderManager();
 		lm.destroyLoader(LOADER_ID_USER);
 		lm.destroyLoader(LOADER_ID_FRIENDSHIP);
+		lm.destroyLoader(LOADER_ID_BANNER);
 		if (!isMyAccount(getActivity(), mAccountId)) {
 			mListContainer.setVisibility(View.GONE);
 			mErrorRetryContainer.setVisibility(View.GONE);
@@ -445,12 +436,13 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mAdapter = new ListActionAdapter(getActivity());
 		mProfileImageContainer.setOnClickListener(this);
 		mNameContainer.setOnClickListener(this);
-		mFollowButton.setOnClickListener(this);
+		mEditFollowButton.setOnClickListener(this);
 		mTweetsContainer.setOnClickListener(this);
 		mFollowersContainer.setOnClickListener(this);
 		mFriendsContainer.setOnClickListener(this);
 		mRetryButton.setOnClickListener(this);
 		mMoreOptionsButton.setOnClickListener(this);
+		mProfileNameBannerContainer.setOnSizeChangedListener(this);
 		setListAdapter(null);
 		mListView = getListView();
 		mListView.addHeaderView(mHeaderView, null, false);
@@ -500,32 +492,43 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	@Override
 	public void onClick(final View view) {
+		if (getActivity() == null) return;
 		switch (view.getId()) {
-			case R.id.follow: {
-				if (mUser == null || mAccountId == mUserId || mUser.is_follow_request_sent) return;
-				if (mFriendship.isSourceFollowingTarget()) {
-					mPopupMenu = PopupMenu.getInstance(getActivity(), view);
-					mPopupMenu.inflate(R.menu.action_user_profile_follow);
-					mPopupMenu.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-
-						@Override
-						public boolean onMenuItemClick(final MenuItem item) {
-							switch (item.getItemId()) {
-								case R.id.unfollow: {
-									mFollowProgress.setVisibility(View.VISIBLE);
-									mFollowButton.setVisibility(View.GONE);
-									mTwitterWrapper.destroyFriendship(mAccountId, mUser.user_id);
-									return true;
-								}
-							}
-							return false;
-						}
-					});
-					mPopupMenu.show();
+			case R.id.edit_follow: {
+				if (mUser == null || mAccountId <= 0) return;
+				if (mAccountId == mUserId) {
+					final Bundle bundle = new Bundle();
+					bundle.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
+					final Intent intent = new Intent(INTENT_ACTION_EDIT_USER_PROFILE);
+					intent.setClass(getActivity(), EditUserProfileActivity.class);
+					intent.putExtras(bundle);
+					startActivity(intent);
 				} else {
-					mFollowProgress.setVisibility(View.VISIBLE);
-					mFollowButton.setVisibility(View.GONE);
-					mTwitterWrapper.createFriendship(mAccountId, mUser.user_id);
+					if (mUser.is_follow_request_sent) return;
+					if (mFriendship.isSourceFollowingTarget()) {
+						mPopupMenu = PopupMenu.getInstance(getActivity(), view);
+						mPopupMenu.inflate(R.menu.action_user_profile_follow);
+						mPopupMenu.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+
+							@Override
+							public boolean onMenuItemClick(final MenuItem item) {
+								switch (item.getItemId()) {
+									case R.id.unfollow: {
+										mFollowProgress.setVisibility(View.VISIBLE);
+										mEditFollowButton.setVisibility(View.GONE);
+										mTwitterWrapper.destroyFriendship(mAccountId, mUser.user_id);
+										return true;
+									}
+								}
+								return false;
+							}
+						});
+						mPopupMenu.show();
+					} else {
+						mFollowProgress.setVisibility(View.VISIBLE);
+						mEditFollowButton.setVisibility(View.GONE);
+						mTwitterWrapper.createFriendship(mAccountId, mUser.user_id);
+					}
 				}
 				break;
 			}
@@ -621,9 +624,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mDescriptionContainer = mHeaderView.findViewById(R.id.description_container);
 		mLocationContainer = mHeaderView.findViewById(R.id.location_container);
 		mURLContainer = mHeaderView.findViewById(R.id.url_container);
-		mFollowContainer = mHeaderView.findViewById(R.id.follow_container);
-		mFollowButton = (Button) mHeaderView.findViewById(R.id.follow);
+		mEditFollowContainer = mHeaderView.findViewById(R.id.edit_follow_container);
+		mEditFollowButton = (Button) mHeaderView.findViewById(R.id.edit_follow);
 		mFollowProgress = (ProgressBar) mHeaderView.findViewById(R.id.follow_progress);
+		mMoreOptionsContainer = mHeaderView.findViewById(R.id.more_options_container);
 		mMoreOptionsButton = (Button) mHeaderView.findViewById(R.id.more_options);
 		mMoreOptionsProgress = (ProgressBar) mHeaderView.findViewById(R.id.more_options_progress);
 		mFollowingYouIndicator = (TextView) mHeaderView.findViewById(R.id.following_you_indicator);
@@ -792,8 +796,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	@Override
 	public void onSizeChanged(final View view, final int w, final int h, final int oldw, final int oldh) {
-		mProfileNameBannerContainer.setBanner(null);
-		getBannerImage(w);
+		mBannerWidth = w;
 	}
 
 	@Override
@@ -812,15 +815,13 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		super.onStop();
 	}
 
-	private void getBannerImage(final int w) {
-		final Bundle args = new Bundle();
-		args.putInt(INTENT_KEY_WIDTH, w);
+	private void getBannerImage() {
 		final LoaderManager lm = getLoaderManager();
 		lm.destroyLoader(LOADER_ID_BANNER);
 		if (mBannerImageLoaderInitialized) {
-			lm.restartLoader(LOADER_ID_BANNER, args, mBannerImageCallback);
+			lm.restartLoader(LOADER_ID_BANNER, null, mBannerImageCallback);
 		} else {
-			lm.initLoader(LOADER_ID_BANNER, args, mBannerImageCallback);
+			lm.initLoader(LOADER_ID_BANNER, null, mBannerImageCallback);
 			mBannerImageLoaderInitialized = true;
 		}
 	}
@@ -857,81 +858,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 	}
 
-	static class BannerImageLoader extends AsyncTaskLoader<Bitmap> {
-
-		private static final String CACHE_DIR = "cached_images";
-
-		private final ParcelableUser user;
-		private final Context context;
-		private final HostAddressResolver resolver;
-		private final int width;
-		private final int connection_timeout;
-
-		public BannerImageLoader(final Context context, final ParcelableUser user, final int width) {
-			super(context);
-			this.context = context;
-			this.user = user;
-			this.width = width;
-			resolver = TwidereApplication.getInstance(context).getHostAddressResolver();
-			connection_timeout = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getInt(
-					PREFERENCE_KEY_CONNECTION_TIMEOUT, 10) * 1000;
-		}
-
-		@Override
-		public Bitmap loadInBackground() {
-			if (user == null || user.profile_banner_url == null) return null;
-			try {
-				final String url = user.profile_banner_url + "/" + getBestBannerType(width);
-				final File cache_dir = getImageCacheDir();
-				final File cache_file = cache_dir != null && cache_dir.isDirectory() ? new File(cache_dir,
-						getURLFilename(url)) : null;
-				if (cache_file != null && cache_file.isFile()) {
-					final BitmapFactory.Options o = new BitmapFactory.Options();
-					// o.inSampleSize = scale_down ? 2 : 1;
-					final Bitmap cache_bitmap = BitmapFactory.decodeFile(cache_file.getPath(), o);
-					if (cache_bitmap != null) return createAlphaGradientBanner(cache_bitmap);
-				}
-				final HttpClientWrapper client = getHttpClient(connection_timeout, true, getProxy(context), resolver,
-						null);
-				if (cache_file != null) {
-					final FileOutputStream fos = new FileOutputStream(cache_file);
-					final InputStream is = client.get(url, null).asStream();
-					copyStream(is, fos);
-					final BitmapFactory.Options o = new BitmapFactory.Options();
-					// o.inSampleSize = scale_down ? 2 : 1;
-					final Bitmap bitmap = BitmapFactory.decodeFile(cache_file.getPath(), o);
-					return createAlphaGradientBanner(bitmap);
-				} else {
-					final Bitmap bitmap = BitmapFactory.decodeStream(client.get(url, null).asStream());
-					return createAlphaGradientBanner(bitmap);
-				}
-			} catch (final IOException e) {
-				return null;
-			} catch (final TwitterException e) {
-				return null;
-			}
-		}
-
-		@Override
-		protected void onStartLoading() {
-			forceLoad();
-		}
-
-		private File getImageCacheDir() {
-			final File cache_dir = getBestCacheDir(context, CACHE_DIR);
-			if (cache_dir != null && !cache_dir.exists()) {
-				cache_dir.mkdirs();
-			}
-			return cache_dir;
-		}
-
-		private String getURLFilename(final String url) {
-			if (url == null) return null;
-			return url.replaceFirst("https?:\\/\\/", "").replaceAll("[^a-zA-Z0-9]", "_");
-		}
-
-	}
-
 	final class FavoritesAction extends ListAction {
 
 		public FavoritesAction(final int order) {
@@ -957,7 +883,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	}
 
-	static class FriendshipLoader extends AsyncTaskLoader<Response<Relationship>> {
+	static class FriendshipLoader extends AsyncTaskLoader<SingleResponse<Relationship>> {
 
 		private final Context context;
 		private final long account_id, user_id;
@@ -970,7 +896,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		}
 
 		@Override
-		public Response<Relationship> loadInBackground() {
+		public SingleResponse<Relationship> loadInBackground() {
 			return getFriendship();
 		}
 
@@ -979,15 +905,15 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			forceLoad();
 		}
 
-		private Response<Relationship> getFriendship() {
-			if (account_id == user_id) return new Response<Relationship>(null, null);
+		private SingleResponse<Relationship> getFriendship() {
+			if (account_id == user_id) return new SingleResponse<Relationship>(null, null);
 			final Twitter twitter = getTwitterInstance(context, account_id, false);
-			if (twitter == null) return new Response<Relationship>(null, null);
+			if (twitter == null) return new SingleResponse<Relationship>(null, null);
 			try {
 				final Relationship result = twitter.showFriendship(account_id, user_id);
-				return new Response<Relationship>(result, null);
+				return new SingleResponse<Relationship>(result, null);
 			} catch (final TwitterException e) {
-				return new Response<Relationship>(null, e);
+				return new SingleResponse<Relationship>(null, e);
 			}
 		}
 	}
@@ -1009,16 +935,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			openIncomingFriendships(getActivity(), mAccountId);
 		}
 
-	}
-
-	static final class Response<T> {
-		public final T value;
-		public final Exception exception;
-
-		public Response(final T value, final Exception exception) {
-			this.value = value;
-			this.exception = exception;
-		}
 	}
 
 	final class SavedSearchesAction extends ListAction {
@@ -1055,81 +971,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		public void onClick() {
 			if (mUser == null) return;
 			openUserBlocks(getActivity(), mAccountId);
-		}
-
-	}
-
-	static final class UserInfoLoader extends AsyncTaskLoader<Response<ParcelableUser>> {
-
-		private final Twitter twitter;
-		private final ContentResolver resolver;
-		private final boolean omit_intent_extra, hires_profile_image;
-		private final Bundle extras;
-		private final long account_id, user_id;
-		private final String screen_name;
-		private final ParcelableUser user;
-
-		private UserInfoLoader(final Context context, final long account_id, final long user_id,
-				final String screen_name, final Bundle extras, final boolean omit_intent_extra,
-				final ParcelableUser user) {
-			super(context);
-			resolver = context.getContentResolver();
-			twitter = getTwitterInstance(context, account_id, true);
-			hires_profile_image = context.getResources().getBoolean(R.bool.hires_profile_image);
-			this.omit_intent_extra = omit_intent_extra;
-			this.user = user;
-			this.extras = extras;
-			this.account_id = account_id;
-			this.user_id = user_id;
-			this.screen_name = screen_name;
-		}
-
-		@Override
-		public Response<ParcelableUser> loadInBackground() {
-			if (!omit_intent_extra && extras != null) {
-				final ParcelableUser user = extras.getParcelable(INTENT_KEY_USER);
-				if (user != null) {
-					final ContentValues values = ParcelableUser.makeCachedUserContentValues(user);
-					resolver.delete(CachedUsers.CONTENT_URI, CachedUsers.USER_ID + " = " + user.user_id, null);
-					resolver.insert(CachedUsers.CONTENT_URI, values);
-					return new Response<ParcelableUser>(user, null);
-				}
-			}
-			if (twitter == null) return new Response<ParcelableUser>(null, null);
-			if (user == null || !user.is_cache) {
-				final String where = CachedUsers.USER_ID + " = " + user_id + " OR " + CachedUsers.SCREEN_NAME + " = '"
-						+ screen_name + "'";
-				final Cursor cur = resolver.query(CachedUsers.CONTENT_URI, CachedUsers.COLUMNS, where, null, null);
-				final int count = cur.getCount();
-				try {
-					if (count > 0) {
-						cur.moveToFirst();
-						return new Response<ParcelableUser>(new ParcelableUser(cur, account_id), null);
-					}
-				} finally {
-					cur.close();
-				}
-			}
-			try {
-				final User user;
-				if (user_id != -1) {
-					user = twitter.showUser(user_id);
-				} else if (screen_name != null) {
-					user = twitter.showUser(screen_name);
-				} else
-					return new Response<ParcelableUser>(null, null);
-				final ContentValues values = makeCachedUserContentValues(user, hires_profile_image);
-				resolver.delete(CachedUsers.CONTENT_URI, CachedUsers.USER_ID + " = " + user.getId(), null);
-				resolver.insert(CachedUsers.CONTENT_URI, values);
-				return new Response<ParcelableUser>(new ParcelableUser(user, account_id, hires_profile_image), null);
-			} catch (final TwitterException e) {
-				return new Response<ParcelableUser>(null, e);
-			}
-		}
-
-		@Override
-		protected void onStartLoading() {
-			forceLoad();
 		}
 
 	}

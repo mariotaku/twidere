@@ -1613,7 +1613,7 @@ class PositionController {
 			return progress >= 1;
 		}
 
-		private boolean interpolateLinear(float progress) {
+		private boolean interpolateLinear(final float progress) {
 			// Other animations
 			if (progress >= 1) {
 				mCurrentX = mToX;

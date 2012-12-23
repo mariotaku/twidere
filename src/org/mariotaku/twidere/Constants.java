@@ -225,6 +225,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_ACTION_NEW_CUSTOM_TAB = INTENT_PACKAGE_PREFIX + "NEW_CUSTOM_TAB";
 	public static final String INTENT_ACTION_EDIT_CUSTOM_TAB = INTENT_PACKAGE_PREFIX + "EDIT_CUSTOM_TAB";
 	public static final String INTENT_ACTION_EDIT_HOST_MAPPING = INTENT_PACKAGE_PREFIX + "EDIT_HOST_MAPPING";
+	public static final String INTENT_ACTION_EDIT_USER_PROFILE = INTENT_PACKAGE_PREFIX + "EDIT_USER_PROFILE";
 	public static final String INTENT_ACTION_SERVICE_COMMAND = INTENT_PACKAGE_PREFIX + "SERVICE_COMMAND";
 
 	public static final String INTENT_ACTION_EXTENSION_EDIT_IMAGE = INTENT_PACKAGE_PREFIX + "EXTENSION_EDIT_IMAGE";
@@ -360,6 +361,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_REQUEST_TOKEN_SECRET = "request_token_secret";
 	public static final String INTENT_KEY_OMIT_INTENT_EXTRA = "omit_intent_extra";
 	public static final String INTENT_KEY_COMMAND = "command";
+	public static final String INTENT_KEY_WIDTH = "width";
 
 	public static final String QUERY_PARAM_NEW_ITEMS_COUNT = "new_items_count";
 
@@ -526,4 +528,5 @@ public interface Constants extends TwitterConstants {
 	public static final int PERMISSION_LEVEL_WRITE = 3;
 	public static final int PERMISSION_LEVEL_DIRECT_MESSAGES = 4;
 	public static final int PERMISSION_LEVEL_ACCOUNTS = 5;
+
 }

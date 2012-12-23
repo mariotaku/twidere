@@ -22,8 +22,8 @@ package org.mariotaku.twidere.fragment;
 import org.mariotaku.actionbarcompat.ActionBarFragmentActivity;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.InvalidateProgressBarRunnable;
-import org.mariotaku.twidere.util.TwitterWrapper;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -89,7 +89,7 @@ public class BaseListFragment extends ListFragment implements Constants {
 		return null;
 	}
 
-	public TwitterWrapper getTwitterWrapper() {
+	public AsyncTwitterWrapper getTwitterWrapper() {
 		return getApplication() != null ? getApplication().getTwitterWrapper() : null;
 	}
 

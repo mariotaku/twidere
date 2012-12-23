@@ -36,10 +36,10 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.service.RefreshService;
 import org.mariotaku.twidere.util.AsyncTaskManager;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
 import org.mariotaku.twidere.util.TwidereHostAddressResolver;
-import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.util.imageloader.ImageLoaderUtils;
 
 import twitter4j.http.HostAddressResolver;
@@ -58,7 +58,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	private LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private AsyncTaskManager mAsyncTaskManager;
 	private SharedPreferences mPreferences;
-	private TwitterWrapper mTwitterWrapper;
+	private AsyncTwitterWrapper mTwitterWrapper;
 
 	private boolean mMultiSelectActive = false;
 
@@ -117,6 +117,10 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		return mDownloadCache;
 	}
 
+	public Handler getHandler() {
+		return mHandler;
+	}
+
 	public HostAddressResolver getHostAddressResolver() {
 		if (mResolver != null) return mResolver;
 		return mResolver = new TwidereHostAddressResolver(this);
@@ -169,7 +173,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		return mThreadPool;
 	}
 
-	public TwitterWrapper getTwitterWrapper() {
+	public AsyncTwitterWrapper getTwitterWrapper() {
 		return mTwitterWrapper;
 	}
 
@@ -189,7 +193,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		super.onCreate();
 		initializeAsyncTask();
 		GalleryUtils.initialize(this);
-		mTwitterWrapper = TwitterWrapper.getInstance(this);
+		mTwitterWrapper = AsyncTwitterWrapper.getInstance(this);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_UCD_DATA_PROFILING, false)) {
 			startService(new Intent(this, UCDService.class));
 		}
@@ -307,10 +311,6 @@ public class TwidereApplication extends Application implements Constants, OnShar
 			return ret;
 		}
 
-	}
-	
-	public Handler getHandler() {
-		return mHandler;
 	}
 
 }

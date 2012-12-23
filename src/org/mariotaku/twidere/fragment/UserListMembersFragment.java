@@ -30,7 +30,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.UsersAdapter;
 import org.mariotaku.twidere.loader.UserListMembersLoader;
 import org.mariotaku.twidere.model.ParcelableUser;
-import org.mariotaku.twidere.util.TwitterWrapper;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -49,7 +49,7 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 	private ParcelableUser mSelectedUser;
 
 	private PopupMenu mPopupMenu;
-	private TwitterWrapper mTwitterWrapper;
+	private AsyncTwitterWrapper mTwitterWrapper;
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 

@@ -23,7 +23,7 @@ import org.mariotaku.actionbarcompat.ActionBarFragmentActivity;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.activity.BaseActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.util.TwitterWrapper;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -68,7 +68,7 @@ public class BaseFragment extends Fragment implements Constants {
 		return null;
 	}
 
-	public TwitterWrapper getTwitterWrapper() {
+	public AsyncTwitterWrapper getTwitterWrapper() {
 		return getApplication() != null ? getApplication().getTwitterWrapper() : null;
 	}
 

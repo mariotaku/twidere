@@ -34,8 +34,8 @@ import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.LazyImageLoader;
-import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.view.holder.DirectMessageConversationViewHolder;
 
 import android.content.BroadcastReceiver;
@@ -81,7 +81,7 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 		Panes.Right, OnItemSelectedListener, OnEditorActionListener {
 
 	private final Validator mValidator = new Validator();
-	private TwitterWrapper mTwitterWrapper;
+	private AsyncTwitterWrapper mTwitterWrapper;
 	private SharedPreferences mPreferences;
 
 	// private ListView mListView;

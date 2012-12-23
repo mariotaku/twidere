@@ -397,13 +397,14 @@
 		</activity>
 		<activity
 			android:name=".activity.EditUserProfileActivity"
+			android:exported="false"
 			android:label="@string/edit_profile"
 			android:theme="@style/Theme.Blank.DialogWhenLarge"
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
+				<action android:name="org.mariotaku.twidere.EDIT_USER_PROFILE"/>
 
-				<category android:name="android.intent.category.LAUNCHER"/>
+				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</activity>
 		<activity
