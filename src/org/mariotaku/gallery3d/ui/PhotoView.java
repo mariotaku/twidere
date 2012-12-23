@@ -407,7 +407,7 @@ public class PhotoView extends GLView {
 	// //////////////////////////////////////////////////////////////////////////
 
 	private void setPictureSize(final int index) {
-		mPositionController.setImageSize(index, mPicture.getSize(), null);
+		mPositionController.setImageSize(mPicture.getSize(), null);
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -931,7 +931,7 @@ public class PhotoView extends GLView {
 		@Override
 		public void forceSize() {
 			updateSize();
-			mPositionController.forceImageSize(mIndex, mSize);
+			mPositionController.forceImageSize(mSize);
 		}
 
 		@Override
@@ -998,7 +998,7 @@ public class PhotoView extends GLView {
 		@Override
 		public void forceSize() {
 			updateSize();
-			mPositionController.forceImageSize(0, mSize);
+			mPositionController.forceImageSize(mSize);
 		}
 
 		@Override

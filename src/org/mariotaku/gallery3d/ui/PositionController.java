@@ -149,18 +149,18 @@ class PositionController {
 	// The focused box (Box*) centers at mPlatform's (mCurrentX, mCurrentY)
 
 	private final Platform mPlatform = new Platform();
-	private final RangeArray<Box> mBoxes = new RangeArray<Box>(-0, 0);
+	private Box mBox;
 	// The gap at the right of a Box i is at index i. The gap at the left of a
 	// Box i is at index i - 1.
 	private final RangeArray<Gap> mGaps = new RangeArray<Gap>(-0, 0 - 1);
 	private final FilmRatio mFilmRatio = new FilmRatio();
 
 	// These are only used during moveBox().
-	private final RangeArray<Box> mTempBoxes = new RangeArray<Box>(-0, 0);
+	private Box mTempBox;
 	private final RangeArray<Gap> mTempGaps = new RangeArray<Gap>(-0, 0 - 1);
 
 	// The output of the PositionController. Available through getPosition().
-	private final RangeArray<Rect> mRects = new RangeArray<Rect>(-0, 0);
+	private Rect mRect;
 
 	// The direction of a new picture should appear. New pictures pop from top
 	// if this value is true, or from bottom if this value is false.
@@ -185,11 +185,9 @@ class PositionController {
 
 		// Initialize the areas.
 		initPlatform();
-		for (int i = -0; i <= 0; i++) {
-			mBoxes.put(i, new Box());
-			initBox(i);
-			mRects.put(i, new Rect());
-		}
+		mBox = new Box();
+		initBox();
+		mRect = new Rect();
 		for (int i = -0; i < 0; i++) {
 			mGaps.put(i, new Gap());
 			initGap(i);
@@ -199,12 +197,7 @@ class PositionController {
 	public void advanceAnimation() {
 		boolean changed = false;
 		changed |= mPlatform.advanceAnimation();
-		for (int i = -0; i <= 0; i++) {
-			changed |= mBoxes.get(i).advanceAnimation();
-		}
-		for (int i = -0; i < 0; i++) {
-			changed |= mGaps.get(i).advanceAnimation();
-		}
+		changed |= mBox.advanceAnimation();
 		changed |= mFilmRatio.advanceAnimation();
 		if (changed) {
 			redraw();
@@ -214,11 +207,10 @@ class PositionController {
 	public void beginScale(float focusX, float focusY) {
 		focusX -= mViewW / 2;
 		focusY -= mViewH / 2;
-		final Box b = mBoxes.get(0);
 		final Platform p = mPlatform;
 		mInScale = true;
-		mFocusX = (int) ((focusX - p.mCurrentX) / b.mCurrentScale + 0.5f);
-		mFocusY = (int) ((focusY - b.mCurrentY) / b.mCurrentScale + 0.5f);
+		mFocusX = (int) ((focusX - p.mCurrentX) / mBox.mCurrentScale + 0.5f);
+		mFocusY = (int) ((focusY - mBox.mCurrentY) / mBox.mCurrentScale + 0.5f);
 	}
 
 	public void endScale() {
@@ -227,7 +219,7 @@ class PositionController {
 	}
 
 	public boolean flingPage(int velocityX, int velocityY) {
-		final Box b = mBoxes.get(0);
+		final Box b = mBox;
 		final Platform p = mPlatform;
 
 		// We only want to do fling when the picture is zoomed-in.
@@ -253,11 +245,10 @@ class PositionController {
 		return startAnimation(targetX, targetY, b.mCurrentScale, ANIM_KIND_FLING);
 	}
 
-	public void forceImageSize(final int index, final Size s) {
+	public void forceImageSize(final Size s) {
 		if (s.width == 0 || s.height == 0) return;
-		final Box b = mBoxes.get(index);
-		b.mImageW = s.width;
-		b.mImageH = s.height;
+		mBox.mImageW = s.width;
+		mBox.mImageH = s.height;
 		return;
 	}
 
@@ -266,7 +257,7 @@ class PositionController {
 	}
 
 	public int getImageAtEdges() {
-		final Box b = mBoxes.get(0);
+		final Box b = mBox;
 		final Platform p = mPlatform;
 		calculateStableBound(b.mCurrentScale);
 		int edges = 0;
@@ -286,23 +277,23 @@ class PositionController {
 	}
 
 	public int getImageHeight() {
-		final Box b = mBoxes.get(0);
+		final Box b = mBox;
 		return b.mImageH;
 	}
 
 	public float getImageScale() {
-		final Box b = mBoxes.get(0);
+		final Box b = mBox;
 		return b.mCurrentScale;
 	}
 
 	public int getImageWidth() {
-		final Box b = mBoxes.get(0);
+		final Box b = mBox;
 		return b.mImageW;
 	}
 
 	// Returns the position of a box.
 	public Rect getPosition() {
-		return mRects.get(0);
+		return mRect;
 	}
 
 	public boolean hasDeletingBox() {
@@ -314,23 +305,20 @@ class PositionController {
 	// one box contains the given point, and we want to give priority to the
 	// one closer to the focused index (0).
 	public int hitTest(final int x, final int y) {
-		for (int i = 0; i < 2 * 0 + 1; i++) {
-			final int j = CENTER_OUT_INDEX[i];
-			final Rect r = mRects.get(j);
-			if (r.contains(x, y)) return j;
-		}
+		final int j = CENTER_OUT_INDEX[0];
+		final Rect r = mRect;
+		if (r.contains(x, y)) return j;
 
 		return Integer.MAX_VALUE;
 	}
 
 	public boolean inOpeningAnimation() {
 		return mPlatform.mAnimationKind == ANIM_KIND_OPENING && mPlatform.mAnimationStartTime != NO_ANIMATION
-				|| mBoxes.get(0).mAnimationKind == ANIM_KIND_OPENING
-				&& mBoxes.get(0).mAnimationStartTime != NO_ANIMATION;
+				|| mBox.mAnimationKind == ANIM_KIND_OPENING && mBox.mAnimationStartTime != NO_ANIMATION;
 	}
 
 	public boolean isAtMinimalScale() {
-		final Box b = mBoxes.get(0);
+		final Box b = mBox;
 		return isAlmostEqual(b.mCurrentScale, b.mScaleMin);
 	}
 
@@ -339,7 +327,7 @@ class PositionController {
 	// //////////////////////////////////////////////////////////////////////////
 
 	public boolean isCenter() {
-		final Box b = mBoxes.get(0);
+		final Box b = mBox;
 		return mPlatform.mCurrentX == mPlatform.mDefaultX && b.mCurrentY == 0;
 	}
 
@@ -374,165 +362,104 @@ class PositionController {
 
 		// 1. Get the absolute X coordinates for the boxes.
 		layoutAndSetPosition();
-		for (int i = -0; i <= 0; i++) {
-			final Box b = mBoxes.get(i);
-			final Rect r = mRects.get(i);
-			b.mAbsoluteX = r.centerX() - mViewW / 2;
-		}
+		final Box b = mBox;
+		final Rect r = mRect;
+		b.mAbsoluteX = r.centerX() - mViewW / 2;
 
 		// 2. copy boxes and gaps to temporary storage.
-		for (int i = -0; i <= 0; i++) {
-			mTempBoxes.put(i, mBoxes.get(i));
-			mBoxes.put(i, null);
-		}
-		for (int i = -0; i < 0; i++) {
-			mTempGaps.put(i, mGaps.get(i));
-			mGaps.put(i, null);
-		}
+		mTempBox = mBox;
+		mBox = null;
 
 		// 3. move back boxes that are used in the new array.
-		for (int i = -0; i <= 0; i++) {
-			final int j = from.get(i);
-			if (j == Integer.MAX_VALUE) {
-				continue;
-			}
-			mBoxes.put(i, mTempBoxes.get(j));
-			mTempBoxes.put(j, null);
+		{
+			final int j = fromIndex[0];
+			mBox = mTempBox;
+			mTempBox = null;
 		}
 
 		// 4. move back gaps if both boxes around it are kept together.
-		for (int i = -0; i < 0; i++) {
-			final int j = from.get(i);
-			if (j == Integer.MAX_VALUE) {
-				continue;
-			}
-			final int k = from.get(i + 1);
-			if (k == Integer.MAX_VALUE) {
-				continue;
-			}
-			if (j + 1 == k) {
-				mGaps.put(i, mTempGaps.get(j));
-				mTempGaps.put(j, null);
-			}
-		}
 
 		// 5. recycle the boxes that are not used in the new array.
-		int k = -0;
-		for (int i = -0; i <= 0; i++) {
-			if (mBoxes.get(i) != null) {
-				continue;
-			}
-			while (mTempBoxes.get(k) == null) {
-				k++;
-			}
-			mBoxes.put(i, mTempBoxes.get(k++));
-			initBox(i, sizes[i + 0]);
+		if (mBox == null) {
+
+			mBox = mTempBox;
+			initBox(sizes[0]);
 		}
 
 		// 6. Now give the recycled box a reasonable absolute X position.
 		//
 		// First try to find the first and the last box which the absolute X
 		// position is known.
-		int first, last;
-		for (first = -0; first <= 0; first++) {
-			if (from.get(first) != Integer.MAX_VALUE) {
-				break;
-			}
-		}
-		for (last = 0; last >= -0; last--) {
-			if (from.get(last) != Integer.MAX_VALUE) {
-				break;
-			}
-		}
+		int first = 0, last;
 		// If there is no box has known X position at all, make the focused one
 		// as known.
-		if (first > 0) {
-			mBoxes.get(0).mAbsoluteX = mPlatform.mCurrentX;
-			first = last = 0;
-		}
+//		if (first > 0) {
+//			mBox.mAbsoluteX = mPlatform.mCurrentX;
+//			first = last = 0;
+//		}
 		// Now for those boxes between first and last, assign their position to
 		// align to the previous box or the next box with known position. For
 		// the boxes before first or after last, we will use a new default gap
 		// size below.
 
 		// Align to the previous box
-		for (int i = Math.max(0, first + 1); i < last; i++) {
-			if (from.get(i) != Integer.MAX_VALUE) {
-				continue;
-			}
-			final Box a = mBoxes.get(i - 1);
-			final Box b = mBoxes.get(i);
-			final int wa = widthOf(a);
-			final int wb = widthOf(b);
-			b.mAbsoluteX = a.mAbsoluteX + wa - wa / 2 + wb / 2 + getDefaultGapSize(i);
-			if (mPopFromTop) {
-				b.mCurrentY = -(mViewH / 2 + heightOf(b) / 2);
-			} else {
-				b.mCurrentY = mViewH / 2 + heightOf(b) / 2;
-			}
-		}
+//		for (int i = Math.max(0, first + 1); i < last; i++) {
+//			if (from.get(i) != Integer.MAX_VALUE) {
+//				continue;
+//			}
+//			final Box a = mBoxes.get(i - 1);
+//			final Box b = mBoxes.get(i);
+//			final int wa = widthOf(a);
+//			final int wb = widthOf(b);
+//			b.mAbsoluteX = a.mAbsoluteX + wa - wa / 2 + wb / 2 + getDefaultGapSize(i);
+//			if (mPopFromTop) {
+//				b.mCurrentY = -(mViewH / 2 + heightOf(b) / 2);
+//			} else {
+//				b.mCurrentY = mViewH / 2 + heightOf(b) / 2;
+//			}
+//		}
 
 		// Align to the next box
-		for (int i = Math.min(-1, last - 1); i > first; i--) {
-			if (from.get(i) != Integer.MAX_VALUE) {
-				continue;
-			}
-			final Box a = mBoxes.get(i + 1);
-			final Box b = mBoxes.get(i);
-			final int wa = widthOf(a);
-			final int wb = widthOf(b);
-			b.mAbsoluteX = a.mAbsoluteX - wa / 2 - (wb - wb / 2) - getDefaultGapSize(i);
-			if (mPopFromTop) {
-				b.mCurrentY = -(mViewH / 2 + heightOf(b) / 2);
-			} else {
-				b.mCurrentY = mViewH / 2 + heightOf(b) / 2;
-			}
-		}
+//		for (int i = Math.min(-1, last - 1); i > first; i--) {
+//			if (from.get(i) != Integer.MAX_VALUE) {
+//				continue;
+//			}
+//			final Box a = mBoxes.get(i + 1);
+//			final Box b = mBoxes.get(i);
+//			final int wa = widthOf(a);
+//			final int wb = widthOf(b);
+//			b.mAbsoluteX = a.mAbsoluteX - wa / 2 - (wb - wb / 2) - getDefaultGapSize(i);
+//			if (mPopFromTop) {
+//				b.mCurrentY = -(mViewH / 2 + heightOf(b) / 2);
+//			} else {
+//				b.mCurrentY = mViewH / 2 + heightOf(b) / 2;
+//			}
+//		}
 
 		// 7. recycle the gaps that are not used in the new array.
-		k = -0;
-		for (int i = -0; i < 0; i++) {
-			if (mGaps.get(i) != null) {
-				continue;
-			}
-			while (mTempGaps.get(k) == null) {
-				k++;
-			}
-			mGaps.put(i, mTempGaps.get(k++));
-			final Box a = mBoxes.get(i);
-			final Box b = mBoxes.get(i + 1);
-			final int wa = widthOf(a);
-			final int wb = widthOf(b);
-			if (i >= first && i < last) {
-				final int g = b.mAbsoluteX - a.mAbsoluteX - wb / 2 - (wa - wa / 2);
-				initGap(i, g);
-			} else {
-				initGap(i);
-			}
-		}
 
 		// 8. calculate the new absolute X coordinates for those box before
 		// first or after last.
-		for (int i = first - 1; i >= -0; i--) {
-			final Box a = mBoxes.get(i + 1);
-			final Box b = mBoxes.get(i);
-			final int wa = widthOf(a);
-			final int wb = widthOf(b);
-			final Gap g = mGaps.get(i);
-			b.mAbsoluteX = a.mAbsoluteX - wa / 2 - (wb - wb / 2) - g.mCurrentGap;
-		}
+//		for (int i = first - 1; i >= -0; i--) {
+//			final Box a = mBoxes.get(i + 1);
+//			final Box b = mBoxes.get(i);
+//			final int wa = widthOf(a);
+//			final int wb = widthOf(b);
+//			final Gap g = mGaps.get(i);
+//			b.mAbsoluteX = a.mAbsoluteX - wa / 2 - (wb - wb / 2) - g.mCurrentGap;
+//		}
 
-		for (int i = last + 1; i <= 0; i++) {
-			final Box a = mBoxes.get(i - 1);
-			final Box b = mBoxes.get(i);
-			final int wa = widthOf(a);
-			final int wb = widthOf(b);
-			final Gap g = mGaps.get(i - 1);
-			b.mAbsoluteX = a.mAbsoluteX + wa - wa / 2 + wb / 2 + g.mCurrentGap;
-		}
+//		for (int i = last + 1; i <= 0; i++) {
+//			final Box a = mBoxes.get(i - 1);
+//			final Box b = mBoxes.get(i);
+//			final int wa = widthOf(a);
+//			final int wb = widthOf(b);
+//			final Gap g = mGaps.get(i - 1);
+//			b.mAbsoluteX = a.mAbsoluteX + wa - wa / 2 + wb / 2 + g.mCurrentGap;
+//		}
 
 		// 9. offset the Platform position
-		final int dx = mBoxes.get(0).mAbsoluteX - mPlatform.mCurrentX;
+		final int dx = mBox.mAbsoluteX - mPlatform.mCurrentX;
 		mPlatform.mCurrentX += dx;
 		mPlatform.mFromX += dx;
 		mPlatform.mToX += dx;
@@ -547,7 +474,7 @@ class PositionController {
 	}
 
 	public void resetToFullView() {
-		final Box b = mBoxes.get(0);
+		final Box b = mBox;
 		startAnimation(mPlatform.mDefaultX, 0, b.mScaleMin, ANIM_KIND_ZOOM);
 	}
 
@@ -559,7 +486,7 @@ class PositionController {
 	public int scaleBy(float s, float focusX, float focusY) {
 		focusX -= mViewW / 2;
 		focusY -= mViewH / 2;
-		final Box b = mBoxes.get(0);
+		final Box b = mBox;
 
 		// We want to keep the focus point (on the bitmap) the same as when we
 		// begin the scale gesture, that is,
@@ -578,7 +505,7 @@ class PositionController {
 	public void scrollFilmX(final int dx) {
 		if (!canScroll()) return;
 
-		final Box b = mBoxes.get(0);
+		final Box b = mBox;
 		final Platform p = mPlatform;
 
 		// Only allow scrolling when we are not currently in an animation or we
@@ -612,7 +539,7 @@ class PositionController {
 	public void scrollFilmY(final int boxIndex, final int dy) {
 		if (!canScroll()) return;
 
-		final Box b = mBoxes.get(boxIndex);
+		final Box b = mBox;
 		final int y = b.mCurrentY + dy;
 		b.doAnimation(y, b.mCurrentScale, ANIM_KIND_SCROLL);
 		redraw();
@@ -621,7 +548,7 @@ class PositionController {
 	public void scrollPage(final int dx, final int dy) {
 		if (!canScroll()) return;
 
-		final Box b = mBoxes.get(0);
+		final Box b = mBox;
 		final Platform p = mPlatform;
 
 		calculateStableBound(b.mCurrentScale);
@@ -679,7 +606,7 @@ class PositionController {
 		snapAndRedraw();
 	}
 
-	public void setImageSize(final int index, final Size s, final Rect cFrame) {
+	public void setImageSize(final Size s, final Rect cFrame) {
 		if (s.width == 0 || s.height == 0) return;
 
 		boolean needUpdate = false;
@@ -688,7 +615,7 @@ class PositionController {
 			mPlatform.updateDefaultXY();
 			needUpdate = true;
 		}
-		needUpdate |= setBoxSize(index, s.width, s.height, false);
+		needUpdate |= setBoxSize(s.width, s.height, false);
 
 		if (!needUpdate) return;
 		updateScaleAndGapLimit();
@@ -712,16 +639,14 @@ class PositionController {
 		mViewH = viewH;
 		initPlatform();
 
-		for (int i = -0; i <= 0; i++) {
-			setBoxSize(i, viewW, viewH, true);
-		}
+		setBoxSize(viewW, viewH, true);
 
 		updateScaleAndGapLimit();
 
 		// If the focused box was at minimal scale, we try to make it the
 		// minimal scale under the new view size.
 		if (wasMinimal) {
-			final Box b = mBoxes.get(0);
+			final Box b = mBox;
 			b.mCurrentScale = b.mScaleMin;
 		}
 
@@ -738,23 +663,13 @@ class PositionController {
 			mPlatform.mCurrentY = mPlatform.mToY;
 			mPlatform.mAnimationStartTime = NO_ANIMATION;
 		}
-		for (int i = -0; i <= 0; i++) {
-			final Box b = mBoxes.get(i);
-			if (b.mAnimationStartTime == NO_ANIMATION) {
-				continue;
-			}
+		final Box b = mBox;
+		if (b.mAnimationStartTime != NO_ANIMATION) {
 			b.mCurrentY = b.mToY;
 			b.mCurrentScale = b.mToScale;
 			b.mAnimationStartTime = NO_ANIMATION;
 		}
-		for (int i = -0; i < 0; i++) {
-			final Gap g = mGaps.get(i);
-			if (g.mAnimationStartTime == NO_ANIMATION) {
-				continue;
-			}
-			g.mCurrentGap = g.mToGap;
-			g.mAnimationStartTime = NO_ANIMATION;
-		}
+
 		redraw();
 	}
 
@@ -779,7 +694,7 @@ class PositionController {
 
 	// Slide the focused box to the center of the view.
 	public void startHorizontalSlide() {
-		final Box b = mBoxes.get(0);
+		final Box b = mBox;
 		startAnimation(mPlatform.mDefaultX, 0, b.mScaleMin, ANIM_KIND_SLIDE);
 	}
 
@@ -790,12 +705,7 @@ class PositionController {
 	// Stop all animations at where they are now.
 	public void stopAnimation() {
 		mPlatform.mAnimationStartTime = NO_ANIMATION;
-		for (int i = -0; i <= 0; i++) {
-			mBoxes.get(i).mAnimationStartTime = NO_ANIMATION;
-		}
-		for (int i = -0; i < 0; i++) {
-			mGaps.get(i).mAnimationStartTime = NO_ANIMATION;
-		}
+		mBox.mAnimationStartTime = NO_ANIMATION;
 	}
 
 	public void stopScrolling() {
@@ -806,7 +716,7 @@ class PositionController {
 	public void zoomIn(float tapX, float tapY, float targetScale) {
 		tapX -= mViewW / 2;
 		tapY -= mViewH / 2;
-		final Box b = mBoxes.get(0);
+		final Box b = mBox;
 
 		// Convert the tap position to distance to center in bitmap coordinates
 		final float tempX = (tapX - mPlatform.mCurrentX) / b.mCurrentScale;
@@ -828,7 +738,7 @@ class PositionController {
 	}
 
 	// Calculates the stable region of mPlatform.mCurrentX and
-	// mBoxes.get(0).mCurrentY, where "stable" means
+	// mBox.mCurrentY, where "stable" means
 	//
 	// (1) If the dimension of scaled image >= view dimension, we will not
 	// see black region outside the image (at that dimension).
@@ -844,7 +754,7 @@ class PositionController {
 	// is used to extend the stable region by some pixels on each side
 	// horizontally.
 	private void calculateStableBound(final float scale, final int horizontalSlack) {
-		final Box b = mBoxes.get(0);
+		final Box b = mBox;
 
 		// The width and height of the box in number of view pixels
 		final int w = widthOf(b, scale);
@@ -871,7 +781,7 @@ class PositionController {
 	// Only allow scrolling when we are not currently in an animation or we
 	// are in some animation with can be interrupted.
 	private boolean canScroll() {
-		final Box b = mBoxes.get(0);
+		final Box b = mBox;
 		if (b.mAnimationStartTime == NO_ANIMATION) return true;
 		switch (b.mAnimationKind) {
 			case ANIM_KIND_SCROLL:
@@ -882,26 +792,14 @@ class PositionController {
 	}
 
 	private void convertBoxToRect(final int i) {
-		final Box b = mBoxes.get(i);
-		final Rect r = mRects.get(i);
+		final Box b = mBox;
+		final Rect r = mRect;
 		final int y = b.mCurrentY + mPlatform.mCurrentY + mViewH / 2;
 		final int w = widthOf(b);
 		final int h = heightOf(b);
-		if (i == 0) {
-			final int x = mPlatform.mCurrentX + mViewW / 2;
-			r.left = x - w / 2;
-			r.right = r.left + w;
-		} else if (i > 0) {
-			final Rect a = mRects.get(i - 1);
-			final Gap g = mGaps.get(i - 1);
-			r.left = a.right + g.mCurrentGap;
-			r.right = r.left + w;
-		} else { // i < 0
-			final Rect a = mRects.get(i + 1);
-			final Gap g = mGaps.get(i);
-			r.right = a.left - g.mCurrentGap;
-			r.left = r.right - w;
-		}
+		final int x = mPlatform.mCurrentX + mViewW / 2;
+		r.left = x - w / 2;
+		r.right = r.left + w;
 		r.top = y - h / 2;
 		r.bottom = r.top + h;
 	}
@@ -920,69 +818,6 @@ class PositionController {
 		Log.d(TAG, s.toString());
 	}
 
-	private void dumpRect(final int i) {
-		final StringBuilder sb = new StringBuilder();
-		final Rect r = mRects.get(i);
-		sb.append("Rect " + i + ":");
-		sb.append("(");
-		sb.append(r.centerX());
-		sb.append(",");
-		sb.append(r.centerY());
-		sb.append(") [");
-		sb.append(r.width());
-		sb.append("x");
-		sb.append(r.height());
-		sb.append("]");
-		Log.d(TAG, sb.toString());
-	}
-
-	// //////////////////////////////////////////////////////////////////////////
-	// Box management
-	// //////////////////////////////////////////////////////////////////////////
-
-	@SuppressWarnings("unused")
-	private void dumpState() {
-		for (int i = -0; i < 0; i++) {
-			Log.d(TAG, "Gap " + i + ": " + mGaps.get(i).mCurrentGap);
-		}
-
-		for (int i = 0; i < 2 * 0 + 1; i++) {
-			dumpRect(CENTER_OUT_INDEX[i]);
-		}
-
-		for (int i = -0; i <= 0; i++) {
-			for (int j = i + 1; j <= 0; j++) {
-				if (Rect.intersects(mRects.get(i), mRects.get(j))) {
-					Log.d(TAG, "rect " + i + " and rect " + j + "intersects!");
-				}
-			}
-		}
-	}
-
-	// Here is how we layout the boxes in the page mode.
-	//
-	// previous current next
-	// ___________ ________________ __________
-	// | _______ | | __________ | | ______ |
-	// | | | | | | right->| | | | | |
-	// | | |<-------->|<--left | | | | | |
-	// | |_______| | | | |__________| | | |______| |
-	// |___________| | |________________| |__________|
-	// | <--> gapToSide()
-	// |
-	// IMAGE_GAP + MAX(gapToSide(previous), gapToSide(current))
-	private int gapToSide(final Box b) {
-		return (int) ((mViewW - getMinimalScale(b) * b.mImageW) / 2 + 0.5f);
-	}
-
-	// Returns the default gap size according the the size of the boxes around
-	// the gap and the current mode.
-	private int getDefaultGapSize(final int i) {
-		final Box a = mBoxes.get(i);
-		final Box b = mBoxes.get(i + 1);
-		return IMAGE_GAP + Math.max(gapToSide(a), gapToSide(b));
-	}
-
 	private float getMaximalScale(final Box b) {
 		if (mConstrained && !mConstrainedFrame.isEmpty()) return getMinimalScale(b);
 		return SCALE_LIMIT;
@@ -993,7 +828,7 @@ class PositionController {
 		final float hFactor = 1.0f;
 		int viewW, viewH;
 
-		if (mConstrained && !mConstrainedFrame.isEmpty() && b == mBoxes.get(0)) {
+		if (mConstrained && !mConstrainedFrame.isEmpty() && b == mBox) {
 			viewW = mConstrainedFrame.width();
 			viewH = mConstrainedFrame.height();
 		} else {
@@ -1024,26 +859,25 @@ class PositionController {
 	}
 
 	// Initialize a box to have the size of the view.
-	private void initBox(final int index) {
-		final Box b = mBoxes.get(index);
-		b.mImageW = mViewW;
-		b.mImageH = mViewH;
-		b.mUseViewSize = true;
-		b.mScaleMin = getMinimalScale(b);
-		b.mScaleMax = getMaximalScale(b);
-		b.mCurrentY = 0;
-		b.mCurrentScale = b.mScaleMin;
-		b.mAnimationStartTime = NO_ANIMATION;
-		b.mAnimationKind = ANIM_KIND_NONE;
+	private void initBox() {
+		mBox.mImageW = mViewW;
+		mBox.mImageH = mViewH;
+		mBox.mUseViewSize = true;
+		mBox.mScaleMin = getMinimalScale(mBox);
+		mBox.mScaleMax = getMaximalScale(mBox);
+		mBox.mCurrentY = 0;
+		mBox.mCurrentScale = mBox.mScaleMin;
+		mBox.mAnimationStartTime = NO_ANIMATION;
+		mBox.mAnimationKind = ANIM_KIND_NONE;
 	}
 
 	// Initialize a box to a given size.
-	private void initBox(final int index, final Size size) {
+	private void initBox(final Size size) {
 		if (size.width == 0 || size.height == 0) {
-			initBox(index);
+			initBox();
 			return;
 		}
-		final Box b = mBoxes.get(index);
+		final Box b = mBox;
 		b.mImageW = size.width;
 		b.mImageH = size.height;
 		b.mUseViewSize = false;
@@ -1059,14 +893,12 @@ class PositionController {
 	// has been initialized.
 	private void initGap(final int index) {
 		final Gap g = mGaps.get(index);
-		g.mDefaultSize = getDefaultGapSize(index);
 		g.mCurrentGap = g.mDefaultSize;
 		g.mAnimationStartTime = NO_ANIMATION;
 	}
 
 	private void initGap(final int index, final int size) {
 		final Gap g = mGaps.get(index);
-		g.mDefaultSize = getDefaultGapSize(index);
 		g.mCurrentGap = size;
 		g.mAnimationStartTime = NO_ANIMATION;
 	}
@@ -1112,8 +944,8 @@ class PositionController {
 	}
 
 	// Returns false if the box size doesn't change.
-	private boolean setBoxSize(final int i, final int width, final int height, final boolean isViewSize) {
-		final Box b = mBoxes.get(i);
+	private boolean setBoxSize(final int width, final int height, final boolean isViewSize) {
+		final Box b = mBox;
 		final boolean wasViewSize = b.mUseViewSize;
 
 		// If we already have an image size, we don't want to use the view size.
@@ -1138,22 +970,15 @@ class PositionController {
 		b.mCurrentScale = getMinimalScale(b);
 		b.mAnimationStartTime = NO_ANIMATION;
 
-		if (i == 0) {
-			mFocusX /= ratio;
-			mFocusY /= ratio;
-		}
+		mFocusX /= ratio;
+		mFocusY /= ratio;
 
 		return true;
 	}
 
 	private void snapAndRedraw() {
 		mPlatform.startSnapback();
-		for (int i = -0; i <= 0; i++) {
-			mBoxes.get(i).startSnapback();
-		}
-		for (int i = -0; i < 0; i++) {
-			mGaps.get(i).startSnapback();
-		}
+		mBox.startSnapback();
 		mFilmRatio.startSnapback();
 		redraw();
 	}
@@ -1161,7 +986,7 @@ class PositionController {
 	private boolean startAnimation(final int targetX, final int targetY, final float targetScale, final int kind) {
 		boolean changed = false;
 		changed |= mPlatform.doAnimation(targetX, mPlatform.mDefaultY, kind);
-		changed |= mBoxes.get(0).doAnimation(targetY, targetScale, kind);
+		changed |= mBox.doAnimation(targetY, targetScale, kind);
 		if (changed) {
 			redraw();
 		}
@@ -1174,7 +999,7 @@ class PositionController {
 
 	private boolean startOpeningAnimationIfNeeded() {
 		if (mOpenAnimationRect == null) return false;
-		final Box b = mBoxes.get(0);
+		final Box b = mBox;
 		if (b.mUseViewSize) return false;
 
 		// Start animation from the saved rectangle if we have one.
@@ -1201,24 +1026,18 @@ class PositionController {
 	// gap size may change. Currently this can happen due to change of view
 	// size, image size, mFilmMode, mConstrained, and mConstrainedFrame.
 	private void updateScaleAndGapLimit() {
-		for (int i = -0; i <= 0; i++) {
-			final Box b = mBoxes.get(i);
-			b.mScaleMin = getMinimalScale(b);
-			b.mScaleMax = getMaximalScale(b);
-		}
+		final Box b = mBox;
+		b.mScaleMin = getMinimalScale(b);
+		b.mScaleMax = getMaximalScale(b);
 
-		for (int i = -0; i < 0; i++) {
-			final Gap g = mGaps.get(i);
-			g.mDefaultSize = getDefaultGapSize(i);
-		}
 	}
 
 	private boolean viewTallerThanScaledImage(final float scale) {
-		return mViewH >= heightOf(mBoxes.get(0), scale);
+		return mViewH >= heightOf(mBox, scale);
 	}
 
 	private boolean viewWiderThanScaledImage(final float scale) {
-		return mViewW >= widthOf(mBoxes.get(0), scale);
+		return mViewW >= widthOf(mBox, scale);
 	}
 
 	// Returns the display width of this box.
@@ -1351,12 +1170,12 @@ class PositionController {
 		public boolean startSnapback() {
 			if (mAnimationStartTime != NO_ANIMATION) return false;
 			if (mAnimationKind == ANIM_KIND_SCROLL && mListener.isHoldingDown()) return false;
-			if (mInScale && this == mBoxes.get(0)) return false;
+			if (mInScale && this == mBox) return false;
 
 			int y = mCurrentY;
 			float scale;
 
-			if (this == mBoxes.get(0)) {
+			if (this == mBox) {
 				final float scaleMin = mExtraScalingRange ? mScaleMin * SCALE_MIN_EXTRA : mScaleMin;
 				final float scaleMax = mExtraScalingRange ? mScaleMax * SCALE_MAX_EXTRA : mScaleMax;
 				scale = Utils.clamp(mCurrentScale, scaleMin, scaleMax);
@@ -1528,7 +1347,7 @@ class PositionController {
 			if (mAnimationKind == ANIM_KIND_SCROLL && mListener.isHoldingDown()) return false;
 			if (mInScale) return false;
 
-			final Box b = mBoxes.get(0);
+			final Box b = mBox;
 			final float scaleMin = mExtraScalingRange ? b.mScaleMin * SCALE_MIN_EXTRA : b.mScaleMin;
 			final float scaleMax = mExtraScalingRange ? b.mScaleMax * SCALE_MAX_EXTRA : b.mScaleMax;
 			final float scale = Utils.clamp(b.mCurrentScale, scaleMin, scaleMax);
@@ -1594,7 +1413,7 @@ class PositionController {
 
 		private boolean interpolateFlingPage(final float progress) {
 			mPageScroller.computeScrollOffset(progress);
-			final Box b = mBoxes.get(0);
+			final Box b = mBox;
 			calculateStableBound(b.mCurrentScale);
 
 			final int oldX = mCurrentX;
