@@ -20,6 +20,7 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 import org.mariotaku.twidere.BuildConfig;
 import org.mariotaku.twidere.util.AsyncTask;
@@ -54,13 +55,26 @@ public abstract class ImageWorker {
 
 	protected final Context mContext;
 	protected final Handler mHandler;
-	protected final ExecutorService mExecutor = Executors.newFixedThreadPool(8);
+	protected final ExecutorService mExecutor;
 
 	protected ImageWorkerAdapter mImageWorkerAdapter;
+
+	private final ThreadFactory mThreadFactory = new ThreadFactory() {
+
+		@Override
+		public Thread newThread(final Runnable r) {
+			final Thread t = new Thread(r);
+			// Lower priority
+			t.setPriority(3);
+			return t;
+		}
+
+	};
 
 	protected ImageWorker(final Context context) {
 		mContext = context;
 		mHandler = new Handler();
+		mExecutor = Executors.newFixedThreadPool(8, mThreadFactory);
 		init();
 	}
 

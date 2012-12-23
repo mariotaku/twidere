@@ -230,8 +230,8 @@ public class DraftsActivity extends BaseDialogWhenLargeActivity implements Loade
 		if (draft == null) return;
 		final Uri uri = draft.media_uri == null ? null : Uri.parse(draft.media_uri);
 		mResolver.delete(Drafts.CONTENT_URI, Drafts._ID + " = " + draft._id, null);
-		mTwitterWrapper.updateStatus(draft.account_ids, draft.text, null, uri, draft.in_reply_to_status_id,
-				draft.is_photo_attached && !draft.is_image_attached);
+		mTwitterWrapper.updateStatus(draft.account_ids, draft.text, draft.location, uri, draft.in_reply_to_status_id,
+				draft.is_possibly_sensitive, draft.is_photo_attached && !draft.is_image_attached);
 	}
 
 	static class DraftsAdapter extends SimpleCursorAdapter {

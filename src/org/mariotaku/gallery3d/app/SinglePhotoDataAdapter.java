@@ -134,7 +134,7 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter implements Imag
 		try {
 			setScreenNail(bundle.backupImage, bundle.decoder.getWidth(), bundle.decoder.getHeight());
 			setRegionDecoder(bundle.decoder);
-			mPhotoView.notifyImageChange(0);
+			mPhotoView.notifyImageChange();
 		} catch (final Throwable t) {
 			Log.w(TAG, "fail to decode large", t);
 		}

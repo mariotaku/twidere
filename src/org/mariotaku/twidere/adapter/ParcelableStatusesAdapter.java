@@ -55,7 +55,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		OnClickListener {
 
 	private boolean mDisplayProfileImage, mDisplayImagePreview, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed,
-			mMultiSelectEnabled, mMentionsHighlightDisabled;
+			mMultiSelectEnabled, mMentionsHighlightDisabled, mDisplaySensitiveContents;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
 	private final Context mContext;
@@ -204,7 +204,11 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 					&& status.image_preview_url_string != null;
 			holder.image_preview_frame.setVisibility(has_preview ? View.VISIBLE : View.GONE);
 			if (has_preview) {
-				mPreviewImageLoader.displayImage(status.image_preview_url_string, holder.image_preview);
+				if (status.is_possibly_sensitive && !mDisplaySensitiveContents) {
+					holder.image_preview.setImageResource(R.drawable.image_preview_nsfw);
+				} else {
+					mPreviewImageLoader.displayImage(status.image_preview_url_string, holder.image_preview);
+				}
 				holder.image_preview_frame.setTag(position);
 			}
 		}
@@ -222,7 +226,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			case R.id.image_preview_frame: {
 				final ImageSpec spec = getAllAvailableImage(status.image_orig_url_string);
 				if (spec != null) {
-					openImage(mContext, Uri.parse(spec.full_image_link));
+					openImage(mContext, Uri.parse(spec.full_image_link), status.is_possibly_sensitive);
 				}
 				break;
 			}
@@ -254,6 +258,14 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	public void setDisplayProfileImage(final boolean display) {
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
+			notifyDataSetChanged();
+		}
+	}
+
+	@Override
+	public void setDisplaySensitiveContents(final boolean display) {
+		if (display != mDisplaySensitiveContents) {
+			mDisplaySensitiveContents = display;
 			notifyDataSetChanged();
 		}
 	}

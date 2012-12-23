@@ -305,9 +305,9 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 	}
 
 	public int updateStatus(final long[] account_ids, final String content, final ParcelableLocation location,
-			final Uri image_uri, final long in_reply_to, final boolean delete_image) {
+			final Uri image_uri, final long in_reply_to, final boolean is_possibly_sensitive, final boolean delete_image) {
 		final UpdateStatusTask task = new UpdateStatusTask(account_ids, content, location, image_uri, in_reply_to,
-				delete_image);
+				is_possibly_sensitive, delete_image);
 		return mAsyncTaskManager.add(task, true);
 	}
 
@@ -2090,10 +2090,11 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		private final ParcelableLocation location;
 		private final Uri image_uri;
 		private final long in_reply_to;
-		private final boolean use_uploader, use_shortener, delete_image;
+		private final boolean use_uploader, use_shortener, is_possibly_sensitive, delete_image;
 
 		public UpdateStatusTask(final long[] account_ids, final String content, final ParcelableLocation location,
-				final Uri image_uri, final long in_reply_to, final boolean delete_image) {
+				final Uri image_uri, final long in_reply_to, final boolean is_possibly_sensitive,
+				final boolean delete_image) {
 			super(mContext, mAsyncTaskManager);
 			final String uploader_component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
 			final String shortener_component = mPreferences.getString(PREFERENCE_KEY_TWEET_SHORTENER, null);
@@ -2107,6 +2108,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			this.location = location;
 			this.image_uri = image_uri;
 			this.in_reply_to = in_reply_to;
+			this.is_possibly_sensitive = is_possibly_sensitive;
 			this.delete_image = delete_image;
 		}
 
@@ -2172,6 +2174,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				if (!use_uploader && image_file != null && image_file.exists()) {
 					status.setMedia(image_file);
 				}
+				status.setPossiblySensitive(is_possibly_sensitive);
 
 				for (final long account_id : account_ids) {
 					// A very stupid workaround here, in order to send tweets

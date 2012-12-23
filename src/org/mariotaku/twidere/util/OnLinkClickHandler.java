@@ -36,10 +36,16 @@ public class OnLinkClickHandler implements OnLinkClickListener {
 
 	private final Activity activity;
 	private final long account_id;
+	private final boolean is_possibly_sensitive;
 
 	public OnLinkClickHandler(final Context context, final long account_id) {
+		this(context, account_id, false);
+	}
+
+	public OnLinkClickHandler(final Context context, final long account_id, final boolean is_possibly_sensitive) {
 		activity = context instanceof Activity ? (Activity) context : null;
 		this.account_id = account_id;
+		this.is_possibly_sensitive = is_possibly_sensitive;
 	}
 
 	@Override
@@ -59,7 +65,7 @@ public class OnLinkClickHandler implements OnLinkClickListener {
 				break;
 			}
 			case TwidereLinkify.LINK_TYPE_LINK_WITH_IMAGE_EXTENSION: {
-				openImage(activity, Uri.parse(link));
+				openImage(activity, Uri.parse(link), is_possibly_sensitive);
 				break;
 			}
 			case TwidereLinkify.LINK_TYPE_LINK: {

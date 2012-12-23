@@ -103,6 +103,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	private static final String FAKE_IMAGE_LINK = "https://www.example.com/fake_image.jpg";
 	private static final String INTENT_KEY_CONTENT_MODIFIED = "content_modified";
 	private static final String INTENT_KEY_IS_NAVIGATE_UP = "is_navigate_up";
+	private static final String INTENT_KEY_IS_POSSIBLY_SENSITIVE = "is_possibly_sensitive";
 
 	private AsyncTwitterWrapper mTwitterWrapper;
 	private LocationManager mLocationManager;
@@ -127,7 +128,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	private Uri mImageUri;
 	private long mInReplyToStatusId = -1;
 	private String mInReplyToScreenName, mInReplyToName;
-	private boolean mIsQuote, mUploadUseExtension, mContentModified;
+	private boolean mIsQuote, mUploadUseExtension, mContentModified, mIsPossiblySensitive;
 
 	private DialogFragment mUnsavedTweetDialogFragment;
 
@@ -431,6 +432,8 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		mColorIndicator.setColor(getAccountColors(this, mAccountIds));
 		mContentModified = savedInstanceState != null ? savedInstanceState.getBoolean(INTENT_KEY_CONTENT_MODIFIED)
 				: false;
+		mIsPossiblySensitive = savedInstanceState != null ? savedInstanceState
+				.getBoolean(INTENT_KEY_IS_POSSIBLY_SENSITIVE) : false;
 	}
 
 	@Override
@@ -536,7 +539,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				break;
 			}
 			case MENU_VIEW: {
-				openImage(this, mImageUri);
+				openImage(this, mImageUri, false);
 				break;
 			}
 			case MENU_EXTENSIONS: {
@@ -552,6 +555,13 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				intent.putExtras(extras);
 				startActivityForResult(Intent.createChooser(intent, getString(R.string.open_with_extensions)),
 						REQUEST_EXTENSION_COMPOSE);
+				break;
+			}
+			case MENU_TOGGLE_SENSITIVE: {
+				final boolean has_media = (mIsImageAttached || mIsPhotoAttached) && mImageUri != null;
+				if (!has_media) return false;
+				mIsPossiblySensitive = !mIsPossiblySensitive;
+				setMenu();
 				break;
 			}
 		}
@@ -635,6 +645,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		outState.putBoolean(INTENT_KEY_IS_PHOTO_ATTACHED, mIsPhotoAttached);
 		outState.putParcelable(INTENT_KEY_IMAGE_URI, mImageUri);
 		outState.putBoolean(INTENT_KEY_CONTENT_MODIFIED, mContentModified);
+		outState.putBoolean(INTENT_KEY_IS_POSSIBLY_SENSITIVE, mIsPossiblySensitive);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -665,6 +676,8 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		values.put(Drafts.IN_REPLY_TO_NAME, mInReplyToName);
 		values.put(Drafts.IN_REPLY_TO_SCREEN_NAME, mInReplyToScreenName);
 		values.put(Drafts.IS_QUOTE, mIsQuote ? 1 : 0);
+		values.put(Drafts.LOCATION, ParcelableLocation.toString(mRecentLocation));
+		values.put(Drafts.IS_POSSIBLY_SENSITIVE, mIsPossiblySensitive ? 1 : 0);
 		if (mImageUri != null) {
 			values.put(Drafts.IS_IMAGE_ATTACHED, mIsImageAttached);
 			values.put(Drafts.IS_PHOTO_ATTACHED, mIsPhotoAttached);
@@ -748,9 +761,10 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	private void send() {
 		final String text = mEditText != null ? parseString(mEditText.getText()) : null;
 		if (isEmpty(text) || isFinishing()) return;
+		final boolean has_media = (mIsImageAttached || mIsPhotoAttached) && mImageUri != null;
 		final boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
 		mTwitterWrapper.updateStatus(mAccountIds, text, attach_location ? mRecentLocation : null, mImageUri,
-				mInReplyToStatusId, mIsPhotoAttached && !mIsImageAttached);
+				mInReplyToStatusId, has_media && mIsPossiblySensitive, mIsPhotoAttached && !mIsImageAttached);
 		setResult(Activity.RESULT_OK);
 		finish();
 	}
@@ -789,18 +803,34 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		}
 		final MenuItem itemMore = menu.findItem(R.id.more_submenu);
 		final MenuItem itemDrafts = menu.findItem(MENU_DRAFTS);
+		final MenuItem itemToggleSensitive = menu.findItem(MENU_TOGGLE_SENSITIVE);
 		if (itemMore != null) {
-			final Cursor drafts_cur = getContentResolver().query(Drafts.CONTENT_URI, new String[0], null, null, null);
-			final Drawable iconMore = itemMore.getIcon().mutate();
-			final Drawable iconDrafts = itemDrafts.getIcon().mutate();
-			if (drafts_cur.getCount() > 0) {
-				iconMore.setColorFilter(activated_color, Mode.MULTIPLY);
-				iconDrafts.setColorFilter(activated_color, Mode.MULTIPLY);
-			} else {
-				iconMore.clearColorFilter();
-				iconDrafts.clearColorFilter();
+			if (itemDrafts != null) {
+				final Cursor drafts_cur = getContentResolver().query(Drafts.CONTENT_URI, new String[0], null, null,
+						null);
+				final Drawable iconMore = itemMore.getIcon().mutate();
+				final Drawable iconDrafts = itemDrafts.getIcon().mutate();
+				if (drafts_cur.getCount() > 0) {
+					iconMore.setColorFilter(activated_color, Mode.MULTIPLY);
+					iconDrafts.setColorFilter(activated_color, Mode.MULTIPLY);
+				} else {
+					iconMore.clearColorFilter();
+					iconDrafts.clearColorFilter();
+				}
+				drafts_cur.close();
 			}
-			drafts_cur.close();
+			if (itemToggleSensitive != null) {
+				final boolean has_media = (mIsImageAttached || mIsPhotoAttached) && mImageUri != null;
+				itemToggleSensitive.setVisible(has_media);
+				if (has_media) {
+					final Drawable iconToggleSensitive = itemToggleSensitive.getIcon().mutate();
+					if (mIsPossiblySensitive) {
+						iconToggleSensitive.setColorFilter(activated_color, Mode.MULTIPLY);
+					} else {
+						iconToggleSensitive.clearColorFilter();
+					}
+				}
+			}
 		}
 		mMenuBar.invalidate();
 		invalidateSupportOptionsMenu();

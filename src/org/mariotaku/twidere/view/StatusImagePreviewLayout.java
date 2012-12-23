@@ -3,19 +3,21 @@ package org.mariotaku.twidere.view;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.util.LazyImageLoader;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-public class StatusImagePreviewLayout extends LinearLayout implements View.OnClickListener,
+public class StatusImagePreviewLayout extends LinearLayout implements Constants, View.OnClickListener,
 		ExtendedFrameLayout.OnSizeChangedListener {
 
 	private final ArrayList<ImageSpec> mData = new ArrayList<ImageSpec>();
@@ -23,6 +25,8 @@ public class StatusImagePreviewLayout extends LinearLayout implements View.OnCli
 	private final LazyImageLoader mImageLoader;
 
 	private OnImageClickListener mListener;
+
+	private boolean mIsPossiblySensitive;
 
 	public StatusImagePreviewLayout(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
@@ -74,10 +78,13 @@ public class StatusImagePreviewLayout extends LinearLayout implements View.OnCli
 		mListener = listener;
 	}
 
-	public void show() {
+	public void show(final boolean is_possibly_sensitive) {
+		mIsPossiblySensitive = is_possibly_sensitive;
 		if (mImageLoader == null) return;
 		removeAllViewsInLayout();
-		final LayoutInflater inflater = LayoutInflater.from(getContext());
+		final Context context = getContext();
+		final LayoutInflater inflater = LayoutInflater.from(context);
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		for (final ImageSpec spec : mData) {
 			final ExtendedFrameLayout view = (ExtendedFrameLayout) inflater.inflate(R.layout.image_preview_item, this,
 					false);
@@ -86,7 +93,11 @@ public class StatusImagePreviewLayout extends LinearLayout implements View.OnCli
 			view.setOnSizeChangedListener(this);
 			addView(view);
 			final ImageView image_view = (ImageView) view.findViewById(R.id.image_preview_item);
-			mImageLoader.displayImage(spec.preview_image_link, image_view);
+			if (mIsPossiblySensitive && !prefs.getBoolean(PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS, false)) {
+				image_view.setImageResource(R.drawable.image_preview_nsfw);
+			} else {
+				mImageLoader.displayImage(spec.preview_image_link, image_view);
+			}
 		}
 	}
 

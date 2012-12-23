@@ -417,7 +417,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mScreenNameView.setText("@" + status.screen_name);
 		mTextView.setText(Html.fromHtml(status.text_html));
 		final TwidereLinkify linkify = new TwidereLinkify(mTextView);
-		linkify.setOnLinkClickListener(new OnLinkClickHandler(getActivity(), mAccountId));
+		linkify.setOnLinkClickListener(new OnLinkClickHandler(getActivity(), mAccountId, status.is_possibly_sensitive));
 		linkify.addAllLinks();
 		final boolean is_reply = status.in_reply_to_status_id > 0;
 		final String time = formatToLongTimeString(getActivity(), status.status_timestamp);
@@ -625,10 +625,10 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	@Override
 	public void onImageClick(final ImageSpec spec) {
-		if (spec == null) return;
+		if (mStatus == null || spec == null) return;
 		// UCD
 		ProfilingUtil.profile(getActivity(), mAccountId, "Large image click, " + mStatusId + ", " + spec);
-		openImage(getActivity(), Uri.parse(spec.full_image_link));
+		openImage(getActivity(), Uri.parse(spec.full_image_link), mStatus.is_possibly_sensitive);
 	}
 
 	@Override
@@ -732,9 +732,10 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	}
 
 	private void showPreviewImages() {
+		if (mStatus == null) return;
 		mLoadImagesIndicator.setVisibility(View.GONE);
 		mImagePreviewView.setVisibility(View.VISIBLE);
-		mImagePreviewView.show();
+		mImagePreviewView.show(mStatus.is_possibly_sensitive);
 	}
 
 	private void updatePullRefresh() {

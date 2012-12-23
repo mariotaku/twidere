@@ -83,6 +83,7 @@ import org.mariotaku.twidere.fragment.IncomingFriendshipsFragment;
 import org.mariotaku.twidere.fragment.SavedSearchesListFragment;
 import org.mariotaku.twidere.fragment.SearchTweetsFragment;
 import org.mariotaku.twidere.fragment.SearchUsersFragment;
+import org.mariotaku.twidere.fragment.SensitiveContentWaringDialogFragment;
 import org.mariotaku.twidere.fragment.StatusFragment;
 import org.mariotaku.twidere.fragment.TrendsFragment;
 import org.mariotaku.twidere.fragment.UserBlocksListFragment;
@@ -176,14 +177,16 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.WebView;
 import android.widget.Toast;
 
 public final class Utils implements Constants {
@@ -1910,6 +1913,7 @@ public final class Utils implements Constants {
 		values.put(Statuses.IN_REPLY_TO_SCREEN_NAME, status.getInReplyToScreenName());
 		values.put(Statuses.IN_REPLY_TO_STATUS_ID, status.getInReplyToStatusId());
 		values.put(Statuses.SOURCE, status.getSource());
+		values.put(Statuses.IS_POSSIBLY_SENSITIVE, status.isPossiblySensitive());
 		final GeoLocation location = status.getGeoLocation();
 		if (location != null) {
 			values.put(Statuses.LOCATION, location.getLatitude() + "," + location.getLongitude());
@@ -2034,7 +2038,7 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openImage(final Context context, final Uri uri) {
+	public static void openImage(final Context context, final Uri uri, final boolean is_possibly_sensitive) {
 		if (context == null || uri == null) return;
 		final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE);
 		intent.setDataAndType(uri, "image/*");
@@ -2043,7 +2047,19 @@ public final class Utils implements Constants {
 		} else {
 			intent.setClass(context, ImageViewerActivity.class);
 		}
-		context.startActivity(intent);
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		if (context instanceof FragmentActivity && is_possibly_sensitive
+				&& !prefs.getBoolean(PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS, false)) {
+			final FragmentActivity activity = (FragmentActivity) context;
+			final FragmentManager fm = activity.getSupportFragmentManager();
+			final DialogFragment fragment = new SensitiveContentWaringDialogFragment();
+			final Bundle args = new Bundle();
+			args.putParcelable(INTENT_KEY_URI, uri);
+			fragment.setArguments(args);
+			fragment.show(fm, "sensitive_content_warning");
+		} else {
+			context.startActivity(intent);
+		}
 	}
 
 	public static void openIncomingFriendships(final Activity activity, final long account_id) {

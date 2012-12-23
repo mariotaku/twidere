@@ -20,32 +20,23 @@ import org.mariotaku.gallery3d.app.ImageViewerGLActivity;
 import org.mariotaku.gallery3d.common.ApiHelper;
 import org.mariotaku.gallery3d.data.MediaItem;
 import org.mariotaku.gallery3d.data.MediaObject;
-import org.mariotaku.twidere.R;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Message;
-import android.util.Log;
 import android.view.MotionEvent;
 
 public class PhotoView extends GLView {
-	private static final String TAG = "PhotoView";
 
 	public static final int INVALID_SIZE = -1;
 	public static final long INVALID_DATA_VERSION = MediaObject.INVALID_DATA_VERSION;
 
 	private static final int MSG_CANCEL_EXTRA_SCALING = 2;
 
-	private static final int MSG_SWITCH_FOCUS = 3;
-
 	private static final int MSG_CAPTURE_ANIMATION_DONE = 4;
 
-	private static final float DEFAULT_TEXT_SIZE = 20;
-
-	private final Size[] mSizes = new Size[1];
 	private final MyGestureListener mGestureListener;
 
 	private final GestureRecognizer mGestureRecognizer;
@@ -53,7 +44,6 @@ public class PhotoView extends GLView {
 
 	private Listener mListener;
 	private Model mModel;
-	private StringTexture mNoThumbnailText;
 
 	private TileImageView mTileView;
 	private EdgeView mEdgeView;
@@ -64,8 +54,6 @@ public class PhotoView extends GLView {
 	private int mDisplayRotation = 0;
 
 	private int mCompensation = 0;
-	private final Rect mCameraRelativeFrame = new Rect();
-	private final Rect mCameraRect = new Rect();
 	// This variable prevents us doing snapback until its values goes to 0. This
 	// happens if the user gesture is still in progress or we are in a capture
 	// animation.
@@ -74,10 +62,6 @@ public class PhotoView extends GLView {
 	private static final int HOLD_TOUCH_DOWN = 1;
 	private static final int HOLD_CAPTURE_ANIMATION = 2;
 
-	// mTouchBoxIndex is the index of the box that is touched by the down
-	// gesture in film mode. The value Integer.MAX_VALUE means no box was
-	// touched.
-	private int mTouchBoxIndex = Integer.MAX_VALUE;
 	// This is the index of the last deleted item. This is only used as a hint
 	// to hide the undo button when we are too far away from the deleted
 	// item. The value Integer.MAX_VALUE means there is no such hint.
@@ -90,9 +74,6 @@ public class PhotoView extends GLView {
 		mContext = activity.getAndroidContext();
 		mEdgeView = new EdgeView(mContext);
 		addComponent(mEdgeView);
-		mNoThumbnailText = StringTexture.newInstance(mContext.getString(R.string.no_thumbnail), DEFAULT_TEXT_SIZE,
-				Color.WHITE);
-
 		mHandler = new MyHandler(activity.getGLRoot());
 
 		mGestureListener = new MyGestureListener();
@@ -127,39 +108,10 @@ public class PhotoView extends GLView {
 		return mPositionController.getPosition();
 	}
 
-	public void notifyDataChange(final int[] fromIndex, final int prevBound, final int nextBound) {
-
-		// Update mTouchBoxIndex
-		if (mTouchBoxIndex != Integer.MAX_VALUE) {
-			final int k = mTouchBoxIndex;
-			mTouchBoxIndex = Integer.MAX_VALUE;
-			for (int i = 0; i < 2 * 0 + 1; i++) {
-				if (fromIndex[i] == k) {
-					mTouchBoxIndex = i - 0;
-					break;
-				}
-			}
-		}
-
+	public void notifyImageChange() {
+		mListener.onCurrentImageUpdated();
 		mPicture.reload();
-		mSizes[0] = mPicture.getSize();
-
-		// Move the boxes
-		mPositionController.moveBox(fromIndex, false, mSizes);
-
-		for (int i = -0; i <= 0; i++) {
-			setPictureSize(i);
-		}
-
-		invalidate();
-	}
-
-	public void notifyImageChange(final int index) {
-		if (index == 0) {
-			mListener.onCurrentImageUpdated();
-		}
-		mPicture.reload();
-		setPictureSize(index);
+		setPictureSize();
 		invalidate();
 	}
 
@@ -178,15 +130,6 @@ public class PhotoView extends GLView {
 	public void resume() {
 		mTileView.prepareTextures();
 		mPositionController.skipToFinalPosition();
-	}
-
-	public void setCameraRelativeFrame(final Rect frame) {
-		mCameraRelativeFrame.set(frame);
-		updateCameraRect();
-		// Originally we do
-		// mPositionController.setConstrainedFrame(mCameraRect);
-		// here, but it is moved to a parameter of the setImageSize() call, so
-		// it can be updated atomically with the CameraScreenNail's size change.
 	}
 
 	public void setListener(final Listener listener) {
@@ -230,8 +173,6 @@ public class PhotoView extends GLView {
 
 		}
 
-		updateCameraRect();
-		mPositionController.setConstrainedFrame(mCameraRect);
 		if (changeSize) {
 			mPositionController.setViewSize(getWidth(), getHeight());
 		}
@@ -245,10 +186,6 @@ public class PhotoView extends GLView {
 
 	@Override
 	protected void render(final GLCanvas canvas) {
-		// Check if the camera preview occupies the full screen.
-		// boolean full = mPictures.get(0).isCamera()
-		// && mPositionController.isCenter()
-		// && mPositionController.isAtMinimalScale();
 
 		// Draw photos from back to front
 		final Rect r = mPositionController.getPosition();
@@ -279,12 +216,6 @@ public class PhotoView extends GLView {
 		// }
 	}
 
-	// Draw the "no thumbnail" message
-	private void drawLoadingFailMessage(final GLCanvas canvas) {
-		final StringTexture m = mNoThumbnailText;
-		m.draw(canvas, -m.getWidth() / 2, -m.getHeight() / 2);
-	}
-
 	// //////////////////////////////////////////////////////////////////////////
 	// Gestures Handling
 	// //////////////////////////////////////////////////////////////////////////
@@ -293,7 +224,7 @@ public class PhotoView extends GLView {
 	// Rendering
 	// //////////////////////////////////////////////////////////////////////////
 
-	private void setPictureSize(final int index) {
+	private void setPictureSize() {
 		mPositionController.setImageSize(mPicture.getSize(), null);
 	}
 
@@ -372,47 +303,6 @@ public class PhotoView extends GLView {
 		return false;
 	}
 
-	// Runs in main thread.
-	private void switchFocus() {
-	}
-
-	// Update the camera rectangle due to layout change or camera relative frame
-	// change.
-	private void updateCameraRect() {
-		// Get the width and height in framework orientation because the given
-		// mCameraRelativeFrame is in that coordinates.
-		int w = getWidth();
-		int h = getHeight();
-		if (mCompensation % 180 != 0) {
-			final int tmp = w;
-			w = h;
-			h = tmp;
-		}
-		final int l = mCameraRelativeFrame.left;
-		final int t = mCameraRelativeFrame.top;
-		final int r = mCameraRelativeFrame.right;
-		final int b = mCameraRelativeFrame.bottom;
-
-		// Now convert it to the coordinates we are using.
-		switch (mCompensation) {
-			case 0:
-				mCameraRect.set(l, t, r, b);
-				break;
-			case 90:
-				mCameraRect.set(h - b, l, h - t, r);
-				break;
-			case 180:
-				mCameraRect.set(w - r, h - b, w - l, h - t);
-				break;
-			case 270:
-				mCameraRect.set(t, w - r, b, w - l);
-				break;
-		}
-
-		Log.d(TAG, "compensation = " + mCompensation + ", CameraRelativeFrame = " + mCameraRelativeFrame
-				+ ", mCameraRect = " + mCameraRect);
-	}
-
 	private static int getRotated(final int degree, final int original, final int theother) {
 		return degree % 180 == 0 ? original : theother;
 	}
@@ -424,7 +314,7 @@ public class PhotoView extends GLView {
 
 		public void onCurrentImageUpdated();
 
-		public void onPictureCenter(boolean isCamera);
+		public void onPictureCenter();
 
 		public void onSingleTapUp(int x, int y);
 	}
@@ -474,7 +364,6 @@ public class PhotoView extends GLView {
 		// If we have changed the film mode in this scaling gesture.
 		private boolean mModeChanged;
 		// If this scaling gesture should be ignored.
-		private boolean mIgnoreScalingGesture;
 		// If we should ignore all gestures other than onSingleTapUp.
 		private boolean mIgnoreSwipingGesture;
 		// If a scrolling has happened after a down gesture.
@@ -515,7 +404,6 @@ public class PhotoView extends GLView {
 
 			mHadFling = false;
 			mScrolledAfterDown = false;
-			mTouchBoxIndex = Integer.MAX_VALUE;
 		}
 
 		@Override
@@ -534,7 +422,6 @@ public class PhotoView extends GLView {
 		@Override
 		public boolean onScale(final float focusX, final float focusY, final float scale) {
 			if (mIgnoreSwipingGesture) return true;
-			if (mIgnoreScalingGesture) return true;
 			if (mModeChanged) return true;
 			if (Float.isNaN(scale) || Float.isInfinite(scale)) return false;
 
@@ -575,7 +462,6 @@ public class PhotoView extends GLView {
 		public boolean onScaleBegin(final float focusX, final float focusY) {
 			if (mIgnoreSwipingGesture) return true;
 			// We ignore the scaling gesture if it is a camera preview.
-			mIgnoreScalingGesture = false;
 			mPositionController.beginScale(focusX, focusY);
 			// We can change mode if we are in film mode, or we are in page
 			// mode and at minimal scale.
@@ -587,7 +473,6 @@ public class PhotoView extends GLView {
 		@Override
 		public void onScaleEnd() {
 			if (mIgnoreSwipingGesture) return;
-			if (mIgnoreScalingGesture) return;
 			if (mModeChanged) return;
 			mPositionController.endScale();
 		}
@@ -744,7 +629,6 @@ public class PhotoView extends GLView {
 
 	class FullPicture implements Picture {
 		private int mRotation;
-		private int mLoadingState = Model.LOADING_INIT;
 		private final Size mSize = new Size();
 
 		@Override
@@ -761,7 +645,7 @@ public class PhotoView extends GLView {
 			if ((mHolding & ~HOLD_TOUCH_DOWN) != 0) return;
 
 			if (mWantPictureCenterCallbacks && mPositionController.isCenter()) {
-				mListener.onPictureCenter(false);
+				mListener.onPictureCenter();
 			}
 		}
 
@@ -780,8 +664,6 @@ public class PhotoView extends GLView {
 		public void reload() {
 			// mImageWidth and mImageHeight will get updated
 			mTileView.notifyModelInvalidated();
-
-			mLoadingState = mModel.getLoadingState();
 			setScreenNail(mModel.getScreenNail());
 			updateSize();
 		}
@@ -805,9 +687,6 @@ public class PhotoView extends GLView {
 
 			// Draw the play video icon and the message.
 			canvas.translate((int) (cx + 0.5f), (int) (cy + 0.5f));
-			if (mLoadingState == Model.LOADING_FAIL) {
-				drawLoadingFailMessage(canvas);
-			}
 
 			canvas.restore();
 		}
@@ -869,10 +748,6 @@ public class PhotoView extends GLView {
 					mGestureRecognizer.cancelScale();
 					mPositionController.setExtraScalingRange(false);
 					mCancelExtraScalingPending = false;
-					break;
-				}
-				case MSG_SWITCH_FOCUS: {
-					switchFocus();
 					break;
 				}
 				case MSG_CAPTURE_ANIMATION_DONE: {

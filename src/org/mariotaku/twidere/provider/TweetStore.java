@@ -489,12 +489,16 @@ public final class TweetStore implements Constants {
 
 		public static final String IS_PHOTO_ATTACHED = "is_photo_attached";
 
+		public static final String IS_POSSIBLY_SENSITIVE = "is_possibly_sensitive";
+
 		public static final String[] COLUMNS = new String[] { _ID, TEXT, ACCOUNT_IDS, LOCATION, IMAGE_URI,
-				IN_REPLY_TO_STATUS_ID, IN_REPLY_TO_NAME, IN_REPLY_TO_SCREEN_NAME, IS_QUOTE, IS_IMAGE_ATTACHED,
-				IS_PHOTO_ATTACHED };
+				IN_REPLY_TO_STATUS_ID, IN_REPLY_TO_NAME, IN_REPLY_TO_SCREEN_NAME, LOCATION, IS_QUOTE,
+				IS_IMAGE_ATTACHED, IS_PHOTO_ATTACHED, IS_POSSIBLY_SENSITIVE };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,
-				TYPE_TEXT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN };
+				TYPE_TEXT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN,
+				TYPE_BOOLEAN };
+
 	}
 
 	public static interface Filters extends BaseColumns {
@@ -610,6 +614,8 @@ public final class TweetStore implements Constants {
 		 */
 		public static final String IS_FAVORITE = "is_favorite";
 
+		public static final String IS_POSSIBLY_SENSITIVE = "is_possibly_sensitive";
+
 		/**
 		 * Set to 1 if the status is a gap.<br>
 		 * Type: INTEGER (boolean)
@@ -659,12 +665,13 @@ public final class TweetStore implements Constants {
 		public static final String[] COLUMNS = new String[] { _ID, ACCOUNT_ID, STATUS_ID, USER_ID, STATUS_TIMESTAMP,
 				TEXT, TEXT_PLAIN, NAME, SCREEN_NAME, PROFILE_IMAGE_URL, IN_REPLY_TO_STATUS_ID, IN_REPLY_TO_SCREEN_NAME,
 				SOURCE, LOCATION, RETWEET_COUNT, RETWEET_ID, RETWEETED_BY_ID, RETWEETED_BY_NAME,
-				RETWEETED_BY_SCREEN_NAME, MY_RETWEET_ID, IS_RETWEET, IS_FAVORITE, IS_PROTECTED, IS_VERIFIED, IS_GAP };
+				RETWEETED_BY_SCREEN_NAME, MY_RETWEET_ID, IS_RETWEET, IS_FAVORITE, IS_PROTECTED, IS_VERIFIED, IS_GAP,
+				IS_POSSIBLY_SENSITIVE };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_INT,
 				TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,
 				TYPE_INT, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN,
-				TYPE_BOOLEAN, TYPE_BOOLEAN };
+				TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN };
 
 	}
 

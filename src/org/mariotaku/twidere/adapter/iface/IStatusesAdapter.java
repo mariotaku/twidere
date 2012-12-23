@@ -27,6 +27,8 @@ public interface IStatusesAdapter extends IBaseAdapter {
 
 	public void setDisplayImagePreview(boolean preview);
 
+	public void setDisplaySensitiveContents(boolean display);
+
 	public void setGapDisallowed(boolean disallowed);
 
 	public void setMentionsHightlightDisabled(boolean disable);

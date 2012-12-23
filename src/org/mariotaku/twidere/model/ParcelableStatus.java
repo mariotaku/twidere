@@ -58,7 +58,7 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 	public final long retweet_id, retweeted_by_id, status_id, account_id, user_id, status_timestamp, retweet_count,
 			in_reply_to_status_id, my_retweet_id;
 
-	public final boolean is_gap, is_retweet, is_favorite, is_protected, is_verified, has_media;
+	public final boolean is_gap, is_retweet, is_favorite, is_protected, is_verified, has_media, is_possibly_sensitive;
 
 	public final String retweeted_by_name, retweeted_by_screen_name, text_html, text_plain, name, screen_name,
 			in_reply_to_screen_name, source, profile_image_url_string, image_preview_url_string, image_orig_url_string,
@@ -125,6 +125,8 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 		image_orig_url_string = preview.orig_url;
 		text_unescaped = toPlainText(text_html);
 		my_retweet_id = indices.my_retweet_id != -1 ? cursor.getLong(indices.my_retweet_id) : -1;
+		is_possibly_sensitive = indices.is_possibly_sensitive != -1 ? cursor.getInt(indices.is_possibly_sensitive) == 1
+				: false;
 	}
 
 	public ParcelableStatus(final Parcel in) {
@@ -158,6 +160,7 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 		// text = text_html != null ? Html.fromHtml(text_html) : null;
 		text_unescaped = toPlainText(text_html);
 		my_retweet_id = in.readLong();
+		is_possibly_sensitive = in.readInt() == 1;
 	}
 
 	public ParcelableStatus(Status status, final long account_id, final boolean is_gap,
@@ -199,11 +202,11 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 		location_string = location.toString();
 		is_favorite = status.isFavorited();
 		has_media = medias != null && medias.length > 0 || preview.has_image;
-		// text = text_html != null ? Html.fromHtml(text_html) : null;
 		image_preview_url_string = preview.matched_url;
 		image_orig_url_string = preview.orig_url;
 		text_unescaped = toPlainText(text_html);
 		my_retweet_id = retweeted_by_id == account_id ? status_id : -1;
+		is_possibly_sensitive = status.isPossiblySensitive();
 	}
 
 	@Override
@@ -247,10 +250,10 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 				+ status_timestamp + ", retweet_count=" + retweet_count + ", in_reply_to_status_id="
 				+ in_reply_to_status_id + ", my_retweet_id=" + my_retweet_id + ", is_gap=" + is_gap + ", is_retweet="
 				+ is_retweet + ", is_favorite=" + is_favorite + ", is_protected=" + is_protected + ", is_verified="
-				+ is_verified + ", has_media=" + has_media + ", retweeted_by_name=" + retweeted_by_name
-				+ ", retweeted_by_screen_name=" + retweeted_by_screen_name + ", text_html=" + text_html
-				+ ", text_plain=" + text_plain + ", name=" + name + ", screen_name=" + screen_name
-				+ ", in_reply_to_screen_name=" + in_reply_to_screen_name + ", source=" + source
+				+ is_verified + ", has_media=" + has_media + ", is_possibly_sensitive=" + is_possibly_sensitive
+				+ ", retweeted_by_name=" + retweeted_by_name + ", retweeted_by_screen_name=" + retweeted_by_screen_name
+				+ ", text_html=" + text_html + ", text_plain=" + text_plain + ", name=" + name + ", screen_name="
+				+ screen_name + ", in_reply_to_screen_name=" + in_reply_to_screen_name + ", source=" + source
 				+ ", profile_image_url_string=" + profile_image_url_string + ", image_preview_url_string="
 				+ image_preview_url_string + ", image_orig_url_string=" + image_orig_url_string + ", location_string="
 				+ location_string + ", text_unescaped=" + text_unescaped + ", location=" + location + "}";

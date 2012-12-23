@@ -49,7 +49,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PERMISSION_PREFERENCES_NAME = "permissions";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 34;
+	public static final int DATABASES_VERSION = 35;
 
 	// The following 4 constants are not included in source code, you'd better
 	// use your own.
@@ -191,6 +191,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_SHOW_MENTIONS_TAB = "show_mentions_tab";
 	public static final String PREFERENCE_KEY_SHOW_MESSAGES_TAB = "show_messages_tab";
 	public static final String PREFERENCE_KEY_SHOW_ACCOUNTS_TAB = "show_accounts_tab";
+	public static final String PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS = "display_sensitive_contents";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;
@@ -413,6 +414,7 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_CLEAR_COLOR = R.id.clear_color;
 	public static final int MENU_COPY = R.id.copy;
 	public static final int MENU_LOAD_FROM_POSITION = R.id.load_from_position;
+	public static final int MENU_TOGGLE_SENSITIVE = R.id.toggle_sensitive;
 
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_PICK_IMAGE = 2;

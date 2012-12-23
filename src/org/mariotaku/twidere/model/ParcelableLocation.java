@@ -136,4 +136,9 @@ public class ParcelableLocation implements Serializable, Parcelable {
 	public static GeoLocation toGeoLocation(final ParcelableLocation location) {
 		return isValidLocation(location) ? location.toGeoLocation() : null;
 	}
+
+	public static String toString(final ParcelableLocation location) {
+		if (location == null) return null;
+		return location.latitude + "," + location.longitude;
+	}
 }

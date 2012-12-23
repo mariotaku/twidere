@@ -346,6 +346,8 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		final boolean display_image_preview = mPreferences.getBoolean(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW, false);
 		final boolean show_absolute_time = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false);
+		final boolean display_sensitive_contents = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS,
+				false);
 		final String name_display_option = mPreferences.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION,
 				NAME_DISPLAY_OPTION_BOTH);
 		mAdapter.setMultiSelectEnabled(mApplication.isMultiSelectActive());
@@ -354,6 +356,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		mAdapter.setTextSize(text_size);
 		mAdapter.setShowAbsoluteTime(show_absolute_time);
 		mAdapter.setNameDisplayOption(name_display_option);
+		mAdapter.setDisplaySensitiveContents(display_sensitive_contents);
 	}
 
 	@Override

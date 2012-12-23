@@ -52,5 +52,6 @@
 	<item name="load_from_position" type="id"/>
 	<item name="right_pane" type="id"/>
 	<item name="right_pane_container" type="id"/>
+	<item name="toggle_sensitive" type="id"/>
 
 </resources>

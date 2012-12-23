@@ -318,8 +318,7 @@ class PositionController {
 	// hasPrev/hasNext indicates if there are previous/next boxes for the
 	// focused box. constrained indicates whether the focused box should be put
 	// into the constrained frame.
-	public void moveBox(final int fromIndex[], final boolean constrained, final Size[] sizes) {
-		// debugMoveBox(fromIndex);
+	public void moveBox(final boolean constrained, final Size size) {
 
 		// 1. Get the absolute X coordinates for the boxes.
 		layoutAndSetPosition();
@@ -332,92 +331,15 @@ class PositionController {
 		mBox = null;
 
 		// 3. move back boxes that are used in the new array.
-		{
-			mBox = mTempBox;
-			mTempBox = null;
-		}
-
-		// 4. move back gaps if both boxes around it are kept together.
+		mBox = mTempBox;
+		mTempBox = null;
 
 		// 5. recycle the boxes that are not used in the new array.
 		if (mBox == null) {
 
 			mBox = mTempBox;
-			initBox(sizes[0]);
+			initBox(size);
 		}
-
-		// 6. Now give the recycled box a reasonable absolute X position.
-		//
-		// First try to find the first and the last box which the absolute X
-		// position is known.
-		// If there is no box has known X position at all, make the focused one
-		// as known.
-		// if (first > 0) {
-		// mBox.mAbsoluteX = mPlatform.mCurrentX;
-		// first = last = 0;
-		// }
-		// Now for those boxes between first and last, assign their position to
-		// align to the previous box or the next box with known position. For
-		// the boxes before first or after last, we will use a new default gap
-		// size below.
-
-		// Align to the previous box
-		// for (int i = Math.max(0, first + 1); i < last; i++) {
-		// if (from.get(i) != Integer.MAX_VALUE) {
-		// continue;
-		// }
-		// final Box a = mBoxes.get(i - 1);
-		// final Box b = mBoxes.get(i);
-		// final int wa = widthOf(a);
-		// final int wb = widthOf(b);
-		// b.mAbsoluteX = a.mAbsoluteX + wa - wa / 2 + wb / 2 +
-		// getDefaultGapSize(i);
-		// if (mPopFromTop) {
-		// b.mCurrentY = -(mViewH / 2 + heightOf(b) / 2);
-		// } else {
-		// b.mCurrentY = mViewH / 2 + heightOf(b) / 2;
-		// }
-		// }
-
-		// Align to the next box
-		// for (int i = Math.min(-1, last - 1); i > first; i--) {
-		// if (from.get(i) != Integer.MAX_VALUE) {
-		// continue;
-		// }
-		// final Box a = mBoxes.get(i + 1);
-		// final Box b = mBoxes.get(i);
-		// final int wa = widthOf(a);
-		// final int wb = widthOf(b);
-		// b.mAbsoluteX = a.mAbsoluteX - wa / 2 - (wb - wb / 2) -
-		// getDefaultGapSize(i);
-		// if (mPopFromTop) {
-		// b.mCurrentY = -(mViewH / 2 + heightOf(b) / 2);
-		// } else {
-		// b.mCurrentY = mViewH / 2 + heightOf(b) / 2;
-		// }
-		// }
-
-		// 7. recycle the gaps that are not used in the new array.
-
-		// 8. calculate the new absolute X coordinates for those box before
-		// first or after last.
-		// for (int i = first - 1; i >= -0; i--) {
-		// final Box a = mBoxes.get(i + 1);
-		// final Box b = mBoxes.get(i);
-		// final int wa = widthOf(a);
-		// final int wb = widthOf(b);
-		// final Gap g = mGaps.get(i);
-		// b.mAbsoluteX = a.mAbsoluteX - wa / 2 - (wb - wb / 2) - g.mCurrentGap;
-		// }
-
-		// for (int i = last + 1; i <= 0; i++) {
-		// final Box a = mBoxes.get(i - 1);
-		// final Box b = mBoxes.get(i);
-		// final int wa = widthOf(a);
-		// final int wb = widthOf(b);
-		// final Gap g = mGaps.get(i - 1);
-		// b.mAbsoluteX = a.mAbsoluteX + wa - wa / 2 + wb / 2 + g.mCurrentGap;
-		// }
 
 		// 9. offset the Platform position
 		final int dx = mBox.mAbsoluteX - mPlatform.mCurrentX;

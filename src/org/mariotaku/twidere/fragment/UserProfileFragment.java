@@ -540,7 +540,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			}
 			case R.id.profile_image_container: {
 				final Uri uri = Uri.parse(getOriginalTwitterProfileImage(mUser.profile_image_url));
-				openImage(getActivity(), uri);
+				openImage(getActivity(), uri, false);
 				break;
 			}
 			case R.id.tweets_container: {
@@ -683,7 +683,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				break;
 			}
 			case TwidereLinkify.LINK_TYPE_LINK_WITH_IMAGE_EXTENSION: {
-				openImage(getActivity(), Uri.parse(link));
+				openImage(getActivity(), Uri.parse(link), false);
 				break;
 			}
 			case TwidereLinkify.LINK_TYPE_LINK: {

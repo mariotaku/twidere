@@ -29,7 +29,8 @@ public class DraftItem {
 	public final long[] account_ids;
 	public final long _id, in_reply_to_status_id;
 	public final String text, media_uri, in_reply_to_name, in_reply_to_screen_name;
-	public final boolean is_quote, is_image_attached, is_photo_attached;
+	public final boolean is_quote, is_image_attached, is_photo_attached, is_possibly_sensitive;
+	public final ParcelableLocation location;
 
 	public DraftItem(final Cursor cursor, final int position) {
 		cursor.moveToPosition(position);
@@ -43,6 +44,8 @@ public class DraftItem {
 		is_quote = cursor.getShort(cursor.getColumnIndex(Drafts.IS_QUOTE)) == 1;
 		is_image_attached = cursor.getShort(cursor.getColumnIndex(Drafts.IS_IMAGE_ATTACHED)) == 1;
 		is_photo_attached = cursor.getShort(cursor.getColumnIndex(Drafts.IS_PHOTO_ATTACHED)) == 1;
+		is_possibly_sensitive = cursor.getShort(cursor.getColumnIndex(Drafts.IS_POSSIBLY_SENSITIVE)) == 1;
+		location = new ParcelableLocation(cursor.getString(cursor.getColumnIndex(Drafts.LOCATION)));
 	}
 
 }

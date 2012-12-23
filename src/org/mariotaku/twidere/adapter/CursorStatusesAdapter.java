@@ -59,7 +59,7 @@ import android.view.ViewGroup;
 public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatusesAdapter, OnClickListener {
 
 	private boolean mDisplayProfileImage, mDisplayImagePreview, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed,
-			mMultiSelectEnabled, mMentionsHighlightDisabled;
+			mMultiSelectEnabled, mMentionsHighlightDisabled, mDisplaySensitiveContents;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
 	private final Context mContext;
@@ -194,7 +194,12 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			final boolean has_preview = mDisplayImagePreview && has_media && preview.matched_url != null;
 			holder.image_preview_frame.setVisibility(has_preview ? View.VISIBLE : View.GONE);
 			if (has_preview) {
-				mPreviewImageLoader.displayImage(preview.matched_url, holder.image_preview);
+				final boolean is_possibly_sensitive = cursor.getInt(mIndices.is_possibly_sensitive) == 1;
+				if (is_possibly_sensitive && !mDisplaySensitiveContents) {
+					holder.image_preview.setImageResource(R.drawable.image_preview_nsfw);
+				} else {
+					mPreviewImageLoader.displayImage(preview.matched_url, holder.image_preview);
+				}
 				holder.image_preview_frame.setTag(position);
 			}
 		}
@@ -253,7 +258,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			case R.id.image_preview_frame: {
 				final ImageSpec spec = getAllAvailableImage(status.image_orig_url_string);
 				if (spec != null) {
-					openImage(mContext, Uri.parse(spec.full_image_link));
+					openImage(mContext, Uri.parse(spec.full_image_link), status.is_possibly_sensitive);
 				}
 				break;
 			}
@@ -278,6 +283,14 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	public void setDisplayProfileImage(final boolean display) {
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
+			notifyDataSetChanged();
+		}
+	}
+
+	@Override
+	public void setDisplaySensitiveContents(final boolean display) {
+		if (display != mDisplaySensitiveContents) {
+			mDisplaySensitiveContents = display;
 			notifyDataSetChanged();
 		}
 	}
@@ -350,20 +363,6 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			mIndices = null;
 		}
 		return super.swapCursor(cursor);
-	}
-
-	static class TimeSpec {
-
-		long time;
-
-		TimeSpec(final long time) {
-			this.time = time;
-		}
-
-		@Override
-		public String toString() {
-			return getRelativeTimeSpanString(time).toString();
-		}
 	}
 
 }

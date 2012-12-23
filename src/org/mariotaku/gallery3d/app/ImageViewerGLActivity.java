@@ -35,9 +35,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
@@ -55,7 +52,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 public final class ImageViewerGLActivity extends FragmentActivity implements Constants, View.OnClickListener,
 		GalleryContext, PhotoView.Listener, OrientationManager.Listener {
@@ -81,8 +77,6 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 			}
 		}
 	};
-
-	private final IntentFilter mMountFilter = new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
 
 	protected static final int FLAG_HIDE_ACTION_BAR = 1;
 	protected static final int FLAG_HIDE_STATUS_BAR = 2;
@@ -167,9 +161,6 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	private boolean mIsMenuVisible;
 	private MediaItem mCurrentPhoto = null;
 
-	// This is the original mSetPathString before adding the camera preview
-	// item.
-	private final boolean mHasCameraScreennailOrPlaceholder = false;
 	private final long mDeferUpdateUntil = Long.MAX_VALUE;
 	private final GLView mRootPane = new GLView() {
 		@Override
@@ -263,12 +254,11 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	}
 
 	@Override
-	public void onPictureCenter(boolean isCamera) {
-		isCamera = isCamera || mHasCameraScreennailOrPlaceholder && null == null;
+	public void onPictureCenter() {
 		mPhotoView.setWantPictureCenterCallbacks(false);
 		mHandler.removeMessages(MSG_ON_CAMERA_CENTER);
 		mHandler.removeMessages(MSG_ON_PICTURE_CENTER);
-		mHandler.sendEmptyMessage(isCamera ? MSG_ON_CAMERA_CENTER : MSG_ON_PICTURE_CENTER);
+		mHandler.sendEmptyMessage(MSG_ON_PICTURE_CENTER);
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -502,33 +492,6 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	}
 
 	@Override
-	protected void onStart() {
-		super.onStart();
-		if (getExternalCacheDir() == null) {
-			final OnCancelListener onCancel = new OnCancelListener() {
-				@Override
-				public void onCancel(final DialogInterface dialog) {
-					finish();
-				}
-			};
-			final OnClickListener onClick = new OnClickListener() {
-				@Override
-				public void onClick(final DialogInterface dialog, final int which) {
-					dialog.cancel();
-				}
-			};
-			final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle(R.string.no_external_storage_title);
-			builder.setMessage(R.string.no_external_storage);
-			builder.setNegativeButton(android.R.string.cancel, onClick);
-			builder.setOnCancelListener(onCancel);
-			builder.setIcon(android.R.drawable.ic_dialog_alert);
-			mAlertDialog = builder.show();
-			registerReceiver(mMountReceiver, mMountFilter);
-		}
-	}
-
-	@Override
 	protected void onStop() {
 		super.onStop();
 		if (mAlertDialog != null) {
@@ -682,7 +645,6 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 			// return;
 		}
 		if (uri == null) {
-			Toast.makeText(this, R.string.no_such_item, Toast.LENGTH_LONG).show();
 			finish();
 		} else {
 			final Path itemPath = dm.findPathByUri(uri, contentType);
