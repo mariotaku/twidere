@@ -1,6 +1,6 @@
 package org.mariotaku.gallery3d.ui;
 
-import org.mariotaku.gallery3d.app.GalleryActivity;
+import org.mariotaku.gallery3d.app.ImageViewerGLActivity;
 import org.mariotaku.gallery3d.ui.GLRoot.OnGLIdleListener;
 
 import android.os.ConditionVariable;
@@ -57,7 +57,7 @@ public class PreparePageFadeoutTexture implements OnGLIdleListener {
 		return false;
 	}
 
-	public static void prepareFadeOutTexture(final GalleryActivity activity, final GLView rootPane) {
+	public static void prepareFadeOutTexture(final ImageViewerGLActivity activity, final GLView rootPane) {
 		final PreparePageFadeoutTexture task = new PreparePageFadeoutTexture(rootPane);
 		if (task.isCancelled()) return;
 		final GLRoot root = activity.getGLRoot();

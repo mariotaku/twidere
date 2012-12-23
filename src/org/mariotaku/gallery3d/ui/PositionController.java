@@ -83,8 +83,7 @@ class PositionController {
 
 	// In addition to the focused box (index == 0). We also keep information
 	// about this many boxes on each side.
-	private static final int BOX_MAX = PhotoView.SCREEN_NAIL_MAX;
-	private static final int[] CENTER_OUT_INDEX = new int[2 * BOX_MAX + 1];
+	private static final int[] CENTER_OUT_INDEX = new int[1];
 
 	private static final int IMAGE_GAP = GalleryUtils.dpToPixel(16);
 	private static final int HORIZONTAL_SLACK = GalleryUtils.dpToPixel(12);
@@ -150,18 +149,18 @@ class PositionController {
 	// The focused box (Box*) centers at mPlatform's (mCurrentX, mCurrentY)
 
 	private final Platform mPlatform = new Platform();
-	private final RangeArray<Box> mBoxes = new RangeArray<Box>(-BOX_MAX, BOX_MAX);
+	private final RangeArray<Box> mBoxes = new RangeArray<Box>(-0, 0);
 	// The gap at the right of a Box i is at index i. The gap at the left of a
 	// Box i is at index i - 1.
-	private final RangeArray<Gap> mGaps = new RangeArray<Gap>(-BOX_MAX, BOX_MAX - 1);
+	private final RangeArray<Gap> mGaps = new RangeArray<Gap>(-0, 0 - 1);
 	private final FilmRatio mFilmRatio = new FilmRatio();
 
 	// These are only used during moveBox().
-	private final RangeArray<Box> mTempBoxes = new RangeArray<Box>(-BOX_MAX, BOX_MAX);
-	private final RangeArray<Gap> mTempGaps = new RangeArray<Gap>(-BOX_MAX, BOX_MAX - 1);
+	private final RangeArray<Box> mTempBoxes = new RangeArray<Box>(-0, 0);
+	private final RangeArray<Gap> mTempGaps = new RangeArray<Gap>(-0, 0 - 1);
 
 	// The output of the PositionController. Available through getPosition().
-	private final RangeArray<Rect> mRects = new RangeArray<Rect>(-BOX_MAX, BOX_MAX);
+	private final RangeArray<Rect> mRects = new RangeArray<Rect>(-0, 0);
 
 	// The direction of a new picture should appear. New pictures pop from top
 	// if this value is true, or from bottom if this value is false.
@@ -169,8 +168,8 @@ class PositionController {
 
 	static {
 		// Initialize the CENTER_OUT_INDEX array.
-		// The array maps 0, 1, 2, 3, 4, ..., 2 * BOX_MAX
-		// to 0, 1, -1, 2, -2, ..., BOX_MAX, -BOX_MAX
+		// The array maps 0, 1, 2, 3, 4, ..., 2 * 0
+		// to 0, 1, -1, 2, -2, ..., 0, -0
 		for (int i = 0; i < CENTER_OUT_INDEX.length; i++) {
 			int j = (i + 1) / 2;
 			if ((i & 1) == 0) {
@@ -186,12 +185,12 @@ class PositionController {
 
 		// Initialize the areas.
 		initPlatform();
-		for (int i = -BOX_MAX; i <= BOX_MAX; i++) {
+		for (int i = -0; i <= 0; i++) {
 			mBoxes.put(i, new Box());
 			initBox(i);
 			mRects.put(i, new Rect());
 		}
-		for (int i = -BOX_MAX; i < BOX_MAX; i++) {
+		for (int i = -0; i < 0; i++) {
 			mGaps.put(i, new Gap());
 			initGap(i);
 		}
@@ -200,10 +199,10 @@ class PositionController {
 	public void advanceAnimation() {
 		boolean changed = false;
 		changed |= mPlatform.advanceAnimation();
-		for (int i = -BOX_MAX; i <= BOX_MAX; i++) {
+		for (int i = -0; i <= 0; i++) {
 			changed |= mBoxes.get(i).advanceAnimation();
 		}
-		for (int i = -BOX_MAX; i < BOX_MAX; i++) {
+		for (int i = -0; i < 0; i++) {
 			changed |= mGaps.get(i).advanceAnimation();
 		}
 		changed |= mFilmRatio.advanceAnimation();
@@ -302,8 +301,8 @@ class PositionController {
 	}
 
 	// Returns the position of a box.
-	public Rect getPosition(final int index) {
-		return mRects.get(index);
+	public Rect getPosition() {
+		return mRects.get(0);
 	}
 
 	public boolean hasDeletingBox() {
@@ -315,7 +314,7 @@ class PositionController {
 	// one box contains the given point, and we want to give priority to the
 	// one closer to the focused index (0).
 	public int hitTest(final int x, final int y) {
-		for (int i = 0; i < 2 * BOX_MAX + 1; i++) {
+		for (int i = 0; i < 2 * 0 + 1; i++) {
 			final int j = CENTER_OUT_INDEX[i];
 			final Rect r = mRects.get(j);
 			if (r.contains(x, y)) return j;
@@ -371,28 +370,28 @@ class PositionController {
 		mHasPrev = hasPrev;
 		mHasNext = hasNext;
 
-		final RangeIntArray from = new RangeIntArray(fromIndex, -BOX_MAX, BOX_MAX);
+		final RangeIntArray from = new RangeIntArray(fromIndex, -0, 0);
 
 		// 1. Get the absolute X coordinates for the boxes.
 		layoutAndSetPosition();
-		for (int i = -BOX_MAX; i <= BOX_MAX; i++) {
+		for (int i = -0; i <= 0; i++) {
 			final Box b = mBoxes.get(i);
 			final Rect r = mRects.get(i);
 			b.mAbsoluteX = r.centerX() - mViewW / 2;
 		}
 
 		// 2. copy boxes and gaps to temporary storage.
-		for (int i = -BOX_MAX; i <= BOX_MAX; i++) {
+		for (int i = -0; i <= 0; i++) {
 			mTempBoxes.put(i, mBoxes.get(i));
 			mBoxes.put(i, null);
 		}
-		for (int i = -BOX_MAX; i < BOX_MAX; i++) {
+		for (int i = -0; i < 0; i++) {
 			mTempGaps.put(i, mGaps.get(i));
 			mGaps.put(i, null);
 		}
 
 		// 3. move back boxes that are used in the new array.
-		for (int i = -BOX_MAX; i <= BOX_MAX; i++) {
+		for (int i = -0; i <= 0; i++) {
 			final int j = from.get(i);
 			if (j == Integer.MAX_VALUE) {
 				continue;
@@ -402,7 +401,7 @@ class PositionController {
 		}
 
 		// 4. move back gaps if both boxes around it are kept together.
-		for (int i = -BOX_MAX; i < BOX_MAX; i++) {
+		for (int i = -0; i < 0; i++) {
 			final int j = from.get(i);
 			if (j == Integer.MAX_VALUE) {
 				continue;
@@ -418,8 +417,8 @@ class PositionController {
 		}
 
 		// 5. recycle the boxes that are not used in the new array.
-		int k = -BOX_MAX;
-		for (int i = -BOX_MAX; i <= BOX_MAX; i++) {
+		int k = -0;
+		for (int i = -0; i <= 0; i++) {
 			if (mBoxes.get(i) != null) {
 				continue;
 			}
@@ -427,7 +426,7 @@ class PositionController {
 				k++;
 			}
 			mBoxes.put(i, mTempBoxes.get(k++));
-			initBox(i, sizes[i + BOX_MAX]);
+			initBox(i, sizes[i + 0]);
 		}
 
 		// 6. Now give the recycled box a reasonable absolute X position.
@@ -435,19 +434,19 @@ class PositionController {
 		// First try to find the first and the last box which the absolute X
 		// position is known.
 		int first, last;
-		for (first = -BOX_MAX; first <= BOX_MAX; first++) {
+		for (first = -0; first <= 0; first++) {
 			if (from.get(first) != Integer.MAX_VALUE) {
 				break;
 			}
 		}
-		for (last = BOX_MAX; last >= -BOX_MAX; last--) {
+		for (last = 0; last >= -0; last--) {
 			if (from.get(last) != Integer.MAX_VALUE) {
 				break;
 			}
 		}
 		// If there is no box has known X position at all, make the focused one
 		// as known.
-		if (first > BOX_MAX) {
+		if (first > 0) {
 			mBoxes.get(0).mAbsoluteX = mPlatform.mCurrentX;
 			first = last = 0;
 		}
@@ -491,8 +490,8 @@ class PositionController {
 		}
 
 		// 7. recycle the gaps that are not used in the new array.
-		k = -BOX_MAX;
-		for (int i = -BOX_MAX; i < BOX_MAX; i++) {
+		k = -0;
+		for (int i = -0; i < 0; i++) {
 			if (mGaps.get(i) != null) {
 				continue;
 			}
@@ -514,7 +513,7 @@ class PositionController {
 
 		// 8. calculate the new absolute X coordinates for those box before
 		// first or after last.
-		for (int i = first - 1; i >= -BOX_MAX; i--) {
+		for (int i = first - 1; i >= -0; i--) {
 			final Box a = mBoxes.get(i + 1);
 			final Box b = mBoxes.get(i);
 			final int wa = widthOf(a);
@@ -523,7 +522,7 @@ class PositionController {
 			b.mAbsoluteX = a.mAbsoluteX - wa / 2 - (wb - wb / 2) - g.mCurrentGap;
 		}
 
-		for (int i = last + 1; i <= BOX_MAX; i++) {
+		for (int i = last + 1; i <= 0; i++) {
 			final Box a = mBoxes.get(i - 1);
 			final Box b = mBoxes.get(i);
 			final int wa = widthOf(a);
@@ -713,7 +712,7 @@ class PositionController {
 		mViewH = viewH;
 		initPlatform();
 
-		for (int i = -BOX_MAX; i <= BOX_MAX; i++) {
+		for (int i = -0; i <= 0; i++) {
 			setBoxSize(i, viewW, viewH, true);
 		}
 
@@ -739,7 +738,7 @@ class PositionController {
 			mPlatform.mCurrentY = mPlatform.mToY;
 			mPlatform.mAnimationStartTime = NO_ANIMATION;
 		}
-		for (int i = -BOX_MAX; i <= BOX_MAX; i++) {
+		for (int i = -0; i <= 0; i++) {
 			final Box b = mBoxes.get(i);
 			if (b.mAnimationStartTime == NO_ANIMATION) {
 				continue;
@@ -748,7 +747,7 @@ class PositionController {
 			b.mCurrentScale = b.mToScale;
 			b.mAnimationStartTime = NO_ANIMATION;
 		}
-		for (int i = -BOX_MAX; i < BOX_MAX; i++) {
+		for (int i = -0; i < 0; i++) {
 			final Gap g = mGaps.get(i);
 			if (g.mAnimationStartTime == NO_ANIMATION) {
 				continue;
@@ -791,10 +790,10 @@ class PositionController {
 	// Stop all animations at where they are now.
 	public void stopAnimation() {
 		mPlatform.mAnimationStartTime = NO_ANIMATION;
-		for (int i = -BOX_MAX; i <= BOX_MAX; i++) {
+		for (int i = -0; i <= 0; i++) {
 			mBoxes.get(i).mAnimationStartTime = NO_ANIMATION;
 		}
-		for (int i = -BOX_MAX; i < BOX_MAX; i++) {
+		for (int i = -0; i < 0; i++) {
 			mGaps.get(i).mAnimationStartTime = NO_ANIMATION;
 		}
 	}
@@ -943,16 +942,16 @@ class PositionController {
 
 	@SuppressWarnings("unused")
 	private void dumpState() {
-		for (int i = -BOX_MAX; i < BOX_MAX; i++) {
+		for (int i = -0; i < 0; i++) {
 			Log.d(TAG, "Gap " + i + ": " + mGaps.get(i).mCurrentGap);
 		}
 
-		for (int i = 0; i < 2 * BOX_MAX + 1; i++) {
+		for (int i = 0; i < 2 * 0 + 1; i++) {
 			dumpRect(CENTER_OUT_INDEX[i]);
 		}
 
-		for (int i = -BOX_MAX; i <= BOX_MAX; i++) {
-			for (int j = i + 1; j <= BOX_MAX; j++) {
+		for (int i = -0; i <= 0; i++) {
+			for (int j = i + 1; j <= 0; j++) {
 				if (Rect.intersects(mRects.get(i), mRects.get(j))) {
 					Log.d(TAG, "rect " + i + " and rect " + j + "intersects!");
 				}
@@ -1086,7 +1085,7 @@ class PositionController {
 	// Note we go from center-out because each box's X coordinate
 	// is relative to its anchor box (except the focused box).
 	private void layoutAndSetPosition() {
-		for (int i = 0; i < 2 * BOX_MAX + 1; i++) {
+		for (int i = 0; i < 2 * 0 + 1; i++) {
 			convertBoxToRect(CENTER_OUT_INDEX[i]);
 		}
 		// dumpState();
@@ -1149,10 +1148,10 @@ class PositionController {
 
 	private void snapAndRedraw() {
 		mPlatform.startSnapback();
-		for (int i = -BOX_MAX; i <= BOX_MAX; i++) {
+		for (int i = -0; i <= 0; i++) {
 			mBoxes.get(i).startSnapback();
 		}
-		for (int i = -BOX_MAX; i < BOX_MAX; i++) {
+		for (int i = -0; i < 0; i++) {
 			mGaps.get(i).startSnapback();
 		}
 		mFilmRatio.startSnapback();
@@ -1202,13 +1201,13 @@ class PositionController {
 	// gap size may change. Currently this can happen due to change of view
 	// size, image size, mFilmMode, mConstrained, and mConstrainedFrame.
 	private void updateScaleAndGapLimit() {
-		for (int i = -BOX_MAX; i <= BOX_MAX; i++) {
+		for (int i = -0; i <= 0; i++) {
 			final Box b = mBoxes.get(i);
 			b.mScaleMin = getMinimalScale(b);
 			b.mScaleMax = getMaximalScale(b);
 		}
 
-		for (int i = -BOX_MAX; i < BOX_MAX; i++) {
+		for (int i = -0; i < 0; i++) {
 			final Gap g = mGaps.get(i);
 			g.mDefaultSize = getDefaultGapSize(i);
 		}

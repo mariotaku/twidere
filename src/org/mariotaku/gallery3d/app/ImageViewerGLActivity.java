@@ -27,7 +27,6 @@ import org.mariotaku.gallery3d.ui.GLRootView;
 import org.mariotaku.gallery3d.ui.GLView;
 import org.mariotaku.gallery3d.ui.PhotoView;
 import org.mariotaku.gallery3d.ui.PreparePageFadeoutTexture;
-import org.mariotaku.gallery3d.ui.RawTexture;
 import org.mariotaku.gallery3d.ui.SynchronizedHandler;
 import org.mariotaku.gallery3d.util.GalleryUtils;
 import org.mariotaku.gallery3d.util.ThreadPool;
@@ -60,7 +59,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-public final class GalleryActivity extends FragmentActivity implements Constants, View.OnClickListener, GalleryContext,
+public final class ImageViewerGLActivity extends FragmentActivity implements Constants, View.OnClickListener, GalleryContext,
 		PhotoView.Listener, OrientationManager.Listener {
 
 	private static final String TAG = "Gallery";
@@ -104,7 +103,6 @@ public final class GalleryActivity extends FragmentActivity implements Constants
 	private boolean mPlugged = false;
 
 	boolean mIsFinishing = false;
-	private static final String KEY_TRANSITION_IN = "transition-in";
 	private StateTransitionAnimation.Transition mNextTransition = StateTransitionAnimation.Transition.None;
 
 	private StateTransitionAnimation mIntroAnimation;
@@ -177,7 +175,6 @@ public final class GalleryActivity extends FragmentActivity implements Constants
 	private boolean mIsMenuVisible;
 	private MediaItem mCurrentPhoto = null;
 
-	private boolean mIsActive;
 	private String mSetPathString;
 	// This is the original mSetPathString before adding the camera preview
 	// item.
@@ -441,13 +438,9 @@ public final class GalleryActivity extends FragmentActivity implements Constants
 				public void onLoadingFinished(final boolean loadingFailed) {
 					// TODO
 					hideProgress();
-					if (!mModel.isEmpty()) {
-						final MediaItem photo = mModel.getMediaItem(0);
-						if (photo != null) {
-							updateCurrentPhoto(photo);
-						}
-					} else if (mIsActive) {
-
+					final MediaItem photo = mModel.getMediaItem(0);
+					if (photo != null) {
+						updateCurrentPhoto(photo);
 					}
 				}
 
@@ -482,7 +475,6 @@ public final class GalleryActivity extends FragmentActivity implements Constants
 			PreparePageFadeoutTexture.prepareFadeOutTexture(this, mContentPane);
 			mNextTransition = StateTransitionAnimation.Transition.None;
 		}
-		mIsActive = false;
 
 		getGLRoot().unfreeze();
 		mHandler.removeMessages(MSG_UNFREEZE_GLROOT);
@@ -666,7 +658,6 @@ public final class GalleryActivity extends FragmentActivity implements Constants
 		}
 
 		getGLRoot().freeze();
-		mIsActive = true;
 		setContentPane(mRootPane);
 
 		mModel.resume();
@@ -834,13 +825,13 @@ public final class GalleryActivity extends FragmentActivity implements Constants
 		}
 	}
 
-	void initialize(final GalleryActivity activity, final Bundle data) {
+	void initialize(final ImageViewerGLActivity activity, final Bundle data) {
 		mData = data;
 	}
 
 	// should only be called by StateManager
 	void resume() {
-		final GalleryActivity activity = this;
+		final ImageViewerGLActivity activity = this;
 
 		activity.invalidateOptionsMenu();
 
@@ -870,7 +861,6 @@ public final class GalleryActivity extends FragmentActivity implements Constants
 	}
 
 	public static interface Model extends PhotoView.Model {
-		public boolean isEmpty();
 
 		public void pause();
 

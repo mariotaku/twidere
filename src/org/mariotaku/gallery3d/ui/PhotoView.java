@@ -16,11 +16,12 @@
 
 package org.mariotaku.gallery3d.ui;
 
-import org.mariotaku.gallery3d.app.GalleryActivity;
+import org.mariotaku.gallery3d.app.ImageViewerGLActivity;
 import org.mariotaku.gallery3d.common.ApiHelper;
 import org.mariotaku.gallery3d.common.Utils;
 import org.mariotaku.gallery3d.data.MediaItem;
 import org.mariotaku.gallery3d.data.MediaObject;
+import org.mariotaku.gallery3d.ui.PhotoView.FullPicture;
 import org.mariotaku.gallery3d.util.RangeArray;
 import org.mariotaku.twidere.R;
 
@@ -32,7 +33,6 @@ import android.os.Build;
 import android.os.Message;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.animation.AccelerateInterpolator;
 
 public class PhotoView extends GLView {
 	private static final String TAG = "PhotoView";
@@ -48,22 +48,9 @@ public class PhotoView extends GLView {
 	private static final int MSG_CAPTURE_ANIMATION_DONE = 4;
 
 	private static final float DEFAULT_TEXT_SIZE = 20;
-	private static float TRANSITION_SCALE_FACTOR = 0.74f;
 
-	// Used to calculate the scaling factor for the card deck effect.
-	private final ZInterpolator mScaleInterpolator = new ZInterpolator(0.5f);
 
-	// Used to calculate the alpha factor for the fading animation.
-	private final AccelerateInterpolator mAlphaInterpolator = new AccelerateInterpolator(0.9f);
-
-	// We keep this many previous ScreenNails. (also this many next ScreenNails)
-	public static final int SCREEN_NAIL_MAX = 3;
-
-	// The picture entries, the valid index is from -SCREEN_NAIL_MAX to
-	// SCREEN_NAIL_MAX.
-	private final RangeArray<Picture> mPictures = new RangeArray<Picture>(-SCREEN_NAIL_MAX, SCREEN_NAIL_MAX);
-
-	private final Size[] mSizes = new Size[2 * SCREEN_NAIL_MAX + 1];
+	private final Size[] mSizes = new Size[1];
 	private final MyGestureListener mGestureListener;
 
 	private final GestureRecognizer mGestureRecognizer;
@@ -107,8 +94,9 @@ public class PhotoView extends GLView {
 	// to hide the undo button when we are too far away from the deleted
 	// item. The value Integer.MAX_VALUE means there is no such hint.
 	private Context mContext;
+	private FullPicture mPicture;
 
-	public PhotoView(final GalleryActivity activity) {
+	public PhotoView(final ImageViewerGLActivity activity) {
 		mTileView = new TileImageView(activity);
 		addComponent(mTileView);
 		mContext = activity.getAndroidContext();
@@ -150,13 +138,7 @@ public class PhotoView extends GLView {
 				mEdgeView.onRelease();
 			}
 		});
-		for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
-			if (i == 0) {
-				mPictures.put(i, new FullPicture());
-			} else {
-				mPictures.put(i, new ScreenNailPicture(i));
-			}
-		}
+				mPicture = new FullPicture();
 	}
 
 	public PhotoFallbackEffect buildFallbackEffect(final GLView root, final GLCanvas canvas) {
@@ -165,27 +147,26 @@ public class PhotoView extends GLView {
 
 		final Rect fullRect = bounds();
 		final PhotoFallbackEffect effect = new PhotoFallbackEffect();
-		for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; ++i) {
-			final MediaItem item = mModel.getMediaItem(i);
+			final MediaItem item = mModel.getMediaItem(0);
 			if (item == null) {
-				continue;
+				return effect;
 			}
-			final ScreenNail sc = mModel.getScreenNail(i);
+			final ScreenNail sc = mModel.getScreenNail(0);
 			if (!(sc instanceof TiledScreenNail) || ((TiledScreenNail) sc).isShowingPlaceholder()) {
-				continue;
+				return effect;
 			}
 
 			// Now, sc is BitmapScreenNail and is not showing placeholder
-			final Rect rect = new Rect(getPhotoRect(i));
+			final Rect rect = new Rect(getPhotoRect());
 			if (!Rect.intersects(fullRect, rect)) {
-				continue;
+				return effect;
 			}
 			rect.offset(location.left, location.top);
 
 			final int width = sc.getWidth();
 			final int height = sc.getHeight();
 
-			final int rotation = mModel.getImageRotation(i);
+			final int rotation = mModel.getImageRotation(0);
 			RawTexture texture;
 			if (rotation % 180 == 0) {
 				texture = new RawTexture(width, height, true);
@@ -202,12 +183,11 @@ public class PhotoView extends GLView {
 			sc.draw(canvas, 0, 0, width, height);
 			canvas.endRenderTarget();
 			effect.addEntry(item.getPath(), rect, texture);
-		}
 		return effect;
 	}
 
-	public Rect getPhotoRect(final int index) {
-		return mPositionController.getPosition(index);
+	public Rect getPhotoRect() {
+		return mPositionController.getPosition();
 	}
 
 	public void notifyDataChange(final int[] fromIndex, final int prevBound, final int nextBound) {
@@ -218,25 +198,21 @@ public class PhotoView extends GLView {
 		if (mTouchBoxIndex != Integer.MAX_VALUE) {
 			final int k = mTouchBoxIndex;
 			mTouchBoxIndex = Integer.MAX_VALUE;
-			for (int i = 0; i < 2 * SCREEN_NAIL_MAX + 1; i++) {
+			for (int i = 0; i < 2 * 0 + 1; i++) {
 				if (fromIndex[i] == k) {
-					mTouchBoxIndex = i - SCREEN_NAIL_MAX;
+					mTouchBoxIndex = i - 0;
 					break;
 				}
 			}
 		}
 
-		// Update the ScreenNails.
-		for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
-			final Picture p = mPictures.get(i);
-			p.reload();
-			mSizes[i + SCREEN_NAIL_MAX] = p.getSize();
-		}
+			mPicture.reload();
+			mSizes[0] = mPicture.getSize();
 
 		// Move the boxes
 		mPositionController.moveBox(fromIndex, mPrevBound < 0, mNextBound > 0, false, mSizes);
 
-		for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
+		for (int i = -0; i <= 0; i++) {
 			setPictureSize(i);
 		}
 
@@ -247,7 +223,7 @@ public class PhotoView extends GLView {
 		if (index == 0) {
 			mListener.onCurrentImageUpdated();
 		}
-		mPictures.get(index).reload();
+		mPicture.reload();
 		setPictureSize(index);
 		invalidate();
 	}
@@ -255,8 +231,8 @@ public class PhotoView extends GLView {
 	public void pause() {
 		mPositionController.skipAnimation();
 		mTileView.freeTextures();
-		for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
-			mPictures.get(i).setScreenNail(null);
+		for (int i = -0; i <= 0; i++) {
+			mPicture.setScreenNail(null);
 		}
 	}
 
@@ -376,15 +352,13 @@ public class PhotoView extends GLView {
 			if (inPageMode && !inCaptureAnimation) {
 				neighbors = 1;
 			} else {
-				neighbors = SCREEN_NAIL_MAX;
+				neighbors = 0;
 			}
 		}
 
 		// Draw photos from back to front
-		for (int i = neighbors; i >= -neighbors; i--) {
-			final Rect r = mPositionController.getPosition(i);
-			mPictures.get(i).draw(canvas, r);
-		}
+			final Rect r = mPositionController.getPosition();
+			mPicture.draw(canvas, r);
 
 		renderChild(canvas, mEdgeView);
 
@@ -426,39 +400,14 @@ public class PhotoView extends GLView {
 		canvas.fillRect(r.left, r.top, r.width(), r.height(), mPlaceholderColor);
 	}
 
-	// Returns the alpha factor in film mode if a picture is not in the center.
-	// The 0.03 lower bound is to make the item always visible a bit.
-	private float getOffsetAlpha(float offset) {
-		offset /= 0.5f;
-		final float alpha = offset > 0 ? 1 - offset : 1 + offset;
-		return Utils.clamp(alpha, 0.03f, 1f);
-	}
-
-	// //////////////////////////////////////////////////////////////////////////
-	// Framework events
-	// //////////////////////////////////////////////////////////////////////////
-
-	// Maps a scrolling progress value to the alpha factor in the fading
-	// animation.
-	private float getScrollAlpha(final float scrollProgress) {
-		return scrollProgress < 0 ? mAlphaInterpolator.getInterpolation(1 - Math.abs(scrollProgress)) : 1.0f;
-	}
-
-	// Maps a scrolling progress value to the scaling factor in the fading
-	// animation.
-	private float getScrollScale(final float scrollProgress) {
-		final float interpolatedProgress = mScaleInterpolator.getInterpolation(Math.abs(scrollProgress));
-		final float scale = 1 - interpolatedProgress + interpolatedProgress * TRANSITION_SCALE_FACTOR;
-		return scale;
-	}
+	
 
 	// //////////////////////////////////////////////////////////////////////////
 	// Rendering
 	// //////////////////////////////////////////////////////////////////////////
 
 	private void setPictureSize(final int index) {
-		final Picture p = mPictures.get(index);
-		mPositionController.setImageSize(index, p.getSize(), null);
+		mPositionController.setImageSize(index, mPicture.getSize(), null);
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -596,69 +545,9 @@ public class PhotoView extends GLView {
 				+ ", mCameraRect = " + mCameraRect);
 	}
 
-	// //////////////////////////////////////////////////////////////////////////
-	// Opening Animation
-	// //////////////////////////////////////////////////////////////////////////
-
-	// Returns the scrolling progress value for an object moving out of a
-	// view. The progress value measures how much the object has moving out of
-	// the view. The object currently displays in [left, right), and the view is
-	// at [0, viewWidth].
-	//
-	// The returned value is negative when the object is moving right, and
-	// positive when the object is moving left. The value goes to -1 or 1 when
-	// the object just moves out of the view completely. The value is 0 if the
-	// object currently fills the view.
-	private static float calculateMoveOutProgress(final int left, final int right, final int viewWidth) {
-		// w = object width
-		// viewWidth = view width
-		final int w = right - left;
-
-		// If the object width is smaller than the view width,
-		// |....view....|
-		// |<-->| progress = -1 when left = viewWidth
-		// |<-->| progress = 0 when left = viewWidth / 2 - w / 2
-		// |<-->| progress = 1 when left = -w
-		if (w < viewWidth) {
-			final int zx = viewWidth / 2 - w / 2;
-			if (left > zx)
-				return -(left - zx) / (float) (viewWidth - zx); // progress =
-																// (0, -1]
-			else
-				return (left - zx) / (float) (-w - zx); // progress = [0, 1]
-		}
-
-		// If the object width is larger than the view width,
-		// |..view..|
-		// |<--------->| progress = -1 when left = viewWidth
-		// |<--------->| progress = 0 between left = 0
-		// |<--------->| and right = viewWidth
-		// |<--------->| progress = 1 when right = 0
-		if (left > 0) return -left / (float) viewWidth;
-
-		if (right < viewWidth) return (viewWidth - right) / (float) viewWidth;
-
-		return 0;
-	}
-
-	// //////////////////////////////////////////////////////////////////////////
-	// Capture Animation
-	// //////////////////////////////////////////////////////////////////////////
-
 	private static int getRotated(final int degree, final int original, final int theother) {
 		return degree % 180 == 0 ? original : theother;
 	}
-
-	// Returns an interpolated value for the page/film transition.
-	// When ratio = 0, the result is from.
-	// When ratio = 1, the result is to.
-	private static float interpolate(final float ratio, final float from, final float to) {
-		return from + (to - from) * ratio * ratio;
-	}
-
-	// //////////////////////////////////////////////////////////////////////////
-	// Card deck effect calculation
-	// //////////////////////////////////////////////////////////////////////////
 
 	public interface Listener {
 		public void onActionBarAllowed(boolean allowed);
@@ -1082,25 +971,6 @@ public class PhotoView extends GLView {
 
 	}
 
-	// //////////////////////////////////////////////////////////////////////////
-	// Simple public utilities
-	// //////////////////////////////////////////////////////////////////////////
-
-	// This interpolator emulates the rate at which the perceived scale of an
-	// object changes as its distance from a camera increases. When this
-	// interpolator is applied to a scale animation on a view, it evokes the
-	// sense that the object is shrinking due to moving away from the camera.
-	private static class ZInterpolator {
-		private final float focalLength;
-
-		public ZInterpolator(final float foc) {
-			focalLength = foc;
-		}
-
-		public float getInterpolation(final float input) {
-			return (1.0f - focalLength / (focalLength + input)) / (1.0f - focalLength / (focalLength + 1.0f));
-		}
-	}
 
 	class FullPicture implements Picture {
 		private int mRotation;
@@ -1157,54 +1027,8 @@ public class PhotoView extends GLView {
 			final int viewH = getHeight();
 			float cx = r.exactCenterX();
 			final float cy = r.exactCenterY();
-			float scale = 1f; // the scaling factor due to card effect
 
 			canvas.save(GLCanvas.SAVE_FLAG_MATRIX | GLCanvas.SAVE_FLAG_ALPHA);
-			final float filmRatio = mPositionController.getFilmRatio();
-			final boolean wantsCardEffect = false;
-			final boolean wantsOffsetEffect = false;
-			// boolean wantsCardEffect = CARD_EFFECT && !mIsCamera
-			// && filmRatio != 1f && !mPictures.get(-1).isCamera()
-			// && !mPositionController.inOpeningAnimation();
-			// boolean wantsOffsetEffect = OFFSET_EFFECT && mIsDeletable
-			// && filmRatio == 1f && r.centerY() != viewH / 2;
-			if (wantsCardEffect) {
-				// Calculate the move-out progress value.
-				final int left = r.left;
-				final int right = r.right;
-				float progress = calculateMoveOutProgress(left, right, viewW);
-				progress = Utils.clamp(progress, -1f, 1f);
-
-				// We only want to apply the fading animation if the scrolling
-				// movement is to the right.
-				if (progress < 0) {
-					scale = getScrollScale(progress);
-					float alpha = getScrollAlpha(progress);
-					scale = interpolate(filmRatio, scale, 1f);
-					alpha = interpolate(filmRatio, alpha, 1f);
-
-					imageScale *= scale;
-					canvas.multiplyAlpha(alpha);
-
-					float cxPage; // the cx value in page mode
-					if (right - left <= viewW) {
-						// If the picture is narrower than the view, keep it at
-						// the center of the view.
-						cxPage = viewW / 2f;
-					} else {
-						// If the picture is wider than the view (it's
-						// zoomed-in), keep the left edge of the object align
-						// the the left edge of the view.
-						cxPage = (right - left) * scale / 2f;
-					}
-					cx = interpolate(filmRatio, cxPage, cx);
-				}
-			} else if (wantsOffsetEffect) {
-				final float offset = (float) (r.centerY() - viewH / 2) / viewH;
-				final float alpha = getOffsetAlpha(offset);
-				canvas.multiplyAlpha(alpha);
-			}
-
 			// Draw the tile view.
 			setTileViewPosition(cx, cy, viewW, viewH, imageScale);
 			renderChild(canvas, mTileView);

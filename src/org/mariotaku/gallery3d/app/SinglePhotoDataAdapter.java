@@ -36,7 +36,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-public class SinglePhotoDataAdapter extends TileImageViewAdapter implements GalleryActivity.Model {
+public class SinglePhotoDataAdapter extends TileImageViewAdapter implements ImageViewerGLActivity.Model {
 
 	private static final String TAG = "SinglePhotoDataAdapter";
 	private static final int SIZE_BACKUP = 1024;
@@ -73,7 +73,7 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter implements Gall
 		}
 	};
 
-	public SinglePhotoDataAdapter(final GalleryActivity activity, final PhotoView view, final MediaItem item) {
+	public SinglePhotoDataAdapter(final ImageViewerGLActivity activity, final PhotoView view, final MediaItem item) {
 		mItem = Utils.checkNotNull(item);
 		mHasFullImage = (item.getSupportedOperations() & MediaItem.SUPPORT_FULL_IMAGE) != 0;
 		mPhotoView = Utils.checkNotNull(view);
@@ -110,11 +110,6 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter implements Gall
 	@Override
 	public ScreenNail getScreenNail(final int offset) {
 		return offset == 0 ? getScreenNail() : null;
-	}
-
-	@Override
-	public boolean isEmpty() {
-		return false;
 	}
 
 	@Override

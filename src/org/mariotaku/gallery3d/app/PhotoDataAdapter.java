@@ -43,7 +43,7 @@ import android.graphics.BitmapRegionDecoder;
 import android.os.Handler;
 import android.os.Message;
 
-public class PhotoDataAdapter implements GalleryActivity.Model {
+class PhotoDataAdapter implements ImageViewerGLActivity.Model {
 	@SuppressWarnings("unused")
 	private static final String TAG = "PhotoDataAdapter";
 
@@ -54,8 +54,7 @@ public class PhotoDataAdapter implements GalleryActivity.Model {
 
 	private static final int MIN_LOAD_COUNT = 16;
 	private static final int DATA_CACHE_SIZE = 256;
-	private static final int SCREEN_NAIL_MAX = PhotoView.SCREEN_NAIL_MAX;
-	private static final int IMAGE_CACHE_SIZE = 2 * SCREEN_NAIL_MAX + 1;
+	private static final int IMAGE_CACHE_SIZE = 1;
 
 	private static final int BIT_SCREEN_NAIL = 1;
 	private static final int BIT_FULL_IMAGE = 2;
@@ -134,7 +133,7 @@ public class PhotoDataAdapter implements GalleryActivity.Model {
 	// can find the item. If mItemPath is null, then we use the 0 to
 	// find the image being viewed. cameraIndex is the index of the camera
 	// preview. If cameraIndex < 0, there is no camera preview.
-	public PhotoDataAdapter(final GalleryActivity activity, final PhotoView view, final Path itemPath,
+	public PhotoDataAdapter(final ImageViewerGLActivity activity, final PhotoView view, final Path itemPath,
 			final int indexHint, final int cameraIndex) {
 		mPhotoView = Utils.checkNotNull(view);
 		mItemPath = Utils.checkNotNull(itemPath);
@@ -250,11 +249,6 @@ public class PhotoDataAdapter implements GalleryActivity.Model {
 	}
 
 	@Override
-	public boolean isEmpty() {
-		return true;
-	}
-
-	@Override
 	public void pause() {
 		mIsActive = false;
 
@@ -294,13 +288,11 @@ public class PhotoDataAdapter implements GalleryActivity.Model {
 	private void fireDataChange() {
 		// First check if data actually changed.
 		boolean changed = false;
-		for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; ++i) {
-			final long newVersion = getVersion(i);
-			if (mChanges[i + SCREEN_NAIL_MAX] != newVersion) {
-				mChanges[i + SCREEN_NAIL_MAX] = newVersion;
+			final long newVersion = getVersion(0);
+			if (mChanges[0] != newVersion) {
+				mChanges[0] = newVersion;
 				changed = true;
 			}
-		}
 
 		if (!changed) return;
 
@@ -316,7 +308,7 @@ public class PhotoDataAdapter implements GalleryActivity.Model {
 
 		// Update the mPaths array.
 		for (int i = 0; i < N; ++i) {
-			mPaths[i] = getPath(i - SCREEN_NAIL_MAX);
+			mPaths[i] = getPath(i);
 		}
 
 		// Calculate the fromIndex array.
@@ -334,7 +326,7 @@ public class PhotoDataAdapter implements GalleryActivity.Model {
 					break;
 				}
 			}
-			fromIndex[i] = j < N ? j - SCREEN_NAIL_MAX : Integer.MAX_VALUE;
+			fromIndex[i] = j < N ? j : Integer.MAX_VALUE;
 		}
 
 		mPhotoView.notifyDataChange(fromIndex, -0, 0 - 1 - 0);
@@ -564,14 +556,9 @@ public class PhotoDataAdapter implements GalleryActivity.Model {
 			entry.screenNail = screenNail;
 		}
 
-		for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; ++i) {
-			if (path == getPath(i)) {
-				if (i == 0) {
-					updateTileProvider(entry);
-				}
-				mPhotoView.notifyImageChange(i);
-				break;
-			}
+		if (path == getPath(0)) {
+			updateTileProvider(entry);
+			mPhotoView.notifyImageChange(0);
 		}
 		updateImageRequests();
 		updateScreenNailUploadQueue();

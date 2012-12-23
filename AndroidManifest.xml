@@ -316,7 +316,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="org.mariotaku.gallery3d.app.GalleryActivity"
+			android:name="org.mariotaku.gallery3d.app.ImageViewerGLActivity"
 			android:configChanges="keyboardHidden|orientation|screenSize"
 			android:exported="false"
 			android:hardwareAccelerated="true"
