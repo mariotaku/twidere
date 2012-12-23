@@ -898,7 +898,6 @@ public class SlidingPaneView extends ViewGroup {
 
 		private final ContentScrollController mController;
 		private final int mScaledTouchSlop;
-		private final SlidingPaneView mParent;
 		private final Context mContext;
 
 		private float mTempDeltaX, mTotalMoveX;
@@ -906,7 +905,6 @@ public class SlidingPaneView extends ViewGroup {
 		private boolean mIsScrolling, mShouldDisableScroll;
 
 		ShadowTouchListener(final SlidingPaneView parent) {
-			mParent = parent;
 			mContext = parent.getContext();
 			mScaledTouchSlop = ViewConfiguration.get(parent.getContext()).getScaledTouchSlop();
 			mController = parent.getController();

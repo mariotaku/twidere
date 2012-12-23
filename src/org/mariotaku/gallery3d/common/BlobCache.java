@@ -72,7 +72,6 @@ import java.io.RandomAccessFile;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.Arrays;
 import java.util.zip.Adler32;
 
 import android.util.Log;
@@ -96,13 +95,6 @@ public class BlobCache implements Closeable {
 
 	private static final int DATA_HEADER_SIZE = 4;
 
-	// blob header offset
-	private static final int BH_KEY = 0;
-	private static final int BH_CHECKSUM = 8;
-	private static final int BH_OFFSET = 12;
-	private static final int BH_LENGTH = 16;
-	private static final int BLOB_HEADER_SIZE = 20;
-
 	private RandomAccessFile mIndexFile;
 	private RandomAccessFile mDataFile0;
 	private RandomAccessFile mDataFile1;
@@ -117,38 +109,8 @@ public class BlobCache implements Closeable {
 	private int mVersion;
 
 	private RandomAccessFile mActiveDataFile;
-	private RandomAccessFile mInactiveDataFile;
-	private int mActiveHashStart;
-	private int mInactiveHashStart;
 	private final byte[] mIndexHeader = new byte[INDEX_HEADER_SIZE];
-	private final byte[] mBlobHeader = new byte[BLOB_HEADER_SIZE];
 	private final Adler32 mAdler32 = new Adler32();
-
-	// This method is for one-off lookup. For repeated lookup, use the version
-	// accepting LookupRequest to avoid repeated memory allocation.
-	private final LookupRequest mLookupRequest = new LookupRequest();
-
-	// Tries to look up a key in the specified hash region.
-	// Returns true if the lookup is successful.
-	// The slot offset in the index file is saved in mSlotOffset. If the lookup
-	// is successful, it's the slot found. Otherwise it's the slot suitable for
-	// insertion.
-	// If the lookup is successful, the file offset is also saved in
-	// mFileOffset.
-	private int mSlotOffset;
-
-	private int mFileOffset;
-
-	// Creates the cache. Three files will be created:
-	// path + ".idx", path + ".0", and path + ".1"
-	// The ".0" file and the ".1" file each stores data for a region. Each of
-	// them can grow to the size specified by maxBytes. The maxEntries parameter
-	// specifies the maximum number of entries each region can have. If the
-	// "reset" parameter is true, the cache will be cleared before use.
-	public BlobCache(final String path, final int maxEntries, final int maxBytes, final boolean reset)
-			throws IOException {
-		this(path, maxEntries, maxBytes, reset, 0);
-	}
 
 	public BlobCache(final String path, final int maxEntries, final int maxBytes, final boolean reset, final int version)
 			throws IOException {
@@ -167,14 +129,6 @@ public class BlobCache implements Closeable {
 		}
 	}
 
-	public void clearEntry(final long key) throws IOException {
-		if (!lookupInternal(key, mActiveHashStart)) return; // Nothing to clear
-		final byte[] header = mBlobHeader;
-		Arrays.fill(header, (byte) 0);
-		mActiveDataFile.seek(mFileOffset);
-		mActiveDataFile.write(header);
-	}
-
 	// Close the cache. All resources are released. No other method should be
 	// called after this is called.
 	@Override
@@ -183,111 +137,10 @@ public class BlobCache implements Closeable {
 		closeAll();
 	}
 
-	// Inserts a (key, data) pair into the cache.
-	public void insert(final long key, final byte[] data) throws IOException {
-		if (DATA_HEADER_SIZE + BLOB_HEADER_SIZE + data.length > mMaxBytes)
-			throw new RuntimeException("blob is too large!");
-
-		if (mActiveBytes + BLOB_HEADER_SIZE + data.length > mMaxBytes || mActiveEntries * 2 >= mMaxEntries) {
-			flipRegion();
-		}
-
-		if (!lookupInternal(key, mActiveHashStart)) {
-			// If we don't have an existing entry with the same key, increase
-			// the entry count.
-			mActiveEntries++;
-			writeInt(mIndexHeader, IH_ACTIVE_ENTRIES, mActiveEntries);
-		}
-
-		insertInternal(key, data, data.length);
-		updateIndexHeader();
-	}
-
-	public byte[] lookup(final long key) throws IOException {
-		mLookupRequest.key = key;
-		mLookupRequest.buffer = null;
-		if (lookup(mLookupRequest))
-			return mLookupRequest.buffer;
-		else
-			return null;
-	}
-
-	// Returns true if the associated blob for the given key is available.
-	// The blob is stored in the buffer pointed by req.buffer, and the length
-	// is in stored in the req.length variable.
-	//
-	// The user can input a non-null value in req.buffer, and this method will
-	// try to use that buffer. If that buffer is not large enough, this method
-	// will allocate a new buffer and assign it to req.buffer.
-	//
-	// This method tries not to throw IOException even if the data file is
-	// corrupted, but it can still throw IOException if things get strange.
-	public boolean lookup(final LookupRequest req) throws IOException {
-		// Look up in the active region first.
-		if (lookupInternal(req.key, mActiveHashStart)) {
-			if (getBlob(mActiveDataFile, mFileOffset, req)) return true;
-		}
-
-		// We want to copy the data from the inactive file to the active file
-		// if it's available. So we keep the offset of the hash entry so we can
-		// avoid looking it up again.
-		final int insertOffset = mSlotOffset;
-
-		// Look up in the inactive region.
-		if (lookupInternal(req.key, mInactiveHashStart)) {
-			if (getBlob(mInactiveDataFile, mFileOffset, req)) {
-				// If we don't have enough space to insert this blob into
-				// the active file, just return it.
-				if (mActiveBytes + BLOB_HEADER_SIZE + req.length > mMaxBytes || mActiveEntries * 2 >= mMaxEntries)
-					return true;
-				// Otherwise copy it over.
-				mSlotOffset = insertOffset;
-				try {
-					insertInternal(req.key, req.buffer, req.length);
-					mActiveEntries++;
-					writeInt(mIndexHeader, IH_ACTIVE_ENTRIES, mActiveEntries);
-					updateIndexHeader();
-				} catch (final Throwable t) {
-					Log.e(TAG, "cannot copy over");
-				}
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	public void syncAll() {
-		syncIndex();
-		try {
-			mDataFile0.getFD().sync();
-		} catch (final Throwable t) {
-			Log.w(TAG, "sync data file 0 failed", t);
-		}
-		try {
-			mDataFile1.getFD().sync();
-		} catch (final Throwable t) {
-			Log.w(TAG, "sync data file 1 failed", t);
-		}
-	}
-
-	public void syncIndex() {
-		try {
-			mIndexBuffer.force();
-		} catch (final Throwable t) {
-			Log.w(TAG, "sync index failed", t);
-		}
-	}
-
-	// Clear the hash table starting from the specified offset.
-	private void clearHash(final int hashStart) {
-		final byte[] zero = new byte[1024];
-		mIndexBuffer.position(hashStart);
-		for (int count = mMaxEntries * 12; count > 0;) {
-			final int todo = Math.min(count, 1024);
-			mIndexBuffer.put(zero, 0, todo);
-			count -= todo;
-		}
+	private int checkSum(final byte[] data, final int offset, final int nbytes) {
+		mAdler32.reset();
+		mAdler32.update(data, offset, nbytes);
+		return (int) mAdler32.getValue();
 	}
 
 	private void closeAll() {
@@ -295,97 +148,6 @@ public class BlobCache implements Closeable {
 		closeSilently(mIndexFile);
 		closeSilently(mDataFile0);
 		closeSilently(mDataFile1);
-	}
-
-	// Flip the active region and the inactive region.
-	private void flipRegion() throws IOException {
-		mActiveRegion = 1 - mActiveRegion;
-		mActiveEntries = 0;
-		mActiveBytes = DATA_HEADER_SIZE;
-
-		writeInt(mIndexHeader, IH_ACTIVE_REGION, mActiveRegion);
-		writeInt(mIndexHeader, IH_ACTIVE_ENTRIES, mActiveEntries);
-		writeInt(mIndexHeader, IH_ACTIVE_BYTES, mActiveBytes);
-		updateIndexHeader();
-
-		setActiveVariables();
-		clearHash(mActiveHashStart);
-		syncIndex();
-	}
-
-	// Copies the blob for the specified offset in the specified file to
-	// req.buffer. If req.buffer is null or too small, allocate a buffer and
-	// assign it to req.buffer.
-	// Returns false if the blob is not available (either the index file is
-	// not sync with the data file, or one of them is corrupted). The length
-	// of the blob is stored in the req.length variable.
-	private boolean getBlob(final RandomAccessFile file, final int offset, final LookupRequest req) throws IOException {
-		final byte[] header = mBlobHeader;
-		final long oldPosition = file.getFilePointer();
-		try {
-			file.seek(offset);
-			if (file.read(header) != BLOB_HEADER_SIZE) {
-				Log.w(TAG, "cannot read blob header");
-				return false;
-			}
-			final long blobKey = readLong(header, BH_KEY);
-			if (blobKey == 0) return false; // This entry has been cleared.
-			if (blobKey != req.key) {
-				Log.w(TAG, "blob key does not match: " + blobKey);
-				return false;
-			}
-			final int sum = readInt(header, BH_CHECKSUM);
-			final int blobOffset = readInt(header, BH_OFFSET);
-			if (blobOffset != offset) {
-				Log.w(TAG, "blob offset does not match: " + blobOffset);
-				return false;
-			}
-			final int length = readInt(header, BH_LENGTH);
-			if (length < 0 || length > mMaxBytes - offset - BLOB_HEADER_SIZE) {
-				Log.w(TAG, "invalid blob length: " + length);
-				return false;
-			}
-			if (req.buffer == null || req.buffer.length < length) {
-				req.buffer = new byte[length];
-			}
-
-			final byte[] blob = req.buffer;
-			req.length = length;
-
-			if (file.read(blob, 0, length) != length) {
-				Log.w(TAG, "cannot read blob data");
-				return false;
-			}
-			if (checkSum(blob, 0, length) != sum) {
-				Log.w(TAG, "blob checksum does not match: " + sum);
-				return false;
-			}
-			return true;
-		} catch (final Throwable t) {
-			Log.e(TAG, "getBlob failed.", t);
-			return false;
-		} finally {
-			file.seek(oldPosition);
-		}
-	}
-
-	// Appends the data to the active file. It also updates the hash entry.
-	// The proper hash entry (suitable for insertion or replacement) must be
-	// pointed by mSlotOffset.
-	private void insertInternal(final long key, final byte[] data, final int length) throws IOException {
-		final byte[] header = mBlobHeader;
-		final int sum = checkSum(data);
-		writeLong(header, BH_KEY, key);
-		writeInt(header, BH_CHECKSUM, sum);
-		writeInt(header, BH_OFFSET, mActiveBytes);
-		writeInt(header, BH_LENGTH, length);
-		mActiveDataFile.write(header);
-		mActiveDataFile.write(data, 0, length);
-
-		mIndexBuffer.putLong(mSlotOffset, key);
-		mIndexBuffer.putInt(mSlotOffset + 8, mActiveBytes);
-		mActiveBytes += BLOB_HEADER_SIZE + length;
-		writeInt(mIndexHeader, IH_ACTIVE_BYTES, mActiveBytes);
 	}
 
 	// Returns true if loading index is successful. After this method is called,
@@ -482,35 +244,6 @@ public class BlobCache implements Closeable {
 		}
 	}
 
-	private boolean lookupInternal(final long key, final int hashStart) {
-		int slot = (int) (key % mMaxEntries);
-		if (slot < 0) {
-			slot += mMaxEntries;
-		}
-		final int slotBegin = slot;
-		while (true) {
-			final int offset = hashStart + slot * 12;
-			final long candidateKey = mIndexBuffer.getLong(offset);
-			final int candidateOffset = mIndexBuffer.getInt(offset + 8);
-			if (candidateOffset == 0) {
-				mSlotOffset = offset;
-				return false;
-			} else if (candidateKey == key) {
-				mSlotOffset = offset;
-				mFileOffset = candidateOffset;
-				return true;
-			} else {
-				if (++slot >= mMaxEntries) {
-					slot = 0;
-				}
-				if (slot == slotBegin) {
-					Log.w(TAG, "corrupted index: clear the slot.");
-					mIndexBuffer.putInt(hashStart + slot * 12 + 8, 0);
-				}
-			}
-		}
-	}
-
 	private void resetCache(final int maxEntries, final int maxBytes) throws IOException {
 		mIndexFile.setLength(0); // truncate to zero the index
 		mIndexFile.setLength(INDEX_HEADER_SIZE + maxEntries * 12 * 2);
@@ -539,58 +272,33 @@ public class BlobCache implements Closeable {
 
 	private void setActiveVariables() throws IOException {
 		mActiveDataFile = mActiveRegion == 0 ? mDataFile0 : mDataFile1;
-		mInactiveDataFile = mActiveRegion == 1 ? mDataFile0 : mDataFile1;
 		mActiveDataFile.setLength(mActiveBytes);
 		mActiveDataFile.seek(mActiveBytes);
 
-		mActiveHashStart = INDEX_HEADER_SIZE;
-		mInactiveHashStart = INDEX_HEADER_SIZE;
-
 		if (mActiveRegion == 0) {
-			mInactiveHashStart += mMaxEntries * 12;
 		} else {
-			mActiveHashStart += mMaxEntries * 12;
 		}
 	}
 
-	// Sync mIndexHeader to the index file.
-	private void updateIndexHeader() {
-		writeInt(mIndexHeader, IH_CHECKSUM, checkSum(mIndexHeader, 0, IH_CHECKSUM));
-		mIndexBuffer.position(0);
-		mIndexBuffer.put(mIndexHeader);
-	}
-
-	int checkSum(final byte[] data) {
-		mAdler32.reset();
-		mAdler32.update(data);
-		return (int) mAdler32.getValue();
-	}
-
-	int checkSum(final byte[] data, final int offset, final int nbytes) {
-		mAdler32.reset();
-		mAdler32.update(data, offset, nbytes);
-		return (int) mAdler32.getValue();
-	}
-
-	// This is for testing only.
-	//
-	// Returns the active count (mActiveEntries). This also verifies that
-	// the active count matches matches what's inside the hash region.
-	int getActiveCount() {
-		int count = 0;
-		for (int i = 0; i < mMaxEntries; i++) {
-			final int offset = mActiveHashStart + i * 12;
-			final long candidateKey = mIndexBuffer.getLong(offset);
-			final int candidateOffset = mIndexBuffer.getInt(offset + 8);
-			if (candidateOffset != 0) {
-				++count;
-			}
+	private void syncAll() {
+		syncIndex();
+		try {
+			mDataFile0.getFD().sync();
+		} catch (final Throwable t) {
+			Log.w(TAG, "sync data file 0 failed", t);
 		}
-		if (count == mActiveEntries)
-			return count;
-		else {
-			Log.e(TAG, "wrong active count: " + mActiveEntries + " vs " + count);
-			return -1; // signal failure.
+		try {
+			mDataFile1.getFD().sync();
+		} catch (final Throwable t) {
+			Log.w(TAG, "sync data file 1 failed", t);
+		}
+	}
+
+	private void syncIndex() {
+		try {
+			mIndexBuffer.force();
+		} catch (final Throwable t) {
+			Log.w(TAG, "sync index failed", t);
 		}
 	}
 
@@ -602,15 +310,7 @@ public class BlobCache implements Closeable {
 		deleteFileSilently(path + ".1");
 	}
 
-	private static void deleteFileSilently(final String path) {
-		try {
-			new File(path).delete();
-		} catch (final Throwable t) {
-			// ignore;
-		}
-	}
-
-	static void closeSilently(final Closeable c) {
+	private static void closeSilently(final Closeable c) {
 		if (c == null) return;
 		try {
 			c.close();
@@ -619,28 +319,21 @@ public class BlobCache implements Closeable {
 		}
 	}
 
-	static int readInt(final byte[] buf, final int offset) {
+	private static void deleteFileSilently(final String path) {
+		try {
+			new File(path).delete();
+		} catch (final Throwable t) {
+			// ignore;
+		}
+	}
+
+	private static int readInt(final byte[] buf, final int offset) {
 		return buf[offset] & 0xff | (buf[offset + 1] & 0xff) << 8 | (buf[offset + 2] & 0xff) << 16
 				| (buf[offset + 3] & 0xff) << 24;
 	}
 
-	static long readLong(final byte[] buf, final int offset) {
-		long result = buf[offset + 7] & 0xff;
-		for (int i = 6; i >= 0; i--) {
-			result = result << 8 | buf[offset + i] & 0xff;
-		}
-		return result;
-	}
-
-	static void writeInt(final byte[] buf, final int offset, int value) {
+	private static void writeInt(final byte[] buf, final int offset, int value) {
 		for (int i = 0; i < 4; i++) {
-			buf[offset + i] = (byte) (value & 0xff);
-			value >>= 8;
-		}
-	}
-
-	static void writeLong(final byte[] buf, final int offset, long value) {
-		for (int i = 0; i < 8; i++) {
 			buf[offset + i] = (byte) (value & 0xff);
 			value >>= 8;
 		}

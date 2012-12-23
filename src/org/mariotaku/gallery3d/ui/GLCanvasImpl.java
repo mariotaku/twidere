@@ -40,8 +40,6 @@ public class GLCanvasImpl implements GLCanvas {
 	private static final float OPAQUE_ALPHA = 0.95f;
 
 	private static final int OFFSET_FILL_RECT = 0;
-	private static final int OFFSET_DRAW_LINE = 4;
-	private static final int OFFSET_DRAW_RECT = 6;
 	private static final float[] BOX_COORDINATES = { 0, 0, 1, 0, 0, 1, 1, 1, // used
 																				// for
 																				// filling
@@ -113,11 +111,6 @@ public class GLCanvasImpl implements GLCanvas {
 	}
 
 	@Override
-	public void clearBuffer() {
-		clearBuffer(null);
-	}
-
-	@Override
 	public void clearBuffer(final float[] argb) {
 		if (argb != null && argb.length == 4) {
 			mGL.glClearColor(argb[1], argb[2], argb[3], argb[0]);
@@ -149,24 +142,6 @@ public class GLCanvasImpl implements GLCanvas {
 				ids.clear();
 			}
 		}
-	}
-
-	@Override
-	public void drawLine(final float x1, final float y1, final float x2, final float y2, final GLPaint paint) {
-		final GL11 gl = mGL;
-
-		mGLState.setColorMode(paint.getColor(), mAlpha);
-		mGLState.setLineWidth(paint.getLineWidth());
-
-		saveTransform();
-		translate(x1, y1);
-		scale(x2 - x1, y2 - y1, 1);
-
-		gl.glLoadMatrixf(mMatrixValues, 0);
-		gl.glDrawArrays(GL11.GL_LINE_STRIP, OFFSET_DRAW_LINE, 2);
-
-		restoreTransform();
-		mCountDrawLine++;
 	}
 
 	@Override
@@ -205,12 +180,6 @@ public class GLCanvasImpl implements GLCanvas {
 	}
 
 	@Override
-	public void drawMixed(final BasicTexture from, final int toColor, final float ratio, final int x, final int y,
-			final int w, final int h) {
-		drawMixed(from, toColor, ratio, x, y, w, h, mAlpha);
-	}
-
-	@Override
 	public void drawMixed(final BasicTexture from, final int toColor, final float ratio, RectF source, RectF target) {
 		if (target.width() <= 0 || target.height() <= 0) return;
 
@@ -242,34 +211,6 @@ public class GLCanvasImpl implements GLCanvas {
 		setTextureCoords(source);
 		textureRect(target.left, target.top, target.width(), target.height());
 		mGLState.setTexEnvMode(GL11.GL_REPLACE);
-	}
-
-	@Override
-	public void drawRect(final float x, final float y, final float width, final float height, final GLPaint paint) {
-		final GL11 gl = mGL;
-
-		mGLState.setColorMode(paint.getColor(), mAlpha);
-		mGLState.setLineWidth(paint.getLineWidth());
-
-		saveTransform();
-		translate(x, y);
-		scale(width, height, 1);
-
-		gl.glLoadMatrixf(mMatrixValues, 0);
-		gl.glDrawArrays(GL11.GL_LINE_LOOP, OFFSET_DRAW_RECT, 4);
-
-		restoreTransform();
-		mCountDrawLine++;
-	}
-
-	@Override
-	public void drawTexture(final BasicTexture texture, final float[] mTextureTransform, final int x, final int y,
-			final int w, final int h) {
-		mGLState.setBlendEnabled(mBlendEnabled && (!texture.isOpaque() || mAlpha < OPAQUE_ALPHA));
-		if (!bindTexture(texture)) return;
-		setTextureCoords(mTextureTransform);
-		mGLState.setTextureAlpha(mAlpha);
-		textureRect(x, y, w, h);
 	}
 
 	@Override
@@ -446,11 +387,6 @@ public class GLCanvasImpl implements GLCanvas {
 		m[15] += m[3] * x + m[7] * y;
 	}
 
-	@Override
-	public void translate(final float x, final float y, final float z) {
-		Matrix.translateM(mMatrixValues, 0, x, y, z);
-	}
-
 	// unloadTexture and deleteBuffer can be called from the finalizer thread,
 	// so we synchronized on the mUnboundTextures object.
 	@Override
@@ -495,30 +431,6 @@ public class GLCanvasImpl implements GLCanvas {
 				mCountTextureOES++;
 			}
 		}
-	}
-
-	private void drawMixed(final BasicTexture from, final int toColor, final float ratio, final int x, final int y,
-			final int width, final int height, final float alpha) {
-		// change from 0 to 0.01f to prevent getting divided by zero below
-		if (ratio <= 0.01f) {
-			drawTexture(from, x, y, width, height, alpha);
-			return;
-		} else if (ratio >= 1) {
-			fillRect(x, y, width, height, toColor);
-			return;
-		}
-
-		mGLState.setBlendEnabled(mBlendEnabled
-				&& (!from.isOpaque() || !Utils.isOpaque(toColor) || alpha < OPAQUE_ALPHA));
-
-		if (!bindTexture(from)) return;
-
-		// Interpolate the RGB and alpha values between both textures.
-		mGLState.setTexEnvMode(GL11.GL_COMBINE);
-		setMixedColor(toColor, ratio, alpha);
-
-		drawBoundTexture(from, x, y, width, height);
-		mGLState.setTexEnvMode(GL11.GL_REPLACE);
 	}
 
 	private void drawTexture(final BasicTexture texture, final int x, final int y, final int width, final int height,
@@ -692,12 +604,6 @@ public class GLCanvasImpl implements GLCanvas {
 		mGL.glMatrixMode(GL11.GL_MODELVIEW);
 	}
 
-	private void setTextureCoords(final float[] mTextureTransform) {
-		mGL.glMatrixMode(GL11.GL_TEXTURE);
-		mGL.glLoadMatrixf(mTextureTransform, 0);
-		mGL.glMatrixMode(GL11.GL_MODELVIEW);
-	}
-
 	private void setTextureCoords(final RectF source) {
 		setTextureCoords(source.left, source.top, source.right, source.bottom);
 	}
@@ -808,7 +714,6 @@ public class GLCanvasImpl implements GLCanvas {
 		private float mTextureAlpha = 1.0f;
 		private int mTextureTarget = GL11.GL_TEXTURE_2D;
 		private boolean mBlendEnabled = true;
-		private float mLineWidth = 1.0f;
 
 		public GLState(final GL11 gl) {
 			mGL = gl;
@@ -858,12 +763,6 @@ public class GLCanvasImpl implements GLCanvas {
 			final float prealpha = (color >>> 24) * alpha * 65535f / 255f / 255f;
 			mGL.glColor4x(Math.round((color >> 16 & 0xFF) * prealpha), Math.round((color >> 8 & 0xFF) * prealpha),
 					Math.round((color & 0xFF) * prealpha), Math.round(255 * prealpha));
-		}
-
-		public void setLineWidth(final float width) {
-			if (mLineWidth == width) return;
-			mLineWidth = width;
-			mGL.glLineWidth(width);
 		}
 
 		public void setTexEnvMode(final int mode) {

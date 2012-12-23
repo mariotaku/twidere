@@ -288,11 +288,11 @@ class PhotoDataAdapter implements ImageViewerGLActivity.Model {
 	private void fireDataChange() {
 		// First check if data actually changed.
 		boolean changed = false;
-			final long newVersion = getVersion(0);
-			if (mChanges[0] != newVersion) {
-				mChanges[0] = newVersion;
-				changed = true;
-			}
+		final long newVersion = getVersion(0);
+		if (mChanges[0] != newVersion) {
+			mChanges[0] = newVersion;
+			changed = true;
+		}
 
 		if (!changed) return;
 

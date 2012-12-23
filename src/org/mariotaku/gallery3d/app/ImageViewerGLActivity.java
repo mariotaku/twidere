@@ -16,7 +16,6 @@
 
 package org.mariotaku.gallery3d.app;
 
-import org.mariotaku.gallery3d.anim.StateTransitionAnimation;
 import org.mariotaku.gallery3d.data.BitmapPool;
 import org.mariotaku.gallery3d.data.DataManager;
 import org.mariotaku.gallery3d.data.MediaItem;
@@ -26,7 +25,6 @@ import org.mariotaku.gallery3d.ui.GLRoot;
 import org.mariotaku.gallery3d.ui.GLRootView;
 import org.mariotaku.gallery3d.ui.GLView;
 import org.mariotaku.gallery3d.ui.PhotoView;
-import org.mariotaku.gallery3d.ui.PreparePageFadeoutTexture;
 import org.mariotaku.gallery3d.ui.SynchronizedHandler;
 import org.mariotaku.gallery3d.util.GalleryUtils;
 import org.mariotaku.gallery3d.util.ThreadPool;
@@ -59,8 +57,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-public final class ImageViewerGLActivity extends FragmentActivity implements Constants, View.OnClickListener, GalleryContext,
-		PhotoView.Listener, OrientationManager.Listener {
+public final class ImageViewerGLActivity extends FragmentActivity implements Constants, View.OnClickListener,
+		GalleryContext, PhotoView.Listener, OrientationManager.Listener {
 
 	private static final String TAG = "Gallery";
 
@@ -70,7 +68,6 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	private View mControlButtons;
 
 	private OrientationManager mOrientationManager;
-
 
 	private AlertDialog mAlertDialog = null;
 
@@ -103,9 +100,6 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	private boolean mPlugged = false;
 
 	boolean mIsFinishing = false;
-	private StateTransitionAnimation.Transition mNextTransition = StateTransitionAnimation.Transition.None;
-
-	private StateTransitionAnimation mIntroAnimation;
 
 	private GLView mContentPane;
 	protected float[] mBackgroundColor;
@@ -267,12 +261,6 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	}
 
 	@Override
-	public void onFullScreenChanged(final boolean full) {
-		final Message m = mHandler.obtainMessage(MSG_ON_FULL_SCREEN_CHANGED, full ? 1 : 0, 0);
-		m.sendToTarget();
-	}
-
-	@Override
 	public void onOrientationCompensationChanged() {
 		getGLRoot().requestLayoutContentPane();
 	}
@@ -390,8 +378,8 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 					}
 					case MSG_UPDATE_SHARE_URI: {
 						if (mCurrentPhoto == message.obj) {
-							final Uri contentUri = mCurrentPhoto.getContentUri();
-							final Intent shareIntent = createShareIntent(mCurrentPhoto);
+							mCurrentPhoto.getContentUri();
+							createShareIntent(mCurrentPhoto);
 						}
 						break;
 					}
@@ -460,20 +448,9 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 
 	}
 
-	// TODO better mimetype
-	private static Intent createShareIntent(final MediaObject mediaObject) {
-		return new Intent(Intent.ACTION_SEND).setType("image/*")
-				.putExtra(Intent.EXTRA_STREAM, mediaObject.getContentUri())
-				.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-	}
-
 	public void state_onPause() {
 		if (0 != (mFlags & FLAG_SCREEN_ON_WHEN_PLUGGED)) {
 			((Activity) this).unregisterReceiver(mPowerIntentReceiver);
-		}
-		if (mNextTransition != StateTransitionAnimation.Transition.None) {
-			PreparePageFadeoutTexture.prepareFadeOutTexture(this, mContentPane);
-			mNextTransition = StateTransitionAnimation.Transition.None;
 		}
 
 		getGLRoot().unfreeze();
@@ -622,10 +599,6 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 
 	protected void setContentPane(final GLView content) {
 		mContentPane = content;
-		if (mIntroAnimation != null) {
-			mContentPane.setIntroAnimation(mIntroAnimation);
-			mIntroAnimation = null;
-		}
 		mContentPane.setBackgroundColor(getBackgroundColor());
 		final GLRoot root = getGLRoot();
 		root.setContentPane(mContentPane);
@@ -650,7 +623,6 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	}
 
 	protected void state_onResume() {
-			mNextTransition = StateTransitionAnimation.Transition.None;
 
 		if (mModel == null) {
 			finish();
@@ -680,7 +652,7 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 
 	private String getContentType(final Intent intent) {
 		final String type = intent.getType();
-		if (type != null) return GalleryUtils.MIME_TYPE_PANORAMA360.equals(type) ? MediaItem.MIME_TYPE_JPEG : type;
+		if (type != null) return type;
 
 		final Uri uri = intent.getData();
 		try {
@@ -799,10 +771,6 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	private void updateProgressBar() {
 	}
 
-	// ////////////////////////////////////////////////////////////////////////
-	// AppBridge.Server interface
-	// ////////////////////////////////////////////////////////////////////////
-
 	private void updateUIForCurrentPhoto() {
 		if (mCurrentPhoto == null) return;
 
@@ -818,6 +786,10 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 		}
 		updateProgressBar();
 	}
+
+	// ////////////////////////////////////////////////////////////////////////
+	// AppBridge.Server interface
+	// ////////////////////////////////////////////////////////////////////////
 
 	private void wantBars() {
 		if (canShowBars()) {
@@ -858,6 +830,13 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 		if (pool != null) {
 			pool.clear();
 		}
+	}
+
+	// TODO better mimetype
+	private static Intent createShareIntent(final MediaObject mediaObject) {
+		return new Intent(Intent.ACTION_SEND).setType("image/*")
+				.putExtra(Intent.EXTRA_STREAM, mediaObject.getContentUri())
+				.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 	}
 
 	public static interface Model extends PhotoView.Model {

@@ -54,9 +54,8 @@ abstract class UploadedTexture extends BasicTexture {
 	private boolean mContentValid = true;
 
 	// indicate this textures is being uploaded in background
-	private boolean mIsUploading = false;
+	private final boolean mIsUploading = false;
 	private boolean mOpaque = true;
-	private boolean mThrottled = false;
 	private static int sUploadedCount;
 	private static final int UPLOAD_LIMIT = 100;
 
@@ -130,7 +129,6 @@ abstract class UploadedTexture extends BasicTexture {
 	 */
 	public void updateContent(final GLCanvas canvas) {
 		if (!isLoaded()) {
-			if (mThrottled && ++sUploadedCount > UPLOAD_LIMIT) return;
 			uploadToCanvas(canvas);
 		} else if (!mContentValid) {
 			final Bitmap bitmap = getBitmap();
@@ -167,14 +165,6 @@ abstract class UploadedTexture extends BasicTexture {
 
 	protected abstract Bitmap onGetBitmap();
 
-	protected void setIsUploading(final boolean uploading) {
-		mIsUploading = uploading;
-	}
-
-	protected void setThrottled(final boolean throttled) {
-		mThrottled = throttled;
-	}
-
 	private void freeBitmap() {
 		Utils.assertTrue(mBitmap != null);
 		onFreeBitmap(mBitmap);
@@ -201,8 +191,6 @@ abstract class UploadedTexture extends BasicTexture {
 			try {
 				final int bWidth = bitmap.getWidth();
 				final int bHeight = bitmap.getHeight();
-				final int width = bWidth + mBorder * 2;
-				final int height = bHeight + mBorder * 2;
 				final int texWidth = getTextureWidth();
 				final int texHeight = getTextureHeight();
 

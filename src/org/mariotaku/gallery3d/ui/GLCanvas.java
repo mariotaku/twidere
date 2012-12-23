@@ -34,9 +34,6 @@ public interface GLCanvas {
 
 	public void beginRenderTarget(RawTexture texture);
 
-	// Clear the drawing buffers. This should only be used by GLRoot.
-	public void clearBuffer();
-
 	public void clearBuffer(float[] argb);
 
 	// Delete the specified buffer object, similar to unloadTexture.
@@ -46,29 +43,13 @@ public interface GLCanvas {
 	// called in the GL thread.
 	public void deleteRecycledResources();
 
-	// Draws a line using the specified paint from (x1, y1) to (x2, y2).
-	// (Both end points are included).
-	public void drawLine(float x1, float y1, float x2, float y2, GLPaint paint);
-
 	public void drawMesh(BasicTexture tex, int x, int y, int xyBuffer, int uvBuffer, int indexBuffer, int indexCount);
-
-	// Draw two textures to the specified rectangle. The actual texture used is
-	// from * (1 - ratio) + to * ratio
-	// The two textures must have the same size.
-	public void drawMixed(BasicTexture from, int toColor, float ratio, int x, int y, int w, int h);
 
 	// Draw a region of a texture and a specified color to the specified
 	// rectangle. The actual color used is from * (1 - ratio) + to * ratio.
 	// The region of the texture is defined by parameter "src". The target
 	// rectangle is specified by parameter "target".
 	public void drawMixed(BasicTexture from, int toColor, float ratio, RectF src, RectF target);
-
-	// Draws a rectangle using the specified paint from (x1, y1) to (x2, y2).
-	// (Both end points are included).
-	public void drawRect(float x1, float y1, float x2, float y2, GLPaint paint);
-
-	// Draw a texture with a specified texture transform.
-	public void drawTexture(BasicTexture texture, float[] mTextureTransform, int x, int y, int w, int h);
 
 	// Draws a texture to the specified rectangle.
 	public void drawTexture(BasicTexture texture, int x, int y, int width, int height);
@@ -123,9 +104,6 @@ public interface GLCanvas {
 	public void setSize(int width, int height);
 
 	public void translate(float x, float y);
-
-	// Change the current transform matrix.
-	public void translate(float x, float y, float z);
 
 	// Unloads the specified texture from the canvas. The resource allocated
 	// to draw the texture will be released. The specified texture will return

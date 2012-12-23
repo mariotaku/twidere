@@ -45,20 +45,11 @@ public class MediaItem extends MediaObject {
 	// not be changed without resetting the cache.
 	public static final int TYPE_THUMBNAIL = 1;
 
-	public static final int CACHED_IMAGE_QUALITY = 95;
-
-	public static final int IMAGE_READY = 0;
-	public static final int IMAGE_WAIT = 1;
-	public static final int IMAGE_ERROR = -1;
-
 	public static final String MIME_TYPE_JPEG = "image/jpeg";
 
 	private static int sThumbnailTargetSize = 640;
 	private static final BitmapPool sThumbPool = ApiHelper.HAS_REUSING_BITMAP_IN_BITMAP_FACTORY ? new BitmapPool(4)
 			: null;
-
-	// TODO: fix default value for latlng and change this.
-	public static final double INVALID_LATLNG = 0f;
 
 	private static final String TAG = "UriImage";
 
@@ -229,21 +220,21 @@ public class MediaItem extends MediaObject {
 		}
 	}
 
-	public static int getTargetSize(final int type) {
-		switch (type) {
-			case TYPE_THUMBNAIL:
-				return sThumbnailTargetSize;
-			default:
-				throw new RuntimeException("should only request thumb/microthumb from cache");
-		}
-	}
-
 	public static BitmapPool getThumbPool() {
 		return sThumbPool;
 	}
 
 	public static void setThumbnailSizes(final int size, final int microSize) {
 		sThumbnailTargetSize = size;
+	}
+
+	private static int getTargetSize(final int type) {
+		switch (type) {
+			case TYPE_THUMBNAIL:
+				return sThumbnailTargetSize;
+			default:
+				throw new RuntimeException("should only request thumb/microthumb from cache");
+		}
 	}
 
 	private class BitmapJob implements Job<Bitmap> {

@@ -70,11 +70,7 @@ public class EdgeEffect {
 	private static final int PULL_DECAY_TIME = 1000;
 
 	private static final float MAX_ALPHA = 0.8f;
-	private static final float HELD_EDGE_ALPHA = 0.7f;
 	private static final float HELD_EDGE_SCALE_Y = 0.5f;
-	private static final float HELD_GLOW_ALPHA = 0.5f;
-	private static final float HELD_GLOW_SCALE_Y = 0.5f;
-
 	private static final float MAX_GLOW_HEIGHT = 4.f;
 
 	private static final float PULL_GLOW_BEGIN = 1.f;
@@ -88,7 +84,6 @@ public class EdgeEffect {
 	private final Drawable mEdge;
 	private final Drawable mGlow;
 	private int mWidth;
-	private int mHeight;
 	private final int MIN_WIDTH = 300;
 	private final int mMinWidth;
 
@@ -162,7 +157,7 @@ public class EdgeEffect {
 		update();
 
 		final int edgeHeight = mEdge.getIntrinsicHeight();
-		final int edgeWidth = mEdge.getIntrinsicWidth();
+		mEdge.getIntrinsicWidth();
 		final int glowHeight = mGlow.getIntrinsicHeight();
 		final int glowWidth = mGlow.getIntrinsicWidth();
 
@@ -195,14 +190,6 @@ public class EdgeEffect {
 		mEdge.draw(canvas);
 
 		return mState != STATE_IDLE;
-	}
-
-	/**
-	 * Immediately finish the current animation. After this call
-	 * {@link #isFinished()} will return true.
-	 */
-	public void finish() {
-		mState = STATE_IDLE;
 	}
 
 	/**
@@ -346,7 +333,6 @@ public class EdgeEffect {
 	 */
 	public void setSize(final int width, final int height) {
 		mWidth = width;
-		mHeight = height;
 	}
 
 	private void update() {

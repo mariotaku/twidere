@@ -6,7 +6,6 @@ import org.mariotaku.gallery3d.ui.GLRoot.OnGLIdleListener;
 import android.os.ConditionVariable;
 
 public class PreparePageFadeoutTexture implements OnGLIdleListener {
-	private static final long TIMEOUT = 200;
 	public static final String KEY_FADE_TEXTURE = "fade_texture";
 
 	private RawTexture mTexture;
@@ -23,17 +22,6 @@ public class PreparePageFadeoutTexture implements OnGLIdleListener {
 		}
 		mTexture = new RawTexture(w, h, true);
 		mRootPane = rootPane;
-	}
-
-	public synchronized RawTexture get() {
-		if (mCancelled)
-			return null;
-		else if (mResultReady.block(TIMEOUT))
-			return mTexture;
-		else {
-			mCancelled = true;
-			return null;
-		}
 	}
 
 	public boolean isCancelled() {

@@ -20,9 +20,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint.FontMetricsInt;
-import android.graphics.Typeface;
 import android.text.TextPaint;
-import android.text.TextUtils;
 import android.util.FloatMath;
 
 // StringTexture is a texture shows the content of a specified String.
@@ -59,18 +57,6 @@ class StringTexture extends CanvasTexture {
 
 	public static StringTexture newInstance(final String text, final float textSize, final int color) {
 		return newInstance(text, getDefaultPaint(textSize, color));
-	}
-
-	public static StringTexture newInstance(String text, final float textSize, final int color,
-			final float lengthLimit, final boolean isBold) {
-		final TextPaint paint = getDefaultPaint(textSize, color);
-		if (isBold) {
-			paint.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-		}
-		if (lengthLimit > 0) {
-			text = TextUtils.ellipsize(text, paint, lengthLimit, TextUtils.TruncateAt.END).toString();
-		}
-		return newInstance(text, paint);
 	}
 
 	private static StringTexture newInstance(final String text, final TextPaint paint) {

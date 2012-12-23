@@ -18,7 +18,6 @@ package org.mariotaku.gallery3d.app;
 
 import org.mariotaku.gallery3d.data.DataManager;
 import org.mariotaku.gallery3d.data.DownloadCache;
-import org.mariotaku.gallery3d.data.ImageCacheService;
 import org.mariotaku.gallery3d.util.ThreadPool;
 
 import android.content.ContentResolver;
@@ -34,8 +33,6 @@ public interface IGalleryApplication {
 	public DataManager getDataManager();
 
 	public DownloadCache getDownloadCache();
-
-	public ImageCacheService getImageCacheService();
 
 	public Looper getMainLooper();
 

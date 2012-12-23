@@ -42,7 +42,6 @@ import android.util.Log;
 public class DataManager {
 	public static final int INCLUDE_IMAGE = 1;
 	public static final int INCLUDE_LOCAL_ONLY = 4;
-	public static final int INCLUDE_LOCAL_IMAGE_ONLY = INCLUDE_LOCAL_ONLY | INCLUDE_IMAGE;
 
 	// Any one who would like to access data should require this lock
 	// to prevent concurrency issue.
@@ -64,19 +63,11 @@ public class DataManager {
 		mDefaultMainHandler = new Handler(application.getMainLooper());
 	}
 
-	public void delete(final Path path) {
-		getMediaObject(path).delete();
-	}
-
 	public Path findPathByUri(final Uri uri, final String type) {
 		if (uri == null) return null;
 		final Path path = source.findPathByUri(uri, type);
 		if (path != null) return path;
 		return null;
-	}
-
-	public Uri getContentUri(final Path path) {
-		return getMediaObject(path).getContentUri();
 	}
 
 	public MediaObject getMediaObject(final Path path) {
@@ -97,30 +88,6 @@ public class DataManager {
 		}
 	}
 
-	public MediaObject getMediaObject(final String s) {
-		return getMediaObject(Path.fromString(s));
-	}
-
-	public int getMediaType(final Path path) {
-		return getMediaObject(path).getMediaType();
-	}
-
-	// The following methods forward the request to the proper object.
-	public int getSupportedOperations(final Path path) {
-		return MediaObject.SUPPORT_FULL_IMAGE;
-	}
-
-	// A common usage of this method is:
-	// synchronized (DataManager.LOCK) {
-	// MediaObject object = peekMediaObject(path);
-	// if (object == null) {
-	// object = createMediaObject(...);
-	// }
-	// }
-	public MediaObject peekMediaObject(final Path path) {
-		return path.getObject();
-	}
-
 	public void registerChangeNotifier(final Uri uri, final ChangeNotifier notifier) {
 		NotifyBroker broker = null;
 		synchronized (mNotifierMap) {
@@ -132,10 +99,6 @@ public class DataManager {
 			}
 		}
 		broker.registerNotifier(notifier);
-	}
-
-	public void rotate(final Path path, final int degrees) {
-		getMediaObject(path).rotate(degrees);
 	}
 
 	private static class NotifyBroker extends ContentObserver {

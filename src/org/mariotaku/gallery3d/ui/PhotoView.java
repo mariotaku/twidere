@@ -18,7 +18,6 @@ package org.mariotaku.gallery3d.ui;
 
 import org.mariotaku.gallery3d.app.ImageViewerGLActivity;
 import org.mariotaku.gallery3d.common.ApiHelper;
-import org.mariotaku.gallery3d.common.Utils;
 import org.mariotaku.gallery3d.data.MediaItem;
 import org.mariotaku.gallery3d.data.MediaObject;
 import org.mariotaku.twidere.R;
@@ -128,58 +127,8 @@ public class PhotoView extends GLView {
 			public void onPull(final int offset, final int direction) {
 				mEdgeView.onPull(offset, direction);
 			}
-
-			@Override
-			public void onRelease() {
-				mEdgeView.onRelease();
-			}
 		});
 		mPicture = new FullPicture();
-	}
-
-	public PhotoFallbackEffect buildFallbackEffect(final GLView root, final GLCanvas canvas) {
-		final Rect location = new Rect();
-		Utils.assertTrue(root.getBoundsOf(this, location));
-
-		final Rect fullRect = bounds();
-		final PhotoFallbackEffect effect = new PhotoFallbackEffect();
-		final MediaItem item = mModel.getMediaItem(0);
-		if (item == null) {
-			return effect;
-		}
-		final ScreenNail sc = mModel.getScreenNail(0);
-		if (!(sc instanceof TiledScreenNail) || ((TiledScreenNail) sc).isShowingPlaceholder()) {
-			return effect;
-		}
-
-		// Now, sc is BitmapScreenNail and is not showing placeholder
-		final Rect rect = new Rect(getPhotoRect());
-		if (!Rect.intersects(fullRect, rect)) {
-			return effect;
-		}
-		rect.offset(location.left, location.top);
-
-		final int width = sc.getWidth();
-		final int height = sc.getHeight();
-
-		final int rotation = mModel.getImageRotation(0);
-		RawTexture texture;
-		if (rotation % 180 == 0) {
-			texture = new RawTexture(width, height, true);
-			canvas.beginRenderTarget(texture);
-			canvas.translate(width / 2f, height / 2f);
-		} else {
-			texture = new RawTexture(height, width, true);
-			canvas.beginRenderTarget(texture);
-			canvas.translate(height / 2f, width / 2f);
-		}
-
-		canvas.rotate(rotation, 0, 0, 1);
-		canvas.translate(-width / 2f, -height / 2f);
-		sc.draw(canvas, 0, 0, width, height);
-		canvas.endRenderTarget();
-		effect.addEntry(item.getPath(), rect, texture);
-		return effect;
 	}
 
 	public Rect getPhotoRect() {
@@ -232,10 +181,6 @@ public class PhotoView extends GLView {
 		}
 	}
 
-	// move to the camera preview and show controls after resume
-	public void resetToFirstPicture() {
-	}
-
 	// //////////////////////////////////////////////////////////////////////////
 	// Data/Image change notifications
 	// //////////////////////////////////////////////////////////////////////////
@@ -273,21 +218,6 @@ public class PhotoView extends GLView {
 
 	public void setWantPictureCenterCallbacks(final boolean wanted) {
 		mWantPictureCenterCallbacks = wanted;
-	}
-
-	public void stopScrolling() {
-		mPositionController.stopScrolling();
-	}
-
-	public boolean switchWithCaptureAnimation(final int offset) {
-		final GLRoot root = getGLRoot();
-		if (root == null) return false;
-		root.lockRenderThread();
-		try {
-			return switchWithCaptureAnimationLocked(offset);
-		} finally {
-			root.unlockRenderThread();
-		}
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -368,11 +298,6 @@ public class PhotoView extends GLView {
 	// //////////////////////////////////////////////////////////////////////////
 	// Gestures Handling
 	// //////////////////////////////////////////////////////////////////////////
-
-	// Draw a gray placeholder in the specified rectangle.
-	private void drawPlaceHolder(final GLCanvas canvas, final Rect r) {
-		canvas.fillRect(r.left, r.top, r.width(), r.height(), mPlaceholderColor);
-	}
 
 	// //////////////////////////////////////////////////////////////////////////
 	// Rendering
@@ -461,25 +386,6 @@ public class PhotoView extends GLView {
 	private void switchFocus() {
 	}
 
-	private boolean switchWithCaptureAnimationLocked(final int offset) {
-		if (mHolding != 0) return true;
-		if (offset == 1) {
-			if (mNextBound <= 0) return false;
-			// Temporary disable action bar until the capture animation is done.
-			mListener.onActionBarAllowed(false);
-			mPositionController.startCaptureAnimationSlide(-1);
-		} else if (offset == -1) {
-			if (mPrevBound >= 0) return false;
-
-			mPositionController.startCaptureAnimationSlide(1);
-		} else
-			return false;
-		mHolding |= HOLD_CAPTURE_ANIMATION;
-		final Message m = mHandler.obtainMessage(MSG_CAPTURE_ANIMATION_DONE, offset, 0);
-		mHandler.sendMessageDelayed(m, PositionController.CAPTURE_ANIMATION_TIME);
-		return true;
-	}
-
 	// Update the camera rectangle due to layout change or camera relative frame
 	// change.
 	private void updateCameraRect() {
@@ -527,8 +433,6 @@ public class PhotoView extends GLView {
 		public void onActionBarWanted();
 
 		public void onCurrentImageUpdated();
-
-		public void onFullScreenChanged(boolean full);
 
 		public void onPictureCenter(boolean isCamera);
 
@@ -853,96 +757,6 @@ public class PhotoView extends GLView {
 		void setScreenNail(ScreenNail s);
 	}
 
-	private class ScreenNailPicture implements Picture {
-		private final int mIndex;
-		private int mRotation;
-		private ScreenNail mScreenNail;
-		private int mLoadingState = Model.LOADING_INIT;
-		private final Size mSize = new Size();
-
-		public ScreenNailPicture(final int index) {
-			mIndex = index;
-		}
-
-		@Override
-		public void draw(final GLCanvas canvas, final Rect r) {
-			if (mScreenNail == null) {
-				// Draw a placeholder rectange if there should be a picture in
-				// this position (but somehow there isn't).
-				if (mIndex >= mPrevBound && mIndex <= mNextBound) {
-					drawPlaceHolder(canvas, r);
-				}
-				return;
-			}
-			final int w = getWidth();
-			final int h = getHeight();
-			if (r.left >= w || r.right <= 0 || r.top >= h || r.bottom <= 0) {
-				mScreenNail.noDraw();
-				return;
-			}
-
-			final int cx = r.centerX();
-			final int cy = r.centerY();
-			canvas.save(GLCanvas.SAVE_FLAG_MATRIX | GLCanvas.SAVE_FLAG_ALPHA);
-			canvas.translate(cx, cy);
-			if (mRotation != 0) {
-				canvas.rotate(mRotation, 0, 0, 1);
-			}
-			final int drawW = getRotated(mRotation, r.width(), r.height());
-			final int drawH = getRotated(mRotation, r.height(), r.width());
-			mScreenNail.draw(canvas, -drawW / 2, -drawH / 2, drawW, drawH);
-			if (isScreenNailAnimating()) {
-				invalidate();
-			}
-			if (mLoadingState == Model.LOADING_FAIL) {
-				drawLoadingFailMessage(canvas);
-			}
-			canvas.restore();
-		}
-
-		@Override
-		public void forceSize() {
-			updateSize();
-			mPositionController.forceImageSize(mSize);
-		}
-
-		@Override
-		public Size getSize() {
-			return mSize;
-		}
-
-		@Override
-		public void reload() {
-			mLoadingState = mModel.getLoadingState(mIndex);
-			setScreenNail(mModel.getScreenNail(mIndex));
-			updateSize();
-		}
-
-		@Override
-		public void setScreenNail(final ScreenNail s) {
-			mScreenNail = s;
-		}
-
-		private boolean isScreenNailAnimating() {
-			return mScreenNail instanceof TiledScreenNail && ((TiledScreenNail) mScreenNail).isAnimating();
-		}
-
-		private void updateSize() {
-			mRotation = mModel.getImageRotation(mIndex);
-
-			if (mScreenNail != null) {
-				mSize.width = mScreenNail.getWidth();
-				mSize.height = mScreenNail.getHeight();
-			}
-
-			final int w = mSize.width;
-			final int h = mSize.height;
-			mSize.width = getRotated(mRotation, w, h);
-			mSize.height = getRotated(mRotation, h, w);
-		}
-
-	}
-
 	class FullPicture implements Picture {
 		private int mRotation;
 		private int mLoadingState = Model.LOADING_INIT;
@@ -993,10 +807,10 @@ public class PhotoView extends GLView {
 		}
 
 		private void drawTileView(final GLCanvas canvas, final Rect r) {
-			float imageScale = mPositionController.getImageScale();
+			final float imageScale = mPositionController.getImageScale();
 			final int viewW = getWidth();
 			final int viewH = getHeight();
-			float cx = r.exactCenterX();
+			final float cx = r.exactCenterX();
 			final float cy = r.exactCenterY();
 
 			canvas.save(GLCanvas.SAVE_FLAG_MATRIX | GLCanvas.SAVE_FLAG_ALPHA);

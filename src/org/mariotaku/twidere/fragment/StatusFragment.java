@@ -170,56 +170,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		}
 	};
 
-	private final LoaderCallbacks<Response<ParcelableStatus>> mConversationLoaderCallbacks2 = new LoaderCallbacks<Response<ParcelableStatus>>() {
-
-		@Override
-		public Loader<Response<ParcelableStatus>> onCreateLoader(final int id, final Bundle args) {
-			setProgressBarIndeterminateVisibility(true);
-			final int count = mAdapter.getCount();
-			final long status_id;
-			if (count == 0) {
-				mShouldScroll = !mLoadMoreAutomatically;
-				status_id = mStatus != null ? mStatus.in_reply_to_status_id : -1;
-			} else {
-				status_id = mAdapter.getItem(0).in_reply_to_status_id;
-			}
-			mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
-			mInReplyToView.setClickable(false);
-			setPullToRefreshEnabled(false);
-			return new StatusLoader(getActivity(), true, null, mAccountId, status_id);
-		}
-
-		@Override
-		public void onLoaderReset(final Loader<Response<ParcelableStatus>> loader) {
-
-		}
-
-		@Override
-		public void onLoadFinished(final Loader<Response<ParcelableStatus>> loader,
-				final Response<ParcelableStatus> data) {
-			updatePullRefresh();
-			if (data == null) return;
-			if (data.value != null) {
-				mAdapter.add(data.value);
-				mAdapter.sort(ParcelableStatus.REVERSE_ID_COMPARATOR);
-				if (!mLoadMoreAutomatically && mShouldScroll) {
-					mListView.setSelection(0 + mListView.getHeaderViewsCount());
-				}
-				if (data.value.in_reply_to_status_id > 0) {
-					// getLoaderManager().restartLoader(LOADER_ID_CONVERSATION,
-					// null, this);
-				} else {
-					setProgressBarIndeterminateVisibility(false);
-				}
-			} else {
-				setProgressBarIndeterminateVisibility(false);
-				showErrorToast(getActivity(), getString(R.string.getting_status), data.exception, true);
-			}
-			updatePullRefresh();
-		}
-
-	};
-
 	private final LoaderCallbacks<Response<ParcelableStatus>> mStatusLoaderCallbacks = new LoaderCallbacks<Response<ParcelableStatus>>() {
 
 		@Override

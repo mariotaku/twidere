@@ -28,7 +28,6 @@ import javax.microedition.khronos.opengles.GL11;
 import org.mariotaku.gallery3d.anim.CanvasAnimation;
 import org.mariotaku.gallery3d.common.ApiHelper;
 import org.mariotaku.gallery3d.common.Utils;
-import org.mariotaku.gallery3d.util.GalleryUtils;
 import org.mariotaku.gallery3d.util.MotionEventHelper;
 import org.mariotaku.twidere.R;
 
@@ -100,13 +99,6 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 	private long mLastDrawFinishTime;
 	private boolean mInDownState = false;
 	private boolean mFirstDraw = true;
-
-	private final Runnable mRequestRenderOnAnimationFrame = new Runnable() {
-		@Override
-		public void run() {
-			superRequestRender();
-		}
-	};
 
 	public GLRootView(final Context context) {
 		this(context, null);
@@ -251,7 +243,6 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 	public void onSurfaceChanged(final GL10 gl1, final int width, final int height) {
 		Log.i(TAG, "onSurfaceChanged: " + width + "x" + height + ", gl10: " + gl1.toString());
 		Process.setThreadPriority(Process.THREAD_PRIORITY_DISPLAY);
-		GalleryUtils.setRenderThread();
 		final GL11 gl = (GL11) gl1;
 		Utils.assertTrue(mGL == gl);
 
@@ -322,11 +313,6 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 		if (mRenderRequested) return;
 		mRenderRequested = true;
 		super.requestRender();
-	}
-
-	@Override
-	public void requestRenderForced() {
-		superRequestRender();
 	}
 
 	@Override
@@ -534,10 +520,6 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 		} else {
 			mCanvas.translate(-cx, -cy);
 		}
-	}
-
-	private void superRequestRender() {
-		super.requestRender();
 	}
 
 	private class IdleRunner implements Runnable {

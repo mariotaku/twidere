@@ -271,10 +271,6 @@ class PositionController {
 		return mRect;
 	}
 
-	public boolean hasDeletingBox() {
-		return false;
-	}
-
 	// Returns the index of the box which contains the given point (x, y)
 	// Returns Integer.MAX_VALUE if there is no hit. There may be more than
 	// one box contains the given point, and we want to give priority to the
@@ -285,11 +281,6 @@ class PositionController {
 		if (r.contains(x, y)) return j;
 
 		return Integer.MAX_VALUE;
-	}
-
-	public boolean inOpeningAnimation() {
-		return mPlatform.mAnimationKind == ANIM_KIND_OPENING && mPlatform.mAnimationStartTime != NO_ANIMATION
-				|| mBox.mAnimationKind == ANIM_KIND_OPENING && mBox.mAnimationStartTime != NO_ANIMATION;
 	}
 
 	public boolean isAtMinimalScale() {
@@ -472,47 +463,6 @@ class PositionController {
 		return 0;
 	}
 
-	public void scrollFilmX(final int dx) {
-		if (!canScroll()) return;
-
-		final Platform p = mPlatform;
-
-		// Only allow scrolling when we are not currently in an animation or we
-		// are in some animation with can be interrupted.
-		if (mBox.mAnimationStartTime != NO_ANIMATION) {
-			switch (mBox.mAnimationKind) {
-				case ANIM_KIND_SCROLL:
-				case ANIM_KIND_FLING:
-					break;
-				default:
-					return;
-			}
-		}
-
-		int x = p.mCurrentX + dx;
-
-		// Horizontal direction: we show the edge effect when the scrolling
-		// tries to go left of the first image or go right of the last image.
-		x -= mPlatform.mDefaultX;
-		if (!false && x > 0) {
-			mListener.onPull(x, EdgeView.LEFT);
-			x = 0;
-		} else if (!false && x < 0) {
-			mListener.onPull(-x, EdgeView.RIGHT);
-			x = 0;
-		}
-		x += mPlatform.mDefaultX;
-		startAnimation(x, mBox.mCurrentY, mBox.mCurrentScale, ANIM_KIND_SCROLL);
-	}
-
-	public void scrollFilmY(final int boxIndex, final int dy) {
-		if (!canScroll()) return;
-
-		final int y = mBox.mCurrentY + dy;
-		mBox.doAnimation(y, mBox.mCurrentScale, ANIM_KIND_SCROLL);
-		redraw();
-	}
-
 	public void scrollPage(final int dx, final int dy) {
 		if (!canScroll()) return;
 
@@ -657,12 +607,6 @@ class PositionController {
 	public void startCaptureAnimationSlide(final int offset) {
 
 		redraw();
-	}
-
-	// Slide the focused box to the center of the view.
-	public void startHorizontalSlide() {
-
-		startAnimation(mPlatform.mDefaultX, 0, mBox.mScaleMin, ANIM_KIND_SLIDE);
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -1007,7 +951,6 @@ class PositionController {
 		// EdgeView
 		void onPull(int offset, int direction);
 
-		void onRelease();
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -1193,44 +1136,6 @@ class PositionController {
 				mCurrentScale = mFromScale + progress * (mToScale - mFromScale);
 				return mCurrentY == mToY && mCurrentScale == mToScale;
 			}
-		}
-	}
-
-	// //////////////////////////////////////////////////////////////////////////
-	// FilmRatio: represents the progress of film mode change.
-	// //////////////////////////////////////////////////////////////////////////
-	private class FilmRatio extends Animatable {
-		// The film ratio: 1 means switching to film mode is complete, 0 means
-		// switching to page mode is complete.
-		public float mCurrentRatio, mFromRatio, mToRatio;
-
-		@Override
-		public boolean startSnapback() {
-			final float target = 0f;
-			if (target == mToRatio) return false;
-			return doAnimation(target, ANIM_KIND_SNAPBACK);
-		}
-
-		@Override
-		protected boolean interpolate(final float progress) {
-			if (progress >= 1) {
-				mCurrentRatio = mToRatio;
-				return true;
-			} else {
-				mCurrentRatio = mFromRatio + progress * (mToRatio - mFromRatio);
-				return mCurrentRatio == mToRatio;
-			}
-		}
-
-		// Starts an animation for the film ratio.
-		private boolean doAnimation(final float targetRatio, final int kind) {
-			mAnimationKind = kind;
-			mFromRatio = mCurrentRatio;
-			mToRatio = targetRatio;
-			mAnimationStartTime = AnimationTime.startTime();
-			mAnimationDuration = ANIM_TIME[mAnimationKind];
-			advanceAnimation();
-			return true;
 		}
 	}
 

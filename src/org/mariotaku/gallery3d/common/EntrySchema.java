@@ -20,8 +20,6 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-import android.content.ContentValues;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
@@ -199,55 +197,6 @@ public final class EntrySchema {
 		}
 	}
 
-	public <T extends Entry> T cursorToObject(final Cursor cursor, final T object) {
-		try {
-			for (final ColumnInfo column : mColumnInfo) {
-				final int columnIndex = column.projectionIndex;
-				final Field field = column.field;
-				switch (column.type) {
-					case TYPE_STRING:
-						field.set(object, cursor.isNull(columnIndex) ? null : cursor.getString(columnIndex));
-						break;
-					case TYPE_BOOLEAN:
-						field.setBoolean(object, cursor.getShort(columnIndex) == 1);
-						break;
-					case TYPE_SHORT:
-						field.setShort(object, cursor.getShort(columnIndex));
-						break;
-					case TYPE_INT:
-						field.setInt(object, cursor.getInt(columnIndex));
-						break;
-					case TYPE_LONG:
-						field.setLong(object, cursor.getLong(columnIndex));
-						break;
-					case TYPE_FLOAT:
-						field.setFloat(object, cursor.getFloat(columnIndex));
-						break;
-					case TYPE_DOUBLE:
-						field.setDouble(object, cursor.getDouble(columnIndex));
-						break;
-					case TYPE_BLOB:
-						field.set(object, cursor.isNull(columnIndex) ? null : cursor.getBlob(columnIndex));
-						break;
-				}
-			}
-			return object;
-		} catch (final IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public void deleteAll(final SQLiteDatabase db) {
-		final StringBuilder sql = new StringBuilder("DELETE FROM ");
-		sql.append(mTableName);
-		sql.append(";");
-		logExecSql(db, sql.toString());
-	}
-
-	public boolean deleteWithId(final SQLiteDatabase db, final long id) {
-		return db.delete(mTableName, "_id=?", new String[] { Long.toString(id) }) == 1;
-	}
-
 	public void dropTables(final SQLiteDatabase db) {
 		final String tableName = mTableName;
 		final StringBuilder sql = new StringBuilder("DROP TABLE IF EXISTS ");
@@ -266,18 +215,6 @@ public final class EntrySchema {
 
 	}
 
-	public ColumnInfo getColumn(final String columnName) {
-		final int index = getColumnIndex(columnName);
-		return index < 0 ? null : mColumnInfo[index];
-	}
-
-	public int getColumnIndex(final String columnName) {
-		for (final ColumnInfo column : mColumnInfo) {
-			if (column.name.equals(columnName)) return column.projectionIndex;
-		}
-		return -1;
-	}
-
 	public ColumnInfo[] getColumnInfo() {
 		return mColumnInfo;
 	}
@@ -288,144 +225,6 @@ public final class EntrySchema {
 
 	public String getTableName() {
 		return mTableName;
-	}
-
-	public long insertOrReplace(final SQLiteDatabase db, final Entry entry) {
-		final ContentValues values = new ContentValues();
-		objectToValues(entry, values);
-		if (entry.id == 0) {
-			values.remove("_id");
-		}
-		final long id = db.replace(mTableName, "_id", values);
-		entry.id = id;
-		return id;
-	}
-
-	public void objectToValues(final Entry object, final ContentValues values) {
-		try {
-			for (final ColumnInfo column : mColumnInfo) {
-				final String columnName = column.name;
-				final Field field = column.field;
-				switch (column.type) {
-					case TYPE_STRING:
-						values.put(columnName, (String) field.get(object));
-						break;
-					case TYPE_BOOLEAN:
-						values.put(columnName, field.getBoolean(object));
-						break;
-					case TYPE_SHORT:
-						values.put(columnName, field.getShort(object));
-						break;
-					case TYPE_INT:
-						values.put(columnName, field.getInt(object));
-						break;
-					case TYPE_LONG:
-						values.put(columnName, field.getLong(object));
-						break;
-					case TYPE_FLOAT:
-						values.put(columnName, field.getFloat(object));
-						break;
-					case TYPE_DOUBLE:
-						values.put(columnName, field.getDouble(object));
-						break;
-					case TYPE_BLOB:
-						values.put(columnName, (byte[]) field.get(object));
-						break;
-				}
-			}
-		} catch (final IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public Cursor queryAll(final SQLiteDatabase db) {
-		return db.query(mTableName, mProjection, null, null, null, null, null);
-	}
-
-	public boolean queryWithId(final SQLiteDatabase db, final long id, final Entry entry) {
-		final Cursor cursor = db.query(mTableName, mProjection, "_id=?", new String[] { Long.toString(id) }, null,
-				null, null);
-		boolean success = false;
-		if (cursor.moveToFirst()) {
-			cursorToObject(cursor, entry);
-			success = true;
-		}
-		cursor.close();
-		return success;
-	}
-
-	public String toDebugString(final Entry entry) {
-		try {
-			final StringBuilder sb = new StringBuilder();
-			sb.append("ID=").append(entry.id);
-			for (final ColumnInfo column : mColumnInfo) {
-				final String columnName = column.name;
-				final Field field = column.field;
-				final Object value = field.get(entry);
-				sb.append(" ").append(columnName).append("=").append(value == null ? "null" : value.toString());
-			}
-			return sb.toString();
-		} catch (final IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public String toDebugString(final Entry entry, final String... columnNames) {
-		try {
-			final StringBuilder sb = new StringBuilder();
-			sb.append("ID=").append(entry.id);
-			for (final String columnName : columnNames) {
-				final ColumnInfo column = getColumn(columnName);
-				final Field field = column.field;
-				final Object value = field.get(entry);
-				sb.append(" ").append(columnName).append("=").append(value == null ? "null" : value.toString());
-			}
-			return sb.toString();
-		} catch (final IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	/**
-	 * Converts the ContentValues to the object. The ContentValues may not
-	 * contain values for all the fields in the object.
-	 */
-	public <T extends Entry> T valuesToObject(final ContentValues values, final T object) {
-		try {
-			for (final ColumnInfo column : mColumnInfo) {
-				final String columnName = column.name;
-				final Field field = column.field;
-				switch (column.type) {
-					case TYPE_STRING:
-						setIfNotNull(field, object, values.getAsString(columnName));
-						break;
-					case TYPE_BOOLEAN:
-						setIfNotNull(field, object, values.getAsBoolean(columnName));
-						break;
-					case TYPE_SHORT:
-						setIfNotNull(field, object, values.getAsShort(columnName));
-						break;
-					case TYPE_INT:
-						setIfNotNull(field, object, values.getAsInteger(columnName));
-						break;
-					case TYPE_LONG:
-						setIfNotNull(field, object, values.getAsLong(columnName));
-						break;
-					case TYPE_FLOAT:
-						setIfNotNull(field, object, values.getAsFloat(columnName));
-						break;
-					case TYPE_DOUBLE:
-						setIfNotNull(field, object, values.getAsDouble(columnName));
-						break;
-					case TYPE_BLOB:
-						setIfNotNull(field, object, values.getAsByteArray(columnName));
-						break;
-				}
-			}
-			return object;
-		} catch (final IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	private void logExecSql(final SQLiteDatabase db, final String sql) {
@@ -495,12 +294,6 @@ public final class EntrySchema {
 		return table.value();
 	}
 
-	private void setIfNotNull(final Field field, final Object object, final Object value) throws IllegalAccessException {
-		if (value != null) {
-			field.set(object, value);
-		}
-	}
-
 	public static final class ColumnInfo {
 		private static final String ID_KEY = "_id";
 
@@ -513,7 +306,7 @@ public final class EntrySchema {
 		public final Field field;
 		public final int projectionIndex;
 
-		public ColumnInfo(final String name, final int type, final boolean indexed, final boolean unique,
+		private ColumnInfo(final String name, final int type, final boolean indexed, final boolean unique,
 				final boolean fullText, final String defaultValue, final Field field, final int projectionIndex) {
 			this.name = name.toLowerCase();
 			this.type = type;

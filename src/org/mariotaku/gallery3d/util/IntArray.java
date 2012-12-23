@@ -46,12 +46,4 @@ public class IntArray {
 		return mSize;
 	}
 
-	// For testing only
-	public int[] toArray(int[] result) {
-		if (result == null || result.length < mSize) {
-			result = new int[mSize];
-		}
-		System.arraycopy(mData, 0, result, 0, mSize);
-		return result;
-	}
 }

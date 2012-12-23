@@ -31,7 +31,6 @@ import org.mariotaku.gallery3d.util.ThreadPool.CancelListener;
 import org.mariotaku.gallery3d.util.ThreadPool.JobContext;
 
 import android.graphics.Bitmap;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.FloatMath;
@@ -198,30 +197,6 @@ public class TileImageView extends GLView {
 		if (sTilePool != null) {
 			sTilePool.clear();
 		}
-	}
-
-	// Calculate where the center of the image is, in the view coordinates.
-	public void getImageCenter(final Point center) {
-		// The width and height of this view.
-		final int viewW = getWidth();
-		final int viewH = getHeight();
-
-		// The distance between the center of the view to the center of the
-		// bitmap, in bitmap units. (mCenterX and mCenterY are the bitmap
-		// coordinates correspond to the center of view)
-		int distW, distH;
-		if (mRotation % 180 == 0) {
-			distW = mImageWidth / 2 - mCenterX;
-			distH = mImageHeight / 2 - mCenterY;
-		} else {
-			distW = mImageHeight / 2 - mCenterY;
-			distH = mImageWidth / 2 - mCenterX;
-		}
-
-		// Convert to view coordinates. mScale translates from bitmap units to
-		// view units.
-		center.x = Math.round(viewW / 2f + distW * mScale);
-		center.y = Math.round(viewH / 2f + distH * mScale);
 	}
 
 	public void notifyModelInvalidated() {

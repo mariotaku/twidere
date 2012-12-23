@@ -43,8 +43,6 @@ public interface GLRoot {
 
 	public void requestRender();
 
-	public void requestRenderForced();
-
 	public void setContentPane(GLView content);
 
 	public void setOrientationSource(OrientationSource source);

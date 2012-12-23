@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import org.mariotaku.gallery3d.app.IGalleryApplication;
-import org.mariotaku.gallery3d.common.LruCache;
 import org.mariotaku.gallery3d.common.Utils;
 import org.mariotaku.gallery3d.data.DownloadEntry.Columns;
 import org.mariotaku.gallery3d.util.Future;
@@ -37,6 +36,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.v4.util.LruCache;
 import android.util.Log;
 
 public class DownloadCache {
@@ -158,7 +158,7 @@ public class DownloadCache {
 				final String path = cursor.getString(FREESPACE_IDNEX_DATA);
 				boolean containsKey;
 				synchronized (mEntryMap) {
-					containsKey = mEntryMap.containsKey(url);
+					containsKey = mEntryMap.get(url) != null;
 				}
 				if (!containsKey) {
 					--maxDeleteFileCount;

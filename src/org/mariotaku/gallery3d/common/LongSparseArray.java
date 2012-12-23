@@ -43,46 +43,12 @@ public class LongSparseArray<E> implements Cloneable {
 	 * require any additional memory allocation to store the specified number of
 	 * mappings.
 	 */
-	public LongSparseArray(int initialCapacity) {
+	private LongSparseArray(int initialCapacity) {
 		initialCapacity = idealLongArraySize(initialCapacity);
 
 		mKeys = new long[initialCapacity];
 		mValues = new Object[initialCapacity];
 		mSize = 0;
-	}
-
-	/**
-	 * Puts a key/value pair into the array, optimizing for the case where the
-	 * key is greater than all existing keys in the array.
-	 */
-	public void append(final long key, final E value) {
-		if (mSize != 0 && key <= mKeys[mSize - 1]) {
-			put(key, value);
-			return;
-		}
-
-		if (mGarbage && mSize >= mKeys.length) {
-			gc();
-		}
-
-		final int pos = mSize;
-		if (pos >= mKeys.length) {
-			final int n = idealLongArraySize(pos + 1);
-
-			final long[] nkeys = new long[n];
-			final Object[] nvalues = new Object[n];
-
-			// Log.e("SparseArray", "grow " + mKeys.length + " to " + n);
-			System.arraycopy(mKeys, 0, nkeys, 0, mKeys.length);
-			System.arraycopy(mValues, 0, nvalues, 0, mValues.length);
-
-			mKeys = nkeys;
-			mValues = nvalues;
-		}
-
-		mKeys[pos] = key;
-		mValues[pos] = value;
-		mSize = pos + 1;
 	}
 
 	/**
@@ -115,81 +81,11 @@ public class LongSparseArray<E> implements Cloneable {
 	}
 
 	/**
-	 * Removes the mapping from the specified key, if there was any.
-	 */
-	public void delete(final long key) {
-		final int i = binarySearch(mKeys, 0, mSize, key);
-
-		if (i >= 0) {
-			if (mValues[i] != DELETED) {
-				mValues[i] = DELETED;
-				mGarbage = true;
-			}
-		}
-	}
-
-	/**
 	 * Gets the Object mapped from the specified key, or <code>null</code> if no
 	 * such mapping has been made.
 	 */
 	public E get(final long key) {
 		return get(key, null);
-	}
-
-	/**
-	 * Gets the Object mapped from the specified key, or the specified Object if
-	 * no such mapping has been made.
-	 */
-	@SuppressWarnings("unchecked")
-	public E get(final long key, final E valueIfKeyNotFound) {
-		final int i = binarySearch(mKeys, 0, mSize, key);
-
-		if (i < 0 || mValues[i] == DELETED)
-			return valueIfKeyNotFound;
-		else
-			return (E) mValues[i];
-	}
-
-	/**
-	 * Returns the index for which {@link #keyAt} would return the specified
-	 * key, or a negative number if the specified key is not mapped.
-	 */
-	public int indexOfKey(final long key) {
-		if (mGarbage) {
-			gc();
-		}
-
-		return binarySearch(mKeys, 0, mSize, key);
-	}
-
-	/**
-	 * Returns an index for which {@link #valueAt} would return the specified
-	 * key, or a negative number if no keys map to the specified value. Beware
-	 * that this is a linear search, unlike lookups by key, and that multiple
-	 * keys can map to the same value and this will find only one of them.
-	 */
-	public int indexOfValue(final E value) {
-		if (mGarbage) {
-			gc();
-		}
-
-		for (int i = 0; i < mSize; i++)
-			if (mValues[i] == value) return i;
-
-		return -1;
-	}
-
-	/**
-	 * Given an index in the range <code>0...size()-1</code>, returns the key
-	 * from the <code>index</code>th key-value mapping that this LongSparseArray
-	 * stores.
-	 */
-	public long keyAt(final int index) {
-		if (mGarbage) {
-			gc();
-		}
-
-		return mKeys[index];
 	}
 
 	/**
@@ -244,13 +140,6 @@ public class LongSparseArray<E> implements Cloneable {
 	}
 
 	/**
-	 * Alias for {@link #delete(long)}.
-	 */
-	public void remove(final long key) {
-		delete(key);
-	}
-
-	/**
 	 * Removes the mapping at the specified index.
 	 */
 	public void removeAt(final int index) {
@@ -258,19 +147,6 @@ public class LongSparseArray<E> implements Cloneable {
 			mValues[index] = DELETED;
 			mGarbage = true;
 		}
-	}
-
-	/**
-	 * Given an index in the range <code>0...size()-1</code>, sets a new value
-	 * for the <code>index</code>th key-value mapping that this LongSparseArray
-	 * stores.
-	 */
-	public void setValueAt(final int index, final E value) {
-		if (mGarbage) {
-			gc();
-		}
-
-		mValues[index] = value;
 	}
 
 	/**
@@ -327,8 +203,18 @@ public class LongSparseArray<E> implements Cloneable {
 		// Log.e("SparseArray", "gc end with " + mSize);
 	}
 
-	public static int idealLongArraySize(final int need) {
-		return idealByteArraySize(need * 8) / 8;
+	/**
+	 * Gets the Object mapped from the specified key, or the specified Object if
+	 * no such mapping has been made.
+	 */
+	@SuppressWarnings("unchecked")
+	private E get(final long key, final E valueIfKeyNotFound) {
+		final int i = binarySearch(mKeys, 0, mSize, key);
+
+		if (i < 0 || mValues[i] == DELETED)
+			return valueIfKeyNotFound;
+		else
+			return (E) mValues[i];
 	}
 
 	private static int binarySearch(final long[] a, final int start, final int len, final long key) {
@@ -357,5 +243,9 @@ public class LongSparseArray<E> implements Cloneable {
 			if (need <= (1 << i) - 12) return (1 << i) - 12;
 
 		return need;
+	}
+
+	private static int idealLongArraySize(final int need) {
+		return idealByteArraySize(need * 8) / 8;
 	}
 }

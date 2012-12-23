@@ -68,10 +68,6 @@ abstract public class Animation {
 		return mStartTime != NO_ANIMATION;
 	}
 
-	public void forceStop() {
-		mStartTime = NO_ANIMATION;
-	}
-
 	public boolean isActive() {
 		return mStartTime != NO_ANIMATION;
 	}

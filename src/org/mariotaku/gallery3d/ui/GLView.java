@@ -19,12 +19,9 @@ package org.mariotaku.gallery3d.ui;
 import java.util.ArrayList;
 
 import org.mariotaku.gallery3d.anim.CanvasAnimation;
-import org.mariotaku.gallery3d.anim.StateTransitionAnimation;
 import org.mariotaku.gallery3d.common.Utils;
 
 import android.graphics.Rect;
-import android.os.SystemClock;
-import android.util.Log;
 import android.view.MotionEvent;
 
 // GLView is a UI component. It can render to a GLCanvas and accept touch
@@ -43,13 +40,10 @@ import android.view.MotionEvent;
 // lockRendering() if the rendering thread should not run at the same time.
 //
 public class GLView {
-	private static final String TAG = "GLView";
-
 	public static final int VISIBLE = 0;
 	public static final int INVISIBLE = 1;
 
 	private static final int FLAG_INVISIBLE = 1;
-	private static final int FLAG_SET_MEASURED_SIZE = 2;
 	private static final int FLAG_LAYOUT_REQUESTED = 4;
 
 	protected final Rect mBounds = new Rect();
@@ -67,17 +61,12 @@ public class GLView {
 	protected int mMeasuredWidth = 0;
 
 	protected int mMeasuredHeight = 0;
-	private int mLastWidthSpec = -1;
-
-	private int mLastHeightSpec = -1;
 	protected int mScrollY = 0;
 
 	protected int mScrollX = 0;
 	protected int mScrollHeight = 0;
 	protected int mScrollWidth = 0;
 	private float[] mBackgroundColor;
-
-	private StateTransitionAnimation mTransition;
 
 	// Adds a child to this GLView.
 	public void addComponent(final GLView component) {
@@ -194,68 +183,8 @@ public class GLView {
 		onLayout(sizeChanged, left, top, right, bottom);
 	}
 
-	public void lockRendering() {
-		if (mRoot != null) {
-			mRoot.lockRenderThread();
-		}
-	}
-
-	public void measure(final int widthSpec, final int heightSpec) {
-		if (widthSpec == mLastWidthSpec && heightSpec == mLastHeightSpec && (mViewFlags & FLAG_LAYOUT_REQUESTED) == 0)
-			return;
-
-		mLastWidthSpec = widthSpec;
-		mLastHeightSpec = heightSpec;
-
-		mViewFlags &= ~FLAG_SET_MEASURED_SIZE;
-		onMeasure(widthSpec, heightSpec);
-		if ((mViewFlags & FLAG_SET_MEASURED_SIZE) == 0)
-			throw new IllegalStateException(getClass().getName() + " should call setMeasuredSize() in onMeasure()");
-	}
-
-	// Removes all children of this GLView.
-	public void removeAllComponents() {
-		for (int i = 0, n = mComponents.size(); i < n; ++i) {
-			removeOneComponent(mComponents.get(i));
-		}
-		mComponents.clear();
-	}
-
-	// Removes a child from this GLView.
-	public boolean removeComponent(final GLView component) {
-		if (mComponents == null) return false;
-		if (mComponents.remove(component)) {
-			removeOneComponent(component);
-			return true;
-		}
-		return false;
-	}
-
-	// Request re-layout of the view hierarchy.
-	public void requestLayout() {
-		mViewFlags |= FLAG_LAYOUT_REQUESTED;
-		mLastHeightSpec = -1;
-		mLastWidthSpec = -1;
-		if (mParent != null) {
-			mParent.requestLayout();
-		} else {
-			// Is this a content pane ?
-			final GLRoot root = getGLRoot();
-			if (root != null) {
-				root.requestLayoutContentPane();
-			}
-		}
-	}
-
 	public void setBackgroundColor(final float[] color) {
 		mBackgroundColor = color;
-	}
-
-	public void setIntroAnimation(final StateTransitionAnimation intro) {
-		mTransition = intro;
-		if (mTransition != null) {
-			mTransition.start();
-		}
 	}
 
 	// Sets the visiblity of this GLView (either GLView.VISIBLE or
@@ -269,23 +198,6 @@ public class GLView {
 		}
 		onVisibilityChanged(visibility);
 		invalidate();
-	}
-
-	public void startAnimation(final CanvasAnimation animation) {
-		final GLRoot root = getGLRoot();
-		if (root == null) throw new IllegalStateException();
-		mAnimation = animation;
-		if (mAnimation != null) {
-			mAnimation.start();
-			root.registerLaunchedAnimation(mAnimation);
-		}
-		invalidate();
-	}
-
-	public void unlockRendering() {
-		if (mRoot != null) {
-			mRoot.unlockRenderThread();
-		}
 	}
 
 	protected boolean dispatchTouchEvent(final MotionEvent event) {
@@ -372,32 +284,17 @@ public class GLView {
 	}
 
 	protected void render(final GLCanvas canvas) {
-		boolean transitionActive = false;
-		if (mTransition != null && mTransition.calculate(AnimationTime.get())) {
-			invalidate();
-			transitionActive = mTransition.isActive();
-		}
 		renderBackground(canvas);
 		canvas.save();
-		if (transitionActive) {
-			mTransition.applyContentTransform(this, canvas);
-		}
 		for (int i = 0, n = getComponentCount(); i < n; ++i) {
 			renderChild(canvas, getComponent(i));
 		}
 		canvas.restore();
-		if (transitionActive) {
-			mTransition.applyOverlay(this, canvas);
-		}
 	}
 
 	protected void renderBackground(final GLCanvas view) {
 		if (mBackgroundColor != null) {
 			view.clearBuffer(mBackgroundColor);
-		}
-		if (mTransition != null && mTransition.isActive()) {
-			mTransition.applyBackground(this, view);
-			return;
 		}
 	}
 
@@ -426,37 +323,11 @@ public class GLView {
 		canvas.translate(-xoffset, -yoffset);
 	}
 
-	protected void setMeasuredSize(final int width, final int height) {
-		mViewFlags |= FLAG_SET_MEASURED_SIZE;
-		mMeasuredWidth = width;
-		mMeasuredHeight = height;
-	}
-
-	private void removeOneComponent(final GLView component) {
-		if (mMotionTarget == component) {
-			final long now = SystemClock.uptimeMillis();
-			final MotionEvent cancelEvent = MotionEvent.obtain(now, now, MotionEvent.ACTION_CANCEL, 0, 0, 0);
-			dispatchTouchEvent(cancelEvent);
-			cancelEvent.recycle();
-		}
-		component.onDetachFromRoot();
-		component.mParent = null;
-	}
-
 	private boolean setBounds(final int left, final int top, final int right, final int bottom) {
 		final boolean sizeChanged = right - left != mBounds.right - mBounds.left
 				|| bottom - top != mBounds.bottom - mBounds.top;
 		mBounds.set(left, top, right, bottom);
 		return sizeChanged;
-	}
-
-	// This is for debugging only.
-	// Dump the view hierarchy into log.
-	void dumpTree(final String prefix) {
-		Log.d(TAG, prefix + getClass().getSimpleName());
-		for (int i = 0, n = getComponentCount(); i < n; ++i) {
-			getComponent(i).dumpTree(prefix + "....");
-		}
 	}
 
 	public interface OnClickListener {

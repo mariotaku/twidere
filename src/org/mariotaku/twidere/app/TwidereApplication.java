@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import org.mariotaku.gallery3d.app.IGalleryApplication;
 import org.mariotaku.gallery3d.data.DataManager;
 import org.mariotaku.gallery3d.data.DownloadCache;
-import org.mariotaku.gallery3d.data.ImageCacheService;
 import org.mariotaku.gallery3d.util.GalleryUtils;
 import org.mariotaku.gallery3d.util.ThreadPool;
 import org.mariotaku.twidere.Constants;
@@ -72,10 +71,6 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	private static final String DOWNLOAD_FOLDER = "download";
 
 	private static final long DOWNLOAD_CAPACITY = 64 * 1024 * 1024; // 64M
-
-	private ImageCacheService mImageCacheService;
-
-	private final Object mLock = new Object();
 
 	private DataManager mDataManager;
 
@@ -124,17 +119,6 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	public HostAddressResolver getHostAddressResolver() {
 		if (mResolver != null) return mResolver;
 		return mResolver = new TwidereHostAddressResolver(this);
-	}
-
-	@Override
-	public ImageCacheService getImageCacheService() {
-		// This method may block on file I/O so a dedicated lock is needed here.
-		synchronized (mLock) {
-			if (mImageCacheService == null) {
-				mImageCacheService = new ImageCacheService(getAndroidContext());
-			}
-			return mImageCacheService;
-		}
 	}
 
 	public LazyImageLoader getPreviewImageLoader() {

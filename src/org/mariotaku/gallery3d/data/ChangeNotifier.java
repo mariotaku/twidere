@@ -18,28 +18,10 @@ package org.mariotaku.gallery3d.data;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.mariotaku.gallery3d.app.IGalleryApplication;
-
-import android.net.Uri;
-
 // This handles change notification for media sets.
 public class ChangeNotifier {
 
 	private final AtomicBoolean mContentDirty = new AtomicBoolean(true);
-
-	public ChangeNotifier(final Uri uri, final IGalleryApplication application) {
-		application.getDataManager().registerChangeNotifier(uri, this);
-	}
-
-	public ChangeNotifier(final Uri[] uris, final IGalleryApplication application) {
-		for (final Uri uri : uris) {
-			application.getDataManager().registerChangeNotifier(uri, this);
-		}
-	}
-
-	public void fakeChange() {
-		onChange(false);
-	}
 
 	// Returns the dirty flag and clear it.
 	public boolean isDirty() {
