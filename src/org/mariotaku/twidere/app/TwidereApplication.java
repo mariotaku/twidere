@@ -49,6 +49,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.webkit.WebView;
 import edu.ucdavis.earlybird.UCDService;
 
 public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener,
@@ -79,6 +80,8 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	private DownloadCache mDownloadCache;
 	private Handler mHandler;
 
+	private String mBrowserUserAgent;
+
 	@Override
 	public Context getAndroidContext() {
 		return this;
@@ -87,6 +90,10 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	public AsyncTaskManager getAsyncTaskManager() {
 		if (mAsyncTaskManager != null) return mAsyncTaskManager;
 		return mAsyncTaskManager = AsyncTaskManager.getInstance();
+	}
+
+	public String getBrowserUserAgent() {
+		return mBrowserUserAgent;
 	}
 
 	@Override
@@ -178,6 +185,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		initializeAsyncTask();
 		GalleryUtils.initialize(this);
 		mTwitterWrapper = AsyncTwitterWrapper.getInstance(this);
+		mBrowserUserAgent = new WebView(this).getSettings().getUserAgentString();
 		if (mPreferences.getBoolean(PREFERENCE_KEY_UCD_DATA_PROFILING, false)) {
 			startService(new Intent(this, UCDService.class));
 		}

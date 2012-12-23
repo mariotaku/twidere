@@ -16,6 +16,10 @@
 
 package org.mariotaku.gallery3d.data;
 
+import static org.mariotaku.twidere.util.Utils.getImageLoaderHttpClient;
+import static org.mariotaku.twidere.util.Utils.getRedirectedHttpResponse;
+import static org.mariotaku.twidere.util.Utils.parseString;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -28,15 +32,18 @@ import org.mariotaku.gallery3d.common.Utils;
 import org.mariotaku.gallery3d.util.ThreadPool.CancelListener;
 import org.mariotaku.gallery3d.util.ThreadPool.JobContext;
 
+import twitter4j.http.HttpClientWrapper;
+import android.content.Context;
 import android.util.Log;
 
 public class DownloadUtils {
 	private static final String TAG = "DownloadService";
 
-	public static boolean download(final JobContext jc, final URL url, final OutputStream output) {
+	public static boolean download(final Context context, final JobContext jc, final URL url, final OutputStream output) {
 		InputStream input = null;
 		try {
-			input = url.openStream();
+			final HttpClientWrapper client = getImageLoaderHttpClient(context);
+			input = getRedirectedHttpResponse(client, parseString(url)).asStream();
 			dump(jc, input, output);
 			return true;
 		} catch (final Throwable t) {
@@ -66,11 +73,11 @@ public class DownloadUtils {
 		Thread.interrupted(); // consume the interrupt signal
 	}
 
-	public static boolean requestDownload(final JobContext jc, final URL url, final File file) {
+	public static boolean requestDownload(final Context context, final JobContext jc, final URL url, final File file) {
 		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream(file);
-			return download(jc, url, fos);
+			return download(context, jc, url, fos);
 		} catch (final Throwable t) {
 			return false;
 		} finally {

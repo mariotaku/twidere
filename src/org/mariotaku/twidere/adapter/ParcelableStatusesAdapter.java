@@ -29,6 +29,7 @@ import static org.mariotaku.twidere.util.Utils.getStatusBackground;
 import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
+import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
 import java.util.ArrayList;
@@ -44,7 +45,6 @@ import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
@@ -222,9 +222,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			case R.id.image_preview_frame: {
 				final ImageSpec spec = getAllAvailableImage(status.image_orig_url_string);
 				if (spec != null) {
-					final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(spec.full_image_link));
-					intent.setPackage(mContext.getPackageName());
-					mContext.startActivity(intent);
+					openImage(mContext, Uri.parse(spec.full_image_link));
 				}
 				break;
 			}

@@ -318,8 +318,7 @@ class PositionController {
 	// hasPrev/hasNext indicates if there are previous/next boxes for the
 	// focused box. constrained indicates whether the focused box should be put
 	// into the constrained frame.
-	public void moveBox(final int fromIndex[], final boolean hasPrev, final boolean hasNext, final boolean constrained,
-			final Size[] sizes) {
+	public void moveBox(final int fromIndex[], final boolean constrained, final Size[] sizes) {
 		// debugMoveBox(fromIndex);
 
 		// 1. Get the absolute X coordinates for the boxes.

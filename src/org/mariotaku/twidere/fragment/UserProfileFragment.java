@@ -32,6 +32,7 @@ import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
+import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.openIncomingFriendships;
 import static org.mariotaku.twidere.util.Utils.openSavedSearches;
 import static org.mariotaku.twidere.util.Utils.openTweetSearch;
@@ -497,11 +498,12 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			case R.id.edit_follow: {
 				if (mUser == null || mAccountId <= 0) return;
 				if (mAccountId == mUserId) {
-					final Bundle bundle = new Bundle();
-					bundle.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
+					final Bundle bundle = getArguments();
 					final Intent intent = new Intent(INTENT_ACTION_EDIT_USER_PROFILE);
 					intent.setClass(getActivity(), EditUserProfileActivity.class);
-					intent.putExtras(bundle);
+					if (bundle != null) {
+						intent.putExtras(bundle);
+					}
 					startActivity(intent);
 				} else {
 					if (mUser.is_follow_request_sent) return;
@@ -538,9 +540,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			}
 			case R.id.profile_image_container: {
 				final Uri uri = Uri.parse(getOriginalTwitterProfileImage(mUser.profile_image_url));
-				final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, uri);
-				intent.setPackage(getActivity().getPackageName());
-				startActivity(intent);
+				openImage(getActivity(), uri);
 				break;
 			}
 			case R.id.tweets_container: {
@@ -683,9 +683,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				break;
 			}
 			case TwidereLinkify.LINK_TYPE_LINK_WITH_IMAGE_EXTENSION: {
-				final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(link));
-				intent.setPackage(getActivity().getPackageName());
-				startActivity(intent);
+				openImage(getActivity(), Uri.parse(link));
 				break;
 			}
 			case TwidereLinkify.LINK_TYPE_LINK: {

@@ -148,8 +148,6 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 
 	private static final int UNFREEZE_GLROOT_TIMEOUT = 250;
 
-	public static final String KEY_MEDIA_SET_PATH = "media-set-path";
-
 	public static final String KEY_MEDIA_ITEM_PATH = "media-item-path";
 
 	public static final String KEY_INDEX_HINT = "index-hint";
@@ -169,10 +167,9 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	private boolean mIsMenuVisible;
 	private MediaItem mCurrentPhoto = null;
 
-	private String mSetPathString;
 	// This is the original mSetPathString before adding the camera preview
 	// item.
-	private boolean mHasCameraScreennailOrPlaceholder = false;
+	private final boolean mHasCameraScreennailOrPlaceholder = false;
 	private final long mDeferUpdateUntil = Long.MAX_VALUE;
 	private final GLView mRootPane = new GLView() {
 		@Override
@@ -280,7 +277,7 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	@Override
 	public void onSingleTapUp(final int x, final int y) {
 
-		final MediaItem item = mModel.getMediaItem(0);
+		final MediaItem item = mModel.getMediaItem();
 		if (item == null) // item is not ready or it is camera preview, ignore
 			return;
 
@@ -354,7 +351,7 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 								 */
 							} else {
 								updateBars();
-								updateCurrentPhoto(mModel.getMediaItem(0));
+								updateCurrentPhoto(mModel.getMediaItem());
 							}
 						}
 						break;
@@ -389,62 +386,14 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 			}
 		};
 
-		mSetPathString = data.getString(KEY_MEDIA_SET_PATH);
 		final String itemPathString = data.getString(KEY_MEDIA_ITEM_PATH);
 		final Path itemPath = itemPathString != null ? Path.fromString(data.getString(KEY_MEDIA_ITEM_PATH)) : null;
 		mCurrentIndex = data.getInt(KEY_INDEX_HINT, 0);
-		if (mSetPathString != null) {
-			if (null != null) {
-				mShowBars = false;
-				mHasCameraScreennailOrPlaceholder = true;
-
-				if (data.getBoolean(KEY_SHOW_WHEN_LOCKED, false)) {
-					// Set the flag to be on top of the lock screen.
-					mFlags |= FLAG_SHOW_WHEN_LOCKED;
-				}
-
-				// Don't display "empty album" action item for capture intents.
-				if (!mSetPathString.equals("/local/all/0")) {
-					mSetPathString = "/filter/empty/{" + mSetPathString + "}";
-				}
-
-			}
-
-			mSetPathString = "/filter/delete/{" + mSetPathString + "}";
-			if (itemPath == null) // Bail out, ActivityState can't load on an
-									// empty
-									// album
-				return;
-			final PhotoDataAdapter pda = new PhotoDataAdapter(this, mPhotoView, itemPath, mCurrentIndex,
-					null == null ? -1 : 0);
-			mModel = pda;
-			mPhotoView.setModel(mModel);
-
-			pda.setDataListener(new PhotoDataAdapter.DataListener() {
-
-				@Override
-				public void onLoadingFinished(final boolean loadingFailed) {
-					// TODO
-					hideProgress();
-					final MediaItem photo = mModel.getMediaItem(0);
-					if (photo != null) {
-						updateCurrentPhoto(photo);
-					}
-				}
-
-				@Override
-				public void onLoadingStarted() {
-					showProgress();
-				}
-
-			});
-		} else {
-			// Get default media set by the URI
-			final MediaItem mediaItem = (MediaItem) getDataManager().getMediaObject(itemPath);
-			mModel = new SinglePhotoDataAdapter(this, mPhotoView, mediaItem);
-			mPhotoView.setModel(mModel);
-			updateCurrentPhoto(mediaItem);
-		}
+		// Get default media set by the URI
+		final MediaItem mediaItem = (MediaItem) getDataManager().getMediaObject(itemPath);
+		mModel = new SinglePhotoDataAdapter(this, mPhotoView, mediaItem);
+		mPhotoView.setModel(mModel);
+		updateCurrentPhoto(mediaItem);
 
 	}
 
@@ -799,6 +748,14 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 
 	void initialize(final ImageViewerGLActivity activity, final Bundle data) {
 		mData = data;
+	}
+
+	void onLoadFinished() {
+		hideProgress();
+	}
+
+	void onLoadStart() {
+		showProgress();
 	}
 
 	// should only be called by StateManager

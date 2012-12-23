@@ -70,10 +70,12 @@ import java.util.regex.Matcher;
 import org.apache.http.NameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mariotaku.gallery3d.app.ImageViewerGLActivity;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.DualPaneActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
+import org.mariotaku.twidere.activity.ImageViewerActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.ActivitiesAboutMeFragment;
 import org.mariotaku.twidere.fragment.DirectMessagesConversationFragment;
@@ -948,8 +950,7 @@ public final class Utils implements Constants {
 
 	public static String getBrowserUserAgent(final Context context) {
 		if (context == null) return null;
-		final WebView wv = new WebView(context);
-		return wv.getSettings().getUserAgentString();
+		return TwidereApplication.getInstance(context).getBrowserUserAgent();
 	}
 
 	public static Bitmap getColorPreviewBitmap(final Context context, final int color) {
@@ -2033,6 +2034,18 @@ public final class Utils implements Constants {
 		}
 	}
 
+	public static void openImage(final Context context, final Uri uri) {
+		if (context == null || uri == null) return;
+		final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE);
+		intent.setDataAndType(uri, "image/*");
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1) {
+			intent.setClass(context, ImageViewerGLActivity.class);
+		} else {
+			intent.setClass(context, ImageViewerActivity.class);
+		}
+		context.startActivity(intent);
+	}
+
 	public static void openIncomingFriendships(final Activity activity, final long account_id) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
@@ -2818,5 +2831,4 @@ public final class Utils implements Constants {
 			}
 		}
 	}
-
 }

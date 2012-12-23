@@ -145,6 +145,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 		final Bundle extras = getIntent().getExtras();
 		if (extras == null || !isMyAccount(this, extras.getLong(INTENT_KEY_ACCOUNT_ID))) {
 			finish();
@@ -152,7 +153,6 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 		}
 		mProfileImageLoader = TwidereApplication.getInstance(this).getProfileImageLoader();
 		mAccountId = extras.getLong(INTENT_KEY_ACCOUNT_ID);
-		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edit_user_profile);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		mProfileNameBannerContainer.setOnSizeChangedListener(this);

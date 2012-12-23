@@ -17,11 +17,9 @@
 package org.mariotaku.gallery3d.app;
 
 import org.mariotaku.gallery3d.common.BitmapUtils;
-import org.mariotaku.gallery3d.common.Utils;
 import org.mariotaku.gallery3d.data.MediaItem;
 import org.mariotaku.gallery3d.ui.BitmapScreenNail;
 import org.mariotaku.gallery3d.ui.PhotoView;
-import org.mariotaku.gallery3d.ui.ScreenNail;
 import org.mariotaku.gallery3d.ui.SynchronizedHandler;
 import org.mariotaku.gallery3d.ui.TileImageViewAdapter;
 import org.mariotaku.gallery3d.util.Future;
@@ -40,16 +38,17 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter implements Imag
 
 	private static final String TAG = "SinglePhotoDataAdapter";
 	private static final int SIZE_BACKUP = 1024;
-	private static final int MSG_UPDATE_IMAGE = 1;
+	private static final int MSG_IMAGE_LOAD_FINISHED = 2;
+	private static final int MSG_IMAGE_LOAD_START = 1;
 
 	private final MediaItem mItem;
-	private final boolean mHasFullImage;
 	private Future<?> mTask;
 	private final Handler mHandler;
 
 	private final PhotoView mPhotoView;
 	private final ThreadPool mThreadPool;
-	private int mLoadingState = LOADING_INIT;
+	private final ImageViewerGLActivity mActivity;
+	private final int mLoadingState = LOADING_INIT;
 	private BitmapScreenNail mBitmapScreenNail;
 
 	private final FutureListener<BitmapRegionDecoder> mLargeListener = new FutureListener<BitmapRegionDecoder>() {
@@ -62,54 +61,52 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter implements Imag
 			final BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inSampleSize = BitmapUtils.computeSampleSize((float) SIZE_BACKUP / Math.max(width, height));
 			final Bitmap bitmap = decoder.decodeRegion(new Rect(0, 0, width, height), options);
-			mHandler.sendMessage(mHandler.obtainMessage(MSG_UPDATE_IMAGE, new ImageBundle(decoder, bitmap)));
+			mHandler.sendMessage(mHandler.obtainMessage(MSG_IMAGE_LOAD_FINISHED, new ImageBundle(decoder, bitmap)));
 		}
-	};
 
-	private final FutureListener<Bitmap> mThumbListener = new FutureListener<Bitmap>() {
 		@Override
-		public void onFutureDone(final Future<Bitmap> future) {
-			mHandler.sendMessage(mHandler.obtainMessage(MSG_UPDATE_IMAGE, future));
+		public void onFutureStart(final Future<BitmapRegionDecoder> future) {
+			mHandler.sendMessage(mHandler.obtainMessage(MSG_IMAGE_LOAD_START));
 		}
 	};
 
 	public SinglePhotoDataAdapter(final ImageViewerGLActivity activity, final PhotoView view, final MediaItem item) {
-		mItem = Utils.checkNotNull(item);
-		mHasFullImage = (item.getSupportedOperations() & MediaItem.SUPPORT_FULL_IMAGE) != 0;
-		mPhotoView = Utils.checkNotNull(view);
+		mItem = item;
+		mPhotoView = view;
+		mActivity = activity;
+		mThreadPool = activity.getThreadPool();
 		mHandler = new SynchronizedHandler(activity.getGLRoot()) {
 			@Override
-			@SuppressWarnings("unchecked")
 			public void handleMessage(final Message message) {
-				Utils.assertTrue(message.what == MSG_UPDATE_IMAGE);
-				if (mHasFullImage) {
-					onDecodeLargeComplete((ImageBundle) message.obj);
-				} else {
-					onDecodeThumbComplete((Future<Bitmap>) message.obj);
+				switch (message.what) {
+					case MSG_IMAGE_LOAD_START: {
+						mActivity.onLoadStart();
+						break;
+					}
+					case MSG_IMAGE_LOAD_FINISHED: {
+						onDecodeLargeComplete((ImageBundle) message.obj);
+						mActivity.onLoadFinished();
+						break;
+					}
 				}
+
 			}
 		};
-		mThreadPool = activity.getThreadPool();
 	}
 
 	@Override
-	public int getImageRotation(final int offset) {
-		return offset == 0 ? mItem.getFullImageRotation() : 0;
+	public int getImageRotation() {
+		return mItem.getFullImageRotation();
 	}
 
 	@Override
-	public int getLoadingState(final int offset) {
+	public int getLoadingState() {
 		return mLoadingState;
 	}
 
 	@Override
-	public MediaItem getMediaItem(final int offset) {
-		return offset == 0 ? mItem : null;
-	}
-
-	@Override
-	public ScreenNail getScreenNail(final int offset) {
-		return offset == 0 ? getScreenNail() : null;
+	public MediaItem getMediaItem() {
+		return mItem;
 	}
 
 	@Override
@@ -129,11 +126,7 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter implements Imag
 	@Override
 	public void resume() {
 		if (mTask == null) {
-			if (mHasFullImage) {
-				mTask = mThreadPool.submit(mItem.requestLargeImage(), mLargeListener);
-			} else {
-				mTask = mThreadPool.submit(mItem.requestImage(MediaItem.TYPE_THUMBNAIL), mThumbListener);
-			}
+			mTask = mThreadPool.submit(mItem.requestLargeImage(), mLargeListener);
 		}
 	}
 
@@ -144,22 +137,6 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter implements Imag
 			mPhotoView.notifyImageChange(0);
 		} catch (final Throwable t) {
 			Log.w(TAG, "fail to decode large", t);
-		}
-	}
-
-	private void onDecodeThumbComplete(final Future<Bitmap> future) {
-		try {
-			final Bitmap backup = future.get();
-			if (backup == null) {
-				mLoadingState = LOADING_FAIL;
-				return;
-			} else {
-				mLoadingState = LOADING_COMPLETE;
-			}
-			setScreenNail(backup, backup.getWidth(), backup.getHeight());
-			mPhotoView.notifyImageChange(0);
-		} catch (final Throwable t) {
-			Log.w(TAG, "fail to decode thumb", t);
 		}
 	}
 

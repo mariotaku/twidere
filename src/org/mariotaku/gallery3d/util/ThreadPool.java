@@ -162,6 +162,9 @@ public class ThreadPool {
 		// This is called by a thread in the thread pool.
 		@Override
 		public void run() {
+			if (mListener != null) {
+				mListener.onFutureStart(this);
+			}
 			T result = null;
 
 			// A job is in CPU mode by default. setMode returns false

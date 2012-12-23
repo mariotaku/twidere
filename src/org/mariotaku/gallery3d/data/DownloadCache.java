@@ -71,6 +71,7 @@ public class DownloadCache {
 	private final IGalleryApplication mApplication;
 	private final SQLiteDatabase mDatabase;
 	private final long mCapacity;
+	private final Context mContext;
 
 	private long mTotalBytes = 0;
 	private boolean mInitialized = false;
@@ -78,8 +79,9 @@ public class DownloadCache {
 	public DownloadCache(final IGalleryApplication application, final File root, final long capacity) {
 		mRoot = Utils.checkNotNull(root);
 		mApplication = Utils.checkNotNull(application);
+		mContext = application.getAndroidContext();
 		mCapacity = capacity;
-		mDatabase = new DatabaseHelper(application.getAndroidContext()).getWritableDatabase();
+		mDatabase = new DatabaseHelper(mContext).getWritableDatabase();
 	}
 
 	public Entry download(final JobContext jc, final URL url) {
@@ -331,6 +333,11 @@ public class DownloadCache {
 			}
 		}
 
+		@Override
+		public void onFutureStart(final Future<File> future) {
+			// TODO Auto-generated method stub
+		}
+
 		public void removeProxy(final TaskProxy proxy) {
 			synchronized (mTaskMap) {
 				Utils.assertTrue(mProxySet.remove(proxy));
@@ -351,7 +358,7 @@ public class DownloadCache {
 				tempFile = File.createTempFile("cache", ".tmp", mRoot);
 				// download from url to tempFile
 				jc.setMode(ThreadPool.MODE_NETWORK);
-				final boolean downloaded = DownloadUtils.requestDownload(jc, url, tempFile);
+				final boolean downloaded = DownloadUtils.requestDownload(mContext, jc, url, tempFile);
 				jc.setMode(ThreadPool.MODE_NONE);
 				if (downloaded) return tempFile;
 			} catch (final Exception e) {

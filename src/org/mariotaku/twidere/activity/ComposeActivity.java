@@ -28,6 +28,7 @@ import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getImageUploadStatus;
 import static org.mariotaku.twidere.util.Utils.getShareStatus;
+import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
@@ -535,10 +536,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				break;
 			}
 			case MENU_VIEW: {
-				if (mImageUri != null) {
-					final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, mImageUri);
-					startActivity(intent);
-				}
+				openImage(this, mImageUri);
 				break;
 			}
 			case MENU_EXTENSIONS: {

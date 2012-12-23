@@ -33,7 +33,6 @@ import android.view.MotionEvent;
 
 public class PhotoView extends GLView {
 	private static final String TAG = "PhotoView";
-	private final int mPlaceholderColor;
 
 	public static final int INVALID_SIZE = -1;
 	public static final long INVALID_DATA_VERSION = MediaObject.INVALID_DATA_VERSION;
@@ -67,12 +66,6 @@ public class PhotoView extends GLView {
 	private int mCompensation = 0;
 	private final Rect mCameraRelativeFrame = new Rect();
 	private final Rect mCameraRect = new Rect();
-	// [mPrevBound, mNextBound] is the range of index for all pictures in the
-	// model, if we assume the index of current focused picture is 0. So if
-	// there are some previous pictures, mPrevBound < 0, and if there are some
-	// next pictures, mNextBound > 0.
-	private int mPrevBound;
-	private int mNextBound;
 	// This variable prevents us doing snapback until its values goes to 0. This
 	// happens if the user gesture is still in progress or we are in a capture
 	// animation.
@@ -95,7 +88,6 @@ public class PhotoView extends GLView {
 		mTileView = new TileImageView(activity);
 		addComponent(mTileView);
 		mContext = activity.getAndroidContext();
-		mPlaceholderColor = mContext.getResources().getColor(R.color.photo_placeholder);
 		mEdgeView = new EdgeView(mContext);
 		addComponent(mEdgeView);
 		mNoThumbnailText = StringTexture.newInstance(mContext.getString(R.string.no_thumbnail), DEFAULT_TEXT_SIZE,
@@ -136,8 +128,6 @@ public class PhotoView extends GLView {
 	}
 
 	public void notifyDataChange(final int[] fromIndex, final int prevBound, final int nextBound) {
-		mPrevBound = prevBound;
-		mNextBound = nextBound;
 
 		// Update mTouchBoxIndex
 		if (mTouchBoxIndex != Integer.MAX_VALUE) {
@@ -155,7 +145,7 @@ public class PhotoView extends GLView {
 		mSizes[0] = mPicture.getSize();
 
 		// Move the boxes
-		mPositionController.moveBox(fromIndex, mPrevBound < 0, mNextBound > 0, false, mSizes);
+		mPositionController.moveBox(fromIndex, false, mSizes);
 
 		for (int i = -0; i <= 0; i++) {
 			setPictureSize(i);
@@ -463,17 +453,12 @@ public class PhotoView extends GLView {
 		public static final int FOCUS_HINT_PREVIOUS = 1;
 
 		// Returns the rotation for the specified picture.
-		public int getImageRotation(int offset);
+		public int getImageRotation();
 
-		public int getLoadingState(int offset);
+		public int getLoadingState();
 
 		// Returns the media item for the specified picture.
-		public MediaItem getMediaItem(int offset);
-
-		// This amends the getScreenNail() method of TileImageView.Model to get
-		// ScreenNail at previous (negative offset) or next (positive offset)
-		// positions. Returns null if the specified ScreenNail is unavailable.
-		public ScreenNail getScreenNail(int offset);
+		public MediaItem getMediaItem();
 
 	}
 
@@ -796,8 +781,8 @@ public class PhotoView extends GLView {
 			// mImageWidth and mImageHeight will get updated
 			mTileView.notifyModelInvalidated();
 
-			mLoadingState = mModel.getLoadingState(0);
-			setScreenNail(mModel.getScreenNail(0));
+			mLoadingState = mModel.getLoadingState();
+			setScreenNail(mModel.getScreenNail());
 			updateSize();
 		}
 
@@ -863,7 +848,7 @@ public class PhotoView extends GLView {
 		}
 
 		private void updateSize() {
-			mRotation = mModel.getImageRotation(0);
+			mRotation = mModel.getImageRotation();
 
 			final int w = mTileView.mImageWidth;
 			final int h = mTileView.mImageHeight;

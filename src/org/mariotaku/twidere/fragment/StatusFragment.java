@@ -33,6 +33,7 @@ import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
+import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 import static org.mariotaku.twidere.util.Utils.setUserColor;
@@ -626,11 +627,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	public void onImageClick(final ImageSpec spec) {
 		if (spec == null) return;
 		// UCD
-		ProfilingUtil.profile(getActivity(), mAccountId, "Large image click, " + mStatusId + ", "
-				+ spec.full_image_link);
-		final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE, Uri.parse(spec.full_image_link));
-		intent.setPackage(getActivity().getPackageName());
-		startActivity(intent);
+		ProfilingUtil.profile(getActivity(), mAccountId, "Large image click, " + mStatusId + ", " + spec);
+		openImage(getActivity(), Uri.parse(spec.full_image_link));
 	}
 
 	@Override
