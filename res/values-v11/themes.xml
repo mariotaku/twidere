@@ -7,11 +7,11 @@
 		<item name="android:windowIsTranslucent">true</item>
 		<item name="android:windowContentOverlay">@null</item>
 		<item name="android:windowBackground">@drawable/viewer_background</item>
-		<item name="android:windowAnimationStyle">@style/Animation.ImageViewer</item>
+		<!-- <item name="android:windowAnimationStyle">@style/Animation.ImageViewer</item> -->
 		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 		<item name="android:itemBackground">@drawable/item_background_holo_dark</item>
-		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Medium</item>>
-		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_dark</item>
+		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Medium</item>
+>		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_dark</item>
 		<item name="messagesBackground">#20000000</item>
 	</style>
 
@@ -29,7 +29,7 @@
 		<item name="android:buttonStyleSmall">@style/Widget.Twidere.Button.Small</item>
 		<item name="android:buttonStyleInset">@style/Widget.Twidere.Button.Inset</item>
 		<item name="android:imageButtonStyle">@style/Widget.Twidere.ImageButton</item>
-			
+
 		<!-- for programmatic instantiation -->
 		<item name="actionBarBackground">@drawable/actionbar_bg_dark_holo</item>
 		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle</item>
@@ -57,7 +57,7 @@
 		<item name="android:buttonStyleSmall">@style/Widget.Twidere.Light.Button.Small</item>
 		<item name="android:buttonStyleInset">@style/Widget.Twidere.Light.Button.Inset</item>
 		<item name="android:imageButtonStyle">@style/Widget.Twidere.Light.ImageButton</item>
-			
+
 		<!-- for programmatic instantiation -->
 		<item name="actionBarBackground">@drawable/bg_actionbar_light_theme</item>
 		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle</item>
@@ -78,13 +78,13 @@
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Medium</item>
 		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_dark</item>
 		<item name="messagesBackground">#20000000</item>
-			
+
 		<!-- Button styles -->
 		<item name="android:buttonStyle">@style/Widget.Twidere.Button</item>
 		<item name="android:buttonStyleSmall">@style/Widget.Twidere.Button.Small</item>
 		<item name="android:buttonStyleInset">@style/Widget.Twidere.Button.Inset</item>
 		<item name="android:imageButtonStyle">@style/Widget.Twidere.ImageButton</item>
-			
+
 		<!-- for programmatic instantiation -->
 		<item name="actionBarBackground">@drawable/actionbar_bg_dark_holo</item>
 		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle</item>
@@ -110,7 +110,7 @@
 		<item name="android:buttonStyleSmall">@style/Widget.Twidere.Light.Button.Small</item>
 		<item name="android:buttonStyleInset">@style/Widget.Twidere.Light.Button.Inset</item>
 		<item name="android:imageButtonStyle">@style/Widget.Twidere.Light.ImageButton</item>
-			
+
 		<!-- for programmatic instantiation -->
 		<item name="actionBarBackground">@drawable/bg_actionbar_light_theme</item>
 		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle</item>

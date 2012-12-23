@@ -48,9 +48,11 @@
 		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 	</style>
 
-	<style name="Theme.Twidere.Viewer" parent="android:Theme.Translucent.NoTitleBar">
+	<style name="Theme.Twidere.Viewer" parent="android:Theme.NoTitleBar">
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowContentOverlay">@null</item>
 		<item name="android:windowBackground">@drawable/viewer_background</item>
-		<item name="android:windowAnimationStyle">@style/Animation.ImageViewer</item>
+		<!-- <item name="android:windowAnimationStyle">@style/Animation.ImageViewer</item> -->
 		<item name="android:galleryItemBackground">@drawable/gallery_item_background</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Large</item>
 		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_dark</item>

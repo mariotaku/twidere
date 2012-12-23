@@ -16,23 +16,62 @@
 
 package org.mariotaku.gallery3d.data;
 
-import android.net.Uri;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
-public abstract class MediaSource {
-	private static final String TAG = "MediaSource";
+import org.mariotaku.gallery3d.app.IGalleryApplication;
+
+import android.content.ContentResolver;
+import android.net.Uri;
+import android.webkit.MimeTypeMap;
+
+public class MediaSource {
 	private final String mPrefix;
 
-	protected MediaSource(final String prefix) {
-		mPrefix = prefix;
+	private static final String IMAGE_TYPE_PREFIX = "image/";
+
+	private static final String IMAGE_TYPE_ANY = "image/*";
+
+	private static final String CHARSET_UTF_8 = "utf-8";
+
+	private final IGalleryApplication mApplication;
+
+	public MediaSource(final IGalleryApplication context) {
+		mPrefix = "uri";
+		mApplication = context;
 	}
 
-	public abstract MediaObject createMediaObject(Path path);
-
-	public Path findPathByUri(final Uri uri, final String type) {
-		return null;
+	public MediaObject createMediaObject(final Path path) {
+		final String segment[] = path.split();
+		if (segment.length != 3) throw new RuntimeException("bad path: " + path);
+		try {
+			final String uri = URLDecoder.decode(segment[1], CHARSET_UTF_8);
+			final String type = URLDecoder.decode(segment[2], CHARSET_UTF_8);
+			return new MediaItem(mApplication, path, Uri.parse(uri), type);
+		} catch (final UnsupportedEncodingException e) {
+			throw new AssertionError(e);
+		}
 	}
 
-	public Path getDefaultSetOf(final Path item) {
+	public Path findPathByUri(final Uri uri, String type) {
+		final String mimeType = getMimeType(uri);
+
+		// Try to find a most specific type but it has to be started with
+		// "image/"
+		if (type == null || IMAGE_TYPE_ANY.equals(type) && mimeType.startsWith(IMAGE_TYPE_PREFIX)) {
+			type = mimeType;
+		}
+
+		if (type.startsWith(IMAGE_TYPE_PREFIX)) {
+			try {
+				return Path.fromString("/uri/" + URLEncoder.encode(uri.toString(), CHARSET_UTF_8) + "/"
+						+ URLEncoder.encode(type, CHARSET_UTF_8));
+			} catch (final UnsupportedEncodingException e) {
+				throw new AssertionError(e);
+			}
+		}
+		// We have no clues that it is an image
 		return null;
 	}
 
@@ -40,18 +79,19 @@ public abstract class MediaSource {
 		return mPrefix;
 	}
 
-	public long getTotalTargetCacheSize() {
-		return 0;
-	}
-
-	public long getTotalUsedCacheSize() {
-		return 0;
-	}
-
-	public void pause() {
-	}
-
-	public void resume() {
+	private String getMimeType(final Uri uri) {
+		if (ContentResolver.SCHEME_FILE.equals(uri.getScheme())) {
+			final String extension = MimeTypeMap.getFileExtensionFromUrl(uri.toString());
+			final String type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.toLowerCase());
+			if (type != null) return type;
+		}
+		// Assume the type is image if the type cannot be resolved
+		// This could happen for "http" URI.
+		String type = mApplication.getContentResolver().getType(uri);
+		if (type == null) {
+			type = "image/*";
+		}
+		return type;
 	}
 
 	public static class PathId {

@@ -16,15 +16,31 @@
 
 package org.mariotaku.gallery3d.data;
 
-import org.mariotaku.gallery3d.common.ApiHelper;
-import org.mariotaku.gallery3d.ui.ScreenNail;
-import org.mariotaku.gallery3d.util.ThreadPool.Job;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
 
+import org.mariotaku.gallery3d.app.IGalleryApplication;
+import org.mariotaku.gallery3d.common.ApiHelper;
+import org.mariotaku.gallery3d.common.BitmapUtils;
+import org.mariotaku.gallery3d.common.Utils;
+import org.mariotaku.gallery3d.util.ThreadPool.CancelListener;
+import org.mariotaku.gallery3d.util.ThreadPool.Job;
+import org.mariotaku.gallery3d.util.ThreadPool.JobContext;
+
+import android.content.ContentResolver;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory.Options;
 import android.graphics.BitmapRegionDecoder;
+import android.net.Uri;
+import android.os.ParcelFileDescriptor;
+import android.util.Log;
 
 // MediaItem represents an image or a video item.
-public abstract class MediaItem extends MediaObject {
+public class MediaItem extends MediaObject {
 	// NOTE: These type numbers are stored in the image cache, so it should not
 	// not be changed without resetting the cache.
 	public static final int TYPE_THUMBNAIL = 1;
@@ -44,8 +60,37 @@ public abstract class MediaItem extends MediaObject {
 	// TODO: fix default value for latlng and change this.
 	public static final double INVALID_LATLNG = 0f;
 
-	public MediaItem(final Path path, final long version) {
-		super(path, version);
+	private static final String TAG = "UriImage";
+
+	private static final int STATE_INIT = 0;
+
+	private static final int STATE_DOWNLOADING = 1;
+
+	private static final int STATE_DOWNLOADED = 2;
+
+	private static final int STATE_ERROR = -1;
+
+	private final Uri mUri;
+
+	private final String mContentType;
+
+	private DownloadCache.Entry mCacheEntry;
+
+	private ParcelFileDescriptor mFileDescriptor;
+	private int mState = STATE_INIT;
+	private int mRotation;
+	private final IGalleryApplication mApplication;
+
+	public MediaItem(final IGalleryApplication application, final Path path, final Uri uri, final String contentType) {
+		super(path, nextVersionNumber());
+		mUri = uri;
+		mApplication = Utils.checkNotNull(application);
+		mContentType = contentType;
+	}
+
+	@Override
+	public Uri getContentUri() {
+		return mUri;
 	}
 
 	public String getFilePath() {
@@ -59,31 +104,130 @@ public abstract class MediaItem extends MediaObject {
 		return getRotation();
 	}
 
-	public abstract int getHeight();
+	@Override
+	public int getMediaType() {
+		return MEDIA_TYPE_IMAGE;
+	}
 
-	public abstract String getMimeType();
+	public String getMimeType() {
+		return mContentType;
+	}
 
 	public int getRotation() {
-		return 0;
+		return mRotation;
 	}
 
-	// This is an alternative for requestImage() in PhotoPage. If this
-	// is implemented, you don't need to implement requestImage().
-	public ScreenNail getScreenNail() {
-		return null;
+	@Override
+	public int getSupportedOperations() {
+		return SUPPORT_FULL_IMAGE;
 	}
 
-	public long getSize() {
-		return 0;
+	public Job<Bitmap> requestImage(final int type) {
+		return new BitmapJob(type);
 	}
 
-	// Returns width and height of the media item.
-	// Returns 0, 0 if the information is not available.
-	public abstract int getWidth();
+	public Job<BitmapRegionDecoder> requestLargeImage() {
+		return new RegionDecoderJob();
+	}
 
-	public abstract Job<Bitmap> requestImage(int type);
+	@Override
+	protected void finalize() throws Throwable {
+		try {
+			if (mFileDescriptor != null) {
+				Utils.closeSilently(mFileDescriptor);
+			}
+		} finally {
+			super.finalize();
+		}
+	}
 
-	public abstract Job<BitmapRegionDecoder> requestLargeImage();
+	private void openFileOrDownloadTempFile(final JobContext jc) {
+		final int state = openOrDownloadInner(jc);
+		synchronized (this) {
+			mState = state;
+			if (mState != STATE_DOWNLOADED) {
+				if (mFileDescriptor != null) {
+					Utils.closeSilently(mFileDescriptor);
+					mFileDescriptor = null;
+				}
+			}
+			notifyAll();
+		}
+	}
+
+	private int openOrDownloadInner(final JobContext jc) {
+		final String scheme = mUri.getScheme();
+		if (ContentResolver.SCHEME_CONTENT.equals(scheme) || ContentResolver.SCHEME_ANDROID_RESOURCE.equals(scheme)
+				|| ContentResolver.SCHEME_FILE.equals(scheme)) {
+			try {
+				if (MIME_TYPE_JPEG.equalsIgnoreCase(mContentType)) {
+					final InputStream is = mApplication.getContentResolver().openInputStream(mUri);
+					mRotation = Exif.getOrientation(is);
+					Utils.closeSilently(is);
+				}
+				mFileDescriptor = mApplication.getContentResolver().openFileDescriptor(mUri, "r");
+				if (jc.isCancelled()) return STATE_INIT;
+				return STATE_DOWNLOADED;
+			} catch (final FileNotFoundException e) {
+				Log.w(TAG, "fail to open: " + mUri, e);
+				return STATE_ERROR;
+			}
+		} else {
+			try {
+				final URL url = new URI(mUri.toString()).toURL();
+				mCacheEntry = mApplication.getDownloadCache().download(jc, url);
+				if (jc.isCancelled()) return STATE_INIT;
+				if (mCacheEntry == null) {
+					Log.w(TAG, "download failed " + url);
+					return STATE_ERROR;
+				}
+				if (MIME_TYPE_JPEG.equalsIgnoreCase(mContentType)) {
+					final InputStream is = new FileInputStream(mCacheEntry.cacheFile);
+					mRotation = Exif.getOrientation(is);
+					Utils.closeSilently(is);
+				}
+				mFileDescriptor = ParcelFileDescriptor.open(mCacheEntry.cacheFile, ParcelFileDescriptor.MODE_READ_ONLY);
+				return STATE_DOWNLOADED;
+			} catch (final Throwable t) {
+				Log.w(TAG, "download error", t);
+				return STATE_ERROR;
+			}
+		}
+	}
+
+	private boolean prepareInputFile(final JobContext jc) {
+		jc.setCancelListener(new CancelListener() {
+			@Override
+			public void onCancel() {
+				synchronized (this) {
+					notifyAll();
+				}
+			}
+		});
+
+		while (true) {
+			synchronized (this) {
+				if (jc.isCancelled()) return false;
+				if (mState == STATE_INIT) {
+					mState = STATE_DOWNLOADING;
+					// Then leave the synchronized block and continue.
+				} else if (mState == STATE_ERROR)
+					return false;
+				else if (mState == STATE_DOWNLOADED)
+					return true;
+				else /* if (mState == STATE_DOWNLOADING) */{
+					try {
+						wait();
+					} catch (final InterruptedException ex) {
+						// ignored.
+					}
+					continue;
+				}
+			}
+			// This is only reached for STATE_INIT->STATE_DOWNLOADING
+			openFileOrDownloadTempFile(jc);
+		}
+	}
 
 	public static int getTargetSize(final int type) {
 		switch (type) {
@@ -102,4 +246,36 @@ public abstract class MediaItem extends MediaObject {
 		sThumbnailTargetSize = size;
 	}
 
+	private class BitmapJob implements Job<Bitmap> {
+		private final int mType;
+
+		protected BitmapJob(final int type) {
+			mType = type;
+		}
+
+		@Override
+		public Bitmap run(final JobContext jc) {
+			if (!prepareInputFile(jc)) return null;
+			final int targetSize = MediaItem.getTargetSize(mType);
+			final Options options = new Options();
+			options.inPreferredConfig = Config.ARGB_8888;
+			Bitmap bitmap = DecodeUtils.decodeThumbnail(jc, mFileDescriptor.getFileDescriptor(), options, targetSize,
+					mType);
+
+			if (jc.isCancelled() || bitmap == null) return null;
+
+			bitmap = BitmapUtils.resizeDownBySideLength(bitmap, targetSize, true);
+			return bitmap;
+		}
+	}
+
+	private class RegionDecoderJob implements Job<BitmapRegionDecoder> {
+		@Override
+		public BitmapRegionDecoder run(final JobContext jc) {
+			if (!prepareInputFile(jc)) return null;
+			final BitmapRegionDecoder decoder = DecodeUtils.createBitmapRegionDecoder(jc,
+					mFileDescriptor.getFileDescriptor(), false);
+			return decoder;
+		}
+	}
 }

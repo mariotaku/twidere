@@ -36,7 +36,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-public class SinglePhotoDataAdapter extends TileImageViewAdapter implements PhotoPage.Model {
+public class SinglePhotoDataAdapter extends TileImageViewAdapter implements GalleryActivity.Model {
 
 	private static final String TAG = "SinglePhotoDataAdapter";
 	private static final int SIZE_BACKUP = 1024;
@@ -93,24 +93,8 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter implements Phot
 	}
 
 	@Override
-	public int getCurrentIndex() {
-		return 0;
-	}
-
-	@Override
 	public int getImageRotation(final int offset) {
 		return offset == 0 ? mItem.getFullImageRotation() : 0;
-	}
-
-	@Override
-	public void getImageSize(final int offset, final PhotoView.Size size) {
-		if (offset == 0) {
-			size.width = mItem.getWidth();
-			size.height = mItem.getHeight();
-		} else {
-			size.width = 0;
-			size.height = 0;
-		}
 	}
 
 	@Override

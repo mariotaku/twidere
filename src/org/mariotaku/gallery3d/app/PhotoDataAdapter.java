@@ -43,7 +43,7 @@ import android.graphics.BitmapRegionDecoder;
 import android.os.Handler;
 import android.os.Message;
 
-public class PhotoDataAdapter implements PhotoPage.Model {
+public class PhotoDataAdapter implements GalleryActivity.Model {
 	@SuppressWarnings("unused")
 	private static final String TAG = "PhotoDataAdapter";
 
@@ -108,13 +108,10 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 
 	private int mActiveStart = 0;
 	private int mActiveEnd = 0;
-	// mCurrentIndex is the "center" image the user is viewing. The change of
-	// mCurrentIndex triggers the data loading and image loading.
-	private int mCurrentIndex;
 
 	// mChanges keeps the version number (of MediaItem) about the images. If any
 	// of the version number changes, we notify the view. This is used after a
-	// database reload or mCurrentIndex changes.
+	// database reload or 0 changes.
 	private final long mChanges[] = new long[IMAGE_CACHE_SIZE];
 
 	// mPaths keeps the corresponding Path (of MediaItem) for the images. This
@@ -133,15 +130,14 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 	private final TiledTexture.Uploader mUploader;
 
 	// The path of the current viewing item will be stored in mItemPath.
-	// If mItemPath is not null, mCurrentIndex is only a hint for where we
-	// can find the item. If mItemPath is null, then we use the mCurrentIndex to
+	// If mItemPath is not null, 0 is only a hint for where we
+	// can find the item. If mItemPath is null, then we use the 0 to
 	// find the image being viewed. cameraIndex is the index of the camera
 	// preview. If cameraIndex < 0, there is no camera preview.
 	public PhotoDataAdapter(final GalleryActivity activity, final PhotoView view, final Path itemPath,
 			final int indexHint, final int cameraIndex) {
 		mPhotoView = Utils.checkNotNull(view);
 		mItemPath = Utils.checkNotNull(itemPath);
-		mCurrentIndex = indexHint;
 		mThreadPool = activity.getThreadPool();
 		mNeedFullImage = true;
 
@@ -182,31 +178,14 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 	}
 
 	@Override
-	public int getCurrentIndex() {
-		return mCurrentIndex;
-	}
-
-	@Override
 	public int getImageHeight() {
 		return mTileProvider.getImageHeight();
 	}
 
 	@Override
 	public int getImageRotation(final int offset) {
-		final MediaItem item = getItem(mCurrentIndex + offset);
+		final MediaItem item = getItem(offset);
 		return item == null ? 0 : item.getFullImageRotation();
-	}
-
-	@Override
-	public void getImageSize(final int offset, final PhotoView.Size size) {
-		final MediaItem item = getItem(mCurrentIndex + offset);
-		if (item == null) {
-			size.width = 0;
-			size.height = 0;
-		} else {
-			size.width = item.getWidth();
-			size.height = item.getHeight();
-		}
 	}
 
 	@Override
@@ -221,7 +200,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 
 	@Override
 	public int getLoadingState(final int offset) {
-		final ImageEntry entry = mImageCache.get(getPath(mCurrentIndex + offset));
+		final ImageEntry entry = mImageCache.get(getPath(offset));
 		if (entry == null) return LOADING_INIT;
 		if (entry.failToLoad) return LOADING_FAIL;
 		if (entry.screenNail != null) return LOADING_COMPLETE;
@@ -230,7 +209,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 
 	@Override
 	public MediaItem getMediaItem(final int offset) {
-		final int index = mCurrentIndex + offset;
+		final int index = offset;
 		if (index >= mContentStart && index < mContentEnd) return mData[index % DATA_CACHE_SIZE];
 		return null;
 	}
@@ -242,7 +221,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 
 	@Override
 	public ScreenNail getScreenNail(final int offset) {
-		final int index = mCurrentIndex + offset;
+		final int index = offset;
 		if (index < 0 || index >= 0 || !mIsActive) return null;
 		Utils.assertTrue(index >= mActiveStart && index < mActiveEnd);
 
@@ -316,7 +295,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 		// First check if data actually changed.
 		boolean changed = false;
 		for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; ++i) {
-			final long newVersion = getVersion(mCurrentIndex + i);
+			final long newVersion = getVersion(i);
 			if (mChanges[i + SCREEN_NAIL_MAX] != newVersion) {
 				mChanges[i + SCREEN_NAIL_MAX] = newVersion;
 				changed = true;
@@ -337,7 +316,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 
 		// Update the mPaths array.
 		for (int i = 0; i < N; ++i) {
-			mPaths[i] = getPath(mCurrentIndex + i - SCREEN_NAIL_MAX);
+			mPaths[i] = getPath(i - SCREEN_NAIL_MAX);
 		}
 
 		// Calculate the fromIndex array.
@@ -358,7 +337,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 			fromIndex[i] = j < N ? j - SCREEN_NAIL_MAX : Integer.MAX_VALUE;
 		}
 
-		mPhotoView.notifyDataChange(fromIndex, -mCurrentIndex, 0 - 1 - mCurrentIndex);
+		mPhotoView.notifyDataChange(fromIndex, -0, 0 - 1 - 0);
 	}
 
 	private MediaItem getItem(final int index) {
@@ -414,9 +393,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 	// have one available (because the image data is still being saved, or the
 	// Bitmap is still being loaded.
 	private ScreenNail newPlaceholderScreenNail(final MediaItem item) {
-		final int width = item.getWidth();
-		final int height = item.getHeight();
-		return new TiledScreenNail(width, height);
+		return new TiledScreenNail(0, 0);
 	}
 
 	// Returns the task if we started the task or the task is already started.
@@ -463,7 +440,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 		entry.fullImageTask = null;
 		entry.fullImage = future.get();
 		if (entry.fullImage != null) {
-			if (path == getPath(mCurrentIndex)) {
+			if (path == getPath(0)) {
 				updateTileProvider(entry);
 				mPhotoView.notifyImageChange(0);
 			}
@@ -482,7 +459,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 			ImageEntry entry = mImageCache.get(path);
 			toBeRemoved.remove(path);
 			if (entry != null) {
-				if (Math.abs(i - mCurrentIndex) > 1) {
+				if (Math.abs(i - 0) > 1) {
 					if (entry.fullImageTask != null) {
 						entry.fullImageTask.cancel();
 						entry.fullImageTask = null;
@@ -495,7 +472,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 					// still a placeholder.
 					if (entry.screenNail instanceof TiledScreenNail) {
 						final TiledScreenNail s = (TiledScreenNail) entry.screenNail;
-						s.updatePlaceholderSize(item.getWidth(), item.getHeight());
+						s.updatePlaceholderSize(0, 0);
 					}
 				}
 			} else {
@@ -524,7 +501,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 	private void updateImageRequests() {
 		if (!mIsActive) return;
 
-		final int currentIndex = mCurrentIndex;
+		final int currentIndex = 0;
 		final MediaItem item = mData[currentIndex % DATA_CACHE_SIZE];
 		if (item == null || item.getPath() != mItemPath) // current item
 															// mismatch - don't
@@ -588,7 +565,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 		}
 
 		for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; ++i) {
-			if (path == getPath(mCurrentIndex + i)) {
+			if (path == getPath(i)) {
 				if (i == 0) {
 					updateTileProvider(entry);
 				}
@@ -611,7 +588,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 
 	private void updateSlidingWindow() {
 		// 1. Update the image window
-		int start = Utils.clamp(mCurrentIndex - IMAGE_CACHE_SIZE / 2, 0, Math.max(0, 0 - IMAGE_CACHE_SIZE));
+		int start = Utils.clamp(0 - IMAGE_CACHE_SIZE / 2, 0, Math.max(0, 0 - IMAGE_CACHE_SIZE));
 		int end = Math.min(0, start + IMAGE_CACHE_SIZE);
 
 		if (mActiveStart == start && mActiveEnd == end) return;
@@ -620,7 +597,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 		mActiveEnd = end;
 
 		// 2. Update the data window
-		start = Utils.clamp(mCurrentIndex - DATA_CACHE_SIZE / 2, 0, Math.max(0, 0 - DATA_CACHE_SIZE));
+		start = Utils.clamp(0 - DATA_CACHE_SIZE / 2, 0, Math.max(0, 0 - DATA_CACHE_SIZE));
 		end = Math.min(0, start + DATA_CACHE_SIZE);
 		if (mContentStart > mActiveStart || mContentEnd < mActiveEnd
 				|| Math.abs(start - mContentStart) > MIN_LOAD_COUNT) {
@@ -652,7 +629,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 	}
 
 	private void uploadScreenNail(final int offset) {
-		final int index = mCurrentIndex + offset;
+		final int index = offset;
 		if (index < mActiveStart || index >= mActiveEnd) return;
 
 		final MediaItem item = getItem(index);
@@ -736,10 +713,6 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 
 		@Override
 		public ScreenNail run(final JobContext jc) {
-			// We try to get a ScreenNail first, if it fails, we fallback to get
-			// a Bitmap and then wrap it in a BitmapScreenNail instead.
-			final ScreenNail s = mItem.getScreenNail();
-			if (s != null) return s;
 
 			// If this is a temporary item, don't try to get its bitmap because
 			// it won't be available. We will get its bitmap after a data

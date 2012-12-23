@@ -165,7 +165,8 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			case REQUEST_PICK_IMAGE: {
 				if (resultCode == Activity.RESULT_OK) {
 					final Uri uri = intent.getData();
-					final File file = uri == null ? null : new File(getImagePathFromUri(this, uri));
+					final String path = getImagePathFromUri(this, uri);
+					final File file = path == null ? null : new File(path);
 					if (file != null && file.exists()) {
 						mImageUri = Uri.fromFile(file);
 						mIsPhotoAttached = false;

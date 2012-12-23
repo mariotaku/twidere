@@ -53,15 +53,14 @@ public class DataManager {
 	private final Handler mDefaultMainHandler;
 
 	private final IGalleryApplication mApplication;
-	private int mActiveCount = 0;
 
 	private final HashMap<Uri, NotifyBroker> mNotifierMap = new HashMap<Uri, NotifyBroker>();
 
-	private final UriSource source;
+	private final MediaSource source;
 
 	public DataManager(final IGalleryApplication application) {
 		mApplication = application;
-		source = new UriSource(application);
+		source = new MediaSource(application);
 		mDefaultMainHandler = new Handler(application.getMainLooper());
 	}
 
@@ -111,23 +110,6 @@ public class DataManager {
 		return MediaObject.SUPPORT_FULL_IMAGE;
 	}
 
-	// Returns number of bytes used by cached pictures if all pending
-	// downloads and removals are completed.
-	public long getTotalTargetCacheSize() {
-		return source.getTotalTargetCacheSize();
-	}
-
-	// Returns number of bytes used by cached pictures currently downloaded.
-	public long getTotalUsedCacheSize() {
-		return source.getTotalUsedCacheSize();
-	}
-
-	public void pause() {
-		if (--mActiveCount == 0) {
-			source.pause();
-		}
-	}
-
 	// A common usage of this method is:
 	// synchronized (DataManager.LOCK) {
 	// MediaObject object = peekMediaObject(path);
@@ -150,12 +132,6 @@ public class DataManager {
 			}
 		}
 		broker.registerNotifier(notifier);
-	}
-
-	public void resume() {
-		if (++mActiveCount == 1) {
-			source.resume();
-		}
 	}
 
 	public void rotate(final Path path, final int degrees) {

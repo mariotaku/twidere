@@ -550,14 +550,6 @@ public class PhotoView extends GLView {
 		} else if (offset == -1) {
 			if (mPrevBound >= 0) return false;
 
-			// If we are too far away from the first image (so that we don't
-			// have all the ScreenNails in-between), we go directly without
-			// animation.
-			if (mModel.getCurrentIndex() > SCREEN_NAIL_MAX) {
-				mPositionController.skipToFinalPosition();
-				return true;
-			}
-
 			mPositionController.startCaptureAnimationSlide(1);
 		} else
 			return false;
@@ -705,15 +697,8 @@ public class PhotoView extends GLView {
 
 		public static final int FOCUS_HINT_PREVIOUS = 1;
 
-		public int getCurrentIndex();
-
 		// Returns the rotation for the specified picture.
 		public int getImageRotation(int offset);
-
-		// Returns the size for the specified picture. If the size information
-		// is
-		// not avaiable, width = height = 0.
-		public void getImageSize(int offset, Size size);
 
 		public int getLoadingState(int offset);
 
@@ -1087,10 +1072,6 @@ public class PhotoView extends GLView {
 			if (mScreenNail != null) {
 				mSize.width = mScreenNail.getWidth();
 				mSize.height = mScreenNail.getHeight();
-			} else {
-				// If we don't have ScreenNail available, we can still try to
-				// get the size information of it.
-				mModel.getImageSize(mIndex, mSize);
 			}
 
 			final int w = mSize.width;
