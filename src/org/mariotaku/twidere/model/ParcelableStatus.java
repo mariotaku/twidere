@@ -288,6 +288,7 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 		out.writeString(image_orig_url_string);
 		out.writeString(location_string);
 		out.writeLong(my_retweet_id);
+		out.writeInt(is_possibly_sensitive ? 1 : 0);
 	}
 
 	private static long getTime(final Date date) {
