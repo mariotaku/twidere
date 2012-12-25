@@ -22,7 +22,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.util.LruCache;
+import com.wuman.utils.LruSoftCache;
 
 /**
  * This class holds our bitmap caches (memory and disk).
@@ -45,7 +45,7 @@ public class ImageCache {
 	private static final boolean DEFAULT_CLEAR_DISK_CACHE_ON_START = false;
 
 	private DiskLruCache mDiskCache;
-	private LruCache<String, Bitmap> mMemoryCache;
+	private LruSoftCache<String, Bitmap> mMemoryCache;
 	private ImageCacheParams mCacheParams;
 
 	/**
@@ -228,7 +228,7 @@ public class ImageCache {
 		}
 	}
 
-	private static final class MemoryCache extends LruCache<String, Bitmap> {
+	private static final class MemoryCache extends LruSoftCache<String, Bitmap> {
 
 		MemoryCache(final int maxSize) {
 			super(maxSize);

@@ -59,22 +59,10 @@ public abstract class ImageWorker {
 
 	protected ImageWorkerAdapter mImageWorkerAdapter;
 
-	private final ThreadFactory mThreadFactory = new ThreadFactory() {
-
-		@Override
-		public Thread newThread(final Runnable r) {
-			final Thread t = new Thread(r);
-			// Lower priority
-			t.setPriority(3);
-			return t;
-		}
-
-	};
-
 	protected ImageWorker(final Context context) {
 		mContext = context;
 		mHandler = new Handler();
-		mExecutor = Executors.newFixedThreadPool(8, mThreadFactory);
+		mExecutor = Executors.newFixedThreadPool(8);
 		init();
 	}
 

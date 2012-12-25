@@ -48,7 +48,7 @@ public class StatusImagePreviewItemView extends RoundCorneredImageView {
 
 		final Bitmap bitmap = ImagePreviewView.getBitmap(getDrawable());
 		if (bitmap != null) {
-			setBackgroundDrawable(new AlphaPatternDrawable((int) (mDensity * 16)));
+			setBackgroundDrawable(null);
 		} else {
 			setBackgroundResource(R.drawable.image_preview_fallback_large);
 		}

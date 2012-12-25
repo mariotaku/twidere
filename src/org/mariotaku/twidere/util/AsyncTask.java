@@ -60,7 +60,7 @@ public abstract class AsyncTask<Param, Progress, Result> {
 		if (mExecutor != null) {
 			mExecutor.execute(mRunnable);
 		} else {
-			mThread = new InternalThread();
+			mThread = new Thread(mRunnable);
 			mThread.start();
 		}
 
@@ -103,14 +103,6 @@ public abstract class AsyncTask<Param, Progress, Result> {
 		public void run() {
 			final Result result = doInBackground(mParams);
 			mHandler.post(new OnPostExecuteRunnable(result));
-		}
-	}
-
-	private final class InternalThread extends Thread {
-
-		@Override
-		public void run() {
-			mRunnable.run();
 		}
 	}
 
