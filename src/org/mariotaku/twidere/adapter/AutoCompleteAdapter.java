@@ -94,7 +94,7 @@ public class AutoCompleteAdapter extends SimpleCursorAdapter implements Constant
 		if (mProfileImageUrlIdx != -1) {
 			if (mDisplayProfileImage && mProfileImageLoader != null) {
 				final String profile_image_url_string = cursor.getString(mProfileImageUrlIdx);
-				mProfileImageLoader.displayImage(profile_image_url_string, icon);
+				mProfileImageLoader.displayImage(icon, profile_image_url_string);
 			} else {
 				icon.setImageResource(R.drawable.ic_profile_image_default);
 			}

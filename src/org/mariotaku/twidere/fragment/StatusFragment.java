@@ -446,8 +446,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		if (mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true)) {
 			final boolean hires_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
 			mProfileImageLoader.displayImage(
-					hires_profile_image ? getBiggerTwitterProfileImage(status.profile_image_url_string)
-							: status.profile_image_url_string, mProfileImageView);
+					mProfileImageView, hires_profile_image ? getBiggerTwitterProfileImage(status.profile_image_url_string)
+									: status.profile_image_url_string);
 		} else {
 			mProfileImageView.setImageResource(R.drawable.ic_profile_image_default);
 		}
@@ -998,7 +998,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			final View view = convertView != null ? convertView : mInflater.inflate(R.layout.image_preview_item, null);
 			final ImageView image = (ImageView) view.findViewById(R.id.image);
 			final ImageSpec spec = getItem(position);
-			mImageLoader.displayImage(spec != null ? spec.preview_image_link : null, image);
+			mImageLoader.displayImage(image, spec != null ? spec.preview_image_link : null);
 			return view;
 		}
 

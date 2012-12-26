@@ -398,9 +398,9 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 		private void setProfileImage(final URL url, final ActivityViewHolder holder) {
 			if (!mDisplayProfileImage) return;
 			if (mDisplayHiResProfileImage) {
-				mProfileImageLoader.displayImage(getBiggerTwitterProfileImage(parseString(url)), holder.profile_image);
+				mProfileImageLoader.displayImage(holder.profile_image, getBiggerTwitterProfileImage(parseString(url)));
 			} else {
-				mProfileImageLoader.displayImage(parseString(url), holder.profile_image);
+				mProfileImageLoader.displayImage(holder.profile_image, parseString(url));
 			}
 		}
 
@@ -440,10 +440,10 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 				}
 				if (mDisplayHiResProfileImage) {
 					mProfileImageLoader.displayImage(
-							getBiggerTwitterProfileImage(parseString(user.getProfileImageURL())),
-							activity_profile_image);
+							activity_profile_image,
+							getBiggerTwitterProfileImage(parseString(user.getProfileImageURL())));
 				} else {
-					mProfileImageLoader.displayImage(parseString(user.getProfileImageURL()), activity_profile_image);
+					mProfileImageLoader.displayImage(activity_profile_image, parseString(user.getProfileImageURL()));
 				}
 			}
 		}

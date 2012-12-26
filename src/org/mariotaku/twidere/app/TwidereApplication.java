@@ -39,7 +39,6 @@ import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
 import org.mariotaku.twidere.util.TwidereHostAddressResolver;
-import org.mariotaku.twidere.util.imageloader.ImageLoaderUtils;
 
 import twitter4j.http.HostAddressResolver;
 import android.app.Application;
@@ -131,17 +130,15 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	public LazyImageLoader getPreviewImageLoader() {
 		if (mPreviewImageLoader != null) return mPreviewImageLoader;
 		final int preview_image_size = getResources().getDimensionPixelSize(R.dimen.image_preview_preferred_width);
-		final int max_mem_size = ImageLoaderUtils.getMemoryClass(this) * 1024 * 1024 / 12;
 		return mPreviewImageLoader = new LazyImageLoader(this, DIR_NAME_CACHED_THUMBNAILS, 0, preview_image_size,
-				preview_image_size, max_mem_size);
+				preview_image_size);
 	}
 
 	public LazyImageLoader getProfileImageLoader() {
 		if (mProfileImageLoader != null) return mProfileImageLoader;
 		final int profile_image_size = getResources().getDimensionPixelSize(R.dimen.profile_image_size);
-		final int max_mem_size = ImageLoaderUtils.getMemoryClass(this) * 1024 * 1024 / 6;
 		return mProfileImageLoader = new LazyImageLoader(this, DIR_NAME_PROFILE_IMAGES,
-				R.drawable.ic_profile_image_default, profile_image_size, profile_image_size, max_mem_size);
+				R.drawable.ic_profile_image_default, profile_image_size, profile_image_size);
 	}
 
 	public ItemsList getSelectedItems() {

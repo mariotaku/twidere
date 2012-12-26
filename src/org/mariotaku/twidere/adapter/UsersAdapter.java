@@ -114,7 +114,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseA
 		holder.description.setText(user.description);
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
-			mProfileImageLoader.displayImage(user.profile_image_url, holder.profile_image);
+			mProfileImageLoader.displayImage(holder.profile_image, user.profile_image_url);
 		}
 
 		return view;

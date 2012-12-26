@@ -116,7 +116,7 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
 			final String profile_image_url_string = cursor.getString(IDX_PROFILE_IMAGE_URL);
-			mProfileImageLoader.displayImage(profile_image_url_string, holder.profile_image);
+			mProfileImageLoader.displayImage(holder.profile_image, profile_image_url_string);
 		}
 
 		super.bindView(view, context, cursor);

@@ -73,10 +73,10 @@ public class AccountsAdapter extends SimpleCursorAdapter {
 		if (mDisplayProfileImage) {
 			final String profile_image_url_string = cursor.getString(mProfileImageIdx);
 			if (mDisplayHiResProfileImage) {
-				mProfileImageLoader.displayImage(getBiggerTwitterProfileImage(profile_image_url_string),
-						holder.profile_image);
+				mProfileImageLoader.displayImage(holder.profile_image,
+						getBiggerTwitterProfileImage(profile_image_url_string));
 			} else {
-				mProfileImageLoader.displayImage(profile_image_url_string, holder.profile_image);
+				mProfileImageLoader.displayImage(holder.profile_image, profile_image_url_string);
 			}
 		} else {
 			holder.profile_image.setImageResource(R.drawable.ic_profile_image_default);

@@ -197,7 +197,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			}
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
-				mProfileImageLoader.displayImage(status.profile_image_url_string, holder.profile_image);
+				mProfileImageLoader.displayImage(holder.profile_image, status.profile_image_url_string);
 				holder.profile_image.setTag(position);
 			}
 			final boolean has_preview = mDisplayImagePreview && status.has_media
@@ -207,7 +207,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 				if (status.is_possibly_sensitive && !mDisplaySensitiveContents) {
 					holder.image_preview.setImageResource(R.drawable.image_preview_nsfw);
 				} else {
-					mPreviewImageLoader.displayImage(status.image_preview_url_string, holder.image_preview);
+					mPreviewImageLoader.displayImage(holder.image_preview, status.image_preview_url_string);
 				}
 				holder.image_preview_frame.setTag(position);
 			}

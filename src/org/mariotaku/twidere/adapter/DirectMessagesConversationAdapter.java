@@ -106,8 +106,8 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		holder.profile_image_right.setVisibility(mDisplayProfileImage && !is_outgoing ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
 			final String profile_image_url_string = cursor.getString(mIndices.sender_profile_image_url);
-			mImageLoader.displayImage(profile_image_url_string, holder.profile_image_left);
-			mImageLoader.displayImage(profile_image_url_string, holder.profile_image_right);
+			mImageLoader.displayImage(holder.profile_image_left, profile_image_url_string);
+			mImageLoader.displayImage(holder.profile_image_right, profile_image_url_string);
 			holder.profile_image_left.setTag(position);
 			holder.profile_image_right.setTag(position);
 		}

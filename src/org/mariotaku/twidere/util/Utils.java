@@ -161,6 +161,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
@@ -191,6 +192,38 @@ import android.widget.Toast;
 
 public final class Utils implements Constants {
 
+	/**
+	 * Resizes specific a Bitmap with keeping ratio.
+	 */
+	public static Bitmap resizeBitmap(Bitmap orig, final int desireWidth, final int desireHeight) {
+		final int width = orig.getWidth();
+		final int height = orig.getHeight();
+
+		if (0 < width && 0 < height && desireWidth < width || desireHeight < height) {
+			// Calculate scale
+			float scale;
+			if (width < height) {
+				scale = (float) desireHeight / (float) height;
+				if (desireWidth < width * scale) {
+					scale = (float) desireWidth / (float) width;
+				}
+			} else {
+				scale = (float) desireWidth / (float) width;
+			}
+
+			// Draw resized image
+			final Matrix matrix = new Matrix();
+			matrix.postScale(scale, scale);
+			final Bitmap bitmap = Bitmap.createBitmap(orig, 0, 0, width, height, matrix, true);
+			final Canvas canvas = new Canvas(bitmap);
+			canvas.drawBitmap(bitmap, 0, 0, null);
+
+			orig = bitmap;
+		}
+
+		return orig;
+	}
+	
 	private static final UriMatcher CONTENT_PROVIDER_URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 	private static final UriMatcher LINK_HANDLER_URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 	public static final HashMap<String, Class<? extends Fragment>> CUSTOM_TABS_FRAGMENT_MAP = new HashMap<String, Class<? extends Fragment>>();

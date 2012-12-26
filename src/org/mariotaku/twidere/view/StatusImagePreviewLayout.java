@@ -96,7 +96,7 @@ public class StatusImagePreviewLayout extends LinearLayout implements Constants,
 			if (mIsPossiblySensitive && !prefs.getBoolean(PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS, false)) {
 				image_view.setImageResource(R.drawable.image_preview_nsfw);
 			} else {
-				mImageLoader.displayImage(spec.preview_image_link, image_view);
+				mImageLoader.displayImage(image_view, spec.preview_image_link);
 			}
 		}
 	}

@@ -97,7 +97,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 				mEditDescription.setText(user.description);
 				mEditLocation.setText(user.location);
 				mEditUrl.setText(user.url);
-				mProfileImageLoader.displayImage(user.profile_image_url, mProfileImageView);
+				mProfileImageLoader.displayImage(mProfileImageView, user.profile_image_url);
 				getBannerImage();
 			} else {
 				finish();

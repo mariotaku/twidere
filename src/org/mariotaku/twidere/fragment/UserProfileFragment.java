@@ -355,7 +355,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mFollowersCount.setText(String.valueOf(user.followers_count));
 		mFriendsCount.setText(String.valueOf(user.friends_count));
 		if (mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true)) {
-			mProfileImageLoader.displayImage(user.profile_image_url, mProfileImageView);
+			mProfileImageLoader.displayImage(mProfileImageView, user.profile_image_url);
 		} else {
 			mProfileImageView.setImageResource(R.drawable.ic_profile_image_default);
 		}

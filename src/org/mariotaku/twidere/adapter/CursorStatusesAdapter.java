@@ -188,7 +188,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
 				final String profile_image_url = cursor.getString(mIndices.profile_image_url);
-				mProfileImageLoader.displayImage(profile_image_url, holder.profile_image);
+				mProfileImageLoader.displayImage(holder.profile_image, profile_image_url);
 				holder.profile_image.setTag(position);
 			}
 			final boolean has_preview = mDisplayImagePreview && has_media && preview.matched_url != null;
@@ -198,7 +198,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 				if (is_possibly_sensitive && !mDisplaySensitiveContents) {
 					holder.image_preview.setImageResource(R.drawable.image_preview_nsfw);
 				} else {
-					mPreviewImageLoader.displayImage(preview.matched_url, holder.image_preview);
+					mPreviewImageLoader.displayImage(holder.image_preview, preview.matched_url);
 				}
 				holder.image_preview_frame.setTag(position);
 			}

@@ -63,7 +63,7 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 		holder.description.setText(user_list.description);
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
-			mProfileImageLoader.displayImage(user_list.user_profile_image_url_string, holder.profile_image);
+			mProfileImageLoader.displayImage(holder.profile_image, user_list.user_profile_image_url_string);
 		}
 		return view;
 	}

@@ -156,8 +156,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		mDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
 		final String profile_image_url_string = parseString(user.getProfileImageUrlHttps());
 		final boolean hires_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
-		mProfileImageLoader.displayImage(hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
-				: profile_image_url_string, mProfileImageView);
+		mProfileImageLoader.displayImage(mProfileImageView, hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
+						: profile_image_url_string);
 		mUserList = user_list;
 		if (mUserId == mAccountId) {
 			mFollowMoreButton.setText(R.string.more);
