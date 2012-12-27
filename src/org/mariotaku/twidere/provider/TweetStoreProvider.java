@@ -652,6 +652,18 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				w, h, true));
 		buildNotification(builder, title, title, text_plain, R.drawable.ic_stat_direct_message, null, content_intent,
 				delete_intent);
+		final StringBuilder summary = new StringBuilder();
+		final int accounts_count = mNewMessageAccounts.size();
+		if (accounts_count > 0) {
+			for (int i = 0; i < accounts_count; i++) {
+				final String name = display_screen_name ? "@"
+					+ getAccountScreenName(context, mNewMessageAccounts.get(i)) : getAccountName(context,																							 mNewMessageAccounts.get(i));
+						summary.append(name);
+				if (i != accounts_count - 1) {
+					summary.append(", ");
+				}
+			}
+		}
 		if (messages_size > 1) {
 			final NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle(builder);
 			final int max = Math.min(4, messages_size);
@@ -663,24 +675,12 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			if (max == 4 && messages_size - max > 0) {
 				style.addLine(context.getString(R.string.and_more, messages_size - max));
 			}
-			final StringBuilder summary = new StringBuilder();
-			final int accounts_count = mNewMessageAccounts.size();
-			if (accounts_count > 0) {
-				for (int i = 0; i < accounts_count; i++) {
-					final String name = display_screen_name ? "@"
-							+ getAccountScreenName(context, mNewMessageAccounts.get(i)) : getAccountName(context,
-							mNewMessageAccounts.get(i));
-					summary.append(name);
-					if (i != accounts_count - 1) {
-						summary.append(", ");
-					}
-				}
-				style.setSummaryText(summary.toString());
-			}
+			style.setSummaryText(summary.toString());
 			mNotificationManager.notify(NOTIFICATION_ID_DIRECT_MESSAGES, style.build());
 		} else {
 			final NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle(builder);
 			style.bigText(message.text_plain);
+			style.setSummaryText(summary.toString());
 			mNotificationManager.notify(NOTIFICATION_ID_DIRECT_MESSAGES, style.build());
 		}
 	}
