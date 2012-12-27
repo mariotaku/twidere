@@ -25,11 +25,11 @@ public interface IStatusesAdapter extends IBaseAdapter {
 
 	public ParcelableStatus getStatus(int position);
 
-	public void setDisplayImagePreview(boolean preview);
-
 	public void setDisplaySensitiveContents(boolean display);
 
 	public void setGapDisallowed(boolean disallowed);
+
+	public void setInlineImagePreviewDisplayOption(String option);
 
 	public void setMentionsHightlightDisabled(boolean disable);
 

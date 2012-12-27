@@ -253,8 +253,9 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			}
 			case MENU_COPY: {
 				final CharSequence text = Html.fromHtml(status.text_html);
-				ClipboardUtils.setText(getActivity(), text);
-				Toast.makeText(getActivity(), R.string.text_copied, Toast.LENGTH_SHORT).show();
+				if (ClipboardUtils.setText(getActivity(), text)) {
+					Toast.makeText(getActivity(), R.string.text_copied, Toast.LENGTH_SHORT).show();
+				}
 				break;
 			}
 			case R.id.direct_retweet:
@@ -344,7 +345,8 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		final boolean display_image_preview = mPreferences.getBoolean(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW, false);
+		final String inline_image_preview_display_option = mPreferences.getString(
+				PREFERENCE_KEY_INLINE_IMAGE_PREVIEW_DISPLAY_OPTION, INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_NONE);
 		final boolean show_absolute_time = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false);
 		final boolean display_sensitive_contents = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS,
 				false);
@@ -352,10 +354,10 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				NAME_DISPLAY_OPTION_BOTH);
 		mAdapter.setMultiSelectEnabled(mApplication.isMultiSelectActive());
 		mAdapter.setDisplayProfileImage(display_profile_image);
-		mAdapter.setDisplayImagePreview(display_image_preview);
 		mAdapter.setTextSize(text_size);
 		mAdapter.setShowAbsoluteTime(show_absolute_time);
 		mAdapter.setNameDisplayOption(name_display_option);
+		mAdapter.setInlineImagePreviewDisplayOption(inline_image_preview_display_option);
 		mAdapter.setDisplaySensitiveContents(display_sensitive_contents);
 	}
 

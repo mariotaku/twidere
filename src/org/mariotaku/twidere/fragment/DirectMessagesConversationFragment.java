@@ -35,6 +35,7 @@ import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.view.holder.DirectMessageConversationViewHolder;
 
@@ -51,6 +52,7 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -73,6 +75,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 
 import com.twitter.Validator;
 
@@ -335,11 +338,14 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 			final long message_id = mSelectedDirectMessage.message_id;
 			final long account_id = mSelectedDirectMessage.account_id;
 			switch (item.getItemId()) {
-				case MENU_REPLY: {
-					break;
-				}
 				case MENU_DELETE: {
 					mTwitterWrapper.destroyDirectMessage(account_id, message_id);
+					break;
+				}
+				case MENU_COPY: {
+					if (ClipboardUtils.setText(getActivity(), Html.fromHtml(mSelectedDirectMessage.text_html))) {
+						Toast.makeText(getActivity(), R.string.text_copied, Toast.LENGTH_SHORT).show();
+					}
 					break;
 				}
 				case MENU_VIEW_PROFILE: {

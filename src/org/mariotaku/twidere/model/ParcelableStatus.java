@@ -29,6 +29,8 @@ import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Date;
 
+import org.mariotaku.twidere.Constants;
+
 import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.User;
@@ -36,7 +38,7 @@ import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class ParcelableStatus implements Parcelable, Serializable, Comparable<ParcelableStatus> {
+public class ParcelableStatus implements Constants, Parcelable, Serializable, Comparable<ParcelableStatus> {
 
 	/**
 	 * 
@@ -108,7 +110,7 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 		retweeted_by_screen_name = indices.retweeted_by_screen_name != -1 ? cursor
 				.getString(indices.retweeted_by_screen_name) : null;
 		text_html = indices.text != -1 ? cursor.getString(indices.text) : null;
-		final PreviewImage preview = getPreviewImage(text_html, true);
+		final PreviewImage preview = getPreviewImage(text_html, INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE);
 		has_media = preview.has_image;
 		text_plain = indices.text_plain != -1 ? cursor.getString(indices.text_plain) : null;
 		name = indices.name != -1 ? cursor.getString(indices.name) : null;
@@ -163,8 +165,13 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 		is_possibly_sensitive = in.readInt() == 1;
 	}
 
-	public ParcelableStatus(Status status, final long account_id, final boolean is_gap,
+	public ParcelableStatus(final Status status, final long account_id, final boolean is_gap,
 			final boolean large_profile_image) {
+		this(status, account_id, is_gap, large_profile_image, true);
+	}
+
+	public ParcelableStatus(Status status, final long account_id, final boolean is_gap,
+			final boolean large_profile_image, final boolean large_inline_image_preview) {
 
 		this.is_gap = is_gap;
 		this.account_id = account_id;
@@ -192,7 +199,9 @@ public class ParcelableStatus implements Parcelable, Serializable, Comparable<Pa
 
 		status_timestamp = getTime(status.getCreatedAt());
 		text_html = formatStatusText(status);
-		final PreviewImage preview = getPreviewImage(text_html, true);
+		final PreviewImage preview = getPreviewImage(text_html,
+				large_inline_image_preview ? INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE
+						: INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_SMALL);
 		text_plain = status.getText();
 		retweet_count = status.getRetweetCount();
 		in_reply_to_screen_name = status.getInReplyToScreenName();

@@ -2,6 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item
+		android:id="@id/copy"
+		android:icon="@drawable/ic_menu_copy"
+		android:title="@android:string/copy"/>
+	<item
 		android:id="@+id/delete_submenu"
 		android:icon="@drawable/ic_menu_delete"
 		android:title="@string/delete">

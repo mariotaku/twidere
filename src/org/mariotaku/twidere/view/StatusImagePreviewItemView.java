@@ -1,7 +1,6 @@
 package org.mariotaku.twidere.view;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.graphic.AlphaPatternDrawable;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -9,8 +8,6 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
 public class StatusImagePreviewItemView extends RoundCorneredImageView {
-
-	private final float mDensity;
 
 	public StatusImagePreviewItemView(final Context context) {
 		this(context, null);
@@ -22,7 +19,6 @@ public class StatusImagePreviewItemView extends RoundCorneredImageView {
 
 	public StatusImagePreviewItemView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		mDensity = getResources().getDisplayMetrics().density;
 	}
 
 	@Override

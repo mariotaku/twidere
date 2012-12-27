@@ -439,8 +439,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 					}
 				}
 				if (mDisplayHiResProfileImage) {
-					mProfileImageLoader.displayImage(
-							activity_profile_image,
+					mProfileImageLoader.displayImage(activity_profile_image,
 							getBiggerTwitterProfileImage(parseString(user.getProfileImageURL())));
 				} else {
 					mProfileImageLoader.displayImage(activity_profile_image, parseString(user.getProfileImageURL()));

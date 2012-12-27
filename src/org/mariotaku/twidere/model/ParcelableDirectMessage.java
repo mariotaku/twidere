@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.model;
 
+import static org.mariotaku.twidere.util.Utils.formatDirectMessageText;
 import static org.mariotaku.twidere.util.Utils.parseString;
 
 import java.util.Comparator;
@@ -60,7 +61,7 @@ public class ParcelableDirectMessage implements Parcelable {
 
 	public final boolean is_out_going;
 
-	public final String text;
+	public final String text_html, text_plain;
 	public final String sender_name, recipient_name, sender_screen_name, recipient_screen_name;
 
 	public final String sender_profile_image_url_string, recipient_profile_image_url_string;
@@ -72,7 +73,8 @@ public class ParcelableDirectMessage implements Parcelable {
 		message_timestamp = indices.message_timestamp != -1 ? cursor.getLong(indices.message_timestamp) : -1;
 		sender_id = indices.sender_id != -1 ? cursor.getLong(indices.sender_id) : -1;
 		recipient_id = indices.recipient_id != -1 ? cursor.getLong(indices.recipient_id) : -1;
-		text = indices.text != -1 ? cursor.getString(indices.text) : null;
+		text_html = indices.text != -1 ? cursor.getString(indices.text) : null;
+		text_plain = indices.text_plain != -1 ? cursor.getString(indices.text_plain) : null;
 		sender_name = indices.sender_name != -1 ? cursor.getString(indices.sender_name) : null;
 		recipient_name = indices.recipient_name != -1 ? cursor.getString(indices.recipient_name) : null;
 		sender_screen_name = indices.sender_screen_name != -1 ? cursor.getString(indices.sender_screen_name) : null;
@@ -93,7 +95,8 @@ public class ParcelableDirectMessage implements Parcelable {
 		message_timestamp = getTime(message.getCreatedAt());
 		sender_id = sender != null ? sender.getId() : -1;
 		recipient_id = recipient != null ? recipient.getId() : -1;
-		text = message.getText();
+		text_html = formatDirectMessageText(message);
+		text_plain = message.getText();
 		sender_name = sender != null ? sender.getName() : null;
 		recipient_name = recipient != null ? recipient.getName() : null;
 		sender_screen_name = sender != null ? sender.getScreenName() : null;
@@ -110,7 +113,8 @@ public class ParcelableDirectMessage implements Parcelable {
 		sender_id = in.readLong();
 		recipient_id = in.readLong();
 		is_out_going = in.readInt() == 1;
-		text = in.readString();
+		text_html = in.readString();
+		text_plain = in.readString();
 		sender_name = in.readString();
 		recipient_name = in.readString();
 		sender_screen_name = in.readString();
@@ -148,8 +152,8 @@ public class ParcelableDirectMessage implements Parcelable {
 	public String toString() {
 		return "ParcelableDirectMessage{account_id=" + account_id + ", message_id=" + message_id
 				+ ", message_timestamp=" + message_timestamp + ", sender_id=" + sender_id + ", recipient_id="
-				+ recipient_id + ", is_out_going=" + is_out_going + ", text=" + text + ", sender_name=" + sender_name
-				+ ", recipient_name=" + recipient_name + ", sender_screen_name=" + sender_screen_name
+				+ recipient_id + ", is_out_going=" + is_out_going + ", text=" + text_html + ", sender_name="
+				+ sender_name + ", recipient_name=" + recipient_name + ", sender_screen_name=" + sender_screen_name
 				+ ", recipient_screen_name=" + recipient_screen_name + ", sender_profile_image_url_string="
 				+ sender_profile_image_url_string + ", recipient_profile_image_url_string="
 				+ recipient_profile_image_url_string + "}";
@@ -163,7 +167,8 @@ public class ParcelableDirectMessage implements Parcelable {
 		out.writeLong(sender_id);
 		out.writeLong(recipient_id);
 		out.writeInt(is_out_going ? 1 : 0);
-		out.writeString(text);
+		out.writeString(text_html);
+		out.writeString(text_plain);
 		out.writeString(sender_name);
 		out.writeString(recipient_name);
 		out.writeString(sender_screen_name);

@@ -37,7 +37,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.BatteryManager;
@@ -47,8 +46,6 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -166,10 +163,6 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 		@Override
 		protected void onLayout(final boolean changed, final int left, final int top, final int right, final int bottom) {
 			mPhotoView.layout(0, 0, right - left, bottom - top);
-			if (mShowDetails) {
-				// mDetailsHelper.layout(left, mActionBar.getHeight(), right,
-				// bottom);
-			}
 		}
 	};
 
@@ -226,13 +219,12 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 
 	@Override
 	public void onClick(final View v) {
-		// TODO: Implement this method
-	}
-
-	@Override
-	public void onConfigurationChanged(final Configuration config) {
-		super.onConfigurationChanged(config);
-		invalidateOptionsMenu();
+		switch (v.getId()) {
+			case R.id.close: {
+				finish();
+				break;
+			}
+		}
 	}
 
 	@Override
@@ -431,11 +423,6 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 		}
 	}
 
-	protected boolean onCreateActionBar(final Menu menu) {
-		updateMenuOperations();
-		return true;
-	}
-
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
@@ -445,12 +432,6 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 		} finally {
 			mGLRootView.unlockRenderThread();
 		}
-	}
-
-	protected boolean onItemSelected(final MenuItem item) {
-		if (mModel == null) return true;
-		refreshHidingMessage();
-		return false;
 	}
 
 	@Override

@@ -130,7 +130,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_CLEAR_DATABASES = "clear_databases";
 	public static final String PREFERENCE_KEY_CLEAR_CACHE = "clear_cache";
 	public static final String PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE = "display_profile_image";
-	public static final String PREFERENCE_KEY_INLINE_IMAGE_PREVIEW = "inline_image_preview";
+	public static final String PREFERENCE_KEY_INLINE_IMAGE_PREVIEW_DISPLAY_OPTION = "inline_image_preview_display_option";
 	public static final String PREFERENCE_KEY_COMPOSE_BUTTON = "bottom_compose_button";
 	public static final String PREFERENCE_KEY_LEFTSIDE_COMPOSE_BUTTON = "leftside_compose_button";
 	public static final String PREFERENCE_KEY_ATTACH_LOCATION = "attach_location";
@@ -205,8 +205,16 @@ public interface Constants extends TwitterConstants {
 	public static final String NAME_DISPLAY_OPTION_BOTH = "both";
 	public static final String NAME_DISPLAY_OPTION_NAME = "name";
 	public static final String NAME_DISPLAY_OPTION_SCREEN_NAME = "screen_name";
+	public static final int NAME_DISPLAY_OPTION_CODE_BOTH = 0;
 	public static final int NAME_DISPLAY_OPTION_CODE_NAME = 1;
 	public static final int NAME_DISPLAY_OPTION_CODE_SCREEN_NAME = 2;
+
+	public static final String INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_NONE = "none";
+	public static final String INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_LARGE = "large";
+	public static final String INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_SMALL = "small";
+	public static final int INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE = 0;
+	public static final int INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE = 1;
+	public static final int INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_SMALL = 2;
 
 	public static final String INTENT_PACKAGE_PREFIX = "org.mariotaku.twidere.";
 

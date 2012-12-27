@@ -21,6 +21,8 @@ package org.mariotaku.twidere.preference;
 
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
+import static org.mariotaku.twidere.util.Utils.getInlineImagePreviewDisplayOptionInt;
+import static org.mariotaku.twidere.util.Utils.getNameDisplayOptionInt;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
@@ -29,17 +31,20 @@ import org.mariotaku.twidere.view.holder.StatusViewHolder;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.res.Resources;
 import android.preference.Preference;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.view.ViewGroup.MarginLayoutParams;
 
 public class StatusPreviewPreference extends Preference implements Constants, OnSharedPreferenceChangeListener {
 
-	final LayoutInflater mInflater;
-	StatusViewHolder mHolder;
-	final SharedPreferences mPreferences;
+	private final LayoutInflater mInflater;
+	private final SharedPreferences mPreferences;
+	private StatusViewHolder mHolder;
 
 	public StatusPreviewPreference(final Context context) {
 		this(context, null);
@@ -63,7 +68,7 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 			setTextSize();
 		} else if (PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE.equals(key)) {
 			setProfileImage();
-		} else if (PREFERENCE_KEY_INLINE_IMAGE_PREVIEW.equals(key)) {
+		} else if (PREFERENCE_KEY_INLINE_IMAGE_PREVIEW_DISPLAY_OPTION.equals(key)) {
 			setImagePreview();
 		} else if (PREFERENCE_KEY_SHOW_ABSOLUTE_TIME.equals(key)) {
 			setTime();
@@ -96,26 +101,28 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 
 	private void setImagePreview() {
 		if (mHolder == null) return;
+		final String option_string = mPreferences.getString(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW_DISPLAY_OPTION,
+				INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_NONE);
+		final int option = getInlineImagePreviewDisplayOptionInt(option_string);
+
 		mHolder.image_preview_frame
-				.setVisibility(mPreferences.getBoolean(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW, false) ? View.VISIBLE
-						: View.GONE);
+				.setVisibility(option != INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE ? View.VISIBLE : View.GONE);
+		final MarginLayoutParams lp = (MarginLayoutParams) mHolder.image_preview_frame.getLayoutParams();
+		if (option == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE) {
+			lp.width = LayoutParams.MATCH_PARENT;
+			lp.leftMargin = 0;
+			mHolder.image_preview_frame.setLayoutParams(lp);
+		} else if (option == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_SMALL) {
+			final Resources res = getContext().getResources();
+			lp.width = res.getDimensionPixelSize(R.dimen.image_preview_width);
+			lp.leftMargin = (int) (res.getDisplayMetrics().density * 16);
+			mHolder.image_preview_frame.setLayoutParams(lp);
+		}
 	}
 
 	private void setName() {
 		final String option = mPreferences.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH);
-		if (NAME_DISPLAY_OPTION_NAME.equals(option)) {
-			mHolder.name.setText("Twidere Project");
-			mHolder.screen_name.setText(null);
-			mHolder.screen_name.setVisibility(View.GONE);
-		} else if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) {
-			mHolder.name.setText("twidere_project");
-			mHolder.screen_name.setText(null);
-			mHolder.screen_name.setVisibility(View.GONE);
-		} else {
-			mHolder.name.setText("Twidere Project");
-			mHolder.screen_name.setText("@twidere_project");
-			mHolder.screen_name.setVisibility(View.VISIBLE);
-		}
+		mHolder.setName("Twidere Project", "twidere_project", getNameDisplayOptionInt(option), false, false);
 	}
 
 	private void setProfileImage() {

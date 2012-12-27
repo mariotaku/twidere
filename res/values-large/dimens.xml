@@ -2,5 +2,6 @@
 <resources>
 
 	<dimen name="pane_spacing_right">150dp</dimen>
+	<dimen name="image_preview_preferred_width">480dp</dimen>
 
 </resources>

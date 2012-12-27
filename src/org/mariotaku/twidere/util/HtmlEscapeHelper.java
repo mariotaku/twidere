@@ -11,12 +11,12 @@ public class HtmlEscapeHelper {
 
 	public static String toHtml(final String string) {
 		if (string == null) return null;
-		return escape(string).replaceAll("\n", "<br\\/>");
+		return escape(string).replace("\n", "<br/>");
 	}
 
 	public static String toPlainText(final String string) {
 		if (string == null) return null;
-		return unescape(string.replaceAll("<br\\/>", "\n").replaceAll("<!--.*?--> |<[^>]+>", ""));
+		return unescape(string.replace("<br/>", "\n").replaceAll("<!--.*?-->|<[^>]+>", ""));
 	}
 
 	public static String unescape(final String string) {

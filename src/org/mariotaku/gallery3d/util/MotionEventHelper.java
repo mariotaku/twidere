@@ -110,10 +110,9 @@ public final class MotionEventHelper {
 			pointerCoords[i].y = xy[2 * i + 1];
 			pointerCoords[i].orientation = transformAngle(m, pointerCoords[i].orientation);
 		}
-
+		@SuppressWarnings("deprecation")
 		final MotionEvent n = MotionEvent.obtain(downTime, eventTime, action, pointerCount, pointerIds, pointerCoords,
 				metaState, xPrecision, yPrecision, deviceId, edgeFlags, source, flags);
-
 		return n;
 	}
 }

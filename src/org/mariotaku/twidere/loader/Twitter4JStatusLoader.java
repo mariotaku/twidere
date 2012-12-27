@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.loader;
 
+import static org.mariotaku.twidere.util.Utils.getInlineImagePreviewDisplayOptionInt;
+
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.List;
@@ -40,6 +42,7 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 
 	private final long mMaxId, mSinceId;
 	private final boolean mHiResProfileImage;
+	private final int mInlineImagePreviewDisplayOption;
 
 	public Twitter4JStatusLoader(final Context context, final long account_id, final long max_id, final long since_id,
 			final List<ParcelableStatus> data, final String class_name, final boolean is_home_tab) {
@@ -47,6 +50,10 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 		mMaxId = max_id;
 		mSinceId = since_id;
 		mHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
+		final String inline_image_preview_display_option = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
+				Context.MODE_PRIVATE).getString(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW_DISPLAY_OPTION,
+				INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_NONE);
+		mInlineImagePreviewDisplayOption = getInlineImagePreviewDisplayOptionInt(inline_image_preview_display_option);
 	}
 
 	public abstract List<Status> getStatuses(Paging paging) throws TwitterException;
@@ -85,7 +92,8 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 				final long id = status.getId();
 				deleteStatus(id);
 				data.add(new ParcelableStatus(status, mAccountId, min_status_id > 0 && min_status_id == id
-						&& insert_gap, mHiResProfileImage));
+						&& insert_gap, mHiResProfileImage,
+						mInlineImagePreviewDisplayOption == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE));
 			}
 		}
 		try {

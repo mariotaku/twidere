@@ -30,8 +30,9 @@ public final class ClipboardUtils {
 		return ((ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE)).getText();
 	}
 
-	public static void setText(final Context context, final CharSequence text) {
-		if (context == null) return;
+	public static boolean setText(final Context context, final CharSequence text) {
+		if (context == null) return false;
 		((ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE)).setText(text);
+		return true;
 	}
 }

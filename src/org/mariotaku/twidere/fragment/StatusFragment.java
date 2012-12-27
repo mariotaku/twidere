@@ -276,8 +276,9 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 				}
 				case MENU_COPY: {
 					final CharSequence text = Html.fromHtml(mStatus.text_html);
-					ClipboardUtils.setText(getActivity(), text);
-					Toast.makeText(getActivity(), R.string.text_copied, Toast.LENGTH_SHORT).show();
+					if (ClipboardUtils.setText(getActivity(), text)) {
+						Toast.makeText(getActivity(), R.string.text_copied, Toast.LENGTH_SHORT).show();
+					}
 					break;
 				}
 				case MENU_RETWEET: {
@@ -445,9 +446,9 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 		if (mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true)) {
 			final boolean hires_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
-			mProfileImageLoader.displayImage(
-					mProfileImageView, hires_profile_image ? getBiggerTwitterProfileImage(status.profile_image_url_string)
-									: status.profile_image_url_string);
+			mProfileImageLoader.displayImage(mProfileImageView,
+					hires_profile_image ? getBiggerTwitterProfileImage(status.profile_image_url_string)
+							: status.profile_image_url_string);
 		} else {
 			mProfileImageView.setImageResource(R.drawable.ic_profile_image_default);
 		}

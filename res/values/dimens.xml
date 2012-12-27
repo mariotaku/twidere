@@ -4,6 +4,7 @@
 	<dimen name="profile_image_size">56dp</dimen>
 	<dimen name="activity_profile_image_size">32dp</dimen>
 	<dimen name="image_preview_height">140dp</dimen>
+	<dimen name="image_preview_width">140dp</dimen>
 	<dimen name="image_preview_size">@dimen/image_preview_preferred_width</dimen>
 	<dimen name="image_preview_preferred_width">320dp</dimen>
 	<dimen name="preference_horizontal_margin">15dp</dimen>

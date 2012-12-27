@@ -49,17 +49,20 @@
 			android:entryValues="@array/values_name_display_option"
 			android:key="name_display_option"
 			android:title="@string/name_display_option"/>
-			
+
 		<CheckBoxPreference
 			android:defaultValue="true"
 			android:key="display_profile_image"
 			android:summary="@string/image_load_summary"
 			android:title="@string/display_profile_image"/>
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:key="inline_image_preview"
-			android:summary="@string/image_load_summary"
-			android:title="@string/inline_image_preview"/>
+
+		<ListPreference
+			android:defaultValue="none"
+			android:entries="@array/entries_inline_image_preview_display_option"
+			android:entryValues="@array/values_inline_image_preview_display_option"
+			android:key="inline_image_preview_display_option"
+			android:title="@string/inline_image_preview_display_option"/>
+
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="show_absolute_time"
