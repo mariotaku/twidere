@@ -21,6 +21,8 @@ package org.mariotaku.twidere.provider;
 
 import static org.mariotaku.twidere.util.Utils.clearAccountColor;
 import static org.mariotaku.twidere.util.Utils.clearAccountName;
+import static org.mariotaku.twidere.util.Utils.getAccountName;
+import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getAllStatusesCount;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTableId;
@@ -30,13 +32,17 @@ import static org.mariotaku.twidere.util.Utils.notifyForUpdatedUri;
 import static org.mariotaku.twidere.util.Utils.parseInt;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.model.ParcelableDirectMessage;
+import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages.Conversation;
@@ -70,6 +76,9 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
+import android.text.Html;
+
+import com.twitter.Extractor;
 
 public final class TweetStoreProvider extends ContentProvider implements Constants {
 
@@ -79,7 +88,13 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 	private SharedPreferences mPreferences;
 	private LazyImageLoader mProfileImageLoader;
 
-	private int mNewMessagesCount, mNewMentionsCount, mNewStatusesCount;
+	private int mNewStatusesCount;
+	private final List<ParcelableStatus> mNewMentions = new ArrayList<ParcelableStatus>();
+	private final List<String> mNewMentionScreenNames = new NoDuplicatesArrayList<String>();
+	private final List<Long> mNewMentionAccounts = new NoDuplicatesArrayList<Long>();
+	private final List<ParcelableDirectMessage> mNewMessages = new ArrayList<ParcelableDirectMessage>();
+	private final List<String> mNewMessageScreenNames = new NoDuplicatesArrayList<String>();
+	private final List<Long> mNewMessageAccounts = new NoDuplicatesArrayList<Long>();
 
 	private boolean mNotificationIsAudible;
 
@@ -111,7 +126,6 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 					return 0;
 			}
 			int result = 0;
-			final int notification_count;
 			if (table != null && values != null) {
 				final int old_count;
 				switch (table_id) {
@@ -136,32 +150,16 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				if (!"false".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
 					switch (table_id) {
 						case TABLE_ID_STATUSES: {
-							mNewStatusesCount += notification_count = getAllStatusesCount(mContext,
-									Statuses.CONTENT_URI) - old_count;
+							mNewStatusesCount += getAllStatusesCount(mContext, Statuses.CONTENT_URI) - old_count;
 							break;
 						}
-						case TABLE_ID_MENTIONS: {
-							mNewMentionsCount += notification_count = getAllStatusesCount(mContext,
-									Mentions.CONTENT_URI) - old_count;
-							break;
-						}
-						case TABLE_ID_DIRECT_MESSAGES_INBOX: {
-							mNewMessagesCount += notification_count = result;
-							break;
-						}
-						default:
-							notification_count = 0;
 					}
-				} else {
-					notification_count = 0;
 				}
-			} else {
-				notification_count = 0;
 			}
 			if (result > 0) {
 				onDatabaseUpdated(uri);
 			}
-			onNewItemsInserted(uri, notification_count, values);
+			onNewItemsInserted(uri, values);
 			return result;
 		} catch (final SQLException e) {
 			throw new IllegalStateException(e);
@@ -221,19 +219,11 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 						mNewStatusesCount++;
 						break;
 					}
-					case TABLE_ID_MENTIONS: {
-						mNewMentionsCount++;
-						break;
-					}
-					case TABLE_ID_DIRECT_MESSAGES_INBOX: {
-						mNewMessagesCount++;
-						break;
-					}
 					default:
 				}
 			}
 			onDatabaseUpdated(uri);
-			onNewItemsInserted(uri, 1, values);
+			onNewItemsInserted(uri, values);
 			return Uri.withAppendedPath(uri, String.valueOf(row_id));
 		} catch (final SQLException e) {
 			throw new IllegalStateException(e);
@@ -317,9 +307,9 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		}
 	}
 
-	private Notification buildNotification(final NotificationCompat.Builder builder, final String ticker,
-			final String title, final String message, final int icon, final Bitmap large_icon,
-			final Intent content_intent, final Intent delete_intent) {
+	private void buildNotification(final NotificationCompat.Builder builder, final String ticker, final String title,
+			final String message, final int icon, final Bitmap large_icon, final Intent content_intent,
+			final Intent delete_intent) {
 		final Context context = getContext();
 		builder.setTicker(ticker);
 		builder.setContentTitle(title);
@@ -356,7 +346,6 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			builder.setLights(color, 1000, 2000);
 		}
 		builder.setDefaults(defaults);
-		return builder.build();
 	}
 
 	private boolean checkPermission(final int level) {
@@ -454,15 +443,246 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				break;
 			}
 			case NOTIFICATION_ID_MENTIONS: {
-				mNewMentionsCount = 0;
+				mNewMentionAccounts.clear();
+				mNewMentions.clear();
+				mNewMentionScreenNames.clear();
 				break;
 			}
 			case NOTIFICATION_ID_DIRECT_MESSAGES: {
-				mNewMessagesCount = 0;
+				mNewMessageAccounts.clear();
+				mNewMessages.clear();
+				mNewMessageScreenNames.clear();
 				break;
 			}
 		}
 		mNotificationManager.cancel(id);
+	}
+
+	private void displayMentionsNotification(final Context context, final ContentValues[] values) {
+		final Resources res = context.getResources();
+		final NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+		final boolean display_screen_name = NAME_DISPLAY_OPTION_SCREEN_NAME.equals(mPreferences.getString(
+				PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH));
+		final boolean display_hires_profile_image = res.getBoolean(R.bool.hires_profile_image);
+		final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
+		final Bundle delete_extras = new Bundle();
+		delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_MENTIONS);
+		delete_intent.putExtras(delete_extras);
+		final Intent content_intent;
+		int notified_count = 0;
+		// Add statuses that not filtered to list for future use.
+		for (final ContentValues value : values) {
+			final String screen_name = value.getAsString(Statuses.SCREEN_NAME);
+			final String text_plain = value.getAsString(Statuses.TEXT_PLAIN);
+			if (!isFiltered(mDatabase, screen_name, value.getAsString(Statuses.SOURCE), text_plain)) {
+				final ParcelableStatus status = new ParcelableStatus(value);
+				mNewMentions.add(status);
+				mNewMentionScreenNames.add(screen_name);
+				mNewMentionAccounts.add(status.account_id);
+				notified_count++;
+			}
+		}
+		Collections.sort(mNewMentions);
+		final int mentions_size = mNewMentions.size();
+		if (notified_count == 0 || mentions_size == 0 || mNewMentionScreenNames.size() == 0) return;
+		final String title;
+		if (mentions_size > 1) {
+			builder.setNumber(mentions_size);
+		}
+		final int screen_names_size = mNewMentionScreenNames.size();
+		final ParcelableStatus status = mNewMentions.get(0);
+		if (mentions_size == 1) {
+			final Uri.Builder uri_builder = new Uri.Builder();
+			uri_builder.scheme(SCHEME_TWIDERE);
+			uri_builder.authority(AUTHORITY_STATUS);
+			uri_builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(status.account_id));
+			uri_builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status.account_id));
+			content_intent = new Intent(Intent.ACTION_VIEW, uri_builder.build());
+		} else {
+			content_intent = new Intent(context, HomeActivity.class);
+			content_intent.setAction(Intent.ACTION_MAIN);
+			content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
+			final Bundle content_extras = new Bundle();
+			content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MENTIONS);
+			content_intent.putExtras(content_extras);
+		}
+		if (screen_names_size > 1) {
+			title = res.getString(R.string.notification_mention_multiple, display_screen_name ? "@"
+					+ status.screen_name : status.name, screen_names_size - 1);
+		} else {
+			title = res.getString(R.string.notification_mention, display_screen_name ? "@" + status.screen_name
+					: status.name);
+		}
+		final String message = status.text_plain;
+		final String profile_image_url_string = status.profile_image_url_string;
+		final File profile_image_file = mProfileImageLoader
+				.getCachedImageFile(display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
+						: profile_image_url_string);
+		final int w = res.getDimensionPixelSize(R.dimen.notification_large_icon_width);
+		final int h = res.getDimensionPixelSize(R.dimen.notification_large_icon_height);
+		final Bitmap profile_image = profile_image_file != null && profile_image_file.isFile() ? BitmapFactory
+				.decodeFile(profile_image_file.getPath()) : null;
+		final Bitmap profile_image_fallback = BitmapFactory.decodeResource(res, R.drawable.ic_profile_image_default);
+		builder.setLargeIcon(Bitmap.createScaledBitmap(profile_image != null ? profile_image : profile_image_fallback,
+				w, h, true));
+		buildNotification(builder, title, title, message, R.drawable.ic_stat_mention, null, content_intent,
+				delete_intent);
+		if (mentions_size > 1) {
+			final Intent reply_intent = new Intent(INTENT_ACTION_COMPOSE);
+			final Bundle bundle = new Bundle();
+			final List<String> mentions = new Extractor().extractMentionedScreennames(status.text_plain);
+			mentions.remove(status.screen_name);
+			mentions.add(0, status.screen_name);
+			bundle.putStringArray(INTENT_KEY_MENTIONS, mentions.toArray(new String[mentions.size()]));
+			bundle.putLong(INTENT_KEY_ACCOUNT_ID, status.account_id);
+			bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status.status_id);
+			bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, status.screen_name);
+			bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, status.name);
+			reply_intent.putExtras(bundle);
+			final NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle(builder);
+			final int max = Math.min(4, mentions_size);
+			for (int i = 0; i < max; i++) {
+				final ParcelableStatus s = mNewMentions.get(i);
+				final String name = display_screen_name ? "@" + s.screen_name : s.name;
+				style.addLine(Html.fromHtml("<b>" + name + "</b>: "
+						+ stripMentionText(s.text_plain, getAccountScreenName(context, s.account_id))));
+			}
+			if (max == 4 && mentions_size - max > 0) {
+				style.addLine(context.getString(R.string.and_more, mentions_size - max));
+			}
+			final StringBuilder summary = new StringBuilder();
+			final int accounts_count = mNewMentionAccounts.size();
+			if (accounts_count > 0) {
+				for (int i = 0; i < accounts_count; i++) {
+					final String name = display_screen_name ? "@"
+							+ getAccountScreenName(context, mNewMentionAccounts.get(i)) : getAccountName(context,
+							mNewMentionAccounts.get(i));
+					summary.append(name);
+					if (i != accounts_count - 1) {
+						summary.append(", ");
+					}
+				}
+				style.setSummaryText(summary.toString());
+			}
+			mNotificationManager.notify(NOTIFICATION_ID_MENTIONS, style.build());
+		} else {
+			final Intent reply_intent = new Intent(INTENT_ACTION_COMPOSE);
+			final Bundle bundle = new Bundle();
+			final List<String> mentions = new Extractor().extractMentionedScreennames(status.text_plain);
+			mentions.remove(status.screen_name);
+			mentions.add(0, status.screen_name);
+			bundle.putStringArray(INTENT_KEY_MENTIONS, mentions.toArray(new String[mentions.size()]));
+			bundle.putLong(INTENT_KEY_ACCOUNT_ID, status.account_id);
+			bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status.status_id);
+			bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, status.screen_name);
+			bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, status.name);
+			reply_intent.putExtras(bundle);
+			builder.addAction(R.drawable.ic_menu_reply, context.getString(R.string.reply),
+					PendingIntent.getActivity(context, 0, reply_intent, 0));
+			final NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle(builder);
+			style.bigText(stripMentionText(status.text_plain, getAccountScreenName(context, status.account_id)));
+			mNotificationManager.notify(NOTIFICATION_ID_MENTIONS, style.build());
+		}
+	}
+
+	private void displayMessagesNotification(final Context context, final ContentValues[] values) {
+		final Resources res = context.getResources();
+		final NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+		final boolean display_screen_name = NAME_DISPLAY_OPTION_SCREEN_NAME.equals(mPreferences.getString(
+				PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH));
+		final boolean display_hires_profile_image = res.getBoolean(R.bool.hires_profile_image);
+		final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
+		final Bundle delete_extras = new Bundle();
+		delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_DIRECT_MESSAGES);
+		delete_intent.putExtras(delete_extras);
+		final Intent content_intent;
+		int notified_count = 0;
+		for (final ContentValues value : values) {
+			final String screen_name = value.getAsString(DirectMessages.SENDER_SCREEN_NAME);
+			final ParcelableDirectMessage message = new ParcelableDirectMessage(value);
+			mNewMessages.add(message);
+			mNewMessageScreenNames.add(screen_name);
+			mNewMessageAccounts.add(message.account_id);
+			notified_count++;
+		}
+		Collections.sort(mNewMessages);
+		final int messages_size = mNewMessages.size();
+		if (notified_count == 0 || messages_size == 0 || mNewMessageScreenNames.size() == 0) return;
+		final String title;
+		if (messages_size > 1) {
+			builder.setNumber(messages_size);
+		}
+		final int screen_names_size = mNewMessageScreenNames.size();
+		final ParcelableDirectMessage message = mNewMessages.get(0);
+		if (messages_size == 1) {
+			final Uri.Builder uri_builder = new Uri.Builder();
+			final long account_id = message.account_id;
+			final long conversation_id = message.sender_id;
+			uri_builder.scheme(SCHEME_TWIDERE);
+			uri_builder.authority(AUTHORITY_DIRECT_MESSAGES_CONVERSATION);
+			uri_builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			uri_builder.appendQueryParameter(QUERY_PARAM_CONVERSATION_ID, String.valueOf(conversation_id));
+			content_intent = new Intent(Intent.ACTION_VIEW, uri_builder.build());
+		} else {
+			content_intent = new Intent(context, HomeActivity.class);
+			content_intent.setAction(Intent.ACTION_MAIN);
+			content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
+			final Bundle content_extras = new Bundle();
+			content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MESSAGES);
+			content_intent.putExtras(content_extras);
+		}
+		if (screen_names_size > 1) {
+			title = res.getString(R.string.notification_direct_message_multiple, display_screen_name ? "@"
+					+ message.sender_screen_name : message.sender_name, screen_names_size - 1);
+		} else {
+			title = res.getString(R.string.notification_direct_message, display_screen_name ? "@"
+					+ message.sender_screen_name : message.sender_name);
+		}
+		final String text_plain = message.text_plain;
+		final String profile_image_url_string = message.sender_profile_image_url_string;
+		final File profile_image_file = mProfileImageLoader
+				.getCachedImageFile(display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
+						: profile_image_url_string);
+		final int w = res.getDimensionPixelSize(R.dimen.notification_large_icon_width);
+		final int h = res.getDimensionPixelSize(R.dimen.notification_large_icon_height);
+		final Bitmap profile_image = profile_image_file != null && profile_image_file.isFile() ? BitmapFactory
+				.decodeFile(profile_image_file.getPath()) : null;
+		final Bitmap profile_image_fallback = BitmapFactory.decodeResource(res, R.drawable.ic_profile_image_default);
+		builder.setLargeIcon(Bitmap.createScaledBitmap(profile_image != null ? profile_image : profile_image_fallback,
+				w, h, true));
+		buildNotification(builder, title, title, text_plain, R.drawable.ic_stat_direct_message, null, content_intent,
+				delete_intent);
+		if (messages_size > 1) {
+			final NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle(builder);
+			final int max = Math.min(4, messages_size);
+			for (int i = 0; i < max; i++) {
+				final ParcelableDirectMessage s = mNewMessages.get(i);
+				final String name = display_screen_name ? "@" + s.sender_screen_name : s.sender_name;
+				style.addLine(Html.fromHtml("<b>" + name + "</b>: " + s.text_plain));
+			}
+			if (max == 4 && messages_size - max > 0) {
+				style.addLine(context.getString(R.string.and_more, messages_size - max));
+			}
+			final StringBuilder summary = new StringBuilder();
+			final int accounts_count = mNewMessageAccounts.size();
+			if (accounts_count > 0) {
+				for (int i = 0; i < accounts_count; i++) {
+					final String name = display_screen_name ? "@"
+							+ getAccountScreenName(context, mNewMessageAccounts.get(i)) : getAccountName(context,
+							mNewMessageAccounts.get(i));
+					summary.append(name);
+					if (i != accounts_count - 1) {
+						summary.append(", ");
+					}
+				}
+				style.setSummaryText(summary.toString());
+			}
+			mNotificationManager.notify(NOTIFICATION_ID_DIRECT_MESSAGES, style.build());
+		} else {
+			final NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle(builder);
+			style.bigText(message.text_plain);
+			mNotificationManager.notify(NOTIFICATION_ID_DIRECT_MESSAGES, style.build());
+		}
 	}
 
 	private void onDatabaseUpdated(final Uri uri) {
@@ -508,15 +728,12 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		context.sendBroadcast(new Intent(BROADCAST_DATABASE_UPDATED));
 	}
 
-	private void onNewItemsInserted(final Uri uri, final int count, final ContentValues... values) {
-		if (uri == null || values == null || values.length == 0 || count == 0) return;
+	private void onNewItemsInserted(final Uri uri, final ContentValues... values) {
+		if (uri == null || values == null || values.length == 0) return;
 		if ("false".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) return;
 		final Context context = getContext();
 		final Resources res = context.getResources();
 		final NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-		final boolean display_screen_name = NAME_DISPLAY_OPTION_SCREEN_NAME.equals(mPreferences.getString(
-				PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH));
-		final boolean display_hires_profile_image = res.getBoolean(R.bool.hires_profile_image);
 		switch (getTableId(uri)) {
 			case TABLE_ID_STATUSES: {
 				if (!mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_HOME_TIMELINE, false)) return;
@@ -532,153 +749,30 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_HOME);
 				content_intent.putExtras(content_extras);
 				builder.setOnlyAlertOnce(true);
-				final Notification notification = buildNotification(builder, res.getString(R.string.new_notifications),
-						message, message, R.drawable.ic_stat_tweet, null, content_intent, delete_intent);
-				mNotificationManager.notify(NOTIFICATION_ID_HOME_TIMELINE, notification);
+				buildNotification(builder, res.getString(R.string.new_notifications), message, message,
+						R.drawable.ic_stat_tweet, null, content_intent, delete_intent);
+				mNotificationManager.notify(NOTIFICATION_ID_HOME_TIMELINE, builder.build());
 				break;
 			}
 			case TABLE_ID_MENTIONS: {
-				if (!mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS, false)) return;
-				if (mNewMentionsCount > 1) {
-					builder.setNumber(mNewMentionsCount);
+				if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS, false)) {
+					displayMentionsNotification(context, values);
 				}
-				final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
-				final Bundle delete_extras = new Bundle();
-				delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_MENTIONS);
-				delete_intent.putExtras(delete_extras);
-				final Intent content_intent;
-				final List<String> screen_names = new NoDuplicatesArrayList<String>();
-				ContentValues notification_value = null;
-				int notified_count = 0;
-				for (final ContentValues value : values) {
-					final String screen_name = value.getAsString(Statuses.SCREEN_NAME);
-					if (!isFiltered(mDatabase, screen_name, value.getAsString(Statuses.SOURCE),
-							value.getAsString(Statuses.TEXT_PLAIN))) {
-						if (notification_value == null) {
-							notification_value = value;
-						}
-						screen_names.add(screen_name);
-						notified_count++;
-					}
-				}
-				if (notified_count == 1) {
-					final Uri.Builder uri_builder = new Uri.Builder();
-					uri_builder.scheme(SCHEME_TWIDERE);
-					uri_builder.authority(AUTHORITY_STATUS);
-					uri_builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID,
-							notification_value.getAsString(Statuses.ACCOUNT_ID));
-					uri_builder.appendQueryParameter(QUERY_PARAM_STATUS_ID,
-							notification_value.getAsString(Statuses.STATUS_ID));
-					content_intent = new Intent(Intent.ACTION_VIEW, uri_builder.build());
-
-				} else {
-					content_intent = new Intent(context, HomeActivity.class);
-					content_intent.setAction(Intent.ACTION_MAIN);
-					content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
-					final Bundle content_extras = new Bundle();
-					content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MENTIONS);
-					content_intent.putExtras(content_extras);
-				}
-				if (notification_value == null) return;
-				final String title;
-				if (screen_names.size() > 1) {
-					title = res.getString(R.string.notification_mention_multiple,
-							display_screen_name ? notification_value.getAsString(Statuses.SCREEN_NAME)
-									: notification_value.getAsString(Statuses.NAME), screen_names.size() - 1);
-				} else {
-					title = res.getString(R.string.notification_mention,
-							display_screen_name ? notification_value.getAsString(Statuses.SCREEN_NAME)
-									: notification_value.getAsString(Statuses.NAME));
-				}
-				final String message = notification_value.getAsString(Statuses.TEXT_PLAIN);
-				final String profile_image_url_string = notification_value.getAsString(Statuses.PROFILE_IMAGE_URL);
-				final File profile_image_file = mProfileImageLoader
-						.getCachedImageFile(display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
-								: profile_image_url_string);
-				final int w = res.getDimensionPixelSize(R.dimen.notification_large_icon_width);
-				final int h = res.getDimensionPixelSize(R.dimen.notification_large_icon_height);
-				final Bitmap profile_image = profile_image_file != null && profile_image_file.isFile() ? BitmapFactory
-						.decodeFile(profile_image_file.getPath()) : null;
-				final Bitmap profile_image_fallback = BitmapFactory.decodeResource(res,
-						R.drawable.ic_profile_image_default);
-				builder.setLargeIcon(Bitmap.createScaledBitmap(profile_image != null ? profile_image
-						: profile_image_fallback, w, h, true));
-				final Notification notification = buildNotification(builder, title, title, message,
-						R.drawable.ic_stat_mention, null, content_intent, delete_intent);
-				mNotificationManager.notify(NOTIFICATION_ID_MENTIONS, notification);
 				break;
 			}
 			case TABLE_ID_DIRECT_MESSAGES_INBOX: {
-				if (!mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES, false)) return;
-				if (mNewMessagesCount > 1) {
-					builder.setNumber(mNewMessagesCount);
+				if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES, false)) {
+					displayMessagesNotification(context, values);
 				}
-				final List<String> screen_names = new NoDuplicatesArrayList<String>();
-				final ContentValues notification_value = values[0];
-				for (final ContentValues value : values) {
-					screen_names.add(value.getAsString(DirectMessages.SENDER_SCREEN_NAME));
-				}
-				if (notification_value == null) return;
-				final String title;
-				if (screen_names.size() > 1) {
-					title = res.getString(R.string.notification_direct_message_multiple,
-							display_screen_name ? notification_value.getAsString(DirectMessages.SENDER_SCREEN_NAME)
-									: notification_value.getAsString(DirectMessages.SENDER_NAME),
-							screen_names.size() - 1);
-				} else {
-					title = res.getString(R.string.notification_direct_message,
-							display_screen_name ? notification_value.getAsString(DirectMessages.SENDER_SCREEN_NAME)
-									: notification_value.getAsString(DirectMessages.SENDER_NAME));
-				}
-				final String message = notification_value.getAsString(DirectMessages.TEXT_PLAIN);
-				final String profile_image_url_string = notification_value
-						.getAsString(DirectMessages.SENDER_PROFILE_IMAGE_URL);
-				final File profile_image_file = mProfileImageLoader
-						.getCachedImageFile(display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
-								: profile_image_url_string);
-				final int w = res.getDimensionPixelSize(R.dimen.notification_large_icon_width);
-				final int h = res.getDimensionPixelSize(R.dimen.notification_large_icon_height);
-				final Bitmap profile_image = profile_image_file != null && profile_image_file.isFile() ? BitmapFactory
-						.decodeFile(profile_image_file.getPath()) : null;
-				final Bitmap profile_image_fallback = BitmapFactory.decodeResource(res,
-						R.drawable.ic_profile_image_default);
-				builder.setLargeIcon(Bitmap.createScaledBitmap(profile_image != null ? profile_image
-						: profile_image_fallback, w, h, true));
-				final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
-				final Bundle delete_extras = new Bundle();
-				delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_DIRECT_MESSAGES);
-				delete_intent.putExtras(delete_extras);
-				final Intent content_intent;
-				if (values.length == 1) {
-					final Uri.Builder uri_builder = new Uri.Builder();
-					final long account_id = notification_value.getAsLong(DirectMessages.ACCOUNT_ID);
-					final long conversation_id = notification_value.getAsLong(DirectMessages.SENDER_ID);
-					uri_builder.scheme(SCHEME_TWIDERE);
-					uri_builder.authority(AUTHORITY_DIRECT_MESSAGES_CONVERSATION);
-					uri_builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-					uri_builder.appendQueryParameter(QUERY_PARAM_CONVERSATION_ID, String.valueOf(conversation_id));
-					content_intent = new Intent(Intent.ACTION_VIEW, uri_builder.build());
-				} else {
-					content_intent = new Intent(context, HomeActivity.class);
-					content_intent.setAction(Intent.ACTION_MAIN);
-					content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
-					final Bundle content_extras = new Bundle();
-					content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MESSAGES);
-					content_intent.putExtras(content_extras);
-				}
-				final Notification notification = buildNotification(builder, title, title, message,
-						R.drawable.ic_stat_direct_message, null, content_intent, delete_intent);
-				mNotificationManager.notify(NOTIFICATION_ID_DIRECT_MESSAGES, notification);
 				break;
 			}
 		}
 	}
 
-	void handleCommandCall() {
-		try {
-			// something blah blah blah
-		} catch (final RuntimeException e) {
-			throw new IllegalArgumentException("This method cannot be called from non-UI thread");
-		}
+	private static String stripMentionText(final String text, final String my_screen_name) {
+		if (text == null || my_screen_name == null) return text;
+		final String temp = "@" + my_screen_name + " ";
+		if (text.startsWith(temp)) return text.substring(temp.length());
+		return text;
 	}
 }

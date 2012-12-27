@@ -25,10 +25,10 @@ import android.database.Cursor;
 
 public class StatusCursorIndices {
 
-	public final int account_id, status_id, status_timestamp, name, screen_name, text, text_plain, profile_image_url,
-			is_retweet, is_favorite, is_gap, location, is_protected, is_verified, in_reply_to_status_id,
-			in_reply_to_screen_name, my_retweet_id, retweeted_by_name, retweeted_by_screen_name, retweet_id,
-			retweeted_by_id, user_id, source, retweet_count, is_possibly_sensitive;
+	public final int account_id, status_id, status_timestamp, name, screen_name, text_html, text_plain,
+			profile_image_url, is_retweet, is_favorite, is_gap, location, is_protected, is_verified,
+			in_reply_to_status_id, in_reply_to_screen_name, my_retweet_id, retweeted_by_name, retweeted_by_screen_name,
+			retweet_id, retweeted_by_id, user_id, source, retweet_count, is_possibly_sensitive;
 
 	public StatusCursorIndices(final Cursor cursor) {
 		account_id = cursor.getColumnIndex(Statuses.ACCOUNT_ID);
@@ -36,7 +36,7 @@ public class StatusCursorIndices {
 		status_timestamp = cursor.getColumnIndex(Statuses.STATUS_TIMESTAMP);
 		name = cursor.getColumnIndex(Statuses.NAME);
 		screen_name = cursor.getColumnIndex(Statuses.SCREEN_NAME);
-		text = cursor.getColumnIndex(Statuses.TEXT);
+		text_html = cursor.getColumnIndex(Statuses.TEXT);
 		text_plain = cursor.getColumnIndex(Statuses.TEXT_PLAIN);
 		profile_image_url = cursor.getColumnIndex(Statuses.PROFILE_IMAGE_URL);
 		is_favorite = cursor.getColumnIndex(Statuses.IS_FAVORITE);
@@ -61,7 +61,7 @@ public class StatusCursorIndices {
 	@Override
 	public String toString() {
 		return "StatusCursorIndices{account_id=" + account_id + ", status_id=" + status_id + ", status_timestamp="
-				+ status_timestamp + ", name=" + name + ", screen_name=" + screen_name + ", text=" + text
+				+ status_timestamp + ", name=" + name + ", screen_name=" + screen_name + ", text=" + text_html
 				+ ", text_plain=" + text_plain + ", profile_image_url=" + profile_image_url + ", is_retweet="
 				+ is_retweet + ", is_favorite=" + is_favorite + ", is_gap=" + is_gap + ", location=" + location
 				+ ", is_protected=" + is_protected + ", is_verified=" + is_verified + ", in_reply_to_status_id="

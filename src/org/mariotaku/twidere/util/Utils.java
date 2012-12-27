@@ -297,6 +297,7 @@ public final class Utils implements Constants {
 	private static Map<Long, Integer> sAccountColors = new LinkedHashMap<Long, Integer>();
 	private static Map<Long, Integer> sUserColors = new LinkedHashMap<Long, Integer>(512, 0.75f, true);
 
+	private static Map<Long, String> sAccountScreenNames = new LinkedHashMap<Long, String>();
 	private static Map<Long, String> sAccountNames = new LinkedHashMap<Long, String>();
 
 	private Utils() {
@@ -487,7 +488,7 @@ public final class Utils implements Constants {
 	}
 
 	public static void clearAccountName() {
-		sAccountNames.clear();
+		sAccountScreenNames.clear();
 	}
 
 	public static void clearUserColor(final Context context, final long user_id) {
@@ -772,22 +773,40 @@ public final class Utils implements Constants {
 		return accounts;
 	}
 
-	public static String getAccountScreenName(final Context context, final long account_id) {
+	public static String getAccountName(final Context context, final long account_id) {
 		if (context == null) return null;
-		String username = sAccountNames.get(account_id);
-		if (username == null) {
-			final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
-					new String[] { Accounts.SCREEN_NAME }, Accounts.ACCOUNT_ID + " = " + account_id, null, null);
-			if (cur == null) return username;
+		String name = sAccountNames.get(account_id);
+		if (name == null) {
+			final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.NAME },
+					Accounts.ACCOUNT_ID + " = " + account_id, null, null);
+			if (cur == null) return name;
 
 			if (cur.getCount() > 0) {
 				cur.moveToFirst();
-				username = cur.getString(cur.getColumnIndex(Accounts.SCREEN_NAME));
-				sAccountNames.put(account_id, username);
+				name = cur.getString(cur.getColumnIndex(Accounts.NAME));
+				sAccountNames.put(account_id, name);
 			}
 			cur.close();
 		}
-		return username;
+		return name;
+	}
+
+	public static String getAccountScreenName(final Context context, final long account_id) {
+		if (context == null) return null;
+		String screen_name = sAccountScreenNames.get(account_id);
+		if (screen_name == null) {
+			final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
+					new String[] { Accounts.SCREEN_NAME }, Accounts.ACCOUNT_ID + " = " + account_id, null, null);
+			if (cur == null) return screen_name;
+
+			if (cur.getCount() > 0) {
+				cur.moveToFirst();
+				screen_name = cur.getString(cur.getColumnIndex(Accounts.SCREEN_NAME));
+				sAccountScreenNames.put(account_id, screen_name);
+			}
+			cur.close();
+		}
+		return screen_name;
 	}
 
 	public static String[] getAccountScreenNames(final Context context) {
@@ -909,6 +928,27 @@ public final class Utils implements Constants {
 		}
 		cur.close();
 		return ids;
+	}
+
+	public static boolean getAsBoolean(final ContentValues values, final String key, final boolean def) {
+		if (values == null || key == null) return def;
+		final Object value = values.get(key);
+		if (value == null) return def;
+		return Boolean.valueOf(value.toString());
+	}
+
+	public static long getAsInteger(final ContentValues values, final String key, final int def) {
+		if (values == null || key == null) return def;
+		final Object value = values.get(key);
+		if (value == null) return def;
+		return Integer.valueOf(value.toString());
+	}
+
+	public static long getAsLong(final ContentValues values, final String key, final long def) {
+		if (values == null || key == null) return def;
+		final Object value = values.get(key);
+		if (value == null) return def;
+		return Long.valueOf(value.toString());
 	}
 
 	public static String getBestBannerType(final int width) {
@@ -1294,7 +1334,6 @@ public final class Utils implements Constants {
 		for (final HtmlLink link : extractor.grabLinks(html)) {
 			final String image_url = link.getLink();
 			Matcher m;
-			// TODO
 			m = PATTERN_TWITTER_IMAGES.matcher(image_url);
 			if (m.matches()) return new PreviewImage(getTwitterImage(image_url, large_image_preview), image_url);
 			m = PATTERN_TWITPIC.matcher(image_url);
@@ -1853,7 +1892,6 @@ public final class Utils implements Constants {
 		return values;
 	}
 
-	// TODO
 	public static ContentValues makeCachedUserContentValues(final User user, final boolean large_profile_image) {
 		if (user == null || user.getId() <= 0) return null;
 		final String profile_image_url = parseString(user.getProfileImageUrlHttps());
@@ -1864,8 +1902,8 @@ public final class Utils implements Constants {
 		values.put(CachedUsers.PROFILE_IMAGE_URL, large_profile_image ? getBiggerTwitterProfileImage(profile_image_url)
 				: profile_image_url);
 		values.put(CachedUsers.CREATED_AT, user.getCreatedAt().getTime());
-		values.put(CachedUsers.IS_PROTECTED, user.isProtected() ? 1 : 0);
-		values.put(CachedUsers.IS_VERIFIED, user.isVerified() ? 1 : 0);
+		values.put(CachedUsers.IS_PROTECTED, user.isProtected());
+		values.put(CachedUsers.IS_VERIFIED, user.isVerified());
 		values.put(CachedUsers.FAVORITES_COUNT, user.getFavouritesCount());
 		values.put(CachedUsers.FOLLOWERS_COUNT, user.getFollowersCount());
 		values.put(CachedUsers.FRIENDS_COUNT, user.getFriendsCount());
@@ -1892,7 +1930,7 @@ public final class Utils implements Constants {
 		values.put(DirectMessages.RECIPIENT_ID, recipient.getId());
 		values.put(DirectMessages.TEXT, formatDirectMessageText(message));
 		values.put(DirectMessages.TEXT_PLAIN, message.getText());
-		values.put(DirectMessages.IS_OUTGOING, is_outgoing ? 1 : 0);
+		values.put(DirectMessages.IS_OUTGOING, is_outgoing);
 		values.put(DirectMessages.SENDER_NAME, sender.getName());
 		values.put(DirectMessages.SENDER_SCREEN_NAME, sender.getScreenName());
 		values.put(DirectMessages.RECIPIENT_NAME, recipient.getName());
@@ -1905,7 +1943,6 @@ public final class Utils implements Constants {
 		return values;
 	}
 
-	// TODO
 	public static ContentValues makeStatusContentValues(Status status, final long account_id,
 			final boolean large_profile_image) {
 		if (status == null || status.getId() <= 0) return null;
@@ -1930,8 +1967,8 @@ public final class Utils implements Constants {
 			values.put(Statuses.USER_ID, user_id);
 			values.put(Statuses.NAME, name);
 			values.put(Statuses.SCREEN_NAME, screen_name);
-			values.put(Statuses.IS_PROTECTED, user.isProtected() ? 1 : 0);
-			values.put(Statuses.IS_VERIFIED, user.isVerified() ? 1 : 0);
+			values.put(Statuses.IS_PROTECTED, user.isProtected());
+			values.put(Statuses.IS_VERIFIED, user.isVerified());
 			values.put(Statuses.PROFILE_IMAGE_URL,
 					large_profile_image ? getBiggerTwitterProfileImage(profile_image_url) : profile_image_url);
 		}
@@ -1949,8 +1986,8 @@ public final class Utils implements Constants {
 		if (location != null) {
 			values.put(Statuses.LOCATION, location.getLatitude() + "," + location.getLongitude());
 		}
-		values.put(Statuses.IS_RETWEET, is_retweet ? 1 : 0);
-		values.put(Statuses.IS_FAVORITE, status.isFavorited() ? 1 : 0);
+		values.put(Statuses.IS_RETWEET, is_retweet);
+		values.put(Statuses.IS_FAVORITE, status.isFavorited());
 		return values;
 	}
 

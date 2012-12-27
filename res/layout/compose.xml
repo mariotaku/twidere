@@ -49,7 +49,7 @@
 				android:id="@+id/text_count"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_gravity="center_vertical|right"
+				android:layout_gravity="bottom|right"
 				android:gravity="center"
 				android:layerType="software"
 				android:paddingLeft="8dp"

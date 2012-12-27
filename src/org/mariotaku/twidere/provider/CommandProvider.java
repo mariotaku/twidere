@@ -59,4 +59,12 @@ public class CommandProvider extends ContentProvider {
 		return 0;
 	}
 
+	private void handleCommandCall() {
+		try {
+			// something blah blah blah
+		} catch (final RuntimeException e) {
+			throw new IllegalArgumentException("This method cannot be called from non-UI thread");
+		}
+	}
+
 }

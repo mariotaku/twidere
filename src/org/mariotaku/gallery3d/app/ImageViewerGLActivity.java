@@ -224,6 +224,12 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 				finish();
 				break;
 			}
+			case R.id.open_in_browser: {
+				final Uri uri = getIntent().getData();
+				if (uri == null) return;
+				startActivity(new Intent(Intent.ACTION_VIEW, uri));
+				break;
+			}
 		}
 	}
 

@@ -380,5 +380,7 @@
 	<string name="none">None</string>
 	<string name="large">Large</string>
 	<string name="small">Small</string>
+	<string name="and_more">and <xliff:g id="count">%d</xliff:g> more</string>
+	<string name="clear_search_history">Clear search history</string>
 
 </resources>

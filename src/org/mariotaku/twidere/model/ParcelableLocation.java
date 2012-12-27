@@ -129,6 +129,12 @@ public class ParcelableLocation implements Serializable, Parcelable {
 		out.writeDouble(longitude);
 	}
 
+	public static ParcelableLocation fromString(final String string) {
+		final ParcelableLocation location = new ParcelableLocation(string);
+		if (ParcelableLocation.isValidLocation(location)) return location;
+		return null;
+	}
+
 	public static boolean isValidLocation(final ParcelableLocation location) {
 		return location != null && location.isValid();
 	}

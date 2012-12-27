@@ -20,18 +20,26 @@
 package org.mariotaku.twidere.model;
 
 import static org.mariotaku.twidere.util.Utils.formatDirectMessageText;
+import static org.mariotaku.twidere.util.Utils.getAsBoolean;
+import static org.mariotaku.twidere.util.Utils.getAsLong;
 import static org.mariotaku.twidere.util.Utils.parseString;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Date;
 
+import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
+
 import twitter4j.DirectMessage;
 import twitter4j.User;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class ParcelableDirectMessage implements Parcelable {
+public class ParcelableDirectMessage implements Parcelable, Serializable, Comparable<ParcelableDirectMessage> {
+
+	private static final long serialVersionUID = -3721836808981416526L;
 
 	public static final Parcelable.Creator<ParcelableDirectMessage> CREATOR = new Parcelable.Creator<ParcelableDirectMessage>() {
 		@Override
@@ -57,14 +65,31 @@ public class ParcelableDirectMessage implements Parcelable {
 	};
 
 	public final long account_id, message_id, message_timestamp;
-	public final long sender_id, recipient_id;
 
+	public final long sender_id, recipient_id;
 	public final boolean is_out_going;
 
 	public final String text_html, text_plain;
-	public final String sender_name, recipient_name, sender_screen_name, recipient_screen_name;
 
+	public final String sender_name, recipient_name, sender_screen_name, recipient_screen_name;
 	public final String sender_profile_image_url_string, recipient_profile_image_url_string;
+
+	public ParcelableDirectMessage(final ContentValues values) {
+		text_plain = values.getAsString(DirectMessages.TEXT_PLAIN);
+		text_html = values.getAsString(DirectMessages.TEXT);
+		sender_screen_name = values.getAsString(DirectMessages.SENDER_SCREEN_NAME);
+		sender_profile_image_url_string = values.getAsString(DirectMessages.SENDER_PROFILE_IMAGE_URL);
+		sender_name = values.getAsString(DirectMessages.SENDER_NAME);
+		sender_id = getAsLong(values, DirectMessages.SENDER_ID, -1);
+		recipient_screen_name = values.getAsString(DirectMessages.RECIPIENT_SCREEN_NAME);
+		recipient_profile_image_url_string = values.getAsString(DirectMessages.RECIPIENT_PROFILE_IMAGE_URL);
+		recipient_name = values.getAsString(DirectMessages.RECIPIENT_NAME);
+		recipient_id = getAsLong(values, DirectMessages.RECIPIENT_ID, -1);
+		message_timestamp = getAsLong(values, DirectMessages.MESSAGE_TIMESTAMP, -1);
+		message_id = getAsLong(values, DirectMessages.MESSAGE_ID, -1);
+		is_out_going = getAsBoolean(values, DirectMessages.IS_OUTGOING, false);
+		account_id = getAsLong(values, DirectMessages.ACCOUNT_ID, -1);
+	}
 
 	public ParcelableDirectMessage(final Cursor cursor, final DirectMessageCursorIndices indices) {
 		account_id = indices.account_id != -1 ? cursor.getLong(indices.account_id) : -1;
@@ -121,6 +146,15 @@ public class ParcelableDirectMessage implements Parcelable {
 		recipient_screen_name = in.readString();
 		sender_profile_image_url_string = in.readString();
 		recipient_profile_image_url_string = in.readString();
+	}
+
+	@Override
+	public int compareTo(final ParcelableDirectMessage another) {
+		if (another == null) return 0;
+		final long diff = another.message_id - message_id;
+		if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
+		if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
+		return (int) diff;
 	}
 
 	@Override

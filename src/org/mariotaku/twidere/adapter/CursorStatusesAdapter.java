@@ -101,7 +101,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 
 			final String retweeted_by_name = cursor.getString(mIndices.retweeted_by_name);
 			final String retweeted_by_screen_name = cursor.getString(mIndices.retweeted_by_screen_name);
-			final String text = cursor.getString(mIndices.text);
+			final String text = cursor.getString(mIndices.text_html);
 			final String screen_name = cursor.getString(mIndices.screen_name);
 			final String name = cursor.getString(mIndices.name);
 			final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
