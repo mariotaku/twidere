@@ -62,22 +62,28 @@ import android.view.ViewGroup.MarginLayoutParams;
 
 public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatusesAdapter, OnClickListener {
 
+	private final Context mContext;
+	private final Resources mResources;
+	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
+	private final ArrayList<Long> mSelectedStatusIds;
+	private final boolean mIsRTL;
+	
 	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled,
 			mMentionsHighlightDisabled, mDisplaySensitiveContents;
-	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
-	private final Context mContext;
-	private StatusCursorIndices mIndices;
-	private final ArrayList<Long> mSelectedStatusIds;
 	private int mNameDisplayOption, mInlineImagePreviewDisplayOption;
+	private StatusCursorIndices mIndices;
 
 	public CursorStatusesAdapter(final Context context) {
 		super(context, R.layout.status_list_item, null, new String[0], new int[0], 0);
 		mContext = context;
+		mResources = context.getResources();
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mSelectedStatusIds = application.getSelectedStatusIds();
 		mProfileImageLoader = application.getProfileImageLoader();
 		mPreviewImageLoader = application.getPreviewImageLoader();
+		final String lang = mResources.getConfiguration().locale.getLanguage();
+		mIsRTL = "ar".equalsIgnoreCase(lang);
 	}
 
 	@Override
@@ -142,7 +148,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			holder.setTextSize(mTextSize);
 
 			holder.text.setText(toPlainText(text));
-			holder.setName(name, screen_name, mNameDisplayOption, is_verified, is_protected);
+			holder.setName(name, screen_name, mNameDisplayOption, is_verified, is_protected, mIsRTL);
 			if (mShowAbsoluteTime) {
 				holder.time.setText(formatSameDayTime(context, status_timestamp));
 			} else {
@@ -185,9 +191,8 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 					lp.leftMargin = 0;
 					holder.image_preview_frame.setLayoutParams(lp);
 				} else if (mInlineImagePreviewDisplayOption == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_SMALL) {
-					final Resources res = mContext.getResources();
-					lp.width = res.getDimensionPixelSize(R.dimen.image_preview_width);
-					lp.leftMargin = (int) (res.getDisplayMetrics().density * 16);
+					lp.width = mResources.getDimensionPixelSize(R.dimen.image_preview_width);
+					lp.leftMargin = (int) (mResources.getDisplayMetrics().density * 16);
 					holder.image_preview_frame.setLayoutParams(lp);
 				}
 				final boolean is_possibly_sensitive = cursor.getInt(mIndices.is_possibly_sensitive) == 1;

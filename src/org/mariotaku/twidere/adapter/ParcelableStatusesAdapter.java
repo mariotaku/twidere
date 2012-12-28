@@ -59,21 +59,27 @@ import android.view.ViewGroup.MarginLayoutParams;
 public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> implements IStatusesAdapter,
 		OnClickListener {
 
+	private final Context mContext;
+	private final Resources mResources;
+	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
+	private final ArrayList<Long> mSelectedStatusIds;
+	
 	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled,
 			mMentionsHighlightDisabled, mDisplaySensitiveContents;
-	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private float mTextSize;
-	private final Context mContext;
-	private final ArrayList<Long> mSelectedStatusIds;
 	private int mNameDisplayOption, mInlineImagePreviewDisplayOption;
+	private boolean mIsRTL;
 
 	public ParcelableStatusesAdapter(final Context context) {
 		super(context, R.layout.status_list_item);
 		mContext = context;
+		mResources = context.getResources();
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mSelectedStatusIds = application.getSelectedStatusIds();
 		mProfileImageLoader = application.getProfileImageLoader();
 		mPreviewImageLoader = application.getPreviewImageLoader();
+		final String lang = mResources.getConfiguration().locale.getLanguage();
+		mIsRTL = "ar".equalsIgnoreCase(lang);
 	}
 
 	public long findItemIdByPosition(final int position) {
@@ -149,7 +155,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			holder.setTextSize(mTextSize);
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					getUserTypeIconRes(status.is_verified, status.is_protected), 0);
-			holder.setName(status.name, status.screen_name, mNameDisplayOption, status.is_verified, status.is_protected);
+			holder.setName(status.name, status.screen_name, mNameDisplayOption, status.is_verified, status.is_protected, mIsRTL);
 			if (mShowAbsoluteTime) {
 				holder.time.setText(formatSameDayTime(mContext, status.status_timestamp));
 			} else {
@@ -196,9 +202,8 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 					lp.leftMargin = 0;
 					holder.image_preview_frame.setLayoutParams(lp);
 				} else if (mInlineImagePreviewDisplayOption == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_SMALL) {
-					final Resources res = mContext.getResources();
-					lp.width = res.getDimensionPixelSize(R.dimen.image_preview_width);
-					lp.leftMargin = (int) (res.getDisplayMetrics().density * 16);
+					lp.width = mResources.getDimensionPixelSize(R.dimen.image_preview_width);
+					lp.leftMargin = (int) (mResources.getDisplayMetrics().density * 16);
 					holder.image_preview_frame.setLayoutParams(lp);
 				}
 				if (status.is_possibly_sensitive && !mDisplaySensitiveContents) {

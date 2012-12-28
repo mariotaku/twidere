@@ -82,16 +82,22 @@ public class StatusViewHolder implements Constants {
 	}
 
 	public void setName(final String name, final String screen_name, final int name_display_option,
-			final boolean is_verified, final boolean is_protected) {
+			final boolean is_verified, final boolean is_protected, final boolean is_rtl) {
 		if (name_display_option == NAME_DISPLAY_OPTION_CODE_NAME) {
-			this.name.setText(Html.fromHtml("<b>" + name + "</b>" + getUserBadgeState(is_verified, is_protected),
-					getter, null));
+			this.name.setText(Html.fromHtml("<b>" + name + "</b>" + getUserType(is_verified, is_protected), getter,
+					null));
 		} else if (name_display_option == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME) {
 			this.name.setText(Html.fromHtml(
-					"<b>" + "@" + screen_name + "</b>" + getUserBadgeState(is_verified, is_protected), getter, null));
+					"<b>" + "@" + screen_name + "</b>" + getUserType(is_verified, is_protected), getter, null));
 		} else {
-			this.name.setText(Html.fromHtml("<b>" + name + "</b>" + getUserBadgeState(is_verified, is_protected) + " "
-					+ "<small>" + "@" + screen_name + "</small>", getter, null));
+			if (is_rtl) {
+				this.name.setText(Html.fromHtml(
+						"<small>" + "@" + screen_name + "</small>" + " " + getUserType(is_verified, is_protected)
+								+ "<b>" + name + "</b>", getter, null));
+			} else {
+				this.name.setText(Html.fromHtml("<b>" + name + "</b>" + getUserType(is_verified, is_protected) + " "
+						+ "<small>" + "@" + screen_name + "</small>", getter, null));
+			}
 		}
 	}
 
@@ -128,7 +134,7 @@ public class StatusViewHolder implements Constants {
 		content.drawLeft(show_as_gap ? Color.TRANSPARENT : color);
 	}
 
-	private static String getUserBadgeState(final boolean is_verified, final boolean is_protected) {
+	private static String getUserType(final boolean is_verified, final boolean is_protected) {
 		if (is_verified)
 			return "<img src=\"v\"/>";
 		else if (is_protected) return "<img src=\"p\"/>";

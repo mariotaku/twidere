@@ -496,7 +496,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			uri_builder.scheme(SCHEME_TWIDERE);
 			uri_builder.authority(AUTHORITY_STATUS);
 			uri_builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(status.account_id));
-			uri_builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status.account_id));
+			uri_builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status.status_id));
 			content_intent = new Intent(Intent.ACTION_VIEW, uri_builder.build());
 		} else {
 			content_intent = new Intent(context, HomeActivity.class);
@@ -513,7 +513,6 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			title = res.getString(R.string.notification_mention, display_screen_name ? "@" + status.screen_name
 					: status.name);
 		}
-		final String message = status.text_plain;
 		final String profile_image_url_string = status.profile_image_url_string;
 		final File profile_image_file = mProfileImageLoader
 				.getCachedImageFile(display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
@@ -525,7 +524,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		final Bitmap profile_image_fallback = BitmapFactory.decodeResource(res, R.drawable.ic_profile_image_default);
 		builder.setLargeIcon(Bitmap.createScaledBitmap(profile_image != null ? profile_image : profile_image_fallback,
 				w, h, true));
-		buildNotification(builder, title, title, message, R.drawable.ic_stat_mention, null, content_intent,
+		buildNotification(builder, title, title, status.text_plain, R.drawable.ic_stat_mention, null, content_intent,
 				delete_intent);
 		if (mentions_size > 1) {
 			final Intent reply_intent = new Intent(INTENT_ACTION_COMPOSE);
@@ -577,8 +576,9 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, status.screen_name);
 			bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, status.name);
 			reply_intent.putExtras(bundle);
+			reply_intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			builder.addAction(R.drawable.ic_menu_reply, context.getString(R.string.reply),
-					PendingIntent.getActivity(context, 0, reply_intent, 0));
+					PendingIntent.getActivity(context, 0, reply_intent, PendingIntent.FLAG_UPDATE_CURRENT));
 			final NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle(builder);
 			style.bigText(stripMentionText(status.text_plain, getAccountScreenName(context, status.account_id)));
 			mNotificationManager.notify(NOTIFICATION_ID_MENTIONS, style.build());
@@ -675,7 +675,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 						summary.append(", ");
 					}
 				}
-				style.setSummaryText(summary.toString());
+				style.setSummaryText(summary);
 			}
 			mNotificationManager.notify(NOTIFICATION_ID_DIRECT_MESSAGES, style.build());
 		} else {

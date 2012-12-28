@@ -122,7 +122,9 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 
 	private void setName() {
 		final String option = mPreferences.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH);
-		mHolder.setName("Twidere Project", "twidere_project", getNameDisplayOptionInt(option), false, false);
+		final String lang = getContext().getResources().getConfiguration().locale.getLanguage();
+		final boolean is_rtl = "ar".equalsIgnoreCase(lang);
+		mHolder.setName("Twidere Project", "twidere_project", getNameDisplayOptionInt(option), false, false, is_rtl);
 	}
 
 	private void setProfileImage() {
