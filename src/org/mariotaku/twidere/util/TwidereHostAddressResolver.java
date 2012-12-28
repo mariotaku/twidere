@@ -156,7 +156,7 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 	}
 
 	void init() throws UnknownHostException {
-		mDNS = !mLocalMappingOnly ? new SimpleResolver(mDNSAddress) : null;
+		mDNS = !mLocalMappingOnly && mDNS == null ? new SimpleResolver(mDNSAddress) : null;
 		if (mDNS != null) {
 			mDNS.setTCP(true);
 		}

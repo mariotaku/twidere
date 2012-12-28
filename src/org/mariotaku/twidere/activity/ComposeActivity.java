@@ -763,6 +763,15 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		if (isEmpty(text) || isFinishing()) return;
 		final boolean has_media = (mIsImageAttached || mIsPhotoAttached) && mImageUri != null;
 		final boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
+		if (mRecentLocation == null && attach_location) {
+			final Location location;
+			if (mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+				location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+			} else {
+				location = null;
+			}
+			mRecentLocation = location != null ? new ParcelableLocation(location) : null;
+		}
 		mTwitterWrapper.updateStatus(mAccountIds, text, attach_location ? mRecentLocation : null, mImageUri,
 				mInReplyToStatusId, has_media && mIsPossiblySensitive, mIsPhotoAttached && !mIsImageAttached);
 		setResult(Activity.RESULT_OK);

@@ -67,7 +67,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private final ArrayList<Long> mSelectedStatusIds;
 	private final boolean mIsRTL;
-	
+
 	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled,
 			mMentionsHighlightDisabled, mDisplaySensitiveContents;
 	private float mTextSize;

@@ -41,6 +41,7 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.model.ConsumerKeySecretCursor;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
@@ -254,6 +255,9 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			final String table = getTableNameById(table_id);
 			checkReadPermission(table_id, table, projection);
 			switch (table_id) {
+				case VIRTUAL_TABLE_ID_CONSUMER_KEY_SECRET: {
+					return new ConsumerKeySecretCursor(mContext);
+				}
 				case TABLE_ID_DIRECT_MESSAGES_CONVERSATION: {
 					final List<String> segments = uri.getPathSegments();
 					if (segments.size() != 3) return null;
@@ -354,6 +358,12 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 
 	private void checkReadPermission(final int id, final String table, final String[] projection) {
 		switch (id) {
+			case VIRTUAL_TABLE_ID_CONSUMER_KEY_SECRET: {
+				if (!checkPermission(PERMISSION_LEVEL_ACCOUNTS))
+					throw new SecurityException("Access database " + table
+							+ " requires level PERMISSION_LEVEL_ACCOUNTS");
+				break;
+			}
 			case TABLE_ID_ACCOUNTS: {
 				// Reading some infomation like user_id, screen_name etc is
 				// okay, but reading columns like password requires higher
@@ -401,7 +411,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			case TABLE_ID_ACCOUNTS: {
 				// Writing to accounts database is not allowed for third-party
 				// applications.
-				if (!mPermissionManager.isSameSignature(Binder.getCallingUid()))
+				if (!mPermissionManager.checkSignature(Binder.getCallingUid()))
 					throw new SecurityException(
 							"Writing to accounts database is not allowed for third-party applications");
 				break;

@@ -19,26 +19,32 @@
 
 package org.mariotaku.twidere.loader;
 
+import static org.mariotaku.twidere.util.Utils.parseString;
+
+import java.util.ArrayList;
 import java.util.List;
 
-import org.mariotaku.twidere.activity.ExtensionsListActivity;
+import org.mariotaku.twidere.Constants;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
 
-public class ExtensionsListLoader extends AsyncTaskLoader<List<ResolveInfo>> {
+public class ExtensionsListLoader extends AsyncTaskLoader<List<ExtensionsListLoader.ExtensionInfo>> implements
+		Constants {
 
-	private ExtensionsListLoader.PackageIntentReceiver mPackageObserver;
-	private final ExtensionsListLoader.InterestingConfigChanges mLastConfig = new InterestingConfigChanges();
+	private PackageIntentReceiver mPackageObserver;
+	private final InterestingConfigChanges mLastConfig = new InterestingConfigChanges();
 	private final PackageManager mPackageManager;
 
 	public ExtensionsListLoader(final Context context, final PackageManager pm) {
@@ -47,9 +53,16 @@ public class ExtensionsListLoader extends AsyncTaskLoader<List<ResolveInfo>> {
 	}
 
 	@Override
-	public List<ResolveInfo> loadInBackground() {
-		final Intent intent = new Intent(ExtensionsListActivity.INTENT_ACTION_EXTENSION_SETTINGS);
-		return mPackageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+	public List<ExtensionInfo> loadInBackground() {
+		final List<ApplicationInfo> apps = mPackageManager.getInstalledApplications(PackageManager.GET_META_DATA);
+		final List<ExtensionInfo> extensions = new ArrayList<ExtensionInfo>();
+		for (final ApplicationInfo info : apps) {
+			final Bundle meta = info.metaData;
+			if (meta != null && meta.getBoolean(METADATA_KEY_EXTENSION, false)) {
+				extensions.add(new ExtensionInfo(info, mPackageManager));
+			}
+		}
+		return extensions;
 	}
 
 	/**
@@ -98,6 +111,34 @@ public class ExtensionsListLoader extends AsyncTaskLoader<List<ResolveInfo>> {
 	protected void onStopLoading() {
 		// Attempt to cancel the current load task if possible.
 		cancelLoad();
+	}
+
+	public static class ExtensionInfo implements Comparable<ExtensionInfo> {
+		public final int permission;
+		public final String label, description;
+		public final String pname, settings;
+		public final Drawable icon;
+
+		ExtensionInfo(final ApplicationInfo info, final PackageManager pm) {
+			final Bundle meta = info.metaData;
+			permission = meta.getInt(METADATA_KEY_PERMISSION, PERMISSION_LEVEL_INVALID);
+			settings = meta.getString(METADATA_KEY_SETTINGS);
+			icon = info.loadIcon(pm);
+			pname = info.packageName;
+			label = parseString(info.loadLabel(pm), pname);
+			description = parseString(info.loadDescription(pm));
+		}
+
+		@Override
+		public int compareTo(final ExtensionInfo another) {
+			return label.compareToIgnoreCase(another.label);
+		}
+
+		@Override
+		public String toString() {
+			return "ExtensionInfo{permission=" + permission + ", label=" + label + ", description=" + description
+					+ ", pname=" + pname + ", settings=" + settings + ", icon=" + icon + "}";
+		}
 	}
 
 	/**

@@ -28,33 +28,62 @@ import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
 public class SelectAccountActivity extends BaseDialogActivity implements LoaderCallbacks<Cursor>, OnItemClickListener,
-		OnClickListener {
+		OnClickListener, OnScrollListener {
+
+	private static final long TICKER_DURATION = 5000L;
 
 	private ListView mListView;
 	private AccountsAdapter mAdapter;
 	private final List<Long> mSelectedIds = new NoDuplicatesArrayList<Long>();
 
+	private Handler mHandler;
+	private Runnable mTicker;
+
+	private volatile boolean mBusy, mTickerStopped;
+
 	private SharedPreferences mPreferences;
+
+	private boolean mAllowSelectNone, mOAuthOnly;
+
+	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			final String action = intent.getAction();
+			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
+				if (!isFinishing()) {
+					getSupportLoaderManager().restartLoader(0, null, SelectAccountActivity.this);
+				}
+			}
+		}
+	};
 
 	@Override
 	public void onBackPressed() {
-		if (mSelectedIds.size() <= 0) {
+		if (mSelectedIds.size() <= 0 && !mAllowSelectNone) {
 			Toast.makeText(this, R.string.no_account_selected, Toast.LENGTH_SHORT).show();
 			return;
 		}
@@ -84,13 +113,23 @@ public class SelectAccountActivity extends BaseDialogActivity implements LoaderC
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-		final Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
+		final Bundle extras = getIntent().getExtras();
 		setContentView(R.layout.select_account);
 		mListView = (ListView) findViewById(android.R.id.list);
 		mAdapter = new AccountsAdapter(this, true);
 		mListView.setAdapter(mAdapter);
 		mListView.setOnItemClickListener(this);
-		final long[] activated_ids = bundle != null ? bundle.getLongArray(Constants.INTENT_KEY_IDS) : null;
+		mListView.setOnScrollListener(this);
+		final long[] activated_ids;
+		if (savedInstanceState != null) {
+			activated_ids = savedInstanceState.getLongArray(INTENT_KEY_IDS);
+		} else if (extras != null) {
+			activated_ids = extras.getLongArray(INTENT_KEY_IDS);
+		} else {
+			activated_ids = null;
+		}
+		mAllowSelectNone = extras != null ? extras.getBoolean(INTENT_KEY_ALLOW_SELECT_NONE, false) : false;
+		mOAuthOnly = extras != null ? extras.getBoolean(INTENT_KEY_OAUTH_ONLY, false) : false;
 		mSelectedIds.clear();
 		if (activated_ids != null) {
 			for (final long id : activated_ids) {
@@ -103,7 +142,8 @@ public class SelectAccountActivity extends BaseDialogActivity implements LoaderC
 
 	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
-		return new CursorLoader(this, Accounts.CONTENT_URI, Accounts.COLUMNS, null, null, null);
+		final String where = mOAuthOnly ? Accounts.AUTH_TYPE + " = " + Accounts.AUTH_TYPE_OAUTH : null;
+		return new CursorLoader(this, Accounts.CONTENT_URI, Accounts.COLUMNS, where, null, null);
 	}
 
 	@Override
@@ -129,6 +169,7 @@ public class SelectAccountActivity extends BaseDialogActivity implements LoaderC
 		final SparseBooleanArray checked = new SparseBooleanArray();
 		cursor.moveToFirst();
 		if (mSelectedIds.size() == 0) {
+			if (mAllowSelectNone) return;
 			while (!cursor.isAfterLast()) {
 				final boolean is_activated = cursor.getInt(cursor.getColumnIndexOrThrow(Accounts.IS_ACTIVATED)) == 1;
 				final long user_id = cursor.getLong(cursor.getColumnIndexOrThrow(Accounts.ACCOUNT_ID));
@@ -161,6 +202,58 @@ public class SelectAccountActivity extends BaseDialogActivity implements LoaderC
 	public void onSaveInstanceState(final Bundle outState) {
 		outState.putLongArray(Constants.INTENT_KEY_IDS, ArrayUtils.fromList(mSelectedIds));
 		super.onSaveInstanceState(outState);
+	}
+
+	@Override
+	public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
+			final int totalItemCount) {
+
+	}
+
+	@Override
+	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
+		switch (scrollState) {
+			case SCROLL_STATE_FLING:
+			case SCROLL_STATE_TOUCH_SCROLL:
+				mBusy = true;
+				break;
+			case SCROLL_STATE_IDLE:
+				mBusy = false;
+				break;
+		}
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		mTickerStopped = false;
+		mHandler = new Handler();
+
+		mTicker = new Runnable() {
+
+			@Override
+			public void run() {
+				if (mTickerStopped) return;
+				if (mListView != null && !mBusy) {
+					mAdapter.notifyDataSetChanged();
+				}
+				final long now = SystemClock.uptimeMillis();
+				final long next = now + TICKER_DURATION - now % TICKER_DURATION;
+				mHandler.postAtTime(mTicker, next);
+			}
+		};
+		mTicker.run();
+
+		final IntentFilter filter = new IntentFilter(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
+		registerReceiver(mStateReceiver, filter);
+
+	}
+
+	@Override
+	public void onStop() {
+		mTickerStopped = true;
+		unregisterReceiver(mStateReceiver);
+		super.onStop();
 	}
 
 }

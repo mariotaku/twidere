@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere;
 
+import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
 import org.mariotaku.twidere.provider.TweetStore.CachedStatuses;
@@ -371,6 +372,8 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_OMIT_INTENT_EXTRA = "omit_intent_extra";
 	public static final String INTENT_KEY_COMMAND = "command";
 	public static final String INTENT_KEY_WIDTH = "width";
+	public static final String INTENT_KEY_ALLOW_SELECT_NONE = "allow_select_none";
+	public static final String INTENT_KEY_OAUTH_ONLY = "oauth_only";
 
 	public static final String QUERY_PARAM_NEW_ITEMS_COUNT = "new_items_count";
 
@@ -457,7 +460,8 @@ public interface Constants extends TwitterConstants {
 	public static final String TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY = DirectMessages.ConversationsEntry.CONTENT_PATH;
 	public static final String TABLE_TRENDS_LOCAL = CachedTrends.Local.CONTENT_PATH;
 	public static final String TABLE_TABS = Tabs.CONTENT_PATH;
-	public static final String TABLE_NOTIFICATIONS = "notifications";
+	public static final String TABLE_NOTIFICATIONS = TweetStore.CONTENT_PATH_NOTIFICATIONS;
+	public static final String TABLE_CONSUMER_KEY_SECRET = TweetStore.CONTENT_PATH_CONSUMER_KEY_SECRET;
 
 	public static final int TABLE_ID_ACCOUNTS = 1;
 	public static final int TABLE_ID_STATUSES = 2;
@@ -479,6 +483,7 @@ public interface Constants extends TwitterConstants {
 	public static final int TABLE_ID_CACHED_STATUSES = 52;
 	public static final int TABLE_ID_CACHED_HASHTAGS = 53;
 	public static final int VIRTUAL_TABLE_ID_NOTIFICATIONS = 101;
+	public static final int VIRTUAL_TABLE_ID_CONSUMER_KEY_SECRET = 102;
 
 	public static final int LINK_ID_STATUS = 1;
 	public static final int LINK_ID_USER = 2;
@@ -530,13 +535,17 @@ public interface Constants extends TwitterConstants {
 	public static final String SERVICE_COMMAND_GET_SENT_DIRECT_MESSAGES = "get_sent_direct_messages";
 	public static final String SERVICE_COMMAND_GET_RECEIVED_DIRECT_MESSAGES = "get_received_direct_messages";
 
-	public static final int PERMISSION_LEVEL_INVALID = -2;
-	public static final int PERMISSION_LEVEL_DENIED = -1;
+	public static final String METADATA_KEY_PERMISSION = "org.mariotaku.twidere.extension.permission";
+	public static final String METADATA_KEY_SETTINGS = "org.mariotaku.twidere.extension.settings";
+	public static final String METADATA_KEY_EXTENSION = "org.mariotaku.twidere.extension";
+
+	public static final int PERMISSION_LEVEL_DENIED = -2;
+	public static final int PERMISSION_LEVEL_INVALID = -1;
 	public static final int PERMISSION_LEVEL_NONE = 0;
-	public static final int PERMISSION_LEVEL_REFRESH = 1;
-	public static final int PERMISSION_LEVEL_READ = 2;
-	public static final int PERMISSION_LEVEL_WRITE = 3;
-	public static final int PERMISSION_LEVEL_DIRECT_MESSAGES = 4;
-	public static final int PERMISSION_LEVEL_ACCOUNTS = 5;
+	public static final int PERMISSION_LEVEL_REFRESH = 2;
+	public static final int PERMISSION_LEVEL_READ = 3;
+	public static final int PERMISSION_LEVEL_WRITE = 5;
+	public static final int PERMISSION_LEVEL_DIRECT_MESSAGES = 7;
+	public static final int PERMISSION_LEVEL_ACCOUNTS = 11;
 
 }

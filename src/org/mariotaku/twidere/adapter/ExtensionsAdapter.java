@@ -19,40 +19,24 @@
 
 package org.mariotaku.twidere.adapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.loader.ExtensionsListLoader.ExtensionInfo;
+import org.mariotaku.twidere.util.PermissionManager;
 import org.mariotaku.twidere.view.holder.ExtensionsViewHolder;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 
-public class ExtensionsAdapter extends BaseAdapter {
+public class ExtensionsAdapter extends ArrayAdapter<ExtensionInfo> {
 
-	private final PackageManager pm;
-	private final Context context;
+	private final PermissionManager mPermissionManager;
 
-	private final List<ResolveInfo> mData = new ArrayList<ResolveInfo>();
-
-	public ExtensionsAdapter(final Context context, final PackageManager pm) {
-		this.pm = pm;
-		this.context = context;
-	}
-
-	@Override
-	public int getCount() {
-		return mData.size();
-	}
-
-	@Override
-	public ResolveInfo getItem(final int position) {
-		return mData.get(position);
+	public ExtensionsAdapter(final Context context) {
+		super(context, R.layout.two_line_with_icon_list_item);
+		mPermissionManager = new PermissionManager(context);
 	}
 
 	@Override
@@ -62,23 +46,22 @@ public class ExtensionsAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(final int position, final View convertView, final ViewGroup parent) {
-		final View view = convertView != null ? convertView : LayoutInflater.from(context).inflate(
-				R.layout.two_line_with_icon_list_item, parent, false);
+		final View view = super.getView(position, convertView, parent);
 		view.findViewById(R.id.checkbox).setVisibility(View.GONE);
 		final ExtensionsViewHolder viewholder = view.getTag() == null ? new ExtensionsViewHolder(view)
 				: (ExtensionsViewHolder) view.getTag();
 
-		final ResolveInfo info = getItem(position);
-		viewholder.text1.setText(info.loadLabel(pm));
-		viewholder.text2.setText(info.activityInfo.applicationInfo.loadLabel(pm));
-		viewholder.icon.setImageDrawable(info.loadIcon(pm));
+		final ExtensionInfo info = getItem(position);
+		viewholder.text1.setText(info.label);
+		viewholder.text2.setText(info.description);
+		viewholder.icon.setImageDrawable(info.icon);
 		return view;
 	}
 
-	public void setData(final List<ResolveInfo> data) {
-		mData.clear();
+	public void setData(final List<ExtensionInfo> data) {
+		clear();
 		if (data != null) {
-			mData.addAll(data);
+			addAll(data);
 		}
 		notifyDataSetChanged();
 	}

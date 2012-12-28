@@ -150,7 +150,7 @@ public class RefreshService extends Service implements Constants {
 	}
 
 	private void clearNotification(final int id) {
-		final Uri uri = TweetStore.NOTOFICATIONS_CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+		final Uri uri = TweetStore.CONTENT_URI_NOTOFICATIONS.buildUpon().appendPath(String.valueOf(id)).build();
 		mResolver.delete(uri, null, null);
 	}
 

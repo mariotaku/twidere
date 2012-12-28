@@ -41,6 +41,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.view.MenuItem;
@@ -58,17 +60,22 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		LoaderCallbacks<List<ParcelableUser>>, OnItemClickListener, OnScrollListener, OnItemLongClickListener,
 		Panes.Left, OnMenuItemClickListener {
 
+	private static final long TICKER_DURATION = 5000L;
+
 	private SharedPreferences mPreferences;
 	private PopupMenu mPopupMenu;
 	private TwidereApplication mApplication;
 
 	private UsersAdapter mAdapter;
 
+	private Handler mHandler;
+	private Runnable mTicker;
+
 	private boolean mLoadMoreAutomatically;
 	private ListView mListView;
 	private long mAccountId;
 	private final SynchronizedStateSavedList<ParcelableUser, Long> mData = new SynchronizedStateSavedList<ParcelableUser, Long>();
-	private volatile boolean mReachedBottom, mNotReachedBottomBefore = true;
+	private volatile boolean mReachedBottom, mNotReachedBottomBefore = true, mTickerStopped, mBusy;
 
 	private ParcelableUser mSelectedUser;
 
@@ -280,11 +287,38 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 
 	@Override
 	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
+		switch (scrollState) {
+			case SCROLL_STATE_FLING:
+			case SCROLL_STATE_TOUCH_SCROLL:
+				mBusy = true;
+				break;
+			case SCROLL_STATE_IDLE:
+				mBusy = false;
+				break;
+		}
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
+		mTickerStopped = false;
+		mHandler = new Handler();
+
+		mTicker = new Runnable() {
+
+			@Override
+			public void run() {
+				if (mTickerStopped) return;
+				if (mListView != null && !mBusy) {
+					mAdapter.notifyDataSetChanged();
+				}
+				final long now = SystemClock.uptimeMillis();
+				final long next = now + TICKER_DURATION - now % TICKER_DURATION;
+				mHandler.postAtTime(mTicker, next);
+			}
+		};
+		mTicker.run();
+
 		final IntentFilter filter = new IntentFilter();
 		filter.addAction(BROADCAST_MULTI_SELECT_STATE_CHANGED);
 		filter.addAction(BROADCAST_MULTI_SELECT_ITEM_CHANGED);
@@ -293,6 +327,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 
 	@Override
 	public void onStop() {
+		mTickerStopped = true;
 		if (mPopupMenu != null) {
 			mPopupMenu.dismiss();
 		}

@@ -223,10 +223,13 @@ public final class Utils implements Constants {
 				TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TRENDS_LOCAL, TABLE_ID_TRENDS_LOCAL);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_TABS, TABLE_ID_TABS);
-		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_NOTIFICATIONS + "/#",
-				VIRTUAL_TABLE_ID_NOTIFICATIONS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_STATUSES, TABLE_ID_CACHED_STATUSES);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_HASHTAGS, TABLE_ID_CACHED_HASHTAGS);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_HASHTAGS, TABLE_ID_CACHED_HASHTAGS);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_NOTIFICATIONS + "/#",
+				VIRTUAL_TABLE_ID_NOTIFICATIONS);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CONSUMER_KEY_SECRET,
+				VIRTUAL_TABLE_ID_CONSUMER_KEY_SECRET);
 
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_STATUS, null, LINK_ID_STATUS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USER, null, LINK_ID_USER);
@@ -360,7 +363,7 @@ public final class Utils implements Constants {
 
 	public static Uri buildDirectMessageConversationUri(final long account_id, final long conversation_id,
 			final String screen_name) {
-		if (conversation_id <= 0 && screen_name == null) return TweetStore.NULL_CONTENT_URI;
+		if (conversation_id <= 0 && screen_name == null) return TweetStore.CONTENT_URI_NULL;
 		final Uri.Builder builder = conversation_id > 0 ? DirectMessages.Conversation.CONTENT_URI.buildUpon()
 				: DirectMessages.Conversation.CONTENT_URI_SCREEN_NAME.buildUpon();
 		builder.appendPath(String.valueOf(account_id));
@@ -2702,7 +2705,11 @@ public final class Utils implements Constants {
 	}
 
 	public static String parseString(final Object object) {
-		if (object == null) return null;
+		return parseString(object, null);
+	}
+
+	public static String parseString(final Object object, final String def) {
+		if (object == null) return def;
 		return String.valueOf(object);
 	}
 

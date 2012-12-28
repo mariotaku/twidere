@@ -43,14 +43,7 @@
 	<string name="username">用户名</string>
 	<string name="password">密码</string>
 	<string name="label_tweetstore_provider">Twidere 数据库存储</string>
-	<string name="label_backend_service">应用后端服务</string>
-	<string name="label_permission_group_access_twidere">访问 Twidere 应用</string>
-	<string name="label_permission_read_databases">读取 Twidere 的数据库</string>
-	<string name="label_permission_write_databases">写入 Twidere 的数据库</string>
-	<string name="label_permission_access_service">访问 Twidere 的服务</string>
-	<string name="description_permission_read_databases">从数据库读取推文、草稿箱、帐号信息、私信等</string>
-	<string name="description_permission_write_databases">向数据库写入推文、草稿箱、帐号信息、私信等</string>
-	<string name="description_permission_access_service">为你刷新/发送推文和私信等</string>
+	<string name="label_refresh_service">刷新服务</string>
 	<string name="open_in_browser">在浏览器中打开</string>
 	<string name="tap_to_load_more">轻按以加载更多</string>
 	<string name="delete">删除</string>
@@ -64,7 +57,6 @@
 	<string name="view_image">图像</string>
 	<string name="view_map">地图</string>
 	<string name="view_status">推文</string>
-	<string name="view_conversation">对话</string>
 	<string name="view_user_profile">资料</string>
 	<string name="browser">浏览器</string>
 	<string name="pick_from_gallery">从图库中选取</string>
@@ -135,6 +127,7 @@
 	<string name="unfollow_successfully">取消关注成功</string>
 	<string name="profile_update_successfully">个人资料更新成功</string>
 	<string name="profile_image_update_successfully">个人资料图像更新成功</string>
+	<string name="profile_banner_image_update_successfully">个人资料横幅图片上传成功</string>
 	<string name="text_size">文字尺寸</string>
 	<string name="text_size_summary">推文的文字尺寸</string>
 	<string name="cannot_get_location">不能获得你的位置</string>
@@ -156,7 +149,6 @@
 	<string name="search_users">搜索用户</string>
 	<string name="search_tweets">搜索推文</string>
 	<string name="created_at">创建日期</string>
-	<string name="set_default_account_hint">请设定一个默认帐号</string>
 	<string name="search_hint">搜索推文或用户</string>
 	<string name="remember_position">记住位置</string>
 	<string name="remember_position_summary">打开Twidere时，恢复到退出前列表/页面的位置</string>
@@ -199,7 +191,7 @@
 	<string name="new_notifications">新通知</string>
 	<string name="screen_name">用户名</string>
 	<string name="sort_timeline_by_time">按时间顺序排序时间线</string>
-	<string name="sort_timeline_by_time_summary">这可能使得被转推的推文显示在错误的位置，不过如果你使用其他服务比如（Identi.ca），这个选项会有不少帮助</string>
+	<string name="sort_timeline_by_time_summary">这可能使得被转推的推文显示在错误的位置，不过如果你使用其他服务（比如Identi.ca），这个选项会有不少帮助</string>
 	<string name="refresh_on_start">启动时刷新</string>
 	<string name="refresh_on_start_summary">在启动时刷新时间线和提及你的内容</string>
 	<string name="refresh_after_tweet">发送推文后刷新</string>
@@ -222,6 +214,7 @@
 	<string name="item_2_hours">2小时</string>
 	<string name="item_4_hours">4小时</string>
 	<string name="inline_image_preview">在推文列表中显示图片预览</string>
+	<string name="inline_image_preview_display_option">图片预览显示选项</string>
 	<string name="solid_color_background">纯色背景</string>
 	<string name="solid_color_background_summary">如果你的设备是AMOLED屏幕的话，启用这个会有所帮助</string>
 	<string name="following_you">正在关注你</string>
@@ -347,6 +340,8 @@
 	<string name="unfavoriting">取消收藏</string>
 	<string name="deleting">删除</string>
 	<string name="updating_profile">更新个人资料</string>
+	<string name="updating_profile_image">更新个人资料图片</string>
+	<string name="updating_profile_banner_image">更新个人资料横幅图片</string>
 	<string name="updating_details">更新详细资料</string>
 	<string name="blocking">阻止</string>
 	<string name="unblocking">解除阻止</string>
@@ -376,5 +371,22 @@
 	<string name="hashtag">话题标签</string>
 	<string name="links">链接</string>
 	<string name="edit_profile">编辑个人资料</string>
+	<string name="display_sensitive_contents">显示敏感内容</string>
+	<string name="display_sensitive_contents_summary">显示色情等敏感内容而不发出提示</string>
+	<string name="sensitive_content_warning">这条推文可能有敏感内容，继续？</string>
+	<string name="mark_as_sensitive">标记为敏感</string>
+	<string name="remove_sensitive_mark">删除敏感标记</string>
+	<string name="loading">正在载入…</string>
+	<string name="none">无</string>
+	<string name="large">大尺寸</string>
+	<string name="small">小尺寸</string>
+	<string name="and_more">和其他 <xliff:g id="count">%d</xliff:g> 个</string>
+	<string name="clear_search_history">清除搜索历史</string>
+	<string name="permission_level_none">没有需要的权限</string>
+	<string name="permission_level_refresh">刷新时间线（包括私信）</string>
+	<string name="permission_level_read">读取推文和一些缓存的内容</string>
+	<string name="permission_level_write">将推文和其他一些内容写入到数据库，发送推文</string>
+	<string name="permission_level_direct_messages">读写/发送私信</string>
+	<string name="permission_level_accounts">读取帐号信息（但不包括授权信息）</string>
 
 </resources>

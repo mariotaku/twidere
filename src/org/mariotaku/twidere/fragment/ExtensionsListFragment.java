@@ -19,8 +19,6 @@
 
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.showErrorToast;
-
 import java.util.List;
 
 import org.mariotaku.popupmenu.PopupMenu;
@@ -29,16 +27,18 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.ExtensionsAdapter;
 import org.mariotaku.twidere.loader.ExtensionsListLoader;
+import org.mariotaku.twidere.loader.ExtensionsListLoader.ExtensionInfo;
 import org.mariotaku.twidere.model.Panes;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -46,12 +46,13 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
-public class ExtensionsListFragment extends BaseListFragment implements Constants, LoaderCallbacks<List<ResolveInfo>>,
-		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener, Panes.Right {
+public class ExtensionsListFragment extends BaseListFragment implements Constants,
+		LoaderCallbacks<List<ExtensionInfo>>, OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener,
+		Panes.Right {
 
 	private ExtensionsAdapter mAdapter;
 	private PackageManager mPackageManager;
-	private ResolveInfo mSelectedResolveInfo;
+	private ExtensionInfo mSelectedExtension;
 	private ListView mListView;
 	private PopupMenu mPopupMenu;
 
@@ -59,7 +60,7 @@ public class ExtensionsListFragment extends BaseListFragment implements Constant
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mPackageManager = getActivity().getPackageManager();
-		mAdapter = new ExtensionsAdapter(getActivity(), mPackageManager);
+		mAdapter = new ExtensionsAdapter(getActivity());
 		setListAdapter(mAdapter);
 		mListView = getListView();
 		mListView.setOnItemClickListener(this);
@@ -69,62 +70,55 @@ public class ExtensionsListFragment extends BaseListFragment implements Constant
 	}
 
 	@Override
-	public Loader<List<ResolveInfo>> onCreateLoader(final int id, final Bundle args) {
+	public Loader<List<ExtensionInfo>> onCreateLoader(final int id, final Bundle args) {
 		return new ExtensionsListLoader(getActivity(), mPackageManager);
 	}
 
 	@Override
 	public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-		final ResolveInfo info = mAdapter.getItem(position);
-		if (info == null || info.activityInfo == null) return;
-		final Intent intent = new Intent(INTENT_ACTION_EXTENSIONS);
-		intent.setClassName(info.activityInfo.packageName, info.activityInfo.name);
-		try {
-			startActivity(intent);
-		} catch (final ActivityNotFoundException e) {
-			showErrorToast(getActivity(), null, e, false);
-		}
+		openSettings(mAdapter.getItem(position));
 	}
 
 	@Override
 	public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-		mSelectedResolveInfo = null;
-		mSelectedResolveInfo = mAdapter.getItem(position);
+		mSelectedExtension = mAdapter.getItem(position);
+		if (mSelectedExtension == null) return false;
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_extension);
+		final Menu menu = mPopupMenu.getMenu();
+		final MenuItem settings = menu.findItem(MENU_SETTINGS);
+		final Intent intent = mSelectedExtension.pname != null && mSelectedExtension.settings != null ? new Intent(
+				INTENT_ACTION_EXTENSION_SETTINGS) : null;
+		if (intent != null) {
+			intent.setClassName(mSelectedExtension.pname, mSelectedExtension.settings);
+		}
+		settings.setVisible(intent != null && mPackageManager.queryIntentActivities(intent, 0).size() == 1);
 		mPopupMenu.setOnMenuItemClickListener(this);
 		mPopupMenu.show();
 		return true;
 	}
 
 	@Override
-	public void onLoaderReset(final Loader<List<ResolveInfo>> loader) {
+	public void onLoaderReset(final Loader<List<ExtensionInfo>> loader) {
 		mAdapter.setData(null);
 	}
 
 	@Override
-	public void onLoadFinished(final Loader<List<ResolveInfo>> loader, final List<ResolveInfo> data) {
+	public void onLoadFinished(final Loader<List<ExtensionInfo>> loader, final List<ExtensionInfo> data) {
 		mAdapter.setData(data);
 		setListShown(true);
 	}
 
 	@Override
 	public boolean onMenuItemClick(final MenuItem item) {
-		if (mSelectedResolveInfo == null) return false;
+		if (mSelectedExtension == null) return false;
 		switch (item.getItemId()) {
 			case MENU_SETTINGS: {
-				final Intent intent = new Intent(INTENT_ACTION_EXTENSIONS);
-				intent.setClassName(mSelectedResolveInfo.activityInfo.packageName,
-						mSelectedResolveInfo.activityInfo.name);
-				try {
-					startActivity(intent);
-				} catch (final ActivityNotFoundException e) {
-					showErrorToast(getActivity(), null, e, false);
-				}
+				openSettings(mSelectedExtension);
 				break;
 			}
 			case MENU_DELETE: {
-				final Uri packageUri = Uri.parse("package:" + mSelectedResolveInfo.activityInfo.packageName);
+				final Uri packageUri = Uri.parse("package:" + mSelectedExtension.pname);
 				final Intent uninstallIntent = new Intent(Intent.ACTION_UNINSTALL_PACKAGE, packageUri);
 				startActivity(uninstallIntent);
 				break;
@@ -139,6 +133,19 @@ public class ExtensionsListFragment extends BaseListFragment implements Constant
 			mPopupMenu.dismiss();
 		}
 		super.onStop();
+	}
+
+	private boolean openSettings(final ExtensionInfo info) {
+		if (info == null || info.settings == null) return false;
+		final Intent intent = new Intent(INTENT_ACTION_EXTENSIONS);
+		intent.setClassName(info.pname, info.settings);
+		try {
+			startActivity(intent);
+		} catch (final ActivityNotFoundException e) {
+			Log.w(LOGTAG, e);
+			return false;
+		}
+		return true;
 	}
 
 }

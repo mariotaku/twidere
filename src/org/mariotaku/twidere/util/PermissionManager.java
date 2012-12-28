@@ -33,11 +33,21 @@ public class PermissionManager implements Constants {
 		return checkPermission(Binder.getCallingUid(), level);
 	}
 
-	public boolean checkPermission(final int uid, final int level) {
+	public boolean checkPermission(final int uid, final int permission) {
+		if (permission <= 0) throw new IllegalArgumentException("level " + permission + " is not allowed");
 		if (Process.myUid() == uid) return true;
-		if (isSameSignature(uid)) return true;
+		if (checkSignature(uid)) return true;
 		final String pname = getPackageNameByUid(uid);
-		return getPermissionLevel(pname) >= level;
+		return getPermissions(pname) % permission == 0;
+	}
+
+	public boolean checkSignature(final int uid) {
+		final String pname = getPackageNameByUid(uid);
+		return checkSignature(pname);
+	}
+
+	public boolean checkSignature(final String pname) {
+		return mPackageManager.checkSignatures(pname, mContext.getPackageName()) == PackageManager.SIGNATURE_MATCH;
 	}
 
 	public boolean deny(final String package_name) {
@@ -48,13 +58,9 @@ public class PermissionManager implements Constants {
 
 	}
 
-	public int getPermissionLevel(final String package_name) {
+	public int getPermissions(final String package_name) {
 		if (isEmpty(package_name)) return PERMISSION_LEVEL_INVALID;
 		return mPreferences.getInt(package_name, PERMISSION_LEVEL_NONE);
-	}
-
-	public boolean isSameSignature(final int uid) {
-		return mPackageManager.checkSignatures(getPackageNameByUid(uid), mContext.getPackageName()) == PackageManager.SIGNATURE_MATCH;
 	}
 
 	public boolean revoke(final String package_name) {

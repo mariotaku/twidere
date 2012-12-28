@@ -48,13 +48,20 @@ public final class TweetStore implements Constants {
 
 	private static final String TYPE_BOOLEAN = "INTEGER(1)";
 
-	public static final String NULL_CONTENT_PATH = "null_content";
+	public static final String CONTENT_PATH_NULL = "null_content";
 
-	public static final Uri NULL_CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-			NULL_CONTENT_PATH);
+	public static final String CONTENT_PATH_CONSUMER_KEY_SECRET = "consumer_key";
 
-	public static final Uri NOTOFICATIONS_CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-			"notifications");
+	public static final String CONTENT_PATH_NOTIFICATIONS = "notifications";
+
+	public static final Uri CONTENT_URI_NULL = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+			CONTENT_PATH_NULL);
+
+	public static final Uri CONTENT_URI_CONSUMER_KEY_SECRET = Uri.withAppendedPath(
+			Uri.parse(PROTOCOL_CONTENT + AUTHORITY), CONTENT_PATH_CONSUMER_KEY_SECRET);
+
+	public static final Uri CONTENT_URI_NOTOFICATIONS = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+			CONTENT_PATH_NOTIFICATIONS);
 
 	public static interface Accounts extends BaseColumns {
 
