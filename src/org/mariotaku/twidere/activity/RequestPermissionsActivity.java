@@ -16,7 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class RequestPermissionsActivity extends BaseDialogWhenLargeActivity implements OnClickListener {
+public class RequestPermissionsActivity extends BaseDialogActivity implements OnClickListener {
 
 	private PermissionsManager mPermissionsManager;
 

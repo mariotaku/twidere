@@ -380,17 +380,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 		@Override
 		protected SingleResponse<User> doInBackground(final Void... params) {
-
-			final Twitter twitter = getTwitterInstance(context, account_id, false);
-			if (twitter != null) {
-				try {
-					final User user = twitter.updateProfile(name, url, location, description);
-					return new TwitterSingleResponse<User>(account_id, user, null);
-				} catch (final TwitterException e) {
-					return new TwitterSingleResponse<User>(account_id, null, e);
-				}
-			}
-			return new TwitterSingleResponse<User>(account_id, null, null);
+			return updateProfile(context, account_id, name, url, location, description);
 		}
 
 		@Override

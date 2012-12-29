@@ -1,6 +1,7 @@
 package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
+import static org.mariotaku.twidere.util.Utils.parseString;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -8,10 +9,18 @@ import org.mariotaku.twidere.loader.ParcelableUserLoader;
 import org.mariotaku.twidere.loader.UserBannerImageLoader;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.SingleResponse;
+import org.mariotaku.twidere.util.AsyncTask;
+import org.mariotaku.twidere.util.AsyncTaskManager;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper.UpdateProfileTask;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.view.ProfileNameBannerContainer;
 import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
 
+import twitter4j.User;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,6 +32,7 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -41,12 +51,28 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 
 	private boolean mBackPressed;
 	private long mAccountId;
-	protected int mBannerWidth;
-	protected ParcelableUser mUser;
+	private int mBannerWidth;
+	private ParcelableUser mUser;
 
 	private boolean mBannerImageLoaderInitialized;
 
 	private final Handler mHandler = new Handler();
+
+	private UpdateUserProfileTask mTask;
+
+	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			if (mUser == null) return;
+			final String action = intent.getAction();
+			if (BROADCAST_PROFILE_UPDATED.equals(action)) {
+				if (mUser == null || intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mUser.user_id) {
+					getSupportLoaderManager().restartLoader(LOADER_ID_USER, null, mUserInfoLoaderCallbacks);
+				}
+			}
+		}
+	};
 
 	private final LoaderCallbacks<Bitmap> mBannerImageCallback = new LoaderCallbacks<Bitmap>() {
 
@@ -75,7 +101,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 		public Loader<SingleResponse<ParcelableUser>> onCreateLoader(final int id, final Bundle args) {
 			mProgress.setVisibility(View.VISIBLE);
 			mContent.setVisibility(View.GONE);
-			setProgressBarIndeterminateVisibility(true);
+			setSupportProgressBarIndeterminateVisibility(true);
 			return new ParcelableUserLoader(EditUserProfileActivity.this, mAccountId, mAccountId, null, getIntent()
 					.getExtras(), false, false);
 		}
@@ -102,7 +128,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 			} else {
 				finish();
 			}
-			setProgressBarIndeterminateVisibility(false);
+			setSupportProgressBarIndeterminateVisibility(false);
 		}
 
 	};
@@ -145,6 +171,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
+		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		final Bundle extras = getIntent().getExtras();
 		if (extras == null || !isMyAccount(this, extras.getLong(INTENT_KEY_ACCOUNT_ID))) {
@@ -177,7 +204,13 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 				break;
 			}
 			case MENU_SAVE: {
-				finish();
+				final AsyncTaskManager manager = TwidereApplication.getInstance(this).getAsyncTaskManager();
+				final String name = parseString(mEditName.getText());
+				final String url = parseString(mEditUrl.getText());
+				final String location = parseString(mEditLocation.getText());
+				final String description = parseString(mEditDescription.getText());
+				mTask = new UpdateUserProfileTask(this, manager, mAccountId, name, url, location, description);
+				mTask.execute();
 				return true;
 			}
 		}
@@ -188,13 +221,26 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 	public boolean onPrepareOptionsMenu(final Menu menu) {
 		final MenuItem save = menu.findItem(MENU_SAVE);
 		if (save != null) {
-			save.setEnabled(mHasUnsavedChanges());
+			save.setEnabled(mHasUnsavedChanges() && (mTask == null || mTask.getStatus() != AsyncTask.Status.RUNNING));
 		}
 		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
 	public void onSizeChanged(final View view, final int w, final int h, final int oldw, final int oldh) {
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		final IntentFilter filter = new IntentFilter(BROADCAST_PROFILE_UPDATED);
+		registerReceiver(mStatusReceiver, filter);
+	}
+
+	@Override
+	public void onStop() {
+		unregisterReceiver(mStatusReceiver);
+		super.onStop();
 	}
 
 	@Override
@@ -226,6 +272,15 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 		}
 	}
 
+	private void setUpdateState(final boolean start) {
+		setSupportProgressBarIndeterminateVisibility(start);
+		mEditName.setEnabled(!start);
+		mEditDescription.setEnabled(!start);
+		mEditLocation.setEnabled(!start);
+		mEditUrl.setEnabled(!start);
+		invalidateOptionsMenu();
+	}
+
 	boolean mHasUnsavedChanges() {
 		if (mUser == null) return false;
 		return !stringEquals(mEditName.getText(), mUser.name)
@@ -237,6 +292,27 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 	private static boolean stringEquals(final CharSequence str1, final CharSequence str2) {
 		if (str1 == null || str2 == null) return str1 == str2;
 		return str1.toString().equals(str2.toString());
+	}
+
+	class UpdateUserProfileTask extends UpdateProfileTask {
+
+		public UpdateUserProfileTask(final Context context, final AsyncTaskManager manager, final long account_id,
+				final String name, final String url, final String location, final String description) {
+			super(context, manager, account_id, name, url, location, description);
+		}
+
+		@Override
+		protected void onPostExecute(final SingleResponse<User> result) {
+			super.onPostExecute(result);
+			setUpdateState(false);
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			setUpdateState(true);
+		}
+
 	}
 
 }

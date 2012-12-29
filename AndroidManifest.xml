@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
-	android:versionCode="54"
+	android:versionCode="56"
 	android:versionName="@string/app_version">
 
 	<uses-sdk
@@ -469,7 +469,7 @@
 		<activity
 			android:name=".activity.RequestPermissionsActivity"
 			android:label="@string/permissions_request"
-			android:theme="@style/Theme.Blank.DialogWhenLarge">
+			android:theme="@style/Theme.Twidere.Light.Dialog">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.REQUEST_PERMISSIONS"/>
 

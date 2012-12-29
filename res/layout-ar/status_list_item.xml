@@ -88,6 +88,7 @@
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_below="@+id/text"
 		android:layout_marginTop="8dp"
+		android:layout_toLeftOf="@+id/profile_image"
 		android:background="?imagePreviewBackground">
 
 		<org.mariotaku.twidere.view.ImagePreviewView
@@ -120,7 +121,6 @@
 		android:text="@string/tap_to_load_more"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:textColor="#606060"
-		android:textStyle="bold"
-		android:visibility="gone"/>
+		android:textStyle="bold"/>
 
 </org.mariotaku.twidere.view.ColorLabelRelativeLayout>

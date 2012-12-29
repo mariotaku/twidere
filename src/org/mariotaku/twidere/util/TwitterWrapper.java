@@ -18,6 +18,20 @@ import android.net.Uri;
 
 public class TwitterWrapper implements Constants {
 
+	public static TwitterSingleResponse<User> updateProfile(final Context context, final long account_id,
+			final String name, final String url, final String location, final String description) {
+		final Twitter twitter = getTwitterInstance(context, account_id, false);
+		if (twitter != null) {
+			try {
+				final User user = twitter.updateProfile(name, url, location, description);
+				return new TwitterSingleResponse<User>(account_id, user, null);
+			} catch (final TwitterException e) {
+				return new TwitterSingleResponse<User>(account_id, null, e);
+			}
+		}
+		return new TwitterSingleResponse<User>(account_id, null, null);
+	}
+
 	public static TwitterSingleResponse<Integer> updateProfileBannerImage(final Context context, final long account_id,
 			final Uri image_uri, final boolean delete_image) {
 		final Twitter twitter = getTwitterInstance(context, account_id, false);
@@ -43,7 +57,7 @@ public class TwitterWrapper implements Constants {
 		return new TwitterSingleResponse<Integer>(account_id, null, null);
 	}
 
-	public static SingleResponse<User> updateProfileImage(final Context context, final long account_id,
+	public static TwitterSingleResponse<User> updateProfileImage(final Context context, final long account_id,
 			final Uri image_uri, final boolean delete_image) {
 		final Twitter twitter = getTwitterInstance(context, account_id, false);
 		if (twitter != null && image_uri != null && "file".equals(image_uri.getScheme())) {
