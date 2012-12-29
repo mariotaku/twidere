@@ -68,7 +68,6 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			mMentionsHighlightDisabled, mDisplaySensitiveContents;
 	private float mTextSize;
 	private int mNameDisplayOption, mInlineImagePreviewDisplayOption;
-	private final boolean mIsRTL;
 
 	public ParcelableStatusesAdapter(final Context context) {
 		super(context, R.layout.status_list_item);
@@ -78,8 +77,6 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		mSelectedStatusIds = application.getSelectedStatusIds();
 		mProfileImageLoader = application.getProfileImageLoader();
 		mPreviewImageLoader = application.getPreviewImageLoader();
-		final String lang = mResources.getConfiguration().locale.getLanguage();
-		mIsRTL = "ar".equalsIgnoreCase(lang);
 	}
 
 	public long findItemIdByPosition(final int position) {
@@ -155,8 +152,26 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			holder.setTextSize(mTextSize);
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					getUserTypeIconRes(status.is_verified, status.is_protected), 0);
-			holder.setName(status.name, status.screen_name, mNameDisplayOption, status.is_verified,
-					status.is_protected, mIsRTL);
+			switch (mNameDisplayOption) {
+				case NAME_DISPLAY_OPTION_CODE_NAME: {
+					holder.name.setText(status.name);
+					holder.screen_name.setText(null);
+					holder.screen_name.setVisibility(View.GONE);
+					break;
+				}
+				case NAME_DISPLAY_OPTION_CODE_SCREEN_NAME: {
+					holder.name.setText("@" + status.screen_name);
+					holder.screen_name.setText(null);
+					holder.screen_name.setVisibility(View.GONE);
+					break;
+				}
+				default: {
+					holder.name.setText(status.name);
+					holder.screen_name.setText("@" + status.screen_name);
+					holder.screen_name.setVisibility(View.VISIBLE);
+					break;
+				}
+			}
 			if (mShowAbsoluteTime) {
 				holder.time.setText(formatSameDayTime(mContext, status.status_timestamp));
 			} else {

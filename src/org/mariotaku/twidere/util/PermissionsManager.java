@@ -10,22 +10,22 @@ import android.content.pm.PackageManager;
 import android.os.Binder;
 import android.os.Process;
 
-public class PermissionManager implements Constants {
+public class PermissionsManager implements Constants {
 
 	private final SharedPreferences mPreferences;
 	private final PackageManager mPackageManager;
 	private final Context mContext;
 
-	public PermissionManager(final Context context) {
+	public PermissionsManager(final Context context) {
 		mContext = context;
 		mPreferences = context.getSharedPreferences(PERMISSION_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mPackageManager = context.getPackageManager();
 	}
 
-	public boolean accept(final String package_name, final int level) {
-		if (package_name == null || level <= PERMISSION_LEVEL_NONE || level > PERMISSION_LEVEL_ACCOUNTS) return false;
+	public boolean accept(final String package_name, final int permissions) {
+		if (package_name == null || permissions < PERMISSION_NONE) return false;
 		final SharedPreferences.Editor editor = mPreferences.edit();
-		editor.putInt(package_name, level);
+		editor.putInt(package_name, permissions);
 		return editor.commit();
 	}
 
@@ -33,12 +33,26 @@ public class PermissionManager implements Constants {
 		return checkPermission(Binder.getCallingUid(), level);
 	}
 
-	public boolean checkPermission(final int uid, final int permission) {
-		if (permission <= 0) throw new IllegalArgumentException("level " + permission + " is not allowed");
+	public boolean checkPermission(final int uid, final int required_permissions) {
+		if (required_permissions < PERMISSION_NONE)
+			throw new IllegalArgumentException("invalid permissions " + required_permissions);
+		if (required_permissions == PERMISSION_NONE) return true;
 		if (Process.myUid() == uid) return true;
 		if (checkSignature(uid)) return true;
 		final String pname = getPackageNameByUid(uid);
-		return getPermissions(pname) % permission == 0;
+		final int permissions = getPermissions(pname);
+		return permissions > PERMISSION_NONE && permissions % required_permissions == 0;
+	}
+
+	public boolean checkPermission(final String pname, final int required_permissions) {
+		if (pname == null) throw new NullPointerException();
+		if (required_permissions < PERMISSION_NONE)
+			throw new IllegalArgumentException("invalid permissions " + required_permissions);
+		if (required_permissions == PERMISSION_NONE) return true;
+		if (mContext.getPackageName().equals(pname)) return true;
+		if (checkSignature(pname)) return true;
+		final int permissions = getPermissions(pname);
+		return permissions > PERMISSION_NONE && permissions % required_permissions == 0;
 	}
 
 	public boolean checkSignature(final int uid) {
@@ -46,21 +60,27 @@ public class PermissionManager implements Constants {
 		return checkSignature(pname);
 	}
 
+	@SuppressWarnings("unused")
 	public boolean checkSignature(final String pname) {
+		if (DEBUG) return false;
 		return mPackageManager.checkSignatures(pname, mContext.getPackageName()) == PackageManager.SIGNATURE_MATCH;
 	}
 
 	public boolean deny(final String package_name) {
 		if (package_name == null) return false;
 		final SharedPreferences.Editor editor = mPreferences.edit();
-		editor.putInt(package_name, PERMISSION_LEVEL_DENIED);
+		editor.putInt(package_name, PERMISSION_DENIED);
 		return editor.commit();
 
 	}
 
+	public int getPermissions(final int uid) {
+		return getPermissions(getPackageNameByUid(uid));
+	}
+
 	public int getPermissions(final String package_name) {
-		if (isEmpty(package_name)) return PERMISSION_LEVEL_INVALID;
-		return mPreferences.getInt(package_name, PERMISSION_LEVEL_NONE);
+		if (isEmpty(package_name)) return PERMISSION_INVALID;
+		return mPreferences.getInt(package_name, PERMISSION_NONE);
 	}
 
 	public boolean revoke(final String package_name) {

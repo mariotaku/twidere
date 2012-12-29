@@ -31,8 +31,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.provider.Settings.SettingNotFoundException;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -83,15 +81,7 @@ class BasePreferenceActivity extends ActionBarPreferenceActivity implements Cons
 	}
 
 	public void restart() {
-		boolean show_anim = false;
-		try {
-			final float transition_animation = Settings.System.getFloat(getContentResolver(),
-					Settings.Global.TRANSITION_ANIMATION_SCALE);
-			show_anim = transition_animation > 0.0;
-		} catch (final SettingNotFoundException e) {
-			e.printStackTrace();
-		}
-		restartActivity(this, show_anim);
+		restartActivity(this);
 	}
 
 	public void setHardwareAcceleration() {

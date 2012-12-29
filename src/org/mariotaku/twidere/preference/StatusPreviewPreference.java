@@ -22,7 +22,6 @@ package org.mariotaku.twidere.preference;
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 import static org.mariotaku.twidere.util.Utils.getInlineImagePreviewDisplayOptionInt;
-import static org.mariotaku.twidere.util.Utils.getNameDisplayOptionInt;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
@@ -122,9 +121,20 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 
 	private void setName() {
 		final String option = mPreferences.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH);
-		final String lang = getContext().getResources().getConfiguration().locale.getLanguage();
-		final boolean is_rtl = "ar".equalsIgnoreCase(lang);
-		mHolder.setName("Twidere Project", "twidere_project", getNameDisplayOptionInt(option), false, false, is_rtl);
+		if (NAME_DISPLAY_OPTION_NAME.equals(option)) {
+			mHolder.name.setText("Twidere Project");
+			mHolder.screen_name.setText(null);
+			mHolder.screen_name.setVisibility(View.GONE);
+		} else if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) {
+			mHolder.name.setText("@twidere_project");
+			mHolder.screen_name.setText(null);
+			mHolder.screen_name.setVisibility(View.GONE);
+		} else {
+			mHolder.name.setText("Twidere Project");
+			mHolder.screen_name.setText("@twidere_project");
+			mHolder.screen_name.setVisibility(View.VISIBLE);
+		}
+
 	}
 
 	private void setProfileImage() {

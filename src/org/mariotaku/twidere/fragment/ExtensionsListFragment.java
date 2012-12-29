@@ -29,8 +29,8 @@ import org.mariotaku.twidere.adapter.ExtensionsAdapter;
 import org.mariotaku.twidere.loader.ExtensionsListLoader;
 import org.mariotaku.twidere.loader.ExtensionsListLoader.ExtensionInfo;
 import org.mariotaku.twidere.model.Panes;
+import org.mariotaku.twidere.util.PermissionsManager;
 
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -52,6 +52,7 @@ public class ExtensionsListFragment extends BaseListFragment implements Constant
 
 	private ExtensionsAdapter mAdapter;
 	private PackageManager mPackageManager;
+	private PermissionsManager mPermissionsManager;
 	private ExtensionInfo mSelectedExtension;
 	private ListView mListView;
 	private PopupMenu mPopupMenu;
@@ -60,6 +61,7 @@ public class ExtensionsListFragment extends BaseListFragment implements Constant
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mPackageManager = getActivity().getPackageManager();
+		mPermissionsManager = new PermissionsManager(getActivity());
 		mAdapter = new ExtensionsAdapter(getActivity());
 		setListAdapter(mAdapter);
 		mListView = getListView();
@@ -123,8 +125,19 @@ public class ExtensionsListFragment extends BaseListFragment implements Constant
 				startActivity(uninstallIntent);
 				break;
 			}
+			case MENU_REVOKE: {
+				mPermissionsManager.revoke(mSelectedExtension.pname);
+				mAdapter.notifyDataSetChanged();
+				break;
+			}
 		}
 		return false;
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		mAdapter.notifyDataSetChanged();
 	}
 
 	@Override
@@ -141,7 +154,7 @@ public class ExtensionsListFragment extends BaseListFragment implements Constant
 		intent.setClassName(info.pname, info.settings);
 		try {
 			startActivity(intent);
-		} catch (final ActivityNotFoundException e) {
+		} catch (final Exception e) {
 			Log.w(LOGTAG, e);
 			return false;
 		}

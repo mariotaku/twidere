@@ -2139,11 +2139,17 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 				final String image_path = getImagePathFromUri(mContext, image_uri);
 				final File image_file = image_path != null ? new File(image_path) : null;
-				if (uploader != null) {
-					uploader.waitForService();
+
+				final Uri upload_result_uri;
+				try {
+					if (uploader != null) {
+						uploader.waitForService();
+					}
+					upload_result_uri = image_file != null && image_file.exists() && uploader != null ? uploader
+							.upload(Uri.fromFile(image_file), content) : null;
+				} catch (final Exception e) {
+					throw new ImageUploadException();
 				}
-				final Uri upload_result_uri = image_file != null && image_file.exists() && uploader != null ? uploader
-						.upload(Uri.fromFile(image_file), content) : null;
 				if (use_uploader && image_file != null && image_file.exists() && upload_result_uri == null)
 					throw new ImageUploadException();
 
@@ -2153,11 +2159,16 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				final boolean should_shorten = unshortened_content != null && unshortened_content.length() > 0
 						&& !validator.isValidTweet(unshortened_content);
 				final String screen_name = getAccountScreenName(mContext, account_ids[0]);
-				if (shortener != null) {
-					shortener.waitForService();
+				final String shortened_content;
+				try {
+					if (shortener != null) {
+						shortener.waitForService();
+					}
+					shortened_content = should_shorten && use_shortener ? shortener.shorten(unshortened_content,
+							screen_name, in_reply_to) : null;
+				} catch (final Exception e) {
+					throw new TweetShortenException();
 				}
-				final String shortened_content = should_shorten && use_shortener ? shortener.shorten(
-						unshortened_content, screen_name, in_reply_to) : null;
 
 				if (should_shorten) {
 					if (!use_shortener)

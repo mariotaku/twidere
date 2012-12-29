@@ -32,6 +32,7 @@ import static org.mariotaku.twidere.util.Utils.getPreviewImage;
 import static org.mariotaku.twidere.util.Utils.getStatusBackground;
 import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
+import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
@@ -66,7 +67,6 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	private final Resources mResources;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private final ArrayList<Long> mSelectedStatusIds;
-	private final boolean mIsRTL;
 
 	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled,
 			mMentionsHighlightDisabled, mDisplaySensitiveContents;
@@ -82,8 +82,6 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 		mSelectedStatusIds = application.getSelectedStatusIds();
 		mProfileImageLoader = application.getProfileImageLoader();
 		mPreviewImageLoader = application.getPreviewImageLoader();
-		final String lang = mResources.getConfiguration().locale.getLanguage();
-		mIsRTL = "ar".equalsIgnoreCase(lang);
 	}
 
 	@Override
@@ -148,7 +146,27 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			holder.setTextSize(mTextSize);
 
 			holder.text.setText(toPlainText(text));
-			holder.setName(name, screen_name, mNameDisplayOption, is_verified, is_protected, mIsRTL);
+			holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0, getUserTypeIconRes(is_verified, is_protected), 0);
+			switch (mNameDisplayOption) {
+				case NAME_DISPLAY_OPTION_CODE_NAME: {
+					holder.name.setText(name);
+					holder.screen_name.setText(null);
+					holder.screen_name.setVisibility(View.GONE);
+					break;
+				}
+				case NAME_DISPLAY_OPTION_CODE_SCREEN_NAME: {
+					holder.name.setText("@" + screen_name);
+					holder.screen_name.setText(null);
+					holder.screen_name.setVisibility(View.GONE);
+					break;
+				}
+				default: {
+					holder.name.setText(name);
+					holder.screen_name.setText("@" + screen_name);
+					holder.screen_name.setVisibility(View.VISIBLE);
+					break;
+				}
+			}
 			if (mShowAbsoluteTime) {
 				holder.time.setText(formatSameDayTime(context, status_timestamp));
 			} else {

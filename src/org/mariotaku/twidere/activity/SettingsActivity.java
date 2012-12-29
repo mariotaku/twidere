@@ -35,8 +35,6 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
-import android.provider.Settings;
-import android.provider.Settings.SettingNotFoundException;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
@@ -164,15 +162,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 	@Override
 	public void onSharedPreferenceChanged(final SharedPreferences preferences, final String key) {
 		if (PREFERENCE_KEY_DARK_THEME.equals(key) || PREFERENCE_KEY_SOLID_COLOR_BACKGROUND.equals(key)) {
-			boolean show_anim = false;
-			try {
-				final float transition_animation = Settings.System.getFloat(getContentResolver(),
-						Settings.Global.TRANSITION_ANIMATION_SCALE);
-				show_anim = transition_animation > 0.0;
-			} catch (final SettingNotFoundException e) {
-				e.printStackTrace();
-			}
-			restartActivity(this, show_anim);
+			restartActivity(this);
 		}
 	}
 

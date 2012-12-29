@@ -19,48 +19,33 @@
 
 package org.mariotaku.twidere.view.holder;
 
-import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
-import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.text.Html;
-import android.text.Html.ImageGetter;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class StatusViewHolder implements Constants {
+public class StatusViewHolder {
 
 	public final ImageView profile_image, image_preview;
-	public final TextView name, text, time, reply_retweet_status;
+	public final TextView name, screen_name, text, time, reply_retweet_status;
 	public final View image_preview_frame;
-	private final Context context;
-	private final Resources res;
 	private final View gap_indicator;
 	private final ColorLabelRelativeLayout content;
-	private final UserBadgeImageGetter getter;
 	public boolean show_as_gap;
 	private boolean account_color_enabled;
 	private float text_size;
 
 	public StatusViewHolder(final View view) {
 		content = (ColorLabelRelativeLayout) view;
-		context = view.getContext();
-		res = context.getResources();
-		getter = new UserBadgeImageGetter(res);
 		gap_indicator = view.findViewById(R.id.list_gap_text);
 		image_preview_frame = view.findViewById(R.id.image_preview_frame);
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		image_preview = (ImageView) view.findViewById(R.id.image_preview);
 		name = (TextView) view.findViewById(R.id.name);
+		screen_name = (TextView) view.findViewById(R.id.screen_name);
 		text = (TextView) view.findViewById(R.id.text);
 		time = (TextView) view.findViewById(R.id.time);
 		reply_retweet_status = (TextView) view.findViewById(R.id.reply_retweet_status);
@@ -81,26 +66,6 @@ public class StatusViewHolder implements Constants {
 		content.drawBackground(show_as_gap ? Color.TRANSPARENT : color);
 	}
 
-	public void setName(final String name, final String screen_name, final int name_display_option,
-			final boolean is_verified, final boolean is_protected, final boolean is_rtl) {
-		if (name_display_option == NAME_DISPLAY_OPTION_CODE_NAME) {
-			this.name.setText(Html.fromHtml("<b>" + name + "</b>" + getUserType(is_verified, is_protected), getter,
-					null));
-		} else if (name_display_option == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME) {
-			this.name.setText(Html.fromHtml(
-					"<b>" + "@" + screen_name + "</b>" + getUserType(is_verified, is_protected), getter, null));
-		} else {
-			if (is_rtl) {
-				this.name.setText(Html.fromHtml(
-						"<small>" + "@" + screen_name + "</small>" + " " + getUserType(is_verified, is_protected)
-								+ "<b>" + name + "</b>", getter, null));
-			} else {
-				this.name.setText(Html.fromHtml("<b>" + name + "</b>" + getUserType(is_verified, is_protected) + " "
-						+ "<small>" + "@" + screen_name + "</small>", getter, null));
-			}
-		}
-	}
-
 	public void setSelected(final boolean selected) {
 		content.setBackgroundColor(selected && !show_as_gap ? 0x600099CC : Color.TRANSPARENT);
 	}
@@ -114,6 +79,7 @@ public class StatusViewHolder implements Constants {
 		profile_image.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		image_preview_frame.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		name.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		screen_name.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		text.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		time.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		reply_retweet_status.setVisibility(show_gap ? View.GONE : View.VISIBLE);
@@ -125,6 +91,7 @@ public class StatusViewHolder implements Constants {
 			this.text_size = text_size;
 			text.setTextSize(text_size);
 			name.setTextSize(text_size);
+			screen_name.setTextSize(text_size * 0.75f);
 			time.setTextSize(text_size * 0.65f);
 			reply_retweet_status.setTextSize(text_size * 0.65f);
 		}
@@ -132,37 +99,6 @@ public class StatusViewHolder implements Constants {
 
 	public void setUserColor(final int color) {
 		content.drawLeft(show_as_gap ? Color.TRANSPARENT : color);
-	}
-
-	private static String getUserType(final boolean is_verified, final boolean is_protected) {
-		if (is_verified)
-			return "<img src=\"v\"/>";
-		else if (is_protected) return "<img src=\"p\"/>";
-		return "";
-	}
-
-	static final class UserBadgeImageGetter implements ImageGetter {
-
-		final Resources res;
-
-		UserBadgeImageGetter(final Resources res) {
-			this.res = res;
-		}
-
-		@Override
-		public Drawable getDrawable(final String source) {
-			final Bitmap b;
-			if ("p".equals(source)) {
-				b = BitmapFactory.decodeResource(res, R.drawable.ic_indicator_is_protected);
-			} else if ("v".equals(source)) {
-				b = BitmapFactory.decodeResource(res, R.drawable.ic_indicator_verified);
-			} else
-				return null;
-			final BitmapDrawable d = new BitmapDrawable(res, b);
-			d.setBounds(0, -d.getIntrinsicHeight() * 3 / 2, d.getIntrinsicWidth(), 0);
-			d.setGravity(Gravity.TOP);
-			return d;
-		}
 	}
 
 }

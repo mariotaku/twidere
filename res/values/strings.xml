@@ -382,11 +382,16 @@
 	<string name="small">Small</string>
 	<string name="and_more">and <xliff:g id="count">%d</xliff:g> more</string>
 	<string name="clear_search_history">Clear search history</string>
-	<string name="permission_level_none">No permission needed</string>
-	<string name="permission_level_refresh">Refresh timeline (including direct messages)</string>
-	<string name="permission_level_read">Read tweets and some content cached</string>
-	<string name="permission_level_write">Write to database, update status</string>
-	<string name="permission_level_direct_messages">Read/Write/Send direct messages</string>
-	<string name="permission_level_accounts">Read account information</string>
+	<string name="permission_description_none">No permission needed</string>
+	<string name="permission_description_refresh">Refresh timeline (including direct messages)</string>
+	<string name="permission_description_read">Read tweets and some content cached</string>
+	<string name="permission_description_write">Write to database, update status</string>
+	<string name="permission_description_direct_messages">Read/Write/Send direct messages</string>
+	<string name="permission_description_accounts">Read account information</string>
+	<string name="permissions_request">Permissions request</string>
+	<string name="permissions_request_message">Extension is requesting following permissions</string>
+	<string name="accept">Accept</string>
+	<string name="no_thanks">No, thanks</string>
+	<string name="revoke_permissions">Remoke permissions</string>
 
 </resources>

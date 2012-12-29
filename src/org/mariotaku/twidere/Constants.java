@@ -237,6 +237,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_ACTION_EDIT_HOST_MAPPING = INTENT_PACKAGE_PREFIX + "EDIT_HOST_MAPPING";
 	public static final String INTENT_ACTION_EDIT_USER_PROFILE = INTENT_PACKAGE_PREFIX + "EDIT_USER_PROFILE";
 	public static final String INTENT_ACTION_SERVICE_COMMAND = INTENT_PACKAGE_PREFIX + "SERVICE_COMMAND";
+	public static final String INTENT_ACTION_REQUEST_PERMISSIONS = INTENT_PACKAGE_PREFIX + "REQUEST_PERMISSIONS";
 
 	public static final String INTENT_ACTION_EXTENSION_EDIT_IMAGE = INTENT_PACKAGE_PREFIX + "EXTENSION_EDIT_IMAGE";
 	public static final String INTENT_ACTION_EXTENSION_UPLOAD = INTENT_PACKAGE_PREFIX + "EXTENSION_UPLOAD";
@@ -374,6 +375,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_WIDTH = "width";
 	public static final String INTENT_KEY_ALLOW_SELECT_NONE = "allow_select_none";
 	public static final String INTENT_KEY_OAUTH_ONLY = "oauth_only";
+	public static final String INTENT_KEY_PERMISSIONS = "permissions";
 
 	public static final String QUERY_PARAM_NEW_ITEMS_COUNT = "new_items_count";
 
@@ -426,6 +428,7 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_COPY = R.id.copy;
 	public static final int MENU_LOAD_FROM_POSITION = R.id.load_from_position;
 	public static final int MENU_TOGGLE_SENSITIVE = R.id.toggle_sensitive;
+	public static final int MENU_REVOKE = R.id.revoke;
 
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_PICK_IMAGE = 2;
@@ -462,6 +465,7 @@ public interface Constants extends TwitterConstants {
 	public static final String TABLE_TABS = Tabs.CONTENT_PATH;
 	public static final String TABLE_NOTIFICATIONS = TweetStore.CONTENT_PATH_NOTIFICATIONS;
 	public static final String TABLE_CONSUMER_KEY_SECRET = TweetStore.CONTENT_PATH_CONSUMER_KEY_SECRET;
+	public static final String TABLE_PERMISSIONS = TweetStore.CONTENT_PATH_PERMISSIONS;
 
 	public static final int TABLE_ID_ACCOUNTS = 1;
 	public static final int TABLE_ID_STATUSES = 2;
@@ -484,6 +488,7 @@ public interface Constants extends TwitterConstants {
 	public static final int TABLE_ID_CACHED_HASHTAGS = 53;
 	public static final int VIRTUAL_TABLE_ID_NOTIFICATIONS = 101;
 	public static final int VIRTUAL_TABLE_ID_CONSUMER_KEY_SECRET = 102;
+	public static final int VIRTUAL_TABLE_ID_PERMISSIONS = 103;
 
 	public static final int LINK_ID_STATUS = 1;
 	public static final int LINK_ID_USER = 2;
@@ -535,17 +540,17 @@ public interface Constants extends TwitterConstants {
 	public static final String SERVICE_COMMAND_GET_SENT_DIRECT_MESSAGES = "get_sent_direct_messages";
 	public static final String SERVICE_COMMAND_GET_RECEIVED_DIRECT_MESSAGES = "get_received_direct_messages";
 
-	public static final String METADATA_KEY_PERMISSION = "org.mariotaku.twidere.extension.permission";
+	public static final String METADATA_KEY_PERMISSIONS = "org.mariotaku.twidere.extension.permissions";
 	public static final String METADATA_KEY_SETTINGS = "org.mariotaku.twidere.extension.settings";
 	public static final String METADATA_KEY_EXTENSION = "org.mariotaku.twidere.extension";
 
-	public static final int PERMISSION_LEVEL_DENIED = -2;
-	public static final int PERMISSION_LEVEL_INVALID = -1;
-	public static final int PERMISSION_LEVEL_NONE = 0;
-	public static final int PERMISSION_LEVEL_REFRESH = 2;
-	public static final int PERMISSION_LEVEL_READ = 3;
-	public static final int PERMISSION_LEVEL_WRITE = 5;
-	public static final int PERMISSION_LEVEL_DIRECT_MESSAGES = 7;
-	public static final int PERMISSION_LEVEL_ACCOUNTS = 11;
+	public static final int PERMISSION_DENIED = -1;
+	public static final int PERMISSION_INVALID = 0;
+	public static final int PERMISSION_NONE = 1;
+	public static final int PERMISSION_REFRESH = 2;
+	public static final int PERMISSION_READ = 3;
+	public static final int PERMISSION_WRITE = 5;
+	public static final int PERMISSION_DIRECT_MESSAGES = 7;
+	public static final int PERMISSION_ACCOUNTS = 11;
 
 }

@@ -230,6 +230,7 @@ public final class Utils implements Constants {
 				VIRTUAL_TABLE_ID_NOTIFICATIONS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CONSUMER_KEY_SECRET,
 				VIRTUAL_TABLE_ID_CONSUMER_KEY_SECRET);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_PERMISSIONS, VIRTUAL_TABLE_ID_PERMISSIONS);
 
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_STATUS, null, LINK_ID_STATUS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USER, null, LINK_ID_USER);
@@ -1641,16 +1642,11 @@ public final class Utils implements Constants {
 		final SharedPreferences preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
 				Context.MODE_PRIVATE);
 		final int connection_timeout = preferences.getInt(PREFERENCE_KEY_CONNECTION_TIMEOUT, 10) * 1000;
-		final boolean enable_gzip_compressing = preferences != null ? preferences.getBoolean(
-				PREFERENCE_KEY_GZIP_COMPRESSING, true) : true;
-		final boolean ignore_ssl_error = preferences != null ? preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR,
-				false) : false;
-		final boolean enable_proxy = preferences != null ? preferences.getBoolean(PREFERENCE_KEY_ENABLE_PROXY, false)
-				: false;
-		final String consumer_key = preferences != null ? preferences.getString(PREFERENCE_KEY_CONSUMER_KEY,
-				TWITTER_CONSUMER_KEY) : TWITTER_CONSUMER_KEY;
-		final String consumer_secret = preferences != null ? preferences.getString(PREFERENCE_KEY_CONSUMER_SECRET,
-				TWITTER_CONSUMER_SECRET) : TWITTER_CONSUMER_SECRET;
+		final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, true);
+		final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
+		final boolean enable_proxy = preferences.getBoolean(PREFERENCE_KEY_ENABLE_PROXY, false);
+		final String consumer_key = preferences.getString(PREFERENCE_KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY);
+		final String consumer_secret = preferences.getString(PREFERENCE_KEY_CONSUMER_SECRET, TWITTER_CONSUMER_SECRET);
 
 		Twitter twitter = null;
 		final StringBuilder where = new StringBuilder();
@@ -2760,10 +2756,10 @@ public final class Utils implements Constants {
 		return orig;
 	}
 
-	public static void restartActivity(final Activity activity, final boolean animation) {
+	public static void restartActivity(final Activity activity) {
 		if (activity == null) return;
-		final int enter_anim = animation ? android.R.anim.fade_in : 0;
-		final int exit_anim = animation ? android.R.anim.fade_out : 0;
+		final int enter_anim = android.R.anim.fade_in;
+		final int exit_anim = android.R.anim.fade_out;
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
 			OverridePendingTransitionAccessor.overridePendingTransition(activity, enter_anim, exit_anim);
 		} else {

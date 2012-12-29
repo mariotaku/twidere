@@ -92,7 +92,7 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 				break;
 			}
 			case NAME_DISPLAY_OPTION_CODE_SCREEN_NAME: {
-				holder.name.setText(screen_name);
+				holder.name.setText("@" + screen_name);
 				holder.screen_name.setText(null);
 				holder.screen_name.setVisibility(View.GONE);
 				break;

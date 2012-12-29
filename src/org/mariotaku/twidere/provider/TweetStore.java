@@ -50,9 +50,11 @@ public final class TweetStore implements Constants {
 
 	public static final String CONTENT_PATH_NULL = "null_content";
 
-	public static final String CONTENT_PATH_CONSUMER_KEY_SECRET = "consumer_key";
+	public static final String CONTENT_PATH_CONSUMER_KEY_SECRET = "consumer_key_secret";
 
 	public static final String CONTENT_PATH_NOTIFICATIONS = "notifications";
+
+	public static final String CONTENT_PATH_PERMISSIONS = "permissions";
 
 	public static final Uri CONTENT_URI_NULL = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
 			CONTENT_PATH_NULL);
@@ -62,6 +64,9 @@ public final class TweetStore implements Constants {
 
 	public static final Uri CONTENT_URI_NOTOFICATIONS = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
 			CONTENT_PATH_NOTIFICATIONS);
+
+	public static final Uri CONTENT_URI_PERMISSIONS = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+			CONTENT_PATH_PERMISSIONS);
 
 	public static interface Accounts extends BaseColumns {
 

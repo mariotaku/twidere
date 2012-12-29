@@ -230,6 +230,22 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 				startActivity(new Intent(Intent.ACTION_VIEW, uri));
 				break;
 			}
+			case R.id.share: {
+				final Uri uri = getIntent().getData();
+				if (uri == null) {
+					break;
+				}
+				final Intent intent = new Intent(Intent.ACTION_SEND);
+				if ("file".equals(uri.getScheme())) {
+					intent.setType("image/*");
+					intent.putExtra(Intent.EXTRA_STREAM, uri);
+				} else {
+					intent.setType("text/plain");
+					intent.putExtra(Intent.EXTRA_TEXT, uri.toString());
+				}
+				startActivity(Intent.createChooser(intent, getString(R.string.share)));
+				break;
+			}
 		}
 	}
 

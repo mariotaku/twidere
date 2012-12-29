@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.provider;
 
+import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.clearAccountColor;
 import static org.mariotaku.twidere.util.Utils.clearAccountName;
 import static org.mariotaku.twidere.util.Utils.getAccountName;
@@ -41,7 +42,7 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.model.ConsumerKeySecretCursor;
+import org.mariotaku.twidere.model.BundleCursor;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
@@ -54,7 +55,7 @@ import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.DatabaseHelper;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
-import org.mariotaku.twidere.util.PermissionManager;
+import org.mariotaku.twidere.util.PermissionsManager;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -81,10 +82,10 @@ import android.text.Html;
 
 import com.twitter.Extractor;
 
-public final class TweetStoreProvider extends ContentProvider implements Constants {
+public final class TwidereDataProvider extends ContentProvider implements Constants {
 
 	private SQLiteDatabase mDatabase;
-	private PermissionManager mPermissionManager;
+	private PermissionsManager mPermissionsManager;
 	private NotificationManager mNotificationManager;
 	private SharedPreferences mPreferences;
 	private LazyImageLoader mProfileImageLoader;
@@ -239,7 +240,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 		mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 		mPreferences = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mProfileImageLoader = app.getProfileImageLoader();
-		mPermissionManager = new PermissionManager(mContext);
+		mPermissionsManager = new PermissionsManager(mContext);
 		final IntentFilter filter = new IntentFilter();
 		filter.addAction(BROADCAST_HOME_ACTIVITY_ONSTART);
 		filter.addAction(BROADCAST_HOME_ACTIVITY_ONSTOP);
@@ -252,11 +253,25 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			final String sortOrder) {
 		try {
 			final int table_id = getTableId(uri);
+			if (table_id == VIRTUAL_TABLE_ID_PERMISSIONS) {
+				final Bundle bundle = new Bundle();
+				bundle.putInt(INTENT_KEY_PERMISSIONS, mPermissionsManager.getPermissions(Binder.getCallingUid()));
+				return new BundleCursor(bundle);
+			}
 			final String table = getTableNameById(table_id);
 			checkReadPermission(table_id, table, projection);
 			switch (table_id) {
 				case VIRTUAL_TABLE_ID_CONSUMER_KEY_SECRET: {
-					return new ConsumerKeySecretCursor(mContext);
+					final String consumer_key = mPreferences.getString(PREFERENCE_KEY_CONSUMER_KEY,
+							TWITTER_CONSUMER_KEY);
+					final String consumer_secret = mPreferences.getString(PREFERENCE_KEY_CONSUMER_SECRET,
+							TWITTER_CONSUMER_SECRET);
+					final Bundle bundle = new Bundle();
+					bundle.putString(PREFERENCE_KEY_CONSUMER_KEY, isEmpty(consumer_key) ? TWITTER_CONSUMER_KEY
+							: consumer_key);
+					bundle.putString(PREFERENCE_KEY_CONSUMER_SECRET, isEmpty(consumer_secret) ? TWITTER_CONSUMER_KEY
+							: consumer_secret);
+					return new BundleCursor(bundle);
 				}
 				case TABLE_ID_DIRECT_MESSAGES_CONVERSATION: {
 					final List<String> segments = uri.getPathSegments();
@@ -353,13 +368,13 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 	}
 
 	private boolean checkPermission(final int level) {
-		return mPermissionManager.checkCallingPermission(level);
+		return mPermissionsManager.checkCallingPermission(level);
 	}
 
 	private void checkReadPermission(final int id, final String table, final String[] projection) {
 		switch (id) {
 			case VIRTUAL_TABLE_ID_CONSUMER_KEY_SECRET: {
-				if (!checkPermission(PERMISSION_LEVEL_ACCOUNTS))
+				if (!checkPermission(PERMISSION_ACCOUNTS))
 					throw new SecurityException("Access database " + table
 							+ " requires level PERMISSION_LEVEL_ACCOUNTS");
 				break;
@@ -369,10 +384,10 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 				// okay, but reading columns like password requires higher
 				// permission level.
 				if (ArrayUtils.contains(projection, Accounts.BASIC_AUTH_PASSWORD, Accounts.OAUTH_TOKEN,
-						Accounts.TOKEN_SECRET) && !checkPermission(PERMISSION_LEVEL_ACCOUNTS))
+						Accounts.TOKEN_SECRET) && !checkPermission(PERMISSION_ACCOUNTS))
 					throw new SecurityException("Access column " + ArrayUtils.toString(projection, ',', true)
 							+ " in database accounts requires level PERMISSION_LEVEL_ACCOUNTS");
-				if (!checkPermission(PERMISSION_LEVEL_READ))
+				if (!checkPermission(PERMISSION_READ))
 					throw new SecurityException("Access database " + table + " requires level PERMISSION_LEVEL_READ");
 				break;
 			}
@@ -382,7 +397,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
 			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME:
 			case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY: {
-				if (!checkPermission(PERMISSION_LEVEL_DIRECT_MESSAGES))
+				if (!checkPermission(PERMISSION_DIRECT_MESSAGES))
 					throw new SecurityException("Access database " + table
 							+ " requires level PERMISSION_LEVEL_DIRECT_MESSAGES");
 				break;
@@ -399,7 +414,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			case TABLE_ID_TRENDS_LOCAL:
 			case TABLE_ID_CACHED_STATUSES:
 			case TABLE_ID_CACHED_HASHTAGS: {
-				if (!checkPermission(PERMISSION_LEVEL_READ))
+				if (!checkPermission(PERMISSION_READ))
 					throw new SecurityException("Access database " + table + " requires level PERMISSION_LEVEL_READ");
 				break;
 			}
@@ -411,7 +426,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			case TABLE_ID_ACCOUNTS: {
 				// Writing to accounts database is not allowed for third-party
 				// applications.
-				if (!mPermissionManager.checkSignature(Binder.getCallingUid()))
+				if (!mPermissionsManager.checkSignature(Binder.getCallingUid()))
 					throw new SecurityException(
 							"Writing to accounts database is not allowed for third-party applications");
 				break;
@@ -422,7 +437,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
 			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME:
 			case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY: {
-				if (!checkPermission(PERMISSION_LEVEL_DIRECT_MESSAGES))
+				if (!checkPermission(PERMISSION_DIRECT_MESSAGES))
 					throw new SecurityException("Access database " + table
 							+ " requires level PERMISSION_LEVEL_DIRECT_MESSAGES");
 				break;
@@ -439,7 +454,7 @@ public final class TweetStoreProvider extends ContentProvider implements Constan
 			case TABLE_ID_TRENDS_LOCAL:
 			case TABLE_ID_CACHED_STATUSES:
 			case TABLE_ID_CACHED_HASHTAGS: {
-				if (!checkPermission(PERMISSION_LEVEL_WRITE))
+				if (!checkPermission(PERMISSION_WRITE))
 					throw new SecurityException("Access database " + table + " requires level PERMISSION_LEVEL_WRITE");
 				break;
 			}

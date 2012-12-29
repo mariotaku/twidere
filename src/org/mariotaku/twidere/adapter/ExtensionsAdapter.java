@@ -21,22 +21,24 @@ package org.mariotaku.twidere.adapter;
 
 import java.util.List;
 
+import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.loader.ExtensionsListLoader.ExtensionInfo;
-import org.mariotaku.twidere.util.PermissionManager;
-import org.mariotaku.twidere.view.holder.ExtensionsViewHolder;
+import org.mariotaku.twidere.util.PermissionsManager;
+import org.mariotaku.twidere.view.holder.TwoLineWithIconViewHolder;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class ExtensionsAdapter extends ArrayAdapter<ExtensionInfo> {
+public class ExtensionsAdapter extends ArrayAdapter<ExtensionInfo> implements Constants {
 
-	private final PermissionManager mPermissionManager;
+	private final PermissionsManager mPermissionsManager;
 
 	public ExtensionsAdapter(final Context context) {
 		super(context, R.layout.two_line_with_icon_list_item);
-		mPermissionManager = new PermissionManager(context);
+		mPermissionsManager = new PermissionsManager(context);
 	}
 
 	@Override
@@ -47,12 +49,17 @@ public class ExtensionsAdapter extends ArrayAdapter<ExtensionInfo> {
 	@Override
 	public View getView(final int position, final View convertView, final ViewGroup parent) {
 		final View view = super.getView(position, convertView, parent);
-		view.findViewById(R.id.checkbox).setVisibility(View.GONE);
-		final ExtensionsViewHolder viewholder = view.getTag() == null ? new ExtensionsViewHolder(view)
-				: (ExtensionsViewHolder) view.getTag();
+		final TwoLineWithIconViewHolder viewholder = view.getTag() == null ? new TwoLineWithIconViewHolder(view)
+				: (TwoLineWithIconViewHolder) view.getTag();
 
 		final ExtensionInfo info = getItem(position);
+		viewholder.checkbox.setVisibility(info.permissions != PERMISSION_INVALID ? View.VISIBLE : View.GONE);
+		if (info.permissions != PERMISSION_INVALID) {
+			viewholder.checkbox.setChecked(info.permissions != PERMISSION_DENIED
+					&& mPermissionsManager.checkPermission(info.pname, info.permissions));
+		}
 		viewholder.text1.setText(info.label);
+		viewholder.text2.setVisibility(TextUtils.isEmpty(info.description) ? View.GONE : View.VISIBLE);
 		viewholder.text2.setText(info.description);
 		viewholder.icon.setImageDrawable(info.icon);
 		return view;

@@ -19,19 +19,23 @@
 
 package org.mariotaku.twidere.view.holder;
 
+import org.mariotaku.twidere.R;
+
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public final class ExtensionsViewHolder {
+public final class TwoLineWithIconViewHolder {
 
 	public final ImageView icon;
 	public final TextView text1, text2;
+	public final CheckBox checkbox;
 
-	public ExtensionsViewHolder(final View view) {
-
+	public TwoLineWithIconViewHolder(final View view) {
 		icon = (ImageView) view.findViewById(android.R.id.icon);
 		text1 = (TextView) view.findViewById(android.R.id.text1);
 		text2 = (TextView) view.findViewById(android.R.id.text2);
+		checkbox = (CheckBox) view.findViewById(R.id.checkbox);
 	}
 }

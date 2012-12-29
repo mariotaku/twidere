@@ -191,8 +191,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			mErrorRetryContainer.setVisibility(View.GONE);
 			mErrorMessageView.setText(null);
 			mErrorMessageView.setVisibility(View.GONE);
-			setListShown(mUser != null
-					&& (mUserId == mUser.user_id || mScreenName != null && mScreenName.equals(mUser.screen_name)));
+			setListShown(false);
 			setProgressBarIndeterminateVisibility(true);
 			final boolean omit_intent_extra = args != null ? args.getBoolean(INTENT_KEY_OMIT_INTENT_EXTRA, true) : true;
 			return new ParcelableUserLoader(getActivity(), mAccountId, mUserId, mScreenName, getArguments(),
@@ -218,6 +217,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			} else if (mUser != null && mUser.is_cache
 					&& (mUserId == mUser.user_id || mScreenName != null && mScreenName.equals(mUser.screen_name))) {
 				setListShown(true);
+				displayUser(mUser);
 			} else {
 				if (data.exception != null) {
 					mErrorMessageView.setText(data.exception.getMessage());

@@ -114,14 +114,14 @@ public class ExtensionsListLoader extends AsyncTaskLoader<List<ExtensionsListLoa
 	}
 
 	public static class ExtensionInfo implements Comparable<ExtensionInfo> {
-		public final int permission;
+		public final int permissions;
 		public final String label, description;
 		public final String pname, settings;
 		public final Drawable icon;
 
 		ExtensionInfo(final ApplicationInfo info, final PackageManager pm) {
 			final Bundle meta = info.metaData;
-			permission = meta.getInt(METADATA_KEY_PERMISSION, PERMISSION_LEVEL_INVALID);
+			permissions = meta.getInt(METADATA_KEY_PERMISSIONS, PERMISSION_INVALID);
 			settings = meta.getString(METADATA_KEY_SETTINGS);
 			icon = info.loadIcon(pm);
 			pname = info.packageName;
@@ -136,7 +136,7 @@ public class ExtensionsListLoader extends AsyncTaskLoader<List<ExtensionsListLoa
 
 		@Override
 		public String toString() {
-			return "ExtensionInfo{permission=" + permission + ", label=" + label + ", description=" + description
+			return "ExtensionInfo{permission=" + permissions + ", label=" + label + ", description=" + description
 					+ ", pname=" + pname + ", settings=" + settings + ", icon=" + icon + "}";
 		}
 	}

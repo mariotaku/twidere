@@ -2,7 +2,7 @@ package org.mariotaku.twidere.provider;
 
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import org.mariotaku.twidere.util.PermissionManager;
+import org.mariotaku.twidere.util.PermissionsManager;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -14,7 +14,7 @@ import android.net.Uri;
 public class CommandProvider extends ContentProvider {
 
 	private Context mContext;
-	private PermissionManager mPermissionManager;
+	private PermissionsManager mPermissionsManager;
 	private PackageManager mPackageManager;
 	private AsyncTwitterWrapper mTwitterWrapper;
 
@@ -40,7 +40,7 @@ public class CommandProvider extends ContentProvider {
 	public boolean onCreate() {
 		mContext = getContext();
 		final TwidereApplication app = TwidereApplication.getInstance(mContext);
-		mPermissionManager = new PermissionManager(mContext);
+		mPermissionsManager = new PermissionsManager(mContext);
 		mPackageManager = mContext.getPackageManager();
 		mTwitterWrapper = app.getTwitterWrapper();
 		return true;
