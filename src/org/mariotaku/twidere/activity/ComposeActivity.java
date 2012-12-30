@@ -315,6 +315,10 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		mIsPhotoAttached = bundle != null ? bundle.getBoolean(INTENT_KEY_IS_PHOTO_ATTACHED) : false;
 		mImageUri = bundle != null ? (Uri) bundle.getParcelable(INTENT_KEY_IMAGE_URI) : null;
 		final String[] mentions = bundle != null ? bundle.getStringArray(INTENT_KEY_MENTIONS) : null;
+		final int notification_id = bundle != null ? bundle.getInt(INTENT_KEY_NOTIFICATION_ID, -1) : -1;
+		if (notification_id != -1) {
+			mTwitterWrapper.clearNotification(notification_id);
+		}
 		final String account_screen_name = getAccountScreenName(this, account_id);
 		int text_selection_start = -1;
 		if (mInReplyToStatusId > 0) {

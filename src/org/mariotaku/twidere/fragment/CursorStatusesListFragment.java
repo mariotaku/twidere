@@ -41,6 +41,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.widget.AbsListView;
 
 public abstract class CursorStatusesListFragment extends BaseStatusesListFragment<Cursor> {
 
@@ -58,8 +59,6 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 			}
 		}
 	};
-
-	public abstract Uri getContentUri();
 
 	public HomeActivity getHomeActivity() {
 		final FragmentActivity activity = getActivity();
@@ -102,8 +101,25 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 
 	@Override
 	public void onLoadFinished(final Loader<Cursor> loader, final Cursor data) {
+		final int first_visible_position = mListView.getFirstVisiblePosition();
+		final long last_viewed_id = mAdapter.findItemIdByPosition(first_visible_position);
 		super.onLoadFinished(loader, data);
 		mAdapter.swapCursor(data);
+		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true);
+		final int curr_first_visible_position = mListView.getFirstVisiblePosition();
+		final long curr_viewed_id = mAdapter.findItemIdByPosition(curr_first_visible_position);
+		final long status_id;
+		if (last_viewed_id <= 0) {
+			if (!remember_position) return;
+			status_id = mPreferences.getLong(getSavedTimelinePreferenceKey(), -1);
+		} else if (first_visible_position > 0 && curr_viewed_id > 0 && last_viewed_id != curr_viewed_id) {
+			status_id = last_viewed_id;
+		} else
+			return;
+		final int position = mAdapter.findItemPositionByStatusId(status_id);
+		if (position > -1 && position < mListView.getCount()) {
+			mListView.setSelection(position);
+		}
 	}
 
 	@Override
@@ -115,6 +131,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 
 	@Override
 	public void onPullDownToRefresh() {
+		saveReadPosition();
 		new AsyncTask<Void, Void, long[][]>() {
 
 			@Override
@@ -135,6 +152,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 
 	@Override
 	public void onPullUpToRefresh() {
+		saveReadPosition();
 		new AsyncTask<Void, Void, long[][]>() {
 
 			@Override
@@ -154,6 +172,16 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	}
 
 	@Override
+	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
+		super.onScrollStateChanged(view, scrollState);
+		switch (scrollState) {
+			case SCROLL_STATE_IDLE:
+				saveReadPosition();
+				break;
+		}
+	}
+	
+	@Override
 	public void onStart() {
 		super.onStart();
 		final IntentFilter filter = new IntentFilter(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
@@ -163,10 +191,15 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 
 	@Override
 	public void onStop() {
+		saveReadPosition();
 		unregisterReceiver(mStatusReceiver);
 		super.onStop();
 	}
 
+	abstract Uri getContentUri();
+
+	abstract String getSavedTimelinePreferenceKey();
+	
 	@Override
 	long[] getNewestStatusIds() {
 		return getNewestStatusIdsFromDatabase(getActivity(), getContentUri());
@@ -175,6 +208,12 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	@Override
 	long[] getOldestStatusIds() {
 		return getOldestStatusIdsFromDatabase(getActivity(), getContentUri());
+	}
+
+	void saveReadPosition() {
+		final int first_visible_position = mListView.getFirstVisiblePosition();
+		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
+		mPreferences.edit().putLong(getSavedTimelinePreferenceKey(), status_id).commit();
 	}
 
 }

@@ -72,17 +72,16 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 
 	private static final long TICKER_DURATION = 5000L;
 
-	private AsyncTwitterWrapper mTwitterWrapper;
 	private TwidereApplication mApplication;
-	private SharedPreferences mPreferences;
 	private AsyncTaskManager mAsyncTaskManager;
+	protected AsyncTwitterWrapper mTwitterWrapper;
+	protected SharedPreferences mPreferences;
 
 	private Handler mHandler;
 	private Runnable mTicker;
 
-	private ListView mListView;
-
-	private IStatusesAdapter mAdapter;
+	protected ListView mListView;
+	protected IStatusesAdapter mAdapter;
 	protected PopupMenu mPopupMenu;
 
 	protected Data mData;

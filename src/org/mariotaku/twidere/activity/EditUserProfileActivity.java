@@ -278,7 +278,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 		mEditDescription.setEnabled(!start);
 		mEditLocation.setEnabled(!start);
 		mEditUrl.setEnabled(!start);
-		invalidateOptionsMenu();
+		invalidateSupportOptionsMenu();
 	}
 
 	boolean mHasUnsavedChanges() {

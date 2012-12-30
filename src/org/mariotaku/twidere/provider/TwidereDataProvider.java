@@ -552,17 +552,6 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		buildNotification(builder, title, title, status.text_plain, R.drawable.ic_stat_mention, null, content_intent,
 				delete_intent);
 		if (mentions_size > 1) {
-			final Intent reply_intent = new Intent(INTENT_ACTION_COMPOSE);
-			final Bundle bundle = new Bundle();
-			final List<String> mentions = new Extractor().extractMentionedScreennames(status.text_plain);
-			mentions.remove(status.screen_name);
-			mentions.add(0, status.screen_name);
-			bundle.putStringArray(INTENT_KEY_MENTIONS, mentions.toArray(new String[mentions.size()]));
-			bundle.putLong(INTENT_KEY_ACCOUNT_ID, status.account_id);
-			bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status.status_id);
-			bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, status.screen_name);
-			bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, status.name);
-			reply_intent.putExtras(bundle);
 			final NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle(builder);
 			final int max = Math.min(4, mentions_size);
 			for (int i = 0; i < max; i++) {
@@ -595,6 +584,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			final List<String> mentions = new Extractor().extractMentionedScreennames(status.text_plain);
 			mentions.remove(status.screen_name);
 			mentions.add(0, status.screen_name);
+			bundle.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_MENTIONS);
 			bundle.putStringArray(INTENT_KEY_MENTIONS, mentions.toArray(new String[mentions.size()]));
 			bundle.putLong(INTENT_KEY_ACCOUNT_ID, status.account_id);
 			bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status.status_id);

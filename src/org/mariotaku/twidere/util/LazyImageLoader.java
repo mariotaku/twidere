@@ -57,6 +57,7 @@ import android.util.Log;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import java.lang.ref.*;
 
 /**
  * Lazy image loader for {@link ListView} and {@link GridView} etc.</br> </br>
@@ -90,6 +91,9 @@ public class LazyImageLoader implements Constants {
 
 	public LazyImageLoader(final Context context, final String cache_dir_name, final int fallback_image_res,
 			final int required_width, final int required_height, final int mem_cache_capacity) {
+		if (DEBUG) {
+			Log.i(LOGTAG, "Initialized with capacity " + mem_cache_capacity);
+		}
 		mContext = context;
 		mMemoryCache = new MemoryCache(mem_cache_capacity);
 		mFileCache = new FileCache(context, cache_dir_name);
@@ -393,7 +397,7 @@ public class LazyImageLoader implements Constants {
 	static class MemoryCache {
 
 		private final Map<String, SoftReference<Bitmap>> mSoftCache;
-		private final Map<String, Bitmap> mHardCache;
+		private final LinkedHashMap<String, Bitmap> mHardCache;
 
 		public MemoryCache(final int max_capacity) {
 			mSoftCache = new HashMap<String, SoftReference<Bitmap>>(max_capacity / 2);
@@ -417,7 +421,7 @@ public class LazyImageLoader implements Constants {
 				}
 			}
 
-			final SoftReference<Bitmap> bitmapRef = mSoftCache.get(key);
+			final Reference<Bitmap> bitmapRef = mSoftCache.get(key);
 			if (bitmapRef != null) {
 				final Bitmap bitmap = bitmapRef.get();
 				if (bitmap != null)
@@ -448,7 +452,7 @@ public class LazyImageLoader implements Constants {
 			private final int capacity;
 
 			HardBitmapCache(final Map<String, SoftReference<Bitmap>> soft_cache, final int capacity) {
-				super(capacity, 0.75f, true);
+				super(capacity);
 				this.soft_cache = soft_cache;
 				this.capacity = capacity;
 			}

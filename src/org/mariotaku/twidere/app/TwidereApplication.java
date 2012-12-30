@@ -133,7 +133,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		final int mem = ImageLoaderUtils.getMemoryClass(this);
 		final int preview_image_size = getResources().getDimensionPixelSize(R.dimen.image_preview_preferred_width);
 		return mPreviewImageLoader = new LazyImageLoader(this, DIR_NAME_CACHED_THUMBNAILS, 0, preview_image_size,
-				preview_image_size, mem / 2);
+				preview_image_size, mem / 4);
 	}
 
 	public LazyImageLoader getProfileImageLoader() {
@@ -141,7 +141,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		final int mem = ImageLoaderUtils.getMemoryClass(this);
 		final int profile_image_size = getResources().getDimensionPixelSize(R.dimen.profile_image_size);
 		return mProfileImageLoader = new LazyImageLoader(this, DIR_NAME_PROFILE_IMAGES,
-				R.drawable.ic_profile_image_default, profile_image_size, profile_image_size, mem * 2);
+				R.drawable.ic_profile_image_default, profile_image_size, profile_image_size, mem);
 	}
 
 	public ItemsList getSelectedItems() {

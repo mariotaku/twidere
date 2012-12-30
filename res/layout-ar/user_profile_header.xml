@@ -45,7 +45,7 @@
 				android:layout_alignTop="@+id/profile_image_container"
 				android:layout_alignWithParentIfMissing="true"
 				android:layout_toLeftOf="@+id/profile_image_container"
-				android:layout_toRightOf="@+id/follow_container"
+				android:layout_toRightOf="@+id/edit_follow_container"
 				android:background="?android:attr/itemBackground"
 				android:clickable="true"
 				android:gravity="center_vertical|right"
@@ -85,7 +85,7 @@
 			</LinearLayout>
 
 			<FrameLayout
-				android:id="@+id/follow_container"
+				android:id="@+id/edit_follow_container"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_alignBottom="@+id/profile_image_container"
@@ -95,7 +95,7 @@
 				android:visibility="gone">
 
 				<Button
-					android:id="@+id/follow"
+					android:id="@+id/edit_follow"
 					style="?android:attr/buttonStyleSmall"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"

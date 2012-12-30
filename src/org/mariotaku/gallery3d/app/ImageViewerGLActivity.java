@@ -725,9 +725,6 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 
 	// should only be called by StateManager
 	void resume() {
-		final ImageViewerGLActivity activity = this;
-
-		activity.invalidateOptionsMenu();
 
 		setScreenFlags();
 
@@ -741,7 +738,7 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 			// correctly
 			final IntentFilter filter = new IntentFilter();
 			filter.addAction(Intent.ACTION_BATTERY_CHANGED);
-			activity.registerReceiver(mPowerIntentReceiver, filter);
+			registerReceiver(mPowerIntentReceiver, filter);
 		}
 
 		state_onResume();
