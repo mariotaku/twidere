@@ -38,14 +38,8 @@ import android.view.View.OnTouchListener;
 import android.widget.AbsListView;
 import android.widget.ListView;
 
-public class MentionsFragment extends CursorStatusesListFragment implements OnTouchListener {
+public class MentionsFragment extends CursorStatusesListFragment {
 	
-	private SharedPreferences mPreferences;
-	private AsyncTwitterWrapper mTwitterWrapper;
-
-	private ListView mListView;
-	private CursorStatusesAdapter mAdapter;
-
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -75,13 +69,7 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
-		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mTwitterWrapper = getTwitterWrapper();
 		super.onActivityCreated(savedInstanceState);
-		mListView = getListView();
-		mListView.setOnTouchListener(this);
-		mAdapter = getListAdapter();
-		mAdapter.setMentionsHightlightDisabled(true);
 	}
 
 	@Override
@@ -106,19 +94,13 @@ public class MentionsFragment extends CursorStatusesListFragment implements OnTo
 	}
 
 	@Override
-	public boolean onTouch(final View view, final MotionEvent ev) {
-		switch (ev.getAction()) {
-			case MotionEvent.ACTION_DOWN: {
-				mTwitterWrapper.clearNotification(NOTIFICATION_ID_MENTIONS);
-				break;
-			}
-		}
-		return false;
-	}
-
-	@Override
 	Uri getContentUri() {
 		return Mentions.CONTENT_URI;
+	}
+	
+	@Override
+	int getNotificationIdToClear() {
+		return NOTIFICATION_ID_MENTIONS;
 	}
 
 	@Override

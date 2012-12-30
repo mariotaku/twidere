@@ -41,11 +41,13 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.AbsListView;
 
-public abstract class CursorStatusesListFragment extends BaseStatusesListFragment<Cursor> {
+public abstract class CursorStatusesListFragment extends BaseStatusesListFragment<Cursor> implements View.OnTouchListener {
 
-	private CursorStatusesAdapter mAdapter;
+	protected CursorStatusesAdapter mAdapter;
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -75,6 +77,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		mAdapter = new CursorStatusesAdapter(getActivity());
 		super.onActivityCreated(savedInstanceState);
+		mListView.setOnTouchListener(this);
 	}
 
 	@Override
@@ -195,6 +198,17 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 		unregisterReceiver(mStatusReceiver);
 		super.onStop();
 	}
+	
+	@Override
+	public boolean onTouch(final View view, final MotionEvent ev) {
+		switch (ev.getAction()) {
+			case MotionEvent.ACTION_DOWN: {
+				mTwitterWrapper.clearNotification(getNotificationIdToClear());
+				break;
+			}
+		}
+		return false;
+	}
 
 	abstract Uri getContentUri();
 
@@ -204,6 +218,8 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	long[] getNewestStatusIds() {
 		return getNewestStatusIdsFromDatabase(getActivity(), getContentUri());
 	}
+	
+	abstract int getNotificationIdToClear();
 
 	@Override
 	long[] getOldestStatusIds() {

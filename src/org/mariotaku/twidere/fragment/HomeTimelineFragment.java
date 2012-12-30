@@ -38,13 +38,7 @@ import android.view.View.OnTouchListener;
 import android.widget.AbsListView;
 import android.widget.ListView;
 
-public class HomeTimelineFragment extends CursorStatusesListFragment implements OnTouchListener {
-
-	private SharedPreferences mPreferences;
-	private AsyncTwitterWrapper mTwitterWrapper;
-
-	private ListView mListView;
-	private CursorStatusesAdapter mAdapter;
+public class HomeTimelineFragment extends CursorStatusesListFragment {
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -76,12 +70,8 @@ public class HomeTimelineFragment extends CursorStatusesListFragment implements 
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
-		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mTwitterWrapper = getTwitterWrapper();
 		super.onActivityCreated(savedInstanceState);
-		mListView = getListView();
 		mListView.setOnTouchListener(this);
-		mAdapter = getListAdapter();
 	}
 
 	@Override
@@ -106,19 +96,13 @@ public class HomeTimelineFragment extends CursorStatusesListFragment implements 
 	}
 
 	@Override
-	public boolean onTouch(final View view, final MotionEvent ev) {
-		switch (ev.getAction()) {
-			case MotionEvent.ACTION_DOWN: {
-				mTwitterWrapper.clearNotification(NOTIFICATION_ID_HOME_TIMELINE);
-				break;
-			}
-		}
-		return false;
+	Uri getContentUri() {
+		return Statuses.CONTENT_URI;
 	}
 
 	@Override
-	Uri getContentUri() {
-		return Statuses.CONTENT_URI;
+	int getNotificationIdToClear() {
+		return NOTIFICATION_ID_HOME_TIMELINE;
 	}
 
 	@Override
