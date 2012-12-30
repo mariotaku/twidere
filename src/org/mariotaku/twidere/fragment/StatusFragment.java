@@ -498,7 +498,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mProfileImageLoader = application.getProfileImageLoader();
 		mTwitterWrapper = getTwitterWrapper();
-		setRetainInstance(true);
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 		if (mLoadMoreAutomatically) {
 			setPullToRefreshEnabled(false);

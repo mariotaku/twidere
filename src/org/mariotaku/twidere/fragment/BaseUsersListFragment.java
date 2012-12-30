@@ -137,14 +137,6 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	}
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		// Tell the framework to try to keep this fragment around
-		// during a configuration change.
-		setRetainInstance(true);
-	}
-
-	@Override
 	public Loader<List<ParcelableUser>> onCreateLoader(final int id, final Bundle args) {
 		setProgressBarIndeterminateVisibility(true);
 		return newLoaderInstance();

@@ -421,7 +421,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mTwitterWrapper = getApplication().getTwitterWrapper();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onActivityCreated(savedInstanceState);
-		setRetainInstance(true);
 		final Bundle args = getArguments();
 		long account_id = -1, user_id = -1;
 		String screen_name = null;

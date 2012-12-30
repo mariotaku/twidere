@@ -87,14 +87,6 @@ public class UserListsListFragment extends BaseListFragment implements LoaderCal
 	}
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		// Tell the framework to try to keep this fragment around
-		// during a configuration change.
-		setRetainInstance(true);
-	}
-
-	@Override
 	public Loader<UserListsLoader.UserListsData> onCreateLoader(final int id, final Bundle args) {
 		setProgressBarIndeterminateVisibility(true);
 		return new UserListsLoader(getActivity(), mAccountId, mUserId, mScreenName);

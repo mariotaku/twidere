@@ -146,14 +146,6 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	}
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		// Tell the framework to try to keep this fragment around
-		// during a configuration change.
-		setRetainInstance(true);
-	}
-
-	@Override
 	public abstract Loader<Data> onCreateLoader(int id, Bundle args);
 
 	@Override

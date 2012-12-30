@@ -110,7 +110,9 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 		if (mDNS != null && mPreferences.getBoolean(PREFERENCE_KEY_TCP_DNS_QUERY, false)) {
 			final Name name = new Name(host);
 			final Record query = Record.newRecord(name, Type.A, DClass.IN);
+			if (query == null) return host;
 			final Message response = mDNS.send(Message.newQuery(query));
+			if (response == null) return host;
 			final Record[] records = response.getSectionArray(Section.ANSWER);
 			if (records == null || records.length < 1) throw new IOException("Could not find " + host);
 			String host_addr = null;

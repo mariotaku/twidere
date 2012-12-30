@@ -224,14 +224,6 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 	}
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		// Tell the framework to try to keep this fragment around
-		// during a configuration change.
-		setRetainInstance(true);
-	}
-
-	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
 		// if (args == null || !args.containsKey(INTENT_KEY_ACCOUNT_ID))
 		// return new CursorLoader(getActivity(), TweetStore.NULL_CONTENT_URI,

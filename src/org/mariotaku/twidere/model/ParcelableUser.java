@@ -195,6 +195,7 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		out.writeInt(friends_count);
 		out.writeInt(statuses_count);
 		out.writeInt(favorites_count);
+		out.writeInt(is_cache ? 1 : 0);
 	}
 
 	private long getTime(final Date date) {

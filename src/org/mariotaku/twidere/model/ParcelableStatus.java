@@ -45,9 +45,6 @@ import android.os.Parcelable;
 
 public class ParcelableStatus implements Constants, Parcelable, Serializable, Comparable<ParcelableStatus> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 8687220519842668226L;
 
 	public static final Parcelable.Creator<ParcelableStatus> CREATOR = new Parcelable.Creator<ParcelableStatus>() {
