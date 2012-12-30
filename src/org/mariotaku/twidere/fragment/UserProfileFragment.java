@@ -191,7 +191,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			mErrorRetryContainer.setVisibility(View.GONE);
 			mErrorMessageView.setText(null);
 			mErrorMessageView.setVisibility(View.GONE);
-			setListShown(false);
+			setListShown(mUser != null);
 			setProgressBarIndeterminateVisibility(true);
 			final boolean omit_intent_extra = args != null ? args.getBoolean(INTENT_KEY_OMIT_INTENT_EXTRA, true) : true;
 			return new ParcelableUserLoader(getActivity(), mAccountId, mUserId, mScreenName, getArguments(),
@@ -642,18 +642,19 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		return container_view;
 	}
 
-	// @Override
-	// public void onDestroyView() {
-	// mUser = null;
-	// mFriendship = null;
-	// mAccountId = -1;
-	// mUserId = -1;
-	// mScreenName = null;
-	// final LoaderManager lm = getLoaderManager();
-	// lm.destroyLoader(LOADER_ID_USER);
-	// lm.destroyLoader(LOADER_ID_FRIENDSHIP);
-	// super.onDestroyView();
-	// }
+	@Override
+	public void onDestroyView() {
+		 mUser = null;
+		 mFriendship = null;
+		 mAccountId = -1;
+		 mUserId = -1;
+		 mScreenName = null;
+		 final LoaderManager lm = getLoaderManager();
+		 lm.destroyLoader(LOADER_ID_USER);
+		 lm.destroyLoader(LOADER_ID_FRIENDSHIP);
+		 lm.destroyLoader(LOADER_ID_BANNER);
+		 super.onDestroyView();
+	}
 
 	@Override
 	public void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {

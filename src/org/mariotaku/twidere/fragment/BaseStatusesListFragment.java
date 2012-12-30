@@ -140,7 +140,6 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		setListAdapter(mAdapter);
 		mListView.setOnScrollListener(this);
 		mListView.setOnItemLongClickListener(this);
-		mListView.setFastScrollEnabled(true);
 		setMode(Mode.BOTH);
 		getLoaderManager().initLoader(0, getArguments(), this);
 		setListShown(false);
@@ -341,7 +340,8 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	@Override
 	public void onResume() {
 		super.onResume();
-		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
+		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);		
+		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
 		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		final String inline_image_preview_display_option = mPreferences.getString(

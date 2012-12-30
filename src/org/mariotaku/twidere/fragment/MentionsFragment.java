@@ -70,6 +70,7 @@ public class MentionsFragment extends CursorStatusesListFragment {
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		mAdapter.setMentionsHightlightDisabled(true);
 	}
 
 	@Override

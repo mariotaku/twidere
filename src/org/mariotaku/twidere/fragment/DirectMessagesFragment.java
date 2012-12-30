@@ -57,6 +57,10 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 
 public class DirectMessagesFragment extends PullToRefreshListFragment implements LoaderCallbacks<Cursor>,
 		OnScrollListener, OnTouchListener {
+
+	private static final long TICKER_DURATION = 5000L;
+
+	private TwidereApplication mApplication;
 	private AsyncTwitterWrapper mTwitterWrapper;
 	private SharedPreferences mPreferences;
 	private Handler mHandler;
@@ -67,8 +71,6 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 	private volatile boolean mBusy, mTickerStopped, mReachedBottom, mNotReachedBottomBefore = true;
 
 	private DirectMessagesEntryAdapter mAdapter;
-
-	private static final long TICKER_DURATION = 5000L;
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -98,8 +100,6 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 		}
 	};
 
-	private TwidereApplication mApplication;
-
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -111,8 +111,7 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 		mAdapter = new DirectMessagesEntryAdapter(getActivity(), imageloader);
 
 		setListAdapter(mAdapter);
-		mListView = getListView();
-		mListView.setFastScrollEnabled(true);
+		mListView = getListView();	
 		mListView.setOnTouchListener(this);
 		mListView.setOnScrollListener(this);
 		setMode(Mode.BOTH);
@@ -218,6 +217,7 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 	@Override
 	public void onResume() {
 		super.onResume();
+		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
 		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		final boolean show_absolute_time = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false);

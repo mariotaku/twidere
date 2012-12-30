@@ -87,7 +87,7 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 	private AsyncTwitterWrapper mTwitterWrapper;
 	private SharedPreferences mPreferences;
 
-	// private ListView mListView;
+	private ListView mListView;
 	private EditText mEditText;
 	private TextView mTextCount;
 	private AutoCompleteTextView mEditScreenName;
@@ -164,12 +164,12 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 		final LazyImageLoader imageloader = mApplication.getProfileImageLoader();
 		mAdapter = new DirectMessagesConversationAdapter(getActivity(), imageloader);
 		setListAdapter(mAdapter);
-		final ListView list = getListView();
-		list.setFastScrollEnabled(true);
-		list.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
-		list.setStackFromBottom(true);
-		list.setOnItemClickListener(this);
-		list.setOnItemLongClickListener(this);
+		mListView = getListView();	
+		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
+		mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
+		mListView.setStackFromBottom(true);
+		mListView.setOnItemClickListener(this);
+		mListView.setOnItemLongClickListener(this);
 		final Bundle args = savedInstanceState == null ? getArguments() : savedInstanceState.getBundle(INTENT_KEY_DATA);
 		if (args != null) {
 			mArguments.putAll(args);

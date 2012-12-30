@@ -393,5 +393,6 @@
 	<string name="accept">Accept</string>
 	<string name="no_thanks">No, thanks</string>
 	<string name="revoke_permissions">Remoke permissions</string>
+	<string name="fast_scroll_thumb">Fast scroll thumb</string>
 
 </resources>

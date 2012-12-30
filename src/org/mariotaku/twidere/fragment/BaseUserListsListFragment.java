@@ -110,8 +110,8 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 			mScreenName = args.getString(INTENT_KEY_SCREEN_NAME);
 		}
 		mAdapter = new UserListsAdapter(getActivity());
-		mListView = getListView();
-		mListView.setFastScrollEnabled(true);
+		mListView = getListView();	
+		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 		if (mAccountId != account_id) {
 			mAdapter.clear();

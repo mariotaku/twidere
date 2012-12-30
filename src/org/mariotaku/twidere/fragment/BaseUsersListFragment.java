@@ -118,8 +118,8 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		mApplication = getApplication();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mAdapter = new UsersAdapter(getActivity());
-		mListView = getListView();
-		mListView.setFastScrollEnabled(true);
+		mListView = getListView();	
+		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
 		final Bundle args = getArguments() != null ? getArguments() : new Bundle();
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 		if (mAccountId != account_id) {

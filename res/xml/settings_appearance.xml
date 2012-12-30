@@ -25,7 +25,11 @@
 		android:key="leftside_compose_button"
 		android:summary="@string/leftside_compose_button_summary"
 		android:title="@string/leftside_compose_button"/>
-
+	<CheckBoxPreference
+		android:defaultValue="false"
+		android:key="fast_scroll_thumb"
+		android:title="@string/fast_scroll_thumb"/>
+		
 	<PreferenceCategory
 		android:key="cat_tweet"
 		android:title="@string/tweet">
