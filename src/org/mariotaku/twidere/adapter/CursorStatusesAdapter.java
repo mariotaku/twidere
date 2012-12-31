@@ -121,6 +121,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			final boolean is_reply = !TextUtils.isEmpty(in_reply_to_screen_name)
 					&& cursor.getLong(mIndices.in_reply_to_status_id) > 0;
 			final boolean is_mention = text.toLowerCase().contains('@' + account_screen_name.toLowerCase());
+			final boolean is_my_status = account_id == user_id;
 
 			if (mMultiSelectEnabled) {
 				holder.setSelected(mSelectedStatusIds.contains(status_id));
@@ -145,6 +146,8 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 
 			holder.setTextSize(mTextSize);
 
+			holder.setIsMyStatus(is_my_status);
+			
 			holder.text.setText(toPlainText(text));
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0, getUserTypeIconRes(is_verified, is_protected), 0);
 			switch (mNameDisplayOption) {
@@ -193,11 +196,15 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_reply, 0,
 						0, 0);
 			}
-			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
 				final String profile_image_url = cursor.getString(mIndices.profile_image_url);
+				mProfileImageLoader.displayImage(holder.my_profile_image, profile_image_url);	
 				mProfileImageLoader.displayImage(holder.profile_image, profile_image_url);
 				holder.profile_image.setTag(position);
+				holder.my_profile_image.setTag(position);
+			} else {
+				holder.profile_image.setVisibility(View.GONE);
+				holder.my_profile_image.setVisibility(View.GONE);
 			}
 			final boolean has_preview = mInlineImagePreviewDisplayOption != INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE
 					&& has_media && preview.matched_url != null;

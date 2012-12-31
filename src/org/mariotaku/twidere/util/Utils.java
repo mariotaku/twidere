@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.util;
 
+import static android.content.res.Configuration.SCREENLAYOUT_LAYOUTDIR_RTL;
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.provider.TweetStore.CACHE_URIS;
 import static org.mariotaku.twidere.provider.TweetStore.DIRECT_MESSAGES_URIS;
@@ -1845,6 +1846,16 @@ public final class Utils implements Constants {
 		return code == 301 || code == 302;
 	}
 
+	public static boolean isRTL(final Context context) {
+		if (context == null) return false;
+		final Resources res = context.getResources();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+			return GetLayoutDirectionAccessor.getLayoutDirection(res.getConfiguration()) == SCREENLAYOUT_LAYOUTDIR_RTL;
+		}
+		final String lang = res.getConfiguration().locale.getLanguage();
+		return "ar".equalsIgnoreCase(lang);
+	}
+	
 	public static boolean isUserLoggedIn(final Context context, final long account_id) {
 		if (context == null) return false;
 		final long[] ids = getAccountIds(context);

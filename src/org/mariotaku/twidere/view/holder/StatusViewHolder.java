@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.view.holder;
 
+import static org.mariotaku.twidere.util.Utils.*;
+ 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
@@ -26,24 +28,32 @@ import android.graphics.Color;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.content.*;
+import android.widget.*;
+import android.view.*;
 
 public class StatusViewHolder {
 
-	public final ImageView profile_image, image_preview;
+	public final ImageView my_profile_image, profile_image, image_preview;
 	public final TextView name, screen_name, text, time, reply_retweet_status;
-	public final View image_preview_frame;
+	public final View image_preview_frame, name_container;
 	private final View gap_indicator;
 	private final ColorLabelRelativeLayout content;
 	public boolean show_as_gap;
 	private boolean account_color_enabled;
 	private float text_size;
+	private final boolean is_rtl;
 
 	public StatusViewHolder(final View view) {
+		final Context context = view.getContext();
+		is_rtl = isRTL(context);
 		content = (ColorLabelRelativeLayout) view;
 		gap_indicator = view.findViewById(R.id.list_gap_text);
 		image_preview_frame = view.findViewById(R.id.image_preview_frame);
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
+		my_profile_image = (ImageView) view.findViewById(R.id.my_profile_image);
 		image_preview = (ImageView) view.findViewById(R.id.image_preview);
+		name_container = view.findViewById(R.id.name_container);
 		name = (TextView) view.findViewById(R.id.name);
 		screen_name = (TextView) view.findViewById(R.id.screen_name);
 		text = (TextView) view.findViewById(R.id.text);
@@ -65,6 +75,14 @@ public class StatusViewHolder {
 	public void setHighlightColor(final int color) {
 		content.drawBackground(show_as_gap ? Color.TRANSPARENT : color);
 	}
+	
+	public void setIsMyStatus(final boolean my_status) {
+		profile_image.setVisibility(my_status ? View.GONE : View.VISIBLE);
+		my_profile_image.setVisibility(my_status ? View.VISIBLE : View.GONE);
+		final FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) name_container.getLayoutParams();
+		lp.gravity = is_rtl ? Gravity.RIGHT : Gravity.LEFT;
+		name_container.setLayoutParams(lp);
+	}
 
 	public void setSelected(final boolean selected) {
 		content.setBackgroundColor(selected && !show_as_gap ? 0x600099CC : Color.TRANSPARENT);
@@ -77,6 +95,7 @@ public class StatusViewHolder {
 			content.drawLabel(Color.TRANSPARENT, Color.TRANSPARENT, Color.TRANSPARENT);
 		}
 		profile_image.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		my_profile_image.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		image_preview_frame.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		name.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		screen_name.setVisibility(show_gap ? View.GONE : View.VISIBLE);
