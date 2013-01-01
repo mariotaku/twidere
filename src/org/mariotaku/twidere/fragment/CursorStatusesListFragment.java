@@ -45,7 +45,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
 
-public abstract class CursorStatusesListFragment extends BaseStatusesListFragment<Cursor> implements View.OnTouchListener {
+public abstract class CursorStatusesListFragment extends BaseStatusesListFragment<Cursor> implements
+		View.OnTouchListener {
 
 	protected CursorStatusesAdapter mAdapter;
 
@@ -183,7 +184,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 				break;
 		}
 	}
-	
+
 	@Override
 	public void onStart() {
 		super.onStart();
@@ -198,7 +199,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 		unregisterReceiver(mStatusReceiver);
 		super.onStop();
 	}
-	
+
 	@Override
 	public boolean onTouch(final View view, final MotionEvent ev) {
 		switch (ev.getAction()) {
@@ -212,19 +213,19 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 
 	abstract Uri getContentUri();
 
-	abstract String getSavedTimelinePreferenceKey();
-	
 	@Override
 	long[] getNewestStatusIds() {
 		return getNewestStatusIdsFromDatabase(getActivity(), getContentUri());
 	}
-	
+
 	abstract int getNotificationIdToClear();
 
 	@Override
 	long[] getOldestStatusIds() {
 		return getOldestStatusIdsFromDatabase(getActivity(), getContentUri());
 	}
+
+	abstract String getSavedTimelinePreferenceKey();
 
 	void saveReadPosition() {
 		final int first_visible_position = mListView.getFirstVisiblePosition();

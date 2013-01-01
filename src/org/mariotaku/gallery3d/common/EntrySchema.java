@@ -303,8 +303,6 @@ public final class EntrySchema {
 		public final boolean unique;
 		public final boolean fullText;
 		public final String defaultValue;
-		public final Field field;
-		public final int projectionIndex;
 
 		private ColumnInfo(final String name, final int type, final boolean indexed, final boolean unique,
 				final boolean fullText, final String defaultValue, final Field field, final int projectionIndex) {
@@ -314,8 +312,6 @@ public final class EntrySchema {
 			this.unique = unique;
 			this.fullText = fullText;
 			this.defaultValue = defaultValue;
-			this.field = field;
-			this.projectionIndex = projectionIndex;
 
 			field.setAccessible(true); // in order to set non-public fields
 		}

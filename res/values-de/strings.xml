@@ -41,13 +41,6 @@
 	<string name="username">Benutzername</string>
 	<string name="password">Passwort</string>
 	<string name="label_tweetstore_provider">Twidere Datenbank Anbieter</string>
-	<string name="label_permission_group_access_twidere">Greife auf Twidere zu</string>
-	<string name="label_permission_read_databases">Lese Twidere Datenbank aus</string>
-	<string name="label_permission_write_databases">Schreibe in die Twidere Datenbank</string>
-	<string name="label_permission_access_service">Zugriff auf den Twidere-Dienst</string>
-	<string name="description_permission_read_databases">Lese Tweets, Entwürfe, Accounts, Direktnachrichten etc. von Datenbank.</string>
-	<string name="description_permission_write_databases">Schreibe Tweets, Entwürfe, Accounts, Direktnachrichten etc. zur Datenbank.</string>
-	<string name="description_permission_access_service">Aktualisieren/Senden von Tweets, Direktnachrichten</string>
 	<string name="open_in_browser">Im Browser öffnen</string>
 	<string name="tap_to_load_more">Weitere Tweets laden</string>
 	<string name="delete">Löschen</string>
@@ -59,7 +52,7 @@
 	<string name="view_image">Bild</string>
 	<string name="view_map">Karte</string>
 	<string name="view_status">Tweet</string>
-	<string name="view_conversation">Konversation</string>
+	
 	<string name="view_user_profile">Benutzerprofil</string>
 	<string name="browser">Browser</string>
 	<string name="pick_from_gallery">Wähle aus Galerie</string>
@@ -142,7 +135,7 @@
 	<string name="search_users">Suche Benutzer</string>
 	<string name="search_tweets">Suche Tweets</string>
 	<string name="created_at">Erstellt am</string>
-	<string name="set_default_account_hint">Bitte ein Standardaccount wählen.</string>
+	
 	<string name="search_hint">Tweets oder Benutzer suchen</string>
 	<string name="remember_position">Position merken</string>
 	<string name="remember_position_summary">Listen/Tabposition beim Beenden merken</string>
@@ -204,7 +197,7 @@
 	<string name="item_1_hour">1 Stunde</string>
 	<string name="item_2_hours">2 Stunden</string>
 	<string name="item_4_hours">4 Stunden</string>
-	<string name="inline_image_preview">Inline Bildvorschau</string>
+	
 	<string name="solid_color_background">Einfarbiger Hintergrund</string>
 	<string name="solid_color_background_summary">Eventuell sinnvoll für Geräte mit AMOLED-Display.</string>
 	<string name="user_list">Benutzerliste</string>

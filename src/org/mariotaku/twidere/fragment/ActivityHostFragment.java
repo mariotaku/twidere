@@ -97,7 +97,7 @@ public abstract class ActivityHostFragment<A extends Activity> extends LocalActi
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
-		if (mAttachedActivity == null) return false;
+		if (mAttachedActivity == null || !isVisible() || !isAdded()) return false;
 		if (!mAttachedActivity.onOptionsItemSelected(item) && mAttachedActivity instanceof FragmentActivity) {
 			final FragmentManager fm = ((FragmentActivity) mAttachedActivity).getSupportFragmentManager();
 			return FragmentManagerTrojan.dispatchOptionsItemSelected(fm, item);

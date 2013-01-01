@@ -61,18 +61,20 @@ public class HandleSpanClickTextView extends TextView {
 			final int line = layout.getLineForVertical(y);
 			final int off = layout.getOffsetForHorizontal(line, x);
 
-			final ClickableSpan[] link = buffer.getSpans(off, off, ClickableSpan.class);
+			final ClickableSpan[] links = buffer.getSpans(off, off, ClickableSpan.class);
 
-			if (link.length != 0) {
+			if (links.length != 0) {
+				final ClickableSpan link = links[0];
 				if (action == MotionEvent.ACTION_UP) {
-					link[0].onClick(this);
+					link.onClick(this);
 					setClickable(false);
 					return true;
 				} else if (action == MotionEvent.ACTION_DOWN) {
-					Selection.setSelection(buffer, buffer.getSpanStart(link[0]), buffer.getSpanEnd(link[0]));
+					Selection.setSelection(buffer, buffer.getSpanStart(link), buffer.getSpanEnd(link));
 					setClickable(true);
 				}
 			} else {
+				setClickable(false);
 				Selection.removeSelection(buffer);
 			}
 		}

@@ -17,12 +17,16 @@
 package org.mariotaku.twidere.view;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.MotionEventAccessor;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.util.AttributeSet;
+import android.view.InputDevice;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
@@ -130,6 +134,36 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		if (mTabSelector != null) {
 			removeCallbacks(mTabSelector);
 		}
+	}
+
+	@Override
+	public boolean onGenericMotionEvent(final MotionEvent event) {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1) return false;
+		if (mAdapter == null) return false;
+		if ((MotionEventAccessor.getSource(event) & InputDevice.SOURCE_CLASS_POINTER) != 0) {
+			switch (event.getAction()) {
+				case MotionEvent.ACTION_SCROLL: {
+					final float vscroll = MotionEventAccessor.getAxisValue(event, MotionEvent.AXIS_VSCROLL);
+					if (vscroll < 0) {
+						if (mCurrentItem + 1 < mAdapter.getCount()) {
+							setCurrentItem(mCurrentItem + 1);
+						}
+					} else if (vscroll > 0) {
+						if (mCurrentItem - 1 >= 0) {
+							setCurrentItem(mCurrentItem - 1);
+						}
+					}
+					// if (vscroll != 0) {
+					// final int delta = (int) (vscroll *
+					// getVerticalScrollFactor());
+					// if (!trackMotionScroll(delta, delta)) {
+					// return true;
+					// }
+					// }
+				}
+			}
+		}
+		return true;
 	}
 
 	@Override
@@ -314,6 +348,8 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 	 * A TitleProvider provides the title to display according to a view.
 	 */
 	public interface TitleProvider {
+
+		public int getCount();
 
 		/**
 		 * Returns the icon of the view at position

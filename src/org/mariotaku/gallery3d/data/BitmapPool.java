@@ -62,16 +62,6 @@ public class BitmapPool {
 		return size > 0 ? mPool.remove(size - 1) : null;
 	}
 
-	// Get a Bitmap from the pool with the specified size.
-	public synchronized Bitmap getBitmap(final int width, final int height) {
-		Utils.assertTrue(!mOneSize);
-		for (int i = mPool.size() - 1; i >= 0; i--) {
-			final Bitmap b = mPool.get(i);
-			if (b.getWidth() == width && b.getHeight() == height) return mPool.remove(i);
-		}
-		return null;
-	}
-
 	public boolean isOneSize() {
 		return mOneSize;
 	}

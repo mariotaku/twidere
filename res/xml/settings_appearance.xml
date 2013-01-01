@@ -29,7 +29,7 @@
 		android:defaultValue="false"
 		android:key="fast_scroll_thumb"
 		android:title="@string/fast_scroll_thumb"/>
-		
+
 	<PreferenceCategory
 		android:key="cat_tweet"
 		android:title="@string/tweet">
@@ -67,6 +67,10 @@
 			android:key="inline_image_preview_display_option"
 			android:title="@string/inline_image_preview_display_option"/>
 
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="link_highlighting"
+			android:title="@string/link_highlighting"/>
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="show_absolute_time"

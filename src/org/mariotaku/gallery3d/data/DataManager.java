@@ -16,14 +16,9 @@
 
 package org.mariotaku.gallery3d.data;
 
-import java.util.HashMap;
-import java.util.WeakHashMap;
-
 import org.mariotaku.gallery3d.app.IGalleryApplication;
 
-import android.database.ContentObserver;
 import android.net.Uri;
-import android.os.Handler;
 import android.util.Log;
 
 // DataManager manages all media sets and media items in the system.
@@ -40,8 +35,6 @@ import android.util.Log;
 // killed and re-created, so child keys should be stable identifiers.
 
 public class DataManager {
-	public static final int INCLUDE_IMAGE = 1;
-	public static final int INCLUDE_LOCAL_ONLY = 4;
 
 	// Any one who would like to access data should require this lock
 	// to prevent concurrency issue.
@@ -49,34 +42,25 @@ public class DataManager {
 
 	private static final String TAG = "DataManager";
 
-	private final Handler mDefaultMainHandler;
-
-	private final IGalleryApplication mApplication;
-
-	private final HashMap<Uri, NotifyBroker> mNotifierMap = new HashMap<Uri, NotifyBroker>();
-
 	private final MediaSource source;
 
 	public DataManager(final IGalleryApplication application) {
-		mApplication = application;
 		source = new MediaSource(application);
-		mDefaultMainHandler = new Handler(application.getMainLooper());
 	}
 
 	public Path findPathByUri(final Uri uri, final String type) {
 		if (uri == null) return null;
 		final Path path = source.findPathByUri(uri, type);
-		if (path != null) return path;
-		return null;
+		return path;
 	}
 
-	public MediaObject getMediaObject(final Path path) {
+	public MediaItem getMediaItem(final Path path) {
 		synchronized (LOCK) {
-			final MediaObject obj = path.getObject();
+			final MediaItem obj = path.getItem();
 			if (obj != null) return obj;
 
 			try {
-				final MediaObject object = source.createMediaObject(path);
+				final MediaItem object = source.createMediaItem(path);
 				if (object == null) {
 					Log.w(TAG, "cannot create media object: " + path);
 				}
@@ -85,38 +69,6 @@ public class DataManager {
 				Log.w(TAG, "exception in creating media object: " + path, t);
 				return null;
 			}
-		}
-	}
-
-	public void registerChangeNotifier(final Uri uri, final ChangeNotifier notifier) {
-		NotifyBroker broker = null;
-		synchronized (mNotifierMap) {
-			broker = mNotifierMap.get(uri);
-			if (broker == null) {
-				broker = new NotifyBroker(mDefaultMainHandler);
-				mApplication.getContentResolver().registerContentObserver(uri, true, broker);
-				mNotifierMap.put(uri, broker);
-			}
-		}
-		broker.registerNotifier(notifier);
-	}
-
-	private static class NotifyBroker extends ContentObserver {
-		private final WeakHashMap<ChangeNotifier, Object> mNotifiers = new WeakHashMap<ChangeNotifier, Object>();
-
-		public NotifyBroker(final Handler handler) {
-			super(handler);
-		}
-
-		@Override
-		public synchronized void onChange(final boolean selfChange) {
-			for (final ChangeNotifier notifier : mNotifiers.keySet()) {
-				notifier.onChange(selfChange);
-			}
-		}
-
-		public synchronized void registerNotifier(final ChangeNotifier notifier) {
-			mNotifiers.put(notifier, null);
 		}
 	}
 }

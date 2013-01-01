@@ -42,14 +42,14 @@
 	<string name="username">Username</string>
 	<string name="password">Password</string>
 	<string name="label_tweetstore_provider">Provider database Twidere</string>
-	<string name="label_backend_service">Layanan aplikasi backend</string>
-	<string name="label_permission_group_access_twidere">Akses aplikasi Twidere</string>
-	<string name="label_permission_read_databases">Baca database Twidere</string>
-	<string name="label_permission_write_databases">Menulis database Twidere</string>
-	<string name="label_permission_access_service">Mengakses layanan Twidere</string>
-	<string name="description_permission_read_databases">Baca tweet, draft, akun, pesan langsung dll dari database.</string>
-	<string name="description_permission_write_databases">Menulis tweet, draft, akun, pesan langsung dll dari database.</string>
-	<string name="description_permission_access_service">Segarkan/Kirim tweet, pesan langsung</string>
+	
+	
+	
+	
+	
+	
+	
+	
 	<string name="open_in_browser">Buka menggunakan browser</string>
 	<string name="tap_to_load_more">Sentuh untuk memuat lebih</string>
 	<string name="delete">Hapus</string>
@@ -63,7 +63,7 @@
 	<string name="view_image">Gambar</string>
 	<string name="view_map">Peta</string>
 	<string name="view_status">Lihat tweet</string>
-	<string name="view_conversation">Percakapan</string>
+	
 	<string name="view_user_profile">Profil pengguna</string>
 	<string name="browser">Browser</string>
 	<string name="pick_from_gallery">Ambil dari gallery</string>
@@ -155,7 +155,7 @@
 	<string name="search_users">Cari pengguna</string>
 	<string name="search_tweets">Cari Tweet</string>
 	<string name="created_at">Dibuat pada</string>
-	<string name="set_default_account_hint">Mohon pilih akun default.</string>
+	
 	<string name="search_hint">Cari tweet atau pengguna</string>
 	<string name="remember_position">Ingat posisi</string>
 	<string name="remember_position_summary">Ingat daftar/posisi tab sebelum menutup Twidere</string>
@@ -224,7 +224,7 @@
 	<string name="item_1_hour">1 jam</string>
 	<string name="item_2_hours">2 jam</string>
 	<string name="item_4_hours">4 jam</string>
-	<string name="inline_image_preview">Inline preview gambar</string>
+	
 	<string name="solid_color_background">Background warna solid</string>
 	<string name="solid_color_background_summary">Mungkin berguna jika layar HH anda AMOLED.</string>
 	<string name="following_you">Following anda</string>

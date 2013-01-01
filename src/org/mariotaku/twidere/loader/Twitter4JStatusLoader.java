@@ -20,12 +20,15 @@
 package org.mariotaku.twidere.loader;
 
 import static org.mariotaku.twidere.util.Utils.getInlineImagePreviewDisplayOptionInt;
+import static org.mariotaku.twidere.util.Utils.isFiltered;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.CacheUsersStatusesTask;
 import org.mariotaku.twidere.util.SynchronizedStateSavedList;
@@ -37,12 +40,15 @@ import twitter4j.TwitterException;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 
 	private final long mMaxId, mSinceId;
 	private final boolean mHiResProfileImage;
-	private final int mInlineImagePreviewDisplayOption;
+	private final boolean mLargeInlineImagePreview;
+	private final SQLiteDatabase mDatabase;
 
 	public Twitter4JStatusLoader(final Context context, final long account_id, final long max_id, final long since_id,
 			final List<ParcelableStatus> data, final String class_name, final boolean is_home_tab) {
@@ -50,10 +56,8 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 		mMaxId = max_id;
 		mSinceId = since_id;
 		mHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
-		final String inline_image_preview_display_option = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
-				Context.MODE_PRIVATE).getString(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW_DISPLAY_OPTION,
-				INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_NONE);
-		mInlineImagePreviewDisplayOption = getInlineImagePreviewDisplayOptionInt(inline_image_preview_display_option);
+		mLargeInlineImagePreview = getInlineImagePreviewDisplayOptionInt(context) == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE;
+		mDatabase = TwidereApplication.getInstance(context).getSQLiteDatabase();
 	}
 
 	public abstract List<Status> getStatuses(Paging paging) throws TwitterException;
@@ -81,7 +85,6 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 		}
 		if (statuses != null) {
 			final boolean insert_gap = load_item_limit == statuses.size() && data.size() > 0;
-			Collections.sort(statuses);
 			final Status min_status = statuses.size() > 0 ? Collections.min(statuses) : null;
 			final long min_status_id = min_status != null ? min_status.getId() : -1;
 			if (context instanceof Activity) {
@@ -92,14 +95,20 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 				final long id = status.getId();
 				deleteStatus(id);
 				data.add(new ParcelableStatus(status, mAccountId, min_status_id > 0 && min_status_id == id
-						&& insert_gap, mHiResProfileImage,
-						mInlineImagePreviewDisplayOption == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE));
+						&& insert_gap, mHiResProfileImage, mLargeInlineImagePreview));
 			}
 		}
 		try {
+			final List<ParcelableStatus> statuses_to_remove = new ArrayList<ParcelableStatus>();
+			for (final ParcelableStatus status : data) {
+				if (isFiltered(mDatabase, status) && !status.is_gap) {
+					statuses_to_remove.add(status);
+				}
+			}
+			data.removeAll(statuses_to_remove);
 			Collections.sort(data);
 		} catch (final ConcurrentModificationException e) {
-			e.printStackTrace();
+			Log.w(LOGTAG, e);
 		}
 		return data;
 	}

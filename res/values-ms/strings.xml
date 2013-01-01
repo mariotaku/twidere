@@ -26,7 +26,7 @@
   <string name="load_images">Memuatkan gambar</string>
   <string name="sort_timeline_by_time_summary">Ini akan menyebabkan tweet semula ditunjukkan di tempat yang salah, tetapi mungkin berguna jika anda menggunakan servis lain seperti Identi.ca.</string>
   <string name="refresh_after_tweet_summary">Memuatkan garis masa dan sebutan selepas menghantar tweet.</string>
-  <string name="inline_image_preview">Pratonton imej dalaman</string>
+  
   <string name="solid_color_background_summary">Ini mungkin berguna jika skrin peranti anda ialah AMOLED.</string>
   <string name="image_uploader_default">Lalai (Twitter)</string>
   <string name="error_message_image_upload_failed">Gagal memuat naik imej.</string>

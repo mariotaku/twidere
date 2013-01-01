@@ -65,7 +65,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	private final ArrayList<Long> mSelectedStatusIds;
 
 	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled,
-			mMentionsHighlightDisabled, mDisplaySensitiveContents;
+			mMentionsHighlightDisabled, mDisplaySensitiveContents, mIndicateMyStatusDisabled, mLinkHighlightingEnabled;
 	private float mTextSize;
 	private int mNameDisplayOption, mInlineImagePreviewDisplayOption;
 
@@ -125,16 +125,16 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		final boolean show_gap = status.is_gap && !mGapDisallowed && position != getCount() - 1;
 
 		holder.setShowAsGap(show_gap);
-		holder.setAccountColorEnabled(mShowAccountColor);
-
-		holder.text.setText(status.text_unescaped);
-
-		if (mShowAccountColor) {
-			holder.setAccountColor(getAccountColor(mContext, status.account_id));
-		}
 
 		if (!show_gap) {
 
+			holder.setAccountColorEnabled(mShowAccountColor);
+
+			holder.text.setText(status.text_unescaped);
+
+			if (mShowAccountColor) {
+				holder.setAccountColor(getAccountColor(mContext, status.account_id));
+			}
 			final String retweeted_by_name = status.retweeted_by_name;
 			final String retweeted_by_screen_name = status.retweeted_by_screen_name;
 
@@ -146,10 +146,14 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			final String account_screen_name = getAccountScreenName(mContext, status.account_id);
 			final boolean is_mention = status.text_plain.toLowerCase()
 					.contains('@' + account_screen_name.toLowerCase());
+			final boolean is_my_status = status.account_id == status.user_id;
 			holder.setUserColor(getUserColor(mContext, status.user_id));
 			holder.setHighlightColor(getStatusBackground(mMentionsHighlightDisabled ? false : is_mention,
 					status.is_favorite, status.is_retweet));
 			holder.setTextSize(mTextSize);
+
+			holder.setIsMyStatus(is_my_status && !mIndicateMyStatusDisabled);
+
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					getUserTypeIconRes(status.is_verified, status.is_protected), 0);
 			switch (mNameDisplayOption) {
@@ -203,10 +207,14 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_reply, 0,
 						0, 0);
 			}
-			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (mDisplayProfileImage) {
+				mProfileImageLoader.displayImage(holder.my_profile_image, status.profile_image_url_string);
 				mProfileImageLoader.displayImage(holder.profile_image, status.profile_image_url_string);
 				holder.profile_image.setTag(position);
+				holder.my_profile_image.setTag(position);
+			} else {
+				holder.profile_image.setVisibility(View.GONE);
+				holder.my_profile_image.setVisibility(View.GONE);
 			}
 			final boolean has_preview = mInlineImagePreviewDisplayOption != INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE
 					&& status.has_media && status.image_preview_url_string != null;
@@ -290,9 +298,25 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	}
 
 	@Override
+	public void setIndicateMyStatusDisabled(final boolean disable) {
+		if (mIndicateMyStatusDisabled != disable) {
+			mIndicateMyStatusDisabled = disable;
+			notifyDataSetChanged();
+		}
+	}
+
+	@Override
 	public void setInlineImagePreviewDisplayOption(final String option) {
 		if (option != null && !option.equals(mInlineImagePreviewDisplayOption)) {
 			mInlineImagePreviewDisplayOption = getInlineImagePreviewDisplayOptionInt(option);
+			notifyDataSetChanged();
+		}
+	}
+
+	@Override
+	public void setLinkHightlightingEnabled(final boolean enable) {
+		if (mLinkHighlightingEnabled != enable) {
+			mLinkHighlightingEnabled = enable;
 			notifyDataSetChanged();
 		}
 	}

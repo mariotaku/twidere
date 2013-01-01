@@ -19,5 +19,7 @@
 	<dimen name="default_slidingpane_shadow_width">32dp</dimen>
 	<dimen name="dialogwhenlarge_min_height">160dp</dimen>
 	<dimen name="dialogwhenlarge_min_width">180dp</dimen>
+	<dimen name="compose_min_width">400dp</dimen>
+	<dimen name="compose_min_height">320dp</dimen>
 
 </resources>

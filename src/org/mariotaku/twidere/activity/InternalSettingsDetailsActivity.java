@@ -22,7 +22,7 @@ package org.mariotaku.twidere.activity;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.ActivityHostFragment;
-import org.mariotaku.twidere.util.OnBackPressedAccessor;
+import org.mariotaku.twidere.util.ActivityAccessor;
 
 import android.app.Activity;
 import android.content.Context;
@@ -62,7 +62,7 @@ public class InternalSettingsDetailsActivity extends PreferenceActivity implemen
 			case KeyEvent.KEYCODE_BACK: {
 				final Activity activity = getParent();
 				if (activity instanceof SettingsActivity && Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
-					OnBackPressedAccessor.onBackPressed(activity);
+					ActivityAccessor.onBackPressed(activity);
 					return true;
 				}
 				break;

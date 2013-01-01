@@ -222,7 +222,7 @@ public class DownloadCache {
 		public File cacheFile;
 		protected long mId;
 
-		Entry(final long id, final File cacheFile) {
+		private Entry(final long id, final File cacheFile) {
 			mId = id;
 			this.cacheFile = Utils.checkNotNull(cacheFile);
 		}
@@ -233,7 +233,7 @@ public class DownloadCache {
 		private boolean mIsCancelled = false;
 		private Entry mEntry;
 
-		public synchronized Entry get(final JobContext jc) {
+		private synchronized Entry get(final JobContext jc) {
 			jc.setCancelListener(new CancelListener() {
 				@Override
 				public void onCancel() {
@@ -255,7 +255,7 @@ public class DownloadCache {
 			return mEntry;
 		}
 
-		synchronized void setResult(final Entry entry) {
+		private synchronized void setResult(final Entry entry) {
 			if (mIsCancelled) return;
 			mEntry = entry;
 			notifyAll();

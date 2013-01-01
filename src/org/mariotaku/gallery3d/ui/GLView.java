@@ -64,8 +64,6 @@ public class GLView {
 	protected int mScrollY = 0;
 
 	protected int mScrollX = 0;
-	protected int mScrollHeight = 0;
-	protected int mScrollWidth = 0;
 	private float[] mBackgroundColor;
 
 	// Adds a child to this GLView.
@@ -92,10 +90,6 @@ public class GLView {
 		onAttachToRoot(root);
 	}
 
-	public Rect bounds() {
-		return mBounds;
-	}
-
 	// This should only be called on the content pane (the topmost GLView).
 	public void detachFromRoot() {
 		Utils.assertTrue(mParent == null && mRoot != null);
@@ -104,30 +98,6 @@ public class GLView {
 
 	public float[] getBackgroundColor() {
 		return mBackgroundColor;
-	}
-
-	/**
-	 * Gets the bounds of the given descendant that relative to this view.
-	 */
-	public boolean getBoundsOf(final GLView descendant, final Rect out) {
-		int xoffset = 0;
-		int yoffset = 0;
-		GLView view = descendant;
-		while (view != this) {
-			if (view == null) return false;
-			final Rect bounds = view.mBounds;
-			xoffset += bounds.left;
-			yoffset += bounds.top;
-			view = view.mParent;
-		}
-		out.set(xoffset, yoffset, xoffset + descendant.getWidth(), yoffset + descendant.getHeight());
-		return true;
-	}
-
-	// Returns the children for the given index.
-	public GLView getComponent(final int index) {
-		if (mComponents == null) throw new ArrayIndexOutOfBoundsException(index);
-		return mComponents.get(index);
 	}
 
 	// Returns the number of children of the GLView.
@@ -234,53 +204,11 @@ public class GLView {
 		return onTouch(event);
 	}
 
-	protected boolean dispatchTouchEvent(final MotionEvent event, final int x, final int y, final GLView component,
-			final boolean checkBounds) {
-		final Rect rect = component.mBounds;
-		final int left = rect.left;
-		final int top = rect.top;
-		if (!checkBounds || rect.contains(x, y)) {
-			event.offsetLocation(-left, -top);
-			if (component.dispatchTouchEvent(event)) {
-				event.offsetLocation(left, top);
-				return true;
-			}
-			event.offsetLocation(left, top);
-		}
-		return false;
-	}
-
-	protected void onAttachToRoot(final GLRoot root) {
-		mRoot = root;
-		for (int i = 0, n = getComponentCount(); i < n; ++i) {
-			getComponent(i).onAttachToRoot(root);
-		}
-	}
-
-	protected void onDetachFromRoot() {
-		for (int i = 0, n = getComponentCount(); i < n; ++i) {
-			getComponent(i).onDetachFromRoot();
-		}
-		mRoot = null;
-	}
-
 	protected void onLayout(final boolean changeSize, final int left, final int top, final int right, final int bottom) {
-	}
-
-	protected void onMeasure(final int widthSpec, final int heightSpec) {
 	}
 
 	protected boolean onTouch(final MotionEvent event) {
 		return false;
-	}
-
-	protected void onVisibilityChanged(final int visibility) {
-		for (int i = 0, n = getComponentCount(); i < n; ++i) {
-			final GLView child = getComponent(i);
-			if (child.getVisibility() == GLView.VISIBLE) {
-				child.onVisibilityChanged(visibility);
-			}
-		}
 	}
 
 	protected void render(final GLCanvas canvas) {
@@ -290,12 +218,6 @@ public class GLView {
 			renderChild(canvas, getComponent(i));
 		}
 		canvas.restore();
-	}
-
-	protected void renderBackground(final GLCanvas view) {
-		if (mBackgroundColor != null) {
-			view.clearBuffer(mBackgroundColor);
-		}
 	}
 
 	protected void renderChild(final GLCanvas canvas, final GLView component) {
@@ -323,14 +245,61 @@ public class GLView {
 		canvas.translate(-xoffset, -yoffset);
 	}
 
+	private boolean dispatchTouchEvent(final MotionEvent event, final int x, final int y, final GLView component,
+			final boolean checkBounds) {
+		final Rect rect = component.mBounds;
+		final int left = rect.left;
+		final int top = rect.top;
+		if (!checkBounds || rect.contains(x, y)) {
+			event.offsetLocation(-left, -top);
+			if (component.dispatchTouchEvent(event)) {
+				event.offsetLocation(left, top);
+				return true;
+			}
+			event.offsetLocation(left, top);
+		}
+		return false;
+	}
+
+	// Returns the children for the given index.
+	private GLView getComponent(final int index) {
+		if (mComponents == null) throw new ArrayIndexOutOfBoundsException(index);
+		return mComponents.get(index);
+	}
+
+	private void onAttachToRoot(final GLRoot root) {
+		mRoot = root;
+		for (int i = 0, n = getComponentCount(); i < n; ++i) {
+			getComponent(i).onAttachToRoot(root);
+		}
+	}
+
+	private void onDetachFromRoot() {
+		for (int i = 0, n = getComponentCount(); i < n; ++i) {
+			getComponent(i).onDetachFromRoot();
+		}
+		mRoot = null;
+	}
+
+	private void onVisibilityChanged(final int visibility) {
+		for (int i = 0, n = getComponentCount(); i < n; ++i) {
+			final GLView child = getComponent(i);
+			if (child.getVisibility() == GLView.VISIBLE) {
+				child.onVisibilityChanged(visibility);
+			}
+		}
+	}
+
+	private void renderBackground(final GLCanvas view) {
+		if (mBackgroundColor != null) {
+			view.clearBuffer(mBackgroundColor);
+		}
+	}
+
 	private boolean setBounds(final int left, final int top, final int right, final int bottom) {
 		final boolean sizeChanged = right - left != mBounds.right - mBounds.left
 				|| bottom - top != mBounds.bottom - mBounds.top;
 		mBounds.set(left, top, right, bottom);
 		return sizeChanged;
-	}
-
-	public interface OnClickListener {
-		void onClick(GLView v);
 	}
 }

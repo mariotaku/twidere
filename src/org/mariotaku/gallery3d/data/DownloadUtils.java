@@ -39,7 +39,19 @@ import android.util.Log;
 public class DownloadUtils {
 	private static final String TAG = "DownloadService";
 
-	public static boolean download(final Context context, final JobContext jc, final URL url, final OutputStream output) {
+	public static boolean requestDownload(final Context context, final JobContext jc, final URL url, final File file) {
+		FileOutputStream fos = null;
+		try {
+			fos = new FileOutputStream(file);
+			return download(context, jc, url, fos);
+		} catch (final Throwable t) {
+			return false;
+		} finally {
+			Utils.closeSilently(fos);
+		}
+	}
+
+	private static boolean download(final Context context, final JobContext jc, final URL url, final OutputStream output) {
 		InputStream input = null;
 		try {
 			final HttpClientWrapper client = getImageLoaderHttpClient(context);
@@ -54,7 +66,7 @@ public class DownloadUtils {
 		}
 	}
 
-	public static void dump(final JobContext jc, final InputStream is, final OutputStream os) throws IOException {
+	private static void dump(final JobContext jc, final InputStream is, final OutputStream os) throws IOException {
 		final byte buffer[] = new byte[4096];
 		int rc = is.read(buffer, 0, buffer.length);
 		final Thread thread = Thread.currentThread();
@@ -71,17 +83,5 @@ public class DownloadUtils {
 		}
 		jc.setCancelListener(null);
 		Thread.interrupted(); // consume the interrupt signal
-	}
-
-	public static boolean requestDownload(final Context context, final JobContext jc, final URL url, final File file) {
-		FileOutputStream fos = null;
-		try {
-			fos = new FileOutputStream(file);
-			return download(context, jc, url, fos);
-		} catch (final Throwable t) {
-			return false;
-		} finally {
-			Utils.closeSilently(fos);
-		}
 	}
 }

@@ -194,6 +194,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_SHOW_ACCOUNTS_TAB = "show_accounts_tab";
 	public static final String PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS = "display_sensitive_contents";
 	public static final String PREFERENCE_KEY_FAST_SCROLL_THUMB = "fast_scroll_thumb";
+	public static final String PREFERENCE_KEY_LINK_HIGHLIGHTING = "link_highlighting";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;
@@ -302,6 +303,7 @@ public interface Constants extends TwitterConstants {
 	public static final String BROADCAST_MULTI_SELECT_STATE_CHANGED = INTENT_PACKAGE_PREFIX
 			+ "MULTI_SELECT_STATE_CHANGED";
 	public static final String BROADCAST_MULTI_BLOCKSTATE_CHANGED = INTENT_PACKAGE_PREFIX + "MULTI_BLOCKSTATE_CHANGED";
+	public static final String BROADCAST_MULTI_MUTESTATE_CHANGED = INTENT_PACKAGE_PREFIX + "MULTI_MUTESTATE_CHANGED";
 	public static final String BROADCAST_HOME_ACTIVITY_ONCREATE = INTENT_PACKAGE_PREFIX + "HOME_ACTIVITY_ONCREATE";
 	public static final String BROADCAST_HOME_ACTIVITY_ONSTART = INTENT_PACKAGE_PREFIX + "HOME_ACTIVITY_ONSTART";
 	public static final String BROADCAST_HOME_ACTIVITY_ONSTOP = INTENT_PACKAGE_PREFIX + "HOME_ACTIVITY_ONSTOP";
@@ -420,7 +422,7 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_REFRESH = R.id.refresh;
 	public static final int MENU_MENTION = R.id.mention;
 	public static final int MENU_SEND_DIRECT_MESSAGE = R.id.send_direct_message;
-	public static final int MENU_EXTENSIONS = R.id.extensions;
+	public static final int MENU_EXTENSIONS_SUBMENU = R.id.extensions_submenu;
 	public static final int MENU_VIEW_USER_LIST = R.id.view_user_list;
 	public static final int MENU_UP = R.id.up;
 	public static final int MENU_DOWN = R.id.down;

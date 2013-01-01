@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.fragment;
 
 import static android.text.TextUtils.isEmpty;
+import static org.mariotaku.twidere.util.Utils.addIntentToSubMenu;
 import static org.mariotaku.twidere.util.Utils.findUserList;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
@@ -52,6 +53,7 @@ import twitter4j.User;
 import twitter4j.UserList;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -64,7 +66,9 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.text.InputFilter;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -254,6 +258,17 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 				} else {
 					mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 					mPopupMenu.inflate(R.menu.action_user_list_details);
+					final Menu menu = mPopupMenu.getMenu();
+					final MenuItem extensions = menu.findItem(MENU_EXTENSIONS_SUBMENU);
+					if (extensions != null) {
+						final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER_LIST);
+						final Bundle extras = new Bundle();
+						extras.putParcelable(INTENT_KEY_USER_LIST, new ParcelableUserList(mUserList, mAccountId,
+								mHiResProfileImage));
+						intent.putExtras(extras);
+						addIntentToSubMenu(getActivity(), extensions.getSubMenu(), intent);
+					}
+
 					mPopupMenu.setOnMenuItemClickListener(this);
 					mPopupMenu.show();
 				}
@@ -402,13 +417,15 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 				mTwitterWrapper.destroyUserList(mAccountId, mUserListId);
 				break;
 			}
-			case MENU_EXTENSIONS: {
-				final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER_LIST);
-				final Bundle extras = new Bundle();
-				extras.putParcelable(INTENT_KEY_USER_LIST, new ParcelableUserList(mUserList, mAccountId,
-						mHiResProfileImage));
-				intent.putExtras(extras);
-				startActivity(Intent.createChooser(intent, getString(R.string.open_with_extensions)));
+			default: {
+				if (item.getIntent() != null) {
+					try {
+						startActivity(item.getIntent());
+					} catch (final ActivityNotFoundException e) {
+						Log.w(LOGTAG, e);
+						return false;
+					}
+				}
 				break;
 			}
 		}

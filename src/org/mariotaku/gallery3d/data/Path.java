@@ -27,7 +27,7 @@ public class Path {
 
 	private final Path mParent;
 	private final String mSegment;
-	private WeakReference<MediaObject> mObject;
+	private WeakReference<MediaItem> mObject;
 	private IdentityCache<String, Path> mChildren;
 
 	private Path(final Path parent, final String segment) {
@@ -62,10 +62,10 @@ public class Path {
 		return mSegment;
 	}
 
-	public void setObject(final MediaObject object) {
+	public void setObject(final MediaItem mediaItem) {
 		synchronized (Path.class) {
 			Utils.assertTrue(mObject == null || mObject.get() == null);
-			mObject = new WeakReference<MediaObject>(object);
+			mObject = new WeakReference<MediaItem>(mediaItem);
 		}
 	}
 
@@ -113,7 +113,7 @@ public class Path {
 		}
 	}
 
-	MediaObject getObject() {
+	MediaItem getItem() {
 		synchronized (Path.class) {
 			return mObject == null ? null : mObject.get();
 		}

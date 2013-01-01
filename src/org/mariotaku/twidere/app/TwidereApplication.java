@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.app;
 
+import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
 import static org.mariotaku.twidere.util.Utils.hasActiveConnection;
 
 import java.io.File;
@@ -36,6 +37,7 @@ import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.service.RefreshService;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.DatabaseHelper;
 import org.mariotaku.twidere.util.ImageLoaderUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
@@ -47,6 +49,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.webkit.WebView;
@@ -55,32 +58,28 @@ import edu.ucdavis.earlybird.UCDService;
 public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener,
 		IGalleryApplication {
 
+	private static final String DOWNLOAD_FOLDER = "download";
+	private static final long DOWNLOAD_CAPACITY = 64 * 1024 * 1024; // 64M
+
 	private LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private AsyncTaskManager mAsyncTaskManager;
 	private SharedPreferences mPreferences;
 	private AsyncTwitterWrapper mTwitterWrapper;
 
-	private boolean mMultiSelectActive = false;
-
-	private final ItemsList mSelectedItems = new ItemsList();
-
-	private final ArrayList<Long> mSelectedStatusIds = new ArrayList<Long>();
-	private final ArrayList<Long> mSelectedUserIds = new ArrayList<Long>();
-
 	private HostAddressResolver mResolver;
-
-	private static final String DOWNLOAD_FOLDER = "download";
-
-	private static final long DOWNLOAD_CAPACITY = 64 * 1024 * 1024; // 64M
-
 	private DataManager mDataManager;
-
 	private ThreadPool mThreadPool;
-
 	private DownloadCache mDownloadCache;
+	private SQLiteDatabase mDatabase;
+
 	private Handler mHandler;
 
 	private String mBrowserUserAgent;
+	private boolean mMultiSelectActive;
+
+	private final ItemsList mSelectedItems = new ItemsList();
+	private final ArrayList<Long> mSelectedStatusIds = new ArrayList<Long>();
+	private final ArrayList<Long> mSelectedUserIds = new ArrayList<Long>();
 
 	@Override
 	public Context getAndroidContext() {
@@ -107,7 +106,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	@Override
 	public synchronized DownloadCache getDownloadCache() {
 		if (mDownloadCache == null) {
-			final File cacheDir = new File(getExternalCacheDir(), DOWNLOAD_FOLDER);
+			final File cacheDir = getBestCacheDir(this, DOWNLOAD_FOLDER);
 
 			if (!cacheDir.isDirectory()) {
 				cacheDir.mkdirs();
@@ -154,6 +153,11 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	public ArrayList<Long> getSelectedUserIds() {
 		return mSelectedUserIds;
+	}
+
+	public SQLiteDatabase getSQLiteDatabase() {
+		if (mDatabase != null) return mDatabase;
+		return mDatabase = new DatabaseHelper(this, DATABASES_NAME, DATABASES_VERSION).getWritableDatabase();
 	}
 
 	@Override

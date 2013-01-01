@@ -17,8 +17,6 @@
 package org.mariotaku.gallery3d.util;
 
 import org.mariotaku.gallery3d.data.MediaItem;
-import org.mariotaku.gallery3d.ui.TiledScreenNail;
-import org.mariotaku.twidere.R;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -41,16 +39,12 @@ public class GalleryUtils {
 		return 2 * Math.atan2(Math.sqrt(x), Math.sqrt(Math.max(0.0, 1.0 - x))) * EARTH_RADIUS_METERS;
 	}
 
-	public static float dpToPixel(final float dp) {
-		return sPixelDensity * dp;
+	public static int dpToPixel(final int dp) {
+		return Math.round(dpToPixel((float) dp));
 	}
 
 	// Below are used the detect using database in the render thread. It only
 	// works most of the time, but that's ok because it's for debugging only.
-
-	public static int dpToPixel(final int dp) {
-		return Math.round(dpToPixel((float) dp));
-	}
 
 	public static byte[] getBytes(final String in) {
 		final byte[] result = new byte[in.length() * 2];
@@ -68,7 +62,6 @@ public class GalleryUtils {
 		wm.getDefaultDisplay().getMetrics(metrics);
 		sPixelDensity = metrics.density;
 		final Resources r = context.getResources();
-		TiledScreenNail.setPlaceholderColor(r.getColor(R.color.bitmap_screennail_placeholder));
 		initializeThumbnailSizes(metrics, r);
 	}
 
@@ -84,12 +77,15 @@ public class GalleryUtils {
 		return metrics.heightPixels > 2048 || metrics.widthPixels > 2048;
 	}
 
+	private static float dpToPixel(final float dp) {
+		return sPixelDensity * dp;
+	}
+
 	private static void initializeThumbnailSizes(final DisplayMetrics metrics, final Resources r) {
 		final int maxPixels = Math.max(metrics.heightPixels, metrics.widthPixels);
 
 		// For screen-nails, we never need to completely fill the screen
 		MediaItem.setThumbnailSizes(maxPixels / 2, maxPixels / 5);
-		TiledScreenNail.setMaxSide(maxPixels / 2);
 	}
 
 }

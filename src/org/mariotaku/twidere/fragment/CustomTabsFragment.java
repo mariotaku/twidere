@@ -29,7 +29,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.SeparatedListAdapter;
 import org.mariotaku.twidere.fragment.CustomTabsFragment.CustomTabsAdapter.CustomTabSpec;
 import org.mariotaku.twidere.fragment.CustomTabsFragment.DefaultTabsAdapter.DefaultTabSpec;
-import org.mariotaku.twidere.fragment.CustomTabsFragment.TabsAdapterInterface.TabSpec;
+import org.mariotaku.twidere.fragment.CustomTabsFragment.ITabsAdapter.TabSpec;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.provider.TweetStore.Tabs;
 
@@ -42,6 +42,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.CharArrayBuffer;
 import android.database.ContentObserver;
 import android.database.Cursor;
@@ -53,10 +54,12 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -78,7 +81,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 
 	private PopupMenu mPopupMenu;
 
-	private SeparatedListAdapter<TabsAdapterInterface> mAdapter;
+	private SeparatedListAdapter<ITabsAdapter> mAdapter;
 	private DefaultTabsAdapter mDefaultTabsAdapter;
 	private CustomTabsAdapter mCustomTabsAdapter;
 
@@ -104,7 +107,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 		mResolver = getContentResolver();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final Context context = getActivity();
-		mAdapter = new SeparatedListAdapter<TabsAdapterInterface>(context);
+		mAdapter = new SeparatedListAdapter<ITabsAdapter>(context);
 		mCustomTabsAdapter = new CustomTabsAdapter(context);
 		mDefaultTabsAdapter = new DefaultTabsAdapter(context);
 		mAdapter.addSection(getString(R.string.default_tabs), mDefaultTabsAdapter);
@@ -167,11 +170,23 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 	}
 
 	@Override
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+		final View view = super.onCreateView(inflater, container, savedInstanceState);
+		final View lv = view.findViewById(android.R.id.list);
+		final Resources res = getResources();
+		final float density = res.getDisplayMetrics().density;
+		final int padding = (int) density * 16;
+		lv.setId(android.R.id.list);
+		lv.setPadding(padding, 0, padding, 0);
+		return view;
+	}
+
+	@Override
 	public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 		mSelectedTab = null;
 		final Object obj = mAdapter.getItem(position);
-		if (!(obj instanceof TabsAdapterInterface.TabSpec)) return;
-		final TabsAdapterInterface.TabSpec tab = (TabSpec) obj;
+		if (!(obj instanceof ITabsAdapter.TabSpec)) return;
+		final ITabsAdapter.TabSpec tab = (TabSpec) obj;
 		// mSelectedId = mCursor.getLong(_id_idx);
 		if (tab instanceof CustomTabsAdapter.CustomTabSpec) {
 			final Intent intent = new Intent(INTENT_ACTION_EDIT_CUSTOM_TAB);
@@ -315,7 +330,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 		super.onStop();
 	}
 
-	public static class CustomTabsAdapter extends SimpleCursorAdapter implements TabsAdapterInterface {
+	public static class CustomTabsAdapter extends SimpleCursorAdapter implements ITabsAdapter, OnClickListener {
 
 		private CursorIndices mIndices;
 
@@ -327,13 +342,17 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 		@Override
 		public void bindView(final View view, final Context context, final Cursor cursor) {
 			super.bindView(view, context, cursor);
+			final CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
+			checkbox.setVisibility(View.VISIBLE);
+			checkbox.setText(R.string.refresh);
+			checkbox.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_refresh, 0, 0, 0);
+			checkbox.setOnClickListener(this);
 			final TextView text2 = (TextView) view.findViewById(android.R.id.text2);
 			final ImageView icon = (ImageView) view.findViewById(android.R.id.icon);
 			final TabSpec item = getTab(cursor.getPosition());
 			text2.setText(getTabTypeName(context, item.getType()));
 			icon.setBackgroundResource(R.drawable.gallery_selected_default);
 			icon.setImageDrawable(getTabIconDrawable(mContext, getTabIconObject(item.getIcon())));
-			view.findViewById(R.id.checkbox).setVisibility(View.GONE);
 		}
 
 		@Override
@@ -354,6 +373,12 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 			return getItem(position);
 		}
 
+		@Override
+		public void onClick(final View view) {
+			// TODO Auto-generated method stub
+
+		}
+
 		static class CursorIndices {
 			final int _id, name, icon, type, arguments;
 
@@ -366,7 +391,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 			}
 		}
 
-		static class CustomTabSpec implements Cursor, TabsAdapterInterface.TabSpec {
+		static class CustomTabSpec implements Cursor, ITabsAdapter.TabSpec {
 
 			final Cursor cursor;
 			final CursorIndices indices;
@@ -613,7 +638,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 	}
 
 	public static class DefaultTabsAdapter extends ArrayAdapter<DefaultTabsAdapter.DefaultTabSpec> implements
-			TabsAdapterInterface {
+			ITabsAdapter {
 
 		final SharedPreferences prefs;
 		final Context context;
@@ -653,7 +678,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 					PREFERENCE_KEY_SHOW_ACCOUNTS_TAB));
 		}
 
-		static class DefaultTabSpec implements TabsAdapterInterface.TabSpec {
+		static class DefaultTabSpec implements ITabsAdapter.TabSpec {
 			final SharedPreferences prefs;
 			final String name, icon, prefs_key;
 
@@ -704,7 +729,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 		}
 	}
 
-	static interface TabsAdapterInterface extends ListAdapter {
+	static interface ITabsAdapter extends ListAdapter {
 
 		TabSpec getTab(int position);
 

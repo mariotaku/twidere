@@ -40,14 +40,14 @@
   <string name="username">ユーザー名かメイルアドレス</string>
   <string name="password">パスワード</string>
   <string name="label_tweetstore_provider">ツイデレのデータベース・ストレージ</string>
-  <string name="label_backend_service">アプリのバックエンドサービス</string>
-  <string name="label_permission_group_access_twidere">ツイデレ アプリ　をアクセス</string>
-  <string name="label_permission_read_databases">データベースの読み込み</string>
-  <string name="label_permission_write_databases">データベースの書み込み</string>
-  <string name="label_permission_access_service">ツイデレサビースをアクセス</string>
-  <string name="description_permission_read_databases">データベースからツイート、下書き、アカウント情報またはダイレクトメッセージを読み込む。</string>
-  <string name="description_permission_write_databases">データベースにツイート、下書き、アカウント情報またはダイレクトメッセージなどを書き込む。</string>
-  <string name="description_permission_access_service">ツイート、DMを送信/更新する</string>
+  
+  
+  
+  
+  
+  
+  
+  
   <string name="open_in_browser">ブラウザで開く</string>
   <string name="tap_to_load_more">タップして読み込む</string>
   <string name="delete">削除</string>
@@ -59,7 +59,7 @@
   <string name="view_image">画像</string>
   <string name="view_map">地図</string>
   <string name="view_status">ツイート</string>
-  <string name="view_conversation">会話</string>
+  
   <string name="view_user_profile">ユーザープロフィール</string>
   <string name="browser">ブラウザ</string>
   <string name="pick_from_gallery">ギャラリーから選択</string>
@@ -140,7 +140,7 @@
   <string name="search_users">ユーザーを検索</string>
   <string name="search_tweets">ツイートを検索</string>
   <string name="created_at">作成日</string>
-  <string name="set_default_account_hint">デフォルトアカウントを選んでください。</string>
+  
   <string name="search_hint">ツイートまたユーザーを検索</string>
   <string name="remember_position">位置を記憶</string>
   <string name="remember_position_summary">ツイデレを閉じる前にリスト/タブの位置を記憶する。</string>
@@ -206,7 +206,7 @@
   <string name="item_1_hour">1時間</string>
   <string name="item_2_hours">2時間</string>
   <string name="item_4_hours">4時間</string>
-  <string name="inline_image_preview">インライン画像プレビュー</string>
+  
   <string name="solid_color_background">単色の背景</string>
   <string name="solid_color_background_summary">アモレッド搭載した機種ならこの機能を有効にすることをお勧めします。</string>
   <string name="user_list">ユーザーリスト</string>

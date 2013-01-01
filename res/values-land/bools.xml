@@ -3,7 +3,6 @@
 
 	<bool name="tab_display_label">true</bool>
 	<bool name="home_display_icon">true</bool>
-	<bool name="should_disable_scroll">true</bool>
 	<bool name="shadow_slidable">false</bool>
 
 </resources>

@@ -20,19 +20,18 @@
 package org.mariotaku.twidere.view;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.view.View;
+import android.widget.FrameLayout;
 
-public class ColorView extends View {
+public class ColorView extends FrameLayout {
 
-	private int mOrientation;
 	private int[] mColors;
 	private final Paint mPaint = new Paint();
-
-	public static final int HORIZONTAL = 1, VERTICAL = 2;
+	private final float mColorsWidth;
 
 	public ColorView(final Context context) {
 		this(context, null);
@@ -44,15 +43,13 @@ public class ColorView extends View {
 
 	public ColorView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
+		setWillNotDraw(false);
+		final Resources res = getResources();
+		mColorsWidth = 3 * res.getDisplayMetrics().density;
 	}
 
-	public void setColor(final int... colors) {
+	public void setColors(final int... colors) {
 		mColors = colors;
-		invalidate();
-	}
-
-	public void setOrientation(final int orientation) {
-		mOrientation = orientation;
 		invalidate();
 	}
 
@@ -63,17 +60,12 @@ public class ColorView extends View {
 			canvas.drawColor(Color.TRANSPARENT);
 			return;
 		}
-		final boolean draw_vertical = mOrientation == VERTICAL;
 		final int width = getWidth(), height = getHeight();
 		final int length = mColors.length;
 		for (int i = 0; i < length; i++) {
 			final int color = mColors[i];
 			mPaint.setColor(color);
-			if (draw_vertical) {
-				canvas.drawRect(0, i * (height / length), width, (i + 1) * (height / length), mPaint);
-			} else {
-				canvas.drawRect(i * (width / length), 0, (i + 1) * (width / length), height, mPaint);
-			}
+			canvas.drawRect(width - mColorsWidth, i * (height / length), width, (i + 1) * (height / length), mPaint);
 		}
 
 	}

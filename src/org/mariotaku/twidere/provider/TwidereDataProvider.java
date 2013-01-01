@@ -52,7 +52,6 @@ import org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEnt
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.ArrayUtils;
-import org.mariotaku.twidere.util.DatabaseHelper;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 import org.mariotaku.twidere.util.PermissionsManager;
@@ -84,6 +83,8 @@ import com.twitter.Extractor;
 
 public final class TwidereDataProvider extends ContentProvider implements Constants {
 
+	private Context mContext;
+
 	private SQLiteDatabase mDatabase;
 	private PermissionsManager mPermissionsManager;
 	private NotificationManager mNotificationManager;
@@ -99,8 +100,6 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	private final List<Long> mNewMessageAccounts = new NoDuplicatesArrayList<Long>();
 
 	private boolean mNotificationIsAudible;
-
-	private Context mContext;
 
 	private final BroadcastReceiver mHomeActivityStateReceiver = new BroadcastReceiver() {
 		@Override
@@ -236,7 +235,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	public boolean onCreate() {
 		mContext = getContext();
 		final TwidereApplication app = TwidereApplication.getInstance(mContext);
-		mDatabase = new DatabaseHelper(mContext, DATABASES_NAME, DATABASES_VERSION).getWritableDatabase();
+		mDatabase = app.getSQLiteDatabase();
 		mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 		mPreferences = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mProfileImageLoader = app.getProfileImageLoader();
@@ -497,12 +496,10 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		int notified_count = 0;
 		// Add statuses that not filtered to list for future use.
 		for (final ContentValues value : values) {
-			final String screen_name = value.getAsString(Statuses.SCREEN_NAME);
-			final String text_plain = value.getAsString(Statuses.TEXT_PLAIN);
-			if (!isFiltered(mDatabase, screen_name, value.getAsString(Statuses.SOURCE), text_plain)) {
-				final ParcelableStatus status = new ParcelableStatus(value);
+			final ParcelableStatus status = new ParcelableStatus(value);
+			if (!isFiltered(mDatabase, status)) {
 				mNewMentions.add(status);
-				mNewMentionScreenNames.add(screen_name);
+				mNewMentionScreenNames.add(status.screen_name);
 				mNewMentionAccounts.add(status.account_id);
 				notified_count++;
 			}

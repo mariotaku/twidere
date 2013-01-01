@@ -77,7 +77,7 @@
 	<string name="search_users">Cercar Usuaris</string>
 	<string name="search_tweets">Cercar Tweets</string>
 	<string name="created_at">Creat a les</string>
-	<string name="set_default_account_hint">Selecciona un compte per defecte.</string>
+	
 	<string name="remember_position">Recorda la posició</string>
 	<string name="user_blocked">Bloquejar aquest usuari.</string>
 	<string name="user_unblocked">Desbloquejar aquest usuari.</string>

@@ -46,6 +46,8 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.PreviewImage;
 import org.mariotaku.twidere.model.StatusCursorIndices;
 import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.OnLinkClickHandler;
+import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
 import android.app.Activity;
@@ -54,6 +56,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -69,7 +72,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	private final ArrayList<Long> mSelectedStatusIds;
 
 	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled,
-			mMentionsHighlightDisabled, mDisplaySensitiveContents;
+			mMentionsHighlightDisabled, mDisplaySensitiveContents, mIndicateMyStatusDisabled, mLinkHighlightingEnabled;
 	private float mTextSize;
 	private int mNameDisplayOption, mInlineImagePreviewDisplayOption;
 	private StatusCursorIndices mIndices;
@@ -146,9 +149,18 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 
 			holder.setTextSize(mTextSize);
 
-			holder.setIsMyStatus(is_my_status);
-			
-			holder.text.setText(toPlainText(text));
+			holder.setIsMyStatus(is_my_status && !mIndicateMyStatusDisabled);
+
+			if (mLinkHighlightingEnabled) {
+				holder.text.setText(Html.fromHtml(text));
+				final TwidereLinkify linkify = new TwidereLinkify(holder.text);
+				linkify.setOnLinkClickListener(new OnLinkClickHandler(context, account_id));
+				linkify.addAllLinks();
+
+			} else {
+				holder.text.setText(toPlainText(text));
+			}
+			holder.text.setMovementMethod(null);
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0, getUserTypeIconRes(is_verified, is_protected), 0);
 			switch (mNameDisplayOption) {
 				case NAME_DISPLAY_OPTION_CODE_NAME: {
@@ -198,7 +210,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			}
 			if (mDisplayProfileImage) {
 				final String profile_image_url = cursor.getString(mIndices.profile_image_url);
-				mProfileImageLoader.displayImage(holder.my_profile_image, profile_image_url);	
+				mProfileImageLoader.displayImage(holder.my_profile_image, profile_image_url);
 				mProfileImageLoader.displayImage(holder.profile_image, profile_image_url);
 				holder.profile_image.setTag(position);
 				holder.my_profile_image.setTag(position);
@@ -323,10 +335,26 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	}
 
 	@Override
+	public void setIndicateMyStatusDisabled(final boolean disable) {
+		if (mIndicateMyStatusDisabled != disable) {
+			mIndicateMyStatusDisabled = disable;
+			notifyDataSetChanged();
+		}
+	}
+
+	@Override
 	public void setInlineImagePreviewDisplayOption(final String option) {
 		if (option != null && !option.equals(mInlineImagePreviewDisplayOption)) {
 			mInlineImagePreviewDisplayOption = getInlineImagePreviewDisplayOptionInt(option);
 			;
+			notifyDataSetChanged();
+		}
+	}
+
+	@Override
+	public void setLinkHightlightingEnabled(final boolean enable) {
+		if (mLinkHighlightingEnabled != enable) {
+			mLinkHighlightingEnabled = enable;
 			notifyDataSetChanged();
 		}
 	}

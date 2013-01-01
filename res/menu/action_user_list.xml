@@ -6,8 +6,10 @@
 		android:icon="@drawable/ic_menu_list"
 		android:title="@string/view_user_list"/>
 	<item
-		android:id="@id/extensions"
+		android:id="@id/extensions_submenu"
 		android:icon="@drawable/ic_menu_extension"
-		android:title="@string/extensions"/>
+		android:title="@string/extensions">
+		<menu/>
+	</item>
 
 </menu>

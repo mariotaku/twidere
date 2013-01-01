@@ -20,11 +20,13 @@
 package org.mariotaku.twidere.preference;
 
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
+import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
 import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 import static org.mariotaku.twidere.util.Utils.getInlineImagePreviewDisplayOptionInt;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
 import android.content.Context;
@@ -32,6 +34,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
 import android.preference.Preference;
+import android.text.Html;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +43,8 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
 
 public class StatusPreviewPreference extends Preference implements Constants, OnSharedPreferenceChangeListener {
+
+	private static final String TEXT_HTML = "Twidere is an open source twitter client for Android, see <a href='https://github.com/mariotaku/twidere'>github.com/mariotak&#8230;<a/>";
 
 	private final LayoutInflater mInflater;
 	private final SharedPreferences mPreferences;
@@ -73,6 +78,8 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 			setTime();
 		} else if (PREFERENCE_KEY_NAME_DISPLAY_OPTION.equals(key)) {
 			setName();
+		} else if (PREFERENCE_KEY_LINK_HIGHLIGHTING.equals(key)) {
+			setText();
 		}
 	}
 
@@ -81,10 +88,11 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 		mHolder = new StatusViewHolder(view);
 		mHolder.profile_image.setImageResource(R.drawable.ic_launcher);
 		mHolder.image_preview.setImageResource(R.drawable.twidere_promotional_graphic);
-		mHolder.text.setText("Twidere is an open source twitter client for Android.");
 		mHolder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_indicator_has_media, 0);
 		mHolder.reply_retweet_status.setVisibility(View.GONE);
 		mHolder.setShowAsGap(false);
+		mHolder.setIsMyStatus(false);
+		setText();
 		setName();
 		setImagePreview();
 		setProfileImage();
@@ -142,6 +150,19 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 		mHolder.profile_image
 				.setVisibility(mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true) ? View.VISIBLE
 						: View.GONE);
+	}
+
+	private void setText() {
+		if (mPreferences == null) return;
+		if (mPreferences.getBoolean(PREFERENCE_KEY_LINK_HIGHLIGHTING, false)) {
+			mHolder.text.setText(Html.fromHtml(TEXT_HTML));
+			final TwidereLinkify linkify = new TwidereLinkify(mHolder.text);
+			linkify.addAllLinks();
+			mHolder.text.setMovementMethod(null);
+		} else {
+			mHolder.text.setText(toPlainText(TEXT_HTML));
+		}
+
 	}
 
 	private void setTextSize() {

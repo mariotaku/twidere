@@ -15,6 +15,7 @@ public class MenuItemImpl implements MenuItem {
 	private CharSequence title;
 	private int groupId, itemId, order;
 	private Drawable icon;
+	private Intent intent;
 	private SubMenu subMenu;
 	private final Context context;
 	private boolean visible = true, enabled = true, checkable, checked;
@@ -61,7 +62,7 @@ public class MenuItemImpl implements MenuItem {
 
 	@Override
 	public Intent getIntent() {
-		return new Intent();
+		return intent;
 	}
 
 	@Override
@@ -183,6 +184,7 @@ public class MenuItemImpl implements MenuItem {
 
 	@Override
 	public MenuItem setIntent(final Intent intent) {
+		this.intent = intent;
 		return this;
 	}
 

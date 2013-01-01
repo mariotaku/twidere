@@ -40,14 +40,14 @@
   <string name="username">Gebruikersnaam</string>
   <string name="password">Wachtwoord</string>
   <string name="label_tweetstore_provider">Citeer</string>
-  <string name="label_backend_service">Applicatie backend-service</string>
-  <string name="label_permission_group_access_twidere">Toegang tot Twidere applicatie</string>
-  <string name="label_permission_read_databases">Lees Twidere databases</string>
-  <string name="label_permission_write_databases">Schrijf Twidere databases</string>
-  <string name="label_permission_access_service">Toegang tot Twidere service</string>
-  <string name="description_permission_read_databases">Lees tweets, concepten, accounts, directe berichten enz uit databases.</string>
-  <string name="description_permission_write_databases">Schrijf tweets, concepten, accounts, directe berichten etc naar database.</string>
-  <string name="description_permission_access_service">Vernieuwen/Verzend tweets, Directe berichten</string>
+  
+  
+  
+  
+  
+  
+  
+  
   <string name="open_in_browser">In browser openen</string>
   <string name="tap_to_load_more">Klik om meer te laden</string>
   <string name="delete">Verwijderen</string>
@@ -59,7 +59,7 @@
   <string name="view_image">Afbeelding</string>
   <string name="view_map">Kaart</string>
   <string name="view_status">Bekijk tweet</string>
-  <string name="view_conversation">Conversatie</string>
+  
   <string name="view_user_profile">Gebruikersprofiel</string>
   <string name="browser">Browser</string>
   <string name="pick_from_gallery">Kies uit gallerij</string>
@@ -131,7 +131,7 @@
   <string name="search_users">Zoek gebruikers</string>
   <string name="search_tweets">Zoek Tweets</string>
   <string name="created_at">Gemaakt op</string>
-  <string name="set_default_account_hint">Stel een standaardaccount in.</string>
+  
   <string name="search_hint">Zoek tweets of gebruikers</string>
   <string name="remember_position">Onthoud positie</string>
   <string name="remember_position_summary">Onthoud lijst of tab positie voor afsluiten Twidere</string>
@@ -185,7 +185,7 @@
   <string name="item_1_hour">1 uur</string>
   <string name="item_2_hours">2 uur</string>
   <string name="item_4_hours">4 uur</string>
-  <string name="inline_image_preview">Voorvertoning interne afbeelding</string>
+  
   <string name="solid_color_background">Effen kleur achtergrond</string>
   <string name="user_list">Gebruikerslijst</string>
   <string name="trends_location">Trends locatie</string>

@@ -70,6 +70,7 @@ public class FiltersListFragment extends BaseFragment implements Panes.Right {
 	@Override
 	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
 		inflater.inflate(R.menu.menu_filter, menu);
+		super.onCreateOptionsMenu(menu, inflater);
 	}
 
 	@Override
@@ -82,6 +83,7 @@ public class FiltersListFragment extends BaseFragment implements Panes.Right {
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
+		if (!isVisible() || !isAdded()) return true;
 		return false;
 	}
 }

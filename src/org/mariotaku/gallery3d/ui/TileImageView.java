@@ -68,7 +68,7 @@ public class TileImageView extends GLView {
 	private static final int STATE_RECYCLING = 0x20;
 	private static final int STATE_RECYCLED = 0x40;
 
-	private Model mModel;
+	private PhotoView.Model mModel;
 	private ScreenNail mScreenNail;
 	protected int mLevelCount; // cache the value of mScaledBitmaps.length
 
@@ -132,41 +132,6 @@ public class TileImageView extends GLView {
 		}
 	}
 
-	// Draw the tile to a square at canvas that locates at (x, y) and
-	// has a side length of length.
-	public void drawTile(final GLCanvas canvas, final int tx, final int ty, final int level, final float x,
-			final float y, final float length) {
-		final RectF source = mSourceRect;
-		final RectF target = mTargetRect;
-		target.set(x, y, x + length, y + length);
-		source.set(0, 0, TILE_SIZE, TILE_SIZE);
-
-		final Tile tile = getTile(tx, ty, level);
-		if (tile != null) {
-			if (!tile.isContentValid()) {
-				if (tile.mTileState == STATE_DECODED) {
-					if (mUploadQuota > 0) {
-						--mUploadQuota;
-						tile.updateContent(canvas);
-					} else {
-						mRenderComplete = false;
-					}
-				} else if (tile.mTileState != STATE_DECODE_FAIL) {
-					mRenderComplete = false;
-					queueForDecode(tile);
-				}
-			}
-			if (drawTile(tile, canvas, source, target)) return;
-		}
-		if (mScreenNail != null) {
-			final int size = TILE_SIZE << level;
-			final float scaleX = (float) mScreenNail.getWidth() / mImageWidth;
-			final float scaleY = (float) mScreenNail.getHeight() / mImageHeight;
-			source.set(tx * scaleX, ty * scaleY, (tx + size) * scaleX, (ty + size) * scaleY);
-			mScreenNail.draw(canvas, source, target);
-		}
-	}
-
 	public void freeTextures() {
 		mIsTextureFreed = true;
 
@@ -227,7 +192,7 @@ public class TileImageView extends GLView {
 		}
 	}
 
-	public void setModel(final Model model) {
+	public void setModel(final PhotoView.Model model) {
 		mModel = model;
 		if (model != null) {
 			notifyModelInvalidated();
@@ -247,19 +212,6 @@ public class TileImageView extends GLView {
 
 	public void setScreenNail(final ScreenNail s) {
 		mScreenNail = s;
-	}
-
-	protected synchronized void invalidateTiles() {
-		mDecodeQueue.clean();
-		mUploadQueue.clean();
-
-		// TODO disable decoder
-		final int n = mActiveTiles.size();
-		for (int i = 0; i < n; i++) {
-			final Tile tile = mActiveTiles.valueAt(i);
-			recycleTile(tile);
-		}
-		mActiveTiles.clear();
 	}
 
 	@Override
@@ -343,6 +295,64 @@ public class TileImageView extends GLView {
 		mActiveTiles.put(key, tile);
 	}
 
+	private boolean decodeTile(final Tile tile) {
+		synchronized (this) {
+			if (tile.mTileState != STATE_IN_QUEUE) return false;
+			tile.mTileState = STATE_DECODING;
+		}
+		final boolean decodeComplete = tile.decode();
+		synchronized (this) {
+			if (tile.mTileState == STATE_RECYCLING) {
+				tile.mTileState = STATE_RECYCLED;
+				if (tile.mDecodedTile != null) {
+					if (sTilePool != null) {
+						sTilePool.recycle(tile.mDecodedTile);
+					}
+					tile.mDecodedTile = null;
+				}
+				mRecycledQueue.push(tile);
+				return false;
+			}
+			tile.mTileState = decodeComplete ? STATE_DECODED : STATE_DECODE_FAIL;
+			return decodeComplete;
+		}
+	}
+
+	// Draw the tile to a square at canvas that locates at (x, y) and
+	// has a side length of length.
+	private void drawTile(final GLCanvas canvas, final int tx, final int ty, final int level, final float x,
+			final float y, final float length) {
+		final RectF source = mSourceRect;
+		final RectF target = mTargetRect;
+		target.set(x, y, x + length, y + length);
+		source.set(0, 0, TILE_SIZE, TILE_SIZE);
+
+		final Tile tile = getTile(tx, ty, level);
+		if (tile != null) {
+			if (!tile.isContentValid()) {
+				if (tile.mTileState == STATE_DECODED) {
+					if (mUploadQuota > 0) {
+						--mUploadQuota;
+						tile.updateContent(canvas);
+					} else {
+						mRenderComplete = false;
+					}
+				} else if (tile.mTileState != STATE_DECODE_FAIL) {
+					mRenderComplete = false;
+					queueForDecode(tile);
+				}
+			}
+			if (drawTile(tile, canvas, source, target)) return;
+		}
+		if (mScreenNail != null) {
+			final int size = TILE_SIZE << level;
+			final float scaleX = (float) mScreenNail.getWidth() / mImageWidth;
+			final float scaleY = (float) mScreenNail.getHeight() / mImageHeight;
+			source.set(tx * scaleX, ty * scaleY, (tx + size) * scaleX, (ty + size) * scaleY);
+			mScreenNail.draw(canvas, source, target);
+		}
+	}
+
 	// If the bitmap is scaled by the given factor "scale", return the
 	// rectangle containing visible range. The left-top coordinate returned is
 	// aligned to the tile boundary.
@@ -384,8 +394,21 @@ public class TileImageView extends GLView {
 		return mActiveTiles.get(makeTileKey(x, y, level));
 	}
 
+	private synchronized void invalidateTiles() {
+		mDecodeQueue.clean();
+		mUploadQueue.clean();
+
+		// TODO disable decoder
+		final int n = mActiveTiles.size();
+		for (int i = 0; i < n; i++) {
+			final Tile tile = mActiveTiles.valueAt(i);
+			recycleTile(tile);
+		}
+		mActiveTiles.clear();
+	}
+
 	private boolean isScreenNailAnimating() {
-		return mScreenNail instanceof TiledScreenNail && ((TiledScreenNail) mScreenNail).isAnimating();
+		return false;
 	}
 
 	// Prepare the tiles we want to use for display.
@@ -478,41 +501,7 @@ public class TileImageView extends GLView {
 		return new Tile(x, y, level);
 	}
 
-	private void uploadBackgroundTiles(final GLCanvas canvas) {
-		mBackgroundTileUploaded = true;
-		final int n = mActiveTiles.size();
-		for (int i = 0; i < n; i++) {
-			final Tile tile = mActiveTiles.valueAt(i);
-			if (!tile.isContentValid()) {
-				queueForDecode(tile);
-			}
-		}
-	}
-
-	boolean decodeTile(final Tile tile) {
-		synchronized (this) {
-			if (tile.mTileState != STATE_IN_QUEUE) return false;
-			tile.mTileState = STATE_DECODING;
-		}
-		final boolean decodeComplete = tile.decode();
-		synchronized (this) {
-			if (tile.mTileState == STATE_RECYCLING) {
-				tile.mTileState = STATE_RECYCLED;
-				if (tile.mDecodedTile != null) {
-					if (sTilePool != null) {
-						sTilePool.recycle(tile.mDecodedTile);
-					}
-					tile.mDecodedTile = null;
-				}
-				mRecycledQueue.push(tile);
-				return false;
-			}
-			tile.mTileState = decodeComplete ? STATE_DECODED : STATE_DECODE_FAIL;
-			return decodeComplete;
-		}
-	}
-
-	synchronized void queueForDecode(final Tile tile) {
+	private synchronized void queueForDecode(final Tile tile) {
 		if (tile.mTileState == STATE_ACTIVATED) {
 			tile.mTileState = STATE_IN_QUEUE;
 			if (mDecodeQueue.push(tile)) {
@@ -521,7 +510,7 @@ public class TileImageView extends GLView {
 		}
 	}
 
-	void queueForUpload(final Tile tile) {
+	private void queueForUpload(final Tile tile) {
 		synchronized (this) {
 			mUploadQueue.push(tile);
 		}
@@ -530,7 +519,7 @@ public class TileImageView extends GLView {
 		}
 	}
 
-	synchronized void recycleTile(final Tile tile) {
+	private synchronized void recycleTile(final Tile tile) {
 		if (tile.mTileState == STATE_DECODING) {
 			tile.mTileState = STATE_RECYCLING;
 			return;
@@ -545,14 +534,18 @@ public class TileImageView extends GLView {
 		mRecycledQueue.push(tile);
 	}
 
-	private static long makeTileKey(final int x, final int y, final int level) {
-		long result = x;
-		result = result << 16 | y;
-		result = result << 16 | level;
-		return result;
+	private void uploadBackgroundTiles(final GLCanvas canvas) {
+		mBackgroundTileUploaded = true;
+		final int n = mActiveTiles.size();
+		for (int i = 0; i < n; i++) {
+			final Tile tile = mActiveTiles.valueAt(i);
+			if (!tile.isContentValid()) {
+				queueForDecode(tile);
+			}
+		}
 	}
 
-	static boolean drawTile(Tile tile, final GLCanvas canvas, final RectF source, final RectF target) {
+	private static boolean drawTile(Tile tile, final GLCanvas canvas, final RectF source, final RectF target) {
 		while (true) {
 			if (tile.isContentValid()) {
 				// offset source rectangle for the texture border.
@@ -582,28 +575,11 @@ public class TileImageView extends GLView {
 		}
 	}
 
-	public static interface Model {
-		public int getImageHeight();
-
-		public int getImageWidth();
-
-		public int getLevelCount();
-
-		public ScreenNail getScreenNail();
-
-		// The tile returned by this method can be specified this way: Assuming
-		// the image size is (width, height), first take the intersection of (0,
-		// 0) - (width, height) and (x, y) - (x + tileSize, y + tileSize). Then
-		// extend this intersection region by borderSize pixels on each side. If
-		// in extending the region, we found some part of the region are outside
-		// the image, those pixels are filled with black.
-		//
-		// If level > 0, it does the same operation on a down-scaled version of
-		// the original image (down-scaled by a factor of 2^level), but (x, y)
-		// still refers to the coordinate on the original image.
-		//
-		// The method would be called in another thread.
-		public Bitmap getTile(int level, int x, int y, int tileSize, int borderSize, BitmapPool pool);
+	private static long makeTileKey(final int x, final int y, final int level) {
+		long result = x;
+		result = result << 16 | y;
+		result = result << 16 | level;
+		return result;
 	}
 
 	private class Tile extends UploadedTexture {

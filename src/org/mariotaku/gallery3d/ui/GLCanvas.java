@@ -32,18 +32,11 @@ public interface GLCanvas {
 	public static final int SAVE_FLAG_ALPHA = 0x01;
 	public static final int SAVE_FLAG_MATRIX = 0x02;
 
-	public void beginRenderTarget(RawTexture texture);
-
 	public void clearBuffer(float[] argb);
-
-	// Delete the specified buffer object, similar to unloadTexture.
-	public void deleteBuffer(int bufferId);
 
 	// Delete the textures and buffers in GL side. This function should only be
 	// called in the GL thread.
 	public void deleteRecycledResources();
-
-	public void drawMesh(BasicTexture tex, int x, int y, int xyBuffer, int uvBuffer, int indexBuffer, int indexCount);
 
 	// Draw a region of a texture and a specified color to the specified
 	// rectangle. The actual color used is from * (1 - ratio) + to * ratio.
@@ -59,8 +52,6 @@ public interface GLCanvas {
 
 	// Dump statistics information and clear the counters. For debug only.
 	public void dumpStatisticsAndClear();
-
-	public void endRenderTarget();
 
 	// Fills the specified rectangle with the specified color.
 	public void fillRect(float x, float y, float width, float height, int color);

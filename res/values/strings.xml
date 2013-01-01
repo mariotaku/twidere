@@ -213,7 +213,7 @@
 	<string name="item_1_hour">1 hour</string>
 	<string name="item_2_hours">2 hours</string>
 	<string name="item_4_hours">4 hours</string>
-	<string name="inline_image_preview">Inline image preview</string>
+	
 	<string name="inline_image_preview_display_option">Inline image preview display option</string>
 	<string name="solid_color_background">Solid color background</string>
 	<string name="solid_color_background_summary">This may be useful if screen of your device is AMOLED.</string>
@@ -394,5 +394,6 @@
 	<string name="no_thanks">No, thanks</string>
 	<string name="revoke_permissions">Remoke permissions</string>
 	<string name="fast_scroll_thumb">Fast scroll thumb</string>
+	<string name="link_highlighting">Link highlighting</string>
 
 </resources>

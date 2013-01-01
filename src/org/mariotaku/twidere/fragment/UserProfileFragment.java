@@ -22,6 +22,7 @@ package org.mariotaku.twidere.fragment;
 import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStorageState;
 import static android.text.TextUtils.isEmpty;
+import static org.mariotaku.twidere.util.Utils.addIntentToSubMenu;
 import static org.mariotaku.twidere.util.Utils.clearUserColor;
 import static org.mariotaku.twidere.util.Utils.createTakePhotoIntent;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
@@ -64,7 +65,7 @@ import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
+import org.mariotaku.twidere.util.EnvironmentAccessor;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
@@ -76,6 +77,7 @@ import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -96,6 +98,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -585,8 +588,16 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 					for (int i = 0; i < size; i++) {
 						final MenuItem item = menu.getItem(i);
 						final int id = item.getItemId();
-						item.setVisible(id == R.id.set_color_submenu || id == MENU_EXTENSIONS);
+						item.setVisible(id == R.id.set_color_submenu || id == MENU_EXTENSIONS_SUBMENU);
 					}
+				}
+				final MenuItem extensions = menu.findItem(MENU_EXTENSIONS_SUBMENU);
+				if (extensions != null) {
+					final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER);
+					final Bundle extras = new Bundle();
+					extras.putParcelable(INTENT_KEY_USER, mUser);
+					intent.putExtras(extras);
+					addIntentToSubMenu(getActivity(), extensions.getSubMenu(), intent);
 				}
 				mPopupMenu.setOnMenuItemClickListener(this);
 				mPopupMenu.show();
@@ -643,16 +654,16 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	@Override
 	public void onDestroyView() {
-		 mUser = null;
-		 mFriendship = null;
-		 mAccountId = -1;
-		 mUserId = -1;
-		 mScreenName = null;
-		 final LoaderManager lm = getLoaderManager();
-		 lm.destroyLoader(LOADER_ID_USER);
-		 lm.destroyLoader(LOADER_ID_FRIENDSHIP);
-		 lm.destroyLoader(LOADER_ID_BANNER);
-		 super.onDestroyView();
+		mUser = null;
+		mFriendship = null;
+		mAccountId = -1;
+		mUserId = -1;
+		mScreenName = null;
+		final LoaderManager lm = getLoaderManager();
+		lm.destroyLoader(LOADER_ID_USER);
+		lm.destroyLoader(LOADER_ID_FRIENDSHIP);
+		lm.destroyLoader(LOADER_ID_BANNER);
+		super.onDestroyView();
 	}
 
 	@Override
@@ -761,14 +772,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 				break;
 			}
-			case MENU_EXTENSIONS: {
-				final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER);
-				final Bundle extras = new Bundle();
-				extras.putParcelable(INTENT_KEY_USER, mUser);
-				intent.putExtras(extras);
-				startActivity(Intent.createChooser(intent, getString(R.string.open_with_extensions)));
-				break;
-			}
 			case MENU_SET_COLOR: {
 				final Intent intent = new Intent(getActivity(), SetColorActivity.class);
 				startActivityForResult(intent, REQUEST_SET_COLOR);
@@ -777,6 +780,17 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			case MENU_CLEAR_COLOR: {
 				clearUserColor(getActivity(), mUserId);
 				mProfileNameContainer.drawLeft(getUserColor(getActivity(), mUserId));
+				break;
+			}
+			default: {
+				if (item.getIntent() != null) {
+					try {
+						startActivity(item.getIntent());
+					} catch (final ActivityNotFoundException e) {
+						Log.w(LOGTAG, e);
+						return false;
+					}
+				}
 				break;
 			}
 		}
@@ -846,7 +860,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	private void takePhoto() {
 		if (getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-			final File cache_dir = Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? GetExternalCacheDirAccessor
+			final File cache_dir = Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? EnvironmentAccessor
 					.getExternalCacheDir(getActivity()) : new File(getExternalStorageDirectory().getPath()
 					+ "/Android/data/" + getActivity().getPackageName() + "/cache/");
 			final File file = new File(cache_dir, "tmp_photo_" + System.currentTimeMillis() + ".jpg");

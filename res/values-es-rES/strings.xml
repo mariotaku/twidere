@@ -40,14 +40,14 @@
   <string name="username">Nombre de usuario</string>
   <string name="password">Contraseña</string>
   <string name="label_tweetstore_provider">Proveedor de base de datos de Twidere</string>
-  <string name="label_backend_service">Solicitud de servicio de extremo posterior</string>
-  <string name="label_permission_group_access_twidere">Acceder a la aplicación de Twidere</string>
-  <string name="label_permission_read_databases">Leer bases de datos de Twidere</string>
-  <string name="label_permission_write_databases">Escribir las bases de datos Twidere</string>
-  <string name="label_permission_access_service">Acceder al servicio Twidere</string>
-  <string name="description_permission_read_databases">Leer tweets, borradores, cuentas, dirigir mensajes etc. de bases de datos.</string>
-  <string name="description_permission_write_databases">Escribir tweets, borradores, cuentas, mensajes directos etc. a bases de datos.</string>
-  <string name="description_permission_access_service">Refrescar/Enviar tweets, mensajes directos</string>
+  
+  
+  
+  
+  
+  
+  
+  
   <string name="open_in_browser">Abrir en el navegador</string>
   <string name="tap_to_load_more">Puntee para cargar más</string>
   <string name="delete">Eliminar</string>
@@ -59,7 +59,7 @@
   <string name="view_image">Imagen</string>
   <string name="view_map">Mapa</string>
   <string name="view_status">Ver Tweet</string>
-  <string name="view_conversation">Conversación</string>
+  
   <string name="view_user_profile">Perfil de usuario</string>
   <string name="browser">Explorador</string>
   <string name="pick_from_gallery">Selección de la Galería</string>
@@ -140,7 +140,7 @@
   <string name="search_users">Buscar Usuarios</string>
   <string name="search_tweets">Búscar Tweets</string>
   <string name="created_at">Creado en</string>
-  <string name="set_default_account_hint">Configure una cuenta predeterminada.</string>
+  
   <string name="search_hint">Búsqueda de tweets o usuarios</string>
   <string name="remember_position">Recuerde la posición</string>
   <string name="remember_position_summary">Recuerda la posición de la lista/ficha antes de cerrar Twidere</string>
@@ -206,7 +206,7 @@
   <string name="item_1_hour">1 hora</string>
   <string name="item_2_hours">2 horas</string>
   <string name="item_4_hours">4 horas</string>
-  <string name="inline_image_preview">Vista previa de imágenes en línea</string>
+  
   <string name="solid_color_background">Fondo de color sólido</string>
   <string name="solid_color_background_summary">Esto puede ser útil si la pantalla de tu dispositivo es AMOLED.</string>
   <string name="user_list">Lista de usuarios</string>

@@ -20,17 +20,14 @@
 package org.mariotaku.twidere.util;
 
 import android.annotation.TargetApi;
-import android.app.ActionBar;
-import android.app.Activity;
+import android.graphics.Paint;
 import android.os.Build;
+import android.view.View;
 
-@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-public class SetHomeButtonEnabledAccessor {
+public class ViewAccessor {
 
-	public static void setHomeButtonEnabled(final Activity activity, final boolean enabled) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			final ActionBar action_bar = activity.getActionBar();
-			action_bar.setHomeButtonEnabled(enabled);
-		}
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	public static void setLayerType(final View view, final int layerType, final Paint paint) {
+		view.setLayerType(layerType, paint);
 	}
 }

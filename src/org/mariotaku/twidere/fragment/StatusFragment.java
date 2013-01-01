@@ -73,6 +73,7 @@ import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -92,6 +93,7 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -331,14 +333,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 					mTwitterWrapper.destroyStatus(mAccountId, mStatusId);
 					break;
 				}
-				case MENU_EXTENSIONS: {
-					final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_STATUS);
-					final Bundle extras = new Bundle();
-					extras.putParcelable(INTENT_KEY_STATUS, mStatus);
-					intent.putExtras(extras);
-					startActivity(Intent.createChooser(intent, getString(R.string.open_with_extensions)));
-					break;
-				}
 				case MENU_MUTE_SOURCE: {
 					final String source = HtmlEscapeHelper.toPlainText(mStatus.source);
 					if (source == null) return false;
@@ -361,8 +355,17 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 					updateUserColor();
 					break;
 				}
-				default:
-					return false;
+				default: {
+					if (item.getIntent() != null) {
+						try {
+							startActivity(item.getIntent());
+						} catch (final ActivityNotFoundException e) {
+							Log.w(LOGTAG, e);
+							return false;
+						}
+					}
+					break;
+				}
 			}
 			return true;
 		}

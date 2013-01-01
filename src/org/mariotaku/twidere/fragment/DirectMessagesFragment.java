@@ -111,7 +111,7 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 		mAdapter = new DirectMessagesEntryAdapter(getActivity(), imageloader);
 
 		setListAdapter(mAdapter);
-		mListView = getListView();	
+		mListView = getListView();
 		mListView.setOnTouchListener(this);
 		mListView.setOnScrollListener(this);
 		setMode(Mode.BOTH);

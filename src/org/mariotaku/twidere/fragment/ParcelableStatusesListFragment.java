@@ -61,6 +61,11 @@ public abstract class ParcelableStatusesListFragment extends
 				if (status_id > 0 && !retweeted) {
 					deleteStatus(status_id);
 				}
+			} else if (BROADCAST_MULTI_MUTESTATE_CHANGED.equals(action)) {
+				final Bundle args = getArguments();
+				final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
+				if (account_id <= 0) return;
+				getStatuses(new long[] { account_id }, null, null);
 			}
 
 		}

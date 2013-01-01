@@ -31,7 +31,7 @@
   <string name="share">Paylaş</string>
   <string name="view_image">Resim</string>
   <string name="view_map">Harita</string>
-  <string name="view_conversation">Görüşme</string>
+  
   <string name="view_user_profile">Kullanıcı profili</string>
   <string name="pick_from_gallery">Galeriden seç</string>
   <string name="followers">Takipçilerin</string>
@@ -64,7 +64,7 @@
   <string name="search_users">Kullanıcı/lar ara</string>
   <string name="search_tweets">Tweet/ler ara</string>
   <string name="created_at">Oluşturuldu</string>
-  <string name="set_default_account_hint">Varsayılan hesap olarak ata.</string>
+  
   <string name="search_hint">Tweet yada kullanıcı ara</string>
   <string name="remember_position">Durumu hatırla</string>
   <string name="remember_position_summary">Liste/Sekme durumunu Twidere kapanmadan kaydet</string>

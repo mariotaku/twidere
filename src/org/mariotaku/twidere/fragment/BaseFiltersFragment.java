@@ -33,6 +33,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -43,6 +44,7 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AutoCompleteTextView;
@@ -86,6 +88,18 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 		final String[] cols = getContentColumns();
 		final Uri uri = getContentUri();
 		return new CursorLoader(getActivity(), uri, cols, null, null, null);
+	}
+
+	@Override
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+		final View view = super.onCreateView(inflater, container, savedInstanceState);
+		final View lv = view.findViewById(android.R.id.list);
+		final Resources res = getResources();
+		final float density = res.getDisplayMetrics().density;
+		final int padding = (int) density * 16;
+		lv.setId(android.R.id.list);
+		lv.setPadding(padding, 0, padding, 0);
+		return view;
 	}
 
 	@Override

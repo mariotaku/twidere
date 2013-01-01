@@ -36,6 +36,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
@@ -167,6 +168,14 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 	}
 
 	void showFragment(final Fragment fragment) {
+		final FragmentManager fm = getSupportFragmentManager();
+		final int entry_count = fm.getBackStackEntryCount();
+		final FragmentTransaction ft = fm.beginTransaction();
+		for (int i = 0; i < entry_count; i++) {
+			final int id = fm.getBackStackEntryAt(i).getId();
+			ft.remove(fm.findFragmentById(id));
+		}
+		ft.commitAllowingStateLoss();
 		showFragment(fragment, false);
 	}
 

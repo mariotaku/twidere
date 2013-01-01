@@ -40,14 +40,14 @@
   <string name="username">Felhasználónév</string>
   <string name="password">Jelszó</string>
   <string name="label_tweetstore_provider">Twidere adatbázis szolgáltató</string>
-  <string name="label_backend_service">Alkalmazás háttérszolgáltatás</string>
-  <string name="label_permission_group_access_twidere">Twidere alkalmazás elérése</string>
-  <string name="label_permission_read_databases">Twidere adatbázisok olvasása</string>
-  <string name="label_permission_write_databases">Twidere adatbázisok írása</string>
-  <string name="label_permission_access_service">Hozzáférés a Twidere szolgáltatáshoz</string>
-  <string name="description_permission_read_databases">Tweetek, piszkozatok, üzenetek olvasása adatbázisból.</string>
-  <string name="description_permission_write_databases">Tweetek, piszkozatok, fiókok, üzenetek, stb. írása adatbázisba.</string>
-  <string name="description_permission_access_service">Tweetek frissítése/küldése, üzenetek</string>
+  
+  
+  
+  
+  
+  
+  
+  
   <string name="open_in_browser">Megnyitás böngészőben</string>
   <string name="tap_to_load_more">Érintse meg ha többet szeretne</string>
   <string name="delete">Törlés</string>
@@ -59,7 +59,7 @@
   <string name="view_image">Kép</string>
   <string name="view_map">Térkép</string>
   <string name="view_status">Tweet megjelenítése</string>
-  <string name="view_conversation">Párbeszéd</string>
+  
   <string name="view_user_profile">Felhasználói profil</string>
   <string name="browser">Böngésző</string>
   <string name="pick_from_gallery">Választás a Galériából</string>
@@ -136,7 +136,7 @@
   <string name="search_users">Keresés felhasználók között</string>
   <string name="search_tweets">Keresés tweetek között</string>
   <string name="created_at">Létrehozva:</string>
-  <string name="set_default_account_hint">Kérem állítson be alapértelmezett fiókot.</string>
+  
   <string name="search_hint">Keresés tweetek és felhasználók között</string>
   <string name="remember_position">Pozíció megjegyzése</string>
   <string name="remember_position_summary">Lista/fül pozíció megjegyzése a Twidere bezárása előtt</string>
@@ -193,7 +193,7 @@
   <string name="item_1_hour">1 óra</string>
   <string name="item_2_hours">2 óra</string>
   <string name="item_4_hours">4 óra</string>
-  <string name="inline_image_preview">Beágyazott kép előnézet</string>
+  
   <string name="solid_color_background">Egyszínű háttér</string>
   <string name="solid_color_background_summary">Ez AMOLED képernyő esetén hasznos lehet.</string>
   <string name="user_list">Felhasználólista</string>

@@ -70,7 +70,7 @@ import twitter4j.http.HttpClientConfiguration;
 import twitter4j.http.HttpParameter;
 import twitter4j.http.RequestMethod;
 import twitter4j.internal.logging.Logger;
-import twitter4j.internal.util.z_T4JInternalStringUtil;
+import twitter4j.internal.util.InternalStringUtil;
 
 /**
  * HttpClient implementation for Apache HttpClient 4.0.x
@@ -106,8 +106,7 @@ public class HttpClientImpl implements twitter4j.http.HttpClient {
 			if (conf.getHttpProxyUser() != null && !conf.getHttpProxyUser().equals("")) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Proxy AuthUser: " + conf.getHttpProxyUser());
-					logger.debug("Proxy AuthPassword: "
-							+ z_T4JInternalStringUtil.maskString(conf.getHttpProxyPassword()));
+					logger.debug("Proxy AuthPassword: " + InternalStringUtil.maskString(conf.getHttpProxyPassword()));
 				}
 				client.getCredentialsProvider().setCredentials(
 						new AuthScope(conf.getHttpProxyHost(), conf.getHttpProxyPort()),

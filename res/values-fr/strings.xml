@@ -38,13 +38,13 @@
   <string name="username">Login</string>
   <string name="password">Mot de passe</string>
   <string name="label_tweetstore_provider">Fournisseur de base de données de Twidere</string>
-  <string name="label_permission_group_access_twidere">Accès aux données de Twidere</string>
-  <string name="label_permission_read_databases">Lire les bases de données de Twidere</string>
-  <string name="label_permission_write_databases">Écrire les bases de données de Twidere</string>
-  <string name="label_permission_access_service">Accéder au service Twidere</string>
-  <string name="description_permission_read_databases">Lire les tweets, brouillons, comptes, DM etc des bases de données.</string>
-  <string name="description_permission_write_databases">Écrire tweets, brouillons, comptes, DM etc dans les bases de données.</string>
-  <string name="description_permission_access_service">Rafraîchir/Envoyer des tweets et des messages directs</string>
+  
+  
+  
+  
+  
+  
+  
   <string name="open_in_browser">Ouvrir dans un navigateur</string>
   <string name="tap_to_load_more">Touchez pour charger plus</string>
   <string name="delete">Supprimer</string>
@@ -56,7 +56,7 @@
   <string name="view_image">Image</string>
   <string name="view_map">Carte</string>
   <string name="view_status">Voir le tweet</string>
-  <string name="view_conversation">Conversation</string>
+  
   <string name="view_user_profile">Profil de l\'utilisateur</string>
   <string name="browser">Navigateur</string>
   <string name="pick_from_gallery">Choisir dans la galerie</string>
@@ -134,7 +134,7 @@
   <string name="search_users">Chercher des utilisateurs</string>
   <string name="search_tweets">Chercher des Tweets</string>
   <string name="created_at">Créé à</string>
-  <string name="set_default_account_hint">Veuillez définir un compte par défaut.</string>
+  
   <string name="search_hint">Rechercher des tweets ou des utilisateurs</string>
   <string name="remember_position">Se souvenir de la position</string>
   <string name="remember_position_summary">Se souvenir de la position dans la liste/l\'onglet avant de fermer Twidere</string>

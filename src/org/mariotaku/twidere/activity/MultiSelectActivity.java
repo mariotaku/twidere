@@ -142,6 +142,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 				resolver.bulkInsert(uri, values_list.toArray(new ContentValues[values_list.size()]));
 				Toast.makeText(this, R.string.users_muted, Toast.LENGTH_SHORT).show();
 				mode.finish();
+				sendBroadcast(new Intent(BROADCAST_MULTI_MUTESTATE_CHANGED));
 				break;
 			}
 			case MENU_BLOCK: {

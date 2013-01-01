@@ -42,7 +42,7 @@ public class MediaSource {
 		mApplication = context;
 	}
 
-	public MediaObject createMediaObject(final Path path) {
+	public MediaItem createMediaItem(final Path path) {
 		final String segment[] = path.split();
 		if (segment.length != 3) throw new RuntimeException("bad path: " + path);
 		try {
@@ -94,13 +94,4 @@ public class MediaSource {
 		return type;
 	}
 
-	public static class PathId {
-		public Path path;
-		public int id;
-
-		public PathId(final Path path, final int id) {
-			this.path = path;
-			this.id = id;
-		}
-	}
 }

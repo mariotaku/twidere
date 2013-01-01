@@ -42,14 +42,14 @@
   <string name="username">Username</string>
   <string name="password">Password</string>
   <string name="label_tweetstore_provider">Provider database Twidere</string>
-  <string name="label_backend_service">Applicazione servizio back-end</string>
-  <string name="label_permission_group_access_twidere">Accesso applicazione Twidere</string>
-  <string name="label_permission_read_databases">Lettura database Twidere</string>
-  <string name="label_permission_write_databases">Scrivi nel database di Twidere</string>
-  <string name="label_permission_access_service">Access Twidere service</string>
-  <string name="description_permission_read_databases">﻿Leggere tweets, bozze, conti, messaggi diretti ecc dal database.</string>
-  <string name="description_permission_write_databases">Scrivere tweets, bozze, conti, messaggi diretti nel database.</string>
-  <string name="description_permission_access_service">Aggiorna/Invia tweets e messaggi diretti</string>
+  
+  
+  
+  
+  
+  
+  
+  
   <string name="open_in_browser">Apri nel browser</string>
   <string name="tap_to_load_more">Tocca per caricare più Tweet</string>
   <string name="delete">Elimina</string>
@@ -63,7 +63,7 @@
   <string name="view_image">Immagine</string>
   <string name="view_map">Mappa</string>
   <string name="view_status">Vedi Tweet</string>
-  <string name="view_conversation">Conversazione</string>
+  
   <string name="view_user_profile">Profilo utente</string>
   <string name="browser">Browser</string>
   <string name="pick_from_gallery">Scegli da galleria</string>
@@ -154,7 +154,7 @@
   <string name="search_users">Ricerca utenti</string>
   <string name="search_tweets">Ricerca tweets</string>
   <string name="created_at">Creato alle</string>
-  <string name="set_default_account_hint">Si prega di impostare un account predefinito.</string>
+  
   <string name="search_hint">Cerca tweets o utenti</string>
   <string name="remember_position">Ricorda posizione</string>
   <string name="remember_position_summary">Ricorda la posizione elenco/tab prima di chiudere Twidere</string>
@@ -222,7 +222,7 @@
   <string name="item_1_hour">1 ora</string>
   <string name="item_2_hours">2 ore</string>
   <string name="item_4_hours">4 ore</string>
-  <string name="inline_image_preview">Inline image preview</string>
+  
   <string name="solid_color_background">Sfondo a tinta unita</string>
   <string name="solid_color_background_summary">Questo può essere utile se lo schermo del dispositivo è AMOLED.</string>
   <string name="following_you">Chi ti segue</string>

@@ -34,14 +34,14 @@
   <string name="username">Имя пользователя</string>
   <string name="password">Пароль</string>
   <string name="label_tweetstore_provider">Провайдер базы данных Twitter</string>
-  <string name="label_backend_service">Серверная служба приложений</string>
-  <string name="label_permission_group_access_twidere">Доступ приложения</string>
-  <string name="label_permission_read_databases">Читать базу данных Twidere</string>
-  <string name="label_permission_write_databases">Вписывать в базу данных Twitter</string>
-  <string name="label_permission_access_service">Доступ к службе Twidere</string>
-  <string name="description_permission_read_databases">Прочесть твиты, черновики, аккаунты, личные сообщения и тд. из базы данных</string>
-  <string name="description_permission_write_databases">Записать твиты, черновики, аккаунты, личные сообщения и тд. в базу данных</string>
-  <string name="description_permission_access_service">Обновить/отправить твиты, сообщения</string>
+  
+  
+  
+  
+  
+  
+  
+  
   <string name="open_in_browser">Открыть в браузере</string>
   <string name="tap_to_load_more">Нажмите, чтобы загрузить еще</string>
   <string name="delete">Удалить</string>
@@ -55,7 +55,7 @@
   <string name="view_image">Изображение</string>
   <string name="view_map">Карта</string>
   <string name="view_status">Просмотр твита</string>
-  <string name="view_conversation">Переписка</string>
+  
   <string name="view_user_profile">Профиль пользователя</string>
   <string name="browser">Браузер</string>
   <string name="pick_from_gallery">Выбрать из галереи</string>
@@ -147,7 +147,7 @@
   <string name="search_users">Поиск пользователей</string>
   <string name="search_tweets">Поиск твитов</string>
   <string name="created_at">Создан</string>
-  <string name="set_default_account_hint">Пожалуйста, установите учетную запись по умолчанию.</string>
+  
   <string name="search_hint">Поиск твитов или пользователей</string>
   <string name="remember_position">Запомнить положение</string>
   <string name="remember_position_summary">Запомнить позицию списка/вкладки перед выходом из Twidere</string>
@@ -211,7 +211,7 @@
   <string name="item_1_hour">1 час</string>
   <string name="item_2_hours">2 часа</string>
   <string name="item_4_hours">4 часа</string>
-  <string name="inline_image_preview">Превью изображений в ленте</string>
+  
   <string name="solid_color_background">Сплошной цвет фона</string>
   <string name="solid_color_background_summary">Включите эту опцию, если у вашего устройства AMOLED экран.</string>
   <string name="user_list">Список пользователей</string>

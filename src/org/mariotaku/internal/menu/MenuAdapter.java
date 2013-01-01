@@ -10,14 +10,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.TextView;
+import android.widget.ImageView;
 
 public final class MenuAdapter extends ArrayAdapter<MenuItem> {
 
 	private Menu mMenu;
 
 	public MenuAdapter(final Context context) {
-		super(context, R.layout.menu_list_item);
+		super(context, R.layout.menu_list_item, android.R.id.text1);
 	}
 
 	@Override
@@ -27,11 +27,10 @@ public final class MenuAdapter extends ArrayAdapter<MenuItem> {
 
 	@Override
 	public View getView(final int position, final View convertView, final ViewGroup parent) {
-		final TextView view = (TextView) super.getView(position, convertView, parent);
+		final View view = super.getView(position, convertView, parent);
+		final ImageView icon = (ImageView) view.findViewById(android.R.id.icon);
 		final MenuItem item = getItem(position);
-		view.setEnabled(item.isEnabled());
-		view.setVisibility(item.isVisible() ? View.VISIBLE : View.GONE);
-		view.setCompoundDrawablesWithIntrinsicBounds(item.getIcon(), null, null, null);
+		icon.setImageDrawable(item.getIcon());
 		return view;
 	}
 

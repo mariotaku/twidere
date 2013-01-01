@@ -14,44 +14,127 @@
  * limitations under the License.
  */
 
-package org.mariotaku.gallery3d.ui;
+package org.mariotaku.gallery3d.app;
 
 import org.mariotaku.gallery3d.common.ApiHelper;
+import org.mariotaku.gallery3d.common.BitmapUtils;
 import org.mariotaku.gallery3d.common.Utils;
 import org.mariotaku.gallery3d.data.BitmapPool;
+import org.mariotaku.gallery3d.data.MediaItem;
+import org.mariotaku.gallery3d.ui.BitmapScreenNail;
+import org.mariotaku.gallery3d.ui.PhotoView;
+import org.mariotaku.gallery3d.ui.ScreenNail;
+import org.mariotaku.gallery3d.ui.SynchronizedHandler;
+import org.mariotaku.gallery3d.util.Future;
+import org.mariotaku.gallery3d.util.FutureListener;
+import org.mariotaku.gallery3d.util.ThreadPool;
 
-import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
-public class TileImageViewAdapter implements TileImageView.Model {
-	private static final String TAG = "TileImageViewAdapter";
+public class PhotoViewAdapter implements PhotoView.Model {
+	private static final String TAG = "PhotoViewAdapter";
 	protected ScreenNail mScreenNail;
-	protected boolean mOwnScreenNail;
 	protected BitmapRegionDecoder mRegionDecoder;
 	protected int mImageWidth;
 	protected int mImageHeight;
 	protected int mLevelCount;
 
-	public TileImageViewAdapter() {
-	}
+	private static final int SIZE_BACKUP = 1024;
+	private static final int MSG_IMAGE_LOAD_FAILED = 3;
+	private static final int MSG_IMAGE_LOAD_FINISHED = 2;
+	private static final int MSG_IMAGE_LOAD_START = 1;
 
-	public synchronized void clear() {
-		mScreenNail = null;
-		mImageWidth = 0;
-		mImageHeight = 0;
-		mLevelCount = 0;
-		mRegionDecoder = null;
+	private final MediaItem mItem;
+	private Future<?> mTask;
+	private final Handler mHandler;
+
+	private final PhotoView mPhotoView;
+	private final ThreadPool mThreadPool;
+	private final ImageViewerGLActivity mActivity;
+	private BitmapScreenNail mBitmapScreenNail;
+
+	private final FutureListener<BitmapRegionDecoder> mLargeListener = new FutureListener<BitmapRegionDecoder>() {
+		@Override
+		public void onFutureDone(final Future<BitmapRegionDecoder> future) {
+			final BitmapRegionDecoder decoder = future.get();
+			if (decoder == null) {
+				mTask = mThreadPool.submit(mItem.requestFallbackImage(), mFallbackListener);
+				return;
+			}
+			final int width = decoder.getWidth();
+			final int height = decoder.getHeight();
+			final BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inSampleSize = BitmapUtils.computeSampleSize((float) SIZE_BACKUP / Math.max(width, height));
+			final Bitmap bitmap = decoder.decodeRegion(new Rect(0, 0, width, height), options);
+			mHandler.sendMessage(mHandler.obtainMessage(MSG_IMAGE_LOAD_FINISHED, new ImageBundle(decoder, bitmap)));
+		}
+
+		@Override
+		public void onFutureStart(final Future<BitmapRegionDecoder> future) {
+			mHandler.sendMessage(mHandler.obtainMessage(MSG_IMAGE_LOAD_START));
+		}
+	};
+
+	private final FutureListener<Bitmap> mFallbackListener = new FutureListener<Bitmap>() {
+		@Override
+		public void onFutureDone(final Future<Bitmap> future) {
+			final Bitmap bitmap = future.get();
+			if (bitmap == null) {
+				mHandler.sendMessage(mHandler.obtainMessage(MSG_IMAGE_LOAD_FAILED));
+			}
+			mHandler.sendMessage(mHandler.obtainMessage(MSG_IMAGE_LOAD_FINISHED, new ImageBundle(null, bitmap)));
+		}
+
+		@Override
+		public void onFutureStart(final Future<Bitmap> future) {
+			mHandler.sendMessage(mHandler.obtainMessage(MSG_IMAGE_LOAD_START));
+
+		}
+	};
+
+	public PhotoViewAdapter(final ImageViewerGLActivity activity, final PhotoView view, final MediaItem item) {
+		mItem = item;
+		mPhotoView = view;
+		mActivity = activity;
+		mThreadPool = activity.getThreadPool();
+		mHandler = new SynchronizedHandler(activity.getGLRoot()) {
+			@Override
+			public void handleMessage(final Message message) {
+				switch (message.what) {
+					case MSG_IMAGE_LOAD_START: {
+						mActivity.onLoadStart();
+						break;
+					}
+					case MSG_IMAGE_LOAD_FINISHED: {
+						onDecodeLargeComplete((ImageBundle) message.obj);
+						mActivity.onLoadFinished();
+						break;
+					}
+					case MSG_IMAGE_LOAD_FAILED: {
+						mActivity.onLoadFailed();
+						break;
+					}
+				}
+			}
+		};
 	}
 
 	@Override
 	public int getImageHeight() {
 		return mImageHeight;
+	}
+
+	@Override
+	public int getImageRotation() {
+		return mItem.getFullImageRotation();
 	}
 
 	@Override
@@ -62,6 +145,11 @@ public class TileImageViewAdapter implements TileImageView.Model {
 	@Override
 	public int getLevelCount() {
 		return mLevelCount;
+	}
+
+	@Override
+	public MediaItem getMediaItem() {
+		return mItem;
 	}
 
 	@Override
@@ -80,7 +168,6 @@ public class TileImageViewAdapter implements TileImageView.Model {
 	//
 	// As a result, we should decode region (50-6, 50-6, 250+6, 250+6) or
 	// (44, 44, 256, 256) from the original photo and down sample it to 106.
-	@TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
 	@Override
 	public Bitmap getTile(final int level, final int x, final int y, final int tileSize, final int borderSize,
 			final BitmapPool pool) {
@@ -140,21 +227,32 @@ public class TileImageViewAdapter implements TileImageView.Model {
 		return bitmap;
 	}
 
+	@Override
+	public void pause() {
+		final Future<?> task = mTask;
+		task.cancel();
+		task.waitDone();
+		if (task.get() == null) {
+			mTask = null;
+		}
+		if (mBitmapScreenNail != null) {
+			mBitmapScreenNail.recycle();
+			mBitmapScreenNail = null;
+		}
+	}
+
+	@Override
+	public void resume() {
+		if (mTask == null) {
+			mTask = mThreadPool.submit(mItem.requestLargeImage(), mLargeListener);
+		}
+	}
+
 	public synchronized void setRegionDecoder(final BitmapRegionDecoder decoder) {
-		mRegionDecoder = Utils.checkNotNull(decoder);
+		if (decoder == null) return;
 		mImageWidth = decoder.getWidth();
 		mImageHeight = decoder.getHeight();
 		mLevelCount = calculateLevelCount();
-	}
-
-	// Caller is responsible to recycle the ScreenNail
-	public synchronized void setScreenNail(final ScreenNail screenNail, final int width, final int height) {
-		Utils.checkNotNull(screenNail);
-		mScreenNail = screenNail;
-		mImageWidth = width;
-		mImageHeight = height;
-		mRegionDecoder = null;
-		mLevelCount = 0;
 	}
 
 	private int calculateLevelCount() {
@@ -201,4 +299,44 @@ public class TileImageViewAdapter implements TileImageView.Model {
 				overlapRegion.top - wantRegion.top >> level, null);
 		return result;
 	}
+
+	private void onDecodeLargeComplete(final ImageBundle bundle) {
+		try {
+			if (bundle.decoder != null) {
+				setScreenNail(bundle.backupImage, bundle.decoder.getWidth(), bundle.decoder.getHeight());
+			} else {
+				setScreenNail(bundle.backupImage, bundle.backupImage.getWidth(), bundle.backupImage.getHeight());
+			}
+			setRegionDecoder(bundle.decoder);
+			mPhotoView.notifyImageChange();
+		} catch (final Throwable t) {
+			Log.w(TAG, "fail to decode large", t);
+		}
+	}
+
+	private void setScreenNail(final Bitmap bitmap, final int width, final int height) {
+		mBitmapScreenNail = new BitmapScreenNail(bitmap);
+		setScreenNail(mBitmapScreenNail, width, height);
+	}
+
+	// Caller is responsible to recycle the ScreenNail
+	private synchronized void setScreenNail(final ScreenNail screenNail, final int width, final int height) {
+		Utils.checkNotNull(screenNail);
+		mScreenNail = screenNail;
+		mImageWidth = width;
+		mImageHeight = height;
+		mRegionDecoder = null;
+		mLevelCount = 0;
+	}
+
+	private static class ImageBundle {
+		public final BitmapRegionDecoder decoder;
+		public final Bitmap backupImage;
+
+		public ImageBundle(final BitmapRegionDecoder decoder, final Bitmap backupImage) {
+			this.decoder = decoder;
+			this.backupImage = backupImage;
+		}
+	}
+
 }

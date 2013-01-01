@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.addIntentToSubMenu;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
@@ -35,6 +36,7 @@ import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
 import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -45,6 +47,8 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
@@ -118,7 +122,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		mApplication = getApplication();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mAdapter = new UsersAdapter(getActivity());
-		mListView = getListView();	
+		mListView = getListView();
 		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
 		final Bundle args = getArguments() != null ? getArguments() : new Bundle();
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
@@ -174,6 +178,15 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		}
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_user);
+		final Menu menu = mPopupMenu.getMenu();
+		final MenuItem extensions = menu.findItem(MENU_EXTENSIONS_SUBMENU);
+		if (extensions != null) {
+			final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER);
+			final Bundle extras = new Bundle();
+			extras.putParcelable(INTENT_KEY_USER, mSelectedUser);
+			intent.putExtras(extras);
+			addIntentToSubMenu(getActivity(), extensions.getSubMenu(), intent);
+		}
 		mPopupMenu.setOnMenuItemClickListener(this);
 		mPopupMenu.show();
 		return true;
@@ -201,14 +214,6 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 				openUserProfile(getActivity(), mSelectedUser);
 				break;
 			}
-			case MENU_EXTENSIONS: {
-				final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER);
-				final Bundle extras = new Bundle();
-				extras.putParcelable(INTENT_KEY_USER, mSelectedUser);
-				intent.putExtras(extras);
-				startActivity(Intent.createChooser(intent, getString(R.string.open_with_extensions)));
-				break;
-			}
 			case MENU_MULTI_SELECT: {
 				if (!mApplication.isMultiSelectActive()) {
 					mApplication.startMultiSelect();
@@ -216,6 +221,17 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 				final NoDuplicatesLinkedList<Object> list = mApplication.getSelectedItems();
 				if (!list.contains(mSelectedUser)) {
 					list.add(mSelectedUser);
+				}
+				break;
+			}
+			default: {
+				if (item.getIntent() != null) {
+					try {
+						startActivity(item.getIntent());
+					} catch (final ActivityNotFoundException e) {
+						Log.w(LOGTAG, e);
+						return false;
+					}
 				}
 				break;
 			}

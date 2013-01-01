@@ -41,14 +41,14 @@
 	<string name="username">사용자명</string>
 	<string name="password">패스워드</string>
 	<string name="label_tweetstore_provider">Twidere 데이터베이스 공급자</string>
-	<string name="label_backend_service">응용 프로그램 백 엔드 서비스</string>
-	<string name="label_permission_group_access_twidere">Twidere 응용 프로그램에 액세스</string>
-	<string name="label_permission_read_databases">Twidere 데이터베이스 읽기</string>
-	<string name="label_permission_write_databases">Twidere 데이터베이스 쓰기</string>
-	<string name="label_permission_access_service">Twidere 서비스에 액세스</string>
-	<string name="description_permission_read_databases">데이터베이스에서 트윗, 보관글, 계정, 다이렉트 메시지 읽기.</string>
-	<string name="description_permission_write_databases">데이터베이스에 트윗, 보관글, 계정, 다이렉트 메시지 쓰기.</string>
-	<string name="description_permission_access_service">새로 고침/짹짹을 보낼, DM</string>
+	
+	
+	
+	
+	
+	
+	
+	
 	<string name="open_in_browser">브라우저에서 열기</string>
 	<string name="tap_to_load_more">더 보기</string>
 	<string name="delete">삭제</string>
@@ -60,7 +60,7 @@
 	<string name="view_image">이미지</string>
 	<string name="view_map">지도</string>
 	<string name="view_status">트윗 보기</string>
-	<string name="view_conversation">대화</string>
+	
 	<string name="view_user_profile">사용자 프로필</string>
 	<string name="browser">브라우저</string>
 	<string name="pick_from_gallery">갤러리에서 선택</string>
@@ -139,7 +139,7 @@
 	<string name="search_users">사용자 검색</string>
 	<string name="search_tweets">트윗 검색</string>
 	<string name="created_at">생성: </string>
-	<string name="set_default_account_hint">기본 계정을 설정하세요.</string>
+	
 	<string name="search_hint">트윗이나 사용자 검색</string>
 	<string name="remember_position">위치 기억하기</string>
 	<string name="remember_position_summary">Twidere를 종료하기 전에 목록, 탭의 위치를 기억합니다</string>
@@ -196,7 +196,7 @@
 	<string name="item_1_hour">1시간</string>
 	<string name="item_2_hours">2시간</string>
 	<string name="item_4_hours">4시간</string>
-	<string name="inline_image_preview">인라인 이미지 미리보기</string>
+	
 	<string name="solid_color_background">단색 배경</string>
 	<string name="solid_color_background_summary">당신의 디바이스가 AMOLED를 사용중이라면 이 기능이 유용할 수 있습니다.</string>
 	<string name="user_list">사용자 목록</string>

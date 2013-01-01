@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent">
+	android:layout_height="match_parent"
+	android:minHeight="@dimen/compose_min_height"
+	android:minWidth="@dimen/compose_min_width"
+	android:orientation="vertical">
 
-	<FrameLayout
+	<org.mariotaku.twidere.view.ColorView
+		android:id="@+id/account_colors"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:layout_above="@+id/menu_bar"
-		android:layout_alignParentTop="true">
-
-		<org.mariotaku.twidere.view.ColorView
-			android:id="@+id/account_colors"
-			android:layout_width="3dp"
-			android:layout_height="match_parent"
-			android:layout_gravity="right"/>
+		android:layout_height="0dp"
+		android:layout_weight="1">
 
 		<org.mariotaku.twidere.view.StatusComposeEditText
 			android:id="@+id/edit_text"
@@ -23,7 +20,8 @@
 			android:completionThreshold="1"
 			android:gravity="top"
 			android:hint="@string/tweet_hint"
-			android:imeOptions="actionDone">
+			android:imeOptions="actionDone"
+			android:minLines="10">
 
 			<requestFocus/>
 		</org.mariotaku.twidere.view.StatusComposeEditText>
@@ -58,13 +56,12 @@
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				android:textColor="#80808080"/>
 		</FrameLayout>
-	</FrameLayout>
+	</org.mariotaku.twidere.view.ColorView>
 
 	<org.mariotaku.menubar.MenuBar
 		android:id="@+id/menu_bar"
 		android:layout_width="match_parent"
 		android:layout_height="48dp"
-		android:layout_alignParentBottom="true"
 		android:background="?menuBarBackground"/>
 
-</RelativeLayout>
+</LinearLayout>

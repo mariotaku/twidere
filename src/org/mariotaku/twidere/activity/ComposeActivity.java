@@ -22,6 +22,7 @@ package org.mariotaku.twidere.activity;
 import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStorageState;
 import static android.text.TextUtils.isEmpty;
+import static org.mariotaku.twidere.util.Utils.addIntentToSubMenu;
 import static org.mariotaku.twidere.util.Utils.getAccountColors;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
@@ -44,7 +45,7 @@ import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.BitmapDecodeHelper;
-import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
+import org.mariotaku.twidere.util.EnvironmentAccessor;
 import org.mariotaku.twidere.view.ColorView;
 
 import android.app.Activity;
@@ -82,6 +83,7 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -197,7 +199,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 									ArrayUtils.toString(mAccountIds, ',', false));
 							editor.commit();
 						}
-						mColorIndicator.setColor(getAccountColors(this, account_ids));
+						mColorIndicator.setColors(getAccountColors(this, account_ids));
 					}
 				}
 				break;
@@ -269,6 +271,13 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				}
 				mPopupMenu = PopupMenu.getInstance(this, view);
 				mPopupMenu.inflate(R.menu.action_attached_image);
+				final Menu menu = mPopupMenu.getMenu();
+				final MenuItem extensions = menu.findItem(MENU_EXTENSIONS_SUBMENU);
+				if (extensions != null) {
+					final Intent intent = new Intent(INTENT_ACTION_EXTENSION_EDIT_IMAGE);
+					intent.setData(mImageUri);
+					addIntentToSubMenu(this, extensions.getSubMenu(), intent);
+				}
 				mPopupMenu.setOnMenuItemClickListener(this);
 				mPopupMenu.show();
 				break;
@@ -415,6 +424,21 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		mImageThumbnailPreview.setOnLongClickListener(this);
 		mMenuBar.setOnMenuItemClickListener(this);
 		mMenuBar.inflate(R.menu.menu_compose);
+		final Menu menu = mMenuBar.getMenu();
+		final MenuItem extensions = menu.findItem(MENU_EXTENSIONS_SUBMENU);
+		if (extensions != null) {
+			final Intent intent = new Intent(INTENT_ACTION_EXTENSION_COMPOSE);
+			final Bundle extras = new Bundle();
+			final String screen_name = mAccountIds != null && mAccountIds.length > 0 ? getAccountScreenName(this,
+					mAccountIds[0]) : null;
+			extras.putString(INTENT_KEY_TEXT, parseString(mEditText.getText()));
+			extras.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, mInReplyToScreenName);
+			extras.putString(INTENT_KEY_IN_REPLY_TO_NAME, mInReplyToName);
+			extras.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+			extras.putLong(INTENT_KEY_IN_REPLY_TO_ID, mInReplyToStatusId);
+			intent.putExtras(extras);
+			addIntentToSubMenu(this, extensions.getSubMenu(), intent);
+		}
 		mMenuBar.show();
 		if (mPreferences.getBoolean(PREFERENCE_KEY_QUICK_SEND, false)) {
 			mEditText.setOnEditorActionListener(this);
@@ -432,8 +456,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			}
 		}
 		setMenu();
-		mColorIndicator.setOrientation(ColorView.VERTICAL);
-		mColorIndicator.setColor(getAccountColors(this, mAccountIds));
+		mColorIndicator.setColors(getAccountColors(this, mAccountIds));
 		mContentModified = savedInstanceState != null ? savedInstanceState.getBoolean(INTENT_KEY_CONTENT_MODIFIED)
 				: false;
 		mIsPossiblySensitive = savedInstanceState != null ? savedInstanceState
@@ -534,31 +557,8 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				setMenu();
 				break;
 			}
-			case MENU_EDIT: {
-				if (mImageUri == null) return false;
-				final Intent intent = new Intent(INTENT_ACTION_EXTENSION_EDIT_IMAGE);
-				intent.setData(mImageUri);
-				startActivityForResult(Intent.createChooser(intent, getString(R.string.open_with_extensions)),
-						REQUEST_EDIT_IMAGE);
-				break;
-			}
 			case MENU_VIEW: {
 				openImage(this, mImageUri, false);
-				break;
-			}
-			case MENU_EXTENSIONS: {
-				final Intent intent = new Intent(INTENT_ACTION_EXTENSION_COMPOSE);
-				final Bundle extras = new Bundle();
-				final String screen_name = mAccountIds != null && mAccountIds.length > 0 ? getAccountScreenName(this,
-						mAccountIds[0]) : null;
-				extras.putString(INTENT_KEY_TEXT, parseString(mEditText.getText()));
-				extras.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, mInReplyToScreenName);
-				extras.putString(INTENT_KEY_IN_REPLY_TO_NAME, mInReplyToName);
-				extras.putString(INTENT_KEY_SCREEN_NAME, screen_name);
-				extras.putLong(INTENT_KEY_IN_REPLY_TO_ID, mInReplyToStatusId);
-				intent.putExtras(extras);
-				startActivityForResult(Intent.createChooser(intent, getString(R.string.open_with_extensions)),
-						REQUEST_EXTENSION_COMPOSE);
 				break;
 			}
 			case MENU_TOGGLE_SENSITIVE: {
@@ -566,6 +566,24 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				if (!has_media) return false;
 				mIsPossiblySensitive = !mIsPossiblySensitive;
 				setMenu();
+				break;
+			}
+			default: {
+				final Intent intent = item.getIntent();
+				if (intent != null) {
+					try {
+						if (INTENT_ACTION_EXTENSION_COMPOSE.equals(intent.getAction())) {
+							startActivityForResult(intent, REQUEST_EXTENSION_COMPOSE);
+						} else if (INTENT_ACTION_EXTENSION_EDIT_IMAGE.equals(intent.getAction())) {
+							startActivityForResult(intent, REQUEST_EDIT_IMAGE);
+						} else {
+							startActivity(intent);
+						}
+					} catch (final ActivityNotFoundException e) {
+						Log.w(LOGTAG, e);
+						return false;
+					}
+				}
 				break;
 			}
 		}
@@ -749,11 +767,10 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	}
 
 	private void reloadAttachedImageThumbnail(final File file) {
-		if (file == null) return;
 		final LoaderManager lm = getSupportLoaderManager();
 		lm.destroyLoader(0);
 		final Bundle args = new Bundle();
-		args.putString(INTENT_KEY_FILENAME, file.getPath());
+		args.putString(INTENT_KEY_FILENAME, file != null ? file.getPath() : null);
 		if (mLoaderInitialized) {
 			lm.restartLoader(0, args, this);
 		} else {
@@ -838,8 +855,10 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				if (has_media) {
 					final Drawable iconToggleSensitive = itemToggleSensitive.getIcon().mutate();
 					if (mIsPossiblySensitive) {
+						itemToggleSensitive.setTitle(R.string.remove_sensitive_mark);
 						iconToggleSensitive.setColorFilter(activated_color, Mode.MULTIPLY);
 					} else {
+						itemToggleSensitive.setTitle(R.string.mark_as_sensitive);
 						iconToggleSensitive.clearColorFilter();
 					}
 				}
@@ -852,7 +871,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	private void takePhoto() {
 		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		if (getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-			final File cache_dir = Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? GetExternalCacheDirAccessor
+			final File cache_dir = Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? EnvironmentAccessor
 					.getExternalCacheDir(this) : new File(getExternalStorageDirectory().getPath() + "/Android/data/"
 					+ getPackageName() + "/cache/");
 			final File file = new File(cache_dir, "tmp_photo_" + System.currentTimeMillis() + ".jpg");

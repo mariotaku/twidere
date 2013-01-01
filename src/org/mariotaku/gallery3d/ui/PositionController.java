@@ -127,7 +127,7 @@ class PositionController {
 	// Our current program's first call to moveBox() sets constrained = true, so
 	// we set the initial value of this variable to true, and we will not see
 	// see unwanted transition animation.
-	private boolean mConstrained = true;
+	private final boolean mConstrained = true;
 
 	//
 	// ___________________________________________________________
@@ -143,17 +143,10 @@ class PositionController {
 	// The focused box (Box*) centers at mPlatform's (mCurrentX, mCurrentY)
 
 	private final Platform mPlatform = new Platform();
-	private Box mBox;
-
-	// These are only used during moveBox().
-	private Box mTempBox;
+	private final Box mBox;
 
 	// The output of the PositionController. Available through getPosition().
 	private final Rect mRect;
-
-	// The direction of a new picture should appear. New pictures pop from top
-	// if this value is true, or from bottom if this value is false.
-	boolean mPopFromTop;
 
 	static {
 		// Initialize the CENTER_OUT_INDEX array.
@@ -301,61 +294,6 @@ class PositionController {
 		return mPlatform.mAnimationStartTime != NO_ANIMATION && mPlatform.mCurrentX != mPlatform.mToX;
 	}
 
-	// Move the boxes: it may indicate focus change, box deleted, box appearing,
-	// box reordered, etc.
-	//
-	// Each element in the fromIndex array indicates where each box was in the
-	// old array. If the value is Integer.MAX_VALUE (pictured as N below), it
-	// means the box is new.
-	//
-	// For example:
-	// N N N N N N N -- all new boxes
-	// -3 -2 -1 0 1 2 3 -- nothing changed
-	// -2 -1 0 1 2 3 N -- focus goes to the next box
-	// N -3 -2 -1 0 1 2 -- focus goes to the previous box
-	// -3 -2 -1 1 2 3 N -- the focused box was deleted.
-	//
-	// hasPrev/hasNext indicates if there are previous/next boxes for the
-	// focused box. constrained indicates whether the focused box should be put
-	// into the constrained frame.
-	public void moveBox(final boolean constrained, final Size size) {
-
-		// 1. Get the absolute X coordinates for the boxes.
-		layoutAndSetPosition();
-
-		final Rect r = mRect;
-		mBox.mAbsoluteX = r.centerX() - mViewW / 2;
-
-		// 2. copy boxes and gaps to temporary storage.
-		mTempBox = mBox;
-		mBox = null;
-
-		// 3. move back boxes that are used in the new array.
-		mBox = mTempBox;
-		mTempBox = null;
-
-		// 5. recycle the boxes that are not used in the new array.
-		if (mBox == null) {
-
-			mBox = mTempBox;
-			initBox(size);
-		}
-
-		// 9. offset the Platform position
-		final int dx = mBox.mAbsoluteX - mPlatform.mCurrentX;
-		mPlatform.mCurrentX += dx;
-		mPlatform.mFromX += dx;
-		mPlatform.mToX += dx;
-
-		if (mConstrained != constrained) {
-			mConstrained = constrained;
-			mPlatform.updateDefaultXY();
-			updateScaleAndGapLimit();
-		}
-
-		snapAndRedraw();
-	}
-
 	public void resetToFullView() {
 
 		startAnimation(mPlatform.mDefaultX, 0, mBox.mScaleMin, ANIM_KIND_ZOOM);
@@ -464,10 +402,6 @@ class PositionController {
 		mOpenAnimationRect = r;
 	}
 
-	public void setPopFromTop(final boolean top) {
-		mPopFromTop = top;
-	}
-
 	public void setViewSize(final int viewW, final int viewH) {
 		if (viewW == mViewW && viewH == mViewH) return;
 
@@ -521,29 +455,9 @@ class PositionController {
 		snapAndRedraw();
 	}
 
-	// Slide the focused box to the center of the view with the capture
-	// animation. In addition to the sliding, the animation will also scale the
-	// the focused box, the specified neighbor box, and the gap between the
-	// two. The specified offset should be 1 or -1.
-	public void startCaptureAnimationSlide(final int offset) {
-
-		redraw();
-	}
-
 	// //////////////////////////////////////////////////////////////////////////
 	// Layout
 	// //////////////////////////////////////////////////////////////////////////
-
-	// Stop all animations at where they are now.
-	public void stopAnimation() {
-		mPlatform.mAnimationStartTime = NO_ANIMATION;
-		mBox.mAnimationStartTime = NO_ANIMATION;
-	}
-
-	public void stopScrolling() {
-		if (mPlatform.mAnimationStartTime == NO_ANIMATION) return;
-		mPlatform.mFromX = mPlatform.mToX = mPlatform.mCurrentX;
-	}
 
 	public void zoomIn(float tapX, float tapY, float targetScale) {
 		tapX -= mViewW / 2;
@@ -679,38 +593,20 @@ class PositionController {
 		return (int) (b.mImageH * b.mCurrentScale + 0.5f);
 	}
 
-	// //////////////////////////////////////////////////////////////////////////
-	// Public utilities
-	// //////////////////////////////////////////////////////////////////////////
-
 	// Returns the display height of this box, using the given scale.
 	private int heightOf(final Box b, final float scale) {
 		return (int) (b.mImageH * scale + 0.5f);
 	}
+
+	// //////////////////////////////////////////////////////////////////////////
+	// Public utilities
+	// //////////////////////////////////////////////////////////////////////////
 
 	// Initialize a box to have the size of the view.
 	private void initBox() {
 		mBox.mImageW = mViewW;
 		mBox.mImageH = mViewH;
 		mBox.mUseViewSize = true;
-		mBox.mScaleMin = getMinimalScale(mBox);
-		mBox.mScaleMax = getMaximalScale(mBox);
-		mBox.mCurrentY = 0;
-		mBox.mCurrentScale = mBox.mScaleMin;
-		mBox.mAnimationStartTime = NO_ANIMATION;
-		mBox.mAnimationKind = ANIM_KIND_NONE;
-	}
-
-	// Initialize a box to a given size.
-	private void initBox(final Size size) {
-		if (size.width == 0 || size.height == 0) {
-			initBox();
-			return;
-		}
-
-		mBox.mImageW = size.width;
-		mBox.mImageH = size.height;
-		mBox.mUseViewSize = false;
 		mBox.mScaleMin = getMinimalScale(mBox);
 		mBox.mScaleMax = getMaximalScale(mBox);
 		mBox.mCurrentY = 0;
@@ -808,10 +704,6 @@ class PositionController {
 		return changed;
 	}
 
-	// //////////////////////////////////////////////////////////////////////////
-	// Private utilities
-	// //////////////////////////////////////////////////////////////////////////
-
 	private boolean startOpeningAnimationIfNeeded() {
 		if (mOpenAnimationRect == null) return false;
 
@@ -827,6 +719,16 @@ class PositionController {
 		startAnimation(mPlatform.mDefaultX, 0, mBox.mScaleMin, ANIM_KIND_OPENING);
 
 		return true;
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+	// Private utilities
+	// //////////////////////////////////////////////////////////////////////////
+
+	// Stop all animations at where they are now.
+	private void stopAnimation() {
+		mPlatform.mAnimationStartTime = NO_ANIMATION;
+		mBox.mAnimationStartTime = NO_ANIMATION;
 	}
 
 	// This should be called whenever the scale range of boxes or the default
@@ -962,10 +864,6 @@ class PositionController {
 		// defined by Platform and Gaps.
 		public int mCurrentY, mFromY, mToY;
 		public float mCurrentScale, mFromScale, mToScale;
-
-		// The absolute X coordinate of the center of the box. This is only used
-		// during moveBox().
-		public int mAbsoluteX;
 
 		// Clamps the input scale to the range that doAnimation() can reach.
 		public float clampScale(final float s) {

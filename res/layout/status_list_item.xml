@@ -8,6 +8,7 @@
 		android:id="@+id/profile_image"
 		android:layout_width="@dimen/profile_image_size"
 		android:layout_height="@dimen/profile_image_size"
+		android:layout_alignParentLeft="true"
 		android:radius="4dp"
 		android:scaleType="fitCenter"/>
 
@@ -18,7 +19,7 @@
 		android:layout_alignParentRight="true"
 		android:radius="4dp"
 		android:scaleType="fitCenter"/>
-		
+
 	<FrameLayout
 		android:id="@+id/name_frame"
 		android:layout_width="wrap_content"
@@ -60,7 +61,7 @@
 		</LinearLayout>
 	</FrameLayout>
 
-	<TextView
+	<org.mariotaku.twidere.view.HandleSpanClickTextView
 		android:id="@+id/text"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -76,9 +77,9 @@
 		android:id="@+id/time"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginRight="4dp"
 		android:layout_alignBottom="@+id/name_frame"
 		android:layout_alignWithParentIfMissing="true"
+		android:layout_marginRight="4dp"
 		android:layout_toLeftOf="@+id/my_profile_image"
 		android:drawablePadding="4dp"
 		android:gravity="center_vertical|right"

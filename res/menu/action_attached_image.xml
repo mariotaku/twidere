@@ -6,7 +6,7 @@
 		android:icon="@drawable/ic_menu_gallery"
 		android:title="@string/view"/>
 	<item
-		android:id="@id/edit"
+		android:id="@id/extensions_submenu"
 		android:icon="@drawable/ic_menu_edit"
 		android:title="@string/edit"/>
 	<item

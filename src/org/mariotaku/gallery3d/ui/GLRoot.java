@@ -16,8 +16,6 @@
 
 package org.mariotaku.gallery3d.ui;
 
-import org.mariotaku.gallery3d.anim.CanvasAnimation;
-
 import android.content.Context;
 import android.graphics.Matrix;
 
@@ -36,8 +34,6 @@ public interface GLRoot {
 	public int getDisplayRotation();
 
 	public void lockRenderThread();
-
-	public void registerLaunchedAnimation(CanvasAnimation animation);
 
 	public void requestLayoutContentPane();
 

@@ -18,15 +18,10 @@ package org.mariotaku.gallery3d.common;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.util.FloatMath;
 
 public class BitmapUtils {
-	public static final int UNCONSTRAINED = -1;
-
-	private BitmapUtils() {
-	}
 
 	// Find the max x that 1 / x <= scale.
 	public static int computeSampleSize(final float scale) {
@@ -35,9 +30,10 @@ public class BitmapUtils {
 		return initialSize <= 8 ? Utils.nextPowerOf2(initialSize) : (initialSize + 7) / 8 * 8;
 	}
 
-	// Find the min x that 1 / x >= scale
-	public static int computeSampleSizeLarger(final float scale) {
-		final int initialSize = (int) FloatMath.floor(1f / scale);
+	// This computes a sample size which makes the longer side at least
+	// minSideLength long. If that's not possible, return 1.
+	public static int computeSampleSizeLarger(final int w, final int h, final int minSideLength) {
+		final int initialSize = Math.max(w / minSideLength, h / minSideLength);
 		if (initialSize <= 1) return 1;
 
 		return initialSize <= 8 ? Utils.prevPowerOf2(initialSize) : initialSize / 8 * 8;
@@ -58,25 +54,13 @@ public class BitmapUtils {
 		return target;
 	}
 
-	public static Bitmap resizeDownBySideLength(final Bitmap bitmap, final int maxLength, final boolean recycle) {
+	// Resize the bitmap if each side is >= targetSize * 2
+	public static Bitmap resizeDownIfTooBig(final Bitmap bitmap, final int targetSize, final boolean recycle) {
 		final int srcWidth = bitmap.getWidth();
 		final int srcHeight = bitmap.getHeight();
-		final float scale = Math.min((float) maxLength / srcWidth, (float) maxLength / srcHeight);
-		if (scale >= 1.0f) return bitmap;
+		final float scale = Math.max((float) targetSize / srcWidth, (float) targetSize / srcHeight);
+		if (scale > 0.5f) return bitmap;
 		return resizeBitmapByScale(bitmap, scale, recycle);
-	}
-
-	public static Bitmap rotateBitmap(final Bitmap source, final int rotation, final boolean recycle) {
-		if (rotation == 0) return source;
-		final int w = source.getWidth();
-		final int h = source.getHeight();
-		final Matrix m = new Matrix();
-		m.postRotate(rotation);
-		final Bitmap bitmap = Bitmap.createBitmap(source, 0, 0, w, h, m, true);
-		if (recycle) {
-			source.recycle();
-		}
-		return bitmap;
 	}
 
 	private static Bitmap.Config getConfig(final Bitmap bitmap) {

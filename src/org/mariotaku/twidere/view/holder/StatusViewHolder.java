@@ -19,8 +19,6 @@
 
 package org.mariotaku.twidere.view.holder;
 
-import static org.mariotaku.twidere.util.Utils.*;
- 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
@@ -28,9 +26,6 @@ import android.graphics.Color;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.content.*;
-import android.widget.*;
-import android.view.*;
 
 public class StatusViewHolder {
 
@@ -42,11 +37,8 @@ public class StatusViewHolder {
 	public boolean show_as_gap;
 	private boolean account_color_enabled;
 	private float text_size;
-	private final boolean is_rtl;
 
 	public StatusViewHolder(final View view) {
-		final Context context = view.getContext();
-		is_rtl = isRTL(context);
 		content = (ColorLabelRelativeLayout) view;
 		gap_indicator = view.findViewById(R.id.list_gap_text);
 		image_preview_frame = view.findViewById(R.id.image_preview_frame);
@@ -75,13 +67,10 @@ public class StatusViewHolder {
 	public void setHighlightColor(final int color) {
 		content.drawBackground(show_as_gap ? Color.TRANSPARENT : color);
 	}
-	
+
 	public void setIsMyStatus(final boolean my_status) {
 		profile_image.setVisibility(my_status ? View.GONE : View.VISIBLE);
 		my_profile_image.setVisibility(my_status ? View.VISIBLE : View.GONE);
-		final FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) name_container.getLayoutParams();
-		lp.gravity = is_rtl ? Gravity.RIGHT : Gravity.LEFT;
-		name_container.setLayoutParams(lp);
 	}
 
 	public void setSelected(final boolean selected) {

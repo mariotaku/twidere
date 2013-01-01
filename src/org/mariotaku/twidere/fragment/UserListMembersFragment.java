@@ -32,12 +32,14 @@ import org.mariotaku.twidere.loader.UserListMembersLoader;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -142,12 +144,15 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 				openUserProfile(getActivity(), mSelectedUser);
 				break;
 			}
-			case MENU_EXTENSIONS: {
-				final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER);
-				final Bundle extras = new Bundle();
-				extras.putParcelable(INTENT_KEY_USER, mSelectedUser);
-				intent.putExtras(extras);
-				startActivity(Intent.createChooser(intent, getString(R.string.open_with_extensions)));
+			default: {
+				if (item.getIntent() != null) {
+					try {
+						startActivity(item.getIntent());
+					} catch (final ActivityNotFoundException e) {
+						Log.w(LOGTAG, e);
+						return false;
+					}
+				}
 				break;
 			}
 		}

@@ -31,6 +31,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,7 +58,6 @@ import android.util.Log;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import java.lang.ref.*;
 
 /**
  * Lazy image loader for {@link ListView} and {@link GridView} etc.</br> </br>

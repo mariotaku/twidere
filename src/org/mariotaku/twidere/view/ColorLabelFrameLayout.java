@@ -30,9 +30,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
 
-public class ColorLabelRelativeLayout extends RelativeLayout implements IColorLabelView {
+public class ColorLabelFrameLayout extends FrameLayout implements IColorLabelView {
 
 	private static final int LABEL_WIDTH = 3;
 
@@ -41,15 +41,15 @@ public class ColorLabelRelativeLayout extends RelativeLayout implements IColorLa
 	private final float mDensity;
 	private final boolean mIsRTL;
 
-	public ColorLabelRelativeLayout(final Context context) {
+	public ColorLabelFrameLayout(final Context context) {
 		this(context, null);
 	}
 
-	public ColorLabelRelativeLayout(final Context context, final AttributeSet attrs) {
+	public ColorLabelFrameLayout(final Context context, final AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
 
-	public ColorLabelRelativeLayout(final Context context, final AttributeSet attrs, final int defStyle) {
+	public ColorLabelFrameLayout(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		setWillNotDraw(false);
 		final Resources res = context.getResources();

@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.addIntentToSubMenu;
 import static org.mariotaku.twidere.util.Utils.openUserListDetails;
 
 import org.mariotaku.popupmenu.PopupMenu;
@@ -31,12 +32,15 @@ import org.mariotaku.twidere.loader.UserListsLoader;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUserList;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -113,6 +117,15 @@ public class UserListsListFragment extends BaseListFragment implements LoaderCal
 		if (mSelectedUserList == null) return false;
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_user_list);
+		final Menu menu = mPopupMenu.getMenu();
+		final MenuItem extensions = menu.findItem(MENU_EXTENSIONS_SUBMENU);
+		if (extensions != null) {
+			final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER_LIST);
+			final Bundle extras = new Bundle();
+			extras.putParcelable(INTENT_KEY_USER_LIST, mSelectedUserList);
+			intent.putExtras(extras);
+			addIntentToSubMenu(getActivity(), extensions.getSubMenu(), intent);
+		}
 		mPopupMenu.setOnMenuItemClickListener(this);
 		mPopupMenu.show();
 		return true;
@@ -144,12 +157,15 @@ public class UserListsListFragment extends BaseListFragment implements LoaderCal
 						mSelectedUserList.user_screen_name, mSelectedUserList.name);
 				break;
 			}
-			case MENU_EXTENSIONS: {
-				final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER_LIST);
-				final Bundle extras = new Bundle();
-				extras.putParcelable(INTENT_KEY_USER_LIST, mSelectedUserList);
-				intent.putExtras(extras);
-				startActivity(Intent.createChooser(intent, getString(R.string.open_with_extensions)));
+			default: {
+				if (item.getIntent() != null) {
+					try {
+						startActivity(item.getIntent());
+					} catch (final ActivityNotFoundException e) {
+						Log.w(LOGTAG, e);
+						return false;
+					}
+				}
 				break;
 			}
 		}

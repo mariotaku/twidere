@@ -18,13 +18,10 @@ package org.mariotaku.gallery3d.data;
 
 import java.io.FileDescriptor;
 
-import org.mariotaku.gallery3d.common.ApiHelper;
 import org.mariotaku.gallery3d.common.BitmapUtils;
-import org.mariotaku.gallery3d.common.Utils;
 import org.mariotaku.gallery3d.util.ThreadPool.CancelListener;
 import org.mariotaku.gallery3d.util.ThreadPool.JobContext;
 
-import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -45,77 +42,6 @@ public class DecodeUtils {
 		}
 	}
 
-	public static Bitmap decode(final JobContext jc, final byte[] bytes, final int offset, final int length,
-			Options options) {
-		if (options == null) {
-			options = new Options();
-		}
-		jc.setCancelListener(new DecodeCanceller(options));
-		setOptionsMutable(options);
-		return ensureGLCompatibleBitmap(BitmapFactory.decodeByteArray(bytes, offset, length, options));
-	}
-
-	public static Bitmap decode(final JobContext jc, final FileDescriptor fd, Options options) {
-		if (options == null) {
-			options = new Options();
-		}
-		jc.setCancelListener(new DecodeCanceller(options));
-		setOptionsMutable(options);
-		return ensureGLCompatibleBitmap(BitmapFactory.decodeFileDescriptor(fd, null, options));
-	}
-
-	public static void decodeBounds(final JobContext jc, final byte[] bytes, final int offset, final int length,
-			final Options options) {
-		Utils.assertTrue(options != null);
-		options.inJustDecodeBounds = true;
-		jc.setCancelListener(new DecodeCanceller(options));
-		BitmapFactory.decodeByteArray(bytes, offset, length, options);
-		options.inJustDecodeBounds = false;
-	}
-
-	public static void decodeBounds(final JobContext jc, final FileDescriptor fd, final Options options) {
-		Utils.assertTrue(options != null);
-		options.inJustDecodeBounds = true;
-		jc.setCancelListener(new DecodeCanceller(options));
-		BitmapFactory.decodeFileDescriptor(fd, null, options);
-		options.inJustDecodeBounds = false;
-	}
-
-	public static Bitmap decodeThumbnail(final JobContext jc, final FileDescriptor fd, Options options,
-			final int targetSize, final int type) {
-		if (options == null) {
-			options = new Options();
-		}
-		jc.setCancelListener(new DecodeCanceller(options));
-
-		options.inJustDecodeBounds = true;
-		BitmapFactory.decodeFileDescriptor(fd, null, options);
-		if (jc.isCancelled()) return null;
-
-		final int w = options.outWidth;
-		final int h = options.outHeight;
-
-		// For screen nail, we only want to keep the longer side >=
-		// targetSize.
-		final float scale = (float) targetSize / Math.max(w, h);
-		options.inSampleSize = BitmapUtils.computeSampleSizeLarger(scale);
-
-		options.inJustDecodeBounds = false;
-		setOptionsMutable(options);
-
-		Bitmap result = BitmapFactory.decodeFileDescriptor(fd, null, options);
-		if (result == null) return null;
-
-		// We need to resize down if the decoder does not support inSampleSize
-		// (For example, GIF images)
-		final float gif_scale = (float) targetSize / Math.max(result.getWidth(), result.getHeight());
-
-		if (gif_scale <= 0.5) {
-			result = BitmapUtils.resizeBitmapByScale(result, gif_scale, true);
-		}
-		return ensureGLCompatibleBitmap(result);
-	}
-
 	// TODO: This function should not be called directly from
 	// DecodeUtils.requestDecode(...), since we don't have the knowledge
 	// if the bitmap will be uploaded to GL.
@@ -126,11 +52,25 @@ public class DecodeUtils {
 		return newBitmap;
 	}
 
-	@TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
-	public static void setOptionsMutable(final Options options) {
-		if (ApiHelper.HAS_OPTIONS_IN_MUTABLE) {
-			options.inMutable = true;
+	public static Bitmap requestDecode(final JobContext jc, final FileDescriptor fd, Options options,
+			final int targetSize) {
+		if (options == null) {
+			options = new Options();
 		}
+		jc.setCancelListener(new DecodeCanceller(options));
+
+		options.inJustDecodeBounds = true;
+		BitmapFactory.decodeFileDescriptor(fd, null, options);
+		if (jc.isCancelled()) return null;
+
+		options.inSampleSize = BitmapUtils.computeSampleSizeLarger(options.outWidth, options.outHeight, targetSize);
+		options.inJustDecodeBounds = false;
+
+		Bitmap result = BitmapFactory.decodeFileDescriptor(fd, null, options);
+		// We need to resize down if the decoder does not support inSampleSize.
+		// (For example, GIF images.)
+		result = BitmapUtils.resizeDownIfTooBig(result, targetSize, true);
+		return ensureGLCompatibleBitmap(result);
 	}
 
 	private static class DecodeCanceller implements CancelListener {

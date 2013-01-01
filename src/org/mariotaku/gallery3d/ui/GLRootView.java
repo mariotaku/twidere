@@ -277,15 +277,6 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 	}
 
 	@Override
-	public void registerLaunchedAnimation(final CanvasAnimation animation) {
-		// Register the newly launched animation so that we can set the start
-		// time more precisely. (Usually, it takes much longer for first
-		// rendering, so we set the animation start time as the time we
-		// complete rendering)
-		mAnimations.add(animation);
-	}
-
-	@Override
 	public void requestLayoutContentPane() {
 		mRenderLock.lock();
 		try {

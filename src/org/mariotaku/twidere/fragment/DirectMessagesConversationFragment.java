@@ -164,7 +164,7 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 		final LazyImageLoader imageloader = mApplication.getProfileImageLoader();
 		mAdapter = new DirectMessagesConversationAdapter(getActivity(), imageloader);
 		setListAdapter(mAdapter);
-		mListView = getListView();	
+		mListView = getListView();
 		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
 		mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
 		mListView.setStackFromBottom(true);

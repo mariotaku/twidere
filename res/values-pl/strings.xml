@@ -24,7 +24,7 @@
   <string name="overwrite_confirm">Plik istnieje, zastąpić?</string>
   <string name="mute_user">Wycisz użytkownika</string>
   <string name="load_images">Załaduj obrazy</string>
-  <string name="inline_image_preview">Wbudowany podgląd obrazu</string>
+  
   <string name="image_uploader_default">Domyślne (Twitter)</string>
   <string name="error_message_image_upload_failed">Wysyłanie obrazu nie powiodło się.</string>
   <string name="tweet_shortener">Skracanie Tweeta</string>

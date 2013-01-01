@@ -24,7 +24,6 @@ import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.provider.TweetStore.CACHE_URIS;
 import static org.mariotaku.twidere.provider.TweetStore.DIRECT_MESSAGES_URIS;
 import static org.mariotaku.twidere.provider.TweetStore.STATUSES_URIS;
-import static org.mariotaku.twidere.util.HtmlEscapeHelper.unescape;
 import static org.mariotaku.twidere.util.TwidereLinkify.IMGLY_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.IMGUR_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.INSTAGRAM_GROUP_ID;
@@ -176,7 +175,6 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
@@ -189,6 +187,7 @@ import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.widget.Toast;
 
 public final class Utils implements Constants {
@@ -307,6 +306,17 @@ public final class Utils implements Constants {
 
 	private Utils() {
 		throw new AssertionError("You are trying to create an instance for this utility class!");
+	}
+
+	public static void addIntentToSubMenu(final Context context, final SubMenu menu, final Intent query_intent) {
+		if (context == null || menu == null || query_intent == null) return;
+		final PackageManager pm = context.getPackageManager();
+		final List<ResolveInfo> activities = pm.queryIntentActivities(query_intent, 0);
+		for (final ResolveInfo info : activities) {
+			final Intent intent = new Intent(query_intent);
+			intent.setClassName(info.activityInfo.packageName, info.activityInfo.name);
+			menu.add(info.loadLabel(pm)).setIcon(info.loadIcon(pm)).setIntent(intent);
+		}
 	}
 
 	public static Uri appendQueryParameters(final Uri uri, final NameValuePair... params) {
@@ -647,7 +657,7 @@ public final class Utils implements Constants {
 		if (message == null) return null;
 		final String raw_text = message.getRawText();
 		if (raw_text == null) return null;
-		final HtmlBuilder builder = new HtmlBuilder(unescape(raw_text), false);
+		final HtmlBuilder builder = new HtmlBuilder(raw_text.replace("\n", "<br/>"), false, false, false);
 		parseEntities(builder, message);
 		return builder.build();
 	}
@@ -666,7 +676,7 @@ public final class Utils implements Constants {
 		if (status == null) return null;
 		final String raw_text = status.getRawText();
 		if (raw_text == null) return null;
-		final HtmlBuilder builder = new HtmlBuilder(unescape(raw_text), false);
+		final HtmlBuilder builder = new HtmlBuilder(raw_text.replace("\n", "<br/>"), false, false, false);
 		parseEntities(builder, status);
 		return builder.build();
 	}
@@ -972,20 +982,10 @@ public final class Utils implements Constants {
 	}
 
 	public static File getBestCacheDir(final Context context, final String cache_dir_name) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-			final File ext_cache_dir = GetExternalCacheDirAccessor.getExternalCacheDir(context);
-			if (ext_cache_dir != null && ext_cache_dir.isDirectory()) {
-				final File cache_dir = new File(ext_cache_dir, cache_dir_name);
-				if (cache_dir.isDirectory() || cache_dir.mkdirs()) return cache_dir;
-			}
-		} else {
-			final File ext_storage_dir = Environment.getExternalStorageDirectory();
-			if (ext_storage_dir != null && ext_storage_dir.isDirectory()) {
-				final String ext_cache_path = ext_storage_dir.getAbsolutePath() + "/Android/data/"
-						+ context.getPackageName() + "/cache/";
-				final File cache_dir = new File(ext_cache_path, cache_dir_name);
-				if (cache_dir.isDirectory() || cache_dir.mkdirs()) return cache_dir;
-			}
+		final File ext_cache_dir = EnvironmentAccessor.getExternalCacheDir(context);
+		if (ext_cache_dir != null && ext_cache_dir.isDirectory()) {
+			final File cache_dir = new File(ext_cache_dir, cache_dir_name);
+			if (cache_dir.isDirectory() || cache_dir.mkdirs()) return cache_dir;
 		}
 		return new File(context.getCacheDir(), cache_dir_name);
 	}
@@ -1167,6 +1167,14 @@ public final class Utils implements Constants {
 		final String full = "http://i.imgur.com/" + id + ".jpg";
 		final String preview = "http://i.imgur.com/" + id + (large_image_preview ? "l.jpg" : "s.jpg");
 		return new ImageSpec(preview, full);
+	}
+
+	public static int getInlineImagePreviewDisplayOptionInt(final Context context) {
+		if (context == null) return INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE;
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final String option = prefs.getString(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW_DISPLAY_OPTION,
+				INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_NONE);
+		return getInlineImagePreviewDisplayOptionInt(option);
 	}
 
 	public static int getInlineImagePreviewDisplayOptionInt(final String option) {
@@ -1732,6 +1740,11 @@ public final class Utils implements Constants {
 		return twitter;
 	}
 
+	public static String getUnescapedStatusString(final String string) {
+		if (string == null) return null;
+		return string.replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">");
+	}
+
 	public static int getUserColor(final Context context, final long user_id) {
 		if (context == null) return Color.TRANSPARENT;
 		Integer color = sUserColors.get(user_id);
@@ -1779,23 +1792,27 @@ public final class Utils implements Constants {
 		return plugged || level / scale > 0.15f;
 	}
 
-	public static boolean isFiltered(final SQLiteDatabase database, final String screen_name, final String source,
-			final String text_plain) {
+	public static boolean isFiltered(final SQLiteDatabase database, final ParcelableStatus status) {
+		if (status == null) return false;
+		return isFiltered(database, status.text_plain, status.text_html, status.screen_name, status.source);
+	}
+
+	public static boolean isFiltered(final SQLiteDatabase database, final String text_plain, final String text_html,
+			final String screen_name, final String source) {
 		if (database == null) return false;
 		final StringBuilder builder = new StringBuilder();
-		final String[] selection_args = new String[] { text_plain, screen_name, source };
+		final String[] selection_args = new String[] { text_plain, text_html, screen_name, source };
 		builder.append("SELECT NULL WHERE");
-		builder.append("(SELECT ? LIKE '%'||" + TABLE_FILTERED_KEYWORDS + "." + Filters.TEXT + "||'%' FROM "
-				+ TABLE_FILTERED_KEYWORDS + ")");
-		if (screen_name != null) {
-			builder.append(" OR ");
-			builder.append("(SELECT ? IN (SELECT " + Filters.TEXT + " FROM " + TABLE_FILTERED_USERS + "))");
-		}
-		if (source != null) {
-			builder.append(" OR ");
-			builder.append("(SELECT ? LIKE '%>'||" + TABLE_FILTERED_SOURCES + "." + Filters.TEXT + "||'</a>%' FROM "
-					+ TABLE_FILTERED_SOURCES + ")");
-		}
+		builder.append("(SELECT 1 IN (SELECT ? LIKE '%'||" + TABLE_FILTERED_KEYWORDS + "." + Filters.TEXT
+				+ "||'%' FROM " + TABLE_FILTERED_KEYWORDS + "))");
+		builder.append(" OR ");
+		builder.append("(SELECT 1 IN (SELECT ? LIKE '%<a href=\"%'||" + TABLE_FILTERED_LINKS + "." + Filters.TEXT
+				+ "||'%\">%' FROM " + TABLE_FILTERED_LINKS + "))");
+		builder.append(" OR ");
+		builder.append("(SELECT ? IN (SELECT " + Filters.TEXT + " FROM " + TABLE_FILTERED_USERS + "))");
+		builder.append(" OR ");
+		builder.append("(SELECT 1 IN (SELECT ? LIKE '%>'||" + TABLE_FILTERED_SOURCES + "." + Filters.TEXT
+				+ "||'</a>%' FROM " + TABLE_FILTERED_SOURCES + "))");
 		final Cursor cur = database.rawQuery(builder.toString(), selection_args);
 		if (cur == null) return false;
 		try {
@@ -1849,13 +1866,9 @@ public final class Utils implements Constants {
 	public static boolean isRTL(final Context context) {
 		if (context == null) return false;
 		final Resources res = context.getResources();
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-			return GetLayoutDirectionAccessor.getLayoutDirection(res.getConfiguration()) == SCREENLAYOUT_LAYOUTDIR_RTL;
-		}
-		final String lang = res.getConfiguration().locale.getLanguage();
-		return "ar".equalsIgnoreCase(lang);
+		return ConfigurationAccessor.getLayoutDirection(res.getConfiguration()) == SCREENLAYOUT_LAYOUTDIR_RTL;
 	}
-	
+
 	public static boolean isUserLoggedIn(final Context context, final long account_id) {
 		if (context == null) return false;
 		final long[] ids = getAccountIds(context);
@@ -1959,6 +1972,7 @@ public final class Utils implements Constants {
 		final ContentValues values = new ContentValues();
 		values.put(Statuses.ACCOUNT_ID, account_id);
 		values.put(Statuses.STATUS_ID, status.getId());
+		values.put(Statuses.MY_RETWEET_ID, status.getCurrentUserRetweet());
 		final boolean is_retweet = status.isRetweet();
 		final Status retweeted_status = is_retweet ? status.getRetweetedStatus() : null;
 		if (retweeted_status != null) {
@@ -2772,13 +2786,13 @@ public final class Utils implements Constants {
 		final int enter_anim = android.R.anim.fade_in;
 		final int exit_anim = android.R.anim.fade_out;
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
-			OverridePendingTransitionAccessor.overridePendingTransition(activity, enter_anim, exit_anim);
+			ActivityAccessor.overridePendingTransition(activity, enter_anim, exit_anim);
 		} else {
 			activity.getWindow().setWindowAnimations(0);
 		}
 		activity.finish();
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
-			OverridePendingTransitionAccessor.overridePendingTransition(activity, enter_anim, exit_anim);
+			ActivityAccessor.overridePendingTransition(activity, enter_anim, exit_anim);
 		} else {
 			activity.getWindow().setWindowAnimations(0);
 		}
@@ -2815,12 +2829,19 @@ public final class Utils implements Constants {
 				favorite.setTitle(R.string.favorite);
 			}
 		}
-		final MenuItem extensions = menu.findItem(MENU_EXTENSIONS);
+		final MenuItem extensions = menu.findItem(MENU_EXTENSIONS_SUBMENU);
 		if (extensions != null) {
+			final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_STATUS);
+			final Bundle extras = new Bundle();
+			extras.putParcelable(INTENT_KEY_STATUS, status);
+			intent.putExtras(extras);
 			final PackageManager pm = context.getPackageManager();
-			final List<ResolveInfo> activities = pm.queryIntentActivities(new Intent(
-					INTENT_ACTION_EXTENSION_OPEN_STATUS), 0);
-			extensions.setVisible(activities.size() > 0);
+			final List<ResolveInfo> activities = pm.queryIntentActivities(intent, 0);
+			final boolean has_extension = !activities.isEmpty();
+			extensions.setVisible(has_extension);
+			if (has_extension) {
+				addIntentToSubMenu(context, extensions.getSubMenu(), intent);
+			}
 		}
 	}
 

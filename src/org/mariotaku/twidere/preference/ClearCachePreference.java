@@ -24,7 +24,7 @@ import static android.os.Environment.getExternalStorageDirectory;
 import java.io.File;
 import java.io.FileFilter;
 
-import org.mariotaku.twidere.util.GetExternalCacheDirAccessor;
+import org.mariotaku.twidere.util.EnvironmentAccessor;
 
 import android.content.Context;
 import android.os.Build;
@@ -48,7 +48,7 @@ public class ClearCachePreference extends AsyncTaskPreference {
 	protected void doInBackground() {
 		final Context context = getContext();
 		if (context == null) return;
-		final File external_cache_dir = Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? GetExternalCacheDirAccessor
+		final File external_cache_dir = Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? EnvironmentAccessor
 				.getExternalCacheDir(context) : getExternalStorageDirectory() != null ? new File(
 				getExternalStorageDirectory().getPath() + "/Android/data/" + context.getPackageName() + "/cache/")
 				: null;

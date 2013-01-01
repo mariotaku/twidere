@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.util;
 
+import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.toHtml;
 
 import java.util.ArrayList;
@@ -32,18 +33,31 @@ public class HtmlBuilder {
 
 	private final String string;
 	private final int string_length;
-	private final boolean strict;
+	private final boolean strict, orig_need_escape, display_need_escape;
 
 	private final ArrayList<LinkSpec> links = new ArrayList<LinkSpec>();
 
+	@Deprecated
 	public HtmlBuilder(final String string) {
-		this(string, false);
+		this(string, true);
 	}
 
+	@Deprecated
 	public HtmlBuilder(final String string, final boolean strict) {
+		this(string, false, true, true);
+	}
+
+	public HtmlBuilder(final String string, final boolean strict, final boolean need_escape) {
+		this(string, true, need_escape, need_escape);
+	}
+
+	public HtmlBuilder(final String string, final boolean strict, final boolean orig_need_escape,
+			final boolean display_need_escape) {
 		if (string == null) throw new NullPointerException();
 		this.string = string;
 		this.strict = strict;
+		this.orig_need_escape = orig_need_escape;
+		this.display_need_escape = display_need_escape;
 		string_length = string.length();
 	}
 
@@ -66,7 +80,7 @@ public class HtmlBuilder {
 	}
 
 	public String build() {
-		if (links.size() == 0) return toHtml(string);
+		if (links.size() == 0) return origToHtmlIfNeeded(string);
 		Collections.sort(links);
 		final StringBuilder builder = new StringBuilder();
 		final int links_size = links.size();
@@ -78,24 +92,32 @@ public class HtmlBuilder {
 			final int start = spec.start, end = spec.end;
 			if (i == 0) {
 				if (start >= 0 && start <= string_length) {
-					builder.append(toHtml(string.substring(0, start)));
+					builder.append(origToHtmlIfNeeded(string.substring(0, start)));
 				}
 			} else if (i > 0) {
 				final int last_end = links.get(i - 1).end;
 				if (last_end >= 0 && last_end <= start && start <= string_length) {
-					builder.append(toHtml(string.substring(last_end, start)));
+					builder.append(origToHtmlIfNeeded(string.substring(last_end, start)));
 				}
 			}
 			builder.append("<a href=\"" + spec.link + "\">");
 			if (start >= 0 && start <= end && end <= string_length) {
-				builder.append(toHtml(spec.display != null ? spec.display : spec.link));
+				builder.append(!isEmpty(spec.display) ? displayToHtmlIfNeeded(spec.display) : spec.link);
 			}
 			builder.append("</a>");
 			if (i == links.size() - 1 && end >= 0 && end <= string_length) {
-				builder.append(toHtml(string.substring(end, string_length)));
+				builder.append(origToHtmlIfNeeded(string.substring(end, string_length)));
 			}
 		}
 		return builder.toString();
+	}
+
+	private String displayToHtmlIfNeeded(final String string) {
+		return display_need_escape ? toHtml(string) : string;
+	}
+
+	private String origToHtmlIfNeeded(final String string) {
+		return orig_need_escape ? toHtml(string) : string;
 	}
 
 	static final class LinkSpec implements Comparable<LinkSpec> {

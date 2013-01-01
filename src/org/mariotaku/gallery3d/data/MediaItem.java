@@ -24,7 +24,6 @@ import java.net.URL;
 
 import org.mariotaku.gallery3d.app.IGalleryApplication;
 import org.mariotaku.gallery3d.common.ApiHelper;
-import org.mariotaku.gallery3d.common.BitmapUtils;
 import org.mariotaku.gallery3d.common.Utils;
 import org.mariotaku.gallery3d.util.ThreadPool.CancelListener;
 import org.mariotaku.gallery3d.util.ThreadPool.Job;
@@ -32,22 +31,44 @@ import org.mariotaku.gallery3d.util.ThreadPool.JobContext;
 
 import android.content.ContentResolver;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory.Options;
 import android.graphics.BitmapRegionDecoder;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
 // MediaItem represents an image or a video item.
-public class MediaItem extends MediaObject {
+public class MediaItem {
+
+	public static final long INVALID_DATA_VERSION = -1;
+
+	// These are the bits returned from getSupportedOperations():
+	public static final int SUPPORT_FULL_IMAGE = 1 << 6;
+	public static final int SUPPORT_ACTION = 1 << 15;
+
+	// These are the bits returned from getMediaType():
+	public static final int MEDIA_TYPE_UNKNOWN = 1;
+	public static final int MEDIA_TYPE_IMAGE = 2;
+
+	public static final String MEDIA_TYPE_IMAGE_STRING = "image";
+	public static final String MEDIA_TYPE_ALL_STRING = "all";
+
+	// These are flags for cache() and return values for getCacheFlag():
+	public static final int CACHE_FLAG_NO = 0;
+
+	private static long sVersionSerial = 0;
+
+	protected long mDataVersion;
+
+	protected final Path mPath;
+
 	// NOTE: These type numbers are stored in the image cache, so it should not
 	// not be changed without resetting the cache.
 	public static final int TYPE_THUMBNAIL = 1;
 
 	public static final String MIME_TYPE_JPEG = "image/jpeg";
 
-	private static int sThumbnailTargetSize = 640;
+	private static int sThumbnailTargetSize = 1024;
+
 	private static final BitmapPool sThumbPool = ApiHelper.HAS_REUSING_BITMAP_IN_BITMAP_FACTORY ? new BitmapPool(4)
 			: null;
 
@@ -56,7 +77,6 @@ public class MediaItem extends MediaObject {
 	private static final int STATE_INIT = 0;
 
 	private static final int STATE_DOWNLOADING = 1;
-
 	private static final int STATE_DOWNLOADED = 2;
 
 	private static final int STATE_ERROR = -1;
@@ -68,20 +88,32 @@ public class MediaItem extends MediaObject {
 	private DownloadCache.Entry mCacheEntry;
 
 	private ParcelFileDescriptor mFileDescriptor;
+
 	private int mState = STATE_INIT;
+
 	private int mRotation;
+
 	private final IGalleryApplication mApplication;
 
 	public MediaItem(final IGalleryApplication application, final Path path, final Uri uri, final String contentType) {
-		super(path, nextVersionNumber());
+		path.setObject(this);
+		mPath = path;
+		mDataVersion = nextVersionNumber();
 		mUri = uri;
 		mApplication = Utils.checkNotNull(application);
 		mContentType = contentType;
 	}
 
-	@Override
+	public int getCacheFlag() {
+		return CACHE_FLAG_NO;
+	}
+
 	public Uri getContentUri() {
 		return mUri;
+	}
+
+	public long getDataVersion() {
+		return mDataVersion;
 	}
 
 	public String getFilePath() {
@@ -95,7 +127,6 @@ public class MediaItem extends MediaObject {
 		return getRotation();
 	}
 
-	@Override
 	public int getMediaType() {
 		return MEDIA_TYPE_IMAGE;
 	}
@@ -104,17 +135,20 @@ public class MediaItem extends MediaObject {
 		return mContentType;
 	}
 
+	public Path getPath() {
+		return mPath;
+	}
+
 	public int getRotation() {
 		return mRotation;
 	}
 
-	@Override
 	public int getSupportedOperations() {
 		return SUPPORT_FULL_IMAGE;
 	}
 
-	public Job<Bitmap> requestImage(final int type) {
-		return new BitmapJob(type);
+	public Job<Bitmap> requestFallbackImage() {
+		return new FallbackDecoderJob();
 	}
 
 	public Job<BitmapRegionDecoder> requestLargeImage() {
@@ -224,38 +258,20 @@ public class MediaItem extends MediaObject {
 		return sThumbPool;
 	}
 
+	public static synchronized long nextVersionNumber() {
+		return ++MediaItem.sVersionSerial;
+	}
+
 	public static void setThumbnailSizes(final int size, final int microSize) {
 		sThumbnailTargetSize = size;
 	}
 
-	private static int getTargetSize(final int type) {
-		switch (type) {
-			case TYPE_THUMBNAIL:
-				return sThumbnailTargetSize;
-			default:
-				throw new RuntimeException("should only request thumb/microthumb from cache");
-		}
-	}
-
-	private class BitmapJob implements Job<Bitmap> {
-		private final int mType;
-
-		protected BitmapJob(final int type) {
-			mType = type;
-		}
-
+	private class FallbackDecoderJob implements Job<Bitmap> {
 		@Override
 		public Bitmap run(final JobContext jc) {
 			if (!prepareInputFile(jc)) return null;
-			final int targetSize = MediaItem.getTargetSize(mType);
-			final Options options = new Options();
-			options.inPreferredConfig = Config.ARGB_8888;
-			Bitmap bitmap = DecodeUtils.decodeThumbnail(jc, mFileDescriptor.getFileDescriptor(), options, targetSize,
-					mType);
-
-			if (jc.isCancelled() || bitmap == null) return null;
-
-			bitmap = BitmapUtils.resizeDownBySideLength(bitmap, targetSize, true);
+			final Bitmap bitmap = DecodeUtils.requestDecode(jc, mFileDescriptor.getFileDescriptor(), null,
+					sThumbnailTargetSize);
 			return bitmap;
 		}
 	}

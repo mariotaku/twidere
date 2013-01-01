@@ -19,27 +19,17 @@
 
 package org.mariotaku.twidere.fragment;
 
-import org.mariotaku.twidere.adapter.CursorStatusesAdapter;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
-import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnTouchListener;
-import android.widget.AbsListView;
-import android.widget.ListView;
 
 public class MentionsFragment extends CursorStatusesListFragment {
-	
+
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -98,7 +88,7 @@ public class MentionsFragment extends CursorStatusesListFragment {
 	Uri getContentUri() {
 		return Mentions.CONTENT_URI;
 	}
-	
+
 	@Override
 	int getNotificationIdToClear() {
 		return NOTIFICATION_ID_MENTIONS;

@@ -11,6 +11,14 @@
 		android:layout_alignParentRight="true"
 		android:scaleType="fitCenter"/>
 
+	<org.mariotaku.twidere.view.RoundCorneredImageView
+		android:id="@+id/my_profile_image"
+		android:layout_width="@dimen/profile_image_size"
+		android:layout_height="@dimen/profile_image_size"
+		android:layout_alignParentLeft="true"
+		android:radius="4dp"
+		android:scaleType="fitCenter"/>
+
 	<FrameLayout
 		android:id="@+id/name_frame"
 		android:layout_width="wrap_content"
@@ -54,7 +62,7 @@
 		</LinearLayout>
 	</FrameLayout>
 
-	<TextView
+	<org.mariotaku.twidere.view.HandleSpanClickTextView
 		android:id="@+id/text"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -73,9 +81,9 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignBottom="@+id/name_frame"
-		android:layout_alignParentLeft="true"
 		android:layout_alignWithParentIfMissing="true"
-		android:layout_marginLeft="8dp"
+		android:layout_marginLeft="4dp"
+		android:layout_toRightOf="@+id/my_profile_image"
 		android:drawablePadding="4dp"
 		android:gravity="center_vertical|left"
 		android:layerType="software"
@@ -89,6 +97,7 @@
 		android:layout_below="@+id/text"
 		android:layout_marginTop="8dp"
 		android:layout_toLeftOf="@+id/profile_image"
+		android:layout_toRightOf="@+id/my_profile_image"
 		android:background="?imagePreviewBackground">
 
 		<org.mariotaku.twidere.view.ImagePreviewView

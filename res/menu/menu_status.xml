@@ -38,9 +38,11 @@
 				android:icon="@drawable/ic_menu_copy"
 				android:title="@android:string/copy"/>
 			<item
-				android:id="@id/extensions"
+				android:id="@id/extensions_submenu"
 				android:icon="@drawable/ic_menu_extension"
-				android:title="@string/extensions"/>
+				android:title="@string/extensions">
+				<menu/>
+			</item>
 			<item
 				android:id="@id/mute_source"
 				android:icon="@drawable/ic_menu_mute"

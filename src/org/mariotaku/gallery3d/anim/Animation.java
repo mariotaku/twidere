@@ -84,9 +84,5 @@ abstract public class Animation {
 		mStartTime = time;
 	}
 
-	public void start() {
-		mStartTime = ANIMATION_START;
-	}
-
 	abstract protected void onCalculate(float progress);
 }
