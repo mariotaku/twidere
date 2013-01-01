@@ -367,13 +367,8 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 
 	private void startViewAction(final Intent intent) {
 		if (intent == null) {
-			// TODO
 			finish();
 			return;
-		}
-		final String action = intent.getAction();
-		if (INTENT_ACTION_VIEW_IMAGE.equals(action)) {
-			startViewAction(intent);
 		}
 		final Bundle data = new Bundle();
 		final DataManager dm = getDataManager();
