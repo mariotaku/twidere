@@ -282,7 +282,7 @@ public final class Utils implements Constants {
 
 		CUSTOM_TABS_ICON_NAME_MAP.put("accounts", R.drawable.ic_tab_accounts);
 		CUSTOM_TABS_ICON_NAME_MAP.put("fire", R.drawable.ic_tab_fire);
-		CUSTOM_TABS_ICON_NAME_MAP.put("hasmter", R.drawable.ic_tab_hasmter);
+		CUSTOM_TABS_ICON_NAME_MAP.put("hamster", R.drawable.ic_tab_hamster);
 		CUSTOM_TABS_ICON_NAME_MAP.put("heart", R.drawable.ic_tab_heart);
 		CUSTOM_TABS_ICON_NAME_MAP.put("home", R.drawable.ic_tab_home);
 		CUSTOM_TABS_ICON_NAME_MAP.put("list", R.drawable.ic_tab_list);
