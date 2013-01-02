@@ -19,6 +19,8 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 
 	private ActionModeCompat mActionModeCompat;
 
+	private int mWindowFeatureId;
+
 	public MenuInflater getBaseMenuInflater() {
 		return super.getMenuInflater();
 	}
@@ -64,6 +66,15 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 		super.onContentChanged();
 		initActionBar();
 		checkActionBar();
+		if (mActionBarCompat.isAvailable()) {
+			switch (mWindowFeatureId) {
+				case Window.FEATURE_INDETERMINATE_PROGRESS: {
+					if (mActionBarCompat instanceof ActionBarCompatBase) {
+						((ActionBarCompatBase) mActionBarCompat).setProgressBarIndeterminateEnabled(true);
+					}
+				}
+			}
+		}
 	}
 
 	@Override
@@ -98,13 +109,7 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 		if (mActionBarCompat instanceof ActionBarCompatNative) {
 			requestWindowFeature(featureId);
 		} else {
-			switch (featureId) {
-				case Window.FEATURE_INDETERMINATE_PROGRESS: {
-					if (mActionBarCompat instanceof ActionBarCompatBase) {
-						((ActionBarCompatBase) mActionBarCompat).setProgressBarIndeterminateEnabled(true);
-					}
-				}
-			}
+			mWindowFeatureId = featureId;
 		}
 	}
 

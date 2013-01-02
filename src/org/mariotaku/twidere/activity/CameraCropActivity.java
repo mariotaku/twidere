@@ -18,11 +18,14 @@ public class CameraCropActivity extends Activity {
 
 	public static final String INTENT_ACTION = "org.mariotaku.twidere.CAMERA_CROP";
 
-	public static final String EXTRA_X = "X";
-	public static final String EXTRA_Y = "Y";
+	public static final String EXTRA_OUTPUT_X = "outputX";
+	public static final String EXTRA_OUTPUT_Y = "outputY";
+	public static final String EXTRA_ASPECT_X = "aspectX";
+	public static final String EXTRA_ASPECT_Y = "aspectY";
+	public static final String EXTRA_SCALE_UP_IF_NEEDED = "scaleUpIfNeeded";
 
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		if (resultCode != RESULT_OK) {
 			if (mImageUriUncropped != null) {
 				final String path = mImageUriUncropped.getPath();
@@ -42,19 +45,24 @@ public class CameraCropActivity extends Activity {
 					return;
 				}
 				final Intent intent = getIntent();
-				final int x = intent.getIntExtra(EXTRA_X, 1), y = intent.getIntExtra(EXTRA_Y, 1);
+				final int aspectX = intent.getIntExtra(EXTRA_ASPECT_X, 1), aspectY = intent.getIntExtra(EXTRA_ASPECT_Y,
+						1);
+				final int outputX = intent.getIntExtra(EXTRA_OUTPUT_X, 512), outputY = intent.getIntExtra(
+						EXTRA_OUTPUT_Y, 512);
+				final boolean scaleUpIfNeeded = intent.getBooleanExtra(EXTRA_SCALE_UP_IF_NEEDED, false);
 				final Intent crop_intent = new Intent("com.android.camera.action.CROP");
 				crop_intent.setDataAndType(mImageUriUncropped, "image/*");
-				crop_intent.putExtra("outputX", x);
-				crop_intent.putExtra("outputY", y);
-				crop_intent.putExtra("aspectX", x);
-				crop_intent.putExtra("aspectY", y);
+				crop_intent.putExtra(EXTRA_OUTPUT_X, outputX);
+				crop_intent.putExtra(EXTRA_OUTPUT_Y, outputY);
+				crop_intent.putExtra(EXTRA_ASPECT_X, aspectX);
+				crop_intent.putExtra(EXTRA_ASPECT_Y, aspectY);
 				crop_intent.putExtra("scale", true);
 				crop_intent.putExtra("crop", "true");
+				crop_intent.putExtra("scaleUpIfNeeded", scaleUpIfNeeded);
 				crop_intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
 				try {
 					startActivityForResult(crop_intent, REQUEST_CROP_IMAGE);
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					setResult(RESULT_CANCELED);
 					finish();
 					return;
@@ -78,7 +86,7 @@ public class CameraCropActivity extends Activity {
 	}
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		final Intent intent = getIntent();
 		try {
@@ -87,7 +95,7 @@ public class CameraCropActivity extends Activity {
 			final Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 			camera_intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUriUncropped);
 			startActivityForResult(camera_intent, REQUEST_TAKE_PHOTO);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			setResult(RESULT_CANCELED);
 			finish();
 			return;

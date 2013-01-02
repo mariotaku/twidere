@@ -73,6 +73,7 @@ import org.json.JSONObject;
 import org.mariotaku.gallery3d.app.ImageViewerGLActivity;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.CameraCropActivity;
 import org.mariotaku.twidere.activity.DualPaneActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.activity.ImageViewerActivity;
@@ -540,50 +541,50 @@ public final class Utils implements Constants {
 		return bitmap;
 	}
 
-	public static Intent createTakePhotoIntent(final Uri uri) {
-		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-		intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-		return intent;
-	}
-	
-	public static Intent createPickImageIntent(final Uri uri, final int outputX, final int outputY) {
+	public static Intent createPickImageIntent(final Uri uri) {
 		final Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 		intent.setType("image/*");
-		intent.putExtra("outputX", outputX);
-		intent.putExtra("outputY", outputY);
-		intent.putExtra("aspectX", outputX);
-		intent.putExtra("aspectY", outputY);
-		intent.putExtra("scale", true);
-		intent.putExtra("crop", "true");
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-		intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-		return intent;
-	}
-	
-	public static Intent createCropImageIntent(final Uri uri, final int outputX, final int outputY) {
-		final Intent intent = new Intent("com.android.camera.action.CROP");
-		intent.setType("image/*");
-		intent.putExtra("outputX", outputX);
-		intent.putExtra("outputY", outputY);
-		intent.putExtra("aspectX", outputX);
-		intent.putExtra("aspectY", outputY);
-		intent.putExtra("scale", true);
-		intent.putExtra("crop", "true");
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-		intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 		return intent;
 	}
 
-	public static Intent createTakePhotoIntent(final Uri uri, final int outputX, final int outputY) {
-		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		intent.putExtra("return-data", true);
+	public static Intent createPickImageIntent(final Uri uri, final Integer outputX, final Integer outputY,
+			final Integer aspectX, final Integer aspectY, final boolean scaleUpIfNeeded) {
+		final Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		intent.setType("image/*");
+		if (outputX != null && outputY != null) {
+			intent.putExtra(CameraCropActivity.EXTRA_OUTPUT_X, outputX);
+			intent.putExtra(CameraCropActivity.EXTRA_OUTPUT_Y, outputY);
+		}
+		if (aspectX != null && aspectY != null) {
+			intent.putExtra(CameraCropActivity.EXTRA_ASPECT_X, aspectX);
+			intent.putExtra(CameraCropActivity.EXTRA_ASPECT_Y, aspectY);
+		}
+		intent.putExtra("scale", true);
+		intent.putExtra("scaleUpIfNeeded", scaleUpIfNeeded);
+		intent.putExtra("crop", "true");
 		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-		intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+		return intent;
+	}
+
+	public static Intent createTakePhotoIntent(final Uri uri) {
+		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+		return intent;
+	}
+
+	public static Intent createTakePhotoIntent(final Uri uri, final Integer outputX, final Integer outputY,
+			final Integer aspectX, final Integer aspectY, final boolean scaleUpIfNeeded) {
+		final Intent intent = new Intent(CameraCropActivity.INTENT_ACTION);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+		if (outputX != null && outputY != null) {
+			intent.putExtra(CameraCropActivity.EXTRA_OUTPUT_X, outputX);
+			intent.putExtra(CameraCropActivity.EXTRA_OUTPUT_Y, outputY);
+		}
+		if (aspectX != null && aspectY != null) {
+			intent.putExtra(CameraCropActivity.EXTRA_ASPECT_X, aspectX);
+			intent.putExtra(CameraCropActivity.EXTRA_ASPECT_Y, aspectY);
+		}
+		intent.putExtra(CameraCropActivity.EXTRA_SCALE_UP_IF_NEEDED, scaleUpIfNeeded);
 		return intent;
 	}
 
@@ -1852,26 +1853,60 @@ public final class Utils implements Constants {
 
 	public static boolean isMyAccount(final Context context, final long account_id) {
 		if (context == null) return false;
-		for (final long id : getAccountIds(context)) {
-			if (id == account_id) return true;
+		final ContentResolver resolver = context.getContentResolver();
+		final String where = Accounts.ACCOUNT_ID + " = " + account_id;
+		final Cursor cur = resolver.query(Accounts.CONTENT_URI, new String[0], where, null, null);
+		try {
+			return cur != null && cur.getCount() > 0;
+		} finally {
+			if (cur != null) {
+				cur.close();
+			}
 		}
-		return false;
+	}
+
+	public static boolean isMyAccount(final Context context, final String screen_name) {
+		if (context == null) return false;
+		final ContentResolver resolver = context.getContentResolver();
+		final String where = Accounts.SCREEN_NAME + " = ?";
+		final Cursor cur = resolver.query(Accounts.CONTENT_URI, new String[0], where, new String[] { screen_name },
+				null);
+		try {
+			return cur != null && cur.getCount() > 0;
+		} finally {
+			if (cur != null) {
+				cur.close();
+			}
+		}
 	}
 
 	public static boolean isMyActivatedAccount(final Context context, final long account_id) {
 		if (context == null || account_id <= 0) return false;
-		for (final long id : getActivatedAccountIds(context)) {
-			if (id == account_id) return true;
+		final ContentResolver resolver = context.getContentResolver();
+		final String where = Accounts.IS_ACTIVATED + " = 1 AND " + Accounts.ACCOUNT_ID + " = " + account_id;
+		final Cursor cur = resolver.query(Accounts.CONTENT_URI, new String[0], where, null, null);
+		try {
+			return cur != null && cur.getCount() > 0;
+		} finally {
+			if (cur != null) {
+				cur.close();
+			}
 		}
-		return false;
 	}
 
-	public static boolean isMyActivatedUserName(final Context context, final String screen_name) {
-		if (context == null || screen_name == null) return false;
-		for (final String account_user_name : getActivatedAccountScreenNames(context)) {
-			if (account_user_name.equalsIgnoreCase(screen_name)) return true;
+	public static boolean isMyActivatedAccount(final Context context, final String screen_name) {
+		if (context == null) return false;
+		final ContentResolver resolver = context.getContentResolver();
+		final String where = Accounts.IS_ACTIVATED + " = 1 AND " + Accounts.SCREEN_NAME + " = ?";
+		final Cursor cur = resolver.query(Accounts.CONTENT_URI, new String[0], where, new String[] { screen_name },
+				null);
+		try {
+			return cur != null && cur.getCount() > 0;
+		} finally {
+			if (cur != null) {
+				cur.close();
+			}
 		}
-		return false;
 	}
 
 	public static boolean isMyRetweet(final ParcelableStatus status) {

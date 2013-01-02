@@ -177,7 +177,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 					getFriendship();
 				}
 			}
-			if (BROADCAST_PROFILE_UPDATED.equals(action)) {
+			if (BROADCAST_PROFILE_UPDATED.equals(action) || BROADCAST_PROFILE_IMAGE_UPDATED.equals(action)
+					|| BROADCAST_PROFILE_BANNER_UPDATED.equals(action)) {
 				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mUser.user_id
 						&& intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
 					getUserInfo(true);
@@ -817,6 +818,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		final IntentFilter filter = new IntentFilter(BROADCAST_FRIENDSHIP_CHANGED);
 		filter.addAction(BROADCAST_BLOCKSTATE_CHANGED);
 		filter.addAction(BROADCAST_PROFILE_UPDATED);
+		filter.addAction(BROADCAST_PROFILE_IMAGE_UPDATED);
+		filter.addAction(BROADCAST_PROFILE_BANNER_UPDATED);
 		registerReceiver(mStatusReceiver, filter);
 		mProfileNameContainer.drawLeft(getUserColor(getActivity(), mUserId));
 	}

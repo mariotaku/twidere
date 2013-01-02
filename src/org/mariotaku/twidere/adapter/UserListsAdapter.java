@@ -45,6 +45,10 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 		mProfileImageLoader = application.getProfileImageLoader();
 	}
 
+	public void appendData(final List<ParcelableUserList> data) {
+		setData(data, false);
+	}
+
 	@Override
 	public View getView(final int position, final View convertView, final ViewGroup parent) {
 		final View view = super.getView(position, convertView, parent);
@@ -66,10 +70,6 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 			mProfileImageLoader.displayImage(holder.profile_image, user_list.user_profile_image_url_string);
 		}
 		return view;
-	}
-
-	public void appendData(final List<ParcelableUserList> data) {
-		setData(data, false);
 	}
 
 	public void setData(final List<ParcelableUserList> data, final boolean clear_old) {

@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.addIntentToSubMenu;
+import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.openUserListDetails;
 
 import org.mariotaku.popupmenu.PopupMenu;
@@ -33,8 +34,6 @@ import org.mariotaku.twidere.loader.UserListsLoader.UserListsData;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUserList;
 
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -44,6 +43,7 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -52,8 +52,11 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-public class UserListsListFragment extends PullToRefreshListFragment implements LoaderCallbacks<UserListsLoader.UserListsData>,
-		OnItemClickListener, OnItemLongClickListener, Panes.Left, OnMenuItemClickListener {
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
+
+public class UserListsListFragment extends PullToRefreshListFragment implements
+		LoaderCallbacks<UserListsLoader.UserListsData>, OnItemClickListener, OnItemLongClickListener, Panes.Left,
+		OnMenuItemClickListener {
 
 	private SeparatedListAdapter<UserListsAdapter> mAdapter;
 	private UserListsAdapter mUserListsAdapter, mUserListMembershipsAdapter;
@@ -67,7 +70,7 @@ public class UserListsListFragment extends PullToRefreshListFragment implements 
 	private ParcelableUserList mSelectedUserList;
 
 	private TwidereApplication mApplication;
-	
+
 	private UserListsData mUserListsData;
 
 	private long mCursor = -1;
@@ -76,6 +79,7 @@ public class UserListsListFragment extends PullToRefreshListFragment implements 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		setHasOptionsMenu(true);
 		mApplication = getApplication();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final Bundle args = getArguments() != null ? getArguments() : new Bundle();
@@ -103,6 +107,11 @@ public class UserListsListFragment extends PullToRefreshListFragment implements 
 	public Loader<UserListsLoader.UserListsData> onCreateLoader(final int id, final Bundle args) {
 		setProgressBarIndeterminateVisibility(true);
 		return new UserListsLoader(getActivity(), mAccountId, mUserId, mScreenName, mUserListsData, mCursor, mPage);
+	}
+
+	@Override
+	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
+		inflater.inflate(R.menu.menu_user_list_created, menu);
 	}
 
 	@Override
@@ -156,6 +165,7 @@ public class UserListsListFragment extends PullToRefreshListFragment implements 
 			mUserListsAdapter.setData(data.getLists(), true);
 			mUserListMembershipsAdapter.setData(data.getMemberships(), true);
 			mAdapter.notifyDataSetChanged();
+			invalidateOptionsMenu();
 		}
 		onRefreshComplete();
 		setListShown(true);
@@ -186,6 +196,30 @@ public class UserListsListFragment extends PullToRefreshListFragment implements 
 	}
 
 	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		// TODO Auto-generated method stub
+		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onPrepareOptionsMenu(final Menu menu) {
+		final MenuItem item = menu.findItem(R.id.new_user_list);
+		if (item == null) return;
+		final String screen_name = getAccountScreenName(getActivity(), mAccountId);
+		item.setVisible(mUserId == mAccountId || screen_name != null && screen_name.equalsIgnoreCase(mScreenName));
+	}
+
+	@Override
+	public void onPullDownToRefresh() {
+
+	}
+
+	@Override
+	public void onPullUpToRefresh() {
+		getLoaderManager().restartLoader(0, null, this);
+	}
+
+	@Override
 	public void onStart() {
 		super.onStart();
 		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
@@ -202,15 +236,5 @@ public class UserListsListFragment extends PullToRefreshListFragment implements 
 			mPopupMenu.dismiss();
 		}
 		super.onStop();
-	}
-
-	@Override
-	public void onPullDownToRefresh() {
-		
-	}
-
-	@Override
-	public void onPullUpToRefresh() {
-		getLoaderManager().restartLoader(0, null, this);
 	}
 }

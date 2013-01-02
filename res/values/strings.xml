@@ -342,6 +342,7 @@
 	<string name="updating_profile">updating profile</string>
 	<string name="updating_profile_image">updating profile image</string>
 	<string name="updating_profile_banner_image">updating profile banner image</string>
+	<string name="removing_profile_banner_image">removing profile banner image</string>
 	<string name="updating_details">updating details</string>
 	<string name="blocking">blocking</string>
 	<string name="unblocking">unblocking</string>

@@ -123,6 +123,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		if (count == 0) {
 			showLeftPane();
 		}
+		invalidateSupportOptionsMenu();
 	}
 
 	@Override
@@ -357,20 +358,24 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 						icon = R.drawable.ic_menu_tweet;
 				}
 			}
-		}
-		final MenuItem composeItem = menu.findItem(MENU_COMPOSE);
-		if (composeItem != null) {
-			composeItem.setIcon(icon);
-			composeItem.setTitle(title);
-			composeItem.setVisible(!bottom_actions);
-		}
-		if (mComposeButton != null) {
-			mComposeButton.setImageResource(icon);
-			mComposeButton.setVisibility(bottom_actions ? View.VISIBLE : View.GONE);
-			if (bottom_actions) {
-				final FrameLayout.LayoutParams compose_lp = (FrameLayout.LayoutParams) mComposeButton.getLayoutParams();
-				compose_lp.gravity = Gravity.BOTTOM | (leftside_compose_button ? Gravity.LEFT : Gravity.RIGHT);
-				mComposeButton.setLayoutParams(compose_lp);
+
+			final MenuItem composeItem = menu.findItem(MENU_COMPOSE);
+			if (composeItem != null) {
+				composeItem.setIcon(icon);
+				composeItem.setTitle(title);
+				composeItem.setVisible(!bottom_actions && mViewPager.getVisibility() == View.VISIBLE);
+			}
+			if (mComposeButton != null) {
+				mComposeButton.setImageResource(icon);
+				mComposeButton
+						.setVisibility(bottom_actions && mViewPager.getVisibility() == View.VISIBLE ? View.VISIBLE
+								: View.GONE);
+				if (bottom_actions) {
+					final FrameLayout.LayoutParams compose_lp = (FrameLayout.LayoutParams) mComposeButton
+							.getLayoutParams();
+					compose_lp.gravity = Gravity.BOTTOM | (leftside_compose_button ? Gravity.LEFT : Gravity.RIGHT);
+					mComposeButton.setLayoutParams(compose_lp);
+				}
 			}
 		}
 		return super.onPrepareOptionsMenu(menu);

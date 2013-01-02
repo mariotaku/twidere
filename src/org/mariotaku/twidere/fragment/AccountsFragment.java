@@ -25,6 +25,7 @@ import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.EditUserProfileActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.activity.SetColorActivity;
 import org.mariotaku.twidere.activity.SignInActivity;
@@ -73,7 +74,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 	private PopupMenu mPopupMenu;
 
 	private int mSelectedColor;
-	private long mSelectedUserId;
+	private long mSelectedAccountId;
 	private Cursor mCursor;
 
 	private boolean mActivityFirstCreated;
@@ -114,7 +115,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 					final int color = data.getIntExtra(Accounts.USER_COLOR, Color.WHITE);
 					final ContentValues values = new ContentValues();
 					values.put(Accounts.USER_COLOR, color);
-					final String where = Accounts.ACCOUNT_ID + " = " + mSelectedUserId;
+					final String where = Accounts.ACCOUNT_ID + " = " + mSelectedAccountId;
 					mResolver.update(Accounts.CONTENT_URI, values, where, null);
 					getLoaderManager().restartLoader(0, null, this);
 				}
@@ -155,7 +156,7 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 		if (isDefaultAccountValid() && mCursor != null && position >= 0 && position < mCursor.getCount()) {
 			mCursor.moveToPosition(position);
 			mSelectedColor = mCursor.getInt(mCursor.getColumnIndexOrThrow(Accounts.USER_COLOR));
-			mSelectedUserId = mCursor.getLong(mCursor.getColumnIndexOrThrow(Accounts.ACCOUNT_ID));
+			mSelectedAccountId = mCursor.getLong(mCursor.getColumnIndexOrThrow(Accounts.ACCOUNT_ID));
 			mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 			mPopupMenu.inflate(R.menu.action_account);
 			mPopupMenu.setOnMenuItemClickListener(this);
@@ -194,10 +195,19 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 	@Override
 	public boolean onMenuItemClick(final MenuItem item) {
-		if (mSelectedUserId <= 0) return false;
+		if (mSelectedAccountId <= 0) return false;
 		switch (item.getItemId()) {
 			case MENU_VIEW_PROFILE: {
-				openUserProfile(getActivity(), mSelectedUserId, mSelectedUserId, null);
+				openUserProfile(getActivity(), mSelectedAccountId, mSelectedAccountId, null);
+				break;
+			}
+			case MENU_EDIT: {
+				final Bundle bundle = new Bundle();
+				bundle.putLong(INTENT_KEY_ACCOUNT_ID, mSelectedAccountId);
+				final Intent intent = new Intent(INTENT_ACTION_EDIT_USER_PROFILE);
+				intent.setClass(getActivity(), EditUserProfileActivity.class);
+				intent.putExtras(bundle);
+				startActivity(intent);
 				break;
 			}
 			case MENU_SET_COLOR: {
@@ -209,19 +219,19 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 				break;
 			}
 			case MENU_SET_AS_DEFAULT: {
-				setDefaultAccount(mSelectedUserId);
+				setDefaultAccount(mSelectedAccountId);
 				break;
 			}
 			case MENU_DELETE: {
-				mResolver.delete(Accounts.CONTENT_URI, Accounts.ACCOUNT_ID + " = " + mSelectedUserId, null);
+				mResolver.delete(Accounts.CONTENT_URI, Accounts.ACCOUNT_ID + " = " + mSelectedAccountId, null);
 				// Also delete tweets related to the account we previously
 				// deleted.
-				mResolver.delete(Statuses.CONTENT_URI, Statuses.ACCOUNT_ID + " = " + mSelectedUserId, null);
-				mResolver.delete(Mentions.CONTENT_URI, Mentions.ACCOUNT_ID + " = " + mSelectedUserId, null);
-				mResolver.delete(DirectMessages.Inbox.CONTENT_URI, DirectMessages.ACCOUNT_ID + " = " + mSelectedUserId,
-						null);
-				mResolver.delete(DirectMessages.Outbox.CONTENT_URI,
-						DirectMessages.ACCOUNT_ID + " = " + mSelectedUserId, null);
+				mResolver.delete(Statuses.CONTENT_URI, Statuses.ACCOUNT_ID + " = " + mSelectedAccountId, null);
+				mResolver.delete(Mentions.CONTENT_URI, Mentions.ACCOUNT_ID + " = " + mSelectedAccountId, null);
+				mResolver.delete(DirectMessages.Inbox.CONTENT_URI, DirectMessages.ACCOUNT_ID + " = "
+						+ mSelectedAccountId, null);
+				mResolver.delete(DirectMessages.Outbox.CONTENT_URI, DirectMessages.ACCOUNT_ID + " = "
+						+ mSelectedAccountId, null);
 				if (getActivatedAccountIds(getActivity()).length > 0) {
 					getLoaderManager().restartLoader(0, null, AccountsFragment.this);
 				} else {

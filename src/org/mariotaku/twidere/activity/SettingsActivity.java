@@ -123,6 +123,11 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 			return true;
 		} else if (KEY_FILTERS.equals(key)) {
 			if (isDualPaneMode()) {
+				final FragmentManager fm = getSupportFragmentManager();
+				if (fm.findFragmentById(PANE_RIGHT) instanceof FiltersListFragment) {
+					showRightPane();
+					return true;
+				}
 				showFragment(new FiltersListFragment());
 			} else {
 				final Intent intent = new Intent(INTENT_ACTION_FILTERS);

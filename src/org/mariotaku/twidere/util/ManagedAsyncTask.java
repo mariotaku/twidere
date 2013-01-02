@@ -44,7 +44,7 @@ public abstract class ManagedAsyncTask<Params, Progress, Result> extends AsyncTa
 	public Context getContext() {
 		return context;
 	}
-	
+
 	public String getTag() {
 		return tag;
 	}

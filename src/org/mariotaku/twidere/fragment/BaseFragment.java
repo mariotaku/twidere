@@ -31,6 +31,7 @@ import android.content.ContentResolver;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 
 public class BaseFragment extends Fragment implements Constants {
 
@@ -70,6 +71,16 @@ public class BaseFragment extends Fragment implements Constants {
 
 	public AsyncTwitterWrapper getTwitterWrapper() {
 		return getApplication() != null ? getApplication().getTwitterWrapper() : null;
+	}
+
+	public void invalidateOptionsMenu() {
+		final FragmentActivity activity = getActivity();
+		if (activity == null) return;
+		if (activity instanceof BaseActivity) {
+			((BaseActivity) activity).invalidateSupportOptionsMenu();
+		} else {
+			activity.supportInvalidateOptionsMenu();
+		}
 	}
 
 	public void registerReceiver(final BroadcastReceiver receiver, final IntentFilter filter) {

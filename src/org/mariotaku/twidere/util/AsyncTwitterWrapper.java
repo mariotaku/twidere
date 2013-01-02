@@ -295,12 +295,14 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 	}
 
 	public int updateProfileBannerImage(final long account_id, final Uri image_uri, final boolean delete_image) {
-		final UpdateProfileBannerImageTask task = new UpdateProfileBannerImageTask(mContext, mAsyncTaskManager, account_id, image_uri, delete_image);
+		final UpdateProfileBannerImageTask task = new UpdateProfileBannerImageTask(mContext, mAsyncTaskManager,
+				account_id, image_uri, delete_image);
 		return mAsyncTaskManager.add(task, true);
 	}
 
 	public int updateProfileImage(final long account_id, final Uri image_uri, final boolean delete_image) {
-		final UpdateProfileImageTask task = new UpdateProfileImageTask(account_id, image_uri, delete_image);
+		final UpdateProfileImageTask task = new UpdateProfileImageTask(mContext, mAsyncTaskManager, account_id,
+				image_uri, delete_image);
 		return mAsyncTaskManager.add(task, true);
 	}
 
@@ -361,6 +363,86 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		return sInstance = new AsyncTwitterWrapper(context);
 	}
 
+	public static class UpdateProfileBannerImageTask extends ManagedAsyncTask<Void, Void, SingleResponse<Integer>> {
+
+		private final long account_id;
+		private final Uri image_uri;
+		private final boolean delete_image;
+		private final Context mContext;
+
+		public UpdateProfileBannerImageTask(final Context context, final AsyncTaskManager manager,
+				final long account_id, final Uri image_uri, final boolean delete_image) {
+			super(context, manager);
+			mContext = context;
+			this.account_id = account_id;
+			this.image_uri = image_uri;
+			this.delete_image = delete_image;
+		}
+
+		@Override
+		protected SingleResponse<Integer> doInBackground(final Void... params) {
+			return TwitterWrapper.updateProfileBannerImage(mContext, account_id, image_uri, delete_image);
+		}
+
+		@Override
+		protected void onPostExecute(final SingleResponse<Integer> result) {
+			if (result != null && result.data != null) {
+				if (result.data >= 200 && result.data <= 202) {
+					Toast.makeText(mContext, R.string.profile_banner_image_update_successfully, Toast.LENGTH_SHORT)
+							.show();
+				} else {
+					Utils.showErrorToast(mContext, mContext.getString(R.string.updating_profile_banner_image), "Code "
+							+ result.data, true);
+				}
+			} else {
+				Utils.showErrorToast(mContext, R.string.updating_profile_banner_image, result.exception, true);
+			}
+			final Intent intent = new Intent(BROADCAST_PROFILE_BANNER_UPDATED);
+			intent.putExtra(INTENT_KEY_USER_ID, account_id);
+			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
+			mContext.sendBroadcast(intent);
+			super.onPostExecute(result);
+		}
+
+	}
+
+	public static class UpdateProfileImageTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
+
+		private final long account_id;
+		private final Uri image_uri;
+		private final boolean delete_image;
+		private final Context context;
+
+		public UpdateProfileImageTask(final Context context, final AsyncTaskManager manager, final long account_id,
+				final Uri image_uri, final boolean delete_image) {
+			super(context, manager);
+			this.context = context;
+			this.account_id = account_id;
+			this.image_uri = image_uri;
+			this.delete_image = delete_image;
+		}
+
+		@Override
+		protected SingleResponse<User> doInBackground(final Void... params) {
+			return TwitterWrapper.updateProfileImage(context, account_id, image_uri, delete_image);
+		}
+
+		@Override
+		protected void onPostExecute(final SingleResponse<User> result) {
+			if (result != null && result.data != null) {
+				Toast.makeText(context, R.string.profile_image_update_successfully, Toast.LENGTH_SHORT).show();
+			} else {
+				Utils.showErrorToast(context, R.string.updating_profile_image, result.exception, true);
+			}
+			final Intent intent = new Intent(BROADCAST_PROFILE_UPDATED);
+			intent.putExtra(INTENT_KEY_USER_ID, account_id);
+			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
+			context.sendBroadcast(intent);
+			super.onPostExecute(result);
+		}
+
+	}
+
 	public static class UpdateProfileTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
 
 		private final long account_id;
@@ -390,7 +472,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			} else {
 				Utils.showErrorToast(context, context.getString(R.string.updating_profile), result.exception, true);
 			}
-			final Intent intent = new Intent(BROADCAST_PROFILE_UPDATED);
+			final Intent intent = new Intent(BROADCAST_PROFILE_IMAGE_UPDATED);
 			intent.putExtra(INTENT_KEY_USER_ID, account_id);
 			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
 			context.sendBroadcast(intent);
@@ -1990,82 +2072,6 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			}
 			super.onPostExecute(response);
 
-		}
-
-	}
-
-	public static class UpdateProfileBannerImageTask extends ManagedAsyncTask<Void, Void, SingleResponse<Integer>> {
-
-		private final long account_id;
-		private final Uri image_uri;
-		private final boolean delete_image;
-		private final Context mContext;
-
-		public UpdateProfileBannerImageTask(final Context context, final AsyncTaskManager manager, final long account_id, final Uri image_uri, final boolean delete_image) {
-			super(context, manager);
-			mContext = context;
-			this.account_id = account_id;
-			this.image_uri = image_uri;
-			this.delete_image = delete_image;
-		}
-
-		@Override
-		protected SingleResponse<Integer> doInBackground(final Void... params) {
-			return TwitterWrapper.updateProfileBannerImage(mContext, account_id, image_uri, delete_image);
-		}
-
-		@Override
-		protected void onPostExecute(final SingleResponse<Integer> result) {
-			if (result != null && result.data != null) {
-				if (result.data >= 200 && result.data <= 202) {
-					Toast.makeText(mContext, R.string.profile_banner_image_update_successfully, Toast.LENGTH_SHORT)
-							.show();
-				} else {
-					Utils.showErrorToast(mContext, mContext.getString(R.string.updating_profile_banner_image), "Code "
-							+ result.data, true);
-				}
-			} else {
-				Utils.showErrorToast(mContext, R.string.updating_profile_banner_image, result.exception, true);
-			}
-			final Intent intent = new Intent(BROADCAST_PROFILE_UPDATED);
-			intent.putExtra(INTENT_KEY_USER_ID, account_id);
-			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
-			mContext.sendBroadcast(intent);
-			super.onPostExecute(result);
-		}
-
-	}
-
-	class UpdateProfileImageTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
-
-		private final long account_id;
-		private final Uri image_uri;
-		private final boolean delete_image;
-
-		public UpdateProfileImageTask(final long account_id, final Uri image_uri, final boolean delete_image) {
-			super(mContext, mAsyncTaskManager);
-			this.account_id = account_id;
-			this.image_uri = image_uri;
-			this.delete_image = delete_image;
-		}
-
-		@Override
-		protected SingleResponse<User> doInBackground(final Void... params) {
-			return TwitterWrapper.updateProfileImage(mContext, account_id, image_uri, delete_image);
-		}
-
-		@Override
-		protected void onPostExecute(final SingleResponse<User> result) {
-			if (result != null && result.data != null) {
-				Toast.makeText(mContext, R.string.profile_image_update_successfully, Toast.LENGTH_SHORT).show();
-			} else {
-				showErrorToast(R.string.updating_profile_image, result.exception, true);
-			}
-			final Intent intent = new Intent(BROADCAST_PROFILE_UPDATED);
-			intent.putExtra(INTENT_KEY_USER_ID, account_id);
-			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
-			mContext.sendBroadcast(intent);
-			super.onPostExecute(result);
 		}
 
 	}

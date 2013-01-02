@@ -18,6 +18,17 @@ import android.net.Uri;
 
 public class TwitterWrapper implements Constants {
 
+	public static TwitterSingleResponse<Boolean> deleteProfileBannerImage(final Context context, final long account_id) {
+		final Twitter twitter = getTwitterInstance(context, account_id, false);
+		if (twitter == null) return new TwitterSingleResponse<Boolean>(account_id, false, null);
+		try {
+			twitter.removeProfileBannerImage();
+			return new TwitterSingleResponse<Boolean>(account_id, true, null);
+		} catch (final TwitterException e) {
+			return new TwitterSingleResponse<Boolean>(account_id, false, e);
+		}
+	}
+
 	public static TwitterSingleResponse<User> updateProfile(final Context context, final long account_id,
 			final String name, final String url, final String location, final String description) {
 		final Twitter twitter = getTwitterInstance(context, account_id, false);
@@ -74,17 +85,6 @@ public class TwitterWrapper implements Constants {
 			}
 		}
 		return new TwitterSingleResponse<User>(account_id, null, null);
-	}
-
-	public static TwitterSingleResponse<Boolean> deleteProfileBannerImage(final Context context, final long account_id) {
-		final Twitter twitter = getTwitterInstance(context, account_id, false);
-		if (twitter == null) return new TwitterSingleResponse<Boolean>(account_id, false, null);
-		try {
-			twitter.removeProfileBannerImage();
-			return new TwitterSingleResponse<Boolean>(account_id, true, null);
-		} catch (TwitterException e) {
-			return new TwitterSingleResponse<Boolean>(account_id, false, e);
-		}
 	}
 
 	public static final class StatusListResponse extends TwitterListResponse<Status> {

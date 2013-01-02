@@ -6,6 +6,10 @@
 		android:icon="@drawable/ic_menu_profile"
 		android:title="@string/view_user_profile"/>
 	<item
+		android:id="@id/edit"
+		android:icon="@drawable/ic_menu_edit"
+		android:title="@string/edit_profile"/>
+	<item
 		android:id="@id/set_color"
 		android:icon="@drawable/ic_menu_color_palette"
 		android:title="@string/set_color"/>

@@ -35,7 +35,6 @@ import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
 import android.app.AlarmManager;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -51,7 +50,6 @@ import android.os.IBinder;
 public class RefreshService extends Service implements Constants {
 
 	private SharedPreferences mPreferences;
-	private NotificationManager mNotificationManager;
 	private AlarmManager mAlarmManager;
 	private ContentResolver mResolver;
 	private AsyncTwitterWrapper mTwitterWrapper;
@@ -116,7 +114,6 @@ public class RefreshService extends Service implements Constants {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		mAlarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 		final TwidereApplication app = TwidereApplication.getInstance(this);
 		mTwitterWrapper = app.getTwitterWrapper();

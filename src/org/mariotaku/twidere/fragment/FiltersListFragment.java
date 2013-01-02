@@ -32,9 +32,6 @@ import org.mariotaku.twidere.view.TabPageIndicator;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -48,7 +45,6 @@ public class FiltersListFragment extends BaseFragment implements Panes.Right {
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		setHasOptionsMenu(true);
 		new Handler().post(new Runnable() {
 
 			@Override
@@ -68,22 +64,10 @@ public class FiltersListFragment extends BaseFragment implements Panes.Right {
 	}
 
 	@Override
-	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
-		inflater.inflate(R.menu.menu_filter, menu);
-		super.onCreateOptionsMenu(menu, inflater);
-	}
-
-	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup parent, final Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.filters, null);
 		mViewPager = (ExtendedViewPager) view.findViewById(R.id.pager);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		return view;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
-		if (!isVisible() || !isAdded()) return true;
-		return false;
 	}
 }

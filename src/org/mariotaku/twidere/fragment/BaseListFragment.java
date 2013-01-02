@@ -21,6 +21,7 @@ package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.actionbarcompat.ActionBarFragmentActivity;
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.activity.BaseActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.InvalidateProgressBarRunnable;
@@ -33,6 +34,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.ListFragmentTrojan;
 import android.view.LayoutInflater;
@@ -91,6 +93,16 @@ public class BaseListFragment extends ListFragment implements Constants {
 
 	public AsyncTwitterWrapper getTwitterWrapper() {
 		return getApplication() != null ? getApplication().getTwitterWrapper() : null;
+	}
+
+	public void invalidateOptionsMenu() {
+		final FragmentActivity activity = getActivity();
+		if (activity == null) return;
+		if (activity instanceof BaseActivity) {
+			((BaseActivity) activity).invalidateSupportOptionsMenu();
+		} else {
+			activity.supportInvalidateOptionsMenu();
+		}
 	}
 
 	public boolean isActivityFirstCreated() {

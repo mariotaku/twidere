@@ -54,7 +54,7 @@ public class UserListsLoader extends AsyncTaskLoader<UserListsLoader.UserListsDa
 	private final int mPage;
 
 	public UserListsLoader(final Context context, final long account_id, final long user_id, final String screen_name,
-			final UserListsData data, final long cursor, int page) {
+			final UserListsData data, final long cursor, final int page) {
 		super(context);
 		mTwitter = getTwitterInstance(context, account_id, true);
 		mAccountId = account_id;
@@ -152,18 +152,10 @@ public class UserListsLoader extends AsyncTaskLoader<UserListsLoader.UserListsDa
 		private final List<ParcelableUserList> memberships = new NoDuplicatesArrayList<ParcelableUserList>();
 		private final long prev_cursor, cursor, next_cursor;
 
-		private UserListsData(long prev_cursor, long cursor, long next_cursor) {
+		private UserListsData(final long prev_cursor, final long cursor, final long next_cursor) {
 			this.prev_cursor = prev_cursor;
 			this.cursor = cursor;
 			this.next_cursor = next_cursor;
-		}
-
-		public long getNextCursor() {
-			return next_cursor;
-		}
-
-		public long getPrevCursor() {
-			return prev_cursor;
 		}
 
 		public long getCursor() {
@@ -176,6 +168,14 @@ public class UserListsLoader extends AsyncTaskLoader<UserListsLoader.UserListsDa
 
 		public List<ParcelableUserList> getMemberships() {
 			return memberships;
+		}
+
+		public long getNextCursor() {
+			return next_cursor;
+		}
+
+		public long getPrevCursor() {
+			return prev_cursor;
 		}
 
 	}
