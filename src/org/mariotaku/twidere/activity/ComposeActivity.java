@@ -871,12 +871,10 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	private void takePhoto() {
 		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		if (getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-			final File cache_dir = Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? EnvironmentAccessor
-					.getExternalCacheDir(this) : new File(getExternalStorageDirectory().getPath() + "/Android/data/"
-					+ getPackageName() + "/cache/");
+			final File cache_dir = EnvironmentAccessor.getExternalCacheDir(this);
 			final File file = new File(cache_dir, "tmp_photo_" + System.currentTimeMillis() + ".jpg");
 			mImageUri = Uri.fromFile(file);
-			intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageUri);
+			intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
 			try {
 				startActivityForResult(intent, REQUEST_TAKE_PHOTO);
 			} catch (final ActivityNotFoundException e) {

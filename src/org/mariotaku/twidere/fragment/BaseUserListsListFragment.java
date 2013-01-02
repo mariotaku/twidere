@@ -176,7 +176,7 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 	@Override
 	public void onLoadFinished(final Loader<List<ParcelableUserList>> loader, final List<ParcelableUserList> data) {
 		setProgressBarIndeterminateVisibility(false);
-		mAdapter.setData(data);
+		mAdapter.appendData(data);
 		if (loader instanceof BaseUserListsLoader) {
 			final long cursor = ((BaseUserListsLoader) loader).getNextCursor();
 			if (cursor != -2) {

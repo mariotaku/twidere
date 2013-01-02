@@ -29,8 +29,11 @@ import org.mariotaku.twidere.adapter.SeparatedListAdapter;
 import org.mariotaku.twidere.adapter.UserListsAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.UserListsLoader;
+import org.mariotaku.twidere.loader.UserListsLoader.UserListsData;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUserList;
+
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -49,7 +52,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-public class UserListsListFragment extends BaseListFragment implements LoaderCallbacks<UserListsLoader.UserListsData>,
+public class UserListsListFragment extends PullToRefreshListFragment implements LoaderCallbacks<UserListsLoader.UserListsData>,
 		OnItemClickListener, OnItemLongClickListener, Panes.Left, OnMenuItemClickListener {
 
 	private SeparatedListAdapter<UserListsAdapter> mAdapter;
@@ -64,6 +67,11 @@ public class UserListsListFragment extends BaseListFragment implements LoaderCal
 	private ParcelableUserList mSelectedUserList;
 
 	private TwidereApplication mApplication;
+	
+	private UserListsData mUserListsData;
+
+	private long mCursor = -1;
+	private int mPage = 0;
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
@@ -87,13 +95,14 @@ public class UserListsListFragment extends BaseListFragment implements LoaderCal
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
 		getLoaderManager().initLoader(0, getArguments(), this);
+		setMode(Mode.PULL_UP_TO_REFRESH);
 		setListShown(false);
 	}
 
 	@Override
 	public Loader<UserListsLoader.UserListsData> onCreateLoader(final int id, final Bundle args) {
 		setProgressBarIndeterminateVisibility(true);
-		return new UserListsLoader(getActivity(), mAccountId, mUserId, mScreenName);
+		return new UserListsLoader(getActivity(), mAccountId, mUserId, mScreenName, mUserListsData, mCursor, mPage);
 	}
 
 	@Override
@@ -140,11 +149,15 @@ public class UserListsListFragment extends BaseListFragment implements LoaderCal
 	public void onLoadFinished(final Loader<UserListsLoader.UserListsData> loader,
 			final UserListsLoader.UserListsData data) {
 		setProgressBarIndeterminateVisibility(false);
+		mUserListsData = data;
 		if (data != null) {
-			mUserListsAdapter.setData(data.getLists());
-			mUserListMembershipsAdapter.setData(data.getMemberships());
+			mCursor = data.getNextCursor();
+			mPage++;
+			mUserListsAdapter.setData(data.getLists(), true);
+			mUserListMembershipsAdapter.setData(data.getMemberships(), true);
 			mAdapter.notifyDataSetChanged();
 		}
+		onRefreshComplete();
 		setListShown(true);
 	}
 
@@ -189,5 +202,15 @@ public class UserListsListFragment extends BaseListFragment implements LoaderCal
 			mPopupMenu.dismiss();
 		}
 		super.onStop();
+	}
+
+	@Override
+	public void onPullDownToRefresh() {
+		
+	}
+
+	@Override
+	public void onPullUpToRefresh() {
+		getLoaderManager().restartLoader(0, null, this);
 	}
 }

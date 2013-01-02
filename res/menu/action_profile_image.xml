@@ -6,7 +6,7 @@
 		android:icon="@drawable/ic_menu_camera"
 		android:title="@string/take_photo"/>
 	<item
-		android:id="@id/add_image"
+		android:id="@id/pick_from_gallery"
 		android:icon="@drawable/ic_menu_gallery"
 		android:title="@string/pick_from_gallery"/>
 

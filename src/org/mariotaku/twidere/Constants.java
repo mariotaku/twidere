@@ -397,6 +397,7 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_VIEW = R.id.view;
 	public static final int MENU_VIEW_PROFILE = R.id.view_profile;
 	public static final int MENU_DELETE = R.id.delete;
+	public static final int MENU_DELETE_SUBMENU = R.id.delete_submenu;
 	public static final int MENU_TOGGLE = R.id.toggle;
 	public static final int MENU_ADD = R.id.add;
 	public static final int MENU_PICK_FROM_GALLERY = R.id.pick_from_gallery;

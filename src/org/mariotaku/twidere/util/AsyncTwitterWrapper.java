@@ -295,7 +295,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 	}
 
 	public int updateProfileBannerImage(final long account_id, final Uri image_uri, final boolean delete_image) {
-		final UpdateProfileBannerImageTask task = new UpdateProfileBannerImageTask(account_id, image_uri, delete_image);
+		final UpdateProfileBannerImageTask task = new UpdateProfileBannerImageTask(mContext, mAsyncTaskManager, account_id, image_uri, delete_image);
 		return mAsyncTaskManager.add(task, true);
 	}
 
@@ -1994,14 +1994,16 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	}
 
-	class UpdateProfileBannerImageTask extends ManagedAsyncTask<Void, Void, SingleResponse<Integer>> {
+	public static class UpdateProfileBannerImageTask extends ManagedAsyncTask<Void, Void, SingleResponse<Integer>> {
 
 		private final long account_id;
 		private final Uri image_uri;
 		private final boolean delete_image;
+		private final Context mContext;
 
-		public UpdateProfileBannerImageTask(final long account_id, final Uri image_uri, final boolean delete_image) {
-			super(mContext, mAsyncTaskManager);
+		public UpdateProfileBannerImageTask(final Context context, final AsyncTaskManager manager, final long account_id, final Uri image_uri, final boolean delete_image) {
+			super(context, manager);
+			mContext = context;
 			this.account_id = account_id;
 			this.image_uri = image_uri;
 			this.delete_image = delete_image;
@@ -2023,7 +2025,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 							+ result.data, true);
 				}
 			} else {
-				showErrorToast(R.string.updating_profile_banner_image, result.exception, true);
+				Utils.showErrorToast(mContext, R.string.updating_profile_banner_image, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_PROFILE_UPDATED);
 			intent.putExtra(INTENT_KEY_USER_ID, account_id);

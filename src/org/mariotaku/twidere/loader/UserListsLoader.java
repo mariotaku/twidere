@@ -21,32 +21,49 @@ package org.mariotaku.twidere.loader;
 
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
+import twitter4j.CursorSupport;
+import twitter4j.PagableResponseList;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.UserList;
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
+import android.util.Log;
 
 public class UserListsLoader extends AsyncTaskLoader<UserListsLoader.UserListsData> {
+
+	public static final String LOGTAG = UserListsLoader.class.getSimpleName();
 
 	protected final Twitter mTwitter;
 	protected final long mAccountId;
 	protected final boolean mHiResProfileImage;
 	private final long mUserId;
 	private final String mScreenName;
+	private final List<ParcelableUserList> mUserLists;
+	private final List<ParcelableUserList> mUserListMemberships;
 
-	public UserListsLoader(final Context context, final long account_id, final long user_id, final String screen_name) {
+	private final long mCursor;
+	private final int mPage;
+
+	public UserListsLoader(final Context context, final long account_id, final long user_id, final String screen_name,
+			final UserListsData data, final long cursor, int page) {
 		super(context);
 		mTwitter = getTwitterInstance(context, account_id, true);
 		mAccountId = account_id;
 		mUserId = user_id;
+		mCursor = cursor;
+		mPage = page;
 		mScreenName = screen_name;
+		mUserLists = data != null ? data.lists : null;
+		mUserListMemberships = data != null ? data.memberships : new ArrayList<ParcelableUserList>();
 		mHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
@@ -60,25 +77,67 @@ public class UserListsLoader extends AsyncTaskLoader<UserListsLoader.UserListsDa
 			final List<UserList> user_lists;
 			final List<UserList> user_list_memberships;
 			if (mUserId > 0) {
-				user_lists = mTwitter.getUserLists(mUserId);
-				user_list_memberships = mTwitter.getUserListMemberships(mUserId, -1);
+				if (mUserLists != null) {
+					user_lists = Collections.emptyList();
+				} else {
+					user_lists = mTwitter.getUserLists(mUserId);
+				}
+				user_list_memberships = mTwitter.getUserListMemberships(mUserId, mCursor);
 			} else if (mScreenName != null) {
-				user_lists = mTwitter.getUserLists(mScreenName);
-				user_list_memberships = mTwitter.getUserListMemberships(mScreenName, -1);
+				if (mUserLists != null) {
+					user_lists = Collections.emptyList();
+				} else {
+					user_lists = mTwitter.getUserLists(mScreenName);
+				}
+				user_list_memberships = mTwitter.getUserListMemberships(mScreenName, mCursor);
 			} else
 				return null;
 			final int user_lists_size = user_lists.size(), user_list_memberships_size = user_list_memberships.size();
-			final UserListsData data = new UserListsData();
-			for (int i = 0; i < user_lists_size; i++) {
-				data.lists.add(new ParcelableUserList(user_lists.get(i), mAccountId, i, mHiResProfileImage));
+			final long prev_cursor, next_cursor;
+			if (user_list_memberships instanceof PagableResponseList) {
+				next_cursor = ((CursorSupport) user_list_memberships).getNextCursor();
+				prev_cursor = ((CursorSupport) user_list_memberships).getPreviousCursor();
+			} else {
+				next_cursor = -1;
+				prev_cursor = -1;
 			}
-			for (int i = 0; i < user_list_memberships_size; i++) {
-				data.memberships.add(new ParcelableUserList(user_list_memberships.get(i), mAccountId, i,
-						mHiResProfileImage));
+			final UserListsData data = new UserListsData(prev_cursor, mCursor, next_cursor);
+			if (mUserLists == null) {
+				for (int i = 0; i < user_lists_size; i++) {
+					final ParcelableUserList list = new ParcelableUserList(user_lists.get(i), mAccountId, i,
+							mHiResProfileImage);
+					if (!data.lists.contains(list)) {
+						data.lists.add(list);
+					}
+				}
+			} else {
+				data.lists.addAll(mUserLists);
 			}
+			if (user_list_memberships instanceof PagableResponseList) {
+				for (int i = 0; i < user_list_memberships_size; i++) {
+					final ParcelableUserList list = new ParcelableUserList(user_list_memberships.get(i), mAccountId,
+							mPage * 20 + i, mHiResProfileImage);
+					if (!data.memberships.contains(list)) {
+						data.memberships.add(list);
+					}
+				}
+			} else {
+				for (int i = 0; i < user_list_memberships_size; i++) {
+					final ParcelableUserList list = new ParcelableUserList(user_list_memberships.get(i), mAccountId, i,
+							mHiResProfileImage);
+					if (!data.memberships.contains(list)) {
+						data.memberships.add(list);
+					}
+				}
+			}
+			if (mUserListMemberships != null) {
+				data.memberships.addAll(mUserListMemberships);
+			}
+			Collections.sort(data.lists);
+			Collections.sort(data.memberships);
 			return data;
 		} catch (final TwitterException e) {
-			e.printStackTrace();
+			Log.w(LOGTAG, e);
 			return null;
 		}
 	}
@@ -91,6 +150,25 @@ public class UserListsLoader extends AsyncTaskLoader<UserListsLoader.UserListsDa
 	public static final class UserListsData {
 		private final List<ParcelableUserList> lists = new NoDuplicatesArrayList<ParcelableUserList>();
 		private final List<ParcelableUserList> memberships = new NoDuplicatesArrayList<ParcelableUserList>();
+		private final long prev_cursor, cursor, next_cursor;
+
+		private UserListsData(long prev_cursor, long cursor, long next_cursor) {
+			this.prev_cursor = prev_cursor;
+			this.cursor = cursor;
+			this.next_cursor = next_cursor;
+		}
+
+		public long getNextCursor() {
+			return next_cursor;
+		}
+
+		public long getPrevCursor() {
+			return prev_cursor;
+		}
+
+		public long getCursor() {
+			return cursor;
+		}
 
 		public List<ParcelableUserList> getLists() {
 			return lists;

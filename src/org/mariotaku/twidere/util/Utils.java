@@ -543,19 +543,47 @@ public final class Utils implements Constants {
 	public static Intent createTakePhotoIntent(final Uri uri) {
 		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 		return intent;
 	}
-
-	public static Intent createTakePhotoIntent(final Uri uri, final int outputX, final int outputY) {
+	
+	public static Intent createPickImageIntent(final Uri uri, final int outputX, final int outputY) {
+		final Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		intent.setType("image/*");
+		intent.putExtra("outputX", outputX);
+		intent.putExtra("outputY", outputY);
+		intent.putExtra("aspectX", outputX);
+		intent.putExtra("aspectY", outputY);
+		intent.putExtra("scale", true);
+		intent.putExtra("crop", "true");
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+		return intent;
+	}
+	
+	public static Intent createCropImageIntent(final Uri uri, final int outputX, final int outputY) {
 		final Intent intent = new Intent("com.android.camera.action.CROP");
 		intent.setType("image/*");
 		intent.putExtra("outputX", outputX);
 		intent.putExtra("outputY", outputY);
-		intent.putExtra("aspectX", 1);
-		intent.putExtra("aspectY", 1);
+		intent.putExtra("aspectX", outputX);
+		intent.putExtra("aspectY", outputY);
 		intent.putExtra("scale", true);
+		intent.putExtra("crop", "true");
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+		return intent;
+	}
+
+	public static Intent createTakePhotoIntent(final Uri uri, final int outputX, final int outputY) {
+		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		intent.putExtra("return-data", true);
 		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 		return intent;
 	}
 

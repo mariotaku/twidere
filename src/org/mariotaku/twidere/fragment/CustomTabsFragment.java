@@ -344,8 +344,8 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 			super.bindView(view, context, cursor);
 			final CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
 			checkbox.setVisibility(View.VISIBLE);
-			checkbox.setText(R.string.refresh);
-			checkbox.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_refresh, 0, 0, 0);
+//			checkbox.setText(R.string.refresh);
+			checkbox.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_menu_refresh, 0);
 			checkbox.setOnClickListener(this);
 			final TextView text2 = (TextView) view.findViewById(android.R.id.text2);
 			final ImageView icon = (ImageView) view.findViewById(android.R.id.icon);

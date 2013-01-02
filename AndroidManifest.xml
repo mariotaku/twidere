@@ -461,9 +461,11 @@
 		</activity>
 		<activity
 			android:name=".activity.AuthorizeActivity"
+			android:exported="false"
 			android:label="@string/sign_in"/>
 		<activity
 			android:name=".activity.DataProfilingSettingsActivity"
+			android:exported="false"
 			android:label="@string/data_profiling"
 			android:theme="@style/Theme.Blank.DialogWhenLarge"/>
 		<activity
@@ -472,6 +474,15 @@
 			android:theme="@style/Theme.Twidere.Light.Dialog">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.REQUEST_PERMISSIONS"/>
+
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
+		<activity
+			android:name=".activity.CameraCropActivity"
+			android:exported="false">
+			<intent-filter>
+				<action android:name="org.mariotaku.twidere.CAMERA_CROP"/>
 
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>

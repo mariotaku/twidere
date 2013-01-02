@@ -68,6 +68,7 @@ import twitter4j.TwitterException;
 import twitter4j.http.HostAddressResolver;
 import twitter4j.http.HttpClientConfiguration;
 import twitter4j.http.HttpParameter;
+import twitter4j.http.HttpResponseCode;
 import twitter4j.http.RequestMethod;
 import twitter4j.internal.logging.Logger;
 import twitter4j.internal.util.InternalStringUtil;
@@ -78,7 +79,7 @@ import twitter4j.internal.util.InternalStringUtil;
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @since Twitter4J 2.1.2
  */
-public class HttpClientImpl implements twitter4j.http.HttpClient {
+public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCode {
 	private static final Logger logger = Logger.getLogger();
 	private final HttpClientConfiguration conf;
 	private final HttpClient client;
@@ -189,7 +190,8 @@ public class HttpClientImpl implements twitter4j.http.HttpClient {
 			}
 			final ApacheHttpClientHttpResponseImpl res = new ApacheHttpClientHttpResponseImpl(
 					client.execute(commonsRequest), conf);
-			if (200 != res.getStatusCode()) throw new TwitterException(res.asString(), req, res);
+			final int statusCode = res.getStatusCode();
+			if (statusCode < OK && statusCode > ACCEPTED) throw new TwitterException(res.asString(), req, res);
 			return res;
 		} catch (final IOException e) {
 			throw new TwitterException(e);

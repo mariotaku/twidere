@@ -68,7 +68,7 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 		return view;
 	}
 
-	public void setData(final List<ParcelableUserList> data) {
+	public void appendData(final List<ParcelableUserList> data) {
 		setData(data, false);
 	}
 
