@@ -191,7 +191,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 					final long[] account_ids = bundle.getLongArray(INTENT_KEY_IDS);
 					if (account_ids != null) {
 						mAccountIds = account_ids;
-						if (mInReplyToStatusId <= 0) {
+						if (mInReplyToStatusId <= 0 && !Intent.ACTION_SEND.equals(getIntent().getAction())) {
 							final SharedPreferences.Editor editor = mPreferences.edit();
 							editor.putString(PREFERENCE_KEY_COMPOSE_ACCOUNTS,
 									ArrayUtils.toString(mAccountIds, ',', false));
