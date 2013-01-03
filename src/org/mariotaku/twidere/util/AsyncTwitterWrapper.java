@@ -619,11 +619,10 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		protected void onPostExecute(final SingleResponse<twitter4j.Status> result) {
 
 			if (result.data != null) {
-				final long status_id = result.data.getId();
 				final ContentValues values = new ContentValues();
-				values.put(Statuses.IS_FAVORITE, 1);
+				values.put(Statuses.IS_FAVORITE, true);
 				final StringBuilder where = new StringBuilder();
-				where.append(Statuses.ACCOUNT_ID + " = " + result.extras.getLong(INTENT_KEY_ACCOUNT_ID));
+				where.append(Statuses.ACCOUNT_ID + " = " + account_id);
 				where.append(" AND ");
 				where.append("(");
 				where.append(Statuses.STATUS_ID + " = " + status_id);
@@ -1005,7 +1004,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				final ContentValues values = new ContentValues();
 				values.put(Statuses.IS_FAVORITE, 0);
 				final StringBuilder where = new StringBuilder();
-				where.append(Statuses.ACCOUNT_ID + " = " + result.extras.getLong(INTENT_KEY_ACCOUNT_ID));
+				where.append(Statuses.ACCOUNT_ID + " = " + account_id);
 				where.append(" AND ");
 				where.append("(");
 				where.append(Statuses.STATUS_ID + " = " + status_id);
