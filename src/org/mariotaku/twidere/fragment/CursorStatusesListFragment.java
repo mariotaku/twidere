@@ -116,7 +116,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 		if (last_viewed_id <= 0) {
 			if (!remember_position) return;
 			status_id = mPreferences.getLong(getSavedTimelinePreferenceKey(), -1);
-		} else if (first_visible_position > 0 && curr_viewed_id > 0 && last_viewed_id != curr_viewed_id) {
+		} else if ((first_visible_position > 0 || remember_position) && curr_viewed_id > 0 && last_viewed_id != curr_viewed_id) {
 			status_id = last_viewed_id;
 		} else
 			return;
