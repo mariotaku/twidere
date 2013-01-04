@@ -542,7 +542,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				break;
 			}
 			case R.id.profile_image_container: {
-				final Uri uri = Uri.parse(getOriginalTwitterProfileImage(mUser.profile_image_url));
+				final String profile_image_url_string = getOriginalTwitterProfileImage(mUser.profile_image_url);
+				if (profile_image_url_string == null) return;
+				final Uri uri = Uri.parse(profile_image_url_string);
 				openImage(getActivity(), uri, false);
 				break;
 			}

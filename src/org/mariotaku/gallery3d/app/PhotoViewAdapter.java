@@ -249,6 +249,7 @@ public class PhotoViewAdapter implements PhotoView.Model {
 	}
 
 	public synchronized void setRegionDecoder(final BitmapRegionDecoder decoder) {
+		mRegionDecoder = decoder;
 		if (decoder == null) return;
 		mImageWidth = decoder.getWidth();
 		mImageHeight = decoder.getHeight();
