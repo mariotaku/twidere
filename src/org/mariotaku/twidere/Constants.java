@@ -31,8 +31,7 @@ import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.provider.TweetStore.Tabs;
-
-import twitter4j.TwitterConstants;
+import org.mariotaku.twidere.twitter4j.TwitterConstants;
 
 public interface Constants extends TwitterConstants {
 
@@ -50,7 +49,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PERMISSION_PREFERENCES_NAME = "permissions";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 36;
+	public static final int DATABASES_VERSION = 37;
 
 	// The following 4 constants are not included in source code, you'd better
 	// use your own.

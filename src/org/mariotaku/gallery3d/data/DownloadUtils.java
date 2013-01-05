@@ -31,8 +31,8 @@ import java.net.URL;
 import org.mariotaku.gallery3d.common.Utils;
 import org.mariotaku.gallery3d.util.ThreadPool.CancelListener;
 import org.mariotaku.gallery3d.util.ThreadPool.JobContext;
+import org.mariotaku.twidere.twitter4j.http.HttpClientWrapper;
 
-import twitter4j.http.HttpClientWrapper;
 import android.content.Context;
 import android.util.Log;
 

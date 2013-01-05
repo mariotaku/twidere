@@ -25,35 +25,11 @@ import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
 public class GalleryUtils {
-	public static final String MIME_TYPE_IMAGE = "image/*";
 
 	private static float sPixelDensity = -1f;
 
-	private static final double EARTH_RADIUS_METERS = 6367000.0;
-
-	public static double accurateDistanceMeters(final double lat1, final double lng1, final double lat2,
-			final double lng2) {
-		final double dlat = Math.sin(0.5 * (lat2 - lat1));
-		final double dlng = Math.sin(0.5 * (lng2 - lng1));
-		final double x = dlat * dlat + dlng * dlng * Math.cos(lat1) * Math.cos(lat2);
-		return 2 * Math.atan2(Math.sqrt(x), Math.sqrt(Math.max(0.0, 1.0 - x))) * EARTH_RADIUS_METERS;
-	}
-
 	public static int dpToPixel(final int dp) {
 		return Math.round(dpToPixel((float) dp));
-	}
-
-	// Below are used the detect using database in the render thread. It only
-	// works most of the time, but that's ok because it's for debugging only.
-
-	public static byte[] getBytes(final String in) {
-		final byte[] result = new byte[in.length() * 2];
-		int output = 0;
-		for (final char ch : in.toCharArray()) {
-			result[output++] = (byte) (ch & 0xFF);
-			result[output++] = (byte) (ch >> 8);
-		}
-		return result;
 	}
 
 	public static void initialize(final Context context) {

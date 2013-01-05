@@ -26,9 +26,9 @@ import java.util.Comparator;
 
 import org.mariotaku.twidere.loader.SavedSearchesLoader;
 import org.mariotaku.twidere.model.Panes;
+import org.mariotaku.twidere.twitter4j.ResponseList;
+import org.mariotaku.twidere.twitter4j.SavedSearch;
 
-import twitter4j.ResponseList;
-import twitter4j.SavedSearch;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;

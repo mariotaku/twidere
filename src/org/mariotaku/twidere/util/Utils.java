@@ -116,32 +116,32 @@ import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.provider.TweetStore.Tabs;
+import org.mariotaku.twidere.twitter4j.DirectMessage;
+import org.mariotaku.twidere.twitter4j.EntitySupport;
+import org.mariotaku.twidere.twitter4j.GeoLocation;
+import org.mariotaku.twidere.twitter4j.MediaEntity;
+import org.mariotaku.twidere.twitter4j.RateLimitStatus;
+import org.mariotaku.twidere.twitter4j.ResponseList;
+import org.mariotaku.twidere.twitter4j.Status;
+import org.mariotaku.twidere.twitter4j.Trend;
+import org.mariotaku.twidere.twitter4j.Trends;
+import org.mariotaku.twidere.twitter4j.Twitter;
+import org.mariotaku.twidere.twitter4j.TwitterException;
+import org.mariotaku.twidere.twitter4j.TwitterFactory;
+import org.mariotaku.twidere.twitter4j.URLEntity;
+import org.mariotaku.twidere.twitter4j.User;
+import org.mariotaku.twidere.twitter4j.UserList;
+import org.mariotaku.twidere.twitter4j.auth.AccessToken;
+import org.mariotaku.twidere.twitter4j.auth.BasicAuthorization;
+import org.mariotaku.twidere.twitter4j.auth.TwipOModeAuthorization;
+import org.mariotaku.twidere.twitter4j.conf.Configuration;
+import org.mariotaku.twidere.twitter4j.conf.ConfigurationBuilder;
+import org.mariotaku.twidere.twitter4j.http.HostAddressResolver;
+import org.mariotaku.twidere.twitter4j.http.HttpClientWrapper;
+import org.mariotaku.twidere.twitter4j.http.HttpResponse;
 import org.mariotaku.twidere.util.HtmlLinkExtractor.HtmlLink;
 import org.mariotaku.twidere.util.httpclient.HttpClientImpl;
 
-import twitter4j.DirectMessage;
-import twitter4j.EntitySupport;
-import twitter4j.GeoLocation;
-import twitter4j.MediaEntity;
-import twitter4j.RateLimitStatus;
-import twitter4j.ResponseList;
-import twitter4j.Status;
-import twitter4j.Trend;
-import twitter4j.Trends;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.URLEntity;
-import twitter4j.User;
-import twitter4j.UserList;
-import twitter4j.auth.AccessToken;
-import twitter4j.auth.BasicAuthorization;
-import twitter4j.auth.TwipOModeAuthorization;
-import twitter4j.conf.Configuration;
-import twitter4j.conf.ConfigurationBuilder;
-import twitter4j.http.HostAddressResolver;
-import twitter4j.http.HttpClientWrapper;
-import twitter4j.http.HttpResponse;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -1968,7 +1968,7 @@ public final class Utils implements Constants {
 		values.put(Accounts.ACCOUNT_ID, user.getId());
 		values.put(Accounts.SCREEN_NAME, user.getScreenName());
 		values.put(Accounts.NAME, user.getName());
-		values.put(Accounts.PROFILE_IMAGE_URL, user.getProfileImageUrlHttps().toString());
+		values.put(Accounts.PROFILE_IMAGE_URL, parseString(user.getProfileImageUrlHttps()));
 		values.put(Accounts.USER_COLOR, color);
 		values.put(Accounts.IS_ACTIVATED, 1);
 		values.put(Accounts.REST_BASE_URL, conf.getRestBaseURL());
@@ -2973,7 +2973,6 @@ public final class Utils implements Constants {
 		toast.show();
 	}
 
-	@SuppressWarnings("deprecation")
 	public static void showErrorToast(final Context context, final String action, final Throwable t,
 			final boolean long_message) {
 		if (context == null) return;
@@ -2986,10 +2985,9 @@ public final class Utils implements Constants {
 					final TwitterException te = (TwitterException) t;
 					if (te.exceededRateLimitation()) {
 						final RateLimitStatus status = te.getRateLimitStatus();
-						final String next_reset_time_string = DateUtils.formatDateTime(context, status.getResetTime()
-								.getTime(), DateFormat.is24HourFormat(context) ? DateUtils.FORMAT_SHOW_TIME
-								| DateUtils.FORMAT_24HOUR : DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_12HOUR);
-						message = context.getString(R.string.error_message_rate_limit, action, next_reset_time_string);
+						final CharSequence next_reset_time = DateUtils.getRelativeTimeSpanString(status
+								.getResetTimeInSeconds() * 1000);
+						message = context.getString(R.string.error_message_rate_limit, action, next_reset_time);
 					} else {
 						message = context.getString(R.string.error_message_with_action, action, t_message);
 					}

@@ -105,6 +105,7 @@ public final class DatabaseHelper extends SQLiteOpenHelper implements Constants 
 		account_db_table_alias.put(Accounts.SCREEN_NAME, "username");
 		account_db_table_alias.put(Accounts.NAME, "username");
 		account_db_table_alias.put(Accounts.ACCOUNT_ID, "user_id");
+		account_db_table_alias.put(Accounts.SIGNING_OAUTH_BASE_URL, "oauth_rest_base_url");
 		safeUpgrade(db, TABLE_ACCOUNTS, Accounts.COLUMNS, Accounts.TYPES, true, false, account_db_table_alias);
 		safeUpgrade(db, TABLE_STATUSES, Statuses.COLUMNS, Statuses.TYPES, true, true, null);
 		safeUpgrade(db, TABLE_MENTIONS, Mentions.COLUMNS, Mentions.TYPES, true, true, null);

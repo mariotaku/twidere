@@ -32,22 +32,21 @@ import java.util.Map;
 import org.ccil.cowan.tagsoup.HTMLSchema;
 import org.ccil.cowan.tagsoup.Parser;
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.twitter4j.Twitter;
+import org.mariotaku.twidere.twitter4j.TwitterException;
+import org.mariotaku.twidere.twitter4j.auth.AccessToken;
+import org.mariotaku.twidere.twitter4j.auth.RequestToken;
+import org.mariotaku.twidere.twitter4j.conf.Configuration;
+import org.mariotaku.twidere.twitter4j.http.HttpClient;
+import org.mariotaku.twidere.twitter4j.http.HttpClientFactory;
+import org.mariotaku.twidere.twitter4j.http.HttpParameter;
+import org.mariotaku.twidere.twitter4j.http.HttpRequest;
+import org.mariotaku.twidere.twitter4j.http.RequestMethod;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
-
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.auth.AccessToken;
-import twitter4j.auth.RequestToken;
-import twitter4j.conf.Configuration;
-import twitter4j.http.HttpClient;
-import twitter4j.http.HttpClientFactory;
-import twitter4j.http.HttpParameter;
-import twitter4j.http.HttpRequest;
-import twitter4j.http.RequestMethod;
 
 public class OAuthPasswordAuthenticator implements Constants {
 

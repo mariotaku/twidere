@@ -30,9 +30,6 @@ import android.view.MotionEvent;
 
 public class PhotoView extends GLView {
 
-	public static final int INVALID_SIZE = -1;
-	public static final long INVALID_DATA_VERSION = MediaItem.INVALID_DATA_VERSION;
-
 	private static final int MSG_CANCEL_EXTRA_SCALING = 2;
 
 	private static final int MSG_CAPTURE_ANIMATION_DONE = 4;

@@ -124,15 +124,6 @@ abstract class BasicTexture implements Texture {
 		freeResource();
 	}
 
-	// yield() is called when the texture will not be used temporarily,
-	// so it can free some resources.
-	// The default implementation unloads the texture from GL memory, so
-	// the subclass should make sure it can reload the texture to GL memory
-	// later, or it will have to override this method.
-	public void yield() {
-		freeResource();
-	}
-
 	@Override
 	protected void finalize() {
 		sInFinalizer.set(BasicTexture.class);
@@ -176,6 +167,15 @@ abstract class BasicTexture implements Texture {
 		}
 		mState = STATE_UNLOADED;
 		setAssociatedCanvas(null);
+	}
+
+	// yield() is called when the texture will not be used temporarily,
+	// so it can free some resources.
+	// The default implementation unloads the texture from GL memory, so
+	// the subclass should make sure it can reload the texture to GL memory
+	// later, or it will have to override this method.
+	private void yield() {
+		freeResource();
 	}
 
 	// This is for deciding if we can call Bitmap's recycle().

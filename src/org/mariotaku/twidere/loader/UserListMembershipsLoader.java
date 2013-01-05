@@ -22,11 +22,11 @@ package org.mariotaku.twidere.loader;
 import java.util.List;
 
 import org.mariotaku.twidere.model.ParcelableUserList;
+import org.mariotaku.twidere.twitter4j.PagableResponseList;
+import org.mariotaku.twidere.twitter4j.Twitter;
+import org.mariotaku.twidere.twitter4j.TwitterException;
+import org.mariotaku.twidere.twitter4j.UserList;
 
-import twitter4j.PagableResponseList;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.UserList;
 import android.content.Context;
 
 public class UserListMembershipsLoader extends BaseUserListsLoader {

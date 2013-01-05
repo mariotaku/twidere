@@ -54,16 +54,16 @@ import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.twitter4j.DirectMessage;
+import org.mariotaku.twidere.twitter4j.Paging;
+import org.mariotaku.twidere.twitter4j.ResponseList;
+import org.mariotaku.twidere.twitter4j.StatusUpdate;
+import org.mariotaku.twidere.twitter4j.Trends;
+import org.mariotaku.twidere.twitter4j.Twitter;
+import org.mariotaku.twidere.twitter4j.TwitterException;
+import org.mariotaku.twidere.twitter4j.User;
+import org.mariotaku.twidere.twitter4j.UserList;
 
-import twitter4j.DirectMessage;
-import twitter4j.Paging;
-import twitter4j.ResponseList;
-import twitter4j.StatusUpdate;
-import twitter4j.Trends;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.User;
-import twitter4j.UserList;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -363,7 +363,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		return sInstance = new AsyncTwitterWrapper(context);
 	}
 
-	public static class UpdateProfileBannerImageTask extends ManagedAsyncTask<Void, Void, SingleResponse<Integer>> {
+	public static class UpdateProfileBannerImageTask extends ManagedAsyncTask<Void, Void, SingleResponse<Boolean>> {
 
 		private final long account_id;
 		private final Uri image_uri;
@@ -380,20 +380,14 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		@Override
-		protected SingleResponse<Integer> doInBackground(final Void... params) {
+		protected SingleResponse<Boolean> doInBackground(final Void... params) {
 			return TwitterWrapper.updateProfileBannerImage(mContext, account_id, image_uri, delete_image);
 		}
 
 		@Override
-		protected void onPostExecute(final SingleResponse<Integer> result) {
-			if (result != null && result.data != null) {
-				if (result.data >= 200 && result.data <= 202) {
-					Toast.makeText(mContext, R.string.profile_banner_image_update_successfully, Toast.LENGTH_SHORT)
-							.show();
-				} else {
-					Utils.showErrorToast(mContext, mContext.getString(R.string.updating_profile_banner_image), "Code "
-							+ result.data, true);
-				}
+		protected void onPostExecute(final SingleResponse<Boolean> result) {
+			if (result != null && result.data != null && result.data) {
+				Toast.makeText(mContext, R.string.profile_banner_image_update_successfully, Toast.LENGTH_SHORT).show();
 			} else {
 				Utils.showErrorToast(mContext, R.string.updating_profile_banner_image, result.exception, true);
 			}
@@ -588,7 +582,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	}
 
-	class CreateFavoriteTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
+	class CreateFavoriteTask extends
+			ManagedAsyncTask<Void, Void, SingleResponse<org.mariotaku.twidere.twitter4j.Status>> {
 
 		private final long account_id, status_id;
 
@@ -599,24 +594,25 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		@Override
-		protected SingleResponse<twitter4j.Status> doInBackground(final Void... params) {
+		protected SingleResponse<org.mariotaku.twidere.twitter4j.Status> doInBackground(final Void... params) {
 
-			if (account_id < 0) return new TwitterSingleResponse<twitter4j.Status>(account_id, null, null);
+			if (account_id < 0)
+				return new TwitterSingleResponse<org.mariotaku.twidere.twitter4j.Status>(account_id, null, null);
 
 			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
-					final twitter4j.Status status = twitter.createFavorite(status_id);
-					return new TwitterSingleResponse<twitter4j.Status>(account_id, status, null);
+					final org.mariotaku.twidere.twitter4j.Status status = twitter.createFavorite(status_id);
+					return new TwitterSingleResponse<org.mariotaku.twidere.twitter4j.Status>(account_id, status, null);
 				} catch (final TwitterException e) {
-					return new TwitterSingleResponse<twitter4j.Status>(account_id, null, e);
+					return new TwitterSingleResponse<org.mariotaku.twidere.twitter4j.Status>(account_id, null, e);
 				}
 			}
-			return new TwitterSingleResponse<twitter4j.Status>(account_id, null, null);
+			return new TwitterSingleResponse<org.mariotaku.twidere.twitter4j.Status>(account_id, null, null);
 		}
 
 		@Override
-		protected void onPostExecute(final SingleResponse<twitter4j.Status> result) {
+		protected void onPostExecute(final SingleResponse<org.mariotaku.twidere.twitter4j.Status> result) {
 
 			if (result.data != null) {
 				final ContentValues values = new ContentValues();
@@ -965,7 +961,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	}
 
-	class DestroyFavoriteTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
+	class DestroyFavoriteTask extends
+			ManagedAsyncTask<Void, Void, SingleResponse<org.mariotaku.twidere.twitter4j.Status>> {
 
 		private final long account_id;
 
@@ -978,26 +975,26 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		@Override
-		protected SingleResponse<twitter4j.Status> doInBackground(final Void... params) {
+		protected SingleResponse<org.mariotaku.twidere.twitter4j.Status> doInBackground(final Void... params) {
 
 			if (account_id < 0) {
-				new TwitterSingleResponse<twitter4j.Status>(account_id, null, null);
+				new TwitterSingleResponse<org.mariotaku.twidere.twitter4j.Status>(account_id, null, null);
 			}
 
 			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
-					final twitter4j.Status status = twitter.destroyFavorite(status_id);
-					return new TwitterSingleResponse<twitter4j.Status>(account_id, status, null);
+					final org.mariotaku.twidere.twitter4j.Status status = twitter.destroyFavorite(status_id);
+					return new TwitterSingleResponse<org.mariotaku.twidere.twitter4j.Status>(account_id, status, null);
 				} catch (final TwitterException e) {
-					return new TwitterSingleResponse<twitter4j.Status>(account_id, null, e);
+					return new TwitterSingleResponse<org.mariotaku.twidere.twitter4j.Status>(account_id, null, e);
 				}
 			}
-			return new TwitterSingleResponse<twitter4j.Status>(account_id, null, null);
+			return new TwitterSingleResponse<org.mariotaku.twidere.twitter4j.Status>(account_id, null, null);
 		}
 
 		@Override
-		protected void onPostExecute(final SingleResponse<twitter4j.Status> result) {
+		protected void onPostExecute(final SingleResponse<org.mariotaku.twidere.twitter4j.Status> result) {
 
 			if (result.data != null) {
 				final long status_id = result.data.getId();
@@ -1071,7 +1068,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	}
 
-	class DestroyStatusTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
+	class DestroyStatusTask extends
+			ManagedAsyncTask<Void, Void, SingleResponse<org.mariotaku.twidere.twitter4j.Status>> {
 
 		private final long account_id;
 
@@ -1084,22 +1082,22 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		@Override
-		protected SingleResponse<twitter4j.Status> doInBackground(final Void... params) {
+		protected SingleResponse<org.mariotaku.twidere.twitter4j.Status> doInBackground(final Void... params) {
 
 			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
-					final twitter4j.Status status = twitter.destroyStatus(status_id);
-					return new TwitterSingleResponse<twitter4j.Status>(account_id, status, null);
+					final org.mariotaku.twidere.twitter4j.Status status = twitter.destroyStatus(status_id);
+					return new TwitterSingleResponse<org.mariotaku.twidere.twitter4j.Status>(account_id, status, null);
 				} catch (final TwitterException e) {
-					return new TwitterSingleResponse<twitter4j.Status>(account_id, null, e);
+					return new TwitterSingleResponse<org.mariotaku.twidere.twitter4j.Status>(account_id, null, e);
 				}
 			}
-			return new TwitterSingleResponse<twitter4j.Status>(account_id, null, null);
+			return new TwitterSingleResponse<org.mariotaku.twidere.twitter4j.Status>(account_id, null, null);
 		}
 
 		@Override
-		protected void onPostExecute(final SingleResponse<twitter4j.Status> result) {
+		protected void onPostExecute(final SingleResponse<org.mariotaku.twidere.twitter4j.Status> result) {
 			final Intent intent = new Intent(BROADCAST_STATUS_DESTROYED);
 			if (result != null && result.data != null && result.data.getId() > 0) {
 				final long status_id = result.data.getId();
@@ -1292,8 +1290,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		@Override
-		public ResponseList<twitter4j.Status> getStatuses(final Twitter twitter, final Paging paging)
-				throws TwitterException {
+		public ResponseList<org.mariotaku.twidere.twitter4j.Status> getStatuses(final Twitter twitter,
+				final Paging paging) throws TwitterException {
 			return twitter.getHomeTimeline(paging);
 		}
 
@@ -1352,9 +1350,9 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		@Override
-		public ResponseList<twitter4j.Status> getStatuses(final Twitter twitter, final Paging paging)
-				throws TwitterException {
-			return twitter.getMentions(paging);
+		public ResponseList<org.mariotaku.twidere.twitter4j.Status> getStatuses(final Twitter twitter,
+				final Paging paging) throws TwitterException {
+			return twitter.getMentionsTimeline(paging);
 		}
 
 		@Override
@@ -1439,7 +1437,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			this.since_ids = since_ids;
 		}
 
-		public abstract ResponseList<twitter4j.Status> getStatuses(Twitter twitter, Paging paging)
+		public abstract ResponseList<org.mariotaku.twidere.twitter4j.Status> getStatuses(Twitter twitter, Paging paging)
 				throws TwitterException;
 
 		public abstract Twitter getTwitter(long account_id);
@@ -1469,7 +1467,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 							since_id = since_ids[idx];
 							paging.setSinceId(since_id);
 						}
-						final ResponseList<twitter4j.Status> statuses = getStatuses(twitter, paging);
+						final ResponseList<org.mariotaku.twidere.twitter4j.Status> statuses = getStatuses(twitter,
+								paging);
 						if (statuses != null) {
 							result.add(new StatusListResponse(account_id, max_id, since_id, load_item_limit, statuses,
 									null));
@@ -1637,7 +1636,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	}
 
-	class RetweetStatusTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
+	class RetweetStatusTask extends
+			ManagedAsyncTask<Void, Void, SingleResponse<org.mariotaku.twidere.twitter4j.Status>> {
 
 		private final long account_id;
 
@@ -1650,24 +1650,25 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		@Override
-		protected SingleResponse<twitter4j.Status> doInBackground(final Void... params) {
+		protected SingleResponse<org.mariotaku.twidere.twitter4j.Status> doInBackground(final Void... params) {
 
-			if (account_id < 0) return new TwitterSingleResponse<twitter4j.Status>(account_id, null, null);
+			if (account_id < 0)
+				return new TwitterSingleResponse<org.mariotaku.twidere.twitter4j.Status>(account_id, null, null);
 
 			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
-					final twitter4j.Status status = twitter.retweetStatus(status_id);
-					return new TwitterSingleResponse<twitter4j.Status>(account_id, status, null);
+					final org.mariotaku.twidere.twitter4j.Status status = twitter.retweetStatus(status_id);
+					return new TwitterSingleResponse<org.mariotaku.twidere.twitter4j.Status>(account_id, status, null);
 				} catch (final TwitterException e) {
-					return new TwitterSingleResponse<twitter4j.Status>(account_id, null, e);
+					return new TwitterSingleResponse<org.mariotaku.twidere.twitter4j.Status>(account_id, null, e);
 				}
 			}
-			return new TwitterSingleResponse<twitter4j.Status>(account_id, null, null);
+			return new TwitterSingleResponse<org.mariotaku.twidere.twitter4j.Status>(account_id, null, null);
 		}
 
 		@Override
-		protected void onPostExecute(final SingleResponse<twitter4j.Status> result) {
+		protected void onPostExecute(final SingleResponse<org.mariotaku.twidere.twitter4j.Status> result) {
 
 			if (result.data != null && result.data.getId() > 0) {
 				final ContentValues values = new ContentValues();
@@ -1932,7 +1933,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			final ArrayList<Long> newly_inserted_ids = new ArrayList<Long>();
 			for (final StatusListResponse response : responses) {
 				final long account_id = response.account_id;
-				final List<twitter4j.Status> statuses = response.list;
+				final List<org.mariotaku.twidere.twitter4j.Status> statuses = response.list;
 				if (statuses == null || statuses.size() <= 0) {
 					continue;
 				}
@@ -1940,7 +1941,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				final boolean no_items_before = ids_in_db.size() <= 0;
 				final List<ContentValues> values_list = new ArrayList<ContentValues>();
 				final List<Long> status_ids = new ArrayList<Long>(), retweet_ids = new ArrayList<Long>();
-				for (final twitter4j.Status status : statuses) {
+				for (final org.mariotaku.twidere.twitter4j.Status status : statuses) {
 					if (status == null) {
 						continue;
 					}
@@ -2075,7 +2076,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	}
 
-	class UpdateStatusTask extends ManagedAsyncTask<Void, Void, List<TwitterSingleResponse<twitter4j.Status>>> {
+	class UpdateStatusTask extends
+			ManagedAsyncTask<Void, Void, List<TwitterSingleResponse<org.mariotaku.twidere.twitter4j.Status>>> {
 
 		private final ImageUploaderInterface uploader;
 		private final TweetShortenerInterface shortener;
@@ -2110,7 +2112,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		@Override
-		protected List<TwitterSingleResponse<twitter4j.Status>> doInBackground(final Void... params) {
+		protected List<TwitterSingleResponse<org.mariotaku.twidere.twitter4j.Status>> doInBackground(
+				final Void... params) {
 
 			final Extractor extractor = new Extractor();
 			final ArrayList<ContentValues> hashtag_values = new ArrayList<ContentValues>();
@@ -2126,7 +2129,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			mResolver.bulkInsert(CachedHashtags.CONTENT_URI,
 					hashtag_values.toArray(new ContentValues[hashtag_values.size()]));
 
-			final List<TwitterSingleResponse<twitter4j.Status>> result = new ArrayList<TwitterSingleResponse<twitter4j.Status>>();
+			final List<TwitterSingleResponse<org.mariotaku.twidere.twitter4j.Status>> result = new ArrayList<TwitterSingleResponse<org.mariotaku.twidere.twitter4j.Status>>();
 
 			if (account_ids.length == 0) return result;
 
@@ -2191,16 +2194,17 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 							.contains("*"));
 					if (twitter != null) {
 						try {
-							result.add(new TwitterSingleResponse<twitter4j.Status>(account_id, twitter
-									.updateStatus(status), null));
+							result.add(new TwitterSingleResponse<org.mariotaku.twidere.twitter4j.Status>(account_id,
+									twitter.updateStatus(status), null));
 						} catch (final TwitterException e) {
-							result.add(new TwitterSingleResponse<twitter4j.Status>(account_id, null, e));
+							result.add(new TwitterSingleResponse<org.mariotaku.twidere.twitter4j.Status>(account_id,
+									null, e));
 						}
 					}
 				}
 			} catch (final UpdateStatusException e) {
 				for (final long account_id : account_ids) {
-					result.add(new TwitterSingleResponse<twitter4j.Status>(account_id, null, e));
+					result.add(new TwitterSingleResponse<org.mariotaku.twidere.twitter4j.Status>(account_id, null, e));
 				}
 			}
 			return result;
@@ -2213,13 +2217,13 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		@Override
-		protected void onPostExecute(final List<TwitterSingleResponse<twitter4j.Status>> result) {
+		protected void onPostExecute(final List<TwitterSingleResponse<org.mariotaku.twidere.twitter4j.Status>> result) {
 
 			boolean succeed = true;
 			Exception exception = null;
 			final List<Long> failed_account_ids = new ArrayList<Long>();
 
-			for (final TwitterSingleResponse<twitter4j.Status> response : result) {
+			for (final TwitterSingleResponse<org.mariotaku.twidere.twitter4j.Status> response : result) {
 				if (response.data == null) {
 					succeed = false;
 					failed_account_ids.add(response.account_id);
@@ -2239,9 +2243,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			} else {
 				// If the status is a duplicate, there's no need to save it to
 				// drafts.
-				if (exception instanceof TwitterException && ((TwitterException) exception).getErrorMessages() != null
-						&& ((TwitterException) exception).getErrorMessages().length > 0
-						&& ((TwitterException) exception).getErrorMessages()[0].getCode() == 187) {
+				if (exception instanceof TwitterException && ((TwitterException) exception).getErrorCode() == 187) {
 					Utils.showErrorToast(mContext, mContext.getString(R.string.status_is_duplicate), false);
 				} else {
 					saveDrafts(failed_account_ids);

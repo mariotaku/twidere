@@ -19,22 +19,11 @@ package org.mariotaku.gallery3d.common;
 import android.os.Build;
 
 public class ApiHelper {
-	public static final boolean USE_888_PIXEL_FORMAT = Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
+	public static final boolean USE_888_PIXEL_FORMAT = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
 
-	public static final boolean HAS_REUSING_BITMAP_IN_BITMAP_REGION_DECODER = Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
+	public static final boolean HAS_REUSING_BITMAP_IN_BITMAP_REGION_DECODER = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
 
-	public static final boolean HAS_REUSING_BITMAP_IN_BITMAP_FACTORY = Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
+	public static final boolean HAS_REUSING_BITMAP_IN_BITMAP_FACTORY = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
 
-	public static final boolean HAS_MOTION_EVENT_TRANSFORM = Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
-
-	public static final boolean HAS_OPTIONS_IN_MUTABLE = Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
-
-	public static interface VERSION_CODES {
-		// These value are copied from Build.VERSION_CODES
-		public static final int HONEYCOMB = 11;
-
-		public static final int ICE_CREAM_SANDWICH = 14;
-		public static final int JELLY_BEAN = 16;
-
-	}
+	public static final boolean HAS_MOTION_EVENT_TRANSFORM = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
 }

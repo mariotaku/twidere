@@ -21,11 +21,12 @@ package org.mariotaku.twidere.loader;
 
 import java.util.List;
 
-import twitter4j.Activity;
-import twitter4j.Paging;
-import twitter4j.ResponseList;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
+import org.mariotaku.twidere.twitter4j.Activity;
+import org.mariotaku.twidere.twitter4j.Paging;
+import org.mariotaku.twidere.twitter4j.ResponseList;
+import org.mariotaku.twidere.twitter4j.Twitter;
+import org.mariotaku.twidere.twitter4j.TwitterException;
+
 import android.content.Context;
 
 public class ActivitiesAboutMeLoader extends Twitter4JActivitiesLoader {

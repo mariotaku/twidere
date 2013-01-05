@@ -95,7 +95,7 @@
 	<style name="Widget.Holo.Spinner" parent="android:Widget.Spinner">
 		<item name="android:background">@drawable/spinner_background_holo_dark</item>
 		<item name="android:dropDownSelector">@drawable/list_selector_holo_dark</item>
-		<item name="android:popupBackground">@drawable/menu_dropdown_panel_holo_dark</item>
+		<item name="android:popupBackground">@drawable/popup_holo_dark</item>
 		<item name="android:dropDownVerticalOffset">0dip</item>
 		<item name="android:dropDownHorizontalOffset">0dip</item>
 		<item name="android:dropDownWidth">wrap_content</item>
@@ -105,7 +105,7 @@
 	<style name="Widget.Holo.Light.Spinner" parent="@style/Widget.Holo.Spinner">
 		<item name="android:background">@drawable/spinner_background_holo_light</item>
 		<item name="android:dropDownSelector">@drawable/list_selector_holo_light</item>
-		<item name="android:popupBackground">@drawable/menu_dropdown_panel_holo_light</item>
+		<item name="android:popupBackground">@drawable/popup_holo_light</item>
 	</style>
 
 	<style name="Widget.Holo.TextView.SpinnerItem" parent="android:Widget.TextView.SpinnerItem">
@@ -123,7 +123,7 @@
 		<item name="android:dropDownHorizontalOffset">0dip</item>
 		<item name="android:dropDownWidth">wrap_content</item>
 		<item name="android:dropDownSelector">@drawable/list_selector_holo_dark</item>
-		<item name="android:popupBackground">@drawable/menu_dropdown_panel_holo_dark</item>
+		<item name="android:popupBackground">@drawable/popup_holo_dark</item>
 	</style>
 
 	<style name="TextAppearance.Holo.Widget.DropDownHint" parent="android:TextAppearance.Widget">
@@ -170,7 +170,7 @@
 		<item name="android:dropDownHorizontalOffset">0dip</item>
 		<item name="android:dropDownWidth">wrap_content</item>
 		<item name="android:dropDownSelector">@drawable/list_selector_holo_light</item>
-		<item name="android:popupBackground">@drawable/menu_dropdown_panel_holo_light</item>
+		<item name="android:popupBackground">@drawable/popup_holo_light</item>
 	</style>
 
 	<!-- Text Styles -->

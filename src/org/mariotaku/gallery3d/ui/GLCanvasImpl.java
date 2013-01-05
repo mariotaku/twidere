@@ -57,8 +57,6 @@ public class GLCanvasImpl implements GLCanvas {
 	// x1, y1, x2, y2.
 	private final float mMapPointsBuffer[] = new float[4];
 
-	private final float mTextureColor[] = new float[4];
-
 	private int mBoxCoords;
 
 	private final GLState mGLState;
@@ -121,40 +119,6 @@ public class GLCanvasImpl implements GLCanvas {
 				ids.clear();
 			}
 		}
-	}
-
-	@Override
-	public void drawMixed(final BasicTexture from, final int toColor, final float ratio, RectF source, RectF target) {
-		if (target.width() <= 0 || target.height() <= 0) return;
-
-		if (ratio <= 0.01f) {
-			drawTexture(from, source, target);
-			return;
-		} else if (ratio >= 1) {
-			fillRect(target.left, target.top, target.width(), target.height(), toColor);
-			return;
-		}
-
-		final float alpha = mAlpha;
-
-		// Copy the input to avoid changing it.
-		mDrawTextureSourceRect.set(source);
-		mDrawTextureTargetRect.set(target);
-		source = mDrawTextureSourceRect;
-		target = mDrawTextureTargetRect;
-
-		mGLState.setBlendEnabled(mBlendEnabled
-				&& (!from.isOpaque() || !Utils.isOpaque(toColor) || alpha < OPAQUE_ALPHA));
-
-		if (!bindTexture(from)) return;
-
-		// Interpolate the RGB and alpha values between both textures.
-		mGLState.setTexEnvMode(GL11.GL_COMBINE);
-		setMixedColor(toColor, ratio, alpha);
-		convertCoordinate(source, target, from);
-		setTextureCoords(source);
-		textureRect(target.left, target.top, target.width(), target.height());
-		mGLState.setTexEnvMode(GL11.GL_REPLACE);
 	}
 
 	@Override
@@ -444,54 +408,6 @@ public class GLCanvasImpl implements GLCanvas {
 
 	private void saveTransform() {
 		System.arraycopy(mMatrixValues, 0, mTempMatrix, 0, 16);
-	}
-
-	private void setMixedColor(final int toColor, final float ratio, final float alpha) {
-		//
-		// The formula we want:
-		// alpha * ((1 - ratio) * from + ratio * to)
-		//
-		// The formula that GL supports is in the form of:
-		// combo * from + (1 - combo) * to * scale
-		//
-		// So, we have combo = alpha * (1 - ratio)
-		// and scale = alpha * ratio / (1 - combo)
-		//
-		final float combo = alpha * (1 - ratio);
-		final float scale = alpha * ratio / (1 - combo);
-
-		// Specify the interpolation factor via the alpha component of
-		// GL_TEXTURE_ENV_COLORs.
-		// RGB component are get from toColor and will used as SRC1
-		final float colorScale = scale * (toColor >>> 24) / (0xff * 0xff);
-		setTextureColor((toColor >>> 16 & 0xff) * colorScale, (toColor >>> 8 & 0xff) * colorScale, (toColor & 0xff)
-				* colorScale, combo);
-		final GL11 gl = mGL;
-		gl.glTexEnvfv(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_COLOR, mTextureColor, 0);
-
-		gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_RGB, GL11.GL_INTERPOLATE);
-		gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_ALPHA, GL11.GL_INTERPOLATE);
-		gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_RGB, GL11.GL_CONSTANT);
-		gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_RGB, GL11.GL_SRC_COLOR);
-		gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_ALPHA, GL11.GL_CONSTANT);
-		gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_ALPHA, GL11.GL_SRC_ALPHA);
-
-		// Wire up the interpolation factor for RGB.
-		gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_SRC2_RGB, GL11.GL_CONSTANT);
-		gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND2_RGB, GL11.GL_SRC_ALPHA);
-
-		// Wire up the interpolation factor for alpha.
-		gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_SRC2_ALPHA, GL11.GL_CONSTANT);
-		gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND2_ALPHA, GL11.GL_SRC_ALPHA);
-
-	}
-
-	private void setTextureColor(final float r, final float g, final float b, final float alpha) {
-		final float[] color = mTextureColor;
-		color[0] = r;
-		color[1] = g;
-		color[2] = b;
-		color[3] = alpha;
 	}
 
 	private void setTextureCoords(final float left, final float top, final float right, final float bottom) {

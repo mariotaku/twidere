@@ -41,11 +41,11 @@ import javax.microedition.khronos.egl.EGLDisplay;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.twitter4j.TwitterException;
+import org.mariotaku.twidere.twitter4j.http.HttpClientWrapper;
+import org.mariotaku.twidere.twitter4j.http.HttpResponse;
 import org.mariotaku.twidere.util.BitmapDecodeHelper;
 
-import twitter4j.TwitterException;
-import twitter4j.http.HttpClientWrapper;
-import twitter4j.http.HttpResponse;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;

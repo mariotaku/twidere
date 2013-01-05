@@ -35,8 +35,6 @@ public class ThreadPool {
 	public static final int MODE_CPU = 1;
 	public static final int MODE_NETWORK = 2;
 
-	public static final JobContext JOB_CONTEXT_STUB = new JobContextStub();
-
 	ResourceCounter mCpuCounter = new ResourceCounter(2);
 	ResourceCounter mNetworkCounter = new ResourceCounter(2);
 

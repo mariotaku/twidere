@@ -24,13 +24,13 @@ import java.util.Collections;
 import java.util.List;
 
 import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.twitter4j.IDs;
+import org.mariotaku.twidere.twitter4j.ResponseList;
+import org.mariotaku.twidere.twitter4j.Twitter;
+import org.mariotaku.twidere.twitter4j.TwitterException;
+import org.mariotaku.twidere.twitter4j.User;
 import org.mariotaku.twidere.util.ArrayUtils;
 
-import twitter4j.IDs;
-import twitter4j.ResponseList;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.User;
 import android.content.Context;
 import android.content.SharedPreferences;
 

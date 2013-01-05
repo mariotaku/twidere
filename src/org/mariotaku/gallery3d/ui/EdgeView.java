@@ -24,7 +24,6 @@ public class EdgeView extends GLView {
 	@SuppressWarnings("unused")
 	private static final String TAG = "EdgeView";
 
-	public static final int INVALID_DIRECTION = -1;
 	public static final int TOP = 0;
 	public static final int LEFT = 1;
 	public static final int BOTTOM = 2;

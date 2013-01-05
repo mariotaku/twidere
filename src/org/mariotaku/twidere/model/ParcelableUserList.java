@@ -24,8 +24,9 @@ import static org.mariotaku.twidere.util.Utils.parseString;
 
 import java.io.Serializable;
 
-import twitter4j.User;
-import twitter4j.UserList;
+import org.mariotaku.twidere.twitter4j.User;
+import org.mariotaku.twidere.twitter4j.UserList;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 

@@ -25,6 +25,7 @@ import static org.mariotaku.twidere.util.Utils.addIntentToSubMenu;
 import static org.mariotaku.twidere.util.Utils.getAccountColors;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
+import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getImageUploadStatus;
 import static org.mariotaku.twidere.util.Utils.getShareStatus;
@@ -333,15 +334,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 					&& (mentions == null || mentions.length < 1)) {
 				mText = bundle.getString(INTENT_KEY_TEXT);
 			} else if (mentions != null) {
-				final StringBuilder builder = new StringBuilder();
-				for (final String mention : mentions) {
-					if (mentions.length == 1 && mentions[0].equalsIgnoreCase(account_screen_name)) {
-						builder.append('@' + account_screen_name + ' ');
-					} else if (!mention.equalsIgnoreCase(account_screen_name)) {
-						builder.append('@' + mention + ' ');
-					}
-				}
-				mText = builder.toString();
+				setMentionsText(mentions, account_screen_name);
 				text_selection_start = mText.indexOf(' ') + 1;
 			}
 
@@ -358,22 +351,17 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			}
 		} else {
 			if (mentions != null) {
-				final StringBuilder builder = new StringBuilder();
-				for (final String mention : mentions) {
-					if (mentions.length == 1 && mentions[0].equalsIgnoreCase(account_screen_name)) {
-						builder.append('@' + account_screen_name + ' ');
-					} else if (!mention.equalsIgnoreCase(account_screen_name)) {
-						builder.append('@' + mention + ' ');
-					}
-				}
-				mText = builder.toString();
+				setMentionsText(mentions, account_screen_name);
 			}
 			if (mAccountIds == null || mAccountIds.length == 0) {
 				final long[] ids_in_prefs = ArrayUtils.fromString(
 						mPreferences.getString(PREFERENCE_KEY_COMPOSE_ACCOUNTS, null), ',');
 				final long[] intersection = ArrayUtils.intersection(ids_in_prefs, account_ids);
 				mAccountIds = intersection.length > 0 ? intersection : account_ids;
-			}
+				if (mAccountIds.length == 1 && mAccountIds[0] != getDefaultAccountId(this)) {
+					mAccountIds[0] = getDefaultAccountId(this);
+				}
+			} 
 			final String action = getIntent().getAction();
 			if (Intent.ACTION_SEND.equals(action) || Intent.ACTION_SEND_MULTIPLE.equals(action)) {
 				setTitle(R.string.share);
@@ -464,6 +452,18 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	@Override
 	public Loader<Bitmap> onCreateLoader(final int id, final Bundle args) {
 		return new AttachedImageThumbnailLoader(this, args.getString(INTENT_KEY_FILENAME));
+	}
+	
+	private void setMentionsText(final String[] mentions, final String account_screen_name) {
+		final StringBuilder builder = new StringBuilder();
+		for (final String mention : mentions) {
+			if (mentions.length == 1 && mentions[0].equalsIgnoreCase(account_screen_name)) {
+				builder.append('@' + account_screen_name + ' ');
+			} else if (!mention.equalsIgnoreCase(account_screen_name)) {
+				builder.append('@' + mention + ' ');
+			}
+		}
+		mText = builder.toString();
 	}
 
 	@Override

@@ -29,9 +29,9 @@ import java.util.Comparator;
 import java.util.Date;
 
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
+import org.mariotaku.twidere.twitter4j.DirectMessage;
+import org.mariotaku.twidere.twitter4j.User;
 
-import twitter4j.DirectMessage;
-import twitter4j.User;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Parcel;

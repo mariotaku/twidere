@@ -18,9 +18,7 @@ package org.mariotaku.gallery3d.util;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 
 public class IdentityCache<K, V> {
 
@@ -34,13 +32,6 @@ public class IdentityCache<K, V> {
 		cleanUpWeakMap();
 		final Entry<K, V> entry = mWeakMap.get(key);
 		return entry == null ? null : entry.get();
-	}
-
-	// This is for debugging only
-	public synchronized ArrayList<K> keys() {
-		final Set<K> set = mWeakMap.keySet();
-		final ArrayList<K> result = new ArrayList<K>(set);
-		return result;
 	}
 
 	public synchronized V put(final K key, final V value) {

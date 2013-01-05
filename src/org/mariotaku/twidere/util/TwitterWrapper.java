@@ -8,11 +8,11 @@ import java.util.List;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.model.ListResponse;
 import org.mariotaku.twidere.model.SingleResponse;
+import org.mariotaku.twidere.twitter4j.Status;
+import org.mariotaku.twidere.twitter4j.Twitter;
+import org.mariotaku.twidere.twitter4j.TwitterException;
+import org.mariotaku.twidere.twitter4j.User;
 
-import twitter4j.Status;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.User;
 import android.content.Context;
 import android.net.Uri;
 
@@ -43,29 +43,27 @@ public class TwitterWrapper implements Constants {
 		return new TwitterSingleResponse<User>(account_id, null, null);
 	}
 
-	public static TwitterSingleResponse<Integer> updateProfileBannerImage(final Context context, final long account_id,
+	public static TwitterSingleResponse<Boolean> updateProfileBannerImage(final Context context, final long account_id,
 			final Uri image_uri, final boolean delete_image) {
 		final Twitter twitter = getTwitterInstance(context, account_id, false);
 		if (twitter != null && image_uri != null && "file".equals(image_uri.getScheme())) {
 			try {
 				final File file = new File(image_uri.getPath());
-				final int value = twitter.updateProfileBannerImage(file);
-				if (value >= 200 && value <= 202) {
-					// Wait for 5 seconds, see
-					// https://dev.twitter.com/docs/api/1.1/post/account/update_profile_image
-					Thread.sleep(5000L);
-					if (delete_image) {
-						file.delete();
-					}
+				twitter.updateProfileBannerImage(file);
+				// Wait for 5 seconds, see
+				// https://dev.twitter.com/docs/api/1.1/post/account/update_profile_image
+				Thread.sleep(5000L);
+				if (delete_image) {
+					file.delete();
 				}
-				return new TwitterSingleResponse<Integer>(account_id, value, null);
+				return new TwitterSingleResponse<Boolean>(account_id, true, null);
 			} catch (final TwitterException e) {
-				return new TwitterSingleResponse<Integer>(account_id, null, e);
+				return new TwitterSingleResponse<Boolean>(account_id, false, e);
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		return new TwitterSingleResponse<Integer>(account_id, null, null);
+		return new TwitterSingleResponse<Boolean>(account_id, false, null);
 	}
 
 	public static TwitterSingleResponse<User> updateProfileImage(final Context context, final long account_id,

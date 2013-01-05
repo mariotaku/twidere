@@ -19,6 +19,7 @@ import org.mariotaku.gallery3d.common.ApiHelper;
 
 import android.annotation.TargetApi;
 import android.graphics.Matrix;
+import android.os.Build;
 import android.util.FloatMath;
 import android.view.MotionEvent;
 import android.view.MotionEvent.PointerCoords;
@@ -75,7 +76,7 @@ public final class MotionEventHelper {
 		return result;
 	}
 
-	@TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private static MotionEvent transformEventNew(final MotionEvent e, final Matrix m) {
 		final MotionEvent newEvent = MotionEvent.obtain(e);
 		newEvent.transform(m);

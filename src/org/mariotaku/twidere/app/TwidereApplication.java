@@ -35,6 +35,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.service.RefreshService;
+import org.mariotaku.twidere.twitter4j.http.HostAddressResolver;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.DatabaseHelper;
@@ -43,7 +44,6 @@ import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
 import org.mariotaku.twidere.util.TwidereHostAddressResolver;
 
-import twitter4j.http.HostAddressResolver;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;

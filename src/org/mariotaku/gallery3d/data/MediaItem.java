@@ -39,31 +39,7 @@ import android.util.Log;
 // MediaItem represents an image or a video item.
 public class MediaItem {
 
-	public static final long INVALID_DATA_VERSION = -1;
-
-	// These are the bits returned from getSupportedOperations():
-	public static final int SUPPORT_FULL_IMAGE = 1 << 6;
-	public static final int SUPPORT_ACTION = 1 << 15;
-
-	// These are the bits returned from getMediaType():
-	public static final int MEDIA_TYPE_UNKNOWN = 1;
-	public static final int MEDIA_TYPE_IMAGE = 2;
-
-	public static final String MEDIA_TYPE_IMAGE_STRING = "image";
-	public static final String MEDIA_TYPE_ALL_STRING = "all";
-
-	// These are flags for cache() and return values for getCacheFlag():
-	public static final int CACHE_FLAG_NO = 0;
-
-	private static long sVersionSerial = 0;
-
-	protected long mDataVersion;
-
 	protected final Path mPath;
-
-	// NOTE: These type numbers are stored in the image cache, so it should not
-	// not be changed without resetting the cache.
-	public static final int TYPE_THUMBNAIL = 1;
 
 	public static final String MIME_TYPE_JPEG = "image/jpeg";
 
@@ -98,37 +74,19 @@ public class MediaItem {
 	public MediaItem(final IGalleryApplication application, final Path path, final Uri uri, final String contentType) {
 		path.setObject(this);
 		mPath = path;
-		mDataVersion = nextVersionNumber();
 		mUri = uri;
 		mApplication = Utils.checkNotNull(application);
 		mContentType = contentType;
-	}
-
-	public int getCacheFlag() {
-		return CACHE_FLAG_NO;
 	}
 
 	public Uri getContentUri() {
 		return mUri;
 	}
 
-	public long getDataVersion() {
-		return mDataVersion;
-	}
-
-	public String getFilePath() {
-		return "";
-	}
-
 	// The rotation of the full-resolution image. By default, it returns the
-	// value of
-	// getRotation().
+	// value of getRotation().
 	public int getFullImageRotation() {
 		return getRotation();
-	}
-
-	public int getMediaType() {
-		return MEDIA_TYPE_IMAGE;
 	}
 
 	public String getMimeType() {
@@ -141,10 +99,6 @@ public class MediaItem {
 
 	public int getRotation() {
 		return mRotation;
-	}
-
-	public int getSupportedOperations() {
-		return SUPPORT_FULL_IMAGE;
 	}
 
 	public Job<Bitmap> requestFallbackImage() {
@@ -256,10 +210,6 @@ public class MediaItem {
 
 	public static BitmapPool getThumbPool() {
 		return sThumbPool;
-	}
-
-	public static synchronized long nextVersionNumber() {
-		return ++MediaItem.sVersionSerial;
 	}
 
 	public static void setThumbnailSizes(final int size, final int microSize) {

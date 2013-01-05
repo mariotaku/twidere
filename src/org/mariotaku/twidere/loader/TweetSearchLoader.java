@@ -26,13 +26,13 @@ import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.twitter4j.Paging;
+import org.mariotaku.twidere.twitter4j.Query;
+import org.mariotaku.twidere.twitter4j.Status;
+import org.mariotaku.twidere.twitter4j.TwitterException;
 import org.mariotaku.twidere.util.SerializationUtil;
 import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
-import twitter4j.Paging;
-import twitter4j.Query;
-import twitter4j.Status;
-import twitter4j.TwitterException;
 import android.content.Context;
 import android.os.Bundle;
 

@@ -38,12 +38,6 @@ public interface GLCanvas {
 	// called in the GL thread.
 	public void deleteRecycledResources();
 
-	// Draw a region of a texture and a specified color to the specified
-	// rectangle. The actual color used is from * (1 - ratio) + to * ratio.
-	// The region of the texture is defined by parameter "src". The target
-	// rectangle is specified by parameter "target".
-	public void drawMixed(BasicTexture from, int toColor, float ratio, RectF src, RectF target);
-
 	// Draws a texture to the specified rectangle.
 	public void drawTexture(BasicTexture texture, int x, int y, int width, int height);
 

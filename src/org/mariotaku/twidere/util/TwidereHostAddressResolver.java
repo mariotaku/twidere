@@ -23,10 +23,10 @@ import static android.text.TextUtils.isEmpty;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.LinkedHashMap;
 
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.twitter4j.http.HostAddressResolver;
 import org.xbill.DNS.AAAARecord;
 import org.xbill.DNS.ARecord;
 import org.xbill.DNS.CNAMERecord;
@@ -39,7 +39,6 @@ import org.xbill.DNS.Section;
 import org.xbill.DNS.SimpleResolver;
 import org.xbill.DNS.Type;
 
-import twitter4j.http.HostAddressResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -157,8 +156,9 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 		return host;
 	}
 
-	void init() throws UnknownHostException {
-		mDNS = !mLocalMappingOnly && mDNS == null ? new SimpleResolver(mDNSAddress) : null;
+	void init() throws IOException {
+		if (mDNS != null) return;
+		mDNS = mLocalMappingOnly ? null : new SimpleResolver(mDNSAddress);
 		if (mDNS != null) {
 			mDNS.setTCP(true);
 		}

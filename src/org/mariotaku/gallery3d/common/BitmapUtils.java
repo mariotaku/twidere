@@ -39,21 +39,6 @@ public class BitmapUtils {
 		return initialSize <= 8 ? Utils.prevPowerOf2(initialSize) : initialSize / 8 * 8;
 	}
 
-	public static Bitmap resizeBitmapByScale(final Bitmap bitmap, final float scale, final boolean recycle) {
-		final int width = Math.round(bitmap.getWidth() * scale);
-		final int height = Math.round(bitmap.getHeight() * scale);
-		if (width == bitmap.getWidth() && height == bitmap.getHeight()) return bitmap;
-		final Bitmap target = Bitmap.createBitmap(width, height, getConfig(bitmap));
-		final Canvas canvas = new Canvas(target);
-		canvas.scale(scale, scale);
-		final Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG | Paint.DITHER_FLAG);
-		canvas.drawBitmap(bitmap, 0, 0, paint);
-		if (recycle) {
-			bitmap.recycle();
-		}
-		return target;
-	}
-
 	// Resize the bitmap if each side is >= targetSize * 2
 	public static Bitmap resizeDownIfTooBig(final Bitmap bitmap, final int targetSize, final boolean recycle) {
 		final int srcWidth = bitmap.getWidth();
@@ -69,5 +54,20 @@ public class BitmapUtils {
 			config = Bitmap.Config.ARGB_8888;
 		}
 		return config;
+	}
+
+	private static Bitmap resizeBitmapByScale(final Bitmap bitmap, final float scale, final boolean recycle) {
+		final int width = Math.round(bitmap.getWidth() * scale);
+		final int height = Math.round(bitmap.getHeight() * scale);
+		if (width == bitmap.getWidth() && height == bitmap.getHeight()) return bitmap;
+		final Bitmap target = Bitmap.createBitmap(width, height, getConfig(bitmap));
+		final Canvas canvas = new Canvas(target);
+		canvas.scale(scale, scale);
+		final Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG | Paint.DITHER_FLAG);
+		canvas.drawBitmap(bitmap, 0, 0, paint);
+		if (recycle) {
+			bitmap.recycle();
+		}
+		return target;
 	}
 }

@@ -128,7 +128,7 @@ public final class TweetStore implements Constants {
 
 		public static final String OAUTH_BASE_URL = "oauth_base_url";
 
-		public static final String SIGNING_OAUTH_BASE_URL = "oauth_rest_base_url";
+		public static final String SIGNING_OAUTH_BASE_URL = "signing_oauth_base_url";
 
 		public static final String USER_COLOR = "user_color";
 

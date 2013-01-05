@@ -43,7 +43,7 @@ import android.util.Log;
 import android.view.View;
 
 public final class ImageViewerGLActivity extends FragmentActivity implements Constants, View.OnClickListener,
-		GalleryContext, PhotoView.Listener, OrientationManager.Listener {
+		GalleryContext, PhotoView.Listener {
 
 	private static final String TAG = "Gallery";
 
@@ -200,11 +200,6 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 
 	public void onLoadStart() {
 		showProgress();
-	}
-
-	@Override
-	public void onOrientationCompensationChanged() {
-		getGLRoot().requestLayoutContentPane();
 	}
 
 	@Override
@@ -501,13 +496,6 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 
 	private void updateUIForCurrentPhoto() {
 		if (mCurrentPhoto == null) return;
-
-		// If by swiping or deletion the user ends up on an action item
-		// and zoomed in, zoom out so that the context of the action is
-		// more clear
-		if ((mCurrentPhoto.getSupportedOperations() & MediaItem.SUPPORT_ACTION) != 0) {
-			mPhotoView.setWantPictureCenterCallbacks(true);
-		}
 
 	}
 

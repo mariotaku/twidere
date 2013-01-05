@@ -39,12 +39,12 @@ import org.mariotaku.twidere.loader.ActivitiesAboutMeLoader;
 import org.mariotaku.twidere.loader.Twitter4JActivitiesLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.twitter4j.Activity.Action;
+import org.mariotaku.twidere.twitter4j.Status;
+import org.mariotaku.twidere.twitter4j.User;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.view.holder.ActivityViewHolder;
 
-import twitter4j.Activity.Action;
-import twitter4j.Status;
-import twitter4j.User;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -59,11 +59,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 public class ActivitiesAboutMeFragment extends PullToRefreshListFragment implements
-		LoaderCallbacks<List<twitter4j.Activity>> {
+		LoaderCallbacks<List<org.mariotaku.twidere.twitter4j.Activity>> {
 
 	private ActivitiesAdapter mAdapter;
 	private SharedPreferences mPreferences;
-	private List<twitter4j.Activity> mData;
+	private List<org.mariotaku.twidere.twitter4j.Activity> mData;
 	private long mAccountId;
 
 	@Override
@@ -77,7 +77,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 	}
 
 	@Override
-	public Loader<List<twitter4j.Activity>> onCreateLoader(final int id, final Bundle args) {
+	public Loader<List<org.mariotaku.twidere.twitter4j.Activity>> onCreateLoader(final int id, final Bundle args) {
 		setProgressBarIndeterminateVisibility(true);
 		final long account_id = mAccountId = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
 		final boolean is_home_tab = args != null ? args.getBoolean(INTENT_KEY_IS_HOME_TAB) : false;
@@ -100,7 +100,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 	public void onListItemClick(final ListView l, final View v, final int position, final long id) {
 		if (mAccountId <= 0) return;
 		final int adapter_pos = position - l.getHeaderViewsCount();
-		final twitter4j.Activity item = mAdapter.getItem(adapter_pos);
+		final org.mariotaku.twidere.twitter4j.Activity item = mAdapter.getItem(adapter_pos);
 		final User[] sources = item.getSources();
 		final Status[] target_statuses = item.getTargetStatuses();
 		final int sources_length = sources != null ? sources.length : 0;
@@ -160,13 +160,14 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 	}
 
 	@Override
-	public void onLoaderReset(final Loader<List<twitter4j.Activity>> loader) {
+	public void onLoaderReset(final Loader<List<org.mariotaku.twidere.twitter4j.Activity>> loader) {
 		mAdapter.setData(null);
 		mData = null;
 	}
 
 	@Override
-	public void onLoadFinished(final Loader<List<twitter4j.Activity>> loader, final List<twitter4j.Activity> data) {
+	public void onLoadFinished(final Loader<List<org.mariotaku.twidere.twitter4j.Activity>> loader,
+			final List<org.mariotaku.twidere.twitter4j.Activity> data) {
 		setProgressBarIndeterminateVisibility(false);
 		mAdapter.setData(data);
 		mData = data;
@@ -205,7 +206,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 
 		private final LayoutInflater mInflater;
 		private final Context mContext;
-		private List<twitter4j.Activity> mData;
+		private List<org.mariotaku.twidere.twitter4j.Activity> mData;
 
 		public ActivitiesAdapter(final Context context) {
 			mInflater = LayoutInflater.from(context);
@@ -221,7 +222,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 		}
 
 		@Override
-		public twitter4j.Activity getItem(final int position) {
+		public org.mariotaku.twidere.twitter4j.Activity getItem(final int position) {
 			return mData.get(position);
 		}
 
@@ -242,7 +243,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 			}
 			holder.reset();
 			holder.setTextSize(mTextSize);
-			final twitter4j.Activity item = getItem(position);
+			final org.mariotaku.twidere.twitter4j.Activity item = getItem(position);
 			final Date created_at = item.getCreatedAt();
 			if (created_at != null) {
 				if (mShowAbsoluteTime) {
@@ -362,8 +363,8 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 			return view;
 		}
 
-		public void setData(final List<twitter4j.Activity> data) {
-			mData = data != null ? data : new ArrayList<twitter4j.Activity>();
+		public void setData(final List<org.mariotaku.twidere.twitter4j.Activity> data) {
+			mData = data != null ? data : new ArrayList<org.mariotaku.twidere.twitter4j.Activity>();
 			notifyDataSetChanged();
 		}
 
