@@ -432,14 +432,6 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	}
 
 	@Override
-	public ResponseList<Status> getFavorites(final String screenName, final int page) throws TwitterException {
-		ensureAuthorizationEnabled();
-		return factory.createStatusList(get(conf.getRestBaseURL() + ENDPOINT_FAVORITES_LIST,
-				conf.getSigningRestBaseURL() + ENDPOINT_FAVORITES_LIST, new HttpParameter("page", page),
-				new HttpParameter("screen_name", screenName), INCLUDE_ENTITIES));
-	}
-
-	@Override
 	public ResponseList<Status> getFavorites(final String screenName, final Paging paging) throws TwitterException {
 		ensureAuthorizationEnabled();
 		return factory.createStatusList(get(

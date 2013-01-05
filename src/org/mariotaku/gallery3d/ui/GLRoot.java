@@ -41,8 +41,6 @@ public interface GLRoot {
 
 	public void setContentPane(GLView content);
 
-	public void setOrientationSource(OrientationSource source);
-
 	public void unfreeze();
 
 	public void unlockRenderThread();

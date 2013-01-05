@@ -124,15 +124,15 @@
   <string name="quote">Cita</string>
   <string name="add_rule">Aggiungi regola</string>
   <string name="longclick_to_delete">Tap lungo per cancellare.</string>
-  <string name="retweet_successfully">Retwittato correttamente.</string>
-  <string name="delete_successfully">Eliminato correttamente.</string>
-  <string name="send_successfully">Inviato correttamente.</string>
-  <string name="favorite_successfully">Preferito aggiunto correttamente.</string>
-  <string name="unfavorite_successfully">Preferito rimosso correttamente.</string>
-  <string name="follow_successfully">Follow eseguito correttamente.</string>
-  <string name="unfollow_successfully">Unfollow eseguito correttamente.</string>
-  <string name="profile_update_successfully">Profilo aggiornato correttamente.</string>
-  <string name="profile_image_update_successfully">Immagine del profilo aggiornata correttamente.</string>
+  <string name="retweet_successful">Retwittato correttamente.</string>
+  <string name="delete_successful">Eliminato correttamente.</string>
+  <string name="send_successful">Inviato correttamente.</string>
+  <string name="favorite_successful">Preferito aggiunto correttamente.</string>
+  <string name="unfavorite_successful">Preferito rimosso correttamente.</string>
+  <string name="follow_successful">Follow eseguito correttamente.</string>
+  <string name="unfollow_successful">Unfollow eseguito correttamente.</string>
+  <string name="profile_update_successful">Profilo aggiornato correttamente.</string>
+  <string name="profile_image_update_successful">Immagine del profilo aggiornata correttamente.</string>
   <string name="text_size">Dimensione del testo</string>
   <string name="text_size_summary">Dimensione del testo degli status.</string>
   <string name="cannot_get_location">Non è possibile ottenere la tua posizione.</string>
@@ -236,8 +236,8 @@
   <string name="signing_in_please_wait">In collegamento, si prega di attendere o premere INDIETRO nuovamente per uscire.</string>
   <string name="connectivity">Connettività</string>
   <string name="add_member">Aggiungi iscritto</string>
-  <string name="add_successfully">Aggiunto correttamente.</string>
-  <string name="create_successfully">Creato correttamente.</string>
+  <string name="add_successful">Aggiunto correttamente.</string>
+  <string name="create_successful">Creato correttamente.</string>
   <string name="new_user_list">New user list</string>
   <string name="is_public">Public</string>
   <string name="send_direct_message">Invia DM</string>
@@ -362,7 +362,7 @@
   <string name="data_profiling_notification_ticker">Statistiche attivate</string>
   <string name="data_profiling_notification_title">Statistiche di utilizzo</string>
   <string name="data_profiling_notification_desc">Abilita o disabilita statistiche di utilizzo</string>
-  <string name="slient_notifications">Notifiche silenziose</string>
-  <string name="slient_notifications_summary">Disattiva suoneria/vibrazione per le notifiche</string>
+  <string name="silent_notifications">Notifiche silenziose</string>
+  <string name="silent_notifications_summary">Disattiva suoneria/vibrazione per le notifiche</string>
   <string name="disable_background_service">Disabilita servizio in backround</string>
 </resources>

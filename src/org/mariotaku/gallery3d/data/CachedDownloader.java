@@ -16,6 +16,7 @@
 
 package org.mariotaku.gallery3d.data;
 
+import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
 import static org.mariotaku.twidere.util.Utils.getImageLoaderHttpClient;
 import static org.mariotaku.twidere.util.Utils.getRedirectedHttpResponse;
 import static org.mariotaku.twidere.util.Utils.parseString;
@@ -26,48 +27,59 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
-import java.net.URL;
 
 import org.mariotaku.gallery3d.common.Utils;
 import org.mariotaku.gallery3d.util.ThreadPool.CancelListener;
 import org.mariotaku.gallery3d.util.ThreadPool.JobContext;
+import org.mariotaku.twidere.twitter4j.TwitterException;
 import org.mariotaku.twidere.twitter4j.http.HttpClientWrapper;
 
 import android.content.Context;
-import android.util.Log;
 
-public class DownloadUtils {
-	private static final String TAG = "DownloadService";
+public class CachedDownloader {
 
-	public static boolean requestDownload(final Context context, final JobContext jc, final URL url, final File file) {
-		FileOutputStream fos = null;
-		try {
-			fos = new FileOutputStream(file);
-			return download(context, jc, url, fos);
-		} catch (final Throwable t) {
-			return false;
-		} finally {
-			Utils.closeSilently(fos);
-		}
+	public static final String CACHE_DIR_NAME = "cached_images";
+
+	private final Context mContext;
+	private File mCacheRoot;
+	private HttpClientWrapper mClient;
+
+	public CachedDownloader(final Context context) {
+		mContext = context;
+		initCacheDir();
+		initHttpClient();
 	}
 
-	private static boolean download(final Context context, final JobContext jc, final URL url, final OutputStream output) {
-		InputStream input = null;
-		try {
-			final HttpClientWrapper client = getImageLoaderHttpClient(context);
-			input = getRedirectedHttpResponse(client, parseString(url)).asStream();
-			dump(jc, input, output);
-			return true;
-		} catch (final Throwable t) {
-			Log.w(TAG, "fail to download", t);
-			return false;
-		} finally {
-			Utils.closeSilently(input);
+	public File download(final JobContext jc, final String url) throws IOException, TwitterException {
+		final File file = getCacheFile(url);
+		if (file == null) return null;
+		if (!file.exists() || file.length() == 0) {
+			final InputStream input = getRedirectedHttpResponse(mClient, parseString(url)).asStream();
+			final FileOutputStream output = new FileOutputStream(file);
+			try {
+				dump(jc, input, output);
+			} finally {
+				Utils.closeSilently(input);
+			}
 		}
+		return file;
+	}
+
+	private File getCacheFile(final String url) {
+		if (url == null) return null;
+		return new File(mCacheRoot, url.replaceAll("https?:\\/\\/", "").replaceAll("[^\\w\\d]", "_"));
+	}
+
+	void initCacheDir() {
+		mCacheRoot = getBestCacheDir(mContext, CACHE_DIR_NAME);
+	}
+
+	void initHttpClient() {
+		mClient = getImageLoaderHttpClient(mContext);
 	}
 
 	private static void dump(final JobContext jc, final InputStream is, final OutputStream os) throws IOException {
-		final byte buffer[] = new byte[4096];
+		final byte buffer[] = new byte[8192];
 		int rc = is.read(buffer, 0, buffer.length);
 		final Thread thread = Thread.currentThread();
 		jc.setCancelListener(new CancelListener() {

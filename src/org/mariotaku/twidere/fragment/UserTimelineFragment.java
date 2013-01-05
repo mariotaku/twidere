@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
+
 import org.mariotaku.twidere.loader.UserTimelineLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.SynchronizedStateSavedList;
@@ -45,6 +47,19 @@ public class UserTimelineFragment extends ParcelableStatusesListFragment {
 		}
 		return new UserTimelineLoader(getActivity(), account_id, user_id, screen_name, max_id, since_id, getData(),
 				getClass().getSimpleName(), is_home_tab);
+	}
+
+	@Override
+	public void onActivityCreated(final Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		final Bundle args = getArguments();
+		if (args != null) {
+			final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+			final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
+			final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
+			mAdapter.setIndicateMyStatusDisabled(account_id == user_id || screen_name != null
+					&& screen_name.equals(getAccountScreenName(getActivity(), account_id)));
+		}
 	}
 
 	@Override

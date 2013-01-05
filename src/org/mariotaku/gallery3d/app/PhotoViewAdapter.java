@@ -105,26 +105,7 @@ public class PhotoViewAdapter implements PhotoView.Model {
 		mPhotoView = view;
 		mActivity = activity;
 		mThreadPool = activity.getThreadPool();
-		mHandler = new SynchronizedHandler(activity.getGLRoot()) {
-			@Override
-			public void handleMessage(final Message message) {
-				switch (message.what) {
-					case MSG_IMAGE_LOAD_START: {
-						mActivity.onLoadStart();
-						break;
-					}
-					case MSG_IMAGE_LOAD_FINISHED: {
-						onDecodeLargeComplete((ImageBundle) message.obj);
-						mActivity.onLoadFinished();
-						break;
-					}
-					case MSG_IMAGE_LOAD_FAILED: {
-						mActivity.onLoadFailed();
-						break;
-					}
-				}
-			}
-		};
+		mHandler = new MyHandler(this);
 	}
 
 	@Override
@@ -337,6 +318,37 @@ public class PhotoViewAdapter implements PhotoView.Model {
 		public ImageBundle(final BitmapRegionDecoder decoder, final Bitmap backupImage) {
 			this.decoder = decoder;
 			this.backupImage = backupImage;
+		}
+	}
+
+	static class MyHandler extends SynchronizedHandler {
+
+		ImageViewerGLActivity mActivity;
+		PhotoViewAdapter mAdapter;
+
+		MyHandler(final PhotoViewAdapter adapter) {
+			super(adapter.mActivity.getGLRoot());
+			mAdapter = adapter;
+			mActivity = adapter.mActivity;
+		}
+
+		@Override
+		public void handleMessage(final Message message) {
+			switch (message.what) {
+				case MSG_IMAGE_LOAD_START: {
+					mActivity.onLoadStart();
+					break;
+				}
+				case MSG_IMAGE_LOAD_FINISHED: {
+					mAdapter.onDecodeLargeComplete((ImageBundle) message.obj);
+					mActivity.onLoadFinished();
+					break;
+				}
+				case MSG_IMAGE_LOAD_FAILED: {
+					mActivity.onLoadFailed();
+					break;
+				}
+			}
 		}
 	}
 

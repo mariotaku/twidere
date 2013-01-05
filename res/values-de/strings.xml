@@ -112,8 +112,8 @@
 	<string name="quote">Zitat</string>
 	<string name="add_rule">Regel hinzufügen</string>
 	<string name="longclick_to_delete">Gedrückt halten zum Löschen.</string>
-	<string name="retweet_successfully">Retweet erfolgreich.</string>
-	<string name="profile_update_successfully">Profilupdate erfolgreich.</string>
+	<string name="retweet_successful">Retweet erfolgreich.</string>
+	<string name="profile_update_successful">Profilupdate erfolgreich.</string>
 	<string name="text_size">Textgröße</string>
 	<string name="text_size_summary">Textgröße von Tweets</string>
 	<string name="cannot_get_location">Ort konnte nicht gefunden werden.</string>

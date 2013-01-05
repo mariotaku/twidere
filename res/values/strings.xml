@@ -118,16 +118,16 @@
 	<string name="quote">Quote</string>
 	<string name="add_rule">Add rule</string>
 	<string name="longclick_to_delete">Long-click to delete.</string>
-	<string name="retweet_successfully">Retweet successful.</string>
-	<string name="delete_successfully">Delete successful.</string>
-	<string name="send_successfully">Send successful.</string>
-	<string name="favorite_successfully">Favorite successfully.</string>
-	<string name="unfavorite_successfully">Unfavorite successful.</string>
-	<string name="follow_successfully">Follow successful.</string>
-	<string name="unfollow_successfully">Unfollow successful.</string>
-	<string name="profile_update_successfully">Profile update successful.</string>
-	<string name="profile_image_update_successfully">Profile image update successful.</string>
-	<string name="profile_banner_image_update_successfully">Profile banner image update successful.</string>
+	<string name="retweet_successful">Retweet successful.</string>
+	<string name="delete_successful">Delete successful.</string>
+	<string name="send_successful">Send successful.</string>
+	<string name="favorite_successful">Favorite successfully.</string>
+	<string name="unfavorite_successful">Unfavorite successful.</string>
+	<string name="follow_successful">Follow successful.</string>
+	<string name="unfollow_successful">Unfollow successful.</string>
+	<string name="profile_update_successful">Profile update successful.</string>
+	<string name="profile_image_update_successful">Profile image update successful.</string>
+	<string name="profile_banner_image_update_successful">Profile banner image update successful.</string>
 	<string name="text_size">Text size</string>
 	<string name="text_size_summary">Text size of statuses.</string>
 	<string name="cannot_get_location">Can\'t get your location.</string>
@@ -213,7 +213,6 @@
 	<string name="item_1_hour">1 hour</string>
 	<string name="item_2_hours">2 hours</string>
 	<string name="item_4_hours">4 hours</string>
-	
 	<string name="inline_image_preview_display_option">Inline image preview display option</string>
 	<string name="solid_color_background">Solid color background</string>
 	<string name="solid_color_background_summary">This may be useful if screen of your device is AMOLED.</string>
@@ -228,8 +227,8 @@
 	<string name="signing_in_please_wait">Signing in, please wait or press BACK to quit.</string>
 	<string name="connectivity">Connectivity</string>
 	<string name="add_member">Add member</string>
-	<string name="add_successfully">Add successfully.</string>
-	<string name="create_successfully">Create successfully.</string>
+	<string name="add_successful">Add successfully.</string>
+	<string name="create_successful">Create successfully.</string>
 	<string name="new_user_list">New user list</string>
 	<string name="is_public">Public</string>
 	<string name="send_direct_message">Send DM</string>
@@ -360,8 +359,8 @@
 	<string name="data_profiling_notification_ticker">Statistics Opted-In</string>
 	<string name="data_profiling_notification_title">Usage Statistics</string>
 	<string name="data_profiling_notification_desc">Enable or Disable Usage Statistics</string>
-	<string name="slient_notifications">Silent notifications</string>
-	<string name="slient_notifications_summary">Disable ringtone/vibrate for notifications</string>
+	<string name="silent_notifications">Silent notifications</string>
+	<string name="silent_notifications_summary">Disable ringtone/vibrate for notifications</string>
 	<string name="disable_background_service">Disable background service</string>
 	<string name="pull_to_load_conversation_label">Pull to load conversation…</string>
 	<string name="pull_to_load_conversation_release_label">Release to load conversation…</string>
@@ -396,5 +395,7 @@
 	<string name="revoke_permissions">Revoke permissions</string>
 	<string name="fast_scroll_thumb">Fast scroll thumb</string>
 	<string name="link_highlighting">Link highlighting</string>
+	<string name="fast_timeline_processing">Fast timeline processing</string>
+	<string name="fast_timeline_processing_summary">Ignore ALL details in timeline, enable this to get better performance.</string>
 
 </resources>

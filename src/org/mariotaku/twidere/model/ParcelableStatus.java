@@ -99,7 +99,7 @@ public class ParcelableStatus implements Constants, Parcelable, Serializable, Co
 		status_timestamp = getAsLong(values, Statuses.STATUS_TIMESTAMP, -1);
 		name = values.getAsString(Statuses.NAME);
 		screen_name = values.getAsString(Statuses.SCREEN_NAME);
-		text_html = values.getAsString(Statuses.TEXT);
+		text_html = values.getAsString(Statuses.TEXT_HTML);
 		text_plain = values.getAsString(Statuses.TEXT_PLAIN);
 		profile_image_url_string = values.getAsString(Statuses.PROFILE_IMAGE_URL);
 		is_favorite = getAsBoolean(values, Statuses.IS_FAVORITE, false);

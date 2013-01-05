@@ -538,7 +538,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 			super.onPostExecute(result);
 			if (result != null && result.data != null && result.data) {
 				getUserInfo();
-				Toast.makeText(EditUserProfileActivity.this, R.string.profile_banner_image_update_successfully,
+				Toast.makeText(EditUserProfileActivity.this, R.string.profile_banner_image_update_successful,
 						Toast.LENGTH_SHORT).show();
 			} else {
 				showErrorToast(EditUserProfileActivity.this, R.string.removing_profile_banner_image, result.exception,

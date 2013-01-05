@@ -43,12 +43,15 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.OnLinkClickHandler;
+import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -65,7 +68,8 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	private final ArrayList<Long> mSelectedStatusIds;
 
 	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled,
-			mMentionsHighlightDisabled, mDisplaySensitiveContents, mIndicateMyStatusDisabled, mLinkHighlightingEnabled;
+			mMentionsHighlightDisabled, mDisplaySensitiveContents, mIndicateMyStatusDisabled, mLinkHighlightingEnabled,
+			mFastTimelineProcessingEnabled;
 	private float mTextSize;
 	private int mNameDisplayOption, mInlineImagePreviewDisplayOption;
 
@@ -116,8 +120,6 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			view.setTag(holder);
 			holder.profile_image.setOnClickListener(mMultiSelectEnabled ? null : this);
 			holder.image_preview_frame.setOnClickListener(mMultiSelectEnabled ? null : this);
-			// holder.image_preview.setClickable(!mMultiSelectEnabled);
-			// holder.profile_image.setClickable(!mMultiSelectEnabled);
 		}
 
 		final ParcelableStatus status = getItem(position);
@@ -130,7 +132,17 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 
 			holder.setAccountColorEnabled(mShowAccountColor);
 
-			holder.text.setText(status.text_unescaped);
+			if (mFastTimelineProcessingEnabled) {
+				holder.text.setText(status.text_plain);
+			} else if (mLinkHighlightingEnabled) {
+				holder.text.setText(Html.fromHtml(status.text_html));
+				final TwidereLinkify linkify = new TwidereLinkify(holder.text);
+				linkify.setOnLinkClickListener(new OnLinkClickHandler(mContext, status.account_id));
+				linkify.addAllLinks();
+			} else {
+				holder.text.setText(status.text_unescaped);
+			}
+			holder.text.setMovementMethod(null);
 
 			if (mShowAccountColor) {
 				holder.setAccountColor(getAccountColor(mContext, status.account_id));
@@ -144,12 +156,12 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 				holder.setSelected(false);
 			}
 			final String account_screen_name = getAccountScreenName(mContext, status.account_id);
-			final boolean is_mention = status.text_plain.toLowerCase()
+			final boolean is_mention = mFastTimelineProcessingEnabled ? false : status.text_plain.toLowerCase()
 					.contains('@' + account_screen_name.toLowerCase());
 			final boolean is_my_status = status.account_id == status.user_id;
 			holder.setUserColor(getUserColor(mContext, status.user_id));
-			holder.setHighlightColor(getStatusBackground(mMentionsHighlightDisabled ? false : is_mention,
-					status.is_favorite, status.is_retweet));
+			holder.setHighlightColor(mFastTimelineProcessingEnabled ? 0 : getStatusBackground(
+					mMentionsHighlightDisabled ? false : is_mention, status.is_favorite, status.is_retweet));
 			holder.setTextSize(mTextSize);
 
 			holder.setIsMyStatus(is_my_status && !mIndicateMyStatusDisabled);
@@ -181,8 +193,8 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			} else {
 				holder.time.setText(getRelativeTimeSpanString(status.status_timestamp));
 			}
-			holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-					getStatusTypeIconRes(status.is_favorite, isValidLocation(status.location), status.has_media), 0);
+			holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, mFastTimelineProcessingEnabled ? 0
+					: getStatusTypeIconRes(status.is_favorite, isValidLocation(status.location), status.has_media), 0);
 			holder.reply_retweet_status
 					.setVisibility(status.in_reply_to_status_id != -1 || status.is_retweet ? View.VISIBLE : View.GONE);
 			if (status.is_retweet && !TextUtils.isEmpty(retweeted_by_name)
@@ -216,9 +228,11 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 				holder.profile_image.setVisibility(View.GONE);
 				holder.my_profile_image.setVisibility(View.GONE);
 			}
-			final boolean has_preview = mInlineImagePreviewDisplayOption != INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE
-					&& status.has_media && status.image_preview_url_string != null;
-			holder.image_preview_frame.setVisibility(has_preview ? View.VISIBLE : View.GONE);
+			final boolean has_preview = mFastTimelineProcessingEnabled ? false
+					: mInlineImagePreviewDisplayOption != INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE
+							&& status.has_media && status.image_preview_url_string != null;
+			holder.image_preview_container.setVisibility(!mFastTimelineProcessingEnabled && has_preview ? View.VISIBLE
+					: View.GONE);
 			if (has_preview) {
 				final MarginLayoutParams lp = (MarginLayoutParams) holder.image_preview_frame.getLayoutParams();
 				if (mInlineImagePreviewDisplayOption == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE) {
@@ -284,6 +298,14 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	public void setDisplaySensitiveContents(final boolean display) {
 		if (display != mDisplaySensitiveContents) {
 			mDisplaySensitiveContents = display;
+			notifyDataSetChanged();
+		}
+	}
+
+	@Override
+	public void setFastTimelineProcessingEnabled(final boolean enabled) {
+		if (mFastTimelineProcessingEnabled != enabled) {
+			mFastTimelineProcessingEnabled = enabled;
 			notifyDataSetChanged();
 		}
 	}

@@ -79,22 +79,6 @@ public class ThreadPool {
 		boolean setMode(int mode);
 	}
 
-	private static class JobContextStub implements JobContext {
-		@Override
-		public boolean isCancelled() {
-			return false;
-		}
-
-		@Override
-		public void setCancelListener(final CancelListener listener) {
-		}
-
-		@Override
-		public boolean setMode(final int mode) {
-			return true;
-		}
-	}
-
 	private static class ResourceCounter {
 		public int value;
 

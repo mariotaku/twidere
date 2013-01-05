@@ -22,7 +22,7 @@ import java.io.InputStream;
 import android.util.Log;
 
 public class Exif {
-	private static final String TAG = "CameraExif";
+	private static final String TAG = "Exif";
 
 	public static int getOrientation(final InputStream is) {
 		if (is == null) return 0;

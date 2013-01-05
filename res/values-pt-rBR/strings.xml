@@ -124,15 +124,15 @@
   <string name="quote">Citação</string>
   <string name="add_rule">Adicionar regra</string>
   <string name="longclick_to_delete">Mantenha pressionado para apagar.</string>
-  <string name="retweet_successfully">Retweetado com sucesso.</string>
-  <string name="delete_successfully">Excluído com sucesso.</string>
-  <string name="send_successfully">Envio concluído.</string>
-  <string name="favorite_successfully">Favoritado com sucesso.</string>
-  <string name="unfavorite_successfully">Removido dos favoritos.</string>
-  <string name="follow_successfully">Agora você segue este usuário.</string>
-  <string name="unfollow_successfully">Não segue mais.</string>
-  <string name="profile_update_successfully">Perfil atualizado com sucesso.</string>
-  <string name="profile_image_update_successfully">Imagem de perfil atualizada com sucesso.</string>
+  <string name="retweet_successful">Retweetado com sucesso.</string>
+  <string name="delete_successful">Excluído com sucesso.</string>
+  <string name="send_successful">Envio concluído.</string>
+  <string name="favorite_successful">Favoritado com sucesso.</string>
+  <string name="unfavorite_successful">Removido dos favoritos.</string>
+  <string name="follow_successful">Agora você segue este usuário.</string>
+  <string name="unfollow_successful">Não segue mais.</string>
+  <string name="profile_update_successful">Perfil atualizado com sucesso.</string>
+  <string name="profile_image_update_successful">Imagem de perfil atualizada com sucesso.</string>
   <string name="text_size">Tamanho do texto</string>
   <string name="text_size_summary">Tamanho do texto de status.</string>
   <string name="cannot_get_location">Não foi possível obter sua localização.</string>
@@ -237,8 +237,8 @@
   <string name="signing_in_please_wait">Entrando, aguarde ou pressione VOLTAR de novo para sair.</string>
   <string name="connectivity">Conectividade</string>
   <string name="add_member">Adicionar membro</string>
-  <string name="add_successfully">Adicionado com sucesso.</string>
-  <string name="create_successfully">Criado com sucesso.</string>
+  <string name="add_successful">Adicionado com sucesso.</string>
+  <string name="create_successful">Criado com sucesso.</string>
   <string name="new_user_list">Nova lista</string>
   <string name="is_public">Público</string>
   <string name="send_direct_message">Enviar MD</string>
@@ -365,7 +365,7 @@
   <string name="data_profiling_notification_ticker">Estatísticas Optadas</string>
   <string name="data_profiling_notification_title">Estatísticas de Uso</string>
   <string name="data_profiling_notification_desc">Ativar ou Desativar Estatísticas de Uso</string>
-  <string name="slient_notifications">Notificações silenciosas</string>
-  <string name="slient_notifications_summary">Desativar toque/vibração em notificações</string>
+  <string name="silent_notifications">Notificações silenciosas</string>
+  <string name="silent_notifications_summary">Desativar toque/vibração em notificações</string>
   <string name="disable_background_service">Desativar serviço em segundo plano</string>
 </resources>

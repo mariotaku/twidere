@@ -119,6 +119,23 @@ public final class ArrayUtils {
 		return fromList(list1);
 	}
 
+	public static String mergeArrayToString(final String[] array) {
+		if (array == null) return null;
+		final StringBuilder builder = new StringBuilder();
+		for (final String c : array) {
+			builder.append(c);
+		}
+		return builder.toString();
+	}
+
+	public static String[] subArray(final String[] array, final int start, final int end) {
+		final int length = end - start;
+		if (length < 0) throw new IllegalArgumentException();
+		final String[] result = new String[length];
+		System.arraycopy(array, start, result, 0, length);
+		return result;
+	}
+
 	public static String toString(final long[] array, final char token, final boolean include_space) {
 		final StringBuilder builder = new StringBuilder();
 		final int length = array.length;
@@ -147,5 +164,10 @@ public final class ArrayUtils {
 			}
 		}
 		return builder.toString();
+	}
+
+	public static String[] toStringArray(final String s) {
+		if (s == null) return null;
+		return s.split("(?!^)");
 	}
 }

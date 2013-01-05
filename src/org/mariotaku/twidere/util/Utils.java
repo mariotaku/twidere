@@ -189,6 +189,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public final class Utils implements Constants {
@@ -413,9 +414,9 @@ public final class Utils implements Constants {
 		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
 		builder.append(" UNION ");
 		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table + ", " + TABLE_FILTERED_LINKS);
-		builder.append(" WHERE " + table + "." + Statuses.TEXT + " LIKE '%<a href=\"%'||" + TABLE_FILTERED_LINKS + "."
-				+ Filters.Links.TEXT + "||'%\">%'");
-		builder.append(" OR " + table + "." + Statuses.TEXT + " LIKE '%>%'||" + TABLE_FILTERED_LINKS + "."
+		builder.append(" WHERE " + table + "." + Statuses.TEXT_HTML + " LIKE '%<a href=\"%'||" + TABLE_FILTERED_LINKS
+				+ "." + Filters.Links.TEXT + "||'%\">%'");
+		builder.append(" OR " + table + "." + Statuses.TEXT_HTML + " LIKE '%>%'||" + TABLE_FILTERED_LINKS + "."
 				+ Filters.Links.TEXT + "||'%</a>%'");
 		builder.append(" AND " + table + "." + Statuses.IS_GAP + " IS NULL");
 		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
@@ -684,11 +685,11 @@ public final class Utils implements Constants {
 
 	public static String formatDirectMessageText(final DirectMessage message) {
 		if (message == null) return null;
-		final String raw_text = message.getRawText();
-		if (raw_text == null) return null;
-		final HtmlBuilder builder = new HtmlBuilder(raw_text.replace("\n", "<br/>"), false, false, false);
+		final String text = message.getRawText();
+		if (text == null) return null;
+		final HtmlBuilder builder = new HtmlBuilder(text, DEBUG, true);
 		parseEntities(builder, message);
-		return builder.build();
+		return builder.build().replace("\n", "<br/>");
 	}
 
 	@SuppressWarnings("deprecation")
@@ -703,11 +704,11 @@ public final class Utils implements Constants {
 
 	public static String formatStatusText(final Status status) {
 		if (status == null) return null;
-		final String raw_text = status.getRawText();
-		if (raw_text == null) return null;
-		final HtmlBuilder builder = new HtmlBuilder(raw_text.replace("\n", "<br/>"), false, false, false);
+		final String text = status.getRawText();
+		if (text == null) return null;
+		final HtmlBuilder builder = new HtmlBuilder(text, DEBUG, true);
 		parseEntities(builder, status);
-		return builder.build();
+		return builder.build().replace("\n", "<br/>");
 	}
 
 	@SuppressWarnings("deprecation")
@@ -1644,6 +1645,17 @@ public final class Utils implements Constants {
 		return res_id != null ? context.getString(res_id) : null;
 	}
 
+	public static int getTextCount(final String string) {
+		if (string == null) return 0;
+		return ArrayUtils.toStringArray(string).length;
+	}
+
+	public static int getTextCount(final TextView view) {
+		if (view == null) return 0;
+		final String string = parseString(view.getText());
+		return getTextCount(string);
+	}
+
 	public static long getTimestampFromDate(final Date date) {
 		if (date == null) return -1;
 		return date.getTime();
@@ -2014,7 +2026,7 @@ public final class Utils implements Constants {
 		values.put(DirectMessages.MESSAGE_TIMESTAMP, message.getCreatedAt().getTime());
 		values.put(DirectMessages.SENDER_ID, sender.getId());
 		values.put(DirectMessages.RECIPIENT_ID, recipient.getId());
-		values.put(DirectMessages.TEXT, formatDirectMessageText(message));
+		values.put(DirectMessages.TEXT_HTML, formatDirectMessageText(message));
 		values.put(DirectMessages.TEXT_PLAIN, message.getText());
 		values.put(DirectMessages.IS_OUTGOING, is_outgoing);
 		values.put(DirectMessages.SENDER_NAME, sender.getName());
@@ -2062,7 +2074,7 @@ public final class Utils implements Constants {
 		if (status.getCreatedAt() != null) {
 			values.put(Statuses.STATUS_TIMESTAMP, status.getCreatedAt().getTime());
 		}
-		values.put(Statuses.TEXT, formatStatusText(status));
+		values.put(Statuses.TEXT_HTML, formatStatusText(status));
 		values.put(Statuses.TEXT_PLAIN, status.getText());
 		values.put(Statuses.RETWEET_COUNT, status.getRetweetCount());
 		values.put(Statuses.IN_REPLY_TO_SCREEN_NAME, status.getInReplyToScreenName());

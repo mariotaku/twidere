@@ -31,7 +31,7 @@ public class StatusViewHolder {
 
 	public final ImageView my_profile_image, profile_image, image_preview;
 	public final TextView name, screen_name, text, time, reply_retweet_status;
-	public final View image_preview_frame, name_container;
+	public final View image_preview_frame, name_container, image_preview_container;
 	private final View gap_indicator;
 	private final ColorLabelRelativeLayout content;
 	public boolean show_as_gap;
@@ -41,6 +41,7 @@ public class StatusViewHolder {
 	public StatusViewHolder(final View view) {
 		content = (ColorLabelRelativeLayout) view;
 		gap_indicator = view.findViewById(R.id.list_gap_text);
+		image_preview_container = view.findViewById(R.id.image_preview_container);
 		image_preview_frame = view.findViewById(R.id.image_preview_frame);
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		my_profile_image = (ImageView) view.findViewById(R.id.my_profile_image);

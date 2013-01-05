@@ -84,11 +84,12 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
 		final String[] cols = new String[] { Statuses._ID, Statuses.ACCOUNT_ID, Statuses.STATUS_ID, Statuses.USER_ID,
-				Statuses.STATUS_TIMESTAMP, Statuses.TEXT, Statuses.NAME, Statuses.SCREEN_NAME,
-				Statuses.PROFILE_IMAGE_URL, Statuses.IN_REPLY_TO_SCREEN_NAME, Statuses.IN_REPLY_TO_STATUS_ID,
-				Statuses.LOCATION, Statuses.IS_RETWEET, Statuses.RETWEET_COUNT, Statuses.RETWEET_ID,
-				Statuses.RETWEETED_BY_NAME, Statuses.RETWEETED_BY_SCREEN_NAME, Statuses.IS_FAVORITE,
-				Statuses.IS_PROTECTED, Statuses.IS_VERIFIED, Statuses.IS_GAP, Statuses.IS_POSSIBLY_SENSITIVE };
+				Statuses.STATUS_TIMESTAMP, Statuses.TEXT_HTML, Statuses.TEXT_PLAIN, Statuses.NAME,
+				Statuses.SCREEN_NAME, Statuses.PROFILE_IMAGE_URL, Statuses.IN_REPLY_TO_SCREEN_NAME,
+				Statuses.IN_REPLY_TO_STATUS_ID, Statuses.LOCATION, Statuses.IS_RETWEET, Statuses.RETWEET_COUNT,
+				Statuses.RETWEET_ID, Statuses.RETWEETED_BY_NAME, Statuses.RETWEETED_BY_SCREEN_NAME,
+				Statuses.IS_FAVORITE, Statuses.IS_PROTECTED, Statuses.IS_VERIFIED, Statuses.IS_GAP,
+				Statuses.IS_POSSIBLY_SENSITIVE };
 		final Uri uri = getContentUri();
 		final String sort_by = getSharedPreferences().getBoolean(PREFERENCE_KEY_SORT_TIMELINE_BY_TIME, false) ? Statuses.SORT_ORDER_TIMESTAMP_DESC
 				: Statuses.SORT_ORDER_STATUS_ID_DESC;

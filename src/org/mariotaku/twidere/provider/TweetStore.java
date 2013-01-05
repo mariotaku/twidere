@@ -39,10 +39,9 @@ public final class TweetStore implements Constants {
 	private static final String TYPE_PRIMARY_KEY = "INTEGER PRIMARY KEY AUTOINCREMENT";
 
 	private static final String TYPE_TEXT = "TEXT";
+	private static final String TYPE_INT = "INTEGER";
 
 	private static final String TYPE_TEXT_NOT_NULL = "TEXT NOT NULL";
-
-	private static final String TYPE_INT = "INTEGER";
 
 	private static final String TYPE_INT_UNIQUE = "INTEGER UNIQUE";
 
@@ -266,7 +265,7 @@ public final class TweetStore implements Constants {
 
 		public static final String IS_OUTGOING = "is_outgoing";
 
-		public static final String TEXT = "text";
+		public static final String TEXT_HTML = "text_html";
 		public static final String TEXT_PLAIN = "text_plain";
 		public static final String SENDER_NAME = "sender_name";
 		public static final String RECIPIENT_NAME = "recipient_name";
@@ -276,7 +275,7 @@ public final class TweetStore implements Constants {
 		public static final String RECIPIENT_PROFILE_IMAGE_URL = "recipient_profile_image_url";
 
 		public static final String[] COLUMNS = new String[] { _ID, ACCOUNT_ID, MESSAGE_ID, MESSAGE_TIMESTAMP,
-				SENDER_ID, RECIPIENT_ID, IS_OUTGOING, TEXT, TEXT_PLAIN, SENDER_NAME, RECIPIENT_NAME,
+				SENDER_ID, RECIPIENT_ID, IS_OUTGOING, TEXT_HTML, TEXT_PLAIN, SENDER_NAME, RECIPIENT_NAME,
 				SENDER_SCREEN_NAME, RECIPIENT_SCREEN_NAME, SENDER_PROFILE_IMAGE_URL, RECIPIENT_PROFILE_IMAGE_URL };
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_INT,
 				TYPE_INT, TYPE_BOOLEAN, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,
@@ -364,7 +363,7 @@ public final class TweetStore implements Constants {
 			public static final String NAME = "name";
 			public static final String SCREEN_NAME = "screen_name";
 			public static final String PROFILE_IMAGE_URL = "profile_image_url";
-			public static final String TEXT = "text";
+			public static final String TEXT_HTML = "text_html";
 			public static final String CONVERSATION_ID = "conversation_id";
 
 			public static final int IDX__ID = 0;
@@ -383,12 +382,12 @@ public final class TweetStore implements Constants {
 					final StringBuilder builder = new StringBuilder();
 					builder.append("SELECT " + _ID + ", " + MESSAGE_TIMESTAMP + ", " + MESSAGE_ID + ", " + ACCOUNT_ID
 							+ ", " + IS_OUTGOING + ", " + NAME + ", " + SCREEN_NAME + ", " + PROFILE_IMAGE_URL + ", "
-							+ TEXT + ", " + CONVERSATION_ID);
+							+ TEXT_HTML + ", " + CONVERSATION_ID);
 					builder.append(" FROM(");
 					builder.append("SELECT " + _ID + ", " + MESSAGE_TIMESTAMP + ", " + MESSAGE_ID + ", " + ACCOUNT_ID
 							+ ", " + "0 AS " + IS_OUTGOING + ", " + SENDER_NAME + " AS " + NAME + ", "
 							+ SENDER_SCREEN_NAME + " AS " + SCREEN_NAME + ", " + SENDER_PROFILE_IMAGE_URL + " AS "
-							+ PROFILE_IMAGE_URL + ", " + TEXT + ", " + SENDER_ID + " AS " + CONVERSATION_ID);
+							+ PROFILE_IMAGE_URL + ", " + TEXT_HTML + ", " + SENDER_ID + " AS " + CONVERSATION_ID);
 					builder.append(" FROM " + TABLE_DIRECT_MESSAGES_INBOX);
 					// builder.append(" GROUP BY " + CONVERSATION_ID);
 					// builder.append(" HAVING " + MAX_TIMESTAMP_TEMP +
@@ -398,7 +397,8 @@ public final class TweetStore implements Constants {
 					builder.append("SELECT " + _ID + ", " + MESSAGE_TIMESTAMP + ", " + MESSAGE_ID + ", " + ACCOUNT_ID
 							+ ", " + "1 AS " + IS_OUTGOING + ", " + RECIPIENT_NAME + " AS " + NAME + ", "
 							+ RECIPIENT_SCREEN_NAME + " AS " + SCREEN_NAME + ", " + RECIPIENT_PROFILE_IMAGE_URL
-							+ " AS " + PROFILE_IMAGE_URL + ", " + TEXT + ", " + RECIPIENT_ID + " AS " + CONVERSATION_ID);
+							+ " AS " + PROFILE_IMAGE_URL + ", " + TEXT_HTML + ", " + RECIPIENT_ID + " AS "
+							+ CONVERSATION_ID);
 					builder.append(" FROM " + TABLE_DIRECT_MESSAGES_OUTBOX);
 					// builder.append(" GROUP BY " + CONVERSATION_ID);
 					// builder.append(" HAVING " + MAX_TIMESTAMP_TEMP +
@@ -575,7 +575,7 @@ public final class TweetStore implements Constants {
 		 * text.<br>
 		 * Type: TEXT
 		 */
-		public static final String TEXT = "text";
+		public static final String TEXT_HTML = "text_html";
 
 		/**
 		 *
@@ -674,10 +674,10 @@ public final class TweetStore implements Constants {
 		public static final String DEFAULT_SORT_ORDER = SORT_ORDER_STATUS_ID_DESC;
 
 		public static final String[] COLUMNS = new String[] { _ID, ACCOUNT_ID, STATUS_ID, USER_ID, STATUS_TIMESTAMP,
-				TEXT, TEXT_PLAIN, NAME, SCREEN_NAME, PROFILE_IMAGE_URL, IN_REPLY_TO_STATUS_ID, IN_REPLY_TO_SCREEN_NAME,
-				SOURCE, LOCATION, RETWEET_COUNT, RETWEET_ID, RETWEETED_BY_ID, RETWEETED_BY_NAME,
-				RETWEETED_BY_SCREEN_NAME, MY_RETWEET_ID, IS_RETWEET, IS_FAVORITE, IS_PROTECTED, IS_VERIFIED, IS_GAP,
-				IS_POSSIBLY_SENSITIVE };
+				TEXT_HTML, TEXT_PLAIN, NAME, SCREEN_NAME, PROFILE_IMAGE_URL, IN_REPLY_TO_STATUS_ID,
+				IN_REPLY_TO_SCREEN_NAME, SOURCE, LOCATION, RETWEET_COUNT, RETWEET_ID, RETWEETED_BY_ID,
+				RETWEETED_BY_NAME, RETWEETED_BY_SCREEN_NAME, MY_RETWEET_ID, IS_RETWEET, IS_FAVORITE, IS_PROTECTED,
+				IS_VERIFIED, IS_GAP, IS_POSSIBLY_SENSITIVE };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_INT,
 				TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,

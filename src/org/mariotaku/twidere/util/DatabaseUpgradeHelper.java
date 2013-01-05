@@ -32,14 +32,16 @@ import android.provider.BaseColumns;
 
 public final class DatabaseUpgradeHelper {
 
+	private static final String TYPE_NULL = "NULL";
+	private static final String TYPE_INT = "INTEGER";
+	private static final String TYPE_FLOAT = "FLOAT";
+	private static final String TYPE_TEXT = "TEXT";
+	private static final String TYPE_BLOB = "BLOB";
+
 	private static final int FIELD_TYPE_NULL = 0;
-
 	private static final int FIELD_TYPE_INTEGER = 1;
-
 	private static final int FIELD_TYPE_FLOAT = 2;
-
 	private static final int FIELD_TYPE_STRING = 3;
-
 	private static final int FIELD_TYPE_BLOB = 4;
 
 	public static void safeUpgrade(final SQLiteDatabase db, final String table, final String[] new_cols,
@@ -186,15 +188,15 @@ public final class DatabaseUpgradeHelper {
 	private static int getTypeInt(final String type) {
 		final int idx = type.contains("(") ? type.indexOf("(") : type.indexOf(" ");
 		final String type_main = idx > -1 ? type.substring(0, idx) : type;
-		if ("NULL".equalsIgnoreCase(type_main))
+		if (TYPE_NULL.equalsIgnoreCase(type_main))
 			return FIELD_TYPE_NULL;
-		else if ("INTEGER".equalsIgnoreCase(type_main))
+		else if (TYPE_INT.equalsIgnoreCase(type_main))
 			return FIELD_TYPE_INTEGER;
-		else if ("FLOAT".equalsIgnoreCase(type_main))
+		else if (TYPE_FLOAT.equalsIgnoreCase(type_main))
 			return FIELD_TYPE_FLOAT;
-		else if ("TEXT".equalsIgnoreCase(type_main))
+		else if (TYPE_TEXT.equalsIgnoreCase(type_main))
 			return FIELD_TYPE_STRING;
-		else if ("BLOB".equalsIgnoreCase(type_main)) return FIELD_TYPE_BLOB;
+		else if (TYPE_BLOB.equalsIgnoreCase(type_main)) return FIELD_TYPE_BLOB;
 		throw new IllegalStateException("Unknown field type " + type);
 	}
 

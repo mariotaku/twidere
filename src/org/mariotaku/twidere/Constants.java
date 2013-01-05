@@ -49,7 +49,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PERMISSION_PREFERENCES_NAME = "permissions";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 37;
+	public static final int DATABASES_VERSION = 38;
 
 	// The following 4 constants are not included in source code, you'd better
 	// use your own.
@@ -194,6 +194,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS = "display_sensitive_contents";
 	public static final String PREFERENCE_KEY_FAST_SCROLL_THUMB = "fast_scroll_thumb";
 	public static final String PREFERENCE_KEY_LINK_HIGHLIGHTING = "link_highlighting";
+	public static final String PREFERENCE_KEY_FAST_TIMELINE_PROCESSING = "fast_timeline_processing";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;

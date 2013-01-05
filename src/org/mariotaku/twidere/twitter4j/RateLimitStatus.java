@@ -16,7 +16,6 @@
 
 package org.mariotaku.twidere.twitter4j;
 
-
 /**
  * A data interface representing Twitter REST API's rate limit status
  * 

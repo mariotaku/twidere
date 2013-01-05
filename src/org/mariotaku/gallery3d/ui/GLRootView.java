@@ -72,7 +72,6 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 	private GLCanvas mCanvas;
 	private GLView mContentView;
 
-	private OrientationSource mOrientationSource;
 	// mCompensation is the difference between the UI orientation on GLCanvas
 	// and the framework orientation. See OrientationManager for details.
 	private int mCompensation;
@@ -327,11 +326,6 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 		}
 	}
 
-	@Override
-	public void setOrientationSource(final OrientationSource source) {
-		mOrientationSource = source;
-	}
-
 	// We need to unfreeze in the following methods and in onPause().
 	// These methods will wait on GLThread. If we have freezed the GLRootView,
 	// the GLThread will wait on main thread to call unfreeze and cause dead
@@ -394,17 +388,8 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 
 		int w = getWidth();
 		int h = getHeight();
-		int displayRotation = 0;
-		int compensation = 0;
-
-		// Get the new orientation values
-		if (mOrientationSource != null) {
-			displayRotation = mOrientationSource.getDisplayRotation();
-			compensation = mOrientationSource.getCompensation();
-		} else {
-			displayRotation = 0;
-			compensation = 0;
-		}
+		final int displayRotation = 0;
+		final int compensation = 0;
 
 		if (mCompensation != compensation) {
 			mCompensation = compensation;

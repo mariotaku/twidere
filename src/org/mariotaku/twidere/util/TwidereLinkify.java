@@ -23,6 +23,7 @@ import static org.mariotaku.twidere.util.Utils.getAllAvailableImage;
 import static org.mariotaku.twidere.util.Utils.matcherEnd;
 import static org.mariotaku.twidere.util.Utils.matcherGroup;
 import static org.mariotaku.twidere.util.Utils.matcherStart;
+import static org.mariotaku.twidere.util.Utils.parseString;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,6 +39,7 @@ import android.text.style.URLSpan;
 import android.view.View;
 import android.widget.TextView;
 
+import com.twitter.Extractor;
 import com.twitter.Regex;
 
 /**
@@ -66,9 +68,7 @@ public class TwidereLinkify {
 	public static final int LINK_TYPE_CASHTAG = 7;
 
 	public static final int[] ALL_LINK_TYPES = new int[] { LINK_TYPE_LINK, LINK_TYPE_MENTION_LIST, LINK_TYPE_HASHTAG,
-			LINK_TYPE_LINK_WITH_IMAGE_EXTENSION, LINK_TYPE_ALL_AVAILABLE_IMAGE, LINK_TYPE_CASHTAG
-
-	};
+			LINK_TYPE_LINK_WITH_IMAGE_EXTENSION, LINK_TYPE_ALL_AVAILABLE_IMAGE, LINK_TYPE_CASHTAG };
 
 	public static final String SINA_WEIBO_IMAGES_AVAILABLE_SIZES = "(woriginal|large|thumbnail|bmiddle|mw[\\d]+)";
 
@@ -186,12 +186,14 @@ public class TwidereLinkify {
 	public static final Pattern PATTERN_TWITTER_PROFILE_IMAGES = Pattern.compile(STRING_PATTERN_TWITTER_PROFILE_IMAGES,
 			Pattern.CASE_INSENSITIVE);
 
-	private final TextView view;
+	private final TextView mTextView;
 
 	private OnLinkClickListener mOnLinkClickListener;
 
+	private final Extractor mExtractor = new Extractor();
+
 	public TwidereLinkify(final TextView view) {
-		this.view = view;
+		mTextView = view;
 		view.setMovementMethod(LinkMovementMethod.getInstance());
 	}
 
@@ -214,7 +216,7 @@ public class TwidereLinkify {
 	 *            link text
 	 */
 	public final void addLinks(final int type) {
-		final SpannableString string = SpannableString.valueOf(view.getText());
+		final SpannableString string = SpannableString.valueOf(mTextView.getText());
 		switch (type) {
 			case LINK_TYPE_MENTION_LIST: {
 				addMentionOrListLinks(string);
@@ -248,6 +250,14 @@ public class TwidereLinkify {
 					string.removeSpan(span);
 					applyLink(span.getURL(), start, end, string, LINK_TYPE_LINK);
 				}
+				for (final Extractor.Entity entity : mExtractor.extractURLsWithIndices(parseString(string))) {
+					final int start = entity.getStart(), end = entity.getEnd();
+					if (entity.getType() != Extractor.Entity.Type.URL
+							|| string.getSpans(start, end, URLSpan.class).length > 0) {
+						continue;
+					}
+					applyLink(entity.getValue(), start, end, string, LINK_TYPE_LINK);
+				}
 				break;
 			}
 			case LINK_TYPE_ALL_AVAILABLE_IMAGE: {
@@ -278,8 +288,8 @@ public class TwidereLinkify {
 
 		}
 
-		view.setText(string);
-		addLinkMovementMethod(view);
+		mTextView.setText(string);
+		addLinkMovementMethod(mTextView);
 	}
 
 	public OnLinkClickListener getmOnLinkClickListener() {

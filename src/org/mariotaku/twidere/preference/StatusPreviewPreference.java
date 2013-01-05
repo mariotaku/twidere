@@ -87,8 +87,6 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 	protected void onBindView(final View view) {
 		mHolder = new StatusViewHolder(view);
 		mHolder.profile_image.setImageResource(R.drawable.ic_launcher);
-		mHolder.image_preview.setImageResource(R.drawable.twidere_promotional_graphic);
-		mHolder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_indicator_has_media, 0);
 		mHolder.reply_retweet_status.setVisibility(View.GONE);
 		mHolder.setShowAsGap(false);
 		mHolder.setIsMyStatus(false);
@@ -98,6 +96,7 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 		setProfileImage();
 		setTextSize();
 		setTime();
+		setDetailsAndMedia();
 		super.onBindView(view);
 	}
 
@@ -106,14 +105,24 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 		return mInflater.inflate(R.layout.status_list_item, null);
 	}
 
+	private void setDetailsAndMedia() {
+		mHolder.image_preview.setImageResource(R.drawable.twidere_promotional_graphic);
+		final boolean fast_timeline_processing = mPreferences
+				.getBoolean(PREFERENCE_KEY_FAST_TIMELINE_PROCESSING, false);
+		mHolder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, fast_timeline_processing ? 0
+				: R.drawable.ic_indicator_has_media, 0);
+	}
+
 	private void setImagePreview() {
 		if (mHolder == null) return;
 		final String option_string = mPreferences.getString(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW_DISPLAY_OPTION,
 				INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_NONE);
+		final boolean fast_timeline_processing = mPreferences
+				.getBoolean(PREFERENCE_KEY_FAST_TIMELINE_PROCESSING, false);
 		final int option = getInlineImagePreviewDisplayOptionInt(option_string);
 
-		mHolder.image_preview_frame
-				.setVisibility(option != INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE ? View.VISIBLE : View.GONE);
+		mHolder.image_preview_container.setVisibility(!fast_timeline_processing
+				&& option != INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE ? View.VISIBLE : View.GONE);
 		final MarginLayoutParams lp = (MarginLayoutParams) mHolder.image_preview_frame.getLayoutParams();
 		if (option == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE) {
 			lp.width = LayoutParams.MATCH_PARENT;
@@ -154,7 +163,9 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 
 	private void setText() {
 		if (mPreferences == null) return;
-		if (mPreferences.getBoolean(PREFERENCE_KEY_LINK_HIGHLIGHTING, false)) {
+		final boolean fast_timeline_processing = mPreferences
+				.getBoolean(PREFERENCE_KEY_FAST_TIMELINE_PROCESSING, false);
+		if (mPreferences.getBoolean(PREFERENCE_KEY_LINK_HIGHLIGHTING, false) && !fast_timeline_processing) {
 			mHolder.text.setText(Html.fromHtml(TEXT_HTML));
 			final TwidereLinkify linkify = new TwidereLinkify(mHolder.text);
 			linkify.addAllLinks();

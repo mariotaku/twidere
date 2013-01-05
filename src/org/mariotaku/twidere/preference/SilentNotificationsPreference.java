@@ -22,17 +22,17 @@ package org.mariotaku.twidere.preference;
 import android.content.Context;
 import android.util.AttributeSet;
 
-public final class SlientNotificationsPreference extends MultiSelectListPreference {
+public final class SilentNotificationsPreference extends MultiSelectListPreference {
 
-	public SlientNotificationsPreference(final Context context) {
+	public SilentNotificationsPreference(final Context context) {
 		super(context);
 	}
 
-	public SlientNotificationsPreference(final Context context, final AttributeSet attrs) {
+	public SilentNotificationsPreference(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
 	}
 
-	public SlientNotificationsPreference(final Context context, final AttributeSet attrs, final int defStyle) {
+	public SilentNotificationsPreference(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 	}
 
@@ -45,7 +45,7 @@ public final class SlientNotificationsPreference extends MultiSelectListPreferen
 	protected String[] getKeys() {
 		final String[] keys = new String[24];
 		for (int i = 0; i < 24; i++) {
-			keys[i] = "slient_notifications_at_" + i;
+			keys[i] = "silent_notifications_at_" + i;
 		}
 		return keys;
 	}

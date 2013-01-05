@@ -27,6 +27,8 @@ public interface IStatusesAdapter extends IBaseAdapter {
 
 	public void setDisplaySensitiveContents(boolean display);
 
+	public void setFastTimelineProcessingEnabled(boolean enabled);
+
 	public void setGapDisallowed(boolean disallowed);
 
 	public void setIndicateMyStatusDisabled(boolean disable);

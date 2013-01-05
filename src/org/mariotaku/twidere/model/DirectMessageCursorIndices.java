@@ -36,7 +36,7 @@ public class DirectMessageCursorIndices {
 		sender_id = cursor.getColumnIndex(DirectMessages.SENDER_ID);
 		recipient_id = cursor.getColumnIndex(DirectMessages.RECIPIENT_ID);
 		is_outgoing = cursor.getColumnIndex(DirectMessages.IS_OUTGOING);
-		text = cursor.getColumnIndex(DirectMessages.TEXT);
+		text = cursor.getColumnIndex(DirectMessages.TEXT_HTML);
 		text_plain = cursor.getColumnIndex(DirectMessages.TEXT_PLAIN);
 		sender_name = cursor.getColumnIndex(DirectMessages.SENDER_NAME);
 		recipient_name = cursor.getColumnIndex(DirectMessages.RECIPIENT_NAME);

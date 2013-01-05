@@ -349,7 +349,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		int defaults = 0;
 		final Calendar now = Calendar.getInstance();
 		if (mNotificationIsAudible
-				&& !mPreferences.getBoolean("slient_notifications_at_" + now.get(Calendar.HOUR_OF_DAY), false)) {
+				&& !mPreferences.getBoolean("silent_notifications_at_" + now.get(Calendar.HOUR_OF_DAY), false)) {
 			if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND, false)) {
 				builder.setSound(Uri.parse(mPreferences.getString(PREFERENCE_KEY_NOTIFICATION_RINGTONE,
 						Settings.System.DEFAULT_RINGTONE_URI.getPath())), Notification.STREAM_DEFAULT);

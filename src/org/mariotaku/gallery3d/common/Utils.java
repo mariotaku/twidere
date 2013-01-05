@@ -24,8 +24,6 @@ import android.util.Log;
 public class Utils {
 	private static final String TAG = "Utils";
 	private static final long POLY64REV = 0x95AC9329AC4BC9B5L;
-	private static final long INITIALCRC = 0xFFFFFFFFFFFFFFFFL;
-
 	private static long[] sCrcTable = new long[256];
 
 	static {
@@ -95,17 +93,6 @@ public class Utils {
 		}
 	}
 
-	/**
-	 * A function thats returns a 64-bit crc for string
-	 * 
-	 * @param in input string
-	 * @return a 64-bit crc value
-	 */
-	public static final long crc64Long(final String in) {
-		if (in == null || in.length() == 0) return 0;
-		return crc64Long(getBytes(in));
-	}
-
 	public static int floorLog2(final float value) {
 		int i;
 		for (i = 0; i < 31; i++) {
@@ -149,23 +136,5 @@ public class Utils {
 		} catch (final InterruptedException e) {
 			Log.w(TAG, "unexpected interrupt: " + object);
 		}
-	}
-
-	private static final long crc64Long(final byte[] buffer) {
-		long crc = INITIALCRC;
-		for (int k = 0, n = buffer.length; k < n; ++k) {
-			crc = sCrcTable[((int) crc ^ buffer[k]) & 0xff] ^ crc >> 8;
-		}
-		return crc;
-	}
-
-	private static byte[] getBytes(final String in) {
-		final byte[] result = new byte[in.length() * 2];
-		int output = 0;
-		for (final char ch : in.toCharArray()) {
-			result[output++] = (byte) (ch & 0xFF);
-			result[output++] = (byte) (ch >> 8);
-		}
-		return result;
 	}
 }

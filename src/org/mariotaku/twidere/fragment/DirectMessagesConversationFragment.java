@@ -230,7 +230,7 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 		// null, null, null, null);
 		final String[] cols = new String[] { DirectMessages._ID, DirectMessages.ACCOUNT_ID, DirectMessages.MESSAGE_ID,
 				DirectMessages.MESSAGE_TIMESTAMP, DirectMessages.SENDER_ID, DirectMessages.RECIPIENT_ID,
-				DirectMessages.IS_OUTGOING, DirectMessages.TEXT, DirectMessages.SENDER_NAME,
+				DirectMessages.IS_OUTGOING, DirectMessages.TEXT_HTML, DirectMessages.SENDER_NAME,
 				DirectMessages.RECIPIENT_NAME, DirectMessages.SENDER_SCREEN_NAME, DirectMessages.RECIPIENT_SCREEN_NAME,
 				DirectMessages.SENDER_PROFILE_IMAGE_URL, DirectMessages.RECIPIENT_PROFILE_IMAGE_URL };
 		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;

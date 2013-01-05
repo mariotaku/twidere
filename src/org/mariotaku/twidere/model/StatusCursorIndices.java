@@ -36,7 +36,7 @@ public class StatusCursorIndices {
 		status_timestamp = cursor.getColumnIndex(Statuses.STATUS_TIMESTAMP);
 		name = cursor.getColumnIndex(Statuses.NAME);
 		screen_name = cursor.getColumnIndex(Statuses.SCREEN_NAME);
-		text_html = cursor.getColumnIndex(Statuses.TEXT);
+		text_html = cursor.getColumnIndex(Statuses.TEXT_HTML);
 		text_plain = cursor.getColumnIndex(Statuses.TEXT_PLAIN);
 		profile_image_url = cursor.getColumnIndex(Statuses.PROFILE_IMAGE_URL);
 		is_favorite = cursor.getColumnIndex(Statuses.IS_FAVORITE);

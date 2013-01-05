@@ -116,15 +116,15 @@
   <string name="quote">Цитировать</string>
   <string name="add_rule">Добавить правило</string>
   <string name="longclick_to_delete">Долгое нажатие для удаления.</string>
-  <string name="retweet_successfully">Ретвитнуто.</string>
-  <string name="delete_successfully">Удалено.</string>
-  <string name="send_successfully">Отослано.</string>
-  <string name="favorite_successfully">Добавлено в избранное.</string>
-  <string name="unfavorite_successfully">Удалено из избранного.</string>
-  <string name="follow_successfully">Теперь вы читаете этого пользователя.</string>
-  <string name="unfollow_successfully">Теперь вы не читаете этого пользователя.</string>
-  <string name="profile_update_successfully">Профиль обновлён.</string>
-  <string name="profile_image_update_successfully">Изображение профиля обновлено.
+  <string name="retweet_successful">Ретвитнуто.</string>
+  <string name="delete_successful">Удалено.</string>
+  <string name="send_successful">Отослано.</string>
+  <string name="favorite_successful">Добавлено в избранное.</string>
+  <string name="unfavorite_successful">Удалено из избранного.</string>
+  <string name="follow_successful">Теперь вы читаете этого пользователя.</string>
+  <string name="unfollow_successful">Теперь вы не читаете этого пользователя.</string>
+  <string name="profile_update_successful">Профиль обновлён.</string>
+  <string name="profile_image_update_successful">Изображение профиля обновлено.
 </string>
   <string name="text_size">Размер текста</string>
   <string name="text_size_summary">Размер текста для статусов.</string>

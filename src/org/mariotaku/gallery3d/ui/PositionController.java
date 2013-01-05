@@ -102,9 +102,6 @@ class PositionController {
 	// This is used by the fling animation (page mode).
 	private final FlingScroller mPageScroller;
 
-	// // This is used by the fling animation (film mode).
-	// private final Scroller mFilmScroller;
-
 	// The bound of the stable region that the focused box can stay, see the
 	// comments above calculateStableBound() for details.
 	private int mBoundLeft, mBoundRight, mBoundTop, mBoundBottom;
@@ -128,19 +125,6 @@ class PositionController {
 	// we set the initial value of this variable to true, and we will not see
 	// see unwanted transition animation.
 	private final boolean mConstrained = true;
-
-	//
-	// ___________________________________________________________
-	// | _____ _____ _____ _____ _____ |
-	// | | | | | | | | | | | |
-	// | | Box | | Box | | Box*| | Box | | Box | |
-	// | |_____|.....|_____|.....|_____|.....|_____|.....|_____| |
-	// | Gap Gap Gap Gap |
-	// |___________________________________________________________|
-	//
-	// <-- Platform -->
-	//
-	// The focused box (Box*) centers at mPlatform's (mCurrentX, mCurrentY)
 
 	private final Platform mPlatform = new Platform();
 	private final Box mBox;
@@ -325,11 +309,9 @@ class PositionController {
 	public void scrollPage(final int dx, final int dy) {
 		if (!canScroll()) return;
 
-		final Platform p = mPlatform;
-
 		calculateStableBound(mBox.mCurrentScale);
 
-		int x = p.mCurrentX + dx;
+		int x = mPlatform.mCurrentX + dx;
 		int y = mBox.mCurrentY + dy;
 
 		// Vertical direction: If we have space to move in the vertical
@@ -346,15 +328,15 @@ class PositionController {
 
 		// Horizontal direction: we show the edge effect when the scrolling
 		// tries to go left of the first image or go right of the last image.
-		if (!false && x > mBoundRight) {
-			final int pixels = x - mBoundRight;
-			mListener.onPull(pixels, EdgeView.LEFT);
-			x = mBoundRight;
-		} else if (!false && x < mBoundLeft) {
-			final int pixels = mBoundLeft - x;
-			mListener.onPull(pixels, EdgeView.RIGHT);
-			x = mBoundLeft;
+		if (mBoundLeft != mBoundRight) {
+			if (x > mBoundRight) {
+				mListener.onPull(x - mBoundRight, EdgeView.LEFT);
+			} else if (x < mBoundLeft) {
+				mListener.onPull(mBoundLeft - x, EdgeView.RIGHT);
+			}
 		}
+
+		x = Utils.clamp(x, mBoundLeft, mBoundRight);
 
 		startAnimation(x, y, mBox.mCurrentScale, ANIM_KIND_SCROLL);
 	}
@@ -632,7 +614,6 @@ class PositionController {
 		for (int i = 0; i < 2 * 0 + 1; i++) {
 			convertBoxToRect(CENTER_OUT_INDEX[i]);
 		}
-		// dumpState();
 	}
 
 	// //////////////////////////////////////////////////////////////////////////

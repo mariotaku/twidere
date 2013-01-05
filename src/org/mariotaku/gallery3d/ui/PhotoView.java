@@ -31,8 +31,10 @@ import android.view.MotionEvent;
 public class PhotoView extends GLView {
 
 	private static final int MSG_CANCEL_EXTRA_SCALING = 2;
-
 	private static final int MSG_CAPTURE_ANIMATION_DONE = 4;
+
+	private static final int HOLD_TOUCH_DOWN = 1;
+	private static final int HOLD_CAPTURE_ANIMATION = 2;
 
 	private final GestureListener mGestureListener;
 
@@ -56,9 +58,6 @@ public class PhotoView extends GLView {
 	// animation.
 	private int mHolding;
 
-	private static final int HOLD_TOUCH_DOWN = 1;
-	private static final int HOLD_CAPTURE_ANIMATION = 2;
-
 	// This is the index of the last deleted item. This is only used as a hint
 	// to hide the undo button when we are too far away from the deleted
 	// item. The value Integer.MAX_VALUE means there is no such hint.
@@ -68,14 +67,13 @@ public class PhotoView extends GLView {
 	public PhotoView(final ImageViewerGLActivity activity) {
 		mTileView = new TileImageView(activity);
 		addComponent(mTileView);
-		mContext = activity.getAndroidContext();
+		mContext = activity;
 		mEdgeView = new EdgeView(mContext);
 		addComponent(mEdgeView);
-		mHandler = new MyHandler(activity.getGLRoot());
-
+		mHandler = new MyHandler(activity);
+		mPicture = new FullPicture();
 		mGestureListener = new GestureListener();
 		mGestureRecognizer = new GestureRecognizer(mContext, mGestureListener);
-
 		mPositionController = new PositionController(mContext, new PositionController.Listener() {
 
 			@Override
@@ -98,7 +96,6 @@ public class PhotoView extends GLView {
 				mEdgeView.onPull(offset, direction);
 			}
 		});
-		mPicture = new FullPicture();
 	}
 
 	public Rect getPhotoRect() {
@@ -568,8 +565,9 @@ public class PhotoView extends GLView {
 	}
 
 	class MyHandler extends SynchronizedHandler {
-		private MyHandler(final GLRoot root) {
-			super(root);
+
+		public MyHandler(final ImageViewerGLActivity activity) {
+			super(activity.getGLRoot());
 		}
 
 		@Override

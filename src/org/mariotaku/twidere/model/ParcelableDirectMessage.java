@@ -76,7 +76,7 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 
 	public ParcelableDirectMessage(final ContentValues values) {
 		text_plain = values.getAsString(DirectMessages.TEXT_PLAIN);
-		text_html = values.getAsString(DirectMessages.TEXT);
+		text_html = values.getAsString(DirectMessages.TEXT_HTML);
 		sender_screen_name = values.getAsString(DirectMessages.SENDER_SCREEN_NAME);
 		sender_profile_image_url_string = values.getAsString(DirectMessages.SENDER_PROFILE_IMAGE_URL);
 		sender_name = values.getAsString(DirectMessages.SENDER_NAME);

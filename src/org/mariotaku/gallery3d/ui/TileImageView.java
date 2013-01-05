@@ -18,7 +18,7 @@ package org.mariotaku.gallery3d.ui;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.mariotaku.gallery3d.app.GalleryContext;
+import org.mariotaku.gallery3d.app.ImageViewerGLActivity;
 import org.mariotaku.gallery3d.common.ApiHelper;
 import org.mariotaku.gallery3d.common.LongSparseArray;
 import org.mariotaku.gallery3d.common.Utils;
@@ -117,11 +117,11 @@ public class TileImageView extends GLView {
 	private final ThreadPool mThreadPool;
 	private boolean mBackgroundTileUploaded;
 
-	public TileImageView(final GalleryContext context) {
+	public TileImageView(final ImageViewerGLActivity context) {
 		mThreadPool = context.getThreadPool();
 		mTileDecoder = mThreadPool.submit(new TileDecoder());
 		if (TILE_SIZE == 0) {
-			if (GalleryUtils.isHighResolution(context.getAndroidContext())) {
+			if (GalleryUtils.isHighResolution(context)) {
 				TILE_SIZE = 510;
 			} else {
 				TILE_SIZE = 254;

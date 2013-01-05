@@ -19,17 +19,11 @@
 
 package org.mariotaku.twidere.app;
 
-import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
 import static org.mariotaku.twidere.util.Utils.hasActiveConnection;
 
-import java.io.File;
 import java.util.ArrayList;
 
-import org.mariotaku.gallery3d.app.IGalleryApplication;
-import org.mariotaku.gallery3d.data.DataManager;
-import org.mariotaku.gallery3d.data.DownloadCache;
 import org.mariotaku.gallery3d.util.GalleryUtils;
-import org.mariotaku.gallery3d.util.ThreadPool;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -55,11 +49,7 @@ import android.os.Handler;
 import android.webkit.WebView;
 import edu.ucdavis.earlybird.UCDService;
 
-public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener,
-		IGalleryApplication {
-
-	private static final String DOWNLOAD_FOLDER = "download";
-	private static final long DOWNLOAD_CAPACITY = 64 * 1024 * 1024; // 64M
+public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener {
 
 	private LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
 	private AsyncTaskManager mAsyncTaskManager;
@@ -67,9 +57,6 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	private AsyncTwitterWrapper mTwitterWrapper;
 
 	private HostAddressResolver mResolver;
-	private DataManager mDataManager;
-	private ThreadPool mThreadPool;
-	private DownloadCache mDownloadCache;
 	private SQLiteDatabase mDatabase;
 
 	private Handler mHandler;
@@ -81,11 +68,6 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	private final ArrayList<Long> mSelectedStatusIds = new ArrayList<Long>();
 	private final ArrayList<Long> mSelectedUserIds = new ArrayList<Long>();
 
-	@Override
-	public Context getAndroidContext() {
-		return this;
-	}
-
 	public AsyncTaskManager getAsyncTaskManager() {
 		if (mAsyncTaskManager != null) return mAsyncTaskManager;
 		return mAsyncTaskManager = AsyncTaskManager.getInstance();
@@ -93,29 +75,6 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	public String getBrowserUserAgent() {
 		return mBrowserUserAgent;
-	}
-
-	@Override
-	public synchronized DataManager getDataManager() {
-		if (mDataManager == null) {
-			mDataManager = new DataManager(this);
-		}
-		return mDataManager;
-	}
-
-	@Override
-	public synchronized DownloadCache getDownloadCache() {
-		if (mDownloadCache == null) {
-			final File cacheDir = getBestCacheDir(this, DOWNLOAD_FOLDER);
-
-			if (!cacheDir.isDirectory()) {
-				cacheDir.mkdirs();
-			}
-
-			if (!cacheDir.isDirectory()) throw new RuntimeException("fail to create: " + cacheDir.getAbsolutePath());
-			mDownloadCache = new DownloadCache(this, cacheDir, DOWNLOAD_CAPACITY);
-		}
-		return mDownloadCache;
 	}
 
 	public Handler getHandler() {
@@ -158,14 +117,6 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	public SQLiteDatabase getSQLiteDatabase() {
 		if (mDatabase != null) return mDatabase;
 		return mDatabase = new DatabaseHelper(this, DATABASES_NAME, DATABASES_VERSION).getWritableDatabase();
-	}
-
-	@Override
-	public synchronized ThreadPool getThreadPool() {
-		if (mThreadPool == null) {
-			mThreadPool = new ThreadPool();
-		}
-		return mThreadPool;
 	}
 
 	public AsyncTwitterWrapper getTwitterWrapper() {

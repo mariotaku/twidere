@@ -361,7 +361,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				if (mAccountIds.length == 1 && mAccountIds[0] != getDefaultAccountId(this)) {
 					mAccountIds[0] = getDefaultAccountId(this);
 				}
-			} 
+			}
 			final String action = getIntent().getAction();
 			if (Intent.ACTION_SEND.equals(action) || Intent.ACTION_SEND_MULTIPLE.equals(action)) {
 				setTitle(R.string.share);
@@ -452,18 +452,6 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	@Override
 	public Loader<Bitmap> onCreateLoader(final int id, final Bundle args) {
 		return new AttachedImageThumbnailLoader(this, args.getString(INTENT_KEY_FILENAME));
-	}
-	
-	private void setMentionsText(final String[] mentions, final String account_screen_name) {
-		final StringBuilder builder = new StringBuilder();
-		for (final String mention : mentions) {
-			if (mentions.length == 1 && mentions[0].equalsIgnoreCase(account_screen_name)) {
-				builder.append('@' + account_screen_name + ' ');
-			} else if (!mention.equalsIgnoreCase(account_screen_name)) {
-				builder.append('@' + mention + ' ');
-			}
-		}
-		mText = builder.toString();
 	}
 
 	@Override
@@ -630,9 +618,9 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		final String text = mIsPhotoAttached || mIsImageAttached ? mUploadUseExtension ? getImageUploadStatus(this,
 				FAKE_IMAGE_LINK, text_orig) : text_orig + " " + FAKE_IMAGE_LINK : text_orig;
 		final int count = mValidator.getTweetLength(text);
-		final float hue = count < Validator.MAX_TWEET_LENGTH ? count >= Validator.MAX_TWEET_LENGTH - 10 ? 5 * (Validator.MAX_TWEET_LENGTH - count)
-				: 50
-				: 0;
+		final boolean exceeded_limit = count < Validator.MAX_TWEET_LENGTH;
+		final boolean near_limit = count >= Validator.MAX_TWEET_LENGTH - 10;
+		final float hue = exceeded_limit ? near_limit ? 5 * (Validator.MAX_TWEET_LENGTH - count) : 50 : 0;
 		final float[] hsv = new float[] { hue, 1.0f, 1.0f };
 		mTextCount.setTextColor(count >= Validator.MAX_TWEET_LENGTH - 10 ? Color.HSVToColor(0x80, hsv) : 0x80808080);
 		mTextCount.setText(parseString(Validator.MAX_TWEET_LENGTH - count));
@@ -680,13 +668,6 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		mContentModified = true;
 	}
 
-	//
-	// @Override
-	// public void onTitleChanged(final CharSequence title, final int color) {
-	// mActionBarCompat.setTitle(title);
-	// super.onTitleChanged(title, color);
-	// }
-
 	public void saveToDrafts() {
 		final String text = mEditText != null ? parseString(mEditText.getText()) : null;
 		final ContentValues values = new ContentValues();
@@ -705,6 +686,13 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		}
 		mResolver.insert(Drafts.CONTENT_URI, values);
 	}
+
+	//
+	// @Override
+	// public void onTitleChanged(final CharSequence title, final int color) {
+	// mActionBarCompat.setTitle(title);
+	// super.onTitleChanged(title, color);
+	// }
 
 	@Override
 	protected void onStart() {
@@ -795,6 +783,18 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				mInReplyToStatusId, has_media && mIsPossiblySensitive, mIsPhotoAttached && !mIsImageAttached);
 		setResult(Activity.RESULT_OK);
 		finish();
+	}
+
+	private void setMentionsText(final String[] mentions, final String account_screen_name) {
+		final StringBuilder builder = new StringBuilder();
+		for (final String mention : mentions) {
+			if (mentions.length == 1 && mentions[0].equalsIgnoreCase(account_screen_name)) {
+				builder.append('@' + account_screen_name + ' ');
+			} else if (!mention.equalsIgnoreCase(account_screen_name)) {
+				builder.append('@' + mention + ' ');
+			}
+		}
+		mText = builder.toString();
 	}
 
 	private void setMenu() {

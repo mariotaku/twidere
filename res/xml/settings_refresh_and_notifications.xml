@@ -68,10 +68,10 @@
 			android:key="notification_light_color"
 			android:title="@string/notification_light_color"/>
 
-		<org.mariotaku.twidere.preference.SlientNotificationsPreference
-			android:key="slient_notifications"
-			android:summary="@string/slient_notifications_summary"
-			android:title="@string/slient_notifications"/>
+		<org.mariotaku.twidere.preference.SilentNotificationsPreference
+			android:key="silent_notifications"
+			android:summary="@string/silent_notifications_summary"
+			android:title="@string/silent_notifications"/>
 	</PreferenceCategory>
 
 </PreferenceScreen>
