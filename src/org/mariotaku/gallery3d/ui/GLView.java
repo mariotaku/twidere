@@ -19,7 +19,7 @@ package org.mariotaku.gallery3d.ui;
 import java.util.ArrayList;
 
 import org.mariotaku.gallery3d.anim.CanvasAnimation;
-import org.mariotaku.gallery3d.util.Utils;
+import org.mariotaku.gallery3d.util.GalleryUtils;
 
 import android.graphics.Rect;
 import android.view.MotionEvent;
@@ -86,13 +86,13 @@ public class GLView {
 
 	// This should only be called on the content pane (the topmost GLView).
 	public void attachToRoot(final GLRoot root) {
-		Utils.assertTrue(mParent == null && mRoot == null);
+		GalleryUtils.assertTrue(mParent == null && mRoot == null);
 		onAttachToRoot(root);
 	}
 
 	// This should only be called on the content pane (the topmost GLView).
 	public void detachFromRoot() {
-		Utils.assertTrue(mParent == null && mRoot != null);
+		GalleryUtils.assertTrue(mParent == null && mRoot != null);
 		onDetachFromRoot();
 	}
 

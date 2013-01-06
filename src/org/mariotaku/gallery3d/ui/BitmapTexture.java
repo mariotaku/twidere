@@ -16,7 +16,7 @@
 
 package org.mariotaku.gallery3d.ui;
 
-import org.mariotaku.gallery3d.util.Utils;
+import org.mariotaku.gallery3d.util.GalleryUtils;
 
 import android.graphics.Bitmap;
 
@@ -34,7 +34,7 @@ public class BitmapTexture extends UploadedTexture {
 
 	private BitmapTexture(final Bitmap bitmap, final boolean hasBorder) {
 		super(hasBorder);
-		Utils.assertTrue(bitmap != null && !bitmap.isRecycled());
+		GalleryUtils.assertTrue(bitmap != null && !bitmap.isRecycled());
 		mContentBitmap = bitmap;
 	}
 

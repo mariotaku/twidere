@@ -19,57 +19,40 @@
 
 package org.mariotaku.twidere.activity;
 
-import static org.mariotaku.twidere.util.Utils.copyStream;
-import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
-import static org.mariotaku.twidere.util.Utils.getImageLoaderHttpClient;
-import static org.mariotaku.twidere.util.Utils.getRedirectedHttpResponse;
-import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 import it.sephiroth.android.library.imagezoom.ImageViewTouch;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import javax.microedition.khronos.egl.EGL10;
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.egl.EGLContext;
-import javax.microedition.khronos.egl.EGLDisplay;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.twitter4j.TwitterException;
-import org.mariotaku.twidere.twitter4j.http.HttpClientWrapper;
-import org.mariotaku.twidere.twitter4j.http.HttpResponse;
-import org.mariotaku.twidere.util.BitmapDecodeHelper;
+import org.mariotaku.twidere.loader.ImageLoader;
+import org.mariotaku.twidere.loader.ImageLoader.DownloadListener;
+import org.mariotaku.twidere.util.SaveImageTask;
 
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 
 public class ImageViewerActivity extends FragmentActivity implements Constants, OnClickListener,
-		LoaderCallbacks<ImageViewerActivity.ImageLoader.Result> {
+		LoaderCallbacks<ImageLoader.Result>, DownloadListener {
 
 	private ImageViewTouch mImageView;
-	private View mProgress;
+	private ProgressBar mProgress;
 	private ImageButton mRefreshStopSaveButton;
 	private boolean mImageLoaded;
 	private File mImageFile;
+	private long mContentLength;
 
 	@Override
 	public void onClick(final View view) {
@@ -86,7 +69,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 				} else if (!mImageLoaded && lm.hasRunningLoaders()) {
 					stopLoading();
 				} else if (mImageLoaded) {
-					saveImage();
+					new SaveImageTask(this, mImageFile).execute();
 				}
 				break;
 			}
@@ -129,15 +112,33 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 		super.onContentChanged();
 		mImageView = (ImageViewTouch) findViewById(R.id.image_viewer);
 		mRefreshStopSaveButton = (ImageButton) findViewById(R.id.refresh_stop_save);
-		mProgress = findViewById(R.id.progress);
+		mProgress = (ProgressBar) findViewById(R.id.progress);
 	}
 
 	@Override
 	public Loader<ImageLoader.Result> onCreateLoader(final int id, final Bundle args) {
 		mProgress.setVisibility(View.VISIBLE);
+		mProgress.setIndeterminate(true);
 		mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_stop);
 		final Uri uri = args != null ? (Uri) args.getParcelable(INTENT_KEY_URI) : null;
-		return new ImageLoader(this, uri);
+		return new ImageLoader(this, this, uri);
+	}
+
+	@Override
+	public void onDownloadError(final Throwable t) {
+		mContentLength = 0;
+	}
+
+	@Override
+	public void onDownloadFinished() {
+		mContentLength = 0;
+	}
+
+	@Override
+	public void onDownloadStart(final long total) {
+		mContentLength = total;
+		mProgress.setIndeterminate(false);
+		mProgress.setMax(100);
 	}
 
 	@Override
@@ -162,6 +163,12 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			}
 		}
 		mProgress.setVisibility(View.GONE);
+		mProgress.setProgress(0);
+	}
+
+	@Override
+	public void onProgressUpdate(final long downloaded) {
+		mProgress.setProgress((int) (downloaded * 100 / mContentLength));
 	}
 
 	@Override
@@ -201,32 +208,6 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 		}
 	}
 
-	private void saveImage() {
-		if (mImageFile != null && mImageFile.exists()) {
-			final Uri uri = getIntent().getData();
-			if (uri == null) return;
-			final String file_name = uri.getLastPathSegment();
-			final BitmapFactory.Options o = new BitmapFactory.Options();
-			o.inJustDecodeBounds = true;
-			BitmapFactory.decodeFile(mImageFile.getPath(), o);
-			final String mime_type = o.outMimeType;
-			String file_name_with_suffix = null;
-			if (file_name.matches("(.*/)*.+\\.(png|jpg|gif|bmp|jpeg|PNG|JPG|JPEG|GIF|BMP)$")) {
-				file_name_with_suffix = file_name;
-			} else {
-				if (mime_type == null) return;
-				if (mime_type.startsWith("image/") && !"image/*".equals(mime_type)) {
-					file_name_with_suffix = file_name + "." + mime_type.substring(5);
-				}
-			}
-			final Intent intent = new Intent(INTENT_ACTION_SAVE_FILE);
-			intent.setPackage(getPackageName());
-			intent.putExtra(INTENT_KEY_FILE_SOURCE, mImageFile.getPath());
-			intent.putExtra(INTENT_KEY_FILENAME, file_name_with_suffix);
-			startActivity(intent);
-		}
-	}
-
 	private void stopLoading() {
 		getSupportLoaderManager().destroyLoader(0);
 		if (!mImageLoaded) {
@@ -236,165 +217,4 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 		}
 	}
 
-	public static class ImageLoader extends AsyncTaskLoader<ImageLoader.Result> {
-
-		private static final String CACHE_DIR_NAME = "cached_images";
-
-		private final Uri mUri;
-		private final Context mContext;
-		private final HttpClientWrapper mClient;
-
-		private File mCacheDir;
-
-		public ImageLoader(final Context context, final Uri uri) {
-			super(context);
-			mContext = context;
-			mUri = uri;
-			mClient = getImageLoaderHttpClient(context);
-			init();
-		}
-
-		@Override
-		public Result loadInBackground() {
-
-			if (mUri == null) return new Result(null, null, null);
-			final String scheme = mUri.getScheme();
-			if ("http".equals(scheme) || "https".equals(scheme)) {
-				final String url = parseString(mUri.toString());
-				if (url == null) return new Result(null, null, null);
-				if (mCacheDir == null || !mCacheDir.exists()) {
-					init();
-				}
-				final File cache_file = new File(mCacheDir, getURLFilename(url));
-
-				// from SD cache
-				final Bitmap cached_bitmap = decodeFile(cache_file);
-				if (cached_bitmap != null) return new Result(cached_bitmap, cache_file, null);
-				// from web
-				try {
-					final HttpResponse resp = getRedirectedHttpResponse(mClient, url);
-					if (resp == null) return null;
-					final InputStream is = resp.asStream();
-					final OutputStream os = new FileOutputStream(cache_file);
-					copyStream(is, os);
-					os.close();
-					final Bitmap bitmap = decodeFile(cache_file);
-					if (bitmap == null) {
-						// The file is corrupted, so we remove it from
-						// cache.
-						if (cache_file.isFile()) {
-							cache_file.delete();
-						}
-					}
-					return new Result(bitmap, cache_file, null);
-				} catch (final FileNotFoundException e) {
-					init();
-				} catch (final IOException e) {
-					return new Result(null, null, e);
-				} catch (final TwitterException e) {
-					return new Result(null, null, e);
-				}
-			} else if ("file".equals(scheme)) {
-				final File file = new File(mUri.getPath());
-				return new Result(decodeFile(file), file, null);
-			}
-			return new Result(null, null, null);
-		}
-
-		@Override
-		protected void onStartLoading() {
-			forceLoad();
-		}
-
-		private Bitmap decodeFile(final File f) {
-			if (f == null) return null;
-			final int max_texture_size = getMaximumTextureSize();
-			final BitmapFactory.Options o = new BitmapFactory.Options();
-			o.inJustDecodeBounds = true;
-			BitmapFactory.decodeFile(f.getPath(), o);
-			if (o.outHeight <= 0) return null;
-			final BitmapFactory.Options o1 = new BitmapFactory.Options();
-			final double size = Math.max(o.outWidth, o.outHeight);
-			o1.inSampleSize = size > max_texture_size ? (int) Math.round(size / max_texture_size) + 1 : 1;
-			Bitmap bitmap = null;
-			while (bitmap == null) {
-				try {
-					final BitmapFactory.Options o2 = new BitmapFactory.Options();
-					o2.inSampleSize = o1.inSampleSize;
-					bitmap = BitmapDecodeHelper.decode(f.getPath(), o2);
-				} catch (final OutOfMemoryError e) {
-					o1.inSampleSize++;
-					continue;
-				}
-				if (bitmap == null) {
-					break;
-				}
-				return bitmap;
-			}
-			return null;
-		}
-
-		private String getURLFilename(final String url) {
-			if (url == null) return null;
-			return url.replaceFirst("https?:\\/\\/", "").replaceAll("[^a-zA-Z0-9]", "_");
-		}
-
-		private void init() {
-			/* Find the dir to save cached images. */
-			mCacheDir = getBestCacheDir(mContext, CACHE_DIR_NAME);
-			if (mCacheDir != null && !mCacheDir.exists()) {
-				mCacheDir.mkdirs();
-			}
-		}
-
-		public static int getMaximumTextureSize() {
-			final EGL10 egl = (EGL10) EGLContext.getEGL();
-			final EGLDisplay display = egl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
-
-			// Initialise
-			final int[] version = new int[2];
-			egl.eglInitialize(display, version);
-
-			// Query total number of configurations
-			final int[] totalConfigurations = new int[1];
-			egl.eglGetConfigs(display, null, 0, totalConfigurations);
-
-			// Query actual list configurations
-			final EGLConfig[] configurationsList = new EGLConfig[totalConfigurations[0]];
-			egl.eglGetConfigs(display, configurationsList, totalConfigurations[0], totalConfigurations);
-
-			final int[] textureSize = new int[1];
-			int maximumTextureSize = 0;
-
-			// Iterate through all the configurations to located the maximum
-			// texture size
-			for (int i = 0; i < totalConfigurations[0]; i++) {
-				// Only need to check for width since opengl textures are always
-				// squared
-				egl.eglGetConfigAttrib(display, configurationsList[i], EGL10.EGL_MAX_PBUFFER_WIDTH, textureSize);
-
-				// Keep track of the maximum texture size
-				if (maximumTextureSize < textureSize[0]) {
-					maximumTextureSize = textureSize[0];
-				}
-
-			}
-
-			// Release
-			egl.eglTerminate(display);
-			return maximumTextureSize;
-		}
-
-		public static class Result {
-			public final Bitmap bitmap;
-			public final File file;
-			public final Exception exception;
-
-			public Result(final Bitmap bitmap, final File file, final Exception exception) {
-				this.bitmap = bitmap;
-				this.file = file;
-				this.exception = exception;
-			}
-		}
-	}
 }

@@ -25,9 +25,9 @@ public class BitmapUtils {
 
 	// Find the max x that 1 / x <= scale.
 	public static int computeSampleSize(final float scale) {
-		Utils.assertTrue(scale > 0);
+		GalleryUtils.assertTrue(scale > 0);
 		final int initialSize = Math.max(1, (int) FloatMath.ceil(1 / scale));
-		return initialSize <= 8 ? Utils.nextPowerOf2(initialSize) : (initialSize + 7) / 8 * 8;
+		return initialSize <= 8 ? GalleryUtils.nextPowerOf2(initialSize) : (initialSize + 7) / 8 * 8;
 	}
 
 	// This computes a sample size which makes the longer side at least
@@ -36,7 +36,7 @@ public class BitmapUtils {
 		final int initialSize = Math.max(w / minSideLength, h / minSideLength);
 		if (initialSize <= 1) return 1;
 
-		return initialSize <= 8 ? Utils.prevPowerOf2(initialSize) : initialSize / 8 * 8;
+		return initialSize <= 8 ? GalleryUtils.prevPowerOf2(initialSize) : initialSize / 8 * 8;
 	}
 
 	// Resize the bitmap if each side is >= targetSize * 2

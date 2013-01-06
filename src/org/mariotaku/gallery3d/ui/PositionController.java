@@ -18,7 +18,6 @@ package org.mariotaku.gallery3d.ui;
 
 import org.mariotaku.gallery3d.ui.PhotoView.Size;
 import org.mariotaku.gallery3d.util.GalleryUtils;
-import org.mariotaku.gallery3d.util.Utils;
 
 import android.content.Context;
 import android.graphics.Rect;
@@ -324,7 +323,7 @@ class PositionController {
 			}
 		}
 
-		y = Utils.clamp(y, mBoundTop, mBoundBottom);
+		y = GalleryUtils.clamp(y, mBoundTop, mBoundBottom);
 
 		// Horizontal direction: we show the edge effect when the scrolling
 		// tries to go left of the first image or go right of the last image.
@@ -336,7 +335,7 @@ class PositionController {
 			}
 		}
 
-		x = Utils.clamp(x, mBoundLeft, mBoundRight);
+		x = GalleryUtils.clamp(x, mBoundLeft, mBoundRight);
 
 		startAnimation(x, y, mBox.mCurrentScale, ANIM_KIND_SCROLL);
 	}
@@ -453,9 +452,9 @@ class PositionController {
 		final int y = (int) (-tempY * targetScale + 0.5f);
 
 		calculateStableBound(targetScale);
-		final int targetX = Utils.clamp(x, mBoundLeft, mBoundRight);
-		final int targetY = Utils.clamp(y, mBoundTop, mBoundBottom);
-		targetScale = Utils.clamp(targetScale, mBox.mScaleMin, mBox.mScaleMax);
+		final int targetX = GalleryUtils.clamp(x, mBoundLeft, mBoundRight);
+		final int targetY = GalleryUtils.clamp(y, mBoundTop, mBoundBottom);
+		targetScale = GalleryUtils.clamp(targetScale, mBox.mScaleMin, mBox.mScaleMax);
 
 		startAnimation(targetX, targetY, targetScale, ANIM_KIND_ZOOM);
 	}
@@ -848,7 +847,7 @@ class PositionController {
 
 		// Clamps the input scale to the range that doAnimation() can reach.
 		public float clampScale(final float s) {
-			return Utils.clamp(s, SCALE_MIN_EXTRA * mScaleMin, SCALE_MAX_EXTRA * mScaleMax);
+			return GalleryUtils.clamp(s, SCALE_MIN_EXTRA * mScaleMin, SCALE_MAX_EXTRA * mScaleMax);
 		}
 
 		@Override
@@ -863,7 +862,7 @@ class PositionController {
 			if (this == mBox) {
 				final float scaleMin = mExtraScalingRange ? mScaleMin * SCALE_MIN_EXTRA : mScaleMin;
 				final float scaleMax = mExtraScalingRange ? mScaleMax * SCALE_MAX_EXTRA : mScaleMax;
-				scale = Utils.clamp(mCurrentScale, scaleMin, scaleMax);
+				scale = GalleryUtils.clamp(mCurrentScale, scaleMin, scaleMax);
 				calculateStableBound(scale, HORIZONTAL_SLACK);
 				// If the picture is zoomed-in, we want to keep the focus
 				// point stay in the same position on screen. See the
@@ -872,7 +871,7 @@ class PositionController {
 					final float scaleDiff = mCurrentScale - scale;
 					y += (int) (mFocusY * scaleDiff + 0.5f);
 				}
-				y = Utils.clamp(y, mBoundTop, mBoundBottom);
+				y = GalleryUtils.clamp(y, mBoundTop, mBoundBottom);
 			} else {
 				y = 0;
 				scale = mScaleMin;
@@ -954,7 +953,7 @@ class PositionController {
 
 			final float scaleMin = mExtraScalingRange ? mBox.mScaleMin * SCALE_MIN_EXTRA : mBox.mScaleMin;
 			final float scaleMax = mExtraScalingRange ? mBox.mScaleMax * SCALE_MAX_EXTRA : mBox.mScaleMax;
-			final float scale = Utils.clamp(mBox.mCurrentScale, scaleMin, scaleMax);
+			final float scale = GalleryUtils.clamp(mBox.mCurrentScale, scaleMin, scaleMax);
 			int x = mCurrentX;
 			final int y = mDefaultY;
 			calculateStableBound(scale, HORIZONTAL_SLACK);
@@ -971,7 +970,7 @@ class PositionController {
 				final float scaleDiff = mBox.mCurrentScale - scale;
 				x += (int) (mFocusX * scaleDiff + 0.5f);
 			}
-			x = Utils.clamp(x, mBoundLeft, mBoundRight);
+			x = GalleryUtils.clamp(x, mBoundLeft, mBoundRight);
 			if (mCurrentX != x || mCurrentY != y) return doAnimation(x, y, ANIM_KIND_SNAPBACK);
 			return false;
 		}

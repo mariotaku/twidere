@@ -25,9 +25,9 @@ import org.mariotaku.gallery3d.util.BitmapPool;
 import org.mariotaku.gallery3d.util.BitmapUtils;
 import org.mariotaku.gallery3d.util.Future;
 import org.mariotaku.gallery3d.util.FutureListener;
+import org.mariotaku.gallery3d.util.GalleryUtils;
 import org.mariotaku.gallery3d.util.MediaItem;
 import org.mariotaku.gallery3d.util.ThreadPool;
-import org.mariotaku.gallery3d.util.Utils;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -39,7 +39,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-public class PhotoViewAdapter implements PhotoView.Model {
+public class PhotoViewAdapter implements PhotoView.ITileImageAdapter {
 	private static final String TAG = "PhotoViewAdapter";
 	protected ScreenNail mScreenNail;
 	protected BitmapRegionDecoder mRegionDecoder;
@@ -106,6 +106,13 @@ public class PhotoViewAdapter implements PhotoView.Model {
 		mActivity = activity;
 		mThreadPool = activity.getThreadPool();
 		mHandler = new MyHandler(this);
+	}
+
+	@Override
+	public void cancel() {
+		if (mTask == null) return;
+		mTask.cancel();
+		mTask = null;
 	}
 
 	@Override
@@ -211,10 +218,12 @@ public class PhotoViewAdapter implements PhotoView.Model {
 	@Override
 	public void pause() {
 		final Future<?> task = mTask;
-		task.cancel();
-		task.waitDone();
-		if (task.get() == null) {
-			mTask = null;
+		if (task != null) {
+			task.cancel();
+			task.waitDone();
+			if (task.get() == null) {
+				mTask = null;
+			}
 		}
 		if (mBitmapScreenNail != null) {
 			mBitmapScreenNail.recycle();
@@ -238,7 +247,7 @@ public class PhotoViewAdapter implements PhotoView.Model {
 	}
 
 	private int calculateLevelCount() {
-		return Math.max(0, Utils.ceilLog2((float) mImageWidth / mScreenNail.getWidth()));
+		return Math.max(0, GalleryUtils.ceilLog2((float) mImageWidth / mScreenNail.getWidth()));
 	}
 
 	private Bitmap getTileWithoutReusingBitmap(final int level, final int x, final int y, final int tileSize,
@@ -254,7 +263,7 @@ public class PhotoViewAdapter implements PhotoView.Model {
 			regionDecoder = mRegionDecoder;
 			if (regionDecoder == null) return null;
 			overlapRegion = new Rect(0, 0, mImageWidth, mImageHeight);
-			Utils.assertTrue(overlapRegion.intersect(wantRegion));
+			GalleryUtils.assertTrue(overlapRegion.intersect(wantRegion));
 		}
 
 		final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -282,17 +291,20 @@ public class PhotoViewAdapter implements PhotoView.Model {
 		return result;
 	}
 
-	private void onDecodeLargeComplete(final ImageBundle bundle) {
+	private boolean onDecodeComplete(final ImageBundle bundle) {
 		try {
 			if (bundle.decoder != null) {
 				setScreenNail(bundle.backupImage, bundle.decoder.getWidth(), bundle.decoder.getHeight());
 			} else {
+				if (bundle.backupImage == null) return false;
 				setScreenNail(bundle.backupImage, bundle.backupImage.getWidth(), bundle.backupImage.getHeight());
 			}
 			setRegionDecoder(bundle.decoder);
 			mPhotoView.notifyImageChange();
+			return true;
 		} catch (final Throwable t) {
 			Log.w(TAG, "fail to decode large", t);
+			return false;
 		}
 	}
 
@@ -303,8 +315,7 @@ public class PhotoViewAdapter implements PhotoView.Model {
 
 	// Caller is responsible to recycle the ScreenNail
 	private synchronized void setScreenNail(final ScreenNail screenNail, final int width, final int height) {
-		Utils.checkNotNull(screenNail);
-		mScreenNail = screenNail;
+		mScreenNail = GalleryUtils.checkNotNull(screenNail);
 		mImageWidth = width;
 		mImageHeight = height;
 		mRegionDecoder = null;
@@ -340,8 +351,11 @@ public class PhotoViewAdapter implements PhotoView.Model {
 					break;
 				}
 				case MSG_IMAGE_LOAD_FINISHED: {
-					mAdapter.onDecodeLargeComplete((ImageBundle) message.obj);
-					mActivity.onLoadFinished();
+					if (mAdapter.onDecodeComplete((ImageBundle) message.obj)) {
+						mActivity.onLoadFinished();
+					} else {
+						mActivity.onLoadFailed();
+					}
 					break;
 				}
 				case MSG_IMAGE_LOAD_FAILED: {

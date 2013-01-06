@@ -26,24 +26,12 @@ import android.util.Log;
 public class Exif {
 	private static final String TAG = "Exif";
 
-	public static int getOrientation(final String file) {
-		InputStream is = null;
-		try {
-			is = new FileInputStream(file);
-			return getOrientation(is);
-		} catch (IOException e) {
-			return 0;
-		} finally {
-			Utils.closeSilently(is);
-		}
-	}
-	
 	public static int getOrientation(final File file) {
 		InputStream is = null;
 		try {
 			is = new FileInputStream(file);
 			return getOrientation(is);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			return 0;
 		} finally {
 			Utils.closeSilently(is);
@@ -150,6 +138,18 @@ public class Exif {
 
 		Log.i(TAG, "Orientation not found");
 		return 0;
+	}
+
+	public static int getOrientation(final String file) {
+		InputStream is = null;
+		try {
+			is = new FileInputStream(file);
+			return getOrientation(is);
+		} catch (final IOException e) {
+			return 0;
+		} finally {
+			Utils.closeSilently(is);
+		}
 	}
 
 	private static int pack(final byte[] bytes, int offset, int length, final boolean littleEndian) {

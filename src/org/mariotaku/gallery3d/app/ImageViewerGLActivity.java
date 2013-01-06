@@ -16,6 +16,8 @@
 
 package org.mariotaku.gallery3d.app;
 
+import java.io.File;
+
 import org.mariotaku.gallery3d.ui.GLRoot;
 import org.mariotaku.gallery3d.ui.GLRootView;
 import org.mariotaku.gallery3d.ui.GLView;
@@ -23,11 +25,14 @@ import org.mariotaku.gallery3d.ui.PhotoView;
 import org.mariotaku.gallery3d.ui.SynchronizedHandler;
 import org.mariotaku.gallery3d.util.BitmapPool;
 import org.mariotaku.gallery3d.util.CachedDownloader;
+import org.mariotaku.gallery3d.util.CachedDownloader.DownloadListener;
 import org.mariotaku.gallery3d.util.GalleryUtils;
 import org.mariotaku.gallery3d.util.MediaItem;
 import org.mariotaku.gallery3d.util.ThreadPool;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.SaveImageTask;
+import org.mariotaku.twidere.util.Utils;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -37,13 +42,24 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 public final class ImageViewerGLActivity extends FragmentActivity implements Constants, View.OnClickListener,
-		PhotoView.Listener {
+		PhotoView.Listener, DownloadListener {
+
+	private final GLView mRootPane = new GLView() {
+		@Override
+		protected void onLayout(final boolean changed, final int left, final int top, final int right, final int bottom) {
+			mPhotoView.layout(0, 0, right - left, bottom - top);
+		}
+	};
 
 	private GLRootView mGLRootView;
-	private View mProgress;
+	private ProgressBar mProgress;
 	private View mControlButtons;
+	private ImageButton mRefreshStopSaveButton;
 
 	protected static final int FLAG_HIDE_ACTION_BAR = 1;
 	protected static final int FLAG_HIDE_STATUS_BAR = 2;
@@ -61,20 +77,23 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	private static final int HIDE_BARS_TIMEOUT = 3500;
 	private static final int UNFREEZE_GLROOT_TIMEOUT = 250;
 
+	private static final int LOAD_STATE_STARTED = 1;
+	private static final int LOAD_STATE_FINISHED = 2;
+	private static final int LOAD_STATE_FAILED = 3;
+
 	private PhotoView mPhotoView;
-	private PhotoView.Model mModel;
+	private PhotoView.ITileImageAdapter mAdapter;
 	private Handler mHandler;
 	private CachedDownloader mDownloader;
+	private MediaItem mMediaItem;
 
 	private boolean mShowBars = true;
 	private volatile boolean mActionBarAllowed = true;
 	private boolean mIsMenuVisible;
-	private final GLView mRootPane = new GLView() {
-		@Override
-		protected void onLayout(final boolean changed, final int left, final int top, final int right, final int bottom) {
-			mPhotoView.layout(0, 0, right - left, bottom - top);
-		}
-	};
+
+	private long mContentLength;
+
+	private int mLoadState = LOAD_STATE_STARTED;
 
 	private ThreadPool mThreadPool;
 
@@ -93,6 +112,7 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 
 	public void hideProgress() {
 		mProgress.setVisibility(View.GONE);
+		mProgress.setProgress(0);
 	}
 
 	@Override
@@ -121,18 +141,41 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 			}
 			case R.id.share: {
 				final Uri uri = getIntent().getData();
-				if (uri == null) {
-					break;
-				}
+				if (mMediaItem == null || uri == null) return;
 				final Intent intent = new Intent(Intent.ACTION_SEND);
-				if ("file".equals(uri.getScheme())) {
-					intent.setType("image/*");
-					intent.putExtra(Intent.EXTRA_STREAM, uri);
+				final File file = mMediaItem.getCachedFile();
+				if (file != null && file.exists()) {
+					final String type = Utils.getImageMimeType(file);
+					if (type == null) return;
+					intent.setType(type);
+					intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
 				} else {
 					intent.setType("text/plain");
 					intent.putExtra(Intent.EXTRA_TEXT, uri.toString());
 				}
 				startActivity(Intent.createChooser(intent, getString(R.string.share)));
+				break;
+			}
+			case R.id.refresh_stop_save: {
+				switch (mLoadState) {
+					case LOAD_STATE_STARTED: {
+						cancelLoad();
+						break;
+					}
+					case LOAD_STATE_FINISHED: {
+						final File cached_file = mMediaItem.getCachedFile();
+						if (Utils.isValidImage(cached_file)) {
+							saveImage();
+						} else {
+							reloadImage();
+						}
+						break;
+					}
+					case LOAD_STATE_FAILED: {
+						reloadImage();
+						break;
+					}
+				}
 				break;
 			}
 		}
@@ -142,8 +185,9 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	public void onContentChanged() {
 		super.onContentChanged();
 		mGLRootView = (GLRootView) findViewById(R.id.gl_root_view);
-		mProgress = findViewById(R.id.progress);
+		mProgress = (ProgressBar) findViewById(R.id.progress);
 		mControlButtons = findViewById(R.id.control_buttons);
+		mRefreshStopSaveButton = (ImageButton) findViewById(R.id.refresh_stop_save);
 	}
 
 	@Override
@@ -151,16 +195,39 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 		mGLRootView.unfreeze();
 	}
 
+	@Override
+	public void onDownloadError(final Throwable t) {
+		mContentLength = 0;
+	}
+
+	@Override
+	public void onDownloadFinished() {
+		mContentLength = 0;
+	}
+
+	@Override
+	public void onDownloadStart(final long total) {
+		mContentLength = total;
+		mProgress.setIndeterminate(false);
+		mProgress.setMax(100);
+	}
+
 	public void onLoadFailed() {
-		// TODO Auto-generated method stub
+		mLoadState = LOAD_STATE_FAILED;
+		Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
+		setActionButton();
 	}
 
 	public void onLoadFinished() {
+		mLoadState = LOAD_STATE_FINISHED;
 		hideProgress();
+		setActionButton();
 	}
 
 	public void onLoadStart() {
+		mLoadState = LOAD_STATE_STARTED;
 		showProgress();
+		setActionButton();
 	}
 
 	@Override
@@ -169,8 +236,13 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	}
 
 	@Override
+	public void onProgressUpdate(final long downloaded) {
+		mProgress.setProgress((int) (downloaded * 100 / mContentLength));
+	}
+
+	@Override
 	public void onSingleTapUp(final int x, final int y) {
-		if (mModel.getMediaItem() == null) return;
+		if (mAdapter.getMediaItem() == null) return;
 		toggleBars();
 	}
 
@@ -180,6 +252,7 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 
 	public void showProgress() {
 		mProgress.setVisibility(View.VISIBLE);
+		mProgress.setIndeterminate(true);
 	}
 
 	@Override
@@ -188,6 +261,9 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 		mDownloader = new CachedDownloader(this);
 		setContentView(R.layout.image_viewer_gl);
 		mHandler = new MyHandler(this);
+		mPhotoView = new PhotoView(this);
+		mPhotoView.setListener(this);
+		mRootPane.addComponent(mPhotoView);
 		if (savedInstanceState == null) {
 			startViewAction(getIntent());
 		}
@@ -207,6 +283,7 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 
 	@Override
 	protected void onNewIntent(final Intent intent) {
+		setIntent(intent);
 		startViewAction(intent);
 	}
 
@@ -219,8 +296,8 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 			mGLRootView.unfreeze();
 			mHandler.removeMessages(MSG_UNFREEZE_GLROOT);
 
-			if (mModel != null) {
-				mModel.pause();
+			if (mAdapter != null) {
+				mAdapter.pause();
 			}
 			mPhotoView.pause();
 			mHandler.removeMessages(MSG_HIDE_BARS);
@@ -237,14 +314,14 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 		super.onResume();
 		mGLRootView.lockRenderThread();
 		try {
-			if (mModel == null) {
+			if (mAdapter == null) {
 				finish();
 				return;
 			}
 			mGLRootView.freeze();
 			setContentPane(mRootPane);
 
-			mModel.resume();
+			mAdapter.resume();
 			mPhotoView.resume();
 			if (!mShowBars) {
 				hideControls();
@@ -272,6 +349,11 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 		mGLRootView.setContentPane(mContentPane);
 	}
 
+	private void cancelLoad() {
+		if (mAdapter == null) return;
+		mAdapter.cancel();
+	}
+
 	private boolean canShowBars() {
 		// No bars if it's not allowed.
 		if (!mActionBarAllowed) return false;
@@ -292,6 +374,41 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 		}
 	}
 
+	private void reloadImage() {
+		if (mLoadState != LOAD_STATE_FAILED) return;
+		startViewAction(getIntent());
+	}
+
+	private void saveImage() {
+		if (mMediaItem == null) return;
+		final File cached_file = mMediaItem.getCachedFile();
+		if (cached_file == null || cached_file.length() == 0) return;
+		new SaveImageTask(this, cached_file).execute();
+	}
+
+	private void setActionButton() {
+		if (mMediaItem == null) {
+			mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
+			return;
+		}
+		switch (mLoadState) {
+			case LOAD_STATE_STARTED: {
+				mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_stop);
+				break;
+			}
+			case LOAD_STATE_FINISHED: {
+				final File cached_file = mMediaItem.getCachedFile();
+				mRefreshStopSaveButton.setImageResource(Utils.isValidImage(cached_file) ? R.drawable.ic_menu_save
+						: R.drawable.ic_menu_refresh);
+				break;
+			}
+			case LOAD_STATE_FAILED: {
+				mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
+				break;
+			}
+		}
+	}
+
 	private void showBars() {
 		if (mShowBars) return;
 		mShowBars = true;
@@ -308,15 +425,10 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 		if (uri == null) {
 			finish();
 		} else {
-
-			mPhotoView = new PhotoView(this);
-			mPhotoView.setListener(this);
-			mRootPane.addComponent(mPhotoView);
-
 			// Get default media set by the URI
-			final MediaItem mediaItem = new MediaItem(this, mDownloader, uri);
-			mModel = new PhotoViewAdapter(this, mPhotoView, mediaItem);
-			mPhotoView.setModel(mModel);
+			mMediaItem = new MediaItem(this, mDownloader, this, uri);
+			mAdapter = new PhotoViewAdapter(this, mPhotoView, mMediaItem);
+			mPhotoView.setModel(mAdapter);
 		}
 	}
 

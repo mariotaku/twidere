@@ -20,31 +20,47 @@
 package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.AutoCompleteAdapter;
 import org.mariotaku.twidere.adapter.TabsAdapter;
 import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredKeywordsFragment;
 import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredLinksFragment;
 import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredSourcesFragment;
 import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredUsersFragment;
 import org.mariotaku.twidere.model.Panes;
-import org.mariotaku.twidere.view.ExtendedViewPager;
+import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.view.TabPageIndicator;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
 
 public class FiltersListFragment extends BaseFragment implements Panes.Right {
 
-	private ExtendedViewPager mViewPager;
-	private TabPageIndicator mIndicator;
+	private static final String INTENT_KEY_AUTO_COMPLETE = "auto_complete";
 
+	private ViewPager mViewPager;
+	private TabPageIndicator mIndicator;
 	private TabsAdapter mAdapter;
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		setHasOptionsMenu(true);
 		new Handler().post(new Runnable() {
 
 			@Override
@@ -64,10 +80,76 @@ public class FiltersListFragment extends BaseFragment implements Panes.Right {
 	}
 
 	@Override
+	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
+		inflater.inflate(R.menu.menu_filter, menu);
+	}
+
+	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup parent, final Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.filters, null);
-		mViewPager = (ExtendedViewPager) view.findViewById(R.id.pager);
+		mViewPager = (ViewPager) view.findViewById(R.id.pager);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		return view;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_ADD: {
+				final Fragment filter = mAdapter.getItem(mViewPager.getCurrentItem());
+				if (!(filter instanceof BaseFiltersFragment)) return true;
+				final Bundle args = new Bundle();
+				args.putBoolean(INTENT_KEY_AUTO_COMPLETE, filter instanceof FilteredUsersFragment);
+				args.putParcelable(INTENT_KEY_URI, ((BaseFiltersFragment) filter).getContentUri());
+				final AddItemFragment dialog = new AddItemFragment();
+				dialog.setArguments(args);
+				dialog.show(getFragmentManager(), "add_rule");
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static final class AddItemFragment extends BaseDialogFragment implements OnClickListener {
+
+		private AutoCompleteTextView mEditText;
+
+		private AutoCompleteAdapter mUserAutoCompleteAdapter;
+
+		@Override
+		public void onClick(final DialogInterface dialog, final int which) {
+			switch (which) {
+				case DialogInterface.BUTTON_POSITIVE:
+					if (mEditText.length() <= 0) return;
+					final ContentValues values = new ContentValues();
+					final String text = mEditText.getText().toString();
+					values.put(Filters.TEXT, text);
+					final Bundle args = getArguments();
+					final Uri uri = args.getParcelable(INTENT_KEY_URI);
+					getContentResolver().insert(uri, values);
+					break;
+			}
+
+		}
+
+		@Override
+		public Dialog onCreateDialog(final Bundle savedInstanceState) {
+			final Context context = getActivity();
+			final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+			final View view = LayoutInflater.from(context).inflate(R.layout.auto_complete_textview_default_style, null);
+			builder.setView(view);
+			mEditText = (AutoCompleteTextView) view.findViewById(R.id.edit_text);
+			final Bundle args = getArguments();
+			if (args != null && args.getBoolean(INTENT_KEY_AUTO_COMPLETE)) {
+				mUserAutoCompleteAdapter = new AutoCompleteAdapter(getActivity());
+				mEditText.setAdapter(mUserAutoCompleteAdapter);
+				mEditText.setThreshold(1);
+			}
+			builder.setTitle(R.string.add_rule);
+			builder.setPositiveButton(android.R.string.ok, this);
+			builder.setNegativeButton(android.R.string.cancel, this);
+			return builder.create();
+		}
+
 	}
 }

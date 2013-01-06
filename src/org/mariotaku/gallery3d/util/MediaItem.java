@@ -20,13 +20,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLConnection;
 
+import org.mariotaku.gallery3d.util.CachedDownloader.DownloadListener;
 import org.mariotaku.gallery3d.util.ThreadPool.CancelListener;
 import org.mariotaku.gallery3d.util.ThreadPool.Job;
 import org.mariotaku.gallery3d.util.ThreadPool.JobContext;
-import org.mariotaku.twidere.twitter4j.TwitterException;
 import org.mariotaku.twidere.util.Exif;
+import org.mariotaku.twidere.util.Utils;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -46,7 +46,7 @@ public class MediaItem {
 	private static final BitmapPool sThumbPool = ApiHelper.HAS_REUSING_BITMAP_IN_BITMAP_FACTORY ? new BitmapPool(4)
 			: null;
 
-	private static final String TAG = "UriImage";
+	private static final String TAG = "MediaItem";
 
 	private static final int STATE_INIT = 0;
 	private static final int STATE_DOWNLOADING = 1;
@@ -56,16 +56,21 @@ public class MediaItem {
 	private final Uri mUri;
 	private final ContentResolver mResolver;
 	private final CachedDownloader mDownloader;
+	private final DownloadListener mListener;
 
 	private String mContentType = "image/*";
 	private ParcelFileDescriptor mFileDescriptor;
 	private int mState = STATE_INIT;
 	private int mRotation;
 
-	public MediaItem(final Context context, final CachedDownloader downloader, final Uri uri) {
+	private long mContentLength;
+
+	public MediaItem(final Context context, final CachedDownloader downloader, final DownloadListener listener,
+			final Uri uri) {
 		mUri = uri;
 		mResolver = context.getContentResolver();
 		mDownloader = downloader;
+		mListener = listener;
 	}
 
 	public File getCachedFile() {
@@ -95,6 +100,10 @@ public class MediaItem {
 	public String getMimeType() {
 		return mContentType;
 	}
+	
+	public long getContentLength() {
+		return mContentLength;
+	}
 
 	public int getRotation() {
 		return mRotation;
@@ -112,7 +121,7 @@ public class MediaItem {
 	protected void finalize() throws Throwable {
 		try {
 			if (mFileDescriptor != null) {
-				Utils.closeSilently(mFileDescriptor);
+				GalleryUtils.closeSilently(mFileDescriptor);
 			}
 		} finally {
 			super.finalize();
@@ -125,7 +134,7 @@ public class MediaItem {
 			mState = state;
 			if (mState != STATE_DOWNLOADED) {
 				if (mFileDescriptor != null) {
-					Utils.closeSilently(mFileDescriptor);
+					GalleryUtils.closeSilently(mFileDescriptor);
 					mFileDescriptor = null;
 				}
 			}
@@ -137,44 +146,50 @@ public class MediaItem {
 		final String scheme = mUri.getScheme();
 		if (ContentResolver.SCHEME_CONTENT.equals(scheme) || ContentResolver.SCHEME_ANDROID_RESOURCE.equals(scheme)
 				|| ContentResolver.SCHEME_FILE.equals(scheme)) {
+			InputStream is = null;
 			try {
-				final InputStream is = mResolver.openInputStream(mUri);
-				mContentType = URLConnection.guessContentTypeFromStream(is);
+				is = mResolver.openInputStream(mUri);
+				if (!Utils.isValidImage(is)) throw new IOException("Invalid image");
+				mContentType = Utils.getImageMimeType(is);
+				if (mContentType == null) throw new IOException("Invalid image");
 				if (MIME_TYPE_JPEG.equalsIgnoreCase(mContentType)) {
 					mRotation = Exif.getOrientation(is);
 				}
-				Utils.closeSilently(is);
 				mFileDescriptor = mResolver.openFileDescriptor(mUri, "r");
 				if (jc.isCancelled()) return STATE_INIT;
 				return STATE_DOWNLOADED;
 			} catch (final IOException e) {
 				Log.w(TAG, "fail to open: " + mUri, e);
 				return STATE_ERROR;
+			} finally {
+				GalleryUtils.closeSilently(is);
 			}
 		} else {
+			InputStream is = null;
 			try {
 				final String url = mUri.toString();
 				// TODO download file
-				final File file = mDownloader.download(jc, url);
+				final File file = mDownloader.downloadOrGetCache(jc, mListener, url);
 				if (jc.isCancelled()) return STATE_INIT;
-				if (file == null) {
+				if (file == null || !Utils.isValidImage(file)) {
 					Log.w(TAG, "download failed " + url);
+					if (file != null) {
+						file.delete();
+					}
 					return STATE_ERROR;
 				}
-				final InputStream is = new FileInputStream(file);
-				mContentType = URLConnection.guessContentTypeFromStream(is);
+				mContentType = Utils.getImageMimeType(file);
 				if (MIME_TYPE_JPEG.equalsIgnoreCase(mContentType)) {
+					is = new FileInputStream(file);
 					mRotation = Exif.getOrientation(is);
 				}
-				Utils.closeSilently(is);
 				mFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
 				return STATE_DOWNLOADED;
-			} catch (final IOException e) {
+			} catch (final Exception e) {
 				Log.w(TAG, "download error", e);
 				return STATE_ERROR;
-			} catch (final TwitterException e) {
-				Log.w(TAG, "download error", e);
-				return STATE_ERROR;
+			} finally {
+				GalleryUtils.closeSilently(is);
 			}
 		}
 	}

@@ -42,7 +42,7 @@ public class PhotoView extends GLView {
 	private final PositionController mPositionController;
 
 	private Listener mListener;
-	private Model mModel;
+	private ITileImageAdapter mModel;
 
 	private TileImageView mTileView;
 	private EdgeView mEdgeView;
@@ -126,7 +126,7 @@ public class PhotoView extends GLView {
 		mListener = listener;
 	}
 
-	public void setModel(final Model model) {
+	public void setModel(final ITileImageAdapter model) {
 		mModel = model;
 		mTileView.setModel(mModel);
 	}
@@ -207,19 +207,9 @@ public class PhotoView extends GLView {
 		return degree % 180 == 0 ? original : theother;
 	}
 
-	public interface Listener {
-		public void onActionBarAllowed(boolean allowed);
+	public interface ITileImageAdapter {
 
-		public void onActionBarWanted();
-
-		public void onCurrentImageUpdated();
-
-		public void onPictureCenter();
-
-		public void onSingleTapUp(int x, int y);
-	}
-
-	public interface Model {
+		public void cancel();
 
 		public int getImageHeight();
 
@@ -255,6 +245,18 @@ public class PhotoView extends GLView {
 
 		public void resume();
 
+	}
+
+	public interface Listener {
+		public void onActionBarAllowed(boolean allowed);
+
+		public void onActionBarWanted();
+
+		public void onCurrentImageUpdated();
+
+		public void onPictureCenter();
+
+		public void onSingleTapUp(int x, int y);
 	}
 
 	public static class Size {

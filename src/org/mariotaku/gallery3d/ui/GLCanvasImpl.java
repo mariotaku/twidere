@@ -25,8 +25,8 @@ import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
 
+import org.mariotaku.gallery3d.util.GalleryUtils;
 import org.mariotaku.gallery3d.util.IntArray;
-import org.mariotaku.gallery3d.util.Utils;
 
 import android.graphics.RectF;
 import android.opengl.GLU;
@@ -184,7 +184,7 @@ public class GLCanvasImpl implements GLCanvas {
 
 	@Override
 	public void multiplyAlpha(final float alpha) {
-		Utils.assertTrue(alpha >= 0 && alpha <= 1);
+		GalleryUtils.assertTrue(alpha >= 0 && alpha <= 1);
 		mAlpha *= alpha;
 	}
 
@@ -243,13 +243,13 @@ public class GLCanvasImpl implements GLCanvas {
 
 	@Override
 	public void setAlpha(final float alpha) {
-		Utils.assertTrue(alpha >= 0 && alpha <= 1);
+		GalleryUtils.assertTrue(alpha >= 0 && alpha <= 1);
 		mAlpha = alpha;
 	}
 
 	@Override
 	public void setSize(final int width, final int height) {
-		Utils.assertTrue(width >= 0 && height >= 0);
+		GalleryUtils.assertTrue(width >= 0 && height >= 0);
 
 		mAlpha = 1.0f;
 
@@ -539,7 +539,7 @@ public class GLCanvasImpl implements GLCanvas {
 		}
 
 		public void setColorMode(final int color, final float alpha) {
-			setBlendEnabled(!Utils.isOpaque(color) || alpha < OPAQUE_ALPHA);
+			setBlendEnabled(!GalleryUtils.isOpaque(color) || alpha < OPAQUE_ALPHA);
 
 			// Set mTextureAlpha to an invalid value, so that it will reset
 			// again in setTextureAlpha(float) later.

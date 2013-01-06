@@ -26,7 +26,6 @@ import org.mariotaku.gallery3d.util.Future;
 import org.mariotaku.gallery3d.util.GalleryUtils;
 import org.mariotaku.gallery3d.util.LongSparseArray;
 import org.mariotaku.gallery3d.util.ThreadPool;
-import org.mariotaku.gallery3d.util.Utils;
 import org.mariotaku.gallery3d.util.ThreadPool.CancelListener;
 import org.mariotaku.gallery3d.util.ThreadPool.JobContext;
 
@@ -68,7 +67,7 @@ public class TileImageView extends GLView {
 	private static final int STATE_RECYCLING = 0x20;
 	private static final int STATE_RECYCLED = 0x40;
 
-	private PhotoView.Model mModel;
+	private PhotoView.ITileImageAdapter mModel;
 	private ScreenNail mScreenNail;
 	protected int mLevelCount; // cache the value of mScaledBitmaps.length
 
@@ -192,7 +191,7 @@ public class TileImageView extends GLView {
 		}
 	}
 
-	public void setModel(final PhotoView.Model model) {
+	public void setModel(final PhotoView.ITileImageAdapter model) {
 		mModel = model;
 		if (model != null) {
 			notifyModelInvalidated();
@@ -429,7 +428,7 @@ public class TileImageView extends GLView {
 		int endLevel;
 
 		// We want to use a texture larger than or equal to the display size.
-		mLevel = Utils.clamp(Utils.floorLog2(1f / scale), 0, mLevelCount);
+		mLevel = GalleryUtils.clamp(GalleryUtils.floorLog2(1f / scale), 0, mLevelCount);
 
 		// We want to keep one more tile level as texture in addition to what
 		// we use for display. So it can be faster when the scale moves to the
@@ -639,7 +638,7 @@ public class TileImageView extends GLView {
 
 		@Override
 		protected Bitmap onGetBitmap() {
-			Utils.assertTrue(mTileState == STATE_DECODED);
+			GalleryUtils.assertTrue(mTileState == STATE_DECODED);
 
 			// We need to override the width and height, so that we won't
 			// draw beyond the boundaries.
@@ -686,7 +685,7 @@ public class TileImageView extends GLView {
 				synchronized (TileImageView.this) {
 					tile = mDecodeQueue.pop();
 					if (tile == null && !jc.isCancelled()) {
-						Utils.waitWithoutInterrupt(TileImageView.this);
+						GalleryUtils.waitWithoutInterrupt(TileImageView.this);
 					}
 				}
 				if (tile == null) {
@@ -742,7 +741,7 @@ public class TileImageView extends GLView {
 				}
 				if (!tile.isContentValid()) {
 					final boolean hasBeenLoaded = tile.isLoaded();
-					Utils.assertTrue(tile.mTileState == STATE_DECODED);
+					GalleryUtils.assertTrue(tile.mTileState == STATE_DECODED);
 					tile.updateContent(canvas);
 					if (!hasBeenLoaded) {
 						tile.draw(canvas, 0, 0);

@@ -18,7 +18,7 @@ package org.mariotaku.gallery3d.ui;
 
 import java.util.WeakHashMap;
 
-import org.mariotaku.gallery3d.util.Utils;
+import org.mariotaku.gallery3d.util.GalleryUtils;
 
 import android.util.Log;
 
@@ -153,8 +153,8 @@ abstract class BasicTexture implements Texture {
 	protected void setSize(final int width, final int height) {
 		mWidth = width;
 		mHeight = height;
-		mTextureWidth = Utils.nextPowerOf2(width);
-		mTextureHeight = Utils.nextPowerOf2(height);
+		mTextureWidth = GalleryUtils.nextPowerOf2(width);
+		mTextureHeight = GalleryUtils.nextPowerOf2(height);
 		if (mTextureWidth > MAX_TEXTURE_SIZE || mTextureHeight > MAX_TEXTURE_SIZE) {
 			Log.w(TAG, String.format("texture is too large: %d x %d", mTextureWidth, mTextureHeight), new Exception());
 		}

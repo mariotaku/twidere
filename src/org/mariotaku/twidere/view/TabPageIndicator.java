@@ -23,6 +23,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.InputDevice;
 import android.view.LayoutInflater;
@@ -38,11 +39,23 @@ import android.widget.TextView;
  * This widget implements the dynamic action bar tab behavior that can change
  * across different configurations or circumstances.
  */
-public class TabPageIndicator extends HorizontalScrollView implements ExtendedViewPager.OnPageChangeListener {
+public class TabPageIndicator extends HorizontalScrollView implements ViewPager.OnPageChangeListener {
 
 	private Runnable mTabSelector;
 	private int mCurrentItem;
 	private TitleProvider mAdapter;
+
+	private LinearLayout mTabLayout;
+	private ViewPager mViewPager;
+	private ViewPager.OnPageChangeListener mListener;
+
+	private LayoutInflater mInflater;
+
+	int mMaxTabWidth;
+	private int mSelectedTabIndex;
+
+	private boolean mPagingEnabled = true;
+	private boolean mDisplayLabel, mDisplayColor = true;
 
 	private final OnClickListener mTabClickListener = new OnClickListener() {
 
@@ -54,7 +67,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 				mAdapter.onPageReselected(mCurrentItem);
 			}
 			mCurrentItem = tabView.getIndex();
-			mViewPager.setCurrentItem(mCurrentItem);
+			setCurrentItem(mCurrentItem);
 		}
 	};
 
@@ -67,18 +80,6 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 			return mAdapter.onTabLongClick(tabView.getIndex());
 		}
 	};
-
-	private LinearLayout mTabLayout;
-	private ExtendedViewPager mViewPager;
-	private ExtendedViewPager.OnPageChangeListener mListener;
-
-	private LayoutInflater mInflater;
-
-	int mMaxTabWidth;
-	private int mSelectedTabIndex;
-
-	private boolean mPagingEnabled = true;
-	private boolean mDisplayLabel, mDisplayColor = true;
 
 	public TabPageIndicator(final Context context) {
 		super(context);
@@ -194,16 +195,16 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 	}
 
 	@Override
-	public void onPageScrolled(final int arg0, final float arg1, final int arg2) {
+	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 		if (mListener != null) {
-			mListener.onPageScrolled(arg0, arg1, arg2);
+			mListener.onPageScrolled(position, positionOffset, positionOffsetPixels);
 		}
 	}
 
 	@Override
-	public void onPageScrollStateChanged(final int arg0) {
+	public void onPageScrollStateChanged(final int state) {
 		if (mListener != null) {
-			mListener.onPageScrollStateChanged(arg0);
+			mListener.onPageScrollStateChanged(state);
 		}
 	}
 
@@ -244,16 +245,17 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		notifyDataSetChanged();
 	}
 
-	public void setOnPageChangeListener(final ExtendedViewPager.OnPageChangeListener listener) {
+	public void setOnPageChangeListener(final ViewPager.OnPageChangeListener listener) {
 		mListener = listener;
 	}
 
 	public void setPagingEnabled(final boolean enabled) {
-		mViewPager.setPagingEnabled(enabled);
+		if (!(mViewPager instanceof ViewPager)) throw new IllegalStateException("This method should only called when your ViewPager instance is ExtendedViewPager");
+		((ExtendedViewPager) mViewPager).setPagingEnabled(enabled);
 		mPagingEnabled = enabled;
 	}
 
-	public void setViewPager(final ExtendedViewPager pager) {
+	public void setViewPager(final ViewPager pager) {
 		final PagerAdapter adapter = pager.getAdapter();
 		if (adapter == null) return;
 		// throw new IllegalStateException("ViewPager has not been bound.");
@@ -265,7 +267,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ExtendedVi
 		notifyDataSetChanged();
 	}
 
-	public void setViewPager(final ExtendedViewPager pager, final int initialPosition) {
+	public void setViewPager(final ViewPager pager, final int initialPosition) {
 		setViewPager(pager);
 		setCurrentItem(initialPosition);
 	}

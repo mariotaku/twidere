@@ -18,7 +18,6 @@ package org.mariotaku.gallery3d.util;
 
 import java.util.ArrayList;
 
-
 import android.graphics.Bitmap;
 
 public class BitmapPool {
@@ -56,7 +55,7 @@ public class BitmapPool {
 
 	// Get a Bitmap from the pool.
 	public synchronized Bitmap getBitmap() {
-		Utils.assertTrue(mOneSize);
+		GalleryUtils.assertTrue(mOneSize);
 		final int size = mPool.size();
 		return size > 0 ? mPool.remove(size - 1) : null;
 	}

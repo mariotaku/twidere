@@ -15,7 +15,6 @@
  */
 package org.mariotaku.gallery3d.util;
 
-
 import android.annotation.TargetApi;
 import android.graphics.Matrix;
 import android.os.Build;

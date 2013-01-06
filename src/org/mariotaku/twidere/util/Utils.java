@@ -201,18 +201,10 @@ public final class Utils implements Constants {
 
 	public static final HashMap<String, Class<? extends Fragment>> CUSTOM_TABS_FRAGMENT_MAP = new HashMap<String, Class<? extends Fragment>>();
 
-	public static boolean closeSilently(Closeable c) {
-		if (c == null) return false;
-		try {
-			c.close();
-		} catch (IOException e) {
-			return false;
-		}
-		return true;
-	}
-	
 	public static final HashMap<String, Integer> CUSTOM_TABS_TYPE_NAME_MAP = new HashMap<String, Integer>();
+
 	public static final HashMap<String, Integer> CUSTOM_TABS_ICON_NAME_MAP = new HashMap<String, Integer>();
+
 	static {
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES, TABLE_ID_STATUSES);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_ACCOUNTS, TABLE_ID_ACCOUNTS);
@@ -311,9 +303,10 @@ public final class Utils implements Constants {
 		CUSTOM_TABS_ICON_NAME_MAP.put(ICON_SPECIAL_TYPE_CUSTOMIZE, -1);
 
 	}
-	private static Map<Long, Integer> sAccountColors = new LinkedHashMap<Long, Integer>();
-	private static Map<Long, Integer> sUserColors = new LinkedHashMap<Long, Integer>(512, 0.75f, true);
 
+	private static Map<Long, Integer> sAccountColors = new LinkedHashMap<Long, Integer>();
+
+	private static Map<Long, Integer> sUserColors = new LinkedHashMap<Long, Integer>(512, 0.75f, true);
 	private static Map<Long, String> sAccountScreenNames = new LinkedHashMap<Long, String>();
 	private static Map<Long, String> sAccountNames = new LinkedHashMap<Long, String>();
 
@@ -526,6 +519,16 @@ public final class Utils implements Constants {
 		editor.remove(Long.toString(user_id));
 		editor.commit();
 		sUserColors.remove(user_id);
+	}
+
+	public static boolean closeSilently(final Closeable c) {
+		if (c == null) return false;
+		try {
+			c.close();
+		} catch (final IOException e) {
+			return false;
+		}
+		return true;
 	}
 
 	public static void copyStream(final InputStream is, final OutputStream os) throws IOException {
@@ -1139,6 +1142,22 @@ public final class Utils implements Constants {
 		// TwidereApplication.getInstance(context).getHostAddressResolver();
 		final HostAddressResolver resolver = null;
 		return getHttpClient(timeout_millis, true, proxy, resolver, user_agent);
+	}
+
+	public static String getImageMimeType(final File image) {
+		if (image == null) return null;
+		final BitmapFactory.Options o = new BitmapFactory.Options();
+		o.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(image.getPath(), o);
+		return o.outMimeType;
+	}
+
+	public static String getImageMimeType(final InputStream is) {
+		if (is == null) return null;
+		final BitmapFactory.Options o = new BitmapFactory.Options();
+		o.inJustDecodeBounds = true;
+		BitmapFactory.decodeStream(is, null, o);
+		return o.outMimeType;
 	}
 
 	public static String getImagePathFromUri(final Context context, final Uri uri) {
@@ -1965,6 +1984,22 @@ public final class Utils implements Constants {
 		return false;
 	}
 
+	public static boolean isValidImage(final File image) {
+		if (image == null) return false;
+		final BitmapFactory.Options o = new BitmapFactory.Options();
+		o.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(image.getPath(), o);
+		return o.outHeight > 0 && o.outWidth > 0;
+	}
+
+	public static boolean isValidImage(final InputStream is) {
+		if (is == null) return false;
+		final BitmapFactory.Options o = new BitmapFactory.Options();
+		o.inJustDecodeBounds = true;
+		BitmapFactory.decodeStream(is, new Rect(), o);
+		return o.outHeight > 0 && o.outWidth > 0;
+	}
+
 	public static ContentValues makeAccountContentValues(final Configuration conf, final String basic_password,
 			final AccessToken access_token, final User user, final int auth_type, final int color) {
 		if (user == null || user.getId() <= 0) return null;
@@ -2219,7 +2254,7 @@ public final class Utils implements Constants {
 	public static void openImage(final Context context, final Uri uri, final boolean is_possibly_sensitive) {
 		if (context == null || uri == null) return;
 		final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE);
-		intent.setDataAndType(uri, "image/*");
+		intent.setData(uri);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1) {
 			intent.setClass(context, ImageViewerGLActivity.class);
 		} else {

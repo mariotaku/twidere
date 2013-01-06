@@ -27,8 +27,8 @@ import javax.microedition.khronos.opengles.GL11;
 
 import org.mariotaku.gallery3d.anim.CanvasAnimation;
 import org.mariotaku.gallery3d.util.ApiHelper;
+import org.mariotaku.gallery3d.util.GalleryUtils;
 import org.mariotaku.gallery3d.util.MotionEventHelper;
-import org.mariotaku.gallery3d.util.Utils;
 import org.mariotaku.twidere.R;
 
 import android.content.Context;
@@ -243,7 +243,7 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 		Log.i(TAG, "onSurfaceChanged: " + width + "x" + height + ", gl10: " + gl1.toString());
 		Process.setThreadPriority(Process.THREAD_PRIORITY_DISPLAY);
 		final GL11 gl = (GL11) gl1;
-		Utils.assertTrue(mGL == gl);
+		GalleryUtils.assertTrue(mGL == gl);
 
 		mCanvas.setSize(width, height);
 	}

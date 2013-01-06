@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
-	android:versionCode="57"
+	android:versionCode="58"
 	android:versionName="@string/app_version">
 
 	<uses-sdk
@@ -369,18 +369,6 @@
 			android:name=".activity.DonateActivity"
 			android:label="@string/donate"
 			android:theme="@style/Theme.Blank.DialogWhenLarge"/>
-		<activity
-			android:name=".activity.FileSaveAsActivity"
-			android:exported="false"
-			android:label="@string/save_as"
-			android:theme="@style/Theme.Blank.DialogWhenLarge"
-			android:windowSoftInputMode="adjustResize">
-			<intent-filter>
-				<action android:name="org.mariotaku.twidere.SAVE_FILE"/>
-
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
 		<activity
 			android:name=".activity.FilePickerActivity"
 			android:exported="false"

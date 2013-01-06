@@ -21,7 +21,7 @@ import java.util.HashMap;
 import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
 
-import org.mariotaku.gallery3d.util.Utils;
+import org.mariotaku.gallery3d.util.GalleryUtils;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -166,7 +166,7 @@ abstract class UploadedTexture extends BasicTexture {
 	protected abstract Bitmap onGetBitmap();
 
 	private void freeBitmap() {
-		Utils.assertTrue(mBitmap != null);
+		GalleryUtils.assertTrue(mBitmap != null);
 		onFreeBitmap(mBitmap);
 		mBitmap = null;
 	}
@@ -194,7 +194,7 @@ abstract class UploadedTexture extends BasicTexture {
 				final int texWidth = getTextureWidth();
 				final int texHeight = getTextureHeight();
 
-				Utils.assertTrue(bWidth <= texWidth && bHeight <= texHeight);
+				GalleryUtils.assertTrue(bWidth <= texWidth && bHeight <= texHeight);
 
 				// Define a vertically flipped crop rectangle for
 				// OES_draw_texture.
