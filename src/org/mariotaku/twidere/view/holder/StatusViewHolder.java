@@ -86,7 +86,7 @@ public class StatusViewHolder {
 		}
 		profile_image.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		my_profile_image.setVisibility(show_gap ? View.GONE : View.VISIBLE);
-		image_preview_frame.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		image_preview_container.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		name.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		screen_name.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		text.setVisibility(show_gap ? View.GONE : View.VISIBLE);

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.mariotaku.gallery3d.data;
+package org.mariotaku.gallery3d.util;
 
 import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
 import static org.mariotaku.twidere.util.Utils.getImageLoaderHttpClient;
@@ -28,7 +28,6 @@ import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
 
-import org.mariotaku.gallery3d.common.Utils;
 import org.mariotaku.gallery3d.util.ThreadPool.CancelListener;
 import org.mariotaku.gallery3d.util.ThreadPool.JobContext;
 import org.mariotaku.twidere.twitter4j.TwitterException;
@@ -65,7 +64,7 @@ public class CachedDownloader {
 		return file;
 	}
 
-	private File getCacheFile(final String url) {
+	public File getCacheFile(final String url) {
 		if (url == null) return null;
 		return new File(mCacheRoot, url.replaceAll("https?:\\/\\/", "").replaceAll("[^\\w\\d]", "_"));
 	}

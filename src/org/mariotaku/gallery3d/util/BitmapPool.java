@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package org.mariotaku.gallery3d.data;
+package org.mariotaku.gallery3d.util;
 
 import java.util.ArrayList;
 
-import org.mariotaku.gallery3d.common.Utils;
 
 import android.graphics.Bitmap;
 

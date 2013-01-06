@@ -19,14 +19,14 @@ package org.mariotaku.gallery3d.ui;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.mariotaku.gallery3d.app.ImageViewerGLActivity;
-import org.mariotaku.gallery3d.common.ApiHelper;
-import org.mariotaku.gallery3d.common.LongSparseArray;
-import org.mariotaku.gallery3d.common.Utils;
-import org.mariotaku.gallery3d.data.BitmapPool;
-import org.mariotaku.gallery3d.data.DecodeUtils;
+import org.mariotaku.gallery3d.util.ApiHelper;
+import org.mariotaku.gallery3d.util.BitmapPool;
+import org.mariotaku.gallery3d.util.DecodeUtils;
 import org.mariotaku.gallery3d.util.Future;
 import org.mariotaku.gallery3d.util.GalleryUtils;
+import org.mariotaku.gallery3d.util.LongSparseArray;
 import org.mariotaku.gallery3d.util.ThreadPool;
+import org.mariotaku.gallery3d.util.Utils;
 import org.mariotaku.gallery3d.util.ThreadPool.CancelListener;
 import org.mariotaku.gallery3d.util.ThreadPool.JobContext;
 

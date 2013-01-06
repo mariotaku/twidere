@@ -47,6 +47,7 @@ import static org.mariotaku.twidere.util.TwidereLinkify.TWITPIC_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES;
 import static org.mariotaku.twidere.util.TwidereLinkify.YFROG_GROUP_ID;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -200,6 +201,16 @@ public final class Utils implements Constants {
 
 	public static final HashMap<String, Class<? extends Fragment>> CUSTOM_TABS_FRAGMENT_MAP = new HashMap<String, Class<? extends Fragment>>();
 
+	public static boolean closeSilently(Closeable c) {
+		if (c == null) return false;
+		try {
+			c.close();
+		} catch (IOException e) {
+			return false;
+		}
+		return true;
+	}
+	
 	public static final HashMap<String, Integer> CUSTOM_TABS_TYPE_NAME_MAP = new HashMap<String, Integer>();
 	public static final HashMap<String, Integer> CUSTOM_TABS_ICON_NAME_MAP = new HashMap<String, Integer>();
 	static {

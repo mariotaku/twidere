@@ -19,7 +19,7 @@ package org.mariotaku.gallery3d.ui;
 import java.util.ArrayList;
 
 import org.mariotaku.gallery3d.anim.CanvasAnimation;
-import org.mariotaku.gallery3d.common.Utils;
+import org.mariotaku.gallery3d.util.Utils;
 
 import android.graphics.Rect;
 import android.view.MotionEvent;

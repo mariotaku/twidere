@@ -16,7 +16,6 @@
 
 package org.mariotaku.gallery3d.util;
 
-import org.mariotaku.gallery3d.data.MediaItem;
 
 import android.content.Context;
 import android.content.res.Resources;

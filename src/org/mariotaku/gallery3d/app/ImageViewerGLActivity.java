@@ -16,15 +16,15 @@
 
 package org.mariotaku.gallery3d.app;
 
-import org.mariotaku.gallery3d.data.BitmapPool;
-import org.mariotaku.gallery3d.data.CachedDownloader;
-import org.mariotaku.gallery3d.data.MediaItem;
 import org.mariotaku.gallery3d.ui.GLRoot;
 import org.mariotaku.gallery3d.ui.GLRootView;
 import org.mariotaku.gallery3d.ui.GLView;
 import org.mariotaku.gallery3d.ui.PhotoView;
 import org.mariotaku.gallery3d.ui.SynchronizedHandler;
+import org.mariotaku.gallery3d.util.BitmapPool;
+import org.mariotaku.gallery3d.util.CachedDownloader;
 import org.mariotaku.gallery3d.util.GalleryUtils;
+import org.mariotaku.gallery3d.util.MediaItem;
 import org.mariotaku.gallery3d.util.ThreadPool;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;

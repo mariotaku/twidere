@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.mariotaku.gallery3d.common;
+package org.mariotaku.gallery3d.util;
 
 // Copied from android.util.LongSparseArray for unbundling
 

@@ -21,7 +21,7 @@ import java.util.HashMap;
 import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
 
-import org.mariotaku.gallery3d.common.Utils;
+import org.mariotaku.gallery3d.util.Utils;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;

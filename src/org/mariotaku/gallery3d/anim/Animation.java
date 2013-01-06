@@ -16,7 +16,7 @@
 
 package org.mariotaku.gallery3d.anim;
 
-import org.mariotaku.gallery3d.common.Utils;
+import org.mariotaku.gallery3d.util.Utils;
 
 import android.view.animation.Interpolator;
 

@@ -18,7 +18,7 @@ package org.mariotaku.gallery3d.ui;
 
 import java.util.WeakHashMap;
 
-import org.mariotaku.gallery3d.common.Utils;
+import org.mariotaku.gallery3d.util.Utils;
 
 import android.util.Log;
 

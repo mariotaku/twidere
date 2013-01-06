@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.mariotaku.gallery3d.data;
+package org.mariotaku.gallery3d.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,12 +22,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
 
-import org.mariotaku.gallery3d.common.ApiHelper;
-import org.mariotaku.gallery3d.common.Utils;
 import org.mariotaku.gallery3d.util.ThreadPool.CancelListener;
 import org.mariotaku.gallery3d.util.ThreadPool.Job;
 import org.mariotaku.gallery3d.util.ThreadPool.JobContext;
 import org.mariotaku.twidere.twitter4j.TwitterException;
+import org.mariotaku.twidere.util.Exif;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -67,6 +66,20 @@ public class MediaItem {
 		mUri = uri;
 		mResolver = context.getContentResolver();
 		mDownloader = downloader;
+	}
+
+	public File getCachedFile() {
+		if (mUri == null || mUri.getScheme() == null) return null;
+		final String scheme = mUri.getScheme();
+		final File file;
+		if (ContentResolver.SCHEME_FILE.equals(scheme)) {
+			file = new File(mUri.getPath());
+		} else if (scheme.matches("https?")) {
+			file = mDownloader.getCacheFile(mUri.toString());
+		} else
+			return null;
+		if (file.exists()) return file;
+		return null;
 	}
 
 	public Uri getContentUri() {

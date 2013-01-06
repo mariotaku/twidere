@@ -16,9 +16,9 @@
 
 package org.mariotaku.gallery3d.ui;
 
-import org.mariotaku.gallery3d.common.Utils;
 import org.mariotaku.gallery3d.ui.PhotoView.Size;
 import org.mariotaku.gallery3d.util.GalleryUtils;
+import org.mariotaku.gallery3d.util.Utils;
 
 import android.content.Context;
 import android.graphics.Rect;

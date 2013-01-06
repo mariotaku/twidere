@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package org.mariotaku.gallery3d.data;
+package org.mariotaku.gallery3d.util;
 
 import java.io.FileDescriptor;
 
-import org.mariotaku.gallery3d.common.BitmapUtils;
 import org.mariotaku.gallery3d.util.ThreadPool.CancelListener;
 import org.mariotaku.gallery3d.util.ThreadPool.JobContext;
 

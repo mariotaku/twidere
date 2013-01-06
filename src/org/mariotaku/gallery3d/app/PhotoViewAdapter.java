@@ -16,18 +16,18 @@
 
 package org.mariotaku.gallery3d.app;
 
-import org.mariotaku.gallery3d.common.ApiHelper;
-import org.mariotaku.gallery3d.common.BitmapUtils;
-import org.mariotaku.gallery3d.common.Utils;
-import org.mariotaku.gallery3d.data.BitmapPool;
-import org.mariotaku.gallery3d.data.MediaItem;
 import org.mariotaku.gallery3d.ui.BitmapScreenNail;
 import org.mariotaku.gallery3d.ui.PhotoView;
 import org.mariotaku.gallery3d.ui.ScreenNail;
 import org.mariotaku.gallery3d.ui.SynchronizedHandler;
+import org.mariotaku.gallery3d.util.ApiHelper;
+import org.mariotaku.gallery3d.util.BitmapPool;
+import org.mariotaku.gallery3d.util.BitmapUtils;
 import org.mariotaku.gallery3d.util.Future;
 import org.mariotaku.gallery3d.util.FutureListener;
+import org.mariotaku.gallery3d.util.MediaItem;
 import org.mariotaku.gallery3d.util.ThreadPool;
+import org.mariotaku.gallery3d.util.Utils;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;

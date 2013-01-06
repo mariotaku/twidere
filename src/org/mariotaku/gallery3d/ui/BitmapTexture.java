@@ -16,7 +16,7 @@
 
 package org.mariotaku.gallery3d.ui;
 
-import org.mariotaku.gallery3d.common.Utils;
+import org.mariotaku.gallery3d.util.Utils;
 
 import android.graphics.Bitmap;
 

@@ -26,9 +26,9 @@ import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 
 import org.mariotaku.gallery3d.anim.CanvasAnimation;
-import org.mariotaku.gallery3d.common.ApiHelper;
-import org.mariotaku.gallery3d.common.Utils;
+import org.mariotaku.gallery3d.util.ApiHelper;
 import org.mariotaku.gallery3d.util.MotionEventHelper;
+import org.mariotaku.gallery3d.util.Utils;
 import org.mariotaku.twidere.R;
 
 import android.content.Context;

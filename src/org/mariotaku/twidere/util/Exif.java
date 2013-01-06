@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package org.mariotaku.gallery3d.data;
+package org.mariotaku.twidere.util;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -23,6 +25,30 @@ import android.util.Log;
 
 public class Exif {
 	private static final String TAG = "Exif";
+
+	public static int getOrientation(final String file) {
+		InputStream is = null;
+		try {
+			is = new FileInputStream(file);
+			return getOrientation(is);
+		} catch (IOException e) {
+			return 0;
+		} finally {
+			Utils.closeSilently(is);
+		}
+	}
+	
+	public static int getOrientation(final File file) {
+		InputStream is = null;
+		try {
+			is = new FileInputStream(file);
+			return getOrientation(is);
+		} catch (IOException e) {
+			return 0;
+		} finally {
+			Utils.closeSilently(is);
+		}
+	}
 
 	public static int getOrientation(final InputStream is) {
 		if (is == null) return 0;
