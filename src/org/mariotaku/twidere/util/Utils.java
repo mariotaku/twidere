@@ -1716,7 +1716,7 @@ public final class Utils implements Constants {
 	}
 
 	public static Twitter getTwitterInstance(final Context context, final long account_id,
-			final boolean include_entities, final boolean use_httpclient) {
+			final boolean include_entities, final boolean use_apache_httpclient) {
 		if (context == null) return null;
 		final TwidereApplication app = TwidereApplication.getInstance(context);
 		final SharedPreferences preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
@@ -1738,7 +1738,7 @@ public final class Utils implements Constants {
 				cur.moveToFirst();
 				final ConfigurationBuilder cb = new ConfigurationBuilder();
 				cb.setHostAddressResolver(app.getHostAddressResolver());
-				if (use_httpclient) {
+				if (use_apache_httpclient) {
 					cb.setHttpClientImplementation(HttpClientImpl.class);
 				}
 				cb.setHttpConnectionTimeout(connection_timeout);

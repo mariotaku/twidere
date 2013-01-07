@@ -17,8 +17,10 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
+import android.util.Log;
+import org.mariotaku.twidere.Constants;
 
-public class SaveImageTask extends AsyncTask<Void, Void, File> {
+public class SaveImageTask extends AsyncTask<Void, Void, File> implements Constants {
 
 	private static final String PROGRESS_FRAGMENT_TAG = "progress";
 
@@ -57,6 +59,8 @@ public class SaveImageTask extends AsyncTask<Void, Void, File> {
 		if (result != null && result.exists()) {
 			Toast.makeText(activity, activity.getString(R.string.file_saved_to, result.getPath()), Toast.LENGTH_SHORT)
 					.show();
+		} else {
+			Toast.makeText(activity, R.string.error_occurred, Toast.LENGTH_SHORT).show();
 		}
 	}
 
@@ -70,11 +74,10 @@ public class SaveImageTask extends AsyncTask<Void, Void, File> {
 
 	public static File saveImage(final Context context, final File image_file) {
 		if (context == null && image_file == null) return null;
-		final String mime_type;
 		try {
 			final String name = image_file.getName();
 			if (isEmpty(name)) return null;
-			mime_type = getImageMimeType(image_file);
+			final String mime_type = getImageMimeType(image_file);
 			final MimeTypeMap map = MimeTypeMap.getSingleton();
 			final String extension = map.getExtensionFromMimeType(mime_type);
 			if (extension == null) return null;
@@ -83,15 +86,16 @@ public class SaveImageTask extends AsyncTask<Void, Void, File> {
 					.getExternalStoragePublicDirectory(EnvironmentAccessor.DIRECTORY_PICTURES);
 			if (pub_dir == null) return null;
 			final File save_dir = new File(pub_dir, "Twidere");
-			if (!save_dir.mkdirs() || !save_dir.isDirectory() && !save_dir.mkdirs()) return null;
+			if (!save_dir.isDirectory() && !save_dir.mkdirs()) return null;
 			final File save_file = new File(save_dir, name_to_save);
-			FileUtils.copyFileToDirectory(image_file, save_file);
+			FileUtils.copyFile(image_file, save_file);
 			if (save_file != null && mime_type != null) {
 				MediaScannerConnection.scanFile(context, new String[] { save_file.getPath() },
 						new String[] { mime_type }, null);
 			}
 			return save_file;
 		} catch (final IOException e) {
+			Log.w(LOGTAG, "Failed to save file", e);
 			return null;
 		}
 	}

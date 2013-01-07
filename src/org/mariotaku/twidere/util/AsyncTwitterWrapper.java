@@ -1703,9 +1703,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		public SendDirectMessageTask(final long account_id, final String screen_name, final long user_id,
 				final String message) {
 			super(mContext, mAsyncTaskManager);
-			// A very stupid workaround here, in order to send tweets
-			// contains asterisk symbol.
-			twitter = getTwitterInstance(mContext, account_id, false, !message.contains("*"));
+			twitter = getTwitterInstance(mContext, account_id, false, true);
 			this.account_id = account_id;
 			this.user_id = user_id;
 			this.screen_name = screen_name;
@@ -2188,10 +2186,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				status.setPossiblySensitive(is_possibly_sensitive);
 
 				for (final long account_id : account_ids) {
-					// A very stupid workaround here, in order to send tweets
-					// contains asterisk symbol.
-					final Twitter twitter = getTwitterInstance(mContext, account_id, false, !status.getStatus()
-							.contains("*"));
+					final Twitter twitter = getTwitterInstance(mContext, account_id, false, true);
 					if (twitter != null) {
 						try {
 							result.add(new TwitterSingleResponse<org.mariotaku.twidere.twitter4j.Status>(account_id,

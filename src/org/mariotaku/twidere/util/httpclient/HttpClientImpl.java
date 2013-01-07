@@ -40,7 +40,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
@@ -71,6 +70,9 @@ import org.mariotaku.twidere.twitter4j.http.HttpResponseCode;
 import org.mariotaku.twidere.twitter4j.http.RequestMethod;
 import org.mariotaku.twidere.twitter4j.internal.logging.Logger;
 import org.mariotaku.twidere.twitter4j.internal.util.InternalStringUtil;
+import java.security.KeyException;
+import java.security.GeneralSecurityException;
+import org.apache.http.entity.ByteArrayEntity;
 
 /**
  * HttpClient implementation for Apache HttpClient 4.0.x
@@ -136,24 +138,21 @@ public class HttpClientImpl implements org.mariotaku.twidere.twitter4j.http.Http
 				final HttpPost post = new HttpPost(resolved_url);
 				// parameter has a file?
 				boolean hasFile = false;
-				if (req.getParameters() != null) {
-					for (final HttpParameter parameter : req.getParameters()) {
+				final HttpParameter[] params = req.getParameters();
+				if (params != null) {
+					for (final HttpParameter parameter : params) {
 						if (parameter.isFile()) {
 							hasFile = true;
 							break;
 						}
 					}
 					if (!hasFile) {
-						final ArrayList<NameValuePair> args = new ArrayList<NameValuePair>();
-						for (final HttpParameter parameter : req.getParameters()) {
-							args.add(new BasicNameValuePair(parameter.getName(), parameter.getValue()));
-						}
-						if (args.size() > 0) {
-							post.setEntity(new UrlEncodedFormEntity(args, "UTF-8"));
+						if (params.length > 0) {
+							post.setEntity(new UrlEncodedFormEntity(params));
 						}
 					} else {
 						final MultipartEntity me = new MultipartEntity();
-						for (final HttpParameter parameter : req.getParameters()) {
+						for (final HttpParameter parameter : params) {
 							if (parameter.isFile()) {
 								final ContentBody body = new FileBody(parameter.getFile(), parameter.getContentType());
 								me.addPart(parameter.getName(), body);
@@ -246,12 +245,10 @@ public class HttpClientImpl implements org.mariotaku.twidere.twitter4j.http.Http
 				final SSLSocketFactory factory = new TrustAllSSLSocketFactory(trustStore);
 				factory.setHostnameVerifier(ALLOW_ALL_HOSTNAME_VERIFIER);
 				return factory;
-			} catch (final KeyStoreException e) {
-			} catch (final KeyManagementException e) {
-			} catch (final UnrecoverableKeyException e) {
-			} catch (final NoSuchAlgorithmException e) {
-			} catch (final CertificateException e) {
+			} catch (final GeneralSecurityException e) {
+				logger.error("Exception while creating SSLSocketFactory instance", e);
 			} catch (final IOException e) {
+				logger.error("Exception while creating SSLSocketFactory instance", e);
 			}
 			return null;
 		}
