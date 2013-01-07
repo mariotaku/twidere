@@ -35,6 +35,7 @@ import android.graphics.BitmapRegionDecoder;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
+import org.mariotaku.twidere.util.ImageValidator;
 
 // MediaItem represents an image or a video item.
 public class MediaItem {
@@ -149,7 +150,11 @@ public class MediaItem {
 			InputStream is = null;
 			try {
 				is = mResolver.openInputStream(mUri);
-				if (!Utils.isValidImage(is)) throw new IOException("Invalid image");
+				if (ContentResolver.SCHEME_FILE.equals(scheme)) {
+					if (!ImageValidator.checkImageValidity(mUri.getPath())) throw new IOException("Invalid image");
+				} else {
+					if (!Utils.isValidImage(is)) throw new IOException("Invalid image");
+				}
 				mContentType = Utils.getImageMimeType(is);
 				if (mContentType == null) throw new IOException("Invalid image");
 				if (MIME_TYPE_JPEG.equalsIgnoreCase(mContentType)) {
@@ -171,11 +176,12 @@ public class MediaItem {
 				// TODO download file
 				final File file = mDownloader.downloadOrGetCache(jc, mListener, url);
 				if (jc.isCancelled()) return STATE_INIT;
-				if (file == null || !Utils.isValidImage(file)) {
+				if (file == null) {
 					Log.w(TAG, "download failed " + url);
-					if (file != null) {
-						file.delete();
-					}
+					return STATE_ERROR;
+				} else if (!ImageValidator.checkImageValidity(file)) {
+					Log.w(TAG, "invalid image " + file);
+					file.delete();
 					return STATE_ERROR;
 				}
 				mContentType = Utils.getImageMimeType(file);

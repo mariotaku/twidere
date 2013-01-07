@@ -214,7 +214,7 @@ import org.mariotaku.twidere.twitter4j.http.HttpResponse;
 			final JSONArray list = json.getJSONArray("lists");
 			final int size = list.length();
 			@SuppressWarnings("unchecked")
-			final PagableResponseList<UserList> users = new PagableResponseListImpl<UserList>(size, json, res);
+			final PagableResponseList<UserList> users = (PagableResponseList<UserList>) new PagableResponseListImpl<UserList>(size, json, res);
 			for (int i = 0; i < size; i++) {
 				final JSONObject userListJson = list.getJSONObject(i);
 				final UserList userList = new UserListJSONImpl(userListJson);
