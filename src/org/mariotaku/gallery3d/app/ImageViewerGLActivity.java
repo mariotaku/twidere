@@ -215,6 +215,7 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	public void onLoadFailed() {
 		mLoadState = LOAD_STATE_FAILED;
 		Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
+		hideProgress();
 		setActionButton();
 	}
 
@@ -237,6 +238,11 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 
 	@Override
 	public void onProgressUpdate(final long downloaded) {
+		if (mContentLength == 0) {
+			mProgress.setIndeterminate(true);
+			return;
+		}
+		mProgress.setIndeterminate(false);
 		mProgress.setProgress((int) (downloaded * 100 / mContentLength));
 	}
 

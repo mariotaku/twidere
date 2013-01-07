@@ -50,7 +50,7 @@ public abstract class ActivityHostFragment<A extends Activity> extends LocalActi
 
 	@Override
 	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
-		if (mAttachedActivity == null) return;
+		if (mAttachedActivity == null || mAttachedActivity.equals(getActivity())) return;
 		mAttachedActivity.onCreateOptionsMenu(menu);
 	}
 
