@@ -31,15 +31,6 @@ public class BitmapPool {
 	private final boolean mOneSize;
 	private final int mWidth, mHeight; // only used if mOneSize is true
 
-	// Construct a BitmapPool which caches bitmap with any size;
-	public BitmapPool(final int poolLimit) {
-		mWidth = -1;
-		mHeight = -1;
-		mPoolLimit = poolLimit;
-		mPool = new ArrayList<Bitmap>(poolLimit);
-		mOneSize = false;
-	}
-
 	// Construct a BitmapPool which caches bitmap with the specified size.
 	public BitmapPool(final int width, final int height, final int poolLimit) {
 		mWidth = width;

@@ -132,7 +132,6 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 
 	protected abstract Uri getContentUri();
 
-
 	public static final class FilteredKeywordsFragment extends BaseFiltersFragment {
 
 		@Override

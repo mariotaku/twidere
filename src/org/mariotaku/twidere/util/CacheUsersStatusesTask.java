@@ -29,9 +29,9 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
 import org.mariotaku.twidere.provider.TweetStore.CachedStatuses;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
-import org.mariotaku.twidere.twitter4j.User;
 import org.mariotaku.twidere.util.TwitterWrapper.TwitterListResponse;
 
+import twitter4j.User;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -40,12 +40,11 @@ import com.twitter.Extractor;
 
 public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
 
-	private final TwitterListResponse<org.mariotaku.twidere.twitter4j.Status>[] all_statuses;
+	private final TwitterListResponse<twitter4j.Status>[] all_statuses;
 	private final ContentResolver resolver;
 	private final boolean large_profile_image;
 
-	public CacheUsersStatusesTask(final Context context,
-			final TwitterListResponse<org.mariotaku.twidere.twitter4j.Status>... all_statuses) {
+	public CacheUsersStatusesTask(final Context context, final TwitterListResponse<twitter4j.Status>... all_statuses) {
 		resolver = context.getContentResolver();
 		this.all_statuses = all_statuses;
 		large_profile_image = context.getResources().getBoolean(R.bool.hires_profile_image);
@@ -62,13 +61,13 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
 
 		final ArrayList<String> hashtags = new ArrayList<String>();
 
-		for (final TwitterListResponse<org.mariotaku.twidere.twitter4j.Status> values : all_statuses) {
+		for (final TwitterListResponse<twitter4j.Status> values : all_statuses) {
 			if (values == null || values.list == null) {
 				continue;
 			}
-			final List<org.mariotaku.twidere.twitter4j.Status> list = values.list;
-			for (final org.mariotaku.twidere.twitter4j.Status status : list) {
-				final org.mariotaku.twidere.twitter4j.Status retweeted_status = status.getRetweetedStatus();
+			final List<twitter4j.Status> list = values.list;
+			for (final twitter4j.Status status : list) {
+				final twitter4j.Status retweeted_status = status.getRetweetedStatus();
 				final User user = retweeted_status == null ? status.getUser() : retweeted_status.getUser();
 				if (user == null) {
 					continue;
@@ -105,17 +104,17 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
 	}
 
 	public static Runnable getRunnable(final Context context,
-			final TwitterListResponse<org.mariotaku.twidere.twitter4j.Status>... all_statuses) {
+			final TwitterListResponse<twitter4j.Status>... all_statuses) {
 		return new ExecuteCacheUserStatusesTaskRunnable(context, all_statuses);
 
 	}
 
 	static class ExecuteCacheUserStatusesTaskRunnable implements Runnable {
 		final Context context;
-		final TwitterListResponse<org.mariotaku.twidere.twitter4j.Status>[] all_statuses;
+		final TwitterListResponse<twitter4j.Status>[] all_statuses;
 
 		ExecuteCacheUserStatusesTaskRunnable(final Context context,
-				final TwitterListResponse<org.mariotaku.twidere.twitter4j.Status>... all_statuses) {
+				final TwitterListResponse<twitter4j.Status>... all_statuses) {
 			this.context = context;
 			this.all_statuses = all_statuses;
 		}

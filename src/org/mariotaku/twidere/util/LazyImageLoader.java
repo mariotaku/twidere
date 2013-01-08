@@ -45,10 +45,10 @@ import java.util.concurrent.ThreadFactory;
 
 import org.mariotaku.twidere.BuildConfig;
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.twitter4j.TwitterException;
-import org.mariotaku.twidere.twitter4j.http.HttpClientWrapper;
-import org.mariotaku.twidere.twitter4j.http.HttpResponse;
 
+import twitter4j.TwitterException;
+import twitter4j.http.HttpClientWrapper;
+import twitter4j.http.HttpResponse;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;

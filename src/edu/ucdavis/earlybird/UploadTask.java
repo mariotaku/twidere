@@ -7,11 +7,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.mariotaku.twidere.twitter4j.TwitterException;
-import org.mariotaku.twidere.twitter4j.http.HttpClientWrapper;
-import org.mariotaku.twidere.twitter4j.http.HttpParameter;
-import org.mariotaku.twidere.twitter4j.http.HttpResponse;
-
+import twitter4j.TwitterException;
+import twitter4j.http.HttpClientWrapper;
+import twitter4j.http.HttpParameter;
+import twitter4j.http.HttpResponse;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;

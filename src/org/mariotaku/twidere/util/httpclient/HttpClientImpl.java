@@ -21,14 +21,13 @@ import java.net.Socket;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
+import java.security.GeneralSecurityException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Map;
 
 import javax.net.ssl.SSLContext;
@@ -36,7 +35,6 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.HttpHost;
-import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.HttpClient;
@@ -57,22 +55,19 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
-import org.mariotaku.twidere.twitter4j.TwitterException;
-import org.mariotaku.twidere.twitter4j.http.HostAddressResolver;
-import org.mariotaku.twidere.twitter4j.http.HttpClientConfiguration;
-import org.mariotaku.twidere.twitter4j.http.HttpParameter;
-import org.mariotaku.twidere.twitter4j.http.HttpResponseCode;
-import org.mariotaku.twidere.twitter4j.http.RequestMethod;
-import org.mariotaku.twidere.twitter4j.internal.logging.Logger;
-import org.mariotaku.twidere.twitter4j.internal.util.InternalStringUtil;
-import java.security.KeyException;
-import java.security.GeneralSecurityException;
-import org.apache.http.entity.ByteArrayEntity;
+
+import twitter4j.TwitterException;
+import twitter4j.http.HostAddressResolver;
+import twitter4j.http.HttpClientConfiguration;
+import twitter4j.http.HttpParameter;
+import twitter4j.http.HttpResponseCode;
+import twitter4j.http.RequestMethod;
+import twitter4j.internal.logging.Logger;
+import twitter4j.internal.util.InternalStringUtil;
 
 /**
  * HttpClient implementation for Apache HttpClient 4.0.x
@@ -80,8 +75,8 @@ import org.apache.http.entity.ByteArrayEntity;
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @since Twitter4J 2.1.2
  */
-public class HttpClientImpl implements org.mariotaku.twidere.twitter4j.http.HttpClient, HttpResponseCode {
-	private static final Logger logger = Logger.getLogger();
+public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCode {
+	private static final Logger logger = Logger.getLogger(HttpClientImpl.class);
 	private final HttpClientConfiguration conf;
 	private final HttpClient client;
 
@@ -119,8 +114,7 @@ public class HttpClientImpl implements org.mariotaku.twidere.twitter4j.http.Http
 	}
 
 	@Override
-	public org.mariotaku.twidere.twitter4j.http.HttpResponse request(
-			final org.mariotaku.twidere.twitter4j.http.HttpRequest req) throws TwitterException {
+	public twitter4j.http.HttpResponse request(final twitter4j.http.HttpRequest req) throws TwitterException {
 		try {
 			HttpRequestBase commonsRequest;
 

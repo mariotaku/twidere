@@ -21,12 +21,12 @@ import org.mariotaku.gallery3d.util.BitmapPool;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapRegionDecoder;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Message;
 import android.view.MotionEvent;
-import android.graphics.BitmapRegionDecoder;
 
 public class PhotoView extends GLView {
 
@@ -44,9 +44,9 @@ public class PhotoView extends GLView {
 	private Listener mListener;
 	private ITileImageAdapter mModel;
 
-	private TileImageView mTileView;
-	private EdgeView mEdgeView;
-	private SynchronizedHandler mHandler;
+	private final TileImageView mTileView;
+	private final EdgeView mEdgeView;
+	private final SynchronizedHandler mHandler;
 	private boolean mCancelExtraScalingPending;
 	private boolean mWantPictureCenterCallbacks = false;
 
@@ -61,8 +61,8 @@ public class PhotoView extends GLView {
 	// This is the index of the last deleted item. This is only used as a hint
 	// to hide the undo button when we are too far away from the deleted
 	// item. The value Integer.MAX_VALUE means there is no such hint.
-	private Context mContext;
-	private FullPicture mPicture;
+	private final Context mContext;
+	private final FullPicture mPicture;
 
 	public PhotoView(final ImageViewerGLActivity activity) {
 		mTileView = new TileImageView(activity);
@@ -74,28 +74,7 @@ public class PhotoView extends GLView {
 		mPicture = new FullPicture();
 		mGestureListener = new GestureListener();
 		mGestureRecognizer = new GestureRecognizer(mContext, mGestureListener);
-		mPositionController = new PositionController(mContext, new PositionController.Listener() {
-
-			@Override
-			public void invalidate() {
-				PhotoView.this.invalidate();
-			}
-
-			@Override
-			public boolean isHoldingDown() {
-				return (mHolding & HOLD_TOUCH_DOWN) != 0;
-			}
-
-			@Override
-			public void onAbsorb(final int velocity, final int direction) {
-				mEdgeView.onAbsorb(velocity, direction);
-			}
-
-			@Override
-			public void onPull(final int offset, final int direction) {
-				mEdgeView.onPull(offset, direction);
-			}
-		});
+		mPositionController = new PositionController(new EventListener());
 	}
 
 	public Rect getPhotoRect() {
@@ -139,10 +118,6 @@ public class PhotoView extends GLView {
 		mWantPictureCenterCallbacks = wanted;
 	}
 
-	// //////////////////////////////////////////////////////////////////////////
-	// Pictures
-	// //////////////////////////////////////////////////////////////////////////
-
 	@Override
 	protected void onLayout(final boolean changeSize, final int left, final int top, final int right, final int bottom) {
 		final int w = right - left;
@@ -162,6 +137,10 @@ public class PhotoView extends GLView {
 			mPositionController.setViewSize(getWidth(), getHeight());
 		}
 	}
+
+	// //////////////////////////////////////////////////////////////////////////
+	// Pictures
+	// //////////////////////////////////////////////////////////////////////////
 
 	@Override
 	protected boolean onTouch(final MotionEvent event) {
@@ -195,23 +174,19 @@ public class PhotoView extends GLView {
 		mPositionController.setImageSize(mPicture.getSize(), null);
 	}
 
-	// //////////////////////////////////////////////////////////////////////////
-	// Film mode focus switching
-	// //////////////////////////////////////////////////////////////////////////
-
 	private void snapback() {
 		mPositionController.snapback();
 	}
+
+	// //////////////////////////////////////////////////////////////////////////
+	// Film mode focus switching
+	// //////////////////////////////////////////////////////////////////////////
 
 	private static int getRotated(final int degree, final int original, final int theother) {
 		return degree % 180 == 0 ? original : theother;
 	}
 
 	public interface ITileImageAdapter {
-
-		public boolean setData(BitmapRegionDecoder decoder, Bitmap bitmap, int orientation);
-
-		public void cancel();
 
 		public int getImageHeight();
 
@@ -221,7 +196,6 @@ public class PhotoView extends GLView {
 		public int getImageWidth();
 
 		public int getLevelCount();
-
 
 		public ScreenNail getScreenNail();
 
@@ -241,9 +215,9 @@ public class PhotoView extends GLView {
 		 */
 		public Bitmap getTile(int level, int x, int y, int tileSize, int borderSize, BitmapPool pool);
 
-		public void pause();
+		public void recycleScreenNail();
 
-		public void resume();
+		public boolean setData(BitmapRegionDecoder decoder, Bitmap bitmap, int orientation);
 
 	}
 
@@ -445,6 +419,33 @@ public class PhotoView extends GLView {
 		}
 	}
 
+	private class MyHandler extends SynchronizedHandler {
+
+		private MyHandler(final ImageViewerGLActivity activity) {
+			super(activity.getGLRoot());
+		}
+
+		@Override
+		public void handleMessage(final Message message) {
+			switch (message.what) {
+				case MSG_CANCEL_EXTRA_SCALING: {
+					mGestureRecognizer.cancelScale();
+					mPositionController.setExtraScalingRange(false);
+					mCancelExtraScalingPending = false;
+					break;
+				}
+				case MSG_CAPTURE_ANIMATION_DONE: {
+					// message.arg1 is the offset parameter passed to
+					// switchWithCaptureAnimation().
+					captureAnimationDone(message.arg1);
+					break;
+				}
+				default:
+					throw new AssertionError(message.what);
+			}
+		}
+	}
+
 	private interface Picture {
 		void draw(GLCanvas canvas, Rect r);
 
@@ -455,6 +456,29 @@ public class PhotoView extends GLView {
 		void reload();
 
 		void setScreenNail(ScreenNail s);
+	}
+
+	class EventListener implements PositionController.Listener {
+
+		@Override
+		public boolean isHoldingDown() {
+			return (mHolding & HOLD_TOUCH_DOWN) != 0;
+		}
+
+		@Override
+		public void onAbsorb(final int velocity, final int direction) {
+			mEdgeView.onAbsorb(velocity, direction);
+		}
+
+		@Override
+		public void onInvalidate() {
+			invalidate();
+		}
+
+		@Override
+		public void onPull(final int offset, final int direction) {
+			mEdgeView.onPull(offset, direction);
+		}
 	}
 
 	class FullPicture implements Picture {
@@ -563,33 +587,6 @@ public class PhotoView extends GLView {
 			final int h = mTileView.mImageHeight;
 			mSize.width = getRotated(mRotation, w, h);
 			mSize.height = getRotated(mRotation, h, w);
-		}
-	}
-
-	class MyHandler extends SynchronizedHandler {
-
-		public MyHandler(final ImageViewerGLActivity activity) {
-			super(activity.getGLRoot());
-		}
-
-		@Override
-		public void handleMessage(final Message message) {
-			switch (message.what) {
-				case MSG_CANCEL_EXTRA_SCALING: {
-					mGestureRecognizer.cancelScale();
-					mPositionController.setExtraScalingRange(false);
-					mCancelExtraScalingPending = false;
-					break;
-				}
-				case MSG_CAPTURE_ANIMATION_DONE: {
-					// message.arg1 is the offset parameter passed to
-					// switchWithCaptureAnimation().
-					captureAnimationDone(message.arg1);
-					break;
-				}
-				default:
-					throw new AssertionError(message.what);
-			}
 		}
 	}
 }

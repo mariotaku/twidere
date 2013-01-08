@@ -27,30 +27,32 @@
 package org.mariotaku.twidere.util.httpclient;
 
 import java.io.UnsupportedEncodingException;
+
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.protocol.HTTP;
-import org.mariotaku.twidere.twitter4j.http.HttpParameter;
+
+import twitter4j.http.HttpParameter;
 
 /**
- * An entity composed of a list of url-encoded pairs.
- * This is typically useful while sending an HTTP POST request.
- *
+ * An entity composed of a list of url-encoded pairs. This is typically useful
+ * while sending an HTTP POST request.
+ * 
  * @since 4.0
  */
 public class UrlEncodedFormEntity extends StringEntity {
-  
-    /**
-     * Constructs a new {@link UrlEncodedFormEntity} with the list
-     * of parameters in the specified encoding.
-     * 
-     * @param parameters list of name/value pairs
-     * @param encoding encoding the name/value pairs be encoded with
-     * @throws UnsupportedEncodingException if the encoding isn't supported
-     */
-    public UrlEncodedFormEntity(final HttpParameter[] params) throws UnsupportedEncodingException {
-        super(HttpParameter.encodeParameters(params), HTTP.DEFAULT_CONTENT_CHARSET);		
-        setContentType(URLEncodedUtils.CONTENT_TYPE + HTTP.CHARSET_PARAM + HTTP.DEFAULT_CONTENT_CHARSET);
-    }
+
+	/**
+	 * Constructs a new {@link UrlEncodedFormEntity} with the list of parameters
+	 * in the specified encoding.
+	 * 
+	 * @param parameters list of name/value pairs
+	 * @param encoding encoding the name/value pairs be encoded with
+	 * @throws UnsupportedEncodingException if the encoding isn't supported
+	 */
+	public UrlEncodedFormEntity(final HttpParameter[] params) throws UnsupportedEncodingException {
+		super(HttpParameter.encodeParameters(params), HTTP.DEFAULT_CONTENT_CHARSET);
+		setContentType(URLEncodedUtils.CONTENT_TYPE + HTTP.CHARSET_PARAM + HTTP.DEFAULT_CONTENT_CHARSET);
+	}
 
 }

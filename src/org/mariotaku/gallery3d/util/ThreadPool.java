@@ -56,7 +56,7 @@ public class ThreadPool {
 
 	// Submit a job to the thread pool. The listener will be called when the
 	// job is finished (or cancelled).
-	public <T> Future<T> submit(final Job<T> job, final FutureListener<T> listener) {
+	private <T> Future<T> submit(final Job<T> job, final FutureListener<T> listener) {
 		final Worker<T> w = new Worker<T>(job, listener);
 		mExecutor.execute(w);
 		return w;
@@ -197,11 +197,6 @@ public class ThreadPool {
 			}
 
 			return true;
-		}
-
-		@Override
-		public void waitDone() {
-			get();
 		}
 
 		private boolean acquireResource(final ResourceCounter counter) {

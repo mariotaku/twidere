@@ -26,8 +26,8 @@ import java.io.File;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.loader.AbstractImageLoader.DownloadListener;
 import org.mariotaku.twidere.loader.ImageLoader;
-import org.mariotaku.twidere.loader.ImageLoader.DownloadListener;
 import org.mariotaku.twidere.util.SaveImageTask;
 
 import android.content.ActivityNotFoundException;

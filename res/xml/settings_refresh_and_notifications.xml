@@ -57,10 +57,9 @@
 			android:summary="@string/notifications_type_summary"
 			android:title="@string/notifications_type"/>
 
-		<RingtonePreference
+		<org.mariotaku.twidere.preference.RingtonePreference
+			android:defaultValue=""
 			android:key="notification_ringtone"
-			android:ringtoneType="notification"
-			android:showDefault="true"
 			android:title="@string/notification_ringtone"/>
 
 		<org.mariotaku.twidere.preference.ColorPickerPreference

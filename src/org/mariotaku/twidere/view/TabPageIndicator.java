@@ -195,7 +195,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 	}
 
 	@Override
-	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+	public void onPageScrolled(final int position, final float positionOffset, final int positionOffsetPixels) {
 		if (mListener != null) {
 			mListener.onPageScrolled(position, positionOffset, positionOffsetPixels);
 		}
@@ -250,7 +250,9 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 	}
 
 	public void setPagingEnabled(final boolean enabled) {
-		if (!(mViewPager instanceof ViewPager)) throw new IllegalStateException("This method should only called when your ViewPager instance is ExtendedViewPager");
+		if (!(mViewPager instanceof ViewPager))
+			throw new IllegalStateException(
+					"This method should only called when your ViewPager instance is ExtendedViewPager");
 		((ExtendedViewPager) mViewPager).setPagingEnabled(enabled);
 		mPagingEnabled = enabled;
 	}

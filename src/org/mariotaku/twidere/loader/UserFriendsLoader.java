@@ -22,10 +22,10 @@ package org.mariotaku.twidere.loader;
 import java.util.List;
 
 import org.mariotaku.twidere.model.ParcelableUser;
-import org.mariotaku.twidere.twitter4j.IDs;
-import org.mariotaku.twidere.twitter4j.Twitter;
-import org.mariotaku.twidere.twitter4j.TwitterException;
 
+import twitter4j.IDs;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
 import android.content.Context;
 
 public class UserFriendsLoader extends IDsUsersLoader {

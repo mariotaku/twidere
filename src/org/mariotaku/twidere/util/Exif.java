@@ -17,25 +17,15 @@
 package org.mariotaku.twidere.util;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import android.util.Log;
-import java.io.FileDescriptor;
 
 public class Exif {
 	private static final String TAG = "Exif";
-
-	public static int getOrientation(FileDescriptor fd) {
-		InputStream is = null;
-		try {
-			is = new FileInputStream(fd);
-			return getOrientation(is);
-		} finally {
-			Utils.closeSilently(is);
-		}
-	}
 
 	public static int getOrientation(final File file) {
 		InputStream is = null;
@@ -44,6 +34,16 @@ public class Exif {
 			return getOrientation(is);
 		} catch (final IOException e) {
 			return 0;
+		} finally {
+			Utils.closeSilently(is);
+		}
+	}
+
+	public static int getOrientation(final FileDescriptor fd) {
+		InputStream is = null;
+		try {
+			is = new FileInputStream(fd);
+			return getOrientation(is);
 		} finally {
 			Utils.closeSilently(is);
 		}

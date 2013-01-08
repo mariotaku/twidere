@@ -6,29 +6,23 @@ import static org.mariotaku.twidere.util.Utils.getRedirectedHttpResponse;
 import static org.mariotaku.twidere.util.Utils.parseString;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.mariotaku.gallery3d.util.GalleryUtils;
-import org.mariotaku.twidere.twitter4j.http.HttpClientWrapper;
-import org.mariotaku.twidere.twitter4j.http.HttpResponse;
-import org.mariotaku.twidere.util.BitmapDecodeHelper;
+import org.mariotaku.twidere.util.ImageValidator;
 
+import twitter4j.http.HttpClientWrapper;
+import twitter4j.http.HttpResponse;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.content.AsyncTaskLoader;
-import org.mariotaku.twidere.util.ImageValidator;
-import android.content.ContentProvider;
-import android.content.ContentResolver;
-import java.io.FileDescriptor;
-import java.io.RandomAccessFile;
-import android.os.ParcelFileDescriptor;
 
 public abstract class AbstractImageLoader extends AsyncTaskLoader<AbstractImageLoader.Result> {
 
@@ -99,29 +93,28 @@ public abstract class AbstractImageLoader extends AsyncTaskLoader<AbstractImageL
 			mImageFile = new File(mUri.getPath());
 			try {
 				return decodeImage(mUri);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				return new Result(null, null, e);
 			}
 		}
 		return new Result(null, null, null);
 	}
 
+	protected Result decodeImage(final File file) throws IOException {
+		if (ImageValidator.checkImageValidity(file)) return decodeImage(Uri.fromFile(file));
+		throw new InvalidImageException();
+	}
+
+	protected abstract Result decodeImage(FileDescriptor fd) throws IOException;
+
+	protected Result decodeImage(final Uri uri) throws IOException {
+		return decodeImage(mResolver.openFileDescriptor(uri, "r").getFileDescriptor());
+	}
+
 	@Override
 	protected void onStartLoading() {
 		forceLoad();
 	}
-	
-
-	protected Result decodeImage(File file) throws IOException {
-		if (ImageValidator.checkImageValidity(file)) return decodeImage(Uri.fromFile(file));
-		throw new InvalidImageException();
-	}
-	
-	protected Result decodeImage(Uri uri) throws IOException {
-		return decodeImage(mResolver.openFileDescriptor(uri, "r").getFileDescriptor());
-	}
-	
-	protected abstract Result decodeImage(FileDescriptor fd) throws IOException;
 
 	private void dump(final InputStream is, final OutputStream os) throws IOException {
 		final byte buffer[] = new byte[1024];
@@ -157,9 +150,11 @@ public abstract class AbstractImageLoader extends AsyncTaskLoader<AbstractImageL
 
 		void onProgressUpdate(long downloaded);
 	}
-	
+
 	public static class InvalidImageException extends IOException {
-		
+
+		private static final long serialVersionUID = 8996099908714452289L;
+
 	}
 
 	public static class Result {

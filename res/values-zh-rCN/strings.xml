@@ -76,7 +76,7 @@
   <string name="gzip_compressing">GZip 压缩</string>
   <string name="gzip_compressing_summary">压缩所有的 API 请求，这将减少数据流量，但并不是所有的API服务器都支持这个功能</string>
   <string name="storage">存储</string>
-  <string name="database_item_limit">条目上限</string>
+  <string name="database_item_limit">数据库条目上限</string>
   <string name="database_item_limit_summary">每个帐号在数据库中保存的推文/信息条目上限，降低数值可以节省更多存储空间以及加快载入的速度</string>
   <string name="clear_cache">清除缓存</string>
   <string name="clear_cache_summary">清除储存的个人资料图片缓存</string>
@@ -124,9 +124,9 @@
   <string name="unfavorite_successful">取消收藏成功</string>
   <string name="follow_successful">关注成功</string>
   <string name="unfollow_successful">取消关注成功</string>
-  <string name="profile_update_successful">个人资料更新成功</string>
+  <string name="profile_update_successful">更新个人资料成功</string>
   <string name="profile_image_update_successful">个人资料图像更新成功</string>
-  <string name="profile_banner_image_update_successful">个人资料横幅图片上传成功</string>
+  <string name="profile_banner_image_update_successful">个人资料横幅图片更新成功</string>
   <string name="text_size">文字尺寸</string>
   <string name="text_size_summary">推文的文字尺寸</string>
   <string name="cannot_get_location">不能获得你的位置</string>
@@ -192,7 +192,7 @@
   <string name="sort_timeline_by_time">按时间顺序排序时间线</string>
   <string name="sort_timeline_by_time_summary">这可能使得被转推的推文显示在错误的位置，不过如果你使用其他服务（比如Identi.ca），这个选项会有不少帮助</string>
   <string name="refresh_on_start">启动时刷新</string>
-  <string name="refresh_on_start_summary">在启动时刷新时间线和提及你的内容</string>
+  <string name="refresh_on_start_summary">启动时刷新时间线和提及</string>
   <string name="refresh_after_tweet">发送推文后刷新</string>
   <string name="refresh_after_tweet_summary">发送推文后刷新</string>
   <string name="list_timeline">列表时间线</string>
@@ -212,7 +212,6 @@
   <string name="item_1_hour">1小时</string>
   <string name="item_2_hours">2小时</string>
   <string name="item_4_hours">4小时</string>
-  
   <string name="inline_image_preview_display_option">图片预览显示选项</string>
   <string name="solid_color_background">纯色背景</string>
   <string name="solid_color_background_summary">如果你的设备是AMOLED屏幕的话，启用这个会有所帮助</string>
@@ -341,6 +340,7 @@
   <string name="updating_profile">更新个人资料</string>
   <string name="updating_profile_image">更新个人资料图片</string>
   <string name="updating_profile_banner_image">更新个人资料横幅图片</string>
+  <string name="removing_profile_banner_image">移除个人资料横幅图片</string>
   <string name="updating_details">更新详细资料</string>
   <string name="blocking">阻止</string>
   <string name="unblocking">解除阻止</string>
@@ -381,7 +381,7 @@
   <string name="small">小尺寸</string>
   <string name="and_more">和其他 <xliff:g id="count">%d</xliff:g> 个</string>
   <string name="clear_search_history">清除搜索历史</string>
-  <string name="permission_description_none">没有需要的权限</string>
+  <string name="permission_description_none">No permissions needed</string>
   <string name="permission_description_refresh">刷新时间线（包括私信）</string>
   <string name="permission_description_read">读取推文和一些缓存的内容</string>
   <string name="permission_description_write">将推文和其他一些内容写入到数据库，发送推文</string>
@@ -392,4 +392,9 @@
   <string name="accept">同意并授权</string>
   <string name="no_thanks">不用了，谢谢</string>
   <string name="revoke_permissions">撤销授权</string>
+  <string name="fast_scroll_thumb">快速滚动</string>
+  <string name="link_highlighting">链接高亮</string>
+  <string name="fast_timeline_processing">快速时间线处理</string>
+  <string name="fast_timeline_processing_summary">忽略时间线中的所有细节，启用可以使列表更加流畅</string>
+  <string name="indicate_my_status">区别我的推文</string>
 </resources>

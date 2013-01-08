@@ -26,10 +26,10 @@ import java.util.List;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.twitter4j.Twitter;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
+import twitter4j.Twitter;
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 

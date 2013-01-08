@@ -19,12 +19,9 @@ package org.mariotaku.gallery3d.ui;
 import org.mariotaku.gallery3d.ui.PhotoView.Size;
 import org.mariotaku.gallery3d.util.GalleryUtils;
 
-import android.content.Context;
 import android.graphics.Rect;
-import android.util.Log;
 
 class PositionController {
-	private static final String TAG = "PositionController";
 
 	public static final int IMAGE_AT_LEFT_EDGE = 1;
 	public static final int IMAGE_AT_RIGHT_EDGE = 2;
@@ -127,7 +124,7 @@ class PositionController {
 	// The output of the PositionController. Available through getPosition().
 	private final Rect mRect;
 
-	public PositionController(final Context context, final Listener listener) {
+	public PositionController(final Listener listener) {
 		mListener = listener;
 		mPageScroller = new FlingScroller();
 
@@ -606,7 +603,7 @@ class PositionController {
 	// //////////////////////////////////////////////////////////////////////////
 	private void redraw() {
 		layoutAndSetPosition();
-		mListener.invalidate();
+		mListener.onInvalidate();
 	}
 
 	// Returns false if the box size doesn't change.
@@ -719,11 +716,11 @@ class PositionController {
 	}
 
 	public interface Listener {
-		void invalidate();
-
 		boolean isHoldingDown();
 
 		void onAbsorb(int velocity, int direction);
+
+		void onInvalidate();
 
 		// EdgeView
 		void onPull(int offset, int direction);

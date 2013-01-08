@@ -26,13 +26,14 @@ import java.util.zip.GZIPInputStream;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpResponse;
-import org.mariotaku.twidere.twitter4j.http.HttpClientConfiguration;
+
+import twitter4j.http.HttpClientConfiguration;
 
 /**
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @since Twitter4J 2.1.2
  */
-final class ApacheHttpClientHttpResponseImpl extends org.mariotaku.twidere.twitter4j.http.HttpResponse {
+final class ApacheHttpClientHttpResponseImpl extends twitter4j.http.HttpResponse {
 	private final HttpResponse res;
 
 	ApacheHttpClientHttpResponseImpl(final HttpResponse res, final HttpClientConfiguration conf) throws IOException {

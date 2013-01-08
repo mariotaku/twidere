@@ -6,6 +6,7 @@ import static org.mariotaku.twidere.util.Utils.getImageMimeType;
 import java.io.File;
 import java.io.IOException;
 
+import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.ProgressDialogFragment;
 
@@ -15,10 +16,9 @@ import android.os.AsyncTask;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
-import android.util.Log;
-import org.mariotaku.twidere.Constants;
 
 public class SaveImageTask extends AsyncTask<Void, Void, File> implements Constants {
 

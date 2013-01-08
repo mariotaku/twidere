@@ -362,7 +362,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		mAdapter.setDisplaySensitiveContents(display_sensitive_contents);
 		mAdapter.setLinkHightlightingEnabled(link_highlighting);
 		mAdapter.setFastTimelineProcessingEnabled(fast_timeline_processing);
-		mAdapter.setIndicateMyStatusDisabled(isMyTimeline() || !indicate_my_status);		
+		mAdapter.setIndicateMyStatusDisabled(isMyTimeline() || !indicate_my_status);
 	}
 
 	@Override
@@ -436,15 +436,15 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		unregisterReceiver(mStateReceiver);
 		super.onStop();
 	}
-	
+
 	private boolean isMyTimeline() {
 		final Bundle args = getArguments();
 		if (args != null && this instanceof UserTimelineFragment) {
 			final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 			final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
 			final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-			if(account_id == user_id || screen_name != null
-			   && screen_name.equals(getAccountScreenName(getActivity(), account_id))) return true;
+			if (account_id == user_id || screen_name != null
+					&& screen_name.equals(getAccountScreenName(getActivity(), account_id))) return true;
 		}
 		return false;
 	}

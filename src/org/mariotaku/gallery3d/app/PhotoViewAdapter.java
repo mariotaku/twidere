@@ -19,14 +19,9 @@ package org.mariotaku.gallery3d.app;
 import org.mariotaku.gallery3d.ui.BitmapScreenNail;
 import org.mariotaku.gallery3d.ui.PhotoView;
 import org.mariotaku.gallery3d.ui.ScreenNail;
-import org.mariotaku.gallery3d.ui.SynchronizedHandler;
 import org.mariotaku.gallery3d.util.ApiHelper;
 import org.mariotaku.gallery3d.util.BitmapPool;
-import org.mariotaku.gallery3d.util.BitmapUtils;
-import org.mariotaku.gallery3d.util.Future;
-import org.mariotaku.gallery3d.util.FutureListener;
 import org.mariotaku.gallery3d.util.GalleryUtils;
-import org.mariotaku.gallery3d.util.ThreadPool;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -34,14 +29,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 
 public class PhotoViewAdapter implements PhotoView.ITileImageAdapter {
- 
+
 	private static final String TAG = "PhotoViewAdapter";
-	
+
 	protected ScreenNail mScreenNail;
 	protected BitmapRegionDecoder mRegionDecoder;
 	protected int mImageWidth;
@@ -49,20 +42,12 @@ public class PhotoViewAdapter implements PhotoView.ITileImageAdapter {
 	protected int mLevelCount;
 
 	private final PhotoView mPhotoView;
-	private final ThreadPool mThreadPool;
-	private final ImageViewerGLActivity mActivity;
 	private BitmapScreenNail mBitmapScreenNail;
 
 	private int mImageRotation;
 
-	public PhotoViewAdapter(final ImageViewerGLActivity activity, final PhotoView view) {
+	public PhotoViewAdapter(final PhotoView view) {
 		mPhotoView = view;
-		mActivity = activity;
-		mThreadPool = activity.getThreadPool();
-	}
-
-	@Override
-	public void cancel() {
 	}
 
 	@Override
@@ -161,7 +146,7 @@ public class PhotoViewAdapter implements PhotoView.ITileImageAdapter {
 	}
 
 	@Override
-	public void pause() {
+	public void recycleScreenNail() {
 		if (mBitmapScreenNail != null) {
 			mBitmapScreenNail.recycle();
 			mBitmapScreenNail = null;
@@ -169,15 +154,21 @@ public class PhotoViewAdapter implements PhotoView.ITileImageAdapter {
 	}
 
 	@Override
-	public void resume() {
-	}
-
-	private synchronized void setRegionDecoder(final BitmapRegionDecoder decoder) {
-		mRegionDecoder = decoder;
-		if (decoder == null) return;
-		mImageWidth = decoder.getWidth();
-		mImageHeight = decoder.getHeight();
-		mLevelCount = calculateLevelCount();
+	public boolean setData(final BitmapRegionDecoder decoder, final Bitmap bitmap, final int oroentation) {
+		try {
+			if (decoder != null) {
+				setScreenNail(bitmap, decoder.getWidth(), decoder.getHeight());
+			} else {
+				if (bitmap == null) return false;
+				setScreenNail(bitmap, bitmap.getWidth(), bitmap.getHeight());
+			}
+			setRegionDecoder(decoder);
+			mPhotoView.notifyImageChange();
+			return true;
+		} catch (final Throwable t) {
+			Log.w(TAG, "fail to decode large", t);
+			return false;
+		}
 	}
 
 	private int calculateLevelCount() {
@@ -225,21 +216,12 @@ public class PhotoViewAdapter implements PhotoView.ITileImageAdapter {
 		return result;
 	}
 
-	public boolean setData(final BitmapRegionDecoder decoder, Bitmap bitmap, int oroentation) {
-		try {
-			if (decoder != null) {
-				setScreenNail(bitmap, decoder.getWidth(), decoder.getHeight());
-			} else {
-				if (bitmap == null) return false;
-				setScreenNail(bitmap, bitmap.getWidth(), bitmap.getHeight());
-			}
-			setRegionDecoder(decoder);
-			mPhotoView.notifyImageChange();
-			return true;
-		} catch (final Throwable t) {
-			Log.w(TAG, "fail to decode large", t);
-			return false;
-		}
+	private synchronized void setRegionDecoder(final BitmapRegionDecoder decoder) {
+		mRegionDecoder = decoder;
+		if (decoder == null) return;
+		mImageWidth = decoder.getWidth();
+		mImageHeight = decoder.getHeight();
+		mLevelCount = calculateLevelCount();
 	}
 
 	private void setScreenNail(final Bitmap bitmap, final int width, final int height) {
@@ -254,16 +236,6 @@ public class PhotoViewAdapter implements PhotoView.ITileImageAdapter {
 		mImageHeight = height;
 		mRegionDecoder = null;
 		mLevelCount = 0;
-	}
-
-	private static class ImageBundle {
-		public final BitmapRegionDecoder decoder;
-		public final Bitmap backupImage;
-
-		public ImageBundle(final BitmapRegionDecoder decoder, final Bitmap backupImage) {
-			this.decoder = decoder;
-			this.backupImage = backupImage;
-		}
 	}
 
 }

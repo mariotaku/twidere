@@ -28,11 +28,11 @@ import java.util.List;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.twitter4j.Location;
-import org.mariotaku.twidere.twitter4j.ResponseList;
-import org.mariotaku.twidere.twitter4j.Twitter;
-import org.mariotaku.twidere.twitter4j.TwitterException;
 
+import twitter4j.Location;
+import twitter4j.ResponseList;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;

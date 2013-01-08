@@ -17,7 +17,6 @@ import org.mariotaku.twidere.loader.ParcelableUserLoader;
 import org.mariotaku.twidere.loader.UserBannerImageLoader;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.SingleResponse;
-import org.mariotaku.twidere.twitter4j.User;
 import org.mariotaku.twidere.util.AsyncTask;
 import org.mariotaku.twidere.util.AsyncTask.Status;
 import org.mariotaku.twidere.util.AsyncTaskManager;
@@ -30,6 +29,7 @@ import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.view.ProfileNameBannerContainer;
 import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
 
+import twitter4j.User;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;

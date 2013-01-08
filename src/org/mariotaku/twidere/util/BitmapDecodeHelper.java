@@ -19,18 +19,19 @@
 
 package org.mariotaku.twidere.util;
 
+import java.io.InputStream;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import java.io.InputStream;
 
 public class BitmapDecodeHelper {
 
-	public static Bitmap decode(final String path, final BitmapFactory.Options opts) {
-		if (path == null || opts == null) return null;
-		final Bitmap bm = BitmapFactory.decodeFile(path, opts);
+	public static Bitmap decode(final InputStream is, final BitmapFactory.Options opts) {
+		if (is == null || opts == null) return null;
+		final int orientation = Exif.getOrientation(is);
+		final Bitmap bm = BitmapFactory.decodeStream(is, null, opts);
 		final Matrix m = new Matrix();
-		final int orientation = Exif.getOrientation(path);
 		switch (orientation) {
 			case 270:
 			case 90:
@@ -43,12 +44,12 @@ public class BitmapDecodeHelper {
 		}
 		return bm;
 	}
-	
-	public static Bitmap decode(final InputStream is, final BitmapFactory.Options opts) {
-		if (is == null || opts == null) return null;
-		final int orientation = Exif.getOrientation(is);
-		final Bitmap bm = BitmapFactory.decodeStream(is, null, opts);
+
+	public static Bitmap decode(final String path, final BitmapFactory.Options opts) {
+		if (path == null || opts == null) return null;
+		final Bitmap bm = BitmapFactory.decodeFile(path, opts);
 		final Matrix m = new Matrix();
+		final int orientation = Exif.getOrientation(path);
 		switch (orientation) {
 			case 270:
 			case 90:

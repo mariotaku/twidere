@@ -26,14 +26,14 @@ import java.util.Collections;
 import java.util.List;
 
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.twitter4j.Paging;
-import org.mariotaku.twidere.twitter4j.ResponseList;
-import org.mariotaku.twidere.twitter4j.Status;
-import org.mariotaku.twidere.twitter4j.TwitterException;
-import org.mariotaku.twidere.twitter4j.UserList;
 import org.mariotaku.twidere.util.SerializationUtil;
 import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
+import twitter4j.Paging;
+import twitter4j.ResponseList;
+import twitter4j.Status;
+import twitter4j.TwitterException;
+import twitter4j.UserList;
 import android.content.Context;
 import android.os.Bundle;
 

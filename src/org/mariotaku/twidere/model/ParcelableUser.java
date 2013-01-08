@@ -26,8 +26,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
-import org.mariotaku.twidere.twitter4j.User;
 
+import twitter4j.User;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Parcel;

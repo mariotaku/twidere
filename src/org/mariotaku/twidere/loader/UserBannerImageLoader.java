@@ -15,10 +15,10 @@ import java.io.InputStream;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.model.ParcelableUser;
-import org.mariotaku.twidere.twitter4j.TwitterException;
-import org.mariotaku.twidere.twitter4j.http.HostAddressResolver;
-import org.mariotaku.twidere.twitter4j.http.HttpClientWrapper;
 
+import twitter4j.TwitterException;
+import twitter4j.http.HostAddressResolver;
+import twitter4j.http.HttpClientWrapper;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

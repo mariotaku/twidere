@@ -398,5 +398,6 @@
 	<string name="fast_timeline_processing">Fast timeline processing</string>
 	<string name="fast_timeline_processing_summary">Ignore ALL details in timeline, enable this to get better performance.</string>
 	<string name="indicate_my_status">Indicate my tweet</string>
+	<string name="default_ringtone">Default ringtone</string>
 
 </resources>

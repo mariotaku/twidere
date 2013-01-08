@@ -31,7 +31,8 @@ import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.provider.TweetStore.Tabs;
-import org.mariotaku.twidere.twitter4j.TwitterConstants;
+
+import twitter4j.TwitterConstants;
 
 public interface Constants extends TwitterConstants {
 

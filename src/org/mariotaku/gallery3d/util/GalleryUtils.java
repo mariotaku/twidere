@@ -19,9 +19,7 @@ package org.mariotaku.gallery3d.util;
 import java.io.Closeable;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
-import android.os.ParcelFileDescriptor;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.WindowManager;
@@ -29,22 +27,7 @@ import android.view.WindowManager;
 public class GalleryUtils {
 
 	private static float sPixelDensity = -1f;
-	private static final long POLY64REV = 0x95AC9329AC4BC9B5L;
-	private static long[] sCrcTable = new long[256];
 	private static final String TAG = "Utils";
-
-	static {
-		// http://bioinf.cs.ucl.ac.uk/downloads/crc64/crc64.c
-		long part;
-		for (int i = 0; i < 256; i++) {
-			part = i;
-			for (int j = 0; j < 8; j++) {
-				final long x = ((int) part & 1) != 0 ? POLY64REV : 0;
-				part = part >> 1 ^ x;
-			}
-			sCrcTable[i] = part;
-		}
-	}
 
 	// Throws AssertionError if the input is false.
 	public static void assertTrue(final boolean cond) {
@@ -87,16 +70,6 @@ public class GalleryUtils {
 			c.close();
 		} catch (final Throwable t) {
 			Log.w(TAG, "close fail", t);
-		}
-	}
-
-	public static void closeSilently(final ParcelFileDescriptor fd) {
-		try {
-			if (fd != null) {
-				fd.close();
-			}
-		} catch (final Throwable t) {
-			Log.w(TAG, "fail to close", t);
 		}
 	}
 

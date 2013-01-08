@@ -16,30 +16,10 @@
 
 package org.mariotaku.gallery3d.util;
 
-import java.io.FileDescriptor;
-
-import org.mariotaku.gallery3d.util.ThreadPool.CancelListener;
-import org.mariotaku.gallery3d.util.ThreadPool.JobContext;
-
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
-import android.graphics.BitmapFactory.Options;
-import android.graphics.BitmapRegionDecoder;
-import android.util.Log;
 
 public class DecodeUtils {
-	private static final String TAG = "DecodeUtils";
-
-	public static BitmapRegionDecoder createBitmapRegionDecoder(final JobContext jc, final FileDescriptor fd,
-			final boolean shareable) {
-		try {
-			return BitmapRegionDecoder.newInstance(fd, shareable);
-		} catch (final Throwable t) {
-			Log.w(TAG, t);
-			return null;
-		}
-	}
 
 	// TODO: This function should not be called directly from
 	// DecodeUtils.requestDecode(...), since we don't have the knowledge
@@ -49,39 +29,5 @@ public class DecodeUtils {
 		final Bitmap newBitmap = bitmap.copy(Config.ARGB_8888, false);
 		bitmap.recycle();
 		return newBitmap;
-	}
-
-	public static Bitmap requestDecode(final JobContext jc, final FileDescriptor fd, Options options,
-			final int targetSize) {
-		if (options == null) {
-			options = new Options();
-		}
-		jc.setCancelListener(new DecodeCanceller(options));
-
-		options.inJustDecodeBounds = true;
-		BitmapFactory.decodeFileDescriptor(fd, null, options);
-		if (jc.isCancelled()) return null;
-
-		options.inSampleSize = BitmapUtils.computeSampleSizeLarger(options.outWidth, options.outHeight, targetSize);
-		options.inJustDecodeBounds = false;
-
-		Bitmap result = BitmapFactory.decodeFileDescriptor(fd, null, options);
-		// We need to resize down if the decoder does not support inSampleSize.
-		// (For example, GIF images.)
-		result = BitmapUtils.resizeDownIfTooBig(result, targetSize, true);
-		return ensureGLCompatibleBitmap(result);
-	}
-
-	private static class DecodeCanceller implements CancelListener {
-		Options mOptions;
-
-		public DecodeCanceller(final Options options) {
-			mOptions = options;
-		}
-
-		@Override
-		public void onCancel() {
-			mOptions.requestCancelDecode();
-		}
 	}
 }

@@ -8,10 +8,10 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.SingleResponse;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
-import org.mariotaku.twidere.twitter4j.Twitter;
-import org.mariotaku.twidere.twitter4j.TwitterException;
-import org.mariotaku.twidere.twitter4j.User;
 
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.User;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;

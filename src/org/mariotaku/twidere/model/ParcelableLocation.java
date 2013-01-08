@@ -23,8 +23,7 @@ import static org.mariotaku.twidere.util.Utils.parseDouble;
 
 import java.io.Serializable;
 
-import org.mariotaku.twidere.twitter4j.GeoLocation;
-
+import twitter4j.GeoLocation;
 import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;

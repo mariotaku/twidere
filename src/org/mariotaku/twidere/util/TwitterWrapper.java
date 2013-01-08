@@ -8,11 +8,11 @@ import java.util.List;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.model.ListResponse;
 import org.mariotaku.twidere.model.SingleResponse;
-import org.mariotaku.twidere.twitter4j.Status;
-import org.mariotaku.twidere.twitter4j.Twitter;
-import org.mariotaku.twidere.twitter4j.TwitterException;
-import org.mariotaku.twidere.twitter4j.User;
 
+import twitter4j.Status;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.User;
 import android.content.Context;
 import android.net.Uri;
 

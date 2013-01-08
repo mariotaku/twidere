@@ -64,9 +64,6 @@ import org.mariotaku.twidere.model.SingleResponse;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
-import org.mariotaku.twidere.twitter4j.Relationship;
-import org.mariotaku.twidere.twitter4j.Twitter;
-import org.mariotaku.twidere.twitter4j.TwitterException;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.EnvironmentAccessor;
 import org.mariotaku.twidere.util.LazyImageLoader;
@@ -76,6 +73,9 @@ import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 import org.mariotaku.twidere.view.ProfileNameBannerContainer;
 import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
 
+import twitter4j.Relationship;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -303,7 +303,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		@Override
 		public Loader<Bitmap> onCreateLoader(final int id, final Bundle args) {
 			if (mUser == null || mUser.profile_banner_url == null
-				|| !mUser.profile_banner_url.equals(mProfileNameBannerContainer.getTag())) {
+					|| !mUser.profile_banner_url.equals(mProfileNameBannerContainer.getTag())) {
 				mProfileNameBannerContainer.setBanner(null);
 			}
 			final int def_width = getResources().getDisplayMetrics().widthPixels;

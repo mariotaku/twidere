@@ -20,12 +20,10 @@
 package org.mariotaku.twidere.loader;
 
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
-
-import org.mariotaku.twidere.twitter4j.ResponseList;
-import org.mariotaku.twidere.twitter4j.SavedSearch;
-import org.mariotaku.twidere.twitter4j.Twitter;
-import org.mariotaku.twidere.twitter4j.TwitterException;
-
+import twitter4j.ResponseList;
+import twitter4j.SavedSearch;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 

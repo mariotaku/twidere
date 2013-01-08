@@ -35,5 +35,4 @@ public interface Future<T> {
 
 	public boolean isDone();
 
-	public void waitDone();
 }
