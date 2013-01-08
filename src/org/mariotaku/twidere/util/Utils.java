@@ -1509,8 +1509,8 @@ public final class Utils implements Constants {
 		if (isEmpty(share_format)) {
 			share_format = PREFERENCE_DEFAULT_SHARE_FORMAT;
 		}
-		if (title == null) return text;
-		return share_format.replace(FORMAT_PATTERN_TITLE, title).replace(FORMAT_PATTERN_TEXT, text);
+		if (isEmpty(title)) return text;
+		return share_format.replace(FORMAT_PATTERN_TITLE, title).replace(FORMAT_PATTERN_TEXT, text != null ? text : "");
 	}
 
 	public static ImageSpec getSinaWeiboImage(final String url, final boolean large_image_preview) {
