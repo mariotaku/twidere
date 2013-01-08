@@ -168,6 +168,11 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 
 	@Override
 	public void onProgressUpdate(final long downloaded) {
+		if (mContentLength == 0) {
+			mProgress.setIndeterminate(true);
+			return;
+		}
+		mProgress.setIndeterminate(false);
 		mProgress.setProgress((int) (downloaded * 100 / mContentLength));
 	}
 
