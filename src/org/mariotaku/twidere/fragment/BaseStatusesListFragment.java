@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.cancelRetweet;
+import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
@@ -349,6 +350,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		final boolean link_highlighting = mPreferences.getBoolean(PREFERENCE_KEY_LINK_HIGHLIGHTING, false);
 		final boolean fast_timeline_processing = mPreferences
 				.getBoolean(PREFERENCE_KEY_FAST_TIMELINE_PROCESSING, false);
+		final boolean indicate_my_status = mPreferences.getBoolean(PREFERENCE_KEY_INDICATE_MY_STATUS, true);
 		final String name_display_option = mPreferences.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION,
 				NAME_DISPLAY_OPTION_BOTH);
 		mAdapter.setMultiSelectEnabled(mApplication.isMultiSelectActive());
@@ -360,6 +362,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		mAdapter.setDisplaySensitiveContents(display_sensitive_contents);
 		mAdapter.setLinkHightlightingEnabled(link_highlighting);
 		mAdapter.setFastTimelineProcessingEnabled(fast_timeline_processing);
+		mAdapter.setIndicateMyStatusDisabled(isMyTimeline() || !indicate_my_status);		
 	}
 
 	@Override
@@ -432,6 +435,18 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		}
 		unregisterReceiver(mStateReceiver);
 		super.onStop();
+	}
+	
+	private boolean isMyTimeline() {
+		final Bundle args = getArguments();
+		if (args != null && this instanceof UserTimelineFragment) {
+			final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+			final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
+			final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
+			if(account_id == user_id || screen_name != null
+			   && screen_name.equals(getAccountScreenName(getActivity(), account_id))) return true;
+		}
+		return false;
 	}
 
 	private void openMenu(final View view, final ParcelableStatus status) {

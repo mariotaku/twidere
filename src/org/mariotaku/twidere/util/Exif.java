@@ -22,9 +22,20 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import android.util.Log;
+import java.io.FileDescriptor;
 
 public class Exif {
 	private static final String TAG = "Exif";
+
+	public static int getOrientation(FileDescriptor fd) {
+		InputStream is = null;
+		try {
+			is = new FileInputStream(fd);
+			return getOrientation(is);
+		} finally {
+			Utils.closeSilently(is);
+		}
+	}
 
 	public static int getOrientation(final File file) {
 		InputStream is = null;

@@ -320,7 +320,7 @@
 			android:configChanges="keyboardHidden|orientation|screenSize"
 			android:exported="false"
 			android:hardwareAccelerated="true"
-			android:label="@string/app_name"
+			android:label="@string/view_image"
 			android:launchMode="singleTop"
 			android:process=":image_viewer"
 			android:theme="@style/Theme.Twidere.Viewer">

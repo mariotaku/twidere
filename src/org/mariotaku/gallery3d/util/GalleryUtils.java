@@ -119,8 +119,6 @@ public class GalleryUtils {
 		final WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 		wm.getDefaultDisplay().getMetrics(metrics);
 		sPixelDensity = metrics.density;
-		final Resources r = context.getResources();
-		initializeThumbnailSizes(metrics, r);
 	}
 
 	public static float[] intColorToFloatARGBArray(final int from) {
@@ -172,13 +170,6 @@ public class GalleryUtils {
 
 	private static float dpToPixel(final float dp) {
 		return sPixelDensity * dp;
-	}
-
-	private static void initializeThumbnailSizes(final DisplayMetrics metrics, final Resources r) {
-		final int maxPixels = Math.max(metrics.heightPixels, metrics.widthPixels);
-
-		// For screen-nails, we never need to completely fill the screen
-		MediaItem.setThumbnailSizes(maxPixels / 2, maxPixels / 5);
 	}
 
 }

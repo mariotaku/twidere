@@ -24,10 +24,7 @@ import org.mariotaku.gallery3d.ui.GLView;
 import org.mariotaku.gallery3d.ui.PhotoView;
 import org.mariotaku.gallery3d.ui.SynchronizedHandler;
 import org.mariotaku.gallery3d.util.BitmapPool;
-import org.mariotaku.gallery3d.util.CachedDownloader;
-import org.mariotaku.gallery3d.util.CachedDownloader.DownloadListener;
 import org.mariotaku.gallery3d.util.GalleryUtils;
-import org.mariotaku.gallery3d.util.MediaItem;
 import org.mariotaku.gallery3d.util.ThreadPool;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
@@ -45,9 +42,14 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+import org.mariotaku.twidere.loader.GLImageLoader;
+import org.mariotaku.twidere.loader.ImageLoader;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+import android.content.ActivityNotFoundException;
 
 public final class ImageViewerGLActivity extends FragmentActivity implements Constants, View.OnClickListener,
-		PhotoView.Listener, DownloadListener {
+		PhotoView.Listener, ImageLoader.DownloadListener, LoaderManager.LoaderCallbacks<ImageLoader.Result> {
 
 	private final GLView mRootPane = new GLView() {
 		@Override
@@ -77,23 +79,16 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	private static final int HIDE_BARS_TIMEOUT = 3500;
 	private static final int UNFREEZE_GLROOT_TIMEOUT = 250;
 
-	private static final int LOAD_STATE_STARTED = 1;
-	private static final int LOAD_STATE_FINISHED = 2;
-	private static final int LOAD_STATE_FAILED = 3;
-
 	private PhotoView mPhotoView;
 	private PhotoView.ITileImageAdapter mAdapter;
 	private Handler mHandler;
-	private CachedDownloader mDownloader;
-	private MediaItem mMediaItem;
 
 	private boolean mShowBars = true;
 	private volatile boolean mActionBarAllowed = true;
 	private boolean mIsMenuVisible;
 
 	private long mContentLength;
-
-	private int mLoadState = LOAD_STATE_STARTED;
+	private boolean mLoaderInitialized;
 
 	private ThreadPool mThreadPool;
 
@@ -127,61 +122,6 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	}
 
 	@Override
-	public void onClick(final View v) {
-		switch (v.getId()) {
-			case R.id.close: {
-				finish();
-				break;
-			}
-			case R.id.open_in_browser: {
-				final Uri uri = getIntent().getData();
-				if (uri == null) return;
-				startActivity(new Intent(Intent.ACTION_VIEW, uri));
-				break;
-			}
-			case R.id.share: {
-				final Uri uri = getIntent().getData();
-				if (mMediaItem == null || uri == null) return;
-				final Intent intent = new Intent(Intent.ACTION_SEND);
-				final File file = mMediaItem.getCachedFile();
-				if (file != null && file.exists()) {
-					final String type = Utils.getImageMimeType(file);
-					if (type == null) return;
-					intent.setType(type);
-					intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
-				} else {
-					intent.setType("text/plain");
-					intent.putExtra(Intent.EXTRA_TEXT, uri.toString());
-				}
-				startActivity(Intent.createChooser(intent, getString(R.string.share)));
-				break;
-			}
-			case R.id.refresh_stop_save: {
-				switch (mLoadState) {
-					case LOAD_STATE_STARTED: {
-						cancelLoad();
-						break;
-					}
-					case LOAD_STATE_FINISHED: {
-						final File cached_file = mMediaItem.getCachedFile();
-						if (Utils.isValidImage(cached_file)) {
-							saveImage();
-						} else {
-							reloadImage();
-						}
-						break;
-					}
-					case LOAD_STATE_FAILED: {
-						reloadImage();
-						break;
-					}
-				}
-				break;
-			}
-		}
-	}
-
-	@Override
 	public void onContentChanged() {
 		super.onContentChanged();
 		mGLRootView = (GLRootView) findViewById(R.id.gl_root_view);
@@ -212,25 +152,6 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 		mProgress.setMax(100);
 	}
 
-	public void onLoadFailed() {
-		mLoadState = LOAD_STATE_FAILED;
-		Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
-		hideProgress();
-		setActionButton();
-	}
-
-	public void onLoadFinished() {
-		mLoadState = LOAD_STATE_FINISHED;
-		hideProgress();
-		setActionButton();
-	}
-
-	public void onLoadStart() {
-		mLoadState = LOAD_STATE_STARTED;
-		showProgress();
-		setActionButton();
-	}
-
 	@Override
 	public void onPictureCenter() {
 		mPhotoView.setWantPictureCenterCallbacks(false);
@@ -248,7 +169,6 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 
 	@Override
 	public void onSingleTapUp(final int x, final int y) {
-		if (mAdapter.getMediaItem() == null) return;
 		toggleBars();
 	}
 
@@ -264,14 +184,15 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mDownloader = new CachedDownloader(this);
 		setContentView(R.layout.image_viewer_gl);
 		mHandler = new MyHandler(this);
 		mPhotoView = new PhotoView(this);
 		mPhotoView.setListener(this);
 		mRootPane.addComponent(mPhotoView);
+		mAdapter = new PhotoViewAdapter(this, mPhotoView);
+		mPhotoView.setModel(mAdapter);
 		if (savedInstanceState == null) {
-			startViewAction(getIntent());
+			loadImage();
 		}
 	}
 
@@ -290,7 +211,7 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	@Override
 	protected void onNewIntent(final Intent intent) {
 		setIntent(intent);
-		startViewAction(intent);
+		loadImage();
 	}
 
 	@Override
@@ -311,7 +232,6 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 		} finally {
 			mGLRootView.unlockRenderThread();
 		}
-		clearBitmapPool(MediaItem.getThumbPool());
 
 	}
 
@@ -355,11 +275,6 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 		mGLRootView.setContentPane(mContentPane);
 	}
 
-	private void cancelLoad() {
-		if (mAdapter == null) return;
-		mAdapter.cancel();
-	}
-
 	private boolean canShowBars() {
 		// No bars if it's not allowed.
 		if (!mActionBarAllowed) return false;
@@ -380,62 +295,11 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 		}
 	}
 
-	private void reloadImage() {
-		if (mLoadState != LOAD_STATE_FAILED) return;
-		startViewAction(getIntent());
-	}
-
-	private void saveImage() {
-		if (mMediaItem == null) return;
-		final File cached_file = mMediaItem.getCachedFile();
-		if (cached_file == null || cached_file.length() == 0) return;
-		new SaveImageTask(this, cached_file).execute();
-	}
-
-	private void setActionButton() {
-		if (mMediaItem == null) {
-			mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
-			return;
-		}
-		switch (mLoadState) {
-			case LOAD_STATE_STARTED: {
-				mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_stop);
-				break;
-			}
-			case LOAD_STATE_FINISHED: {
-				final File cached_file = mMediaItem.getCachedFile();
-				mRefreshStopSaveButton.setImageResource(Utils.isValidImage(cached_file) ? R.drawable.ic_menu_save
-						: R.drawable.ic_menu_refresh);
-				break;
-			}
-			case LOAD_STATE_FAILED: {
-				mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
-				break;
-			}
-		}
-	}
-
 	private void showBars() {
 		if (mShowBars) return;
 		mShowBars = true;
 		showControls();
 		refreshHidingMessage();
-	}
-
-	private void startViewAction(final Intent intent) {
-		if (intent == null) {
-			finish();
-			return;
-		}
-		final Uri uri = intent.getData();
-		if (uri == null) {
-			finish();
-		} else {
-			// Get default media set by the URI
-			mMediaItem = new MediaItem(this, mDownloader, this, uri);
-			mAdapter = new PhotoViewAdapter(this, mPhotoView, mMediaItem);
-			mPhotoView.setModel(mAdapter);
-		}
 	}
 
 	private void toggleBars() {
@@ -457,12 +321,6 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	private void wantBars() {
 		if (canShowBars()) {
 			showBars();
-		}
-	}
-
-	private static void clearBitmapPool(final BitmapPool pool) {
-		if (pool != null) {
-			pool.clear();
 		}
 	}
 
@@ -503,4 +361,120 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 		}
 	}
 
+	private boolean mImageLoaded;
+	private File mImageFile;
+
+	@Override
+	public void onClick(final View view) {
+		final Uri uri = getIntent().getData();
+		switch (view.getId()) {
+			case R.id.close: {
+					onBackPressed();
+					break;
+				}
+			case R.id.refresh_stop_save: {
+					final LoaderManager lm = getSupportLoaderManager();
+					if (!mImageLoaded && !lm.hasRunningLoaders()) {
+						loadImage();
+					} else if (!mImageLoaded && lm.hasRunningLoaders()) {
+						stopLoading();
+					} else if (mImageLoaded) {
+						new SaveImageTask(this, mImageFile).execute();
+					}
+					break;
+				}
+			case R.id.share: {
+					if (uri == null) {
+						break;
+					}
+					final Intent intent = new Intent(Intent.ACTION_SEND);
+					if (mImageFile != null && mImageFile.exists()) {
+						intent.setType("image/*");
+						intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(mImageFile));
+					} else {
+						intent.setType("text/plain");
+						intent.putExtra(Intent.EXTRA_TEXT, uri.toString());
+					}
+					startActivity(Intent.createChooser(intent, getString(R.string.share)));
+					break;
+				}
+			case R.id.open_in_browser: {
+					if (uri == null) {
+						break;
+					}
+					final String scheme = uri.getScheme();
+					if ("http".equals(scheme) || "https".equals(scheme)) {
+						final Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+						intent.addCategory(Intent.CATEGORY_BROWSABLE);
+						try {
+							startActivity(intent);
+						} catch (final ActivityNotFoundException e) {
+							// Ignore.
+						}
+					}
+					break;
+				}
+		}
+	}
+
+	@Override
+	public Loader<ImageLoader.Result> onCreateLoader(final int id, final Bundle args) {
+		mProgress.setVisibility(View.VISIBLE);
+		mProgress.setIndeterminate(true);
+		mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_stop);
+		final Uri uri = args != null ? (Uri) args.getParcelable(INTENT_KEY_URI) : null;
+		return new GLImageLoader(this, this, uri);
+	}
+
+
+	@Override
+	public void onLoaderReset(final Loader<ImageLoader.Result> loader) {
+
+	}
+
+	@Override
+	public void onLoadFinished(final Loader<ImageLoader.Result> loader, final ImageLoader.Result data) {
+		if (data instanceof GLImageLoader.GLImageResult) {
+			final GLImageLoader.GLImageResult data_gl = (GLImageLoader.GLImageResult) data;
+			mAdapter.setData(data_gl.decoder, data_gl.bitmap, data_gl.orientation);
+			mImageFile = data.file;
+			mImageLoaded = true;
+			mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_save);
+		} else {
+			mImageFile = null;
+			mImageLoaded = false;
+			mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
+			if (data != null) {
+				Utils.showErrorToast(this, null, data.exception, true);
+			}
+		}
+		mProgress.setVisibility(View.GONE);
+		mProgress.setProgress(0);
+	}
+
+	private void loadImage() {
+		getSupportLoaderManager().destroyLoader(0);
+		final Uri uri = getIntent().getData();
+		if (uri == null) {
+			finish();
+			return;
+		}
+		final Bundle args = new Bundle();
+		args.putParcelable(INTENT_KEY_URI, uri);
+		if (!mLoaderInitialized) {
+			getSupportLoaderManager().initLoader(0, args, this);
+			mLoaderInitialized = true;
+		} else {
+			getSupportLoaderManager().restartLoader(0, args, this);
+		}
+	}
+
+	private void stopLoading() {
+		getSupportLoaderManager().destroyLoader(0);
+		if (!mImageLoaded) {
+			mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
+			mProgress.setVisibility(View.GONE);
+		}
+	}
+	
 }

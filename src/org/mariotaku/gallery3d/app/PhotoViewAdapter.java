@@ -26,7 +26,6 @@ import org.mariotaku.gallery3d.util.BitmapUtils;
 import org.mariotaku.gallery3d.util.Future;
 import org.mariotaku.gallery3d.util.FutureListener;
 import org.mariotaku.gallery3d.util.GalleryUtils;
-import org.mariotaku.gallery3d.util.MediaItem;
 import org.mariotaku.gallery3d.util.ThreadPool;
 
 import android.graphics.Bitmap;
@@ -40,79 +39,30 @@ import android.os.Message;
 import android.util.Log;
 
 public class PhotoViewAdapter implements PhotoView.ITileImageAdapter {
+ 
 	private static final String TAG = "PhotoViewAdapter";
+	
 	protected ScreenNail mScreenNail;
 	protected BitmapRegionDecoder mRegionDecoder;
 	protected int mImageWidth;
 	protected int mImageHeight;
 	protected int mLevelCount;
 
-	private static final int SIZE_BACKUP = 1024;
-	private static final int MSG_IMAGE_LOAD_FAILED = 3;
-	private static final int MSG_IMAGE_LOAD_FINISHED = 2;
-	private static final int MSG_IMAGE_LOAD_START = 1;
-
-	private final MediaItem mItem;
-	private Future<?> mTask;
-	private final Handler mHandler;
-
 	private final PhotoView mPhotoView;
 	private final ThreadPool mThreadPool;
 	private final ImageViewerGLActivity mActivity;
 	private BitmapScreenNail mBitmapScreenNail;
 
-	private final FutureListener<BitmapRegionDecoder> mLargeListener = new FutureListener<BitmapRegionDecoder>() {
-		@Override
-		public void onFutureDone(final Future<BitmapRegionDecoder> future) {
-			final BitmapRegionDecoder decoder = future.get();
-			if (decoder == null) {
-				mTask = mThreadPool.submit(mItem.requestFallbackImage(), mFallbackListener);
-				return;
-			}
-			final int width = decoder.getWidth();
-			final int height = decoder.getHeight();
-			final BitmapFactory.Options options = new BitmapFactory.Options();
-			options.inSampleSize = BitmapUtils.computeSampleSize((float) SIZE_BACKUP / Math.max(width, height));
-			final Bitmap bitmap = decoder.decodeRegion(new Rect(0, 0, width, height), options);
-			mHandler.sendMessage(mHandler.obtainMessage(MSG_IMAGE_LOAD_FINISHED, new ImageBundle(decoder, bitmap)));
-		}
+	private int mImageRotation;
 
-		@Override
-		public void onFutureStart(final Future<BitmapRegionDecoder> future) {
-			mHandler.sendMessage(mHandler.obtainMessage(MSG_IMAGE_LOAD_START));
-		}
-	};
-
-	private final FutureListener<Bitmap> mFallbackListener = new FutureListener<Bitmap>() {
-		@Override
-		public void onFutureDone(final Future<Bitmap> future) {
-			final Bitmap bitmap = future.get();
-			if (bitmap == null) {
-				mHandler.sendMessage(mHandler.obtainMessage(MSG_IMAGE_LOAD_FAILED));
-			}
-			mHandler.sendMessage(mHandler.obtainMessage(MSG_IMAGE_LOAD_FINISHED, new ImageBundle(null, bitmap)));
-		}
-
-		@Override
-		public void onFutureStart(final Future<Bitmap> future) {
-			mHandler.sendMessage(mHandler.obtainMessage(MSG_IMAGE_LOAD_START));
-
-		}
-	};
-
-	public PhotoViewAdapter(final ImageViewerGLActivity activity, final PhotoView view, final MediaItem item) {
-		mItem = item;
+	public PhotoViewAdapter(final ImageViewerGLActivity activity, final PhotoView view) {
 		mPhotoView = view;
 		mActivity = activity;
 		mThreadPool = activity.getThreadPool();
-		mHandler = new MyHandler(this);
 	}
 
 	@Override
 	public void cancel() {
-		if (mTask == null) return;
-		mTask.cancel();
-		mTask = null;
 	}
 
 	@Override
@@ -122,7 +72,7 @@ public class PhotoViewAdapter implements PhotoView.ITileImageAdapter {
 
 	@Override
 	public int getImageRotation() {
-		return mItem.getFullImageRotation();
+		return mImageRotation;
 	}
 
 	@Override
@@ -133,11 +83,6 @@ public class PhotoViewAdapter implements PhotoView.ITileImageAdapter {
 	@Override
 	public int getLevelCount() {
 		return mLevelCount;
-	}
-
-	@Override
-	public MediaItem getMediaItem() {
-		return mItem;
 	}
 
 	@Override
@@ -217,14 +162,6 @@ public class PhotoViewAdapter implements PhotoView.ITileImageAdapter {
 
 	@Override
 	public void pause() {
-		final Future<?> task = mTask;
-		if (task != null) {
-			task.cancel();
-			task.waitDone();
-			if (task.get() == null) {
-				mTask = null;
-			}
-		}
 		if (mBitmapScreenNail != null) {
 			mBitmapScreenNail.recycle();
 			mBitmapScreenNail = null;
@@ -233,12 +170,9 @@ public class PhotoViewAdapter implements PhotoView.ITileImageAdapter {
 
 	@Override
 	public void resume() {
-		if (mTask == null) {
-			mTask = mThreadPool.submit(mItem.requestLargeImage(), mLargeListener);
-		}
 	}
 
-	public synchronized void setRegionDecoder(final BitmapRegionDecoder decoder) {
+	private synchronized void setRegionDecoder(final BitmapRegionDecoder decoder) {
 		mRegionDecoder = decoder;
 		if (decoder == null) return;
 		mImageWidth = decoder.getWidth();
@@ -291,15 +225,15 @@ public class PhotoViewAdapter implements PhotoView.ITileImageAdapter {
 		return result;
 	}
 
-	private boolean onDecodeComplete(final ImageBundle bundle) {
+	public boolean setData(final BitmapRegionDecoder decoder, Bitmap bitmap, int oroentation) {
 		try {
-			if (bundle.decoder != null) {
-				setScreenNail(bundle.backupImage, bundle.decoder.getWidth(), bundle.decoder.getHeight());
+			if (decoder != null) {
+				setScreenNail(bitmap, decoder.getWidth(), decoder.getHeight());
 			} else {
-				if (bundle.backupImage == null) return false;
-				setScreenNail(bundle.backupImage, bundle.backupImage.getWidth(), bundle.backupImage.getHeight());
+				if (bitmap == null) return false;
+				setScreenNail(bitmap, bitmap.getWidth(), bitmap.getHeight());
 			}
-			setRegionDecoder(bundle.decoder);
+			setRegionDecoder(decoder);
 			mPhotoView.notifyImageChange();
 			return true;
 		} catch (final Throwable t) {
@@ -329,40 +263,6 @@ public class PhotoViewAdapter implements PhotoView.ITileImageAdapter {
 		public ImageBundle(final BitmapRegionDecoder decoder, final Bitmap backupImage) {
 			this.decoder = decoder;
 			this.backupImage = backupImage;
-		}
-	}
-
-	static class MyHandler extends SynchronizedHandler {
-
-		ImageViewerGLActivity mActivity;
-		PhotoViewAdapter mAdapter;
-
-		MyHandler(final PhotoViewAdapter adapter) {
-			super(adapter.mActivity.getGLRoot());
-			mAdapter = adapter;
-			mActivity = adapter.mActivity;
-		}
-
-		@Override
-		public void handleMessage(final Message message) {
-			switch (message.what) {
-				case MSG_IMAGE_LOAD_START: {
-					mActivity.onLoadStart();
-					break;
-				}
-				case MSG_IMAGE_LOAD_FINISHED: {
-					if (mAdapter.onDecodeComplete((ImageBundle) message.obj)) {
-						mActivity.onLoadFinished();
-					} else {
-						mActivity.onLoadFailed();
-					}
-					break;
-				}
-				case MSG_IMAGE_LOAD_FAILED: {
-					mActivity.onLoadFailed();
-					break;
-				}
-			}
 		}
 	}
 

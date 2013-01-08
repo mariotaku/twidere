@@ -22,6 +22,7 @@ package org.mariotaku.twidere.util;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import java.io.InputStream;
 
 public class BitmapDecodeHelper {
 
@@ -30,6 +31,24 @@ public class BitmapDecodeHelper {
 		final Bitmap bm = BitmapFactory.decodeFile(path, opts);
 		final Matrix m = new Matrix();
 		final int orientation = Exif.getOrientation(path);
+		switch (orientation) {
+			case 270:
+			case 90:
+				m.postRotate(orientation);
+				return Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), m, true);
+			case 180:
+				m.postRotate(orientation);
+				m.postScale(bm.getWidth(), bm.getHeight());
+				return Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), m, true);
+		}
+		return bm;
+	}
+	
+	public static Bitmap decode(final InputStream is, final BitmapFactory.Options opts) {
+		if (is == null || opts == null) return null;
+		final int orientation = Exif.getOrientation(is);
+		final Bitmap bm = BitmapFactory.decodeStream(is, null, opts);
+		final Matrix m = new Matrix();
 		switch (orientation) {
 			case 270:
 			case 90:

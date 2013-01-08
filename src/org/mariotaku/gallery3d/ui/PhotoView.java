@@ -18,7 +18,6 @@ package org.mariotaku.gallery3d.ui;
 
 import org.mariotaku.gallery3d.app.ImageViewerGLActivity;
 import org.mariotaku.gallery3d.util.BitmapPool;
-import org.mariotaku.gallery3d.util.MediaItem;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -27,6 +26,7 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.os.Message;
 import android.view.MotionEvent;
+import android.graphics.BitmapRegionDecoder;
 
 public class PhotoView extends GLView {
 
@@ -209,6 +209,8 @@ public class PhotoView extends GLView {
 
 	public interface ITileImageAdapter {
 
+		public boolean setData(BitmapRegionDecoder decoder, Bitmap bitmap, int orientation);
+
 		public void cancel();
 
 		public int getImageHeight();
@@ -220,8 +222,6 @@ public class PhotoView extends GLView {
 
 		public int getLevelCount();
 
-		// Returns the media item for the specified picture.
-		public MediaItem getMediaItem();
 
 		public ScreenNail getScreenNail();
 

@@ -78,10 +78,6 @@ class PositionController {
 	// set to false again).
 	private boolean mExtraScalingRange = false;
 
-	// In addition to the focused box (index == 0). We also keep information
-	// about this many boxes on each side.
-	private static final int[] CENTER_OUT_INDEX = new int[1];
-
 	private static final int HORIZONTAL_SLACK = GalleryUtils.dpToPixel(12);
 
 	private final Listener mListener;
@@ -130,13 +126,6 @@ class PositionController {
 
 	// The output of the PositionController. Available through getPosition().
 	private final Rect mRect;
-
-	static {
-		// Initialize the CENTER_OUT_INDEX array.
-		// The array maps 0, 1, 2, 3, 4, ..., 2 * 0
-		// to 0, 1, -1, 2, -2, ..., 0, -0
-		CENTER_OUT_INDEX[0] = 0;
-	}
 
 	public PositionController(final Context context, final Listener listener) {
 		mListener = listener;
@@ -252,9 +241,8 @@ class PositionController {
 	// one box contains the given point, and we want to give priority to the
 	// one closer to the focused index (0).
 	public int hitTest(final int x, final int y) {
-		final int j = CENTER_OUT_INDEX[0];
 		final Rect r = mRect;
-		if (r.contains(x, y)) return j;
+		if (r.contains(x, y)) return 0;
 
 		return Integer.MAX_VALUE;
 	}
@@ -516,7 +504,7 @@ class PositionController {
 		return false;
 	}
 
-	private void convertBoxToRect(final int i) {
+	private void convertBoxToRect() {
 
 		final Rect r = mRect;
 		final int y = mBox.mCurrentY + mPlatform.mCurrentY + mViewH / 2;
@@ -527,20 +515,6 @@ class PositionController {
 		r.right = r.left + w;
 		r.top = y - h / 2;
 		r.bottom = r.top + h;
-	}
-
-	@SuppressWarnings("unused")
-	private void debugMoveBox(final int fromIndex[]) {
-		final StringBuilder s = new StringBuilder("moveBox:");
-		for (final int j : fromIndex) {
-			if (j == Integer.MAX_VALUE) {
-				s.append(" N");
-			} else {
-				s.append(" ");
-				s.append(j);
-			}
-		}
-		Log.d(TAG, s.toString());
 	}
 
 	private float getMaximalScale(final Box b) {
@@ -611,7 +585,7 @@ class PositionController {
 	// is relative to its anchor box (except the focused box).
 	private void layoutAndSetPosition() {
 		for (int i = 0; i < 2 * 0 + 1; i++) {
-			convertBoxToRect(CENTER_OUT_INDEX[i]);
+			convertBoxToRect();
 		}
 	}
 
