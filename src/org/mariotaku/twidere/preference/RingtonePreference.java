@@ -54,7 +54,7 @@ public class RingtonePreference extends ListPreference {
 		mEntries = new String[count + 1];
 		mValues = new String[count + 1];
 		mEntries[0] = context.getString(R.string.default_ringtone);
-		mValues[0] = "";
+		mValues[0] = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString();
 		final int data_idx = cur.getColumnIndex(Audio.Media.DATA), title_idx = cur.getColumnIndex(Audio.Media.TITLE);
 		while (!cur.isAfterLast()) {
 			final int pos = cur.getPosition() + 1;
