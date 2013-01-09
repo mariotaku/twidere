@@ -13,28 +13,23 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
 
-public class SensitiveContentWaringDialogFragment extends BaseDialogFragment implements OnClickListener {
+public class PhishingLinkWarningDialogFragment extends BaseDialogFragment implements OnClickListener {
 
 	@Override
 	public void onClick(final DialogInterface dialog, final int which) {
 		switch (which) {
 			case DialogInterface.BUTTON_POSITIVE: {
-				final Context context = getActivity();
-				final Bundle args = getArguments();
-				if (args == null) return;
-				final Uri uri = args.getParcelable(INTENT_KEY_URI);
-				if (uri == null) return;
-				final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE);
-				intent.setDataAndType(uri, "image/*");
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1) {
-					intent.setClass(context, ImageViewerGLActivity.class);
-				} else {
-					intent.setClass(context, ImageViewerActivity.class);
+					final Bundle args = getArguments();
+					if (args == null) return;
+					final Uri uri = args.getParcelable(INTENT_KEY_URI);
+					if (uri == null) return;
+					final Intent intent = new Intent(Intent.ACTION_VIEW);
+					intent.setData(uri);
+					startActivity(intent);
+					break;
 				}
-				startActivity(intent);
-				break;
-			}
 		}
 
 	}
@@ -43,7 +38,7 @@ public class SensitiveContentWaringDialogFragment extends BaseDialogFragment imp
 	public Dialog onCreateDialog(final Bundle savedInstanceState) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(android.R.string.dialog_alert_title);
-		builder.setMessage(R.string.sensitive_content_warning);
+		builder.setMessage(Html.fromHtml(getString(R.string.phishing_link_warning_message)));
 		builder.setPositiveButton(android.R.string.ok, this);
 		builder.setNegativeButton(android.R.string.cancel, null);
 		return builder.create();

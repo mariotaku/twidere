@@ -43,6 +43,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
+import org.mariotaku.twidere.util.OnDirectMessageLinkClickHandler;
 
 public class DirectMessagesConversationAdapter extends SimpleCursorAdapter implements IDirectMessagesAdapter,
 		OnClickListener {
@@ -96,7 +97,7 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		holder.name_container.setLayoutParams(lp);
 		holder.text.setText(Html.fromHtml(cursor.getString(mIndices.text)));
 		final TwidereLinkify linkify = new TwidereLinkify(holder.text);
-		linkify.setOnLinkClickListener(new OnLinkClickHandler(context, account_id));
+		linkify.setOnLinkClickListener(new OnDirectMessageLinkClickHandler(context, account_id));
 		linkify.addAllLinks();
 		holder.text.setMovementMethod(null);
 		holder.text.setGravity(is_outgoing ? Gravity.LEFT : Gravity.RIGHT);

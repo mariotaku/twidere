@@ -399,5 +399,8 @@
 	<string name="fast_timeline_processing_summary">Ignore ALL details in timeline, enable this to get better performance.</string>
 	<string name="indicate_my_status">Indicate my tweet</string>
 	<string name="default_ringtone">Default ringtone</string>
+	<string name="phishing_link_warning">Phishing link warning</string>
+	<string name="phishing_link_warning_summary">Warn you when are trying to open a possibly phishing link in a direct message.</string>
+	<string name="phishing_link_warning_message">You are opening a link may harmful to your account, usually a direct message should &lt;b&gt;NOT&lt;/b&gt; contain links shortened with third-party services like bitly.&lt;br/&gt;Are you sure to continue?</string>
 
 </resources>

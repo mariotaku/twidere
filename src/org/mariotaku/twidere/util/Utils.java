@@ -85,7 +85,7 @@ import org.mariotaku.twidere.fragment.IncomingFriendshipsFragment;
 import org.mariotaku.twidere.fragment.SavedSearchesListFragment;
 import org.mariotaku.twidere.fragment.SearchTweetsFragment;
 import org.mariotaku.twidere.fragment.SearchUsersFragment;
-import org.mariotaku.twidere.fragment.SensitiveContentWaringDialogFragment;
+import org.mariotaku.twidere.fragment.SensitiveContentWarningDialogFragment;
 import org.mariotaku.twidere.fragment.StatusFragment;
 import org.mariotaku.twidere.fragment.TrendsFragment;
 import org.mariotaku.twidere.fragment.UserBlocksListFragment;
@@ -2265,7 +2265,7 @@ public final class Utils implements Constants {
 				&& !prefs.getBoolean(PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS, false)) {
 			final FragmentActivity activity = (FragmentActivity) context;
 			final FragmentManager fm = activity.getSupportFragmentManager();
-			final DialogFragment fragment = new SensitiveContentWaringDialogFragment();
+			final DialogFragment fragment = new SensitiveContentWarningDialogFragment();
 			final Bundle args = new Bundle();
 			args.putParcelable(INTENT_KEY_URI, uri);
 			fragment.setArguments(args);

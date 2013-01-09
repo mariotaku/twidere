@@ -24,6 +24,7 @@ import static org.mariotaku.twidere.util.Utils.openTweetSearch;
 import static org.mariotaku.twidere.util.Utils.openUserListDetails;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
+import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
 
 import android.app.Activity;
@@ -32,9 +33,9 @@ import android.content.Intent;
 import android.net.Uri;
 import edu.ucdavis.earlybird.ProfilingUtil;
 
-public class OnLinkClickHandler implements OnLinkClickListener {
+public class OnLinkClickHandler implements OnLinkClickListener, Constants {
 
-	private final Activity activity;
+	protected final Activity activity;
 	private final long account_id;
 	private final boolean is_possibly_sensitive;
 
@@ -50,7 +51,7 @@ public class OnLinkClickHandler implements OnLinkClickListener {
 
 	@Override
 	public void onLinkClick(final String link, final int type) {
-
+		if (activity == null) return;
 		// UCD
 		ProfilingUtil.profile(activity, account_id, "Click, " + link + ", " + type);
 
@@ -69,8 +70,7 @@ public class OnLinkClickHandler implements OnLinkClickListener {
 				break;
 			}
 			case TwidereLinkify.LINK_TYPE_LINK: {
-				final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
-				activity.startActivity(intent);
+				openLink(link);
 				break;
 			}
 			case TwidereLinkify.LINK_TYPE_LIST: {
@@ -86,5 +86,10 @@ public class OnLinkClickHandler implements OnLinkClickListener {
 				break;
 			}
 		}
+	}
+	
+	protected void openLink(final String link) {
+		final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+		activity.startActivity(intent);
 	}
 }
