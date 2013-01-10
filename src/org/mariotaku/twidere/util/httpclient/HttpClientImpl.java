@@ -184,7 +184,7 @@ public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCo
 			final ApacheHttpClientHttpResponseImpl res = new ApacheHttpClientHttpResponseImpl(
 					client.execute(commonsRequest), conf);
 			final int statusCode = res.getStatusCode();
-			if (statusCode < OK && statusCode > ACCEPTED) throw new TwitterException(res.asString(), req, res);
+			if (statusCode < OK || statusCode > ACCEPTED) throw new TwitterException(res.asString(), req, res);
 			return res;
 		} catch (final IOException e) {
 			throw new TwitterException(e);

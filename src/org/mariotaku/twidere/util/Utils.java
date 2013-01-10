@@ -3043,8 +3043,8 @@ public final class Utils implements Constants {
 					final TwitterException te = (TwitterException) t;
 					if (te.exceededRateLimitation()) {
 						final RateLimitStatus status = te.getRateLimitStatus();
-						final CharSequence next_reset_time = DateUtils.getRelativeTimeSpanString(status
-								.getResetTimeInSeconds() * 1000);
+						final CharSequence next_reset_time = DateUtils.getRelativeTimeSpanString(System.
+							currentTimeMillis() + status.getSecondsUntilReset() * 1000);
 						message = context.getString(R.string.error_message_rate_limit, action, next_reset_time);
 					} else {
 						message = context.getString(R.string.error_message_with_action, action, t_message);

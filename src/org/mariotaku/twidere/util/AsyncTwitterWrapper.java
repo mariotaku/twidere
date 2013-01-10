@@ -83,6 +83,7 @@ import com.twitter.Extractor;
 import com.twitter.Validator;
 
 import edu.ucdavis.earlybird.ProfilingUtil;
+import android.text.format.DateUtils;
 
 public class AsyncTwitterWrapper extends TwitterWrapper {
 

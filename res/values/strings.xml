@@ -38,7 +38,7 @@
 	<string name="error_unknown_error">Error: Unknown error, this is probably a bug.</string>
 	<string name="error_message">Error: <xliff:g id="message">%s</xliff:g></string>
 	<string name="error_message_with_action">Error while <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
-	<string name="error_message_rate_limit">Twitter\'s rate limit exceeded while <xliff:g id="action">%1$s</xliff:g>, please retry after <xliff:g id="time">%2$s</xliff:g></string>
+	<string name="error_message_rate_limit">Twitter\'s rate limit exceeded while <xliff:g id="action">%1$s</xliff:g>, please retry <xliff:g id="time">%2$s</xliff:g></string>
 	<string name="select_account">Select account</string>
 	<string name="username">Username</string>
 	<string name="password">Password</string>
