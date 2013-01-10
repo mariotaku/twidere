@@ -302,7 +302,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 		if (status == null) return;
 		switch (view.getId()) {
 			case R.id.image_preview_frame: {
-				final ImageSpec spec = getAllAvailableImage(status.image_orig_url_string);
+				final ImageSpec spec = getAllAvailableImage(status.image_orig_url);
 				if (spec != null) {
 					openImage(mContext, Uri.parse(spec.full_image_link), status.is_possibly_sensitive);
 				}

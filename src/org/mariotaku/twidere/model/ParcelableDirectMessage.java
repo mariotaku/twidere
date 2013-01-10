@@ -22,6 +22,7 @@ package org.mariotaku.twidere.model;
 import static org.mariotaku.twidere.util.Utils.formatDirectMessageText;
 import static org.mariotaku.twidere.util.Utils.getAsBoolean;
 import static org.mariotaku.twidere.util.Utils.getAsLong;
+import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.parseString;
 
 import java.io.Serializable;
@@ -72,17 +73,17 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 	public final String text_html, text_plain;
 
 	public final String sender_name, recipient_name, sender_screen_name, recipient_screen_name;
-	public final String sender_profile_image_url_string, recipient_profile_image_url_string;
+	public final String sender_profile_image_url, recipient_profile_image_url;
 
 	public ParcelableDirectMessage(final ContentValues values) {
 		text_plain = values.getAsString(DirectMessages.TEXT_PLAIN);
 		text_html = values.getAsString(DirectMessages.TEXT_HTML);
 		sender_screen_name = values.getAsString(DirectMessages.SENDER_SCREEN_NAME);
-		sender_profile_image_url_string = values.getAsString(DirectMessages.SENDER_PROFILE_IMAGE_URL);
+		sender_profile_image_url = values.getAsString(DirectMessages.SENDER_PROFILE_IMAGE_URL);
 		sender_name = values.getAsString(DirectMessages.SENDER_NAME);
 		sender_id = getAsLong(values, DirectMessages.SENDER_ID, -1);
 		recipient_screen_name = values.getAsString(DirectMessages.RECIPIENT_SCREEN_NAME);
-		recipient_profile_image_url_string = values.getAsString(DirectMessages.RECIPIENT_PROFILE_IMAGE_URL);
+		recipient_profile_image_url = values.getAsString(DirectMessages.RECIPIENT_PROFILE_IMAGE_URL);
 		recipient_name = values.getAsString(DirectMessages.RECIPIENT_NAME);
 		recipient_id = getAsLong(values, DirectMessages.RECIPIENT_ID, -1);
 		message_timestamp = getAsLong(values, DirectMessages.MESSAGE_TIMESTAMP, -1);
@@ -105,9 +106,9 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 		sender_screen_name = indices.sender_screen_name != -1 ? cursor.getString(indices.sender_screen_name) : null;
 		recipient_screen_name = indices.recipient_screen_name != -1 ? cursor.getString(indices.recipient_screen_name)
 				: null;
-		sender_profile_image_url_string = indices.sender_profile_image_url != -1 ? cursor
+		sender_profile_image_url = indices.sender_profile_image_url != -1 ? cursor
 				.getString(indices.sender_profile_image_url) : null;
-		recipient_profile_image_url_string = indices.recipient_profile_image_url != -1 ? cursor
+		recipient_profile_image_url = indices.recipient_profile_image_url != -1 ? cursor
 				.getString(indices.recipient_profile_image_url) : null;
 	}
 
@@ -116,6 +117,8 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 		this.account_id = account_id;
 		is_out_going = is_outgoing;
 		final User sender = message.getSender(), recipient = message.getRecipient();
+		final String sender_profile_image_url_string = sender != null ? parseString(sender.getProfileImageUrlHttps()) : null;
+		final String recipient_profile_image_url_string = recipient != null ? parseString(recipient.getProfileImageUrlHttps()) : null;
 		message_id = message.getId();
 		message_timestamp = getTime(message.getCreatedAt());
 		sender_id = sender != null ? sender.getId() : -1;
@@ -126,9 +129,8 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 		recipient_name = recipient != null ? recipient.getName() : null;
 		sender_screen_name = sender != null ? sender.getScreenName() : null;
 		recipient_screen_name = recipient != null ? recipient.getScreenName() : null;
-		sender_profile_image_url_string = sender != null ? parseString(sender.getProfileImageUrlHttps()) : null;
-		recipient_profile_image_url_string = recipient != null ? parseString(recipient.getProfileImageUrlHttps())
-				: null;
+		sender_profile_image_url = large_profile_image ? getBiggerTwitterProfileImage(sender_profile_image_url_string) : sender_profile_image_url_string;
+		recipient_profile_image_url = large_profile_image ? getBiggerTwitterProfileImage(recipient_profile_image_url_string) : recipient_profile_image_url_string;
 	}
 
 	public ParcelableDirectMessage(final Parcel in) {
@@ -144,8 +146,8 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 		recipient_name = in.readString();
 		sender_screen_name = in.readString();
 		recipient_screen_name = in.readString();
-		sender_profile_image_url_string = in.readString();
-		recipient_profile_image_url_string = in.readString();
+		sender_profile_image_url = in.readString();
+		recipient_profile_image_url = in.readString();
 	}
 
 	@Override
@@ -188,9 +190,9 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 				+ ", message_timestamp=" + message_timestamp + ", sender_id=" + sender_id + ", recipient_id="
 				+ recipient_id + ", is_out_going=" + is_out_going + ", text=" + text_html + ", sender_name="
 				+ sender_name + ", recipient_name=" + recipient_name + ", sender_screen_name=" + sender_screen_name
-				+ ", recipient_screen_name=" + recipient_screen_name + ", sender_profile_image_url_string="
-				+ sender_profile_image_url_string + ", recipient_profile_image_url_string="
-				+ recipient_profile_image_url_string + "}";
+				+ ", recipient_screen_name=" + recipient_screen_name + ", sender_profile_image_url="
+				+ sender_profile_image_url + ", recipient_profile_image_url="
+				+ recipient_profile_image_url + "}";
 	}
 
 	@Override
@@ -207,8 +209,8 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 		out.writeString(recipient_name);
 		out.writeString(sender_screen_name);
 		out.writeString(recipient_screen_name);
-		out.writeString(sender_profile_image_url_string);
-		out.writeString(recipient_profile_image_url_string);
+		out.writeString(sender_profile_image_url);
+		out.writeString(recipient_profile_image_url);
 	}
 
 	private long getTime(final Date date) {

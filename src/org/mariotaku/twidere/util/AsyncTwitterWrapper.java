@@ -948,7 +948,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		protected void onPostExecute(final SingleResponse<DirectMessage> result) {
 			super.onPostExecute(result);
 			if (result == null) return;
-			if (result.data != null && result.data.getId() > 0) {
+			if ((result.data != null && result.data.getId() > 0) || (result.exception instanceof TwitterException && ((TwitterException) result.exception).getErrorCode() == 34)) {
 				Toast.makeText(mContext, R.string.delete_successful, Toast.LENGTH_SHORT).show();
 				final String where = DirectMessages.MESSAGE_ID + " = " + message_id;
 				mResolver.delete(DirectMessages.Inbox.CONTENT_URI, where, null);

@@ -535,7 +535,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			title = res.getString(R.string.notification_mention, display_screen_name ? "@" + status.screen_name
 					: status.name);
 		}
-		final String profile_image_url_string = status.profile_image_url_string;
+		final String profile_image_url_string = status.profile_image_url;
 		final File profile_image_file = mProfileImageLoader
 				.getCachedImageFile(display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
 						: profile_image_url_string);
@@ -651,7 +651,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 					+ message.sender_screen_name : message.sender_name);
 		}
 		final String text_plain = message.text_plain;
-		final String profile_image_url_string = message.sender_profile_image_url_string;
+		final String profile_image_url_string = message.sender_profile_image_url;
 		final File profile_image_file = mProfileImageLoader
 				.getCachedImageFile(display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
 						: profile_image_url_string);

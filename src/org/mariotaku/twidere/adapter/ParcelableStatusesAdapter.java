@@ -220,8 +220,8 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 						0, 0);
 			}
 			if (mDisplayProfileImage) {
-				mProfileImageLoader.displayImage(holder.my_profile_image, status.profile_image_url_string);
-				mProfileImageLoader.displayImage(holder.profile_image, status.profile_image_url_string);
+				mProfileImageLoader.displayImage(holder.my_profile_image, status.profile_image_url);
+				mProfileImageLoader.displayImage(holder.profile_image, status.profile_image_url);
 				holder.profile_image.setTag(position);
 				holder.my_profile_image.setTag(position);
 			} else {
@@ -230,7 +230,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			}
 			final boolean has_preview = mFastTimelineProcessingEnabled ? false
 					: mInlineImagePreviewDisplayOption != INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE
-							&& status.has_media && status.image_preview_url_string != null;
+							&& status.has_media && status.image_preview_url != null;
 			holder.image_preview_container.setVisibility(!mFastTimelineProcessingEnabled && has_preview ? View.VISIBLE
 					: View.GONE);
 			if (has_preview) {
@@ -247,7 +247,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 				if (status.is_possibly_sensitive && !mDisplaySensitiveContents) {
 					holder.image_preview.setImageResource(R.drawable.image_preview_nsfw);
 				} else {
-					mPreviewImageLoader.displayImage(holder.image_preview, status.image_preview_url_string);
+					mPreviewImageLoader.displayImage(holder.image_preview, status.image_preview_url);
 				}
 				holder.image_preview_frame.setTag(position);
 			}
@@ -264,7 +264,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		if (status == null) return;
 		switch (view.getId()) {
 			case R.id.image_preview_frame: {
-				final ImageSpec spec = getAllAvailableImage(status.image_orig_url_string);
+				final ImageSpec spec = getAllAvailableImage(status.image_orig_url);
 				if (spec != null) {
 					openImage(mContext, Uri.parse(spec.full_image_link), status.is_possibly_sensitive);
 				}
