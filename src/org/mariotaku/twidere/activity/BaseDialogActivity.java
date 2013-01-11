@@ -40,19 +40,10 @@ class BaseDialogActivity extends FragmentActivity implements Constants, IThemedA
 
 	private boolean mIsDarkTheme, mHardwareAccelerated;
 
+	private boolean mInstanceStateSaved;
+
 	public TwidereApplication getTwidereApplication() {
 		return (TwidereApplication) getApplication();
-	}
-
-	public boolean isDarkTheme() {
-		return mIsDarkTheme;
-	}
-
-	public boolean isHardwareAccelerationChanged() {
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return false;
-		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final boolean hardware_acceleration = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION, false);
-		return mHardwareAccelerated != hardware_acceleration;
 	}
 
 	@Override
@@ -67,6 +58,7 @@ class BaseDialogActivity extends FragmentActivity implements Constants, IThemedA
 		setHardwareAcceleration();
 		setTheme();
 		super.onCreate(savedInstanceState);
+		mInstanceStateSaved = false;
 	}
 
 	@Override
@@ -109,4 +101,26 @@ class BaseDialogActivity extends FragmentActivity implements Constants, IThemedA
 	protected int getLightThemeRes() {
 		return R.style.Theme_Twidere_Light_Dialog;
 	}
+	
+	protected boolean isDarkTheme() {
+		return mIsDarkTheme;
+	}
+
+	protected boolean isHardwareAccelerationChanged() {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return false;
+		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final boolean hardware_acceleration = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION, false);
+		return mHardwareAccelerated != hardware_acceleration;
+	}
+
+	protected boolean isStateSaved() {
+		return mInstanceStateSaved;
+	}
+
+	@Override
+	protected void onSaveInstanceState(final Bundle outState) {
+		mInstanceStateSaved = true;
+		super.onSaveInstanceState(outState);
+	}
+	
 }

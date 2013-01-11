@@ -1138,9 +1138,7 @@ public final class Utils implements Constants {
 		final int timeout_millis = prefs.getInt(PREFERENCE_KEY_CONNECTION_TIMEOUT, 10000) * 1000;
 		final Proxy proxy = getProxy(context);
 		final String user_agent = getBrowserUserAgent(context);
-		// final HostAddressResolver resolver =
-		// TwidereApplication.getInstance(context).getHostAddressResolver();
-		final HostAddressResolver resolver = null;
+		final HostAddressResolver resolver = TwidereApplication.getInstance(context).getHostAddressResolver();
 		return getHttpClient(timeout_millis, true, proxy, resolver, user_agent);
 	}
 

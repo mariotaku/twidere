@@ -32,8 +32,6 @@ import android.support.v4.content.Loader;
 
 public class UserMentionsFragment extends SearchTweetsFragment {
 
-	private boolean mIsStatusesSaved = false;
-
 	@Override
 	public Loader<SynchronizedStateSavedList<ParcelableStatus, Long>> newLoaderInstance(final Bundle args) {
 		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
@@ -50,22 +48,11 @@ public class UserMentionsFragment extends SearchTweetsFragment {
 	}
 
 	@Override
-	public void onDestroy() {
-		saveStatuses();
-		super.onDestroy();
-	}
-
-	@Override
-	public void onDestroyView() {
-		saveStatuses();
-		super.onDestroyView();
-	}
-
-	private void saveStatuses() {
-		if (mIsStatusesSaved) return;
+	boolean saveStatuses() {
+		if (getActivity() == null || getView() == null) return false;
 		final int first_visible_position = getListView().getFirstVisiblePosition();
 		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
 		TweetSearchLoader.writeSerializableStatuses(this, getActivity(), getData(), status_id, getArguments());
-		mIsStatusesSaved = true;
+		return true;
 	}
 }

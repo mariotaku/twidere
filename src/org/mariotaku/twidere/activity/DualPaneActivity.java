@@ -131,6 +131,7 @@ public class DualPaneActivity extends BaseDialogWhenLargeActivity implements OnB
 	}
 
 	public final void showAtPane(final int pane, final Fragment fragment, final boolean addToBackStack) {
+		if (isStateSaved()) return;
 		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		switch (pane) {
 			case PANE_LEFT: {

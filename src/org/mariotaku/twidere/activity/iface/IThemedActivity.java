@@ -23,11 +23,11 @@ import android.os.Bundle;
 
 public interface IThemedActivity {
 
-	public boolean isThemeChanged();
+	boolean isThemeChanged();
 
-	public void onCreate(Bundle savedInstanceState);
+	void onCreate(Bundle savedInstanceState);
 
-	public void onResume();
+	void onResume();
 
-	public void setTheme();
+	void setTheme();
 }

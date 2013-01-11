@@ -50,8 +50,6 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 
 	};
 
-	private boolean mIsStatusesSaved = false;
-
 	@Override
 	public Loader<SynchronizedStateSavedList<ParcelableStatus, Long>> newLoaderInstance(final Bundle args) {
 		long account_id = -1, user_id = -1, max_id = -1, since_id = -1;
@@ -73,18 +71,6 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 	}
 
 	@Override
-	public void onDestroy() {
-		saveStatuses();
-		super.onDestroy();
-	}
-
-	@Override
-	public void onDestroyView() {
-		saveStatuses();
-		super.onDestroyView();
-	}
-
-	@Override
 	public void onStart() {
 		super.onStart();
 		final IntentFilter filter = new IntentFilter(BROADCAST_FAVORITE_CHANGED);
@@ -97,12 +83,13 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 		super.onStop();
 	}
 
-	private void saveStatuses() {
-		if (mIsStatusesSaved) return;
+	@Override
+	boolean saveStatuses() {
+		if (getActivity() == null || getView() == null) return false;
 		final int first_visible_position = getListView().getFirstVisiblePosition();
 		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
 		UserFavoritesLoader.writeSerializableStatuses(this, getActivity(), getData(), status_id, getArguments());
-		mIsStatusesSaved = true;
+		return true;
 	}
 
 }

@@ -28,7 +28,6 @@ import org.mariotaku.gallery3d.util.ThreadPool;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.loader.GLImageLoader;
-import org.mariotaku.twidere.loader.ImageLoader;
 import org.mariotaku.twidere.util.SaveImageTask;
 import org.mariotaku.twidere.util.Utils;
 
@@ -47,7 +46,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
 public final class ImageViewerGLActivity extends FragmentActivity implements Constants, View.OnClickListener,
-		PhotoView.Listener, ImageLoader.DownloadListener, LoaderManager.LoaderCallbacks<ImageLoader.Result> {
+		PhotoView.Listener, GLImageLoader.DownloadListener, LoaderManager.LoaderCallbacks<GLImageLoader.Result> {
 
 	private final GLView mRootPane = new GLView() {
 		@Override
@@ -186,7 +185,7 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	}
 
 	@Override
-	public Loader<ImageLoader.Result> onCreateLoader(final int id, final Bundle args) {
+	public Loader<GLImageLoader.Result> onCreateLoader(final int id, final Bundle args) {
 		mProgress.setVisibility(View.VISIBLE);
 		mProgress.setIndeterminate(true);
 		mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_stop);
@@ -212,17 +211,17 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	@Override
 	public void onDownloadStart(final long total) {
 		mContentLength = total;
-		mProgress.setIndeterminate(false);
-		mProgress.setMax(100);
+		mProgress.setIndeterminate(total <= 0);
+		mProgress.setMax(total > 0 ? (int) (total / 1024) : 0);
 	}
 
 	@Override
-	public void onLoaderReset(final Loader<ImageLoader.Result> loader) {
+	public void onLoaderReset(final Loader<GLImageLoader.Result> loader) {
 
 	}
 
 	@Override
-	public void onLoadFinished(final Loader<ImageLoader.Result> loader, final ImageLoader.Result data) {
+	public void onLoadFinished(final Loader<GLImageLoader.Result> loader, final GLImageLoader.Result data) {
 		if (data instanceof GLImageLoader.GLImageResult) {
 			final GLImageLoader.GLImageResult data_gl = (GLImageLoader.GLImageResult) data;
 			mAdapter.setData(data_gl.decoder, data_gl.bitmap, data_gl.orientation);
@@ -253,7 +252,7 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 			return;
 		}
 		mProgress.setIndeterminate(false);
-		mProgress.setProgress((int) (downloaded * 100 / mContentLength));
+		mProgress.setProgress((int) (downloaded / 1024));
 	}
 
 	@Override

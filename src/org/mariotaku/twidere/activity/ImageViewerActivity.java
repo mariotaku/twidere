@@ -137,8 +137,8 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 	@Override
 	public void onDownloadStart(final long total) {
 		mContentLength = total;
-		mProgress.setIndeterminate(false);
-		mProgress.setMax(100);
+		mProgress.setIndeterminate(total <= 0);
+		mProgress.setMax(total > 0 ? (int) (total / 1024) : 0);
 	}
 
 	@Override
@@ -173,7 +173,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			return;
 		}
 		mProgress.setIndeterminate(false);
-		mProgress.setProgress((int) (downloaded * 100 / mContentLength));
+		mProgress.setProgress((int) (downloaded / 1024));
 	}
 
 	@Override

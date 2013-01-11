@@ -40,23 +40,10 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 
 	private boolean mIsDarkTheme, mIsSolidColorBackground, mHardwareAccelerated;
 
+	private boolean mInstanceStateSaved;
+
 	public TwidereApplication getTwidereApplication() {
 		return (TwidereApplication) getApplication();
-	}
-
-	public boolean isDarkTheme() {
-		return mIsDarkTheme;
-	}
-
-	public boolean isHardwareAccelerationChanged() {
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return false;
-		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final boolean hardware_acceleration = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION, false);
-		return mHardwareAccelerated != hardware_acceleration;
-	}
-
-	public boolean isSolidColorBackground() {
-		return mIsSolidColorBackground;
 	}
 
 	@Override
@@ -72,6 +59,7 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 		setHardwareAcceleration();
 		setTheme();
 		super.onCreate(savedInstanceState);
+		mInstanceStateSaved = false;
 	}
 
 	@Override
@@ -117,8 +105,33 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 
 	protected int getLightThemeRes() {
 		return R.style.Theme_Twidere_Light;
+	}	
+
+	protected boolean isDarkTheme() {
+		return mIsDarkTheme;
 	}
 
+	protected boolean isHardwareAccelerationChanged() {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return false;
+		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final boolean hardware_acceleration = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION, false);
+		return mHardwareAccelerated != hardware_acceleration;
+	}
+
+	protected boolean isSolidColorBackground() {
+		return mIsSolidColorBackground;
+	}
+	
+	protected boolean isStateSaved() {
+		return mInstanceStateSaved;
+	}
+
+	@Override
+	protected void onSaveInstanceState(final Bundle outState) {
+		mInstanceStateSaved = true;
+		super.onSaveInstanceState(outState);
+	}
+	
 	protected boolean shouldSetBackground() {
 		return true;
 	}

@@ -181,8 +181,14 @@ public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCo
 			if (resolved_host != null && !host.equals(resolved_host)) {
 				commonsRequest.addHeader("Host", host);
 			}
-			final ApacheHttpClientHttpResponseImpl res = new ApacheHttpClientHttpResponseImpl(
-					client.execute(commonsRequest), conf);
+			
+			final ApacheHttpClientHttpResponseImpl res;
+			try {
+				res = new ApacheHttpClientHttpResponseImpl(client.execute(commonsRequest), conf);
+			} catch (final NullPointerException e) {
+				// Bug http://code.google.com/p/android/issues/detail?id=5255
+				throw new TwitterException("Please check your APN settings, make sure not to use WAP APNs.", e);
+			}
 			final int statusCode = res.getStatusCode();
 			if (statusCode < OK || statusCode > ACCEPTED) throw new TwitterException(res.asString(), req, res);
 			return res;

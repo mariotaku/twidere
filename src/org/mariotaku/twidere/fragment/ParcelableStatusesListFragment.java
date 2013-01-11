@@ -43,6 +43,7 @@ public abstract class ParcelableStatusesListFragment extends
 
 	protected ParcelableStatusesAdapter mAdapter;
 	private ListView mListView;
+	private boolean mIsStatusesSaved;
 
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -144,7 +145,14 @@ public abstract class ParcelableStatusesListFragment extends
 	}
 
 	@Override
+	public void onDestroy() {
+		saveStatusesInternal();
+		super.onDestroy();
+	}
+
+	@Override
 	public void onDestroyView() {
+		saveStatusesInternal();
 		super.onDestroyView();
 	}
 
@@ -225,5 +233,16 @@ public abstract class ParcelableStatusesListFragment extends
 		final int last_idx = mAdapter.getCount() - 1;
 		final long last_id = last_idx >= 0 ? mAdapter.getItem(last_idx).status_id : -1;
 		return last_id > 0 ? new long[] { last_id } : null;
+	}
+
+	boolean saveStatuses() {
+		return true;
+	}
+	
+	private void saveStatusesInternal() {
+		if (getActivity() == null || getView() == null || mIsStatusesSaved) return;
+		if (saveStatuses()) {
+			mIsStatusesSaved = true;
+		}
 	}
 }

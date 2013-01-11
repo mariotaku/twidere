@@ -28,8 +28,6 @@ import android.support.v4.content.Loader;
 
 public class SearchTweetsFragment extends ParcelableStatusesListFragment {
 
-	private boolean mIsStatusesSaved = false;
-
 	@Override
 	public Loader<SynchronizedStateSavedList<ParcelableStatus, Long>> newLoaderInstance(final Bundle args) {
 		long account_id = -1, max_id = -1, since_id = -1;
@@ -47,23 +45,12 @@ public class SearchTweetsFragment extends ParcelableStatusesListFragment {
 	}
 
 	@Override
-	public void onDestroy() {
-		saveStatuses();
-		super.onDestroy();
-	}
-
-	@Override
-	public void onDestroyView() {
-		saveStatuses();
-		super.onDestroyView();
-	}
-
-	private void saveStatuses() {
-		if (mIsStatusesSaved) return;
+	boolean saveStatuses() {
+		if (getActivity() == null || getView() == null) return false;
 		final int first_visible_position = getListView().getFirstVisiblePosition();
 		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
 		TweetSearchLoader.writeSerializableStatuses(this, getActivity(), getData(), status_id, getArguments());
-		mIsStatusesSaved = true;
+		return true;
 	}
 
 }

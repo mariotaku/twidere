@@ -32,7 +32,7 @@ public final class ClipboardUtils {
 
 	public static boolean setText(final Context context, final CharSequence text) {
 		if (context == null) return false;
-		((ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE)).setText(text);
+		((ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE)).setText(text != null ? text : "");
 		return true;
 	}
 }
