@@ -63,6 +63,7 @@ class BaseDialogActivity extends FragmentActivity implements Constants, IThemedA
 	@Override
 	public void onResume() {
 		super.onResume();
+		mInstanceStateSaved = false;
 		if (isThemeChanged() || isHardwareAccelerationChanged()) {
 			restart();
 		}
@@ -122,9 +123,4 @@ class BaseDialogActivity extends FragmentActivity implements Constants, IThemedA
 		super.onSaveInstanceState(outState);
 	}
 
-	@Override
-	protected void onStart() {
-		super.onStart();
-		mInstanceStateSaved = false;
-	}
 }

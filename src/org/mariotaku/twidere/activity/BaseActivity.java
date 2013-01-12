@@ -64,6 +64,7 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 	@Override
 	public void onResume() {
 		super.onResume();
+		mInstanceStateSaved = false;
 		if (isThemeChanged() || isHardwareAccelerationChanged()) {
 			restart();
 		}
@@ -129,12 +130,6 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 	protected void onSaveInstanceState(final Bundle outState) {
 		mInstanceStateSaved = true;
 		super.onSaveInstanceState(outState);
-	}
-
-	@Override
-	protected void onStart() {
-		super.onStart();
-		mInstanceStateSaved = false;
 	}
 
 	protected boolean shouldSetBackground() {
