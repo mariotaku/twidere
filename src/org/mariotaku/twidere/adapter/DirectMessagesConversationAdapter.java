@@ -28,7 +28,7 @@ import org.mariotaku.twidere.adapter.iface.IDirectMessagesAdapter;
 import org.mariotaku.twidere.model.DirectMessageCursorIndices;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.util.LazyImageLoader;
-import org.mariotaku.twidere.util.OnLinkClickHandler;
+import org.mariotaku.twidere.util.OnDirectMessageLinkClickHandler;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.view.holder.DirectMessageConversationViewHolder;
 
@@ -43,7 +43,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
-import org.mariotaku.twidere.util.OnDirectMessageLinkClickHandler;
 
 public class DirectMessagesConversationAdapter extends SimpleCursorAdapter implements IDirectMessagesAdapter,
 		OnClickListener {
@@ -61,15 +60,6 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		mImageLoader = loader;
 	}
 
-
-	public void onItemSelected(Object item) {
-		notifyDataSetChanged();
-	}
-
-	public void onItemUnselected(Object item) {
-		notifyDataSetChanged();
-	}
-	
 	@Override
 	public void bindView(final View view, final Context context, final Cursor cursor) {
 		final int position = cursor.getPosition();

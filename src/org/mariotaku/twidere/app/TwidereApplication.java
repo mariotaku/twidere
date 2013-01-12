@@ -21,20 +21,16 @@ package org.mariotaku.twidere.app;
 
 import static org.mariotaku.twidere.util.Utils.hasActiveConnection;
 
-import java.util.ArrayList;
-
 import org.mariotaku.gallery3d.util.GalleryUtils;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.service.RefreshService;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.DatabaseHelper;
 import org.mariotaku.twidere.util.ImageLoaderUtils;
 import org.mariotaku.twidere.util.LazyImageLoader;
-import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
+import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.TwidereHostAddressResolver;
 
 import twitter4j.http.HostAddressResolver;
@@ -48,7 +44,6 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.webkit.WebView;
 import edu.ucdavis.earlybird.UCDService;
-import org.mariotaku.twidere.util.MultiSelectManager;
 
 public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener {
 
@@ -83,6 +78,11 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		return mResolver = new TwidereHostAddressResolver(this);
 	}
 
+	public MultiSelectManager getMultiSelectManager() {
+		if (mMultiSelectManager != null) return mMultiSelectManager;
+		return mMultiSelectManager = new MultiSelectManager();
+	}
+
 	public LazyImageLoader getPreviewImageLoader() {
 		if (mPreviewImageLoader != null) return mPreviewImageLoader;
 		final int mem = ImageLoaderUtils.getMemoryClass(this);
@@ -99,11 +99,6 @@ public class TwidereApplication extends Application implements Constants, OnShar
 				R.drawable.ic_profile_image_default, profile_image_size, profile_image_size, mem);
 	}
 
-	public MultiSelectManager getMultiSelectManager() {
-		if (mMultiSelectManager != null) return mMultiSelectManager;
-		return mMultiSelectManager = new MultiSelectManager();
-	}
-
 	public SQLiteDatabase getSQLiteDatabase() {
 		if (mDatabase != null) return mDatabase;
 		return mDatabase = new DatabaseHelper(this, DATABASES_NAME, DATABASES_VERSION).getWritableDatabase();
@@ -116,8 +111,8 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	public boolean isDebugBuild() {
 		return DEBUG;
 	}
-	
-	public boolean isMultiSelectEnabled() {
+
+	public boolean isMultiSelectActive() {
 		return getMultiSelectManager().isActive();
 	}
 

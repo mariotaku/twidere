@@ -2825,13 +2825,17 @@ public final class Utils implements Constants {
 	}
 
 	public static int parseInt(final String source) {
-		if (source == null) return -1;
+		return parseInt(source, -1);
+	}
+
+	public static int parseInt(final String source, final int def) {
+		if (source == null) return def;
 		try {
 			return Integer.valueOf(source);
 		} catch (final NumberFormatException e) {
 			// Wrong number format? Ignore them.
 		}
-		return -1;
+		return def;
 	}
 
 	public static long parseLong(final String source) {
@@ -3041,8 +3045,8 @@ public final class Utils implements Constants {
 					final TwitterException te = (TwitterException) t;
 					if (te.exceededRateLimitation()) {
 						final RateLimitStatus status = te.getRateLimitStatus();
-						final CharSequence next_reset_time = DateUtils.getRelativeTimeSpanString(System.
-							currentTimeMillis() + status.getSecondsUntilReset() * 1000);
+						final CharSequence next_reset_time = DateUtils.getRelativeTimeSpanString(System
+								.currentTimeMillis() + status.getSecondsUntilReset() * 1000);
 						message = context.getString(R.string.error_message_rate_limit, action, next_reset_time);
 					} else {
 						message = context.getString(R.string.error_message_with_action, action, t_message);

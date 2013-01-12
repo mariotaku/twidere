@@ -36,8 +36,6 @@ import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
-import java.util.ArrayList;
-
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -46,6 +44,7 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.PreviewImage;
 import org.mariotaku.twidere.model.StatusCursorIndices;
 import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
@@ -63,7 +62,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
-import org.mariotaku.twidere.util.MultiSelectManager;
 
 public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatusesAdapter, OnClickListener {
 
@@ -316,14 +314,6 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 				break;
 			}
 		}
-	}
-	
-	public void onItemSelected(Object item) {
-		notifyDataSetChanged();
-	}
-
-	public void onItemUnselected(Object item) {
-		notifyDataSetChanged();
 	}
 
 	@Override

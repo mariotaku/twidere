@@ -24,6 +24,7 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.activity.BaseActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.MultiSelectManager;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -32,7 +33,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import org.mariotaku.twidere.util.MultiSelectManager;
 
 public class BaseFragment extends Fragment implements Constants {
 
@@ -58,6 +58,10 @@ public class BaseFragment extends Fragment implements Constants {
 		return null;
 	}
 
+	public MultiSelectManager getMultiSelectManager() {
+		return getApplication() != null ? getApplication().getMultiSelectManager() : null;
+	}
+
 	public SharedPreferences getSharedPreferences(final String name, final int mode) {
 		final Activity activity = getActivity();
 		if (activity != null) return activity.getSharedPreferences(name, mode);
@@ -72,10 +76,6 @@ public class BaseFragment extends Fragment implements Constants {
 
 	public AsyncTwitterWrapper getTwitterWrapper() {
 		return getApplication() != null ? getApplication().getTwitterWrapper() : null;
-	}
-	
-	public MultiSelectManager getMultiSelectManager() {
-		return getApplication() != null ? getApplication().getMultiSelectManager() : null;
 	}
 
 	public void invalidateOptionsMenu() {

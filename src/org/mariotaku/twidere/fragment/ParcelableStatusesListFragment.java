@@ -222,6 +222,13 @@ public abstract class ParcelableStatusesListFragment extends
 		super.onStop();
 	}
 
+	private void saveStatusesInternal() {
+		if (getActivity() == null || getView() == null || mIsStatusesSaved) return;
+		if (saveStatuses()) {
+			mIsStatusesSaved = true;
+		}
+	}
+
 	@Override
 	final long[] getNewestStatusIds() {
 		final long last_id = mAdapter.getCount() > 0 ? mAdapter.getItem(0).status_id : -1;
@@ -237,12 +244,5 @@ public abstract class ParcelableStatusesListFragment extends
 
 	boolean saveStatuses() {
 		return true;
-	}
-	
-	private void saveStatusesInternal() {
-		if (getActivity() == null || getView() == null || mIsStatusesSaved) return;
-		if (saveStatuses()) {
-			mIsStatusesSaved = true;
-		}
 	}
 }

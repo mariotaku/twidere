@@ -33,15 +33,13 @@ import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ListUtils;
+import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
@@ -50,25 +48,14 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.twitter.Extractor;
-import org.mariotaku.twidere.util.MultiSelectManager;
 
 @SuppressLint("Registered")
 public class MultiSelectActivity extends DualPaneActivity implements ActionMode.Callback, MultiSelectManager.Callback {
 
-	public void onItemsCleared() {
-		updateMultiSelectState();
-	}
-
-	public void onItemSelected(Object item) {
-		updateMultiSelectState();
-	}
-
-	public void onItemUnselected(Object item) {
-		updateMultiSelectState();
-	}
-
 	private TwidereApplication mApplication;
+
 	private AsyncTwitterWrapper mTwitterWrapper;
+
 	private MultiSelectManager mMultiSelectManager;
 
 	private ActionMode mActionMode;
@@ -185,9 +172,24 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 	@Override
 	public void onDestroyActionMode(final ActionMode mode) {
 		if (mMultiSelectManager.getCount() != 0) {
-			mMultiSelectManager.clearSelectedItems();	
+			mMultiSelectManager.clearSelectedItems();
 		}
 		mActionMode = null;
+	}
+
+	@Override
+	public void onItemsCleared() {
+		updateMultiSelectState();
+	}
+
+	@Override
+	public void onItemSelected(final Object item) {
+		updateMultiSelectState();
+	}
+
+	@Override
+	public void onItemUnselected(final Object item) {
+		updateMultiSelectState();
 	}
 
 	@Override
@@ -198,17 +200,23 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 	@Override
 	protected void onStart() {
 		super.onStart();
+		mMultiSelectManager.registerCallback(this);
 		updateMultiSelectState();
+	}
+
+	@Override
+	protected void onStop() {
+		mMultiSelectManager.unregisterCallback(this);
+		super.onStop();
 	}
 
 	private void updateMultiSelectState() {
 		if (mMultiSelectManager.isActive()) {
 			if (mActionMode == null) {
 				mActionMode = startActionMode(this);
-			} else {
-				final int count = mMultiSelectManager.getCount();
-				mActionMode.setTitle(getResources().getQuantityString(R.plurals.Nitems_selected, count, count));
 			}
+			final int count = mMultiSelectManager.getCount();
+			mActionMode.setTitle(getResources().getQuantityString(R.plurals.Nitems_selected, count, count));
 		} else {
 			if (mActionMode != null) {
 				mActionMode.finish();

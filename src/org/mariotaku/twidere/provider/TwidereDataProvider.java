@@ -43,6 +43,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.BundleCursor;
+import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
@@ -52,9 +53,11 @@ import org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEnt
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.ArrayUtils;
+import org.mariotaku.twidere.util.ImagePreloader;
 import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 import org.mariotaku.twidere.util.PermissionsManager;
+import org.mariotaku.twidere.util.Utils;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -72,10 +75,10 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.text.Html;
 
@@ -90,6 +93,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	private NotificationManager mNotificationManager;
 	private SharedPreferences mPreferences;
 	private LazyImageLoader mProfileImageLoader;
+	private ImagePreloader mImagePreloader;
 
 	private int mNewStatusesCount;
 	private final List<ParcelableStatus> mNewMentions = new ArrayList<ParcelableStatus>();
@@ -240,6 +244,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		mPreferences = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mProfileImageLoader = app.getProfileImageLoader();
 		mPermissionsManager = new PermissionsManager(mContext);
+		mImagePreloader = new ImagePreloader(mContext);
 		final IntentFilter filter = new IntentFilter();
 		filter.addAction(BROADCAST_HOME_ACTIVITY_ONSTART);
 		filter.addAction(BROADCAST_HOME_ACTIVITY_ONSTOP);
@@ -351,8 +356,9 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		if (mNotificationIsAudible
 				&& !mPreferences.getBoolean("silent_notifications_at_" + now.get(Calendar.HOUR_OF_DAY), false)) {
 			if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND, false)) {
-				builder.setSound(Uri.parse(mPreferences.getString(PREFERENCE_KEY_NOTIFICATION_RINGTONE,
-						Settings.System.DEFAULT_RINGTONE_URI.getPath())), Notification.STREAM_DEFAULT);
+				final Uri def_ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+				final String path = mPreferences.getString(PREFERENCE_KEY_NOTIFICATION_RINGTONE, "");
+				builder.setSound(isEmpty(path) ? def_ringtone : Uri.parse(path), Notification.STREAM_DEFAULT);
 			}
 			if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_VIBRATION, false)) {
 				defaults |= Notification.DEFAULT_VIBRATE;
@@ -743,6 +749,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 
 	private void onNewItemsInserted(final Uri uri, final ContentValues... values) {
 		if (uri == null || values == null || values.length == 0) return;
+		preloadImages(values);
 		if ("false".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) return;
 		final Context context = getContext();
 		final Resources res = context.getResources();
@@ -778,6 +785,34 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 					displayMessagesNotification(context, values);
 				}
 				break;
+			}
+		}
+	}
+
+	private void preloadImages(final ContentValues... values) {
+		if (values == null) return;
+		for (final ContentValues v : values) {
+			if (mPreferences.getBoolean(PREFERENCE_KEY_PRELOAD_PROFILE_IMAGES, false)) {
+				final String profile_image_url = v.getAsString(Statuses.PROFILE_IMAGE_URL);
+				if (profile_image_url != null) {
+					mImagePreloader.preloadImage(DIR_NAME_PROFILE_IMAGES, profile_image_url);
+				}
+				final String sender_profile_image_url = v.getAsString(DirectMessages.SENDER_PROFILE_IMAGE_URL);
+				if (sender_profile_image_url != null) {
+					mImagePreloader.preloadImage(DIR_NAME_PROFILE_IMAGES, sender_profile_image_url);
+				}
+				final String recipient_profile_image_url = v.getAsString(DirectMessages.RECIPIENT_PROFILE_IMAGE_URL);
+				if (recipient_profile_image_url != null) {
+					mImagePreloader.preloadImage(DIR_NAME_PROFILE_IMAGES, recipient_profile_image_url);
+				}
+			}
+			if (mPreferences.getBoolean(PREFERENCE_KEY_PRELOAD_PREVIEW_IMAGES, false)) {
+				final String text_html = v.getAsString(Statuses.TEXT_HTML);
+				for (final ImageSpec spec : Utils.getImagesInStatus(text_html)) {
+					if (spec.preview_image_link != null) {
+						mImagePreloader.preloadImage(DIR_NAME_CACHED_THUMBNAILS, spec.preview_image_link);
+					}
+				}
 			}
 		}
 	}

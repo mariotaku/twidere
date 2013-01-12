@@ -127,7 +127,7 @@
 	<string name="unfollow_successful">Unfollow successful.</string>
 	<string name="profile_update_successful">Profile update successful.</string>
 	<string name="profile_image_update_successful">Profile image update successful.</string>
-	<string name="profile_banner_image_update_successful">Profile banner image update successful.</string>
+	<string name="profile_banner_image_update_successful">Profile header image update successful.</string>
 	<string name="text_size">Text size</string>
 	<string name="text_size_summary">Text size of statuses.</string>
 	<string name="cannot_get_location">Can\'t get your location.</string>
@@ -340,8 +340,8 @@
 	<string name="deleting">deleting</string>
 	<string name="updating_profile">updating profile</string>
 	<string name="updating_profile_image">updating profile image</string>
-	<string name="updating_profile_banner_image">updating profile banner image</string>
-	<string name="removing_profile_banner_image">removing profile banner image</string>
+	<string name="updating_profile_banner_image">updating profile header image</string>
+	<string name="removing_profile_banner_image">removing profile header image</string>
 	<string name="updating_details">updating details</string>
 	<string name="blocking">blocking</string>
 	<string name="unblocking">unblocking</string>
@@ -401,6 +401,9 @@
 	<string name="default_ringtone">Default ringtone</string>
 	<string name="phishing_link_warning">Phishing link warning</string>
 	<string name="phishing_link_warning_summary">Warn you when are trying to open a possibly phishing link in a direct message.</string>
-	<string name="phishing_link_warning_message">You are opening a link may harmful to your account, usually a direct message should &lt;b&gt;NOT&lt;/b&gt; contain links shortened with third-party services like bitly.&lt;br/&gt;Are you sure to continue?</string>
+	<string name="phishing_link_warning_message">You are opening a link in a direct message, which might lead you tu a phishing site.&lt;br/&gt;&lt;br/&gt;Check the ste address twice before providing any personal information.&lt;br/&gt;&lt;br/&gt;&lt;img src=&quot;phishing_site_warning_example&quot;&gt;&lt;/img&gt;&lt;br/&gt;&lt;br/&gt;Are you sure to continue?</string>
+	<string name="image_preload_options">Image preload options</string>
+	<string name="profile_images">Profile images</string>
+	<string name="preview_images">Preview images</string>
 
 </resources>

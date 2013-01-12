@@ -23,7 +23,6 @@ import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
@@ -31,6 +30,7 @@ import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.view.holder.UserViewHolder;
 
 import android.content.Context;
@@ -39,21 +39,14 @@ import android.view.ViewGroup;
 
 public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseAdapter {
 
-	public void onItemSelected(Object item) {
-		notifyDataSetChanged();
-	}
-
-	public void onItemUnselected(Object item) {
-		notifyDataSetChanged();
-	}
-
 	private final LazyImageLoader mProfileImageLoader;
+	private final MultiSelectManager mMultiSelectManager;
 	private final Context mContext;
 
-	private final ArrayList<Long> mSelectedUserIds;
-
 	private boolean mDisplayProfileImage, mShowAccountColor, mMultiSelectEnabled;
+
 	private float mTextSize;
+
 	private int mNameDisplayOption;
 
 	public UsersAdapter(final Context context) {
@@ -61,7 +54,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseA
 		mContext = context;
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mProfileImageLoader = application.getProfileImageLoader();
-		mSelectedUserIds = application.getSelectedUserIds();
+		mMultiSelectManager = application.getMultiSelectManager();
 	}
 
 	@Override
@@ -83,7 +76,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseA
 		final ParcelableUser user = getItem(position);
 
 		if (mMultiSelectEnabled) {
-			holder.setSelected(mSelectedUserIds.contains(user.user_id));
+			holder.setSelected(mMultiSelectManager.isUserSelected(user.user_id));
 		} else {
 			holder.setSelected(false);
 		}

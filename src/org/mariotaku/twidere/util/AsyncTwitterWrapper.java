@@ -73,9 +73,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
@@ -83,7 +83,6 @@ import com.twitter.Extractor;
 import com.twitter.Validator;
 
 import edu.ucdavis.earlybird.ProfilingUtil;
-import android.text.format.DateUtils;
 
 public class AsyncTwitterWrapper extends TwitterWrapper {
 
@@ -340,8 +339,9 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 		int defaults = 0;
 		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND, false)) {
-			builder.setSound(Uri.parse(mPreferences.getString(PREFERENCE_KEY_NOTIFICATION_RINGTONE,
-					Settings.System.DEFAULT_RINGTONE_URI.getPath())), Notification.STREAM_DEFAULT);
+			final Uri def_ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+			final String path = mPreferences.getString(PREFERENCE_KEY_NOTIFICATION_RINGTONE, "");
+			builder.setSound(isEmpty(path) ? def_ringtone : Uri.parse(path), Notification.STREAM_DEFAULT);
 		}
 		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_VIBRATION, false)) {
 			defaults |= Notification.DEFAULT_VIBRATE;
@@ -948,7 +948,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		protected void onPostExecute(final SingleResponse<DirectMessage> result) {
 			super.onPostExecute(result);
 			if (result == null) return;
-			if ((result.data != null && result.data.getId() > 0) || (result.exception instanceof TwitterException && ((TwitterException) result.exception).getErrorCode() == 34)) {
+			if (result.data != null && result.data.getId() > 0 || result.exception instanceof TwitterException
+					&& ((TwitterException) result.exception).getErrorCode() == 34) {
 				Toast.makeText(mContext, R.string.delete_successful, Toast.LENGTH_SHORT).show();
 				final String where = DirectMessages.MESSAGE_ID + " = " + message_id;
 				mResolver.delete(DirectMessages.Inbox.CONTENT_URI, where, null);
@@ -2037,7 +2038,9 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					final ContentValues[] values_array = makeTrendsContentValues(messages);
 					for (final ContentValues values : values_array) {
 						final String hashtag = values.getAsString(CachedTrends.NAME).replaceFirst("#", "");
-						if (hashtags.contains(hashtag)) continue;
+						if (hashtags.contains(hashtag)) {
+							continue;
+						}
 						hashtags.add(hashtag);
 						final ContentValues hashtag_value = new ContentValues();
 						hashtag_value.put(CachedHashtags.NAME, hashtag);

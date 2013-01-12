@@ -81,7 +81,7 @@
 		<item name="android:progressBarStyleInverse">@style/Widget.Holo.ProgressBar.Inverse</item>
 		<item name="android:progressBarStyleSmallInverse">@style/Widget.Holo.ProgressBar.Small.Inverse</item>
 		<item name="android:progressBarStyleLargeInverse">@style/Widget.Holo.ProgressBar.Large.Inverse</item>
-		<item name="android:radioButtonStyle">@style/Widget.Holo.Light.CompoundButton.CheckBox</item>
+		<item name="android:radioButtonStyle">@style/Widget.Holo.Light.CompoundButton.RadioButton</item>
 		<item name="android:seekBarStyle">@style/Widget.Holo.Light.SeekBar</item>
 		<item name="android:spinnerStyle">@style/Widget.Holo.Light.Spinner</item>
 		<item name="android:spinnerItemStyle">@style/Widget.Holo.Light.TextView.SpinnerItem</item>
@@ -165,7 +165,7 @@
 		<item name="android:progressBarStyleInverse">@style/Widget.Holo.Light.ProgressBar.Inverse</item>
 		<item name="android:progressBarStyleSmallInverse">@style/Widget.Holo.Light.ProgressBar.Small.Inverse</item>
 		<item name="android:progressBarStyleLargeInverse">@style/Widget.Holo.Light.ProgressBar.Large.Inverse</item>
-		<item name="android:radioButtonStyle">@style/Widget.Holo.Light.CompoundButton.CheckBox</item>
+		<item name="android:radioButtonStyle">@style/Widget.Holo.Light.CompoundButton.RadioButton</item>
 		<item name="android:seekBarStyle">@style/Widget.Holo.Light.SeekBar</item>
 		<item name="android:spinnerStyle">@style/Widget.Holo.Light.Spinner</item>
 		<item name="android:spinnerItemStyle">@style/Widget.Holo.Light.TextView.SpinnerItem</item>

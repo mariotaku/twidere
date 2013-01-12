@@ -181,7 +181,7 @@ public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCo
 			if (resolved_host != null && !host.equals(resolved_host)) {
 				commonsRequest.addHeader("Host", host);
 			}
-			
+
 			final ApacheHttpClientHttpResponseImpl res;
 			try {
 				res = new ApacheHttpClientHttpResponseImpl(client.execute(commonsRequest), conf);

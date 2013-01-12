@@ -83,7 +83,9 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
 			}
 		}
 		for (final String hashtag : hashtags) {
-			if (hashtags.contains(hashtag)) continue;
+			if (hashtags.contains(hashtag)) {
+				continue;
+			}
 			final ContentValues hashtag_value = new ContentValues();
 			hashtag_value.put(CachedHashtags.NAME, hashtag);
 			hashtag_values.add(hashtag_value);

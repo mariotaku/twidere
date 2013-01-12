@@ -65,9 +65,9 @@ public class SerializationUtil {
 			final FileInputStream fis = new FileInputStream(new File(path));
 			is = new ObjectInputStream(fis);
 			return (T) is.readObject();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw e;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new IOException(e);
 		} finally {
 			if (is != null) {

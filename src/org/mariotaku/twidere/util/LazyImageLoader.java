@@ -157,12 +157,16 @@ public class LazyImageLoader implements Constants {
 	public File getCachedImageFile(final String url) {
 		if (mFileCache == null) return null;
 		final File f = mFileCache.getFile(url);
-		if (f != null && f.exists())
+		if (ImageValidator.checkImageValidity(f))
 			return f;
 		else {
-			queuePhoto(url, null);
+			queuePhoto(url);
 		}
 		return null;
+	}
+
+	public void queuePhoto(final String url) {
+		queuePhoto(url, null);
 	}
 
 	public void reloadConnectivitySettings() {
@@ -294,7 +298,7 @@ public class LazyImageLoader implements Constants {
 
 		public File getFile(final String url) {
 			if (mCacheDir == null) return null;
-			final String filename = getStringFilename(url);
+			final String filename = getFilename(url);
 			if (filename == null) return null;
 			final File file = new File(mCacheDir, filename);
 			return file;
@@ -308,9 +312,9 @@ public class LazyImageLoader implements Constants {
 			}
 		}
 
-		private String getStringFilename(final String url) {
+		private String getFilename(final String url) {
 			if (url == null) return null;
-			return url.replaceFirst("https?:\\/\\/", "").replaceAll("[^a-zA-Z0-9]", "_");
+			return url.replaceFirst("https?:\\/\\/", "").replaceAll("[^\\w\\d]", "_");
 		}
 
 	}

@@ -47,6 +47,10 @@
 			android:summary="@string/load_more_automatically_summary"
 			android:title="@string/load_more_automatically"/>
 
+		<org.mariotaku.twidere.preference.ImagePreloadPreference
+			android:key="image_preload_options"
+			android:title="@string/image_preload_options"/>
+
 		<com.robobunny.SeekBarPreference
 			android:defaultValue="20"
 			android:key="load_item_limit"
@@ -72,7 +76,7 @@
 			android:key="trends_location"
 			android:summary="@string/trends_location_summary"
 			android:title="@string/trends_location"/>
-			
+
 		<CheckBoxPreference
 			android:defaultValue="true"
 			android:key="phishing_link_warning"

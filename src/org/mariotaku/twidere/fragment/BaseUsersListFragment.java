@@ -30,17 +30,14 @@ import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.UsersAdapter;
-import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUser;
-import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
+import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
 import android.content.ActivityNotFoundException;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -54,21 +51,20 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 
 abstract class BaseUsersListFragment extends PullToRefreshListFragment implements
-		LoaderCallbacks<List<ParcelableUser>>, OnItemClickListener, OnScrollListener, OnItemLongClickListener,
-		Panes.Left, OnMenuItemClickListener {
+		LoaderCallbacks<List<ParcelableUser>>, OnScrollListener, OnItemLongClickListener, Panes.Left,
+		OnMenuItemClickListener, MultiSelectManager.Callback {
 
 	private static final long TICKER_DURATION = 5000L;
 
 	private SharedPreferences mPreferences;
 	private PopupMenu mPopupMenu;
-	private TwidereApplication mApplication;
+	private MultiSelectManager mMultiSelectManager;
 
 	private UsersAdapter mAdapter;
 
@@ -82,20 +78,6 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	private volatile boolean mReachedBottom, mNotReachedBottomBefore = true, mTickerStopped, mBusy;
 
 	private ParcelableUser mSelectedUser;
-
-	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(final Context context, final Intent intent) {
-			final String action = intent.getAction();
-			if (BROADCAST_MULTI_SELECT_STATE_CHANGED.equals(action)) {
-				mAdapter.setMultiSelectEnabled(mApplication.isMultiSelectActive());
-			} else if (BROADCAST_MULTI_SELECT_ITEM_CHANGED.equals(action)) {
-				mAdapter.notifyDataSetChanged();
-			}
-		}
-
-	};
 
 	public long getAccountId() {
 		return mAccountId;
@@ -119,9 +101,9 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mApplication = getApplication();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mAdapter = new UsersAdapter(getActivity());
+		mMultiSelectManager = getMultiSelectManager();
 		mListView = getListView();
 		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
 		final Bundle args = getArguments() != null ? getArguments() : new Bundle();
@@ -131,7 +113,6 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 			mData.clear();
 		}
 		mAccountId = account_id;
-		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
 		mListView.setOnScrollListener(this);
 		setMode(Mode.BOTH);
@@ -147,32 +128,15 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	}
 
 	@Override
-	public final void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
-		final ParcelableUser user = mAdapter.findItem(id);
-		if (user == null) return;
-		if (mApplication.isMultiSelectActive()) {
-			final NoDuplicatesLinkedList<Object> list = mApplication.getSelectedItems();
-			if (!list.contains(user)) {
-				list.add(user);
-			} else {
-				list.remove(user);
-			}
-			return;
-		}
-		openUserProfile(getActivity(), user);
-	}
-
-	@Override
 	public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 		mSelectedUser = null;
 		final UsersAdapter adapter = getListAdapter();
 		mSelectedUser = adapter.findItem(id);
-		if (mApplication.isMultiSelectActive()) {
-			final NoDuplicatesLinkedList<Object> list = mApplication.getSelectedItems();
-			if (!list.contains(mSelectedUser)) {
-				list.add(mSelectedUser);
+		if (mMultiSelectManager.isActive()) {
+			if (!mMultiSelectManager.isSelected(mSelectedUser)) {
+				mMultiSelectManager.selectItem(mSelectedUser);
 			} else {
-				list.remove(mSelectedUser);
+				mMultiSelectManager.unselectItem(mSelectedUser);
 			}
 			return true;
 		}
@@ -193,6 +157,38 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	}
 
 	@Override
+	public void onItemsCleared() {
+		mAdapter.setMultiSelectEnabled(false);
+		mAdapter.notifyDataSetChanged();
+	}
+
+	@Override
+	public void onItemSelected(final Object item) {
+		mAdapter.setMultiSelectEnabled(true);
+		mAdapter.notifyDataSetChanged();
+	}
+
+	@Override
+	public void onItemUnselected(final Object item) {
+		mAdapter.notifyDataSetChanged();
+	}
+
+	@Override
+	public void onListItemClick(final ListView l, final View v, final int position, final long id) {
+		final ParcelableUser user = mAdapter.findItem(id);
+		if (user == null) return;
+		if (mMultiSelectManager.isActive()) {
+			if (!mMultiSelectManager.isSelected(user)) {
+				mMultiSelectManager.selectItem(user);
+			} else {
+				mMultiSelectManager.unselectItem(user);
+			}
+			return;
+		}
+		openUserProfile(getActivity(), user);
+	}
+
+	@Override
 	public void onLoaderReset(final Loader<List<ParcelableUser>> loader) {
 		setProgressBarIndeterminateVisibility(false);
 	}
@@ -209,19 +205,14 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	@Override
 	public boolean onMenuItemClick(final MenuItem item) {
 		if (mSelectedUser == null) return false;
+		final ParcelableUser user = mSelectedUser;
 		switch (item.getItemId()) {
 			case MENU_VIEW_PROFILE: {
-				openUserProfile(getActivity(), mSelectedUser);
+				openUserProfile(getActivity(), user);
 				break;
 			}
 			case MENU_MULTI_SELECT: {
-				if (!mApplication.isMultiSelectActive()) {
-					mApplication.startMultiSelect();
-				}
-				final NoDuplicatesLinkedList<Object> list = mApplication.getSelectedItems();
-				if (!list.contains(mSelectedUser)) {
-					list.add(mSelectedUser);
-				}
+				mMultiSelectManager.selectItem(user);
 				break;
 			}
 			default: {
@@ -261,13 +252,12 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	@Override
 	public void onResume() {
 		super.onResume();
-
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		final String name_display_option = mPreferences.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION,
 				NAME_DISPLAY_OPTION_BOTH);
-		mAdapter.setMultiSelectEnabled(mApplication.isMultiSelectActive());
+		mAdapter.setMultiSelectEnabled(mMultiSelectManager.isActive());
 		mAdapter.setDisplayProfileImage(display_profile_image);
 		mAdapter.setTextSize(text_size);
 		mAdapter.setNameDisplayOption(name_display_option);
@@ -326,20 +316,16 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 			}
 		};
 		mTicker.run();
-
-		final IntentFilter filter = new IntentFilter();
-		filter.addAction(BROADCAST_MULTI_SELECT_STATE_CHANGED);
-		filter.addAction(BROADCAST_MULTI_SELECT_ITEM_CHANGED);
-		registerReceiver(mStateReceiver, filter);
+		mMultiSelectManager.registerCallback(this);
 	}
 
 	@Override
 	public void onStop() {
+		mMultiSelectManager.unregisterCallback(this);
 		mTickerStopped = true;
 		if (mPopupMenu != null) {
 			mPopupMenu.dismiss();
 		}
-		unregisterReceiver(mStateReceiver);
 		super.onStop();
 	}
 

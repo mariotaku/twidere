@@ -101,7 +101,7 @@ class BaseDialogActivity extends FragmentActivity implements Constants, IThemedA
 	protected int getLightThemeRes() {
 		return R.style.Theme_Twidere_Light_Dialog;
 	}
-	
+
 	protected boolean isDarkTheme() {
 		return mIsDarkTheme;
 	}

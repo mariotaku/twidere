@@ -69,7 +69,7 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 			restart();
 		}
 	}
-	
+
 	public void restart() {
 		restartActivity(this);
 	}
@@ -105,7 +105,7 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 
 	protected int getLightThemeRes() {
 		return R.style.Theme_Twidere_Light;
-	}	
+	}
 
 	protected boolean isDarkTheme() {
 		return mIsDarkTheme;
@@ -121,7 +121,7 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 	protected boolean isSolidColorBackground() {
 		return mIsSolidColorBackground;
 	}
-	
+
 	protected boolean isStateSaved() {
 		return mInstanceStateSaved;
 	}

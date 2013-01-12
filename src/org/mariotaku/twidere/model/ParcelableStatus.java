@@ -291,9 +291,9 @@ public class ParcelableStatus implements Constants, Parcelable, Serializable, Co
 				+ ", retweeted_by_name=" + retweeted_by_name + ", retweeted_by_screen_name=" + retweeted_by_screen_name
 				+ ", text_html=" + text_html + ", text_plain=" + text_plain + ", name=" + name + ", screen_name="
 				+ screen_name + ", in_reply_to_screen_name=" + in_reply_to_screen_name + ", source=" + source
-				+ ", profile_image_url=" + profile_image_url + ", image_preview_url="
-				+ image_preview_url + ", image_orig_url=" + image_orig_url + ", text_unescaped="
-				+ text_unescaped + ", location=" + location + "}";
+				+ ", profile_image_url=" + profile_image_url + ", image_preview_url=" + image_preview_url
+				+ ", image_orig_url=" + image_orig_url + ", text_unescaped=" + text_unescaped + ", location="
+				+ location + "}";
 	}
 
 	@Override

@@ -21,7 +21,7 @@ package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.util.Utils.getTableId;
 import static org.mariotaku.twidere.util.Utils.getTableNameById;
- 
+
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -35,13 +35,12 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.widget.FilterQueryProvider;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.database.sqlite.SQLiteQueryBuilder;
-import android.database.sqlite.SQLiteDatabase;
 
 public class AutoCompleteAdapter extends SimpleCursorAdapter implements Constants {
 
@@ -75,8 +74,8 @@ public class AutoCompleteAdapter extends SimpleCursorAdapter implements Constant
 		final Context app_context = context.getApplicationContext();
 		mProfileImageLoader = app_context instanceof TwidereApplication ? ((TwidereApplication) app_context)
 				.getProfileImageLoader() : null;
-		mDatabase = app_context instanceof TwidereApplication ? ((TwidereApplication) app_context)
-				.getSQLiteDatabase() : null;
+		mDatabase = app_context instanceof TwidereApplication ? ((TwidereApplication) app_context).getSQLiteDatabase()
+				: null;
 		mDisplayProfileImage = mPreferences != null ? mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE,
 				true) : true;
 	}
@@ -164,8 +163,8 @@ public class AutoCompleteAdapter extends SimpleCursorAdapter implements Constant
 		} else {
 			final String where = CachedHashtags.NAME + " LIKE '" + constraint_escaped + "%' ESCAPE '^'";
 			final String table = getTableNameById(getTableId(CachedHashtags.CONTENT_URI));
-			return mDatabase.query(true, table, CachedHashtags.COLUMNS,
-					constraint_escaped != null ? where : null, null, null, null, null, null);
+			return mDatabase.query(true, table, CachedHashtags.COLUMNS, constraint_escaped != null ? where : null,
+					null, null, null, null, null);
 		}
 	}
 

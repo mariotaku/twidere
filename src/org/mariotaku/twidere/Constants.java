@@ -198,6 +198,8 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_LINK_HIGHLIGHTING = "link_highlighting";
 	public static final String PREFERENCE_KEY_FAST_TIMELINE_PROCESSING = "fast_timeline_processing";
 	public static final String PREFERENCE_KEY_INDICATE_MY_STATUS = "indicate_my_status";
+	public static final String PREFERENCE_KEY_PRELOAD_PROFILE_IMAGES = "preload_profile_images";
+	public static final String PREFERENCE_KEY_PRELOAD_PREVIEW_IMAGES = "preload_preview_images";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;

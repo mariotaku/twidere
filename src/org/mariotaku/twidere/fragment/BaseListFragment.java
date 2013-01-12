@@ -25,6 +25,7 @@ import org.mariotaku.twidere.activity.BaseActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.InvalidateProgressBarRunnable;
+import org.mariotaku.twidere.util.MultiSelectManager;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -40,7 +41,6 @@ import android.support.v4.app.ListFragmentTrojan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import org.mariotaku.twidere.util.MultiSelectManager;
 
 public class BaseListFragment extends ListFragment implements Constants {
 
@@ -80,16 +80,16 @@ public class BaseListFragment extends ListFragment implements Constants {
 		return null;
 	}
 
+	public MultiSelectManager getMultiSelectManager() {
+		return getApplication() != null ? getApplication().getMultiSelectManager() : null;
+	}
+
 	public SharedPreferences getSharedPreferences(final String name, final int mode) {
 		final Activity activity = getActivity();
 		if (activity != null) return activity.getSharedPreferences(name, mode);
 		return null;
 	}
-	
-	public MultiSelectManager getMultiSelectManager() {
-		return getApplication() != null ? getApplication().getMultiSelectManager() : null;
-	}
-	
+
 	public Object getSystemService(final String name) {
 		final Activity activity = getActivity();
 		if (activity != null) return activity.getSystemService(name);

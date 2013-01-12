@@ -117,8 +117,10 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 		this.account_id = account_id;
 		is_out_going = is_outgoing;
 		final User sender = message.getSender(), recipient = message.getRecipient();
-		final String sender_profile_image_url_string = sender != null ? parseString(sender.getProfileImageUrlHttps()) : null;
-		final String recipient_profile_image_url_string = recipient != null ? parseString(recipient.getProfileImageUrlHttps()) : null;
+		final String sender_profile_image_url_string = sender != null ? parseString(sender.getProfileImageUrlHttps())
+				: null;
+		final String recipient_profile_image_url_string = recipient != null ? parseString(recipient
+				.getProfileImageUrlHttps()) : null;
 		message_id = message.getId();
 		message_timestamp = getTime(message.getCreatedAt());
 		sender_id = sender != null ? sender.getId() : -1;
@@ -129,8 +131,10 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 		recipient_name = recipient != null ? recipient.getName() : null;
 		sender_screen_name = sender != null ? sender.getScreenName() : null;
 		recipient_screen_name = recipient != null ? recipient.getScreenName() : null;
-		sender_profile_image_url = large_profile_image ? getBiggerTwitterProfileImage(sender_profile_image_url_string) : sender_profile_image_url_string;
-		recipient_profile_image_url = large_profile_image ? getBiggerTwitterProfileImage(recipient_profile_image_url_string) : recipient_profile_image_url_string;
+		sender_profile_image_url = large_profile_image ? getBiggerTwitterProfileImage(sender_profile_image_url_string)
+				: sender_profile_image_url_string;
+		recipient_profile_image_url = large_profile_image ? getBiggerTwitterProfileImage(recipient_profile_image_url_string)
+				: recipient_profile_image_url_string;
 	}
 
 	public ParcelableDirectMessage(final Parcel in) {
@@ -191,8 +195,7 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 				+ recipient_id + ", is_out_going=" + is_out_going + ", text=" + text_html + ", sender_name="
 				+ sender_name + ", recipient_name=" + recipient_name + ", sender_screen_name=" + sender_screen_name
 				+ ", recipient_screen_name=" + recipient_screen_name + ", sender_profile_image_url="
-				+ sender_profile_image_url + ", recipient_profile_image_url="
-				+ recipient_profile_image_url + "}";
+				+ sender_profile_image_url + ", recipient_profile_image_url=" + recipient_profile_image_url + "}";
 	}
 
 	@Override

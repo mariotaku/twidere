@@ -33,20 +33,17 @@ import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
-import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ClipboardUtils;
-import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
+import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
 import android.content.ActivityNotFoundException;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -69,14 +66,12 @@ import android.widget.Toast;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.twitter.Extractor;
-import org.mariotaku.twidere.util.MultiSelectManager;
 
 abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment implements LoaderCallbacks<Data>,
 		OnScrollListener, OnItemLongClickListener, OnMenuItemClickListener, Panes.Left, MultiSelectManager.Callback {
 
 	private static final long TICKER_DURATION = 5000L;
 
-	private TwidereApplication mApplication;
 	private AsyncTaskManager mAsyncTaskManager;
 	protected AsyncTwitterWrapper mTwitterWrapper;
 	protected SharedPreferences mPreferences;
@@ -121,7 +116,6 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mApplication = getApplication();
 		mAsyncTaskManager = getAsyncTaskManager();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mTwitterWrapper = getTwitterWrapper();
@@ -141,19 +135,6 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	@Override
 	public abstract Loader<Data> onCreateLoader(int id, Bundle args);
 
-
-	public void onItemsCleared() {
-		mAdapter.notifyDataSetChanged();
-	}
-
-	public void onItemSelected(Object item) {
-		mAdapter.notifyDataSetChanged();
-	}
-
-	public void onItemUnselected(Object item) {
-		mAdapter.notifyDataSetChanged();
-	}
-	
 	@Override
 	public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 		mSelectedStatus = null;
@@ -165,8 +146,8 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			final ParcelableStatus status = mSelectedStatus = mAdapter.getStatus(position
 					- mListView.getHeaderViewsCount());
 			if (mMultiSelectManager.isActive() || click_to_open_menu) {
-				if (!mMultiSelectManager.isSelected(mSelectedStatus)) {
-					mMultiSelectManager.selectItem(mSelectedStatus);
+				if (!mMultiSelectManager.isSelected(status)) {
+					mMultiSelectManager.selectItem(status);
 				} else {
 					mMultiSelectManager.unselectItem(mSelectedStatus);
 				}
@@ -176,6 +157,23 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void onItemsCleared() {
+		mAdapter.setMultiSelectEnabled(false);
+		mAdapter.notifyDataSetChanged();
+	}
+
+	@Override
+	public void onItemSelected(final Object item) {
+		mAdapter.setMultiSelectEnabled(true);
+		mAdapter.notifyDataSetChanged();
+	}
+
+	@Override
+	public void onItemUnselected(final Object item) {
+		mAdapter.notifyDataSetChanged();
 	}
 
 	@Override
@@ -191,10 +189,10 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				getStatuses(new long[] { status.account_id }, new long[] { status.status_id }, null);
 			} else {
 				if (mMultiSelectManager.isActive()) {
-					if (!mMultiSelectManager.isSelected(mSelectedStatus)) {
-						mMultiSelectManager.selectItem(mSelectedStatus);
+					if (!mMultiSelectManager.isSelected(status)) {
+						mMultiSelectManager.selectItem(status);
 					} else {
-						mMultiSelectManager.unselectItem(mSelectedStatus);
+						mMultiSelectManager.unselectItem(status);
 					}
 					return;
 				}
@@ -247,8 +245,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				if (isMyRetweet(status)) {
 					cancelRetweet(mTwitterWrapper, status);
 				} else {
-					final long id_to_retweet = mSelectedStatus.is_retweet && mSelectedStatus.retweet_id > 0 ? mSelectedStatus.retweet_id
-							: mSelectedStatus.status_id;
+					final long id_to_retweet = status.retweet_id > 0 ? status.retweet_id : status.status_id;
 					mTwitterWrapper.retweetStatus(status.account_id, id_to_retweet);
 				}
 				break;
@@ -283,7 +280,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				break;
 			}
 			case MENU_FAVORITE: {
-				if (mSelectedStatus.is_favorite) {
+				if (status.is_favorite) {
 					mTwitterWrapper.destroyFavorite(status.account_id, status.status_id);
 				} else {
 					mTwitterWrapper.createFavoriteAsync(status.account_id, status.status_id);
@@ -404,10 +401,12 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			}
 		};
 		mTicker.run();
+		mMultiSelectManager.registerCallback(this);
 	}
 
 	@Override
 	public void onStop() {
+		mMultiSelectManager.unregisterCallback(this);
 		mTickerStopped = true;
 		if (mPopupMenu != null) {
 			mPopupMenu.dismiss();

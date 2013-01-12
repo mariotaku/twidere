@@ -34,7 +34,6 @@ import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
@@ -43,6 +42,7 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
@@ -58,7 +58,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
-import org.mariotaku.twidere.util.MultiSelectManager;
 
 public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> implements IStatusesAdapter,
 		OnClickListener {
@@ -84,14 +83,6 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		mPreviewImageLoader = application.getPreviewImageLoader();
 	}
 
-	public void onItemSelected(Object item) {
-		notifyDataSetChanged();
-	}
-
-	public void onItemUnselected(Object item) {
-		notifyDataSetChanged();
-	}
-	
 	public long findItemIdByPosition(final int position) {
 		if (position >= 0 && position < getCount()) return getItem(position).status_id;
 		return -1;

@@ -197,22 +197,16 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 
 	static class ActivitiesAdapter extends BaseAdapter implements IBaseAdapter {
 
-		public void onItemSelected(Object item) {
-			notifyDataSetChanged();
-		}
-
-		public void onItemUnselected(Object item) {
-			notifyDataSetChanged();
-		}
-
 		private boolean mDisplayProfileImage, mDisplayName, mShowAbsoluteTime;
 
 		private final boolean mDisplayHiResProfileImage;
-		private float mTextSize;
-		private final LazyImageLoader mProfileImageLoader;
 
+		private float mTextSize;
+
+		private final LazyImageLoader mProfileImageLoader;
 		private final LayoutInflater mInflater;
 		private final Context mContext;
+
 		private List<twitter4j.Activity> mData;
 
 		public ActivitiesAdapter(final Context context) {
@@ -368,6 +362,14 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 				}
 			}
 			return view;
+		}
+
+		public void onItemSelected(final Object item) {
+			notifyDataSetChanged();
+		}
+
+		public void onItemUnselected(final Object item) {
+			notifyDataSetChanged();
 		}
 
 		public void setData(final List<twitter4j.Activity> data) {

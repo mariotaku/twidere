@@ -57,5 +57,9 @@
 		<item>large</item>
 		<item>small</item>
 	</string-array>
+	<string-array name="entries_image_preload_option">
+		<item>@string/profile_images</item>
+		<item>@string/preview_images</item>
+	</string-array>
 
 </resources>
