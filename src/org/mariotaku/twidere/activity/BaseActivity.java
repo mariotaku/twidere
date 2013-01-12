@@ -59,7 +59,6 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 		setHardwareAcceleration();
 		setTheme();
 		super.onCreate(savedInstanceState);
-		mInstanceStateSaved = false;
 	}
 
 	@Override
@@ -69,7 +68,7 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 			restart();
 		}
 	}
-
+	
 	public void restart() {
 		restartActivity(this);
 	}
@@ -131,7 +130,13 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 		mInstanceStateSaved = true;
 		super.onSaveInstanceState(outState);
 	}
-	
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		mInstanceStateSaved = false;
+	}
+
 	protected boolean shouldSetBackground() {
 		return true;
 	}

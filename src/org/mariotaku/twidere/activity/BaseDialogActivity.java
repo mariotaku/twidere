@@ -58,7 +58,6 @@ class BaseDialogActivity extends FragmentActivity implements Constants, IThemedA
 		setHardwareAcceleration();
 		setTheme();
 		super.onCreate(savedInstanceState);
-		mInstanceStateSaved = false;
 	}
 
 	@Override
@@ -122,5 +121,10 @@ class BaseDialogActivity extends FragmentActivity implements Constants, IThemedA
 		mInstanceStateSaved = true;
 		super.onSaveInstanceState(outState);
 	}
-	
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		mInstanceStateSaved = false;
+	}
 }
