@@ -32,6 +32,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import org.mariotaku.twidere.util.MultiSelectManager;
 
 public class BaseFragment extends Fragment implements Constants {
 
@@ -71,6 +72,10 @@ public class BaseFragment extends Fragment implements Constants {
 
 	public AsyncTwitterWrapper getTwitterWrapper() {
 		return getApplication() != null ? getApplication().getTwitterWrapper() : null;
+	}
+	
+	public MultiSelectManager getMultiSelectManager() {
+		return getApplication() != null ? getApplication().getMultiSelectManager() : null;
 	}
 
 	public void invalidateOptionsMenu() {

@@ -40,6 +40,7 @@ import android.support.v4.app.ListFragmentTrojan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import org.mariotaku.twidere.util.MultiSelectManager;
 
 public class BaseListFragment extends ListFragment implements Constants {
 
@@ -84,7 +85,11 @@ public class BaseListFragment extends ListFragment implements Constants {
 		if (activity != null) return activity.getSharedPreferences(name, mode);
 		return null;
 	}
-
+	
+	public MultiSelectManager getMultiSelectManager() {
+		return getApplication() != null ? getApplication().getMultiSelectManager() : null;
+	}
+	
 	public Object getSystemService(final String name) {
 		final Activity activity = getActivity();
 		if (activity != null) return activity.getSystemService(name);

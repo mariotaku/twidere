@@ -58,6 +58,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
+import org.mariotaku.twidere.util.MultiSelectManager;
 
 public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> implements IStatusesAdapter,
 		OnClickListener {
@@ -65,7 +66,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	private final Context mContext;
 	private final Resources mResources;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
-	private final ArrayList<Long> mSelectedStatusIds;
+	private final MultiSelectManager mMultiSelectManager;
 
 	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled,
 			mMentionsHighlightDisabled, mDisplaySensitiveContents, mIndicateMyStatusDisabled, mLinkHighlightingEnabled,
@@ -78,11 +79,19 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		mContext = context;
 		mResources = context.getResources();
 		final TwidereApplication application = TwidereApplication.getInstance(context);
-		mSelectedStatusIds = application.getSelectedStatusIds();
+		mMultiSelectManager = application.getMultiSelectManager();
 		mProfileImageLoader = application.getProfileImageLoader();
 		mPreviewImageLoader = application.getPreviewImageLoader();
 	}
 
+	public void onItemSelected(Object item) {
+		notifyDataSetChanged();
+	}
+
+	public void onItemUnselected(Object item) {
+		notifyDataSetChanged();
+	}
+	
 	public long findItemIdByPosition(final int position) {
 		if (position >= 0 && position < getCount()) return getItem(position).status_id;
 		return -1;
@@ -151,7 +160,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			final String retweeted_by_screen_name = status.retweeted_by_screen_name;
 
 			if (mMultiSelectEnabled) {
-				holder.setSelected(mSelectedStatusIds.contains(status.status_id));
+				holder.setSelected(mMultiSelectManager.isStatusSelected(status.status_id));
 			} else {
 				holder.setSelected(false);
 			}

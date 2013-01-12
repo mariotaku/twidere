@@ -48,6 +48,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.webkit.WebView;
 import edu.ucdavis.earlybird.UCDService;
+import org.mariotaku.twidere.util.MultiSelectManager;
 
 public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener {
 
@@ -55,6 +56,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	private AsyncTaskManager mAsyncTaskManager;
 	private SharedPreferences mPreferences;
 	private AsyncTwitterWrapper mTwitterWrapper;
+	private MultiSelectManager mMultiSelectManager;
 
 	private HostAddressResolver mResolver;
 	private SQLiteDatabase mDatabase;
@@ -62,11 +64,6 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	private Handler mHandler;
 
 	private String mBrowserUserAgent;
-	private boolean mMultiSelectActive;
-
-	private final ItemsList mSelectedItems = new ItemsList();
-	private final ArrayList<Long> mSelectedStatusIds = new ArrayList<Long>();
-	private final ArrayList<Long> mSelectedUserIds = new ArrayList<Long>();
 
 	public AsyncTaskManager getAsyncTaskManager() {
 		if (mAsyncTaskManager != null) return mAsyncTaskManager;
@@ -102,16 +99,9 @@ public class TwidereApplication extends Application implements Constants, OnShar
 				R.drawable.ic_profile_image_default, profile_image_size, profile_image_size, mem);
 	}
 
-	public ItemsList getSelectedItems() {
-		return mSelectedItems;
-	}
-
-	public ArrayList<Long> getSelectedStatusIds() {
-		return mSelectedStatusIds;
-	}
-
-	public ArrayList<Long> getSelectedUserIds() {
-		return mSelectedUserIds;
+	public MultiSelectManager getMultiSelectManager() {
+		if (mMultiSelectManager != null) return mMultiSelectManager;
+		return mMultiSelectManager = new MultiSelectManager();
 	}
 
 	public SQLiteDatabase getSQLiteDatabase() {
@@ -126,9 +116,9 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	public boolean isDebugBuild() {
 		return DEBUG;
 	}
-
-	public boolean isMultiSelectActive() {
-		return mMultiSelectActive;
+	
+	public boolean isMultiSelectEnabled() {
+		return getMultiSelectManager().isActive();
 	}
 
 	@Override
@@ -141,6 +131,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		GalleryUtils.initialize(this);
 		mTwitterWrapper = AsyncTwitterWrapper.getInstance(this);
 		mBrowserUserAgent = new WebView(this).getSettings().getUserAgentString();
+		mMultiSelectManager = new MultiSelectManager();
 		if (mPreferences.getBoolean(PREFERENCE_KEY_UCD_DATA_PROFILING, false)) {
 			startService(new Intent(this, UCDService.class));
 		}
@@ -189,21 +180,6 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		}
 	}
 
-	public void startMultiSelect() {
-		mMultiSelectActive = true;
-		final Intent intent = new Intent(BROADCAST_MULTI_SELECT_STATE_CHANGED);
-		intent.setPackage(getPackageName());
-		sendBroadcast(intent);
-	}
-
-	public void stopMultiSelect() {
-		mSelectedItems.clear();
-		mMultiSelectActive = false;
-		final Intent intent = new Intent(BROADCAST_MULTI_SELECT_STATE_CHANGED);
-		intent.setPackage(getPackageName());
-		sendBroadcast(intent);
-	}
-
 	private void initializeAsyncTask() {
 		// AsyncTask class needs to be loaded in UI thread.
 		// So we load it here to comply the rule.
@@ -215,49 +191,6 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	public static TwidereApplication getInstance(final Context context) {
 		return context != null ? (TwidereApplication) context.getApplicationContext() : null;
-	}
-
-	@SuppressWarnings("serial")
-	public class ItemsList extends NoDuplicatesLinkedList<Object> {
-
-		@Override
-		public boolean add(final Object object) {
-			final boolean ret = super.add(object);
-			if (object instanceof ParcelableStatus) {
-				mSelectedStatusIds.add(((ParcelableStatus) object).status_id);
-			} else if (object instanceof ParcelableUser) {
-				mSelectedUserIds.add(((ParcelableUser) object).user_id);
-			}
-			final Intent intent = new Intent(BROADCAST_MULTI_SELECT_ITEM_CHANGED);
-			intent.setPackage(getPackageName());
-			sendBroadcast(intent);
-			return ret;
-		}
-
-		@Override
-		public void clear() {
-			super.clear();
-			mSelectedStatusIds.clear();
-			mSelectedUserIds.clear();
-			final Intent intent = new Intent(BROADCAST_MULTI_SELECT_ITEM_CHANGED);
-			intent.setPackage(getPackageName());
-			sendBroadcast(intent);
-		}
-
-		@Override
-		public boolean remove(final Object object) {
-			final boolean ret = super.remove(object);
-			if (object instanceof ParcelableStatus) {
-				mSelectedStatusIds.remove(((ParcelableStatus) object).status_id);
-			} else if (object instanceof ParcelableUser) {
-				mSelectedUserIds.remove(((ParcelableUser) object).user_id);
-			}
-			final Intent intent = new Intent(BROADCAST_MULTI_SELECT_ITEM_CHANGED);
-			intent.setPackage(getPackageName());
-			sendBroadcast(intent);
-			return ret;
-		}
-
 	}
 
 }

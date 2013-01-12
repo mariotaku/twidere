@@ -63,13 +63,14 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
+import org.mariotaku.twidere.util.MultiSelectManager;
 
 public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatusesAdapter, OnClickListener {
 
 	private final Context mContext;
 	private final Resources mResources;
 	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
-	private final ArrayList<Long> mSelectedStatusIds;
+	private final MultiSelectManager mMultiSelectManager;
 
 	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled,
 			mMentionsHighlightDisabled, mDisplaySensitiveContents, mIndicateMyStatusDisabled, mLinkHighlightingEnabled,
@@ -83,7 +84,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 		mContext = context;
 		mResources = context.getResources();
 		final TwidereApplication application = TwidereApplication.getInstance(context);
-		mSelectedStatusIds = application.getSelectedStatusIds();
+		mMultiSelectManager = application.getMultiSelectManager();
 		mProfileImageLoader = application.getProfileImageLoader();
 		mPreviewImageLoader = application.getPreviewImageLoader();
 	}
@@ -138,7 +139,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			final boolean is_my_status = account_id == user_id;
 
 			if (mMultiSelectEnabled) {
-				holder.setSelected(mSelectedStatusIds.contains(status_id));
+				holder.setSelected(mMultiSelectManager.isStatusSelected(status_id));
 			} else {
 				holder.setSelected(false);
 			}
@@ -315,6 +316,14 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 				break;
 			}
 		}
+	}
+	
+	public void onItemSelected(Object item) {
+		notifyDataSetChanged();
+	}
+
+	public void onItemUnselected(Object item) {
+		notifyDataSetChanged();
 	}
 
 	@Override

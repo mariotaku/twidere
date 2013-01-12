@@ -34,6 +34,14 @@ import android.view.ViewGroup;
 
 public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implements IBaseAdapter {
 
+	public void onItemSelected(Object item) {
+		notifyDataSetChanged();
+	}
+
+	public void onItemUnselected(Object item) {
+		notifyDataSetChanged();
+	}
+
 	private final LazyImageLoader mProfileImageLoader;
 
 	private boolean mDisplayProfileImage;

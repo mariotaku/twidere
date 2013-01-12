@@ -83,11 +83,6 @@ public class UserTimelineLoader extends Twitter4JStatusLoader {
 				}
 				return data;
 			} catch (final IOException e) {
-				e.printStackTrace();
-			} catch (final ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (final ClassCastException e) {
-				e.printStackTrace();
 			}
 		}
 		return super.loadInBackground();

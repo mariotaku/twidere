@@ -61,6 +61,15 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		mImageLoader = loader;
 	}
 
+
+	public void onItemSelected(Object item) {
+		notifyDataSetChanged();
+	}
+
+	public void onItemUnselected(Object item) {
+		notifyDataSetChanged();
+	}
+	
 	@Override
 	public void bindView(final View view, final Context context, final Cursor cursor) {
 		final int position = cursor.getPosition();

@@ -197,6 +197,14 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 
 	static class ActivitiesAdapter extends BaseAdapter implements IBaseAdapter {
 
+		public void onItemSelected(Object item) {
+			notifyDataSetChanged();
+		}
+
+		public void onItemUnselected(Object item) {
+			notifyDataSetChanged();
+		}
+
 		private boolean mDisplayProfileImage, mDisplayName, mShowAbsoluteTime;
 
 		private final boolean mDisplayHiResProfileImage;

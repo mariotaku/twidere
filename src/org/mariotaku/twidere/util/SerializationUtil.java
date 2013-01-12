@@ -56,7 +56,7 @@ public class SerializationUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> T read(final String path) throws IOException, ClassNotFoundException {
+	public static <T> T read(final String path) throws IOException {
 		if (path == null) return null;
 		ObjectInputStream is = null;
 		try {
@@ -65,6 +65,10 @@ public class SerializationUtil {
 			final FileInputStream fis = new FileInputStream(new File(path));
 			is = new ObjectInputStream(fis);
 			return (T) is.readObject();
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new IOException(e);
 		} finally {
 			if (is != null) {
 				is.close();

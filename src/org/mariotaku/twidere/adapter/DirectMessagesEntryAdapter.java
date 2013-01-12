@@ -59,6 +59,14 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 		mProfileImageLoader = loader;
 	}
 
+	public void onItemSelected(Object item) {
+		notifyDataSetChanged();
+	}
+
+	public void onItemUnselected(Object item) {
+		notifyDataSetChanged();
+	}
+	
 	@Override
 	public void bindView(final View view, final Context context, final Cursor cursor) {
 		final DirectMessageEntryViewHolder holder = (DirectMessageEntryViewHolder) view.getTag();
