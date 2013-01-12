@@ -70,7 +70,7 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 
 	@Override
 	public String resolve(final String host) throws IOException {
-		if (host == null) return null;
+		if (host == null || !mPreferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false)) return null;
 		// First, I'll try to load address cached.
 		if (mHostCache.containsKey(host)) {
 			if (DEBUG) {

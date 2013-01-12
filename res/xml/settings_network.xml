@@ -46,12 +46,14 @@
 			android:summary="@string/ignore_ssl_error_summary"
 			android:title="@string/ignore_ssl_error"/>
 		<CheckBoxPreference
+			android:dependency="ignore_ssl_error"
 			android:defaultValue="false"
 			android:key="tcp_dns_query"
 			android:summary="@string/tcp_dns_query_summary"
 			android:title="@string/tcp_dns_query"/>
 
 		<EditTextPreference
+			android:dependency="ignore_ssl_error"
 			android:defaultValue="8.8.8.8"
 			android:dialogTitle="@string/dns_server"
 			android:inputType="textVisiblePassword"
@@ -61,6 +63,7 @@
 			android:title="@string/dns_server"/>
 
 		<Preference
+			android:dependency="ignore_ssl_error"
 			android:key="custom_host_mapping"
 			android:summary="@string/custom_host_mapping_summary"
 			android:title="@string/custom_host_mapping">
