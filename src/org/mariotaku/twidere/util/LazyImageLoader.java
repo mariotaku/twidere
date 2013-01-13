@@ -409,34 +409,40 @@ public class LazyImageLoader implements Constants {
 		}
 
 		public void clear() {
-			mHardCache.clear();
-			mSoftCache.clear();
+			try {
+				mHardCache.clear();
+				mSoftCache.clear();
+			} catch (final Exception e) {
+				Log.e(LOGTAG, "Unknown exception", e);
+			}
 		}
 
 		public Bitmap get(final String key) {
 			if (key == null) return null;
-			synchronized (mHardCache) {
-				final Bitmap bitmap = mHardCache.get(key);
-				if (bitmap != null) {
-					// Put bitmap on top of cache so it's purged last.
-					mHardCache.remove(key);
-					mHardCache.put(key, bitmap);
-					return bitmap;
+			try {
+				synchronized (mHardCache) {
+					final Bitmap bitmap = mHardCache.get(key);
+					if (bitmap != null && key != null) {
+						// Put bitmap on top of cache so it's purged last.
+						mHardCache.remove(key);
+						mHardCache.put(key, bitmap);
+						return bitmap;
+					}
 				}
-			}
-
-			final Reference<Bitmap> bitmapRef = mSoftCache.get(key);
-			if (bitmapRef != null) {
-				final Bitmap bitmap = bitmapRef.get();
-				if (bitmap != null)
-					return bitmap;
-				else {
-					// Must have been collected by the Garbage Collector
-					// so we remove the bucket from the cache.
-					mSoftCache.remove(key);
+				final Reference<Bitmap> bitmapRef = mSoftCache.get(key);
+				if (bitmapRef != null) {
+					final Bitmap bitmap = bitmapRef.get();
+					if (bitmap != null)
+						return bitmap;
+					else {
+						// Must have been collected by the Garbage Collector
+						// so we remove the bucket from the cache.
+						mSoftCache.remove(key);
+					}
 				}
+			} catch (final Exception e) {
+				Log.e(LOGTAG, "Unknown exception", e);
 			}
-
 			// Could not locate the bitmap in any of the caches, so we return
 			// null.
 			return null;
@@ -445,12 +451,15 @@ public class LazyImageLoader implements Constants {
 
 		public void put(final String key, final Bitmap bitmap) {
 			if (key == null || bitmap == null) return;
-			mHardCache.put(key, bitmap);
+			try {
+				mHardCache.put(key, bitmap);
+			} catch (final Exception e) {
+				Log.e(LOGTAG, "Unknown exception", e);
+			}
 		}
 
 		static class HardBitmapCache extends LinkedHashMap<String, Bitmap> {
 
-			/***/
 			private static final long serialVersionUID = 1347795807259717646L;
 			private final Map<String, SoftReference<Bitmap>> soft_cache;
 			private final int capacity;

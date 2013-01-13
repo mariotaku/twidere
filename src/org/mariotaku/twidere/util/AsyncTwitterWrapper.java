@@ -1698,7 +1698,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		public SendDirectMessageTask(final long account_id, final String screen_name, final long user_id,
 				final String message) {
 			super(mContext, mAsyncTaskManager);
-			twitter = getTwitterInstance(mContext, account_id, false, true);
+			twitter = getTwitterInstance(mContext, account_id, true, true);
 			this.account_id = account_id;
 			this.user_id = user_id;
 			this.screen_name = screen_name;

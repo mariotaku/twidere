@@ -115,6 +115,7 @@ public class AuthorizeActivity extends BaseActivity implements LoaderCallbacks<R
 		if (data == null || mWebView == null) {
 			Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
 			finish();
+			return;
 		}
 		mWebView.loadUrl(mAuthUrl = data.getAuthorizationURL());
 	}

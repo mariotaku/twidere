@@ -171,6 +171,8 @@ import android.graphics.Rect;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.NinePatchDrawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -312,6 +314,20 @@ public final class Utils implements Constants {
 
 	private Utils() {
 		throw new AssertionError("You are trying to create an instance for this utility class!");
+	}
+
+	public static Bitmap getBitmap(final Drawable drawable) {
+		if (drawable instanceof NinePatchDrawable) return null;
+		if (drawable instanceof BitmapDrawable)
+			return ((BitmapDrawable) drawable).getBitmap();
+		else if (drawable instanceof TransitionDrawable) {
+			final int layer_count = ((TransitionDrawable) drawable).getNumberOfLayers();
+			for (int i = 0; i < layer_count; i++) {
+				final Drawable layer = ((TransitionDrawable) drawable).getDrawable(i);
+				if (layer instanceof BitmapDrawable) return ((BitmapDrawable) layer).getBitmap();
+			}
+		}
+		return null;
 	}
 
 	public static void addIntentToSubMenu(final Context context, final SubMenu menu, final Intent query_intent) {

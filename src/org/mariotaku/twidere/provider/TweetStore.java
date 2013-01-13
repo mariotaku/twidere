@@ -389,10 +389,6 @@ public final class TweetStore implements Constants {
 							+ SENDER_SCREEN_NAME + " AS " + SCREEN_NAME + ", " + SENDER_PROFILE_IMAGE_URL + " AS "
 							+ PROFILE_IMAGE_URL + ", " + TEXT_HTML + ", " + SENDER_ID + " AS " + CONVERSATION_ID);
 					builder.append(" FROM " + TABLE_DIRECT_MESSAGES_INBOX);
-					// builder.append(" GROUP BY " + CONVERSATION_ID);
-					// builder.append(" HAVING " + MAX_TIMESTAMP_TEMP +
-					// " NOT NULL" + " AND " + MAX_STATUS_ID
-					// + " NOT NULL");
 					builder.append(" UNION ");
 					builder.append("SELECT " + _ID + ", " + MESSAGE_TIMESTAMP + ", " + MESSAGE_ID + ", " + ACCOUNT_ID
 							+ ", " + "1 AS " + IS_OUTGOING + ", " + RECIPIENT_NAME + " AS " + NAME + ", "
@@ -400,10 +396,6 @@ public final class TweetStore implements Constants {
 							+ " AS " + PROFILE_IMAGE_URL + ", " + TEXT_HTML + ", " + RECIPIENT_ID + " AS "
 							+ CONVERSATION_ID);
 					builder.append(" FROM " + TABLE_DIRECT_MESSAGES_OUTBOX);
-					// builder.append(" GROUP BY " + CONVERSATION_ID);
-					// builder.append(" HAVING " + MAX_TIMESTAMP_TEMP +
-					// " NOT NULL" + " AND " + MAX_STATUS_ID
-					// + " NOT NULL");
 					builder.append(")");
 					builder.append(" WHERE ");
 					builder.append(MESSAGE_ID + " IN(");

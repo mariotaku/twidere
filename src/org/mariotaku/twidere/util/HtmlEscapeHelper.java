@@ -1,6 +1,6 @@
 package org.mariotaku.twidere.util;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.mariotaku.twidere.util.apache.commons.lang3.StringEscapeUtils;
 
 public class HtmlEscapeHelper {
 

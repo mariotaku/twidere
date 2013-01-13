@@ -1,14 +1,13 @@
 package org.mariotaku.twidere.view;
 
+import static org.mariotaku.twidere.util.Utils.getBitmap;
+
 import org.mariotaku.twidere.R;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.NinePatchDrawable;
-import android.graphics.drawable.TransitionDrawable;
 import android.util.AttributeSet;
 
 public class ImagePreviewView extends RoundCorneredImageView {
@@ -98,19 +97,5 @@ public class ImagePreviewView extends RoundCorneredImageView {
 		if (value < min) return min;
 		if (value > max) return max;
 		return value;
-	}
-
-	static Bitmap getBitmap(final Drawable drawable) {
-		if (drawable instanceof NinePatchDrawable) return null;
-		if (drawable instanceof BitmapDrawable)
-			return ((BitmapDrawable) drawable).getBitmap();
-		else if (drawable instanceof TransitionDrawable) {
-			final int layer_count = ((TransitionDrawable) drawable).getNumberOfLayers();
-			for (int i = 0; i < layer_count; i++) {
-				final Drawable layer = ((TransitionDrawable) drawable).getDrawable(i);
-				if (layer instanceof BitmapDrawable) return ((BitmapDrawable) layer).getBitmap();
-			}
-		}
-		return null;
 	}
 }

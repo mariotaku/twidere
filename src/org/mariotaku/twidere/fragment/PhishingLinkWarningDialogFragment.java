@@ -1,7 +1,6 @@
 package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.util.AssetsImageGetter;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -10,9 +9,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.Html.ImageGetter;
-import android.text.Spanned;
+import android.view.LayoutInflater;
 
 public class PhishingLinkWarningDialogFragment extends BaseDialogFragment implements OnClickListener {
 
@@ -36,11 +33,9 @@ public class PhishingLinkWarningDialogFragment extends BaseDialogFragment implem
 	@Override
 	public Dialog onCreateDialog(final Bundle savedInstanceState) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		final LayoutInflater inflater = LayoutInflater.from(getActivity());
 		builder.setTitle(android.R.string.dialog_alert_title);
-		final String html = getString(R.string.phishing_link_warning_message);
-		final ImageGetter getter = new AssetsImageGetter(getActivity());
-		final Spanned text = Html.fromHtml(html, getter, null);
-		builder.setMessage(text);
+		builder.setView(inflater.inflate(R.layout.phishing_link_warning, null));
 		builder.setPositiveButton(android.R.string.ok, this);
 		builder.setNegativeButton(android.R.string.cancel, null);
 		return builder.create();

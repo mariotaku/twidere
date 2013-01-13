@@ -36,8 +36,8 @@
   <string name="no_account_selected">你必須至少選擇一個帳號</string>
   <string name="error_unknown_error">錯誤：未知錯誤，這很可能是個bug</string>
   <string name="error_message">錯誤：<xliff:g id="message">%s</xliff:g></string>
-  <string name="error_message_with_action">在<xliff:g id="action">%1$s</xliff:g>時發生問題: <xliff:g id="message">%2$s</xliff:g></string>
-  <string name="error_message_rate_limit">在 <xliff:g id="action">%1$s</xliff:g>時超過了Twitter的調用次數限制，請在<xliff:g id="time">%2$s</xliff:g>重試</string>
+  <string name="error_message_with_action">在 <xliff:g id="action">%1$s</xliff:g> 時發生問題: <xliff:g id="message">%2$s</xliff:g></string>
+  <string name="error_message_rate_limit">在<xliff:g id="action">%1$s</xliff:g>時超過了Twitter的調用次數限制，請在<xliff:g id="time">%2$s</xliff:g>重試</string>
   <string name="select_account">選擇帳號</string>
   <string name="username">用戶名</string>
   <string name="password">密碼</string>
@@ -381,7 +381,7 @@
   <string name="small">小尺寸</string>
   <string name="and_more">和其他 <xliff:g id="count">%d</xliff:g> 個</string>
   <string name="clear_search_history">清除搜索歷史</string>
-  <string name="permission_description_none">No permissions needed</string>
+  <string name="permission_description_none">沒有需要的權限</string>
   <string name="permission_description_refresh">刷新時間綫（包括私信）</string>
   <string name="permission_description_read">讀取推文和一些緩存的內容</string>
   <string name="permission_description_write">將推文和其他一些內容寫入到資料庫，發送推文</string>
@@ -392,9 +392,17 @@
   <string name="accept">同意並授權</string>
   <string name="no_thanks">不用了，謝謝</string>
   <string name="revoke_permissions">撤銷授權</string>
-  <string name="fast_scroll_thumb">快速滾動</string>
+  <string name="fast_scroll_thumb">快速捲動條</string>
   <string name="link_highlighting">連結高亮</string>
   <string name="fast_timeline_processing">快速時間綫處理</string>
   <string name="fast_timeline_processing_summary">忽略時間綫中的所有細節，啟用可以使列表更加流暢</string>
   <string name="indicate_my_status">區別我的推文</string>
+  <string name="default_ringtone">預設鈴聲</string>
+  <string name="phishing_link_warning">釣魚連結警告</string>
+  <string name="phishing_link_warning_summary">在你試圖打開私信中可能的釣魚連結時發出警告</string>
+  <string name="phishing_link_warning_message_1">你正在打開私信中一個可能是釣魚站點的連結。\n\n請在輸入任何個人信息前，認真檢查站點的地址。</string>
+  <string name="phishing_link_warning_message_2">確定繼續嗎？</string>
+  <string name="image_preload_options">圖片預加載選項</string>
+  <string name="profile_images">個人資料圖片</string>
+  <string name="preview_images">推文預覽圖片</string>
 </resources>

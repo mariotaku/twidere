@@ -36,35 +36,32 @@
   <string name="no_account_selected">アカウント選択なし</string>
   <string name="error_unknown_error">エラー：未知のエラー、これはバッグかもしれませんが…</string>
   <string name="error_message">エラー：<xliff:g id="message">%s</xliff:g></string>
+  <string name="error_message_with_action"><xliff:g id="action">%1$s</xliff:g>中にエラー：<xliff:g id="message">%2$s</xliff:g></string>
+  <string name="error_message_rate_limit"><xliff:g id="action">%1$s</xliff:g>中にツイッターのAPI制限を超過しました。<xliff:g id="time">%2$s</xliff:g>後にもう一度試してください。</string>
   <string name="select_account">アカウントを選択</string>
   <string name="username">ユーザー名かメイルアドレス</string>
   <string name="password">パスワード</string>
   <string name="label_tweetstore_provider">ツイデレのデータベース・ストレージ</string>
-  
-  
-  
-  
-  
-  
-  
-  
+  <string name="label_refresh_service">サービスをリフレッシュ</string>
   <string name="open_in_browser">ブラウザで開く</string>
   <string name="tap_to_load_more">タップして読み込む</string>
   <string name="delete">削除</string>
   <string name="retweet">リツイート</string>
   <string name="cancel_retweet">リツイートをキャンセル</string>
+  <string name="favorite">お気に入りに登録</string>
+  <string name="unfavorite">お気に入りから削除</string>
   <string name="reply">返信</string>
   <string name="share">共有</string>
   <string name="share_via_twidere">ツイデレ経由で共有</string>
   <string name="view_image">画像</string>
   <string name="view_map">地図</string>
   <string name="view_status">ツイート</string>
-  
   <string name="view_user_profile">ユーザープロフィール</string>
   <string name="browser">ブラウザ</string>
   <string name="pick_from_gallery">ギャラリーから選択</string>
   <string name="tweets">ツイート</string>
   <string name="followers">フォロワー</string>
+  <string name="friends">フォロー</string>
   <string name="about">バージョン情報</string>
   <string name="about_summary">ツイデレについて</string>
   <string name="license">オープンソースライセンス</string>
@@ -91,6 +88,7 @@
   <string name="display_profile_image">プロフィール画像を表示</string>
   <string name="image_load_summary">プロフィール画像を表示する。無効にするとリストのスクロール速度を速くなり、モバイルデータ通信量を抑えることができる。</string>
   <string name="in_reply_to"><xliff:g id="user_name">%s</xliff:g>さんへの返信</string>
+  <string name="in_reply_to_pull_to_load_conversation"> <xliff:g id="user_name">%s</xliff:g>さんへの返信、引っ張って会話を表示…</string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> さんがリツイート</string>
   <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> と他 <xliff:g id="retweet_count">%2$d</xliff:g> 人がリツイート</string>
   <string name="reply_to"><xliff:g id="user_name">%s</xliff:g>さんへの返信</string>
@@ -119,6 +117,16 @@
   <string name="quote">引用</string>
   <string name="add_rule">ルールを追加</string>
   <string name="longclick_to_delete">長押して削除</string>
+  <string name="retweet_successful">リツイートしました</string>
+  <string name="delete_successful">削除しました</string>
+  <string name="send_successful">送信しました</string>
+  <string name="favorite_successful">お気に入りに追加しました</string>
+  <string name="unfavorite_successful">お気に入りから削除しました</string>
+  <string name="follow_successful">フォローしました</string>
+  <string name="unfollow_successful">フォロー解除しました</string>
+  <string name="profile_update_successful">プロフィールを更新しました</string>
+  <string name="profile_image_update_successful">プロフィールアイコンを更新しました</string>
+  <string name="profile_banner_image_update_successful">プロフィールのヘッダーを更新しました。</string>
   <string name="text_size">フォントサイズ</string>
   <string name="text_size_summary">ツイートのフォントサイズ。</string>
   <string name="cannot_get_location">位置情報が取得できません。</string>
@@ -140,7 +148,6 @@
   <string name="search_users">ユーザーを検索</string>
   <string name="search_tweets">ツイートを検索</string>
   <string name="created_at">作成日</string>
-  
   <string name="search_hint">ツイートまたユーザーを検索</string>
   <string name="remember_position">位置を記憶</string>
   <string name="remember_position_summary">ツイデレを閉じる前にリスト/タブの位置を記憶する。</string>
@@ -192,13 +199,12 @@
   <string name="list_members">リスト内アカウント</string>
   <string name="list_subscribers">リストフォロー数</string>
   <string name="type_to_compose">メッセージを入力</string>
+  <string name="users_lists">このユーザーのリスト</string>
+  <string name="lists_following_user">このユーザーが追加されているリスト</string>
   <string name="Ntweets_quantity_one">新しいツイートが一件あります。</string>
   <string name="Ntweets_quantity_other">新しいツイートが <xliff:g id="items">%d</xliff:g>+ 件あります。</string>
-  
-  
-  
-  
   <string name="item_1_minute">1分</string>
+  <string name="item_3_minutes">3分</string>
   <string name="item_5_minutes">5分</string>
   <string name="item_10_minutes">10分</string>
   <string name="item_15_minutes">15分</string>
@@ -206,9 +212,10 @@
   <string name="item_1_hour">1時間</string>
   <string name="item_2_hours">2時間</string>
   <string name="item_4_hours">4時間</string>
-  
+  <string name="inline_image_preview_display_option">サムネイル表示設定</string>
   <string name="solid_color_background">単色の背景</string>
   <string name="solid_color_background_summary">アモレッド搭載した機種ならこの機能を有効にすることをお勧めします。</string>
+  <string name="following_you">あなたをフォロー中</string>
   <string name="user_list">ユーザーリスト</string>
   <string name="trends_location">トレンドの場所</string>
   <string name="trends_location_summary">ローカルトレンドの場所を変更する。</string>
@@ -219,6 +226,8 @@
   <string name="signing_in_please_wait">サインインしています、しばらくお待ちください。もう一度戻るボタンを押すと終了します。</string>
   <string name="connectivity">接続性</string>
   <string name="add_member">ユーザーを追加</string>
+  <string name="add_successful">追加しました</string>
+  <string name="create_successful">作成しました</string>
   <string name="new_user_list">新規リスト作成</string>
   <string name="is_public">公開</string>
   <string name="send_direct_message">DMを送信</string>
@@ -229,6 +238,7 @@
   <string name="users_retweeted_this">リツイートしたユーザー</string>
   <string name="saved_searches">保存した検索</string>
   <string name="custom_tabs">カスタムタブ</string>
+  <string name="default_tabs">デフォルトタブ</string>
   <string name="add_tab">タブを追加</string>
   <string name="tab_type">タブ類型</string>
   <string name="unused">利用できません</string>
@@ -252,8 +262,8 @@
   <string name="home_refresh">ホームTLの更新</string>
   <string name="error_message_image_upload_failed">画像をアップロードできません。</string>
   <string name="error_message_image_uploader_not_found">画像アップローダーが見つかりません。</string>
-  <string name="image_upload_format">画像をアップロード時のツイート形式</string>
-  <string name="image_upload_format_summary">\"[LINK]\" = 画像リンク\n\"[TEXT]\" = ツイートするコンテンツ</string>
+  <string name="image_upload_format">画像付きツイートの書式</string>
+  <string name="image_upload_format_summary">\"[LINK]\" = 画像リンク\n\"[TEXT]\" = ツイートのテキスト\n(拡張機能のみ)</string>
   <string name="tweet_shortener">Tweet shortener</string>
   <string name="tweet_shortener_default">無 (送信を取り消す)</string>
   <string name="error_message_status_too_long">ツイートのテキストは長過ぎます。</string>
@@ -290,6 +300,109 @@
   <string name="activities_about_me">アクティビティ</string>
   <string name="activity_about_me_favorite"><xliff:g id="user">%s</xliff:g> があなたのツイートを気に入りました。</string>
   <string name="activity_about_me_favorite_multi"><xliff:g id="user">%s</xliff:g> と他 <xliff:g id="count">%d</xliff:g> 人があなたのツイートを気に入りました。</string>
+  <string name="activity_about_me_follow"><xliff:g id="user">%s</xliff:g> があなたをフォローしました。</string>
+  <string name="activity_about_me_follow_multi"><xliff:g id="user">%s</xliff:g> と他 <xliff:g id="count">%d</xliff:g> 人があなたをフォローしました。</string>
   <string name="activity_about_me_retweet"><xliff:g id="user">%s</xliff:g> があなたのツイートをリツイートしました。</string>
   <string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> と他 <xliff:g id="count">%d</xliff:g> 人があなたのツイートをリツイートしました。</string>
+  <string name="activity_about_me_list_member_added"><xliff:g id="user">%s</xliff:g> があなたをリストに追加しました。</string>
+  <string name="activity_about_me_list_member_added_multi"><xliff:g id="user">%s</xliff:g> と他 <xliff:g id="count">%d</xliff:g>人があなたをリストに追加しました。</string>
+  <string name="cannot_get_callback_url">コールバックが取得できません。ユーザー名とパスワードを確認して再試行してください。</string>
+  <string name="tweet_not_sent">ツイートは送信されませんでした。</string>
+  <string name="tweet_not_sent_summary">ツイートは送信されませんでした。下書きに保存されています。</string>
+  <string name="incoming_friendships">保留中のフォローリクエスト</string>
+  <string name="click_to_open_menu">クリックするとメニューを表示</string>
+  <string name="click_to_open_menu_summary">タップするとメニューを表示し、長押しと複数選択。</string>
+  <string name="send_follow_request">フォローリクエストを送信</string>
+  <string name="follow_request_sent">フォローリクエストを送信しました。</string>
+  <string name="seprate_retweet_action">リツイートと引用の分離</string>
+  <string name="seprate_retweet_action_summary">リツイートと引用の両方をメニューに同時表示する。</string>
+  <string name="tweet">ツイート</string>
+  <string name="preview">プリビュー</string>
+  <string name="api_upgrade_notice_title">十分ご注意ください！</string>
+  <string name="api_upgrade_notice_message">  Twitter API Version 1.1 の提供が開始されます。\n\n  これからツイデレはAPI1.1を採用します。\n\n  問題が発生する可能性を防ぐため、あなたの既存アカウントを削除して再サインインすることを強くお勧めします。\n\n  利用ルール変更点：\n  *レート制限が厳しくなりました。例、１５分間ホームTLの更新回数は１５回のみです。\n  *あなたのツイートをリツイートしたユーザーと あなたにリツイートしたツイートが見えなくなりました。\n  *ツイデレをStatusNetのクライントとして利用している場合、APIルールの変更でいろんな機能を失うことになります。\n\n  ご不便をおかけして申し訳ございませんが、こちらも何もできません。ツイッターはサードパーティクライントを厳しく制限していますから。</string>
+  <string name="connection_timeout">接続のタイムアウト</string>
+  <string name="name_display_option">ユーザー名の表示</string>
+  <string name="both">両方</string>
+  <string name="browser_sign_in">ブラウザーでログイン</string>
+  <string name="stop_auto_refresh_when_battery_low">電池残量不足時に自動更新を停止</string>
+  <string name="notification_mention"><xliff:g id="user">%s</xliff:g>さんからあなた宛のツイートがあります。</string>
+  <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g>さんからDMが届きました。</string>
+  <string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> と他 <xliff:g id="count">%d</xliff:g> 人からあなた宛のツイートがあります。</string>
+  <string name="notification_direct_message_multiple"><xliff:g id="user">%s</xliff:g> と他 <xliff:g id="count">%d</xliff:g> 人からDMが届きました。</string>
+  <string name="getting_status">ツイート取得中</string>
+  <string name="sending_status">ツイート送信中</string>
+  <string name="sending_direct_message">DM送信中</string>
+  <string name="refreshing_timelines">タイムラインを更新しています</string>
+  <string name="refreshing_direct_messages">DMを更新しています</string>
+  <string name="favoriting">お気に入りに登録しています</string>
+  <string name="unfavoriting">お気に入りから削除しています</string>
+  <string name="deleting">削除しています</string>
+  <string name="updating_profile">プロフィールを更新しています</string>
+  <string name="updating_profile_image">プロフィール画像を更新しています</string>
+  <string name="updating_profile_banner_image">ヘッダー画像を更新しています</string>
+  <string name="removing_profile_banner_image">ヘッダー画像を削除しています</string>
+  <string name="updating_details">詳細情報を更新しています</string>
+  <string name="blocking">ブロッグしています</string>
+  <string name="unblocking">ブロックを解除しています</string>
+  <string name="following">フォローしています</string>
+  <string name="unfollowing">フォローを解除しています</string>
+  <string name="status_is_duplicate">既にあなたは同じツイートを送信済みです。</string>
+  <string name="creating_list">リストを作成しています</string>
+  <string name="adding_member">アカウントを追加しています</string>
+  <string name="signing_in">サインインしています</string>
+  <string name="retweeting">リツイートしています</string>
+  <string name="reporting_for_spam">スパムとして報告しています</string>
+  <string name="data_profiling_summary">Twidere took part in a research on predicting user\'s social behavior to pre-caching content started by students in UC Davis.\n\nHere are the data we wanted to collect and why:\nCollected data:\n1. User\'s twitter ID\n2. User\'s home timeline (prediction based on user\'s interest and social interaction)\n3. User\'s click on a tweet (prediction based on user\'s interest and social interaction)\n4. Coarse location (which is good predictor when user will access twitter)\n\nTwidere will upload collected data only when Wifi available and your device connected to charger, so It will not cost you extra bandwidth fee or drain your battery power.</string>
+  <string name="data_profiling">匿名利用状況データ</string>
+  <string name="enable_data_profiling">報告を有効にする</string>
+  <string name="data_profiling_notification_ticker">オプトイン統計</string>
+  <string name="data_profiling_notification_title">匿名利用状況データ</string>
+  <string name="data_profiling_notification_desc">匿名利用状況データの報告を有効/無効にする</string>
+  <string name="silent_notifications">通知を止める時間帯</string>
+  <string name="silent_notifications_summary">Disable ringtone/vibrate for notifications</string>
+  <string name="disable_background_service">バックグラウンドサビースを無効にする</string>
+  <string name="pull_to_load_conversation_label">引っ張って会話を表示…</string>
+  <string name="pull_to_load_conversation_release_label">指を離すと会話を読み込む…</string>
+  <string name="text_copied">テキストがクリップボードにコピーされました。</string>
+  <string name="load_from_here">ここから読み込む</string>
+  <string name="amount_usd">総計 (usd)</string>
+  <string name="donate">寄付</string>
+  <string name="hashtag">ハッシュタグ</string>
+  <string name="links">リンク</string>
+  <string name="edit_profile">プロフィールを編集</string>
+  <string name="display_sensitive_contents">センシティブなコンテンツを表示</string>
+  <string name="display_sensitive_contents_summary">プロンプトを表示せずにセンシティブなコンテンツを表示する</string>
+  <string name="sensitive_content_warning">このツイートはセンシティブなコンテンツを含める可能性があります。続行しますか？</string>
+  <string name="mark_as_sensitive">センシティブとしてマーク</string>
+  <string name="remove_sensitive_mark">センシティブのマークを消去</string>
+  <string name="loading">読み込み中…</string>
+  <string name="none">なし</string>
+  <string name="large">大きい</string>
+  <string name="small">小さい</string>
+  <string name="and_more">and <xliff:g id="count">%d</xliff:g> more</string>
+  <string name="clear_search_history">検索履歴を消去</string>
+  <string name="permission_description_none">権限が要求されません</string>
+  <string name="permission_description_refresh">タイムラインの更新 (DMを含める)</string>
+  <string name="permission_description_read">ツイートとキャッシュしたコンテンツの読み取り</string>
+  <string name="permission_description_write">データベースへの書き込み、ステイタスの更新</string>
+  <string name="permission_description_direct_messages">ダイレクトメッセージの読み取り、書き込みと送信</string>
+  <string name="permission_description_accounts">アカウント情報の読み取り</string>
+  <string name="permissions_request">権限の要求</string>
+  <string name="permissions_request_message">拡張アプリは下記にアクセスする場合があります</string>
+  <string name="accept">同意</string>
+  <string name="no_thanks">拒否</string>
+  <string name="revoke_permissions">許可を取り消す</string>
+  <string name="fast_scroll_thumb">スクロール加速</string>
+  <string name="link_highlighting">リンクのハイライト表示</string>
+  <string name="fast_timeline_processing">タイムライン処理の加速</string>
+  <string name="fast_timeline_processing_summary">タイムラインの詳細情報の処理をスキップ。有効にするとより良いパフォーマンスが得られる。</string>
+  <string name="indicate_my_status">マイツイートを示す</string>
+  <string name="default_ringtone">デフォルトの通知音</string>
+  <string name="phishing_link_warning">詐欺サイトの警告</string>
+  <string name="phishing_link_warning_summary">ダイレクトメッセージで詐欺サイトをアクセスする時、警告プロンプトを表示。</string>
+  <string name="phishing_link_warning_message_1">You are opening a link in a direct message, which might lead you to a phishing site.\n\nCheck the site address twice before providing any personal information.</string>
+  <string name="phishing_link_warning_message_2">Are you sure to continue?</string>
+  <string name="image_preload_options">Image preload options</string>
+  <string name="profile_images">Profile images</string>
+  <string name="preview_images">Preview images</string>
 </resources>

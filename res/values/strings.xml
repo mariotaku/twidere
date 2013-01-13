@@ -401,9 +401,11 @@
 	<string name="default_ringtone">Default ringtone</string>
 	<string name="phishing_link_warning">Phishing link warning</string>
 	<string name="phishing_link_warning_summary">Warn you when are trying to open a possibly phishing link in a direct message.</string>
-	<string name="phishing_link_warning_message">You are opening a link in a direct message, which might lead you tu a phishing site.&lt;br/&gt;&lt;br/&gt;Check the ste address twice before providing any personal information.&lt;br/&gt;&lt;br/&gt;&lt;img src=&quot;phishing_site_warning_example&quot;&gt;&lt;/img&gt;&lt;br/&gt;&lt;br/&gt;Are you sure to continue?</string>
+	<string name="phishing_link_warning_message_1">You are opening a link in a direct message, which might lead you to a phishing site.\n\nCheck the site address twice before providing any personal information.</string>
+	<string name="phishing_link_warning_message_2">Are you sure to continue?</string>
 	<string name="image_preload_options">Image preload options</string>
 	<string name="profile_images">Profile images</string>
 	<string name="preview_images">Preview images</string>
+	<string name="preload_on_mobile_network">Preload on mobile network</string>
 
 </resources>
