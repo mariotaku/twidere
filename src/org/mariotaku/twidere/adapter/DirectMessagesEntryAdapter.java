@@ -36,7 +36,7 @@ import java.text.DateFormat;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry;
-import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.view.holder.DirectMessageEntryViewHolder;
 
 import android.content.Context;
@@ -45,18 +45,19 @@ import android.graphics.Color;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.view.ViewGroup;
+import org.mariotaku.twidere.app.TwidereApplication;
 
 public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements IBaseAdapter {
 
 	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mFastProcessingEnabled;
-	private final LazyImageLoader mProfileImageLoader;
+	private final ImageLoaderWrapper mLazyImageLoader;
 	private float mTextSize;
 
 	private int mNameDisplayOption;
 
-	public DirectMessagesEntryAdapter(final Context context, final LazyImageLoader loader) {
+	public DirectMessagesEntryAdapter(final Context context) {
 		super(context, R.layout.direct_messages_entry_item, null, new String[0], new int[0], 0);
-		mProfileImageLoader = loader;
+		mLazyImageLoader = TwidereApplication.getInstance(context).getImageLoaderWrapper();
 	}
 
 	@Override
@@ -116,7 +117,7 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
 			final String profile_image_url_string = cursor.getString(IDX_PROFILE_IMAGE_URL);
-			mProfileImageLoader.displayImage(holder.profile_image, profile_image_url_string);
+			mLazyImageLoader.displayProfileImage(holder.profile_image, profile_image_url_string);
 		}
 
 		super.bindView(view, context, cursor);

@@ -92,7 +92,7 @@
 	<FrameLayout
 		android:id="@+id/image_preview_container"
 		android:layout_width="match_parent"
-		android:layout_height="@dimen/image_preview_height"
+		android:layout_height="wrap_content"
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_below="@+id/text"
 		android:layout_marginTop="8dp"
@@ -103,14 +103,14 @@
 		<FrameLayout
 			android:id="@+id/image_preview_frame"
 			android:layout_width="match_parent"
-			android:layout_height="match_parent"
+			android:layout_height="wrap_content"
 			android:layout_marginTop="8dp"
 			android:background="?imagePreviewBackground">
 
-			<org.mariotaku.twidere.view.ImagePreviewView
+			<org.mariotaku.twidere.view.StatusImagePreviewItemView
 				android:id="@+id/image_preview"
 				android:layout_width="match_parent"
-				android:layout_height="match_parent"
+				android:layout_height="wrap_content"
 				android:radius="4dp"/>
 		</FrameLayout>
 	</FrameLayout>

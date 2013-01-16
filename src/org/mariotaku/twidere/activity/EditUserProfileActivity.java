@@ -24,7 +24,7 @@ import org.mariotaku.twidere.util.AsyncTwitterWrapper.UpdateProfileBannerImageTa
 import org.mariotaku.twidere.util.AsyncTwitterWrapper.UpdateProfileImageTask;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper.UpdateProfileTask;
 import org.mariotaku.twidere.util.EnvironmentAccessor;
-import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.view.ProfileNameBannerContainer;
 import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
@@ -62,7 +62,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 	private static final int REQUEST_UPLOAD_PROFILE_IMAGE = 1;
 	private static final int REQUEST_UPLOAD_PROFILE_BANNER_IMAGE = 2;
 
-	private LazyImageLoader mProfileImageLoader;
+	private ImageLoaderWrapper mLazyImageLoader;
 
 	private ProfileNameBannerContainer mProfileNameBannerContainer;
 	private ImageView mProfileImageView;
@@ -300,7 +300,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 			return;
 		}
 		mAsyncTaskManager = TwidereApplication.getInstance(this).getAsyncTaskManager();
-		mProfileImageLoader = TwidereApplication.getInstance(this).getProfileImageLoader();
+		mLazyImageLoader = TwidereApplication.getInstance(this).getImageLoaderWrapper();
 		mAccountId = extras.getLong(INTENT_KEY_ACCOUNT_ID);
 		setContentView(R.layout.edit_user_profile);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -417,7 +417,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 			mEditDescription.setText(user.description);
 			mEditLocation.setText(user.location);
 			mEditUrl.setText(user.url);
-			mProfileImageLoader.displayImage(mProfileImageView, user.profile_image_url);
+			mLazyImageLoader.displayProfileImage(mProfileImageView, user.profile_image_url);
 			getBannerImage();
 		} else {
 			mProgress.setVisibility(View.GONE);

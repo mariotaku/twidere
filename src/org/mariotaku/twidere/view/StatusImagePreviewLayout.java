@@ -7,7 +7,7 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ImageSpec;
-import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -22,7 +22,7 @@ public class StatusImagePreviewLayout extends LinearLayout implements Constants,
 
 	private final ArrayList<ImageSpec> mData = new ArrayList<ImageSpec>();
 
-	private final LazyImageLoader mImageLoader;
+	private final ImageLoaderWrapper mImageLoader;
 
 	private OnImageClickListener mListener;
 
@@ -32,7 +32,7 @@ public class StatusImagePreviewLayout extends LinearLayout implements Constants,
 		super(context, attrs);
 		setOrientation(VERTICAL);
 		final TwidereApplication app = TwidereApplication.getInstance(context);
-		mImageLoader = app != null ? app.getPreviewImageLoader() : null;
+		mImageLoader = app != null ? app.getImageLoaderWrapper() : null;
 	}
 
 	public void add(final ImageSpec spec) {
@@ -96,7 +96,7 @@ public class StatusImagePreviewLayout extends LinearLayout implements Constants,
 			if (mIsPossiblySensitive && !prefs.getBoolean(PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS, false)) {
 				image_view.setImageResource(R.drawable.image_preview_nsfw);
 			} else {
-				mImageLoader.displayImage(image_view, spec.preview_image_link);
+				mImageLoader.displayPreviewImage(image_view, spec.preview_image_link);
 			}
 		}
 	}

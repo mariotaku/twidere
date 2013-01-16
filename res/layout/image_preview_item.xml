@@ -9,7 +9,6 @@
 		android:id="@+id/image_preview_item"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:radius="4dp"
-		android:scaleType="fitCenter"/>
+		android:radius="4dp"/>
 
 </org.mariotaku.twidere.view.ExtendedFrameLayout>

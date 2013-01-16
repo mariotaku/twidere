@@ -31,15 +31,6 @@ public class ProfilingUtil {
 		return plugged == BatteryManager.BATTERY_PLUGGED_AC || plugged == BatteryManager.BATTERY_PLUGGED_USB;
 	}
 
-	public static boolean isOnWifi(final Context context) {
-		if (context == null) return false;
-		final ConnectivityManager conn = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		final NetworkInfo networkInfo = conn.getActiveNetworkInfo();
-
-		return networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI
-				&& networkInfo.isConnected();
-	}
-
 	public static boolean log(final String msg) {
 		if (DEBUG) {
 			final StackTraceElement ste = new Throwable().fillInStackTrace().getStackTrace()[1];

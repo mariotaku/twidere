@@ -41,7 +41,7 @@ import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.TwidereLinkify;
@@ -64,8 +64,10 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 
 	private final Context mContext;
 	private final Resources mResources;
-	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
+	private final ImageLoaderWrapper mLazyImageLoader;
 	private final MultiSelectManager mMultiSelectManager;
+
+	private final float mDensity;
 
 	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled,
 			mMentionsHighlightDisabled, mDisplaySensitiveContents, mIndicateMyStatusDisabled, mLinkHighlightingEnabled,
@@ -79,8 +81,8 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		mResources = context.getResources();
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mMultiSelectManager = application.getMultiSelectManager();
-		mProfileImageLoader = application.getProfileImageLoader();
-		mPreviewImageLoader = application.getPreviewImageLoader();
+		mLazyImageLoader = application.getImageLoaderWrapper();
+		mDensity = mResources.getDisplayMetrics().density;
 	}
 
 	public long findItemIdByPosition(final int position) {
@@ -118,9 +120,12 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		} else {
 			holder = new StatusViewHolder(view);
 			view.setTag(holder);
-			holder.profile_image.setOnClickListener(mMultiSelectEnabled ? null : this);
-			holder.image_preview_frame.setOnClickListener(mMultiSelectEnabled ? null : this);
 		}
+		
+		// Clear images in prder to prevent images in recycled view shown.
+		holder.profile_image.setImageDrawable(null);
+		holder.my_profile_image.setImageDrawable(null);
+		holder.image_preview.setImageDrawable(null);
 
 		final ParcelableStatus status = getItem(position);
 
@@ -220,8 +225,8 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 						0, 0);
 			}
 			if (mDisplayProfileImage) {
-				mProfileImageLoader.displayImage(holder.my_profile_image, status.profile_image_url);
-				mProfileImageLoader.displayImage(holder.profile_image, status.profile_image_url);
+				mLazyImageLoader.displayProfileImage(holder.my_profile_image, status.profile_image_url);
+				mLazyImageLoader.displayProfileImage(holder.profile_image, status.profile_image_url);
 				holder.profile_image.setTag(position);
 				holder.my_profile_image.setTag(position);
 			} else {
@@ -241,18 +246,20 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 					holder.image_preview_frame.setLayoutParams(lp);
 				} else if (mInlineImagePreviewDisplayOption == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_SMALL) {
 					lp.width = mResources.getDimensionPixelSize(R.dimen.image_preview_width);
-					lp.leftMargin = (int) (mResources.getDisplayMetrics().density * 16);
+					lp.leftMargin = (int) (mDensity * 16);
 					holder.image_preview_frame.setLayoutParams(lp);
 				}
 				if (status.is_possibly_sensitive && !mDisplaySensitiveContents) {
 					holder.image_preview.setImageResource(R.drawable.image_preview_nsfw);
 				} else {
-					mPreviewImageLoader.displayImage(holder.image_preview, status.image_preview_url);
+					mLazyImageLoader.displayPreviewImage(holder.image_preview, status.image_preview_url);
 				}
 				holder.image_preview_frame.setTag(position);
 			}
 		}
-
+		holder.profile_image.setOnClickListener(mMultiSelectEnabled ? null : this);
+		holder.my_profile_image.setOnClickListener(mMultiSelectEnabled ? null : this);
+		holder.image_preview_frame.setOnClickListener(mMultiSelectEnabled ? null : this);
 		return view;
 	}
 

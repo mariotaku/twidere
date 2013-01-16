@@ -28,7 +28,7 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.CachedValues;
-import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.view.StatusComposeEditText;
 
 import android.content.ContentResolver;
@@ -51,7 +51,7 @@ public class AutoCompleteAdapter extends SimpleCursorAdapter implements Constant
 
 	private final ContentResolver mResolver;
 	private final SQLiteDatabase mDatabase;
-	private final LazyImageLoader mProfileImageLoader;
+	private final ImageLoaderWrapper mProfileImageLoader;
 	private final SharedPreferences mPreferences;
 
 	private final StatusComposeEditText mEditText;
@@ -73,7 +73,7 @@ public class AutoCompleteAdapter extends SimpleCursorAdapter implements Constant
 		mResolver = context.getContentResolver();
 		final Context app_context = context.getApplicationContext();
 		mProfileImageLoader = app_context instanceof TwidereApplication ? ((TwidereApplication) app_context)
-				.getProfileImageLoader() : null;
+				.getImageLoaderWrapper() : null;
 		mDatabase = app_context instanceof TwidereApplication ? ((TwidereApplication) app_context).getSQLiteDatabase()
 				: null;
 		mDisplayProfileImage = mPreferences != null ? mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE,
@@ -101,7 +101,7 @@ public class AutoCompleteAdapter extends SimpleCursorAdapter implements Constant
 		if (mProfileImageUrlIdx != -1) {
 			if (mDisplayProfileImage && mProfileImageLoader != null) {
 				final String profile_image_url_string = cursor.getString(mProfileImageUrlIdx);
-				mProfileImageLoader.displayImage(icon, profile_image_url_string);
+				mProfileImageLoader.displayProfileImage(icon, profile_image_url_string);
 			} else {
 				icon.setImageResource(R.drawable.ic_profile_image_default);
 			}

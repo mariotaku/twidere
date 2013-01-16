@@ -29,6 +29,7 @@ import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTableId;
 import static org.mariotaku.twidere.util.Utils.getTableNameById;
 import static org.mariotaku.twidere.util.Utils.isFiltered;
+import static org.mariotaku.twidere.util.Utils.isOnWifi;
 import static org.mariotaku.twidere.util.Utils.notifyForUpdatedUri;
 import static org.mariotaku.twidere.util.Utils.parseInt;
 
@@ -54,7 +55,6 @@ import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.ImagePreloader;
-import org.mariotaku.twidere.util.LazyImageLoader;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 import org.mariotaku.twidere.util.PermissionsManager;
 import org.mariotaku.twidere.util.Utils;
@@ -92,7 +92,6 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	private PermissionsManager mPermissionsManager;
 	private NotificationManager mNotificationManager;
 	private SharedPreferences mPreferences;
-	private LazyImageLoader mProfileImageLoader;
 	private ImagePreloader mImagePreloader;
 
 	private int mNewStatusesCount;
@@ -242,7 +241,6 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		mDatabase = app.getSQLiteDatabase();
 		mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 		mPreferences = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mProfileImageLoader = app.getProfileImageLoader();
 		mPermissionsManager = new PermissionsManager(mContext);
 		mImagePreloader = new ImagePreloader(mContext);
 		final IntentFilter filter = new IntentFilter();
@@ -542,8 +540,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 					: status.name);
 		}
 		final String profile_image_url_string = status.profile_image_url;
-		final File profile_image_file = mProfileImageLoader
-				.getCachedImageFile(display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
+		final File profile_image_file = mImagePreloader
+				.getCachedImageFile(DIR_NAME_IMAGE_CACHE, display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
 						: profile_image_url_string);
 		final int w = res.getDimensionPixelSize(R.dimen.notification_large_icon_width);
 		final int h = res.getDimensionPixelSize(R.dimen.notification_large_icon_height);
@@ -658,8 +656,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		}
 		final String text_plain = message.text_plain;
 		final String profile_image_url_string = message.sender_profile_image_url;
-		final File profile_image_file = mProfileImageLoader
-				.getCachedImageFile(display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
+		final File profile_image_file = mImagePreloader
+				.getCachedImageFile(DIR_NAME_IMAGE_CACHE, display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
 						: profile_image_url_string);
 		final int w = res.getDimensionPixelSize(R.dimen.notification_large_icon_width);
 		final int h = res.getDimensionPixelSize(R.dimen.notification_large_icon_height);
@@ -790,27 +788,27 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	}
 
 	private void preloadImages(final ContentValues... values) {
-		if (values == null) return;
+		if (values == null || (!isOnWifi(mContext) && mPreferences.getBoolean(PREFERENCE_KEY_PRELOAD_WIFI_ONLY, true))) return;
 		for (final ContentValues v : values) {
 			if (mPreferences.getBoolean(PREFERENCE_KEY_PRELOAD_PROFILE_IMAGES, false)) {
 				final String profile_image_url = v.getAsString(Statuses.PROFILE_IMAGE_URL);
 				if (profile_image_url != null) {
-					mImagePreloader.preloadImage(DIR_NAME_PROFILE_IMAGES, profile_image_url);
+					mImagePreloader.preloadImage(DIR_NAME_IMAGE_CACHE, profile_image_url);
 				}
 				final String sender_profile_image_url = v.getAsString(DirectMessages.SENDER_PROFILE_IMAGE_URL);
 				if (sender_profile_image_url != null) {
-					mImagePreloader.preloadImage(DIR_NAME_PROFILE_IMAGES, sender_profile_image_url);
+					mImagePreloader.preloadImage(DIR_NAME_IMAGE_CACHE, sender_profile_image_url);
 				}
 				final String recipient_profile_image_url = v.getAsString(DirectMessages.RECIPIENT_PROFILE_IMAGE_URL);
 				if (recipient_profile_image_url != null) {
-					mImagePreloader.preloadImage(DIR_NAME_PROFILE_IMAGES, recipient_profile_image_url);
+					mImagePreloader.preloadImage(DIR_NAME_IMAGE_CACHE, recipient_profile_image_url);
 				}
 			}
 			if (mPreferences.getBoolean(PREFERENCE_KEY_PRELOAD_PREVIEW_IMAGES, false)) {
 				final String text_html = v.getAsString(Statuses.TEXT_HTML);
 				for (final ImageSpec spec : Utils.getImagesInStatus(text_html)) {
 					if (spec.preview_image_link != null) {
-						mImagePreloader.preloadImage(DIR_NAME_CACHED_THUMBNAILS, spec.preview_image_link);
+						mImagePreloader.preloadImage(DIR_NAME_IMAGE_CACHE, spec.preview_image_link);
 					}
 				}
 			}

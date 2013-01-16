@@ -60,7 +60,7 @@ import org.mariotaku.twidere.util.AsyncTask;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.HtmlEscapeHelper;
-import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 import org.mariotaku.twidere.util.TwidereLinkify;
@@ -131,7 +131,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	private SharedPreferences mPreferences;
 	private AsyncTwitterWrapper mTwitterWrapper;
-	private LazyImageLoader mProfileImageLoader;
+	private ImageLoaderWrapper mProfileImageLoader;
 
 	private TextView mNameView, mScreenNameView, mTextView, mTimeAndSourceView, mInReplyToView, mLocationView,
 			mRetweetedStatusView;
@@ -449,7 +449,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 		if (mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true)) {
 			final boolean hires_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
-			mProfileImageLoader.displayImage(mProfileImageView,
+			mProfileImageLoader.displayProfileImage(mProfileImageView,
 					hires_profile_image ? getBiggerTwitterProfileImage(status.profile_image_url)
 							: status.profile_image_url);
 		} else {
@@ -499,7 +499,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mAdapter.setGapDisallowed(true);
 		final TwidereApplication application = getApplication();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mProfileImageLoader = application.getProfileImageLoader();
+		mProfileImageLoader = application.getImageLoaderWrapper();
 		mTwitterWrapper = getTwitterWrapper();
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 		if (mLoadMoreAutomatically) {
@@ -961,11 +961,11 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	static class ImagesAdapter extends BaseAdapter {
 
 		private final List<ImageSpec> mImages = new ArrayList<ImageSpec>();
-		private final LazyImageLoader mImageLoader;
+		private final ImageLoaderWrapper mImageLoader;
 		private final LayoutInflater mInflater;
 
 		public ImagesAdapter(final Context context) {
-			mImageLoader = TwidereApplication.getInstance(context).getPreviewImageLoader();
+			mImageLoader = TwidereApplication.getInstance(context).getImageLoaderWrapper();
 			mInflater = LayoutInflater.from(context);
 		}
 
@@ -1001,7 +1001,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			final View view = convertView != null ? convertView : mInflater.inflate(R.layout.image_preview_item, null);
 			final ImageView image = (ImageView) view.findViewById(R.id.image);
 			final ImageSpec spec = getItem(position);
-			mImageLoader.displayImage(image, spec != null ? spec.preview_image_link : null);
+			mImageLoader.displayPreviewImage(image, spec != null ? spec.preview_image_link : null);
 			return view;
 		}
 

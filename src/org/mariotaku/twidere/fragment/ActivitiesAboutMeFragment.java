@@ -39,7 +39,7 @@ import org.mariotaku.twidere.loader.ActivitiesAboutMeLoader;
 import org.mariotaku.twidere.loader.Twitter4JActivitiesLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
-import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.view.holder.ActivityViewHolder;
 
 import twitter4j.Activity.Action;
@@ -203,7 +203,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 
 		private float mTextSize;
 
-		private final LazyImageLoader mProfileImageLoader;
+		private final ImageLoaderWrapper mProfileImageLoader;
 		private final LayoutInflater mInflater;
 		private final Context mContext;
 
@@ -213,7 +213,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 			mInflater = LayoutInflater.from(context);
 			mContext = context;
 			final TwidereApplication application = TwidereApplication.getInstance(context);
-			mProfileImageLoader = application.getProfileImageLoader();
+			mProfileImageLoader = application.getImageLoaderWrapper();
 			mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 		}
 
@@ -408,9 +408,9 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 		private void setProfileImage(final URL url, final ActivityViewHolder holder) {
 			if (!mDisplayProfileImage) return;
 			if (mDisplayHiResProfileImage) {
-				mProfileImageLoader.displayImage(holder.profile_image, getBiggerTwitterProfileImage(parseString(url)));
+				mProfileImageLoader.displayProfileImage(holder.profile_image, getBiggerTwitterProfileImage(parseString(url)));
 			} else {
-				mProfileImageLoader.displayImage(holder.profile_image, parseString(url));
+				mProfileImageLoader.displayProfileImage(holder.profile_image, parseString(url));
 			}
 		}
 
@@ -449,10 +449,10 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 					}
 				}
 				if (mDisplayHiResProfileImage) {
-					mProfileImageLoader.displayImage(activity_profile_image,
+					mProfileImageLoader.displayProfileImage(activity_profile_image,
 							getBiggerTwitterProfileImage(parseString(user.getProfileImageURL())));
 				} else {
-					mProfileImageLoader.displayImage(activity_profile_image, parseString(user.getProfileImageURL()));
+					mProfileImageLoader.displayProfileImage(activity_profile_image, parseString(user.getProfileImageURL()));
 				}
 			}
 		}

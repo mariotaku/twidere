@@ -43,7 +43,7 @@ import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.PreviewImage;
 import org.mariotaku.twidere.model.StatusCursorIndices;
-import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.TwidereLinkify;
@@ -67,8 +67,10 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 
 	private final Context mContext;
 	private final Resources mResources;
-	private final LazyImageLoader mProfileImageLoader, mPreviewImageLoader;
+	private final ImageLoaderWrapper mLazyImageLoader;
 	private final MultiSelectManager mMultiSelectManager;
+	
+	private final float mDensity;
 
 	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled,
 			mMentionsHighlightDisabled, mDisplaySensitiveContents, mIndicateMyStatusDisabled, mLinkHighlightingEnabled,
@@ -83,14 +85,19 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 		mResources = context.getResources();
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mMultiSelectManager = application.getMultiSelectManager();
-		mProfileImageLoader = application.getProfileImageLoader();
-		mPreviewImageLoader = application.getPreviewImageLoader();
+		mLazyImageLoader = application.getImageLoaderWrapper();
+		mDensity = mResources.getDisplayMetrics().density;
 	}
 
 	@Override
 	public void bindView(final View view, final Context context, final Cursor cursor) {
 		final int position = cursor.getPosition();
 		final StatusViewHolder holder = (StatusViewHolder) view.getTag();
+
+		// Clear images in prder to prevent images in recycled view shown.
+		holder.profile_image.setImageDrawable(null);
+		holder.my_profile_image.setImageDrawable(null);
+		holder.image_preview.setImageDrawable(null);
 
 		final boolean is_gap = cursor.getShort(mIndices.is_gap) == 1;
 
@@ -216,8 +223,8 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			}
 			if (mDisplayProfileImage) {
 				final String profile_image_url = cursor.getString(mIndices.profile_image_url);
-				mProfileImageLoader.displayImage(holder.my_profile_image, profile_image_url);
-				mProfileImageLoader.displayImage(holder.profile_image, profile_image_url);
+				mLazyImageLoader.displayProfileImage(holder.my_profile_image, profile_image_url);
+				mLazyImageLoader.displayProfileImage(holder.profile_image, profile_image_url);
 				holder.profile_image.setTag(position);
 				holder.my_profile_image.setTag(position);
 			} else {
@@ -236,19 +243,21 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 					holder.image_preview_frame.setLayoutParams(lp);
 				} else if (mInlineImagePreviewDisplayOption == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_SMALL) {
 					lp.width = mResources.getDimensionPixelSize(R.dimen.image_preview_width);
-					lp.leftMargin = (int) (mResources.getDisplayMetrics().density * 16);
+					lp.leftMargin = (int) (mDensity * 16);
 					holder.image_preview_frame.setLayoutParams(lp);
 				}
 				final boolean is_possibly_sensitive = cursor.getInt(mIndices.is_possibly_sensitive) == 1;
 				if (is_possibly_sensitive && !mDisplaySensitiveContents) {
 					holder.image_preview.setImageResource(R.drawable.image_preview_nsfw);
 				} else {
-					mPreviewImageLoader.displayImage(holder.image_preview, preview.matched_url);
+					mLazyImageLoader.displayPreviewImage(holder.image_preview, preview.matched_url);
 				}
 				holder.image_preview_frame.setTag(position);
 			}
 		}
-
+		holder.profile_image.setOnClickListener(mMultiSelectEnabled ? null : this);
+		holder.my_profile_image.setOnClickListener(mMultiSelectEnabled ? null : this);
+		holder.image_preview_frame.setOnClickListener(mMultiSelectEnabled ? null : this);
 		super.bindView(view, context, cursor);
 	}
 
@@ -285,10 +294,6 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 		if (!(tag instanceof StatusViewHolder)) {
 			final StatusViewHolder holder = new StatusViewHolder(view);
 			view.setTag(holder);
-			holder.profile_image.setOnClickListener(mMultiSelectEnabled ? null : this);
-			holder.image_preview_frame.setOnClickListener(mMultiSelectEnabled ? null : this);
-			// holder.image_preview.setClickable(!mMultiSelectEnabled);
-			// holder.profile_image.setClickable(!mMultiSelectEnabled);
 		}
 		return view;
 	}

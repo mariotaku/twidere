@@ -1977,6 +1977,15 @@ public final class Utils implements Constants {
 		}
 		return false;
 	}
+	
+	public static boolean isOnWifi(final Context context) {
+		if (context == null) return false;
+		final ConnectivityManager conn = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		final NetworkInfo networkInfo = conn.getActiveNetworkInfo();
+
+		return networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI
+				&& networkInfo.isConnected();
+	}
 
 	public static boolean isRedirected(final int code) {
 		return code == 301 || code == 302;

@@ -50,7 +50,12 @@
 		<org.mariotaku.twidere.preference.ImagePreloadPreference
 			android:key="image_preload_options"
 			android:title="@string/image_preload_options"/>
-
+			
+		<CheckBoxPreference
+			android:defaultValue="true"
+			android:key="preload_wifi_only"
+			android:title="@string/preload_wifi_only"/>
+		
 		<com.robobunny.SeekBarPreference
 			android:defaultValue="20"
 			android:key="load_item_limit"

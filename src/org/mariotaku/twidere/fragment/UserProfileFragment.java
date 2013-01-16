@@ -66,7 +66,7 @@ import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.EnvironmentAccessor;
-import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
@@ -123,7 +123,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private static final int LOADER_ID_FRIENDSHIP = 2;
 	private static final int LOADER_ID_BANNER = 3;
 
-	private LazyImageLoader mProfileImageLoader;
+	private ImageLoaderWrapper mProfileImageLoader;
 	private SharedPreferences mPreferences;
 
 	private ImageView mProfileImageView;
@@ -363,7 +363,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mFollowersCount.setText(String.valueOf(user.followers_count));
 		mFriendsCount.setText(String.valueOf(user.friends_count));
 		if (mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true)) {
-			mProfileImageLoader.displayImage(mProfileImageView, user.profile_image_url);
+			mProfileImageLoader.displayProfileImage(mProfileImageView, user.profile_image_url);
 		} else {
 			mProfileImageView.setImageResource(R.drawable.ic_profile_image_default);
 		}
@@ -440,7 +440,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			user_id = args.getLong(INTENT_KEY_USER_ID, -1);
 			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		}
-		mProfileImageLoader = getApplication().getProfileImageLoader();
+		mProfileImageLoader = getApplication().getImageLoaderWrapper();
 		mAdapter = new ListActionAdapter(getActivity());
 		mProfileImageContainer.setOnClickListener(this);
 		mNameContainer.setOnClickListener(this);

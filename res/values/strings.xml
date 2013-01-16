@@ -406,6 +406,6 @@
 	<string name="image_preload_options">Image preload options</string>
 	<string name="profile_images">Profile images</string>
 	<string name="preview_images">Preview images</string>
-	<string name="preload_on_mobile_network">Preload on mobile network</string>
+	<string name="preload_wifi_only">Preload using Wi-Fi only</string>
 
 </resources>

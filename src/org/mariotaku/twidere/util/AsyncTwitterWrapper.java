@@ -2150,8 +2150,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				final String unshortened_content = use_uploader && upload_result_uri != null ? getImageUploadStatus(
 						mContext, upload_result_uri.toString(), content) : content;
 
-				final boolean should_shorten = unshortened_content != null && unshortened_content.length() > 0
-						&& !validator.isValidTweet(unshortened_content);
+				final boolean should_shorten = validator.getTweetLength(unshortened_content) > Validator.MAX_TWEET_LENGTH;
 				final String screen_name = getAccountScreenName(mContext, account_ids[0]);
 				final String shortened_content;
 				try {

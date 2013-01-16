@@ -1,5 +1,7 @@
 package edu.ucdavis.earlybird;
 
+import org.mariotaku.twidere.util.Utils;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +14,7 @@ public class UploadReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(final Context context, final Intent intent) {
 		final String action = intent.getAction();
-		final boolean isWifi = ProfilingUtil.isOnWifi(context.getApplicationContext());
+		final boolean isWifi = Utils.isOnWifi(context.getApplicationContext());
 		final boolean isCharging = ProfilingUtil.isCharging(context.getApplicationContext());
 		if (WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION.equals(action)) {
 			final boolean wifi = intent.getBooleanExtra(WifiManager.EXTRA_SUPPLICANT_CONNECTED, false);

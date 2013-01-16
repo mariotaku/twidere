@@ -29,7 +29,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableUser;
-import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.view.holder.UserViewHolder;
 
@@ -39,7 +39,7 @@ import android.view.ViewGroup;
 
 public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseAdapter {
 
-	private final LazyImageLoader mProfileImageLoader;
+	private final ImageLoaderWrapper mProfileImageLoader;
 	private final MultiSelectManager mMultiSelectManager;
 	private final Context mContext;
 
@@ -53,7 +53,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseA
 		super(context, R.layout.user_list_item);
 		mContext = context;
 		final TwidereApplication application = TwidereApplication.getInstance(context);
-		mProfileImageLoader = application.getProfileImageLoader();
+		mProfileImageLoader = application.getImageLoaderWrapper();
 		mMultiSelectManager = application.getMultiSelectManager();
 	}
 
@@ -115,7 +115,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseA
 		holder.description.setText(user.description);
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
-			mProfileImageLoader.displayImage(holder.profile_image, user.profile_image_url);
+			mProfileImageLoader.displayProfileImage(holder.profile_image, user.profile_image_url);
 		}
 
 		return view;

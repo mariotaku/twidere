@@ -25,7 +25,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.AccountsFragment;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
-import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.view.holder.AccountViewHolder;
 
 import android.content.Context;
@@ -40,7 +40,7 @@ public class AccountsAdapter extends SimpleCursorAdapter {
 
 	private boolean mDisplayProfileImage;
 
-	private final LazyImageLoader mProfileImageLoader;
+	private final ImageLoaderWrapper mLazyImageLoader;
 
 	private final SharedPreferences mPreferences;
 	private int mUserColorIdx, mProfileImageIdx, mScreenNameIdx;
@@ -55,7 +55,7 @@ public class AccountsAdapter extends SimpleCursorAdapter {
 				new int[] { android.R.id.text1 }, 0);
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mMultiSelectEnabled = multi_select;
-		mProfileImageLoader = application.getProfileImageLoader();
+		mLazyImageLoader = application.getInstance(context).getImageLoaderWrapper();
 		mPreferences = context.getSharedPreferences(AccountsFragment.SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
@@ -73,10 +73,10 @@ public class AccountsAdapter extends SimpleCursorAdapter {
 		if (mDisplayProfileImage) {
 			final String profile_image_url_string = cursor.getString(mProfileImageIdx);
 			if (mDisplayHiResProfileImage) {
-				mProfileImageLoader.displayImage(holder.profile_image,
+				mLazyImageLoader.displayProfileImage(holder.profile_image,
 						getBiggerTwitterProfileImage(profile_image_url_string));
 			} else {
-				mProfileImageLoader.displayImage(holder.profile_image, profile_image_url_string);
+				mLazyImageLoader.displayProfileImage(holder.profile_image, profile_image_url_string);
 			}
 		} else {
 			holder.profile_image.setImageResource(R.drawable.ic_profile_image_default);

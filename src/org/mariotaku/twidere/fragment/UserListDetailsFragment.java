@@ -42,7 +42,7 @@ import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
@@ -90,7 +90,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener,
 		LoaderCallbacks<UserListDetailsFragment.Response<UserList>>, Panes.Right {
 
-	private LazyImageLoader mProfileImageLoader;
+	private ImageLoaderWrapper mProfileImageLoader;
 	private AsyncTwitterWrapper mTwitterWrapper;
 
 	private ImageView mProfileImageView;
@@ -161,7 +161,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		final String profile_image_url_string = parseString(user.getProfileImageUrlHttps());
 		final boolean hires_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
 		mProfileImageLoader
-				.displayImage(mProfileImageView,
+				.displayProfileImage(mProfileImageView,
 						hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
 								: profile_image_url_string);
 		mUserList = user_list;
@@ -222,7 +222,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		}
 		mHiResProfileImage = getResources().getBoolean(R.bool.hires_profile_image);
-		mProfileImageLoader = getApplication().getProfileImageLoader();
+		mProfileImageLoader = getApplication().getImageLoaderWrapper();
 		mAdapter = new ListActionAdapter(getActivity());
 		mAdapter.add(new ListTimelineAction(1));
 		mAdapter.add(new ListMembersAction(2));

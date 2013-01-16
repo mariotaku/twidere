@@ -200,6 +200,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_INDICATE_MY_STATUS = "indicate_my_status";
 	public static final String PREFERENCE_KEY_PRELOAD_PROFILE_IMAGES = "preload_profile_images";
 	public static final String PREFERENCE_KEY_PRELOAD_PREVIEW_IMAGES = "preload_preview_images";
+	public static final String PREFERENCE_KEY_PRELOAD_WIFI_ONLY = "preload_wifi_only";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;
@@ -513,8 +514,7 @@ public interface Constants extends TwitterConstants {
 	public static final int LINK_ID_USER_MENTIONS = 21;
 	public static final int LINK_ID_INCOMING_FRIENDSHIPS = 22;
 
-	public static final String DIR_NAME_PROFILE_IMAGES = "profile_images";
-	public static final String DIR_NAME_CACHED_THUMBNAILS = "cached_thumbnails";
+	public static final String DIR_NAME_IMAGE_CACHE = "image_cache";
 
 	public static final int PANE_LEFT = R.id.fragment_container_left;
 	public static final int PANE_RIGHT = R.id.fragment_container_right;

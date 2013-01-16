@@ -27,7 +27,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.iface.IDirectMessagesAdapter;
 import org.mariotaku.twidere.model.DirectMessageCursorIndices;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
-import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.OnDirectMessageLinkClickHandler;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.view.holder.DirectMessageConversationViewHolder;
@@ -43,21 +43,22 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
+import org.mariotaku.twidere.app.TwidereApplication;
 
 public class DirectMessagesConversationAdapter extends SimpleCursorAdapter implements IDirectMessagesAdapter,
 		OnClickListener {
 
 	private boolean mDisplayProfileImage;
-	private final LazyImageLoader mImageLoader;
+	private final ImageLoaderWrapper mImageLoader;
 	private float mTextSize;
 	private final Context mContext;
 	private DirectMessageCursorIndices mIndices;
 	private int mNameDisplayOption;
 
-	public DirectMessagesConversationAdapter(final Context context, final LazyImageLoader loader) {
+	public DirectMessagesConversationAdapter(final Context context) {
 		super(context, R.layout.direct_message_list_item, null, new String[0], new int[0], 0);
 		mContext = context;
-		mImageLoader = loader;
+		mImageLoader = TwidereApplication.getInstance(context).getImageLoaderWrapper();
 	}
 
 	@Override
@@ -106,8 +107,8 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		holder.profile_image_right.setVisibility(mDisplayProfileImage && !is_outgoing ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
 			final String profile_image_url_string = cursor.getString(mIndices.sender_profile_image_url);
-			mImageLoader.displayImage(holder.profile_image_left, profile_image_url_string);
-			mImageLoader.displayImage(holder.profile_image_right, profile_image_url_string);
+			mImageLoader.displayProfileImage(holder.profile_image_left, profile_image_url_string);
+			mImageLoader.displayProfileImage(holder.profile_image_right, profile_image_url_string);
 			holder.profile_image_left.setTag(position);
 			holder.profile_image_right.setTag(position);
 		}

@@ -25,7 +25,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableUserList;
-import org.mariotaku.twidere.util.LazyImageLoader;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.view.holder.UserListViewHolder;
 
 import android.content.Context;
@@ -34,7 +34,7 @@ import android.view.ViewGroup;
 
 public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implements IBaseAdapter {
 
-	private final LazyImageLoader mProfileImageLoader;
+	private final ImageLoaderWrapper mProfileImageLoader;
 
 	private boolean mDisplayProfileImage;
 
@@ -43,7 +43,7 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 	public UserListsAdapter(final Context context) {
 		super(context, R.layout.user_list_list_item);
 		final TwidereApplication application = TwidereApplication.getInstance(context);
-		mProfileImageLoader = application.getProfileImageLoader();
+		mProfileImageLoader = application.getImageLoaderWrapper();
 	}
 
 	public void appendData(final List<ParcelableUserList> data) {
@@ -68,7 +68,7 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 		holder.description.setText(user_list.description);
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
-			mProfileImageLoader.displayImage(holder.profile_image, user_list.user_profile_image_url_string);
+			mProfileImageLoader.displayProfileImage(holder.profile_image, user_list.user_profile_image_url_string);
 		}
 		return view;
 	}
