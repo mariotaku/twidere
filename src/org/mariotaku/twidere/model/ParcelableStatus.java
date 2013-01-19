@@ -118,10 +118,10 @@ public class ParcelableStatus implements Constants, Parcelable, Serializable, Co
 		source = values.getAsString(Statuses.SOURCE);
 		retweet_count = getAsInteger(values, Statuses.RETWEET_COUNT, 0);
 		text_unescaped = toPlainText(text_html);
-		final PreviewImage preview = getPreviewImage(text_html, INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE);
-		has_media = preview.has_image;
-		image_preview_url = preview.matched_url;
-		image_orig_url = preview.orig_url;
+		final ImageSpec preview = getPreviewImage(text_html, INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE);
+		has_media = preview != null;
+		image_preview_url = preview != null ? preview.preview_image_link : null;
+		image_orig_url = preview != null ? preview.orig_link : null;
 		is_possibly_sensitive = getAsBoolean(values, Statuses.IS_POSSIBLY_SENSITIVE, false);
 	}
 
@@ -144,8 +144,10 @@ public class ParcelableStatus implements Constants, Parcelable, Serializable, Co
 		retweeted_by_screen_name = indices.retweeted_by_screen_name != -1 ? cursor
 				.getString(indices.retweeted_by_screen_name) : null;
 		text_html = indices.text_html != -1 ? cursor.getString(indices.text_html) : null;
-		final PreviewImage preview = getPreviewImage(text_html, INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE);
-		has_media = preview.has_image;
+		final ImageSpec preview = getPreviewImage(text_html, INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE);
+		has_media = preview != null;
+		image_preview_url = preview != null ? preview.preview_image_link : null;
+		image_orig_url = preview != null ? preview.orig_link : null;
 		text_plain = indices.text_plain != -1 ? cursor.getString(indices.text_plain) : null;
 		name = indices.name != -1 ? cursor.getString(indices.name) : null;
 		screen_name = indices.screen_name != -1 ? cursor.getString(indices.screen_name) : null;
@@ -154,8 +156,6 @@ public class ParcelableStatus implements Constants, Parcelable, Serializable, Co
 		source = indices.source != -1 ? cursor.getString(indices.source) : null;
 		location = indices.location != -1 ? new ParcelableLocation(cursor.getString(indices.location)) : null;
 		profile_image_url = indices.profile_image_url != -1 ? cursor.getString(indices.profile_image_url) : null;
-		image_preview_url = preview.matched_url;
-		image_orig_url = preview.orig_url;
 		text_unescaped = toPlainText(text_html);
 		my_retweet_id = indices.my_retweet_id != -1 ? cursor.getLong(indices.my_retweet_id) : -1;
 		is_possibly_sensitive = indices.is_possibly_sensitive != -1 ? cursor.getInt(indices.is_possibly_sensitive) == 1
@@ -224,13 +224,14 @@ public class ParcelableStatus implements Constants, Parcelable, Serializable, Co
 				: profile_image_url_orig;
 		is_protected = user != null ? user.isProtected() : false;
 		is_verified = user != null ? user.isVerified() : false;
-		final MediaEntity[] medias = status.getMediaEntities();
-
 		status_timestamp = getTime(status.getCreatedAt());
 		text_html = formatStatusText(status);
-		final PreviewImage preview = getPreviewImage(text_html,
+		final ImageSpec preview = getPreviewImage(text_html,
 				large_inline_image_preview ? INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE
 						: INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_SMALL);
+		has_media = preview != null;
+		image_preview_url = preview != null ? preview.preview_image_link : null;
+		image_orig_url = preview != null ? preview.orig_link : null;
 		text_plain = status.getText();
 		retweet_count = status.getRetweetCount();
 		in_reply_to_screen_name = status.getInReplyToScreenName();
@@ -238,9 +239,6 @@ public class ParcelableStatus implements Constants, Parcelable, Serializable, Co
 		source = status.getSource();
 		location = new ParcelableLocation(status.getGeoLocation());
 		is_favorite = status.isFavorited();
-		has_media = medias != null && medias.length > 0 || preview.has_image;
-		image_preview_url = preview.matched_url;
-		image_orig_url = preview.orig_url;
 		text_unescaped = toPlainText(text_html);
 		my_retweet_id = retweeted_by_id == account_id ? status_id : -1;
 		is_possibly_sensitive = status.isPossiblySensitive();

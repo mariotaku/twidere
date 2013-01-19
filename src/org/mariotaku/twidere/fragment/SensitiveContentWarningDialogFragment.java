@@ -1,5 +1,8 @@
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.openImageDirectly;
+import static org.mariotaku.twidere.util.Utils.parseString;
+
 import org.mariotaku.gallery3d.app.ImageViewerGLActivity;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.ImageViewerActivity;
@@ -22,17 +25,10 @@ public class SensitiveContentWarningDialogFragment extends BaseDialogFragment im
 			case DialogInterface.BUTTON_POSITIVE: {
 				final Context context = getActivity();
 				final Bundle args = getArguments();
-				if (args == null) return;
+				if (args == null || context == null) return;
 				final Uri uri = args.getParcelable(INTENT_KEY_URI);
-				if (uri == null) return;
-				final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE);
-				intent.setDataAndType(uri, "image/*");
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1) {
-					intent.setClass(context, ImageViewerGLActivity.class);
-				} else {
-					intent.setClass(context, ImageViewerActivity.class);
-				}
-				startActivity(intent);
+				final Uri orig = args.getParcelable(INTENT_KEY_URI_ORIG);
+				openImageDirectly(context, parseString(uri), parseString(orig));
 				break;
 			}
 		}

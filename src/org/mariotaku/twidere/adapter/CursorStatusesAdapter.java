@@ -41,7 +41,6 @@ import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.model.PreviewImage;
 import org.mariotaku.twidere.model.StatusCursorIndices;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
@@ -127,9 +126,9 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 					: cursor.getShort(mIndices.is_favorite) == 1;
 			final boolean has_location = mFastTimelineProcessingEnabled ? false : !TextUtils.isEmpty(cursor
 					.getString(mIndices.location));
-			final PreviewImage preview = !mFastTimelineProcessingEnabled ? getPreviewImage(text,
+			final ImageSpec preview = !mFastTimelineProcessingEnabled ? getPreviewImage(text,
 					mInlineImagePreviewDisplayOption) : null;
-			final boolean has_media = preview != null ? preview.has_image : false;
+			final boolean has_media = preview != null;
 
 			// User type (protected/verified)
 			final boolean is_verified = cursor.getShort(mIndices.is_verified) == 1;
@@ -233,7 +232,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			}
 			final boolean has_preview = mFastTimelineProcessingEnabled ? false
 					: mInlineImagePreviewDisplayOption != INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE && has_media
-							&& preview.matched_url != null;
+							&& preview.preview_image_link != null;
 			holder.image_preview_container.setVisibility(has_preview ? View.VISIBLE : View.GONE);
 			if (has_preview) {
 				final MarginLayoutParams lp = (MarginLayoutParams) holder.image_preview_frame.getLayoutParams();
@@ -250,7 +249,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 				if (is_possibly_sensitive && !mDisplaySensitiveContents) {
 					holder.image_preview.setImageResource(R.drawable.image_preview_nsfw);
 				} else {
-					mLazyImageLoader.displayPreviewImage(holder.image_preview, preview.matched_url);
+					mLazyImageLoader.displayPreviewImage(holder.image_preview, preview.preview_image_link);
 				}
 				holder.image_preview_frame.setTag(position);
 			}
@@ -306,9 +305,9 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 		if (status == null) return;
 		switch (view.getId()) {
 			case R.id.image_preview_frame: {
-				final ImageSpec spec = getAllAvailableImage(status.image_orig_url);
+				final ImageSpec spec = getAllAvailableImage(status.image_orig_url, true);
 				if (spec != null) {
-					openImage(mContext, Uri.parse(spec.full_image_link), status.is_possibly_sensitive);
+					openImage(mContext, spec.full_image_link, spec.orig_link, status.is_possibly_sensitive);
 				}
 				break;
 			}

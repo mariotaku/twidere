@@ -20,16 +20,24 @@
 package org.mariotaku.twidere.model;
 
 public class ImageSpec {
+ 
+ 	private static final ImageSpec EMPTY_INSTANCE = new ImageSpec(null, null, null);
 
-	public final String preview_image_link, full_image_link;
+	public final String preview_image_link, full_image_link, orig_link;
 
-	public ImageSpec(final String thumbnail_link, final String image_link) {
-		preview_image_link = thumbnail_link;
-		full_image_link = image_link;
+	public ImageSpec(final String preview_image_link, final String full_image_link, final String orig_link) {
+		this.preview_image_link = preview_image_link;
+		this.full_image_link = full_image_link;
+		this.orig_link = orig_link;
 	}
 
 	@Override
 	public String toString() {
-		return "ImageSpec{preview_image_link=" + preview_image_link + ", full_image_link=" + full_image_link + "}";
+		return "ImageSpec{preview_image_link=" + preview_image_link + ", full_image_link=" + full_image_link 
+				+ "orig_link=" + orig_link + "}";
+	}
+	
+	public static ImageSpec getEmpty() {
+		return EMPTY_INSTANCE;
 	}
 }

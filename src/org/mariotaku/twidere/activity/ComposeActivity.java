@@ -29,7 +29,7 @@ import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getImageUploadStatus;
 import static org.mariotaku.twidere.util.Utils.getShareStatus;
-import static org.mariotaku.twidere.util.Utils.openImage;
+import static org.mariotaku.twidere.util.Utils.openImageDirectly;
 import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
@@ -544,7 +544,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				break;
 			}
 			case MENU_VIEW: {
-				openImage(this, mImageUri, false);
+				openImageDirectly(this, parseString(mImageUri), null);
 				break;
 			}
 			case MENU_TOGGLE_SENSITIVE: {

@@ -56,7 +56,9 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 
 	@Override
 	public void onClick(final View view) {
-		final Uri uri = getIntent().getData();
+		final Intent intent = getIntent();
+		final Uri uri = intent.getData();
+		final Uri orig = intent.getParcelableExtra(INTENT_KEY_URI_ORIG);
 		switch (view.getId()) {
 			case R.id.close: {
 				onBackPressed();
@@ -77,27 +79,26 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 				if (uri == null) {
 					break;
 				}
-				final Intent intent = new Intent(Intent.ACTION_SEND);
+				final Intent share_intent = new Intent(Intent.ACTION_SEND);
 				if (mImageFile != null && mImageFile.exists()) {
-					intent.setType("image/*");
-					intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(mImageFile));
+					share_intent.setType("image/*");
+					share_intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(mImageFile));
 				} else {
-					intent.setType("text/plain");
-					intent.putExtra(Intent.EXTRA_TEXT, uri.toString());
+					share_intent.setType("text/plain");
+					share_intent.putExtra(Intent.EXTRA_TEXT, uri.toString());
 				}
-				startActivity(Intent.createChooser(intent, getString(R.string.share)));
+				startActivity(Intent.createChooser(share_intent, getString(R.string.share)));
 				break;
 			}
 			case R.id.open_in_browser: {
-				if (uri == null) {
-					break;
-				}
-				final String scheme = uri.getScheme();
+				final Uri uri_preferred = orig != null ? orig : uri;
+				if (uri_preferred == null) return;
+				final String scheme = uri_preferred.getScheme();
 				if ("http".equals(scheme) || "https".equals(scheme)) {
-					final Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-					intent.addCategory(Intent.CATEGORY_BROWSABLE);
+					final Intent open_intent = new Intent(Intent.ACTION_VIEW, uri_preferred);
+					open_intent.addCategory(Intent.CATEGORY_BROWSABLE);
 					try {
-						startActivity(intent);
+						startActivity(open_intent);
 					} catch (final ActivityNotFoundException e) {
 						// Ignore.
 					}

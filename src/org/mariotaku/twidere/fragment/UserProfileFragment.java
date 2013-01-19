@@ -547,9 +547,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			}
 			case R.id.profile_image_container: {
 				final String profile_image_url_string = getOriginalTwitterProfileImage(mUser.profile_image_url);
-				if (profile_image_url_string == null) return;
-				final Uri uri = Uri.parse(profile_image_url_string);
-				openImage(getActivity(), uri, false);
+				openImage(getActivity(), profile_image_url_string, null, false);
 				break;
 			}
 			case R.id.tweets_container: {
@@ -689,7 +687,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	}
 
 	@Override
-	public void onLinkClick(final String link, final int type) {
+	public void onLinkClick(final String link, final String orig, final int type) {
 		if (mUser == null) return;
 		switch (type) {
 			case TwidereLinkify.LINK_TYPE_MENTION_LIST: {
@@ -701,7 +699,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				break;
 			}
 			case TwidereLinkify.LINK_TYPE_LINK_WITH_IMAGE_EXTENSION: {
-				openImage(getActivity(), Uri.parse(link), false);
+				openImage(getActivity(), link, orig, false);
 				break;
 			}
 			case TwidereLinkify.LINK_TYPE_LINK: {

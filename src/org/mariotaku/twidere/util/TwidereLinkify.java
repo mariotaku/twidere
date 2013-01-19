@@ -265,15 +265,14 @@ public class TwidereLinkify {
 				for (final URLSpan span : spans) {
 					final Matcher matcher = PATTERN_ALL_AVAILABLE_IMAGES.matcher(span.getURL());
 					if (matcher.matches()) {
-						final ImageSpec spec = getAllAvailableImage(matcher.group());
+						final ImageSpec spec = getAllAvailableImage(matcher.group(), true);
 						final int start = string.getSpanStart(span);
 						final int end = string.getSpanEnd(span);
 						if (spec == null || start < 0 || end > string.length() || start > end) {
 							continue;
 						}
-						final String url = spec.full_image_link;
 						string.removeSpan(span);
-						applyLink(url, start, end, string, LINK_TYPE_LINK_WITH_IMAGE_EXTENSION);
+						applyLink(spec.full_image_link, spec.orig_link, start, end, string, LINK_TYPE_LINK_WITH_IMAGE_EXTENSION);
 					}
 				}
 				break;
@@ -354,8 +353,11 @@ public class TwidereLinkify {
 	}
 
 	private final void applyLink(final String url, final int start, final int end, final Spannable text, final int type) {
-		final LinkSpan span = new LinkSpan(url, type, mOnLinkClickListener);
+		applyLink(url, null, start, end, text, type);
+	}
 
+	private final void applyLink(final String url, final String orig, final int start, final int end, final Spannable text, final int type) {
+		final LinkSpan span = new LinkSpan(url, orig, type, mOnLinkClickListener);
 		text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 	}
 
@@ -370,16 +372,22 @@ public class TwidereLinkify {
 	}
 
 	public interface OnLinkClickListener {
-		public void onLinkClick(String link, int type);
+		public void onLinkClick(String link, String orig, int type);
 	}
 
 	static class LinkSpan extends URLSpan {
 
 		private final int type;
+		private final String orig;
 		private final OnLinkClickListener listener;
 
 		public LinkSpan(final String url, final int type, final OnLinkClickListener listener) {
+			this(url, null, type, listener);
+		}
+
+		public LinkSpan(final String url, final String orig, final int type, final OnLinkClickListener listener) {
 			super(url);
+			this.orig = orig;
 			this.type = type;
 			this.listener = listener;
 		}
@@ -387,9 +395,12 @@ public class TwidereLinkify {
 		@Override
 		public void onClick(final View widget) {
 			if (listener != null) {
-				listener.onLinkClick(getURL(), type);
+				listener.onLinkClick(getURL(), getURLOrig(), type);
 			}
 		}
 
+		public String getURLOrig() {
+			return orig;
+		}
 	}
 }

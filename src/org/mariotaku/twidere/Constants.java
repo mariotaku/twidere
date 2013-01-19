@@ -315,6 +315,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_LATITUDE = "latitude";
 	public static final String INTENT_KEY_LONGITUDE = "longitude";
 	public static final String INTENT_KEY_URI = "uri";
+	public static final String INTENT_KEY_URI_ORIG = "uri_orig";
 	public static final String INTENT_KEY_MENTIONS = "mentions";
 	public static final String INTENT_KEY_ACCOUNT_ID = "account_id";
 	public static final String INTENT_KEY_ACCOUNT_IDS = "account_ids";

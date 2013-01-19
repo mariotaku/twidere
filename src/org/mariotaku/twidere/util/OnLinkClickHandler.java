@@ -50,7 +50,7 @@ public class OnLinkClickHandler implements OnLinkClickListener, Constants {
 	}
 
 	@Override
-	public void onLinkClick(final String link, final int type) {
+	public void onLinkClick(final String link, final String orig, final int type) {
 		if (activity == null) return;
 		// UCD
 		ProfilingUtil.profile(activity, account_id, "Click, " + link + ", " + type);
@@ -66,7 +66,7 @@ public class OnLinkClickHandler implements OnLinkClickListener, Constants {
 				break;
 			}
 			case TwidereLinkify.LINK_TYPE_LINK_WITH_IMAGE_EXTENSION: {
-				openImage(activity, Uri.parse(link), is_possibly_sensitive);
+				openImage(activity, link, orig, is_possibly_sensitive);
 				break;
 			}
 			case TwidereLinkify.LINK_TYPE_LINK: {

@@ -105,7 +105,6 @@ import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
-import org.mariotaku.twidere.model.PreviewImage;
 import org.mariotaku.twidere.model.StatusCursorIndices;
 import org.mariotaku.twidere.model.TabSpec;
 import org.mariotaku.twidere.provider.TweetStore;
@@ -946,31 +945,31 @@ public final class Utils implements Constants {
 		return accounts;
 	}
 
-	public static ImageSpec getAllAvailableImage(final String link) {
+	public static ImageSpec getAllAvailableImage(final String link, final boolean large_image_preview) {
 		if (link == null) return null;
 		Matcher m;
 		m = PATTERN_TWITTER_IMAGES.matcher(link);
-		if (m.matches()) return getTwitterImage(link, true);
+		if (m.matches()) return getTwitterImage(link, large_image_preview);
 		m = PATTERN_TWITPIC.matcher(link);
-		if (m.matches()) return getTwitpicImage(matcherGroup(m, TWITPIC_GROUP_ID), true);
+		if (m.matches()) return getTwitpicImage(matcherGroup(m, TWITPIC_GROUP_ID), link, large_image_preview);
 		m = PATTERN_INSTAGRAM.matcher(link);
-		if (m.matches()) return getInstagramImage(matcherGroup(m, INSTAGRAM_GROUP_ID), true);
+		if (m.matches()) return getInstagramImage(matcherGroup(m, INSTAGRAM_GROUP_ID), link, large_image_preview);
 		m = PATTERN_IMGUR.matcher(link);
-		if (m.matches()) return getImgurImage(matcherGroup(m, IMGUR_GROUP_ID), true);
+		if (m.matches()) return getImgurImage(matcherGroup(m, IMGUR_GROUP_ID), link, large_image_preview);
 		m = PATTERN_IMGLY.matcher(link);
-		if (m.matches()) return getImglyImage(matcherGroup(m, IMGLY_GROUP_ID), true);
+		if (m.matches()) return getImglyImage(matcherGroup(m, IMGLY_GROUP_ID), link, large_image_preview);
 		m = PATTERN_YFROG.matcher(link);
-		if (m.matches()) return getYfrogImage(matcherGroup(m, YFROG_GROUP_ID), true);
+		if (m.matches()) return getYfrogImage(matcherGroup(m, YFROG_GROUP_ID), link, large_image_preview);
 		m = PATTERN_LOCKERZ_AND_PLIXI.matcher(link);
-		if (m.matches()) return getLockerzAndPlixiImage(link, true);
+		if (m.matches()) return getLockerzAndPlixiImage(link, large_image_preview);
 		m = PATTERN_SINA_WEIBO_IMAGES.matcher(link);
-		if (m.matches()) return getSinaWeiboImage(link, true);
+		if (m.matches()) return getSinaWeiboImage(link, large_image_preview);
 		m = PATTERN_TWITGOO.matcher(link);
-		if (m.matches()) return getTwitgooImage(matcherGroup(m, TWITGOO_GROUP_ID), true);
+		if (m.matches()) return getTwitgooImage(matcherGroup(m, TWITGOO_GROUP_ID), link, large_image_preview);
 		m = PATTERN_MOBYPICTURE.matcher(link);
-		if (m.matches()) return getMobyPictureImage(matcherGroup(m, MOBYPICTURE_GROUP_ID), true);
+		if (m.matches()) return getMobyPictureImage(matcherGroup(m, MOBYPICTURE_GROUP_ID), link, large_image_preview);
 		m = PATTERN_PHOTOZOU.matcher(link);
-		if (m.matches()) return getPhotozouImage(matcherGroup(m, PHOTOZOU_GROUP_ID), true);
+		if (m.matches()) return getPhotozouImage(matcherGroup(m, PHOTOZOU_GROUP_ID), link, large_image_preview);
 		return null;
 	}
 
@@ -1209,7 +1208,7 @@ public final class Utils implements Constants {
 		final HtmlLinkExtractor extractor = new HtmlLinkExtractor();
 		extractor.grabLinks(status_string);
 		for (final HtmlLink link : extractor.grabLinks(status_string)) {
-			final ImageSpec spec = getAllAvailableImage(link.getLink());
+			final ImageSpec spec = getAllAvailableImage(link.getLink(), true);
 			if (spec != null) {
 				images.add(spec);
 			}
@@ -1228,19 +1227,19 @@ public final class Utils implements Constants {
 		return image_upload_format.replace(FORMAT_PATTERN_LINK, link).replace(FORMAT_PATTERN_TEXT, text);
 	}
 
-	public static ImageSpec getImglyImage(final String id, final boolean large_image_preview) {
+	public static ImageSpec getImglyImage(final String id, final String orig, final boolean large_image_preview) {
 		if (isEmpty(id)) return null;
 		final String full = "https://img.ly/show/full/" + id;
 		final String preview = "https://img.ly/show/" + (large_image_preview ? "medium" : "thumb") + "/" + id;
-		return new ImageSpec(preview, full);
+		return new ImageSpec(preview, full, orig);
 
 	}
 
-	public static ImageSpec getImgurImage(final String id, final boolean large_image_preview) {
+	public static ImageSpec getImgurImage(final String id, final String orig, final boolean large_image_preview) {
 		if (isEmpty(id)) return null;
 		final String full = "http://i.imgur.com/" + id + ".jpg";
 		final String preview = "http://i.imgur.com/" + id + (large_image_preview ? "l.jpg" : "s.jpg");
-		return new ImageSpec(preview, full);
+		return new ImageSpec(preview, full, orig);
 	}
 
 	public static int getInlineImagePreviewDisplayOptionInt(final Context context) {
@@ -1259,11 +1258,11 @@ public final class Utils implements Constants {
 		return INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE;
 	}
 
-	public static ImageSpec getInstagramImage(final String id, final boolean large_image_preview) {
+	public static ImageSpec getInstagramImage(final String id, final String orig, final boolean large_image_preview) {
 		if (isEmpty(id)) return null;
 		final String full = "https://instagr.am/p/" + id + "/media/?size=l";
 		final String preview = large_image_preview ? full : "https://instagr.am/p/" + id + "/media/?size=t";
-		return new ImageSpec(preview, full);
+		return new ImageSpec(preview, full, orig);
 	}
 
 	public static ImageSpec getLockerzAndPlixiImage(final String url, final boolean large_image_preview) {
@@ -1271,15 +1270,15 @@ public final class Utils implements Constants {
 		final String full = "https://api.plixi.com/api/tpapi.svc/imagefromurl?url=" + url + "&size=big";
 		final String preview = large_image_preview ? full : "https://api.plixi.com/api/tpapi.svc/imagefromurl?url="
 				+ url + "&size=small";
-		return new ImageSpec(preview, full);
+		return new ImageSpec(preview, full, url);
 
 	}
 
-	public static ImageSpec getMobyPictureImage(final String id, final boolean large_image_preview) {
+	public static ImageSpec getMobyPictureImage(final String id, final String orig, final boolean large_image_preview) {
 		if (isEmpty(id)) return null;
 		final String full = "https://moby.to/" + id + ":full";
 		final String preview = large_image_preview ? full : "https://moby.to/" + id + ":thumb";
-		return new ImageSpec(preview, full);
+		return new ImageSpec(preview, full, orig);
 	}
 
 	public static int getNameDisplayOptionInt(final String option) {
@@ -1399,66 +1398,30 @@ public final class Utils implements Constants {
 		return url;
 	}
 
-	public static ImageSpec getPhotozouImage(final String id, final boolean large_image_preview) {
+	public static ImageSpec getPhotozouImage(final String id, final String orig, final boolean large_image_preview) {
 		if (isEmpty(id)) return null;
 		final String full = "http://photozou.jp/p/img/" + id;
 		final String preview = large_image_preview ? full : "http://photozou.jp/p/thumb/" + id;
-		return new ImageSpec(preview, full);
+		return new ImageSpec(preview, full, orig);
 	}
 
-	public static PreviewImage getPreviewImage(final String html, final int display_option) {
-		if (html == null) return new PreviewImage(false, null, null);
-		if (display_option == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE)
-			return new PreviewImage(html.contains(".twimg.com/") || html.contains("://instagr.am/")
+	public static ImageSpec getPreviewImage(final String html, final int display_option) {
+		if (html == null) return null;
+		if (display_option == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE
+				&& (html.contains(".twimg.com/") || html.contains("://instagr.am/")
 					|| html.contains("://instagram.com/") || html.contains("://imgur.com/")
 					|| html.contains("://i.imgur.com/") || html.contains("://twitpic.com/")
 					|| html.contains("://img.ly/") || html.contains("://yfrog.com/")
 					|| html.contains("://twitgoo.com/") || html.contains("://moby.to/")
 					|| html.contains("://plixi.com/p/") || html.contains("://lockerz.com/s/")
-					|| html.contains(".sinaimg.cn/") || html.contains("://photozou.jp/"), null, null);
+					|| html.contains(".sinaimg.cn/") || html.contains("://photozou.jp/"))) return ImageSpec.getEmpty();
 		final boolean large_image_preview = display_option == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE;
 		final HtmlLinkExtractor extractor = new HtmlLinkExtractor();
 		for (final HtmlLink link : extractor.grabLinks(html)) {
-			final String image_url = link.getLink();
-			Matcher m;
-			m = PATTERN_TWITTER_IMAGES.matcher(image_url);
-			if (m.matches()) return new PreviewImage(getTwitterImage(image_url, large_image_preview), image_url);
-			m = PATTERN_TWITPIC.matcher(image_url);
-			if (m.matches())
-				return new PreviewImage(getTwitpicImage(matcherGroup(m, TWITPIC_GROUP_ID), large_image_preview),
-						image_url);
-			m = PATTERN_INSTAGRAM.matcher(image_url);
-			if (m.matches())
-				return new PreviewImage(getInstagramImage(matcherGroup(m, INSTAGRAM_GROUP_ID), large_image_preview),
-						image_url);
-			m = PATTERN_IMGUR.matcher(image_url);
-			if (m.matches())
-				return new PreviewImage(getImgurImage(matcherGroup(m, IMGUR_GROUP_ID), large_image_preview), image_url);
-			m = PATTERN_IMGLY.matcher(image_url);
-			if (m.matches())
-				return new PreviewImage(getImglyImage(matcherGroup(m, IMGLY_GROUP_ID), large_image_preview), image_url);
-			m = PATTERN_YFROG.matcher(image_url);
-			if (m.matches())
-				return new PreviewImage(getYfrogImage(matcherGroup(m, YFROG_GROUP_ID), large_image_preview), image_url);
-			m = PATTERN_LOCKERZ_AND_PLIXI.matcher(image_url);
-			if (m.matches())
-				return new PreviewImage(getLockerzAndPlixiImage(image_url, large_image_preview), image_url);
-			m = PATTERN_SINA_WEIBO_IMAGES.matcher(image_url);
-			if (m.matches()) return new PreviewImage(getSinaWeiboImage(image_url, large_image_preview), image_url);
-			m = PATTERN_TWITGOO.matcher(image_url);
-			if (m.matches())
-				return new PreviewImage(getTwitgooImage(matcherGroup(m, TWITGOO_GROUP_ID), large_image_preview),
-						image_url);
-			m = PATTERN_MOBYPICTURE.matcher(image_url);
-			if (m.matches())
-				return new PreviewImage(
-						getMobyPictureImage(matcherGroup(m, MOBYPICTURE_GROUP_ID), large_image_preview), image_url);
-			m = PATTERN_PHOTOZOU.matcher(image_url);
-			if (m.matches())
-				return new PreviewImage(getPhotozouImage(matcherGroup(m, PHOTOZOU_GROUP_ID), large_image_preview),
-						image_url);
+			final ImageSpec image = getAllAvailableImage(link.getLink(), large_image_preview);
+			if (image != null) return image;
 		}
-		return new PreviewImage(false, null, null);
+		return null;
 	}
 
 	public static Proxy getProxy(final Context context) {
@@ -1532,7 +1495,7 @@ public final class Utils implements Constants {
 		final String full = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVAILABLE_SIZES + "\\/", "/large/");
 		final String preview = large_image_preview ? full : url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVAILABLE_SIZES
 				+ "\\/", "/thumbnail/");
-		return new ImageSpec(preview, full);
+		return new ImageSpec(preview, full, full);
 	}
 
 	public static int getStatusBackground(final boolean is_mention, final boolean is_favorite, final boolean is_retweet) {
@@ -1705,23 +1668,25 @@ public final class Utils implements Constants {
 		return date.getTime();
 	}
 
-	public static ImageSpec getTwitgooImage(final String id, final boolean large_image_preview) {
+	public static ImageSpec getTwitgooImage(final String id, final String orig, final boolean large_image_preview) {
 		if (isEmpty(id)) return null;
 		final String full = "https://twitgoo.com/show/img/" + id;
 		final String preview = large_image_preview ? full : "https://twitgoo.com/show/thumb/" + id;
-		return new ImageSpec(preview, full);
+		return new ImageSpec(preview, full, orig);
 	}
 
-	public static ImageSpec getTwitpicImage(final String id, final boolean large_image_preview) {
+	public static ImageSpec getTwitpicImage(final String id, final String orig, final boolean large_image_preview) {
 		if (isEmpty(id)) return null;
 		final String full = "https://twitpic.com/show/large/" + id;
 		final String preview = large_image_preview ? full : "https://twitpic.com/show/thumb/" + id;
-		return new ImageSpec(preview, full);
+		return new ImageSpec(preview, full, orig);
 	}
 
 	public static ImageSpec getTwitterImage(final String url, final boolean large_image_preview) {
 		if (isEmpty(url)) return null;
-		return new ImageSpec(url + (large_image_preview ? ":large" : ":thumb"), url + ":large");
+		final String full = url+ ":large";
+		final String preview = large_image_preview ? full : url + ":thumb";
+		return new ImageSpec(preview, full, full);
 	}
 
 	public static Twitter getTwitterInstance(final Context context, final long account_id,
@@ -1849,11 +1814,11 @@ public final class Utils implements Constants {
 		return 0;
 	}
 
-	public static ImageSpec getYfrogImage(final String id, final boolean large_image_preview) {
+	public static ImageSpec getYfrogImage(final String id, final String orig, final boolean large_image_preview) {
 		if (isEmpty(id)) return null;
 		final String preview = "https://yfrog.com/" + id + ":iphone";
 		final String full = "https://yfrog.com/" + id + (large_image_preview ? ":medium" : ":small");
-		return new ImageSpec(preview, full);
+		return new ImageSpec(preview, full, orig);
 
 	}
 
@@ -2274,15 +2239,8 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openImage(final Context context, final Uri uri, final boolean is_possibly_sensitive) {
+	public static void openImage(final Context context, final String uri, final String orig, final boolean is_possibly_sensitive) {
 		if (context == null || uri == null) return;
-		final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE);
-		intent.setData(uri);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1) {
-			intent.setClass(context, ImageViewerGLActivity.class);
-		} else {
-			intent.setClass(context, ImageViewerActivity.class);
-		}
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		if (context instanceof FragmentActivity && is_possibly_sensitive
 				&& !prefs.getBoolean(PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS, false)) {
@@ -2290,14 +2248,32 @@ public final class Utils implements Constants {
 			final FragmentManager fm = activity.getSupportFragmentManager();
 			final DialogFragment fragment = new SensitiveContentWarningDialogFragment();
 			final Bundle args = new Bundle();
-			args.putParcelable(INTENT_KEY_URI, uri);
+			args.putParcelable(INTENT_KEY_URI, Uri.parse(uri));
+			if (orig != null) {
+				args.putParcelable(INTENT_KEY_URI_ORIG, Uri.parse(orig));
+			}
 			fragment.setArguments(args);
 			fragment.show(fm, "sensitive_content_warning");
 		} else {
-			context.startActivity(intent);
+			openImageDirectly(context, uri, orig);
 		}
 	}
-
+	
+	public static void openImageDirectly(final Context context, final String uri, final String orig) {
+		if (context == null || uri == null) return;
+		final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE);
+		intent.setData(Uri.parse(uri));
+		if (orig != null) {
+			intent.putExtra(INTENT_KEY_URI_ORIG, Uri.parse(orig));
+		}
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1) {
+			intent.setClass(context, ImageViewerGLActivity.class);
+		} else {
+			intent.setClass(context, ImageViewerActivity.class);
+		}
+		context.startActivity(intent);
+	}
+	
 	public static void openIncomingFriendships(final Activity activity, final long account_id) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
