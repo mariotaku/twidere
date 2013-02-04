@@ -31,6 +31,7 @@ public final class MenuAdapter extends ArrayAdapter<MenuItem> {
 		final ImageView icon = (ImageView) view.findViewById(android.R.id.icon);
 		final MenuItem item = getItem(position);
 		icon.setImageDrawable(item.getIcon());
+		icon.setVisibility(item.getIcon() != null ? View.VISIBLE : View.GONE);
 		return view;
 	}
 

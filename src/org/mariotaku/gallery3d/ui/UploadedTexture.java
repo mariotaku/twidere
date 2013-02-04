@@ -132,6 +132,7 @@ abstract class UploadedTexture extends BasicTexture {
 			uploadToCanvas(canvas);
 		} else if (!mContentValid) {
 			final Bitmap bitmap = getBitmap();
+			if (bitmap == null) return;
 			final int format = GLUtils.getInternalFormat(bitmap);
 			final int type = GLUtils.getType(bitmap);
 			canvas.getGLInstance().glBindTexture(GL11.GL_TEXTURE_2D, mId);

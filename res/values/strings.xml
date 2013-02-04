@@ -407,5 +407,6 @@
 	<string name="profile_images">Profile images</string>
 	<string name="preview_images">Preview images</string>
 	<string name="preload_wifi_only">Preload using Wi-Fi only</string>
+	<string name="re_sign_in_needed">You may need to sign-in your accounts again.</string>
 
 </resources>

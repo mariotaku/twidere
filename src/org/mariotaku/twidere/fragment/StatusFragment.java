@@ -393,6 +393,9 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		} else {
 			mListView.setSelection(0);
 		}
+		if (mConversationTask != null && mConversationTask.getStatus() == AsyncTask.Status.RUNNING) {
+			mConversationTask.cancel(true);
+		}
 		mStatusId = -1;
 		mAccountId = -1;
 		mStatus = status;
@@ -620,7 +623,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		lm.destroyLoader(LOADER_ID_STATUS);
 		lm.destroyLoader(LOADER_ID_LOCATION);
 		lm.destroyLoader(LOADER_ID_FOLLOW);
-		if (mConversationTask != null) {
+		if (mConversationTask != null && mConversationTask.getStatus() == AsyncTask.Status.RUNNING) {
 			mConversationTask.cancel(true);
 		}
 		super.onDestroyView();

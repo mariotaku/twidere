@@ -54,6 +54,7 @@ import com.nostra13.universalimageloader.cache.disc.naming.FileNameGenerator;
 import org.mariotaku.twidere.util.URLFileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
 import org.mariotaku.twidere.util.TwidereImageDownloader;
+import android.widget.Toast;
 
 public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener {
 
@@ -177,6 +178,8 @@ public class TwidereApplication extends Application implements Constants, OnShar
 			} else {
 				stopService(intent);
 			}
+		} else if (PREFERENCE_KEY_CONSUMER_KEY.equals(key) || PREFERENCE_KEY_CONSUMER_SECRET.equals(key)) {
+			Toast.makeText(this, R.string.re_sign_in_needed, Toast.LENGTH_SHORT).show();
 		}
 	}
 

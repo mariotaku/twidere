@@ -265,9 +265,9 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			switch (table_id) {
 				case VIRTUAL_TABLE_ID_CONSUMER_KEY_SECRET: {
 					final String consumer_key = mPreferences.getString(PREFERENCE_KEY_CONSUMER_KEY,
-							TWITTER_CONSUMER_KEY);
+							TWITTER_CONSUMER_KEY).trim();
 					final String consumer_secret = mPreferences.getString(PREFERENCE_KEY_CONSUMER_SECRET,
-							TWITTER_CONSUMER_SECRET);
+							TWITTER_CONSUMER_SECRET).trim();
 					final Bundle bundle = new Bundle();
 					bundle.putString(PREFERENCE_KEY_CONSUMER_KEY, isEmpty(consumer_key) ? TWITTER_CONSUMER_KEY
 							: consumer_key);
