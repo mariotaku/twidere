@@ -141,7 +141,6 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 			mScreenNameConfirmButton.setEnabled(s.length() > 0 && s.length() < 20);
 		}
 	};
-	private TwidereApplication mApplication;
 
 	@Override
 	public void afterTextChanged(final Editable s) {
@@ -156,7 +155,6 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mApplication = getApplication();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mTwitterWrapper = getTwitterWrapper();
 
