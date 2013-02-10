@@ -10,16 +10,16 @@ import android.util.AttributeSet;
 
 public class StatusImagePreviewItemView extends AutoAdjustHeightImageView {
 
-	public StatusImagePreviewItemView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
+	public StatusImagePreviewItemView(final Context context) {
+		super(context);
 	}
 
-	public StatusImagePreviewItemView(Context context, AttributeSet attrs) {
+	public StatusImagePreviewItemView(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
 	}
 
-	public StatusImagePreviewItemView(Context context) {
-		super(context);
+	public StatusImagePreviewItemView(final Context context, final AttributeSet attrs, final int defStyle) {
+		super(context, attrs, defStyle);
 	}
 
 	@SuppressWarnings("deprecation")

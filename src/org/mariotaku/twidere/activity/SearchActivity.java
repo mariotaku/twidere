@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.activity;
 
+import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.getAccountId;
 import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
@@ -42,19 +43,24 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.PagerTabStrip;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 public class SearchActivity extends MultiSelectActivity {
 
 	private ActionBar mActionBar;
 	private TabsAdapter mAdapter;
 
-	private Uri mData;
-	private final Bundle mArguments = new Bundle();
-
 	private ExtendedViewPager mViewPager;
-	private PagerTabStrip mPagerTab;
+	private PagerTabStrip mIndicator;
+
+	private final Bundle mArguments = new Bundle();
+	private Uri mData;
+	private String mQuery;
+
 	private boolean mDisplayAppIcon;
+	private boolean mIsSearchUsers, mIsSearchTweets;
 
 	@Override
 	public void onBackStackChanged() {
@@ -77,7 +83,7 @@ public class SearchActivity extends MultiSelectActivity {
 	public void onContentChanged() {
 		super.onContentChanged();
 		mViewPager = (ExtendedViewPager) findViewById(R.id.main);
-		mPagerTab = (PagerTabStrip) findViewById(R.id.pager_tab);
+		mIndicator = (PagerTabStrip) findViewById(R.id.pager_tab);
 	}
 
 	@Override
@@ -87,21 +93,21 @@ public class SearchActivity extends MultiSelectActivity {
 		final Intent intent = getIntent();
 		mArguments.clear();
 		mData = intent.getData();
-		final boolean is_search_user = mData != null ? QUERY_PARAM_VALUE_USERS.equals(mData
-				.getQueryParameter(QUERY_PARAM_TYPE)) : false;
-		final String query = Intent.ACTION_SEARCH.equals(intent.getAction()) ? intent
-				.getStringExtra(SearchManager.QUERY) : mData != null ? mData.getQueryParameter(QUERY_PARAM_QUERY)
-				: null;
-		if (query == null) {
+		final String type = mData != null ? mData.getQueryParameter(QUERY_PARAM_TYPE) : null;
+		mQuery = Intent.ACTION_SEARCH.equals(intent.getAction()) ? intent.getStringExtra(SearchManager.QUERY)
+				: mData != null ? mData.getQueryParameter(QUERY_PARAM_QUERY) : null;
+		mIsSearchUsers = QUERY_PARAM_VALUE_USERS.equals(type);
+		mIsSearchTweets = QUERY_PARAM_VALUE_TWEETS.equals(type);
+		if (isEmpty(mQuery)) {
 			finish();
 			return;
 		}
 		if (savedInstanceState == null) {
 			final SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
 					RecentSearchProvider.AUTHORITY, RecentSearchProvider.MODE);
-			suggestions.saveRecentQuery(query, null);
+			suggestions.saveRecentQuery(mQuery, null);
 		}
-		mArguments.putString(INTENT_KEY_QUERY, query);
+		mArguments.putString(INTENT_KEY_QUERY, mQuery);
 		final String param_account_id = mData != null ? mData.getQueryParameter(QUERY_PARAM_ACCOUNT_ID) : null;
 		if (param_account_id != null) {
 			mArguments.putLong(INTENT_KEY_ACCOUNT_ID, parseLong(param_account_id));
@@ -121,13 +127,26 @@ public class SearchActivity extends MultiSelectActivity {
 		}
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
+		mActionBar.setSubtitle(mQuery);
 		mAdapter = new TabsAdapter(this, getSupportFragmentManager(), null);
-		mAdapter.addTab(SearchTweetsFragment.class, mArguments, getString(R.string.tweets), R.drawable.ic_tab_twitter,
-				0);
-		mAdapter.addTab(SearchUsersFragment.class, mArguments, getString(R.string.users), R.drawable.ic_tab_person, 1);
+		if (!mIsSearchUsers) {
+			mAdapter.addTab(SearchTweetsFragment.class, mArguments, getString(R.string.tweets),
+					R.drawable.ic_tab_twitter, 0);
+		}
+		if (!mIsSearchTweets) {
+			mAdapter.addTab(SearchUsersFragment.class, mArguments, getString(R.string.users), R.drawable.ic_tab_person,
+					1);
+		}
 		mViewPager.setAdapter(mAdapter);
-		mViewPager.setCurrentItem(is_search_user ? 1 : 0);
-		mPagerTab.setTabIndicatorColorResource(R.color.holo_blue_light);
+		mViewPager.setCurrentItem(mIsSearchUsers ? 1 : 0);
+		mIndicator.setTabIndicatorColorResource(R.color.holo_blue_light);
+		mIndicator.setVisibility(mIsSearchUsers || mIsSearchTweets ? View.GONE : View.VISIBLE);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(final Menu menu) {
+		getMenuInflater().inflate(R.menu.menu_search, menu);
+		return true;
 	}
 
 	@Override
@@ -148,10 +167,31 @@ public class SearchActivity extends MultiSelectActivity {
 				} else {
 					NavUtils.navigateUpFromSameTask(this);
 				}
-				break;
+				return true;
+			}
+			case MENU_COMPOSE: {
+				final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+				final Bundle extras = new Bundle();
+				if (mQuery.startsWith("#")) {
+					extras.putString(INTENT_KEY_TEXT, mQuery + " ");
+				} else {
+					extras.putString(INTENT_KEY_TEXT, "#" + mQuery + " ");
+				}
+				intent.putExtras(extras);
+				startActivity(intent);
+				return true;
 			}
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(final Menu menu) {
+		final MenuItem compose = menu.findItem(MENU_COMPOSE);
+		if (compose != null) {
+			compose.setVisible(!mIsSearchUsers);
+		}
+		return true;
 	}
 
 	@Override

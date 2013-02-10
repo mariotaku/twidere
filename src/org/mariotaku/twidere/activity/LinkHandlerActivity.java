@@ -148,7 +148,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 
 	@Override
 	protected int getNormalLayoutRes() {
-		return R.layout.base;
+		return R.layout.link_handler;
 	}
 
 	@Override
@@ -404,4 +404,5 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 		mFragment = fragment;
 		return true;
 	}
+
 }

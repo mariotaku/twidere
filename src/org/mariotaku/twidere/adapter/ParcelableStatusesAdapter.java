@@ -50,7 +50,6 @@ import org.mariotaku.twidere.view.holder.StatusViewHolder;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
-import android.net.Uri;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
@@ -121,7 +120,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			holder = new StatusViewHolder(view);
 			view.setTag(holder);
 		}
-		
+
 		// Clear images in prder to prevent images in recycled view shown.
 		holder.profile_image.setImageDrawable(null);
 		holder.my_profile_image.setImageDrawable(null);

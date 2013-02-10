@@ -19,49 +19,17 @@
 
 package org.mariotaku.twidere.util;
 
-import static org.mariotaku.twidere.util.Utils.copyStream;
-import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
-import static org.mariotaku.twidere.util.Utils.getImageLoaderHttpClient;
-import static org.mariotaku.twidere.util.Utils.getRedirectedHttpResponse;
-import static org.mariotaku.twidere.util.Utils.resizeBitmap;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.ref.Reference;
-import java.lang.ref.SoftReference;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.WeakHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-
-import org.mariotaku.twidere.BuildConfig;
 import org.mariotaku.twidere.Constants;
- 
-import com.nostra13.universalimageloader.core.ImageLoader;
+import org.mariotaku.twidere.R;
 
-import twitter4j.TwitterException;
-import twitter4j.http.HttpClientWrapper;
-import twitter4j.http.HttpResponse;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Handler;
-import android.util.Log;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
+
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import org.mariotaku.twidere.R;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 /**
  * Lazy image loader for {@link ListView} and {@link GridView} etc.</br> </br>
@@ -76,12 +44,10 @@ import org.mariotaku.twidere.R;
  */
 public class ImageLoaderWrapper implements Constants {
 
-	private final Context mContext;
 	private final ImageLoader mImageLoader;
 	private final DisplayImageOptions mProfileImageDisplayOptions, mPreviewImageDisplayOptions;
 
 	public ImageLoaderWrapper(final Context context, final ImageLoader loader) {
-		mContext = context;
 		mImageLoader = loader;
 		final DisplayImageOptions.Builder profile_opts_builder = new DisplayImageOptions.Builder();
 		profile_opts_builder.cacheInMemory();

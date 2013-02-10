@@ -52,7 +52,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.net.Uri;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.Html;
 import android.text.TextUtils;
@@ -68,7 +67,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	private final Resources mResources;
 	private final ImageLoaderWrapper mLazyImageLoader;
 	private final MultiSelectManager mMultiSelectManager;
-	
+
 	private final float mDensity;
 
 	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled,

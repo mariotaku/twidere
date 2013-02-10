@@ -67,17 +67,18 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
 			}
 			final List<twitter4j.Status> list = values.list;
 			for (final twitter4j.Status status : list) {
-				final twitter4j.Status retweeted_status = status.getRetweetedStatus();
-				final User user = retweeted_status == null ? status.getUser() : retweeted_status.getUser();
+				final User user = status.getUser();
 				if (user == null) {
 					continue;
 				}
-				final long user_id = user.getId();
-				status_ids.add(status.getId());
+				final long user_id = user.getId(), status_id = status.getId();
+				if (!status_ids.contains(status_id)) {
+					status_ids.add(status.getId());
+					cached_statuses_values.add(makeStatusContentValues(status, values.account_id, large_profile_image));
+				}
 				if (!user_ids.contains(user_id)) {
 					user_ids.add(user_id);
 					cached_users_values.add(makeCachedUserContentValues(user, large_profile_image));
-					cached_statuses_values.add(makeStatusContentValues(status, values.account_id, large_profile_image));
 				}
 				hashtags.addAll(extractor.extractHashtags(status.getText()));
 			}

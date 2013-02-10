@@ -385,11 +385,13 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	public void displayStatus(final ParcelableStatus status) {
 		onRefreshComplete();
 		updatePullRefresh();
-		final boolean status_changed = mStatus != null && status != null && !status.equals(mStatus);
-		if (status_changed) {
+		final boolean status_unchanged = mStatus != null && status != null && status.equals(mStatus);
+		if (!status_unchanged) {
 			mAdapter.clear();
-			// UCD
-			ProfilingUtil.profile(getActivity(), mStatus.account_id, "End, " + mStatus.status_id);
+			if (mStatus != null) {
+				// UCD
+				ProfilingUtil.profile(getActivity(), mStatus.account_id, "End, " + mStatus.status_id);
+			}
 		} else {
 			mListView.setSelection(0);
 		}
@@ -461,7 +463,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		final List<ImageSpec> images = getImagesInStatus(status.text_html);
 		mImagePreviewContainer.setVisibility(images.size() > 0 ? View.VISIBLE : View.GONE);
 		loadPreviewImages(images);
-		if (mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false)) {
+		if (mLoadMoreAutomatically || status_unchanged) {
 			showPreviewImages();
 		}
 		mRetweetedStatusView.setVisibility(status.retweet_id > 0 ? View.VISIBLE : View.GONE);

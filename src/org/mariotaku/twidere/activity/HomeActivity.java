@@ -283,25 +283,25 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 					}
 					setSupportProgressBarIndeterminateVisibility(false);
 				}
-				break;
+				return true;
 			}
 			case MENU_COMPOSE: {
 				if (mComposeButton != null) {
 					onClick(mComposeButton);
 				}
-				break;
+				return true;
 			}
 			case MENU_SEARCH: {
 				onSearchRequested();
-				break;
+				return true;
 			}
 			case MENU_SELECT_ACCOUNT: {
 				startActivityForResult(new Intent(INTENT_ACTION_SELECT_ACCOUNT), REQUEST_SELECT_ACCOUNT);
-				break;
+				return true;
 			}
 			case MENU_SETTINGS: {
 				startActivity(new Intent(INTENT_ACTION_SETTINGS));
-				break;
+				return true;
 			}
 		}
 		return super.onOptionsItemSelected(item);

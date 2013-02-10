@@ -272,7 +272,8 @@ public class TwidereLinkify {
 							continue;
 						}
 						string.removeSpan(span);
-						applyLink(spec.full_image_link, spec.orig_link, start, end, string, LINK_TYPE_LINK_WITH_IMAGE_EXTENSION);
+						applyLink(spec.full_image_link, spec.orig_link, start, end, string,
+								LINK_TYPE_LINK_WITH_IMAGE_EXTENSION);
 					}
 				}
 				break;
@@ -356,7 +357,8 @@ public class TwidereLinkify {
 		applyLink(url, null, start, end, text, type);
 	}
 
-	private final void applyLink(final String url, final String orig, final int start, final int end, final Spannable text, final int type) {
+	private final void applyLink(final String url, final String orig, final int start, final int end,
+			final Spannable text, final int type) {
 		final LinkSpan span = new LinkSpan(url, orig, type, mOnLinkClickListener);
 		text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 	}
@@ -392,15 +394,15 @@ public class TwidereLinkify {
 			this.listener = listener;
 		}
 
+		public String getURLOrig() {
+			return orig;
+		}
+
 		@Override
 		public void onClick(final View widget) {
 			if (listener != null) {
 				listener.onLinkClick(getURL(), getURLOrig(), type);
 			}
-		}
-
-		public String getURLOrig() {
-			return orig;
 		}
 	}
 }

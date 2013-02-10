@@ -1,12 +1,15 @@
 package org.mariotaku.twidere.util;
-import com.nostra13.universalimageloader.core.download.ImageDownloader;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import android.content.Context;
+
+import twitter4j.TwitterException;
 import twitter4j.http.HttpClientWrapper;
 import twitter4j.http.HttpResponse;
-import twitter4j.TwitterException;
+import android.content.Context;
+
+import com.nostra13.universalimageloader.core.download.ImageDownloader;
 
 public class TwidereImageDownloader extends ImageDownloader {
 
@@ -17,20 +20,21 @@ public class TwidereImageDownloader extends ImageDownloader {
 		this.context = context;
 		initHttpClient();
 	}
-	
+
 	public void initHttpClient() {
 		client = Utils.getImageLoaderHttpClient(context);
 	}
 
-	protected InputStream getStreamFromNetwork(URI uri) throws IOException {
+	@Override
+	protected InputStream getStreamFromNetwork(final URI uri) throws IOException {
 		final InputStream is;
 		try {
 			final HttpResponse resp = Utils.getRedirectedHttpResponse(client, uri.toString());
 			is = resp.asStream();
-		} catch (TwitterException e) {
+		} catch (final TwitterException e) {
 			throw new IOException(e);
 		}
 		return is;
 	}
-	
+
 }

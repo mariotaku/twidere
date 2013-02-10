@@ -36,7 +36,6 @@ import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ClipboardUtils;
-import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.view.holder.DirectMessageConversationViewHolder;
 
 import android.content.BroadcastReceiver;

@@ -3,18 +3,14 @@ package org.mariotaku.twidere.fragment;
 import static org.mariotaku.twidere.util.Utils.openImageDirectly;
 import static org.mariotaku.twidere.util.Utils.parseString;
 
-import org.mariotaku.gallery3d.app.ImageViewerGLActivity;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.ImageViewerActivity;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 
 public class SensitiveContentWarningDialogFragment extends BaseDialogFragment implements OnClickListener {

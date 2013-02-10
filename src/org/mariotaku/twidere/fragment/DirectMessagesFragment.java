@@ -30,7 +30,6 @@ import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.AsyncTask;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import org.mariotaku.twidere.util.ImageLoaderWrapper;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

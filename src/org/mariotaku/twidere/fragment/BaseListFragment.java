@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.scrollListToTop;
+
 import org.mariotaku.actionbarcompat.ActionBarFragmentActivity;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.activity.BaseActivity;
@@ -51,10 +53,9 @@ public class BaseListFragment extends ListFragment implements Constants {
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
-			if ((BaseListFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP).equals(action))
-				if (getListView() != null) {
-					getListView().setSelection(0);
-				}
+			if ((BaseListFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP).equals(action)) {
+				scrollListToTop(getListView());
+			}
 		}
 	};
 

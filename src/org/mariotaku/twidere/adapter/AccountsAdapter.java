@@ -55,7 +55,7 @@ public class AccountsAdapter extends SimpleCursorAdapter {
 				new int[] { android.R.id.text1 }, 0);
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mMultiSelectEnabled = multi_select;
-		mLazyImageLoader = application.getInstance(context).getImageLoaderWrapper();
+		mLazyImageLoader = application.getImageLoaderWrapper();
 		mPreferences = context.getSharedPreferences(AccountsFragment.SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}

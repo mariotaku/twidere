@@ -189,7 +189,7 @@ public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCo
 				// Bug http://code.google.com/p/android/issues/detail?id=5255
 				throw new TwitterException("Please check your APN settings, make sure not to use WAP APNs.", e);
 			} catch (final OutOfMemoryError e) {
-				//I don't know why this causes OOM, but it should be catched.
+				// I don't know why this causes OOM, but it should be catched.
 				throw new TwitterException("Unknown error", e);
 			}
 			final int statusCode = res.getStatusCode();

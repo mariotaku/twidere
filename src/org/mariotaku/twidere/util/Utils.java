@@ -178,6 +178,7 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
@@ -190,7 +191,9 @@ import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.SubMenu;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -308,25 +311,12 @@ public final class Utils implements Constants {
 	private static Map<Long, Integer> sAccountColors = new LinkedHashMap<Long, Integer>();
 
 	private static Map<Long, Integer> sUserColors = new LinkedHashMap<Long, Integer>(512, 0.75f, true);
+
 	private static Map<Long, String> sAccountScreenNames = new LinkedHashMap<Long, String>();
 	private static Map<Long, String> sAccountNames = new LinkedHashMap<Long, String>();
 
 	private Utils() {
 		throw new AssertionError("You are trying to create an instance for this utility class!");
-	}
-
-	public static Bitmap getBitmap(final Drawable drawable) {
-		if (drawable instanceof NinePatchDrawable) return null;
-		if (drawable instanceof BitmapDrawable)
-			return ((BitmapDrawable) drawable).getBitmap();
-		else if (drawable instanceof TransitionDrawable) {
-			final int layer_count = ((TransitionDrawable) drawable).getNumberOfLayers();
-			for (int i = 0; i < layer_count; i++) {
-				final Drawable layer = ((TransitionDrawable) drawable).getDrawable(i);
-				if (layer instanceof BitmapDrawable) return ((BitmapDrawable) layer).getBitmap();
-			}
-		}
-		return null;
 	}
 
 	public static void addIntentToSubMenu(final Context context, final SubMenu menu, final Intent query_intent) {
@@ -1056,6 +1046,20 @@ public final class Utils implements Constants {
 		return url;
 	}
 
+	public static Bitmap getBitmap(final Drawable drawable) {
+		if (drawable instanceof NinePatchDrawable) return null;
+		if (drawable instanceof BitmapDrawable)
+			return ((BitmapDrawable) drawable).getBitmap();
+		else if (drawable instanceof TransitionDrawable) {
+			final int layer_count = ((TransitionDrawable) drawable).getNumberOfLayers();
+			for (int i = 0; i < layer_count; i++) {
+				final Drawable layer = ((TransitionDrawable) drawable).getDrawable(i);
+				if (layer instanceof BitmapDrawable) return ((BitmapDrawable) layer).getBitmap();
+			}
+		}
+		return null;
+	}
+
 	public static String getBrowserUserAgent(final Context context) {
 		if (context == null) return null;
 		return TwidereApplication.getInstance(context).getBrowserUserAgent();
@@ -1409,12 +1413,13 @@ public final class Utils implements Constants {
 		if (html == null) return null;
 		if (display_option == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE
 				&& (html.contains(".twimg.com/") || html.contains("://instagr.am/")
-					|| html.contains("://instagram.com/") || html.contains("://imgur.com/")
-					|| html.contains("://i.imgur.com/") || html.contains("://twitpic.com/")
-					|| html.contains("://img.ly/") || html.contains("://yfrog.com/")
-					|| html.contains("://twitgoo.com/") || html.contains("://moby.to/")
-					|| html.contains("://plixi.com/p/") || html.contains("://lockerz.com/s/")
-					|| html.contains(".sinaimg.cn/") || html.contains("://photozou.jp/"))) return ImageSpec.getEmpty();
+						|| html.contains("://instagram.com/") || html.contains("://imgur.com/")
+						|| html.contains("://i.imgur.com/") || html.contains("://twitpic.com/")
+						|| html.contains("://img.ly/") || html.contains("://yfrog.com/")
+						|| html.contains("://twitgoo.com/") || html.contains("://moby.to/")
+						|| html.contains("://plixi.com/p/") || html.contains("://lockerz.com/s/")
+						|| html.contains(".sinaimg.cn/") || html.contains("://photozou.jp/")))
+			return ImageSpec.getEmpty();
 		final boolean large_image_preview = display_option == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE;
 		final HtmlLinkExtractor extractor = new HtmlLinkExtractor();
 		for (final HtmlLink link : extractor.grabLinks(html)) {
@@ -1684,7 +1689,7 @@ public final class Utils implements Constants {
 
 	public static ImageSpec getTwitterImage(final String url, final boolean large_image_preview) {
 		if (isEmpty(url)) return null;
-		final String full = url+ ":large";
+		final String full = url + ":large";
 		final String preview = large_image_preview ? full : url + ":thumb";
 		return new ImageSpec(preview, full, full);
 	}
@@ -1705,7 +1710,8 @@ public final class Utils implements Constants {
 		final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 		final boolean enable_proxy = preferences.getBoolean(PREFERENCE_KEY_ENABLE_PROXY, false);
 		final String consumer_key = preferences.getString(PREFERENCE_KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY).trim();
-		final String consumer_secret = preferences.getString(PREFERENCE_KEY_CONSUMER_SECRET, TWITTER_CONSUMER_SECRET).trim();
+		final String consumer_secret = preferences.getString(PREFERENCE_KEY_CONSUMER_SECRET, TWITTER_CONSUMER_SECRET)
+				.trim();
 
 		Twitter twitter = null;
 		final StringBuilder where = new StringBuilder();
@@ -1942,7 +1948,7 @@ public final class Utils implements Constants {
 		}
 		return false;
 	}
-	
+
 	public static boolean isOnWifi(final Context context) {
 		if (context == null) return false;
 		final ConnectivityManager conn = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -1953,7 +1959,7 @@ public final class Utils implements Constants {
 	}
 
 	public static boolean isRedirected(final int code) {
-		return code == 301 || code == 302;
+		return code == 301 || code == 302 || code == 307;
 	}
 
 	public static boolean isRTL(final Context context) {
@@ -2239,7 +2245,8 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openImage(final Context context, final String uri, final String orig, final boolean is_possibly_sensitive) {
+	public static void openImage(final Context context, final String uri, final String orig,
+			final boolean is_possibly_sensitive) {
 		if (context == null || uri == null) return;
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		if (context instanceof FragmentActivity && is_possibly_sensitive
@@ -2258,7 +2265,7 @@ public final class Utils implements Constants {
 			openImageDirectly(context, uri, orig);
 		}
 	}
-	
+
 	public static void openImageDirectly(final Context context, final String uri, final String orig) {
 		if (context == null || uri == null) return;
 		final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE);
@@ -2273,7 +2280,7 @@ public final class Utils implements Constants {
 		}
 		context.startActivity(intent);
 	}
-	
+
 	public static void openIncomingFriendships(final Activity activity, final long account_id) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
@@ -2921,6 +2928,26 @@ public final class Utils implements Constants {
 			activity.getWindow().setWindowAnimations(0);
 		}
 		activity.startActivity(activity.getIntent());
+	}
+
+	public static void scrollListToPosition(final ListView list, final int position) {
+		if (list == null) return;
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+			list.setSelection(position);
+			list.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(),
+					MotionEvent.ACTION_CANCEL, 0, 0, 0));
+		} else {
+			list.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(),
+					MotionEvent.ACTION_DOWN, 0, 0, 0));
+			list.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(),
+					MotionEvent.ACTION_UP, 0, 0, 0));
+			list.setSelection(position);
+		}
+	}
+
+	public static void scrollListToTop(final ListView list) {
+		if (list == null) return;
+		scrollListToPosition(list, 0);
 	}
 
 	public static void setMenuForStatus(final Context context, final Menu menu, final ParcelableStatus status) {

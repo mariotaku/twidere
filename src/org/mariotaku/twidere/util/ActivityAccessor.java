@@ -36,6 +36,11 @@ public final class ActivityAccessor {
 		OverridePendingTransitionAccessor.overridePendingTransition(activity, enter_anim, exit_anim);
 	}
 
+	public static void setFinishOnTouchOutside(final Activity activity, final boolean finish) {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return;
+		SetFinishOnTouchOutsideAccessor.setFinishOnTouchOutside(activity, finish);
+	}
+
 	public static void setHomeButtonEnabled(final Activity activity, final boolean enabled) {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) return;
 		SetHomeButtonEnabledAccessor.setHomeButtonEnabled(activity, enabled);
@@ -55,6 +60,14 @@ public final class ActivityAccessor {
 		private static void overridePendingTransition(final Activity activity, final int enter_anim, final int exit_anim) {
 			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ECLAIR) return;
 			activity.overridePendingTransition(enter_anim, exit_anim);
+		}
+	}
+
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private static class SetFinishOnTouchOutsideAccessor {
+		public static void setFinishOnTouchOutside(final Activity activity, final boolean finish) {
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return;
+			activity.setFinishOnTouchOutside(finish);
 		}
 	}
 

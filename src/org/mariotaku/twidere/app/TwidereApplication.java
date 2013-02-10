@@ -22,6 +22,8 @@ package org.mariotaku.twidere.app;
 import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
 import static org.mariotaku.twidere.util.Utils.hasActiveConnection;
 
+import java.io.File;
+
 import org.mariotaku.gallery3d.util.GalleryUtils;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
@@ -31,8 +33,11 @@ import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.DatabaseHelper;
 import org.mariotaku.twidere.util.ImageLoaderUtils;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
+import org.mariotaku.twidere.util.ImageMemoryCache;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.TwidereHostAddressResolver;
+import org.mariotaku.twidere.util.TwidereImageDownloader;
+import org.mariotaku.twidere.util.URLFileNameGenerator;
 
 import twitter4j.http.HostAddressResolver;
 import android.app.Application;
@@ -44,17 +49,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.webkit.WebView;
-import edu.ucdavis.earlybird.UCDService;
+import android.widget.Toast;
+
+import com.nostra13.universalimageloader.cache.disc.impl.TotalSizeLimitedDiscCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.cache.disc.DiscCacheAware;
-import com.nostra13.universalimageloader.cache.disc.impl.TotalSizeLimitedDiscCache;
-import java.io.File;
-import com.nostra13.universalimageloader.cache.disc.naming.FileNameGenerator;
-import org.mariotaku.twidere.util.URLFileNameGenerator;
-import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
-import org.mariotaku.twidere.util.TwidereImageDownloader;
-import android.widget.Toast;
+
+import edu.ucdavis.earlybird.UCDService;
 
 public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener {
 
@@ -86,6 +87,11 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		return mHandler;
 	}
 
+	public HostAddressResolver getHostAddressResolver() {
+		if (mResolver != null) return mResolver;
+		return mResolver = new TwidereHostAddressResolver(this);
+	}
+
 	public ImageLoader getImageLoader() {
 		if (mImageLoader != null) return mImageLoader;
 		final File cache_dir = getBestCacheDir(this, DIR_NAME_IMAGE_CACHE);
@@ -94,26 +100,21 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		final ImageLoader loader = ImageLoader.getInstance();
 		final ImageLoaderConfiguration.Builder cb = new ImageLoaderConfiguration.Builder(this);
 		cb.threadPoolSize(8);
-		cb.memoryCache(new WeakMemoryCache());
+		cb.memoryCache(new ImageMemoryCache(40));
 		cb.discCache(new TotalSizeLimitedDiscCache(cache_dir, new URLFileNameGenerator(), (int) disc_cache_size));
 		cb.imageDownloader(mImageDownloader);
 		loader.init(cb.build());
 		return mImageLoader = loader;
 	}
-	
-	public HostAddressResolver getHostAddressResolver() {
-		if (mResolver != null) return mResolver;
-		return mResolver = new TwidereHostAddressResolver(this);
+
+	public ImageLoaderWrapper getImageLoaderWrapper() {
+		if (mImageLoaderWrapper != null) return mImageLoaderWrapper;
+		return mImageLoaderWrapper = new ImageLoaderWrapper(this, getImageLoader());
 	}
 
 	public MultiSelectManager getMultiSelectManager() {
 		if (mMultiSelectManager != null) return mMultiSelectManager;
 		return mMultiSelectManager = new MultiSelectManager();
-	}
-
-	public ImageLoaderWrapper getImageLoaderWrapper() {
-		if (mImageLoaderWrapper != null) return mImageLoaderWrapper;
-		return mImageLoaderWrapper = new ImageLoaderWrapper(this, getImageLoader());
 	}
 
 	public SQLiteDatabase getSQLiteDatabase() {

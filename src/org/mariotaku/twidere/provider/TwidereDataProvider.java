@@ -540,8 +540,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 					: status.name);
 		}
 		final String profile_image_url_string = status.profile_image_url;
-		final File profile_image_file = mImagePreloader
-				.getCachedImageFile(DIR_NAME_IMAGE_CACHE, display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
+		final File profile_image_file = mImagePreloader.getCachedImageFile(DIR_NAME_IMAGE_CACHE,
+				display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
 						: profile_image_url_string);
 		final int w = res.getDimensionPixelSize(R.dimen.notification_large_icon_width);
 		final int h = res.getDimensionPixelSize(R.dimen.notification_large_icon_height);
@@ -656,8 +656,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		}
 		final String text_plain = message.text_plain;
 		final String profile_image_url_string = message.sender_profile_image_url;
-		final File profile_image_file = mImagePreloader
-				.getCachedImageFile(DIR_NAME_IMAGE_CACHE, display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
+		final File profile_image_file = mImagePreloader.getCachedImageFile(DIR_NAME_IMAGE_CACHE,
+				display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
 						: profile_image_url_string);
 		final int w = res.getDimensionPixelSize(R.dimen.notification_large_icon_width);
 		final int h = res.getDimensionPixelSize(R.dimen.notification_large_icon_height);
@@ -788,7 +788,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	}
 
 	private void preloadImages(final ContentValues... values) {
-		if (values == null || (!isOnWifi(mContext) && mPreferences.getBoolean(PREFERENCE_KEY_PRELOAD_WIFI_ONLY, true))) return;
+		if (values == null || !isOnWifi(mContext) && mPreferences.getBoolean(PREFERENCE_KEY_PRELOAD_WIFI_ONLY, true))
+			return;
 		for (final ContentValues v : values) {
 			if (mPreferences.getBoolean(PREFERENCE_KEY_PRELOAD_PROFILE_IMAGES, false)) {
 				final String profile_image_url = v.getAsString(Statuses.PROFILE_IMAGE_URL);

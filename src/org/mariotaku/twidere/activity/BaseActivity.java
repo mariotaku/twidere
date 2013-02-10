@@ -78,7 +78,7 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 			final boolean hardware_acceleration = mHardwareAccelerated = preferences.getBoolean(
-					PREFERENCE_KEY_HARDWARE_ACCELERATION, false);
+					PREFERENCE_KEY_HARDWARE_ACCELERATION, true);
 			final Window w = getWindow();
 			if (hardware_acceleration) {
 				w.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
@@ -114,7 +114,7 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 	protected boolean isHardwareAccelerationChanged() {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return false;
 		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final boolean hardware_acceleration = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION, false);
+		final boolean hardware_acceleration = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION, true);
 		return mHardwareAccelerated != hardware_acceleration;
 	}
 

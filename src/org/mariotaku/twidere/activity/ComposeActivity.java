@@ -42,6 +42,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.BaseDialogFragment;
 import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
+import org.mariotaku.twidere.util.ActivityAccessor;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.BitmapDecodeHelper;
@@ -302,6 +303,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		mTwitterWrapper = getTwidereApplication().getTwitterWrapper();
 		mResolver = getContentResolver();
 		super.onCreate(savedInstanceState);
+		ActivityAccessor.setFinishOnTouchOutside(this, false);
 		final long[] account_ids = getAccountIds(this);
 		if (account_ids.length <= 0) {
 			final Intent intent = new Intent(INTENT_ACTION_TWITTER_LOGIN);

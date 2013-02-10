@@ -4,7 +4,7 @@
 	android:title="@string/other_settings">
 
 	<CheckBoxPreference
-		android:defaultValue="false"
+		android:defaultValue="true"
 		android:enabled="@bool/hw_accel_supported"
 		android:key="hardware_acceleration"
 		android:summary="@string/hardware_acceleration_summary"

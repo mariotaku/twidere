@@ -35,7 +35,6 @@ import java.util.Date;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 
-import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.User;
 import android.content.ContentValues;
