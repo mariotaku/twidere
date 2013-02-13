@@ -97,6 +97,11 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.twitter.Validator;
+import org.mariotaku.twidere.util.ImageValidator;
+import java.io.FileNotFoundException;
+import org.mariotaku.twidere.util.Exif;
+import org.mariotaku.gallery3d.util.DecodeUtils;
+import android.view.Window;
 
 public class ComposeActivity extends BaseDialogWhenLargeActivity implements TextWatcher, LocationListener,
 		OnMenuItemClickListener, OnClickListener, OnLongClickListener, PopupMenu.OnMenuItemClickListener,
@@ -151,12 +156,10 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		switch (requestCode) {
 			case REQUEST_TAKE_PHOTO: {
 				if (resultCode == Activity.RESULT_OK) {
-					final File file = new File(mImageUri.getPath());
-					if (file.exists()) {
+					if (ImageValidator.checkImageValidity(mImageUri)) {
 						mIsImageAttached = false;
 						mIsPhotoAttached = true;
-						mImageThumbnailPreview.setVisibility(View.VISIBLE);
-						reloadAttachedImageThumbnail(file);
+						reloadAttachedImageThumbnail(mImageUri);
 					} else {
 						mIsPhotoAttached = false;
 					}
@@ -169,14 +172,11 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			case REQUEST_PICK_IMAGE: {
 				if (resultCode == Activity.RESULT_OK) {
 					final Uri uri = intent.getData();
-					final String path = getImagePathFromUri(this, uri);
-					final File file = path == null ? null : new File(path);
-					if (file != null && file.exists()) {
-						mImageUri = Uri.fromFile(file);
+					if (uri != null) {
+						mImageUri = uri;
 						mIsPhotoAttached = false;
 						mIsImageAttached = true;
-						mImageThumbnailPreview.setVisibility(View.VISIBLE);
-						reloadAttachedImageThumbnail(file);
+						reloadAttachedImageThumbnail(uri);
 					} else {
 						mIsImageAttached = false;
 					}
@@ -207,10 +207,9 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			case REQUEST_EDIT_IMAGE: {
 				if (resultCode == Activity.RESULT_OK) {
 					final Uri uri = intent.getData();
-					final File file = uri == null ? null : new File(getImagePathFromUri(this, uri));
-					if (file != null && file.exists()) {
-						mImageUri = Uri.fromFile(file);
-						reloadAttachedImageThumbnail(file);
+					if (uri != null) {
+						mImageUri = uri;
+						reloadAttachedImageThumbnail(uri);
 					} else {
 						break;
 					}
@@ -234,10 +233,9 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 						mEditText.append(append);
 						mText = parseString(mEditText.getText());
 					}
-					final File file = image_uri == null ? null : new File(getImagePathFromUri(this, image_uri));
-					if (file != null && file.exists()) {
-						mImageUri = Uri.fromFile(file);
-						reloadAttachedImageThumbnail(file);
+					if (image_uri != null) {
+						mImageUri = image_uri;
+						reloadAttachedImageThumbnail(image_uri);
 					}
 					setMenu();
 				}
@@ -302,6 +300,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mTwitterWrapper = getTwidereApplication().getTwitterWrapper();
 		mResolver = getContentResolver();
+		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		ActivityAccessor.setFinishOnTouchOutside(this, false);
 		final long[] account_ids = getAccountIds(this);
@@ -312,6 +311,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			finish();
 			return;
 		}
+		setSupportProgressBarIndeterminateVisibility(true);
 		setContentView(R.layout.compose);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -378,18 +378,13 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 					}
 					if (mImageUri == null) {
 						final Uri extra_stream = extras.getParcelable(Intent.EXTRA_STREAM);
-						final String content_type = getIntent().getType();
-						if (extra_stream != null && content_type != null && content_type.startsWith("image/")) {
-							final String real_path = getImagePathFromUri(this, extra_stream);
-							final File file = real_path != null ? new File(real_path) : null;
-							if (file != null && file.exists()) {
-								mImageUri = Uri.fromFile(file);
-								mIsImageAttached = true;
-								mIsPhotoAttached = false;
-							} else {
-								mImageUri = null;
-								mIsImageAttached = false;
-							}
+						if (extra_stream != null) {
+							mImageUri = extra_stream;
+							mIsImageAttached = true;
+							mIsPhotoAttached = false;
+						} else {
+							mImageUri = null;
+							mIsImageAttached = false;
 						}
 					}
 				}
@@ -400,13 +395,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			}
 		}
 
-		final File image_file = mImageUri != null && "file".equals(mImageUri.getScheme()) ? new File(
-				mImageUri.getPath()) : null;
-		final boolean image_file_valid = image_file != null && image_file.exists();
-		mImageThumbnailPreview.setVisibility(image_file_valid ? View.VISIBLE : View.GONE);
-		if (image_file_valid) {
-			reloadAttachedImageThumbnail(image_file);
-		}
+		reloadAttachedImageThumbnail(mImageUri);
 
 		mImageThumbnailPreview.setOnClickListener(this);
 		mImageThumbnailPreview.setOnLongClickListener(this);
@@ -453,7 +442,8 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 
 	@Override
 	public Loader<Bitmap> onCreateLoader(final int id, final Bundle args) {
-		return new AttachedImageThumbnailLoader(this, args.getString(INTENT_KEY_FILENAME));
+		final Uri uri = args.getParcelable(INTENT_KEY_URI);
+		return new AttachedImageThumbnailLoader(this, uri);
 	}
 
 	@Override
@@ -476,13 +466,13 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 
 	@Override
 	public void onLoaderReset(final Loader<Bitmap> loader) {
-		mImageThumbnailPreview.setVisibility(View.GONE);
 		mImageThumbnailPreview.setImageBitmap(null);
 	}
 
 	@Override
 	public void onLoadFinished(final Loader<Bitmap> loader, final Bitmap data) {
-		mImageThumbnailPreview.setVisibility(data != null ? View.VISIBLE : View.GONE);
+		mImageThumbnailPreview.setVisibility(View.VISIBLE);
+		//mImageThumbnailPreview.setVisibility(data != null ? View.VISIBLE : View.GONE);
 		mImageThumbnailPreview.setImageBitmap(data);
 
 	}
@@ -746,25 +736,28 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	}
 
 	private void pickImage() {
-		final Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		final Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 		try {
-			startActivityForResult(i, REQUEST_PICK_IMAGE);
+			startActivityForResult(intent, REQUEST_PICK_IMAGE);
 		} catch (final ActivityNotFoundException e) {
 			showErrorToast(this, null, e, false);
 		}
 	}
 
-	private void reloadAttachedImageThumbnail(final File file) {
+	private void reloadAttachedImageThumbnail(final Uri uri) {
 		final LoaderManager lm = getSupportLoaderManager();
 		lm.destroyLoader(0);
 		final Bundle args = new Bundle();
-		args.putString(INTENT_KEY_FILENAME, file != null ? file.getPath() : null);
+		args.putParcelable(INTENT_KEY_URI, uri);
 		if (mLoaderInitialized) {
 			lm.restartLoader(0, args, this);
 		} else {
 			lm.initLoader(0, args, this);
 			mLoaderInitialized = true;
 		}
+		mImageThumbnailPreview.setVisibility(View.VISIBLE);
+//		mImageThumbnailPreview.setVisibility(uri != null ? View.VISIBLE : View.GONE);
 	}
 
 	private void send() {
@@ -885,28 +878,33 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 
 	public static final class AttachedImageThumbnailLoader extends AsyncTaskLoader<Bitmap> {
 
-		private final File file;
+		private final Uri uri;
 
-		public AttachedImageThumbnailLoader(final Context context, final String path) {
+		public AttachedImageThumbnailLoader(final Context context, final Uri uri) {
 			super(context);
-			file = path != null ? new File(path) : null;
+			this.uri = uri;
 		}
 
 		@Override
 		public Bitmap loadInBackground() {
-			if (file != null && file.exists()) {
-				final int thumbnail_size_px = (int) (THUMBNAIL_SIZE * getContext().getResources().getDisplayMetrics().density);
+			if (uri == null) return null;
+			try {
+				final Context context = getContext();
+				final ContentResolver resolver = context.getContentResolver();
+				final float density = context.getResources().getDisplayMetrics().density;
+				final int thumbnail_size_px = (int) (THUMBNAIL_SIZE * density);
 				final BitmapFactory.Options o = new BitmapFactory.Options();
 				o.inJustDecodeBounds = true;
-				BitmapFactory.decodeFile(file.getPath(), o);
+				BitmapFactory.decodeStream(resolver.openInputStream(uri), null, o);
 				final int tmp_width = o.outWidth;
 				final int tmp_height = o.outHeight;
 				if (tmp_width == 0 || tmp_height == 0) return null;
 				final BitmapFactory.Options o2 = new BitmapFactory.Options();
 				o2.inSampleSize = Math.round(Math.max(tmp_width, tmp_height) / thumbnail_size_px);
-				return BitmapDecodeHelper.decode(file.getPath(), o2);
+				return BitmapDecodeHelper.decode(resolver.openInputStream(uri), o2);			
+			} catch (FileNotFoundException e) {
+				return null;
 			}
-			return null;
 		}
 
 		@Override

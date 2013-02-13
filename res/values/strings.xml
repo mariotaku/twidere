@@ -408,5 +408,6 @@
 	<string name="preview_images">Preview images</string>
 	<string name="preload_wifi_only">Preload using Wi-Fi only</string>
 	<string name="re_sign_in_needed">You may need to sign-in your accounts again.</string>
+	<string name="disable_tab_swipe">Disable tab swipe</string>
 
 </resources>

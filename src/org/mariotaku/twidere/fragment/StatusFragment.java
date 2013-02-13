@@ -408,6 +408,9 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			mStatusId = mStatus.status_id;
 		}
 		clearPreviewImages();
+		if (!status_unchanged) {
+			hidePreviewImages();
+		}
 		if (status == null || getActivity() == null) return;
 		final Bundle args = getArguments();
 		args.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
@@ -463,7 +466,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		final List<ImageSpec> images = getImagesInStatus(status.text_html);
 		mImagePreviewContainer.setVisibility(images.size() > 0 ? View.VISIBLE : View.GONE);
 		loadPreviewImages(images);
-		if (mLoadMoreAutomatically || status_unchanged) {
+		if (mLoadMoreAutomatically){
 			showPreviewImages();
 		}
 		mRetweetedStatusView.setVisibility(status.retweet_id > 0 ? View.VISIBLE : View.GONE);
@@ -486,7 +489,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		} else {
 			mFollowIndicator.setVisibility(View.GONE);
 		}
-
 	}
 
 	@Override
@@ -678,10 +680,13 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	private void clearPreviewImages() {
 		mImagePreviewView.clear();
+	}
+
+	private void hidePreviewImages() {
 		mLoadImagesIndicator.setVisibility(View.VISIBLE);
 		mImagePreviewView.setVisibility(View.GONE);
 	}
-
+	
 	private void getStatus(final boolean omit_intent_extra) {
 		final LoaderManager lm = getLoaderManager();
 		lm.destroyLoader(LOADER_ID_STATUS);

@@ -201,6 +201,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_PRELOAD_PROFILE_IMAGES = "preload_profile_images";
 	public static final String PREFERENCE_KEY_PRELOAD_PREVIEW_IMAGES = "preload_preview_images";
 	public static final String PREFERENCE_KEY_PRELOAD_WIFI_ONLY = "preload_wifi_only";
+	public static final String PREFERENCE_KEY_DISABLE_TAB_SWIPE = "disable_tab_swipe";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;

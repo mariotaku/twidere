@@ -106,10 +106,9 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 	}
 
 	public void requestSupportWindowFeature(final int featureId) {
+		mWindowFeatureId = featureId;
 		if (mActionBarCompat instanceof ActionBarCompatNative) {
 			requestWindowFeature(featureId);
-		} else {
-			mWindowFeatureId = featureId;
 		}
 	}
 

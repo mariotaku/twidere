@@ -310,6 +310,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 				}
 				break;
 			}
+			case R.id.my_profile_image:
 			case R.id.profile_image: {
 				if (mContext instanceof Activity) {
 					openUserProfile((Activity) mContext, status.account_id, status.user_id, status.screen_name);

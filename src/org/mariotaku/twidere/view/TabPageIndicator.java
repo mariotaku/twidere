@@ -54,14 +54,14 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 	int mMaxTabWidth;
 	private int mSelectedTabIndex;
 
-	private boolean mPagingEnabled = true;
+	private boolean mSwitchingEnabled = true;
 	private boolean mDisplayLabel, mDisplayColor = true;
 
 	private final OnClickListener mTabClickListener = new OnClickListener() {
 
 		@Override
 		public void onClick(final View view) {
-			if (!mPagingEnabled) return;
+			if (!mSwitchingEnabled) return;
 			final TabView tabView = (TabView) view;
 			if (mCurrentItem == tabView.getIndex()) {
 				mAdapter.onPageReselected(mCurrentItem);
@@ -75,7 +75,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 
 		@Override
 		public boolean onLongClick(final View view) {
-			if (!mPagingEnabled) return false;
+			if (!mSwitchingEnabled) return false;
 			final TabView tabView = (TabView) view;
 			return mAdapter.onTabLongClick(tabView.getIndex());
 		}
@@ -249,12 +249,11 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 		mListener = listener;
 	}
 
-	public void setPagingEnabled(final boolean enabled) {
+	public void setSwitchingEnabled(final boolean enabled) {
 		if (!(mViewPager instanceof ViewPager))
 			throw new IllegalStateException(
 					"This method should only called when your ViewPager instance is ExtendedViewPager");
-		((ExtendedViewPager) mViewPager).setPagingEnabled(enabled);
-		mPagingEnabled = enabled;
+		mSwitchingEnabled = enabled;
 	}
 
 	public void setViewPager(final ViewPager pager) {

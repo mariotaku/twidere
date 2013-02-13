@@ -385,6 +385,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	public void onResume() {
 		super.onResume();
 		invalidateSupportOptionsMenu();
+		mViewPager.setPagingEnabled(!mPreferences.getBoolean(PREFERENCE_KEY_DISABLE_TAB_SWIPE, false));
 	}
 
 	public void setDefaultAccount() {
@@ -394,9 +395,6 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		if (activated_ids != null && activated_ids.length > 0
 				&& !ArrayUtils.contains(activated_ids, default_account_id)) {
 			mPreferences.edit().putLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, activated_ids[0]).commit();
-			if (mIndicator != null) {
-				mIndicator.setPagingEnabled(true);
-			}
 		}
 	}
 
@@ -532,8 +530,9 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	}
 
 	protected void setPagingEnabled(final boolean enabled) {
-		if (mIndicator != null) {
-			mIndicator.setPagingEnabled(enabled);
+		if (mIndicator != null && mViewPager != null) {
+			mViewPager.setPagingEnabled(!mPreferences.getBoolean(PREFERENCE_KEY_DISABLE_TAB_SWIPE, false));
+			mIndicator.setSwitchingEnabled(enabled);
 			mIndicator.setEnabled(enabled);
 		}
 	}

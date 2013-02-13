@@ -6,6 +6,7 @@ import java.io.RandomAccessFile;
 import java.util.Arrays;
 
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 
 public class ImageValidator {
 
@@ -18,6 +19,11 @@ public class ImageValidator {
 	public static boolean checkImageValidity(final File file) {
 		if (file == null) return false;
 		return checkImageValidity(file.getPath());
+	}
+	
+	public static boolean checkImageValidity(final Uri uri) {
+		if (uri == null) return false;
+		return checkImageValidity(uri.getPath());
 	}
 
 	public static boolean checkImageValidity(final String file) {
