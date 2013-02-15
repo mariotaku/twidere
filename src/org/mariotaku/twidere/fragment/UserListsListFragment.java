@@ -21,7 +21,8 @@ package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.addIntentToSubMenu;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
-import static org.mariotaku.twidere.util.Utils.*;
+import static org.mariotaku.twidere.util.Utils.openUserListDetails;
+import static org.mariotaku.twidere.util.Utils.parseString;
 
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
@@ -33,15 +34,21 @@ import org.mariotaku.twidere.loader.UserListsLoader;
 import org.mariotaku.twidere.loader.UserListsLoader.UserListsData;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUserList;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -49,18 +56,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-import android.content.DialogInterface;
-import android.widget.EditText;
-import android.widget.CheckBox;
-import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import android.app.AlertDialog;
-import android.view.LayoutInflater;
-import android.app.Dialog;
-import android.support.v4.app.DialogFragment;
 
 public class UserListsListFragment extends PullToRefreshListFragment implements
 		LoaderCallbacks<UserListsLoader.UserListsData>, OnItemClickListener, OnItemLongClickListener, Panes.Left,

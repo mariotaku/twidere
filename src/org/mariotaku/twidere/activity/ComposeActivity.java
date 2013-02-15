@@ -26,7 +26,6 @@ import static org.mariotaku.twidere.util.Utils.getAccountColors;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
-import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getImageUploadStatus;
 import static org.mariotaku.twidere.util.Utils.getShareStatus;
 import static org.mariotaku.twidere.util.Utils.openImageDirectly;
@@ -34,6 +33,8 @@ import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
@@ -47,6 +48,7 @@ import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.BitmapDecodeHelper;
 import org.mariotaku.twidere.util.EnvironmentAccessor;
+import org.mariotaku.twidere.util.ImageValidator;
 import org.mariotaku.twidere.view.ColorView;
 
 import android.app.Activity;
@@ -90,6 +92,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -97,11 +100,6 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.twitter.Validator;
-import org.mariotaku.twidere.util.ImageValidator;
-import java.io.FileNotFoundException;
-import org.mariotaku.twidere.util.Exif;
-import org.mariotaku.gallery3d.util.DecodeUtils;
-import android.view.Window;
 
 public class ComposeActivity extends BaseDialogWhenLargeActivity implements TextWatcher, LocationListener,
 		OnMenuItemClickListener, OnClickListener, OnLongClickListener, PopupMenu.OnMenuItemClickListener,
@@ -296,11 +294,11 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
+		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mTwitterWrapper = getTwidereApplication().getTwitterWrapper();
 		mResolver = getContentResolver();
-		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		ActivityAccessor.setFinishOnTouchOutside(this, false);
 		final long[] account_ids = getAccountIds(this);
@@ -311,7 +309,6 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			finish();
 			return;
 		}
-		setSupportProgressBarIndeterminateVisibility(true);
 		setContentView(R.layout.compose);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -471,10 +468,8 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 
 	@Override
 	public void onLoadFinished(final Loader<Bitmap> loader, final Bitmap data) {
-		mImageThumbnailPreview.setVisibility(View.VISIBLE);
-		//mImageThumbnailPreview.setVisibility(data != null ? View.VISIBLE : View.GONE);
+		mImageThumbnailPreview.setVisibility(data != null ? View.VISIBLE : View.GONE);
 		mImageThumbnailPreview.setImageBitmap(data);
-
 	}
 
 	@Override
@@ -679,13 +674,6 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		mResolver.insert(Drafts.CONTENT_URI, values);
 	}
 
-	//
-	// @Override
-	// public void onTitleChanged(final CharSequence title, final int color) {
-	// mActionBarCompat.setTitle(title);
-	// super.onTitleChanged(title, color);
-	// }
-
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -756,8 +744,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			lm.initLoader(0, args, this);
 			mLoaderInitialized = true;
 		}
-		mImageThumbnailPreview.setVisibility(View.VISIBLE);
-//		mImageThumbnailPreview.setVisibility(uri != null ? View.VISIBLE : View.GONE);
+		mImageThumbnailPreview.setVisibility(uri != null ? View.VISIBLE : View.GONE);
 	}
 
 	private void send() {
@@ -895,13 +882,14 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				final int thumbnail_size_px = (int) (THUMBNAIL_SIZE * density);
 				final BitmapFactory.Options o = new BitmapFactory.Options();
 				o.inJustDecodeBounds = true;
-				BitmapFactory.decodeStream(resolver.openInputStream(uri), null, o);
+				final InputStream is = resolver.openInputStream(uri);
+				BitmapFactory.decodeStream(is, null, o);
 				final int tmp_width = o.outWidth;
 				final int tmp_height = o.outHeight;
 				if (tmp_width == 0 || tmp_height == 0) return null;
 				final BitmapFactory.Options o2 = new BitmapFactory.Options();
 				o2.inSampleSize = Math.round(Math.max(tmp_width, tmp_height) / thumbnail_size_px);
-				return BitmapDecodeHelper.decode(resolver.openInputStream(uri), o2);			
+				return BitmapDecodeHelper.decode(is, o2);			
 			} catch (FileNotFoundException e) {
 				return null;
 			}

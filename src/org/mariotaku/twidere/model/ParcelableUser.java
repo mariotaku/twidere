@@ -19,14 +19,18 @@
 
 package org.mariotaku.twidere.model;
 
+import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
+import static org.mariotaku.twidere.util.Utils.formatUserDescription;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.parseString;
+import static org.mariotaku.twidere.util.Utils.*;
 
 import java.io.Serializable;
 import java.util.Date;
 
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 
+import twitter4j.URLEntity;
 import twitter4j.User;
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -53,7 +57,8 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 
 	public final boolean is_protected, is_verified, is_follow_request_sent;
 
-	public final String description, name, screen_name, location, profile_image_url, profile_banner_url, url;
+	public final String description_plain, name, screen_name, location, profile_image_url, profile_banner_url, url,
+			url_expanded, description_html, description_unescaped, description_expanded;
 
 	public final int followers_count, friends_count, statuses_count, favorites_count;
 
@@ -75,10 +80,14 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		friends_count = cursor.getInt(cursor.getColumnIndex(CachedUsers.FRIENDS_COUNT));
 		statuses_count = cursor.getInt(cursor.getColumnIndex(CachedUsers.STATUSES_COUNT));
 		location = cursor.getString(cursor.getColumnIndex(CachedUsers.LOCATION));
-		description = cursor.getString(cursor.getColumnIndex(CachedUsers.DESCRIPTION));
+		description_plain = cursor.getString(cursor.getColumnIndex(CachedUsers.DESCRIPTION_PLAIN));
+		description_html = cursor.getString(cursor.getColumnIndex(CachedUsers.DESCRIPTION_HTML));
+		description_expanded = cursor.getString(cursor.getColumnIndex(CachedUsers.DESCRIPTION_EXPANDED));
 		url = cursor.getString(cursor.getColumnIndex(CachedUsers.URL));
+		url_expanded = cursor.getString(cursor.getColumnIndex(CachedUsers.URL_EXPANDED));
 		profile_banner_url = cursor.getString(cursor.getColumnIndex(CachedUsers.PROFILE_BANNER_URL));
 		is_cache = true;
+		description_unescaped = toPlainText(description_html);
 	}
 
 	public ParcelableUser(final Parcel in) {
@@ -90,7 +99,7 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		is_verified = in.readInt() == 1;
 		name = in.readString();
 		screen_name = in.readString();
-		description = in.readString();
+		description_plain = in.readString();
 		location = in.readString();
 		profile_image_url = in.readString();
 		profile_banner_url = in.readString();
@@ -101,6 +110,10 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		statuses_count = in.readInt();
 		favorites_count = in.readInt();
 		is_cache = in.readInt() == 1;
+		description_html = in.readString();
+		description_expanded = in.readString();
+		url_expanded = in.readString();
+		description_unescaped = toPlainText(description_html);
 	}
 
 	public ParcelableUser(final User user, final long account_id, final boolean large_profile_image) {
@@ -111,24 +124,30 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		this.position = position;
 		this.account_id = account_id;
 		final String profile_image_url_orig = parseString(user.getProfileImageUrlHttps());
+		final URLEntity[] urls_url_entities = user.getURLsURLEntities();
 		user_id = user.getId();
 		created_at = getTime(user.getCreatedAt());
 		is_protected = user.isProtected();
 		is_verified = user.isVerified();
 		name = user.getName();
 		screen_name = user.getScreenName();
-		description = user.getDescription();
+		description_plain = user.getDescription();
+		description_html = formatUserDescription(user);
+		description_expanded = formatExpandedUserDescription(user);
 		location = user.getLocation();
 		profile_image_url = large_profile_image ? getBiggerTwitterProfileImage(profile_image_url_orig)
 				: profile_image_url_orig;
 		profile_banner_url = user.getProfileBannerImageUrl();
 		url = parseString(user.getURL());
+		url_expanded = url != null && urls_url_entities != null && urls_url_entities.length > 0 ? parseString(urls_url_entities[0]
+				.getExpandedURL()) : null;
 		is_follow_request_sent = user.isFollowRequestSent();
 		followers_count = user.getFollowersCount();
 		friends_count = user.getFriendsCount();
 		statuses_count = user.getStatusesCount();
 		favorites_count = user.getFavouritesCount();
 		is_cache = false;
+		description_unescaped = toPlainText(description_html);
 	}
 
 	@Override
@@ -168,11 +187,12 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 	public String toString() {
 		return "ParcelableUser{account_id=" + account_id + ", user_id=" + user_id + ", created_at=" + created_at
 				+ ", position=" + position + ", is_protected=" + is_protected + ", is_verified=" + is_verified
-				+ ", is_follow_request_sent=" + is_follow_request_sent + ", description=" + description + ", name="
-				+ name + ", screen_name=" + screen_name + ", location=" + location + ", profile_image_url_string="
-				+ profile_image_url + ", profile_banner_url_string=" + profile_banner_url + ", url_string=" + url
-				+ ", followers_count=" + followers_count + ", friends_count=" + friends_count + ", statuses_count="
-				+ statuses_count + ", favorites_count=" + favorites_count + "}";
+				+ ", is_follow_request_sent=" + is_follow_request_sent + ", description=" + description_plain
+				+ ", name=" + name + ", screen_name=" + screen_name + ", location=" + location
+				+ ", profile_image_url_string=" + profile_image_url + ", profile_banner_url_string="
+				+ profile_banner_url + ", url_string=" + url + ", followers_count=" + followers_count
+				+ ", friends_count=" + friends_count + ", statuses_count=" + statuses_count + ", favorites_count="
+				+ favorites_count + "}";
 	}
 
 	@Override
@@ -185,7 +205,7 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		out.writeInt(is_verified ? 1 : 0);
 		out.writeString(name);
 		out.writeString(screen_name);
-		out.writeString(description);
+		out.writeString(description_plain);
 		out.writeString(location);
 		out.writeString(profile_image_url);
 		out.writeString(profile_banner_url);
@@ -196,6 +216,9 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		out.writeInt(statuses_count);
 		out.writeInt(favorites_count);
 		out.writeInt(is_cache ? 1 : 0);
+		out.writeString(description_html);
+		out.writeString(description_expanded);
+		out.writeString(url_expanded);
 	}
 
 	private long getTime(final Date date) {
@@ -217,8 +240,11 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		values.put(CachedUsers.FRIENDS_COUNT, user.friends_count);
 		values.put(CachedUsers.STATUSES_COUNT, user.statuses_count);
 		values.put(CachedUsers.LOCATION, user.location);
-		values.put(CachedUsers.DESCRIPTION, user.description);
+		values.put(CachedUsers.DESCRIPTION_PLAIN, user.description_plain);
+		values.put(CachedUsers.DESCRIPTION_HTML, user.description_html);
+		values.put(CachedUsers.DESCRIPTION_EXPANDED, user.description_expanded);
 		values.put(CachedUsers.URL, user.url);
+		values.put(CachedUsers.URL_EXPANDED, user.url_expanded);
 		values.put(CachedUsers.PROFILE_BANNER_URL, user.profile_banner_url);
 		return values;
 	}

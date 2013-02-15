@@ -26,6 +26,7 @@ import static org.mariotaku.twidere.util.Utils.getTabTypeName;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.ArrayAdapter;
 import org.mariotaku.twidere.adapter.SeparatedListAdapter;
 import org.mariotaku.twidere.fragment.CustomTabsFragment.CustomTabsAdapter.CustomTabSpec;
 import org.mariotaku.twidere.fragment.CustomTabsFragment.DefaultTabsAdapter.DefaultTabSpec;
@@ -64,7 +65,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -644,7 +644,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 		final Context context;
 
 		public DefaultTabsAdapter(final Context context) {
-			super(context, R.layout.two_line_with_icon_list_item, android.R.id.text1);
+			super(context, R.layout.two_line_with_icon_list_item);
 			this.context = context;
 			prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 			reload();

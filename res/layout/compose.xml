@@ -32,7 +32,7 @@
 			android:layout_gravity="bottom"
 			android:layout_margin="16dp">
 
-			<org.mariotaku.twidere.view.RoundCorneredImageView
+			<ImageView
 				android:id="@+id/image_thumbnail_preview"
 				android:layout_width="42dp"
 				android:layout_height="42dp"

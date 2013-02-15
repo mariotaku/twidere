@@ -39,14 +39,13 @@
 						android:background="?android:attr/itemBackground"
 						android:clickable="true">
 
-						<org.mariotaku.twidere.view.RoundCorneredImageView
+						<ImageView
 							android:id="@+id/profile_image"
 							android:layout_width="@dimen/profile_image_size"
 							android:layout_height="@dimen/profile_image_size"
 							android:layout_gravity="center"
 							android:layout_margin="8dp"
-							android:radius="4dp"
-							android:scaleType="fitCenter"
+												android:scaleType="fitCenter"
 							android:src="@drawable/ic_profile_image_default"/>
 					</FrameLayout>
 

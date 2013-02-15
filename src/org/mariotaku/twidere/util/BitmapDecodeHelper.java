@@ -28,7 +28,7 @@ import android.graphics.Matrix;
 public class BitmapDecodeHelper {
 
 	public static Bitmap decode(final InputStream is, final BitmapFactory.Options opts) {
-		if (is == null || opts == null) return null;
+		if (is == null) return null;
 		final int orientation = Exif.getOrientation(is);
 		final Bitmap bm = BitmapFactory.decodeStream(is, null, opts);
 		final Matrix m = new Matrix();

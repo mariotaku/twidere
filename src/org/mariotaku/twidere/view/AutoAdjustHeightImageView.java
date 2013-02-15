@@ -3,8 +3,9 @@ package org.mariotaku.twidere.view;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.widget.ImageView;
 
-public class AutoAdjustHeightImageView extends RoundCorneredImageView {
+public class AutoAdjustHeightImageView extends ImageView {
 
 	public AutoAdjustHeightImageView(final Context context) {
 		this(context, null);

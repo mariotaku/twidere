@@ -9,8 +9,9 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.widget.ImageView;
 
-public class ImagePreviewView extends RoundCorneredImageView {
+public class ImagePreviewView extends ImageView {
 
 	public ImagePreviewView(final Context context) {
 		this(context, null);

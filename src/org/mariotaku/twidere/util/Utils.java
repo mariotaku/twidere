@@ -24,6 +24,7 @@ import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.provider.TweetStore.CACHE_URIS;
 import static org.mariotaku.twidere.provider.TweetStore.DIRECT_MESSAGES_URIS;
 import static org.mariotaku.twidere.provider.TweetStore.STATUSES_URIS;
+import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
 import static org.mariotaku.twidere.util.TwidereLinkify.IMGLY_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.IMGUR_GROUP_ID;
 import static org.mariotaku.twidere.util.TwidereLinkify.INSTAGRAM_GROUP_ID;
@@ -719,6 +720,40 @@ public final class Utils implements Constants {
 					DateFormat.is24HourFormat(context) ? DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_24HOUR
 							: DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_12HOUR);
 		return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_DATE);
+	}
+	
+	public static String formatExpandedUserDescription(final User user) {
+		if (user == null) return null;
+		final String text = user.getDescription();
+		if (text == null) return null;
+		final HtmlBuilder builder = new HtmlBuilder(text, DEBUG, true);
+		final URLEntity[] urls = user.getDescriptionsURLEntities();
+		if (urls != null) {
+			for (final URLEntity url : urls) {
+				final String expanded_url = parseString(url.getExpandedURL());
+				if (expanded_url != null) {
+					builder.addLink(expanded_url, expanded_url, url.getStart(), url.getEnd());
+				}
+			}
+		}
+		return toPlainText(builder.build().replace("\n", "<br/>"));
+	}
+	
+	public static String formatUserDescription(final User user) {
+		if (user == null) return null;
+		final String text = user.getDescription();
+		if (text == null) return null;
+		final HtmlBuilder builder = new HtmlBuilder(text, DEBUG, true);
+		final URLEntity[] urls = user.getDescriptionsURLEntities();
+		if (urls != null) {
+			for (final URLEntity url : urls) {
+				final URL expanded_url = url.getExpandedURL();
+				if (expanded_url != null) {
+					builder.addLink(parseString(expanded_url), url.getDisplayURL(), url.getStart(), url.getEnd());
+				}
+			}
+		}
+		return builder.build().replace("\n", "<br/>");
 	}
 
 	public static String formatStatusText(final Status status) {
@@ -2047,7 +2082,7 @@ public final class Utils implements Constants {
 		values.put(CachedUsers.FRIENDS_COUNT, user.getFriendsCount());
 		values.put(CachedUsers.STATUSES_COUNT, user.getStatusesCount());
 		values.put(CachedUsers.LOCATION, user.getLocation());
-		values.put(CachedUsers.DESCRIPTION, user.getDescription());
+		values.put(CachedUsers.DESCRIPTION_PLAIN, user.getDescription());
 		values.put(CachedUsers.URL, parseString(user.getURL()));
 		values.put(CachedUsers.PROFILE_BANNER_URL, user.getProfileBannerImageUrl());
 		return values;

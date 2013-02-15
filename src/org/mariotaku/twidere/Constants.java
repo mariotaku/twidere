@@ -50,7 +50,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PERMISSION_PREFERENCES_NAME = "permissions";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 38;
+	public static final int DATABASES_VERSION = 40;
 
 	// The following 4 constants are not included in source code, you'd better
 	// use your own.

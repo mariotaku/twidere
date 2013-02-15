@@ -414,9 +414,9 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 			mProgress.setVisibility(View.GONE);
 			mContent.setVisibility(View.VISIBLE);
 			mEditName.setText(user.name);
-			mEditDescription.setText(user.description);
+			mEditDescription.setText(user.description_expanded);
 			mEditLocation.setText(user.location);
-			mEditUrl.setText(user.url);
+			mEditUrl.setText(user.url_expanded);
 			mLazyImageLoader.displayProfileImage(mProfileImageView, user.profile_image_url);
 			getBannerImage();
 		} else {
@@ -463,9 +463,9 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 	boolean mHasUnsavedChanges() {
 		if (mUser == null) return false;
 		return !stringEquals(mEditName.getText(), mUser.name)
-				|| !stringEquals(mEditDescription.getText(), mUser.description)
+				|| !stringEquals(mEditDescription.getText(), mUser.description_expanded)
 				|| !stringEquals(mEditLocation.getText(), mUser.location)
-				|| !stringEquals(mEditUrl.getText(), mUser.url);
+				|| !stringEquals(mEditUrl.getText(), mUser.url_expanded);
 	}
 
 	private static boolean stringEquals(final CharSequence str1, final CharSequence str2) {

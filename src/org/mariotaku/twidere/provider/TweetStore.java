@@ -207,11 +207,17 @@ public final class TweetStore implements Constants {
 
 		public static final String IS_VERIFIED = "is_verified";
 
-		public static final String DESCRIPTION = "description";
+		public static final String DESCRIPTION_PLAIN = "description_plain";
+		
+		public static final String DESCRIPTION_HTML = "description_html";
+		
+		public static final String DESCRIPTION_EXPANDED = "description_expanded";
 
 		public static final String LOCATION = "location";
 
 		public static final String URL = "url";
+		
+		public static final String URL_EXPANDED = "url_expanded";
 
 		public static final String PROFILE_BANNER_URL = "profile_banner_url";
 
@@ -235,13 +241,13 @@ public final class TweetStore implements Constants {
 		 */
 		public static final String PROFILE_IMAGE_URL = "profile_image_url";
 
-		public static final String[] COLUMNS = new String[] { _ID, USER_ID, CREATED_AT, NAME, SCREEN_NAME, DESCRIPTION,
+		public static final String[] COLUMNS = new String[] { _ID, USER_ID, CREATED_AT, NAME, SCREEN_NAME, DESCRIPTION_PLAIN,
 				LOCATION, URL, PROFILE_IMAGE_URL, PROFILE_BANNER_URL, IS_PROTECTED, IS_VERIFIED, FOLLOWERS_COUNT,
-				FRIENDS_COUNT, STATUSES_COUNT, FAVORITES_COUNT };
+				FRIENDS_COUNT, STATUSES_COUNT, FAVORITES_COUNT, DESCRIPTION_HTML, DESCRIPTION_EXPANDED, URL_EXPANDED };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT_UNIQUE, TYPE_INT, TYPE_TEXT,
 				TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_INT,
-				TYPE_INT, TYPE_INT, TYPE_INT };
+				TYPE_INT, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT };
 
 	}
 

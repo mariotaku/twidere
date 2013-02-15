@@ -4,11 +4,10 @@
 	android:layout_height="wrap_content"
 	android:padding="8dp">
 
-	<org.mariotaku.twidere.view.RoundCorneredImageView
+	<ImageView
 		android:id="@+id/profile_image"
 		android:layout_width="@dimen/profile_image_size"
 		android:layout_height="@dimen/profile_image_size"
-		android:radius="4dp"
 		android:scaleType="fitCenter"/>
 
 	<TextView
@@ -61,45 +60,40 @@
 		android:layout_toRightOf="@+id/profile_image"
 		android:orientation="horizontal">
 
-		<org.mariotaku.twidere.view.RoundCorneredImageView
+		<ImageView
 			android:id="@+id/activity_profile_image_1"
 			android:layout_width="@dimen/activity_profile_image_size"
 			android:layout_height="@dimen/activity_profile_image_size"
 			android:layout_margin="2dp"
-			android:radius="4dp"
-			android:scaleType="fitCenter"/>
+				android:scaleType="fitCenter"/>
 
-		<org.mariotaku.twidere.view.RoundCorneredImageView
+		<ImageView
 			android:id="@+id/activity_profile_image_2"
 			android:layout_width="@dimen/activity_profile_image_size"
 			android:layout_height="@dimen/activity_profile_image_size"
 			android:layout_margin="2dp"
-			android:radius="4dp"
-			android:scaleType="fitCenter"/>
+				android:scaleType="fitCenter"/>
 
-		<org.mariotaku.twidere.view.RoundCorneredImageView
+		<ImageView
 			android:id="@+id/activity_profile_image_3"
 			android:layout_width="@dimen/activity_profile_image_size"
 			android:layout_height="@dimen/activity_profile_image_size"
 			android:layout_margin="2dp"
-			android:radius="4dp"
-			android:scaleType="fitCenter"/>
+				android:scaleType="fitCenter"/>
 
-		<org.mariotaku.twidere.view.RoundCorneredImageView
+		<ImageView
 			android:id="@+id/activity_profile_image_4"
 			android:layout_width="@dimen/activity_profile_image_size"
 			android:layout_height="@dimen/activity_profile_image_size"
 			android:layout_margin="2dp"
-			android:radius="4dp"
-			android:scaleType="fitCenter"/>
+				android:scaleType="fitCenter"/>
 
-		<org.mariotaku.twidere.view.RoundCorneredImageView
+		<ImageView
 			android:id="@+id/activity_profile_image_5"
 			android:layout_width="@dimen/activity_profile_image_size"
 			android:layout_height="@dimen/activity_profile_image_size"
 			android:layout_margin="2dp"
-			android:radius="4dp"
-			android:scaleType="fitCenter"/>
+				android:scaleType="fitCenter"/>
 	</LinearLayout>
 
 	<TextView
