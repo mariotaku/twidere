@@ -817,7 +817,7 @@ public class SlidingPaneView extends ViewGroup {
 		@Override
 		public void dispatchTouchEvent(final ViewGroup view, final MotionEvent event) {
 			if (event.getAction() == MotionEvent.ACTION_UP) {
-				if (mFirstDownHandled && mTotalMoveX != 0) {
+				if (mFirstDownHandled && mTotalMoveX != 0 && !mIsVerticalScrolling) {
 					mController.release(mIsVerticalScrolling ? 0 : -mTempDeltaX, -mTotalMoveX);
 				}
 				mTempDeltaX = 0;

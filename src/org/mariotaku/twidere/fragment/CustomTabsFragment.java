@@ -660,10 +660,13 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 			final View view = super.getView(position, convertView, parent);
 			final ImageView icon = (ImageView) view.findViewById(android.R.id.icon);
 			final CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
+			final TextView text1 = (TextView) view.findViewById(android.R.id.text1);
 			final DefaultTabSpec item = getTab(position);
 			icon.setBackgroundResource(R.drawable.gallery_selected_default);
 			icon.setImageDrawable(getTabIconDrawable(context, getTabIconObject(item.getIcon())));
 			view.findViewById(android.R.id.text2).setVisibility(View.GONE);
+			text1.setVisibility(View.VISIBLE);
+			text1.setText(item.getName());
 			checkbox.setChecked(item.isEnabled());
 			return view;
 		}

@@ -852,7 +852,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		if (getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
 			final File cache_dir = EnvironmentAccessor.getExternalCacheDir(this);
-			final File file = new File(cache_dir, "tmp_photo_" + System.currentTimeMillis() + ".jpg");
+			final File file = new File(cache_dir, "tmp_image_" + System.currentTimeMillis());
 			mImageUri = Uri.fromFile(file);
 			intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
 			try {
@@ -950,6 +950,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			builder.setNegativeButton(R.string.discard, this);
 			return builder.create();
 		}
-
 	}
+	
+	
 }

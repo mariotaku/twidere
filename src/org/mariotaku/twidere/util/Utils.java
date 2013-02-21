@@ -2068,6 +2068,8 @@ public final class Utils implements Constants {
 	public static ContentValues makeCachedUserContentValues(final User user, final boolean large_profile_image) {
 		if (user == null || user.getId() <= 0) return null;
 		final String profile_image_url = parseString(user.getProfileImageUrlHttps());
+		final String url = parseString(user.getURL());
+		final URLEntity[] urls = user.getURLsURLEntities();
 		final ContentValues values = new ContentValues();
 		values.put(CachedUsers.USER_ID, user.getId());
 		values.put(CachedUsers.NAME, user.getName());
@@ -2083,7 +2085,10 @@ public final class Utils implements Constants {
 		values.put(CachedUsers.STATUSES_COUNT, user.getStatusesCount());
 		values.put(CachedUsers.LOCATION, user.getLocation());
 		values.put(CachedUsers.DESCRIPTION_PLAIN, user.getDescription());
-		values.put(CachedUsers.URL, parseString(user.getURL()));
+		values.put(CachedUsers.DESCRIPTION_HTML, formatUserDescription(user));
+		values.put(CachedUsers.DESCRIPTION_EXPANDED, formatExpandedUserDescription(user));
+		values.put(CachedUsers.URL, url);
+		values.put(CachedUsers.URL_EXPANDED, url != null && urls != null && urls.length > 0 ? parseString(urls[0].getExpandedURL()) : null);
 		values.put(CachedUsers.PROFILE_BANNER_URL, user.getProfileBannerImageUrl());
 		return values;
 	}

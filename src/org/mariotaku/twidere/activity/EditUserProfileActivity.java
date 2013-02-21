@@ -416,7 +416,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 			mEditName.setText(user.name);
 			mEditDescription.setText(user.description_expanded);
 			mEditLocation.setText(user.location);
-			mEditUrl.setText(user.url_expanded);
+			mEditUrl.setText(isEmpty(user.url_expanded) ? user.url : user.url_expanded);
 			mLazyImageLoader.displayProfileImage(mProfileImageView, user.profile_image_url);
 			getBannerImage();
 		} else {
@@ -465,7 +465,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 		return !stringEquals(mEditName.getText(), mUser.name)
 				|| !stringEquals(mEditDescription.getText(), mUser.description_expanded)
 				|| !stringEquals(mEditLocation.getText(), mUser.location)
-				|| !stringEquals(mEditUrl.getText(), mUser.url_expanded);
+				|| !stringEquals(mEditUrl.getText(), isEmpty(mUser.url_expanded) ? mUser.url : mUser.url_expanded);
 	}
 
 	private static boolean stringEquals(final CharSequence str1, final CharSequence str2) {

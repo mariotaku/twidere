@@ -354,8 +354,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mDescriptionView.setMovementMethod(null);
 		mLocationContainer.setVisibility(user_is_me || !isEmpty(user.location) ? View.VISIBLE : View.GONE);
 		mLocationView.setText(user.location);
-		mURLContainer.setVisibility(user_is_me || !isEmpty(user.url) ? View.VISIBLE : View.GONE);
-		mURLView.setText(user.url_expanded);
+		mURLContainer.setVisibility(user_is_me || !isEmpty(user.url) || !isEmpty(user.url_expanded) ? View.VISIBLE : View.GONE);
+		mURLView.setText(isEmpty(user.url_expanded) ? user.url : user.url_expanded);
 		mURLView.setMovementMethod(null);
 		mCreatedAtView.setText(formatToLongTimeString(getActivity(), user.created_at));
 		mTweetCount.setText(String.valueOf(user.statuses_count));
