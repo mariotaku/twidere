@@ -84,9 +84,9 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 			e.printStackTrace();
 		}
 		if (statuses != null) {
-			final boolean insert_gap = load_item_limit == statuses.size() && data.size() > 0;
 			final Status min_status = statuses.size() > 0 ? Collections.min(statuses) : null;
 			final long min_status_id = min_status != null ? min_status.getId() : -1;
+			final boolean insert_gap = min_status_id > 0 && load_item_limit <= statuses.size() && data.size() > 0;
 			if (context instanceof Activity) {
 				((Activity) context).runOnUiThread(CacheUsersStatusesTask.getRunnable(context, new StatusListResponse(
 						mAccountId, statuses)));
@@ -94,8 +94,7 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 			for (final Status status : statuses) {
 				final long id = status.getId();
 				deleteStatus(id);
-				data.add(new ParcelableStatus(status, mAccountId, min_status_id > 0 && min_status_id == id
-						&& insert_gap, mHiResProfileImage, mLargeInlineImagePreview));
+				data.add(new ParcelableStatus(status, mAccountId, min_status_id == id && insert_gap, mHiResProfileImage, mLargeInlineImagePreview));
 			}
 		}
 		try {

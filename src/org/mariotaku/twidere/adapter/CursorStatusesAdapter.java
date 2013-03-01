@@ -137,7 +137,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 					&& cursor.getShort(mIndices.is_retweet) == 1;
 			final boolean is_reply = !TextUtils.isEmpty(in_reply_to_screen_name)
 					&& cursor.getLong(mIndices.in_reply_to_status_id) > 0;
-			final boolean is_mention = mFastTimelineProcessingEnabled ? false : text.toLowerCase().contains(
+			final boolean is_mention = mFastTimelineProcessingEnabled || TextUtils.isEmpty(text) || TextUtils.isEmpty(account_screen_name) ? false : text.toLowerCase().contains(
 					'@' + account_screen_name.toLowerCase());
 			final boolean is_my_status = account_id == user_id;
 

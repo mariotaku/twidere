@@ -19,7 +19,7 @@
 
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.addIntentToSubMenu;
+import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
@@ -149,7 +149,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 			final Bundle extras = new Bundle();
 			extras.putParcelable(INTENT_KEY_USER, mSelectedUser);
 			intent.putExtras(extras);
-			addIntentToSubMenu(getActivity(), extensions.getSubMenu(), intent);
+			addIntentToMenu(getActivity(), extensions.getSubMenu(), intent);
 		}
 		mPopupMenu.setOnMenuItemClickListener(this);
 		mPopupMenu.show();

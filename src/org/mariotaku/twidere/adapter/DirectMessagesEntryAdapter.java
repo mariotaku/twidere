@@ -130,6 +130,10 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 	public long getConversationId(final int position) {
 		return ((Cursor) getItem(position)).getLong(IDX_CONVERSATION_ID);
 	}
+	
+	public String getScreenName(final int position) {
+		return ((Cursor) getItem(position)).getString(IDX_SCREEN_NAME);
+	}
 
 	@Override
 	public View newView(final Context context, final Cursor cursor, final ViewGroup parent) {

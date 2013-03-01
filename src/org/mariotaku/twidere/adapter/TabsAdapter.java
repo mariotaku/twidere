@@ -94,7 +94,7 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 	}
 
 	public TabSpec getTab(final int position) {
-		return mTabs.get(position);
+		return position >= 0 && position < mTabs.size() ? mTabs.get(position) : null;
 	}
 
 	@Override

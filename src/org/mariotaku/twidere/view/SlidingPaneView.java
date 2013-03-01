@@ -835,15 +835,11 @@ public class SlidingPaneView extends ViewGroup {
 					&& ((DualPaneActivity) mContext).isRightPaneUsed());
 			switch (event.getAction()) {
 				case MotionEvent.ACTION_DOWN: {
-					// mFirstDownHandled = isTouchEventHandled(view, event);
 					mFirstDownHandled = !mShouldDisableScroll;
 					mTempDeltaX = 0;
 					mTotalMoveX = 0;
 					mTotalMoveY = 0;
 					mIsVerticalScrolling = false;
-					if (!mShouldDisableScroll) {
-						mController.reset();
-					}
 					break;
 				}
 				case MotionEvent.ACTION_MOVE: {

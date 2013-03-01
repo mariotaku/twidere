@@ -21,7 +21,8 @@ package org.mariotaku.twidere.activity;
 
 import static android.os.Environment.getExternalStorageState;
 import static android.text.TextUtils.isEmpty;
-import static org.mariotaku.twidere.util.Utils.addIntentToSubMenu;
+import static org.mariotaku.twidere.util.Utils.copyStream;
+import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
 import static org.mariotaku.twidere.util.Utils.getAccountColors;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
@@ -100,6 +101,11 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.twitter.Validator;
+import org.mariotaku.twidere.util.AsyncTask;
+import java.io.OutputStream;
+import java.io.IOException;
+import org.mariotaku.twidere.fragment.ProgressDialogFragment;
+import android.support.v4.app.FragmentManager;
 
 public class ComposeActivity extends BaseDialogWhenLargeActivity implements TextWatcher, LocationListener,
 		OnMenuItemClickListener, OnClickListener, OnLongClickListener, PopupMenu.OnMenuItemClickListener,
@@ -268,12 +274,9 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				mPopupMenu = PopupMenu.getInstance(this, view);
 				mPopupMenu.inflate(R.menu.action_attached_image);
 				final Menu menu = mPopupMenu.getMenu();
-				final MenuItem extensions = menu.findItem(MENU_EXTENSIONS_SUBMENU);
-				if (extensions != null) {
-					final Intent intent = new Intent(INTENT_ACTION_EXTENSION_EDIT_IMAGE);
-					intent.setData(mImageUri);
-					addIntentToSubMenu(this, extensions.getSubMenu(), intent);
-				}
+				final Intent extension_intent = new Intent(INTENT_ACTION_EXTENSION_EDIT_IMAGE);
+				extension_intent.setData(mImageUri);
+				addIntentToMenu(this, menu, extension_intent);
 				mPopupMenu.setOnMenuItemClickListener(this);
 				mPopupMenu.show();
 				break;
@@ -399,8 +402,8 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		mMenuBar.setOnMenuItemClickListener(this);
 		mMenuBar.inflate(R.menu.menu_compose);
 		final Menu menu = mMenuBar.getMenu();
-		final MenuItem extensions = menu.findItem(MENU_EXTENSIONS_SUBMENU);
-		if (extensions != null) {
+		final MenuItem more_submenu = menu.findItem(R.id.more_submenu);
+		if (more_submenu != null) {
 			final Intent intent = new Intent(INTENT_ACTION_EXTENSION_COMPOSE);
 			final Bundle extras = new Bundle();
 			final String screen_name = mAccountIds != null && mAccountIds.length > 0 ? getAccountScreenName(this,
@@ -411,7 +414,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			extras.putString(INTENT_KEY_SCREEN_NAME, screen_name);
 			extras.putLong(INTENT_KEY_IN_REPLY_TO_ID, mInReplyToStatusId);
 			intent.putExtras(extras);
-			addIntentToSubMenu(this, extensions.getSubMenu(), intent);
+			addIntentToMenu(this, more_submenu.getSubMenu(), intent);
 		}
 		mMenuBar.show();
 		if (mPreferences.getBoolean(PREFERENCE_KEY_QUICK_SEND, false)) {
@@ -949,6 +952,50 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			builder.setPositiveButton(R.string.save, this);
 			builder.setNegativeButton(R.string.discard, this);
 			return builder.create();
+		}
+	}
+
+	static class CopyImageTask extends AsyncTask<Uri, Void, Boolean> {
+
+		private static final String PROGRESS_FRAGMENT_TAG = "copy_image_progress";
+	
+		final ComposeActivity activity;
+		
+		CopyImageTask(ComposeActivity a) {
+			activity = a;
+		}
+		
+		@Override
+		protected Boolean doInBackground(Uri... params) {
+			if (params == null || params.length != 2) return false;
+			try {
+				final ContentResolver resolver = activity.getContentResolver();
+				final InputStream is = resolver.openInputStream(params[0]);
+				final OutputStream os = resolver.openOutputStream(params[1]);
+				copyStream(is, os);
+				os.close();
+			} catch (Exception e) {
+				return false;
+			}
+			return true;
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			final DialogFragment f = new ProgressDialogFragment();
+			f.show(activity.getSupportFragmentManager(), PROGRESS_FRAGMENT_TAG);
+		}
+		
+		@Override
+		protected void onPostExecute(Boolean result) {
+			final FragmentManager fm = activity.getSupportFragmentManager();
+			final DialogFragment f = (DialogFragment) fm.findFragmentByTag(PROGRESS_FRAGMENT_TAG);
+			if (f != null) {
+				f.dismiss();
+			}
+			if (!result) {
+				Toast.makeText(activity, R.string.error_occurred, Toast.LENGTH_SHORT).show();
+			}
 		}
 	}
 	

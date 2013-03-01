@@ -16,6 +16,8 @@
 
 package org.mariotaku.twidere.util.httpclient;
 
+import static android.text.TextUtils.isEmpty;
+ 
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
@@ -123,7 +125,7 @@ public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCo
 			final URL url_orig = new URL(url_string);
 			final String host = url_orig.getHost();
 			final String resolved_host = resolver != null ? resolver.resolve(host) : null;
-			final String resolved_url = resolved_host != null ? url_string.replace("://" + host, "://" + resolved_host)
+			final String resolved_url = isEmpty(resolved_host) ? url_string.replace("://" + host, "://" + resolved_host)
 					: url_string;
 
 			if (req.getMethod() == RequestMethod.GET) {
@@ -178,7 +180,7 @@ public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCo
 					&& (authorizationHeader = req.getAuthorization().getAuthorizationHeader(req)) != null) {
 				commonsRequest.addHeader("Authorization", authorizationHeader);
 			}
-			if (resolved_host != null && !host.equals(resolved_host)) {
+			if (isEmpty(resolved_host) && !host.equals(resolved_host)) {
 				commonsRequest.addHeader("Host", host);
 			}
 

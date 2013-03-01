@@ -22,7 +22,7 @@ package org.mariotaku.twidere.fragment;
 import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStorageState;
 import static android.text.TextUtils.isEmpty;
-import static org.mariotaku.twidere.util.Utils.addIntentToSubMenu;
+import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
 import static org.mariotaku.twidere.util.Utils.clearUserColor;
 import static org.mariotaku.twidere.util.Utils.createTakePhotoIntent;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
@@ -595,14 +595,11 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 						item.setVisible(id == R.id.set_color_submenu || id == MENU_EXTENSIONS_SUBMENU);
 					}
 				}
-				final MenuItem extensions = menu.findItem(MENU_EXTENSIONS_SUBMENU);
-				if (extensions != null) {
-					final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER);
-					final Bundle extras = new Bundle();
-					extras.putParcelable(INTENT_KEY_USER, mUser);
-					intent.putExtras(extras);
-					addIntentToSubMenu(getActivity(), extensions.getSubMenu(), intent);
-				}
+				final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER);
+				final Bundle extras = new Bundle();
+				extras.putParcelable(INTENT_KEY_USER, mUser);
+				intent.putExtras(extras);
+				addIntentToMenu(getActivity(), menu, intent);
 				mPopupMenu.setOnMenuItemClickListener(this);
 				mPopupMenu.show();
 				break;

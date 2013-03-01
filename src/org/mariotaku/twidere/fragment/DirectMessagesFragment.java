@@ -129,10 +129,12 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 	@Override
 	public void onListItemClick(final ListView l, final View v, final int position, final long id) {
 		if (mApplication.isMultiSelectActive()) return;
-		final long conversation_id = mAdapter.getConversationId(position - l.getHeaderViewsCount());
-		final long account_id = mAdapter.getAccountId(position - l.getHeaderViewsCount());
+		final int pos = position - l.getHeaderViewsCount();
+		final long conversation_id = mAdapter.getConversationId(pos);
+		final long account_id = mAdapter.getAccountId(pos);
+		final String screen_name = mAdapter.getScreenName(pos);
 		if (conversation_id > 0 && account_id > 0) {
-			openDirectMessagesConversation(getActivity(), account_id, conversation_id);
+			openDirectMessagesConversation(getActivity(), account_id, conversation_id, screen_name);
 		}
 	}
 
@@ -153,7 +155,7 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_COMPOSE: {
-				openDirectMessagesConversation(getActivity(), -1, -1);
+				openDirectMessagesConversation(getActivity(), -1, -1, null);
 				break;
 			}
 		}

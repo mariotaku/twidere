@@ -112,7 +112,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseA
 				break;
 			}
 		}
-		holder.description.setText(user.description_plain);
+		holder.description.setText(user.description_unescaped);
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
 			mProfileImageLoader.displayProfileImage(holder.profile_image, user.profile_image_url);

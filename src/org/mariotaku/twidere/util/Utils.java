@@ -320,7 +320,7 @@ public final class Utils implements Constants {
 		throw new AssertionError("You are trying to create an instance for this utility class!");
 	}
 
-	public static void addIntentToSubMenu(final Context context, final SubMenu menu, final Intent query_intent) {
+	public static void addIntentToMenu(final Context context, final Menu menu, final Intent query_intent) {
 		if (context == null || menu == null || query_intent == null) return;
 		final PackageManager pm = context.getPackageManager();
 		final List<ResolveInfo> activities = pm.queryIntentActivities(query_intent, 0);
@@ -2251,13 +2251,13 @@ public final class Utils implements Constants {
 	}
 
 	public static void openDirectMessagesConversation(final Activity activity, final long account_id,
-			final long conversation_id) {
+			final long conversation_id, final String screen_name) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment details_fragment = dual_pane_activity.getDetailsFragment();
 			if (details_fragment instanceof DirectMessagesConversationFragment && details_fragment.isAdded()) {
-				((DirectMessagesConversationFragment) details_fragment).showConversation(account_id, conversation_id);
+				((DirectMessagesConversationFragment) details_fragment).showConversation(account_id, conversation_id, screen_name);
 				dual_pane_activity.showRightPane();
 			} else {
 				final Fragment fragment = new DirectMessagesConversationFragment();
@@ -3020,20 +3020,12 @@ public final class Utils implements Constants {
 				favorite.setTitle(R.string.favorite);
 			}
 		}
-		final MenuItem extensions = menu.findItem(MENU_EXTENSIONS_SUBMENU);
-		if (extensions != null) {
-			final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_STATUS);
-			final Bundle extras = new Bundle();
-			extras.putParcelable(INTENT_KEY_STATUS, status);
-			intent.putExtras(extras);
-			final PackageManager pm = context.getPackageManager();
-			final List<ResolveInfo> activities = pm.queryIntentActivities(intent, 0);
-			final boolean has_extension = !activities.isEmpty();
-			extensions.setVisible(has_extension);
-			if (has_extension) {
-				addIntentToSubMenu(context, extensions.getSubMenu(), intent);
-			}
-		}
+		final Intent extension_intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_STATUS);
+		final Bundle extension_extras = new Bundle();
+		extension_extras.putParcelable(INTENT_KEY_STATUS, status);
+		extension_intent.putExtras(extension_extras);
+		final MenuItem more_submenu = menu.findItem(R.id.more_submenu);
+		addIntentToMenu(context, more_submenu != null ? more_submenu.getSubMenu() : menu, extension_intent);
 	}
 
 	public static void setUserAgent(final Context context, final ConfigurationBuilder cb) {

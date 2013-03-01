@@ -20,7 +20,7 @@
 package org.mariotaku.twidere.fragment;
 
 import static android.text.TextUtils.isEmpty;
-import static org.mariotaku.twidere.util.Utils.addIntentToSubMenu;
+import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
 import static org.mariotaku.twidere.util.Utils.findUserList;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
@@ -266,7 +266,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 						extras.putParcelable(INTENT_KEY_USER_LIST, new ParcelableUserList(mUserList, mAccountId,
 								mHiResProfileImage));
 						intent.putExtras(extras);
-						addIntentToSubMenu(getActivity(), extensions.getSubMenu(), intent);
+						addIntentToMenu(getActivity(), extensions.getSubMenu(), intent);
 					}
 
 					mPopupMenu.setOnMenuItemClickListener(this);

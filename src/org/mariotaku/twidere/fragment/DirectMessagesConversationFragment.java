@@ -397,11 +397,11 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 		mSendButton.setEnabled(mValidator.isValidTweet(s.toString()));
 	}
 
-	public void showConversation(final long account_id, final long conversation_id) {
-		final Bundle args = new Bundle();
-		args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-		args.putLong(INTENT_KEY_CONVERSATION_ID, conversation_id);
-		getLoaderManager().restartLoader(0, args, this);
+	public void showConversation(final long account_id, final long conversation_id, final String screen_name) {
+		mArguments.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+		mArguments.putLong(INTENT_KEY_CONVERSATION_ID, conversation_id);
+		mArguments.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+		getLoaderManager().restartLoader(0, mArguments, this);
 	}
 
 	private void send() {

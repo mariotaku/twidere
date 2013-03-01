@@ -134,14 +134,16 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 				if (mViewPager == null || mAdapter == null) return;
 				final int position = mViewPager.getCurrentItem();
 				final TabSpec tab = mAdapter.getTab(position);
-				if (mShowAccountsTab && tab.position == Integer.MAX_VALUE) {
+				if (tab == null) {
+					startActivity(new Intent(INTENT_ACTION_COMPOSE));
+				} else if (mShowAccountsTab && tab.position == Integer.MAX_VALUE) {
 					final Intent intent = new Intent(INTENT_ACTION_TWITTER_LOGIN);
 					intent.setClass(this, SignInActivity.class);
 					startActivity(intent);
 				} else {
 					switch (tab.position) {
 						case TAB_POSITION_MESSAGES:
-							openDirectMessagesConversation(this, -1, -1);
+							openDirectMessagesConversation(this, -1, -1, null);
 							break;
 						default:
 							startActivity(new Intent(INTENT_ACTION_COMPOSE));
@@ -345,7 +347,10 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		if (mViewPager != null && mAdapter != null) {
 			final int position = mViewPager.getCurrentItem();
 			final TabSpec tab = mAdapter.getTab(position);
-			if (mShowAccountsTab && tab.position == Integer.MAX_VALUE) {
+			if (tab == null) {
+				title = R.string.compose;
+				icon = R.drawable.ic_menu_tweet;
+			} else if (tab.position == Integer.MAX_VALUE && mShowAccountsTab) {
 				icon = R.drawable.ic_menu_add;
 				title = R.string.add_account;
 			} else {
