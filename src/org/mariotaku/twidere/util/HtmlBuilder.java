@@ -22,6 +22,7 @@ package org.mariotaku.twidere.util;
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.escape;
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.toHtml;
+import static org.mariotaku.twidere.util.HtmlEscapeHelper.unescape;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,17 +34,20 @@ public class HtmlBuilder {
 
 	private static final String LOGTAG = "HtmlBuilder";
 
+	private final String orig;
 	private final String[] array;
 	private final int string_length;
-	private final boolean strict, source_is_escaped;
+	private final boolean throw_exceptions, source_is_escaped, should_re_escape;
 
 	private final ArrayList<LinkSpec> links = new ArrayList<LinkSpec>();
 
-	public HtmlBuilder(final String source, final boolean strict, final boolean string_is_escaped) {
+	public HtmlBuilder(final String source, final boolean strict, final boolean is_escaped, final boolean re_escape) {
 		if (source == null) throw new NullPointerException();
+		orig = source;
 		array = ArrayUtils.toStringArray(source);
-		this.strict = strict;
-		source_is_escaped = string_is_escaped;
+		throw_exceptions = strict;
+		source_is_escaped = is_escaped;
+		should_re_escape = re_escape;
 		string_length = array.length;
 	}
 
@@ -55,13 +59,13 @@ public class HtmlBuilder {
 			final boolean display_is_html) {
 		if (start < 0 || end < 0 || start > end || end > string_length) {
 			final String message = "String length = " + string_length + ", start = " + start + ", end = " + end;
-			if (strict) throw new StringIndexOutOfBoundsException(message);
+			if (throw_exceptions) throw new StringIndexOutOfBoundsException(message);
 			Log.e(LOGTAG, message);
 			return false;
 		}
 		if (hasLink(start, end)) {
 			final String message = "link already added in this range!";
-			if (strict) throw new IllegalArgumentException(message);
+			if (throw_exceptions) throw new IllegalArgumentException(message);
 			Log.e(LOGTAG, message);
 			return false;
 		}
@@ -69,7 +73,7 @@ public class HtmlBuilder {
 	}
 
 	public String build() {
-		if (links.size() == 0) return escapeSourceIfNeeded(ArrayUtils.mergeArrayToString(array));
+		if (links.size() == 0) return escapeSource(ArrayUtils.mergeArrayToString(array));
 		Collections.sort(links);
 		final StringBuilder builder = new StringBuilder();
 		final int links_size = links.size();
@@ -81,13 +85,13 @@ public class HtmlBuilder {
 			final int start = spec.start, end = spec.end;
 			if (i == 0) {
 				if (start >= 0 && start <= string_length) {
-					builder.append(escapeSourceIfNeeded(ArrayUtils.mergeArrayToString(ArrayUtils.subArray(array, 0,
+					builder.append(escapeSource(ArrayUtils.mergeArrayToString(ArrayUtils.subArray(array, 0,
 							start))));
 				}
 			} else if (i > 0) {
 				final int last_end = links.get(i - 1).end;
 				if (last_end >= 0 && last_end <= start && start <= string_length) {
-					builder.append(escapeSourceIfNeeded(ArrayUtils.mergeArrayToString(ArrayUtils.subArray(array,
+					builder.append(escapeSource(ArrayUtils.mergeArrayToString(ArrayUtils.subArray(array,
 							last_end, start))));
 				}
 			}
@@ -98,7 +102,7 @@ public class HtmlBuilder {
 			}
 			builder.append("</a>");
 			if (i == links.size() - 1 && end >= 0 && end <= string_length) {
-				builder.append(escapeSourceIfNeeded(ArrayUtils.mergeArrayToString(ArrayUtils.subArray(array, end,
+				builder.append(escapeSource(ArrayUtils.mergeArrayToString(ArrayUtils.subArray(array, end,
 						string_length))));
 			}
 		}
@@ -115,11 +119,12 @@ public class HtmlBuilder {
 	@Override
 	public String toString() {
 		return "HtmlBuilder{array=" + Arrays.toString(array) + ", string_length=" + string_length + ", strict="
-				+ strict + ", source_is_escaped" + source_is_escaped + ", links=" + links + "}";
+				+ throw_exceptions + ", source_is_escaped" + source_is_escaped + ", links=" + links + "}";
 	}
 
-	private String escapeSourceIfNeeded(final String string) {
-		return source_is_escaped ? string : escape(string);
+	private String escapeSource(final String string) {
+		final String escaped = source_is_escaped ? string : escape(string);
+		return should_re_escape ? escape(unescape(escaped)) : escaped;
 	}
 
 	static final class LinkSpec implements Comparable<LinkSpec> {
