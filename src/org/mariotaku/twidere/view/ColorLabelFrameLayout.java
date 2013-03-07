@@ -34,8 +34,6 @@ import android.widget.FrameLayout;
 
 public class ColorLabelFrameLayout extends FrameLayout implements IColorLabelView {
 
-	private static final int LABEL_WIDTH = 3;
-
 	private final Paint mPaintLeft = new Paint(), mPaintRight = new Paint(), mPaintBackground = new Paint();
 	private final Rect mRectLeft = new Rect(), mRectRight = new Rect(), mRectBackground = new Rect();
 	private final float mDensity;

@@ -48,13 +48,16 @@ import twitter4j.http.HttpClientFactory;
 import twitter4j.http.HttpParameter;
 import twitter4j.http.HttpRequest;
 import twitter4j.http.RequestMethod;
+import java.util.regex.Pattern;
 
 public class OAuthPasswordAuthenticator implements Constants {
 
+	private static final String PATTERN_OAUTH_PIN = "^\\d+$";
+ 
 	private final Twitter twitter;
 	private final HttpClient client;
 
-	private String authenticity_token, callback_url;
+	private String authenticity_token, oauth_pin;
 
 	private final ContentHandler mAuthenticityTokenHandler = new DummyContentHandler() {
 
@@ -69,22 +72,43 @@ public class OAuthPasswordAuthenticator implements Constants {
 		}
 	};
 
-	private final ContentHandler mCallbackURLHandler = new DummyContentHandler() {
+	private final ContentHandler mOAuthPINHandler = new DummyContentHandler() {
 
+		private boolean start_div, start_code;
+		
 		@Override
-		public void startElement(final String uri, final String localName, final String qName, final Attributes atts) {
-			if ("meta".equalsIgnoreCase(localName) && "refresh".equalsIgnoreCase(atts.getValue("", "http-equiv"))) {
-				final String content = atts.getValue("", "content");
-				final String url_prefix = "url=";
-				final int idx = content.indexOf(url_prefix);
-				if (!isEmpty(content) && idx != -1) {
-					final String url = content.substring(idx + url_prefix.length());
-					if (!isEmpty(url)) {
-						callback_url = url;
-					}
+		public void characters(final char[] ch, final int start, final int length) {
+			if (start_code && ch != null) {
+				final String value = new String(ch, start, length);
+				if (value.matches(PATTERN_OAUTH_PIN)) {
+					oauth_pin = value;
+					start_div = false;
+					start_code = false;
 				}
 			}
 		}
+
+		@Override	
+		public void endElement(final String uri, final String localName, final String qName) {
+			if ("div".equalsIgnoreCase(localName)) {
+				start_div = false;
+			} else if ("code".equalsIgnoreCase(localName)) {
+				start_code = false;
+			}
+		}
+		
+		@Override
+		public void startElement(final String uri, final String localName, final String qName, final Attributes atts) {
+			if (!isEmpty(oauth_pin)) return;
+			if ("div".equalsIgnoreCase(localName)) {
+				start_div = "oauth_pin".equals(atts.getValue("", "id"));
+			} else if ("code".equalsIgnoreCase(localName)) {
+				if (start_div) {
+					start_code = true;
+				}
+			}
+		}
+
 	};
 
 	public OAuthPasswordAuthenticator(final Twitter twitter) {
@@ -96,9 +120,9 @@ public class OAuthPasswordAuthenticator implements Constants {
 	public synchronized AccessToken getOAuthAccessToken(final String username, final String password)
 			throws AuthenticationException, OAuthPasswordAuthenticator.CallbackURLException {
 		authenticity_token = null;
-		callback_url = null;
+		oauth_pin = null;
 		try {
-			final RequestToken request_token = twitter.getOAuthRequestToken(DEFAULT_OAUTH_CALLBACK);
+			final RequestToken request_token = twitter.getOAuthRequestToken(OAUTH_CALLBACK_OOB);
 			final String oauth_token = request_token.getToken();
 			readAuthenticityToken(getHTTPContent(request_token.getAuthorizationURL(), false, null));
 			if (authenticity_token == null) throw new AuthenticationException("Cannot get authenticity token.");
@@ -108,14 +132,9 @@ public class OAuthPasswordAuthenticator implements Constants {
 			params[1] = new HttpParameter("oauth_token", oauth_token);
 			params[2] = new HttpParameter("session[username_or_email]", username);
 			params[3] = new HttpParameter("session[password]", password);
-			readCallbackURL(getHTTPContent(conf.getOAuthAuthorizationURL().toString(), true, params));
-			if (callback_url == null) throw new CallbackURLException();
-			if (!callback_url.startsWith(DEFAULT_OAUTH_CALLBACK))
-				throw new IOException("Wrong OAuth callback URL " + callback_url);
-			final String oauth_verifier = parseParameters(callback_url.substring(callback_url.indexOf("?") + 1)).get(
-					INTENT_KEY_OAUTH_VERIFIER);
-			if (isEmpty(oauth_verifier)) throw new AuthenticationException("Cannot get OAuth verifier.");
-			return twitter.getOAuthAccessToken(request_token, oauth_verifier);
+			readOAuthPIN(getHTTPContent(conf.getOAuthAuthorizationURL().toString(), true, params));
+			if (isEmpty(oauth_pin)) throw new AuthenticationException("Cannot get OAuth PIN.");			
+			return twitter.getOAuthAccessToken(request_token, oauth_pin);
 		} catch (final IOException e) {
 			throw new AuthenticationException(e);
 		} catch (final SAXException e) {
@@ -144,32 +163,16 @@ public class OAuthPasswordAuthenticator implements Constants {
 		parser.parse(source);
 	}
 
-	private synchronized void readCallbackURL(final InputStream stream) throws SAXException, IOException {
+	private synchronized void readOAuthPIN(final InputStream stream) throws SAXException, IOException {
 		final InputSource source = new InputSource(stream);
 		final Parser parser = new Parser();
 		parser.setProperty(Parser.schemaProperty, HtmlParser.schema);
-		parser.setContentHandler(mCallbackURLHandler);
+		parser.setContentHandler(mOAuthPINHandler);
 		parser.parse(source);
 	}
 
 	private synchronized void setAuthenticityToken(final String authenticity_token) {
 		this.authenticity_token = authenticity_token;
-	}
-
-	private static Map<String, String> parseParameters(final String raw_params_string)
-			throws UnsupportedEncodingException {
-		if (raw_params_string == null) return Collections.emptyMap();
-		final Map<String, String> params_map = new HashMap<String, String>();
-		final String[] raw_params_array = raw_params_string.split("&");
-		for (final String raw_param : raw_params_array) {
-			final String[] raw_param_segment = raw_param.split("=");
-			if (raw_param_segment.length != 2) {
-				continue;
-			}
-			params_map.put(URLDecoder.decode(raw_param_segment[0], "UTF-8"),
-					URLDecoder.decode(raw_param_segment[1], "UTF-8"));
-		}
-		return params_map;
 	}
 
 	public static class AuthenticationException extends Exception {

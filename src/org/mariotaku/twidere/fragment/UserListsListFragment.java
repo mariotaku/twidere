@@ -145,14 +145,11 @@ public class UserListsListFragment extends PullToRefreshListFragment implements
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_user_list);
 		final Menu menu = mPopupMenu.getMenu();
-		final MenuItem extensions = menu.findItem(MENU_EXTENSIONS_SUBMENU);
-		if (extensions != null) {
-			final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER_LIST);
-			final Bundle extras = new Bundle();
-			extras.putParcelable(INTENT_KEY_USER_LIST, mSelectedUserList);
-			intent.putExtras(extras);
-			addIntentToMenu(getActivity(), extensions.getSubMenu(), intent);
-		}
+		final Intent extension_intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER_LIST);
+		final Bundle extension_extras = new Bundle();
+		extension_extras.putParcelable(INTENT_KEY_USER_LIST, mSelectedUserList);
+		extension_intent.putExtras(extension_extras);
+		addIntentToMenu(getActivity(), menu, extension_intent);
 		mPopupMenu.setOnMenuItemClickListener(this);
 		mPopupMenu.show();
 		return true;

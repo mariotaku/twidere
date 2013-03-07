@@ -64,16 +64,6 @@
 						android:layout_weight="1"
 						android:text="@string/oauth"/>
 
-					<!-- This auth method is not available for now -->
-
-					<RadioButton
-						android:id="@+id/xauth"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_weight="1"
-						android:text="@string/xauth"
-						android:visibility="gone"/>
-
 					<RadioButton
 						android:id="@+id/basic"
 						android:layout_width="wrap_content"
@@ -87,6 +77,15 @@
 						android:layout_height="wrap_content"
 						android:layout_weight="1"
 						android:text="@string/twip_o"/>
+						
+					<!-- This auth method is not available for now -->
+
+					<RadioButton
+						android:id="@+id/xauth"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:text="@string/xauth"/>	
 				</RadioGroup>
 			</HorizontalScrollView>
 

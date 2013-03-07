@@ -268,7 +268,7 @@ public class AuthorizeActivity extends BaseActivity implements LoaderCallbacks<R
 			}
 			try {
 				final Twitter twitter = new TwitterFactory(cb.build()).getInstance();
-				return twitter.getOAuthRequestToken(DEFAULT_OAUTH_CALLBACK);
+				return twitter.getOAuthRequestToken(OAUTH_CALLBACK_OOB);
 			} catch (final TwitterException e) {
 
 			}

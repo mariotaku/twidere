@@ -592,7 +592,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 					for (int i = 0; i < size; i++) {
 						final MenuItem item = menu.getItem(i);
 						final int id = item.getItemId();
-						item.setVisible(id == R.id.set_color_submenu || id == MENU_EXTENSIONS_SUBMENU);
+						item.setVisible(id == R.id.set_color_submenu || id == 0);
 					}
 				}
 				final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER);

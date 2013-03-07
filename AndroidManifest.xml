@@ -448,10 +448,6 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".activity.AuthorizeActivity"
-			android:exported="false"
-			android:label="@string/sign_in"/>
-		<activity
 			android:name=".activity.DataProfilingSettingsActivity"
 			android:exported="false"
 			android:label="@string/data_profiling"

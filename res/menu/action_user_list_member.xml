@@ -19,11 +19,5 @@
 				android:title="@android:string/cancel"/>
 		</menu>
 	</item>
-	<item
-		android:id="@id/extensions_submenu"
-		android:icon="@drawable/ic_menu_extension"
-		android:title="@string/extensions">
-		<menu/>
-	</item>
 
 </menu>

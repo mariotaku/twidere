@@ -70,15 +70,15 @@
 					android:text="@string/sign_up"/>
 			</LinearLayout>
 
-			<Button
-				android:id="@+id/browser_sign_in"
+			<TextView
+				android:id="@+id/sign_in_method_introduction"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_below="@+id/sign_in_sign_up"
 				android:layout_margin="8dp"
 				android:minHeight="42dp"
 				android:onClick="onClick"
-				android:text="@string/browser_sign_in"/>
+				android:text="@string/sign_in_method_introduction_title"/>
 		</RelativeLayout>
 	</ScrollView>
 

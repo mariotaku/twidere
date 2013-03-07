@@ -409,5 +409,7 @@
 	<string name="preload_wifi_only">Preload using Wi-Fi only</string>
 	<string name="re_sign_in_needed">You may need to sign-in your accounts again.</string>
 	<string name="disable_tab_swipe">Disable tab swipe</string>
+	<string name="sign_in_method_introduction_title">How doe\'s it work?</string>
+	<string name="sign_in_method_introduction">Most clients like twicca opens a browser asking you to type username and password, and then takes you back to heir clients. Sometimes this can become very inconvenient.\nTwidere uses more simple steps to sign in, without opening the browser. Don\'t worry about your password, Twidere will never store it, it\'s totally safe!</string>
 
 </resources>

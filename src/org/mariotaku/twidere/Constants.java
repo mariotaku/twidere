@@ -115,6 +115,8 @@ public interface Constants extends TwitterConstants {
 
 	public static final String DEFAULT_OAUTH_CALLBACK = PROTOCOL_TWIDERE + "com.twitter.oauth/";
 
+	public static final String OAUTH_CALLBACK_OOB = "oob";
+
 	public static final String SHUFFIX_SCROLL_TO_TOP = ".SCROLL_TO_TOP";
 	public static final String SHUFFIX_REFRESH_TAB = ".REFRESH_TAB";
 
@@ -428,7 +430,6 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_REFRESH = R.id.refresh;
 	public static final int MENU_MENTION = R.id.mention;
 	public static final int MENU_SEND_DIRECT_MESSAGE = R.id.send_direct_message;
-	public static final int MENU_EXTENSIONS_SUBMENU = R.id.extensions_submenu;
 	public static final int MENU_VIEW_USER_LIST = R.id.view_user_list;
 	public static final int MENU_UP = R.id.up;
 	public static final int MENU_DOWN = R.id.down;

@@ -259,16 +259,12 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 					mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 					mPopupMenu.inflate(R.menu.action_user_list_details);
 					final Menu menu = mPopupMenu.getMenu();
-					final MenuItem extensions = menu.findItem(MENU_EXTENSIONS_SUBMENU);
-					if (extensions != null) {
-						final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER_LIST);
-						final Bundle extras = new Bundle();
-						extras.putParcelable(INTENT_KEY_USER_LIST, new ParcelableUserList(mUserList, mAccountId,
-								mHiResProfileImage));
-						intent.putExtras(extras);
-						addIntentToMenu(getActivity(), extensions.getSubMenu(), intent);
-					}
-
+					final Intent extensions_intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER_LIST);
+					final Bundle extensions_extras = new Bundle();
+					extensions_extras.putParcelable(INTENT_KEY_USER_LIST, new ParcelableUserList(mUserList, mAccountId,
+							mHiResProfileImage));
+					extensions_intent.putExtras(extensions_extras);
+					addIntentToMenu(getActivity(), menu, extensions_intent);
 					mPopupMenu.setOnMenuItemClickListener(this);
 					mPopupMenu.show();
 				}

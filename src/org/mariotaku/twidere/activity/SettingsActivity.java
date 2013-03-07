@@ -74,8 +74,8 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME:
-				NavUtils.navigateUpFromSameTask(this);
-				break;
+				onBackPressed();
+				return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
