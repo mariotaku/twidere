@@ -49,6 +49,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 		View.OnTouchListener {
 
 	protected CursorStatusesAdapter mAdapter;
+	private int mListScrollOffset;
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -107,6 +108,10 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	@Override
 	public void onLoadFinished(final Loader<Cursor> loader, final Cursor data) {
 		final int first_visible_position = mListView.getFirstVisiblePosition();
+		if (mListView.getChildCount() > 0) {
+			final View first_child = mListView.getChildAt(0);
+			mListScrollOffset = first_child != null ? first_child.getTop() : 0;
+		}
 		final long last_viewed_id = mAdapter.findItemIdByPosition(first_visible_position);
 		super.onLoadFinished(loader, data);
 		mAdapter.swapCursor(data);
@@ -124,7 +129,8 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 			return;
 		final int position = mAdapter.findItemPositionByStatusId(status_id);
 		if (position > -1 && position < mListView.getCount()) {
-			mListView.setSelection(position);
+			mListView.setSelectionFromTop(position, mListScrollOffset);
+			mListScrollOffset = 0;
 		}
 	}
 
@@ -231,6 +237,10 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 
 	void saveReadPosition() {
 		final int first_visible_position = mListView.getFirstVisiblePosition();
+		if (mListView.getChildCount() > 0) {
+			final View first_child = mListView.getChildAt(0);
+			mListScrollOffset = first_child != null ? first_child.getTop() : 0;
+		}
 		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
 		mPreferences.edit().putLong(getSavedTimelinePreferenceKey(), status_id).commit();
 	}
