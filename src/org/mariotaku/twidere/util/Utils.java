@@ -197,6 +197,7 @@ import android.view.SubMenu;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import org.mariotaku.twidere.graphic.ExtraPaddingsDrawable;
 
 public final class Utils implements Constants {
 
@@ -323,11 +324,25 @@ public final class Utils implements Constants {
 	public static void addIntentToMenu(final Context context, final Menu menu, final Intent query_intent) {
 		if (context == null || menu == null || query_intent == null) return;
 		final PackageManager pm = context.getPackageManager();
+		final Resources res = context.getResources();
+		final float density = res.getDisplayMetrics().density;
 		final List<ResolveInfo> activities = pm.queryIntentActivities(query_intent, 0);
 		for (final ResolveInfo info : activities) {
 			final Intent intent = new Intent(query_intent);
+			final Drawable icon = info.loadIcon(pm);
 			intent.setClassName(info.activityInfo.packageName, info.activityInfo.name);
-			menu.add(info.loadLabel(pm)).setIcon(info.loadIcon(pm)).setIntent(intent);
+			final MenuItem item = menu.add(info.loadLabel(pm));
+			item.setIntent(intent);
+			if (icon instanceof BitmapDrawable) {
+				final int paddings = Math.round(density * 4);
+				final Bitmap orig = ((BitmapDrawable) icon).getBitmap();
+				final Bitmap bitmap = Bitmap.createBitmap(orig.getWidth() + paddings * 2, orig.getHeight() + paddings * 2, Bitmap.Config.ARGB_8888);
+				final Canvas canvas = new Canvas(bitmap);
+				canvas.drawBitmap(orig, paddings, paddings, null);
+				item.setIcon(new BitmapDrawable(res, bitmap));
+			} else {
+				item.setIcon(icon);
+			}
 		}
 	}
 
