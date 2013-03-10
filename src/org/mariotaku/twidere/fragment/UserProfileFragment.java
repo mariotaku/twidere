@@ -746,7 +746,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				final ContentValues values = new ContentValues();
 				final ContentResolver resolver = getContentResolver();
 				values.put(Filters.Users.TEXT, screen_name);
-				resolver.delete(uri, Filters.Users.TEXT + " = '" + screen_name + "'", null);
+				resolver.delete(uri, Filters.Users.TEXT + " = ?", new String[] { screen_name });
 				resolver.insert(uri, values);
 				Toast.makeText(getActivity(), R.string.user_muted, Toast.LENGTH_SHORT).show();
 				break;

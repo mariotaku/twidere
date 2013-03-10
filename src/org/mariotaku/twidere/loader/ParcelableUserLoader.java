@@ -78,9 +78,8 @@ public final class ParcelableUserLoader extends AsyncTaskLoader<SingleResponse<P
 			} else
 				return new SingleResponse<ParcelableUser>(null, null);
 			final ContentValues values = makeCachedUserContentValues(user, hires_profile_image);
-			final String where = CachedUsers.USER_ID + " = " + user.getId() + " OR " + CachedUsers.SCREEN_NAME + " = '"
-					+ user.getScreenName() + "'";
-			resolver.delete(CachedUsers.CONTENT_URI, where, null);
+			final String where = CachedUsers.USER_ID + " = " + user.getId() + " OR " + CachedUsers.SCREEN_NAME + " = ?";
+			resolver.delete(CachedUsers.CONTENT_URI, where, new String[] { user.getScreenName() });
 			resolver.insert(CachedUsers.CONTENT_URI, values);
 			return new SingleResponse<ParcelableUser>(new ParcelableUser(user, account_id, hires_profile_image), null);
 		} catch (final TwitterException e) {

@@ -197,7 +197,6 @@ import android.view.SubMenu;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import org.mariotaku.twidere.graphic.ExtraPaddingsDrawable;
 
 public final class Utils implements Constants {
 

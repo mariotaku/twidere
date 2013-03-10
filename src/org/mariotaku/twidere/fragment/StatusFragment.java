@@ -340,7 +340,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 					final ContentValues values = new ContentValues();
 					final ContentResolver resolver = getContentResolver();
 					values.put(Filters.TEXT, source);
-					resolver.delete(uri, Filters.TEXT + " = '" + source + "'", null);
+					resolver.delete(uri, Filters.TEXT + " = ?", new String[] { source });
 					resolver.insert(uri, values);
 					Toast.makeText(getActivity(), getString(R.string.source_muted, source), Toast.LENGTH_SHORT).show();
 					break;
