@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.util;
 
+import static org.mariotaku.twidere.util.Utils.getBestBannerType;
+ 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 
@@ -45,7 +47,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 public class ImageLoaderWrapper implements Constants {
 
 	private final ImageLoader mImageLoader;
-	private final DisplayImageOptions mProfileImageDisplayOptions, mPreviewImageDisplayOptions;
+	private final DisplayImageOptions mProfileImageDisplayOptions, mImageDisplayOptions;
 
 	public ImageLoaderWrapper(final Context context, final ImageLoader loader) {
 		mImageLoader = loader;
@@ -55,11 +57,11 @@ public class ImageLoaderWrapper implements Constants {
 		profile_opts_builder.showStubImage(R.drawable.ic_profile_image_default);
 		profile_opts_builder.bitmapConfig(Bitmap.Config.ARGB_8888);
 		mProfileImageDisplayOptions = profile_opts_builder.build();
-		final DisplayImageOptions.Builder preview_opts_builder = new DisplayImageOptions.Builder();
-		preview_opts_builder.cacheInMemory();
-		preview_opts_builder.cacheOnDisc();
-		preview_opts_builder.bitmapConfig(Bitmap.Config.RGB_565);
-		mPreviewImageDisplayOptions = preview_opts_builder.build();
+		final DisplayImageOptions.Builder image_opts_builder = new DisplayImageOptions.Builder();
+		image_opts_builder.cacheInMemory();
+		image_opts_builder.cacheOnDisc();
+		image_opts_builder.bitmapConfig(Bitmap.Config.RGB_565);
+		mImageDisplayOptions = image_opts_builder.build();
 	}
 
 	public void clearFileCache() {
@@ -71,9 +73,14 @@ public class ImageLoaderWrapper implements Constants {
 	}
 
 	public void displayPreviewImage(final ImageView view, final String url) {
-		mImageLoader.displayImage(url, view, mPreviewImageDisplayOptions);
+		mImageLoader.displayImage(url, view, mImageDisplayOptions);
 	}
 
+	public void displayProfileBanner(final ImageView view, final String base_url, final int width) {
+		final String type = getBestBannerType(width);
+		mImageLoader.displayImage(base_url + "/" + type, view, mImageDisplayOptions);
+	}
+	
 	public void displayProfileImage(final ImageView view, final String url) {
 		mImageLoader.displayImage(url, view, mProfileImageDisplayOptions);
 	}

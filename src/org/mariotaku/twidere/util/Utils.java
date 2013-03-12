@@ -561,21 +561,6 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static Bitmap createAlphaGradientBanner(final Bitmap orig) {
-		if (orig == null) return null;
-		final int width = orig.getWidth(), height = orig.getHeight();
-		final Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-		final Canvas canvas = new Canvas(bitmap);
-		final Paint paint = new Paint();
-		final LinearGradient shader = new LinearGradient(width / 2, 0, width / 2, height, 0xffffffff, 0x00ffffff,
-				Shader.TileMode.CLAMP);
-		paint.setShader(shader);
-		paint.setXfermode(new PorterDuffXfermode(Mode.DST_IN));
-		canvas.drawBitmap(orig, 0, 0, null);
-		canvas.drawRect(0, 0, width, height, paint);
-		return bitmap;
-	}
-
 	public static Intent createPickImageIntent(final Uri uri) {
 		final Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 		intent.setType("image/*");

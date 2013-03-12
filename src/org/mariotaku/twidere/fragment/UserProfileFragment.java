@@ -24,7 +24,6 @@ import static android.os.Environment.getExternalStorageState;
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
 import static org.mariotaku.twidere.util.Utils.clearUserColor;
-import static org.mariotaku.twidere.util.Utils.createTakePhotoIntent;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
@@ -56,7 +55,6 @@ import org.mariotaku.twidere.activity.EditUserProfileActivity;
 import org.mariotaku.twidere.activity.SetColorActivity;
 import org.mariotaku.twidere.adapter.ListActionAdapter;
 import org.mariotaku.twidere.loader.ParcelableUserLoader;
-import org.mariotaku.twidere.loader.UserBannerImageLoader;
 import org.mariotaku.twidere.model.ListAction;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUser;
@@ -70,7 +68,6 @@ import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
-import org.mariotaku.twidere.view.ProfileNameBannerContainer;
 import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
 
 import twitter4j.Relationship;
@@ -116,23 +113,23 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import org.mariotaku.twidere.view.BannerImageView;
 
 public class UserProfileFragment extends BaseListFragment implements OnClickListener, OnItemClickListener,
 		OnItemLongClickListener, OnMenuItemClickListener, OnLinkClickListener, Panes.Right, OnSizeChangedListener {
 
 	private static final int LOADER_ID_USER = 1;
 	private static final int LOADER_ID_FRIENDSHIP = 2;
-	private static final int LOADER_ID_BANNER = 3;
 
 	private ImageLoaderWrapper mProfileImageLoader;
 	private SharedPreferences mPreferences;
 
 	private ImageView mProfileImageView;
+	private BannerImageView mProfileBannerView;
 	private TextView mNameView, mScreenNameView, mDescriptionView, mLocationView, mURLView, mCreatedAtView,
 			mTweetCount, mFollowersCount, mFriendsCount, mFollowingYouIndicator, mErrorMessageView;
 	private View mNameContainer, mProfileImageContainer, mDescriptionContainer, mLocationContainer, mURLContainer,
 			mTweetsContainer, mFollowersContainer, mFriendsContainer, mEditFollowContainer, mMoreOptionsContainer;
-	private ProfileNameBannerContainer mProfileNameBannerContainer;
 	private ProgressBar mFollowProgress, mMoreOptionsProgress;
 	private Button mEditFollowButton, mMoreOptionsButton, mRetryButton;
 	private ColorLabelRelativeLayout mProfileNameContainer;
@@ -148,9 +145,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	private View mListContainer, mErrorRetryContainer;
 
-	private boolean mGetUserInfoLoaderInitialized;
-	private boolean mGetFriendShipLoaderInitialized;
-	private boolean mBannerImageLoaderInitialized;
+	private boolean mGetUserInfoLoaderInitialized, mGetFriendShipLoaderInitialized;
 
 	private long mUserId;
 	private String mScreenName;
@@ -299,31 +294,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	};
 
-	private final LoaderCallbacks<Bitmap> mBannerImageCallback = new LoaderCallbacks<Bitmap>() {
-
-		@Override
-		public Loader<Bitmap> onCreateLoader(final int id, final Bundle args) {
-			if (mUser == null || mUser.profile_banner_url == null
-					|| !mUser.profile_banner_url.equals(mProfileNameBannerContainer.getTag())) {
-				mProfileNameBannerContainer.setBanner(null);
-			}
-			final int def_width = getResources().getDisplayMetrics().widthPixels;
-			final int width = mBannerWidth > 0 ? mBannerWidth : def_width;
-			return new UserBannerImageLoader(getActivity(), mUser, width, true);
-		}
-
-		@Override
-		public void onLoaderReset(final Loader<Bitmap> loader) {
-		}
-
-		@Override
-		public void onLoadFinished(final Loader<Bitmap> loader, final Bitmap data) {
-			mProfileNameBannerContainer.setBanner(data);
-			mProfileNameBannerContainer.setTag(data != null ? mUser.profile_banner_url : null);
-		}
-
-	};
-
 	public void displayUser(final ParcelableUser user) {
 		mFriendship = null;
 		mUser = null;
@@ -363,8 +333,12 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mFriendsCount.setText(String.valueOf(user.friends_count));
 		if (mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true)) {
 			mProfileImageLoader.displayProfileImage(mProfileImageView, user.profile_image_url);
+			final int def_width = getResources().getDisplayMetrics().widthPixels;
+			final int width = mBannerWidth > 0 ? mBannerWidth : def_width;
+			mProfileImageLoader.displayProfileBanner(mProfileBannerView, user.profile_banner_url, width);
 		} else {
 			mProfileImageView.setImageResource(R.drawable.ic_profile_image_default);
+			mProfileBannerView.setImageResource(android.R.color.transparent);
 		}
 		if (isMyAccount(getActivity(), user.user_id)) {
 			final ContentResolver resolver = getContentResolver();
@@ -391,7 +365,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		if (!user.is_cache) {
 			getFriendship();
 		}
-		getBannerImage();
 	}
 
 	public void getUserInfo(final long account_id, final long user_id, final String screen_name,
@@ -402,7 +375,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		final LoaderManager lm = getLoaderManager();
 		lm.destroyLoader(LOADER_ID_USER);
 		lm.destroyLoader(LOADER_ID_FRIENDSHIP);
-		lm.destroyLoader(LOADER_ID_BANNER);
 		if (!isMyAccount(getActivity(), mAccountId)) {
 			mListContainer.setVisibility(View.GONE);
 			mErrorRetryContainer.setVisibility(View.GONE);
@@ -449,7 +421,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mFriendsContainer.setOnClickListener(this);
 		mRetryButton.setOnClickListener(this);
 		mMoreOptionsButton.setOnClickListener(this);
-		mProfileNameBannerContainer.setOnSizeChangedListener(this);
+		mProfileBannerView.setOnSizeChangedListener(this);
 		setListAdapter(null);
 		mListView = getListView();
 		mListView.addHeaderView(mHeaderView, null, false);
@@ -464,27 +436,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	public void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
 		if (intent == null) return;
 		switch (requestCode) {
-			case REQUEST_TAKE_PHOTO: {
-				if (resultCode == Activity.RESULT_OK) {
-					final String path = mImageUri.getPath();
-					final File file = path != null ? new File(path) : null;
-					if (file != null && file.exists()) {
-						mTwitterWrapper.updateProfileImage(mUser.user_id, mImageUri, true);
-					}
-				}
-				break;
-			}
-			case REQUEST_PICK_IMAGE: {
-				if (resultCode == Activity.RESULT_OK && intent != null) {
-					final Uri uri = intent.getData();
-					final String image_path = getImagePathFromUri(getActivity(), uri);
-					final File file = image_path != null ? new File(image_path) : null;
-					if (file != null && file.exists()) {
-						mTwitterWrapper.updateProfileImage(mUser.user_id, Uri.fromFile(file), false);
-					}
-				}
-				break;
-			}
 			case REQUEST_SET_COLOR: {
 				if (resultCode == Activity.RESULT_OK && intent != null) {
 					final int color = intent.getIntExtra(Accounts.USER_COLOR, Color.TRANSPARENT);
@@ -642,8 +593,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mMoreOptionsButton = (Button) mHeaderView.findViewById(R.id.more_options);
 		mMoreOptionsProgress = (ProgressBar) mHeaderView.findViewById(R.id.more_options_progress);
 		mFollowingYouIndicator = (TextView) mHeaderView.findViewById(R.id.following_you_indicator);
-		mProfileNameBannerContainer = (ProfileNameBannerContainer) mHeaderView
-				.findViewById(R.id.profile_name_banner_container);
+		mProfileBannerView = (BannerImageView) mHeaderView.findViewById(R.id.profile_banner);
 		mListContainer = super.onCreateView(inflater, container, savedInstanceState);
 		final View container_view = inflater.inflate(R.layout.list_with_error_message, null);
 		((FrameLayout) container_view.findViewById(R.id.list_container)).addView(mListContainer);
@@ -663,7 +613,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		final LoaderManager lm = getLoaderManager();
 		lm.destroyLoader(LOADER_ID_USER);
 		lm.destroyLoader(LOADER_ID_FRIENDSHIP);
-		lm.destroyLoader(LOADER_ID_BANNER);
 		super.onDestroyView();
 	}
 
@@ -717,14 +666,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	public boolean onMenuItemClick(final MenuItem item) {
 		if (mUser == null || mTwitterWrapper == null) return false;
 		switch (item.getItemId()) {
-			case MENU_TAKE_PHOTO: {
-				takePhoto();
-				break;
-			}
-			case MENU_ADD_IMAGE: {
-				pickImage();
-				break;
-			}
 			case MENU_BLOCK: {
 				if (mTwitterWrapper == null || mFriendship == null) {
 					break;
@@ -830,17 +771,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		super.onStop();
 	}
 
-	private void getBannerImage() {
-		final LoaderManager lm = getLoaderManager();
-		lm.destroyLoader(LOADER_ID_BANNER);
-		if (mBannerImageLoaderInitialized) {
-			lm.restartLoader(LOADER_ID_BANNER, null, mBannerImageCallback);
-		} else {
-			lm.initLoader(LOADER_ID_BANNER, null, mBannerImageCallback);
-			mBannerImageLoaderInitialized = true;
-		}
-	}
-
 	private void getFriendship() {
 		final LoaderManager lm = getLoaderManager();
 		lm.destroyLoader(LOADER_ID_FRIENDSHIP);
@@ -854,23 +784,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 	private void getUserInfo(final boolean omit_intent_extra) {
 		getUserInfo(mAccountId, mUserId, mScreenName, omit_intent_extra);
-	}
-
-	private void pickImage() {
-		final Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-		startActivityForResult(i, REQUEST_PICK_IMAGE);
-	}
-
-	private void takePhoto() {
-		if (getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-			final File cache_dir = Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? EnvironmentAccessor
-					.getExternalCacheDir(getActivity()) : new File(getExternalStorageDirectory().getPath()
-					+ "/Android/data/" + getActivity().getPackageName() + "/cache/");
-			final File file = new File(cache_dir, "tmp_photo_" + System.currentTimeMillis() + ".jpg");
-			mImageUri = Uri.fromFile(file);
-			final Intent intent = createTakePhotoIntent(mImageUri);
-			startActivityForResult(intent, REQUEST_TAKE_PHOTO);
-		}
 	}
 
 	final class FavoritesAction extends ListAction {

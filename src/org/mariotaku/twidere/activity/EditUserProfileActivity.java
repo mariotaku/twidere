@@ -14,7 +14,6 @@ import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.ParcelableUserLoader;
-import org.mariotaku.twidere.loader.UserBannerImageLoader;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.SingleResponse;
 import org.mariotaku.twidere.util.AsyncTask;
@@ -26,7 +25,7 @@ import org.mariotaku.twidere.util.AsyncTwitterWrapper.UpdateProfileTask;
 import org.mariotaku.twidere.util.EnvironmentAccessor;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.TwitterWrapper;
-import org.mariotaku.twidere.view.ProfileNameBannerContainer;
+import org.mariotaku.twidere.view.BannerImageView;
 import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
 
 import twitter4j.User;
@@ -57,15 +56,14 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 		OnClickListener {
 
 	private static final int LOADER_ID_USER = 1;
-	private static final int LOADER_ID_BANNER = 2;
 
 	private static final int REQUEST_UPLOAD_PROFILE_IMAGE = 1;
 	private static final int REQUEST_UPLOAD_PROFILE_BANNER_IMAGE = 2;
 
 	private ImageLoaderWrapper mLazyImageLoader;
 
-	private ProfileNameBannerContainer mProfileNameBannerContainer;
 	private ImageView mProfileImageView;
+	private BannerImageView mProfileBannerView;
 	private EditText mEditName, mEditDescription, mEditLocation, mEditUrl;
 	private View mProgress, mContent;
 	private View mProfileImageContainer, mProfileBannerContainer;
@@ -76,7 +74,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 	private int mBannerWidth;
 	private ParcelableUser mUser;
 
-	private boolean mUserInfoLoaderInitialized, mBannerImageLoaderInitialized;
+	private boolean mUserInfoLoaderInitialized;
 
 	private PopupMenu mPopupMenu;
 
@@ -96,31 +94,6 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 				}
 			}
 		}
-	};
-
-	private final LoaderCallbacks<Bitmap> mBannerImageCallback = new LoaderCallbacks<Bitmap>() {
-
-		@Override
-		public Loader<Bitmap> onCreateLoader(final int id, final Bundle args) {
-			if (mUser == null || mUser.profile_banner_url == null
-					|| !mUser.profile_banner_url.equals(mProfileNameBannerContainer.getTag())) {
-				mProfileNameBannerContainer.setBanner(null);
-			}
-			final int def_width = getResources().getDisplayMetrics().widthPixels;
-			final int width = mBannerWidth > 0 ? mBannerWidth : def_width;
-			return new UserBannerImageLoader(EditUserProfileActivity.this, mUser, width, true);
-		}
-
-		@Override
-		public void onLoaderReset(final Loader<Bitmap> loader) {
-		}
-
-		@Override
-		public void onLoadFinished(final Loader<Bitmap> loader, final Bitmap data) {
-			mProfileNameBannerContainer.setBanner(data);
-			mProfileNameBannerContainer.setTag(data != null ? mUser.profile_banner_url : null);
-		}
-
 	};
 
 	private final LoaderCallbacks<SingleResponse<ParcelableUser>> mUserInfoLoaderCallbacks = new LoaderCallbacks<SingleResponse<ParcelableUser>>() {
@@ -144,7 +117,6 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 				final SingleResponse<ParcelableUser> data) {
 			if (data.data != null && data.data.user_id > 0) {
 				displayUser(data.data);
-				getBannerImage();
 			} else {
 				finish();
 			}
@@ -280,7 +252,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 		super.onContentChanged();
 		mProgress = findViewById(R.id.progress);
 		mContent = findViewById(R.id.content);
-		mProfileNameBannerContainer = (ProfileNameBannerContainer) findViewById(R.id.profile_name_banner_container);
+		mProfileBannerView = (BannerImageView) findViewById(R.id.profile_banner);
 		mProfileImageContainer = findViewById(R.id.profile_image_container);
 		mProfileBannerContainer = findViewById(R.id.profile_banner_container);
 		mProfileImageView = (ImageView) findViewById(R.id.profile_image);
@@ -304,7 +276,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 		mAccountId = extras.getLong(INTENT_KEY_ACCOUNT_ID);
 		setContentView(R.layout.edit_user_profile);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		mProfileNameBannerContainer.setOnSizeChangedListener(this);
+		mProfileBannerView.setOnSizeChangedListener(this);
 		mEditName.addTextChangedListener(this);
 		mEditDescription.addTextChangedListener(this);
 		mEditLocation.addTextChangedListener(this);
@@ -418,21 +390,12 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 			mEditLocation.setText(user.location);
 			mEditUrl.setText(isEmpty(user.url_expanded) ? user.url : user.url_expanded);
 			mLazyImageLoader.displayProfileImage(mProfileImageView, user.profile_image_url);
-			getBannerImage();
+			final int def_width = getResources().getDisplayMetrics().widthPixels;
+			final int width = mBannerWidth > 0 ? mBannerWidth : def_width;
+			mLazyImageLoader.displayProfileBanner(mProfileBannerView, user.profile_banner_url, width);
 		} else {
 			mProgress.setVisibility(View.GONE);
 			mContent.setVisibility(View.GONE);
-		}
-	}
-
-	private void getBannerImage() {
-		final LoaderManager lm = getSupportLoaderManager();
-		lm.destroyLoader(LOADER_ID_BANNER);
-		if (mBannerImageLoaderInitialized) {
-			lm.restartLoader(LOADER_ID_BANNER, null, mBannerImageCallback);
-		} else {
-			lm.initLoader(LOADER_ID_BANNER, null, mBannerImageCallback);
-			mBannerImageLoaderInitialized = true;
 		}
 	}
 

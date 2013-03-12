@@ -11,10 +11,15 @@
 			android:layout_height="wrap_content"
 			android:orientation="vertical">
 
-			<org.mariotaku.twidere.view.ProfileNameBannerContainer
-				android:id="@+id/profile_name_banner_container"
+			<FrameLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content">
+
+				<org.mariotaku.twidere.view.BannerImageView
+					android:id="@+id/profile_banner"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center"/>
 
 				<FrameLayout
 					android:id="@+id/profile_banner_container"
@@ -45,7 +50,7 @@
 							android:layout_height="@dimen/profile_image_size"
 							android:layout_gravity="center"
 							android:layout_margin="8dp"
-												android:scaleType="fitCenter"
+							android:scaleType="fitCenter"
 							android:src="@drawable/ic_profile_image_default"/>
 					</FrameLayout>
 
@@ -81,7 +86,7 @@
 							android:textAppearance="?android:attr/textAppearanceMedium"/>
 					</LinearLayout>
 				</RelativeLayout>
-			</org.mariotaku.twidere.view.ProfileNameBannerContainer>
+			</FrameLayout>
 
 			<LinearLayout
 				android:id="@+id/description_container"

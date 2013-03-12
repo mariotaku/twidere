@@ -6,17 +6,17 @@ import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 
-public class ProfileNameBannerContainer extends ExtendedFrameLayout {
+class ProfileNameBannerContainer2 extends ExtendedFrameLayout {
 
-	public ProfileNameBannerContainer(final Context context) {
+	public ProfileNameBannerContainer2(final Context context) {
 		super(context);
 	}
 
-	public ProfileNameBannerContainer(final Context context, final AttributeSet attrs) {
+	public ProfileNameBannerContainer2(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
 	}
 
-	public ProfileNameBannerContainer(final Context context, final AttributeSet attrs, final int defStyle) {
+	public ProfileNameBannerContainer2(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 	}
 
