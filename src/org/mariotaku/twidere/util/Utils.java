@@ -1518,14 +1518,14 @@ public final class Utils implements Constants {
 		return resp;
 	}
 
-	public static String getShareStatus(final Context context, final String title, final String text) {
+	public static String getShareStatus(final Context context, final CharSequence title, final CharSequence text) {
 		if (context == null) return null;
 		String share_format = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getString(
 				PREFERENCE_KEY_SHARE_FORMAT, PREFERENCE_DEFAULT_SHARE_FORMAT);
 		if (isEmpty(share_format)) {
 			share_format = PREFERENCE_DEFAULT_SHARE_FORMAT;
 		}
-		if (isEmpty(title)) return text;
+		if (isEmpty(title)) return parseString(text);
 		return share_format.replace(FORMAT_PATTERN_TITLE, title).replace(FORMAT_PATTERN_TEXT, text != null ? text : "");
 	}
 

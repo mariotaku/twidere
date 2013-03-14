@@ -489,12 +489,6 @@ public final class TweetStore implements Constants {
 
 		public static final String IN_REPLY_TO_STATUS_ID = "in_reply_to_status_id";
 
-		public static final String IN_REPLY_TO_NAME = "in_reply_to_name";
-
-		public static final String IN_REPLY_TO_SCREEN_NAME = "in_reply_to_screen_name";
-
-		public static final String IS_QUOTE = "is_quote";
-
 		public static final String IS_IMAGE_ATTACHED = "is_image_attached";
 
 		public static final String IS_PHOTO_ATTACHED = "is_photo_attached";
@@ -502,8 +496,7 @@ public final class TweetStore implements Constants {
 		public static final String IS_POSSIBLY_SENSITIVE = "is_possibly_sensitive";
 
 		public static final String[] COLUMNS = new String[] { _ID, TEXT, ACCOUNT_IDS, LOCATION, IMAGE_URI,
-				IN_REPLY_TO_STATUS_ID, IN_REPLY_TO_NAME, IN_REPLY_TO_SCREEN_NAME, IS_QUOTE, IS_IMAGE_ATTACHED,
-				IS_PHOTO_ATTACHED, IS_POSSIBLY_SENSITIVE };
+				IN_REPLY_TO_STATUS_ID, IS_IMAGE_ATTACHED, IS_PHOTO_ATTACHED, IS_POSSIBLY_SENSITIVE };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,
 				TYPE_TEXT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN };

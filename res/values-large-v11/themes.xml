@@ -10,6 +10,7 @@
 		<!-- for programmatic instantiation -->
 		<item name="actionBarBackground">@drawable/actionbar_bg_dark_holo</item>
 		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle</item>
+		<item name="actionBarSubtitleStyle">@style/Widget.ActionBarSubtitle</item>
 		<item name="actionBarItemStyle">@style/Widget.ActionBarItem</item>
 		<item name="actionBarItemHomeStyle">@style/Widget.ActionBarHomeItem</item>
 		<item name="actionBarHomeAsUpIndicator">@drawable/actionbar_back_dark</item>
@@ -25,6 +26,7 @@
 		<!-- for programmatic instantiation -->
 		<item name="actionBarBackground">@drawable/bg_actionbar_light_theme</item>
 		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle.Inverse</item>
+		<item name="actionBarSubtitleStyle">@style/Widget.ActionBarSubtitle.Inverse</item>
 		<item name="actionBarItemStyle">@style/Widget.ActionBarItem</item>
 		<item name="actionBarItemHomeStyle">@style/Widget.ActionBarHomeItem</item>
 		<item name="actionBarHomeAsUpIndicator">@drawable/actionbar_back_dark</item>

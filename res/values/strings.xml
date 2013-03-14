@@ -411,6 +411,7 @@
 	<string name="disable_tab_swipe">Disable tab swipe</string>
 	<string name="sign_in_method_introduction_title">How does it work?</string>
 	<string name="sign_in_method_introduction">Most clients like twicca opens a browser asking you to type username and password, and then takes you back to heir clients. Sometimes this can become very inconvenient.\nTwidere uses more simple steps to sign in, without opening the browser. Don\'t worry about your password, Twidere will never store it, it\'s totally safe!</string>
-	<string name="protected_tweet_notice">It\'s not recommand to quote protected tweet.</string>
+	<string name="quote_protected_tweet_notice">It\'s not recommand to quote protected tweet.</string>
+	<string name="edit_draft">Edit draft</string>
 
 </resources>

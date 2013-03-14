@@ -20,6 +20,7 @@
 	<attr name="actionBarBackground" format="reference"/>
 	<attr name="actionBarHomeAsUpIndicator" format="reference"/>
 	<attr name="actionBarTitleStyle" format="reference"/>
+	<attr name="actionBarSubtitleStyle" format="reference"/>
 	<attr name="actionBarItemStyle" format="reference"/>
 	<attr name="actionBarItemHomeStyle" format="reference"/>
 	<attr name="actionBarIndeterminateProgressStyle" format="reference"/>

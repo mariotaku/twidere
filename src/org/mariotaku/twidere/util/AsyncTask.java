@@ -55,14 +55,20 @@ public abstract class AsyncTask<Param, Progress, Result> {
 		}
 
 		mStatus = Status.RUNNING;
-		onPreExecute();
-		mParams = params;
-		if (mExecutor != null) {
-			mExecutor.execute(mRunnable);
-		} else {
-			mThread = new Thread(mRunnable);
-			mThread.start();
-		}
+		mHandler.post(new Runnable() {
+			
+			@Override
+			public void run() {
+				onPreExecute();
+				mParams = params;
+				if (mExecutor != null) {
+					mExecutor.execute(mRunnable);
+				} else {
+					mThread = new Thread(mRunnable);
+					mThread.start();
+				}
+			}
+		});
 
 		return this;
 	}

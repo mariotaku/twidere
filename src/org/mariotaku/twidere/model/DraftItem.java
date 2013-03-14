@@ -23,13 +23,28 @@ import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.util.ArrayUtils;
 
 import android.database.Cursor;
+import android.os.Parcelable;
+import java.io.Serializable;
+import android.os.Parcel;
 
-public class DraftItem {
+public class DraftItem implements Serializable, Parcelable {
+
+	public static final Parcelable.Creator<DraftItem> CREATOR = new Parcelable.Creator<DraftItem>() {
+		@Override
+		public DraftItem createFromParcel(final Parcel in) {
+			return new DraftItem(in);
+		}
+
+		@Override
+		public DraftItem[] newArray(final int size) {
+			return new DraftItem[size];
+		}
+	};
 
 	public final long[] account_ids;
 	public final long _id, in_reply_to_status_id;
-	public final String text, media_uri, in_reply_to_name, in_reply_to_screen_name;
-	public final boolean is_quote, is_image_attached, is_photo_attached, is_possibly_sensitive;
+	public final String text, media_uri;
+	public final boolean is_image_attached, is_photo_attached, is_possibly_sensitive;
 	public final ParcelableLocation location;
 
 	public DraftItem(final Cursor cursor, final int position) {
@@ -39,13 +54,37 @@ public class DraftItem {
 		media_uri = cursor.getString(cursor.getColumnIndex(Drafts.IMAGE_URI));
 		account_ids = ArrayUtils.fromString(cursor.getString(cursor.getColumnIndex(Drafts.ACCOUNT_IDS)), ',');
 		in_reply_to_status_id = cursor.getLong(cursor.getColumnIndex(Drafts.IN_REPLY_TO_STATUS_ID));
-		in_reply_to_name = cursor.getString(cursor.getColumnIndex(Drafts.IN_REPLY_TO_NAME));
-		in_reply_to_screen_name = cursor.getString(cursor.getColumnIndex(Drafts.IN_REPLY_TO_SCREEN_NAME));
-		is_quote = cursor.getShort(cursor.getColumnIndex(Drafts.IS_QUOTE)) == 1;
 		is_image_attached = cursor.getShort(cursor.getColumnIndex(Drafts.IS_IMAGE_ATTACHED)) == 1;
 		is_photo_attached = cursor.getShort(cursor.getColumnIndex(Drafts.IS_PHOTO_ATTACHED)) == 1;
 		is_possibly_sensitive = cursor.getShort(cursor.getColumnIndex(Drafts.IS_POSSIBLY_SENSITIVE)) == 1;
 		location = new ParcelableLocation(cursor.getString(cursor.getColumnIndex(Drafts.LOCATION)));
 	}
 
+	public DraftItem(final Parcel in) {
+		account_ids = in.createLongArray();
+		_id = in.readLong();
+		in_reply_to_status_id = in.readLong();
+		text = in.readString();
+		media_uri = in.readString();
+		is_image_attached = in.readInt() == 1;
+		is_photo_attached = in.readInt() == 1;
+		is_possibly_sensitive = in.readInt() == 1;
+		location = ParcelableLocation.fromString(in.readString());
+	}
+
+	public int describeContents() {
+		return 0;
+	}
+
+	public void writeToParcel(final Parcel out, final int flags) {
+		out.writeLongArray(account_ids);
+		out.writeLong(_id);
+		out.writeLong(in_reply_to_status_id);
+		out.writeString(text);
+		out.writeString(media_uri);
+		out.writeInt(is_image_attached ? 1 : 0);
+		out.writeInt(is_photo_attached ? 1 : 0);
+		out.writeInt(is_possibly_sensitive ? 1 : 0);
+		out.writeString(ParcelableLocation.toString(location));
+	}
 }

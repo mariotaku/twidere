@@ -100,6 +100,9 @@
 			<intent-filter android:label="@string/compose">
 				<action android:name="android.intent.action.MAIN"/>
 				<action android:name="org.mariotaku.twidere.COMPOSE"/>
+				<action android:name="org.mariotaku.twidere.REPLY"/>
+				<action android:name="org.mariotaku.twidere.QUOTE"/>
+				<action android:name="org.mariotaku.twidere.EDIT_DRAFT"/>
 
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>

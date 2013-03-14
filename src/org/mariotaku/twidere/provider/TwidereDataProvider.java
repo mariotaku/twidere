@@ -83,6 +83,7 @@ import android.support.v4.app.NotificationCompat;
 import android.text.Html;
 
 import com.twitter.Extractor;
+import java.util.Set;
 
 public final class TwidereDataProvider extends ContentProvider implements Constants {
 
@@ -559,7 +560,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				final ParcelableStatus s = mNewMentions.get(i);
 				final String name = display_screen_name ? "@" + s.screen_name : s.name;
 				style.addLine(Html.fromHtml("<b>" + name + "</b>: "
-						+ stripMentionText(s.text_plain, getAccountScreenName(context, s.account_id))));
+						+ stripMentionText(s.text_unescaped, getAccountScreenName(context, s.account_id))));
 			}
 			if (max == 4 && mentions_size - max > 0) {
 				style.addLine(context.getString(R.string.and_more, mentions_size - max));
@@ -580,23 +581,16 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			}
 			mNotificationManager.notify(NOTIFICATION_ID_MENTIONS, style.build());
 		} else {
-			final Intent reply_intent = new Intent(INTENT_ACTION_COMPOSE);
+			final Intent reply_intent = new Intent(INTENT_ACTION_REPLY);
 			final Bundle bundle = new Bundle();
-			final List<String> mentions = new Extractor().extractMentionedScreennames(status.text_plain);
-			mentions.remove(status.screen_name);
-			mentions.add(0, status.screen_name);
 			bundle.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_MENTIONS);
-			bundle.putStringArray(INTENT_KEY_MENTIONS, mentions.toArray(new String[mentions.size()]));
-			bundle.putLong(INTENT_KEY_ACCOUNT_ID, status.account_id);
-			bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status.status_id);
-			bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, status.screen_name);
-			bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, status.name);
+			bundle.putParcelable(INTENT_KEY_STATUS, status);
 			reply_intent.putExtras(bundle);
 			reply_intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			builder.addAction(R.drawable.ic_menu_reply, context.getString(R.string.reply),
 					PendingIntent.getActivity(context, 0, reply_intent, PendingIntent.FLAG_UPDATE_CURRENT));
 			final NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle(builder);
-			style.bigText(stripMentionText(status.text_plain, getAccountScreenName(context, status.account_id)));
+			style.bigText(stripMentionText(status.text_unescaped, getAccountScreenName(context, status.account_id)));
 			mNotificationManager.notify(NOTIFICATION_ID_MENTIONS, style.build());
 		}
 	}

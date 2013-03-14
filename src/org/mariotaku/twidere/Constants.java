@@ -232,6 +232,9 @@ public interface Constants extends TwitterConstants {
 
 	public static final String INTENT_ACTION_HOME = INTENT_PACKAGE_PREFIX + "HOME";
 	public static final String INTENT_ACTION_COMPOSE = INTENT_PACKAGE_PREFIX + "COMPOSE";
+	public static final String INTENT_ACTION_REPLY = INTENT_PACKAGE_PREFIX + "REPLY";
+	public static final String INTENT_ACTION_QUOTE = INTENT_PACKAGE_PREFIX + "QUOTE";
+	public static final String INTENT_ACTION_EDIT_DRAFT = INTENT_PACKAGE_PREFIX + "EDIT_DRAFT";
 	public static final String INTENT_ACTION_SETTINGS = INTENT_PACKAGE_PREFIX + "SETTINGS";
 	public static final String INTENT_ACTION_SELECT_ACCOUNT = INTENT_PACKAGE_PREFIX + "SELECT_ACCOUNT";
 	public static final String INTENT_ACTION_VIEW_IMAGE = INTENT_PACKAGE_PREFIX + "VIEW_IMAGE";
@@ -347,9 +350,9 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_TYPE = "type";
 	public static final String INTENT_KEY_SUCCEED = "succeed";
 	public static final String INTENT_KEY_IDS = "ids";
-	public static final String INTENT_KEY_IS_QUOTE = "is_quote";
 	public static final String INTENT_KEY_IS_SHARE = "is_share";
 	public static final String INTENT_KEY_STATUS = "status";
+	public static final String INTENT_KEY_DRAFT = "draft";
 	public static final String INTENT_KEY_FAVORITED = "favorited";
 	public static final String INTENT_KEY_RETWEETED = "retweeted";
 	public static final String INTENT_KEY_FILENAME = "filename";

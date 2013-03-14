@@ -6,6 +6,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * A class to extract usernames, lists, hashtags and URLs from Tweet text.
@@ -127,14 +129,14 @@ public class Extractor {
 	 * @param text of the tweet from which to extract usernames
 	 * @return List of usernames referenced (without the leading @ sign)
 	 */
-	public List<String> extractMentionedScreennames(final String text) {
+	public Set<String> extractMentionedScreennames(final String text) {
 		return extractMentionedScreennames(text, true);
 	}
 
-	public List<String> extractMentionedScreennames(final String text, final boolean exclude_duplicate) {
-		if (text == null || text.length() == 0) return Collections.emptyList();
+	public Set<String> extractMentionedScreennames(final String text, final boolean exclude_duplicate) {
+		if (text == null || text.length() == 0) return Collections.emptySet();
 
-		final ArrayList<String> extracted = new ArrayList<String>();
+		final Set<String> extracted = new HashSet<String>();
 		for (final Entity entity : extractMentionedScreennamesWithIndices(text)) {
 			if (!exclude_duplicate || !extracted.contains(entity.value)) {
 				extracted.add(entity.value);

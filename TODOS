@@ -1,6 +1,6 @@
 2012-12-13：
 	* twipple.jp photo support.
 2012-12-14
-	* option to enable/disable full image preview.
+	[FINISHED] option to enable/disable full image preview.
 2012-12-15
 	[FINISHED] full user caching (store in cached_users table)

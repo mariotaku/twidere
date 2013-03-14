@@ -111,7 +111,7 @@ public class DraftsActivity extends BaseDialogWhenLargeActivity implements Loade
 		if (mCursor != null) {
 			mSelectedId = id;
 			final DraftItem draft = new DraftItem(mCursor, position);
-			composeDraft(draft);
+			editDraft(draft);
 		}
 	}
 
@@ -152,7 +152,7 @@ public class DraftsActivity extends BaseDialogWhenLargeActivity implements Loade
 				break;
 			}
 			case MENU_EDIT: {
-				composeDraft(mDraftItem);
+				editDraft(mDraftItem);
 				break;
 			}
 			case MENU_DELETE: {
@@ -208,19 +208,10 @@ public class DraftsActivity extends BaseDialogWhenLargeActivity implements Loade
 		super.onStop();
 	}
 
-	private void composeDraft(final DraftItem draft) {
-		final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+	private void editDraft(final DraftItem draft) {
+		final Intent intent = new Intent(INTENT_ACTION_EDIT_DRAFT);
 		final Bundle bundle = new Bundle();
-		final Uri image_uri = draft.media_uri == null ? null : Uri.parse(draft.media_uri);
-		bundle.putString(INTENT_KEY_TEXT, draft.text);
-		bundle.putLongArray(INTENT_KEY_IDS, draft.account_ids);
-		bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, draft.in_reply_to_status_id);
-		bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, draft.in_reply_to_name);
-		bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, draft.in_reply_to_screen_name);
-		bundle.putParcelable(INTENT_KEY_IMAGE_URI, image_uri);
-		bundle.putBoolean(INTENT_KEY_IS_IMAGE_ATTACHED, draft.is_image_attached);
-		bundle.putBoolean(INTENT_KEY_IS_PHOTO_ATTACHED, draft.is_photo_attached);
-		bundle.putBoolean(INTENT_KEY_IS_QUOTE, draft.is_quote);
+		bundle.putParcelable(INTENT_KEY_DRAFT, draft);
 		intent.putExtras(bundle);
 		mResolver.delete(Drafts.CONTENT_URI, Drafts._ID + " = " + draft._id, null);
 		startActivityForResult(intent, REQUEST_COMPOSE);

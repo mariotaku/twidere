@@ -53,10 +53,18 @@
 	</style>
 	
 	<style name="Widget.ActionBarTitleBase" parent="android:Widget.TextView">
-		<item name="android:id">@id/actionbar_title</item>
 		<!-- layout_width/height/weight must be set in code -->
 		<item name="android:gravity">center_vertical</item>
 		<item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+		<item name="android:paddingLeft">6dp</item>
+		<item name="android:paddingRight">6dp</item>
+		<item name="android:singleLine">true</item>
+	</style>
+
+	<style name="Widget.ActionBarSubtitleBase" parent="android:Widget.TextView">
+		<!-- layout_width/height/weight must be set in code -->
+		<item name="android:gravity">center_vertical</item>
+		<item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
 		<item name="android:paddingLeft">6dp</item>
 		<item name="android:paddingRight">6dp</item>
 		<item name="android:singleLine">true</item>
@@ -70,6 +78,14 @@
 		<item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
 	</style>
 
+	<style name="Widget.ActionBarSubtitle" parent="Widget.ActionBarSubtitleBase">
+		<item name="android:textColor">?android:attr/textColorSecondary</item>
+	</style>
+
+	<style name="Widget.ActionBarSubtitle.Inverse" parent="Widget.ActionBarSubtitleBase">
+		<item name="android:textColor">?android:attr/textColorSecondaryInverse</item>
+	</style>
+	
 	<style name="Widget.ActionBarItem" parent="android:Widget">
 
 		<!-- layout_width/height must be set in code -->

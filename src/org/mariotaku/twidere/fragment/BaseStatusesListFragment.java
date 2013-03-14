@@ -252,29 +252,17 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			}
 			case R.id.direct_quote:
 			case MENU_QUOTE: {
-				final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+				final Intent intent = new Intent(INTENT_ACTION_QUOTE);
 				final Bundle bundle = new Bundle();
-				bundle.putLong(INTENT_KEY_ACCOUNT_ID, status.account_id);
-				bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status.status_id);
-				bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, status.screen_name);
-				bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, status.name);
-				bundle.putBoolean(INTENT_KEY_IS_QUOTE, true);
-				bundle.putString(INTENT_KEY_TEXT, getQuoteStatus(getActivity(), status.screen_name, status.text_plain));
+				bundle.putParcelable(INTENT_KEY_STATUS, status);
 				intent.putExtras(bundle);
 				startActivity(intent);
 				break;
 			}
 			case MENU_REPLY: {
-				final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+				final Intent intent = new Intent(INTENT_ACTION_REPLY);
 				final Bundle bundle = new Bundle();
-				final List<String> mentions = new Extractor().extractMentionedScreennames(status.text_plain);
-				mentions.remove(status.screen_name);
-				mentions.add(0, status.screen_name);
-				bundle.putStringArray(INTENT_KEY_MENTIONS, mentions.toArray(new String[mentions.size()]));
-				bundle.putLong(INTENT_KEY_ACCOUNT_ID, status.account_id);
-				bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, status.status_id);
-				bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, status.screen_name);
-				bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, status.name);
+				bundle.putParcelable(INTENT_KEY_STATUS, status);
 				intent.putExtras(bundle);
 				startActivity(intent);
 				break;

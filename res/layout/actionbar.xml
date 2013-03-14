@@ -49,16 +49,15 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layerType="software"
-				android:singleLine="true"
-				android:textAppearance="?android:attr/textAppearanceMedium"/>
+				android:singleLine="true"/>
 
 			<TextView
 				android:id="@id/actionbar_subtitle"
+				style="?attr/actionBarSubtitleStyle"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layerType="software"
 				android:singleLine="true"
-				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:visibility="gone"/>
 		</LinearLayout>
 

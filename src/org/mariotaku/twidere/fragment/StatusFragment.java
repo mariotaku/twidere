@@ -294,29 +294,17 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 					break;
 				}
 				case MENU_QUOTE: {
-					final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+					final Intent intent = new Intent(INTENT_ACTION_QUOTE);
 					final Bundle bundle = new Bundle();
-					bundle.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
-					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, mStatusId);
-					bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, screen_name);
-					bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, name);
-					bundle.putBoolean(INTENT_KEY_IS_QUOTE, true);
-					bundle.putString(INTENT_KEY_TEXT, getQuoteStatus(getActivity(), screen_name, text_plain));
+					bundle.putParcelable(INTENT_KEY_STATUS, mStatus);
 					intent.putExtras(bundle);
 					startActivity(intent);
 					break;
 				}
 				case MENU_REPLY: {
-					final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+					final Intent intent = new Intent(INTENT_ACTION_REPLY);
 					final Bundle bundle = new Bundle();
-					final List<String> mentions = new Extractor().extractMentionedScreennames(mStatus.text_plain);
-					mentions.remove(mStatus.screen_name);
-					mentions.add(0, mStatus.screen_name);
-					bundle.putStringArray(INTENT_KEY_MENTIONS, mentions.toArray(new String[mentions.size()]));
-					bundle.putLong(INTENT_KEY_ACCOUNT_ID, mStatus.account_id);
-					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, mStatus.status_id);
-					bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, mStatus.screen_name);
-					bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, mStatus.name);
+					bundle.putParcelable(INTENT_KEY_STATUS, mStatus);
 					intent.putExtras(bundle);
 					startActivity(intent);
 					break;
