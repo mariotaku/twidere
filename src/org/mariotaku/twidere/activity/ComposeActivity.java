@@ -112,6 +112,7 @@ import com.twitter.Extractor;
 import java.util.Set;
 import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.twidere.model.DraftItem;
+import android.content.ComponentName;
 
 public class ComposeActivity extends BaseDialogWhenLargeActivity implements TextWatcher, LocationListener,
 		OnMenuItemClickListener, OnClickListener, OnLongClickListener, PopupMenu.OnMenuItemClickListener,
@@ -144,7 +145,8 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	private long[] mAccountIds;
 	private Uri mImageUri, mTempPhotoUri;
 	private boolean mLoaderInitialized, mUploadUseExtension, mContentModified;
-	private ParcelableStatus mOrigStatus;
+	private ParcelableStatus mInReplyToStatus;
+	private long mInReplyToStatusId;
 
 	private DialogFragment mUnsavedTweetDialogFragment;
 
@@ -192,7 +194,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 					final long[] account_ids = bundle.getLongArray(INTENT_KEY_IDS);
 					if (account_ids != null) {
 						mAccountIds = account_ids;
-						if (mOrigStatus != null && !Intent.ACTION_SEND.equals(getIntent().getAction())) {
+						if (mInReplyToStatus != null && !Intent.ACTION_SEND.equals(getIntent().getAction())) {
 							final SharedPreferences.Editor editor = mPreferences.edit();
 							editor.putString(PREFERENCE_KEY_COMPOSE_ACCOUNTS,
 									ArrayUtils.toString(mAccountIds, ',', false));
@@ -261,17 +263,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	public void onClick(final View view) {
 		switch (view.getId()) {
 			case R.id.image_thumbnail_preview: {
-				if (mPopupMenu != null) {
-					mPopupMenu.dismiss();
-				}
-				mPopupMenu = PopupMenu.getInstance(this, view);
-				mPopupMenu.inflate(R.menu.action_attached_image);
-				final Menu menu = mPopupMenu.getMenu();
-				final Intent extension_intent = new Intent(INTENT_ACTION_EXTENSION_EDIT_IMAGE);
-				extension_intent.setData(mImageUri);
-				addIntentToMenu(this, menu, extension_intent);
-				mPopupMenu.setOnMenuItemClickListener(this);
-				mPopupMenu.show();
+				openImageMenu();
 				break;
 			}
 		}
@@ -319,7 +311,8 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			mIsPossiblySensitive = savedInstanceState.getBoolean(INTENT_KEY_IS_POSSIBLY_SENSITIVE);
 			mContentModified = savedInstanceState.getBoolean(INTENT_KEY_CONTENT_MODIFIED);
 			mImageUri = savedInstanceState.getParcelable(INTENT_KEY_IMAGE_URI);
-			mOrigStatus = savedInstanceState.getParcelable(INTENT_KEY_STATUS);
+			mInReplyToStatus = savedInstanceState.getParcelable(INTENT_KEY_STATUS);
+			mInReplyToStatusId = savedInstanceState.getLong(INTENT_KEY_STATUS_ID);
 		} else {
 			// The activity was first created
 			final Bundle extras = intent.getExtras();
@@ -408,7 +401,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	public boolean onLongClick(final View view) {
 		switch (view.getId()) {
 			case R.id.image_thumbnail_preview: {
-				onClick(view);
+				openImageMenu();
 				return true;
 			}
 		}
@@ -463,11 +456,15 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 						if (INTENT_ACTION_EXTENSION_COMPOSE.equals(intent.getAction())) {
 							final Bundle extras = new Bundle();
 							extras.putString(INTENT_KEY_TEXT, parseString(mEditText.getText()));
-							extras.putParcelable(INTENT_KEY_STATUS, mOrigStatus);
+							extras.putParcelable(INTENT_KEY_STATUS, mInReplyToStatus);
 							intent.putExtras(extras);
 							startActivityForResult(intent, REQUEST_EXTENSION_COMPOSE);
 						} else if (INTENT_ACTION_EXTENSION_EDIT_IMAGE.equals(intent.getAction())) {
-							startActivityForResult(intent, REQUEST_EDIT_IMAGE);
+							final ComponentName cmp = intent.getComponent();
+							if (cmp != null) {
+								grantUriPermission(cmp.getPackageName(), mImageUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+								startActivityForResult(intent, REQUEST_EDIT_IMAGE);
+							}
 						} else {
 							startActivity(intent);
 						}
@@ -554,7 +551,8 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		outState.putParcelable(INTENT_KEY_IMAGE_URI, mImageUri);
 		outState.putBoolean(INTENT_KEY_CONTENT_MODIFIED, mContentModified);
 		outState.putBoolean(INTENT_KEY_IS_POSSIBLY_SENSITIVE, mIsPossiblySensitive);
-		outState.putParcelable(INTENT_KEY_STATUS, mOrigStatus);
+		outState.putParcelable(INTENT_KEY_STATUS, mInReplyToStatus);
+		outState.putLong(INTENT_KEY_STATUS_ID, mInReplyToStatusId);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -574,7 +572,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		final ContentValues values = new ContentValues();
 		values.put(Drafts.TEXT, text);
 		values.put(Drafts.ACCOUNT_IDS, ArrayUtils.toString(mAccountIds, ',', false));
-		values.put(Drafts.IN_REPLY_TO_STATUS_ID, mOrigStatus != null ? mOrigStatus.status_id : -1);
+		values.put(Drafts.IN_REPLY_TO_STATUS_ID, mInReplyToStatusId);
 		values.put(Drafts.LOCATION, ParcelableLocation.toString(mRecentLocation));
 		values.put(Drafts.IS_POSSIBLY_SENSITIVE, mIsPossiblySensitive);
 		if (mImageUri != null) {
@@ -608,11 +606,12 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 
 	private boolean handleIntent(final String action, final Bundle extras) {
 		if (extras == null) return false;
-		mOrigStatus = extras.getParcelable(INTENT_KEY_STATUS);
+		mInReplyToStatus = extras.getParcelable(INTENT_KEY_STATUS);
+		mInReplyToStatusId = mInReplyToStatus != null ? mInReplyToStatus.status_id : -1;
 		if (INTENT_ACTION_REPLY.equals(action)) {
-			return handleReplyIntent(mOrigStatus);
+			return handleReplyIntent(mInReplyToStatus);
 		} else if (INTENT_ACTION_QUOTE.equals(action)) {
-			return handleQuoteIntent(mOrigStatus);
+			return handleQuoteIntent(mInReplyToStatus);
 		} else if (INTENT_ACTION_EDIT_DRAFT.equals(action)) {
 			final DraftItem draft = extras.getParcelable(INTENT_KEY_DRAFT);
 			return handleEditDraftIntent(draft);
@@ -710,6 +709,20 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		}
 		return provider != null;
 	}
+	
+	private void openImageMenu() {
+		if (mPopupMenu != null) {
+			mPopupMenu.dismiss();
+		}
+		mPopupMenu = PopupMenu.getInstance(this, mImageThumbnailPreview);
+		mPopupMenu.inflate(R.menu.action_attached_image);
+		final Menu menu = mPopupMenu.getMenu();
+		final Intent extension_intent = new Intent(INTENT_ACTION_EXTENSION_EDIT_IMAGE);
+		extension_intent.setData(mImageUri);
+		addIntentToMenu(this, menu, extension_intent);
+		mPopupMenu.setOnMenuItemClickListener(this);
+		mPopupMenu.show();
+	}
 
 	private void pickImage() {
 		final Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -748,9 +761,8 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			}
 			mRecentLocation = location != null ? new ParcelableLocation(location) : null;
 		}
-		final long in_reply_to_status_id = mOrigStatus != null ? mOrigStatus.status_id : -1;
 		mTwitterWrapper.updateStatus(mAccountIds, text, attach_location ? mRecentLocation : null, mImageUri,
-				in_reply_to_status_id, has_media && mIsPossiblySensitive, mIsPhotoAttached && !mIsImageAttached);
+				mInReplyToStatusId, has_media && mIsPossiblySensitive, mIsPhotoAttached && !mIsImageAttached);
 		setResult(Activity.RESULT_OK);
 		finish();
 	}
@@ -828,12 +840,12 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		final boolean display_screen_name = NAME_DISPLAY_OPTION_SCREEN_NAME.equals(mPreferences.getString(
 				PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH));
 		if (INTENT_ACTION_REPLY.equals(action)) {
-			if (mOrigStatus == null) return;
-			setTitle(getString(R.string.reply_to, display_screen_name ? "@" + mOrigStatus.screen_name : mOrigStatus.name));
+			if (mInReplyToStatus == null) return;
+			setTitle(getString(R.string.reply_to, display_screen_name ? "@" + mInReplyToStatus.screen_name : mInReplyToStatus.name));
 		} else if (INTENT_ACTION_QUOTE.equals(action)) {
-			if (mOrigStatus == null) return;
-			setTitle(getString(R.string.quote_user, display_screen_name ? "@" + mOrigStatus.screen_name : mOrigStatus.name));
-			mActionBar.setSubtitle(mOrigStatus.is_protected && mOrigStatus.account_id != mOrigStatus.user_id ?
+			if (mInReplyToStatus == null) return;
+			setTitle(getString(R.string.quote_user, display_screen_name ? "@" + mInReplyToStatus.screen_name : mInReplyToStatus.name));
+			mActionBar.setSubtitle(mInReplyToStatus.is_protected && mInReplyToStatus.account_id != mInReplyToStatus.user_id ?
 					getString(R.string.quote_protected_tweet_notice) : null);
 		} else if (INTENT_ACTION_EDIT_DRAFT.equals(action)) {
 			setTitle(R.string.edit_draft);
