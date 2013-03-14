@@ -154,13 +154,6 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 							setCurrentItem(mCurrentItem - 1);
 						}
 					}
-					// if (vscroll != 0) {
-					// final int delta = (int) (vscroll *
-					// getVerticalScrollFactor());
-					// if (!trackMotionScroll(delta, delta)) {
-					// return true;
-					// }
-					// }
 				}
 			}
 		}
@@ -273,14 +266,14 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 		setCurrentItem(initialPosition);
 	}
 
-	private void addTab(final CharSequence text, final Drawable icon, final int index) {
+	private void addTab(final CharSequence label, final Drawable icon, final int index) {
 		// Workaround for not being able to pass a defStyle on pre-3.0
 		final TabView tabView = (TabView) mInflater.inflate(R.layout.vpi__tab, null);
-		tabView.init(this, mDisplayLabel ? text : null, mDisplayColor ? icon : null, index);
+		tabView.init(this, mDisplayLabel ? label : null, mDisplayColor ? icon : null, index);
 		tabView.setFocusable(true);
 		tabView.setOnClickListener(mTabClickListener);
 		tabView.setOnLongClickListener(mTabLongClickListener);
-
+		tabView.setContentDescription(label);
 		mTabLayout.addView(tabView, new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1));
 	}
 
@@ -314,7 +307,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 			return mIndex;
 		}
 
-		public void init(final TabPageIndicator parent, final CharSequence text, final Drawable icon, final int index) {
+		public void init(final TabPageIndicator parent, final CharSequence label, final Drawable icon, final int index) {
 			mParent = parent;
 			mIndex = index;
 
@@ -323,8 +316,8 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 			imageView.setImageDrawable(icon);
 
 			final TextView textView = (TextView) findViewById(android.R.id.text1);
-			textView.setVisibility(text != null ? View.VISIBLE : View.GONE);
-			textView.setText(text);
+			textView.setVisibility(label != null ? View.VISIBLE : View.GONE);
+			textView.setText(label);
 		}
 
 		public void init(final TabPageIndicator parent, final CharSequence text, final int index) {
