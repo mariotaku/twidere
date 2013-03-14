@@ -25,7 +25,7 @@ public class BitmapUtils {
 
 	// Find the max x that 1 / x <= scale.
 	public static int computeSampleSize(final float scale) {
-		GalleryUtils.assertTrue(scale > 0);
+		if (scale <= 0) return 1;
 		final int initialSize = Math.max(1, (int) FloatMath.ceil(1 / scale));
 		return initialSize <= 8 ? GalleryUtils.nextPowerOf2(initialSize) : (initialSize + 7) / 8 * 8;
 	}

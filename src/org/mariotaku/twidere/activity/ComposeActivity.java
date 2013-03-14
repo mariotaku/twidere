@@ -879,6 +879,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			o.inJustDecodeBounds = true;
 			BitmapFactory.decodeFile(path, o);
 			if (o.outWidth == 0 || o.outHeight == 0) return null;
+			o.inJustDecodeBounds = false;
 			o.inSampleSize = Math.round(Math.max(o.outWidth, o.outHeight) / thumbnail_size_px);
 			return BitmapDecodeHelper.decode(path, o);
 		}

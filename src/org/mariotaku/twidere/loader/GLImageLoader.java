@@ -43,6 +43,7 @@ public class GLImageLoader extends AbstractImageLoader {
 			BitmapFactory.decodeFileDescriptor(fd, null, o1);
 			final int width = o1.outWidth;
 			final int height = o1.outHeight;
+			if (width == 0 || height == 0) return new AbstractImageLoader.Result(null, mImageFile, e);
 			final BitmapFactory.Options o2 = new BitmapFactory.Options();
 			o2.inSampleSize = BitmapUtils.computeSampleSize(mBackupSize / Math.max(width, height));
 			final Bitmap bitmap = BitmapFactory.decodeFileDescriptor(fd, null, o2);
