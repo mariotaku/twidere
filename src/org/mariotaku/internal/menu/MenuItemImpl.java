@@ -12,7 +12,7 @@ import android.view.View;
 
 public class MenuItemImpl implements MenuItem {
 
-	private CharSequence title;
+	private CharSequence title, titleCondensed;
 	private int groupId, itemId, order;
 	private Drawable icon;
 	private Intent intent;
@@ -232,7 +232,8 @@ public class MenuItemImpl implements MenuItem {
 	}
 
 	@Override
-	public MenuItem setTitleCondensed(final CharSequence title) {
+	public MenuItem setTitleCondensed(final CharSequence titleCondensed) {
+		this.titleCondensed = titleCondensed;
 		return this;
 	}
 

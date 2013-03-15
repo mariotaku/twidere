@@ -59,15 +59,16 @@ import com.twitter.Regex;
 
 public class TwidereLinkify {
 
-	public static final int LINK_TYPE_MENTION_LIST = 1;
+	public static final int LINK_TYPE_MENTION = 1;
 	public static final int LINK_TYPE_HASHTAG = 2;
 	public static final int LINK_TYPE_LINK_WITH_IMAGE_EXTENSION = 3;
 	public static final int LINK_TYPE_LINK = 4;
 	public static final int LINK_TYPE_ALL_AVAILABLE_IMAGE = 5;
 	public static final int LINK_TYPE_LIST = 6;
 	public static final int LINK_TYPE_CASHTAG = 7;
+	public static final int LINK_TYPE_USER_ID = 8;
 
-	public static final int[] ALL_LINK_TYPES = new int[] { LINK_TYPE_LINK, LINK_TYPE_MENTION_LIST, LINK_TYPE_HASHTAG,
+	public static final int[] ALL_LINK_TYPES = new int[] { LINK_TYPE_LINK, LINK_TYPE_MENTION, LINK_TYPE_HASHTAG,
 			LINK_TYPE_LINK_WITH_IMAGE_EXTENSION, LINK_TYPE_ALL_AVAILABLE_IMAGE, LINK_TYPE_CASHTAG };
 
 	public static final String SINA_WEIBO_IMAGES_AVAILABLE_SIZES = "(woriginal|large|thumbnail|bmiddle|mw[\\d]+)";
@@ -186,21 +187,38 @@ public class TwidereLinkify {
 	public static final Pattern PATTERN_TWITTER_PROFILE_IMAGES = Pattern.compile(STRING_PATTERN_TWITTER_PROFILE_IMAGES,
 			Pattern.CASE_INSENSITIVE);
 
-	private final TextView mTextView;
-
-	private OnLinkClickListener mOnLinkClickListener;
+	private final OnLinkClickListener mOnLinkClickListener;
 
 	private final Extractor mExtractor = new Extractor();
 
-	public TwidereLinkify(final TextView view) {
-		mTextView = view;
+	public TwidereLinkify(final OnLinkClickListener listener) {
+		mOnLinkClickListener = listener;
+	}
+	
+	public final void applyUserProfileLink(final TextView view, final long user_id, final String screen_name) {
 		view.setMovementMethod(LinkMovementMethod.getInstance());
+		final SpannableString string = SpannableString.valueOf(view.getText());
+		final URLSpan[] spans = string.getSpans(0, string.length(), URLSpan.class);
+		for (final URLSpan span : spans) {
+			string.removeSpan(span);
+		}
+		if (user_id > 0) {
+			applyLink(parseString(user_id), 0, string.length(), string, LINK_TYPE_USER_ID);
+		} else if (screen_name != null) {
+			applyLink(screen_name, 0, string.length(), string, LINK_TYPE_MENTION);
+		}
+		view.setText(string);
+		addLinkMovementMethod(view);
 	}
 
-	public final void addAllLinks() {
+	public final void applyAllLinks(final TextView view) {
+		view.setMovementMethod(LinkMovementMethod.getInstance());
+		final SpannableString string = SpannableString.valueOf(view.getText());
 		for (final int type : ALL_LINK_TYPES) {
-			addLinks(type);
+			addLinks(string, type);
 		}
+		view.setText(string);
+		addLinkMovementMethod(view);
 	}
 
 	/**
@@ -215,10 +233,9 @@ public class TwidereLinkify {
 	 *            to the url of links that do not have a scheme specified in the
 	 *            link text
 	 */
-	public final void addLinks(final int type) {
-		final SpannableString string = SpannableString.valueOf(mTextView.getText());
+	private final void addLinks(final SpannableString string, final int type) {
 		switch (type) {
-			case LINK_TYPE_MENTION_LIST: {
+			case LINK_TYPE_MENTION: {
 				addMentionOrListLinks(string);
 				break;
 			}
@@ -287,17 +304,6 @@ public class TwidereLinkify {
 			}
 
 		}
-
-		mTextView.setText(string);
-		addLinkMovementMethod(mTextView);
-	}
-
-	public OnLinkClickListener getmOnLinkClickListener() {
-		return mOnLinkClickListener;
-	}
-
-	public void setOnLinkClickListener(final OnLinkClickListener listener) {
-		mOnLinkClickListener = listener;
 	}
 
 	private final boolean addCashtagLinks(final Spannable spannable) {
@@ -343,7 +349,7 @@ public class TwidereLinkify {
 			final int list_end = matcherEnd(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_LIST);
 			final String mention = matcherGroup(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_USERNAME);
 			final String list = matcherGroup(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_LIST);
-			applyLink(mention, start, username_end, spannable, LINK_TYPE_MENTION_LIST);
+			applyLink(mention, start, username_end, spannable, LINK_TYPE_MENTION);
 			if (list_start >= 0 && list_end >= 0) {
 				applyLink(mention + "/" + list, list_start, list_end, spannable, LINK_TYPE_LIST);
 			}

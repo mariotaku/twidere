@@ -136,13 +136,13 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 
 			holder.setAccountColorEnabled(mShowAccountColor);
 
+			final TwidereLinkify linkify = mLinkHighlightingEnabled ? new TwidereLinkify(new OnLinkClickHandler(mContext, status.account_id, status.is_possibly_sensitive)) : null;
+			
 			if (mFastTimelineProcessingEnabled) {
 				holder.text.setText(status.text_plain);
 			} else if (mLinkHighlightingEnabled) {
 				holder.text.setText(Html.fromHtml(status.text_html));
-				final TwidereLinkify linkify = new TwidereLinkify(holder.text);
-				linkify.setOnLinkClickListener(new OnLinkClickHandler(mContext, status.account_id));
-				linkify.addAllLinks();
+				linkify.applyAllLinks(holder.text);
 			} else {
 				holder.text.setText(status.text_unescaped);
 			}
@@ -191,6 +191,12 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 					holder.screen_name.setVisibility(View.VISIBLE);
 					break;
 				}
+			}
+			if (mLinkHighlightingEnabled) {
+				linkify.applyUserProfileLink(holder.name, status.user_id, status.screen_name);
+				linkify.applyUserProfileLink(holder.screen_name, status.user_id, status.screen_name);
+				holder.name.setMovementMethod(null);
+				holder.screen_name.setMovementMethod(null);
 			}
 			if (mShowAbsoluteTime) {
 				holder.time.setText(formatSameDayTime(mContext, status.status_timestamp));

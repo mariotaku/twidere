@@ -957,14 +957,14 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		@Override
 		protected Boolean doInBackground(Void... params) {
 			try {
-				if (old != null && ContentResolver.SCHEME_FILE.equals(old.getScheme())) {
-					new File(old.getPath()).delete();
-				}
 				final ContentResolver resolver = activity.getContentResolver();
 				final InputStream is = resolver.openInputStream(src);
 				final OutputStream os = resolver.openOutputStream(dst);
 				copyStream(is, os);
 				os.close();
+				if (old != null && !old.equals(dst) && ContentResolver.SCHEME_FILE.equals(old.getScheme())) {
+					new File(old.getPath()).delete();
+				}
 				if (ContentResolver.SCHEME_FILE.equals(src.getScheme()) && delete_orig) {
 					new File(src.getPath()).delete();
 				}

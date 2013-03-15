@@ -60,6 +60,8 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
+import android.text.Spanned;
+import android.text.SpannableString;
 
 public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatusesAdapter, OnClickListener {
 
@@ -125,6 +127,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 					: cursor.getShort(mIndices.is_favorite) == 1;
 			final boolean has_location = mFastTimelineProcessingEnabled ? false : !TextUtils.isEmpty(cursor
 					.getString(mIndices.location));
+			final boolean is_possibly_sensitive = cursor.getInt(mIndices.is_possibly_sensitive) == 1;
 			final ImageSpec preview = !mFastTimelineProcessingEnabled ? getPreviewImage(text,
 					mInlineImagePreviewDisplayOption) : null;
 			final boolean has_media = preview != null;
@@ -157,17 +160,16 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 				holder.setAccountColor(getAccountColor(mContext, account_id));
 			}
 
+			final TwidereLinkify linkify = mLinkHighlightingEnabled ? new TwidereLinkify(new OnLinkClickHandler(mContext, account_id, is_possibly_sensitive)) : null;
+			
 			holder.setTextSize(mTextSize);
 
 			holder.setIsMyStatus(is_my_status && !mIndicateMyStatusDisabled);
-
 			if (mFastTimelineProcessingEnabled) {
 				holder.text.setText(text);
 			} else if (mLinkHighlightingEnabled) {
 				holder.text.setText(Html.fromHtml(text));
-				final TwidereLinkify linkify = new TwidereLinkify(holder.text);
-				linkify.setOnLinkClickListener(new OnLinkClickHandler(context, account_id));
-				linkify.addAllLinks();
+				linkify.applyAllLinks(holder.text);
 			} else {
 				holder.text.setText(toPlainText(text));
 			}
@@ -192,6 +194,12 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 					holder.screen_name.setVisibility(View.VISIBLE);
 					break;
 				}
+			}
+			if (mLinkHighlightingEnabled) {
+				linkify.applyUserProfileLink(holder.name, user_id, screen_name);
+				linkify.applyUserProfileLink(holder.screen_name, user_id, screen_name);
+				holder.name.setMovementMethod(null);
+				holder.screen_name.setMovementMethod(null);
 			}
 			if (mShowAbsoluteTime) {
 				holder.time.setText(formatSameDayTime(context, status_timestamp));
@@ -219,6 +227,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_reply, 0,
 						0, 0);
 			}
+	
 			if (mDisplayProfileImage) {
 				final String profile_image_url = cursor.getString(mIndices.profile_image_url);
 				mLazyImageLoader.displayProfileImage(holder.my_profile_image, profile_image_url);
@@ -244,7 +253,6 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 					lp.leftMargin = (int) (mDensity * 16);
 					holder.image_preview_frame.setLayoutParams(lp);
 				}
-				final boolean is_possibly_sensitive = cursor.getInt(mIndices.is_possibly_sensitive) == 1;
 				if (is_possibly_sensitive && !mDisplaySensitiveContents) {
 					holder.image_preview.setImageResource(R.drawable.image_preview_nsfw);
 				} else {

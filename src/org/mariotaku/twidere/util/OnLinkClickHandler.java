@@ -23,6 +23,7 @@ import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.openTweetSearch;
 import static org.mariotaku.twidere.util.Utils.openUserListDetails;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
+import static org.mariotaku.twidere.util.Utils.parseLong;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
@@ -57,7 +58,7 @@ public class OnLinkClickHandler implements OnLinkClickListener, Constants {
 
 		if (activity == null) return;
 		switch (type) {
-			case TwidereLinkify.LINK_TYPE_MENTION_LIST: {
+			case TwidereLinkify.LINK_TYPE_MENTION: {
 				openUserProfile(activity, account_id, -1, link);
 				break;
 			}
@@ -83,6 +84,10 @@ public class OnLinkClickHandler implements OnLinkClickListener, Constants {
 			}
 			case TwidereLinkify.LINK_TYPE_CASHTAG: {
 				openTweetSearch(activity, account_id, link);
+				break;
+			}
+			case TwidereLinkify.LINK_TYPE_USER_ID: {
+				openUserProfile(activity, account_id, parseLong(link), null);
 				break;
 			}
 		}

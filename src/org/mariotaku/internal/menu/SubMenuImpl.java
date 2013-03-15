@@ -176,17 +176,35 @@ final class SubMenuImpl extends MenuImpl implements SubMenu {
 
 	@Override
 	public void setGroupCheckable(final int group, final boolean checkable, final boolean exclusive) {
-
+		for (final MenuItem item : mMenuItems) {
+			if (item.hasSubMenu()) {
+				item.getSubMenu().setGroupCheckable(group, checkable, exclusive);
+			} else if (item.getGroupId() == group) {
+				item.setCheckable(checkable);
+			}
+		}
 	}
 
 	@Override
 	public void setGroupEnabled(final int group, final boolean enabled) {
-
+		for (final MenuItem item : mMenuItems) {
+			if (item.hasSubMenu()) {
+				item.getSubMenu().setGroupEnabled(group, enabled);
+			} else if (item.getGroupId() == group) {
+				item.setEnabled(enabled);
+			}
+		}
 	}
 
 	@Override
 	public void setGroupVisible(final int group, final boolean visible) {
-
+		for (final MenuItem item : mMenuItems) {
+			if (item.hasSubMenu()) {
+				item.getSubMenu().setGroupVisible(group, visible);
+			} else if (item.getGroupId() == group) {
+				item.setVisible(visible);
+			}
+		}
 	}
 
 	@Override

@@ -82,28 +82,30 @@ public class SelectAccountActivity extends BaseDialogActivity implements LoaderC
 	};
 
 	@Override
-	public void onBackPressed() {
-		if (mSelectedIds.size() <= 0 && !mAllowSelectNone) {
-			Toast.makeText(this, R.string.no_account_selected, Toast.LENGTH_SHORT).show();
-			return;
-		}
-		final Bundle bundle = new Bundle();
-		final long[] ids = new long[mSelectedIds.size()];
-		int i = 0;
-		for (final Long id_long : mSelectedIds) {
-			ids[i] = id_long;
-			i++;
-		}
-		bundle.putLongArray(INTENT_KEY_IDS, ids);
-		setResult(RESULT_OK, new Intent().putExtras(bundle));
-		finish();
-	}
-
-	@Override
 	public void onClick(final View view) {
 		switch (view.getId()) {
 			case R.id.save: {
-				onBackPressed();
+				if (mSelectedIds.size() <= 0 && !mAllowSelectNone) {
+					Toast.makeText(this, R.string.no_account_selected, Toast.LENGTH_SHORT).show();
+					return;
+				}
+				final Bundle bundle = new Bundle();
+				final long[] ids = new long[mSelectedIds.size()];
+				int i = 0;
+				for (final Long id_long : mSelectedIds) {
+					ids[i] = id_long;
+					i++;
+				}
+				bundle.putLongArray(INTENT_KEY_IDS, ids);
+				setResult(RESULT_OK, new Intent().putExtras(bundle));
+				finish();
+				break;
+			}
+			case R.id.add_account: {
+				final Intent intent = new Intent(INTENT_ACTION_TWITTER_LOGIN);
+				intent.setClass(this, SignInActivity.class);
+				startActivity(intent);
+				finish();
 				break;
 			}
 		}
