@@ -318,8 +318,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mScreenNameView.setText("@" + user.screen_name);
 		mDescriptionContainer.setVisibility(user_is_me || !isEmpty(user.description_html) ? View.VISIBLE : View.GONE);
 		mDescriptionView.setText(user.description_html != null ? Html.fromHtml(user.description_html) : null);
-		final TwidereLinkify linkify = new TwidereLinkify(this);
-		linkify.applyAllLinks(mDescriptionView);
+		final TwidereLinkify mLinkify = new TwidereLinkify(this);//TODO
+		mLinkify.applyAllLinks(mDescriptionView, user.account_id, false);
 		mDescriptionView.setMovementMethod(null);
 		mLocationContainer.setVisibility(user_is_me || !isEmpty(user.location) ? View.VISIBLE : View.GONE);
 		mLocationView.setText(user.location);
@@ -631,7 +631,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	}
 
 	@Override
-	public void onLinkClick(final String link, final String orig, final int type) {
+	public void onLinkClick(final String link, final String orig, final long account_id, final int type, final boolean sensitive) {
 		if (mUser == null) return;
 		switch (type) {
 			case TwidereLinkify.LINK_TYPE_MENTION: {

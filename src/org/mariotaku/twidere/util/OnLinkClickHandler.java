@@ -37,21 +37,13 @@ import edu.ucdavis.earlybird.ProfilingUtil;
 public class OnLinkClickHandler implements OnLinkClickListener, Constants {
 
 	protected final Activity activity;
-	private final long account_id;
-	private final boolean is_possibly_sensitive;
 
-	public OnLinkClickHandler(final Context context, final long account_id) {
-		this(context, account_id, false);
-	}
-
-	public OnLinkClickHandler(final Context context, final long account_id, final boolean is_possibly_sensitive) {
+	public OnLinkClickHandler(final Context context) {
 		activity = context instanceof Activity ? (Activity) context : null;
-		this.account_id = account_id;
-		this.is_possibly_sensitive = is_possibly_sensitive;
 	}
 
 	@Override
-	public void onLinkClick(final String link, final String orig, final int type) {
+	public void onLinkClick(final String link, final String orig, final long account_id, final int type, final boolean sensitive) {
 		if (activity == null) return;
 		// UCD
 		ProfilingUtil.profile(activity, account_id, "Click, " + link + ", " + type);
@@ -67,7 +59,7 @@ public class OnLinkClickHandler implements OnLinkClickListener, Constants {
 				break;
 			}
 			case TwidereLinkify.LINK_TYPE_LINK_WITH_IMAGE_EXTENSION: {
-				openImage(activity, link, orig, is_possibly_sensitive);
+				openImage(activity, link, orig, sensitive);
 				break;
 			}
 			case TwidereLinkify.LINK_TYPE_LINK: {

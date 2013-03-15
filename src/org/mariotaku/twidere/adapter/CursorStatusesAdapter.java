@@ -69,6 +69,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	private final Resources mResources;
 	private final ImageLoaderWrapper mLazyImageLoader;
 	private final MultiSelectManager mMultiSelectManager;
+	private final TwidereLinkify mLinkify;
 
 	private final float mDensity;
 
@@ -87,6 +88,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 		mMultiSelectManager = application.getMultiSelectManager();
 		mLazyImageLoader = application.getImageLoaderWrapper();
 		mDensity = mResources.getDisplayMetrics().density;
+		mLinkify = new TwidereLinkify(new OnLinkClickHandler(mContext));
 	}
 
 	@Override
@@ -160,8 +162,6 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 				holder.setAccountColor(getAccountColor(mContext, account_id));
 			}
 
-			final TwidereLinkify linkify = mLinkHighlightingEnabled ? new TwidereLinkify(new OnLinkClickHandler(mContext, account_id, is_possibly_sensitive)) : null;
-			
 			holder.setTextSize(mTextSize);
 
 			holder.setIsMyStatus(is_my_status && !mIndicateMyStatusDisabled);
@@ -169,7 +169,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 				holder.text.setText(text);
 			} else if (mLinkHighlightingEnabled) {
 				holder.text.setText(Html.fromHtml(text));
-				linkify.applyAllLinks(holder.text);
+				mLinkify.applyAllLinks(holder.text, account_id, is_possibly_sensitive);
 			} else {
 				holder.text.setText(toPlainText(text));
 			}
@@ -196,8 +196,8 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 				}
 			}
 			if (mLinkHighlightingEnabled) {
-				linkify.applyUserProfileLink(holder.name, user_id, screen_name);
-				linkify.applyUserProfileLink(holder.screen_name, user_id, screen_name);
+				mLinkify.applyUserProfileLink(holder.name, account_id, user_id, screen_name);
+				mLinkify.applyUserProfileLink(holder.screen_name, account_id , user_id, screen_name);
 				holder.name.setMovementMethod(null);
 				holder.screen_name.setMovementMethod(null);
 			}

@@ -96,8 +96,8 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		lp.gravity = is_outgoing ? Gravity.LEFT : Gravity.RIGHT;
 		holder.name_container.setLayoutParams(lp);
 		holder.text.setText(Html.fromHtml(cursor.getString(mIndices.text)));
-		final TwidereLinkify linkify = new TwidereLinkify(new OnDirectMessageLinkClickHandler(context, account_id));
-		linkify.applyAllLinks(holder.text);
+		final TwidereLinkify linkify = new TwidereLinkify(new OnDirectMessageLinkClickHandler(context));
+		linkify.applyAllLinks(holder.text, account_id, false);
 		holder.text.setMovementMethod(null);
 		holder.text.setGravity(is_outgoing ? Gravity.LEFT : Gravity.RIGHT);
 		holder.time.setText(formatToLongTimeString(mContext, message_timestamp));

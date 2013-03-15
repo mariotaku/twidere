@@ -168,7 +168,7 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 		if (mPreferences.getBoolean(PREFERENCE_KEY_LINK_HIGHLIGHTING, false) && !fast_timeline_processing) {
 			mHolder.text.setText(Html.fromHtml(TEXT_HTML));
 			final TwidereLinkify linkify = new TwidereLinkify(null);
-			linkify.applyAllLinks(mHolder.text);
+			linkify.applyAllLinks(mHolder.text, 0, false);
 			mHolder.text.setMovementMethod(null);
 		} else {
 			mHolder.text.setText(toPlainText(TEXT_HTML));

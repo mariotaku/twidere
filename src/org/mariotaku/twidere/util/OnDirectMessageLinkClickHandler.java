@@ -15,8 +15,8 @@ public class OnDirectMessageLinkClickHandler extends OnLinkClickHandler {
 	private static final String[] SHORT_LINK_SERVICES = new String[] { "bit.ly", "ow.ly", "tinyurl.com", "goo.gl",
 			"k6.kz" };
 
-	public OnDirectMessageLinkClickHandler(final Context context, final long account_id) {
-		super(context, account_id, false);
+	public OnDirectMessageLinkClickHandler(final Context context) {
+		super(context);
 	}
 
 	@Override

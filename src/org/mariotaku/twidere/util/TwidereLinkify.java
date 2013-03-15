@@ -195,7 +195,7 @@ public class TwidereLinkify {
 		mOnLinkClickListener = listener;
 	}
 	
-	public final void applyUserProfileLink(final TextView view, final long user_id, final String screen_name) {
+	public final void applyUserProfileLink(final TextView view, final long account_id, final long user_id, final String screen_name) {
 		view.setMovementMethod(LinkMovementMethod.getInstance());
 		final SpannableString string = SpannableString.valueOf(view.getText());
 		final URLSpan[] spans = string.getSpans(0, string.length(), URLSpan.class);
@@ -203,19 +203,19 @@ public class TwidereLinkify {
 			string.removeSpan(span);
 		}
 		if (user_id > 0) {
-			applyLink(parseString(user_id), 0, string.length(), string, LINK_TYPE_USER_ID);
+			applyLink(parseString(user_id), 0, string.length(), string, account_id, LINK_TYPE_USER_ID, false);
 		} else if (screen_name != null) {
-			applyLink(screen_name, 0, string.length(), string, LINK_TYPE_MENTION);
+			applyLink(screen_name, 0, string.length(), string, account_id, LINK_TYPE_MENTION, false);
 		}
 		view.setText(string);
 		addLinkMovementMethod(view);
 	}
 
-	public final void applyAllLinks(final TextView view) {
+	public final void applyAllLinks(final TextView view, final long account_id, final boolean sensitive) {
 		view.setMovementMethod(LinkMovementMethod.getInstance());
 		final SpannableString string = SpannableString.valueOf(view.getText());
 		for (final int type : ALL_LINK_TYPES) {
-			addLinks(string, type);
+			addLinks(string, account_id, type, sensitive);
 		}
 		view.setText(string);
 		addLinkMovementMethod(view);
@@ -233,14 +233,14 @@ public class TwidereLinkify {
 	 *            to the url of links that do not have a scheme specified in the
 	 *            link text
 	 */
-	private final void addLinks(final SpannableString string, final int type) {
+	private final void addLinks(final SpannableString string, final long account_id, final int type, final boolean sensitive) {
 		switch (type) {
 			case LINK_TYPE_MENTION: {
-				addMentionOrListLinks(string);
+				addMentionOrListLinks(string, account_id);
 				break;
 			}
 			case LINK_TYPE_HASHTAG: {
-				addHashtagLinks(string);
+				addHashtagLinks(string, account_id);
 				break;
 			}
 			case LINK_TYPE_LINK_WITH_IMAGE_EXTENSION: {
@@ -251,7 +251,7 @@ public class TwidereLinkify {
 					final String url = span.getURL();
 					if (PATTERN_IMAGES.matcher(url).matches()) {
 						string.removeSpan(span);
-						applyLink(url, start, end, string, LINK_TYPE_LINK_WITH_IMAGE_EXTENSION);
+						applyLink(url, start, end, string, account_id, LINK_TYPE_LINK_WITH_IMAGE_EXTENSION, sensitive);
 					}
 				}
 				break;
@@ -265,7 +265,7 @@ public class TwidereLinkify {
 						continue;
 					}
 					string.removeSpan(span);
-					applyLink(span.getURL(), start, end, string, LINK_TYPE_LINK);
+					applyLink(span.getURL(), start, end, string, account_id, LINK_TYPE_LINK, sensitive);
 				}
 				for (final Extractor.Entity entity : mExtractor.extractURLsWithIndices(parseString(string))) {
 					final int start = entity.getStart(), end = entity.getEnd();
@@ -273,7 +273,7 @@ public class TwidereLinkify {
 							|| string.getSpans(start, end, URLSpan.class).length > 0) {
 						continue;
 					}
-					applyLink(entity.getValue(), start, end, string, LINK_TYPE_LINK);
+					applyLink(entity.getValue(), start, end, string, account_id, LINK_TYPE_LINK, sensitive);
 				}
 				break;
 			}
@@ -290,13 +290,13 @@ public class TwidereLinkify {
 						}
 						string.removeSpan(span);
 						applyLink(spec.full_image_link, spec.orig_link, start, end, string,
-								LINK_TYPE_LINK_WITH_IMAGE_EXTENSION);
+								account_id, LINK_TYPE_LINK_WITH_IMAGE_EXTENSION, sensitive);
 					}
 				}
 				break;
 			}
 			case LINK_TYPE_CASHTAG: {
-				addCashtagLinks(string);
+				addCashtagLinks(string, account_id);
 				break;
 			}
 			default: {
@@ -306,7 +306,7 @@ public class TwidereLinkify {
 		}
 	}
 
-	private final boolean addCashtagLinks(final Spannable spannable) {
+	private final boolean addCashtagLinks(final Spannable spannable, final long account_id) {
 		boolean hasMatches = false;
 		final Matcher matcher = Regex.VALID_CASHTAG.matcher(spannable);
 
@@ -315,14 +315,14 @@ public class TwidereLinkify {
 			final int end = matcherEnd(matcher, Regex.VALID_CASHTAG_GROUP_CASHTAG_FULL);
 			final String url = matcherGroup(matcher, Regex.VALID_CASHTAG_GROUP_TAG);
 
-			applyLink(url, start, end, spannable, LINK_TYPE_HASHTAG);
+			applyLink(url, start, end, spannable, account_id, LINK_TYPE_HASHTAG, false);
 			hasMatches = true;
 		}
 
 		return hasMatches;
 	}
 
-	private final boolean addHashtagLinks(final Spannable spannable) {
+	private final boolean addHashtagLinks(final Spannable spannable, final long account_id) {
 		boolean hasMatches = false;
 		final Matcher matcher = Regex.VALID_HASHTAG.matcher(spannable);
 
@@ -331,14 +331,14 @@ public class TwidereLinkify {
 			final int end = matcherEnd(matcher, Regex.VALID_HASHTAG_GROUP_HASHTAG_FULL);
 			final String url = matcherGroup(matcher, Regex.VALID_HASHTAG_GROUP_HASHTAG_FULL);
 
-			applyLink(url, start, end, spannable, LINK_TYPE_HASHTAG);
+			applyLink(url, start, end, spannable, account_id, LINK_TYPE_HASHTAG, false);
 			hasMatches = true;
 		}
 
 		return hasMatches;
 	}
 
-	private final boolean addMentionOrListLinks(final Spannable spannable) {
+	private final boolean addMentionOrListLinks(final Spannable spannable, final long account_id) {
 		boolean hasMatches = false;
 		final Matcher matcher = Regex.VALID_MENTION_OR_LIST.matcher(spannable);
 
@@ -349,9 +349,9 @@ public class TwidereLinkify {
 			final int list_end = matcherEnd(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_LIST);
 			final String mention = matcherGroup(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_USERNAME);
 			final String list = matcherGroup(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_LIST);
-			applyLink(mention, start, username_end, spannable, LINK_TYPE_MENTION);
+			applyLink(mention, start, username_end, spannable, account_id, LINK_TYPE_MENTION, false);
 			if (list_start >= 0 && list_end >= 0) {
-				applyLink(mention + "/" + list, list_start, list_end, spannable, LINK_TYPE_LIST);
+				applyLink(mention + "/" + list, list_start, list_end, spannable, account_id, LINK_TYPE_LIST, false);
 			}
 			hasMatches = true;
 		}
@@ -359,13 +359,14 @@ public class TwidereLinkify {
 		return hasMatches;
 	}
 
-	private final void applyLink(final String url, final int start, final int end, final Spannable text, final int type) {
-		applyLink(url, null, start, end, text, type);
+	private final void applyLink(final String url, final int start, final int end, final Spannable text, final long account_id,
+			final int type, final boolean sensitive) {
+		applyLink(url, null, start, end, text, account_id, type, sensitive);
 	}
 
 	private final void applyLink(final String url, final String orig, final int start, final int end,
-			final Spannable text, final int type) {
-		final LinkSpan span = new LinkSpan(url, orig, type, mOnLinkClickListener);
+			final Spannable text, final long account_id, final int type, final boolean sensitive) {
+		final LinkSpan span = new LinkSpan(url, orig, account_id, type, sensitive, mOnLinkClickListener);
 		text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 	}
 
@@ -380,23 +381,27 @@ public class TwidereLinkify {
 	}
 
 	public interface OnLinkClickListener {
-		public void onLinkClick(String link, String orig, int type);
+		public void onLinkClick(String link, String orig, long account_id, int type, boolean sensitive);
 	}
 
 	static class LinkSpan extends URLSpan {
 
 		private final int type;
+		private final long account_id;
 		private final String orig;
+		private final boolean sensitive;
 		private final OnLinkClickListener listener;
 
-		public LinkSpan(final String url, final int type, final OnLinkClickListener listener) {
-			this(url, null, type, listener);
+		public LinkSpan(final String url, final long account_id, final int type, final boolean sensitive, final OnLinkClickListener listener) {
+			this(url, null, account_id, type, sensitive, listener);
 		}
 
-		public LinkSpan(final String url, final String orig, final int type, final OnLinkClickListener listener) {
+		public LinkSpan(final String url, final String orig, final long account_id, final int type, final boolean sensitive, final OnLinkClickListener listener) {
 			super(url);
 			this.orig = orig;
+			this.account_id = account_id;
 			this.type = type;
+			this.sensitive = sensitive;
 			this.listener = listener;
 		}
 
@@ -407,7 +412,7 @@ public class TwidereLinkify {
 		@Override
 		public void onClick(final View widget) {
 			if (listener != null) {
-				listener.onLinkClick(getURL(), getURLOrig(), type);
+				listener.onLinkClick(getURL(), getURLOrig(), account_id, type, sensitive);
 			}
 		}
 	}

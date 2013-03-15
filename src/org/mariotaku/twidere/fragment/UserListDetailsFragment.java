@@ -154,8 +154,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 				.setVisibility(is_my_activated_account || !isEmpty(description) ? View.VISIBLE : View.GONE);
 		mDescriptionContainer.setOnLongClickListener(this);
 		mDescriptionView.setText(description);
-		final TwidereLinkify linkify = new TwidereLinkify(new OnLinkClickHandler(getActivity(), account_id));
-		linkify.applyAllLinks(mDescriptionView);
+		final TwidereLinkify linkify = new TwidereLinkify(new OnLinkClickHandler(getActivity()));
+		linkify.applyAllLinks(mDescriptionView, account_id, false);
 		mDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
 		final String profile_image_url_string = parseString(user.getProfileImageUrlHttps());
 		final boolean hires_profile_image = getResources().getBoolean(R.bool.hires_profile_image);

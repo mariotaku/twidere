@@ -65,6 +65,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	private final Resources mResources;
 	private final ImageLoaderWrapper mLazyImageLoader;
 	private final MultiSelectManager mMultiSelectManager;
+	private final TwidereLinkify mLinkify;
 
 	private final float mDensity;
 
@@ -82,6 +83,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		mMultiSelectManager = application.getMultiSelectManager();
 		mLazyImageLoader = application.getImageLoaderWrapper();
 		mDensity = mResources.getDisplayMetrics().density;
+		mLinkify = new TwidereLinkify(new OnLinkClickHandler(mContext));
 	}
 
 	public long findItemIdByPosition(final int position) {
@@ -136,13 +138,11 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 
 			holder.setAccountColorEnabled(mShowAccountColor);
 
-			final TwidereLinkify linkify = mLinkHighlightingEnabled ? new TwidereLinkify(new OnLinkClickHandler(mContext, status.account_id, status.is_possibly_sensitive)) : null;
-			
 			if (mFastTimelineProcessingEnabled) {
 				holder.text.setText(status.text_plain);
 			} else if (mLinkHighlightingEnabled) {
 				holder.text.setText(Html.fromHtml(status.text_html));
-				linkify.applyAllLinks(holder.text);
+				mLinkify.applyAllLinks(holder.text, status.account_id, status.is_possibly_sensitive);
 			} else {
 				holder.text.setText(status.text_unescaped);
 			}
@@ -193,8 +193,8 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 				}
 			}
 			if (mLinkHighlightingEnabled) {
-				linkify.applyUserProfileLink(holder.name, status.user_id, status.screen_name);
-				linkify.applyUserProfileLink(holder.screen_name, status.user_id, status.screen_name);
+				mLinkify.applyUserProfileLink(holder.name, status.account_id, status.user_id, status.screen_name);
+				mLinkify.applyUserProfileLink(holder.screen_name, status.account_id, status.user_id, status.screen_name);
 				holder.name.setMovementMethod(null);
 				holder.screen_name.setMovementMethod(null);
 			}

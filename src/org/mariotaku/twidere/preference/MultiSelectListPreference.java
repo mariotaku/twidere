@@ -43,7 +43,7 @@ abstract class MultiSelectListPreference extends DialogPreference implements OnM
 		OnClickListener {
 
 	private final boolean[] mValues, mDefaultValues;
-	private SharedPreferences prefs;
+	private SharedPreferences mPreferences;
 	private final String[] mNames, mKeys;
 
 	private final Handler mDialogWorkaroundHandler = new Handler() {
@@ -84,10 +84,10 @@ abstract class MultiSelectListPreference extends DialogPreference implements OnM
 
 	@Override
 	public void onClick(final DialogInterface dialog, final int which) {
-		if (prefs == null) return;
+		if (mPreferences == null) return;
 		switch (which) {
 			case DialogInterface.BUTTON_POSITIVE:
-				final SharedPreferences.Editor editor = prefs.edit();
+				final SharedPreferences.Editor editor = mPreferences.edit();
 				final int length = mKeys.length;
 				for (int i = 0; i < length; i++) {
 					editor.putBoolean(mKeys[i], mValues[i]);
@@ -106,11 +106,11 @@ abstract class MultiSelectListPreference extends DialogPreference implements OnM
 	@Override
 	public void onPrepareDialogBuilder(final AlertDialog.Builder builder) {
 		super.onPrepareDialogBuilder(builder);
-		prefs = getSharedPreferences();
-		if (prefs == null) return;
+		mPreferences = getDefaultSharedPreferences();
+		if (mPreferences == null) return;
 		final int length = mKeys.length;
 		for (int i = 0; i < length; i++) {
-			mValues[i] = prefs.getBoolean(mKeys[i], mDefaultValues[i]);
+			mValues[i] = mPreferences.getBoolean(mKeys[i], mDefaultValues[i]);
 		}
 		builder.setPositiveButton(android.R.string.ok, this);
 		builder.setNegativeButton(android.R.string.cancel, null);
@@ -142,6 +142,10 @@ abstract class MultiSelectListPreference extends DialogPreference implements OnM
 	protected abstract String[] getKeys();
 
 	protected abstract String[] getNames();
+	
+	protected SharedPreferences getDefaultSharedPreferences() {
+		return getSharedPreferences();
+	}
 
 	private static ListView findListView(final View view) {
 		if (!(view instanceof ViewGroup)) return null;
