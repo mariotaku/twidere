@@ -38,6 +38,8 @@ import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 @SuppressLint("Registered")
 public class DualPaneActivity extends BaseDialogWhenLargeActivity implements OnBackStackChangedListener {
@@ -91,7 +93,13 @@ public class DualPaneActivity extends BaseDialogWhenLargeActivity implements OnB
 				}
 			}
 			if (main_view != null) {
-				main_view.setVisibility(left_pane_used ? View.GONE : View.VISIBLE);
+				final int visibility = left_pane_used ? View.GONE : View.VISIBLE;
+				// Visibility changed, so start animation.
+				if (main_view.getVisibility() != visibility) {
+					final Animation anim = AnimationUtils.loadAnimation(this, left_pane_used ? android.R.anim.fade_out : android.R.anim.fade_in);
+					main_view.startAnimation(anim);
+				}
+				main_view.setVisibility(visibility);
 			}
 		}
 	}
@@ -133,7 +141,7 @@ public class DualPaneActivity extends BaseDialogWhenLargeActivity implements OnB
 	public final void showAtPane(final int pane, final Fragment fragment, final boolean addToBackStack) {
 		if (isStateSaved()) return;
 		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+		ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
 		switch (pane) {
 			case PANE_LEFT: {
 				showLeftPane();
