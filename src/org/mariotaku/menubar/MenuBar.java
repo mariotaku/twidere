@@ -51,10 +51,7 @@ public class MenuBar extends TableRow implements PopupMenu.OnMenuItemClickListen
 	@Override
 	public void invalidate() {
 		super.invalidate();
-		final int count = getChildCount();
-		for (int i = 0; i < count; i++) {
-			getChildAt(i).invalidate();
-		}
+		show();
 	}
 
 	@Override

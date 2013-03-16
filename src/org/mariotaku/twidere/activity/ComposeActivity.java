@@ -120,7 +120,6 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 
 	private static final String FAKE_IMAGE_LINK = "https://www.example.com/fake_image.jpg";
 	private static final String INTENT_KEY_CONTENT_MODIFIED = "content_modified";
-	private static final String INTENT_KEY_IS_NAVIGATE_UP = "is_navigate_up";
 	private static final String INTENT_KEY_IS_POSSIBLY_SENSITIVE = "is_possibly_sensitive";
 
 	private AsyncTwitterWrapper mTwitterWrapper;
@@ -247,12 +246,9 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	@Override
 	public void onBackPressed() {
 		final String text = mEditText != null ? parseString(mEditText.getText()) : null;
-		if (mContentModified && !isEmpty(text)) {
+		if (!isEmpty(text) || mImageUri != null) {
 			mUnsavedTweetDialogFragment = (DialogFragment) Fragment.instantiate(this,
 					UnsavedTweetDialogFragment.class.getName());
-			final Bundle args = new Bundle();
-			args.putBoolean(INTENT_KEY_IS_NAVIGATE_UP, false);
-			mUnsavedTweetDialogFragment.setArguments(args);
 			mUnsavedTweetDialogFragment.show(getSupportFragmentManager(), "unsaved_tweet");
 			return;
 		}
@@ -412,11 +408,19 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	public boolean onMenuItemClick(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_TAKE_PHOTO: {
-				takePhoto();
+				if (!mIsPhotoAttached) {
+					takePhoto();
+				} else {
+					new DeleteImageTask(this).execute();
+				}
 				break;
 			}
 			case MENU_ADD_IMAGE: {
-				pickImage();
+				if (!mIsImageAttached) {
+					pickImage();
+				} else {
+					new DeleteImageTask(this).execute();
+				}
 				break;
 			}
 			case MENU_ADD_LOCATION: {
@@ -433,10 +437,8 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				break;
 			}
 			case MENU_DELETE: {
-				if (mImageUri != null) {
-					new DeleteImageTask(this).execute(mImageUri);
-				}
-				return true;
+				new DeleteImageTask(this).execute();
+				break;
 			}
 			case MENU_VIEW: {
 				openImageDirectly(this, parseString(mImageUri), null);
@@ -487,9 +489,6 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				if (mContentModified && !isEmpty(text)) {
 					mUnsavedTweetDialogFragment = (DialogFragment) Fragment.instantiate(this,
 							UnsavedTweetDialogFragment.class.getName());
-					final Bundle args = new Bundle();
-					args.putBoolean(INTENT_KEY_IS_NAVIGATE_UP, true);
-					mUnsavedTweetDialogFragment.setArguments(args);
 					mUnsavedTweetDialogFragment.show(getSupportFragmentManager(), "unsaved_tweet");
 				} else {
 					// NavUtils.navigateUpFromSameTask(this);
@@ -1011,8 +1010,12 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		protected Boolean doInBackground(Uri... params) {
 			if (params == null) return false;
 			try {
+				final Uri uri = activity.mImageUri;
+				if (uri != null && ContentResolver.SCHEME_FILE.equals(uri.getScheme())) {
+					new File(uri.getPath()).delete();
+				}
 				for (final Uri target : params) {
-					if (target == null) return false;
+					if (target == null) continue;
 					if (ContentResolver.SCHEME_FILE.equals(target.getScheme())) {
 						new File(target.getPath()).delete();
 					}
