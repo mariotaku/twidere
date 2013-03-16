@@ -44,6 +44,7 @@
 					android:hint="@string/type_to_compose"
 					android:imeOptions="actionDone"
 					android:inputType="textMultiLine"
+					android:maxHeight="180dp"
 					android:minHeight="64dp"
 					android:singleLine="false">
 					
@@ -70,6 +71,7 @@
 				android:layout_height="56dp"
 				android:layout_gravity="bottom"
 				android:layout_weight="0"
+				android:contentDescription="@string/send"
 				android:background="?android:attr/itemBackground"
 				android:src="@drawable/ic_menu_send"/>
 		</LinearLayout>
@@ -107,6 +109,7 @@
 			android:layout_marginTop="16dp"
 			android:minHeight="42dp"
 			android:minWidth="72dp"
+			android:contentDescription="@android:string/ok"
 			android:text="@android:string/ok"
 			android:textSize="16sp"/>
 
