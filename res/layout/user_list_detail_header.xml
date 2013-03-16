@@ -25,7 +25,8 @@
 				android:layout_height="@dimen/profile_image_size"
 				android:layout_gravity="center"
 				android:layout_margin="8dp"
-						android:scaleType="fitCenter"
+				android:contentDescription="@string/profile_image"
+				android:scaleType="fitCenter"
 				android:src="@drawable/ic_profile_image_default"/>
 		</FrameLayout>
 
