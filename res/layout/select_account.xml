@@ -20,24 +20,6 @@
 		android:orientation="horizontal">
 		
 		<Button
-			android:id="@+id/save"
-			style="?android:attr/buttonStyleSmall"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_weight="1"
-			android:background="?android:attr/itemBackground"
-			android:gravity="center"
-			android:minHeight="48dp"
-			android:onClick="onClick"
-			android:text="@android:string/ok"/>
-
-		<View
-			android:id="@+id/button_divider"
-			android:layout_width="0.2dp"
-			android:layout_height="match_parent"
-			android:background="#40808080"/>
-
-		<Button
 			android:id="@+id/add_account"
 			style="?android:attr/buttonStyleSmall"
 			android:layout_width="0dp"
@@ -48,5 +30,23 @@
 			android:minHeight="48dp"
 			android:onClick="onClick"
 			android:text="@string/add_account"/>
+			
+		<View
+			android:id="@+id/button_divider"
+			android:layout_width="0.2dp"
+			android:layout_height="match_parent"
+			android:background="#40808080"/>
+
+		<Button
+			android:id="@+id/save"
+			style="?android:attr/buttonStyleSmall"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:background="?android:attr/itemBackground"
+			android:gravity="center"
+			android:minHeight="48dp"
+			android:onClick="onClick"
+			android:text="@android:string/ok"/>
 	</LinearLayout>
 </LinearLayout>
