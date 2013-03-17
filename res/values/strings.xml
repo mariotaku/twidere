@@ -415,5 +415,6 @@
 	<string name="edit_draft">Edit draft</string>
 	<string name="profile_image">Profile image</string>
 	<string name="my_profile_image">My profile image</string>
+	<string name="mention_user">Mention <xliff:g id="user">%s</xliff:g></string>
 
 </resources>

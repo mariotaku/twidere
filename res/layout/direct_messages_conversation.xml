@@ -44,7 +44,7 @@
 					android:hint="@string/type_to_compose"
 					android:imeOptions="actionDone"
 					android:inputType="textMultiLine"
-					android:maxHeight="180dp"
+					android:maxHeight="140dp"
 					android:minHeight="64dp"
 					android:singleLine="false">
 					

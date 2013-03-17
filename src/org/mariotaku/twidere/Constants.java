@@ -48,6 +48,7 @@ public interface Constants extends TwitterConstants {
 	public static final String HOST_MAPPING_PREFERENCES_NAME = "host_mapping";
 	public static final String SHARED_PREFERENCES_NAME = "preferences";
 	public static final String PERMISSION_PREFERENCES_NAME = "permissions";
+	public static final String SILENT_NOTIFICATIONS_PREFERENCE_NAME = "silent_notifications";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
 	public static final int DATABASES_VERSION = 40;
@@ -235,6 +236,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_ACTION_REPLY = INTENT_PACKAGE_PREFIX + "REPLY";
 	public static final String INTENT_ACTION_QUOTE = INTENT_PACKAGE_PREFIX + "QUOTE";
 	public static final String INTENT_ACTION_EDIT_DRAFT = INTENT_PACKAGE_PREFIX + "EDIT_DRAFT";
+	public static final String INTENT_ACTION_MENTION = INTENT_PACKAGE_PREFIX + "MENTION";
 	public static final String INTENT_ACTION_SETTINGS = INTENT_PACKAGE_PREFIX + "SETTINGS";
 	public static final String INTENT_ACTION_SELECT_ACCOUNT = INTENT_PACKAGE_PREFIX + "SELECT_ACCOUNT";
 	public static final String INTENT_ACTION_VIEW_IMAGE = INTENT_PACKAGE_PREFIX + "VIEW_IMAGE";

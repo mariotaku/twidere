@@ -29,6 +29,7 @@ import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTableId;
 import static org.mariotaku.twidere.util.Utils.getTableNameById;
 import static org.mariotaku.twidere.util.Utils.isFiltered;
+import static org.mariotaku.twidere.util.Utils.isNotificationsSilent;
 import static org.mariotaku.twidere.util.Utils.isOnWifi;
 import static org.mariotaku.twidere.util.Utils.notifyForUpdatedUri;
 import static org.mariotaku.twidere.util.Utils.parseInt;
@@ -351,9 +352,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 					PendingIntent.FLAG_UPDATE_CURRENT));
 		}
 		int defaults = 0;
-		final Calendar now = Calendar.getInstance();
-		if (mNotificationIsAudible
-				&& !mPreferences.getBoolean("silent_notifications_at_" + now.get(Calendar.HOUR_OF_DAY), false)) {
+		if (mNotificationIsAudible && !isNotificationsSilent(context)) {
 			if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND, false)) {
 				final Uri def_ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 				final String path = mPreferences.getString(PREFERENCE_KEY_NOTIFICATION_RINGTONE, "");

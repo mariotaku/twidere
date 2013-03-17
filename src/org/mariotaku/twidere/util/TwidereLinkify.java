@@ -41,6 +41,7 @@ import android.widget.TextView;
 
 import com.twitter.Extractor;
 import com.twitter.Regex;
+import android.text.TextPaint;
 
 /**
  * Linkify take a piece of text and a regular expression and turns all of the
@@ -188,11 +189,17 @@ public class TwidereLinkify {
 			Pattern.CASE_INSENSITIVE);
 
 	private final OnLinkClickListener mOnLinkClickListener;
-
 	private final Extractor mExtractor = new Extractor();
 
+	private final boolean mShowUnderline;
+
 	public TwidereLinkify(final OnLinkClickListener listener) {
+		this(listener, false);
+	}
+	
+	public TwidereLinkify(final OnLinkClickListener listener, final boolean show_underline) {
 		mOnLinkClickListener = listener;
+		mShowUnderline = show_underline;
 	}
 	
 	public final void applyUserProfileLink(final TextView view, final long account_id, final long user_id, final String screen_name) {
@@ -366,7 +373,7 @@ public class TwidereLinkify {
 
 	private final void applyLink(final String url, final String orig, final int start, final int end,
 			final Spannable text, final long account_id, final int type, final boolean sensitive) {
-		final LinkSpan span = new LinkSpan(url, orig, account_id, type, sensitive, mOnLinkClickListener);
+		final LinkSpan span = new LinkSpan(url, orig, account_id, type, sensitive, mOnLinkClickListener, mShowUnderline);
 		text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 	}
 
@@ -391,18 +398,20 @@ public class TwidereLinkify {
 		private final String orig;
 		private final boolean sensitive;
 		private final OnLinkClickListener listener;
+		private final boolean show_underline;
 
-		public LinkSpan(final String url, final long account_id, final int type, final boolean sensitive, final OnLinkClickListener listener) {
-			this(url, null, account_id, type, sensitive, listener);
+		public LinkSpan(final String url, final long account_id, final int type, final boolean sensitive, final OnLinkClickListener listener, final boolean show_underline) {
+			this(url, null, account_id, type, sensitive, listener, show_underline);
 		}
 
-		public LinkSpan(final String url, final String orig, final long account_id, final int type, final boolean sensitive, final OnLinkClickListener listener) {
+		public LinkSpan(final String url, final String orig, final long account_id, final int type, final boolean sensitive, final OnLinkClickListener listener, final boolean show_underline) {
 			super(url);
 			this.orig = orig;
 			this.account_id = account_id;
 			this.type = type;
 			this.sensitive = sensitive;
 			this.listener = listener;
+			this.show_underline = show_underline;
 		}
 
 		public String getURLOrig() {
@@ -415,5 +424,11 @@ public class TwidereLinkify {
 				listener.onLinkClick(getURL(), getURLOrig(), account_id, type, sensitive);
 			}
 		}
+		
+		@Override
+		public void updateDrawState(TextPaint ds) {
+            super.updateDrawState(ds);
+            ds.setUnderlineText(show_underline);
+        }
 	}
 }

@@ -318,7 +318,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mScreenNameView.setText("@" + user.screen_name);
 		mDescriptionContainer.setVisibility(user_is_me || !isEmpty(user.description_html) ? View.VISIBLE : View.GONE);
 		mDescriptionView.setText(user.description_html != null ? Html.fromHtml(user.description_html) : null);
-		final TwidereLinkify mLinkify = new TwidereLinkify(this);//TODO
+		final TwidereLinkify mLinkify = new TwidereLinkify(this, true);
 		mLinkify.applyAllLinks(mDescriptionView, user.account_id, false);
 		mDescriptionView.setMovementMethod(null);
 		mLocationContainer.setVisibility(user_is_me || !isEmpty(user.location) ? View.VISIBLE : View.GONE);
@@ -692,14 +692,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				break;
 			}
 			case MENU_MENTION: {
-				final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+				final Intent intent = new Intent(INTENT_ACTION_MENTION);
 				final Bundle bundle = new Bundle();
-				final String name = mUser.name;
-				final String screen_name = mUser.screen_name;
-				bundle.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
-				bundle.putString(INTENT_KEY_TEXT, "@" + screen_name + " ");
-				bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, screen_name);
-				bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, name);
+				bundle.putParcelable(INTENT_KEY_USER, mUser);
 				intent.putExtras(bundle);
 				startActivity(intent);
 				break;

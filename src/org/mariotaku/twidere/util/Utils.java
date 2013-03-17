@@ -59,6 +59,7 @@ import java.net.Proxy;
 import java.net.SocketAddress;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -1981,6 +1982,13 @@ public final class Utils implements Constants {
 			if (account_screen_name.equalsIgnoreCase(screen_name)) return true;
 		}
 		return false;
+	}
+	
+	public static boolean isNotificationsSilent(final Context context) {
+		if (context == null) return false;
+		final SharedPreferences prefs = context.getSharedPreferences(SILENT_NOTIFICATIONS_PREFERENCE_NAME, Context.MODE_PRIVATE);
+		final Calendar now = Calendar.getInstance();
+		return prefs.getBoolean("silent_notifications_at_" + now.get(Calendar.HOUR_OF_DAY), false);
 	}
 
 	public static boolean isOnWifi(final Context context) {

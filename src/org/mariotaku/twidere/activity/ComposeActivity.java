@@ -113,6 +113,7 @@ import java.util.Set;
 import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.twidere.model.DraftItem;
 import android.content.ComponentName;
+import org.mariotaku.twidere.model.ParcelableUser;
 
 public class ComposeActivity extends BaseDialogWhenLargeActivity implements TextWatcher, LocationListener,
 		OnMenuItemClickListener, OnClickListener, OnLongClickListener, PopupMenu.OnMenuItemClickListener,
@@ -145,6 +146,8 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	private Uri mImageUri, mTempPhotoUri;
 	private boolean mLoaderInitialized, mUploadUseExtension, mContentModified;
 	private ParcelableStatus mInReplyToStatus;
+	private ParcelableUser mMentionUser;
+	private DraftItem mDraftItem;
 	private long mInReplyToStatusId;
 
 	private DialogFragment mUnsavedTweetDialogFragment;
@@ -309,6 +312,8 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			mImageUri = savedInstanceState.getParcelable(INTENT_KEY_IMAGE_URI);
 			mInReplyToStatus = savedInstanceState.getParcelable(INTENT_KEY_STATUS);
 			mInReplyToStatusId = savedInstanceState.getLong(INTENT_KEY_STATUS_ID);
+			mMentionUser = savedInstanceState.getParcelable(INTENT_KEY_USER);
+			mDraftItem = savedInstanceState.getParcelable(INTENT_KEY_DRAFT);
 		} else {
 			// The activity was first created
 			final Bundle extras = intent.getExtras();
@@ -329,7 +334,9 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				}
 			}
 		}
-		setComposeTitle(action);
+		if (!setComposeTitle(action)) {
+			setTitle(R.string.compose);
+		}
 
 		reloadAttachedImageThumbnail();
 
@@ -552,6 +559,8 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		outState.putBoolean(INTENT_KEY_IS_POSSIBLY_SENSITIVE, mIsPossiblySensitive);
 		outState.putParcelable(INTENT_KEY_STATUS, mInReplyToStatus);
 		outState.putLong(INTENT_KEY_STATUS_ID, mInReplyToStatusId);
+		outState.putParcelable(INTENT_KEY_USER, mMentionUser);
+		outState.putParcelable(INTENT_KEY_DRAFT, mDraftItem);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -605,6 +614,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 
 	private boolean handleIntent(final String action, final Bundle extras) {
 		if (extras == null) return false;
+		mMentionUser = extras.getParcelable(INTENT_KEY_USER);
 		mInReplyToStatus = extras.getParcelable(INTENT_KEY_STATUS);
 		mInReplyToStatusId = mInReplyToStatus != null ? mInReplyToStatus.status_id : -1;
 		if (INTENT_ACTION_REPLY.equals(action)) {
@@ -612,11 +622,36 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		} else if (INTENT_ACTION_QUOTE.equals(action)) {
 			return handleQuoteIntent(mInReplyToStatus);
 		} else if (INTENT_ACTION_EDIT_DRAFT.equals(action)) {
-			final DraftItem draft = extras.getParcelable(INTENT_KEY_DRAFT);
-			return handleEditDraftIntent(draft);
+			mDraftItem = extras.getParcelable(INTENT_KEY_DRAFT);
+			return handleEditDraftIntent(mDraftItem);
+		} else if (INTENT_ACTION_MENTION.equals(action)) {
+			return handleMentionIntent(mMentionUser);
 		}
 		// Unknown action or no intent extras
 		return false;
+	}
+
+	private boolean handleDefaultIntent(final Intent intent) {
+		if (intent == null) return false;
+		final Bundle extras = intent.getExtras();
+		final Uri data = intent.getData();
+		if (data != null) {
+			mImageUri = data;
+		}
+		if (extras != null) {
+			final CharSequence extra_subject = extras.getCharSequence(Intent.EXTRA_SUBJECT);
+			final CharSequence extra_text = extras.getCharSequence(Intent.EXTRA_TEXT);
+			final Uri extra_stream = extras.getParcelable(Intent.EXTRA_STREAM);
+			if (extra_stream != null) {
+				mImageUri = extra_stream;
+			}
+			mEditText.setText(getShareStatus(this, extra_subject, extra_text));
+		}
+		if (mImageUri != null) {
+			mIsImageAttached = true;
+			mIsPhotoAttached = false;
+		}
+		return true;
 	}
 
 	private boolean handleEditDraftIntent(final DraftItem draft) {
@@ -628,6 +663,17 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		mIsImageAttached = draft.is_image_attached;
 		mIsPhotoAttached = draft.is_photo_attached;
 		mIsPossiblySensitive = draft.is_possibly_sensitive;
+		return true;
+	}
+
+	private boolean handleMentionIntent(final ParcelableUser status) {
+		if (status == null || status.user_id <= 0) return false;
+		final String my_screen_name = getAccountScreenName(this, status.account_id);
+		if (isEmpty(my_screen_name)) return false;
+		mEditText.setText("@" + status.screen_name + " ");
+		final int selection_end = mEditText.length();
+		mEditText.setSelection(selection_end);
+		mAccountIds = new long[] { status.account_id };
 		return true;
 	}
 	
@@ -655,29 +701,6 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		final int selection_end = mEditText.length();
 		mEditText.setSelection(selection_start, selection_end);
 		mAccountIds = new long[] { status.account_id };
-		return true;
-	}
-
-	private boolean handleDefaultIntent(final Intent intent) {
-		if (intent == null) return false;
-		final Bundle extras = intent.getExtras();
-		final Uri data = intent.getData();
-		if (data != null) {
-			mImageUri = data;
-		}
-		if (extras != null) {
-			final CharSequence extra_subject = extras.getCharSequence(Intent.EXTRA_SUBJECT);
-			final CharSequence extra_text = extras.getCharSequence(Intent.EXTRA_TEXT);
-			final Uri extra_stream = extras.getParcelable(Intent.EXTRA_STREAM);
-			if (extra_stream != null) {
-				mImageUri = extra_stream;
-			}
-			mEditText.setText(getShareStatus(this, extra_subject, extra_text));
-		}
-		if (mImageUri != null) {
-			mIsImageAttached = true;
-			mIsPhotoAttached = false;
-		}
 		return true;
 	}
 	
@@ -765,6 +788,31 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		setResult(Activity.RESULT_OK);
 		finish();
 	}
+	
+	private boolean setComposeTitle(final String action) {
+		final boolean display_screen_name = NAME_DISPLAY_OPTION_SCREEN_NAME.equals(mPreferences.getString(
+				PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH));
+		if (INTENT_ACTION_REPLY.equals(action)) {
+			if (mInReplyToStatus == null) return false;
+			setTitle(getString(R.string.reply_to, display_screen_name ? "@" + mInReplyToStatus.screen_name : mInReplyToStatus.name));
+		} else if (INTENT_ACTION_QUOTE.equals(action)) {
+			if (mInReplyToStatus == null) return false;
+			setTitle(getString(R.string.quote_user, display_screen_name ? "@" + mInReplyToStatus.screen_name : mInReplyToStatus.name));
+			mActionBar.setSubtitle(mInReplyToStatus.is_protected && mInReplyToStatus.account_id != mInReplyToStatus.user_id ?
+					getString(R.string.quote_protected_tweet_notice) : null);
+		} else if (INTENT_ACTION_EDIT_DRAFT.equals(action)) {
+			if (mDraftItem == null) return false;
+			setTitle(R.string.edit_draft);
+		} else if (INTENT_ACTION_MENTION.equals(action)) {
+			if (mMentionUser == null) return false;
+			setTitle(getString(R.string.mention_user, display_screen_name ? "@" + mMentionUser.screen_name : mMentionUser.name));
+		} else if (Intent.ACTION_SEND.equals(action) || Intent.ACTION_SEND_MULTIPLE.equals(action)) {
+			setTitle(R.string.share);
+		} else {
+			setTitle(R.string.compose);
+		}
+		return true;
+	}
 
 	private void setMenu() {
 		final Menu menu = mMenuBar.getMenu();
@@ -833,26 +881,6 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		}
 		mMenuBar.invalidate();
 		invalidateSupportOptionsMenu();
-	}
-	
-	private void setComposeTitle(final String action) {
-		final boolean display_screen_name = NAME_DISPLAY_OPTION_SCREEN_NAME.equals(mPreferences.getString(
-				PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH));
-		if (INTENT_ACTION_REPLY.equals(action)) {
-			if (mInReplyToStatus == null) return;
-			setTitle(getString(R.string.reply_to, display_screen_name ? "@" + mInReplyToStatus.screen_name : mInReplyToStatus.name));
-		} else if (INTENT_ACTION_QUOTE.equals(action)) {
-			if (mInReplyToStatus == null) return;
-			setTitle(getString(R.string.quote_user, display_screen_name ? "@" + mInReplyToStatus.screen_name : mInReplyToStatus.name));
-			mActionBar.setSubtitle(mInReplyToStatus.is_protected && mInReplyToStatus.account_id != mInReplyToStatus.user_id ?
-					getString(R.string.quote_protected_tweet_notice) : null);
-		} else if (INTENT_ACTION_EDIT_DRAFT.equals(action)) {
-			setTitle(R.string.edit_draft);
-		} else if (Intent.ACTION_SEND.equals(action) || Intent.ACTION_SEND_MULTIPLE.equals(action)) {
-			setTitle(R.string.share);
-		} else {
-			setTitle(R.string.compose);
-		}
 	}
 
 	private void takePhoto() {
