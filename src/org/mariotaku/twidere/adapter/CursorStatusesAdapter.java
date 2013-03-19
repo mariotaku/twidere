@@ -88,7 +88,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 		mMultiSelectManager = application.getMultiSelectManager();
 		mLazyImageLoader = application.getImageLoaderWrapper();
 		mDensity = mResources.getDisplayMetrics().density;
-		mLinkify = new TwidereLinkify(new OnLinkClickHandler(mContext));
+		mLinkify = new TwidereLinkify(new OnLinkClickHandler(mContext), mContext);
 	}
 
 	@Override

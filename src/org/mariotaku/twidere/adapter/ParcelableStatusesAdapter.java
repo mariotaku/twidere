@@ -83,7 +83,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		mMultiSelectManager = application.getMultiSelectManager();
 		mLazyImageLoader = application.getImageLoaderWrapper();
 		mDensity = mResources.getDisplayMetrics().density;
-		mLinkify = new TwidereLinkify(new OnLinkClickHandler(mContext));
+		mLinkify = new TwidereLinkify(new OnLinkClickHandler(mContext), mContext);
 	}
 
 	public long findItemIdByPosition(final int position) {

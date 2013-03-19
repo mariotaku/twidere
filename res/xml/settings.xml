@@ -13,6 +13,9 @@
 		android:key="solid_color_background"
 		android:summary="@string/solid_color_background_summary"
 		android:title="@string/solid_color_background"/>
+		
+	<org.mariotaku.twidere.preference.ThemeColorPreference
+		android:title="@string/theme_color"/>
 
 	<PreferenceCategory
 		android:key="category_settings"

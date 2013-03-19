@@ -19,6 +19,7 @@ package org.mariotaku.twidere.view;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.MotionEventAccessor;
+import org.mariotaku.twidere.preference.ThemeColorPreference;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -35,6 +36,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.graphics.PorterDuff;
 
 /**
  * This widget implements the dynamic action bar tab behavior that can change
@@ -54,6 +56,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 
 	int mMaxTabWidth;
 	private int mSelectedTabIndex;
+	private int mTabColor;
 
 	private boolean mSwitchingEnabled = true;
 	private boolean mDisplayLabel, mDisplayColor = true;
@@ -83,16 +86,15 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 	};
 
 	public TabPageIndicator(final Context context) {
-		super(context);
+		this(context, null);
 	}
 
 	public TabPageIndicator(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
 		setHorizontalScrollBarEnabled(false);
-
+		mTabColor = ThemeColorPreference.getThemeColor(context);
 		mInflater = LayoutInflater.from(context);
-
-		mTabLayout = new LinearLayout(getContext());
+		mTabLayout = new LinearLayout(context);
 		addView(mTabLayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
 				ViewGroup.LayoutParams.MATCH_PARENT));
 	}
@@ -276,6 +278,11 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 		tabView.setOnLongClickListener(mTabLongClickListener);
 		tabView.setContentDescription(label);
 		mTabLayout.addView(tabView, new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1));
+		final Drawable bg = tabView.getBackground();
+		if (bg != null) {
+			bg.mutate().setColorFilter(mTabColor, PorterDuff.Mode.MULTIPLY);
+			tabView.invalidate();
+		}
 	}
 
 	private void animateToTab(final int position) {

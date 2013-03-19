@@ -318,7 +318,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mScreenNameView.setText("@" + user.screen_name);
 		mDescriptionContainer.setVisibility(user_is_me || !isEmpty(user.description_html) ? View.VISIBLE : View.GONE);
 		mDescriptionView.setText(user.description_html != null ? Html.fromHtml(user.description_html) : null);
-		final TwidereLinkify mLinkify = new TwidereLinkify(this, true);
+		final TwidereLinkify mLinkify = new TwidereLinkify(this, getActivity(), true);
 		mLinkify.applyAllLinks(mDescriptionView, user.account_id, false);
 		mDescriptionView.setMovementMethod(null);
 		mLocationContainer.setVisibility(user_is_me || !isEmpty(user.location) ? View.VISIBLE : View.GONE);

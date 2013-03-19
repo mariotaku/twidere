@@ -29,6 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.mariotaku.twidere.model.ImageSpec;
+import org.mariotaku.twidere.preference.ThemeColorPreference;
 
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -42,6 +43,8 @@ import android.widget.TextView;
 import com.twitter.Extractor;
 import com.twitter.Regex;
 import android.text.TextPaint;
+import android.text.style.ClickableSpan;
+import android.content.Context;
 
 /**
  * Linkify take a piece of text and a regular expression and turns all of the
@@ -190,16 +193,17 @@ public class TwidereLinkify {
 
 	private final OnLinkClickListener mOnLinkClickListener;
 	private final Extractor mExtractor = new Extractor();
-
+	private final int mLinkColor;
 	private final boolean mShowUnderline;
 
-	public TwidereLinkify(final OnLinkClickListener listener) {
-		this(listener, false);
+	public TwidereLinkify(final OnLinkClickListener listener, final Context context) {
+		this(listener, context, false);
 	}
 	
-	public TwidereLinkify(final OnLinkClickListener listener, final boolean show_underline) {
+	public TwidereLinkify(final OnLinkClickListener listener, final Context context, final boolean show_underline) {
 		mOnLinkClickListener = listener;
 		mShowUnderline = show_underline;
+		mLinkColor = ThemeColorPreference.getThemeColor(context);
 	}
 	
 	public final void applyUserProfileLink(final TextView view, final long account_id, final long user_id, final String screen_name) {
@@ -373,7 +377,7 @@ public class TwidereLinkify {
 
 	private final void applyLink(final String url, final String orig, final int start, final int end,
 			final Spannable text, final long account_id, final int type, final boolean sensitive) {
-		final LinkSpan span = new LinkSpan(url, orig, account_id, type, sensitive, mOnLinkClickListener, mShowUnderline);
+		final LinkSpan span = new LinkSpan(url, orig, account_id, type, sensitive, mOnLinkClickListener, mShowUnderline, mLinkColor);
 		text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 	}
 
@@ -395,39 +399,38 @@ public class TwidereLinkify {
 
 		private final int type;
 		private final long account_id;
-		private final String orig;
+		private final String url, orig;
 		private final boolean sensitive;
 		private final OnLinkClickListener listener;
 		private final boolean show_underline;
+		private final int color;
 
-		public LinkSpan(final String url, final long account_id, final int type, final boolean sensitive, final OnLinkClickListener listener, final boolean show_underline) {
-			this(url, null, account_id, type, sensitive, listener, show_underline);
+		public LinkSpan(final String url, final long account_id, final int type, final boolean sensitive, final OnLinkClickListener listener, final boolean show_underline, final int color) {
+			this(url, null, account_id, type, sensitive, listener, show_underline, color);
 		}
 
-		public LinkSpan(final String url, final String orig, final long account_id, final int type, final boolean sensitive, final OnLinkClickListener listener, final boolean show_underline) {
+		public LinkSpan(final String url, final String orig, final long account_id, final int type, final boolean sensitive, final OnLinkClickListener listener, final boolean show_underline, final int color) {
 			super(url);
+			this.url = url;
 			this.orig = orig;
 			this.account_id = account_id;
 			this.type = type;
 			this.sensitive = sensitive;
 			this.listener = listener;
 			this.show_underline = show_underline;
-		}
-
-		public String getURLOrig() {
-			return orig;
+			this.color = color;
 		}
 
 		@Override
 		public void onClick(final View widget) {
 			if (listener != null) {
-				listener.onLinkClick(getURL(), getURLOrig(), account_id, type, sensitive);
+				listener.onLinkClick(url, orig, account_id, type, sensitive);
 			}
 		}
 		
 		@Override
-		public void updateDrawState(TextPaint ds) {
-            super.updateDrawState(ds);
+		public void updateDrawState(final TextPaint ds) {
+            ds.setColor(color);
             ds.setUnderlineText(show_underline);
         }
 	}

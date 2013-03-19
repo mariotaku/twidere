@@ -41,9 +41,8 @@ public class ColorPickerPreference extends DialogPreference implements DialogInt
 		OnColorChangedListener {
 
 	private View mView;
-	private int mDefaultValue = Color.WHITE;
-	private int mValue = Color.WHITE;
-	private float mDensity = 0;
+	protected int mDefaultValue = Color.WHITE;
+	private final float mDensity;
 	private boolean mAlphaSliderEnabled = false;
 
 	private static final String ANDROID_NS = "http://schemas.android.com/apk/res/android";
@@ -57,8 +56,8 @@ public class ColorPickerPreference extends DialogPreference implements DialogInt
 	}
 
 	public ColorPickerPreference(final Context context, final AttributeSet attrs, final int defStyle) {
-
 		super(context, attrs, defStyle);
+		mDensity = context.getResources().getDisplayMetrics().density;
 		init(context, attrs);
 	}
 
@@ -70,10 +69,10 @@ public class ColorPickerPreference extends DialogPreference implements DialogInt
 				if (isPersistent()) {
 					persistInt(color);
 				}
-				mValue = color;
 				setPreviewColor();
-				if (getOnPreferenceChangeListener() != null) {
-					getOnPreferenceChangeListener().onPreferenceChange(this, color);
+				final OnPreferenceChangeListener listener = getOnPreferenceChangeListener();
+				if (listener != null) {
+					listener.onPreferenceChange(this, color);
 				}
 				break;
 		}
@@ -86,10 +85,14 @@ public class ColorPickerPreference extends DialogPreference implements DialogInt
 		final Context context = getContext();
 		dialog.setIcon(new BitmapDrawable(context.getResources(), getColorPreviewBitmap(context, color)));
 	}
+	
+	public void setDefaultValue(final Object value) {
+		if (!(value instanceof Integer)) return;
+		mDefaultValue = (Integer) value;
+	}
 
 	@Override
 	protected void onBindView(final View view) {
-
 		super.onBindView(view);
 		mView = view;
 		setPreviewColor();
@@ -108,17 +111,18 @@ public class ColorPickerPreference extends DialogPreference implements DialogInt
 		view.addView(mColorPicker, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		view.setPadding(Math.round(mColorPicker.getDrawingOffset()), 0, Math.round(mColorPicker.getDrawingOffset()), 0);
 
-		mColorPicker.setColor(mValue, true);
+		final int val = getValue();
+		mColorPicker.setColor(val, true);
 		mColorPicker.setAlphaSliderVisible(mAlphaSliderEnabled);
 		builder.setView(view);
-		builder.setIcon(new BitmapDrawable(context.getResources(), getColorPreviewBitmap(context, mValue)));
+		builder.setIcon(new BitmapDrawable(context.getResources(), getColorPreviewBitmap(context, val)));
 		builder.setPositiveButton(android.R.string.ok, this);
 		builder.setNegativeButton(android.R.string.cancel, null);
 	}
 
 	@Override
 	protected void onSetInitialValue(final boolean restoreValue, final Object defaultValue) {
-		if (isPersistent()) {
+		if (isPersistent() && defaultValue instanceof Integer) {
 			persistInt(restoreValue ? getValue() : (Integer) defaultValue);
 		}
 	}
@@ -126,39 +130,35 @@ public class ColorPickerPreference extends DialogPreference implements DialogInt
 	private int getValue() {
 		try {
 			if (isPersistent()) {
-				mValue = getPersistedInt(mDefaultValue);
+				return getPersistedInt(mDefaultValue);
 			}
 		} catch (final ClassCastException e) {
-			mValue = mDefaultValue;
+			e.printStackTrace();
 		}
-		return mValue;
+		return mDefaultValue;
 	}
 
-	private void init(final Context context, final AttributeSet attrs) {
-
-		mDensity = context.getResources().getDisplayMetrics().density;
+	protected void init(final Context context, final AttributeSet attrs) {
 		if (attrs != null) {
 			final String defaultValue = attrs.getAttributeValue(ANDROID_NS, ATTR_DEFAULTVALUE);
 			if (defaultValue != null && defaultValue.startsWith("#")) {
 				try {
-					mDefaultValue = Color.parseColor(defaultValue);
+					setDefaultValue(Color.parseColor(defaultValue));
 				} catch (final IllegalArgumentException e) {
 					Log.e("ColorPickerPreference", "Wrong color: " + defaultValue);
-					mDefaultValue = Color.WHITE;
+					setDefaultValue(Color.WHITE);
 				}
 			} else {
 				final int colorResourceId = attrs.getAttributeResourceValue(ANDROID_NS, ATTR_DEFAULTVALUE, 0);
 				if (colorResourceId != 0) {
-					mDefaultValue = context.getResources().getColor(colorResourceId);
+					setDefaultValue(context.getResources().getColor(colorResourceId));
 				}
 			}
 			mAlphaSliderEnabled = attrs.getAttributeBooleanValue(null, ATTR_ALPHASLIDER, false);
 		}
-		mValue = mDefaultValue;
 	}
 
 	private void setPreviewColor() {
-
 		if (mView == null) return;
 		final ImageView image_view = new ImageView(getContext());
 		final View widget_frame_view = mView.findViewById(android.R.id.widget_frame);
