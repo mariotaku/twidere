@@ -626,6 +626,11 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			return handleEditDraftIntent(mDraftItem);
 		} else if (INTENT_ACTION_MENTION.equals(action)) {
 			return handleMentionIntent(mMentionUser);
+		} else if (INTENT_ACTION_REPLY_MULTIPLE.equals(action)) {
+			final String[] screen_names = extras.getStringArray(INTENT_KEY_SCREEN_NAMES);
+			final long account_id = extras.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+			final long in_reply_to_user_id = extras.getLong(INTENT_KEY_IN_REPLY_TO_ID, -1);
+			return handleReplyMultipleIntent(screen_names, account_id, in_reply_to_user_id);
 		}
 		// Unknown action or no intent extras
 		return false;
@@ -701,6 +706,24 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		final int selection_end = mEditText.length();
 		mEditText.setSelection(selection_start, selection_end);
 		mAccountIds = new long[] { status.account_id };
+		return true;
+	}
+	
+	private boolean handleReplyMultipleIntent(final String[] screen_names, final long account_id, final long in_reply_to_status_id) {
+		if (screen_names == null || screen_names.length == 0 || account_id <= 0) return false;
+		final String my_screen_name = getAccountScreenName(this, account_id);
+		if (isEmpty(my_screen_name)) return false;
+		final int selection_start = mEditText.length();
+		for (final String screen_name : screen_names) {
+			if (screen_name.equalsIgnoreCase(my_screen_name)) {
+				continue;
+			}
+			mEditText.append("@" + screen_name + " ");
+		}
+		final int selection_end = mEditText.length();
+		mEditText.setSelection(selection_start, selection_end);
+		mAccountIds = new long[] { account_id };
+		mInReplyToStatusId = in_reply_to_status_id;
 		return true;
 	}
 	
@@ -806,6 +829,8 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		} else if (INTENT_ACTION_MENTION.equals(action)) {
 			if (mMentionUser == null) return false;
 			setTitle(getString(R.string.mention_user, display_screen_name ? "@" + mMentionUser.screen_name : mMentionUser.name));
+		} else if (INTENT_ACTION_REPLY_MULTIPLE.equals(action)) {
+			setTitle(R.string.reply);
 		} else if (Intent.ACTION_SEND.equals(action) || Intent.ACTION_SEND_MULTIPLE.equals(action)) {
 			setTitle(R.string.share);
 		} else {

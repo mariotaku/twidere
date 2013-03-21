@@ -3,7 +3,10 @@ package org.mariotaku.twidere.preference;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.View;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 
@@ -22,6 +25,14 @@ public class ThemeColorPreference extends ColorPickerPreference implements Const
 		final String key = dark_theme ? PREFERENCE_KEY_DARK_THEME_COLOR : PREFERENCE_KEY_LIGHT_THEME_COLOR;
 		setDefaultValue(def);
 		setKey(key);
+	}
+
+	public static void applyBackground(final View view, final int color) {
+		if (view == null) return;
+		final Drawable bg = view.getBackground();
+		if (bg == null) return;
+		bg.mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+		view.invalidate();
 	}
 
 	public static int getThemeColor(final Context context) {

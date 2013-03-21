@@ -68,7 +68,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 		switch (item.getItemId()) {
 			case MENU_REPLY: {
 				final Extractor extractor = new Extractor();
-				final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+				final Intent intent = new Intent(INTENT_ACTION_REPLY_MULTIPLE);
 				final Bundle bundle = new Bundle();
 				final String[] account_names = getAccountScreenNames(this);
 				final NoDuplicatesLinkedList<String> all_mentions = new NoDuplicatesLinkedList<String>();
@@ -88,15 +88,11 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 					final ParcelableStatus first_status = (ParcelableStatus) first_obj;
 					bundle.putLong(INTENT_KEY_ACCOUNT_ID, first_status.account_id);
 					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, first_status.status_id);
-					bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, first_status.screen_name);
-					bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, first_status.name);
 				} else if (first_obj instanceof ParcelableUser) {
 					final ParcelableUser first_user = (ParcelableUser) first_obj;
 					bundle.putLong(INTENT_KEY_ACCOUNT_ID, first_user.account_id);
-					bundle.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, first_user.screen_name);
-					bundle.putString(INTENT_KEY_IN_REPLY_TO_NAME, first_user.name);
 				}
-				bundle.putStringArray(INTENT_KEY_MENTIONS, all_mentions.toArray(new String[all_mentions.size()]));
+				bundle.putStringArray(INTENT_KEY_SCREEN_NAMES, all_mentions.toArray(new String[all_mentions.size()]));
 				intent.putExtras(bundle);
 				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				startActivity(intent);

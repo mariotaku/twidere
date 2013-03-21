@@ -239,6 +239,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_ACTION_QUOTE = INTENT_PACKAGE_PREFIX + "QUOTE";
 	public static final String INTENT_ACTION_EDIT_DRAFT = INTENT_PACKAGE_PREFIX + "EDIT_DRAFT";
 	public static final String INTENT_ACTION_MENTION = INTENT_PACKAGE_PREFIX + "MENTION";
+	public static final String INTENT_ACTION_REPLY_MULTIPLE = INTENT_PACKAGE_PREFIX + "REPLY_MULTIPLE";
 	public static final String INTENT_ACTION_SETTINGS = INTENT_PACKAGE_PREFIX + "SETTINGS";
 	public static final String INTENT_ACTION_SELECT_ACCOUNT = INTENT_PACKAGE_PREFIX + "SELECT_ACCOUNT";
 	public static final String INTENT_ACTION_VIEW_IMAGE = INTENT_PACKAGE_PREFIX + "VIEW_IMAGE";
@@ -344,6 +345,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_MIN_ID = "min_id";
 	public static final String INTENT_KEY_STATUS_ID = "status_id";
 	public static final String INTENT_KEY_SCREEN_NAME = "screen_name";
+	public static final String INTENT_KEY_SCREEN_NAMES = "screen_names";
 	public static final String INTENT_KEY_LIST_NAME = "list_name";
 	public static final String INTENT_KEY_DESCRIPTION = "description";
 	public static final String INTENT_KEY_IN_REPLY_TO_ID = "in_reply_to_id";

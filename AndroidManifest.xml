@@ -104,6 +104,7 @@
 				<action android:name="org.mariotaku.twidere.QUOTE"/>
 				<action android:name="org.mariotaku.twidere.EDIT_DRAFT"/>
 				<action android:name="org.mariotaku.twidere.MENTION"/>
+				<action android:name="org.mariotaku.twidere.REPLY_MULTIPLE"/>
 
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>

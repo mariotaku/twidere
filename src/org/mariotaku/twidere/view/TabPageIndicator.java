@@ -278,11 +278,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 		tabView.setOnLongClickListener(mTabLongClickListener);
 		tabView.setContentDescription(label);
 		mTabLayout.addView(tabView, new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1));
-		final Drawable bg = tabView.getBackground();
-		if (bg != null) {
-			bg.mutate().setColorFilter(mTabColor, PorterDuff.Mode.MULTIPLY);
-			tabView.invalidate();
-		}
+		ThemeColorPreference.applyBackground(tabView, mTabColor);
 	}
 
 	private void animateToTab(final int position) {
