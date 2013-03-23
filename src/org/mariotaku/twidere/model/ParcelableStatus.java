@@ -208,10 +208,8 @@ public class ParcelableStatus implements Constants, Parcelable, Serializable, Co
 		this.account_id = account_id;
 		status_id = status.getId();
 		is_retweet = status.isRetweet();
-		is_following = false;
 		User user = status.getUser();
-		// TODO: implement this in twitter4j lib
-		// is_following = user != null ? user.isFollowing() : false;
+		is_following = user != null ? user.isFollowing() : false;
 		final Status retweeted_status = is_retweet ? status.getRetweetedStatus() : null;
 		final User retweet_user = retweeted_status != null ? status.getUser() : null;
 		retweet_id = retweeted_status != null ? retweeted_status.getId() : -1;

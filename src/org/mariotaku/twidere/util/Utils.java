@@ -727,7 +727,7 @@ public final class Utils implements Constants {
 		final String text = user.getDescription();
 		if (text == null) return null;
 		final HtmlBuilder builder = new HtmlBuilder(text, DEBUG, true, true);
-		final URLEntity[] urls = user.getDescriptionsURLEntities();
+		final URLEntity[] urls = user.getDescriptionEntities();
 		if (urls != null) {
 			for (final URLEntity url : urls) {
 				final String expanded_url = parseString(url.getExpandedURL());
@@ -744,7 +744,7 @@ public final class Utils implements Constants {
 		final String text = user.getDescription();
 		if (text == null) return null;
 		final HtmlBuilder builder = new HtmlBuilder(text, DEBUG, true, true);
-		final URLEntity[] urls = user.getDescriptionsURLEntities();
+		final URLEntity[] urls = user.getDescriptionEntities();
 		if (urls != null) {
 			for (final URLEntity url : urls) {
 				final URL expanded_url = url.getExpandedURL();
@@ -2076,7 +2076,7 @@ public final class Utils implements Constants {
 		if (user == null || user.getId() <= 0) return null;
 		final String profile_image_url = parseString(user.getProfileImageUrlHttps());
 		final String url = parseString(user.getURL());
-		final URLEntity[] urls = user.getURLsURLEntities();
+		final URLEntity[] urls = user.getURLEntities();
 		final ContentValues values = new ContentValues();
 		values.put(CachedUsers.USER_ID, user.getId());
 		values.put(CachedUsers.NAME, user.getName());
@@ -2086,8 +2086,7 @@ public final class Utils implements Constants {
 		values.put(CachedUsers.CREATED_AT, user.getCreatedAt().getTime());
 		values.put(CachedUsers.IS_PROTECTED, user.isProtected());
 		values.put(CachedUsers.IS_VERIFIED, user.isVerified());
-		// TODO: implement this in twitter4j lib
-		// values.put(CachedUsers.IS_FOLLOWING, user.isFollowing());
+		values.put(CachedUsers.IS_FOLLOWING, user.isFollowing());
 		values.put(CachedUsers.FAVORITES_COUNT, user.getFavouritesCount());
 		values.put(CachedUsers.FOLLOWERS_COUNT, user.getFollowersCount());
 		values.put(CachedUsers.FRIENDS_COUNT, user.getFriendsCount());
@@ -2139,8 +2138,7 @@ public final class Utils implements Constants {
 		values.put(Statuses.MY_RETWEET_ID, status.getCurrentUserRetweet());
 		final boolean is_retweet = status.isRetweet();
 		User user = status.getUser();
-		// TODO: implement this in twitter4j lib
-		// values.put(CachedUsers.IS_FOLLOWING, user != null ? user.isFollowing() : false);
+		values.put(CachedUsers.IS_FOLLOWING, user != null ? user.isFollowing() : false);
 		final Status retweeted_status = is_retweet ? status.getRetweetedStatus() : null;
 		if (retweeted_status != null) {
 			final User retweet_user = status.getUser();

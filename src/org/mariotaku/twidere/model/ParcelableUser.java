@@ -126,7 +126,7 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		this.position = position;
 		this.account_id = account_id;
 		final String profile_image_url_orig = parseString(user.getProfileImageUrlHttps());
-		final URLEntity[] urls_url_entities = user.getURLsURLEntities();
+		final URLEntity[] urls_url_entities = user.getURLEntities();
 		user_id = user.getId();
 		created_at = getTime(user.getCreatedAt());
 		is_protected = user.isProtected();
@@ -149,9 +149,7 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		statuses_count = user.getStatusesCount();
 		favorites_count = user.getFavouritesCount();
 		is_cache = false;
-		// TODO: implememt this in twitter4j lib
-		// is_following = user.isFollowing();
-		is_following = false;
+		is_following = user.isFollowing();
 		description_unescaped = toPlainText(description_html);
 	}
 
