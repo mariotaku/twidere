@@ -168,22 +168,18 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		switch (requestCode) {
 			case REQUEST_TAKE_PHOTO: {
 				if (resultCode == Activity.RESULT_OK) {
-					final File file = new File(getCacheDir(), "tmp_image_" + System.currentTimeMillis());
-					final Uri dst = Uri.fromFile(file);
 					mIsPhotoAttached = true;
 					mIsImageAttached = false;
-					new CopyImageTask(this, mImageUri, mTempPhotoUri, dst, true).execute();
+					new CopyImageTask(this, mImageUri, mTempPhotoUri, createTempImageUri(), true).execute();
 				}
 				break;
 			}
 			case REQUEST_PICK_IMAGE: {
 				if (resultCode == Activity.RESULT_OK) {
 					final Uri src = intent.getData();
-					final File file = new File(getCacheDir(), "tmp_image_" + System.currentTimeMillis());
-					final Uri dst = Uri.fromFile(file);
 					mIsPhotoAttached = false;
 					mIsImageAttached = true;
-					new CopyImageTask(this, mImageUri, src, dst, false).execute();
+					new CopyImageTask(this, mImageUri, src, createTempImageUri(), false).execute();
 				}
 				break;
 			}
@@ -612,6 +608,10 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		super.onStop();
 	}
 
+	private Uri createTempImageUri() {
+		final File file = new File(getCacheDir(), "tmp_image_" + System.currentTimeMillis());
+		return Uri.fromFile(file);
+	}
 	private boolean handleIntent(final String action, final Bundle extras) {
 		if (extras == null) return false;
 		mMentionUser = extras.getParcelable(INTENT_KEY_USER);
@@ -648,7 +648,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			final CharSequence extra_text = extras.getCharSequence(Intent.EXTRA_TEXT);
 			final Uri extra_stream = extras.getParcelable(Intent.EXTRA_STREAM);
 			if (extra_stream != null) {
-				mImageUri = extra_stream;
+				new CopyImageTask(this, mImageUri, extra_stream, createTempImageUri(), false).execute();
 			}
 			mEditText.setText(getShareStatus(this, extra_subject, extra_text));
 		}

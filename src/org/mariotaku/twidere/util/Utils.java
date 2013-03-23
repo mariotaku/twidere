@@ -2086,6 +2086,8 @@ public final class Utils implements Constants {
 		values.put(CachedUsers.CREATED_AT, user.getCreatedAt().getTime());
 		values.put(CachedUsers.IS_PROTECTED, user.isProtected());
 		values.put(CachedUsers.IS_VERIFIED, user.isVerified());
+		// TODO: implement this in twitter4j lib
+		// values.put(CachedUsers.IS_FOLLOWING, user.isFollowing());
 		values.put(CachedUsers.FAVORITES_COUNT, user.getFavouritesCount());
 		values.put(CachedUsers.FOLLOWERS_COUNT, user.getFollowersCount());
 		values.put(CachedUsers.FRIENDS_COUNT, user.getFriendsCount());
@@ -2136,6 +2138,9 @@ public final class Utils implements Constants {
 		values.put(Statuses.STATUS_ID, status.getId());
 		values.put(Statuses.MY_RETWEET_ID, status.getCurrentUserRetweet());
 		final boolean is_retweet = status.isRetweet();
+		User user = status.getUser();
+		// TODO: implement this in twitter4j lib
+		// values.put(CachedUsers.IS_FOLLOWING, user != null ? user.isFollowing() : false);
 		final Status retweeted_status = is_retweet ? status.getRetweetedStatus() : null;
 		if (retweeted_status != null) {
 			final User retweet_user = status.getUser();
@@ -2143,9 +2148,9 @@ public final class Utils implements Constants {
 			values.put(Statuses.RETWEETED_BY_ID, retweet_user.getId());
 			values.put(Statuses.RETWEETED_BY_NAME, retweet_user.getName());
 			values.put(Statuses.RETWEETED_BY_SCREEN_NAME, retweet_user.getScreenName());
+			user = retweeted_status.getUser();
 			status = retweeted_status;
 		}
-		final User user = status.getUser();
 		if (user != null) {
 			final long user_id = user.getId();
 			final String profile_image_url = parseString(user.getProfileImageUrlHttps());

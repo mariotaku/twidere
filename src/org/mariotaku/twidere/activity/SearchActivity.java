@@ -173,9 +173,9 @@ public class SearchActivity extends MultiSelectActivity {
 				final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
 				final Bundle extras = new Bundle();
 				if (mQuery.startsWith("#")) {
-					extras.putString(INTENT_KEY_TEXT, mQuery + " ");
+					extras.putString(Intent.EXTRA_TEXT, mQuery + " ");
 				} else {
-					extras.putString(INTENT_KEY_TEXT, "#" + mQuery + " ");
+					extras.putString(Intent.EXTRA_TEXT, "#" + mQuery + " ");
 				}
 				intent.putExtras(extras);
 				startActivity(intent);

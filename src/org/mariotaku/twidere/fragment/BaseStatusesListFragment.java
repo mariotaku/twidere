@@ -420,7 +420,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_status);
 		final boolean click_to_open_menu = mPreferences.getBoolean(PREFERENCE_KEY_CLICK_TO_OPEN_MENU, false);
-		final boolean seprate_retweet_action = mPreferences.getBoolean(PREFERENCE_KEY_SEPRATE_RETWEET_ACTION, false);
+		final boolean separate_retweet_action = mPreferences.getBoolean(PREFERENCE_KEY_SEPARATE_RETWEET_ACTION, false);
 		final Menu menu = mPopupMenu.getMenu();
 		setMenuForStatus(getActivity(), menu, status);
 		final MenuItem view_status = menu.findItem(MENU_VIEW);
@@ -429,16 +429,16 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		}
 		final MenuItem retweet_submenu = menu.findItem(R.id.retweet_submenu);
 		if (retweet_submenu != null) {
-			retweet_submenu.setVisible(!seprate_retweet_action);
+			retweet_submenu.setVisible(!separate_retweet_action);
 		}
 		final MenuItem direct_quote = menu.findItem(R.id.direct_quote);
 		if (direct_quote != null) {
-			direct_quote.setVisible(seprate_retweet_action);
+			direct_quote.setVisible(separate_retweet_action);
 		}
 		final MenuItem direct_retweet = menu.findItem(R.id.direct_retweet);
 		if (direct_retweet != null) {
 			final Drawable icon = direct_retweet.getIcon().mutate();
-			direct_retweet.setVisible(seprate_retweet_action && (!status.is_protected || isMyRetweet(status)));
+			direct_retweet.setVisible(separate_retweet_action && (!status.is_protected || isMyRetweet(status)));
 			if (isMyRetweet(status)) {
 				icon.setColorFilter(activated_color, PorterDuff.Mode.MULTIPLY);
 				direct_retweet.setTitle(R.string.cancel_retweet);

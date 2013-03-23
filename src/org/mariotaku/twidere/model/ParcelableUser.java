@@ -55,7 +55,7 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 
 	public final long account_id, user_id, created_at, position;
 
-	public final boolean is_protected, is_verified, is_follow_request_sent;
+	public final boolean is_protected, is_verified, is_follow_request_sent, is_following;
 
 	public final String description_plain, name, screen_name, location, profile_image_url, profile_banner_url, url,
 			url_expanded, description_html, description_unescaped, description_expanded;
@@ -88,6 +88,7 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		profile_banner_url = cursor.getString(cursor.getColumnIndex(CachedUsers.PROFILE_BANNER_URL));
 		is_cache = true;
 		description_unescaped = toPlainText(description_html);
+		is_following = cursor.getInt(cursor.getColumnIndex(CachedUsers.IS_FOLLOWING)) == 1;
 	}
 
 	public ParcelableUser(final Parcel in) {
@@ -113,6 +114,7 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		description_html = in.readString();
 		description_expanded = in.readString();
 		url_expanded = in.readString();
+		is_following = in.readInt() == 1;
 		description_unescaped = toPlainText(description_html);
 	}
 
@@ -147,6 +149,9 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		statuses_count = user.getStatusesCount();
 		favorites_count = user.getFavouritesCount();
 		is_cache = false;
+		// TODO: implememt this in twitter4j lib
+		// is_following = user.isFollowing();
+		is_following = false;
 		description_unescaped = toPlainText(description_html);
 	}
 
@@ -219,6 +224,7 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		out.writeString(description_html);
 		out.writeString(description_expanded);
 		out.writeString(url_expanded);
+		out.writeInt(is_following ? 1 : 0);
 	}
 
 	private long getTime(final Date date) {
@@ -233,8 +239,8 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		values.put(CachedUsers.SCREEN_NAME, user.screen_name);
 		values.put(CachedUsers.PROFILE_IMAGE_URL, user.profile_image_url);
 		values.put(CachedUsers.CREATED_AT, user.created_at);
-		values.put(CachedUsers.IS_PROTECTED, user.is_protected ? 1 : 0);
-		values.put(CachedUsers.IS_VERIFIED, user.is_verified ? 1 : 0);
+		values.put(CachedUsers.IS_PROTECTED, user.is_protected);
+		values.put(CachedUsers.IS_VERIFIED, user.is_verified);
 		values.put(CachedUsers.FAVORITES_COUNT, user.favorites_count);
 		values.put(CachedUsers.FOLLOWERS_COUNT, user.followers_count);
 		values.put(CachedUsers.FRIENDS_COUNT, user.friends_count);
@@ -246,6 +252,7 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		values.put(CachedUsers.URL, user.url);
 		values.put(CachedUsers.URL_EXPANDED, user.url_expanded);
 		values.put(CachedUsers.PROFILE_BANNER_URL, user.profile_banner_url);
+		values.put(CachedUsers.IS_FOLLOWING, user.is_following);
 		return values;
 	}
 }

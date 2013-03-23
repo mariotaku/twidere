@@ -445,7 +445,8 @@
 		</activity>
 		<activity
 			android:name=".activity.CreateComposeShortcutActivity"
-			android:label="@string/compose">
+			android:label="@string/compose"
+			android:theme="@android:style/Theme.NoDisplay">
 			<intent-filter>
 				<action android:name="android.intent.action.CREATE_SHORTCUT"/>
 

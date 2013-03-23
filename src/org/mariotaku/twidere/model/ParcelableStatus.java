@@ -61,7 +61,8 @@ public class ParcelableStatus implements Constants, Parcelable, Serializable, Co
 	public final long retweet_id, retweeted_by_id, status_id, account_id, user_id, status_timestamp, retweet_count,
 			in_reply_to_status_id, my_retweet_id;
 
-	public final boolean is_gap, is_retweet, is_favorite, is_protected, is_verified, has_media, is_possibly_sensitive;
+	public final boolean is_gap, is_retweet, is_favorite, is_protected, is_verified, has_media, is_possibly_sensitive,
+			is_following;
 
 	public final String retweeted_by_name, retweeted_by_screen_name, text_html, text_plain, name, screen_name,
 			in_reply_to_screen_name, source, profile_image_url, image_preview_url, image_orig_url, text_unescaped;
@@ -122,6 +123,7 @@ public class ParcelableStatus implements Constants, Parcelable, Serializable, Co
 		image_preview_url = preview != null ? preview.preview_image_link : null;
 		image_orig_url = preview != null ? preview.orig_link : null;
 		is_possibly_sensitive = getAsBoolean(values, Statuses.IS_POSSIBLY_SENSITIVE, false);
+		is_following = getAsBoolean(values, Statuses.IS_FOLLOWING, false);
 	}
 
 	public ParcelableStatus(final Cursor cursor, final StatusCursorIndices indices) {
@@ -159,6 +161,7 @@ public class ParcelableStatus implements Constants, Parcelable, Serializable, Co
 		my_retweet_id = indices.my_retweet_id != -1 ? cursor.getLong(indices.my_retweet_id) : -1;
 		is_possibly_sensitive = indices.is_possibly_sensitive != -1 ? cursor.getInt(indices.is_possibly_sensitive) == 1
 				: false;
+		is_following = indices.is_following != -1 ? cursor.getInt(indices.is_following) == 1 : false;
 	}
 
 	public ParcelableStatus(final Parcel in) {
@@ -191,6 +194,7 @@ public class ParcelableStatus implements Constants, Parcelable, Serializable, Co
 		my_retweet_id = in.readLong();
 		is_possibly_sensitive = in.readInt() == 1;
 		text_unescaped = toPlainText(text_html);
+		is_following = in.readInt() == 1;
 	}
 
 	public ParcelableStatus(final Status status, final long account_id, final boolean is_gap,
@@ -200,11 +204,14 @@ public class ParcelableStatus implements Constants, Parcelable, Serializable, Co
 
 	public ParcelableStatus(Status status, final long account_id, final boolean is_gap,
 			final boolean large_profile_image, final boolean large_inline_image_preview) {
-
 		this.is_gap = is_gap;
 		this.account_id = account_id;
 		status_id = status.getId();
 		is_retweet = status.isRetweet();
+		is_following = false;
+		User user = status.getUser();
+		// TODO: implement this in twitter4j lib
+		// is_following = user != null ? user.isFollowing() : false;
 		final Status retweeted_status = is_retweet ? status.getRetweetedStatus() : null;
 		final User retweet_user = retweeted_status != null ? status.getUser() : null;
 		retweet_id = retweeted_status != null ? retweeted_status.getId() : -1;
@@ -213,8 +220,8 @@ public class ParcelableStatus implements Constants, Parcelable, Serializable, Co
 		retweeted_by_screen_name = retweet_user != null ? retweet_user.getScreenName() : null;
 		if (retweeted_status != null) {
 			status = retweeted_status;
+			user = retweeted_status.getUser();
 		}
-		final User user = status.getUser();
 		user_id = user != null ? user.getId() : -1;
 		name = user != null ? user.getName() : null;
 		screen_name = user != null ? user.getScreenName() : null;
@@ -323,6 +330,7 @@ public class ParcelableStatus implements Constants, Parcelable, Serializable, Co
 		out.writeString(ParcelableLocation.toString(location));
 		out.writeLong(my_retweet_id);
 		out.writeInt(is_possibly_sensitive ? 1 : 0);
+		out.writeInt(is_following ? 1 : 0);
 	}
 
 	private static long getTime(final Date date) {

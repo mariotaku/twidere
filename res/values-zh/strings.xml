@@ -314,8 +314,8 @@
   <string name="click_to_open_menu_summary">點擊打開推文菜單，長按以多選，如果你習慣twicca式的操作方式，這個選項會有所幫助</string>
   <string name="send_follow_request">發送關注請求</string>
   <string name="follow_request_sent">已發送關注請求</string>
-  <string name="seprate_retweet_action">分離的轉推操作</string>
-  <string name="seprate_retweet_action_summary">在推文菜單中同時顯示“轉推”和“引用”</string>
+  <string name="separate_retweet_action">分離的轉推操作</string>
+  <string name="separate_retweet_action_summary">在推文菜單中同時顯示“轉推”和“引用”</string>
   <string name="tweet">推文</string>
   <string name="preview">預覽</string>
   <string name="api_upgrade_notice_title">非常重要！</string>

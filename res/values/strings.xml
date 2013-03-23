@@ -315,8 +315,8 @@
 	<string name="click_to_open_menu_summary">Click to open item menu, long-click to multi select.</string>
 	<string name="send_follow_request">Send follow request</string>
 	<string name="follow_request_sent">Follow request sent</string>
-	<string name="seprate_retweet_action">Seprate retweet action</string>
-	<string name="seprate_retweet_action_summary">Show both retweet and quote action in tweet menu</string>
+	<string name="separate_retweet_action">Separate retweet action</string>
+	<string name="separate_retweet_action_summary">Show both retweet and quote action in tweet menu</string>
 	<string name="tweet">Tweet</string>
 	<string name="preview">Preview</string>
 	<string name="api_upgrade_notice_title">VERY IMPORTANT!</string>
