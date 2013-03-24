@@ -294,6 +294,11 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		setContentView(R.layout.compose);
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
+		mImageThumbnailPreview.setOnClickListener(this);
+		mImageThumbnailPreview.setOnLongClickListener(this);
+		mMenuBar.setOnMenuItemClickListener(this);
+		mEditText.setOnEditorActionListener(mPreferences.getBoolean(PREFERENCE_KEY_QUICK_SEND, false) ? this : null);
+		mEditText.addTextChangedListener(this);
 
 		final Intent intent = getIntent();
 		final String action = intent.getAction();
@@ -336,9 +341,6 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 
 		reloadAttachedImageThumbnail();
 
-		mImageThumbnailPreview.setOnClickListener(this);
-		mImageThumbnailPreview.setOnLongClickListener(this);
-		mMenuBar.setOnMenuItemClickListener(this);
 		mMenuBar.inflate(R.menu.menu_compose);
 		final Menu menu = mMenuBar.getMenu();
 		final MenuItem more_submenu = menu.findItem(R.id.more_submenu);
@@ -347,8 +349,6 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			addIntentToMenu(this, more_submenu.getSubMenu(), extensions_intent);
 		}
 		mMenuBar.show();
-		mEditText.setOnEditorActionListener(mPreferences.getBoolean(PREFERENCE_KEY_QUICK_SEND, false) ? this : null);
-		mEditText.addTextChangedListener(this);
 		setMenu();
 		mColorIndicator.setColors(getAccountColors(this, mAccountIds));
 	}
@@ -520,8 +520,8 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	public boolean onPrepareOptionsMenu(final Menu menu) {
 		if (menu == null || mEditText == null || mTextCount == null) return false;
 		final String text_orig = parseString(mEditText.getText());
-		final String text = mIsPhotoAttached || mIsImageAttached ? mUploadUseExtension ? getImageUploadStatus(this,
-				FAKE_IMAGE_LINK, text_orig) : text_orig + " " + FAKE_IMAGE_LINK : text_orig;
+		final String text = mImageUri != null ? mUploadUseExtension ? getImageUploadStatus(this, FAKE_IMAGE_LINK,
+				text_orig) : text_orig + " " + FAKE_IMAGE_LINK : text_orig;
 		final int count = mValidator.getTweetLength(text);
 		final boolean exceeded_limit = count < Validator.MAX_TWEET_LENGTH;
 		final boolean near_limit = count >= Validator.MAX_TWEET_LENGTH - 10;
