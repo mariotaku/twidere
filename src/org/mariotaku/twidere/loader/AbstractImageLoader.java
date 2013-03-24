@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.mariotaku.twidere.Constants;
 import org.mariotaku.gallery3d.util.GalleryUtils;
 import org.mariotaku.twidere.util.ImageValidator;
 
@@ -23,10 +24,12 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.content.AsyncTaskLoader;
+import com.nostra13.universalimageloader.cache.disc.naming.FileNameGenerator;
+import org.mariotaku.twidere.util.URLFileNameGenerator;
 
-public abstract class AbstractImageLoader extends AsyncTaskLoader<AbstractImageLoader.Result> {
+public abstract class AbstractImageLoader extends AsyncTaskLoader<AbstractImageLoader.Result> implements Constants {
 
-	private static final String CACHE_DIR_NAME = "cached_images";
+	private static final String CACHE_DIR_NAME = DIR_NAME_IMAGE_CACHE;
 
 	private final Uri mUri;
 	private final Context mContext;
@@ -34,6 +37,7 @@ public abstract class AbstractImageLoader extends AsyncTaskLoader<AbstractImageL
 	private final Handler mHandler;
 	private final DownloadListener mListener;
 	private final ContentResolver mResolver;
+	private final FileNameGenerator mGenerator;
 
 	protected File mCacheDir, mImageFile;
 
@@ -45,6 +49,7 @@ public abstract class AbstractImageLoader extends AsyncTaskLoader<AbstractImageL
 		mClient = getImageLoaderHttpClient(context);
 		mListener = listener;
 		mResolver = context.getContentResolver();
+		mGenerator = new URLFileNameGenerator();
 		init();
 	}
 
@@ -58,7 +63,7 @@ public abstract class AbstractImageLoader extends AsyncTaskLoader<AbstractImageL
 			if (mCacheDir == null || !mCacheDir.exists()) {
 				init();
 			}
-			final File cache_file = mImageFile = new File(mCacheDir, getURLFilename(url));
+			final File cache_file = mImageFile = new File(mCacheDir, mGenerator.generate(url));
 			try {
 				// from SD cache
 				if (ImageValidator.checkImageValidity(cache_file)) return decodeImage(cache_file);
@@ -126,11 +131,6 @@ public abstract class AbstractImageLoader extends AsyncTaskLoader<AbstractImageL
 			os.write(buffer, 0, rc);
 			rc = is.read(buffer, 0, buffer.length);
 		}
-	}
-
-	private String getURLFilename(final String url) {
-		if (url == null) return null;
-		return url.replaceFirst("https?:\\/\\/", "").replaceAll("[^\\w\\d_]", "_");
 	}
 
 	private void init() {

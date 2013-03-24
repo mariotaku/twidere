@@ -51,7 +51,7 @@ import android.os.Handler;
 import android.webkit.WebView;
 import android.widget.Toast;
 
-import com.nostra13.universalimageloader.cache.disc.impl.TotalSizeLimitedDiscCache;
+import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
@@ -95,13 +95,11 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	public ImageLoader getImageLoader() {
 		if (mImageLoader != null) return mImageLoader;
 		final File cache_dir = getBestCacheDir(this, DIR_NAME_IMAGE_CACHE);
-		final long usable_space = ImageLoaderUtils.getUsableSpace(cache_dir);
-		final long disc_cache_size = Math.min(Math.min(100 * 1024 * 1024, usable_space), Integer.MAX_VALUE);
 		final ImageLoader loader = ImageLoader.getInstance();
 		final ImageLoaderConfiguration.Builder cb = new ImageLoaderConfiguration.Builder(this);
 		cb.threadPoolSize(8);
 		cb.memoryCache(new ImageMemoryCache(40));
-		cb.discCache(new TotalSizeLimitedDiscCache(cache_dir, new URLFileNameGenerator(), (int) disc_cache_size));
+		cb.discCache(new UnlimitedDiscCache(cache_dir, new URLFileNameGenerator()));
 		cb.imageDownloader(mImageDownloader);
 		loader.init(cb.build());
 		return mImageLoader = loader;

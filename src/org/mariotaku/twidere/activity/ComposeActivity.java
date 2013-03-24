@@ -656,13 +656,16 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			mIsImageAttached = true;
 			mIsPhotoAttached = false;
 		}
+		final int selection_end = mEditText.length();
+		mEditText.setSelection(selection_end);
 		return true;
 	}
 
 	private boolean handleEditDraftIntent(final DraftItem draft) {
 		if (draft == null) return false;
 		mEditText.setText(draft.text);
-		mEditText.setSelection(mEditText.length());
+		final int selection_end = mEditText.length();
+		mEditText.setSelection(selection_end);
 		mAccountIds = draft.account_ids;
 		mImageUri = draft.media_uri != null ? Uri.parse(draft.media_uri) : null;
 		mIsImageAttached = draft.is_image_attached;

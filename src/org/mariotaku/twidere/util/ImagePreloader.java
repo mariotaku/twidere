@@ -40,6 +40,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.GridView;
 import android.widget.ListView;
+import com.nostra13.universalimageloader.cache.disc.naming.FileNameGenerator;
 
 /**
  * Lazy image loader for {@link ListView} and {@link GridView} etc.</br> </br>
@@ -58,11 +59,13 @@ public class ImagePreloader implements Constants {
 
 	private final Context mContext;
 	private final ExecutorService mExecutor;
+	private final FileNameGenerator mGenerator;
 	private HttpClientWrapper mClient;
 
 	public ImagePreloader(final Context context) {
 		mContext = context;
 		mExecutor = Executors.newFixedThreadPool(32, new LowestPriorityThreadFactory());
+		mGenerator = new URLFileNameGenerator();
 		reloadConnectivitySettings();
 	}
 
@@ -84,7 +87,7 @@ public class ImagePreloader implements Constants {
 		if (cache_dir_name == null || url == null) return null;
 		final File cache_dir = getBestCacheDir(mContext, cache_dir_name);
 		if (cache_dir == null) return null;
-		final File cache = new File(cache_dir, getFilename(url));
+		final File cache = new File(cache_dir, mGenerator.generate(url));
 		if (ImageValidator.checkImageValidity(cache))
 			return cache;
 		else {
@@ -102,11 +105,6 @@ public class ImagePreloader implements Constants {
 		mClient = getImageLoaderHttpClient(mContext);
 	}
 
-	private String getFilename(final String url) {
-		if (url == null) return null;
-		return url.replaceFirst("https?:\\/\\/", "").replaceAll("[^a-zA-Z0-9]", "_");
-	}
-
 	class ImageLoader implements Runnable {
 		private final ImageToLoad imagetoload;
 
@@ -122,7 +120,7 @@ public class ImagePreloader implements Constants {
 			if (!cache_dir.isDirectory()) {
 				cache_dir.mkdir();
 			}
-			final File cache_file = new File(cache_dir, getFilename(imagetoload.url));
+			final File cache_file = new File(cache_dir, mGenerator.generate(imagetoload.url));
 			// from SD cache
 			if (DEBUG) {
 				Log.d(LOGTAG, "Preload image " + imagetoload.url + " to " + cache_file);
