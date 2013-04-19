@@ -1311,6 +1311,12 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			super.onPostExecute(responses);
 			mAsyncTaskManager.add(new StoreHomeTimelineTask(responses, shouldSetMinId(), !isMaxIdsValid()), true);
 			mGetHomeTimelineTaskId = -1;
+			for (final StatusListResponse response : responses) {
+				if (response.list == null) {
+					showErrorToast(R.string.refreshing_home_timeline, response.exception, true);
+					break;
+				}
+			}
 		}
 
 		@Override
@@ -1371,6 +1377,12 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			super.onPostExecute(responses);
 			mAsyncTaskManager.add(new StoreMentionsTask(responses, shouldSetMinId(), !isMaxIdsValid()), true);
 			mGetMentionsTaskId = -1;
+			for (final StatusListResponse response : responses) {
+				if (response.list == null) {
+					showErrorToast(R.string.refreshing_mentions, response.exception, true);
+					break;
+				}
+			}
 		}
 
 		@Override
@@ -1485,16 +1497,6 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				idx++;
 			}
 			return result;
-		}
-
-		@Override
-		protected void onPostExecute(final List<StatusListResponse> result) {
-			super.onPostExecute(result);
-			for (final StatusListResponse response : result) {
-				if (response.list == null) {
-					showErrorToast(R.string.refreshing_timelines, response.exception, true);
-				}
-			}
 		}
 
 		final boolean isMaxIdsValid() {

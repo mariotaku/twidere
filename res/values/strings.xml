@@ -334,6 +334,8 @@
 	<string name="sending_status">sending tweet</string>
 	<string name="sending_direct_message">sending direct message</string>
 	<string name="refreshing_timelines">refreshing timelines</string>
+	<string name="refreshing_home_timeline">refreshing home timeline</string>
+	<string name="refreshing_mentions">refreshing mentions</string>
 	<string name="refreshing_direct_messages">refreshing direct messages</string>
 	<string name="favoriting">favoriting</string>
 	<string name="unfavoriting">unfavoriting</string>

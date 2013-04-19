@@ -76,9 +76,12 @@
 				android:layout_height="wrap_content"
 				android:layout_below="@+id/sign_in_sign_up"
 				android:layout_margin="8dp"
-				android:minHeight="42dp"
+				android:clickable="true"
+				android:gravity="center_vertical"
+				android:minHeight="36dp"
 				android:onClick="onClick"
-				android:text="@string/sign_in_method_introduction_title"/>
+				android:text="@string/sign_in_method_introduction_title"
+				android:background="?android:attr/itemBackground"/>
 		</RelativeLayout>
 	</ScrollView>
 

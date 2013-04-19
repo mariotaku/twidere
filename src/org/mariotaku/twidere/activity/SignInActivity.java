@@ -32,7 +32,9 @@ import static org.mariotaku.twidere.util.Utils.showErrorToast;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.APIUpgradeConfirmDialog;
+import org.mariotaku.twidere.fragment.BaseDialogFragment;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.util.AsyncTask;
 import org.mariotaku.twidere.util.ColorAnalyser;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator.AuthenticationException;
@@ -51,6 +53,8 @@ import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 import twitter4j.http.HttpClientWrapper;
 import twitter4j.http.HttpResponse;
+import android.app.Dialog;
+import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -76,7 +80,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-import org.mariotaku.twidere.util.AsyncTask;
 
 public class SignInActivity extends BaseActivity implements OnClickListener, TextWatcher {
 
@@ -198,6 +201,10 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 				}
 				intent.putExtras(bundle);
 				startActivityForResult(intent, REQUEST_SET_COLOR);
+				break;
+			}
+			case R.id.sign_in_method_introduction: {
+				new SignInMethodIntroductionDialogFragment().show(getSupportFragmentManager(), "sign_in_method_introduction");
 				break;
 			}
 		}
@@ -400,9 +407,9 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 			final String token = args.getString(INTENT_KEY_REQUEST_TOKEN);
 			final String secret = args.getString(INTENT_KEY_REQUEST_TOKEN_SECRET);
 			final String verifier = args.getString(INTENT_KEY_OAUTH_VERIFIER);
-			mTask = new BrowserSigninUserCredentialsLoader(this, conf, token, secret, verifier, mUserColor);
+			mTask = new BrowserSignInTask(this, conf, token, secret, verifier, mUserColor);
 		} else {
-			mTask = new UserCredentialsLoader(this, conf, mUsername, mPassword, mAuthType, mUserColor);
+			mTask = new SignInTask(this, conf, mUsername, mPassword, mAuthType, mUserColor);
 		}
 		mTask.execute();
 	}
@@ -503,7 +510,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 
 	}
 
-	public static class BrowserSigninUserCredentialsLoader extends AbstractSignInTask {
+	public static class BrowserSignInTask extends AbstractSignInTask {
 
 		private final Configuration conf;
 		private final String request_token, request_token_secret, oauth_verifier;
@@ -511,7 +518,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 
 		private final Context context;
 
-		public BrowserSigninUserCredentialsLoader(final SignInActivity context, final Configuration conf,
+		public BrowserSignInTask(final SignInActivity context, final Configuration conf,
 				final String request_token, final String request_token_secret, final String oauth_verifier,
 				final Integer user_color) {
 			super(context, conf);
@@ -541,8 +548,21 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 			}
 		}
 	}
+	
+	public static class SignInMethodIntroductionDialogFragment extends BaseDialogFragment {
 
-	public static class UserCredentialsLoader extends AbstractSignInTask {
+		@Override
+		public Dialog onCreateDialog(final Bundle savedInstanceState) {
+			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			builder.setTitle(R.string.sign_in_method_introduction_title);
+			builder.setMessage(R.string.sign_in_method_introduction);
+			builder.setPositiveButton(android.R.string.ok, null);
+			return builder.create();
+		}
+		
+	}
+
+	public static class SignInTask extends AbstractSignInTask {
 
 		private final Configuration conf;
 		private final String username, password;
@@ -551,7 +571,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 
 		private final Context context;
 
-		public UserCredentialsLoader(final SignInActivity context, final Configuration conf, final String username,
+		public SignInTask(final SignInActivity context, final Configuration conf, final String username,
 				final String password, final int auth_type, final Integer user_color) {
 			super(context, conf);
 			this.context = context;
