@@ -37,6 +37,8 @@ public interface IStatusesAdapter extends IBaseAdapter {
 
 	public void setLinkHightlightingEnabled(boolean enable);
 
+	public void setLinkUnderlineOnly(boolean underline_only);
+	
 	public void setMentionsHightlightDisabled(boolean disable);
 
 	public void setMultiSelectEnabled(boolean multi);

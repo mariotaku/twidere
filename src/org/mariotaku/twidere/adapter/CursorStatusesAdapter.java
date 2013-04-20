@@ -42,6 +42,7 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.StatusCursorIndices;
+import org.mariotaku.twidere.preference.ThemeColorPreference;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
@@ -52,6 +53,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.Html;
 import android.text.TextUtils;
@@ -75,7 +77,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 
 	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled,
 			mMentionsHighlightDisabled, mDisplaySensitiveContents, mIndicateMyStatusDisabled, mLinkHighlightingEnabled,
-			mFastTimelineProcessingEnabled;
+			mFastTimelineProcessingEnabled, mLinkUnderlineOnly;
 	private float mTextSize;
 	private int mNameDisplayOption, mInlineImagePreviewDisplayOption;
 	private StatusCursorIndices mIndices;
@@ -332,105 +334,109 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 
 	@Override
 	public void setDisplayProfileImage(final boolean display) {
-		if (display != mDisplayProfileImage) {
-			mDisplayProfileImage = display;
-			notifyDataSetChanged();
-		}
+		if (display == mDisplayProfileImage) return;
+		mDisplayProfileImage = display;
+		notifyDataSetChanged();
 	}
 
 	@Override
 	public void setDisplaySensitiveContents(final boolean display) {
-		if (display != mDisplaySensitiveContents) {
-			mDisplaySensitiveContents = display;
-			notifyDataSetChanged();
-		}
+		if (display == mDisplaySensitiveContents) return;
+		mDisplaySensitiveContents = display;
+		notifyDataSetChanged();
 	}
 
 	@Override
 	public void setFastTimelineProcessingEnabled(final boolean enabled) {
-		if (mFastTimelineProcessingEnabled != enabled) {
-			mFastTimelineProcessingEnabled = enabled;
-			notifyDataSetChanged();
-		}
+		if (mFastTimelineProcessingEnabled == enabled) return;
+		mFastTimelineProcessingEnabled = enabled;
+		notifyDataSetChanged();
 	}
 
 	@Override
 	public void setGapDisallowed(final boolean disallowed) {
-		if (mGapDisallowed != disallowed) {
-			mGapDisallowed = disallowed;
-			notifyDataSetChanged();
-		}
-
+		if (mGapDisallowed == disallowed) return;
+		mGapDisallowed = disallowed;
+		notifyDataSetChanged();
 	}
 
 	@Override
 	public void setIndicateMyStatusDisabled(final boolean disable) {
-		if (mIndicateMyStatusDisabled != disable) {
-			mIndicateMyStatusDisabled = disable;
-			notifyDataSetChanged();
-		}
+		if (mIndicateMyStatusDisabled == disable) return;
+		mIndicateMyStatusDisabled = disable;
+		notifyDataSetChanged();
 	}
 
 	@Override
 	public void setInlineImagePreviewDisplayOption(final String option) {
-		if (option != null && !option.equals(mInlineImagePreviewDisplayOption)) {
-			mInlineImagePreviewDisplayOption = getInlineImagePreviewDisplayOptionInt(option);
-			;
-			notifyDataSetChanged();
-		}
+		final int option_int = getInlineImagePreviewDisplayOptionInt(option);
+		if (option_int == mInlineImagePreviewDisplayOption) return;
+		mInlineImagePreviewDisplayOption = option_int;
+		notifyDataSetChanged();
 	}
 
 	@Override
 	public void setLinkHightlightingEnabled(final boolean enable) {
-		if (mLinkHighlightingEnabled != enable) {
-			mLinkHighlightingEnabled = enable;
-			notifyDataSetChanged();
-		}
+		if (mLinkHighlightingEnabled == enable) return;
+		mLinkHighlightingEnabled = enable;
+		notifyDataSetChanged();
 	}
 
 	@Override
-	public void setMentionsHightlightDisabled(final boolean disable) {
-		if (disable != mMentionsHighlightDisabled) {
-			mMentionsHighlightDisabled = disable;
-			notifyDataSetChanged();
+	public void setLinkUnderlineOnly(boolean underline_only) {
+		if (mLinkUnderlineOnly == underline_only) return;
+		if (underline_only) {
+			mLinkify.setLinkColor(Color.TRANSPARENT);
+			mLinkify.setShowUnderline(true);
+		} else {
+			mLinkify.setLinkColor(ThemeColorPreference.getThemeColor(mContext));
+			mLinkify.setShowUnderline(false);
 		}
+		mLinkUnderlineOnly = underline_only;
+		notifyDataSetChanged();
+	}
+	
+	@Override
+	public void setMentionsHightlightDisabled(final boolean disable) {
+		if (disable == mMentionsHighlightDisabled) return;
+		mMentionsHighlightDisabled = disable;
+		notifyDataSetChanged();
 	}
 
 	@Override
 	public void setMultiSelectEnabled(final boolean multi) {
-		if (mMultiSelectEnabled != multi) {
-			mMultiSelectEnabled = multi;
-			notifyDataSetChanged();
-		}
+		if (mMultiSelectEnabled == multi) return;
+		mMultiSelectEnabled = multi;
+		notifyDataSetChanged();
 	}
 
 	@Override
 	public void setNameDisplayOption(final String option) {
-		mNameDisplayOption = getNameDisplayOptionInt(option);
+		final int option_int = getNameDisplayOptionInt(option);
+		if (option_int == mNameDisplayOption) return;
+		mNameDisplayOption = option_int;
+		notifyDataSetChanged();
 	}
 
 	@Override
 	public void setShowAbsoluteTime(final boolean show) {
-		if (show != mShowAbsoluteTime) {
-			mShowAbsoluteTime = show;
-			notifyDataSetChanged();
-		}
+		if (show == mShowAbsoluteTime) return;
+		mShowAbsoluteTime = show;
+		notifyDataSetChanged();
 	}
 
 	@Override
 	public void setShowAccountColor(final boolean show) {
-		if (show != mShowAccountColor) {
-			mShowAccountColor = show;
-			notifyDataSetChanged();
-		}
+		if (show == mShowAccountColor) return;
+		mShowAccountColor = show;
+		notifyDataSetChanged();
 	}
 
 	@Override
 	public void setTextSize(final float text_size) {
-		if (text_size != mTextSize) {
-			mTextSize = text_size;
-			notifyDataSetChanged();
-		}
+		if (text_size == mTextSize) return;
+		mTextSize = text_size;
+		notifyDataSetChanged();
 	}
 
 	@Override

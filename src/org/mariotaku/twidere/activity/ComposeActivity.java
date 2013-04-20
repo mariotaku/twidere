@@ -114,14 +114,16 @@ import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.twidere.model.DraftItem;
 import android.content.ComponentName;
 import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
 
 public class ComposeActivity extends BaseDialogWhenLargeActivity implements TextWatcher, LocationListener,
 		OnMenuItemClickListener, OnClickListener, OnLongClickListener, PopupMenu.OnMenuItemClickListener,
-		OnEditorActionListener, LoaderCallbacks<Bitmap> {
+		OnEditorActionListener {
 
 	private static final String FAKE_IMAGE_LINK = "https://www.example.com/fake_image.jpg";
 	private static final String INTENT_KEY_CONTENT_MODIFIED = "content_modified";
-	private static final String INTENT_KEY_IS_POSSIBLY_SENSITIVE = "is_possibly_sensitive";	private static final String INTENT_KEY_SHOULD_SAVE_ACCOUNTS = "should_save_accounts";
+	private static final String INTENT_KEY_IS_POSSIBLY_SENSITIVE = "is_possibly_sensitive";
+	private static final String INTENT_KEY_SHOULD_SAVE_ACCOUNTS = "should_save_accounts";
 
 	private AsyncTwitterWrapper mTwitterWrapper;
 	private LocationManager mLocationManager;
@@ -129,11 +131,10 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	private ParcelableLocation mRecentLocation;
 	private ContentResolver mResolver;
 	private final Validator mValidator = new Validator();
+	private ImageLoaderWrapper mImageLoader;
 
 	private ActionBar mActionBar;
 	private PopupMenu mPopupMenu;
-
-	private static final int THUMBNAIL_SIZE = 36;
 
 	private ColorView mColorIndicator;
 	private EditText mEditText;
@@ -144,13 +145,12 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	private boolean mIsImageAttached, mIsPhotoAttached, mIsPossiblySensitive, mShouldSaveAccounts;
 	private long[] mAccountIds;
 	private Uri mImageUri, mTempPhotoUri;
-	private boolean mLoaderInitialized, mUploadUseExtension, mContentModified;
+	private boolean mUploadUseExtension, mContentModified;
 	private ParcelableStatus mInReplyToStatus;
 	private ParcelableUser mMentionUser;
 	private DraftItem mDraftItem;
 	private long mInReplyToStatusId;
 
-	//private DialogFragment mUnsavedTweetDialogFragment;
 
 	@Override
 	public void afterTextChanged(final Editable s) {
@@ -278,6 +278,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mTwitterWrapper = getTwidereApplication().getTwitterWrapper();
 		mResolver = getContentResolver();
+		mImageLoader = getTwidereApplication().getImageLoaderWrapper();
 		super.onCreate(savedInstanceState);
 		ActivityAccessor.setFinishOnTouchOutside(this, false);
 		final long[] account_ids = getAccountIds(this);
@@ -352,12 +353,6 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	}
 
 	@Override
-	public Loader<Bitmap> onCreateLoader(final int id, final Bundle args) {
-		final Uri uri = args.getParcelable(INTENT_KEY_URI);
-		return new AttachedImageThumbnailLoader(this, uri);
-	}
-
-	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_compose_actionbar, menu);
 		return super.onCreateOptionsMenu(menu);
@@ -373,17 +368,6 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			}
 		}
 		return false;
-	}
-
-	@Override
-	public void onLoaderReset(final Loader<Bitmap> loader) {
-		mImageThumbnailPreview.setImageBitmap(null);
-	}
-
-	@Override
-	public void onLoadFinished(final Loader<Bitmap> loader, final Bitmap data) {
-		mImageThumbnailPreview.setVisibility(data != null ? View.VISIBLE : View.GONE);
-		mImageThumbnailPreview.setImageBitmap(data);
 	}
 
 	@Override
@@ -782,16 +766,8 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	}
 
 	private void reloadAttachedImageThumbnail() {
-		final LoaderManager lm = getSupportLoaderManager();
-		lm.destroyLoader(0);
-		final Bundle args = new Bundle();
-		args.putParcelable(INTENT_KEY_URI, mImageUri);
-		if (mLoaderInitialized) {
-			lm.restartLoader(0, args, this);
-		} else {
-			lm.initLoader(0, args, this);
-			mLoaderInitialized = true;
-		}
+		mImageThumbnailPreview.setVisibility(mImageUri != null ? View.VISIBLE : View.GONE);
+		mImageLoader.displayPreviewImage(mImageThumbnailPreview, mImageUri != null ? mImageUri.toString() : null);
 	}
 
 	private void sendStatus() {
@@ -922,37 +898,6 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			} catch (final ActivityNotFoundException e) {
 				showErrorToast(this, null, e, false);
 			}
-		}
-	}
-
-	public static final class AttachedImageThumbnailLoader extends AsyncTaskLoader<Bitmap> {
-
-		private final Uri uri;
-
-		public AttachedImageThumbnailLoader(final Context context, final Uri uri) {
-			super(context);
-			this.uri = uri;
-		}
-
-		@Override
-		public Bitmap loadInBackground() {
-			if (uri == null) return null;
-			final String path = uri.getPath();
-			final Context context = getContext();
-			final float density = context.getResources().getDisplayMetrics().density;
-			final int thumbnail_size_px = (int) (THUMBNAIL_SIZE * density);
-			final BitmapFactory.Options o = new BitmapFactory.Options();
-			o.inJustDecodeBounds = true;
-			BitmapFactory.decodeFile(path, o);
-			if (o.outWidth == 0 || o.outHeight == 0) return null;
-			o.inJustDecodeBounds = false;
-			o.inSampleSize = Math.round(Math.max(o.outWidth, o.outHeight) / thumbnail_size_px);
-			return BitmapDecodeHelper.decode(path, o);
-		}
-
-		@Override
-		protected void onStartLoading() {
-			forceLoad();
 		}
 	}
 

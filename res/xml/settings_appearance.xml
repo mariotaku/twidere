@@ -70,15 +70,20 @@
 
 		<CheckBoxPreference
 			android:defaultValue="false"
+			android:disableDependentsState="true"
+			android:key="fast_timeline_processing"
+			android:summary="@string/fast_timeline_processing_summary"
+			android:title="@string/fast_timeline_processing"/>
+		<CheckBoxPreference
+			android:defaultValue="false"
 			android:dependency="fast_timeline_processing"
 			android:key="link_highlighting"
 			android:title="@string/link_highlighting"/>
 		<CheckBoxPreference
 			android:defaultValue="false"
-			android:disableDependentsState="true"
-			android:key="fast_timeline_processing"
-			android:summary="@string/fast_timeline_processing_summary"
-			android:title="@string/fast_timeline_processing"/>
+			android:dependency="link_highlighting"
+			android:key="link_underline_only"
+			android:title="@string/link_underline_only"/>
 		<CheckBoxPreference
 			android:defaultValue="true"
 			android:key="indicate_my_status"

@@ -45,6 +45,7 @@ import com.twitter.Regex;
 import android.text.TextPaint;
 import android.text.style.ClickableSpan;
 import android.content.Context;
+import android.graphics.Color;
 
 /**
  * Linkify take a piece of text and a regular expression and turns all of the
@@ -193,17 +194,21 @@ public class TwidereLinkify {
 
 	private final OnLinkClickListener mOnLinkClickListener;
 	private final Extractor mExtractor = new Extractor();
-	private final int mLinkColor;
-	private final boolean mShowUnderline;
+	private int mLinkColor;
+	private boolean mShowUnderline;
 
 	public TwidereLinkify(final OnLinkClickListener listener, final Context context) {
 		this(listener, context, false);
 	}
 	
 	public TwidereLinkify(final OnLinkClickListener listener, final Context context, final boolean show_underline) {
+		this(listener, context, show_underline, ThemeColorPreference.getThemeColor(context));
+	}
+
+	public TwidereLinkify(final OnLinkClickListener listener, final Context context, final boolean show_underline, final int link_color) {
 		mOnLinkClickListener = listener;
 		mShowUnderline = show_underline;
-		mLinkColor = ThemeColorPreference.getThemeColor(context);
+		mLinkColor = link_color;
 	}
 	
 	public final void applyUserProfileLink(final TextView view, final long account_id, final long user_id, final String screen_name) {
@@ -230,6 +235,14 @@ public class TwidereLinkify {
 		}
 		view.setText(string);
 		addLinkMovementMethod(view);
+	}
+	
+	public void setLinkColor(final int link_color) {
+		mLinkColor = link_color;
+	}
+	
+	public void setShowUnderline(final boolean show_underline) {
+		mShowUnderline = show_underline;
 	}
 
 	/**
@@ -430,7 +443,9 @@ public class TwidereLinkify {
 		
 		@Override
 		public void updateDrawState(final TextPaint ds) {
-            ds.setColor(color);
+			if (color != Color.TRANSPARENT) {
+          	  ds.setColor(color);
+			}
             ds.setUnderlineText(show_underline);
         }
 	}

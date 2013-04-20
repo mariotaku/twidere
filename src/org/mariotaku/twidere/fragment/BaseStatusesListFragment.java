@@ -323,6 +323,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		final boolean indicate_my_status = mPreferences.getBoolean(PREFERENCE_KEY_INDICATE_MY_STATUS, true);
 		final String name_display_option = mPreferences.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION,
 				NAME_DISPLAY_OPTION_BOTH);
+		final boolean link_underline_only = mPreferences.getBoolean(PREFERENCE_KEY_LINK_UNDERLINE_ONLY, false);
 		mAdapter.setMultiSelectEnabled(mMultiSelectManager.isActive());
 		mAdapter.setDisplayProfileImage(display_profile_image);
 		mAdapter.setTextSize(text_size);
@@ -333,6 +334,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		mAdapter.setLinkHightlightingEnabled(link_highlighting);
 		mAdapter.setFastTimelineProcessingEnabled(fast_timeline_processing);
 		mAdapter.setIndicateMyStatusDisabled(isMyTimeline() || !indicate_my_status);
+		mAdapter.setLinkUnderlineOnly(link_underline_only);
 	}
 
 	@Override

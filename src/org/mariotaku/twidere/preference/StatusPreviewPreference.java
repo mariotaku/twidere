@@ -33,6 +33,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.preference.Preference;
 import android.text.Html;
 import android.util.AttributeSet;
@@ -48,6 +49,7 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 
 	private final LayoutInflater mInflater;
 	private final SharedPreferences mPreferences;
+	private final TwidereLinkify mLinkify;
 	private StatusViewHolder mHolder;
 
 	public StatusPreviewPreference(final Context context) {
@@ -61,6 +63,7 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 	public StatusPreviewPreference(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		mInflater = LayoutInflater.from(context);
+		mLinkify = new TwidereLinkify(null, getContext());
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
 	}
@@ -79,6 +82,8 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 		} else if (PREFERENCE_KEY_NAME_DISPLAY_OPTION.equals(key)) {
 			setName();
 		} else if (PREFERENCE_KEY_LINK_HIGHLIGHTING.equals(key)) {
+			setText();
+		} else if (PREFERENCE_KEY_LINK_UNDERLINE_ONLY.equals(key)) {			
 			setText();
 		}
 	}
@@ -163,17 +168,23 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 
 	private void setText() {
 		if (mPreferences == null) return;
+		final boolean underline_only = mPreferences.getBoolean(PREFERENCE_KEY_LINK_UNDERLINE_ONLY, false);
+		if (underline_only) {
+			mLinkify.setLinkColor(Color.TRANSPARENT);
+			mLinkify.setShowUnderline(true);
+		} else {
+			mLinkify.setLinkColor(ThemeColorPreference.getThemeColor(getContext()));
+			mLinkify.setShowUnderline(false);
+		}
 		final boolean fast_timeline_processing = mPreferences
 				.getBoolean(PREFERENCE_KEY_FAST_TIMELINE_PROCESSING, false);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_LINK_HIGHLIGHTING, false) && !fast_timeline_processing) {
 			mHolder.text.setText(Html.fromHtml(TEXT_HTML));
-			final TwidereLinkify linkify = new TwidereLinkify(null, getContext());
-			linkify.applyAllLinks(mHolder.text, 0, false);
+			mLinkify.applyAllLinks(mHolder.text, 0, false);
 			mHolder.text.setMovementMethod(null);
 		} else {
 			mHolder.text.setText(toPlainText(TEXT_HTML));
 		}
-
 	}
 
 	private void setTextSize() {

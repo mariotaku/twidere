@@ -419,5 +419,6 @@
 	<string name="my_profile_image">My profile image</string>
 	<string name="mention_user">Mention <xliff:g id="user">%s</xliff:g></string>
 	<string name="theme_color">Theme color</string>
+	<string name="link_underline_only">Show underline only for links</string>
 
 </resources>
