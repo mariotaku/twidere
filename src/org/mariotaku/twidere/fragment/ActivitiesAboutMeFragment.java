@@ -233,10 +233,13 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 			}
 			holder.reset();
 			holder.setTextSize(mTextSize);
-			final Object item = getItem(position);
-			if (!(item instanceof Activity)) return view;
-			final Activity activity = (Activity) item;
-			final Date created_at = activity.getCreatedAt();
+			final Activity item;
+			try {
+				item = getItem(position);
+			} catch (ClassCastException e) {
+				return view;
+			}
+			final Date created_at = item.getCreatedAt();
 			if (created_at != null) {
 				if (mShowAbsoluteTime) {
 					holder.time.setText(formatSameDayTime(mContext, created_at.getTime()));
@@ -244,15 +247,15 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 					holder.time.setText(getRelativeTimeSpanString(created_at.getTime()));
 				}
 			}
-			final User[] sources = activity.getSources();
-			final Status[] target_statuses = activity.getTargetStatuses();
+			final User[] sources = item.getSources();
+			final Status[] target_statuses = item.getTargetStatuses();
 			final int sources_length = sources != null ? sources.length : 0;
 			final int target_statuses_length = target_statuses != null ? target_statuses.length : 0;
-			final Action action = activity.getAction();
+			final Action action = item.getAction();
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (sources_length > 0) {
 				final User first_source = sources[0];
-				final Status[] target_objects = activity.getTargetObjectStatuses();
+				final Status[] target_objects = item.getTargetObjectStatuses();
 				final String name = mDisplayName ? first_source.getName() : first_source.getScreenName();
 				switch (action.getActionId()) {
 					case Action.ACTION_FAVORITE: {
