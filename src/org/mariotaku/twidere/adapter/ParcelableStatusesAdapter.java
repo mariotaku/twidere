@@ -57,6 +57,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
+import com.twitter.Extractor;
 
 public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> implements IStatusesAdapter,
 		OnClickListener {
@@ -74,6 +75,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			mFastTimelineProcessingEnabled;
 	private float mTextSize;
 	private int mNameDisplayOption, mInlineImagePreviewDisplayOption;
+
 
 	public ParcelableStatusesAdapter(final Context context) {
 		super(context, R.layout.status_list_item);
@@ -160,8 +162,8 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 				holder.setSelected(false);
 			}
 			final String account_screen_name = getAccountScreenName(mContext, status.account_id);
-			final boolean is_mention = mFastTimelineProcessingEnabled ? false : status.text_plain.toLowerCase()
-					.contains('@' + account_screen_name.toLowerCase());
+			final boolean is_mention = mFastTimelineProcessingEnabled ? false : !TextUtils.isEmpty(status.text_plain) &&
+					status.text_plain.toLowerCase().contains('@' + account_screen_name.toLowerCase());
 			final boolean is_my_status = status.account_id == status.user_id;
 			holder.setUserColor(getUserColor(mContext, status.user_id));
 			holder.setHighlightColor(mFastTimelineProcessingEnabled ? 0 : getStatusBackground(

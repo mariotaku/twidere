@@ -121,7 +121,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 
 	private static final String FAKE_IMAGE_LINK = "https://www.example.com/fake_image.jpg";
 	private static final String INTENT_KEY_CONTENT_MODIFIED = "content_modified";
-	private static final String INTENT_KEY_IS_POSSIBLY_SENSITIVE = "is_possibly_sensitive";
+	private static final String INTENT_KEY_IS_POSSIBLY_SENSITIVE = "is_possibly_sensitive";	private static final String INTENT_KEY_SHOULD_SAVE_ACCOUNTS = "should_save_accounts";
 
 	private AsyncTwitterWrapper mTwitterWrapper;
 	private LocationManager mLocationManager;
@@ -141,7 +141,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	private ImageView mImageThumbnailPreview;
 	private MenuBar mMenuBar;
 
-	private boolean mIsImageAttached, mIsPhotoAttached, mIsPossiblySensitive;
+	private boolean mIsImageAttached, mIsPhotoAttached, mIsPossiblySensitive, mShouldSaveAccounts;
 	private long[] mAccountIds;
 	private Uri mImageUri, mTempPhotoUri;
 	private boolean mLoaderInitialized, mUploadUseExtension, mContentModified;
@@ -150,8 +150,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	private DraftItem mDraftItem;
 	private long mInReplyToStatusId;
 
-	private DialogFragment mUnsavedTweetDialogFragment;
-
+	//private DialogFragment mUnsavedTweetDialogFragment;
 
 	@Override
 	public void afterTextChanged(final Editable s) {
@@ -192,7 +191,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 					final long[] account_ids = bundle.getLongArray(INTENT_KEY_IDS);
 					if (account_ids != null) {
 						mAccountIds = account_ids;
-						if (mInReplyToStatus != null && !Intent.ACTION_SEND.equals(getIntent().getAction())) {
+						if (mShouldSaveAccounts) {
 							final SharedPreferences.Editor editor = mPreferences.edit();
 							editor.putString(PREFERENCE_KEY_COMPOSE_ACCOUNTS,
 									ArrayUtils.toString(mAccountIds, ',', false));
@@ -246,9 +245,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	public void onBackPressed() {
 		final String text = mEditText != null ? parseString(mEditText.getText()) : null;
 		if (!isEmpty(text) || mImageUri != null) {
-			mUnsavedTweetDialogFragment = (DialogFragment) Fragment.instantiate(this,
-					UnsavedTweetDialogFragment.class.getName());
-			mUnsavedTweetDialogFragment.show(getSupportFragmentManager(), "unsaved_tweet");
+			new UnsavedTweetDialogFragment().show(getSupportFragmentManager(), "unsaved_tweet");
 			return;
 		}
 		new DiscardTweetTask(this).execute();
@@ -315,6 +312,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			mInReplyToStatusId = savedInstanceState.getLong(INTENT_KEY_STATUS_ID);
 			mMentionUser = savedInstanceState.getParcelable(INTENT_KEY_USER);
 			mDraftItem = savedInstanceState.getParcelable(INTENT_KEY_DRAFT);
+			mShouldSaveAccounts = savedInstanceState.getBoolean(INTENT_KEY_SHOULD_SAVE_ACCOUNTS, false);
 		} else {
 			// The activity was first created
 			final Bundle extras = intent.getExtras();
@@ -490,9 +488,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			case MENU_HOME: {
 				final String text = mEditText != null ? parseString(mEditText.getText()) : null;
 				if (mContentModified && !isEmpty(text)) {
-					mUnsavedTweetDialogFragment = (DialogFragment) Fragment.instantiate(this,
-							UnsavedTweetDialogFragment.class.getName());
-					mUnsavedTweetDialogFragment.show(getSupportFragmentManager(), "unsaved_tweet");
+					new UnsavedTweetDialogFragment().show(getSupportFragmentManager(), "unsaved_tweet");
 				} else {
 					// NavUtils.navigateUpFromSameTask(this);
 					onBackPressed();
@@ -557,6 +553,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		outState.putLong(INTENT_KEY_STATUS_ID, mInReplyToStatusId);
 		outState.putParcelable(INTENT_KEY_USER, mMentionUser);
 		outState.putParcelable(INTENT_KEY_DRAFT, mDraftItem);
+		outState.putBoolean(INTENT_KEY_SHOULD_SAVE_ACCOUNTS, mShouldSaveAccounts);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -613,6 +610,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		return Uri.fromFile(file);
 	}
 	private boolean handleIntent(final String action, final Bundle extras) {
+		mShouldSaveAccounts = false;
 		if (extras == null) return false;
 		mMentionUser = extras.getParcelable(INTENT_KEY_USER);
 		mInReplyToStatus = extras.getParcelable(INTENT_KEY_STATUS);
@@ -637,6 +635,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	}
 
 	private boolean handleDefaultIntent(final Intent intent) {
+		mShouldSaveAccounts = true;
 		if (intent == null) return false;
 		final Bundle extras = intent.getExtras();
 		final Uri data = intent.getData();
@@ -907,7 +906,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				}
 			}
 		}
-		mMenuBar.invalidate();
+		mMenuBar.show();
 		invalidateSupportOptionsMenu();
 	}
 

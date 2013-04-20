@@ -70,6 +70,8 @@ import twitter4j.http.HttpResponseCode;
 import twitter4j.http.RequestMethod;
 import twitter4j.internal.logging.Logger;
 import twitter4j.internal.util.InternalStringUtil;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * HttpClient implementation for Apache HttpClient 4.0.x
@@ -122,10 +124,15 @@ public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCo
 
 			final HostAddressResolver resolver = conf.getHostAddressResolver();
 			final String url_string = req.getURL();
-			final URL url_orig = new URL(url_string);
+			final URI url_orig;
+			try {
+				url_orig = new URI(url_string);
+			} catch (URISyntaxException e) {
+				throw new TwitterException(e);
+			}
 			final String host = url_orig.getHost();
 			final String resolved_host = resolver != null ? resolver.resolve(host) : null;
-			final String resolved_url = isEmpty(resolved_host) ? url_string.replace("://" + host, "://" + resolved_host)
+			final String resolved_url = !isEmpty(resolved_host) ? url_string.replace("://" + host, "://" + resolved_host)
 					: url_string;
 
 			if (req.getMethod() == RequestMethod.GET) {
@@ -170,7 +177,7 @@ public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCo
 			} else if (req.getMethod() == RequestMethod.PUT) {
 				commonsRequest = new HttpPut(resolved_url);
 			} else
-				throw new AssertionError();
+				throw new TwitterException("Unsupported request method " + req.getMethod());
 			final Map<String, String> headers = req.getRequestHeaders();
 			for (final String headerName : headers.keySet()) {
 				commonsRequest.addHeader(headerName, headers.get(headerName));
@@ -180,7 +187,7 @@ public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCo
 					&& (authorizationHeader = req.getAuthorization().getAuthorizationHeader(req)) != null) {
 				commonsRequest.addHeader("Authorization", authorizationHeader);
 			}
-			if (isEmpty(resolved_host) && !host.equals(resolved_host)) {
+			if (!isEmpty(resolved_host) && !resolved_host.equals(host)) {
 				commonsRequest.addHeader("Host", host);
 			}
 

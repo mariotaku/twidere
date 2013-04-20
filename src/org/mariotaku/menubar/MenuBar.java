@@ -49,12 +49,6 @@ public class MenuBar extends TableRow implements PopupMenu.OnMenuItemClickListen
 	}
 
 	@Override
-	public void invalidate() {
-		super.invalidate();
-		show();
-	}
-
-	@Override
 	public boolean onMenuItemClick(final MenuItem item) {
 		if (mItemClickListener != null) return mItemClickListener.onMenuItemClick(item);
 		return false;
@@ -76,6 +70,7 @@ public class MenuBar extends TableRow implements PopupMenu.OnMenuItemClickListen
 				addMenuButton(item);
 			}
 		}
+		invalidate();
 	}
 
 	@Override

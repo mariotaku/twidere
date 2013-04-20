@@ -57,6 +57,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import org.mariotaku.twidere.adapter.ArrayAdapter;
 
 public class ActivitiesAboutMeFragment extends PullToRefreshListFragment implements
 		LoaderCallbacks<List<twitter4j.Activity>> {
@@ -195,7 +196,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 		mAdapter.setShowAbsoluteTime(show_absolute_time);
 	}
 
-	static class ActivitiesAdapter extends BaseAdapter implements IBaseAdapter {
+	static class ActivitiesAdapter extends ArrayAdapter<twitter4j.Activity> implements IBaseAdapter {
 
 		private boolean mDisplayProfileImage, mDisplayName, mShowAbsoluteTime;
 
@@ -204,27 +205,14 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 		private float mTextSize;
 
 		private final ImageLoaderWrapper mProfileImageLoader;
-		private final LayoutInflater mInflater;
 		private final Context mContext;
 
-		private List<twitter4j.Activity> mData;
-
 		public ActivitiesAdapter(final Context context) {
-			mInflater = LayoutInflater.from(context);
+			super(context, R.layout.activity_list_item);
 			mContext = context;
 			final TwidereApplication application = TwidereApplication.getInstance(context);
 			mProfileImageLoader = application.getImageLoaderWrapper();
 			mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
-		}
-
-		@Override
-		public int getCount() {
-			return mData != null ? mData.size() : 0;
-		}
-
-		@Override
-		public twitter4j.Activity getItem(final int position) {
-			return mData.get(position);
 		}
 
 		@Override
@@ -235,7 +223,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 
 		@Override
 		public View getView(final int position, final View convertView, final ViewGroup parent) {
-			final View view = convertView != null ? convertView : mInflater.inflate(R.layout.activity_list_item, null);
+			final View view = super.getView(position, convertView, parent);
 			final Object tag = view.getTag();
 			final ActivityViewHolder holder = tag instanceof ActivityViewHolder ? (ActivityViewHolder) tag
 					: new ActivityViewHolder(view);
@@ -373,8 +361,9 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 		}
 
 		public void setData(final List<twitter4j.Activity> data) {
-			mData = data != null ? data : new ArrayList<twitter4j.Activity>();
-			notifyDataSetChanged();
+			clear();
+			if (data == null) return;
+			addAll(data);
 		}
 
 		@Override

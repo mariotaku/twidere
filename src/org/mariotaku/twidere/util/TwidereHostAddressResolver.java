@@ -52,9 +52,9 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 	private final SharedPreferences mHostMapping, mPreferences;
 	private final HostCache mHostCache = new HostCache(512);
 	private final boolean mLocalMappingOnly;
-	private final String mDNSAddress;
+	private final String mDnsAddress;
 
-	private Resolver mDNS;
+	private Resolver mDns;
 
 	public TwidereHostAddressResolver(final Context context) {
 		this(context, false);
@@ -64,7 +64,7 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 		mHostMapping = context.getSharedPreferences(HOST_MAPPING_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final String address = mPreferences.getString(PREFERENCE_KEY_DNS_SERVER, DEFAULT_DNS_SERVER_ADDRESS);
-		mDNSAddress = isValidIpAddress(address) ? address : DEFAULT_DNS_SERVER_ADDRESS;
+		mDnsAddress = isValidIpAddress(address) ? address : DEFAULT_DNS_SERVER_ADDRESS;
 		mLocalMappingOnly = local_only;
 	}
 
@@ -106,13 +106,13 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 			init();
 		}
 		// Use TCP DNS Query if enabled.
-		if (mDNS != null && mPreferences.getBoolean(PREFERENCE_KEY_TCP_DNS_QUERY, false)) {
+		if (mDns != null && mPreferences.getBoolean(PREFERENCE_KEY_TCP_DNS_QUERY, false)) {
 			final Name name = new Name(host);
 			final Record query = Record.newRecord(name, Type.A, DClass.IN);
 			if (query == null) return host;
 			final Message response;
 			try {
-				response = mDNS.send(Message.newQuery(query));
+				response = mDns.send(Message.newQuery(query));
 			} catch (final IOException e) {
 				return host;
 			}
@@ -162,10 +162,10 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 	}
 
 	void init() throws IOException {
-		if (mDNS != null) return;
-		mDNS = mLocalMappingOnly ? null : new SimpleResolver(mDNSAddress);
-		if (mDNS != null) {
-			mDNS.setTCP(true);
+		if (mDns != null) return;
+		mDns = mLocalMappingOnly ? null : new SimpleResolver(mDnsAddress);
+		if (mDns != null) {
+			mDns.setTCP(true);
 		}
 	}
 
