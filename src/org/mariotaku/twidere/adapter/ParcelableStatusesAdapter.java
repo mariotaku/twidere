@@ -281,6 +281,8 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 				final ImageSpec spec = getAllAvailableImage(status.image_orig_url, true);
 				if (spec != null) {
 					openImage(mContext, spec.full_image_link, spec.orig_link, status.is_possibly_sensitive);
+				} else {
+					openImage(mContext, status.image_orig_url, null, status.is_possibly_sensitive);
 				}
 				break;
 			}

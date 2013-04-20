@@ -9,6 +9,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
+import android.os.Build;
 
 public class MenuItemImpl implements MenuItem {
 
@@ -34,7 +35,7 @@ public class MenuItemImpl implements MenuItem {
 		return false;
 	}
 
-	@TargetApi(14)
+	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	@Override
 	public ActionProvider getActionProvider() {
 		return null;
@@ -125,13 +126,13 @@ public class MenuItemImpl implements MenuItem {
 		return enabled;
 	}
 
-	@TargetApi(14)
+	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	@Override
 	public boolean isVisible() {
 		return visible;
 	}
 
-	@TargetApi(14)
+	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	@Override
 	public MenuItem setActionProvider(final ActionProvider actionProvider) {
 		return this;
@@ -193,7 +194,7 @@ public class MenuItemImpl implements MenuItem {
 		return this;
 	}
 
-	@TargetApi(14)
+	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	@Override
 	public MenuItem setOnActionExpandListener(final OnActionExpandListener listener) {
 		return this;

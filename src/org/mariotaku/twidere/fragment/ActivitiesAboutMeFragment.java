@@ -33,6 +33,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.ArrayAdapter;
 import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.ActivitiesAboutMeLoader;
@@ -42,6 +43,7 @@ import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.view.holder.ActivityViewHolder;
 
+import twitter4j.Activity;
 import twitter4j.Activity.Action;
 import twitter4j.Status;
 import twitter4j.User;
@@ -57,14 +59,13 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import org.mariotaku.twidere.adapter.ArrayAdapter;
 
 public class ActivitiesAboutMeFragment extends PullToRefreshListFragment implements
-		LoaderCallbacks<List<twitter4j.Activity>> {
+		LoaderCallbacks<List<Activity>> {
 
 	private ActivitiesAdapter mAdapter;
 	private SharedPreferences mPreferences;
-	private List<twitter4j.Activity> mData;
+	private List<Activity> mData;
 	private long mAccountId;
 
 	@Override
@@ -78,7 +79,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 	}
 
 	@Override
-	public Loader<List<twitter4j.Activity>> onCreateLoader(final int id, final Bundle args) {
+	public Loader<List<Activity>> onCreateLoader(final int id, final Bundle args) {
 		setProgressBarIndeterminateVisibility(true);
 		final long account_id = mAccountId = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
 		final boolean is_home_tab = args != null ? args.getBoolean(INTENT_KEY_IS_HOME_TAB) : false;
@@ -101,7 +102,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 	public void onListItemClick(final ListView l, final View v, final int position, final long id) {
 		if (mAccountId <= 0) return;
 		final int adapter_pos = position - l.getHeaderViewsCount();
-		final twitter4j.Activity item = mAdapter.getItem(adapter_pos);
+		final Activity item = mAdapter.getItem(adapter_pos);
 		final User[] sources = item.getSources();
 		final Status[] target_statuses = item.getTargetStatuses();
 		final int sources_length = sources != null ? sources.length : 0;
@@ -161,13 +162,13 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 	}
 
 	@Override
-	public void onLoaderReset(final Loader<List<twitter4j.Activity>> loader) {
+	public void onLoaderReset(final Loader<List<Activity>> loader) {
 		mAdapter.setData(null);
 		mData = null;
 	}
 
 	@Override
-	public void onLoadFinished(final Loader<List<twitter4j.Activity>> loader, final List<twitter4j.Activity> data) {
+	public void onLoadFinished(final Loader<List<Activity>> loader, final List<Activity> data) {
 		setProgressBarIndeterminateVisibility(false);
 		mAdapter.setData(data);
 		mData = data;
@@ -196,7 +197,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 		mAdapter.setShowAbsoluteTime(show_absolute_time);
 	}
 
-	static class ActivitiesAdapter extends ArrayAdapter<twitter4j.Activity> implements IBaseAdapter {
+	static class ActivitiesAdapter extends ArrayAdapter<Activity> implements IBaseAdapter {
 
 		private boolean mDisplayProfileImage, mDisplayName, mShowAbsoluteTime;
 
@@ -232,8 +233,10 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 			}
 			holder.reset();
 			holder.setTextSize(mTextSize);
-			final twitter4j.Activity item = getItem(position);
-			final Date created_at = item.getCreatedAt();
+			final Object item = getItem(position);
+			if (!(item instanceof Activity)) return view;
+			final Activity activity = (Activity) item;
+			final Date created_at = activity.getCreatedAt();
 			if (created_at != null) {
 				if (mShowAbsoluteTime) {
 					holder.time.setText(formatSameDayTime(mContext, created_at.getTime()));
@@ -241,15 +244,15 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 					holder.time.setText(getRelativeTimeSpanString(created_at.getTime()));
 				}
 			}
-			final User[] sources = item.getSources();
-			final Status[] target_statuses = item.getTargetStatuses();
+			final User[] sources = activity.getSources();
+			final Status[] target_statuses = activity.getTargetStatuses();
 			final int sources_length = sources != null ? sources.length : 0;
 			final int target_statuses_length = target_statuses != null ? target_statuses.length : 0;
-			final Action action = item.getAction();
+			final Action action = activity.getAction();
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (sources_length > 0) {
 				final User first_source = sources[0];
-				final Status[] target_objects = item.getTargetObjectStatuses();
+				final Status[] target_objects = activity.getTargetObjectStatuses();
 				final String name = mDisplayName ? first_source.getName() : first_source.getScreenName();
 				switch (action.getActionId()) {
 					case Action.ACTION_FAVORITE: {
@@ -360,7 +363,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 			notifyDataSetChanged();
 		}
 
-		public void setData(final List<twitter4j.Activity> data) {
+		public void setData(final List<Activity> data) {
 			clear();
 			if (data == null) return;
 			addAll(data);

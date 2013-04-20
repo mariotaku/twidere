@@ -28,6 +28,16 @@ public class ViewAccessor {
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public static void setLayerType(final View view, final int layerType, final Paint paint) {
-		view.setLayerType(layerType, paint);
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return;
+		ViewAccessorHoneycomb.setLayerType(view, layerType, paint);
+	}	
+
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private static class ViewAccessorHoneycomb {
+
+		private static void setLayerType(final View view, final int layerType, final Paint paint) {
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return;
+			view.setLayerType(layerType, paint);
+		}
 	}
 }

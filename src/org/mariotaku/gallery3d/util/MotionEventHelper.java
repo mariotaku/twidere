@@ -23,7 +23,9 @@ import android.view.MotionEvent;
 import android.view.MotionEvent.PointerCoords;
 
 public final class MotionEventHelper {
+
 	private MotionEventHelper() {
+		throw new AssertionError();
 	}
 
 	public static MotionEvent transformEvent(final MotionEvent e, final Matrix m) {

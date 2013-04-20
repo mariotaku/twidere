@@ -76,7 +76,7 @@ public final class EnvironmentAccessor {
 
 	static {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-			ExternalStoragePublicDirectoryInitializer.init();
+			EnvironmentAccessorSDK8.init();
 		} else {
 			DIRECTORY_ALARMS = "Alarms";
 			DIRECTORY_DCIM = "DCIM";
@@ -92,7 +92,7 @@ public final class EnvironmentAccessor {
 
 	public static File getExternalCacheDir(final Context context) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
-			return GetExternalCacheDirAccessorFroyo.getExternalCacheDir(context);
+			return EnvironmentAccessorSDK8.getExternalCacheDir(context);
 		final File ext_storage_dir = Environment.getExternalStorageDirectory();
 		if (ext_storage_dir != null && ext_storage_dir.isDirectory()) {
 			final String ext_cache_path = ext_storage_dir.getAbsolutePath() + "/Android/data/"
@@ -105,7 +105,7 @@ public final class EnvironmentAccessor {
 
 	public static File getExternalStoragePublicDirectory(final String type) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
-			return GetExternalStoragePublicDirectoryAccessorFroyo.getExternalStoragePublicDirectory(type);
+			return EnvironmentAccessorSDK8.getExternalStoragePublicDirectory(type);
 		else {
 			final File ext_dir = Environment.getExternalStorageDirectory();
 			if (ext_dir == null || type == null) return null;
@@ -114,7 +114,8 @@ public final class EnvironmentAccessor {
 	}
 
 	@TargetApi(Build.VERSION_CODES.FROYO)
-	private static class ExternalStoragePublicDirectoryInitializer {
+	private static class EnvironmentAccessorSDK8 {
+
 		static void init() {
 			DIRECTORY_ALARMS = Environment.DIRECTORY_ALARMS;
 			DIRECTORY_DCIM = Environment.DIRECTORY_DCIM;
@@ -126,19 +127,12 @@ public final class EnvironmentAccessor {
 			DIRECTORY_PODCASTS = Environment.DIRECTORY_PODCASTS;
 			DIRECTORY_RINGTONES = Environment.DIRECTORY_RINGTONES;
 		}
-	}
-
-	@TargetApi(Build.VERSION_CODES.FROYO)
-	private static class GetExternalCacheDirAccessorFroyo {
 
 		private static File getExternalCacheDir(final Context context) {
 			return context.getExternalCacheDir();
 		}
-	}
 
-	@TargetApi(Build.VERSION_CODES.FROYO)
-	private static class GetExternalStoragePublicDirectoryAccessorFroyo {
-		public static File getExternalStoragePublicDirectory(final String type) {
+		private static File getExternalStoragePublicDirectory(final String type) {
 			return Environment.getExternalStoragePublicDirectory(type);
 		}
 	}

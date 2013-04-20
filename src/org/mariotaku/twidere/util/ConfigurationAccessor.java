@@ -16,7 +16,7 @@ public class ConfigurationAccessor {
 
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
 	private static class GetLayoutDirectionAccessorJB {
-		@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+
 		private static int getLayoutDirection(final Configuration conf) {
 			return conf.getLayoutDirection();
 		}

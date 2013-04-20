@@ -28,35 +28,32 @@ public final class ActivityAccessor {
 
 	public static void onBackPressed(final Activity activity) {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ECLAIR) return;
-		OnBackPressedAccessor.onBackPressed(activity);
+		ActivityAccessorSDK5.onBackPressed(activity);
 	}
 
 	public static void overridePendingTransition(final Activity activity, final int enter_anim, final int exit_anim) {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ECLAIR) return;
-		OverridePendingTransitionAccessor.overridePendingTransition(activity, enter_anim, exit_anim);
+		ActivityAccessorSDK5.overridePendingTransition(activity, enter_anim, exit_anim);
 	}
 
 	public static void setFinishOnTouchOutside(final Activity activity, final boolean finish) {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return;
-		SetFinishOnTouchOutsideAccessor.setFinishOnTouchOutside(activity, finish);
+		ActivityAccessorSDK11.setFinishOnTouchOutside(activity, finish);
 	}
 
 	public static void setHomeButtonEnabled(final Activity activity, final boolean enabled) {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) return;
-		SetHomeButtonEnabledAccessor.setHomeButtonEnabled(activity, enabled);
+		ActivityAccessorSDK14.setHomeButtonEnabled(activity, enabled);
 	}
 
 	@TargetApi(Build.VERSION_CODES.ECLAIR)
-	private static class OnBackPressedAccessor {
+	private static class ActivityAccessorSDK5 {
 
 		private static void onBackPressed(final Activity activity) {
 			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ECLAIR) return;
 			activity.onBackPressed();
 		}
-	}
-
-	@TargetApi(Build.VERSION_CODES.ECLAIR)
-	private static class OverridePendingTransitionAccessor {
+		
 		private static void overridePendingTransition(final Activity activity, final int enter_anim, final int exit_anim) {
 			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ECLAIR) return;
 			activity.overridePendingTransition(enter_anim, exit_anim);
@@ -64,7 +61,8 @@ public final class ActivityAccessor {
 	}
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	private static class SetFinishOnTouchOutsideAccessor {
+	private static class ActivityAccessorSDK11 {
+
 		public static void setFinishOnTouchOutside(final Activity activity, final boolean finish) {
 			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return;
 			activity.setFinishOnTouchOutside(finish);
@@ -72,12 +70,11 @@ public final class ActivityAccessor {
 	}
 
 	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-	private static class SetHomeButtonEnabledAccessor {
+	private static class ActivityAccessorSDK14 {
 
 		private static void setHomeButtonEnabled(final Activity activity, final boolean enabled) {
 			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) return;
-			final ActionBar action_bar = activity.getActionBar();
-			action_bar.setHomeButtonEnabled(enabled);
+			activity.getActionBar().setHomeButtonEnabled(enabled);
 		}
 	}
 }
