@@ -3,6 +3,12 @@
 
 	<include layout="@layout/gl_root_group"/>
 
+	<it.sephiroth.android.library.imagezoom.ImageViewTouch
+		android:id="@+id/image_viewer"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@android:color/black"/>
+	
 	<org.mariotaku.twidere.view.HoloProgressBar
 		android:id="@+id/progress"
 		style="?android:attr/progressBarStyleHorizontal"

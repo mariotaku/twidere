@@ -71,12 +71,12 @@ public abstract class AbstractImageLoader extends AsyncTaskLoader<AbstractImageL
 				// from web
 				if (resp == null) return null;
 				final long length = resp.getContentLength();
-				mHandler.post(new DownloadStartRunnable(mListener, length));
+				mHandler.post(new DownloadStartRunnable(this, mListener, length));
 				final InputStream is = resp.asStream();
 				final OutputStream os = new FileOutputStream(cache_file);
 				try {
 					dump(is, os);
-					mHandler.post(new DownloadFinishRunnable(mListener));
+					mHandler.post(new DownloadFinishRunnable(this, mListener));
 				} finally {
 					GalleryUtils.closeSilently(is);
 					GalleryUtils.closeSilently(os);
@@ -91,7 +91,7 @@ public abstract class AbstractImageLoader extends AsyncTaskLoader<AbstractImageL
 				}
 				return decodeImage(cache_file);
 			} catch (final Exception e) {
-				mHandler.post(new DownloadErrorRunnable(mListener, e));
+				mHandler.post(new DownloadErrorRunnable(this, mListener, e));
 				return new Result(null, null, e);
 			}
 		} else if (ContentResolver.SCHEME_FILE.equals(scheme)) {
@@ -171,49 +171,55 @@ public abstract class AbstractImageLoader extends AsyncTaskLoader<AbstractImageL
 
 	private final static class DownloadErrorRunnable implements Runnable {
 
+		private final AbstractImageLoader loader;
 		private final DownloadListener listener;
 		private final Throwable t;
 
-		DownloadErrorRunnable(final DownloadListener listener, final Throwable t) {
+		DownloadErrorRunnable(final AbstractImageLoader loader, final DownloadListener listener, final Throwable t) {
+			this.loader = loader;
 			this.listener = listener;
 			this.t = t;
 		}
 
 		@Override
 		public void run() {
-			if (listener == null) return;
+			if (listener == null || loader.isAbandoned() || loader.isReset()) return;
 			listener.onDownloadError(t);
 		}
 	}
 
 	private final static class DownloadFinishRunnable implements Runnable {
 
+		private final AbstractImageLoader loader;
 		private final DownloadListener listener;
 
-		DownloadFinishRunnable(final DownloadListener listener) {
+		DownloadFinishRunnable(final AbstractImageLoader loader, final DownloadListener listener) {
+			this.loader = loader;
 			this.listener = listener;
 		}
 
 		@Override
 		public void run() {
-			if (listener == null) return;
+			if (listener == null || loader.isAbandoned() || loader.isReset()) return;
 			listener.onDownloadFinished();
 		}
 	}
 
 	private final static class DownloadStartRunnable implements Runnable {
 
+		private final AbstractImageLoader loader;
 		private final DownloadListener listener;
 		private final long total;
 
-		DownloadStartRunnable(final DownloadListener listener, final long total) {
+		DownloadStartRunnable(final AbstractImageLoader loader, final DownloadListener listener, final long total) {
+			this.loader = loader;
 			this.listener = listener;
 			this.total = total;
 		}
 
 		@Override
 		public void run() {
-			if (listener == null) return;
+			if (listener == null || loader.isAbandoned() || loader.isReset()) return;
 			listener.onDownloadStart(total);
 		}
 	}

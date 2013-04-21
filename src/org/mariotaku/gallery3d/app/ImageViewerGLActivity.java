@@ -44,6 +44,7 @@ import android.support.v4.content.Loader;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.ImageView;
 
 public final class ImageViewerGLActivity extends FragmentActivity implements Constants, View.OnClickListener,
 		PhotoView.Listener, GLImageLoader.DownloadListener, LoaderManager.LoaderCallbacks<GLImageLoader.Result> {
@@ -81,7 +82,7 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	private Handler mHandler;
 
 	private boolean mShowBars = true;
-	private volatile boolean mActionBarAllowed = true;
+	private boolean mActionBarAllowed = true;
 	private boolean mIsMenuVisible;
 
 	private long mContentLength;
@@ -92,6 +93,8 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	private boolean mImageLoaded;
 
 	private File mImageFile;
+
+	private ImageView mImageViewer;
 
 	public GLRoot getGLRoot() {
 		return mGLRootView;
@@ -180,6 +183,7 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	public void onContentChanged() {
 		super.onContentChanged();
 		mGLRootView = (GLRootView) findViewById(R.id.gl_root_view);
+		mImageViewer = (ImageView) findViewById(R.id.image_viewer);
 		mProgress = (ProgressBar) findViewById(R.id.progress);
 		mControlButtons = findViewById(R.id.control_buttons);
 		mRefreshStopSaveButton = (ImageButton) findViewById(R.id.refresh_stop_save);
@@ -225,7 +229,16 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	public void onLoadFinished(final Loader<GLImageLoader.Result> loader, final GLImageLoader.Result data) {
 		if (data instanceof GLImageLoader.GLImageResult) {
 			final GLImageLoader.GLImageResult data_gl = (GLImageLoader.GLImageResult) data;
-			mAdapter.setData(data_gl.decoder, data_gl.bitmap, data_gl.orientation);
+			if (data_gl.decoder != null) {
+				mGLRootView.setVisibility(View.VISIBLE);
+				mImageViewer.setVisibility(View.GONE);
+				mAdapter.setData(data_gl.decoder, data_gl.bitmap, data_gl.orientation);
+				mImageViewer.setImageBitmap(null);
+			} else {
+				mGLRootView.setVisibility(View.GONE);
+				mImageViewer.setVisibility(View.VISIBLE);	
+				mImageViewer.setImageBitmap(data_gl.bitmap);
+			}
 			mImageFile = data.file;
 			mImageLoaded = true;
 			mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_save);
