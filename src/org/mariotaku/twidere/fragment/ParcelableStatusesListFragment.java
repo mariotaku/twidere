@@ -250,8 +250,10 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	protected abstract String[] getSavedStatusesFileArgs();
 
 	protected final String getPositionKey() {
+		final String[] args = getSavedStatusesFileArgs();
+		if (args == null || args.length <= 0) return null;
 		try {
-			return encodeQueryParams(ArrayUtils.toString(getSavedStatusesFileArgs(), '.', false) + "." + getTabPosition());
+			return encodeQueryParams(ArrayUtils.toString(args, '.', false) + "." + getTabPosition());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
