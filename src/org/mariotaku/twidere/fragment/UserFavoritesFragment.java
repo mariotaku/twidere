@@ -63,8 +63,8 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 			since_id = args.getLong(INTENT_KEY_SINCE_ID, -1);
 		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		final int tab_position = args.getInt(INTENT_KEY_TAB_POSITION, -1);
-		return new UserFavoritesLoader(getActivity(), account_id, user_id, screen_name, max_id, since_id, getData(),
-				getSavedStatusesFileArgs(), tab_position);
+		return new UserFavoritesLoader(getActivity(), account_id, user_id, screen_name, max_id, since_id,
+				getData(), getSavedStatusesFileArgs(), tab_position);
 	}
 
 	@Override
@@ -86,7 +86,7 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 		final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
 		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-		return new String[] { AUTHORITY_USER_TIMELINE, "account" + account_id, "user" + user_id +
+		return new String[] { AUTHORITY_USER_FAVORITES, "account" + account_id, "user" + user_id,
 			"name" + screen_name };
 	}
 

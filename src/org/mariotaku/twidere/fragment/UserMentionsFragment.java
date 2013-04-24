@@ -51,7 +51,7 @@ public class UserMentionsFragment extends SearchTweetsFragment {
 		if (args == null) return null;
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-		return new String[] { AUTHORITY_LIST_TIMELINE, "account" + account_id, "screen_name" + screen_name };
+		return new String[] { AUTHORITY_USER_MENTIONS, "account" + account_id, "screen_name" + screen_name };
 	}
 
 }

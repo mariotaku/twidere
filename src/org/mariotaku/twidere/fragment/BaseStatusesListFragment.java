@@ -81,7 +81,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	private Runnable mTicker;
 
 	protected ListView mListView;
-	protected IStatusesAdapter mAdapter;
+	protected IStatusesAdapter<Data> mAdapter;
 	protected PopupMenu mPopupMenu;
 
 	protected Data mData;
@@ -89,7 +89,8 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 
 	private boolean mLoadMoreAutomatically;
 
-	private volatile boolean mBusy, mTickerStopped, mReachedBottom, mNotReachedBottomBefore = true;
+	private boolean mBusy, mTickerStopped, mReachedBottom, mNotReachedBottomBefore = true;
+	private int mListScrollOffset;
 
 	private MultiSelectManager mMultiSelectManager;
 	private PositionManager mPositionManager;
@@ -103,7 +104,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	}
 
 	@Override
-	public abstract IStatusesAdapter getListAdapter();
+	public abstract IStatusesAdapter<Data> getListAdapter();
 
 	public ParcelableStatus getSelectedStatus() {
 		return mSelectedStatus;
@@ -212,12 +213,38 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	public void onLoaderReset(final Loader<Data> loader) {
 		mData = null;
 	}
-
+	
 	@Override
-	public void onLoadFinished(final Loader<Data> loader, final Data data) {
+	public final void onLoadFinished(final Loader<Data> loader, final Data data) {
 		mData = data;
+		final int first_visible_position = mListView.getFirstVisiblePosition();
+		if (mListView.getChildCount() > 0) {
+			final View first_child = mListView.getChildAt(0);
+			mListScrollOffset = first_child != null ? first_child.getTop() : 0;
+		}
+		final long last_viewed_id = mAdapter.findItemIdByPosition(first_visible_position);
+		mAdapter.setData(data);
 		mAdapter.setShowAccountColor(getActivatedAccountIds(getActivity()).length > 1);
+		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true);
+		final int curr_first_visible_position = mListView.getFirstVisiblePosition();
+		final long curr_viewed_id = mAdapter.findItemIdByPosition(curr_first_visible_position);
+		final long status_id;
+		if (last_viewed_id <= 0) {
+			if (!remember_position) return;
+			status_id = mPositionManager.getPosition(getPositionKey());
+		} else if ((first_visible_position > 0 || remember_position) && curr_viewed_id > 0
+				   && last_viewed_id != curr_viewed_id) {
+			status_id = last_viewed_id;
+		} else
+			return;
+		final int position = mAdapter.findItemPositionByStatusId(status_id);
+		if (position > -1 && position < mListView.getCount()) {
+			mListView.setSelectionFromTop(position, mListScrollOffset);
+			mListScrollOffset = 0;
+		}
 		setListShown(true);
+		onRefreshComplete();
+		setProgressBarIndeterminateVisibility(false);
 	}
 
 	@Override
@@ -463,6 +490,10 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 
 	protected void savePosition() {
 		final int first_visible_position = mListView.getFirstVisiblePosition();
+		if (mListView.getChildCount() > 0) {
+			final View first_child = mListView.getChildAt(0);
+			mListScrollOffset = first_child != null ? first_child.getTop() : 0;
+		}
 		final long status_id = mAdapter.findItemIdByPosition(first_visible_position);
 		mPositionManager.setPosition(getPositionKey(), status_id);
 	}

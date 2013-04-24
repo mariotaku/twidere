@@ -25,6 +25,8 @@ public interface IStatusesAdapter<Data> extends IBaseAdapter {
 
 	public long findItemIdByPosition(final int position);
 	
+	public int findItemPositionByStatusId(final long status_id);
+	
 	public ParcelableStatus getStatus(int position);
 
 	public void setData(Data data);

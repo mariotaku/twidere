@@ -137,19 +137,6 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 		return loader != null ? loader : new DummyParcelableStatusesLoader(getActivity());
 	}
 
-	public void onDataLoaded(final Loader<List<ParcelableStatus>> loader,
-			final ParcelableStatusesAdapter adapter) {
-		if (loader instanceof ParcelableStatusesLoader) {
-			final Long last_viewed_id = ((ParcelableStatusesLoader) loader).getLastViewedId();
-			if (last_viewed_id != null && mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true)) {
-				final int position = adapter.findItemPositionByStatusId(last_viewed_id);
-				if (position > -1 && position < mListView.getCount()) {
-					mListView.setSelection(position);
-				}
-			}
-		}
-	}
-
 	@Override
 	public void onDestroy() {
 		saveStatusesInternal();
@@ -170,15 +157,14 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 		setProgressBarIndeterminateVisibility(false);
 	}
 
-	@Override
-	public final void onLoadFinished(final Loader<List<ParcelableStatus>> loader, final List<ParcelableStatus> data) {
-		super.onLoadFinished(loader, data);
-		if (!isLoaderUsed()) return;
-		mAdapter.setData(data);
-		onDataLoaded(loader, mAdapter);
-		onRefreshComplete();
-		setProgressBarIndeterminateVisibility(false);
-	}
+//	@Override
+//	public final void onLoadFinished(final Loader<List<ParcelableStatus>> loader, final List<ParcelableStatus> data) {
+//		super.onLoadFinished(loader, data);
+//		if (!isLoaderUsed()) return;
+//		mAdapter.setData(data);
+//		onRefreshComplete();
+//		setProgressBarIndeterminateVisibility(false);
+//	}
 
 	@Override
 	public final void onPostStart() {
