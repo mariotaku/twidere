@@ -19,29 +19,29 @@
 
 package org.mariotaku.twidere.loader;
 
-import static org.mariotaku.twidere.util.Utils.getInlineImagePreviewDisplayOptionInt;
-import static org.mariotaku.twidere.util.Utils.isFiltered;
-
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Handler;
+import android.util.Log;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.List;
-
+import org.mariotaku.jsonserializer.JSONSerializer;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.CacheUsersStatusesTask;
-import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 import org.mariotaku.twidere.util.TwitterWrapper.StatusListResponse;
-
 import twitter4j.Paging;
 import twitter4j.Status;
 import twitter4j.TwitterException;
-import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
+
+import static org.mariotaku.twidere.util.Utils.getInlineImagePreviewDisplayOptionInt;
+import static org.mariotaku.twidere.util.Utils.isFiltered;
 
 public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 
@@ -49,24 +49,40 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 	private final boolean mHiResProfileImage;
 	private final boolean mLargeInlineImagePreview;
 	private final SQLiteDatabase mDatabase;
+	private final Handler mHandler;
+	private final String[] mSavedStatusesFileArgs;
 
 	public Twitter4JStatusLoader(final Context context, final long account_id, final long max_id, final long since_id,
-			final List<ParcelableStatus> data, final String class_name, final boolean is_home_tab) {
-		super(context, account_id, data, class_name, is_home_tab);
+			final List<ParcelableStatus> data, final String[] saved_statuses_args, final int tab_position) {
+		super(context, account_id, data, tab_position);
 		mMaxId = max_id;
 		mSinceId = since_id;
 		mHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 		mLargeInlineImagePreview = getInlineImagePreviewDisplayOptionInt(context) == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE;
 		mDatabase = TwidereApplication.getInstance(context).getSQLiteDatabase();
+		mHandler = new Handler();
+		mSavedStatusesFileArgs = saved_statuses_args;
 	}
 
-	public abstract List<Status> getStatuses(Paging paging) throws TwitterException;
+	protected abstract List<Status> getStatuses(Paging paging) throws TwitterException;
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public SynchronizedStateSavedList<ParcelableStatus, Long> loadInBackground() {
-		final SynchronizedStateSavedList<ParcelableStatus, Long> data = getData();
-		List<Status> statuses = null;
+	public List<ParcelableStatus> loadInBackground() {
+		final List<ParcelableStatus> data = getData();
+		if (isFirstLoad() && getTabPosition() >= 0) {
+			try {
+				final File file = JSONSerializer.getSerializationFile(getContext(), mSavedStatusesFileArgs);
+				final List<ParcelableStatus> statuses = JSONSerializer.listFromFile(file);
+				if (data != null && statuses != null) {
+					data.addAll(statuses);
+					Collections.sort(data);
+				}
+				return data;
+			} catch (final IOException e) {
+			}
+		}
+		final List<Status> statuses;
 		final Context context = getContext();
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final int load_item_limit = prefs.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
@@ -82,15 +98,13 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 			statuses = getStatuses(paging);
 		} catch (final TwitterException e) {
 			e.printStackTrace();
+			return data;
 		}
 		if (statuses != null) {
 			final Status min_status = statuses.size() > 0 ? Collections.min(statuses) : null;
 			final long min_status_id = min_status != null ? min_status.getId() : -1;
 			final boolean insert_gap = min_status_id > 0 && load_item_limit <= statuses.size() && data.size() > 0;
-			if (context instanceof Activity) {
-				((Activity) context).runOnUiThread(CacheUsersStatusesTask.getRunnable(context, new StatusListResponse(
-						mAccountId, statuses)));
-			}
+			mHandler.post(CacheUsersStatusesTask.getRunnable(context, new StatusListResponse(mAccountId, statuses)));
 			for (final Status status : statuses) {
 				final long id = status.getId();
 				deleteStatus(id);

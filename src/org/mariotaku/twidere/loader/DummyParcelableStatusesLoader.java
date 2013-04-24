@@ -19,22 +19,22 @@
 
 package org.mariotaku.twidere.loader;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
 import android.content.Context;
 
 public final class DummyParcelableStatusesLoader extends ParcelableStatusesLoader {
 
-	public DummyParcelableStatusesLoader(final Context context, final long account_id, final List<ParcelableStatus> data) {
-		super(context, account_id, data, null, false);
+	public DummyParcelableStatusesLoader(final Context context) {
+		super(context, -1, null, -1);
 	}
 
 	@Override
-	public SynchronizedStateSavedList<ParcelableStatus, Long> loadInBackground() {
-		return new SynchronizedStateSavedList<ParcelableStatus, Long>();
+	public List<ParcelableStatus> loadInBackground() {
+		return Collections.emptyList();
 	}
 
 }

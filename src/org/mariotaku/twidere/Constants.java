@@ -49,6 +49,7 @@ public interface Constants extends TwitterConstants {
 	public static final String SHARED_PREFERENCES_NAME = "preferences";
 	public static final String PERMISSION_PREFERENCES_NAME = "permissions";
 	public static final String SILENT_NOTIFICATIONS_PREFERENCE_NAME = "silent_notifications";
+	public static final String TIMELINE_POSITIONS_PREFERENCES_NAME = "timeline_positions";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
 	public static final int DATABASES_VERSION = 41;
@@ -146,8 +147,6 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_QUOTE_FORMAT = "quote_format";
 	public static final String PREFERENCE_KEY_DEFAULT_ACCOUNT_ID = "default_account_id";
 	public static final String PREFERENCE_KEY_REMEMBER_POSITION = "remember_position";
-	public static final String PREFERENCE_KEY_SAVED_HOME_TIMELINE_ID = "saved_home_timeline_id";
-	public static final String PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID = "saved_mentions_list_id";
 	public static final String PREFERENCE_KEY_SAVED_TAB_POSITION = "saved_tab_position";
 	public static final String PREFERENCE_KEY_ENABLE_PROXY = "enable_proxy";
 	public static final String PREFERENCE_KEY_PROXY_HOST = "proxy_host";
@@ -385,7 +384,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_IS_PHOTO_ATTACHED = "is_photo_attached";
 	public static final String INTENT_KEY_IS_IMAGE_ATTACHED = "is_image_attached";
 	public static final String INTENT_KEY_ACTIVATED_ONLY = "activated_only";
-	public static final String INTENT_KEY_IS_HOME_TAB = "is_home_tab";
+	public static final String INTENT_KEY_TAB_POSITION = "tab_position";
 	public static final String INTENT_KEY_HAS_RUNNING_TASK = "has_running_task";
 	public static final String INTENT_KEY_OAUTH_VERIFIER = "oauth_verifier";
 	public static final String INTENT_KEY_REQUEST_TOKEN = "request_token";
@@ -484,8 +483,8 @@ public interface Constants extends TwitterConstants {
 	public static final String TABLE_TRENDS_LOCAL = CachedTrends.Local.CONTENT_PATH;
 	public static final String TABLE_TABS = Tabs.CONTENT_PATH;
 	public static final String TABLE_NOTIFICATIONS = TweetStore.CONTENT_PATH_NOTIFICATIONS;
-	public static final String TABLE_CONSUMER_KEY_SECRET = TweetStore.CONTENT_PATH_CONSUMER_KEY_SECRET;
-	public static final String TABLE_PERMISSIONS = TweetStore.CONTENT_PATH_PERMISSIONS;
+	public static final String TABLE_PREFERENCES = TweetStore.Preferences.CONTENT_PATH;
+	public static final String TABLE_PERMISSIONS = TweetStore.Permissions.CONTENT_PATH;
 
 	public static final int TABLE_ID_ACCOUNTS = 1;
 	public static final int TABLE_ID_STATUSES = 2;
@@ -507,7 +506,7 @@ public interface Constants extends TwitterConstants {
 	public static final int TABLE_ID_CACHED_STATUSES = 52;
 	public static final int TABLE_ID_CACHED_HASHTAGS = 53;
 	public static final int VIRTUAL_TABLE_ID_NOTIFICATIONS = 101;
-	public static final int VIRTUAL_TABLE_ID_CONSUMER_KEY_SECRET = 102;
+	public static final int VIRTUAL_TABLE_ID_PREFERENCES = 102;
 	public static final int VIRTUAL_TABLE_ID_PERMISSIONS = 103;
 
 	public static final int LINK_ID_STATUS = 1;

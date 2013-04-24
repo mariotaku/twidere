@@ -21,7 +21,6 @@ package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.loader.UserFavoritesLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -29,6 +28,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
+import java.util.List;
 
 public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 
@@ -51,11 +51,9 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 	};
 
 	@Override
-	public Loader<SynchronizedStateSavedList<ParcelableStatus, Long>> newLoaderInstance(final Bundle args) {
+	public Loader<List<ParcelableStatus>> newLoaderInstance(final Context context, final Bundle args) {
+		if (args == null) return null;
 		long account_id = -1, user_id = -1, max_id = -1, since_id = -1;
-		String screen_name = null;
-		boolean is_home_tab = false;
-		if (args != null) {
 			account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
 			user_id = args.getLong(INTENT_KEY_USER_ID, -1);
 			if (user_id > 0) {
@@ -63,11 +61,10 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 			}
 			max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
 			since_id = args.getLong(INTENT_KEY_SINCE_ID, -1);
-			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-			is_home_tab = args.getBoolean(INTENT_KEY_IS_HOME_TAB);
-		}
+		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
+		final int tab_position = args.getInt(INTENT_KEY_TAB_POSITION, -1);
 		return new UserFavoritesLoader(getActivity(), account_id, user_id, screen_name, max_id, since_id, getData(),
-				getClass().getSimpleName(), is_home_tab);
+				getSavedStatusesFileArgs(), tab_position);
 	}
 
 	@Override
@@ -83,13 +80,14 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 		super.onStop();
 	}
 
-	@Override
-	boolean saveStatuses() {
-		if (getActivity() == null || getView() == null) return false;
-		final int first_visible_position = getListView().getFirstVisiblePosition();
-		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
-		UserFavoritesLoader.writeSerializableStatuses(this, getActivity(), getData(), status_id, getArguments());
-		return true;
+	protected String[] getSavedStatusesFileArgs() {
+		final Bundle args = getArguments();
+		if (args == null) return null;
+		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+		final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
+		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
+		return new String[] { AUTHORITY_USER_TIMELINE, "account" + account_id, "user" + user_id +
+			"name" + screen_name };
 	}
 
 }

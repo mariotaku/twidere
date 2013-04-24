@@ -19,42 +19,40 @@
 
 package org.mariotaku.twidere.fragment;
 
-import org.mariotaku.twidere.loader.UserListTimelineLoader;
-import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.util.SynchronizedStateSavedList;
-
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
+import java.util.List;
+import org.mariotaku.twidere.loader.UserListTimelineLoader;
+import org.mariotaku.twidere.model.ParcelableStatus;
 
 public class UserListTimelineFragment extends ParcelableStatusesListFragment {
 
 	@Override
-	public Loader<SynchronizedStateSavedList<ParcelableStatus, Long>> newLoaderInstance(final Bundle args) {
-		int list_id = -1;
-		long account_id = -1, max_id = -1, since_id = -1, user_id = -1;
-		String screen_name = null, list_name = null;
-		boolean is_home_tab = false;
-		if (args != null) {
-			list_id = args.getInt(INTENT_KEY_LIST_ID, -1);
-			account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-			max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
-			since_id = args.getLong(INTENT_KEY_SINCE_ID, -1);
-			user_id = args.getLong(INTENT_KEY_USER_ID, -1);
-			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-			list_name = args.getString(INTENT_KEY_LIST_NAME);
-			is_home_tab = args.getBoolean(INTENT_KEY_IS_HOME_TAB);
-		}
+	public Loader<List<ParcelableStatus>> newLoaderInstance(final Context context, final Bundle args) {
+		if (args == null) return null;
+		final int list_id = args.getInt(INTENT_KEY_LIST_ID, -1);
+		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+		final long max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
+		final long since_id = args.getLong(INTENT_KEY_SINCE_ID, -1);
+		final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
+		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
+		final String list_name = args.getString(INTENT_KEY_LIST_NAME);
+		final int tab_position = args.getInt(INTENT_KEY_TAB_POSITION, -1);
 		return new UserListTimelineLoader(getActivity(), account_id, list_id, user_id, screen_name, list_name, max_id,
-				since_id, getData(), getClass().getSimpleName(), is_home_tab);
+				since_id, getData(), getSavedStatusesFileArgs(), tab_position);
 	}
 
-	@Override
-	boolean saveStatuses() {
-		if (getActivity() == null || getView() == null) return false;
-		final int first_visible_position = getListView().getFirstVisiblePosition();
-		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
-		UserListTimelineLoader.writeSerializableStatuses(this, getActivity(), getData(), status_id, getArguments());
-		return true;
+	protected String[] getSavedStatusesFileArgs() {
+		final Bundle args = getArguments();
+		if (args == null) return null;
+		final int list_id = args.getInt(INTENT_KEY_LIST_ID, -1);
+		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+		final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
+		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
+		final String list_name = args.getString(INTENT_KEY_LIST_NAME);
+		return new String[] { AUTHORITY_LIST_TIMELINE, "account" + account_id, "list_id" + list_id, "list_name" +
+				list_name, "user" + user_id, "screen_name" + screen_name };
 	}
 
 }

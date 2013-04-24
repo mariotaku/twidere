@@ -39,6 +39,7 @@ import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.MultiSelectManager;
+import org.mariotaku.twidere.util.PositionManager;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
 import android.content.ActivityNotFoundException;
@@ -91,6 +92,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	private volatile boolean mBusy, mTickerStopped, mReachedBottom, mNotReachedBottomBefore = true;
 
 	private MultiSelectManager mMultiSelectManager;
+	private PositionManager mPositionManager;
 
 	public AsyncTaskManager getAsyncTaskManager() {
 		return mAsyncTaskManager;
@@ -118,6 +120,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		super.onActivityCreated(savedInstanceState);
 		mAsyncTaskManager = getAsyncTaskManager();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mPositionManager = new PositionManager(getActivity());
 		mTwitterWrapper = getTwitterWrapper();
 		mMultiSelectManager = getMultiSelectManager();
 		mListView = getListView();
@@ -396,6 +399,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 
 	@Override
 	public void onStop() {
+		savePosition();
 		mMultiSelectManager.unregisterCallback(this);
 		mTickerStopped = true;
 		if (mPopupMenu != null) {
@@ -453,11 +457,24 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		mPopupMenu.show();
 	}
 
-	abstract long[] getNewestStatusIds();
+	protected abstract long[] getNewestStatusIds();
 
-	abstract long[] getOldestStatusIds();
+	protected abstract long[] getOldestStatusIds();
 
-	void setListHeaderFooters(final ListView list) {
+	protected void savePosition() {
+		final int first_visible_position = mListView.getFirstVisiblePosition();
+		final long status_id = mAdapter.findItemIdByPosition(first_visible_position);
+		mPositionManager.setPosition(getPositionKey(), status_id);
+	}
+	
+	protected abstract String getPositionKey();
+	
+	protected void setListHeaderFooters(final ListView list) {
 
+	}
+	
+	protected int getTabPosition() {
+		final Bundle args = getArguments();
+		return args != null ? args.getInt(INTENT_KEY_TAB_POSITION, -1) : -1;
 	}
 }

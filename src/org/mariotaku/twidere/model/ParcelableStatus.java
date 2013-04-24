@@ -32,6 +32,8 @@ import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Date;
 
+import org.mariotaku.jsonserializer.JSONParcel;
+import org.mariotaku.jsonserializer.JSONParcelable;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 
@@ -42,13 +44,58 @@ import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class ParcelableStatus implements Constants, Parcelable, Serializable, Comparable<ParcelableStatus> {
+public class ParcelableStatus implements Constants, Parcelable, JSONParcelable, Serializable, Comparable<ParcelableStatus> {
+
+	public void writeToParcel(JSONParcel out) {
+		out.writeLong("retweet_id", retweet_id);
+		out.writeLong("retweeted_by_id", retweeted_by_id);
+        out.writeLong("status_id", status_id);
+		out.writeLong("account_id", account_id);
+		out.writeLong("user_id", user_id);
+		out.writeLong("status_timestamp", status_timestamp);
+		out.writeLong("retweet_count", retweet_count);
+		out.writeLong("in_reply_to_status_id", in_reply_to_status_id);
+		out.writeBoolean("is_gap", is_gap);
+		out.writeBoolean("is_retweet", is_retweet);
+		out.writeBoolean("is_favorite", is_favorite);
+		out.writeBoolean("is_protected", is_protected);
+		out.writeBoolean("is_verified", is_verified);
+		out.writeBoolean("has_media", has_media);
+		out.writeString("retweeted_by_name", retweeted_by_name);
+		out.writeString("retweeted_by_screen_name", retweeted_by_screen_name);
+		out.writeString("text_html", text_html);
+		out.writeString("text_plain", text_plain);
+		out.writeString("name", name);
+		out.writeString("scrren_name", screen_name);
+		out.writeString("in_reply_to_screen_name", in_reply_to_screen_name);
+		out.writeString("source", source);
+		out.writeString("profile_image_url", profile_image_url);
+		out.writeString("image_preview_url", image_preview_url);
+		out.writeString("image_orig_url", image_orig_url);
+		out.writeParcelable("location", location);
+        out.writeLong("my_retweet_id", my_retweet_id);
+		out.writeBoolean("is_possibly_sensitive", is_possibly_sensitive);
+		out.writeBoolean("is_following", is_following);
+	}
+
 
 	private static final long serialVersionUID = 8687220519842668226L;
 
 	public static final Parcelable.Creator<ParcelableStatus> CREATOR = new Parcelable.Creator<ParcelableStatus>() {
 		@Override
 		public ParcelableStatus createFromParcel(final Parcel in) {
+			return new ParcelableStatus(in);
+		}
+
+		@Override
+		public ParcelableStatus[] newArray(final int size) {
+			return new ParcelableStatus[size];
+		}
+	};
+
+	public static final JSONParcelable.Creator<ParcelableStatus> JSON_CREATOR = new JSONParcelable.Creator<ParcelableStatus>() {
+		@Override
+		public ParcelableStatus createFromParcel(final JSONParcel in) {
 			return new ParcelableStatus(in);
 		}
 
@@ -164,6 +211,39 @@ public class ParcelableStatus implements Constants, Parcelable, Serializable, Co
 		is_following = indices.is_following != -1 ? cursor.getInt(indices.is_following) == 1 : false;
 	}
 
+	public ParcelableStatus(final JSONParcel in) {
+		retweet_id = in.readLong("retweet_id");
+		retweeted_by_id = in.readLong("retweeted_by_id");
+		status_id = in.readLong("status_id");
+		account_id = in.readLong("account_id");
+		user_id = in.readLong("user_id");
+		status_timestamp = in.readLong("status_timestamp");
+		retweet_count = in.readLong("retweet_count");
+		in_reply_to_status_id = in.readLong("in_reply_to_status_id");
+		is_gap = in.readBoolean("is_gap");
+		is_retweet = in.readBoolean("is_retweet");
+		is_favorite = in.readBoolean("is_favorite");
+		is_protected = in.readBoolean("is_protected");
+		is_verified = in.readBoolean("is_verified");
+		has_media = in.readBoolean("has_media");
+		retweeted_by_name = in.readString("retweeted_by_name");
+		retweeted_by_screen_name = in.readString("retweeted_by_screen_name");
+		text_html = in.readString("text_html");
+		text_plain = in.readString("text_plain");
+		name = in.readString("name");
+		screen_name = in.readString("scrren_name");
+		in_reply_to_screen_name = in.readString("in_reply_to_screen_name");
+		source = in.readString("source");
+		profile_image_url = in.readString("profile_image_url");
+		image_preview_url = in.readString("image_preview_url");
+		image_orig_url = in.readString("image_orig_url");
+		location = in.readParcelable("location", ParcelableLocation.JSON_CREATOR);
+		my_retweet_id = in.readLong("my_retweet_id");
+		is_possibly_sensitive = in.readBoolean("is_possibly_sensitive");
+		text_unescaped = toPlainText(text_html);
+		is_following = in.readBoolean("is_following");
+	}
+	
 	public ParcelableStatus(final Parcel in) {
 		retweet_id = in.readLong();
 		retweeted_by_id = in.readLong();

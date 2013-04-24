@@ -19,38 +19,40 @@
 
 package org.mariotaku.twidere.fragment;
 
-import org.mariotaku.twidere.loader.TweetSearchLoader;
-import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.util.SynchronizedStateSavedList;
-
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
+import java.util.List;
+import org.mariotaku.twidere.loader.TweetSearchLoader;
+import org.mariotaku.twidere.model.ParcelableStatus;
 
 public class SearchTweetsFragment extends ParcelableStatusesListFragment {
 
 	@Override
-	public Loader<SynchronizedStateSavedList<ParcelableStatus, Long>> newLoaderInstance(final Bundle args) {
+	public Loader<List<ParcelableStatus>> newLoaderInstance(final Context context, final Bundle args) {
+		if (args == null) return null;
 		long account_id = -1, max_id = -1, since_id = -1;
 		String query = null;
-		boolean is_home_tab = false;
+		int tab_position = -1;
 		if (args != null) {
 			account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
 			max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
 			since_id = args.getLong(INTENT_KEY_SINCE_ID, -1);
 			query = args.getString(INTENT_KEY_QUERY);
-			is_home_tab = args.getBoolean(INTENT_KEY_IS_HOME_TAB);
+			tab_position = args.getInt(INTENT_KEY_TAB_POSITION, -1);
 		}
-		return new TweetSearchLoader(getActivity(), account_id, query, max_id, since_id, getData(), getClass()
-				.getSimpleName(), is_home_tab);
+		return new TweetSearchLoader(getActivity(), account_id, query, max_id, since_id, getData(),
+				getSavedStatusesFileArgs(), tab_position);
 	}
 
-	@Override
-	boolean saveStatuses() {
-		if (getActivity() == null || getView() == null) return false;
-		final int first_visible_position = getListView().getFirstVisiblePosition();
-		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
-		TweetSearchLoader.writeSerializableStatuses(this, getActivity(), getData(), status_id, getArguments());
-		return true;
+	protected String[] getSavedStatusesFileArgs() {
+		final Bundle args = getArguments();
+		if (args == null) return null;
+		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
+		final String query = args.getString(INTENT_KEY_QUERY);
+		return new String[] { AUTHORITY_LIST_TIMELINE, "account" + account_id, "query" + query, "screen_name" +
+				screen_name };
 	}
 
 }

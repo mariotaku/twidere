@@ -85,17 +85,18 @@ public class MentionsFragment extends CursorStatusesListFragment {
 	}
 
 	@Override
-	Uri getContentUri() {
+	protected Uri getContentUri() {
 		return Mentions.CONTENT_URI;
 	}
 
 	@Override
-	int getNotificationIdToClear() {
-		return NOTIFICATION_ID_MENTIONS;
+	protected String getPositionKey() {
+		return "mentions_timeline_" + getTabPosition();
 	}
 
 	@Override
-	String getSavedTimelinePreferenceKey() {
-		return PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID;
+	protected int getNotificationIdToClear() {
+		return NOTIFICATION_ID_MENTIONS;
 	}
+
 }

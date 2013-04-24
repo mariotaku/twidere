@@ -21,40 +21,38 @@ package org.mariotaku.twidere.loader;
 
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 
+import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
-import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
 import twitter4j.Twitter;
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 
-public abstract class ParcelableStatusesLoader extends
-		AsyncTaskLoader<SynchronizedStateSavedList<ParcelableStatus, Long>> implements Constants {
+public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<ParcelableStatus>> implements Constants {
 
 	protected final Twitter mTwitter;
 	protected final long mAccountId;
-	private final String mClassName;
-	private final SynchronizedStateSavedList<ParcelableStatus, Long> mData = new SynchronizedStateSavedList<ParcelableStatus, Long>();
-	private final boolean mFirstLoad, mIsHomeTab;
+	private final List<ParcelableStatus> mData = Collections.synchronizedList(new NoDuplicatesArrayList<ParcelableStatus>());
+	private final boolean mFirstLoad;
+	private final int mTabPosition;
 
 	private Long mLastViewedId;
 
 	public ParcelableStatusesLoader(final Context context, final long account_id, final List<ParcelableStatus> data,
-			final String class_name, final boolean is_home_tab) {
+			final int tab_position) {
 		super(context);
-		mClassName = class_name;
 		mTwitter = getTwitterInstance(context, account_id, true);
 		mAccountId = account_id;
 		mFirstLoad = data == null;
 		if (data != null) {
 			mData.addAll(data);
 		}
-		mIsHomeTab = is_home_tab;
+		mTabPosition = tab_position;
 	}
 
 	public Long getLastViewedId() {
@@ -83,20 +81,16 @@ public abstract class ParcelableStatusesLoader extends
 		return false;
 	}
 
-	protected String getClassName() {
-		return mClassName;
-	}
-
-	protected SynchronizedStateSavedList<ParcelableStatus, Long> getData() {
+	protected List<ParcelableStatus> getData() {
 		return mData;
 	}
 
+	protected int getTabPosition() {
+		return mTabPosition;
+	}
+	
 	protected boolean isFirstLoad() {
 		return mFirstLoad;
-	}
-
-	protected boolean isHomeTab() {
-		return mIsHomeTab;
 	}
 
 	@Override

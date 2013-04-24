@@ -20,15 +20,19 @@
 package org.mariotaku.twidere.model;
 
 import static org.mariotaku.twidere.util.Utils.parseDouble;
-
+ 
+import org.mariotaku.jsonserializer.JSONParcel;
+import org.mariotaku.jsonserializer.JSONParcelable;
+ 
 import java.io.Serializable;
 
 import twitter4j.GeoLocation;
 import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
+ 
 
-public class ParcelableLocation implements Serializable, Parcelable {
+public class ParcelableLocation implements Serializable, Parcelable, JSONParcelable {
 
 	private static final long serialVersionUID = -1690848439775407442L;
 
@@ -37,6 +41,18 @@ public class ParcelableLocation implements Serializable, Parcelable {
 	public static final Parcelable.Creator<ParcelableLocation> CREATOR = new Parcelable.Creator<ParcelableLocation>() {
 		@Override
 		public ParcelableLocation createFromParcel(final Parcel in) {
+			return new ParcelableLocation(in);
+		}
+
+		@Override
+		public ParcelableLocation[] newArray(final int size) {
+			return new ParcelableLocation[size];
+		}
+	};
+	
+	public static final JSONParcelable.Creator<ParcelableLocation> JSON_CREATOR = new JSONParcelable.Creator<ParcelableLocation>() {
+		@Override
+		public ParcelableLocation createFromParcel(final JSONParcel in) {
 			return new ParcelableLocation(in);
 		}
 
@@ -61,6 +77,11 @@ public class ParcelableLocation implements Serializable, Parcelable {
 		longitude = location != null ? location.getLongitude() : -1;
 	}
 
+	public ParcelableLocation(final JSONParcel in) {
+		latitude = in.readDouble("latitude", -1);
+		longitude = in.readDouble("longutude", -1);
+	}
+	
 	public ParcelableLocation(final Parcel in) {
 		latitude = in.readDouble();
 		longitude = in.readDouble();
@@ -121,6 +142,12 @@ public class ParcelableLocation implements Serializable, Parcelable {
 	@Override
 	public String toString() {
 		return "ParcelableLocation{latitude=" + latitude + ", longitude=" + longitude + "}";
+	}
+
+	@Override
+	public void writeToParcel(final JSONParcel out) {
+		out.writeDouble("latitude", latitude);
+		out.writeDouble("longitude", longitude);
 	}
 
 	@Override

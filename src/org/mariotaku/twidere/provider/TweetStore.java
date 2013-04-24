@@ -49,23 +49,13 @@ public final class TweetStore implements Constants {
 
 	public static final String CONTENT_PATH_NULL = "null_content";
 
-	public static final String CONTENT_PATH_CONSUMER_KEY_SECRET = "consumer_key_secret";
-
 	public static final String CONTENT_PATH_NOTIFICATIONS = "notifications";
-
-	public static final String CONTENT_PATH_PERMISSIONS = "permissions";
 
 	public static final Uri CONTENT_URI_NULL = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
 			CONTENT_PATH_NULL);
 
-	public static final Uri CONTENT_URI_CONSUMER_KEY_SECRET = Uri.withAppendedPath(
-			Uri.parse(PROTOCOL_CONTENT + AUTHORITY), CONTENT_PATH_CONSUMER_KEY_SECRET);
-
 	public static final Uri CONTENT_URI_NOTOFICATIONS = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
 			CONTENT_PATH_NOTIFICATIONS);
-
-	public static final Uri CONTENT_URI_PERMISSIONS = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-			CONTENT_PATH_PERMISSIONS);
 
 	public static interface Accounts extends BaseColumns {
 
@@ -703,5 +693,35 @@ public final class TweetStore implements Constants {
 				TYPE_TEXT, TYPE_INT };
 
 		public static final String DEFAULT_SORT_ORDER = POSITION + " ASC";
+	}
+	
+	public static interface Preferences extends BaseColumns {
+		public static final String CONTENT_PATH = "preferences";
+
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+				CONTENT_PATH);
+
+		public static final String KEY = "key";
+
+		public static final String VALUE = "value";
+
+		public static final String[] MATRIX_COLUMNS = new String[] { KEY, VALUE };
+		
+		public static final String[] COLUMNS = new String[] { _ID, KEY, VALUE };
+	}
+
+	public static interface Permissions extends BaseColumns {
+		public static final String CONTENT_PATH = "permissions";
+
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+				CONTENT_PATH);
+
+		public static final String PERMISSION = "permissions";
+
+		public static final String PACKAGE_NAME = "package_name";
+
+		public static final String[] MATRIX_COLUMNS = new String[] { PACKAGE_NAME, PERMISSION };
+
+		public static final String[] COLUMNS = new String[] { _ID, PACKAGE_NAME, PERMISSION };
 	}
 }

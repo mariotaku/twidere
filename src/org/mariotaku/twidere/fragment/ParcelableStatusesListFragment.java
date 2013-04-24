@@ -19,13 +19,16 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.encodeQueryParams;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
+import org.mariotaku.twidere.loader.DummyParcelableStatusesLoader;
 import org.mariotaku.twidere.loader.ParcelableStatusesLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.util.SynchronizedStateSavedList;
+import org.mariotaku.twidere.util.ArrayUtils;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -35,9 +38,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.widget.ListView;
+import org.mariotaku.jsonserializer.JSONSerializer;
+import java.io.File;
+import java.io.IOException;
 
-public abstract class ParcelableStatusesListFragment extends
-		BaseStatusesListFragment<SynchronizedStateSavedList<ParcelableStatus, Long>> {
+public abstract class ParcelableStatusesListFragment extends BaseStatusesListFragment<List<ParcelableStatus>> {
 
 	protected SharedPreferences mPreferences;
 
@@ -105,14 +110,14 @@ public abstract class ParcelableStatusesListFragment extends
 		return true;
 	}
 
-	public abstract Loader<SynchronizedStateSavedList<ParcelableStatus, Long>> newLoaderInstance(Bundle args);
+	public abstract Loader<List<ParcelableStatus>> newLoaderInstance(Context context, Bundle args);
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		if (savedInstanceState != null) {
 			final List<ParcelableStatus> saved = savedInstanceState.getParcelableArrayList(INTENT_KEY_DATA);
 			if (saved != null) {
-				mData = new SynchronizedStateSavedList<ParcelableStatus, Long>(saved);
+				mData = saved;
 			}
 		}
 		mAdapter = new ParcelableStatusesAdapter(getActivity());
@@ -123,15 +128,16 @@ public abstract class ParcelableStatusesListFragment extends
 	}
 
 	@Override
-	public final Loader<SynchronizedStateSavedList<ParcelableStatus, Long>> onCreateLoader(final int id,
+	public final Loader<List<ParcelableStatus>> onCreateLoader(final int id,
 			final Bundle args) {
 		if (isLoaderUsed()) {
 			setProgressBarIndeterminateVisibility(true);
 		}
-		return newLoaderInstance(args);
+		final Loader<List<ParcelableStatus>> loader = newLoaderInstance(getActivity(), args);
+		return loader != null ? loader : new DummyParcelableStatusesLoader(getActivity());
 	}
 
-	public void onDataLoaded(final Loader<SynchronizedStateSavedList<ParcelableStatus, Long>> loader,
+	public void onDataLoaded(final Loader<List<ParcelableStatus>> loader,
 			final ParcelableStatusesAdapter adapter) {
 		if (loader instanceof ParcelableStatusesLoader) {
 			final Long last_viewed_id = ((ParcelableStatusesLoader) loader).getLastViewedId();
@@ -157,7 +163,7 @@ public abstract class ParcelableStatusesListFragment extends
 	}
 
 	@Override
-	public final void onLoaderReset(final Loader<SynchronizedStateSavedList<ParcelableStatus, Long>> loader) {
+	public final void onLoaderReset(final Loader<List<ParcelableStatus>> loader) {
 		super.onLoaderReset(loader);
 		if (!isLoaderUsed()) return;
 		onRefreshComplete();
@@ -165,8 +171,7 @@ public abstract class ParcelableStatusesListFragment extends
 	}
 
 	@Override
-	public final void onLoadFinished(final Loader<SynchronizedStateSavedList<ParcelableStatus, Long>> loader,
-			final SynchronizedStateSavedList<ParcelableStatus, Long> data) {
+	public final void onLoadFinished(final Loader<List<ParcelableStatus>> loader, final List<ParcelableStatus> data) {
 		super.onLoadFinished(loader, data);
 		if (!isLoaderUsed()) return;
 		mAdapter.setData(data);
@@ -230,19 +235,40 @@ public abstract class ParcelableStatusesListFragment extends
 	}
 
 	@Override
-	final long[] getNewestStatusIds() {
+	protected final long[] getNewestStatusIds() {
 		final long last_id = mAdapter.getCount() > 0 ? mAdapter.getItem(0).status_id : -1;
 		return last_id > 0 ? new long[] { last_id } : null;
 	}
 
 	@Override
-	final long[] getOldestStatusIds() {
+	protected final long[] getOldestStatusIds() {
 		final int last_idx = mAdapter.getCount() - 1;
 		final long last_id = last_idx >= 0 ? mAdapter.getItem(last_idx).status_id : -1;
 		return last_id > 0 ? new long[] { last_id } : null;
 	}
 
-	boolean saveStatuses() {
+	protected final boolean saveStatuses() {
+		if (mIsStatusesSaved) return true;
+		final int items_limit = mPreferences.getInt(PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
+		final List<ParcelableStatus> data = getData();
+		final List<ParcelableStatus> statuses = data.subList(0, Math.min(items_limit, data.size()));
+		try {
+			final File file = JSONSerializer.getSerializationFile(getActivity(), getSavedStatusesFileArgs());
+			JSONSerializer.toFile(file, statuses.toArray(new ParcelableStatus[statuses.size()]));
+		} catch (IOException e) {
+			return false;
+		}
 		return true;
+	}
+	
+	protected abstract String[] getSavedStatusesFileArgs();
+
+	protected final String getPositionKey() {
+		try {
+			return encodeQueryParams(ArrayUtils.toString(getSavedStatusesFileArgs(), '.', false) + "." + getTabPosition());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

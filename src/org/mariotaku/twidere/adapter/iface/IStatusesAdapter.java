@@ -21,9 +21,13 @@ package org.mariotaku.twidere.adapter.iface;
 
 import org.mariotaku.twidere.model.ParcelableStatus;
 
-public interface IStatusesAdapter extends IBaseAdapter {
+public interface IStatusesAdapter<Data> extends IBaseAdapter {
 
+	public long findItemIdByPosition(final int position);
+	
 	public ParcelableStatus getStatus(int position);
+
+	public void setData(Data data);
 
 	public void setDisplaySensitiveContents(boolean display);
 

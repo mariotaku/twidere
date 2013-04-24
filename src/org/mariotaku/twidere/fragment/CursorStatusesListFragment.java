@@ -121,7 +121,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 		final long status_id;
 		if (last_viewed_id <= 0) {
 			if (!remember_position) return;
-			status_id = mPreferences.getLong(getSavedTimelinePreferenceKey(), -1);
+			status_id = mPreferences.getLong(getPositionKey(), -1);
 		} else if ((first_visible_position > 0 || remember_position) && curr_viewed_id > 0
 				&& last_viewed_id != curr_viewed_id) {
 			status_id = last_viewed_id;
@@ -219,21 +219,19 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 		return false;
 	}
 
-	abstract Uri getContentUri();
+	protected abstract Uri getContentUri();
 
 	@Override
-	long[] getNewestStatusIds() {
+	protected long[] getNewestStatusIds() {
 		return getNewestStatusIdsFromDatabase(getActivity(), getContentUri());
 	}
 
-	abstract int getNotificationIdToClear();
+	protected abstract int getNotificationIdToClear();
 
 	@Override
-	long[] getOldestStatusIds() {
+	protected long[] getOldestStatusIds() {
 		return getOldestStatusIdsFromDatabase(getActivity(), getContentUri());
 	}
-
-	abstract String getSavedTimelinePreferenceKey();
 
 	void saveReadPosition() {
 		final int first_visible_position = mListView.getFirstVisiblePosition();
@@ -242,7 +240,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 			mListScrollOffset = first_child != null ? first_child.getTop() : 0;
 		}
 		final long status_id = getListAdapter().findItemIdByPosition(first_visible_position);
-		mPreferences.edit().putLong(getSavedTimelinePreferenceKey(), status_id).commit();
+		mPreferences.edit().putLong(getPositionKey(), status_id).commit();
 	}
 
 }

@@ -65,7 +65,7 @@ import android.view.ViewGroup.MarginLayoutParams;
 import android.text.Spanned;
 import android.text.SpannableString;
 
-public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatusesAdapter, OnClickListener {
+public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatusesAdapter<Cursor>, OnClickListener {
 
 	private final Context mContext;
 	private final Resources mResources;
@@ -330,6 +330,11 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 				break;
 			}
 		}
+	}
+	
+	@Override
+	public void setData(final Cursor data) {
+		swapCursor(data);
 	}
 
 	@Override

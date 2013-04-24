@@ -82,8 +82,8 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 	public Loader<List<Activity>> onCreateLoader(final int id, final Bundle args) {
 		setProgressBarIndeterminateVisibility(true);
 		final long account_id = mAccountId = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
-		final boolean is_home_tab = args != null ? args.getBoolean(INTENT_KEY_IS_HOME_TAB) : false;
-		return new ActivitiesAboutMeLoader(getActivity(), account_id, mData, getClass().getSimpleName(), is_home_tab);
+		//final boolean is_home_tab = args != null ? args.getBoolean(INTENT_KEY_IS_HOME_TAB) : false;
+		return new ActivitiesAboutMeLoader(getActivity(), account_id, mData, getClass().getSimpleName(), true);
 	}
 
 	@Override

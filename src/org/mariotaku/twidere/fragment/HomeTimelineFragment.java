@@ -86,18 +86,18 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 	}
 
 	@Override
-	Uri getContentUri() {
+	protected Uri getContentUri() {
 		return Statuses.CONTENT_URI;
 	}
 
 	@Override
-	int getNotificationIdToClear() {
+	protected int getNotificationIdToClear() {
 		return NOTIFICATION_ID_HOME_TIMELINE;
 	}
 
 	@Override
-	String getSavedTimelinePreferenceKey() {
-		return PREFERENCE_KEY_SAVED_HOME_TIMELINE_ID;
+	protected String getPositionKey() {
+		return "home_timeline_" + getTabPosition();
 	}
 
 }

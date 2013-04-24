@@ -19,22 +19,6 @@
 
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
-import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
-import static org.mariotaku.twidere.util.Utils.openUserProfile;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.mariotaku.popupmenu.PopupMenu;
-import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.UsersAdapter;
-import org.mariotaku.twidere.model.Panes;
-import org.mariotaku.twidere.model.ParcelableUser;
-import org.mariotaku.twidere.util.MultiSelectManager;
-import org.mariotaku.twidere.util.SynchronizedStateSavedList;
-
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -53,8 +37,22 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
-
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.mariotaku.popupmenu.PopupMenu;
+import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.UsersAdapter;
+import org.mariotaku.twidere.model.Panes;
+import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.util.MultiSelectManager;
+import org.mariotaku.twidere.util.NoDuplicatesArrayList;
+
+import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
+import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
+import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
 abstract class BaseUsersListFragment extends PullToRefreshListFragment implements
 		LoaderCallbacks<List<ParcelableUser>>, OnScrollListener, OnItemLongClickListener, Panes.Left,
@@ -74,7 +72,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	private boolean mLoadMoreAutomatically;
 	private ListView mListView;
 	private long mAccountId;
-	private final SynchronizedStateSavedList<ParcelableUser, Long> mData = new SynchronizedStateSavedList<ParcelableUser, Long>();
+	private final List<ParcelableUser> mData = Collections.synchronizedList(new NoDuplicatesArrayList<ParcelableUser>());
 	private volatile boolean mReachedBottom, mNotReachedBottomBefore = true, mTickerStopped, mBusy;
 
 	private ParcelableUser mSelectedUser;

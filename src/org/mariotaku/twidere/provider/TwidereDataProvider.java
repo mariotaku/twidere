@@ -44,7 +44,6 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.model.BundleCursor;
 import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -85,6 +84,8 @@ import android.text.Html;
 
 import com.twitter.Extractor;
 import java.util.Set;
+import android.database.MatrixCursor;
+import java.util.Map;
 
 public final class TwidereDataProvider extends ContentProvider implements Constants {
 
@@ -258,24 +259,23 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		try {
 			final int table_id = getTableId(uri);
 			if (table_id == VIRTUAL_TABLE_ID_PERMISSIONS) {
-				final Bundle bundle = new Bundle();
-				bundle.putInt(INTENT_KEY_PERMISSIONS, mPermissionsManager.getPermissions(Binder.getCallingUid()));
-				return new BundleCursor(bundle);
+				final MatrixCursor c = new MatrixCursor(TweetStore.Permissions.MATRIX_COLUMNS);
+				final Map<String, Integer> map = mPermissionsManager.getAll();
+				for (final Map.Entry<String, Integer> item : map.entrySet()) {
+					c.addRow(new Object[] {item.getKey(), item.getValue()});
+				}
+				return c;
 			}
 			final String table = getTableNameById(table_id);
 			checkReadPermission(table_id, table, projection);
 			switch (table_id) {
-				case VIRTUAL_TABLE_ID_CONSUMER_KEY_SECRET: {
-					final String consumer_key = mPreferences.getString(PREFERENCE_KEY_CONSUMER_KEY,
-							TWITTER_CONSUMER_KEY).trim();
-					final String consumer_secret = mPreferences.getString(PREFERENCE_KEY_CONSUMER_SECRET,
-							TWITTER_CONSUMER_SECRET).trim();
-					final Bundle bundle = new Bundle();
-					bundle.putString(PREFERENCE_KEY_CONSUMER_KEY, isEmpty(consumer_key) ? TWITTER_CONSUMER_KEY
-							: consumer_key);
-					bundle.putString(PREFERENCE_KEY_CONSUMER_SECRET, isEmpty(consumer_secret) ? TWITTER_CONSUMER_KEY
-							: consumer_secret);
-					return new BundleCursor(bundle);
+				case VIRTUAL_TABLE_ID_PREFERENCES: {
+					final MatrixCursor c = new MatrixCursor(TweetStore.Preferences.MATRIX_COLUMNS);
+					final Map<String, ?> map = mPreferences.getAll();
+					for (final Map.Entry<String, ?> item : map.entrySet()) {
+						c.addRow(new Object[] {item.getKey(), item.getValue()});
+					}
+					return c;
 				}
 				case TABLE_ID_DIRECT_MESSAGES_CONVERSATION: {
 					final List<String> segments = uri.getPathSegments();
@@ -376,7 +376,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 
 	private void checkReadPermission(final int id, final String table, final String[] projection) {
 		switch (id) {
-			case VIRTUAL_TABLE_ID_CONSUMER_KEY_SECRET: {
+			case VIRTUAL_TABLE_ID_PREFERENCES: {
 				if (!checkPermission(PERMISSION_ACCOUNTS))
 					throw new SecurityException("Access database " + table
 							+ " requires level PERMISSION_LEVEL_ACCOUNTS");

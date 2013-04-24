@@ -1824,7 +1824,6 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				final long min_id = response != null && response.data != null ? response.data.getLong(
 						INTENT_KEY_MIN_ID, -1) : -1;
 				extras.putLong(INTENT_KEY_MIN_ID, min_id);
-				mPreferences.edit().putLong(PREFERENCE_KEY_SAVED_HOME_TIMELINE_ID, min_id).commit();
 			}
 			mContext.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtras(extras));
 			super.onPostExecute(response);
@@ -1857,7 +1856,6 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				final long min_id = response != null && response.data != null ? response.data.getLong(
 						INTENT_KEY_MIN_ID, -1) : -1;
 				extras.putLong(INTENT_KEY_MIN_ID, min_id);
-				mPreferences.edit().putLong(PREFERENCE_KEY_SAVED_MENTIONS_LIST_ID, min_id).commit();
 			}
 			mContext.sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtras(extras));
 			super.onPostExecute(response);

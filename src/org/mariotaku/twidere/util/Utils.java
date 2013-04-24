@@ -198,6 +198,7 @@ import android.view.SubMenu;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.net.URLEncoder;
 
 public final class Utils implements Constants {
 
@@ -239,8 +240,8 @@ public final class Utils implements Constants {
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_HASHTAGS, TABLE_ID_CACHED_HASHTAGS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_NOTIFICATIONS + "/#",
 				VIRTUAL_TABLE_ID_NOTIFICATIONS);
-		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CONSUMER_KEY_SECRET,
-				VIRTUAL_TABLE_ID_CONSUMER_KEY_SECRET);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_PREFERENCES,
+				VIRTUAL_TABLE_ID_PREFERENCES);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_PERMISSIONS, VIRTUAL_TABLE_ID_PERMISSIONS);
 
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_STATUS, null, LINK_ID_STATUS);
@@ -607,6 +608,28 @@ public final class Utils implements Constants {
 		}
 		intent.putExtra(CameraCropActivity.EXTRA_SCALE_UP_IF_NEEDED, scaleUpIfNeeded);
 		return intent;
+	}
+
+	public static String encodeQueryParams(final String value) throws IOException {
+		final String encoded = URLEncoder.encode(value, "UTF-8");
+		final StringBuilder buf = new StringBuilder();
+		final int length = encoded.length();
+		char focus;
+		for (int i = 0; i < length; i++) {
+			focus = encoded.charAt(i);
+			if (focus == '*') {
+				buf.append("%2A");
+			} else if (focus == '+') {
+				buf.append("%20");
+			} else if (focus == '%' && i + 1 < encoded.length() && encoded.charAt(i + 1) == '7'
+					   && encoded.charAt(i + 2) == 'E') {
+				buf.append('~');
+				i += 2;
+			} else {
+				buf.append(focus);
+			}
+		}
+		return buf.toString();
 	}
 
 	public static boolean equals(final Object object1, final Object object2) {
@@ -1674,7 +1697,7 @@ public final class Utils implements Constants {
 				final String type = cur.getString(idx_type);
 				final String name = cur.getString(idx_name);
 				final Bundle args = parseArguments(cur.getString(idx_arguments));
-				args.putBoolean(INTENT_KEY_IS_HOME_TAB, true);
+				args.putInt(INTENT_KEY_TAB_POSITION, position);
 				final Class<? extends Fragment> fragment = CUSTOM_TABS_FRAGMENT_MAP.get(type);
 				if (name != null && fragment != null) {
 					tabs.add(new TabSpec(name, getTabIconObject(icon_type), fragment, args, position));
@@ -2847,18 +2870,18 @@ public final class Utils implements Constants {
 					final String key = key_obj.toString();
 					final Object value = json.get(key);
 					if (value instanceof Boolean) {
-						bundle.putBoolean(key, json.getBoolean(key));
+						bundle.putBoolean(key, json.optBoolean(key));
 					} else if (value instanceof Integer) {
 						// Simple workaround for account_id
 						if (INTENT_KEY_ACCOUNT_ID.equals(key)) {
-							bundle.putLong(key, json.getLong(key));
+							bundle.putLong(key, json.optLong(key));
 						} else {
-							bundle.putInt(key, json.getInt(key));
+							bundle.putInt(key, json.optInt(key));
 						}
 					} else if (value instanceof Long) {
-						bundle.putLong(key, json.getLong(key));
+						bundle.putLong(key, json.optLong(key));
 					} else if (value instanceof String) {
-						bundle.putString(key, json.getString(key));
+						bundle.putString(key, json.optString(key));
 					} else {
 						Log.w(LOGTAG, "Unknown type " + value.getClass().getSimpleName() + " in arguments key " + key);
 					}

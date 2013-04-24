@@ -30,7 +30,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.util.SerializationUtil;
 
 import twitter4j.Activity;
 import twitter4j.Paging;
@@ -75,15 +74,15 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Act
 
 	@Override
 	public List<Activity> loadInBackground() {
-		if (mIsFirstLoad && mIsHomeTab && mClassName != null) {
-			try {
-				final File f = new File(getContext().getCacheDir(), mClassName + "." + getAccountId());
-				@SuppressWarnings("unchecked")
-				final List<Activity> cached_activities = (List<Activity>) SerializationUtil.read(f.getPath());
-				return cached_activities;
-			} catch (final IOException e) {
-			}
-		}
+//		if (mIsFirstLoad && mIsHomeTab && mClassName != null) {
+//			try {
+//				final File f = new File(getContext().getCacheDir(), mClassName + "." + getAccountId());
+//				@SuppressWarnings("unchecked")
+//				final List<Activity> cached_activities = (List<Activity>) SerializationUtil.read(f.getPath());
+//				return cached_activities;
+//			} catch (final IOException e) {
+//			}
+//		}
 		ResponseList<Activity> activities = null;
 		try {
 			final Paging paging = new Paging();

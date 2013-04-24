@@ -9,6 +9,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Binder;
 import android.os.Process;
+import java.util.Map;
+import java.util.HashMap;
 
 public class PermissionsManager implements Constants {
 
@@ -71,6 +73,22 @@ public class PermissionsManager implements Constants {
 		return editor.commit();
 
 	}
+	
+	public Map<String, Integer> getAll() {
+		final Map<String, Integer> map = new HashMap<String, Integer>();
+		for (Map.Entry<String, ?> entry : mPreferences.getAll().entrySet()) {
+			if (entry.getValue() instanceof Integer) {
+				map.put(entry.getKey(), (Integer) entry.getValue());
+			}
+		}
+		return map;
+	}
+
+	public String getPackageNameByUid(final int uid) {
+		final String[] pkgs = mPackageManager.getPackagesForUid(uid);
+		if (pkgs != null && pkgs.length > 0) return pkgs[0];
+		return null;
+	}
 
 	public int getPermissions(final int uid) {
 		return getPermissions(getPackageNameByUid(uid));
@@ -86,11 +104,5 @@ public class PermissionsManager implements Constants {
 		final SharedPreferences.Editor editor = mPreferences.edit();
 		editor.remove(package_name);
 		return editor.commit();
-	}
-
-	private String getPackageNameByUid(final int uid) {
-		final String[] pkgs = mPackageManager.getPackagesForUid(uid);
-		if (pkgs != null && pkgs.length > 0) return pkgs[0];
-		return null;
 	}
 }

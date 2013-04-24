@@ -61,7 +61,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
 import com.twitter.Extractor;
 
-public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> implements IStatusesAdapter,
+public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> implements IStatusesAdapter<List<ParcelableStatus>>,
 		OnClickListener {
 
 	private final Context mContext;
@@ -298,6 +298,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		}
 	}
 
+	@Override
 	public void setData(final List<ParcelableStatus> data) {
 		clear();
 		if (data == null) return;

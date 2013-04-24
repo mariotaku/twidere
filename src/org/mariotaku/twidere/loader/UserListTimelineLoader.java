@@ -26,8 +26,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.util.SerializationUtil;
-import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 
 import twitter4j.Paging;
 import twitter4j.ResponseList;
@@ -46,8 +44,8 @@ public class UserListTimelineLoader extends Twitter4JStatusLoader {
 
 	public UserListTimelineLoader(final Context context, final long account_id, final int list_id, final long user_id,
 			final String screen_name, final String list_name, final long max_id, final long since_id,
-			final List<ParcelableStatus> data, final String class_name, final boolean is_home_tab) {
-		super(context, account_id, max_id, since_id, data, class_name, is_home_tab);
+					final List<ParcelableStatus> data, final String[] saved_statuses_args, final int tab_position) {
+		super(context, account_id, max_id, since_id, data, saved_statuses_args, tab_position);
 		mContext = context;
 		mListId = list_id;
 		mUserId = user_id;
@@ -65,50 +63,6 @@ public class UserListTimelineLoader extends Twitter4JStatusLoader {
 			if (list != null && list.getId() > 0) return mTwitter.getUserListStatuses(list.getId(), paging);
 		}
 		return null;
-	}
-
-	@Override
-	public SynchronizedStateSavedList<ParcelableStatus, Long> loadInBackground() {
-		if (isFirstLoad() && isHomeTab() && getClassName() != null) {
-			try {
-				final String path = SerializationUtil.getSerializationFilePath(mContext, getClassName(), mAccountId,
-						mListId, mUserId, mScreenName, mListName);
-				final SynchronizedStateSavedList<ParcelableStatus, Long> statuses = SerializationUtil.read(path);
-				setLastViewedId(statuses.getState());
-				final SynchronizedStateSavedList<ParcelableStatus, Long> data = getData();
-				if (data != null && statuses != null) {
-					data.addAll(statuses);
-					Collections.sort(data);
-				}
-				return data;
-			} catch (final IOException e) {
-			}
-		}
-		return super.loadInBackground();
-	}
-
-	public static void writeSerializableStatuses(final Object instance, final Context context,
-			final List<ParcelableStatus> data, final long last_viewed_id, final Bundle args) {
-		if (instance == null || context == null || data == null || args == null) return;
-		final int list_id = args.getInt(INTENT_KEY_LIST_ID, -1);
-		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-		final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
-		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-		final String list_name = args.getString(INTENT_KEY_LIST_NAME);
-		final int items_limit = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getInt(
-				PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
-		try {
-			final int size = data.size();
-			final SynchronizedStateSavedList<ParcelableStatus, Long> statuses = new SynchronizedStateSavedList<ParcelableStatus, Long>(
-					data.subList(0, size > items_limit ? items_limit : size));
-			if (last_viewed_id > 0) {
-				statuses.setState(last_viewed_id);
-			}
-			final String path = SerializationUtil.getSerializationFilePath(context,
-					instance.getClass().getSimpleName(), account_id, list_id, user_id, screen_name, list_name);
-			SerializationUtil.write(statuses, path);
-		} catch (final IOException e) {
-		}
 	}
 
 }

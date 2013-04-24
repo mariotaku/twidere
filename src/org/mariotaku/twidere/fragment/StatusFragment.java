@@ -62,7 +62,6 @@ import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.HtmlEscapeHelper;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
-import org.mariotaku.twidere.util.SynchronizedStateSavedList;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 import org.mariotaku.twidere.view.ExtendedFrameLayout;
@@ -114,7 +113,7 @@ import com.twitter.Extractor;
 import edu.ucdavis.earlybird.ProfilingUtil;
 
 public class StatusFragment extends ParcelableStatusesListFragment implements OnClickListener, Panes.Right,
-		OnImageClickListener {
+OnImageClickListener {
 
 	private static final int LOADER_ID_STATUS = 1;
 	private static final int LOADER_ID_FOLLOW = 2;
@@ -479,9 +478,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	}
 
 	@Override
-	public Loader<SynchronizedStateSavedList<ParcelableStatus, Long>> newLoaderInstance(final Bundle args) {
-		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
-		return new DummyParcelableStatusesLoader(getActivity(), account_id, getData());
+	public Loader<List<ParcelableStatus>> newLoaderInstance(final Context context, final Bundle args) {
+		return null;
 	}
 
 	@Override
@@ -754,7 +752,12 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	}
 
 	@Override
-	void setListHeaderFooters(final ListView list) {
+	protected String[] getSavedStatusesFileArgs() {
+		return null;
+	}
+
+	@Override
+	protected void setListHeaderFooters(final ListView list) {
 		list.addFooterView(mStatusView);
 	}
 
