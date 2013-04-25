@@ -33,7 +33,7 @@ import twitter4j.User;
 import twitter4j.UserList;
 import android.content.Context;
 
-public class UserListMembersLoader extends ParcelableUsersLoader {
+public class UserListMembersLoader extends Twitter4JUsersLoader {
 
 	private final int mListId;
 	private final long mAccountId, mUserId, mCursor;
@@ -45,8 +45,8 @@ public class UserListMembersLoader extends ParcelableUsersLoader {
 	private long mNextCursor = -2, mPrevCursor = -2;
 
 	public UserListMembersLoader(final Context context, final long account_id, final int list_id, final long user_id,
-			final String screen_name, final String list_name, final long cursor, final List<ParcelableUser> users_list) {
-		super(context, account_id, users_list);
+			final String screen_name, final String list_name, final long cursor, final List<ParcelableUser> data) {
+		super(context, account_id, data);
 		mListId = list_id;
 		mCursor = cursor;
 		mAccountId = account_id;
@@ -72,8 +72,7 @@ public class UserListMembersLoader extends ParcelableUsersLoader {
 	}
 
 	@Override
-	public List<ParcelableUser> getUsers() throws TwitterException {
-		final Twitter twitter = getTwitter();
+	public List<User> getUsers(final Twitter twitter) throws TwitterException {
 		if (twitter == null) return null;
 		final PagableResponseList<User> users;
 		if (mListId > 0) {
@@ -103,12 +102,11 @@ public class UserListMembersLoader extends ParcelableUsersLoader {
 		}
 		mNextCursor = users.getNextCursor();
 		mPrevCursor = users.getPreviousCursor();
-		final List<ParcelableUser> result = new ArrayList<ParcelableUser>();
-		final int size = users.size();
-		for (int i = 0; i < size; i++) {
-			result.add(new ParcelableUser(users.get(i), mAccountId, (mCursor + 1) * 20 + i, mHiResProfileImage));
-		}
-		return result;
+		return users;
+	}
+
+	protected long getUserPosition(final User user, final int index) {
+		return (mCursor + 1) * 20 + index;
 	}
 
 }

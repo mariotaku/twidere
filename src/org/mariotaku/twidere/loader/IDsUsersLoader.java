@@ -33,40 +33,38 @@ import twitter4j.TwitterException;
 import twitter4j.User;
 import android.content.Context;
 import android.content.SharedPreferences;
+import java.util.Arrays;
+import twitter4j.Paging;
 
-public abstract class IDsUsersLoader extends ParcelableUsersLoader {
+public abstract class IDsUsersLoader extends Twitter4JUsersLoader {
 
 	private final long mMaxId;
-	private IDs mIDs;
 	private final SharedPreferences mPreferences;
 	private final int mLoadItemLimit;
 
+	private IDs mIDs;
+
 	public IDsUsersLoader(final Context context, final long account_id, final long max_id,
-			final List<ParcelableUser> users_list) {
-		super(context, account_id, users_list);
+			final List<ParcelableUser> data) {
+		super(context, account_id, data);
 		mMaxId = max_id;
 		mPreferences = getContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final int prefs_load_item_limit = mPreferences.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT,
 				PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
-		mLoadItemLimit = prefs_load_item_limit > 100 ? 100 : prefs_load_item_limit;
+		mLoadItemLimit = Math.min(100, prefs_load_item_limit);
 	}
 
-	public abstract IDs getIDs() throws TwitterException;
+	protected abstract IDs getIDs(Twitter twitter) throws TwitterException;
 
-	public long[] getIDsArray() {
+	protected final long[] getIDsArray() {
 		return mIDs != null ? mIDs.getIDs() : null;
 	}
 
-	public int getLoadItemLimit() {
-		return mLoadItemLimit;
-	}
-
 	@Override
-	public List<ParcelableUser> getUsers() throws TwitterException {
-		final Twitter twitter = getTwitter();
+	public List<User> getUsers(final Twitter twitter) throws TwitterException {
 		if (twitter == null) return null;
 		if (mIDs == null) {
-			mIDs = getIDs();
+			mIDs = getIDs(twitter);
 			if (mIDs == null) return null;
 		}
 		final long[] ids = mIDs.getIDs();
@@ -75,18 +73,14 @@ public abstract class IDsUsersLoader extends ParcelableUsersLoader {
 		if (max_id_idx == ids.length - 1) return Collections.emptyList();
 		final int count = max_id_idx + mLoadItemLimit < ids.length ? mLoadItemLimit : ids.length - max_id_idx;
 		final long[] ids_to_load = new long[count];
-		int temp_idx = max_id_idx;
-		for (int i = 0; i < count; i++) {
-			ids_to_load[i] = ids[temp_idx];
-			temp_idx++;
-		}
-		final ResponseList<User> users = twitter.lookupUsers(ids_to_load);
-		final List<ParcelableUser> result = new ArrayList<ParcelableUser>();
-		for (final User user : users) {
-			final int position = ArrayUtils.indexOf(mIDs.getIDs(), user.getId());
-			result.add(new ParcelableUser(user, mAccountId, position, mHiResProfileImage));
-		}
-		return result;
+		System.arraycopy(ids, max_id_idx, ids_to_load, 0, count);
+		return twitter.lookupUsers(ids_to_load);
+	}
+	
+	protected long getUserPosition(final User user, final int index) {
+		final long[] ids = getIDsArray();
+		if (ids == null) return -1;
+		return ArrayUtils.indexOf(ids, user.getId());
 	}
 
 }

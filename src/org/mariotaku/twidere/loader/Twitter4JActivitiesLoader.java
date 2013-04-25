@@ -40,40 +40,47 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
+import org.mariotaku.twidere.model.ParcelableActivity;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
-public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Activity>> implements Constants {
+public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<ParcelableActivity>> implements Constants {
 
 	private final Twitter mTwitter;
 	private final long mAccountId;
-	private final List<Activity> mData;
-	private final boolean mIsFirstLoad, mIsHomeTab;
-	private final String mClassName;
+	private final List<ParcelableActivity> mData = Collections.synchronizedList(new NoDuplicatesArrayList<ParcelableActivity>());
+	private final boolean mIsFirstLoad;
+	private final int mTabPosition;
+
+	private final boolean mHiResProfileImage;
+
+	private final String[] mSavedActivitiesFileArgs;
 
 	public Twitter4JActivitiesLoader(final Context context, final long account_id, final List<Activity> data,
-			final String class_name, final boolean is_home_tab) {
+			final String[] save_file_args, final int tab_position) {
 		super(context);
 		mTwitter = getTwitterInstance(context, account_id, true);
 		mAccountId = account_id;
 		mIsFirstLoad = data == null;
-		mIsHomeTab = is_home_tab;
-		mClassName = class_name;
-		mData = data != null ? data : new ArrayList<Activity>();
+		mTabPosition = tab_position;
+		mSavedActivitiesFileArgs = save_file_args;
+		mHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
-	public long getAccountId() {
+	protected final long getAccountId() {
 		return mAccountId;
 	}
 
-	public List<Activity> getData() {
+	public List<ParcelableActivity> getData() {
 		return mData;
 	}
 
-	public Twitter getTwitter() {
+	protected Twitter getTwitter() {
 		return mTwitter;
 	}
 
 	@Override
-	public List<Activity> loadInBackground() {
+	public List<ParcelableActivity> loadInBackground() {
 //		if (mIsFirstLoad && mIsHomeTab && mClassName != null) {
 //			try {
 //				final File f = new File(getContext().getCacheDir(), mClassName + "." + getAccountId());
@@ -83,22 +90,25 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Act
 //			} catch (final IOException e) {
 //			}
 //		}
-		ResponseList<Activity> activities = null;
+		final ResponseList<Activity> activities;
 		try {
 			final Paging paging = new Paging();
 			final SharedPreferences prefs = getContext().getSharedPreferences(SHARED_PREFERENCES_NAME,
 					Context.MODE_PRIVATE);
 			final int load_item_limit = prefs
 					.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
-			paging.setCount(load_item_limit > 100 ? 100 : load_item_limit);
+			paging.setCount(Math.min(100, load_item_limit));
 			activities = getActivities(paging);
 		} catch (final TwitterException e) {
 			e.printStackTrace();
+			return mData;
 		}
-		if (activities != null) {
-			Collections.sort(activities);
+		mData.clear();
+		for (final Activity activity : activities) {
+			mData.add(new ParcelableActivity(activity, mAccountId, mHiResProfileImage));
 		}
-		return activities;
+		Collections.sort(mData);
+		return mData;
 	}
 
 	@Override
@@ -106,21 +116,6 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Act
 		forceLoad();
 	}
 
-	abstract ResponseList<Activity> getActivities(Paging paging) throws TwitterException;
-
-	public static void writeSerializableStatuses(final Object instance, final Context context,
-			final List<Activity> data, final Bundle args) {
-		if (instance == null || context == null || data == null || args == null) return;
-		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-		try {
-			final FileOutputStream fos = new FileOutputStream(new File(context.getCacheDir(), instance.getClass()
-					.getSimpleName() + "." + account_id));
-			final ObjectOutputStream os = new ObjectOutputStream(fos);
-			os.writeObject(data);
-			os.close();
-			fos.close();
-		} catch (final IOException e) {
-		}
-	}
+	protected abstract ResponseList<Activity> getActivities(Paging paging) throws TwitterException;
 
 }

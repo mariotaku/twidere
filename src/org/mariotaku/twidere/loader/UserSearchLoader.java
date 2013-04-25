@@ -30,31 +30,27 @@ import twitter4j.TwitterException;
 import twitter4j.User;
 import android.content.Context;
 
-public class UserSearchLoader extends ParcelableUsersLoader {
+public class UserSearchLoader extends Twitter4JUsersLoader {
 
 	private final String mQuery;
 	private final int mPage;
 	private final long mAccountId;
 
 	public UserSearchLoader(final Context context, final long account_id, final String query, final int page,
-			final List<ParcelableUser> users_list) {
-		super(context, account_id, users_list);
+			final List<ParcelableUser> data) {
+		super(context, account_id, data);
 		mQuery = query;
 		mPage = page;
 		mAccountId = account_id;
 	}
 
 	@Override
-	public List<ParcelableUser> getUsers() throws TwitterException {
-		final Twitter twitter = getTwitter();
+	public List<User> getUsers(final Twitter twitter) throws TwitterException {
 		if (twitter == null) return null;
-		final ResponseList<User> users = twitter.searchUsers(mQuery, mPage);
-		final List<ParcelableUser> result = new ArrayList<ParcelableUser>();
-		final int size = users.size();
-		for (int i = 0; i < size; i++) {
-			result.add(new ParcelableUser(users.get(i), mAccountId, (mPage - 1) * 20 + i, mHiResProfileImage));
-		}
-		return result;
+		return twitter.searchUsers(mQuery, mPage);
 	}
 
+	protected long getUserPosition(final User user, final int index) {
+		return (mPage + 1) * 20 + index;
+	}
 }

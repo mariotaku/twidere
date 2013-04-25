@@ -19,8 +19,6 @@
 
 package org.mariotaku.twidere.loader;
 
-import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
-
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.List;
@@ -35,19 +33,14 @@ import android.support.v4.content.AsyncTaskLoader;
 
 public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<ParcelableStatus>> implements Constants {
 
-	protected final Twitter mTwitter;
-	protected final long mAccountId;
 	private final List<ParcelableStatus> mData = Collections.synchronizedList(new NoDuplicatesArrayList<ParcelableStatus>());
 	private final boolean mFirstLoad;
 	private final int mTabPosition;
 
 	private Long mLastViewedId;
 
-	public ParcelableStatusesLoader(final Context context, final long account_id, final List<ParcelableStatus> data,
-			final int tab_position) {
+	public ParcelableStatusesLoader(final Context context, final List<ParcelableStatus> data, final int tab_position) {
 		super(context);
-		mTwitter = getTwitterInstance(context, account_id, true);
-		mAccountId = account_id;
 		mFirstLoad = data == null;
 		if (data != null) {
 			mData.addAll(data);

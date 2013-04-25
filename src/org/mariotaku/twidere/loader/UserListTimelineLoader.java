@@ -19,23 +19,19 @@
 
 package org.mariotaku.twidere.loader;
 
-import static org.mariotaku.twidere.util.Utils.findUserList;
-
-import java.io.IOException;
-import java.util.Collections;
+import android.content.Context;
 import java.util.List;
-
 import org.mariotaku.twidere.model.ParcelableStatus;
-
 import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
+import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.UserList;
-import android.content.Context;
-import android.os.Bundle;
 
-public class UserListTimelineLoader extends Twitter4JStatusLoader {
+import static org.mariotaku.twidere.util.Utils.findUserList;
+
+public class UserListTimelineLoader extends Twitter4JStatusesLoader {
 
 	private final long mUserId;
 	private final String mScreenName, mListName;
@@ -54,13 +50,13 @@ public class UserListTimelineLoader extends Twitter4JStatusLoader {
 	}
 
 	@Override
-	public ResponseList<Status> getStatuses(final Paging paging) throws TwitterException {
-		if (mTwitter == null) return null;
+	public ResponseList<Status> getStatuses(final Twitter twitter, final Paging paging) throws TwitterException {
+		if (twitter == null) return null;
 		if (mListId > 0)
-			return mTwitter.getUserListStatuses(mListId, paging);
+			return twitter.getUserListStatuses(mListId, paging);
 		else {
-			final UserList list = findUserList(mTwitter, mUserId, mScreenName, mListName);
-			if (list != null && list.getId() > 0) return mTwitter.getUserListStatuses(list.getId(), paging);
+			final UserList list = findUserList(twitter, mUserId, mScreenName, mListName);
+			if (list != null && list.getId() > 0) return twitter.getUserListStatuses(list.getId(), paging);
 		}
 		return null;
 	}

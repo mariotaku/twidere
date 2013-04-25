@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.loader;
 
+import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
@@ -38,13 +40,16 @@ import org.mariotaku.twidere.util.CacheUsersStatusesTask;
 import org.mariotaku.twidere.util.TwitterWrapper.StatusListResponse;
 import twitter4j.Paging;
 import twitter4j.Status;
+import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
 import static org.mariotaku.twidere.util.Utils.getInlineImagePreviewDisplayOptionInt;
 import static org.mariotaku.twidere.util.Utils.isFiltered;
 
-public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
+public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 
+	private final Context mContext;
+	private final long mAccountId;
 	private final long mMaxId, mSinceId;
 	private final boolean mHiResProfileImage;
 	private final boolean mLargeInlineImagePreview;
@@ -52,9 +57,11 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 	private final Handler mHandler;
 	private final String[] mSavedStatusesFileArgs;
 
-	public Twitter4JStatusLoader(final Context context, final long account_id, final long max_id, final long since_id,
+	public Twitter4JStatusesLoader(final Context context, final long account_id, final long max_id, final long since_id,
 			final List<ParcelableStatus> data, final String[] saved_statuses_args, final int tab_position) {
-		super(context, account_id, data, tab_position);
+		super(context, data, tab_position);
+		mContext = context;
+		mAccountId = account_id;
 		mMaxId = max_id;
 		mSinceId = since_id;
 		mHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
@@ -64,8 +71,12 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 		mSavedStatusesFileArgs = saved_statuses_args;
 	}
 
-	protected abstract List<Status> getStatuses(Paging paging) throws TwitterException;
+	protected abstract List<Status> getStatuses(Twitter twitter, Paging paging) throws TwitterException;
 
+	protected final Twitter getTwitter() {
+		return getTwitterInstance(mContext, mAccountId, true);
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ParcelableStatus> loadInBackground() {
@@ -95,7 +106,7 @@ public abstract class Twitter4JStatusLoader extends ParcelableStatusesLoader {
 			if (mSinceId > 0) {
 				paging.setSinceId(mSinceId);
 			}
-			statuses = getStatuses(paging);
+			statuses = getStatuses(getTwitter(), paging);
 		} catch (final TwitterException e) {
 			e.printStackTrace();
 			return data;

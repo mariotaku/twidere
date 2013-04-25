@@ -280,6 +280,8 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		mResolver = getContentResolver();
 		mImageLoader = getTwidereApplication().getImageLoaderWrapper();
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.compose);
+		setSupportProgressBarIndeterminateVisibility(false);
 		ActivityAccessor.setFinishOnTouchOutside(this, false);
 		final long[] account_ids = getAccountIds(this);
 		if (account_ids.length <= 0) {
@@ -289,7 +291,6 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			finish();
 			return;
 		}
-		setContentView(R.layout.compose);
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 		mImageThumbnailPreview.setOnClickListener(this);
@@ -845,6 +846,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			iconAttachLocation.setColorFilter(activated_color, Mode.MULTIPLY);
 			itemAttachLocation.setTitle(R.string.remove_location);
 		} else {
+			setSupportProgressBarIndeterminateVisibility(false);
 			mPreferences.edit().putBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false).commit();
 			iconAttachLocation.clearColorFilter();
 			itemAttachLocation.setTitle(R.string.add_location);

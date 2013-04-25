@@ -31,12 +31,12 @@ import android.content.Context;
 public class ActivitiesAboutMeLoader extends Twitter4JActivitiesLoader {
 
 	public ActivitiesAboutMeLoader(final Context context, final long account_id, final List<Activity> data,
-			final String class_name, final boolean is_home_tab) {
-		super(context, account_id, data, class_name, is_home_tab);
+			final String[] save_file_args, final int tab_position) {
+		super(context, account_id, data, save_file_args, tab_position);
 	}
 
 	@Override
-	ResponseList<Activity> getActivities(final Paging paging) throws TwitterException {
+	protected ResponseList<Activity> getActivities(final Paging paging) throws TwitterException {
 		final Twitter twitter = getTwitter();
 		if (twitter == null) return null;
 		return twitter.getActivitiesAboutMe(paging);

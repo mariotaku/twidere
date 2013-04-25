@@ -19,22 +19,17 @@
 
 package org.mariotaku.twidere.loader;
 
-import java.io.IOException;
+import android.content.Context;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.ConcurrentModificationException;
 import java.util.List;
-
 import org.mariotaku.twidere.model.ParcelableStatus;
-
 import twitter4j.Paging;
 import twitter4j.Query;
 import twitter4j.Status;
+import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import android.content.Context;
-import android.os.Bundle;
 
-public class TweetSearchLoader extends Twitter4JStatusLoader {
+public class TweetSearchLoader extends Twitter4JStatusesLoader {
 
 	private final String mQuery;
 
@@ -45,14 +40,14 @@ public class TweetSearchLoader extends Twitter4JStatusLoader {
 	}
 
 	@Override
-	public List<Status> getStatuses(final Paging paging) throws TwitterException {
-		if (mTwitter == null) return null;
+	public List<Status> getStatuses(final Twitter twitter, final Paging paging) throws TwitterException {
+		if (twitter == null) return null;
 		final Query query = new Query(mQuery);
 		query.setRpp(paging.getCount());
 		if (paging.getMaxId() > 0) {
 			query.setMaxId(paging.getMaxId());
 		}
-		return Arrays.asList(mTwitter.search(query).getStatuses());
+		return Arrays.asList(twitter.search(query).getStatuses());
 	}
 
 }

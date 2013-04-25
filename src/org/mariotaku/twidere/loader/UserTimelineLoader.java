@@ -32,8 +32,9 @@ import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.TwitterException;
+import twitter4j.Twitter;
 
-public class UserTimelineLoader extends Twitter4JStatusLoader {
+public class UserTimelineLoader extends Twitter4JStatusesLoader {
 
 	private final long mUserId;
 	private final String mUserScreenName;
@@ -47,18 +48,18 @@ public class UserTimelineLoader extends Twitter4JStatusLoader {
 	}
 
 	@Override
-	public ResponseList<Status> getStatuses(final Paging paging) throws TwitterException {
-		if (mTwitter == null) return null;
+	public ResponseList<Status> getStatuses(final Twitter twitter, final Paging paging) throws TwitterException {
+		if (twitter == null) return null;
 		if (mUserId != -1) {
 			if (mTotalItemsCount == -1) {
 				try {
-					mTotalItemsCount = mTwitter.showUser(mUserId).getStatusesCount();
+					mTotalItemsCount = twitter.showUser(mUserId).getStatusesCount();
 				} catch (final TwitterException e) {
 					mTotalItemsCount = -1;
 				}
 			}
-			return mTwitter.getUserTimeline(mUserId, paging);
-		} else if (mUserScreenName != null) return mTwitter.getUserTimeline(mUserScreenName, paging);
+			return twitter.getUserTimeline(mUserId, paging);
+		} else if (mUserScreenName != null) return twitter.getUserTimeline(mUserScreenName, paging);
 		return null;
 	}
 

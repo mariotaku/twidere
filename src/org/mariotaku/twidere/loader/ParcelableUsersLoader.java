@@ -19,71 +19,38 @@
 
 package org.mariotaku.twidere.loader;
 
-import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
-
-import java.util.Collections;
-import java.util.List;
-
-import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.model.ParcelableUser;
-
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
+import java.util.Collections;
+import java.util.List;
+import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.util.NoDuplicatesArrayList;
+
+import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 
 public abstract class ParcelableUsersLoader extends AsyncTaskLoader<List<ParcelableUser>> implements Constants {
 
-	protected final Twitter mTwitter;
-	protected final long mAccountId;
-	protected final boolean mHiResProfileImage;
-	private final List<ParcelableUser> mUsersList;
+	private final List<ParcelableUser> mData = Collections.synchronizedList(new NoDuplicatesArrayList<ParcelableUser>());
 
-	public ParcelableUsersLoader(final Context context, final long account_id, final List<ParcelableUser> users_list) {
+	public ParcelableUsersLoader(final Context context, final List<ParcelableUser> data) {
 		super(context);
-		mTwitter = getTwitterInstance(context, account_id, true);
-		mUsersList = users_list;
-		mAccountId = account_id;
-		mHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
-	}
-
-	public long getAccountId() {
-		return mAccountId;
-	}
-
-	public Twitter getTwitter() {
-		return mTwitter;
-	}
-
-	public abstract List<ParcelableUser> getUsers() throws TwitterException;
-
-	@Override
-	public List<ParcelableUser> loadInBackground() {
-		List<ParcelableUser> list_loaded = null;
-		try {
-			list_loaded = getUsers();
-		} catch (final TwitterException e) {
-			e.printStackTrace();
+		if (data != null) {
+			mData.addAll(data);
 		}
-		if (list_loaded != null) {
-			for (final ParcelableUser user : list_loaded) {
-				if (!hasId(user.user_id)) {
-					mUsersList.add(user);
-				}
-			}
-		}
-		Collections.sort(mUsersList);
-		return mUsersList;
 	}
 
 	@Override
 	public void onStartLoading() {
 		forceLoad();
 	}
+	
+	protected List<ParcelableUser> getData() {
+		return mData;
+	}
 
-	private boolean hasId(final long id) {
-		for (final ParcelableUser user : mUsersList) {
+	protected boolean hasId(final long id) {
+		for (final ParcelableUser user : mData) {
 			if (user.user_id == id) return true;
 		}
 		return false;

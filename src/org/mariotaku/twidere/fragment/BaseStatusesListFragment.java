@@ -132,8 +132,8 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		mListView.setOnScrollListener(this);
 		mListView.setOnItemLongClickListener(this);
 		setMode(Mode.BOTH);
-		getLoaderManager().initLoader(0, getArguments(), this);
 		setListShown(false);
+		getLoaderManager().initLoader(0, getArguments(), this);
 	}
 
 	@Override
@@ -224,6 +224,9 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		}
 		final long last_viewed_id = mAdapter.findItemIdByPosition(first_visible_position);
 		mAdapter.setData(data);
+		setListShown(true);
+		onRefreshComplete();
+		setProgressBarIndeterminateVisibility(false);
 		mAdapter.setShowAccountColor(getActivatedAccountIds(getActivity()).length > 1);
 		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true);
 		final int curr_first_visible_position = mListView.getFirstVisiblePosition();
@@ -242,9 +245,6 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			mListView.setSelectionFromTop(position, mListScrollOffset);
 			mListScrollOffset = 0;
 		}
-		setListShown(true);
-		onRefreshComplete();
-		setProgressBarIndeterminateVisibility(false);
 	}
 
 	@Override

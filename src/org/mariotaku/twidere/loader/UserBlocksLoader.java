@@ -36,8 +36,7 @@ public class UserBlocksLoader extends IDsUsersLoader {
 	}
 
 	@Override
-	public IDs getIDs() throws TwitterException {
-		final Twitter twitter = getTwitter();
+	protected IDs getIDs(final Twitter twitter) throws TwitterException {
 		if (twitter == null) return null;
 		return twitter.getBlocksIDs();
 	}

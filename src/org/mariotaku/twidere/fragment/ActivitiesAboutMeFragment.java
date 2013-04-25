@@ -38,15 +38,12 @@ import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.ActivitiesAboutMeLoader;
 import org.mariotaku.twidere.loader.Twitter4JActivitiesLoader;
+import org.mariotaku.twidere.model.ParcelableActivity;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.view.holder.ActivityViewHolder;
 
-import twitter4j.Activity;
-import twitter4j.Activity.Action;
-import twitter4j.Status;
-import twitter4j.User;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -59,14 +56,13 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.text.TextUtils;
 
 public class ActivitiesAboutMeFragment extends PullToRefreshListFragment implements
-		LoaderCallbacks<List<Activity>> {
+		LoaderCallbacks<List<ParcelableActivity>> {
 
 	private ActivitiesAdapter mAdapter;
 	private SharedPreferences mPreferences;
-	private List<Activity> mData;
-	private long mAccountId;
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
@@ -79,80 +75,70 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 	}
 
 	@Override
-	public Loader<List<Activity>> onCreateLoader(final int id, final Bundle args) {
+	public Loader<List<ParcelableActivity>> onCreateLoader(final int id, final Bundle args) {
 		setProgressBarIndeterminateVisibility(true);
-		final long account_id = mAccountId = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
+		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
 		//final boolean is_home_tab = args != null ? args.getBoolean(INTENT_KEY_IS_HOME_TAB) : false;
-		return new ActivitiesAboutMeLoader(getActivity(), account_id, mData, getClass().getSimpleName(), true);
+		return new ActivitiesAboutMeLoader(getActivity(), account_id, null, null, 0);
 	}
 
 	@Override
 	public void onDestroy() {
-		Twitter4JActivitiesLoader.writeSerializableStatuses(this, getActivity(), mData, getArguments());
 		super.onDestroy();
 	}
 
 	@Override
 	public void onDestroyView() {
-		Twitter4JActivitiesLoader.writeSerializableStatuses(this, getActivity(), mData, getArguments());
 		super.onDestroyView();
 	}
 
 	@Override
 	public void onListItemClick(final ListView l, final View v, final int position, final long id) {
-		if (mAccountId <= 0) return;
 		final int adapter_pos = position - l.getHeaderViewsCount();
-		final Activity item = mAdapter.getItem(adapter_pos);
-		final User[] sources = item.getSources();
-		final Status[] target_statuses = item.getTargetStatuses();
+		final ParcelableActivity item = mAdapter.getItem(adapter_pos);
+		if (item == null) return;
+		final ParcelableUser[] sources = item.sources;
+		final ParcelableStatus[] target_statuses = item.target_statuses;
 		final int sources_length = sources != null ? sources.length : 0;
-		final Action action = item.getAction();
-		final boolean hires_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
 		if (sources_length > 0) {
-			final Status[] target_objects = item.getTargetObjectStatuses();
-			switch (action.getActionId()) {
-				case Action.ACTION_FAVORITE: {
+			final ParcelableStatus[] target_objects = item.target_object_statuses;
+			switch (item.action) {
+				case ParcelableActivity.ACTION_FAVORITE: {
 					if (sources_length == 1) {
-						openUserProfile(getActivity(), new ParcelableUser(sources[0], mAccountId, hires_profile_image));
+						openUserProfile(getActivity(), sources[0]);
 					} else {
 						if (target_statuses != null && target_statuses.length > 0) {
-							final Status status = target_statuses[0];
-							openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false,
-									hires_profile_image));
+							openStatus(getActivity(), target_statuses[0]);
 						}
 					}
 					break;
 				}
-				case Action.ACTION_FOLLOW: {
+				case ParcelableActivity.ACTION_FOLLOW: {
 					if (sources_length == 1) {
-						openUserProfile(getActivity(), new ParcelableUser(sources[0], mAccountId, hires_profile_image));
+						openUserProfile(getActivity(), sources[0]);
 					} else {
-						openUserFollowers(getActivity(), mAccountId, mAccountId, null);
+						openUserFollowers(getActivity(), item.account_id, item.account_id, null);
 					}
 					break;
 				}
-				case Action.ACTION_MENTION: {
+				case ParcelableActivity.ACTION_MENTION: {
 					if (target_objects != null && target_objects.length > 0) {
-						final Status status = target_objects[0];
-						openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false, hires_profile_image));
+						openStatus(getActivity(), target_objects[0]);
 					}
 					break;
 				}
-				case Action.ACTION_REPLY: {
+				case ParcelableActivity.ACTION_REPLY: {
 					if (target_statuses != null && target_statuses.length > 0) {
-						final Status status = target_statuses[0];
-						openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false, hires_profile_image));
+						openStatus(getActivity(), target_statuses[0]);
 					}
 					break;
 				}
-				case Action.ACTION_RETWEET: {
+				case ParcelableActivity.ACTION_RETWEET: {
 					if (sources_length == 1) {
-						openUserProfile(getActivity(), new ParcelableUser(sources[0], mAccountId, hires_profile_image));
+						openUserProfile(getActivity(), sources[0]);
 					} else {
 						if (target_objects != null && target_objects.length > 0) {
-							final Status status = target_objects[0];
-							openStatus(getActivity(), new ParcelableStatus(status, mAccountId, false,
-									hires_profile_image));
+							openStatus(getActivity(), target_objects[0]);
 						}
 					}
 					break;
@@ -162,16 +148,14 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 	}
 
 	@Override
-	public void onLoaderReset(final Loader<List<Activity>> loader) {
+	public void onLoaderReset(final Loader<List<ParcelableActivity>> loader) {
 		mAdapter.setData(null);
-		mData = null;
 	}
 
 	@Override
-	public void onLoadFinished(final Loader<List<Activity>> loader, final List<Activity> data) {
+	public void onLoadFinished(final Loader<List<ParcelableActivity>> loader, final List<ParcelableActivity> data) {
 		setProgressBarIndeterminateVisibility(false);
 		mAdapter.setData(data);
-		mData = data;
 		onRefreshComplete();
 		setListShown(true);
 	}
@@ -197,11 +181,9 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 		mAdapter.setShowAbsoluteTime(show_absolute_time);
 	}
 
-	static class ActivitiesAdapter extends ArrayAdapter<Activity> implements IBaseAdapter {
+	static class ActivitiesAdapter extends ArrayAdapter<ParcelableActivity> implements IBaseAdapter {
 
 		private boolean mDisplayProfileImage, mDisplayName, mShowAbsoluteTime;
-
-		private final boolean mDisplayHiResProfileImage;
 
 		private float mTextSize;
 
@@ -213,7 +195,6 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 			mContext = context;
 			final TwidereApplication application = TwidereApplication.getInstance(context);
 			mProfileImageLoader = application.getImageLoaderWrapper();
-			mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 		}
 
 		@Override
@@ -233,37 +214,29 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 			}
 			holder.reset();
 			holder.setTextSize(mTextSize);
-			final Activity item;
-			try {
-				item = getItem(position);
-			} catch (ClassCastException e) {
-				return view;
+			final ParcelableActivity item = getItem(position);
+			if (mShowAbsoluteTime) {
+				holder.time.setText(formatSameDayTime(mContext, item.activity_timestamp));
+			} else {
+				holder.time.setText(getRelativeTimeSpanString(item.activity_timestamp));
 			}
-			final Date created_at = item.getCreatedAt();
-			if (created_at != null) {
-				if (mShowAbsoluteTime) {
-					holder.time.setText(formatSameDayTime(mContext, created_at.getTime()));
-				} else {
-					holder.time.setText(getRelativeTimeSpanString(created_at.getTime()));
-				}
-			}
-			final User[] sources = item.getSources();
-			final Status[] target_statuses = item.getTargetStatuses();
+			final ParcelableUser[] sources = item.sources;
+			final ParcelableStatus[] target_statuses = item.target_statuses;
 			final int sources_length = sources != null ? sources.length : 0;
 			final int target_statuses_length = target_statuses != null ? target_statuses.length : 0;
-			final Action action = item.getAction();
+			final int action = item.action;
 			holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 			if (sources_length > 0) {
-				final User first_source = sources[0];
-				final Status[] target_objects = item.getTargetObjectStatuses();
-				final String name = mDisplayName ? first_source.getName() : first_source.getScreenName();
-				switch (action.getActionId()) {
-					case Action.ACTION_FAVORITE: {
+				final ParcelableUser first_source = sources[0];
+				final ParcelableStatus[] target_objects = item.target_object_statuses;
+				final String name = mDisplayName ? first_source.name : first_source.screen_name;
+				switch (action) {
+					case ParcelableActivity.ACTION_FAVORITE: {
 						if (target_statuses_length > 0) {
-							final Status status = target_statuses[0];
+							final ParcelableStatus status = target_statuses[0];
 							holder.text.setSingleLine(true);
 							holder.text.setEllipsize(TruncateAt.END);
-							holder.text.setText(status.getText());
+							holder.text.setText(status.text_plain);
 						}
 						if (sources_length == 1) {
 							holder.title.setText(mContext.getString(R.string.activity_about_me_favorite, name));
@@ -276,7 +249,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 						setUserProfileImages(sources, holder);
 						break;
 					}
-					case Action.ACTION_FOLLOW: {
+					case ParcelableActivity.ACTION_FOLLOW: {
 						holder.text.setVisibility(View.GONE);
 						if (sources_length == 1) {
 							holder.title.setText(mContext.getString(R.string.activity_about_me_follow, name));
@@ -289,44 +262,44 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 						setUserProfileImages(sources, holder);
 						break;
 					}
-					case Action.ACTION_MENTION: {
+					case ParcelableActivity.ACTION_MENTION: {
 						holder.title.setText(name);
 						if (target_objects != null && target_objects.length > 0) {
-							final Status status = target_objects[0];
-							holder.text.setText(status.getText());
-							if (status.getInReplyToStatusId() > 0 && status.getInReplyToScreenName() != null) {
+							final ParcelableStatus status = target_objects[0];
+							holder.text.setText(status.text_plain);
+							if (status.in_reply_to_status_id > 0 && !TextUtils.isEmpty(status.in_reply_to_screen_name)) {
 								holder.reply_status.setVisibility(View.VISIBLE);
 								holder.reply_status.setText(mContext.getString(R.string.in_reply_to,
-										status.getInReplyToScreenName()));
+										status.in_reply_to_screen_name));
 								holder.reply_status.setCompoundDrawablesWithIntrinsicBounds(
 										R.drawable.ic_indicator_reply, 0, 0, 0);
 							}
 						}
-						setProfileImage(first_source.getProfileImageURL(), holder);
+						setProfileImage(holder, first_source.profile_image_url);
 						break;
 					}
-					case Action.ACTION_REPLY: {
+					case ParcelableActivity.ACTION_REPLY: {
 						holder.title.setText(name);
 						if (target_statuses_length > 0) {
-							final Status status = target_statuses[0];
-							holder.text.setText(status.getText());
-							if (status.getInReplyToStatusId() > 0 && status.getInReplyToScreenName() != null) {
+							final ParcelableStatus status = target_statuses[0];
+							holder.text.setText(status.text_plain);
+							if (status.in_reply_to_status_id > 0 && !TextUtils.isEmpty(status.in_reply_to_screen_name)) {
 								holder.reply_status.setVisibility(View.VISIBLE);
 								holder.reply_status.setText(mContext.getString(R.string.in_reply_to,
-										status.getInReplyToScreenName()));
+										status.in_reply_to_screen_name));
 								holder.reply_status.setCompoundDrawablesWithIntrinsicBounds(
 										R.drawable.ic_indicator_reply, 0, 0, 0);
 							}
 						}
-						setProfileImage(first_source.getProfileImageURL(), holder);
+						setProfileImage(holder, first_source.profile_image_url);
 						break;
 					}
-					case Action.ACTION_RETWEET: {
+					case ParcelableActivity.ACTION_RETWEET: {
 						if (target_objects != null && target_objects.length > 0) {
-							final Status status = target_objects[0];
+							final ParcelableStatus status = target_objects[0];
 							holder.text.setSingleLine(true);
 							holder.text.setEllipsize(TruncateAt.END);
-							holder.text.setText(status.getText());
+							holder.text.setText(status.text_plain);
 						}
 						if (sources_length == 1) {
 							holder.title.setText(mContext.getString(R.string.activity_about_me_retweet, name));
@@ -339,7 +312,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 						setUserProfileImages(sources, holder);
 						break;
 					}
-					case Action.ACTION_LIST_MEMBER_ADDED: {
+					case ParcelableActivity.ACTION_LIST_MEMBER_ADDED: {
 						holder.text.setVisibility(View.GONE);
 						if (sources_length == 1) {
 							holder.title
@@ -366,7 +339,7 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 			notifyDataSetChanged();
 		}
 
-		public void setData(final List<Activity> data) {
+		public void setData(final List<ParcelableActivity> data) {
 			clear();
 			if (data == null) return;
 			addAll(data);
@@ -400,56 +373,22 @@ public class ActivitiesAboutMeFragment extends PullToRefreshListFragment impleme
 			}
 		}
 
-		private void setProfileImage(final URL url, final ActivityViewHolder holder) {
-			if (!mDisplayProfileImage) return;
-			if (mDisplayHiResProfileImage) {
-				mProfileImageLoader.displayProfileImage(holder.profile_image,
-						getBiggerTwitterProfileImage(parseString(url)));
+		private void setProfileImage(final ActivityViewHolder holder, final String url) {
+			if (mDisplayProfileImage) {
+				mProfileImageLoader.displayProfileImage(holder.profile_image, url);
 			} else {
-				mProfileImageLoader.displayProfileImage(holder.profile_image, parseString(url));
+				holder.profile_image.setImageDrawable(null);
 			}
 		}
 
-		private void setUserProfileImages(final User[] users, final ActivityViewHolder holder) {
-			if (!mDisplayProfileImage) return;
-			final int length = users.length;
+		private void setUserProfileImages(final ParcelableUser[] users, final ActivityViewHolder holder) {
+			final int length = Math.min(holder.activity_profile_images.length, users.length);
 			for (int i = 0; i < length; i++) {
-				if (i > 4) {
-					break;
-				}
-				final User user = users[i];
-				final ImageView activity_profile_image;
-				switch (i) {
-					case 0: {
-						activity_profile_image = holder.activity_profile_image_1;
-						break;
-					}
-					case 1: {
-						activity_profile_image = holder.activity_profile_image_2;
-						break;
-					}
-					case 2: {
-						activity_profile_image = holder.activity_profile_image_3;
-						break;
-					}
-					case 3: {
-						activity_profile_image = holder.activity_profile_image_4;
-						break;
-					}
-					case 4: {
-						activity_profile_image = holder.activity_profile_image_5;
-						break;
-					}
-					default: {
-						activity_profile_image = null;
-					}
-				}
-				if (mDisplayHiResProfileImage) {
-					mProfileImageLoader.displayProfileImage(activity_profile_image,
-							getBiggerTwitterProfileImage(parseString(user.getProfileImageURL())));
+				final ImageView activity_profile_image = holder.activity_profile_images[i];
+				if (mDisplayProfileImage) {
+					mProfileImageLoader.displayProfileImage(activity_profile_image, users[i].profile_image_url);
 				} else {
-					mProfileImageLoader.displayProfileImage(activity_profile_image,
-							parseString(user.getProfileImageURL()));
+					activity_profile_image.setImageDrawable(null);
 				}
 			}
 		}

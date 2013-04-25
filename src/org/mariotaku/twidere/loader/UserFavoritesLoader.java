@@ -19,21 +19,16 @@
 
 package org.mariotaku.twidere.loader;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.ConcurrentModificationException;
+import android.content.Context;
 import java.util.List;
-
 import org.mariotaku.twidere.model.ParcelableStatus;
-
 import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
+import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import android.content.Context;
-import android.os.Bundle;
 
-public class UserFavoritesLoader extends Twitter4JStatusLoader {
+public class UserFavoritesLoader extends Twitter4JStatusesLoader {
 
 	private final long mUserId;
 	private final String mUserScreenName;
@@ -47,11 +42,11 @@ public class UserFavoritesLoader extends Twitter4JStatusLoader {
 	}
 
 	@Override
-	public ResponseList<Status> getStatuses(final Paging paging) throws TwitterException {
-		if (mTwitter == null) return null;
+	public ResponseList<Status> getStatuses(final Twitter twitter, final Paging paging) throws TwitterException {
+		if (twitter == null) return null;
 		if (mUserId != -1)
-			return mTwitter.getFavorites(mUserId, paging);
-		else if (mUserScreenName != null) return mTwitter.getFavorites(mUserScreenName, paging);
+			return twitter.getFavorites(mUserId, paging);
+		else if (mUserScreenName != null) return twitter.getFavorites(mUserScreenName, paging);
 		return null;
 	}
 

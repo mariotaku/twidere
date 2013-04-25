@@ -41,8 +41,7 @@ public class UserFriendsLoader extends IDsUsersLoader {
 	}
 
 	@Override
-	public IDs getIDs() throws TwitterException {
-		final Twitter twitter = getTwitter();
+	protected IDs getIDs(final Twitter twitter) throws TwitterException {
 		if (twitter == null) return null;
 		if (mUserId > 0)
 			return twitter.getFriendsIDs(mUserId, -1);
