@@ -33,7 +33,6 @@ import org.mariotaku.twidere.Constants;
 
 import twitter4j.Activity;
 import twitter4j.Paging;
-import twitter4j.ResponseList;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.content.Context;
@@ -43,62 +42,64 @@ import android.support.v4.content.AsyncTaskLoader;
 import org.mariotaku.twidere.model.ParcelableActivity;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
+import org.mariotaku.jsonserializer.JSONSerializer;
 
 public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<ParcelableActivity>> implements Constants {
-
-	private final Twitter mTwitter;
+	private final Context mContext;
+	
 	private final long mAccountId;
 	private final List<ParcelableActivity> mData = Collections.synchronizedList(new NoDuplicatesArrayList<ParcelableActivity>());
 	private final boolean mIsFirstLoad;
-	private final int mTabPosition;
+	private final int mTabPosition, mLoadItemLimit;
 
 	private final boolean mHiResProfileImage;
 
 	private final String[] mSavedActivitiesFileArgs;
 
-	public Twitter4JActivitiesLoader(final Context context, final long account_id, final List<Activity> data,
+
+	public Twitter4JActivitiesLoader(final Context context, final long account_id, final List<ParcelableActivity> data,
 			final String[] save_file_args, final int tab_position) {
 		super(context);
-		mTwitter = getTwitterInstance(context, account_id, true);
+		mContext = context;
 		mAccountId = account_id;
 		mIsFirstLoad = data == null;
 		mTabPosition = tab_position;
 		mSavedActivitiesFileArgs = save_file_args;
 		mHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mLoadItemLimit = Math.min(100, prefs.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT));
 	}
 
 	protected final long getAccountId() {
 		return mAccountId;
 	}
 
-	public List<ParcelableActivity> getData() {
+	protected List<ParcelableActivity> getData() {
 		return mData;
 	}
 
 	protected Twitter getTwitter() {
-		return mTwitter;
+		return getTwitterInstance(mContext, mAccountId, true);
 	}
 
 	@Override
 	public List<ParcelableActivity> loadInBackground() {
-//		if (mIsFirstLoad && mIsHomeTab && mClassName != null) {
-//			try {
-//				final File f = new File(getContext().getCacheDir(), mClassName + "." + getAccountId());
-//				@SuppressWarnings("unchecked")
-//				final List<Activity> cached_activities = (List<Activity>) SerializationUtil.read(f.getPath());
-//				return cached_activities;
-//			} catch (final IOException e) {
-//			}
-//		}
-		final ResponseList<Activity> activities;
+		if (mIsFirstLoad && mTabPosition >= 0 && mSavedActivitiesFileArgs != null) {
+			try {
+				final File file = JSONSerializer.getSerializationFile(mContext, mSavedActivitiesFileArgs);
+				final List<ParcelableActivity> cached = JSONSerializer.listFromFile(file);
+				mData.addAll(cached);
+				Collections.sort(mData);
+				return mData;
+			} catch (final IOException e) {
+				e.printStackTrace();
+			}
+		}
+		final List<Activity> activities;
 		try {
 			final Paging paging = new Paging();
-			final SharedPreferences prefs = getContext().getSharedPreferences(SHARED_PREFERENCES_NAME,
-					Context.MODE_PRIVATE);
-			final int load_item_limit = prefs
-					.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
-			paging.setCount(Math.min(100, load_item_limit));
-			activities = getActivities(paging);
+			paging.setCount(mLoadItemLimit);
+			activities = getActivities(getTwitter(), paging);
 		} catch (final TwitterException e) {
 			e.printStackTrace();
 			return mData;
@@ -116,6 +117,6 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Par
 		forceLoad();
 	}
 
-	protected abstract ResponseList<Activity> getActivities(Paging paging) throws TwitterException;
+	protected abstract List<Activity> getActivities(Twitter twitter, Paging paging) throws TwitterException;
 
 }

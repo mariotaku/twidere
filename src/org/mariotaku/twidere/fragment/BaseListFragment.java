@@ -59,42 +59,43 @@ public class BaseListFragment extends ListFragment implements Constants {
 		}
 	};
 
-	public BaseListFragment() {
-
-	}
-
-	public ActionBarFragmentActivity getActionBarActivity() {
+	public final ActionBarFragmentActivity getActionBarActivity() {
 		final Activity activity = getActivity();
 		if (activity instanceof ActionBarFragmentActivity) return (ActionBarFragmentActivity) activity;
 		return null;
 	}
 
-	public TwidereApplication getApplication() {
+	public final TwidereApplication getApplication() {
 		final Activity activity = getActivity();
 		if (activity != null) return (TwidereApplication) activity.getApplication();
 		return null;
 	}
 
-	public ContentResolver getContentResolver() {
+	public final ContentResolver getContentResolver() {
 		final Activity activity = getActivity();
 		if (activity != null) return activity.getContentResolver();
 		return null;
 	}
 
-	public MultiSelectManager getMultiSelectManager() {
+	public final MultiSelectManager getMultiSelectManager() {
 		return getApplication() != null ? getApplication().getMultiSelectManager() : null;
 	}
 
-	public SharedPreferences getSharedPreferences(final String name, final int mode) {
+	public final SharedPreferences getSharedPreferences(final String name, final int mode) {
 		final Activity activity = getActivity();
 		if (activity != null) return activity.getSharedPreferences(name, mode);
 		return null;
 	}
 
-	public Object getSystemService(final String name) {
+	public final Object getSystemService(final String name) {
 		final Activity activity = getActivity();
 		if (activity != null) return activity.getSystemService(name);
 		return null;
+	}
+
+	public final int getTabPosition() {
+		final Bundle args = getArguments();
+		return args != null ? args.getInt(INTENT_KEY_TAB_POSITION, -1) : -1;
 	}
 
 	public AsyncTwitterWrapper getTwitterWrapper() {

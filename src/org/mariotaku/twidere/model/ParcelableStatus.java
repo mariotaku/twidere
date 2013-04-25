@@ -44,40 +44,7 @@ import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class ParcelableStatus implements Constants, Parcelable, JSONParcelable, Serializable, Comparable<ParcelableStatus> {
-
-	public void writeToParcel(JSONParcel out) {
-		out.writeLong("retweet_id", retweet_id);
-		out.writeLong("retweeted_by_id", retweeted_by_id);
-        out.writeLong("status_id", status_id);
-		out.writeLong("account_id", account_id);
-		out.writeLong("user_id", user_id);
-		out.writeLong("status_timestamp", status_timestamp);
-		out.writeLong("retweet_count", retweet_count);
-		out.writeLong("in_reply_to_status_id", in_reply_to_status_id);
-		out.writeBoolean("is_gap", is_gap);
-		out.writeBoolean("is_retweet", is_retweet);
-		out.writeBoolean("is_favorite", is_favorite);
-		out.writeBoolean("is_protected", is_protected);
-		out.writeBoolean("is_verified", is_verified);
-		out.writeBoolean("has_media", has_media);
-		out.writeString("retweeted_by_name", retweeted_by_name);
-		out.writeString("retweeted_by_screen_name", retweeted_by_screen_name);
-		out.writeString("text_html", text_html);
-		out.writeString("text_plain", text_plain);
-		out.writeString("name", name);
-		out.writeString("scrren_name", screen_name);
-		out.writeString("in_reply_to_screen_name", in_reply_to_screen_name);
-		out.writeString("source", source);
-		out.writeString("profile_image_url", profile_image_url);
-		out.writeString("image_preview_url", image_preview_url);
-		out.writeString("image_orig_url", image_orig_url);
-		out.writeParcelable("location", location);
-        out.writeLong("my_retweet_id", my_retweet_id);
-		out.writeBoolean("is_possibly_sensitive", is_possibly_sensitive);
-		out.writeBoolean("is_following", is_following);
-	}
-
+public class ParcelableStatus implements Constants, Parcelable, JSONParcelable, Comparable<ParcelableStatus> {
 
 	private static final long serialVersionUID = 8687220519842668226L;
 
@@ -243,7 +210,7 @@ public class ParcelableStatus implements Constants, Parcelable, JSONParcelable, 
 		text_unescaped = toPlainText(text_html);
 		is_following = in.readBoolean("is_following");
 	}
-	
+
 	public ParcelableStatus(final Parcel in) {
 		retweet_id = in.readLong();
 		retweeted_by_id = in.readLong();
@@ -270,7 +237,7 @@ public class ParcelableStatus implements Constants, Parcelable, JSONParcelable, 
 		profile_image_url = in.readString();
 		image_preview_url = in.readString();
 		image_orig_url = in.readString();
-		location = ParcelableLocation.fromString(in.readString());
+		location = in.readParcelable(getClass().getClassLoader());
 		my_retweet_id = in.readLong();
 		is_possibly_sensitive = in.readInt() == 1;
 		text_unescaped = toPlainText(text_html);
@@ -379,6 +346,39 @@ public class ParcelableStatus implements Constants, Parcelable, JSONParcelable, 
 	}
 
 	@Override
+	public void writeToParcel(final JSONParcel out) {
+		out.writeLong("retweet_id", retweet_id);
+		out.writeLong("retweeted_by_id", retweeted_by_id);
+        out.writeLong("status_id", status_id);
+		out.writeLong("account_id", account_id);
+		out.writeLong("user_id", user_id);
+		out.writeLong("status_timestamp", status_timestamp);
+		out.writeLong("retweet_count", retweet_count);
+		out.writeLong("in_reply_to_status_id", in_reply_to_status_id);
+		out.writeBoolean("is_gap", is_gap);
+		out.writeBoolean("is_retweet", is_retweet);
+		out.writeBoolean("is_favorite", is_favorite);
+		out.writeBoolean("is_protected", is_protected);
+		out.writeBoolean("is_verified", is_verified);
+		out.writeBoolean("has_media", has_media);
+		out.writeString("retweeted_by_name", retweeted_by_name);
+		out.writeString("retweeted_by_screen_name", retweeted_by_screen_name);
+		out.writeString("text_html", text_html);
+		out.writeString("text_plain", text_plain);
+		out.writeString("name", name);
+		out.writeString("scrren_name", screen_name);
+		out.writeString("in_reply_to_screen_name", in_reply_to_screen_name);
+		out.writeString("source", source);
+		out.writeString("profile_image_url", profile_image_url);
+		out.writeString("image_preview_url", image_preview_url);
+		out.writeString("image_orig_url", image_orig_url);
+		out.writeParcelable("location", location);
+        out.writeLong("my_retweet_id", my_retweet_id);
+		out.writeBoolean("is_possibly_sensitive", is_possibly_sensitive);
+		out.writeBoolean("is_following", is_following);
+	}
+
+	@Override
 	public void writeToParcel(final Parcel out, final int flags) {
 		out.writeLong(retweet_id);
 		out.writeLong(retweeted_by_id);
@@ -405,7 +405,7 @@ public class ParcelableStatus implements Constants, Parcelable, JSONParcelable, 
 		out.writeString(profile_image_url);
 		out.writeString(image_preview_url);
 		out.writeString(image_orig_url);
-		out.writeString(ParcelableLocation.toString(location));
+		out.writeParcelable(location, flags);
 		out.writeLong(my_retweet_id);
 		out.writeInt(is_possibly_sensitive ? 1 : 0);
 		out.writeInt(is_following ? 1 : 0);

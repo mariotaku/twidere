@@ -54,7 +54,11 @@ public final class JSONParcel {
 	public <T extends JSONParcelable> T readParcelable(final String key, final JSONParcelable.Creator<T> creator) {
 		return JSONSerializer.fromJSON(creator, jsonObject.optJSONObject(key));
 	}
-		
+
+	public <T extends JSONParcelable> T[] readParcelableArray(final String key, final JSONParcelable.Creator<T> creator) {
+		return JSONSerializer.fromJSON(creator, jsonObject.optJSONArray(key));
+	}
+
 	public String readString(String key) {
 		return jsonObject.optString(key);
 	}
@@ -179,6 +183,7 @@ public final class JSONParcel {
 	}
 	
 	public <T extends JSONParcelable> void writeParcelable(final String key, final T value) {
+		if (key == null) return;		
 		try {
 			final JSONObject json = JSONSerializer.toJSON(value);
 			jsonObject.put(key, json);
@@ -188,11 +193,16 @@ public final class JSONParcel {
 	}
 
 	public <T extends JSONParcelable> void writeParcelableArray(final String key, final T[] value) {
+		if (key == null) return;
 		try {
+			if (value == null) {
+				jsonObject.put(key, JSONObject.NULL);
+				return;
+			}
 			final JSONArray array = new JSONArray();			
 			for (final T item : value) {
-				final JSONObject json = JSONSerializer.toJSON(((JSONParcelable)item));
-				array.put(json);
+				final JSONObject json = JSONSerializer.toJSON(item);
+				array.put(json != null ? json : JSONObject.NULL);
 			}
 			jsonObject.put(key, array);
 		} catch (JSONException e) {

@@ -1,8 +1,22 @@
 package org.mariotaku.twidere.model;
 import java.util.Date;
 import twitter4j.Activity;
+import org.mariotaku.jsonserializer.JSONParcelable;
+import org.mariotaku.jsonserializer.JSONParcel;
 
-public class ParcelableActivity implements Comparable<ParcelableActivity> {
+public class ParcelableActivity implements Comparable<ParcelableActivity>, JSONParcelable {
+
+	public static final JSONParcelable.Creator<ParcelableActivity> JSON_CREATOR = new JSONParcelable.Creator<ParcelableActivity>() {
+		@Override
+		public ParcelableActivity createFromParcel(final JSONParcel in) {
+			return new ParcelableActivity(in);
+		}
+
+		@Override
+		public ParcelableActivity[] newArray(final int size) {
+			return new ParcelableActivity[size];
+		}
+	};
 
 	public final static int ACTION_FAVORITE = Activity.Action.ACTION_FAVORITE;
 	public final static int ACTION_FOLLOW = Activity.Action.ACTION_FOLLOW;
@@ -59,10 +73,21 @@ public class ParcelableActivity implements Comparable<ParcelableActivity> {
 		}
 	}
 
+	public ParcelableActivity(final JSONParcel in) {
+		account_id = in.readLong("account_id");
+		activity_timestamp = in.readLong("activity_timestamp");
+		action = in.readInt("action");
+		sources = in.readParcelableArray("sources", ParcelableUser.JSON_CREATOR);
+		target_users = in.readParcelableArray("target_users", ParcelableUser.JSON_CREATOR);
+		target_statuses = in.readParcelableArray("target_statuses", ParcelableStatus.JSON_CREATOR);
+		target_object_user_lists = in.readParcelableArray("target_object_user_lists", ParcelableUserList.JSON_CREATOR);
+		target_object_statuses = in.readParcelableArray("target_object_statuses", ParcelableStatus.JSON_CREATOR);
+	}
+
 	@Override
 	public int compareTo(final ParcelableActivity another) {
 		if (another == null) return 0;
-		final long delta = activity_timestamp - another.activity_timestamp;
+		final long delta = another.activity_timestamp - activity_timestamp;
 		if (delta < Integer.MIN_VALUE) return Integer.MIN_VALUE;
 		if (delta > Integer.MAX_VALUE) return Integer.MAX_VALUE;
 		return (int) delta;
@@ -72,4 +97,16 @@ public class ParcelableActivity implements Comparable<ParcelableActivity> {
 		return date != null ? date.getTime() : 0;
 	}
 
+	@Override
+	public void writeToParcel(final JSONParcel out) {
+		out.writeLong("account_id", account_id);
+		out.writeLong("activity_timestamp", activity_timestamp);
+		out.writeInt("action", action);
+		out.writeParcelableArray("sources", sources);
+		out.writeParcelableArray("target_users", target_users);
+		out.writeParcelableArray("target_statuses", target_statuses);
+		out.writeParcelableArray("target_object_user_lists", target_object_user_lists);
+		out.writeParcelableArray("target_object_statuses", target_object_statuses);
+	}
+	
 }

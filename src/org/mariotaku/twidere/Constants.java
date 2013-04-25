@@ -96,6 +96,9 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_USER_MENTIONS = "user_mentions";
 	public static final String AUTHORITY_ACTIVITIES_ABOUT_ME = "activities_about_me";
 	public static final String AUTHORITY_INCOMING_FRIENDSHIPS = "incoming_friendships";
+	public static final String AUTHORITY_MY_ACTIVITIES = "my_activities";
+	public static final String AUTHORITY_FRIENDS_ACTIVITIES = "friends_activities";
+	
 
 	public static final String QUERY_PARAM_ACCOUNT_ID = "account_id";
 	public static final String QUERY_PARAM_ACCOUNT_NAME = "account_name";

@@ -24,12 +24,15 @@ import static org.mariotaku.twidere.util.Utils.parseString;
 
 import java.io.Serializable;
 
+import org.mariotaku.jsonserializer.JSONParcel;
+import org.mariotaku.jsonserializer.JSONParcelable;
+ 
 import twitter4j.User;
 import twitter4j.UserList;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class ParcelableUserList implements Parcelable, Serializable, Comparable<ParcelableUserList> {
+public class ParcelableUserList implements Parcelable, JSONParcelable, Comparable<ParcelableUserList> {
 
 	private static final long serialVersionUID = 5896769285301886501L;
 
@@ -45,13 +48,39 @@ public class ParcelableUserList implements Parcelable, Serializable, Comparable<
 		}
 	};
 
+	public static final JSONParcelable.Creator<ParcelableUserList> JSON_CREATOR = new JSONParcelable.Creator<ParcelableUserList>() {
+		@Override
+		public ParcelableUserList createFromParcel(final JSONParcel in) {
+			return new ParcelableUserList(in);
+		}
+
+		@Override
+		public ParcelableUserList[] newArray(final int size) {
+			return new ParcelableUserList[size];
+		}
+	};
+
 	public final int list_id;
 
 	public final long account_id, user_id, position;
 
 	public final boolean is_public, is_following;
 
-	public final String description, name, user_screen_name, user_name, user_profile_image_url_string;
+	public final String description, name, user_screen_name, user_name, user_profile_image_url;
+
+	public ParcelableUserList(final JSONParcel in) {
+		position = in.readLong("position");
+		account_id = in.readLong("account_id");
+		list_id = in.readInt("list_id");
+		is_public = in.readBoolean("is_public");
+		is_following = in.readBoolean("is_following");
+		name = in.readString("name");
+		description = in.readString("description");
+		user_id = in.readLong("user_id");
+		user_name = in.readString("user_name");
+		user_screen_name = in.readString("user_screen_name");
+		user_profile_image_url = in.readString("user_profile_image_url");
+	}
 
 	public ParcelableUserList(final Parcel in) {
 		position = in.readLong();
@@ -64,7 +93,7 @@ public class ParcelableUserList implements Parcelable, Serializable, Comparable<
 		user_id = in.readLong();
 		user_name = in.readString();
 		user_screen_name = in.readString();
-		user_profile_image_url_string = in.readString();
+		user_profile_image_url = in.readString();
 	}
 
 	public ParcelableUserList(final UserList user, final long account_id, final boolean large_profile_image) {
@@ -85,7 +114,7 @@ public class ParcelableUserList implements Parcelable, Serializable, Comparable<
 		user_name = user.getName();
 		user_screen_name = user.getScreenName();
 		final String user_profile_image_url_orig = user != null ? parseString(user.getProfileImageUrlHttps()) : null;
-		user_profile_image_url_string = large_profile_image ? getBiggerTwitterProfileImage(user_profile_image_url_orig)
+		user_profile_image_url = large_profile_image ? getBiggerTwitterProfileImage(user_profile_image_url_orig)
 				: user_profile_image_url_orig;
 	}
 
@@ -128,7 +157,22 @@ public class ParcelableUserList implements Parcelable, Serializable, Comparable<
 		return "ParcelableUserList{list_id=" + list_id + ", account_id=" + account_id + ", user_id=" + user_id
 				+ ", position=" + position + ", is_public=" + is_public + ", is_following=" + is_following
 				+ ", description=" + description + ", name=" + name + ", user_screen_name=" + user_screen_name
-				+ ", user_name=" + user_name + ", user_profile_image_url_string=" + user_profile_image_url_string + "}";
+				+ ", user_name=" + user_name + ", user_profile_image_url_string=" + user_profile_image_url + "}";
+	}
+
+	@Override
+	public void writeToParcel(final JSONParcel out) {
+		out.writeLong("position", position);
+		out.writeLong("account_id", account_id);
+		out.writeInt("list_id", list_id);
+		out.writeBoolean("is_public", is_public);
+		out.writeBoolean("is_following", is_following);
+		out.writeString("name", name);
+		out.writeString("description", description);
+		out.writeLong("user_id", user_id);
+		out.writeString("user_name", user_name);
+		out.writeString("user_screen_name", user_screen_name);
+		out.writeString("user_profile_image_url", user_profile_image_url);
 	}
 
 	@Override
@@ -143,8 +187,7 @@ public class ParcelableUserList implements Parcelable, Serializable, Comparable<
 		out.writeLong(user_id);
 		out.writeString(user_name);
 		out.writeString(user_screen_name);
-		out.writeString(user_profile_image_url_string);
-
+		out.writeString(user_profile_image_url);
 	}
 
 }

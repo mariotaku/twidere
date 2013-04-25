@@ -27,21 +27,34 @@ public class JSONSerializer {
 	private static final String KEY_CLASS = "class";
 
 	public static <T extends JSONParcelable> JSONObject toJSON(final T parcelable) {
+		if (parcelable == null) return null;
 		final JSONObject json = new JSONObject();
 		parcelable.writeToParcel(new JSONParcel(json));
 		return json;
 	}
 
-	public static <T extends JSONParcelable> JSONArray toJSONArray(final T[] list) {
+	public static <T extends JSONParcelable> JSONArray toJSONArray(final T[] array) {
+		if (array == null) return null;
 		final JSONArray json = new JSONArray();
-		for (final T parcelable : list) {
+		for (final T parcelable : array) {
 			json.put(toJSON(parcelable));
 		}
 		return json;
 	}
 
 	public static <T extends JSONParcelable> T fromJSON(final JSONParcelable.Creator<T> creator, final JSONObject json) {
+		if (json == null) return null;
 		return creator.createFromParcel(new JSONParcel(json));		
+	}
+
+	public static <T extends JSONParcelable> T[] fromJSON(final JSONParcelable.Creator<T> creator, final JSONArray json) {
+		if (json == null) return null;
+		final int size = json.length();
+		final T[] array = creator.newArray(size);
+		for (int i = 0; i < size; i++) {
+			array[i] = creator.createFromParcel(new JSONParcel(json.optJSONObject(i)));
+		}
+		return array;
 	}
 
 	public static <T extends JSONParcelable> List<T> listFromJSON(final JSONParcelable.Creator<T> creator, final JSONArray json) {

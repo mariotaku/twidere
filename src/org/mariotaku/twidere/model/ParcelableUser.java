@@ -20,10 +20,10 @@
 package org.mariotaku.twidere.model;
 
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
+import static org.mariotaku.twidere.util.Utils.formatExpandedUserDescription;
 import static org.mariotaku.twidere.util.Utils.formatUserDescription;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.parseString;
-import static org.mariotaku.twidere.util.Utils.*;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -36,14 +36,28 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
+import org.mariotaku.jsonserializer.JSONParcelable;
+import org.mariotaku.jsonserializer.JSONParcel;
 
-public class ParcelableUser implements Parcelable, Serializable, Comparable<ParcelableUser> {
+public class ParcelableUser implements Parcelable, JSONParcelable, Comparable<ParcelableUser> {
 
 	private static final long serialVersionUID = 5977877636776748705L;
 
 	public static final Parcelable.Creator<ParcelableUser> CREATOR = new Parcelable.Creator<ParcelableUser>() {
 		@Override
 		public ParcelableUser createFromParcel(final Parcel in) {
+			return new ParcelableUser(in);
+		}
+
+		@Override
+		public ParcelableUser[] newArray(final int size) {
+			return new ParcelableUser[size];
+		}
+	};
+
+	public static final JSONParcelable.Creator<ParcelableUser> JSON_CREATOR = new JSONParcelable.Creator<ParcelableUser>() {
+		@Override
+		public ParcelableUser createFromParcel(final JSONParcel in) {
 			return new ParcelableUser(in);
 		}
 
@@ -89,6 +103,33 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 		is_cache = true;
 		description_unescaped = toPlainText(description_html);
 		is_following = cursor.getInt(cursor.getColumnIndex(CachedUsers.IS_FOLLOWING)) == 1;
+	}
+	
+	public ParcelableUser(final JSONParcel in) {
+		position = in.readLong("position");
+		account_id = in.readLong("account_id");
+		user_id = in.readLong("user_id");
+		created_at = in.readLong("created_at");
+		is_protected = in.readBoolean("is_protected");
+		is_verified = in.readBoolean("is_verified");
+		name = in.readString("name");
+		screen_name = in.readString("screen_name");
+		description_plain = in.readString("description_plain");
+		location = in.readString("location");
+		profile_image_url = in.readString("profile_image_url");
+		profile_banner_url = in.readString("profile_banner_url");
+		url = in.readString("url");
+		is_follow_request_sent = in.readBoolean("is_follow_request_sent");
+		followers_count = in.readInt("followers_count");
+		friends_count = in.readInt("friends_count");
+		statuses_count = in.readInt("statuses_count");
+		favorites_count = in.readInt("favorites_count");
+		is_cache = in.readBoolean("is_cache");
+		description_html = in.readString("description_html");
+		description_expanded = in.readString("description_expanded");
+		url_expanded = in.readString("url_expanded");
+		is_following = in.readBoolean("is_following");
+		description_unescaped = toPlainText(description_html);
 	}
 
 	public ParcelableUser(final Parcel in) {
@@ -197,7 +238,34 @@ public class ParcelableUser implements Parcelable, Serializable, Comparable<Parc
 				+ ", friends_count=" + friends_count + ", statuses_count=" + statuses_count + ", favorites_count="
 				+ favorites_count + "}";
 	}
-
+	
+	@Override
+	public void writeToParcel(final JSONParcel out) {
+		out.writeLong("position", position);
+		out.writeLong("account_id", account_id);
+		out.writeLong("user_id", user_id);
+		out.writeLong("created_at", created_at);
+		out.writeBoolean("is_protected", is_protected);
+		out.writeBoolean("is_verified", is_verified);
+		out.writeString("name", name);
+		out.writeString("screen_name", screen_name);
+		out.writeString("description_plain", description_plain);
+		out.writeString("location", location);
+		out.writeString("profile_image_url", profile_image_url);
+		out.writeString("profile_banner_url", profile_banner_url);
+		out.writeString("url", url);
+		out.writeBoolean("is_follow_request_sent", is_follow_request_sent);
+		out.writeInt("followers_count", followers_count);
+		out.writeInt("friends_count", friends_count);
+		out.writeInt("statuses_count", statuses_count);
+		out.writeInt("favorites_count", favorites_count);
+		out.writeBoolean("is_cache", is_cache);
+		out.writeString("description_html", description_html);
+		out.writeString("description_expanded", description_expanded);
+		out.writeString("url_expanded", url_expanded);
+		out.writeBoolean("is_following", is_following);
+	}
+	
 	@Override
 	public void writeToParcel(final Parcel out, final int flags) {
 		out.writeLong(position);

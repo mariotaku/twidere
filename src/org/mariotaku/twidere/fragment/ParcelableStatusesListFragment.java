@@ -139,13 +139,13 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 
 	@Override
 	public void onDestroy() {
-		saveStatusesInternal();
+		saveStatuses();
 		super.onDestroy();
 	}
 
 	@Override
 	public void onDestroyView() {
-		saveStatusesInternal();
+		saveStatuses();
 		super.onDestroyView();
 	}
 
@@ -213,9 +213,9 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 		super.onStop();
 	}
 
-	private void saveStatusesInternal() {
+	protected void saveStatuses() {
 		if (getActivity() == null || getView() == null || mIsStatusesSaved) return;
-		if (saveStatuses()) {
+		if (saveStatusesInternal()) {
 			mIsStatusesSaved = true;
 		}
 	}
@@ -233,7 +233,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 		return last_id > 0 ? new long[] { last_id } : null;
 	}
 
-	protected final boolean saveStatuses() {
+	protected final boolean saveStatusesInternal() {
 		if (mIsStatusesSaved) return true;
 		final int items_limit = mPreferences.getInt(PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
 		final List<ParcelableStatus> data = getData();

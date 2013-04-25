@@ -504,8 +504,4 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 
 	}
 	
-	protected int getTabPosition() {
-		final Bundle args = getArguments();
-		return args != null ? args.getInt(INTENT_KEY_TAB_POSITION, -1) : -1;
-	}
 }

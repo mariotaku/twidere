@@ -49,10 +49,8 @@ public class SearchTweetsFragment extends ParcelableStatusesListFragment {
 		final Bundle args = getArguments();
 		if (args == null) return null;
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		final String query = args.getString(INTENT_KEY_QUERY);
-		return new String[] { AUTHORITY_SEARCH_TWEETS, "account" + account_id, "query" + query, "screen_name" +
-				screen_name };
+		return new String[] { AUTHORITY_SEARCH_TWEETS, "account" + account_id, "query" + query };
 	}
 
 }
