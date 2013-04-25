@@ -56,7 +56,6 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Par
 
 	private final String[] mSavedActivitiesFileArgs;
 
-
 	public Twitter4JActivitiesLoader(final Context context, final long account_id, final List<ParcelableActivity> data,
 			final String[] save_file_args, final int tab_position) {
 		super(context);

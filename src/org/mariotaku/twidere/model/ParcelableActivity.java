@@ -25,7 +25,7 @@ public class ParcelableActivity implements Comparable<ParcelableActivity>, JSONP
 	public final static int ACTION_RETWEET = Activity.Action.ACTION_RETWEET;
 	public final static int ACTION_LIST_MEMBER_ADDED = Activity.Action.ACTION_LIST_MEMBER_ADDED;
 
-	public final long account_id, activity_timestamp;
+	public final long account_id, activity_timestamp, max_position, min_position;
 	public final int action;
 	
 	public final ParcelableUser[] sources, target_users;
@@ -38,6 +38,8 @@ public class ParcelableActivity implements Comparable<ParcelableActivity>, JSONP
 		this.account_id = account_id;
 		this.activity_timestamp = getTime(activity.getCreatedAt());
 		this.action = activity.getAction().getActionId();
+		this.max_position = activity.getMaxPosition();
+		this.min_position = activity.getMinPosition();
 		final int sources_size = activity.getSourcesSize();
 		sources = new ParcelableUser[sources_size];
 		for (int i = 0; i < sources_size; i++) {
@@ -76,6 +78,8 @@ public class ParcelableActivity implements Comparable<ParcelableActivity>, JSONP
 	public ParcelableActivity(final JSONParcel in) {
 		account_id = in.readLong("account_id");
 		activity_timestamp = in.readLong("activity_timestamp");
+		max_position = in.readLong("max_position");
+		min_position = in.readLong("min_position");
 		action = in.readInt("action");
 		sources = in.readParcelableArray("sources", ParcelableUser.JSON_CREATOR);
 		target_users = in.readParcelableArray("target_users", ParcelableUser.JSON_CREATOR);
@@ -92,6 +96,13 @@ public class ParcelableActivity implements Comparable<ParcelableActivity>, JSONP
 		if (delta > Integer.MAX_VALUE) return Integer.MAX_VALUE;
 		return (int) delta;
 	}
+	
+	@Override
+	public boolean equals(final Object that) {
+		if (!(that instanceof ParcelableActivity)) return false;
+		final ParcelableActivity activity = (ParcelableActivity) that;
+		return max_position == activity.max_position && min_position == activity.min_position;
+	}
 
 	private static long getTime(final Date date) {
 		return date != null ? date.getTime() : 0;
@@ -101,6 +112,8 @@ public class ParcelableActivity implements Comparable<ParcelableActivity>, JSONP
 	public void writeToParcel(final JSONParcel out) {
 		out.writeLong("account_id", account_id);
 		out.writeLong("activity_timestamp", activity_timestamp);
+		out.writeLong("max_position", max_position);
+		out.writeLong("min_position", min_position);
 		out.writeInt("action", action);
 		out.writeParcelableArray("sources", sources);
 		out.writeParcelableArray("target_users", target_users);

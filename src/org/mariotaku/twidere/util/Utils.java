@@ -730,7 +730,7 @@ public final class Utils implements Constants {
 		if (message == null) return null;
 		final String text = message.getRawText();
 		if (text == null) return null;
-		final HtmlBuilder builder = new HtmlBuilder(text, DEBUG, true, true);
+		final HtmlBuilder builder = new HtmlBuilder(text, false, true, true);
 		parseEntities(builder, message);
 		return builder.build().replace("\n", "<br/>");
 	}
@@ -749,7 +749,7 @@ public final class Utils implements Constants {
 		if (user == null) return null;
 		final String text = user.getDescription();
 		if (text == null) return null;
-		final HtmlBuilder builder = new HtmlBuilder(text, DEBUG, true, true);
+		final HtmlBuilder builder = new HtmlBuilder(text, false, true, true);
 		final URLEntity[] urls = user.getDescriptionEntities();
 		if (urls != null) {
 			for (final URLEntity url : urls) {
@@ -766,7 +766,7 @@ public final class Utils implements Constants {
 		if (user == null) return null;
 		final String text = user.getDescription();
 		if (text == null) return null;
-		final HtmlBuilder builder = new HtmlBuilder(text, DEBUG, true, true);
+		final HtmlBuilder builder = new HtmlBuilder(text, false, true, true);
 		final URLEntity[] urls = user.getDescriptionEntities();
 		if (urls != null) {
 			for (final URLEntity url : urls) {
@@ -783,7 +783,7 @@ public final class Utils implements Constants {
 		if (status == null) return null;
 		final String text = status.getRawText();
 		if (text == null) return null;
-		final HtmlBuilder builder = new HtmlBuilder(text, DEBUG, true, true);
+		final HtmlBuilder builder = new HtmlBuilder(text, false, true, true);
 		parseEntities(builder, status);
 		return builder.build().replace("\n", "<br/>");
 	}
