@@ -5,6 +5,6 @@
 	android:layout_height="wrap_content"
 	android:gravity="center"
 	android:horizontalSpacing="2dp"
-	android:numColumns="auto_fit"
+	android:numColumns="3"
 	android:stretchMode="columnWidth"
 	android:verticalSpacing="4dp"/>

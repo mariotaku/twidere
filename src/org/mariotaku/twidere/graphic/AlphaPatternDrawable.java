@@ -32,46 +32,42 @@ import android.graphics.drawable.Drawable;
  */
 public class AlphaPatternDrawable extends Drawable {
 
-	private int mRectangleSize = 10;
+	private final int mRectangleSize;
 
 	private int numRectanglesHorizontal;
 	private int numRectanglesVertical;
 
-	public AlphaPatternDrawable(final int rectangleSize) {
+	private final Rect mRect = new Rect(), mBounds = new Rect();
+	private final Paint mPaint = new Paint();
 
+	public AlphaPatternDrawable(final int rectangleSize) {
 		mRectangleSize = rectangleSize;
 	}
 
 	@Override
 	public void draw(final Canvas canvas) {
 
-		final Rect r = new Rect();
 		boolean verticalStartWhite = true;
 		for (int i = 0; i <= numRectanglesVertical; i++) {
-
-			boolean isWhite = verticalStartWhite;
+			boolean horizontalStartWhite = verticalStartWhite;
 			for (int j = 0; j <= numRectanglesHorizontal; j++) {
+				mRect.setEmpty();
+				mRect.top = i * mRectangleSize + mBounds.top;
+				mRect.left = j * mRectangleSize + mBounds.left;
+				mRect.bottom = Math.min(mRect.top + mRectangleSize, mBounds.bottom);
+				mRect.right = Math.min(mRect.left + mRectangleSize, mBounds.right);
 
-				r.top = i * mRectangleSize;
-				r.left = j * mRectangleSize;
-				r.bottom = r.top + mRectangleSize;
-				r.right = r.left + mRectangleSize;
+				mPaint.setColor(horizontalStartWhite ? Color.WHITE : Color.GRAY);
+				canvas.drawRect(mRect, mPaint);			
 
-				final Paint paint = new Paint();
-				paint.setColor(isWhite ? Color.WHITE : Color.GRAY);
-				canvas.drawRect(r, paint);
-
-				isWhite = !isWhite;
+				horizontalStartWhite = !horizontalStartWhite;
 			}
-
 			verticalStartWhite = !verticalStartWhite;
-
 		}
 	}
 
 	@Override
 	public int getOpacity() {
-
 		return 0;
 	}
 
@@ -87,17 +83,13 @@ public class AlphaPatternDrawable extends Drawable {
 
 	@Override
 	protected void onBoundsChange(final Rect bounds) {
-
 		super.onBoundsChange(bounds);
-
+		mBounds.set(bounds);
 		final int height = bounds.height();
 		final int width = bounds.width();
-
 		numRectanglesHorizontal = (int) Math.ceil(width / mRectangleSize);
 		numRectanglesVertical = (int) Math.ceil(height / mRectangleSize);
-
 		invalidateSelf();
-
 	}
 
 }

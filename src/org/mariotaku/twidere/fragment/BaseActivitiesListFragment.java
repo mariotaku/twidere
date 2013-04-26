@@ -176,8 +176,9 @@ public abstract class BaseActivitiesListFragment extends PullToRefreshListFragme
 	
 	protected final boolean saveActivitiesInternal() {
 		if (mIsActivitiesSaved) return true;
-		final int items_limit = mPreferences.getInt(PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
 		final List<ParcelableActivity> data = getData();
+		if (data == null) return false;
+		final int items_limit = mPreferences.getInt(PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
 		final List<ParcelableActivity> activities = data.subList(0, Math.min(items_limit, data.size()));
 		try {
 			final File file = JSONSerializer.getSerializationFile(getActivity(), getSavedActivitiesFileArgs());

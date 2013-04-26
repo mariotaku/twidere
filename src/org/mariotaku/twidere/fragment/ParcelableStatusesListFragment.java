@@ -235,8 +235,9 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 
 	protected final boolean saveStatusesInternal() {
 		if (mIsStatusesSaved) return true;
-		final int items_limit = mPreferences.getInt(PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
 		final List<ParcelableStatus> data = getData();
+		if (data == null) return false;
+		final int items_limit = mPreferences.getInt(PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
 		final List<ParcelableStatus> statuses = data.subList(0, Math.min(items_limit, data.size()));
 		try {
 			final File file = JSONSerializer.getSerializationFile(getActivity(), getSavedStatusesFileArgs());
