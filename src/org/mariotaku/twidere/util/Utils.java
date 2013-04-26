@@ -2059,6 +2059,15 @@ public final class Utils implements Constants {
 		return o.outHeight > 0 && o.outWidth > 0;
 	}
 
+	public static boolean isValidUrl(final CharSequence url) {
+		try {
+			new URL(parseString(url));
+		} catch (final Exception e) {
+			return false;
+		}
+		return true;
+	}
+
 	public static ContentValues makeAccountContentValues(final Configuration conf, final String basic_password,
 			final AccessToken access_token, final User user, final int auth_type, final int color) {
 		if (user == null || user.getId() <= 0) return null;

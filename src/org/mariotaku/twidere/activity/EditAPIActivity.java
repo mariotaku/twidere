@@ -19,6 +19,9 @@
 
 package org.mariotaku.twidere.activity;
 
+import static org.mariotaku.twidere.util.Utils.isValidUrl;
+import static org.mariotaku.twidere.util.Utils.parseString;
+
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 
@@ -33,6 +36,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
+import java.net.URL;
 
 public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChangeListener, OnClickListener {
 
@@ -71,6 +75,7 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 		switch (v.getId()) {
 			case R.id.save: {
 				saveEditedText();
+				if (checkUrlErrors()) return;
 				final Bundle bundle = new Bundle();
 				bundle.putString(Accounts.REST_BASE_URL, mRestBaseURL);
 				bundle.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRESTBaseURL);
@@ -151,31 +156,48 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 		outState.putInt(Accounts.AUTH_TYPE, mAuthType);
 		super.onSaveInstanceState(outState);
 	}
-
-	private void saveEditedText() {
+	
+	private boolean checkUrlErrors() {
+		boolean urlHasErrors = false;
 		if (mEditRestBaseURL != null) {
-			final Editable ed = mEditRestBaseURL.getText();
-			if (ed != null) {
-				mRestBaseURL = ed.toString();
+			if (!isValidUrl(mEditRestBaseURL.getText())) {
+				mEditRestBaseURL.setError(getString(R.string.wrong_url_format));
+				urlHasErrors = true;
 			}
 		}
 		if (mEditSigningRESTBaseURL != null) {
-			final Editable ed = mEditSigningRESTBaseURL.getText();
-			if (ed != null) {
-				mSigningRESTBaseURL = ed.toString();
+			if (!isValidUrl(mEditSigningRESTBaseURL.getText())) {
+				mEditSigningRESTBaseURL.setError(getString(R.string.wrong_url_format));
+				urlHasErrors = true;
 			}
 		}
 		if (mEditOAuthBaseURL != null) {
-			final Editable ed = mEditOAuthBaseURL.getText();
-			if (ed != null) {
-				mOAuthBaseURL = ed.toString();
+			if(!isValidUrl(mEditOAuthBaseURL.getText())) {
+				mEditOAuthBaseURL.setError(getString(R.string.wrong_url_format));
+				urlHasErrors = true;
 			}
 		}
 		if (mEditSigningOAuthBaseURL != null) {
-			final Editable ed = mEditSigningOAuthBaseURL.getText();
-			if (ed != null) {
-				mSigningOAuthBaseURL = ed.toString();
+			if (!isValidUrl(mEditSigningOAuthBaseURL.getText())) {
+				mEditSigningOAuthBaseURL.setError(getString(R.string.wrong_url_format));
+				urlHasErrors = true;
 			}
+		}
+		return urlHasErrors;
+	}
+
+	private void saveEditedText() {
+		if (mEditRestBaseURL != null) {
+			mRestBaseURL = parseString(mEditRestBaseURL.getText());
+		}
+		if (mEditSigningRESTBaseURL != null) {
+			mSigningRESTBaseURL = parseString(mEditSigningRESTBaseURL.getText());
+		}
+		if (mEditOAuthBaseURL != null) {
+			mOAuthBaseURL = parseString(mEditOAuthBaseURL.getText());
+		}
+		if (mEditSigningOAuthBaseURL != null) {
+			mSigningOAuthBaseURL = parseString(mEditSigningOAuthBaseURL.getText());
 		}
 	}
 }
