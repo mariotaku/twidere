@@ -421,5 +421,6 @@
 	<string name="theme_color">Theme color</string>
 	<string name="link_underline_only">Show underline only for links</string>
 	<string name="wrong_url_format">Wrong URL format.</string>
+	<string name="wrong_username_password">Wrong username/password.</string>
 
 </resources>

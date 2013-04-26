@@ -38,7 +38,6 @@ import org.mariotaku.twidere.util.AsyncTask;
 import org.mariotaku.twidere.util.ColorAnalyser;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator.AuthenticationException;
-import org.mariotaku.twidere.util.OAuthPasswordAuthenticator.CallbackURLException;
 import org.mariotaku.twidere.util.httpclient.HttpClientImpl;
 
 import twitter4j.Twitter;
@@ -80,6 +79,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import android.support.v4.app.Fragment;
 
 public class SignInActivity extends BaseActivity implements OnClickListener, TextWatcher {
 
@@ -234,15 +234,24 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 		final long[] account_ids = getActivatedAccountIds(this);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(account_ids.length > 0);
 
-		Bundle bundle = savedInstanceState == null ? getIntent().getExtras() : savedInstanceState;
-		if (bundle == null) {
-			bundle = new Bundle();
+		final Bundle extras = getIntent().getExtras();
+		if (savedInstanceState != null) {
+			mRESTBaseURL = savedInstanceState.getString(Accounts.REST_BASE_URL);
+			mOAuthBaseURL = savedInstanceState.getString(Accounts.OAUTH_BASE_URL);
+			mSigningRESTBaseURL = savedInstanceState.getString(Accounts.SIGNING_REST_BASE_URL);
+			mSigningOAuthBaseURL = savedInstanceState.getString(Accounts.SIGNING_OAUTH_BASE_URL);
+			mUsername = savedInstanceState.getString(Accounts.SCREEN_NAME);
+			mPassword = savedInstanceState.getString(Accounts.PASSWORD);
+			mAuthType = savedInstanceState.getInt(Accounts.AUTH_TYPE);
+			if (savedInstanceState.containsKey(Accounts.USER_COLOR)) {
+				mUserColor = savedInstanceState.getInt(Accounts.USER_COLOR, Color.TRANSPARENT);
+			}
+		} else if (extras != null) {
+			mRESTBaseURL = extras.getString(Accounts.REST_BASE_URL);
+			mOAuthBaseURL = extras.getString(Accounts.OAUTH_BASE_URL);
+			mSigningRESTBaseURL = extras.getString(Accounts.SIGNING_REST_BASE_URL);
+			mSigningOAuthBaseURL = extras.getString(Accounts.SIGNING_OAUTH_BASE_URL);
 		}
-		mRESTBaseURL = bundle.getString(Accounts.REST_BASE_URL);
-		mOAuthBaseURL = bundle.getString(Accounts.OAUTH_BASE_URL);
-		mSigningRESTBaseURL = bundle.getString(Accounts.SIGNING_REST_BASE_URL);
-		mSigningOAuthBaseURL = bundle.getString(Accounts.SIGNING_OAUTH_BASE_URL);
-
 		if (isEmpty(mRESTBaseURL)) {
 			mRESTBaseURL = DEFAULT_REST_BASE_URL;
 		}
@@ -256,12 +265,6 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 			mSigningOAuthBaseURL = DEFAULT_SIGNING_OAUTH_BASE_URL;
 		}
 
-		mUsername = bundle.getString(Accounts.SCREEN_NAME);
-		mPassword = bundle.getString(Accounts.PASSWORD);
-		mAuthType = bundle.getInt(Accounts.AUTH_TYPE);
-		if (bundle.containsKey(Accounts.USER_COLOR)) {
-			mUserColor = bundle.getInt(Accounts.USER_COLOR, Color.TRANSPARENT);
-		}
 		mUsernamePasswordContainer
 				.setVisibility(mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE ? View.GONE : View.VISIBLE);
 		mSigninSignupContainer.setOrientation(mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE ? LinearLayout.VERTICAL
@@ -275,9 +278,9 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 		setUserColorButton();
 		if (!mPreferences.getBoolean(PREFERENCE_KEY_API_UPGRADE_CONFIRMED, false)) {
 			final FragmentManager fm = getSupportFragmentManager();
-			if (fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE) == null
-					|| !fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE).isAdded()) {
-				new APIUpgradeConfirmDialog().show(getSupportFragmentManager(), "api_upgrade_notice");
+			final Fragment fragment = fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE);
+			if (fragment == null || !fragment.isAdded()) {
+				new APIUpgradeConfirmDialog().show(getSupportFragmentManager(), FRAGMENT_TAG_API_UPGRADE_NOTICE);
 			}
 		}
 	}
@@ -310,8 +313,8 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 			} else if (result.already_logged_in) {
 				Toast.makeText(SignInActivity.this, R.string.error_already_logged_in, Toast.LENGTH_SHORT).show();
 			} else {
-				if (result.exception instanceof CallbackURLException) {
-					showErrorToast(this, getString(R.string.cannot_get_callback_url), true);
+				if (result.exception instanceof AuthenticationException) {
+					showErrorToast(this, getString(R.string.wrong_username_password), true);
 				} else {
 					showErrorToast(this, getString(R.string.signing_in), result.exception, true);
 				}
@@ -597,8 +600,6 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 				}
 				return authOAuth();
 			} catch (final TwitterException e) {
-				return new SigninResponse(false, false, e);
-			} catch (final CallbackURLException e) {
 				return new SigninResponse(false, false, e);
 			} catch (final AuthenticationException e) {
 				return new SigninResponse(false, false, e);

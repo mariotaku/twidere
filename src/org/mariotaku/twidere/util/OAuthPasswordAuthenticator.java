@@ -118,7 +118,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 	}
 
 	public synchronized AccessToken getOAuthAccessToken(final String username, final String password)
-			throws AuthenticationException, OAuthPasswordAuthenticator.CallbackURLException {
+			throws AuthenticationException {
 		authenticity_token = null;
 		oauth_pin = null;
 		try {
@@ -192,11 +192,10 @@ public class OAuthPasswordAuthenticator implements Constants {
 		}
 	}
 
-	public static final class CallbackURLException extends AuthenticationException {
-
-		private static final long serialVersionUID = 1735318863603574697L;
-
-	}
+//	public static final class CallbackURLException extends AuthenticationException {
+//		private static final long serialVersionUID = 1735318863603574697L;
+//
+//	}
 
 	static class DummyContentHandler implements ContentHandler {
 		@Override
