@@ -2,7 +2,9 @@
 <resources>
 
 	<declare-styleable name="Twidere">
-		<attr name="switchStyle" format="reference"/>
+		<attr name="borderlessButtonStyle" format="reference"/>
+		<attr name="borderlessImageButtonStyle" format="reference"/>
+		<attr name="selectableViewStyle" format="reference"/>
 		<attr name="editTextStyle" format="reference"/>
 		<attr name="preferenceTitleStyle" format="reference"/>
 		<attr name="imagePreviewBackground" format="reference"/>

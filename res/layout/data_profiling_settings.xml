@@ -44,11 +44,10 @@
 
 		<Button
 			android:id="@+id/preview"
-			style="?android:attr/buttonStyleSmall"
+			style="?borderlessButtonStyle"
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
 			android:layout_weight="1"
-			android:background="?android:attr/itemBackground"
 			android:gravity="center"
 			android:text="@string/preview"/>
 
@@ -59,11 +58,10 @@
 
 		<Button
 			android:id="@+id/save"
-			style="?android:attr/buttonStyleSmall"
+			style="?borderlessButtonStyle"
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
 			android:layout_weight="1"
-			android:background="?android:attr/itemBackground"
 			android:gravity="center"
 			android:text="@android:string/ok"/>
 	</LinearLayout>

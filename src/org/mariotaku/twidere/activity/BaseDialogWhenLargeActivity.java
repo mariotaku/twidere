@@ -53,6 +53,7 @@ public class BaseDialogWhenLargeActivity extends BaseActivity {
 		final ViewGroup content = (ViewGroup) root.findViewById(R.id.activity_content);
 		content.addView(mActivityContent = view, params);
 		super.setContentView(root);
+		setActionBarBackground();
 	}
 
 	@Override

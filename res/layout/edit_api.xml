@@ -89,19 +89,19 @@
 				</RadioGroup>
 			</HorizontalScrollView>
 
-			<TextView android:layerType="software"
+			<Button android:layerType="software"
 				android:id="@+id/advanced_api_config_label"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_below="@+id/auth_type_scroll"
-				android:background="?android:attr/itemBackground"
 				android:drawableLeft="@drawable/expander_close_holo"
 				android:drawablePadding="4dp"
 				android:gravity="center_vertical"
 				android:paddingBottom="4dp"
 				android:paddingTop="4dp"
 				android:text="@string/advanced"
-				android:textAppearance="?android:attr/textAppearanceMedium"/>
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				style="?borderlessButtonStyle"/>
 
 			<ViewStub
 				android:id="@+id/stub_advanced_api_config"
@@ -121,13 +121,12 @@
 
 	<Button
 		android:id="@+id/save"
-		style="?android:attr/buttonStyleSmall"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal"
-		android:background="?android:attr/itemBackground"
 		android:gravity="center"
 		android:minHeight="48dp"
-		android:text="@android:string/ok"/>
+		android:text="@android:string/ok"
+		style="?borderlessButtonStyle"/>
 
 </LinearLayout>

@@ -68,11 +68,10 @@
 
 		<Button
 			android:id="@+id/accept"
-			style="?android:attr/buttonStyleSmall"
+			style="?borderlessButtonStyle"
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
 			android:layout_weight="1"
-			android:background="?android:attr/itemBackground"
 			android:gravity="center"
 			android:text="@string/accept"/>
 
@@ -83,11 +82,10 @@
 
 		<Button
 			android:id="@+id/deny"
-			style="?android:attr/buttonStyleSmall"
+			style="?borderlessButtonStyle"
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
 			android:layout_weight="1"
-			android:background="?android:attr/itemBackground"
 			android:gravity="center"
 			android:text="@string/no_thanks"/>
 	</LinearLayout>

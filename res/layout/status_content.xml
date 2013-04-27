@@ -8,8 +8,8 @@
 		android:id="@+id/profile"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:background="?android:attr/itemBackground"
-		android:padding="6dp">
+		android:padding="6dp"
+		style="?selectableViewStyle">
 
 		<ImageView
 			android:id="@+id/profile_image"
@@ -81,7 +81,6 @@
 		android:id="@+id/in_reply_to"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:background="?android:attr/itemBackground"
 		android:drawableLeft="@drawable/ic_indicator_reply"
 		android:drawablePadding="4dp"
 		android:ellipsize="marquee"
@@ -90,7 +89,8 @@
 		android:padding="8dp"
 		android:singleLine="true"
 		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:visibility="gone"/>
+		android:visibility="gone"
+		style="?selectableViewStyle"/>
 
 	<TextView
 		android:id="@+id/text"
@@ -108,7 +108,6 @@
 		android:id="@+id/retweet_view"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:background="?android:attr/itemBackground"
 		android:drawableLeft="@drawable/ic_indicator_retweet"
 		android:drawablePadding="4dp"
 		android:ellipsize="marquee"
@@ -118,13 +117,13 @@
 		android:singleLine="true"
 		android:text="@string/users_retweeted_this"
 		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:visibility="gone"/>
+		android:visibility="gone"
+		style="?selectableViewStyle"/>
 
 	<TextView
 		android:id="@+id/location_view"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:background="?android:attr/itemBackground"
 		android:drawableLeft="@drawable/ic_indicator_has_location"
 		android:drawablePadding="4dp"
 		android:ellipsize="marquee"
@@ -134,7 +133,8 @@
 		android:singleLine="true"
 		android:text="@string/view_map"
 		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:visibility="gone"/>
+		android:visibility="gone"
+		style="?selectableViewStyle"/>
 
 	<TextView
 		android:id="@+id/time_source"
