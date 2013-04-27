@@ -74,7 +74,9 @@ public final class ActivityAccessor {
 
 		private static void setHomeButtonEnabled(final Activity activity, final boolean enabled) {
 			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) return;
-			activity.getActionBar().setHomeButtonEnabled(enabled);
+			final ActionBar actionBar = activity.getActionBar();
+			if (actionBar == null) return;
+			actionBar.setHomeButtonEnabled(enabled);
 		}
 	}
 }
