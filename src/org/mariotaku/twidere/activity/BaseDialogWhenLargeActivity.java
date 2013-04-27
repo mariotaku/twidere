@@ -1,13 +1,13 @@
 package org.mariotaku.twidere.activity;
 
-import org.mariotaku.twidere.R;
-
 import android.annotation.SuppressLint;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
+import org.mariotaku.twidere.R;
 
 @SuppressLint("Registered")
 public class BaseDialogWhenLargeActivity extends BaseActivity {
@@ -20,6 +20,18 @@ public class BaseDialogWhenLargeActivity extends BaseActivity {
 		return mActivityContent.findViewById(id);
 	}
 
+	@Override
+	public void onContentChanged() {
+		super.onContentChanged();
+		setActionBarBackground();
+	}
+	
+	@Override
+	public void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setActionBarBackground();
+	}
+	
 	@Override
 	public void setContentView(final int layoutResID) {
 		if (shouldDisableDialogWhenLargeMode()) {
@@ -53,7 +65,6 @@ public class BaseDialogWhenLargeActivity extends BaseActivity {
 		final ViewGroup content = (ViewGroup) root.findViewById(R.id.activity_content);
 		content.addView(mActivityContent = view, params);
 		super.setContentView(root);
-		setActionBarBackground();
 	}
 
 	@Override

@@ -89,7 +89,6 @@
 			android:orientation="horizontal"/>
 	</LinearLayout>
 
-	<include layout="@layout/action_mode">
-	</include>
+	<include layout="@layout/action_mode"/>
 
 </FrameLayout>
