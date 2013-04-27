@@ -19,21 +19,25 @@
 
 package org.mariotaku.twidere.activity;
 
-import static org.mariotaku.twidere.util.Utils.restartActivity;
-
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.TypedArray;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
+import android.os.Build;
+import android.os.Bundle;
+import android.view.Window;
+import android.view.WindowManager;
+import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.actionbarcompat.ActionBarFragmentActivity;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.iface.IThemedActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Build;
-import android.os.Bundle;
-import android.view.Window;
-import android.view.WindowManager;
+import static org.mariotaku.twidere.util.Utils.restartActivity;
 
 @SuppressLint("Registered")
 public class BaseActivity extends ActionBarFragmentActivity implements Constants, IThemedActivity {
@@ -59,6 +63,7 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 		setHardwareAcceleration();
 		setTheme();
 		super.onCreate(savedInstanceState);
+		setActionBarBackground();
 	}
 
 	@Override
@@ -72,6 +77,23 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 
 	public void restart() {
 		restartActivity(this);
+	}
+
+	public void setActionBarBackground() {
+		final ActionBar ab = getSupportActionBar();
+		final TypedArray a = obtainStyledAttributes(new int[] { R.attr.actionBarBackground, android.R.attr.colorActivatedHighlight });
+		final int color = a.getColor(1, getResources().getColor(R.color.holo_blue_dark));
+		final Drawable d = a.getDrawable(0);
+		if (d == null) return;
+		if (mIsDarkTheme) {
+			final Drawable mutated = d.mutate();
+			mutated.setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+			ab.setBackgroundDrawable(mutated);
+		} else if (d instanceof LayerDrawable) {
+			final LayerDrawable ld = (LayerDrawable) d.mutate();
+			ld.findDrawableByLayerId(R.id.color_layer).setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+			ab.setBackgroundDrawable(ld);
+		}
 	}
 
 	public void setHardwareAcceleration() {

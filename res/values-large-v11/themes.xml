@@ -24,7 +24,7 @@
 		<item name="android:windowBackground">@drawable/dialog_full_holo_light_darkactionbar</item>
 
 		<!-- for programmatic instantiation -->
-		<item name="actionBarBackground">@drawable/bg_actionbar_light_theme</item>
+		<item name="actionBarBackground">@drawable/actionbar_bg_light_darkactionbar_twidere_holo</item>
 		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle.Inverse</item>
 		<item name="actionBarSubtitleStyle">@style/Widget.ActionBarSubtitle.Inverse</item>
 		<item name="actionBarItemStyle">@style/Widget.ActionBarItem</item>

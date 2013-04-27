@@ -3,6 +3,7 @@ package org.mariotaku.actionbarcompat;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.support.v4.app.ActivityCompat;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.Window;
@@ -25,7 +26,7 @@ public class ActionBarPreferenceActivity extends PreferenceActivity {
 
 	public void invalidateSupportOptionsMenu() {
 		if (mActionBarCompat instanceof ActionBarCompatNative) {
-			MethodsCompat.invalidateOptionsMenu(this);
+			ActivityCompat.invalidateOptionsMenu(this);
 		} else if (mActionBarCompat instanceof ActionBarCompatBase) {
 			((ActionBarCompatBase) mActionBarCompat).invalidateOptionsMenu();
 		}

@@ -3,6 +3,7 @@ package org.mariotaku.actionbarcompat;
 import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
@@ -36,7 +37,7 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 
 	public void invalidateSupportOptionsMenu() {
 		if (mActionBarCompat instanceof ActionBarCompatNative) {
-			MethodsCompat.invalidateOptionsMenu(this);
+			ActivityCompat.invalidateOptionsMenu(this);
 		} else if (mActionBarCompat instanceof ActionBarCompatBase) {
 			((ActionBarCompatBase) mActionBarCompat).invalidateOptionsMenu();
 		}

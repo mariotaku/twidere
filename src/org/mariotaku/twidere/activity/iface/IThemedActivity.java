@@ -30,4 +30,5 @@ public interface IThemedActivity {
 	void onResume();
 
 	void setTheme();
+
 }

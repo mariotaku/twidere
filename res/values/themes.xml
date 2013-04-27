@@ -36,7 +36,7 @@
 		<item name="android:itemBackground">@drawable/item_background_holo_light</item>
 		<item name="messagesBackground">#20808080</item>
 		<item name="android:windowBackground">@drawable/background_holo_light</item>
-		<item name="actionBarBackground">@drawable/bg_actionbar_light_theme</item>
+		<item name="actionBarBackground">@drawable/actionbar_bg_light_darkactionbar_twidere_holo</item>
 
 		<!-- Button styles -->
 		<item name="android:buttonStyle">@style/Widget.Twidere.Light.Button</item>

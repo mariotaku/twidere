@@ -364,7 +364,13 @@ OnImageClickListener {
 		public void onSizeChanged(final View view, final int w, final int h, final int oldw, final int oldh) {
 			if (getActivity() == null) return;
 			final float density = getResources().getDisplayMetrics().density;
-			mStatusView.setMinimumHeight(h - (int) (density * 2));
+			final ViewGroup.LayoutParams lp = mStatusView.getLayoutParams();
+			if (lp != null) {
+				lp.height = h - (int) (density * 2);
+				mStatusView.setLayoutParams(lp);
+			} else {
+				mStatusView.setMinimumHeight(h - (int) (density * 2));
+			}
 		}
 
 	};
