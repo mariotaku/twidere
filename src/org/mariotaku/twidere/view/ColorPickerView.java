@@ -17,7 +17,6 @@
 package org.mariotaku.twidere.view;
 
 import org.mariotaku.twidere.graphic.AlphaPatternDrawable;
-import org.mariotaku.twidere.util.ViewAccessor;
 
 import android.content.Context;
 import android.content.res.Configuration;
@@ -33,7 +32,7 @@ import android.graphics.PorterDuff;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.Shader.TileMode;
-import android.os.Build;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -732,9 +731,7 @@ public class ColorPickerView extends View {
 
 	private void init() {
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			ViewAccessor.setLayerType(this, View.LAYER_TYPE_SOFTWARE, null);
-		}
+		ViewCompat.setLayerType(this, LAYER_TYPE_SOFTWARE, null);
 		mDensity = getContext().getResources().getDisplayMetrics().density;
 		PALETTE_CIRCLE_TRACKER_RADIUS *= mDensity;
 		RECTANGLE_TRACKER_OFFSET *= mDensity;
