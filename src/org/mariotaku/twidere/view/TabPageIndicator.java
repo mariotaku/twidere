@@ -23,6 +23,7 @@ import org.mariotaku.twidere.preference.ThemeColorPreference;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v4.view.PagerAdapter;
@@ -37,7 +38,6 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.graphics.PorterDuff;
 
 /**
  * This widget implements the dynamic action bar tab behavior that can change
@@ -93,13 +93,9 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 	public TabPageIndicator(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
 		setHorizontalScrollBarEnabled(false);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.colorActivatedHighlight });
-			mTabColor = a.getColor(0, R.color.holo_blue_dark);
-			a.recycle();
-		} else {
-			mTabColor = getResources().getColor(R.color.holo_blue_dark);
-		}
+		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.colorActivatedHighlight });
+		mTabColor = a.getColor(0, R.color.holo_blue_dark);
+		a.recycle();
 		mInflater = LayoutInflater.from(context);
 		mTabLayout = new LinearLayout(context);
 		addView(mTabLayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
