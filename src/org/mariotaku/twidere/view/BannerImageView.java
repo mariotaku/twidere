@@ -47,7 +47,6 @@ public class BannerImageView extends ImageView implements IExtendedView {
 	protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
 		final int width = MeasureSpec.getSize(widthMeasureSpec), mode = MeasureSpec.getMode(heightMeasureSpec);
 		setMeasuredDimension(width, width / 2);
-		super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(width / 2, mode));
 	}
 
 	@Override

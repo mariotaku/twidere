@@ -266,7 +266,6 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 		holder.profile_image.setOnClickListener(mMultiSelectEnabled ? null : this);
 		holder.my_profile_image.setOnClickListener(mMultiSelectEnabled ? null : this);
 		holder.image_preview_frame.setOnClickListener(mMultiSelectEnabled ? null : this);
-		super.bindView(view, context, cursor);
 	}
 
 	public long findItemIdByPosition(final int position) {
