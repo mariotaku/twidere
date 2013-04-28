@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.view.holder;
 
+import static org.mariotaku.twidere.util.Utils.getThemeColor;
+
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
@@ -32,11 +34,14 @@ public class UserViewHolder {
 	public final ImageView profile_image;
 	public final TextView name, screen_name, description;
 	private final ColorLabelRelativeLayout content;
+	private final int theme_color;
 	private boolean account_color_enabled;
 	private float text_size;
 
 	public UserViewHolder(final View view) {
 		content = (ColorLabelRelativeLayout) view;
+		final int color = getThemeColor(view.getContext());
+		theme_color = Color.argb(0x60, Color.red(color), Color.green(color), Color.blue(color));
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		name = (TextView) view.findViewById(R.id.name);
 		screen_name = (TextView) view.findViewById(R.id.screen_name);
@@ -59,7 +64,7 @@ public class UserViewHolder {
 	}
 
 	public void setSelected(final boolean selected) {
-		content.setBackgroundColor(selected ? 0x600099CC : Color.TRANSPARENT);
+		content.setBackgroundColor(selected ? theme_color : Color.TRANSPARENT);
 	}
 
 	public void setTextSize(final float text_size) {

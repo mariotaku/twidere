@@ -23,6 +23,11 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
+import android.graphics.Bitmap;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import org.mariotaku.twidere.util.Utils;
 
 // This is copied from android.widget.EdgeEffect with some small modifications:
 // (1) Copy the images (overscroll_{edge|glow}.png) to local resources.
@@ -136,9 +141,11 @@ public class EdgeEffect {
 	 *            for the EdgeEffect
 	 */
 	public EdgeEffect(final Context context) {
+		final int theme_color = Utils.getThemeColor(context);
 		mEdge = new Drawable(context, R.drawable.overscroll_edge);
+		mEdge.setColorFilter(theme_color, PorterDuff.Mode.MULTIPLY);
 		mGlow = new Drawable(context, R.drawable.overscroll_glow);
-
+		mGlow.setColorFilter(theme_color, PorterDuff.Mode.MULTIPLY);
 		mMinWidth = (int) (context.getResources().getDisplayMetrics().density * MIN_WIDTH + 0.5f);
 		mInterpolator = new DecelerateInterpolator();
 	}
@@ -399,6 +406,8 @@ public class EdgeEffect {
 		private final Rect mBounds = new Rect();
 		private int mAlpha = 255;
 
+		private final Paint mPaint = new Paint();
+
 		public Drawable(final Context context, final int resId) {
 			super(context, resId);
 		}
@@ -425,6 +434,25 @@ public class EdgeEffect {
 
 		public void setBounds(final int left, final int top, final int right, final int bottom) {
 			mBounds.set(left, top, right, bottom);
+		}
+		
+		public void clearColorFilter() {
+			mPaint.setColorFilter(null);
+		}
+		
+		public void setColorFilter(int color, PorterDuff.Mode mode) {
+			mPaint.setColorFilter(new PorterDuffColorFilter(color, mode));
+		}
+		
+		@Override
+		protected Bitmap onGetBitmap() {
+			final Bitmap orig = super.onGetBitmap();
+			if (mPaint.getColorFilter() == null) return orig;
+			final Bitmap bitmap = Bitmap.createBitmap(orig.getWidth(), orig.getHeight(), orig.getConfig());
+			final Canvas c = new Canvas(bitmap);
+			c.drawBitmap(orig, 0, 0, mPaint);
+			orig.recycle();
+			return bitmap;
 		}
 	}
 }

@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.view.holder;
 
+import static org.mariotaku.twidere.util.Utils.getThemeColor;
+ 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
@@ -34,12 +36,15 @@ public class StatusViewHolder {
 	public final View image_preview_frame, name_container, image_preview_container;
 	private final View gap_indicator;
 	private final ColorLabelRelativeLayout content;
+	private final int theme_color;
 	public boolean show_as_gap;
 	private boolean account_color_enabled;
 	private float text_size;
 
 	public StatusViewHolder(final View view) {
 		content = (ColorLabelRelativeLayout) view;
+		final int color = getThemeColor(view.getContext());
+		theme_color = Color.argb(0x60, Color.red(color), Color.green(color), Color.blue(color));
 		gap_indicator = view.findViewById(R.id.list_gap_text);
 		image_preview_container = view.findViewById(R.id.image_preview_container);
 		image_preview_frame = view.findViewById(R.id.image_preview_frame);
@@ -75,7 +80,7 @@ public class StatusViewHolder {
 	}
 
 	public void setSelected(final boolean selected) {
-		content.setBackgroundColor(selected && !show_as_gap ? 0x600099CC : Color.TRANSPARENT);
+		content.setBackgroundColor(selected && !show_as_gap ? theme_color : Color.TRANSPARENT);
 	}
 
 	public void setShowAsGap(final boolean show_gap) {
