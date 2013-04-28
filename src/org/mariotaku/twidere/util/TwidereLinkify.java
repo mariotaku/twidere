@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.util;
 
 import static org.mariotaku.twidere.util.Utils.getAllAvailableImage;
+import static org.mariotaku.twidere.util.Utils.getThemeColor;
 import static org.mariotaku.twidere.util.Utils.matcherEnd;
 import static org.mariotaku.twidere.util.Utils.matcherGroup;
 import static org.mariotaku.twidere.util.Utils.matcherStart;
@@ -194,21 +195,15 @@ public class TwidereLinkify {
 
 	private final OnLinkClickListener mOnLinkClickListener;
 	private final Extractor mExtractor = new Extractor();
-	private int mLinkColor;
 	private boolean mShowUnderline;
 
-	public TwidereLinkify(final OnLinkClickListener listener, final Context context) {
-		this(listener, context, false);
-	}
-	
-	public TwidereLinkify(final OnLinkClickListener listener, final Context context, final boolean show_underline) {
-		this(listener, context, show_underline, ThemeColorPreference.getThemeColor(context));
+	public TwidereLinkify(final OnLinkClickListener listener) {
+		this(listener, false);
 	}
 
-	public TwidereLinkify(final OnLinkClickListener listener, final Context context, final boolean show_underline, final int link_color) {
+	public TwidereLinkify(final OnLinkClickListener listener, final boolean show_underline) {
 		mOnLinkClickListener = listener;
 		mShowUnderline = show_underline;
-		mLinkColor = link_color;
 	}
 	
 	public final void applyUserProfileLink(final TextView view, final long account_id, final long user_id, final String screen_name) {
@@ -235,10 +230,6 @@ public class TwidereLinkify {
 		}
 		view.setText(string);
 		addLinkMovementMethod(view);
-	}
-	
-	public void setLinkColor(final int link_color) {
-		mLinkColor = link_color;
 	}
 	
 	public void setShowUnderline(final boolean show_underline) {
@@ -390,7 +381,7 @@ public class TwidereLinkify {
 
 	private final void applyLink(final String url, final String orig, final int start, final int end,
 			final Spannable text, final long account_id, final int type, final boolean sensitive) {
-		final LinkSpan span = new LinkSpan(url, orig, account_id, type, sensitive, mOnLinkClickListener, mShowUnderline, mLinkColor);
+		final LinkSpan span = new LinkSpan(url, orig, account_id, type, sensitive, mOnLinkClickListener, mShowUnderline);
 		text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 	}
 
@@ -416,13 +407,12 @@ public class TwidereLinkify {
 		private final boolean sensitive;
 		private final OnLinkClickListener listener;
 		private final boolean show_underline;
-		private final int color;
 
-		public LinkSpan(final String url, final long account_id, final int type, final boolean sensitive, final OnLinkClickListener listener, final boolean show_underline, final int color) {
-			this(url, null, account_id, type, sensitive, listener, show_underline, color);
+		public LinkSpan(final String url, final long account_id, final int type, final boolean sensitive, final OnLinkClickListener listener, final boolean show_underline) {
+			this(url, null, account_id, type, sensitive, listener, show_underline);
 		}
 
-		public LinkSpan(final String url, final String orig, final long account_id, final int type, final boolean sensitive, final OnLinkClickListener listener, final boolean show_underline, final int color) {
+		public LinkSpan(final String url, final String orig, final long account_id, final int type, final boolean sensitive, final OnLinkClickListener listener, final boolean show_underline) {
 			super(url);
 			this.url = url;
 			this.orig = orig;
@@ -431,7 +421,6 @@ public class TwidereLinkify {
 			this.sensitive = sensitive;
 			this.listener = listener;
 			this.show_underline = show_underline;
-			this.color = color;
 		}
 
 		@Override
@@ -443,9 +432,7 @@ public class TwidereLinkify {
 		
 		@Override
 		public void updateDrawState(final TextPaint ds) {
-			if (color != Color.TRANSPARENT) {
-          	  ds.setColor(color);
-			}
+			super.updateDrawState(ds);
             ds.setUnderlineText(show_underline);
         }
 	}

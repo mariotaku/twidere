@@ -58,6 +58,7 @@ import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.SocketAddress;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -156,6 +157,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -198,7 +200,6 @@ import android.view.SubMenu;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import java.net.URLEncoder;
 
 public final class Utils implements Constants {
 
@@ -1719,6 +1720,14 @@ public final class Utils implements Constants {
 		if (string == null) return 0;
 		return ArrayUtils.toStringArray(string).length;
 	}
+	
+	public static int getThemeColor(final Context context) {
+		if (context == null) return Color.TRANSPARENT;
+		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.colorActivatedHighlight });
+		final int color = a.getColor(0, context.getResources().getColor(R.color.holo_blue_light));
+		a.recycle();
+		return color;
+	}
 
 	public static int getTextCount(final TextView view) {
 		if (view == null) return 0;
@@ -3034,7 +3043,7 @@ public final class Utils implements Constants {
 
 	public static void setMenuForStatus(final Context context, final Menu menu, final ParcelableStatus status) {
 		if (context == null || menu == null || status == null) return;
-		final int activated_color = context.getResources().getColor(R.color.holo_blue_bright);
+		final int activated_color = getThemeColor(context);
 		final MenuItem delete = menu.findItem(R.id.delete_submenu);
 		if (delete != null) {
 			delete.setVisible(status.account_id == status.user_id && !isMyRetweet(status));

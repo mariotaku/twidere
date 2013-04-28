@@ -48,17 +48,20 @@ import android.widget.FrameLayout.LayoutParams;
 public class DirectMessagesConversationAdapter extends SimpleCursorAdapter implements IDirectMessagesAdapter,
 		OnClickListener {
 
-	private boolean mDisplayProfileImage;
 	private final ImageLoaderWrapper mImageLoader;
-	private float mTextSize;
 	private final Context mContext;
+	private final TwidereLinkify mLinkify;
+
 	private DirectMessageCursorIndices mIndices;
 	private int mNameDisplayOption;
+	private boolean mDisplayProfileImage;
+	private float mTextSize;
 
 	public DirectMessagesConversationAdapter(final Context context) {
 		super(context, R.layout.direct_message_list_item, null, new String[0], new int[0], 0);
 		mContext = context;
 		mImageLoader = TwidereApplication.getInstance(context).getImageLoaderWrapper();
+		mLinkify = new TwidereLinkify(new OnDirectMessageLinkClickHandler(context));
 	}
 
 	@Override
@@ -96,8 +99,7 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		lp.gravity = is_outgoing ? Gravity.LEFT : Gravity.RIGHT;
 		holder.name_container.setLayoutParams(lp);
 		holder.text.setText(Html.fromHtml(cursor.getString(mIndices.text)));
-		final TwidereLinkify linkify = new TwidereLinkify(new OnDirectMessageLinkClickHandler(context), context);
-		linkify.applyAllLinks(holder.text, account_id, false);
+		mLinkify.applyAllLinks(holder.text, account_id, false);
 		holder.text.setMovementMethod(null);
 		holder.text.setGravity(is_outgoing ? Gravity.LEFT : Gravity.RIGHT);
 		holder.time.setText(formatToLongTimeString(mContext, message_timestamp));

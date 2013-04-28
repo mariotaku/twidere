@@ -30,6 +30,7 @@ import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
 import static org.mariotaku.twidere.util.Utils.getImageUploadStatus;
 import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.getShareStatus;
+import static org.mariotaku.twidere.util.Utils.getThemeColor;
 import static org.mariotaku.twidere.util.Utils.openImageDirectly;
 import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.showErrorToast;
@@ -820,7 +821,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 
 	private void setMenu() {
 		final Menu menu = mMenuBar.getMenu();
-		final int activated_color = getResources().getColor(R.color.holo_blue_bright);
+		final int activated_color = getThemeColor(this);
 		final MenuItem itemAddImage = menu.findItem(MENU_ADD_IMAGE);
 		final Drawable iconAddImage = itemAddImage.getIcon().mutate();
 		if (mIsImageAttached && !mIsPhotoAttached) {

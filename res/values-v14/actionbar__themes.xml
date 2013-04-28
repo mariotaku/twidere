@@ -38,7 +38,6 @@
 
 	<style name="Theme.ActionBar.Light.DarkActionBar" parent="android:Theme.Holo.Light.DarkActionBar">
 		<item name="android:actionBarStyle">@style/Widget.ActionBar.Light.Solid.Inverse</item>
-		<item name="android:actionBarWidgetTheme">@style/Theme.Holo</item>
 			
 		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle.Inverse</item>
 		<item name="actionBarSubtitleStyle">@style/Widget.ActionBarSubtitle.Inverse</item>

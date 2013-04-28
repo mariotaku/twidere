@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.Utils;
 
 public class ThemeColorPreference extends ColorPickerPreference implements Constants {
 
@@ -18,10 +19,9 @@ public class ThemeColorPreference extends ColorPickerPreference implements Const
 
 	public ThemeColorPreference(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		final Resources res = context.getResources();
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final boolean dark_theme = prefs.getBoolean(PREFERENCE_KEY_DARK_THEME, false);
-		final int def = res.getColor(dark_theme ? R.color.holo_blue_dark : R.color.holo_blue_light);
+		final int def = Utils.getThemeColor(context);
 		final String key = dark_theme ? PREFERENCE_KEY_DARK_THEME_COLOR : PREFERENCE_KEY_LIGHT_THEME_COLOR;
 		setDefaultValue(def);
 		setKey(key);
@@ -36,10 +36,9 @@ public class ThemeColorPreference extends ColorPickerPreference implements Const
 	}
 
 	public static int getThemeColor(final Context context) {
-		final Resources res = context.getResources();
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final boolean dark_theme = prefs.getBoolean(PREFERENCE_KEY_DARK_THEME, false);
-		final int def = res.getColor(dark_theme ? R.color.holo_blue_dark : R.color.holo_blue_light);
+		final int def = Utils.getThemeColor(context);
 		final String key = dark_theme ? PREFERENCE_KEY_DARK_THEME_COLOR : PREFERENCE_KEY_LIGHT_THEME_COLOR;
 		return prefs.getInt(key, def);
 	}

@@ -29,6 +29,7 @@ import static org.mariotaku.twidere.util.Utils.getInlineImagePreviewDisplayOptio
 import static org.mariotaku.twidere.util.Utils.getNameDisplayOptionInt;
 import static org.mariotaku.twidere.util.Utils.getStatusBackground;
 import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
+import static org.mariotaku.twidere.util.Utils.getThemeColor;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.openImage;
@@ -87,7 +88,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		mMultiSelectManager = application.getMultiSelectManager();
 		mLazyImageLoader = application.getImageLoaderWrapper();
 		mDensity = mResources.getDisplayMetrics().density;
-		mLinkify = new TwidereLinkify(new OnLinkClickHandler(mContext), mContext);
+		mLinkify = new TwidereLinkify(new OnLinkClickHandler(mContext));
 	}
 
 	public long findItemIdByPosition(final int position) {
@@ -359,13 +360,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	@Override
 	public void setLinkUnderlineOnly(boolean underline_only) {
 		if (mLinkUnderlineOnly == underline_only) return;
-		if (underline_only) {
-			mLinkify.setLinkColor(Color.TRANSPARENT);
-			mLinkify.setShowUnderline(true);
-		} else {
-			mLinkify.setLinkColor(ThemeColorPreference.getThemeColor(mContext));
-			mLinkify.setShowUnderline(false);
-		}
+		mLinkify.setShowUnderline(underline_only);
 		mLinkUnderlineOnly = underline_only;
 		notifyDataSetChanged();
 	}

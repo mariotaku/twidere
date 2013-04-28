@@ -23,6 +23,7 @@ import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
 import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 import static org.mariotaku.twidere.util.Utils.getInlineImagePreviewDisplayOptionInt;
+import static org.mariotaku.twidere.util.Utils.getThemeColor;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
@@ -63,7 +64,7 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 	public StatusPreviewPreference(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		mInflater = LayoutInflater.from(context);
-		mLinkify = new TwidereLinkify(null, getContext());
+		mLinkify = new TwidereLinkify(null);
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
 	}
@@ -170,10 +171,8 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 		if (mPreferences == null) return;
 		final boolean underline_only = mPreferences.getBoolean(PREFERENCE_KEY_LINK_UNDERLINE_ONLY, false);
 		if (underline_only) {
-			mLinkify.setLinkColor(Color.TRANSPARENT);
 			mLinkify.setShowUnderline(true);
 		} else {
-			mLinkify.setLinkColor(ThemeColorPreference.getThemeColor(getContext()));
 			mLinkify.setShowUnderline(false);
 		}
 		final boolean fast_timeline_processing = mPreferences

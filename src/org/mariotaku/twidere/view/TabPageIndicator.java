@@ -17,6 +17,8 @@
  */
 package org.mariotaku.twidere.view;
 
+import static org.mariotaku.twidere.util.Utils.getThemeColor;
+ 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.MotionEventAccessor;
 import org.mariotaku.twidere.preference.ThemeColorPreference;
@@ -93,9 +95,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 	public TabPageIndicator(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
 		setHorizontalScrollBarEnabled(false);
-		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.colorActivatedHighlight });
-		mTabColor = a.getColor(0, R.color.holo_blue_dark);
-		a.recycle();
+		mTabColor = getThemeColor(context);
 		mInflater = LayoutInflater.from(context);
 		mTabLayout = new LinearLayout(context);
 		addView(mTabLayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,

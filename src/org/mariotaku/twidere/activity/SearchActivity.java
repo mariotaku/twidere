@@ -22,6 +22,7 @@ package org.mariotaku.twidere.activity;
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.getAccountId;
 import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
+import static org.mariotaku.twidere.util.Utils.getThemeColor;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.parseLong;
 
@@ -139,7 +140,7 @@ public class SearchActivity extends MultiSelectActivity {
 		}
 		mViewPager.setAdapter(mAdapter);
 		mViewPager.setCurrentItem(mIsSearchUsers ? 1 : 0);
-		mIndicator.setTabIndicatorColorResource(R.color.holo_blue_light);
+		mIndicator.setTabIndicatorColor(getThemeColor(this));
 		mIndicator.setVisibility(mIsSearchUsers || mIsSearchTweets ? View.GONE : View.VISIBLE);
 	}
 

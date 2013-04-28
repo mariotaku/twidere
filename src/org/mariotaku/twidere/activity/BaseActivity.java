@@ -18,6 +18,9 @@
  */
 
 package org.mariotaku.twidere.activity;
+ 
+import static org.mariotaku.twidere.util.Utils.getThemeColor;
+import static org.mariotaku.twidere.util.Utils.restartActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -37,7 +40,6 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.iface.IThemedActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 
-import static org.mariotaku.twidere.util.Utils.restartActivity;
 
 @SuppressLint("Registered")
 public class BaseActivity extends ActionBarFragmentActivity implements Constants, IThemedActivity {
@@ -81,8 +83,8 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 
 	public void setActionBarBackground() {
 		final ActionBar ab = getSupportActionBar();
-		final TypedArray a = obtainStyledAttributes(new int[] { R.attr.actionBarBackground, android.R.attr.colorActivatedHighlight });
-		final int color = a.getColor(1, getResources().getColor(R.color.holo_blue_dark));
+		final TypedArray a = obtainStyledAttributes(new int[] { R.attr.actionBarBackground });
+		final int color = getThemeColor(this);
 		final Drawable d = a.getDrawable(0);
 		if (d == null) return;
 		if (mIsDarkTheme) {

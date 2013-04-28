@@ -28,6 +28,7 @@ import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getOriginalTwitterProfileImage;
+import static org.mariotaku.twidere.util.Utils.getThemeColor;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
@@ -139,7 +140,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private ListActionAdapter mAdapter;
 
 	private long mAccountId;
-	private Uri mImageUri;
 	private Relationship mFriendship;
 	private ParcelableUser mUser = null;
 
@@ -318,7 +318,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mScreenNameView.setText("@" + user.screen_name);
 		mDescriptionContainer.setVisibility(user_is_me || !isEmpty(user.description_html) ? View.VISIBLE : View.GONE);
 		mDescriptionView.setText(user.description_html != null ? Html.fromHtml(user.description_html) : null);
-		final TwidereLinkify mLinkify = new TwidereLinkify(this, getActivity(), true);
+		final TwidereLinkify mLinkify = new TwidereLinkify(this, true);
 		mLinkify.applyAllLinks(mDescriptionView, user.account_id, false);
 		mDescriptionView.setMovementMethod(null);
 		mLocationContainer.setVisibility(user_is_me || !isEmpty(user.location) ? View.VISIBLE : View.GONE);
@@ -526,7 +526,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 						final Drawable blockIcon = blockItem.getIcon();
 						if (mFriendship.isSourceBlockingTarget()) {
 							blockItem.setTitle(R.string.unblock);
-							blockIcon.mutate().setColorFilter(getResources().getColor(R.color.holo_blue_bright),
+							blockIcon.mutate().setColorFilter(getThemeColor(getActivity()),
 									PorterDuff.Mode.MULTIPLY);
 						} else {
 							blockItem.setTitle(R.string.block);

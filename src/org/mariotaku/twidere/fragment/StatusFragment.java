@@ -421,7 +421,7 @@ OnImageClickListener {
 				getUserTypeIconRes(status.is_verified, status.is_protected), 0);
 		mScreenNameView.setText("@" + status.screen_name);
 		mTextView.setText(Html.fromHtml(status.text_html));
-		final TwidereLinkify linkify = new TwidereLinkify(new OnLinkClickHandler(getActivity()), getActivity(), true);
+		final TwidereLinkify linkify = new TwidereLinkify(new OnLinkClickHandler(getActivity()), true);
 		linkify.applyAllLinks(mTextView, status.account_id, status.is_possibly_sensitive);
 		final boolean is_reply = status.in_reply_to_status_id > 0;
 		final String time = formatToLongTimeString(getActivity(), status.status_timestamp);
