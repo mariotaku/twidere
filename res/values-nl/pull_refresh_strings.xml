@@ -4,4 +4,6 @@
   <string name="pull_to_refresh_pull_label">Trek voor vernieuwen</string>
   <string name="pull_to_refresh_release_label">Loslaten voor vernieuwen</string>
   <string name="pull_to_refresh_refreshing_label">Aan het laden</string>
+  <string name="pull_to_refresh_from_bottom_pull_label">Trek om meer te laden</string>
+  <string name="pull_to_refresh_from_bottom_release_label">Loslaten om meer te laden</string>
 </resources>

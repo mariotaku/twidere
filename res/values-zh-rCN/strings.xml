@@ -333,6 +333,8 @@
   <string name="sending_status">发送推文</string>
   <string name="sending_direct_message">发送私信</string>
   <string name="refreshing_timelines">刷新时间线</string>
+  <string name="refreshing_home_timeline">刷新主页</string>
+  <string name="refreshing_mentions">刷新提及</string>
   <string name="refreshing_direct_messages">刷新私信</string>
   <string name="favoriting">收藏</string>
   <string name="unfavoriting">取消收藏</string>
@@ -412,4 +414,11 @@
   <string name="sign_in_method_introduction">大多数客户端（例如twicca）通过打开浏览器验证登录Twitter，然后浏览器再将你引导回客户端。有时这会导致许多不便，因为一些第三方浏览器不会引导你回客户端。\nTwidere使用更加简便的步骤代替浏览器登录到Twitter，不必担心你会泄露你的密码，这个方式非常安全！\nTwidere不会保存密码，仅在登录时发送给Twitter，只要网络足够安全，你的密码永远不会被第三方获取！</string>
   <string name="quote_protected_tweet_notice">不建议引用受保护的推文</string>
   <string name="edit_draft">编辑草稿</string>
+  <string name="profile_image">个人资料图片</string>
+  <string name="my_profile_image">我的个人资料图片</string>
+  <string name="mention_user">提及 <xliff:g id="user">%s</xliff:g></string>
+  <string name="theme_color">主题颜色</string>
+  <string name="link_underline_only">仅为链接显示下划线</string>
+  <string name="wrong_url_format">URL格式错误</string>
+  <string name="wrong_username_password">用户名/密码错误</string>
 </resources>

@@ -38,30 +38,26 @@
   <string name="username">Login</string>
   <string name="password">Mot de passe</string>
   <string name="label_tweetstore_provider">Fournisseur de base de données de Twidere</string>
-  
-  
-  
-  
-  
-  
-  
+  <string name="label_refresh_service">Refraîcher la service</string>
   <string name="open_in_browser">Ouvrir dans un navigateur</string>
   <string name="tap_to_load_more">Touchez pour charger plus</string>
   <string name="delete">Supprimer</string>
   <string name="retweet">Retweeter</string>
   <string name="cancel_retweet">Annuler le retweet</string>
+  <string name="favorite">Favori</string>
+  <string name="unfavorite">Supprimer des favoris</string>
   <string name="reply">Répondre</string>
   <string name="share">Partager</string>
   <string name="share_via_twidere">Partager via Twidere</string>
   <string name="view_image">Image</string>
   <string name="view_map">Carte</string>
   <string name="view_status">Voir le tweet</string>
-  
   <string name="view_user_profile">Profil de l\'utilisateur</string>
   <string name="browser">Navigateur</string>
   <string name="pick_from_gallery">Choisir dans la galerie</string>
   <string name="tweets">Tweets</string>
   <string name="followers">Abonnés</string>
+  <string name="friends">Amis</string>
   <string name="about">À propos</string>
   <string name="about_summary">À propos de Twidere</string>
   <string name="license">Licence open source</string>
@@ -74,9 +70,8 @@
   <string name="ignore_ssl_error">Ignorer les erreurs SSL</string>
   <string name="ignore_ssl_error_summary">Ignorer les erreurs SSL, à activer si vous avez des problèmes avec une API personnalisée.</string>
   <string name="gzip_compressing">Compression GZip</string>
-  <string name="gzip_compressing_summary">Compresser toutes les requêtes API, ce qui peut réduire l\'utilisation du traffic, mais peut ne peut être compatible avec tous les serveurs.</string>
   <string name="storage">Stockage</string>
-  <string name="database_item_limit">Limite d\'entrées dans la base de données</string>
+  <string name="database_item_limit">Limite de la taille de la base</string>
   <string name="clear_cache">Vider le cache</string>
   <string name="clear_cache_summary">Supprimer les images en cache.</string>
   <string name="clear_databases">Vider les bases de données</string>
@@ -99,6 +94,7 @@
   <string name="content">Contenu</string>
   <string name="customize">Personnaliser</string>
   <string name="set_color">Définir la couleur</string>
+  <string name="clear">Effacer</string>
   <string name="pick_color">Choisir une couleur</string>
   <string name="follow">Suivre</string>
   <string name="unfollow">Ne plus suivre</string>
@@ -113,6 +109,15 @@
   <string name="quote">Citer</string>
   <string name="add_rule">Ajouter une règle</string>
   <string name="longclick_to_delete">Maintenir pour supprimer.</string>
+  <string name="retweet_successful">Retweet réussi.</string>
+  <string name="delete_successful">Suppression réussie.</string>
+  <string name="send_successful">Envoi réussi.</string>
+  <string name="favorite_successful">Bien ajouté aux favoris.</string>
+  <string name="unfavorite_successful">Bien retiré des favoris.</string>
+  <string name="follow_successful">Abonnement réussi.</string>
+  <string name="unfollow_successful">Désabonnement réussi.</string>
+  <string name="profile_update_successful">Profil mis à jour.</string>
+  <string name="profile_image_update_successful">Image du profil mise à jour.</string>
   <string name="text_size">Taille du texte</string>
   <string name="text_size_summary">Taille du texte des tweets.</string>
   <string name="cannot_get_location">Impossible d\'acquérir votre position.</string>
@@ -134,13 +139,14 @@
   <string name="search_users">Chercher des utilisateurs</string>
   <string name="search_tweets">Chercher des Tweets</string>
   <string name="created_at">Créé à</string>
-  
   <string name="search_hint">Rechercher des tweets ou des utilisateurs</string>
   <string name="remember_position">Se souvenir de la position</string>
   <string name="remember_position_summary">Se souvenir de la position dans la liste/l\'onglet avant de fermer Twidere</string>
   <string name="user_blocked">Bloquer cet utilisateur.</string>
+  <string name="users_blocked">Utilisateurs bloqués.</string>
   <string name="user_unblocked">Débloquer cet utilisateur.</string>
   <string name="reported_user_for_spam">Reporter cet utilisateur pour spam.</string>
+  <string name="reported_users_for_spam">Utilisateur signalé comme spam.</string>
   <string name="filename_hint">Nom du fichier</string>
   <string name="overwrite_confirm">Le fichier existe déjà, le remplacer ?</string>
   <string name="save_as">Enregistrer sous</string>
@@ -153,13 +159,17 @@
   <string name="proxy_port">Port du Proxy</string>
   <string name="block">Bloquer</string>
   <string name="unblock">Débloquer</string>
+  <string name="report_for_spam">Signaler comme spam</string>
+  <string name="mute_user">Masquer utilisateur</string>
+  <string name="user_muted">Utilisateur ajouté au filtre. Les retweets de cet utilisateur n’apparaîtront plus dans votre fil.</string>
+  <string name="users_muted">Utilisateur ajouté au filtre. Les retweets de cet utilisateur n’apparaîtront plus dans votre fil et mentions.</string>
   <string name="inbox">Boîte de réception</string>
   <string name="load_images">Charger les images</string>
   <string name="other_settings">Autres paramètres</string>
   <string name="refresh_and_notifications">Actualisation &amp; Notifications</string>
   <string name="auto_refresh">Actualisation automatique</string>
   <string name="refresh_interval">Intervalle d\'actualisation</string>
-  <string name="refresh_interval_summary">Des temps de rafraîchissement plus courts consomment plus de batterie et de traffic réseau !</string>
+  <string name="refresh_interval_summary">Des fréquences de rafraîchissement plus élevées consomment plus de batterie et plus de trafic réseau !</string>
   <string name="content_to_refresh">Contenu à actualiser</string>
   <string name="content_to_nofity">Contenu à notifier</string>
   <string name="notifications_type">Type de notifications</string>
@@ -169,23 +179,23 @@
   <string name="lights">Lumières</string>
   <string name="notifications">Notifications</string>
   <string name="new_notifications">Nouvelles notifications</string>
+  <string name="screen_name">Nom d’écran</string>
   <string name="sort_timeline_by_time">Trier le fil d\'actualité par ordre chronologique</string>
-  <string name="sort_timeline_by_time_summary">Ceci peut faire apparaître les retweets au mauvais endroit, mais peut être utile si vous utilisez d\'autres services comme Identi.ca.</string>
+  <string name="sort_timeline_by_time_summary">Cela peut provoquer l\'apparition des retweets au mauvais endroit, mais ça peut être utile si vous utilisez d\'autres services, tels qu’Identi.ca.</string>
   <string name="refresh_on_start">Rafraîchir au démarrage</string>
-  <string name="refresh_on_start_summary">Actualiser le fil d\'actualité et les mentions au démarrage.</string>
+  <string name="refresh_on_start_summary">Rafraîchir le fil et les mentions au démarrage.</string>
   <string name="refresh_after_tweet">Rafraîchir après avoir tweeté</string>
   <string name="refresh_after_tweet_summary">Actualiser le fil d\'actualité et les mentions après l\'envoi d\'un tweet.</string>
   <string name="list_timeline">Liste « fil d\'actualité »</string>
   <string name="list_members">Lister les membres</string>
   <string name="list_subscribers">Liste « abonnés »</string>
   <string name="type_to_compose">Tapez pour composer</string>
+  <string name="users_lists">Listes de l\'utilisateur</string>
+  <string name="lists_following_user">Liste dont cet utilisateur est membre</string>
   <string name="Ntweets_quantity_one">Vous avez un nouveau tweet.</string>
   <string name="Ntweets_quantity_other">Vous avez <xliff:g id="items">%d</xliff:g> nouveaux tweets.</string>
-  
-  
-  
-  
   <string name="item_1_minute">1 minute</string>
+  <string name="item_3_minutes">3 minutes</string>
   <string name="item_5_minutes">5 minutes</string>
   <string name="item_10_minutes">10 minutes</string>
   <string name="item_15_minutes">15 minutes</string>
@@ -195,6 +205,7 @@
   <string name="item_4_hours">4 heures</string>
   <string name="solid_color_background">Couleur du fond solide</string>
   <string name="solid_color_background_summary">Ceci peut être utile si l\'écran de votre appareil est AMOLED.</string>
+  <string name="following_you">Vous suit</string>
   <string name="user_list">Liste d\'utilisateurs</string>
   <string name="trends_location">Emplacement des tendances</string>
   <string name="trends_location_summary">Défini l\'emplacement des tendances locales.</string>
@@ -202,9 +213,11 @@
   <string name="accounts">Comptes</string>
   <string name="account">Compte</string>
   <string name="mention_this_user">Mentionner cet utilisateur</string>
-  <string name="signing_in_please_wait">Connexion en cours, veuillez patienter ou appuyer sur RETOUR à nouveau pour quitter.</string>
+  <string name="signing_in_please_wait">Connexion en cours. Veuillez patienter ou appuyer sur BACK pour quitter.</string>
   <string name="connectivity">Connectivité</string>
   <string name="add_member">Ajouter un membre</string>
+  <string name="add_successful">Ajout réussi.</string>
+  <string name="create_successful">Création réussie.</string>
   <string name="new_user_list">Nouvelle liste d\'utilisateurs</string>
   <string name="is_public">Public</string>
   <string name="send_direct_message">Envoyer un message privé</string>
@@ -215,6 +228,7 @@
   <string name="users_retweeted_this">Utilisateurs ont retweeté ceci</string>
   <string name="saved_searches">Recherches sauvegardées</string>
   <string name="custom_tabs">Onglets personnalisés</string>
+  <string name="default_tabs">Onglets par défaut</string>
   <string name="add_tab">Ajouter un onglet</string>
   <string name="tab_type">Type d\'onglet</string>
   <string name="unused">Inutilisé</string>
@@ -228,15 +242,72 @@
   <string name="pick_file">Choisir un fichier</string>
   <string name="user_timeline">Fil d\'actualité de l\'utlisateur</string>
   <string name="notification_ringtone">Sonnerie</string>
+  <string name="notification_light_color">Couleur claire</string>
   <string name="share_format">Format de partage</string>
   <string name="share_format_summary">\"[TITLE]\" = Titre du contenu\n\"[TEXT]\" = Texte du contenu</string>
   <string name="network">Réseau</string>
   <string name="content_and_storage">Contenu &amp; Stockage</string>
   <string name="image_uploader_default">Défaut (Twitter)</string>
+  <string name="home_refresh">Refraîcher le fil</string>
   <string name="error_message_image_upload_failed">L\'envoi de l\'image a échoué.</string>
   <string name="tweet_shortener">Raccourcisseur de tweet</string>
   <string name="tweet_shortener_default">Aucun (Annuler l\'envoi)</string>
   <string name="error_message_status_too_long">Tweet trop long.</string>
   <string name="error_message_tweet_shorten_failed">Le raccourcissement du tweet a échoué.</string>
   <string name="error_message_tweet_shortener_not_found">Le raccourcisseur de tweet introuvable, il a peut-être été désinstallé.</string>
+  <string name="mute_source">Masquer le client</string>
+  <string name="source_muted">« <xliff:g id="source">%s</xliff:g> » ajouté à vos filtres. Vous ne verrez plus les tweets de cette source ni dans votre fil ni dans vos mentions.</string>
+  <string name="user_mentions">Mentions de l\'utilisateur</string>
+  <string name="landscape">Paysage</string>
+  <string name="portrait">Potrait</string>
+  <string name="quick_send">Appuyez \"Enter\" pour envoyer</string>
+  <string name="discard">Supprimer</string>
+  <string name="multi_select">Sélection multiple</string>
+  <string name="view">Voir</string>
+  <string name="hardware_acceleration">Accélération matérielle</string>
+  <string name="dns_server">Serveur DNS</string>
+  <string name="dns_server_summary">Configurer le Serveur DNS pour les requêtes API.</string>
+  <string name="activities_about_me">Mes activités</string>
+  <string name="activity_about_me_favorite"><xliff:g id="user">%s</xliff:g> a ajouté ton tweet à ses favoris.</string>
+  <string name="activity_about_me_favorite_multi"><xliff:g id="user">%s</xliff:g> et <xliff:g id="count">%d</xliff:g> autres ont ajouté ton tweet à leurs favoris.</string>
+  <string name="activity_about_me_follow_multi"><xliff:g id="user">%s</xliff:g> et <xliff:g id="count">%d</xliff:g> autres vous suivent.</string>
+  <string name="activity_about_me_retweet"><xliff:g id="user">%s</xliff:g> a retweeté ton tweet.</string>
+  <string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> et <xliff:g id="count">%d</xliff:g> autres ont retweeté ton tweet.</string>
+  <string name="activity_about_me_list_member_added"><xliff:g id="user">%s</xliff:g> vous a ajouté à une liste.</string>
+  <string name="activity_about_me_list_member_added_multi"><xliff:g id="user">%s</xliff:g> et <xliff:g id="count">%d</xliff:g> autres vous ont ajouté à leurs listes.</string>
+  <string name="tweet_not_sent">Tweet impossible à envoyer.</string>
+  <string name="send_follow_request">Envoyer une demande d\'abonnement</string>
+  <string name="follow_request_sent">Demande d\'abonnement envoyée</string>
+  <string name="tweet">Tweet</string>
+  <string name="api_upgrade_notice_title">TRÈS IMPORTANT !</string>
+  <string name="notification_mention"><xliff:g id="user">%s</xliff:g> vous a mentioné.</string>
+  <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> vous a envoyé un message privé.</string>
+  <string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> et <xliff:g id="count">%d</xliff:g> autres vous ont mentioné.</string>
+  <string name="notification_direct_message_multiple"><xliff:g id="user">%s</xliff:g> et <xliff:g id="count">%d</xliff:g> autres vous ont envoyé un message privé.</string>
+  <string name="status_is_duplicate">Vous avez déjà tweeté ça.</string>
+  <string name="signing_in">connexion</string>
+  <string name="retweeting">retweet</string>
+  <string name="reporting_for_spam">signale comme spam</string>
+  <string name="data_profiling">Statistiques d\'utilisation</string>
+  <string name="data_profiling_notification_title">Statistique d\'utilisation</string>
+  <string name="silent_notifications">Notifications silencieuses</string>
+  <string name="text_copied">Le texte est copié dans le presse-papiers.</string>
+  <string name="donate">Donner</string>
+  <string name="hashtag">Hashtag</string>
+  <string name="links">Liens</string>
+  <string name="edit_profile">Modifier le profil</string>
+  <string name="display_sensitive_contents">Afficher le contenu qui peut être sensible</string>
+  <string name="display_sensitive_contents_summary">Afficher le contenu qui peut être sensible sans notice dans votre fil</string>
+  <string name="sensitive_content_warning">Ce tweet a peut-être le contenu sensible, continuer?</string>
+  <string name="loading">Chargement…</string>
+  <string name="large">Grand</string>
+  <string name="small">Petit</string>
+  <string name="accept">Accepter</string>
+  <string name="no_thanks">Non, merci</string>
+  <string name="revoke_permissions">Révoquer les autorisations</string>
+  <string name="indicate_my_status">Indique mon tweet</string>
+  <string name="phishing_link_warning_message_2">Êtes-vous sûr de continuer ?</string>
+  <string name="profile_images">Photo de profile</string>
+  <string name="sign_in_method_introduction_title">Comment ça marche ?</string>
+  <string name="edit_draft">Modifier brouillons</string>
 </resources>

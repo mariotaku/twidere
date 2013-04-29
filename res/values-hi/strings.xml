@@ -40,14 +40,6 @@
   <string name="username">यूज़रनेम</string>
   <string name="password">पासवर्ड</string>
   <string name="label_tweetstore_provider">ट्विदेर डेटाबेस प्रदाता</string>
-  
-  
-  
-  
-  
-  
-  
-  
   <string name="open_in_browser">ब्राउज़र में खोलें</string>
   <string name="tap_to_load_more">छुए अधिक लोड करने के लिए।</string>
   <string name="delete">मिटायें</string>
@@ -59,7 +51,6 @@
   <string name="view_image">छवि</string>
   <string name="view_map">नक्शा</string>
   <string name="view_status">ट्वीट देखे</string>
-  
   <string name="view_user_profile">उपयोगकर्ता प्रोफ़ाइल</string>
   <string name="browser">ब्राउज़र</string>
   <string name="pick_from_gallery">गैलरी से चुनें</string>
@@ -76,9 +67,7 @@
   <string name="consumer_secret_summary">OAuth/xAuth के लिए उपभोक्ता रहस्य, डिफ़ॉल्ट के लिए खाली छोड़ दें|</string>
   <string name="ignore_ssl_error">SSL एरर को ध्यान न</string>
   <string name="gzip_compressing">GZip कोम्प्रेस्सिंग</string>
-  <string name="gzip_compressing_summary">सभी API अनुरोध संपीड़ित करे, यह यातायात के उपयोग को कम कर सकते हैं, लेकिन सभी API सर्वर पर काम नहीं कर सकते.</string>
   <string name="storage">भंडारण</string>
-  <string name="database_item_limit">डेटाबेस आइटम सीमा</string>
   <string name="clear_cache">कैश खाली किजीये</string>
   <string name="clear_cache_summary">संग्रहीत प्रोफाइल छवि को मिटाए|</string>
   <string name="clear_databases">डेटाबेस साफ़ करे</string>
@@ -131,7 +120,6 @@
   <string name="search_users">उपयोगकर्ताओं को खोजे</string>
   <string name="search_tweets">ट्वीट खोजे</string>
   <string name="created_at">पर बनाया गया</string>
-  
   <string name="search_hint">उपयोगकर्ताओं या ट्वीट्स खोजे</string>
   <string name="remember_position">स्थिति याद रखें</string>
   <string name="remember_position_summary">ट्विदेर बंद करने से पहले सूची/स्थिति टैब याद रखे</string>
@@ -155,7 +143,6 @@
   <string name="refresh_and_notifications">ताज़ा करें; सूचनाएँ</string>
   <string name="auto_refresh">ऑटो ताज़ा करें</string>
   <string name="refresh_interval">रीफ़्रेश अंतराल</string>
-  <string name="refresh_interval_summary">छोटे ताज़ा अंतराल के कारन अधिक बैटरी और नेटवर्क यातायात की खपत!</string>
   <string name="content_to_refresh">ताज़ा सामग्री</string>
   <string name="content_to_nofity">सूचित करने के लिए सामग्री</string>
   <string name="notifications_type">सूचना प्रकार</string>
@@ -168,15 +155,12 @@
   <string name="screen_name">स्क्रीन नाम</string>
   <string name="sort_timeline_by_time">मुख्यपृष्ठ को समय से भेद किजीये</string>
   <string name="refresh_on_start">शुरू करने पर ताज़ा करें</string>
-  <string name="refresh_on_start_summary">शुरू करने पर मुख्य पृष्ट और उल्लेख ताज़ा करे|</string>
   <string name="refresh_after_tweet">ट्वीट के बाद ताज़ा करे</string>
   <string name="list_timeline">मुख्य पृष्ठ सूचीबद्ध करे</string>
   <string name="list_members">सदस्यों सूचीबद्ध करें</string>
   <string name="list_subscribers">ग्राहकों सूचीबद्ध करें</string>
   <string name="type_to_compose">रचना करने के लिये टाइप करे</string>
   <string name="Ntweets_quantity_one">आप के लिए एक नया ट्वीट है|.</string>
-  
-  
   <string name="item_1_minute">1 मिनट</string>
   <string name="item_5_minutes">5 मिनट</string>
   <string name="item_10_minutes">10 मिनट</string>
@@ -185,7 +169,6 @@
   <string name="item_1_hour">1 घंटा</string>
   <string name="item_2_hours">2 घंटे</string>
   <string name="item_4_hours">4 घंटे</string>
-  
   <string name="solid_color_background">ठोस रंग पृष्ठभूमि</string>
   <string name="user_list">उपयोगकर्ता की सूची</string>
   <string name="trends_location">रुझान स्थान</string>
@@ -193,7 +176,6 @@
   <string name="trends">रुझान</string>
   <string name="accounts">खातों</string>
   <string name="mention_this_user">इस उपयोगकर्ता का उल्लेख करे</string>
-  <string name="signing_in_please_wait">साइन इन हो रहा है, कृपया प्रतीक्षा करें या BACK फिर से दबाये छोड़नेके लिए|</string>
   <string name="connectivity">कनेक्टिविटी</string>
   <string name="add_member">सदस्य जोड़ें</string>
   <string name="new_user_list">नई उपयोगकर्ता सूची</string>
