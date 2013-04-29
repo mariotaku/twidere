@@ -93,6 +93,10 @@ public class RequestPermissionsActivity extends BaseDialogActivity implements On
 			if (permissions == 0) {
 				builder.append("<br/>" + getString(R.string.permission_description_none));
 			} else {
+				if (permissions % PERMISSION_PREFERENCES == 0) {
+					builder.append("<br/>" + "<b><font color='#FF8000'>"
+							+ getString(R.string.permission_description_preferences) + "</font></b>");
+				}
 				if (permissions % PERMISSION_ACCOUNTS == 0) {
 					builder.append("<br/>" + "<b><font color='#FF8000'>"
 							+ getString(R.string.permission_description_accounts) + "</font></b>");

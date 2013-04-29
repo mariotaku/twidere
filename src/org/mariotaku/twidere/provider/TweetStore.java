@@ -700,14 +700,30 @@ public final class TweetStore implements Constants {
 
 		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
 				CONTENT_PATH);
+				
+		public static final int TYPE_INVALID = -1;
+		
+		public static final int TYPE_NULL = 0;
+				
+		public static final int TYPE_BOOLEAN = 1;
+		
+		public static final int TYPE_INTEGER = 2;
+		
+		public static final int TYPE_LONG = 3;
+
+		public static final int TYPE_FLOAT = 4;
+		
+		public static final int TYPE_STRING = 5;
 
 		public static final String KEY = "key";
 
 		public static final String VALUE = "value";
 
-		public static final String[] MATRIX_COLUMNS = new String[] { KEY, VALUE };
+		public static final String TYPE = "type";
+
+		public static final String[] MATRIX_COLUMNS = new String[] { KEY, VALUE, TYPE };
 		
-		public static final String[] COLUMNS = new String[] { _ID, KEY, VALUE };
+		public static final String[] COLUMNS = new String[] { _ID, KEY, VALUE, TYPE };
 	}
 
 	public static interface Permissions extends BaseColumns {

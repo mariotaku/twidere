@@ -33,6 +33,7 @@ import static org.mariotaku.twidere.util.Utils.isNotificationsSilent;
 import static org.mariotaku.twidere.util.Utils.isOnWifi;
 import static org.mariotaku.twidere.util.Utils.notifyForUpdatedUri;
 import static org.mariotaku.twidere.util.Utils.parseInt;
+import static org.mariotaku.twidere.util.Utils.parseString;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages.Conversation;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
+import org.mariotaku.twidere.provider.TweetStore.Preferences;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.ImagePreloader;
@@ -270,12 +272,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			checkReadPermission(table_id, table, projection);
 			switch (table_id) {
 				case VIRTUAL_TABLE_ID_PREFERENCES: {
-					final MatrixCursor c = new MatrixCursor(TweetStore.Preferences.MATRIX_COLUMNS);
-					final Map<String, ?> map = mPreferences.getAll();
-					for (final Map.Entry<String, ?> item : map.entrySet()) {
-						c.addRow(new Object[] {item.getKey(), item.getValue()});
-					}
-					return c;
+					return getPreferencesCursor(mPreferences);
 				}
 				case TABLE_ID_DIRECT_MESSAGES_CONVERSATION: {
 					final List<String> segments = uri.getPathSegments();
@@ -304,6 +301,27 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		} catch (final SQLException e) {
 			throw new IllegalStateException(e);
 		}
+	}
+
+	private static Cursor getPreferencesCursor(SharedPreferences mPreferences) {
+		final MatrixCursor c = new MatrixCursor(TweetStore.Preferences.MATRIX_COLUMNS);
+		final Map<String, ?> map = mPreferences.getAll();
+		for (final Map.Entry<String, ?> item : map.entrySet()) {
+			final Object value = item.getValue();
+			final int type = getPreferenceType(value);
+			c.addRow(new Object[] { item.getKey(), parseString(value), type });
+		}
+		return c;
+	}
+	
+	private static int getPreferenceType(final Object object) {
+		if (object == null) return Preferences.TYPE_NULL;
+		else if (object instanceof Boolean) return Preferences.TYPE_BOOLEAN;
+		else if (object instanceof Integer) return Preferences.TYPE_INTEGER;
+		else if (object instanceof Long) return Preferences.TYPE_LONG;
+		else if (object instanceof Float) return Preferences.TYPE_FLOAT;
+		else if (object instanceof String) return Preferences.TYPE_STRING;
+		return Preferences.TYPE_INVALID;
 	}
 
 	@Override
@@ -377,9 +395,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	private void checkReadPermission(final int id, final String table, final String[] projection) {
 		switch (id) {
 			case VIRTUAL_TABLE_ID_PREFERENCES: {
-				if (!checkPermission(PERMISSION_ACCOUNTS))
-					throw new SecurityException("Access database " + table
-							+ " requires level PERMISSION_LEVEL_ACCOUNTS");
+				if (!checkPermission(PERMISSION_PREFERENCES))
+					throw new SecurityException("Access preferences requires level PERMISSION_LEVEL_PREFERENCES");
 				break;
 			}
 			case TABLE_ID_ACCOUNTS: {

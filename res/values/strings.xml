@@ -390,6 +390,7 @@
 	<string name="permission_description_write">Write to database, update status</string>
 	<string name="permission_description_direct_messages">Read/Write/Send direct messages</string>
 	<string name="permission_description_accounts">Read account information</string>
+	<string name="permission_description_preferences">Read settings</string>
 	<string name="permissions_request">Permissions request</string>
 	<string name="permissions_request_message">Extension is requesting following permissions</string>
 	<string name="accept">Accept</string>

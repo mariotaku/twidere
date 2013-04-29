@@ -573,5 +573,6 @@ public interface Constants extends TwitterConstants {
 	public static final int PERMISSION_WRITE = 5;
 	public static final int PERMISSION_DIRECT_MESSAGES = 7;
 	public static final int PERMISSION_ACCOUNTS = 11;
+	public static final int PERMISSION_PREFERENCES = 13;
 
 }
