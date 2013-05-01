@@ -74,6 +74,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PROTOCOL_TWIDERE = SCHEME_TWIDERE + "://";
 
 	public static final String AUTHORITY_USER = "user";
+	public static final String AUTHORITY_USERS = "users";
 	public static final String AUTHORITY_USER_TIMELINE = "user_timeline";
 	public static final String AUTHORITY_USER_FAVORITES = "user_favorites";
 	public static final String AUTHORITY_USER_FOLLOWERS = "user_followers";
@@ -373,6 +374,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_FROM_NOTIFICATION = "from_notification";
 	public static final String INTENT_KEY_IS_PUBLIC = "is_public";
 	public static final String INTENT_KEY_USER = "user";
+	public static final String INTENT_KEY_USERS = "users";
 	public static final String INTENT_KEY_USER_LIST = "user_list";
 	public static final String INTENT_KEY_APPEND_TEXT = "append_text";
 	public static final String INTENT_KEY_NAME = "name";
@@ -528,6 +530,7 @@ public interface Constants extends TwitterConstants {
 	public static final int LINK_ID_SAVED_SEARCHES = 19;
 	public static final int LINK_ID_USER_MENTIONS = 21;
 	public static final int LINK_ID_INCOMING_FRIENDSHIPS = 22;
+	public static final int LINK_ID_USERS = 23;
 
 	public static final String DIR_NAME_IMAGE_CACHE = "image_cache";
 

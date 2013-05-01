@@ -19,24 +19,20 @@
 
 package org.mariotaku.twidere.fragment;
 
-import java.util.List;
-
-import org.mariotaku.twidere.loader.UserFriendsLoader;
-import org.mariotaku.twidere.model.ParcelableUser;
-
 import android.os.Bundle;
 import android.support.v4.content.Loader;
+import java.util.List;
+import org.mariotaku.twidere.loader.IntentExtrasUsersLoader;
+import org.mariotaku.twidere.model.ParcelableUser;
 
-public class UserFriendsFragment extends BaseUsersListFragment {
+public class UsersListFragment extends BaseUsersListFragment {
 
 	@Override
 	public Loader<List<ParcelableUser>> newLoaderInstance(final Bundle args) {
 		if (args == null) return null;
-		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-		final long max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
-		final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
-		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-		return new UserFriendsLoader(getActivity(), account_id, user_id, screen_name, max_id, getData());
+		if (args.containsKey(INTENT_KEY_USERS))
+			return new IntentExtrasUsersLoader(getActivity(), args, getData());
+		return null;
 	}
 
 }

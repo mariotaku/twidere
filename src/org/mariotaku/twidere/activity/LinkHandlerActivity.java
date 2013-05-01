@@ -44,6 +44,7 @@ import org.mariotaku.twidere.fragment.UserListsListFragment;
 import org.mariotaku.twidere.fragment.UserMentionsFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
+import org.mariotaku.twidere.fragment.UsersListFragment;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -376,6 +377,10 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					fragment = new IncomingFriendshipsFragment();
 					break;
 				}
+				case LINK_ID_USERS: {
+					fragment = new UsersListFragment();
+					break;
+				}
 				default: {
 					break;
 				}
@@ -392,8 +397,8 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					if (isMyAccount(this, account_id)) {
 						bundle.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 					} else {
-						finish();
-						return false;
+						//finish();
+						//return false;
 					}
 				}
 			}

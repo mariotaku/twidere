@@ -216,6 +216,9 @@
 					android:host="user"
 					android:scheme="twidere"/>
 				<data
+					android:host="users"
+					android:scheme="twidere"/>
+				<data
 					android:host="user_timeline"
 					android:scheme="twidere"/>
 				<data

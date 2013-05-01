@@ -32,14 +32,10 @@ public class SearchUsersFragment extends BaseUsersListFragment {
 	private int mPage = 1;
 
 	@Override
-	public Loader<List<ParcelableUser>> newLoaderInstance() {
-		final Bundle args = getArguments();
-		long account_id = -1;
-		String query = null;
-		if (args != null) {
-			account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
-			query = args.getString(INTENT_KEY_QUERY);
-		}
+	public Loader<List<ParcelableUser>> newLoaderInstance(final Bundle args) {
+		if (args == null) return null;
+		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
+		final String query = args.getString(INTENT_KEY_QUERY);
 		return new UserSearchLoader(getActivity(), account_id, query, mPage, getData());
 	}
 

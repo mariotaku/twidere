@@ -32,18 +32,13 @@ public class UserListSubscribersFragment extends BaseUsersListFragment {
 	private long mCursor = -1;
 
 	@Override
-	public Loader<List<ParcelableUser>> newLoaderInstance() {
-		final Bundle args = getArguments();
-		int list_id = -1;
-		long account_id = -1, user_id = -1;
-		String screen_name = null, list_name = null;
-		if (args != null) {
-			list_id = args.getInt(INTENT_KEY_LIST_ID, -1);
-			account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-			user_id = args.getLong(INTENT_KEY_USER_ID, -1);
-			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-			list_name = args.getString(INTENT_KEY_LIST_NAME);
-		}
+	public Loader<List<ParcelableUser>> newLoaderInstance(final Bundle args) {
+		if (args == null) return null;
+		final int list_id = args.getInt(INTENT_KEY_LIST_ID, -1);
+		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+		final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
+		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
+		final String list_name = args.getString(INTENT_KEY_LIST_NAME);
 		return new UserListSubscribersLoader(getActivity(), account_id, list_id, user_id, screen_name, list_name,
 				mCursor, getData());
 	}

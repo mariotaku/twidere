@@ -30,13 +30,10 @@ import android.support.v4.content.Loader;
 public class IncomingFriendshipsFragment extends BaseUsersListFragment {
 
 	@Override
-	public Loader<List<ParcelableUser>> newLoaderInstance() {
-		final Bundle args = getArguments();
-		long account_id = -1, max_id = -1;
-		if (args != null) {
-			account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-			max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
-		}
+	public Loader<List<ParcelableUser>> newLoaderInstance(final Bundle args) {
+		if (args == null) return null;
+		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+		final long max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
 		return new IncomingFriendshipsLoader(getActivity(), account_id, max_id, getData());
 	}
 

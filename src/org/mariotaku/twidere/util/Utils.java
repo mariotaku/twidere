@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.util;
 
 import static android.content.res.Configuration.SCREENLAYOUT_LAYOUTDIR_RTL;
+import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.provider.TweetStore.CACHE_URIS;
 import static org.mariotaku.twidere.provider.TweetStore.DIRECT_MESSAGES_URIS;
@@ -103,6 +104,7 @@ import org.mariotaku.twidere.fragment.UserListsListFragment;
 import org.mariotaku.twidere.fragment.UserMentionsFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
+import org.mariotaku.twidere.fragment.UsersListFragment;
 import org.mariotaku.twidere.model.DirectMessageCursorIndices;
 import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
@@ -204,15 +206,12 @@ import android.widget.Toast;
 public final class Utils implements Constants {
 
 	private static final UriMatcher CONTENT_PROVIDER_URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
-
 	private static final UriMatcher LINK_HANDLER_URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
 	public static final HashMap<String, Class<? extends Fragment>> CUSTOM_TABS_FRAGMENT_MAP = new HashMap<String, Class<? extends Fragment>>();
-
 	public static final HashMap<String, Integer> CUSTOM_TABS_TYPE_NAME_MAP = new HashMap<String, Integer>();
-
 	public static final HashMap<String, Integer> CUSTOM_TABS_ICON_NAME_MAP = new HashMap<String, Integer>();
-
+	
 	static {
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES, TABLE_ID_STATUSES);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_ACCOUNTS, TABLE_ID_ACCOUNTS);
@@ -262,6 +261,7 @@ public final class Utils implements Constants {
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_SAVED_SEARCHES, null, LINK_ID_SAVED_SEARCHES);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USER_MENTIONS, null, LINK_ID_USER_MENTIONS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_INCOMING_FRIENDSHIPS, null, LINK_ID_INCOMING_FRIENDSHIPS);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USERS, null, LINK_ID_USERS);
 
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LISTS, UserListsListFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LIST_MEMBERS, UserListMembersFragment.class);
@@ -313,7 +313,6 @@ public final class Utils implements Constants {
 	}
 
 	private static Map<Long, Integer> sAccountColors = new LinkedHashMap<Long, Integer>();
-
 	private static Map<Long, Integer> sUserColors = new LinkedHashMap<Long, Integer>(512, 0.75f, true);
 
 	private static Map<Long, String> sAccountScreenNames = new LinkedHashMap<Long, String>();
@@ -1188,6 +1187,19 @@ public final class Utils implements Constants {
 			final boolean use_httpclient) {
 		if (context == null) return null;
 		return getTwitterInstance(context, getDefaultAccountId(context), include_entities, use_httpclient);
+	}
+	
+	public static String getErrorMessage(final Context context, final Throwable t) {
+		if (t == null) return null;
+		if (context != null && t instanceof TwitterException) return getTwitterErrorMessage(context, (TwitterException) t);
+		return t.getMessage();
+	}
+	
+	public static String getTwitterErrorMessage(final Context context, final TwitterException te) {
+		if (te == null) return null;
+		final String msg = TwitterErrorCodes.getErrorMessage(context, te.getErrorCode());
+		if (isEmpty(msg)) return te.getMessage();
+		return msg;
 	}
 
 	public static HttpClientWrapper getHttpClient(final int timeout_millis, final boolean ignore_ssl_error,
@@ -2544,7 +2556,6 @@ public final class Utils implements Constants {
 			}
 			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}
-
 	}
 
 	public static void openUserFriends(final Activity activity, final long account_id, final long user_id,
@@ -2841,6 +2852,25 @@ public final class Utils implements Constants {
 			activity.startActivity(intent);
 		}
 	}
+	
+	public static void openUsers(final Activity activity, final List<ParcelableUser> users) {
+		if (activity == null || users == null) return;
+		final Bundle bundle = new Bundle();
+		bundle.putParcelableArrayList(INTENT_KEY_USERS, new ArrayList<ParcelableUser>(users));
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
+			final Fragment fragment = new UsersListFragment();
+			fragment.setArguments(bundle);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
+		} else {
+			final Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_USERS);
+			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
+			intent.putExtras(bundle);
+			activity.startActivity(intent);
+		}
+	}
 
 	public static void openUserTimeline(final Activity activity, final long account_id, final long user_id,
 			final String screen_name) {
@@ -3130,12 +3160,12 @@ public final class Utils implements Constants {
 		toast.show();
 	}
 
-	public static void showErrorToast(final Context context, final String action, final String desc,
+	public static void showErrorToast(final Context context, final String action, final String msg,
 			final boolean long_message) {
 		if (context == null) return;
 		final String message;
-		if (desc != null) {
-			message = context.getString(R.string.error_message, desc);
+		if (msg != null) {
+			message = context.getString(R.string.error_message, msg);
 		} else {
 			message = context.getString(R.string.error_unknown_error);
 		}
@@ -3148,23 +3178,14 @@ public final class Utils implements Constants {
 			final boolean long_message) {
 		if (context == null) return;
 		final String message;
-		if (t != null) {
+		if (t instanceof TwitterException) {
+			showTwitterErrorToast(context, action, (TwitterException) t, long_message);
+			return;
+		} else if (t != null) {
 			t.printStackTrace();
 			final String t_message = trimLineBreak(t.getMessage());
 			if (action != null) {
-				if (t instanceof TwitterException) {
-					final TwitterException te = (TwitterException) t;
-					if (te.exceededRateLimitation()) {
-						final RateLimitStatus status = te.getRateLimitStatus();
-						final CharSequence next_reset_time = DateUtils.getRelativeTimeSpanString(System
-								.currentTimeMillis() + status.getSecondsUntilReset() * 1000);
-						message = context.getString(R.string.error_message_rate_limit, action, next_reset_time);
-					} else {
-						message = context.getString(R.string.error_message_with_action, action, t_message);
-					}
-				} else {
-					message = context.getString(R.string.error_message_with_action, action, t_message);
-				}
+				message = context.getString(R.string.error_message_with_action, action, t_message);
 			} else {
 				message = context.getString(R.string.error_message, t_message);
 			}
@@ -3176,6 +3197,33 @@ public final class Utils implements Constants {
 		toast.show();
 	}
 
+	public static void showTwitterErrorToast(final Context context, final String action, final TwitterException te,
+			final boolean long_message) {
+		if (context == null) return;
+		final String message;
+		if (te != null) {
+			te.printStackTrace();
+			if (action != null) {
+				if (te.exceededRateLimitation()) {
+					final RateLimitStatus status = te.getRateLimitStatus();
+					final long sec_until_reset = status.getSecondsUntilReset() * 1000;
+					final String next_reset_time = parseString(getRelativeTimeSpanString(System.currentTimeMillis() + sec_until_reset));
+					message = context.getString(R.string.error_message_rate_limit, action, next_reset_time.trim());
+				} else {
+					final String msg = TwitterErrorCodes.getErrorMessage(context, te.getErrorCode());
+					message = context.getString(R.string.error_message_with_action, action, msg != null ? msg : trimLineBreak(te.getMessage()));
+				}
+			} else {
+				message = context.getString(R.string.error_message, trimLineBreak(te.getMessage()));
+			}
+		} else {
+			message = context.getString(R.string.error_unknown_error);
+		}
+		final int length = long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;
+		final Toast toast = Toast.makeText(context, message, length);
+		toast.show();
+	}
+	
 	public static String trimLineBreak(final String orig) {
 		if (orig == null) return null;
 		return orig.replaceAll("\\n+", "\n");

@@ -2,6 +2,7 @@ package org.mariotaku.twidere.adapter;
 
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
+import static org.mariotaku.twidere.util.Utils.getNameDisplayOptionInt;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -21,8 +22,8 @@ import org.mariotaku.twidere.view.holder.ActivityViewHolder;
 
 public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity> implements IBaseAdapter {
 
-	private boolean mDisplayProfileImage, mDisplayName, mShowAbsoluteTime;
-
+	private boolean mDisplayProfileImage, mShowAbsoluteTime;
+	private int mNameDisplayOption;
 	private float mTextSize;
 
 	private final ImageLoaderWrapper mProfileImageLoader;
@@ -67,103 +68,101 @@ public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity
 		if (sources_length > 0) {
 			final ParcelableUser first_source = sources[0];
 			final ParcelableStatus[] target_objects = item.target_object_statuses;
-			final String name = mDisplayName ? first_source.name : first_source.screen_name;
+			final String source_name = mNameDisplayOption == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME ?
+					first_source.screen_name : first_source.name;
 			switch (action) {
 				case ParcelableActivity.ACTION_FAVORITE: {
-						if (target_statuses_length > 0) {
-							final ParcelableStatus status = target_statuses[0];
-							holder.text.setSingleLine(true);
-							holder.text.setEllipsize(TruncateAt.END);
-							holder.text.setText(status.text_plain);
-						}
-						if (sources_length == 1) {
-							holder.title.setText(mContext.getString(R.string.activity_about_me_favorite, name));
-						} else {
-							holder.title.setText(mContext.getString(R.string.activity_about_me_favorite_multi, name,
-																	sources_length - 1));
-						}
-						holder.activity_profile_image_container.setVisibility(mDisplayProfileImage ? View.VISIBLE
-																			  : View.GONE);
-						setUserProfileImages(sources, holder);
-						break;
+					if (target_statuses_length > 0) {
+						final ParcelableStatus status = target_statuses[0];
+						holder.text.setSingleLine(true);
+						holder.text.setEllipsize(TruncateAt.END);
+						holder.text.setText(status.text_plain);
 					}
+					if (sources_length == 1) {
+						holder.title.setText(mContext.getString(R.string.activity_about_me_favorite, source_name));
+					} else {
+						holder.title.setText(mContext.getString(R.string.activity_about_me_favorite_multi, source_name,
+							sources_length - 1));
+					}
+					holder.activity_profile_image_container.setVisibility(mDisplayProfileImage ? View.VISIBLE
+							: View.GONE);
+					setUserProfileImages(sources, holder);
+					break;
+				}
 				case ParcelableActivity.ACTION_FOLLOW: {
-						holder.text.setVisibility(View.GONE);
-						if (sources_length == 1) {
-							holder.title.setText(mContext.getString(R.string.activity_about_me_follow, name));
-						} else {
-							holder.title.setText(mContext.getString(R.string.activity_about_me_follow_multi, name,
-																	sources_length - 1));
-						}
-						holder.activity_profile_image_container.setVisibility(mDisplayProfileImage ? View.VISIBLE
-																			  : View.GONE);
-						setUserProfileImages(sources, holder);
-						break;
+					holder.text.setVisibility(View.GONE);
+					if (sources_length == 1) {
+						holder.title.setText(mContext.getString(R.string.activity_about_me_follow, source_name));
+					} else {
+						holder.title.setText(mContext.getString(R.string.activity_about_me_follow_multi, source_name,
+								sources_length - 1));
 					}
+					holder.activity_profile_image_container.setVisibility(mDisplayProfileImage ? View.VISIBLE
+								: View.GONE);
+					setUserProfileImages(sources, holder);
+					break;
+				}
 				case ParcelableActivity.ACTION_MENTION: {
-						holder.title.setText(name);
-						if (target_objects != null && target_objects.length > 0) {
-							final ParcelableStatus status = target_objects[0];
-							holder.text.setText(status.text_plain);
-							if (status.in_reply_to_status_id > 0 && !TextUtils.isEmpty(status.in_reply_to_screen_name)) {
-								holder.reply_status.setVisibility(View.VISIBLE);
-								holder.reply_status.setText(mContext.getString(R.string.in_reply_to,
-																			   status.in_reply_to_screen_name));
-								holder.reply_status.setCompoundDrawablesWithIntrinsicBounds(
+					holder.title.setText(source_name);
+					if (target_objects != null && target_objects.length > 0) {
+						final ParcelableStatus status = target_objects[0];
+						holder.text.setText(status.text_plain);
+						if (status.in_reply_to_status_id > 0 && !TextUtils.isEmpty(status.in_reply_to_screen_name)) {
+							holder.reply_status.setVisibility(View.VISIBLE);
+							holder.reply_status.setText(mContext.getString(R.string.in_reply_to,
+							status.in_reply_to_screen_name));
+							holder.reply_status.setCompoundDrawablesWithIntrinsicBounds(
 									R.drawable.ic_indicator_reply, 0, 0, 0);
-							}
 						}
-						setProfileImage(holder, first_source.profile_image_url);
-						break;
 					}
+					setProfileImage(holder, first_source.profile_image_url);
+					break;
+				}
 				case ParcelableActivity.ACTION_REPLY: {
-						holder.title.setText(name);
-						if (target_statuses_length > 0) {
-							final ParcelableStatus status = target_statuses[0];
-							holder.text.setText(status.text_plain);
-							if (status.in_reply_to_status_id > 0 && !TextUtils.isEmpty(status.in_reply_to_screen_name)) {
-								holder.reply_status.setVisibility(View.VISIBLE);
-								holder.reply_status.setText(mContext.getString(R.string.in_reply_to,
-																			   status.in_reply_to_screen_name));
-								holder.reply_status.setCompoundDrawablesWithIntrinsicBounds(
+					holder.title.setText(source_name);
+					if (target_statuses_length > 0) {
+						final ParcelableStatus status = target_statuses[0];
+						holder.text.setText(status.text_plain);
+						if (status.in_reply_to_status_id > 0 && !TextUtils.isEmpty(status.in_reply_to_screen_name)) {
+							holder.reply_status.setVisibility(View.VISIBLE);
+							holder.reply_status.setText(mContext.getString(R.string.in_reply_to,
+									status.in_reply_to_screen_name));
+							holder.reply_status.setCompoundDrawablesWithIntrinsicBounds(
 									R.drawable.ic_indicator_reply, 0, 0, 0);
-							}
 						}
-						setProfileImage(holder, first_source.profile_image_url);
-						break;
 					}
+					setProfileImage(holder, first_source.profile_image_url);
+					break;
+				}
 				case ParcelableActivity.ACTION_RETWEET: {
-						if (target_objects != null && target_objects.length > 0) {
-							final ParcelableStatus status = target_objects[0];
-							holder.text.setSingleLine(true);
-							holder.text.setEllipsize(TruncateAt.END);
-							holder.text.setText(status.text_plain);
-						}
-						if (sources_length == 1) {
-							holder.title.setText(mContext.getString(R.string.activity_about_me_retweet, name));
-						} else {
-							holder.title.setText(mContext.getString(R.string.activity_about_me_retweet_multi, name,
-																	sources_length - 1));
-						}
-						holder.activity_profile_image_container.setVisibility(mDisplayProfileImage ? View.VISIBLE
-																			  : View.GONE);
-						setUserProfileImages(sources, holder);
-						break;
+					if (target_objects != null && target_objects.length > 0) {
+						final ParcelableStatus status = target_objects[0];
+						holder.text.setSingleLine(true);
+						holder.text.setEllipsize(TruncateAt.END);
+						holder.text.setText(status.text_plain);
 					}
+					if (sources_length == 1) {
+						holder.title.setText(mContext.getString(R.string.activity_about_me_retweet, source_name));
+					} else {
+						holder.title.setText(mContext.getString(R.string.activity_about_me_retweet_multi, source_name,
+							sources_length - 1));
+					}
+					holder.activity_profile_image_container.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
+					setUserProfileImages(sources, holder);
+					break;
+				}
 				case ParcelableActivity.ACTION_LIST_MEMBER_ADDED: {
-						holder.text.setVisibility(View.GONE);
-						if (sources_length == 1) {
-							holder.title
-								.setText(mContext.getString(R.string.activity_about_me_list_member_added, name));
-						} else {
-							holder.title.setText(mContext.getString(R.string.activity_about_me_list_member_added_multi,
-																	name, sources_length - 1));
-						}
-						holder.activity_profile_image_container.setVisibility(mDisplayProfileImage ? View.VISIBLE
-																			  : View.GONE);
-						setUserProfileImages(sources, holder);
-						break;
+					holder.text.setVisibility(View.GONE);
+					if (sources_length == 1) {
+						holder.title.setText(mContext.getString(R.string.activity_about_me_list_member_added, source_name));
+					} else {
+						holder.title.setText(mContext.getString(R.string.activity_about_me_list_member_added_multi,
+							source_name, sources_length - 1));
 					}
+					holder.activity_profile_image_container.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
+					setUserProfileImages(sources, holder);
+					break;
+				}
 			}
 		}
 		return view;
@@ -193,7 +192,10 @@ public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity
 
 	@Override
 	public void setNameDisplayOption(final String option) {
-		// TODO: Implement this method
+		final int option_int = getNameDisplayOptionInt(option);
+		if (option_int == mNameDisplayOption) return;
+		mNameDisplayOption = option_int;
+		notifyDataSetChanged();
 	}
 
 	public void setShowAbsoluteTime(final boolean show) {

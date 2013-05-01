@@ -53,6 +53,7 @@ import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
+import org.mariotaku.twidere.loader.DummyParcelableUsersLoader;
 
 abstract class BaseUsersListFragment extends PullToRefreshListFragment implements
 		LoaderCallbacks<List<ParcelableUser>>, OnScrollListener, OnItemLongClickListener, Panes.Left,
@@ -94,7 +95,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		return mPreferences;
 	}
 
-	public abstract Loader<List<ParcelableUser>> newLoaderInstance();
+	public abstract Loader<List<ParcelableUser>> newLoaderInstance(Bundle args);
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
@@ -122,7 +123,8 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	@Override
 	public Loader<List<ParcelableUser>> onCreateLoader(final int id, final Bundle args) {
 		setProgressBarIndeterminateVisibility(true);
-		return newLoaderInstance();
+		final Loader<List<ParcelableUser>>loader = newLoaderInstance(args);
+		return loader != null ? loader : new DummyParcelableUsersLoader(getActivity());
 	}
 
 	@Override

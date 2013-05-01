@@ -87,9 +87,11 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Par
 			try {
 				final File file = JSONSerializer.getSerializationFile(mContext, mSavedActivitiesFileArgs);
 				final List<ParcelableActivity> cached = JSONSerializer.listFromFile(file);
-				mData.addAll(cached);
-				Collections.sort(mData);
-				return mData;
+				if (cached != null) {
+					mData.addAll(cached);
+					Collections.sort(mData);
+					return mData;
+				}
 			} catch (final IOException e) {
 				e.printStackTrace();
 			}
@@ -103,6 +105,7 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Par
 			e.printStackTrace();
 			return mData;
 		}
+		if (activities == null) return mData;
 		mData.clear();
 		for (final Activity activity : activities) {
 			mData.add(new ParcelableActivity(activity, mAccountId, mHiResProfileImage));

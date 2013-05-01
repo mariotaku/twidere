@@ -26,6 +26,7 @@ import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
 import static org.mariotaku.twidere.util.Utils.clearUserColor;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
+import static org.mariotaku.twidere.util.Utils.getErrorMessage;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getOriginalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getThemeColor;
@@ -220,7 +221,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				displayUser(mUser);
 			} else {
 				if (data.exception != null) {
-					mErrorMessageView.setText(data.exception.getMessage());
+					mErrorMessageView.setText(getErrorMessage(getActivity(), data.exception));
 					mErrorMessageView.setVisibility(View.VISIBLE);
 				}
 				mListContainer.setVisibility(View.GONE);

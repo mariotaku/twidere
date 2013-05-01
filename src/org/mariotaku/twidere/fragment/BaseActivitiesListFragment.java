@@ -19,6 +19,23 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.openStatus;
+import static org.mariotaku.twidere.util.Utils.openUserFollowers;
+import static org.mariotaku.twidere.util.Utils.openUserProfile;
+import static org.mariotaku.twidere.util.Utils.openUsers;
+import static org.mariotaku.twidere.util.Utils.parseString;
+
+import org.mariotaku.jsonserializer.JSONSerializer;
+import org.mariotaku.twidere.adapter.ParcelableActivitiesAdapter;
+import org.mariotaku.twidere.model.ParcelableActivity;
+import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.model.ParcelableUser;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -26,19 +43,6 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.view.View;
 import android.widget.ListView;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import org.mariotaku.jsonserializer.JSONSerializer;
-import org.mariotaku.twidere.adapter.ParcelableActivitiesAdapter;
-import org.mariotaku.twidere.model.ParcelableActivity;
-import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.model.ParcelableUser;
-
-import static org.mariotaku.twidere.util.Utils.openStatus;
-import static org.mariotaku.twidere.util.Utils.openUserFollowers;
-import static org.mariotaku.twidere.util.Utils.openUserProfile;
-import static org.mariotaku.twidere.util.Utils.parseString;
 
 public abstract class BaseActivitiesListFragment extends PullToRefreshListFragment implements
 		LoaderCallbacks<List<ParcelableActivity>> {
@@ -87,9 +91,8 @@ public abstract class BaseActivitiesListFragment extends PullToRefreshListFragme
 						if (sources_length == 1) {
 							openUserProfile(getActivity(), sources[0]);
 						} else {
-							if (target_statuses != null && target_statuses.length > 0) {
-								openStatus(getActivity(), target_statuses[0]);
-							}
+							final List<ParcelableUser> users = Arrays.asList(sources);
+							openUsers(getActivity(), users);
 						}
 						break;
 					}
@@ -97,7 +100,8 @@ public abstract class BaseActivitiesListFragment extends PullToRefreshListFragme
 						if (sources_length == 1) {
 							openUserProfile(getActivity(), sources[0]);
 						} else {
-							openUserFollowers(getActivity(), item.account_id, item.account_id, null);
+							final List<ParcelableUser> users = Arrays.asList(sources);
+							openUsers(getActivity(), users);
 						}
 						break;
 					}
@@ -117,9 +121,8 @@ public abstract class BaseActivitiesListFragment extends PullToRefreshListFragme
 						if (sources_length == 1) {
 							openUserProfile(getActivity(), sources[0]);
 						} else {
-							if (target_objects != null && target_objects.length > 0) {
-								openStatus(getActivity(), target_objects[0]);
-							}
+							final List<ParcelableUser> users = Arrays.asList(sources);
+							openUsers(getActivity(), users);
 						}
 						break;
 					}
