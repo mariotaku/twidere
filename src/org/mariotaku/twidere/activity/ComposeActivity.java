@@ -146,7 +146,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	private boolean mIsImageAttached, mIsPhotoAttached, mIsPossiblySensitive, mShouldSaveAccounts;
 	private long[] mAccountIds;
 	private Uri mImageUri, mTempPhotoUri;
-	private boolean mUploadUseExtension, mContentModified;
+	private boolean mImageUploaderUsed, mTweetShortenerUsed, mContentModified;
 	private ParcelableStatus mInReplyToStatus;
 	private ParcelableUser mMentionUser;
 	private DraftItem mDraftItem;
@@ -502,7 +502,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	public boolean onPrepareOptionsMenu(final Menu menu) {
 		if (menu == null || mEditText == null || mTextCount == null) return false;
 		final String text_orig = parseString(mEditText.getText());
-		final String text = mImageUri != null ? mUploadUseExtension ? getImageUploadStatus(this, FAKE_IMAGE_LINK,
+		final String text = mImageUri != null ? mImageUploaderUsed ? getImageUploadStatus(this, FAKE_IMAGE_LINK,
 				text_orig) : text_orig + " " + FAKE_IMAGE_LINK : text_orig;
 		final int count = mValidator.getTweetLength(text);
 		final boolean exceeded_limit = count < Validator.MAX_TWEET_LENGTH;
@@ -574,7 +574,9 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	protected void onStart() {
 		super.onStart();
 		final String uploader_component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
-		mUploadUseExtension = !isEmpty(uploader_component);
+		final String shortener_component = mPreferences.getString(PREFERENCE_KEY_TWEET_SHORTENER, null);
+		mImageUploaderUsed = !isEmpty(uploader_component);
+		mTweetShortenerUsed = !isEmpty(shortener_component);
 		if (mMenuBar != null) {
 			setMenu();
 		}
@@ -775,6 +777,12 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	private void sendStatus() {
 		final String text = mEditText != null ? parseString(mEditText.getText()) : null;
 		if (isEmpty(text) || isFinishing()) return;
+		final int tweet_length = mValidator.getTweetLength(text);
+		if (!mTweetShortenerUsed && tweet_length > Validator.MAX_TWEET_LENGTH) {
+			mEditText.setError(getString(R.string.error_message_status_too_long));
+			mEditText.setSelection(mEditText.length() - (tweet_length - Validator.MAX_TWEET_LENGTH), mEditText.length());
+			return;
+		}
 		final boolean has_media = (mIsImageAttached || mIsPhotoAttached) && mImageUri != null;
 		final boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
 		if (mRecentLocation == null && attach_location) {

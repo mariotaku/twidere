@@ -17,30 +17,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.loader;
+package org.mariotaku.twidere.fragment;
 
+import android.os.Bundle;
+import android.support.v4.content.Loader;
 import java.util.List;
-
-import org.mariotaku.twidere.model.ParcelableActivity;
-
-import twitter4j.Activity;
-import twitter4j.Paging;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-
+import org.mariotaku.twidere.loader.IntentExtrasStatusesLoader;
+import org.mariotaku.twidere.model.ParcelableStatus;
 import android.content.Context;
 
-public class ActivitiesAboutMeLoader extends Twitter4JActivitiesLoader {
+public class StatusesListFragment extends ParcelableStatusesListFragment {
 
-	public ActivitiesAboutMeLoader(final Context context, final long account_id, final List<ParcelableActivity> data,
-			final String[] save_file_args, final int tab_position) {
-		super(context, account_id, data, save_file_args, tab_position);
+	@Override
+	public Loader<List<ParcelableStatus>> newLoaderInstance(final Context context, final Bundle args) {
+		if (args == null) return null;
+		if (args.containsKey(INTENT_KEY_STATUSES))
+			return new IntentExtrasStatusesLoader(getActivity(), args, getData());
+		return null;
 	}
 
 	@Override
-	protected List<Activity> getActivities(final Twitter twitter, final Paging paging) throws TwitterException {
-		if (twitter == null) return null;
-		return twitter.getActivitiesAboutMe(paging);
+	protected String[] getSavedStatusesFileArgs() {
+		return null;
 	}
 
 }

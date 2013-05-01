@@ -19,30 +19,31 @@
 
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.openStatus;
-import static org.mariotaku.twidere.util.Utils.openUserFollowers;
-import static org.mariotaku.twidere.util.Utils.openUserProfile;
-import static org.mariotaku.twidere.util.Utils.openUsers;
-import static org.mariotaku.twidere.util.Utils.parseString;
-
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.view.View;
 import android.widget.ListView;
 import java.util.Arrays;
 import java.util.List;
-import org.mariotaku.twidere.loader.ActivitiesAboutMeLoader;
+import org.mariotaku.twidere.loader.ActivitiesByFriendsLoader;
 import org.mariotaku.twidere.model.ParcelableActivity;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
 
-public class ActivitiesAboutMeFragment extends BaseActivitiesListFragment {
+import static org.mariotaku.twidere.util.Utils.openStatus;
+import static org.mariotaku.twidere.util.Utils.openStatuses;
+import static org.mariotaku.twidere.util.Utils.openUserFollowers;
+import static org.mariotaku.twidere.util.Utils.openUserProfile;
+import static org.mariotaku.twidere.util.Utils.openUsers;
+import static org.mariotaku.twidere.util.Utils.parseString;
+
+public class ActivitiesByFriendsFragment extends BaseActivitiesListFragment {
 
 	@Override
 	public Loader<List<ParcelableActivity>> onCreateLoader(final int id, final Bundle args) {
 		setProgressBarIndeterminateVisibility(true);
 		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
-		return new ActivitiesAboutMeLoader(getActivity(), account_id, getData(), getSavedActivitiesFileArgs(), getTabPosition());
+		return new ActivitiesByFriendsLoader(getActivity(), account_id, getData(), getSavedActivitiesFileArgs(), getTabPosition());
 	}
 
 	@Override
@@ -52,46 +53,49 @@ public class ActivitiesAboutMeFragment extends BaseActivitiesListFragment {
 		if (item == null) return;
 		final ParcelableUser[] sources = item.sources;
 		final ParcelableStatus[] target_statuses = item.target_statuses;
+		final ParcelableUser[] target_users = item.target_users;
 		final int sources_length = sources != null ? sources.length : 0;
+		final int target_statuses_length = target_statuses != null ? target_statuses.length : 0;
+		final int target_users_length = target_users != null ? target_users.length : 0;
 		if (sources_length > 0) {
-			final ParcelableStatus[] target_objects = item.target_object_statuses;
+			final ParcelableStatus[] target_object_statuses = item.target_object_statuses;
 			switch (item.action) {
 				case ParcelableActivity.ACTION_FAVORITE: {
-					if (sources_length == 1) {
-						openUserProfile(getActivity(), sources[0]);
+					if (target_statuses_length == 1) {
+						openStatus(getActivity(), target_statuses[0]);
 					} else {
-						final List<ParcelableUser> users = Arrays.asList(sources);
-						openUsers(getActivity(), users);
+						final List<ParcelableStatus> statuses = Arrays.asList(target_statuses);
+						openStatuses(getActivity(), statuses);
 					}
 					break;
 				}
 				case ParcelableActivity.ACTION_FOLLOW: {
-					if (sources_length == 1) {
-						openUserProfile(getActivity(), sources[0]);
+					if (target_users_length == 1) {
+						openUserProfile(getActivity(), target_users[0]);
 					} else {
-						final List<ParcelableUser> users = Arrays.asList(sources);
+						final List<ParcelableUser> users = Arrays.asList(target_users);
 						openUsers(getActivity(), users);
 					}
 					break;
 				}
 				case ParcelableActivity.ACTION_MENTION: {
-					if (target_objects != null && target_objects.length > 0) {
-						openStatus(getActivity(), target_objects[0]);
+						if (target_object_statuses != null && target_object_statuses.length > 0) {
+							openStatus(getActivity(), target_object_statuses[0]);
+						}
+						break;
 					}
-					break;
-				}
 				case ParcelableActivity.ACTION_REPLY: {
-					if (target_statuses != null && target_statuses.length > 0) {
-						openStatus(getActivity(), target_statuses[0]);
+						if (target_statuses != null && target_statuses.length > 0) {
+							openStatus(getActivity(), target_statuses[0]);
+						}
+						break;
 					}
-					break;
-				}
 				case ParcelableActivity.ACTION_RETWEET: {
-					if (sources_length == 1) {
-						openUserProfile(getActivity(), sources[0]);
+					if (target_statuses_length == 1) {
+						openStatus(getActivity(), target_statuses[0]);
 					} else {
-						final List<ParcelableUser> users = Arrays.asList(sources);
-						openUsers(getActivity(), users);
+						final List<ParcelableStatus> statuses = Arrays.asList(target_statuses);
+						openStatuses(getActivity(), statuses);
 					}
 					break;
 				}
@@ -103,7 +107,7 @@ public class ActivitiesAboutMeFragment extends BaseActivitiesListFragment {
 		final Bundle args = getArguments();
 		if (args == null) return null;
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-		return new String[] { AUTHORITY_ACTIVITIES_ABOUT_ME, "account" +  account_id};
+		return new String[] { AUTHORITY_ACTIVITIES_BY_FRIENDS, "account" +  account_id};
 	}
 
 }

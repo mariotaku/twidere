@@ -19,24 +19,23 @@
 
 package org.mariotaku.twidere.fragment;
 
-import java.util.List;
-
-import org.mariotaku.twidere.loader.UserSearchLoader;
-import org.mariotaku.twidere.model.ParcelableUser;
-
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
+import java.util.List;
+import org.mariotaku.twidere.loader.UserSearchLoader;
+import org.mariotaku.twidere.model.ParcelableUser;
 
 public class SearchUsersFragment extends BaseUsersListFragment {
 
 	private int mPage = 1;
 
 	@Override
-	public Loader<List<ParcelableUser>> newLoaderInstance(final Bundle args) {
+	public Loader<List<ParcelableUser>> newLoaderInstance(final Context context, final Bundle args) {
 		if (args == null) return null;
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
 		final String query = args.getString(INTENT_KEY_QUERY);
-		return new UserSearchLoader(getActivity(), account_id, query, mPage, getData());
+		return new UserSearchLoader(context, account_id, query, mPage, getData());
 	}
 
 	@Override

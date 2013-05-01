@@ -237,6 +237,9 @@
 					android:host="status"
 					android:scheme="twidere"/>
 				<data
+					android:host="statuses"
+					android:scheme="twidere"/>
+				<data
 					android:host="direct_messages_conversation"
 					android:scheme="twidere"/>
 				<data

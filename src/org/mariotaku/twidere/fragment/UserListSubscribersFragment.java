@@ -19,27 +19,26 @@
 
 package org.mariotaku.twidere.fragment;
 
-import java.util.List;
-
-import org.mariotaku.twidere.loader.UserListSubscribersLoader;
-import org.mariotaku.twidere.model.ParcelableUser;
-
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
+import java.util.List;
+import org.mariotaku.twidere.loader.UserListSubscribersLoader;
+import org.mariotaku.twidere.model.ParcelableUser;
 
 public class UserListSubscribersFragment extends BaseUsersListFragment {
 
 	private long mCursor = -1;
 
 	@Override
-	public Loader<List<ParcelableUser>> newLoaderInstance(final Bundle args) {
+	public Loader<List<ParcelableUser>> newLoaderInstance(final Context context, final Bundle args) {
 		if (args == null) return null;
 		final int list_id = args.getInt(INTENT_KEY_LIST_ID, -1);
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 		final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
 		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		final String list_name = args.getString(INTENT_KEY_LIST_NAME);
-		return new UserListSubscribersLoader(getActivity(), account_id, list_id, user_id, screen_name, list_name,
+		return new UserListSubscribersLoader(context, account_id, list_id, user_id, screen_name, list_name,
 				mCursor, getData());
 	}
 

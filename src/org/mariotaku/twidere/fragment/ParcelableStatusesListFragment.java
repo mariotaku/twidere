@@ -110,7 +110,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 		return true;
 	}
 
-	public abstract Loader<List<ParcelableStatus>> newLoaderInstance(Context context, Bundle args);
+	protected abstract Loader<List<ParcelableStatus>> newLoaderInstance(Context context, Bundle args);
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {

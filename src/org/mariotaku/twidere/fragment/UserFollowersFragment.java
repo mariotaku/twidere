@@ -58,13 +58,13 @@ public class UserFollowersFragment extends BaseUsersListFragment {
 	};
 
 	@Override
-	public Loader<List<ParcelableUser>> newLoaderInstance(final Bundle args) {
+	public Loader<List<ParcelableUser>> newLoaderInstance(final Context context, final Bundle args) {
 		if (args == null) return null;
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 		final long max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
 		final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
 		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-		return new UserFollowersLoader(getActivity(), account_id, user_id, screen_name, max_id, getData());
+		return new UserFollowersLoader(context, account_id, user_id, screen_name, max_id, getData());
 	}
 
 	@Override

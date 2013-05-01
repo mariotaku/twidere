@@ -32,6 +32,7 @@ import org.mariotaku.twidere.fragment.DirectMessagesConversationFragment;
 import org.mariotaku.twidere.fragment.IncomingFriendshipsFragment;
 import org.mariotaku.twidere.fragment.SavedSearchesListFragment;
 import org.mariotaku.twidere.fragment.StatusFragment;
+import org.mariotaku.twidere.fragment.StatusesListFragment;
 import org.mariotaku.twidere.fragment.UserBlocksListFragment;
 import org.mariotaku.twidere.fragment.UserFavoritesFragment;
 import org.mariotaku.twidere.fragment.UserFollowersFragment;
@@ -379,6 +380,10 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 				}
 				case LINK_ID_USERS: {
 					fragment = new UsersListFragment();
+					break;
+				}
+				case LINK_ID_STATUSES: {
+					fragment = new StatusesListFragment();
 					break;
 				}
 				default: {

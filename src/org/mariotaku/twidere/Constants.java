@@ -81,6 +81,7 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_USER_FRIENDS = "user_friends";
 	public static final String AUTHORITY_USER_BLOCKS = "user_blocks";
 	public static final String AUTHORITY_STATUS = "status";
+	public static final String AUTHORITY_STATUSES = "statuses";
 	public static final String AUTHORITY_DIRECT_MESSAGES_CONVERSATION = "direct_messages_conversation";
 	public static final String AUTHORITY_SEARCH = "search";
 	public static final String AUTHORITY_MAP = "map";
@@ -96,9 +97,8 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_TRENDS = "trends";
 	public static final String AUTHORITY_USER_MENTIONS = "user_mentions";
 	public static final String AUTHORITY_ACTIVITIES_ABOUT_ME = "activities_about_me";
+	public static final String AUTHORITY_ACTIVITIES_BY_FRIENDS = "activities_by_friends";
 	public static final String AUTHORITY_INCOMING_FRIENDSHIPS = "incoming_friendships";
-	public static final String AUTHORITY_MY_ACTIVITIES = "my_activities";
-	public static final String AUTHORITY_FRIENDS_ACTIVITIES = "friends_activities";
 	
 
 	public static final String QUERY_PARAM_ACCOUNT_ID = "account_id";
@@ -362,6 +362,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_IDS = "ids";
 	public static final String INTENT_KEY_IS_SHARE = "is_share";
 	public static final String INTENT_KEY_STATUS = "status";
+	public static final String INTENT_KEY_STATUSES = "statuses";
 	public static final String INTENT_KEY_DRAFT = "draft";
 	public static final String INTENT_KEY_FAVORITED = "favorited";
 	public static final String INTENT_KEY_RETWEETED = "retweeted";
@@ -531,6 +532,7 @@ public interface Constants extends TwitterConstants {
 	public static final int LINK_ID_USER_MENTIONS = 21;
 	public static final int LINK_ID_INCOMING_FRIENDSHIPS = 22;
 	public static final int LINK_ID_USERS = 23;
+	public static final int LINK_ID_STATUSES = 24;
 
 	public static final String DIR_NAME_IMAGE_CACHE = "image_cache";
 

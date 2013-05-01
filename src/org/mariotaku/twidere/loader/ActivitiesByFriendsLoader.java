@@ -30,9 +30,9 @@ import twitter4j.TwitterException;
 
 import android.content.Context;
 
-public class ActivitiesAboutMeLoader extends Twitter4JActivitiesLoader {
+public class ActivitiesByFriendsLoader extends Twitter4JActivitiesLoader {
 
-	public ActivitiesAboutMeLoader(final Context context, final long account_id, final List<ParcelableActivity> data,
+	public ActivitiesByFriendsLoader(final Context context, final long account_id, final List<ParcelableActivity> data,
 			final String[] save_file_args, final int tab_position) {
 		super(context, account_id, data, save_file_args, tab_position);
 	}
@@ -40,7 +40,7 @@ public class ActivitiesAboutMeLoader extends Twitter4JActivitiesLoader {
 	@Override
 	protected List<Activity> getActivities(final Twitter twitter, final Paging paging) throws TwitterException {
 		if (twitter == null) return null;
-		return twitter.getActivitiesAboutMe(paging);
+		return twitter.getActivitiesByFriends(paging);
 	}
 
 }

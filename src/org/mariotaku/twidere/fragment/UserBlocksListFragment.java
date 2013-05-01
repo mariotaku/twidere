@@ -19,22 +19,21 @@
 
 package org.mariotaku.twidere.fragment;
 
-import java.util.List;
-
-import org.mariotaku.twidere.loader.UserBlocksLoader;
-import org.mariotaku.twidere.model.ParcelableUser;
-
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
+import java.util.List;
+import org.mariotaku.twidere.loader.UserBlocksLoader;
+import org.mariotaku.twidere.model.ParcelableUser;
 
 public class UserBlocksListFragment extends BaseUsersListFragment {
 
 	@Override
-	public Loader<List<ParcelableUser>> newLoaderInstance(final Bundle args) {
+	public Loader<List<ParcelableUser>> newLoaderInstance(final Context context, final Bundle args) {
 		if (args == null) return null;
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 		final long max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
-		return new UserBlocksLoader(getActivity(), account_id, max_id, getData());
+		return new UserBlocksLoader(context, account_id, max_id, getData());
 	}
 
 }

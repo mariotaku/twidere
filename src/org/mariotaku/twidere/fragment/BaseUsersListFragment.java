@@ -95,7 +95,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		return mPreferences;
 	}
 
-	public abstract Loader<List<ParcelableUser>> newLoaderInstance(Bundle args);
+	protected abstract Loader<List<ParcelableUser>> newLoaderInstance(Context context, Bundle args);
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
@@ -123,7 +123,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	@Override
 	public Loader<List<ParcelableUser>> onCreateLoader(final int id, final Bundle args) {
 		setProgressBarIndeterminateVisibility(true);
-		final Loader<List<ParcelableUser>>loader = newLoaderInstance(args);
+		final Loader<List<ParcelableUser>>loader = newLoaderInstance(getActivity(), args);
 		return loader != null ? loader : new DummyParcelableUsersLoader(getActivity());
 	}
 

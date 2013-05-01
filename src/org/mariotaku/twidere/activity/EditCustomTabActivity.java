@@ -250,7 +250,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 			mText1Preference.setTitle(R.string.keywords);
 			mText1Preference.setShouldCompleteUserName(false);
 		} else if (AUTHORITY_SAVED_SEARCHES.equals(type) || AUTHORITY_TRENDS.equals(type)
-				|| AUTHORITY_ACTIVITIES_ABOUT_ME.equals(type)) {
+				 || AUTHORITY_ACTIVITIES_ABOUT_ME.equals(type) || AUTHORITY_ACTIVITIES_BY_FRIENDS.equals(type)) {
 			mText1Preference.setEnabled(false);
 			mText1Preference.setTitle(R.string.unused);
 			mText1Preference.setShouldCompleteUserName(false);

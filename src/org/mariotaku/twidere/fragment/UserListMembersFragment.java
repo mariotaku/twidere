@@ -71,14 +71,14 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 	};
 
 	@Override
-	public Loader<List<ParcelableUser>> newLoaderInstance(final Bundle args) {
+	public Loader<List<ParcelableUser>> newLoaderInstance(final Context context, final Bundle args) {
 		if (args == null) return null;
 		final int list_id = args.getInt(INTENT_KEY_LIST_ID, -1);
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 		final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
 		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		final String list_name = args.getString(INTENT_KEY_LIST_NAME);
-		return new UserListMembersLoader(getActivity(), account_id, list_id, user_id, screen_name, list_name, mCursor,
+		return new UserListMembersLoader(context, account_id, list_id, user_id, screen_name, list_name, mCursor,
 				getData());
 	}
 
