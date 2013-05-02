@@ -32,6 +32,7 @@ public abstract class Twitter4JUsersLoader extends ParcelableUsersLoader {
 		final List<User> users;
 		try {
 			users = getUsers(getTwitter());
+			if (users == null) return data;
 		} catch (final TwitterException e) {
 			e.printStackTrace();
 			return data;

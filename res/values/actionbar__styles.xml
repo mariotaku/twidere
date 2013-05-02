@@ -12,7 +12,8 @@
 
 	<style name="DialogWindowTitle.Holo" parent="android:Widget.TextView">
 		<item name="android:maxLines">1</item>
-		<item name="android:background">@drawable/actionbar_bg_dark_holo</item>
+		<item name="android:minHeight">48dp</item>
+		<item name="android:background">@drawable/actionbar_bg_dialog_dark_holo</item>
 		<item name="android:textAppearance">@style/TextAppearance.Holo.DialogWindowTitle</item>
 	</style>
 

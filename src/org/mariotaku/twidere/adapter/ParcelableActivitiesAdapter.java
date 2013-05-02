@@ -178,8 +178,6 @@ public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity
 						holder.title.setText(mContext.getString(R.string.activity_about_me_favorite_multi, source_name,
 								sources_length - 1));
 					}
-						holder.activity_profile_image_container.setVisibility(mDisplayProfileImage ? View.VISIBLE
-								: View.GONE);
 					setUserProfileImages(holder, sources);
 					break;
 				}
@@ -191,8 +189,6 @@ public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity
 						holder.title.setText(mContext.getString(R.string.activity_about_me_follow_multi, source_name,
 								sources_length - 1));
 					}
-					holder.activity_profile_image_container.setVisibility(mDisplayProfileImage ? View.VISIBLE
-								: View.GONE);
 					setUserProfileImages(holder, sources);
 					break;
 				}
@@ -241,7 +237,6 @@ public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity
 						holder.title.setText(mContext.getString(R.string.activity_about_me_retweet_multi, source_name,
 								sources_length - 1));
 					}
-					holder.activity_profile_image_container.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 					setUserProfileImages(holder, sources);
 					break;
 				}
@@ -253,7 +248,6 @@ public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity
 						holder.title.setText(mContext.getString(R.string.activity_about_me_list_member_added_multi,
 								source_name, sources_length - 1));
 					}
-					holder.activity_profile_image_container.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 					setUserProfileImages(holder, sources);
 					break;
 				}
