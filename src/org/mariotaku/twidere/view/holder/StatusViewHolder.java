@@ -57,6 +57,7 @@ public class StatusViewHolder {
 		text = (TextView) view.findViewById(R.id.text);
 		time = (TextView) view.findViewById(R.id.time);
 		reply_retweet_status = (TextView) view.findViewById(R.id.reply_retweet_status);
+		show_as_gap = gap_indicator.isShown();
 	}
 
 	public void setAccountColor(final int color) {
@@ -101,14 +102,13 @@ public class StatusViewHolder {
 	}
 
 	public void setTextSize(final float text_size) {
-		if (this.text_size != text_size) {
-			this.text_size = text_size;
-			text.setTextSize(text_size);
-			name.setTextSize(text_size);
-			screen_name.setTextSize(text_size * 0.75f);
-			time.setTextSize(text_size * 0.65f);
-			reply_retweet_status.setTextSize(text_size * 0.65f);
-		}
+		if (this.text_size == text_size) return;
+		this.text_size = text_size;
+		text.setTextSize(text_size);
+		name.setTextSize(text_size);
+		screen_name.setTextSize(text_size * 0.75f);
+		time.setTextSize(text_size * 0.65f);
+		reply_retweet_status.setTextSize(text_size * 0.65f);
 	}
 
 	public void setUserColor(final int color) {

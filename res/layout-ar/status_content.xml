@@ -34,7 +34,7 @@
 				android:id="@+id/name"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layerType="software"
+				
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceMedium"/>
 
@@ -42,7 +42,7 @@
 				android:id="@+id/screen_name"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layerType="software"
+				
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:textColor="?android:attr/textColorSecondary"/>
@@ -82,7 +82,7 @@
 		android:drawablePadding="4dp"
 		android:ellipsize="marquee"
 		android:gravity="center_vertical|right"
-		android:layerType="software"
+		
 		android:padding="8dp"
 		android:singleLine="true"
 		android:textAppearance="?android:attr/textAppearanceSmall"
@@ -95,7 +95,7 @@
 		android:layout_height="wrap_content"
 		android:layout_margin="8dp"
 		android:gravity="right"
-		android:layerType="software"
+		
 		android:singleLine="false"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:textIsSelectable="true"/>
@@ -110,7 +110,7 @@
 		android:drawablePadding="4dp"
 		android:ellipsize="marquee"
 		android:gravity="center_vertical|right"
-		android:layerType="software"
+		
 		android:padding="8dp"
 		android:singleLine="true"
 		android:text="@string/users_retweeted_this"
@@ -126,7 +126,7 @@
 		android:drawablePadding="4dp"
 		android:ellipsize="marquee"
 		android:gravity="center_vertical|right"
-		android:layerType="software"
+		
 		android:padding="8dp"
 		android:singleLine="true"
 		android:text="@string/view_map"
@@ -139,7 +139,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:gravity="right"
-		android:layerType="software"
+		
 		android:padding="8dp"
 		android:textAppearance="?android:attr/textAppearanceSmall"/>
 

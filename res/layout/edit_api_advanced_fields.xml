@@ -9,7 +9,7 @@
 	<TextView
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layerType="software"
+		
 		android:text="@string/oauth_base_url"
 		android:textAppearance="?android:attr/textAppearanceSmall"/>
 
@@ -24,7 +24,7 @@
 	<TextView
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layerType="software"
+		
 		android:text="@string/signing_rest_base_url"
 		android:textAppearance="?android:attr/textAppearanceSmall"/>
 
@@ -39,7 +39,7 @@
 	<TextView
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layerType="software"
+		
 		android:text="@string/signing_oauth_base_url"
 		android:textAppearance="?android:attr/textAppearanceSmall"/>
 

@@ -64,7 +64,7 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:ellipsize="marquee"
-					android:layerType="software"
+					
 					android:singleLine="true"
 					android:textAppearance="?android:attr/textAppearanceMedium"/>
 
@@ -73,7 +73,7 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:ellipsize="marquee"
-					android:layerType="software"
+					
 					android:singleLine="true"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:textColor="?android:attr/textColorSecondary"/>
@@ -83,7 +83,7 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:ellipsize="marquee"
-					android:layerType="software"
+					
 					android:singleLine="true"
 					android:text="@string/following_you"
 					android:textAppearance="?android:attr/textAppearanceMedium"
@@ -135,7 +135,7 @@
 		<TextView
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layerType="software"
+			
 			android:text="@string/description"
 			android:textAppearance="?android:attr/textAppearanceMedium"/>
 
@@ -143,7 +143,7 @@
 			android:id="@+id/description"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layerType="software"
+			
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:textColor="?android:attr/textColorSecondary"/>
 	</LinearLayout>
@@ -160,7 +160,7 @@
 		<TextView
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layerType="software"
+			
 			android:singleLine="true"
 			android:text="@string/location"
 			android:textAppearance="?android:attr/textAppearanceMedium"/>
@@ -169,7 +169,7 @@
 			android:id="@+id/location"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layerType="software"
+			
 			android:singleLine="true"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:textColor="?android:attr/textColorSecondary"/>
@@ -187,7 +187,7 @@
 		<TextView
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layerType="software"
+			
 			android:singleLine="true"
 			android:text="@string/url"
 			android:textAppearance="?android:attr/textAppearanceMedium"/>
@@ -197,7 +197,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:autoLink="web"
-			android:layerType="software"
+			
 			android:singleLine="true"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:textColor="?android:attr/textColorSecondary"/>
@@ -223,7 +223,7 @@
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layerType="software"
+				
 				android:singleLine="true"
 				android:text="@string/created_at"
 				android:textAppearance="?android:attr/textAppearanceMedium"/>
@@ -232,7 +232,7 @@
 				android:id="@+id/created_at"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layerType="software"
+				
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:textColor="?android:attr/textColorSecondary"/>
@@ -293,7 +293,7 @@
 				android:id="@+id/tweet_count"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layerType="software"
+				
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				android:textColor="?android:attr/textColorPrimary"/>
@@ -301,7 +301,7 @@
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layerType="software"
+				
 				android:singleLine="true"
 				android:text="@string/tweets"
 				android:textAppearance="?android:attr/textAppearanceSmall"
@@ -329,7 +329,7 @@
 				android:id="@+id/followers_count"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layerType="software"
+				
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				android:textColor="?android:attr/textColorPrimary"/>
@@ -337,7 +337,7 @@
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layerType="software"
+				
 				android:singleLine="true"
 				android:text="@string/followers"
 				android:textAppearance="?android:attr/textAppearanceSmall"
@@ -365,7 +365,7 @@
 				android:id="@+id/friends_count"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layerType="software"
+				
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				android:textColor="?android:attr/textColorPrimary"/>
@@ -373,7 +373,7 @@
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layerType="software"
+				
 				android:singleLine="true"
 				android:text="@string/friends"
 				android:textAppearance="?android:attr/textAppearanceSmall"

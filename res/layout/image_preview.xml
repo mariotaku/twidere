@@ -21,7 +21,7 @@
 			android:layout_gravity="center"
 			android:drawableLeft="@drawable/ic_menu_gallery"
 			android:gravity="center"
-			android:layerType="software"
+			
 			android:text="@string/load_images"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textStyle="bold"/>

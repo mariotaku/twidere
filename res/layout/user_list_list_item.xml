@@ -19,7 +19,7 @@
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_marginLeft="8dp"
 		android:layout_toRightOf="@+id/profile_image"
-		android:layerType="software"
+		
 		android:singleLine="true"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorPrimary"
@@ -34,7 +34,7 @@
 		android:layout_below="@+id/name"
 		android:layout_marginRight="8dp"
 		android:drawablePadding="4dp"
-		android:layerType="software"
+		
 		android:textColor="?android:attr/textColorSecondary"/>
 
 	<TextView
@@ -45,7 +45,7 @@
 		android:layout_alignParentRight="true"
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_below="@+id/owner"
-		android:layerType="software"
+		
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorSecondary"/>
 

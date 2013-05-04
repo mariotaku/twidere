@@ -129,9 +129,9 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		}
 
 		// Clear images in prder to prevent images in recycled view shown.
-		holder.profile_image.setImageDrawable(null);
-		holder.my_profile_image.setImageDrawable(null);
-		holder.image_preview.setImageDrawable(null);
+//		holder.profile_image.setImageDrawable(null);
+//		holder.my_profile_image.setImageDrawable(null);
+//		holder.image_preview.setImageDrawable(null);
 
 		final ParcelableStatus status = getItem(position);
 

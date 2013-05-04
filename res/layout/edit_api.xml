@@ -15,7 +15,7 @@
 			android:layout_height="wrap_content"
 			android:padding="16dp">
 
-			<TextView android:layerType="software"
+			<TextView 
 				android:id="@+id/label_rest_base_url"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
 				android:inputType="textUri"
 				android:singleLine="true"/>
 
-			<TextView android:layerType="software"
+			<TextView 
 				android:id="@+id/label_auth_type"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
@@ -89,7 +89,7 @@
 				</RadioGroup>
 			</HorizontalScrollView>
 
-			<Button android:layerType="software"
+			<Button 
 				android:id="@+id/advanced_api_config_label"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"

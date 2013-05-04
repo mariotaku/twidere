@@ -70,7 +70,7 @@
 						<TextView
 							android:layout_width="wrap_content"
 							android:layout_height="wrap_content"
-							android:layerType="software"
+							
 							android:text="@string/name"
 							android:textAppearance="?android:attr/textAppearanceMedium"/>
 
@@ -80,7 +80,7 @@
 							android:layout_height="wrap_content"
 							android:layout_gravity="center"
 							android:inputType="textPersonName"
-							android:layerType="software"
+							
 							android:maxLength="20"
 							android:singleLine="true"
 							android:textAppearance="?android:attr/textAppearanceMedium"/>
@@ -98,7 +98,7 @@
 				<TextView
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:layerType="software"
+					
 					android:text="@string/description"
 					android:textAppearance="?android:attr/textAppearanceMedium"/>
 
@@ -108,7 +108,7 @@
 					android:layout_height="wrap_content"
 					android:gravity="top"
 					android:inputType="textMultiLine"
-					android:layerType="software"
+					
 					android:maxLength="160"
 					android:minLines="4"
 					android:singleLine="false"
@@ -125,7 +125,7 @@
 				<TextView
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:layerType="software"
+					
 					android:singleLine="true"
 					android:text="@string/location"
 					android:textAppearance="?android:attr/textAppearanceMedium"/>
@@ -135,7 +135,7 @@
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:inputType="textPostalAddress"
-					android:layerType="software"
+					
 					android:maxLength="30"
 					android:singleLine="true"
 					android:textAppearance="?android:attr/textAppearanceMedium"/>
@@ -151,7 +151,7 @@
 				<TextView
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:layerType="software"
+					
 					android:singleLine="true"
 					android:text="@string/url"
 					android:textAppearance="?android:attr/textAppearanceMedium"/>
@@ -161,7 +161,7 @@
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:inputType="textUri"
-					android:layerType="software"
+					
 					android:maxLength="100"
 					android:singleLine="true"
 					android:textAppearance="?android:attr/textAppearanceMedium"/>

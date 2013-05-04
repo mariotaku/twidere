@@ -335,6 +335,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			mProfileImageLoader.displayProfileImage(mProfileImageView, user.profile_image_url);
 			final int def_width = getResources().getDisplayMetrics().widthPixels;
 			final int width = mBannerWidth > 0 ? mBannerWidth : def_width;
+			mProfileBannerView.setImageBitmap(null);
 			mProfileImageLoader.displayProfileBanner(mProfileBannerView, user.profile_banner_url, width);
 		} else {
 			mProfileImageView.setImageResource(R.drawable.ic_profile_image_default);

@@ -33,7 +33,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:gravity="right"
-				android:layerType="software"
+				
 				android:paddingRight="4dp"
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceSmall"
@@ -44,7 +44,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:gravity="right"
-				android:layerType="software"
+				
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:textColor="?android:attr/textColorPrimary"
@@ -61,7 +61,7 @@
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_below="@+id/name_frame"
 		android:gravity="right"
-		android:layerType="software"
+		
 		android:maxLines="3"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorSecondary"/>
@@ -76,7 +76,7 @@
 		android:layout_marginLeft="8dp"
 		android:drawablePadding="4dp"
 		android:gravity="center_vertical|right"
-		android:layerType="software"
+		
 		android:paddingTop="4dp"
 		android:textColor="?android:attr/textColorSecondary"/>
 

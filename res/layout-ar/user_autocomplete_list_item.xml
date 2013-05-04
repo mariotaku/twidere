@@ -19,7 +19,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:ellipsize="marquee"
-			android:layerType="software"
+			
 			android:singleLine="true"
 			android:textAppearance="?android:attr/textAppearanceMedium"/>
 
@@ -28,7 +28,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:ellipsize="marquee"
-			android:layerType="software"
+			
 			android:singleLine="true"
 			android:textAppearance="?android:attr/textAppearanceSmall"/>
 	</LinearLayout>

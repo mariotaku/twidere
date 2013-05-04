@@ -41,7 +41,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:gravity="right"
-				android:layerType="software"
+				
 				android:paddingLeft="4dp"
 				android:paddingRight="4dp"
 				android:singleLine="true"
@@ -53,7 +53,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:gravity="right"
-				android:layerType="software"
+				
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:textColor="?android:attr/textColorPrimary"
@@ -71,7 +71,7 @@
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_below="@+id/name_frame"
 		android:gravity="right"
-		android:layerType="software"
+		
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorSecondary"/>
 
@@ -85,7 +85,7 @@
 		android:layout_toRightOf="@+id/my_profile_image"
 		android:drawablePadding="4dp"
 		android:gravity="center_vertical|left"
-		android:layerType="software"
+		
 		android:textColor="?android:attr/textColorSecondary"/>
 
 	<FrameLayout
@@ -122,7 +122,7 @@
 		android:layout_below="@+id/image_preview_container"
 		android:layout_toLeftOf="@+id/profile_image"
 		android:drawablePadding="4dp"
-		android:layerType="software"
+		
 		android:paddingLeft="8dp"
 		android:paddingTop="4dp"
 		android:textColor="?android:attr/textColorSecondary"/>
@@ -133,7 +133,7 @@
 		android:layout_height="42dp"
 		android:layout_centerInParent="true"
 		android:gravity="center"
-		android:layerType="software"
+		
 		android:text="@string/tap_to_load_more"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:textColor="#606060"

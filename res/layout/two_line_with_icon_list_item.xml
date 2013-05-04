@@ -31,7 +31,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:ellipsize="marquee"
-			android:layerType="software"
+			
 			android:singleLine="true"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textStyle="bold"/>
@@ -41,7 +41,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:ellipsize="marquee"
-			android:layerType="software"
+			
 			android:singleLine="true"
 			android:textAppearance="?android:attr/textAppearanceSmall"/>
 	</LinearLayout>

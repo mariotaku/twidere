@@ -19,7 +19,7 @@
 		android:layout_marginLeft="4dp"
 		android:layout_toLeftOf="@+id/time"
 		android:layout_toRightOf="@+id/profile_image"
-		android:layerType="software"
+		
 		android:singleLine="false"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorPrimary"
@@ -33,7 +33,7 @@
 		android:layout_alignParentRight="true"
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_below="@+id/title"
-		android:layerType="software"
+		
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorSecondary"/>
 
@@ -46,7 +46,7 @@
 		android:layout_alignWithParentIfMissing="true"
 		android:drawablePadding="4dp"
 		android:gravity="center_vertical|right"
-		android:layerType="software"
+		
 		android:textColor="?android:attr/textColorSecondary"/>
 
 	<LinearLayout
@@ -104,7 +104,7 @@
 		android:layout_below="@+id/activity_profile_image_container"
 		android:layout_toRightOf="@+id/profile_image"
 		android:drawablePadding="4dp"
-		android:layerType="software"
+		
 		android:paddingLeft="8dp"
 		android:paddingTop="4dp"
 		android:textColor="?android:attr/textColorSecondary"/>

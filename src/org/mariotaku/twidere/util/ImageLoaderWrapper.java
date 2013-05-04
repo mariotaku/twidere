@@ -56,11 +56,13 @@ public class ImageLoaderWrapper implements Constants {
 		profile_opts_builder.cacheOnDisc();
 		profile_opts_builder.showStubImage(R.drawable.ic_profile_image_default);
 		profile_opts_builder.bitmapConfig(Bitmap.Config.ARGB_8888);
+		profile_opts_builder.resetViewBeforeLoading();
 		mProfileImageDisplayOptions = profile_opts_builder.build();
 		final DisplayImageOptions.Builder image_opts_builder = new DisplayImageOptions.Builder();
 		image_opts_builder.cacheInMemory();
 		image_opts_builder.cacheOnDisc();
 		image_opts_builder.bitmapConfig(Bitmap.Config.RGB_565);
+		image_opts_builder.resetViewBeforeLoading();
 		mImageDisplayOptions = image_opts_builder.build();
 	}
 

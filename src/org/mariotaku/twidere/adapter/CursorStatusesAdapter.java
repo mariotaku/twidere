@@ -100,12 +100,11 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 		final StatusViewHolder holder = (StatusViewHolder) view.getTag();
 
 		// Clear images in prder to prevent images in recycled view shown.
-		holder.profile_image.setImageDrawable(null);
-		holder.my_profile_image.setImageDrawable(null);
-		holder.image_preview.setImageDrawable(null);
+//		holder.profile_image.setImageDrawable(null);
+//		holder.my_profile_image.setImageDrawable(null);
+//		holder.image_preview.setImageDrawable(null);
 
 		final boolean is_gap = cursor.getShort(mIndices.is_gap) == 1;
-
 		final boolean show_gap = is_gap && !mGapDisallowed && position != getCount() - 1;
 
 		holder.setShowAsGap(show_gap);
@@ -264,9 +263,6 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 				holder.image_preview_frame.setTag(position);
 			}
 		}
-		holder.profile_image.setOnClickListener(mMultiSelectEnabled ? null : this);
-		holder.my_profile_image.setOnClickListener(mMultiSelectEnabled ? null : this);
-		holder.image_preview_frame.setOnClickListener(mMultiSelectEnabled ? null : this);
 	}
 
 	public long findItemIdByPosition(final int position) {
@@ -301,6 +297,9 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 		final Object tag = view.getTag();
 		if (!(tag instanceof StatusViewHolder)) {
 			final StatusViewHolder holder = new StatusViewHolder(view);
+			holder.profile_image.setOnClickListener(this);
+			holder.my_profile_image.setOnClickListener(this);
+			holder.image_preview_frame.setOnClickListener(this);
 			view.setTag(holder);
 		}
 		return view;
