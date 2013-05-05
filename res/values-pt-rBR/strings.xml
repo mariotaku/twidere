@@ -389,6 +389,7 @@
   <string name="permission_description_write">Escrever no BD, atualizar status</string>
   <string name="permission_description_direct_messages">Ler/Escrever/Enviar mensagens diretas</string>
   <string name="permission_description_accounts">Ler informações da conta</string>
+  <string name="permission_description_preferences">Configurações de leitura</string>
   <string name="permissions_request">Permissões requeridas</string>
   <string name="permissions_request_message">A extensão está pedindo as seguintes permissões</string>
   <string name="accept">Aceitar</string>
@@ -419,4 +420,6 @@
   <string name="mention_user">Citar <xliff:g id="user">%s</xliff:g></string>
   <string name="theme_color">Cor do tema</string>
   <string name="link_underline_only">Sublinhar apenas links</string>
+  <string name="wrong_url_format">Formato de URL incorreto.</string>
+  <string name="wrong_username_password">Usuário/senha incorretos.</string>
 </resources>

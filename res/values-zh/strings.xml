@@ -35,8 +35,8 @@
   <string name="error_already_logged_in">你已經登錄</string>
   <string name="no_account_selected">你必須至少選擇一個帳號</string>
   <string name="error_unknown_error">錯誤：未知錯誤，這很可能是個bug</string>
-  <string name="error_message">錯誤：<xliff:g id="message">%s</xliff:g></string>
-  <string name="error_message_with_action">在 <xliff:g id="action">%1$s</xliff:g> 時發生問題: <xliff:g id="message">%2$s</xliff:g></string>
+  <string name="error_message">發生問題：<xliff:g id="message">%s</xliff:g></string>
+  <string name="error_message_with_action">在<xliff:g id="action">%1$s</xliff:g>時發生問題：<xliff:g id="message">%2$s</xliff:g></string>
   <string name="error_message_rate_limit">在<xliff:g id="action">%1$s</xliff:g>時超過了Twitter的調用次數限制，請在<xliff:g id="time">%2$s</xliff:g>重試</string>
   <string name="select_account">選擇帳號</string>
   <string name="username">用戶名</string>
@@ -87,7 +87,7 @@
   <string name="dark_theme_summary">為 Twidere 使用暗色主題</string>
   <string name="display_profile_image">顯示個人資料圖片</string>
   <string name="image_load_summary">關閉可以加快列表的滾動速度，以及減少數據流量</string>
-  <string name="in_reply_to">回覆 <xliff:g id="user_name">%s</xliff:g></string>
+  <string name="in_reply_to">回覆<xliff:g id="user_name">%s</xliff:g></string>
   <string name="in_reply_to_pull_to_load_conversation">回覆 <xliff:g id="user_name">%s</xliff:g>，下拉加載對話</string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> 轉推了這個</string>
   <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> 和其他 <xliff:g id="retweet_count">%2$d</xliff:g> 人轉推了這個</string>
@@ -298,6 +298,7 @@
   <string name="dns_server">DNS 伺服器</string>
   <string name="dns_server_summary">為API請求指定DNS伺服器</string>
   <string name="activities_about_me">關於我的活動</string>
+  <string name="activities_by_friends">好友的活動</string>
   <string name="activity_about_me_favorite"><xliff:g id="user">%s</xliff:g> 收藏了你的推文</string>
   <string name="activity_about_me_favorite_multi"><xliff:g id="user">%s</xliff:g> 和其他 <xliff:g id="count">%d</xliff:g> 人收藏了你的推文</string>
   <string name="activity_about_me_follow"><xliff:g id="user">%s</xliff:g> 正在關注你</string>
@@ -305,7 +306,13 @@
   <string name="activity_about_me_retweet"><xliff:g id="user">%s</xliff:g> 轉推了你的推文</string>
   <string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> 和其他 <xliff:g id="count">%d</xliff:g> 人轉推了你的推文</string>
   <string name="activity_about_me_list_member_added"><xliff:g id="user">%s</xliff:g> 把你添加到了列表</string>
-  <string name="activity_about_me_list_member_added_multi"><xliff:g id="user">%s</xliff:g> 和其他 <xliff:g id="count">%d</xliff:g> 人把你加到了他們的列表</string>
+  <string name="activity_about_me_list_member_added_multi"><xliff:g id="user">%s</xliff:g>和其他<xliff:g id="count">%d</xliff:g>人把你加到了他們的列表</string>
+  <string name="activity_by_friends_favorite"><xliff:g id="user">%1$s</xliff:g>收藏了<xliff:g id="target">%2$s</xliff:g>的推文</string>
+  <string name="activity_by_friends_favorite_multi"><xliff:g id="user">%1$s</xliff:g>收藏了<xliff:g id="target">%2$s</xliff:g>和其他<xliff:g id="count">%3$d</xliff:g>人的推文</string>
+  <string name="activity_by_friends_follow"><xliff:g id="user">%1$s</xliff:g>關注了<xliff:g id="target">%2$s</xliff:g></string>
+  <string name="activity_by_friends_follow_multi"><xliff:g id="user">%1$s</xliff:g>關注了<xliff:g id="target">%2$s</xliff:g>和其他<xliff:g id="count">%3$d</xliff:g>人</string>
+  <string name="activity_by_friends_retweet"><xliff:g id="user">%1$s</xliff:g>轉推了<xliff:g id="target">%2$s</xliff:g>的推文</string>
+  <string name="activity_by_friends_list_member_added"><xliff:g id="user">%1$s</xliff:g>把<xliff:g id="target">%2$s</xliff:g>加入了列表</string>
   <string name="cannot_get_callback_url">請檢查你的用戶名和密碼是否正確</string>
   <string name="tweet_not_sent">推文未發送</string>
   <string name="tweet_not_sent_summary">推文未發送，並被保存到草稿箱</string>
@@ -333,6 +340,8 @@
   <string name="sending_status">發送推文</string>
   <string name="sending_direct_message">發送私信</string>
   <string name="refreshing_timelines">刷新時間綫</string>
+  <string name="refreshing_home_timeline">刷新主頁</string>
+  <string name="refreshing_mentions">刷新提及</string>
   <string name="refreshing_direct_messages">刷新私信</string>
   <string name="favoriting">收藏</string>
   <string name="unfavoriting">取消收藏</string>
@@ -379,7 +388,7 @@
   <string name="none">無</string>
   <string name="large">大尺寸</string>
   <string name="small">小尺寸</string>
-  <string name="and_more">和其他 <xliff:g id="count">%d</xliff:g> 個</string>
+  <string name="and_more">和其他<xliff:g id="count">%d</xliff:g>個</string>
   <string name="clear_search_history">清除搜索歷史</string>
   <string name="permission_description_none">沒有需要的權限</string>
   <string name="permission_description_refresh">刷新時間綫（包括私信）</string>
@@ -387,6 +396,7 @@
   <string name="permission_description_write">將推文和其他一些內容寫入到資料庫，發送推文</string>
   <string name="permission_description_direct_messages">讀寫/發送私信</string>
   <string name="permission_description_accounts">讀取帳號授權信息</string>
+  <string name="permission_description_preferences">讀取設定</string>
   <string name="permissions_request">授權請求</string>
   <string name="permissions_request_message">擴展程序正在請求以下權限</string>
   <string name="accept">同意並授權</string>
@@ -405,4 +415,18 @@
   <string name="image_preload_options">圖片預加載選項</string>
   <string name="profile_images">個人資料圖片</string>
   <string name="preview_images">推文預覽圖片</string>
+  <string name="preload_wifi_only">僅使用Wi-Fi預加載</string>
+  <string name="re_sign_in_needed">你可能需要重新登錄你的帳號</string>
+  <string name="disable_tab_swipe">禁用滑動切換標籤頁</string>
+  <string name="sign_in_method_introduction_title">輸入密碼登錄是怎樣工作的？</string>
+  <string name="sign_in_method_introduction">大多數客戶端（例如twicca）通過打開瀏覽器驗證登錄Twitter，然後瀏覽器再將你引導回客戶端。有時這會導致許多不便，因為一些第三方瀏覽器不會引導你回客戶端。\nTwidere使用更加簡便的步驟代替瀏覽器登錄到Twitter，不必擔心你會泄露你的密碼，這個方式非常安全！\nTwidere不會保存密碼，僅在登錄時發送給Twitter，只要網絡足夠安全，你的密碼永遠不會被第三方獲取！</string>
+  <string name="quote_protected_tweet_notice">不建議引用受保護的推文</string>
+  <string name="edit_draft">編輯草稿</string>
+  <string name="profile_image">個人資料圖片</string>
+  <string name="my_profile_image">我的個人資料圖片</string>
+  <string name="mention_user">提及<xliff:g id="user">%s</xliff:g></string>
+  <string name="theme_color">主題顏色</string>
+  <string name="link_underline_only">僅為連結顯示下劃線</string>
+  <string name="wrong_url_format">URL格式錯誤</string>
+  <string name="wrong_username_password">用戶名/密碼錯誤</string>
 </resources>

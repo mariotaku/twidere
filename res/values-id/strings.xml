@@ -37,6 +37,7 @@
   <string name="error_unknown_error">Kesalahan: Kesalahan tidak diketahui, ini mungkin adalah bug.</string>
   <string name="error_message">Kesalahan: <xliff:g id="message">%s</xliff:g></string>
   <string name="error_message_with_action">Kesalahan saat <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
+  <string name="error_message_rate_limit">Laju tweet melebihi batas saat <xliff:g id="action">%1$s</xliff:g>, silakan coba lagi setelah <xliff:g id="time">%2$s</xliff:g></string>
   <string name="select_account">Pilih akun</string>
   <string name="username">Nama pengguna</string>
   <string name="password">Kata Sandi</string>
@@ -73,6 +74,7 @@
   <string name="ignore_ssl_error">Abaikan kesalahan SSL</string>
   <string name="ignore_ssl_error_summary">Abaikan kesalahan SSL, aktifkan ini bila anda bermasalah dengan server API lain.</string>
   <string name="gzip_compressing">Kompresi GZip</string>
+  <string name="gzip_compressing_summary">Kompres permintaan API, hal itu dapat menghemat penggunaan lalu lintas data, tapi mungkin tidak berjalan di semua server API.</string>
   <string name="storage">Penyimpanan</string>
   <string name="database_item_limit">Batas ukuran database</string>
   <string name="database_item_limit_summary">Batas atas item yang disimpan pada database untuk tiap akun, berikan nilai kecil untuk menghemat ruang dan meningkatkan kecepatan muat.</string>
@@ -119,8 +121,11 @@
   <string name="delete_successful">Berhasil menghapus.</string>
   <string name="send_successful">Berhasil mengirim.</string>
   <string name="favorite_successful">Berhasil difavoritkan.</string>
+  <string name="unfavorite_successful">Berhasil batalkan favorit.</string>
   <string name="follow_successful">Berhasil mengikuti.</string>
   <string name="unfollow_successful">Berhasil tidak mengikuti.</string>
+  <string name="profile_update_successful">Berhasil memperbaharui profil.</string>
+  <string name="profile_image_update_successful">Berhasil memperbaharui gambar profil.</string>
   <string name="profile_banner_image_update_successful">Berhasil memperbaharui gambar latar profil.</string>
   <string name="text_size">Ukuran teks</string>
   <string name="text_size_summary">Ukuran teks status.</string>
@@ -173,6 +178,7 @@
   <string name="refresh_and_notifications">Refresh &amp; Notifikasi</string>
   <string name="auto_refresh">Refresh otomatis</string>
   <string name="refresh_interval">Interval refresh</string>
+  <string name="refresh_interval_summary">Rentang waktu muat ulang yang kecil memerlukan banyak daya dan data!</string>
   <string name="content_to_refresh">Konten yang di-refresh</string>
   <string name="content_to_nofity">Konten untuk diberitahukan</string>
   <string name="notifications_type">Jenis pemberitahuan</string>
@@ -186,6 +192,7 @@
   <string name="sort_timeline_by_time">Urutkan timeline berdasarkan waktu</string>
   <string name="sort_timeline_by_time_summary">Ini mungkin akan membuat ulang kicauan ditampilkan pada lokasi yang salah atau berguna apabila layanan lain seperti Identi.ca digunakan.</string>
   <string name="refresh_on_start">Muat ulang di awal</string>
+  <string name="refresh_on_start_summary">Muat ulang lini massa dan mention untuk memulai.</string>
   <string name="refresh_after_tweet">Refresh setelah ngetwit</string>
   <string name="refresh_after_tweet_summary">Muat ulang timeline dan mention setelah mengirim tweet.</string>
   <string name="list_timeline">Daftarkan timeline</string>
@@ -262,6 +269,7 @@
   <string name="error_message_status_too_long">Kicauan terlalu panjang.</string>
   <string name="error_message_tweet_shorten_failed">Penyingkat kicauan gagal.</string>
   <string name="error_message_tweet_shortener_not_found">Pemendek kicauan tidak ditemukan, mungkin tidak dipasang.</string>
+  <string name="multimedia_contents">Isi multimedia</string>
   <string name="show_absolute_time">Tampilkan waktu absolut</string>
   <string name="show_absolute_time_summary">Tampilkan waktu absulut di tweet</string>
   <string name="mute_source">Bisukan sumber</string>
@@ -279,6 +287,7 @@
   <string name="Nitems_selected_quantity_other"><xliff:g id="items">%d</xliff:g> item terpilih</string>
   <string name="view">Lihat</string>
   <string name="hardware_acceleration">Akselerasi perangkat keras</string>
+  <string name="hardware_acceleration_summary">Beberapa perangkat akan menjadi lebih lancar, SEBAGIAN TIDAK. Untuk Android 3.0+ saja. Ini tidak akan menimpa pengaturan sistem!</string>
   <string name="custom_host_mapping">Kustom host mapping</string>
   <string name="custom_host_mapping_summary">Host pemetaan sperti /etc/hosts, tanpa butuh permisi tambahan.</string>
   <string name="host">Host</string>
@@ -297,6 +306,7 @@
   <string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> dan <xliff:g id="count">%d</xliff:g> lainnya me-retweet tweet Anda.</string>
   <string name="activity_about_me_list_member_added"><xliff:g id="user">%s</xliff:g> menambahkan Anda ke dalam daftar.</string>
   <string name="activity_about_me_list_member_added_multi"><xliff:g id="user">%s</xliff:g> dan <xliff:g id="count">%d</xliff:g> lainnya menambahkan Anda ke dalam daftar mereka.</string>
+  <string name="cannot_get_callback_url">Tidak dapat panggilan balik, harap periksa nama dan kata sandi anda.</string>
   <string name="tweet_not_sent">Tweet tidak terkirim.</string>
   <string name="tweet_not_sent_summary">Tweet tidak terkirim, dan disimpan di konsep.</string>
   <string name="incoming_friendships">Permintaan mengikuti ditahan</string>
@@ -350,6 +360,8 @@
   <string name="data_profiling_notification_ticker">Statistik yang terpilih untuk masuk</string>
   <string name="data_profiling_notification_title">Statistik penggunaan</string>
   <string name="data_profiling_notification_desc">Aktifkan atau Matikan Statistik penggunaan</string>
+  <string name="silent_notifications">Notifikasi diam</string>
+  <string name="silent_notifications_summary">Matikan nada dering/getar untuk notifikasi</string>
   <string name="disable_background_service">Matikan layanan background</string>
   <string name="pull_to_load_conversation_label">Tarik untuk memuat percakapan…</string>
   <string name="pull_to_load_conversation_release_label">Lepaskan untuk memuat percakapan…</string>
@@ -371,11 +383,13 @@
   <string name="small">Sedikit</string>
   <string name="and_more">dan <xliff:g id="count">%d</xliff:g> lebih lagi</string>
   <string name="clear_search_history">Bersihkan riwayat pencarian</string>
+  <string name="permission_description_none">Tidak ada ijin yang diperlukan</string>
   <string name="permission_description_refresh">Memperbaharui timeline (termasuk direct messages)</string>
   <string name="permission_description_read">Baca kicauan dan beberapa konten chace</string>
   <string name="permission_description_write">Menuliskan ke database, update status</string>
   <string name="permission_description_direct_messages">Baca/Tulis/Kirim direct messages</string>
   <string name="permission_description_accounts">Melihat informasi akun</string>
+  <string name="permission_description_preferences">Baca pengaturan</string>
   <string name="permissions_request">Permintaan ijin</string>
   <string name="permissions_request_message">Ekstensi meminta ijin berikut ini</string>
   <string name="accept">Setuju</string>
@@ -398,4 +412,12 @@
   <string name="disable_tab_swipe">Nonaktifkan tab menggesek</string>
   <string name="sign_in_method_introduction_title">Bagaimana cara kerjanya?</string>
   <string name="sign_in_method_introduction">Kebanyakan klien seperti twicca membuka browser meminta Anda untuk mengetik nama user dan sandi, dan kemudian membawa Anda kembali ke klien mereka. Kadang-kadang ini bisa menjadi sangat nyaman.\nTwidere menggunakan langkah-langkah yang lebih sederhana untuk masuk, tanpa membuka browser. Jangan khawatir tentang sandi Anda, Twidere tidak akan pernah menyimpannya, itu benar-benar aman!</string>
+  <string name="quote_protected_tweet_notice">Tidak direkomendasikan untuk mengutip tweet terproteksi.</string>
+  <string name="edit_draft">Ubah draf</string>
+  <string name="profile_image">Gambar Profil</string>
+  <string name="my_profile_image">Gambar profile saya</string>
+  <string name="theme_color">Warna tema</string>
+  <string name="link_underline_only">Perlihatkan garis bawah hanya untuk tautan</string>
+  <string name="wrong_url_format">Format URL salah.</string>
+  <string name="wrong_username_password">Nama/kata sandi salah.</string>
 </resources>

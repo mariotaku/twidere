@@ -389,6 +389,7 @@
   <string name="permission_description_write">データベースへの書き込み、ステータスの更新</string>
   <string name="permission_description_direct_messages">ダイレクトメッセージの読み取り、書き込みと送信</string>
   <string name="permission_description_accounts">アカウント情報の読み込み</string>
+  <string name="permission_description_preferences">設定の読み込み</string>
   <string name="permissions_request">権限の要求</string>
   <string name="permissions_request_message">拡張アプリは下記にアクセスする場合があります</string>
   <string name="accept">同意</string>
@@ -419,6 +420,6 @@
   <string name="mention_user"><xliff:g id="user">%s</xliff:g>宛にツイート</string>
   <string name="theme_color">テーマ色</string>
   <string name="link_underline_only">リンクにのみ下線を表示</string>
-  <string name="wrong_url_format">Wrong URL format.</string>
-  <string name="wrong_username_password">Wrong username/password.</string>
+  <string name="wrong_url_format">不正なURL形式です。</string>
+  <string name="wrong_username_password">間違ったユーザー名/パスワードです。</string>
 </resources>
