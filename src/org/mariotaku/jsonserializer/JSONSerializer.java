@@ -1,23 +1,21 @@
 package org.mariotaku.jsonserializer;
 
 import android.content.Context;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mariotaku.twidere.BuildConfig;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.Utils;
-import org.mariotaku.twidere.Constants;
-import org.apache.http.protocol.HTTP;
-import org.mariotaku.twidere.BuildConfig;
-import java.io.FileNotFoundException;
 
 public class JSONSerializer {
 
@@ -69,21 +67,22 @@ public class JSONSerializer {
 	
 	public static <T extends JSONParcelable> void toFile(final File file, final T parcelable) throws IOException {
 		if (file == null || parcelable == null) return;
-		final FileWriter writer = new FileWriter(file);
+		final BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 		final JSONObject json = new JSONObject();
 		try {
 			json.put(KEY_CLASS, parcelable.getClass().getName());
 			json.put(KEY_OBJECT, toJSON(parcelable));
+			writer.write(json.toString());
 		} catch (final JSONException e) {
 			throw new IOException(e);
+		} finally {
+			writer.close();
 		}
-		writer.write(json.toString());
-		writer.close();
 	}
 
 	public static <T extends JSONParcelable> void toFile(final File file, final T[] array) throws IOException {
 		if (file == null || array == null) return;
-		final FileWriter writer = new FileWriter(file);
+		final BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 		final JSONObject json = new JSONObject();
 		try {
 			json.put(KEY_CLASS, array.getClass().getComponentType().getName());
@@ -94,38 +93,49 @@ public class JSONSerializer {
 				writer.write(json.toString());
 			}
 		} catch (final JSONException e) {
-			throw new IOException(e);
+			throw new IOException();
+		} finally {
+			writer.close();
 		}
-		writer.close();
 	}
 	
 	public static <T extends JSONParcelable> T fromFile(final File file) throws IOException {
 		if (file == null) throw new FileNotFoundException();
-		final FileInputStream is = new FileInputStream(file);
-		final byte[] buffer = new byte[is.available()];
-		is.read(buffer);
-		is.close();
+		final BufferedReader reader = new BufferedReader(new FileReader(file));
+		final StringBuffer buf = new StringBuffer();
+		String line = reader.readLine();
+		while (line != null) {
+			buf.append(line);
+			buf.append('\n');
+			line = reader.readLine();
+		}
+		reader.close();
 		try {
-			final JSONObject json = new JSONObject(new String(buffer));
+			final JSONObject json = new JSONObject(buf.toString());
 			final JSONParcelable.Creator<T> creator = getCreator(json.optString(KEY_CLASS));
 			return fromJSON(creator, json.optJSONObject(KEY_OBJECT));
-		} catch (JSONException e) {
-			throw new IOException(e);
+		} catch (final JSONException e) {
+			throw new IOException();
 		}
 	}
 
 	public static <T extends JSONParcelable> List<T> listFromFile(final File file) throws IOException {
 		if (file == null) throw new FileNotFoundException();
-		final FileInputStream is = new FileInputStream(file);
-		final byte[] buffer = new byte[is.available()];
-		is.read(buffer);
-		is.close();
+		final BufferedReader reader = new BufferedReader(new FileReader(file));
+		final StringBuffer buf = new StringBuffer();
+		String line = reader.readLine();
+		while (line != null) {
+			buf.append(line);
+			buf.append('\n');
+			line = reader.readLine();
+		}
+		reader.close();
 		try {
-			final JSONObject json = new JSONObject(new String(buffer));
+			final JSONObject json = new JSONObject(buf.toString());
 			final JSONParcelable.Creator<T> creator = getCreator(json.optString(KEY_CLASS));
 			return listFromJSON(creator, json.optJSONArray(KEY_OBJECT));
 		} catch (JSONException e) {
-			throw new IOException(e);
+			throw new IOException();
 		}
 	}
 
@@ -134,7 +144,7 @@ public class JSONSerializer {
 			final Class<?> cls = Class.forName(name);
 			return (JSONParcelable.Creator<T>) cls.getField("JSON_CREATOR").get(null);
 		} catch (final Exception e) {
-			throw new IOException(e);
+			throw new IOException();
 		}
 	}
 	

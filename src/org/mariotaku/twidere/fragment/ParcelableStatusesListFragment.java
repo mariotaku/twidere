@@ -41,6 +41,7 @@ import android.widget.ListView;
 import org.mariotaku.jsonserializer.JSONSerializer;
 import java.io.File;
 import java.io.IOException;
+import java.util.ConcurrentModificationException;
 
 public abstract class ParcelableStatusesListFragment extends BaseStatusesListFragment<List<ParcelableStatus>> {
 
@@ -235,14 +236,17 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 
 	protected final boolean saveStatusesInternal() {
 		if (mIsStatusesSaved) return true;
-		final List<ParcelableStatus> data = getData();
-		if (data == null) return false;
-		final int items_limit = mPreferences.getInt(PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
-		final List<ParcelableStatus> statuses = data.subList(0, Math.min(items_limit, data.size()));
 		try {
+			final List<ParcelableStatus> data = getData();
+			if (data == null) return false;
+			final int items_limit = mPreferences.getInt(PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
+			final List<ParcelableStatus> statuses = data.subList(0, Math.min(items_limit, data.size()));			
 			final File file = JSONSerializer.getSerializationFile(getActivity(), getSavedStatusesFileArgs());
 			JSONSerializer.toFile(file, statuses.toArray(new ParcelableStatus[statuses.size()]));
-		} catch (IOException e) {
+		} catch (final IOException e) {
+			return false;
+		} catch (final ConcurrentModificationException e) {
+			e.printStackTrace();
 			return false;
 		}
 		return true;

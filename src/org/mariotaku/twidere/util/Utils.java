@@ -1740,10 +1740,15 @@ public final class Utils implements Constants {
 	
 	public static int getThemeColor(final Context context) {
 		if (context == null) return Color.TRANSPARENT;
-		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.colorActivatedHighlight });
-		final int color = a.getColor(0, context.getResources().getColor(R.color.holo_blue_light));
-		a.recycle();
-		return color;
+		final int def = context.getResources().getColor(R.color.holo_blue_light);
+		try {		
+			final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.colorActivatedHighlight });
+			final int color = a.getColor(0, def);
+			a.recycle();
+			return color;	
+		} catch (final Exception e) {
+			return def;
+		}
 	}
 
 	public static int getTextCount(final TextView view) {
