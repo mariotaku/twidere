@@ -54,4 +54,7 @@ public class UserFavoritesLoader extends Twitter4JStatusesLoader {
 		return mTotalItemsCount;
 	}
 
+	protected boolean shouldFilterStatus(ParcelableStatus status) {
+		return false;
+	}
 }

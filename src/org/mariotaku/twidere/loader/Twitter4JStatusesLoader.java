@@ -125,7 +125,7 @@ public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 		try {
 			final List<ParcelableStatus> statuses_to_remove = new ArrayList<ParcelableStatus>();
 			for (final ParcelableStatus status : data) {
-				if (isFiltered(mDatabase, status) && !status.is_gap) {
+				if (shouldFilterStatus(status) && !status.is_gap && isFiltered(mDatabase, status)) {
 					statuses_to_remove.add(status);
 				}
 			}
@@ -136,5 +136,7 @@ public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 		}
 		return data;
 	}
+	
+	protected abstract boolean shouldFilterStatus(final ParcelableStatus status);
 
 }

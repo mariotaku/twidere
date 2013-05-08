@@ -430,5 +430,7 @@
 	<string name="link_underline_only">Show underline only for links</string>
 	<string name="wrong_url_format">Wrong URL format.</string>
 	<string name="wrong_username_password">Wrong username/password.</string>
+	<string name="network_error">Network error.</string>
+	<string name="ssl_error">SSL error, you may need to enable \"Ignore SSL error\" option.</string>
 
 </resources>

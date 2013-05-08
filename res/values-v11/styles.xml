@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<style name="Widget.Twidere.Button.Borderless" parent="android:Widget.Holo.Button">
+	<style name="Widget.Twidere.Button.Borderless" parent="android:Widget.Holo.Button.Small">
 		<item name="android:background">?android:attr/selectableItemBackground</item>
 	</style>
 
@@ -9,7 +9,7 @@
 		<item name="android:background">?android:attr/selectableItemBackground</item>
 	</style>
 
-	<style name="Widget.Twidere.Light.Button.Borderless" parent="android:Widget.Holo.Light.Button">
+	<style name="Widget.Twidere.Light.Button.Borderless" parent="android:Widget.Holo.Light.Button.Small">
 		<item name="android:background">?android:attr/selectableItemBackground</item>
 	</style>
 

@@ -805,7 +805,7 @@ public class SlidingPaneView extends ViewGroup {
 		private final int mScaledTouchSlop;
 		private final Context mContext;
 
-		private float mTempDeltaX, mTotalMoveX, mTotalMoveY;
+		private float mTempDeltaX, mTotalMoveX, mTotalMoveY, mActualMoveX;
 		private boolean mIsVerticalScrolling, mFirstDownHandled, mShouldDisableScroll;
 
 		ScrollTouchInterceptor(final SlidingPaneView parent) {
@@ -816,17 +816,17 @@ public class SlidingPaneView extends ViewGroup {
 
 		@Override
 		public void dispatchTouchEvent(final ViewGroup view, final MotionEvent event) {
-			if (event.getAction() == MotionEvent.ACTION_UP) {
-				if (mFirstDownHandled && mTotalMoveX != 0 && !mIsVerticalScrolling) {
-					mController.release(mIsVerticalScrolling ? 0 : -mTempDeltaX, -mTotalMoveX);
-				}
-				mTempDeltaX = 0;
-				mTotalMoveX = 0;
-				mTotalMoveY = 0;
-				mIsVerticalScrolling = false;
-				mShouldDisableScroll = false;
-				mFirstDownHandled = false;
+			if (event.getAction() != MotionEvent.ACTION_UP) return;
+			if (mFirstDownHandled && mActualMoveX != 0 && !mIsVerticalScrolling) {
+				mController.release(mIsVerticalScrolling ? 0 : -mTempDeltaX, -mActualMoveX);
 			}
+			mTempDeltaX = 0;
+			mTotalMoveX = 0;
+			mTotalMoveY = 0;
+			mActualMoveX = 0;
+			mIsVerticalScrolling = false;
+			mShouldDisableScroll = false;
+			mFirstDownHandled = false;
 		}
 
 		@Override
@@ -839,6 +839,7 @@ public class SlidingPaneView extends ViewGroup {
 					mTempDeltaX = 0;
 					mTotalMoveX = 0;
 					mTotalMoveY = 0;
+					mActualMoveX = 0;
 					mIsVerticalScrolling = false;
 					break;
 				}
@@ -871,6 +872,7 @@ public class SlidingPaneView extends ViewGroup {
 					mTempDeltaX = 0;
 					mTotalMoveX = 0;
 					mTotalMoveY = 0;
+					mActualMoveX = 0;
 					mIsVerticalScrolling = false;
 					mController.reset();
 					break;
@@ -881,7 +883,7 @@ public class SlidingPaneView extends ViewGroup {
 						break;
 					}
 					final float distanceX = mTempDeltaX = event.getX() - event.getHistoricalX(0);
-					mTotalMoveX += mTempDeltaX;
+					mActualMoveX = mTotalMoveX += mTempDeltaX;
 					mController.scrollBy((int) -distanceX);
 					break;
 				}

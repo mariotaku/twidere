@@ -21,7 +21,7 @@
 		
 		<Button
 			android:id="@+id/add_account"
-			style="?android:attr/borderlessButtonStyle"
+			style="?borderlessButtonStyle"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
@@ -38,7 +38,7 @@
 
 		<Button
 			android:id="@+id/save"
-			style="?android:attr/borderlessButtonStyle"
+			style="?borderlessButtonStyle"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:layout_weight="1"

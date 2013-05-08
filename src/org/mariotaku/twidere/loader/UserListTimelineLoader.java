@@ -50,7 +50,7 @@ public class UserListTimelineLoader extends Twitter4JStatusesLoader {
 	}
 
 	@Override
-	public ResponseList<Status> getStatuses(final Twitter twitter, final Paging paging) throws TwitterException {
+	protected ResponseList<Status> getStatuses(final Twitter twitter, final Paging paging) throws TwitterException {
 		if (twitter == null) return null;
 		if (mListId > 0)
 			return twitter.getUserListStatuses(mListId, paging);
@@ -59,6 +59,10 @@ public class UserListTimelineLoader extends Twitter4JStatusesLoader {
 			if (list != null && list.getId() > 0) return twitter.getUserListStatuses(list.getId(), paging);
 		}
 		return null;
+	}
+
+	protected boolean shouldFilterStatus(ParcelableStatus status) {
+		return true;
 	}
 
 }

@@ -52,7 +52,7 @@ public class PermissionsManager implements Constants {
 			throw new IllegalArgumentException("invalid permissions " + required_permissions);
 		if (required_permissions == PERMISSION_NONE) return true;
 		if (mContext.getPackageName().equals(pname)) return true;
-		if (checkSignature(pname)) return true;
+		//if (checkSignature(pname)) return true;
 		final int permissions = getPermissions(pname);
 		return permissions > PERMISSION_NONE && permissions % required_permissions == 0;
 	}

@@ -50,4 +50,8 @@ public class TweetSearchLoader extends Twitter4JStatusesLoader {
 		return Arrays.asList(twitter.search(query).getStatuses());
 	}
 
+	protected boolean shouldFilterStatus(ParcelableStatus status) {
+		return true;
+	}
+
 }

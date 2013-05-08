@@ -204,6 +204,7 @@ import android.view.SubMenu;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import javax.net.ssl.SSLException;
 
 public final class Utils implements Constants {
 
@@ -3238,9 +3239,15 @@ public final class Utils implements Constants {
 					final long sec_until_reset = status.getSecondsUntilReset() * 1000;
 					final String next_reset_time = parseString(getRelativeTimeSpanString(System.currentTimeMillis() + sec_until_reset));
 					message = context.getString(R.string.error_message_rate_limit, action, next_reset_time.trim());
-				} else {
+				} else if (te.getErrorCode() > 0) {
 					final String msg = TwitterErrorCodes.getErrorMessage(context, te.getErrorCode());
 					message = context.getString(R.string.error_message_with_action, action, msg != null ? msg : trimLineBreak(te.getMessage()));
+				} else if (te.getCause() instanceof SSLException) {					
+					message = context.getString(R.string.error_message_with_action, action, context.getString(R.string.ssl_error));
+				} else if (te.getCause() instanceof IOException) {					
+					message = context.getString(R.string.error_message_with_action, action, context.getString(R.string.network_error));
+				} else {					
+					message = context.getString(R.string.error_message_with_action, action, trimLineBreak(te.getMessage()));
 				}
 			} else {
 				message = context.getString(R.string.error_message, trimLineBreak(te.getMessage()));
@@ -3265,9 +3272,9 @@ public final class Utils implements Constants {
 		o.inJustDecodeBounds = true;
 		BitmapFactory.decodeFile(path, o);
 		if (o.outHeight <= 0 || o.outWidth <= 0) return null;
-		final BitmapFactory.Options o2 = new BitmapFactory.Options();
-		o2.inSampleSize = (int) (Math.max(o.outWidth, o.outHeight) / (48 * res.getDisplayMetrics().density));
-		return BitmapFactory.decodeFile(path, o2);
+		o.inSampleSize = (int) (Math.max(o.outWidth, o.outHeight) / (48 * res.getDisplayMetrics().density));
+		o.inJustDecodeBounds = false;
+		return BitmapFactory.decodeFile(path, o);
 	}
 
 	private static void parseEntities(final HtmlBuilder builder, final EntitySupport entities) {

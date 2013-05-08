@@ -48,7 +48,7 @@ public class UserTimelineLoader extends Twitter4JStatusesLoader {
 	}
 
 	@Override
-	public ResponseList<Status> getStatuses(final Twitter twitter, final Paging paging) throws TwitterException {
+	protected ResponseList<Status> getStatuses(final Twitter twitter, final Paging paging) throws TwitterException {
 		if (twitter == null) return null;
 		if (mUserId != -1) {
 			if (mTotalItemsCount == -1) {
@@ -67,4 +67,7 @@ public class UserTimelineLoader extends Twitter4JStatusesLoader {
 		return mTotalItemsCount;
 	}
 
+	protected boolean shouldFilterStatus(final ParcelableStatus status) {
+		return false;
+	}
 }
