@@ -38,6 +38,8 @@ import org.mariotaku.twidere.util.AsyncTask;
 import org.mariotaku.twidere.util.ColorAnalyser;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator.AuthenticationException;
+import org.mariotaku.twidere.util.OAuthPasswordAuthenticator.AuthenticityTokenException;
+import org.mariotaku.twidere.util.OAuthPasswordAuthenticator.WrongUserPassException;
 import org.mariotaku.twidere.util.httpclient.HttpClientImpl;
 
 import twitter4j.Twitter;
@@ -311,10 +313,12 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 				startActivity(intent);
 				finish();
 			} else if (result.already_logged_in) {
-				Toast.makeText(SignInActivity.this, R.string.error_already_logged_in, Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, R.string.error_already_logged_in, Toast.LENGTH_SHORT).show();
 			} else {
-				if (result.exception instanceof AuthenticationException) {
-					showErrorToast(this, getString(R.string.wrong_username_password), true);
+				if (result.exception instanceof AuthenticityTokenException) {
+					Toast.makeText(this, R.string.wrong_api_key, Toast.LENGTH_LONG).show();
+				} else if (result.exception instanceof WrongUserPassException) {
+					Toast.makeText(this, R.string.wrong_username_password, Toast.LENGTH_LONG).show();
 				} else {
 					showErrorToast(this, getString(R.string.signing_in), result.exception, true);
 				}

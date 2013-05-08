@@ -121,11 +121,17 @@ public class OAuthPasswordAuthenticator implements Constants {
 			throws AuthenticationException {
 		authenticity_token = null;
 		oauth_pin = null;
+		final RequestToken request_token;
 		try {
-			final RequestToken request_token = twitter.getOAuthRequestToken(OAUTH_CALLBACK_OOB);
+			request_token = twitter.getOAuthRequestToken(OAUTH_CALLBACK_OOB);
+		} catch (final TwitterException e) {
+			if (e.isCausedByNetworkIssue()) throw new AuthenticationException(e);
+			throw new AuthenticityTokenException();
+		}
+		try {
 			final String oauth_token = request_token.getToken();
 			readAuthenticityToken(getHTTPContent(request_token.getAuthorizationURL(), false, null));
-			if (authenticity_token == null) throw new AuthenticationException("Cannot get authenticity token.");
+			if (authenticity_token == null) throw new AuthenticityTokenException();
 			final Configuration conf = twitter.getConfiguration();
 			final HttpParameter[] params = new HttpParameter[4];
 			params[0] = new HttpParameter("authenticity_token", authenticity_token);
@@ -133,7 +139,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 			params[2] = new HttpParameter("session[username_or_email]", username);
 			params[3] = new HttpParameter("session[password]", password);
 			readOAuthPIN(getHTTPContent(conf.getOAuthAuthorizationURL().toString(), true, params));
-			if (isEmpty(oauth_pin)) throw new AuthenticationException("Cannot get OAuth PIN.");			
+			if (isEmpty(oauth_pin)) throw new WrongUserPassException();		
 			return twitter.getOAuthAccessToken(request_token, oauth_pin);
 		} catch (final IOException e) {
 			throw new AuthenticationException(e);
@@ -174,13 +180,12 @@ public class OAuthPasswordAuthenticator implements Constants {
 	private synchronized void setAuthenticityToken(final String authenticity_token) {
 		this.authenticity_token = authenticity_token;
 	}
-
+	
 	public static class AuthenticationException extends Exception {
 
 		private static final long serialVersionUID = -5629194721838256378L;
 
 		AuthenticationException() {
-			super();
 		}
 
 		AuthenticationException(final Exception cause) {
@@ -192,10 +197,13 @@ public class OAuthPasswordAuthenticator implements Constants {
 		}
 	}
 
-//	public static final class CallbackURLException extends AuthenticationException {
-//		private static final long serialVersionUID = 1735318863603574697L;
-//
-//	}
+	public static final class AuthenticityTokenException extends AuthenticationException {
+
+	}
+
+	public static final class WrongUserPassException extends AuthenticationException {
+
+	}
 
 	static class DummyContentHandler implements ContentHandler {
 		@Override

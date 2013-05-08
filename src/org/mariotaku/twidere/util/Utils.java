@@ -1947,7 +1947,8 @@ public final class Utils implements Constants {
 			final String screen_name, final String source) {
 		if (database == null) return false;
 		final StringBuilder builder = new StringBuilder();
-		final String[] selection_args = new String[] { text_plain, text_html, screen_name, source };
+		final String[] selection_args = new String[] { parseString(text_plain, ""), parseString(text_html, ""),
+				parseString(screen_name, ""), parseString(source, "") };
 		builder.append("SELECT NULL WHERE");
 		builder.append("(SELECT 1 IN (SELECT ? LIKE '%'||" + TABLE_FILTERED_KEYWORDS + "." + Filters.TEXT
 				+ "||'%' FROM " + TABLE_FILTERED_KEYWORDS + "))");

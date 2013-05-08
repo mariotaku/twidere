@@ -432,5 +432,6 @@
 	<string name="wrong_username_password">Wrong username/password.</string>
 	<string name="network_error">Network error.</string>
 	<string name="ssl_error">SSL error, you may need to enable \"Ignore SSL error\" option.</string>
+	<string name="wrong_api_key">Wrong API url or consumer key/secret, please check them again.</string>
 
 </resources>

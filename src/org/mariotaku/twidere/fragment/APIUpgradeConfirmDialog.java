@@ -33,6 +33,7 @@ public class APIUpgradeConfirmDialog extends BaseDialogFragment implements Dialo
 	@Override
 	public void onClick(final DialogInterface dialog, final int which) {
 		final SharedPreferences prefs = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		if (prefs == null) return;
 		prefs.edit().putBoolean(PREFERENCE_KEY_API_UPGRADE_CONFIRMED, true).commit();
 	}
 

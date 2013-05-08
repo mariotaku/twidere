@@ -741,7 +741,7 @@ public class TileImageView extends GLView {
 				}
 				if (!tile.isContentValid()) {
 					final boolean hasBeenLoaded = tile.isLoaded();
-					GalleryUtils.assertTrue(tile.mTileState == STATE_DECODED);
+					if (tile.mTileState != STATE_DECODED) return false;
 					tile.updateContent(canvas);
 					if (!hasBeenLoaded) {
 						tile.draw(canvas, 0, 0);
