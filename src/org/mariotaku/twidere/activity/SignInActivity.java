@@ -27,7 +27,7 @@ import static org.mariotaku.twidere.util.Utils.makeAccountContentValues;
 import static org.mariotaku.twidere.util.Utils.parseInt;
 import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.setUserAgent;
-import static org.mariotaku.twidere.util.Utils.showErrorToast;
+import static org.mariotaku.twidere.util.Utils.showErrorMessage;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -80,10 +80,24 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 import android.support.v4.app.Fragment;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
+import de.keyboardsurfer.android.widget.crouton.CroutonConfiguration;
+import de.keyboardsurfer.android.widget.crouton.CroutonLifecycleCallback;
 
-public class SignInActivity extends BaseActivity implements OnClickListener, TextWatcher {
+public class SignInActivity extends BaseActivity implements OnClickListener, TextWatcher, CroutonLifecycleCallback {
+
+	public void onDisplayed() {
+		mBackPressed = true;
+		// TODO: Implement this method
+	}
+
+	public void onRemoved() {
+		mBackPressed = false;
+		// TODO: Implement this method
+	}
+	
 
 	private static final String TWITTER_SIGNUP_URL = "https://twitter.com/signup";
 	private static final int MESSAGE_ID_BACK_TIMEOUT = 0;
@@ -104,15 +118,6 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 	private SharedPreferences mPreferences;
 	private ContentResolver mResolver;
 	private AbstractSignInTask mTask;
-
-	private final Handler mBackPressedHandler = new Handler() {
-
-		@Override
-		public void handleMessage(final Message msg) {
-			mBackPressed = false;
-		}
-
-	};
 
 	@Override
 	public void afterTextChanged(final Editable s) {
@@ -168,14 +173,13 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 	@Override
 	public void onBackPressed() {
 		if (getSupportLoaderManager().hasRunningLoaders()) {
-			mBackPressedHandler.removeMessages(MESSAGE_ID_BACK_TIMEOUT);
 			if (!mBackPressed) {
-				Toast.makeText(this, R.string.signing_in_please_wait, Toast.LENGTH_SHORT).show();
-				mBackPressed = true;
-				mBackPressedHandler.sendEmptyMessageDelayed(MESSAGE_ID_BACK_TIMEOUT, 2000L);
+				final CroutonStyle.Builder builder = new CroutonStyle.Builder(CroutonStyle.INFO);
+				final Crouton crouton = Crouton.makeText(this, R.string.signing_in_please_wait, builder.build());
+				crouton.setLifecycleCallback(this);
+				crouton.show();
 				return;
 			}
-			mBackPressed = false;
 		}
 		if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) {
 			mTask.cancel(false);
@@ -225,7 +229,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 	}
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
@@ -313,14 +317,14 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 				startActivity(intent);
 				finish();
 			} else if (result.already_logged_in) {
-				Toast.makeText(this, R.string.error_already_logged_in, Toast.LENGTH_SHORT).show();
+				Crouton.makeText(this, R.string.error_already_logged_in, CroutonStyle.ALERT).show();
 			} else {
 				if (result.exception instanceof AuthenticityTokenException) {
-					Toast.makeText(this, R.string.wrong_api_key, Toast.LENGTH_LONG).show();
+					Crouton.makeText(this, R.string.wrong_api_key, CroutonStyle.ALERT).show();
 				} else if (result.exception instanceof WrongUserPassException) {
-					Toast.makeText(this, R.string.wrong_username_password, Toast.LENGTH_LONG).show();
+					Crouton.makeText(this, R.string.wrong_username_password, CroutonStyle.ALERT).show();
 				} else {
-					showErrorToast(this, getString(R.string.signing_in), result.exception, true);
+					showErrorMessage(this, getString(R.string.signing_in), result.exception, true);
 				}
 			}
 		}

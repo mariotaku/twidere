@@ -19,6 +19,9 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.showInfoMessage;
+import static org.mariotaku.twidere.util.Utils.showOkMessage;
+
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 
@@ -41,7 +44,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public abstract class BaseFiltersFragment extends BaseListFragment implements LoaderCallbacks<Cursor>,
 		OnItemLongClickListener {
@@ -101,7 +103,7 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 
 	@Override
 	public void onListItemClick(final ListView l, final View v, final int position, final long id) {
-		Toast.makeText(getActivity(), R.string.longclick_to_delete, Toast.LENGTH_SHORT).show();
+		showInfoMessage(getActivity(), R.string.longclick_to_delete, false);
 		super.onListItemClick(l, v, position, id);
 	}
 

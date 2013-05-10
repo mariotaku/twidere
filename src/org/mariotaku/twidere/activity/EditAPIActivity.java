@@ -114,7 +114,7 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 	}
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edit_api);
 		mEditRestBaseURL = (EditText) findViewById(R.id.rest_base_url);

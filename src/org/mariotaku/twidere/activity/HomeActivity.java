@@ -76,7 +76,6 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 
 	private SharedPreferences mPreferences;
 	private AsyncTwitterWrapper mTwitterWrapper;
-	private TwidereApplication mApplication;
 	private NotificationManager mNotificationManager;
 
 	private ActionBar mActionBar;
@@ -158,9 +157,8 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 
 	/** Called when the activity is first created. */
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
-		mApplication = getTwidereApplication();
-		mTwitterWrapper = mApplication.getTwitterWrapper();
+	protected void onCreate(final Bundle savedInstanceState) {
+		mTwitterWrapper = getTwitterWrapper();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		super.onCreate(savedInstanceState);
@@ -380,7 +378,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	}
 
 	@Override
-	public void onResume() {
+	protected void onResume() {
 		super.onResume();
 		invalidateSupportOptionsMenu();
 		mViewPager.setPagingEnabled(!mPreferences.getBoolean(PREFERENCE_KEY_DISABLE_TAB_SWIPE, false));
@@ -518,6 +516,10 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 
 	@Override
 	protected void onStop() {
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		if (twitter != null) {
+			twitter.removeHomeMessageCallback(this);
+		}
 		unregisterReceiver(mStateReceiver);
 		mPreferences.edit().putInt(PREFERENCE_KEY_SAVED_TAB_POSITION, mViewPager.getCurrentItem()).commit();
 		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONSTOP));

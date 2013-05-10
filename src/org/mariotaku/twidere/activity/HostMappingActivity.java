@@ -24,6 +24,8 @@ import static org.mariotaku.twidere.util.Utils.parseString;
 
 import java.util.Map;
 
+import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.BaseDialogFragment;
 
@@ -48,7 +50,6 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class HostMappingActivity extends BaseDialogWhenLargeActivity implements OnItemClickListener,
 		OnItemLongClickListener {
@@ -60,7 +61,7 @@ public class HostMappingActivity extends BaseDialogWhenLargeActivity implements 
 	private DialogFragment mDialogFragment;
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mPreferences = getSharedPreferences(HOST_MAPPING_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		setContentView(R.layout.base_list);
@@ -81,7 +82,7 @@ public class HostMappingActivity extends BaseDialogWhenLargeActivity implements 
 
 	@Override
 	public void onItemClick(final AdapterView<?> adapter, final View v, final int position, final long id) {
-		Toast.makeText(this, R.string.longclick_to_delete, Toast.LENGTH_SHORT).show();
+		Crouton.showText(this, R.string.longclick_to_delete, CroutonStyle.INFO);
 	}
 
 	@Override

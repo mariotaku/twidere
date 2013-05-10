@@ -23,12 +23,4 @@ import android.os.Bundle;
 
 public interface IThemedActivity {
 
-	boolean isThemeChanged();
-
-	void onCreate(Bundle savedInstanceState);
-
-	void onResume();
-
-	void setTheme();
-
 }

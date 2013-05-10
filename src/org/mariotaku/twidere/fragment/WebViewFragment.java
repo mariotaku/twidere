@@ -19,7 +19,7 @@
 
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.showErrorToast;
+import static org.mariotaku.twidere.util.Utils.showErrorMessage;
 
 import org.mariotaku.twidere.activity.BaseActivity;
 
@@ -119,7 +119,7 @@ public class WebViewFragment extends BaseFragment {
 			try {
 				mActivity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
 			} catch (final ActivityNotFoundException e) {
-				showErrorToast(mActivity, null, e, false);
+				showErrorMessage(mActivity, null, e, false);
 			}
 			return true;
 		}

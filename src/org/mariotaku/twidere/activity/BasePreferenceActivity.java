@@ -71,7 +71,7 @@ class BasePreferenceActivity extends ActionBarPreferenceActivity implements Cons
 	}
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		setHardwareAcceleration();
 		setTheme();
 		super.onCreate(savedInstanceState);
@@ -79,7 +79,7 @@ class BasePreferenceActivity extends ActionBarPreferenceActivity implements Cons
 	}
 
 	@Override
-	public void onResume() {
+	protected void onResume() {
 		super.onResume();
 		if (isThemeChanged() || isHardwareAccelerationChanged()) {
 			restart();

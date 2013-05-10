@@ -247,7 +247,7 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 			mImageLoaded = false;
 			mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
 			if (data != null) {
-				Utils.showErrorToast(this, null, data.exception, true);
+				Utils.showErrorMessage(this, null, data.exception, true);
 			}
 		}
 		mProgress.setVisibility(View.GONE);

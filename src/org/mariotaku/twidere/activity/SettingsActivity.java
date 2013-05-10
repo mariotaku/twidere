@@ -58,7 +58,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 	private static final String KEY_SETTINGS_OTHER = "settings_other";
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);

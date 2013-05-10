@@ -54,14 +54,14 @@ class BaseDialogActivity extends FragmentActivity implements Constants, IThemedA
 	}
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		setHardwareAcceleration();
 		setTheme();
 		super.onCreate(savedInstanceState);
 	}
 
 	@Override
-	public void onResume() {
+	protected void onResume() {
 		super.onResume();
 		mInstanceStateSaved = false;
 		if (isThemeChanged() || isHardwareAccelerationChanged()) {
@@ -73,7 +73,7 @@ class BaseDialogActivity extends FragmentActivity implements Constants, IThemedA
 		restartActivity(this);
 	}
 
-	public void setHardwareAcceleration() {
+	private void setHardwareAcceleration() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 			final boolean hardware_acceleration = mHardwareAccelerated = preferences.getBoolean(
@@ -86,8 +86,7 @@ class BaseDialogActivity extends FragmentActivity implements Constants, IThemedA
 		}
 	}
 
-	@Override
-	public void setTheme() {
+	private void setTheme() {
 		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final boolean is_dark_theme = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false);
 		mIsDarkTheme = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false);

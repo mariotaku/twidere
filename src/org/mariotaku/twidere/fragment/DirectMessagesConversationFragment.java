@@ -23,6 +23,8 @@ import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.buildDirectMessageConversationUri;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.parseString;
+import static org.mariotaku.twidere.util.Utils.showInfoMessage;
+import static org.mariotaku.twidere.util.Utils.showOkMessage;
 
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
@@ -73,7 +75,6 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-import android.widget.Toast;
 
 import com.twitter.Validator;
 
@@ -331,7 +332,7 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 				}
 				case MENU_COPY: {
 					if (ClipboardUtils.setText(getActivity(), Html.fromHtml(mSelectedDirectMessage.text_html))) {
-						Toast.makeText(getActivity(), R.string.text_copied, Toast.LENGTH_SHORT).show();
+						showOkMessage(getActivity(), R.string.text_copied, false);
 					}
 					break;
 				}

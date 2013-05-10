@@ -2,6 +2,7 @@ package org.mariotaku.twidere.util;
 
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.getImageMimeType;
+import static org.mariotaku.twidere.util.Utils.showErrorMessage;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +20,8 @@ import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 
 public class SaveImageTask extends AsyncTask<Void, Void, File> implements Constants {
 
@@ -60,7 +63,7 @@ public class SaveImageTask extends AsyncTask<Void, Void, File> implements Consta
 			Toast.makeText(activity, activity.getString(R.string.file_saved_to, result.getPath()), Toast.LENGTH_SHORT)
 					.show();
 		} else {
-			Toast.makeText(activity, R.string.error_occurred, Toast.LENGTH_SHORT).show();
+			Crouton.showText(activity, R.string.error_occurred, CroutonStyle.ALERT);
 		}
 	}
 

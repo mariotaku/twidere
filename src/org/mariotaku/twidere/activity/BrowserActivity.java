@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.activity;
 
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.WebViewFragment;
 
@@ -28,21 +30,20 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 import android.view.Window;
-import android.widget.Toast;
 
 public class BrowserActivity extends BaseDialogWhenLargeActivity {
 
 	private Uri mUri = Uri.parse("about:blank");
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.base);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		mUri = getIntent().getData();
 		if (mUri == null) {
-			Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
+			Crouton.showText(this, R.string.error_occurred, CroutonStyle.ALERT);
 			finish();
 			return;
 		}

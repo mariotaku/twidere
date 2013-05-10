@@ -112,7 +112,7 @@ public class SelectAccountActivity extends BaseDialogActivity implements LoaderC
 	}
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		final Bundle extras = getIntent().getExtras();
@@ -194,7 +194,7 @@ public class SelectAccountActivity extends BaseDialogActivity implements LoaderC
 	}
 
 	@Override
-	public void onResume() {
+	protected void onResume() {
 		super.onResume();
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		mAdapter.setDisplayProfileImage(display_profile_image);
@@ -252,7 +252,7 @@ public class SelectAccountActivity extends BaseDialogActivity implements LoaderC
 	}
 
 	@Override
-	public void onStop() {
+	protected void onStop() {
 		mTickerStopped = true;
 		unregisterReceiver(mStateReceiver);
 		super.onStop();

@@ -52,7 +52,7 @@ public class ActionBarPreferenceActivity extends PreferenceActivity {
 	}
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		if (mActionBarCompat instanceof ActionBarCompatBase) {
 			((ActionBarCompatBase) mActionBarCompat).requestCustomTitleView();
 		}

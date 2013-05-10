@@ -73,7 +73,7 @@ public class FilePickerActivity extends BaseDialogWhenLargeActivity implements O
 	}
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		final String action = getIntent().getAction();
 		mCurrentDirectory = getExternalStorageDirectory();
 		if (!INTENT_ACTION_PICK_FILE.equals(action) || mCurrentDirectory == null) {

@@ -77,7 +77,7 @@ public class DraftsActivity extends BaseDialogWhenLargeActivity implements Loade
 	};
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mResolver = getContentResolver();
 		mTwitterWrapper = getTwidereApplication().getTwitterWrapper();
@@ -181,7 +181,7 @@ public class DraftsActivity extends BaseDialogWhenLargeActivity implements Loade
 	}
 
 	@Override
-	public void onResume() {
+	protected void onResume() {
 		super.onResume();
 		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		mAdapter.setTextSize(text_size);
@@ -200,7 +200,7 @@ public class DraftsActivity extends BaseDialogWhenLargeActivity implements Loade
 	}
 
 	@Override
-	public void onStop() {
+	protected void onStop() {
 		unregisterReceiver(mStatusReceiver);
 		if (mPopupMenu != null) {
 			mPopupMenu.dismiss();

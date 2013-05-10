@@ -27,6 +27,8 @@ import static org.mariotaku.twidere.util.Utils.getThemeColor;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.openStatus;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
+import static org.mariotaku.twidere.util.Utils.showInfoMessage;
+import static org.mariotaku.twidere.util.Utils.showOkMessage;
 
 import java.util.List;
 
@@ -64,7 +66,6 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.twitter.Extractor;
@@ -267,7 +268,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			case MENU_COPY: {
 				final CharSequence text = Html.fromHtml(status.text_html);
 				if (ClipboardUtils.setText(getActivity(), text)) {
-					Toast.makeText(getActivity(), R.string.text_copied, Toast.LENGTH_SHORT).show();
+					showOkMessage(getActivity(), R.string.text_copied, false);
 				}
 				break;
 			}

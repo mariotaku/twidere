@@ -29,7 +29,7 @@ import android.view.MenuItem;
 public class FiltersActivity extends BaseDialogWhenLargeActivity {
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.base);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);

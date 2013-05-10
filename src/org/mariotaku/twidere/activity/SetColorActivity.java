@@ -60,7 +60,7 @@ public class SetColorActivity extends BaseDialogActivity implements OnItemClickL
 	}
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.set_color);
 		mColorsGrid = (GridView) findViewById(R.id.colors_grid);

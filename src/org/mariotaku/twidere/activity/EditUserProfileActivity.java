@@ -5,7 +5,7 @@ import static org.mariotaku.twidere.util.Utils.createPickImageIntent;
 import static org.mariotaku.twidere.util.Utils.createTakePhotoIntent;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.parseString;
-import static org.mariotaku.twidere.util.Utils.showErrorToast;
+import static org.mariotaku.twidere.util.Utils.showErrorMessage;
 
 import java.io.File;
 
@@ -263,7 +263,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 	}
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		final Bundle extras = getIntent().getExtras();
@@ -334,7 +334,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 	}
 
 	@Override
-	public void onStop() {
+	protected void onStop() {
 		unregisterReceiver(mStatusReceiver);
 		super.onStop();
 	}
@@ -504,7 +504,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 				Toast.makeText(EditUserProfileActivity.this, R.string.profile_banner_image_update_successful,
 						Toast.LENGTH_SHORT).show();
 			} else {
-				showErrorToast(EditUserProfileActivity.this, R.string.removing_profile_banner_image, result.exception,
+				showErrorMessage(EditUserProfileActivity.this, R.string.removing_profile_banner_image, result.exception,
 						true);
 			}
 			setUpdateState(false);

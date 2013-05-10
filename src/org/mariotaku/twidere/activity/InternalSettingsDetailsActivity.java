@@ -44,7 +44,7 @@ public class InternalSettingsDetailsActivity extends PreferenceActivity implemen
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		setTheme();
 		super.onCreate(savedInstanceState);
 		getPreferenceManager().setSharedPreferencesName(SHARED_PREFERENCES_NAME);

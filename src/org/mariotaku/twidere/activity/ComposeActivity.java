@@ -33,31 +33,42 @@ import static org.mariotaku.twidere.util.Utils.getShareStatus;
 import static org.mariotaku.twidere.util.Utils.getThemeColor;
 import static org.mariotaku.twidere.util.Utils.openImageDirectly;
 import static org.mariotaku.twidere.util.Utils.parseString;
-import static org.mariotaku.twidere.util.Utils.showErrorToast;
+import static org.mariotaku.twidere.util.Utils.showErrorMessage;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Set;
 
+import com.twitter.Extractor;
+import com.twitter.Validator;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
+import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.BaseDialogFragment;
+import org.mariotaku.twidere.fragment.ProgressDialogFragment;
+import org.mariotaku.twidere.model.DraftItem;
 import org.mariotaku.twidere.model.ParcelableLocation;
+import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.util.ActivityAccessor;
 import org.mariotaku.twidere.util.ArrayUtils;
+import org.mariotaku.twidere.util.AsyncTask;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import org.mariotaku.twidere.util.BitmapDecodeHelper;
 import org.mariotaku.twidere.util.EnvironmentAccessor;
-import org.mariotaku.twidere.util.ImageValidator;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.view.ColorView;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -65,8 +76,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
@@ -79,12 +88,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.Loader;
+import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -99,24 +104,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-import android.widget.Toast;
-
-import com.twitter.Validator;
-import org.mariotaku.twidere.util.AsyncTask;
-import java.io.OutputStream;
-import java.io.IOException;
-import org.mariotaku.twidere.fragment.ProgressDialogFragment;
-import android.support.v4.app.FragmentManager;
-import org.mariotaku.twidere.model.ParcelableStatus;
-import java.util.List;
-import com.twitter.Extractor;
-import java.util.Set;
-import org.mariotaku.actionbarcompat.ActionBar;
-import org.mariotaku.twidere.model.DraftItem;
-import android.content.ComponentName;
-import org.mariotaku.twidere.model.ParcelableUser;
-import org.mariotaku.twidere.util.ImageLoaderWrapper;
-
+ 
 public class ComposeActivity extends BaseDialogWhenLargeActivity implements TextWatcher, LocationListener,
 		OnMenuItemClickListener, OnClickListener, OnLongClickListener, PopupMenu.OnMenuItemClickListener,
 		OnEditorActionListener {
@@ -273,7 +261,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	}
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -740,7 +728,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			}
 			mRecentLocation = location != null ? new ParcelableLocation(location) : null;
 		} else {
-			Toast.makeText(this, R.string.cannot_get_location, Toast.LENGTH_SHORT).show();
+			Crouton.showText(this, R.string.cannot_get_location, CroutonStyle.ALERT);
 		}
 		return provider != null;
 	}
@@ -765,7 +753,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		try {
 			startActivityForResult(intent, REQUEST_PICK_IMAGE);
 		} catch (final ActivityNotFoundException e) {
-			showErrorToast(this, null, e, false);
+			showErrorMessage(this, null, e, false);
 		}
 	}
 
@@ -907,7 +895,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			try {
 				startActivityForResult(intent, REQUEST_TAKE_PHOTO);
 			} catch (final ActivityNotFoundException e) {
-				showErrorToast(this, null, e, false);
+				showErrorMessage(this, null, e, false);
 			}
 		}
 	}
@@ -1002,7 +990,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			activity.setMenu();
 			activity.reloadAttachedImageThumbnail();
 			if (!result) {
-				Toast.makeText(activity, R.string.error_occurred, Toast.LENGTH_SHORT).show();
+				Crouton.showText(activity, R.string.error_occurred, CroutonStyle.ALERT);
 			}
 		}
 	}
@@ -1058,7 +1046,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			activity.setMenu();
 			activity.reloadAttachedImageThumbnail();
 			if (!result) {
-				Toast.makeText(activity, R.string.error_occurred, Toast.LENGTH_SHORT).show();
+				Crouton.showText(activity, R.string.error_occurred, CroutonStyle.ALERT);
 			}
 		}
 	}

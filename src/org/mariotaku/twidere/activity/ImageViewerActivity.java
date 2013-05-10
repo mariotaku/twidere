@@ -19,7 +19,7 @@
 
 package org.mariotaku.twidere.activity;
 
-import static org.mariotaku.twidere.util.Utils.showErrorToast;
+import static org.mariotaku.twidere.util.Utils.showErrorMessage;
 import it.sephiroth.android.library.imagezoom.ImageViewTouch;
 
 import java.io.File;
@@ -160,7 +160,7 @@ public class ImageViewerActivity extends FragmentActivity implements Constants, 
 			mImageLoaded = false;
 			mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
 			if (data != null) {
-				showErrorToast(this, null, data.exception, true);
+				showErrorMessage(this, null, data.exception, true);
 			}
 		}
 		mProgress.setVisibility(View.GONE);

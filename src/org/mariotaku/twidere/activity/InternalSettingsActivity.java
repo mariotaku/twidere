@@ -40,7 +40,7 @@ import android.widget.ListView;
 public class InternalSettingsActivity extends PreferenceActivity implements Constants {
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		setTheme();
 		super.onCreate(savedInstanceState);
 		getPreferenceManager().setSharedPreferencesName(SHARED_PREFERENCES_NAME);

@@ -39,6 +39,7 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.iface.IThemedActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
 
 @SuppressLint("Registered")
@@ -51,8 +52,11 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 	public TwidereApplication getTwidereApplication() {
 		return (TwidereApplication) getApplication();
 	}
+	
+	public AsyncTwitterWrapper getTwitterWrapper() {
+		return getTwidereApplication() != null ? getTwidereApplication().getTwitterWrapper() : null;
+	}
 
-	@Override
 	public boolean isThemeChanged() {
 		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final boolean is_dark_theme = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false);
@@ -61,7 +65,7 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 	}
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		setHardwareAcceleration();
 		setTheme();
 		super.onCreate(savedInstanceState);
@@ -69,19 +73,32 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 	}
 
 	@Override
-	public void onResume() {
+	protected void onResume() {
 		super.onResume();
 		mInstanceStateSaved = false;
 		if (isThemeChanged() || isHardwareAccelerationChanged()) {
 			restart();
 		}
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		if (twitter != null) {
+			twitter.addMessageCallback(this);
+		}
+	}
+
+	@Override
+	protected void onPause() {
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		if (twitter != null) {
+			twitter.removeMessageCallback(this);
+		}
+		super.onPause();
 	}
 
 	public void restart() {
 		restartActivity(this);
 	}
 
-	public void setActionBarBackground() {
+	void setActionBarBackground() {
 		final ActionBar ab = getSupportActionBar();
 		final TypedArray a = obtainStyledAttributes(new int[] { R.attr.actionBarBackground });
 		final int color = getThemeColor(this);
@@ -98,7 +115,7 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 		}
 	}
 
-	public void setHardwareAcceleration() {
+	private void setHardwareAcceleration() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 			final boolean hardware_acceleration = mHardwareAccelerated = preferences.getBoolean(
@@ -111,8 +128,7 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 		}
 	}
 
-	@Override
-	public void setTheme() {
+	private void setTheme() {
 		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final boolean is_dark_theme = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false);
 		mIsDarkTheme = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false);

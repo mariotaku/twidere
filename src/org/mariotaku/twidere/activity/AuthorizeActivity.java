@@ -69,7 +69,7 @@ public class AuthorizeActivity extends BaseActivity implements LoaderCallbacks<R
 	private RequestToken mRequestToken;
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		final Bundle extras = getIntent().getExtras();

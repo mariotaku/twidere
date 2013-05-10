@@ -30,7 +30,7 @@ import android.os.Bundle;
 public class CreateComposeShortcutActivity extends Activity implements Constants {
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		final Intent intent = new Intent();
 		final Intent launch_intent = new Intent(INTENT_ACTION_COMPOSE);

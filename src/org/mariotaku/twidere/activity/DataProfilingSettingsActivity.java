@@ -96,7 +96,7 @@ public class DataProfilingSettingsActivity extends BaseDialogWhenLargeActivity i
 	}
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.data_profiling_settings);

@@ -23,11 +23,10 @@ public class BaseDialogWhenLargeActivity extends BaseActivity {
 	@Override
 	public void onContentChanged() {
 		super.onContentChanged();
-		setActionBarBackground();
 	}
 	
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setActionBarBackground();
 	}
@@ -43,6 +42,7 @@ public class BaseDialogWhenLargeActivity extends BaseActivity {
 		final ViewGroup content = (ViewGroup) root.findViewById(R.id.activity_content);
 		mActivityContent = inflater.inflate(layoutResID, content, true);
 		super.setContentView(root);
+		setActionBarBackground();
 	}
 
 	@Override
@@ -65,6 +65,7 @@ public class BaseDialogWhenLargeActivity extends BaseActivity {
 		final ViewGroup content = (ViewGroup) root.findViewById(R.id.activity_content);
 		content.addView(mActivityContent = view, params);
 		super.setContentView(root);
+		setActionBarBackground();
 	}
 
 	@Override

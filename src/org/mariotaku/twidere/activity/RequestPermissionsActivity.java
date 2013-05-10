@@ -56,7 +56,7 @@ public class RequestPermissionsActivity extends BaseDialogActivity implements On
 	}
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		mPermissionsManager = new PermissionsManager(this);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.request_permissions);

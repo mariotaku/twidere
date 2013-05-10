@@ -75,7 +75,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 	private static final int MESSAGE_ID_BACK_TIMEOUT = 0;
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		final Intent intent = getIntent();
 		final String action = intent.getAction();

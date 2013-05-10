@@ -37,7 +37,9 @@ import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 import static org.mariotaku.twidere.util.Utils.setUserColor;
-import static org.mariotaku.twidere.util.Utils.showErrorToast;
+import static org.mariotaku.twidere.util.Utils.showErrorMessage;
+import static org.mariotaku.twidere.util.Utils.showInfoMessage;
+import static org.mariotaku.twidere.util.Utils.showOkMessage;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -105,10 +107,12 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.twitter.Extractor;
+
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 
 import edu.ucdavis.earlybird.ProfilingUtil;
 
@@ -193,7 +197,7 @@ OnImageClickListener {
 		public void onLoadFinished(final Loader<Response<ParcelableStatus>> loader,
 				final Response<ParcelableStatus> data) {
 			if (data.value == null) {
-				showErrorToast(getActivity(), getString(R.string.getting_status), data.exception, true);
+				showErrorMessage(getActivity(), getString(R.string.getting_status), data.exception, true);
 			} else {
 				displayStatus(data.value);
 				mStatusLoadProgress.setVisibility(View.GONE);
@@ -278,7 +282,7 @@ OnImageClickListener {
 				case MENU_COPY: {
 					final CharSequence text = Html.fromHtml(mStatus.text_html);
 					if (ClipboardUtils.setText(getActivity(), text)) {
-						Toast.makeText(getActivity(), R.string.text_copied, Toast.LENGTH_SHORT).show();
+						showOkMessage(getActivity(), R.string.text_copied, false);
 					}
 					break;
 				}
@@ -329,7 +333,7 @@ OnImageClickListener {
 					values.put(Filters.TEXT, source);
 					resolver.delete(uri, Filters.TEXT + " = ?", new String[] { source });
 					resolver.insert(uri, values);
-					Toast.makeText(getActivity(), getString(R.string.source_muted, source), Toast.LENGTH_SHORT).show();
+					Crouton.showText(getActivity(), getString(R.string.source_muted, source), CroutonStyle.INFO);
 					break;
 				}
 				case MENU_SET_COLOR: {
@@ -809,7 +813,7 @@ OnImageClickListener {
 			fragment.setProgressBarIndeterminateVisibility(false);
 			fragment.updatePullRefresh();
 			if (data == null || data.value == null || !data.value) {
-				showErrorToast(context, context.getString(R.string.getting_status), data.exception, true);
+				showErrorMessage(context, context.getString(R.string.getting_status), data.exception, true);
 			}
 		}
 

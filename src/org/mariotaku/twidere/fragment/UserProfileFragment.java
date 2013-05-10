@@ -47,6 +47,8 @@ import static org.mariotaku.twidere.util.Utils.openUserMentions;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.openUserTimeline;
 import static org.mariotaku.twidere.util.Utils.setUserColor;
+import static org.mariotaku.twidere.util.Utils.showInfoMessage;
+import static org.mariotaku.twidere.util.Utils.showOkMessage;
 
 import java.io.File;
 
@@ -114,7 +116,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 import org.mariotaku.twidere.view.BannerImageView;
 
 public class UserProfileFragment extends BaseListFragment implements OnClickListener, OnItemClickListener,
@@ -690,7 +691,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				values.put(Filters.Users.TEXT, screen_name);
 				resolver.delete(uri, Filters.Users.TEXT + " = ?", new String[] { screen_name });
 				resolver.insert(uri, values);
-				Toast.makeText(getActivity(), R.string.user_muted, Toast.LENGTH_SHORT).show();
+				showInfoMessage(getActivity(), R.string.user_muted, false);
 				break;
 			}
 			case MENU_MENTION: {

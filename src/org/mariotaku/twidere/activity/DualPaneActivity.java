@@ -111,7 +111,7 @@ public class DualPaneActivity extends BaseDialogWhenLargeActivity implements OnB
 	}
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
 		final Resources res = getResources();

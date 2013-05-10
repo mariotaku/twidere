@@ -205,6 +205,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import javax.net.ssl.SSLException;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
+import de.keyboardsurfer.android.widget.crouton.CroutonConfiguration;
 
 public final class Utils implements Constants {
 
@@ -3166,19 +3169,19 @@ public final class Utils implements Constants {
 		sUserColors.put(user_id, color);
 	}
 
-	public static void showErrorToast(final Context context, final int action, final String desc,
+	public static void showErrorMessage(final Context context, final int action, final String desc,
 			final boolean long_message) {
 		if (context == null) return;
-		showErrorToast(context, context.getString(action), desc, long_message);
+		showErrorMessage(context, context.getString(action), desc, long_message);
 	}
 
-	public static void showErrorToast(final Context context, final int action, final Throwable t,
+	public static void showErrorMessage(final Context context, final int action, final Throwable t,
 			final boolean long_message) {
 		if (context == null) return;
-		showErrorToast(context, context.getString(action), t, long_message);
+		showErrorMessage(context, context.getString(action), t, long_message);
 	}
 
-	public static void showErrorToast(final Context context, final String message, final boolean long_message) {
+	public static void showErrorMessage(final Context context, final CharSequence message, final boolean long_message) {
 		if (context == null) return;
 		final String text;
 		if (message != null) {
@@ -3186,12 +3189,19 @@ public final class Utils implements Constants {
 		} else {
 			text = context.getString(R.string.error_unknown_error);
 		}
-		final int length = long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;
-		final Toast toast = Toast.makeText(context, text, length);
-		toast.show();
+		if (context instanceof Activity) {
+			final Crouton crouton = Crouton.makeText((Activity) context, message, CroutonStyle.ALERT);
+			final CroutonConfiguration.Builder cb = new CroutonConfiguration.Builder();
+			cb.setDuration(long_message ? CroutonConfiguration.DURATION_LONG : CroutonConfiguration.DURATION_SHORT);
+			crouton.setConfiguration(cb.build());
+			crouton.show();
+		} else {
+			final Toast toast = Toast.makeText(context, text, long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
+			toast.show();
+		}
 	}
 
-	public static void showErrorToast(final Context context, final String action, final String msg,
+	public static void showErrorMessage(final Context context, final CharSequence action, final CharSequence msg,
 			final boolean long_message) {
 		if (context == null) return;
 		final String message;
@@ -3200,17 +3210,24 @@ public final class Utils implements Constants {
 		} else {
 			message = context.getString(R.string.error_unknown_error);
 		}
-		final int length = long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;
-		final Toast toast = Toast.makeText(context, message, length);
-		toast.show();
+		if (context instanceof Activity) {
+			final Crouton crouton = Crouton.makeText((Activity) context, message, CroutonStyle.ALERT);
+			final CroutonConfiguration.Builder cb = new CroutonConfiguration.Builder();
+			cb.setDuration(long_message ? CroutonConfiguration.DURATION_LONG : CroutonConfiguration.DURATION_SHORT);
+			crouton.setConfiguration(cb.build());
+			crouton.show();
+		} else {
+			final Toast toast = Toast.makeText(context, message, long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
+			toast.show();
+		}
 	}
 
-	public static void showErrorToast(final Context context, final String action, final Throwable t,
+	public static void showErrorMessage(final Context context, final CharSequence action, final Throwable t,
 			final boolean long_message) {
 		if (context == null) return;
 		final String message;
 		if (t instanceof TwitterException) {
-			showTwitterErrorToast(context, action, (TwitterException) t, long_message);
+			showTwitterErrorMessage(context, action, (TwitterException) t, long_message);
 			return;
 		} else if (t != null) {
 			t.printStackTrace();
@@ -3223,12 +3240,57 @@ public final class Utils implements Constants {
 		} else {
 			message = context.getString(R.string.error_unknown_error);
 		}
-		final int length = long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;
-		final Toast toast = Toast.makeText(context, message, length);
-		toast.show();
+		if (context instanceof Activity) {
+			final Crouton crouton = Crouton.makeText((Activity) context, message, CroutonStyle.ALERT);
+			final CroutonConfiguration.Builder cb = new CroutonConfiguration.Builder();
+			cb.setDuration(long_message ? CroutonConfiguration.DURATION_LONG : CroutonConfiguration.DURATION_SHORT);
+			crouton.setConfiguration(cb.build());
+			crouton.show();
+		} else {
+			final Toast toast = Toast.makeText(context, message, long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
+			toast.show();
+		}
 	}
 
-	public static void showTwitterErrorToast(final Context context, final String action, final TwitterException te,
+	public static void showOkMessage(final Context context, final int resId, final boolean long_message) {
+		if (context == null) return;
+		showOkMessage(context, context.getText(resId), long_message);
+	}
+
+	public static void showOkMessage(final Context context, final CharSequence message, final boolean long_message) {
+		if (context == null || isEmpty(message)) return;
+		if (context instanceof Activity) {
+			final Crouton crouton = Crouton.makeText((Activity) context, message, CroutonStyle.CONFIRM);
+			final CroutonConfiguration.Builder cb = new CroutonConfiguration.Builder();
+			cb.setDuration(long_message ? CroutonConfiguration.DURATION_LONG : CroutonConfiguration.DURATION_SHORT);
+			crouton.setConfiguration(cb.build());
+			crouton.show();
+		} else {
+			final Toast toast = Toast.makeText(context, message, long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
+			toast.show();
+		}
+	}
+
+	public static void showInfoMessage(final Context context, final int resId, final boolean long_message) {
+		if (context == null) return;
+		showInfoMessage(context, context.getText(resId), long_message);
+	}
+
+	public static void showInfoMessage(final Context context, final CharSequence message, final boolean long_message) {
+		if (context == null || isEmpty(message)) return;
+		if (context instanceof Activity) {
+			final Crouton crouton = Crouton.makeText((Activity) context, message, CroutonStyle.INFO);
+			final CroutonConfiguration.Builder cb = new CroutonConfiguration.Builder();
+			cb.setDuration(long_message ? CroutonConfiguration.DURATION_LONG : CroutonConfiguration.DURATION_SHORT);
+			crouton.setConfiguration(cb.build());
+			crouton.show();
+		} else {
+			final Toast toast = Toast.makeText(context, message, long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
+			toast.show();
+		}
+	}
+	
+	public static void showTwitterErrorMessage(final Context context, final CharSequence action, final TwitterException te,
 			final boolean long_message) {
 		if (context == null) return;
 		final String message;
@@ -3243,8 +3305,13 @@ public final class Utils implements Constants {
 				} else if (te.getErrorCode() > 0) {
 					final String msg = TwitterErrorCodes.getErrorMessage(context, te.getErrorCode());
 					message = context.getString(R.string.error_message_with_action, action, msg != null ? msg : trimLineBreak(te.getMessage()));
-				} else if (te.getCause() instanceof SSLException) {					
-					message = context.getString(R.string.error_message_with_action, action, context.getString(R.string.ssl_error));
+				} else if (te.getCause() instanceof SSLException) {
+					final String msg = te.getCause().getMessage();
+					if (msg != null && msg.contains("!=")) {						
+						message = context.getString(R.string.error_message_with_action, action, context.getString(R.string.ssl_error));
+					} else {						
+						message = context.getString(R.string.error_message_with_action, action, context.getString(R.string.network_error));
+					}
 				} else if (te.getCause() instanceof IOException) {					
 					message = context.getString(R.string.error_message_with_action, action, context.getString(R.string.network_error));
 				} else {					
@@ -3256,9 +3323,16 @@ public final class Utils implements Constants {
 		} else {
 			message = context.getString(R.string.error_unknown_error);
 		}
-		final int length = long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;
-		final Toast toast = Toast.makeText(context, message, length);
-		toast.show();
+		if (context instanceof Activity) {
+			final Crouton crouton = Crouton.makeText((Activity) context, message, CroutonStyle.ALERT);
+			final CroutonConfiguration.Builder cb = new CroutonConfiguration.Builder();
+			cb.setDuration(long_message ? CroutonConfiguration.DURATION_LONG : CroutonConfiguration.DURATION_SHORT);
+			crouton.setConfiguration(cb.build());
+			crouton.show();
+		} else {
+			final Toast toast = Toast.makeText(context, message, long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
+			toast.show();
+		}
 	}
 	
 	public static String trimLineBreak(final String orig) {

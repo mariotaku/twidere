@@ -64,7 +64,7 @@ public class DonateActivity extends BaseDialogWhenLargeActivity implements OnCli
 	}
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.donate);
 		mEditAmount.setText("5.00");

@@ -45,9 +45,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.twitter.Extractor;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 
 @SuppressLint("Registered")
 public class MultiSelectActivity extends DualPaneActivity implements ActionMode.Callback, MultiSelectManager.Callback {
@@ -123,7 +124,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 					values_list.add(values);
 				}
 				resolver.bulkInsert(uri, values_list.toArray(new ContentValues[values_list.size()]));
-				Toast.makeText(this, R.string.users_muted, Toast.LENGTH_SHORT).show();
+				Crouton.showText(this, R.string.users_muted, CroutonStyle.INFO);
 				mode.finish();
 				sendBroadcast(new Intent(BROADCAST_MULTI_MUTESTATE_CHANGED));
 				break;
@@ -152,7 +153,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 
 	/** Called when the activity is first created. */
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		mApplication = getTwidereApplication();
 		mTwitterWrapper = mApplication.getTwitterWrapper();
 		mMultiSelectManager = mApplication.getMultiSelectManager();

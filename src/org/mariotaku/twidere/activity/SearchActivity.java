@@ -88,7 +88,7 @@ public class SearchActivity extends MultiSelectActivity {
 	}
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setTitle(android.R.string.search_go);
 		final Intent intent = getIntent();
