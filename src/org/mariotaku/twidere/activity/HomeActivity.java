@@ -364,9 +364,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 			}
 			if (mComposeButton != null) {
 				mComposeButton.setImageResource(icon);
-				mComposeButton
-						.setVisibility(bottom_actions && mViewPager.getVisibility() == View.VISIBLE ? View.VISIBLE
-								: View.GONE);
+				mComposeButton.setVisibility(bottom_actions && !isRightPaneUsed() ? View.VISIBLE : View.GONE);
 				if (bottom_actions) {
 					final FrameLayout.LayoutParams compose_lp = (FrameLayout.LayoutParams) mComposeButton
 							.getLayoutParams();
