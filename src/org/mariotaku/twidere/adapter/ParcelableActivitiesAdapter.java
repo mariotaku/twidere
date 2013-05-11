@@ -137,6 +137,8 @@ public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity
 			return true;
 		} else if (activity.action == ParcelableActivity.ACTION_RETWEET) {
 			return target_object_statuses_length > 0 && target_object_statuses[0].user_id == activity.account_id;
+		} else if (activity.action == ParcelableActivity.ACTION_LIST_CREATED) {
+			return false;
 		}
 		return false;
 	}
@@ -261,17 +263,18 @@ public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity
 		final ParcelableStatus[] target_statuses = activity.target_statuses;
 		final ParcelableUser[] target_users = activity.target_users;
 		final ParcelableStatus[] target_object_statuses = activity.target_object_statuses;
+		final ParcelableUserList[] target_user_lists = activity.target_user_lists;
 		final ParcelableUserList[] target_object_user_lists = activity.target_object_user_lists;
 		final int sources_length = sources != null ? sources.length : 0;
 		final int target_statuses_length = target_statuses != null ? target_statuses.length : 0;
 		final int target_users_length = target_users != null ? target_users.length : 0;
 		final int target_object_user_lists_length = target_object_user_lists != null ? target_object_user_lists.length : 0;
+		final int target_user_lists_length = target_user_lists != null ? target_user_lists.length : 0;
 		final int action = activity.action;
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (sources_length > 0) {
 			final ParcelableUser first_source = sources[0];
-			final String source_name = mNameDisplayOption == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME ?
-				first_source.screen_name : first_source.name;
+			final String first_source_name = getName(first_source);
 			switch (action) {
 				case ParcelableActivity.ACTION_FAVORITE: {
 					if (target_statuses_length == 0) return;
@@ -280,11 +283,11 @@ public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity
 						holder.text.setSingleLine(true);
 						holder.text.setEllipsize(TruncateAt.END);
 						holder.text.setText(first_status.text_plain);
-						holder.title.setText(mContext.getString(R.string.activity_by_friends_favorite, source_name,
+						holder.title.setText(mContext.getString(R.string.activity_by_friends_favorite, first_source_name,
 								getName(first_status)));
 					} else {
 						holder.text.setVisibility(View.GONE);
-						holder.title.setText(mContext.getString(R.string.activity_by_friends_favorite_multi, source_name,
+						holder.title.setText(mContext.getString(R.string.activity_by_friends_favorite_multi, first_source_name,
 								getName(first_status), target_statuses_length - 1));
 					}
 					setProfileImage(holder, first_source);
@@ -295,10 +298,10 @@ public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity
 					holder.text.setVisibility(View.GONE);
 					if (target_users_length == 0) return;
 					if (target_users_length == 1) {
-						holder.title.setText(mContext.getString(R.string.activity_by_friends_follow, source_name,
+						holder.title.setText(mContext.getString(R.string.activity_by_friends_follow, first_source_name,
 								getName(target_users[0])));
 					} else {
-						holder.title.setText(mContext.getString(R.string.activity_by_friends_follow_multi, source_name,
+						holder.title.setText(mContext.getString(R.string.activity_by_friends_follow_multi, first_source_name,
 								getName(target_users[0]), target_users_length - 1));
 					}
 					setProfileImage(holder, first_source);
@@ -313,10 +316,10 @@ public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity
 						holder.text.setText(status.text_plain);
 					}
 					if (sources_length == 1) {
-						holder.title.setText(mContext.getString(R.string.activity_by_friends_retweet, source_name,
+						holder.title.setText(mContext.getString(R.string.activity_by_friends_retweet, first_source_name,
 								getName(target_statuses[0])));
 					} else {
-						holder.title.setText(mContext.getString(R.string.activity_about_me_retweet_multi, source_name,
+						holder.title.setText(mContext.getString(R.string.activity_about_me_retweet_multi, first_source_name,
 								sources_length - 1));
 					}
 					setUserProfileImages(holder, sources);
@@ -325,15 +328,32 @@ public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity
 				case ParcelableActivity.ACTION_LIST_MEMBER_ADDED: {
 					holder.text.setVisibility(View.GONE);
 					if (target_object_user_lists_length == 1) {
-						holder.title.setText(mContext.getString(R.string.activity_by_friends_list_member_added, source_name,
+						holder.title.setText(mContext.getString(R.string.activity_by_friends_list_member_added, first_source_name,
 								getName(target_users[0])));
 					} else {
 						holder.title.setText(mContext.getString(R.string.activity_about_me_list_member_added_multi,
-								source_name, sources_length - 1));
+								first_source_name, sources_length - 1));
 					}
 					setProfileImage(holder, first_source);
 					setUserProfileImages(holder, target_users);
 					break;
+				}
+				case ParcelableActivity.ACTION_LIST_CREATED: {
+					if (target_user_lists_length == 0) return;
+					final ParcelableUserList user_list = target_user_lists[0];
+					if (target_user_lists_length == 1) {
+						holder.text.setVisibility(View.VISIBLE);
+						holder.title.setText(mContext.getString(R.string.activity_by_friends_list_created,
+								first_source_name, user_list.name));
+						holder.text.setText(user_list.description);
+					} else {
+						holder.text.setVisibility(View.GONE);
+						holder.title.setText(mContext.getString(R.string.activity_by_friends_list_created_multi,
+								first_source_name, user_list.name, target_user_lists_length - 1));
+					}
+					setProfileImage(holder, first_source);
+					//setUserProfileImages(holder, target_users);
+					break;				
 				}
 			}
 		}
@@ -348,28 +368,26 @@ public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity
 	}
 
 	private void setUserProfileImages(final ActivityViewHolder holder, final ParcelableStatus[] statuses) {
-		holder.activity_profile_image_container.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
-		final int length = Math.min(holder.activity_profile_images.length, statuses.length);
+		final int length = statuses != null ? Math.min(holder.activity_profile_images.length, statuses.length) : 0;
+		final boolean should_display_images = mDisplayProfileImage && length > 0;
+		holder.activity_profile_image_container.setVisibility(should_display_images ? View.VISIBLE : View.GONE);
+		if (!should_display_images) return;
 		for (int i = 0; i < length; i++) {
 			final ImageView activity_profile_image = holder.activity_profile_images[i];
-			if (mDisplayProfileImage) {
-				mProfileImageLoader.displayProfileImage(activity_profile_image, statuses[i].profile_image_url);
-			} else {
-				activity_profile_image.setImageDrawable(null);
-			}
+			final String profile_image_url = statuses[i].profile_image_url;
+			mProfileImageLoader.displayProfileImage(activity_profile_image, profile_image_url);
 		}
 	}
 
 	private void setUserProfileImages(final ActivityViewHolder holder, final ParcelableUser[] users) {
-		holder.activity_profile_image_container.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
-		final int length = Math.min(holder.activity_profile_images.length, users.length);
+		final int length = users != null ? Math.min(holder.activity_profile_images.length, users.length) : 0;
+		final boolean should_display_images = mDisplayProfileImage && length > 0;
+		holder.activity_profile_image_container.setVisibility(should_display_images ? View.VISIBLE : View.GONE);
+		if (!should_display_images) return;
 		for (int i = 0; i < length; i++) {
 			final ImageView activity_profile_image = holder.activity_profile_images[i];
-			if (mDisplayProfileImage) {
-				mProfileImageLoader.displayProfileImage(activity_profile_image, users[i].profile_image_url);
-			} else {
-				activity_profile_image.setImageDrawable(null);
-			}
+			final String profile_image_url = users[i].profile_image_url;
+			mProfileImageLoader.displayProfileImage(activity_profile_image, profile_image_url);
 		}
 	}
 }

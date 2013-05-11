@@ -167,6 +167,11 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 		}
 	}
 
+	@Override
+	protected boolean shouldForceEnableDualPaneMode() {
+		return getResources().getBoolean(R.bool.default_dual_pane_mode);
+	}
+
 	void showFragment(final Fragment fragment) {
 		final FragmentManager fm = getSupportFragmentManager();
 		final int entry_count = fm.getBackStackEntryCount();

@@ -625,7 +625,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 		@Override
 		protected void onPostExecute(final SingleResponse<User> result) {
-			if (result != null && result.data != null && result.data.getId() > 0) {				
+			if (result != null && result.data != null && result.data.getId() > 0) {
 				showInfoMessage(R.string.user_blocked, false);
 			} else {
 				showErrorMessage(R.string.blocking, result.exception, true);

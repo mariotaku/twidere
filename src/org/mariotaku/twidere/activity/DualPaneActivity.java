@@ -117,14 +117,15 @@ public class DualPaneActivity extends BaseDialogWhenLargeActivity implements OnB
 		final Resources res = getResources();
 		final int orientation = res.getConfiguration().orientation;
 		final int layout;
-		mDualPaneInPortrait = mPreferences.getBoolean(PREFERENCE_KEY_DUAL_PANE_IN_PORTRAIT, false);
-		mDualPaneInLandscape = mPreferences.getBoolean(PREFERENCE_KEY_DUAL_PANE_IN_LANDSCAPE, false);
+		final boolean default_dual_pane_mode = res.getBoolean(R.bool.default_dual_pane_mode);
+		mDualPaneInPortrait = mPreferences.getBoolean(PREFERENCE_KEY_DUAL_PANE_IN_PORTRAIT, default_dual_pane_mode);
+		mDualPaneInLandscape = mPreferences.getBoolean(PREFERENCE_KEY_DUAL_PANE_IN_LANDSCAPE, default_dual_pane_mode);
 		switch (orientation) {
 			case Configuration.ORIENTATION_LANDSCAPE:
-				layout = mDualPaneInLandscape ? getDualPaneLayoutRes() : getNormalLayoutRes();
+				layout = mDualPaneInLandscape || shouldForceEnableDualPaneMode() ? getDualPaneLayoutRes() : getNormalLayoutRes();
 				break;
 			case Configuration.ORIENTATION_PORTRAIT:
-				layout = mDualPaneInPortrait ? getDualPaneLayoutRes() : getNormalLayoutRes();
+				layout = mDualPaneInPortrait || shouldForceEnableDualPaneMode() ? getDualPaneLayoutRes() : getNormalLayoutRes();
 				break;
 			default:
 				layout = getNormalLayoutRes();
@@ -221,6 +222,10 @@ public class DualPaneActivity extends BaseDialogWhenLargeActivity implements OnB
 	@Override
 	protected boolean shouldDisableDialogWhenLargeMode() {
 		return true;
+	}
+
+	protected boolean shouldForceEnableDualPaneMode() {
+		return false;
 	}
 
 	private int getPaneBackground() {

@@ -2,5 +2,6 @@
 <resources>
 
 	<bool name="shadow_slidable">false</bool>
+	<bool name="default_dual_pane_mode">true</bool>
 
 </resources>
