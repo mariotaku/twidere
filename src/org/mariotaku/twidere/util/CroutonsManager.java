@@ -8,7 +8,6 @@ import org.mariotaku.twidere.activity.HomeActivity;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 
 public final class CroutonsManager {
 
@@ -21,8 +20,6 @@ public final class CroutonsManager {
 	
 	public boolean addMessageCallback(final Activity activity) {
 		if (activity == null) return false;
-		// We already have a HomeActivity here, so ignore new activities added.
-		//if (hasHomeActivityInMessageCallbacks()) return false;
 		return mMessageCallbacks.add(activity);
 	}
 
@@ -39,6 +36,11 @@ public final class CroutonsManager {
 	}
 	
 	public void showErrorMessage(final String message, final boolean long_message) {
+		final HomeActivity home = getVisibleHomeActivity();
+		if (home != null) {
+			Utils.showErrorMessage(home, message, long_message);
+			return;
+		}
 		for (final Activity activity : mMessageCallbacks) {
 			Utils.showErrorMessage(activity, message, long_message);
 		}
@@ -46,24 +48,44 @@ public final class CroutonsManager {
 
 	public void showErrorMessage(final int action_res, final Exception e, final boolean long_message) {
 		final String message = mContext.getString(action_res);
+		final HomeActivity home = getVisibleHomeActivity();
+		if (home != null) {
+			Utils.showErrorMessage(home, message, e, long_message);
+			return;
+		}
 		for (final Activity activity : mMessageCallbacks) {
 			Utils.showErrorMessage(activity, message, e, long_message);
 		}
 	}
 
 	public void showInfoMessage(final int message_res, final boolean long_message) {
+		final HomeActivity home = getVisibleHomeActivity();
+		if (home != null) {
+			Utils.showInfoMessage(home, message_res, long_message);
+			return;
+		}
 		for (final Activity activity : mMessageCallbacks) {
 			Utils.showInfoMessage(activity, message_res, long_message);
 		}
 	}
 
 	public void showOkMessage(final int message_res, final boolean long_message) {
+		final HomeActivity home = getVisibleHomeActivity();
+		if (home != null) {
+			Utils.showOkMessage(home, message_res, long_message);
+			return;
+		}
 		for (final Activity activity : mMessageCallbacks) {
 			Utils.showOkMessage(activity, message_res, long_message);
 		}
 	}
 
 	public void showWarnMessage(final int message_res, final boolean long_message) {
+		final HomeActivity home = getVisibleHomeActivity();
+		if (home != null) {
+			Utils.showWarnMessage(home, message_res, long_message);
+			return;
+		}
 		for (final Activity activity : mMessageCallbacks) {
 			Utils.showWarnMessage(activity, message_res, long_message);
 		}
@@ -74,6 +96,16 @@ public final class CroutonsManager {
 			if (activity instanceof HomeActivity) return true;
 		}
 		return false;
+	}
+	
+	private HomeActivity getVisibleHomeActivity() {
+		for (final Activity activity : mMessageCallbacks) {
+			if (activity instanceof HomeActivity) {
+				final HomeActivity home = (HomeActivity) activity;
+				if (home.isVisible()) return home;
+			}
+		}
+		return null;
 	}
 
 }

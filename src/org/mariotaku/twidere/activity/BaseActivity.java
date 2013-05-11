@@ -41,12 +41,13 @@ import org.mariotaku.twidere.activity.iface.IThemedActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.CroutonsManager;
+import android.util.Log;
 
 
 @SuppressLint("Registered")
 public class BaseActivity extends ActionBarFragmentActivity implements Constants, IThemedActivity {
 
-	private boolean mIsDarkTheme, mIsSolidColorBackground, mHardwareAccelerated;
+	private boolean mIsDarkTheme, mIsSolidColorBackground, mHardwareAccelerated, mIsVisible;
 
 	private boolean mInstanceStateSaved;
 
@@ -68,6 +69,10 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 		final boolean solid_color_background = preferences.getBoolean(PREFERENCE_KEY_SOLID_COLOR_BACKGROUND, false);
 		return is_dark_theme != mIsDarkTheme || solid_color_background != mIsSolidColorBackground;
 	}
+	
+	public boolean isVisible() {
+		return mIsVisible;
+	}
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -78,22 +83,9 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 	}
 
 	@Override
-	protected void onPause() {
-		final CroutonsManager croutons = getCroutonsManager();
-		if (croutons != null) {
-			croutons.removeMessageCallback(this);
-		}
-		super.onPause();
-	}
-
-	@Override
 	protected void onResume() {
 		super.onResume();
 		mInstanceStateSaved = false;
-		final CroutonsManager croutons = getCroutonsManager();
-		if (croutons != null) {
-			croutons.addMessageCallback(this);
-		}
 		if (isThemeChanged() || isHardwareAccelerationChanged()) {
 			restart();
 		}
@@ -102,6 +94,7 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 	@Override
 	protected void onStart() {
 		super.onStart();
+		mIsVisible = true;
 		final CroutonsManager croutons = getCroutonsManager();
 		if (croutons != null) {
 			croutons.addMessageCallback(this);
@@ -110,6 +103,7 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 	
 	@Override
 	protected void onStop() {
+		mIsVisible = false;
 		final CroutonsManager croutons = getCroutonsManager();
 		if (croutons != null) {
 			croutons.removeMessageCallbackForce(this);
