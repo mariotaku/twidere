@@ -1,13 +1,12 @@
 package org.mariotaku.twidere.util;
 
+import android.app.Activity;
+import android.content.Context;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
+import org.mariotaku.twidere.activity.BaseActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
-
-import android.app.Activity;
-import android.content.Context;
 
 public final class CroutonsManager {
 
@@ -36,58 +35,63 @@ public final class CroutonsManager {
 	}
 	
 	public void showErrorMessage(final String message, final boolean long_message) {
-		final HomeActivity home = getVisibleHomeActivity();
-		if (home != null) {
-			Utils.showErrorMessage(home, message, long_message);
+		final Activity best = getBestActivity();
+		if (best != null) {
+			Utils.showErrorMessage(best, message, long_message);
 			return;
 		}
 		for (final Activity activity : mMessageCallbacks) {
 			Utils.showErrorMessage(activity, message, long_message);
+			return;
 		}
 	}
 
 	public void showErrorMessage(final int action_res, final Exception e, final boolean long_message) {
 		final String message = mContext.getString(action_res);
-		final HomeActivity home = getVisibleHomeActivity();
-		if (home != null) {
-			Utils.showErrorMessage(home, message, e, long_message);
+		final Activity best = getBestActivity();
+		if (best != null) {
+			Utils.showErrorMessage(best, message, e, long_message);
 			return;
 		}
 		for (final Activity activity : mMessageCallbacks) {
 			Utils.showErrorMessage(activity, message, e, long_message);
+			return;
 		}
 	}
 
 	public void showInfoMessage(final int message_res, final boolean long_message) {
-		final HomeActivity home = getVisibleHomeActivity();
-		if (home != null) {
-			Utils.showInfoMessage(home, message_res, long_message);
+		final Activity best = getBestActivity();
+		if (best != null) {
+			Utils.showInfoMessage(best, message_res, long_message);
 			return;
 		}
 		for (final Activity activity : mMessageCallbacks) {
 			Utils.showInfoMessage(activity, message_res, long_message);
+			return;
 		}
 	}
 
 	public void showOkMessage(final int message_res, final boolean long_message) {
-		final HomeActivity home = getVisibleHomeActivity();
-		if (home != null) {
-			Utils.showOkMessage(home, message_res, long_message);
+		final Activity best = getBestActivity();
+		if (best != null) {
+			Utils.showOkMessage(best, message_res, long_message);
 			return;
 		}
 		for (final Activity activity : mMessageCallbacks) {
 			Utils.showOkMessage(activity, message_res, long_message);
+			return;
 		}
 	}
 
 	public void showWarnMessage(final int message_res, final boolean long_message) {
-		final HomeActivity home = getVisibleHomeActivity();
-		if (home != null) {
-			Utils.showWarnMessage(home, message_res, long_message);
+		final Activity best = getBestActivity();
+		if (best != null) {
+			Utils.showWarnMessage(best, message_res, long_message);
 			return;
 		}
 		for (final Activity activity : mMessageCallbacks) {
 			Utils.showWarnMessage(activity, message_res, long_message);
+			return;
 		}
 	}
 
@@ -98,11 +102,14 @@ public final class CroutonsManager {
 		return false;
 	}
 	
-	private HomeActivity getVisibleHomeActivity() {
+	private Activity getBestActivity() {
 		for (final Activity activity : mMessageCallbacks) {
 			if (activity instanceof HomeActivity) {
 				final HomeActivity home = (HomeActivity) activity;
 				if (home.isVisible()) return home;
+			} else if (activity instanceof BaseActivity) {
+				final BaseActivity base = (BaseActivity) activity;
+				if (base.isOnTop()) return base;
 			}
 		}
 		return null;

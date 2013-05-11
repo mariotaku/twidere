@@ -30,6 +30,16 @@ public class BaseDialogWhenLargeActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setActionBarBackground();
 	}
+
+	@Override
+	public void addContentView(final View view, final LayoutParams params) {
+		if (shouldDisableDialogWhenLargeMode()) {
+			super.addContentView(view, params);
+			return;
+		}
+		final ViewGroup content = (ViewGroup) super.findViewById(R.id.activity_content);
+		content.addView(view, params);
+	}
 	
 	@Override
 	public void setContentView(final int layoutResID) {

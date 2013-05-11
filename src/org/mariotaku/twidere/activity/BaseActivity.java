@@ -47,9 +47,9 @@ import android.util.Log;
 @SuppressLint("Registered")
 public class BaseActivity extends ActionBarFragmentActivity implements Constants, IThemedActivity {
 
-	private boolean mIsDarkTheme, mIsSolidColorBackground, mHardwareAccelerated, mIsVisible;
+	private boolean mIsDarkTheme, mIsSolidColorBackground, mHardwareAccelerated;
 
-	private boolean mInstanceStateSaved;
+	private boolean mInstanceStateSaved, mIsVisible, mIsOnTop;
 
 	public CroutonsManager getCroutonsManager() {
 		return getTwidereApplication() != null ? getTwidereApplication().getCroutonsManager() : null;
@@ -73,6 +73,10 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 	public boolean isVisible() {
 		return mIsVisible;
 	}
+	
+	public boolean isOnTop() {
+		return mIsOnTop;
+	}
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -83,9 +87,16 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 	}
 
 	@Override
+	protected void onPause() {
+		mIsOnTop = false;
+		super.onPause();
+	}
+	
+	@Override
 	protected void onResume() {
 		super.onResume();
 		mInstanceStateSaved = false;
+		mIsOnTop = true;
 		if (isThemeChanged() || isHardwareAccelerationChanged()) {
 			restart();
 		}
