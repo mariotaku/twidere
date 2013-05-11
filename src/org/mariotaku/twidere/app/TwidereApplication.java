@@ -30,6 +30,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.service.RefreshService;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.CroutonsManager;
 import org.mariotaku.twidere.util.DatabaseHelper;
 import org.mariotaku.twidere.util.ImageLoaderUtils;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
@@ -66,6 +67,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	private AsyncTwitterWrapper mTwitterWrapper;
 	private MultiSelectManager mMultiSelectManager;
 	private TwidereImageDownloader mImageDownloader;
+	private CroutonsManager mCroutonsManager;
 
 	private HostAddressResolver mResolver;
 	private SQLiteDatabase mDatabase;
@@ -81,6 +83,11 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	public String getBrowserUserAgent() {
 		return mBrowserUserAgent;
+	}
+	
+	public CroutonsManager getCroutonsManager() {
+		if (mCroutonsManager != null) return mCroutonsManager;
+		return mCroutonsManager = new CroutonsManager(this);
 	}
 
 	public Handler getHandler() {
@@ -121,7 +128,8 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	}
 
 	public AsyncTwitterWrapper getTwitterWrapper() {
-		return mTwitterWrapper;
+		if (mTwitterWrapper != null) return mTwitterWrapper;
+		return mTwitterWrapper = AsyncTwitterWrapper.getInstance(this);
 	}
 
 	public boolean isDebugBuild() {
@@ -140,9 +148,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		super.onCreate();
 		initializeAsyncTask();
 		GalleryUtils.initialize(this);
-		mTwitterWrapper = AsyncTwitterWrapper.getInstance(this);
 		mBrowserUserAgent = new WebView(this).getSettings().getUserAgentString();
-		mMultiSelectManager = new MultiSelectManager();
 		mImageDownloader = new TwidereImageDownloader(this);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_UCD_DATA_PROFILING, false)) {
 			startService(new Intent(this, UCDService.class));
@@ -178,7 +184,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 				stopService(intent);
 			}
 		} else if (PREFERENCE_KEY_CONSUMER_KEY.equals(key) || PREFERENCE_KEY_CONSUMER_SECRET.equals(key)) {
-			Toast.makeText(this, R.string.re_sign_in_needed, Toast.LENGTH_SHORT).show();
+			mCroutonsManager.showWarnMessage(R.string.re_sign_in_needed, false);
 		}
 	}
 

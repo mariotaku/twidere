@@ -40,6 +40,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.iface.IThemedActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.CroutonsManager;
 
 
 @SuppressLint("Registered")
@@ -49,6 +50,10 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 
 	private boolean mInstanceStateSaved;
 
+	public CroutonsManager getCroutonsManager() {
+		return getTwidereApplication() != null ? getTwidereApplication().getCroutonsManager() : null;
+	}
+	
 	public TwidereApplication getTwidereApplication() {
 		return (TwidereApplication) getApplication();
 	}
@@ -73,25 +78,43 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 	}
 
 	@Override
+	protected void onPause() {
+		final CroutonsManager croutons = getCroutonsManager();
+		if (croutons != null) {
+			croutons.removeMessageCallback(this);
+		}
+		super.onPause();
+	}
+
+	@Override
 	protected void onResume() {
 		super.onResume();
 		mInstanceStateSaved = false;
+		final CroutonsManager croutons = getCroutonsManager();
+		if (croutons != null) {
+			croutons.addMessageCallback(this);
+		}
 		if (isThemeChanged() || isHardwareAccelerationChanged()) {
 			restart();
-		}
-		final AsyncTwitterWrapper twitter = getTwitterWrapper();
-		if (twitter != null) {
-			twitter.addMessageCallback(this);
 		}
 	}
 
 	@Override
-	protected void onPause() {
-		final AsyncTwitterWrapper twitter = getTwitterWrapper();
-		if (twitter != null) {
-			twitter.removeMessageCallback(this);
+	protected void onStart() {
+		super.onStart();
+		final CroutonsManager croutons = getCroutonsManager();
+		if (croutons != null) {
+			croutons.addMessageCallback(this);
 		}
-		super.onPause();
+	}
+	
+	@Override
+	protected void onStop() {
+		final CroutonsManager croutons = getCroutonsManager();
+		if (croutons != null) {
+			croutons.removeMessageCallbackForce(this);
+		}
+		super.onStop();
 	}
 
 	public void restart() {

@@ -3335,6 +3335,25 @@ public final class Utils implements Constants {
 		}
 	}
 	
+	public static void showWarnMessage(final Context context, final int resId, final boolean long_message) {
+		if (context == null) return;
+		showWarnMessage(context, context.getText(resId), long_message);
+	}
+
+	public static void showWarnMessage(final Context context, final CharSequence message, final boolean long_message) {
+		if (context == null || isEmpty(message)) return;
+		if (context instanceof Activity) {
+			final Crouton crouton = Crouton.makeText((Activity) context, message, CroutonStyle.WARN);
+			final CroutonConfiguration.Builder cb = new CroutonConfiguration.Builder();
+			cb.setDuration(long_message ? CroutonConfiguration.DURATION_LONG : CroutonConfiguration.DURATION_SHORT);
+			crouton.setConfiguration(cb.build());
+			crouton.show();
+		} else {
+			final Toast toast = Toast.makeText(context, message, long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
+			toast.show();
+		}
+	}
+	
 	public static String trimLineBreak(final String orig) {
 		if (orig == null) return null;
 		return orig.replaceAll("\\n+", "\n");

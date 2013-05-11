@@ -136,7 +136,7 @@
 		<activity
 			android:name=".activity.SettingsActivity"
 			android:label="@string/settings"
-			android:launchMode="singleTask">
+			android:launchMode="singleTop">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 				<action android:name="android.intent.action.MANAGE_NETWORK_USAGE"/>
@@ -296,6 +296,7 @@
 			android:name=".activity.DraftsActivity"
 			android:exported="false"
 			android:label="@string/drafts"
+			android:launchMode="singleTop"
 			android:theme="@style/Theme.Blank.DialogWhenLarge">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
