@@ -117,7 +117,7 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 		mIsVisible = false;
 		final CroutonsManager croutons = getCroutonsManager();
 		if (croutons != null) {
-			croutons.removeMessageCallbackForce(this);
+			croutons.removeMessageCallback(this);
 		}
 		super.onStop();
 	}

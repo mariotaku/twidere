@@ -24,13 +24,6 @@ public final class CroutonsManager {
 
 	public boolean removeMessageCallback(final Activity activity) {
 		if (activity == null) return false;
-		// If we only have one activity, don't remove it unless it force removes itself.
-		if (mMessageCallbacks.size() == 1) return false;
-		return mMessageCallbacks.remove(activity);
-	}
-
-	public boolean removeMessageCallbackForce(final Activity activity) {
-		if (activity == null) return false;
 		return mMessageCallbacks.remove(activity);
 	}
 	
@@ -94,20 +87,16 @@ public final class CroutonsManager {
 			return;
 		}
 	}
-
-	private boolean hasHomeActivityInMessageCallbacks() {
-		for (final Activity activity : mMessageCallbacks) {
-			if (activity instanceof HomeActivity) return true;
-		}
-		return false;
-	}
 	
 	private Activity getBestActivity() {
 		for (final Activity activity : mMessageCallbacks) {
 			if (activity instanceof HomeActivity) {
 				final HomeActivity home = (HomeActivity) activity;
 				if (home.isVisible()) return home;
-			} else if (activity instanceof BaseActivity) {
+			}
+		}
+		for (final Activity activity : mMessageCallbacks) {
+			if (activity instanceof BaseActivity) {
 				final BaseActivity base = (BaseActivity) activity;
 				if (base.isOnTop()) return base;
 			}

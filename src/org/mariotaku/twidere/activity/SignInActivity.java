@@ -90,17 +90,14 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 
 	public void onDisplayed() {
 		mBackPressed = true;
-		// TODO: Implement this method
 	}
 
 	public void onRemoved() {
 		mBackPressed = false;
-		// TODO: Implement this method
 	}
 	
 
 	private static final String TWITTER_SIGNUP_URL = "https://twitter.com/signup";
-	private static final int MESSAGE_ID_BACK_TIMEOUT = 0;
 
 	private String mRESTBaseURL, mSigningRESTBaseURL, mOAuthBaseURL, mSigningOAuthBaseURL;
 	private String mUsername, mPassword;
@@ -323,6 +320,8 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 					Crouton.makeText(this, R.string.wrong_api_key, CroutonStyle.ALERT).show();
 				} else if (result.exception instanceof WrongUserPassException) {
 					Crouton.makeText(this, R.string.wrong_username_password, CroutonStyle.ALERT).show();
+				} else if (result.exception instanceof AuthenticationException) {
+					showErrorMessage(this, getString(R.string.signing_in), result.exception.getCause(), true);
 				} else {
 					showErrorMessage(this, getString(R.string.signing_in), result.exception, true);
 				}
