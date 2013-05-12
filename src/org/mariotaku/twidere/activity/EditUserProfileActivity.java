@@ -1,17 +1,33 @@
 package org.mariotaku.twidere.activity;
 
-import static android.text.TextUtils.isEmpty;
-import static org.mariotaku.twidere.util.Utils.createPickImageIntent;
-import static org.mariotaku.twidere.util.Utils.createTakePhotoIntent;
-import static org.mariotaku.twidere.util.Utils.isMyAccount;
-import static org.mariotaku.twidere.util.Utils.parseString;
-import static org.mariotaku.twidere.util.Utils.showErrorMessage;
-
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.Window;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.CroutonLifecycleCallback;
+import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 import java.io.File;
-
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.EditUserProfileActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.ParcelableUserLoader;
 import org.mariotaku.twidere.model.ParcelableUser;
@@ -27,33 +43,17 @@ import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.view.BannerImageView;
 import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
-
 import twitter4j.User;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.Window;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.Toast;
+
+import static android.text.TextUtils.isEmpty;
+import static org.mariotaku.twidere.util.Utils.createPickImageIntent;
+import static org.mariotaku.twidere.util.Utils.createTakePhotoIntent;
+import static org.mariotaku.twidere.util.Utils.isMyAccount;
+import static org.mariotaku.twidere.util.Utils.parseString;
+import static org.mariotaku.twidere.util.Utils.showErrorMessage;
 
 public class EditUserProfileActivity extends BaseDialogWhenLargeActivity implements OnSizeChangedListener, TextWatcher,
-		OnClickListener {
+		OnClickListener, CroutonLifecycleCallback {
 
 	private static final int LOADER_ID_USER = 1;
 
@@ -77,8 +77,6 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 	private boolean mUserInfoLoaderInitialized;
 
 	private PopupMenu mPopupMenu;
-
-	private final Handler mHandler = new Handler();
 
 	private AsyncTask<Void, Void, ?> mTask;
 
@@ -194,15 +192,6 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 
 	};
 
-	private final Runnable mBackPressTimeoutRunnable = new Runnable() {
-
-		@Override
-		public void run() {
-			mBackPressed = false;
-		}
-
-	};
-
 	@Override
 	public void afterTextChanged(final Editable s) {
 	}
@@ -213,7 +202,13 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 
 	@Override
 	public void onBackPressed() {
-		if (!backPressed()) return;
+		if (mHasUnsavedChanges() && !mBackPressed) {
+			final CroutonStyle.Builder builder = new CroutonStyle.Builder(CroutonStyle.INFO);
+			final Crouton crouton = Crouton.makeText(this, R.string.unsaved_change_back_pressed, builder.build());
+			crouton.setLifecycleCallback(this);
+			crouton.show();
+			return;
+		}
 		super.onBackPressed();
 	}
 
@@ -293,6 +288,11 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 	}
 
 	@Override
+	public void onDisplayed() {
+		mBackPressed = true;
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME: {
@@ -320,6 +320,11 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 			save.setEnabled(mHasUnsavedChanges() && (mTask == null || mTask.getStatus() != AsyncTask.Status.RUNNING));
 		}
 		return super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
+	public void onRemoved() {
+		mBackPressed = false;
 	}
 
 	@Override
@@ -359,19 +364,6 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 			}
 		}
 
-	}
-
-	private boolean backPressed() {
-		if (!mHasUnsavedChanges()) return true;
-		mHandler.removeCallbacks(mBackPressTimeoutRunnable);
-		if (!mBackPressed) {
-			Toast.makeText(this, R.string.unsaved_change_back_pressed, Toast.LENGTH_SHORT).show();
-			mBackPressed = true;
-			mHandler.postDelayed(mBackPressTimeoutRunnable, 2000);
-			return false;
-		}
-		mBackPressed = false;
-		return true;
 	}
 
 	private Uri createTempFileUri() {

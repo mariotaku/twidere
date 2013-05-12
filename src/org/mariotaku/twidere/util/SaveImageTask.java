@@ -60,8 +60,7 @@ public class SaveImageTask extends AsyncTask<Void, Void, File> implements Consta
 		}
 		super.onPostExecute(result);
 		if (result != null && result.exists()) {
-			Toast.makeText(activity, activity.getString(R.string.file_saved_to, result.getPath()), Toast.LENGTH_SHORT)
-					.show();
+			Crouton.showText(activity, activity.getString(R.string.file_saved_to, result.getPath()), CroutonStyle.CONFIRM);
 		} else {
 			Crouton.showText(activity, R.string.error_occurred, CroutonStyle.ALERT);
 		}

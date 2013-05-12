@@ -88,15 +88,6 @@ import de.keyboardsurfer.android.widget.crouton.CroutonLifecycleCallback;
 
 public class SignInActivity extends BaseActivity implements OnClickListener, TextWatcher, CroutonLifecycleCallback {
 
-	public void onDisplayed() {
-		mBackPressed = true;
-	}
-
-	public void onRemoved() {
-		mBackPressed = false;
-	}
-	
-
 	private static final String TWITTER_SIGNUP_URL = "https://twitter.com/signup";
 
 	private String mRESTBaseURL, mSigningRESTBaseURL, mOAuthBaseURL, mSigningOAuthBaseURL;
@@ -288,6 +279,16 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 		}
 	}
 
+	@Override
+	public void onDisplayed() {
+		mBackPressed = true;
+	}
+
+	@Override
+	public void onRemoved() {
+		mBackPressed = false;
+	}
+	
 	void onSignInStart() {
 		setSupportProgressBarIndeterminateVisibility(true);
 		mEditPassword.setEnabled(false);
