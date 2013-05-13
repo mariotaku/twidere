@@ -1,5 +1,7 @@
 package org.mariotaku.twidere.util;
 
+import java.util.List;
+
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
@@ -19,7 +21,7 @@ public class MultiSelectManager implements Constants {
 		return mSelectedItems.size();
 	}
 
-	public NoDuplicatesLinkedList<Object> getSelectedItems() {
+	public List<Object> getSelectedItems() {
 		return mSelectedItems;
 	}
 
@@ -85,7 +87,7 @@ public class MultiSelectManager implements Constants {
 	}
 
 	@SuppressWarnings("serial")
-	class ItemsList extends NoDuplicatesLinkedList<Object> {
+	class ItemsList extends NoDuplicatesArrayList<Object> {
 
 		@Override
 		public boolean add(final Object object) {

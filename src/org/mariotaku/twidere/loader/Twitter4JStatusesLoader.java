@@ -19,8 +19,6 @@
 
 package org.mariotaku.twidere.loader;
 
-import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
@@ -43,8 +41,10 @@ import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
+import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.getInlineImagePreviewDisplayOptionInt;
 import static org.mariotaku.twidere.util.Utils.isFiltered;
+import static org.mariotaku.twidere.util.Utils.showErrorMessage;
 
 public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 
@@ -108,7 +108,7 @@ public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 			}
 			statuses = getStatuses(getTwitter(), paging);
 		} catch (final TwitterException e) {
-			e.printStackTrace();
+			//7mHandler.post(new ShowErrorRunnable(e));
 			return data;
 		}
 		if (statuses != null) {
@@ -139,4 +139,20 @@ public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 	
 	protected abstract boolean shouldFilterStatus(final ParcelableStatus status);
 
+	private final class ShowErrorRunnable implements Runnable {
+
+		private Exception exception;
+
+		ShowErrorRunnable(final Exception e) {
+			exception = e;
+		}
+		
+		@Override
+		public void run() {
+			if (isAbandoned() || isReset()) return;
+			showErrorMessage(getContext(), R.string.getting_statuses, exception, false);
+		}
+		
+		
+	}
 }

@@ -1782,8 +1782,8 @@ public final class Utils implements Constants {
 
 	public static ImageSpec getTwitterImage(final String url, final boolean large_image_preview) {
 		if (isEmpty(url)) return null;
-		final String full = url + ":large";
-		final String preview = large_image_preview ? full : url + ":thumb";
+		final String full = (url + ":large").replaceFirst("https?://", "https://");
+		final String preview = large_image_preview ? full : (url + ":thumb").replaceFirst("https?://", "https://");
 		return new ImageSpec(preview, full, full);
 	}
 

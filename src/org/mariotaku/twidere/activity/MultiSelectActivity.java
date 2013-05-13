@@ -19,11 +19,21 @@
 
 package org.mariotaku.twidere.activity;
 
-import static org.mariotaku.twidere.util.Utils.getAccountScreenNames;
-
+import android.annotation.SuppressLint;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import com.twitter.Extractor;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
-
+import java.util.List;
 import org.mariotaku.actionbarcompat.ActionMode;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -34,21 +44,9 @@ import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ListUtils;
 import org.mariotaku.twidere.util.MultiSelectManager;
-import org.mariotaku.twidere.util.NoDuplicatesLinkedList;
+import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
-import android.annotation.SuppressLint;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-
-import com.twitter.Extractor;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
+import static org.mariotaku.twidere.util.Utils.getAccountScreenNames;
 
 @SuppressLint("Registered")
 public class MultiSelectActivity extends DualPaneActivity implements ActionMode.Callback, MultiSelectManager.Callback {
@@ -63,7 +61,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 
 	@Override
 	public boolean onActionItemClicked(final ActionMode mode, final MenuItem item) {
-		final NoDuplicatesLinkedList<Object> selected_items = mMultiSelectManager.getSelectedItems();
+		final List<Object> selected_items = mMultiSelectManager.getSelectedItems();
 		final int count = selected_items.size();
 		if (count < 1) return false;
 		switch (item.getItemId()) {
@@ -72,7 +70,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 				final Intent intent = new Intent(INTENT_ACTION_REPLY_MULTIPLE);
 				final Bundle bundle = new Bundle();
 				final String[] account_names = getAccountScreenNames(this);
-				final NoDuplicatesLinkedList<String> all_mentions = new NoDuplicatesLinkedList<String>();
+				final NoDuplicatesArrayList<String> all_mentions = new NoDuplicatesArrayList<String>();
 				for (final Object object : selected_items) {
 					if (object instanceof ParcelableStatus) {
 						final ParcelableStatus status = (ParcelableStatus) object;
@@ -84,7 +82,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 					}
 				}
 				all_mentions.removeAll(Arrays.asList(account_names));
-				final Object first_obj = selected_items.getFirst();
+				final Object first_obj = selected_items.get(0);
 				if (first_obj instanceof ParcelableStatus) {
 					final ParcelableStatus first_status = (ParcelableStatus) first_obj;
 					bundle.putLong(INTENT_KEY_ACCOUNT_ID, first_status.account_id);
@@ -104,7 +102,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 				final ContentResolver resolver = getContentResolver();
 				final Uri uri = Filters.Users.CONTENT_URI;
 				final ArrayList<ContentValues> values_list = new ArrayList<ContentValues>();
-				final NoDuplicatesLinkedList<String> names_list = new NoDuplicatesLinkedList<String>();
+				final List<String> names_list = new NoDuplicatesArrayList<String>();
 				for (final Object object : selected_items) {
 					if (object instanceof ParcelableStatus) {
 						final ParcelableStatus status = (ParcelableStatus) object;
@@ -222,7 +220,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 		}
 	}
 
-	private static long getFirstSelectAccountId(final NoDuplicatesLinkedList<Object> selected_items) {
+	private static long getFirstSelectAccountId(final List<Object> selected_items) {
 		final Object obj = selected_items.get(0);
 		if (obj instanceof ParcelableUser)
 			return ((ParcelableUser) obj).account_id;
@@ -230,7 +228,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 		return -1;
 	}
 
-	private static long[] getSelectedUserIds(final NoDuplicatesLinkedList<Object> selected_items) {
+	private static long[] getSelectedUserIds(final List<Object> selected_items) {
 		final ArrayList<Long> ids_list = new ArrayList<Long>();
 		for (final Object item : selected_items) {
 			if (item instanceof ParcelableUser) {
