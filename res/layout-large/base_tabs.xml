@@ -19,24 +19,31 @@
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/tab_container"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:orientation="horizontal">
 
-	<view
-		android:id="@android:id/tabs"
-		android:layout_width="wrap_content"
+	<FrameLayout
+		android:layout_width="0dp"
 		android:layout_height="match_parent"
-		android:layout_weight="1"
-		class="org.mariotaku.twidere.view.TabPageIndicator"/>
+		android:layout_weight="1">
+
+		<org.mariotaku.twidere.view.TabPageIndicator
+			android:id="@android:id/tabs"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:layout_gravity="left"/>
+		
+	</FrameLayout>
 
 	<org.mariotaku.twidere.view.HoloProgressBar
 		android:id="@android:id/progress"
 		style="@style/Widget.Holo.ProgressBar.Small"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_gravity="center_vertical"
-		android:layout_margin="2dp"
-		android:layout_weight="0"/>
+		android:layout_weight="0"
+		android:layout_gravity="center_vertical|right"
+		android:layout_margin="2dp"/>
 
 </LinearLayout>
