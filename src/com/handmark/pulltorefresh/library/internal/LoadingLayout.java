@@ -15,8 +15,6 @@
  *******************************************************************************/
 package com.handmark.pulltorefresh.library.internal;
 
-import org.mariotaku.twidere.R;
-
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
@@ -24,19 +22,23 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.support.v4.view.accessibility.AccessibilityEventCompat;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
+import org.mariotaku.twidere.R;
 
 public class LoadingLayout extends FrameLayout {
 
@@ -109,17 +111,26 @@ public class LoadingLayout extends FrameLayout {
 		this(context, Mode.PULL_DOWN_TO_REFRESH, attrs);
 	}
 
+	public void notifyPullToRefresh() {
+		final CharSequence text = Html.fromHtml(mPullLabel);
+		notifyAccessibilityService(text);
+	}
+
 	public void pullToRefresh() {
 		if (mArrowRotated) {
 			mHeaderArrow.startAnimation(mRotateAnimation);
 			rotateArrow();
 			mArrowRotated = false;
 		}
-		mHeaderText.setText(Html.fromHtml(mPullLabel));
+		final CharSequence text = Html.fromHtml(mPullLabel);
+		mHeaderText.setText(text);
+		notifyAccessibilityService(text);
 	}
 
 	public void refreshing() {
-		mHeaderText.setText(Html.fromHtml(mRefreshingLabel));
+		final CharSequence text = Html.fromHtml(mRefreshingLabel);
+		mHeaderText.setText(text);
+		notifyAccessibilityService(text);
 		mHeaderArrow.setVisibility(View.INVISIBLE);
 		mHeaderProgress.setVisibility(View.VISIBLE);
 		mSubHeaderText.setVisibility(View.GONE);
@@ -131,7 +142,9 @@ public class LoadingLayout extends FrameLayout {
 			rotateArrow();
 			mArrowRotated = true;
 		}
-		mHeaderText.setText(Html.fromHtml(mReleaseLabel));
+		final CharSequence text = Html.fromHtml(mReleaseLabel);
+		mHeaderText.setText(text);
+		notifyAccessibilityService(text);
 	}
 
 	public void reset() {
@@ -205,5 +218,33 @@ public class LoadingLayout extends FrameLayout {
 		drawable.draw(canvas);
 		canvas.restore();
 		mHeaderArrow.setImageBitmap(bitmap);
+	}
+	
+	private void notifyAccessibilityService(final CharSequence text) {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.DONUT) return;
+		final AccessibilityManager accessibilityManager = (AccessibilityManager) getContext().getSystemService(Context.ACCESSIBILITY_SERVICE);
+		if (!accessibilityManager.isEnabled()) return;
+		// Prior to SDK 16, announcements could only be made through FOCUSED
+		// events. Jelly Bean (SDK 16) added support for speaking text verbatim
+		// using the ANNOUNCEMENT event type.
+		final int eventType;
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+			eventType = AccessibilityEvent.TYPE_VIEW_FOCUSED;
+		} else {
+			eventType = AccessibilityEventCompat.TYPE_ANNOUNCEMENT;
+		}
+
+		// Construct an accessibility event with the minimum recommended
+		// attributes. An event without a class name or package may be dropped.
+		final AccessibilityEvent event = AccessibilityEvent.obtain(eventType);
+		event.getText().add(text);
+		event.setClassName(getClass().getName());
+		event.setPackageName(getContext().getPackageName());
+		event.setSource(this);
+
+		// Sends the event directly through the accessibility manager. If your
+		// application only targets SDK 14+, you should just call
+		// getParent().requestSendAccessibilityEvent(this, event);
+		accessibilityManager.sendAccessibilityEvent(event);
 	}
 }

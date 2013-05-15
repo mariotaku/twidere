@@ -829,24 +829,39 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		final int oldHeight = getScrollY();
 
 		switch (mCurrentMode) {
-			case PULL_UP_TO_REFRESH:
+			case PULL_UP_TO_REFRESH: {
 				newHeight = Math.round(Math.max(mInitialMotionY - mLastMotionY, 0) / FRICTION);
 				break;
+			}
 			case PULL_DOWN_TO_REFRESH:
-			default:
+			default: {
 				newHeight = Math.round(Math.min(mInitialMotionY - mLastMotionY, 0) / FRICTION);
 				break;
+			}
 		}
 
 		setHeaderScroll(newHeight);
 
 		if (newHeight != 0) {
 
-			if (mState == PULL_TO_REFRESH && mHeaderHeight < Math.abs(newHeight)) {
-				mState = RELEASE_TO_REFRESH;
-				onReleaseToRefresh();
-				return true;
-
+			if (mState == PULL_TO_REFRESH) {
+				if (mHeaderHeight < Math.abs(newHeight)) {
+					mState = RELEASE_TO_REFRESH;
+					onReleaseToRefresh();
+					return true;
+				} else {
+					switch (mCurrentMode) {
+						case PULL_UP_TO_REFRESH: {
+							mFooterLayout.notifyPullToRefresh();
+							break;
+						}
+						case PULL_DOWN_TO_REFRESH:
+						default: {
+							mHeaderLayout.notifyPullToRefresh();
+							break;
+						}
+					}
+				}
 			} else if (mState == RELEASE_TO_REFRESH && mHeaderHeight >= Math.abs(newHeight)) {
 				mState = PULL_TO_REFRESH;
 				onPullToRefresh();

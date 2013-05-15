@@ -36,6 +36,7 @@ public class TwitterErrorCodes {
 		ERROR_CODE_MESSAGES.put(130, R.string.error_130);
 		ERROR_CODE_MESSAGES.put(131, R.string.error_131);
 		ERROR_CODE_MESSAGES.put(135, R.string.error_135);
+		ERROR_CODE_MESSAGES.put(179, R.string.error_179);
 		ERROR_CODE_MESSAGES.put(215, R.string.error_215);
 	}
 
