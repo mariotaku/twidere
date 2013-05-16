@@ -104,7 +104,6 @@
 		android:layout_below="@+id/activity_profile_image_container"
 		android:layout_toRightOf="@+id/profile_image"
 		android:drawablePadding="4dp"
-		
 		android:paddingLeft="8dp"
 		android:paddingTop="4dp"
 		android:textColor="?android:attr/textColorSecondary"/>

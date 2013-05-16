@@ -41,7 +41,7 @@ import org.mariotaku.twidere.util.AsyncTwitterWrapper.UpdateProfileTask;
 import org.mariotaku.twidere.util.EnvironmentAccessor;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.TwitterWrapper;
-import org.mariotaku.twidere.view.BannerImageView;
+import org.mariotaku.twidere.view.ProfileBannerImageView;
 import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
 import twitter4j.User;
 
@@ -63,10 +63,9 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 	private ImageLoaderWrapper mLazyImageLoader;
 
 	private ImageView mProfileImageView;
-	private BannerImageView mProfileBannerView;
+	private ProfileBannerImageView mProfileBannerView;
 	private EditText mEditName, mEditDescription, mEditLocation, mEditUrl;
 	private View mProgress, mContent;
-	private View mProfileImageContainer, mProfileBannerContainer;
 	private AsyncTaskManager mAsyncTaskManager;
 
 	private boolean mBackPressed;
@@ -219,13 +218,13 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 			mPopupMenu.dismiss();
 		}
 		switch (view.getId()) {
-			case R.id.profile_image_container: {
+			case R.id.profile_image: {
 				mPopupMenu = PopupMenu.getInstance(this, view);
 				mPopupMenu.inflate(R.menu.action_profile_image);
 				mPopupMenu.setOnMenuItemClickListener(mProfileImageMenuListener);
 				break;
 			}
-			case R.id.profile_banner_container: {
+			case R.id.profile_banner: {
 				mPopupMenu = PopupMenu.getInstance(this, view);
 				mPopupMenu.inflate(R.menu.action_profile_banner_image);
 				final Menu menu = mPopupMenu.getMenu();
@@ -247,9 +246,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 		super.onContentChanged();
 		mProgress = findViewById(R.id.progress);
 		mContent = findViewById(R.id.content);
-		mProfileBannerView = (BannerImageView) findViewById(R.id.profile_banner);
-		mProfileImageContainer = findViewById(R.id.profile_image_container);
-		mProfileBannerContainer = findViewById(R.id.profile_banner_container);
+		mProfileBannerView = (ProfileBannerImageView) findViewById(R.id.profile_banner);
 		mProfileImageView = (ImageView) findViewById(R.id.profile_image);
 		mEditName = (EditText) findViewById(R.id.name);
 		mEditDescription = (EditText) findViewById(R.id.description);
@@ -276,8 +273,8 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 		mEditDescription.addTextChangedListener(this);
 		mEditLocation.addTextChangedListener(this);
 		mEditUrl.addTextChangedListener(this);
-		mProfileImageContainer.setOnClickListener(this);
-		mProfileBannerContainer.setOnClickListener(this);
+		mProfileImageView.setOnClickListener(this);
+		mProfileBannerView.setOnClickListener(this);
 		getUserInfo();
 	}
 
@@ -408,10 +405,10 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 		mEditDescription.setEnabled(!start);
 		mEditLocation.setEnabled(!start);
 		mEditUrl.setEnabled(!start);
-		mProfileImageContainer.setEnabled(!start);
-		mProfileImageContainer.setOnClickListener(start ? null : this);
-		mProfileBannerContainer.setEnabled(!start);
-		mProfileBannerContainer.setOnClickListener(start ? null : this);
+		mProfileImageView.setEnabled(!start);
+		mProfileImageView.setOnClickListener(start ? null : this);
+		mProfileBannerView.setEnabled(!start);
+		mProfileBannerView.setOnClickListener(start ? null : this);
 		invalidateSupportOptionsMenu();
 	}
 

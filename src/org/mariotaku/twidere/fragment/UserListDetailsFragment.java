@@ -97,7 +97,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	private TextView mListNameView, mUserNameView, mDescriptionView, mErrorMessageView;
 	private View mListContainer, mErrorRetryContainer;
 	private ColorLabelRelativeLayout mProfileContainer;
-	private View mNameContainer, mProfileImageContainer, mDescriptionContainer;
+	private View mNameContainer, mDescriptionContainer;
 	private Button mFollowMoreButton, mRetryButton;
 	private ListView mListView;
 	private View mHeaderView;
@@ -226,8 +226,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		mAdapter.add(new ListTimelineAction(1));
 		mAdapter.add(new ListMembersAction(2));
 		mAdapter.add(new ListSubscribersAction(3));
-		mProfileImageContainer.setOnClickListener(this);
-		mProfileImageContainer.setOnLongClickListener(this);
+		mProfileImageView.setOnClickListener(this);
+		mProfileImageView.setOnLongClickListener(this);
 		mNameContainer.setOnClickListener(this);
 		mNameContainer.setOnLongClickListener(this);
 		mFollowMoreButton.setOnClickListener(this);
@@ -273,7 +273,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 				reloadUserListInfo();
 				break;
 			}
-			case R.id.profile_image_container: {
+			case R.id.profile_image: {
 				if (mAccountId > 0 && (mUserId > 0 || mUserScreenName != null)) {
 					openUserProfile(getActivity(), new ParcelableUser(mUserList.getUser(), mAccountId,
 							mHiResProfileImage));
@@ -314,7 +314,6 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		mUserNameView = (TextView) mHeaderView.findViewById(R.id.user_name);
 		mDescriptionView = (TextView) mHeaderView.findViewById(R.id.description);
 		mProfileImageView = (ImageView) mHeaderView.findViewById(R.id.profile_image);
-		mProfileImageContainer = mHeaderView.findViewById(R.id.profile_image_container);
 		mDescriptionContainer = mHeaderView.findViewById(R.id.description_container);
 		mFollowMoreButton = (Button) mHeaderView.findViewById(R.id.follow_more);
 		mListContainer = super.onCreateView(inflater, container, savedInstanceState);

@@ -13,22 +13,22 @@ import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
-public class BannerImageView extends ImageView implements IExtendedView {
+public class ProfileBannerImageView extends ImageView implements IExtendedView {
 
 	private final Paint mPaint = new Paint();
 	
 	private LinearGradient mShader;
 	private OnSizeChangedListener mOnSizeChangedListener;
 	
-	public BannerImageView(final Context context) {
+	public ProfileBannerImageView(final Context context) {
 		this(context, null);
 	}
 
-	public BannerImageView(final Context context, final AttributeSet attrs) {
+	public ProfileBannerImageView(final Context context, final AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
 
-	public BannerImageView(final Context context, final AttributeSet attrs, final int defStyle) {
+	public ProfileBannerImageView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		ViewCompat.setLayerType(this, LAYER_TYPE_SOFTWARE, null);
 	}

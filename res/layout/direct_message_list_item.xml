@@ -5,7 +5,7 @@
 	android:descendantFocusability="blocksDescendants"
 	android:padding="8dp">
 
-	<ImageView
+	<org.mariotaku.twidere.view.ClickableProfileImageView
 		android:id="@+id/profile_image_left"
 		android:layout_width="@dimen/profile_image_size"
 		android:layout_height="@dimen/profile_image_size"
@@ -13,7 +13,7 @@
 		android:layout_alignParentTop="true"
 		android:scaleType="fitCenter"/>
 
-	<ImageView
+	<org.mariotaku.twidere.view.ClickableProfileImageView
 		android:id="@+id/profile_image_right"
 		android:layout_width="@dimen/profile_image_size"
 		android:layout_height="@dimen/profile_image_size"

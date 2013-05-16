@@ -10,7 +10,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content">
 
-		<org.mariotaku.twidere.view.BannerImageView
+		<org.mariotaku.twidere.view.ProfileBannerImageView
 			android:id="@+id/profile_banner"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -24,34 +24,26 @@
 			android:gravity="center_vertical"
 			android:orientation="horizontal">
 
-			<FrameLayout
-				android:id="@+id/profile_image_container"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_alignParentTop="true"
-				android:clickable="true"
-				style="?selectableViewStyle">
-
-				<ImageView
-					android:id="@+id/profile_image"
-					android:layout_width="@dimen/profile_image_size"
-					android:layout_height="@dimen/profile_image_size"
-					android:layout_gravity="center"
-					android:layout_margin="8dp"
-					android:contentDescription="@string/profile_image"
-					android:scaleType="fitCenter"
-					android:src="@drawable/ic_profile_image_default"/>
-			</FrameLayout>
+			<org.mariotaku.twidere.view.ClickableProfileImageView
+				android:id="@+id/profile_image"
+				android:layout_width="@dimen/profile_image_size"
+				android:layout_height="@dimen/profile_image_size"
+				android:layout_alignParentLeft="true"
+				android:layout_centerInParent="true"
+				android:layout_margin="8dp"
+				android:contentDescription="@string/profile_image"
+				android:scaleType="fitCenter"
+				android:src="@drawable/ic_profile_image_default"/>
 
 			<LinearLayout
 				android:id="@+id/name_container"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_alignBottom="@+id/profile_image_container"
-				android:layout_alignTop="@+id/profile_image_container"
+				android:layout_alignBottom="@+id/profile_image"
+				android:layout_alignTop="@+id/profile_image"
 				android:layout_alignWithParentIfMissing="true"
 				android:layout_toLeftOf="@+id/edit_follow_container"
-				android:layout_toRightOf="@+id/profile_image_container"
+				android:layout_toRightOf="@+id/profile_image"
 				android:clickable="true"
 				android:gravity="center_vertical"
 				android:orientation="vertical"
@@ -64,7 +56,6 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:ellipsize="marquee"
-					
 					android:singleLine="true"
 					android:textAppearance="?android:attr/textAppearanceMedium"/>
 
@@ -72,8 +63,7 @@
 					android:id="@+id/screen_name"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:ellipsize="marquee"
-					
+					android:ellipsize="marquee"			
 					android:singleLine="true"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:textColor="?android:attr/textColorSecondary"/>
@@ -83,7 +73,6 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:ellipsize="marquee"
-					
 					android:singleLine="true"
 					android:text="@string/following_you"
 					android:textAppearance="?android:attr/textAppearanceMedium"
@@ -97,9 +86,9 @@
 				android:id="@+id/edit_follow_container"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_alignBottom="@+id/profile_image_container"
+				android:layout_alignBottom="@+id/profile_image"
 				android:layout_alignParentRight="true"
-				android:layout_alignTop="@+id/profile_image_container"
+				android:layout_alignTop="@+id/profile_image"
 				android:layout_margin="4dp"
 				android:visibility="gone">
 
@@ -135,7 +124,6 @@
 		<TextView
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			
 			android:text="@string/description"
 			android:textAppearance="?android:attr/textAppearanceMedium"/>
 
@@ -143,7 +131,6 @@
 			android:id="@+id/description"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:textColor="?android:attr/textColorSecondary"/>
 	</LinearLayout>
@@ -160,7 +147,6 @@
 		<TextView
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			
 			android:singleLine="true"
 			android:text="@string/location"
 			android:textAppearance="?android:attr/textAppearanceMedium"/>
@@ -169,7 +155,6 @@
 			android:id="@+id/location"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			
 			android:singleLine="true"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:textColor="?android:attr/textColorSecondary"/>
@@ -187,7 +172,6 @@
 		<TextView
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			
 			android:singleLine="true"
 			android:text="@string/url"
 			android:textAppearance="?android:attr/textAppearanceMedium"/>
@@ -197,7 +181,6 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:autoLink="web"
-			
 			android:singleLine="true"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:textColor="?android:attr/textColorSecondary"/>
@@ -223,7 +206,6 @@
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				
 				android:singleLine="true"
 				android:text="@string/created_at"
 				android:textAppearance="?android:attr/textAppearanceMedium"/>
@@ -232,7 +214,6 @@
 				android:id="@+id/created_at"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:textColor="?android:attr/textColorSecondary"/>
@@ -293,7 +274,6 @@
 				android:id="@+id/tweet_count"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				android:textColor="?android:attr/textColorPrimary"/>
@@ -301,7 +281,6 @@
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				
 				android:singleLine="true"
 				android:text="@string/tweets"
 				android:textAppearance="?android:attr/textAppearanceSmall"
@@ -329,7 +308,6 @@
 				android:id="@+id/followers_count"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				android:textColor="?android:attr/textColorPrimary"/>
@@ -337,7 +315,6 @@
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				
 				android:singleLine="true"
 				android:text="@string/followers"
 				android:textAppearance="?android:attr/textAppearanceSmall"
@@ -365,7 +342,6 @@
 				android:id="@+id/friends_count"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				android:textColor="?android:attr/textColorPrimary"/>
@@ -373,7 +349,6 @@
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				
 				android:singleLine="true"
 				android:text="@string/friends"
 				android:textAppearance="?android:attr/textAppearanceSmall"
