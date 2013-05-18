@@ -132,9 +132,8 @@ public class DualPaneActivity extends BaseDialogWhenLargeActivity implements OnB
 				break;
 		}
 		setContentView(layout);
-		final View pane_right = findViewById(PANE_RIGHT);
-		if (pane_right != null) {
-			pane_right.setBackgroundResource(getPaneBackground());
+		if (mSlidingPane != null) {
+			mSlidingPane.setRightPaneBackground(getPaneBackground());
 		}
 		getSupportFragmentManager().addOnBackStackChangedListener(this);
 	}

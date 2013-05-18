@@ -1,9 +1,5 @@
 package org.mariotaku.twidere.view;
 
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.DualPaneActivity;
-import org.mariotaku.twidere.view.iface.IExtendedViewGroup.TouchInterceptor;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -19,9 +15,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Scroller;
+import android.widget.TextView;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.DualPaneActivity;
+import org.mariotaku.twidere.view.iface.IExtendedViewGroup.TouchInterceptor;
 
 public class SlidingPaneView extends ViewGroup {
 
@@ -36,17 +38,18 @@ public class SlidingPaneView extends ViewGroup {
 	/**
 	 * Fade applies to content container.
 	 */
-	public static final int FADE_RIGHT = 2;
+	public static final int FADE_RIGHT = 3;
 	/**
 	 * Fade applies to every container.
 	 */
 	public static final int FADE_BOTH = 3;
 
 	private final View mViewShadow;
-	private final LeftPaneLayout mViewLeftPaneContainer;
-	private final RightPaneLayout mViewRightPaneContainer;
-	private final ExtendedFrameLayout mRightPaneContent;
-	private final View mLeftPaneLayout, mRightPaneLayout;
+	private final LeftPaneLayout mLeftPaneLayout;
+	private final RightPaneLayout mRightPaneLayout;
+	private final ExtendedFrameLayout mRightPaneContainer;
+	private final View mLeftPaneView, mRightPaneView, mRightPaneBackground;
+	private final FadingRightPaneContainer mFadingRightPaneContainer;
 
 	private final ScrollTouchInterceptor mTouchInterceptor;
 	private final OnTouchListener mShadowTouchListener;
@@ -139,30 +142,36 @@ public class SlidingPaneView extends ViewGroup {
 		mTouchInterceptor = new ScrollTouchInterceptor(this);
 		mShadowTouchListener = new ShadowTouchListener(this);
 
-		mViewLeftPaneContainer = new LeftPaneLayout(this);
-		mViewRightPaneContainer = new RightPaneLayout(this);
-		mRightPaneContent = new ExtendedFrameLayout(context);
+		mLeftPaneLayout = new LeftPaneLayout(this);
+		mRightPaneLayout = new RightPaneLayout(this);
+	
+		mRightPaneContainer = new ExtendedFrameLayout(context);
+		mFadingRightPaneContainer = new FadingRightPaneContainer(this);
 		mViewShadow = new View(context);
+		mRightPaneBackground = new FrameLayout(context);
+		mRightPaneBackground.setWillNotDraw(false);
 
 		final LayoutInflater inflater = LayoutInflater.from(context);
 		if (leftPaneLayout == 0) throw new IllegalArgumentException();
-		mLeftPaneLayout = inflater.inflate(leftPaneLayout, mViewLeftPaneContainer, true);
+		mLeftPaneView = inflater.inflate(leftPaneLayout, mLeftPaneLayout, true);
 
 		if (rightPaneLayout == 0) throw new IllegalArgumentException();
-		mRightPaneLayout = inflater.inflate(rightPaneLayout, mRightPaneContent, true);
+		mRightPaneView = inflater.inflate(rightPaneLayout, mFadingRightPaneContainer, true);
 
-		addView(mViewLeftPaneContainer, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-		addView(mViewRightPaneContainer, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		addView(mLeftPaneLayout, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+		addView(mRightPaneLayout, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
 		mViewShadow.setBackgroundResource(shadowDrawableRes);
 		if (mShadowWidth <= 0 || shadowDrawableRes == 0) {
 			mViewShadow.setVisibility(GONE);
 		}
-		mViewRightPaneContainer.addView(mViewShadow, mShadowWidth, LinearLayout.LayoutParams.MATCH_PARENT);
-		mViewRightPaneContainer.addView(mRightPaneContent, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		mRightPaneLayout.addView(mViewShadow, mShadowWidth, LinearLayout.LayoutParams.MATCH_PARENT);
+		mRightPaneLayout.addView(mRightPaneContainer, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
-		mRightPaneContent.setTouchInterceptor(mTouchInterceptor);
-		mViewRightPaneContainer.setOnSwipeListener(new SwipeFadeListener());
+		mRightPaneContainer.addView(mRightPaneBackground, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		mRightPaneContainer.addView(mFadingRightPaneContainer, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		mRightPaneContainer.setTouchInterceptor(mTouchInterceptor);
+		mRightPaneLayout.setOnSwipeListener(new SwipeFadeListener());
 		mViewShadow.setOnTouchListener(mShadowTouchListener);
 		setShadowSlidable(shadowSlidable);
 	}
@@ -192,11 +201,11 @@ public class SlidingPaneView extends ViewGroup {
 	}
 
 	public ViewGroup getLeftPaneContainer() {
-		return mViewLeftPaneContainer;
+		return mLeftPaneLayout;
 	}
 
 	public View getLeftPaneLayout() {
-		return mLeftPaneLayout;
+		return mLeftPaneView;
 	}
 
 	public int getLeftPaneSpacingWidth() {
@@ -204,11 +213,11 @@ public class SlidingPaneView extends ViewGroup {
 	}
 
 	public ViewGroup getRightPaneContainer() {
-		return mViewRightPaneContainer;
+		return mRightPaneLayout;
 	}
 
 	public View getRightPaneLayout() {
-		return mRightPaneLayout;
+		return mRightPaneView;
 	}
 
 	public int getShadowWidth() {
@@ -299,6 +308,10 @@ public class SlidingPaneView extends ViewGroup {
 	public void setFlingDuration(final int duration) {
 		mFlingDuration = duration;
 	}
+	
+	public void setRightPaneBackground(final int resId) {
+		mRightPaneBackground.setBackgroundResource(resId);
+	}
 
 	public void setShadowSlidable(final boolean slidable) {
 		mShadowSlidable = slidable;
@@ -313,7 +326,6 @@ public class SlidingPaneView extends ViewGroup {
 
 	public void setShadowWidth(final int width) {
 		if (mShadowWidth == width) return;
-
 		mShadowWidth = width;
 		mViewShadow.getLayoutParams().width = mShadowWidth;
 		mForceRefresh = true;
@@ -342,7 +354,7 @@ public class SlidingPaneView extends ViewGroup {
 		final int childrenCount = getChildCount();
 		for (int i = 0; i < childrenCount; ++i) {
 			final View v = getChildAt(i);
-			if (v == mViewRightPaneContainer) {
+			if (v == mRightPaneLayout) {
 				final int shadowWidth = isShadowVisible() ? mShadowWidth : 0;
 				v.layout(l + mLeftSpacing - shadowWidth, t, l + mLeftSpacing + v.getMeasuredWidth(),
 						t + v.getMeasuredHeight());
@@ -364,11 +376,11 @@ public class SlidingPaneView extends ViewGroup {
 		final int childrenCount = getChildCount();
 		for (int i = 0; i < childrenCount; ++i) {
 			final View v = getChildAt(i);
-			if (v == mViewLeftPaneContainer) {
+			if (v == mLeftPaneLayout) {
 				// setting size of actions according to spacing parameters
-				mViewLeftPaneContainer.measure(MeasureSpec.makeMeasureSpec(width - mRightSpacing, MeasureSpec.EXACTLY),
+				mLeftPaneLayout.measure(MeasureSpec.makeMeasureSpec(width - mRightSpacing, MeasureSpec.EXACTLY),
 						heightMeasureSpec);
-			} else if (v == mViewRightPaneContainer) {
+			} else if (v == mRightPaneLayout) {
 				final int shadowWidth = isShadowVisible() ? mShadowWidth : 0;
 				final int contentWidth = MeasureSpec.getSize(widthMeasureSpec) - mLeftSpacing + shadowWidth;
 				v.measure(MeasureSpec.makeMeasureSpec(contentWidth, MeasureSpec.EXACTLY), heightMeasureSpec);
@@ -394,13 +406,13 @@ public class SlidingPaneView extends ViewGroup {
 		if (mFadeType == FADE_NONE) return;
 
 		final float scrollFactor = mController.getScrollFactor();
-		if ((mFadeType & FADE_LEFT) > 0) {
-			final int fadeFactor = (int) (scrollFactor * mFadeMax);
-			mViewLeftPaneContainer.invalidate(fadeFactor);
+		if ((mFadeType & FADE_LEFT) > 0 || mFadeType == FADE_BOTH) {
+			final int fadeFactor = 0xff - (int) ((1f - scrollFactor) * mFadeMax);
+			mLeftPaneLayout.setFadeFactor(fadeFactor);
 		}
-		if ((mFadeType & FADE_RIGHT) > 0) {
-			final int fadeFactor = (int) ((1f - scrollFactor) * mFadeMax);
-			mViewRightPaneContainer.invalidate(fadeFactor);
+		if ((mFadeType & FADE_RIGHT) > 0 || mFadeType == FADE_BOTH) {
+			final int fadeFactor = 0xff - (int) (scrollFactor * mFadeMax);
+			mFadingRightPaneContainer.setFadeFactor(fadeFactor);
 		}
 	}
 
@@ -452,7 +464,6 @@ public class SlidingPaneView extends ViewGroup {
 
 	public static class LeftPaneLayout extends FrameLayout {
 
-		private final Paint mFadePaint = new Paint();
 		private int mFadeFactor = 0;
 		private final SlidingPaneView parent;
 
@@ -461,7 +472,7 @@ public class SlidingPaneView extends ViewGroup {
 			this.parent = parent;
 		}
 
-		public void invalidate(final int fadeFactor) {
+		public void setFadeFactor(final int fadeFactor) {
 			mFadeFactor = fadeFactor;
 			invalidate();
 		}
@@ -476,12 +487,9 @@ public class SlidingPaneView extends ViewGroup {
 
 		@Override
 		protected void dispatchDraw(final Canvas canvas) {
+			canvas.saveLayerAlpha(null, mFadeFactor, Canvas.ALL_SAVE_FLAG);
 			super.dispatchDraw(canvas);
-
-			if (mFadeFactor > 0f) {
-				mFadePaint.setColor(Color.argb(mFadeFactor, 0, 0, 0));
-				canvas.drawRect(0, 0, getWidth(), getHeight(), mFadePaint);
-			}
+			canvas.restore();
 		}
 	}
 
@@ -612,12 +620,12 @@ public class SlidingPaneView extends ViewGroup {
 			final int x = mScroller.getCurrX();
 			final int diff = mLastFlingX - x;
 			if (diff != 0) {
-				mViewRightPaneContainer.scrollBy(diff, 0);
+				mRightPaneLayout.scrollBy(diff, 0);
 				mLastFlingX = x;
 			}
 
 			if (more) {
-				mViewRightPaneContainer.post(this);
+				mRightPaneLayout.post(this);
 			}
 		}
 
@@ -629,7 +637,7 @@ public class SlidingPaneView extends ViewGroup {
 		private void completeScrolling(final float delta) {
 			if (delta == 0) {
 				final int bound = getRightBound();
-				final int scroll = mViewRightPaneContainer.getScrollX();
+				final int scroll = mRightPaneLayout.getScrollX();
 				if (-scroll < bound / 2) {
 					showRightPane(getFlingDuration());
 				} else {
@@ -649,26 +657,26 @@ public class SlidingPaneView extends ViewGroup {
 			if (dx == 0) return;
 			mIsScrolling = true;
 			if (duration <= 0) {
-				mViewRightPaneContainer.scrollBy(-dx, 0);
+				mRightPaneLayout.scrollBy(-dx, 0);
 				return;
 			}
 
 			mScroller.startScroll(startX, 0, dx, 0, duration);
 
 			mLastFlingX = startX;
-			mViewRightPaneContainer.post(this);
+			mRightPaneLayout.post(this);
 		}
 
 		private float getScrollFactor() {
-			return 1f + (float) mViewRightPaneContainer.getScrollX() / (float) getRightBound();
+			return - (float) mRightPaneLayout.getScrollX() / (float) getRightBound();
 		}
 
 		private void hideRightPane(final int duration) {
 			mIsRightPaneShown = false;
-			if (mViewRightPaneContainer.getMeasuredWidth() == 0 || mViewRightPaneContainer.getMeasuredHeight() == 0)
+			if (mRightPaneLayout.getMeasuredWidth() == 0 || mRightPaneLayout.getMeasuredHeight() == 0)
 				return;
 
-			final int startX = mViewRightPaneContainer.getScrollX();
+			final int startX = mRightPaneLayout.getScrollX();
 			final int dx = getRightBound() + startX;
 			fling(startX, dx, duration);
 		}
@@ -690,7 +698,7 @@ public class SlidingPaneView extends ViewGroup {
 			if (!mScroller.isFinished()) {
 				x = mScroller.getFinalX();
 			} else {
-				x = mViewRightPaneContainer.getScrollX();
+				x = mRightPaneLayout.getScrollX();
 			}
 			return x == 0;
 		}
@@ -719,7 +727,7 @@ public class SlidingPaneView extends ViewGroup {
 		 * @param dx
 		 */
 		private void scrollBy(final int dx) {
-			final int x = mViewRightPaneContainer.getScrollX();
+			final int x = mRightPaneLayout.getScrollX();
 
 			final int scrollBy;
 			if (dx < 0) { // scrolling right
@@ -740,15 +748,15 @@ public class SlidingPaneView extends ViewGroup {
 				}
 			}
 
-			mViewRightPaneContainer.scrollBy(scrollBy, 0);
+			mRightPaneLayout.scrollBy(scrollBy, 0);
 		}
 
 		private void showRightPane(final int duration) {
 			mIsRightPaneShown = true;
-			if (mViewRightPaneContainer.getMeasuredWidth() == 0 || mViewRightPaneContainer.getMeasuredHeight() == 0)
+			if (mRightPaneLayout.getMeasuredWidth() == 0 || mRightPaneLayout.getMeasuredHeight() == 0)
 				return;
 
-			final int startX = mViewRightPaneContainer.getScrollX();
+			final int startX = mRightPaneLayout.getScrollX();
 			final int dx = startX;
 			fling(startX, dx, duration);
 		}
@@ -756,9 +764,6 @@ public class SlidingPaneView extends ViewGroup {
 
 	private static class RightPaneLayout extends ExtendedLinearLayout {
 
-		private final Paint mFadePaint = new Paint();
-
-		private int mFadeFactor = 0;
 		private OnSwipeListener mOnSwipeListener;
 
 		public RightPaneLayout(final SlidingPaneView parent) {
@@ -766,23 +771,8 @@ public class SlidingPaneView extends ViewGroup {
 			setOrientation(LinearLayout.HORIZONTAL);
 		}
 
-		public void invalidate(final int fadeFactor) {
-			mFadeFactor = fadeFactor;
-			invalidate();
-		}
-
 		public void setOnSwipeListener(final OnSwipeListener listener) {
 			mOnSwipeListener = listener;
-		}
-
-		@Override
-		protected void dispatchDraw(final Canvas canvas) {
-			super.dispatchDraw(canvas);
-
-			if (mFadeFactor > 0f) {
-				mFadePaint.setColor(Color.argb(mFadeFactor, 0, 0, 0));
-				canvas.drawRect(0, 0, getWidth(), getHeight(), mFadePaint);
-			}
 		}
 
 		@Override
@@ -798,9 +788,32 @@ public class SlidingPaneView extends ViewGroup {
 		}
 
 	}
+	
+	private static class FadingRightPaneContainer extends ExtendedFrameLayout {
+		
+		private int mFadeFactor = 0;
+
+		public FadingRightPaneContainer(final SlidingPaneView parent) {
+			super(parent.getContext());
+		}
+		
+		public void setFadeFactor(final int fadeFactor) {
+			mFadeFactor = fadeFactor;
+			invalidate();
+		}
+		
+
+		@Override
+		protected void dispatchDraw(final Canvas canvas) {
+			canvas.saveLayerAlpha(null, mFadeFactor, Canvas.ALL_SAVE_FLAG);
+			super.dispatchDraw(canvas);
+			canvas.restore();
+		}
+	}
 
 	private static class ScrollTouchInterceptor implements TouchInterceptor {
 
+		private final SlidingPaneView mParent;
 		private final ContentScrollController mController;
 		private final int mScaledTouchSlop;
 		private final Context mContext;
@@ -808,7 +821,9 @@ public class SlidingPaneView extends ViewGroup {
 		private float mTempDeltaX, mTotalMoveX, mTotalMoveY, mActualMoveX;
 		private boolean mIsVerticalScrolling, mFirstDownHandled, mShouldDisableScroll;
 
+
 		ScrollTouchInterceptor(final SlidingPaneView parent) {
+			mParent = parent;
 			mScaledTouchSlop = ViewConfiguration.get(parent.getContext()).getScaledTouchSlop();
 			mController = parent.getController();
 			mContext = parent.getContext();
@@ -841,6 +856,7 @@ public class SlidingPaneView extends ViewGroup {
 					mTotalMoveY = 0;
 					mActualMoveX = 0;
 					mIsVerticalScrolling = false;
+					//mParent.animateOpen();
 					break;
 				}
 				case MotionEvent.ACTION_MOVE: {

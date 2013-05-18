@@ -3,5 +3,6 @@
 
 	<dimen name="pane_spacing_right">150dp</dimen>
 	<dimen name="image_preview_preferred_width">480dp</dimen>
+	<dimen name="default_slidingpane_shadow_width">8dp</dimen>
 
 </resources>

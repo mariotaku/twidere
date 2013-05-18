@@ -34,12 +34,12 @@ public class ProfileBannerImageView extends ImageView implements IExtendedView {
 	}
 
 	@Override
-	protected void onDraw(Canvas canvas) {
-		super.onDraw(canvas);
+	protected void onDraw(final Canvas canvas) {
 		if (mShader == null) return;
 		final int width = getWidth(), height = getHeight();
 		mPaint.setShader(mShader);
 		mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+		super.onDraw(canvas);
 		canvas.drawRect(0, 0, width, height, mPaint);
 	}
 
@@ -57,7 +57,7 @@ public class ProfileBannerImageView extends ImageView implements IExtendedView {
 	@Override
 	protected final void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
-		mShader= new LinearGradient(w / 2, 0, w / 2, h, 0xffffffff, 0x00ffffff, Shader.TileMode.CLAMP);
+		mShader = new LinearGradient(w / 2, 0, w / 2, h, 0xffffffff, 0x00ffffff, Shader.TileMode.CLAMP);
 		if (mOnSizeChangedListener != null) {
 			mOnSizeChangedListener.onSizeChanged(this, w, h, oldw, oldh);
 		}

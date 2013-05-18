@@ -28,7 +28,10 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 
 	@Override
 	public MenuInflater getMenuInflater() {
-		return mActionBarCompat.getMenuInflater(super.getMenuInflater());
+		if (mActionBarCompat instanceof ActionBarCompatBase) {
+			return mActionBarCompat.getMenuInflater(super.getMenuInflater());
+		}
+		return super.getMenuInflater();
 	}
 
 	public ActionBar getSupportActionBar() {
