@@ -10,7 +10,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content">
 
-		<org.mariotaku.twidere.view.ProfileBannerImageView
+		<org.mariotaku.twidere.view.ClickableProfileBannerImageView
 			android:id="@+id/profile_banner"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"

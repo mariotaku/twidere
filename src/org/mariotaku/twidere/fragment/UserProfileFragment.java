@@ -416,6 +416,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mProfileImageLoader = getApplication().getImageLoaderWrapper();
 		mAdapter = new ListActionAdapter(getActivity());
 		mProfileImageView.setOnClickListener(this);
+		mProfileBannerView.setOnClickListener(this);
 		mNameContainer.setOnClickListener(this);
 		mEditFollowButton.setOnClickListener(this);
 		mTweetsContainer.setOnClickListener(this);
@@ -500,6 +501,12 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			case R.id.profile_image: {
 				final String profile_image_url_string = getOriginalTwitterProfileImage(mUser.profile_image_url);
 				openImage(getActivity(), profile_image_url_string, null, false);
+				break;
+			}
+			case R.id.profile_banner: {
+				final String profile_banner_url = mUser.profile_banner_url;
+				if (profile_banner_url == null) return;
+				openImage(getActivity(), profile_banner_url + "/ipad_retina", null, false);
 				break;
 			}
 			case R.id.tweets_container: {
