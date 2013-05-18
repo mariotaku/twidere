@@ -33,7 +33,7 @@ public class StatusViewHolder {
 
 	public final ImageView my_profile_image, profile_image, image_preview;
 	public final TextView name, screen_name, text, time, reply_retweet_status;
-	public final View image_preview_frame, name_container, image_preview_container;
+	public final View name_container, image_preview_container;
 	private final View gap_indicator;
 	private final ColorLabelRelativeLayout content;
 	private final int theme_color;
@@ -47,7 +47,6 @@ public class StatusViewHolder {
 		theme_color = Color.argb(0x60, Color.red(color), Color.green(color), Color.blue(color));
 		gap_indicator = view.findViewById(R.id.list_gap_text);
 		image_preview_container = view.findViewById(R.id.image_preview_container);
-		image_preview_frame = view.findViewById(R.id.image_preview_frame);
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		my_profile_image = (ImageView) view.findViewById(R.id.my_profile_image);
 		image_preview = (ImageView) view.findViewById(R.id.image_preview);

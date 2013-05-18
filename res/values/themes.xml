@@ -14,7 +14,6 @@
 		<item name="selectableViewStyle">@style/Widget.Twidere.SelectableView</item>
 		<item name="editTextStyle">@style/Widget.Holo.EditText</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Large</item>
-		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_dark</item>
 		<item name="messagesBackground">#20000000</item>
 		<item name="android:itemBackground">@drawable/item_background_holo_dark</item>
 		<item name="android:windowBackground">@drawable/background_holo_dark</item>
@@ -36,7 +35,6 @@
 		<item name="selectableViewStyle">@style/Widget.Twidere.Light.SelectableView</item>
 		<item name="editTextStyle">@style/Widget.Holo.Light.EditText</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Light.Large</item>
-		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_light</item>
 		<item name="messagesBackground">#20808080</item>
 		<item name="android:itemBackground">@drawable/item_background_holo_light</item>
 		<item name="android:windowBackground">@drawable/background_holo_light</item>
@@ -59,7 +57,6 @@
 		<item name="borderlessImageButtonStyle">@style/Widget.Twidere.ImageButton.Borderless</item>
 		<item name="selectableViewStyle">@style/Widget.Twidere.SelectableView</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Large</item>
-		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_dark</item>
 		<item name="android:itemBackground">@drawable/item_background_holo_dark</item>
 		<item name="messagesBackground">#20000000</item>
 
@@ -108,7 +105,6 @@
 		<item name="borderlessImageButtonStyle">@style/Widget.Twidere.ImageButton.Borderless</item>
 		<item name="selectableViewStyle">@style/Widget.Twidere.SelectableView</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Large</item>
-		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_dark</item>
 		<item name="messagesBackground">#20000000</item>
 		<item name="android:itemBackground">@drawable/item_background_holo_dark</item>
 
@@ -128,7 +124,6 @@
 		<item name="borderlessImageButtonStyle">@style/Widget.Twidere.Light.ImageButton.Borderless</item>
 		<item name="selectableViewStyle">@style/Widget.Twidere.Light.SelectableView</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Light.Large</item>
-		<item name="imagePreviewBackground">@drawable/image_preview_background_holo_light</item>
 		<item name="messagesBackground">#20808080</item>
 		<item name="android:itemBackground">@drawable/item_background_holo_light</item>
 

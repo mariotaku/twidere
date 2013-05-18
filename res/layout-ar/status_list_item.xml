@@ -96,22 +96,14 @@
 		android:layout_below="@+id/text"
 		android:layout_marginTop="8dp"
 		android:layout_toLeftOf="@+id/profile_image"
-		android:layout_toRightOf="@+id/my_profile_image"
-		android:background="?imagePreviewBackground">
+		android:layout_toRightOf="@+id/my_profile_image">
 
-		<FrameLayout
-			android:id="@+id/image_preview_frame"
+		<org.mariotaku.twidere.view.StatusImagePreviewItemView
+			android:id="@+id/image_preview"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_marginTop="8dp"
-			android:background="?imagePreviewBackground">
+			android:cropToPadding="true"/>
 
-			<org.mariotaku.twidere.view.StatusImagePreviewItemView
-				android:id="@+id/image_preview"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:radius="4dp"/>
-		</FrameLayout>
 	</FrameLayout>
 
 	<TextView
@@ -121,8 +113,7 @@
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_below="@+id/image_preview_container"
 		android:layout_toLeftOf="@+id/profile_image"
-		android:drawablePadding="4dp"
-		
+		android:drawablePadding="4dp"		
 		android:paddingLeft="8dp"
 		android:paddingTop="4dp"
 		android:textColor="?android:attr/textColorSecondary"/>
@@ -132,8 +123,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="42dp"
 		android:layout_centerInParent="true"
-		android:gravity="center"
-		
+		android:gravity="center"		
 		android:text="@string/tap_to_load_more"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:textColor="#606060"

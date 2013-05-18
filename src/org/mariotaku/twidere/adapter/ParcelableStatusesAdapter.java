@@ -249,27 +249,27 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			holder.image_preview_container.setVisibility(!mFastTimelineProcessingEnabled && has_preview ? View.VISIBLE
 					: View.GONE);
 			if (has_preview) {
-				final MarginLayoutParams lp = (MarginLayoutParams) holder.image_preview_frame.getLayoutParams();
+				final MarginLayoutParams lp = (MarginLayoutParams) holder.image_preview.getLayoutParams();
 				if (mInlineImagePreviewDisplayOption == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE) {
 					lp.width = LayoutParams.MATCH_PARENT;
 					lp.leftMargin = 0;
-					holder.image_preview_frame.setLayoutParams(lp);
+					holder.image_preview.setLayoutParams(lp);
 				} else if (mInlineImagePreviewDisplayOption == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_SMALL) {
 					lp.width = mResources.getDimensionPixelSize(R.dimen.image_preview_width);
 					lp.leftMargin = (int) (mDensity * 16);
-					holder.image_preview_frame.setLayoutParams(lp);
+					holder.image_preview.setLayoutParams(lp);
 				}
 				if (status.is_possibly_sensitive && !mDisplaySensitiveContents) {
 					holder.image_preview.setImageResource(R.drawable.image_preview_nsfw);
 				} else {
 					mLazyImageLoader.displayPreviewImage(holder.image_preview, status.image_preview_url);
 				}
-				holder.image_preview_frame.setTag(position);
+				holder.image_preview.setTag(position);
 			}
 		}
 		holder.profile_image.setOnClickListener(mMultiSelectEnabled ? null : this);
 		holder.my_profile_image.setOnClickListener(mMultiSelectEnabled ? null : this);
-		holder.image_preview_frame.setOnClickListener(mMultiSelectEnabled ? null : this);
+		holder.image_preview.setOnClickListener(mMultiSelectEnabled ? null : this);
 		return view;
 	}
 
@@ -280,7 +280,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		final ParcelableStatus status = tag instanceof Integer ? getStatus((Integer) tag) : null;
 		if (status == null) return;
 		switch (view.getId()) {
-			case R.id.image_preview_frame: {
+			case R.id.image_preview: {
 				final ImageSpec spec = getAllAvailableImage(status.image_orig_url, true);
 				if (spec != null) {
 					openImage(mContext, spec.full_image_link, spec.orig_link, status.is_possibly_sensitive);

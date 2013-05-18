@@ -2,13 +2,12 @@
 <org.mariotaku.twidere.view.ExtendedFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:layout_margin="18dp"
-	android:background="?imagePreviewBackground">
+	android:layout_margin="18dp">
 
 	<org.mariotaku.twidere.view.StatusImagePreviewItemView
 		android:id="@+id/image_preview_item"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:radius="4dp"/>
+		android:clickable="true"/>
 
 </org.mariotaku.twidere.view.ExtendedFrameLayout>

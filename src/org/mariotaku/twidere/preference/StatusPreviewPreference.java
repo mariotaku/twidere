@@ -129,16 +129,16 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 
 		mHolder.image_preview_container.setVisibility(!fast_timeline_processing
 				&& option != INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE ? View.VISIBLE : View.GONE);
-		final MarginLayoutParams lp = (MarginLayoutParams) mHolder.image_preview_frame.getLayoutParams();
+		final MarginLayoutParams lp = (MarginLayoutParams) mHolder.image_preview.getLayoutParams();
 		if (option == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE) {
 			lp.width = LayoutParams.MATCH_PARENT;
 			lp.leftMargin = 0;
-			mHolder.image_preview_frame.setLayoutParams(lp);
+			mHolder.image_preview.setLayoutParams(lp);
 		} else if (option == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_SMALL) {
 			final Resources res = getContext().getResources();
 			lp.width = res.getDimensionPixelSize(R.dimen.image_preview_width);
 			lp.leftMargin = (int) (res.getDisplayMetrics().density * 16);
-			mHolder.image_preview_frame.setLayoutParams(lp);
+			mHolder.image_preview.setLayoutParams(lp);
 		}
 	}
 
