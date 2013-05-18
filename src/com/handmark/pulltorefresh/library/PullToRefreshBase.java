@@ -312,6 +312,17 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 						return true;
 					}
 
+					switch (mCurrentMode) {
+						case PULL_UP_TO_REFRESH: {
+							mFooterLayout.resetAccessibilityState();
+							break;
+						}
+						case PULL_DOWN_TO_REFRESH:
+						default: {
+							mHeaderLayout.resetAccessibilityState();
+							break;
+						}
+					}
 					smoothScrollTo(0);
 					return true;
 				}

@@ -110,13 +110,23 @@ public class LoadingLayout extends FrameLayout {
 	public LoadingLayout(final Context context, final TypedArray attrs, final int defStyle) {
 		this(context, Mode.PULL_DOWN_TO_REFRESH, attrs);
 	}
+	
+	private boolean mNotifyPullToRefreshCalled;
+
+	public void resetAccessibilityState() {
+		// TODO: Implement this method
+		mNotifyPullToRefreshCalled = false;
+	}
 
 	public void notifyPullToRefresh() {
+		if (mNotifyPullToRefreshCalled) return;
 		final CharSequence text = Html.fromHtml(mPullLabel);
 		notifyAccessibilityService(text);
+		mNotifyPullToRefreshCalled = true;
 	}
 
 	public void pullToRefresh() {
+		mNotifyPullToRefreshCalled = false;
 		if (mArrowRotated) {
 			mHeaderArrow.startAnimation(mRotateAnimation);
 			rotateArrow();
@@ -137,6 +147,7 @@ public class LoadingLayout extends FrameLayout {
 	}
 
 	public void releaseToRefresh() {
+		mNotifyPullToRefreshCalled = false;
 		if (!mArrowRotated) {
 			mHeaderArrow.startAnimation(mRotateAnimation);
 			rotateArrow();
@@ -148,6 +159,7 @@ public class LoadingLayout extends FrameLayout {
 	}
 
 	public void reset() {
+		mNotifyPullToRefreshCalled = false;
 		mHeaderText.setText(Html.fromHtml(mPullLabel));
 		mHeaderArrow.setImageResource(R.drawable.pull_to_refresh_arrow);
 		mHeaderArrow.setVisibility(View.VISIBLE);
