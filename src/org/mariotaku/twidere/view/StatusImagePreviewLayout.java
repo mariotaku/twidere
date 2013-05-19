@@ -129,11 +129,11 @@ public class StatusImagePreviewLayout extends LinearLayout implements Constants,
 		for (final ImageSpec spec : mData) {
 			final ExtendedFrameLayout view = (ExtendedFrameLayout) inflater.inflate(R.layout.image_preview_item, this,
 					false);
-			view.setTag(spec);
-			view.setOnClickListener(this);
 			view.setOnSizeChangedListener(this);
 			addView(view);
 			final ImageView image_view = (ImageView) view.findViewById(R.id.image_preview_item);
+			image_view.setTag(spec);
+			image_view.setOnClickListener(this);
 			if (mIsPossiblySensitive && !prefs.getBoolean(PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS, false)) {
 				view.findViewById(R.id.image_preview_progress).setVisibility(View.GONE);
 				image_view.setImageResource(R.drawable.image_preview_nsfw);
