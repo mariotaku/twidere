@@ -114,7 +114,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	public ImageLoaderWrapper getImageLoaderWrapper() {
 		if (mImageLoaderWrapper != null) return mImageLoaderWrapper;
-		return mImageLoaderWrapper = new ImageLoaderWrapper(this, getImageLoader());
+		return mImageLoaderWrapper = new ImageLoaderWrapper(getImageLoader());
 	}
 
 	public MultiSelectManager getMultiSelectManager() {

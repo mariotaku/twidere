@@ -46,7 +46,7 @@ public class ImageLoaderWrapper implements Constants {
 	private final ImageLoader mImageLoader;
 	private final DisplayImageOptions mProfileImageDisplayOptions, mImageDisplayOptions;
 
-	public ImageLoaderWrapper(final Context context, final ImageLoader loader) {
+	public ImageLoaderWrapper(final ImageLoader loader) {
 		mImageLoader = loader;
 		final DisplayImageOptions.Builder profile_opts_builder = new DisplayImageOptions.Builder();
 		profile_opts_builder.cacheInMemory();
@@ -60,7 +60,6 @@ public class ImageLoaderWrapper implements Constants {
 		image_opts_builder.cacheOnDisc();
 		image_opts_builder.bitmapConfig(Bitmap.Config.RGB_565);
 		image_opts_builder.resetViewBeforeLoading();
-		image_opts_builder.showStubImage(R.drawable.image_preview_fallback_large);
 		mImageDisplayOptions = image_opts_builder.build();
 	}
 

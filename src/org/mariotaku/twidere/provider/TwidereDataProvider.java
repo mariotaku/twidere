@@ -247,7 +247,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 		mPreferences = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mPermissionsManager = new PermissionsManager(mContext);
-		mImagePreloader = new ImagePreloader(mContext);
+		mImagePreloader = new ImagePreloader(app.getImageLoader());
 		final IntentFilter filter = new IntentFilter();
 		filter.addAction(BROADCAST_HOME_ACTIVITY_ONSTART);
 		filter.addAction(BROADCAST_HOME_ACTIVITY_ONSTOP);
@@ -557,9 +557,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 					: status.name);
 		}
 		final String profile_image_url_string = status.profile_image_url;
-		final File profile_image_file = mImagePreloader.getCachedImageFile(DIR_NAME_IMAGE_CACHE,
-				display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
-						: profile_image_url_string);
+		final File profile_image_file = mImagePreloader.getCachedImageFile(display_hires_profile_image ?
+				getBiggerTwitterProfileImage(profile_image_url_string) : profile_image_url_string);
 		final int w = res.getDimensionPixelSize(R.dimen.notification_large_icon_width);
 		final int h = res.getDimensionPixelSize(R.dimen.notification_large_icon_height);
 		final Bitmap profile_image = profile_image_file != null && profile_image_file.isFile() ? BitmapFactory
@@ -666,9 +665,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		}
 		final String text_plain = message.text_plain;
 		final String profile_image_url_string = message.sender_profile_image_url;
-		final File profile_image_file = mImagePreloader.getCachedImageFile(DIR_NAME_IMAGE_CACHE,
-				display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
-						: profile_image_url_string);
+		final File profile_image_file = mImagePreloader.getCachedImageFile(display_hires_profile_image ?
+				getBiggerTwitterProfileImage(profile_image_url_string) : profile_image_url_string);
 		final int w = res.getDimensionPixelSize(R.dimen.notification_large_icon_width);
 		final int h = res.getDimensionPixelSize(R.dimen.notification_large_icon_height);
 		final Bitmap profile_image = profile_image_file != null && profile_image_file.isFile() ? BitmapFactory
@@ -804,22 +802,22 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			if (mPreferences.getBoolean(PREFERENCE_KEY_PRELOAD_PROFILE_IMAGES, false)) {
 				final String profile_image_url = v.getAsString(Statuses.PROFILE_IMAGE_URL);
 				if (profile_image_url != null) {
-					mImagePreloader.preloadImage(DIR_NAME_IMAGE_CACHE, profile_image_url);
+					mImagePreloader.preloadImage(profile_image_url);
 				}
 				final String sender_profile_image_url = v.getAsString(DirectMessages.SENDER_PROFILE_IMAGE_URL);
 				if (sender_profile_image_url != null) {
-					mImagePreloader.preloadImage(DIR_NAME_IMAGE_CACHE, sender_profile_image_url);
+					mImagePreloader.preloadImage(sender_profile_image_url);
 				}
 				final String recipient_profile_image_url = v.getAsString(DirectMessages.RECIPIENT_PROFILE_IMAGE_URL);
 				if (recipient_profile_image_url != null) {
-					mImagePreloader.preloadImage(DIR_NAME_IMAGE_CACHE, recipient_profile_image_url);
+					mImagePreloader.preloadImage(recipient_profile_image_url);
 				}
 			}
 			if (mPreferences.getBoolean(PREFERENCE_KEY_PRELOAD_PREVIEW_IMAGES, false)) {
 				final String text_html = v.getAsString(Statuses.TEXT_HTML);
 				for (final ImageSpec spec : Utils.getImagesInStatus(text_html)) {
 					if (spec.image_preview_url != null) {
-						mImagePreloader.preloadImage(DIR_NAME_IMAGE_CACHE, spec.image_preview_url);
+						mImagePreloader.preloadImage(spec.image_preview_url);
 					}
 				}
 			}
