@@ -142,7 +142,7 @@ public class TwidereLinkify {
 			+ STRING_PATTERN_TWITGOO_NO_SCHEME + "|" + STRING_PATTERN_MOBYPICTURE_NO_SCHEME + "|"
 			+ STRING_PATTERN_IMGUR_NO_SCHEME + "|" + STRING_PATTERN_PHOTOZOU_NO_SCHEME + ")", Pattern.CASE_INSENSITIVE);
 
-	public static final Pattern PATTERN_INLINE_PREVIEW_AVAILABLE_IMAGES_MATCH_ONLY = Pattern.compile(
+	public static final Pattern PATTERN_PREVIEW_AVAILABLE_IMAGES_MATCH_ONLY = Pattern.compile(
 			AVAILABLE_URL_SCHEME_PREFIX + "(" + STRING_PATTERN_IMAGES_NO_SCHEME + "|"
 					+ STRING_PATTERN_TWITTER_IMAGES_DOMAIN + "|" + STRING_PATTERN_SINA_WEIBO_IMAGES_DOMAIN + "|"
 					+ STRING_PATTERN_LOCKERZ_AND_PLIXI_DOMAIN + "|" + STRING_PATTERN_INSTAGRAM_DOMAIN + "|"
@@ -304,7 +304,7 @@ public class TwidereLinkify {
 							continue;
 						}
 						string.removeSpan(span);
-						applyLink(spec.full_image_link, spec.orig_link, start, end, string,
+						applyLink(spec.image_full_url, spec.image_original_url, start, end, string,
 								account_id, LINK_TYPE_LINK_WITH_IMAGE_EXTENSION, sensitive);
 					}
 				}

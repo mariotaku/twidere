@@ -344,8 +344,8 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
 		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		final String inline_image_preview_display_option = mPreferences.getString(
-				PREFERENCE_KEY_INLINE_IMAGE_PREVIEW_DISPLAY_OPTION, INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_NONE);
+		final String image_preview_display_option = mPreferences.getString(
+				PREFERENCE_KEY_IMAGE_PREVIEW_DISPLAY_OPTION, IMAGE_PREVIEW_DISPLAY_OPTION_NONE);
 		final boolean show_absolute_time = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false);
 		final boolean display_sensitive_contents = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS,
 				false);
@@ -361,7 +361,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		mAdapter.setTextSize(text_size);
 		mAdapter.setShowAbsoluteTime(show_absolute_time);
 		mAdapter.setNameDisplayOption(name_display_option);
-		mAdapter.setInlineImagePreviewDisplayOption(inline_image_preview_display_option);
+		mAdapter.setImagePreviewDisplayOption(image_preview_display_option);
 		mAdapter.setDisplaySensitiveContents(display_sensitive_contents);
 		mAdapter.setLinkHightlightingEnabled(link_highlighting);
 		mAdapter.setFastTimelineProcessingEnabled(fast_timeline_processing);

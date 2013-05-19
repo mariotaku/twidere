@@ -42,7 +42,7 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
-import static org.mariotaku.twidere.util.Utils.getInlineImagePreviewDisplayOptionInt;
+import static org.mariotaku.twidere.util.Utils.getImagePreviewDisplayOptionInt;
 import static org.mariotaku.twidere.util.Utils.isFiltered;
 import static org.mariotaku.twidere.util.Utils.showErrorMessage;
 
@@ -65,7 +65,7 @@ public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 		mMaxId = max_id;
 		mSinceId = since_id;
 		mHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
-		mLargeInlineImagePreview = getInlineImagePreviewDisplayOptionInt(context) == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE;
+		mLargeInlineImagePreview = getImagePreviewDisplayOptionInt(context) == IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE;
 		mDatabase = TwidereApplication.getInstance(context).getSQLiteDatabase();
 		mHandler = new Handler();
 		mSavedStatusesFileArgs = saved_statuses_args;

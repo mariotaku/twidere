@@ -214,7 +214,7 @@
   <string name="item_1_hour">ساعة</string>
   <string name="item_2_hours">ساعتان</string>
   <string name="item_4_hours">4 ساعات</string>
-  <string name="inline_image_preview_display_option">خيار معاينة الصورة المضمنة</string>
+  <string name="image_preview_display_option">خيار معاينة الصورة المضمنة</string>
   <string name="solid_color_background">خلفية غير متدرجة</string>
   <string name="solid_color_background_summary">هذا سيكون مفيداً إذا كانت شاشة جهازك من نوع AMOLED.</string>
   <string name="following_you">يتابعك</string>

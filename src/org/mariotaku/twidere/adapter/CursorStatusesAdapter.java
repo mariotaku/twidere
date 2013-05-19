@@ -19,6 +19,34 @@
 
 package org.mariotaku.twidere.adapter;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.res.Resources;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.Html;
+import android.text.TextUtils;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
+import java.util.HashMap;
+import java.util.Map;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
+import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.model.ImageSpec;
+import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.model.StatusCursorIndices;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
+import org.mariotaku.twidere.util.MultiSelectManager;
+import org.mariotaku.twidere.util.OnLinkClickHandler;
+import org.mariotaku.twidere.util.TwidereLinkify;
+import org.mariotaku.twidere.view.holder.StatusViewHolder;
+
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
 import static org.mariotaku.twidere.util.Utils.findStatusInDatabases;
@@ -26,7 +54,7 @@ import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getAllAvailableImage;
-import static org.mariotaku.twidere.util.Utils.getInlineImagePreviewDisplayOptionInt;
+import static org.mariotaku.twidere.util.Utils.getImagePreviewDisplayOptionInt;
 import static org.mariotaku.twidere.util.Utils.getNameDisplayOptionInt;
 import static org.mariotaku.twidere.util.Utils.getPreviewImage;
 import static org.mariotaku.twidere.util.Utils.getStatusBackground;
@@ -37,42 +65,14 @@ import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
-import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.model.ImageSpec;
-import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.model.StatusCursorIndices;
-import org.mariotaku.twidere.preference.ThemeColorPreference;
-import org.mariotaku.twidere.util.ImageLoaderWrapper;
-import org.mariotaku.twidere.util.MultiSelectManager;
-import org.mariotaku.twidere.util.OnLinkClickHandler;
-import org.mariotaku.twidere.util.TwidereLinkify;
-import org.mariotaku.twidere.view.holder.StatusViewHolder;
-
-import android.app.Activity;
-import android.content.Context;
-import android.content.res.Resources;
-import android.database.Cursor;
-import android.graphics.Color;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.text.Html;
-import android.text.TextUtils;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
-import android.view.ViewGroup.MarginLayoutParams;
-import android.text.Spanned;
-import android.text.SpannableString;
-
-public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatusesAdapter<Cursor>, OnClickListener {
+public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatusesAdapter<Cursor>, OnClickListener, ImageLoadingListener {
 
 	private final Context mContext;
 	private final Resources mResources;
 	private final ImageLoaderWrapper mLazyImageLoader;
 	private final MultiSelectManager mMultiSelectManager;
 	private final TwidereLinkify mLinkify;
+	private final Map<View, String> mLoadingViewsMap = new HashMap<View, String>();
 
 	private final float mDensity;
 
@@ -80,7 +80,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			mMentionsHighlightDisabled, mDisplaySensitiveContents, mIndicateMyStatusDisabled, mLinkHighlightingEnabled,
 			mFastTimelineProcessingEnabled, mLinkUnderlineOnly;
 	private float mTextSize;
-	private int mNameDisplayOption, mInlineImagePreviewDisplayOption;
+	private int mNameDisplayOption, mImagePreviewDisplayOption;
 	private StatusCursorIndices mIndices;
 
 	public CursorStatusesAdapter(final Context context) {
@@ -133,7 +133,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 					.getString(mIndices.location));
 			final boolean is_possibly_sensitive = cursor.getInt(mIndices.is_possibly_sensitive) == 1;
 			final ImageSpec preview = !mFastTimelineProcessingEnabled ? getPreviewImage(text,
-					mInlineImagePreviewDisplayOption) : null;
+					mImagePreviewDisplayOption) : null;
 			final boolean has_media = preview != null;
 
 			// User type (protected/verified)
@@ -241,24 +241,16 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 				holder.my_profile_image.setVisibility(View.GONE);
 			}
 			final boolean has_preview = mFastTimelineProcessingEnabled ? false
-					: mInlineImagePreviewDisplayOption != INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE && has_media
-							&& preview.preview_image_link != null;
+					: mImagePreviewDisplayOption != IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE && has_media
+							&& preview.image_preview_url != null;
 			holder.image_preview_container.setVisibility(has_preview ? View.VISIBLE : View.GONE);
 			if (has_preview) {
-				final MarginLayoutParams lp = (MarginLayoutParams) holder.image_preview.getLayoutParams();
-				if (mInlineImagePreviewDisplayOption == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE) {
-					lp.width = LayoutParams.MATCH_PARENT;
-					lp.leftMargin = 0;
-					holder.image_preview.setLayoutParams(lp);
-				} else if (mInlineImagePreviewDisplayOption == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_SMALL) {
-					lp.width = mResources.getDimensionPixelSize(R.dimen.image_preview_width);
-					lp.leftMargin = (int) (mDensity * 16);
-					holder.image_preview.setLayoutParams(lp);
-				}
+				holder.setImagePreviewDisplayOption(mImagePreviewDisplayOption);
 				if (is_possibly_sensitive && !mDisplaySensitiveContents) {
 					holder.image_preview.setImageResource(R.drawable.image_preview_nsfw);
-				} else {
-					mLazyImageLoader.displayPreviewImage(holder.image_preview, preview.preview_image_link);
+					holder.image_preview_progress.setVisibility(View.GONE);
+				} else if (!preview.image_preview_url.equals(mLoadingViewsMap.get(holder.image_preview))) {
+					mLazyImageLoader.displayPreviewImage(holder.image_preview, preview.image_preview_url, this);
 				}
 				holder.image_preview.setTag(position);
 			}
@@ -313,11 +305,11 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 		if (status == null) return;
 		switch (view.getId()) {
 			case R.id.image_preview: {
-					final ImageSpec spec = getAllAvailableImage(status.image_orig_url, true);
+					final ImageSpec spec = getAllAvailableImage(status.image_original_url, true);
 				if (spec != null) {
-					openImage(mContext, spec.full_image_link, spec.orig_link, status.is_possibly_sensitive);
+					openImage(mContext, spec.image_full_url, spec.image_original_url, status.is_possibly_sensitive);
 				} else {
-					openImage(mContext, status.image_orig_url, null, status.is_possibly_sensitive);
+					openImage(mContext, status.image_original_url, null, status.is_possibly_sensitive);
 				}
 				break;
 			}
@@ -330,7 +322,64 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			}
 		}
 	}
+
+	@Override
+	public void onLoadingStarted(final String url, final View view) {
+		if (view == null || url == null || url.equals(mLoadingViewsMap.get(view))) return;
+		mLoadingViewsMap.put(view, url);
+		final View parent = (View) view.getParent();
+		final ProgressBar progress = (ProgressBar) parent.findViewById(R.id.image_preview_progress);
+		if (progress != null) {
+			progress.setVisibility(View.VISIBLE);
+			progress.setIndeterminate(true);
+			progress.setMax(100);
+		}
+	}
+
+	@Override
+	public void onLoadingFailed(final String url, final View view, final FailReason reason) {
+		if (view == null) return;
+		mLoadingViewsMap.remove(view);
+		final View parent = (View) view.getParent();
+		final View progress = parent.findViewById(R.id.image_preview_progress);
+		if (progress != null) {
+			progress.setVisibility(View.GONE);
+		}
+	}
+
+	@Override
+	public void onLoadingComplete(final String url, final View view, final Bitmap bitmap) {
+		if (view == null) return;
+		mLoadingViewsMap.remove(view);
+		final View parent = (View) view.getParent();
+		final View progress = parent.findViewById(R.id.image_preview_progress);
+		if (progress != null) {
+			progress.setVisibility(View.GONE);
+		}
+	}
+
+	@Override
+	public void onLoadingCancelled(final String url, final View view) {
+		if (view == null || url == null || url.equals(mLoadingViewsMap.get(view))) return;
+		mLoadingViewsMap.remove(view);
+		final View parent = (View) view.getParent();
+		final View progress = parent.findViewById(R.id.image_preview_progress);
+		if (progress != null) {
+			progress.setVisibility(View.GONE);
+		}
+	}
 	
+	@Override
+	public void onLoadingProgressChanged(String imageUri, View view, int current, int total) {
+		if (total == 0) return;
+		final View parent = (View) view.getParent();
+		final ProgressBar progress = (ProgressBar) parent.findViewById(R.id.image_preview_progress);
+		if (progress != null) {
+			progress.setIndeterminate(false);
+			progress.setProgress(100 * current / total);
+		}
+	}
+
 	@Override
 	public void setData(final Cursor data) {
 		swapCursor(data);
@@ -372,10 +421,10 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	}
 
 	@Override
-	public void setInlineImagePreviewDisplayOption(final String option) {
-		final int option_int = getInlineImagePreviewDisplayOptionInt(option);
-		if (option_int == mInlineImagePreviewDisplayOption) return;
-		mInlineImagePreviewDisplayOption = option_int;
+	public void setImagePreviewDisplayOption(final String option) {
+		final int option_int = getImagePreviewDisplayOptionInt(option);
+		if (option_int == mImagePreviewDisplayOption) return;
+		mImagePreviewDisplayOption = option_int;
 		notifyDataSetChanged();
 	}
 

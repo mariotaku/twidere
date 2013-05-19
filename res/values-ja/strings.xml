@@ -212,7 +212,7 @@
   <string name="item_1_hour">1時間</string>
   <string name="item_2_hours">2時間</string>
   <string name="item_4_hours">4時間</string>
-  <string name="inline_image_preview_display_option">インラインプレビュー表示オプション</string>
+  <string name="image_preview_display_option">インラインプレビュー表示オプション</string>
   <string name="solid_color_background">単色の背景</string>
   <string name="solid_color_background_summary">アモレッド搭載した機種ならこの機能を有効にすることをお勧めします。</string>
   <string name="following_you">あなたをフォロー中</string>

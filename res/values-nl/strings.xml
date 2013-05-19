@@ -208,7 +208,7 @@
   <string name="item_1_hour">1 uur</string>
   <string name="item_2_hours">2 uur</string>
   <string name="item_4_hours">4 uur</string>
-  <string name="inline_image_preview_display_option">In lijn fotovoorbeeld weergave optie</string>
+  <string name="image_preview_display_option">In lijn fotovoorbeeld weergave optie</string>
   <string name="solid_color_background">Effen kleur achtergrond</string>
   <string name="solid_color_background_summary">Dit kan handig zijn als het scherm van uw apparaat AMOLED is.</string>
   <string name="following_you">Volgt jou</string>

@@ -19,19 +19,16 @@
 
 package org.mariotaku.twidere.util;
 
-import static org.mariotaku.twidere.util.Utils.getBestBannerType;
- 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.widget.ImageView;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.ListView;
-
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import static org.mariotaku.twidere.util.Utils.getBestBannerType;
 
 /**
  * Lazy image loader for {@link ListView} and {@link GridView} etc.</br> </br>
@@ -63,6 +60,7 @@ public class ImageLoaderWrapper implements Constants {
 		image_opts_builder.cacheOnDisc();
 		image_opts_builder.bitmapConfig(Bitmap.Config.RGB_565);
 		image_opts_builder.resetViewBeforeLoading();
+		image_opts_builder.showStubImage(R.drawable.image_preview_fallback_large);
 		mImageDisplayOptions = image_opts_builder.build();
 	}
 
@@ -76,6 +74,10 @@ public class ImageLoaderWrapper implements Constants {
 
 	public void displayPreviewImage(final ImageView view, final String url) {
 		mImageLoader.displayImage(url, view, mImageDisplayOptions);
+	}
+
+	public void displayPreviewImage(final ImageView view, final String url, final ImageLoadingListener listener) {
+		mImageLoader.displayImage(url, view, mImageDisplayOptions, listener);
 	}
 
 	public void displayProfileBanner(final ImageView view, final String base_url, final int width) {

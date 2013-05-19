@@ -1326,20 +1326,20 @@ public final class Utils implements Constants {
 		return new ImageSpec(preview, full, orig);
 	}
 
-	public static int getInlineImagePreviewDisplayOptionInt(final Context context) {
-		if (context == null) return INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE;
+	public static int getImagePreviewDisplayOptionInt(final Context context) {
+		if (context == null) return IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE;
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final String option = prefs.getString(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW_DISPLAY_OPTION,
-				INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_NONE);
-		return getInlineImagePreviewDisplayOptionInt(option);
+		final String option = prefs.getString(PREFERENCE_KEY_IMAGE_PREVIEW_DISPLAY_OPTION,
+				IMAGE_PREVIEW_DISPLAY_OPTION_NONE);
+		return getImagePreviewDisplayOptionInt(option);
 	}
 
-	public static int getInlineImagePreviewDisplayOptionInt(final String option) {
-		if (INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_LARGE.equals(option))
-			return INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE;
-		else if (INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_SMALL.equals(option))
-			return INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_SMALL;
-		return INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE;
+	public static int getImagePreviewDisplayOptionInt(final String option) {
+		if (IMAGE_PREVIEW_DISPLAY_OPTION_LARGE.equals(option))
+			return IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE;
+		else if (IMAGE_PREVIEW_DISPLAY_OPTION_SMALL.equals(option))
+			return IMAGE_PREVIEW_DISPLAY_OPTION_CODE_SMALL;
+		return IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE;
 	}
 
 	public static ImageSpec getInstagramImage(final String id, final String orig, final boolean large_image_preview) {
@@ -1491,7 +1491,7 @@ public final class Utils implements Constants {
 
 	public static ImageSpec getPreviewImage(final String html, final int display_option) {
 		if (html == null) return null;
-		if (display_option == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE
+		if (display_option == IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE
 				&& (html.contains(".twimg.com/") || html.contains("://instagr.am/")
 						|| html.contains("://instagram.com/") || html.contains("://imgur.com/")
 						|| html.contains("://i.imgur.com/") || html.contains("://twitpic.com/")
@@ -1500,7 +1500,7 @@ public final class Utils implements Constants {
 						|| html.contains("://plixi.com/p/") || html.contains("://lockerz.com/s/")
 						|| html.contains(".sinaimg.cn/") || html.contains("://photozou.jp/")))
 			return ImageSpec.getEmpty();
-		final boolean large_image_preview = display_option == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE;
+		final boolean large_image_preview = display_option == IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE;
 		final HtmlLinkExtractor extractor = new HtmlLinkExtractor();
 		for (final HtmlLink link : extractor.grabLinks(html)) {
 			final ImageSpec image = getAllAvailableImage(link.getLink(), large_image_preview);
@@ -2066,7 +2066,8 @@ public final class Utils implements Constants {
 	public static boolean isRTL(final Context context) {
 		if (context == null) return false;
 		final Resources res = context.getResources();
-		return ConfigurationAccessor.getLayoutDirection(res.getConfiguration()) == SCREENLAYOUT_LAYOUTDIR_RTL;
+		return "ar".equals(res.getConfiguration().locale.getLanguage());
+		//return ConfigurationAccessor.getLayoutDirection(res.getConfiguration()) == SCREENLAYOUT_LAYOUTDIR_RTL;
 	}
 
 	public static boolean isUserLoggedIn(final Context context, final long account_id) {

@@ -19,13 +19,39 @@
 
 package org.mariotaku.twidere.adapter;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.text.Html;
+import android.text.TextUtils;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
+import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.model.ImageSpec;
+import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
+import org.mariotaku.twidere.util.MultiSelectManager;
+import org.mariotaku.twidere.util.OnLinkClickHandler;
+import org.mariotaku.twidere.util.TwidereLinkify;
+import org.mariotaku.twidere.view.holder.StatusViewHolder;
+
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static org.mariotaku.twidere.model.ParcelableLocation.isValidLocation;
 import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getAllAvailableImage;
-import static org.mariotaku.twidere.util.Utils.getInlineImagePreviewDisplayOptionInt;
+import static org.mariotaku.twidere.util.Utils.getImagePreviewDisplayOptionInt;
 import static org.mariotaku.twidere.util.Utils.getNameDisplayOptionInt;
 import static org.mariotaku.twidere.util.Utils.getStatusBackground;
 import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
@@ -35,41 +61,15 @@ import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
-import java.util.List;
-
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
-import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.model.ImageSpec;
-import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.preference.ThemeColorPreference;
-import org.mariotaku.twidere.util.ImageLoaderWrapper;
-import org.mariotaku.twidere.util.MultiSelectManager;
-import org.mariotaku.twidere.util.OnLinkClickHandler;
-import org.mariotaku.twidere.util.TwidereLinkify;
-import org.mariotaku.twidere.view.holder.StatusViewHolder;
-
-import android.app.Activity;
-import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.text.Html;
-import android.text.TextUtils;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
-import android.view.ViewGroup.MarginLayoutParams;
-import com.twitter.Extractor;
-
 public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> implements IStatusesAdapter<List<ParcelableStatus>>,
-		OnClickListener {
+		OnClickListener, ImageLoadingListener {
 
 	private final Context mContext;
 	private final Resources mResources;
 	private final ImageLoaderWrapper mLazyImageLoader;
 	private final MultiSelectManager mMultiSelectManager;
 	private final TwidereLinkify mLinkify;
+	private final Map<View, String> mLoadingViewsMap = new HashMap<View, String>();
 
 	private final float mDensity;
 
@@ -77,7 +77,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			mMentionsHighlightDisabled, mDisplaySensitiveContents, mIndicateMyStatusDisabled, mLinkHighlightingEnabled,
 			mFastTimelineProcessingEnabled, mLinkUnderlineOnly;
 	private float mTextSize;
-	private int mNameDisplayOption, mInlineImagePreviewDisplayOption;
+	private int mNameDisplayOption, mImagePreviewDisplayOption;
 
 
 	public ParcelableStatusesAdapter(final Context context) {
@@ -244,25 +244,17 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 				holder.my_profile_image.setVisibility(View.GONE);
 			}
 			final boolean has_preview = mFastTimelineProcessingEnabled ? false
-					: mInlineImagePreviewDisplayOption != INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE
+					: mImagePreviewDisplayOption != IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE
 							&& status.has_media && status.image_preview_url != null;
 			holder.image_preview_container.setVisibility(!mFastTimelineProcessingEnabled && has_preview ? View.VISIBLE
 					: View.GONE);
 			if (has_preview) {
-				final MarginLayoutParams lp = (MarginLayoutParams) holder.image_preview.getLayoutParams();
-				if (mInlineImagePreviewDisplayOption == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE) {
-					lp.width = LayoutParams.MATCH_PARENT;
-					lp.leftMargin = 0;
-					holder.image_preview.setLayoutParams(lp);
-				} else if (mInlineImagePreviewDisplayOption == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_SMALL) {
-					lp.width = mResources.getDimensionPixelSize(R.dimen.image_preview_width);
-					lp.leftMargin = (int) (mDensity * 16);
-					holder.image_preview.setLayoutParams(lp);
-				}
+				holder.setImagePreviewDisplayOption(mImagePreviewDisplayOption);
 				if (status.is_possibly_sensitive && !mDisplaySensitiveContents) {
 					holder.image_preview.setImageResource(R.drawable.image_preview_nsfw);
-				} else {
-					mLazyImageLoader.displayPreviewImage(holder.image_preview, status.image_preview_url);
+					holder.image_preview_progress.setVisibility(View.GONE);
+				} else if (!status.image_preview_url.equals(mLoadingViewsMap.get(holder.image_preview))) {
+					mLazyImageLoader.displayPreviewImage(holder.image_preview, status.image_preview_url, this);
 				}
 				holder.image_preview.setTag(position);
 			}
@@ -281,11 +273,11 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		if (status == null) return;
 		switch (view.getId()) {
 			case R.id.image_preview: {
-				final ImageSpec spec = getAllAvailableImage(status.image_orig_url, true);
+				final ImageSpec spec = getAllAvailableImage(status.image_original_url, true);
 				if (spec != null) {
-					openImage(mContext, spec.full_image_link, spec.orig_link, status.is_possibly_sensitive);
+					openImage(mContext, spec.image_full_url, spec.image_original_url, status.is_possibly_sensitive);
 				} else {
-					openImage(mContext, status.image_orig_url, null, status.is_possibly_sensitive);
+					openImage(mContext, status.image_original_url, null, status.is_possibly_sensitive);
 				}
 				break;
 			}
@@ -296,6 +288,63 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 				}
 				break;
 			}
+		}
+	}
+
+	@Override
+	public void onLoadingStarted(final String url, final View view) {
+		if (view == null || url == null || url.equals(mLoadingViewsMap.get(view))) return;
+		mLoadingViewsMap.put(view, url);
+		final View parent = (View) view.getParent();
+		final ProgressBar progress = (ProgressBar) parent.findViewById(R.id.image_preview_progress);
+		if (progress != null) {
+			progress.setVisibility(View.VISIBLE);
+			progress.setIndeterminate(true);
+			progress.setMax(100);
+		}
+	}
+
+	@Override
+	public void onLoadingFailed(final String url, final View view, final FailReason reason) {
+		if (view == null) return;
+		mLoadingViewsMap.remove(view);
+		final View parent = (View) view.getParent();
+		final View progress = parent.findViewById(R.id.image_preview_progress);
+		if (progress != null) {
+			progress.setVisibility(View.GONE);
+		}
+	}
+
+	@Override
+	public void onLoadingComplete(final String url, final View view, final Bitmap bitmap) {
+		if (view == null) return;
+		mLoadingViewsMap.remove(view);
+		final View parent = (View) view.getParent();
+		final View progress = parent.findViewById(R.id.image_preview_progress);
+		if (progress != null) {
+			progress.setVisibility(View.GONE);
+		}
+	}
+
+	@Override
+	public void onLoadingCancelled(final String url, final View view) {
+		if (view == null || url == null || url.equals(mLoadingViewsMap.get(view))) return;
+		mLoadingViewsMap.remove(view);
+		final View parent = (View) view.getParent();
+		final View progress = parent.findViewById(R.id.image_preview_progress);
+		if (progress != null) {
+			progress.setVisibility(View.GONE);
+		}
+	}
+
+	@Override
+	public void onLoadingProgressChanged(String imageUri, View view, int current, int total) {
+		if (total == 0) return;
+		final View parent = (View) view.getParent();
+		final ProgressBar progress = (ProgressBar) parent.findViewById(R.id.image_preview_progress);
+		if (progress != null) {
+			progress.setIndeterminate(false);
+			progress.setProgress(100 * current / total);
 		}
 	}
 
@@ -343,10 +392,10 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	}
 
 	@Override
-	public void setInlineImagePreviewDisplayOption(final String option) {
-		final int option_int = getInlineImagePreviewDisplayOptionInt(option);
-		if (option_int == mInlineImagePreviewDisplayOption) return;
-		mInlineImagePreviewDisplayOption = option_int;
+	public void setImagePreviewDisplayOption(final String option) {
+		final int option_int = getImagePreviewDisplayOptionInt(option);
+		if (option_int == mImagePreviewDisplayOption) return;
+		mImagePreviewDisplayOption = option_int;
 		notifyDataSetChanged();
 	}
 

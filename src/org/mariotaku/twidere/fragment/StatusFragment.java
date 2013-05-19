@@ -633,7 +633,7 @@ OnImageClickListener {
 		if (mStatus == null || spec == null) return;
 		// UCD
 		ProfilingUtil.profile(getActivity(), mAccountId, "Large image click, " + mStatusId + ", " + spec);
-		openImage(getActivity(), spec.full_image_link, spec.orig_link, mStatus.is_possibly_sensitive);
+		openImage(getActivity(), spec.image_full_url, spec.image_original_url, mStatus.is_possibly_sensitive);
 	}
 
 	@Override
@@ -1011,7 +1011,7 @@ OnImageClickListener {
 			final View view = convertView != null ? convertView : mInflater.inflate(R.layout.image_preview_item, null);
 			final ImageView image = (ImageView) view.findViewById(R.id.image);
 			final ImageSpec spec = getItem(position);
-			mImageLoader.displayPreviewImage(image, spec != null ? spec.preview_image_link : null);
+			mImageLoader.displayPreviewImage(image, spec != null ? spec.image_preview_url : null);
 			return view;
 		}
 

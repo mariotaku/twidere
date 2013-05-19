@@ -1,9 +1,12 @@
 package org.mariotaku.twidere.view;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
+import org.mariotaku.twidere.util.Utils;
 
 public class AutoAdjustHeightImageView extends ImageView {
 
@@ -23,13 +26,11 @@ public class AutoAdjustHeightImageView extends ImageView {
 	protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
 		final int width = MeasureSpec.getSize(widthMeasureSpec);
 		final Drawable d = getDrawable();
+		final Bitmap b = d instanceof BitmapDrawable ? ((BitmapDrawable) d).getBitmap() : null;
 
-		if (d != null) {
-			// ceil not round - avoid thin vertical gaps along the left/right
-			// edges
-			final int height = (int) Math.ceil((float) width * (float) d.getIntrinsicHeight() / d.getIntrinsicWidth());
+		if (b != null) {
+			final int height = (int) Math.floor((float) width * (float) b.getHeight() / b.getWidth());
 			setMeasuredDimension(width, height);
-			setMaxHeight(width * 3);
 		} else {
 			setMeasuredDimension(width, width);
 			// super.onMeasure(widthMeasureSpec, heightMeasureSpec);

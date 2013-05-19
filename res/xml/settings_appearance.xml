@@ -63,10 +63,10 @@
 		<ListPreference
 			android:defaultValue="none"
 			android:dependency="fast_timeline_processing"
-			android:entries="@array/entries_inline_image_preview_display_option"
-			android:entryValues="@array/values_inline_image_preview_display_option"
-			android:key="inline_image_preview_display_option"
-			android:title="@string/inline_image_preview_display_option"/>
+			android:entries="@array/entries_image_preview_display_option"
+			android:entryValues="@array/values_image_preview_display_option"
+			android:key="image_preview_display_option"
+			android:title="@string/image_preview_display_option"/>
 
 		<CheckBoxPreference
 			android:defaultValue="false"

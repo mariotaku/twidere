@@ -212,7 +212,7 @@
   <string name="item_1_hour">1小时</string>
   <string name="item_2_hours">2小时</string>
   <string name="item_4_hours">4小时</string>
-  <string name="inline_image_preview_display_option">图片预览显示选项</string>
+  <string name="image_preview_display_option">图片预览显示选项</string>
   <string name="solid_color_background">纯色背景</string>
   <string name="solid_color_background_summary">如果你的设备是AMOLED屏幕的话，启用这个会有所帮助</string>
   <string name="following_you">正在关注你</string>

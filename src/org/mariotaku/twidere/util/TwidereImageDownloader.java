@@ -36,7 +36,7 @@ public class TwidereImageDownloader implements ImageDownloader {
 							|| ContentResolver.SCHEME_FILE.equals(scheme))
 				return resolver.openInputStream(uri);
 			final HttpResponse resp = Utils.getRedirectedHttpResponse(client, uri_string);
-			is = resp.asStream();
+			is = new ContentLengthInputStream(resp.asStream(), (int) resp.getContentLength());
 		} catch (final TwitterException e) {
 			throw new IOException(e);
 		}
@@ -45,6 +45,39 @@ public class TwidereImageDownloader implements ImageDownloader {
 
 	public void initHttpClient() {
 		client = Utils.getImageLoaderHttpClient(context);
+	}
+	
+	private static class ContentLengthInputStream extends InputStream {
+
+		private final InputStream stream;
+		private final int length;
+		private int available;
+
+		ContentLengthInputStream(final InputStream stream, final int length) {
+			this.stream = stream;
+			this.length = this.available = length;
+		}
+		
+		@Override
+		public synchronized int available() {
+			return available;
+		}
+		
+		@Override
+		public void close() throws IOException {
+			stream.close();
+		}
+		
+		public int length() {
+			return length;
+		}
+		
+		@Override
+		public int read() throws IOException {
+			available--;
+			return stream.read();
+		}
+
 	}
 
 }

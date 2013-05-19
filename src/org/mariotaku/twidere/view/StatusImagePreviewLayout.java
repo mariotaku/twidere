@@ -1,24 +1,26 @@
 package org.mariotaku.twidere.view;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.util.AttributeSet;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import java.util.ArrayList;
 import java.util.Collection;
-
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-
 public class StatusImagePreviewLayout extends LinearLayout implements Constants, View.OnClickListener,
-		ExtendedFrameLayout.OnSizeChangedListener {
+		ExtendedFrameLayout.OnSizeChangedListener, ImageLoadingListener {
 
 	private final ArrayList<ImageSpec> mData = new ArrayList<ImageSpec>();
 
@@ -65,6 +67,45 @@ public class StatusImagePreviewLayout extends LinearLayout implements Constants,
 	}
 
 	@Override
+	public void onLoadingStarted(final String url, final View view) {
+		final View parent = (View) view.getParent();
+		final ProgressBar progress = (ProgressBar) parent.findViewById(R.id.image_preview_progress);
+		if (progress != null) {
+			progress.setVisibility(View.VISIBLE);
+			progress.setIndeterminate(true);
+			progress.setMax(100);
+		}
+	}
+
+	@Override
+	public void onLoadingFailed(final String url, final View view, final FailReason reason) {
+	}
+
+	@Override
+	public void onLoadingComplete(final String url, final View view, final Bitmap bitmap) {
+		final View parent = (View) view.getParent();
+		final View progress = parent.findViewById(R.id.image_preview_progress);
+		if (progress != null) {
+			progress.setVisibility(View.GONE);
+		}
+	}
+
+	@Override
+	public void onLoadingCancelled(final String url, final View view) {
+	}
+
+	@Override
+	public void onLoadingProgressChanged(String imageUri, View view, int current, int total) {
+		if (total == 0) return;
+		final View parent = (View) view.getParent();
+		final ProgressBar progress = (ProgressBar) parent.findViewById(R.id.image_preview_progress);
+		if (progress != null) {
+			progress.setIndeterminate(false);
+			progress.setProgress(100 * current / total);
+		}
+	}
+	
+	@Override
 	public void onSizeChanged(final View view, final int w, final int h, final int oldw, final int oldh) {
 		// final ImageView v = (ImageView)
 		// view.findViewById(R.id.image_preview_item);
@@ -94,9 +135,10 @@ public class StatusImagePreviewLayout extends LinearLayout implements Constants,
 			addView(view);
 			final ImageView image_view = (ImageView) view.findViewById(R.id.image_preview_item);
 			if (mIsPossiblySensitive && !prefs.getBoolean(PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS, false)) {
+				view.findViewById(R.id.image_preview_progress).setVisibility(View.GONE);
 				image_view.setImageResource(R.drawable.image_preview_nsfw);
 			} else {
-				mImageLoader.displayPreviewImage(image_view, spec.preview_image_link);
+				mImageLoader.displayPreviewImage(image_view, spec.image_preview_url, this);
 			}
 		}
 	}

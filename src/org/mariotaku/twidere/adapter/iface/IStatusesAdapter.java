@@ -37,9 +37,9 @@ public interface IStatusesAdapter<Data> extends IBaseAdapter {
 
 	public void setGapDisallowed(boolean disallowed);
 
-	public void setIndicateMyStatusDisabled(boolean disable);
+	public void setImagePreviewDisplayOption(String option);
 
-	public void setInlineImagePreviewDisplayOption(String option);
+	public void setIndicateMyStatusDisabled(boolean disable);
 
 	public void setLinkHightlightingEnabled(boolean enable);
 

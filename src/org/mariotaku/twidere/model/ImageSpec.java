@@ -23,18 +23,18 @@ public class ImageSpec {
 
 	private static final ImageSpec EMPTY_INSTANCE = new ImageSpec(null, null, null);
 
-	public final String preview_image_link, full_image_link, orig_link;
+	public final String image_preview_url, image_full_url, image_original_url;
 
 	public ImageSpec(final String preview_image_link, final String full_image_link, final String orig_link) {
-		this.preview_image_link = preview_image_link;
-		this.full_image_link = full_image_link;
-		this.orig_link = orig_link;
+		this.image_preview_url = preview_image_link;
+		this.image_full_url = full_image_link;
+		this.image_original_url = orig_link;
 	}
 
 	@Override
 	public String toString() {
-		return "ImageSpec{preview_image_link=" + preview_image_link + ", full_image_link=" + full_image_link
-				+ "orig_link=" + orig_link + "}";
+		return "ImageSpec{preview_image_link=" + image_preview_url + ", full_image_link=" + image_full_url
+				+ "orig_link=" + image_original_url + "}";
 	}
 
 	public static ImageSpec getEmpty() {

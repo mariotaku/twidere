@@ -212,7 +212,7 @@
   <string name="item_1_hour">1 Stunde</string>
   <string name="item_2_hours">2 Stunden</string>
   <string name="item_4_hours">4 Stunden</string>
-  <string name="inline_image_preview_display_option">Optionen der Anzeige von Bilder in der Timeline</string>
+  <string name="image_preview_display_option">Optionen der Anzeige von Bilder in der Timeline</string>
   <string name="solid_color_background">Einfarbiger Hintergrund</string>
   <string name="solid_color_background_summary">Eventuell sinnvoll für Geräte mit AMOLED-Display.</string>
   <string name="following_you">Folgt dir</string>

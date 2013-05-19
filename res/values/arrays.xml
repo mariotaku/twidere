@@ -47,12 +47,12 @@
 		<item>name</item>
 		<item>screen_name</item>
 	</string-array>
-	<string-array name="entries_inline_image_preview_display_option">
+	<string-array name="entries_image_preview_display_option">
 		<item>@string/none</item>
 		<item>@string/large</item>
 		<item>@string/small</item>
 	</string-array>
-	<string-array name="values_inline_image_preview_display_option">
+	<string-array name="values_image_preview_display_option">
 		<item>none</item>
 		<item>large</item>
 		<item>small</item>

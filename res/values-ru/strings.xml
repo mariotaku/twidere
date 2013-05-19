@@ -212,7 +212,7 @@
   <string name="item_1_hour">1 час</string>
   <string name="item_2_hours">2 часа</string>
   <string name="item_4_hours">4 часа</string>
-  <string name="inline_image_preview_display_option">Настройки отображения превью изображений в ленте</string>
+  <string name="image_preview_display_option">Настройки отображения превью изображений в ленте</string>
   <string name="solid_color_background">Сплошной цвет фона</string>
   <string name="solid_color_background_summary">Включите эту опцию, если у вашего устройства AMOLED экран.</string>
   <string name="following_you">Ваши подписчики</string>

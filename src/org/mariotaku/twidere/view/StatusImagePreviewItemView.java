@@ -31,6 +31,7 @@ public class StatusImagePreviewItemView extends AutoAdjustHeightImageView {
 		final int color = Utils.getThemeColor(context);
 		mHightlightColor = Color.argb(0x80, Color.red(color), Color.green(color), Color.blue(color));
 		mRect = new Rect();
+		setCropToPadding(true);
 	}
 
 	@Override
@@ -65,17 +66,4 @@ public class StatusImagePreviewItemView extends AutoAdjustHeightImageView {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
-	@Override
-	protected boolean setFrame(final int frameLeft, final int frameTop, final int frameRight, final int frameBottom) {
-		final boolean ret = super.setFrame(frameLeft, frameTop, frameRight, frameBottom);
-
-		final Bitmap bitmap = getBitmap(getDrawable());
-		if (bitmap != null) {
-			setBackgroundDrawable(null);
-		} else {
-			setBackgroundResource(R.drawable.image_preview_fallback_large);
-		}
-		return ret;
-	}
 }

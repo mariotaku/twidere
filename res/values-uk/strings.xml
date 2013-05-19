@@ -212,7 +212,7 @@
   <string name="item_1_hour">1 година</string>
   <string name="item_2_hours">2 години</string>
   <string name="item_4_hours">4 години</string>
-  <string name="inline_image_preview_display_option">налаштування показу зображень у стрічці</string>
+  <string name="image_preview_display_option">налаштування показу зображень у стрічці</string>
   <string name="solid_color_background">Суцільний колір тла</string>
   <string name="solid_color_background_summary">Це може бути корисним, якщо екран вашого пристрою AMOLED.</string>
   <string name="following_you">Ваші підписники</string>

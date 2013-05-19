@@ -19,27 +19,34 @@
 
 package org.mariotaku.twidere.view.holder;
 
-import static org.mariotaku.twidere.util.Utils.getThemeColor;
- 
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
-
+import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.Utils;
+import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
-public class StatusViewHolder {
+import static org.mariotaku.twidere.util.Utils.getThemeColor;
+
+public class StatusViewHolder implements Constants {
 
 	public final ImageView my_profile_image, profile_image, image_preview;
 	public final TextView name, screen_name, text, time, reply_retweet_status;
-	public final View name_container, image_preview_container;
+	public final View name_container, image_preview_container, image_preview_progress;
 	private final View gap_indicator;
 	private final ColorLabelRelativeLayout content;
-	private final int theme_color;
+	private final int theme_color, image_preview_small_width;
+	private final float density;
+	private final boolean is_rtl;
 	public boolean show_as_gap;
 	private boolean account_color_enabled;
 	private float text_size;
+
 
 	public StatusViewHolder(final View view) {
 		content = (ColorLabelRelativeLayout) view;
@@ -50,6 +57,7 @@ public class StatusViewHolder {
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		my_profile_image = (ImageView) view.findViewById(R.id.my_profile_image);
 		image_preview = (ImageView) view.findViewById(R.id.image_preview);
+		image_preview_progress = view.findViewById(R.id.image_preview_progress);
 		name_container = view.findViewById(R.id.name_container);
 		name = (TextView) view.findViewById(R.id.name);
 		screen_name = (TextView) view.findViewById(R.id.screen_name);
@@ -57,6 +65,11 @@ public class StatusViewHolder {
 		time = (TextView) view.findViewById(R.id.time);
 		reply_retweet_status = (TextView) view.findViewById(R.id.reply_retweet_status);
 		show_as_gap = gap_indicator.isShown();
+		final Context context = view.getContext();
+		final Resources res = context.getResources();
+		image_preview_small_width = res.getDimensionPixelSize(R.dimen.image_preview_width);
+		is_rtl = Utils.isRTL(context);
+		density = res.getDisplayMetrics().density;
 	}
 
 	public void setAccountColor(final int color) {
@@ -72,6 +85,36 @@ public class StatusViewHolder {
 
 	public void setHighlightColor(final int color) {
 		content.drawBackground(show_as_gap ? Color.TRANSPARENT : color);
+	}
+	
+	public void setImagePreviewDisplayOption(final int option) {
+		final RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) image_preview_container.getLayoutParams();
+		if (option == IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE) {
+			lp.width = RelativeLayout.LayoutParams.MATCH_PARENT;
+			lp.rightMargin = 0;
+			lp.leftMargin = 0;
+			if (is_rtl) {
+				lp.addRule(RelativeLayout.LEFT_OF, R.id.profile_image);
+				lp.addRule(RelativeLayout.RIGHT_OF, R.id.my_profile_image);
+			} else {
+				lp.addRule(RelativeLayout.RIGHT_OF, R.id.profile_image);
+				lp.addRule(RelativeLayout.LEFT_OF, R.id.my_profile_image);
+			}
+		} else if (option == IMAGE_PREVIEW_DISPLAY_OPTION_CODE_SMALL) {
+			lp.width = image_preview_small_width;
+			if (is_rtl) {
+				lp.leftMargin = 0;
+				lp.rightMargin = (int) (density * 16);
+				lp.addRule(RelativeLayout.LEFT_OF, R.id.profile_image);
+				lp.removeRule(RelativeLayout.RIGHT_OF);
+			} else {
+				lp.leftMargin = (int) (density * 16);
+				lp.rightMargin = 0;
+				lp.addRule(RelativeLayout.RIGHT_OF, R.id.profile_image);
+				lp.removeRule(RelativeLayout.LEFT_OF);
+			}
+		}
+		image_preview_container.setLayoutParams(lp);
 	}
 
 	public void setIsMyStatus(final boolean my_status) {

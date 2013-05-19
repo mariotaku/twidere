@@ -19,22 +19,10 @@
 
 package org.mariotaku.twidere.preference;
 
-import static android.text.format.DateUtils.getRelativeTimeSpanString;
-import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
-import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
-import static org.mariotaku.twidere.util.Utils.getInlineImagePreviewDisplayOptionInt;
-import static org.mariotaku.twidere.util.Utils.getThemeColor;
-
-import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.util.TwidereLinkify;
-import org.mariotaku.twidere.view.holder.StatusViewHolder;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.preference.Preference;
 import android.text.Html;
 import android.util.AttributeSet;
@@ -43,6 +31,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
+import android.widget.RelativeLayout;
+import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.TwidereLinkify;
+import org.mariotaku.twidere.view.holder.StatusViewHolder;
+
+import static android.text.format.DateUtils.getRelativeTimeSpanString;
+import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
+import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
+import static org.mariotaku.twidere.util.Utils.getImagePreviewDisplayOptionInt;
+import static org.mariotaku.twidere.util.Utils.getThemeColor;
+import org.mariotaku.twidere.util.Utils;
 
 public class StatusPreviewPreference extends Preference implements Constants, OnSharedPreferenceChangeListener {
 
@@ -76,7 +76,7 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 			setTextSize();
 		} else if (PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE.equals(key)) {
 			setProfileImage();
-		} else if (PREFERENCE_KEY_INLINE_IMAGE_PREVIEW_DISPLAY_OPTION.equals(key)) {
+		} else if (PREFERENCE_KEY_IMAGE_PREVIEW_DISPLAY_OPTION.equals(key)) {
 			setImagePreview();
 		} else if (PREFERENCE_KEY_SHOW_ABSOLUTE_TIME.equals(key)) {
 			setTime();
@@ -121,25 +121,15 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 
 	private void setImagePreview() {
 		if (mHolder == null) return;
-		final String option_string = mPreferences.getString(PREFERENCE_KEY_INLINE_IMAGE_PREVIEW_DISPLAY_OPTION,
-				INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_NONE);
+		final String option_string = mPreferences.getString(PREFERENCE_KEY_IMAGE_PREVIEW_DISPLAY_OPTION,
+				IMAGE_PREVIEW_DISPLAY_OPTION_NONE);
 		final boolean fast_timeline_processing = mPreferences
 				.getBoolean(PREFERENCE_KEY_FAST_TIMELINE_PROCESSING, false);
-		final int option = getInlineImagePreviewDisplayOptionInt(option_string);
-
+		final int option = getImagePreviewDisplayOptionInt(option_string);
 		mHolder.image_preview_container.setVisibility(!fast_timeline_processing
-				&& option != INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE ? View.VISIBLE : View.GONE);
-		final MarginLayoutParams lp = (MarginLayoutParams) mHolder.image_preview.getLayoutParams();
-		if (option == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE) {
-			lp.width = LayoutParams.MATCH_PARENT;
-			lp.leftMargin = 0;
-			mHolder.image_preview.setLayoutParams(lp);
-		} else if (option == INLINE_IMAGE_PREVIEW_DISPLAY_OPTION_CODE_SMALL) {
-			final Resources res = getContext().getResources();
-			lp.width = res.getDimensionPixelSize(R.dimen.image_preview_width);
-			lp.leftMargin = (int) (res.getDisplayMetrics().density * 16);
-			mHolder.image_preview.setLayoutParams(lp);
-		}
+				&& option != IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE ? View.VISIBLE : View.GONE);
+		mHolder.image_preview_progress.setVisibility(View.GONE);
+		mHolder.setImagePreviewDisplayOption(option);
 	}
 
 	private void setName() {
