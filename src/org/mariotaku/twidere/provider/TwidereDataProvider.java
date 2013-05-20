@@ -781,13 +781,13 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				break;
 			}
 			case TABLE_ID_MENTIONS: {
-				if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS, false)) {
+				if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS, true)) {
 					displayMentionsNotification(context, values);
 				}
 				break;
 			}
 			case TABLE_ID_DIRECT_MESSAGES_INBOX: {
-				if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES, false)) {
+				if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES, true)) {
 					displayMessagesNotification(context, values);
 				}
 				break;
