@@ -1113,7 +1113,11 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			if (result != null && result.data != null && result.data.getId() > 0) {
 				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
 				intent.putExtra(INTENT_KEY_SUCCEED, true);
-				mCroutonsManager.showInfoMessage(R.string.delete_successful, false);
+				if (result.data.getRetweetedStatus() != null) {
+					mCroutonsManager.showInfoMessage(R.string.retweet_cancelled, false);
+				} else {					
+					mCroutonsManager.showInfoMessage(R.string.status_deleted, false);
+				}
 			} else {
 				mCroutonsManager.showErrorMessage(R.string.deleting, result.exception, true);
 			}

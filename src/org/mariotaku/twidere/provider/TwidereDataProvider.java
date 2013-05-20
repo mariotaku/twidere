@@ -88,6 +88,7 @@ import com.twitter.Extractor;
 import java.util.Set;
 import android.database.MatrixCursor;
 import java.util.Map;
+import org.mariotaku.twidere.preference.NotificationContentPreference;
 
 public final class TwidereDataProvider extends ContentProvider implements Constants {
 
@@ -762,7 +763,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		final NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 		switch (getTableId(uri)) {
 			case TABLE_ID_STATUSES: {
-				if (!mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_HOME_TIMELINE, false)) return;
+				if (!mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_HOME_TIMELINE,
+						NotificationContentPreference.DEFAULT_ENABLE_HOME_TTMELINE)) return;
 				final String message = res.getQuantityString(R.plurals.Ntweets, mNewStatusesCount, mNewStatusesCount);
 				final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
 				final Bundle delete_extras = new Bundle();
@@ -781,13 +783,15 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				break;
 			}
 			case TABLE_ID_MENTIONS: {
-				if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS, true)) {
+				if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS, 
+						NotificationContentPreference.DEFAULT_ENABLE_MENTIONS)) {
 					displayMentionsNotification(context, values);
 				}
 				break;
 			}
 			case TABLE_ID_DIRECT_MESSAGES_INBOX: {
-				if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES, true)) {
+				if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES,
+						NotificationContentPreference.DEFAULT_ENABLE_DIRECT_MESSAGES)) {
 					displayMessagesNotification(context, values);
 				}
 				break;

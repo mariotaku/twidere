@@ -46,6 +46,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import org.mariotaku.twidere.preference.AutoRefreshContentPreference;
 
 public class RefreshService extends Service implements Constants {
 
@@ -79,7 +80,8 @@ public class RefreshService extends Service implements Constants {
 				if (BROADCAST_REFRESH_HOME_TIMELINE.equals(action)) {
 					final long[] activated_ids = getActivatedAccountIds(context);
 					final long[] since_ids = getNewestStatusIdsFromDatabase(context, Statuses.CONTENT_URI);
-					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE, false)) {
+					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE,
+							AutoRefreshContentPreference.DEFAULT_ENABLE_HOME_TTMELINE)) {
 						if (!isHomeTimelineRefreshing()) {
 							getHomeTimeline(activated_ids, null, since_ids);
 						}
@@ -87,7 +89,8 @@ public class RefreshService extends Service implements Constants {
 				} else if (BROADCAST_REFRESH_MENTIONS.equals(action)) {
 					final long[] activated_ids = getActivatedAccountIds(context);
 					final long[] since_ids = getNewestStatusIdsFromDatabase(context, Mentions.CONTENT_URI);
-					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_MENTIONS, false)) {
+					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_MENTIONS,
+							AutoRefreshContentPreference.DEFAULT_ENABLE_MENTIONS)) {
 						if (!isMentionsRefreshing()) {
 							getMentions(activated_ids, null, since_ids);
 						}
@@ -95,7 +98,8 @@ public class RefreshService extends Service implements Constants {
 				} else if (BROADCAST_REFRESH_DIRECT_MESSAGES.equals(action)) {
 					final long[] activated_ids = getActivatedAccountIds(context);
 					final long[] since_ids = getNewestMessageIdsFromDatabase(context, DirectMessages.Inbox.CONTENT_URI);
-					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_DIRECT_MESSAGES, false)) {
+					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_DIRECT_MESSAGES,
+							AutoRefreshContentPreference.DEFAULT_ENABLE_DIRECT_MESSAGES)) {
 						if (!isReceivedDirectMessagesRefreshing()) {
 							getReceivedDirectMessages(activated_ids, null, since_ids);
 						}
