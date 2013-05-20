@@ -48,7 +48,7 @@ public class SlidingPaneView extends ViewGroup {
 	private final LeftPaneLayout mLeftPaneLayout;
 	private final RightPaneLayout mRightPaneLayout;
 	private final ExtendedFrameLayout mRightPaneContainer;
-	private final View mLeftPaneView, mRightPaneView, mRightPaneBackground;
+	private final View mLeftPaneView, mRightPaneView, mRightPaneBackgroundView;
 	private final FadingRightPaneContainer mFadingRightPaneContainer;
 
 	private final ScrollTouchInterceptor mTouchInterceptor;
@@ -148,8 +148,7 @@ public class SlidingPaneView extends ViewGroup {
 		mRightPaneContainer = new ExtendedFrameLayout(context);
 		mFadingRightPaneContainer = new FadingRightPaneContainer(this);
 		mViewShadow = new View(context);
-		mRightPaneBackground = new FrameLayout(context);
-		mRightPaneBackground.setWillNotDraw(false);
+		mRightPaneBackgroundView = new RightPaneBackgroundView(context);
 
 		final LayoutInflater inflater = LayoutInflater.from(context);
 		if (leftPaneLayout == 0) throw new IllegalArgumentException();
@@ -168,7 +167,7 @@ public class SlidingPaneView extends ViewGroup {
 		mRightPaneLayout.addView(mViewShadow, mShadowWidth, LinearLayout.LayoutParams.MATCH_PARENT);
 		mRightPaneLayout.addView(mRightPaneContainer, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
-		mRightPaneContainer.addView(mRightPaneBackground, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		mRightPaneContainer.addView(mRightPaneBackgroundView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		mRightPaneContainer.addView(mFadingRightPaneContainer, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		mRightPaneContainer.setTouchInterceptor(mTouchInterceptor);
 		mRightPaneLayout.setOnSwipeListener(new SwipeFadeListener());
@@ -310,7 +309,7 @@ public class SlidingPaneView extends ViewGroup {
 	}
 	
 	public void setRightPaneBackground(final int resId) {
-		mRightPaneBackground.setBackgroundResource(resId);
+		mRightPaneBackgroundView.setBackgroundResource(resId);
 	}
 
 	public void setShadowSlidable(final boolean slidable) {
@@ -430,6 +429,7 @@ public class SlidingPaneView extends ViewGroup {
 	}
 
 	private static boolean isTouchEventHandled(final View view, final MotionEvent event) {
+		if (view instanceof RightPaneBackgroundView) return false;
 		if (!(view instanceof ViewGroup)) return true;
 		final MotionEvent ev = MotionEvent.obtain(event);
 		final float xf = ev.getX();
@@ -460,6 +460,18 @@ public class SlidingPaneView extends ViewGroup {
 		if (value < min) return min;
 		if (value > max) return max;
 		return value;
+	}
+	
+	private static class RightPaneBackgroundView extends View {
+		
+		public RightPaneBackgroundView(final Context context) {
+			super(context);
+		}
+		
+		@Override
+		public boolean onTouchEvent(final MotionEvent e) {
+			return false;
+		}
 	}
 
 	public static class LeftPaneLayout extends FrameLayout {
@@ -856,7 +868,9 @@ public class SlidingPaneView extends ViewGroup {
 					mTotalMoveY = 0;
 					mActualMoveX = 0;
 					mIsVerticalScrolling = false;
-					//mParent.animateOpen();
+					if (mFirstDownHandled) {
+						mParent.animateOpen();
+					}
 					break;
 				}
 				case MotionEvent.ACTION_MOVE: {
