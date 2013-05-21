@@ -2192,13 +2192,15 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 				for (final long account_id : account_ids) {
 					final Twitter twitter = getTwitterInstance(mContext, account_id, false, true);
-					if (twitter != null) {
-						try {
-							result.add(new TwitterSingleResponse<twitter4j.Status>(account_id, twitter
-									.updateStatus(status), null));
-						} catch (final TwitterException e) {
-							result.add(new TwitterSingleResponse<twitter4j.Status>(account_id, null, e));
-						}
+					if (twitter == null) {
+						new TwitterSingleResponse<twitter4j.Status>(account_id, null, new NullPointerException());
+						continue;
+					}
+					try {
+						result.add(new TwitterSingleResponse<twitter4j.Status>(account_id, twitter
+								.updateStatus(status), null));
+					} catch (final TwitterException e) {
+						result.add(new TwitterSingleResponse<twitter4j.Status>(account_id, null, e));
 					}
 				}
 			} catch (final UpdateStatusException e) {
@@ -2218,35 +2220,36 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		@Override
 		protected void onPostExecute(final List<TwitterSingleResponse<twitter4j.Status>> result) {
 
-			boolean succeed = true;
+			boolean failed = false;
 			Exception exception = null;
 			final List<Long> failed_account_ids = new ArrayList<Long>();
 
 			for (final TwitterSingleResponse<twitter4j.Status> response : result) {
 				if (response.data == null) {
-					succeed = false;
+					failed = true;
 					failed_account_ids.add(response.account_id);
 					if (exception == null) {
 						exception = response.exception;
 					}
 				}
 			}
-			if (succeed) {
+			if (failed) {
+				// If the status is a duplicate, there's no need to save it to
+				// drafts.
+				if (exception instanceof TwitterException &&
+						((TwitterException) exception).getErrorCode() == TwitterErrorCodes.STATUS_IS_DUPLICATE) {
+					mCroutonsManager.showErrorMessage(mContext.getString(R.string.status_is_duplicate), false);
+				} else {
+					saveDrafts(failed_account_ids);
+					mCroutonsManager.showErrorMessage(R.string.sending_status, exception, true);
+				}
+			} else {
 				mCroutonsManager.showOkMessage(R.string.send_successful, false);
 				if (image_uri != null && delete_image) {
 					final String path = getImagePathFromUri(mContext, image_uri);
 					if (path != null) {
 						new File(path).delete();
 					}
-				}
-			} else {
-				// If the status is a duplicate, there's no need to save it to
-				// drafts.
-				if (exception instanceof TwitterException && ((TwitterException) exception).getErrorCode() == 187) {
-					mCroutonsManager.showErrorMessage(mContext.getString(R.string.status_is_duplicate), false);
-				} else {
-					saveDrafts(failed_account_ids);
-					mCroutonsManager.showErrorMessage(R.string.sending_status, exception, true);
 				}
 			}
 			super.onPostExecute(result);

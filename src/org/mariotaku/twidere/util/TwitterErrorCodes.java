@@ -25,6 +25,8 @@ import org.mariotaku.twidere.R;
 
 public class TwitterErrorCodes {
 
+ 	public static final int STATUS_IS_DUPLICATE = 187;
+	
 	private static final SparseIntArray ERROR_CODE_MESSAGES = new SparseIntArray();
 
 	static {
