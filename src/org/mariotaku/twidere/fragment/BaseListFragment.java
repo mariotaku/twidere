@@ -52,6 +52,7 @@ public class BaseListFragment extends ListFragment implements Constants {
 
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
+			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
 			if ((BaseListFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP).equals(action)) {
 				scrollListToTop(getListView());

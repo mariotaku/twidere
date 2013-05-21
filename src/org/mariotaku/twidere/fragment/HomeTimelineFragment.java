@@ -34,16 +34,13 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
+			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
 			if (BROADCAST_HOME_TIMELINE_REFRESHED.equals(action)) {
 				onRefreshComplete();
-				if (isAdded() && !isDetached()) {
-					getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
-				}
+				getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
 			} else if (BROADCAST_HOME_TIMELINE_DATABASE_UPDATED.equals(action)) {
-				if (isAdded() && !isDetached()) {
-					getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
-				}
+				getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
 			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
 				if (mTwitterWrapper.isHomeTimelineRefreshing()) {
 					setRefreshing(false);

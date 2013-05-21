@@ -83,9 +83,9 @@ public class AccountsFragment extends BaseListFragment implements LoaderCallback
 
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
+			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
 			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
-				if (getActivity() == null) return;
 				getLoaderManager().restartLoader(0, null, AccountsFragment.this);
 				if (getActivity() instanceof HomeActivity) {
 					((HomeActivity) getActivity()).setDefaultAccount();

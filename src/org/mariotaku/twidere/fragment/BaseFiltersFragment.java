@@ -56,6 +56,7 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
+			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
 			if (BROADCAST_FILTERS_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, BaseFiltersFragment.this);

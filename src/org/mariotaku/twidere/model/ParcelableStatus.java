@@ -237,7 +237,7 @@ public class ParcelableStatus implements Constants, Parcelable, JSONParcelable, 
 		profile_image_url = in.readString();
 		image_preview_url = in.readString();
 		image_original_url = in.readString();
-		location = in.readParcelable(getClass().getClassLoader());
+		location = in.readParcelable(ParcelableLocation.class.getClassLoader());
 		my_retweet_id = in.readLong();
 		is_possibly_sensitive = in.readInt() == 1;
 		text_unescaped = toPlainText(text_html);

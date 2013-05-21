@@ -39,6 +39,7 @@ public class UserFollowersFragment extends BaseUsersListFragment {
 
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
+			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
 			if (BROADCAST_MULTI_BLOCKSTATE_CHANGED.equals(action)) {
 				final long[] ids = intent.getLongArrayExtra(INTENT_KEY_USER_IDS);

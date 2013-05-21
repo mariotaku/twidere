@@ -54,11 +54,10 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
+			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
 			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action) || BROADCAST_FILTERS_UPDATED.equals(action)) {
-				if (isAdded() && !isDetached()) {
-					getLoaderManager().restartLoader(0, null, CursorStatusesListFragment.this);
-				}
+				getLoaderManager().restartLoader(0, null, CursorStatusesListFragment.this);
 			}
 		}
 	};

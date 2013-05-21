@@ -161,6 +161,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
+			if (getActivity() == null || !isAdded() || isDetached()) return;
 			if (mUser == null) return;
 			final String action = intent.getAction();
 			if (BROADCAST_FRIENDSHIP_CHANGED.equals(action)) {

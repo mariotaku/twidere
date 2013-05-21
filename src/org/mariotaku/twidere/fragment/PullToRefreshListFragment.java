@@ -50,6 +50,7 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
+			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
 			if ((PullToRefreshListFragment.this.getClass().getName() + SHUFFIX_REFRESH_TAB).equals(action)) {
 				onPullDownToRefresh();

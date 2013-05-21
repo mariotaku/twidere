@@ -118,6 +118,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
+			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
 			if (BROADCAST_USER_LIST_DETAILS_UPDATED.equals(action)) {
 				if (intent.getIntExtra(INTENT_KEY_LIST_ID, -1) == mUserListId

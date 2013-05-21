@@ -75,11 +75,10 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
+			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
 			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
-				if (isAdded() && !isDetached()) {
-					getLoaderManager().restartLoader(0, null, DirectMessagesFragment.this);
-				}
+				getLoaderManager().restartLoader(0, null, DirectMessagesFragment.this);
 			} else if (BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED.equals(action)
 					|| BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, DirectMessagesFragment.this);
