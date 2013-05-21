@@ -21,6 +21,7 @@ package org.mariotaku.twidere.util;
 
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.provider.TweetStore.STATUSES_URIS;
+import static org.mariotaku.twidere.util.ContentResolverUtils.bulkDelete;
 import static org.mariotaku.twidere.util.Utils.appendQueryParameters;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
@@ -729,16 +730,12 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		private void deleteCaches(final List<Long> list) {			
-			final String user_ids = ListUtils.toString(list, ',', false);
 			for (final Uri uri : STATUSES_URIS) {
-				final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.USER_ID
-						+ " IN (" + user_ids + ")";
-				mResolver.delete(uri, where, null);
+				bulkDelete(mResolver, uri, Statuses.USER_ID, list, Statuses.ACCOUNT_ID + " = " + account_id, false);
 			}
 			// I bet you don't want to see these users in your auto complete
 			// list.
-			final String where = CachedUsers.USER_ID + " IN (" + user_ids + ")";
-			mResolver.delete(CachedUsers.CONTENT_URI, where, null);
+			bulkDelete(mResolver, CachedUsers.CONTENT_URI, CachedUsers.USER_ID, list, null, false);
 		}
 	}
 
@@ -2059,7 +2056,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					mResolver.delete(uri, null, null);
 					mResolver.bulkInsert(uri, values_array);
 					mResolver.delete(CachedHashtags.CONTENT_URI,
-							CachedHashtags.NAME + " IN (" + ListUtils.toStringForSQL(hashtags.size()) + ")",
+							CachedHashtags.NAME + " IN (" + ListUtils.toStringForSQL(hashtags) + ")",
 							hashtags.toArray(new String[hashtags.size()]));
 					mResolver.bulkInsert(CachedHashtags.CONTENT_URI,
 							hashtag_values.toArray(new ContentValues[hashtag_values.size()]));
@@ -2128,7 +2125,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				hashtag_values.add(values);
 			}
 			mResolver.delete(CachedHashtags.CONTENT_URI,
-					CachedHashtags.NAME + " IN (" + ListUtils.toStringForSQL(hashtags.size()) + ")",
+					CachedHashtags.NAME + " IN (" + ListUtils.toStringForSQL(hashtags) + ")",
 					hashtags.toArray(new String[hashtags.size()]));
 			mResolver.bulkInsert(CachedHashtags.CONTENT_URI,
 					hashtag_values.toArray(new ContentValues[hashtag_values.size()]));

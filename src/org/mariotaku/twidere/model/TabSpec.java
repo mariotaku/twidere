@@ -19,9 +19,9 @@
 
 package org.mariotaku.twidere.model;
 
-import static org.mariotaku.twidere.util.Utils.bundleEquals;
-import static org.mariotaku.twidere.util.Utils.classEquals;
-import static org.mariotaku.twidere.util.Utils.objectEquals;
+import static org.mariotaku.twidere.util.CompareUtils.bundleEquals;
+import static org.mariotaku.twidere.util.CompareUtils.classEquals;
+import static org.mariotaku.twidere.util.CompareUtils.objectEquals;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 

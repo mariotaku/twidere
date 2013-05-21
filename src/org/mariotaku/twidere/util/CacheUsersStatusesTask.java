@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.util;
 
+import static org.mariotaku.twidere.util.ContentResolverUtils.bulkDelete;
+import static org.mariotaku.twidere.util.ContentResolverUtils.bulkInsert;
 import static org.mariotaku.twidere.util.Utils.makeCachedUserContentValues;
 import static org.mariotaku.twidere.util.Utils.makeStatusContentValues;
 
@@ -53,13 +55,13 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
 	@Override
 	protected Void doInBackground(final Void... args) {
 		if (all_statuses == null || all_statuses.length == 0) return null;
-		final ArrayList<ContentValues> cached_users_values = new ArrayList<ContentValues>();
-		final ArrayList<ContentValues> cached_statuses_values = new ArrayList<ContentValues>();
-		final ArrayList<ContentValues> hashtag_values = new ArrayList<ContentValues>();
-		final ArrayList<Long> user_ids = new ArrayList<Long>(), status_ids = new ArrayList<Long>();
 		final Extractor extractor = new Extractor();
-
-		final ArrayList<String> hashtags = new ArrayList<String>();
+		final ArrayList<ContentValues> cached_users_values = new NoDuplicatesArrayList<ContentValues>();
+		final ArrayList<ContentValues> cached_statuses_values = new NoDuplicatesArrayList<ContentValues>();
+		final ArrayList<ContentValues> hashtag_values = new NoDuplicatesArrayList<ContentValues>();
+		final ArrayList<Long> user_ids = new NoDuplicatesArrayList<Long>();
+		final ArrayList<Long> status_ids = new NoDuplicatesArrayList<Long>();
+		final ArrayList<String> hashtags = new NoDuplicatesArrayList<String>();
 
 		for (final TwitterListResponse<twitter4j.Status> values : all_statuses) {
 			if (values == null || values.list == null) {
@@ -67,43 +69,31 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
 			}
 			final List<twitter4j.Status> list = values.list;
 			for (final twitter4j.Status status : list) {
-				final User user = status.getUser();
-				if (user == null) {
+				if (status == null || status.getId() <= 0) {
 					continue;
 				}
-				final long user_id = user.getId(), status_id = status.getId();
-				if (!status_ids.contains(status_id)) {
-					status_ids.add(status.getId());
-					cached_statuses_values.add(makeStatusContentValues(status, values.account_id, large_profile_image));
-				}
-				if (!user_ids.contains(user_id)) {
-					user_ids.add(user_id);
-					cached_users_values.add(makeCachedUserContentValues(user, large_profile_image));
-				}
+				status_ids.add(status.getId());
+				cached_statuses_values.add(makeStatusContentValues(status, values.account_id, large_profile_image));
 				hashtags.addAll(extractor.extractHashtags(status.getText()));
+				final User user = status.getUser();
+				if (user == null || user.getId() <= 0) {
+					continue;
+				}
+				user_ids.add(user.getId());
+				cached_users_values.add(makeCachedUserContentValues(user, large_profile_image));
 			}
 		}
 		for (final String hashtag : hashtags) {
-			if (hashtags.contains(hashtag)) {
-				continue;
-			}
 			final ContentValues hashtag_value = new ContentValues();
 			hashtag_value.put(CachedHashtags.NAME, hashtag);
 			hashtag_values.add(hashtag_value);
 		}
-		resolver.delete(CachedUsers.CONTENT_URI,
-				CachedUsers.USER_ID + " IN (" + ListUtils.toString(user_ids, ',', true) + " )", null);
-		resolver.bulkInsert(CachedUsers.CONTENT_URI,
-				cached_users_values.toArray(new ContentValues[cached_users_values.size()]));
-		resolver.delete(CachedStatuses.CONTENT_URI,
-				CachedStatuses.STATUS_ID + " IN (" + ListUtils.toString(status_ids, ',', true) + " )", null);
-		resolver.bulkInsert(CachedStatuses.CONTENT_URI,
-				cached_statuses_values.toArray(new ContentValues[cached_statuses_values.size()]));
-		resolver.delete(CachedHashtags.CONTENT_URI,
-				CachedHashtags.NAME + " IN (" + ListUtils.toStringForSQL(hashtags.size()) + ")",
-				hashtags.toArray(new String[hashtags.size()]));
-		resolver.bulkInsert(CachedHashtags.CONTENT_URI,
-				hashtag_values.toArray(new ContentValues[hashtag_values.size()]));
+		bulkDelete(resolver, CachedUsers.CONTENT_URI, CachedUsers.USER_ID, user_ids, null, false);
+		bulkInsert(resolver, CachedUsers.CONTENT_URI, cached_users_values);
+		bulkDelete(resolver, CachedStatuses.CONTENT_URI, CachedStatuses.STATUS_ID, status_ids, null, false);
+		bulkInsert(resolver, CachedStatuses.CONTENT_URI, cached_statuses_values);
+		bulkDelete(resolver, CachedHashtags.CONTENT_URI, CachedHashtags.NAME, hashtags, null, true);
+		bulkInsert(resolver, CachedHashtags.CONTENT_URI, hashtag_values);
 		return null;
 	}
 

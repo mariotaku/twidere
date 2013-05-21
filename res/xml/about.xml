@@ -30,11 +30,18 @@
 				android:data="http://about.me/fdb713"/>
 		</Preference>
 		<Preference
-			android:summary="Deutsch, Türkçe"
+			android:summary="Deutsch"
 			android:title="Cem Uluer">
 			<intent
 				android:action="android.intent.action.VIEW"
 				android:data="twidere://user?user_id=289472337"/>
+		</Preference>
+		<Preference
+			android:summary="Türkçe"
+			android:title="Ahmet Okur">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="twidere://user?user_id=930853520"/>
 		</Preference>
 		<Preference
 			android:summary="Français"

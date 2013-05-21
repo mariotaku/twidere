@@ -48,28 +48,14 @@ public class ListUtils {
 		return builder.toString();
 	}
 
-	public static String toStringForSQL(final int size) {
+	public static String toStringForSQL(final List<String> list) {
+		final int size = list != null ? list.size() : 0;
 		final StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < size; i++) {
 			if (i > 0) {
 				builder.append(',');
 			}
 			builder.append('?');
-		}
-		return builder.toString();
-	}
-
-	public static String toStringForSQL(final List<String> list) {
-		final StringBuilder builder = new StringBuilder();
-		final int size = list.size();
-		for (int i = 0; i < size; i++) {
-			final String string = list.get(i);
-			if (string != null) {
-				if (i > 0) {
-					builder.append(',');
-				}
-				builder.append('\'' + string + '\'');
-			}
 		}
 		return builder.toString();
 	}

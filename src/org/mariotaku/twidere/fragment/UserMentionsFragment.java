@@ -27,6 +27,7 @@ import org.mariotaku.twidere.loader.TweetSearchLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.Utils;
 
+import static org.mariotaku.twidere.util.CompareUtils.objectEquals;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 
 public class UserMentionsFragment extends SearchTweetsFragment {
@@ -41,7 +42,7 @@ public class UserMentionsFragment extends SearchTweetsFragment {
 		final long since_id = args.getLong(INTENT_KEY_SINCE_ID, -1);
 		final int tab_position = args.getInt(INTENT_KEY_TAB_POSITION, -1);
 		getListAdapter().setMentionsHightlightDisabled(
-				Utils.equals(getAccountScreenName(getActivity(), account_id), screen_name));
+				objectEquals(getAccountScreenName(getActivity(), account_id), screen_name));
 		return new TweetSearchLoader(getActivity(), account_id, screen_name.startsWith("@") ? screen_name : "@"
 				+ screen_name, max_id, since_id, getData(), getSavedStatusesFileArgs(), tab_position);
 	}

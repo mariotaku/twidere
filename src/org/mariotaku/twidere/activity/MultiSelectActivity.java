@@ -46,6 +46,8 @@ import org.mariotaku.twidere.util.ListUtils;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
+import static org.mariotaku.twidere.util.ContentResolverUtils.bulkDelete;
+import static org.mariotaku.twidere.util.ContentResolverUtils.bulkInsert;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenNames;
 
 @SuppressLint("Registered")
@@ -62,8 +64,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 	@Override
 	public boolean onActionItemClicked(final ActionMode mode, final MenuItem item) {
 		final List<Object> selected_items = mMultiSelectManager.getSelectedItems();
-		final int count = selected_items.size();
-		if (count < 1) return false;
+		if (selected_items.isEmpty()) return false;
 		switch (item.getItemId()) {
 			case MENU_REPLY: {
 				final Extractor extractor = new Extractor();
@@ -114,14 +115,13 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 						continue;
 					}
 				}
-				resolver.delete(uri, Filters.Users.TEXT + " IN (" + ListUtils.toStringForSQL(names_list.size()) + ")",
-						names_list.toArray(new String[names_list.size()]));
+				bulkDelete(resolver, uri, Filters.Users.TEXT, names_list, null, true);
 				for (final String screen_name : names_list) {
 					final ContentValues values = new ContentValues();
 					values.put(Filters.TEXT, screen_name);
 					values_list.add(values);
 				}
-				resolver.bulkInsert(uri, values_list.toArray(new ContentValues[values_list.size()]));
+				bulkInsert(resolver, uri, values_list);
 				Crouton.showText(this, R.string.users_muted, CroutonStyle.INFO);
 				mode.finish();
 				sendBroadcast(new Intent(BROADCAST_MULTI_MUTESTATE_CHANGED));
