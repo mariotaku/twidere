@@ -50,7 +50,6 @@ import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.BaseDialogFragment;
-import org.mariotaku.twidere.fragment.ProgressDialogFragment;
 import org.mariotaku.twidere.model.DraftItem;
 import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -121,6 +120,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	private ContentResolver mResolver;
 	private final Validator mValidator = new Validator();
 	private ImageLoaderWrapper mImageLoader;
+	private AsyncTask<Void, Void, ?> mTask;
 
 	private ActionBar mActionBar;
 	private PopupMenu mPopupMenu;
@@ -158,7 +158,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				if (resultCode == Activity.RESULT_OK) {
 					mIsPhotoAttached = true;
 					mIsImageAttached = false;
-					new CopyImageTask(this, mImageUri, mTempPhotoUri, createTempImageUri(), true).execute();
+					mTask = new CopyImageTask(this, mImageUri, mTempPhotoUri, createTempImageUri(), true).execute();
 				}
 				break;
 			}
@@ -167,7 +167,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 					final Uri src = intent.getData();
 					mIsPhotoAttached = false;
 					mIsImageAttached = true;
-					new CopyImageTask(this, mImageUri, src, createTempImageUri(), false).execute();
+					mTask = new CopyImageTask(this, mImageUri, src, createTempImageUri(), false).execute();
 				}
 				break;
 			}
@@ -232,12 +232,13 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 
 	@Override
 	public void onBackPressed() {
+		if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) return;
 		final String text = mEditText != null ? parseString(mEditText.getText()) : null;
 		if (!isEmpty(text) || mImageUri != null) {
 			new UnsavedTweetDialogFragment().show(getSupportFragmentManager(), "unsaved_tweet");
 			return;
 		}
-		new DiscardTweetTask(this).execute();
+		mTask = new DiscardTweetTask(this).execute();
 	}
 
 	@Override
@@ -938,8 +939,6 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 
 	static class CopyImageTask extends AsyncTask<Void, Void, Boolean> {
 
-		private static final String PROGRESS_FRAGMENT_TAG = "copy_image_progress";
-	
 		final ComposeActivity activity;
 		final boolean delete_orig;
 		final Uri old, src, dst;
@@ -974,18 +973,12 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		
 		@Override
 		protected void onPreExecute() {
-			final DialogFragment f = new ProgressDialogFragment();
-			f.setCancelable(false);
-			f.show(activity.getSupportFragmentManager(), PROGRESS_FRAGMENT_TAG);
+			activity.setSupportProgressBarIndeterminateVisibility(true);
 		}
 		
 		@Override
 		protected void onPostExecute(final Boolean result) {
-			final FragmentManager fm = activity.getSupportFragmentManager();
-			final DialogFragment f = (DialogFragment) fm.findFragmentByTag(PROGRESS_FRAGMENT_TAG);
-			if (f != null) {
-				f.dismiss();
-			}
+			activity.setSupportProgressBarIndeterminateVisibility(false);
 			activity.mImageUri = dst;
 			activity.setMenu();
 			activity.reloadAttachedImageThumbnail();
@@ -996,8 +989,6 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	}
 	
 	static class DeleteImageTask extends AsyncTask<Uri, Void, Boolean> {
-
-		private static final String PROGRESS_FRAGMENT_TAG = "delete_file_progress";
 
 		final ComposeActivity activity;
 
@@ -1027,18 +1018,12 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 
 		@Override
 		protected void onPreExecute() {
-			final DialogFragment f = new ProgressDialogFragment();
-			f.setCancelable(false);
-			f.show(activity.getSupportFragmentManager(), PROGRESS_FRAGMENT_TAG);
+			activity.setSupportProgressBarIndeterminateVisibility(true);
 		}
 
 		@Override
 		protected void onPostExecute(Boolean result) {
-			final FragmentManager fm = activity.getSupportFragmentManager();
-			final DialogFragment f = (DialogFragment) fm.findFragmentByTag(PROGRESS_FRAGMENT_TAG);
-			if (f != null) {
-				f.dismiss();
-			}
+			activity.setSupportProgressBarIndeterminateVisibility(false);
 			activity.mImageUri = null;
 			activity.mIsImageAttached = false;
 			activity.mIsPhotoAttached = false;
@@ -1052,8 +1037,6 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	}
 	
 	static class DiscardTweetTask extends AsyncTask<Void, Void, Void> {
-
-		private static final String PROGRESS_FRAGMENT_TAG = "discard_tweet_progress";
 
 		final ComposeActivity activity;
 
@@ -1076,18 +1059,12 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 
 		@Override
 		protected void onPreExecute() {
-			final DialogFragment f = new ProgressDialogFragment();
-			f.setCancelable(false);
-			f.show(activity.getSupportFragmentManager(), PROGRESS_FRAGMENT_TAG);
+			activity.setSupportProgressBarIndeterminateVisibility(true);
 		}
 
 		@Override
 		protected void onPostExecute(Void result) {
-			final FragmentManager fm = activity.getSupportFragmentManager();
-			final DialogFragment f = (DialogFragment) fm.findFragmentByTag(PROGRESS_FRAGMENT_TAG);
-			if (f != null) {
-				f.dismiss();
-			}
+			activity.setSupportProgressBarIndeterminateVisibility(false);
 			activity.finish();
 		}
 	}
