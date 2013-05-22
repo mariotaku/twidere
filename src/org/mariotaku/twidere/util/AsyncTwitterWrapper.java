@@ -2132,7 +2132,11 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 			final List<TwitterSingleResponse<twitter4j.Status>> result = new ArrayList<TwitterSingleResponse<twitter4j.Status>>();
 
-			if (account_ids.length == 0) return result;
+			if (account_ids.length == 0) {
+				final Exception e = new Exception(mContext.getString(R.string.no_account_selected));
+				result.add(new TwitterSingleResponse<twitter4j.Status>(0, null, e));
+				return result;
+			}
 
 			try {
 				if (use_uploader && uploader == null) throw new ImageUploaderNotFoundException();
@@ -2224,7 +2228,9 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			for (final TwitterSingleResponse<twitter4j.Status> response : result) {
 				if (response.data == null) {
 					failed = true;
-					failed_account_ids.add(response.account_id);
+					if (response.account_id > 0) {
+						failed_account_ids.add(response.account_id);
+					}
 					if (exception == null) {
 						exception = response.exception;
 					}
