@@ -19,12 +19,6 @@
 
 package org.mariotaku.twidere.fragment;
 
-import static android.support.v4.app.ListFragmentTrojan.INTERNAL_EMPTY_ID;
-import static android.support.v4.app.ListFragmentTrojan.INTERNAL_LIST_CONTAINER_ID;
-import static android.support.v4.app.ListFragmentTrojan.INTERNAL_PROGRESS_CONTAINER_ID;
-
-import org.mariotaku.twidere.view.HoloProgressBar;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -39,12 +33,19 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import org.mariotaku.twidere.view.HoloProgressBar;
 
-public abstract class PullToRefreshListFragment extends BaseListFragment implements OnRefreshListener2 {
+import static android.support.v4.app.ListFragmentTrojan.INTERNAL_EMPTY_ID;
+import static android.support.v4.app.ListFragmentTrojan.INTERNAL_LIST_CONTAINER_ID;
+import static android.support.v4.app.ListFragmentTrojan.INTERNAL_PROGRESS_CONTAINER_ID;
+import android.support.v4.view.ViewCompat;
+import com.handmark.pulltorefresh.library.extras.AccessibilityPullEventListener;
+
+public abstract class PullToRefreshListFragment extends BaseListFragment implements OnRefreshListener2<ListView> {
 
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -53,7 +54,7 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
 			if ((PullToRefreshListFragment.this.getClass().getName() + SHUFFIX_REFRESH_TAB).equals(action)) {
-				onPullDownToRefresh();
+				onPullDownToRefresh(mPullToRefreshListView);
 			}
 		}
 	};
@@ -123,11 +124,13 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 
 		final PullToRefreshListView plv = new PullToRefreshListView(context);
 		plv.setOnRefreshListener(this);
+		plv.setOnPullEventListener(new AccessibilityPullEventListener<ListView>(context));
 		mPullToRefreshListView = plv;
 
 		final ListView lv = plv.getRefreshableView();
 		lv.setId(android.R.id.list);
 		lv.setDrawSelectorOnTop(false);
+		//ViewCompat.setOverScrollMode(lv, ViewCompat.OVER_SCROLL_NEVER);
 		lframe.addView(plv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.MATCH_PARENT));
 
@@ -141,7 +144,23 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 
 		return root;
 	}
+	
+	/**
+	 * onPullDownToRefresh will be called only when the user has Pulled from
+	 * the start, and released.
+	 */
+	public final void onPullDownToRefresh(final PullToRefreshBase<ListView> refreshView) {
+		onPullDownToRefresh();
+	}
 
+	/**
+	 * onPullUpToRefresh will be called only when the user has Pulled from
+	 * the end, and released.
+	 */
+	public final void onPullUpToRefresh(final PullToRefreshBase<ListView> refreshView) {
+		onPullDownToRefresh();
+	}
+	
 	/**
 	 * Mark the current Refresh as complete. Will Reset the UI and hide the
 	 * Refreshing View
@@ -272,4 +291,16 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 		if (mPullToRefreshListView == null) return;
 		mPullToRefreshListView.setShowViewWhileRefreshing(showView);
 	}
+	
+	/**
+	 * onPullDownToRefresh will be called only when the user has Pulled from
+	 * the start, and released.
+	 */
+	protected abstract void onPullDownToRefresh();
+
+	/**
+	 * onPullUpToRefresh will be called only when the user has Pulled from
+	 * the end, and released.
+	 */
+	protected abstract void onPullUpToRefresh();
 }
