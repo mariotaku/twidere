@@ -568,8 +568,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				onReleaseToRefresh();
 				break;
 			case REFRESHING:
+				onRefreshing(params[0], true);
+				break;
 			case MANUAL_REFRESHING:
-				onRefreshing(params[0]);
+				onRefreshing(params[0], false);
 				break;
 			case OVERSCROLLING:
 				// NO-OP
@@ -739,7 +741,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * 
 	 * @param doScroll - Whether the UI should scroll for this event.
 	 */
-	protected void onRefreshing(final boolean doScroll) {
+	protected void onRefreshing(final boolean doScroll, final boolean fromUser) {
 		if (mMode.showHeaderLoadingLayout()) {
 			mHeaderLayout.refreshing();
 		}
@@ -754,7 +756,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				OnSmoothScrollFinishedListener listener = new OnSmoothScrollFinishedListener() {
 					@Override
 					public void onSmoothScrollFinished() {
-						callRefreshListener();
+						if (fromUser) {
+							callRefreshListener();
+						}
 					}
 				};
 
@@ -773,7 +777,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			}
 		} else {
 			// We're not scrolling, so just call Refresh Listener now
-			callRefreshListener();
+			if (fromUser) {
+				callRefreshListener();
+			}
 		}
 	}
 
