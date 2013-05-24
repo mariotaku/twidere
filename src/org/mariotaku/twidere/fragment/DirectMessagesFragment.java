@@ -82,11 +82,9 @@ public class DirectMessagesFragment extends PullToRefreshListFragment implements
 			} else if (BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED.equals(action)
 					|| BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, DirectMessagesFragment.this);
-				onRefreshComplete();
 			} else if (BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED.equals(action)
 					|| BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, DirectMessagesFragment.this);
-				onRefreshComplete();
 			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
 				if (mTwitterWrapper.isReceivedDirectMessagesRefreshing()
 						|| mTwitterWrapper.isSentDirectMessagesRefreshing()) {
