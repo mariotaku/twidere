@@ -158,7 +158,7 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 	 * the end, and released.
 	 */
 	public final void onPullUpToRefresh(final PullToRefreshBase<ListView> refreshView) {
-		onPullDownToRefresh();
+		onPullUpToRefresh();
 	}
 	
 	/**
