@@ -50,7 +50,7 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 	private static final String DEFAULT_DNS_SERVER_ADDRESS = "8.8.8.8";
 
 	private final SharedPreferences mHostMapping, mPreferences;
-	private final SystemHostsParser mHosts = new SystemHostsParser();
+	private final HostsFileParser mHosts = new HostsFileParser();
 	private final HostCache mHostCache = new HostCache(512);
 	private final boolean mLocalMappingOnly;
 	private final String mDnsAddress;

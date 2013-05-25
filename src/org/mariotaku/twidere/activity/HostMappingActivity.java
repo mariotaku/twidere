@@ -25,10 +25,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,14 +49,12 @@ import java.util.Map;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.FilePickerActivity;
 import org.mariotaku.twidere.fragment.BaseDialogFragment;
+import org.mariotaku.twidere.fragment.ProgressDialogFragment;
+import org.mariotaku.twidere.util.AsyncTask;
+import org.mariotaku.twidere.util.HostsFileParser;
 
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.parseString;
-import org.mariotaku.twidere.util.AsyncTask;
-import org.mariotaku.twidere.util.SystemHostsParser;
-import java.util.HashMap;
-import org.mariotaku.twidere.fragment.ProgressDialogFragment;
-import android.support.v4.app.FragmentManager;
 
 public class HostMappingActivity extends BaseDialogWhenLargeActivity implements OnItemClickListener,
 		OnItemLongClickListener {
@@ -70,7 +70,10 @@ public class HostMappingActivity extends BaseDialogWhenLargeActivity implements 
 		switch (requestCode) {
 			case REQUEST_PICK_FILE: {
 				if (resultCode == RESULT_OK) {
-					new ImportHostsTask(this).execute();
+					final Uri uri = intent != null ? intent.getData() : null;
+					if (uri != null) {
+						new ImportHostsTask(this, uri.getPath()).execute();
+					}
 				}
 				break;
 			}
@@ -246,15 +249,17 @@ public class HostMappingActivity extends BaseDialogWhenLargeActivity implements 
 
 		private final SharedPreferences mPreferences;
 		private final HostMappingActivity mActivity;
+		private final String mPath;
 
-		ImportHostsTask(final HostMappingActivity activity) {
+		ImportHostsTask(final HostMappingActivity activity, final String path) {
 			mActivity = activity;
+			mPath = path;
 			mPreferences = activity.getSharedPreferences(HOST_MAPPING_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		}
 		
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			final SystemHostsParser hosts = new SystemHostsParser();
+			final HostsFileParser hosts = new HostsFileParser(mPath);
 			final boolean result = hosts.reload();
 			final SharedPreferences.Editor editor = mPreferences.edit();
 			for (final Map.Entry<String, String> entry : hosts.getAll().entrySet()) {

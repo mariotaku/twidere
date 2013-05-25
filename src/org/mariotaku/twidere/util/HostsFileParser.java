@@ -8,10 +8,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Arrays;
 
-public class SystemHostsParser {
+public class HostsFileParser {
 
 	private final Map<String, String> mHosts = new HashMap<String, String>();
+	private final String mPath;
 
+	public HostsFileParser() {
+		this("/etc/hosts");
+	}
+	
+	public HostsFileParser(final String path) {
+		mPath = path;
+	}
+	
 	public boolean contains(final String host) {
 		return mHosts.containsKey(host);
 	}
@@ -32,7 +41,7 @@ public class SystemHostsParser {
 	public boolean reload() {
 		BufferedReader reader = null;
 		try {
-			reader = new BufferedReader(new FileReader("/etc/hosts"));
+			reader = new BufferedReader(new FileReader(mPath));
 			mHosts.clear();
 			String line = null;
 			while ((line = reader.readLine()) != null) {
