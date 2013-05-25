@@ -20,6 +20,7 @@ public class AutoAdjustHeightImageView extends ImageView {
 
 	public AutoAdjustHeightImageView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
+		setScaleType(ScaleType.CENTER_CROP);
 	}
 
 	@Override

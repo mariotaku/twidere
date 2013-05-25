@@ -90,14 +90,13 @@
 		android:layout_height="wrap_content"
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_below="@+id/text"
-		android:layout_marginTop="8dp">
+		android:layout_marginTop="8dp"
+		android:background="@drawable/image_shadow">
 
 		<org.mariotaku.twidere.view.StatusImagePreviewItemView
 			android:id="@+id/image_preview"
 			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:cropToPadding="true"
-			android:background="@drawable/image_shadow"/>
+			android:layout_height="match_parent"/>
 
 		<org.mariotaku.twidere.view.HoloProgressBar
 			android:id="@+id/image_preview_progress"

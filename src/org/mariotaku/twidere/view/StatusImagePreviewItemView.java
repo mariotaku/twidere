@@ -31,7 +31,6 @@ public class StatusImagePreviewItemView extends AutoAdjustHeightImageView {
 		final int color = Utils.getThemeColor(context);
 		mHightlightColor = Color.argb(0x80, Color.red(color), Color.green(color), Color.blue(color));
 		mRect = new Rect();
-		setCropToPadding(true);
 	}
 
 	@Override
