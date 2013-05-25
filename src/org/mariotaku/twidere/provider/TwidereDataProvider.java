@@ -89,6 +89,8 @@ import java.util.Set;
 import android.database.MatrixCursor;
 import java.util.Map;
 import org.mariotaku.twidere.preference.NotificationContentPreference;
+import twitter4j.http.HostAddressResolver;
+import java.io.IOException;
 
 public final class TwidereDataProvider extends ContentProvider implements Constants {
 
@@ -99,6 +101,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	private NotificationManager mNotificationManager;
 	private SharedPreferences mPreferences;
 	private ImagePreloader mImagePreloader;
+	private HostAddressResolver mHostAddressResolver;
 
 	private int mNewStatusesCount;
 	private final List<ParcelableStatus> mNewMentions = new ArrayList<ParcelableStatus>();
@@ -122,6 +125,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		}
 
 	};
+
 
 	@Override
 	public int bulkInsert(final Uri uri, final ContentValues[] values) {
@@ -245,6 +249,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		mContext = getContext();
 		final TwidereApplication app = TwidereApplication.getInstance(mContext);
 		mDatabase = app.getSQLiteDatabase();
+		mHostAddressResolver = app.getHostAddressResolver();
 		mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 		mPreferences = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mPermissionsManager = new PermissionsManager(mContext);
@@ -275,6 +280,9 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				case VIRTUAL_TABLE_ID_PREFERENCES: {
 					return getPreferencesCursor(mPreferences);
 				}
+				case VIRTUAL_TABLE_ID_DNS: {
+					return getDNSCursor(uri.getLastPathSegment());
+				}
 				case TABLE_ID_DIRECT_MESSAGES_CONVERSATION: {
 					final List<String> segments = uri.getPathSegments();
 					if (segments.size() != 3) return null;
@@ -302,6 +310,19 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		} catch (final SQLException e) {
 			throw new IllegalStateException(e);
 		}
+	}
+	
+	private Cursor getDNSCursor(final String host) {
+		final MatrixCursor c = new MatrixCursor(TweetStore.DNS.MATRIX_COLUMNS);
+		try {
+			final String address = mHostAddressResolver.resolve(host);
+			if (host != null && address != null) {
+				c.addRow(new String[] { host, address });
+			}
+		} catch (final IOException e) {
+			
+		}
+		return c;
 	}
 
 	private static Cursor getPreferencesCursor(SharedPreferences mPreferences) {
@@ -395,7 +416,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 
 	private void checkReadPermission(final int id, final String table, final String[] projection) {
 		switch (id) {
-			case VIRTUAL_TABLE_ID_PREFERENCES: {
+			case VIRTUAL_TABLE_ID_PREFERENCES:
+			case VIRTUAL_TABLE_ID_DNS: {
 				if (!checkPermission(PERMISSION_PREFERENCES))
 					throw new SecurityException("Access preferences requires level PERMISSION_LEVEL_PREFERENCES");
 				break;

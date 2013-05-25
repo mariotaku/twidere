@@ -740,4 +740,20 @@ public final class TweetStore implements Constants {
 
 		public static final String[] COLUMNS = new String[] { _ID, PACKAGE_NAME, PERMISSION };
 	}
+	
+
+	public static interface DNS extends BaseColumns {
+		public static final String CONTENT_PATH = "dns";
+
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+				CONTENT_PATH);
+
+		public static final String HOST = "host";
+		
+		public static final String ADDRESS = "address";
+
+		public static final String[] MATRIX_COLUMNS = new String[] { HOST, ADDRESS };
+
+		public static final String[] COLUMNS = new String[] { _ID, HOST, ADDRESS };
+	}
 }
