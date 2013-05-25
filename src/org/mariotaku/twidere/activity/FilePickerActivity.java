@@ -30,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.ArrayAdapter;
 import org.mariotaku.twidere.util.ArrayUtils;
 
 import android.content.Context;
@@ -47,7 +48,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -64,7 +64,7 @@ public class FilePickerActivity extends BaseDialogWhenLargeActivity implements O
 			final File parent = mCurrentDirectory.getParentFile();
 			if (parent != null) {
 				mCurrentDirectory = parent;
-				getSupportLoaderManager().restartLoader(0, null, this);
+				getSupportLoaderManager().restartLoader(0, getIntent().getExtras(), this);
 				return;
 			}
 		}
@@ -88,15 +88,12 @@ public class FilePickerActivity extends BaseDialogWhenLargeActivity implements O
 		mListView = (ListView) findViewById(android.R.id.list);
 		mListView.setAdapter(mAdapter);
 		mListView.setOnItemClickListener(this);
-		getSupportLoaderManager().initLoader(0, null, this);
+		getSupportLoaderManager().initLoader(0, getIntent().getExtras(), this);
 	}
 
 	@Override
 	public Loader<List<File>> onCreateLoader(final int id, Bundle args) {
-		if (args == null) {
-			args = getIntent().getExtras();
-		}
-		final String[] extensions = args != null ? args.getStringArray(INTENT_KEY_FILE_EXTENSIONS) : new String[0];
+		final String[] extensions = args != null ? args.getStringArray(INTENT_KEY_FILE_EXTENSIONS) : null;
 		return new FilesLoader(this, mCurrentDirectory, extensions);
 	}
 
@@ -112,7 +109,7 @@ public class FilePickerActivity extends BaseDialogWhenLargeActivity implements O
 		if (file == null) return;
 		if (file.isDirectory()) {
 			mCurrentDirectory = file;
-			getSupportLoaderManager().restartLoader(0, null, this);
+			getSupportLoaderManager().restartLoader(0, getIntent().getExtras(), this);
 		} else if (file.isFile()) {
 			final Intent intent = new Intent();
 			intent.setData(Uri.fromFile(file));
@@ -154,26 +151,13 @@ public class FilePickerActivity extends BaseDialogWhenLargeActivity implements O
 		super.onSaveInstanceState(outState);
 	}
 
-	static class FilesAdapter extends BaseAdapter {
+	static class FilesAdapter extends ArrayAdapter<File> {
 
-		private final LayoutInflater mInflater;
-		private final Context mContext;
-
-		private final List<File> mData = new ArrayList<File>();
+		private final int mPadding;
 
 		public FilesAdapter(final Context context) {
-			mInflater = LayoutInflater.from(context);
-			mContext = context;
-		}
-
-		@Override
-		public int getCount() {
-			return mData.size();
-		}
-
-		@Override
-		public File getItem(final int position) {
-			return mData.get(position);
+			super(context, android.R.layout.simple_list_item_1);
+			mPadding = (int) (4 * context.getResources().getDisplayMetrics().density);
 		}
 
 		@Override
@@ -183,27 +167,24 @@ public class FilePickerActivity extends BaseDialogWhenLargeActivity implements O
 
 		@Override
 		public View getView(final int position, final View convertView, final ViewGroup parent) {
-			final View view = convertView != null ? convertView : mInflater.inflate(
-					android.R.layout.simple_list_item_1, parent, false);
+			final View view = super.getView(position, convertView, parent);
 			final TextView text = (TextView) (view instanceof TextView ? view : view.findViewById(android.R.id.text1));
 			final File file = getItem(position);
 			if (file == null || text == null) return view;
 			text.setText(file.getName());
-			final int padding = (int) (4 * mContext.getResources().getDisplayMetrics().density);
 			text.setSingleLine(true);
 			text.setEllipsize(TruncateAt.MARQUEE);
-			text.setPadding(padding, padding, position, padding);
+			text.setPadding(mPadding, mPadding, position, mPadding);
 			text.setCompoundDrawablesWithIntrinsicBounds(
 					file.isDirectory() ? R.drawable.ic_folder : R.drawable.ic_file, 0, 0, 0);
 			return view;
 		}
 
 		public void setData(final List<File> data) {
-			mData.clear();
+			clear();
 			if (data != null) {
-				mData.addAll(data);
+				addAll(data);
 			}
-			notifyDataSetChanged();
 		}
 
 	}
@@ -211,46 +192,51 @@ public class FilePickerActivity extends BaseDialogWhenLargeActivity implements O
 	static class FilesLoader extends AsyncTaskLoader<List<File>> {
 
 		private final File path;
+		private final String[] extensions;
 		private final Pattern extensions_regex;
 
 		private static final Comparator<File> NAME_COMPARATOR = new Comparator<File>() {
 			@Override
 			public int compare(final File file1, final File file2) {
-				return file1.getName().compareTo(file2.getName());
+				return file1.getName().toLowerCase().compareTo(file2.getName().toLowerCase());
 			}
 		};
+
 
 		public FilesLoader(final Context context, final File path, final String[] extensions) {
 			super(context);
 			this.path = path;
-			extensions_regex = Pattern.compile(ArrayUtils.toString(extensions, '|', false), Pattern.CASE_INSENSITIVE);
+			this.extensions = extensions;
+			extensions_regex = extensions != null ?
+					Pattern.compile(ArrayUtils.toString(extensions, '|', false), Pattern.CASE_INSENSITIVE) : null;
 		}
 
 		@Override
 		public List<File> loadInBackground() {
-			final List<File> list = new ArrayList<File>();
-			if (path != null && path.isDirectory()) {
-				final File[] files = path.listFiles();
-				if (files != null) {
-					for (final File file : files) {
-						if (file.canRead()) {
-							if (file.isFile()) {
-								final String name = file.getName();
-								final int idx = name.lastIndexOf(".");
-								if (idx == -1) {
-									continue;
-								}
-								final Matcher m = extensions_regex.matcher(name.substring(idx + 1));
-								if (!m.matches()) {
-									continue;
-								}
-							}
-							list.add(file);
-						}
+			if (path == null || !path.isDirectory()) return Collections.emptyList();
+			final File[] listed_files = path.listFiles();
+			if (listed_files == null) return Collections.emptyList();
+			final List<File> dirs = new ArrayList<File>();
+			final List<File> files = new ArrayList<File>();
+			for (final File file : listed_files) {
+				if (!file.canRead() || file.isHidden()) {
+					continue;
+				}
+				if (file.isDirectory()) {
+					dirs.add(file);
+				} else if (file.isFile()) {
+					final String name = file.getName();
+					final int idx = name.lastIndexOf(".");
+					if (extensions == null || (extensions.length == 0 || idx == -1) ||
+							(idx > -1 && extensions_regex.matcher(name.substring(idx + 1)).matches())) {
+						files.add(file);
 					}
 				}
-				Collections.sort(list, NAME_COMPARATOR);
 			}
+			Collections.sort(dirs, NAME_COMPARATOR);
+			Collections.sort(files, NAME_COMPARATOR);
+			final List<File> list = new ArrayList<File>(dirs);
+			list.addAll(files);
 			return list;
 		}
 

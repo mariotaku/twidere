@@ -19,9 +19,13 @@ public class SystemHostsParser {
 	public String getAddress(final String host) {
 		return mHosts.get(host);
 	}
+	
+	public Map<String, String> getAll() {
+		return new HashMap<String, String>(mHosts);
+	}
 
 	public void init() {
-		if (mHosts.isEmpty()) return;
+		if (!mHosts.isEmpty()) return;
 		reload();
 	}
 
@@ -42,7 +46,7 @@ public class SystemHostsParser {
 					continue;
 				}
 				final String host = segments[1];
-				if (!mHosts.containsKey(host)) {
+				if (!contains(host)) {
 					mHosts.put(host, segments[0]);		
 				}
 			}

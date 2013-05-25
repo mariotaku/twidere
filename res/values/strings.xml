@@ -438,5 +438,6 @@
 	<string name="wrong_api_key">Wrong API url or consumer key/secret, please check them again.</string>
 	<string name="status_deleted">Tweet deleted.</string>
 	<string name="retweet_cancelled">Retweet cancelled.</string>
+	<string name="import_from">Import from…</string>
 
 </resources>

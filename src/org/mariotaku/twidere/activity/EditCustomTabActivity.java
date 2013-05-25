@@ -440,6 +440,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 			if (ICON_SPECIAL_TYPE_CUSTOMIZE.equals(key)) {
 				mIcon = null;
 				final Intent intent = new Intent(INTENT_ACTION_PICK_FILE);
+				intent.setClass(getContext(), FilePickerActivity.class);
 				final Bundle extras = new Bundle();
 				extras.putStringArray(INTENT_KEY_FILE_EXTENSIONS, new String[] { "jpg", "png", "bmp", "gif" });
 				intent.putExtras(extras);

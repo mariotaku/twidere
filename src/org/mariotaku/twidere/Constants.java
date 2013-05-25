@@ -454,6 +454,7 @@ public interface Constants extends TwitterConstants {
 	public static final int MENU_LOAD_FROM_POSITION = R.id.load_from_position;
 	public static final int MENU_TOGGLE_SENSITIVE = R.id.toggle_sensitive;
 	public static final int MENU_REVOKE = R.id.revoke;
+	public static final int MENU_IMPORT_FROM = R.id.import_from;
 
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_PICK_IMAGE = 2;

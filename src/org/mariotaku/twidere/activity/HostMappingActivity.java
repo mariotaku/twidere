@@ -19,20 +19,11 @@
 
 package org.mariotaku.twidere.activity;
 
-import static android.text.TextUtils.isEmpty;
-import static org.mariotaku.twidere.util.Utils.parseString;
-
-import java.util.Map;
-
-import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.fragment.BaseDialogFragment;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -50,6 +41,20 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
+import java.util.Map;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.FilePickerActivity;
+import org.mariotaku.twidere.fragment.BaseDialogFragment;
+
+import static android.text.TextUtils.isEmpty;
+import static org.mariotaku.twidere.util.Utils.parseString;
+import org.mariotaku.twidere.util.AsyncTask;
+import org.mariotaku.twidere.util.SystemHostsParser;
+import java.util.HashMap;
+import org.mariotaku.twidere.fragment.ProgressDialogFragment;
+import android.support.v4.app.FragmentManager;
 
 public class HostMappingActivity extends BaseDialogWhenLargeActivity implements OnItemClickListener,
 		OnItemLongClickListener {
@@ -60,6 +65,19 @@ public class HostMappingActivity extends BaseDialogWhenLargeActivity implements 
 
 	private DialogFragment mDialogFragment;
 
+	@Override
+	protected void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
+		switch (requestCode) {
+			case REQUEST_PICK_FILE: {
+				if (resultCode == RESULT_OK) {
+					new ImportHostsTask(this).execute();
+				}
+				break;
+			}
+		}
+		super.onActivityResult(requestCode, resultCode, intent);
+	}
+	
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -104,6 +122,11 @@ public class HostMappingActivity extends BaseDialogWhenLargeActivity implements 
 				mDialogFragment = (DialogFragment) Fragment.instantiate(this, AddMappingDialogFragment.class.getName());
 				mDialogFragment.show(getSupportFragmentManager(), "add_mapping");
 				break;
+			case MENU_IMPORT_FROM:			
+				final Intent intent = new Intent(INTENT_ACTION_PICK_FILE);
+				intent.setClass(this, FilePickerActivity.class);
+				startActivityForResult(intent, REQUEST_PICK_FILE);
+				break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -117,10 +140,6 @@ public class HostMappingActivity extends BaseDialogWhenLargeActivity implements 
 
 		private EditText mEditHost, mEditAddress;
 		private String mHost, mAddress;
-
-		public AddMappingDialogFragment() {
-
-		}
 
 		@Override
 		public void onClick(final DialogInterface dialog, final int which) {
@@ -221,5 +240,45 @@ public class HostMappingActivity extends BaseDialogWhenLargeActivity implements 
 			notifyDataSetChanged();
 		}
 
+	}
+	
+	static class ImportHostsTask extends AsyncTask<Void, Void, Boolean> {
+
+		private final SharedPreferences mPreferences;
+		private final HostMappingActivity mActivity;
+
+		ImportHostsTask(final HostMappingActivity activity) {
+			mActivity = activity;
+			mPreferences = activity.getSharedPreferences(HOST_MAPPING_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		}
+		
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			final SystemHostsParser hosts = new SystemHostsParser();
+			final boolean result = hosts.reload();
+			final SharedPreferences.Editor editor = mPreferences.edit();
+			for (final Map.Entry<String, String> entry : hosts.getAll().entrySet()) {
+				editor.putString(entry.getKey(), entry.getValue());
+			}
+			return result && editor.commit();
+		}
+
+		@Override
+		protected void onPostExecute(final Boolean result) {
+			final FragmentManager fm = mActivity.getSupportFragmentManager();
+			final Fragment f = fm.findFragmentByTag("import_hosts_progress");
+			if (f instanceof DialogFragment) {
+				((DialogFragment)f).dismiss();
+			}
+			mActivity.reload();
+		}
+
+		@Override
+		protected void onPreExecute() {
+			final FragmentManager fm = mActivity.getSupportFragmentManager();
+			final DialogFragment f = new ProgressDialogFragment();
+			f.setCancelable(false);
+			f.show(fm, "import_hosts_progress");
+		}
 	}
 }
