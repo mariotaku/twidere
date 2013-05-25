@@ -50,6 +50,7 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 	private static final String DEFAULT_DNS_SERVER_ADDRESS = "8.8.8.8";
 
 	private final SharedPreferences mHostMapping, mPreferences;
+	private final SystemHostsParser mHosts = new SystemHostsParser();
 	private final HostCache mHostCache = new HostCache(512);
 	private final boolean mLocalMappingOnly;
 	private final String mDnsAddress;
@@ -88,6 +89,15 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 			}
 			return host_addr;
 		}
+		mHosts.init();
+		if (mHosts.contains(host)) {
+			final String host_addr = mHosts.getAddress(host);
+			mHostCache.put(host, host_addr);
+			if (DEBUG) {
+				Log.d(RESOLVER_LOGTAG, "Got mapped address " + host_addr + " for host " + host);
+			}
+			return host_addr;
+		}
 		final String[] host_segments = host.split("\\.");
 		final int host_segments_length = host_segments.length;
 		if (host_segments_length > 2) {
@@ -102,9 +112,7 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 				return host_addr;
 			}
 		}
-		if (!mLocalMappingOnly) {
-			init();
-		}
+		initDns();
 		// Use TCP DNS Query if enabled.
 		if (mDns != null && mPreferences.getBoolean(PREFERENCE_KEY_TCP_DNS_QUERY, false)) {
 			final Name name = new Name(host);
@@ -161,7 +169,7 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 		return host;
 	}
 
-	void init() throws IOException {
+	void initDns() throws IOException {
 		if (mDns != null) return;
 		mDns = mLocalMappingOnly ? null : new SimpleResolver(mDnsAddress);
 		if (mDns != null) {
