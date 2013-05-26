@@ -401,6 +401,8 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_KEY_ALLOW_SELECT_NONE = "allow_select_none";
 	public static final String INTENT_KEY_OAUTH_ONLY = "oauth_only";
 	public static final String INTENT_KEY_PERMISSIONS = "permissions";
+	public static final String INTENT_KEY_LOCATION = "location";
+	public static final String INTENT_KEY_URL = "url";
 
 	public static final String QUERY_PARAM_NEW_ITEMS_COUNT = "new_items_count";
 

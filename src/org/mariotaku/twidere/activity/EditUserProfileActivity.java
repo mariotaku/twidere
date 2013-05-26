@@ -51,6 +51,7 @@ import static org.mariotaku.twidere.util.Utils.createTakePhotoIntent;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.showErrorMessage;
+import org.mariotaku.twidere.util.BundleAccessor;
 
 public class EditUserProfileActivity extends BaseDialogWhenLargeActivity implements OnSizeChangedListener, TextWatcher,
 		OnClickListener, CroutonLifecycleCallback {
@@ -275,7 +276,16 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 		mEditUrl.addTextChangedListener(this);
 		mProfileImageView.setOnClickListener(this);
 		mProfileBannerView.setOnClickListener(this);
-		getUserInfo();
+		if (savedInstanceState != null && savedInstanceState.getParcelable(INTENT_KEY_USER) != null) {
+			final ParcelableUser user = savedInstanceState.getParcelable(INTENT_KEY_USER);
+			displayUser(user);
+			mEditName.setText(BundleAccessor.getString(savedInstanceState, INTENT_KEY_NAME, user.name));
+			mEditLocation.setText(BundleAccessor.getString(savedInstanceState, INTENT_KEY_LOCATION, user.location));
+			mEditDescription.setText(BundleAccessor.getString(savedInstanceState, INTENT_KEY_DESCRIPTION, user.description_expanded));
+			mEditUrl.setText(BundleAccessor.getString(savedInstanceState, INTENT_KEY_URL, user.url_expanded));
+		} else {
+			getUserInfo();
+		}
 	}
 
 	@Override
@@ -327,9 +337,19 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 	@Override
 	public void onSizeChanged(final View view, final int w, final int h, final int oldw, final int oldh) {
 	}
+	
+	@Override
+	protected void onSaveInstanceState(final Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putParcelable(INTENT_KEY_USER, mUser);
+		outState.putString(INTENT_KEY_NAME, parseString(mEditName.getText()));
+		outState.putString(INTENT_KEY_DESCRIPTION, parseString(mEditDescription.getText()));
+		outState.putString(INTENT_KEY_LOCATION, parseString(mEditLocation.getText()));
+		outState.putString(INTENT_KEY_URL, parseString(mEditUrl.getText()));
+	}
 
 	@Override
-	public void onStart() {
+	protected void onStart() {
 		super.onStart();
 		final IntentFilter filter = new IntentFilter(BROADCAST_PROFILE_UPDATED);
 		registerReceiver(mStatusReceiver, filter);

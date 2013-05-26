@@ -3,9 +3,7 @@
 	android:title="@string/about">
 
 	<PreferenceCategory android:title="ABOUT TWIDERE">
-		<Preference
-			android:summary="@string/app_version"
-			android:title="@string/app_name"/>
+		<org.mariotaku.twidere.preference.AppVersionPreference/>
 		<Preference
 			android:summary="Mariotaku Lee"
 			android:title="Developer">
