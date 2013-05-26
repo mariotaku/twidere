@@ -27,11 +27,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.accessibility.AccessibilityEventCompat;
-import android.view.accessibility.AccessibilityEvent;
-import android.view.accessibility.AccessibilityManager;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.CroutonManager;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.mariotaku.twidere.Constants;
@@ -39,6 +34,7 @@ import org.mariotaku.twidere.model.TabSpec;
 import org.mariotaku.twidere.view.TabPageIndicator;
 import org.mariotaku.twidere.view.TabPageIndicator.TitleProvider;
 
+import static org.mariotaku.twidere.util.Utils.announceForAccessibilityCompat;
 import static org.mariotaku.twidere.util.Utils.getTabIconDrawable;
 
 public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvider, Constants {
@@ -120,32 +116,7 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 	@Override
 	public void onPageSelected(final int position) {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.DONUT) return;
-		final AccessibilityManager accessibilityManager = (AccessibilityManager) mContext.getSystemService(Context.ACCESSIBILITY_SERVICE);
-		if (!accessibilityManager.isEnabled()) return;
-		// Prior to SDK 16, announcements could only be made through FOCUSED
-		// events. Jelly Bean (SDK 16) added support for speaking text verbatim
-		// using the ANNOUNCEMENT event type.
-		final int eventType;
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-			eventType = AccessibilityEvent.TYPE_VIEW_FOCUSED;
-		} else {
-			eventType = AccessibilityEventCompat.TYPE_ANNOUNCEMENT;
-		}
-
-		// Construct an accessibility event with the minimum recommended
-		// attributes. An event without a class name or package may be dropped.
-		final AccessibilityEvent event = AccessibilityEvent.obtain(eventType);
-		event.getText().add(getPageTitle(position));
-		event.setClassName(getClass().getName());
-		event.setPackageName(mContext.getPackageName());
-		if (mIndicator != null) {
-			event.setSource(mIndicator);
-		}
-
-		// Sends the event directly through the accessibility manager. If your
-		// application only targets SDK 14+, you should just call
-		// getParent().requestSendAccessibilityEvent(this, event);
-		accessibilityManager.sendAccessibilityEvent(event);
+		announceForAccessibilityCompat(mContext, mIndicator, getPageTitle(position), getClass());
 	}
 
 	@Override

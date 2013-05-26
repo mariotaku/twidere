@@ -17,22 +17,21 @@
 
 package de.keyboardsurfer.android.widget.crouton;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.view.accessibility.AccessibilityEventCompat;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.view.ViewTreeObserver;
-import android.view.accessibility.AccessibilityEvent;
-import android.view.accessibility.AccessibilityManager;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.FrameLayout;
 import java.util.Iterator;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import static org.mariotaku.twidere.util.Utils.announceForAccessibilityCompat;
 
 
 /** Manages the lifecycle of {@link Crouton}s. */
@@ -47,7 +46,7 @@ final class CroutonManager extends Handler {
 
 	private static CroutonManager INSTANCE;
 
-	private Queue<Crouton> croutonQueue;
+	private final Queue<Crouton> croutonQueue;
 
 	private CroutonManager() {
 		croutonQueue = new LinkedBlockingQueue<Crouton>();
@@ -68,7 +67,7 @@ final class CroutonManager extends Handler {
 	 * @param crouton
 	 *   The {@link Crouton} to be displayed.
 	 */
-	void add(Crouton crouton) {
+	void add(final Crouton crouton) {
 		croutonQueue.add(crouton);
 		displayCrouton();
 	}
@@ -98,7 +97,7 @@ final class CroutonManager extends Handler {
 		}
 	}
 
-	private long calculateCroutonDuration(Crouton crouton) {
+	private long calculateCroutonDuration(final Crouton crouton) {
 		long croutonDuration = crouton.getConfiguration().durationInMilliseconds;
 		croutonDuration += crouton.getInAnimation().getDuration();
 		croutonDuration += crouton.getOutAnimation().getDuration();
@@ -113,7 +112,7 @@ final class CroutonManager extends Handler {
 	 * @param messageId
 	 *   The {@link Message} id.
 	 */
-	private void sendMessage(Crouton crouton, final int messageId) {
+	private void sendMessage(final Crouton crouton, final int messageId) {
 		final Message message = obtainMessage(messageId);
 		message.obj = crouton;
 		sendMessage(message);
@@ -129,7 +128,7 @@ final class CroutonManager extends Handler {
 	 * @param delay
 	 *   The delay in milliseconds.
 	 */
-	private void sendMessageDelayed(Crouton crouton, final int messageId, final long delay) {
+	private void sendMessageDelayed(final Crouton crouton, final int messageId, final long delay) {
 		Message message = obtainMessage(messageId);
 		message.obj = crouton;
 		sendMessageDelayed(message, delay);
@@ -141,7 +140,7 @@ final class CroutonManager extends Handler {
 	 * @see android.os.Handler#handleMessage(android.os.Message)
 	 */
 	@Override
-	public void handleMessage(Message message) {
+	public void handleMessage(final Message message) {
 		final Crouton crouton = (Crouton) message.obj;
 
 		switch (message.what) {
@@ -206,14 +205,10 @@ final class CroutonManager extends Handler {
 		croutonView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 				@Override
 				public void onGlobalLayout() {
-					if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-						croutonView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-					} else {
-						croutonView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-					}
+					ViewTreeObserverAccessor.removeOnGlobalLayoutListener(croutonView.getViewTreeObserver(), this);
 
 					croutonView.startAnimation(crouton.getInAnimation());
-					announceForAccessibilityCompat(crouton.getActivity(), crouton);
+					announceForAccessibilityCompat(crouton.getActivity(), crouton.getView(), crouton.getText(), getClass());
 					if (CroutonConfiguration.DURATION_INFINITE != crouton.getConfiguration().durationInMilliseconds) {
 						sendMessageDelayed(crouton, Messages.REMOVE_CROUTON,
 										   crouton.getConfiguration().durationInMilliseconds + crouton.getInAnimation().getDuration());
@@ -230,7 +225,7 @@ final class CroutonManager extends Handler {
 	 *   The {@link Crouton} added to a {@link ViewGroup} and should be
 	 *   removed.
 	 */
-	protected void removeCrouton(Crouton crouton) {
+	protected void removeCrouton(final Crouton crouton) {
 		final View croutonView = crouton.getView();
 		final ViewGroup croutonParentView = (ViewGroup) croutonView.getParent();
 
@@ -263,7 +258,7 @@ final class CroutonManager extends Handler {
 	 * @param crouton
 	 *   The {@link Crouton} that should be removed.
 	 */
-	void removeCroutonImmediately(Crouton crouton) {
+	void removeCroutonImmediately(final Crouton crouton) {
 		// if Crouton has already been displayed then it may not be in the queue (because it was popped).
 		// This ensures the displayed Crouton is removed from its parent immediately, whether another instance
 		// of it exists in the queue or not.
@@ -316,7 +311,7 @@ final class CroutonManager extends Handler {
 	 * Removes all {@link Crouton}s for the provided activity. This will remove
 	 * crouton from {@link Activity}s content view immediately.
 	 */
-	void clearCroutonsForActivity(Activity activity) {
+	void clearCroutonsForActivity(final Activity activity) {
 		if (croutonQueue == null) return;
 		final Iterator<Crouton> croutonIterator = croutonQueue.iterator();
 		while (croutonIterator.hasNext()) {
@@ -345,56 +340,29 @@ final class CroutonManager extends Handler {
 		removeMessages(Messages.REMOVE_CROUTON, crouton);
 	}
 
-	/**
-	 * Generates and dispatches an SDK-specific spoken announcement.
-	 * <p>
-	 * For backwards compatibility, we're constructing an event from scratch
-	 * using the appropriate event type. If your application only targets SDK
-	 * 16+, you can just call View.announceForAccessibility(CharSequence).
-	 * </p>
-	 * <p/>
-	 * note: AccessibilityManager is only available from API lvl 4.
-	 * <p/>
-	 * Adapted from https://http://eyes-free.googlecode.com/files/accessibility_codelab_demos_v2_src.zip
-	 * via https://github.com/coreform/android-formidable-validation
-	 *
-	 * @param context
-	 *   Used to get {@link AccessibilityManager}
-	 * @param text
-	 *   The text to announce.
-	 */
-	public static void announceForAccessibilityCompat(final Context context, final Crouton crouton) {
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.DONUT) return;
-		final AccessibilityManager accessibilityManager = (AccessibilityManager) context.getSystemService(Context.ACCESSIBILITY_SERVICE);
-		if (!accessibilityManager.isEnabled()) return;
-		// Prior to SDK 16, announcements could only be made through FOCUSED
-		// events. Jelly Bean (SDK 16) added support for speaking text verbatim
-		// using the ANNOUNCEMENT event type.
-		final int eventType;
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-			eventType = AccessibilityEvent.TYPE_VIEW_FOCUSED;
-		} else {
-			eventType = AccessibilityEventCompat.TYPE_ANNOUNCEMENT;
-		}
-
-		// Construct an accessibility event with the minimum recommended
-		// attributes. An event without a class name or package may be dropped.
-		final AccessibilityEvent event = AccessibilityEvent.obtain(eventType);
-		event.getText().add(crouton.getText());
-		event.setClassName(CroutonManager.class.getName());
-		event.setPackageName(context.getPackageName());
-		event.setSource(crouton.getView());
-
-		// Sends the event directly through the accessibility manager. If your
-		// application only targets SDK 14+, you should just call
-		// getParent().requestSendAccessibilityEvent(this, event);
-		accessibilityManager.sendAccessibilityEvent(event);
-	}
-
 	@Override
 	public String toString() {
-		return "Manager{" +
-			"croutonQueue=" + croutonQueue +
-			'}';
+		return "CroutonManager{croutonQueue=" + croutonQueue + '}';
+	}
+	
+	private static class ViewTreeObserverAccessor {
+		
+		private static void removeOnGlobalLayoutListener(final ViewTreeObserver observer, final OnGlobalLayoutListener listener) {
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+				observer.removeGlobalOnLayoutListener(listener);
+			} else {
+				ViewTreeObserverAccessorJB.removeOnGlobalLayoutListener(observer, listener);
+			}
+		}
+		
+		@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+		private static class ViewTreeObserverAccessorJB {
+			
+			private static void removeOnGlobalLayoutListener(final ViewTreeObserver observer, final OnGlobalLayoutListener listener) {
+				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) return;
+				observer.removeOnGlobalLayoutListener(listener);
+			}
+
+		}
 	}
 }

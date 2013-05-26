@@ -19,36 +19,64 @@
 
 package org.mariotaku.twidere.util;
 
-import static android.content.res.Configuration.SCREENLAYOUT_LAYOUTDIR_RTL;
-import static android.text.format.DateUtils.getRelativeTimeSpanString;
-import static android.text.TextUtils.isEmpty;
-import static org.mariotaku.twidere.provider.TweetStore.CACHE_URIS;
-import static org.mariotaku.twidere.provider.TweetStore.DIRECT_MESSAGES_URIS;
-import static org.mariotaku.twidere.provider.TweetStore.STATUSES_URIS;
-import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
-import static org.mariotaku.twidere.util.TwidereLinkify.IMGLY_GROUP_ID;
-import static org.mariotaku.twidere.util.TwidereLinkify.IMGUR_GROUP_ID;
-import static org.mariotaku.twidere.util.TwidereLinkify.INSTAGRAM_GROUP_ID;
-import static org.mariotaku.twidere.util.TwidereLinkify.MOBYPICTURE_GROUP_ID;
-import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_IMGLY;
-import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_IMGUR;
-import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_INSTAGRAM;
-import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_LOCKERZ_AND_PLIXI;
-import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_MOBYPICTURE;
-import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_PHOTOZOU;
-import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_SINA_WEIBO_IMAGES;
-import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITGOO;
-import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITPIC;
-import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITTER_IMAGES;
-import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITTER_PROFILE_IMAGES;
-import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_YFROG;
-import static org.mariotaku.twidere.util.TwidereLinkify.PHOTOZOU_GROUP_ID;
-import static org.mariotaku.twidere.util.TwidereLinkify.SINA_WEIBO_IMAGES_AVAILABLE_SIZES;
-import static org.mariotaku.twidere.util.TwidereLinkify.TWITGOO_GROUP_ID;
-import static org.mariotaku.twidere.util.TwidereLinkify.TWITPIC_GROUP_ID;
-import static org.mariotaku.twidere.util.TwidereLinkify.TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES;
-import static org.mariotaku.twidere.util.TwidereLinkify.YFROG_GROUP_ID;
-
+import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.UriMatcher;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PorterDuff.Mode;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.NinePatchDrawable;
+import android.graphics.drawable.TransitionDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.BatteryManager;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.SystemClock;
+import android.provider.BaseColumns;
+import android.provider.MediaStore;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.accessibility.AccessibilityEventCompat;
+import android.text.format.DateFormat;
+import android.text.format.DateUtils;
+import android.text.format.Time;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityManager;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.CroutonConfiguration;
+import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -71,7 +99,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
-
+import javax.net.ssl.SSLException;
 import org.apache.http.NameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -125,7 +153,6 @@ import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.provider.TweetStore.Tabs;
 import org.mariotaku.twidere.util.HtmlLinkExtractor.HtmlLink;
 import org.mariotaku.twidere.util.httpclient.HttpClientImpl;
-
 import twitter4j.DirectMessage;
 import twitter4j.EntitySupport;
 import twitter4j.GeoLocation;
@@ -149,65 +176,36 @@ import twitter4j.conf.ConfigurationBuilder;
 import twitter4j.http.HostAddressResolver;
 import twitter4j.http.HttpClientWrapper;
 import twitter4j.http.HttpResponse;
-import android.app.Activity;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.content.UriMatcher;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.content.res.Resources;
-import android.content.res.TypedArray;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.LinearGradient;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.PorterDuff.Mode;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.Shader;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.NinePatchDrawable;
-import android.graphics.drawable.TransitionDrawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
-import android.os.BatteryManager;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.SystemClock;
-import android.provider.BaseColumns;
-import android.provider.MediaStore;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.text.format.DateFormat;
-import android.text.format.DateUtils;
-import android.text.format.Time;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.SubMenu;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-import javax.net.ssl.SSLException;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
-import de.keyboardsurfer.android.widget.crouton.CroutonConfiguration;
+
+import static android.content.res.Configuration.SCREENLAYOUT_LAYOUTDIR_RTL;
+import static android.text.format.DateUtils.getRelativeTimeSpanString;
+import static android.text.TextUtils.isEmpty;
+import static org.mariotaku.twidere.provider.TweetStore.CACHE_URIS;
+import static org.mariotaku.twidere.provider.TweetStore.DIRECT_MESSAGES_URIS;
+import static org.mariotaku.twidere.provider.TweetStore.STATUSES_URIS;
+import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
+import static org.mariotaku.twidere.util.TwidereLinkify.IMGLY_GROUP_ID;
+import static org.mariotaku.twidere.util.TwidereLinkify.IMGUR_GROUP_ID;
+import static org.mariotaku.twidere.util.TwidereLinkify.INSTAGRAM_GROUP_ID;
+import static org.mariotaku.twidere.util.TwidereLinkify.MOBYPICTURE_GROUP_ID;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_IMGLY;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_IMGUR;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_INSTAGRAM;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_LOCKERZ_AND_PLIXI;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_MOBYPICTURE;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_PHOTOZOU;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_SINA_WEIBO_IMAGES;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITGOO;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITPIC;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITTER_IMAGES;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITTER_PROFILE_IMAGES;
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_YFROG;
+import static org.mariotaku.twidere.util.TwidereLinkify.PHOTOZOU_GROUP_ID;
+import static org.mariotaku.twidere.util.TwidereLinkify.SINA_WEIBO_IMAGES_AVAILABLE_SIZES;
+import static org.mariotaku.twidere.util.TwidereLinkify.TWITGOO_GROUP_ID;
+import static org.mariotaku.twidere.util.TwidereLinkify.TWITPIC_GROUP_ID;
+import static org.mariotaku.twidere.util.TwidereLinkify.TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES;
+import static org.mariotaku.twidere.util.TwidereLinkify.YFROG_GROUP_ID;
 
 public final class Utils implements Constants {
 
@@ -354,6 +352,34 @@ public final class Utils implements Constants {
 				item.setIcon(icon);
 			}
 		}
+	}
+	
+	public static void announceForAccessibilityCompat(final Context context, final View view, final CharSequence text, final Class<?> cls) {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.DONUT) return;
+		final AccessibilityManager accessibilityManager = (AccessibilityManager) context.getSystemService(Context.ACCESSIBILITY_SERVICE);
+		if (!accessibilityManager.isEnabled()) return;
+		// Prior to SDK 16, announcements could only be made through FOCUSED
+		// events. Jelly Bean (SDK 16) added support for speaking text verbatim
+		// using the ANNOUNCEMENT event type.
+		final int eventType;
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+			eventType = AccessibilityEvent.TYPE_VIEW_FOCUSED;
+		} else {
+			eventType = AccessibilityEventCompat.TYPE_ANNOUNCEMENT;
+		}
+
+		// Construct an accessibility event with the minimum recommended
+		// attributes. An event without a class name or package may be dropped.
+		final AccessibilityEvent event = AccessibilityEvent.obtain(eventType);
+		event.getText().add(text);
+		event.setClassName(cls.getName());
+		event.setPackageName(context.getPackageName());
+		AccessibilityEventAccessor.setSource(event, view);
+
+		// Sends the event directly through the accessibility manager. If your
+		// application only targets SDK 14+, you should just call
+		// getParent().requestSendAccessibilityEvent(this, event);
+		accessibilityManager.sendAccessibilityEvent(event);
 	}
 
 	public static Uri appendQueryParameters(final Uri uri, final NameValuePair... params) {

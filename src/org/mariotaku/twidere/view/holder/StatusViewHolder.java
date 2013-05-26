@@ -106,12 +106,12 @@ public class StatusViewHolder implements Constants {
 				lp.leftMargin = 0;
 				lp.rightMargin = (int) (density * 16);
 				lp.addRule(RelativeLayout.LEFT_OF, R.id.profile_image);
-				lp.removeRule(RelativeLayout.RIGHT_OF);
+				lp.addRule(RelativeLayout.RIGHT_OF, 0);
 			} else {
 				lp.leftMargin = (int) (density * 16);
 				lp.rightMargin = 0;
 				lp.addRule(RelativeLayout.RIGHT_OF, R.id.profile_image);
-				lp.removeRule(RelativeLayout.LEFT_OF);
+				lp.addRule(RelativeLayout.LEFT_OF, 0);
 			}
 		}
 		image_preview_container.setLayoutParams(lp);
