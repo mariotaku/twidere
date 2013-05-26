@@ -64,6 +64,18 @@ public final class CroutonsManager {
 		}
 	}
 
+	public void showInfoMessage(final String message, final boolean long_message) {
+		final Activity best = getBestActivity();
+		if (best != null) {
+			Utils.showInfoMessage(best, message, long_message);
+			return;
+		}
+		for (final Activity activity : mMessageCallbacks) {
+			Utils.showInfoMessage(activity, message, long_message);
+			return;
+		}
+	}
+
 	public void showOkMessage(final int message_res, final boolean long_message) {
 		final Activity best = getBestActivity();
 		if (best != null) {
@@ -76,6 +88,18 @@ public final class CroutonsManager {
 		}
 	}
 
+	public void showOkMessage(final String message, final boolean long_message) {
+		final Activity best = getBestActivity();
+		if (best != null) {
+			Utils.showOkMessage(best, message, long_message);
+			return;
+		}
+		for (final Activity activity : mMessageCallbacks) {
+			Utils.showOkMessage(activity, message, long_message);
+			return;
+		}
+	}
+	
 	public void showWarnMessage(final int message_res, final boolean long_message) {
 		final Activity best = getBestActivity();
 		if (best != null) {

@@ -211,6 +211,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_DISABLE_TAB_SWIPE = "disable_tab_swipe";
 	public static final String PREFERENCE_KEY_DARK_THEME_COLOR = "dark_theme_color";
 	public static final String PREFERENCE_KEY_LIGHT_THEME_COLOR = "light_theme_color";
+	public static final String PREFERENCE_KEY_LINK_TO_QUOTED_TWEET = "link_to_quoted_tweet";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;

@@ -1371,6 +1371,16 @@ public final class Utils implements Constants {
 		return new ImageSpec(preview, full, orig);
 	}
 
+	public static String getNameDisplayOption(final Context context) {
+		if (context == null) return null;
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		return prefs.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH);
+	}
+
+	public static int getNameDisplayOptionInt(final Context context) {
+		return getNameDisplayOptionInt(getNameDisplayOption(context));
+	}
+
 	public static int getNameDisplayOptionInt(final String option) {
 		if (NAME_DISPLAY_OPTION_NAME.equals(option))
 			return NAME_DISPLAY_OPTION_CODE_NAME;
@@ -1910,6 +1920,30 @@ public final class Utils implements Constants {
 			sUserColors.put(user_id, color);
 		}
 		return color != null ? color : Color.TRANSPARENT;
+	}
+
+	public static String getUserName(final Context context, final ParcelableUser user) {
+		if (context == null || user == null) return null;
+		final boolean display_screen_name = getNameDisplayOptionInt(context) == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
+		return display_screen_name ? user.screen_name : user.name;
+	}
+
+	public static String getUserName(final Context context, final ParcelableStatus user) {
+		if (context == null || user == null) return null;
+		final boolean display_screen_name = getNameDisplayOptionInt(context) == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
+		return display_screen_name ? user.screen_name : user.name;
+	}
+	
+	public static String getSenderUserName(final Context context, final ParcelableDirectMessage user) {
+		if (context == null || user == null) return null;
+		final boolean display_screen_name = getNameDisplayOptionInt(context) == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
+		return display_screen_name ? user.sender_screen_name : user.sender_name;
+	}
+	
+	public static String getUserName(final Context context, final User user) {
+		if (context == null || user == null) return null;
+		final boolean display_screen_name = getNameDisplayOptionInt(context) == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
+		return display_screen_name ? user.getScreenName() : user.getName();
 	}
 
 	public static int getUserTypeIconRes(final boolean is_verified, final boolean is_protected) {

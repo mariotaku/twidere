@@ -354,7 +354,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		if (event == null) return false;
 		switch (event.getKeyCode()) {
 			case KeyEvent.KEYCODE_ENTER: {
-				sendStatus();
+				updateStatus();
 				return true;
 			}
 		}
@@ -403,6 +403,8 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				final boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
 				if (!attach_location) {
 					getLocation();
+				} else {
+					mLocationManager.removeUpdates(this);
 				}
 				mPreferences.edit().putBoolean(PREFERENCE_KEY_ATTACH_LOCATION, !attach_location).commit();
 				setMenu();
@@ -471,7 +473,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				break;
 			}
 			case MENU_SEND: {
-				sendStatus();
+				updateStatus();
 				break;
 			}
 			case MENU_SELECT_ACCOUNT: {
@@ -763,7 +765,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		mImageLoader.displayPreviewImage(mImageThumbnailPreview, mImageUri != null ? mImageUri.toString() : null);
 	}
 
-	private void sendStatus() {
+	private void updateStatus() {
 		final String text = mEditText != null ? parseString(mEditText.getText()) : null;
 		if (isEmpty(text) || isFinishing()) return;
 		final int tweet_length = mValidator.getTweetLength(text);
@@ -783,8 +785,10 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			}
 			mRecentLocation = location != null ? new ParcelableLocation(location) : null;
 		}
+		final boolean is_quote = INTENT_ACTION_QUOTE.equals(getIntent().getAction());
 		mTwitterWrapper.updateStatus(mAccountIds, text, attach_location ? mRecentLocation : null, mImageUri,
-				mInReplyToStatusId, has_media && mIsPossiblySensitive, mIsPhotoAttached && !mIsImageAttached);
+				!is_quote || mPreferences.getBoolean(PREFERENCE_KEY_LINK_TO_QUOTED_TWEET, true) ? mInReplyToStatusId : -1,
+						has_media && mIsPossiblySensitive, mIsPhotoAttached && !mIsImageAttached);
 		setResult(Activity.RESULT_OK);
 		finish();
 	}

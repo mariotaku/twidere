@@ -436,8 +436,22 @@
 	<string name="network_error">Network error.</string>
 	<string name="ssl_error">SSL error, you may need to enable \"Ignore SSL error\" option.</string>
 	<string name="wrong_api_key">Wrong API url or consumer key/secret, please check them again.</string>
+	<string name="status_updated">Tweet sent.</string>
 	<string name="status_deleted">Tweet deleted.</string>
+	<string name="status_favorited">Tweet favorited.</string>
+	<string name="status_unfavorited">Tweet unfavorited.</string>
+	<string name="status_retweeted">Retweeted.</string>
 	<string name="retweet_cancelled">Retweet cancelled.</string>
+	<string name="direct_message_updated">Direct message sent.</string>
+	<string name="direct_message_deleted">Direct message deleted.</string>
 	<string name="import_from">Import from…</string>
+	<string name="link_to_quoted_tweet">Link to quoted tweet</string>
+	<string name="followed_user">Followed <xliff:g id="user">%s</xliff:g>.</string>
+	<string name="unfollowed_user">Unfollowed <xliff:g id="user">%s</xliff:g>.</string>
+	<string name="blocked_user">Blocked <xliff:g id="user">%s</xliff:g>.</string>
+	<string name="unblocked_user">Unblocked <xliff:g id="user">%s</xliff:g>.</string>
+	<string name="profile_updated">Profle updated.</string>
+	<string name="profile_banner_image_updated">Profle banner image updated.</string>
+	<string name="profile_image_updated">Profle image updated.</string>
 
 </resources>
