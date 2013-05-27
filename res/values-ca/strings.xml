@@ -117,16 +117,16 @@
   <string name="quote">Cita</string>
   <string name="add_rule">Afegeix una regla</string>
   <string name="longclick_to_delete">Mantingueu pressionat per esborrar.</string>
-  <string name="retweet_successful">Repiulada realitzada correctament.</string>
-  <string name="delete_successful">S\'ha eliminat correctament.</string>
-  <string name="send_successful">S\'ha enviat correctament.</string>
-  <string name="favorite_successful">Marcat com a a favorit correctament.</string>
-  <string name="unfavorite_successful">S\'ha desfavorit correctament.</string>
-  <string name="follow_successful">S\'ha seguit correctament.</string>
-  <string name="unfollow_successful">S\'ha deixat de seguir correctament.</string>
-  <string name="profile_update_successful">S\'ha actualitzat el perfil correctament.</string>
-  <string name="profile_image_update_successful">S\'ha actualitzat la imatge de perfil correctament.</string>
-  <string name="profile_banner_image_update_successful">S\'ha actualitzat la imatge de capçalera correctament.</string>
+
+
+
+
+
+
+
+
+
+
   <string name="text_size">Tamany del text</string>
   <string name="text_size_summary">Mida del text dels estats.</string>
   <string name="cannot_get_location">No es pot obtenir la vostra localització.</string>
@@ -226,8 +226,8 @@
   <string name="signing_in_please_wait">S\'està iniciant la sessió, premeu ENRERE per sortir.</string>
   <string name="connectivity">Conectivitat</string>
   <string name="add_member">Afegeix un membre</string>
-  <string name="add_successful">S\'ha afegit correctament.</string>
-  <string name="create_successful">S\'ha creat correctament.</string>
+
+
   <string name="new_user_list">Nova llista d\'usuaris</string>
   <string name="is_public">Públic</string>
   <string name="send_direct_message">Enviar Missatge Directe</string>

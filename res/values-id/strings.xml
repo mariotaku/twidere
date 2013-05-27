@@ -117,16 +117,16 @@
   <string name="quote">Kutip</string>
   <string name="add_rule">Tambah aturan</string>
   <string name="longclick_to_delete">Tekan tahan untuk menghapus.</string>
-  <string name="retweet_successful">Berhasil mengulang kicauan.</string>
-  <string name="delete_successful">Berhasil menghapus.</string>
-  <string name="send_successful">Berhasil mengirim.</string>
-  <string name="favorite_successful">Berhasil difavoritkan.</string>
-  <string name="unfavorite_successful">Berhasil batalkan favorit.</string>
-  <string name="follow_successful">Berhasil mengikuti.</string>
-  <string name="unfollow_successful">Berhasil tidak mengikuti.</string>
-  <string name="profile_update_successful">Berhasil memperbaharui profil.</string>
-  <string name="profile_image_update_successful">Berhasil memperbaharui gambar profil.</string>
-  <string name="profile_banner_image_update_successful">Berhasil memperbaharui gambar latar profil.</string>
+
+
+
+
+
+
+
+
+
+
   <string name="text_size">Ukuran teks</string>
   <string name="text_size_summary">Ukuran teks status.</string>
   <string name="cannot_get_location">Tidak bisa mendapatkan lokasi anda.</string>
@@ -226,8 +226,8 @@
   <string name="signing_in_please_wait">Sign in, silakan menunggu atau tekan KEMBALI untuk berhenti.</string>
   <string name="connectivity">Konektifitas</string>
   <string name="add_member">Tambah Anggota</string>
-  <string name="add_successful">Berhasil ditambahkan.</string>
-  <string name="create_successful">Berhasil dibuat.</string>
+
+
   <string name="new_user_list">Daftarkan pengguna baru</string>
   <string name="is_public">Publik</string>
   <string name="send_direct_message">Kirim DM</string>

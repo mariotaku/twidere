@@ -19,8 +19,6 @@
 
 package org.mariotaku.twidere.loader;
 
-import static org.mariotaku.twidere.util.Utils.findUserList;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,12 +65,12 @@ public class UserListSubscribersLoader extends Twitter4JUsersLoader {
 		final PagableResponseList<User> users;
 		if (mListId > 0) {
 			users = twitter.getUserListSubscribers(mListId, mCursor);
+		} else if (mUserId > 0) {
+			users = twitter.getUserListSubscribers(mListName, mUserId, mCursor);
+		} else if (mScreenName != null) {
+			users = twitter.getUserListSubscribers(mListName, mScreenName, mCursor);
 		} else {
-			final UserList list = findUserList(twitter, mUserId, mScreenName, mListName);
-			if (list != null && list.getId() > 0) {
-				users = twitter.getUserListSubscribers(list.getId(), mCursor);
-			} else
-				return null;
+			return null;
 		}
 		mNextCursor = users.getNextCursor();
 		mPrevCursor = users.getPreviousCursor();

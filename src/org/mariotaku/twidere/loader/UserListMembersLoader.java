@@ -19,8 +19,6 @@
 
 package org.mariotaku.twidere.loader;
 
-import static org.mariotaku.twidere.util.Utils.findUserList;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,9 +37,6 @@ public class UserListMembersLoader extends Twitter4JUsersLoader {
 	private final long mAccountId, mUserId, mCursor;
 	private final String mScreenName, mListName;
 
-	private long mOwnerId;
-	private int mUserListId;
-
 	private long mNextCursor = -2, mPrevCursor = -2;
 
 	public UserListMembersLoader(final Context context, final long account_id, final int list_id, final long user_id,
@@ -59,16 +54,8 @@ public class UserListMembersLoader extends Twitter4JUsersLoader {
 		return mNextCursor;
 	}
 
-	public long getOwnerId() {
-		return mOwnerId;
-	}
-
 	public long getPrevCursor() {
 		return mPrevCursor;
-	}
-
-	public int getUserListId() {
-		return mUserListId;
 	}
 
 	@Override
@@ -76,29 +63,13 @@ public class UserListMembersLoader extends Twitter4JUsersLoader {
 		if (twitter == null) return null;
 		final PagableResponseList<User> users;
 		if (mListId > 0) {
-			if (mUserListId <= 0) {
-				mUserListId = mListId;
-			}
-			if (mOwnerId <= 0) {
-				final UserList list = twitter.showUserList(mListId);
-				final User owner = list != null ? list.getUser() : null;
-				mOwnerId = owner != null ? owner.getId() : -1;
-			}
 			users = twitter.getUserListMembers(mListId, mCursor);
+		} else if (mUserId > 0) {
+			users = twitter.getUserListMembers(mListName, mUserId, mCursor);
+		} else if (mScreenName != null) {
+			users = twitter.getUserListMembers(mListName, mScreenName, mCursor);
 		} else {
-			final UserList list = findUserList(twitter, mUserId, mScreenName, mListName);
-			if (list == null) return null;
-			if (mOwnerId <= 0) {
-				final User owner = list.getUser();
-				mOwnerId = owner != null ? owner.getId() : -1;
-			}
-			if (list != null && list.getId() > 0) {
-				if (mUserListId <= 0) {
-					mUserListId = list.getId();
-				}
-				users = twitter.getUserListMembers(list.getId(), mCursor);
-			} else
-				return null;
+			return null;
 		}
 		mNextCursor = users.getNextCursor();
 		mPrevCursor = users.getPreviousCursor();

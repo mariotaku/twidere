@@ -117,16 +117,16 @@
   <string name="quote">Quote</string>
   <string name="add_rule">Add rule</string>
   <string name="longclick_to_delete">Long-click to delete.</string>
-  <string name="retweet_successful">Retweet successful.</string>
-  <string name="delete_successful">Delete successful.</string>
-  <string name="send_successful">Send successful.</string>
-  <string name="favorite_successful">Favorite successfully.</string>
-  <string name="unfavorite_successful">Unfavorite successful.</string>
-  <string name="follow_successful">Follow successful.</string>
-  <string name="unfollow_successful">Unfollow successful.</string>
-  <string name="profile_update_successful">Profile update successful.</string>
-  <string name="profile_image_update_successful">Profile image update successful.</string>
-  <string name="profile_banner_image_update_successful">Profile header image update successful.</string>
+
+
+
+
+
+
+
+
+
+
   <string name="text_size">Text size</string>
   <string name="text_size_summary">Text size of statuses.</string>
   <string name="cannot_get_location">Can\'t get your location.</string>
@@ -226,8 +226,8 @@
   <string name="signing_in_please_wait">Signing in, please wait or press BACK to quit.</string>
   <string name="connectivity">Connectivity</string>
   <string name="add_member">Add member</string>
-  <string name="add_successful">Add successfully.</string>
-  <string name="create_successful">Create successfully.</string>
+
+
   <string name="new_user_list">New user list</string>
   <string name="is_public">Public</string>
   <string name="send_direct_message">Send DM</string>

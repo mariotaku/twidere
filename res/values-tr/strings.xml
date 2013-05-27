@@ -102,16 +102,16 @@
   <string name="quote">Alıntı yap</string>
   <string name="add_rule">Kural ekle</string>
   <string name="longclick_to_delete">Silmek için basılı tut.</string>
-  <string name="retweet_successful">Retweet başarılı.</string>
-  <string name="delete_successful">Silme başarılı.</string>
-  <string name="send_successful">Gönderme başarılı.</string>
-  <string name="favorite_successful">Favorilere eklendi.</string>
-  <string name="unfavorite_successful">Favorilerden çıkarıldı.</string>
-  <string name="follow_successful">Takip etme başarılı.</string>
-  <string name="unfollow_successful">Takip bırakıldı.</string>
-  <string name="profile_update_successful">Profil güncellendi.</string>
-  <string name="profile_image_update_successful">Profil resmi güncellendi.</string>
-  <string name="profile_banner_image_update_successful">Profil başlık resmi güncellendi.</string>
+
+
+
+
+
+
+
+
+
+
   <string name="text_size">Yazı Boyutu</string>
   <string name="text_size_summary">\'Durum\'lar yazı boyutu.</string>
   <string name="cannot_get_location">Konumunuz alınamıyor.</string>
@@ -206,8 +206,8 @@
   <string name="signing_in_please_wait">Giriş yapılıyor, lütfen bekleyin veya çıkmak için GERİ butonuna basın.</string>
   <string name="connectivity">Bağlanabilirlik</string>
   <string name="add_member">Üye ekle</string>
-  <string name="add_successful">Eklendi.</string>
-  <string name="create_successful">Oluşturuldu.</string>
+
+
   <string name="new_user_list">Yeni kullanıcı listesi</string>
   <string name="is_public">Herkese açık</string>
   <string name="send_direct_message">DM gönder</string>

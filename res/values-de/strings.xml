@@ -117,16 +117,16 @@
   <string name="quote">Zitat</string>
   <string name="add_rule">Regel hinzufügen</string>
   <string name="longclick_to_delete">Gedrückt halten zum Löschen.</string>
-  <string name="retweet_successful">Erfolgreich retweetet.</string>
-  <string name="delete_successful">Erfolgreich gelöscht.</string>
-  <string name="send_successful">Erfolgreich gesendet.</string>
-  <string name="favorite_successful">Favorisieren erfolgreich.</string>
-  <string name="unfavorite_successful">Erfolgreich Favorit entfernt.</string>
-  <string name="follow_successful">Folgen erfolgreich.</string>
-  <string name="unfollow_successful">Entfolgen erfolgreich.</string>
-  <string name="profile_update_successful">Profil erfolgreich aktualisiert.</string>
-  <string name="profile_image_update_successful">Profilbild erfolgreich aktualisiert.</string>
-  <string name="profile_banner_image_update_successful">Profil Titelbild erfolgreich aktualisiert.</string>
+
+
+
+
+
+
+
+
+
+
   <string name="text_size">Textgröße</string>
   <string name="text_size_summary">Textgröße von Tweets</string>
   <string name="cannot_get_location">Ort konnte nicht gefunden werden.</string>
@@ -226,8 +226,8 @@
   <string name="signing_in_please_wait">Anmeldung läuft, bitte warten oder ZURÜCK drücken zum Abbrechen.</string>
   <string name="connectivity">Konnektivität</string>
   <string name="add_member">Mitglied hinzufügen</string>
-  <string name="add_successful">Erfolgreich hinzugefügt.</string>
-  <string name="create_successful">Erfolgreich erstellt.</string>
+
+
   <string name="new_user_list">Neue Beutzerliste</string>
   <string name="is_public">Öffentlich</string>
   <string name="send_direct_message">Direktnachricht senden</string>

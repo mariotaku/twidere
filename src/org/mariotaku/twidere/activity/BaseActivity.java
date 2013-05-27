@@ -40,9 +40,8 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.iface.IThemedActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import org.mariotaku.twidere.util.CroutonsManager;
+import org.mariotaku.twidere.util.MessagesManager;
 import android.util.Log;
-
 
 @SuppressLint("Registered")
 public class BaseActivity extends ActionBarFragmentActivity implements Constants, IThemedActivity {
@@ -51,8 +50,8 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 
 	private boolean mInstanceStateSaved, mIsVisible, mIsOnTop;
 
-	public CroutonsManager getCroutonsManager() {
-		return getTwidereApplication() != null ? getTwidereApplication().getCroutonsManager() : null;
+	public MessagesManager getMessagesManager() {
+		return getTwidereApplication() != null ? getTwidereApplication().getMessagesManager() : null;
 	}
 	
 	public TwidereApplication getTwidereApplication() {
@@ -106,7 +105,7 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 	protected void onStart() {
 		super.onStart();
 		mIsVisible = true;
-		final CroutonsManager croutons = getCroutonsManager();
+		final MessagesManager croutons = getMessagesManager();
 		if (croutons != null) {
 			croutons.addMessageCallback(this);
 		}
@@ -115,7 +114,7 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 	@Override
 	protected void onStop() {
 		mIsVisible = false;
-		final CroutonsManager croutons = getCroutonsManager();
+		final MessagesManager croutons = getMessagesManager();
 		if (croutons != null) {
 			croutons.removeMessageCallback(this);
 		}

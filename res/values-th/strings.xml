@@ -117,16 +117,16 @@
   <string name="quote">อ้างอิง</string>
   <string name="add_rule">เพิ่มกฎ</string>
   <string name="longclick_to_delete">แตะค้างเพื่อลบ</string>
-  <string name="retweet_successful">รีทวีตสำเร็จ</string>
-  <string name="delete_successful">ลบทวีตสำเร็จ</string>
-  <string name="send_successful">ส่งทวีตสำเร็จ</string>
-  <string name="favorite_successful">ถูกใจทวีตสำเร็จ</string>
-  <string name="unfavorite_successful">เลิกถูกใจทวีตสำเร็จ</string>
-  <string name="follow_successful">ติดตามสำเร็จ</string>
-  <string name="unfollow_successful">เลิกติดตามสำเร็จ</string>
-  <string name="profile_update_successful">อัพเดทข้อมูลส่วนตัวสำเร็จ</string>
-  <string name="profile_image_update_successful">อัพเดทภาพแทนตัวสำเร็จ</string>
-  <string name="profile_banner_image_update_successful">อัพเดทภาพหัวโปรไฟล์สำเร็จ</string>
+
+
+
+
+
+
+
+
+
+
   <string name="text_size">ขนาดข้อความ</string>
   <string name="text_size_summary">ขนาดข้อความของสถานะ</string>
   <string name="cannot_get_location">ไม่สามารถรับที่อยู่ได้</string>

@@ -113,16 +113,16 @@
   <string name="quote">Citeer</string>
   <string name="add_rule">Regel toevoegen</string>
   <string name="longclick_to_delete">Lang klikken om te verwijderen.</string>
-  <string name="retweet_successful">Retweet geslaagd.</string>
-  <string name="delete_successful">Verwijderen geslaagd.</string>
-  <string name="send_successful">Verzenden geslaagd.</string>
-  <string name="favorite_successful">Favorieten succesvol.</string>
-  <string name="unfavorite_successful">Favoriet verwijderd.</string>
-  <string name="follow_successful">Favoriet toegevoegd.</string>
-  <string name="unfollow_successful">Ontvolgen geslaagd.</string>
-  <string name="profile_update_successful">Profiel update geslaagd.</string>
-  <string name="profile_image_update_successful">Profielfoto update geslaagd.</string>
-  <string name="profile_banner_image_update_successful">Profiel headerfoto update geslaagd.</string>
+
+
+
+
+
+
+
+
+
+
   <string name="text_size">lettergrootte</string>
   <string name="text_size_summary">Lettergrootte van statussen.</string>
   <string name="cannot_get_location">Kan uw locatie niet verkrijgen.</string>
@@ -222,8 +222,8 @@
   <string name="signing_in_please_wait">Inloggen, wacht of klik op TERUG om te annuleren.</string>
   <string name="connectivity">Connectiviteit</string>
   <string name="add_member">Voeg lid toe</string>
-  <string name="add_successful">Succesvol toegevoegd.</string>
-  <string name="create_successful">Succesvol gemaakt.</string>
+
+
   <string name="new_user_list">Nieuwe gebruikerslijst</string>
   <string name="is_public">Openbaar</string>
   <string name="send_direct_message">Stuur DM</string>

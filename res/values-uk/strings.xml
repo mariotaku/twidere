@@ -117,16 +117,16 @@
   <string name="quote">Цитата</string>
   <string name="add_rule">Додати правило</string>
   <string name="longclick_to_delete">Довгий натиск для видалення.</string>
-  <string name="retweet_successful">Ретвітнуто успішно.</string>
-  <string name="delete_successful">Вилучено успішно.</string>
-  <string name="send_successful">Надіслано успішно.</string>
-  <string name="favorite_successful">Обрано успішно.</string>
-  <string name="unfavorite_successful">Вилучено з обраного успішно.</string>
-  <string name="follow_successful">Підписано успішно.</string>
-  <string name="unfollow_successful">Відписано успішно.</string>
-  <string name="profile_update_successful">Успішно оновлено профіль.</string>
-  <string name="profile_image_update_successful">Успішно оновлено зображення профілю.</string>
-  <string name="profile_banner_image_update_successful">Зображення заголовку профілю успішно оновлено.</string>
+
+
+
+
+
+
+
+
+
+
   <string name="text_size">Розмір тексту</string>
   <string name="text_size_summary">Розмір тексту для статусів.</string>
   <string name="cannot_get_location">Не вдається отримати ваше розташування.</string>
@@ -226,8 +226,8 @@
   <string name="signing_in_please_wait">Увійдіть, будь ласка, зачекайте та натисніть НАЗАД, щоб вийти.</string>
   <string name="connectivity">З\'єднання</string>
   <string name="add_member">Додати користувача</string>
-  <string name="add_successful">Додано успішно.</string>
-  <string name="create_successful">Створено успішно.</string>
+
+
   <string name="new_user_list">Новий список користувачів</string>
   <string name="is_public">Публічний</string>
   <string name="send_direct_message">Надіслати ПП</string>

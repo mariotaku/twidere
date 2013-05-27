@@ -21,7 +21,6 @@ package org.mariotaku.twidere.fragment;
 
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
-import static org.mariotaku.twidere.util.Utils.findUserList;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
@@ -98,7 +97,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	private View mListContainer, mErrorRetryContainer;
 	private ColorLabelRelativeLayout mProfileContainer;
 	private View mNameContainer, mDescriptionContainer;
-	private Button mFollowMoreButton, mRetryButton;
+	private Button mSubscribeMoreButton, mRetryButton;
 	private ListView mListView;
 	private View mHeaderView;
 
@@ -166,11 +165,11 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 								: profile_image_url_string);
 		mUserList = user_list;
 		if (mUserId == mAccountId) {
-			mFollowMoreButton.setText(R.string.more);
-			mFollowMoreButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.expander_open_holo, 0);
+			mSubscribeMoreButton.setText(R.string.more);
+			mSubscribeMoreButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.expander_open_holo, 0);
 		} else {
-			mFollowMoreButton.setText(user_list.isFollowing() ? R.string.unfollow : R.string.follow);
-			mFollowMoreButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+			mSubscribeMoreButton.setText(user_list.isFollowing() ? R.string.unsubscribe : R.string.subscribe);
+			mSubscribeMoreButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 		}
 		mAdapter.notifyDataSetChanged();
 	}
@@ -231,7 +230,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		mProfileImageView.setOnLongClickListener(this);
 		mNameContainer.setOnClickListener(this);
 		mNameContainer.setOnLongClickListener(this);
-		mFollowMoreButton.setOnClickListener(this);
+		mSubscribeMoreButton.setOnClickListener(this);
 		mRetryButton.setOnClickListener(this);
 		setListAdapter(null);
 		mListView = getListView();
@@ -246,10 +245,10 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	@Override
 	public void onClick(final View view) {
 		switch (view.getId()) {
-			case R.id.follow_more: {
+			case R.id.subscribe_more: {
 				if (mUserList == null) return;
 				if (mAccountId != mUserId) {
-					mFollowMoreButton.setVisibility(View.GONE);
+					mSubscribeMoreButton.setVisibility(View.GONE);
 					if (mUserList.isFollowing()) {
 						mTwitterWrapper.destroyUserListSubscription(mAccountId, mUserList.getId());
 					} else {
@@ -308,7 +307,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		mHeaderView = inflater.inflate(R.layout.user_list_detail_header, null);
+		mHeaderView = inflater.inflate(R.layout.user_list_details_header, null);
 		mProfileContainer = (ColorLabelRelativeLayout) mHeaderView.findViewById(R.id.profile_name_container);
 		mNameContainer = mHeaderView.findViewById(R.id.name_container);
 		mListNameView = (TextView) mHeaderView.findViewById(R.id.list_name);
@@ -316,7 +315,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		mDescriptionView = (TextView) mHeaderView.findViewById(R.id.description);
 		mProfileImageView = (ImageView) mHeaderView.findViewById(R.id.profile_image);
 		mDescriptionContainer = mHeaderView.findViewById(R.id.description_container);
-		mFollowMoreButton = (Button) mHeaderView.findViewById(R.id.follow_more);
+		mSubscribeMoreButton = (Button) mHeaderView.findViewById(R.id.subscribe_more);
 		mListContainer = super.onCreateView(inflater, container, savedInstanceState);
 		final View container_view = inflater.inflate(R.layout.list_with_error_message, null);
 		((FrameLayout) container_view.findViewById(R.id.list_container)).addView(mListContainer);
@@ -463,11 +462,10 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 				case DialogInterface.BUTTON_POSITIVE: {
 					mText = parseString(mEditText.getText());
 					if (mText == null || mText.length() <= 0) return;
-					mTwitterWrapper.addUserListMember(mAccountId, mListId, -1, mText);
+					mTwitterWrapper.addUserListMembers(mAccountId, mListId, mText);
 					break;
 				}
 			}
-
 		}
 
 		@Override
@@ -594,11 +592,14 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			try {
 				if (list_id > 0)
 					return new Response<UserList>(twitter.showUserList(list_id), null);
-				else
-					return new Response<UserList>(findUserList(twitter, user_id, screen_name, list_name), null);
+				else if (user_id > 0)
+					return new Response<UserList>(twitter.showUserList(list_name, user_id), null);
+				else if (screen_name != null)
+					return new Response<UserList>(twitter.showUserList(list_name, screen_name), null);
 			} catch (final TwitterException e) {
 				return new Response<UserList>(null, e);
 			}
+			return new Response<UserList>(null, null);
 		}
 
 		@Override

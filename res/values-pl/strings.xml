@@ -113,7 +113,7 @@
   <string name="quote">Cytuj</string>
   <string name="add_rule">Dodaj regułę</string>
   <string name="longclick_to_delete">Przytrzymaj dłużej aby usunąć</string>
-  <string name="favorite_successful">Dodane do ulubionych.</string>
+
   <string name="text_size">Rozmiar tekstu</string>
   <string name="text_size_summary">Rozmiar tekstu statusu.</string>
   <string name="cannot_get_location">Nie można wyszukać lokalizacji.</string>
@@ -209,8 +209,8 @@
   <string name="mention_this_user">Wzmiankujący tego użytkownika</string>
   <string name="connectivity">Połączenie</string>
   <string name="add_member">Dodaj członka</string>
-  <string name="add_successful">Dodano pomyślnie.</string>
-  <string name="create_successful">Utworzono pomyślnie.</string>
+
+
   <string name="new_user_list">Nowa lista użytkownika</string>
   <string name="is_public">Publiczny</string>
   <string name="send_direct_message">Wyślij Wiadomość Prywatną</string>

@@ -117,16 +117,16 @@
   <string name="quote">引用</string>
   <string name="add_rule">ルールを追加</string>
   <string name="longclick_to_delete">長押して削除</string>
-  <string name="retweet_successful">リツイートしました</string>
-  <string name="delete_successful">削除しました</string>
-  <string name="send_successful">送信しました</string>
-  <string name="favorite_successful">お気に入りに追加しました</string>
-  <string name="unfavorite_successful">お気に入りから削除しました</string>
-  <string name="follow_successful">フォローしました</string>
-  <string name="unfollow_successful">フォロー解除しました</string>
-  <string name="profile_update_successful">プロフィールを更新しました</string>
-  <string name="profile_image_update_successful">プロフィールアイコンを更新しました</string>
-  <string name="profile_banner_image_update_successful">プロフィールのヘッダーを更新しました。</string>
+
+
+
+
+
+
+
+
+
+
   <string name="text_size">フォントサイズ</string>
   <string name="text_size_summary">ツイートのフォントサイズ。</string>
   <string name="cannot_get_location">位置情報が取得できません。</string>
@@ -226,8 +226,8 @@
   <string name="signing_in_please_wait">サインインしています、しばらくお待ちください。もう一度戻るボタンを押すと終了します。</string>
   <string name="connectivity">接続性</string>
   <string name="add_member">ユーザーを追加</string>
-  <string name="add_successful">追加しました</string>
-  <string name="create_successful">作成しました</string>
+
+
   <string name="new_user_list">新規リスト作成</string>
   <string name="is_public">公開</string>
   <string name="send_direct_message">DMを送信</string>

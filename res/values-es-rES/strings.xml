@@ -117,16 +117,16 @@
   <string name="quote">Cita</string>
   <string name="add_rule">Agregar regla</string>
   <string name="longclick_to_delete">Pulsación larga para eliminar.</string>
-  <string name="retweet_successful">Retuiteado correctamente.</string>
-  <string name="delete_successful">Eliminado correctamente.</string>
-  <string name="send_successful">Enviado correctamente.</string>
-  <string name="favorite_successful">Añadido a favoritos correctamente.</string>
-  <string name="unfavorite_successful">Desmarcado como favorito correctamente.</string>
-  <string name="follow_successful">Seguido con éxito.</string>
-  <string name="unfollow_successful">Se dejó de seguir correctamente.</string>
-  <string name="profile_update_successful">Perfil actualizado correctamente.</string>
-  <string name="profile_image_update_successful">Imagen de perfil actualizada correctamente.</string>
-  <string name="profile_banner_image_update_successful">Se actualizó la imagen de encabezado correctamente.</string>
+
+
+
+
+
+
+
+
+
+
   <string name="text_size">Tamaño del texto</string>
   <string name="text_size_summary">Tamaño del texto de Estados.</string>
   <string name="cannot_get_location">No puede obtener su ubicación.</string>
@@ -226,8 +226,8 @@
   <string name="signing_in_please_wait">Iniciando sesión, espera o pulsa Atrás para salir.</string>
   <string name="connectivity">Conectividad</string>
   <string name="add_member">Agregar un miembro</string>
-  <string name="add_successful">Añadido con éxito.</string>
-  <string name="create_successful">Creado con éxito.</string>
+
+
   <string name="new_user_list">Nueva lista de usuarios</string>
   <string name="is_public">Público</string>
   <string name="send_direct_message">Enviar DM</string>

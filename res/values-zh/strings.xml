@@ -117,16 +117,16 @@
   <string name="quote">引用</string>
   <string name="add_rule">添加規則</string>
   <string name="longclick_to_delete">長按以刪除</string>
-  <string name="retweet_successful">轉推成功</string>
-  <string name="delete_successful">刪除成功</string>
-  <string name="send_successful">發送成功</string>
-  <string name="favorite_successful">收藏成功</string>
-  <string name="unfavorite_successful">取消收藏成功</string>
-  <string name="follow_successful">關注成功</string>
-  <string name="unfollow_successful">取消關注成功</string>
-  <string name="profile_update_successful">更新個人資料成功</string>
-  <string name="profile_image_update_successful">個人資料圖像更新成功</string>
-  <string name="profile_banner_image_update_successful">個人資料橫幅圖片更新成功</string>
+
+
+
+
+
+
+
+
+
+
   <string name="text_size">文字尺寸</string>
   <string name="text_size_summary">推文的文字尺寸</string>
   <string name="cannot_get_location">不能獲得你的位置</string>
@@ -226,8 +226,8 @@
   <string name="signing_in_please_wait">正在登錄，請稍等或按BACK退出</string>
   <string name="connectivity">連接性</string>
   <string name="add_member">添加成員</string>
-  <string name="add_successful">添加成功</string>
-  <string name="create_successful">創建成功</string>
+
+
   <string name="new_user_list">新列表</string>
   <string name="is_public">公開</string>
   <string name="send_direct_message">發送私信</string>

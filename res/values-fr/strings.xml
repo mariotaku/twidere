@@ -109,15 +109,15 @@
   <string name="quote">Citer</string>
   <string name="add_rule">Ajouter une règle</string>
   <string name="longclick_to_delete">Maintenir pour supprimer.</string>
-  <string name="retweet_successful">Retweet réussi.</string>
-  <string name="delete_successful">Suppression réussie.</string>
-  <string name="send_successful">Envoi réussi.</string>
-  <string name="favorite_successful">Bien ajouté aux favoris.</string>
-  <string name="unfavorite_successful">Bien retiré des favoris.</string>
-  <string name="follow_successful">Abonnement réussi.</string>
-  <string name="unfollow_successful">Désabonnement réussi.</string>
-  <string name="profile_update_successful">Profil mis à jour.</string>
-  <string name="profile_image_update_successful">Image du profil mise à jour.</string>
+
+
+
+
+
+
+
+
+
   <string name="text_size">Taille du texte</string>
   <string name="text_size_summary">Taille du texte des tweets.</string>
   <string name="cannot_get_location">Impossible d\'acquérir votre position.</string>
@@ -216,8 +216,8 @@
   <string name="signing_in_please_wait">Connexion en cours. Veuillez patienter ou appuyer sur BACK pour quitter.</string>
   <string name="connectivity">Connectivité</string>
   <string name="add_member">Ajouter un membre</string>
-  <string name="add_successful">Ajout réussi.</string>
-  <string name="create_successful">Création réussie.</string>
+
+
   <string name="new_user_list">Nouvelle liste d\'utilisateurs</string>
   <string name="is_public">Public</string>
   <string name="send_direct_message">Envoyer un message privé</string>

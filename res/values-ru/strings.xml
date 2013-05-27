@@ -117,16 +117,16 @@
   <string name="quote">Цитировать</string>
   <string name="add_rule">Добавить правило</string>
   <string name="longclick_to_delete">Долгое нажатие для удаления.</string>
-  <string name="retweet_successful">Ретвитнуто.</string>
-  <string name="delete_successful">Удалено.</string>
-  <string name="send_successful">Отправлено.</string>
-  <string name="favorite_successful">Добавлено в избранное.</string>
-  <string name="unfavorite_successful">Исключено из Избранного.</string>
-  <string name="follow_successful">Вы подписались.</string>
-  <string name="unfollow_successful">Вы отписались.</string>
-  <string name="profile_update_successful">Профиль обновлён.</string>
-  <string name="profile_image_update_successful">Изображение в профиле обновлено.</string>
-  <string name="profile_banner_image_update_successful">Изображение в заголовке профиля обновлено.</string>
+
+
+
+
+
+
+
+
+
+
   <string name="text_size">Размер текста</string>
   <string name="text_size_summary">Размер текста для статусов.</string>
   <string name="cannot_get_location">Не удается получить ваше местоположение.</string>
@@ -226,8 +226,8 @@
   <string name="signing_in_please_wait">Выполняется вход. Пожалуйста, подождите или нажмите НАЗАД, чтобы закрыть программу.</string>
   <string name="connectivity">Соединение</string>
   <string name="add_member">Добавить пользователя</string>
-  <string name="add_successful">Успешно добавлено.</string>
-  <string name="create_successful">Успешно создано.</string>
+
+
   <string name="new_user_list">Новый список пользователей</string>
   <string name="is_public">Общедоступный</string>
   <string name="send_direct_message">Послать ЛС</string>

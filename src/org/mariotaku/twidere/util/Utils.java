@@ -712,35 +712,6 @@ public final class Utils implements Constants {
 		return status;
 	}
 
-	public static UserList findUserList(final Twitter twitter, final long user_id, final String list_name)
-			throws TwitterException {
-		if (twitter == null || user_id <= 0 || list_name == null) return null;
-		final ResponseList<UserList> response = twitter.getUserLists(user_id);
-		for (final UserList list : response) {
-			if (list_name.equals(list.getName())) return list;
-		}
-		return null;
-	}
-
-	public static UserList findUserList(final Twitter twitter, final long user_id, final String screen_name,
-			final String list_name) throws TwitterException {
-		if (user_id > 0)
-			return findUserList(twitter, user_id, list_name);
-		else if (screen_name != null) return findUserList(twitter, screen_name, list_name);
-		return null;
-	}
-
-	public static UserList findUserList(final Twitter twitter, final String screen_name, final String list_name)
-			throws TwitterException {
-		if (twitter == null || screen_name == null || list_name == null) return null;
-		final ResponseList<UserList> response = twitter.getUserLists(screen_name);
-		for (final UserList list : response) {
-			if (list_name.equals(list.getName()) && list.getUser() != null
-					&& screen_name.equals(list.getUser().getScreenName())) return list;
-		}
-		return null;
-	}
-
 	public static String formatDirectMessageText(final DirectMessage message) {
 		if (message == null) return null;
 		final String text = message.getRawText();

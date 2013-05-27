@@ -30,7 +30,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.service.RefreshService;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import org.mariotaku.twidere.util.CroutonsManager;
+import org.mariotaku.twidere.util.MessagesManager;
 import org.mariotaku.twidere.util.DatabaseHelper;
 import org.mariotaku.twidere.util.ImageLoaderUtils;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
@@ -67,7 +67,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	private AsyncTwitterWrapper mTwitterWrapper;
 	private MultiSelectManager mMultiSelectManager;
 	private TwidereImageDownloader mImageDownloader;
-	private CroutonsManager mCroutonsManager;
+	private MessagesManager mCroutonsManager;
 
 	private HostAddressResolver mResolver;
 	private SQLiteDatabase mDatabase;
@@ -85,9 +85,9 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		return mBrowserUserAgent;
 	}
 	
-	public CroutonsManager getCroutonsManager() {
+	public MessagesManager getMessagesManager() {
 		if (mCroutonsManager != null) return mCroutonsManager;
-		return mCroutonsManager = new CroutonsManager(this);
+		return mCroutonsManager = new MessagesManager(this);
 	}
 
 	public Handler getHandler() {

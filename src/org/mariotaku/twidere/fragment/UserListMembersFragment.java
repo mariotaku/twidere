@@ -46,8 +46,9 @@ import android.widget.AdapterView;
 
 public class UserListMembersFragment extends BaseUsersListFragment implements OnMenuItemClickListener {
 
-	private long mCursor = -1, mOwnerId = -1;
+	private long mCursor = -1;
 	private int mUserListId = -1;
+	private boolean mIsMyUserList;
 	private ParcelableUser mSelectedUser;
 
 	private PopupMenu mPopupMenu;
@@ -59,7 +60,7 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 		public void onReceive(final Context context, final Intent intent) {
 			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
-			if (BROADCAST_USER_LIST_MEMBER_DELETED.equals(action)) {
+			if (BROADCAST_USER_LIST_MEMBERS_DELETED.equals(action)) {
 				if (!intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) return;
 				if (intent.getIntExtra(INTENT_KEY_LIST_ID, -1) == mUserListId) {
 					final long user_id = intent.getLongExtra(INTENT_KEY_USER_ID, -1);
@@ -101,8 +102,8 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 	@Override
 	public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 		mSelectedUser = null;
+		if (!mIsMyUserList) return false;
 		final UsersAdapter adapter = getListAdapter();
-		if (!isMyActivatedAccount(getActivity(), mOwnerId)) return false;
 		mSelectedUser = adapter.getItem(position);
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_user_list_member);
@@ -115,12 +116,6 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 	public void onLoadFinished(final Loader<List<ParcelableUser>> loader, final List<ParcelableUser> data) {
 		if (loader instanceof UserListMembersLoader) {
 			final long cursor = ((UserListMembersLoader) loader).getNextCursor();
-			if (mOwnerId <= 0) {
-				mOwnerId = ((UserListMembersLoader) loader).getOwnerId();
-			}
-			if (mUserListId <= 0) {
-				mUserListId = ((UserListMembersLoader) loader).getUserListId();
-			}
 			if (cursor != -2) {
 				mCursor = cursor;
 			}
@@ -133,7 +128,7 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 		if (mSelectedUser == null) return false;
 		switch (item.getItemId()) {
 			case MENU_DELETE: {
-				mTwitterWrapper.deleteUserListMember(getAccountId(), mUserListId, mSelectedUser.user_id);
+				mTwitterWrapper.deleteUserListMembers(getAccountId(), mUserListId, mSelectedUser.user_id);
 				break;
 			}
 			case MENU_VIEW_PROFILE: {
@@ -164,7 +159,7 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 	@Override
 	public void onStart() {
 		super.onStart();
-		final IntentFilter filter = new IntentFilter(BROADCAST_USER_LIST_MEMBER_DELETED);
+		final IntentFilter filter = new IntentFilter(BROADCAST_USER_LIST_MEMBERS_DELETED);
 		registerReceiver(mStatusReceiver, filter);
 	}
 

@@ -29,8 +29,6 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.UserList;
 
-import static org.mariotaku.twidere.util.Utils.findUserList;
-
 public class UserListTimelineLoader extends Twitter4JStatusesLoader {
 
 	private final long mUserId;
@@ -54,10 +52,10 @@ public class UserListTimelineLoader extends Twitter4JStatusesLoader {
 		if (twitter == null) return null;
 		if (mListId > 0)
 			return twitter.getUserListStatuses(mListId, paging);
-		else {
-			final UserList list = findUserList(twitter, mUserId, mScreenName, mListName);
-			if (list != null && list.getId() > 0) return twitter.getUserListStatuses(list.getId(), paging);
-		}
+		else if (mUserId > 0)
+			return twitter.getUserListStatuses(mListName, mUserId, paging);
+		else if (mScreenName != null)
+			return twitter.getUserListStatuses(mListName, mScreenName, paging);
 		return null;
 	}
 

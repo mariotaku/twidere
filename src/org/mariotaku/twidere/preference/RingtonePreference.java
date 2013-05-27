@@ -16,10 +16,6 @@
 
 package org.mariotaku.twidere.preference;
 
-import static android.text.TextUtils.isEmpty;
-
-import org.mariotaku.twidere.R;
-
 import android.app.AlertDialog.Builder;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -31,19 +27,25 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.preference.ListPreference;
 import android.provider.MediaStore.Audio;
+import android.text.TextUtils;
 import android.util.AttributeSet;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.ArrayUtils;
+
+import static android.text.TextUtils.isEmpty;
+import android.widget.Toast;
 
 public class RingtonePreference extends ListPreference {
 
-	private int mSelectedItem;
 	private final Context mContext;
 	private final ContentResolver mResolver;
 	private final String[] mEntries, mValues;
 	private MediaPlayer mMediaPlayer;
 
+	private int mSelectedItem;
+
 	public RingtonePreference(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
-
 		mContext = context;
 		mResolver = context.getContentResolver();
 		final String[] cols = new String[] { Audio.Media.DATA, Audio.Media.TITLE };
@@ -67,12 +69,12 @@ public class RingtonePreference extends ListPreference {
 		setEntryValues(mValues);
 	}
 
-	public int getItem() {
+	public int getSelectedItem() {
 		return mSelectedItem;
 	}
 
-	public void setItem(final int selected) {
-		mSelectedItem = selected;
+	public void setSelectedItem(final int selected) {
+		mSelectedItem = selected >= 0 && selected < mValues.length ? selected : 0;
 	}
 
 	@Override
@@ -84,18 +86,20 @@ public class RingtonePreference extends ListPreference {
 			mMediaPlayer.release();
 			mMediaPlayer = null;
 		}
-		if (positiveResult) {
-			callChangeListener(mSelectedItem);
+		if (positiveResult && mSelectedItem >= 0 && mSelectedItem < mValues.length) {
+			if (callChangeListener(mValues[mSelectedItem])) {
+				persistString(mValues[mSelectedItem]);
+			}
 		}
 	}
 
 	@Override
 	protected void onPrepareDialogBuilder(final Builder builder) {
-		builder.setSingleChoiceItems(getEntries(), mSelectedItem, new OnClickListener() {
-
+		setSelectedItem(ArrayUtils.indexOf(mValues, getPersistedString(null)));
+		builder.setSingleChoiceItems(getEntries(), getSelectedItem(), new OnClickListener() {
 			@Override
 			public void onClick(final DialogInterface dialog, final int which) {
-				mSelectedItem = which;
+				setSelectedItem(which);
 				if (mMediaPlayer != null) {
 					if (mMediaPlayer.isPlaying()) {
 						mMediaPlayer.stop();
@@ -104,7 +108,7 @@ public class RingtonePreference extends ListPreference {
 				}
 				mMediaPlayer = new MediaPlayer();
 				mMediaPlayer.setLooping(false);
-				final String ringtone = mValues[mSelectedItem];
+				final String ringtone = mValues[getSelectedItem()];
 				final Uri def_uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 				final Uri uri = isEmpty(ringtone) ? def_uri : Uri.parse(ringtone);
 				try {

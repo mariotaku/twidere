@@ -8,12 +8,12 @@ import java.util.Set;
 import org.mariotaku.twidere.activity.BaseActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
 
-public final class CroutonsManager {
+public final class MessagesManager {
 
 	private final Set<Activity> mMessageCallbacks = Collections.synchronizedSet(new HashSet<Activity>());
 	private final Context mContext;
 	
-	public CroutonsManager(final Context context) {
+	public MessagesManager(final Context context) {
 		mContext = context;
 	}
 	
@@ -27,7 +27,7 @@ public final class CroutonsManager {
 		return mMessageCallbacks.remove(activity);
 	}
 	
-	public void showErrorMessage(final String message, final boolean long_message) {
+	public void showErrorMessage(final CharSequence message, final boolean long_message) {
 		final Activity best = getBestActivity();
 		if (best != null) {
 			Utils.showErrorMessage(best, message, long_message);
@@ -64,7 +64,7 @@ public final class CroutonsManager {
 		}
 	}
 
-	public void showInfoMessage(final String message, final boolean long_message) {
+	public void showInfoMessage(final CharSequence message, final boolean long_message) {
 		final Activity best = getBestActivity();
 		if (best != null) {
 			Utils.showInfoMessage(best, message, long_message);
@@ -88,7 +88,7 @@ public final class CroutonsManager {
 		}
 	}
 
-	public void showOkMessage(final String message, final boolean long_message) {
+	public void showOkMessage(final  CharSequence message, final boolean long_message) {
 		final Activity best = getBestActivity();
 		if (best != null) {
 			Utils.showOkMessage(best, message, long_message);

@@ -118,16 +118,16 @@
 	<string name="quote">Quote</string>
 	<string name="add_rule">Add rule</string>
 	<string name="longclick_to_delete">Long-click to delete.</string>
-	<string name="retweet_successful">Retweet successful.</string>
-	<string name="delete_successful">Delete successful.</string>
-	<string name="send_successful">Send successful.</string>
-	<string name="favorite_successful">Favorite successfully.</string>
-	<string name="unfavorite_successful">Unfavorite successful.</string>
-	<string name="follow_successful">Follow successful.</string>
-	<string name="unfollow_successful">Unfollow successful.</string>
-	<string name="profile_update_successful">Profile update successful.</string>
-	<string name="profile_image_update_successful">Profile image update successful.</string>
-	<string name="profile_banner_image_update_successful">Profile header image update successful.</string>
+
+
+
+
+
+
+
+
+
+
 	<string name="text_size">Text size</string>
 	<string name="text_size_summary">Text size of statuses.</string>
 	<string name="cannot_get_location">Can\'t get your location.</string>
@@ -227,8 +227,8 @@
 	<string name="signing_in_please_wait">Signing in, please wait or press BACK to quit.</string>
 	<string name="connectivity">Connectivity</string>
 	<string name="add_member">Add member</string>
-	<string name="add_successful">Add successfully.</string>
-	<string name="create_successful">Create successfully.</string>
+
+
 	<string name="new_user_list">New user list</string>
 	<string name="is_public">Public</string>
 	<string name="send_direct_message">Send DM</string>
@@ -365,6 +365,8 @@
 	<string name="signing_in">signing in</string>
 	<string name="retweeting">retweeting</string>
 	<string name="reporting_for_spam">reporting for spam</string>
+	<string name="subscribing_to_list">subscribing to list</string>
+	<string name="unsubscribing_from_list">unsubscribing from list</string>
 	<string name="data_profiling_summary">Twidere took part in a research on predicting user\'s social behavior to pre-caching content started by students in UC Davis.\n\nHere are the data we wanted to collect and why:\nCollected data:\n1. User\'s twitter ID\n2. User\'s home timeline (prediction based on user\'s interest and social interaction)\n3. User\'s click on a tweet (prediction based on user\'s interest and social interaction)\n4. Coarse location (which is good predictor when user will access twitter)\n\nTwidere will upload collected data only when Wifi available and your device connected to charger, so It will not cost you extra bandwidth fee or drain your battery power.</string>
 	<string name="data_profiling">Usage Statistics</string>
 	<string name="enable_data_profiling">Enable Reporting</string>
@@ -442,7 +444,7 @@
 	<string name="status_unfavorited">Tweet unfavorited.</string>
 	<string name="status_retweeted">Retweeted.</string>
 	<string name="retweet_cancelled">Retweet cancelled.</string>
-	<string name="direct_message_updated">Direct message sent.</string>
+	<string name="direct_message_sent">Direct message sent.</string>
 	<string name="direct_message_deleted">Direct message deleted.</string>
 	<string name="import_from">Import from…</string>
 	<string name="link_to_quoted_tweet">Link to quoted tweet</string>
@@ -453,5 +455,13 @@
 	<string name="profile_updated">Profle updated.</string>
 	<string name="profile_banner_image_updated">Profle banner image updated.</string>
 	<string name="profile_image_updated">Profle image updated.</string>
-
+	<string name="created_list">Created list \"<xliff:g id="list">%s</xliff:g>\".</string>
+	<string name="deleted_list">Deleted list \"<xliff:g id="list">%s</xliff:g>\".</string>
+	<string name="updated_list_details">Updated list \"<xliff:g id="list">%s</xliff:g>\"\'s details.</string>
+	<string name="subscribed_to_list">Subscribed to list \"<xliff:g id="list">%s</xliff:g>\".</string>
+	<string name="unsubscribed_from_list">Unsubscribed from list \"<xliff:g id="list">%s</xliff:g>\".</string>
+	<string name="added_user_to_list">Added user to list \"<xliff:g id="list">%s</xliff:g>\".</string>
+	<string name="deleted_user_from_list">Deleted user from list \"<xliff:g id="list">%s</xliff:g>\".</string>
+	<string name="subscribe">Subscribe</string>
+	<string name="unsubscribe">Unsubscribe</string>
 </resources>

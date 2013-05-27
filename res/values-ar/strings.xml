@@ -117,16 +117,16 @@
   <string name="quote">اقتباس:</string>
   <string name="add_rule">اضافة شرط</string>
   <string name="longclick_to_delete">اضغط ضغطة مطولة للحذف.</string>
-  <string name="retweet_successful">تمت إعادة التغريد.</string>
-  <string name="delete_successful">ثم الحذف بنجاح.</string>
-  <string name="send_successful">تم الإرسال بنجاح.</string>
-  <string name="favorite_successful">أضيفت للمفضلة.</string>
-  <string name="unfavorite_successful">أزيلت من المفضلة.</string>
-  <string name="follow_successful">تتبع ناجح.</string>
-  <string name="unfollow_successful">ثم إلغاء المتابعة بنجاح.</string>
-  <string name="profile_update_successful">تم تحديث الملف الشخصي.</string>
-  <string name="profile_image_update_successful">تم تحديث الصورة الشخصية.</string>
-  <string name="profile_banner_image_update_successful">تم تحديث الصورة العلوية بنجاح.</string>
+
+
+
+
+
+
+
+
+
+
   <string name="text_size">حجم النص</string>
   <string name="text_size_summary">حجم نص التغريدات.</string>
   <string name="cannot_get_location">لا يمكن تحديد الموقع.</string>
@@ -228,8 +228,8 @@
   <string name="signing_in_please_wait">تسجيل الدخول، يرجى الانتظار أو اضغط على \"العودة\" الخروج.</string>
   <string name="connectivity">الإتصال</string>
   <string name="add_member">إضافة عضو</string>
-  <string name="add_successful">تمت الإضافة.</string>
-  <string name="create_successful">تم الإنشاء.</string>
+
+
   <string name="new_user_list">قائمة مستخدمين جديدة</string>
   <string name="is_public">عام</string>
   <string name="send_direct_message">إرسال رسالة مباشرة</string>
