@@ -593,7 +593,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		if (extras == null) return false;
 		mMentionUser = extras.getParcelable(INTENT_KEY_USER);
 		mInReplyToStatus = extras.getParcelable(INTENT_KEY_STATUS);
-		mInReplyToStatusId = mInReplyToStatus != null ? mInReplyToStatus.status_id : -1;
+		mInReplyToStatusId = mInReplyToStatus != null ? mInReplyToStatus.id : -1;
 		if (INTENT_ACTION_REPLY.equals(action)) {
 			return handleReplyIntent(mInReplyToStatus);
 		} else if (INTENT_ACTION_QUOTE.equals(action)) {
@@ -652,19 +652,19 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		return true;
 	}
 
-	private boolean handleMentionIntent(final ParcelableUser status) {
-		if (status == null || status.user_id <= 0) return false;
-		final String my_screen_name = getAccountScreenName(this, status.account_id);
+	private boolean handleMentionIntent(final ParcelableUser user) {
+		if (user == null || user.id <= 0) return false;
+		final String my_screen_name = getAccountScreenName(this, user.account_id);
 		if (isEmpty(my_screen_name)) return false;
-		mEditText.setText("@" + status.screen_name + " ");
+		mEditText.setText("@" + user.screen_name + " ");
 		final int selection_end = mEditText.length();
 		mEditText.setSelection(selection_end);
-		mAccountIds = new long[] { status.account_id };
+		mAccountIds = new long[] { user.account_id };
 		return true;
 	}
 	
 	private boolean handleQuoteIntent(final ParcelableStatus status) {
-		if (status == null || status.status_id <= 0) return false;
+		if (status == null || status.id <= 0) return false;
 		mEditText.setText(getQuoteStatus(this, status.screen_name, status.text_plain));
 		mEditText.setSelection(0);
 		mAccountIds = new long[] { status.account_id };
@@ -672,7 +672,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	}
 	
 	private boolean handleReplyIntent(final ParcelableStatus status) {
-		if (status == null || status.status_id <= 0) return false;
+		if (status == null || status.id <= 0) return false;
 		final String my_screen_name = getAccountScreenName(this, status.account_id);
 		if (isEmpty(my_screen_name)) return false;
 		final Set<String> mentions = new Extractor().extractMentionedScreennames(status.text_plain);

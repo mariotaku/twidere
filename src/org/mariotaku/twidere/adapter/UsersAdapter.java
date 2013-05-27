@@ -59,7 +59,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseA
 
 	@Override
 	public long getItemId(final int position) {
-		return getItem(position) != null ? getItem(position).user_id : -1;
+		return getItem(position) != null ? getItem(position).id : -1;
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseA
 		final ParcelableUser user = getItem(position);
 
 		if (mMultiSelectEnabled) {
-			holder.setSelected(mMultiSelectManager.isUserSelected(user.user_id));
+			holder.setSelected(mMultiSelectManager.isUserSelected(user.id));
 		} else {
 			holder.setSelected(false);
 		}
@@ -87,7 +87,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseA
 			holder.setAccountColor(getAccountColor(mContext, user.account_id));
 		}
 
-		holder.setUserColor(getUserColor(mContext, user.user_id));
+		holder.setUserColor(getUserColor(mContext, user.id));
 
 		holder.setTextSize(mTextSize);
 		holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0,
@@ -131,7 +131,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseA
 		}
 		if (data == null) return;
 		for (final ParcelableUser user : data) {
-			if (clear_old || findItem(user.user_id) == null) {
+			if (clear_old || findItem(user.id) == null) {
 				add(user);
 			}
 		}

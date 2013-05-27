@@ -58,14 +58,14 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 
 		@Override
 		public int compare(final ParcelableDirectMessage object1, final ParcelableDirectMessage object2) {
-			final long diff = object2.message_id - object1.message_id;
+			final long diff = object2.id - object1.id;
 			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
 			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
 			return (int) diff;
 		}
 	};
 
-	public final long account_id, message_id, message_timestamp;
+	public final long account_id, id, timestamp;
 
 	public final long sender_id, recipient_id;
 	public final boolean is_out_going;
@@ -86,8 +86,8 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 		recipient_profile_image_url = values.getAsString(DirectMessages.RECIPIENT_PROFILE_IMAGE_URL);
 		recipient_name = values.getAsString(DirectMessages.RECIPIENT_NAME);
 		recipient_id = getAsLong(values, DirectMessages.RECIPIENT_ID, -1);
-		message_timestamp = getAsLong(values, DirectMessages.MESSAGE_TIMESTAMP, -1);
-		message_id = getAsLong(values, DirectMessages.MESSAGE_ID, -1);
+		timestamp = getAsLong(values, DirectMessages.MESSAGE_TIMESTAMP, -1);
+		id = getAsLong(values, DirectMessages.MESSAGE_ID, -1);
 		is_out_going = getAsBoolean(values, DirectMessages.IS_OUTGOING, false);
 		account_id = getAsLong(values, DirectMessages.ACCOUNT_ID, -1);
 	}
@@ -95,8 +95,8 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 	public ParcelableDirectMessage(final Cursor cursor, final DirectMessageCursorIndices indices) {
 		account_id = indices.account_id != -1 ? cursor.getLong(indices.account_id) : -1;
 		is_out_going = indices.is_outgoing != -1 ? cursor.getShort(indices.is_outgoing) == 1 : null;
-		message_id = indices.message_id != -1 ? cursor.getLong(indices.message_id) : -1;
-		message_timestamp = indices.message_timestamp != -1 ? cursor.getLong(indices.message_timestamp) : -1;
+		id = indices.message_id != -1 ? cursor.getLong(indices.message_id) : -1;
+		timestamp = indices.message_timestamp != -1 ? cursor.getLong(indices.message_timestamp) : -1;
 		sender_id = indices.sender_id != -1 ? cursor.getLong(indices.sender_id) : -1;
 		recipient_id = indices.recipient_id != -1 ? cursor.getLong(indices.recipient_id) : -1;
 		text_html = indices.text != -1 ? cursor.getString(indices.text) : null;
@@ -121,8 +121,8 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 				: null;
 		final String recipient_profile_image_url_string = recipient != null ? parseString(recipient
 				.getProfileImageUrlHttps()) : null;
-		message_id = message.getId();
-		message_timestamp = getTime(message.getCreatedAt());
+		id = message.getId();
+		timestamp = getTime(message.getCreatedAt());
 		sender_id = sender != null ? sender.getId() : -1;
 		recipient_id = recipient != null ? recipient.getId() : -1;
 		text_html = formatDirectMessageText(message);
@@ -139,8 +139,8 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 
 	public ParcelableDirectMessage(final Parcel in) {
 		account_id = in.readLong();
-		message_id = in.readLong();
-		message_timestamp = in.readLong();
+		id = in.readLong();
+		timestamp = in.readLong();
 		sender_id = in.readLong();
 		recipient_id = in.readLong();
 		is_out_going = in.readInt() == 1;
@@ -157,7 +157,7 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 	@Override
 	public int compareTo(final ParcelableDirectMessage another) {
 		if (another == null) return 0;
-		final long diff = another.message_id - message_id;
+		final long diff = another.id - id;
 		if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
 		if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
 		return (int) diff;
@@ -175,7 +175,7 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 		if (!(obj instanceof ParcelableDirectMessage)) return false;
 		final ParcelableDirectMessage other = (ParcelableDirectMessage) obj;
 		if (account_id != other.account_id) return false;
-		if (message_id != other.message_id) return false;
+		if (id != other.id) return false;
 		return true;
 	}
 
@@ -184,14 +184,14 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (int) (account_id ^ account_id >>> 32);
-		result = prime * result + (int) (message_id ^ message_id >>> 32);
+		result = prime * result + (int) (id ^ id >>> 32);
 		return result;
 	}
 
 	@Override
 	public String toString() {
-		return "ParcelableDirectMessage{account_id=" + account_id + ", message_id=" + message_id
-				+ ", message_timestamp=" + message_timestamp + ", sender_id=" + sender_id + ", recipient_id="
+		return "ParcelableDirectMessage{account_id=" + account_id + ", message_id=" + id
+				+ ", message_timestamp=" + timestamp + ", sender_id=" + sender_id + ", recipient_id="
 				+ recipient_id + ", is_out_going=" + is_out_going + ", text=" + text_html + ", sender_name="
 				+ sender_name + ", recipient_name=" + recipient_name + ", sender_screen_name=" + sender_screen_name
 				+ ", recipient_screen_name=" + recipient_screen_name + ", sender_profile_image_url="
@@ -201,8 +201,8 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 	@Override
 	public void writeToParcel(final Parcel out, final int flags) {
 		out.writeLong(account_id);
-		out.writeLong(message_id);
-		out.writeLong(message_timestamp);
+		out.writeLong(id);
+		out.writeLong(timestamp);
 		out.writeLong(sender_id);
 		out.writeLong(recipient_id);
 		out.writeInt(is_out_going ? 1 : 0);

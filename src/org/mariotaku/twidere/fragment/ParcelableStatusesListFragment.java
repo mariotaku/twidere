@@ -84,7 +84,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 		if (status_id <= 0 || mData == null) return;
 		final ArrayList<ParcelableStatus> data_to_remove = new ArrayList<ParcelableStatus>();
 		for (final ParcelableStatus status : mData) {
-			if (status.status_id == status_id || status.retweet_id > 0 && status.retweet_id == status_id) {
+			if (status.id == status_id || status.retweet_id > 0 && status.retweet_id == status_id) {
 				data_to_remove.add(status);
 			}
 		}
@@ -180,7 +180,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 		final int count = mAdapter.getCount();
 		final ParcelableStatus status = count > 0 ? mAdapter.getItem(0) : null;
 		if (status != null) {
-			getStatuses(new long[] { status.account_id }, null, new long[] { status.status_id });
+			getStatuses(new long[] { status.account_id }, null, new long[] { status.id });
 		}
 	}
 
@@ -189,7 +189,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 		final int count = mAdapter.getCount();
 		final ParcelableStatus status = count > 0 ? mAdapter.getItem(count - 1) : null;
 		if (status != null) {
-			getStatuses(new long[] { status.account_id }, new long[] { status.status_id }, null);
+			getStatuses(new long[] { status.account_id }, new long[] { status.id }, null);
 		}
 	}
 
@@ -224,14 +224,14 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 
 	@Override
 	protected final long[] getNewestStatusIds() {
-		final long last_id = mAdapter.getCount() > 0 ? mAdapter.getItem(0).status_id : -1;
+		final long last_id = mAdapter.getCount() > 0 ? mAdapter.getItem(0).id : -1;
 		return last_id > 0 ? new long[] { last_id } : null;
 	}
 
 	@Override
 	protected final long[] getOldestStatusIds() {
 		final int last_idx = mAdapter.getCount() - 1;
-		final long last_id = last_idx >= 0 ? mAdapter.getItem(last_idx).status_id : -1;
+		final long last_id = last_idx >= 0 ? mAdapter.getItem(last_idx).id : -1;
 		return last_id > 0 ? new long[] { last_id } : null;
 	}
 

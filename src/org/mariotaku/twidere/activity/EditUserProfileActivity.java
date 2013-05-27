@@ -87,7 +87,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 			if (mUser == null) return;
 			final String action = intent.getAction();
 			if (BROADCAST_PROFILE_UPDATED.equals(action)) {
-				if (mUser == null || intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mUser.user_id) {
+				if (mUser == null || intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mUser.id) {
 					getUserInfo();
 				}
 			}
@@ -113,7 +113,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 		@Override
 		public void onLoadFinished(final Loader<SingleResponse<ParcelableUser>> loader,
 				final SingleResponse<ParcelableUser> data) {
-			if (data.data != null && data.data.user_id > 0) {
+			if (data.data != null && data.data.id > 0) {
 				displayUser(data.data);
 			} else {
 				finish();
@@ -391,7 +391,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 
 	private void displayUser(final ParcelableUser user) {
 		mUser = user;
-		if (user != null && user.user_id > 0) {
+		if (user != null && user.id > 0) {
 			mProgress.setVisibility(View.GONE);
 			mContent.setVisibility(View.VISIBLE);
 			mEditName.setText(user.name);

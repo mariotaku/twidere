@@ -72,7 +72,7 @@ public class ParcelableStatus implements Constants, Parcelable, JSONParcelable, 
 		}
 	};
 
-	public final long retweet_id, retweeted_by_id, status_id, account_id, user_id, status_timestamp, retweet_count,
+	public final long retweet_id, retweeted_by_id, id, account_id, user_id, timestamp, retweet_count,
 			in_reply_to_status_id, my_retweet_id;
 
 	public final boolean is_gap, is_retweet, is_favorite, is_protected, is_verified, has_media, is_possibly_sensitive,
@@ -88,7 +88,7 @@ public class ParcelableStatus implements Constants, Parcelable, JSONParcelable, 
 
 		@Override
 		public int compare(final ParcelableStatus object1, final ParcelableStatus object2) {
-			final long diff = object2.status_timestamp - object1.status_timestamp;
+			final long diff = object2.timestamp - object1.timestamp;
 			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
 			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
 			return (int) diff;
@@ -99,7 +99,7 @@ public class ParcelableStatus implements Constants, Parcelable, JSONParcelable, 
 
 		@Override
 		public int compare(final ParcelableStatus object1, final ParcelableStatus object2) {
-			final long diff = object1.status_id - object2.status_id;
+			final long diff = object1.id - object2.id;
 			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
 			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
 			return (int) diff;
@@ -108,8 +108,8 @@ public class ParcelableStatus implements Constants, Parcelable, JSONParcelable, 
 
 	public ParcelableStatus(final ContentValues values) {
 		account_id = getAsLong(values, Statuses.ACCOUNT_ID, -1);
-		status_id = getAsLong(values, Statuses.STATUS_ID, -1);
-		status_timestamp = getAsLong(values, Statuses.STATUS_TIMESTAMP, -1);
+		id = getAsLong(values, Statuses.STATUS_ID, -1);
+		timestamp = getAsLong(values, Statuses.STATUS_TIMESTAMP, -1);
 		name = values.getAsString(Statuses.NAME);
 		screen_name = values.getAsString(Statuses.SCREEN_NAME);
 		text_html = values.getAsString(Statuses.TEXT_HTML);
@@ -143,10 +143,10 @@ public class ParcelableStatus implements Constants, Parcelable, JSONParcelable, 
 	public ParcelableStatus(final Cursor cursor, final StatusCursorIndices indices) {
 		retweet_id = indices.retweet_id != -1 ? cursor.getLong(indices.retweet_id) : -1;
 		retweeted_by_id = indices.retweeted_by_id != -1 ? cursor.getLong(indices.retweeted_by_id) : -1;
-		status_id = indices.status_id != -1 ? cursor.getLong(indices.status_id) : -1;
+		id = indices.status_id != -1 ? cursor.getLong(indices.status_id) : -1;
 		account_id = indices.account_id != -1 ? cursor.getLong(indices.account_id) : -1;
 		user_id = indices.user_id != -1 ? cursor.getLong(indices.user_id) : -1;
-		status_timestamp = indices.status_timestamp != -1 ? cursor.getLong(indices.status_timestamp) : 0;
+		timestamp = indices.status_timestamp != -1 ? cursor.getLong(indices.status_timestamp) : 0;
 		retweet_count = indices.retweet_count != -1 ? cursor.getLong(indices.retweet_count) : -1;
 		in_reply_to_status_id = indices.in_reply_to_status_id != -1 ? cursor.getLong(indices.in_reply_to_status_id)
 				: -1;
@@ -181,10 +181,10 @@ public class ParcelableStatus implements Constants, Parcelable, JSONParcelable, 
 	public ParcelableStatus(final JSONParcel in) {
 		retweet_id = in.readLong("retweet_id");
 		retweeted_by_id = in.readLong("retweeted_by_id");
-		status_id = in.readLong("status_id");
+		id = in.readLong("status_id");
 		account_id = in.readLong("account_id");
 		user_id = in.readLong("user_id");
-		status_timestamp = in.readLong("status_timestamp");
+		timestamp = in.readLong("status_timestamp");
 		retweet_count = in.readLong("retweet_count");
 		in_reply_to_status_id = in.readLong("in_reply_to_status_id");
 		is_gap = in.readBoolean("is_gap");
@@ -214,10 +214,10 @@ public class ParcelableStatus implements Constants, Parcelable, JSONParcelable, 
 	public ParcelableStatus(final Parcel in) {
 		retweet_id = in.readLong();
 		retweeted_by_id = in.readLong();
-		status_id = in.readLong();
+		id = in.readLong();
 		account_id = in.readLong();
 		user_id = in.readLong();
-		status_timestamp = in.readLong();
+		timestamp = in.readLong();
 		retweet_count = in.readLong();
 		in_reply_to_status_id = in.readLong();
 		is_gap = in.readInt() == 1;
@@ -253,7 +253,7 @@ public class ParcelableStatus implements Constants, Parcelable, JSONParcelable, 
 			final boolean large_profile_image, final boolean large_image_preview) {
 		this.is_gap = is_gap;
 		this.account_id = account_id;
-		status_id = status.getId();
+		id = status.getId();
 		is_retweet = status.isRetweet();
 		User user = status.getUser();
 		is_following = user != null ? user.isFollowing() : false;
@@ -275,7 +275,7 @@ public class ParcelableStatus implements Constants, Parcelable, JSONParcelable, 
 				: profile_image_url_orig;
 		is_protected = user != null ? user.isProtected() : false;
 		is_verified = user != null ? user.isVerified() : false;
-		status_timestamp = getTime(status.getCreatedAt());
+		timestamp = getTime(status.getCreatedAt());
 		text_html = formatStatusText(status);
 		final ImageSpec preview = getPreviewImage(text_html,
 				large_image_preview ? IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE
@@ -291,14 +291,14 @@ public class ParcelableStatus implements Constants, Parcelable, JSONParcelable, 
 		location = new ParcelableLocation(status.getGeoLocation());
 		is_favorite = status.isFavorited();
 		text_unescaped = toPlainText(text_html);
-		my_retweet_id = retweeted_by_id == account_id ? status_id : -1;
+		my_retweet_id = retweeted_by_id == account_id ? id : -1;
 		is_possibly_sensitive = status.isPossiblySensitive();
 	}
 
 	@Override
 	public int compareTo(final ParcelableStatus another) {
 		if (another == null) return 0;
-		final long diff = another.status_id - status_id;
+		final long diff = another.id - id;
 		if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
 		if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
 		return (int) diff;
@@ -316,7 +316,7 @@ public class ParcelableStatus implements Constants, Parcelable, JSONParcelable, 
 		if (!(obj instanceof ParcelableStatus)) return false;
 		final ParcelableStatus other = (ParcelableStatus) obj;
 		if (account_id != other.account_id) return false;
-		if (status_id != other.status_id) return false;
+		if (id != other.id) return false;
 		return true;
 	}
 
@@ -325,15 +325,15 @@ public class ParcelableStatus implements Constants, Parcelable, JSONParcelable, 
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (int) (account_id ^ account_id >>> 32);
-		result = prime * result + (int) (status_id ^ status_id >>> 32);
+		result = prime * result + (int) (id ^ id >>> 32);
 		return result;
 	}
 
 	@Override
 	public String toString() {
 		return "ParcelableStatus{retweet_id=" + retweet_id + ", retweeted_by_id=" + retweeted_by_id + ", status_id="
-				+ status_id + ", account_id=" + account_id + ", user_id=" + user_id + ", status_timestamp="
-				+ status_timestamp + ", retweet_count=" + retweet_count + ", in_reply_to_status_id="
+				+ id + ", account_id=" + account_id + ", user_id=" + user_id + ", status_timestamp="
+				+ timestamp + ", retweet_count=" + retweet_count + ", in_reply_to_status_id="
 				+ in_reply_to_status_id + ", my_retweet_id=" + my_retweet_id + ", is_gap=" + is_gap + ", is_retweet="
 				+ is_retweet + ", is_favorite=" + is_favorite + ", is_protected=" + is_protected + ", is_verified="
 				+ is_verified + ", has_media=" + has_media + ", is_possibly_sensitive=" + is_possibly_sensitive
@@ -349,10 +349,10 @@ public class ParcelableStatus implements Constants, Parcelable, JSONParcelable, 
 	public void writeToParcel(final JSONParcel out) {
 		out.writeLong("retweet_id", retweet_id);
 		out.writeLong("retweeted_by_id", retweeted_by_id);
-        out.writeLong("status_id", status_id);
+        out.writeLong("status_id", id);
 		out.writeLong("account_id", account_id);
 		out.writeLong("user_id", user_id);
-		out.writeLong("status_timestamp", status_timestamp);
+		out.writeLong("status_timestamp", timestamp);
 		out.writeLong("retweet_count", retweet_count);
 		out.writeLong("in_reply_to_status_id", in_reply_to_status_id);
 		out.writeBoolean("is_gap", is_gap);
@@ -382,10 +382,10 @@ public class ParcelableStatus implements Constants, Parcelable, JSONParcelable, 
 	public void writeToParcel(final Parcel out, final int flags) {
 		out.writeLong(retweet_id);
 		out.writeLong(retweeted_by_id);
-		out.writeLong(status_id);
+		out.writeLong(id);
 		out.writeLong(account_id);
 		out.writeLong(user_id);
-		out.writeLong(status_timestamp);
+		out.writeLong(timestamp);
 		out.writeLong(retweet_count);
 		out.writeLong(in_reply_to_status_id);
 		out.writeInt(is_gap ? 1 : 0);

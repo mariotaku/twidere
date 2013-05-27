@@ -51,6 +51,11 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 	}
 
 	@Override
+	public long getItemId(final int position) {
+		return getItem(position) != null ? getItem(position).id : -1;
+	}
+
+	@Override
 	public View getView(final int position, final View convertView, final ViewGroup parent) {
 		final View view = super.getView(position, convertView, parent);
 		final Object tag = view.getTag();
@@ -79,7 +84,7 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 		}
 		if (data == null) return;
 		for (final ParcelableUserList user : data) {
-			if (clear_old || findItem(user.list_id) == null) {
+			if (clear_old || findItem(user.id) == null) {
 				add(user);
 			}
 		}

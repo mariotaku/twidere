@@ -142,7 +142,7 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 		if (mApplication.isMultiSelectActive()) return;
 		final ParcelableUserList user_list = mAdapter.findItem(id);
 		if (user_list == null) return;
-		openUserListDetails(getActivity(), mAccountId, user_list.list_id, user_list.user_id,
+		openUserListDetails(getActivity(), mAccountId, user_list.id, user_list.user_id,
 				user_list.user_screen_name, user_list.name);
 	}
 
@@ -189,7 +189,7 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 		if (mSelectedUserList == null) return false;
 		switch (item.getItemId()) {
 			case MENU_VIEW_USER_LIST: {
-				openUserListDetails(getActivity(), mAccountId, mSelectedUserList.list_id, mSelectedUserList.user_id,
+				openUserListDetails(getActivity(), mAccountId, mSelectedUserList.id, mSelectedUserList.user_id,
 						mSelectedUserList.user_screen_name, mSelectedUserList.name);
 				break;
 			}

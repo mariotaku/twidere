@@ -140,6 +140,7 @@ import org.mariotaku.twidere.model.ImageSpec;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.model.StatusCursorIndices;
 import org.mariotaku.twidere.model.TabSpec;
 import org.mariotaku.twidere.provider.TweetStore;
@@ -158,7 +159,6 @@ import twitter4j.EntitySupport;
 import twitter4j.GeoLocation;
 import twitter4j.MediaEntity;
 import twitter4j.RateLimitStatus;
-import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Trend;
 import twitter4j.Trends;
@@ -167,7 +167,6 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.URLEntity;
 import twitter4j.User;
-import twitter4j.UserList;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.BasicAuthorization;
 import twitter4j.auth.TwipOModeAuthorization;
@@ -2444,7 +2443,7 @@ public final class Utils implements Constants {
 
 	public static void openStatus(final Activity activity, final ParcelableStatus status) {
 		if (activity == null || status == null) return;
-		final long account_id = status.account_id, status_id = status.status_id;
+		final long account_id = status.account_id, status_id = status.id;
 		final Bundle bundle = new Bundle();
 		bundle.putParcelable(INTENT_KEY_STATUS, status);
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
@@ -2647,6 +2646,11 @@ public final class Utils implements Constants {
 		}
 	}
 
+	public static void openUserListMembers(final Activity activity, final ParcelableUserList list) {
+		if (activity == null || list == null) return;
+		openUserListMembers(activity, list.account_id, list.id, list.user_id, list.user_screen_name, list.name);
+	}
+
 	public static void openUserListMembers(final Activity activity, final long account_id, final int list_id,
 			final long user_id, final String screen_name, final String list_name) {
 		if (activity == null) return;
@@ -2709,6 +2713,11 @@ public final class Utils implements Constants {
 		}
 	}
 
+	public static void openUserListSubscribers(final Activity activity, final ParcelableUserList list) {
+		if (activity == null || list == null) return;
+		openUserListSubscribers(activity, list.account_id, list.id, list.user_id, list.user_screen_name, list.name);
+	}
+	
 	public static void openUserListSubscribers(final Activity activity, final long account_id, final int list_id,
 			final long user_id, final String screen_name, final String list_name) {
 		if (activity == null) return;
@@ -2742,6 +2751,11 @@ public final class Utils implements Constants {
 			}
 			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 		}
+	}
+	
+	public static void openUserListTimeline(final Activity activity, final ParcelableUserList list) {
+		if (activity == null || list == null) return;
+		openUserListTimeline(activity, list.account_id, list.id, list.user_id, list.user_screen_name, list.name);
 	}
 
 	public static void openUserListTimeline(final Activity activity, final long account_id, final int list_id,
@@ -2849,8 +2863,8 @@ public final class Utils implements Constants {
 				final Fragment fragment = new UserProfileFragment();
 				final Bundle args = new Bundle(bundle);
 				args.putLong(INTENT_KEY_ACCOUNT_ID, user.account_id);
-				if (user.user_id > 0) {
-					args.putLong(INTENT_KEY_USER_ID, user.user_id);
+				if (user.id > 0) {
+					args.putLong(INTENT_KEY_USER_ID, user.id);
 				}
 				if (user.screen_name != null) {
 					args.putString(INTENT_KEY_SCREEN_NAME, user.screen_name);
@@ -2863,8 +2877,8 @@ public final class Utils implements Constants {
 			builder.scheme(SCHEME_TWIDERE);
 			builder.authority(AUTHORITY_USER);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(user.account_id));
-			if (user.user_id > 0) {
-				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user.user_id));
+			if (user.id > 0) {
+				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user.id));
 			}
 			if (user.screen_name != null) {
 				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, user.screen_name);

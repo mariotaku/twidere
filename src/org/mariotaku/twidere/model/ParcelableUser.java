@@ -67,7 +67,7 @@ public class ParcelableUser implements Parcelable, JSONParcelable, Comparable<Pa
 		}
 	};
 
-	public final long account_id, user_id, created_at, position;
+	public final long account_id, id, created_at, position;
 
 	public final boolean is_protected, is_verified, is_follow_request_sent, is_following;
 
@@ -82,7 +82,7 @@ public class ParcelableUser implements Parcelable, JSONParcelable, Comparable<Pa
 		this.account_id = account_id;
 		position = -1;
 		is_follow_request_sent = false;
-		user_id = cursor.getLong(cursor.getColumnIndex(CachedUsers.USER_ID));
+		id = cursor.getLong(cursor.getColumnIndex(CachedUsers.USER_ID));
 		name = cursor.getString(cursor.getColumnIndex(CachedUsers.NAME));
 		screen_name = cursor.getString(cursor.getColumnIndex(CachedUsers.SCREEN_NAME));
 		profile_image_url = cursor.getString(cursor.getColumnIndex(CachedUsers.PROFILE_IMAGE_URL));
@@ -108,7 +108,7 @@ public class ParcelableUser implements Parcelable, JSONParcelable, Comparable<Pa
 	public ParcelableUser(final JSONParcel in) {
 		position = in.readLong("position");
 		account_id = in.readLong("account_id");
-		user_id = in.readLong("user_id");
+		id = in.readLong("user_id");
 		created_at = in.readLong("created_at");
 		is_protected = in.readBoolean("is_protected");
 		is_verified = in.readBoolean("is_verified");
@@ -135,7 +135,7 @@ public class ParcelableUser implements Parcelable, JSONParcelable, Comparable<Pa
 	public ParcelableUser(final Parcel in) {
 		position = in.readLong();
 		account_id = in.readLong();
-		user_id = in.readLong();
+		id = in.readLong();
 		created_at = in.readLong();
 		is_protected = in.readInt() == 1;
 		is_verified = in.readInt() == 1;
@@ -168,7 +168,7 @@ public class ParcelableUser implements Parcelable, JSONParcelable, Comparable<Pa
 		this.account_id = account_id;
 		final String profile_image_url_orig = parseString(user.getProfileImageUrlHttps());
 		final URLEntity[] urls_url_entities = user.getURLEntities();
-		user_id = user.getId();
+		id = user.getId();
 		created_at = getTime(user.getCreatedAt());
 		is_protected = user.isProtected();
 		is_verified = user.isVerified();
@@ -214,7 +214,7 @@ public class ParcelableUser implements Parcelable, JSONParcelable, Comparable<Pa
 		if (!(obj instanceof ParcelableUser)) return false;
 		final ParcelableUser other = (ParcelableUser) obj;
 		if (account_id != other.account_id) return false;
-		if (user_id != other.user_id) return false;
+		if (id != other.id) return false;
 		return true;
 	}
 
@@ -223,13 +223,13 @@ public class ParcelableUser implements Parcelable, JSONParcelable, Comparable<Pa
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (int) (account_id ^ account_id >>> 32);
-		result = prime * result + (int) (user_id ^ user_id >>> 32);
+		result = prime * result + (int) (id ^ id >>> 32);
 		return result;
 	}
 
 	@Override
 	public String toString() {
-		return "ParcelableUser{account_id=" + account_id + ", user_id=" + user_id + ", created_at=" + created_at
+		return "ParcelableUser{account_id=" + account_id + ", user_id=" + id + ", created_at=" + created_at
 				+ ", position=" + position + ", is_protected=" + is_protected + ", is_verified=" + is_verified
 				+ ", is_follow_request_sent=" + is_follow_request_sent + ", description=" + description_plain
 				+ ", name=" + name + ", screen_name=" + screen_name + ", location=" + location
@@ -243,7 +243,7 @@ public class ParcelableUser implements Parcelable, JSONParcelable, Comparable<Pa
 	public void writeToParcel(final JSONParcel out) {
 		out.writeLong("position", position);
 		out.writeLong("account_id", account_id);
-		out.writeLong("user_id", user_id);
+		out.writeLong("user_id", id);
 		out.writeLong("created_at", created_at);
 		out.writeBoolean("is_protected", is_protected);
 		out.writeBoolean("is_verified", is_verified);
@@ -270,7 +270,7 @@ public class ParcelableUser implements Parcelable, JSONParcelable, Comparable<Pa
 	public void writeToParcel(final Parcel out, final int flags) {
 		out.writeLong(position);
 		out.writeLong(account_id);
-		out.writeLong(user_id);
+		out.writeLong(id);
 		out.writeLong(created_at);
 		out.writeInt(is_protected ? 1 : 0);
 		out.writeInt(is_verified ? 1 : 0);
@@ -300,7 +300,7 @@ public class ParcelableUser implements Parcelable, JSONParcelable, Comparable<Pa
 	public static ContentValues makeCachedUserContentValues(final ParcelableUser user) {
 		if (user == null) return null;
 		final ContentValues values = new ContentValues();
-		values.put(CachedUsers.USER_ID, user.user_id);
+		values.put(CachedUsers.USER_ID, user.id);
 		values.put(CachedUsers.NAME, user.name);
 		values.put(CachedUsers.SCREEN_NAME, user.screen_name);
 		values.put(CachedUsers.PROFILE_IMAGE_URL, user.profile_image_url);

@@ -44,4 +44,8 @@ public class SingleResponse<Data> {
 		result = prime * result + (extras == null ? 0 : extras.hashCode());
 		return result;
 	}
+	
+	public static <T> SingleResponse<T> nullInstance() {
+		return new SingleResponse<T>(null, null);
+	}
 }

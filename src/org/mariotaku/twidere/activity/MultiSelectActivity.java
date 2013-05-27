@@ -87,7 +87,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 				if (first_obj instanceof ParcelableStatus) {
 					final ParcelableStatus first_status = (ParcelableStatus) first_obj;
 					bundle.putLong(INTENT_KEY_ACCOUNT_ID, first_status.account_id);
-					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, first_status.status_id);
+					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, first_status.id);
 				} else if (first_obj instanceof ParcelableUser) {
 					final ParcelableUser first_user = (ParcelableUser) first_obj;
 					bundle.putLong(INTENT_KEY_ACCOUNT_ID, first_user.account_id);
@@ -232,7 +232,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 		final ArrayList<Long> ids_list = new ArrayList<Long>();
 		for (final Object item : selected_items) {
 			if (item instanceof ParcelableUser) {
-				ids_list.add(((ParcelableUser) item).user_id);
+				ids_list.add(((ParcelableUser) item).id);
 			} else if (item instanceof ParcelableStatus) {
 				ids_list.add(((ParcelableStatus) item).user_id);
 			}

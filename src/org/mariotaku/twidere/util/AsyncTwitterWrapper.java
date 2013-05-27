@@ -49,6 +49,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ListResponse;
 import org.mariotaku.twidere.model.ParcelableLocation;
+import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.model.SingleResponse;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
@@ -85,7 +86,6 @@ import android.support.v4.app.NotificationCompat;
 import com.twitter.Extractor;
 import com.twitter.Validator;
 import edu.ucdavis.earlybird.ProfilingUtil;
-import org.mariotaku.twidere.model.ParcelableUserList;
 
 public class AsyncTwitterWrapper extends TwitterWrapper {
 
@@ -515,18 +515,18 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					} else if (screen_names != null) {
 						list = new ParcelableUserList(twitter.addUserListMembers(list_id, screen_names), account_id, false);
 					} else
-						return new TwitterSingleResponse<ParcelableUserList>(account_id, null, null);
-					return new TwitterSingleResponse<ParcelableUserList>(account_id, list, null);
+						return SingleResponse.nullInstance();
+					return new SingleResponse<ParcelableUserList>(list, null);
 				} catch (final TwitterException e) {
-					return new TwitterSingleResponse<ParcelableUserList>(account_id, null, e);
+					return new SingleResponse<ParcelableUserList>(null, e);
 				}
 			}
-			return new TwitterSingleResponse<ParcelableUserList>(account_id, null, null);
+			return SingleResponse.nullInstance();
 		}
 
 		@Override
 		protected void onPostExecute(final SingleResponse<ParcelableUserList> result) {
-			final boolean succeed = result != null && result.data != null && result.data.list_id > 0;
+			final boolean succeed = result != null && result.data != null && result.data.id > 0;
 			if (succeed) {
 				final String message = mContext.getString(R.string.added_user_to_list, result.data.name);
 				mMessagesManager.showOkMessage(message, false);
@@ -753,7 +753,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 	}
 
-	class CreateUserListSubscriptionTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
+	class CreateUserListSubscriptionTask extends ManagedAsyncTask<Void, Void, SingleResponse<ParcelableUserList>> {
 
 		private final long account_id;
 		private final int list_id;
@@ -765,31 +765,30 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		@Override
-		protected SingleResponse<UserList> doInBackground(final Void... params) {
-
+		protected SingleResponse<ParcelableUserList> doInBackground(final Void... params) {
 			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
-					final UserList list = twitter.createUserListSubscription(list_id);
-					return new TwitterSingleResponse<UserList>(account_id, list, null);
+					final ParcelableUserList list = new ParcelableUserList(twitter.createUserListSubscription(list_id), account_id, false);
+					return new SingleResponse<ParcelableUserList>(list, null);
 				} catch (final TwitterException e) {
-					return new TwitterSingleResponse<UserList>(account_id, null, e);
+					return new SingleResponse<ParcelableUserList>(null, e);
 				}
 			}
-			return new TwitterSingleResponse<UserList>(account_id, null, null);
+			return SingleResponse.nullInstance();
 		}
 
 		@Override
-		protected void onPostExecute(final SingleResponse<UserList> result) {
-			final boolean succeed = result != null && result.data != null && result.data.getId() > 0;
+		protected void onPostExecute(final SingleResponse<ParcelableUserList> result) {
+			final boolean succeed = result != null && result.data != null;
 			if (succeed) {
-				final String message = mContext.getString(R.string.subscribed_to_list, result.data.getName());
+				final String message = mContext.getString(R.string.subscribed_to_list, result.data.name);
 				mMessagesManager.showOkMessage(message, false);
 			} else {
-				mMessagesManager.showErrorMessage(R.string.following, result.exception, true);
+				mMessagesManager.showErrorMessage(R.string.subscribing_to_list, result.exception, true);
 			}
-			final Intent intent = new Intent(BROADCAST_USER_LIST_SUBSCRIPTION_CHANGED);
-			intent.putExtra(INTENT_KEY_LIST_ID, list_id);
+			final Intent intent = new Intent(BROADCAST_USER_LIST_SUBSCRIBED);
+			intent.putExtra(INTENT_KEY_USER_LIST, result.data);
 			intent.putExtra(INTENT_KEY_SUCCEED, succeed);
 			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
@@ -872,20 +871,20 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					} else if (screen_names != null) {
 						list = new ParcelableUserList(twitter.deleteUserListMembers(list_id, screen_names), account_id, false);
 					} else
-						return new TwitterSingleResponse<ParcelableUserList>(account_id, null, null);
-					return new TwitterSingleResponse<ParcelableUserList>(account_id, list, null);
+						return SingleResponse.nullInstance();
+					return new SingleResponse<ParcelableUserList>(list, null);
 				} catch (final TwitterException e) {
-					return new TwitterSingleResponse<ParcelableUserList>(account_id, null, e);
+					return new SingleResponse<ParcelableUserList>(null, e);
 				}
 			}
-			return new TwitterSingleResponse<ParcelableUserList>(account_id, null, null);
+			return SingleResponse.nullInstance();
 		}
 
 		@Override
 		protected void onPostExecute(final SingleResponse<ParcelableUserList> result) {
-			final boolean succeed = result != null && result.data != null && result.data.list_id > 0;
+			final boolean succeed = result != null && result.data != null && result.data.id > 0;
 			if (succeed) {
-				final String message = mContext.getString(R.string.deleted_list, result.data.name);
+				final String message = mContext.getString(R.string.deleted_user_from_list, result.data.name);
 				mMessagesManager.showInfoMessage(message, false);
 			} else {
 				mMessagesManager.showErrorMessage(R.string.deleting, result.exception, true);
@@ -1005,11 +1004,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 		@Override
 		protected SingleResponse<twitter4j.Status> doInBackground(final Void... params) {
-
-			if (account_id < 0) {
-				new TwitterSingleResponse<twitter4j.Status>(account_id, null, null);
-			}
-
+			if (account_id < 0) return TwitterSingleResponse.nullInstance();
 			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
@@ -1027,17 +1022,16 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					for (final Uri uri : TweetStore.STATUSES_URIS) {
 						mResolver.update(uri, values, where.toString(), null);
 					}
-					return new TwitterSingleResponse<twitter4j.Status>(account_id, status, null);
+					return new SingleResponse<twitter4j.Status>(status, null);
 				} catch (final TwitterException e) {
-					return new TwitterSingleResponse<twitter4j.Status>(account_id, null, e);
+					return new SingleResponse<twitter4j.Status>(null, e);
 				}
 			}
-			return new TwitterSingleResponse<twitter4j.Status>(account_id, null, null);
+			return SingleResponse.nullInstance();
 		}
 
 		@Override
 		protected void onPostExecute(final SingleResponse<twitter4j.Status> result) {
-
 			if (result.data != null) {
 				final Intent intent = new Intent(BROADCAST_FAVORITE_CHANGED);
 				intent.putExtra(INTENT_KEY_USER_ID, account_id);
@@ -1152,7 +1146,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	}
 
-	class DestroyUserListSubscriptionTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
+	class DestroyUserListSubscriptionTask extends ManagedAsyncTask<Void, Void, SingleResponse<ParcelableUserList>> {
 
 		private final long account_id;
 		private final int list_id;
@@ -1164,31 +1158,31 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		@Override
-		protected SingleResponse<UserList> doInBackground(final Void... params) {
+		protected SingleResponse<ParcelableUserList> doInBackground(final Void... params) {
 
 			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
-					final UserList list = twitter.destroyUserListSubscription(list_id);
-					return new TwitterSingleResponse<UserList>(account_id, list, null);
+					final ParcelableUserList list = new ParcelableUserList(twitter.destroyUserListSubscription(list_id), account_id, false);
+					return new TwitterSingleResponse<ParcelableUserList>(account_id, list, null);
 				} catch (final TwitterException e) {
-					return new TwitterSingleResponse<UserList>(account_id, null, e);
+					return new TwitterSingleResponse<ParcelableUserList>(account_id, null, e);
 				}
 			}
-			return new TwitterSingleResponse<UserList>(account_id, null, null);
+			return TwitterSingleResponse.nullInstance();
 		}
 
 		@Override
-		protected void onPostExecute(final SingleResponse<UserList> result) {
-			final boolean succeed = result != null && result.data != null && result.data.getId() > 0;
+		protected void onPostExecute(final SingleResponse<ParcelableUserList> result) {
+			final boolean succeed = result.data != null;
 			if (succeed) {
-				final String message = mContext.getString(R.string.unsubscribed_from_list, result.data.getName());
+				final String message = mContext.getString(R.string.unsubscribed_from_list, result.data.name);
 				mMessagesManager.showOkMessage(message, false);
 			} else {
-				mMessagesManager.showErrorMessage(R.string.unfollowing, result.exception, true);
+				mMessagesManager.showErrorMessage(R.string.unsubscribing_from_list, result.exception, true);
 			}
-			final Intent intent = new Intent(BROADCAST_USER_LIST_SUBSCRIPTION_CHANGED);
-			intent.putExtra(INTENT_KEY_LIST_ID, list_id);
+			final Intent intent = new Intent(BROADCAST_USER_LIST_UNSUBSCRIBED);
+			intent.putExtra(INTENT_KEY_USER_LIST, result.data);
 			intent.putExtra(INTENT_KEY_SUCCEED, succeed);
 			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
@@ -1196,7 +1190,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	}
 
-	class DestroyUserListTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
+	class DestroyUserListTask extends ManagedAsyncTask<Void, Void, SingleResponse<ParcelableUserList>> {
 
 		private final long account_id;
 		private final int list_id;
@@ -1208,34 +1202,34 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		@Override
-		protected SingleResponse<UserList> doInBackground(final Void... params) {
+		protected SingleResponse<ParcelableUserList> doInBackground(final Void... params) {
 
 			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
 					if (list_id > 0) {
-						final UserList list = twitter.destroyUserList(list_id);
-						return new TwitterSingleResponse<UserList>(account_id, list, null);
+						final ParcelableUserList list = new ParcelableUserList(twitter.destroyUserList(list_id), account_id, false);
+						return new SingleResponse<ParcelableUserList>(list, null);
 					}
 				} catch (final TwitterException e) {
-					return new TwitterSingleResponse<UserList>(account_id, null, e);
+					return new SingleResponse<ParcelableUserList>(null, e);
 				}
 			}
-			return new TwitterSingleResponse<UserList>(account_id, null, null);
+			return SingleResponse.nullInstance();
 		}
 
 		@Override
-		protected void onPostExecute(final SingleResponse<UserList> result) {
-			final boolean succeed = result != null && result.data != null && result.data.getId() > 0;
+		protected void onPostExecute(final SingleResponse<ParcelableUserList> result) {
+			final boolean succeed = result.data != null;
 			if (succeed) {
-				final String message = mContext.getString(R.string.deleted_list, result.data.getName());
+				final String message = mContext.getString(R.string.deleted_list, result.data.name);
 				mMessagesManager.showInfoMessage(message, false);
 			} else {
 				mMessagesManager.showErrorMessage(R.string.deleting, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_USER_LIST_DELETED);
 			intent.putExtra(INTENT_KEY_SUCCEED, succeed);
-			intent.putExtra(INTENT_KEY_LIST_ID, list_id);
+			intent.putExtra(INTENT_KEY_USER_LIST, result.data);
 			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}

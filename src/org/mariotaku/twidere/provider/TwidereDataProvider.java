@@ -562,7 +562,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			uri_builder.scheme(SCHEME_TWIDERE);
 			uri_builder.authority(AUTHORITY_STATUS);
 			uri_builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(status.account_id));
-			uri_builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status.status_id));
+			uri_builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status.id));
 			content_intent = new Intent(Intent.ACTION_VIEW, uri_builder.build());
 		} else {
 			content_intent = new Intent(context, HomeActivity.class);

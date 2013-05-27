@@ -42,16 +42,12 @@ public class UserFollowersFragment extends BaseUsersListFragment {
 			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
 			if (BROADCAST_MULTI_BLOCKSTATE_CHANGED.equals(action)) {
-				final long[] ids = intent.getLongArrayExtra(INTENT_KEY_USER_IDS);
 				final long account_id = intent.getLongExtra(INTENT_KEY_ACCOUNT_ID, -1);
 				final String screen_name = getAccountScreenName(getActivity(), account_id);
 				final Bundle args = getArguments();
-				if (ids == null || args == null) return;
-				if (account_id > 0 && args.getLong(INTENT_KEY_USER_ID, -1) == account_id || screen_name != null
-						&& screen_name.equalsIgnoreCase(args.getString(INTENT_KEY_SCREEN_NAME))) {
-					for (final long id : ids) {
-						removeUser(id);
-					}
+				if (args != null && account_id > 0 && args.getLong(INTENT_KEY_USER_ID, -1) == account_id ||
+						screen_name != null && screen_name.equalsIgnoreCase(args.getString(INTENT_KEY_SCREEN_NAME))) {
+					removeUsers(intent.getLongArrayExtra(INTENT_KEY_USER_IDS));
 				}
 			}
 		}

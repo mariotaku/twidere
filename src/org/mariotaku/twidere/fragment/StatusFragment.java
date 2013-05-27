@@ -292,7 +292,7 @@ OnImageClickListener {
 						cancelRetweet(mTwitterWrapper, mStatus);
 					} else {
 						final long id_to_retweet = mStatus.is_retweet && mStatus.retweet_id > 0 ? mStatus.retweet_id
-								: mStatus.status_id;
+								: mStatus.id;
 						mTwitterWrapper.retweetStatus(mStatus.account_id, id_to_retweet);
 					}
 					break;
@@ -388,7 +388,7 @@ OnImageClickListener {
 			mAdapter.clear();
 			if (mStatus != null) {
 				// UCD
-				ProfilingUtil.profile(getActivity(), mStatus.account_id, "End, " + mStatus.status_id);
+				ProfilingUtil.profile(getActivity(), mStatus.account_id, "End, " + mStatus.id);
 			}
 		} else {
 			mListView.setSelection(0);
@@ -401,9 +401,9 @@ OnImageClickListener {
 		mStatus = status;
 		if (mStatus != null) {
 			// UCD
-			ProfilingUtil.profile(getActivity(), mStatus.account_id, "Start, " + mStatus.status_id);
+			ProfilingUtil.profile(getActivity(), mStatus.account_id, "Start, " + mStatus.id);
 			mAccountId = mStatus.account_id;
-			mStatusId = mStatus.status_id;
+			mStatusId = mStatus.id;
 		}
 		clearPreviewImages();
 		if (!status_unchanged) {
@@ -429,7 +429,7 @@ OnImageClickListener {
 		final TwidereLinkify linkify = new TwidereLinkify(new OnLinkClickHandler(getActivity()), true);
 		linkify.applyAllLinks(mTextView, status.account_id, status.is_possibly_sensitive);
 		final boolean is_reply = status.in_reply_to_status_id > 0;
-		final String time = formatToLongTimeString(getActivity(), status.status_timestamp);
+		final String time = formatToLongTimeString(getActivity(), status.timestamp);
 		final String source_html = status.source;
 		setPullToRefreshEnabled(!mLoadMoreAutomatically && is_reply);
 		if (!isEmpty(time) && !isEmpty(source_html)) {
@@ -614,7 +614,7 @@ OnImageClickListener {
 	public void onDestroyView() {
 		// UCD
 		if (mStatus != null) {
-			ProfilingUtil.profile(getActivity(), mAccountId, "End, " + mStatus.status_id);
+			ProfilingUtil.profile(getActivity(), mAccountId, "End, " + mStatus.id);
 		}
 		mStatus = null;
 		mAccountId = -1;

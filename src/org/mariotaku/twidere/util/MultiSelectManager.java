@@ -92,9 +92,9 @@ public class MultiSelectManager implements Constants {
 		@Override
 		public boolean add(final Object object) {
 			if (object instanceof ParcelableStatus) {
-				mSelectedStatusIds.add(((ParcelableStatus) object).status_id);
+				mSelectedStatusIds.add(((ParcelableStatus) object).id);
 			} else if (object instanceof ParcelableUser) {
-				mSelectedUserIds.add(((ParcelableUser) object).user_id);
+				mSelectedUserIds.add(((ParcelableUser) object).id);
 			} else
 				return false;
 			final boolean ret = super.add(object);
@@ -114,9 +114,9 @@ public class MultiSelectManager implements Constants {
 		public boolean remove(final Object object) {
 			final boolean ret = super.remove(object);
 			if (object instanceof ParcelableStatus) {
-				mSelectedStatusIds.remove(((ParcelableStatus) object).status_id);
+				mSelectedStatusIds.remove(((ParcelableStatus) object).id);
 			} else if (object instanceof ParcelableUser) {
-				mSelectedUserIds.remove(((ParcelableUser) object).user_id);
+				mSelectedUserIds.remove(((ParcelableUser) object).id);
 			}
 			if (ret) {
 				if (isEmpty()) {

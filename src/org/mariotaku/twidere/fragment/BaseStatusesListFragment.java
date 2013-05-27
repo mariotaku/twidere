@@ -192,7 +192,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			if (status == null) return;
 			final StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) {
-				getStatuses(new long[] { status.account_id }, new long[] { status.status_id }, null);
+				getStatuses(new long[] { status.account_id }, new long[] { status.id }, null);
 			} else {
 				if (mMultiSelectManager.isActive()) {
 					if (!mMultiSelectManager.isSelected(status)) {
@@ -277,7 +277,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 				if (isMyRetweet(status)) {
 					cancelRetweet(mTwitterWrapper, status);
 				} else {
-					final long id_to_retweet = status.retweet_id > 0 ? status.retweet_id : status.status_id;
+					final long id_to_retweet = status.retweet_id > 0 ? status.retweet_id : status.id;
 					mTwitterWrapper.retweetStatus(status.account_id, id_to_retweet);
 				}
 				break;
@@ -301,18 +301,18 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			}
 			case MENU_FAVORITE: {
 				if (status.is_favorite) {
-					mTwitterWrapper.destroyFavorite(status.account_id, status.status_id);
+					mTwitterWrapper.destroyFavorite(status.account_id, status.id);
 				} else {
-					mTwitterWrapper.createFavoriteAsync(status.account_id, status.status_id);
+					mTwitterWrapper.createFavoriteAsync(status.account_id, status.id);
 				}
 				break;
 			}
 			case MENU_DELETE: {
-				mTwitterWrapper.destroyStatus(status.account_id, status.status_id);
+				mTwitterWrapper.destroyStatus(status.account_id, status.id);
 				break;
 			}
 			case MENU_LOAD_FROM_POSITION: {
-				getStatuses(new long[] { status.account_id }, new long[] { status.status_id }, null);
+				getStatuses(new long[] { status.account_id }, new long[] { status.id }, null);
 				break;
 			}
 			case MENU_MULTI_SELECT: {

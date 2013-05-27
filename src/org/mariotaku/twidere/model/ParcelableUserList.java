@@ -60,7 +60,7 @@ public class ParcelableUserList implements Parcelable, JSONParcelable, Comparabl
 		}
 	};
 
-	public final int list_id;
+	public final int id, members_count, subscribers_count;
 
 	public final long account_id, user_id, position;
 
@@ -71,7 +71,7 @@ public class ParcelableUserList implements Parcelable, JSONParcelable, Comparabl
 	public ParcelableUserList(final JSONParcel in) {
 		position = in.readLong("position");
 		account_id = in.readLong("account_id");
-		list_id = in.readInt("list_id");
+		id = in.readInt("list_id");
 		is_public = in.readBoolean("is_public");
 		is_following = in.readBoolean("is_following");
 		name = in.readString("name");
@@ -80,12 +80,14 @@ public class ParcelableUserList implements Parcelable, JSONParcelable, Comparabl
 		user_name = in.readString("user_name");
 		user_screen_name = in.readString("user_screen_name");
 		user_profile_image_url = in.readString("user_profile_image_url");
+		members_count = in.readInt("members_count");
+		subscribers_count = in.readInt("subscribers_count");
 	}
 
 	public ParcelableUserList(final Parcel in) {
 		position = in.readLong();
 		account_id = in.readLong();
-		list_id = in.readInt();
+		id = in.readInt();
 		is_public = in.readInt() == 1;
 		is_following = in.readInt() == 1;
 		name = in.readString();
@@ -94,6 +96,8 @@ public class ParcelableUserList implements Parcelable, JSONParcelable, Comparabl
 		user_name = in.readString();
 		user_screen_name = in.readString();
 		user_profile_image_url = in.readString();
+		members_count = in.readInt();
+		subscribers_count = in.readInt();
 	}
 
 	public ParcelableUserList(final UserList user, final long account_id, final boolean large_profile_image) {
@@ -105,7 +109,7 @@ public class ParcelableUserList implements Parcelable, JSONParcelable, Comparabl
 		final User user = list.getUser();
 		this.position = position;
 		this.account_id = account_id;
-		list_id = list.getId();
+		id = list.getId();
 		is_public = list.isPublic();
 		is_following = list.isFollowing();
 		name = list.getName();
@@ -116,6 +120,8 @@ public class ParcelableUserList implements Parcelable, JSONParcelable, Comparabl
 		final String user_profile_image_url_orig = user != null ? parseString(user.getProfileImageUrlHttps()) : null;
 		user_profile_image_url = large_profile_image ? getBiggerTwitterProfileImage(user_profile_image_url_orig)
 				: user_profile_image_url_orig;
+		members_count = list.getMemberCount();
+		subscribers_count = list.getSubscriberCount();
 	}
 
 	@Override
@@ -139,7 +145,7 @@ public class ParcelableUserList implements Parcelable, JSONParcelable, Comparabl
 		if (!(obj instanceof ParcelableUserList)) return false;
 		final ParcelableUserList other = (ParcelableUserList) obj;
 		if (account_id != other.account_id) return false;
-		if (list_id != other.list_id) return false;
+		if (id != other.id) return false;
 		return true;
 	}
 
@@ -148,13 +154,13 @@ public class ParcelableUserList implements Parcelable, JSONParcelable, Comparabl
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (int) (account_id ^ account_id >>> 32);
-		result = prime * result + list_id;
+		result = prime * result + id;
 		return result;
 	}
 
 	@Override
 	public String toString() {
-		return "ParcelableUserList{list_id=" + list_id + ", account_id=" + account_id + ", user_id=" + user_id
+		return "ParcelableUserList{list_id=" + id + ", account_id=" + account_id + ", user_id=" + user_id
 				+ ", position=" + position + ", is_public=" + is_public + ", is_following=" + is_following
 				+ ", description=" + description + ", name=" + name + ", user_screen_name=" + user_screen_name
 				+ ", user_name=" + user_name + ", user_profile_image_url_string=" + user_profile_image_url + "}";
@@ -164,7 +170,7 @@ public class ParcelableUserList implements Parcelable, JSONParcelable, Comparabl
 	public void writeToParcel(final JSONParcel out) {
 		out.writeLong("position", position);
 		out.writeLong("account_id", account_id);
-		out.writeInt("list_id", list_id);
+		out.writeInt("list_id", id);
 		out.writeBoolean("is_public", is_public);
 		out.writeBoolean("is_following", is_following);
 		out.writeString("name", name);
@@ -173,13 +179,15 @@ public class ParcelableUserList implements Parcelable, JSONParcelable, Comparabl
 		out.writeString("user_name", user_name);
 		out.writeString("user_screen_name", user_screen_name);
 		out.writeString("user_profile_image_url", user_profile_image_url);
+		out.writeInt("members_count", members_count);
+		out.writeInt("subscribers_count", subscribers_count);
 	}
 
 	@Override
 	public void writeToParcel(final Parcel out, final int flags) {
 		out.writeLong(position);
 		out.writeLong(account_id);
-		out.writeInt(list_id);
+		out.writeInt(id);
 		out.writeInt(is_public ? 1 : 0);
 		out.writeInt(is_following ? 1 : 0);
 		out.writeString(name);
@@ -188,6 +196,8 @@ public class ParcelableUserList implements Parcelable, JSONParcelable, Comparabl
 		out.writeString(user_name);
 		out.writeString(user_screen_name);
 		out.writeString(user_profile_image_url);
+		out.writeInt(members_count);
+		out.writeInt(subscribers_count);
 	}
 
 }

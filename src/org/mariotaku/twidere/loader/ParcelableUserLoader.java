@@ -49,7 +49,7 @@ public final class ParcelableUserLoader extends AsyncTaskLoader<SingleResponse<P
 			final ParcelableUser user = extras.getParcelable(INTENT_KEY_USER);
 			if (user != null) {
 				final ContentValues values = ParcelableUser.makeCachedUserContentValues(user);
-				resolver.delete(CachedUsers.CONTENT_URI, CachedUsers.USER_ID + " = " + user.user_id, null);
+				resolver.delete(CachedUsers.CONTENT_URI, CachedUsers.USER_ID + " = " + user.id, null);
 				resolver.insert(CachedUsers.CONTENT_URI, values);
 				return new SingleResponse<ParcelableUser>(user, null);
 			}

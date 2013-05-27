@@ -54,6 +54,7 @@ import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import org.mariotaku.twidere.loader.DummyParcelableUsersLoader;
+import org.mariotaku.twidere.util.ArrayUtils;
 
 abstract class BaseUsersListFragment extends PullToRefreshListFragment implements
 		LoaderCallbacks<List<ParcelableUser>>, OnScrollListener, OnItemLongClickListener, Panes.Left,
@@ -238,7 +239,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		if (count - 1 > 0) {
 			final Bundle args = getArguments();
 			if (args != null) {
-				args.putLong(INTENT_KEY_MAX_ID, mAdapter.getItem(count - 1).user_id);
+				args.putLong(INTENT_KEY_MAX_ID, mAdapter.getItem(count - 1).id);
 			}
 			if (!getLoaderManager().hasRunningLoaders()) {
 				getLoaderManager().restartLoader(0, args, this);
@@ -326,12 +327,11 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		super.onStop();
 	}
 
-	protected final void removeUser(final long user_id) {
+	protected final void removeUsers(final long... user_ids) {
+		if (user_ids == null || user_ids.length == 0) return;
 		final ArrayList<ParcelableUser> items_to_remove = new ArrayList<ParcelableUser>();
-		for (final ParcelableUser user : mData) {
-			if (user != null && user.user_id == user_id) {
-				items_to_remove.add(user);
-			}
+		for (final long user_id : user_ids) {
+			items_to_remove.add(mAdapter.findItem(user_id));
 		}
 		mData.removeAll(items_to_remove);
 		mAdapter.setData(mData, true);

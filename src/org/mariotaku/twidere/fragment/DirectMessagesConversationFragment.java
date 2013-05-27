@@ -324,7 +324,7 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 	@Override
 	public boolean onMenuItemClick(final MenuItem item) {
 		if (mSelectedDirectMessage != null) {
-			final long message_id = mSelectedDirectMessage.message_id;
+			final long message_id = mSelectedDirectMessage.id;
 			final long account_id = mSelectedDirectMessage.account_id;
 			switch (item.getItemId()) {
 				case MENU_DELETE: {

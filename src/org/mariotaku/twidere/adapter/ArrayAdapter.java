@@ -79,5 +79,11 @@ public class ArrayAdapter<T> extends BaseAdapter {
 		Collections.sort(mData, comparator);
 		notifyDataSetChanged();
 	}
+	
+	public final boolean remove(final int position) {
+		final boolean ret = mData.remove(position) != null;
+		notifyDataSetChanged();
+		return ret;
+	}
 
 }

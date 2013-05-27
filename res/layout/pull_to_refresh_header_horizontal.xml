@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
 
-        <ProgressBar
+        <org.mariotaku.twidere.view.HoloProgressBar
             android:id="@+id/pull_to_refresh_progress"
             style="?android:attr/progressBarStyleSmall"
             android:layout_width="wrap_content"

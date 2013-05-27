@@ -165,20 +165,20 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			if (mUser == null) return;
 			final String action = intent.getAction();
 			if (BROADCAST_FRIENDSHIP_CHANGED.equals(action)) {
-				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mUser.user_id
+				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mUser.id
 						&& intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
 					getFriendship();
 				}
 			}
 			if (BROADCAST_BLOCKSTATE_CHANGED.equals(action)) {
-				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mUser.user_id
+				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mUser.id
 						&& intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
 					getFriendship();
 				}
 			}
 			if (BROADCAST_PROFILE_UPDATED.equals(action) || BROADCAST_PROFILE_IMAGE_UPDATED.equals(action)
 					|| BROADCAST_PROFILE_BANNER_UPDATED.equals(action)) {
-				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mUser.user_id
+				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mUser.id
 						&& intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
 					getUserInfo(true);
 				}
@@ -198,7 +198,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			setProgressBarIndeterminateVisibility(true);
 			final boolean omit_intent_extra = args != null ? args.getBoolean(INTENT_KEY_OMIT_INTENT_EXTRA, true) : true;
 			return new ParcelableUserLoader(getActivity(), mAccountId, mUserId, mScreenName, getArguments(),
-					omit_intent_extra, mUser == null || !mUser.is_cache && mUserId != mUser.user_id);
+					omit_intent_extra, mUser == null || !mUser.is_cache && mUserId != mUser.id);
 		}
 
 		@Override
@@ -210,7 +210,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		public void onLoadFinished(final Loader<SingleResponse<ParcelableUser>> loader,
 				final SingleResponse<ParcelableUser> data) {
 			if (getActivity() == null) return;
-			if (data.data != null && data.data.user_id > 0) {
+			if (data.data != null && data.data.id > 0) {
 				setListShown(true);
 				displayUser(data.data);
 				mErrorRetryContainer.setVisibility(View.GONE);
@@ -218,7 +218,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 					getLoaderManager().restartLoader(LOADER_ID_USER, null, this);
 				}
 			} else if (mUser != null && mUser.is_cache
-					&& (mUserId == mUser.user_id || mScreenName != null && mScreenName.equals(mUser.screen_name))) {
+					&& (mUserId == mUser.id || mScreenName != null && mScreenName.equals(mUser.screen_name))) {
 				setListShown(true);
 				displayUser(mUser);
 			} else {
@@ -303,15 +303,15 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mUserId = -1;
 		mAccountId = -1;
 		mAdapter.clear();
-		if (user == null || user.user_id <= 0 || getActivity() == null) return;
+		if (user == null || user.id <= 0 || getActivity() == null) return;
 		final LoaderManager lm = getLoaderManager();
 		lm.destroyLoader(LOADER_ID_USER);
 		lm.destroyLoader(LOADER_ID_FRIENDSHIP);
-		final boolean user_is_me = user.account_id == user.user_id;
+		final boolean user_is_me = user.account_id == user.id;
 		mErrorRetryContainer.setVisibility(View.GONE);
 		mAccountId = user.account_id;
 		mUser = user;
-		mUserId = user.user_id;
+		mUserId = user.id;
 		mScreenName = user.screen_name;
 		mProfileNameContainer.drawLeft(getUserColor(getActivity(), mUserId));
 		mProfileNameContainer.drawRight(getAccountColor(getActivity(), user.account_id));
@@ -343,7 +343,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			mProfileImageView.setImageResource(R.drawable.ic_profile_image_default);
 			mProfileBannerView.setImageResource(android.R.color.transparent);
 		}
-		if (isMyAccount(getActivity(), user.user_id)) {
+		if (isMyAccount(getActivity(), user.id)) {
 			final ContentResolver resolver = getContentResolver();
 			final ContentValues values = new ContentValues();
 			if (user.profile_image_url != null) {
@@ -351,7 +351,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			}
 			values.put(Accounts.NAME, user.name);
 			values.put(Accounts.SCREEN_NAME, user.screen_name);
-			final String where = Accounts.ACCOUNT_ID + " = " + user.user_id;
+			final String where = Accounts.ACCOUNT_ID + " = " + user.id;
 			resolver.update(Accounts.CONTENT_URI, values, where, null);
 		}
 		mAdapter.add(new FavoritesAction(1));
@@ -479,7 +479,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 									case R.id.unfollow: {
 										mFollowProgress.setVisibility(View.VISIBLE);
 										mEditFollowButton.setVisibility(View.GONE);
-										mTwitterWrapper.destroyFriendship(mAccountId, mUser.user_id);
+										mTwitterWrapper.destroyFriendship(mAccountId, mUser.id);
 										return true;
 									}
 								}
@@ -490,7 +490,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 					} else {
 						mFollowProgress.setVisibility(View.VISIBLE);
 						mEditFollowButton.setVisibility(View.GONE);
-						mTwitterWrapper.createFriendship(mAccountId, mUser.user_id);
+						mTwitterWrapper.createFriendship(mAccountId, mUser.id);
 					}
 				}
 				break;
@@ -512,17 +512,17 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			}
 			case R.id.tweets_container: {
 				if (mUser == null) return;
-				openUserTimeline(getActivity(), mAccountId, mUser.user_id, mUser.screen_name);
+				openUserTimeline(getActivity(), mAccountId, mUser.id, mUser.screen_name);
 				break;
 			}
 			case R.id.followers_container: {
 				if (mUser == null) return;
-				openUserFollowers(getActivity(), mAccountId, mUser.user_id, mUser.screen_name);
+				openUserFollowers(getActivity(), mAccountId, mUser.id, mUser.screen_name);
 				break;
 			}
 			case R.id.friends_container: {
 				if (mUser == null) return;
-				openUserFriends(getActivity(), mAccountId, mUser.user_id, mUser.screen_name);
+				openUserFriends(getActivity(), mAccountId, mUser.id, mUser.screen_name);
 				break;
 			}
 			case R.id.more_options: {
@@ -530,7 +530,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 				mPopupMenu.inflate(R.menu.action_user_profile);
 				final Menu menu = mPopupMenu.getMenu();
-				if (mUser.user_id != mAccountId) {
+				if (mUser.id != mAccountId) {
 					if (mFriendship == null) return;
 					final MenuItem blockItem = menu.findItem(MENU_BLOCK);
 					if (blockItem != null) {
@@ -680,14 +680,14 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 					break;
 				}
 				if (mFriendship.isSourceBlockingTarget()) {
-					mTwitterWrapper.destroyBlock(mAccountId, mUser.user_id);
+					mTwitterWrapper.destroyBlock(mAccountId, mUser.id);
 				} else {
-					mTwitterWrapper.createBlockAsync(mAccountId, mUser.user_id);
+					mTwitterWrapper.createBlockAsync(mAccountId, mUser.id);
 				}
 				break;
 			}
 			case MENU_REPORT_SPAM: {
-				mTwitterWrapper.reportSpam(mAccountId, mUser.user_id);
+				mTwitterWrapper.reportSpam(mAccountId, mUser.id);
 				break;
 			}
 			case MENU_MUTE_USER: {
@@ -714,7 +714,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				builder.scheme(SCHEME_TWIDERE);
 				builder.authority(AUTHORITY_DIRECT_MESSAGES_CONVERSATION);
 				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(mAccountId));
-				builder.appendQueryParameter(QUERY_PARAM_CONVERSATION_ID, String.valueOf(mUser.user_id));
+				builder.appendQueryParameter(QUERY_PARAM_CONVERSATION_ID, String.valueOf(mUser.id));
 				startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 				break;
 			}
@@ -810,7 +810,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		@Override
 		public void onClick() {
 			if (mUser == null) return;
-			openUserFavorites(getActivity(), mAccountId, mUser.user_id, mUser.screen_name);
+			openUserFavorites(getActivity(), mAccountId, mUser.id, mUser.screen_name);
 		}
 
 	}
@@ -921,7 +921,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		@Override
 		public void onClick() {
 			if (mUser == null) return;
-			openUserLists(getActivity(), mAccountId, mUser.user_id, mUser.screen_name);
+			openUserLists(getActivity(), mAccountId, mUser.id, mUser.screen_name);
 		}
 
 	}

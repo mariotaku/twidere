@@ -92,14 +92,14 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	}
 
 	public long findItemIdByPosition(final int position) {
-		if (position >= 0 && position < getCount()) return getItem(position).status_id;
+		if (position >= 0 && position < getCount()) return getItem(position).id;
 		return -1;
 	}
 
 	public int findItemPositionByStatusId(final long status_id) {
 		final int count = getCount();
 		for (int i = 0; i < count; i++) {
-			if (getItem(i).status_id == status_id) return i;
+			if (getItem(i).id == status_id) return i;
 		}
 		return -1;
 	}
@@ -107,7 +107,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	@Override
 	public long getItemId(final int position) {
 		final ParcelableStatus item = getItem(position);
-		return item != null ? item.status_id : -1;
+		return item != null ? item.id : -1;
 	}
 
 	@Override
@@ -160,7 +160,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			final String retweeted_by_screen_name = status.retweeted_by_screen_name;
 
 			if (mMultiSelectEnabled) {
-				holder.setSelected(mMultiSelectManager.isStatusSelected(status.status_id));
+				holder.setSelected(mMultiSelectManager.isStatusSelected(status.id));
 			} else {
 				holder.setSelected(false);
 			}
@@ -204,9 +204,9 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 				holder.screen_name.setMovementMethod(null);
 			}
 			if (mShowAbsoluteTime) {
-				holder.time.setText(formatSameDayTime(mContext, status.status_timestamp));
+				holder.time.setText(formatSameDayTime(mContext, status.timestamp));
 			} else {
-				holder.time.setText(getRelativeTimeSpanString(status.status_timestamp));
+				holder.time.setText(getRelativeTimeSpanString(status.timestamp));
 			}
 			holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, mFastTimelineProcessingEnabled ? 0
 					: getStatusTypeIconRes(status.is_favorite, isValidLocation(status.location), status.has_media), 0);

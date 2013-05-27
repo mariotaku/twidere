@@ -128,9 +128,9 @@ public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity
 		if (activity.action == ParcelableActivity.ACTION_FAVORITE) {
 			return target_statuses_length > 0 && target_statuses[0].user_id == activity.account_id;
 		} else if (activity.action == ParcelableActivity.ACTION_FOLLOW) {
-			return target_users_length > 0 && target_users[0].user_id == activity.account_id;
+			return target_users_length > 0 && target_users[0].id == activity.account_id;
 		} else if (activity.action == ParcelableActivity.ACTION_LIST_MEMBER_ADDED) {
-			return target_users_length > 0 && target_users[0].user_id == activity.account_id;
+			return target_users_length > 0 && target_users[0].id == activity.account_id;
 		} else if (activity.action == ParcelableActivity.ACTION_MENTION) {
 			return true;
 		} else if (activity.action == ParcelableActivity.ACTION_REPLY) {
