@@ -4,7 +4,7 @@
 	android:layout_height="wrap_content"
 	android:padding="8dp">
 
-	<org.mariotaku.twidere.view.ClickableProfileImageView
+	<org.mariotaku.twidere.view.ClickableImageView
 		android:id="@+id/profile_image"
 		android:layout_width="@dimen/profile_image_size"
 		android:layout_height="@dimen/profile_image_size"
@@ -12,7 +12,7 @@
 		android:contentDescription="@string/profile_image"
 		android:scaleType="fitCenter"/>
 
-	<org.mariotaku.twidere.view.ClickableProfileImageView
+	<org.mariotaku.twidere.view.ClickableImageView
 		android:id="@+id/my_profile_image"
 		android:layout_width="@dimen/profile_image_size"
 		android:layout_height="@dimen/profile_image_size"

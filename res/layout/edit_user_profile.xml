@@ -15,7 +15,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content">
 
-				<org.mariotaku.twidere.view.ClickableProfileBannerImageView
+				<org.mariotaku.twidere.view.ProfileBannerImageView
 					android:id="@+id/profile_banner"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
 					android:clickable="true"
 					android:gravity="center_vertical">
 
-					<org.mariotaku.twidere.view.ClickableProfileImageView
+					<org.mariotaku.twidere.view.ClickableImageView
 						android:id="@+id/profile_image"
 						android:layout_width="@dimen/profile_image_size"
 						android:layout_height="@dimen/profile_image_size"

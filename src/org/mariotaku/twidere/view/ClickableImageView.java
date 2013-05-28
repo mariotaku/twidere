@@ -9,21 +9,21 @@ import android.view.MotionEvent;
 import android.widget.ImageView;
 import org.mariotaku.twidere.util.Utils;
 
-public class ClickableProfileImageView extends ImageView {
+public class ClickableImageView extends ImageView {
 
 	private final int mHightlightColor;
 	private final Rect mRect;
 	private boolean mIsDown;
 
-	public ClickableProfileImageView(final Context context) {
+	public ClickableImageView(final Context context) {
 		this(context, null);
 	}
 
-	public ClickableProfileImageView(final Context context, final AttributeSet attrs) {
+	public ClickableImageView(final Context context, final AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
 	
-	public ClickableProfileImageView(final Context context, final AttributeSet attrs, final int defStyle) {
+	public ClickableImageView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		final int color = Utils.getThemeColor(context);
 		mHightlightColor = Color.argb(0x80, Color.red(color), Color.green(color), Color.blue(color));

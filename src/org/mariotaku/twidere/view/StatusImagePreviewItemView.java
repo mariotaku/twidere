@@ -12,11 +12,7 @@ import org.mariotaku.twidere.util.Utils;
 
 import static org.mariotaku.twidere.util.Utils.getBitmap;
 
-public class StatusImagePreviewItemView extends AutoAdjustHeightImageView {
-
-	private final int mHightlightColor;
-	private final Rect mRect;
-	private boolean mIsDown;
+public class StatusImagePreviewItemView extends ClickableImageView {
 	
 	public StatusImagePreviewItemView(final Context context) {
 		this(context, null);
@@ -28,40 +24,21 @@ public class StatusImagePreviewItemView extends AutoAdjustHeightImageView {
 
 	public StatusImagePreviewItemView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		final int color = Utils.getThemeColor(context);
-		mHightlightColor = Color.argb(0x80, Color.red(color), Color.green(color), Color.blue(color));
-		mRect = new Rect();
+		setAdjustViewBounds(true);
+		setScaleType(ScaleType.FIT_CENTER);
 	}
 
 	@Override
-	public boolean onTouchEvent(final MotionEvent e) {
-		switch (e.getAction()) {
-			case MotionEvent.ACTION_DOWN:
-				mRect.set(getLeft(), getTop(), getRight(), getBottom());
-				mIsDown = true;
-				invalidate();
-				break;
-			case MotionEvent.ACTION_CANCEL:
-			case MotionEvent.ACTION_UP:
-				mIsDown = false;
-				invalidate();
-				break;
-			case MotionEvent.ACTION_MOVE:
-				if (mRect.contains(getLeft() + (int) e.getX(), getTop() + (int) e.getY())) break;
-				if (mIsDown) {
-					mIsDown = false;
-					invalidate();
-				}
-				break;
-		}
-		return super.onTouchEvent(e);		
-	}
-
-	@Override
-	protected void onDraw(final Canvas canvas) {
-		super.onDraw(canvas);
-		if (mIsDown && isClickable() && isEnabled()) {
-			canvas.drawColor(mHightlightColor);
+	protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
+		final int width = MeasureSpec.getSize(widthMeasureSpec);
+		final Bitmap b = getBitmap(getDrawable());
+		if (b != null) {
+			final int height = (int) Math.floor((float) width * (float) b.getHeight() / b.getWidth());
+			setMeasuredDimension(width, height);
+			setMinimumHeight(height);
+		} else {
+			setMeasuredDimension(width, width);
+			// super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 		}
 	}
 

@@ -13,7 +13,7 @@ import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
-public class ProfileBannerImageView extends ImageView implements IExtendedView {
+public class ProfileBannerImageView extends ClickableImageView implements IExtendedView {
 
 	private final Paint mPaint = new Paint();
 	
