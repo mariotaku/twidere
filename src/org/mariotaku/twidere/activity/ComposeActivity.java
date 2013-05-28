@@ -649,6 +649,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		mIsImageAttached = draft.is_image_attached;
 		mIsPhotoAttached = draft.is_photo_attached;
 		mIsPossiblySensitive = draft.is_possibly_sensitive;
+		mInReplyToStatusId = draft.in_reply_to_status_id;
 		return true;
 	}
 

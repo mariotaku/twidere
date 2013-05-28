@@ -112,7 +112,7 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 	}
 
 	private void setDetailsAndMedia() {
-		mHolder.image_preview.setImageResource(R.drawable.twidere_promotional_graphic);
+		mHolder.image_preview.setImageResource(R.drawable.twidere_icon_512);
 		final boolean fast_timeline_processing = mPreferences
 				.getBoolean(PREFERENCE_KEY_FAST_TIMELINE_PROCESSING, false);
 		mHolder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, fast_timeline_processing ? 0

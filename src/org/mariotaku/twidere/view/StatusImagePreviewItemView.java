@@ -25,21 +25,15 @@ public class StatusImagePreviewItemView extends ClickableImageView {
 	public StatusImagePreviewItemView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		setAdjustViewBounds(true);
-		setScaleType(ScaleType.FIT_CENTER);
+		setScaleType(ScaleType.CENTER_CROP);
 	}
 
 	@Override
 	protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
 		final int width = MeasureSpec.getSize(widthMeasureSpec);
-		final Bitmap b = getBitmap(getDrawable());
-		if (b != null) {
-			final int height = (int) Math.floor((float) width * (float) b.getHeight() / b.getWidth());
-			setMeasuredDimension(width, height);
-			setMinimumHeight(height);
-		} else {
-			setMeasuredDimension(width, width);
-			// super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-		}
+		final int hSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
+		setMeasuredDimension(width, width);
+		super.onMeasure(widthMeasureSpec, hSpec);
 	}
 
 }
