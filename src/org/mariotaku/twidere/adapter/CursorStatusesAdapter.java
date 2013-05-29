@@ -307,7 +307,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	
 	@Override
 	public boolean isLastItemFiltered() {
-		return mIsLastItemFiltered;
+		return mFiltersEnabled && mIsLastItemFiltered;
 	}
 
 	@Override

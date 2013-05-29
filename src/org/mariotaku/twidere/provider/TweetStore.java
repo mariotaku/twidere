@@ -409,7 +409,7 @@ public final class TweetStore implements Constants {
 					if (where != null) {
 						builder.append(" AND " + where);
 					}
-					builder.append(" GROUP BY " + CONVERSATION_ID);
+					builder.append(" GROUP BY " + CONVERSATION_ID + ", " + ACCOUNT_ID);
 					builder.append(" ORDER BY " + MESSAGE_TIMESTAMP + " DESC");
 					return builder.toString();
 				}

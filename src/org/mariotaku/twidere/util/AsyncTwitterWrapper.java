@@ -1757,10 +1757,12 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		@Override
 		protected void onPostExecute(final SingleResponse<DirectMessage> result) {
 			super.onPostExecute(result);
-			if (result == null) return;
 			if (result.data != null && result.data.getId() > 0) {
 				final ContentValues values = makeDirectMessageContentValues(result.data, account_id, true,
 						large_profile_image);
+				final String delete_where = DirectMessages.ACCOUNT_ID + " = " + account_id + " AND " +
+						DirectMessages.MESSAGE_ID + " = " + result.data.getId();
+				mResolver.delete(DirectMessages.Outbox.CONTENT_URI, delete_where, null);
 				mResolver.insert(DirectMessages.Outbox.CONTENT_URI, values);
 				mMessagesManager.showOkMessage(R.string.direct_message_sent, false);
 			} else {
