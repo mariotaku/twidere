@@ -76,18 +76,18 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	private static final long TICKER_DURATION = 5000L;
 
 	private AsyncTaskManager mAsyncTaskManager;
-	protected AsyncTwitterWrapper mTwitterWrapper;
-	protected SharedPreferences mPreferences;
+	private AsyncTwitterWrapper mTwitterWrapper;
+	private SharedPreferences mPreferences;
 
 	private Handler mHandler;
 	private Runnable mTicker;
 
-	protected ListView mListView;
-	protected IStatusesAdapter<Data> mAdapter;
-	protected PopupMenu mPopupMenu;
+	private ListView mListView;
+	private IStatusesAdapter<Data> mAdapter;
+	private PopupMenu mPopupMenu;
 
-	protected Data mData;
-	protected ParcelableStatus mSelectedStatus;
+	private Data mData;
+	private ParcelableStatus mSelectedStatus;
 
 	private boolean mLoadMoreAutomatically;
 
@@ -106,7 +106,9 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	}
 
 	@Override
-	public abstract IStatusesAdapter<Data> getListAdapter();
+	public IStatusesAdapter<Data> getListAdapter() {
+		return mAdapter;
+	}
 
 	public ParcelableStatus getSelectedStatus() {
 		return mSelectedStatus;
@@ -212,8 +214,8 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	}
 
 	@Override
-	public void onLoaderReset(final Loader<Data> loader) {
-		mData = null;
+	public final void onLoaderReset(final Loader<Data> loader) {
+		mAdapter.setData(mData = null);
 	}
 	
 	@Override
@@ -503,6 +505,10 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	protected abstract String getPositionKey();
 	
 	protected abstract IStatusesAdapter<Data> newAdapterInstance();
+	
+	protected final void setData(final Data data) {
+		mData = data;
+	}
 	
 	protected void setListHeaderFooters(final ListView list) {
 

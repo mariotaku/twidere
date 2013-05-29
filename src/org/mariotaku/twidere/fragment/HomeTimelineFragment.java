@@ -42,7 +42,7 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 			} else if (BROADCAST_HOME_TIMELINE_DATABASE_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
 			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
-				if (mTwitterWrapper.isHomeTimelineRefreshing()) {
+				if (getTwitterWrapper().isHomeTimelineRefreshing()) {
 					setRefreshing(false);
 				}
 			}
@@ -51,14 +51,8 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 
 	@Override
 	public int getStatuses(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
-		if (max_ids == null) return mTwitterWrapper.refreshAll();
-		return mTwitterWrapper.getHomeTimeline(account_ids, max_ids, since_ids);
-	}
-
-	@Override
-	public void onActivityCreated(final Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		mListView.setOnTouchListener(this);
+		if (max_ids == null) return getTwitterWrapper().refreshAll();
+		return getTwitterWrapper().getHomeTimeline(account_ids, max_ids, since_ids);
 	}
 
 	@Override
@@ -69,7 +63,7 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 		filter.addAction(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_TASK_STATE_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
-		if (mTwitterWrapper.isHomeTimelineRefreshing()) {
+		if (getTwitterWrapper().isHomeTimelineRefreshing()) {
 			setRefreshing(false);
 		} else {
 			onRefreshComplete();

@@ -42,7 +42,7 @@ public class MentionsFragment extends CursorStatusesListFragment {
 			} else if (BROADCAST_MENTIONS_DATABASE_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, MentionsFragment.this);
 			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
-				if (mTwitterWrapper != null && mTwitterWrapper.isMentionsRefreshing()) {
+				if (getTwitterWrapper() != null && getTwitterWrapper().isMentionsRefreshing()) {
 					setRefreshing(false);
 				}
 			}
@@ -51,13 +51,13 @@ public class MentionsFragment extends CursorStatusesListFragment {
 
 	@Override
 	public int getStatuses(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
-		return mTwitterWrapper.getMentions(account_ids, max_ids, since_ids);
+		return getTwitterWrapper().getMentions(account_ids, max_ids, since_ids);
 	}
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mAdapter.setMentionsHightlightDisabled(true);
+		getListAdapter().setMentionsHightlightDisabled(true);
 	}
 
 	@Override

@@ -44,6 +44,7 @@ import android.support.v4.content.Loader;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
+import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 
 public abstract class CursorStatusesListFragment extends BaseStatusesListFragment<Cursor> implements
 		View.OnTouchListener {
@@ -55,8 +56,6 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 		Statuses.RETWEET_ID, Statuses.RETWEETED_BY_NAME, Statuses.RETWEETED_BY_SCREEN_NAME,
 		Statuses.IS_FAVORITE, Statuses.IS_PROTECTED, Statuses.IS_VERIFIED, Statuses.IS_GAP,
 		Statuses.IS_POSSIBLY_SENSITIVE, Statuses.SOURCE };
-	
-	protected CursorStatusesAdapter mAdapter;
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -77,14 +76,10 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	}
 
 	@Override
-	public CursorStatusesAdapter getListAdapter() {
-		return mAdapter;
-	}
-
-	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mListView.setOnTouchListener(this);
+		getListView().setOnTouchListener(this);
+		getListAdapter().setFiltersEnabled(true);
 	}
 
 	@Override
@@ -95,12 +90,6 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 		final String where = buildActivatedStatsWhereClause(getActivity(), null);
 		final String table = getTableNameByUri(uri);
 		return new CursorLoader(getActivity(), uri, CURSOR_COLS, buildStatusFilterWhereClause(table, where), null, sort_by);
-	}
-
-	@Override
-	public void onLoaderReset(final Loader<Cursor> loader) {
-		super.onLoaderReset(loader);
-		mAdapter.swapCursor(null);
 	}
 
 	@Override
@@ -181,7 +170,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	public boolean onTouch(final View view, final MotionEvent ev) {
 		switch (ev.getAction()) {
 			case MotionEvent.ACTION_DOWN: {
-				mTwitterWrapper.clearNotification(getNotificationIdToClear());
+				getTwitterWrapper().clearNotification(getNotificationIdToClear());
 				break;
 			}
 		}

@@ -42,12 +42,12 @@ import org.mariotaku.jsonserializer.JSONSerializer;
 import java.io.File;
 import java.io.IOException;
 import java.util.ConcurrentModificationException;
+import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 
 public abstract class ParcelableStatusesListFragment extends BaseStatusesListFragment<List<ParcelableStatus>> {
 
 	protected SharedPreferences mPreferences;
 
-	protected ParcelableStatusesAdapter mAdapter;
 	private ListView mListView;
 	private boolean mIsStatusesSaved;
 
@@ -81,20 +81,16 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	};
 
 	public final void deleteStatus(final long status_id) {
-		if (status_id <= 0 || mData == null) return;
+		final List<ParcelableStatus> data  = getData();
+		if (status_id <= 0 || data == null) return;
 		final ArrayList<ParcelableStatus> data_to_remove = new ArrayList<ParcelableStatus>();
-		for (final ParcelableStatus status : mData) {
+		for (final ParcelableStatus status : data) {
 			if (status.id == status_id || status.retweet_id > 0 && status.retweet_id == status_id) {
 				data_to_remove.add(status);
 			}
 		}
-		mData.removeAll(data_to_remove);
-		mAdapter.setData(mData);
-	}
-
-	@Override
-	public final ParcelableStatusesAdapter getListAdapter() {
-		return mAdapter;
+		data.removeAll(data_to_remove);
+		getListAdapter().setData(data);
 	}
 
 	@Override
@@ -119,7 +115,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 		if (savedInstanceState != null) {
 			final List<ParcelableStatus> saved = savedInstanceState.getParcelableArrayList(INTENT_KEY_DATA);
 			if (saved != null) {
-				mData = saved;
+				setData(saved);
 			}
 		}
 		super.onActivityCreated(savedInstanceState);		
@@ -149,13 +145,13 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 		super.onDestroyView();
 	}
 
-	@Override
-	public final void onLoaderReset(final Loader<List<ParcelableStatus>> loader) {
-		super.onLoaderReset(loader);
-		if (!isLoaderUsed()) return;
-		onRefreshComplete();
-		setProgressBarIndeterminateVisibility(false);
-	}
+//	@Override
+//	public final void onLoaderReset(final Loader<List<ParcelableStatus>> loader) {
+//		super.onLoaderReset(loader);
+//		if (!isLoaderUsed()) return;
+//		onRefreshComplete();
+//		setProgressBarIndeterminateVisibility(false);
+//	}
 
 //	@Override
 //	public final void onLoadFinished(final Loader<List<ParcelableStatus>> loader, final List<ParcelableStatus> data) {
@@ -175,8 +171,9 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 
 	@Override
 	public void onPullDownToRefresh() {
-		final int count = mAdapter.getCount();
-		final ParcelableStatus status = count > 0 ? mAdapter.getItem(0) : null;
+		final IStatusesAdapter adapter = getListAdapter();
+		final int count = adapter.getCount();
+		final ParcelableStatus status = count > 0 ? adapter.getStatus(0) : null;
 		if (status != null) {
 			getStatuses(new long[] { status.account_id }, null, new long[] { status.id });
 		}
@@ -184,8 +181,9 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 
 	@Override
 	public void onPullUpToRefresh() {
-		final int count = mAdapter.getCount();
-		final ParcelableStatus status = count > 0 ? mAdapter.getItem(count - 1) : null;
+		final IStatusesAdapter adapter = getListAdapter();
+		final int count = adapter.getCount();
+		final ParcelableStatus status = count > 0 ? adapter.getStatus(count - 1) : null;
 		if (status != null) {
 			getStatuses(new long[] { status.account_id }, new long[] { status.id }, null);
 		}
@@ -193,8 +191,8 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
-		if (mData != null) {
-			outState.putParcelableArrayList(INTENT_KEY_DATA, new ArrayList<ParcelableStatus>(mData));
+		if (getData() != null) {
+			outState.putParcelableArrayList(INTENT_KEY_DATA, new ArrayList<ParcelableStatus>(getData()));
 		}
 		super.onSaveInstanceState(outState);
 	}
@@ -222,13 +220,15 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 
 	@Override
 	protected final long[] getNewestStatusIds() {
-		final long last_id = mAdapter.getCount() > 0 ? mAdapter.getItem(0).id : -1;
+		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();
+		final long last_id = adapter.getCount() > 0 ? adapter.getStatus(0).id : -1;
 		return last_id > 0 ? new long[] { last_id } : null;
 	}
 
 	@Override
 	protected final long[] getOldestStatusIds() {
-		final ParcelableStatus status = mAdapter.getLastStatus();
+		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();
+		final ParcelableStatus status = adapter.getLastStatus();
 		final long last_id = status != null ? status.id : -1;
 		return last_id > 0 ? new long[] { last_id } : null;
 	}

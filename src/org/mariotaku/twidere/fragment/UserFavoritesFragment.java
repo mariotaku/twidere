@@ -71,7 +71,7 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mAdapter.setFiltersEnabled(false);
+		getListAdapter().setFiltersEnabled(false);
 	}
 
 	@Override

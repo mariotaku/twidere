@@ -19,60 +19,6 @@
 
 package org.mariotaku.twidere.fragment;
 
-import static android.text.TextUtils.isEmpty;
-import static org.mariotaku.twidere.util.Utils.cancelRetweet;
-import static org.mariotaku.twidere.util.Utils.clearUserColor;
-import static org.mariotaku.twidere.util.Utils.findStatus;
-import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
-import static org.mariotaku.twidere.util.Utils.getAccountColor;
-import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
-import static org.mariotaku.twidere.util.Utils.getImagesInStatus;
-import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
-import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
-import static org.mariotaku.twidere.util.Utils.getUserColor;
-import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
-import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
-import static org.mariotaku.twidere.util.Utils.isMyRetweet;
-import static org.mariotaku.twidere.util.Utils.openImage;
-import static org.mariotaku.twidere.util.Utils.openUserProfile;
-import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
-import static org.mariotaku.twidere.util.Utils.setUserColor;
-import static org.mariotaku.twidere.util.Utils.showErrorMessage;
-import static org.mariotaku.twidere.util.Utils.showInfoMessage;
-import static org.mariotaku.twidere.util.Utils.showOkMessage;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import org.mariotaku.menubar.MenuBar;
-import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.SetColorActivity;
-import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.loader.DummyParcelableStatusesLoader;
-import org.mariotaku.twidere.model.ImageSpec;
-import org.mariotaku.twidere.model.Panes;
-import org.mariotaku.twidere.model.ParcelableLocation;
-import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.provider.TweetStore.Accounts;
-import org.mariotaku.twidere.provider.TweetStore.Filters;
-import org.mariotaku.twidere.util.AsyncTask;
-import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import org.mariotaku.twidere.util.ClipboardUtils;
-import org.mariotaku.twidere.util.HtmlEscapeHelper;
-import org.mariotaku.twidere.util.ImageLoaderWrapper;
-import org.mariotaku.twidere.util.OnLinkClickHandler;
-import org.mariotaku.twidere.util.TwidereLinkify;
-import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
-import org.mariotaku.twidere.view.ExtendedFrameLayout;
-import org.mariotaku.twidere.view.StatusImagePreviewLayout;
-import org.mariotaku.twidere.view.StatusImagePreviewLayout.OnImageClickListener;
-
-import twitter4j.Relationship;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -107,14 +53,63 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-import com.twitter.Extractor;
-
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
-
 import edu.ucdavis.earlybird.ProfilingUtil;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import org.mariotaku.menubar.MenuBar;
+import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.SetColorActivity;
+import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
+import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
+import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.model.ImageSpec;
+import org.mariotaku.twidere.model.Panes;
+import org.mariotaku.twidere.model.ParcelableLocation;
+import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.provider.TweetStore.Filters;
+import org.mariotaku.twidere.util.AsyncTask;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.ClipboardUtils;
+import org.mariotaku.twidere.util.HtmlEscapeHelper;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
+import org.mariotaku.twidere.util.OnLinkClickHandler;
+import org.mariotaku.twidere.util.TwidereLinkify;
+import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
+import org.mariotaku.twidere.view.ExtendedFrameLayout;
+import org.mariotaku.twidere.view.StatusImagePreviewLayout;
+import org.mariotaku.twidere.view.StatusImagePreviewLayout.OnImageClickListener;
+import twitter4j.Relationship;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+
+import static android.text.TextUtils.isEmpty;
+import static org.mariotaku.twidere.util.Utils.cancelRetweet;
+import static org.mariotaku.twidere.util.Utils.clearUserColor;
+import static org.mariotaku.twidere.util.Utils.findStatus;
+import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
+import static org.mariotaku.twidere.util.Utils.getAccountColor;
+import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
+import static org.mariotaku.twidere.util.Utils.getImagesInStatus;
+import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
+import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import static org.mariotaku.twidere.util.Utils.getUserColor;
+import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
+import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
+import static org.mariotaku.twidere.util.Utils.isMyRetweet;
+import static org.mariotaku.twidere.util.Utils.openImage;
+import static org.mariotaku.twidere.util.Utils.openUserProfile;
+import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
+import static org.mariotaku.twidere.util.Utils.setUserColor;
+import static org.mariotaku.twidere.util.Utils.showErrorMessage;
+import static org.mariotaku.twidere.util.Utils.showInfoMessage;
+import static org.mariotaku.twidere.util.Utils.showOkMessage;
 
 public class StatusFragment extends ParcelableStatusesListFragment implements OnClickListener, Panes.Right,
 OnImageClickListener {
@@ -383,7 +378,7 @@ OnImageClickListener {
 		updatePullRefresh();
 		final boolean status_unchanged = mStatus != null && status != null && status.equals(mStatus);
 		if (!status_unchanged) {
-			mAdapter.clear();
+			getListAdapter().setData(null);
 			if (mStatus != null) {
 				// UCD
 				ProfilingUtil.profile(getActivity(), mStatus.account_id, "End, " + mStatus.id);
@@ -497,7 +492,7 @@ OnImageClickListener {
 		setListShownNoAnimation(true);
 		mListView = getListView();
 		mListView.setStackFromBottom(true);
-		mAdapter.setGapDisallowed(true);
+		getListAdapter().setGapDisallowed(true);
 		final TwidereApplication application = getApplication();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mProfileImageLoader = application.getImageLoaderWrapper();
@@ -701,13 +696,14 @@ OnImageClickListener {
 
 	private void showConversation() {
 		if (mConversationTask != null && mConversationTask.getStatus() == AsyncTask.Status.RUNNING) return;
-		final int count = mAdapter.getCount();
+		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();
+		final int count = adapter.getCount();
 		final ParcelableStatus status;
 		if (count == 0) {
 			mShouldScroll = !mLoadMoreAutomatically;
 			status = mStatus;
 		} else {
-			status = mAdapter.getItem(0);
+			status = adapter.getStatus(0);
 		}
 		if (status == null || status.in_reply_to_status_id <= 0) return;
 		mConversationTask = new LoadConversationTask(this);
@@ -747,7 +743,8 @@ OnImageClickListener {
 
 	private void updatePullRefresh() {
 		final boolean has_converstion = mStatus != null && mStatus.in_reply_to_status_id > 0;
-		final boolean load_not_finished = mAdapter.getCount() > 0 && mAdapter.getItem(0).in_reply_to_status_id > 0;
+		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();
+		final boolean load_not_finished = adapter.getCount() > 0 && adapter.getStatus(0).in_reply_to_status_id > 0;
 		final boolean should_enable = has_converstion && load_not_finished;
 		mListView
 				.setTranscriptMode(should_enable ? ListView.TRANSCRIPT_MODE_NORMAL : ListView.TRANSCRIPT_MODE_DISABLED);
@@ -832,8 +829,9 @@ OnImageClickListener {
 
 			@Override
 			public void run() {
-				fragment.mAdapter.add(status);
-				fragment.mAdapter.sort(ParcelableStatus.REVERSE_ID_COMPARATOR);
+				final ParcelableStatusesAdapter adapter = (ParcelableStatusesAdapter) fragment.getListAdapter();
+				adapter.add(status);
+				adapter.sort(ParcelableStatus.REVERSE_ID_COMPARATOR);
 				if (!fragment.mLoadMoreAutomatically && fragment.mShouldScroll) {
 					fragment.mListView.setSelection(0 + fragment.mListView.getHeaderViewsCount());
 				}
