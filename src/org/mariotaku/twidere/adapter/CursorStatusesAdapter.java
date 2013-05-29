@@ -62,8 +62,10 @@ import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.getThemeColor;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
+import static org.mariotaku.twidere.util.Utils.isFiltered;
 import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
+import android.database.sqlite.SQLiteDatabase;
 
 public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatusesAdapter<Cursor>, OnClickListener, ImageLoadingListener {
 
@@ -72,15 +74,18 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	private final ImageLoaderWrapper mLazyImageLoader;
 	private final MultiSelectManager mMultiSelectManager;
 	private final TwidereLinkify mLinkify;
+	private final SQLiteDatabase mDatabase;
 	private final Map<View, String> mLoadingViewsMap = new HashMap<View, String>();
 
 	private final float mDensity;
 
 	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled,
 			mMentionsHighlightDisabled, mDisplaySensitiveContents, mIndicateMyStatusDisabled, mLinkHighlightingEnabled,
-			mFastTimelineProcessingEnabled, mLinkUnderlineOnly;
+			mFastTimelineProcessingEnabled, mLinkUnderlineOnly, mIsLastItemFiltered, mFiltersEnabled = true;
 	private float mTextSize;
 	private int mNameDisplayOption, mImagePreviewDisplayOption;
+	private boolean mFilterIgnoreSource, mFilterIgnoreScreenName, mFilterIgnoreTextHtml, mFilterIgnoreTextPlain;
+	
 	private StatusCursorIndices mIndices;
 
 	public CursorStatusesAdapter(final Context context) {
@@ -90,6 +95,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mMultiSelectManager = application.getMultiSelectManager();
 		mLazyImageLoader = application.getImageLoaderWrapper();
+		mDatabase = application.getSQLiteDatabase();
 		mDensity = mResources.getDisplayMetrics().density;
 		mLinkify = new TwidereLinkify(new OnLinkClickHandler(mContext));
 	}
@@ -122,7 +128,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			final String text = mFastTimelineProcessingEnabled ? cursor.getString(mIndices.text_plain) : cursor
 					.getString(mIndices.text_html);
 			final String screen_name = cursor.getString(mIndices.screen_name);
-			final String name = cursor.getString(mIndices.name);
+			final String name = cursor.getString(mIndices.user_name);
 			final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
 			final String account_screen_name = getAccountScreenName(mContext, account_id);
 
@@ -271,6 +277,22 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	}
 
 	@Override
+	public int getCount() {
+		final int count = super.getCount();
+		return mFiltersEnabled && mIsLastItemFiltered && count > 0 ? count - 1 : count;
+	}
+
+	@Override
+	public ParcelableStatus getLastStatus() {
+		final Cursor cur = getCursor();
+		if (cur == null || cur.getCount() == 0) return null;
+		cur.moveToLast();
+		final long account_id = cur.getLong(mIndices.account_id);
+		final long status_id = cur.getLong(mIndices.status_id);
+		return findStatusInDatabases(mContext, account_id, status_id);
+	}
+	
+	@Override
 	public Cursor getItem(final int position) {
 		return (Cursor) super.getItem(position);
 	}
@@ -281,6 +303,11 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 		final long account_id = cur.getLong(mIndices.account_id);
 		final long status_id = cur.getLong(mIndices.status_id);
 		return findStatusInDatabases(mContext, account_id, status_id);
+	}
+	
+	@Override
+	public boolean isLastItemFiltered() {
+		return mIsLastItemFiltered;
 	}
 
 	@Override
@@ -316,7 +343,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			case R.id.my_profile_image:
 			case R.id.profile_image: {
 				if (mContext instanceof Activity) {
-					openUserProfile((Activity) mContext, status.account_id, status.user_id, status.screen_name);
+					openUserProfile((Activity) mContext, status.account_id, status.user_id, status.user_screen_name);
 				}
 				break;
 			}
@@ -407,9 +434,27 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	}
 
 	@Override
+	public void setFiltersEnabled(boolean enabled) {
+		if (mFiltersEnabled == enabled) return;
+		mFiltersEnabled = enabled;
+		rebuildFilterInfo();
+		notifyDataSetChanged();
+	}
+
+	@Override
 	public void setGapDisallowed(final boolean disallowed) {
 		if (mGapDisallowed == disallowed) return;
 		mGapDisallowed = disallowed;
+		notifyDataSetChanged();
+	}
+
+	@Override
+	public void setIgnoredFilterFields(boolean text_plain, boolean text_html, boolean screen_name, boolean source) {
+		mFilterIgnoreTextPlain = text_plain;
+		mFilterIgnoreTextHtml = text_html;
+		mFilterIgnoreScreenName = screen_name;
+		mFilterIgnoreSource = source;
+		rebuildFilterInfo();
 		notifyDataSetChanged();
 	}
 
@@ -488,12 +533,27 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 
 	@Override
 	public Cursor swapCursor(final Cursor cursor) {
-		if (cursor != null) {
-			mIndices = new StatusCursorIndices(cursor);
-		} else {
-			mIndices = null;
-		}
+		mIndices = cursor != null ? new StatusCursorIndices(cursor) : null;
+		rebuildFilterInfo();
 		return super.swapCursor(cursor);
+	}
+	
+	private void rebuildFilterInfo() {
+		final Cursor cursor = getCursor();
+		if (cursor != null && mIndices != null && cursor.getCount() > 0) {
+			if (cursor.getCount() > 0) {
+				cursor.moveToLast();
+				final String text_plain = mFilterIgnoreTextPlain ? null : cursor.getString(mIndices.text_plain);
+				final String text_html = mFilterIgnoreTextHtml ? null : cursor.getString(mIndices.text_html);
+				final String screen_name = mFilterIgnoreScreenName ? null : cursor.getString(mIndices.screen_name);
+				final String source = mFilterIgnoreSource ? null : cursor.getString(mIndices.source);
+				mIsLastItemFiltered = isFiltered(mDatabase, text_plain, text_html, screen_name, source);
+			} else {
+				mIsLastItemFiltered = false;
+			}
+		} else {
+			mIsLastItemFiltered = false;
+		}
 	}
 
 }

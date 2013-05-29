@@ -145,7 +145,7 @@ public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity
 	
 	private String getName(final ParcelableStatus status) {
 		if (status == null) return null;
-		return mNameDisplayOption == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME ? status.screen_name : status.name;
+		return mNameDisplayOption == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME ? status.user_screen_name : status.user_name;
 	}
 
 	private String getName(final ParcelableUser user) {
@@ -374,7 +374,7 @@ public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity
 		if (!should_display_images) return;
 		for (int i = 0; i < length; i++) {
 			final ImageView activity_profile_image = holder.activity_profile_images[i];
-			final String profile_image_url = statuses[i].profile_image_url;
+			final String profile_image_url = statuses[i].user_profile_image_url;
 			mProfileImageLoader.displayProfileImage(activity_profile_image, profile_image_url);
 		}
 	}

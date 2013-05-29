@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.loader;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import java.util.List;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import twitter4j.Paging;
@@ -54,7 +55,7 @@ public class UserFavoritesLoader extends Twitter4JStatusesLoader {
 		return mTotalItemsCount;
 	}
 
-	protected boolean shouldFilterStatus(ParcelableStatus status) {
+	protected boolean shouldFilterStatus(final SQLiteDatabase database, final ParcelableStatus status) {
 		return false;
 	}
 }

@@ -1901,7 +1901,7 @@ public final class Utils implements Constants {
 	public static String getUserName(final Context context, final ParcelableStatus user) {
 		if (context == null || user == null) return null;
 		final boolean display_screen_name = getNameDisplayOptionInt(context) == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
-		return display_screen_name ? user.screen_name : user.name;
+		return display_screen_name ? user.user_screen_name : user.user_name;
 	}
 	
 	public static String getSenderUserName(final Context context, final ParcelableDirectMessage user) {
@@ -1953,27 +1953,45 @@ public final class Utils implements Constants {
 
 	public static boolean isFiltered(final SQLiteDatabase database, final ParcelableStatus status) {
 		if (status == null) return false;
-		return isFiltered(database, status.text_plain, status.text_html, status.screen_name, status.source);
+		return isFiltered(database, status.text_plain, status.text_html, status.user_screen_name, status.source);
 	}
 
 	public static boolean isFiltered(final SQLiteDatabase database, final String text_plain, final String text_html,
 			final String screen_name, final String source) {
 		if (database == null) return false;
+		if (text_plain == null && text_html == null && screen_name == null && source == null) return false;
 		final StringBuilder builder = new StringBuilder();
-		final String[] selection_args = new String[] { parseString(text_plain, ""), parseString(text_html, ""),
-				parseString(screen_name, ""), parseString(source, "") };
+		final List<String> selection_args = new ArrayList<String>();
 		builder.append("SELECT NULL WHERE");
-		builder.append("(SELECT 1 IN (SELECT ? LIKE '%'||" + TABLE_FILTERED_KEYWORDS + "." + Filters.TEXT
-				+ "||'%' FROM " + TABLE_FILTERED_KEYWORDS + "))");
-		builder.append(" OR ");
-		builder.append("(SELECT 1 IN (SELECT ? LIKE '%<a href=\"%'||" + TABLE_FILTERED_LINKS + "." + Filters.TEXT
-				+ "||'%\">%' FROM " + TABLE_FILTERED_LINKS + "))");
-		builder.append(" OR ");
-		builder.append("(SELECT ? IN (SELECT " + Filters.TEXT + " FROM " + TABLE_FILTERED_USERS + "))");
-		builder.append(" OR ");
-		builder.append("(SELECT 1 IN (SELECT ? LIKE '%>'||" + TABLE_FILTERED_SOURCES + "." + Filters.TEXT
-				+ "||'</a>%' FROM " + TABLE_FILTERED_SOURCES + "))");
-		final Cursor cur = database.rawQuery(builder.toString(), selection_args);
+		if (text_plain != null) {
+			selection_args.add(text_plain);
+			builder.append("(SELECT 1 IN (SELECT ? LIKE '%'||" + TABLE_FILTERED_KEYWORDS + "." + Filters.TEXT
+					+ "||'%' FROM " + TABLE_FILTERED_KEYWORDS + "))");
+		}
+		if (text_html != null) {
+			if (!selection_args.isEmpty()) {			
+				builder.append(" OR ");	
+			}
+			selection_args.add(text_html);
+			builder.append("(SELECT 1 IN (SELECT ? LIKE '%<a href=\"%'||" + TABLE_FILTERED_LINKS + "." + Filters.TEXT
+					+ "||'%\">%' FROM " + TABLE_FILTERED_LINKS + "))");
+		}
+		if (screen_name != null) {
+			if (!selection_args.isEmpty()) {			
+				builder.append(" OR ");	
+			}
+			selection_args.add(screen_name);
+			builder.append("(SELECT ? IN (SELECT " + Filters.TEXT + " FROM " + TABLE_FILTERED_USERS + "))");
+		}
+		if (source != null) {
+			if (!selection_args.isEmpty()) {			
+				builder.append(" OR ");	
+			}
+			selection_args.add(source);
+			builder.append("(SELECT 1 IN (SELECT ? LIKE '%>'||" + TABLE_FILTERED_SOURCES + "." + Filters.TEXT
+					+ "||'</a>%' FROM " + TABLE_FILTERED_SOURCES + "))");
+		}
+		final Cursor cur = database.rawQuery(builder.toString(), selection_args.toArray(new String[selection_args.size()]));
 		if (cur == null) return false;
 		try {
 			return cur.getCount() > 0;
@@ -3136,7 +3154,7 @@ public final class Utils implements Constants {
 		final MenuItem retweet = menu.findItem(MENU_RETWEET);
 		if (retweet != null) {
 			final Drawable icon = retweet.getIcon().mutate();
-			retweet.setVisible(!status.is_protected || isMyRetweet(status));
+			retweet.setVisible(!status.user_is_protected || isMyRetweet(status));
 			if (isMyRetweet(status)) {
 				icon.setColorFilter(activated_color, Mode.MULTIPLY);
 				retweet.setTitle(R.string.cancel_retweet);

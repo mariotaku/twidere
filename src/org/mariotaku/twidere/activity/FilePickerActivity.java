@@ -74,13 +74,18 @@ public class FilePickerActivity extends BaseDialogWhenLargeActivity implements O
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		final Intent intent = getIntent();
+		final Uri data = intent.getData();
+		mCurrentDirectory = data != null ? new File(data.getPath()) : getExternalStorageDirectory();
+		if (mCurrentDirectory == null) {
+			mCurrentDirectory = new File("/");
+		}
 		final String action = getIntent().getAction();
-		mCurrentDirectory = getExternalStorageDirectory();
-		if (!INTENT_ACTION_PICK_FILE.equals(action) || mCurrentDirectory == null) {
+		if (!INTENT_ACTION_PICK_FILE.equals(action) && !INTENT_ACTION_PICK_DIRECTORY.equals(action)) {
 			finish();
 			return;
 		}
-		super.onCreate(savedInstanceState);
 		setContentView(R.layout.base_list);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -110,13 +115,12 @@ public class FilePickerActivity extends BaseDialogWhenLargeActivity implements O
 		if (file.isDirectory()) {
 			mCurrentDirectory = file;
 			getSupportLoaderManager().restartLoader(0, getIntent().getExtras(), this);
-		} else if (file.isFile()) {
+		} else if (file.isFile() && !isPickDirectory()) {
 			final Intent intent = new Intent();
 			intent.setData(Uri.fromFile(file));
 			setResult(RESULT_OK, intent);
 			finish();
 		}
-
 	}
 
 	@Override
@@ -128,7 +132,9 @@ public class FilePickerActivity extends BaseDialogWhenLargeActivity implements O
 	@Override
 	public void onLoadFinished(final Loader<List<File>> loader, final List<File> data) {
 		mAdapter.setData(data);
-
+		if (mCurrentDirectory != null) {
+			getSupportActionBar().setTitle(mCurrentDirectory.getName());
+		}
 	}
 
 	@Override
@@ -149,6 +155,10 @@ public class FilePickerActivity extends BaseDialogWhenLargeActivity implements O
 	@Override
 	protected void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
+	}
+	
+	private boolean isPickDirectory() {
+		return INTENT_ACTION_PICK_DIRECTORY.equals(getIntent().getAction());
 	}
 
 	static class FilesAdapter extends ArrayAdapter<File> {

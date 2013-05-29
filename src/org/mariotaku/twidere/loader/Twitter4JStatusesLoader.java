@@ -43,7 +43,6 @@ import twitter4j.TwitterException;
 
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.getImagePreviewDisplayOptionInt;
-import static org.mariotaku.twidere.util.Utils.isFiltered;
 import static org.mariotaku.twidere.util.Utils.showErrorMessage;
 
 public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
@@ -123,21 +122,23 @@ public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 			}
 		}
 		try {
+			Collections.sort(data);
 			final List<ParcelableStatus> statuses_to_remove = new ArrayList<ParcelableStatus>();
-			for (final ParcelableStatus status : data) {
-				if (shouldFilterStatus(status) && !status.is_gap && isFiltered(mDatabase, status)) {
+			final int count = data.size();
+			for (int i = 0; i < count; i++) {
+				final ParcelableStatus status = data.get(i);
+				if (shouldFilterStatus(mDatabase, status) && !status.is_gap && i != count - 1) {
 					statuses_to_remove.add(status);
 				}
 			}
 			data.removeAll(statuses_to_remove);
-			Collections.sort(data);
 		} catch (final ConcurrentModificationException e) {
 			Log.w(LOGTAG, e);
 		}
 		return data;
 	}
 	
-	protected abstract boolean shouldFilterStatus(final ParcelableStatus status);
+	protected abstract boolean shouldFilterStatus(final SQLiteDatabase database, final ParcelableStatus status);
 
 	private final class ShowErrorRunnable implements Runnable {
 

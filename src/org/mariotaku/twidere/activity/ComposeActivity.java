@@ -666,7 +666,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	
 	private boolean handleQuoteIntent(final ParcelableStatus status) {
 		if (status == null || status.id <= 0) return false;
-		mEditText.setText(getQuoteStatus(this, status.screen_name, status.text_plain));
+		mEditText.setText(getQuoteStatus(this, status.user_screen_name, status.text_plain));
 		mEditText.setSelection(0);
 		mAccountIds = new long[] { status.account_id };
 		return true;
@@ -677,10 +677,10 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		final String my_screen_name = getAccountScreenName(this, status.account_id);
 		if (isEmpty(my_screen_name)) return false;
 		final Set<String> mentions = new Extractor().extractMentionedScreennames(status.text_plain);
-		mEditText.append("@" + status.screen_name + " ");
+		mEditText.append("@" + status.user_screen_name + " ");
 		final int selection_start = mEditText.length();
 		for (final String screen_name : mentions) {
-			if (screen_name.equalsIgnoreCase(status.screen_name) || screen_name.equalsIgnoreCase(my_screen_name)) {
+			if (screen_name.equalsIgnoreCase(status.user_screen_name) || screen_name.equalsIgnoreCase(my_screen_name)) {
 				continue;
 			}
 			mEditText.append("@" + screen_name + " ");
@@ -799,11 +799,11 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH));
 		if (INTENT_ACTION_REPLY.equals(action)) {
 			if (mInReplyToStatus == null) return false;
-			setTitle(getString(R.string.reply_to, display_screen_name ? "@" + mInReplyToStatus.screen_name : mInReplyToStatus.name));
+			setTitle(getString(R.string.reply_to, display_screen_name ? "@" + mInReplyToStatus.user_screen_name : mInReplyToStatus.user_name));
 		} else if (INTENT_ACTION_QUOTE.equals(action)) {
 			if (mInReplyToStatus == null) return false;
-			setTitle(getString(R.string.quote_user, display_screen_name ? "@" + mInReplyToStatus.screen_name : mInReplyToStatus.name));
-			mActionBar.setSubtitle(mInReplyToStatus.is_protected && mInReplyToStatus.account_id != mInReplyToStatus.user_id ?
+			setTitle(getString(R.string.quote_user, display_screen_name ? "@" + mInReplyToStatus.user_screen_name : mInReplyToStatus.user_name));
+			mActionBar.setSubtitle(mInReplyToStatus.user_is_protected && mInReplyToStatus.account_id != mInReplyToStatus.user_id ?
 					getString(R.string.quote_protected_tweet_notice) : null);
 		} else if (INTENT_ACTION_EDIT_DRAFT.equals(action)) {
 			if (mDraftItem == null) return false;

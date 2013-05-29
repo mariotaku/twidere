@@ -43,6 +43,13 @@ public class UserListTimelineFragment extends ParcelableStatusesListFragment {
 				since_id, getData(), getSavedStatusesFileArgs(), tab_position);
 	}
 
+	@Override
+	public void onActivityCreated(final Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		mAdapter.setFiltersEnabled(true);
+		mAdapter.setIgnoredFilterFields(false, false, false, false);
+	}
+	
 	protected String[] getSavedStatusesFileArgs() {
 		final Bundle args = getArguments();
 		if (args == null) return null;

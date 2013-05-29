@@ -20,54 +20,58 @@
 package org.mariotaku.twidere.loader;
 
 import android.content.Context;
-import android.os.Bundle;
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
+import android.database.sqlite.SQLiteDatabase;
 import java.util.List;
-import org.mariotaku.jsonserializer.JSONSerializer;
-import org.mariotaku.twidere.BuildConfig;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
-import twitter4j.TwitterException;
 import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.User;
 
+import static org.mariotaku.twidere.util.Utils.getAccountId;
+import static org.mariotaku.twidere.util.Utils.isFiltered;
+ 
 public class UserTimelineLoader extends Twitter4JStatusesLoader {
 
 	private final long mUserId;
 	private final String mUserScreenName;
+	private final boolean mIsMyTimeline;
 	private int mTotalItemsCount;
+
 
 	public UserTimelineLoader(final Context context, final long account_id, final long user_id, final String screen_name,
 			final long max_id, final long since_id, final List<ParcelableStatus> data, final String[] saved_statuses_args, final int tab_position) {
 		super(context, account_id, max_id, since_id, data, saved_statuses_args, tab_position);
 		mUserId = user_id;
 		mUserScreenName = screen_name;
+		mIsMyTimeline = user_id > 0 ? account_id == user_id : account_id == getAccountId(context, screen_name);
 	}
 
 	@Override
 	protected ResponseList<Status> getStatuses(final Twitter twitter, final Paging paging) throws TwitterException {
 		if (twitter == null) return null;
+		final ResponseList<Status> statuses;
 		if (mUserId != -1) {
-			if (mTotalItemsCount == -1) {
-				try {
-					mTotalItemsCount = twitter.showUser(mUserId).getStatusesCount();
-				} catch (final TwitterException e) {
-					mTotalItemsCount = -1;
-				}
+			statuses = twitter.getUserTimeline(mUserId, paging);
+		} else if (mUserScreenName != null) {
+			statuses = twitter.getUserTimeline(mUserScreenName, paging);
+		} else return null;
+		if (mTotalItemsCount == -1 && !statuses.isEmpty()) {
+			final User user = statuses.get(0).getUser();
+			if (user != null) {
+				mTotalItemsCount = user.getStatusesCount();
 			}
-			return twitter.getUserTimeline(mUserId, paging);
-		} else if (mUserScreenName != null) return twitter.getUserTimeline(mUserScreenName, paging);
-		return null;
+		}
+		return statuses;
 	}
 
 	public int getTotalItemsCount() {
 		return mTotalItemsCount;
 	}
 
-	protected boolean shouldFilterStatus(final ParcelableStatus status) {
-		return false;
+	protected boolean shouldFilterStatus(final SQLiteDatabase database, final ParcelableStatus status) {
+		return !mIsMyTimeline && isFiltered(database, status.text_plain, status.text_html, null, status.source);
 	}
 }

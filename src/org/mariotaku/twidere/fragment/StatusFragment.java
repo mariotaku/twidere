@@ -270,13 +270,11 @@ OnImageClickListener {
 		public boolean onMenuItemClick(final MenuItem item) {
 			if (mStatus == null) return false;
 			final String text_plain = mStatus.text_plain;
-			final String screen_name = mStatus.screen_name;
-			final String name = mStatus.name;
 			switch (item.getItemId()) {
 				case MENU_SHARE: {
 					final Intent intent = new Intent(Intent.ACTION_SEND);
 					intent.setType("text/plain");
-					intent.putExtra(Intent.EXTRA_TEXT, "@" + mStatus.screen_name + ": " + text_plain);
+					intent.putExtra(Intent.EXTRA_TEXT, "@" + mStatus.user_screen_name + ": " + text_plain);
 					startActivity(Intent.createChooser(intent, getString(R.string.share)));
 					break;
 				}
@@ -421,10 +419,10 @@ OnImageClickListener {
 		updateUserColor();
 		mProfileView.drawRight(getAccountColor(getActivity(), status.account_id));
 
-		mNameView.setText(status.name);
+		mNameView.setText(status.user_name);
 		mNameView.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-				getUserTypeIconRes(status.is_verified, status.is_protected), 0);
-		mScreenNameView.setText("@" + status.screen_name);
+				getUserTypeIconRes(status.user_is_verified, status.user_is_protected), 0);
+		mScreenNameView.setText("@" + status.user_screen_name);
 		mTextView.setText(Html.fromHtml(status.text_html));
 		final TwidereLinkify linkify = new TwidereLinkify(new OnLinkClickHandler(getActivity()), true);
 		linkify.applyAllLinks(mTextView, status.account_id, status.is_possibly_sensitive);
@@ -455,8 +453,8 @@ OnImageClickListener {
 		if (mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true)) {
 			final boolean hires_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
 			mProfileImageLoader.displayProfileImage(mProfileImageView,
-					hires_profile_image ? getBiggerTwitterProfileImage(status.profile_image_url)
-							: status.profile_image_url);
+					hires_profile_image ? getBiggerTwitterProfileImage(status.user_profile_image_url)
+							: status.user_profile_image_url);
 		} else {
 			mProfileImageView.setImageResource(R.drawable.ic_profile_image_default);
 		}

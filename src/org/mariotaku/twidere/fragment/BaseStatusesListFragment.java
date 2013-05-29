@@ -127,7 +127,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		mTwitterWrapper = getTwitterWrapper();
 		mMultiSelectManager = getMultiSelectManager();
 		mListView = getListView();
-		mAdapter = getListAdapter();
+		mAdapter = newAdapterInstance();
 		setListAdapter(null);
 		setListHeaderFooters(mListView);
 		setListAdapter(mAdapter);
@@ -261,7 +261,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			case MENU_SHARE: {
 				final Intent intent = new Intent(Intent.ACTION_SEND);
 				intent.setType("text/plain");
-				intent.putExtra(Intent.EXTRA_TEXT, "@" + status.screen_name + ": " + status.text_plain);
+				intent.putExtra(Intent.EXTRA_TEXT, "@" + status.user_screen_name + ": " + status.text_plain);
 				startActivity(Intent.createChooser(intent, getString(R.string.share)));
 				break;
 			}
@@ -473,7 +473,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		final MenuItem direct_retweet = menu.findItem(R.id.direct_retweet);
 		if (direct_retweet != null) {
 			final Drawable icon = direct_retweet.getIcon().mutate();
-			direct_retweet.setVisible(separate_retweet_action && (!status.is_protected || isMyRetweet(status)));
+			direct_retweet.setVisible(separate_retweet_action && (!status.user_is_protected || isMyRetweet(status)));
 			if (isMyRetweet(status)) {
 				icon.setColorFilter(activated_color, PorterDuff.Mode.MULTIPLY);
 				direct_retweet.setTitle(R.string.cancel_retweet);
@@ -501,6 +501,8 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	}
 	
 	protected abstract String getPositionKey();
+	
+	protected abstract IStatusesAdapter<Data> newAdapterInstance();
 	
 	protected void setListHeaderFooters(final ListView list) {
 

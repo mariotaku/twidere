@@ -252,6 +252,7 @@ public interface Constants extends TwitterConstants {
 	public static final String INTENT_ACTION_TWITTER_LOGIN = INTENT_PACKAGE_PREFIX + "TWITTER_LOGIN";
 	public static final String INTENT_ACTION_DRAFTS = INTENT_PACKAGE_PREFIX + "DRAFTS";
 	public static final String INTENT_ACTION_PICK_FILE = INTENT_PACKAGE_PREFIX + "PICK_FILE";
+	public static final String INTENT_ACTION_PICK_DIRECTORY = INTENT_PACKAGE_PREFIX + "PICK_DIRECTORY";
 	public static final String INTENT_ACTION_VIEW_WEBPAGE = INTENT_PACKAGE_PREFIX + "VIEW_WEBPAGE";
 	public static final String INTENT_ACTION_EXTENSIONS = INTENT_PACKAGE_PREFIX + "EXTENSIONS";
 	public static final String INTENT_ACTION_CUSTOM_TABS = INTENT_PACKAGE_PREFIX + "CUSTOM_TABS";
@@ -473,6 +474,7 @@ public interface Constants extends TwitterConstants {
 	public static final int REQUEST_ADD_TAB = 11;
 	public static final int REQUEST_EDIT_TAB = 12;
 	public static final int REQUEST_PICK_FILE = 13;
+	public static final int REQUEST_PICK_DIRECTORY = 14;
 
 	public static final String TABLE_ACCOUNTS = Accounts.CONTENT_PATH;
 	public static final String TABLE_STATUSES = Statuses.CONTENT_PATH;

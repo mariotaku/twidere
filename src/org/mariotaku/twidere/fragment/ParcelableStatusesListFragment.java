@@ -122,9 +122,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 				mData = saved;
 			}
 		}
-		mAdapter = new ParcelableStatusesAdapter(getActivity());
-		mAdapter.setData(mData);
-		super.onActivityCreated(savedInstanceState);
+		super.onActivityCreated(savedInstanceState);		
 		mListView = getListView();
 		mPreferences = getSharedPreferences();
 	}
@@ -230,9 +228,25 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 
 	@Override
 	protected final long[] getOldestStatusIds() {
-		final int last_idx = mAdapter.getCount() - 1;
-		final long last_id = last_idx >= 0 ? mAdapter.getItem(last_idx).id : -1;
+		final ParcelableStatus status = mAdapter.getLastStatus();
+		final long last_id = status != null ? status.id : -1;
 		return last_id > 0 ? new long[] { last_id } : null;
+	}
+
+	protected final String getPositionKey() {
+		final String[] args = getSavedStatusesFileArgs();
+		if (args == null || args.length <= 0) return null;
+		try {
+			return encodeQueryParams(ArrayUtils.toString(args, '.', false) + "." + getTabPosition());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	protected ParcelableStatusesAdapter newAdapterInstance() {
+		return new ParcelableStatusesAdapter(getActivity());		
 	}
 
 	protected final boolean saveStatusesInternal() {
@@ -255,14 +269,4 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	
 	protected abstract String[] getSavedStatusesFileArgs();
 
-	protected final String getPositionKey() {
-		final String[] args = getSavedStatusesFileArgs();
-		if (args == null || args.length <= 0) return null;
-		try {
-			return encodeQueryParams(ArrayUtils.toString(args, '.', false) + "." + getTabPosition());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
 }

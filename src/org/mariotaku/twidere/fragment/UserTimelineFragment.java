@@ -28,7 +28,7 @@ import org.mariotaku.twidere.loader.UserTimelineLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.ArrayUtils;
 
-import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
+import static org.mariotaku.twidere.util.Utils.getAccountId;
 import static org.mariotaku.twidere.util.Utils.encodeQueryParams;
 
 public class UserTimelineFragment extends ParcelableStatusesListFragment {
@@ -50,13 +50,14 @@ public class UserTimelineFragment extends ParcelableStatusesListFragment {
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		final Bundle args = getArguments();
-		if (args != null) {
-			final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-			final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
-			final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-			mAdapter.setIndicateMyStatusDisabled(account_id == user_id || screen_name != null
-					&& screen_name.equals(getAccountScreenName(getActivity(), account_id)));
-		}
+		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
+		final long user_id = args != null ? args.getLong(INTENT_KEY_USER_ID, -1) : -1;
+		final String screen_name = args != null ? args.getString(INTENT_KEY_SCREEN_NAME) : null;
+		final boolean is_my_timeline = user_id > 0 ? account_id == user_id :
+				account_id == getAccountId(getActivity(), screen_name);
+		mAdapter.setIndicateMyStatusDisabled(is_my_timeline);
+		mAdapter.setFiltersEnabled(!is_my_timeline);
+		mAdapter.setIgnoredFilterFields(false, false, true, false);
 	}
 
 	protected String[] getSavedStatusesFileArgs() {

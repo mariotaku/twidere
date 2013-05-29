@@ -56,7 +56,7 @@ public class ArrayAdapter<T> extends BaseAdapter {
 	}
 
 	@Override
-	public final int getCount() {
+	public int getCount() {
 		return mData.size();
 	}
 

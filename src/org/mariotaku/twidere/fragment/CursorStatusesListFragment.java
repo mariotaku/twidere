@@ -47,7 +47,15 @@ import android.widget.AbsListView;
 
 public abstract class CursorStatusesListFragment extends BaseStatusesListFragment<Cursor> implements
 		View.OnTouchListener {
-
+	
+	private static final String[] CURSOR_COLS = new String[] { Statuses._ID, Statuses.ACCOUNT_ID, Statuses.STATUS_ID, Statuses.USER_ID,
+		Statuses.STATUS_TIMESTAMP, Statuses.TEXT_HTML, Statuses.TEXT_PLAIN, Statuses.NAME,
+		Statuses.SCREEN_NAME, Statuses.PROFILE_IMAGE_URL, Statuses.IN_REPLY_TO_SCREEN_NAME,
+		Statuses.IN_REPLY_TO_STATUS_ID, Statuses.LOCATION, Statuses.IS_RETWEET, Statuses.RETWEET_COUNT,
+		Statuses.RETWEET_ID, Statuses.RETWEETED_BY_NAME, Statuses.RETWEETED_BY_SCREEN_NAME,
+		Statuses.IS_FAVORITE, Statuses.IS_PROTECTED, Statuses.IS_VERIFIED, Statuses.IS_GAP,
+		Statuses.IS_POSSIBLY_SENSITIVE, Statuses.SOURCE };
+	
 	protected CursorStatusesAdapter mAdapter;
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
@@ -75,26 +83,18 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
-		mAdapter = new CursorStatusesAdapter(getActivity());
 		super.onActivityCreated(savedInstanceState);
 		mListView.setOnTouchListener(this);
 	}
 
 	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
-		final String[] cols = new String[] { Statuses._ID, Statuses.ACCOUNT_ID, Statuses.STATUS_ID, Statuses.USER_ID,
-				Statuses.STATUS_TIMESTAMP, Statuses.TEXT_HTML, Statuses.TEXT_PLAIN, Statuses.NAME,
-				Statuses.SCREEN_NAME, Statuses.PROFILE_IMAGE_URL, Statuses.IN_REPLY_TO_SCREEN_NAME,
-				Statuses.IN_REPLY_TO_STATUS_ID, Statuses.LOCATION, Statuses.IS_RETWEET, Statuses.RETWEET_COUNT,
-				Statuses.RETWEET_ID, Statuses.RETWEETED_BY_NAME, Statuses.RETWEETED_BY_SCREEN_NAME,
-				Statuses.IS_FAVORITE, Statuses.IS_PROTECTED, Statuses.IS_VERIFIED, Statuses.IS_GAP,
-				Statuses.IS_POSSIBLY_SENSITIVE };
 		final Uri uri = getContentUri();
 		final String sort_by = getSharedPreferences().getBoolean(PREFERENCE_KEY_SORT_TIMELINE_BY_TIME, false) ? Statuses.SORT_ORDER_TIMESTAMP_DESC
 				: Statuses.SORT_ORDER_STATUS_ID_DESC;
 		final String where = buildActivatedStatsWhereClause(getActivity(), null);
 		final String table = getTableNameByUri(uri);
-		return new CursorLoader(getActivity(), uri, cols, buildStatusFilterWhereClause(table, where), null, sort_by);
+		return new CursorLoader(getActivity(), uri, CURSOR_COLS, buildStatusFilterWhereClause(table, where), null, sort_by);
 	}
 
 	@Override
@@ -202,4 +202,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 		return getOldestStatusIdsFromDatabase(getActivity(), getContentUri());
 	}
 
+	protected CursorStatusesAdapter newAdapterInstance() {
+		return new CursorStatusesAdapter(getActivity());
+	}
 }

@@ -389,6 +389,7 @@
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.PICK_FILE"/>
+				<action android:name="org.mariotaku.twidere.PICK_DIRECTORY"/>
 
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>

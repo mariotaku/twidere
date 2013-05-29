@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.loader;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import java.util.List;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import twitter4j.Paging;
@@ -27,7 +28,8 @@ import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.UserList;
+
+import static org.mariotaku.twidere.util.Utils.isFiltered;
 
 public class UserListTimelineLoader extends Twitter4JStatusesLoader {
 
@@ -59,8 +61,8 @@ public class UserListTimelineLoader extends Twitter4JStatusesLoader {
 		return null;
 	}
 
-	protected boolean shouldFilterStatus(ParcelableStatus status) {
-		return true;
+	protected boolean shouldFilterStatus(final SQLiteDatabase database, final ParcelableStatus status) {
+		return isFiltered(database, status);
 	}
 
 }

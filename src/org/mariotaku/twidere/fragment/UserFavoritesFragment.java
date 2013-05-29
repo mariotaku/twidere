@@ -69,6 +69,12 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 	}
 
 	@Override
+	public void onActivityCreated(final Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		mAdapter.setFiltersEnabled(false);
+	}
+
+	@Override
 	public void onStart() {
 		super.onStart();
 		final IntentFilter filter = new IntentFilter(BROADCAST_FAVORITE_CHANGED);

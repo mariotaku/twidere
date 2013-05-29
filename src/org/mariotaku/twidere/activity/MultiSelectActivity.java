@@ -75,7 +75,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 				for (final Object object : selected_items) {
 					if (object instanceof ParcelableStatus) {
 						final ParcelableStatus status = (ParcelableStatus) object;
-						all_mentions.add(status.screen_name);
+						all_mentions.add(status.user_screen_name);
 						all_mentions.addAll(extractor.extractMentionedScreennames(status.text_plain));
 					} else if (object instanceof ParcelableUser) {
 						final ParcelableUser user = (ParcelableUser) object;
@@ -107,7 +107,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 				for (final Object object : selected_items) {
 					if (object instanceof ParcelableStatus) {
 						final ParcelableStatus status = (ParcelableStatus) object;
-						names_list.add(status.screen_name);
+						names_list.add(status.user_screen_name);
 					} else if (object instanceof ParcelableUser) {
 						final ParcelableUser user = (ParcelableUser) object;
 						names_list.add(user.screen_name);

@@ -543,7 +543,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			final ParcelableStatus status = new ParcelableStatus(value);
 			if (!isFiltered(mDatabase, status)) {
 				mNewMentions.add(status);
-				mNewMentionScreenNames.add(status.screen_name);
+				mNewMentionScreenNames.add(status.user_screen_name);
 				mNewMentionAccounts.add(status.account_id);
 				notified_count++;
 			}
@@ -574,12 +574,12 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		}
 		if (screen_names_size > 1) {
 			title = res.getString(R.string.notification_mention_multiple, display_screen_name ? "@"
-					+ status.screen_name : status.name, screen_names_size - 1);
+					+ status.user_screen_name : status.user_name, screen_names_size - 1);
 		} else {
-			title = res.getString(R.string.notification_mention, display_screen_name ? "@" + status.screen_name
-					: status.name);
+			title = res.getString(R.string.notification_mention, display_screen_name ? "@" + status.user_screen_name
+					: status.user_name);
 		}
-		final String profile_image_url_string = status.profile_image_url;
+		final String profile_image_url_string = status.user_profile_image_url;
 		final File profile_image_file = mImagePreloader.getCachedImageFile(display_hires_profile_image ?
 				getBiggerTwitterProfileImage(profile_image_url_string) : profile_image_url_string);
 		final int w = res.getDimensionPixelSize(R.dimen.notification_large_icon_width);
@@ -596,7 +596,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			final int max = Math.min(4, mentions_size);
 			for (int i = 0; i < max; i++) {
 				final ParcelableStatus s = mNewMentions.get(i);
-				final String name = display_screen_name ? "@" + s.screen_name : s.name;
+				final String name = display_screen_name ? "@" + s.user_screen_name : s.user_name;
 				style.addLine(Html.fromHtml("<b>" + name + "</b>: "
 						+ stripMentionText(s.text_unescaped, getAccountScreenName(context, s.account_id))));
 			}
