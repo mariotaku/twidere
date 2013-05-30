@@ -231,7 +231,8 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 				holder.time.setText(getRelativeTimeSpanString(status.timestamp));
 			}
 			holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, mFastTimelineProcessingEnabled ? 0
-					: getStatusTypeIconRes(status.is_favorite, isValidLocation(status.location), status.has_media), 0);
+					: getStatusTypeIconRes(status.is_favorite, isValidLocation(status.location), status.has_media,
+							status.is_possibly_sensitive), 0);
 			holder.reply_retweet_status
 					.setVisibility(status.in_reply_to_status_id != -1 || status.is_retweet ? View.VISIBLE : View.GONE);
 			if (status.is_retweet && !TextUtils.isEmpty(retweeted_by_name)

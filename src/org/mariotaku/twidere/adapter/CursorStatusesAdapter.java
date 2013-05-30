@@ -215,7 +215,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 				holder.time.setText(getRelativeTimeSpanString(status_timestamp));
 			}
 			holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, mFastTimelineProcessingEnabled ? 0
-					: getStatusTypeIconRes(is_favorite, has_location, has_media), 0);
+					: getStatusTypeIconRes(is_favorite, has_location, has_media, is_possibly_sensitive), 0);
 
 			holder.reply_retweet_status.setVisibility(is_retweet || is_reply ? View.VISIBLE : View.GONE);
 			if (is_retweet) {
