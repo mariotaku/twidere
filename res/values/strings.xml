@@ -452,9 +452,9 @@
 	<string name="unfollowed_user">Unfollowed <xliff:g id="user">%s</xliff:g>.</string>
 	<string name="blocked_user">Blocked <xliff:g id="user">%s</xliff:g>.</string>
 	<string name="unblocked_user">Unblocked <xliff:g id="user">%s</xliff:g>.</string>
-	<string name="profile_updated">Profle updated.</string>
-	<string name="profile_banner_image_updated">Profle banner image updated.</string>
-	<string name="profile_image_updated">Profle image updated.</string>
+	<string name="profile_updated">Profile updated.</string>
+	<string name="profile_banner_image_updated">Profile banner image updated.</string>
+	<string name="profile_image_updated">Profile image updated.</string>
 	<string name="created_list">Created list \"<xliff:g id="list">%s</xliff:g>\".</string>
 	<string name="deleted_list">Deleted list \"<xliff:g id="list">%s</xliff:g>\".</string>
 	<string name="updated_list_details">Updated list \"<xliff:g id="list">%s</xliff:g>\"\'s details.</string>
