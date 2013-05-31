@@ -29,10 +29,16 @@ public class ThemeColorPreference extends ColorPickerPreference implements Const
 
 	public static void applyBackground(final View view, final int color) {
 		if (view == null) return;
-		final Drawable bg = view.getBackground();
-		if (bg == null) return;
-		bg.mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-		view.invalidate();
+		try {
+			final Drawable bg = view.getBackground();
+			if (bg == null) return;
+			final Drawable mutated = bg.mutate();
+			if (mutated == null) return;
+			mutated.setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+			view.invalidate();
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static int getThemeColor(final Context context) {
