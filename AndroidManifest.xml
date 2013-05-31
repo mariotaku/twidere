@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
-	android:versionCode="70"
-	android:versionName="0.2.8.1">
+	android:versionCode="71"
+	android:versionName="0.2.8.2">
 
 	<uses-sdk
 		android:minSdkVersion="4"
@@ -127,7 +127,6 @@
 			android:label="@string/login_to_twitter"
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
 				<action android:name="org.mariotaku.twidere.TWITTER_LOGIN"/>
 
 				<category android:name="android.intent.category.DEFAULT"/>
@@ -138,7 +137,6 @@
 			android:label="@string/settings"
 			android:launchMode="singleTop">
 			<intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
 				<action android:name="android.intent.action.MANAGE_NETWORK_USAGE"/>
 				<action android:name="org.mariotaku.twidere.SETTINGS"/>
 
@@ -159,7 +157,6 @@
 			android:label="@string/select_account"
 			android:theme="@style/Theme.Twidere.Light.Dialog">
 			<intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
 				<action android:name="org.mariotaku.twidere.SELECT_ACCOUNT"/>
 
 				<category android:name="android.intent.category.DEFAULT"/>
@@ -171,7 +168,6 @@
 			android:label="@string/browser"
 			android:theme="@style/Theme.Blank.DialogWhenLarge">
 			<intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
 				<action android:name="org.mariotaku.twidere.VIEW_WEBPAGE"/>
 
 				<category android:name="android.intent.category.DEFAULT"/>
@@ -188,7 +184,6 @@
 			android:theme="@style/Theme.Blank.DialogWhenLarge"
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
 				<action android:name="org.mariotaku.twidere.FILTERS"/>
 
 				<category android:name="android.intent.category.DEFAULT"/>
@@ -299,7 +294,6 @@
 			android:launchMode="singleTop"
 			android:theme="@style/Theme.Blank.DialogWhenLarge">
 			<intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
 				<action android:name="org.mariotaku.twidere.DRAFTS"/>
 
 				<category android:name="android.intent.category.DEFAULT"/>

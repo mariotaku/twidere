@@ -307,7 +307,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 					mResolver.insert(Accounts.CONTENT_URI, values);
 				}
 				mPreferences.edit().putBoolean(PREFERENCE_KEY_API_UPGRADE_CONFIRMED, true).commit();
-				final Intent intent = new Intent(INTENT_ACTION_HOME);
+				final Intent intent = new Intent(this, HomeActivity.class);
 				final Bundle bundle = new Bundle();
 				bundle.putLongArray(INTENT_KEY_IDS, new long[] { mLoggedId });
 				intent.putExtras(bundle);
@@ -351,7 +351,6 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
-		Intent intent = new Intent();
 		switch (item.getItemId()) {
 			case MENU_HOME: {
 				final long[] account_ids = getActivatedAccountIds(this);
@@ -361,13 +360,13 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 				break;
 			}
 			case MENU_SETTINGS: {
-				intent = new Intent(INTENT_ACTION_SETTINGS);
+				final Intent intent = new Intent(this, SettingsActivity.class);
 				startActivity(intent);
 				break;
 			}
 			case MENU_EDIT_API: {
 				if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) return false;
-				intent = new Intent(this, EditAPIActivity.class);
+				final Intent intent = new Intent(this, EditAPIActivity.class);
 				final Bundle bundle = new Bundle();
 				bundle.putString(Accounts.REST_BASE_URL, mRESTBaseURL);
 				bundle.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRESTBaseURL);

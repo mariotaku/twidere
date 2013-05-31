@@ -221,6 +221,7 @@ public interface Constants extends TwitterConstants {
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
 	public static final int PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT = 20;
 	public static final int PREFERENCE_DEFAULT_TEXT_SIZE = 15;
+	public static final boolean PREFERENCE_DEFAULT_HARDWARE_ACCELERATION = true;
 
 	public static final String NAME_DISPLAY_OPTION_BOTH = "both";
 	public static final String NAME_DISPLAY_OPTION_NAME = "name";

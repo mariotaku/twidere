@@ -45,7 +45,6 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 		OnPreferenceClickListener {
 
 	private SharedPreferences mPreferences;
-	private ActivityHostFragment<InternalSettingsActivity> mFragment;
 
 	private static final String KEY_ABOUT = "about";
 	private static final String KEY_CUSTOM_TABS = "custom_tabs";
@@ -63,9 +62,9 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
-		mFragment = new InternalSettingsFragment();
+		final Fragment fragment = new InternalSettingsFragment();
 		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.replace(R.id.main, mFragment);
+		ft.replace(R.id.main, fragment);
 		ft.commit();
 
 	}
@@ -84,7 +83,9 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 	@Override
 	public void onPostCreate(final Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-		final InternalSettingsActivity activity = mFragment.getAttachedActivity();
+		final InternalSettingsFragment fragment = (InternalSettingsFragment) getSupportFragmentManager().findFragmentById(R.id.main);
+		if (fragment == null) return;
+		final InternalSettingsActivity activity = fragment.getAttachedActivity();
 		if (activity != null) {
 			activity.findPreference(KEY_ABOUT).setOnPreferenceClickListener(this);
 			activity.findPreference(KEY_EXTENSIONS).setOnPreferenceClickListener(this);

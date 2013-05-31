@@ -38,7 +38,7 @@ import android.view.WindowManager;
 @SuppressLint("Registered")
 class BaseDialogActivity extends FragmentActivity implements Constants, IThemedActivity {
 
-	private boolean mIsDarkTheme, mHardwareAccelerated;
+	private boolean mIsDarkTheme, mHardwareAccelerated = PREFERENCE_DEFAULT_HARDWARE_ACCELERATION;
 
 	private boolean mInstanceStateSaved;
 
@@ -76,7 +76,7 @@ class BaseDialogActivity extends FragmentActivity implements Constants, IThemedA
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 			final boolean hardware_acceleration = mHardwareAccelerated = preferences.getBoolean(
-					PREFERENCE_KEY_HARDWARE_ACCELERATION, true);
+				PREFERENCE_KEY_HARDWARE_ACCELERATION, PREFERENCE_DEFAULT_HARDWARE_ACCELERATION);
 			final Window w = getWindow();
 			if (hardware_acceleration) {
 				w.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
@@ -107,7 +107,8 @@ class BaseDialogActivity extends FragmentActivity implements Constants, IThemedA
 	protected boolean isHardwareAccelerationChanged() {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return false;
 		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final boolean hardware_acceleration = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION, true);
+		final boolean hardware_acceleration = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION,
+				PREFERENCE_DEFAULT_HARDWARE_ACCELERATION);
 		return mHardwareAccelerated != hardware_acceleration;
 	}
 
