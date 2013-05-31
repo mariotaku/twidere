@@ -65,6 +65,10 @@ import android.graphics.Color;
 
 public class TwidereLinkify {
 
+	public static final int HIGHLIGHT_STYLE_DEFAULT = 0;
+	public static final int HIGHLIGHT_STYLE_UNDERLINE = 1;
+	public static final int HIGHLIGHT_STYLE_COLOR = 2;
+
 	public static final int LINK_TYPE_MENTION = 1;
 	public static final int LINK_TYPE_HASHTAG = 2;
 	public static final int LINK_TYPE_LINK_WITH_IMAGE_EXTENSION = 3;
@@ -195,15 +199,15 @@ public class TwidereLinkify {
 
 	private final OnLinkClickListener mOnLinkClickListener;
 	private final Extractor mExtractor = new Extractor();
-	private boolean mShowUnderlineOnly;
+	private int mHighlightStyle;
 
 	public TwidereLinkify(final OnLinkClickListener listener) {
-		this(listener, false);
+		this(listener, HIGHLIGHT_STYLE_DEFAULT);
 	}
 
-	public TwidereLinkify(final OnLinkClickListener listener, final boolean show_underline) {
+	public TwidereLinkify(final OnLinkClickListener listener, final int highlight_style) {
 		mOnLinkClickListener = listener;
-		mShowUnderlineOnly = show_underline;
+		mHighlightStyle = highlight_style;
 	}
 	
 	public final void applyUserProfileLink(final TextView view, final long account_id, final long user_id, final String screen_name) {
@@ -232,8 +236,8 @@ public class TwidereLinkify {
 		addLinkMovementMethod(view);
 	}
 	
-	public void setShowUnderlineOnly(final boolean underline_only) {
-		mShowUnderlineOnly = underline_only;
+	public void setHighlightStyle(final int style) {
+		mHighlightStyle = style;
 	}
 
 	/**
@@ -381,13 +385,12 @@ public class TwidereLinkify {
 
 	private final void applyLink(final String url, final String orig, final int start, final int end,
 			final Spannable text, final long account_id, final int type, final boolean sensitive) {
-		final LinkSpan span = new LinkSpan(url, orig, account_id, type, sensitive, mOnLinkClickListener, mShowUnderlineOnly);
+		final LinkSpan span = new LinkSpan(url, orig, account_id, type, sensitive, mOnLinkClickListener, mHighlightStyle);
 		text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 	}
 
 	private static final void addLinkMovementMethod(final TextView t) {
 		final MovementMethod m = t.getMovementMethod();
-
 		if (m == null || !(m instanceof LinkMovementMethod)) {
 			if (t.getLinksClickable()) {
 				t.setMovementMethod(LinkMovementMethod.getInstance());
@@ -401,18 +404,17 @@ public class TwidereLinkify {
 
 	static class LinkSpan extends URLSpan {
 
-		private final int type;
+		private final int type, highlight_style;
 		private final long account_id;
 		private final String url, orig;
 		private final boolean sensitive;
 		private final OnLinkClickListener listener;
-		private final boolean show_underline_only;
 
-		public LinkSpan(final String url, final long account_id, final int type, final boolean sensitive, final OnLinkClickListener listener, final boolean underline_only) {
-			this(url, null, account_id, type, sensitive, listener, underline_only);
+		public LinkSpan(final String url, final long account_id, final int type, final boolean sensitive, final OnLinkClickListener listener, final int highlight_style) {
+			this(url, null, account_id, type, sensitive, listener, highlight_style);
 		}
 
-		public LinkSpan(final String url, final String orig, final long account_id, final int type, final boolean sensitive, final OnLinkClickListener listener, final boolean show_underline) {
+		public LinkSpan(final String url, final String orig, final long account_id, final int type, final boolean sensitive, final OnLinkClickListener listener, final int highlight_style) {
 			super(url);
 			this.url = url;
 			this.orig = orig;
@@ -420,7 +422,7 @@ public class TwidereLinkify {
 			this.type = type;
 			this.sensitive = sensitive;
 			this.listener = listener;
-			this.show_underline_only = show_underline;
+			this.highlight_style = highlight_style;
 		}
 
 		@Override
@@ -432,10 +434,17 @@ public class TwidereLinkify {
 		
 		@Override
 		public void updateDrawState(final TextPaint ds) {
-			if (show_underline_only) {
-				ds.setUnderlineText(show_underline_only);
-			} else {
-				super.updateDrawState(ds);
+			switch (highlight_style) {
+				case HIGHLIGHT_STYLE_UNDERLINE:
+					ds.setUnderlineText(true);
+					break;
+				case HIGHLIGHT_STYLE_COLOR:
+					super.updateDrawState(ds);
+					ds.setUnderlineText(false);
+					break;
+				default:
+					super.updateDrawState(ds);
+					break;
 			}
         }
 	}

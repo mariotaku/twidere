@@ -46,6 +46,8 @@ import org.mariotaku.twidere.util.Utils;
 
 public class StatusPreviewPreference extends Preference implements Constants, OnSharedPreferenceChangeListener {
 
+ 	private static final String NAME = "Twidere Project";
+ 	private static final String SCREEN_NAME = "@TwidereProject";
 	private static final String TEXT_HTML = "Twidere is an open source twitter client for Android, see <a href='https://github.com/mariotaku/twidere'>github.com/mariotak&#8230;<a/>";
 
 	private final LayoutInflater mInflater;
@@ -135,42 +137,44 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 	private void setName() {
 		final String option = mPreferences.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH);
 		if (NAME_DISPLAY_OPTION_NAME.equals(option)) {
-			mHolder.name.setText("Twidere Project");
+			mHolder.name.setText(NAME);
 			mHolder.screen_name.setText(null);
 			mHolder.screen_name.setVisibility(View.GONE);
 		} else if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) {
-			mHolder.name.setText("@twidere_project");
+			mHolder.name.setText(SCREEN_NAME);
 			mHolder.screen_name.setText(null);
 			mHolder.screen_name.setVisibility(View.GONE);
 		} else {
-			mHolder.name.setText("Twidere Project");
-			mHolder.screen_name.setText("@twidere_project");
+			mHolder.name.setText(NAME);
+			mHolder.screen_name.setText(SCREEN_NAME);
 			mHolder.screen_name.setVisibility(View.VISIBLE);
 		}
-
 	}
 
 	private void setProfileImage() {
 		if (mHolder == null) return;
-		mHolder.profile_image
-				.setVisibility(mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true) ? View.VISIBLE
-						: View.GONE);
+		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		mHolder.profile_image.setVisibility(display_profile_image ? View.VISIBLE : View.GONE);
 	}
 
 	private void setText() {
 		if (mPreferences == null) return;
 		final boolean underline_only = mPreferences.getBoolean(PREFERENCE_KEY_LINK_UNDERLINE_ONLY, false);
 		if (underline_only) {
-			mLinkify.setShowUnderlineOnly(true);
+			mLinkify.setHighlightStyle(TwidereLinkify.HIGHLIGHT_STYLE_UNDERLINE);
 		} else {
-			mLinkify.setShowUnderlineOnly(false);
+			mLinkify.setHighlightStyle(TwidereLinkify.HIGHLIGHT_STYLE_COLOR);
 		}
 		final boolean fast_timeline_processing = mPreferences
 				.getBoolean(PREFERENCE_KEY_FAST_TIMELINE_PROCESSING, false);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_LINK_HIGHLIGHTING, false) && !fast_timeline_processing) {
 			mHolder.text.setText(Html.fromHtml(TEXT_HTML));
 			mLinkify.applyAllLinks(mHolder.text, 0, false);
+			mLinkify.applyUserProfileLink(mHolder.name, 0, 0, SCREEN_NAME);
+			mLinkify.applyUserProfileLink(mHolder.screen_name, 0, 0, SCREEN_NAME);
 			mHolder.text.setMovementMethod(null);
+			mHolder.name.setMovementMethod(null);
+			mHolder.screen_name.setMovementMethod(null);			
 		} else {
 			mHolder.text.setText(toPlainText(TEXT_HTML));
 		}

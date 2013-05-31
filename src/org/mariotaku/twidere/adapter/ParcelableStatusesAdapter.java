@@ -78,9 +78,9 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 
 	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled,
 			mMentionsHighlightDisabled, mDisplaySensitiveContents, mIndicateMyStatusDisabled, mLinkHighlightingEnabled,
-			mFastTimelineProcessingEnabled, mLinkUnderlineOnly, mIsLastItemFiltered, mFiltersEnabled;
+			mFastTimelineProcessingEnabled, mIsLastItemFiltered, mFiltersEnabled;
 	private float mTextSize;
-	private int mNameDisplayOption, mImagePreviewDisplayOption;
+	private int mNameDisplayOption, mImagePreviewDisplayOption, mLinkHighlightStyle;
 	private boolean mFilterIgnoreSource, mFilterIgnoreScreenName, mFilterIgnoreTextHtml, mFilterIgnoreTextPlain;
 	
 	public ParcelableStatusesAdapter(final Context context) {
@@ -451,9 +451,10 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 
 	@Override
 	public void setLinkUnderlineOnly(boolean underline_only) {
-		if (mLinkUnderlineOnly == underline_only) return;
-		mLinkify.setShowUnderlineOnly(underline_only);
-		mLinkUnderlineOnly = underline_only;
+		final int style = underline_only ? TwidereLinkify.HIGHLIGHT_STYLE_UNDERLINE : TwidereLinkify.HIGHLIGHT_STYLE_COLOR;
+		if (mLinkHighlightStyle == style) return;
+		mLinkify.setHighlightStyle(style);
+		mLinkHighlightStyle = style;
 		notifyDataSetChanged();
 	}
 

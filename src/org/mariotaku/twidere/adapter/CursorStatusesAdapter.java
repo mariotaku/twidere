@@ -81,9 +81,9 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 
 	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled,
 			mMentionsHighlightDisabled, mDisplaySensitiveContents, mIndicateMyStatusDisabled, mLinkHighlightingEnabled,
-			mFastTimelineProcessingEnabled, mLinkUnderlineOnly, mIsLastItemFiltered, mFiltersEnabled = true;
+			mFastTimelineProcessingEnabled, mIsLastItemFiltered, mFiltersEnabled = true;
 	private float mTextSize;
-	private int mNameDisplayOption, mImagePreviewDisplayOption;
+	private int mNameDisplayOption, mImagePreviewDisplayOption, mLinkHighlightStyle;
 	private boolean mFilterIgnoreSource, mFilterIgnoreScreenName, mFilterIgnoreTextHtml, mFilterIgnoreTextPlain;
 	
 	private StatusCursorIndices mIndices;
@@ -482,9 +482,10 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 
 	@Override
 	public void setLinkUnderlineOnly(boolean underline_only) {
-		if (mLinkUnderlineOnly == underline_only) return;
-		mLinkify.setShowUnderlineOnly(underline_only);
-		mLinkUnderlineOnly = underline_only;
+		final int style = underline_only ? TwidereLinkify.HIGHLIGHT_STYLE_UNDERLINE : TwidereLinkify.HIGHLIGHT_STYLE_COLOR;
+		if (mLinkHighlightStyle == style) return;
+		mLinkify.setHighlightStyle(style);
+		mLinkHighlightStyle = style;
 		notifyDataSetChanged();
 	}
 	
