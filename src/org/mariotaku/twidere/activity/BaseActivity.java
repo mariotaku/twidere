@@ -46,7 +46,7 @@ import android.util.Log;
 @SuppressLint("Registered")
 public class BaseActivity extends ActionBarFragmentActivity implements Constants, IThemedActivity {
 
-	private boolean mIsDarkTheme, mIsSolidColorBackground, mHardwareAccelerated = PREFERENCE_DEFAULT_HARDWARE_ACCELERATION;
+	private boolean mIsDarkTheme, mIsSolidColorBackground, mHardwareAccelerated;
 
 	private boolean mInstanceStateSaved, mIsVisible, mIsOnTop;
 
@@ -125,7 +125,7 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 		restartActivity(this);
 	}
 
-	void setActionBarBackground() {
+	protected void setActionBarBackground() {
 		final ActionBar ab = getSupportActionBar();
 		final TypedArray a = obtainStyledAttributes(new int[] { R.attr.actionBarBackground });
 		final int color = getThemeColor(this);
@@ -141,17 +141,16 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 			ab.setBackgroundDrawable(ld);
 		}
 	}
-
+	
 	private void setHardwareAcceleration() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-			final boolean hardware_acceleration = mHardwareAccelerated = preferences.getBoolean(
-					PREFERENCE_KEY_HARDWARE_ACCELERATION, PREFERENCE_DEFAULT_HARDWARE_ACCELERATION);
-			final Window w = getWindow();
-			if (hardware_acceleration) {
-				w.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-						WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
-			}
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return;
+		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mHardwareAccelerated = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION,
+				PREFERENCE_DEFAULT_HARDWARE_ACCELERATION);
+		final Window w = getWindow();
+		if (mHardwareAccelerated) {
+			w.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+					WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
 		}
 	}
 

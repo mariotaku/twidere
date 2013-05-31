@@ -41,7 +41,7 @@ import org.mariotaku.twidere.app.TwidereApplication;
 
 class BasePreferenceActivity extends ActionBarPreferenceActivity implements Constants, IThemedActivity {
 
-	private boolean mIsDarkTheme, mIsSolidColorBackground, mHardwareAccelerated = PREFERENCE_DEFAULT_HARDWARE_ACCELERATION;
+	private boolean mIsDarkTheme, mIsSolidColorBackground, mHardwareAccelerated;
 
 	public TwidereApplication getTwidereApplication() {
 		return (TwidereApplication) getApplication();
@@ -106,16 +106,15 @@ class BasePreferenceActivity extends ActionBarPreferenceActivity implements Cons
 		}
 	}
 
-	public void setHardwareAcceleration() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-			final boolean hardware_acceleration = mHardwareAccelerated = preferences.getBoolean(
-					PREFERENCE_KEY_HARDWARE_ACCELERATION, PREFERENCE_DEFAULT_HARDWARE_ACCELERATION);
-			final Window w = getWindow();
-			if (hardware_acceleration) {
-				w.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-						WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
-			}
+	private void setHardwareAcceleration() {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return;
+		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mHardwareAccelerated = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION,
+				PREFERENCE_DEFAULT_HARDWARE_ACCELERATION);
+		final Window w = getWindow();
+		if (mHardwareAccelerated) {
+			w.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+					WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
 		}
 	}
 

@@ -66,7 +66,6 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		ft.replace(R.id.main, fragment);
 		ft.commit();
-
 	}
 
 	@Override

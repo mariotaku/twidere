@@ -200,9 +200,10 @@ public class DualPaneActivity extends BaseDialogWhenLargeActivity implements OnB
 			}
 		}
 		super.onStart();
-		final boolean dual_pane_in_portrait = mPreferences.getBoolean(PREFERENCE_KEY_DUAL_PANE_IN_PORTRAIT, false);
-		final boolean dual_pane_in_landscape = mPreferences.getBoolean(PREFERENCE_KEY_DUAL_PANE_IN_LANDSCAPE, false);
 		final Resources res = getResources();
+		final boolean def_dualpane = res.getBoolean(R.bool.default_dual_pane_mode);
+		final boolean dual_pane_in_portrait = mPreferences.getBoolean(PREFERENCE_KEY_DUAL_PANE_IN_PORTRAIT, def_dualpane);
+		final boolean dual_pane_in_landscape = mPreferences.getBoolean(PREFERENCE_KEY_DUAL_PANE_IN_LANDSCAPE, def_dualpane);
 		final int orientation = res.getConfiguration().orientation;
 		switch (orientation) {
 			case Configuration.ORIENTATION_LANDSCAPE:
