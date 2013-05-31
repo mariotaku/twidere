@@ -123,7 +123,7 @@ public class FiltersListFragment extends BaseFragment implements Panes.Right {
 					if (mEditText.length() <= 0) return;
 					final ContentValues values = new ContentValues();
 					final String text = mEditText.getText().toString();
-					values.put(Filters.TEXT, text);
+					values.put(Filters.VALUE, text);
 					final Bundle args = getArguments();
 					final Uri uri = args.getParcelable(INTENT_KEY_URI);
 					getContentResolver().insert(uri, values);

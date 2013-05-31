@@ -324,8 +324,8 @@ OnImageClickListener {
 					final Uri uri = Filters.Sources.CONTENT_URI;
 					final ContentValues values = new ContentValues();
 					final ContentResolver resolver = getContentResolver();
-					values.put(Filters.TEXT, source);
-					resolver.delete(uri, Filters.TEXT + " = ?", new String[] { source });
+					values.put(Filters.VALUE, source);
+					resolver.delete(uri, Filters.VALUE + " = ?", new String[] { source });
 					resolver.insert(uri, values);
 					Crouton.showText(getActivity(), getString(R.string.source_muted, source), CroutonStyle.INFO);
 					break;

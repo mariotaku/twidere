@@ -497,9 +497,9 @@ public final class TweetStore implements Constants {
 
 	public static interface Filters extends BaseColumns {
 
-		public static final String TEXT = "text";
+		public static final String VALUE = "value";
 
-		public static final String[] COLUMNS = new String[] { _ID, TEXT };
+		public static final String[] COLUMNS = new String[] { _ID, VALUE };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT_NOT_NULL };
 

@@ -695,8 +695,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				final Uri uri = Filters.Users.CONTENT_URI;
 				final ContentValues values = new ContentValues();
 				final ContentResolver resolver = getContentResolver();
-				values.put(Filters.Users.TEXT, screen_name);
-				resolver.delete(uri, Filters.Users.TEXT + " = ?", new String[] { screen_name });
+				values.put(Filters.Users.VALUE, screen_name);
+				resolver.delete(uri, Filters.Users.VALUE + " = ?", new String[] { screen_name });
 				resolver.insert(uri, values);
 				showInfoMessage(getActivity(), R.string.user_muted, false);
 				break;

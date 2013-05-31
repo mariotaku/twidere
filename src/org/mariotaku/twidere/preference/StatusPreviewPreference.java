@@ -161,9 +161,9 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 		if (mPreferences == null) return;
 		final boolean underline_only = mPreferences.getBoolean(PREFERENCE_KEY_LINK_UNDERLINE_ONLY, false);
 		if (underline_only) {
-			mLinkify.setShowUnderline(true);
+			mLinkify.setShowUnderlineOnly(true);
 		} else {
-			mLinkify.setShowUnderline(false);
+			mLinkify.setShowUnderlineOnly(false);
 		}
 		final boolean fast_timeline_processing = mPreferences
 				.getBoolean(PREFERENCE_KEY_FAST_TIMELINE_PROCESSING, false);

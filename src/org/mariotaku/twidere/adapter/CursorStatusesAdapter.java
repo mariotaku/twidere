@@ -483,7 +483,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	@Override
 	public void setLinkUnderlineOnly(boolean underline_only) {
 		if (mLinkUnderlineOnly == underline_only) return;
-		mLinkify.setShowUnderline(underline_only);
+		mLinkify.setShowUnderlineOnly(underline_only);
 		mLinkUnderlineOnly = underline_only;
 		notifyDataSetChanged();
 	}

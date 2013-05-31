@@ -455,29 +455,29 @@ public final class Utils implements Constants {
 		builder.append(Statuses._ID + " NOT IN ( ");
 		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table);
 		builder.append(" WHERE " + table + "." + Statuses.SCREEN_NAME + " IN ( SELECT " + TABLE_FILTERED_USERS + "."
-				+ Filters.Users.TEXT + " FROM " + TABLE_FILTERED_USERS + " )");
+				+ Filters.Users.VALUE + " FROM " + TABLE_FILTERED_USERS + " )");
 		builder.append(" AND " + table + "." + Statuses.IS_GAP + " IS NULL");
 		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
 		builder.append(" UNION ");
 		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table + ", "
 				+ TABLE_FILTERED_SOURCES);
 		builder.append(" WHERE " + table + "." + Statuses.SOURCE + " LIKE '%>'||" + TABLE_FILTERED_SOURCES + "."
-				+ Filters.Sources.TEXT + "||'</a>%'");
+				+ Filters.Sources.VALUE + "||'</a>%'");
 		builder.append(" AND " + table + "." + Statuses.IS_GAP + " IS NULL");
 		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
 		builder.append(" UNION ");
 		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table + ", "
 				+ TABLE_FILTERED_KEYWORDS);
 		builder.append(" WHERE " + table + "." + Statuses.TEXT_PLAIN + " LIKE '%'||" + TABLE_FILTERED_KEYWORDS + "."
-				+ Filters.Keywords.TEXT + "||'%'");
+				+ Filters.Keywords.VALUE + "||'%'");
 		builder.append(" AND " + table + "." + Statuses.IS_GAP + " IS NULL");
 		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
 		builder.append(" UNION ");
 		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table + ", " + TABLE_FILTERED_LINKS);
 		builder.append(" WHERE " + table + "." + Statuses.TEXT_HTML + " LIKE '%<a href=\"%'||" + TABLE_FILTERED_LINKS
-				+ "." + Filters.Links.TEXT + "||'%\">%'");
+				+ "." + Filters.Links.VALUE + "||'%\">%'");
 		builder.append(" OR " + table + "." + Statuses.TEXT_HTML + " LIKE '%>%'||" + TABLE_FILTERED_LINKS + "."
-				+ Filters.Links.TEXT + "||'%</a>%'");
+				+ Filters.Links.VALUE + "||'%</a>%'");
 		builder.append(" AND " + table + "." + Statuses.IS_GAP + " IS NULL");
 		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
 		builder.append(" )");
@@ -1968,7 +1968,7 @@ public final class Utils implements Constants {
 		builder.append("SELECT NULL WHERE");
 		if (text_plain != null) {
 			selection_args.add(text_plain);
-			builder.append("(SELECT 1 IN (SELECT ? LIKE '%'||" + TABLE_FILTERED_KEYWORDS + "." + Filters.TEXT
+			builder.append("(SELECT 1 IN (SELECT ? LIKE '%'||" + TABLE_FILTERED_KEYWORDS + "." + Filters.VALUE
 					+ "||'%' FROM " + TABLE_FILTERED_KEYWORDS + "))");
 		}
 		if (text_html != null) {
@@ -1976,7 +1976,7 @@ public final class Utils implements Constants {
 				builder.append(" OR ");	
 			}
 			selection_args.add(text_html);
-			builder.append("(SELECT 1 IN (SELECT ? LIKE '%<a href=\"%'||" + TABLE_FILTERED_LINKS + "." + Filters.TEXT
+			builder.append("(SELECT 1 IN (SELECT ? LIKE '%<a href=\"%'||" + TABLE_FILTERED_LINKS + "." + Filters.VALUE
 					+ "||'%\">%' FROM " + TABLE_FILTERED_LINKS + "))");
 		}
 		if (screen_name != null) {
@@ -1984,14 +1984,14 @@ public final class Utils implements Constants {
 				builder.append(" OR ");	
 			}
 			selection_args.add(screen_name);
-			builder.append("(SELECT ? IN (SELECT " + Filters.TEXT + " FROM " + TABLE_FILTERED_USERS + "))");
+			builder.append("(SELECT ? IN (SELECT " + Filters.VALUE + " FROM " + TABLE_FILTERED_USERS + "))");
 		}
 		if (source != null) {
 			if (!selection_args.isEmpty()) {			
 				builder.append(" OR ");	
 			}
 			selection_args.add(source);
-			builder.append("(SELECT 1 IN (SELECT ? LIKE '%>'||" + TABLE_FILTERED_SOURCES + "." + Filters.TEXT
+			builder.append("(SELECT 1 IN (SELECT ? LIKE '%>'||" + TABLE_FILTERED_SOURCES + "." + Filters.VALUE
 					+ "||'</a>%' FROM " + TABLE_FILTERED_SOURCES + "))");
 		}
 		final Cursor cur = database.rawQuery(builder.toString(), selection_args.toArray(new String[selection_args.size()]));

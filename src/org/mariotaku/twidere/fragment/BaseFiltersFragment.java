@@ -193,7 +193,7 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 
 	public static final class FilterListAdapter extends SimpleCursorAdapter {
 
-		private static final String[] from = new String[] { Filters.TEXT };
+		private static final String[] from = new String[] { Filters.VALUE };
 
 		private static final int[] to = new int[] { android.R.id.text1 };
 

@@ -87,6 +87,7 @@ public class OnLinkClickHandler implements OnLinkClickListener, Constants {
 
 	protected void openLink(final String link) {
 		final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		activity.startActivity(intent);
 	}
 }

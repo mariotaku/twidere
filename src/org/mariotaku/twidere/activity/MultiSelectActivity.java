@@ -115,10 +115,10 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 						continue;
 					}
 				}
-				bulkDelete(resolver, uri, Filters.Users.TEXT, names_list, null, true);
+					bulkDelete(resolver, uri, Filters.Users.VALUE, names_list, null, true);
 				for (final String screen_name : names_list) {
 					final ContentValues values = new ContentValues();
-					values.put(Filters.TEXT, screen_name);
+					values.put(Filters.VALUE, screen_name);
 					values_list.add(values);
 				}
 				bulkInsert(resolver, uri, values_list);
