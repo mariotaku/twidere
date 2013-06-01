@@ -464,4 +464,6 @@
 	<string name="deleted_user_from_list">Deleted user(s) from list \"<xliff:g id="list">%s</xliff:g>\".</string>
 	<string name="subscribe">Subscribe</string>
 	<string name="unsubscribe">Unsubscribe</string>
+	<string name="background_toast_notification">Background Toast notification</string>
+	<string name="background_toast_notification_summary">Show Toast notification when switched to background</string>
 </resources>

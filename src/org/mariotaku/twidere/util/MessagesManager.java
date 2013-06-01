@@ -5,16 +5,20 @@ import android.content.Context;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.activity.BaseActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
+import android.content.SharedPreferences;
 
-public final class MessagesManager {
+public final class MessagesManager implements Constants {
 
 	private final Set<Activity> mMessageCallbacks = Collections.synchronizedSet(new HashSet<Activity>());
 	private final Context mContext;
+	private final SharedPreferences mPreferences;
 	
 	public MessagesManager(final Context context) {
 		mContext = context;
+		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 	}
 	
 	public boolean addMessageCallback(final Activity activity) {
@@ -33,8 +37,8 @@ public final class MessagesManager {
 			Utils.showErrorMessage(best, message, long_message);
 			return;
 		}
-		for (final Activity activity : mMessageCallbacks) {
-			Utils.showErrorMessage(activity, message, long_message);
+		if (showToast()) {
+			Utils.showErrorMessage(mContext, message, long_message);
 			return;
 		}
 	}
@@ -46,8 +50,8 @@ public final class MessagesManager {
 			Utils.showErrorMessage(best, message, e, long_message);
 			return;
 		}
-		for (final Activity activity : mMessageCallbacks) {
-			Utils.showErrorMessage(activity, message, e, long_message);
+		if (showToast()) {
+			Utils.showErrorMessage(mContext, message, e, long_message);
 			return;
 		}
 	}
@@ -58,8 +62,8 @@ public final class MessagesManager {
 			Utils.showInfoMessage(best, message_res, long_message);
 			return;
 		}
-		for (final Activity activity : mMessageCallbacks) {
-			Utils.showInfoMessage(activity, message_res, long_message);
+		if (showToast()) {
+			Utils.showInfoMessage(mContext, message_res, long_message);
 			return;
 		}
 	}
@@ -70,8 +74,8 @@ public final class MessagesManager {
 			Utils.showInfoMessage(best, message, long_message);
 			return;
 		}
-		for (final Activity activity : mMessageCallbacks) {
-			Utils.showInfoMessage(activity, message, long_message);
+		if (showToast()) {
+			Utils.showInfoMessage(mContext, message, long_message);
 			return;
 		}
 	}
@@ -82,8 +86,8 @@ public final class MessagesManager {
 			Utils.showOkMessage(best, message_res, long_message);
 			return;
 		}
-		for (final Activity activity : mMessageCallbacks) {
-			Utils.showOkMessage(activity, message_res, long_message);
+		if (showToast()) {
+			Utils.showOkMessage(mContext, message_res, long_message);
 			return;
 		}
 	}
@@ -94,9 +98,8 @@ public final class MessagesManager {
 			Utils.showOkMessage(best, message, long_message);
 			return;
 		}
-		for (final Activity activity : mMessageCallbacks) {
-			Utils.showOkMessage(activity, message, long_message);
-			return;
+		if (showToast()) {
+			Utils.showOkMessage(mContext, message, long_message);
 		}
 	}
 	
@@ -106,9 +109,8 @@ public final class MessagesManager {
 			Utils.showWarnMessage(best, message_res, long_message);
 			return;
 		}
-		for (final Activity activity : mMessageCallbacks) {
-			Utils.showWarnMessage(activity, message_res, long_message);
-			return;
+		if (showToast()) {
+			Utils.showWarnMessage(mContext, message_res, long_message);
 		}
 	}
 	
@@ -125,7 +127,14 @@ public final class MessagesManager {
 				if (base.isOnTop()) return base;
 			}
 		}
+		for (final Activity activity : mMessageCallbacks) {
+			return activity;
+		}
 		return null;
+	}
+	
+	private boolean showToast() {
+		return mPreferences.getBoolean(PREFERENCE_KEY_BACKGROUND_TOAST_NOTIFICATION, false);
 	}
 
 }
