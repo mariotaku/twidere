@@ -99,6 +99,15 @@ public abstract class AsyncTask<Param, Progress, Result> {
 
 	}
 
+	protected void onProgressUpdate(Progress... values) {
+
+	}
+	
+	protected final void publishProgress(Progress... progress) {
+		if (isCancelled()) return;
+		mHandler.post(new OnProgressUpdateRunnable(progress));
+	}
+
 	public enum Status {
 		RUNNING, PENDING, FINISHED
 	}
@@ -114,9 +123,9 @@ public abstract class AsyncTask<Param, Progress, Result> {
 
 	private final class OnPostExecuteRunnable implements Runnable {
 
-		final Result mResult;
+		private final Result mResult;
 
-		public OnPostExecuteRunnable(final Result result) {
+		private OnPostExecuteRunnable(final Result result) {
 			mResult = result;
 		}
 
@@ -129,6 +138,20 @@ public abstract class AsyncTask<Param, Progress, Result> {
 			}
 			mStatus = Status.FINISHED;
 		}
+	}
+	
+	private final class OnProgressUpdateRunnable implements Runnable {
+		
+		private final Progress[] mResult;
 
+		private OnProgressUpdateRunnable(final Progress... result) {
+			mResult = result;
+		}
+
+		@Override
+		public void run() {
+			if (isCancelled()) return;
+			onProgressUpdate(mResult);
+		}
 	}
 }

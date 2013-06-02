@@ -19,9 +19,6 @@
 
 package org.mariotaku.twidere.activity;
 
-import static org.mariotaku.twidere.util.Utils.getThemeColor;
-import static org.mariotaku.twidere.util.Utils.restartActivity;
- 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
@@ -38,6 +35,9 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.iface.IThemedActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
+
+import static org.mariotaku.twidere.util.Utils.getThemeColor;
+import static org.mariotaku.twidere.util.Utils.restartActivity;
 
 class BasePreferenceActivity extends ActionBarPreferenceActivity implements Constants, IThemedActivity {
 

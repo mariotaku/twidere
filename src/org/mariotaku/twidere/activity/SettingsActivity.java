@@ -57,15 +57,8 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 	private static final String KEY_SETTINGS_OTHER = "settings_other";
 
 	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-		super.onCreate(savedInstanceState);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		mPreferences.registerOnSharedPreferenceChangeListener(this);
-		final Fragment fragment = new InternalSettingsFragment();
-		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.replace(R.id.main, fragment);
-		ft.commit();
+	public void onBackPressed() {
+		NavUtils.navigateUpFromSameTask(this);
 	}
 
 	@Override
@@ -165,6 +158,19 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 		if (PREFERENCE_KEY_DARK_THEME.equals(key) || PREFERENCE_KEY_SOLID_COLOR_BACKGROUND.equals(key)) {
 			restartActivity(this);
 		}
+	}
+
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+		super.onCreate(savedInstanceState);
+		setIntent(getIntent().addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));		
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		mPreferences.registerOnSharedPreferenceChangeListener(this);
+		final Fragment fragment = new InternalSettingsFragment();
+		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		ft.replace(R.id.main, fragment);
+		ft.commit();
 	}
 
 	@Override

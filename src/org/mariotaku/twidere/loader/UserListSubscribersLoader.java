@@ -66,9 +66,9 @@ public class UserListSubscribersLoader extends Twitter4JUsersLoader {
 		if (mListId > 0) {
 			users = twitter.getUserListSubscribers(mListId, mCursor);
 		} else if (mUserId > 0) {
-			users = twitter.getUserListSubscribers(mListName, mUserId, mCursor);
+			users = twitter.getUserListSubscribers(mListName.replace(' ', '-'), mUserId, mCursor);
 		} else if (mScreenName != null) {
-			users = twitter.getUserListSubscribers(mListName, mScreenName, mCursor);
+			users = twitter.getUserListSubscribers(mListName.replace(' ', '-'), mScreenName, mCursor);
 		} else {
 			return null;
 		}

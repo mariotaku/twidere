@@ -297,7 +297,9 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 				return true;
 			}
 			case MENU_SETTINGS: {
-				startActivity(new Intent(INTENT_ACTION_SETTINGS));
+				final Intent intent = new Intent(this, SettingsActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+				startActivity(intent);
 				return true;
 			}
 		}

@@ -107,7 +107,8 @@ public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 			}
 			statuses = getStatuses(getTwitter(), paging);
 		} catch (final TwitterException e) {
-			//7mHandler.post(new ShowErrorRunnable(e));
+			//mHandler.post(new ShowErrorRunnable(e));
+			e.printStackTrace();
 			return data;
 		}
 		if (statuses != null) {

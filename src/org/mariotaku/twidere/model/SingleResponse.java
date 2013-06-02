@@ -47,5 +47,9 @@ public class SingleResponse<Data> {
 	
 	public static <T> SingleResponse<T> nullInstance() {
 		return new SingleResponse<T>(null, null);
+	}	
+
+	public static <T> SingleResponse<T> newInstance(final T data, final Exception exception) {
+		return new SingleResponse<T>(data, exception);
 	}
 }

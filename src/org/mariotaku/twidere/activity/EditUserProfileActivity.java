@@ -38,12 +38,12 @@ import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper.UpdateProfileBannerImageTask;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper.UpdateProfileImageTask;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper.UpdateProfileTask;
+import org.mariotaku.twidere.util.BundleAccessor;
 import org.mariotaku.twidere.util.EnvironmentAccessor;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.view.ProfileBannerImageView;
 import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
-import twitter4j.User;
 
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.createPickImageIntent;
@@ -51,7 +51,6 @@ import static org.mariotaku.twidere.util.Utils.createTakePhotoIntent;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.showErrorMessage;
-import org.mariotaku.twidere.util.BundleAccessor;
 
 public class EditUserProfileActivity extends BaseDialogWhenLargeActivity implements OnSizeChangedListener, TextWatcher,
 		OnClickListener, CroutonLifecycleCallback {
@@ -475,11 +474,10 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 		}
 
 		@Override
-		protected void onPostExecute(final SingleResponse<User> result) {
+		protected void onPostExecute(final SingleResponse<ParcelableUser> result) {
 			super.onPostExecute(result);
 			if (result != null && result.data != null) {
-				final boolean large_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
-				displayUser(new ParcelableUser(result.data, mAccountId, large_profile_image));
+				displayUser(result.data);
 			}
 			setUpdateState(false);
 		}
@@ -535,11 +533,10 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 		}
 
 		@Override
-		protected void onPostExecute(final SingleResponse<User> result) {
+		protected void onPostExecute(final SingleResponse<ParcelableUser> result) {
 			super.onPostExecute(result);
 			if (result != null && result.data != null) {
-				final boolean large_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
-				displayUser(new ParcelableUser(result.data, mAccountId, large_profile_image));
+				displayUser(result.data);
 			}
 			setUpdateState(false);
 		}

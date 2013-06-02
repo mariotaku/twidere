@@ -1,49 +1,50 @@
 package org.mariotaku.twidere.util;
 
-import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
-
+import android.content.Context;
+import android.net.Uri;
 import java.io.File;
 import java.util.List;
-
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ListResponse;
+import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.SingleResponse;
-
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
-import android.content.Context;
-import android.net.Uri;
+
+import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 
 public class TwitterWrapper implements Constants {
 
-	public static TwitterSingleResponse<Boolean> deleteProfileBannerImage(final Context context, final long account_id) {
+	public static SingleResponse<Boolean> deleteProfileBannerImage(final Context context, final long account_id) {
 		final Twitter twitter = getTwitterInstance(context, account_id, false);
-		if (twitter == null) return new TwitterSingleResponse<Boolean>(account_id, false, null);
+		if (twitter == null) return new SingleResponse<Boolean>(false, null);
 		try {
 			twitter.removeProfileBannerImage();
-			return new TwitterSingleResponse<Boolean>(account_id, true, null);
+			return new SingleResponse<Boolean>(true, null);
 		} catch (final TwitterException e) {
-			return new TwitterSingleResponse<Boolean>(account_id, false, e);
+			return new SingleResponse<Boolean>(false, e);
 		}
 	}
 
-	public static TwitterSingleResponse<User> updateProfile(final Context context, final long account_id,
+	public static SingleResponse<ParcelableUser> updateProfile(final Context context, final long account_id,
 			final String name, final String url, final String location, final String description) {
 		final Twitter twitter = getTwitterInstance(context, account_id, false);
+		final boolean large_profile_image = context.getResources().getBoolean(R.bool.hires_profile_image);
 		if (twitter != null) {
 			try {
 				final User user = twitter.updateProfile(name, url, location, description);
-				return new TwitterSingleResponse<User>(account_id, user, null);
+				return new SingleResponse<ParcelableUser>(new ParcelableUser(user, account_id, large_profile_image), null);
 			} catch (final TwitterException e) {
-				return new TwitterSingleResponse<User>(account_id, null, e);
+				return new SingleResponse<ParcelableUser>(null, e);
 			}
 		}
-		return new TwitterSingleResponse<User>(account_id, null, null);
+		return SingleResponse.nullInstance();
 	}
 
-	public static TwitterSingleResponse<Boolean> updateProfileBannerImage(final Context context, final long account_id,
+	public static SingleResponse<Boolean> updateProfileBannerImage(final Context context, final long account_id,
 			final Uri image_uri, final boolean delete_image) {
 		final Twitter twitter = getTwitterInstance(context, account_id, false);
 		if (twitter != null && image_uri != null && "file".equals(image_uri.getScheme())) {
@@ -56,33 +57,34 @@ public class TwitterWrapper implements Constants {
 				if (delete_image) {
 					file.delete();
 				}
-				return new TwitterSingleResponse<Boolean>(account_id, true, null);
+				return new SingleResponse<Boolean>(true, null);
 			} catch (final TwitterException e) {
-				return new TwitterSingleResponse<Boolean>(account_id, false, e);
+				return new SingleResponse<Boolean>(false, e);
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		return new TwitterSingleResponse<Boolean>(account_id, false, null);
+		return new SingleResponse<Boolean>(false, null);
 	}
 
-	public static TwitterSingleResponse<User> updateProfileImage(final Context context, final long account_id,
+	public static SingleResponse<ParcelableUser> updateProfileImage(final Context context, final long account_id,
 			final Uri image_uri, final boolean delete_image) {
-		final Twitter twitter = getTwitterInstance(context, account_id, false);
+		final Twitter twitter = getTwitterInstance(context, account_id, false);		
+		final boolean large_profile_image = context.getResources().getBoolean(R.bool.hires_profile_image);
 		if (twitter != null && image_uri != null && "file".equals(image_uri.getScheme())) {
 			try {
 				final User user = twitter.updateProfileImage(new File(image_uri.getPath()));
 				// Wait for 5 seconds, see
 				// https://dev.twitter.com/docs/api/1.1/post/account/update_profile_image
 				Thread.sleep(5000L);
-				return new TwitterSingleResponse<User>(account_id, user, null);
+				return new SingleResponse<ParcelableUser>(new ParcelableUser(user, account_id, large_profile_image), null);
 			} catch (final TwitterException e) {
-				return new TwitterSingleResponse<User>(account_id, null, e);
+				return new SingleResponse<ParcelableUser>(null, e);
 			} catch (final InterruptedException e) {
-				return new TwitterSingleResponse<User>(account_id, null, e);
+				return new SingleResponse<ParcelableUser>(null, e);
 			}
 		}
-		return new TwitterSingleResponse<User>(account_id, null, null);
+		return SingleResponse.nullInstance();
 	}
 
 	public static final class StatusListResponse extends TwitterListResponse<Status> {
@@ -110,17 +112,6 @@ public class TwitterWrapper implements Constants {
 			this.max_id = max_id;
 			this.since_id = since_id;
 			this.load_item_limit = load_item_limit;
-		}
-
-	}
-
-	public static final class TwitterSingleResponse<Data> extends SingleResponse<Data> {
-
-		public final long account_id;
-
-		public TwitterSingleResponse(final long account_id, final Data data, final Exception exception) {
-			super(data, exception);
-			this.account_id = account_id;
 		}
 
 	}

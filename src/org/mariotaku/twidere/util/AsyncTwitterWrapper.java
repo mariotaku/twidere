@@ -19,6 +19,52 @@
 
 package org.mariotaku.twidere.util;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
+import com.twitter.Extractor;
+import com.twitter.Validator;
+import edu.ucdavis.earlybird.ProfilingUtil;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.model.ListResponse;
+import org.mariotaku.twidere.model.ParcelableLocation;
+import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.model.ParcelableUserList;
+import org.mariotaku.twidere.model.SingleResponse;
+import org.mariotaku.twidere.provider.TweetStore;
+import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
+import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
+import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
+import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
+import org.mariotaku.twidere.provider.TweetStore.Drafts;
+import org.mariotaku.twidere.provider.TweetStore.Mentions;
+import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import twitter4j.DirectMessage;
+import twitter4j.Paging;
+import twitter4j.ResponseList;
+import twitter4j.StatusUpdate;
+import twitter4j.Trends;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.User;
+import twitter4j.UserList;
+
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.provider.TweetStore.STATUSES_URIS;
 import static org.mariotaku.twidere.util.ContentResolverUtils.bulkDelete;
@@ -37,55 +83,6 @@ import static org.mariotaku.twidere.util.Utils.makeDirectMessageContentValues;
 import static org.mariotaku.twidere.util.Utils.makeStatusContentValues;
 import static org.mariotaku.twidere.util.Utils.makeTrendsContentValues;
 import static org.mariotaku.twidere.util.Utils.parseString;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
- 
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.model.ListResponse;
-import org.mariotaku.twidere.model.ParcelableLocation;
-import org.mariotaku.twidere.model.ParcelableUserList;
-import org.mariotaku.twidere.model.SingleResponse;
-import org.mariotaku.twidere.provider.TweetStore;
-import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
-import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
-import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
-import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
-import org.mariotaku.twidere.provider.TweetStore.Drafts;
-import org.mariotaku.twidere.provider.TweetStore.Mentions;
-import org.mariotaku.twidere.provider.TweetStore.Statuses;
-
-import twitter4j.DirectMessage;
-import twitter4j.Paging;
-import twitter4j.ResponseList;
-import twitter4j.StatusUpdate;
-import twitter4j.Trends;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.User;
-import twitter4j.UserList;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
-
-import com.twitter.Extractor;
-import com.twitter.Validator;
-import edu.ucdavis.earlybird.ProfilingUtil;
 
 public class AsyncTwitterWrapper extends TwitterWrapper {
 
@@ -350,6 +347,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					PendingIntent.FLAG_UPDATE_CURRENT));
 		}
 		if (content_intent != null) {
+			content_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 			builder.setContentIntent(PendingIntent.getActivity(mContext, 0, content_intent,
 					PendingIntent.FLAG_UPDATE_CURRENT));
 		}
@@ -413,7 +411,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	}
 
-	public static class UpdateProfileImageTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
+	public static class UpdateProfileImageTask extends ManagedAsyncTask<Void, Void, SingleResponse<ParcelableUser>> {
 
 		private final long account_id;
 		private final Uri image_uri;
@@ -430,12 +428,12 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		@Override
-		protected SingleResponse<User> doInBackground(final Void... params) {
+		protected SingleResponse<ParcelableUser> doInBackground(final Void... params) {
 			return TwitterWrapper.updateProfileImage(context, account_id, image_uri, delete_image);
 		}
 
 		@Override
-		protected void onPostExecute(final SingleResponse<User> result) {
+		protected void onPostExecute(final SingleResponse<ParcelableUser> result) {
 			if (result != null && result.data != null) {
 				Utils.showOkMessage(context, R.string.profile_image_updated, false);
 			} else {
@@ -450,7 +448,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	}
 
-	public static class UpdateProfileTask extends ManagedAsyncTask<Void, Void, SingleResponse<User>> {
+	public static class UpdateProfileTask extends ManagedAsyncTask<Void, Void, SingleResponse<ParcelableUser>> {
 
 		private final long account_id;
 		private final String name, url, location, description;
@@ -468,12 +466,12 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		@Override
-		protected SingleResponse<User> doInBackground(final Void... params) {
+		protected SingleResponse<ParcelableUser> doInBackground(final Void... params) {
 			return updateProfile(context, account_id, name, url, location, description);
 		}
 
 		@Override
-		protected void onPostExecute(final SingleResponse<User> result) {
+		protected void onPostExecute(final SingleResponse<ParcelableUser> result) {
 			if (result != null && result.data != null) {
 				Utils.showOkMessage(context, R.string.profile_updated, false);
 			} else {
@@ -516,9 +514,9 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 						list = new ParcelableUserList(twitter.addUserListMembers(list_id, screen_names), account_id, false);
 					} else
 						return SingleResponse.nullInstance();
-					return new SingleResponse<ParcelableUserList>(list, null);
+					return SingleResponse.newInstance(list, null);
 				} catch (final TwitterException e) {
-					return new SingleResponse<ParcelableUserList>(null, e);
+					return SingleResponse.newInstance(null, e);
 				}
 			}
 			return SingleResponse.nullInstance();
@@ -571,12 +569,12 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					// list.
 					final String where = CachedUsers.USER_ID + " = " + user_id;
 					mResolver.delete(CachedUsers.CONTENT_URI, where, null);
-					return new TwitterSingleResponse<User>(account_id, user, null);
+					return SingleResponse.newInstance(user, null);
 				} catch (final TwitterException e) {
-					return new TwitterSingleResponse<User>(account_id, null, e);
+					return SingleResponse.newInstance(null, e);
 				}
 			}
-			return new TwitterSingleResponse<User>(account_id, null, null);
+			return SingleResponse.nullInstance();
 		}
 
 		@Override
@@ -609,7 +607,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		@Override
 		protected SingleResponse<twitter4j.Status> doInBackground(final Void... params) {
 
-			if (account_id < 0) return new TwitterSingleResponse<twitter4j.Status>(account_id, null, null);
+			if (account_id < 0) return SingleResponse.nullInstance();
 
 			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
@@ -628,12 +626,12 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					for (final Uri uri : TweetStore.STATUSES_URIS) {
 						mResolver.update(uri, values, where.toString(), null);
 					}
-					return new TwitterSingleResponse<twitter4j.Status>(account_id, status, null);
+					return new SingleResponse<twitter4j.Status>(status, null);
 				} catch (final TwitterException e) {
-					return new TwitterSingleResponse<twitter4j.Status>(account_id, null, e);
+					return new SingleResponse<twitter4j.Status>(null, e);
 				}
 			}
-			return new TwitterSingleResponse<twitter4j.Status>(account_id, null, null);
+			return SingleResponse.nullInstance();
 		}
 
 		@Override
@@ -671,12 +669,12 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			if (twitter != null) {
 				try {
 					final User user = twitter.createFriendship(user_id);
-					return new TwitterSingleResponse<User>(account_id, user, null);
+					return SingleResponse.newInstance(user, null);
 				} catch (final TwitterException e) {
-					return new TwitterSingleResponse<User>(account_id, null, e);
+					return SingleResponse.newInstance(null, e);
 				}
 			}
-			return new TwitterSingleResponse<User>(account_id, null, null);
+			return SingleResponse.nullInstance();
 		}
 
 		@Override
@@ -819,13 +817,13 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				try {
 					if (list_name != null) {
 						final UserList list = twitter.createUserList(list_name, is_public, description);
-						return new TwitterSingleResponse<UserList>(account_id, list, null);
+						return SingleResponse.newInstance(list, null);
 					}
 				} catch (final TwitterException e) {
-					return new TwitterSingleResponse<UserList>(account_id, null, e);
+					return SingleResponse.newInstance(null, e);
 				}
 			}
-			return new TwitterSingleResponse<UserList>(account_id, null, null);
+			return SingleResponse.nullInstance();
 		}
 
 		@Override
@@ -918,12 +916,12 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			if (twitter != null) {
 				try {
 					final User user = twitter.destroyBlock(user_id);
-					return new TwitterSingleResponse<User>(account_id, user, null);
+					return SingleResponse.newInstance(user, null);
 				} catch (final TwitterException e) {
-					return new TwitterSingleResponse<User>(account_id, null, e);
+					return SingleResponse.newInstance(null, e);
 				}
 			}
-			return new TwitterSingleResponse<User>(account_id, null, null);
+			return SingleResponse.nullInstance();
 		}
 
 		@Override
@@ -958,16 +956,16 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 		@Override
 		protected SingleResponse<DirectMessage> doInBackground(final Void... args) {
-			if (twitter == null) return new TwitterSingleResponse<DirectMessage>(account_id, null, null);
+			if (twitter == null) return SingleResponse.nullInstance();
 			try {
 				final DirectMessage message = twitter.destroyDirectMessage(message_id);
 				deleteMessages(message_id);
-				return new TwitterSingleResponse<DirectMessage>(account_id, message, null);
+				return SingleResponse.newInstance(message, null);
 			} catch (final TwitterException e) {
 				if (e.getErrorCode() == 34) {
 					deleteMessages(message_id);
 				}
-				return new TwitterSingleResponse<DirectMessage>(account_id, null, e);
+				return SingleResponse.newInstance(null, e);
 			}
 		}
 
@@ -1004,7 +1002,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 		@Override
 		protected SingleResponse<twitter4j.Status> doInBackground(final Void... params) {
-			if (account_id < 0) return TwitterSingleResponse.nullInstance();
+			if (account_id < 0) return SingleResponse.nullInstance();
 			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
@@ -1068,12 +1066,12 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.USER_ID + " = "
 						+ user_id;
 					mResolver.delete(Statuses.CONTENT_URI, where, null);
-					return new TwitterSingleResponse<User>(account_id, user, null);
+					return SingleResponse.newInstance(user, null);
 				} catch (final TwitterException e) {
-					return new TwitterSingleResponse<User>(account_id, null, e);
+					return SingleResponse.newInstance(null, e);
 				}
 			}
-			return new TwitterSingleResponse<User>(account_id, null, null);
+			return SingleResponse.nullInstance();
 		}
 
 		@Override
@@ -1118,12 +1116,12 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 						mResolver.delete(uri, Statuses.STATUS_ID + " = " + status_id, null);
 						mResolver.update(uri, values, Statuses.MY_RETWEET_ID + " = " + status_id, null);
 					}
-					return new TwitterSingleResponse<twitter4j.Status>(account_id, status, null);
+					return SingleResponse.newInstance(status, null);
 				} catch (final TwitterException e) {
-					return new TwitterSingleResponse<twitter4j.Status>(account_id, null, e);
+					return SingleResponse.newInstance(null, e);
 				}
 			}
-			return new TwitterSingleResponse<twitter4j.Status>(account_id, null, null);
+			return SingleResponse.nullInstance();
 		}
 
 		@Override
@@ -1164,12 +1162,12 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			if (twitter != null) {
 				try {
 					final ParcelableUserList list = new ParcelableUserList(twitter.destroyUserListSubscription(list_id), account_id, false);
-					return new TwitterSingleResponse<ParcelableUserList>(account_id, list, null);
+					return SingleResponse.newInstance(list, null);
 				} catch (final TwitterException e) {
-					return new TwitterSingleResponse<ParcelableUserList>(account_id, null, e);
+					return SingleResponse.newInstance(null, e);
 				}
 			}
-			return TwitterSingleResponse.nullInstance();
+			return SingleResponse.nullInstance();
 		}
 
 		@Override
@@ -1637,12 +1635,12 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			if (twitter != null) {
 				try {
 					final User user = twitter.reportSpam(user_id);
-					return new TwitterSingleResponse<User>(account_id, user, null);
+					return SingleResponse.newInstance(user, null);
 				} catch (final TwitterException e) {
-					return new TwitterSingleResponse<User>(account_id, null, e);
+					return SingleResponse.newInstance(null, e);
 				}
 			}
-			return new TwitterSingleResponse<User>(account_id, null, null);
+			return SingleResponse.nullInstance();
 		}
 
 		@Override
@@ -1681,18 +1679,18 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		@Override
 		protected SingleResponse<twitter4j.Status> doInBackground(final Void... params) {
 
-			if (account_id < 0) return new TwitterSingleResponse<twitter4j.Status>(account_id, null, null);
+			if (account_id < 0) return SingleResponse.nullInstance();
 
 			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
 					final twitter4j.Status status = twitter.retweetStatus(status_id);
-					return new TwitterSingleResponse<twitter4j.Status>(account_id, status, null);
+					return SingleResponse.newInstance(status, null);
 				} catch (final TwitterException e) {
-					return new TwitterSingleResponse<twitter4j.Status>(account_id, null, e);
+					return SingleResponse.newInstance(null, e);
 				}
 			}
-			return new TwitterSingleResponse<twitter4j.Status>(account_id, null, null);
+			return SingleResponse.nullInstance();
 		}
 
 		@Override
@@ -1740,18 +1738,18 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 		@Override
 		protected SingleResponse<DirectMessage> doInBackground(final Void... args) {
-			if (twitter == null) return new TwitterSingleResponse<DirectMessage>(account_id, null, null);
+			if (twitter == null) return SingleResponse.nullInstance();
 			try {
 				if (user_id > 0)
-					return new TwitterSingleResponse<DirectMessage>(account_id, twitter.sendDirectMessage(user_id,
+					return SingleResponse.newInstance(twitter.sendDirectMessage(user_id,
 							message), null);
 				else if (screen_name != null)
-					return new TwitterSingleResponse<DirectMessage>(account_id, twitter.sendDirectMessage(screen_name,
+					return SingleResponse.newInstance(twitter.sendDirectMessage(screen_name,
 							message), null);
 			} catch (final TwitterException e) {
-				return new TwitterSingleResponse<DirectMessage>(account_id, null, e);
+				return SingleResponse.newInstance(null, e);
 			}
-			return new TwitterSingleResponse<DirectMessage>(account_id, null, null);
+			return SingleResponse.nullInstance();
 		}
 
 		@Override
@@ -1825,7 +1823,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			}
 			final Bundle bundle = new Bundle();
 			bundle.putBoolean(INTENT_KEY_SUCCEED, succeed);
-			return new TwitterSingleResponse<Bundle>(-1, bundle, null);
+			return SingleResponse.newInstance(bundle, null);
 		}
 
 		abstract boolean isOutgoing();
@@ -2036,7 +2034,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			if (should_set_min_id && newly_inserted_ids.size() > 0) {
 				bundle.putLong(INTENT_KEY_MIN_ID, Collections.min(newly_inserted_ids));
 			}
-			return new TwitterSingleResponse<Bundle>(-1, bundle, null);
+			return SingleResponse.newInstance(bundle, null);
 		}
 
 		@Override
@@ -2089,7 +2087,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					bundle.putBoolean(INTENT_KEY_SUCCEED, true);
 				}
 			}
-			return new TwitterSingleResponse<Bundle>(-1, bundle, null);
+			return new SingleResponse<Bundle>(bundle, null);
 		}
 
 		@Override
@@ -2105,7 +2103,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	}
 
-	class UpdateStatusTask extends ManagedAsyncTask<Void, Void, List<TwitterSingleResponse<twitter4j.Status>>> {
+	class UpdateStatusTask extends ManagedAsyncTask<Void, Void, List<SingleResponse<ParcelableStatus>>> {
 
 		private final ImageUploaderInterface uploader;
 		private final TweetShortenerInterface shortener;
@@ -2140,7 +2138,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		@Override
-		protected List<TwitterSingleResponse<twitter4j.Status>> doInBackground(final Void... params) {
+		protected List<SingleResponse<ParcelableStatus>> doInBackground(final Void... params) {
 
 			final Extractor extractor = new Extractor();
 			final ArrayList<ContentValues> hashtag_values = new ArrayList<ContentValues>();
@@ -2156,12 +2154,10 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			mResolver.bulkInsert(CachedHashtags.CONTENT_URI,
 					hashtag_values.toArray(new ContentValues[hashtag_values.size()]));
 
-			final List<TwitterSingleResponse<twitter4j.Status>> result = new ArrayList<TwitterSingleResponse<twitter4j.Status>>();
+			final List<SingleResponse<ParcelableStatus>> results = new ArrayList<SingleResponse<ParcelableStatus>>();
 
 			if (account_ids.length == 0) {
-				final Exception e = new Exception(mContext.getString(R.string.no_account_selected));
-				result.add(new TwitterSingleResponse<twitter4j.Status>(0, null, e));
-				return result;
+				return Collections.emptyList();
 			}
 
 			try {
@@ -2220,22 +2216,20 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				for (final long account_id : account_ids) {
 					final Twitter twitter = getTwitterInstance(mContext, account_id, false, true);
 					if (twitter == null) {
-						new TwitterSingleResponse<twitter4j.Status>(account_id, null, new NullPointerException());
+						results.add(new SingleResponse<ParcelableStatus>(null, new NullPointerException()));
 						continue;
 					}
 					try {
-						result.add(new TwitterSingleResponse<twitter4j.Status>(account_id, twitter
-								.updateStatus(status), null));
+						final ParcelableStatus result = new ParcelableStatus(twitter.updateStatus(status), account_id, false, false);
+						results.add(new SingleResponse<ParcelableStatus>(result, null));
 					} catch (final TwitterException e) {
-						result.add(new TwitterSingleResponse<twitter4j.Status>(account_id, null, e));
+						results.add(new SingleResponse<ParcelableStatus>(null, e));
 					}
 				}
 			} catch (final UpdateStatusException e) {
-				for (final long account_id : account_ids) {
-					result.add(new TwitterSingleResponse<twitter4j.Status>(account_id, null, e));
-				}
+				results.add(new SingleResponse<ParcelableStatus>(null, e));
 			}
-			return result;
+			return results;
 		}
 
 		@Override
@@ -2245,24 +2239,26 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		@Override
-		protected void onPostExecute(final List<TwitterSingleResponse<twitter4j.Status>> result) {
+		protected void onPostExecute(final List<SingleResponse<ParcelableStatus>> result) {
 
 			boolean failed = false;
 			Exception exception = null;
-			final List<Long> failed_account_ids = new ArrayList<Long>();
+			final List<Long> failed_account_ids = ListUtils.fromArray(account_ids);
 
-			for (final TwitterSingleResponse<twitter4j.Status> response : result) {
+			for (final SingleResponse<ParcelableStatus> response : result) {
 				if (response.data == null) {
 					failed = true;
-					if (response.account_id > 0) {
-						failed_account_ids.add(response.account_id);
-					}
 					if (exception == null) {
 						exception = response.exception;
 					}
+				} else if (response.data.account_id > 0){
+					failed_account_ids.remove(response.data.account_id);
 				}
 			}
-			if (failed) {
+			if (result.isEmpty()) {
+				saveDrafts(failed_account_ids);
+				mMessagesManager.showErrorMessage(R.string.sending_status, mContext.getString(R.string.no_account_selected), false);
+			} else if (failed) {
 				// If the status is a duplicate, there's no need to save it to
 				// drafts.
 				if (exception instanceof TwitterException &&
@@ -2354,7 +2350,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 	}
 
-	class UpdateUserListDetailsTask extends ManagedAsyncTask<Void, Void, SingleResponse<UserList>> {
+	class UpdateUserListDetailsTask extends ManagedAsyncTask<Void, Void, SingleResponse<ParcelableUserList>> {
 
 		private final long account_id;
 
@@ -2374,26 +2370,26 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		@Override
-		protected SingleResponse<UserList> doInBackground(final Void... params) {
+		protected SingleResponse<ParcelableUserList> doInBackground(final Void... params) {
 
 			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
 				try {
-					final UserList user = twitter.updateUserList(list_id, name, is_public, description);
-					return new TwitterSingleResponse<UserList>(account_id, user, null);
+					final UserList list = twitter.updateUserList(list_id, name, is_public, description);
+					return new SingleResponse<ParcelableUserList>(new ParcelableUserList(list, account_id, false), null);
 				} catch (final TwitterException e) {
-					return new TwitterSingleResponse<UserList>(account_id, null, e);
+					return new SingleResponse<ParcelableUserList>(null, e);
 				}
 			}
-			return new TwitterSingleResponse<UserList>(account_id, null, null);
+			return SingleResponse.nullInstance();
 		}
 
 		@Override
-		protected void onPostExecute(final SingleResponse<UserList> result) {
+		protected void onPostExecute(final SingleResponse<ParcelableUserList> result) {
 			final Intent intent = new Intent(BROADCAST_USER_LIST_DETAILS_UPDATED);
 			intent.putExtra(INTENT_KEY_LIST_ID, list_id);
-			if (result != null && result.data != null && result.data.getId() > 0) {
-				final String message = mContext.getString(R.string.updated_list_details, result.data.getName());
+			if (result.data != null && result.data.id > 0) {
+				final String message = mContext.getString(R.string.updated_list_details, result.data.name);
 				mMessagesManager.showOkMessage(message, false);
 				intent.putExtra(INTENT_KEY_SUCCEED, true);
 			} else {
