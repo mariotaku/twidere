@@ -99,7 +99,7 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_ACTIVITIES_ABOUT_ME = "activities_about_me";
 	public static final String AUTHORITY_ACTIVITIES_BY_FRIENDS = "activities_by_friends";
 	public static final String AUTHORITY_INCOMING_FRIENDSHIPS = "incoming_friendships";
-	
+	public static final String AUTHORITY_STATUS_RETWEETERS = "status_retweeters";	
 
 	public static final String QUERY_PARAM_ACCOUNT_ID = "account_id";
 	public static final String QUERY_PARAM_ACCOUNT_NAME = "account_name";
@@ -544,6 +544,7 @@ public interface Constants extends TwitterConstants {
 	public static final int LINK_ID_INCOMING_FRIENDSHIPS = 22;
 	public static final int LINK_ID_USERS = 23;
 	public static final int LINK_ID_STATUSES = 24;
+	public static final int LINK_ID_RETWEETERS = 25;
 
 	public static final String DIR_NAME_IMAGE_CACHE = "image_cache";
 

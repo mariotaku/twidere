@@ -104,6 +104,7 @@ import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.openImage;
+import static org.mariotaku.twidere.util.Utils.openStatusRetweeters;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 import static org.mariotaku.twidere.util.Utils.setUserColor;
@@ -459,16 +460,19 @@ OnImageClickListener {
 		if (mLoadMoreAutomatically){
 			showPreviewImages();
 		}
-		mRetweetedStatusView.setVisibility(status.retweet_id > 0 ? View.VISIBLE : View.GONE);
-		if (status.retweet_id > 0) {
-			if (display_screen_name) {
-				mRetweetedStatusView.setText(status.retweet_count > 1 ? getString(R.string.retweeted_by_with_count,
-						status.retweeted_by_screen_name, status.retweet_count - 1) : getString(R.string.retweeted_by,
-						status.retweeted_by_screen_name));
+		mRetweetedStatusView.setVisibility(!status.user_is_protected ? View.VISIBLE : View.GONE);
+		if (status.is_retweet && status.retweet_id > 0) {
+			final String name = display_screen_name ? status.user_name : status.user_screen_name;
+			if (status.retweet_count > 1) {
+				mRetweetedStatusView.setText(getString(R.string.retweeted_by_with_count, name, status.retweet_count - 1));
 			} else {
-				mRetweetedStatusView.setText(status.retweet_count > 1 ? getString(R.string.retweeted_by_with_count,
-						status.retweeted_by_name, status.retweet_count - 1) : getString(R.string.retweeted_by,
-						status.retweeted_by_name));
+				mRetweetedStatusView.setText(getString(R.string.retweeted_by, name));
+			}
+		} else {
+			if (status.retweet_count > 0) {
+				mRetweetedStatusView.setText(getString(R.string.retweeted_by_count, status.retweet_count));
+			} else {
+				mRetweetedStatusView.setText(R.string.users_retweeted_this);
 			}
 		}
 		mLocationView.setVisibility(ParcelableLocation.isValidLocation(status.location) ? View.VISIBLE : View.GONE);
@@ -569,6 +573,10 @@ OnImageClickListener {
 				showPreviewImages();
 				// UCD
 				ProfilingUtil.profile(getActivity(), mAccountId, "Thumbnail click, " + mStatusId);
+				break;
+			}
+			case R.id.retweet_view: {
+				openStatusRetweeters(getActivity(), mAccountId, mStatus.retweet_id > 0 ? mStatus.retweet_id : mStatus.id);
 				break;
 			}
 		}

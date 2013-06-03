@@ -58,6 +58,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
+import org.mariotaku.twidere.fragment.StatusRetweetersListFragment;
 
 public class LinkHandlerActivity extends MultiSelectActivity {
 
@@ -384,6 +385,10 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 				}
 				case LINK_ID_STATUSES: {
 					fragment = new StatusesListFragment();
+					break;
+				}
+				case LINK_ID_RETWEETERS: {
+					fragment = new StatusRetweetersListFragment();
 					break;
 				}
 				default: {

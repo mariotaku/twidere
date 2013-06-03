@@ -92,6 +92,8 @@
 	<string name="in_reply_to_pull_to_load_conversation">In reply to <xliff:g id="user_name">%s</xliff:g>, pull to load conversation</string>
 	<string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> retweeted this</string>
 	<string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> and <xliff:g id="retweet_count">%2$d</xliff:g> others retweeted this</string>
+	<string name="retweeted_by_count"><xliff:g id="retweet_count">%d</xliff:g> users retweeted this</string>
+	<string name="users_retweeted_this">Users retweeted this</string>
 	<string name="reply_to">Reply to <xliff:g id="user_name">%s</xliff:g></string>
 	<string name="quote_user">Quote <xliff:g id="user_name">%s</xliff:g></string>
 	<string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>
@@ -236,7 +238,6 @@
 	<string name="open_with_extensions">Open with extensions</string>
 	<string name="view_user_list">View user list</string>
 	<string name="uninstall">Uninstall</string>
-	<string name="users_retweeted_this">Users retweeted this</string>
 	<string name="saved_searches">Saved searches</string>
 	<string name="custom_tabs">Custom tabs</string>
 	<string name="default_tabs">Default tabs</string>
