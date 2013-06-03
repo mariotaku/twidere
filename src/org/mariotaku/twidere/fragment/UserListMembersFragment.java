@@ -25,20 +25,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import java.util.List;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.UsersAdapter;
+import org.mariotaku.twidere.loader.CursorSupportUsersLoader;
 import org.mariotaku.twidere.loader.UserListMembersLoader;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.ParcelableUserList;
-import org.mariotaku.twidere.model.SingleResponse;
 import org.mariotaku.twidere.util.AsyncTask;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import twitter4j.Twitter;
@@ -49,9 +47,8 @@ import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
-public class UserListMembersFragment extends BaseUsersListFragment implements OnMenuItemClickListener {
+public class UserListMembersFragment extends CursorSupportUsersListFragment implements OnMenuItemClickListener {
 
-	private long mCursor = -1;
 	private ParcelableUser mSelectedUser;
 	private ParcelableUserList mUserList;
 
@@ -76,22 +73,21 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 
 
 	@Override
-	public Loader<List<ParcelableUser>> newLoaderInstance(final Context context, final Bundle args) {
+	public CursorSupportUsersLoader newLoaderInstance(final Context context, final Bundle args) {
 		if (args == null) return null;
 		final int list_id = args.getInt(INTENT_KEY_LIST_ID, -1);
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 		final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
 		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		final String list_name = args.getString(INTENT_KEY_LIST_NAME);
-		return new UserListMembersLoader(context, account_id, list_id, user_id, screen_name, list_name, mCursor,
-				getData());
+		return new UserListMembersLoader(context, account_id, list_id, user_id, screen_name, list_name,
+				getNextCursor(), getData());
 	}
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		final Bundle args = getArguments();
 		if (savedInstanceState != null) {
-			mCursor = savedInstanceState.getLong(INTENT_KEY_PAGE, -1);
 			mUserList = savedInstanceState.getParcelable(INTENT_KEY_USER_LIST);
 		} else if (args != null) {
 			mUserList = args.getParcelable(INTENT_KEY_USER_LIST);			
@@ -109,12 +105,6 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 	}
 
 	@Override
-	public void onDestroyView() {
-		mCursor = -1;
-		super.onDestroyView();
-	}
-
-	@Override
 	public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 		mSelectedUser = null;
 		if (mUserList == null || mUserList.account_id != mUserList.user_id) return false;
@@ -125,17 +115,6 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 		mPopupMenu.setOnMenuItemClickListener(this);
 		mPopupMenu.show();
 		return true;
-	}
-
-	@Override
-	public void onLoadFinished(final Loader<List<ParcelableUser>> loader, final List<ParcelableUser> data) {
-		if (loader instanceof UserListMembersLoader) {
-			final long cursor = ((UserListMembersLoader) loader).getNextCursor();
-			if (cursor != -2) {
-				mCursor = cursor;
-			}
-		}
-		super.onLoadFinished(loader, data);
 	}
 
 	@Override
@@ -167,7 +146,6 @@ public class UserListMembersFragment extends BaseUsersListFragment implements On
 
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
-		outState.putLong(INTENT_KEY_PAGE, mCursor);
 		outState.putParcelable(INTENT_KEY_USER_LIST, mUserList);
 		super.onSaveInstanceState(outState);
 	}

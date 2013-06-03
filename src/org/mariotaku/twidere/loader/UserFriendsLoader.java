@@ -19,16 +19,16 @@
 
 package org.mariotaku.twidere.loader;
 
+import android.content.Context;
 import java.util.List;
-
 import org.mariotaku.twidere.model.ParcelableUser;
-
-import twitter4j.IDs;
+import twitter4j.PagableResponseList;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import android.content.Context;
+import twitter4j.User;
+import twitter4j.CursorPaging;
 
-public class UserFriendsLoader extends IDsUsersLoader {
+public class UserFriendsLoader extends CursorSupportUsersLoader {
 
 	private final long mUserId;
 	private final String mScreenName;
@@ -41,11 +41,10 @@ public class UserFriendsLoader extends IDsUsersLoader {
 	}
 
 	@Override
-	protected IDs getIDs(final Twitter twitter) throws TwitterException {
+	protected PagableResponseList<User> getCursoredUsers(final Twitter twitter, final CursorPaging paging) throws TwitterException {
 		if (twitter == null) return null;
-		if (mUserId > 0)
-			return twitter.getFriendsIDs(mUserId, -1);
-		else if (mScreenName != null) return twitter.getFriendsIDs(mScreenName, -1);
+		if (mUserId > 0) return twitter.getFriendsList(mUserId, paging);
+		else if (mScreenName != null) return twitter.getFriendsList(mScreenName, paging);
 		return null;
 	}
 

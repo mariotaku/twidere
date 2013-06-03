@@ -27,18 +27,21 @@ import twitter4j.IDs;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.content.Context;
+import twitter4j.PagableResponseList;
+import twitter4j.User;
+import twitter4j.CursorPaging;
 
-public class UserBlocksLoader extends IDsUsersLoader {
+public class UserBlocksLoader extends CursorSupportUsersLoader {
 
-	public UserBlocksLoader(final Context context, final long account_id, final long max_id,
-			final List<ParcelableUser> users_list) {
-		super(context, account_id, max_id, users_list);
+	public UserBlocksLoader(final Context context, final long account_id, final long cursor,
+			final List<ParcelableUser> data) {
+		super(context, account_id, cursor, data);
 	}
 
 	@Override
-	protected IDs getIDs(final Twitter twitter) throws TwitterException {
+	protected final PagableResponseList<User> getCursoredUsers(final Twitter twitter, final CursorPaging paging) throws TwitterException {
 		if (twitter == null) return null;
-		return twitter.getBlocksIDs();
+		return twitter.getBlocksList(paging);
 	}
-
+	
 }

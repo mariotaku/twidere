@@ -28,33 +28,26 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
 
-public class UserListMembersLoader extends CursorSupportUsersLoader {
+public abstract class CursorSupportUsersLoader extends BaseCursorSupportUsersLoader {
 
-	private final int mListId;
-	private final long mAccountId, mUserId;
-	private final String mScreenName, mListName;
-
-	public UserListMembersLoader(final Context context, final long account_id, final int list_id,
-			final long user_id, final String screen_name, final String list_name, final long cursor,
-					final List<ParcelableUser> data) {
+	public CursorSupportUsersLoader(final Context context, final long account_id, final long cursor,
+			final List<ParcelableUser> data) {
 		super(context, account_id, cursor, data);
-		mListId = list_id;
-		mAccountId = account_id;
-		mUserId = user_id;
-		mScreenName = screen_name;
-		mListName = list_name;
 	}
+	
+	protected abstract PagableResponseList<User> getCursoredUsers(Twitter twitter, CursorPaging paging) throws TwitterException;
 
 	@Override
-	public PagableResponseList<User> getCursoredUsers(final Twitter twitter, final CursorPaging paging) throws TwitterException {
+	protected final List<User> getUsers(final Twitter twitter) throws TwitterException {
 		if (twitter == null) return null;
-		if (mListId > 0)
-			return twitter.getUserListMembers(mListId, paging);
-		else if (mUserId > 0)
-			return twitter.getUserListMembers(mListName.replace(' ', '-'), mUserId, paging);
-		else if (mScreenName != null)
-			return twitter.getUserListMembers(mListName.replace(' ', '-'), mScreenName, paging);
-		return null;
+		final CursorPaging paging = new CursorPaging(getCount());
+		if (getCursor() > 0) {
+			paging.setCursor(getCursor());
+		}
+		final PagableResponseList<User> users = getCursoredUsers(twitter, paging);
+		if (users == null) return null;
+		setCursorIds(users);
+		return users;
 	}
 
 }

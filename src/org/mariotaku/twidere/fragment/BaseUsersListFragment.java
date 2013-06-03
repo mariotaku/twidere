@@ -115,7 +115,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		mAccountId = account_id;
 		mListView.setOnItemLongClickListener(this);
 		mListView.setOnScrollListener(this);
-		setMode(Mode.BOTH);
+		setMode(Mode.PULL_UP_TO_REFRESH);
 		setListAdapter(mAdapter);
 		getLoaderManager().initLoader(0, getArguments(), this);
 		setListShown(false);

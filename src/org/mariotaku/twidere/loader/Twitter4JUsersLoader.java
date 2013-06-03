@@ -31,27 +31,20 @@ public abstract class Twitter4JUsersLoader extends ParcelableUsersLoader {
 		final List<ParcelableUser> data = getData();
 		final List<User> users;
 		try {
-			users = getUsers(getTwitter());
+			users = getUsers(getTwitterInstance(mContext, mAccountId, true));
 			if (users == null) return data;
 		} catch (final TwitterException e) {
 			e.printStackTrace();
 			return data;
 		}
-		final int size = users.size();
-		for (int i = 0; i < size; i++) {
-			final User user = users.get(i);
-			if (!hasId(user.getId())) {
-				data.add(new ParcelableUser(user, mAccountId, getUserPosition(user, i), mHiResProfileImage));
-			}
+		int pos = data.size();
+		for (final User user : users) {
+			if (hasId(user.getId())) continue;
+			data.add(new ParcelableUser(user, mAccountId, pos, mHiResProfileImage));
+			pos++;
 		}
 		Collections.sort(data);
 		return data;
-	}
-	
-	protected abstract long getUserPosition(final User user, final int index);
-
-	protected final Twitter getTwitter() {
-		return getTwitterInstance(mContext, mAccountId, true);
 	}
 
 	protected abstract List<User> getUsers(Twitter twitter) throws TwitterException;

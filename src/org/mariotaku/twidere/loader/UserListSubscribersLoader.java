@@ -19,65 +19,42 @@
 
 package org.mariotaku.twidere.loader;
 
-import java.util.ArrayList;
+import android.content.Context;
 import java.util.List;
-
 import org.mariotaku.twidere.model.ParcelableUser;
-
+import twitter4j.CursorPaging;
 import twitter4j.PagableResponseList;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
-import twitter4j.UserList;
-import android.content.Context;
 
-public class UserListSubscribersLoader extends Twitter4JUsersLoader {
+public class UserListSubscribersLoader extends CursorSupportUsersLoader {
 
 	private final int mListId;
-	private final long mAccountId, mUserId, mCursor;
+	private final long mAccountId, mUserId;
 	private final String mScreenName, mListName;
-
-	private long mNextCursor = -2, mPrevCursor = -2;
 
 	public UserListSubscribersLoader(final Context context, final long account_id, final int list_id,
 			final long user_id, final String screen_name, final String list_name, final long cursor,
 			final List<ParcelableUser> data) {
-		super(context, account_id, data);
+		super(context, account_id, cursor, data);
 		mListId = list_id;
-		mCursor = cursor;
 		mAccountId = account_id;
 		mUserId = user_id;
 		mScreenName = screen_name;
 		mListName = list_name;
 	}
 
-	public long getNextCursor() {
-		return mNextCursor;
-	}
-
-	public long getPrevCursor() {
-		return mPrevCursor;
-	}
-
 	@Override
-	public List<User> getUsers(final Twitter twitter) throws TwitterException {
+	public PagableResponseList<User> getCursoredUsers(final Twitter twitter, final CursorPaging paging) throws TwitterException {
 		if (twitter == null) return null;
-		final PagableResponseList<User> users;
-		if (mListId > 0) {
-			users = twitter.getUserListSubscribers(mListId, mCursor);
-		} else if (mUserId > 0) {
-			users = twitter.getUserListSubscribers(mListName.replace(' ', '-'), mUserId, mCursor);
-		} else if (mScreenName != null) {
-			users = twitter.getUserListSubscribers(mListName.replace(' ', '-'), mScreenName, mCursor);
-		} else {
-			return null;
-		}
-		mNextCursor = users.getNextCursor();
-		mPrevCursor = users.getPreviousCursor();
-		return users;
+		if (mListId > 0)
+			return twitter.getUserListSubscribers(mListId, paging);
+		else if (mUserId > 0)
+			return twitter.getUserListSubscribers(mListName.replace(' ', '-'), mUserId, paging);
+		else if (mScreenName != null) 
+			return twitter.getUserListSubscribers(mListName.replace(' ', '-'), mScreenName, paging);
+		return null;
 	}
 
-	protected long getUserPosition(final User user, final int index) {
-		return (mCursor + 1) * 20 + index;
-	}
 }

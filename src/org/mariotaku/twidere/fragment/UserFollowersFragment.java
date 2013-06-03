@@ -19,21 +19,17 @@
 
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
-
-import java.util.List;
-
-import org.mariotaku.twidere.loader.UserFollowersLoader;
-import org.mariotaku.twidere.model.ParcelableUser;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
+import org.mariotaku.twidere.loader.CursorSupportUsersLoader;
+import org.mariotaku.twidere.loader.UserFollowersLoader;
 
-public class UserFollowersFragment extends BaseUsersListFragment {
+import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
+
+public class UserFollowersFragment extends CursorSupportUsersListFragment {
 
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -55,13 +51,12 @@ public class UserFollowersFragment extends BaseUsersListFragment {
 	};
 
 	@Override
-	public Loader<List<ParcelableUser>> newLoaderInstance(final Context context, final Bundle args) {
+	public CursorSupportUsersLoader newLoaderInstance(final Context context, final Bundle args) {
 		if (args == null) return null;
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-		final long max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
 		final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
 		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-		return new UserFollowersLoader(context, account_id, user_id, screen_name, max_id, getData());
+		return new UserFollowersLoader(context, account_id, user_id, screen_name, getNextCursor(), getData());
 	}
 
 	@Override

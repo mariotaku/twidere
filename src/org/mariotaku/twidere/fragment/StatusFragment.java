@@ -462,7 +462,7 @@ OnImageClickListener {
 		}
 		mRetweetedStatusView.setVisibility(!status.user_is_protected ? View.VISIBLE : View.GONE);
 		if (status.is_retweet && status.retweet_id > 0) {
-			final String name = display_screen_name ? status.user_name : status.user_screen_name;
+			final String name = display_screen_name ? status.retweeted_by_screen_name : status.retweeted_by_name;
 			if (status.retweet_count > 1) {
 				mRetweetedStatusView.setText(getString(R.string.retweeted_by_with_count, name, status.retweet_count - 1));
 			} else {

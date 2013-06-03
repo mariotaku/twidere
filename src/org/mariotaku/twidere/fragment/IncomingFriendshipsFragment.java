@@ -25,15 +25,15 @@ import android.support.v4.content.Loader;
 import java.util.List;
 import org.mariotaku.twidere.loader.IncomingFriendshipsLoader;
 import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.loader.IDsUsersLoader;
 
-public class IncomingFriendshipsFragment extends BaseUsersListFragment {
+public class IncomingFriendshipsFragment extends CursorSupportUsersListFragment {
 
 	@Override
-	public Loader<List<ParcelableUser>> newLoaderInstance(final Context context, final Bundle args) {
+	public IDsUsersLoader newLoaderInstance(final Context context, final Bundle args) {
 		if (args == null) return null;
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-		final long max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
-		return new IncomingFriendshipsLoader(context, account_id, max_id, getData());
+		return new IncomingFriendshipsLoader(context, account_id, getNextCursor(), getData());
 	}
 
 }

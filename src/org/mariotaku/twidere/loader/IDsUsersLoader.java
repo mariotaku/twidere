@@ -19,68 +19,35 @@
 
 package org.mariotaku.twidere.loader;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import android.content.Context;
 import java.util.List;
-
 import org.mariotaku.twidere.model.ParcelableUser;
-import org.mariotaku.twidere.util.ArrayUtils;
-
+import twitter4j.CursorPaging;
 import twitter4j.IDs;
-import twitter4j.ResponseList;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
-import android.content.Context;
-import android.content.SharedPreferences;
-import java.util.Arrays;
-import twitter4j.Paging;
 
-public abstract class IDsUsersLoader extends Twitter4JUsersLoader {
+public abstract class IDsUsersLoader extends BaseCursorSupportUsersLoader {
 
-	private final long mMaxId;
-	private final SharedPreferences mPreferences;
-	private final int mLoadItemLimit;
-
-	private IDs mIDs;
-
-	public IDsUsersLoader(final Context context, final long account_id, final long max_id,
+	public IDsUsersLoader(final Context context, final long account_id, final long cursor,
 			final List<ParcelableUser> data) {
-		super(context, account_id, data);
-		mMaxId = max_id;
-		mPreferences = getContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final int prefs_load_item_limit = mPreferences.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT,
-				PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
-		mLoadItemLimit = Math.min(100, prefs_load_item_limit);
+		super(context, account_id, cursor, data);
 	}
 
-	protected abstract IDs getIDs(Twitter twitter) throws TwitterException;
-
-	protected final long[] getIDsArray() {
-		return mIDs != null ? mIDs.getIDs() : null;
-	}
+	protected abstract IDs getIDs(Twitter twitter, CursorPaging paging) throws TwitterException;
 
 	@Override
 	public List<User> getUsers(final Twitter twitter) throws TwitterException {
 		if (twitter == null) return null;
-		if (mIDs == null) {
-			mIDs = getIDs(twitter);
-			if (mIDs == null) return null;
+		final CursorPaging paging = new CursorPaging(getCount());
+		if (getCursor() > 0) {
+			paging.setCursor(getCursor());
 		}
-		final long[] ids = mIDs.getIDs();
-		final int max_id_idx = mMaxId > 0 ? ArrayUtils.indexOf(ids, mMaxId) : 0;
-		if (max_id_idx < 0) return null;
-		if (max_id_idx == ids.length - 1) return Collections.emptyList();
-		final int count = max_id_idx + mLoadItemLimit < ids.length ? mLoadItemLimit : ids.length - max_id_idx;
-		final long[] ids_to_load = new long[count];
-		System.arraycopy(ids, max_id_idx, ids_to_load, 0, count);
-		return twitter.lookupUsers(ids_to_load);
-	}
-	
-	protected long getUserPosition(final User user, final int index) {
-		final long[] ids = getIDsArray();
-		if (ids == null) return -1;
-		return ArrayUtils.indexOf(ids, user.getId());
+		final IDs ids = getIDs(twitter, paging);
+		if (ids == null) return null;
+		setCursorIds(ids);
+		return twitter.lookupUsers(ids.getIDs());
 	}
 
 }

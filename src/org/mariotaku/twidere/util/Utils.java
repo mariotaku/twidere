@@ -1796,13 +1796,12 @@ public final class Utils implements Constants {
 		final String consumer_key = preferences.getString(PREFERENCE_KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY).trim();
 		final String consumer_secret = preferences.getString(PREFERENCE_KEY_CONSUMER_SECRET, TWITTER_CONSUMER_SECRET)
 				.trim();
-
-		Twitter twitter = null;
 		final StringBuilder where = new StringBuilder();
 		where.append(Accounts.ACCOUNT_ID + " = " + account_id);
 		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, Accounts.COLUMNS, where.toString(),
 				null, null);
-		if (cur != null) {
+		if (cur == null) return null;
+		try {
 			if (cur.getCount() > 0) {
 				cur.moveToFirst();
 				final ConfigurationBuilder cb = new ConfigurationBuilder();
@@ -1853,31 +1852,27 @@ public final class Utils implements Constants {
 						}
 						final String oauth_token = cur.getString(cur.getColumnIndexOrThrow(Accounts.OAUTH_TOKEN));
 						final String token_secret = cur.getString(cur.getColumnIndexOrThrow(Accounts.TOKEN_SECRET));
-						if (!isEmpty(oauth_token) && !isEmpty(token_secret)) {
-							twitter = new TwitterFactory(cb.build()).getInstance(new AccessToken(oauth_token,
-									token_secret));
-						}
-						break;
+						if (isEmpty(oauth_token) || isEmpty(token_secret)) return null;
+						return new TwitterFactory(cb.build()).getInstance(new AccessToken(oauth_token,
+								token_secret));
 					}
 					case Accounts.AUTH_TYPE_BASIC: {
 						final String screen_name = cur.getString(cur.getColumnIndexOrThrow(Accounts.SCREEN_NAME));
 						final String password = cur.getString(cur.getColumnIndexOrThrow(Accounts.BASIC_AUTH_PASSWORD));
-						if (!isEmpty(screen_name) && !isEmpty(password)) {
-							twitter = new TwitterFactory(cb.build()).getInstance(new BasicAuthorization(screen_name,
-									password));
-						}
-						break;
+						if (isEmpty(screen_name) || isEmpty(password)) return null;
+						return new TwitterFactory(cb.build()).getInstance(new BasicAuthorization(screen_name,
+								password));
 					}
 					case Accounts.AUTH_TYPE_TWIP_O_MODE: {
-						twitter = new TwitterFactory(cb.build()).getInstance(new TwipOModeAuthorization());
-						break;
+						return new TwitterFactory(cb.build()).getInstance(new TwipOModeAuthorization());
 					}
 					default:
 				}
 			}
+			return null;
+		} finally {
 			cur.close();
 		}
-		return twitter;
 	}
 
 	public static String getUnescapedStatusString(final String string) {
