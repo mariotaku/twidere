@@ -21,5 +21,6 @@
 	<dimen name="dialogwhenlarge_min_width">180dp</dimen>
 	<dimen name="compose_min_width">400dp</dimen>
 	<dimen name="compose_min_height">320dp</dimen>
+	<dimen name="button_bar_height">52dp</dimen>
 
 </resources>

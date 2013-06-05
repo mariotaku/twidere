@@ -19,21 +19,6 @@
 
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.getTabIconDrawable;
-import static org.mariotaku.twidere.util.Utils.getTabIconObject;
-import static org.mariotaku.twidere.util.Utils.getTabTypeName;
-
-import org.mariotaku.popupmenu.PopupMenu;
-import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.ArrayAdapter;
-import org.mariotaku.twidere.adapter.SeparatedListAdapter;
-import org.mariotaku.twidere.fragment.CustomTabsFragment.CustomTabsAdapter.CustomTabSpec;
-import org.mariotaku.twidere.fragment.CustomTabsFragment.DefaultTabsAdapter.DefaultTabSpec;
-import org.mariotaku.twidere.fragment.CustomTabsFragment.ITabsAdapter.TabSpec;
-import org.mariotaku.twidere.model.Panes;
-import org.mariotaku.twidere.provider.TweetStore.Tabs;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -48,6 +33,7 @@ import android.database.CharArrayBuffer;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.DataSetObserver;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -70,6 +56,22 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import org.mariotaku.popupmenu.PopupMenu;
+import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.ArrayAdapter;
+import org.mariotaku.twidere.adapter.SeparatedListAdapter;
+import org.mariotaku.twidere.fragment.CustomTabsFragment.CustomTabsAdapter.CustomTabSpec;
+import org.mariotaku.twidere.fragment.CustomTabsFragment.DefaultTabsAdapter.DefaultTabSpec;
+import org.mariotaku.twidere.fragment.CustomTabsFragment.ITabsAdapter.TabSpec;
+import org.mariotaku.twidere.model.Panes;
+import org.mariotaku.twidere.provider.TweetStore.Tabs;
+
+import static org.mariotaku.twidere.util.Utils.getTabIconDrawable;
+import static org.mariotaku.twidere.util.Utils.getTabIconObject;
+import static org.mariotaku.twidere.util.Utils.getTabTypeName;
+import org.mariotaku.twidere.preference.ThemeColorPreference;
+import android.graphics.PorterDuff;
 
 public class CustomTabsFragment extends BaseListFragment implements LoaderCallbacks<Cursor>, OnItemLongClickListener,
 		OnMenuItemClickListener, OnItemClickListener, Panes.Right {
@@ -335,9 +337,12 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 
 		private CursorIndices mIndices;
 
+		private final int mThemeColor;
+
 		public CustomTabsAdapter(final Context context) {
 			super(context, R.layout.two_line_with_icon_list_item, null, new String[] { Tabs.NAME },
-					new int[] { android.R.id.text1 }, 0);
+				  new int[] { android.R.id.text1 }, 0);
+			mThemeColor = ThemeColorPreference.getThemeColor(mContext);
 		}
 
 		@Override
@@ -352,8 +357,14 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 			final ImageView icon = (ImageView) view.findViewById(android.R.id.icon);
 			final TabSpec item = getTab(cursor.getPosition());
 			text2.setText(getTabTypeName(context, item.getType()));
-			icon.setBackgroundResource(R.drawable.gallery_selected_default);
-			icon.setImageDrawable(getTabIconDrawable(mContext, getTabIconObject(item.getIcon())));
+			final Drawable d = getTabIconDrawable(mContext, getTabIconObject(item.getIcon()));
+			if (d != null) {
+				final Drawable m = d.mutate();
+				m.setColorFilter(mThemeColor, PorterDuff.Mode.MULTIPLY);
+				icon.setImageDrawable(m);
+			} else {
+				icon.setImageResource(R.drawable.ic_tab_list);
+			}
 		}
 
 		@Override
@@ -641,12 +652,15 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 	public static class DefaultTabsAdapter extends ArrayAdapter<DefaultTabsAdapter.DefaultTabSpec> implements
 			ITabsAdapter {
 
-		final SharedPreferences prefs;
-		final Context context;
+		private final SharedPreferences prefs;
+		private final Context mContext;
+
+		private final int mThemeColor;
 
 		public DefaultTabsAdapter(final Context context) {
 			super(context, R.layout.two_line_with_icon_list_item);
-			this.context = context;
+			mContext = context;
+			mThemeColor = ThemeColorPreference.getThemeColor(mContext);
 			prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 			reload();
 		}
@@ -663,8 +677,14 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 			final CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
 			final TextView text1 = (TextView) view.findViewById(android.R.id.text1);
 			final DefaultTabSpec item = getTab(position);
-			icon.setBackgroundResource(R.drawable.gallery_selected_default);
-			icon.setImageDrawable(getTabIconDrawable(context, getTabIconObject(item.getIcon())));
+			final Drawable d = getTabIconDrawable(mContext, getTabIconObject(item.getIcon()));
+			if (d != null) {
+				final Drawable m = d.mutate();
+				m.setColorFilter(mThemeColor, PorterDuff.Mode.MULTIPLY);
+				icon.setImageDrawable(m);
+			} else {
+				icon.setImageResource(R.drawable.ic_tab_list);
+			}
 			view.findViewById(android.R.id.text2).setVisibility(View.GONE);
 			text1.setVisibility(View.VISIBLE);
 			text1.setText(item.getName());
@@ -673,12 +693,12 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 		}
 
 		void reload() {
-			add(new DefaultTabSpec(prefs, context.getString(R.string.home), "home", PREFERENCE_KEY_SHOW_HOME_TAB));
-			add(new DefaultTabSpec(prefs, context.getString(R.string.mentions), "mention",
+			add(new DefaultTabSpec(prefs, mContext.getString(R.string.home), "home", PREFERENCE_KEY_SHOW_HOME_TAB));
+			add(new DefaultTabSpec(prefs, mContext.getString(R.string.mentions), "mention",
 					PREFERENCE_KEY_SHOW_MENTIONS_TAB));
-			add(new DefaultTabSpec(prefs, context.getString(R.string.direct_messages), "message",
+			add(new DefaultTabSpec(prefs, mContext.getString(R.string.direct_messages), "message",
 					PREFERENCE_KEY_SHOW_MESSAGES_TAB));
-			add(new DefaultTabSpec(prefs, context.getString(R.string.accounts), "accounts",
+			add(new DefaultTabSpec(prefs, mContext.getString(R.string.accounts), "accounts",
 					PREFERENCE_KEY_SHOW_ACCOUNTS_TAB));
 		}
 

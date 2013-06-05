@@ -38,7 +38,7 @@
 	<LinearLayout
 		android:id="@+id/buttons"
 		android:layout_width="match_parent"
-		android:layout_height="52dp"
+		android:layout_height="@dimen/button_bar_height"
 		android:layout_alignParentBottom="true"
 		android:orientation="horizontal">
 

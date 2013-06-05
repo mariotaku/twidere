@@ -64,6 +64,9 @@ public class MenuBar extends TableRow implements PopupMenu.OnMenuItemClickListen
 	}
 
 	public void show() {
+		if (mPopupMenu != null) {
+			mPopupMenu.dismiss();
+		}
 		removeAllViews();
 		for (final MenuItem item : ((MenuImpl) mMenu).getMenuItems()) {
 			if (item.isVisible()) {

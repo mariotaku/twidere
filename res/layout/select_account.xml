@@ -16,17 +16,16 @@
 
 	<LinearLayout
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="@dimen/button_bar_height"
 		android:orientation="horizontal">
 		
 		<Button
 			android:id="@+id/add_account"
 			style="?borderlessButtonStyle"
 			android:layout_width="0dp"
-			android:layout_height="wrap_content"
+			android:layout_height="match_parent"
 			android:layout_weight="1"
 			android:gravity="center"
-			android:minHeight="48dp"
 			android:onClick="onClick"
 			android:text="@string/add_account"/>
 			
@@ -40,10 +39,9 @@
 			android:id="@+id/save"
 			style="?borderlessButtonStyle"
 			android:layout_width="0dp"
-			android:layout_height="wrap_content"
+			android:layout_height="match_parent"
 			android:layout_weight="1"
 			android:gravity="center"
-			android:minHeight="48dp"
 			android:onClick="onClick"
 			android:text="@android:string/ok"/>
 	</LinearLayout>
