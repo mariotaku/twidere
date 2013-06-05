@@ -72,6 +72,7 @@ import static org.mariotaku.twidere.util.Utils.getTabIconObject;
 import static org.mariotaku.twidere.util.Utils.getTabTypeName;
 import org.mariotaku.twidere.preference.ThemeColorPreference;
 import android.graphics.PorterDuff;
+import org.mariotaku.twidere.graphic.DropShadowDrawable;
 
 public class CustomTabsFragment extends BaseListFragment implements LoaderCallbacks<Cursor>, OnItemLongClickListener,
 		OnMenuItemClickListener, OnItemClickListener, Panes.Right {
@@ -359,9 +360,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 			text2.setText(getTabTypeName(context, item.getType()));
 			final Drawable d = getTabIconDrawable(mContext, getTabIconObject(item.getIcon()));
 			if (d != null) {
-				final Drawable m = d.mutate();
-				m.setColorFilter(mThemeColor, PorterDuff.Mode.MULTIPLY);
-				icon.setImageDrawable(m);
+				icon.setImageDrawable(new DropShadowDrawable(context.getResources(), d, 2, 0x80000000));
 			} else {
 				icon.setImageResource(R.drawable.ic_tab_list);
 			}
@@ -679,9 +678,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 			final DefaultTabSpec item = getTab(position);
 			final Drawable d = getTabIconDrawable(mContext, getTabIconObject(item.getIcon()));
 			if (d != null) {
-				final Drawable m = d.mutate();
-				m.setColorFilter(mThemeColor, PorterDuff.Mode.MULTIPLY);
-				icon.setImageDrawable(m);
+				icon.setImageDrawable(new DropShadowDrawable(mContext.getResources(), d, 2, 0x80000000));
 			} else {
 				icon.setImageResource(R.drawable.ic_tab_list);
 			}

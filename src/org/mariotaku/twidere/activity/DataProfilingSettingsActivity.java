@@ -64,11 +64,10 @@ public class DataProfilingSettingsActivity extends BaseDialogWhenLargeActivity i
 						mTextView.append(file.getName() + ":\n------\n");
 						try {
 							final BufferedReader br = new BufferedReader(new FileReader(file));
-							String line = br.readLine();
+							String line = null;
 							int i = 0;
-							while (line != null && i < 10) {
+							while ((line = br.readLine() )!= null && i < 10) {
 								mTextView.append(line + "\n");
-								line = br.readLine();
 								i++;
 							}
 							mTextView.append("------------\n\n");
