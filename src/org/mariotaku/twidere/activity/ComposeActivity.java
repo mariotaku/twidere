@@ -614,8 +614,9 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	}
 
 	private boolean handleDefaultIntent(final Intent intent) {
-		mShouldSaveAccounts = true;
 		if (intent == null) return false;
+		final String action = intent.getAction();
+		mShouldSaveAccounts = !Intent.ACTION_SEND.equals(action) && !Intent.ACTION_SEND_MULTIPLE.equals(action);
 		final Bundle extras = intent.getExtras();
 		final Uri data = intent.getData();
 		if (data != null) {

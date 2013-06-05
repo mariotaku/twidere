@@ -362,7 +362,8 @@
   <string name="data_profiling_notification_desc">启用或停用使用信息统计</string>
   <string name="silent_notifications">静默通知</string>
   <string name="silent_notifications_summary">在特定时间为通知禁用铃声和震动</string>
-  <string name="disable_background_service">禁用后台服务</string>
+	<string name="disable_background_service">禁用后台服务</string>
+	<string name="disable_background_service_summary">别傻了，Twidere在关闭自动刷新和数据统计之后是没有后台服务的。</string>
   <string name="pull_to_load_conversation_label">下拉并释放以加载对话…</string>
   <string name="pull_to_load_conversation_release_label">释放加载对话…</string>
   <string name="text_copied">文本已复制到剪贴板</string>

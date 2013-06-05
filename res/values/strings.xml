@@ -377,6 +377,7 @@
 	<string name="silent_notifications">Silent notifications</string>
 	<string name="silent_notifications_summary">Disable ringtone/vibrate for notifications</string>
 	<string name="disable_background_service">Disable background service</string>
+	<string name="disable_background_service_summary">Twidere doesn\'t have background service if you disable auto refresh and data profiling, don\'t be silly!</string>
 	<string name="pull_to_load_conversation_label">Pull to load conversation…</string>
 	<string name="pull_to_load_conversation_release_label">Release to load conversation…</string>
 	<string name="text_copied">Text copied to clipboard.</string>

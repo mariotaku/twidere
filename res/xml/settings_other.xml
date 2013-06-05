@@ -26,12 +26,10 @@
 			android:targetClass="org.mariotaku.twidere.activity.DataProfilingSettingsActivity"
 			android:targetPackage="org.mariotaku.twidere"/>
 	</Preference>
+	
 	<Preference
 		android:key="disable_background_service"
-		android:title="@string/disable_background_service">
-		<intent
-			android:action="android.intent.action.UNINSTALL_PACKAGE"
-			android:data="package:org.mariotaku.twidere"/>
-	</Preference>
-
+		android:title="@string/disable_background_service"
+		android:summary="@string/disable_background_service_summary"/>
+	
 </PreferenceScreen>
