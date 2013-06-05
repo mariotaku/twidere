@@ -22,6 +22,7 @@ package org.mariotaku.twidere.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.text.Html;
 import android.text.TextUtils;
@@ -61,14 +62,13 @@ import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isFiltered;
 import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
-import android.database.sqlite.SQLiteDatabase;
 
 public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> implements IStatusesAdapter<List<ParcelableStatus>>,
 		OnClickListener, ImageLoadingListener {
 
 	private final Context mContext;
 	private final Resources mResources;
-	private final ImageLoaderWrapper mLazyImageLoader;
+	private final ImageLoaderWrapper mImageLoader;
 	private final MultiSelectManager mMultiSelectManager;
 	private final TwidereLinkify mLinkify;
 	private final SQLiteDatabase mDatabase;
@@ -89,7 +89,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		mResources = context.getResources();
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mMultiSelectManager = application.getMultiSelectManager();
-		mLazyImageLoader = application.getImageLoaderWrapper();
+		mImageLoader = application.getImageLoaderWrapper();
 		mDatabase = application.getSQLiteDatabase();
 		mDensity = mResources.getDisplayMetrics().density;
 		mLinkify = new TwidereLinkify(new OnLinkClickHandler(mContext));
@@ -258,8 +258,8 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 						0, 0);
 			}
 			if (mDisplayProfileImage) {
-				mLazyImageLoader.displayProfileImage(holder.my_profile_image, status.user_profile_image_url);
-				mLazyImageLoader.displayProfileImage(holder.profile_image, status.user_profile_image_url);
+				mImageLoader.displayProfileImage(holder.my_profile_image, status.user_profile_image_url);
+				mImageLoader.displayProfileImage(holder.profile_image, status.user_profile_image_url);
 				holder.profile_image.setTag(position);
 				holder.my_profile_image.setTag(position);
 			} else {
@@ -277,7 +277,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 					holder.image_preview.setImageResource(R.drawable.image_preview_nsfw);
 					holder.image_preview_progress.setVisibility(View.GONE);
 				} else if (!status.image_preview_url.equals(mLoadingViewsMap.get(holder.image_preview))) {
-					mLazyImageLoader.displayPreviewImage(holder.image_preview, status.image_preview_url, this);
+					mImageLoader.displayPreviewImage(holder.image_preview, status.image_preview_url, this);
 				}
 				holder.image_preview.setTag(position);
 			}

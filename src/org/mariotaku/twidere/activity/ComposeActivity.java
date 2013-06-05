@@ -19,50 +19,6 @@
 
 package org.mariotaku.twidere.activity;
 
-import static android.os.Environment.getExternalStorageState;
-import static android.text.TextUtils.isEmpty;
-import static org.mariotaku.twidere.util.Utils.copyStream;
-import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
-import static org.mariotaku.twidere.util.Utils.getAccountColors;
-import static org.mariotaku.twidere.util.Utils.getAccountIds;
-import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
-import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
-import static org.mariotaku.twidere.util.Utils.getImageUploadStatus;
-import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
-import static org.mariotaku.twidere.util.Utils.getShareStatus;
-import static org.mariotaku.twidere.util.Utils.getThemeColor;
-import static org.mariotaku.twidere.util.Utils.openImageDirectly;
-import static org.mariotaku.twidere.util.Utils.parseString;
-import static org.mariotaku.twidere.util.Utils.showErrorMessage;
-
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Set;
-
-import com.twitter.Extractor;
-import com.twitter.Validator;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
-import org.mariotaku.actionbarcompat.ActionBar;
-import org.mariotaku.menubar.MenuBar;
-import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
-import org.mariotaku.popupmenu.PopupMenu;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.fragment.BaseDialogFragment;
-import org.mariotaku.twidere.model.DraftItem;
-import org.mariotaku.twidere.model.ParcelableLocation;
-import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.model.ParcelableUser;
-import org.mariotaku.twidere.provider.TweetStore.Drafts;
-import org.mariotaku.twidere.util.ActivityAccessor;
-import org.mariotaku.twidere.util.ArrayUtils;
-import org.mariotaku.twidere.util.AsyncTask;
-import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import org.mariotaku.twidere.util.EnvironmentAccessor;
-import org.mariotaku.twidere.util.ImageLoaderWrapper;
-import org.mariotaku.twidere.view.ColorView;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -88,21 +44,84 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+import com.twitter.Extractor;
+import com.twitter.Validator;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Set;
+import org.mariotaku.actionbarcompat.ActionBar;
+import org.mariotaku.menubar.MenuBar;
+import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
+import org.mariotaku.popupmenu.PopupMenu;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.fragment.BaseDialogFragment;
+import org.mariotaku.twidere.model.DraftItem;
+import org.mariotaku.twidere.model.ParcelableLocation;
+import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.provider.TweetStore.Drafts;
+import org.mariotaku.twidere.util.ActivityAccessor;
+import org.mariotaku.twidere.util.ArrayUtils;
+import org.mariotaku.twidere.util.AsyncTask;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.EnvironmentAccessor;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
+import org.mariotaku.twidere.view.AccountsColorFrameLayout;
+import org.mariotaku.twidere.view.holder.StatusViewHolder;
+
+import static android.os.Environment.getExternalStorageState;
+import static android.text.TextUtils.isEmpty;
+import static org.mariotaku.twidere.util.Utils.copyStream;
+import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
+import static org.mariotaku.twidere.util.Utils.getAccountColors;
+import static org.mariotaku.twidere.util.Utils.getAccountIds;
+import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
+import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
+import static org.mariotaku.twidere.util.Utils.getImageUploadStatus;
+import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
+import static org.mariotaku.twidere.util.Utils.getShareStatus;
+import static org.mariotaku.twidere.util.Utils.getThemeColor;
+import static org.mariotaku.twidere.util.Utils.openImageDirectly;
+import static org.mariotaku.twidere.util.Utils.parseString;
+import static org.mariotaku.twidere.util.Utils.showErrorMessage;
+import static android.text.format.DateUtils.getRelativeTimeSpanString;
+import static org.mariotaku.twidere.model.ParcelableLocation.isValidLocation;
+import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
+import static org.mariotaku.twidere.util.Utils.getAccountColor;
+import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
+import static org.mariotaku.twidere.util.Utils.getAllAvailableImage;
+import static org.mariotaku.twidere.util.Utils.getImagePreviewDisplayOptionInt;
+import static org.mariotaku.twidere.util.Utils.getNameDisplayOptionInt;
+import static org.mariotaku.twidere.util.Utils.getStatusBackground;
+import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
+import static org.mariotaku.twidere.util.Utils.getThemeColor;
+import static org.mariotaku.twidere.util.Utils.getUserColor;
+import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
+import static org.mariotaku.twidere.util.Utils.isFiltered;
+import static org.mariotaku.twidere.util.Utils.openImage;
+import static org.mariotaku.twidere.util.Utils.openUserProfile;
  
 public class ComposeActivity extends BaseDialogWhenLargeActivity implements TextWatcher, LocationListener,
 		OnMenuItemClickListener, OnClickListener, OnLongClickListener, PopupMenu.OnMenuItemClickListener,
@@ -125,9 +144,9 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	private ActionBar mActionBar;
 	private PopupMenu mPopupMenu;
 
-	private ColorView mColorIndicator;
+	private AccountsColorFrameLayout mColorIndicator;
 	private EditText mEditText;
-	private TextView mTextCount;
+	private TextView mTextCountView;
 	private ImageView mImageThumbnailPreview;
 	private MenuBar mMenuBar;
 
@@ -254,9 +273,9 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	@Override
 	public void onContentChanged() {
 		super.onContentChanged();
-		mColorIndicator = (ColorView) findViewById(R.id.account_colors);
+		mColorIndicator = (AccountsColorFrameLayout) findViewById(R.id.account_colors);
 		mEditText = (EditText) findViewById(R.id.edit_text);
-		mTextCount = (TextView) findViewById(R.id.text_count);
+		mTextCountView = (TextView) findViewById(R.id.text_count);
 		mImageThumbnailPreview = (ImageView) findViewById(R.id.image_thumbnail_preview);
 		mMenuBar = (MenuBar) findViewById(R.id.menu_bar);
 	}
@@ -476,6 +495,15 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				updateStatus();
 				break;
 			}
+			case MENU_VIEW: {
+				if (mInReplyToStatus == null) return false;
+				final DialogFragment fragment = new ViewStatusDialogFragment();
+				final Bundle args = new Bundle();
+				args.putParcelable(INTENT_KEY_STATUS, mInReplyToStatus);
+				fragment.setArguments(args);
+				fragment.show(getSupportFragmentManager(), "view_status");
+				break;
+			}
 			case MENU_SELECT_ACCOUNT: {
 				final Intent intent = new Intent(INTENT_ACTION_SELECT_ACCOUNT);
 				final Bundle bundle = new Bundle();
@@ -491,7 +519,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 
 	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu) {
-		if (menu == null || mEditText == null || mTextCount == null) return false;
+		if (menu == null || mEditText == null || mTextCountView == null) return false;
 		final String text_orig = parseString(mEditText.getText());
 		final String text = mImageUri != null ? mImageUploaderUsed ? getImageUploadStatus(this, FAKE_IMAGE_LINK,
 				text_orig) : text_orig + " " + FAKE_IMAGE_LINK : text_orig;
@@ -500,11 +528,15 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		final boolean near_limit = count >= Validator.MAX_TWEET_LENGTH - 10;
 		final float hue = exceeded_limit ? near_limit ? 5 * (Validator.MAX_TWEET_LENGTH - count) : 50 : 0;
 		final float[] hsv = new float[] { hue, 1.0f, 1.0f };
-		mTextCount.setTextColor(count >= Validator.MAX_TWEET_LENGTH - 10 ? Color.HSVToColor(0x80, hsv) : 0x80808080);
-		mTextCount.setText(parseString(Validator.MAX_TWEET_LENGTH - count));
+		mTextCountView.setTextColor(count >= Validator.MAX_TWEET_LENGTH - 10 ? Color.HSVToColor(0x80, hsv) : 0x80808080);
+		mTextCountView.setText(parseString(Validator.MAX_TWEET_LENGTH - count));
 		final MenuItem sendItem = menu.findItem(MENU_SEND);
 		if (sendItem != null) {
 			sendItem.setEnabled(text_orig.length() > 0);
+		}
+		final MenuItem viewItem = menu.findItem(MENU_VIEW);
+		if (viewItem != null) {
+			viewItem.setVisible(mInReplyToStatus != null);
 		}
 		return super.onPrepareOptionsMenu(menu);
 	}
@@ -941,6 +973,116 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			builder.setNegativeButton(R.string.discard, this);
 			return builder.create();
 		}
+	}
+
+	public static class ViewStatusDialogFragment extends BaseDialogFragment {
+
+		private StatusViewHolder mHolder;
+
+		@Override
+		public void onActivityCreated(final Bundle savedInstanceState) {
+			super.onActivityCreated(savedInstanceState);
+			final Bundle args = getArguments();
+			if (args == null || args.getParcelable(INTENT_KEY_STATUS) == null) {
+				dismiss();
+				return;
+			}
+			final TwidereApplication application = getApplication();
+			final ImageLoaderWrapper loader = application.getImageLoaderWrapper();
+			final SharedPreferences prefs = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+			final ParcelableStatus status = args.getParcelable(INTENT_KEY_STATUS);
+			mHolder.setShowAsGap(false);
+			mHolder.setAccountColorEnabled(true);
+			mHolder.setTextSize(prefs.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE));
+			mHolder.text.setText(status.text_unescaped);
+			final String option = prefs.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH);
+			if (NAME_DISPLAY_OPTION_NAME.equals(option)) {
+				mHolder.name.setText(status.user_name);
+				mHolder.screen_name.setText(null);
+				mHolder.screen_name.setVisibility(View.GONE);
+			} else if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) {
+				mHolder.name.setText("@" + status.user_screen_name);
+				mHolder.screen_name.setText(null);
+				mHolder.screen_name.setVisibility(View.GONE);
+			} else {
+				mHolder.name.setText(status.user_name);
+				mHolder.screen_name.setText("@" + status.user_screen_name);
+				mHolder.screen_name.setVisibility(View.VISIBLE);
+			}
+
+			mHolder.setAccountColor(getAccountColor(getActivity(), status.account_id));
+			final String retweeted_by_name = status.retweeted_by_name;
+			final String retweeted_by_screen_name = status.retweeted_by_screen_name;
+
+			final boolean is_my_status = status.account_id == status.user_id;
+			mHolder.setUserColor(getUserColor(getActivity(), status.user_id));
+			mHolder.setHighlightColor(getStatusBackground(false, status.is_favorite, status.is_retweet));
+
+			mHolder.setIsMyStatus(is_my_status && !prefs.getBoolean(PREFERENCE_KEY_INDICATE_MY_STATUS, true));
+
+			mHolder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0, getUserTypeIconRes(status.user_is_verified, status.user_is_protected), 0);
+			if (prefs.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false)) {
+				mHolder.time.setText(formatSameDayTime(getActivity(), status.timestamp));
+			} else {
+				mHolder.time.setText(getRelativeTimeSpanString(status.timestamp));
+			}
+			mHolder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0,  getStatusTypeIconRes(status.is_favorite, isValidLocation(status.location),
+					status.has_media, status.is_possibly_sensitive), 0);
+			mHolder.reply_retweet_status.setVisibility(status.in_reply_to_status_id != -1 || status.is_retweet ? View.VISIBLE : View.GONE);
+			if (status.is_retweet && !TextUtils.isEmpty(retweeted_by_name)
+				&& !TextUtils.isEmpty(retweeted_by_screen_name)) {
+				if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) {
+					mHolder.reply_retweet_status.setText(status.retweet_count > 1 ? getString(
+							R.string.retweeted_by_with_count, retweeted_by_screen_name, status.retweet_count - 1)
+									: getString(R.string.retweeted_by, retweeted_by_screen_name));
+				} else {
+					mHolder.reply_retweet_status.setText(status.retweet_count > 1 ? getString(
+							R.string.retweeted_by_with_count, retweeted_by_name, status.retweet_count - 1) : getString(R.string.retweeted_by, retweeted_by_name));
+				}
+				mHolder.reply_retweet_status.setText(status.retweet_count > 1 ? getString(
+						R.string.retweeted_by_with_count, retweeted_by_name, status.retweet_count - 1) : getString(R.string.retweeted_by, retweeted_by_name));
+				mHolder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_retweet, 0,
+																					0, 0);
+			} else if (status.in_reply_to_status_id > 0 && !TextUtils.isEmpty(status.in_reply_to_screen_name)) {
+				mHolder.reply_retweet_status.setText(getString(R.string.in_reply_to,
+																	   status.in_reply_to_screen_name));
+				mHolder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_reply, 0,
+																					0, 0);
+			}
+			if (prefs.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true)) {
+				loader.displayProfileImage(mHolder.my_profile_image, status.user_profile_image_url);
+				loader.displayProfileImage(mHolder.profile_image, status.user_profile_image_url);
+			} else {
+				mHolder.profile_image.setVisibility(View.GONE);
+				mHolder.my_profile_image.setVisibility(View.GONE);
+			}
+			final boolean has_preview = status.has_media && status.image_preview_url != null;
+			mHolder.image_preview_container.setVisibility(has_preview ? View.VISIBLE : View.GONE);
+			if (has_preview) {
+				mHolder.setImagePreviewDisplayOption(getImagePreviewDisplayOptionInt(getActivity()));
+				if (status.is_possibly_sensitive && !prefs.getBoolean(PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS, false)) {
+					mHolder.image_preview.setImageResource(R.drawable.image_preview_nsfw);
+					mHolder.image_preview_progress.setVisibility(View.GONE);
+				} else {
+					loader.displayPreviewImage(mHolder.image_preview, status.image_preview_url, null);
+				}
+			}
+		}
+
+		@Override
+		public Dialog onCreateDialog(final Bundle savedInstanceState) {
+			final Dialog dialog = super.onCreateDialog(savedInstanceState);
+			dialog.setTitle(R.string.view_status);
+			return dialog;
+		}
+		
+		@Override		
+		public View onCreateView(final LayoutInflater inflater, final ViewGroup parent, final Bundle savedInstanceState) {
+			final ScrollView view = (ScrollView) inflater.inflate(R.layout.compose_view_status, parent, false);
+			mHolder = new StatusViewHolder(view.getChildAt(0));
+			return view;
+		}
+
 	}
 
 	static class CopyImageTask extends AsyncTask<Void, Void, Boolean> {

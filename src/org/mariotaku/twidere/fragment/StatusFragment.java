@@ -457,7 +457,7 @@ OnImageClickListener {
 		final List<ImageSpec> images = getImagesInStatus(status.text_html);
 		mImagePreviewContainer.setVisibility(images.size() > 0 ? View.VISIBLE : View.GONE);
 		loadPreviewImages(images);
-		if (mLoadMoreAutomatically){
+		if (mLoadMoreAutomatically) {
 			showPreviewImages();
 		}
 		mRetweetedStatusView.setVisibility(!status.user_is_protected ? View.VISIBLE : View.GONE);

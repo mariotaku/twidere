@@ -6,7 +6,7 @@
 	android:minWidth="@dimen/compose_min_width"
 	android:orientation="vertical">
 
-	<org.mariotaku.twidere.view.ColorView
+	<org.mariotaku.twidere.view.AccountsColorFrameLayout
 		android:id="@+id/account_colors"
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
@@ -56,7 +56,7 @@
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				android:textColor="#80808080"/>
 		</FrameLayout>
-	</org.mariotaku.twidere.view.ColorView>
+	</org.mariotaku.twidere.view.AccountsColorFrameLayout>
 
 	<org.mariotaku.menubar.MenuBar
 		android:id="@+id/menu_bar"

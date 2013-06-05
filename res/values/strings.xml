@@ -468,4 +468,5 @@
 	<string name="unsubscribe">Unsubscribe</string>
 	<string name="background_toast_notification">Background Toast notification</string>
 	<string name="background_toast_notification_summary">Show Toast notification when switched to background</string>
+	<string name="original_status">Original tweet</string>
 </resources>

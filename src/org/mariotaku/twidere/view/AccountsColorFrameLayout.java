@@ -27,21 +27,21 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
-public class ColorView extends FrameLayout {
+public class AccountsColorFrameLayout extends FrameLayout {
 
 	private int[] mColors;
 	private final Paint mPaint = new Paint();
 	private final float mColorsWidth;
 
-	public ColorView(final Context context) {
+	public AccountsColorFrameLayout(final Context context) {
 		this(context, null);
 	}
 
-	public ColorView(final Context context, final AttributeSet attrs) {
+	public AccountsColorFrameLayout(final Context context, final AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
 
-	public ColorView(final Context context, final AttributeSet attrs, final int defStyle) {
+	public AccountsColorFrameLayout(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		setWillNotDraw(false);
 		final Resources res = getResources();
