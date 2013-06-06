@@ -10,8 +10,8 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content">
 
-		<org.mariotaku.twidere.view.ProfileBannerImageView
-			android:id="@+id/profile_banner"
+		<org.mariotaku.twidere.view.ProfileImageBannerLayout
+			android:id="@+id/profile_image_banner"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center"/>
@@ -24,31 +24,16 @@
 			android:gravity="center_vertical"
 			android:orientation="horizontal">
 
-			<org.mariotaku.twidere.view.ClickableImageView
-				android:id="@+id/profile_image"
-				android:layout_width="@dimen/profile_image_size"
-				android:layout_height="@dimen/profile_image_size"
-				android:layout_alignParentLeft="true"
-				android:layout_centerInParent="true"
-				android:layout_margin="8dp"
-				android:contentDescription="@string/profile_image"
-				android:scaleType="fitCenter"
-				android:src="@drawable/ic_profile_image_default"/>
-
 			<LinearLayout
 				android:id="@+id/name_container"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_alignBottom="@+id/profile_image"
-				android:layout_alignTop="@+id/profile_image"
-				android:layout_alignWithParentIfMissing="true"
+				android:layout_alignParentLeft="true"
 				android:layout_toLeftOf="@+id/edit_follow_container"
-				android:layout_toRightOf="@+id/profile_image"
 				android:clickable="true"
 				android:gravity="center_vertical"
 				android:orientation="vertical"
-				android:paddingLeft="8dp"
-				android:paddingRight="8dp"
+				android:padding="8dp"
 				style="?selectableViewStyle">
 
 				<TextView
@@ -86,9 +71,9 @@
 				android:id="@+id/edit_follow_container"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_alignBottom="@+id/profile_image"
+				android:layout_alignBottom="@+id/name_container"
 				android:layout_alignParentRight="true"
-				android:layout_alignTop="@+id/profile_image"
+				android:layout_alignTop="@+id/name_container"
 				android:layout_margin="4dp"
 				android:visibility="gone">
 

@@ -51,6 +51,7 @@ import static org.mariotaku.twidere.util.Utils.createTakePhotoIntent;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.showErrorMessage;
+import org.mariotaku.twidere.view.ProfileImageBannerLayout;
 
 public class EditUserProfileActivity extends BaseDialogWhenLargeActivity implements OnSizeChangedListener, TextWatcher,
 		OnClickListener, CroutonLifecycleCallback {
@@ -61,13 +62,16 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 	private static final int REQUEST_UPLOAD_PROFILE_BANNER_IMAGE = 2;
 
 	private ImageLoaderWrapper mLazyImageLoader;
+	private AsyncTaskManager mAsyncTaskManager;
+	private AsyncTask<Void, Void, ?> mTask;
 
-	private ImageView mProfileImageView;
-	private ProfileBannerImageView mProfileBannerView;
+	private ProfileImageBannerLayout mProfileImageBannerLayout;
+	private ImageView mProfileImageView, mProfileBannerView;
 	private EditText mEditName, mEditDescription, mEditLocation, mEditUrl;
 	private View mProgress, mContent;
-	private AsyncTaskManager mAsyncTaskManager;
 
+	private PopupMenu mPopupMenu;
+	
 	private boolean mBackPressed;
 	private long mAccountId;
 	private int mBannerWidth;
@@ -75,9 +79,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 
 	private boolean mUserInfoLoaderInitialized;
 
-	private PopupMenu mPopupMenu;
 
-	private AsyncTask<Void, Void, ?> mTask;
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -218,13 +220,13 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 			mPopupMenu.dismiss();
 		}
 		switch (view.getId()) {
-			case R.id.profile_image: {
+			case ProfileImageBannerLayout.VIEW_ID_PROFILE_IMAGE: {
 				mPopupMenu = PopupMenu.getInstance(this, view);
 				mPopupMenu.inflate(R.menu.action_profile_image);
 				mPopupMenu.setOnMenuItemClickListener(mProfileImageMenuListener);
 				break;
 			}
-			case R.id.profile_banner: {
+			case ProfileImageBannerLayout.VIEW_ID_PROFILE_BANNER_IMAGE: {
 				mPopupMenu = PopupMenu.getInstance(this, view);
 				mPopupMenu.inflate(R.menu.action_profile_banner_image);
 				final Menu menu = mPopupMenu.getMenu();
@@ -246,8 +248,9 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 		super.onContentChanged();
 		mProgress = findViewById(R.id.progress);
 		mContent = findViewById(R.id.content);
-		mProfileBannerView = (ProfileBannerImageView) findViewById(R.id.profile_banner);
-		mProfileImageView = (ImageView) findViewById(R.id.profile_image);
+		mProfileImageBannerLayout = (ProfileImageBannerLayout) findViewById(R.id.profile_image_banner);
+		mProfileBannerView = mProfileImageBannerLayout.getProfileBannerImageView();
+		mProfileImageView = mProfileImageBannerLayout.getProfileImageView();
 		mEditName = (EditText) findViewById(R.id.name);
 		mEditDescription = (EditText) findViewById(R.id.description);
 		mEditLocation = (EditText) findViewById(R.id.location);
@@ -268,7 +271,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 		mAccountId = extras.getLong(INTENT_KEY_ACCOUNT_ID);
 		setContentView(R.layout.edit_user_profile);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		mProfileBannerView.setOnSizeChangedListener(this);
+		mProfileImageBannerLayout.setOnSizeChangedListener(this);
 		mEditName.addTextChangedListener(this);
 		mEditDescription.addTextChangedListener(this);
 		mEditLocation.addTextChangedListener(this);

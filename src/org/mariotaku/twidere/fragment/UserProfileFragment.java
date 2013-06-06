@@ -117,6 +117,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import org.mariotaku.twidere.view.ProfileBannerImageView;
+import org.mariotaku.twidere.view.ProfileImageBannerLayout;
 
 public class UserProfileFragment extends BaseListFragment implements OnClickListener, OnItemClickListener,
 		OnItemLongClickListener, OnMenuItemClickListener, OnLinkClickListener, Panes.Right, OnSizeChangedListener {
@@ -127,8 +128,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private ImageLoaderWrapper mProfileImageLoader;
 	private SharedPreferences mPreferences;
 
-	private ImageView mProfileImageView;
-	private ProfileBannerImageView mProfileBannerView;
+	private ImageView mProfileImageView, mProfileBannerView;
 	private TextView mNameView, mScreenNameView, mDescriptionView, mLocationView, mURLView, mCreatedAtView,
 			mTweetCount, mFollowersCount, mFriendsCount, mFollowingYouIndicator, mErrorMessageView;
 	private View mNameContainer, mDescriptionContainer, mLocationContainer, mURLContainer,
@@ -136,6 +136,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private ProgressBar mFollowProgress, mMoreOptionsProgress;
 	private Button mEditFollowButton, mMoreOptionsButton, mRetryButton;
 	private ColorLabelRelativeLayout mProfileNameContainer;
+	private ProfileImageBannerLayout mProfileImageBannerLayout;
 	private ListView mListView;
 	private View mHeaderView;
 
@@ -425,7 +426,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mFriendsContainer.setOnClickListener(this);
 		mRetryButton.setOnClickListener(this);
 		mMoreOptionsButton.setOnClickListener(this);
-		mProfileBannerView.setOnSizeChangedListener(this);
+		mProfileImageBannerLayout.setOnSizeChangedListener(this);
 		setListAdapter(null);
 		mListView = getListView();
 		mListView.addHeaderView(mHeaderView, null, false);
@@ -433,7 +434,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mListView.setOnItemLongClickListener(this);
 		setListAdapter(mAdapter);
 		getUserInfo(account_id, user_id, screen_name, false);
-
 	}
 
 	@Override
@@ -499,12 +499,12 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				getUserInfo(true);
 				break;
 			}
-			case R.id.profile_image: {
+			case ProfileImageBannerLayout.VIEW_ID_PROFILE_IMAGE: {
 				final String profile_image_url_string = getOriginalTwitterProfileImage(mUser.profile_image_url);
 				openImage(getActivity(), profile_image_url_string, null, false);
 				break;
 			}
-			case R.id.profile_banner: {
+			case ProfileImageBannerLayout.VIEW_ID_PROFILE_BANNER_IMAGE: {
 				final String profile_banner_url = mUser.profile_banner_url;
 				if (profile_banner_url == null) return;
 				openImage(getActivity(), profile_banner_url + "/ipad_retina", null, false);
@@ -591,7 +591,9 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mFriendsContainer = mHeaderView.findViewById(R.id.friends_container);
 		mFriendsCount = (TextView) mHeaderView.findViewById(R.id.friends_count);
 		mProfileNameContainer = (ColorLabelRelativeLayout) mHeaderView.findViewById(R.id.profile_name_container);
-		mProfileImageView = (ImageView) mHeaderView.findViewById(R.id.profile_image);
+		mProfileImageBannerLayout = (ProfileImageBannerLayout) mHeaderView.findViewById(R.id.profile_image_banner);
+		mProfileImageView = mProfileImageBannerLayout.getProfileImageView();
+		mProfileBannerView = mProfileImageBannerLayout.getProfileBannerImageView();
 		mDescriptionContainer = mHeaderView.findViewById(R.id.description_container);
 		mLocationContainer = mHeaderView.findViewById(R.id.location_container);
 		mURLContainer = mHeaderView.findViewById(R.id.url_container);
@@ -602,7 +604,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mMoreOptionsButton = (Button) mHeaderView.findViewById(R.id.more_options);
 		mMoreOptionsProgress = (ProgressBar) mHeaderView.findViewById(R.id.more_options_progress);
 		mFollowingYouIndicator = (TextView) mHeaderView.findViewById(R.id.following_you_indicator);
-		mProfileBannerView = (ProfileBannerImageView) mHeaderView.findViewById(R.id.profile_banner);
 		mListContainer = super.onCreateView(inflater, container, savedInstanceState);
 		final View container_view = inflater.inflate(R.layout.list_with_error_message, null);
 		((FrameLayout) container_view.findViewById(R.id.list_container)).addView(mListContainer);

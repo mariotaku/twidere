@@ -15,58 +15,38 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content">
 
-				<org.mariotaku.twidere.view.ProfileBannerImageView
-					android:id="@+id/profile_banner"
+				<org.mariotaku.twidere.view.ProfileImageBannerLayout
+					android:id="@+id/profile_image_banner"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:layout_gravity="center"/>
 
-				<RelativeLayout
+				<LinearLayout
 					android:id="@+id/profile_name_container"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:layout_gravity="bottom"
 					android:clickable="true"
-					android:gravity="center_vertical">
+					android:gravity="center_vertical"
+					android:orientation="vertical"
+					android:padding="8dp">
 
-					<org.mariotaku.twidere.view.ClickableImageView
-						android:id="@+id/profile_image"
-						android:layout_width="@dimen/profile_image_size"
-						android:layout_height="@dimen/profile_image_size"
-						android:layout_centerVertical="true"
-						android:layout_margin="16dp"
-						android:scaleType="fitCenter"
-						android:src="@drawable/ic_profile_image_default"/>
+					<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/name"
+						android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-					<LinearLayout
-						android:id="@+id/name_container"
+					<EditText
+						android:id="@+id/name"
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
-						android:layout_alignWithParentIfMissing="true"
-						android:layout_toRightOf="@+id/profile_image"
-						android:layout_centerVertical="true"
-						android:gravity="center_vertical"
-						android:orientation="vertical"
-						android:paddingLeft="8dp"
-						android:paddingRight="8dp">
-
-						<TextView
-							android:layout_width="wrap_content"
-							android:layout_height="wrap_content"
-							android:text="@string/name"
-							android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-						<EditText
-							android:id="@+id/name"
-							android:layout_width="match_parent"
-							android:layout_height="wrap_content"
-							android:layout_gravity="center"
-							android:inputType="textPersonName"
-							android:maxLength="20"
-							android:singleLine="true"
-							android:textAppearance="?android:attr/textAppearanceMedium"/>
-					</LinearLayout>
-				</RelativeLayout>
+						android:layout_gravity="center"
+						android:inputType="textPersonName"
+						android:maxLength="20"
+						android:singleLine="true"
+						android:textAppearance="?android:attr/textAppearanceMedium"/>
+				</LinearLayout>
 			</FrameLayout>
 
 			<LinearLayout
@@ -79,7 +59,6 @@
 				<TextView
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					
 					android:text="@string/description"
 					android:textAppearance="?android:attr/textAppearanceMedium"/>
 
@@ -89,7 +68,6 @@
 					android:layout_height="wrap_content"
 					android:gravity="top"
 					android:inputType="textMultiLine"
-					
 					android:maxLength="160"
 					android:minLines="4"
 					android:singleLine="false"
@@ -106,7 +84,7 @@
 				<TextView
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					
+
 					android:singleLine="true"
 					android:text="@string/location"
 					android:textAppearance="?android:attr/textAppearanceMedium"/>
@@ -116,7 +94,7 @@
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:inputType="textPostalAddress"
-					
+
 					android:maxLength="30"
 					android:singleLine="true"
 					android:textAppearance="?android:attr/textAppearanceMedium"/>
@@ -132,7 +110,7 @@
 				<TextView
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					
+
 					android:singleLine="true"
 					android:text="@string/url"
 					android:textAppearance="?android:attr/textAppearanceMedium"/>
@@ -142,7 +120,7 @@
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:inputType="textUri"
-					
+
 					android:maxLength="100"
 					android:singleLine="true"
 					android:textAppearance="?android:attr/textAppearanceMedium"/>
