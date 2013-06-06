@@ -109,17 +109,17 @@ public class ProfileImageBannerLayout extends ExtendedFrameLayout {
 	
 	private static class ProfileImageView extends ClickableImageView {
 
-		private final Paint mBorderPaint, mBackgroundPaint;
+		private final Paint mWhitePaint, mBlackPaint;
 		private final int mPaddings;
 		
 		private ProfileImageView(final Context context, int padding) {
 			super(context, null, 0);
 			ViewCompat.setLayerType(this, LAYER_TYPE_SOFTWARE, null);
 			//setScaleType(ScaleType.FIT_XY);
-			mBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-			mBorderPaint.setColor(Color.WHITE);
-			mBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-			mBackgroundPaint.setColor(Color.BLACK);
+			mWhitePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+			mWhitePaint.setColor(Color.WHITE);
+			mBlackPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+			mBlackPaint.setColor(Color.BLACK);
 			mPaddings = padding;
 			setPadding(padding, padding, padding, padding);
 		}
@@ -129,7 +129,8 @@ public class ProfileImageBannerLayout extends ExtendedFrameLayout {
 			canvas.drawColor(Color.WHITE);
 			final int width = getWidth(), height = getHeight();
 			if (width > 0 && height > 0) {
-				canvas.drawRect(mPaddings, mPaddings, width - mPaddings, height - mPaddings, mBackgroundPaint);
+				canvas.drawRect(mPaddings, mPaddings, width - mPaddings, height - mPaddings, mBlackPaint);
+				canvas.drawRect(mPaddings / 2, mPaddings / 2, width - mPaddings / 2, height - mPaddings / 2, mWhitePaint);
 			}
 			super.onDraw(canvas);
 		}
