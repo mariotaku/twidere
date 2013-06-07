@@ -93,6 +93,8 @@ import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
 import static android.os.Environment.getExternalStorageState;
 import static android.text.TextUtils.isEmpty;
+import static android.text.format.DateUtils.getRelativeTimeSpanString;
+import static org.mariotaku.twidere.model.ParcelableLocation.isValidLocation;
 import static org.mariotaku.twidere.util.Utils.copyStream;
 import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
 import static org.mariotaku.twidere.util.Utils.getAccountColors;
@@ -106,8 +108,6 @@ import static org.mariotaku.twidere.util.Utils.getThemeColor;
 import static org.mariotaku.twidere.util.Utils.openImageDirectly;
 import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.showErrorMessage;
-import static android.text.format.DateUtils.getRelativeTimeSpanString;
-import static org.mariotaku.twidere.model.ParcelableLocation.isValidLocation;
 import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
@@ -995,12 +995,12 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			mHolder.setAccountColorEnabled(true);
 			mHolder.setTextSize(prefs.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE));
 			mHolder.text.setText(status.text_unescaped);
-			final String option = prefs.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH);
-			if (NAME_DISPLAY_OPTION_NAME.equals(option)) {
+			final String name_option = prefs.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH);
+			if (NAME_DISPLAY_OPTION_NAME.equals(name_option)) {
 				mHolder.name.setText(status.user_name);
 				mHolder.screen_name.setText(null);
 				mHolder.screen_name.setVisibility(View.GONE);
-			} else if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) {
+			} else if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(name_option)) {
 				mHolder.name.setText("@" + status.user_screen_name);
 				mHolder.screen_name.setText(null);
 				mHolder.screen_name.setVisibility(View.GONE);
@@ -1031,7 +1031,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			mHolder.reply_retweet_status.setVisibility(status.in_reply_to_status_id != -1 || status.is_retweet ? View.VISIBLE : View.GONE);
 			if (status.is_retweet && !TextUtils.isEmpty(retweeted_by_name)
 				&& !TextUtils.isEmpty(retweeted_by_screen_name)) {
-				if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) {
+				if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(name_option)) {
 					mHolder.reply_retweet_status.setText(status.retweet_count > 1 ? getString(
 							R.string.retweeted_by_with_count, retweeted_by_screen_name, status.retweet_count - 1)
 									: getString(R.string.retweeted_by, retweeted_by_screen_name));
@@ -1042,12 +1042,12 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				mHolder.reply_retweet_status.setText(status.retweet_count > 1 ? getString(
 						R.string.retweeted_by_with_count, retweeted_by_name, status.retweet_count - 1) : getString(R.string.retweeted_by, retweeted_by_name));
 				mHolder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_retweet, 0,
-																					0, 0);
+						0, 0);
 			} else if (status.in_reply_to_status_id > 0 && !TextUtils.isEmpty(status.in_reply_to_screen_name)) {
 				mHolder.reply_retweet_status.setText(getString(R.string.in_reply_to,
-																	   status.in_reply_to_screen_name));
+						status.in_reply_to_screen_name));
 				mHolder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_reply, 0,
-																					0, 0);
+						0, 0);
 			}
 			if (prefs.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true)) {
 				loader.displayProfileImage(mHolder.my_profile_image, status.user_profile_image_url);
@@ -1056,17 +1056,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				mHolder.profile_image.setVisibility(View.GONE);
 				mHolder.my_profile_image.setVisibility(View.GONE);
 			}
-			final boolean has_preview = status.has_media && status.image_preview_url != null;
-			mHolder.image_preview_container.setVisibility(has_preview ? View.VISIBLE : View.GONE);
-			if (has_preview) {
-				mHolder.setImagePreviewDisplayOption(getImagePreviewDisplayOptionInt(getActivity()));
-				if (status.is_possibly_sensitive && !prefs.getBoolean(PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS, false)) {
-					mHolder.image_preview.setImageResource(R.drawable.image_preview_nsfw);
-					mHolder.image_preview_progress.setVisibility(View.GONE);
-				} else {
-					loader.displayPreviewImage(mHolder.image_preview, status.image_preview_url, null);
-				}
-			}
+			mHolder.image_preview_container.setVisibility(View.GONE);
 		}
 
 		@Override
@@ -1082,7 +1072,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			mHolder = new StatusViewHolder(view.getChildAt(0));
 			return view;
 		}
-
+		
 	}
 
 	static class CopyImageTask extends AsyncTask<Void, Void, Boolean> {

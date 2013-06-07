@@ -24,6 +24,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import org.mariotaku.twidere.Constants;
@@ -37,7 +38,8 @@ public class StatusViewHolder implements Constants {
 
 	public final ImageView my_profile_image, profile_image, image_preview;
 	public final TextView name, screen_name, text, time, reply_retweet_status;
-	public final View name_container, image_preview_container, image_preview_progress;
+	public final View name_container, image_preview_container;
+	public final ProgressBar image_preview_progress;
 	private final View gap_indicator;
 	private final ColorLabelRelativeLayout content;
 	private final int theme_color, image_preview_small_width;
@@ -57,7 +59,7 @@ public class StatusViewHolder implements Constants {
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		my_profile_image = (ImageView) view.findViewById(R.id.my_profile_image);
 		image_preview = (ImageView) view.findViewById(R.id.image_preview);
-		image_preview_progress = view.findViewById(R.id.image_preview_progress);
+		image_preview_progress = (ProgressBar) view.findViewById(R.id.image_preview_progress);
 		name_container = view.findViewById(R.id.name_container);
 		name = (TextView) view.findViewById(R.id.name);
 		screen_name = (TextView) view.findViewById(R.id.screen_name);

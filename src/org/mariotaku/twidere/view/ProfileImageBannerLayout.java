@@ -75,7 +75,9 @@ public class ProfileImageBannerLayout extends ExtendedFrameLayout {
 	}
 
 	private static class ProfileBannerImageView extends ClickableImageView {
-
+		
+		private static final int[] COLORS = new int[] { 0xFFFFFFFF, 0x00FFFFFF };
+		private static final float[] POSITIONS = new float[] { 0.0f, 1.0f };
 		private final Paint mPaint = new Paint();
 
 		private LinearGradient mShader;
@@ -88,11 +90,11 @@ public class ProfileImageBannerLayout extends ExtendedFrameLayout {
 
 		@Override
 		protected void onDraw(final Canvas canvas) {
-			if (mShader == null) return;
 			final int width = getWidth(), height = getHeight();
+			if (mShader == null) return;
+			super.onDraw(canvas);			
 			mPaint.setShader(mShader);
 			mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-			super.onDraw(canvas);
 			canvas.drawRect(0, 0, width, height, mPaint);
 		}
 
@@ -101,7 +103,7 @@ public class ProfileImageBannerLayout extends ExtendedFrameLayout {
 			final int width = MeasureSpec.getSize(widthMeasureSpec), height = width / 2;
 			setMeasuredDimension(width, height);
 			if (width > 0) {		
-				mShader = new LinearGradient(width / 2, 0, width / 2, height, 0xffffffff, 0x00ffffff, Shader.TileMode.CLAMP);
+				mShader = new LinearGradient(width / 2, 0, width / 2, height, COLORS, POSITIONS, Shader.TileMode.CLAMP);
 			}
 			super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
 		}
