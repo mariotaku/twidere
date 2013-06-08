@@ -1,7 +1,5 @@
 package org.mariotaku.twidere.view;
 
-import org.mariotaku.twidere.view.iface.IExtendedView;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.LinearGradient;
@@ -11,7 +9,7 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Shader;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.widget.ImageView;
+import org.mariotaku.twidere.view.iface.IExtendedView;
 
 public class ProfileBannerImageView extends ClickableImageView implements IExtendedView {
 
