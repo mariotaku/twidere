@@ -29,6 +29,7 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 
 import static org.mariotaku.twidere.util.Utils.getBestBannerType;
+import android.text.TextUtils;
 
 /**
  * Lazy image loader for {@link ListView} and {@link GridView} etc.</br> </br>
@@ -44,7 +45,7 @@ import static org.mariotaku.twidere.util.Utils.getBestBannerType;
 public class ImageLoaderWrapper implements Constants {
 
 	private final ImageLoader mImageLoader;
-	private final DisplayImageOptions mProfileImageDisplayOptions, mImageDisplayOptions;
+	private final DisplayImageOptions mProfileImageDisplayOptions, mImageDisplayOptions, mBannerDisplayOptions;
 
 	public ImageLoaderWrapper(final ImageLoader loader) {
 		mImageLoader = loader;
@@ -61,6 +62,13 @@ public class ImageLoaderWrapper implements Constants {
 		image_opts_builder.bitmapConfig(Bitmap.Config.RGB_565);
 		image_opts_builder.resetViewBeforeLoading();
 		mImageDisplayOptions = image_opts_builder.build();
+		final DisplayImageOptions.Builder banner_opts_builder = new DisplayImageOptions.Builder();
+		banner_opts_builder.cacheInMemory();
+		banner_opts_builder.cacheOnDisc();
+		banner_opts_builder.bitmapConfig(Bitmap.Config.RGB_565);
+		banner_opts_builder.resetViewBeforeLoading();
+		banner_opts_builder.showStubImage(R.drawable.profile_banner_default);
+		mBannerDisplayOptions = banner_opts_builder.build();
 	}
 
 	public void clearFileCache() {
@@ -81,7 +89,8 @@ public class ImageLoaderWrapper implements Constants {
 
 	public void displayProfileBanner(final ImageView view, final String base_url, final int width) {
 		final String type = getBestBannerType(width);
-		mImageLoader.displayImage(base_url + "/" + type, view, mImageDisplayOptions);
+		final String url = TextUtils.isEmpty(base_url) ? null : base_url + "/" + type;
+		mImageLoader.displayImage(url, view, mBannerDisplayOptions);
 	}
 	
 	public void displayProfileImage(final ImageView view, final String url) {

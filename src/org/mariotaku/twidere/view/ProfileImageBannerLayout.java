@@ -1,9 +1,8 @@
 package org.mariotaku.twidere.view;
 
-import org.mariotaku.twidere.view.iface.IExtendedView;
-
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
@@ -11,12 +10,10 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Shader;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.widget.ImageView;
-import android.widget.FrameLayout;
-import android.view.ViewGroup;
 import android.view.Gravity;
-import android.graphics.Color;
-import android.graphics.Rect;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import org.mariotaku.twidere.R;
 
 public class ProfileImageBannerLayout extends ExtendedFrameLayout {
 
@@ -43,9 +40,9 @@ public class ProfileImageBannerLayout extends ExtendedFrameLayout {
 		mBorderWidth = (int) (getResources().getDisplayMetrics().density * 3.5);
 		mProfileBannerImageView = new ProfileBannerImageView(context);
 		mProfileBannerImageView.setId(VIEW_ID_PROFILE_BANNER_IMAGE);
+		mProfileBannerImageView.setBackgroundResource(R.drawable.profile_banner_default);
 		addView(mProfileBannerImageView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		mProfileImageView = new ProfileImageView(context, mBorderWidth);
-		//mProfileImageView.setScaleType(ImageView.ScaleType.FIT_XY);
 		mProfileImageView.setId(VIEW_ID_PROFILE_IMAGE);
 		addView(mProfileImageView, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL));
 	}
@@ -85,7 +82,7 @@ public class ProfileImageBannerLayout extends ExtendedFrameLayout {
 		private ProfileBannerImageView(final Context context) {
 			super(context, null, 0);
 			ViewCompat.setLayerType(this, LAYER_TYPE_SOFTWARE, null);
-			//setScaleType(ScaleType.FIT_XY);
+			setScaleType(ScaleType.FIT_XY);
 		}
 
 		@Override
