@@ -40,7 +40,6 @@ public class ProfileImageBannerLayout extends ExtendedFrameLayout {
 		mBorderWidth = (int) (getResources().getDisplayMetrics().density * 3.5);
 		mProfileBannerImageView = new ProfileBannerImageView(context);
 		mProfileBannerImageView.setId(VIEW_ID_PROFILE_BANNER_IMAGE);
-		mProfileBannerImageView.setBackgroundResource(R.drawable.profile_banner_default);
 		addView(mProfileBannerImageView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		mProfileImageView = new ProfileImageView(context, mBorderWidth);
 		mProfileImageView.setId(VIEW_ID_PROFILE_IMAGE);
