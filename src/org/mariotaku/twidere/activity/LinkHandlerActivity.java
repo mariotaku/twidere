@@ -19,19 +19,23 @@
 
 package org.mariotaku.twidere.activity;
 
-import static android.text.TextUtils.isEmpty;
-import static org.mariotaku.twidere.util.Utils.getAccountId;
-import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
-import static org.mariotaku.twidere.util.Utils.isMyAccount;
-import static org.mariotaku.twidere.util.Utils.matchLinkId;
-import static org.mariotaku.twidere.util.Utils.parseInt;
-import static org.mariotaku.twidere.util.Utils.parseLong;
-
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentManagerTrojan;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NavUtils;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.Window;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.DirectMessagesConversationFragment;
 import org.mariotaku.twidere.fragment.IncomingFriendshipsFragment;
 import org.mariotaku.twidere.fragment.SavedSearchesListFragment;
 import org.mariotaku.twidere.fragment.StatusFragment;
+import org.mariotaku.twidere.fragment.StatusRetweetersListFragment;
 import org.mariotaku.twidere.fragment.StatusesListFragment;
 import org.mariotaku.twidere.fragment.UserBlocksListFragment;
 import org.mariotaku.twidere.fragment.UserFavoritesFragment;
@@ -47,18 +51,13 @@ import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
 import org.mariotaku.twidere.fragment.UsersListFragment;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentManagerTrojan;
-import android.support.v4.app.FragmentTransaction;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.Window;
-import org.mariotaku.twidere.fragment.StatusRetweetersListFragment;
+import static android.text.TextUtils.isEmpty;
+import static org.mariotaku.twidere.util.Utils.getAccountId;
+import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
+import static org.mariotaku.twidere.util.Utils.isMyAccount;
+import static org.mariotaku.twidere.util.Utils.matchLinkId;
+import static org.mariotaku.twidere.util.Utils.parseInt;
+import static org.mariotaku.twidere.util.Utils.parseLong;
 
 public class LinkHandlerActivity extends MultiSelectActivity {
 
@@ -115,8 +114,8 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 				if (isDualPaneMode()) {
 					final int count = fm.getBackStackEntryCount();
 					if (count == 0) {
-						// NavUtils.navigateUpFromSameTask(this);
-						onBackPressed();
+						NavUtils.navigateUpFromSameTask(this);
+						// onBackPressed();
 					} else if (!FragmentManagerTrojan.isStateSaved(fm)) {
 						for (int i = 0; i < count; i++) {
 							fm.popBackStackImmediate();
@@ -124,8 +123,8 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 						setSupportProgressBarIndeterminateVisibility(false);
 					}
 				} else {
-					// NavUtils.navigateUpFromSameTask(this);
-					onBackPressed();
+					NavUtils.navigateUpFromSameTask(this);
+					// onBackPressed();
 				}
 				break;
 			}

@@ -17,15 +17,8 @@
  */
 package org.mariotaku.twidere.view;
 
-import static org.mariotaku.twidere.util.Utils.getThemeColor;
- 
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.util.MotionEventAccessor;
-import org.mariotaku.twidere.preference.ThemeColorPreference;
-
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.PorterDuff;
+import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v4.view.PagerAdapter;
@@ -40,6 +33,11 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.preference.ThemeColorPreference;
+import org.mariotaku.twidere.util.MotionEventAccessor;
+
+import static org.mariotaku.twidere.util.Utils.getThemeColor;
 
 /**
  * This widget implements the dynamic action bar tab behavior that can change
@@ -271,6 +269,13 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 	public void setViewPager(final ViewPager pager, final int initialPosition) {
 		setViewPager(pager);
 		setCurrentItem(initialPosition);
+	}
+
+	@Override
+	protected void dispatchDraw(final Canvas canvas) {
+		canvas.saveLayerAlpha(null, isEnabled() ? 0xFF : 0x80, Canvas.ALL_SAVE_FLAG);
+		super.dispatchDraw(canvas);
+		canvas.restore();
 	}
 
 	private void addTab(final CharSequence label, final Drawable icon, final int index) {
