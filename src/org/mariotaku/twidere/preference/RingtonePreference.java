@@ -23,24 +23,27 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.media.MediaPlayer;
+import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.preference.ListPreference;
 import android.provider.MediaStore.Audio;
-import android.text.TextUtils;
 import android.util.AttributeSet;
+import java.util.ArrayList;
+import java.util.List;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.ArrayUtils;
 
 import static android.text.TextUtils.isEmpty;
-import android.widget.Toast;
+import java.util.Comparator;
+import java.util.Collections;
 
 public class RingtonePreference extends ListPreference {
 
 	private final Context mContext;
 	private final ContentResolver mResolver;
+	private final List<Ringtone> mRingtones;
 	private final String[] mEntries, mValues;
-	private MediaPlayer mMediaPlayer;
 
 	private int mSelectedItem;
 
@@ -48,29 +51,31 @@ public class RingtonePreference extends ListPreference {
 		super(context, attrs);
 		mContext = context;
 		mResolver = context.getContentResolver();
-		final String[] cols = new String[] { Audio.Media.DATA, Audio.Media.TITLE };
-		final Cursor cur = mResolver.query(Audio.Media.INTERNAL_CONTENT_URI, cols, Audio.Media.IS_NOTIFICATION + " = "
-				+ 1, null, Audio.Media.DEFAULT_SORT_ORDER);
+		final RingtoneManager manager = new RingtoneManager(context);
+		manager.setType(RingtoneManager.TYPE_NOTIFICATION);
+		final Cursor cur = manager.getCursor();
 		cur.moveToFirst();
 		final int count = cur.getCount();
-		mEntries = new String[count + 1];
-		mValues = new String[count + 1];
-		mEntries[0] = context.getString(R.string.default_ringtone);
-		mValues[0] = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString();
-		final int data_idx = cur.getColumnIndex(Audio.Media.DATA), title_idx = cur.getColumnIndex(Audio.Media.TITLE);
-		while (!cur.isAfterLast()) {
-			final int pos = cur.getPosition() + 1;
-			mEntries[pos] = cur.getString(title_idx);
-			mValues[pos] = cur.getString(data_idx);
-			cur.moveToNext();
+		mRingtones = new ArrayList<Ringtone>(count);
+		mEntries = new String[count];
+		mValues = new String[count];
+		for (int i = 0; i < count; i++) {
+			final Ringtone ringtone = manager.getRingtone(i);
+			mRingtones.add(ringtone);
+			mEntries[i] = ringtone.getTitle(context);
+			mValues[i] = manager.getRingtoneUri(i).toString();
 		}
-		cur.close();
 		setEntries(mEntries);
 		setEntryValues(mValues);
+		cur.close();
 	}
 
 	public int getSelectedItem() {
 		return mSelectedItem;
+	}
+	
+	public Ringtone getSelectedRingtone() {
+		return mRingtones.get(mSelectedItem);
 	}
 
 	public void setSelectedItem(final int selected) {
@@ -79,12 +84,9 @@ public class RingtonePreference extends ListPreference {
 
 	@Override
 	protected void onDialogClosed(final boolean positiveResult) {
-		if (mMediaPlayer != null) {
-			if (mMediaPlayer.isPlaying()) {
-				mMediaPlayer.stop();
-			}
-			mMediaPlayer.release();
-			mMediaPlayer = null;
+		final Ringtone ringtone = getSelectedRingtone();
+		if (ringtone != null && ringtone.isPlaying()) {
+			ringtone.stop();
 		}
 		if (positiveResult && mSelectedItem >= 0 && mSelectedItem < mValues.length) {
 			if (callChangeListener(mValues[mSelectedItem])) {
@@ -100,24 +102,27 @@ public class RingtonePreference extends ListPreference {
 			@Override
 			public void onClick(final DialogInterface dialog, final int which) {
 				setSelectedItem(which);
-				if (mMediaPlayer != null) {
-					if (mMediaPlayer.isPlaying()) {
-						mMediaPlayer.stop();
-					}
-					mMediaPlayer.release();
+				final Ringtone ringtone = getSelectedRingtone();
+				if (ringtone.isPlaying()) {
+					ringtone.stop();
 				}
-				mMediaPlayer = new MediaPlayer();
-				mMediaPlayer.setLooping(false);
-				final String ringtone = mValues[getSelectedItem()];
-				final Uri def_uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-				final Uri uri = isEmpty(ringtone) ? def_uri : Uri.parse(ringtone);
-				try {
-					mMediaPlayer.setDataSource(mContext, uri);
-					mMediaPlayer.prepare();
-					mMediaPlayer.start();
-				} catch (final Exception e) {
-				}
+				ringtone.play();
 			}
 		});
 	}
+	
+//	static final class RingtoneNameComparator implements Comparator<Ringtone> {
+//
+//		private final Context context;
+//
+//		RingtoneNameComparator(final Context context) {
+//			this.context = context;
+//		}
+//		
+//		@Override
+//		public int compare(final Ringtone value1, final Ringtone value2) {
+//			if (value1 == null || value2 == null) return 0;	
+//			return value1.getTitle(context).compareToIgnoreCase(value2.getTitle(context));
+//		}
+//	}
 }
