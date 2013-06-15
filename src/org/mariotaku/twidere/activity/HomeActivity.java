@@ -338,7 +338,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 
 	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu) {
-		final boolean bottom_actions = mPreferences.getBoolean(PREFERENCE_KEY_COMPOSE_BUTTON, false);
+		final boolean bottom_actions = mPreferences.getBoolean(PREFERENCE_KEY_BOTTOM_COMPOSE_BUTTON, false);
 		final boolean leftside_compose_button = mPreferences.getBoolean(PREFERENCE_KEY_LEFTSIDE_COMPOSE_BUTTON, false);
 		int icon = R.drawable.ic_menu_tweet, title = R.string.compose;
 		if (mViewPager != null && mAdapter != null) {

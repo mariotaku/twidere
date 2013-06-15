@@ -88,6 +88,7 @@ public class PopupMenu implements OnDismissListener, OnItemClickListener, OnTouc
 		dismiss();
 		final MenuItem item = mAdapter.getItem(position);
 		if (item.hasSubMenu()) {
+			if (item.getSubMenu().size() == 0) return;
 			showMenu(item.getSubMenu());
 		} else {
 			if (mItemClickListener != null) {

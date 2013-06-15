@@ -139,7 +139,7 @@ public interface Constants extends TwitterConstants {
 	public static final String PREFERENCE_KEY_CLEAR_CACHE = "clear_cache";
 	public static final String PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE = "display_profile_image";
 	public static final String PREFERENCE_KEY_IMAGE_PREVIEW_DISPLAY_OPTION = "image_preview_display_option";
-	public static final String PREFERENCE_KEY_COMPOSE_BUTTON = "bottom_compose_button";
+	public static final String PREFERENCE_KEY_BOTTOM_COMPOSE_BUTTON = "bottom_compose_button";
 	public static final String PREFERENCE_KEY_LEFTSIDE_COMPOSE_BUTTON = "leftside_compose_button";
 	public static final String PREFERENCE_KEY_ATTACH_LOCATION = "attach_location";
 	public static final String PREFERENCE_KEY_GZIP_COMPRESSING = "gzip_compressing";

@@ -16,5 +16,27 @@
 		android:icon="@drawable/ic_menu_send"
 		android:showAsAction="always"
 		android:title="@string/send"/>
+	<item
+		android:id="@+id/more_submenu"
+		android:icon="@drawable/ic_menu_more"
+		android:showAsAction="always"
+		android:title="@string/more">
+		<menu>
+			<item
+				android:id="@id/toggle_sensitive"
+				android:icon="@drawable/ic_menu_report_image"
+				android:title="@string/mark_as_sensitive"/>
+			<item
+				android:id="@id/extensions_submenu"
+				android:icon="@drawable/ic_menu_extension"
+				android:title="@string/extensions">
+				<menu/>
+			</item>
+			<item
+				android:id="@id/drafts"
+				android:icon="@drawable/ic_menu_save"
+				android:title="@string/drafts"/>
+		</menu>
+	</item>
 
 </menu>

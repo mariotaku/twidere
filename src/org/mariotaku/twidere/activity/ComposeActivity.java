@@ -256,7 +256,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) return;
 		final String option = mPreferences.getString(PREFERENCE_KEY_COMPOSE_QUIT_ACTION, COMPOSE_QUIT_ACTION_ASK);
 		final String text = mEditText != null ? parseString(mEditText.getText()) : null;
-		final boolean text_changed = text != null && !text.equals(mOriginalText);
+		final boolean text_changed = !isEmpty(text) && !text.equals(mOriginalText);
 		if (COMPOSE_QUIT_ACTION_DISCARD.equals(option)) {
 			mTask = new DiscardTweetTask(this).execute();
 		} else if (text_changed || mImageUri != null) {
@@ -370,6 +370,15 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			final Intent extensions_intent = new Intent(INTENT_ACTION_EXTENSION_COMPOSE);
 			addIntentToMenu(this, more_submenu.getSubMenu(), extensions_intent);
 		}
+		final boolean bottom_compose_button = mPreferences.getBoolean(PREFERENCE_KEY_BOTTOM_COMPOSE_BUTTON, false);
+		final MenuItem sendItem = menu.findItem(MENU_SEND);
+		if (sendItem != null) {
+			sendItem.setVisible(bottom_compose_button);
+		}
+		final MenuItem moreItem = menu.findItem(R.id.more_submenu);
+		if (moreItem != null) {
+			moreItem.setVisible(!bottom_compose_button);
+		}
 		mMenuBar.show();
 		setMenu();
 		mColorIndicator.setColors(getAccountColors(this, mAccountIds));
@@ -414,6 +423,12 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 
 	@Override
 	public boolean onMenuItemClick(final MenuItem item) {
+		return handleMenuItem(item);
+	}
+		
+
+	@Override
+	public boolean handleMenuItem(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_TAKE_PHOTO: {
 				if (!mIsPhotoAttached) {
@@ -450,7 +465,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				new DeleteImageTask(this).execute();
 				break;
 			}
-			case MENU_VIEW: {
+			case MENU_IMAGE: {
 				openImageDirectly(this, parseString(mImageUri), null);
 				break;
 			}
@@ -459,6 +474,28 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				if (!has_media) return false;
 				mIsPossiblySensitive = !mIsPossiblySensitive;
 				setMenu();
+				break;
+			}
+			case MENU_SEND: {
+				updateStatus();
+				break;
+			}
+			case MENU_VIEW: {
+				if (mInReplyToStatus == null) return false;
+				final DialogFragment fragment = new ViewStatusDialogFragment();
+				final Bundle args = new Bundle();
+				args.putParcelable(INTENT_KEY_STATUS, mInReplyToStatus);
+				fragment.setArguments(args);
+				fragment.show(getSupportFragmentManager(), "view_status");
+				break;
+			}
+			case MENU_SELECT_ACCOUNT: {
+				final Intent intent = new Intent(INTENT_ACTION_SELECT_ACCOUNT);
+				final Bundle bundle = new Bundle();
+				bundle.putBoolean(INTENT_KEY_ACTIVATED_ONLY, false);
+				bundle.putLongArray(INTENT_KEY_IDS, mAccountIds);
+				intent.putExtras(bundle);
+				startActivityForResult(intent, REQUEST_SELECT_ACCOUNT);
 				break;
 			}
 			default: {
@@ -498,27 +535,8 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				onBackPressed();
 				break;
 			}
-			case MENU_SEND: {
-				updateStatus();
-				break;
-			}
-			case MENU_VIEW: {
-				if (mInReplyToStatus == null) return false;
-				final DialogFragment fragment = new ViewStatusDialogFragment();
-				final Bundle args = new Bundle();
-				args.putParcelable(INTENT_KEY_STATUS, mInReplyToStatus);
-				fragment.setArguments(args);
-				fragment.show(getSupportFragmentManager(), "view_status");
-				break;
-			}
-			case MENU_SELECT_ACCOUNT: {
-				final Intent intent = new Intent(INTENT_ACTION_SELECT_ACCOUNT);
-				final Bundle bundle = new Bundle();
-				bundle.putBoolean(INTENT_KEY_ACTIVATED_ONLY, false);
-				bundle.putLongArray(INTENT_KEY_IDS, mAccountIds);
-				intent.putExtras(bundle);
-				startActivityForResult(intent, REQUEST_SELECT_ACCOUNT);
-				break;
+			default: {
+				return handleMenuItem(item);
 			}
 		}
 		return super.onOptionsItemSelected(item);
@@ -526,26 +544,35 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 
 	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu) {
-		if (menu == null || mEditText == null || mTextCountView == null) return false;
-		final String text_orig = parseString(mEditText.getText());
-		final String text = mImageUri != null ? mImageUploaderUsed ? getImageUploadStatus(this, FAKE_IMAGE_LINK,
-				text_orig) : text_orig + " " + FAKE_IMAGE_LINK : text_orig;
-		final int count = mValidator.getTweetLength(text);
+		final String text_orig = mEditText != null ? parseString(mEditText.getText()) : null;
+		final String text = mImageUri != null && text_orig != null ? mImageUploaderUsed ?
+				getImageUploadStatus(this, FAKE_IMAGE_LINK, text_orig) : text_orig + " " + FAKE_IMAGE_LINK : text_orig;
+		final int count = text != null ? mValidator.getTweetLength(text) : 0;
 		final boolean exceeded_limit = count < Validator.MAX_TWEET_LENGTH;
 		final boolean near_limit = count >= Validator.MAX_TWEET_LENGTH - 10;
 		final float hue = exceeded_limit ? near_limit ? 5 * (Validator.MAX_TWEET_LENGTH - count) : 50 : 0;
 		final float[] hsv = new float[] { hue, 1.0f, 1.0f };
-		mTextCountView.setTextColor(count >= Validator.MAX_TWEET_LENGTH - 10 ? Color.HSVToColor(0x80, hsv) : 0x80808080);
-		mTextCountView.setText(parseString(Validator.MAX_TWEET_LENGTH - count));
-		final MenuItem sendItem = menu.findItem(MENU_SEND);
-		if (sendItem != null) {
-			sendItem.setEnabled(text_orig.length() > 0);
+		if (mTextCountView != null) {
+			mTextCountView.setTextColor(count >= Validator.MAX_TWEET_LENGTH - 10 ? Color.HSVToColor(0x80, hsv) : 0x80808080);
+			mTextCountView.setText(parseString(Validator.MAX_TWEET_LENGTH - count));
 		}
-		final MenuItem viewItem = menu.findItem(MENU_VIEW);
-		if (viewItem != null) {
-			viewItem.setVisible(mInReplyToStatus != null);
+		if (menu != null) {
+			final boolean bottom_compose_button = mPreferences.getBoolean(PREFERENCE_KEY_BOTTOM_COMPOSE_BUTTON, false);
+			final MenuItem sendItem = menu.findItem(MENU_SEND);
+			if (sendItem != null) {
+				sendItem.setVisible(!bottom_compose_button);
+				sendItem.setEnabled(!isEmpty(text_orig));
+			}
+			final MenuItem viewItem = menu.findItem(MENU_VIEW);
+			if (viewItem != null) {
+				viewItem.setVisible(mInReplyToStatus != null);
+			}
+			final MenuItem moreItem = menu.findItem(R.id.more_submenu);
+			if (moreItem != null) {
+				moreItem.setVisible(bottom_compose_button);
+			}
 		}
-		return super.onPrepareOptionsMenu(menu);
+		return true;
 	}
 
 	@Override
@@ -580,7 +607,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 
 	@Override
 	public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
-		invalidateSupportOptionsMenu();
+		setMenu();
 	}
 
 	public void saveToDrafts() {
@@ -840,6 +867,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			mMentionUser = null;
 			mDraftItem = null;
 			mInReplyToStatusId = -1;
+			mOriginalText = null;
 			mEditText.setText(null);
 			final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
 			setIntent(intent);
@@ -883,6 +911,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 
 	private void setMenu() {
 		final Menu menu = mMenuBar.getMenu();
+		if (menu.size() == 0) return;
 		final int activated_color = getThemeColor(this);
 		final MenuItem itemAddImage = menu.findItem(MENU_ADD_IMAGE);
 		final Drawable iconAddImage = itemAddImage.getIcon().mutate();
@@ -946,6 +975,11 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 					}
 				}
 			}
+		}
+		final String text_orig = parseString(mEditText.getText());
+		final MenuItem sendItem = menu.findItem(MENU_SEND);
+		if (sendItem != null) {
+			sendItem.setEnabled(!isEmpty(text_orig));
 		}
 		mMenuBar.show();
 		invalidateSupportOptionsMenu();
