@@ -49,7 +49,6 @@ public class ColorLabelFrameLayout extends FrameLayout implements IColorLabelVie
 
 	public ColorLabelFrameLayout(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		setWillNotDraw(false);
 		final Resources res = context.getResources();
 		mDensity = res.getDisplayMetrics().density;
 		mPaintLeft.setColor(Color.TRANSPARENT);
@@ -82,15 +81,15 @@ public class ColorLabelFrameLayout extends FrameLayout implements IColorLabelVie
 	}
 
 	@Override
-	public void onDraw(final Canvas canvas) {
+	protected void dispatchDraw(final Canvas canvas) {
 		canvas.drawRect(mRectBackground, mPaintBackground);
 		canvas.drawRect(mRectLeft, mPaintLeft);
 		canvas.drawRect(mRectRight, mPaintRight);
-		super.onDraw(canvas);
+		super.dispatchDraw(canvas);
 	}
 
 	@Override
-	public void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
+	protected void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
 		mRectBackground.set(0, 0, w, h);
 		if (mIsRTL) {
 			mRectRight.set(0, 0, (int) (LABEL_WIDTH * mDensity), h);

@@ -14,6 +14,17 @@
 		android:key="quick_send"
 		android:summary="@string/quick_send_summary"
 		android:title="@string/quick_send"/>
+	<ListPreference
+		android:defaultValue="ask"
+		android:entries="@array/entries_compose_quit_action"
+		android:entryValues="@array/values_compose_quit_action"
+		android:key="compose_quit_action"
+		android:title="@string/compose_quit_action"/>
+	<CheckBoxPreference
+		android:defaultValue="false"
+		android:key="no_close_after_tweet_sent"
+		android:summary="@string/no_close_after_tweet_sent_summary"
+		android:title="@string/no_close_after_tweet_sent"/>	
 	<CheckBoxPreference
 		android:defaultValue="false"
 		android:key="disable_tab_swipe"

@@ -67,9 +67,7 @@ public class BaseListFragment extends ListFragment implements Constants {
 	}
 
 	public final TwidereApplication getApplication() {
-		final Activity activity = getActivity();
-		if (activity != null) return (TwidereApplication) activity.getApplication();
-		return null;
+		return TwidereApplication.getInstance(getActivity());
 	}
 
 	public final ContentResolver getContentResolver() {
@@ -120,7 +118,6 @@ public class BaseListFragment extends ListFragment implements Constants {
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		// getView().setClickable(true);
 	}
 
 	@Override

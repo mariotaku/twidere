@@ -61,5 +61,15 @@
 		<item>@string/profile_images</item>
 		<item>@string/preview_images</item>
 	</string-array>
+	<string-array name="entries_compose_quit_action">
+		<item>@string/ask</item>
+		<item>@string/save</item>
+		<item>@string/discard</item>
+	</string-array>
+	<string-array name="values_compose_quit_action">
+		<item>ask</item>
+		<item>save</item>
+		<item>discard</item>
+	</string-array>
 
 </resources>

@@ -122,15 +122,16 @@ import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isFiltered;
 import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
+import android.widget.Toast;
  
 public class ComposeActivity extends BaseDialogWhenLargeActivity implements TextWatcher, LocationListener,
 		OnMenuItemClickListener, OnClickListener, OnLongClickListener, PopupMenu.OnMenuItemClickListener,
 		OnEditorActionListener {
 
 	private static final String FAKE_IMAGE_LINK = "https://www.example.com/fake_image.jpg";
-	private static final String INTENT_KEY_CONTENT_MODIFIED = "content_modified";
 	private static final String INTENT_KEY_IS_POSSIBLY_SENSITIVE = "is_possibly_sensitive";
 	private static final String INTENT_KEY_SHOULD_SAVE_ACCOUNTS = "should_save_accounts";
+	private static final String INTENT_KEY_ORIGINAL_TEXT = "original_text";
 
 	private AsyncTwitterWrapper mTwitterWrapper;
 	private LocationManager mLocationManager;
@@ -153,11 +154,12 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	private boolean mIsImageAttached, mIsPhotoAttached, mIsPossiblySensitive, mShouldSaveAccounts;
 	private long[] mAccountIds;
 	private Uri mImageUri, mTempPhotoUri;
-	private boolean mImageUploaderUsed, mTweetShortenerUsed, mContentModified;
+	private boolean mImageUploaderUsed, mTweetShortenerUsed;
 	private ParcelableStatus mInReplyToStatus;
 	private ParcelableUser mMentionUser;
 	private DraftItem mDraftItem;
 	private long mInReplyToStatusId;
+	private String mOriginalText;
 
 
 	@Override
@@ -252,12 +254,22 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	@Override
 	public void onBackPressed() {
 		if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) return;
+		final String option = mPreferences.getString(PREFERENCE_KEY_COMPOSE_QUIT_ACTION, COMPOSE_QUIT_ACTION_ASK);
 		final String text = mEditText != null ? parseString(mEditText.getText()) : null;
-		if (!isEmpty(text) || mImageUri != null) {
-			new UnsavedTweetDialogFragment().show(getSupportFragmentManager(), "unsaved_tweet");
-			return;
+		final boolean text_changed = text != null && !text.equals(mOriginalText);
+		if (COMPOSE_QUIT_ACTION_DISCARD.equals(option)) {
+			mTask = new DiscardTweetTask(this).execute();
+		} else if (text_changed || mImageUri != null) {
+			if (COMPOSE_QUIT_ACTION_SAVE.equals(option)) {
+				saveToDrafts();
+				Toast.makeText(this, R.string.tweet_saved_to_draft, Toast.LENGTH_SHORT).show();
+				finish();
+			} else {
+				new UnsavedTweetDialogFragment().show(getSupportFragmentManager(), "unsaved_tweet");
+			}
+		} else {
+			mTask = new DiscardTweetTask(this).execute();
 		}
-		mTask = new DiscardTweetTask(this).execute();
 	}
 
 	@Override
@@ -317,13 +329,13 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			mIsImageAttached = savedInstanceState.getBoolean(INTENT_KEY_IS_IMAGE_ATTACHED);
 			mIsPhotoAttached = savedInstanceState.getBoolean(INTENT_KEY_IS_PHOTO_ATTACHED);
 			mIsPossiblySensitive = savedInstanceState.getBoolean(INTENT_KEY_IS_POSSIBLY_SENSITIVE);
-			mContentModified = savedInstanceState.getBoolean(INTENT_KEY_CONTENT_MODIFIED);
 			mImageUri = savedInstanceState.getParcelable(INTENT_KEY_IMAGE_URI);
 			mInReplyToStatus = savedInstanceState.getParcelable(INTENT_KEY_STATUS);
 			mInReplyToStatusId = savedInstanceState.getLong(INTENT_KEY_STATUS_ID);
 			mMentionUser = savedInstanceState.getParcelable(INTENT_KEY_USER);
 			mDraftItem = savedInstanceState.getParcelable(INTENT_KEY_DRAFT);
 			mShouldSaveAccounts = savedInstanceState.getBoolean(INTENT_KEY_SHOULD_SAVE_ACCOUNTS, false);
+			mOriginalText = savedInstanceState.getString(INTENT_KEY_ORIGINAL_TEXT);
 		} else {
 			// The activity was first created
 			final Bundle extras = intent.getExtras();
@@ -343,6 +355,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 					mAccountIds[0] = getDefaultAccountId(this);
 				}
 			}
+			mOriginalText = parseString(mEditText.getText());
 		}
 		if (!setComposeTitle(action)) {
 			setTitle(R.string.compose);
@@ -482,13 +495,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME: {
-				final String text = mEditText != null ? parseString(mEditText.getText()) : null;
-				if (mContentModified && !isEmpty(text)) {
-					new UnsavedTweetDialogFragment().show(getSupportFragmentManager(), "unsaved_tweet");
-				} else {
-					// NavUtils.navigateUpFromSameTask(this);
-					onBackPressed();
-				}
+				onBackPressed();
 				break;
 			}
 			case MENU_SEND: {
@@ -556,13 +563,13 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		outState.putBoolean(INTENT_KEY_IS_IMAGE_ATTACHED, mIsImageAttached);
 		outState.putBoolean(INTENT_KEY_IS_PHOTO_ATTACHED, mIsPhotoAttached);
 		outState.putParcelable(INTENT_KEY_IMAGE_URI, mImageUri);
-		outState.putBoolean(INTENT_KEY_CONTENT_MODIFIED, mContentModified);
 		outState.putBoolean(INTENT_KEY_IS_POSSIBLY_SENSITIVE, mIsPossiblySensitive);
 		outState.putParcelable(INTENT_KEY_STATUS, mInReplyToStatus);
 		outState.putLong(INTENT_KEY_STATUS_ID, mInReplyToStatusId);
 		outState.putParcelable(INTENT_KEY_USER, mMentionUser);
 		outState.putParcelable(INTENT_KEY_DRAFT, mDraftItem);
 		outState.putBoolean(INTENT_KEY_SHOULD_SAVE_ACCOUNTS, mShouldSaveAccounts);
+		outState.putString(INTENT_KEY_ORIGINAL_TEXT, mOriginalText);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -574,7 +581,6 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	@Override
 	public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
 		invalidateSupportOptionsMenu();
-		mContentModified = true;
 	}
 
 	public void saveToDrafts() {
@@ -823,8 +829,29 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		mTwitterWrapper.updateStatus(mAccountIds, text, attach_location ? mRecentLocation : null, mImageUri,
 				!is_quote || mPreferences.getBoolean(PREFERENCE_KEY_LINK_TO_QUOTED_TWEET, true) ? mInReplyToStatusId : -1,
 						has_media && mIsPossiblySensitive, mIsPhotoAttached && !mIsImageAttached);
-		setResult(Activity.RESULT_OK);
-		finish();
+		if (mPreferences.getBoolean(PREFERENCE_KEY_NO_CLOSE_AFTER_TWEET_SENT, false)) {
+			mIsImageAttached = false;
+			mIsPhotoAttached = false;
+			mIsPossiblySensitive = false;
+			mShouldSaveAccounts = true;
+			mImageUri = null;
+			mTempPhotoUri = null;
+			mInReplyToStatus = null;
+			mMentionUser = null;
+			mDraftItem = null;
+			mInReplyToStatusId = -1;
+			mEditText.setText(null);
+			final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
+			setIntent(intent);
+			setComposeTitle(intent.getAction());
+			handleIntent(intent.getAction(), intent.getExtras());
+			reloadAttachedImageThumbnail();
+			invalidateSupportOptionsMenu();
+			setMenu();
+		} else {
+			setResult(Activity.RESULT_OK);
+			finish();
+		}
 	}
 	
 	private boolean setComposeTitle(final String action) {

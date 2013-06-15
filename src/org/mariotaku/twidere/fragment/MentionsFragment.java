@@ -19,14 +19,14 @@
 
 package org.mariotaku.twidere.fragment;
 
-import org.mariotaku.twidere.provider.TweetStore.Mentions;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import org.mariotaku.twidere.provider.TweetStore.Mentions;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
 public class MentionsFragment extends CursorStatusesListFragment {
 
@@ -51,7 +51,9 @@ public class MentionsFragment extends CursorStatusesListFragment {
 
 	@Override
 	public int getStatuses(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
-		return getTwitterWrapper().getMentions(account_ids, max_ids, since_ids);
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		if (twitter == null) return -1;
+		return twitter.getMentions(account_ids, max_ids, since_ids);
 	}
 
 	@Override
@@ -68,7 +70,8 @@ public class MentionsFragment extends CursorStatusesListFragment {
 		filter.addAction(BROADCAST_MENTIONS_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_TASK_STATE_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
-		if (getTwitterWrapper().isMentionsRefreshing()) {
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		if (twitter != null && twitter.isMentionsRefreshing()) {
 			setRefreshing(false);
 		} else {
 			onRefreshComplete();

@@ -1603,7 +1603,7 @@ public final class Utils implements Constants {
 			final boolean is_possibly_sensitive) {
 		if (is_fav)
 			return R.drawable.ic_indicator_starred;
-		else if (is_possibly_sensitive)
+		else if (is_possibly_sensitive && has_media)
 			return R.drawable.ic_indicator_reported_media;
 		else if (has_media)
 			return R.drawable.ic_indicator_has_media;

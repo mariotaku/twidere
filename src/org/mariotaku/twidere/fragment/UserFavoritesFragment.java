@@ -33,6 +33,7 @@ import java.util.List;
 public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 
 	private long mUserId;
+	private String mUserScreenName;
 
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -54,16 +55,14 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 	@Override
 	public Loader<List<ParcelableStatus>> newLoaderInstance(final Context context, final Bundle args) {
 		if (args == null) return null;
-		long account_id = -1, user_id = -1, max_id = -1, since_id = -1;
-			account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
-			user_id = args.getLong(INTENT_KEY_USER_ID, -1);
-			if (user_id > 0) {
-				mUserId = user_id;
-			}
-			max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
-			since_id = args.getLong(INTENT_KEY_SINCE_ID, -1);
+		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
+		final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
+		final long max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
+		final long since_id = args.getLong(INTENT_KEY_SINCE_ID, -1);
 		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		final int tab_position = args.getInt(INTENT_KEY_TAB_POSITION, -1);
+		mUserId = user_id;
+		mUserScreenName = screen_name;
 		return new UserFavoritesLoader(getActivity(), account_id, user_id, screen_name, max_id, since_id,
 				getData(), getSavedStatusesFileArgs(), tab_position);
 	}

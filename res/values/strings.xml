@@ -469,4 +469,9 @@
 	<string name="background_toast_notification">Background Toast notification</string>
 	<string name="background_toast_notification_summary">Show Toast notification when switched to background</string>
 	<string name="original_status">Original tweet</string>
+	<string name="compose_quit_action">Quit compose action</string>
+	<string name="ask">Ask</string>
+	<string name="no_close_after_tweet_sent">Keep \"Compose\" opening after tweet sent</string>
+	<string name="no_close_after_tweet_sent_summary">A little gift for chatterbox</string>
+	<string name="tweet_saved_to_draft">Tweet saved to draft.</string>
 </resources>
