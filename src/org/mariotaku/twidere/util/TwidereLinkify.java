@@ -77,9 +77,10 @@ public class TwidereLinkify {
 	public static final int LINK_TYPE_LIST = 6;
 	public static final int LINK_TYPE_CASHTAG = 7;
 	public static final int LINK_TYPE_USER_ID = 8;
+	public static final int LINK_TYPE_STATUS = 9;
 
 	public static final int[] ALL_LINK_TYPES = new int[] { LINK_TYPE_LINK, LINK_TYPE_MENTION, LINK_TYPE_HASHTAG,
-			LINK_TYPE_LINK_WITH_IMAGE_EXTENSION, LINK_TYPE_ALL_AVAILABLE_IMAGE, LINK_TYPE_CASHTAG };
+			LINK_TYPE_STATUS, LINK_TYPE_LINK_WITH_IMAGE_EXTENSION, LINK_TYPE_ALL_AVAILABLE_IMAGE, LINK_TYPE_CASHTAG };
 
 	public static final String SINA_WEIBO_IMAGES_AVAILABLE_SIZES = "(woriginal|large|thumbnail|bmiddle|mw[\\d]+)";
 
@@ -197,6 +198,12 @@ public class TwidereLinkify {
 	public static final Pattern PATTERN_TWITTER_PROFILE_IMAGES = Pattern.compile(STRING_PATTERN_TWITTER_PROFILE_IMAGES,
 			Pattern.CASE_INSENSITIVE);
 
+	private static final String STRING_PATTERN_TWITTER_STATUS_NO_SCHEME = "twitter\\.com\\/([^\\/]+)\\/status\\/(\\d+)";
+	private static final String STRING_PATTERN_TWITTER_STATUS = AVAILABLE_URL_SCHEME_PREFIX
+			+ STRING_PATTERN_TWITTER_STATUS_NO_SCHEME;
+	public static final Pattern PATTERN_TWITTER_STATUS = Pattern.compile(STRING_PATTERN_TWITTER_STATUS, Pattern.CASE_INSENSITIVE);
+	public static final int TWITTER_STATUS_ID = 3;
+
 	private final OnLinkClickListener mOnLinkClickListener;
 	private final Extractor mExtractor = new Extractor();
 	private int mHighlightStyle;
@@ -310,6 +317,20 @@ public class TwidereLinkify {
 						string.removeSpan(span);
 						applyLink(spec.image_full_url, spec.image_original_url, start, end, string,
 								account_id, LINK_TYPE_LINK_WITH_IMAGE_EXTENSION, sensitive);
+					}
+				}
+				break;
+			}
+			case LINK_TYPE_STATUS: {
+				final URLSpan[] spans = string.getSpans(0, string.length(), URLSpan.class);
+				for (final URLSpan span : spans) {
+					final Matcher matcher = PATTERN_TWITTER_STATUS.matcher(span.getURL());
+					if (matcher.matches()) {
+						final int start = string.getSpanStart(span);
+						final int end = string.getSpanEnd(span);
+						final String url = matcherGroup(matcher, TWITTER_STATUS_ID);
+						string.removeSpan(span);
+						applyLink(url, start, end, string, account_id, LINK_TYPE_STATUS, sensitive);
 					}
 				}
 				break;

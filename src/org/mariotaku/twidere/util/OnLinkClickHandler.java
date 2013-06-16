@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.util;
 
 import static org.mariotaku.twidere.util.Utils.openImage;
+import static org.mariotaku.twidere.util.Utils.openStatus;
 import static org.mariotaku.twidere.util.Utils.openTweetSearch;
 import static org.mariotaku.twidere.util.Utils.openUserListDetails;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
@@ -80,6 +81,10 @@ public class OnLinkClickHandler implements OnLinkClickListener, Constants {
 			}
 			case TwidereLinkify.LINK_TYPE_USER_ID: {
 				openUserProfile(activity, account_id, parseLong(link), null);
+				break;
+			}
+			case TwidereLinkify.LINK_TYPE_STATUS: {
+				openStatus(activity, account_id, parseLong(link));
 				break;
 			}
 		}
