@@ -2465,6 +2465,27 @@ public final class Utils implements Constants {
 		}
 	}
 
+	public static void openStatus(final Activity activity, final long account_id, final long status_id) {
+		if (activity == null || account_id <= 0 || status_id <= 0) return;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
+			final Fragment fragment = new StatusFragment();
+			final Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			args.putLong(INTENT_KEY_STATUS_ID, status_id);
+			fragment.setArguments(args);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_RIGHT, fragment, true);
+		} else {
+			final Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_STATUS);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status_id));
+			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
+			activity.startActivity(intent);
+		}
+	}
+
 	public static void openStatus(final Activity activity, final ParcelableStatus status) {
 		if (activity == null || status == null) return;
 		final long account_id = status.account_id, status_id = status.id;
