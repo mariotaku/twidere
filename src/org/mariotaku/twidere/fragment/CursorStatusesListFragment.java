@@ -19,18 +19,6 @@
 
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.buildActivatedStatsWhereClause;
-import static org.mariotaku.twidere.util.Utils.buildStatusFilterWhereClause;
-import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
-import static org.mariotaku.twidere.util.Utils.getNewestStatusIdsFromDatabase;
-import static org.mariotaku.twidere.util.Utils.getOldestStatusIdsFromDatabase;
-import static org.mariotaku.twidere.util.Utils.getTableNameByUri;
-
-import org.mariotaku.twidere.activity.HomeActivity;
-import org.mariotaku.twidere.adapter.CursorStatusesAdapter;
-import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.util.AsyncTask;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -44,7 +32,17 @@ import android.support.v4.content.Loader;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
-import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
+import org.mariotaku.twidere.activity.HomeActivity;
+import org.mariotaku.twidere.adapter.CursorStatusesAdapter;
+import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.util.AsyncTask;
+
+import static org.mariotaku.twidere.util.Utils.buildActivatedStatsWhereClause;
+import static org.mariotaku.twidere.util.Utils.buildStatusFilterWhereClause;
+import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
+import static org.mariotaku.twidere.util.Utils.getNewestStatusIdsFromDatabase;
+import static org.mariotaku.twidere.util.Utils.getOldestStatusIdsFromDatabase;
+import static org.mariotaku.twidere.util.Utils.getTableNameByUri;
 
 public abstract class CursorStatusesListFragment extends BaseStatusesListFragment<Cursor> implements
 		View.OnTouchListener {

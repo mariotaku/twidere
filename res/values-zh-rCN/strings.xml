@@ -91,6 +91,8 @@
   <string name="in_reply_to_pull_to_load_conversation">回复 <xliff:g id="user_name">%s</xliff:g>，下拉加载对话</string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> 转推了这个</string>
   <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> 和其他 <xliff:g id="retweet_count">%2$d</xliff:g> 人转推了这个</string>
+  <string name="retweeted_by_count"><xliff:g id="retweet_count">%d</xliff:g>人转推了这条推文</string>
+  <string name="users_retweeted_this">转推了这条推文的用户</string>
   <string name="reply_to">回复 <xliff:g id="user_name">%s</xliff:g></string>
   <string name="quote_user">引用 <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>，来自<xliff:g id="source">%2$s</xliff:g></string>
@@ -223,7 +225,6 @@
   <string name="open_with_extensions">使用扩展打开</string>
   <string name="view_user_list">查看列表</string>
   <string name="uninstall">卸载</string>
-  <string name="users_retweeted_this">转推了这条推文的用户</string>
   <string name="saved_searches">已保存的搜索</string>
   <string name="custom_tabs">自定义标签页</string>
   <string name="default_tabs">默认标签页</string>
@@ -362,8 +363,8 @@
   <string name="data_profiling_notification_desc">启用或停用使用信息统计</string>
   <string name="silent_notifications">静默通知</string>
   <string name="silent_notifications_summary">在特定时间为通知禁用铃声和震动</string>
-	<string name="disable_background_service">禁用后台服务</string>
-	<string name="disable_background_service_summary">别傻了，Twidere在关闭自动刷新和数据统计之后是没有后台服务的。</string>
+  <string name="disable_background_service">禁用后台服务</string>
+  <string name="disable_background_service_summary">别傻了，Twidere在关闭自动刷新和数据统计之后是没有后台服务的。</string>
   <string name="pull_to_load_conversation_label">下拉并释放以加载对话…</string>
   <string name="pull_to_load_conversation_release_label">释放加载对话…</string>
   <string name="text_copied">文本已复制到剪贴板</string>
@@ -452,4 +453,12 @@
   <string name="deleted_user_from_list">从列表\"<xliff:g id="list">%s</xliff:g>\"移除了这些用户</string>
   <string name="subscribe">订阅</string>
   <string name="unsubscribe">退订</string>
+  <string name="background_toast_notification">背景Toast通知</string>
+  <string name="background_toast_notification_summary">切换到后台后显示Toast通知</string>
+  <string name="original_status">原推文</string>
+  <string name="compose_quit_action">退出“撰写”时的操作</string>
+  <string name="ask">询问</string>
+  <string name="no_close_after_tweet_sent">发送推文之后仍然保持“撰写”开启</string>
+  <string name="no_close_after_tweet_sent_summary">给不二的小礼物</string>
+  <string name="tweet_saved_to_draft">推文已经保存到草稿箱</string>
 </resources>
