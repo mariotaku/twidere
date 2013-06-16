@@ -118,7 +118,6 @@ class BasePreferenceActivity extends ActionBarPreferenceActivity implements Cons
 		}
 	}
 
-	@Override
 	public void setTheme() {
 		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final boolean is_dark_theme = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false);

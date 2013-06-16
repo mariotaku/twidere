@@ -425,9 +425,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	public boolean onMenuItemClick(final MenuItem item) {
 		return handleMenuItem(item);
 	}
-		
 
-	@Override
 	public boolean handleMenuItem(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_TAKE_PHOTO: {
