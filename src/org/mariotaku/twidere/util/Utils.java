@@ -686,9 +686,10 @@ public final class Utils implements Constants {
 		final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.STATUS_ID + " = "
 				+ status.getId();
 		final ContentResolver resolver = context.getContentResolver();
-		final boolean large_profile_image = context.getResources().getBoolean(R.bool.hires_profile_image);
+				final boolean large_profile_image = context.getResources().getBoolean(R.bool.hires_profile_image);
+				final boolean large_preview_image = Utils.getImagePreviewDisplayOptionInt(context) == IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE;
 		resolver.delete(CachedStatuses.CONTENT_URI, where, null);
-		resolver.insert(CachedStatuses.CONTENT_URI, makeStatusContentValues(status, account_id, large_profile_image));
+		resolver.insert(CachedStatuses.CONTENT_URI, makeStatusContentValues(status, account_id, large_profile_image, large_preview_image));
 		return new ParcelableStatus(status, account_id, false, large_profile_image, true);
 	}
 
@@ -2227,7 +2228,7 @@ public final class Utils implements Constants {
 	}
 
 	public static ContentValues makeStatusContentValues(Status status, final long account_id,
-			final boolean large_profile_image) {
+			final boolean large_profile_image, final boolean large_preview_image) {
 		if (status == null || status.getId() <= 0) return null;
 		final ContentValues values = new ContentValues();
 		values.put(Statuses.ACCOUNT_ID, account_id);
@@ -2261,8 +2262,10 @@ public final class Utils implements Constants {
 		if (status.getCreatedAt() != null) {
 			values.put(Statuses.STATUS_TIMESTAMP, status.getCreatedAt().getTime());
 		}
-		values.put(Statuses.TEXT_HTML, formatStatusText(status));
+		final String text_html = formatStatusText(status);
+		values.put(Statuses.TEXT_HTML, text_html);
 		values.put(Statuses.TEXT_PLAIN, status.getText());
+		values.put(Statuses.TEXT_UNESCAPED, toPlainText(text_html));
 		values.put(Statuses.RETWEET_COUNT, status.getRetweetCount());
 		values.put(Statuses.IN_REPLY_TO_SCREEN_NAME, status.getInReplyToScreenName());
 		values.put(Statuses.IN_REPLY_TO_STATUS_ID, status.getInReplyToStatusId());
@@ -2274,6 +2277,9 @@ public final class Utils implements Constants {
 		}
 		values.put(Statuses.IS_RETWEET, is_retweet);
 		values.put(Statuses.IS_FAVORITE, status.isFavorited());
+		final ImageSpec preview = getPreviewImage(text_html,
+				!large_preview_image ? IMAGE_PREVIEW_DISPLAY_OPTION_CODE_SMALL : IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE);
+		values.put(Statuses.IMAGE_PREVIEW_URL, preview != null ? preview.image_preview_url : null);
 		return values;
 	}
 

@@ -125,6 +125,7 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 		final PullToRefreshListView plv = new PullToRefreshListView(context);
 		plv.setOnRefreshListener(this);
 		plv.setOnPullEventListener(new AccessibilityPullEventListener<ListView>(context));
+		plv.setPullToRefreshOverScrollEnabled(false);
 		mPullToRefreshListView = plv;
 
 		final ListView lv = plv.getRefreshableView();

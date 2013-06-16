@@ -1953,7 +1953,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		@Override
 		protected SingleResponse<Bundle> doInBackground(final Void... args) {
 			boolean succeed = false;
-
+			final boolean large_preview_image = Utils.getImagePreviewDisplayOptionInt(mContext) == IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE;
 			final ArrayList<Long> newly_inserted_ids = new ArrayList<Long>();
 			for (final StatusListResponse response : responses) {
 				final long account_id = response.account_id;
@@ -1979,7 +1979,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 						if (retweet_id > 0) {
 							retweet_ids.add(retweet_id);
 						}
-						values_list.add(makeStatusContentValues(status, account_id, large_profile_image));
+						values_list.add(makeStatusContentValues(status, account_id, large_profile_image, large_preview_image));
 					}
 
 				}

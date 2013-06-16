@@ -55,7 +55,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 		Statuses.IN_REPLY_TO_STATUS_ID, Statuses.LOCATION, Statuses.IS_RETWEET, Statuses.RETWEET_COUNT,
 		Statuses.RETWEET_ID, Statuses.RETWEETED_BY_NAME, Statuses.RETWEETED_BY_SCREEN_NAME,
 		Statuses.IS_FAVORITE, Statuses.IS_PROTECTED, Statuses.IS_VERIFIED, Statuses.IS_GAP,
-		Statuses.IS_POSSIBLY_SENSITIVE, Statuses.SOURCE };
+		Statuses.IS_POSSIBLY_SENSITIVE, Statuses.SOURCE, Statuses.TEXT_UNESCAPED, Statuses.IMAGE_PREVIEW_URL };
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 

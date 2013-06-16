@@ -125,8 +125,8 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 
 			final String retweeted_by_name = cursor.getString(mIndices.retweeted_by_name);
 			final String retweeted_by_screen_name = cursor.getString(mIndices.retweeted_by_screen_name);
-			final String text = mFastTimelineProcessingEnabled ? cursor.getString(mIndices.text_plain) : cursor
-					.getString(mIndices.text_html);
+			final String text = mLinkHighlightingEnabled ? cursor.getString(mIndices.text_html) : cursor
+					.getString(mIndices.text_unescaped);
 			final String screen_name = cursor.getString(mIndices.screen_name);
 			final String name = cursor.getString(mIndices.user_name);
 			final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
@@ -138,9 +138,8 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			final boolean has_location = mFastTimelineProcessingEnabled ? false : !TextUtils.isEmpty(cursor
 					.getString(mIndices.location));
 			final boolean is_possibly_sensitive = cursor.getInt(mIndices.is_possibly_sensitive) == 1;
-			final ImageSpec preview = !mFastTimelineProcessingEnabled ? getPreviewImage(text,
-					mImagePreviewDisplayOption) : null;
-			final boolean has_media = preview != null;
+			final String image_preview_url = !mFastTimelineProcessingEnabled ? cursor.getString(mIndices.image_preview_url) : null;
+			final boolean has_media = image_preview_url != null;
 
 			// User type (protected/verified)
 			final boolean is_verified = cursor.getShort(mIndices.is_verified) == 1;
@@ -173,13 +172,11 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			holder.setTextSize(mTextSize);
 
 			holder.setIsMyStatus(is_my_status && !mIndicateMyStatusDisabled);
-			if (mFastTimelineProcessingEnabled) {
-				holder.text.setText(text);
-			} else if (mLinkHighlightingEnabled) {
+			if (mLinkHighlightingEnabled) {
 				holder.text.setText(Html.fromHtml(text));
 				mLinkify.applyAllLinks(holder.text, account_id, is_possibly_sensitive);
 			} else {
-				holder.text.setText(toPlainText(text));
+				holder.text.setText(text);
 			}
 			holder.text.setMovementMethod(null);
 			holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0, getUserTypeIconRes(is_verified, is_protected), 0);
@@ -247,16 +244,15 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 				holder.my_profile_image.setVisibility(View.GONE);
 			}
 			final boolean has_preview = mFastTimelineProcessingEnabled ? false
-					: mImagePreviewDisplayOption != IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE && has_media
-							&& preview.image_preview_url != null;
+					: mImagePreviewDisplayOption != IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE && has_media;
 			holder.image_preview_container.setVisibility(has_preview ? View.VISIBLE : View.GONE);
 			if (has_preview) {
 				holder.setImagePreviewDisplayOption(mImagePreviewDisplayOption);
 				if (is_possibly_sensitive && !mDisplaySensitiveContents) {
 					holder.image_preview.setImageResource(R.drawable.image_preview_nsfw);
 					holder.image_preview_progress.setVisibility(View.GONE);
-				} else if (!preview.image_preview_url.equals(mLoadingViewsMap.get(holder.image_preview))) {
-					mLazyImageLoader.displayPreviewImage(holder.image_preview, preview.image_preview_url, this);
+				} else if (!image_preview_url.equals(mLoadingViewsMap.get(holder.image_preview))) {
+					mLazyImageLoader.displayPreviewImage(holder.image_preview, image_preview_url, this);
 				}
 				holder.image_preview.setTag(position);
 			}

@@ -27,6 +27,7 @@ import static org.mariotaku.twidere.util.Utils.makeStatusContentValues;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
 import org.mariotaku.twidere.provider.TweetStore.CachedStatuses;
@@ -40,14 +41,16 @@ import android.content.Context;
 
 import com.twitter.Extractor;
 
-public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
+public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> implements Constants {
 
 	private final TwitterListResponse<twitter4j.Status>[] all_statuses;
 	private final ContentResolver resolver;
 	private final boolean large_profile_image;
+	private final Context context;
 
 	public CacheUsersStatusesTask(final Context context, final TwitterListResponse<twitter4j.Status>... all_statuses) {
 		resolver = context.getContentResolver();
+		this.context = context;
 		this.all_statuses = all_statuses;
 		large_profile_image = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
@@ -62,6 +65,7 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
 		final ArrayList<Long> user_ids = new NoDuplicatesArrayList<Long>();
 		final ArrayList<Long> status_ids = new NoDuplicatesArrayList<Long>();
 		final ArrayList<String> hashtags = new NoDuplicatesArrayList<String>();
+		final boolean large_preview_image = Utils.getImagePreviewDisplayOptionInt(context) == IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE;
 
 		for (final TwitterListResponse<twitter4j.Status> values : all_statuses) {
 			if (values == null || values.list == null) {
@@ -73,7 +77,7 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> {
 					continue;
 				}
 				status_ids.add(status.getId());
-				cached_statuses_values.add(makeStatusContentValues(status, values.account_id, large_profile_image));
+				cached_statuses_values.add(makeStatusContentValues(status, values.account_id, large_profile_image, large_preview_image));
 				hashtags.addAll(extractor.extractHashtags(status.getText()));
 				final User user = status.getUser();
 				if (user == null || user.getId() <= 0) {

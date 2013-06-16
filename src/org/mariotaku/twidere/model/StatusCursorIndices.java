@@ -26,9 +26,10 @@ import android.database.Cursor;
 public class StatusCursorIndices {
 
 	public final int account_id, status_id, status_timestamp, user_name, screen_name, text_html, text_plain,
-			profile_image_url, is_retweet, is_favorite, is_gap, location, is_protected, is_verified,
+			text_unescaped, profile_image_url, is_retweet, is_favorite, is_gap, location, is_protected, is_verified,
 			in_reply_to_status_id, in_reply_to_screen_name, my_retweet_id, retweeted_by_name, retweeted_by_screen_name,
-			retweet_id, retweeted_by_id, user_id, source, retweet_count, is_possibly_sensitive, is_following;
+			retweet_id, retweeted_by_id, user_id, source, retweet_count, is_possibly_sensitive, is_following,
+			image_preview_url;
 
 	public StatusCursorIndices(final Cursor cursor) {
 		account_id = cursor.getColumnIndex(Statuses.ACCOUNT_ID);
@@ -38,6 +39,7 @@ public class StatusCursorIndices {
 		screen_name = cursor.getColumnIndex(Statuses.SCREEN_NAME);
 		text_html = cursor.getColumnIndex(Statuses.TEXT_HTML);
 		text_plain = cursor.getColumnIndex(Statuses.TEXT_PLAIN);
+		text_unescaped = cursor.getColumnIndex(Statuses.TEXT_UNESCAPED);
 		profile_image_url = cursor.getColumnIndex(Statuses.PROFILE_IMAGE_URL);
 		is_favorite = cursor.getColumnIndex(Statuses.IS_FAVORITE);
 		is_retweet = cursor.getColumnIndex(Statuses.IS_RETWEET);
@@ -57,6 +59,7 @@ public class StatusCursorIndices {
 		retweet_count = cursor.getColumnIndex(Statuses.RETWEET_COUNT);
 		is_possibly_sensitive = cursor.getColumnIndex(Statuses.IS_POSSIBLY_SENSITIVE);
 		is_following = cursor.getColumnIndex(Statuses.IS_FOLLOWING);
+		image_preview_url = cursor.getColumnIndex(Statuses.IMAGE_PREVIEW_URL);
 	}
 
 	@Override
