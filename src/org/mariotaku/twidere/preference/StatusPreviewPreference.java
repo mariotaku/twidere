@@ -115,21 +115,15 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 
 	private void setDetailsAndMedia() {
 		mHolder.image_preview.setImageResource(R.drawable.twidere_icon_512);
-		final boolean fast_timeline_processing = mPreferences
-				.getBoolean(PREFERENCE_KEY_FAST_TIMELINE_PROCESSING, false);
-		mHolder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, fast_timeline_processing ? 0
-				: R.drawable.ic_indicator_has_media, 0);
+		mHolder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_indicator_has_media, 0);
 	}
 
 	private void setImagePreview() {
 		if (mHolder == null) return;
 		final String option_string = mPreferences.getString(PREFERENCE_KEY_IMAGE_PREVIEW_DISPLAY_OPTION,
 				IMAGE_PREVIEW_DISPLAY_OPTION_NONE);
-		final boolean fast_timeline_processing = mPreferences
-				.getBoolean(PREFERENCE_KEY_FAST_TIMELINE_PROCESSING, false);
 		final int option = getImagePreviewDisplayOptionInt(option_string);
-		mHolder.image_preview_container.setVisibility(!fast_timeline_processing
-				&& option != IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE ? View.VISIBLE : View.GONE);
+		mHolder.image_preview_container.setVisibility(option != IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE ? View.VISIBLE : View.GONE);
 		mHolder.image_preview_progress.setVisibility(View.GONE);
 		mHolder.setImagePreviewDisplayOption(option);
 	}
@@ -165,9 +159,7 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 		} else {
 			mLinkify.setHighlightStyle(TwidereLinkify.HIGHLIGHT_STYLE_COLOR);
 		}
-		final boolean fast_timeline_processing = mPreferences
-				.getBoolean(PREFERENCE_KEY_FAST_TIMELINE_PROCESSING, false);
-		if (mPreferences.getBoolean(PREFERENCE_KEY_LINK_HIGHLIGHTING, false) && !fast_timeline_processing) {
+		if (mPreferences.getBoolean(PREFERENCE_KEY_LINK_HIGHLIGHTING, false)) {
 			mHolder.text.setText(Html.fromHtml(TEXT_HTML));
 			mLinkify.applyAllLinks(mHolder.text, 0, false);
 			mLinkify.applyUserProfileLink(mHolder.name, 0, 0, SCREEN_NAME);

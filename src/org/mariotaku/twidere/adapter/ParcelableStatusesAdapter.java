@@ -78,7 +78,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 
 	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled,
 			mMentionsHighlightDisabled, mDisplaySensitiveContents, mIndicateMyStatusDisabled, mLinkHighlightingEnabled,
-			mFastTimelineProcessingEnabled, mIsLastItemFiltered, mFiltersEnabled;
+			mIsLastItemFiltered, mFiltersEnabled;
 	private float mTextSize;
 	private int mNameDisplayOption, mImagePreviewDisplayOption, mLinkHighlightStyle;
 	private boolean mFilterIgnoreSource, mFilterIgnoreScreenName, mFilterIgnoreTextHtml, mFilterIgnoreTextPlain;
@@ -165,9 +165,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 
 			holder.setAccountColorEnabled(mShowAccountColor);
 
-			if (mFastTimelineProcessingEnabled) {
-				holder.text.setText(status.text_plain);
-			} else if (mLinkHighlightingEnabled) {
+			if (mLinkHighlightingEnabled) {
 				holder.text.setText(Html.fromHtml(status.text_html));
 				mLinkify.applyAllLinks(holder.text, status.account_id, status.is_possibly_sensitive);
 			} else {
@@ -178,8 +176,6 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			if (mShowAccountColor) {
 				holder.setAccountColor(getAccountColor(mContext, status.account_id));
 			}
-			final String retweeted_by_name = status.retweeted_by_name;
-			final String retweeted_by_screen_name = status.retweeted_by_screen_name;
 
 			if (mMultiSelectEnabled) {
 				holder.setSelected(mMultiSelectManager.isStatusSelected(status.id));
@@ -187,38 +183,18 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 				holder.setSelected(false);
 			}
 			final String account_screen_name = getAccountScreenName(mContext, status.account_id);
-			final boolean is_mention = mFastTimelineProcessingEnabled ? false : !TextUtils.isEmpty(status.text_plain) &&
+			final boolean is_mention = !TextUtils.isEmpty(status.text_plain) &&
 					status.text_plain.toLowerCase().contains('@' + account_screen_name.toLowerCase());
 			final boolean is_my_status = status.account_id == status.user_id;
 			holder.setUserColor(getUserColor(mContext, status.user_id));
-			holder.setHighlightColor(mFastTimelineProcessingEnabled ? 0 : getStatusBackground(
-					mMentionsHighlightDisabled ? false : is_mention, status.is_favorite, status.is_retweet));
+			holder.setHighlightColor(getStatusBackground(mMentionsHighlightDisabled ? false : is_mention, status.is_favorite, status.is_retweet));
 			holder.setTextSize(mTextSize);
 
 			holder.setIsMyStatus(is_my_status && !mIndicateMyStatusDisabled);
 
-			holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-					getUserTypeIconRes(status.user_is_verified, status.user_is_protected), 0);
-			switch (mNameDisplayOption) {
-				case NAME_DISPLAY_OPTION_CODE_NAME: {
-					holder.name.setText(status.user_name);
-					holder.screen_name.setText(null);
-					holder.screen_name.setVisibility(View.GONE);
-					break;
-				}
-				case NAME_DISPLAY_OPTION_CODE_SCREEN_NAME: {
-					holder.name.setText("@" + status.user_screen_name);
-					holder.screen_name.setText(null);
-					holder.screen_name.setVisibility(View.GONE);
-					break;
-				}
-				default: {
-					holder.name.setText(status.user_name);
-					holder.screen_name.setText("@" + status.user_screen_name);
-					holder.screen_name.setVisibility(View.VISIBLE);
-					break;
-				}
-			}
+			holder.setUserType(status.user_is_verified, status.user_is_protected);
+			holder.setNameDisplayOption(mNameDisplayOption);
+			holder.setName(status.user_name, status.user_screen_name);
 			if (mLinkHighlightingEnabled) {
 				mLinkify.applyUserProfileLink(holder.name, status.account_id, status.user_id, status.user_screen_name);
 				mLinkify.applyUserProfileLink(holder.screen_name, status.account_id, status.user_id, status.user_screen_name);
@@ -230,32 +206,13 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			} else {
 				holder.time.setText(getRelativeTimeSpanString(status.timestamp));
 			}
-			holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, mFastTimelineProcessingEnabled ? 0
-					: getStatusTypeIconRes(status.is_favorite, isValidLocation(status.location), status.has_media,
-							status.is_possibly_sensitive), 0);
-			holder.reply_retweet_status
-					.setVisibility(status.in_reply_to_status_id != -1 || status.is_retweet ? View.VISIBLE : View.GONE);
-			if (status.is_retweet && !TextUtils.isEmpty(retweeted_by_name)
-					&& !TextUtils.isEmpty(retweeted_by_screen_name)) {
-				if (mNameDisplayOption == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME) {
-					holder.reply_retweet_status.setText(status.retweet_count > 1 ? mContext.getString(
-							R.string.retweeted_by_with_count, retweeted_by_screen_name, status.retweet_count - 1)
-							: mContext.getString(R.string.retweeted_by, retweeted_by_screen_name));
-				} else {
-					holder.reply_retweet_status.setText(status.retweet_count > 1 ? mContext.getString(
-							R.string.retweeted_by_with_count, retweeted_by_name, status.retweet_count - 1) : mContext
-							.getString(R.string.retweeted_by, retweeted_by_name));
-				}
-				holder.reply_retweet_status.setText(status.retweet_count > 1 ? mContext.getString(
-						R.string.retweeted_by_with_count, retweeted_by_name, status.retweet_count - 1) : mContext
-						.getString(R.string.retweeted_by, retweeted_by_name));
-				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_retweet, 0,
-						0, 0);
-			} else if (status.in_reply_to_status_id > 0 && !TextUtils.isEmpty(status.in_reply_to_screen_name)) {
-				holder.reply_retweet_status.setText(mContext.getString(R.string.in_reply_to,
-						status.in_reply_to_screen_name));
-				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_reply, 0,
-						0, 0);
+			holder.setStatusType(status.is_favorite, isValidLocation(status.location), status.has_media,
+							status.is_possibly_sensitive);
+			holder.setIsReplyRetweet(status.in_reply_to_status_id > 0, status.is_retweet);
+			if (status.is_retweet) {
+				holder.setRetweetedBy(status.retweet_count, status.retweeted_by_name, status.retweeted_by_screen_name);
+			} else if (status.in_reply_to_status_id > 0) {
+				holder.setReplyTo(status.in_reply_to_screen_name);
 			}
 			if (mDisplayProfileImage) {
 				mImageLoader.displayProfileImage(holder.my_profile_image, status.user_profile_image_url);
@@ -266,11 +223,9 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 				holder.profile_image.setVisibility(View.GONE);
 				holder.my_profile_image.setVisibility(View.GONE);
 			}
-			final boolean has_preview = mFastTimelineProcessingEnabled ? false
-					: mImagePreviewDisplayOption != IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE
-							&& status.has_media && status.image_preview_url != null;
-			holder.image_preview_container.setVisibility(!mFastTimelineProcessingEnabled && has_preview ? View.VISIBLE
-					: View.GONE);
+			final boolean has_preview = mImagePreviewDisplayOption != IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE
+					&& status.has_media && status.image_preview_url != null;
+			holder.image_preview_container.setVisibility(has_preview ? View.VISIBLE : View.GONE);
 			if (has_preview) {
 				holder.setImagePreviewDisplayOption(mImagePreviewDisplayOption);
 				if (status.is_possibly_sensitive && !mDisplaySensitiveContents) {
@@ -392,13 +347,6 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	public void setDisplaySensitiveContents(final boolean display) {
 		if (display == mDisplaySensitiveContents) return;
 		mDisplaySensitiveContents = display;
-		notifyDataSetChanged();
-	}
-
-	@Override
-	public void setFastTimelineProcessingEnabled(final boolean enabled) {
-		if (mFastTimelineProcessingEnabled == enabled) return;
-		mFastTimelineProcessingEnabled = enabled;
 		notifyDataSetChanged();
 	}
 

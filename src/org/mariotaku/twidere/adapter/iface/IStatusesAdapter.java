@@ -38,8 +38,6 @@ public interface IStatusesAdapter<Data> extends IBaseAdapter {
 	public void setDisplaySensitiveContents(boolean display);
 
 	public void setFiltersEnabled(boolean enabled);
-	
-	public void setFastTimelineProcessingEnabled(boolean enabled);
 
 	public void setGapDisallowed(boolean disallowed);
 

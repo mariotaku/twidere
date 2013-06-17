@@ -62,7 +62,6 @@ import static org.mariotaku.twidere.util.Utils.getStatusBackground;
 import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.getThemeColor;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
-import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isFiltered;
 import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
@@ -71,7 +70,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 
 	private final Context mContext;
 	private final Resources mResources;
-	private final ImageLoaderWrapper mLazyImageLoader;
+	private final ImageLoaderWrapper mImageLoader;
 	private final MultiSelectManager mMultiSelectManager;
 	private final TwidereLinkify mLinkify;
 	private final SQLiteDatabase mDatabase;
@@ -81,7 +80,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 
 	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled,
 			mMentionsHighlightDisabled, mDisplaySensitiveContents, mIndicateMyStatusDisabled, mLinkHighlightingEnabled,
-			mFastTimelineProcessingEnabled, mIsLastItemFiltered, mFiltersEnabled = true;
+			mIsLastItemFiltered, mFiltersEnabled = true;
 	private float mTextSize;
 	private int mNameDisplayOption, mImagePreviewDisplayOption, mLinkHighlightStyle;
 	private boolean mFilterIgnoreSource, mFilterIgnoreScreenName, mFilterIgnoreTextHtml, mFilterIgnoreTextPlain;
@@ -94,7 +93,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 		mResources = context.getResources();
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mMultiSelectManager = application.getMultiSelectManager();
-		mLazyImageLoader = application.getImageLoaderWrapper();
+		mImageLoader = application.getImageLoaderWrapper();
 		mDatabase = application.getSQLiteDatabase();
 		mDensity = mResources.getDisplayMetrics().density;
 		mLinkify = new TwidereLinkify(new OnLinkClickHandler(mContext));
@@ -131,14 +130,12 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			final String name = cursor.getString(mIndices.user_name);
 			final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
 			final String account_screen_name = getAccountScreenName(mContext, account_id);
+			final String image_preview_url = cursor.getString(mIndices.image_preview_url);
 
 			// Tweet type (favorite/location/media)
-			final boolean is_favorite = mFastTimelineProcessingEnabled ? false
-					: cursor.getShort(mIndices.is_favorite) == 1;
-			final boolean has_location = mFastTimelineProcessingEnabled ? false : !TextUtils.isEmpty(cursor
-					.getString(mIndices.location));
+			final boolean is_favorite = cursor.getShort(mIndices.is_favorite) == 1;
+			final boolean has_location = !TextUtils.isEmpty(cursor.getString(mIndices.location));
 			final boolean is_possibly_sensitive = cursor.getInt(mIndices.is_possibly_sensitive) == 1;
-			final String image_preview_url = !mFastTimelineProcessingEnabled ? cursor.getString(mIndices.image_preview_url) : null;
 			final boolean has_media = image_preview_url != null;
 
 			// User type (protected/verified)
@@ -149,8 +146,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 					&& cursor.getShort(mIndices.is_retweet) == 1;
 			final boolean is_reply = !TextUtils.isEmpty(in_reply_to_screen_name)
 					&& cursor.getLong(mIndices.in_reply_to_status_id) > 0;
-			final boolean is_mention = mFastTimelineProcessingEnabled || TextUtils.isEmpty(text) || TextUtils.isEmpty(account_screen_name) ? false : text.toLowerCase().contains(
-					'@' + account_screen_name.toLowerCase());
+			final boolean is_mention = TextUtils.isEmpty(text) || TextUtils.isEmpty(account_screen_name) ? false : text.toLowerCase().contains('@' + account_screen_name.toLowerCase());
 			final boolean is_my_status = account_id == user_id;
 
 			if (mMultiSelectEnabled) {
@@ -160,8 +156,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			}
 
 			holder.setUserColor(getUserColor(mContext, user_id));
-			holder.setHighlightColor(mFastTimelineProcessingEnabled ? 0 : getStatusBackground(
-					mMentionsHighlightDisabled ? false : is_mention, is_favorite, is_retweet));
+			holder.setHighlightColor(getStatusBackground(mMentionsHighlightDisabled ? false : is_mention, is_favorite, is_retweet));
 
 			holder.setAccountColorEnabled(mShowAccountColor);
 
@@ -179,27 +174,9 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 				holder.text.setText(text);
 			}
 			holder.text.setMovementMethod(null);
-			holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0, getUserTypeIconRes(is_verified, is_protected), 0);
-			switch (mNameDisplayOption) {
-				case NAME_DISPLAY_OPTION_CODE_NAME: {
-					holder.name.setText(name);
-					holder.screen_name.setText(null);
-					holder.screen_name.setVisibility(View.GONE);
-					break;
-				}
-				case NAME_DISPLAY_OPTION_CODE_SCREEN_NAME: {
-					holder.name.setText("@" + screen_name);
-					holder.screen_name.setText(null);
-					holder.screen_name.setVisibility(View.GONE);
-					break;
-				}
-				default: {
-					holder.name.setText(name);
-					holder.screen_name.setText("@" + screen_name);
-					holder.screen_name.setVisibility(View.VISIBLE);
-					break;
-				}
-			}
+			holder.setUserType(is_verified, is_protected);
+			holder.setNameDisplayOption(mNameDisplayOption);
+			holder.setName(name, screen_name);
 			if (mLinkHighlightingEnabled) {
 				mLinkify.applyUserProfileLink(holder.name, account_id, user_id, screen_name);
 				mLinkify.applyUserProfileLink(holder.screen_name, account_id , user_id, screen_name);
@@ -211,40 +188,26 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			} else {
 				holder.time.setText(getRelativeTimeSpanString(status_timestamp));
 			}
-			holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, mFastTimelineProcessingEnabled ? 0
-					: getStatusTypeIconRes(is_favorite, has_location, has_media, is_possibly_sensitive), 0);
+			holder.setStatusType(is_favorite, has_location, has_media, is_possibly_sensitive);
 
-			holder.reply_retweet_status.setVisibility(is_retweet || is_reply ? View.VISIBLE : View.GONE);
+			holder.setIsReplyRetweet(is_reply, is_retweet);
 			if (is_retweet) {
-				if (mNameDisplayOption == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME) {
-					holder.reply_retweet_status.setText(retweet_count > 1 ? mContext.getString(
-							R.string.retweeted_by_with_count, retweeted_by_screen_name, retweet_count - 1) : mContext
-							.getString(R.string.retweeted_by, retweeted_by_screen_name));
-				} else {
-					holder.reply_retweet_status.setText(retweet_count > 1 ? mContext.getString(
-							R.string.retweeted_by_with_count, retweeted_by_name, retweet_count - 1) : mContext
-							.getString(R.string.retweeted_by, retweeted_by_name));
-				}
-				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_retweet, 0,
-						0, 0);
+				holder.setRetweetedBy(retweet_count, retweeted_by_name, retweeted_by_screen_name);
 			} else if (is_reply) {
-				holder.reply_retweet_status.setText(mContext.getString(R.string.in_reply_to, in_reply_to_screen_name));
-				holder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_reply, 0,
-						0, 0);
+				holder.setReplyTo(in_reply_to_screen_name);
 			}
 	
 			if (mDisplayProfileImage) {
 				final String profile_image_url = cursor.getString(mIndices.profile_image_url);
-				mLazyImageLoader.displayProfileImage(holder.my_profile_image, profile_image_url);
-				mLazyImageLoader.displayProfileImage(holder.profile_image, profile_image_url);
+				mImageLoader.displayProfileImage(holder.my_profile_image, profile_image_url);
+				mImageLoader.displayProfileImage(holder.profile_image, profile_image_url);
 				holder.profile_image.setTag(position);
 				holder.my_profile_image.setTag(position);
 			} else {
 				holder.profile_image.setVisibility(View.GONE);
 				holder.my_profile_image.setVisibility(View.GONE);
 			}
-			final boolean has_preview = mFastTimelineProcessingEnabled ? false
-					: mImagePreviewDisplayOption != IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE && has_media;
+			final boolean has_preview = mImagePreviewDisplayOption != IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE && has_media;
 			holder.image_preview_container.setVisibility(has_preview ? View.VISIBLE : View.GONE);
 			if (has_preview) {
 				holder.setImagePreviewDisplayOption(mImagePreviewDisplayOption);
@@ -252,7 +215,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 					holder.image_preview.setImageResource(R.drawable.image_preview_nsfw);
 					holder.image_preview_progress.setVisibility(View.GONE);
 				} else if (!image_preview_url.equals(mLoadingViewsMap.get(holder.image_preview))) {
-					mLazyImageLoader.displayPreviewImage(holder.image_preview, image_preview_url, this);
+					mImageLoader.displayPreviewImage(holder.image_preview, image_preview_url, this);
 				}
 				holder.image_preview.setTag(position);
 			}
@@ -419,13 +382,6 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	public void setDisplaySensitiveContents(final boolean display) {
 		if (display == mDisplaySensitiveContents) return;
 		mDisplaySensitiveContents = display;
-		notifyDataSetChanged();
-	}
-
-	@Override
-	public void setFastTimelineProcessingEnabled(final boolean enabled) {
-		if (mFastTimelineProcessingEnabled == enabled) return;
-		mFastTimelineProcessingEnabled = enabled;
 		notifyDataSetChanged();
 	}
 

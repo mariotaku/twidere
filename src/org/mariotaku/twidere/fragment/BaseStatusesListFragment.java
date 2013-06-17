@@ -352,8 +352,6 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		final boolean display_sensitive_contents = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS,
 				false);
 		final boolean link_highlighting = mPreferences.getBoolean(PREFERENCE_KEY_LINK_HIGHLIGHTING, false);
-		final boolean fast_timeline_processing = mPreferences
-				.getBoolean(PREFERENCE_KEY_FAST_TIMELINE_PROCESSING, false);
 		final boolean indicate_my_status = mPreferences.getBoolean(PREFERENCE_KEY_INDICATE_MY_STATUS, true);
 		final String name_display_option = mPreferences.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION,
 				NAME_DISPLAY_OPTION_BOTH);
@@ -366,7 +364,6 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		mAdapter.setImagePreviewDisplayOption(image_preview_display_option);
 		mAdapter.setDisplaySensitiveContents(display_sensitive_contents);
 		mAdapter.setLinkHightlightingEnabled(link_highlighting);
-		mAdapter.setFastTimelineProcessingEnabled(fast_timeline_processing);
 		mAdapter.setIndicateMyStatusDisabled(isMyTimeline() || !indicate_my_status);
 		mAdapter.setLinkUnderlineOnly(link_underline_only);
 	}

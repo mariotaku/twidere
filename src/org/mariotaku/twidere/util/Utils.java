@@ -1600,9 +1600,9 @@ public final class Utils implements Constants {
 		return list;
 	}
 
-	public static int getStatusTypeIconRes(final boolean is_fav, final boolean has_location, final boolean has_media, 
+	public static int getStatusTypeIconRes(final boolean is_favorite, final boolean has_location, final boolean has_media, 
 			final boolean is_possibly_sensitive) {
-		if (is_fav)
+		if (is_favorite)
 			return R.drawable.ic_indicator_starred;
 		else if (is_possibly_sensitive && has_media)
 			return R.drawable.ic_indicator_reported_media;

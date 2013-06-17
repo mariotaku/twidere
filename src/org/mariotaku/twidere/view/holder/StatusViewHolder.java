@@ -32,7 +32,9 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
+import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.getThemeColor;
+import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 
 public class StatusViewHolder implements Constants {
 
@@ -42,12 +44,14 @@ public class StatusViewHolder implements Constants {
 	public final ProgressBar image_preview_progress;
 	private final View gap_indicator;
 	private final ColorLabelRelativeLayout content;
+	private final Resources res;
 	private final int theme_color, image_preview_small_width;
 	private final float density;
 	private final boolean is_rtl;
 	public boolean show_as_gap;
 	private boolean account_color_enabled;
 	private float text_size;
+	private int name_display_option;
 
 
 	public StatusViewHolder(final View view) {
@@ -68,7 +72,7 @@ public class StatusViewHolder implements Constants {
 		reply_retweet_status = (TextView) view.findViewById(R.id.reply_retweet_status);
 		show_as_gap = gap_indicator.isShown();
 		final Context context = view.getContext();
-		final Resources res = context.getResources();
+		res = context.getResources();
 		image_preview_small_width = res.getDimensionPixelSize(R.dimen.image_preview_width);
 		is_rtl = Utils.isRTL(context);
 		density = res.getDisplayMetrics().density;
@@ -124,6 +128,57 @@ public class StatusViewHolder implements Constants {
 		my_profile_image.setVisibility(my_status ? View.VISIBLE : View.GONE);
 	}
 
+	public void setIsReplyRetweet(final boolean is_reply, final boolean is_retweet) {
+		reply_retweet_status.setVisibility(is_retweet || is_reply ? View.VISIBLE : View.GONE);
+	}
+	
+	public void setName(final String name, final String screen_name) {
+		switch (name_display_option) {
+			case NAME_DISPLAY_OPTION_CODE_NAME: {
+				this.name.setText(name);
+				this.screen_name.setText(null);
+				this.screen_name.setVisibility(View.GONE);
+				break;
+			}
+			case NAME_DISPLAY_OPTION_CODE_SCREEN_NAME: {
+				this.name.setText("@" + screen_name);
+				this.screen_name.setText(null);
+				this.screen_name.setVisibility(View.GONE);
+				break;
+			}
+			default: {
+				this.name.setText(name);
+				this.screen_name.setText("@" + screen_name);
+				this.screen_name.setVisibility(View.VISIBLE);
+				break;
+			}
+		}
+	}
+	
+	public void setNameDisplayOption(final int option) {
+		name_display_option = option;
+	}
+	
+	public void setReplyTo(final String in_reply_to_screen_name) {		
+		reply_retweet_status.setText(res.getString(R.string.in_reply_to, in_reply_to_screen_name));
+		reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_reply, 0,
+				0, 0);
+	}
+	
+	public void setRetweetedBy(final long retweet_count, final String retweeted_by_name, final String retweeted_by_screen_name) {
+		if (name_display_option == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME) {
+			reply_retweet_status.setText(retweet_count > 1 ? res.getString(
+					R.string.retweeted_by_with_count, retweeted_by_screen_name, retweet_count - 1) : res
+					.getString(R.string.retweeted_by, retweeted_by_screen_name));
+		} else {
+			reply_retweet_status.setText(retweet_count > 1 ? res.getString(
+					R.string.retweeted_by_with_count, retweeted_by_name, retweet_count - 1) : res
+					.getString(R.string.retweeted_by, retweeted_by_name));
+		}
+		reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_retweet, 0,
+				0, 0);
+	}
+
 	public void setSelected(final boolean selected) {
 		content.setBackgroundColor(selected && !show_as_gap ? theme_color : Color.TRANSPARENT);
 	}
@@ -145,6 +200,12 @@ public class StatusViewHolder implements Constants {
 		gap_indicator.setVisibility(!show_gap ? View.GONE : View.VISIBLE);
 	}
 
+	public void setStatusType(final boolean is_favorite, final boolean has_location, final boolean has_media, 
+			final boolean is_possibly_sensitive) {
+		final int res = getStatusTypeIconRes(is_favorite, has_location, has_media, is_possibly_sensitive);
+		time.setCompoundDrawablesWithIntrinsicBounds(0, 0, res, 0);
+	}
+	
 	public void setTextSize(final float text_size) {
 		if (this.text_size == text_size) return;
 		this.text_size = text_size;
@@ -155,8 +216,13 @@ public class StatusViewHolder implements Constants {
 		reply_retweet_status.setTextSize(text_size * 0.65f);
 	}
 
+	
 	public void setUserColor(final int color) {
 		content.drawLeft(show_as_gap ? Color.TRANSPARENT : color);
 	}
-
+	
+	public void setUserType(final boolean is_verified, final boolean is_protected) {
+		final int res = getUserTypeIconRes(is_verified, is_protected);
+		name.setCompoundDrawablesWithIntrinsicBounds(0, 0, res, 0);
+	}
 }
