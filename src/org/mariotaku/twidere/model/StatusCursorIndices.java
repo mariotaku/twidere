@@ -25,22 +25,23 @@ import android.database.Cursor;
 
 public class StatusCursorIndices {
 
-	public final int account_id, status_id, status_timestamp, user_name, screen_name, text_html, text_plain,
-			text_unescaped, profile_image_url, is_retweet, is_favorite, is_gap, location, is_protected, is_verified,
+	public final int _id, account_id, status_id, status_timestamp, user_name, user_screen_name, text_html, text_plain,
+			text_unescaped, user_profile_image_url, is_retweet, is_favorite, is_gap, location, is_protected, is_verified,
 			in_reply_to_status_id, in_reply_to_screen_name, my_retweet_id, retweeted_by_name, retweeted_by_screen_name,
 			retweet_id, retweeted_by_id, user_id, source, retweet_count, is_possibly_sensitive, is_following,
 			image_preview_url;
 
 	public StatusCursorIndices(final Cursor cursor) {
+		_id = cursor.getColumnIndex(Statuses._ID);
 		account_id = cursor.getColumnIndex(Statuses.ACCOUNT_ID);
 		status_id = cursor.getColumnIndex(Statuses.STATUS_ID);
 		status_timestamp = cursor.getColumnIndex(Statuses.STATUS_TIMESTAMP);
 		user_name = cursor.getColumnIndex(Statuses.NAME);
-		screen_name = cursor.getColumnIndex(Statuses.SCREEN_NAME);
+		user_screen_name = cursor.getColumnIndex(Statuses.SCREEN_NAME);
 		text_html = cursor.getColumnIndex(Statuses.TEXT_HTML);
 		text_plain = cursor.getColumnIndex(Statuses.TEXT_PLAIN);
 		text_unescaped = cursor.getColumnIndex(Statuses.TEXT_UNESCAPED);
-		profile_image_url = cursor.getColumnIndex(Statuses.PROFILE_IMAGE_URL);
+		user_profile_image_url = cursor.getColumnIndex(Statuses.PROFILE_IMAGE_URL);
 		is_favorite = cursor.getColumnIndex(Statuses.IS_FAVORITE);
 		is_retweet = cursor.getColumnIndex(Statuses.IS_RETWEET);
 		is_gap = cursor.getColumnIndex(Statuses.IS_GAP);
@@ -65,8 +66,8 @@ public class StatusCursorIndices {
 	@Override
 	public String toString() {
 		return "StatusCursorIndices{account_id=" + account_id + ", status_id=" + status_id + ", status_timestamp="
-				+ status_timestamp + ", name=" + user_name + ", screen_name=" + screen_name + ", text=" + text_html
-				+ ", text_plain=" + text_plain + ", profile_image_url=" + profile_image_url + ", is_retweet="
+				+ status_timestamp + ", name=" + user_name + ", screen_name=" + user_screen_name + ", text=" + text_html
+				+ ", text_plain=" + text_plain + ", profile_image_url=" + user_profile_image_url + ", is_retweet="
 				+ is_retweet + ", is_favorite=" + is_favorite + ", is_gap=" + is_gap + ", location=" + location
 				+ ", is_protected=" + is_protected + ", is_verified=" + is_verified + ", in_reply_to_status_id="
 				+ in_reply_to_status_id + ", in_reply_to_screen_name=" + in_reply_to_screen_name + ", my_retweet_id="

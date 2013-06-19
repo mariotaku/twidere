@@ -126,7 +126,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			final String retweeted_by_screen_name = cursor.getString(mIndices.retweeted_by_screen_name);
 			final String text = mLinkHighlightingEnabled ? cursor.getString(mIndices.text_html) : cursor
 					.getString(mIndices.text_unescaped);
-			final String screen_name = cursor.getString(mIndices.screen_name);
+			final String screen_name = cursor.getString(mIndices.user_screen_name);
 			final String name = cursor.getString(mIndices.user_name);
 			final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
 			final String account_screen_name = getAccountScreenName(mContext, account_id);
@@ -198,7 +198,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			}
 	
 			if (mDisplayProfileImage) {
-				final String profile_image_url = cursor.getString(mIndices.profile_image_url);
+				final String profile_image_url = cursor.getString(mIndices.user_profile_image_url);
 				mImageLoader.displayProfileImage(holder.my_profile_image, profile_image_url);
 				mImageLoader.displayProfileImage(holder.profile_image, profile_image_url);
 				holder.profile_image.setTag(position);
@@ -498,7 +498,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 				cursor.moveToLast();
 				final String text_plain = mFilterIgnoreTextPlain ? null : cursor.getString(mIndices.text_plain);
 				final String text_html = mFilterIgnoreTextHtml ? null : cursor.getString(mIndices.text_html);
-				final String screen_name = mFilterIgnoreScreenName ? null : cursor.getString(mIndices.screen_name);
+				final String screen_name = mFilterIgnoreScreenName ? null : cursor.getString(mIndices.user_screen_name);
 				final String source = mFilterIgnoreSource ? null : cursor.getString(mIndices.source);
 				mIsLastItemFiltered = isFiltered(mDatabase, text_plain, text_html, screen_name, source);
 			} else {

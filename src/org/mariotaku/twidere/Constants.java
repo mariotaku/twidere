@@ -115,6 +115,7 @@ public interface Constants extends TwitterConstants {
 	public static final String QUERY_PARAM_LAT = "lat";
 	public static final String QUERY_PARAM_LNG = "lng";
 	public static final String QUERY_PARAM_CONVERSATION_ID = "conversation_id";
+	public static final String QUERY_PARAM_URL = "url";
 
 	public static final String DEFAULT_PROTOCOL = PROTOCOL_HTTPS;
 
@@ -507,6 +508,7 @@ public interface Constants extends TwitterConstants {
 	public static final String TABLE_PREFERENCES = TweetStore.Preferences.CONTENT_PATH;
 	public static final String TABLE_PERMISSIONS = TweetStore.Permissions.CONTENT_PATH;
 	public static final String TABLE_DNS = TweetStore.DNS.CONTENT_PATH;
+	public static final String TABLE_CACHED_IMAGES = TweetStore.CachedImages.CONTENT_PATH;
 
 	public static final int TABLE_ID_ACCOUNTS = 1;
 	public static final int TABLE_ID_STATUSES = 2;
@@ -531,6 +533,7 @@ public interface Constants extends TwitterConstants {
 	public static final int VIRTUAL_TABLE_ID_PREFERENCES = 102;
 	public static final int VIRTUAL_TABLE_ID_PERMISSIONS = 103;
 	public static final int VIRTUAL_TABLE_ID_DNS = 104;
+	public static final int VIRTUAL_TABLE_ID_CACHED_IMAGES = 105;
 
 	public static final int LINK_ID_STATUS = 1;
 	public static final int LINK_ID_USER = 2;

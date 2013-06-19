@@ -165,12 +165,12 @@ public class ParcelableStatus implements Constants, Parcelable, JSONParcelable, 
 		image_original_url = preview != null ? preview.image_original_url : null;
 		text_plain = indices.text_plain != -1 ? cursor.getString(indices.text_plain) : null;
 		user_name = indices.user_name != -1 ? cursor.getString(indices.user_name) : null;
-		user_screen_name = indices.screen_name != -1 ? cursor.getString(indices.screen_name) : null;
+		user_screen_name = indices.user_screen_name != -1 ? cursor.getString(indices.user_screen_name) : null;
 		in_reply_to_screen_name = indices.in_reply_to_screen_name != -1 ? cursor
 				.getString(indices.in_reply_to_screen_name) : null;
 		source = indices.source != -1 ? cursor.getString(indices.source) : null;
 		location = indices.location != -1 ? new ParcelableLocation(cursor.getString(indices.location)) : null;
-		user_profile_image_url = indices.profile_image_url != -1 ? cursor.getString(indices.profile_image_url) : null;
+		user_profile_image_url = indices.user_profile_image_url != -1 ? cursor.getString(indices.user_profile_image_url) : null;
 		text_unescaped = toPlainText(text_html);
 		my_retweet_id = indices.my_retweet_id != -1 ? cursor.getLong(indices.my_retweet_id) : -1;
 		is_possibly_sensitive = indices.is_possibly_sensitive != -1 ? cursor.getInt(indices.is_possibly_sensitive) == 1

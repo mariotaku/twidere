@@ -247,6 +247,7 @@ public final class Utils implements Constants {
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_PREFERENCES, VIRTUAL_TABLE_ID_PREFERENCES);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_PERMISSIONS, VIRTUAL_TABLE_ID_PERMISSIONS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DNS + "/*", VIRTUAL_TABLE_ID_DNS);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_IMAGES, VIRTUAL_TABLE_ID_CACHED_IMAGES);
 
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_STATUS, null, LINK_ID_STATUS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USER, null, LINK_ID_USER);
@@ -835,7 +836,7 @@ public final class Utils implements Constants {
 		}
 		return color;
 	}
-
+	
 	public static int[] getAccountColors(final Context context, final long[] account_ids) {
 		if (context == null || account_ids == null) return null;
 		final int length = account_ids.length;
@@ -1938,6 +1939,28 @@ public final class Utils implements Constants {
 		final NetworkInfo netInfo = cm.getActiveNetworkInfo();
 		if (netInfo != null && netInfo.isConnected()) return true;
 		return false;
+	}
+
+	public static void initAccountColor(final Context context) {
+		if (context == null) return;
+		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.ACCOUNT_ID , Accounts.USER_COLOR },
+				null, null, null);
+		if (cur == null) return;
+		final int id_idx = cur.getColumnIndex(Accounts.ACCOUNT_ID), color_idx = cur.getColumnIndex(Accounts.USER_COLOR);
+		cur.moveToFirst();
+		while (!cur.isAfterLast()) {
+			sAccountColors.put(cur.getLong(id_idx), cur.getInt(color_idx));
+			cur.moveToNext();
+		}
+		cur.close();
+	}
+
+	public static void initUserColor(final Context context) {
+		if (context == null) return;
+		final SharedPreferences prefs = context.getSharedPreferences(USER_COLOR_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		for (final Map.Entry<String, ?> entry : prefs.getAll().entrySet()) {
+			sAccountColors.put(parseLong(entry.getKey()), parseInt(parseString(entry.getValue())));
+		}
 	}
 
 	public static boolean isBatteryOkay(final Context context) {

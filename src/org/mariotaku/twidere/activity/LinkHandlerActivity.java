@@ -176,16 +176,18 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 		final Bundle extras = getIntent().getExtras();
 		Fragment fragment = null;
 		if (uri != null) {
-			final Bundle bundle = new Bundle();
+			final Bundle args = new Bundle();
 			if (extras != null) {
-				bundle.putAll(extras);
+				args.putAll(extras);
 			}
 			switch (matchLinkId(uri)) {
 				case LINK_ID_STATUS: {
 					setTitle(R.string.view_status);
 					fragment = new StatusFragment();
-					final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
-					bundle.putLong(INTENT_KEY_STATUS_ID, parseLong(param_status_id));
+					if (!args.containsKey(INTENT_KEY_STATUS_ID)) {						
+						final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
+						args.putLong(INTENT_KEY_STATUS_ID, parseLong(param_status_id));
+					}
 					break;
 				}
 				case LINK_ID_USER: {
@@ -193,11 +195,11 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					fragment = new UserProfileFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
-					if (!isEmpty(param_screen_name)) {
-						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					if (!args.containsKey(INTENT_KEY_SCREEN_NAME)) {
+						args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					}
-					if (!isEmpty(param_user_id)) {
-						bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					if (!args.containsKey(INTENT_KEY_USER_ID)) {
+						args.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
 					}
 					break;
 				}
@@ -206,11 +208,15 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					fragment = new UserTimelineFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
-					if (!isEmpty(param_screen_name)) {
-						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					if (!args.containsKey(INTENT_KEY_SCREEN_NAME)) {
+						args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					}
-					if (!isEmpty(param_user_id)) {
-						bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					if (!args.containsKey(INTENT_KEY_USER_ID)) {
+						args.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					}
+					if (isEmpty(param_screen_name) && isEmpty(param_user_id)) {
+						finish();
+						return false;
 					}
 					break;
 				}
@@ -219,11 +225,15 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					fragment = new UserFavoritesFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
-					if (!isEmpty(param_screen_name)) {
-						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					if (!args.containsKey(INTENT_KEY_SCREEN_NAME)) {
+						args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					}
-					if (!isEmpty(param_user_id)) {
-						bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					if (!args.containsKey(INTENT_KEY_USER_ID)) {
+						args.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					}
+					if (isEmpty(param_screen_name) && isEmpty(param_user_id)) {
+						finish();
+						return false;
 					}
 					break;
 				}
@@ -232,11 +242,15 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					fragment = new UserFollowersFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
-					if (!isEmpty(param_screen_name)) {
-						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					if (!args.containsKey(INTENT_KEY_SCREEN_NAME)) {
+						args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					}
-					if (!isEmpty(param_user_id)) {
-						bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					if (!args.containsKey(INTENT_KEY_USER_ID)) {
+						args.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					}
+					if (isEmpty(param_screen_name) && isEmpty(param_user_id)) {
+						finish();
+						return false;
 					}
 					break;
 				}
@@ -245,11 +259,15 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					fragment = new UserFriendsFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
-					if (!isEmpty(param_screen_name)) {
-						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					if (!args.containsKey(INTENT_KEY_SCREEN_NAME)) {
+						args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					}
-					if (!isEmpty(param_user_id)) {
-						bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					if (!args.containsKey(INTENT_KEY_USER_ID)) {
+						args.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					}
+					if (isEmpty(param_screen_name) && isEmpty(param_user_id)) {
+						finish();
+						return false;
 					}
 					break;
 				}
@@ -265,9 +283,9 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final long conversation_id = parseLong(param_conversation_id);
 					if (conversation_id > 0) {
-						bundle.putLong(INTENT_KEY_CONVERSATION_ID, conversation_id);
+						args.putLong(INTENT_KEY_CONVERSATION_ID, conversation_id);
 					} else if (param_screen_name != null) {
-						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+						args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					}
 					break;
 				}
@@ -283,10 +301,10 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 						finish();
 						return false;
 					}
-					bundle.putInt(INTENT_KEY_LIST_ID, parseInt(param_list_id));
-					bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
-					bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
-					bundle.putString(INTENT_KEY_LIST_NAME, param_list_name);
+					args.putInt(INTENT_KEY_LIST_ID, parseInt(param_list_id));
+					args.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					args.putString(INTENT_KEY_LIST_NAME, param_list_name);
 					break;
 				}
 				case LINK_ID_LISTS: {
@@ -294,12 +312,16 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					fragment = new UserListsListFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 					final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
+					if (!args.containsKey(INTENT_KEY_SCREEN_NAME)) {
+						args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					}
+					if (!args.containsKey(INTENT_KEY_USER_ID)) {
+						args.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					}
 					if (isEmpty(param_screen_name) && isEmpty(param_user_id)) {
 						finish();
 						return false;
 					}
-					bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
-					bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					break;
 				}
 				case LINK_ID_LIST_TIMELINE: {
@@ -314,10 +336,10 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 						finish();
 						return false;
 					}
-					bundle.putInt(INTENT_KEY_LIST_ID, parseInt(param_list_id));
-					bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
-					bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
-					bundle.putString(INTENT_KEY_LIST_NAME, param_list_name);
+					args.putInt(INTENT_KEY_LIST_ID, parseInt(param_list_id));
+					args.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					args.putString(INTENT_KEY_LIST_NAME, param_list_name);
 					break;
 				}
 				case LINK_ID_LIST_MEMBERS: {
@@ -332,10 +354,10 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 						finish();
 						return false;
 					}
-					bundle.putInt(INTENT_KEY_LIST_ID, parseInt(param_list_id));
-					bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
-					bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
-					bundle.putString(INTENT_KEY_LIST_NAME, param_list_name);
+					args.putInt(INTENT_KEY_LIST_ID, parseInt(param_list_id));
+					args.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					args.putString(INTENT_KEY_LIST_NAME, param_list_name);
 					break;
 				}
 				case LINK_ID_LIST_SUBSCRIBERS: {
@@ -350,10 +372,10 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 						finish();
 						return false;
 					}
-					bundle.putInt(INTENT_KEY_LIST_ID, parseInt(param_list_id));
-					bundle.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
-					bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
-					bundle.putString(INTENT_KEY_LIST_NAME, param_list_name);
+					args.putInt(INTENT_KEY_LIST_ID, parseInt(param_list_id));
+					args.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					args.putString(INTENT_KEY_LIST_NAME, param_list_name);
 					break;
 				}
 				case LINK_ID_SAVED_SEARCHES: {
@@ -365,9 +387,10 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					setTitle(R.string.user_mentions);
 					fragment = new UserMentionsFragment();
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
-					if (!isEmpty(param_screen_name)) {
-						bundle.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
-					} else {
+					if (!args.containsKey(INTENT_KEY_SCREEN_NAME) && !isEmpty(param_screen_name)) {
+						args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					}
+					if (isEmpty(args.getString(INTENT_KEY_SCREEN_NAME))) {
 						finish();
 						return false;
 					}
@@ -396,15 +419,15 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 			}
 			final String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
 			if (param_account_id != null) {
-				bundle.putLong(INTENT_KEY_ACCOUNT_ID, parseLong(param_account_id));
+				args.putLong(INTENT_KEY_ACCOUNT_ID, parseLong(param_account_id));
 			} else {
 				final String param_account_name = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_NAME);
 				if (param_account_name != null) {
-					bundle.putLong(INTENT_KEY_ACCOUNT_ID, getAccountId(this, param_account_name));
+					args.putLong(INTENT_KEY_ACCOUNT_ID, getAccountId(this, param_account_name));
 				} else {
 					final long account_id = getDefaultAccountId(this);
 					if (isMyAccount(this, account_id)) {
-						bundle.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+						args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 					} else {
 						//finish();
 						//return false;
@@ -412,7 +435,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 				}
 			}
 			if (fragment != null) {
-				fragment.setArguments(bundle);
+				fragment.setArguments(args);
 			}
 		}
 		mFragment = fragment;

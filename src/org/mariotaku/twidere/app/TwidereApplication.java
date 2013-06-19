@@ -21,6 +21,8 @@ package org.mariotaku.twidere.app;
 
 import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
 import static org.mariotaku.twidere.util.Utils.hasActiveConnection;
+import static org.mariotaku.twidere.util.Utils.initAccountColor;
+import static org.mariotaku.twidere.util.Utils.initUserColor;
 
 import java.io.File;
 
@@ -156,6 +158,8 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
 			startService(new Intent(this, RefreshService.class));
 		}
+		initAccountColor(this);
+		initUserColor(this);
 	}
 
 	@Override

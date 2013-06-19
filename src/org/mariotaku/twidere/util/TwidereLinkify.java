@@ -198,11 +198,12 @@ public class TwidereLinkify {
 	public static final Pattern PATTERN_TWITTER_PROFILE_IMAGES = Pattern.compile(STRING_PATTERN_TWITTER_PROFILE_IMAGES,
 			Pattern.CASE_INSENSITIVE);
 
-	private static final String STRING_PATTERN_TWITTER_STATUS_NO_SCHEME = "twitter\\.com\\/([^\\/]+)\\/status\\/(\\d+)";
+	private static final String STRING_PATTERN_TWITTER_STATUS_NO_SCHEME = "((mobile|www)\\.)?twitter\\.com\\/([^\\/]+)\\/status\\/(\\d+)(\\/photo\\/\\d)?(\\/)?";
 	private static final String STRING_PATTERN_TWITTER_STATUS = AVAILABLE_URL_SCHEME_PREFIX
 			+ STRING_PATTERN_TWITTER_STATUS_NO_SCHEME;
 	public static final Pattern PATTERN_TWITTER_STATUS = Pattern.compile(STRING_PATTERN_TWITTER_STATUS, Pattern.CASE_INSENSITIVE);
-	public static final int TWITTER_STATUS_ID = 3;
+	public static final int TWITTER_SCREEN_NAME = 4;
+	public static final int TWITTER_STATUS_ID = 5;
 
 	private final OnLinkClickListener mOnLinkClickListener;
 	private final Extractor mExtractor = new Extractor();

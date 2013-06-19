@@ -744,7 +744,6 @@ public final class TweetStore implements Constants {
 
 		public static final String[] COLUMNS = new String[] { _ID, PACKAGE_NAME, PERMISSION };
 	}
-	
 
 	public static interface DNS extends BaseColumns {
 		public static final String CONTENT_PATH = "dns";
@@ -759,5 +758,20 @@ public final class TweetStore implements Constants {
 		public static final String[] MATRIX_COLUMNS = new String[] { HOST, ADDRESS };
 
 		public static final String[] COLUMNS = new String[] { _ID, HOST, ADDRESS };
+	}
+
+	public static interface CachedImages extends BaseColumns {
+		public static final String CONTENT_PATH = "cached_images";
+
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
+				CONTENT_PATH);
+
+		public static final String URL = "url";
+
+		public static final String PATH = "path";
+
+		public static final String[] MATRIX_COLUMNS = new String[] { URL, PATH };
+
+		public static final String[] COLUMNS = new String[] { _ID, URL, PATH };
 	}
 }
