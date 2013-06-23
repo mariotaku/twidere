@@ -129,7 +129,7 @@ public class TwidereLinkify {
 			string.removeSpan(span);
 		}
 		if (user_id > 0) {
-			applyLink(ParseUtils.parseString(user_id), 0, string.length(), string, account_id, LINK_TYPE_USER_ID, false);
+			applyLink(String.valueOf(user_id), 0, string.length(), string, account_id, LINK_TYPE_USER_ID, false);
 		} else if (screen_name != null) {
 			applyLink(screen_name, 0, string.length(), string, account_id, LINK_TYPE_MENTION, false);
 		}

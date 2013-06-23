@@ -15,6 +15,7 @@
 		android:id="@+id/name_frame"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
 		android:layout_alignParentTop="true"
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_marginRight="8dp"
@@ -31,7 +32,6 @@
 				android:layout_width="0dp"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
-				
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:textColor="?android:attr/textColorPrimary"
@@ -41,7 +41,6 @@
 				android:id="@+id/screen_name"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				
 				android:paddingLeft="4dp"
 				android:paddingRight="4dp"
 				android:singleLine="true"
@@ -59,8 +58,78 @@
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_below="@+id/name_frame"
 		android:gravity="right"
-		
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorSecondary"/>
+
+	<TextView
+		android:id="@+id/location"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_alignRight="@+id/name_frame"
+		android:layout_below="@+id/description"
+		android:layout_toRightOf="@+id/profile_image"
+		android:drawablePadding="4dp"
+		android:drawableRight="@drawable/ic_indicator_has_location"
+		android:gravity="right"
+		android:singleLine="true"
+		android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+	<TextView
+		android:id="@+id/url"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_alignRight="@+id/name_frame"
+		android:layout_below="@+id/location"
+		android:layout_toRightOf="@+id/profile_image"
+		android:drawablePadding="4dp"
+		android:drawableRight="@drawable/ic_indicator_web"
+		android:gravity="right"
+		android:singleLine="true"
+		android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+	<TableRow
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_alignRight="@+id/name_frame"
+		android:layout_below="@+id/url"
+		android:layout_toRightOf="@+id/profile_image"
+		android:orientation="horizontal">
+
+		<TextView
+			android:id="@+id/statuses_count"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:drawablePadding="4dp"
+			android:drawableRight="@drawable/ic_indicator_twitter"
+			android:gravity="right"
+			android:singleLine="true"
+			android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+		<TextView
+			android:id="@+id/followers_count"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:drawablePadding="4dp"
+			android:drawableRight="@drawable/ic_indicator_incoming"
+			android:gravity="right"
+			android:singleLine="true"
+			android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+		<TextView
+			android:id="@+id/friends_count"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:drawablePadding="4dp"
+			android:drawableRight="@drawable/ic_indicator_outgoing"
+			android:gravity="right"
+			android:singleLine="true"
+			android:textAppearance="?android:attr/textAppearanceSmall"/>
+	</TableRow>
 
 </org.mariotaku.twidere.view.ColorLabelRelativeLayout>

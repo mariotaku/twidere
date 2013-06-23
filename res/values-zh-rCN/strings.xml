@@ -112,6 +112,7 @@
   <string name="bottom_compose_button_summary">将撰写按钮放置在底部，当你的手机屏幕难以单手操作，它会有不少帮助</string>
   <string name="leftside_compose_button">左侧撰写按钮</string>
   <string name="leftside_compose_button_summary">将撰写按钮放置在左边</string>
+  <string name="bottom_send_button">底部放置的发送按钮</string>
   <string name="load_item_limit">载入条目上限</string>
   <string name="load_item_limit_summary">设定一次载入条目的数量上限</string>
   <string name="load_more_automatically">自动载入更多内容</string>
@@ -461,4 +462,6 @@
   <string name="no_close_after_tweet_sent">发送推文之后仍然保持“撰写”开启</string>
   <string name="no_close_after_tweet_sent_summary">给不二的小礼物</string>
   <string name="tweet_saved_to_draft">推文已经保存到草稿箱</string>
+  <string name="default_account">默认</string>
+  <string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g> （每天<xliff:g id="daily_tweet">%2$d</xliff:g>推）</string>
 </resources>

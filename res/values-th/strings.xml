@@ -90,7 +90,7 @@
   <string name="in_reply_to">ในการตอบกลับถึง <xliff:g id="user_name">%s</xliff:g></string>
   <string name="in_reply_to_pull_to_load_conversation">ในการตอบกลับถึง <xliff:g id="user_name">%s</xliff:g> ลากเพื่อดูการสนทนา</string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> รีทวีตข้อความนี้</string>
-  <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> และอีก <xliff:g id="retweet_count">%2$d</xliff:g> คน รีทวีตข้อความนี้</string>
+  <string name="users_retweeted_this">ผู้ใช้ที่รีทวีตข้อความนี้</string>
   <string name="reply_to">ตอบกลับหา <xliff:g id="user_name">%s</xliff:g></string>
   <string name="quote_user">อ้างอิง <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, ผ่าน <xliff:g id="source">%2$s</xliff:g></string>
@@ -117,16 +117,6 @@
   <string name="quote">อ้างอิง</string>
   <string name="add_rule">เพิ่มกฎ</string>
   <string name="longclick_to_delete">แตะค้างเพื่อลบ</string>
-
-
-
-
-
-
-
-
-
-
   <string name="text_size">ขนาดข้อความ</string>
   <string name="text_size_summary">ขนาดข้อความของสถานะ</string>
   <string name="cannot_get_location">ไม่สามารถรับที่อยู่ได้</string>
@@ -202,6 +192,49 @@
   <string name="users_lists">รายการของผู้ใช้</string>
   <string name="lists_following_user">รายการที่ติดตามผู้ใช้นี้</string>
   <string name="Ntweets_quantity_one">คุณมีทวีตใหม่</string>
+  <string name="Ntweets_quantity_other">คุณมี <xliff:g id="items">%d</xliff:g> ทวีตใหม่</string>
+  <string name="item_1_minute">1 นาที</string>
+  <string name="item_3_minutes">3 นาที</string>
+  <string name="item_5_minutes">5 นาที</string>
+  <string name="item_10_minutes">10 นาที</string>
+  <string name="item_15_minutes">10 นาที</string>
+  <string name="item_30_minutes">30 นาที</string>
+  <string name="item_1_hour">1 ชั่วโมง</string>
+  <string name="item_2_hours">2 ชั่วโมง</string>
+  <string name="item_4_hours">4 ชั่วโมง</string>
+  <string name="solid_color_background">ไม่ไล่สีพื้นหลัง</string>
+  <string name="solid_color_background_summary">ตัวเลือกนี้อาจมีประโยชน์ ถ้าหากอุปกรณ์ของคุณใช้จอแบบ AMOLED</string>
+  <string name="following_you">กำลังติดตามคุณ</string>
+  <string name="user_list">รายการของผู้ใช้</string>
+  <string name="trends_location">ตำแหน่งเทรนด์</string>
+  <string name="trends_location_summary">เลือกตำแหน่งสำหรับเทรนด์ท้องถิ่น</string>
+  <string name="trends">เทรนด์</string>
+  <string name="accounts">บัญชีผู้ใช้</string>
+  <string name="account">บัญชีผู้ใช้</string>
+  <string name="mention_this_user">กล่าวถึงผู้ใช้นี้</string>
+  <string name="signing_in_please_wait">กำลังเข้าสู่ระบบ กรุณารอสักครู่ หรือกด BACK เพื่อยกเลิก</string>
+  <string name="connectivity">การเชื่อมต่อ</string>
+  <string name="add_member">เพิ่มสมาชิก</string>
+  <string name="new_user_list">สร้างรายการผู้ใช้</string>
+  <string name="is_public">สาธารณะ</string>
+  <string name="send_direct_message">ส่งข้อความส่วนตัว</string>
+  <string name="extensions">ส่วนขยาย</string>
+  <string name="open_with_extensions">เปิดด้วยส่วนขยาย</string>
+  <string name="view_user_list">ดูรายการผู้ใช้</string>
+  <string name="uninstall">ถอนการติดตั้ง</string>
+  <string name="saved_searches">คำค้นที่บันทึกไว้</string>
+  <string name="custom_tabs">แท็บที่กำหนดเอง</string>
+  <string name="default_tabs">แท็บเริ่มต้น</string>
+  <string name="add_tab">เพิ่มแท็บ</string>
+  <string name="tab_type">ประเภทแท็บ</string>
+  <string name="unused">ไม่ถูกใช้</string>
+  <string name="list_name">รายการชื่อ</string>
+  <string name="edit_tab">แก้ไขแท็บ</string>
+  <string name="move_up">ย้ายขึ้น</string>
+  <string name="move_down">ย้ายลง</string>
+  <string name="unsaved_change_back_pressed">คุณมีการเปลี่ยนแปลงที่ยังไม่ได้บันทึก กด back เพื่อทิ้งการเปลี่ยนแปลงนี้</string>
+  <string name="invalid_settings">พบการตั้งค่าที่ไม่ถูกต้อง</string>
+  <string name="icon">ไอคอน</string>
   <string name="pick_file">เลือกไฟล์</string>
   <string name="user_timeline">ไทม์ไลน์ผู้ใช้</string>
   <string name="notification_ringtone">เสียงเรียกเข้า</string>
@@ -220,5 +253,10 @@
   <string name="tweet_shortener">ตัวย่อทวีต</string>
   <string name="tweet_shortener_default">ไม่มี (ยกเลิกการส่ง)</string>
   <string name="error_message_status_too_long">ทวีตยาวเกินไป</string>
+  <string name="error_message_tweet_shorten_failed">การย่อทวีตล้มเหลว</string>
+  <string name="error_message_tweet_shortener_not_found">ไม่พบตัวย่อทวีต อาจจะถูกถอนการติดตั้งออกไปแล้ว</string>
+  <string name="multimedia_contents">เนื้อหามัลติมีเดีย</string>
+  <string name="show_absolute_time">แสดงเวลาจริง</string>
+  <string name="show_absolute_time_summary">แสดงเวลาจริงในทวีต</string>
   <string name="loading">กำลังโหลด</string>
 </resources>

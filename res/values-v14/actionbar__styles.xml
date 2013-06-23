@@ -27,6 +27,7 @@
 		<item name="android:paddingTop">0dp</item>
 		<item name="android:paddingRight">4dp</item>
 		<item name="android:paddingBottom">0dp</item>
+		<item name="android:clickable">true</item>
 	</style>
 
 	<style name="Widget.ActionBarItem.Light.DarkActionBar" parent="Widget.ActionBarItem"/>

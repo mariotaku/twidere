@@ -86,7 +86,7 @@
   <string name="in_reply_to">W odpowiedzi do <xliff:g id="user_name">%s</xliff:g></string>
   <string name="in_reply_to_pull_to_load_conversation">W odpowiedzi do <xliff:g id="user_name">%s</xliff:g>, pociągnij, aby załadować rozmowę</string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> przesłał dalej</string>
-  <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> oraz <xliff:g id="retweet_count">%2$d</xliff:g> innych przesłało dalej</string>
+  <string name="users_retweeted_this">Użytkownicy którzy to przesłali dalej</string>
   <string name="reply_to">Odpowiedz do <xliff:g id="user_name">%s</xliff:g></string>
   <string name="quote_user">Cytuj <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, poprzez <xliff:g id="source">%2$s</xliff:g></string>
@@ -113,7 +113,6 @@
   <string name="quote">Cytuj</string>
   <string name="add_rule">Dodaj regułę</string>
   <string name="longclick_to_delete">Przytrzymaj dłużej aby usunąć</string>
-
   <string name="text_size">Rozmiar tekstu</string>
   <string name="text_size_summary">Rozmiar tekstu statusu.</string>
   <string name="cannot_get_location">Nie można wyszukać lokalizacji.</string>
@@ -196,7 +195,6 @@
   <string name="item_1_hour">1 godzina</string>
   <string name="item_2_hours">2 godziny</string>
   <string name="item_4_hours">4 godziny</string>
-  <string name="image_preview_display_option">Wbudowany podgląd załączonych obrazów</string>
   <string name="solid_color_background">Głęboki kolor tła</string>
   <string name="solid_color_background_summary">Może być przydatne dla ekranów AMOLED.</string>
   <string name="following_you">Obserwujący Cię</string>
@@ -209,8 +207,6 @@
   <string name="mention_this_user">Wzmiankujący tego użytkownika</string>
   <string name="connectivity">Połączenie</string>
   <string name="add_member">Dodaj członka</string>
-
-
   <string name="new_user_list">Nowa lista użytkownika</string>
   <string name="is_public">Publiczny</string>
   <string name="send_direct_message">Wyślij Wiadomość Prywatną</string>
@@ -218,7 +214,6 @@
   <string name="open_with_extensions">Otwórz z rozszerzeniami</string>
   <string name="view_user_list">Zobacz listę użytkownika</string>
   <string name="uninstall">Odinstaluj</string>
-  <string name="users_retweeted_this">Użytkownicy którzy to przesłali dalej</string>
   <string name="saved_searches">Zapisane wyniki wyszukiwania</string>
   <string name="custom_tabs">Własne zakładki</string>
   <string name="default_tabs">Domyślne zakładki</string>

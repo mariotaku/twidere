@@ -90,7 +90,7 @@
   <string name="in_reply_to">Em resposta a <xliff:g id="user_name">%s</xliff:g></string>
   <string name="in_reply_to_pull_to_load_conversation">Em resposta a <xliff:g id="user_name">%s</xliff:g>, puxe para ver a conversa</string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> retweetou isso</string>
-  <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> e <xliff:g id="retweet_count">%2$d</xliff:g> outros retweetaram isso</string>
+  <string name="users_retweeted_this">Usuários retweetaram isso</string>
   <string name="reply_to">Responder para <xliff:g id="user_name">%s</xliff:g></string>
   <string name="quote_user">Citar <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>
@@ -117,16 +117,6 @@
   <string name="quote">Citar</string>
   <string name="add_rule">Adicionar regra</string>
   <string name="longclick_to_delete">Mantenha pressionado para apagar.</string>
-
-
-
-
-
-
-
-
-
-
   <string name="text_size">Tamanho do texto</string>
   <string name="text_size_summary">Tamanho do texto de status.</string>
   <string name="cannot_get_location">Não foi possível obter sua localização.</string>
@@ -212,7 +202,7 @@
   <string name="item_1_hour">1 hora</string>
   <string name="item_2_hours">2 horas</string>
   <string name="item_4_hours">4 horas</string>
-  <string name="image_preview_display_option">Visualizador de imagem integrado</string>
+  <string name="image_preview_display_option">Opções de visualização integrada</string>
   <string name="solid_color_background">Fundo de cor sólida</string>
   <string name="solid_color_background_summary">Isso pode ser útil se a tela do dispositivo é de AMOLED.</string>
   <string name="following_you">Seguindo você</string>
@@ -226,8 +216,6 @@
   <string name="signing_in_please_wait">Logando, aguarde ou pressione VOLTAR para sair.</string>
   <string name="connectivity">Conectividade</string>
   <string name="add_member">Adicionar membro</string>
-
-
   <string name="new_user_list">Nova lista</string>
   <string name="is_public">Público</string>
   <string name="send_direct_message">Enviar MD</string>
@@ -235,7 +223,6 @@
   <string name="open_with_extensions">Abrir com extensões</string>
   <string name="view_user_list">Ver lista</string>
   <string name="uninstall">Desinstalar</string>
-  <string name="users_retweeted_this">Usuários retweetaram isso</string>
   <string name="saved_searches">Pesquisas salvas</string>
   <string name="custom_tabs">Abas personalizadas</string>
   <string name="default_tabs">Abas padrão</string>
@@ -298,6 +285,7 @@
   <string name="dns_server">Servidor DNS</string>
   <string name="dns_server_summary">Definir o servidor DNS para solicitações de API.</string>
   <string name="activities_about_me">Atividades sobre mim</string>
+  <string name="activities_by_friends">Atividades de amigos</string>
   <string name="activity_about_me_favorite"><xliff:g id="user">%s</xliff:g> favoritou seu tweet.</string>
   <string name="activity_about_me_favorite_multi"><xliff:g id="user">%s</xliff:g> e <xliff:g id="count">%d</xliff:g> outros favoritaram seu tweet.</string>
   <string name="activity_about_me_follow"><xliff:g id="user">%s</xliff:g> está seguindo você.</string>
@@ -306,6 +294,14 @@
   <string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> e <xliff:g id="count">%d</xliff:g> outros retweetaram seu tweet.</string>
   <string name="activity_about_me_list_member_added"><xliff:g id="user">%s</xliff:g> adicionou você à lista.</string>
   <string name="activity_about_me_list_member_added_multi"><xliff:g id="user">%s</xliff:g> e <xliff:g id="count">%d</xliff:g> te adicionaram à listas.</string>
+  <string name="activity_by_friends_favorite"><xliff:g id="user">%1$s</xliff:g> favoritou o tweet de <xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_favorite_multi"><xliff:g id="user">%1$s</xliff:g> favoritou o tweet de <xliff:g id="target">%2$s</xliff:g> e de outros <xliff:g id="count">%3$d</xliff:g> usuários.</string>
+  <string name="activity_by_friends_follow"><xliff:g id="user">%1$s</xliff:g> agora segue <xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_follow_multi"><xliff:g id="user">%1$s</xliff:g> agora segue <xliff:g id="target">%2$s</xliff:g> e outros <xliff:g id="count">%3$d</xliff:g> usuários.</string>
+  <string name="activity_by_friends_retweet"><xliff:g id="user">%1$s</xliff:g> retweetou <xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_list_member_added"><xliff:g id="user">%1$s</xliff:g> adicionou <xliff:g id="target">%2$s</xliff:g> em uma lista.</string>
+  <string name="activity_by_friends_list_created"><xliff:g id="user">%1$s</xliff:g> criou a lista <xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g> criou a lista <xliff:g id="target">%2$s</xliff:g> e mais <xliff:g id="count">%3$d</xliff:g>.</string>
   <string name="cannot_get_callback_url">Sem retorno, verifique seu nome e senha.</string>
   <string name="tweet_not_sent">Tweet não enviado.</string>
   <string name="tweet_not_sent_summary">Tweet não enviado, salvo nos rascunhos.</string>
@@ -330,6 +326,7 @@
   <string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> e <xliff:g id="count">%d</xliff:g> outros mencionaram você.</string>
   <string name="notification_direct_message_multiple"><xliff:g id="user">%s</xliff:g> e <xliff:g id="count">%d</xliff:g> outros lhe enviaram mensagens diretas.</string>
   <string name="getting_status">obtendo tweet</string>
+  <string name="getting_statuses">ao obter tweets</string>
   <string name="sending_status">enviando tweet</string>
   <string name="sending_direct_message">enviando mensagem direta</string>
   <string name="refreshing_timelines">atualizando timelines</string>
@@ -354,6 +351,8 @@
   <string name="signing_in">fazendo login</string>
   <string name="retweeting">retweetando</string>
   <string name="reporting_for_spam">denunciando como spam</string>
+  <string name="subscribing_to_list">ao se inscrever na lista</string>
+  <string name="unsubscribing_from_list">ao remover inscrição</string>
   <string name="data_profiling_summary">Twidere participa de uma pesquisa sobre comportamento social de usuários pela UC Davis.\n\nOs dados que nós coletamos e porque:\nDados coletados:\n1. Twitter ID\n2. Timeline do usuário (predição baseada nos interesses e interações)\n3. Cliques do usuário num tweet (predição baseada nos interesses e interações sociais)\n4. Localização genérica (um bom indicador de quando o usuário irá acessar o Twitter)\n\nO Twidere vai enviar estes dados apenas quando seu aparelho estiver com o Wi-Fi  ligado e o carregador conectado, assim não afetará seu pacote de dados nem drenar sua bateria.</string>
   <string name="data_profiling">Estatísticas de Uso</string>
   <string name="enable_data_profiling">Permitir Relatórios</string>
@@ -363,6 +362,7 @@
   <string name="silent_notifications">Notificações silenciosas</string>
   <string name="silent_notifications_summary">Desativar toque/vibração em notificações</string>
   <string name="disable_background_service">Desativar serviço em segundo plano</string>
+  <string name="disable_background_service_summary">O Twidere não executa serviços em segundo plano se você desabilitar a atualização automática e perfil de dados, não se preocupe!</string>
   <string name="pull_to_load_conversation_label">Puxe para carregar a conversa...</string>
   <string name="pull_to_load_conversation_release_label">Solte para carregar a conversa...</string>
   <string name="text_copied">Texto copiado para a área de transferência.</string>
@@ -422,4 +422,41 @@
   <string name="link_underline_only">Sublinhar apenas links</string>
   <string name="wrong_url_format">Formato de URL incorreto.</string>
   <string name="wrong_username_password">Usuário/senha incorretos.</string>
+  <string name="network_error">Erro de rede.</string>
+  <string name="ssl_error">Erro de SSL, você pode ter que habilitar a opção \"Ignorar Erro de SSL\".</string>
+  <string name="wrong_api_key">URL do API ou chave de consumidor inválidos, verifique por favor.</string>
+  <string name="status_updated">Tweet enviado.</string>
+  <string name="status_deleted">Tweet excluído.</string>
+  <string name="status_favorited">Tweet marcado como favorito.</string>
+  <string name="status_unfavorited">Tweet desmarcado como favorito.</string>
+  <string name="status_retweeted">Retweetado.</string>
+  <string name="retweet_cancelled">Retweet cancelado.</string>
+  <string name="direct_message_sent">Mensagem direta enviada.</string>
+  <string name="direct_message_deleted">Mensagem direta excluída.</string>
+  <string name="import_from">Importar de...</string>
+  <string name="link_to_quoted_tweet">Link para o tweet mencionado</string>
+  <string name="followed_user">Seguindo <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="unfollowed_user">Não segue mais <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="blocked_user">Bloqueou <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="unblocked_user">Desbloqueou <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="profile_updated">Perfil atualizado.</string>
+  <string name="profile_banner_image_updated">Banner do perfil atualizado.</string>
+  <string name="profile_image_updated">Imagem do perfil atualizada.</string>
+  <string name="created_list">A lista \"<xliff:g id="list">%s</xliff:g>\" foi criada.</string>
+  <string name="deleted_list">A lista \"<xliff:g id="list">%s</xliff:g>\" foi excluída.</string>
+  <string name="updated_list_details">Os detalhes da lista \"<xliff:g id="list">%s</xliff:g>\" foram atualizados.</string>
+  <string name="subscribed_to_list">Inscrito na lista \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="unsubscribed_from_list">Removida a inscrição na lista \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="added_user_to_list">Adicionados usuário(s) à lista \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="deleted_user_from_list">Excluído(s) usuário(s) da lista \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="subscribe">Inscrever-se</string>
+  <string name="unsubscribe">Sair</string>
+  <string name="background_toast_notification">Notificação toast em segundo plano</string>
+  <string name="background_toast_notification_summary">Exibir notificações toast quando estiver rodando em segundo plano</string>
+  <string name="original_status">Tweet original</string>
+  <string name="compose_quit_action">Abandonar a composição</string>
+  <string name="ask">Perguntar</string>
+  <string name="no_close_after_tweet_sent">Permanecer na tela de composição após o tweet ser enviado</string>
+  <string name="no_close_after_tweet_sent_summary">Um presentinho para tagarelas</string>
+  <string name="tweet_saved_to_draft">Tweet salvo como rascunho.</string>
 </resources>

@@ -147,7 +147,8 @@ public final class Crouton {
 	 * @param customView The custom {@link View} to display
 	 * @param viewGroup The {@link ViewGroup} that this {@link Crouton} should
 	 *            be added to.
-	 * @param configuration The {@link Configuration} for this {@link Crouton}.
+	 * @param configuration The {@link CroutonConfiguration} for this
+	 *            {@link Crouton}.
 	 */
 	private Crouton(final Activity activity, final View customView, final ViewGroup viewGroup,
 			final CroutonConfiguration configuration) {
@@ -194,11 +195,11 @@ public final class Crouton {
 	}
 
 	/**
-	 * Set the {@link Configuration} on this {@link Crouton}, prior to showing
-	 * it.
+	 * Set the {@link CroutonConfiguration} on this {@link Crouton}, prior to
+	 * showing it.
 	 * 
-	 * @param configuration a {@link Configuration} built using the
-	 *            {@link Configuration.Builder}.
+	 * @param configuration a {@link CroutonConfiguration} built using the
+	 *            {@link CroutonConfiguration.Builder}.
 	 * 
 	 * @return this {@link Crouton}.
 	 */

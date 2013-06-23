@@ -7,7 +7,7 @@
 		<attr name="selectableViewStyle" format="reference"/>
 		<attr name="editTextStyle" format="reference"/>
 		<attr name="preferenceTitleStyle" format="reference"/>
-		<attr name="messagesBackground" format="reference|color"/>
+		<attr name="contentBackground" format="reference|color"/>
 	</declare-styleable>
 	<declare-styleable name="ViewPagerIndicator">
 		<attr name="tabStyle" format="reference"/>

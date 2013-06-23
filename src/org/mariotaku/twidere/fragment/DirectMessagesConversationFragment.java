@@ -21,8 +21,11 @@ package org.mariotaku.twidere.fragment;
 
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.buildDirectMessageConversationUri;
+import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.showOkMessage;
+
+import java.util.Locale;
 
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
@@ -87,7 +90,7 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 
 	private ListView mListView;
 	private EditText mEditText;
-	private TextView mTextCount;
+	private TextView mTextCountView;
 	private AutoCompleteTextView mEditScreenName;
 	private ImageButton mSendButton;
 	private Button mScreenNameConfirmButton;
@@ -99,6 +102,7 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 	private ParcelableDirectMessage mSelectedDirectMessage;
 	private final Bundle mArguments = new Bundle();
 	private Account mSelectedAccount;
+	private Locale mLocale;
 
 	private DirectMessagesConversationAdapter mAdapter;
 	private AutoCompleteAdapter mUserAutoCompleteAdapter;
@@ -157,7 +161,7 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 		super.onActivityCreated(savedInstanceState);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mTwitterWrapper = getTwitterWrapper();
-
+		mLocale = getResources().getConfiguration().locale;
 		mAdapter = new DirectMessagesConversationAdapter(getActivity());
 		setListAdapter(mAdapter);
 		mListView = getListView();
@@ -250,7 +254,7 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 				FrameLayout.LayoutParams.MATCH_PARENT);
 		list_container.addView(super.onCreateView(inflater, container, savedInstanceState), lp);
 		mEditText = (EditText) view.findViewById(R.id.edit_text);
-		mTextCount = (TextView) view.findViewById(R.id.text_count);
+		mTextCountView = (TextView) view.findViewById(R.id.text_count);
 		mSendButton = (ImageButton) view.findViewById(R.id.send);
 		mConversationContainer = view.findViewById(R.id.conversation_container);
 		mScreenNameContainer = view.findViewById(R.id.screen_name_container);
@@ -419,16 +423,16 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 	}
 
 	private void updateTextCount() {
-		if (mTextCount != null) {
+		if (mTextCountView != null) {
 			final String text = mEditText != null ? ParseUtils.parseString(mEditText.getText()) : null;
 			final int count = mValidator.getTweetLength(text);
 			final float hue = count < Validator.MAX_TWEET_LENGTH ? count >= Validator.MAX_TWEET_LENGTH - 10 ? 5 * (Validator.MAX_TWEET_LENGTH - count)
 					: 50
 					: 0;
 			final float[] hsv = new float[] { hue, 1.0f, 1.0f };
-			mTextCount
+			mTextCountView
 					.setTextColor(count >= Validator.MAX_TWEET_LENGTH - 10 ? Color.HSVToColor(0x80, hsv) : 0x80808080);
-			mTextCount.setText(ParseUtils.parseString(Validator.MAX_TWEET_LENGTH - count));
+			mTextCountView.setText(getLocalizedNumber(mLocale, Validator.MAX_TWEET_LENGTH - count));
 		}
 	}
 

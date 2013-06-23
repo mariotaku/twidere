@@ -42,6 +42,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -106,6 +107,7 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	}
 
 	public void hideControls() {
+		mControlButtons.startAnimation(AnimationUtils.loadAnimation(this, android.R.anim.fade_out));
 		mControlButtons.setVisibility(View.GONE);
 	}
 
@@ -275,6 +277,7 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 	}
 
 	public void showControls() {
+		mControlButtons.startAnimation(AnimationUtils.loadAnimation(this, android.R.anim.fade_in));
 		mControlButtons.setVisibility(View.VISIBLE);
 	}
 

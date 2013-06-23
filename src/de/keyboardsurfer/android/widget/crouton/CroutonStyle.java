@@ -47,8 +47,8 @@ public class CroutonStyle {
 	}
 
 	/**
-	 * The {@link Configuration} for this {@link Style}. It can be overridden
-	 * via {@link Crouton#setConfiguration(Configuration)}.
+	 * The {@link CroutonConfiguration} for this {@link CroutonStyle}. It can be
+	 * overridden via {@link Crouton#setConfiguration(Configuration)}.
 	 */
 	final CroutonConfiguration configuration;
 
@@ -178,7 +178,7 @@ public class CroutonStyle {
 				+ paddingDimensionResId + '}';
 	}
 
-	/** Builder for the {@link Style} object. */
+	/** Builder for the {@link CroutonStyle} object. */
 	public static class Builder {
 		private CroutonConfiguration configuration;
 		private int backgroundColorValue;
@@ -203,7 +203,7 @@ public class CroutonStyle {
 		private int paddingInPixels;
 		private int paddingDimensionResId;
 
-		/** Creates a {@link Builder} to build a {@link Style} upon. */
+		/** Creates a {@link Builder} to build a {@link CroutonStyle} upon. */
 		public Builder() {
 			configuration = CroutonConfiguration.DEFAULT;
 			paddingInPixels = 10;
@@ -221,10 +221,10 @@ public class CroutonStyle {
 		}
 
 		/**
-		 * Creates a {@link Builder} to build a {@link Style} upon.
+		 * Creates a {@link Builder} to build a {@link CroutonStyle} upon.
 		 * 
-		 * @param baseStyle The base {@link Style} to use for this {@link Style}
-		 *            .
+		 * @param baseStyle The base {@link CroutonStyle} to use for this
+		 *            {@link CroutonStyle} .
 		 */
 		public Builder(final CroutonStyle baseStyle) {
 			configuration = baseStyle.configuration;
@@ -251,7 +251,7 @@ public class CroutonStyle {
 			paddingDimensionResId = baseStyle.paddingDimensionResId;
 		}
 
-		/** @return a configured {@link Style} object. */
+		/** @return a configured {@link CroutonStyle} object. */
 		public CroutonStyle build() {
 			return new CroutonStyle(this);
 		}
@@ -298,9 +298,9 @@ public class CroutonStyle {
 		}
 
 		/**
-		 * Set the {@link Configuration} option of the {@link Crouton}.
+		 * Set the {@link CroutonConfiguration} option of the {@link Crouton}.
 		 * 
-		 * @param configuration The {@link Configuration}.
+		 * @param configuration The {@link CroutonConfiguration}.
 		 * 
 		 * @return the {@link Builder}.
 		 */

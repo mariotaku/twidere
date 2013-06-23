@@ -86,7 +86,7 @@
   <string name="in_reply_to">In antwoord aan <xliff:g id="user_name">%s</xliff:g>;</string>
   <string name="in_reply_to_pull_to_load_conversation">In antwoord op <xliff:g id="user_name">%s</xliff:g>, trek om gesprek te laden</string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> retweet dit</string>
-  <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> en <xliff:g id="retweet_count">%2$d</xliff:g> anderen retweet dit</string>
+  <string name="users_retweeted_this">Gebruikers retweet dit</string>
   <string name="reply_to">Antwoord aan <xliff:g id="user_name">%s</xliff:g>;</string>
   <string name="quote_user">Quote <xliff:g id="user_name">%s</xliff:g>;</string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g>;</string>
@@ -113,16 +113,6 @@
   <string name="quote">Citeer</string>
   <string name="add_rule">Regel toevoegen</string>
   <string name="longclick_to_delete">Lang klikken om te verwijderen.</string>
-
-
-
-
-
-
-
-
-
-
   <string name="text_size">lettergrootte</string>
   <string name="text_size_summary">Lettergrootte van statussen.</string>
   <string name="cannot_get_location">Kan uw locatie niet verkrijgen.</string>
@@ -208,7 +198,6 @@
   <string name="item_1_hour">1 uur</string>
   <string name="item_2_hours">2 uur</string>
   <string name="item_4_hours">4 uur</string>
-  <string name="image_preview_display_option">In lijn fotovoorbeeld weergave optie</string>
   <string name="solid_color_background">Effen kleur achtergrond</string>
   <string name="solid_color_background_summary">Dit kan handig zijn als het scherm van uw apparaat AMOLED is.</string>
   <string name="following_you">Volgt jou</string>
@@ -222,8 +211,6 @@
   <string name="signing_in_please_wait">Inloggen, wacht of klik op TERUG om te annuleren.</string>
   <string name="connectivity">Connectiviteit</string>
   <string name="add_member">Voeg lid toe</string>
-
-
   <string name="new_user_list">Nieuwe gebruikerslijst</string>
   <string name="is_public">Openbaar</string>
   <string name="send_direct_message">Stuur DM</string>
@@ -231,7 +218,6 @@
   <string name="open_with_extensions">Open met uitbreidingen</string>
   <string name="view_user_list">Bekijk gebruikerslijst</string>
   <string name="uninstall">Verwijder</string>
-  <string name="users_retweeted_this">Gebruikers retweet dit</string>
   <string name="saved_searches">Opgeslagen zoekopdrachten</string>
   <string name="custom_tabs">Aangepaste tabbladen</string>
   <string name="default_tabs">Standaard tabbladen</string>

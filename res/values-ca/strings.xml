@@ -90,7 +90,7 @@
   <string name="in_reply_to">En resposta a <xliff:g id="user_name">%s</xliff:g></string>
   <string name="in_reply_to_pull_to_load_conversation">En resposta a <xliff:g id="user_name">%s</xliff:g>, desplaça cap a baix per carregar la conversa</string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> ho ha retuitejat</string>
-  <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> i <xliff:g id="retweet_count">%2$d</xliff:g> altres ho han retuitejat</string>
+  <string name="users_retweeted_this">Usuaris que han repiulat</string>
   <string name="reply_to">Respondre a <xliff:g id="user_name">%s</xliff:g></string>
   <string name="quote_user">Citar <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>
@@ -117,16 +117,6 @@
   <string name="quote">Cita</string>
   <string name="add_rule">Afegeix una regla</string>
   <string name="longclick_to_delete">Mantingueu pressionat per esborrar.</string>
-
-
-
-
-
-
-
-
-
-
   <string name="text_size">Tamany del text</string>
   <string name="text_size_summary">Mida del text dels estats.</string>
   <string name="cannot_get_location">No es pot obtenir la vostra localització.</string>
@@ -212,7 +202,6 @@
   <string name="item_1_hour">1 hora</string>
   <string name="item_2_hours">2 hores</string>
   <string name="item_4_hours">4 hores</string>
-  <string name="image_preview_display_option">Opcions de la vista prèvia d\'imatges al llistat</string>
   <string name="solid_color_background">Color de fons sòlid</string>
   <string name="solid_color_background_summary">Això pot ser útil si la pantalla del dispositiu és AMOLED.</string>
   <string name="following_you">Seguinte</string>
@@ -226,8 +215,6 @@
   <string name="signing_in_please_wait">S\'està iniciant la sessió, premeu ENRERE per sortir.</string>
   <string name="connectivity">Conectivitat</string>
   <string name="add_member">Afegeix un membre</string>
-
-
   <string name="new_user_list">Nova llista d\'usuaris</string>
   <string name="is_public">Públic</string>
   <string name="send_direct_message">Enviar Missatge Directe</string>
@@ -235,7 +222,6 @@
   <string name="open_with_extensions">Obrir amb les extensions</string>
   <string name="view_user_list">Visualitzar llista usuari</string>
   <string name="uninstall">Desinstal·la</string>
-  <string name="users_retweeted_this">Usuaris que han repiulat</string>
   <string name="saved_searches">Cerques desades</string>
   <string name="custom_tabs">Pestanyes personalitzades</string>
   <string name="default_tabs">Pestanyes per defecte</string>
@@ -298,6 +284,7 @@
   <string name="dns_server">Servidor DNS</string>
   <string name="dns_server_summary">Ajusta el servidor DNS per peticions API.</string>
   <string name="activities_about_me">Activitats sobre mi</string>
+  <string name="activities_by_friends">Activitats dels teus amics</string>
   <string name="activity_about_me_favorite"><xliff:g id="user">%s</xliff:g> ha marcat el teu tuit com a preferit.</string>
   <string name="activity_about_me_favorite_multi"><xliff:g id="user">%s</xliff:g> y <xliff:g id="count">%d</xliff:g> altres usuaris han marcat el teu tuit com a preferit.</string>
   <string name="activity_about_me_follow"><xliff:g id="user">%s</xliff:g> t\'està seguint.</string>
@@ -306,6 +293,14 @@
   <string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> i <xliff:g id="count">%d</xliff:g> altres han retuitejat el teu tuit.</string>
   <string name="activity_about_me_list_member_added"><xliff:g id="usuario">%s</xliff:g> t\'ha afegit a una llista.</string>
   <string name="activity_about_me_list_member_added_multi"><xliff:g id="user">%s</xliff:g> i <xliff:g id="count">%d</xliff:g> altrs t\'han afegit a les seves llistes.</string>
+  <string name="activity_by_friends_favorite"><xliff:g id="user">%1$s</xliff:g> ha marcat com a favorit el tuit de <xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_favorite_multi"><xliff:g id="user">%1$s</xliff:g> ha marcat com a favorit un tuit de <xliff:g id="target">%2$s</xliff:g> i de <xliff:g id="count">%3$d</xliff:g> altres.</string>
+  <string name="activity_by_friends_follow"><xliff:g id="user">%1$s</xliff:g> segueix a <xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_follow_multi"><xliff:g id="user">%1$s</xliff:g> segueix a <xliff:g id="target">%2$s</xliff:g> i a <xliff:g id="count">%3$d</xliff:g> usuaris més.</string>
+  <string name="activity_by_friends_retweet"><xliff:g id="user">%1$s</xliff:g> retuitejat a <xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_list_member_added"><xliff:g id="user">%1$s</xliff:g> ha afegit a <xliff:g id="target">%2$s</xliff:g> a una llista.</string>
+  <string name="activity_by_friends_list_created"><xliff:g id="user">%1$s</xliff:g> ha creat la llista <xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g> ha creat la llista <xliff:g id="target">%2$s</xliff:g> i <xliff:g id="count">%3$d</xliff:g> més.</string>
   <string name="cannot_get_callback_url">No s\'ha rebut cap resposta. Comproveu el vostre nom d\'usuari i contrasenya.</string>
   <string name="tweet_not_sent">Piulada no enviada.</string>
   <string name="tweet_not_sent_summary">No s\'ha enviat la piulada, però s\'ha guardat a Esborranys.</string>
@@ -328,9 +323,12 @@
   <string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> i altres <xliff:g id="count">%d</xliff:g> t\'han mencionat.</string>
   <string name="notification_direct_message_multiple"><xliff:g id="user">%s</xliff:g> y otros <xliff:g id="count">%d</xliff:g> t\'han enviat missatges directes.</string>
   <string name="getting_status">s\'està rebent la piulada</string>
+  <string name="getting_statuses">descarregant tuits</string>
   <string name="sending_status">s\'està enviant la pulada</string>
   <string name="sending_direct_message">s\'està enviant missatge directe</string>
   <string name="refreshing_timelines">s\'està actualitzant les cronologies</string>
+  <string name="refreshing_home_timeline">actualitzant la cronologia</string>
+  <string name="refreshing_mentions">actualitzant els esments</string>
   <string name="refreshing_direct_messages">s\'està actualitzant els missatges directes</string>
   <string name="favoriting">s\'està afegint a favorits</string>
   <string name="unfavoriting">s\'està eliminant dels favorits</string>
@@ -350,6 +348,7 @@
   <string name="signing_in">s\'hi està accedint</string>
   <string name="retweeting">s\'està repiulant</string>
   <string name="reporting_for_spam">informar d\'abús</string>
+  <string name="subscribing_to_list">subscrivint-vos a la llista</string>
   <string name="data_profiling_summary">Twidere va participar en un projecte iniciat pels estudiants de la UC Davis per predir els comportaments socials dels usuaris de continguts pre-carregats.\n\nHeus aquí les dades que volíem recopilar i per què:\nDades obtingudes:\n1. Nom d\'usuari de Twitter.\n2. La cronologia de l\'usuari (predita basada en els interessos de l\'usuari i la seva interacció social)\n3. Els clics del l\'usuari a una piulada (predits basat en els interessos de l\'usuari i la seva interacció social).\n4. Localització no exacta (que és un indicador de la hora d\'accés de l\'usuari a Twitter)\n\nTwidere carregarà les dades obtingudes només en una xarxa Wi-Fi i quan tingueu el vostre dispositiu connectat al carregador, així que no us costarà us de dades extra o us descarregarà la bateria.</string>
   <string name="data_profiling">Estadístiques d\'Ús</string>
   <string name="enable_data_profiling">Activar Informes</string>
@@ -359,6 +358,7 @@
   <string name="silent_notifications">Notificacions silencioses</string>
   <string name="silent_notifications_summary">Desactiva el to/vibració de les notificacions</string>
   <string name="disable_background_service">Desactivar el servei en segon pla</string>
+  <string name="disable_background_service_summary">El Twidere no opera en rerefons si desactives l‘actualització automàtica i la recollida de dades, no siguis ruc!</string>
   <string name="pull_to_load_conversation_label">Desplaça cap a baix per carregar la conversa...</string>
   <string name="pull_to_load_conversation_release_label">Solta per carregar la conversa...</string>
   <string name="text_copied">Text copia al porta-retalls.</string>
@@ -403,4 +403,5 @@
   <string name="image_preload_options">Opcions del pre-carregament d\'imatges</string>
   <string name="profile_images">Imatges de perfil</string>
   <string name="preview_images">Previsualització d\'imatges</string>
+  <string name="sign_in_method_introduction_title">Com funciona, això?</string>
 </resources>

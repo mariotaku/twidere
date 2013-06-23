@@ -90,7 +90,7 @@
   <string name="in_reply_to">У відповідь на <xliff:g id="user_name">%s</xliff:g></string>
   <string name="in_reply_to_pull_to_load_conversation">Для відповіді на <xliff:g id="user_name">%s</xliff:g>, потягніть для завантаження діалогу</string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> ретвітнув це</string>
-  <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> та <xliff:g id="retweet_count">%2$d</xliff:g> інших ретвітнули це</string>
+  <string name="users_retweeted_this">Користувачі, які ретвітнули це</string>
   <string name="reply_to">Відповідь на <xliff:g id="user_name">%s</xliff:g></string>
   <string name="quote_user">Цитата <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, через <xliff:g id="source">%2$s</xliff:g></string>
@@ -117,16 +117,6 @@
   <string name="quote">Цитата</string>
   <string name="add_rule">Додати правило</string>
   <string name="longclick_to_delete">Довгий натиск для видалення.</string>
-
-
-
-
-
-
-
-
-
-
   <string name="text_size">Розмір тексту</string>
   <string name="text_size_summary">Розмір тексту для статусів.</string>
   <string name="cannot_get_location">Не вдається отримати ваше розташування.</string>
@@ -212,7 +202,7 @@
   <string name="item_1_hour">1 година</string>
   <string name="item_2_hours">2 години</string>
   <string name="item_4_hours">4 години</string>
-  <string name="image_preview_display_option">налаштування показу зображень у стрічці</string>
+  <string name="image_preview_display_option">Налаштування показу зображень у стрічці</string>
   <string name="solid_color_background">Суцільний колір тла</string>
   <string name="solid_color_background_summary">Це може бути корисним, якщо екран вашого пристрою AMOLED.</string>
   <string name="following_you">Ваші підписники</string>
@@ -226,8 +216,6 @@
   <string name="signing_in_please_wait">Увійдіть, будь ласка, зачекайте та натисніть НАЗАД, щоб вийти.</string>
   <string name="connectivity">З\'єднання</string>
   <string name="add_member">Додати користувача</string>
-
-
   <string name="new_user_list">Новий список користувачів</string>
   <string name="is_public">Публічний</string>
   <string name="send_direct_message">Надіслати ПП</string>
@@ -235,7 +223,6 @@
   <string name="open_with_extensions">Відкрити з розширенням</string>
   <string name="view_user_list">Переглянути список користувачів</string>
   <string name="uninstall">Видалити</string>
-  <string name="users_retweeted_this">Користувачі, які ретвітнули це</string>
   <string name="saved_searches">Збережені пошуки</string>
   <string name="custom_tabs">Користувацькі вкладки</string>
   <string name="default_tabs">Типові вкладки</string>
@@ -298,6 +285,7 @@
   <string name="dns_server">сервер DNS</string>
   <string name="dns_server_summary">Вкажіть DNS-сервер для API-запитів.</string>
   <string name="activities_about_me">Моя діяльність</string>
+  <string name="activities_by_friends">Діяльність за друзями</string>
   <string name="activity_about_me_favorite"><xliff:g id="user">%s</xliff:g> додав у обране ваш твіт.</string>
   <string name="activity_about_me_favorite_multi"><xliff:g id="user">%s</xliff:g> та <xliff:g id="count">%d</xliff:g> інших додали у обране ваш твіт.</string>
   <string name="activity_about_me_follow"><xliff:g id="user">%s</xliff:g> підписаний на вас.</string>
@@ -306,6 +294,14 @@
   <string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> та <xliff:g id="count">%d</xliff:g> інших ретвітнули ваш твіт.</string>
   <string name="activity_about_me_list_member_added"><xliff:g id="user">%s</xliff:g> додав вас у свій список.</string>
   <string name="activity_about_me_list_member_added_multi"><xliff:g id="user">%s</xliff:g> та <xliff:g id="count">%d</xliff:g> інших додали вас у свої списки.</string>
+  <string name="activity_by_friends_favorite"><xliff:g id="user">%1$s</xliff:g> додав у обране твіт <xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_favorite_multi"><xliff:g id="user">%1$s</xliff:g> додав у обране твіт <xliff:g id="target">%2$s</xliff:g> та <xliff:g id="count">%3$d</xliff:g> інших твітів.</string>
+  <string name="activity_by_friends_follow"><xliff:g id="user">%1$s</xliff:g> слідкує за <xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_follow_multi"><xliff:g id="user">%1$s</xliff:g> слідкує за <xliff:g id="target">%2$s</xliff:g> та <xliff:g id="count">%3$d</xliff:g> іншими.</string>
+  <string name="activity_by_friends_retweet"><xliff:g id="user">%1$s</xliff:g> ретвітнув твіт <xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_list_member_added"><xliff:g id="user">%1$s</xliff:g> додав <xliff:g id="target">%2$s</xliff:g> до списку.</string>
+  <string name="activity_by_friends_list_created"><xliff:g id="user">%1$s</xliff:g> створив список <xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g> створив список <xliff:g id="target">%2$s</xliff:g> та ще <xliff:g id="count">%3$d</xliff:g>.</string>
   <string name="cannot_get_callback_url">Не вдається отримати відповідь, перевірте ім\'я користувача і пароль.</string>
   <string name="tweet_not_sent">Твіт не надіслано.</string>
   <string name="tweet_not_sent_summary">Твіт не надіслано і збережено до чернеток.</string>
@@ -330,6 +326,7 @@
   <string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> і <xliff:g id="count">%d</xliff:g> інших згадали вас.</string>
   <string name="notification_direct_message_multiple"><xliff:g id="user">%s</xliff:g> та <xliff:g id="count">%d</xliff:g> інших надіслали вам декілька приватних повідомлень.</string>
   <string name="getting_status">отримуємо твіт</string>
+  <string name="getting_statuses">отримання твітів</string>
   <string name="sending_status">надсилаємо твіт</string>
   <string name="sending_direct_message">надсилаємо приватне повідомлення</string>
   <string name="refreshing_timelines">оновлення стрічки</string>
@@ -354,6 +351,8 @@
   <string name="signing_in">вхід</string>
   <string name="retweeting">ретвітимо</string>
   <string name="reporting_for_spam">звітуємо про спам</string>
+  <string name="subscribing_to_list">підписка на список</string>
+  <string name="unsubscribing_from_list">відписка з списку</string>
   <string name="data_profiling_summary">Twidere бере участь у дослідженнях з прогнозування поведінки користувачів (для кешування вмісту), розпочатого студентами Каліфорнійського університету в Девісі \n\nДалі наведено список даних, які ми хотіли б зібрати, і пояснення - навіщо. \nЦе: \n1. Ідентифікатор користувача\n2. Стрічка користувача (прогнозування, засноване на інтересах користувачів і їх соціальній взаємодії) \n3. Натискання користувачів на твіти (прогнозування, засноване на інтересах користувачів і їх соціальній взаємодії) \n4. Грубі дані про місцезнаходження (прогнозування, де користувачі користуються Твіттером) \n\nTwidere буде відправляти зібрані дані тільки тоді, коли пристрій підключено до Wi-Fi і до зарядного пристрою, так що це не заподіє вам неприємностей, пов\'язаних з додатковими грошовими витратами або витратою енергії акумулятора.</string>
   <string name="data_profiling">Статистика використання</string>
   <string name="enable_data_profiling">Включити надсилання звітів</string>
@@ -363,6 +362,7 @@
   <string name="silent_notifications">Тихі сповіщення</string>
   <string name="silent_notifications_summary">Вимкнути мелодію/вібрацію для сповіщень</string>
   <string name="disable_background_service">Вимкнути фоновий режим</string>
+  <string name="disable_background_service_summary">Twidere не має фонової служби, якщо ви відключили автоматичне оновлення і профілювання даних, не говоріть дурниць!</string>
   <string name="pull_to_load_conversation_label">Потягніть, щоб завантажити діалог</string>
   <string name="pull_to_load_conversation_release_label">Відпустіть, щоб завантажити діалог…</string>
   <string name="text_copied">Текст скопійовано до буферу обміну.</string>
@@ -389,6 +389,7 @@
   <string name="permission_description_write">Записувати у базу даних, оновлювати статус</string>
   <string name="permission_description_direct_messages">Читати/писати/надсилати приватні повідомлення</string>
   <string name="permission_description_accounts">Читати інформацію облікового запису</string>
+  <string name="permission_description_preferences">Налаштування читання</string>
   <string name="permissions_request">Запит на дозволи</string>
   <string name="permissions_request_message">Розширення запитує наступні дозволи</string>
   <string name="accept">Прийняти</string>
@@ -419,4 +420,43 @@
   <string name="mention_user">Згадка <xliff:g id="user">%s</xliff:g></string>
   <string name="theme_color">Колір теми</string>
   <string name="link_underline_only">Показувати підкреслення лише для посилань</string>
+  <string name="wrong_url_format">Невірний формат URL.</string>
+  <string name="wrong_username_password">Невірне ім\'я користувача/пароль.</string>
+  <string name="network_error">Помилка мережі.</string>
+  <string name="ssl_error">Помилка SSL, вам можливо потрібно увімкнути параметр \"Ігнорувати помилку SSL\".</string>
+  <string name="wrong_api_key">Невірне API url або ключ покупця, перевірте їх знову.</string>
+  <string name="status_updated">Твіт надіслано.</string>
+  <string name="status_deleted">Твіт видалено.</string>
+  <string name="status_favorited">Твіт обрано.</string>
+  <string name="status_unfavorited">Твіт знято з обраних.</string>
+  <string name="status_retweeted">Ретвітнуто.</string>
+  <string name="retweet_cancelled">Ретвіт скасовано.</string>
+  <string name="direct_message_sent">Надіслано пряме повідомлення.</string>
+  <string name="direct_message_deleted">Видалено пряме повідомлення.</string>
+  <string name="import_from">Імпортувати з…</string>
+  <string name="link_to_quoted_tweet">Посилання на цитований твіт</string>
+  <string name="followed_user">Підписаний на <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="unfollowed_user">Відписаний з <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="blocked_user">Заблокований <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="unblocked_user">Розблокований <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="profile_updated">Оновлено профіль.</string>
+  <string name="profile_banner_image_updated">Банер зображення профілю оновлено.</string>
+  <string name="profile_image_updated">Оновлено зображення профілю.</string>
+  <string name="created_list">Створено список \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="deleted_list">Видалено список \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="updated_list_details">Оновлено список  подробиць \"<xliff:g id="list">%s</xliff:g>\"\'.</string>
+  <string name="subscribed_to_list">Підписано на список \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="unsubscribed_from_list">Відписано з списку \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="added_user_to_list">Додані користувачі до списку \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="deleted_user_from_list">Видалені користувачі з списку \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="subscribe">Підписатися</string>
+  <string name="unsubscribe">Відписатися</string>
+  <string name="background_toast_notification">Тостове фонове сповіщення</string>
+  <string name="background_toast_notification_summary">Показувати тостові сповіщення при переключенні у фоновий режим</string>
+  <string name="original_status">Первісний твіт</string>
+  <string name="compose_quit_action">Вихід після створення</string>
+  <string name="ask">Прохання</string>
+  <string name="no_close_after_tweet_sent">Зберігати \"Створити\" відкритою після надсилання твіту</string>
+  <string name="no_close_after_tweet_sent_summary">Маленький подарунок для базіки</string>
+  <string name="tweet_saved_to_draft">Твіт збережено у чернетці.</string>
 </resources>

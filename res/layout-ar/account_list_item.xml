@@ -47,7 +47,6 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:ellipsize="marquee"
-			
 			android:singleLine="true"
 			android:textAppearance="?android:attr/textAppearanceMedium"/>
 
@@ -58,7 +57,6 @@
 			android:layout_alignLeft="@android:id/text1"
 			android:layout_below="@android:id/text1"
 			android:ellipsize="marquee"
-			
 			android:singleLine="true"
 			android:textAppearance="?android:attr/textAppearanceSmall"/>
 	</TwoLineListItem>
@@ -74,10 +72,14 @@
 
 	<ImageView
 		android:id="@+id/default_indicator"
-		android:layout_width="24dp"
-		android:layout_height="24dp"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
 		android:layout_alignBottom="@android:id/icon"
 		android:layout_alignRight="@android:id/icon"
-		android:src="@drawable/btn_check_buttonless_on"/>
+		android:background="#80000000"
+		android:singleLine="true"
+		android:text="@string/default_account"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textColor="@android:color/white"/>
 
 </org.mariotaku.twidere.view.ColorLabelRelativeLayout>

@@ -112,14 +112,13 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 		} else {
 			holder.time.setText(getRelativeTimeSpanString(message_timestamp));
 		}
-		holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, is_outgoing ? R.drawable.ic_indicator_outgoing
-				: R.drawable.ic_indicator_incoming, 0);
+		holder.text.setCompoundDrawablesWithIntrinsicBounds(is_outgoing ? R.drawable.ic_indicator_outgoing
+				: 0, 0, 0, 0);
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
 			final String profile_image_url_string = cursor.getString(IDX_PROFILE_IMAGE_URL);
 			mLazyImageLoader.displayProfileImage(holder.profile_image, profile_image_url_string);
 		}
-
 		super.bindView(view, context, cursor);
 	}
 

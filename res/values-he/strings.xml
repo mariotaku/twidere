@@ -19,6 +19,7 @@
   <string name="advanced">מתקדם</string>
   <string name="save">שמור</string>
   <string name="edit">שמור</string>
+  <string name="edit_api">ערוך API</string>
   <string name="error_occurred">שגיאה ארעה, נא נסה שנית.</string>
   <string name="select_account">בחר חשבון</string>
   <string name="username">שם משתמש</string>

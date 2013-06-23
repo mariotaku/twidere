@@ -16,8 +16,8 @@
 		android:layout_height="wrap_content"
 		android:layout_alignParentTop="true"
 		android:layout_alignWithParentIfMissing="true"
-		android:layout_marginLeft="4dp"
-		android:layout_toLeftOf="@+id/time"
+		android:layout_marginLeft="6dp"
+		android:layout_toLeftOf="@+id/count"
 		android:layout_toRightOf="@+id/profile_image">
 
 		<LinearLayout
@@ -31,17 +31,14 @@
 				android:layout_width="0dp"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
-				
 				android:singleLine="true"
-				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:textColor="?android:attr/textColorPrimary"
-				android:textStyle="bold"/>
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:textColor="?android:attr/textColorPrimary"/>
 
 			<TextView
 				android:id="@+id/screen_name"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				
 				android:paddingLeft="4dp"
 				android:paddingRight="4dp"
 				android:singleLine="true"
@@ -54,12 +51,12 @@
 		android:id="@+id/text"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		android:layout_alignBottom="@+id/profile_image"
 		android:layout_alignLeft="@+id/name_frame"
-		android:layout_alignParentRight="true"
 		android:layout_alignWithParentIfMissing="true"
-		android:layout_below="@+id/name_frame"
-		
-		android:maxLines="3"
+		android:layout_toLeftOf="@+id/time"
+		android:ellipsize="end"
+		android:singleLine="true"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorSecondary"/>
 
@@ -67,13 +64,12 @@
 		android:id="@+id/time"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_alignBaseline="@+id/name_frame"
+		android:layout_alignBaseline="@+id/text"
 		android:layout_alignParentRight="true"
 		android:layout_alignWithParentIfMissing="true"
-		android:layout_marginRight="8dp"
+		android:layout_marginRight="0dp"
 		android:drawablePadding="4dp"
 		android:gravity="center_vertical|right"
-		
 		android:paddingTop="4dp"
 		android:textColor="?android:attr/textColorSecondary"/>
 
@@ -82,10 +78,8 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_centerInParent="true"
-		
 		android:text="@string/tap_to_load_more"
 		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:textColor="#606060"
 		android:textStyle="bold"
 		android:visibility="gone"/>
 

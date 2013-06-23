@@ -29,9 +29,11 @@ import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getAccountColors;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
+import static org.mariotaku.twidere.util.Utils.getAccountName;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
 import static org.mariotaku.twidere.util.Utils.getImageUploadStatus;
+import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
 import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.getShareStatus;
 import static org.mariotaku.twidere.util.Utils.getStatusBackground;
@@ -45,6 +47,7 @@ import static org.mariotaku.twidere.util.Utils.showErrorMessage;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Locale;
 import java.util.Set;
 
 import org.mariotaku.actionbarcompat.ActionBar;
@@ -73,12 +76,14 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -156,7 +161,19 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	private DraftItem mDraftItem;
 	private long mInReplyToStatusId;
 	private String mOriginalText;
+	private Locale mLocale;
 
+	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			final String action = intent.getAction();
+			if (BROADCAST_DRAFTS_DATABASE_UPDATED.equals(action)) {
+				setMenu();
+			}
+		}
+	};
+	
 	@Override
 	public void afterTextChanged(final Editable s) {
 
@@ -244,7 +261,19 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 						if (INTENT_ACTION_EXTENSION_COMPOSE.equals(intent.getAction())) {
 							final Bundle extras = new Bundle();
 							extras.putString(INTENT_KEY_TEXT, ParseUtils.parseString(mEditText.getText()));
-							extras.putParcelable(INTENT_KEY_STATUS, mInReplyToStatus);
+							extras.putLongArray(INTENT_KEY_ACCOUNT_IDS, mAccountIds);
+							if (mAccountIds != null && mAccountIds.length > 0) {
+								final long account_id = mAccountIds[0];
+								extras.putString(INTENT_KEY_NAME, getAccountName(this, account_id));
+								extras.putString(INTENT_KEY_SCREEN_NAME, getAccountScreenName(this, account_id));
+							}
+							if (mInReplyToStatusId > 0) {
+								extras.putLong(INTENT_KEY_IN_REPLY_TO_ID, mInReplyToStatusId);
+							}
+							if (mInReplyToStatus != null) {
+								extras.putString(INTENT_KEY_IN_REPLY_TO_NAME, mInReplyToStatus.user_name);
+								extras.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, mInReplyToStatus.user_screen_name);
+							}
 							intent.putExtras(extras);
 							startActivityForResult(intent, REQUEST_EXTENSION_COMPOSE);
 						} else if (INTENT_ACTION_EXTENSION_EDIT_IMAGE.equals(intent.getAction())) {
@@ -457,13 +486,13 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		if (mTextCountView != null) {
 			mTextCountView.setTextColor(count >= Validator.MAX_TWEET_LENGTH - 10 ? Color.HSVToColor(0x80, hsv)
 					: 0x80808080);
-			mTextCountView.setText(ParseUtils.parseString(Validator.MAX_TWEET_LENGTH - count));
+			mTextCountView.setText(getLocalizedNumber(mLocale, Validator.MAX_TWEET_LENGTH - count));
 		}
 		if (menu != null) {
-			final boolean bottom_compose_button = mPreferences.getBoolean(PREFERENCE_KEY_BOTTOM_COMPOSE_BUTTON, false);
+			final boolean bottom_send_button = mPreferences.getBoolean(PREFERENCE_KEY_BOTTOM_SEND_BUTTON, false);
 			final MenuItem sendItem = menu.findItem(MENU_SEND);
 			if (sendItem != null) {
-				sendItem.setVisible(!bottom_compose_button);
+				sendItem.setVisible(!bottom_send_button);
 				sendItem.setEnabled(!isEmpty(text_orig));
 			}
 			final MenuItem viewItem = menu.findItem(MENU_VIEW);
@@ -472,10 +501,11 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			}
 			final MenuItem moreItem = menu.findItem(R.id.more_submenu);
 			if (moreItem != null) {
-				moreItem.setVisible(bottom_compose_button);
+				moreItem.setVisible(bottom_send_button);
 			}
+			setCommonMenu(menu);
 		}
-		return true;
+		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
@@ -537,6 +567,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		mTwitterWrapper = getTwidereApplication().getTwitterWrapper();
 		mResolver = getContentResolver();
 		mImageLoader = getTwidereApplication().getImageLoaderWrapper();
+		mLocale = getResources().getConfiguration().locale;
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.compose);
 		setSupportProgressBarIndeterminateVisibility(false);
@@ -607,14 +638,14 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			final Intent extensions_intent = new Intent(INTENT_ACTION_EXTENSION_COMPOSE);
 			addIntentToMenu(this, more_submenu.getSubMenu(), extensions_intent);
 		}
-		final boolean bottom_compose_button = mPreferences.getBoolean(PREFERENCE_KEY_BOTTOM_COMPOSE_BUTTON, false);
+		final boolean bottom_send_button = mPreferences.getBoolean(PREFERENCE_KEY_BOTTOM_SEND_BUTTON, false);
 		final MenuItem sendItem = menu.findItem(MENU_SEND);
 		if (sendItem != null) {
-			sendItem.setVisible(bottom_compose_button);
+			sendItem.setVisible(bottom_send_button);
 		}
 		final MenuItem moreItem = menu.findItem(R.id.more_submenu);
 		if (moreItem != null) {
-			moreItem.setVisible(!bottom_compose_button);
+			moreItem.setVisible(!bottom_send_button);
 		}
 		mMenuBar.show();
 		setMenu();
@@ -633,10 +664,13 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		}
 		final int text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		mEditText.setTextSize(text_size * 1.25f);
+		final IntentFilter filter = new IntentFilter(BROADCAST_DRAFTS_DATABASE_UPDATED);
+		registerReceiver(mStatusReceiver, filter);
 	}
 
 	@Override
 	protected void onStop() {
+		unregisterReceiver(mStatusReceiver);
 		if (mPopupMenu != null) {
 			mPopupMenu.dismiss();
 		}
@@ -800,6 +834,16 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		return true;
 	}
 
+	private boolean hasDraftItem() {
+		final Cursor drafts_cur = getContentResolver().query(Drafts.CONTENT_URI, new String[0], null, null, null);
+		try {
+			return drafts_cur.getCount() > 0;
+		} finally {
+
+			drafts_cur.close();
+		}
+	}
+
 	private void openImageMenu() {
 		if (mPopupMenu != null) {
 			mPopupMenu.dismiss();
@@ -827,6 +871,46 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	private void reloadAttachedImageThumbnail() {
 		mImageThumbnailPreview.setVisibility(mImageUri != null ? View.VISIBLE : View.GONE);
 		mImageLoader.displayPreviewImage(mImageThumbnailPreview, mImageUri != null ? mImageUri.toString() : null);
+	}
+
+	private void setCommonMenu(final Menu menu) {
+		final MenuItem itemMore = menu.findItem(R.id.more_submenu);
+		if (itemMore != null) {
+			final int activated_color = getThemeColor(this);
+			final MenuItem itemDrafts = menu.findItem(MENU_DRAFTS);
+			final MenuItem itemToggleSensitive = menu.findItem(MENU_TOGGLE_SENSITIVE);
+			if (itemDrafts != null) {
+				final Drawable iconMore = itemMore.getIcon().mutate();
+				final Drawable iconDrafts = itemDrafts.getIcon().mutate();
+				if (hasDraftItem()) {
+					iconMore.setColorFilter(activated_color, Mode.MULTIPLY);
+					iconDrafts.setColorFilter(activated_color, Mode.MULTIPLY);
+				} else {
+					iconMore.clearColorFilter();
+					iconDrafts.clearColorFilter();
+				}
+			}
+			if (itemToggleSensitive != null) {
+				final boolean has_media = (mIsImageAttached || mIsPhotoAttached) && mImageUri != null;
+				itemToggleSensitive.setVisible(has_media);
+				if (has_media) {
+					final Drawable iconToggleSensitive = itemToggleSensitive.getIcon().mutate();
+					if (mIsPossiblySensitive) {
+						itemToggleSensitive.setTitle(R.string.remove_sensitive_mark);
+						iconToggleSensitive.setColorFilter(activated_color, Mode.MULTIPLY);
+					} else {
+						itemToggleSensitive.setTitle(R.string.mark_as_sensitive);
+						iconToggleSensitive.clearColorFilter();
+					}
+				}
+			}
+		}
+		final String text_orig = mEditText != null ? ParseUtils.parseString(mEditText.getText()) : null;
+		final MenuItem sendItem = menu.findItem(MENU_SEND);
+		if (sendItem != null) {
+			sendItem.setEnabled(!isEmpty(text_orig));
+		}
+
 	}
 
 	private boolean setComposeTitle(final String action) {
@@ -895,44 +979,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			iconAttachLocation.clearColorFilter();
 			itemAttachLocation.setTitle(R.string.add_location);
 		}
-		final MenuItem itemMore = menu.findItem(R.id.more_submenu);
-		final MenuItem itemDrafts = menu.findItem(MENU_DRAFTS);
-		final MenuItem itemToggleSensitive = menu.findItem(MENU_TOGGLE_SENSITIVE);
-		if (itemMore != null) {
-			if (itemDrafts != null) {
-				final Cursor drafts_cur = getContentResolver().query(Drafts.CONTENT_URI, new String[0], null, null,
-						null);
-				final Drawable iconMore = itemMore.getIcon().mutate();
-				final Drawable iconDrafts = itemDrafts.getIcon().mutate();
-				if (drafts_cur.getCount() > 0) {
-					iconMore.setColorFilter(activated_color, Mode.MULTIPLY);
-					iconDrafts.setColorFilter(activated_color, Mode.MULTIPLY);
-				} else {
-					iconMore.clearColorFilter();
-					iconDrafts.clearColorFilter();
-				}
-				drafts_cur.close();
-			}
-			if (itemToggleSensitive != null) {
-				final boolean has_media = (mIsImageAttached || mIsPhotoAttached) && mImageUri != null;
-				itemToggleSensitive.setVisible(has_media);
-				if (has_media) {
-					final Drawable iconToggleSensitive = itemToggleSensitive.getIcon().mutate();
-					if (mIsPossiblySensitive) {
-						itemToggleSensitive.setTitle(R.string.remove_sensitive_mark);
-						iconToggleSensitive.setColorFilter(activated_color, Mode.MULTIPLY);
-					} else {
-						itemToggleSensitive.setTitle(R.string.mark_as_sensitive);
-						iconToggleSensitive.clearColorFilter();
-					}
-				}
-			}
-		}
-		final String text_orig = ParseUtils.parseString(mEditText.getText());
-		final MenuItem sendItem = menu.findItem(MENU_SEND);
-		if (sendItem != null) {
-			sendItem.setEnabled(!isEmpty(text_orig));
-		}
+		setCommonMenu(menu);
 		mMenuBar.show();
 		invalidateSupportOptionsMenu();
 	}
@@ -977,7 +1024,8 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		mTwitterWrapper.updateStatus(mAccountIds, text, attach_location ? mRecentLocation : null, mImageUri, !is_quote
 				|| mPreferences.getBoolean(PREFERENCE_KEY_LINK_TO_QUOTED_TWEET, true) ? mInReplyToStatusId : -1,
 				has_media && mIsPossiblySensitive, mIsPhotoAttached && !mIsImageAttached);
-		if (mPreferences.getBoolean(PREFERENCE_KEY_NO_CLOSE_AFTER_TWEET_SENT, false)) {
+		if (mPreferences.getBoolean(PREFERENCE_KEY_NO_CLOSE_AFTER_TWEET_SENT, false)
+				&& (mInReplyToStatus == null || mInReplyToStatusId <= 0)) {
 			mIsImageAttached = false;
 			mIsPhotoAttached = false;
 			mIsPossiblySensitive = false;

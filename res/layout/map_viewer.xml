@@ -6,30 +6,63 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"/>
 
-	<RelativeLayout
+	<LinearLayout
+		android:id="@+id/control_buttons"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent">
+		android:layout_height="@dimen/actionbar_height"
+		android:background="#80000000"
+		android:baselineAligned="false"
+		android:gravity="center_vertical"
+		android:orientation="horizontal">
 
-		<ImageButton
+		<LinearLayout
 			android:id="@+id/close"
-			android:layout_width="64dp"
-			android:layout_height="48dp"
-			android:layout_alignParentLeft="true"
-			android:layout_alignParentTop="true"
-			android:background="@drawable/btn_viewer_topleft"
-			android:contentDescription="@android:string/cancel"
+			style="@style/Widget.ActionBarHomeItem"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:layout_weight="0"
+			android:clickable="true"
+			android:focusable="true"
 			android:onClick="onClick"
-			android:src="@drawable/ic_menu_close_clear_cancel"/>
+			android:orientation="horizontal">
 
-		<ImageButton
-			android:id="@+id/center"
-			android:layout_width="64dp"
-			android:layout_height="48dp"
-			android:layout_alignParentRight="true"
-			android:layout_alignParentTop="true"
-			android:background="@drawable/btn_viewer_topright"
-			android:onClick="onClick"
-			android:src="@drawable/ic_menu_mylocation"/>
-	</RelativeLayout>
+			<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:gravity="center_vertical|left"
+				android:scaleType="fitCenter"
+				android:src="@drawable/actionbar_back_dark"/>
+
+			<ImageView
+				android:layout_width="@dimen/actionbar_home_width"
+				android:layout_height="match_parent"
+				android:gravity="center_vertical|left"
+				android:scaleType="fitCenter"
+				android:src="@drawable/ic_launcher"/>
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:singleLine="true"
+				android:text="@string/view_map"
+				android:textAppearance="?android:attr/textAppearanceMedium"/>
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:layout_weight="1"
+			android:gravity="right"
+			android:orientation="horizontal">
+
+			<ImageButton
+				android:id="@+id/center"
+				style="@style/Widget.ActionBarItem"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:onClick="onClick"
+				android:src="@drawable/ic_menu_mylocation"/>
+		</LinearLayout>
+	</LinearLayout>
 
 </merge>

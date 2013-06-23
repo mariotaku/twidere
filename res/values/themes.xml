@@ -14,7 +14,7 @@
 		<item name="selectableViewStyle">@style/Widget.Twidere.SelectableView</item>
 		<item name="editTextStyle">@style/Widget.Holo.EditText</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Large</item>
-		<item name="messagesBackground">#20000000</item>
+		<item name="contentBackground">#20000000</item>
 		<item name="android:itemBackground">@drawable/item_background_holo_dark</item>
 		<item name="android:windowBackground">@drawable/background_holo_dark</item>
 
@@ -23,7 +23,6 @@
 		<item name="android:buttonStyleSmall">@style/Widget.Twidere.Button.Small</item>
 		<item name="android:buttonStyleInset">@style/Widget.Twidere.Button.Inset</item>
 		<item name="android:imageButtonStyle">@style/Widget.Twidere.ImageButton</item>
-
 	</style>
 
 	<style name="Theme.Twidere.Light" parent="Theme.Holo.Light.DarkActionBar">
@@ -35,7 +34,7 @@
 		<item name="selectableViewStyle">@style/Widget.Twidere.Light.SelectableView</item>
 		<item name="editTextStyle">@style/Widget.Holo.Light.EditText</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Light.Large</item>
-		<item name="messagesBackground">#20808080</item>
+		<item name="contentBackground">#20808080</item>
 		<item name="android:itemBackground">@drawable/item_background_holo_light</item>
 		<item name="android:windowBackground">@drawable/background_holo_light</item>
 		<item name="actionBarBackground">@drawable/actionbar_bg_light_darkactionbar_twidere_holo</item>
@@ -45,7 +44,6 @@
 		<item name="android:buttonStyleSmall">@style/Widget.Twidere.Light.Button.Small</item>
 		<item name="android:buttonStyleInset">@style/Widget.Twidere.Light.Button.Inset</item>
 		<item name="android:imageButtonStyle">@style/Widget.Twidere.Light.ImageButton</item>
-
 	</style>
 
 	<style name="Theme.Twidere.Viewer" parent="android:Theme.NoTitleBar">
@@ -58,7 +56,7 @@
 		<item name="selectableViewStyle">@style/Widget.Twidere.SelectableView</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Large</item>
 		<item name="android:itemBackground">@drawable/item_background_holo_dark</item>
-		<item name="messagesBackground">#20000000</item>
+		<item name="contentBackground">#20000000</item>
 
 		<!-- Text styles -->
 		<item name="android:textAppearance">@style/TextAppearance.Holo</item>
@@ -105,7 +103,7 @@
 		<item name="borderlessImageButtonStyle">@style/Widget.Twidere.ImageButton.Borderless</item>
 		<item name="selectableViewStyle">@style/Widget.Twidere.SelectableView</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Large</item>
-		<item name="messagesBackground">#20000000</item>
+		<item name="contentBackground">#20000000</item>
 		<item name="android:itemBackground">@drawable/item_background_holo_dark</item>
 
 		<!-- Button styles -->
@@ -113,7 +111,6 @@
 		<item name="android:buttonStyleSmall">@style/Widget.Twidere.Button.Small</item>
 		<item name="android:buttonStyleInset">@style/Widget.Twidere.Button.Inset</item>
 		<item name="android:imageButtonStyle">@style/Widget.Twidere.ImageButton</item>
-
 	</style>
 
 	<style name="Theme.Twidere.Light.Dialog" parent="Theme.Holo.Light.Dialog">
@@ -124,7 +121,7 @@
 		<item name="borderlessImageButtonStyle">@style/Widget.Twidere.Light.ImageButton.Borderless</item>
 		<item name="selectableViewStyle">@style/Widget.Twidere.Light.SelectableView</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Light.Large</item>
-		<item name="messagesBackground">#20808080</item>
+		<item name="contentBackground">#20808080</item>
 		<item name="android:itemBackground">@drawable/item_background_holo_light</item>
 
 		<!-- Button styles -->
@@ -132,7 +129,6 @@
 		<item name="android:buttonStyleSmall">@style/Widget.Twidere.Light.Button.Small</item>
 		<item name="android:buttonStyleInset">@style/Widget.Twidere.Light.Button.Inset</item>
 		<item name="android:imageButtonStyle">@style/Widget.Twidere.Light.ImageButton</item>
-
 	</style>
 
 	<style name="Theme.Twidere.DialogWhenLarge"/>

@@ -16,6 +16,10 @@
 		android:title="@string/separate_retweet_action"/>
 	<CheckBoxPreference
 		android:defaultValue="false"
+		android:key="bottom_send_button"
+		android:title="@string/bottom_send_button"/>
+	<CheckBoxPreference
+		android:defaultValue="false"
 		android:key="bottom_compose_button"
 		android:summary="@string/bottom_compose_button_summary"
 		android:title="@string/bottom_compose_button"/>

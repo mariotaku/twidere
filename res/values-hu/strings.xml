@@ -77,7 +77,7 @@
   <string name="display_profile_image">Profilkép megjelenítése</string>
   <string name="in_reply_to">Válasz neki: <xliff:g id="username">%s</xliff:g></string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> retweetelte ezt</string>
-  <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> és másik <xliff:g id="retweet_count">%2$d</xliff:g> felhasználó retweetelte ezt</string>
+  <string name="users_retweeted_this">Következő felhasználók által retweetelve</string>
   <string name="reply_to">Válasz neki: <xliff:g id="user_name">%s</xliff:g></string>
   <string name="quote_user">Idézet: <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>
@@ -193,7 +193,6 @@
   <string name="open_with_extensions">Megnyitás kiterjesztésekkel</string>
   <string name="view_user_list">Felhasználólista megtekintése</string>
   <string name="uninstall">Eltávolít</string>
-  <string name="users_retweeted_this">Következő felhasználók által retweetelve</string>
   <string name="saved_searches">Elmentett keresések</string>
   <string name="custom_tabs">Egyéni fülek</string>
   <string name="add_tab">Fül hozzáadása</string>

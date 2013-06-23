@@ -66,6 +66,7 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> implemen
 		final Set<Long> user_ids = new HashSet<Long>();
 		final Set<Long> status_ids = new HashSet<Long>();
 		final Set<String> hashtags = new HashSet<String>();
+		final Set<User> users = new HashSet<User>();
 		final boolean large_preview_image = Utils.getImagePreviewDisplayOptionInt(context) == IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE;
 
 		for (final TwitterListResponse<twitter4j.Status> values : all_statuses) {
@@ -82,24 +83,29 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> implemen
 						large_preview_image));
 				hashtags.addAll(extractor.extractHashtags(status.getText()));
 				final User user = status.getUser();
-				if (user == null || user.getId() <= 0 || user_ids.contains(user.getId())) {
-					continue;
+				if (user != null && user.getId() > 0) {
+					users.add(user);
 				}
-				user_ids.add(user.getId());
-				cached_users_values.add(makeCachedUserContentValues(user, large_profile_image));
 			}
 		}
+
+		bulkDelete(resolver, CachedStatuses.CONTENT_URI, CachedStatuses.STATUS_ID, status_ids, null, false);
+		bulkInsert(resolver, CachedStatuses.CONTENT_URI, cached_statuses_values);
+		
 		for (final String hashtag : hashtags) {
 			final ContentValues hashtag_value = new ContentValues();
 			hashtag_value.put(CachedHashtags.NAME, hashtag);
 			hashtag_values.add(hashtag_value);
 		}
-		bulkDelete(resolver, CachedUsers.CONTENT_URI, CachedUsers.USER_ID, user_ids, null, false);
-		bulkInsert(resolver, CachedUsers.CONTENT_URI, cached_users_values);
-		bulkDelete(resolver, CachedStatuses.CONTENT_URI, CachedStatuses.STATUS_ID, status_ids, null, false);
-		bulkInsert(resolver, CachedStatuses.CONTENT_URI, cached_statuses_values);
 		bulkDelete(resolver, CachedHashtags.CONTENT_URI, CachedHashtags.NAME, hashtags, null, true);
 		bulkInsert(resolver, CachedHashtags.CONTENT_URI, hashtag_values);
+		
+		for (final User user : users) {
+			user_ids.add(user.getId());
+			cached_users_values.add(makeCachedUserContentValues(user, large_profile_image));
+		}
+		bulkDelete(resolver, CachedUsers.CONTENT_URI, CachedUsers.USER_ID, user_ids, null, false);
+		bulkInsert(resolver, CachedUsers.CONTENT_URI, cached_users_values);
 		return null;
 	}
 

@@ -22,12 +22,15 @@ package org.mariotaku.twidere.fragment;
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
+import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.openUserListMembers;
 import static org.mariotaku.twidere.util.Utils.openUserListSubscribers;
 import static org.mariotaku.twidere.util.Utils.openUserListTimeline;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
+
+import java.util.Locale;
 
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
@@ -104,6 +107,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	private PopupMenu mPopupMenu;
 
 	private ParcelableUserList mUserList;
+	private Locale mLocale;
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -184,6 +188,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		mTwitterWrapper = getApplication().getTwitterWrapper();
+		mLocale = getResources().getConfiguration().locale;
 		super.onActivityCreated(savedInstanceState);
 		mProfileImageLoader = getApplication().getImageLoaderWrapper();
 		mAdapter = new ListActionAdapter(getActivity());
@@ -596,7 +601,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		@Override
 		public String getSummary() {
 			if (mUserList == null) return null;
-			return String.valueOf(mUserList.members_count);
+			return getLocalizedNumber(mLocale, mUserList.members_count);
 		}
 
 		@Override
@@ -620,7 +625,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		@Override
 		public String getSummary() {
 			if (mUserList == null) return null;
-			return String.valueOf(mUserList.subscribers_count);
+			return getLocalizedNumber(mLocale, mUserList.subscribers_count);
 		}
 
 		@Override

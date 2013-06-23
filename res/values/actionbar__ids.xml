@@ -11,5 +11,6 @@
 	<item name="actionbar_custom_view_container" type="id"/>
 	<item name="actionbar_progress_indeterminate" type="id"/>
 	<item name="actionbar_menu_buttons" type="id"/>
+	<item name="actionbar_place_holder" type="id"/>
 
 </resources>

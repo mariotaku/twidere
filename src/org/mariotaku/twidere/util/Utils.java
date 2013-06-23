@@ -38,6 +38,7 @@ import java.net.Proxy;
 import java.net.SocketAddress;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -45,6 +46,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -1128,13 +1130,20 @@ public final class Utils implements Constants {
 
 	public static Twitter getDefaultTwitterInstance(final Context context, final boolean include_entities) {
 		if (context == null) return null;
-		return getDefaultTwitterInstance(context, include_entities, true);
+		return getDefaultTwitterInstance(context, include_entities, true, true);
 	}
 
 	public static Twitter getDefaultTwitterInstance(final Context context, final boolean include_entities,
-			final boolean use_httpclient) {
+			final boolean include_retweets) {
 		if (context == null) return null;
-		return getTwitterInstance(context, getDefaultAccountId(context), include_entities, use_httpclient);
+		return getDefaultTwitterInstance(context, include_entities, include_retweets, true);
+	}
+
+	public static Twitter getDefaultTwitterInstance(final Context context, final boolean include_entities,
+			final boolean include_retweets, final boolean use_httpclient) {
+		if (context == null) return null;
+		return getTwitterInstance(context, getDefaultAccountId(context), include_entities, include_retweets,
+				use_httpclient);
 	}
 
 	public static String getErrorMessage(final Context context, final Throwable t) {
@@ -1257,6 +1266,11 @@ public final class Utils implements Constants {
 		}
 		if (link == null) return text;
 		return image_upload_format.replace(FORMAT_PATTERN_LINK, link).replace(FORMAT_PATTERN_TEXT, text);
+	}
+
+	public static String getLocalizedNumber(final Locale locale, final Number number) {
+		final NumberFormat nf = NumberFormat.getInstance(locale);
+		return nf.format(number);
 	}
 
 	public static String getNameDisplayOption(final Context context) {
@@ -1653,11 +1667,16 @@ public final class Utils implements Constants {
 
 	public static Twitter getTwitterInstance(final Context context, final long account_id,
 			final boolean include_entities) {
-		return getTwitterInstance(context, account_id, include_entities, true);
+		return getTwitterInstance(context, account_id, include_entities, true, true);
 	}
 
 	public static Twitter getTwitterInstance(final Context context, final long account_id,
-			final boolean include_entities, final boolean use_apache_httpclient) {
+			final boolean include_entities, final boolean include_retweets) {
+		return getTwitterInstance(context, account_id, include_entities, include_retweets, true);
+	}
+
+	public static Twitter getTwitterInstance(final Context context, final long account_id,
+			final boolean include_entities, final boolean include_retweets, final boolean use_apache_httpclient) {
 		if (Thread.currentThread().getId() == 1) {
 			Log.w(LOGTAG, "getTwitterInstance called from UI thread", new IllegalStateException());
 		}
@@ -1716,6 +1735,7 @@ public final class Utils implements Constants {
 					cb.setSigningOAuthBaseURL(signing_oauth_base_url);
 				}
 				cb.setIncludeEntitiesEnabled(include_entities);
+				cb.setIncludeRTsEnabled(include_retweets);
 				switch (cur.getInt(cur.getColumnIndexOrThrow(Accounts.AUTH_TYPE))) {
 					case Accounts.AUTH_TYPE_OAUTH:
 					case Accounts.AUTH_TYPE_XAUTH: {
@@ -3049,7 +3069,7 @@ public final class Utils implements Constants {
 		if (context == null) return;
 		final SharedPreferences prefs = context.getSharedPreferences(USER_COLOR_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final SharedPreferences.Editor editor = prefs.edit();
-		editor.putInt(ParseUtils.parseString(user_id), color);
+		editor.putInt(String.valueOf(user_id), color);
 		editor.commit();
 		sUserColors.put(user_id, color);
 	}

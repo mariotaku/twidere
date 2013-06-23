@@ -20,10 +20,12 @@
 package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
+import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
@@ -34,6 +36,7 @@ import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.view.holder.UserViewHolder;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -42,6 +45,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseA
 	private final ImageLoaderWrapper mProfileImageLoader;
 	private final MultiSelectManager mMultiSelectManager;
 	private final Context mContext;
+	private final Locale mLocale;
 
 	private boolean mDisplayProfileImage, mShowAccountColor, mMultiSelectEnabled;
 
@@ -52,6 +56,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseA
 	public UsersAdapter(final Context context) {
 		super(context, R.layout.user_list_item);
 		mContext = context;
+		mLocale = context.getResources().getConfiguration().locale;
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mProfileImageLoader = application.getImageLoaderWrapper();
 		mMultiSelectManager = application.getMultiSelectManager();
@@ -117,7 +122,13 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseA
 		if (mDisplayProfileImage) {
 			mProfileImageLoader.displayProfileImage(holder.profile_image, user.profile_image_url);
 		}
-
+		holder.location.setVisibility(!TextUtils.isEmpty(user.location) ? View.VISIBLE : View.GONE);
+		holder.location.setText(user.location);
+		holder.url.setVisibility(user.url_expanded != null ? View.VISIBLE : View.GONE);
+		holder.url.setText(user.url_expanded);
+		holder.statuses_count.setText(getLocalizedNumber(mLocale, user.statuses_count));
+		holder.followers_count.setText(getLocalizedNumber(mLocale, user.followers_count));
+		holder.friends_count.setText(getLocalizedNumber(mLocale, user.friends_count));
 		return view;
 	}
 

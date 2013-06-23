@@ -90,7 +90,7 @@
   <string name="in_reply_to">En respuesta a <xliff:g id="user_name">%s</xliff:g></string>
   <string name="in_reply_to_pull_to_load_conversation">Respuesta a <xliff:g id="user_name">%s</xliff:g>, tirar para cargar la conversación</string>
   <string name="retweeted_by">Retweet por <xliff:g id="user_name">%s</xliff:g></string>
-  <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> y <xliff:g id="retweet_count">%2$d</xliff:g> otros Retweets</string>
+  <string name="users_retweeted_this">Usuarios retweeted esto</string>
   <string name="reply_to">Respuesta a <xliff:g id="user_name">%s</xliff:g></string>
   <string name="quote_user">Cita <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, Via <xliff:g id="source">%2$s</xliff:g></string>
@@ -117,16 +117,6 @@
   <string name="quote">Cita</string>
   <string name="add_rule">Agregar regla</string>
   <string name="longclick_to_delete">Pulsación larga para eliminar.</string>
-
-
-
-
-
-
-
-
-
-
   <string name="text_size">Tamaño del texto</string>
   <string name="text_size_summary">Tamaño del texto de Estados.</string>
   <string name="cannot_get_location">No puede obtener su ubicación.</string>
@@ -225,9 +215,7 @@
   <string name="mention_this_user">Mencionar a este usuario</string>
   <string name="signing_in_please_wait">Iniciando sesión, espera o pulsa Atrás para salir.</string>
   <string name="connectivity">Conectividad</string>
-  <string name="add_member">Agregar un miembro</string>
-
-
+  <string name="add_member">Añadir un miembro</string>
   <string name="new_user_list">Nueva lista de usuarios</string>
   <string name="is_public">Público</string>
   <string name="send_direct_message">Enviar DM</string>
@@ -235,7 +223,6 @@
   <string name="open_with_extensions">Abrir con las extensiones</string>
   <string name="view_user_list">Ver lista del usuario</string>
   <string name="uninstall">Desinstalar</string>
-  <string name="users_retweeted_this">Usuarios retweeted esto</string>
   <string name="saved_searches">Búsquedas guardadas</string>
   <string name="custom_tabs">Pestañas personalizadas</string>
   <string name="default_tabs">Pestañas predeterminadas</string>
@@ -298,6 +285,7 @@
   <string name="dns_server">Servidor DNS</string>
   <string name="dns_server_summary">Configurar servidor DNS para peticiones de API.</string>
   <string name="activities_about_me">Actividades sobre mí</string>
+  <string name="activities_by_friends">Actividades de amigos</string>
   <string name="activity_about_me_favorite"><xliff:g id="user">%s</xliff:g> ha agregado tu tweet como favorito.</string>
   <string name="activity_about_me_favorite_multi"><xliff:g id="user">%s</xliff:g> y <xliff:g id="count">%d</xliff:g> otros usuarios han agregado tu tweet como favorito.</string>
   <string name="activity_about_me_follow"><xliff:g id="user">%s</xliff:g> te está siguiendo.</string>
@@ -306,6 +294,14 @@
   <string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> y <xliff:g id="count">%d</xliff:g> otros usuarios han hecho retweet de tu tweet.</string>
   <string name="activity_about_me_list_member_added"><xliff:g id="usuario">%s</xliff:g> te agregó en una lista.</string>
   <string name="activity_about_me_list_member_added_multi"><xliff:g id="user">%s</xliff:g> y <xliff:g id="count">%d</xliff:g> otros te agregaron en sus listas.</string>
+  <string name="activity_by_friends_favorite"><xliff:g id="user">%1$s</xliff:g> marcó como favorito el tuit de <xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_favorite_multi"><xliff:g id="user">%1$s</xliff:g> favoritos <xliff:g id="target">%2$s</xliff:g> y <xliff:g id="count">%3$d</xliff:g> otros tweets.</string>
+  <string name="activity_by_friends_follow"><xliff:g id="user">%1$s</xliff:g> ahora sigue a <xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_follow_multi"><xliff:g id="user">%1$s</xliff:g> ahora sigue a <xliff:g id="target">%2$s</xliff:g> y <xliff:g id="count">%3$d</xliff:g> mas.</string>
+  <string name="activity_by_friends_retweet"><xliff:g id="user">%1$s</xliff:g> ha retuiteado el tuit de <xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_list_member_added"><xliff:g id="user">%1$s</xliff:g> agregado <xliff:g id="target">%2$s</xliff:g> a la lista.</string>
+  <string name="activity_by_friends_list_created"><xliff:g id="user">%1$s</xliff:g> ha creado la lista <xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g> ha creado la lista <xliff:g id="target">%2$s</xliff:g> y <xliff:g id="count">%3$d</xliff:g> más.</string>
   <string name="cannot_get_callback_url">No se ha obtenido respuesta, por favor comprueba tu usuario y contraseña.</string>
   <string name="tweet_not_sent">Tweet no enviado.</string>
   <string name="tweet_not_sent_summary">Tweet no enviado. Guardado en borradores.</string>
@@ -318,7 +314,7 @@
   <string name="separate_retweet_action_summary">Mostrar las opciones de retuitear y citar en el menú del tuit</string>
   <string name="tweet">Tweet</string>
   <string name="preview">Previsualización</string>
-  <string name="api_upgrade_notice_title">MUY IMPORTANTE!</string>
+  <string name="api_upgrade_notice_title">¡MUY IMPORTANTE!</string>
   <string name="api_upgrade_notice_message">Twitter anunció su nueva versión de API (1.1)\n\n . Desde esta versión, Twidere usa dicha versión API. Es altamente recomendado salir de su cuenta y volver a dar permisos a la aplicación o tendrá algunos problemas usando esta versión. Lo que cambió en esta versión de la API\n: más restricción para las frecuencias de actualización del TimeLine\n, sólo se podrá 15 veces cada 15 minutos, no podrás ver quién te ha hecho retweet\n, si tú usas Twidere como un cliente de StatusNet, algunas características ya no estarán presentes por los cambios en la API\n\n. Disculpas por los inconvenientes pero Twitter está tratando de matar las aplicaciones de terceros y no puedo hacer nada al respecto.</string>
   <string name="connection_timeout">La conexión ha terminado</string>
   <string name="name_display_option">Opción para mostrar el nombre</string>
@@ -330,7 +326,8 @@
   <string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> y otros <xliff:g id="count">%d</xliff:g> te han mencionado.</string>
   <string name="notification_direct_message_multiple"><xliff:g id="user">%s</xliff:g> y otros <xliff:g id="count">%d</xliff:g> te han enviado mensajes privados.</string>
   <string name="getting_status">recuperando tweet</string>
-  <string name="sending_status">enviando tweet</string>
+  <string name="getting_statuses">cargando tuits</string>
+  <string name="sending_status">enviando tuit</string>
   <string name="sending_direct_message">enviado mensaje directo</string>
   <string name="refreshing_timelines">actualizando timelines</string>
   <string name="refreshing_home_timeline">actualizando la cronología</string>
@@ -354,6 +351,8 @@
   <string name="signing_in">accediendo</string>
   <string name="retweeting">retweeteado</string>
   <string name="reporting_for_spam">reporte por spam</string>
+  <string name="subscribing_to_list">suscribiéndose a la lista</string>
+  <string name="unsubscribing_from_list">desuscribiéndose de la lista</string>
   <string name="data_profiling_summary">Twidere participó en una investigación sobre predicción del comportamiento social de los usuarios para pre-cachear contenido compartido por los estudiantes de la UC Davis.\n\nEstos son los datos que queríamos recopilar y el por qué:\nDatos recopilados:\n1. ID de usuario de Twitter\n2. Timeline principal del usuario (predicción basada en los intereses del usuario e interacción social)\n3. Clicks de usuario en un tweet (predicción basada en los intereseses del usuario e interacción social)\n4. Localización básica (buena para predecir cuándo un usuario accederá a Twitter)\n\nTwidere subirá los datos recopilados sólo cuando una conexión WiFi esté disponible y tu dispositivo esté conectado a la corriente, de manera que no te supondrá costes adicionales por consumo extra de ancho de banda o consumo de batería.</string>
   <string name="data_profiling">Estadísticas de uso</string>
   <string name="enable_data_profiling">Activar reportes</string>
@@ -364,12 +363,12 @@
   <string name="silent_notifications_summary">Desactivar tono/vibrar para notificaciones</string>
   <string name="disable_background_service">Desactivar servicio en segundo plano</string>
   <string name="pull_to_load_conversation_label">Tire para cargar la conversación…</string>
-  <string name="pull_to_load_conversation_release_label">Suelte para cargar la conversación…</string>
+  <string name="pull_to_load_conversation_release_label">Suelta para cargar la conversación…</string>
   <string name="text_copied">Texto copiado al portapapeles.</string>
   <string name="load_from_here">Cargar desde aquí</string>
   <string name="amount_usd">Cantidad (USD)</string>
   <string name="donate">Donar</string>
-  <string name="hashtag">Hashtad</string>
+  <string name="hashtag">Hashtag</string>
   <string name="links">Enlaces</string>
   <string name="edit_profile">Editar perfil</string>
   <string name="display_sensitive_contents">Mostrar contenido sensible</string>
@@ -389,6 +388,7 @@
   <string name="permission_description_write">Escribir en base de datos, actualizar estado</string>
   <string name="permission_description_direct_messages">Leer/Escribir/Enviar mensajes directos</string>
   <string name="permission_description_accounts">Leer información de cuenta</string>
+  <string name="permission_description_preferences">Leer configuraciones</string>
   <string name="permissions_request">Petición de permisos</string>
   <string name="permissions_request_message">Una extensión necesita los siguientes permisos</string>
   <string name="accept">Aceptar</string>
@@ -419,4 +419,35 @@
   <string name="mention_user">Mención <xliff:g id="user">%s</xliff:g></string>
   <string name="theme_color">Color del tema</string>
   <string name="link_underline_only">Solo subrayar los enlaces</string>
+  <string name="wrong_url_format">El formato del URL es incorrecto.</string>
+  <string name="wrong_username_password">Usuario/contraseña incorrectos.</string>
+  <string name="network_error">Error de red.</string>
+  <string name="ssl_error">Error de SSL. Posiblemente necesites activar la opción \"Ignorar errores SSL\".</string>
+  <string name="wrong_api_key">URL de API o combinación consumer key/secret erróneos, por favor compruébalos de nuevo.</string>
+  <string name="status_updated">Tuit enviado.</string>
+  <string name="status_deleted">Tuit eliminado.</string>
+  <string name="status_favorited">Tuit marcado como favorito.</string>
+  <string name="status_unfavorited">Tuit desmarcado como favorito.</string>
+  <string name="status_retweeted">Retuiteado.</string>
+  <string name="retweet_cancelled">Retuit cancelado.</string>
+  <string name="direct_message_sent">Mensaje directo enviado.</string>
+  <string name="direct_message_deleted">Mensaje directo eliminado.</string>
+  <string name="import_from">Importar desde...</string>
+  <string name="link_to_quoted_tweet">Enlace al tuit mencionado</string>
+  <string name="followed_user">Siguiendo a <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="unfollowed_user">Ya no sigues a <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="blocked_user"><xliff:g id="user">%s</xliff:g> bloqueado.</string>
+  <string name="unblocked_user"><xliff:g id="user">%s</xliff:g> desbloqueado.</string>
+  <string name="profile_updated">Perfil actualizado.</string>
+  <string name="profile_banner_image_updated">Imagen de cabecera del perfil actualizada.</string>
+  <string name="profile_image_updated">Imagen del perfil actualizada.</string>
+  <string name="created_list">List \"<xliff:g id="list">%s</xliff:g>\" creada.</string>
+  <string name="deleted_list">Lista \"<xliff:g id="list">%s</xliff:g>\" eliminada.</string>
+  <string name="updated_list_details">Detalles de la lista \"<xliff:g id="list">%s</xliff:g>\" actualizados.</string>
+  <string name="subscribed_to_list">Suscrito a la lista \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="unsubscribed_from_list">Desuscrito de la lista \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="added_user_to_list">Usuario(s) añadido(s) a la lista \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="deleted_user_from_list">Usuario(s) eliminado(s) de la lista \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="subscribe">Suscribirse</string>
+  <string name="unsubscribe">Desuscribirse</string>
 </resources>

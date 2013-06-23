@@ -38,7 +38,6 @@ import static org.mariotaku.twidere.util.Utils.makeStatusContentValues;
 import static org.mariotaku.twidere.util.Utils.makeTrendsContentValues;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -2205,11 +2204,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					status.setLocation(ParcelableLocation.toGeoLocation(location));
 				}
 				if (!use_uploader && image_file != null && image_file.exists()) {
-					try {
-						status.setMedia(image_file.getName(), new ContentLengthInputStream(image_file));
-					} catch (IOException e) {
-						status.setMedia(image_file);
-					}
+					status.setMedia(image_file);
 				}
 				status.setPossiblySensitive(is_possibly_sensitive);
 

@@ -75,7 +75,7 @@
   <string name="in_reply_to"><xliff:g id="user_name">%s</xliff:g>\'e cevap olarak</string>
   <string name="in_reply_to_pull_to_load_conversation"><xliff:g id="user_name">%s</xliff:g>\'e cevap olarak. Diyaloğu yüklemek için çekin</string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> bunu retweet etti</string>
-  <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> ve <xliff:g id="retweet_count">%2$d</xliff:g> kişi daha bunu retweet etti</string>
+  <string name="users_retweeted_this">Kullanıcılar bunu retweetledi</string>
   <string name="reply_to"><xliff:g id="user_name">%s</xliff:g> adlı kişiye cevap ver</string>
   <string name="quote_user">Alıntı yap <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, <xliff:g id="source">%2$s</xliff:g> kullanılarak</string>
@@ -102,16 +102,6 @@
   <string name="quote">Alıntı yap</string>
   <string name="add_rule">Kural ekle</string>
   <string name="longclick_to_delete">Silmek için basılı tut.</string>
-
-
-
-
-
-
-
-
-
-
   <string name="text_size">Yazı Boyutu</string>
   <string name="text_size_summary">\'Durum\'lar yazı boyutu.</string>
   <string name="cannot_get_location">Konumunuz alınamıyor.</string>
@@ -192,7 +182,6 @@
   <string name="item_1_hour">1 saat</string>
   <string name="item_2_hours">2 saat</string>
   <string name="item_4_hours">4 saat</string>
-  <string name="image_preview_display_option">Satıriçi resim önizleme seçeneği</string>
   <string name="solid_color_background">Düz renk arkaplan</string>
   <string name="solid_color_background_summary">Ekranınız AMOLED ise, işe yarayabilir.</string>
   <string name="following_you">Sizi takip ediyor</string>
@@ -206,8 +195,6 @@
   <string name="signing_in_please_wait">Giriş yapılıyor, lütfen bekleyin veya çıkmak için GERİ butonuna basın.</string>
   <string name="connectivity">Bağlanabilirlik</string>
   <string name="add_member">Üye ekle</string>
-
-
   <string name="new_user_list">Yeni kullanıcı listesi</string>
   <string name="is_public">Herkese açık</string>
   <string name="send_direct_message">DM gönder</string>
@@ -215,7 +202,6 @@
   <string name="open_with_extensions">Eklentilerle aç</string>
   <string name="view_user_list">kullanıcı listesini gör</string>
   <string name="uninstall">Kaldır</string>
-  <string name="users_retweeted_this">Kullanıcılar bunu retweetledi</string>
   <string name="saved_searches">Kayıtlı aramalar</string>
   <string name="custom_tabs">Özel sekmeler</string>
   <string name="default_tabs">Varsayılan sekmeler</string>
@@ -269,6 +255,7 @@
   <string name="hardware_acceleration">Donanımsal hızlandırıcı</string>
   <string name="hardware_acceleration_summary">Bazı cihazlar, bu aktivasyondan sonra daha akıcı hissedilir, bazıları hissedilmez. Yalnız Android 3.0+. BU, SİSTEM AYARLARININ ÜSTÜNE GEÇMEZ!</string>
   <string name="activities_about_me">Etkileşimler</string>
+  <string name="activities_by_friends">Arkadaşların hareketleri</string>
   <string name="activity_about_me_favorite"><xliff:g id="user">%s</xliff:g> senin tweetini kendi favorilerine ekledi.</string>
   <string name="activity_about_me_favorite_multi"><xliff:g id="user">%s</xliff:g> ve <xliff:g id="count">%d</xliff:g> kişi daha senin tweetini favorilerine ekledi.</string>
   <string name="activity_about_me_follow"><xliff:g id="user">%s</xliff:g> seni takip ediyor.</string>
@@ -285,6 +272,8 @@
   <string name="click_to_open_menu_summary">Nesne menüsünü açmak için bas, çoklu seçim için basılı tut.</string>
   <string name="send_follow_request">Takip isteği gönder</string>
   <string name="follow_request_sent">Takip isteği gönderildi</string>
+  <string name="separate_retweet_action">Retweet butonu ayrı</string>
+  <string name="separate_retweet_action_summary">tweet menüsünde retweet ve alıntı butonlarının ikisini de göster</string>
   <string name="tweet">Tweet</string>
   <string name="preview">Önizleme</string>
   <string name="api_upgrade_notice_title">ÇOK ÖNEMLİ!</string>
@@ -302,6 +291,8 @@
   <string name="sending_status">tweet gönderilirken</string>
   <string name="sending_direct_message">Direkt mesaj gönderirken</string>
   <string name="refreshing_timelines">zaman tüneli yenilenirken</string>
+  <string name="refreshing_home_timeline">zaman akışı yenilenirken</string>
+  <string name="refreshing_mentions">bahsedilenler yenilenirken</string>
   <string name="refreshing_direct_messages">direkt mesajları güncellerken</string>
   <string name="favoriting">favorilere eklerken</string>
   <string name="unfavoriting">favorilerden çıkarılırken</string>
@@ -313,7 +304,7 @@
   <string name="updating_details">ayrıntılar güncellenirken</string>
   <string name="blocking">engellenirken</string>
   <string name="unblocking">engel kaldırılırken</string>
-  <string name="following">takip edilenlere eklenirken</string>
+  <string name="following">takip edilenler</string>
   <string name="unfollowing">takip edilenlerden çıkarılırken</string>
   <string name="status_is_duplicate">Aynı tweet daha önce gönderilmiş.</string>
   <string name="creating_list">liste oluşturulurken</string>
@@ -354,6 +345,7 @@
   <string name="permission_description_write">Veritabanına yaz, durumu güncelle</string>
   <string name="permission_description_direct_messages">Direkt mesaj Oku/Yaz/Gönder</string>
   <string name="permission_description_accounts">Hesap bilgisini oku</string>
+  <string name="permission_description_preferences">Ayarları oku</string>
   <string name="permissions_request">İzin isteği</string>
   <string name="permissions_request_message">Eklenti aşağıdaki izinleri istiyor</string>
   <string name="accept">Kabul Et</string>
@@ -372,4 +364,17 @@
   <string name="image_preload_options">Resim önyükleme seçenekleri</string>
   <string name="profile_images">Profil resimleri</string>
   <string name="preview_images">Resim önizleme</string>
+  <string name="preload_wifi_only">Yalnız Wi-Fi kullanarak önyükleme yap</string>
+  <string name="re_sign_in_needed">Hesaplarınıza tekrar giriş yapmanız gerekebilir.</string>
+  <string name="disable_tab_swipe">Sekme kaydırmayı iptal et</string>
+  <string name="sign_in_method_introduction_title">Nasıl çalışıyor?</string>
+  <string name="quote_protected_tweet_notice">Korunmuş tweeti alıntılamak tavsiye edilmez.</string>
+  <string name="edit_draft">Taslağı düzenle</string>
+  <string name="profile_image">Profil resmi</string>
+  <string name="my_profile_image">Profil resmim</string>
+  <string name="mention_user">dahil et: <xliff:g id="user">%s</xliff:g></string>
+  <string name="theme_color">Tema rengi</string>
+  <string name="link_underline_only">Sadece linklerin altını çiz</string>
+  <string name="wrong_url_format">Yanlış URL biçimi.</string>
+  <string name="wrong_username_password">Yanlış kullanıcı adı / şifre.</string>
 </resources>

@@ -113,6 +113,7 @@
 	<string name="bottom_compose_button_summary">Put the compose button in the bottom, you can enable this if your screen is large.</string>
 	<string name="leftside_compose_button">Leftside compose button</string>
 	<string name="leftside_compose_button_summary">Put the compose button to the left.</string>
+	<string name="bottom_send_button">Bottom send button</string>
 	<string name="load_item_limit">Load item limit</string>
 	<string name="load_item_limit_summary">Set items limit per load.</string>
 	<string name="load_more_automatically">Load more content automatically</string>
@@ -120,16 +121,6 @@
 	<string name="quote">Quote</string>
 	<string name="add_rule">Add rule</string>
 	<string name="longclick_to_delete">Long-click to delete.</string>
-
-
-
-
-
-
-
-
-
-
 	<string name="text_size">Text size</string>
 	<string name="text_size_summary">Text size of statuses.</string>
 	<string name="cannot_get_location">Can\'t get your location.</string>
@@ -229,8 +220,6 @@
 	<string name="signing_in_please_wait">Signing in, please wait or press BACK to quit.</string>
 	<string name="connectivity">Connectivity</string>
 	<string name="add_member">Add member</string>
-
-
 	<string name="new_user_list">New user list</string>
 	<string name="is_public">Public</string>
 	<string name="send_direct_message">Send DM</string>
@@ -474,4 +463,7 @@
 	<string name="no_close_after_tweet_sent">Keep \"Compose\" opening after tweet sent</string>
 	<string name="no_close_after_tweet_sent_summary">A little gift for chatterbox</string>
 	<string name="tweet_saved_to_draft">Tweet saved to draft.</string>
+	<string name="default_account">Default</string>
+	<string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g> (<xliff:g id="daily_tweet">%2$d</xliff:g> tweet(s) per day)</string>
+
 </resources>

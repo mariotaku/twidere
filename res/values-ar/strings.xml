@@ -90,7 +90,7 @@
   <string name="in_reply_to">رداً على <xliff:g id="user_name">%s</xliff:g></string>
   <string name="in_reply_to_pull_to_load_conversation">ردا على <xliff:g id="user_name">%s</xliff:g>. إسحب لشحن المحادثة</string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> أعاد التغريدة</string>
-  <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> و <xliff:g id="retweet_count">%2$d</xliff:g> قاموا بإعادة التغريدة</string>
+  <string name="users_retweeted_this">المستخدمين الذين قاموا بإعادة التغريد</string>
   <string name="reply_to">الرد على <xliff:g id="user_name">%s</xliff:g></string>
   <string name="quote_user">إقتباس <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, عَبر <xliff:g id="source">%2$s</xliff:g></string>
@@ -117,16 +117,6 @@
   <string name="quote">اقتباس:</string>
   <string name="add_rule">اضافة شرط</string>
   <string name="longclick_to_delete">اضغط ضغطة مطولة للحذف.</string>
-
-
-
-
-
-
-
-
-
-
   <string name="text_size">حجم النص</string>
   <string name="text_size_summary">حجم نص التغريدات.</string>
   <string name="cannot_get_location">لا يمكن تحديد الموقع.</string>
@@ -214,7 +204,6 @@
   <string name="item_1_hour">ساعة</string>
   <string name="item_2_hours">ساعتان</string>
   <string name="item_4_hours">4 ساعات</string>
-  <string name="image_preview_display_option">خيار معاينة الصورة المضمنة</string>
   <string name="solid_color_background">خلفية غير متدرجة</string>
   <string name="solid_color_background_summary">هذا سيكون مفيداً إذا كانت شاشة جهازك من نوع AMOLED.</string>
   <string name="following_you">يتابعك</string>
@@ -228,8 +217,6 @@
   <string name="signing_in_please_wait">تسجيل الدخول، يرجى الانتظار أو اضغط على \"العودة\" الخروج.</string>
   <string name="connectivity">الإتصال</string>
   <string name="add_member">إضافة عضو</string>
-
-
   <string name="new_user_list">قائمة مستخدمين جديدة</string>
   <string name="is_public">عام</string>
   <string name="send_direct_message">إرسال رسالة مباشرة</string>
@@ -237,7 +224,6 @@
   <string name="open_with_extensions">فتح مع الملحقات</string>
   <string name="view_user_list">عرض قائمة المستخدمين</string>
   <string name="uninstall">إلغاء التنصيب</string>
-  <string name="users_retweeted_this">المستخدمين الذين قاموا بإعادة التغريد</string>
   <string name="saved_searches">عمليات البحث المحفوظة</string>
   <string name="custom_tabs">علامات تبويب مخصصة</string>
   <string name="default_tabs">التبويبات الافتراضية</string>

@@ -25,6 +25,7 @@ import static org.mariotaku.twidere.util.Utils.clearUserColor;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getErrorMessage;
+import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
 import static org.mariotaku.twidere.util.Utils.getOriginalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getThemeColor;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
@@ -45,6 +46,8 @@ import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.openUserTimeline;
 import static org.mariotaku.twidere.util.Utils.setUserColor;
 import static org.mariotaku.twidere.util.Utils.showInfoMessage;
+
+import java.util.Locale;
 
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
@@ -133,6 +136,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private long mAccountId;
 	private Relationship mFriendship;
 	private ParcelableUser mUser = null;
+	private Locale mLocale;
 
 	private View mListContainer, mErrorRetryContainer;
 
@@ -319,10 +323,13 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				: View.GONE);
 		mURLView.setText(isEmpty(user.url_expanded) ? user.url : user.url_expanded);
 		mURLView.setMovementMethod(null);
-		mCreatedAtView.setText(formatToLongTimeString(getActivity(), user.created_at));
-		mTweetCount.setText(String.valueOf(user.statuses_count));
-		mFollowersCount.setText(String.valueOf(user.followers_count));
-		mFriendsCount.setText(String.valueOf(user.friends_count));
+		final String created_at = formatToLongTimeString(getActivity(), user.created_at);
+		final double total_created_days = (System.currentTimeMillis() - user.created_at) / 1000 / 60 / 60 / 24;
+		final long daily_tweets = Math.round(user.statuses_count / Math.max(1, total_created_days)); 
+		mCreatedAtView.setText(getString(R.string.daily_statuses_count, created_at, daily_tweets));
+		mTweetCount.setText(getLocalizedNumber(mLocale, user.statuses_count));
+		mFollowersCount.setText(getLocalizedNumber(mLocale, user.followers_count));
+		mFriendsCount.setText(getLocalizedNumber(mLocale, user.friends_count));
 		if (mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true)) {
 			mProfileImageLoader.displayProfileImage(mProfileImageView, user.profile_image_url);
 			final int def_width = getResources().getDisplayMetrics().widthPixels;
@@ -392,6 +399,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		mTwitterWrapper = getApplication().getTwitterWrapper();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mLocale = getResources().getConfiguration().locale;
 		super.onActivityCreated(savedInstanceState);
 		final Bundle args = getArguments();
 		long account_id = -1, user_id = -1;
@@ -573,7 +581,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mURLView = (TextView) mHeaderView.findViewById(R.id.url);
 		mCreatedAtView = (TextView) mHeaderView.findViewById(R.id.created_at);
 		mTweetsContainer = mHeaderView.findViewById(R.id.tweets_container);
-		mTweetCount = (TextView) mHeaderView.findViewById(R.id.tweet_count);
+		mTweetCount = (TextView) mHeaderView.findViewById(R.id.statuses_count);
 		mFollowersContainer = mHeaderView.findViewById(R.id.followers_container);
 		mFollowersCount = (TextView) mHeaderView.findViewById(R.id.followers_count);
 		mFriendsContainer = mHeaderView.findViewById(R.id.friends_container);
@@ -794,7 +802,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		@Override
 		public String getSummary() {
 			if (mUser == null) return null;
-			return String.valueOf(mUser.favorites_count);
+			return getLocalizedNumber(mLocale, mUser.favorites_count);
 		}
 
 		@Override

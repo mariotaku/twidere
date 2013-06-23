@@ -13,7 +13,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:layout_above="@+id/divider_horizontal"
-			android:background="?messagesBackground"/>
+			android:background="?contentBackground"/>
 
 		<View
 			android:id="@+id/divider_horizontal"

@@ -32,7 +32,8 @@ import android.widget.TextView;
 public class UserViewHolder {
 
 	public final ImageView profile_image;
-	public final TextView name, screen_name, description;
+	public final TextView name, screen_name, description, location, url, statuses_count, followers_count,
+			friends_count;
 	private final ColorLabelRelativeLayout content;
 	private final int theme_color;
 	private boolean account_color_enabled;
@@ -46,6 +47,11 @@ public class UserViewHolder {
 		name = (TextView) view.findViewById(R.id.name);
 		screen_name = (TextView) view.findViewById(R.id.screen_name);
 		description = (TextView) view.findViewById(R.id.description);
+		location = (TextView) view.findViewById(R.id.location);
+		url = (TextView) view.findViewById(R.id.url);
+		statuses_count = (TextView) view.findViewById(R.id.statuses_count);
+		followers_count = (TextView) view.findViewById(R.id.followers_count);
+		friends_count = (TextView) view.findViewById(R.id.friends_count);
 	}
 
 	public void setAccountColor(final int color) {
@@ -73,6 +79,11 @@ public class UserViewHolder {
 			description.setTextSize(text_size);
 			name.setTextSize(text_size);
 			screen_name.setTextSize(text_size * 0.75f);
+			location.setTextSize(text_size);
+			url.setTextSize(text_size);
+			statuses_count.setTextSize(text_size);
+			followers_count.setTextSize(text_size);
+			friends_count.setTextSize(text_size);
 		}
 	}
 

@@ -15,12 +15,13 @@
  */
 package de.keyboardsurfer.android.widget.crouton;
 
+
 /**
  * Allows configuring a {@link Crouton}s behavior aside from the actual view,
- * which is defined via {@link Style}.
+ * which is defined via {@link CroutonStyle}.
  * <p/>
- * This allows to re-use a {@link Style} while modifying parameters that only
- * have to be applied when the {@link Crouton} is being displayed.
+ * This allows to re-use a {@link CroutonStyle} while modifying parameters that
+ * only have to be applied when the {@link Crouton} is being displayed.
  * 
  * @author chris
  * @since 1.8
@@ -38,7 +39,7 @@ public class CroutonConfiguration {
 	/** The default long display duration of a {@link Crouton}. */
 	public static final int DURATION_LONG = 5000;
 
-	/** The default {@link Configuration} of a {@link Crouton}. */
+	/** The default {@link CroutonConfiguration} of a {@link Crouton}. */
 	public static final CroutonConfiguration DEFAULT;
 
 	static {
@@ -67,16 +68,16 @@ public class CroutonConfiguration {
 				+ inAnimationResId + ", outAnimationResId=" + outAnimationResId + '}';
 	}
 
-	/** Creates a {@link Builder} to build a {@link Configuration} upon. */
+	/** Creates a {@link Builder} to build a {@link CroutonConfiguration} upon. */
 	public static class Builder {
 		private int durationInMilliseconds = DURATION_SHORT;
 		private int inAnimationResId = 0;
 		private int outAnimationResId = 0;
 
 		/**
-		 * Builds the {@link Configuration}.
+		 * Builds the {@link CroutonConfiguration}.
 		 * 
-		 * @return The built {@link Configuration}.
+		 * @return The built {@link CroutonConfiguration}.
 		 */
 		public CroutonConfiguration build() {
 			return new CroutonConfiguration(this);

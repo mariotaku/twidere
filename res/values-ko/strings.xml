@@ -82,7 +82,7 @@
   <string name="dark_theme_summary">Twidere에 어두운 테마를 적용합니다.</string>
   <string name="display_profile_image">프로필 이미지 표시</string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g>이(가) 리트윗함</string>
-  <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> 및 <xliff:g id="retweet_count">%2$d</xliff:g>여 명이 리트윗함</string>
+  <string name="users_retweeted_this">이 트윗을 리트윗한 사용자</string>
   <string name="reply_to"><xliff:g id="user_name">%s</xliff:g>에게 답하기</string>
   <string name="quote_user"><xliff:g id="user_name">%s</xliff:g>를 인용</string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, <xliff:g id="source">%2$s</xliff:g>를 통해</string>
@@ -109,12 +109,6 @@
   <string name="quote">인용</string>
   <string name="add_rule">규칙 추가</string>
   <string name="longclick_to_delete">삭제하려면 길게 누르세요.</string>
-
-
-
-
-
-
   <string name="text_size">글자 크기</string>
   <string name="text_size_summary">상태 글꼴 크기</string>
   <string name="cannot_get_location">위치를 찾을 수 없습니다.</string>
@@ -208,8 +202,6 @@
   <string name="signing_in_please_wait">로그인 할때, 기다리거나 종료하려면 뒤로가기 키를 누르십시오.</string>
   <string name="connectivity">연결</string>
   <string name="add_member">구성원 추가</string>
-
-
   <string name="new_user_list">새 목록 만들기</string>
   <string name="is_public">공공의</string>
   <string name="send_direct_message">DM 보내기</string>
@@ -217,7 +209,6 @@
   <string name="open_with_extensions">플러그인으로 열기</string>
   <string name="view_user_list">사용자 목록 보기</string>
   <string name="uninstall">제거</string>
-  <string name="users_retweeted_this">이 트윗을 리트윗한 사용자</string>
   <string name="saved_searches">저장된 검색어</string>
   <string name="custom_tabs">커스텀 탭 </string>
   <string name="default_tabs">기본 탭</string>

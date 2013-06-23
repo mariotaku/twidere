@@ -49,6 +49,7 @@ public class DirectMessageEntryViewHolder {
 	}
 
 	public void setAccountColorEnabled(final boolean enabled) {
+		if (account_color_enabled == enabled) return;
 		account_color_enabled = enabled;
 		if (!account_color_enabled) {
 			content.drawRight(Color.TRANSPARENT);
@@ -56,13 +57,12 @@ public class DirectMessageEntryViewHolder {
 	}
 
 	public void setTextSize(final float text_size) {
-		if (this.text_size != text_size) {
+		if (this.text_size == text_size) return;
 			this.text_size = text_size;
 			text.setTextSize(text_size);
-			name.setTextSize(text_size);
-			screen_name.setTextSize(text_size * 0.75f);
+			name.setTextSize(text_size * 1.25f);
+			screen_name.setTextSize(text_size);
 			time.setTextSize(text_size * 0.65f);
-		}
 	}
 
 	public void setUserColor(final int color) {

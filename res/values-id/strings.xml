@@ -37,7 +37,7 @@
   <string name="error_unknown_error">Kesalahan: Kesalahan tidak diketahui, ini mungkin adalah bug.</string>
   <string name="error_message">Kesalahan: <xliff:g id="message">%s</xliff:g></string>
   <string name="error_message_with_action">Kesalahan saat <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
-  <string name="error_message_rate_limit">Laju tweet melebihi batas saat <xliff:g id="action">%1$s</xliff:g>, silakan coba lagi setelah <xliff:g id="time">%2$s</xliff:g></string>
+  <string name="error_message_rate_limit">Laju kicauan melebihi batas saat <xliff:g id="action">%1$s</xliff:g>, silakan coba lagi setelah <xliff:g id="time">%2$s</xliff:g></string>
   <string name="select_account">Pilih akun</string>
   <string name="username">Nama pengguna</string>
   <string name="password">Kata Sandi</string>
@@ -90,7 +90,7 @@
   <string name="in_reply_to">Balasan untuk <xliff:g id="username">%s</xliff:g></string>
   <string name="in_reply_to_pull_to_load_conversation">Sebagai balasan untuk <xliff:g id="user_name">%s</xliff:g>, tarik untuk memuat percakapan</string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> retweet ini</string>
-  <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> dan <xliff:g id="retweet_count">%2$d</xliff:g> lainnya me-retweet ini</string>
+  <string name="users_retweeted_this">Pengguna yang me-retweet</string>
   <string name="reply_to">Balasan untuk <xliff:g id="user_name">%s</xliff:g></string>
   <string name="quote_user">Mengutip <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>
@@ -117,16 +117,6 @@
   <string name="quote">Kutip</string>
   <string name="add_rule">Tambah aturan</string>
   <string name="longclick_to_delete">Tekan tahan untuk menghapus.</string>
-
-
-
-
-
-
-
-
-
-
   <string name="text_size">Ukuran teks</string>
   <string name="text_size_summary">Ukuran teks status.</string>
   <string name="cannot_get_location">Tidak bisa mendapatkan lokasi anda.</string>
@@ -226,8 +216,6 @@
   <string name="signing_in_please_wait">Sign in, silakan menunggu atau tekan KEMBALI untuk berhenti.</string>
   <string name="connectivity">Konektifitas</string>
   <string name="add_member">Tambah Anggota</string>
-
-
   <string name="new_user_list">Daftarkan pengguna baru</string>
   <string name="is_public">Publik</string>
   <string name="send_direct_message">Kirim DM</string>
@@ -235,7 +223,6 @@
   <string name="open_with_extensions">Buka dengan ekstensi</string>
   <string name="view_user_list">Lihat daftar pengguna</string>
   <string name="uninstall">Hapus</string>
-  <string name="users_retweeted_this">Pengguna yang me-retweet</string>
   <string name="saved_searches">Pencarian yang tersimpan</string>
   <string name="custom_tabs">Tab custom</string>
   <string name="default_tabs">Tab default</string>
@@ -298,6 +285,7 @@
   <string name="dns_server">Server DNS</string>
   <string name="dns_server_summary">Atur server DNS untu permintaan API.</string>
   <string name="activities_about_me">Kegiatan tentang saya</string>
+  <string name="activities_by_friends">Aktivitas oleh teman-teman</string>
   <string name="activity_about_me_favorite"><xliff:g id="user">%s</xliff:g> memfavoriti tweet anda.</string>
   <string name="activity_about_me_favorite_multi"><xliff:g id="user">%s</xliff:g> dan <xliff:g id="count">%d</xliff:g> lainnya menfavoriti tweet anda.</string>
   <string name="activity_about_me_follow"><xliff:g id="user">%s</xliff:g> mengikuti Anda.</string>
@@ -306,6 +294,14 @@
   <string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> dan <xliff:g id="count">%d</xliff:g> lainnya me-retweet tweet Anda.</string>
   <string name="activity_about_me_list_member_added"><xliff:g id="user">%s</xliff:g> menambahkan Anda ke dalam daftar.</string>
   <string name="activity_about_me_list_member_added_multi"><xliff:g id="user">%s</xliff:g> dan <xliff:g id="count">%d</xliff:g> lainnya menambahkan Anda ke dalam daftar mereka.</string>
+  <string name="activity_by_friends_favorite"><xliff:g id="user">%1$s</xliff:g> memfavoritkan tweet<xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_favorite_multi"><xliff:g id="user">%1$s</xliff:g> memfavoritkan twit <xliff:g id="target">%2$s</xliff:g> dan juga <xliff:g id="count">%3$d</xliff:g> twit lagi.</string>
+  <string name="activity_by_friends_follow"><xliff:g id="user">%1$s</xliff:g> mengikuti <xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_follow_multi"><xliff:g id="user">%1$s</xliff:g> mengikuti <xliff:g id="target">%2$s</xliff:g> dan <xliff:g id="count">%3$d</xliff:g> lainnya.</string>
+  <string name="activity_by_friends_retweet"><xliff:g id="user">%1$s</xliff:g> me-retweet twit <xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_list_member_added"><xliff:g id="user">%1$s</xliff:g> menambahkan <xliff:g id="target">%2$s</xliff:g> ke daftar.</string>
+  <string name="activity_by_friends_list_created"><xliff:g id="user">%1$s</xliff:g> membuat daftar <xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g> membuat daftar <xliff:g id="target">%2$s</xliff:g> dan <xliff:g id="count">%3$d</xliff:g> lagi.</string>
   <string name="cannot_get_callback_url">Tidak dapat panggilan balik, harap periksa nama dan kata sandi anda.</string>
   <string name="tweet_not_sent">Tweet tidak terkirim.</string>
   <string name="tweet_not_sent_summary">Tweet tidak terkirim, dan disimpan di konsep.</string>
@@ -330,6 +326,7 @@
   <string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> dan <xliff:g id="count">%d</xliff:g> lainnya menyebut Anda.</string>
   <string name="notification_direct_message_multiple"><xliff:g id="user">%s</xliff:g> dan <xliff:g id="count">%d</xliff:g> lainnya mengirim Anda pesan langsung.</string>
   <string name="getting_status">mendapat tweet</string>
+  <string name="getting_statuses">mendapatkan twit</string>
   <string name="sending_status">mengirim tweet</string>
   <string name="sending_direct_message">mengirim pesan langsung</string>
   <string name="refreshing_timelines">menyegarkan timeline</string>
@@ -354,6 +351,7 @@
   <string name="signing_in">mencoba masuk</string>
   <string name="retweeting">me-retweet</string>
   <string name="reporting_for_spam">laporkan sebagai spam</string>
+  <string name="subscribing_to_list">mengikuti daftar</string>
   <string name="data_profiling_summary">Twidere mengambil bagian sebuah penelitian dalam memprediksi pengguna sosial untuk pra-caching konten dimulai mahasiswa di UC Davis.\n\nBerikut adalah data yang berhasil kamu kumpulkan dan mengapa:\nMengumpulkan data:\n1. ID pengguna twitter\n2. Pengguna home timeline (prediksi berdasarkan ketertarikan pengguna dan interaksi sosial)\n3. Pengguna yang mengklik sebuah tweet (prediksi berdasarkan ketertarikan pengguna dan interaksi sosial)\n4. Lokasi mentah (merupakan prediksi yang bagus saat pengguna akan menggunakan twitter)\n\nTwidere akan mengunggah data yang terkumpul hanya saat dalam jangkauan WIFI dan perangkat anda terkoneksi ke charger, jadi tidak akan menggunakan biaya bandwidth lebih atau mengkonsumsi daya baterai anda.</string>
   <string name="data_profiling">Statistik penggunaan</string>
   <string name="enable_data_profiling">Aktifkan laporan</string>
@@ -377,7 +375,7 @@
   <string name="sensitive_content_warning">Tweet ini mungkin berisi konten yang sensitif, mau melanjutkan?</string>
   <string name="mark_as_sensitive">Tandai sebagai konten sensitif</string>
   <string name="remove_sensitive_mark">Hilangkan tanda konten sensitif</string>
-  <string name="loading">Sedang memuat</string>
+  <string name="loading">Tunggu</string>
   <string name="none">Tidak ada</string>
   <string name="large">Banyak</string>
   <string name="small">Sedikit</string>
@@ -395,6 +393,7 @@
   <string name="accept">Setuju</string>
   <string name="no_thanks">Tidak, terima kasih</string>
   <string name="revoke_permissions">Cabut ijin yang diberikan</string>
+  <string name="fast_scroll_thumb">Menggulung dengan cepat</string>
   <string name="link_highlighting">Link penyorotan</string>
   <string name="fast_timeline_processing">Pengolahan waktu cepat</string>
   <string name="fast_timeline_processing_summary">Abaikan SEMUA detail dalam timeline, nyalakan ini untuk mendapatkan kinerja yang lebih baik.</string>
@@ -416,8 +415,33 @@
   <string name="edit_draft">Ubah draf</string>
   <string name="profile_image">Gambar Profil</string>
   <string name="my_profile_image">Gambar profile saya</string>
+  <string name="mention_user">Menyebut <xliff:g id="user">%s</xliff:g></string>
   <string name="theme_color">Warna tema</string>
   <string name="link_underline_only">Perlihatkan garis bawah hanya untuk tautan</string>
   <string name="wrong_url_format">Format URL salah.</string>
   <string name="wrong_username_password">Nama/kata sandi salah.</string>
+  <string name="network_error">Masalah Jaringan.</string>
+  <string name="ssl_error">Masalah SSL, Anda mungkin harus mengaktifkan opsi \"Abaikan masalah SSL\".</string>
+  <string name="wrong_api_key">Salah API url atau consumer key/secret, coba cek kembali.</string>
+  <string name="status_updated">Twit terkirim.</string>
+  <string name="status_deleted">Twit dihapus.</string>
+  <string name="status_favorited">Twit difavoritkan.</string>
+  <string name="status_unfavorited">Twit batal difavoritkan.</string>
+  <string name="status_retweeted">Di-retweet.</string>
+  <string name="retweet_cancelled">Reetweet digagalkan.</string>
+  <string name="direct_message_sent">Direct meesage terkirim.</string>
+  <string name="direct_message_deleted">Direct message dihapus.</string>
+  <string name="import_from">Impor dari…</string>
+  <string name="link_to_quoted_tweet">Tautan ke kutipan twit</string>
+  <string name="followed_user"><xliff:g id="user">%s</xliff:g> diikuti.</string>
+  <string name="unfollowed_user">Batal mengikuti <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="blocked_user">Mengeblok <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="unblocked_user">Batal memblokir <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="created_list">Membuat daftar \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="deleted_list">Hapus daftar \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="updated_list_details">Perbarui detil daftar \"<xliff:g id="list">%s</xliff:g>\"\'.</string>
+  <string name="added_user_to_list">Masukkan pengguna ke daftar \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="deleted_user_from_list">Hapus pengguna dari daftar \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="subscribe">Ikuti</string>
+  <string name="unsubscribe">Batal ikuti</string>
 </resources>

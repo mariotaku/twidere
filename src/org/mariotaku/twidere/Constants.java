@@ -140,6 +140,7 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_IMAGE_PREVIEW_DISPLAY_OPTION = "image_preview_display_option";
 	public static final String PREFERENCE_KEY_BOTTOM_COMPOSE_BUTTON = "bottom_compose_button";
 	public static final String PREFERENCE_KEY_LEFTSIDE_COMPOSE_BUTTON = "leftside_compose_button";
+	public static final String PREFERENCE_KEY_BOTTOM_SEND_BUTTON = "bottom_send_button";
 	public static final String PREFERENCE_KEY_ATTACH_LOCATION = "attach_location";
 	public static final String PREFERENCE_KEY_GZIP_COMPRESSING = "gzip_compressing";
 	public static final String PREFERENCE_KEY_IGNORE_SSL_ERROR = "ignore_ssl_error";

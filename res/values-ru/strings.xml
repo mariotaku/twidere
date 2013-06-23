@@ -24,7 +24,7 @@
   <string name="xauth">xAuth</string>
   <string name="basic">Простая</string>
   <string name="twip_o">twip O Mode</string>
-  <string name="advanced">Более сложная</string>
+  <string name="advanced">Расширенный</string>
   <string name="save">Сохранить</string>
   <string name="edit">Редактировать</string>
   <string name="login_to_twitter">Вход в Twitter</string>
@@ -46,7 +46,7 @@
   <string name="open_in_browser">Открыть в браузере</string>
   <string name="tap_to_load_more">Нажмите, чтобы загрузить еще</string>
   <string name="delete">Удалить</string>
-  <string name="retweet">Ретвитнуть</string>
+  <string name="retweet">Ретвит</string>
   <string name="cancel_retweet">Отменить ретвит</string>
   <string name="favorite">Добавить в избранное</string>
   <string name="unfavorite">Удалить из избранного</string>
@@ -90,7 +90,7 @@
   <string name="in_reply_to">В ответ на <xliff:g id="user_name">%s</xliff:g></string>
   <string name="in_reply_to_pull_to_load_conversation">В ответ <xliff:g id="user_name">%s</xliff:g>, потяните для загрузки беседы</string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> ретвитнул это</string>
-  <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> и <xliff:g id="retweet_count">%2$d</xliff:g> других ретвитнули это</string>
+  <string name="users_retweeted_this">Пользователи ретвитнувшие это</string>
   <string name="reply_to">Ответ на <xliff:g id="user_name">%s</xliff:g></string>
   <string name="quote_user">Цитата <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, через <xliff:g id="source">%2$s</xliff:g></string>
@@ -117,16 +117,6 @@
   <string name="quote">Цитировать</string>
   <string name="add_rule">Добавить правило</string>
   <string name="longclick_to_delete">Долгое нажатие для удаления.</string>
-
-
-
-
-
-
-
-
-
-
   <string name="text_size">Размер текста</string>
   <string name="text_size_summary">Размер текста для статусов.</string>
   <string name="cannot_get_location">Не удается получить ваше местоположение.</string>
@@ -226,8 +216,6 @@
   <string name="signing_in_please_wait">Выполняется вход. Пожалуйста, подождите или нажмите НАЗАД, чтобы закрыть программу.</string>
   <string name="connectivity">Соединение</string>
   <string name="add_member">Добавить пользователя</string>
-
-
   <string name="new_user_list">Новый список пользователей</string>
   <string name="is_public">Общедоступный</string>
   <string name="send_direct_message">Послать ЛС</string>
@@ -235,7 +223,6 @@
   <string name="open_with_extensions">﻿Открыть расширением</string>
   <string name="view_user_list">Просмотреть список пользователей</string>
   <string name="uninstall">Удалить</string>
-  <string name="users_retweeted_this">Пользователи ретвитнувшие это</string>
   <string name="saved_searches">Сохраненные поиски</string>
   <string name="custom_tabs">Пользовательские вкладки</string>
   <string name="default_tabs">Таб по-умолчанию</string>
@@ -298,6 +285,7 @@
   <string name="dns_server">DNS-сервер</string>
   <string name="dns_server_summary">Укажите DNS-сервер для API-запросов.</string>
   <string name="activities_about_me">Моя активность</string>
+  <string name="activities_by_friends">Деятельность друзей</string>
   <string name="activity_about_me_favorite"><xliff:g id="user">%s</xliff:g> добавил в избранное.</string>
   <string name="activity_about_me_favorite_multi"><xliff:g id="user">%s</xliff:g> и <xliff:g id="count">%d</xliff:g> других добавили в избранное.</string>
   <string name="activity_about_me_follow"><xliff:g id="user">%s</xliff:g> читает вас.</string>
@@ -306,6 +294,10 @@
   <string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> и <xliff:g id="count">%d</xliff:g> других ретвитнули ваш твит.</string>
   <string name="activity_about_me_list_member_added"><xliff:g id="user">%s</xliff:g> добавил(а) вас в свой список.</string>
   <string name="activity_about_me_list_member_added_multi"><xliff:g id="user">%s</xliff:g> и <xliff:g id="count">%d</xliff:g> других добавили вас в свои списки.</string>
+  <string name="activity_by_friends_retweet"><xliff:g id="user">%1$s</xliff:g> ретвитнул твит <xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_list_member_added"><xliff:g id="user">%1$s</xliff:g> добавлен <xliff:g id="target">%2$s</xliff:g> в список.</string>
+  <string name="activity_by_friends_list_created"><xliff:g id="user">%1$s</xliff:g> созданный список <xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g> созданный список <xliff:g id="target">%2$s</xliff:g> и <xliff:g id="count">%3$d</xliff:g> более.</string>
   <string name="cannot_get_callback_url">Нет отклика, проверьте ваши логин и пароль.</string>
   <string name="tweet_not_sent">Твит не отправлен.</string>
   <string name="tweet_not_sent_summary">Твит не отправлен, сохранен в черновиках.</string>
@@ -330,6 +322,7 @@
   <string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> и <xliff:g id="count">%d</xliff:g> других упомянули вас.</string>
   <string name="notification_direct_message_multiple"><xliff:g id="user">%s</xliff:g> и <xliff:g id="count">%d</xliff:g> других прислали вам несколько личных сообщений.</string>
   <string name="getting_status">получаем твит</string>
+  <string name="getting_statuses">получить твиты</string>
   <string name="sending_status">отправляем твит</string>
   <string name="sending_direct_message">отправляем личное сообщение</string>
   <string name="refreshing_timelines">обновляем ленту</string>
@@ -341,8 +334,8 @@
   <string name="deleting">удаляем</string>
   <string name="updating_profile">обновляем профиль</string>
   <string name="updating_profile_image">обновляем изображение профиля</string>
-  <string name="updating_profile_banner_image">обновление изображения в заголовке профиля</string>
-  <string name="removing_profile_banner_image">удаление изображения в заголовке профиля</string>
+  <string name="updating_profile_banner_image">Обновление изображения в заголовке профиля</string>
+  <string name="removing_profile_banner_image">Удаление изображения в заголовке профиля</string>
   <string name="updating_details">обновляем детали</string>
   <string name="blocking">блокирование</string>
   <string name="unblocking">разблокирование</string>
@@ -354,6 +347,8 @@
   <string name="signing_in">вход</string>
   <string name="retweeting">ретвит</string>
   <string name="reporting_for_spam">сообщение о спаме</string>
+  <string name="subscribing_to_list">подписаться</string>
+  <string name="unsubscribing_from_list">отписаться</string>
   <string name="data_profiling_summary">Twidere принимает участие в исследованиях по прогнозированию поведения пользователей (для кэширования содержания), начатого студентами Калифорнийского университета в Дэвисе\n\nДалее приведен список данных, которые мы хотели бы собрать, и объяснение - зачем.\nЭто:\n1. Идентификатор пользователя\n2. Лента пользователя (прогнозирование, основанное на интересах пользователей и их социальном взаимодействии)\n3. Нажатия пользователей на твиты (прогнозирование, основанное на интересах пользователей и их социальном взаимодействии)\n4. Огрубленные данные о местоположении (прогнозирование, где пользователи пользуются Twitter)\n\nTwidere будет отправлять собранные данные только тогда, когда устройство подключено к Wi-Fi и к зарядному устройству, так что это не причинит вам неприятностей, связанных с дополнительными денежными расходами или расходом энергии аккумулятора.</string>
   <string name="data_profiling">Статистика использования</string>
   <string name="enable_data_profiling">Включить отправку отчетов</string>
@@ -389,6 +384,7 @@
   <string name="permission_description_write">Записано в базу, обновляем статус</string>
   <string name="permission_description_direct_messages">Просматривать/Писать/Слать личн. сообщения</string>
   <string name="permission_description_accounts">Просмотреть информацию аккаунта</string>
+  <string name="permission_description_preferences">Читать настройки</string>
   <string name="permissions_request">Запрос на доступ</string>
   <string name="permissions_request_message">Расширение запрашивает правда на доступ к</string>
   <string name="accept">Да</string>
@@ -419,4 +415,35 @@
   <string name="mention_user">Упоминание <xliff:g id="user">%s</xliff:g></string>
   <string name="theme_color">Цвет темы</string>
   <string name="link_underline_only">Показывать подчеркнутыми только ссылки</string>
+  <string name="wrong_url_format">Ошибка формата URL.</string>
+  <string name="wrong_username_password">Неверный логин/пароль.</string>
+  <string name="network_error">Ошибка сети.</string>
+  <string name="ssl_error">Ошибка SSL, возможно вам нужно включить опцию \"Игнорировать ошибку SSL\".</string>
+  <string name="wrong_api_key">Неверный API url или ключ покупателя, проверьте их снова.</string>
+  <string name="status_updated">Твит отправлен.</string>
+  <string name="status_deleted">Твит удален.</string>
+  <string name="status_favorited">Твит добавлен в избранное.</string>
+  <string name="status_unfavorited">Твит удален из избранного.</string>
+  <string name="status_retweeted">Ретвит.</string>
+  <string name="retweet_cancelled">Ретвит отменен.</string>
+  <string name="direct_message_sent">Личное сообщение отправлено.</string>
+  <string name="direct_message_deleted">Личное сообщение удалено.</string>
+  <string name="import_from">Импортировать из…</string>
+  <string name="link_to_quoted_tweet">Ссылка на цитату</string>
+  <string name="followed_user">Подписан на <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="unfollowed_user">Отписан от <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="blocked_user">Заблокирован <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="unblocked_user">Разблокирован <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="profile_updated">Профиль обновлен.</string>
+  <string name="profile_banner_image_updated">Изображение профиля обновлено.</string>
+  <string name="profile_image_updated">Изображение профиля обновлено.</string>
+  <string name="created_list">Созданный список \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="deleted_list">Созданный список \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="updated_list_details">Обновлен список деталей \"<xliff:g id="list">%s</xliff:g>\"\'.</string>
+  <string name="subscribed_to_list">Подписанные в \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="unsubscribed_from_list">Отписанные из \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="added_user_to_list">Добавленные пользователи в \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="deleted_user_from_list">Удаленные пользователи из \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="subscribe">Подписаться</string>
+  <string name="unsubscribe">Отписаться</string>
 </resources>
