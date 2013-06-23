@@ -19,6 +19,60 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static android.text.TextUtils.isEmpty;
+import static org.mariotaku.twidere.util.Utils.cancelRetweet;
+import static org.mariotaku.twidere.util.Utils.clearUserColor;
+import static org.mariotaku.twidere.util.Utils.findStatus;
+import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
+import static org.mariotaku.twidere.util.Utils.getAccountColor;
+import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
+import static org.mariotaku.twidere.util.Utils.getImagesInStatus;
+import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import static org.mariotaku.twidere.util.Utils.getUserColor;
+import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
+import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
+import static org.mariotaku.twidere.util.Utils.isMyRetweet;
+import static org.mariotaku.twidere.util.Utils.openImage;
+import static org.mariotaku.twidere.util.Utils.openStatusRetweeters;
+import static org.mariotaku.twidere.util.Utils.openUserProfile;
+import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
+import static org.mariotaku.twidere.util.Utils.setUserColor;
+import static org.mariotaku.twidere.util.Utils.showErrorMessage;
+import static org.mariotaku.twidere.util.Utils.showOkMessage;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.mariotaku.menubar.MenuBar;
+import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.SetColorActivity;
+import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
+import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
+import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.model.Panes;
+import org.mariotaku.twidere.model.ParcelableLocation;
+import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.model.PreviewImage;
+import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.provider.TweetStore.Filters;
+import org.mariotaku.twidere.util.AsyncTask;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.ClipboardUtils;
+import org.mariotaku.twidere.util.HtmlEscapeHelper;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
+import org.mariotaku.twidere.util.OnLinkClickHandler;
+import org.mariotaku.twidere.util.TwidereLinkify;
+import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
+import org.mariotaku.twidere.view.ExtendedFrameLayout;
+import org.mariotaku.twidere.view.StatusImagePreviewLayout;
+import org.mariotaku.twidere.view.StatusImagePreviewLayout.OnImageClickListener;
+
+import twitter4j.Relationship;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -53,67 +107,15 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
+
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 import edu.ucdavis.earlybird.ProfilingUtil;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import org.mariotaku.menubar.MenuBar;
-import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.SetColorActivity;
-import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
-import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
-import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.model.ImageSpec;
-import org.mariotaku.twidere.model.Panes;
-import org.mariotaku.twidere.model.ParcelableLocation;
-import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.provider.TweetStore.Accounts;
-import org.mariotaku.twidere.provider.TweetStore.Filters;
-import org.mariotaku.twidere.util.AsyncTask;
-import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import org.mariotaku.twidere.util.ClipboardUtils;
-import org.mariotaku.twidere.util.HtmlEscapeHelper;
-import org.mariotaku.twidere.util.ImageLoaderWrapper;
-import org.mariotaku.twidere.util.OnLinkClickHandler;
-import org.mariotaku.twidere.util.TwidereLinkify;
-import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
-import org.mariotaku.twidere.view.ExtendedFrameLayout;
-import org.mariotaku.twidere.view.StatusImagePreviewLayout;
-import org.mariotaku.twidere.view.StatusImagePreviewLayout.OnImageClickListener;
-import twitter4j.Relationship;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-
-import static android.text.TextUtils.isEmpty;
-import static org.mariotaku.twidere.util.Utils.cancelRetweet;
-import static org.mariotaku.twidere.util.Utils.clearUserColor;
-import static org.mariotaku.twidere.util.Utils.findStatus;
-import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
-import static org.mariotaku.twidere.util.Utils.getAccountColor;
-import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
-import static org.mariotaku.twidere.util.Utils.getImagesInStatus;
-import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
-import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
-import static org.mariotaku.twidere.util.Utils.getUserColor;
-import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
-import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
-import static org.mariotaku.twidere.util.Utils.isMyRetweet;
-import static org.mariotaku.twidere.util.Utils.openImage;
-import static org.mariotaku.twidere.util.Utils.openStatusRetweeters;
-import static org.mariotaku.twidere.util.Utils.openUserProfile;
-import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
-import static org.mariotaku.twidere.util.Utils.setUserColor;
-import static org.mariotaku.twidere.util.Utils.showErrorMessage;
-import static org.mariotaku.twidere.util.Utils.showInfoMessage;
-import static org.mariotaku.twidere.util.Utils.showOkMessage;
 
 public class StatusFragment extends ParcelableStatusesListFragment implements OnClickListener, Panes.Right,
-OnImageClickListener {
+		OnImageClickListener {
 
 	private static final int LOADER_ID_STATUS = 1;
 	private static final int LOADER_ID_FOLLOW = 2;
@@ -425,7 +427,7 @@ OnImageClickListener {
 		final boolean is_reply = status.in_reply_to_status_id > 0;
 		final String time = formatToLongTimeString(getActivity(), status.timestamp);
 		final String source_html = status.source;
-		setPullToRefreshEnabled(!mLoadMoreAutomatically && is_reply);
+		setMode(!mLoadMoreAutomatically && is_reply ? Mode.PULL_FROM_START : Mode.DISABLED);
 		if (!isEmpty(time) && !isEmpty(source_html)) {
 			mTimeAndSourceView.setText(Html.fromHtml(getString(R.string.time_source, time, source_html)));
 		} else if (isEmpty(time) && !isEmpty(source_html)) {
@@ -454,7 +456,7 @@ OnImageClickListener {
 		} else {
 			mProfileImageView.setImageResource(R.drawable.ic_profile_image_default);
 		}
-		final List<ImageSpec> images = getImagesInStatus(status.text_html);
+		final List<PreviewImage> images = getImagesInStatus(status.text_html);
 		mImagePreviewContainer.setVisibility(images.size() > 0 ? View.VISIBLE : View.GONE);
 		loadPreviewImages(images);
 		if (mLoadMoreAutomatically) {
@@ -464,7 +466,8 @@ OnImageClickListener {
 		if (status.is_retweet && status.retweet_id > 0) {
 			final String name = display_screen_name ? status.retweeted_by_screen_name : status.retweeted_by_name;
 			if (status.retweet_count > 1) {
-				mRetweetedStatusView.setText(getString(R.string.retweeted_by_with_count, name, status.retweet_count - 1));
+				mRetweetedStatusView
+						.setText(getString(R.string.retweeted_by_with_count, name, status.retweet_count - 1));
 			} else {
 				mRetweetedStatusView.setText(getString(R.string.retweeted_by, name));
 			}
@@ -503,9 +506,9 @@ OnImageClickListener {
 		mTwitterWrapper = getTwitterWrapper();
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 		if (mLoadMoreAutomatically) {
-			setPullToRefreshEnabled(false);
+			setMode(Mode.DISABLED);
 		} else {
-			setMode(Mode.PULL_DOWN_TO_REFRESH);
+			setMode(Mode.PULL_FROM_START);
 			setPullLabel(getString(R.string.pull_to_load_conversation_label), Mode.BOTH);
 			setReleaseLabel(getString(R.string.pull_to_load_conversation_release_label), Mode.BOTH);
 		}
@@ -576,7 +579,8 @@ OnImageClickListener {
 				break;
 			}
 			case R.id.retweet_view: {
-				openStatusRetweeters(getActivity(), mAccountId, mStatus.retweet_id > 0 ? mStatus.retweet_id : mStatus.id);
+				openStatusRetweeters(getActivity(), mAccountId, mStatus.retweet_id > 0 ? mStatus.retweet_id
+						: mStatus.id);
 				break;
 			}
 		}
@@ -631,7 +635,7 @@ OnImageClickListener {
 	}
 
 	@Override
-	public void onImageClick(final ImageSpec spec) {
+	public void onImageClick(final PreviewImage spec) {
 		if (mStatus == null || spec == null) return;
 		// UCD
 		ProfilingUtil.profile(getActivity(), mAccountId, "Large image click, " + mStatusId + ", " + spec);
@@ -675,15 +679,20 @@ OnImageClickListener {
 		super.onStop();
 	}
 
+	@Override
+	protected String[] getSavedStatusesFileArgs() {
+		return null;
+	}
+
+	@Override
+	protected void setListHeaderFooters(final ListView list) {
+		list.addFooterView(mStatusView);
+	}
+
 	private void clearPreviewImages() {
 		mImagePreviewView.clear();
 	}
 
-	private void hidePreviewImages() {
-		mLoadImagesIndicator.setVisibility(View.VISIBLE);
-		mImagePreviewView.setVisibility(View.GONE);
-	}
-	
 	private void getStatus(final boolean omit_intent_extra) {
 		final LoaderManager lm = getLoaderManager();
 		lm.destroyLoader(LOADER_ID_STATUS);
@@ -697,7 +706,12 @@ OnImageClickListener {
 		}
 	}
 
-	private boolean loadPreviewImages(final Collection<? extends ImageSpec> images) {
+	private void hidePreviewImages() {
+		mLoadImagesIndicator.setVisibility(View.VISIBLE);
+		mImagePreviewView.setVisibility(View.GONE);
+	}
+
+	private boolean loadPreviewImages(final Collection<? extends PreviewImage> images) {
 		mImagePreviewView.clear();
 		return mImagePreviewView.addAll(images);
 	}
@@ -757,22 +771,12 @@ OnImageClickListener {
 		mListView
 				.setTranscriptMode(should_enable ? ListView.TRANSCRIPT_MODE_NORMAL : ListView.TRANSCRIPT_MODE_DISABLED);
 		mInReplyToView.setClickable(should_enable);
-		setPullToRefreshEnabled(should_enable);
+		setMode(should_enable ? Mode.PULL_FROM_START : Mode.DISABLED);
 	}
 
 	private void updateUserColor() {
 		if (mStatus == null) return;
 		mProfileView.drawLeft(getUserColor(getActivity(), mStatus.user_id));
-	}
-
-	@Override
-	protected String[] getSavedStatusesFileArgs() {
-		return null;
-	}
-
-	@Override
-	protected void setListHeaderFooters(final ListView list) {
-		list.addFooterView(mStatusView);
 	}
 
 	public static class LoadConversationTask extends AsyncTask<ParcelableStatus, Void, Response<Boolean>> {
@@ -975,7 +979,7 @@ OnImageClickListener {
 
 	static class ImagesAdapter extends BaseAdapter {
 
-		private final List<ImageSpec> mImages = new ArrayList<ImageSpec>();
+		private final List<PreviewImage> mImages = new ArrayList<PreviewImage>();
 		private final ImageLoaderWrapper mImageLoader;
 		private final LayoutInflater mInflater;
 
@@ -984,7 +988,7 @@ OnImageClickListener {
 			mInflater = LayoutInflater.from(context);
 		}
 
-		public boolean addAll(final Collection<? extends ImageSpec> images) {
+		public boolean addAll(final Collection<? extends PreviewImage> images) {
 			final boolean ret = images != null && mImages.addAll(images);
 			notifyDataSetChanged();
 			return ret;
@@ -1001,13 +1005,13 @@ OnImageClickListener {
 		}
 
 		@Override
-		public ImageSpec getItem(final int position) {
+		public PreviewImage getItem(final int position) {
 			return mImages.get(position);
 		}
 
 		@Override
 		public long getItemId(final int position) {
-			final ImageSpec spec = getItem(position);
+			final PreviewImage spec = getItem(position);
 			return spec != null ? spec.hashCode() : 0;
 		}
 
@@ -1015,7 +1019,7 @@ OnImageClickListener {
 		public View getView(final int position, final View convertView, final ViewGroup parent) {
 			final View view = convertView != null ? convertView : mInflater.inflate(R.layout.image_preview_item, null);
 			final ImageView image = (ImageView) view.findViewById(R.id.image);
-			final ImageSpec spec = getItem(position);
+			final PreviewImage spec = getItem(position);
 			mImageLoader.displayPreviewImage(image, spec != null ? spec.image_preview_url : null);
 			return view;
 		}

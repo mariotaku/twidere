@@ -19,19 +19,20 @@
 
 package org.mariotaku.twidere.loader;
 
-import android.content.Context;
-import android.support.v4.content.AsyncTaskLoader;
 import java.util.Collections;
 import java.util.List;
+
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
-import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import android.content.Context;
+import android.support.v4.content.AsyncTaskLoader;
 
 public abstract class ParcelableUsersLoader extends AsyncTaskLoader<List<ParcelableUser>> implements Constants {
 
-	private final List<ParcelableUser> mData = Collections.synchronizedList(new NoDuplicatesArrayList<ParcelableUser>());
+	private final List<ParcelableUser> mData = Collections
+			.synchronizedList(new NoDuplicatesArrayList<ParcelableUser>());
 
 	public ParcelableUsersLoader(final Context context, final List<ParcelableUser> data) {
 		super(context);
@@ -44,7 +45,7 @@ public abstract class ParcelableUsersLoader extends AsyncTaskLoader<List<Parcela
 	public void onStartLoading() {
 		forceLoad();
 	}
-	
+
 	protected List<ParcelableUser> getData() {
 		return mData;
 	}

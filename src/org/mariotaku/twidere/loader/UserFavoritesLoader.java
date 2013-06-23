@@ -19,15 +19,17 @@
 
 package org.mariotaku.twidere.loader;
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import java.util.List;
+
 import org.mariotaku.twidere.model.ParcelableStatus;
+
 import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
 public class UserFavoritesLoader extends Twitter4JStatusesLoader {
 
@@ -35,8 +37,9 @@ public class UserFavoritesLoader extends Twitter4JStatusesLoader {
 	private final String mUserScreenName;
 	private int mTotalItemsCount;
 
-	public UserFavoritesLoader(final Context context, final long account_id, final long user_id, final String screen_name,
-			final long max_id, final long since_id, final List<ParcelableStatus> data, final String[] saved_statuses_args, final int tab_position) {
+	public UserFavoritesLoader(final Context context, final long account_id, final long user_id,
+			final String screen_name, final long max_id, final long since_id, final List<ParcelableStatus> data,
+			final String[] saved_statuses_args, final int tab_position) {
 		super(context, account_id, max_id, since_id, data, saved_statuses_args, tab_position);
 		mUserId = user_id;
 		mUserScreenName = screen_name;
@@ -55,6 +58,7 @@ public class UserFavoritesLoader extends Twitter4JStatusesLoader {
 		return mTotalItemsCount;
 	}
 
+	@Override
 	protected boolean shouldFilterStatus(final SQLiteDatabase database, final ParcelableStatus status) {
 		return false;
 	}

@@ -24,8 +24,9 @@ import static org.mariotaku.twidere.util.ContentResolverUtils.bulkInsert;
 import static org.mariotaku.twidere.util.Utils.makeCachedUserContentValues;
 import static org.mariotaku.twidere.util.Utils.makeStatusContentValues;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
@@ -59,12 +60,12 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> implemen
 	protected Void doInBackground(final Void... args) {
 		if (all_statuses == null || all_statuses.length == 0) return null;
 		final Extractor extractor = new Extractor();
-		final ArrayList<ContentValues> cached_users_values = new NoDuplicatesArrayList<ContentValues>();
-		final ArrayList<ContentValues> cached_statuses_values = new NoDuplicatesArrayList<ContentValues>();
-		final ArrayList<ContentValues> hashtag_values = new NoDuplicatesArrayList<ContentValues>();
-		final ArrayList<Long> user_ids = new NoDuplicatesArrayList<Long>();
-		final ArrayList<Long> status_ids = new NoDuplicatesArrayList<Long>();
-		final ArrayList<String> hashtags = new NoDuplicatesArrayList<String>();
+		final Set<ContentValues> cached_users_values = new HashSet<ContentValues>();
+		final Set<ContentValues> cached_statuses_values = new HashSet<ContentValues>();
+		final Set<ContentValues> hashtag_values = new HashSet<ContentValues>();
+		final Set<Long> user_ids = new HashSet<Long>();
+		final Set<Long> status_ids = new HashSet<Long>();
+		final Set<String> hashtags = new HashSet<String>();
 		final boolean large_preview_image = Utils.getImagePreviewDisplayOptionInt(context) == IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE;
 
 		for (final TwitterListResponse<twitter4j.Status> values : all_statuses) {
@@ -77,10 +78,11 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> implemen
 					continue;
 				}
 				status_ids.add(status.getId());
-				cached_statuses_values.add(makeStatusContentValues(status, values.account_id, large_profile_image, large_preview_image));
+				cached_statuses_values.add(makeStatusContentValues(status, values.account_id, large_profile_image,
+						large_preview_image));
 				hashtags.addAll(extractor.extractHashtags(status.getText()));
 				final User user = status.getUser();
-				if (user == null || user.getId() <= 0) {
+				if (user == null || user.getId() <= 0 || user_ids.contains(user.getId())) {
 					continue;
 				}
 				user_ids.add(user.getId());

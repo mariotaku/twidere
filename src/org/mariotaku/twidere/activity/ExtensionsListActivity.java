@@ -30,6 +30,16 @@ import android.view.MenuItem;
 public class ExtensionsListActivity extends BaseDialogWhenLargeActivity {
 
 	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_HOME:
+				onBackPressed();
+				break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.base);
@@ -38,15 +48,5 @@ public class ExtensionsListActivity extends BaseDialogWhenLargeActivity {
 		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		ft.replace(R.id.main, fragment);
 		ft.commit();
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
-		switch (item.getItemId()) {
-			case MENU_HOME:
-				onBackPressed();
-				break;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 }

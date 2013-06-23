@@ -19,30 +19,30 @@
 
 package org.mariotaku.twidere.loader;
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
+import static org.mariotaku.twidere.util.Utils.isFiltered;
+
 import java.util.List;
+
 import org.mariotaku.twidere.model.ParcelableStatus;
+
 import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-
-import static org.mariotaku.twidere.util.Utils.isFiltered;
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
 public class UserListTimelineLoader extends Twitter4JStatusesLoader {
 
 	private final long mUserId;
 	private final String mScreenName, mListName;
 	private final int mListId;
-	private final Context mContext;
 
 	public UserListTimelineLoader(final Context context, final long account_id, final int list_id, final long user_id,
 			final String screen_name, final String list_name, final long max_id, final long since_id,
-					final List<ParcelableStatus> data, final String[] saved_statuses_args, final int tab_position) {
+			final List<ParcelableStatus> data, final String[] saved_statuses_args, final int tab_position) {
 		super(context, account_id, max_id, since_id, data, saved_statuses_args, tab_position);
-		mContext = context;
 		mListId = list_id;
 		mUserId = user_id;
 		mScreenName = screen_name;
@@ -61,6 +61,7 @@ public class UserListTimelineLoader extends Twitter4JStatusesLoader {
 		return null;
 	}
 
+	@Override
 	protected boolean shouldFilterStatus(final SQLiteDatabase database, final ParcelableStatus status) {
 		return isFiltered(database, status);
 	}

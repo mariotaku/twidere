@@ -52,43 +52,8 @@ class BaseDialogActivity extends FragmentActivity implements Constants, IThemedA
 		return is_dark_theme != mIsDarkTheme;
 	}
 
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		setHardwareAcceleration();
-		setTheme();
-		super.onCreate(savedInstanceState);
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		mInstanceStateSaved = false;
-		if (isThemeChanged() || isHardwareAccelerationChanged()) {
-			restart();
-		}
-	}
-
 	public void restart() {
 		restartActivity(this);
-	}
-
-	private void setHardwareAcceleration() {
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return;
-		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mHardwareAccelerated = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION,
-				PREFERENCE_DEFAULT_HARDWARE_ACCELERATION);
-		final Window w = getWindow();
-		if (mHardwareAccelerated) {
-			w.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-					   WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
-		}
-	}
-
-	private void setTheme() {
-		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final boolean is_dark_theme = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false);
-		mIsDarkTheme = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false);
-		setTheme(is_dark_theme ? getDarkThemeRes() : getLightThemeRes());
 	}
 
 	protected int getDarkThemeRes() {
@@ -116,9 +81,44 @@ class BaseDialogActivity extends FragmentActivity implements Constants, IThemedA
 	}
 
 	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		setHardwareAcceleration();
+		setTheme();
+		super.onCreate(savedInstanceState);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		mInstanceStateSaved = false;
+		if (isThemeChanged() || isHardwareAccelerationChanged()) {
+			restart();
+		}
+	}
+
+	@Override
 	protected void onSaveInstanceState(final Bundle outState) {
 		mInstanceStateSaved = true;
 		super.onSaveInstanceState(outState);
+	}
+
+	private void setHardwareAcceleration() {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return;
+		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mHardwareAccelerated = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION,
+				PREFERENCE_DEFAULT_HARDWARE_ACCELERATION);
+		final Window w = getWindow();
+		if (mHardwareAccelerated) {
+			w.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+					WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
+		}
+	}
+
+	private void setTheme() {
+		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final boolean is_dark_theme = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false);
+		mIsDarkTheme = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false);
+		setTheme(is_dark_theme ? getDarkThemeRes() : getLightThemeRes());
 	}
 
 }

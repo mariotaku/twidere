@@ -1,9 +1,27 @@
+/*
+ * 				Twidere - Twitter client for Android
+ *
+ *  Copyright (C) 2012-2013 Mariotaku Lee <mariotaku.lee@gmail.com>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere.loader;
 
 import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
 import static org.mariotaku.twidere.util.Utils.getImageLoaderHttpClient;
 import static org.mariotaku.twidere.util.Utils.getRedirectedHttpResponse;
-import static org.mariotaku.twidere.util.Utils.parseString;
 
 import java.io.File;
 import java.io.FileDescriptor;
@@ -12,9 +30,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.mariotaku.twidere.Constants;
 import org.mariotaku.gallery3d.util.GalleryUtils;
+import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.util.ImageValidator;
+import org.mariotaku.twidere.util.ParseUtils;
+import org.mariotaku.twidere.util.URLFileNameGenerator;
 
 import twitter4j.http.HttpClientWrapper;
 import twitter4j.http.HttpResponse;
@@ -24,8 +44,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.content.AsyncTaskLoader;
+
 import com.nostra13.universalimageloader.cache.disc.naming.FileNameGenerator;
-import org.mariotaku.twidere.util.URLFileNameGenerator;
 
 public abstract class AbstractImageLoader extends AsyncTaskLoader<AbstractImageLoader.Result> implements Constants {
 
@@ -58,7 +78,7 @@ public abstract class AbstractImageLoader extends AsyncTaskLoader<AbstractImageL
 		if (mUri == null) return new Result(null, null, null);
 		final String scheme = mUri.getScheme();
 		if ("http".equals(scheme) || "https".equals(scheme)) {
-			final String url = parseString(mUri.toString());
+			final String url = ParseUtils.parseString(mUri.toString());
 			if (url == null) return new Result(null, null, null);
 			if (mCacheDir == null || !mCacheDir.exists()) {
 				init();

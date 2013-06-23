@@ -19,14 +19,16 @@
 
 package org.mariotaku.twidere.loader;
 
-import android.content.Context;
 import java.util.List;
+
 import org.mariotaku.twidere.model.ParcelableUser;
+
 import twitter4j.CursorPaging;
 import twitter4j.IDs;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
+import android.content.Context;
 
 public abstract class IDsUsersLoader extends BaseCursorSupportUsersLoader {
 
@@ -34,8 +36,6 @@ public abstract class IDsUsersLoader extends BaseCursorSupportUsersLoader {
 			final List<ParcelableUser> data) {
 		super(context, account_id, cursor, data);
 	}
-
-	protected abstract IDs getIDs(Twitter twitter, CursorPaging paging) throws TwitterException;
 
 	@Override
 	public List<User> getUsers(final Twitter twitter) throws TwitterException {
@@ -49,5 +49,7 @@ public abstract class IDsUsersLoader extends BaseCursorSupportUsersLoader {
 		setCursorIds(ids);
 		return twitter.lookupUsers(ids.getIDs());
 	}
+
+	protected abstract IDs getIDs(Twitter twitter, CursorPaging paging) throws TwitterException;
 
 }

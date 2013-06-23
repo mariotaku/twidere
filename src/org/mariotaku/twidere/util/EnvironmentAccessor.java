@@ -116,6 +116,14 @@ public final class EnvironmentAccessor {
 	@TargetApi(Build.VERSION_CODES.FROYO)
 	private static class EnvironmentAccessorSDK8 {
 
+		private static File getExternalCacheDir(final Context context) {
+			return context.getExternalCacheDir();
+		}
+
+		private static File getExternalStoragePublicDirectory(final String type) {
+			return Environment.getExternalStoragePublicDirectory(type);
+		}
+
 		static void init() {
 			DIRECTORY_ALARMS = Environment.DIRECTORY_ALARMS;
 			DIRECTORY_DCIM = Environment.DIRECTORY_DCIM;
@@ -126,14 +134,6 @@ public final class EnvironmentAccessor {
 			DIRECTORY_PICTURES = Environment.DIRECTORY_PICTURES;
 			DIRECTORY_PODCASTS = Environment.DIRECTORY_PODCASTS;
 			DIRECTORY_RINGTONES = Environment.DIRECTORY_RINGTONES;
-		}
-
-		private static File getExternalCacheDir(final Context context) {
-			return context.getExternalCacheDir();
-		}
-
-		private static File getExternalStoragePublicDirectory(final String type) {
-			return Environment.getExternalStoragePublicDirectory(type);
 		}
 	}
 }

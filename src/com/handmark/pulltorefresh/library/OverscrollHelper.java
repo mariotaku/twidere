@@ -126,7 +126,7 @@ public final class OverscrollHelper {
 			// Check that Pull-to-Refresh is enabled, and the event isn't from
 			// touch
 			if (mode.permitsPullToRefresh() && !isTouchEvent && deltaValue != 0) {
-				final int newScrollValue = (deltaValue + scrollValue);
+				final int newScrollValue = deltaValue + scrollValue;
 
 				if (PullToRefreshBase.DEBUG) {
 					Log.d(LOG_TAG, "OverScroll. DeltaX: " + deltaX + ", ScrollX: " + scrollX + ", DeltaY: " + deltaY
@@ -134,7 +134,7 @@ public final class OverscrollHelper {
 							+ ", CurrentScroll: " + currentScrollValue);
 				}
 
-				if (newScrollValue < (0 - fuzzyThreshold)) {
+				if (newScrollValue < 0 - fuzzyThreshold) {
 					// Check the mode supports the overscroll direction, and
 					// then move scroll
 					if (mode.showHeaderLoadingLayout()) {
@@ -146,7 +146,7 @@ public final class OverscrollHelper {
 
 						view.setHeaderScroll((int) (scaleFactor * (currentScrollValue + newScrollValue)));
 					}
-				} else if (newScrollValue > (scrollRange + fuzzyThreshold)) {
+				} else if (newScrollValue > scrollRange + fuzzyThreshold) {
 					// Check the mode supports the overscroll direction, and
 					// then move scroll
 					if (mode.showFooterLoadingLayout()) {
@@ -172,7 +172,7 @@ public final class OverscrollHelper {
 		}
 	}
 
-	static boolean isAndroidOverScrollEnabled(View view) {
+	static boolean isAndroidOverScrollEnabled(final View view) {
 		return view.getOverScrollMode() != View.OVER_SCROLL_NEVER;
 	}
 }

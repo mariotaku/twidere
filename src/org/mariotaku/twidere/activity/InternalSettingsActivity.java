@@ -40,14 +40,6 @@ import android.widget.ListView;
 public class InternalSettingsActivity extends PreferenceActivity implements Constants {
 
 	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		setTheme();
-		super.onCreate(savedInstanceState);
-		getPreferenceManager().setSharedPreferencesName(SHARED_PREFERENCES_NAME);
-		addPreferencesFromResource(R.xml.settings);
-	}
-
-	@Override
 	public boolean onKeyUp(final int keyCode, final KeyEvent event) {
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_BACK: {
@@ -92,5 +84,13 @@ public class InternalSettingsActivity extends PreferenceActivity implements Cons
 		if (solid_color_background) {
 			getWindow().setBackgroundDrawableResource(is_dark_theme ? android.R.color.black : android.R.color.white);
 		}
+	}
+
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		setTheme();
+		super.onCreate(savedInstanceState);
+		getPreferenceManager().setSharedPreferencesName(SHARED_PREFERENCES_NAME);
+		addPreferencesFromResource(R.xml.settings);
 	}
 }

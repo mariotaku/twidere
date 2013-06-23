@@ -112,37 +112,6 @@ public class SelectAccountActivity extends BaseDialogActivity implements LoaderC
 	}
 
 	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-		final Bundle extras = getIntent().getExtras();
-		setContentView(R.layout.select_account);
-		mListView = (ListView) findViewById(android.R.id.list);
-		mAdapter = new AccountsAdapter(this, true);
-		mListView.setAdapter(mAdapter);
-		mListView.setOnItemClickListener(this);
-		mListView.setOnScrollListener(this);
-		final long[] activated_ids;
-		if (savedInstanceState != null) {
-			activated_ids = savedInstanceState.getLongArray(INTENT_KEY_IDS);
-		} else if (extras != null) {
-			activated_ids = extras.getLongArray(INTENT_KEY_IDS);
-		} else {
-			activated_ids = null;
-		}
-		mAllowSelectNone = extras != null ? extras.getBoolean(INTENT_KEY_ALLOW_SELECT_NONE, false) : false;
-		mOAuthOnly = extras != null ? extras.getBoolean(INTENT_KEY_OAUTH_ONLY, false) : false;
-		mSelectedIds.clear();
-		if (activated_ids != null) {
-			for (final long id : activated_ids) {
-				mSelectedIds.add(id);
-			}
-		}
-		getSupportLoaderManager().initLoader(0, null, this);
-
-	}
-
-	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
 		final String where = mOAuthOnly ? Accounts.AUTH_TYPE + " = " + Accounts.AUTH_TYPE_OAUTH : null;
 		return new CursorLoader(this, Accounts.CONTENT_URI, Accounts.COLUMNS, where, null, null);
@@ -194,13 +163,6 @@ public class SelectAccountActivity extends BaseDialogActivity implements LoaderC
 	}
 
 	@Override
-	protected void onResume() {
-		super.onResume();
-		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		mAdapter.setDisplayProfileImage(display_profile_image);
-	}
-
-	@Override
 	public void onSaveInstanceState(final Bundle outState) {
 		outState.putLongArray(Constants.INTENT_KEY_IDS, ArrayUtils.fromList(mSelectedIds));
 		super.onSaveInstanceState(outState);
@@ -249,6 +211,44 @@ public class SelectAccountActivity extends BaseDialogActivity implements LoaderC
 		final IntentFilter filter = new IntentFilter(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
 		registerReceiver(mStateReceiver, filter);
 
+	}
+
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+		final Bundle extras = getIntent().getExtras();
+		setContentView(R.layout.select_account);
+		mListView = (ListView) findViewById(android.R.id.list);
+		mAdapter = new AccountsAdapter(this, true);
+		mListView.setAdapter(mAdapter);
+		mListView.setOnItemClickListener(this);
+		mListView.setOnScrollListener(this);
+		final long[] activated_ids;
+		if (savedInstanceState != null) {
+			activated_ids = savedInstanceState.getLongArray(INTENT_KEY_IDS);
+		} else if (extras != null) {
+			activated_ids = extras.getLongArray(INTENT_KEY_IDS);
+		} else {
+			activated_ids = null;
+		}
+		mAllowSelectNone = extras != null ? extras.getBoolean(INTENT_KEY_ALLOW_SELECT_NONE, false) : false;
+		mOAuthOnly = extras != null ? extras.getBoolean(INTENT_KEY_OAUTH_ONLY, false) : false;
+		mSelectedIds.clear();
+		if (activated_ids != null) {
+			for (final long id : activated_ids) {
+				mSelectedIds.add(id);
+			}
+		}
+		getSupportLoaderManager().initLoader(0, null, this);
+
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		mAdapter.setDisplayProfileImage(display_profile_image);
 	}
 
 	@Override

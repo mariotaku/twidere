@@ -1,3 +1,22 @@
+/*
+ * 				Twidere - Twitter client for Android
+ *
+ *  Copyright (C) 2012-2013 Mariotaku Lee <mariotaku.lee@gmail.com>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere.util;
 
 import java.util.concurrent.ExecutorService;
@@ -44,19 +63,19 @@ public abstract class AsyncTask<Param, Progress, Result> {
 	}
 
 	public AsyncTask<Param, Progress, Result> execute(final Param... params) {
-		if (mStatus != Status.PENDING) {
-			switch (mStatus) {
-				case RUNNING:
-					throw new IllegalStateException("Cannot execute task:" + " the task is already running.");
-				case FINISHED:
-					throw new IllegalStateException("Cannot execute task:" + " the task has already been executed "
-							+ "(a task can be executed only once)");
-			}
+		switch (mStatus) {
+			case RUNNING:
+				throw new IllegalStateException("Cannot execute task:" + " the task is already running.");
+			case FINISHED:
+				throw new IllegalStateException("Cannot execute task:" + " the task has already been executed "
+						+ "(a task can be executed only once)");
+			default:
+				break;
 		}
 
 		mStatus = Status.RUNNING;
 		mHandler.post(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				onPreExecute();
@@ -99,11 +118,11 @@ public abstract class AsyncTask<Param, Progress, Result> {
 
 	}
 
-	protected void onProgressUpdate(Progress... values) {
+	protected void onProgressUpdate(final Progress... values) {
 
 	}
-	
-	protected final void publishProgress(Progress... progress) {
+
+	protected final void publishProgress(final Progress... progress) {
 		if (isCancelled()) return;
 		mHandler.post(new OnProgressUpdateRunnable(progress));
 	}
@@ -139,9 +158,9 @@ public abstract class AsyncTask<Param, Progress, Result> {
 			mStatus = Status.FINISHED;
 		}
 	}
-	
+
 	private final class OnProgressUpdateRunnable implements Runnable {
-		
+
 		private final Progress[] mResult;
 
 		private OnProgressUpdateRunnable(final Progress... result) {

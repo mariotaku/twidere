@@ -48,7 +48,7 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 
 	static final Interpolator ANIMATION_INTERPOLATOR = new LinearInterpolator();
 
-	private FrameLayout mInnerLayout;
+	private final FrameLayout mInnerLayout;
 
 	protected final ImageView mHeaderImage;
 	protected final ProgressBar mHeaderProgress;
@@ -65,7 +65,8 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 	private CharSequence mRefreshingLabel;
 	private CharSequence mReleaseLabel;
 
-	public LoadingLayout(Context context, final Mode mode, final Orientation scrollDirection, TypedArray attrs) {
+	public LoadingLayout(final Context context, final Mode mode, final Orientation scrollDirection,
+			final TypedArray attrs) {
 		super(context);
 		mMode = mode;
 		mScrollDirection = scrollDirection;
@@ -86,7 +87,7 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 		mSubHeaderText = (TextView) mInnerLayout.findViewById(R.id.pull_to_refresh_sub_text);
 		mHeaderImage = (ImageView) mInnerLayout.findViewById(R.id.pull_to_refresh_image);
 
-		FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mInnerLayout.getLayoutParams();
+		final FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mInnerLayout.getLayoutParams();
 
 		switch (mode) {
 			case PULL_FROM_END:
@@ -110,32 +111,32 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 		}
 
 		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderBackground)) {
-			Drawable background = attrs.getDrawable(R.styleable.PullToRefresh_ptrHeaderBackground);
+			final Drawable background = attrs.getDrawable(R.styleable.PullToRefresh_ptrHeaderBackground);
 			if (null != background) {
 				ViewCompat.setBackground(this, background);
 			}
 		}
 
 		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderTextAppearance)) {
-			TypedValue styleID = new TypedValue();
+			final TypedValue styleID = new TypedValue();
 			attrs.getValue(R.styleable.PullToRefresh_ptrHeaderTextAppearance, styleID);
 			setTextAppearance(styleID.data);
 		}
 		if (attrs.hasValue(R.styleable.PullToRefresh_ptrSubHeaderTextAppearance)) {
-			TypedValue styleID = new TypedValue();
+			final TypedValue styleID = new TypedValue();
 			attrs.getValue(R.styleable.PullToRefresh_ptrSubHeaderTextAppearance, styleID);
 			setSubTextAppearance(styleID.data);
 		}
 
 		// Text Color attrs need to be set after TextAppearance attrs
 		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderTextColor)) {
-			ColorStateList colors = attrs.getColorStateList(R.styleable.PullToRefresh_ptrHeaderTextColor);
+			final ColorStateList colors = attrs.getColorStateList(R.styleable.PullToRefresh_ptrHeaderTextColor);
 			if (null != colors) {
 				setTextColor(colors);
 			}
 		}
 		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderSubTextColor)) {
-			ColorStateList colors = attrs.getColorStateList(R.styleable.PullToRefresh_ptrHeaderSubTextColor);
+			final ColorStateList colors = attrs.getColorStateList(R.styleable.PullToRefresh_ptrHeaderSubTextColor);
 			if (null != colors) {
 				setSubTextColor(colors);
 			}
@@ -181,18 +182,6 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 		reset();
 	}
 
-	public final void setHeight(int height) {
-		ViewGroup.LayoutParams lp = getLayoutParams();
-		lp.height = height;
-		requestLayout();
-	}
-
-	public final void setWidth(int width) {
-		ViewGroup.LayoutParams lp = getLayoutParams();
-		lp.width = width;
-		requestLayout();
-	}
-
 	public final int getContentSize() {
 		switch (mScrollDirection) {
 			case HORIZONTAL:
@@ -201,6 +190,21 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 			default:
 				return mInnerLayout.getHeight();
 		}
+	}
+
+	@Override
+	public CharSequence getPullLabel() {
+		return mPullLabel;
+	}
+
+	@Override
+	public CharSequence getRefreshingLabel() {
+		return mRefreshingLabel;
+	}
+
+	@Override
+	public CharSequence getReleaseLabel() {
+		return mReleaseLabel;
 	}
 
 	public final void hideAllViews() {
@@ -218,7 +222,7 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 		}
 	}
 
-	public final void onPull(float scaleOfLayout) {
+	public final void onPull(final float scaleOfLayout) {
 		if (!mUseIntrinsicAnimation) {
 			onPullImpl(scaleOfLayout);
 		}
@@ -281,47 +285,51 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 		}
 	}
 
+	public final void setHeight(final int height) {
+		final ViewGroup.LayoutParams lp = getLayoutParams();
+		lp.height = height;
+		requestLayout();
+	}
+
 	@Override
-	public void setLastUpdatedLabel(CharSequence label) {
+	public void setLastUpdatedLabel(final CharSequence label) {
 		setSubHeaderText(label);
 	}
 
-	public final void setLoadingDrawable(Drawable imageDrawable) {
+	@Override
+	public final void setLoadingDrawable(final Drawable imageDrawable) {
 		// Set Drawable
 		mHeaderImage.setImageDrawable(imageDrawable);
-		mUseIntrinsicAnimation = (imageDrawable instanceof AnimationDrawable);
+		mUseIntrinsicAnimation = imageDrawable instanceof AnimationDrawable;
 
 		// Now call the callback
 		onLoadingDrawableSet(imageDrawable);
 	}
 
-	public CharSequence getPullLabel() {
-		return mPullLabel;
-	}
-
-	public CharSequence getRefreshingLabel() {
-		return mRefreshingLabel;
-	}
-
-	public CharSequence getReleaseLabel() {
-		return mReleaseLabel;
-	}
-
-	public void setPullLabel(CharSequence pullLabel) {
+	@Override
+	public void setPullLabel(final CharSequence pullLabel) {
 		mPullLabel = pullLabel;
 	}
 
-	public void setRefreshingLabel(CharSequence refreshingLabel) {
+	@Override
+	public void setRefreshingLabel(final CharSequence refreshingLabel) {
 		mRefreshingLabel = refreshingLabel;
 	}
 
-	public void setReleaseLabel(CharSequence releaseLabel) {
+	@Override
+	public void setReleaseLabel(final CharSequence releaseLabel) {
 		mReleaseLabel = releaseLabel;
 	}
 
 	@Override
-	public void setTextTypeface(Typeface tf) {
+	public void setTextTypeface(final Typeface tf) {
 		mHeaderText.setTypeface(tf);
+	}
+
+	public final void setWidth(final int width) {
+		final ViewGroup.LayoutParams lp = getLayoutParams();
+		lp.width = width;
+		requestLayout();
 	}
 
 	public final void showInvisibleViews() {
@@ -357,7 +365,7 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 
 	protected abstract void resetImpl();
 
-	private void setSubHeaderText(CharSequence label) {
+	private void setSubHeaderText(final CharSequence label) {
 		if (null != mSubHeaderText) {
 			if (TextUtils.isEmpty(label)) {
 				mSubHeaderText.setVisibility(View.GONE);
@@ -373,19 +381,19 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 		}
 	}
 
-	private void setSubTextAppearance(int value) {
+	private void setSubTextAppearance(final int value) {
 		if (null != mSubHeaderText) {
 			mSubHeaderText.setTextAppearance(getContext(), value);
 		}
 	}
 
-	private void setSubTextColor(ColorStateList color) {
+	private void setSubTextColor(final ColorStateList color) {
 		if (null != mSubHeaderText) {
 			mSubHeaderText.setTextColor(color);
 		}
 	}
 
-	private void setTextAppearance(int value) {
+	private void setTextAppearance(final int value) {
 		if (null != mHeaderText) {
 			mHeaderText.setTextAppearance(getContext(), value);
 		}
@@ -394,7 +402,7 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 		}
 	}
 
-	private void setTextColor(ColorStateList color) {
+	private void setTextColor(final ColorStateList color) {
 		if (null != mHeaderText) {
 			mHeaderText.setTextColor(color);
 		}

@@ -24,7 +24,6 @@ import static org.mariotaku.twidere.util.Utils.openStatus;
 import static org.mariotaku.twidere.util.Utils.openTweetSearch;
 import static org.mariotaku.twidere.util.Utils.openUserListDetails;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
-import static org.mariotaku.twidere.util.Utils.parseLong;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
@@ -44,7 +43,8 @@ public class OnLinkClickHandler implements OnLinkClickListener, Constants {
 	}
 
 	@Override
-	public void onLinkClick(final String link, final String orig, final long account_id, final int type, final boolean sensitive) {
+	public void onLinkClick(final String link, final String orig, final long account_id, final int type,
+			final boolean sensitive) {
 		if (activity == null) return;
 		// UCD
 		ProfilingUtil.profile(activity, account_id, "Click, " + link + ", " + type);
@@ -80,11 +80,11 @@ public class OnLinkClickHandler implements OnLinkClickListener, Constants {
 				break;
 			}
 			case TwidereLinkify.LINK_TYPE_USER_ID: {
-				openUserProfile(activity, account_id, parseLong(link), null);
+				openUserProfile(activity, account_id, ParseUtils.parseLong(link), null);
 				break;
 			}
 			case TwidereLinkify.LINK_TYPE_STATUS: {
-				openStatus(activity, account_id, parseLong(link));
+				openStatus(activity, account_id, ParseUtils.parseLong(link));
 				break;
 			}
 		}

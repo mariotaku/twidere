@@ -19,16 +19,17 @@
 
 package org.mariotaku.twidere.fragment;
 
-import android.content.Context;
-import android.os.Bundle;
-import android.support.v4.content.Loader;
+import static org.mariotaku.twidere.util.Utils.getAccountId;
+
 import java.util.List;
+
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.loader.UserTimelineLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
 
-import static org.mariotaku.twidere.util.Utils.getAccountId;
-import static org.mariotaku.twidere.util.Utils.encodeQueryParams;
+import android.content.Context;
+import android.os.Bundle;
+import android.support.v4.content.Loader;
 
 public class UserTimelineFragment extends ParcelableStatusesListFragment {
 
@@ -52,22 +53,22 @@ public class UserTimelineFragment extends ParcelableStatusesListFragment {
 		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
 		final long user_id = args != null ? args.getLong(INTENT_KEY_USER_ID, -1) : -1;
 		final String screen_name = args != null ? args.getString(INTENT_KEY_SCREEN_NAME) : null;
-		final boolean is_my_timeline = user_id > 0 ? account_id == user_id :
-			account_id == getAccountId(getActivity(), screen_name);
+		final boolean is_my_timeline = user_id > 0 ? account_id == user_id : account_id == getAccountId(getActivity(),
+				screen_name);
 		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();
 		adapter.setIndicateMyStatusDisabled(is_my_timeline);
 		adapter.setFiltersEnabled(!is_my_timeline);
 		adapter.setIgnoredFilterFields(false, false, true, false);
 	}
 
+	@Override
 	protected String[] getSavedStatusesFileArgs() {
 		final Bundle args = getArguments();
 		if (args == null) return null;
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 		final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
 		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-		return new String[] { AUTHORITY_USER_TIMELINE, "account" + account_id, "user" + user_id +
-				"name" + screen_name };
+		return new String[] { AUTHORITY_USER_TIMELINE, "account" + account_id, "user" + user_id + "name" + screen_name };
 	}
 
 }

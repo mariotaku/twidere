@@ -24,15 +24,15 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 public interface IStatusesAdapter<Data> extends IBaseAdapter {
 
 	public long findItemIdByPosition(final int position);
-	
+
 	public int findItemPositionByStatusId(final long status_id);
-	
-	public ParcelableStatus getStatus(int position);
 
 	public ParcelableStatus getLastStatus();
 
+	public ParcelableStatus getStatus(int position);
+
 	public boolean isLastItemFiltered();
-	
+
 	public void setData(Data data);
 
 	public void setDisplaySensitiveContents(boolean display);
@@ -42,7 +42,7 @@ public interface IStatusesAdapter<Data> extends IBaseAdapter {
 	public void setGapDisallowed(boolean disallowed);
 
 	public void setIgnoredFilterFields(boolean text_plain, boolean text_html, boolean screen_name, boolean source);
-	
+
 	public void setImagePreviewDisplayOption(String option);
 
 	public void setIndicateMyStatusDisabled(boolean disable);
@@ -50,7 +50,7 @@ public interface IStatusesAdapter<Data> extends IBaseAdapter {
 	public void setLinkHightlightingEnabled(boolean enable);
 
 	public void setLinkUnderlineOnly(boolean underline_only);
-	
+
 	public void setMentionsHightlightDisabled(boolean disable);
 
 	public void setMultiSelectEnabled(boolean multi);

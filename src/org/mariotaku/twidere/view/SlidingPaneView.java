@@ -1,11 +1,32 @@
+/*
+ * 				Twidere - Twitter client for Android
+ *
+ *  Copyright (C) 2012-2013 Mariotaku Lee <mariotaku.lee@gmail.com>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere.view;
+
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.DualPaneActivity;
+import org.mariotaku.twidere.view.iface.IExtendedViewGroup.TouchInterceptor;
 
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -15,15 +36,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Scroller;
-import android.widget.TextView;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.DualPaneActivity;
-import org.mariotaku.twidere.view.iface.IExtendedViewGroup.TouchInterceptor;
 
 public class SlidingPaneView extends ViewGroup {
 
@@ -144,7 +159,7 @@ public class SlidingPaneView extends ViewGroup {
 
 		mLeftPaneLayout = new LeftPaneLayout(this);
 		mRightPaneLayout = new RightPaneLayout(this);
-	
+
 		mRightPaneContainer = new ExtendedFrameLayout(context);
 		mFadingRightPaneContainer = new FadingRightPaneContainer(this);
 		mViewShadow = new View(context);
@@ -307,7 +322,7 @@ public class SlidingPaneView extends ViewGroup {
 	public void setFlingDuration(final int duration) {
 		mFlingDuration = duration;
 	}
-	
+
 	public void setRightPaneBackground(final int resId) {
 		mRightPaneBackgroundView.setBackgroundResource(resId);
 	}
@@ -461,18 +476,6 @@ public class SlidingPaneView extends ViewGroup {
 		if (value > max) return max;
 		return value;
 	}
-	
-	private static class RightPaneBackgroundView extends View {
-		
-		public RightPaneBackgroundView(final Context context) {
-			super(context);
-		}
-		
-		@Override
-		public boolean onTouchEvent(final MotionEvent e) {
-			return false;
-		}
-	}
 
 	public static class LeftPaneLayout extends FrameLayout {
 
@@ -484,17 +487,17 @@ public class SlidingPaneView extends ViewGroup {
 			this.parent = parent;
 		}
 
-		public void setFadeFactor(final int fadeFactor) {
-			mFadeFactor = fadeFactor;
-			invalidate();
-		}
-
 		@Override
 		public boolean onInterceptTouchEvent(final MotionEvent ev) {
 			if (ev.getAction() == MotionEvent.ACTION_DOWN) {
 				parent.animateClose();
 			}
 			return super.onInterceptTouchEvent(ev);
+		}
+
+		public void setFadeFactor(final int fadeFactor) {
+			mFadeFactor = fadeFactor;
+			invalidate();
 		}
 
 		@Override
@@ -680,13 +683,12 @@ public class SlidingPaneView extends ViewGroup {
 		}
 
 		private float getScrollFactor() {
-			return - (float) mRightPaneLayout.getScrollX() / (float) getRightBound();
+			return -(float) mRightPaneLayout.getScrollX() / getRightBound();
 		}
 
 		private void hideRightPane(final int duration) {
 			mIsRightPaneShown = false;
-			if (mRightPaneLayout.getMeasuredWidth() == 0 || mRightPaneLayout.getMeasuredHeight() == 0)
-				return;
+			if (mRightPaneLayout.getMeasuredWidth() == 0 || mRightPaneLayout.getMeasuredHeight() == 0) return;
 
 			final int startX = mRightPaneLayout.getScrollX();
 			final int dx = getRightBound() + startX;
@@ -765,12 +767,44 @@ public class SlidingPaneView extends ViewGroup {
 
 		private void showRightPane(final int duration) {
 			mIsRightPaneShown = true;
-			if (mRightPaneLayout.getMeasuredWidth() == 0 || mRightPaneLayout.getMeasuredHeight() == 0)
-				return;
+			if (mRightPaneLayout.getMeasuredWidth() == 0 || mRightPaneLayout.getMeasuredHeight() == 0) return;
 
 			final int startX = mRightPaneLayout.getScrollX();
 			final int dx = startX;
 			fling(startX, dx, duration);
+		}
+	}
+
+	private static class FadingRightPaneContainer extends ExtendedFrameLayout {
+
+		private int mFadeFactor = 0;
+
+		public FadingRightPaneContainer(final SlidingPaneView parent) {
+			super(parent.getContext());
+		}
+
+		public void setFadeFactor(final int fadeFactor) {
+			mFadeFactor = fadeFactor;
+			invalidate();
+		}
+
+		@Override
+		protected void dispatchDraw(final Canvas canvas) {
+			canvas.saveLayerAlpha(null, mFadeFactor, Canvas.ALL_SAVE_FLAG);
+			super.dispatchDraw(canvas);
+			canvas.restore();
+		}
+	}
+
+	private static class RightPaneBackgroundView extends View {
+
+		public RightPaneBackgroundView(final Context context) {
+			super(context);
+		}
+
+		@Override
+		public boolean onTouchEvent(final MotionEvent e) {
+			return false;
 		}
 	}
 
@@ -800,28 +834,6 @@ public class SlidingPaneView extends ViewGroup {
 		}
 
 	}
-	
-	private static class FadingRightPaneContainer extends ExtendedFrameLayout {
-		
-		private int mFadeFactor = 0;
-
-		public FadingRightPaneContainer(final SlidingPaneView parent) {
-			super(parent.getContext());
-		}
-		
-		public void setFadeFactor(final int fadeFactor) {
-			mFadeFactor = fadeFactor;
-			invalidate();
-		}
-		
-
-		@Override
-		protected void dispatchDraw(final Canvas canvas) {
-			canvas.saveLayerAlpha(null, mFadeFactor, Canvas.ALL_SAVE_FLAG);
-			super.dispatchDraw(canvas);
-			canvas.restore();
-		}
-	}
 
 	private static class ScrollTouchInterceptor implements TouchInterceptor {
 
@@ -832,7 +844,6 @@ public class SlidingPaneView extends ViewGroup {
 
 		private float mTempDeltaX, mTotalMoveX, mTotalMoveY, mActualMoveX;
 		private boolean mIsVerticalScrolling, mFirstDownHandled, mShouldDisableScroll;
-
 
 		ScrollTouchInterceptor(final SlidingPaneView parent) {
 			mParent = parent;

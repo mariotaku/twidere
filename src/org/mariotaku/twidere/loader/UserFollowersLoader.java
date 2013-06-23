@@ -19,14 +19,16 @@
 
 package org.mariotaku.twidere.loader;
 
-import android.content.Context;
 import java.util.List;
+
 import org.mariotaku.twidere.model.ParcelableUser;
+
 import twitter4j.CursorPaging;
 import twitter4j.PagableResponseList;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
+import android.content.Context;
 
 public class UserFollowersLoader extends CursorSupportUsersLoader {
 
@@ -41,9 +43,11 @@ public class UserFollowersLoader extends CursorSupportUsersLoader {
 	}
 
 	@Override
-	protected PagableResponseList<User> getCursoredUsers(final Twitter twitter, final CursorPaging paging) throws TwitterException {
+	protected PagableResponseList<User> getCursoredUsers(final Twitter twitter, final CursorPaging paging)
+			throws TwitterException {
 		if (twitter == null) return null;
-		if (mUserId > 0) return twitter.getFollowersList(mUserId, paging);
+		if (mUserId > 0)
+			return twitter.getFollowersList(mUserId, paging);
 		else if (mScreenName != null) return twitter.getFollowersList(mScreenName, paging);
 		return null;
 	}

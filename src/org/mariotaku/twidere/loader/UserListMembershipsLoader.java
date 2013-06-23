@@ -42,8 +42,7 @@ public class UserListMembershipsLoader extends BaseUserListsLoader {
 	}
 
 	@Override
-	public PagableResponseList<UserList> getUserLists() throws TwitterException {
-		final Twitter twitter = getTwitter();
+	public PagableResponseList<UserList> getUserLists(final Twitter twitter) throws TwitterException {
 		if (twitter == null) return null;
 		if (mUserId > 0)
 			return twitter.getUserListMemberships(mUserId, getCursor());

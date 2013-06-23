@@ -25,8 +25,6 @@ import static org.mariotaku.twidere.util.Utils.CUSTOM_TABS_TYPE_NAME_MAP;
 import static org.mariotaku.twidere.util.Utils.buildArguments;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getTabTypeName;
-import static org.mariotaku.twidere.util.Utils.parseArguments;
-import static org.mariotaku.twidere.util.Utils.parseString;
 
 import java.util.Arrays;
 import java.util.List;
@@ -37,6 +35,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.AutoCompleteAdapter;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.util.ArrayUtils;
+import org.mariotaku.twidere.util.ParseUtils;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -73,59 +72,6 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 	private final Handler mBackPressedHandler = new BackPressedHandler(this);;
 
 	private static final int MESSAGE_ID_BACK_TIMEOUT = 0;
-
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		final Intent intent = getIntent();
-		final String action = intent.getAction();
-		final Bundle extras = intent.getExtras();
-		if (!INTENT_ACTION_NEW_CUSTOM_TAB.equals(action) && !INTENT_ACTION_EDIT_CUSTOM_TAB.equals(action)) {
-			finish();
-			return;
-		}
-		if (INTENT_ACTION_EDIT_CUSTOM_TAB.equals(action)) {
-			setTitle(R.string.edit_tab);
-		}
-		if (savedInstanceState != null) {
-			mName = savedInstanceState.getString(INTENT_KEY_NAME);
-			mType = savedInstanceState.getString(INTENT_KEY_TYPE);
-			mAccountId = savedInstanceState.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-			mText1 = savedInstanceState.getString(INTENT_KEY_TEXT1);
-			mText2 = savedInstanceState.getString(INTENT_KEY_TEXT2);
-		} else if (extras != null && INTENT_ACTION_EDIT_CUSTOM_TAB.equals(action)) {
-			mType = extras.getString(INTENT_KEY_TYPE);
-			mName = extras.getString(INTENT_KEY_NAME);
-			mIcon = extras.getString(INTENT_KEY_ICON);
-			final Bundle args = parseArguments(extras.getString(INTENT_KEY_ARGUMENTS));
-			if (args.containsKey(INTENT_KEY_ACCOUNT_ID)) {
-				mAccountId = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-			}
-			if (args.containsKey(INTENT_KEY_SCREEN_NAME)) {
-				mText1 = args.getString(INTENT_KEY_SCREEN_NAME);
-			} else if (args.containsKey(INTENT_KEY_QUERY)) {
-				mText1 = args.getString(INTENT_KEY_QUERY);
-			}
-			if (args.containsKey(INTENT_KEY_LIST_NAME)) {
-				mText2 = args.getString(INTENT_KEY_LIST_NAME);
-			}
-		}
-		addPreferencesFromResource(R.xml.edit_tab);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		mText1Preference = new Text1Preference(this, R.string.unused);
-		mText2Preference = new Text2Preference(this, R.string.unused);
-		mTabIconPreference = new TabIconPreference(this);
-		mNamePreference = new NamePreference(this);
-		mAccountPreference = new AccountPreference(this);
-		mTabTypePreference = new TabTypePreference(this);
-		final PreferenceScreen screen = (PreferenceScreen) findPreference("edit_tab");
-		screen.addPreference(mNamePreference);
-		screen.addPreference(mTabIconPreference);
-		screen.addPreference(mTabTypePreference);
-		screen.addPreference(mAccountPreference);
-		screen.addPreference(mText1Preference);
-		screen.addPreference(mText2Preference);
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
@@ -212,6 +158,59 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 	}
 
 	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		final Intent intent = getIntent();
+		final String action = intent.getAction();
+		final Bundle extras = intent.getExtras();
+		if (!INTENT_ACTION_NEW_CUSTOM_TAB.equals(action) && !INTENT_ACTION_EDIT_CUSTOM_TAB.equals(action)) {
+			finish();
+			return;
+		}
+		if (INTENT_ACTION_EDIT_CUSTOM_TAB.equals(action)) {
+			setTitle(R.string.edit_tab);
+		}
+		if (savedInstanceState != null) {
+			mName = savedInstanceState.getString(INTENT_KEY_NAME);
+			mType = savedInstanceState.getString(INTENT_KEY_TYPE);
+			mAccountId = savedInstanceState.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+			mText1 = savedInstanceState.getString(INTENT_KEY_TEXT1);
+			mText2 = savedInstanceState.getString(INTENT_KEY_TEXT2);
+		} else if (extras != null && INTENT_ACTION_EDIT_CUSTOM_TAB.equals(action)) {
+			mType = extras.getString(INTENT_KEY_TYPE);
+			mName = extras.getString(INTENT_KEY_NAME);
+			mIcon = extras.getString(INTENT_KEY_ICON);
+			final Bundle args = ParseUtils.parseArguments(extras.getString(INTENT_KEY_ARGUMENTS));
+			if (args.containsKey(INTENT_KEY_ACCOUNT_ID)) {
+				mAccountId = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+			}
+			if (args.containsKey(INTENT_KEY_SCREEN_NAME)) {
+				mText1 = args.getString(INTENT_KEY_SCREEN_NAME);
+			} else if (args.containsKey(INTENT_KEY_QUERY)) {
+				mText1 = args.getString(INTENT_KEY_QUERY);
+			}
+			if (args.containsKey(INTENT_KEY_LIST_NAME)) {
+				mText2 = args.getString(INTENT_KEY_LIST_NAME);
+			}
+		}
+		addPreferencesFromResource(R.xml.edit_tab);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		mText1Preference = new Text1Preference(this, R.string.unused);
+		mText2Preference = new Text2Preference(this, R.string.unused);
+		mTabIconPreference = new TabIconPreference(this);
+		mNamePreference = new NamePreference(this);
+		mAccountPreference = new AccountPreference(this);
+		mTabTypePreference = new TabTypePreference(this);
+		final PreferenceScreen screen = (PreferenceScreen) findPreference("edit_tab");
+		screen.addPreference(mNamePreference);
+		screen.addPreference(mTabIconPreference);
+		screen.addPreference(mTabTypePreference);
+		screen.addPreference(mAccountPreference);
+		screen.addPreference(mText1Preference);
+		screen.addPreference(mText2Preference);
+	}
+
+	@Override
 	protected void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putString(INTENT_KEY_NAME, mName);
@@ -250,7 +249,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 			mText1Preference.setTitle(R.string.keywords);
 			mText1Preference.setShouldCompleteUserName(false);
 		} else if (AUTHORITY_SAVED_SEARCHES.equals(type) || AUTHORITY_TRENDS.equals(type)
-				 || AUTHORITY_ACTIVITIES_ABOUT_ME.equals(type) || AUTHORITY_ACTIVITIES_BY_FRIENDS.equals(type)) {
+				|| AUTHORITY_ACTIVITIES_ABOUT_ME.equals(type) || AUTHORITY_ACTIVITIES_BY_FRIENDS.equals(type)) {
 			mText1Preference.setEnabled(false);
 			mText1Preference.setTitle(R.string.unused);
 			mText1Preference.setShouldCompleteUserName(false);
@@ -323,7 +322,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 		public void onClick(final DialogInterface dialog, final int which) {
 			switch (which) {
 				case DialogInterface.BUTTON_POSITIVE: {
-					final String text = parseString(mEditText.getText());
+					final String text = ParseUtils.parseString(mEditText.getText());
 					onTextSet(text);
 					setSummary(text);
 					break;

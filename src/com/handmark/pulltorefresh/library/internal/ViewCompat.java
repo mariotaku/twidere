@@ -24,7 +24,7 @@ import android.view.View;
 @SuppressWarnings("deprecation")
 public class ViewCompat {
 
-	public static void postOnAnimation(View view, Runnable runnable) {
+	public static void postOnAnimation(final View view, final Runnable runnable) {
 		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
 			SDK16.postOnAnimation(view, runnable);
 		} else {
@@ -32,7 +32,7 @@ public class ViewCompat {
 		}
 	}
 
-	public static void setBackground(View view, Drawable background) {
+	public static void setBackground(final View view, final Drawable background) {
 		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
 			SDK16.setBackground(view, background);
 		} else {
@@ -40,7 +40,7 @@ public class ViewCompat {
 		}
 	}
 
-	public static void setLayerType(View view, int layerType) {
+	public static void setLayerType(final View view, final int layerType) {
 		if (VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB) {
 			SDK11.setLayerType(view, layerType);
 		}
@@ -49,7 +49,7 @@ public class ViewCompat {
 	@TargetApi(11)
 	static class SDK11 {
 
-		public static void setLayerType(View view, int layerType) {
+		public static void setLayerType(final View view, final int layerType) {
 			view.setLayerType(layerType, null);
 		}
 	}
@@ -57,11 +57,11 @@ public class ViewCompat {
 	@TargetApi(16)
 	static class SDK16 {
 
-		public static void postOnAnimation(View view, Runnable runnable) {
+		public static void postOnAnimation(final View view, final Runnable runnable) {
 			view.postOnAnimation(runnable);
 		}
 
-		public static void setBackground(View view, Drawable background) {
+		public static void setBackground(final View view, final Drawable background) {
 			view.setBackground(background);
 		}
 

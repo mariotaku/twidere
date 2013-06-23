@@ -37,17 +37,9 @@ public class SoundPullEventListener<V extends View> implements PullToRefreshBase
 	 * 
 	 * @param context - Context
 	 */
-	public SoundPullEventListener(Context context) {
+	public SoundPullEventListener(final Context context) {
 		mContext = context;
 		mSoundMap = new HashMap<State, Integer>();
-	}
-
-	@Override
-	public final void onPullEvent(PullToRefreshBase<V> refreshView, State event, Mode direction) {
-		Integer soundResIdObj = mSoundMap.get(event);
-		if (null != soundResIdObj) {
-			playSound(soundResIdObj.intValue());
-		}
 	}
 
 	/**
@@ -62,7 +54,7 @@ public class SoundPullEventListener<V extends View> implements PullToRefreshBase
 	 * @param resId - Resource Id of the sound file to be played (e.g.
 	 *            <var>R.raw.pull_sound</var>)
 	 */
-	public void addSoundEvent(State event, int resId) {
+	public void addSoundEvent(final State event, final int resId) {
 		mSoundMap.put(event, resId);
 	}
 
@@ -80,7 +72,15 @@ public class SoundPullEventListener<V extends View> implements PullToRefreshBase
 		return mCurrentMediaPlayer;
 	}
 
-	private void playSound(int resId) {
+	@Override
+	public final void onPullEvent(final PullToRefreshBase<V> refreshView, final State event, final Mode direction) {
+		final Integer soundResIdObj = mSoundMap.get(event);
+		if (null != soundResIdObj) {
+			playSound(soundResIdObj.intValue());
+		}
+	}
+
+	private void playSound(final int resId) {
 		// Stop current player, if there's one playing
 		if (null != mCurrentMediaPlayer) {
 			mCurrentMediaPlayer.stop();

@@ -32,11 +32,10 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.service.RefreshService;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import org.mariotaku.twidere.util.MessagesManager;
 import org.mariotaku.twidere.util.DatabaseHelper;
-import org.mariotaku.twidere.util.ImageLoaderUtils;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.ImageMemoryCache;
+import org.mariotaku.twidere.util.MessagesManager;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.TwidereHostAddressResolver;
 import org.mariotaku.twidere.util.TwidereImageDownloader;
@@ -52,7 +51,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.webkit.WebView;
-import android.widget.Toast;
 
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -86,11 +84,6 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	public String getBrowserUserAgent() {
 		return mBrowserUserAgent;
 	}
-	
-	public MessagesManager getMessagesManager() {
-		if (mCroutonsManager != null) return mCroutonsManager;
-		return mCroutonsManager = new MessagesManager(this);
-	}
 
 	public Handler getHandler() {
 		return mHandler;
@@ -117,6 +110,11 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	public ImageLoaderWrapper getImageLoaderWrapper() {
 		if (mImageLoaderWrapper != null) return mImageLoaderWrapper;
 		return mImageLoaderWrapper = new ImageLoaderWrapper(getImageLoader());
+	}
+
+	public MessagesManager getMessagesManager() {
+		if (mCroutonsManager != null) return mCroutonsManager;
+		return mCroutonsManager = new MessagesManager(this);
 	}
 
 	public MultiSelectManager getMultiSelectManager() {

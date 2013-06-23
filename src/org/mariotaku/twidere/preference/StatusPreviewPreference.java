@@ -19,35 +19,30 @@
 
 package org.mariotaku.twidere.preference;
 
+import static android.text.format.DateUtils.getRelativeTimeSpanString;
+import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
+import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
+import static org.mariotaku.twidere.util.Utils.getImagePreviewDisplayOptionInt;
+
+import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.TwidereLinkify;
+import org.mariotaku.twidere.view.holder.StatusViewHolder;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.content.res.Resources;
 import android.preference.Preference;
 import android.text.Html;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
-import android.view.ViewGroup.MarginLayoutParams;
-import android.widget.RelativeLayout;
-import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.util.TwidereLinkify;
-import org.mariotaku.twidere.view.holder.StatusViewHolder;
-
-import static android.text.format.DateUtils.getRelativeTimeSpanString;
-import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
-import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
-import static org.mariotaku.twidere.util.Utils.getImagePreviewDisplayOptionInt;
-import static org.mariotaku.twidere.util.Utils.getThemeColor;
-import org.mariotaku.twidere.util.Utils;
 
 public class StatusPreviewPreference extends Preference implements Constants, OnSharedPreferenceChangeListener {
 
- 	private static final String NAME = "Twidere Project";
- 	private static final String SCREEN_NAME = "@TwidereProject";
+	private static final String NAME = "Twidere Project";
+	private static final String SCREEN_NAME = "@TwidereProject";
 	private static final String TEXT_HTML = "Twidere is an open source twitter client for Android, see <a href='https://github.com/mariotaku/twidere'>github.com/mariotak&#8230;<a/>";
 
 	private final LayoutInflater mInflater;
@@ -86,7 +81,7 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 			setName();
 		} else if (PREFERENCE_KEY_LINK_HIGHLIGHTING.equals(key)) {
 			setText();
-		} else if (PREFERENCE_KEY_LINK_UNDERLINE_ONLY.equals(key)) {			
+		} else if (PREFERENCE_KEY_LINK_UNDERLINE_ONLY.equals(key)) {
 			setText();
 		}
 	}
@@ -123,7 +118,8 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 		final String option_string = mPreferences.getString(PREFERENCE_KEY_IMAGE_PREVIEW_DISPLAY_OPTION,
 				IMAGE_PREVIEW_DISPLAY_OPTION_NONE);
 		final int option = getImagePreviewDisplayOptionInt(option_string);
-		mHolder.image_preview_container.setVisibility(option != IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE ? View.VISIBLE : View.GONE);
+		mHolder.image_preview_container.setVisibility(option != IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE ? View.VISIBLE
+				: View.GONE);
 		mHolder.image_preview_progress.setVisibility(View.GONE);
 		mHolder.setImagePreviewDisplayOption(option);
 	}
@@ -166,7 +162,7 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 			mLinkify.applyUserProfileLink(mHolder.screen_name, 0, 0, SCREEN_NAME);
 			mHolder.text.setMovementMethod(null);
 			mHolder.name.setMovementMethod(null);
-			mHolder.screen_name.setMovementMethod(null);			
+			mHolder.screen_name.setMovementMethod(null);
 		} else {
 			mHolder.text.setText(toPlainText(TEXT_HTML));
 		}

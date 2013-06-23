@@ -1,3 +1,22 @@
+/*
+ * 				Twidere - Twitter client for Android
+ *
+ *  Copyright (C) 2012-2013 Mariotaku Lee <mariotaku.lee@gmail.com>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere.loader;
 
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
@@ -21,7 +40,6 @@ import android.support.v4.content.AsyncTaskLoader;
 
 public final class ParcelableUserLoader extends AsyncTaskLoader<SingleResponse<ParcelableUser>> implements Constants {
 
-	private final Twitter twitter;
 	private final ContentResolver resolver;
 	private final boolean omit_intent_extra, hires_profile_image, load_from_cache;
 	private final Bundle extras;
@@ -33,7 +51,6 @@ public final class ParcelableUserLoader extends AsyncTaskLoader<SingleResponse<P
 			final boolean load_from_cache) {
 		super(context);
 		resolver = context.getContentResolver();
-		twitter = getTwitterInstance(context, account_id, true);
 		hires_profile_image = context.getResources().getBoolean(R.bool.hires_profile_image);
 		this.omit_intent_extra = omit_intent_extra;
 		this.load_from_cache = load_from_cache;
@@ -54,6 +71,7 @@ public final class ParcelableUserLoader extends AsyncTaskLoader<SingleResponse<P
 				return new SingleResponse<ParcelableUser>(user, null);
 			}
 		}
+		final Twitter twitter = getTwitterInstance(getContext(), account_id, true);
 		if (twitter == null) return new SingleResponse<ParcelableUser>(null, null);
 		if (load_from_cache) {
 			final String where = CachedUsers.USER_ID + " = " + user_id + " OR " + CachedUsers.SCREEN_NAME + " = '"

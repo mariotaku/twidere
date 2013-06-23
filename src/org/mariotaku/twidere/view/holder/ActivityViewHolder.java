@@ -32,7 +32,7 @@ public class ActivityViewHolder {
 
 	public final ImageView profile_image;
 	public final ImageView activity_profile_image_1, activity_profile_image_2, activity_profile_image_3,
-	activity_profile_image_4, activity_profile_image_5;
+			activity_profile_image_4, activity_profile_image_5;
 	public final ImageView[] activity_profile_images;
 	public final TextView title, text, time, reply_status;
 	public final ViewGroup activity_profile_image_container;
@@ -53,8 +53,8 @@ public class ActivityViewHolder {
 		activity_profile_image_3 = (ImageView) view.findViewById(R.id.activity_profile_image_3);
 		activity_profile_image_4 = (ImageView) view.findViewById(R.id.activity_profile_image_4);
 		activity_profile_image_5 = (ImageView) view.findViewById(R.id.activity_profile_image_5);
-		activity_profile_images = new ImageView[] { activity_profile_image_1, activity_profile_image_2, activity_profile_image_3,
-			activity_profile_image_4, activity_profile_image_5 };
+		activity_profile_images = new ImageView[] { activity_profile_image_1, activity_profile_image_2,
+				activity_profile_image_3, activity_profile_image_4, activity_profile_image_5 };
 	}
 
 	public void reset() {

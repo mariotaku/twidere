@@ -24,7 +24,6 @@ import static org.mariotaku.twidere.util.Utils.getAccountId;
 import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
 import static org.mariotaku.twidere.util.Utils.getThemeColor;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
-import static org.mariotaku.twidere.util.Utils.parseLong;
 
 import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.twidere.R;
@@ -32,6 +31,7 @@ import org.mariotaku.twidere.adapter.TabsAdapter;
 import org.mariotaku.twidere.fragment.SearchTweetsFragment;
 import org.mariotaku.twidere.fragment.SearchUsersFragment;
 import org.mariotaku.twidere.provider.RecentSearchProvider;
+import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.view.ExtendedViewPager;
 
 import android.app.SearchManager;
@@ -85,63 +85,6 @@ public class SearchActivity extends MultiSelectActivity {
 		super.onContentChanged();
 		mViewPager = (ExtendedViewPager) findViewById(R.id.main);
 		mIndicator = (PagerTabStrip) findViewById(R.id.pager_tab);
-	}
-
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setTitle(android.R.string.search_go);
-		final Intent intent = getIntent();
-		mArguments.clear();
-		mData = intent.getData();
-		final String type = mData != null ? mData.getQueryParameter(QUERY_PARAM_TYPE) : null;
-		mQuery = Intent.ACTION_SEARCH.equals(intent.getAction()) ? intent.getStringExtra(SearchManager.QUERY)
-				: mData != null ? mData.getQueryParameter(QUERY_PARAM_QUERY) : null;
-		mIsSearchUsers = QUERY_PARAM_VALUE_USERS.equals(type);
-		mIsSearchTweets = QUERY_PARAM_VALUE_TWEETS.equals(type);
-		if (isEmpty(mQuery)) {
-			finish();
-			return;
-		}
-		if (savedInstanceState == null) {
-			final SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
-					RecentSearchProvider.AUTHORITY, RecentSearchProvider.MODE);
-			suggestions.saveRecentQuery(mQuery, null);
-		}
-		mArguments.putString(INTENT_KEY_QUERY, mQuery);
-		final String param_account_id = mData != null ? mData.getQueryParameter(QUERY_PARAM_ACCOUNT_ID) : null;
-		if (param_account_id != null) {
-			mArguments.putLong(INTENT_KEY_ACCOUNT_ID, parseLong(param_account_id));
-		} else {
-			final String param_account_name = mData != null ? mData.getQueryParameter(QUERY_PARAM_ACCOUNT_NAME) : null;
-			if (param_account_name != null) {
-				mArguments.putLong(INTENT_KEY_ACCOUNT_ID, getAccountId(this, param_account_name));
-			} else {
-				final long account_id = getDefaultAccountId(this);
-				if (isMyAccount(this, account_id)) {
-					mArguments.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-				} else {
-					finish();
-					return;
-				}
-			}
-		}
-		mActionBar = getSupportActionBar();
-		mActionBar.setDisplayHomeAsUpEnabled(true);
-		mActionBar.setSubtitle(mQuery);
-		mAdapter = new TabsAdapter(this, getSupportFragmentManager(), null);
-		if (!mIsSearchUsers) {
-			mAdapter.addTab(SearchTweetsFragment.class, mArguments, getString(R.string.tweets),
-					R.drawable.ic_tab_twitter, 0);
-		}
-		if (!mIsSearchTweets) {
-			mAdapter.addTab(SearchUsersFragment.class, mArguments, getString(R.string.users), R.drawable.ic_tab_person,
-					1);
-		}
-		mViewPager.setAdapter(mAdapter);
-		mViewPager.setCurrentItem(mIsSearchUsers ? 1 : 0);
-		mIndicator.setTabIndicatorColor(getThemeColor(this));
-		mIndicator.setVisibility(mIsSearchUsers || mIsSearchTweets ? View.GONE : View.VISIBLE);
 	}
 
 	@Override
@@ -203,6 +146,63 @@ public class SearchActivity extends MultiSelectActivity {
 	@Override
 	protected int getNormalLayoutRes() {
 		return R.layout.search;
+	}
+
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setTitle(android.R.string.search_go);
+		final Intent intent = getIntent();
+		mArguments.clear();
+		mData = intent.getData();
+		final String type = mData != null ? mData.getQueryParameter(QUERY_PARAM_TYPE) : null;
+		mQuery = Intent.ACTION_SEARCH.equals(intent.getAction()) ? intent.getStringExtra(SearchManager.QUERY)
+				: mData != null ? mData.getQueryParameter(QUERY_PARAM_QUERY) : null;
+		mIsSearchUsers = QUERY_PARAM_VALUE_USERS.equals(type);
+		mIsSearchTweets = QUERY_PARAM_VALUE_TWEETS.equals(type);
+		if (isEmpty(mQuery)) {
+			finish();
+			return;
+		}
+		if (savedInstanceState == null) {
+			final SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+					RecentSearchProvider.AUTHORITY, RecentSearchProvider.MODE);
+			suggestions.saveRecentQuery(mQuery, null);
+		}
+		mArguments.putString(INTENT_KEY_QUERY, mQuery);
+		final String param_account_id = mData != null ? mData.getQueryParameter(QUERY_PARAM_ACCOUNT_ID) : null;
+		if (param_account_id != null) {
+			mArguments.putLong(INTENT_KEY_ACCOUNT_ID, ParseUtils.parseLong(param_account_id));
+		} else {
+			final String param_account_name = mData != null ? mData.getQueryParameter(QUERY_PARAM_ACCOUNT_NAME) : null;
+			if (param_account_name != null) {
+				mArguments.putLong(INTENT_KEY_ACCOUNT_ID, getAccountId(this, param_account_name));
+			} else {
+				final long account_id = getDefaultAccountId(this);
+				if (isMyAccount(this, account_id)) {
+					mArguments.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+				} else {
+					finish();
+					return;
+				}
+			}
+		}
+		mActionBar = getSupportActionBar();
+		mActionBar.setDisplayHomeAsUpEnabled(true);
+		mActionBar.setSubtitle(mQuery);
+		mAdapter = new TabsAdapter(this, getSupportFragmentManager(), null);
+		if (!mIsSearchUsers) {
+			mAdapter.addTab(SearchTweetsFragment.class, mArguments, getString(R.string.tweets),
+					R.drawable.ic_tab_twitter, 0);
+		}
+		if (!mIsSearchTweets) {
+			mAdapter.addTab(SearchUsersFragment.class, mArguments, getString(R.string.users), R.drawable.ic_tab_person,
+					1);
+		}
+		mViewPager.setAdapter(mAdapter);
+		mViewPager.setCurrentItem(mIsSearchUsers ? 1 : 0);
+		mIndicator.setTabIndicatorColor(getThemeColor(this));
+		mIndicator.setVisibility(mIsSearchUsers || mIsSearchTweets ? View.GONE : View.VISIBLE);
 	}
 
 	protected void setPagingEnabled(final boolean enabled) {

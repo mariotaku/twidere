@@ -96,7 +96,8 @@ public class DualPaneActivity extends BaseDialogWhenLargeActivity implements OnB
 				final int visibility = left_pane_used ? View.GONE : View.VISIBLE;
 				// Visibility changed, so start animation.
 				if (main_view.getVisibility() != visibility) {
-					final Animation anim = AnimationUtils.loadAnimation(this, left_pane_used ? android.R.anim.fade_out : android.R.anim.fade_in);
+					final Animation anim = AnimationUtils.loadAnimation(this, left_pane_used ? android.R.anim.fade_out
+							: android.R.anim.fade_in);
 					main_view.startAnimation(anim);
 				}
 				main_view.setVisibility(visibility);
@@ -110,38 +111,11 @@ public class DualPaneActivity extends BaseDialogWhenLargeActivity implements OnB
 		mSlidingPane = (SlidingPaneView) findViewById(R.id.sliding_pane);
 	}
 
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		super.onCreate(savedInstanceState);
-		final Resources res = getResources();
-		final int orientation = res.getConfiguration().orientation;
-		final int layout;
-		final boolean default_dual_pane_mode = res.getBoolean(R.bool.default_dual_pane_mode);
-		mDualPaneInPortrait = mPreferences.getBoolean(PREFERENCE_KEY_DUAL_PANE_IN_PORTRAIT, default_dual_pane_mode);
-		mDualPaneInLandscape = mPreferences.getBoolean(PREFERENCE_KEY_DUAL_PANE_IN_LANDSCAPE, default_dual_pane_mode);
-		switch (orientation) {
-			case Configuration.ORIENTATION_LANDSCAPE:
-				layout = mDualPaneInLandscape || shouldForceEnableDualPaneMode() ? getDualPaneLayoutRes() : getNormalLayoutRes();
-				break;
-			case Configuration.ORIENTATION_PORTRAIT:
-				layout = mDualPaneInPortrait || shouldForceEnableDualPaneMode() ? getDualPaneLayoutRes() : getNormalLayoutRes();
-				break;
-			default:
-				layout = getNormalLayoutRes();
-				break;
-		}
-		setContentView(layout);
-		if (mSlidingPane != null) {
-			mSlidingPane.setRightPaneBackground(getPaneBackground());
-		}
-		getSupportFragmentManager().addOnBackStackChangedListener(this);
-	}
-
 	public final void showAtPane(final int pane, final Fragment fragment, final boolean addToBackStack) {
 		if (isStateSaved()) return;
 		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
+		ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in,
+				android.R.anim.fade_out);
 		switch (pane) {
 			case PANE_LEFT: {
 				showLeftPane();
@@ -191,6 +165,36 @@ public class DualPaneActivity extends BaseDialogWhenLargeActivity implements OnB
 	}
 
 	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		super.onCreate(savedInstanceState);
+		final Resources res = getResources();
+		final int orientation = res.getConfiguration().orientation;
+		final int layout;
+		final boolean default_dual_pane_mode = res.getBoolean(R.bool.default_dual_pane_mode);
+		mDualPaneInPortrait = mPreferences.getBoolean(PREFERENCE_KEY_DUAL_PANE_IN_PORTRAIT, default_dual_pane_mode);
+		mDualPaneInLandscape = mPreferences.getBoolean(PREFERENCE_KEY_DUAL_PANE_IN_LANDSCAPE, default_dual_pane_mode);
+		switch (orientation) {
+			case Configuration.ORIENTATION_LANDSCAPE:
+				layout = mDualPaneInLandscape || shouldForceEnableDualPaneMode() ? getDualPaneLayoutRes()
+						: getNormalLayoutRes();
+				break;
+			case Configuration.ORIENTATION_PORTRAIT:
+				layout = mDualPaneInPortrait || shouldForceEnableDualPaneMode() ? getDualPaneLayoutRes()
+						: getNormalLayoutRes();
+				break;
+			default:
+				layout = getNormalLayoutRes();
+				break;
+		}
+		setContentView(layout);
+		if (mSlidingPane != null) {
+			mSlidingPane.setRightPaneBackground(getPaneBackground());
+		}
+		getSupportFragmentManager().addOnBackStackChangedListener(this);
+	}
+
+	@Override
 	protected void onStart() {
 		final FragmentManager fm = getSupportFragmentManager();
 		if (!isDualPaneMode() && !FragmentManagerTrojan.isStateSaved(fm)) {
@@ -202,8 +206,10 @@ public class DualPaneActivity extends BaseDialogWhenLargeActivity implements OnB
 		super.onStart();
 		final Resources res = getResources();
 		final boolean def_dualpane = res.getBoolean(R.bool.default_dual_pane_mode);
-		final boolean dual_pane_in_portrait = mPreferences.getBoolean(PREFERENCE_KEY_DUAL_PANE_IN_PORTRAIT, def_dualpane);
-		final boolean dual_pane_in_landscape = mPreferences.getBoolean(PREFERENCE_KEY_DUAL_PANE_IN_LANDSCAPE, def_dualpane);
+		final boolean dual_pane_in_portrait = mPreferences.getBoolean(PREFERENCE_KEY_DUAL_PANE_IN_PORTRAIT,
+				def_dualpane);
+		final boolean dual_pane_in_landscape = mPreferences.getBoolean(PREFERENCE_KEY_DUAL_PANE_IN_LANDSCAPE,
+				def_dualpane);
 		final int orientation = res.getConfiguration().orientation;
 		switch (orientation) {
 			case Configuration.ORIENTATION_LANDSCAPE:

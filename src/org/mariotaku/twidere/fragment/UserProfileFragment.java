@@ -19,15 +19,12 @@
 
 package org.mariotaku.twidere.fragment;
 
-import static android.os.Environment.getExternalStorageDirectory;
-import static android.os.Environment.getExternalStorageState;
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
 import static org.mariotaku.twidere.util.Utils.clearUserColor;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getErrorMessage;
-import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getOriginalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getThemeColor;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
@@ -48,9 +45,6 @@ import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.openUserTimeline;
 import static org.mariotaku.twidere.util.Utils.setUserColor;
 import static org.mariotaku.twidere.util.Utils.showInfoMessage;
-import static org.mariotaku.twidere.util.Utils.showOkMessage;
-
-import java.io.File;
 
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
@@ -67,11 +61,11 @@ import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import org.mariotaku.twidere.util.EnvironmentAccessor;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
+import org.mariotaku.twidere.view.ProfileImageBannerLayout;
 import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
 
 import twitter4j.Relationship;
@@ -86,15 +80,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
@@ -116,8 +106,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import org.mariotaku.twidere.view.ProfileBannerImageView;
-import org.mariotaku.twidere.view.ProfileImageBannerLayout;
 
 public class UserProfileFragment extends BaseListFragment implements OnClickListener, OnItemClickListener,
 		OnItemLongClickListener, OnMenuItemClickListener, OnLinkClickListener, Panes.Right, OnSizeChangedListener {
@@ -131,8 +119,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	private ImageView mProfileImageView, mProfileBannerView;
 	private TextView mNameView, mScreenNameView, mDescriptionView, mLocationView, mURLView, mCreatedAtView,
 			mTweetCount, mFollowersCount, mFriendsCount, mFollowingYouIndicator, mErrorMessageView;
-	private View mNameContainer, mDescriptionContainer, mLocationContainer, mURLContainer,
-			mTweetsContainer, mFollowersContainer, mFriendsContainer, mEditFollowContainer, mMoreOptionsContainer;
+	private View mNameContainer, mDescriptionContainer, mLocationContainer, mURLContainer, mTweetsContainer,
+			mFollowersContainer, mFriendsContainer, mEditFollowContainer, mMoreOptionsContainer;
 	private ProgressBar mFollowProgress, mMoreOptionsProgress;
 	private Button mEditFollowButton, mMoreOptionsButton, mRetryButton;
 	private ColorLabelRelativeLayout mProfileNameContainer;
@@ -327,7 +315,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		mDescriptionView.setMovementMethod(null);
 		mLocationContainer.setVisibility(user_is_me || !isEmpty(user.location) ? View.VISIBLE : View.GONE);
 		mLocationView.setText(user.location);
-		mURLContainer.setVisibility(user_is_me || !isEmpty(user.url) || !isEmpty(user.url_expanded) ? View.VISIBLE : View.GONE);
+		mURLContainer.setVisibility(user_is_me || !isEmpty(user.url) || !isEmpty(user.url_expanded) ? View.VISIBLE
+				: View.GONE);
 		mURLView.setText(isEmpty(user.url_expanded) ? user.url : user.url_expanded);
 		mURLView.setMovementMethod(null);
 		mCreatedAtView.setText(formatToLongTimeString(getActivity(), user.created_at));
@@ -537,8 +526,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 						final Drawable blockIcon = blockItem.getIcon();
 						if (mFriendship.isSourceBlockingTarget()) {
 							blockItem.setTitle(R.string.unblock);
-							blockIcon.mutate().setColorFilter(getThemeColor(getActivity()),
-									PorterDuff.Mode.MULTIPLY);
+							blockIcon.mutate().setColorFilter(getThemeColor(getActivity()), PorterDuff.Mode.MULTIPLY);
 						} else {
 							blockItem.setTitle(R.string.block);
 							blockIcon.clearColorFilter();
@@ -642,7 +630,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 	}
 
 	@Override
-	public void onLinkClick(final String link, final String orig, final long account_id, final int type, final boolean sensitive) {
+	public void onLinkClick(final String link, final String orig, final long account_id, final int type,
+			final boolean sensitive) {
 		if (mUser == null) return;
 		switch (type) {
 			case TwidereLinkify.LINK_TYPE_MENTION: {
@@ -830,15 +819,6 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 
 		@Override
 		public SingleResponse<Relationship> loadInBackground() {
-			return getFriendship();
-		}
-
-		@Override
-		protected void onStartLoading() {
-			forceLoad();
-		}
-
-		private SingleResponse<Relationship> getFriendship() {
 			if (account_id == user_id) return new SingleResponse<Relationship>(null, null);
 			final Twitter twitter = getTwitterInstance(context, account_id, false);
 			if (twitter == null) return new SingleResponse<Relationship>(null, null);
@@ -848,6 +828,11 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			} catch (final TwitterException e) {
 				return new SingleResponse<Relationship>(null, e);
 			}
+		}
+
+		@Override
+		protected void onStartLoading() {
+			forceLoad();
 		}
 	}
 

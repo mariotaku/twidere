@@ -19,6 +19,25 @@
 
 package org.mariotaku.twidere.activity;
 
+import static org.mariotaku.twidere.util.ContentResolverUtils.bulkDelete;
+import static org.mariotaku.twidere.util.ContentResolverUtils.bulkInsert;
+import static org.mariotaku.twidere.util.Utils.getAccountScreenNames;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.mariotaku.actionbarcompat.ActionMode;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.provider.TweetStore.Filters;
+import org.mariotaku.twidere.util.ArrayUtils;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.MultiSelectManager;
+import org.mariotaku.twidere.util.NoDuplicatesArrayList;
+
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -28,27 +47,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
 import com.twitter.Extractor;
+
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import org.mariotaku.actionbarcompat.ActionMode;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.model.ParcelableUser;
-import org.mariotaku.twidere.provider.TweetStore.Filters;
-import org.mariotaku.twidere.util.ArrayUtils;
-import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import org.mariotaku.twidere.util.ListUtils;
-import org.mariotaku.twidere.util.MultiSelectManager;
-import org.mariotaku.twidere.util.NoDuplicatesArrayList;
-
-import static org.mariotaku.twidere.util.ContentResolverUtils.bulkDelete;
-import static org.mariotaku.twidere.util.ContentResolverUtils.bulkInsert;
-import static org.mariotaku.twidere.util.Utils.getAccountScreenNames;
 
 @SuppressLint("Registered")
 public class MultiSelectActivity extends DualPaneActivity implements ActionMode.Callback, MultiSelectManager.Callback {
@@ -115,7 +118,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 						continue;
 					}
 				}
-					bulkDelete(resolver, uri, Filters.Users.VALUE, names_list, null, true);
+				bulkDelete(resolver, uri, Filters.Users.VALUE, names_list, null, true);
 				for (final String screen_name : names_list) {
 					final ContentValues values = new ContentValues();
 					values.put(Filters.VALUE, screen_name);
@@ -147,15 +150,6 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 			}
 		}
 		return true;
-	}
-
-	/** Called when the activity is first created. */
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		mApplication = getTwidereApplication();
-		mTwitterWrapper = mApplication.getTwitterWrapper();
-		mMultiSelectManager = mApplication.getMultiSelectManager();
-		super.onCreate(savedInstanceState);
 	}
 
 	@Override
@@ -190,6 +184,15 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 	@Override
 	public boolean onPrepareActionMode(final ActionMode mode, final Menu menu) {
 		return true;
+	}
+
+	/** Called when the activity is first created. */
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		mApplication = getTwidereApplication();
+		mTwitterWrapper = mApplication.getTwitterWrapper();
+		mMultiSelectManager = mApplication.getMultiSelectManager();
+		super.onCreate(savedInstanceState);
 	}
 
 	@Override

@@ -19,6 +19,35 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static android.text.TextUtils.isEmpty;
+import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
+import static org.mariotaku.twidere.util.Utils.getAccountColor;
+import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
+import static org.mariotaku.twidere.util.Utils.openUserListMembers;
+import static org.mariotaku.twidere.util.Utils.openUserListSubscribers;
+import static org.mariotaku.twidere.util.Utils.openUserListTimeline;
+import static org.mariotaku.twidere.util.Utils.openUserProfile;
+
+import org.mariotaku.popupmenu.PopupMenu;
+import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.AutoCompleteAdapter;
+import org.mariotaku.twidere.adapter.ListActionAdapter;
+import org.mariotaku.twidere.model.ListAction;
+import org.mariotaku.twidere.model.Panes;
+import org.mariotaku.twidere.model.ParcelableUserList;
+import org.mariotaku.twidere.model.SingleResponse;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
+import org.mariotaku.twidere.util.OnLinkClickHandler;
+import org.mariotaku.twidere.util.ParseUtils;
+import org.mariotaku.twidere.util.TwidereLinkify;
+import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
+
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.UserList;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
@@ -53,41 +82,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import org.mariotaku.popupmenu.PopupMenu;
-import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.AutoCompleteAdapter;
-import org.mariotaku.twidere.adapter.ListActionAdapter;
-import org.mariotaku.twidere.model.ListAction;
-import org.mariotaku.twidere.model.Panes;
-import org.mariotaku.twidere.model.ParcelableUser;
-import org.mariotaku.twidere.model.ParcelableUserList;
-import org.mariotaku.twidere.model.SingleResponse;
-import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import org.mariotaku.twidere.util.ImageLoaderWrapper;
-import org.mariotaku.twidere.util.OnLinkClickHandler;
-import org.mariotaku.twidere.util.TwidereLinkify;
-import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.User;
-import twitter4j.UserList;
-
-import static android.text.TextUtils.isEmpty;
-import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
-import static org.mariotaku.twidere.util.Utils.getAccountColor;
-import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
-import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
-import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
-import static org.mariotaku.twidere.util.Utils.openUserListMembers;
-import static org.mariotaku.twidere.util.Utils.openUserListSubscribers;
-import static org.mariotaku.twidere.util.Utils.openUserListTimeline;
-import static org.mariotaku.twidere.util.Utils.openUserProfile;
-import static org.mariotaku.twidere.util.Utils.parseString;
 
 public class UserListDetailsFragment extends BaseListFragment implements OnClickListener, OnLongClickListener,
-		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener, LoaderCallbacks<SingleResponse<ParcelableUserList>>,
-				Panes.Right {
+		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener,
+		LoaderCallbacks<SingleResponse<ParcelableUserList>>, Panes.Right {
 
 	private ImageLoaderWrapper mProfileImageLoader;
 	private AsyncTwitterWrapper mTwitterWrapper;
@@ -119,8 +117,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 				if (user_list.id == mUserList.id) {
 					reloadUserListInfo();
 				}
-			} else if (BROADCAST_USER_LIST_SUBSCRIBED.equals(action) ||
-					BROADCAST_USER_LIST_UNSUBSCRIBED.equals(action)) {
+			} else if (BROADCAST_USER_LIST_SUBSCRIBED.equals(action) || BROADCAST_USER_LIST_UNSUBSCRIBED.equals(action)) {
 				if (user_list.id == mUserList.id) {
 					reloadUserListInfo();
 				}
@@ -246,8 +243,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			}
 			case R.id.profile_image: {
 				if (mUserList == null) return;
-				openUserProfile(getActivity(), mUserList.account_id, mUserList.user_id,
-						mUserList.user_screen_name);
+				openUserProfile(getActivity(), mUserList.account_id, mUserList.user_id, mUserList.user_screen_name);
 				break;
 			}
 		}
@@ -318,7 +314,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	}
 
 	@Override
-	public void onLoadFinished(final Loader<SingleResponse<ParcelableUserList>> loader, final SingleResponse<ParcelableUserList> data) {
+	public void onLoadFinished(final Loader<SingleResponse<ParcelableUserList>> loader,
+			final SingleResponse<ParcelableUserList> data) {
 		if (data == null) return;
 		if (getActivity() == null) return;
 		if (data.data != null) {
@@ -429,7 +426,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			if (mListId <= 0 || mAccountId <= 0) return;
 			switch (which) {
 				case DialogInterface.BUTTON_POSITIVE: {
-					mText = parseString(mEditText.getText());
+					mText = ParseUtils.parseString(mEditText.getText());
 					if (mText == null || mText.length() <= 0) return;
 					mTwitterWrapper.addUserListMembers(mAccountId, mListId, mText);
 					break;
@@ -488,8 +485,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			if (mAccountId <= 0) return;
 			switch (which) {
 				case DialogInterface.BUTTON_POSITIVE: {
-					mName = parseString(mEditName.getText());
-					mDescription = parseString(mEditDescription.getText());
+					mName = ParseUtils.parseString(mEditName.getText());
+					mDescription = ParseUtils.parseString(mEditDescription.getText());
 					mIsPublic = mPublicCheckBox.isChecked();
 					if (mName == null || mName.length() <= 0) return;
 					mTwitterWrapper.updateUserListDetails(mAccountId, mListId, mIsPublic, mName, mDescription);
@@ -553,8 +550,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 			this.user_id = user_id;
 			this.list_id = list_id;
 			this.screen_name = screen_name;
-			this.list_name = list_name;			
-			this.hires_profile_image = context.getResources().getBoolean(R.bool.hires_profile_image);
+			this.list_name = list_name;
+			hires_profile_image = context.getResources().getBoolean(R.bool.hires_profile_image);
 		}
 
 		@Override
@@ -569,8 +566,10 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 					list = twitter.showUserList(list_name, user_id);
 				} else if (screen_name != null) {
 					list = twitter.showUserList(list_name, screen_name);
-				} else return SingleResponse.nullInstance();
-				return new SingleResponse<ParcelableUserList>(new ParcelableUserList(list, account_id, hires_profile_image), null);
+				} else
+					return SingleResponse.nullInstance();
+				return new SingleResponse<ParcelableUserList>(new ParcelableUserList(list, account_id,
+						hires_profile_image), null);
 			} catch (final TwitterException e) {
 				return new SingleResponse<ParcelableUserList>(null, e);
 			}

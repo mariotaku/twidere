@@ -17,17 +17,17 @@
 package org.mariotaku.gallery3d.ui;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.Utils;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Rect;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.Interpolator;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import org.mariotaku.twidere.util.Utils;
+import android.graphics.Rect;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
 
 // This is copied from android.widget.EdgeEffect with some small modifications:
 // (1) Copy the images (overscroll_{edge|glow}.png) to local resources.
@@ -435,15 +435,11 @@ public class EdgeEffect {
 		public void setBounds(final int left, final int top, final int right, final int bottom) {
 			mBounds.set(left, top, right, bottom);
 		}
-		
-		public void clearColorFilter() {
-			mPaint.setColorFilter(null);
-		}
-		
-		public void setColorFilter(int color, PorterDuff.Mode mode) {
+
+		public void setColorFilter(final int color, final PorterDuff.Mode mode) {
 			mPaint.setColorFilter(new PorterDuffColorFilter(color, mode));
 		}
-		
+
 		@Override
 		protected Bitmap onGetBitmap() {
 			final Bitmap orig = super.onGetBitmap();

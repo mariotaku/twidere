@@ -496,8 +496,8 @@
 			android:exported="true"
 			android:label="@string/label_tweetstore_provider"/>
 		<provider
-			android:name=".provider.CommandProvider"
-			android:authorities="twidere_command"
+			android:name="org.mariotaku.twidere.provider.CommandProvider"
+			android:authorities="twidere.command"
 			android:exported="true"/>
 		<provider
 			android:name=".provider.RecentSearchProvider"

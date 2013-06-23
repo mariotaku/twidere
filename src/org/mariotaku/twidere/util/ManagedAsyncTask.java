@@ -36,6 +36,7 @@ public abstract class ManagedAsyncTask<Params, Progress, Result> extends AsyncTa
 	}
 
 	public ManagedAsyncTask(final Context context, final AsyncTaskManager manager, final String tag) {
+		super(manager.getHandler());
 		this.manager = manager;
 		this.context = context;
 		this.tag = tag;

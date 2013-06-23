@@ -19,12 +19,10 @@
 
 package org.mariotaku.twidere.loader;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.model.ParcelableUser;
 
-import twitter4j.ResponseList;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
@@ -34,14 +32,12 @@ public class UserSearchLoader extends Twitter4JUsersLoader {
 
 	private final String mQuery;
 	private final int mPage;
-	private final long mAccountId;
 
 	public UserSearchLoader(final Context context, final long account_id, final String query, final int page,
 			final List<ParcelableUser> data) {
 		super(context, account_id, data);
 		mQuery = query;
 		mPage = page;
-		mAccountId = account_id;
 	}
 
 	@Override

@@ -32,7 +32,6 @@ import java.util.List;
 import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.TabsAdapter;
-import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.APIUpgradeConfirmDialog;
 import org.mariotaku.twidere.fragment.AccountsFragment;
 import org.mariotaku.twidere.fragment.DirectMessagesFragment;
@@ -43,7 +42,6 @@ import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ActivityAccessor;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import org.mariotaku.twidere.util.MessagesManager;
 import org.mariotaku.twidere.view.ExtendedViewPager;
 import org.mariotaku.twidere.view.TabPageIndicator;
 
@@ -110,7 +108,6 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 
 	};
 
-
 	@Override
 	public void onBackStackChanged() {
 		super.onBackStackChanged();
@@ -154,112 +151,6 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		super.onContentChanged();
 		mViewPager = (ExtendedViewPager) findViewById(R.id.main);
 		mComposeButton = (ImageButton) findViewById(R.id.button_compose);
-	}
-
-	/** Called when the activity is first created. */
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		mTwitterWrapper = getTwitterWrapper();
-		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		super.onCreate(savedInstanceState);
-		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONCREATE));
-		final Resources res = getResources();
-		mDisplayAppIcon = res.getBoolean(R.bool.home_display_icon);
-		final long[] account_ids = getAccountIds(this);
-		if (account_ids.length <= 0) {
-			final Intent intent = new Intent(INTENT_ACTION_TWITTER_LOGIN);
-			intent.setClass(this, SignInActivity.class);
-			startActivity(intent);
-			finish();
-			return;
-		} else {
-			setDefaultAccount();
-		}
-		final boolean refresh_on_start = mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ON_START, false);
-		final Bundle bundle = getIntent().getExtras();
-		int initial_tab = -1;
-		if (bundle != null) {
-			final long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
-			if (refreshed_ids != null && !refresh_on_start && savedInstanceState == null) {
-				mTwitterWrapper.refreshAll();
-			}
-			initial_tab = bundle.getInt(INTENT_KEY_INITIAL_TAB, -1);
-			switch (initial_tab) {
-				case TAB_POSITION_HOME: {
-					mTwitterWrapper.clearNotification(NOTIFICATION_ID_HOME_TIMELINE);
-					break;
-				}
-				case TAB_POSITION_MENTIONS: {
-					mTwitterWrapper.clearNotification(NOTIFICATION_ID_MENTIONS);
-					break;
-				}
-				case TAB_POSITION_MESSAGES: {
-					mTwitterWrapper.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
-					break;
-				}
-			}
-		}
-		mActionBar = getSupportActionBar();
-		mActionBar.setCustomView(R.layout.base_tabs);
-		mActionBar.setDisplayShowTitleEnabled(false);
-		mActionBar.setDisplayShowCustomEnabled(true);
-		mActionBar.setDisplayShowHomeEnabled(mDisplayAppIcon);
-		if (mDisplayAppIcon) {
-			ActivityAccessor.setHomeButtonEnabled(this, true);
-		}
-		final View view = mActionBar.getCustomView();
-
-		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
-		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
-		final boolean tab_display_label = res.getBoolean(R.bool.tab_display_label);
-		mAdapter = new TabsAdapter(this, getSupportFragmentManager(), mIndicator);
-		mShowHomeTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_HOME_TAB, true);
-		mShowMentionsTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_MENTIONS_TAB, true);
-		mShowMessagesTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_MESSAGES_TAB, true);
-		mShowAccountsTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ACCOUNTS_TAB, true);
-		initTabs(getTabs(this));
-		mViewPager.setAdapter(mAdapter);
-		mViewPager.setOffscreenPageLimit(3);
-		mIndicator.setViewPager(mViewPager);
-		mIndicator.setOnPageChangeListener(this);
-		mIndicator.setDisplayLabel(tab_display_label);
-		getSupportFragmentManager().addOnBackStackChangedListener(this);
-
-		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true);
-		final long[] activated_ids = getActivatedAccountIds(this);
-		if (activated_ids.length <= 0) {
-			startActivityForResult(new Intent(INTENT_ACTION_SELECT_ACCOUNT), REQUEST_SELECT_ACCOUNT);
-		} else if (remember_position || initial_tab >= 0) {
-			final int position = initial_tab >= 0 ? initial_tab : mPreferences.getInt(
-					PREFERENCE_KEY_SAVED_TAB_POSITION, TAB_POSITION_HOME);
-			if (position >= 0 || position < mViewPager.getChildCount()) {
-				mViewPager.setCurrentItem(position);
-			}
-		}
-		if (refresh_on_start && savedInstanceState == null) {
-			mTwitterWrapper.refreshAll();
-		}
-		if (!mPreferences.getBoolean(PREFERENCE_KEY_API_UPGRADE_CONFIRMED, false)) {
-			final FragmentManager fm = getSupportFragmentManager();
-			if (fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE) == null
-					|| !fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE).isAdded()) {
-				new APIUpgradeConfirmDialog().show(getSupportFragmentManager(), "api_upgrade_notice");
-			}
-		}
-
-		if (mPreferences.getBoolean(PREFERENCE_KEY_SHOW_UCD_DATA_PROFILING_REQUEST, true)) {
-			final Intent intent = new Intent(this, DataProfilingSettingsActivity.class);
-			final PendingIntent content_intent = PendingIntent.getActivity(this, 0, intent, 0);
-			final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-			builder.setAutoCancel(true);
-			builder.setSmallIcon(R.drawable.ic_stat_question_mark);
-			builder.setTicker(getString(R.string.data_profiling_notification_ticker));
-			builder.setContentTitle(getString(R.string.data_profiling_notification_title));
-			builder.setContentText(getString(R.string.data_profiling_notification_desc));
-			builder.setContentIntent(content_intent);
-			mNotificationManager.notify(NOTIFICATION_ID_DATA_PROFILING, builder.build());
-		}
 	}
 
 	@Override
@@ -378,13 +269,6 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		return super.onPrepareOptionsMenu(menu);
 	}
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		invalidateSupportOptionsMenu();
-		mViewPager.setPagingEnabled(!mPreferences.getBoolean(PREFERENCE_KEY_DISABLE_TAB_SWIPE, false));
-	}
-
 	public void setDefaultAccount() {
 		if (mPreferences == null) return;
 		final long[] activated_ids = getActivatedAccountIds(this);
@@ -451,6 +335,112 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		super.onActivityResult(requestCode, resultCode, intent);
 	}
 
+	/** Called when the activity is first created. */
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		mTwitterWrapper = getTwitterWrapper();
+		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		super.onCreate(savedInstanceState);
+		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONCREATE));
+		final Resources res = getResources();
+		mDisplayAppIcon = res.getBoolean(R.bool.home_display_icon);
+		final long[] account_ids = getAccountIds(this);
+		if (account_ids.length <= 0) {
+			final Intent intent = new Intent(INTENT_ACTION_TWITTER_LOGIN);
+			intent.setClass(this, SignInActivity.class);
+			startActivity(intent);
+			finish();
+			return;
+		} else {
+			setDefaultAccount();
+		}
+		final boolean refresh_on_start = mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ON_START, false);
+		final Bundle bundle = getIntent().getExtras();
+		int initial_tab = -1;
+		if (bundle != null) {
+			final long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
+			if (refreshed_ids != null && !refresh_on_start && savedInstanceState == null) {
+				mTwitterWrapper.refreshAll();
+			}
+			initial_tab = bundle.getInt(INTENT_KEY_INITIAL_TAB, -1);
+			switch (initial_tab) {
+				case TAB_POSITION_HOME: {
+					mTwitterWrapper.clearNotification(NOTIFICATION_ID_HOME_TIMELINE);
+					break;
+				}
+				case TAB_POSITION_MENTIONS: {
+					mTwitterWrapper.clearNotification(NOTIFICATION_ID_MENTIONS);
+					break;
+				}
+				case TAB_POSITION_MESSAGES: {
+					mTwitterWrapper.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
+					break;
+				}
+			}
+		}
+		mActionBar = getSupportActionBar();
+		mActionBar.setCustomView(R.layout.base_tabs);
+		mActionBar.setDisplayShowTitleEnabled(false);
+		mActionBar.setDisplayShowCustomEnabled(true);
+		mActionBar.setDisplayShowHomeEnabled(mDisplayAppIcon);
+		if (mDisplayAppIcon) {
+			ActivityAccessor.setHomeButtonEnabled(this, true);
+		}
+		final View view = mActionBar.getCustomView();
+
+		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
+		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
+		final boolean tab_display_label = res.getBoolean(R.bool.tab_display_label);
+		mAdapter = new TabsAdapter(this, getSupportFragmentManager(), mIndicator);
+		mShowHomeTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_HOME_TAB, true);
+		mShowMentionsTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_MENTIONS_TAB, true);
+		mShowMessagesTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_MESSAGES_TAB, true);
+		mShowAccountsTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ACCOUNTS_TAB, true);
+		initTabs(getTabs(this));
+		mViewPager.setAdapter(mAdapter);
+		mViewPager.setOffscreenPageLimit(3);
+		mIndicator.setViewPager(mViewPager);
+		mIndicator.setOnPageChangeListener(this);
+		mIndicator.setDisplayLabel(tab_display_label);
+		getSupportFragmentManager().addOnBackStackChangedListener(this);
+
+		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true);
+		final long[] activated_ids = getActivatedAccountIds(this);
+		if (activated_ids.length <= 0) {
+			startActivityForResult(new Intent(INTENT_ACTION_SELECT_ACCOUNT), REQUEST_SELECT_ACCOUNT);
+		} else if (remember_position || initial_tab >= 0) {
+			final int position = initial_tab >= 0 ? initial_tab : mPreferences.getInt(
+					PREFERENCE_KEY_SAVED_TAB_POSITION, TAB_POSITION_HOME);
+			if (position >= 0 || position < mViewPager.getChildCount()) {
+				mViewPager.setCurrentItem(position);
+			}
+		}
+		if (refresh_on_start && savedInstanceState == null) {
+			mTwitterWrapper.refreshAll();
+		}
+		if (!mPreferences.getBoolean(PREFERENCE_KEY_API_UPGRADE_CONFIRMED, false)) {
+			final FragmentManager fm = getSupportFragmentManager();
+			if (fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE) == null
+					|| !fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE).isAdded()) {
+				new APIUpgradeConfirmDialog().show(getSupportFragmentManager(), "api_upgrade_notice");
+			}
+		}
+
+		if (mPreferences.getBoolean(PREFERENCE_KEY_SHOW_UCD_DATA_PROFILING_REQUEST, true)) {
+			final Intent intent = new Intent(this, DataProfilingSettingsActivity.class);
+			final PendingIntent content_intent = PendingIntent.getActivity(this, 0, intent, 0);
+			final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+			builder.setAutoCancel(true);
+			builder.setSmallIcon(R.drawable.ic_stat_question_mark);
+			builder.setTicker(getString(R.string.data_profiling_notification_ticker));
+			builder.setContentTitle(getString(R.string.data_profiling_notification_title));
+			builder.setContentText(getString(R.string.data_profiling_notification_desc));
+			builder.setContentIntent(content_intent);
+			mNotificationManager.notify(NOTIFICATION_ID_DATA_PROFILING, builder.build());
+		}
+	}
+
 	@Override
 	protected void onDestroy() {
 		// Delete unused items in databases.
@@ -492,6 +482,13 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 			}
 		}
 		super.onNewIntent(intent);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		invalidateSupportOptionsMenu();
+		mViewPager.setPagingEnabled(!mPreferences.getBoolean(PREFERENCE_KEY_DISABLE_TAB_SWIPE, false));
 	}
 
 	@Override

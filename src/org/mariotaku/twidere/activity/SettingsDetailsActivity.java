@@ -29,6 +29,16 @@ import android.view.MenuItem;
 public class SettingsDetailsActivity extends BaseActivity {
 
 	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_HOME:
+				onBackPressed();
+				return true;
+		}
+		return false;
+	}
+
+	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.base);
@@ -38,15 +48,5 @@ public class SettingsDetailsActivity extends BaseActivity {
 		fragment.setArguments(getIntent().getExtras());
 		ft.replace(R.id.main, fragment);
 		ft.commit();
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
-		switch (item.getItemId()) {
-			case MENU_HOME:
-				onBackPressed();
-				return true;
-		}
-		return false;
 	}
 }

@@ -19,8 +19,6 @@
 
 package org.mariotaku.twidere.util;
 
-import static org.mariotaku.twidere.util.Utils.parseString;
-
 import org.apache.http.NameValuePair;
 
 public class NameValuePairImpl implements NameValuePair {
@@ -29,7 +27,7 @@ public class NameValuePairImpl implements NameValuePair {
 
 	public NameValuePairImpl(final String name, final Object value) {
 		this.name = name;
-		this.value = parseString(value);
+		this.value = ParseUtils.parseString(value);
 	}
 
 	@Override

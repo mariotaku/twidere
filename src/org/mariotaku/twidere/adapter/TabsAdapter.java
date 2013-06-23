@@ -19,6 +19,17 @@
 
 package org.mariotaku.twidere.adapter;
 
+import static org.mariotaku.twidere.util.Utils.announceForAccessibilityCompat;
+import static org.mariotaku.twidere.util.Utils.getTabIconDrawable;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
+import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.model.TabSpec;
+import org.mariotaku.twidere.view.TabPageIndicator;
+import org.mariotaku.twidere.view.TabPageIndicator.TitleProvider;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -27,15 +38,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import java.util.ArrayList;
-import java.util.Collection;
-import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.model.TabSpec;
-import org.mariotaku.twidere.view.TabPageIndicator;
-import org.mariotaku.twidere.view.TabPageIndicator.TitleProvider;
-
-import static org.mariotaku.twidere.util.Utils.announceForAccessibilityCompat;
-import static org.mariotaku.twidere.util.Utils.getTabIconDrawable;
 
 public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvider, Constants {
 

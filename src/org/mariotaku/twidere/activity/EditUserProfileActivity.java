@@ -1,4 +1,52 @@
+/*
+ * 				Twidere - Twitter client for Android
+ *
+ *  Copyright (C) 2012-2013 Mariotaku Lee <mariotaku.lee@gmail.com>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere.activity;
+
+import static android.text.TextUtils.isEmpty;
+import static org.mariotaku.twidere.util.Utils.createPickImageIntent;
+import static org.mariotaku.twidere.util.Utils.createTakePhotoIntent;
+import static org.mariotaku.twidere.util.Utils.isMyAccount;
+import static org.mariotaku.twidere.util.Utils.showErrorMessage;
+
+import java.io.File;
+
+import org.mariotaku.popupmenu.PopupMenu;
+import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.loader.ParcelableUserLoader;
+import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.model.SingleResponse;
+import org.mariotaku.twidere.util.AsyncTask;
+import org.mariotaku.twidere.util.AsyncTask.Status;
+import org.mariotaku.twidere.util.AsyncTaskManager;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper.UpdateProfileBannerImageTask;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper.UpdateProfileImageTask;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper.UpdateProfileTask;
+import org.mariotaku.twidere.util.BundleAccessor;
+import org.mariotaku.twidere.util.EnvironmentAccessor;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
+import org.mariotaku.twidere.util.ParseUtils;
+import org.mariotaku.twidere.util.TwitterWrapper;
+import org.mariotaku.twidere.view.ProfileImageBannerLayout;
+import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -23,35 +71,6 @@ import android.widget.Toast;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.CroutonLifecycleCallback;
 import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
-import java.io.File;
-import org.mariotaku.popupmenu.PopupMenu;
-import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.EditUserProfileActivity;
-import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.loader.ParcelableUserLoader;
-import org.mariotaku.twidere.model.ParcelableUser;
-import org.mariotaku.twidere.model.SingleResponse;
-import org.mariotaku.twidere.util.AsyncTask;
-import org.mariotaku.twidere.util.AsyncTask.Status;
-import org.mariotaku.twidere.util.AsyncTaskManager;
-import org.mariotaku.twidere.util.AsyncTwitterWrapper.UpdateProfileBannerImageTask;
-import org.mariotaku.twidere.util.AsyncTwitterWrapper.UpdateProfileImageTask;
-import org.mariotaku.twidere.util.AsyncTwitterWrapper.UpdateProfileTask;
-import org.mariotaku.twidere.util.BundleAccessor;
-import org.mariotaku.twidere.util.EnvironmentAccessor;
-import org.mariotaku.twidere.util.ImageLoaderWrapper;
-import org.mariotaku.twidere.util.TwitterWrapper;
-import org.mariotaku.twidere.view.ProfileBannerImageView;
-import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
-
-import static android.text.TextUtils.isEmpty;
-import static org.mariotaku.twidere.util.Utils.createPickImageIntent;
-import static org.mariotaku.twidere.util.Utils.createTakePhotoIntent;
-import static org.mariotaku.twidere.util.Utils.isMyAccount;
-import static org.mariotaku.twidere.util.Utils.parseString;
-import static org.mariotaku.twidere.util.Utils.showErrorMessage;
-import org.mariotaku.twidere.view.ProfileImageBannerLayout;
 
 public class EditUserProfileActivity extends BaseDialogWhenLargeActivity implements OnSizeChangedListener, TextWatcher,
 		OnClickListener, CroutonLifecycleCallback {
@@ -71,15 +90,13 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 	private View mProgress, mContent;
 
 	private PopupMenu mPopupMenu;
-	
+
 	private boolean mBackPressed;
 	private long mAccountId;
 	private int mBannerWidth;
 	private ParcelableUser mUser;
 
 	private boolean mUserInfoLoaderInitialized;
-
-
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -258,39 +275,6 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 	}
 
 	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		super.onCreate(savedInstanceState);
-		final Bundle extras = getIntent().getExtras();
-		if (extras == null || !isMyAccount(this, extras.getLong(INTENT_KEY_ACCOUNT_ID))) {
-			finish();
-			return;
-		}
-		mAsyncTaskManager = TwidereApplication.getInstance(this).getAsyncTaskManager();
-		mLazyImageLoader = TwidereApplication.getInstance(this).getImageLoaderWrapper();
-		mAccountId = extras.getLong(INTENT_KEY_ACCOUNT_ID);
-		setContentView(R.layout.edit_user_profile);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		mProfileImageBannerLayout.setOnSizeChangedListener(this);
-		mEditName.addTextChangedListener(this);
-		mEditDescription.addTextChangedListener(this);
-		mEditLocation.addTextChangedListener(this);
-		mEditUrl.addTextChangedListener(this);
-		mProfileImageView.setOnClickListener(this);
-		mProfileBannerView.setOnClickListener(this);
-		if (savedInstanceState != null && savedInstanceState.getParcelable(INTENT_KEY_USER) != null) {
-			final ParcelableUser user = savedInstanceState.getParcelable(INTENT_KEY_USER);
-			displayUser(user);
-			mEditName.setText(BundleAccessor.getString(savedInstanceState, INTENT_KEY_NAME, user.name));
-			mEditLocation.setText(BundleAccessor.getString(savedInstanceState, INTENT_KEY_LOCATION, user.location));
-			mEditDescription.setText(BundleAccessor.getString(savedInstanceState, INTENT_KEY_DESCRIPTION, user.description_expanded));
-			mEditUrl.setText(BundleAccessor.getString(savedInstanceState, INTENT_KEY_URL, user.url_expanded));
-		} else {
-			getUserInfo();
-		}
-	}
-
-	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_edit_user_profile, menu);
 		return super.onCreateOptionsMenu(menu);
@@ -309,10 +293,10 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 				break;
 			}
 			case MENU_SAVE: {
-				final String name = parseString(mEditName.getText());
-				final String url = parseString(mEditUrl.getText());
-				final String location = parseString(mEditLocation.getText());
-				final String description = parseString(mEditDescription.getText());
+				final String name = ParseUtils.parseString(mEditName.getText());
+				final String url = ParseUtils.parseString(mEditUrl.getText());
+				final String location = ParseUtils.parseString(mEditLocation.getText());
+				final String description = ParseUtils.parseString(mEditDescription.getText());
 				mTask = new UpdateProfileTaskInternal(this, mAsyncTaskManager, mAccountId, name, url, location,
 						description);
 				mTask.execute();
@@ -339,29 +323,6 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 	@Override
 	public void onSizeChanged(final View view, final int w, final int h, final int oldw, final int oldh) {
 	}
-	
-	@Override
-	protected void onSaveInstanceState(final Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putParcelable(INTENT_KEY_USER, mUser);
-		outState.putString(INTENT_KEY_NAME, parseString(mEditName.getText()));
-		outState.putString(INTENT_KEY_DESCRIPTION, parseString(mEditDescription.getText()));
-		outState.putString(INTENT_KEY_LOCATION, parseString(mEditLocation.getText()));
-		outState.putString(INTENT_KEY_URL, parseString(mEditUrl.getText()));
-	}
-
-	@Override
-	protected void onStart() {
-		super.onStart();
-		final IntentFilter filter = new IntentFilter(BROADCAST_PROFILE_UPDATED);
-		registerReceiver(mStatusReceiver, filter);
-	}
-
-	@Override
-	protected void onStop() {
-		unregisterReceiver(mStatusReceiver);
-		super.onStop();
-	}
 
 	@Override
 	public void onTextChanged(final CharSequence s, final int length, final int start, final int end) {
@@ -383,6 +344,63 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 			}
 		}
 
+	}
+
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		super.onCreate(savedInstanceState);
+		final Bundle extras = getIntent().getExtras();
+		if (extras == null || !isMyAccount(this, extras.getLong(INTENT_KEY_ACCOUNT_ID))) {
+			finish();
+			return;
+		}
+		mAsyncTaskManager = TwidereApplication.getInstance(this).getAsyncTaskManager();
+		mLazyImageLoader = TwidereApplication.getInstance(this).getImageLoaderWrapper();
+		mAccountId = extras.getLong(INTENT_KEY_ACCOUNT_ID);
+		setContentView(R.layout.edit_user_profile);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		mProfileImageBannerLayout.setOnSizeChangedListener(this);
+		mEditName.addTextChangedListener(this);
+		mEditDescription.addTextChangedListener(this);
+		mEditLocation.addTextChangedListener(this);
+		mEditUrl.addTextChangedListener(this);
+		mProfileImageView.setOnClickListener(this);
+		mProfileBannerView.setOnClickListener(this);
+		if (savedInstanceState != null && savedInstanceState.getParcelable(INTENT_KEY_USER) != null) {
+			final ParcelableUser user = savedInstanceState.getParcelable(INTENT_KEY_USER);
+			displayUser(user);
+			mEditName.setText(BundleAccessor.getString(savedInstanceState, INTENT_KEY_NAME, user.name));
+			mEditLocation.setText(BundleAccessor.getString(savedInstanceState, INTENT_KEY_LOCATION, user.location));
+			mEditDescription.setText(BundleAccessor.getString(savedInstanceState, INTENT_KEY_DESCRIPTION,
+					user.description_expanded));
+			mEditUrl.setText(BundleAccessor.getString(savedInstanceState, INTENT_KEY_URL, user.url_expanded));
+		} else {
+			getUserInfo();
+		}
+	}
+
+	@Override
+	protected void onSaveInstanceState(final Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putParcelable(INTENT_KEY_USER, mUser);
+		outState.putString(INTENT_KEY_NAME, ParseUtils.parseString(mEditName.getText()));
+		outState.putString(INTENT_KEY_DESCRIPTION, ParseUtils.parseString(mEditDescription.getText()));
+		outState.putString(INTENT_KEY_LOCATION, ParseUtils.parseString(mEditLocation.getText()));
+		outState.putString(INTENT_KEY_URL, ParseUtils.parseString(mEditUrl.getText()));
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		final IntentFilter filter = new IntentFilter(BROADCAST_PROFILE_UPDATED);
+		registerReceiver(mStatusReceiver, filter);
+	}
+
+	@Override
+	protected void onStop() {
+		unregisterReceiver(mStatusReceiver);
+		super.onStop();
 	}
 
 	private Uri createTempFileUri() {
@@ -511,11 +529,11 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 			super.onPostExecute(result);
 			if (result != null && result.data != null && result.data) {
 				getUserInfo();
-				Toast.makeText(EditUserProfileActivity.this, R.string.profile_banner_image_updated,
-						Toast.LENGTH_SHORT).show();
+				Toast.makeText(EditUserProfileActivity.this, R.string.profile_banner_image_updated, Toast.LENGTH_SHORT)
+						.show();
 			} else {
-				showErrorMessage(EditUserProfileActivity.this, R.string.removing_profile_banner_image, result.exception,
-						true);
+				showErrorMessage(EditUserProfileActivity.this, R.string.removing_profile_banner_image,
+						result.exception, true);
 			}
 			setUpdateState(false);
 		}

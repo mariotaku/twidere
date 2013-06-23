@@ -1,6 +1,28 @@
+/*
+ * 				Twidere - Twitter client for Android
+ *
+ *  Copyright (C) 2012-2013 Mariotaku Lee <mariotaku.lee@gmail.com>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere.util;
 
 import static android.text.TextUtils.isEmpty;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.mariotaku.twidere.Constants;
 
@@ -9,8 +31,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Binder;
 import android.os.Process;
-import java.util.Map;
-import java.util.HashMap;
 
 public class PermissionsManager implements Constants {
 
@@ -52,7 +72,7 @@ public class PermissionsManager implements Constants {
 			throw new IllegalArgumentException("invalid permissions " + required_permissions);
 		if (required_permissions == PERMISSION_NONE) return true;
 		if (mContext.getPackageName().equals(pname)) return true;
-		//if (checkSignature(pname)) return true;
+		// if (checkSignature(pname)) return true;
 		final int permissions = getPermissions(pname);
 		return permissions > PERMISSION_NONE && permissions % required_permissions == 0;
 	}
@@ -73,10 +93,10 @@ public class PermissionsManager implements Constants {
 		return editor.commit();
 
 	}
-	
+
 	public Map<String, Integer> getAll() {
 		final Map<String, Integer> map = new HashMap<String, Integer>();
-		for (Map.Entry<String, ?> entry : mPreferences.getAll().entrySet()) {
+		for (final Map.Entry<String, ?> entry : mPreferences.getAll().entrySet()) {
 			if (entry.getValue() instanceof Integer) {
 				map.put(entry.getKey(), (Integer) entry.getValue());
 			}

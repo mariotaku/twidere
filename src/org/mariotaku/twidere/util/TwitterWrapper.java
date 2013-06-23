@@ -1,20 +1,41 @@
+/*
+ * 				Twidere - Twitter client for Android
+ *
+ *  Copyright (C) 2012-2013 Mariotaku Lee <mariotaku.lee@gmail.com>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere.util;
 
-import android.content.Context;
-import android.net.Uri;
+import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+
 import java.io.File;
 import java.util.List;
+
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ListResponse;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.SingleResponse;
+
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
-
-import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import android.content.Context;
+import android.net.Uri;
 
 public class TwitterWrapper implements Constants {
 
@@ -36,7 +57,8 @@ public class TwitterWrapper implements Constants {
 		if (twitter != null) {
 			try {
 				final User user = twitter.updateProfile(name, url, location, description);
-				return new SingleResponse<ParcelableUser>(new ParcelableUser(user, account_id, large_profile_image), null);
+				return new SingleResponse<ParcelableUser>(new ParcelableUser(user, account_id, large_profile_image),
+						null);
 			} catch (final TwitterException e) {
 				return new SingleResponse<ParcelableUser>(null, e);
 			}
@@ -69,7 +91,7 @@ public class TwitterWrapper implements Constants {
 
 	public static SingleResponse<ParcelableUser> updateProfileImage(final Context context, final long account_id,
 			final Uri image_uri, final boolean delete_image) {
-		final Twitter twitter = getTwitterInstance(context, account_id, false);		
+		final Twitter twitter = getTwitterInstance(context, account_id, false);
 		final boolean large_profile_image = context.getResources().getBoolean(R.bool.hires_profile_image);
 		if (twitter != null && image_uri != null && "file".equals(image_uri.getScheme())) {
 			try {
@@ -77,7 +99,8 @@ public class TwitterWrapper implements Constants {
 				// Wait for 5 seconds, see
 				// https://dev.twitter.com/docs/api/1.1/post/account/update_profile_image
 				Thread.sleep(5000L);
-				return new SingleResponse<ParcelableUser>(new ParcelableUser(user, account_id, large_profile_image), null);
+				return new SingleResponse<ParcelableUser>(new ParcelableUser(user, account_id, large_profile_image),
+						null);
 			} catch (final TwitterException e) {
 				return new SingleResponse<ParcelableUser>(null, e);
 			} catch (final InterruptedException e) {

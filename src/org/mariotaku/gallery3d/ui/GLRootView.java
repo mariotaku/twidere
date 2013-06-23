@@ -30,6 +30,7 @@ import org.mariotaku.gallery3d.util.ApiHelper;
 import org.mariotaku.gallery3d.util.GalleryUtils;
 import org.mariotaku.gallery3d.util.MotionEventHelper;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.ViewAccessor;
 
 import android.content.Context;
 import android.graphics.Matrix;
@@ -106,7 +107,7 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 	public GLRootView(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
 		mFlags |= FLAG_INITIALIZED;
-		setBackgroundDrawable(null);
+		ViewAccessor.setBackground(this, null);
 		setEGLConfigChooser(mEglConfigChooser);
 		setRenderer(this);
 		if (ApiHelper.USE_888_PIXEL_FORMAT) {

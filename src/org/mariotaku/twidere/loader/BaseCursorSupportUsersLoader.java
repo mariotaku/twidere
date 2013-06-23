@@ -19,15 +19,13 @@
 
 package org.mariotaku.twidere.loader;
 
+import java.util.List;
+
+import org.mariotaku.twidere.model.ParcelableUser;
+
+import twitter4j.CursorSupport;
 import android.content.Context;
 import android.content.SharedPreferences;
-import java.util.List;
-import org.mariotaku.twidere.model.ParcelableUser;
-import twitter4j.CursorSupport;
-import twitter4j.PagableResponseList;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.User;
 
 public abstract class BaseCursorSupportUsersLoader extends Twitter4JUsersLoader {
 
@@ -36,7 +34,7 @@ public abstract class BaseCursorSupportUsersLoader extends Twitter4JUsersLoader 
 	private final int mLoadItemLimit;
 
 	private long mNextCursor, mPrevCursor;
-	
+
 	public BaseCursorSupportUsersLoader(final Context context, final long account_id, final long cursor,
 			final List<ParcelableUser> data) {
 		super(context, account_id, data);
@@ -46,7 +44,7 @@ public abstract class BaseCursorSupportUsersLoader extends Twitter4JUsersLoader 
 				PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
 		mLoadItemLimit = Math.min(100, prefs_load_item_limit);
 	}
-	
+
 	public final int getCount() {
 		return mLoadItemLimit;
 	}
@@ -54,7 +52,7 @@ public abstract class BaseCursorSupportUsersLoader extends Twitter4JUsersLoader 
 	public final long getCursor() {
 		return mCursor;
 	}
-	
+
 	public final long getNextCursor() {
 		return mNextCursor;
 	}
@@ -62,7 +60,7 @@ public abstract class BaseCursorSupportUsersLoader extends Twitter4JUsersLoader 
 	public final long getPrevCursor() {
 		return mPrevCursor;
 	}
-	
+
 	protected final void setCursorIds(final CursorSupport cursor) {
 		if (cursor == null) return;
 		mNextCursor = cursor.getNextCursor();

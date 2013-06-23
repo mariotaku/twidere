@@ -19,16 +19,9 @@
 
 package org.mariotaku.twidere.fragment;
 
-import android.content.ActivityNotFoundException;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
+import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import static org.mariotaku.twidere.util.Utils.openUserProfile;
+
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
@@ -39,13 +32,20 @@ import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.util.AsyncTask;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.UserList;
-
-import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
-import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
-import static org.mariotaku.twidere.util.Utils.openUserProfile;
+import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 
 public class UserListMembersFragment extends CursorSupportUsersListFragment implements OnMenuItemClickListener {
 
@@ -71,7 +71,6 @@ public class UserListMembersFragment extends CursorSupportUsersListFragment impl
 		}
 	};
 
-
 	@Override
 	public CursorSupportUsersLoader newLoaderInstance(final Context context, final Bundle args) {
 		if (args == null) return null;
@@ -90,7 +89,7 @@ public class UserListMembersFragment extends CursorSupportUsersListFragment impl
 		if (savedInstanceState != null) {
 			mUserList = savedInstanceState.getParcelable(INTENT_KEY_USER_LIST);
 		} else if (args != null) {
-			mUserList = args.getParcelable(INTENT_KEY_USER_LIST);			
+			mUserList = args.getParcelable(INTENT_KEY_USER_LIST);
 		}
 		mTwitterWrapper = getApplication().getTwitterWrapper();
 		super.onActivityCreated(savedInstanceState);
@@ -167,24 +166,24 @@ public class UserListMembersFragment extends CursorSupportUsersListFragment impl
 	}
 
 	private class GetUserListTask extends AsyncTask<Void, Void, ParcelableUserList> {
-	
+
 		private final long account_id, user_id;
 		private final int list_id;
 		private final String screen_name, list_name;
 		private final boolean hires_profile_image;
-		
-		private GetUserListTask(final long account_id, final int list_id, final String list_name,
-				final long user_id, final String screen_name) {
+
+		private GetUserListTask(final long account_id, final int list_id, final String list_name, final long user_id,
+				final String screen_name) {
 			this.account_id = account_id;
 			this.user_id = user_id;
 			this.list_id = list_id;
 			this.screen_name = screen_name;
-			this.list_name = list_name;			
-			this.hires_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
+			this.list_name = list_name;
+			hires_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
 		}
 
 		@Override
-		protected ParcelableUserList doInBackground(Void... params) {
+		protected ParcelableUserList doInBackground(final Void... params) {
 			final Twitter twitter = getTwitterInstance(getActivity(), account_id, true);
 			if (twitter == null) return null;
 			try {
@@ -203,7 +202,7 @@ public class UserListMembersFragment extends CursorSupportUsersListFragment impl
 				return null;
 			}
 		}
-		
+
 		@Override
 		protected void onPostExecute(final ParcelableUserList result) {
 			if (mUserList != null) return;

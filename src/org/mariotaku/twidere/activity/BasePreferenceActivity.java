@@ -19,6 +19,16 @@
 
 package org.mariotaku.twidere.activity;
 
+import static org.mariotaku.twidere.util.Utils.getThemeColor;
+import static org.mariotaku.twidere.util.Utils.restartActivity;
+
+import org.mariotaku.actionbarcompat.ActionBar;
+import org.mariotaku.actionbarcompat.ActionBarPreferenceActivity;
+import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.iface.IThemedActivity;
+import org.mariotaku.twidere.app.TwidereApplication;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
@@ -29,15 +39,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
-import org.mariotaku.actionbarcompat.ActionBar;
-import org.mariotaku.actionbarcompat.ActionBarPreferenceActivity;
-import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.iface.IThemedActivity;
-import org.mariotaku.twidere.app.TwidereApplication;
-
-import static org.mariotaku.twidere.util.Utils.getThemeColor;
-import static org.mariotaku.twidere.util.Utils.restartActivity;
 
 class BasePreferenceActivity extends ActionBarPreferenceActivity implements Constants, IThemedActivity {
 
@@ -54,7 +55,8 @@ class BasePreferenceActivity extends ActionBarPreferenceActivity implements Cons
 	public boolean isHardwareAccelerationChanged() {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return false;
 		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final boolean hardware_acceleration = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION, PREFERENCE_DEFAULT_HARDWARE_ACCELERATION);
+		final boolean hardware_acceleration = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION,
+				PREFERENCE_DEFAULT_HARDWARE_ACCELERATION);
 		return mHardwareAccelerated != hardware_acceleration;
 	}
 
@@ -67,22 +69,6 @@ class BasePreferenceActivity extends ActionBarPreferenceActivity implements Cons
 		final boolean is_dark_theme = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false);
 		final boolean solid_color_background = preferences.getBoolean(PREFERENCE_KEY_SOLID_COLOR_BACKGROUND, false);
 		return is_dark_theme != mIsDarkTheme || solid_color_background != mIsSolidColorBackground;
-	}
-
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		setHardwareAcceleration();
-		setTheme();
-		super.onCreate(savedInstanceState);
-		setActionBarBackground();
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		if (isThemeChanged() || isHardwareAccelerationChanged()) {
-			restart();
-		}
 	}
 
 	public void restart() {
@@ -106,18 +92,6 @@ class BasePreferenceActivity extends ActionBarPreferenceActivity implements Cons
 		}
 	}
 
-	private void setHardwareAcceleration() {
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return;
-		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mHardwareAccelerated = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION,
-				PREFERENCE_DEFAULT_HARDWARE_ACCELERATION);
-		final Window w = getWindow();
-		if (mHardwareAccelerated) {
-			w.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-					WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
-		}
-	}
-
 	public void setTheme() {
 		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final boolean is_dark_theme = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false);
@@ -137,7 +111,35 @@ class BasePreferenceActivity extends ActionBarPreferenceActivity implements Cons
 		return R.style.Theme_Twidere_Light;
 	}
 
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		setHardwareAcceleration();
+		setTheme();
+		super.onCreate(savedInstanceState);
+		setActionBarBackground();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (isThemeChanged() || isHardwareAccelerationChanged()) {
+			restart();
+		}
+	}
+
 	protected boolean shouldSetBackground() {
 		return true;
+	}
+
+	private void setHardwareAcceleration() {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return;
+		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mHardwareAccelerated = preferences.getBoolean(PREFERENCE_KEY_HARDWARE_ACCELERATION,
+				PREFERENCE_DEFAULT_HARDWARE_ACCELERATION);
+		final Window w = getWindow();
+		if (mHardwareAccelerated) {
+			w.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+					WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
+		}
 	}
 }

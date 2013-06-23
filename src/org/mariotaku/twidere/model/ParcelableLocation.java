@@ -19,18 +19,16 @@
 
 package org.mariotaku.twidere.model;
 
-import static org.mariotaku.twidere.util.Utils.parseDouble;
- 
+import java.io.Serializable;
+
 import org.mariotaku.jsonserializer.JSONParcel;
 import org.mariotaku.jsonserializer.JSONParcelable;
- 
-import java.io.Serializable;
+import org.mariotaku.twidere.util.ParseUtils;
 
 import twitter4j.GeoLocation;
 import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
- 
 
 public class ParcelableLocation implements Serializable, Parcelable, JSONParcelable {
 
@@ -49,7 +47,7 @@ public class ParcelableLocation implements Serializable, Parcelable, JSONParcela
 			return new ParcelableLocation[size];
 		}
 	};
-	
+
 	public static final JSONParcelable.Creator<ParcelableLocation> JSON_CREATOR = new JSONParcelable.Creator<ParcelableLocation>() {
 		@Override
 		public ParcelableLocation createFromParcel(final JSONParcel in) {
@@ -72,16 +70,16 @@ public class ParcelableLocation implements Serializable, Parcelable, JSONParcela
 		longitude = location != null ? location.getLongitude() : -1;
 	}
 
+	public ParcelableLocation(final JSONParcel in) {
+		latitude = in.readDouble("latitude", -1);
+		longitude = in.readDouble("longutude", -1);
+	}
+
 	public ParcelableLocation(final Location location) {
 		latitude = location != null ? location.getLatitude() : -1;
 		longitude = location != null ? location.getLongitude() : -1;
 	}
 
-	public ParcelableLocation(final JSONParcel in) {
-		latitude = in.readDouble("latitude", -1);
-		longitude = in.readDouble("longutude", -1);
-	}
-	
 	public ParcelableLocation(final Parcel in) {
 		latitude = in.readDouble();
 		longitude = in.readDouble();
@@ -98,8 +96,8 @@ public class ParcelableLocation implements Serializable, Parcelable, JSONParcela
 			latitude = -1;
 			longitude = -1;
 		} else {
-			latitude = parseDouble(longlat[0]);
-			longitude = parseDouble(longlat[1]);
+			latitude = ParseUtils.parseDouble(longlat[0]);
+			longitude = ParseUtils.parseDouble(longlat[1]);
 		}
 	}
 

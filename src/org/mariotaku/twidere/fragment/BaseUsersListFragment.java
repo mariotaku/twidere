@@ -19,6 +19,24 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
+import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
+import static org.mariotaku.twidere.util.Utils.openUserProfile;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.mariotaku.popupmenu.PopupMenu;
+import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.UsersAdapter;
+import org.mariotaku.twidere.loader.DummyParcelableUsersLoader;
+import org.mariotaku.twidere.model.Panes;
+import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.util.MultiSelectManager;
+import org.mariotaku.twidere.util.NoDuplicatesArrayList;
+
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -37,24 +55,8 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import org.mariotaku.popupmenu.PopupMenu;
-import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.UsersAdapter;
-import org.mariotaku.twidere.model.Panes;
-import org.mariotaku.twidere.model.ParcelableUser;
-import org.mariotaku.twidere.util.MultiSelectManager;
-import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
-import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
-import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
-import static org.mariotaku.twidere.util.Utils.openUserProfile;
-import org.mariotaku.twidere.loader.DummyParcelableUsersLoader;
-import org.mariotaku.twidere.util.ArrayUtils;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 
 abstract class BaseUsersListFragment extends PullToRefreshListFragment implements
 		LoaderCallbacks<List<ParcelableUser>>, OnScrollListener, OnItemLongClickListener, Panes.Left,
@@ -74,7 +76,8 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	private boolean mLoadMoreAutomatically;
 	private ListView mListView;
 	private long mAccountId;
-	private final List<ParcelableUser> mData = Collections.synchronizedList(new NoDuplicatesArrayList<ParcelableUser>());
+	private final List<ParcelableUser> mData = Collections
+			.synchronizedList(new NoDuplicatesArrayList<ParcelableUser>());
 	private volatile boolean mReachedBottom, mNotReachedBottomBefore = true, mTickerStopped, mBusy;
 
 	private ParcelableUser mSelectedUser;
@@ -96,8 +99,6 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		return mPreferences;
 	}
 
-	protected abstract Loader<List<ParcelableUser>> newLoaderInstance(Context context, Bundle args);
-
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -115,7 +116,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		mAccountId = account_id;
 		mListView.setOnItemLongClickListener(this);
 		mListView.setOnScrollListener(this);
-		setMode(Mode.PULL_UP_TO_REFRESH);
+		setMode(Mode.PULL_FROM_END);
 		setListAdapter(mAdapter);
 		getLoaderManager().initLoader(0, getArguments(), this);
 		setListShown(false);
@@ -124,7 +125,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	@Override
 	public Loader<List<ParcelableUser>> onCreateLoader(final int id, final Bundle args) {
 		setProgressBarIndeterminateVisibility(true);
-		final Loader<List<ParcelableUser>>loader = newLoaderInstance(getActivity(), args);
+		final Loader<List<ParcelableUser>> loader = newLoaderInstance(getActivity(), args);
 		return loader != null ? loader : new DummyParcelableUsersLoader(getActivity());
 	}
 
@@ -326,6 +327,8 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 		}
 		super.onStop();
 	}
+
+	protected abstract Loader<List<ParcelableUser>> newLoaderInstance(Context context, Bundle args);
 
 	protected final void removeUsers(final long... user_ids) {
 		if (user_ids == null || user_ids.length == 0) return;

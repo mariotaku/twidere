@@ -10,6 +10,7 @@ import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.ViewAccessor;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -94,7 +95,7 @@ final class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 	@Override
 	public void setBackgroundDrawable(final Drawable d) {
 		if (mActionBarView != null) {
-			mActionBarView.setBackgroundDrawable(d);
+			ViewAccessor.setBackground(mActionBarView, d);
 		}
 	}
 

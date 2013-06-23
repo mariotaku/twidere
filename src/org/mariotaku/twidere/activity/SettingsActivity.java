@@ -22,7 +22,6 @@ package org.mariotaku.twidere.activity;
 import static org.mariotaku.twidere.util.Utils.restartActivity;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.fragment.ActivityHostFragment;
 import org.mariotaku.twidere.fragment.CustomTabsFragment;
 import org.mariotaku.twidere.fragment.ExtensionsListFragment;
 import org.mariotaku.twidere.fragment.FiltersListFragment;
@@ -75,7 +74,8 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 	@Override
 	public void onPostCreate(final Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-		final InternalSettingsFragment fragment = (InternalSettingsFragment) getSupportFragmentManager().findFragmentById(R.id.main);
+		final InternalSettingsFragment fragment = (InternalSettingsFragment) getSupportFragmentManager()
+				.findFragmentById(R.id.main);
 		if (fragment == null) return;
 		final InternalSettingsActivity activity = fragment.getAttachedActivity();
 		if (activity != null) {
@@ -164,7 +164,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 	protected void onCreate(final Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
-		setIntent(getIntent().addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));		
+		setIntent(getIntent().addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
 		final Fragment fragment = new InternalSettingsFragment();

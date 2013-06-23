@@ -19,13 +19,15 @@
 
 package org.mariotaku.twidere.fragment;
 
-import android.content.Context;
-import android.os.Bundle;
-import android.support.v4.content.Loader;
 import java.util.List;
+
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.loader.TweetSearchLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
+
+import android.content.Context;
+import android.os.Bundle;
+import android.support.v4.content.Loader;
 
 public class SearchTweetsFragment extends ParcelableStatusesListFragment {
 
@@ -53,7 +55,8 @@ public class SearchTweetsFragment extends ParcelableStatusesListFragment {
 		adapter.setFiltersEnabled(true);
 		adapter.setIgnoredFilterFields(false, false, false, false);
 	}
-	
+
+	@Override
 	protected String[] getSavedStatusesFileArgs() {
 		final Bundle args = getArguments();
 		if (args == null) return null;

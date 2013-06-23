@@ -19,14 +19,15 @@
 
 package org.mariotaku.twidere.fragment;
 
+import org.mariotaku.twidere.provider.TweetStore.Mentions;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import org.mariotaku.twidere.provider.TweetStore.Mentions;
-import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
 public class MentionsFragment extends CursorStatusesListFragment {
 
@@ -42,7 +43,8 @@ public class MentionsFragment extends CursorStatusesListFragment {
 			} else if (BROADCAST_MENTIONS_DATABASE_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, MentionsFragment.this);
 			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
-				if (getTwitterWrapper() != null && getTwitterWrapper().isMentionsRefreshing()) {
+				final AsyncTwitterWrapper twitter = getTwitterWrapper();
+				if (twitter != null && twitter.isMentionsRefreshing()) {
 					setRefreshing(false);
 				}
 			}
@@ -90,13 +92,13 @@ public class MentionsFragment extends CursorStatusesListFragment {
 	}
 
 	@Override
-	protected String getPositionKey() {
-		return "mentions_timeline_" + getTabPosition();
+	protected int getNotificationIdToClear() {
+		return NOTIFICATION_ID_MENTIONS;
 	}
 
 	@Override
-	protected int getNotificationIdToClear() {
-		return NOTIFICATION_ID_MENTIONS;
+	protected String getPositionKey() {
+		return "mentions_timeline_" + getTabPosition();
 	}
 
 }

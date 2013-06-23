@@ -22,15 +22,11 @@ package org.mariotaku.twidere.fragment;
 import static org.mariotaku.twidere.util.Utils.cancelRetweet;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
-import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.getThemeColor;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.openStatus;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
-import static org.mariotaku.twidere.util.Utils.showInfoMessage;
 import static org.mariotaku.twidere.util.Utils.showOkMessage;
-
-import java.util.List;
 
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
@@ -68,7 +64,6 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-import com.twitter.Extractor;
 
 abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment implements LoaderCallbacks<Data>,
 		OnScrollListener, OnItemLongClickListener, OnMenuItemClickListener, Panes.Left, MultiSelectManager.Callback {
@@ -217,7 +212,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 	public final void onLoaderReset(final Loader<Data> loader) {
 		mAdapter.setData(mData = null);
 	}
-	
+
 	@Override
 	public final void onLoadFinished(final Loader<Data> loader, final Data data) {
 		mData = data;
@@ -240,7 +235,7 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 			if (!remember_position) return;
 			status_id = mPositionManager.getPosition(getPositionKey());
 		} else if ((first_visible_position > 0 || remember_position) && curr_viewed_id > 0
-				   && last_viewed_id != curr_viewed_id) {
+				&& last_viewed_id != curr_viewed_id) {
 			status_id = last_viewed_id;
 		} else
 			return;
@@ -346,8 +341,8 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
 		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		final String image_preview_display_option = mPreferences.getString(
-				PREFERENCE_KEY_IMAGE_PREVIEW_DISPLAY_OPTION, IMAGE_PREVIEW_DISPLAY_OPTION_NONE);
+		final String image_preview_display_option = mPreferences.getString(PREFERENCE_KEY_IMAGE_PREVIEW_DISPLAY_OPTION,
+				IMAGE_PREVIEW_DISPLAY_OPTION_NONE);
 		final boolean show_absolute_time = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false);
 		final boolean display_sensitive_contents = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS,
 				false);
@@ -436,6 +431,32 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		super.onStop();
 	}
 
+	protected abstract long[] getNewestStatusIds();
+
+	protected abstract long[] getOldestStatusIds();
+
+	protected abstract String getPositionKey();
+
+	protected abstract IStatusesAdapter<Data> newAdapterInstance();
+
+	protected void savePosition() {
+		final int first_visible_position = mListView.getFirstVisiblePosition();
+		if (mListView.getChildCount() > 0) {
+			final View first_child = mListView.getChildAt(0);
+			mListScrollOffset = first_child != null ? first_child.getTop() : 0;
+		}
+		final long status_id = mAdapter.findItemIdByPosition(first_visible_position);
+		mPositionManager.setPosition(getPositionKey(), status_id);
+	}
+
+	protected final void setData(final Data data) {
+		mData = data;
+	}
+
+	protected void setListHeaderFooters(final ListView list) {
+
+	}
+
 	private boolean isMyTimeline() {
 		final Bundle args = getArguments();
 		if (args != null && this instanceof UserTimelineFragment) {
@@ -485,30 +506,4 @@ abstract class BaseStatusesListFragment<Data> extends PullToRefreshListFragment 
 		mPopupMenu.show();
 	}
 
-	protected abstract long[] getNewestStatusIds();
-
-	protected abstract long[] getOldestStatusIds();
-
-	protected void savePosition() {
-		final int first_visible_position = mListView.getFirstVisiblePosition();
-		if (mListView.getChildCount() > 0) {
-			final View first_child = mListView.getChildAt(0);
-			mListScrollOffset = first_child != null ? first_child.getTop() : 0;
-		}
-		final long status_id = mAdapter.findItemIdByPosition(first_visible_position);
-		mPositionManager.setPosition(getPositionKey(), status_id);
-	}
-	
-	protected abstract String getPositionKey();
-	
-	protected abstract IStatusesAdapter<Data> newAdapterInstance();
-	
-	protected final void setData(final Data data) {
-		mData = data;
-	}
-	
-	protected void setListHeaderFooters(final ListView list) {
-
-	}
-	
 }

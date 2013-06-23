@@ -20,21 +20,17 @@
 package org.mariotaku.twidere.model;
 
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
-import static org.mariotaku.twidere.util.Utils.parseString;
-
-import java.io.Serializable;
 
 import org.mariotaku.jsonserializer.JSONParcel;
 import org.mariotaku.jsonserializer.JSONParcelable;
- 
+import org.mariotaku.twidere.util.ParseUtils;
+
 import twitter4j.User;
 import twitter4j.UserList;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class ParcelableUserList implements Parcelable, JSONParcelable, Comparable<ParcelableUserList> {
-
-	private static final long serialVersionUID = 5896769285301886501L;
 
 	public static final Parcelable.Creator<ParcelableUserList> CREATOR = new Parcelable.Creator<ParcelableUserList>() {
 		@Override
@@ -117,7 +113,8 @@ public class ParcelableUserList implements Parcelable, JSONParcelable, Comparabl
 		user_id = user.getId();
 		user_name = user.getName();
 		user_screen_name = user.getScreenName();
-		final String user_profile_image_url_orig = user != null ? parseString(user.getProfileImageUrlHttps()) : null;
+		final String user_profile_image_url_orig = user != null ? ParseUtils
+				.parseString(user.getProfileImageUrlHttps()) : null;
 		user_profile_image_url = large_profile_image ? getBiggerTwitterProfileImage(user_profile_image_url_orig)
 				: user_profile_image_url_orig;
 		members_count = list.getMemberCount();

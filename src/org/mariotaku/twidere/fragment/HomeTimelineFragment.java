@@ -20,13 +20,13 @@
 package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
-import android.os.Bundle;
 
 public class HomeTimelineFragment extends CursorStatusesListFragment {
 
@@ -42,7 +42,8 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 			} else if (BROADCAST_HOME_TIMELINE_DATABASE_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
 			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
-				if (getTwitterWrapper().isHomeTimelineRefreshing()) {
+				final AsyncTwitterWrapper twitter = getTwitterWrapper();
+				if (twitter != null && twitter.isHomeTimelineRefreshing()) {
 					setRefreshing(false);
 				}
 			}
@@ -51,8 +52,10 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 
 	@Override
 	public int getStatuses(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
-		if (max_ids == null) return getTwitterWrapper().refreshAll();
-		return getTwitterWrapper().getHomeTimeline(account_ids, max_ids, since_ids);
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		if (twitter == null) return 0;
+		if (max_ids == null) return twitter.refreshAll();
+		return twitter.getHomeTimeline(account_ids, max_ids, since_ids);
 	}
 
 	@Override
@@ -63,7 +66,8 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 		filter.addAction(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_TASK_STATE_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
-		if (getTwitterWrapper().isHomeTimelineRefreshing()) {
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		if (twitter != null && twitter.isHomeTimelineRefreshing()) {
 			setRefreshing(false);
 		} else {
 			onRefreshComplete();

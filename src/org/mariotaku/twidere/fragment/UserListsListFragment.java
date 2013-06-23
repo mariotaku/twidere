@@ -19,6 +19,24 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
+import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
+import static org.mariotaku.twidere.util.Utils.openUserListDetails;
+
+import org.mariotaku.popupmenu.PopupMenu;
+import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
+import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.SeparatedListAdapter;
+import org.mariotaku.twidere.adapter.UserListsAdapter;
+import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.loader.UserListsLoader;
+import org.mariotaku.twidere.loader.UserListsLoader.UserListsData;
+import org.mariotaku.twidere.model.Panes;
+import org.mariotaku.twidere.model.ParcelableUserList;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.ParseUtils;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
@@ -45,24 +63,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-import org.mariotaku.popupmenu.PopupMenu;
-import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
-import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.SeparatedListAdapter;
-import org.mariotaku.twidere.adapter.UserListsAdapter;
-import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.loader.UserListsLoader;
-import org.mariotaku.twidere.loader.UserListsLoader.UserListsData;
-import org.mariotaku.twidere.model.Panes;
-import org.mariotaku.twidere.model.ParcelableUserList;
-import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
-import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
-import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
-import static org.mariotaku.twidere.util.Utils.openUserListDetails;
-import static org.mariotaku.twidere.util.Utils.parseString;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 
 public class UserListsListFragment extends PullToRefreshListFragment implements Constants,
 		LoaderCallbacks<UserListsLoader.UserListsData>, OnItemClickListener, OnItemLongClickListener, Panes.Left,
@@ -100,7 +102,7 @@ public class UserListsListFragment extends PullToRefreshListFragment implements 
 			}
 		}
 	};
-	
+
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -124,7 +126,7 @@ public class UserListsListFragment extends PullToRefreshListFragment implements 
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
 		getLoaderManager().initLoader(0, getArguments(), this);
-		setMode(Mode.PULL_UP_TO_REFRESH);
+		setMode(Mode.PULL_FROM_END);
 		setListShown(false);
 	}
 
@@ -146,8 +148,8 @@ public class UserListsListFragment extends PullToRefreshListFragment implements 
 		final ParcelableUserList user_list = selected instanceof ParcelableUserList ? (ParcelableUserList) selected
 				: null;
 		if (user_list == null) return;
-		openUserListDetails(getActivity(), mAccountId, user_list.id, user_list.user_id,
-				user_list.user_screen_name, user_list.name);
+		openUserListDetails(getActivity(), mAccountId, user_list.id, user_list.user_id, user_list.user_screen_name,
+				user_list.name);
 	}
 
 	@Override
@@ -271,7 +273,7 @@ public class UserListsListFragment extends PullToRefreshListFragment implements 
 		}
 		super.onStop();
 	}
-	
+
 	private void removeUserList(final int id) {
 		final int lists_idx = mUserListsAdapter.findItemPosition(id);
 		if (lists_idx >= 0) {
@@ -281,9 +283,9 @@ public class UserListsListFragment extends PullToRefreshListFragment implements 
 		if (memberships_idx >= 0) {
 			mUserListMembershipsAdapter.remove(memberships_idx);
 		}
-		mAdapter.notifyDataSetChanged();		
+		mAdapter.notifyDataSetChanged();
 	}
-	
+
 	public static class CreateUserListDialogFragment extends BaseDialogFragment implements
 			DialogInterface.OnClickListener {
 
@@ -300,8 +302,8 @@ public class UserListsListFragment extends PullToRefreshListFragment implements 
 			if (mAccountId <= 0) return;
 			switch (which) {
 				case DialogInterface.BUTTON_POSITIVE: {
-					mName = parseString(mEditName.getText());
-					mDescription = parseString(mEditDescription.getText());
+					mName = ParseUtils.parseString(mEditName.getText());
+					mDescription = ParseUtils.parseString(mEditDescription.getText());
 					mIsPublic = mPublicCheckBox.isChecked();
 					if (mName == null || mName.length() <= 0) return;
 					mTwitterWrapper.createUserList(mAccountId, mName, mIsPublic, mDescription);

@@ -22,8 +22,6 @@ package org.mariotaku.twidere.fragment;
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.buildDirectMessageConversationUri;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
-import static org.mariotaku.twidere.util.Utils.parseString;
-import static org.mariotaku.twidere.util.Utils.showInfoMessage;
 import static org.mariotaku.twidere.util.Utils.showOkMessage;
 
 import org.mariotaku.popupmenu.PopupMenu;
@@ -37,6 +35,7 @@ import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ClipboardUtils;
+import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.view.holder.DirectMessageConversationViewHolder;
 
 import android.content.BroadcastReceiver;
@@ -358,7 +357,7 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
 		if (mEditText != null) {
-			outState.putString(INTENT_KEY_TEXT, parseString(mEditText.getText()));
+			outState.putString(INTENT_KEY_TEXT, ParseUtils.parseString(mEditText.getText()));
 		}
 		outState.putBundle(INTENT_KEY_DATA, mArguments);
 		super.onSaveInstanceState(outState);
@@ -421,7 +420,7 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 
 	private void updateTextCount() {
 		if (mTextCount != null) {
-			final String text = mEditText != null ? parseString(mEditText.getText()) : null;
+			final String text = mEditText != null ? ParseUtils.parseString(mEditText.getText()) : null;
 			final int count = mValidator.getTweetLength(text);
 			final float hue = count < Validator.MAX_TWEET_LENGTH ? count >= Validator.MAX_TWEET_LENGTH - 10 ? 5 * (Validator.MAX_TWEET_LENGTH - count)
 					: 50
@@ -429,7 +428,7 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 			final float[] hsv = new float[] { hue, 1.0f, 1.0f };
 			mTextCount
 					.setTextColor(count >= Validator.MAX_TWEET_LENGTH - 10 ? Color.HSVToColor(0x80, hsv) : 0x80808080);
-			mTextCount.setText(parseString(Validator.MAX_TWEET_LENGTH - count));
+			mTextCount.setText(ParseUtils.parseString(Validator.MAX_TWEET_LENGTH - count));
 		}
 	}
 

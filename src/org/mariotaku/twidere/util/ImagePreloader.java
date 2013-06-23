@@ -19,16 +19,17 @@
 
 package org.mariotaku.twidere.util;
 
-import android.os.Handler;
-import com.nostra13.universalimageloader.cache.disc.DiscCacheAware;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import java.io.File;
+
 import org.mariotaku.twidere.Constants;
 
-import static org.mariotaku.twidere.util.Utils.copyStream;
-import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
-import static org.mariotaku.twidere.util.Utils.getImageLoaderHttpClient;
-import static org.mariotaku.twidere.util.Utils.getRedirectedHttpResponse;
+import android.content.Context;
+import android.os.Handler;
+import android.widget.GridView;
+import android.widget.ListView;
+
+import com.nostra13.universalimageloader.cache.disc.DiscCacheAware;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 /**
  * Lazy image loader for {@link ListView} and {@link GridView} etc.</br> </br>
@@ -79,8 +80,8 @@ public class ImagePreloader implements Constants {
 			@Override
 			public void run() {
 				mImageLoader.loadImage(url, null);
-			}				
-			
+			}
+
 		});
 	}
 

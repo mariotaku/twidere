@@ -22,7 +22,6 @@ import android.view.Gravity;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 
-
 /** The style for a {@link Crouton}. */
 public class CroutonStyle {
 
@@ -48,8 +47,8 @@ public class CroutonStyle {
 	}
 
 	/**
-	 * The {@link Configuration} for this {@link Style}.
-	 * It can be overridden via {@link Crouton#setConfiguration(Configuration)}.
+	 * The {@link Configuration} for this {@link Style}. It can be overridden
+	 * via {@link Crouton#setConfiguration(Configuration)}.
 	 */
 	final CroutonConfiguration configuration;
 
@@ -105,7 +104,10 @@ public class CroutonStyle {
 	/** An additional image to display in the {@link Crouton}. */
 	final int imageResId;
 
-	/** The {@link ImageView.ScaleType} for the image to display in the {@link Crouton}. */
+	/**
+	 * The {@link ImageView.ScaleType} for the image to display in the
+	 * {@link Crouton}.
+	 */
 	final ImageView.ScaleType imageScaleType;
 
 	/**
@@ -137,28 +139,43 @@ public class CroutonStyle {
 	final int paddingDimensionResId;
 
 	private CroutonStyle(final Builder builder) {
-		this.configuration = builder.configuration;
-		this.backgroundColorResourceId = builder.backgroundColorResourceId;
-		this.backgroundDrawableResourceId = builder.backgroundDrawableResourceId;
-		this.isTileEnabled = builder.isTileEnabled;
-		this.textColorResourceId = builder.textColorResourceId;
-		this.heightInPixels = builder.heightInPixels;
-		this.heightDimensionResId = builder.heightDimensionResId;
-		this.widthInPixels = builder.widthInPixels;
-		this.widthDimensionResId = builder.widthDimensionResId;
-		this.gravity = builder.gravity;
-		this.imageDrawable = builder.imageDrawable;
-		this.textSize = builder.textSize;
-		this.textShadowColorResId = builder.textShadowColorResId;
-		this.textShadowRadius = builder.textShadowRadius;
-		this.textShadowDx = builder.textShadowDx;
-		this.textShadowDy = builder.textShadowDy;
-		this.textAppearanceResId = builder.textAppearanceResId;
-		this.imageResId = builder.imageResId;
-		this.imageScaleType = builder.imageScaleType;
-		this.paddingInPixels = builder.paddingInPixels;
-		this.paddingDimensionResId = builder.paddingDimensionResId;
-		this.backgroundColorValue = builder.backgroundColorValue;
+		configuration = builder.configuration;
+		backgroundColorResourceId = builder.backgroundColorResourceId;
+		backgroundDrawableResourceId = builder.backgroundDrawableResourceId;
+		isTileEnabled = builder.isTileEnabled;
+		textColorResourceId = builder.textColorResourceId;
+		heightInPixels = builder.heightInPixels;
+		heightDimensionResId = builder.heightDimensionResId;
+		widthInPixels = builder.widthInPixels;
+		widthDimensionResId = builder.widthDimensionResId;
+		gravity = builder.gravity;
+		imageDrawable = builder.imageDrawable;
+		textSize = builder.textSize;
+		textShadowColorResId = builder.textShadowColorResId;
+		textShadowRadius = builder.textShadowRadius;
+		textShadowDx = builder.textShadowDx;
+		textShadowDy = builder.textShadowDy;
+		textAppearanceResId = builder.textAppearanceResId;
+		imageResId = builder.imageResId;
+		imageScaleType = builder.imageScaleType;
+		paddingInPixels = builder.paddingInPixels;
+		paddingDimensionResId = builder.paddingDimensionResId;
+		backgroundColorValue = builder.backgroundColorValue;
+	}
+
+	@Override
+	public String toString() {
+		return "Style{" + "configuration=" + configuration + ", backgroundColorResourceId=" + backgroundColorResourceId
+				+ ", backgroundDrawableResourceId=" + backgroundDrawableResourceId + ", backgroundColorValue="
+				+ backgroundColorValue + ", isTileEnabled=" + isTileEnabled + ", textColorResourceId="
+				+ textColorResourceId + ", heightInPixels=" + heightInPixels + ", heightDimensionResId="
+				+ heightDimensionResId + ", widthInPixels=" + widthInPixels + ", widthDimensionResId="
+				+ widthDimensionResId + ", gravity=" + gravity + ", imageDrawable=" + imageDrawable + ", imageResId="
+				+ imageResId + ", imageScaleType=" + imageScaleType + ", textSize=" + textSize
+				+ ", textShadowColorResId=" + textShadowColorResId + ", textShadowRadius=" + textShadowRadius
+				+ ", textShadowDy=" + textShadowDy + ", textShadowDx=" + textShadowDx + ", textAppearanceResId="
+				+ textAppearanceResId + ", paddingInPixels=" + paddingInPixels + ", paddingDimensionResId="
+				+ paddingDimensionResId + '}';
 	}
 
 	/** Builder for the {@link Style} object. */
@@ -205,9 +222,9 @@ public class CroutonStyle {
 
 		/**
 		 * Creates a {@link Builder} to build a {@link Style} upon.
-		 *
-		 * @param baseStyle
-		 *   The base {@link Style} to use for this {@link Style}.
+		 * 
+		 * @param baseStyle The base {@link Style} to use for this {@link Style}
+		 *            .
 		 */
 		public Builder(final CroutonStyle baseStyle) {
 			configuration = baseStyle.configuration;
@@ -233,28 +250,21 @@ public class CroutonStyle {
 			paddingInPixels = baseStyle.paddingInPixels;
 			paddingDimensionResId = baseStyle.paddingDimensionResId;
 		}
-		/**
-		 * Set the {@link Configuration} option of the {@link Crouton}.
-		 *
-		 * @param configuration
-		 *   The {@link Configuration}.
-		 *
-		 * @return the {@link Builder}.
-		 */
-		public Builder setConfiguration(CroutonConfiguration configuration) {
-			this.configuration = configuration;
-			return this;
+
+		/** @return a configured {@link Style} object. */
+		public CroutonStyle build() {
+			return new CroutonStyle(this);
 		}
 
 		/**
 		 * Set the backgroundColorResourceId option of the {@link Crouton}.
-		 *
-		 * @param backgroundColorResourceId
-		 *   The backgroundColorResourceId's resource id.
-		 *
+		 * 
+		 * @param backgroundColorResourceId The backgroundColorResourceId's
+		 *            resource id.
+		 * 
 		 * @return the {@link Builder}.
 		 */
-		public Builder setBackgroundColor(int backgroundColorResourceId) {
+		public Builder setBackgroundColor(final int backgroundColorResourceId) {
 			this.backgroundColorResourceId = backgroundColorResourceId;
 
 			return this;
@@ -262,143 +272,94 @@ public class CroutonStyle {
 
 		/**
 		 * Set the backgroundColorResourceValue option of the {@link Crouton}.
-		 *
-		 * @param backgroundColorValue
-		 *   The backgroundColorResourceValue's e.g. 0xffff4444;
-		 *
+		 * 
+		 * @param backgroundColorValue The backgroundColorResourceValue's e.g.
+		 *            0xffff4444;
+		 * 
 		 * @return the {@link Builder}.
 		 */
-		public Builder setBackgroundColorValue(int backgroundColorValue) {
+		public Builder setBackgroundColorValue(final int backgroundColorValue) {
 			this.backgroundColorValue = backgroundColorValue;
 			return this;
 		}
 
 		/**
 		 * Set the backgroundDrawableResourceId option for the {@link Crouton}.
-		 *
-		 * @param backgroundDrawableResourceId
-		 *   Resource ID of a backgroundDrawableResourceId image drawable.
-		 *
+		 * 
+		 * @param backgroundDrawableResourceId Resource ID of a
+		 *            backgroundDrawableResourceId image drawable.
+		 * 
 		 * @return the {@link Builder}.
 		 */
-		public Builder setBackgroundDrawable(int backgroundDrawableResourceId) {
+		public Builder setBackgroundDrawable(final int backgroundDrawableResourceId) {
 			this.backgroundDrawableResourceId = backgroundDrawableResourceId;
 
 			return this;
 		}
 
 		/**
-		 * Set the heightInPixels option for the {@link Crouton}.
-		 *
-		 * @param height
-		 *   The height of the {@link Crouton} in pixel. Can also be
-		 *   {@link LayoutParams#MATCH_PARENT} or
-		 *   {@link LayoutParams#WRAP_CONTENT}.
-		 *
+		 * Set the {@link Configuration} option of the {@link Crouton}.
+		 * 
+		 * @param configuration The {@link Configuration}.
+		 * 
 		 * @return the {@link Builder}.
 		 */
-		public Builder setHeight(int height) {
-			this.heightInPixels = height;
-
-			return this;
-		}
-
-		/**
-		 * Set the resource id for the height option for the {@link Crouton}.
-		 *
-		 * @param heightDimensionResId
-		 *   Resource ID of a dimension for the height of the {@link Crouton}.
-		 *
-		 * @return the {@link Builder}.
-		 */
-		public Builder setHeightDimensionResId(int heightDimensionResId) {
-			this.heightDimensionResId = heightDimensionResId;
-
-			return this;
-		}
-
-		/**
-		 * Set the widthInPixels option for the {@link Crouton}.
-		 *
-		 * @param width
-		 *   The width of the {@link Crouton} in pixel. Can also be
-		 *   {@link LayoutParams#MATCH_PARENT} or
-		 *   {@link LayoutParams#WRAP_CONTENT}.
-		 *
-		 * @return the {@link Builder}.
-		 */
-		public Builder setWidth(int width) {
-			this.widthInPixels = width;
-
-			return this;
-		}
-
-		/**
-		 * Set the resource id for the width option for the {@link Crouton}.
-		 *
-		 * @param widthDimensionResId
-		 *   Resource ID of a dimension for the width of the {@link Crouton}.
-		 *
-		 * @return the {@link Builder}.
-		 */
-		public Builder setWidthDimensionResId(int widthDimensionResId) {
-			this.widthDimensionResId = widthDimensionResId;
-
-			return this;
-		}
-
-		/**
-		 * Set the isTileEnabled option for the {@link Crouton}.
-		 *
-		 * @param isTileEnabled
-		 *   <code>true</code> if you want the backgroundResourceId to be
-		 *   tiled, else <code>false</code>.
-		 *
-		 * @return the {@link Builder}.
-		 */
-		public Builder setTileEnabled(boolean isTileEnabled) {
-			this.isTileEnabled = isTileEnabled;
-
-			return this;
-		}
-
-		/**
-		 * Set the textColorResourceId option for the {@link Crouton}.
-		 *
-		 * @param textColor
-		 *   The resource id of the text colorResourceId.
-		 *
-		 * @return the {@link Builder}.
-		 */
-		public Builder setTextColor(int textColor) {
-			this.textColorResourceId = textColor;
-
+		public Builder setConfiguration(final CroutonConfiguration configuration) {
+			this.configuration = configuration;
 			return this;
 		}
 
 		/**
 		 * Set the gravity option for the {@link Crouton}.
-		 *
-		 * @param gravity
-		 *   The text's gravity as provided by {@link Gravity}.
-		 *
+		 * 
+		 * @param gravity The text's gravity as provided by {@link Gravity}.
+		 * 
 		 * @return the {@link Builder}.
 		 */
-		public Builder setGravity(int gravity) {
+		public Builder setGravity(final int gravity) {
 			this.gravity = gravity;
 
 			return this;
 		}
 
 		/**
-		 * Set the image option for the {@link Crouton}.
-		 *
-		 * @param imageDrawable
-		 *   An additional image to display in the {@link Crouton}.
-		 *
+		 * Set the heightInPixels option for the {@link Crouton}.
+		 * 
+		 * @param height The height of the {@link Crouton} in pixel. Can also be
+		 *            {@link LayoutParams#MATCH_PARENT} or
+		 *            {@link LayoutParams#WRAP_CONTENT}.
+		 * 
 		 * @return the {@link Builder}.
 		 */
-		public Builder setImageDrawable(Drawable imageDrawable) {
+		public Builder setHeight(final int height) {
+			heightInPixels = height;
+
+			return this;
+		}
+
+		/**
+		 * Set the resource id for the height option for the {@link Crouton}.
+		 * 
+		 * @param heightDimensionResId Resource ID of a dimension for the height
+		 *            of the {@link Crouton}.
+		 * 
+		 * @return the {@link Builder}.
+		 */
+		public Builder setHeightDimensionResId(final int heightDimensionResId) {
+			this.heightDimensionResId = heightDimensionResId;
+
+			return this;
+		}
+
+		/**
+		 * Set the image option for the {@link Crouton}.
+		 * 
+		 * @param imageDrawable An additional image to display in the
+		 *            {@link Crouton}.
+		 * 
+		 * @return the {@link Builder}.
+		 */
+		public Builder setImageDrawable(final Drawable imageDrawable) {
 			this.imageDrawable = imageDrawable;
 
 			return this;
@@ -406,103 +367,126 @@ public class CroutonStyle {
 
 		/**
 		 * Set the image resource option for the {@link Crouton}.
-		 *
-		 * @param imageResId
-		 *   An additional image to display in the {@link Crouton}.
-		 *
+		 * 
+		 * @param imageResId An additional image to display in the
+		 *            {@link Crouton}.
+		 * 
 		 * @return the {@link Builder}.
 		 */
-		public Builder setImageResource(int imageResId) {
+		public Builder setImageResource(final int imageResId) {
 			this.imageResId = imageResId;
 
 			return this;
 		}
 
-		/** The text size in sp. */
-		public Builder setTextSize(int textSize) {
-			this.textSize = textSize;
+		/** The {@link android.widget.ImageView.ScaleType} for the image. */
+		public Builder setImageScaleType(final ImageView.ScaleType imageScaleType) {
+			this.imageScaleType = imageScaleType;
+			return this;
+		}
+
+		/** The resource id for the padding for the crouton view's content. */
+		public Builder setPaddingDimensionResId(final int paddingResId) {
+			paddingDimensionResId = paddingResId;
+			return this;
+		}
+
+		/** The padding for the crouton view's content in pixels. */
+		public Builder setPaddingInPixels(final int padding) {
+			paddingInPixels = padding;
+			return this;
+		}
+
+		/** The text appearance resource id for the text. */
+		public Builder setTextAppearance(final int textAppearanceResId) {
+			this.textAppearanceResId = textAppearanceResId;
+			return this;
+		}
+
+		/**
+		 * Set the textColorResourceId option for the {@link Crouton}.
+		 * 
+		 * @param textColor The resource id of the text colorResourceId.
+		 * 
+		 * @return the {@link Builder}.
+		 */
+		public Builder setTextColor(final int textColor) {
+			textColorResourceId = textColor;
+
 			return this;
 		}
 
 		/** The text shadow color resource id. */
-		public Builder setTextShadowColor(int textShadowColorResId) {
+		public Builder setTextShadowColor(final int textShadowColorResId) {
 			this.textShadowColorResId = textShadowColorResId;
 			return this;
 		}
 
-		/** The text shadow radius. */
-		public Builder setTextShadowRadius(float textShadowRadius) {
-			this.textShadowRadius = textShadowRadius;
-			return this;
-		}
-
 		/** The text shadow horizontal offset. */
-		public Builder setTextShadowDx(float textShadowDx) {
+		public Builder setTextShadowDx(final float textShadowDx) {
 			this.textShadowDx = textShadowDx;
 			return this;
 		}
 
 		/** The text shadow vertical offset. */
-		public Builder setTextShadowDy(float textShadowDy) {
+		public Builder setTextShadowDy(final float textShadowDy) {
 			this.textShadowDy = textShadowDy;
 			return this;
 		}
 
-		/** The text appearance resource id for the text. */
-		public Builder setTextAppearance(int textAppearanceResId) {
-			this.textAppearanceResId = textAppearanceResId;
+		/** The text shadow radius. */
+		public Builder setTextShadowRadius(final float textShadowRadius) {
+			this.textShadowRadius = textShadowRadius;
 			return this;
 		}
 
-		/** The {@link android.widget.ImageView.ScaleType} for the image. */
-		public Builder setImageScaleType(ImageView.ScaleType imageScaleType) {
-			this.imageScaleType = imageScaleType;
+		/** The text size in sp. */
+		public Builder setTextSize(final int textSize) {
+			this.textSize = textSize;
 			return this;
 		}
 
-		/** The padding for the crouton view's content in pixels. */
-		public Builder setPaddingInPixels(int padding) {
-			this.paddingInPixels = padding;
+		/**
+		 * Set the isTileEnabled option for the {@link Crouton}.
+		 * 
+		 * @param isTileEnabled <code>true</code> if you want the
+		 *            backgroundResourceId to be tiled, else <code>false</code>.
+		 * 
+		 * @return the {@link Builder}.
+		 */
+		public Builder setTileEnabled(final boolean isTileEnabled) {
+			this.isTileEnabled = isTileEnabled;
+
 			return this;
 		}
 
-		/** The resource id for the padding for the crouton view's content. */
-		public Builder setPaddingDimensionResId(int paddingResId) {
-			this.paddingDimensionResId = paddingResId;
+		/**
+		 * Set the widthInPixels option for the {@link Crouton}.
+		 * 
+		 * @param width The width of the {@link Crouton} in pixel. Can also be
+		 *            {@link LayoutParams#MATCH_PARENT} or
+		 *            {@link LayoutParams#WRAP_CONTENT}.
+		 * 
+		 * @return the {@link Builder}.
+		 */
+		public Builder setWidth(final int width) {
+			widthInPixels = width;
+
 			return this;
 		}
 
-		/** @return a configured {@link Style} object. */
-		public CroutonStyle build() {
-			return new CroutonStyle(this);
-		}
-	}
+		/**
+		 * Set the resource id for the width option for the {@link Crouton}.
+		 * 
+		 * @param widthDimensionResId Resource ID of a dimension for the width
+		 *            of the {@link Crouton}.
+		 * 
+		 * @return the {@link Builder}.
+		 */
+		public Builder setWidthDimensionResId(final int widthDimensionResId) {
+			this.widthDimensionResId = widthDimensionResId;
 
-	@Override
-	public String toString() {
-		return "Style{" +
-			"configuration=" + configuration +
-			", backgroundColorResourceId=" + backgroundColorResourceId +
-			", backgroundDrawableResourceId=" + backgroundDrawableResourceId +
-			", backgroundColorValue=" + backgroundColorValue +
-			", isTileEnabled=" + isTileEnabled +
-			", textColorResourceId=" + textColorResourceId +
-			", heightInPixels=" + heightInPixels +
-			", heightDimensionResId=" + heightDimensionResId +
-			", widthInPixels=" + widthInPixels +
-			", widthDimensionResId=" + widthDimensionResId +
-			", gravity=" + gravity +
-			", imageDrawable=" + imageDrawable +
-			", imageResId=" + imageResId +
-			", imageScaleType=" + imageScaleType +
-			", textSize=" + textSize +
-			", textShadowColorResId=" + textShadowColorResId +
-			", textShadowRadius=" + textShadowRadius +
-			", textShadowDy=" + textShadowDy +
-			", textShadowDx=" + textShadowDx +
-			", textAppearanceResId=" + textAppearanceResId +
-			", paddingInPixels=" + paddingInPixels +
-			", paddingDimensionResId=" + paddingDimensionResId +
-			'}';
+			return this;
+		}
 	}
 }

@@ -22,12 +22,26 @@ package org.mariotaku.twidere.util;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 
+import android.os.Handler;
+
 public class AsyncTaskManager {
 
 	private final ArrayList<ManagedAsyncTask<?, ?, ?>> mTasks = new ArrayList<ManagedAsyncTask<?, ?, ?>>();
-
+	private final Handler mHandler;
 	private static AsyncTaskManager sInstance;
 
+	AsyncTaskManager() {
+		this(new Handler());
+	}
+	
+	AsyncTaskManager(Handler handler) {
+		mHandler = handler;
+	}
+	
+	public Handler getHandler() {
+		return mHandler;
+	}
+	
 	public <T> int add(final ManagedAsyncTask<T, ?, ?> task, final boolean exec, final T... params) {
 		final int hashCode = task.hashCode();
 		mTasks.add(task);

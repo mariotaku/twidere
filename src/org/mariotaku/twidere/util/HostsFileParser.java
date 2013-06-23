@@ -1,12 +1,29 @@
+/*
+ * 				Twidere - Twitter client for Android
+ *
+ *  Copyright (C) 2012-2013 Mariotaku Lee <mariotaku.lee@gmail.com>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere.util;
 
-import android.text.TextUtils;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Arrays;
 
 public class HostsFileParser {
 
@@ -16,11 +33,11 @@ public class HostsFileParser {
 	public HostsFileParser() {
 		this("/etc/hosts");
 	}
-	
+
 	public HostsFileParser(final String path) {
 		mPath = path;
 	}
-	
+
 	public boolean contains(final String host) {
 		return mHosts.containsKey(host);
 	}
@@ -28,7 +45,7 @@ public class HostsFileParser {
 	public String getAddress(final String host) {
 		return mHosts.get(host);
 	}
-	
+
 	public Map<String, String> getAll() {
 		return new HashMap<String, String>(mHosts);
 	}
@@ -56,7 +73,7 @@ public class HostsFileParser {
 				}
 				final String host = segments[1];
 				if (!contains(host)) {
-					mHosts.put(host, segments[0]);		
+					mHosts.put(host, segments[0]);
 				}
 			}
 			return true;

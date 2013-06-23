@@ -29,15 +29,16 @@ import android.support.v4.content.AsyncTaskLoader;
 
 public class SavedSearchesLoader extends AsyncTaskLoader<ResponseList<SavedSearch>> {
 
-	private final Twitter twitter;
+	private final long mAccountId;
 
 	public SavedSearchesLoader(final Context context, final long account_id) {
 		super(context);
-		twitter = getTwitterInstance(context, account_id, false);
+		mAccountId = account_id;
 	}
 
 	@Override
 	public ResponseList<SavedSearch> loadInBackground() {
+		final Twitter twitter = getTwitterInstance(getContext(), mAccountId, false);
 		if (twitter == null) return null;
 		try {
 			return twitter.getSavedSearches();

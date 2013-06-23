@@ -42,9 +42,8 @@ public class UserListsLoader extends AsyncTaskLoader<UserListsLoader.UserListsDa
 
 	public static final String LOGTAG = UserListsLoader.class.getSimpleName();
 
-	protected final Twitter mTwitter;
-	protected final long mAccountId;
-	protected final boolean mHiResProfileImage;
+	private final long mAccountId;
+	private final boolean mHiResProfileImage;
 	private final long mUserId;
 	private final String mScreenName;
 	private final List<ParcelableUserList> mUserLists;
@@ -56,7 +55,6 @@ public class UserListsLoader extends AsyncTaskLoader<UserListsLoader.UserListsDa
 	public UserListsLoader(final Context context, final long account_id, final long user_id, final String screen_name,
 			final UserListsData data, final long cursor, final int page) {
 		super(context);
-		mTwitter = getTwitterInstance(context, account_id, true);
 		mAccountId = account_id;
 		mUserId = user_id;
 		mCursor = cursor;
@@ -67,12 +65,10 @@ public class UserListsLoader extends AsyncTaskLoader<UserListsLoader.UserListsDa
 		mHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
-	public Twitter getTwitter() {
-		return mTwitter;
-	}
-
 	@Override
 	public UserListsData loadInBackground() {
+		final Twitter twitter = getTwitterInstance(getContext(), mAccountId, false);
+		if (twitter == null) return null;
 		try {
 			final List<UserList> user_lists;
 			final List<UserList> user_list_memberships;
@@ -80,16 +76,16 @@ public class UserListsLoader extends AsyncTaskLoader<UserListsLoader.UserListsDa
 				if (mUserLists != null) {
 					user_lists = Collections.emptyList();
 				} else {
-					user_lists = mTwitter.getUserLists(mUserId);
+					user_lists = twitter.getUserLists(mUserId);
 				}
-				user_list_memberships = mTwitter.getUserListMemberships(mUserId, mCursor);
+				user_list_memberships = twitter.getUserListMemberships(mUserId, mCursor);
 			} else if (mScreenName != null) {
 				if (mUserLists != null) {
 					user_lists = Collections.emptyList();
 				} else {
-					user_lists = mTwitter.getUserLists(mScreenName);
+					user_lists = twitter.getUserLists(mScreenName);
 				}
-				user_list_memberships = mTwitter.getUserListMemberships(mScreenName, mCursor);
+				user_list_memberships = twitter.getUserListMemberships(mScreenName, mCursor);
 			} else
 				return null;
 			final int user_lists_size = user_lists.size(), user_list_memberships_size = user_list_memberships.size();

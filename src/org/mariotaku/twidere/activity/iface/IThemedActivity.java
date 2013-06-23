@@ -19,8 +19,6 @@
 
 package org.mariotaku.twidere.activity.iface;
 
-import android.os.Bundle;
-
 public interface IThemedActivity {
 
 }

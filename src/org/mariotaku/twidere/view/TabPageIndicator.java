@@ -17,6 +17,12 @@
  */
 package org.mariotaku.twidere.view;
 
+import static org.mariotaku.twidere.util.Utils.getThemeColor;
+
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.preference.ThemeColorPreference;
+import org.mariotaku.twidere.util.MotionEventAccessor;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -33,11 +39,6 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.preference.ThemeColorPreference;
-import org.mariotaku.twidere.util.MotionEventAccessor;
-
-import static org.mariotaku.twidere.util.Utils.getThemeColor;
 
 /**
  * This widget implements the dynamic action bar tab behavior that can change
@@ -49,15 +50,15 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 	private int mCurrentItem;
 	private TitleProvider mAdapter;
 
-	private LinearLayout mTabLayout;
+	private final LinearLayout mTabLayout;
 	private ViewPager mViewPager;
 	private ViewPager.OnPageChangeListener mListener;
 
-	private LayoutInflater mInflater;
+	private final LayoutInflater mInflater;
 
 	int mMaxTabWidth;
 	private int mSelectedTabIndex;
-	private int mTabColor;
+	private final int mTabColor;
 
 	private boolean mSwitchingEnabled = true;
 	private boolean mDisplayLabel, mDisplayColor = true;

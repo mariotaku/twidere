@@ -19,6 +19,52 @@
 
 package org.mariotaku.twidere.provider;
 
+import static android.text.TextUtils.isEmpty;
+import static org.mariotaku.twidere.util.Utils.clearAccountColor;
+import static org.mariotaku.twidere.util.Utils.clearAccountName;
+import static org.mariotaku.twidere.util.Utils.getAccountName;
+import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
+import static org.mariotaku.twidere.util.Utils.getAllStatusesCount;
+import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
+import static org.mariotaku.twidere.util.Utils.getTableId;
+import static org.mariotaku.twidere.util.Utils.getTableNameById;
+import static org.mariotaku.twidere.util.Utils.isFiltered;
+import static org.mariotaku.twidere.util.Utils.isNotificationsSilent;
+import static org.mariotaku.twidere.util.Utils.isOnWifi;
+import static org.mariotaku.twidere.util.Utils.notifyForUpdatedUri;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.HomeActivity;
+import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.model.ParcelableDirectMessage;
+import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.model.PreviewImage;
+import org.mariotaku.twidere.preference.NotificationContentPreference;
+import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
+import org.mariotaku.twidere.provider.TweetStore.DirectMessages.Conversation;
+import org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry;
+import org.mariotaku.twidere.provider.TweetStore.Mentions;
+import org.mariotaku.twidere.provider.TweetStore.Preferences;
+import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.util.ArrayUtils;
+import org.mariotaku.twidere.util.ImagePreloader;
+import org.mariotaku.twidere.util.NoDuplicatesArrayList;
+import org.mariotaku.twidere.util.ParseUtils;
+import org.mariotaku.twidere.util.PermissionsManager;
+import org.mariotaku.twidere.util.Utils;
+
+import twitter4j.http.HostAddressResolver;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -40,54 +86,9 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.support.v4.app.NotificationCompat;
 import android.text.Html;
-import android.util.Log;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.HomeActivity;
-import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.model.ImageSpec;
-import org.mariotaku.twidere.model.ParcelableDirectMessage;
-import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.preference.NotificationContentPreference;
-import org.mariotaku.twidere.provider.TweetStore.Accounts;
-import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
-import org.mariotaku.twidere.provider.TweetStore.DirectMessages.Conversation;
-import org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry;
-import org.mariotaku.twidere.provider.TweetStore.Mentions;
-import org.mariotaku.twidere.provider.TweetStore.Preferences;
-import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.util.ArrayUtils;
-import org.mariotaku.twidere.util.ImagePreloader;
-import org.mariotaku.twidere.util.NoDuplicatesArrayList;
-import org.mariotaku.twidere.util.PermissionsManager;
-import org.mariotaku.twidere.util.Utils;
-import twitter4j.http.HostAddressResolver;
-
-import static android.text.TextUtils.isEmpty;
-import static org.mariotaku.twidere.util.Utils.clearAccountColor;
-import static org.mariotaku.twidere.util.Utils.clearAccountName;
-import static org.mariotaku.twidere.util.Utils.getAccountName;
-import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
-import static org.mariotaku.twidere.util.Utils.getAllStatusesCount;
-import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
-import static org.mariotaku.twidere.util.Utils.getTableId;
-import static org.mariotaku.twidere.util.Utils.getTableNameById;
-import static org.mariotaku.twidere.util.Utils.isFiltered;
-import static org.mariotaku.twidere.util.Utils.isNotificationsSilent;
-import static org.mariotaku.twidere.util.Utils.isOnWifi;
-import static org.mariotaku.twidere.util.Utils.notifyForUpdatedUri;
-import static org.mariotaku.twidere.util.Utils.parseInt;
-import static org.mariotaku.twidere.util.Utils.parseString;
-import android.os.ParcelFileDescriptor;
-import java.io.FileNotFoundException;
 
 public final class TwidereDataProvider extends ContentProvider implements Constants {
 
@@ -122,7 +123,6 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		}
 
 	};
-
 
 	@Override
 	public int bulkInsert(final Uri uri, final ContentValues[] values) {
@@ -186,7 +186,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			if (table_id == VIRTUAL_TABLE_ID_NOTIFICATIONS) {
 				final List<String> segments = uri.getPathSegments();
 				if (segments.size() != 2) return 0;
-				clearNotification(parseInt(segments.get(1)));
+				clearNotification(ParseUtils.parseInt(segments.get(1)));
 			}
 			switch (table_id) {
 				case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
@@ -257,7 +257,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		mContext.registerReceiver(mHomeActivityStateReceiver, filter);
 		return mDatabase != null;
 	}
-	
+
+	@Override
 	public ParcelFileDescriptor openFile(final Uri uri, final String mode) throws FileNotFoundException {
 		if (uri == null || mode == null) throw new IllegalArgumentException();
 		final int table_id = getTableId(uri);
@@ -267,16 +268,15 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		} else if ("rw".equals(mode) || "rwt".equals(mode)) {
 			checkReadPermission(table_id, table, null);
 			checkWritePermission(table_id, table);
-		} else {
+		} else
 			throw new IllegalArgumentException();
-		}
 		final int mode_code;
 		if ("r".equals(mode)) {
 			mode_code = ParcelFileDescriptor.MODE_READ_ONLY;
 		} else if ("rw".equals(mode)) {
 			mode_code = ParcelFileDescriptor.MODE_READ_WRITE;
 		} else {
-			mode_code = ParcelFileDescriptor.MODE_READ_WRITE|ParcelFileDescriptor.MODE_TRUNCATE;
+			mode_code = ParcelFileDescriptor.MODE_READ_WRITE | ParcelFileDescriptor.MODE_TRUNCATE;
 		}
 		switch (table_id) {
 			case VIRTUAL_TABLE_ID_CACHED_IMAGES: {
@@ -295,15 +295,18 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				final MatrixCursor c = new MatrixCursor(TweetStore.Permissions.MATRIX_COLUMNS);
 				final Map<String, Integer> map = mPermissionsManager.getAll();
 				for (final Map.Entry<String, Integer> item : map.entrySet()) {
-					c.addRow(new Object[] {item.getKey(), item.getValue()});
+					c.addRow(new Object[] { item.getKey(), item.getValue() });
 				}
 				return c;
 			}
 			final String table = getTableNameById(table_id);
 			checkReadPermission(table_id, table, projection);
 			switch (table_id) {
+				case VIRTUAL_TABLE_ID_ALL_PREFERENCES: {
+					return getPreferencesCursor(mPreferences, null);
+				}
 				case VIRTUAL_TABLE_ID_PREFERENCES: {
-					return getPreferencesCursor(mPreferences);
+					return getPreferencesCursor(mPreferences, uri.getLastPathSegment());
 				}
 				case VIRTUAL_TABLE_ID_DNS: {
 					return getDNSCursor(uri.getLastPathSegment());
@@ -420,8 +423,9 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				// Reading some infomation like user_id, screen_name etc is
 				// okay, but reading columns like password requires higher
 				// permission level.
-				if (projection == null || ArrayUtils.contains(projection, Accounts.BASIC_AUTH_PASSWORD, Accounts.OAUTH_TOKEN,
-						Accounts.TOKEN_SECRET) && !checkPermission(PERMISSION_ACCOUNTS))
+				if (projection == null
+						|| ArrayUtils.contains(projection, Accounts.BASIC_AUTH_PASSWORD, Accounts.OAUTH_TOKEN,
+								Accounts.TOKEN_SECRET) && !checkPermission(PERMISSION_ACCOUNTS))
 					throw new SecurityException("Access column " + ArrayUtils.toString(projection, ',', true)
 							+ " in database accounts requires level PERMISSION_LEVEL_ACCOUNTS");
 				if (!checkPermission(PERMISSION_READ))
@@ -574,8 +578,9 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 					: status.user_name);
 		}
 		final String profile_image_url_string = status.user_profile_image_url;
-		final File profile_image_file = mImagePreloader.getCachedImageFile(display_hires_profile_image ?
-				getBiggerTwitterProfileImage(profile_image_url_string) : profile_image_url_string);
+		final File profile_image_file = mImagePreloader
+				.getCachedImageFile(display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
+						: profile_image_url_string);
 		final int w = res.getDimensionPixelSize(R.dimen.notification_large_icon_width);
 		final int h = res.getDimensionPixelSize(R.dimen.notification_large_icon_height);
 		final Bitmap profile_image = profile_image_file != null && profile_image_file.isFile() ? BitmapFactory
@@ -682,8 +687,9 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		}
 		final String text_plain = message.text_plain;
 		final String profile_image_url_string = message.sender_profile_image_url;
-		final File profile_image_file = mImagePreloader.getCachedImageFile(display_hires_profile_image ?
-				getBiggerTwitterProfileImage(profile_image_url_string) : profile_image_url_string);
+		final File profile_image_file = mImagePreloader
+				.getCachedImageFile(display_hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url_string)
+						: profile_image_url_string);
 		final int w = res.getDimensionPixelSize(R.dimen.notification_large_icon_width);
 		final int h = res.getDimensionPixelSize(R.dimen.notification_large_icon_height);
 		final Bitmap profile_image = profile_image_file != null && profile_image_file.isFile() ? BitmapFactory
@@ -727,19 +733,6 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		}
 	}
 
-	private Cursor getDNSCursor(final String host) {
-		final MatrixCursor c = new MatrixCursor(TweetStore.DNS.MATRIX_COLUMNS);
-		try {
-			final String address = mHostAddressResolver.resolve(host);
-			if (host != null && address != null) {
-				c.addRow(new String[] { host, address });
-			}
-		} catch (final IOException e) {
-
-		}
-		return c;
-	}
-
 	private Cursor getCachedImageCursor(final String url) {
 		final MatrixCursor c = new MatrixCursor(TweetStore.CachedImages.MATRIX_COLUMNS);
 		final File file = mImagePreloader.getCachedImageFile(url);
@@ -754,25 +747,18 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		if (file == null) return null;
 		return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
 	}
-	private static Cursor getPreferencesCursor(SharedPreferences mPreferences) {
-		final MatrixCursor c = new MatrixCursor(TweetStore.Preferences.MATRIX_COLUMNS);
-		final Map<String, ?> map = mPreferences.getAll();
-		for (final Map.Entry<String, ?> item : map.entrySet()) {
-			final Object value = item.getValue();
-			final int type = getPreferenceType(value);
-			c.addRow(new Object[] { item.getKey(), parseString(value), type });
+
+	private Cursor getDNSCursor(final String host) {
+		final MatrixCursor c = new MatrixCursor(TweetStore.DNS.MATRIX_COLUMNS);
+		try {
+			final String address = mHostAddressResolver.resolve(host);
+			if (host != null && address != null) {
+				c.addRow(new String[] { host, address });
+			}
+		} catch (final IOException e) {
+
 		}
 		return c;
-	}
-
-	private static int getPreferenceType(final Object object) {
-		if (object == null) return Preferences.TYPE_NULL;
-		else if (object instanceof Boolean) return Preferences.TYPE_BOOLEAN;
-		else if (object instanceof Integer) return Preferences.TYPE_INTEGER;
-		else if (object instanceof Long) return Preferences.TYPE_LONG;
-		else if (object instanceof Float) return Preferences.TYPE_FLOAT;
-		else if (object instanceof String) return Preferences.TYPE_STRING;
-		return Preferences.TYPE_INVALID;
 	}
 
 	private void onDatabaseUpdated(final Uri uri) {
@@ -847,7 +833,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				break;
 			}
 			case TABLE_ID_MENTIONS: {
-				if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS, 
+				if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS,
 						NotificationContentPreference.DEFAULT_ENABLE_MENTIONS)) {
 					displayMentionsNotification(context, values);
 				}
@@ -883,13 +869,45 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			}
 			if (mPreferences.getBoolean(PREFERENCE_KEY_PRELOAD_PREVIEW_IMAGES, false)) {
 				final String text_html = v.getAsString(Statuses.TEXT_HTML);
-				for (final ImageSpec spec : Utils.getImagesInStatus(text_html)) {
+				for (final PreviewImage spec : Utils.getImagesInStatus(text_html)) {
 					if (spec.image_preview_url != null) {
 						mImagePreloader.preloadImage(spec.image_preview_url);
 					}
 				}
 			}
 		}
+	}
+
+	private static Cursor getPreferencesCursor(final SharedPreferences mPreferences, final String key) {
+		final MatrixCursor c = new MatrixCursor(TweetStore.Preferences.MATRIX_COLUMNS);
+		final Map<String, Object> map = new HashMap<String, Object>();
+		final Map<String, ?> all = mPreferences.getAll();
+		if (key == null) {
+			map.putAll(all);
+		} else {
+			map.put(key, all.get(key));
+		}
+		for (final Map.Entry<String, ?> item : map.entrySet()) {
+			final Object value = item.getValue();
+			final int type = getPreferenceType(value);
+			c.addRow(new Object[] { item.getKey(), ParseUtils.parseString(value), type });
+		}
+		return c;
+	}
+
+	private static int getPreferenceType(final Object object) {
+		if (object == null)
+			return Preferences.TYPE_NULL;
+		else if (object instanceof Boolean)
+			return Preferences.TYPE_BOOLEAN;
+		else if (object instanceof Integer)
+			return Preferences.TYPE_INTEGER;
+		else if (object instanceof Long)
+			return Preferences.TYPE_LONG;
+		else if (object instanceof Float)
+			return Preferences.TYPE_FLOAT;
+		else if (object instanceof String) return Preferences.TYPE_STRING;
+		return Preferences.TYPE_INVALID;
 	}
 
 	private static String stripMentionText(final String text, final String my_screen_name) {

@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.fragment;
 
+import java.util.List;
+
 import org.mariotaku.twidere.loader.UserFavoritesLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
 
@@ -28,7 +30,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
-import java.util.List;
 
 public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 
@@ -63,8 +64,8 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 		final int tab_position = args.getInt(INTENT_KEY_TAB_POSITION, -1);
 		mUserId = user_id;
 		mUserScreenName = screen_name;
-		return new UserFavoritesLoader(getActivity(), account_id, user_id, screen_name, max_id, since_id,
-				getData(), getSavedStatusesFileArgs(), tab_position);
+		return new UserFavoritesLoader(getActivity(), account_id, user_id, screen_name, max_id, since_id, getData(),
+				getSavedStatusesFileArgs(), tab_position);
 	}
 
 	@Override
@@ -86,14 +87,14 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 		super.onStop();
 	}
 
+	@Override
 	protected String[] getSavedStatusesFileArgs() {
 		final Bundle args = getArguments();
 		if (args == null) return null;
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 		final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
 		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-		return new String[] { AUTHORITY_USER_FAVORITES, "account" + account_id, "user" + user_id,
-			"name" + screen_name };
+		return new String[] { AUTHORITY_USER_FAVORITES, "account" + account_id, "user" + user_id, "name" + screen_name };
 	}
 
 }

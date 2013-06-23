@@ -77,23 +77,6 @@ public class DraftsActivity extends BaseDialogWhenLargeActivity implements Loade
 	};
 
 	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		mResolver = getContentResolver();
-		mTwitterWrapper = getTwidereApplication().getTwitterWrapper();
-		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mTextSize = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
-		setContentView(R.layout.base_list);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		mAdapter = new DraftsAdapter(this);
-		mListView = (ListView) findViewById(android.R.id.list);
-		mListView.setAdapter(mAdapter);
-		mListView.setOnItemClickListener(this);
-		mListView.setOnItemLongClickListener(this);
-		getSupportLoaderManager().initLoader(0, null, this);
-	}
-
-	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
 		final Uri uri = Drafts.CONTENT_URI;
 		final String[] cols = Drafts.COLUMNS;
@@ -181,6 +164,31 @@ public class DraftsActivity extends BaseDialogWhenLargeActivity implements Loade
 	}
 
 	@Override
+	public void onStart() {
+		final IntentFilter filter = new IntentFilter(BROADCAST_DRAFTS_DATABASE_UPDATED);
+		registerReceiver(mStatusReceiver, filter);
+		mTwitterWrapper.clearNotification(NOTIFICATION_ID_DRAFTS);
+		super.onStart();
+	}
+
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		mResolver = getContentResolver();
+		mTwitterWrapper = getTwidereApplication().getTwitterWrapper();
+		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mTextSize = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
+		setContentView(R.layout.base_list);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		mAdapter = new DraftsAdapter(this);
+		mListView = (ListView) findViewById(android.R.id.list);
+		mListView.setAdapter(mAdapter);
+		mListView.setOnItemClickListener(this);
+		mListView.setOnItemLongClickListener(this);
+		getSupportLoaderManager().initLoader(0, null, this);
+	}
+
+	@Override
 	protected void onResume() {
 		super.onResume();
 		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
@@ -189,14 +197,6 @@ public class DraftsActivity extends BaseDialogWhenLargeActivity implements Loade
 			mTextSize = text_size;
 			mListView.invalidateViews();
 		}
-	}
-
-	@Override
-	public void onStart() {
-		final IntentFilter filter = new IntentFilter(BROADCAST_DRAFTS_DATABASE_UPDATED);
-		registerReceiver(mStatusReceiver, filter);
-		mTwitterWrapper.clearNotification(NOTIFICATION_ID_DRAFTS);
-		super.onStart();
 	}
 
 	@Override

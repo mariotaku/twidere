@@ -23,13 +23,12 @@ import java.util.List;
 
 import org.mariotaku.twidere.model.ParcelableUser;
 
-import twitter4j.IDs;
+import twitter4j.CursorPaging;
+import twitter4j.PagableResponseList;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import android.content.Context;
-import twitter4j.PagableResponseList;
 import twitter4j.User;
-import twitter4j.CursorPaging;
+import android.content.Context;
 
 public class UserBlocksLoader extends CursorSupportUsersLoader {
 
@@ -39,9 +38,10 @@ public class UserBlocksLoader extends CursorSupportUsersLoader {
 	}
 
 	@Override
-	protected final PagableResponseList<User> getCursoredUsers(final Twitter twitter, final CursorPaging paging) throws TwitterException {
+	protected final PagableResponseList<User> getCursoredUsers(final Twitter twitter, final CursorPaging paging)
+			throws TwitterException {
 		if (twitter == null) return null;
 		return twitter.getBlocksList(paging);
 	}
-	
+
 }

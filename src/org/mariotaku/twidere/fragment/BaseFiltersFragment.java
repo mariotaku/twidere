@@ -20,7 +20,6 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.showInfoMessage;
-import static org.mariotaku.twidere.util.Utils.showOkMessage;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Filters;

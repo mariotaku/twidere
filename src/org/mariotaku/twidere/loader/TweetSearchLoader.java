@@ -19,25 +19,28 @@
 
 package org.mariotaku.twidere.loader;
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
+import static org.mariotaku.twidere.util.Utils.isFiltered;
+
 import java.util.Arrays;
 import java.util.List;
+
 import org.mariotaku.twidere.model.ParcelableStatus;
+
 import twitter4j.Paging;
 import twitter4j.Query;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-
-import static org.mariotaku.twidere.util.Utils.isFiltered;
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
 public class TweetSearchLoader extends Twitter4JStatusesLoader {
 
 	private final String mQuery;
 
 	public TweetSearchLoader(final Context context, final long account_id, final String query, final long max_id,
-			final long since_id, final List<ParcelableStatus> data, final String[] saved_statuses_args, final int tab_position) {
+			final long since_id, final List<ParcelableStatus> data, final String[] saved_statuses_args,
+			final int tab_position) {
 		super(context, account_id, max_id, since_id, data, saved_statuses_args, tab_position);
 		mQuery = query;
 	}
@@ -53,6 +56,7 @@ public class TweetSearchLoader extends Twitter4JStatusesLoader {
 		return Arrays.asList(twitter.search(query).getStatuses());
 	}
 
+	@Override
 	protected boolean shouldFilterStatus(final SQLiteDatabase database, final ParcelableStatus status) {
 		return isFiltered(database, status);
 	}

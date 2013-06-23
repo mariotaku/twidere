@@ -1,38 +1,61 @@
+/*
+ * 				Twidere - Twitter client for Android
+ *
+ *  Copyright (C) 2012-2013 Mariotaku Lee <mariotaku.lee@gmail.com>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere.util;
+
+import static android.text.TextUtils.isEmpty;
+
+import java.util.Collection;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.net.Uri;
-import java.util.List;
-
-import static android.text.TextUtils.isEmpty;
 
 public class ContentResolverUtils {
 
 	private static final int MAX_DELETE_COUNT = 128;
 
-	public static <T> int bulkDelete(final ContentResolver resolver, final Uri uri, final String in_column, final List<T> col_values,
-			final String extra_where, final boolean values_is_string) {
+	public static <T> int bulkDelete(final ContentResolver resolver, final Uri uri, final String in_column,
+			final Collection<T> col_values, final String extra_where, final boolean values_is_string) {
 		if (col_values == null) return 0;
 		return bulkDelete(resolver, uri, in_column, col_values.toArray(), extra_where, values_is_string);
 	}
 
-	public static <T> int bulkDelete(final ContentResolver resolver, final Uri uri, final String in_column, final T[] col_values,
-			final String extra_where, final boolean values_is_string) {
-		if (resolver == null || uri == null || isEmpty(in_column) || col_values == null || col_values.length == 0) return 0;
+	public static <T> int bulkDelete(final ContentResolver resolver, final Uri uri, final String in_column,
+			final T[] col_values, final String extra_where, final boolean values_is_string) {
+		if (resolver == null || uri == null || isEmpty(in_column) || col_values == null || col_values.length == 0)
+			return 0;
 		final int col_values_length = col_values.length, blocks_count = col_values_length / MAX_DELETE_COUNT + 1;
 		int rows_deleted = 0;
 		for (int i = 0; i < blocks_count; i++) {
 			final int start = i * MAX_DELETE_COUNT, end = Math.min(start + MAX_DELETE_COUNT, col_values_length);
 			final String[] block = ArrayUtils.toStringArray(ArrayUtils.subArray(col_values, start, end));
-			if (values_is_string) {			
-				final StringBuilder where = new StringBuilder(in_column + " IN(" + ArrayUtils.toStringForSQL(block) + ")");
+			if (values_is_string) {
+				final StringBuilder where = new StringBuilder(in_column + " IN(" + ArrayUtils.toStringForSQL(block)
+						+ ")");
 				if (!isEmpty(extra_where)) {
 					where.append("AND " + extra_where);
 				}
 				rows_deleted += resolver.delete(uri, where.toString(), block);
 			} else {
-				final StringBuilder where = new StringBuilder(in_column + " IN(" + ArrayUtils.toString(block, ',', true) + ")");
+				final StringBuilder where = new StringBuilder(in_column + " IN("
+						+ ArrayUtils.toString(block, ',', true) + ")");
 				if (!isEmpty(extra_where)) {
 					where.append("AND " + extra_where);
 				}
@@ -42,7 +65,7 @@ public class ContentResolverUtils {
 		return rows_deleted;
 	}
 
-	public static int bulkInsert(final ContentResolver resolver, final Uri uri, final List<ContentValues> values) {
+	public static int bulkInsert(final ContentResolver resolver, final Uri uri, final Collection<ContentValues> values) {
 		if (values == null) return 0;
 		return bulkInsert(resolver, uri, values.toArray(new ContentValues[values.size()]));
 	}
@@ -59,5 +82,5 @@ public class ContentResolverUtils {
 		}
 		return rows_inserted;
 	}
-	
+
 }

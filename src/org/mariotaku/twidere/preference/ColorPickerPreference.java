@@ -19,6 +19,7 @@ package org.mariotaku.twidere.preference;
 import static org.mariotaku.twidere.util.Utils.getColorPreviewBitmap;
 
 import org.mariotaku.twidere.graphic.AlphaPatternDrawable;
+import org.mariotaku.twidere.util.ViewAccessor;
 import org.mariotaku.twidere.view.ColorPickerView;
 import org.mariotaku.twidere.view.ColorPickerView.OnColorChangedListener;
 
@@ -85,10 +86,31 @@ public class ColorPickerPreference extends DialogPreference implements DialogInt
 		final Context context = getContext();
 		dialog.setIcon(new BitmapDrawable(context.getResources(), getColorPreviewBitmap(context, color)));
 	}
-	
+
+	@Override
 	public void setDefaultValue(final Object value) {
 		if (!(value instanceof Integer)) return;
 		mDefaultValue = (Integer) value;
+	}
+
+	protected void init(final Context context, final AttributeSet attrs) {
+		if (attrs != null) {
+			final String defaultValue = attrs.getAttributeValue(ANDROID_NS, ATTR_DEFAULTVALUE);
+			if (defaultValue != null && defaultValue.startsWith("#")) {
+				try {
+					setDefaultValue(Color.parseColor(defaultValue));
+				} catch (final IllegalArgumentException e) {
+					Log.e("ColorPickerPreference", "Wrong color: " + defaultValue);
+					setDefaultValue(Color.WHITE);
+				}
+			} else {
+				final int colorResourceId = attrs.getAttributeResourceValue(ANDROID_NS, ATTR_DEFAULTVALUE, 0);
+				if (colorResourceId != 0) {
+					setDefaultValue(context.getResources().getColor(colorResourceId));
+				}
+			}
+			mAlphaSliderEnabled = attrs.getAttributeBooleanValue(null, ATTR_ALPHASLIDER, false);
+		}
 	}
 
 	@Override
@@ -129,33 +151,11 @@ public class ColorPickerPreference extends DialogPreference implements DialogInt
 
 	private int getValue() {
 		try {
-			if (isPersistent()) {
-				return getPersistedInt(mDefaultValue);
-			}
+			if (isPersistent()) return getPersistedInt(mDefaultValue);
 		} catch (final ClassCastException e) {
 			e.printStackTrace();
 		}
 		return mDefaultValue;
-	}
-
-	protected void init(final Context context, final AttributeSet attrs) {
-		if (attrs != null) {
-			final String defaultValue = attrs.getAttributeValue(ANDROID_NS, ATTR_DEFAULTVALUE);
-			if (defaultValue != null && defaultValue.startsWith("#")) {
-				try {
-					setDefaultValue(Color.parseColor(defaultValue));
-				} catch (final IllegalArgumentException e) {
-					Log.e("ColorPickerPreference", "Wrong color: " + defaultValue);
-					setDefaultValue(Color.WHITE);
-				}
-			} else {
-				final int colorResourceId = attrs.getAttributeResourceValue(ANDROID_NS, ATTR_DEFAULTVALUE, 0);
-				if (colorResourceId != 0) {
-					setDefaultValue(context.getResources().getColor(colorResourceId));
-				}
-			}
-			mAlphaSliderEnabled = attrs.getAttributeBooleanValue(null, ATTR_ALPHASLIDER, false);
-		}
 	}
 
 	private void setPreviewColor() {
@@ -170,7 +170,7 @@ public class ColorPickerPreference extends DialogPreference implements DialogInt
 		// remove already create preview image
 		widget_frame.removeAllViews();
 		widget_frame.addView(image_view);
-		image_view.setBackgroundDrawable(new AlphaPatternDrawable((int) (5 * mDensity)));
+		ViewAccessor.setBackground(image_view, new AlphaPatternDrawable((int) (5 * mDensity)));
 		image_view.setImageBitmap(getColorPreviewBitmap(getContext(), getValue()));
 	}
 }

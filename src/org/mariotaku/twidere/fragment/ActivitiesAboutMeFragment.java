@@ -20,21 +20,21 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.openStatus;
-import static org.mariotaku.twidere.util.Utils.openUserFollowers;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.openUsers;
-import static org.mariotaku.twidere.util.Utils.parseString;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.mariotaku.twidere.loader.ActivitiesAboutMeLoader;
+import org.mariotaku.twidere.model.ParcelableActivity;
+import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.model.ParcelableUser;
 
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.view.View;
 import android.widget.ListView;
-import java.util.Arrays;
-import java.util.List;
-import org.mariotaku.twidere.loader.ActivitiesAboutMeLoader;
-import org.mariotaku.twidere.model.ParcelableActivity;
-import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.model.ParcelableUser;
 
 public class ActivitiesAboutMeFragment extends BaseActivitiesListFragment {
 
@@ -42,7 +42,8 @@ public class ActivitiesAboutMeFragment extends BaseActivitiesListFragment {
 	public Loader<List<ParcelableActivity>> onCreateLoader(final int id, final Bundle args) {
 		setProgressBarIndeterminateVisibility(true);
 		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
-		return new ActivitiesAboutMeLoader(getActivity(), account_id, getData(), getSavedActivitiesFileArgs(), getTabPosition());
+		return new ActivitiesAboutMeLoader(getActivity(), account_id, getData(), getSavedActivitiesFileArgs(),
+				getTabPosition());
 	}
 
 	@Override
@@ -99,11 +100,12 @@ public class ActivitiesAboutMeFragment extends BaseActivitiesListFragment {
 		}
 	}
 
+	@Override
 	protected String[] getSavedActivitiesFileArgs() {
 		final Bundle args = getArguments();
 		if (args == null) return null;
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-		return new String[] { AUTHORITY_ACTIVITIES_ABOUT_ME, "account" +  account_id};
+		return new String[] { AUTHORITY_ACTIVITIES_ABOUT_ME, "account" + account_id };
 	}
 
 }

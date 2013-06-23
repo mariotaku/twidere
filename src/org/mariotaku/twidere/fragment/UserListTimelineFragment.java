@@ -19,13 +19,15 @@
 
 package org.mariotaku.twidere.fragment;
 
-import android.content.Context;
-import android.os.Bundle;
-import android.support.v4.content.Loader;
 import java.util.List;
+
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.loader.UserListTimelineLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
+
+import android.content.Context;
+import android.os.Bundle;
+import android.support.v4.content.Loader;
 
 public class UserListTimelineFragment extends ParcelableStatusesListFragment {
 
@@ -51,7 +53,8 @@ public class UserListTimelineFragment extends ParcelableStatusesListFragment {
 		adapter.setFiltersEnabled(true);
 		adapter.setIgnoredFilterFields(false, false, false, false);
 	}
-	
+
+	@Override
 	protected String[] getSavedStatusesFileArgs() {
 		final Bundle args = getArguments();
 		if (args == null) return null;
@@ -60,8 +63,8 @@ public class UserListTimelineFragment extends ParcelableStatusesListFragment {
 		final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
 		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
 		final String list_name = args.getString(INTENT_KEY_LIST_NAME);
-		return new String[] { AUTHORITY_LIST_TIMELINE, "account" + account_id, "list_id" + list_id, "list_name" +
-				list_name, "user" + user_id, "screen_name" + screen_name };
+		return new String[] { AUTHORITY_LIST_TIMELINE, "account" + account_id, "list_id" + list_id,
+				"list_name" + list_name, "user" + user_id, "screen_name" + screen_name };
 	}
 
 }

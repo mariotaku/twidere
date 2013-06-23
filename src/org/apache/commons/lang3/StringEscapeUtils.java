@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.mariotaku.twidere.util.apache.commons.lang3;
+package org.apache.commons.lang3;
 
-import org.mariotaku.twidere.util.apache.commons.lang3.text.translate.AggregateTranslator;
-import org.mariotaku.twidere.util.apache.commons.lang3.text.translate.CharSequenceTranslator;
-import org.mariotaku.twidere.util.apache.commons.lang3.text.translate.EntityArrays;
-import org.mariotaku.twidere.util.apache.commons.lang3.text.translate.LookupTranslator;
-import org.mariotaku.twidere.util.apache.commons.lang3.text.translate.NumericEntityUnescaper;
+import org.apache.commons.lang3.text.translate.AggregateTranslator;
+import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
+import org.apache.commons.lang3.text.translate.EntityArrays;
+import org.apache.commons.lang3.text.translate.LookupTranslator;
+import org.apache.commons.lang3.text.translate.NumericEntityUnescaper;
 
 /**
  * <p>

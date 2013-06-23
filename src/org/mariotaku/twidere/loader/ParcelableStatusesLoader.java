@@ -27,13 +27,13 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
-import twitter4j.Twitter;
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 
 public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<ParcelableStatus>> implements Constants {
 
-	private final List<ParcelableStatus> mData = Collections.synchronizedList(new NoDuplicatesArrayList<ParcelableStatus>());
+	private final List<ParcelableStatus> mData = Collections
+			.synchronizedList(new NoDuplicatesArrayList<ParcelableStatus>());
 	private final boolean mFirstLoad;
 	private final int mTabPosition;
 
@@ -81,7 +81,7 @@ public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<Parc
 	protected int getTabPosition() {
 		return mTabPosition;
 	}
-	
+
 	protected boolean isFirstLoad() {
 		return mFirstLoad;
 	}

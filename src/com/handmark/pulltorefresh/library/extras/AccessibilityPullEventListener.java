@@ -15,15 +15,15 @@
  *******************************************************************************/
 package com.handmark.pulltorefresh.library.extras;
 
+import static org.mariotaku.twidere.util.Utils.announceForAccessibilityCompat;
 import android.content.Context;
 import android.os.Build;
 import android.text.TextUtils;
 import android.view.View;
+
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
-
-import static org.mariotaku.twidere.util.Utils.announceForAccessibilityCompat;
 
 public class AccessibilityPullEventListener<V extends View> implements PullToRefreshBase.OnPullEventListener<V> {
 
@@ -34,7 +34,7 @@ public class AccessibilityPullEventListener<V extends View> implements PullToRef
 	 * 
 	 * @param context - Context
 	 */
-	public AccessibilityPullEventListener(Context context) {
+	public AccessibilityPullEventListener(final Context context) {
 		mContext = context;
 	}
 
@@ -46,14 +46,13 @@ public class AccessibilityPullEventListener<V extends View> implements PullToRef
 		announceForAccessibilityCompat(mContext, refreshView, text, getClass());
 	}
 
-	private static <V extends View> CharSequence getAccessibilityText(final PullToRefreshBase<V> refreshView, State state, Mode mode) {
-		if (state == State.PULL_TO_REFRESH) {
+	private static <V extends View> CharSequence getAccessibilityText(final PullToRefreshBase<V> refreshView,
+			final State state, final Mode mode) {
+		if (state == State.PULL_TO_REFRESH)
 			return refreshView.getPullLabel(mode);
-		} else if (state == State.RELEASE_TO_REFRESH) {
+		else if (state == State.RELEASE_TO_REFRESH)
 			return refreshView.getReleaseLabel(mode);
-		} else if (state == State.REFRESHING) {
-			return refreshView.getRefreshingLabel(mode);
-		}
+		else if (state == State.REFRESHING) return refreshView.getRefreshingLabel(mode);
 		return null;
 	}
 }

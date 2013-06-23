@@ -6,10 +6,11 @@ import android.graphics.drawable.Drawable;
 public interface ILoadingLayout {
 
 	public CharSequence getPullLabel();
-	
+
 	public CharSequence getRefreshingLabel();
 
 	public CharSequence getReleaseLabel();
+
 	/**
 	 * Set the Last Updated Text. This displayed under the main label when
 	 * Pulling

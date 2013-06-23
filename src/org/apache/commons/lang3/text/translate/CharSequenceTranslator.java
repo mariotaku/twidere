@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.mariotaku.twidere.util.apache.commons.lang3.text.translate;
+package org.apache.commons.lang3.text.translate;
 
 import java.io.IOException;
 import java.io.StringWriter;

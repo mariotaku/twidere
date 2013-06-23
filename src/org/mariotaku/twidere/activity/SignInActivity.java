@@ -24,8 +24,6 @@ import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getColorPreviewBitmap;
 import static org.mariotaku.twidere.util.Utils.isUserLoggedIn;
 import static org.mariotaku.twidere.util.Utils.makeAccountContentValues;
-import static org.mariotaku.twidere.util.Utils.parseInt;
-import static org.mariotaku.twidere.util.Utils.parseString;
 import static org.mariotaku.twidere.util.Utils.setUserAgent;
 import static org.mariotaku.twidere.util.Utils.showErrorMessage;
 
@@ -40,9 +38,11 @@ import org.mariotaku.twidere.util.OAuthPasswordAuthenticator;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator.AuthenticationException;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator.AuthenticityTokenException;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator.WrongUserPassException;
+import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.httpclient.HttpClientImpl;
 
 import twitter4j.Twitter;
+import twitter4j.TwitterConstants;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.User;
@@ -54,8 +54,8 @@ import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 import twitter4j.http.HttpClientWrapper;
 import twitter4j.http.HttpResponse;
-import android.app.Dialog;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -66,8 +66,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -80,13 +79,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.support.v4.app.Fragment;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
-import de.keyboardsurfer.android.widget.crouton.CroutonConfiguration;
 import de.keyboardsurfer.android.widget.crouton.CroutonLifecycleCallback;
+import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 
-public class SignInActivity extends BaseActivity implements OnClickListener, TextWatcher, CroutonLifecycleCallback {
+public class SignInActivity extends BaseActivity implements TwitterConstants, OnClickListener, TextWatcher,
+		CroutonLifecycleCallback {
 
 	private static final String TWITTER_SIGNUP_URL = "https://twitter.com/signup";
 
@@ -198,7 +196,8 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 				break;
 			}
 			case R.id.sign_in_method_introduction: {
-				new SignInMethodIntroductionDialogFragment().show(getSupportFragmentManager(), "sign_in_method_introduction");
+				new SignInMethodIntroductionDialogFragment().show(getSupportFragmentManager(),
+						"sign_in_method_introduction");
 				break;
 			}
 		}
@@ -214,6 +213,81 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 		mSigninSignupContainer = (LinearLayout) findViewById(R.id.sign_in_sign_up);
 		mUsernamePasswordContainer = (LinearLayout) findViewById(R.id.username_password);
 		mSetColorButton = (ImageButton) findViewById(R.id.set_color);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(final Menu menu) {
+		getMenuInflater().inflate(R.menu.menu_login, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public void onDestroy() {
+		getSupportLoaderManager().destroyLoader(0);
+		super.onDestroy();
+	}
+
+	@Override
+	public void onDisplayed() {
+		mBackPressed = true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_HOME: {
+				final long[] account_ids = getActivatedAccountIds(this);
+				if (account_ids.length > 0) {
+					onBackPressed();
+				}
+				break;
+			}
+			case MENU_SETTINGS: {
+				final Intent intent = new Intent(this, SettingsActivity.class);
+				startActivity(intent);
+				break;
+			}
+			case MENU_EDIT_API: {
+				if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) return false;
+				final Intent intent = new Intent(this, EditAPIActivity.class);
+				final Bundle bundle = new Bundle();
+				bundle.putString(Accounts.REST_BASE_URL, mRESTBaseURL);
+				bundle.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRESTBaseURL);
+				bundle.putString(Accounts.OAUTH_BASE_URL, mOAuthBaseURL);
+				bundle.putString(Accounts.SIGNING_OAUTH_BASE_URL, mSigningOAuthBaseURL);
+				bundle.putInt(Accounts.AUTH_TYPE, mAuthType);
+				intent.putExtras(bundle);
+				startActivityForResult(intent, REQUEST_EDIT_API);
+				break;
+			}
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onRemoved() {
+		mBackPressed = false;
+	}
+
+	@Override
+	public void onSaveInstanceState(final Bundle outState) {
+		saveEditedText();
+		outState.putString(Accounts.REST_BASE_URL, mRESTBaseURL);
+		outState.putString(Accounts.OAUTH_BASE_URL, mOAuthBaseURL);
+		outState.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRESTBaseURL);
+		outState.putString(Accounts.SIGNING_OAUTH_BASE_URL, mSigningOAuthBaseURL);
+		outState.putString(Accounts.SCREEN_NAME, mUsername);
+		outState.putString(Accounts.PASSWORD, mPassword);
+		outState.putInt(Accounts.AUTH_TYPE, mAuthType);
+		if (mUserColor != null) {
+			outState.putInt(Accounts.USER_COLOR, mUserColor);
+		}
+		super.onSaveInstanceState(outState);
+	}
+
+	@Override
+	public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
+		setSignInButton();
 	}
 
 	@Override
@@ -279,129 +353,6 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 		}
 	}
 
-	@Override
-	public void onDisplayed() {
-		mBackPressed = true;
-	}
-
-	@Override
-	public void onRemoved() {
-		mBackPressed = false;
-	}
-	
-	void onSignInStart() {
-		setSupportProgressBarIndeterminateVisibility(true);
-		mEditPassword.setEnabled(false);
-		mEditUsername.setEnabled(false);
-		mSignInButton.setEnabled(false);
-		mSignUpButton.setEnabled(false);
-		mSetColorButton.setEnabled(false);		
-	}
-
-	void onSignInResult(SignInActivity.SigninResponse result) {
-		if (result != null) {
-			if (result.succeed) {
-				final ContentValues values = makeAccountContentValues(result.conf, result.basic_password,
-						result.access_token, result.user, result.auth_type, result.color);
-				if (values != null) {
-					mResolver.insert(Accounts.CONTENT_URI, values);
-				}
-				mPreferences.edit().putBoolean(PREFERENCE_KEY_API_UPGRADE_CONFIRMED, true).commit();
-				final Intent intent = new Intent(this, HomeActivity.class);
-				final Bundle bundle = new Bundle();
-				bundle.putLongArray(INTENT_KEY_IDS, new long[] { mLoggedId });
-				intent.putExtras(bundle);
-				intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-				startActivity(intent);
-				finish();
-			} else if (result.already_logged_in) {
-				Crouton.makeText(this, R.string.error_already_logged_in, CroutonStyle.ALERT).show();
-			} else {
-				if (result.exception instanceof AuthenticityTokenException) {
-					Crouton.makeText(this, R.string.wrong_api_key, CroutonStyle.ALERT).show();
-				} else if (result.exception instanceof WrongUserPassException) {
-					Crouton.makeText(this, R.string.wrong_username_password, CroutonStyle.ALERT).show();
-				} else if (result.exception instanceof AuthenticationException) {
-					showErrorMessage(this, getString(R.string.signing_in), result.exception.getCause(), true);
-				} else {
-					showErrorMessage(this, getString(R.string.signing_in), result.exception, true);
-				}
-			}
-		}
-		setSupportProgressBarIndeterminateVisibility(false);
-		mEditPassword.setEnabled(true);
-		mEditUsername.setEnabled(true);
-		mSignInButton.setEnabled(true);
-		mSignUpButton.setEnabled(true);
-		mSetColorButton.setEnabled(true);
-		setSignInButton();
-	}
-	
-	@Override
-	public boolean onCreateOptionsMenu(final Menu menu) {
-		getMenuInflater().inflate(R.menu.menu_login, menu);
-		return super.onCreateOptionsMenu(menu);
-	}
-
-	@Override
-	public void onDestroy() {
-		getSupportLoaderManager().destroyLoader(0);
-		super.onDestroy();
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
-		switch (item.getItemId()) {
-			case MENU_HOME: {
-				final long[] account_ids = getActivatedAccountIds(this);
-				if (account_ids.length > 0) {
-					onBackPressed();
-				}
-				break;
-			}
-			case MENU_SETTINGS: {
-				final Intent intent = new Intent(this, SettingsActivity.class);
-				startActivity(intent);
-				break;
-			}
-			case MENU_EDIT_API: {
-				if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) return false;
-				final Intent intent = new Intent(this, EditAPIActivity.class);
-				final Bundle bundle = new Bundle();
-				bundle.putString(Accounts.REST_BASE_URL, mRESTBaseURL);
-				bundle.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRESTBaseURL);
-				bundle.putString(Accounts.OAUTH_BASE_URL, mOAuthBaseURL);
-				bundle.putString(Accounts.SIGNING_OAUTH_BASE_URL, mSigningOAuthBaseURL);
-				bundle.putInt(Accounts.AUTH_TYPE, mAuthType);
-				intent.putExtras(bundle);
-				startActivityForResult(intent, REQUEST_EDIT_API);
-				break;
-			}
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public void onSaveInstanceState(final Bundle outState) {
-		saveEditedText();
-		outState.putString(Accounts.REST_BASE_URL, mRESTBaseURL);
-		outState.putString(Accounts.OAUTH_BASE_URL, mOAuthBaseURL);
-		outState.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRESTBaseURL);
-		outState.putString(Accounts.SIGNING_OAUTH_BASE_URL, mSigningOAuthBaseURL);
-		outState.putString(Accounts.SCREEN_NAME, mUsername);
-		outState.putString(Accounts.PASSWORD, mPassword);
-		outState.putInt(Accounts.AUTH_TYPE, mAuthType);
-		if (mUserColor != null) {
-			outState.putInt(Accounts.USER_COLOR, mUserColor);
-		}
-		super.onSaveInstanceState(outState);
-	}
-
-	@Override
-	public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
-		setSignInButton();
-	}
-
 	private void doLogin(final boolean is_browser_sign_in, final Bundle extras) {
 		final Bundle args = new Bundle();
 		if (extras != null) {
@@ -460,7 +411,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 		cb.setIgnoreSSLError(ignore_ssl_error);
 		if (enable_proxy) {
 			final String proxy_host = mPreferences.getString(PREFERENCE_KEY_PROXY_HOST, null);
-			final int proxy_port = parseInt(mPreferences.getString(PREFERENCE_KEY_PROXY_PORT, "-1"));
+			final int proxy_port = ParseUtils.parseInt(mPreferences.getString(PREFERENCE_KEY_PROXY_PORT, "-1"));
 			if (!isEmpty(proxy_host) && proxy_port > 0) {
 				cb.setHttpProxyHost(proxy_host);
 				cb.setHttpProxyPort(proxy_port);
@@ -470,8 +421,8 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 	}
 
 	private void saveEditedText() {
-		mUsername = parseString(mEditUsername.getText());
-		mPassword = parseString(mEditPassword.getText());
+		mUsername = ParseUtils.parseString(mEditUsername.getText());
+		mPassword = ParseUtils.parseString(mEditPassword.getText());
 	}
 
 	private void setSignInButton() {
@@ -487,6 +438,54 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 		}
 	}
 
+	void onSignInResult(final SignInActivity.SigninResponse result) {
+		if (result != null) {
+			if (result.succeed) {
+				final ContentValues values = makeAccountContentValues(result.conf, result.basic_password,
+						result.access_token, result.user, result.auth_type, result.color);
+				if (values != null) {
+					mResolver.insert(Accounts.CONTENT_URI, values);
+				}
+				mPreferences.edit().putBoolean(PREFERENCE_KEY_API_UPGRADE_CONFIRMED, true).commit();
+				final Intent intent = new Intent(this, HomeActivity.class);
+				final Bundle bundle = new Bundle();
+				bundle.putLongArray(INTENT_KEY_IDS, new long[] { mLoggedId });
+				intent.putExtras(bundle);
+				intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+				startActivity(intent);
+				finish();
+			} else if (result.already_logged_in) {
+				Crouton.makeText(this, R.string.error_already_logged_in, CroutonStyle.ALERT).show();
+			} else {
+				if (result.exception instanceof AuthenticityTokenException) {
+					Crouton.makeText(this, R.string.wrong_api_key, CroutonStyle.ALERT).show();
+				} else if (result.exception instanceof WrongUserPassException) {
+					Crouton.makeText(this, R.string.wrong_username_password, CroutonStyle.ALERT).show();
+				} else if (result.exception instanceof AuthenticationException) {
+					showErrorMessage(this, getString(R.string.signing_in), result.exception.getCause(), true);
+				} else {
+					showErrorMessage(this, getString(R.string.signing_in), result.exception, true);
+				}
+			}
+		}
+		setSupportProgressBarIndeterminateVisibility(false);
+		mEditPassword.setEnabled(true);
+		mEditUsername.setEnabled(true);
+		mSignInButton.setEnabled(true);
+		mSignUpButton.setEnabled(true);
+		mSetColorButton.setEnabled(true);
+		setSignInButton();
+	}
+
+	void onSignInStart() {
+		setSupportProgressBarIndeterminateVisibility(true);
+		mEditPassword.setEnabled(false);
+		mEditUsername.setEnabled(false);
+		mSignInButton.setEnabled(false);
+		mSignUpButton.setEnabled(false);
+		mSetColorButton.setEnabled(false);
+	}
+
 	public static abstract class AbstractSignInTask extends AsyncTask<Void, Void, SigninResponse> {
 
 		protected final Configuration conf;
@@ -497,21 +496,24 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 			this.callback = callback;
 		}
 
-		protected void onPreExecute() {
-			if (callback != null) {
-				callback.onSignInStart();
-			}
-		}	
-
-		protected void onPostExecute(SigninResponse result) {
+		@Override
+		protected void onPostExecute(final SigninResponse result) {
 			if (callback != null) {
 				callback.onSignInResult(result);
 			}
 		}
-		
+
+		@Override
+		protected void onPreExecute() {
+			if (callback != null) {
+				callback.onSignInStart();
+			}
+		}
+
 		int analyseUserProfileColor(final User user) throws TwitterException {
 			final HttpClientWrapper client = new HttpClientWrapper(conf);
-			final String profile_image_url = user != null ? parseString(user.getProfileImageUrlHttps()) : null;
+			final String profile_image_url = user != null ? ParseUtils.parseString(user.getProfileImageUrlHttps())
+					: null;
 			final HttpResponse conn = profile_image_url != null ? client.get(profile_image_url, null) : null;
 			final Bitmap bm = conn != null ? BitmapFactory.decodeStream(conn.asStream()) : null;
 			if (bm == null) throw new TwitterException("Can't get profile image");
@@ -528,9 +530,8 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 
 		private final Context context;
 
-		public BrowserSignInTask(final SignInActivity context, final Configuration conf,
-				final String request_token, final String request_token_secret, final String oauth_verifier,
-				final Integer user_color) {
+		public BrowserSignInTask(final SignInActivity context, final Configuration conf, final String request_token,
+				final String request_token_secret, final String oauth_verifier, final Integer user_color) {
 			super(context, conf);
 			this.context = context;
 			this.conf = conf;
@@ -541,7 +542,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 		}
 
 		@Override
-		protected SigninResponse doInBackground(Void... params) {
+		protected SigninResponse doInBackground(final Void... params) {
 			try {
 				final Twitter twitter = new TwitterFactory(conf).getInstance();
 				final AccessToken access_token = twitter.getOAuthAccessToken(new RequestToken(conf, request_token,
@@ -558,7 +559,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 			}
 		}
 	}
-	
+
 	public static class SignInMethodIntroductionDialogFragment extends BaseDialogFragment {
 
 		@Override
@@ -569,7 +570,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 			builder.setPositiveButton(android.R.string.ok, null);
 			return builder.create();
 		}
-		
+
 	}
 
 	public static class SignInTask extends AbstractSignInTask {
@@ -593,7 +594,7 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 		}
 
 		@Override
-		protected SigninResponse doInBackground(Void... params) {
+		protected SigninResponse doInBackground(final Void... params) {
 			try {
 				switch (auth_type) {
 					case Accounts.AUTH_TYPE_OAUTH:
@@ -632,7 +633,8 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 			final User user = twitter.showUser(user_id);
 			if (isUserLoggedIn(context, user_id)) return new SigninResponse(true, false, null);
 			final int color = user_color != null ? user_color : analyseUserProfileColor(user);
-			return new SigninResponse(false, true, null, conf, null, access_token, user, Accounts.AUTH_TYPE_OAUTH, color);
+			return new SigninResponse(false, true, null, conf, null, access_token, user, Accounts.AUTH_TYPE_OAUTH,
+					color);
 		}
 
 		private SigninResponse authTwipOMode() throws TwitterException {
@@ -653,9 +655,16 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 			if (user_id <= 0) return new SigninResponse(false, false, null);
 			if (isUserLoggedIn(context, user_id)) return new SigninResponse(true, false, null);
 			final int color = user_color != null ? user_color : analyseUserProfileColor(user);
-			return new SigninResponse(false, true, null, conf, null, access_token, user, Accounts.AUTH_TYPE_XAUTH, color);
+			return new SigninResponse(false, true, null, conf, null, access_token, user, Accounts.AUTH_TYPE_XAUTH,
+					color);
 		}
 
+	}
+
+	static interface SigninCallback {
+		void onSigninResult(SigninResponse response);
+
+		void onSigninStart();
 	}
 
 	static class SigninResponse {
@@ -685,10 +694,5 @@ public class SignInActivity extends BaseActivity implements OnClickListener, Tex
 			this.auth_type = auth_type;
 			this.color = color;
 		}
-	}
-	
-	static interface SigninCallback {
-		void onSigninStart();
-		void onSigninResult(SigninResponse response);
 	}
 }

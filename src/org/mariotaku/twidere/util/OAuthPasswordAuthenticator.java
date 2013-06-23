@@ -23,11 +23,7 @@ import static android.text.TextUtils.isEmpty;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.ccil.cowan.tagsoup.HTMLSchema;
 import org.ccil.cowan.tagsoup.Parser;
@@ -48,12 +44,11 @@ import twitter4j.http.HttpClientFactory;
 import twitter4j.http.HttpParameter;
 import twitter4j.http.HttpRequest;
 import twitter4j.http.RequestMethod;
-import java.util.regex.Pattern;
 
 public class OAuthPasswordAuthenticator implements Constants {
 
 	private static final String PATTERN_OAUTH_PIN = "^\\d+$";
- 
+
 	private final Twitter twitter;
 	private final HttpClient client;
 
@@ -75,7 +70,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 	private final ContentHandler mOAuthPINHandler = new DummyContentHandler() {
 
 		private boolean start_div, start_code;
-		
+
 		@Override
 		public void characters(final char[] ch, final int start, final int length) {
 			if (start_code && ch != null) {
@@ -88,7 +83,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 			}
 		}
 
-		@Override	
+		@Override
 		public void endElement(final String uri, final String localName, final String qName) {
 			if ("div".equalsIgnoreCase(localName)) {
 				start_div = false;
@@ -96,7 +91,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 				start_code = false;
 			}
 		}
-		
+
 		@Override
 		public void startElement(final String uri, final String localName, final String qName, final Attributes atts) {
 			if (!isEmpty(oauth_pin)) return;
@@ -139,7 +134,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 			params[2] = new HttpParameter("session[username_or_email]", username);
 			params[3] = new HttpParameter("session[password]", password);
 			readOAuthPIN(getHTTPContent(conf.getOAuthAuthorizationURL().toString(), true, params));
-			if (isEmpty(oauth_pin)) throw new WrongUserPassException();		
+			if (isEmpty(oauth_pin)) throw new WrongUserPassException();
 			return twitter.getOAuthAccessToken(request_token, oauth_pin);
 		} catch (final IOException e) {
 			throw new AuthenticationException(e);
@@ -180,7 +175,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 	private synchronized void setAuthenticityToken(final String authenticity_token) {
 		this.authenticity_token = authenticity_token;
 	}
-	
+
 	public static class AuthenticationException extends Exception {
 
 		private static final long serialVersionUID = -5629194721838256378L;
@@ -199,9 +194,13 @@ public class OAuthPasswordAuthenticator implements Constants {
 
 	public static final class AuthenticityTokenException extends AuthenticationException {
 
+		private static final long serialVersionUID = -1840298989316218380L;
+
 	}
 
 	public static final class WrongUserPassException extends AuthenticationException {
+
+		private static final long serialVersionUID = -4880737459768513029L;
 
 	}
 

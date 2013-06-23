@@ -19,6 +19,22 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.getTabIconDrawable;
+import static org.mariotaku.twidere.util.Utils.getTabIconObject;
+import static org.mariotaku.twidere.util.Utils.getTabTypeName;
+
+import org.mariotaku.popupmenu.PopupMenu;
+import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.ArrayAdapter;
+import org.mariotaku.twidere.adapter.SeparatedListAdapter;
+import org.mariotaku.twidere.fragment.CustomTabsFragment.CustomTabsAdapter.CustomTabSpec;
+import org.mariotaku.twidere.fragment.CustomTabsFragment.DefaultTabsAdapter.DefaultTabSpec;
+import org.mariotaku.twidere.fragment.CustomTabsFragment.ITabsAdapter.TabSpec;
+import org.mariotaku.twidere.graphic.DropShadowDrawable;
+import org.mariotaku.twidere.model.Panes;
+import org.mariotaku.twidere.provider.TweetStore.Tabs;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -56,23 +72,6 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import org.mariotaku.popupmenu.PopupMenu;
-import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.ArrayAdapter;
-import org.mariotaku.twidere.adapter.SeparatedListAdapter;
-import org.mariotaku.twidere.fragment.CustomTabsFragment.CustomTabsAdapter.CustomTabSpec;
-import org.mariotaku.twidere.fragment.CustomTabsFragment.DefaultTabsAdapter.DefaultTabSpec;
-import org.mariotaku.twidere.fragment.CustomTabsFragment.ITabsAdapter.TabSpec;
-import org.mariotaku.twidere.model.Panes;
-import org.mariotaku.twidere.provider.TweetStore.Tabs;
-
-import static org.mariotaku.twidere.util.Utils.getTabIconDrawable;
-import static org.mariotaku.twidere.util.Utils.getTabIconObject;
-import static org.mariotaku.twidere.util.Utils.getTabTypeName;
-import org.mariotaku.twidere.preference.ThemeColorPreference;
-import android.graphics.PorterDuff;
-import org.mariotaku.twidere.graphic.DropShadowDrawable;
 
 public class CustomTabsFragment extends BaseListFragment implements LoaderCallbacks<Cursor>, OnItemLongClickListener,
 		OnMenuItemClickListener, OnItemClickListener, Panes.Right {
@@ -338,12 +337,9 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 
 		private CursorIndices mIndices;
 
-		private final int mThemeColor;
-
 		public CustomTabsAdapter(final Context context) {
 			super(context, R.layout.two_line_with_icon_list_item, null, new String[] { Tabs.NAME },
-				  new int[] { android.R.id.text1 }, 0);
-			mThemeColor = ThemeColorPreference.getThemeColor(mContext);
+					new int[] { android.R.id.text1 }, 0);
 		}
 
 		@Override
@@ -654,12 +650,9 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 		private final SharedPreferences prefs;
 		private final Context mContext;
 
-		private final int mThemeColor;
-
 		public DefaultTabsAdapter(final Context context) {
 			super(context, R.layout.two_line_with_icon_list_item);
 			mContext = context;
-			mThemeColor = ThemeColorPreference.getThemeColor(mContext);
 			prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 			reload();
 		}

@@ -115,10 +115,14 @@ public final class DatabaseHelper extends SQLiteOpenHelper implements Constants 
 		safeUpgrade(db, TABLE_CACHED_USERS, CachedUsers.COLUMNS, CachedUsers.TYPES, true, true, null);
 		safeUpgrade(db, TABLE_CACHED_STATUSES, CachedStatuses.COLUMNS, CachedStatuses.TYPES, true, true, null);
 		safeUpgrade(db, TABLE_CACHED_HASHTAGS, CachedHashtags.COLUMNS, CachedHashtags.TYPES, true, true, null);
-		safeUpgrade(db, TABLE_FILTERED_USERS, Filters.Users.COLUMNS, Filters.Users.TYPES, true, false, filters_db_table_alias);
-		safeUpgrade(db, TABLE_FILTERED_KEYWORDS, Filters.Keywords.COLUMNS, Filters.Keywords.TYPES, true, false, filters_db_table_alias);
-		safeUpgrade(db, TABLE_FILTERED_SOURCES, Filters.Sources.COLUMNS, Filters.Sources.TYPES, true, false, filters_db_table_alias);
-		safeUpgrade(db, TABLE_FILTERED_LINKS, Filters.Links.COLUMNS, Filters.Links.TYPES, true, false, filters_db_table_alias);
+		safeUpgrade(db, TABLE_FILTERED_USERS, Filters.Users.COLUMNS, Filters.Users.TYPES, true, false,
+				filters_db_table_alias);
+		safeUpgrade(db, TABLE_FILTERED_KEYWORDS, Filters.Keywords.COLUMNS, Filters.Keywords.TYPES, true, false,
+				filters_db_table_alias);
+		safeUpgrade(db, TABLE_FILTERED_SOURCES, Filters.Sources.COLUMNS, Filters.Sources.TYPES, true, false,
+				filters_db_table_alias);
+		safeUpgrade(db, TABLE_FILTERED_LINKS, Filters.Links.COLUMNS, Filters.Links.TYPES, true, false,
+				filters_db_table_alias);
 		safeUpgrade(db, TABLE_DIRECT_MESSAGES_INBOX, DirectMessages.Inbox.COLUMNS, DirectMessages.Inbox.TYPES, true,
 				true, null);
 		safeUpgrade(db, TABLE_DIRECT_MESSAGES_OUTBOX, DirectMessages.Outbox.COLUMNS, DirectMessages.Outbox.TYPES, true,

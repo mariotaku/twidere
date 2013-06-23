@@ -27,10 +27,10 @@ import android.util.AttributeSet;
 
 public class NotificationContentPreference extends MultiSelectListPreference implements Constants {
 
- 	public static final boolean DEFAULT_ENABLE_HOME_TTMELINE = false;
- 	public static final boolean DEFAULT_ENABLE_MENTIONS = true;
- 	public static final boolean DEFAULT_ENABLE_DIRECT_MESSAGES = true;
- 
+	public static final boolean DEFAULT_ENABLE_HOME_TTMELINE = false;
+	public static final boolean DEFAULT_ENABLE_MENTIONS = true;
+	public static final boolean DEFAULT_ENABLE_DIRECT_MESSAGES = true;
+
 	public NotificationContentPreference(final Context context) {
 		this(context, null);
 	}

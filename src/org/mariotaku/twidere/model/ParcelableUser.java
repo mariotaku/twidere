@@ -23,12 +23,13 @@ import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
 import static org.mariotaku.twidere.util.Utils.formatExpandedUserDescription;
 import static org.mariotaku.twidere.util.Utils.formatUserDescription;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
-import static org.mariotaku.twidere.util.Utils.parseString;
 
-import java.io.Serializable;
 import java.util.Date;
 
+import org.mariotaku.jsonserializer.JSONParcel;
+import org.mariotaku.jsonserializer.JSONParcelable;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
+import org.mariotaku.twidere.util.ParseUtils;
 
 import twitter4j.URLEntity;
 import twitter4j.User;
@@ -36,12 +37,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
-import org.mariotaku.jsonserializer.JSONParcelable;
-import org.mariotaku.jsonserializer.JSONParcel;
 
 public class ParcelableUser implements Parcelable, JSONParcelable, Comparable<ParcelableUser> {
-
-	private static final long serialVersionUID = 5977877636776748705L;
 
 	public static final Parcelable.Creator<ParcelableUser> CREATOR = new Parcelable.Creator<ParcelableUser>() {
 		@Override
@@ -104,7 +101,7 @@ public class ParcelableUser implements Parcelable, JSONParcelable, Comparable<Pa
 		description_unescaped = toPlainText(description_html);
 		is_following = cursor.getInt(cursor.getColumnIndex(CachedUsers.IS_FOLLOWING)) == 1;
 	}
-	
+
 	public ParcelableUser(final JSONParcel in) {
 		position = in.readLong("position");
 		account_id = in.readLong("account_id");
@@ -129,7 +126,7 @@ public class ParcelableUser implements Parcelable, JSONParcelable, Comparable<Pa
 		description_expanded = in.readString("description_expanded");
 		url_expanded = in.readString("url_expanded");
 		is_following = in.readBoolean("is_following");
-		description_unescaped = toPlainText(description_html);
+		description_unescaped = in.readString("description_unescaped");
 	}
 
 	public ParcelableUser(final Parcel in) {
@@ -156,7 +153,7 @@ public class ParcelableUser implements Parcelable, JSONParcelable, Comparable<Pa
 		description_expanded = in.readString();
 		url_expanded = in.readString();
 		is_following = in.readInt() == 1;
-		description_unescaped = toPlainText(description_html);
+		description_unescaped = in.readString();
 	}
 
 	public ParcelableUser(final User user, final long account_id, final boolean large_profile_image) {
@@ -166,7 +163,7 @@ public class ParcelableUser implements Parcelable, JSONParcelable, Comparable<Pa
 	public ParcelableUser(final User user, final long account_id, final long position, final boolean large_profile_image) {
 		this.position = position;
 		this.account_id = account_id;
-		final String profile_image_url_orig = parseString(user.getProfileImageUrlHttps());
+		final String profile_image_url_orig = ParseUtils.parseString(user.getProfileImageUrlHttps());
 		final URLEntity[] urls_url_entities = user.getURLEntities();
 		id = user.getId();
 		created_at = getTime(user.getCreatedAt());
@@ -181,9 +178,9 @@ public class ParcelableUser implements Parcelable, JSONParcelable, Comparable<Pa
 		profile_image_url = large_profile_image ? getBiggerTwitterProfileImage(profile_image_url_orig)
 				: profile_image_url_orig;
 		profile_banner_url = user.getProfileBannerImageUrl();
-		url = parseString(user.getURL());
-		url_expanded = url != null && urls_url_entities != null && urls_url_entities.length > 0 ? parseString(urls_url_entities[0]
-				.getExpandedURL()) : null;
+		url = ParseUtils.parseString(user.getURL());
+		url_expanded = url != null && urls_url_entities != null && urls_url_entities.length > 0 ? ParseUtils
+				.parseString(urls_url_entities[0].getExpandedURL()) : null;
 		is_follow_request_sent = user.isFollowRequestSent();
 		followers_count = user.getFollowersCount();
 		friends_count = user.getFriendsCount();
@@ -229,16 +226,18 @@ public class ParcelableUser implements Parcelable, JSONParcelable, Comparable<Pa
 
 	@Override
 	public String toString() {
-		return "ParcelableUser{account_id=" + account_id + ", user_id=" + id + ", created_at=" + created_at
-				+ ", position=" + position + ", is_protected=" + is_protected + ", is_verified=" + is_verified
-				+ ", is_follow_request_sent=" + is_follow_request_sent + ", description=" + description_plain
-				+ ", name=" + name + ", screen_name=" + screen_name + ", location=" + location
-				+ ", profile_image_url_string=" + profile_image_url + ", profile_banner_url_string="
-				+ profile_banner_url + ", url_string=" + url + ", followers_count=" + followers_count
-				+ ", friends_count=" + friends_count + ", statuses_count=" + statuses_count + ", favorites_count="
-				+ favorites_count + "}";
+		return "ParcelableUser{account_id=" + account_id + ", id=" + id + ", created_at=" + created_at + ", position="
+				+ position + ", is_protected=" + is_protected + ", is_verified=" + is_verified
+				+ ", is_follow_request_sent=" + is_follow_request_sent + ", is_following=" + is_following
+				+ ", description_plain=" + description_plain + ", name=" + name + ", screen_name=" + screen_name
+				+ ", location=" + location + ", profile_image_url=" + profile_image_url + ", profile_banner_url="
+				+ profile_banner_url + ", url=" + url + ", url_expanded=" + url_expanded + ", description_html="
+				+ description_html + ", description_unescaped=" + description_unescaped + ", description_expanded="
+				+ description_expanded + ", followers_count=" + followers_count + ", friends_count=" + friends_count
+				+ ", statuses_count=" + statuses_count + ", favorites_count=" + favorites_count + ", is_cache="
+				+ is_cache + "}";
 	}
-	
+
 	@Override
 	public void writeToParcel(final JSONParcel out) {
 		out.writeLong("position", position);
@@ -264,8 +263,9 @@ public class ParcelableUser implements Parcelable, JSONParcelable, Comparable<Pa
 		out.writeString("description_expanded", description_expanded);
 		out.writeString("url_expanded", url_expanded);
 		out.writeBoolean("is_following", is_following);
+		out.writeString("description_unescaped", description_unescaped);
 	}
-	
+
 	@Override
 	public void writeToParcel(final Parcel out, final int flags) {
 		out.writeLong(position);
@@ -291,6 +291,7 @@ public class ParcelableUser implements Parcelable, JSONParcelable, Comparable<Pa
 		out.writeString(description_expanded);
 		out.writeString(url_expanded);
 		out.writeInt(is_following ? 1 : 0);
+		out.writeString(description_unescaped);
 	}
 
 	private long getTime(final Date date) {

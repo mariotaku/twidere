@@ -19,18 +19,20 @@
 
 package org.mariotaku.twidere.fragment;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ConcurrentModificationException;
+import java.util.List;
+
+import org.mariotaku.jsonserializer.JSONSerializer;
+import org.mariotaku.twidere.adapter.ParcelableActivitiesAdapter;
+import org.mariotaku.twidere.model.ParcelableActivity;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import java.io.File;
-import java.io.IOException;
-import java.util.ConcurrentModificationException;
-import java.util.List;
-import org.mariotaku.jsonserializer.JSONSerializer;
-import org.mariotaku.twidere.adapter.ParcelableActivitiesAdapter;
-import org.mariotaku.twidere.model.ParcelableActivity;
 
 public abstract class BaseActivitiesListFragment extends PullToRefreshListFragment implements
 		LoaderCallbacks<List<ParcelableActivity>> {
@@ -46,7 +48,7 @@ public abstract class BaseActivitiesListFragment extends PullToRefreshListFragme
 	public ParcelableActivitiesAdapter getListAdapter() {
 		return mAdapter;
 	}
-	
+
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -104,10 +106,12 @@ public abstract class BaseActivitiesListFragment extends PullToRefreshListFragme
 		mAdapter.setTextSize(text_size);
 		mAdapter.setShowAbsoluteTime(show_absolute_time);
 	}
-	
+
 	protected final List<ParcelableActivity> getData() {
 		return mData;
 	}
+
+	protected abstract Object[] getSavedActivitiesFileArgs();
 
 	protected void saveActivities() {
 		if (getActivity() == null || getView() == null || mIsActivitiesSaved) return;
@@ -115,17 +119,18 @@ public abstract class BaseActivitiesListFragment extends PullToRefreshListFragme
 			mIsActivitiesSaved = true;
 		}
 	}
-	
+
 	protected final boolean saveActivitiesInternal() {
 		if (mIsActivitiesSaved) return true;
 		try {
 			final List<ParcelableActivity> data = getData();
 			if (data == null) return false;
-			final int items_limit = mPreferences.getInt(PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
-			final List<ParcelableActivity> activities = data.subList(0, Math.min(items_limit, data.size()));		
+			final int items_limit = mPreferences.getInt(PREFERENCE_KEY_DATABASE_ITEM_LIMIT,
+					PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
+			final List<ParcelableActivity> activities = data.subList(0, Math.min(items_limit, data.size()));
 			final File file = JSONSerializer.getSerializationFile(getActivity(), getSavedActivitiesFileArgs());
 			JSONSerializer.toFile(file, activities.toArray(new ParcelableActivity[activities.size()]));
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			return false;
 		} catch (final ConcurrentModificationException e) {
 			e.printStackTrace();
@@ -133,7 +138,5 @@ public abstract class BaseActivitiesListFragment extends PullToRefreshListFragme
 		}
 		return true;
 	}
-
-	protected abstract String[] getSavedActivitiesFileArgs();
 
 }

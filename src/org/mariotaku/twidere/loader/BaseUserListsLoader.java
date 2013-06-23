@@ -39,7 +39,6 @@ import android.support.v4.content.AsyncTaskLoader;
 public abstract class BaseUserListsLoader extends AsyncTaskLoader<List<ParcelableUserList>> {
 
 	protected final NoDuplicatesArrayList<ParcelableUserList> mData = new NoDuplicatesArrayList<ParcelableUserList>();
-	protected final Twitter mTwitter;
 	protected final boolean mHiResProfileImage;
 	protected final long mAccountId;
 	private final long mCursor;
@@ -52,7 +51,6 @@ public abstract class BaseUserListsLoader extends AsyncTaskLoader<List<Parcelabl
 		if (data != null) {
 			mData.addAll(data);
 		}
-		mTwitter = getTwitterInstance(context, account_id, true);
 		mCursor = cursor;
 		mAccountId = account_id;
 		mHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
@@ -70,17 +68,14 @@ public abstract class BaseUserListsLoader extends AsyncTaskLoader<List<Parcelabl
 		return mPrevCursor;
 	}
 
-	public Twitter getTwitter() {
-		return mTwitter;
-	}
-
-	public abstract List<UserList> getUserLists() throws TwitterException;;
+	public abstract List<UserList> getUserLists(final Twitter twitter) throws TwitterException;;
 
 	@Override
 	public List<ParcelableUserList> loadInBackground() {
+		final Twitter twitter = getTwitterInstance(getContext(), mAccountId, true);
 		List<UserList> list_loaded = null;
 		try {
-			list_loaded = getUserLists();
+			list_loaded = getUserLists(twitter);
 		} catch (final TwitterException e) {
 			e.printStackTrace();
 		}

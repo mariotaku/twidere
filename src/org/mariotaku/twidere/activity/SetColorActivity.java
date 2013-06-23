@@ -60,6 +60,16 @@ public class SetColorActivity extends BaseDialogActivity implements OnItemClickL
 	}
 
 	@Override
+	public void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
+		if (position == adapter.getCount() - 1) {
+			showDialog();
+		} else {
+			finishSelecting(mColors.get(position));
+		}
+
+	}
+
+	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.set_color);
@@ -87,16 +97,6 @@ public class SetColorActivity extends BaseDialogActivity implements OnItemClickL
 		}
 		mColorsGrid.setAdapter(new ColorsAdapter(this, mColors));
 		mColorsGrid.setOnItemClickListener(this);
-
-	}
-
-	@Override
-	public void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
-		if (position == adapter.getCount() - 1) {
-			showDialog();
-		} else {
-			finishSelecting(mColors.get(position));
-		}
 
 	}
 

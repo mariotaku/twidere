@@ -20,12 +20,12 @@
 package org.mariotaku.twidere.activity;
 
 import static android.text.TextUtils.isEmpty;
-import static org.mariotaku.twidere.util.Utils.parseInt;
 import static org.mariotaku.twidere.util.Utils.setUserAgent;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.httpclient.HttpClientImpl;
 
 import twitter4j.Twitter;
@@ -69,29 +69,6 @@ public class AuthorizeActivity extends BaseActivity implements LoaderCallbacks<R
 	private RequestToken mRequestToken;
 
 	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		super.onCreate(savedInstanceState);
-		final Bundle extras = getIntent().getExtras();
-		if (extras == null) {
-			finish();
-			return;
-		}
-		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		setContentView(mWebView = new WebView(this));
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		mWebView.setWebViewClient(new AuthorizationWebViewClient());
-		mWebView.setVerticalScrollBarEnabled(false);
-		mWebSettings = mWebView.getSettings();
-		mWebSettings.setLoadsImagesAutomatically(true);
-		mWebSettings.setJavaScriptEnabled(true);
-		mWebSettings.setBlockNetworkImage(false);
-		mWebSettings.setSaveFormData(true);
-		mWebSettings.setSavePassword(true);
-		getRequestToken();
-	}
-
-	@Override
 	public Loader<RequestToken> onCreateLoader(final int id, final Bundle args) {
 		setSupportProgressBarIndeterminateVisibility(true);
 		return new RequestTokenLoader(this, args);
@@ -129,6 +106,29 @@ public class AuthorizeActivity extends BaseActivity implements LoaderCallbacks<R
 			}
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		super.onCreate(savedInstanceState);
+		final Bundle extras = getIntent().getExtras();
+		if (extras == null) {
+			finish();
+			return;
+		}
+		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		setContentView(mWebView = new WebView(this));
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		mWebView.setWebViewClient(new AuthorizationWebViewClient());
+		mWebView.setVerticalScrollBarEnabled(false);
+		mWebSettings = mWebView.getSettings();
+		mWebSettings.setLoadsImagesAutomatically(true);
+		mWebSettings.setJavaScriptEnabled(true);
+		mWebSettings.setBlockNetworkImage(false);
+		mWebSettings.setSaveFormData(true);
+		mWebSettings.setSavePassword(true);
+		getRequestToken();
 	}
 
 	private void getRequestToken() {
@@ -260,7 +260,7 @@ public class AuthorizeActivity extends BaseActivity implements LoaderCallbacks<R
 			cb.setIgnoreSSLError(ignore_ssl_error);
 			if (enable_proxy) {
 				final String proxy_host = prefs.getString(PREFERENCE_KEY_PROXY_HOST, null);
-				final int proxy_port = parseInt(prefs.getString(PREFERENCE_KEY_PROXY_PORT, "-1"));
+				final int proxy_port = ParseUtils.parseInt(prefs.getString(PREFERENCE_KEY_PROXY_PORT, "-1"));
 				if (!isEmpty(proxy_host) && proxy_port > 0) {
 					cb.setHttpProxyHost(proxy_host);
 					cb.setHttpProxyPort(proxy_port);

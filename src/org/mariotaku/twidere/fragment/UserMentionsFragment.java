@@ -19,16 +19,17 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.CompareUtils.objectEquals;
+import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
+
+import java.util.List;
+
+import org.mariotaku.twidere.loader.TweetSearchLoader;
+import org.mariotaku.twidere.model.ParcelableStatus;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
-import java.util.List;
-import org.mariotaku.twidere.loader.TweetSearchLoader;
-import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.util.Utils;
-
-import static org.mariotaku.twidere.util.CompareUtils.objectEquals;
-import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 
 public class UserMentionsFragment extends SearchTweetsFragment {
 
@@ -47,6 +48,7 @@ public class UserMentionsFragment extends SearchTweetsFragment {
 				+ screen_name, max_id, since_id, getData(), getSavedStatusesFileArgs(), tab_position);
 	}
 
+	@Override
 	protected String[] getSavedStatusesFileArgs() {
 		final Bundle args = getArguments();
 		if (args == null) return null;

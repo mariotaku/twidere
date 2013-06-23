@@ -19,15 +19,16 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
+
+import org.mariotaku.twidere.loader.CursorSupportUsersLoader;
+import org.mariotaku.twidere.loader.UserFollowersLoader;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import org.mariotaku.twidere.loader.CursorSupportUsersLoader;
-import org.mariotaku.twidere.loader.UserFollowersLoader;
-
-import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 
 public class UserFollowersFragment extends CursorSupportUsersListFragment {
 
@@ -41,8 +42,8 @@ public class UserFollowersFragment extends CursorSupportUsersListFragment {
 				final long account_id = intent.getLongExtra(INTENT_KEY_ACCOUNT_ID, -1);
 				final String screen_name = getAccountScreenName(getActivity(), account_id);
 				final Bundle args = getArguments();
-				if (args != null && account_id > 0 && args.getLong(INTENT_KEY_USER_ID, -1) == account_id ||
-						screen_name != null && screen_name.equalsIgnoreCase(args.getString(INTENT_KEY_SCREEN_NAME))) {
+				if (args != null && account_id > 0 && args.getLong(INTENT_KEY_USER_ID, -1) == account_id
+						|| screen_name != null && screen_name.equalsIgnoreCase(args.getString(INTENT_KEY_SCREEN_NAME))) {
 					removeUsers(intent.getLongArrayExtra(INTENT_KEY_USER_IDS));
 				}
 			}

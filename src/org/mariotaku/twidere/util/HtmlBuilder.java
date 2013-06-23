@@ -58,14 +58,16 @@ public class HtmlBuilder {
 	public boolean addLink(final String link, final String display, final int start, final int end,
 			final boolean display_is_html) {
 		if (start < 0 || end < 0 || start > end || end > string_length) {
-			final String message = String.format("text:%s, length:%d, start:%d, end:%d", orig, string_length, start, end);
+			final String message = String.format("text:%s, length:%d, start:%d, end:%d", orig, string_length, start,
+					end);
 			if (throw_exceptions) throw new StringIndexOutOfBoundsException(message);
 			Log.e(LOGTAG, message);
 			return false;
 		}
 		if (hasLink(start, end)) {
-			final String message = String.format("link already added in this range! text:%s, link:%s, display:%s, start:%d, end:%d",
-					orig, link, display, start, end);
+			final String message = String.format(
+					"link already added in this range! text:%s, link:%s, display:%s, start:%d, end:%d", orig, link,
+					display, start, end);
 			if (throw_exceptions) throw new IllegalArgumentException(message);
 			Log.e(LOGTAG, message);
 			return false;
@@ -86,14 +88,13 @@ public class HtmlBuilder {
 			final int start = spec.start, end = spec.end;
 			if (i == 0) {
 				if (start >= 0 && start <= string_length) {
-					builder.append(escapeSource(ArrayUtils.mergeArrayToString(ArrayUtils.subArray(array, 0,
-							start))));
+					builder.append(escapeSource(ArrayUtils.mergeArrayToString(ArrayUtils.subArray(array, 0, start))));
 				}
 			} else if (i > 0) {
 				final int last_end = links.get(i - 1).end;
 				if (last_end >= 0 && last_end <= start && start <= string_length) {
-					builder.append(escapeSource(ArrayUtils.mergeArrayToString(ArrayUtils.subArray(array,
-							last_end, start))));
+					builder.append(escapeSource(ArrayUtils.mergeArrayToString(ArrayUtils.subArray(array, last_end,
+							start))));
 				}
 			}
 			builder.append("<a href=\"" + spec.link + "\">");
@@ -103,8 +104,8 @@ public class HtmlBuilder {
 			}
 			builder.append("</a>");
 			if (i == links.size() - 1 && end >= 0 && end <= string_length) {
-				builder.append(escapeSource(ArrayUtils.mergeArrayToString(ArrayUtils.subArray(array, end,
-						string_length))));
+				builder.append(escapeSource(ArrayUtils.mergeArrayToString(ArrayUtils
+						.subArray(array, end, string_length))));
 			}
 		}
 		return builder.toString();

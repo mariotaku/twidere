@@ -49,7 +49,8 @@ public final class DatabaseUpgradeHelper {
 			final HashMap<String, String> column_alias) {
 
 		if (new_cols == null || new_types == null || new_cols.length != new_types.length)
-			throw new IllegalArgumentException("Invalid parameters for upgrading table " + table + ", length of columns and types not match.");
+			throw new IllegalArgumentException("Invalid parameters for upgrading table " + table
+					+ ", length of columns and types not match.");
 
 		final List<ContentValues> values_list = new ArrayList<ContentValues>();
 

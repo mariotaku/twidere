@@ -19,13 +19,15 @@
 
 package org.mariotaku.twidere.loader;
 
-import android.content.Context;
 import java.util.List;
+
 import org.mariotaku.twidere.model.ParcelableUser;
+
 import twitter4j.CursorPaging;
 import twitter4j.IDs;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import android.content.Context;
 
 public class IncomingFriendshipsLoader extends IDsUsersLoader {
 

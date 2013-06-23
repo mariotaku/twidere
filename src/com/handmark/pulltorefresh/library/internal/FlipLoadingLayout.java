@@ -38,7 +38,8 @@ public class FlipLoadingLayout extends LoadingLayout {
 
 	private final Animation mRotateAnimation, mResetRotateAnimation;
 
-	public FlipLoadingLayout(Context context, final Mode mode, final Orientation scrollDirection, TypedArray attrs) {
+	public FlipLoadingLayout(final Context context, final Mode mode, final Orientation scrollDirection,
+			final TypedArray attrs) {
 		super(context, mode, scrollDirection, attrs);
 
 		final int rotateAngle = mode == Mode.PULL_FROM_START ? -180 : 180;
@@ -57,7 +58,12 @@ public class FlipLoadingLayout extends LoadingLayout {
 	}
 
 	@Override
-	protected void onLoadingDrawableSet(Drawable imageDrawable) {
+	protected int getDefaultDrawableResId() {
+		return R.drawable.default_ptr_flip;
+	}
+
+	@Override
+	protected void onLoadingDrawableSet(final Drawable imageDrawable) {
 		if (null != imageDrawable) {
 			final int dHeight = imageDrawable.getIntrinsicHeight();
 			final int dWidth = imageDrawable.getIntrinsicWidth();
@@ -67,7 +73,7 @@ public class FlipLoadingLayout extends LoadingLayout {
 			 * square with each side the size of the largest drawable dimension.
 			 * This is so that it doesn't clip when rotated.
 			 */
-			ViewGroup.LayoutParams lp = mHeaderImage.getLayoutParams();
+			final ViewGroup.LayoutParams lp = mHeaderImage.getLayoutParams();
 			lp.width = lp.height = Math.max(dHeight, dWidth);
 			mHeaderImage.requestLayout();
 
@@ -76,7 +82,7 @@ public class FlipLoadingLayout extends LoadingLayout {
 			 * and is centered.
 			 */
 			mHeaderImage.setScaleType(ScaleType.MATRIX);
-			Matrix matrix = new Matrix();
+			final Matrix matrix = new Matrix();
 			matrix.postTranslate((lp.width - dWidth) / 2f, (lp.height - dHeight) / 2f);
 			matrix.postRotate(getDrawableRotationAngle(), lp.width / 2f, lp.height / 2f);
 			mHeaderImage.setImageMatrix(matrix);
@@ -84,7 +90,7 @@ public class FlipLoadingLayout extends LoadingLayout {
 	}
 
 	@Override
-	protected void onPullImpl(float scaleOfLayout) {
+	protected void onPullImpl(final float scaleOfLayout) {
 		// NO-OP
 	}
 
@@ -113,11 +119,6 @@ public class FlipLoadingLayout extends LoadingLayout {
 		mHeaderImage.clearAnimation();
 		mHeaderProgress.setVisibility(View.GONE);
 		mHeaderImage.setVisibility(View.VISIBLE);
-	}
-
-	@Override
-	protected int getDefaultDrawableResId() {
-		return R.drawable.default_ptr_flip;
 	}
 
 	private float getDrawableRotationAngle() {

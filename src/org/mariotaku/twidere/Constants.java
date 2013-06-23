@@ -32,9 +32,7 @@ import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.provider.TweetStore.Tabs;
 
-import twitter4j.TwitterConstants;
-
-public interface Constants extends TwitterConstants {
+public interface Constants {
 
 	public static final String APP_NAME = "Twidere";
 
@@ -98,7 +96,7 @@ public interface Constants extends TwitterConstants {
 	public static final String AUTHORITY_ACTIVITIES_ABOUT_ME = "activities_about_me";
 	public static final String AUTHORITY_ACTIVITIES_BY_FRIENDS = "activities_by_friends";
 	public static final String AUTHORITY_INCOMING_FRIENDSHIPS = "incoming_friendships";
-	public static final String AUTHORITY_STATUS_RETWEETERS = "status_retweeters";	
+	public static final String AUTHORITY_STATUS_RETWEETERS = "status_retweeters";
 
 	public static final String QUERY_PARAM_ACCOUNT_ID = "account_id";
 	public static final String QUERY_PARAM_ACCOUNT_NAME = "account_name";
@@ -242,7 +240,7 @@ public interface Constants extends TwitterConstants {
 	public static final String COMPOSE_QUIT_ACTION_ASK = "ask";
 	public static final String COMPOSE_QUIT_ACTION_SAVE = "save";
 	public static final String COMPOSE_QUIT_ACTION_DISCARD = "discard";
-	
+
 	public static final String INTENT_PACKAGE_PREFIX = "org.mariotaku.twidere.";
 
 	public static final String INTENT_ACTION_HOME = INTENT_PACKAGE_PREFIX + "HOME";
@@ -485,30 +483,30 @@ public interface Constants extends TwitterConstants {
 	public static final int REQUEST_PICK_FILE = 13;
 	public static final int REQUEST_PICK_DIRECTORY = 14;
 
-	public static final String TABLE_ACCOUNTS = Accounts.CONTENT_PATH;
-	public static final String TABLE_STATUSES = Statuses.CONTENT_PATH;
-	public static final String TABLE_MENTIONS = Mentions.CONTENT_PATH;
-	public static final String TABLE_DRAFTS = Drafts.CONTENT_PATH;
-	public static final String TABLE_CACHED_HASHTAGS = CachedHashtags.CONTENT_PATH;
-	public static final String TABLE_CACHED_USERS = CachedUsers.CONTENT_PATH;
-	public static final String TABLE_CACHED_STATUSES = CachedStatuses.CONTENT_PATH;
-	public static final String TABLE_FILTERED_USERS = Filters.Users.CONTENT_PATH;
-	public static final String TABLE_FILTERED_KEYWORDS = Filters.Keywords.CONTENT_PATH;
-	public static final String TABLE_FILTERED_SOURCES = Filters.Sources.CONTENT_PATH;
-	public static final String TABLE_FILTERED_LINKS = Filters.Links.CONTENT_PATH;
-	public static final String TABLE_DIRECT_MESSAGES = DirectMessages.CONTENT_PATH;
-	public static final String TABLE_DIRECT_MESSAGES_INBOX = DirectMessages.Inbox.CONTENT_PATH;
-	public static final String TABLE_DIRECT_MESSAGES_OUTBOX = DirectMessages.Outbox.CONTENT_PATH;
-	public static final String TABLE_DIRECT_MESSAGES_CONVERSATION = DirectMessages.Conversation.CONTENT_PATH;
-	public static final String TABLE_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME = DirectMessages.Conversation.CONTENT_PATH_SCREEN_NAME;
-	public static final String TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY = DirectMessages.ConversationsEntry.CONTENT_PATH;
-	public static final String TABLE_TRENDS_LOCAL = CachedTrends.Local.CONTENT_PATH;
-	public static final String TABLE_TABS = Tabs.CONTENT_PATH;
-	public static final String TABLE_NOTIFICATIONS = TweetStore.CONTENT_PATH_NOTIFICATIONS;
-	public static final String TABLE_PREFERENCES = TweetStore.Preferences.CONTENT_PATH;
-	public static final String TABLE_PERMISSIONS = TweetStore.Permissions.CONTENT_PATH;
-	public static final String TABLE_DNS = TweetStore.DNS.CONTENT_PATH;
-	public static final String TABLE_CACHED_IMAGES = TweetStore.CachedImages.CONTENT_PATH;
+	public static final String TABLE_ACCOUNTS = Accounts.TABLE_NAME;
+	public static final String TABLE_STATUSES = Statuses.TABLE_NAME;
+	public static final String TABLE_MENTIONS = Mentions.TABLE_NAME;
+	public static final String TABLE_DRAFTS = Drafts.TABLE_NAME;
+	public static final String TABLE_CACHED_HASHTAGS = CachedHashtags.TABLE_NAME;
+	public static final String TABLE_CACHED_USERS = CachedUsers.TABLE_NAME;
+	public static final String TABLE_CACHED_STATUSES = CachedStatuses.TABLE_NAME;
+	public static final String TABLE_FILTERED_USERS = Filters.Users.TABLE_NAME;
+	public static final String TABLE_FILTERED_KEYWORDS = Filters.Keywords.TABLE_NAME;
+	public static final String TABLE_FILTERED_SOURCES = Filters.Sources.TABLE_NAME;
+	public static final String TABLE_FILTERED_LINKS = Filters.Links.TABLE_NAME;
+	public static final String TABLE_DIRECT_MESSAGES = DirectMessages.TABLE_NAME;
+	public static final String TABLE_DIRECT_MESSAGES_INBOX = DirectMessages.Inbox.TABLE_NAME;
+	public static final String TABLE_DIRECT_MESSAGES_OUTBOX = DirectMessages.Outbox.TABLE_NAME;
+	public static final String TABLE_DIRECT_MESSAGES_CONVERSATION = DirectMessages.Conversation.TABLE_NAME;
+	public static final String TABLE_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME = DirectMessages.Conversation.TABLE_NAME_SCREEN_NAME;
+	public static final String TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY = DirectMessages.ConversationsEntry.TABLE_NAME;
+	public static final String TABLE_TRENDS_LOCAL = CachedTrends.Local.TABLE_NAME;
+	public static final String TABLE_TABS = Tabs.TABLE_NAME;
+	public static final String TABLE_NOTIFICATIONS = TweetStore.TABLE_NAME_NOTIFICATIONS;
+	public static final String TABLE_PREFERENCES = TweetStore.Preferences.TABLE_NAME;
+	public static final String TABLE_PERMISSIONS = TweetStore.Permissions.TABLE_NAME;
+	public static final String TABLE_DNS = TweetStore.DNS.TABLE_NAME;
+	public static final String TABLE_CACHED_IMAGES = TweetStore.CachedImages.TABLE_NAME;
 
 	public static final int TABLE_ID_ACCOUNTS = 1;
 	public static final int TABLE_ID_STATUSES = 2;
@@ -531,9 +529,10 @@ public interface Constants extends TwitterConstants {
 	public static final int TABLE_ID_CACHED_HASHTAGS = 53;
 	public static final int VIRTUAL_TABLE_ID_NOTIFICATIONS = 101;
 	public static final int VIRTUAL_TABLE_ID_PREFERENCES = 102;
-	public static final int VIRTUAL_TABLE_ID_PERMISSIONS = 103;
-	public static final int VIRTUAL_TABLE_ID_DNS = 104;
-	public static final int VIRTUAL_TABLE_ID_CACHED_IMAGES = 105;
+	public static final int VIRTUAL_TABLE_ID_ALL_PREFERENCES = 103;
+	public static final int VIRTUAL_TABLE_ID_PERMISSIONS = 104;
+	public static final int VIRTUAL_TABLE_ID_DNS = 105;
+	public static final int VIRTUAL_TABLE_ID_CACHED_IMAGES = 106;
 
 	public static final int LINK_ID_STATUS = 1;
 	public static final int LINK_ID_USER = 2;

@@ -9,28 +9,6 @@ import com.handmark.pulltorefresh.library.internal.LoadingLayout;
 
 public class LoadingLayoutProxy implements ILoadingLayout {
 
-	public CharSequence getPullLabel() {
-		for (LoadingLayout layout : mLoadingLayouts) {
-			return layout.getPullLabel();
-		}
-		return null;
-	}
-
-	public CharSequence getRefreshingLabel() {
-		for (LoadingLayout layout : mLoadingLayouts) {
-			return layout.getRefreshingLabel();
-		}
-		return null;
-	}
-
-	public CharSequence getReleaseLabel() {
-		for (LoadingLayout layout : mLoadingLayouts) {
-			return layout.getReleaseLabel();
-		}
-		return null;
-	}
-
-
 	private final HashSet<LoadingLayout> mLoadingLayouts;
 
 	LoadingLayoutProxy() {
@@ -46,49 +24,71 @@ public class LoadingLayoutProxy implements ILoadingLayout {
 	 * 
 	 * @param layout - LoadingLayout to have included.
 	 */
-	public void addLayout(LoadingLayout layout) {
+	public void addLayout(final LoadingLayout layout) {
 		if (null != layout) {
 			mLoadingLayouts.add(layout);
 		}
 	}
 
 	@Override
-	public void setLastUpdatedLabel(CharSequence label) {
-		for (LoadingLayout layout : mLoadingLayouts) {
+	public CharSequence getPullLabel() {
+		for (final LoadingLayout layout : mLoadingLayouts)
+			return layout.getPullLabel();
+		return null;
+	}
+
+	@Override
+	public CharSequence getRefreshingLabel() {
+		for (final LoadingLayout layout : mLoadingLayouts)
+			return layout.getRefreshingLabel();
+		return null;
+	}
+
+	@Override
+	public CharSequence getReleaseLabel() {
+		for (final LoadingLayout layout : mLoadingLayouts)
+			return layout.getReleaseLabel();
+		return null;
+	}
+
+	@Override
+	public void setLastUpdatedLabel(final CharSequence label) {
+		for (final LoadingLayout layout : mLoadingLayouts) {
 			layout.setLastUpdatedLabel(label);
 		}
 	}
 
 	@Override
-	public void setLoadingDrawable(Drawable drawable) {
-		for (LoadingLayout layout : mLoadingLayouts) {
+	public void setLoadingDrawable(final Drawable drawable) {
+		for (final LoadingLayout layout : mLoadingLayouts) {
 			layout.setLoadingDrawable(drawable);
 		}
 	}
 
 	@Override
-	public void setRefreshingLabel(CharSequence refreshingLabel) {
-		for (LoadingLayout layout : mLoadingLayouts) {
-			layout.setRefreshingLabel(refreshingLabel);
-		}
-	}
-
-	@Override
-	public void setPullLabel(CharSequence label) {
-		for (LoadingLayout layout : mLoadingLayouts) {
+	public void setPullLabel(final CharSequence label) {
+		for (final LoadingLayout layout : mLoadingLayouts) {
 			layout.setPullLabel(label);
 		}
 	}
 
 	@Override
-	public void setReleaseLabel(CharSequence label) {
-		for (LoadingLayout layout : mLoadingLayouts) {
+	public void setRefreshingLabel(final CharSequence refreshingLabel) {
+		for (final LoadingLayout layout : mLoadingLayouts) {
+			layout.setRefreshingLabel(refreshingLabel);
+		}
+	}
+
+	@Override
+	public void setReleaseLabel(final CharSequence label) {
+		for (final LoadingLayout layout : mLoadingLayouts) {
 			layout.setReleaseLabel(label);
 		}
 	}
 
-	public void setTextTypeface(Typeface tf) {
-		for (LoadingLayout layout : mLoadingLayouts) {
+	@Override
+	public void setTextTypeface(final Typeface tf) {
+		for (final LoadingLayout layout : mLoadingLayouts) {
 			layout.setTextTypeface(tf);
 		}
 	}

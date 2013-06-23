@@ -4,12 +4,12 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.ActionProvider;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
-import android.os.Build;
 
 public class MenuItemImpl implements MenuItem {
 
@@ -98,7 +98,7 @@ public class MenuItemImpl implements MenuItem {
 
 	@Override
 	public CharSequence getTitleCondensed() {
-		return null;
+		return titleCondensed;
 	}
 
 	@Override

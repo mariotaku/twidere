@@ -23,13 +23,13 @@ import static org.mariotaku.twidere.util.Utils.formatDirectMessageText;
 import static org.mariotaku.twidere.util.Utils.getAsBoolean;
 import static org.mariotaku.twidere.util.Utils.getAsLong;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
-import static org.mariotaku.twidere.util.Utils.parseString;
 
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Date;
 
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
+import org.mariotaku.twidere.util.ParseUtils;
 
 import twitter4j.DirectMessage;
 import twitter4j.User;
@@ -117,9 +117,9 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 		this.account_id = account_id;
 		is_out_going = is_outgoing;
 		final User sender = message.getSender(), recipient = message.getRecipient();
-		final String sender_profile_image_url_string = sender != null ? parseString(sender.getProfileImageUrlHttps())
-				: null;
-		final String recipient_profile_image_url_string = recipient != null ? parseString(recipient
+		final String sender_profile_image_url_string = sender != null ? ParseUtils.parseString(sender
+				.getProfileImageUrlHttps()) : null;
+		final String recipient_profile_image_url_string = recipient != null ? ParseUtils.parseString(recipient
 				.getProfileImageUrlHttps()) : null;
 		id = message.getId();
 		timestamp = getTime(message.getCreatedAt());
@@ -190,12 +190,12 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 
 	@Override
 	public String toString() {
-		return "ParcelableDirectMessage{account_id=" + account_id + ", message_id=" + id
-				+ ", message_timestamp=" + timestamp + ", sender_id=" + sender_id + ", recipient_id="
-				+ recipient_id + ", is_out_going=" + is_out_going + ", text=" + text_html + ", sender_name="
-				+ sender_name + ", recipient_name=" + recipient_name + ", sender_screen_name=" + sender_screen_name
-				+ ", recipient_screen_name=" + recipient_screen_name + ", sender_profile_image_url="
-				+ sender_profile_image_url + ", recipient_profile_image_url=" + recipient_profile_image_url + "}";
+		return "ParcelableDirectMessage{account_id=" + account_id + ", message_id=" + id + ", message_timestamp="
+				+ timestamp + ", sender_id=" + sender_id + ", recipient_id=" + recipient_id + ", is_out_going="
+				+ is_out_going + ", text=" + text_html + ", sender_name=" + sender_name + ", recipient_name="
+				+ recipient_name + ", sender_screen_name=" + sender_screen_name + ", recipient_screen_name="
+				+ recipient_screen_name + ", sender_profile_image_url=" + sender_profile_image_url
+				+ ", recipient_profile_image_url=" + recipient_profile_image_url + "}";
 	}
 
 	@Override

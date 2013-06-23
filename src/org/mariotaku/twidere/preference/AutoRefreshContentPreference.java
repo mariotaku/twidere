@@ -26,11 +26,11 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 public class AutoRefreshContentPreference extends MultiSelectListPreference implements Constants {
- 
+
 	public static final boolean DEFAULT_ENABLE_HOME_TTMELINE = false;
- 	public static final boolean DEFAULT_ENABLE_MENTIONS = true;
- 	public static final boolean DEFAULT_ENABLE_DIRECT_MESSAGES = true;
-	
+	public static final boolean DEFAULT_ENABLE_MENTIONS = true;
+	public static final boolean DEFAULT_ENABLE_DIRECT_MESSAGES = true;
+
 	public AutoRefreshContentPreference(final Context context) {
 		this(context, null);
 	}

@@ -16,32 +16,23 @@
 
 package org.mariotaku.twidere.preference;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.mariotaku.twidere.util.ArrayUtils;
+
 import android.app.AlertDialog.Builder;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
-import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
-import android.net.Uri;
 import android.preference.ListPreference;
-import android.provider.MediaStore.Audio;
 import android.util.AttributeSet;
-import java.util.ArrayList;
-import java.util.List;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.util.ArrayUtils;
-
-import static android.text.TextUtils.isEmpty;
-import java.util.Comparator;
-import java.util.Collections;
 
 public class RingtonePreference extends ListPreference {
 
-	private final Context mContext;
-	private final ContentResolver mResolver;
 	private final List<Ringtone> mRingtones;
 	private final String[] mEntries, mValues;
 
@@ -49,8 +40,6 @@ public class RingtonePreference extends ListPreference {
 
 	public RingtonePreference(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
-		mContext = context;
-		mResolver = context.getContentResolver();
 		final RingtoneManager manager = new RingtoneManager(context);
 		manager.setType(RingtoneManager.TYPE_NOTIFICATION);
 		final Cursor cur = manager.getCursor();
@@ -73,7 +62,7 @@ public class RingtonePreference extends ListPreference {
 	public int getSelectedItem() {
 		return mSelectedItem;
 	}
-	
+
 	public Ringtone getSelectedRingtone() {
 		return mRingtones.get(mSelectedItem);
 	}
@@ -110,19 +99,21 @@ public class RingtonePreference extends ListPreference {
 			}
 		});
 	}
-	
-//	static final class RingtoneNameComparator implements Comparator<Ringtone> {
-//
-//		private final Context context;
-//
-//		RingtoneNameComparator(final Context context) {
-//			this.context = context;
-//		}
-//		
-//		@Override
-//		public int compare(final Ringtone value1, final Ringtone value2) {
-//			if (value1 == null || value2 == null) return 0;	
-//			return value1.getTitle(context).compareToIgnoreCase(value2.getTitle(context));
-//		}
-//	}
+
+	// static final class RingtoneNameComparator implements Comparator<Ringtone>
+	// {
+	//
+	// private final Context context;
+	//
+	// RingtoneNameComparator(final Context context) {
+	// this.context = context;
+	// }
+	//
+	// @Override
+	// public int compare(final Ringtone value1, final Ringtone value2) {
+	// if (value1 == null || value2 == null) return 0;
+	// return
+	// value1.getTitle(context).compareToIgnoreCase(value2.getTitle(context));
+	// }
+	// }
 }

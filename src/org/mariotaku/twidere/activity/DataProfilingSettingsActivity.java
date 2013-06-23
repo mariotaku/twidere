@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.activity;
 
+import static org.mariotaku.twidere.util.Utils.closeSilently;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -66,11 +68,12 @@ public class DataProfilingSettingsActivity extends BaseDialogWhenLargeActivity i
 							final BufferedReader br = new BufferedReader(new FileReader(file));
 							String line = null;
 							int i = 0;
-							while ((line = br.readLine() )!= null && i < 10) {
+							while ((line = br.readLine()) != null && i < 10) {
 								mTextView.append(line + "\n");
 								i++;
 							}
 							mTextView.append("------------\n\n");
+							closeSilently(br);
 						} catch (final IOException e) {
 							mTextView.append("Cannot read this file");
 						}

@@ -17,10 +17,11 @@
 package org.mariotaku.twidere.util.httpclient;
 
 import static android.text.TextUtils.isEmpty;
- 
+
 import java.io.IOException;
 import java.net.Socket;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
@@ -70,8 +71,6 @@ import twitter4j.http.HttpResponseCode;
 import twitter4j.http.RequestMethod;
 import twitter4j.internal.logging.Logger;
 import twitter4j.internal.util.InternalStringUtil;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
  * HttpClient implementation for Apache HttpClient 4.0.x
@@ -127,13 +126,13 @@ public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCo
 			final URI url_orig;
 			try {
 				url_orig = new URI(url_string);
-			} catch (URISyntaxException e) {
+			} catch (final URISyntaxException e) {
 				throw new TwitterException(e);
 			}
 			final String host = url_orig.getHost();
 			final String resolved_host = resolver != null ? resolver.resolve(host) : null;
-			final String resolved_url = !isEmpty(resolved_host) ? url_string.replace("://" + host, "://" + resolved_host)
-					: url_string;
+			final String resolved_url = !isEmpty(resolved_host) ? url_string.replace("://" + host, "://"
+					+ resolved_host) : url_string;
 
 			if (req.getMethod() == RequestMethod.GET) {
 				commonsRequest = new HttpGet(resolved_url);

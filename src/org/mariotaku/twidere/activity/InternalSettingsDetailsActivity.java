@@ -42,20 +42,6 @@ public class InternalSettingsDetailsActivity extends PreferenceActivity implemen
 
 	private ActivityHostFragment<InternalSettingsDetailsActivity> mCallbackFragment;
 
-	@SuppressWarnings("deprecation")
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		setTheme();
-		super.onCreate(savedInstanceState);
-		getPreferenceManager().setSharedPreferencesName(SHARED_PREFERENCES_NAME);
-		final Bundle args = getIntent().getExtras();
-		if (args != null) {
-			if (args.containsKey(INTENT_KEY_RESID)) {
-				addPreferencesFromResource(args.getInt(INTENT_KEY_RESID));
-			}
-		}
-	}
-
 	@Override
 	public boolean onKeyUp(final int keyCode, final KeyEvent event) {
 		switch (keyCode) {
@@ -120,6 +106,20 @@ public class InternalSettingsDetailsActivity extends PreferenceActivity implemen
 		setTheme(is_dark_theme ? R.style.Theme_Twidere : R.style.Theme_Twidere_Light);
 		if (solid_color_background) {
 			getWindow().setBackgroundDrawableResource(is_dark_theme ? android.R.color.black : android.R.color.white);
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		setTheme();
+		super.onCreate(savedInstanceState);
+		getPreferenceManager().setSharedPreferencesName(SHARED_PREFERENCES_NAME);
+		final Bundle args = getIntent().getExtras();
+		if (args != null) {
+			if (args.containsKey(INTENT_KEY_RESID)) {
+				addPreferencesFromResource(args.getInt(INTENT_KEY_RESID));
+			}
 		}
 	}
 }

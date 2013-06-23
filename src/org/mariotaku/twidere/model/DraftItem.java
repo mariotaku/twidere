@@ -23,11 +23,10 @@ import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.util.ArrayUtils;
 
 import android.database.Cursor;
-import android.os.Parcelable;
-import java.io.Serializable;
 import android.os.Parcel;
+import android.os.Parcelable;
 
-public class DraftItem implements Serializable, Parcelable {
+public class DraftItem implements Parcelable {
 
 	public static final Parcelable.Creator<DraftItem> CREATOR = new Parcelable.Creator<DraftItem>() {
 		@Override
@@ -72,10 +71,12 @@ public class DraftItem implements Serializable, Parcelable {
 		location = ParcelableLocation.fromString(in.readString());
 	}
 
+	@Override
 	public int describeContents() {
 		return 0;
 	}
 
+	@Override
 	public void writeToParcel(final Parcel out, final int flags) {
 		out.writeLongArray(account_ids);
 		out.writeLong(_id);

@@ -43,19 +43,19 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 	private boolean mListViewExtrasEnabled;
 
-	public PullToRefreshListView(Context context) {
+	public PullToRefreshListView(final Context context) {
 		super(context);
 	}
 
-	public PullToRefreshListView(Context context, AttributeSet attrs) {
+	public PullToRefreshListView(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
 	}
 
-	public PullToRefreshListView(Context context, Mode mode) {
+	public PullToRefreshListView(final Context context, final Mode mode) {
 		super(context, mode);
 	}
 
-	public PullToRefreshListView(Context context, Mode mode, AnimationStyle style) {
+	public PullToRefreshListView(final Context context, final Mode mode, final AnimationStyle style) {
 		super(context, mode, style);
 	}
 
@@ -64,13 +64,82 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		return Orientation.VERTICAL;
 	}
 
+	protected ListView createListView(final Context context, final AttributeSet attrs) {
+		final ListView lv;
+		if (VERSION.SDK_INT >= VERSION_CODES.GINGERBREAD) {
+			lv = new InternalListViewSDK9(context, attrs);
+		} else {
+			lv = new InternalListView(context, attrs);
+		}
+		return lv;
+	}
+
+	@Override
+	protected LoadingLayoutProxy createLoadingLayoutProxy(final boolean includeStart, final boolean includeEnd) {
+		final LoadingLayoutProxy proxy = super.createLoadingLayoutProxy(includeStart, includeEnd);
+
+		if (mListViewExtrasEnabled) {
+			final Mode mode = getMode();
+
+			if (includeStart && mode.showHeaderLoadingLayout()) {
+				proxy.addLayout(mHeaderLoadingView);
+			}
+			if (includeEnd && mode.showFooterLoadingLayout()) {
+				proxy.addLayout(mFooterLoadingView);
+			}
+		}
+
+		return proxy;
+	}
+
+	@Override
+	protected ListView createRefreshableView(final Context context, final AttributeSet attrs) {
+		final ListView lv = createListView(context, attrs);
+
+		// Set it to this so it can be used in ListActivity/ListFragment
+		lv.setId(android.R.id.list);
+		return lv;
+	}
+
+	@Override
+	protected void handleStyledAttributes(final TypedArray a) {
+		super.handleStyledAttributes(a);
+
+		mListViewExtrasEnabled = a.getBoolean(R.styleable.PullToRefresh_ptrListViewExtrasEnabled, true);
+
+		if (mListViewExtrasEnabled) {
+			final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
+					FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL);
+
+			// Create Loading Views ready for use later
+			final FrameLayout frame = new FrameLayout(getContext());
+			mHeaderLoadingView = createLoadingLayout(getContext(), Mode.PULL_FROM_START, a);
+			mHeaderLoadingView.setVisibility(View.GONE);
+			frame.addView(mHeaderLoadingView, lp);
+			mRefreshableView.addHeaderView(frame, null, false);
+
+			mLvFooterLoadingFrame = new FrameLayout(getContext());
+			mFooterLoadingView = createLoadingLayout(getContext(), Mode.PULL_FROM_END, a);
+			mFooterLoadingView.setVisibility(View.GONE);
+			mLvFooterLoadingFrame.addView(mFooterLoadingView, lp);
+
+			/**
+			 * If the value for Scrolling While Refreshing hasn't been
+			 * explicitly set via XML, enable Scrolling While Refreshing.
+			 */
+			if (!a.hasValue(R.styleable.PullToRefresh_ptrScrollingWhileRefreshingEnabled)) {
+				setScrollingWhileRefreshingEnabled(true);
+			}
+		}
+	}
+
 	@Override
 	protected void onRefreshing(final boolean doScroll, final boolean fromUser) {
 		/**
 		 * If we're not showing the Refreshing view, or the list is empty, the
 		 * the header/footer views won't show so we use the normal method.
 		 */
-		ListAdapter adapter = mRefreshableView.getAdapter();
+		final ListAdapter adapter = mRefreshableView.getAdapter();
 		if (!mListViewExtrasEnabled || !getShowViewWhileRefreshing() || null == adapter || adapter.isEmpty()) {
 			super.onRefreshing(doScroll, fromUser);
 			return;
@@ -186,120 +255,16 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		super.onReset();
 	}
 
-	@Override
-	protected LoadingLayoutProxy createLoadingLayoutProxy(final boolean includeStart, final boolean includeEnd) {
-		LoadingLayoutProxy proxy = super.createLoadingLayoutProxy(includeStart, includeEnd);
-
-		if (mListViewExtrasEnabled) {
-			final Mode mode = getMode();
-
-			if (includeStart && mode.showHeaderLoadingLayout()) {
-				proxy.addLayout(mHeaderLoadingView);
-			}
-			if (includeEnd && mode.showFooterLoadingLayout()) {
-				proxy.addLayout(mFooterLoadingView);
-			}
-		}
-
-		return proxy;
-	}
-
-	protected ListView createListView(Context context, AttributeSet attrs) {
-		final ListView lv;
-		if (VERSION.SDK_INT >= VERSION_CODES.GINGERBREAD) {
-			lv = new InternalListViewSDK9(context, attrs);
-		} else {
-			lv = new InternalListView(context, attrs);
-		}
-		return lv;
-	}
-
-	@Override
-	protected ListView createRefreshableView(Context context, AttributeSet attrs) {
-		ListView lv = createListView(context, attrs);
-
-		// Set it to this so it can be used in ListActivity/ListFragment
-		lv.setId(android.R.id.list);
-		return lv;
-	}
-
-	@Override
-	protected void handleStyledAttributes(TypedArray a) {
-		super.handleStyledAttributes(a);
-
-		mListViewExtrasEnabled = a.getBoolean(R.styleable.PullToRefresh_ptrListViewExtrasEnabled, true);
-
-		if (mListViewExtrasEnabled) {
-			final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
-					FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL);
-
-			// Create Loading Views ready for use later
-			FrameLayout frame = new FrameLayout(getContext());
-			mHeaderLoadingView = createLoadingLayout(getContext(), Mode.PULL_FROM_START, a);
-			mHeaderLoadingView.setVisibility(View.GONE);
-			frame.addView(mHeaderLoadingView, lp);
-			mRefreshableView.addHeaderView(frame, null, false);
-
-			mLvFooterLoadingFrame = new FrameLayout(getContext());
-			mFooterLoadingView = createLoadingLayout(getContext(), Mode.PULL_FROM_END, a);
-			mFooterLoadingView.setVisibility(View.GONE);
-			mLvFooterLoadingFrame.addView(mFooterLoadingView, lp);
-
-			/**
-			 * If the value for Scrolling While Refreshing hasn't been
-			 * explicitly set via XML, enable Scrolling While Refreshing.
-			 */
-			if (!a.hasValue(R.styleable.PullToRefresh_ptrScrollingWhileRefreshingEnabled)) {
-				setScrollingWhileRefreshingEnabled(true);
-			}
-		}
-	}
-
-	@TargetApi(9)
-	final class InternalListViewSDK9 extends InternalListView {
-
-		public InternalListViewSDK9(Context context, AttributeSet attrs) {
-			super(context, attrs);
-		}
-
-		@Override
-		protected boolean overScrollBy(int deltaX, int deltaY, int scrollX, int scrollY, int scrollRangeX,
-				int scrollRangeY, int maxOverScrollX, int maxOverScrollY, boolean isTouchEvent) {
-
-			final boolean returnValue = super.overScrollBy(deltaX, deltaY, scrollX, scrollY, scrollRangeX,
-					scrollRangeY, maxOverScrollX, maxOverScrollY, isTouchEvent);
-
-			// Does all of the hard work...
-			OverscrollHelper.overScrollBy(PullToRefreshListView.this, deltaX, scrollX, deltaY, scrollY, isTouchEvent);
-
-			return returnValue;
-		}
-	}
-
 	protected class InternalListView extends ListView implements EmptyViewMethodAccessor {
 
 		private boolean mAddedLvFooter = false;
 
-		public InternalListView(Context context, AttributeSet attrs) {
+		public InternalListView(final Context context, final AttributeSet attrs) {
 			super(context, attrs);
 		}
 
 		@Override
-		protected void dispatchDraw(Canvas canvas) {
-			/**
-			 * This is a bit hacky, but Samsung's ListView has got a bug in it
-			 * when using Header/Footer Views and the list is empty. This masks
-			 * the issue so that it doesn't cause an FC. See Issue #66.
-			 */
-			try {
-				super.dispatchDraw(canvas);
-			} catch (IndexOutOfBoundsException e) {
-				e.printStackTrace();
-			}
-		}
-
-		@Override
-		public boolean dispatchTouchEvent(MotionEvent ev) {
+		public boolean dispatchTouchEvent(final MotionEvent ev) {
 			/**
 			 * This is a bit hacky, but Samsung's ListView has got a bug in it
 			 * when using Header/Footer Views and the list is empty. This masks
@@ -307,14 +272,14 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 			 */
 			try {
 				return super.dispatchTouchEvent(ev);
-			} catch (IndexOutOfBoundsException e) {
+			} catch (final IndexOutOfBoundsException e) {
 				e.printStackTrace();
 				return false;
 			}
 		}
 
 		@Override
-		public void setAdapter(ListAdapter adapter) {
+		public void setAdapter(final ListAdapter adapter) {
 			// Add the Footer View at the last possible moment
 			if (null != mLvFooterLoadingFrame && !mAddedLvFooter) {
 				addFooterView(mLvFooterLoadingFrame, null, false);
@@ -325,15 +290,51 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		}
 
 		@Override
-		public void setEmptyView(View emptyView) {
+		public void setEmptyView(final View emptyView) {
 			PullToRefreshListView.this.setEmptyView(emptyView);
 		}
 
 		@Override
-		public void setEmptyViewInternal(View emptyView) {
+		public void setEmptyViewInternal(final View emptyView) {
 			super.setEmptyView(emptyView);
 		}
 
+		@Override
+		protected void dispatchDraw(final Canvas canvas) {
+			/**
+			 * This is a bit hacky, but Samsung's ListView has got a bug in it
+			 * when using Header/Footer Views and the list is empty. This masks
+			 * the issue so that it doesn't cause an FC. See Issue #66.
+			 */
+			try {
+				super.dispatchDraw(canvas);
+			} catch (final IndexOutOfBoundsException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	@TargetApi(9)
+	final class InternalListViewSDK9 extends InternalListView {
+
+		public InternalListViewSDK9(final Context context, final AttributeSet attrs) {
+			super(context, attrs);
+		}
+
+		@Override
+		protected boolean overScrollBy(final int deltaX, final int deltaY, final int scrollX, final int scrollY,
+				final int scrollRangeX, final int scrollRangeY, final int maxOverScrollX, final int maxOverScrollY,
+				final boolean isTouchEvent) {
+
+			final boolean returnValue = super.overScrollBy(deltaX, deltaY, scrollX, scrollY, scrollRangeX,
+					scrollRangeY, maxOverScrollX, maxOverScrollY, isTouchEvent);
+
+			// Does all of the hard work...
+			OverscrollHelper.overScrollBy(PullToRefreshListView.this, deltaX, scrollX, deltaY, scrollY, isTouchEvent);
+
+			return returnValue;
+		}
 	}
 
 }

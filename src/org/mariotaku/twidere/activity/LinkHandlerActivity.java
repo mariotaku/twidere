@@ -19,17 +19,12 @@
 
 package org.mariotaku.twidere.activity;
 
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentManagerTrojan;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.NavUtils;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.Window;
+import static android.text.TextUtils.isEmpty;
+import static org.mariotaku.twidere.util.Utils.getAccountId;
+import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
+import static org.mariotaku.twidere.util.Utils.isMyAccount;
+import static org.mariotaku.twidere.util.Utils.matchLinkId;
+
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.DirectMessagesConversationFragment;
 import org.mariotaku.twidere.fragment.IncomingFriendshipsFragment;
@@ -50,46 +45,24 @@ import org.mariotaku.twidere.fragment.UserMentionsFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
 import org.mariotaku.twidere.fragment.UsersListFragment;
+import org.mariotaku.twidere.util.ParseUtils;
 
-import static android.text.TextUtils.isEmpty;
-import static org.mariotaku.twidere.util.Utils.getAccountId;
-import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
-import static org.mariotaku.twidere.util.Utils.isMyAccount;
-import static org.mariotaku.twidere.util.Utils.matchLinkId;
-import static org.mariotaku.twidere.util.Utils.parseInt;
-import static org.mariotaku.twidere.util.Utils.parseLong;
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentManagerTrojan;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NavUtils;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.Window;
 
 public class LinkHandlerActivity extends MultiSelectActivity {
 
 	private Fragment mFragment;
-
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		super.onCreate(savedInstanceState);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		setSupportProgressBarIndeterminateVisibility(false);
-		final Intent intent = getIntent();
-		final Uri data = intent.getData();
-		if (data != null) {
-			if (setFragment(data)) {
-				if (mFragment != null) {
-					if (isDualPaneMode()) {
-						showFragment(mFragment, true);
-					} else {
-						final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-						ft.replace(R.id.main, mFragment);
-						ft.commit();
-					}
-					return;
-				} else {
-					finish();
-				}
-			}
-		} else {
-			finish();
-		}
-	}
 
 	/**
 	 * Base action bar-aware implementation for
@@ -154,6 +127,34 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 	}
 
 	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		super.onCreate(savedInstanceState);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		setSupportProgressBarIndeterminateVisibility(false);
+		final Intent intent = getIntent();
+		final Uri data = intent.getData();
+		if (data != null) {
+			if (setFragment(data)) {
+				if (mFragment != null) {
+					if (isDualPaneMode()) {
+						showFragment(mFragment, true);
+					} else {
+						final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+						ft.replace(R.id.main, mFragment);
+						ft.commit();
+					}
+					return;
+				} else {
+					finish();
+				}
+			}
+		} else {
+			finish();
+		}
+	}
+
+	@Override
 	protected void onStart() {
 		if (isDualPaneMode() && mFragment != null) {
 			final FragmentManager fm = getSupportFragmentManager();
@@ -184,9 +185,9 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 				case LINK_ID_STATUS: {
 					setTitle(R.string.view_status);
 					fragment = new StatusFragment();
-					if (!args.containsKey(INTENT_KEY_STATUS_ID)) {						
+					if (!args.containsKey(INTENT_KEY_STATUS_ID)) {
 						final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
-						args.putLong(INTENT_KEY_STATUS_ID, parseLong(param_status_id));
+						args.putLong(INTENT_KEY_STATUS_ID, ParseUtils.parseLong(param_status_id));
 					}
 					break;
 				}
@@ -199,7 +200,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 						args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					}
 					if (!args.containsKey(INTENT_KEY_USER_ID)) {
-						args.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+						args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
 					}
 					break;
 				}
@@ -212,7 +213,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 						args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					}
 					if (!args.containsKey(INTENT_KEY_USER_ID)) {
-						args.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+						args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
 					}
 					if (isEmpty(param_screen_name) && isEmpty(param_user_id)) {
 						finish();
@@ -229,7 +230,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 						args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					}
 					if (!args.containsKey(INTENT_KEY_USER_ID)) {
-						args.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+						args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
 					}
 					if (isEmpty(param_screen_name) && isEmpty(param_user_id)) {
 						finish();
@@ -246,7 +247,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 						args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					}
 					if (!args.containsKey(INTENT_KEY_USER_ID)) {
-						args.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+						args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
 					}
 					if (isEmpty(param_screen_name) && isEmpty(param_user_id)) {
 						finish();
@@ -263,7 +264,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 						args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					}
 					if (!args.containsKey(INTENT_KEY_USER_ID)) {
-						args.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+						args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
 					}
 					if (isEmpty(param_screen_name) && isEmpty(param_user_id)) {
 						finish();
@@ -281,7 +282,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					fragment = new DirectMessagesConversationFragment();
 					final String param_conversation_id = uri.getQueryParameter(QUERY_PARAM_CONVERSATION_ID);
 					final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
-					final long conversation_id = parseLong(param_conversation_id);
+					final long conversation_id = ParseUtils.parseLong(param_conversation_id);
 					if (conversation_id > 0) {
 						args.putLong(INTENT_KEY_CONVERSATION_ID, conversation_id);
 					} else if (param_screen_name != null) {
@@ -301,8 +302,8 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 						finish();
 						return false;
 					}
-					args.putInt(INTENT_KEY_LIST_ID, parseInt(param_list_id));
-					args.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					args.putInt(INTENT_KEY_LIST_ID, ParseUtils.parseInt(param_list_id));
+					args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
 					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					args.putString(INTENT_KEY_LIST_NAME, param_list_name);
 					break;
@@ -316,7 +317,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 						args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					}
 					if (!args.containsKey(INTENT_KEY_USER_ID)) {
-						args.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+						args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
 					}
 					if (isEmpty(param_screen_name) && isEmpty(param_user_id)) {
 						finish();
@@ -336,8 +337,8 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 						finish();
 						return false;
 					}
-					args.putInt(INTENT_KEY_LIST_ID, parseInt(param_list_id));
-					args.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					args.putInt(INTENT_KEY_LIST_ID, ParseUtils.parseInt(param_list_id));
+					args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
 					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					args.putString(INTENT_KEY_LIST_NAME, param_list_name);
 					break;
@@ -354,8 +355,8 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 						finish();
 						return false;
 					}
-					args.putInt(INTENT_KEY_LIST_ID, parseInt(param_list_id));
-					args.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					args.putInt(INTENT_KEY_LIST_ID, ParseUtils.parseInt(param_list_id));
+					args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
 					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					args.putString(INTENT_KEY_LIST_NAME, param_list_name);
 					break;
@@ -372,8 +373,8 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 						finish();
 						return false;
 					}
-					args.putInt(INTENT_KEY_LIST_ID, parseInt(param_list_id));
-					args.putLong(INTENT_KEY_USER_ID, parseLong(param_user_id));
+					args.putInt(INTENT_KEY_LIST_ID, ParseUtils.parseInt(param_list_id));
+					args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
 					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
 					args.putString(INTENT_KEY_LIST_NAME, param_list_name);
 					break;
@@ -419,7 +420,7 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 			}
 			final String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
 			if (param_account_id != null) {
-				args.putLong(INTENT_KEY_ACCOUNT_ID, parseLong(param_account_id));
+				args.putLong(INTENT_KEY_ACCOUNT_ID, ParseUtils.parseLong(param_account_id));
 			} else {
 				final String param_account_name = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_NAME);
 				if (param_account_name != null) {
@@ -429,8 +430,8 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					if (isMyAccount(this, account_id)) {
 						args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 					} else {
-						//finish();
-						//return false;
+						// finish();
+						// return false;
 					}
 				}
 			}

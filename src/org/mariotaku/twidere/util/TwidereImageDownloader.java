@@ -1,16 +1,35 @@
-package org.mariotaku.twidere.util;
+/*
+ * 				Twidere - Twitter client for Android
+ *
+ *  Copyright (C) 2012-2013 Mariotaku Lee <mariotaku.lee@gmail.com>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-import android.content.ContentResolver;
-import android.content.Context;
-import android.net.Uri;
-import com.nostra13.universalimageloader.core.download.ImageDownloader;
+package org.mariotaku.twidere.util;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
+
 import twitter4j.TwitterException;
 import twitter4j.http.HttpClientWrapper;
 import twitter4j.http.HttpResponse;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.net.Uri;
+
+import com.nostra13.universalimageloader.core.download.ImageDownloader;
 
 public class TwidereImageDownloader implements ImageDownloader {
 
@@ -20,7 +39,7 @@ public class TwidereImageDownloader implements ImageDownloader {
 
 	public TwidereImageDownloader(final Context context) {
 		this.context = context;
-		this.resolver = context.getContentResolver();
+		resolver = context.getContentResolver();
 		initHttpClient();
 	}
 
@@ -31,10 +50,8 @@ public class TwidereImageDownloader implements ImageDownloader {
 		final Uri uri = Uri.parse(uri_string);
 		final String scheme = uri.getScheme();
 		try {
-			if (ContentResolver.SCHEME_ANDROID_RESOURCE.equals(scheme)
-					|| ContentResolver.SCHEME_CONTENT.equals(scheme)
-							|| ContentResolver.SCHEME_FILE.equals(scheme))
-				return resolver.openInputStream(uri);
+			if (ContentResolver.SCHEME_ANDROID_RESOURCE.equals(scheme) || ContentResolver.SCHEME_CONTENT.equals(scheme)
+					|| ContentResolver.SCHEME_FILE.equals(scheme)) return resolver.openInputStream(uri);
 			final HttpResponse resp = Utils.getRedirectedHttpResponse(client, uri_string);
 			is = new ContentLengthInputStream(resp.asStream(), (int) resp.getContentLength());
 		} catch (final TwitterException e) {
@@ -45,39 +62,6 @@ public class TwidereImageDownloader implements ImageDownloader {
 
 	public void initHttpClient() {
 		client = Utils.getImageLoaderHttpClient(context);
-	}
-	
-	private static class ContentLengthInputStream extends InputStream {
-
-		private final InputStream stream;
-		private final int length;
-		private int available;
-
-		ContentLengthInputStream(final InputStream stream, final int length) {
-			this.stream = stream;
-			this.length = this.available = length;
-		}
-		
-		@Override
-		public synchronized int available() {
-			return available;
-		}
-		
-		@Override
-		public void close() throws IOException {
-			stream.close();
-		}
-		
-		public int length() {
-			return length;
-		}
-		
-		@Override
-		public int read() throws IOException {
-			available--;
-			return stream.read();
-		}
-
 	}
 
 }

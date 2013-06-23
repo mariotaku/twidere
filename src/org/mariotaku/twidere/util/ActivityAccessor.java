@@ -46,20 +46,6 @@ public final class ActivityAccessor {
 		ActivityAccessorSDK14.setHomeButtonEnabled(activity, enabled);
 	}
 
-	@TargetApi(Build.VERSION_CODES.ECLAIR)
-	private static class ActivityAccessorSDK5 {
-
-		private static void onBackPressed(final Activity activity) {
-			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ECLAIR) return;
-			activity.onBackPressed();
-		}
-		
-		private static void overridePendingTransition(final Activity activity, final int enter_anim, final int exit_anim) {
-			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ECLAIR) return;
-			activity.overridePendingTransition(enter_anim, exit_anim);
-		}
-	}
-
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private static class ActivityAccessorSDK11 {
 
@@ -77,6 +63,20 @@ public final class ActivityAccessor {
 			final ActionBar actionBar = activity.getActionBar();
 			if (actionBar == null) return;
 			actionBar.setHomeButtonEnabled(enabled);
+		}
+	}
+
+	@TargetApi(Build.VERSION_CODES.ECLAIR)
+	private static class ActivityAccessorSDK5 {
+
+		private static void onBackPressed(final Activity activity) {
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ECLAIR) return;
+			activity.onBackPressed();
+		}
+
+		private static void overridePendingTransition(final Activity activity, final int enter_anim, final int exit_anim) {
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ECLAIR) return;
+			activity.overridePendingTransition(enter_anim, exit_anim);
 		}
 	}
 }

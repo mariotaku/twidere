@@ -19,15 +19,35 @@
 
 package org.mariotaku.twidere.provider;
 
-import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.util.ArrayUtils;
 
+import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-public final class TweetStore implements Constants {
+public final class TweetStore  {
 
 	public static final String AUTHORITY = "twidere";
+
+	private static final String TYPE_PRIMARY_KEY = "INTEGER PRIMARY KEY AUTOINCREMENT";
+	private static final String TYPE_INT = "INTEGER";
+	private static final String TYPE_INT_UNIQUE = "INTEGER UNIQUE";
+	private static final String TYPE_BOOLEAN = "INTEGER(1)";
+	private static final String TYPE_TEXT = "TEXT";
+	private static final String TYPE_TEXT_NOT_NULL = "TEXT NOT NULL";
+
+	public static final String CONTENT_PATH_NULL = "null_content";
+
+	public static final String TABLE_NAME_NOTIFICATIONS = "notifications";
+	
+	public static final String CONTENT_PATH_NOTIFICATIONS = TABLE_NAME_NOTIFICATIONS;
+
+	public static final Uri BASE_CONTENT_URI = new Uri.Builder().scheme(ContentResolver.SCHEME_CONTENT).authority(AUTHORITY).build();
+
+	public static final Uri CONTENT_URI_NULL = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH_NULL);
+
+	public static final Uri CONTENT_URI_NOTOFICATIONS = Uri.withAppendedPath(BASE_CONTENT_URI,
+			CONTENT_PATH_NOTIFICATIONS);
 
 	public static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI,
 			CachedStatuses.CONTENT_URI };
@@ -35,28 +55,7 @@ public final class TweetStore implements Constants {
 			CachedHashtags.CONTENT_URI };
 	public static final Uri[] DIRECT_MESSAGES_URIS = new Uri[] { DirectMessages.Inbox.CONTENT_URI,
 			DirectMessages.Outbox.CONTENT_URI };
-
-	private static final String TYPE_PRIMARY_KEY = "INTEGER PRIMARY KEY AUTOINCREMENT";
-
-	private static final String TYPE_TEXT = "TEXT";
-	private static final String TYPE_INT = "INTEGER";
-
-	private static final String TYPE_TEXT_NOT_NULL = "TEXT NOT NULL";
-
-	private static final String TYPE_INT_UNIQUE = "INTEGER UNIQUE";
-
-	private static final String TYPE_BOOLEAN = "INTEGER(1)";
-
-	public static final String CONTENT_PATH_NULL = "null_content";
-
-	public static final String CONTENT_PATH_NOTIFICATIONS = "notifications";
-
-	public static final Uri CONTENT_URI_NULL = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-			CONTENT_PATH_NULL);
-
-	public static final Uri CONTENT_URI_NOTOFICATIONS = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-			CONTENT_PATH_NOTIFICATIONS);
-
+	
 	public static interface Accounts extends BaseColumns {
 
 		public static final int AUTH_TYPE_OAUTH = 0;
@@ -64,9 +63,9 @@ public final class TweetStore implements Constants {
 		public static final int AUTH_TYPE_BASIC = 2;
 		public static final int AUTH_TYPE_TWIP_O_MODE = 3;
 
-		public static final String CONTENT_PATH = "accounts";
-		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-				CONTENT_PATH);
+		public static final String TABLE_NAME = "accounts";
+		public static final String CONTENT_PATH = TABLE_NAME;
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
 
 		/**
 		 * Login name of the account<br>
@@ -148,17 +147,32 @@ public final class TweetStore implements Constants {
 		public static final String[] COLUMNS = new String[] { _ID, NAME };
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT };
 
-		public static final String CONTENT_PATH = "cached_hashtags";
+		public static final String TABLE_NAME = "cached_hashtags";
+		public static final String CONTENT_PATH = TABLE_NAME;
 
-		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-				CONTENT_PATH);
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
+	}
+
+	public static interface CachedImages extends BaseColumns {
+		public static final String TABLE_NAME = "cached_images";
+		public static final String CONTENT_PATH = TABLE_NAME;
+
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
+
+		public static final String URL = "url";
+
+		public static final String PATH = "path";
+
+		public static final String[] MATRIX_COLUMNS = new String[] { URL, PATH };
+
+		public static final String[] COLUMNS = new String[] { _ID, URL, PATH };
 	}
 
 	public static interface CachedStatuses extends Statuses {
-		public static final String CONTENT_PATH = "cached_statuses";
+		public static final String TABLE_NAME = "cached_statuses";
+		public static final String CONTENT_PATH = TABLE_NAME;
 
-		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-				CONTENT_PATH);
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
 	}
 
 	public static interface CachedTrends extends CachedValues {
@@ -169,10 +183,10 @@ public final class TweetStore implements Constants {
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT, TYPE_INT };
 
 		public static interface Local extends CachedTrends {
-			public static final String CONTENT_PATH = "local_trends";
+			public static final String TABLE_NAME = "local_trends";
+			public static final String CONTENT_PATH = TABLE_NAME;
 
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-					CONTENT_PATH);
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
 
 		}
 
@@ -180,10 +194,10 @@ public final class TweetStore implements Constants {
 
 	public static interface CachedUsers extends CachedValues {
 
-		public static final String CONTENT_PATH = "cached_users";
+		public static final String TABLE_NAME = "cached_users";
+		public static final String CONTENT_PATH = TABLE_NAME;
 
-		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-				CONTENT_PATH);
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
 
 		/**
 		 * User's ID of the status.<br>
@@ -196,19 +210,19 @@ public final class TweetStore implements Constants {
 		public static final String IS_PROTECTED = "is_protected";
 
 		public static final String IS_VERIFIED = "is_verified";
-		
+
 		public static final String IS_FOLLOWING = "is_following";
 
 		public static final String DESCRIPTION_PLAIN = "description_plain";
-		
+
 		public static final String DESCRIPTION_HTML = "description_html";
-		
+
 		public static final String DESCRIPTION_EXPANDED = "description_expanded";
 
 		public static final String LOCATION = "location";
 
 		public static final String URL = "url";
-		
+
 		public static final String URL_EXPANDED = "url_expanded";
 
 		public static final String PROFILE_BANNER_URL = "profile_banner_url";
@@ -233,13 +247,14 @@ public final class TweetStore implements Constants {
 		 */
 		public static final String PROFILE_IMAGE_URL = "profile_image_url";
 
-		public static final String[] COLUMNS = new String[] { _ID, USER_ID, CREATED_AT, NAME, SCREEN_NAME, DESCRIPTION_PLAIN,
-				LOCATION, URL, PROFILE_IMAGE_URL, PROFILE_BANNER_URL, IS_PROTECTED, IS_VERIFIED, IS_FOLLOWING, FOLLOWERS_COUNT,
-				FRIENDS_COUNT, STATUSES_COUNT, FAVORITES_COUNT, DESCRIPTION_HTML, DESCRIPTION_EXPANDED, URL_EXPANDED };
+		public static final String[] COLUMNS = new String[] { _ID, USER_ID, CREATED_AT, NAME, SCREEN_NAME,
+				DESCRIPTION_PLAIN, LOCATION, URL, PROFILE_IMAGE_URL, PROFILE_BANNER_URL, IS_PROTECTED, IS_VERIFIED,
+				IS_FOLLOWING, FOLLOWERS_COUNT, FRIENDS_COUNT, STATUSES_COUNT, FAVORITES_COUNT, DESCRIPTION_HTML,
+				DESCRIPTION_EXPANDED, URL_EXPANDED };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT_UNIQUE, TYPE_INT, TYPE_TEXT,
-				TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN, 
-				TYPE_INT, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT };
+				TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_BOOLEAN, TYPE_BOOLEAN,
+				TYPE_BOOLEAN, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT };
 
 	}
 
@@ -250,10 +265,10 @@ public final class TweetStore implements Constants {
 
 	public static interface DirectMessages extends BaseColumns {
 
-		public static final String CONTENT_PATH = "messages";
+		public static final String TABLE_NAME = "messages";
+		public static final String CONTENT_PATH = TABLE_NAME;
 
-		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-				CONTENT_PATH);
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
 
 		public static final String ACCOUNT_ID = "account_id";
 		public static final String MESSAGE_ID = "message_id";
@@ -285,15 +300,17 @@ public final class TweetStore implements Constants {
 
 			public static final String DEFAULT_SORT_ORDER = MESSAGE_TIMESTAMP + " ASC";
 
-			public static final String CONTENT_PATH = "messages_conversation";
+			public static final String TABLE_NAME = "messages_conversation";
+			public static final String CONTENT_PATH = TABLE_NAME;
 
-			public static final String CONTENT_PATH_SCREEN_NAME = "messages_conversation_screen_name";
+			public static final String TABLE_NAME_SCREEN_NAME = "messages_conversation_screen_name";
+			
+			public static final String CONTENT_PATH_SCREEN_NAME = TABLE_NAME_SCREEN_NAME;
 
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-					CONTENT_PATH);
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
 
-			public static final Uri CONTENT_URI_SCREEN_NAME = Uri.withAppendedPath(
-					Uri.parse(PROTOCOL_CONTENT + AUTHORITY), CONTENT_PATH_SCREEN_NAME);
+			public static final Uri CONTENT_URI_SCREEN_NAME = Uri.withAppendedPath(BASE_CONTENT_URI,
+					CONTENT_PATH_SCREEN_NAME);
 
 			public static final class QueryBuilder {
 
@@ -303,7 +320,7 @@ public final class TweetStore implements Constants {
 							: "*";
 					final StringBuilder sql_builder = new StringBuilder();
 					sql_builder.append("SELECT " + projection_string);
-					sql_builder.append(" FROM " + TABLE_DIRECT_MESSAGES_INBOX);
+					sql_builder.append(" FROM " + Inbox.TABLE_NAME);
 					sql_builder.append(" WHERE " + DirectMessages.ACCOUNT_ID + " = " + account_id);
 					sql_builder.append(" AND " + DirectMessages.SENDER_ID + " = " + conversation_id);
 					if (selection != null) {
@@ -311,7 +328,7 @@ public final class TweetStore implements Constants {
 					}
 					sql_builder.append(" UNION ");
 					sql_builder.append("SELECT " + projection_string);
-					sql_builder.append(" FROM " + TABLE_DIRECT_MESSAGES_OUTBOX);
+					sql_builder.append(" FROM " + Outbox.TABLE_NAME);
 					sql_builder.append(" WHERE " + DirectMessages.ACCOUNT_ID + " = " + account_id);
 					sql_builder.append(" AND " + DirectMessages.RECIPIENT_ID + " = " + conversation_id);
 					if (selection != null) {
@@ -328,7 +345,7 @@ public final class TweetStore implements Constants {
 							: "*";
 					final StringBuilder sql_builder = new StringBuilder();
 					sql_builder.append("SELECT " + projection_string);
-					sql_builder.append(" FROM " + TABLE_DIRECT_MESSAGES_INBOX);
+					sql_builder.append(" FROM " + Inbox.TABLE_NAME);
 					sql_builder.append(" WHERE " + DirectMessages.ACCOUNT_ID + " = " + account_id);
 					sql_builder.append(" AND " + DirectMessages.SENDER_SCREEN_NAME + " = '" + screen_name + "'");
 					if (selection != null) {
@@ -336,7 +353,7 @@ public final class TweetStore implements Constants {
 					}
 					sql_builder.append(" UNION ");
 					sql_builder.append("SELECT " + projection_string);
-					sql_builder.append(" FROM " + TABLE_DIRECT_MESSAGES_OUTBOX);
+					sql_builder.append(" FROM " + Outbox.TABLE_NAME);
 					sql_builder.append(" WHERE " + DirectMessages.ACCOUNT_ID + " = " + account_id);
 					sql_builder.append(" AND " + DirectMessages.RECIPIENT_SCREEN_NAME + " = '" + screen_name + "'");
 					if (selection != null) {
@@ -352,10 +369,10 @@ public final class TweetStore implements Constants {
 
 		public static interface ConversationsEntry extends BaseColumns {
 
-			public static final String CONTENT_PATH = "messages_conversations_entry";
+			public static final String TABLE_NAME = "messages_conversations_entry";
+			public static final String CONTENT_PATH = TABLE_NAME;
 
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-					CONTENT_PATH);
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
 
 			public static final String MESSAGE_TIMESTAMP = "message_timestamp";
 			public static final String NAME = "name";
@@ -386,25 +403,24 @@ public final class TweetStore implements Constants {
 							+ ", " + "0 AS " + IS_OUTGOING + ", " + SENDER_NAME + " AS " + NAME + ", "
 							+ SENDER_SCREEN_NAME + " AS " + SCREEN_NAME + ", " + SENDER_PROFILE_IMAGE_URL + " AS "
 							+ PROFILE_IMAGE_URL + ", " + TEXT_HTML + ", " + SENDER_ID + " AS " + CONVERSATION_ID);
-					builder.append(" FROM " + TABLE_DIRECT_MESSAGES_INBOX);
+					builder.append(" FROM " + Inbox.TABLE_NAME);
 					builder.append(" UNION ");
 					builder.append("SELECT " + _ID + ", " + MESSAGE_TIMESTAMP + ", " + MESSAGE_ID + ", " + ACCOUNT_ID
 							+ ", " + "1 AS " + IS_OUTGOING + ", " + RECIPIENT_NAME + " AS " + NAME + ", "
 							+ RECIPIENT_SCREEN_NAME + " AS " + SCREEN_NAME + ", " + RECIPIENT_PROFILE_IMAGE_URL
 							+ " AS " + PROFILE_IMAGE_URL + ", " + TEXT_HTML + ", " + RECIPIENT_ID + " AS "
 							+ CONVERSATION_ID);
-					builder.append(" FROM " + TABLE_DIRECT_MESSAGES_OUTBOX);
+					builder.append(" FROM " + Outbox.TABLE_NAME);
 					builder.append(")");
 					builder.append(" WHERE ");
 					builder.append(MESSAGE_ID + " IN(");
 					builder.append("SELECT " + MESSAGE_ID + " FROM (" + " SELECT " + MESSAGE_ID + ", " + SENDER_ID
-							+ " AS " + CONVERSATION_ID + " FROM " + TABLE_DIRECT_MESSAGES_INBOX + " WHERE "
-							+ MESSAGE_ID + " IN (SELECT " + "MAX(" + MESSAGE_ID + ") FROM "
-							+ TABLE_DIRECT_MESSAGES_INBOX + " GROUP BY " + SENDER_ID + ")" + " UNION " + " SELECT "
-							+ MESSAGE_ID + ", " + RECIPIENT_ID + " AS " + CONVERSATION_ID + " FROM "
-							+ TABLE_DIRECT_MESSAGES_OUTBOX + " WHERE " + MESSAGE_ID + " IN (" + " SELECT " + "MAX("
-							+ MESSAGE_ID + ") FROM " + TABLE_DIRECT_MESSAGES_OUTBOX + " GROUP BY " + RECIPIENT_ID
-							+ ")) " + " GROUP BY " + CONVERSATION_ID);
+							+ " AS " + CONVERSATION_ID + " FROM " + Inbox.TABLE_NAME + " WHERE " + MESSAGE_ID
+							+ " IN (SELECT " + "MAX(" + MESSAGE_ID + ") FROM " + Inbox.TABLE_NAME + " GROUP BY "
+							+ SENDER_ID + ")" + " UNION " + " SELECT " + MESSAGE_ID + ", " + RECIPIENT_ID + " AS "
+							+ CONVERSATION_ID + " FROM " + Outbox.TABLE_NAME + " WHERE " + MESSAGE_ID + " IN ("
+							+ " SELECT " + "MAX(" + MESSAGE_ID + ") FROM " + Outbox.TABLE_NAME + " GROUP BY "
+							+ RECIPIENT_ID + ")) " + " GROUP BY " + CONVERSATION_ID);
 					builder.append(")");
 					if (where != null) {
 						builder.append(" AND " + where);
@@ -418,19 +434,21 @@ public final class TweetStore implements Constants {
 
 		public static interface Inbox extends DirectMessages {
 
-			public static final String CONTENT_PATH = "messages_inbox";
+			public static final String TABLE_NAME = "messages_inbox";
 
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-					CONTENT_PATH);
+			public static final String CONTENT_PATH = TABLE_NAME;
+
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
 
 		}
 
 		public static interface Outbox extends DirectMessages {
 
-			public static final String CONTENT_PATH = "messages_outbox";
+			public static final String TABLE_NAME = "messages_outbox";
 
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-					CONTENT_PATH);
+			public static final String CONTENT_PATH = TABLE_NAME;
+
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
 
 		}
 
@@ -439,13 +457,13 @@ public final class TweetStore implements Constants {
 				final String projection_string = projection != null ? ArrayUtils.toString(projection, ',', false) : "*";
 				final StringBuilder sql_builder = new StringBuilder();
 				sql_builder.append("SELECT " + projection_string);
-				sql_builder.append(" FROM " + TABLE_DIRECT_MESSAGES_INBOX);
+				sql_builder.append(" FROM " + Inbox.TABLE_NAME);
 				if (selection != null) {
 					sql_builder.append(" WHERE " + selection);
 				}
 				sql_builder.append(" UNION ");
 				sql_builder.append("SELECT " + projection_string);
-				sql_builder.append(" FROM " + TABLE_DIRECT_MESSAGES_OUTBOX);
+				sql_builder.append(" FROM " + Outbox.TABLE_NAME);
 				if (selection != null) {
 					sql_builder.append(" WHERE " + selection);
 				}
@@ -456,12 +474,27 @@ public final class TweetStore implements Constants {
 
 	}
 
+	public static interface DNS extends BaseColumns {
+		public static final String TABLE_NAME = "dns";
+		public static final String CONTENT_PATH = TABLE_NAME;
+
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
+
+		public static final String HOST = "host";
+
+		public static final String ADDRESS = "address";
+
+		public static final String[] MATRIX_COLUMNS = new String[] { HOST, ADDRESS };
+
+		public static final String[] COLUMNS = new String[] { _ID, HOST, ADDRESS };
+	}
+
 	public static interface Drafts extends BaseColumns {
 
-		public static final String CONTENT_PATH = "drafts";
+		public static final String TABLE_NAME = "drafts";
+		public static final String CONTENT_PATH = TABLE_NAME;
 
-		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-				CONTENT_PATH);
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
 
 		/**
 		 * Status content.<br>
@@ -505,48 +538,94 @@ public final class TweetStore implements Constants {
 
 		public static interface Keywords extends Filters {
 
-			public static final String CONTENT_PATH = "filtered_keywords";
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-					CONTENT_PATH);
+			public static final String TABLE_NAME = "filtered_keywords";
+			public static final String CONTENT_PATH = TABLE_NAME;
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
 		}
 
 		public static interface Links extends Filters {
 
-			public static final String CONTENT_PATH = "filtered_links";
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-					CONTENT_PATH);
+			public static final String TABLE_NAME = "filtered_links";
+			public static final String CONTENT_PATH = TABLE_NAME;
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
 		}
 
 		public static interface Sources extends Filters {
 
-			public static final String CONTENT_PATH = "filtered_sources";
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-					CONTENT_PATH);
+			public static final String TABLE_NAME = "filtered_sources";
+			public static final String CONTENT_PATH = TABLE_NAME;
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
 		}
 
 		public static interface Users extends Filters {
 
-			public static final String CONTENT_PATH = "filtered_users";
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-					CONTENT_PATH);
+			public static final String TABLE_NAME = "filtered_users";
+			public static final String CONTENT_PATH = TABLE_NAME;
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
 		}
 	}
 
 	public static interface Mentions extends Statuses {
 
-		public static final String CONTENT_PATH = "mentions";
+		public static final String TABLE_NAME = "mentions";
+		public static final String CONTENT_PATH = TABLE_NAME;
 
-		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-				CONTENT_PATH);
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
 
+	}
+
+	public static interface Permissions extends BaseColumns {
+		public static final String TABLE_NAME = "permissions";
+		public static final String CONTENT_PATH = TABLE_NAME;
+
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
+
+		public static final String PERMISSION = "permissions";
+
+		public static final String PACKAGE_NAME = "package_name";
+
+		public static final String[] MATRIX_COLUMNS = new String[] { PACKAGE_NAME, PERMISSION };
+
+		public static final String[] COLUMNS = new String[] { _ID, PACKAGE_NAME, PERMISSION };
+	}
+
+	public static interface Preferences extends BaseColumns {
+		public static final String TABLE_NAME = "preferences";
+		public static final String CONTENT_PATH = TABLE_NAME;
+
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
+
+		public static final int TYPE_INVALID = -1;
+
+		public static final int TYPE_NULL = 0;
+
+		public static final int TYPE_BOOLEAN = 1;
+
+		public static final int TYPE_INTEGER = 2;
+
+		public static final int TYPE_LONG = 3;
+
+		public static final int TYPE_FLOAT = 4;
+
+		public static final int TYPE_STRING = 5;
+
+		public static final String KEY = "key";
+
+		public static final String VALUE = "value";
+
+		public static final String TYPE = "type";
+
+		public static final String[] MATRIX_COLUMNS = new String[] { KEY, VALUE, TYPE };
+
+		public static final String[] COLUMNS = new String[] { _ID, KEY, VALUE, TYPE };
 	}
 
 	public static interface Statuses extends BaseColumns {
 
-		public static final String CONTENT_PATH = "statuses";
+		public static final String TABLE_NAME = "statuses";
+		public static final String CONTENT_PATH = TABLE_NAME;
 
-		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-				CONTENT_PATH);
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
 		/**
 		 * Account ID of the status.<br>
 		 * Type: TEXT
@@ -564,7 +643,7 @@ public final class TweetStore implements Constants {
 		 *
 		 */
 		public static final String TEXT_PLAIN = "text_plain";
-		
+
 		public static final String TEXT_UNESCAPED = "text_unescaped";
 
 		/**
@@ -655,7 +734,7 @@ public final class TweetStore implements Constants {
 		public static final String MY_RETWEET_ID = "my_retweet_id";
 
 		public static final String IMAGE_PREVIEW_URL = "image_preview_url";
-		
+
 		public static final String SORT_ORDER_TIMESTAMP_DESC = STATUS_TIMESTAMP + " DESC";
 
 		public static final String SORT_ORDER_STATUS_ID_DESC = STATUS_ID + " DESC";
@@ -669,17 +748,17 @@ public final class TweetStore implements Constants {
 				IS_VERIFIED, IS_FOLLOWING, IS_GAP, IS_POSSIBLY_SENSITIVE, IMAGE_PREVIEW_URL };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_INT,
-				TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,
-				TYPE_INT, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN,
-				TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_TEXT };
+				TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_TEXT, TYPE_TEXT,
+				TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_BOOLEAN, TYPE_BOOLEAN,
+				TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_TEXT };
 
 	}
 
 	public static interface Tabs extends BaseColumns {
-		public static final String CONTENT_PATH = "tabs";
+		public static final String TABLE_NAME = "tabs";
+		public static final String CONTENT_PATH = TABLE_NAME;
 
-		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-				CONTENT_PATH);
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
 
 		public static final String NAME = "name";
 
@@ -697,81 +776,5 @@ public final class TweetStore implements Constants {
 				TYPE_TEXT, TYPE_INT };
 
 		public static final String DEFAULT_SORT_ORDER = POSITION + " ASC";
-	}
-	
-	public static interface Preferences extends BaseColumns {
-		public static final String CONTENT_PATH = "preferences";
-
-		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-				CONTENT_PATH);
-				
-		public static final int TYPE_INVALID = -1;
-		
-		public static final int TYPE_NULL = 0;
-				
-		public static final int TYPE_BOOLEAN = 1;
-		
-		public static final int TYPE_INTEGER = 2;
-		
-		public static final int TYPE_LONG = 3;
-
-		public static final int TYPE_FLOAT = 4;
-		
-		public static final int TYPE_STRING = 5;
-
-		public static final String KEY = "key";
-
-		public static final String VALUE = "value";
-
-		public static final String TYPE = "type";
-
-		public static final String[] MATRIX_COLUMNS = new String[] { KEY, VALUE, TYPE };
-		
-		public static final String[] COLUMNS = new String[] { _ID, KEY, VALUE, TYPE };
-	}
-
-	public static interface Permissions extends BaseColumns {
-		public static final String CONTENT_PATH = "permissions";
-
-		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-				CONTENT_PATH);
-
-		public static final String PERMISSION = "permissions";
-
-		public static final String PACKAGE_NAME = "package_name";
-
-		public static final String[] MATRIX_COLUMNS = new String[] { PACKAGE_NAME, PERMISSION };
-
-		public static final String[] COLUMNS = new String[] { _ID, PACKAGE_NAME, PERMISSION };
-	}
-
-	public static interface DNS extends BaseColumns {
-		public static final String CONTENT_PATH = "dns";
-
-		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-				CONTENT_PATH);
-
-		public static final String HOST = "host";
-		
-		public static final String ADDRESS = "address";
-
-		public static final String[] MATRIX_COLUMNS = new String[] { HOST, ADDRESS };
-
-		public static final String[] COLUMNS = new String[] { _ID, HOST, ADDRESS };
-	}
-
-	public static interface CachedImages extends BaseColumns {
-		public static final String CONTENT_PATH = "cached_images";
-
-		public static final Uri CONTENT_URI = Uri.withAppendedPath(Uri.parse(PROTOCOL_CONTENT + AUTHORITY),
-				CONTENT_PATH);
-
-		public static final String URL = "url";
-
-		public static final String PATH = "path";
-
-		public static final String[] MATRIX_COLUMNS = new String[] { URL, PATH };
-
-		public static final String[] COLUMNS = new String[] { _ID, URL, PATH };
 	}
 }

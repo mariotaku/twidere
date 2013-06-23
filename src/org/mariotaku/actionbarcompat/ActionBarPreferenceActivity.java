@@ -4,6 +4,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.support.v4.app.ActivityCompat;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.Window;
@@ -32,31 +33,11 @@ public class ActionBarPreferenceActivity extends PreferenceActivity {
 		}
 	}
 
-	// @Override
-	// public void onBackPressed() {
-	// if (mActionBarCompat instanceof ActionBarCompatBase) {
-	// if (((ActionBarCompatBase) mActionBarCompat).isActionModeShowing() &&
-	// mActionModeCompat != null) {
-	// mActionModeCompat.finish();
-	// return;
-	// }
-	// }
-	// super.onBackPressed();
-	// }
-
 	@Override
 	public void onContentChanged() {
 		super.onContentChanged();
 		initActionBar();
 		checkActionBar();
-	}
-
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		if (mActionBarCompat instanceof ActionBarCompatBase) {
-			((ActionBarCompatBase) mActionBarCompat).requestCustomTitleView();
-		}
-		super.onCreate(savedInstanceState);
 	}
 
 	@Override
@@ -66,6 +47,17 @@ public class ActionBarPreferenceActivity extends PreferenceActivity {
 			retValue = true;
 		}
 		return retValue;
+	}
+
+	@Override
+	public boolean onKeyUp(final int keyCode, final KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK && mActionBarCompat instanceof ActionBarCompatBase) {
+			if (((ActionBarCompatBase) mActionBarCompat).isActionModeShowing() && mActionModeCompat != null) {
+				mActionModeCompat.finish();
+				return true;
+			}
+		}
+		return super.onKeyUp(keyCode, event);
 	}
 
 	@Override
@@ -112,6 +104,14 @@ public class ActionBarPreferenceActivity extends PreferenceActivity {
 			return new ActionModeNative(this, callback);
 		else
 			return mActionModeCompat = new ActionModeCompat((ActionBarCompatBase) mActionBarCompat, callback);
+	}
+
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		if (mActionBarCompat instanceof ActionBarCompatBase) {
+			((ActionBarCompatBase) mActionBarCompat).requestCustomTitleView();
+		}
+		super.onCreate(savedInstanceState);
 	}
 
 	private void checkActionBar() {

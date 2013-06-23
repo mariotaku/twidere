@@ -19,10 +19,11 @@
 
 package org.mariotaku.twidere.fragment;
 
-import android.content.Context;
-import android.os.Bundle;
 import org.mariotaku.twidere.loader.IDsUsersLoader;
 import org.mariotaku.twidere.loader.StatusRetweetersLoader;
+
+import android.content.Context;
+import android.os.Bundle;
 
 public class StatusRetweetersListFragment extends CursorSupportUsersListFragment {
 

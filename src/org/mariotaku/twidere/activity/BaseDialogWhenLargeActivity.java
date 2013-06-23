@@ -1,4 +1,25 @@
+/*
+ * 				Twidere - Twitter client for Android
+ *
+ *  Copyright (C) 2012-2013 Mariotaku Lee <mariotaku.lee@gmail.com>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere.activity;
+
+import org.mariotaku.twidere.R;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -7,12 +28,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
-import org.mariotaku.twidere.R;
 
 @SuppressLint("Registered")
 public class BaseDialogWhenLargeActivity extends BaseActivity {
 
 	private View mActivityContent;
+
+	@Override
+	public void addContentView(final View view, final LayoutParams params) {
+		if (shouldDisableDialogWhenLargeMode()) {
+			super.addContentView(view, params);
+			return;
+		}
+		final ViewGroup content = (ViewGroup) super.findViewById(R.id.activity_content);
+		content.addView(view, params);
+	}
 
 	@Override
 	public View findViewById(final int id) {
@@ -24,23 +54,7 @@ public class BaseDialogWhenLargeActivity extends BaseActivity {
 	public void onContentChanged() {
 		super.onContentChanged();
 	}
-	
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setActionBarBackground();
-	}
 
-	@Override
-	public void addContentView(final View view, final LayoutParams params) {
-		if (shouldDisableDialogWhenLargeMode()) {
-			super.addContentView(view, params);
-			return;
-		}
-		final ViewGroup content = (ViewGroup) super.findViewById(R.id.activity_content);
-		content.addView(view, params);
-	}
-	
 	@Override
 	public void setContentView(final int layoutResID) {
 		if (shouldDisableDialogWhenLargeMode()) {
@@ -88,6 +102,12 @@ public class BaseDialogWhenLargeActivity extends BaseActivity {
 	protected int getLightThemeRes() {
 		if (shouldDisableDialogWhenLargeMode()) return super.getLightThemeRes();
 		return R.style.Theme_Twidere_Light_DialogWhenLarge;
+	}
+
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setActionBarBackground();
 	}
 
 	protected boolean shouldDisableDialogWhenLargeMode() {

@@ -257,7 +257,7 @@ abstract class UploadedTexture extends BasicTexture {
 			mContentValid = true;
 		} else {
 			mState = STATE_ERROR;
-			//throw new RuntimeException("Texture load fail, no bitmap");
+			// throw new RuntimeException("Texture load fail, no bitmap");
 		}
 	}
 

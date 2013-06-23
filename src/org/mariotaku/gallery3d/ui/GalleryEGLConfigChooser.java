@@ -71,22 +71,22 @@ class GalleryEGLConfigChooser implements EGLConfigChooser {
 		// Because we need only one bit of stencil, try to choose a config that
 		// has stencil support but with smallest number of stencil bits. If
 		// none is found, choose any one.
-		for (int i = 0, n = configs.length; i < n; ++i) {
+		for (final EGLConfig config : configs) {
 			if (!ApiHelper.USE_888_PIXEL_FORMAT) {
-				if (egl.eglGetConfigAttrib(display, configs[i], EGL10.EGL_RED_SIZE, value)) {
+				if (egl.eglGetConfigAttrib(display, config, EGL10.EGL_RED_SIZE, value)) {
 					// Filter out ARGB 8888 configs.
 					if (value[0] == 8) {
 						continue;
 					}
 				}
 			}
-			if (egl.eglGetConfigAttrib(display, configs[i], EGL10.EGL_STENCIL_SIZE, value)) {
+			if (egl.eglGetConfigAttrib(display, config, EGL10.EGL_STENCIL_SIZE, value)) {
 				if (value[0] == 0) {
 					continue;
 				}
 				if (value[0] < minStencil) {
 					minStencil = value[0];
-					result = configs[i];
+					result = config;
 				}
 			} else
 				throw new RuntimeException("eglGetConfigAttrib error: " + egl.eglGetError());

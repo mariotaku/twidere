@@ -1,16 +1,36 @@
+/*
+ * 				Twidere - Twitter client for Android
+ *
+ *  Copyright (C) 2012-2013 Mariotaku Lee <mariotaku.lee@gmail.com>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere.loader;
 
-import android.content.Context;
+import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+
 import java.util.Collections;
 import java.util.List;
+
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableUser;
-import twitter4j.Paging;
+
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
-
-import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import android.content.Context;
 
 public abstract class Twitter4JUsersLoader extends ParcelableUsersLoader {
 
@@ -39,7 +59,9 @@ public abstract class Twitter4JUsersLoader extends ParcelableUsersLoader {
 		}
 		int pos = data.size();
 		for (final User user : users) {
-			if (hasId(user.getId())) continue;
+			if (hasId(user.getId())) {
+				continue;
+			}
 			data.add(new ParcelableUser(user, mAccountId, pos, mHiResProfileImage));
 			pos++;
 		}

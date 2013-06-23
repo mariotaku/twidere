@@ -19,31 +19,32 @@
 
 package org.mariotaku.twidere.loader;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Handler;
-import android.util.Log;
+import static org.mariotaku.twidere.util.Utils.getImagePreviewDisplayOptionInt;
+import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.List;
+
 import org.mariotaku.jsonserializer.JSONSerializer;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.CacheUsersStatusesTask;
 import org.mariotaku.twidere.util.TwitterWrapper.StatusListResponse;
+
 import twitter4j.Paging;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-
-import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
-import static org.mariotaku.twidere.util.Utils.getImagePreviewDisplayOptionInt;
-import static org.mariotaku.twidere.util.Utils.showErrorMessage;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Handler;
+import android.util.Log;
 
 public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 
@@ -54,10 +55,11 @@ public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 	private final boolean mLargeInlineImagePreview;
 	private final SQLiteDatabase mDatabase;
 	private final Handler mHandler;
-	private final String[] mSavedStatusesFileArgs;
+	private final Object[] mSavedStatusesFileArgs;
 
-	public Twitter4JStatusesLoader(final Context context, final long account_id, final long max_id, final long since_id,
-			final List<ParcelableStatus> data, final String[] saved_statuses_args, final int tab_position) {
+	public Twitter4JStatusesLoader(final Context context, final long account_id, final long max_id,
+			final long since_id, final List<ParcelableStatus> data, final String[] saved_statuses_args,
+			final int tab_position) {
 		super(context, data, tab_position);
 		mContext = context;
 		mAccountId = account_id;
@@ -70,12 +72,6 @@ public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 		mSavedStatusesFileArgs = saved_statuses_args;
 	}
 
-	protected abstract List<Status> getStatuses(Twitter twitter, Paging paging) throws TwitterException;
-
-	protected final Twitter getTwitter() {
-		return getTwitterInstance(mContext, mAccountId, true);
-	}
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ParcelableStatus> loadInBackground() {
@@ -107,7 +103,7 @@ public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 			}
 			statuses = getStatuses(getTwitter(), paging);
 		} catch (final TwitterException e) {
-			//mHandler.post(new ShowErrorRunnable(e));
+			// mHandler.post(new ShowErrorRunnable(e));
 			e.printStackTrace();
 			return data;
 		}
@@ -119,7 +115,8 @@ public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 			for (final Status status : statuses) {
 				final long id = status.getId();
 				deleteStatus(id);
-				data.add(new ParcelableStatus(status, mAccountId, min_status_id == id && insert_gap, mHiResProfileImage, mLargeInlineImagePreview));
+				data.add(new ParcelableStatus(status, mAccountId, min_status_id == id && insert_gap,
+						mHiResProfileImage, mLargeInlineImagePreview));
 			}
 		}
 		try {
@@ -138,23 +135,12 @@ public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 		}
 		return data;
 	}
-	
-	protected abstract boolean shouldFilterStatus(final SQLiteDatabase database, final ParcelableStatus status);
 
-	private final class ShowErrorRunnable implements Runnable {
+	protected abstract List<Status> getStatuses(Twitter twitter, Paging paging) throws TwitterException;
 
-		private Exception exception;
-
-		ShowErrorRunnable(final Exception e) {
-			exception = e;
-		}
-		
-		@Override
-		public void run() {
-			if (isAbandoned() || isReset()) return;
-			showErrorMessage(getContext(), R.string.getting_statuses, exception, false);
-		}
-		
-		
+	protected final Twitter getTwitter() {
+		return getTwitterInstance(mContext, mAccountId, true);
 	}
+
+	protected abstract boolean shouldFilterStatus(final SQLiteDatabase database, final ParcelableStatus status);
 }

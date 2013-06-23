@@ -19,10 +19,11 @@
 
 package org.mariotaku.twidere.preference;
 
+import org.mariotaku.twidere.Constants;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.AttributeSet;
-import org.mariotaku.twidere.Constants;
 
 public final class SilentNotificationsPreference extends MultiSelectListPreference implements Constants {
 
@@ -42,7 +43,7 @@ public final class SilentNotificationsPreference extends MultiSelectListPreferen
 	protected boolean[] getDefaults() {
 		return new boolean[24];
 	}
-	
+
 	@Override
 	protected SharedPreferences getDefaultSharedPreferences() {
 		return getContext().getSharedPreferences(SILENT_NOTIFICATIONS_PREFERENCE_NAME, Context.MODE_PRIVATE);

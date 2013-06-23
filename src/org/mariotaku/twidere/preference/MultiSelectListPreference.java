@@ -139,13 +139,13 @@ abstract class MultiSelectListPreference extends DialogPreference implements OnM
 
 	protected abstract boolean[] getDefaults();
 
-	protected abstract String[] getKeys();
-
-	protected abstract String[] getNames();
-	
 	protected SharedPreferences getDefaultSharedPreferences() {
 		return getSharedPreferences();
 	}
+
+	protected abstract String[] getKeys();
+
+	protected abstract String[] getNames();
 
 	private static ListView findListView(final View view) {
 		if (!(view instanceof ViewGroup)) return null;

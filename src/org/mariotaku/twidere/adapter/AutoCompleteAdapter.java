@@ -159,12 +159,13 @@ public class AutoCompleteAdapter extends SimpleCursorAdapter implements Constant
 			where.append(" OR ");
 			where.append(CachedUsers.NAME + " LIKE '" + constraint_escaped + "%' ESCAPE '^'");
 			return mResolver.query(CachedUsers.CONTENT_URI, CACHED_USERS_COLUMNS,
-					constraint_escaped != null ? where.toString() : null, null, null);
+					constraint_escaped != null ? where.toString() : null, null, CachedUsers.SCREEN_NAME + ", "
+							+ CachedUsers.SCREEN_NAME);
 		} else {
 			final String where = CachedHashtags.NAME + " LIKE '" + constraint_escaped + "%' ESCAPE '^'";
 			final String table = getTableNameById(getTableId(CachedHashtags.CONTENT_URI));
 			return mDatabase.query(true, table, CachedHashtags.COLUMNS, constraint_escaped != null ? where : null,
-					null, null, null, null, null);
+					null, null, null, CachedHashtags.NAME, null);
 		}
 	}
 

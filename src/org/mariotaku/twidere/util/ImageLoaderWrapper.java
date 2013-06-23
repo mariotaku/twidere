@@ -19,17 +19,21 @@
 
 package org.mariotaku.twidere.util;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.widget.ImageView;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
+import static org.mariotaku.twidere.util.Utils.getBestBannerType;
+
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 
-import static org.mariotaku.twidere.util.Utils.getBestBannerType;
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.text.TextUtils;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.ListView;
+
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 
 /**
  * Lazy image loader for {@link ListView} and {@link GridView} etc.</br> </br>
@@ -92,7 +96,7 @@ public class ImageLoaderWrapper implements Constants {
 		final String url = TextUtils.isEmpty(base_url) ? null : base_url + "/" + type;
 		mImageLoader.displayImage(url, view, mBannerDisplayOptions);
 	}
-	
+
 	public void displayProfileImage(final ImageView view, final String url) {
 		mImageLoader.displayImage(url, view, mProfileImageDisplayOptions);
 	}

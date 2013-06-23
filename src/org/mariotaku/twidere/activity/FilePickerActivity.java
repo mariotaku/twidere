@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.mariotaku.twidere.R;
@@ -41,7 +40,6 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.text.TextUtils.TruncateAt;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -73,31 +71,7 @@ public class FilePickerActivity extends BaseDialogWhenLargeActivity implements O
 	}
 
 	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		final Intent intent = getIntent();
-		final Uri data = intent.getData();
-		mCurrentDirectory = data != null ? new File(data.getPath()) : getExternalStorageDirectory();
-		if (mCurrentDirectory == null) {
-			mCurrentDirectory = new File("/");
-		}
-		final String action = getIntent().getAction();
-		if (!INTENT_ACTION_PICK_FILE.equals(action) && !INTENT_ACTION_PICK_DIRECTORY.equals(action)) {
-			finish();
-			return;
-		}
-		setContentView(R.layout.base_list);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-		mAdapter = new FilesAdapter(this);
-		mListView = (ListView) findViewById(android.R.id.list);
-		mListView.setAdapter(mAdapter);
-		mListView.setOnItemClickListener(this);
-		getSupportLoaderManager().initLoader(0, getIntent().getExtras(), this);
-	}
-
-	@Override
-	public Loader<List<File>> onCreateLoader(final int id, Bundle args) {
+	public Loader<List<File>> onCreateLoader(final int id, final Bundle args) {
 		final String[] extensions = args != null ? args.getStringArray(INTENT_KEY_FILE_EXTENSIONS) : null;
 		return new FilesLoader(this, mCurrentDirectory, extensions);
 	}
@@ -153,10 +127,34 @@ public class FilePickerActivity extends BaseDialogWhenLargeActivity implements O
 	}
 
 	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		final Intent intent = getIntent();
+		final Uri data = intent.getData();
+		mCurrentDirectory = data != null ? new File(data.getPath()) : getExternalStorageDirectory();
+		if (mCurrentDirectory == null) {
+			mCurrentDirectory = new File("/");
+		}
+		final String action = getIntent().getAction();
+		if (!INTENT_ACTION_PICK_FILE.equals(action) && !INTENT_ACTION_PICK_DIRECTORY.equals(action)) {
+			finish();
+			return;
+		}
+		setContentView(R.layout.base_list);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+		mAdapter = new FilesAdapter(this);
+		mListView = (ListView) findViewById(android.R.id.list);
+		mListView.setAdapter(mAdapter);
+		mListView.setOnItemClickListener(this);
+		getSupportLoaderManager().initLoader(0, getIntent().getExtras(), this);
+	}
+
+	@Override
 	protected void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
 	}
-	
+
 	private boolean isPickDirectory() {
 		return INTENT_ACTION_PICK_DIRECTORY.equals(getIntent().getAction());
 	}
@@ -212,13 +210,12 @@ public class FilePickerActivity extends BaseDialogWhenLargeActivity implements O
 			}
 		};
 
-
 		public FilesLoader(final Context context, final File path, final String[] extensions) {
 			super(context);
 			this.path = path;
 			this.extensions = extensions;
-			extensions_regex = extensions != null ?
-					Pattern.compile(ArrayUtils.toString(extensions, '|', false), Pattern.CASE_INSENSITIVE) : null;
+			extensions_regex = extensions != null ? Pattern.compile(ArrayUtils.toString(extensions, '|', false),
+					Pattern.CASE_INSENSITIVE) : null;
 		}
 
 		@Override
@@ -237,8 +234,8 @@ public class FilePickerActivity extends BaseDialogWhenLargeActivity implements O
 				} else if (file.isFile()) {
 					final String name = file.getName();
 					final int idx = name.lastIndexOf(".");
-					if (extensions == null || (extensions.length == 0 || idx == -1) ||
-							(idx > -1 && extensions_regex.matcher(name.substring(idx + 1)).matches())) {
+					if (extensions == null || extensions.length == 0 || idx == -1 || idx > -1
+							&& extensions_regex.matcher(name.substring(idx + 1)).matches()) {
 						files.add(file);
 					}
 				}

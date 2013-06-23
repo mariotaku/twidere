@@ -19,8 +19,6 @@
 
 package org.mariotaku.twidere.activity;
 
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.WebViewFragment;
 
@@ -30,10 +28,22 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 import android.view.Window;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 
 public class BrowserActivity extends BaseDialogWhenLargeActivity {
 
 	private Uri mUri = Uri.parse("about:blank");
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_HOME:
+				finish();
+				break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -54,15 +64,5 @@ public class BrowserActivity extends BaseDialogWhenLargeActivity {
 		fragment.setArguments(bundle);
 		ft.replace(R.id.main, fragment);
 		ft.commit();
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
-		switch (item.getItemId()) {
-			case MENU_HOME:
-				finish();
-				break;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 }

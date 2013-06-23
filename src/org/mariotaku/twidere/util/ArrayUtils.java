@@ -135,19 +135,19 @@ public final class ArrayUtils {
 		System.arraycopy(array, start, result, 0, length);
 		return result;
 	}
-	
-	public static String[] subArray(final String[] array, final int start, final int end) {
-		final int length = end - start;
-		if (length < 0) throw new IllegalArgumentException();
-		final String[] result = new String[length];
-		System.arraycopy(array, start, result, 0, length);
-		return result;
-	}
 
 	public static Object[] subArray(final Object[] array, final int start, final int end) {
 		final int length = end - start;
 		if (length < 0) throw new IllegalArgumentException();
 		final Object[] result = new Object[length];
+		System.arraycopy(array, start, result, 0, length);
+		return result;
+	}
+
+	public static String[] subArray(final String[] array, final int start, final int end) {
+		final int length = end - start;
+		if (length < 0) throw new IllegalArgumentException();
+		final String[] result = new String[length];
 		System.arraycopy(array, start, result, 0, length);
 		return result;
 	}
@@ -182,19 +182,19 @@ public final class ArrayUtils {
 		return builder.toString();
 	}
 
-	public static String[] toStringArray(final String s) {
-		if (s == null) return null;
-		return s.split("(?!^)");
-	}
-
 	public static String[] toStringArray(final Object[] array) {
 		if (array == null) return null;
 		final int length = array.length;
 		final String[] string_array = new String[length];
 		for (int i = 0; i < length; i++) {
-			string_array[i] = Utils.parseString(array[i]);
+			string_array[i] = ParseUtils.parseString(array[i]);
 		}
 		return string_array;
+	}
+
+	public static String[] toStringArray(final String s) {
+		if (s == null) return null;
+		return s.split("(?!^)");
 	}
 
 	public static String toStringForSQL(final String[] array) {

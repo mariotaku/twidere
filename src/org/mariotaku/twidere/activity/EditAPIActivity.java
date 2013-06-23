@@ -20,14 +20,14 @@
 package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.Utils.isValidUrl;
-import static org.mariotaku.twidere.util.Utils.parseString;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.util.ParseUtils;
 
+import twitter4j.TwitterConstants;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -36,9 +36,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
-import java.net.URL;
 
-public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChangeListener, OnClickListener {
+public class EditAPIActivity extends BaseDialogActivity implements TwitterConstants, OnCheckedChangeListener,
+		OnClickListener {
 
 	private EditText mEditRestBaseURL, mEditSigningRESTBaseURL, mEditOAuthBaseURL, mEditSigningOAuthBaseURL;
 	private RadioGroup mEditAuthType;
@@ -114,6 +114,17 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 	}
 
 	@Override
+	public void onSaveInstanceState(final Bundle outState) {
+		saveEditedText();
+		outState.putString(Accounts.REST_BASE_URL, mRestBaseURL);
+		outState.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRESTBaseURL);
+		outState.putString(Accounts.OAUTH_BASE_URL, mOAuthBaseURL);
+		outState.putString(Accounts.SIGNING_OAUTH_BASE_URL, mSigningOAuthBaseURL);
+		outState.putInt(Accounts.AUTH_TYPE, mAuthType);
+		super.onSaveInstanceState(outState);
+	}
+
+	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edit_api);
@@ -146,17 +157,6 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 		mButtonTwipOMode.setChecked(mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE);
 	}
 
-	@Override
-	public void onSaveInstanceState(final Bundle outState) {
-		saveEditedText();
-		outState.putString(Accounts.REST_BASE_URL, mRestBaseURL);
-		outState.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRESTBaseURL);
-		outState.putString(Accounts.OAUTH_BASE_URL, mOAuthBaseURL);
-		outState.putString(Accounts.SIGNING_OAUTH_BASE_URL, mSigningOAuthBaseURL);
-		outState.putInt(Accounts.AUTH_TYPE, mAuthType);
-		super.onSaveInstanceState(outState);
-	}
-	
 	private boolean checkUrlErrors() {
 		boolean urlHasErrors = false;
 		if (mEditRestBaseURL != null) {
@@ -172,7 +172,7 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 			}
 		}
 		if (mEditOAuthBaseURL != null) {
-			if(!isValidUrl(mEditOAuthBaseURL.getText())) {
+			if (!isValidUrl(mEditOAuthBaseURL.getText())) {
 				mEditOAuthBaseURL.setError(getString(R.string.wrong_url_format));
 				urlHasErrors = true;
 			}
@@ -188,16 +188,16 @@ public class EditAPIActivity extends BaseDialogActivity implements OnCheckedChan
 
 	private void saveEditedText() {
 		if (mEditRestBaseURL != null) {
-			mRestBaseURL = parseString(mEditRestBaseURL.getText());
+			mRestBaseURL = ParseUtils.parseString(mEditRestBaseURL.getText());
 		}
 		if (mEditSigningRESTBaseURL != null) {
-			mSigningRESTBaseURL = parseString(mEditSigningRESTBaseURL.getText());
+			mSigningRESTBaseURL = ParseUtils.parseString(mEditSigningRESTBaseURL.getText());
 		}
 		if (mEditOAuthBaseURL != null) {
-			mOAuthBaseURL = parseString(mEditOAuthBaseURL.getText());
+			mOAuthBaseURL = ParseUtils.parseString(mEditOAuthBaseURL.getText());
 		}
 		if (mEditSigningOAuthBaseURL != null) {
-			mSigningOAuthBaseURL = parseString(mEditSigningOAuthBaseURL.getText());
+			mSigningOAuthBaseURL = ParseUtils.parseString(mEditSigningOAuthBaseURL.getText());
 		}
 	}
 }

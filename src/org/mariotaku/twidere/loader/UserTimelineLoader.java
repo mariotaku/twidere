@@ -19,20 +19,22 @@
 
 package org.mariotaku.twidere.loader;
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
+import static org.mariotaku.twidere.util.Utils.getAccountId;
+import static org.mariotaku.twidere.util.Utils.isFiltered;
+
 import java.util.List;
+
 import org.mariotaku.twidere.model.ParcelableStatus;
+
 import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
-import static org.mariotaku.twidere.util.Utils.getAccountId;
-import static org.mariotaku.twidere.util.Utils.isFiltered;
- 
 public class UserTimelineLoader extends Twitter4JStatusesLoader {
 
 	private final long mUserId;
@@ -40,13 +42,17 @@ public class UserTimelineLoader extends Twitter4JStatusesLoader {
 	private final boolean mIsMyTimeline;
 	private int mTotalItemsCount;
 
-
-	public UserTimelineLoader(final Context context, final long account_id, final long user_id, final String screen_name,
-			final long max_id, final long since_id, final List<ParcelableStatus> data, final String[] saved_statuses_args, final int tab_position) {
+	public UserTimelineLoader(final Context context, final long account_id, final long user_id,
+			final String screen_name, final long max_id, final long since_id, final List<ParcelableStatus> data,
+			final String[] saved_statuses_args, final int tab_position) {
 		super(context, account_id, max_id, since_id, data, saved_statuses_args, tab_position);
 		mUserId = user_id;
 		mUserScreenName = screen_name;
 		mIsMyTimeline = user_id > 0 ? account_id == user_id : account_id == getAccountId(context, screen_name);
+	}
+
+	public int getTotalItemsCount() {
+		return mTotalItemsCount;
 	}
 
 	@Override
@@ -57,7 +63,8 @@ public class UserTimelineLoader extends Twitter4JStatusesLoader {
 			statuses = twitter.getUserTimeline(mUserId, paging);
 		} else if (mUserScreenName != null) {
 			statuses = twitter.getUserTimeline(mUserScreenName, paging);
-		} else return null;
+		} else
+			return null;
 		if (mTotalItemsCount == -1 && !statuses.isEmpty()) {
 			final User user = statuses.get(0).getUser();
 			if (user != null) {
@@ -67,10 +74,7 @@ public class UserTimelineLoader extends Twitter4JStatusesLoader {
 		return statuses;
 	}
 
-	public int getTotalItemsCount() {
-		return mTotalItemsCount;
-	}
-
+	@Override
 	protected boolean shouldFilterStatus(final SQLiteDatabase database, final ParcelableStatus status) {
 		return !mIsMyTimeline && isFiltered(database, status.text_plain, status.text_html, null, status.source);
 	}

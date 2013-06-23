@@ -19,12 +19,11 @@
 
 package org.mariotaku.twidere.loader;
 
-import static org.mariotaku.twidere.util.Utils.parseString;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.util.ParseUtils;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -125,8 +124,8 @@ public class ExtensionsListLoader extends AsyncTaskLoader<List<ExtensionsListLoa
 			settings = meta.getString(METADATA_KEY_SETTINGS);
 			icon = info.loadIcon(pm);
 			pname = info.packageName;
-			label = parseString(info.loadLabel(pm), pname);
-			description = parseString(info.loadDescription(pm));
+			label = ParseUtils.parseString(info.loadLabel(pm), pname);
+			description = ParseUtils.parseString(info.loadDescription(pm));
 		}
 
 		@Override

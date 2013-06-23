@@ -19,13 +19,11 @@
 
 package org.mariotaku.twidere.fragment;
 
+import org.mariotaku.twidere.loader.IDsUsersLoader;
+import org.mariotaku.twidere.loader.IncomingFriendshipsLoader;
+
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
-import java.util.List;
-import org.mariotaku.twidere.loader.IncomingFriendshipsLoader;
-import org.mariotaku.twidere.model.ParcelableUser;
-import org.mariotaku.twidere.loader.IDsUsersLoader;
 
 public class IncomingFriendshipsFragment extends CursorSupportUsersListFragment {
 

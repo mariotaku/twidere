@@ -43,8 +43,8 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 public final class ImageViewerGLActivity extends FragmentActivity implements Constants, View.OnClickListener,
 		PhotoView.Listener, GLImageLoader.DownloadListener, LoaderManager.LoaderCallbacks<GLImageLoader.Result> {
@@ -236,7 +236,7 @@ public final class ImageViewerGLActivity extends FragmentActivity implements Con
 				mImageViewer.setImageBitmap(null);
 			} else {
 				mGLRootView.setVisibility(View.GONE);
-				mImageViewer.setVisibility(View.VISIBLE);	
+				mImageViewer.setVisibility(View.VISIBLE);
 				mImageViewer.setImageBitmap(data_gl.bitmap);
 			}
 			mImageFile = data.file;

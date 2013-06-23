@@ -142,8 +142,8 @@ abstract class BaseUserListsListFragment extends PullToRefreshListFragment imple
 		if (mApplication.isMultiSelectActive()) return;
 		final ParcelableUserList user_list = mAdapter.findItem(id);
 		if (user_list == null) return;
-		openUserListDetails(getActivity(), mAccountId, user_list.id, user_list.user_id,
-				user_list.user_screen_name, user_list.name);
+		openUserListDetails(getActivity(), mAccountId, user_list.id, user_list.user_id, user_list.user_screen_name,
+				user_list.name);
 	}
 
 	@Override

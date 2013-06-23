@@ -19,6 +19,18 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.buildActivatedStatsWhereClause;
+import static org.mariotaku.twidere.util.Utils.buildStatusFilterWhereClause;
+import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
+import static org.mariotaku.twidere.util.Utils.getNewestStatusIdsFromDatabase;
+import static org.mariotaku.twidere.util.Utils.getOldestStatusIdsFromDatabase;
+import static org.mariotaku.twidere.util.Utils.getTableNameByUri;
+
+import org.mariotaku.twidere.activity.HomeActivity;
+import org.mariotaku.twidere.adapter.CursorStatusesAdapter;
+import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.util.AsyncTask;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -32,28 +44,17 @@ import android.support.v4.content.Loader;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
-import org.mariotaku.twidere.activity.HomeActivity;
-import org.mariotaku.twidere.adapter.CursorStatusesAdapter;
-import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.util.AsyncTask;
-
-import static org.mariotaku.twidere.util.Utils.buildActivatedStatsWhereClause;
-import static org.mariotaku.twidere.util.Utils.buildStatusFilterWhereClause;
-import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
-import static org.mariotaku.twidere.util.Utils.getNewestStatusIdsFromDatabase;
-import static org.mariotaku.twidere.util.Utils.getOldestStatusIdsFromDatabase;
-import static org.mariotaku.twidere.util.Utils.getTableNameByUri;
 
 public abstract class CursorStatusesListFragment extends BaseStatusesListFragment<Cursor> implements
 		View.OnTouchListener {
-	
-	private static final String[] CURSOR_COLS = new String[] { Statuses._ID, Statuses.ACCOUNT_ID, Statuses.STATUS_ID, Statuses.USER_ID,
-		Statuses.STATUS_TIMESTAMP, Statuses.TEXT_HTML, Statuses.TEXT_PLAIN, Statuses.NAME,
-		Statuses.SCREEN_NAME, Statuses.PROFILE_IMAGE_URL, Statuses.IN_REPLY_TO_SCREEN_NAME,
-		Statuses.IN_REPLY_TO_STATUS_ID, Statuses.LOCATION, Statuses.IS_RETWEET, Statuses.RETWEET_COUNT,
-		Statuses.RETWEET_ID, Statuses.RETWEETED_BY_NAME, Statuses.RETWEETED_BY_SCREEN_NAME,
-		Statuses.IS_FAVORITE, Statuses.IS_PROTECTED, Statuses.IS_VERIFIED, Statuses.IS_GAP,
-		Statuses.IS_POSSIBLY_SENSITIVE, Statuses.SOURCE, Statuses.TEXT_UNESCAPED, Statuses.IMAGE_PREVIEW_URL };
+
+	private static final String[] CURSOR_COLS = new String[] { Statuses._ID, Statuses.ACCOUNT_ID, Statuses.STATUS_ID,
+			Statuses.USER_ID, Statuses.STATUS_TIMESTAMP, Statuses.TEXT_HTML, Statuses.TEXT_PLAIN, Statuses.NAME,
+			Statuses.SCREEN_NAME, Statuses.PROFILE_IMAGE_URL, Statuses.IN_REPLY_TO_SCREEN_NAME,
+			Statuses.IN_REPLY_TO_STATUS_ID, Statuses.LOCATION, Statuses.IS_RETWEET, Statuses.RETWEET_COUNT,
+			Statuses.RETWEET_ID, Statuses.RETWEETED_BY_NAME, Statuses.RETWEETED_BY_SCREEN_NAME, Statuses.IS_FAVORITE,
+			Statuses.IS_PROTECTED, Statuses.IS_VERIFIED, Statuses.IS_GAP, Statuses.IS_POSSIBLY_SENSITIVE,
+			Statuses.SOURCE, Statuses.TEXT_UNESCAPED, Statuses.IMAGE_PREVIEW_URL };
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -87,7 +88,8 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 				: Statuses.SORT_ORDER_STATUS_ID_DESC;
 		final String where = buildActivatedStatsWhereClause(getActivity(), null);
 		final String table = getTableNameByUri(uri);
-		return new CursorLoader(getActivity(), uri, CURSOR_COLS, buildStatusFilterWhereClause(table, where), null, sort_by);
+		return new CursorLoader(getActivity(), uri, CURSOR_COLS, buildStatusFilterWhereClause(table, where), null,
+				sort_by);
 	}
 
 	@Override
@@ -189,6 +191,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 		return getOldestStatusIdsFromDatabase(getActivity(), getContentUri());
 	}
 
+	@Override
 	protected CursorStatusesAdapter newAdapterInstance() {
 		return new CursorStatusesAdapter(getActivity());
 	}

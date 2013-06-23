@@ -1,8 +1,30 @@
+/*
+ * 				Twidere - Twitter client for Android
+ *
+ *  Copyright (C) 2012-2013 Mariotaku Lee <mariotaku.lee@gmail.com>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere.model;
+
 import java.util.Date;
-import twitter4j.Activity;
-import org.mariotaku.jsonserializer.JSONParcelable;
+
 import org.mariotaku.jsonserializer.JSONParcel;
+import org.mariotaku.jsonserializer.JSONParcelable;
+
+import twitter4j.Activity;
 
 public class ParcelableActivity implements Comparable<ParcelableActivity>, JSONParcelable {
 
@@ -28,21 +50,21 @@ public class ParcelableActivity implements Comparable<ParcelableActivity>, JSONP
 
 	public final long account_id, activity_timestamp, max_position, min_position;
 	public final int action;
-	
+
 	public final ParcelableUser[] sources;
 	public final ParcelableUser[] target_users;
 	public final ParcelableStatus[] target_statuses;
 	public final ParcelableUserList[] target_user_lists;
 
 	public final ParcelableUserList[] target_object_user_lists;
-	public final ParcelableStatus[] target_object_statuses;	
-	
+	public final ParcelableStatus[] target_object_statuses;
+
 	public ParcelableActivity(final Activity activity, final long account_id, final boolean large_profile_image) {
 		this.account_id = account_id;
-		this.activity_timestamp = getTime(activity.getCreatedAt());
-		this.action = activity.getAction().getActionId();
-		this.max_position = activity.getMaxPosition();
-		this.min_position = activity.getMinPosition();
+		activity_timestamp = getTime(activity.getCreatedAt());
+		action = activity.getAction().getActionId();
+		max_position = activity.getMaxPosition();
+		min_position = activity.getMinPosition();
 		final int sources_size = activity.getSourcesSize();
 		sources = new ParcelableUser[sources_size];
 		for (int i = 0; i < sources_size; i++) {
@@ -61,14 +83,16 @@ public class ParcelableActivity implements Comparable<ParcelableActivity>, JSONP
 			target_statuses = null;
 			target_users = null;
 			for (int i = 0; i < targets_size; i++) {
-				target_user_lists[i] = new ParcelableUserList(activity.getTargetUserLists()[i], account_id, large_profile_image);
+				target_user_lists[i] = new ParcelableUserList(activity.getTargetUserLists()[i], account_id,
+						large_profile_image);
 			}
 		} else {
 			target_statuses = new ParcelableStatus[targets_size];
 			target_users = null;
 			target_user_lists = null;
 			for (int i = 0; i < targets_size; i++) {
-				target_statuses[i] = new ParcelableStatus(activity.getTargetStatuses()[i], account_id, false, large_profile_image);
+				target_statuses[i] = new ParcelableStatus(activity.getTargetStatuses()[i], account_id, false,
+						large_profile_image);
 			}
 		}
 		final int target_objects_size = activity.getTargetObjectsSize();
@@ -76,7 +100,8 @@ public class ParcelableActivity implements Comparable<ParcelableActivity>, JSONP
 			target_object_user_lists = new ParcelableUserList[target_objects_size];
 			target_object_statuses = null;
 			for (int i = 0; i < target_objects_size; i++) {
-				target_object_user_lists[i] = new ParcelableUserList(activity.getTargetObjectUserLists()[i], account_id, large_profile_image);
+				target_object_user_lists[i] = new ParcelableUserList(activity.getTargetObjectUserLists()[i],
+						account_id, large_profile_image);
 			}
 		} else if (action == ACTION_LIST_CREATED) {
 			target_object_user_lists = null;
@@ -85,7 +110,8 @@ public class ParcelableActivity implements Comparable<ParcelableActivity>, JSONP
 			target_object_statuses = new ParcelableStatus[target_objects_size];
 			target_object_user_lists = null;
 			for (int i = 0; i < target_objects_size; i++) {
-				target_object_statuses[i] = new ParcelableStatus(activity.getTargetObjectStatuses()[i], account_id, false, large_profile_image);
+				target_object_statuses[i] = new ParcelableStatus(activity.getTargetObjectStatuses()[i], account_id,
+						false, large_profile_image);
 			}
 		}
 	}
@@ -112,16 +138,12 @@ public class ParcelableActivity implements Comparable<ParcelableActivity>, JSONP
 		if (delta > Integer.MAX_VALUE) return Integer.MAX_VALUE;
 		return (int) delta;
 	}
-	
+
 	@Override
 	public boolean equals(final Object that) {
 		if (!(that instanceof ParcelableActivity)) return false;
 		final ParcelableActivity activity = (ParcelableActivity) that;
 		return max_position == activity.max_position && min_position == activity.min_position;
-	}
-
-	private static long getTime(final Date date) {
-		return date != null ? date.getTime() : 0;
 	}
 
 	@Override
@@ -138,5 +160,9 @@ public class ParcelableActivity implements Comparable<ParcelableActivity>, JSONP
 		out.writeParcelableArray("target_object_user_lists", target_object_user_lists);
 		out.writeParcelableArray("target_object_statuses", target_object_statuses);
 	}
-	
+
+	private static long getTime(final Date date) {
+		return date != null ? date.getTime() : 0;
+	}
+
 }
