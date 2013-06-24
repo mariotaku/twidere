@@ -33,30 +33,13 @@ import android.util.AttributeSet;
 
 public class RingtonePreference extends ListPreference {
 
-	private final List<Ringtone> mRingtones;
-	private final String[] mEntries, mValues;
+	private List<Ringtone> mRingtones;
+	private String[] mEntries, mValues;
 
 	private int mSelectedItem;
 
 	public RingtonePreference(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
-		final RingtoneManager manager = new RingtoneManager(context);
-		manager.setType(RingtoneManager.TYPE_NOTIFICATION);
-		final Cursor cur = manager.getCursor();
-		cur.moveToFirst();
-		final int count = cur.getCount();
-		mRingtones = new ArrayList<Ringtone>(count);
-		mEntries = new String[count];
-		mValues = new String[count];
-		for (int i = 0; i < count; i++) {
-			final Ringtone ringtone = manager.getRingtone(i);
-			mRingtones.add(ringtone);
-			mEntries[i] = ringtone.getTitle(context);
-			mValues[i] = manager.getRingtoneUri(i).toString();
-		}
-		setEntries(mEntries);
-		setEntryValues(mValues);
-		cur.close();
 	}
 
 	public int getSelectedItem() {
@@ -86,6 +69,7 @@ public class RingtonePreference extends ListPreference {
 
 	@Override
 	protected void onPrepareDialogBuilder(final Builder builder) {
+		loadRingtones(getContext());
 		setSelectedItem(ArrayUtils.indexOf(mValues, getPersistedString(null)));
 		builder.setSingleChoiceItems(getEntries(), getSelectedItem(), new OnClickListener() {
 			@Override
@@ -98,6 +82,26 @@ public class RingtonePreference extends ListPreference {
 				ringtone.play();
 			}
 		});
+	}
+	
+	private void loadRingtones(final Context context) {
+		final RingtoneManager manager = new RingtoneManager(context);
+		manager.setType(RingtoneManager.TYPE_NOTIFICATION);
+		final Cursor cur = manager.getCursor();
+		cur.moveToFirst();
+		final int count = cur.getCount();
+		mRingtones = new ArrayList<Ringtone>(count);
+		mEntries = new String[count];
+		mValues = new String[count];
+		for (int i = 0; i < count; i++) {
+			final Ringtone ringtone = manager.getRingtone(i);
+			mRingtones.add(ringtone);
+			mEntries[i] = ringtone.getTitle(context);
+			mValues[i] = manager.getRingtoneUri(i).toString();
+		}
+		setEntries(mEntries);
+		setEntryValues(mValues);
+		cur.close();
 	}
 
 	// static final class RingtoneNameComparator implements Comparator<Ringtone>
