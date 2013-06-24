@@ -41,7 +41,7 @@ public class UploadTask extends AsyncTask<Void, Void, Void> {
 		final File tmp_dir = new File(app_root + "/tmp");
 		if (!tmp_dir.exists()) {
 			if (!tmp_dir.mkdirs()) {
-				ProfilingUtil.log("cannot create tmp, do nothing.");
+				ProfilingUtil.log(context, "cannot create tmp, do nothing.");
 				return;
 			}
 		}
@@ -55,17 +55,17 @@ public class UploadTask extends AsyncTask<Void, Void, Void> {
 			// Responses from the server (code and message)
 			final int serverResponseCode = resp.getStatusCode();
 
-			ProfilingUtil.log("server response code " + serverResponseCode);
+			ProfilingUtil.log(context, "server response code " + serverResponseCode);
 
 			if (serverResponseCode / 100 == 2) {
 				tmp.delete();
 			} else {
-				putBackProfile(tmp, file);
+				putBackProfile(context, tmp, file);
 			}
 
 		} catch (final TwitterException e) {
 			e.printStackTrace();
-			putBackProfile(tmp, file);
+			putBackProfile(context, tmp, file);
 		}
 	}
 
@@ -78,7 +78,7 @@ public class UploadTask extends AsyncTask<Void, Void, Void> {
 			final long lastUpload = prefs.getLong(LAST_UPLOAD_DATE, System.currentTimeMillis());
 			final double deltaDays = (System.currentTimeMillis() - lastUpload) / (MILLSECS_HALF_DAY * 2);
 			if (deltaDays < 1) {
-				ProfilingUtil.log("Uploaded less than 1 day ago.");
+				ProfilingUtil.log(context, "Uploaded less than 1 day ago.");
 				return null;
 			}
 		}
@@ -98,13 +98,13 @@ public class UploadTask extends AsyncTask<Void, Void, Void> {
 			}
 			final String url = PROFILE_SERVER_URL + "/" + device_id + "/"
 					+ file.getName().replaceFirst("[.][^.]+$", "");
-			ProfilingUtil.log(url);
+			ProfilingUtil.log(context, url);
 			uploadMultipart(url, file);
 		}
 		return false;
 	}
 
-	public static void putBackProfile(final File tmp, final File profile) {
+	public static void putBackProfile(final Context context, final File tmp, final File profile) {
 		boolean success;
 		if (profile.exists()) {
 			try {
@@ -120,15 +120,15 @@ public class UploadTask extends AsyncTask<Void, Void, Void> {
 			success = true;
 
 			if (success && tmp.renameTo(profile) && tmp.delete()) {
-				ProfilingUtil.log("put profile back success");
+				ProfilingUtil.log(context, "put profile back success");
 			} else {
-				ProfilingUtil.log("put profile back failed");
+				ProfilingUtil.log(context, "put profile back failed");
 			}
 		} else {
 			if (tmp.renameTo(profile)) {
-				ProfilingUtil.log("put profile back success");
+				ProfilingUtil.log(context, "put profile back success");
 			} else {
-				ProfilingUtil.log("put profile back failed");
+				ProfilingUtil.log(context, "put profile back failed");
 			}
 		}
 	}

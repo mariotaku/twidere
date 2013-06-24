@@ -15,7 +15,6 @@
  */
 package de.keyboardsurfer.android.widget.crouton;
 
-
 /**
  * Allows configuring a {@link Crouton}s behavior aside from the actual view,
  * which is defined via {@link CroutonStyle}.

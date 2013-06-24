@@ -33,15 +33,11 @@ public class AsyncTaskManager {
 	AsyncTaskManager() {
 		this(new Handler());
 	}
-	
-	AsyncTaskManager(Handler handler) {
+
+	AsyncTaskManager(final Handler handler) {
 		mHandler = handler;
 	}
-	
-	public Handler getHandler() {
-		return mHandler;
-	}
-	
+
 	public <T> int add(final ManagedAsyncTask<T, ?, ?> task, final boolean exec, final T... params) {
 		final int hashCode = task.hashCode();
 		mTasks.add(task);
@@ -83,6 +79,10 @@ public class AsyncTaskManager {
 			return true;
 		}
 		return false;
+	}
+
+	public Handler getHandler() {
+		return mHandler;
 	}
 
 	public ArrayList<ManagedAsyncTask<?, ?, ?>> getTaskSpecList() {

@@ -40,7 +40,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseAdapter {
+public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseAdapter {
 
 	private final ImageLoaderWrapper mProfileImageLoader;
 	private final MultiSelectManager mMultiSelectManager;
@@ -53,7 +53,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseA
 
 	private int mNameDisplayOption;
 
-	public UsersAdapter(final Context context) {
+	public ParcelableUsersAdapter(final Context context) {
 		super(context, R.layout.user_list_item);
 		mContext = context;
 		mLocale = context.getResources().getConfiguration().locale;
@@ -117,11 +117,8 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseA
 				break;
 			}
 		}
+		holder.description.setVisibility(user.description_unescaped != null ? View.VISIBLE : View.GONE);
 		holder.description.setText(user.description_unescaped);
-		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
-		if (mDisplayProfileImage) {
-			mProfileImageLoader.displayProfileImage(holder.profile_image, user.profile_image_url);
-		}
 		holder.location.setVisibility(!TextUtils.isEmpty(user.location) ? View.VISIBLE : View.GONE);
 		holder.location.setText(user.location);
 		holder.url.setVisibility(user.url_expanded != null ? View.VISIBLE : View.GONE);
@@ -129,6 +126,10 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseA
 		holder.statuses_count.setText(getLocalizedNumber(mLocale, user.statuses_count));
 		holder.followers_count.setText(getLocalizedNumber(mLocale, user.followers_count));
 		holder.friends_count.setText(getLocalizedNumber(mLocale, user.friends_count));
+		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
+		if (mDisplayProfileImage) {
+			mProfileImageLoader.displayProfileImage(holder.profile_image, user.profile_image_url);
+		}
 		return view;
 	}
 
@@ -156,6 +157,7 @@ public class UsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseA
 		}
 	}
 
+	@Override
 	public void setMultiSelectEnabled(final boolean multi) {
 		if (mMultiSelectEnabled != multi) {
 			mMultiSelectEnabled = multi;

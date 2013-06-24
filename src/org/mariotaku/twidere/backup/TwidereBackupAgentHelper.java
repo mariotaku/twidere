@@ -21,9 +21,12 @@ package org.mariotaku.twidere.backup;
 
 import org.mariotaku.twidere.Constants;
 
+import android.annotation.TargetApi;
 import android.app.backup.BackupAgentHelper;
 import android.app.backup.SharedPreferencesBackupHelper;
+import android.os.Build;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class TwidereBackupAgentHelper extends BackupAgentHelper implements Constants {
 
 	// A key to uniquely identify the set of backup data

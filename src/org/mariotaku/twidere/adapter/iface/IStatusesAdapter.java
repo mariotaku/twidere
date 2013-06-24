@@ -53,8 +53,6 @@ public interface IStatusesAdapter<Data> extends IBaseAdapter {
 
 	public void setMentionsHightlightDisabled(boolean disable);
 
-	public void setMultiSelectEnabled(boolean multi);
-
 	public void setShowAbsoluteTime(boolean show);
 
 	public void setShowAccountColor(boolean show);

@@ -16,7 +16,9 @@
 
 package org.mariotaku.gallery3d.ui;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.os.SystemClock;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -24,6 +26,7 @@ import android.view.ScaleGestureDetector;
 
 // This class aggregates three gesture detectors: GestureDetector,
 // ScaleGestureDetector, and DownUpDetector.
+@TargetApi(Build.VERSION_CODES.GINGERBREAD_MR1)
 public class GestureRecognizer {
 	@SuppressWarnings("unused")
 	private static final String TAG = "GestureRecognizer";

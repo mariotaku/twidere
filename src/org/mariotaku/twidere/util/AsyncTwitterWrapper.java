@@ -599,7 +599,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	}
 
-	class CreateFavoriteTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
+	class CreateFavoriteTask extends ManagedAsyncTask<Void, Void, SingleResponse<ParcelableStatus>> {
 
 		private final long account_id, status_id;
 
@@ -610,7 +610,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		@Override
-		protected SingleResponse<twitter4j.Status> doInBackground(final Void... params) {
+		protected SingleResponse<ParcelableStatus> doInBackground(final Void... params) {
 
 			if (account_id < 0) return SingleResponse.nullInstance();
 
@@ -631,20 +631,20 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					for (final Uri uri : TweetStore.STATUSES_URIS) {
 						mResolver.update(uri, values, where.toString(), null);
 					}
-					return new SingleResponse<twitter4j.Status>(status, null);
+					return SingleResponse.dataOnly(new ParcelableStatus(status, account_id, false, mLargeProfileImage));
 				} catch (final TwitterException e) {
-					return new SingleResponse<twitter4j.Status>(null, e);
+					return SingleResponse.exceptionOnly(e);
 				}
 			}
 			return SingleResponse.nullInstance();
 		}
 
 		@Override
-		protected void onPostExecute(final SingleResponse<twitter4j.Status> result) {
+		protected void onPostExecute(final SingleResponse<ParcelableStatus> result) {
 
 			if (result.data != null) {
 				final Intent intent = new Intent(BROADCAST_FAVORITE_CHANGED);
-				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
+				intent.putExtra(INTENT_KEY_STATUS, result.data);
 				intent.putExtra(INTENT_KEY_FAVORITED, true);
 				mContext.sendBroadcast(intent);
 				mMessagesManager.showOkMessage(R.string.status_favorited, false);
@@ -776,7 +776,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 							account_id, false);
 					return new SingleResponse<ParcelableUserList>(list, null);
 				} catch (final TwitterException e) {
-					return new SingleResponse<ParcelableUserList>(null, e);
+					return SingleResponse.exceptionOnly(e);
 				}
 			}
 			return SingleResponse.nullInstance();
@@ -881,7 +881,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 						return SingleResponse.nullInstance();
 					return new SingleResponse<ParcelableUserList>(list, null);
 				} catch (final TwitterException e) {
-					return new SingleResponse<ParcelableUserList>(null, e);
+					return SingleResponse.exceptionOnly(e);
 				}
 			}
 			return SingleResponse.nullInstance();
@@ -997,7 +997,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 	}
 
-	class DestroyFavoriteTask extends ManagedAsyncTask<Void, Void, SingleResponse<twitter4j.Status>> {
+	class DestroyFavoriteTask extends ManagedAsyncTask<Void, Void, SingleResponse<ParcelableStatus>> {
 
 		private final long account_id;
 
@@ -1010,7 +1010,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		@Override
-		protected SingleResponse<twitter4j.Status> doInBackground(final Void... params) {
+		protected SingleResponse<ParcelableStatus> doInBackground(final Void... params) {
 			if (account_id < 0) return SingleResponse.nullInstance();
 			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
@@ -1029,20 +1029,20 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					for (final Uri uri : TweetStore.STATUSES_URIS) {
 						mResolver.update(uri, values, where.toString(), null);
 					}
-					return new SingleResponse<twitter4j.Status>(status, null);
+					return new SingleResponse<ParcelableStatus>(new ParcelableStatus(status, account_id, false,
+							mLargeProfileImage), null);
 				} catch (final TwitterException e) {
-					return new SingleResponse<twitter4j.Status>(null, e);
+					return SingleResponse.exceptionOnly(e);
 				}
 			}
 			return SingleResponse.nullInstance();
 		}
 
 		@Override
-		protected void onPostExecute(final SingleResponse<twitter4j.Status> result) {
+		protected void onPostExecute(final SingleResponse<ParcelableStatus> result) {
 			if (result.data != null) {
 				final Intent intent = new Intent(BROADCAST_FAVORITE_CHANGED);
-				intent.putExtra(INTENT_KEY_USER_ID, account_id);
-				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
+				intent.putExtra(INTENT_KEY_STATUS, result.data);
 				intent.putExtra(INTENT_KEY_FAVORITED, false);
 				mContext.sendBroadcast(intent);
 				mMessagesManager.showInfoMessage(R.string.status_unfavorited, false);
@@ -1221,7 +1221,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 						return new SingleResponse<ParcelableUserList>(list, null);
 					}
 				} catch (final TwitterException e) {
-					return new SingleResponse<ParcelableUserList>(null, e);
+					return SingleResponse.exceptionOnly(e);
 				}
 			}
 			return SingleResponse.nullInstance();
@@ -2219,11 +2219,13 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 								false, false);
 						results.add(new SingleResponse<ParcelableStatus>(result, null));
 					} catch (final TwitterException e) {
-						results.add(new SingleResponse<ParcelableStatus>(null, e));
+						final SingleResponse<ParcelableStatus> response = SingleResponse.exceptionOnly(e);
+						results.add(response);
 					}
 				}
 			} catch (final UpdateStatusException e) {
-				results.add(new SingleResponse<ParcelableStatus>(null, e));
+				final SingleResponse<ParcelableStatus> response = SingleResponse.exceptionOnly(e);
+				results.add(response);
 			}
 			return results;
 		}
@@ -2375,7 +2377,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					final UserList list = twitter.updateUserList(list_id, name, is_public, description);
 					return new SingleResponse<ParcelableUserList>(new ParcelableUserList(list, account_id, false), null);
 				} catch (final TwitterException e) {
-					return new SingleResponse<ParcelableUserList>(null, e);
+					return SingleResponse.exceptionOnly(e);
 				}
 			}
 			return SingleResponse.nullInstance();

@@ -34,7 +34,7 @@ public class ContentLengthInputStream extends InputStream {
 	public ContentLengthInputStream(final File file) throws FileNotFoundException {
 		this(new FileInputStream(file), file.length());
 	}
-	
+
 	public ContentLengthInputStream(final InputStream stream, final long length) {
 		this.stream = stream;
 		this.length = available = (int) length;

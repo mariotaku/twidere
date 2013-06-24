@@ -22,6 +22,7 @@ import android.util.FloatMath;
 import android.view.MotionEvent;
 import android.view.MotionEvent.PointerCoords;
 
+@TargetApi(Build.VERSION_CODES.GINGERBREAD_MR1)
 public final class MotionEventHelper {
 
 	private MotionEventHelper() {

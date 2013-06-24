@@ -177,8 +177,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	@Override
 	public void onPullUpToRefresh() {
 		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();
-		final int count = adapter.getCount();
-		final ParcelableStatus status = count > 0 ? adapter.getStatus(count - 1) : null;
+		final ParcelableStatus status = adapter.getLastStatus();
 		if (status != null) {
 			getStatuses(new long[] { status.account_id }, new long[] { status.id }, null);
 		}

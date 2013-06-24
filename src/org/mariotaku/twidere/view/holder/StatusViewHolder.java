@@ -55,9 +55,9 @@ public class StatusViewHolder implements Constants {
 	private int name_display_option;
 
 	public StatusViewHolder(final View view) {
+		final Context context = view.getContext();
 		content = (ColorLabelRelativeLayout) view;
-		final int color = getThemeColor(view.getContext());
-		theme_color = Color.argb(0x60, Color.red(color), Color.green(color), Color.blue(color));
+		res = context.getResources();
 		gap_indicator = view.findViewById(R.id.list_gap_text);
 		image_preview_container = view.findViewById(R.id.image_preview_container);
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
@@ -71,8 +71,8 @@ public class StatusViewHolder implements Constants {
 		time = (TextView) view.findViewById(R.id.time);
 		reply_retweet_status = (TextView) view.findViewById(R.id.reply_retweet_status);
 		show_as_gap = gap_indicator.isShown();
-		final Context context = view.getContext();
-		res = context.getResources();
+		final int color = getThemeColor(context);
+		theme_color = Color.argb(0x60, Color.red(color), Color.green(color), Color.blue(color));
 		image_preview_small_width = res.getDimensionPixelSize(R.dimen.image_preview_width);
 		is_rtl = Utils.isRTL(context);
 		density = res.getDisplayMetrics().density;
@@ -126,6 +126,11 @@ public class StatusViewHolder implements Constants {
 	public void setIsMyStatus(final boolean my_status) {
 		profile_image.setVisibility(my_status ? View.GONE : View.VISIBLE);
 		my_profile_image.setVisibility(my_status ? View.VISIBLE : View.GONE);
+		if (is_rtl) {
+			time.setPadding((int) (my_status ? 6 * density : 0), 0, 0, 0);
+		} else {
+			time.setPadding(0, 0, (int) (my_status ? 6 * density : 0), 0);
+		}
 	}
 
 	public void setIsReplyRetweet(final boolean is_reply, final boolean is_retweet) {

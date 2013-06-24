@@ -54,7 +54,7 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 
 	private DirectMessageCursorIndices mIndices;
 	private int mNameDisplayOption;
-	private boolean mDisplayProfileImage;
+	private boolean mDisplayProfileImage, mMultiSelectEnabled;
 	private float mTextSize;
 
 	public DirectMessagesConversationAdapter(final Context context) {
@@ -153,6 +153,7 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 
 	@Override
 	public void onClick(final View view) {
+		if (mMultiSelectEnabled) return;
 		final Object tag = view.getTag();
 		final ParcelableDirectMessage status = tag instanceof Integer ? getDirectMessage((Integer) tag) : null;
 		if (status == null) return;
@@ -173,6 +174,13 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
 		}
+	}
+
+	@Override
+	public void setMultiSelectEnabled(final boolean multi) {
+		if (mMultiSelectEnabled == multi) return;
+		mMultiSelectEnabled = multi;
+		notifyDataSetChanged();
 	}
 
 	@Override

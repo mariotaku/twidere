@@ -138,8 +138,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.UriMatcher;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -837,7 +839,7 @@ public final class Utils implements Constants {
 	}
 
 	public static long getAccountId(final Context context, final String screen_name) {
-		if (context == null) return -1;
+		if (context == null || isEmpty(screen_name)) return -1;
 		long user_id = -1;
 
 		final Cursor cur = context.getContentResolver()
@@ -1643,6 +1645,7 @@ public final class Utils implements Constants {
 	public static int getThemeColor(final Context context) {
 		if (context == null) return Color.TRANSPARENT;
 		final int def = context.getResources().getColor(R.color.holo_blue_light);
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) return def;
 		try {
 			final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.colorActivatedHighlight });
 			final int color = a.getColor(0, def);
@@ -1855,6 +1858,17 @@ public final class Utils implements Constants {
 		return plugged || level / scale > 0.15f;
 	}
 
+	public static boolean isDebugBuild(final Context context) {
+		if (context == null) return false;
+		final ApplicationInfo info;
+		try {
+			info = context.getPackageManager().getApplicationInfo(context.getPackageName(), 0);
+		} catch (final NameNotFoundException e) {
+			return false;
+		}
+		return (info.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+	}
+
 	public static boolean isFiltered(final SQLiteDatabase database, final ParcelableStatus status) {
 		if (status == null) return false;
 		return isFiltered(database, status.text_plain, status.text_html, status.user_screen_name, status.source);
@@ -2004,6 +2018,16 @@ public final class Utils implements Constants {
 		// return
 		// ConfigurationAccessor.getLayoutDirection(res.getConfiguration()) ==
 		// SCREENLAYOUT_LAYOUTDIR_RTL;
+	}
+
+	public static boolean isSameAccount(final Context context, final long account_id, final long user_id) {
+		if (context == null || account_id <= 0 || user_id <= 0) return false;
+		return account_id == user_id;
+	}
+
+	public static boolean isSameAccount(final Context context, final long account_id, final String screen_name) {
+		if (context == null || account_id <= 0 || screen_name == null) return false;
+		return screen_name.equalsIgnoreCase(getAccountScreenName(context, account_id));
 	}
 
 	public static boolean isUserLoggedIn(final Context context, final long account_id) {

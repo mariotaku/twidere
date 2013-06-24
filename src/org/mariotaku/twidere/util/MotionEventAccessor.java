@@ -33,7 +33,7 @@ public class MotionEventAccessor {
 	}
 
 	public static int getSource(final MotionEvent event) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1)
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD)
 			return GetSourceAccessorGingerbread.getSource(event);
 		return InputDevice.SOURCE_TOUCHSCREEN;
 	}

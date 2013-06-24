@@ -4,14 +4,14 @@
 	android:layout_height="wrap_content"
 	android:padding="8dp">
 
-	<ImageView
+	<org.mariotaku.twidere.view.ClickableImageView
 		android:id="@+id/profile_image"
 		android:layout_width="@dimen/profile_image_size"
 		android:layout_height="@dimen/profile_image_size"
 		android:layout_alignParentRight="true"
 		android:scaleType="fitCenter"/>
 
-	<TextView 
+	<TextView
 		android:id="@+id/name"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
 		android:textColor="?android:attr/textColorPrimary"
 		android:textStyle="bold"/>
 
-	<TextView 
+	<TextView
 		android:id="@+id/owner"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
 		android:gravity="right"
 		android:textColor="?android:attr/textColorSecondary"/>
 
-	<TextView 
+	<TextView
 		android:id="@+id/description"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"

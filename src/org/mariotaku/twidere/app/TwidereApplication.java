@@ -132,10 +132,6 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		return mTwitterWrapper = AsyncTwitterWrapper.getInstance(this);
 	}
 
-	public boolean isDebugBuild() {
-		return DEBUG;
-	}
-
 	public boolean isMultiSelectActive() {
 		return getMultiSelectManager().isActive();
 	}

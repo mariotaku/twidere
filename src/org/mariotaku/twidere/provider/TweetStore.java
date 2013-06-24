@@ -25,7 +25,7 @@ import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-public final class TweetStore  {
+public final class TweetStore {
 
 	public static final String AUTHORITY = "twidere";
 
@@ -39,10 +39,11 @@ public final class TweetStore  {
 	public static final String CONTENT_PATH_NULL = "null_content";
 
 	public static final String TABLE_NAME_NOTIFICATIONS = "notifications";
-	
+
 	public static final String CONTENT_PATH_NOTIFICATIONS = TABLE_NAME_NOTIFICATIONS;
 
-	public static final Uri BASE_CONTENT_URI = new Uri.Builder().scheme(ContentResolver.SCHEME_CONTENT).authority(AUTHORITY).build();
+	public static final Uri BASE_CONTENT_URI = new Uri.Builder().scheme(ContentResolver.SCHEME_CONTENT)
+			.authority(AUTHORITY).build();
 
 	public static final Uri CONTENT_URI_NULL = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH_NULL);
 
@@ -55,7 +56,7 @@ public final class TweetStore  {
 			CachedHashtags.CONTENT_URI };
 	public static final Uri[] DIRECT_MESSAGES_URIS = new Uri[] { DirectMessages.Inbox.CONTENT_URI,
 			DirectMessages.Outbox.CONTENT_URI };
-	
+
 	public static interface Accounts extends BaseColumns {
 
 		public static final int AUTH_TYPE_OAUTH = 0;
@@ -304,7 +305,7 @@ public final class TweetStore  {
 			public static final String CONTENT_PATH = TABLE_NAME;
 
 			public static final String TABLE_NAME_SCREEN_NAME = "messages_conversation_screen_name";
-			
+
 			public static final String CONTENT_PATH_SCREEN_NAME = TABLE_NAME_SCREEN_NAME;
 
 			public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);

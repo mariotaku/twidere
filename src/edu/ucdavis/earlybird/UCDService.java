@@ -33,7 +33,7 @@ public class UCDService extends Service {
 	public void onCreate() {
 		super.onCreate();
 
-		ProfilingUtil.log("onCreate");
+		ProfilingUtil.log(this, "onCreate");
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		mAlarmManager = (AlarmManager) getSystemService(Service.ALARM_SERVICE);
 
@@ -66,15 +66,16 @@ public class UCDService extends Service {
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
 			if (mLocationManager == null) return;
-			ProfilingUtil.log("AlarmReceiver");
+			ProfilingUtil.log(context, "AlarmReceiver");
 			final String provider = LocationManager.NETWORK_PROVIDER;
 			if (mLocationManager.isProviderEnabled(provider)) {
 				final Location location = mLocationManager.getLastKnownLocation(provider);
 				if (location != null) {
 					ProfilingUtil.profile(UCDService.this, ProfilingUtil.FILE_NAME_LOCATION, location.getTime() + ","
 							+ location.getLatitude() + "," + location.getLongitude() + "," + location.getProvider());
-					ProfilingUtil.log(location.getTime() + "," + location.getLatitude() + "," + location.getLongitude()
-							+ "," + location.getProvider());
+					ProfilingUtil.log(context,
+							location.getTime() + "," + location.getLatitude() + "," + location.getLongitude() + ","
+									+ location.getProvider());
 				}
 			}
 		}

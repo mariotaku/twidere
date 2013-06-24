@@ -47,7 +47,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.handmark.pulltorefresh.library.extras.AccessibilityPullEventListener;
 
-public abstract class PullToRefreshListFragment extends BaseListFragment implements OnRefreshListener2<ListView> {
+public abstract class BasePullToRefreshListFragment extends BaseListFragment implements OnRefreshListener2<ListView> {
 
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -55,7 +55,7 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 		public void onReceive(final Context context, final Intent intent) {
 			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
-			if ((PullToRefreshListFragment.this.getClass().getName() + SHUFFIX_REFRESH_TAB).equals(action)) {
+			if ((BasePullToRefreshListFragment.this.getClass().getName() + SHUFFIX_REFRESH_TAB).equals(action)) {
 				onPullDownToRefresh(mPullToRefreshListView);
 			}
 		}
@@ -126,6 +126,7 @@ public abstract class PullToRefreshListFragment extends BaseListFragment impleme
 
 		final PullToRefreshListView plv = new PullToRefreshListView(context);
 		plv.setOnRefreshListener(this);
+		plv.setShowIndicator(false);
 		plv.setOnPullEventListener(new AccessibilityPullEventListener<ListView>(context));
 		plv.setPullToRefreshOverScrollEnabled(false);
 		mPullToRefreshListView = plv;

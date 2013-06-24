@@ -274,9 +274,13 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 
 	@Override
 	protected void dispatchDraw(final Canvas canvas) {
-		canvas.saveLayerAlpha(null, isEnabled() ? 0xFF : 0x80, Canvas.ALL_SAVE_FLAG);
-		super.dispatchDraw(canvas);
-		canvas.restore();
+		try {
+			canvas.saveLayerAlpha(null, isEnabled() ? 0xFF : 0x80, Canvas.ALL_SAVE_FLAG);
+			super.dispatchDraw(canvas);
+			canvas.restore();
+		} catch (final NullPointerException e) {
+			super.dispatchDraw(canvas);
+		}
 	}
 
 	private void addTab(final CharSequence label, final Drawable icon, final int index) {

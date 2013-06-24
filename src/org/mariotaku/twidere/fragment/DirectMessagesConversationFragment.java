@@ -430,8 +430,8 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 					: 50
 					: 0;
 			final float[] hsv = new float[] { hue, 1.0f, 1.0f };
-			mTextCountView
-					.setTextColor(count >= Validator.MAX_TWEET_LENGTH - 10 ? Color.HSVToColor(0x80, hsv) : 0x80808080);
+			mTextCountView.setTextColor(count >= Validator.MAX_TWEET_LENGTH - 10 ? Color.HSVToColor(0x80, hsv)
+					: 0x80808080);
 			mTextCountView.setText(getLocalizedNumber(mLocale, Validator.MAX_TWEET_LENGTH - count));
 		}
 	}

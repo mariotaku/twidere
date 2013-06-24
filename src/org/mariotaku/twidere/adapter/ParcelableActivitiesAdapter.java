@@ -44,7 +44,7 @@ import android.widget.ImageView;
 
 public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity> implements IBaseAdapter {
 
-	private boolean mDisplayProfileImage, mShowAbsoluteTime;
+	private boolean mDisplayProfileImage, mShowAbsoluteTime, mMultiSelectEnabled;
 	private int mNameDisplayOption;
 	private float mTextSize;
 
@@ -112,6 +112,13 @@ public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity
 	}
 
 	@Override
+	public void setMultiSelectEnabled(final boolean multi) {
+		if (mMultiSelectEnabled == multi) return;
+		mMultiSelectEnabled = multi;
+		notifyDataSetChanged();
+	}
+
+	@Override
 	public void setNameDisplayOption(final String option) {
 		final int option_int = getNameDisplayOptionInt(option);
 		if (option_int == mNameDisplayOption) return;
@@ -146,17 +153,12 @@ public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity
 
 	private boolean isMyActivity(final ParcelableActivity activity) {
 		if (activity == null) return false;
-		final ParcelableUser[] sources = activity.sources;
 		final ParcelableStatus[] target_statuses = activity.target_statuses;
 		final ParcelableUser[] target_users = activity.target_users;
 		final ParcelableStatus[] target_object_statuses = activity.target_object_statuses;
-		final ParcelableUserList[] target_object_user_lists = activity.target_object_user_lists;
-		final int sources_length = sources != null ? sources.length : 0;
 		final int target_statuses_length = target_statuses != null ? target_statuses.length : 0;
 		final int target_users_length = target_users != null ? target_users.length : 0;
 		final int target_object_statuses_length = target_object_statuses != null ? target_object_statuses.length : 0;
-		final int target_object_user_lists_length = target_object_user_lists != null ? target_object_user_lists.length
-				: 0;
 		if (activity.action == ParcelableActivity.ACTION_FAVORITE)
 			return target_statuses_length > 0 && target_statuses[0].user_id == activity.account_id;
 		else if (activity.action == ParcelableActivity.ACTION_FOLLOW)

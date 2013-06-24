@@ -30,7 +30,7 @@ import java.util.List;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.UsersAdapter;
+import org.mariotaku.twidere.adapter.ParcelableUsersAdapter;
 import org.mariotaku.twidere.loader.DummyParcelableUsersLoader;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUser;
@@ -58,7 +58,7 @@ import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 
-abstract class BaseUsersListFragment extends PullToRefreshListFragment implements
+abstract class BaseUsersListFragment extends BasePullToRefreshListFragment implements
 		LoaderCallbacks<List<ParcelableUser>>, OnScrollListener, OnItemLongClickListener, Panes.Left,
 		OnMenuItemClickListener, MultiSelectManager.Callback {
 
@@ -68,7 +68,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	private PopupMenu mPopupMenu;
 	private MultiSelectManager mMultiSelectManager;
 
-	private UsersAdapter mAdapter;
+	private ParcelableUsersAdapter mAdapter;
 
 	private Handler mHandler;
 	private Runnable mTicker;
@@ -91,7 +91,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	}
 
 	@Override
-	public UsersAdapter getListAdapter() {
+	public ParcelableUsersAdapter getListAdapter() {
 		return mAdapter;
 	}
 
@@ -103,7 +103,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mAdapter = new UsersAdapter(getActivity());
+		mAdapter = new ParcelableUsersAdapter(getActivity());
 		mMultiSelectManager = getMultiSelectManager();
 		mListView = getListView();
 		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
@@ -132,7 +132,7 @@ abstract class BaseUsersListFragment extends PullToRefreshListFragment implement
 	@Override
 	public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 		mSelectedUser = null;
-		final UsersAdapter adapter = getListAdapter();
+		final ParcelableUsersAdapter adapter = getListAdapter();
 		mSelectedUser = adapter.findItem(id);
 		if (mMultiSelectManager.isActive()) {
 			if (!mMultiSelectManager.isSelected(mSelectedUser)) {

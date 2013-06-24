@@ -91,7 +91,7 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> implemen
 
 		bulkDelete(resolver, CachedStatuses.CONTENT_URI, CachedStatuses.STATUS_ID, status_ids, null, false);
 		bulkInsert(resolver, CachedStatuses.CONTENT_URI, cached_statuses_values);
-		
+
 		for (final String hashtag : hashtags) {
 			final ContentValues hashtag_value = new ContentValues();
 			hashtag_value.put(CachedHashtags.NAME, hashtag);
@@ -99,7 +99,7 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> implemen
 		}
 		bulkDelete(resolver, CachedHashtags.CONTENT_URI, CachedHashtags.NAME, hashtags, null, true);
 		bulkInsert(resolver, CachedHashtags.CONTENT_URI, hashtag_values);
-		
+
 		for (final User user : users) {
 			user_ids.add(user.getId());
 			cached_users_values.add(makeCachedUserContentValues(user, large_profile_image));

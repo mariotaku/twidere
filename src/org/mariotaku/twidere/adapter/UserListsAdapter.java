@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.adapter;
 
+import static org.mariotaku.twidere.util.Utils.openUserProfile;
+
 import java.util.List;
 
 import org.mariotaku.twidere.R;
@@ -28,20 +30,24 @@ import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.view.holder.UserListViewHolder;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
-public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implements IBaseAdapter {
+public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implements IBaseAdapter, OnClickListener {
 
+	private final Context mContext;
 	private final ImageLoaderWrapper mProfileImageLoader;
 
-	private boolean mDisplayProfileImage;
+	private boolean mDisplayProfileImage, mMultiSelectEnabled;
 
 	private float mTextSize;
 
 	public UserListsAdapter(final Context context) {
 		super(context, R.layout.user_list_list_item);
+		mContext = context;
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mProfileImageLoader = application.getImageLoaderWrapper();
 	}
@@ -64,6 +70,7 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 			holder = (UserListViewHolder) tag;
 		} else {
 			holder = new UserListViewHolder(view);
+			holder.profile_image.setOnClickListener(this);
 			view.setTag(holder);
 		}
 		final ParcelableUserList user_list = getItem(position);
@@ -76,6 +83,23 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 			mProfileImageLoader.displayProfileImage(holder.profile_image, user_list.user_profile_image_url);
 		}
 		return view;
+	}
+
+	@Override
+	public void onClick(final View view) {
+		if (mMultiSelectEnabled) return;
+		final Object tag = view.getTag();
+		final int position = tag instanceof Integer ? (Integer) tag : -1;
+		if (position == -1) return;
+		switch (view.getId()) {
+			case R.id.profile_image: {
+				if (mContext instanceof Activity) {
+					final ParcelableUserList item = getItem(position);
+					openUserProfile((Activity) mContext, item.account_id, item.user_id, item.user_screen_name);
+				}
+				break;
+			}
+		}
 	}
 
 	public void setData(final List<ParcelableUserList> data, final boolean clear_old) {
@@ -96,6 +120,13 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
 		}
+	}
+
+	@Override
+	public void setMultiSelectEnabled(final boolean multi) {
+		if (mMultiSelectEnabled == multi) return;
+		mMultiSelectEnabled = multi;
+		notifyDataSetChanged();
 	}
 
 	@Override

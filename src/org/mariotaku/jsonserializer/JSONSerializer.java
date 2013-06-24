@@ -112,7 +112,7 @@ public class JSONSerializer {
 			json.put(KEY_OBJECT, toJSON(parcelable));
 			writer.write(json.toString());
 		} catch (final JSONException e) {
-			throw new IOException(e);
+			throw new IOException(e.getMessage());
 		} finally {
 			writer.close();
 		}

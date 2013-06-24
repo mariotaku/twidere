@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.util.Utils;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +15,6 @@ import android.os.BatteryManager;
 import android.util.Log;
 
 public class ProfilingUtil {
-	static final boolean DEBUG = Constants.DEBUG;
 
 	public static final String FILE_NAME_PROFILE = "Profile";
 	public static final String FILE_NAME_LOCATION = "Location";
@@ -29,8 +29,8 @@ public class ProfilingUtil {
 		return plugged == BatteryManager.BATTERY_PLUGGED_AC || plugged == BatteryManager.BATTERY_PLUGGED_USB;
 	}
 
-	public static boolean log(final String msg) {
-		if (DEBUG) {
+	public static boolean log(final Context context, final String msg) {
+		if (Utils.isDebugBuild(context)) {
 			final StackTraceElement ste = new Throwable().fillInStackTrace().getStackTrace()[1];
 			final String fullname = ste.getClassName();
 			final String name = fullname.substring(fullname.lastIndexOf('.'));

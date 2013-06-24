@@ -23,14 +23,17 @@ import org.mariotaku.gallery3d.util.ApiHelper;
 import org.mariotaku.gallery3d.util.BitmapPool;
 import org.mariotaku.gallery3d.util.GalleryUtils;
 
+import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.os.Build;
 import android.util.Log;
 
+@TargetApi(Build.VERSION_CODES.GINGERBREAD_MR1)
 public class PhotoViewAdapter implements PhotoView.ITileImageAdapter {
 
 	private static final String TAG = "PhotoViewAdapter";

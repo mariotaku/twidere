@@ -26,6 +26,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
@@ -73,7 +74,7 @@ public class WebMapFragment extends WebViewFragment implements MapInterface {
 		settings.setBuiltInZoomControls(false);
 
 		/** Allows JavaScript calls to access application resources **/
-		webview.addJavascriptInterface(new JavaScriptInterface(), "android");
+		webview.addJavascriptInterface(new MapJavaScriptInterface(), "android");
 
 	}
 
@@ -81,12 +82,14 @@ public class WebMapFragment extends WebViewFragment implements MapInterface {
 	 * Sets up the interface for getting access to Latitude and Longitude data
 	 * from device
 	 **/
-	class JavaScriptInterface {
+	class MapJavaScriptInterface {
 
+		@JavascriptInterface
 		public double getLatitude() {
 			return latitude;
 		}
 
+		@JavascriptInterface
 		public double getLongitude() {
 			return longitude;
 		}

@@ -25,7 +25,7 @@ import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.UsersAdapter;
+import org.mariotaku.twidere.adapter.ParcelableUsersAdapter;
 import org.mariotaku.twidere.loader.CursorSupportUsersLoader;
 import org.mariotaku.twidere.loader.UserListMembersLoader;
 import org.mariotaku.twidere.model.ParcelableUser;
@@ -107,7 +107,7 @@ public class UserListMembersFragment extends CursorSupportUsersListFragment impl
 	public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 		mSelectedUser = null;
 		if (mUserList == null || mUserList.account_id != mUserList.user_id) return false;
-		final UsersAdapter adapter = getListAdapter();
+		final ParcelableUsersAdapter adapter = getListAdapter();
 		mSelectedUser = adapter.getItem(position - getListView().getHeaderViewsCount());
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_user_list_member);

@@ -60,7 +60,8 @@ public class TweetSearchLoader extends Twitter4JStatusesLoader {
 	protected boolean shouldFilterStatus(final SQLiteDatabase database, final ParcelableStatus status) {
 		return isFiltered(database, status);
 	}
-	
+
+	@Override
 	protected boolean shouldIncludeRetweets() {
 		return false;
 	}

@@ -54,7 +54,7 @@ import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 
-public class DirectMessagesFragment extends PullToRefreshListFragment implements LoaderCallbacks<Cursor>,
+public class DirectMessagesFragment extends BasePullToRefreshListFragment implements LoaderCallbacks<Cursor>,
 		OnScrollListener, OnTouchListener {
 
 	private static final long TICKER_DURATION = 5000L;

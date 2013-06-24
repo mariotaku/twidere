@@ -34,7 +34,8 @@ public class TwidereCommands {
 
 	public static final String AUTHORITY = "twidere.command";
 
-	public static final Uri BASE_CONTENT_URI = new Uri.Builder().scheme(ContentResolver.SCHEME_CONTENT).authority(AUTHORITY).build();
+	public static final Uri BASE_CONTENT_URI = new Uri.Builder().scheme(ContentResolver.SCHEME_CONTENT)
+			.authority(AUTHORITY).build();
 	public static final String INTENT_KEY_IN_REPLY_TO_STATUS_ID = "in_reply_to_status_id";
 	public static final String INTENT_KEY_IS_POSSIBLY_SENSITIVE = "is_possibly_sensitive";
 	public static final String INTENT_KEY_DELETE_IMAGE = "delete_image";
@@ -51,6 +52,22 @@ public class TwidereCommands {
 		public static final String ACTION_REFRESH_MENTIONS = "refresh_mentions";
 		public static final String ACTION_REFRESH_INBOX = "refresh_inbox";
 		public static final String ACTION_REFRESH_OUTBOX = "refresh_inbox";
+
+		public static boolean isHomeTimelineRefreshing(final Context context) {
+			return Utils.isQueryCommandTrue(context, ACTION_REFRESH_HOME_TIMELINE);
+		}
+
+		public static boolean isInboxRefreshing(final Context context) {
+			return Utils.isQueryCommandTrue(context, ACTION_REFRESH_INBOX);
+		}
+
+		public static boolean isMentionsRefreshing(final Context context) {
+			return Utils.isQueryCommandTrue(context, ACTION_REFRESH_MENTIONS);
+		}
+
+		public static boolean isOutboxRefreshing(final Context context) {
+			return Utils.isQueryCommandTrue(context, ACTION_REFRESH_OUTBOX);
+		}
 
 		public static void refreshAll(final Context context) {
 			Utils.sendInsertCommand(context, ACTION_REFRESH_ALL, null);
@@ -70,22 +87,6 @@ public class TwidereCommands {
 
 		public static void refreshOutbox(final Context context) {
 			Utils.sendInsertCommand(context, ACTION_REFRESH_OUTBOX, null);
-		}
-
-		public static boolean isHomeTimelineRefreshing(final Context context) {
-			return Utils.isQueryCommandTrue(context, ACTION_REFRESH_HOME_TIMELINE);
-		}
-
-		public static boolean isInboxRefreshing(final Context context) {
-			return Utils.isQueryCommandTrue(context, ACTION_REFRESH_INBOX);
-		}
-
-		public static boolean isMentionsRefreshing(final Context context) {
-			return Utils.isQueryCommandTrue(context, ACTION_REFRESH_MENTIONS);
-		}
-
-		public static boolean isOutboxRefreshing(final Context context) {
-			return Utils.isQueryCommandTrue(context, ACTION_REFRESH_OUTBOX);
 		}
 	}
 
@@ -110,17 +111,17 @@ public class TwidereCommands {
 
 	private final static class Utils {
 
-		private static Uri sendInsertCommand(final Context context, final String action, final ContentValues values) {
-			final ContentResolver resolver = context.getContentResolver();
-			final Uri uri = Uri.withAppendedPath(BASE_CONTENT_URI, action);
-			return resolver.insert(uri, values != null ? values : new ContentValues());
-		}
-
 		private static boolean isQueryCommandTrue(final Context context, final String action) {
 			final Cursor cur = sendQueryCommand(context, action);
 			if (cur == null) return false;
 			cur.close();
 			return true;
+		}
+
+		private static Uri sendInsertCommand(final Context context, final String action, final ContentValues values) {
+			final ContentResolver resolver = context.getContentResolver();
+			final Uri uri = Uri.withAppendedPath(BASE_CONTENT_URI, action);
+			return resolver.insert(uri, values != null ? values : new ContentValues());
 		}
 
 		private static Cursor sendQueryCommand(final Context context, final String action) {

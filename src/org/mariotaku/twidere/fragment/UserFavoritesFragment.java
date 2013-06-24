@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.isSameAccount;
+
 import java.util.List;
 
 import org.mariotaku.twidere.loader.UserFavoritesLoader;
@@ -43,10 +45,11 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
 			if (BROADCAST_FAVORITE_CHANGED.equals(action)) {
-				final long status_id = intent.getLongExtra(INTENT_KEY_STATUS_ID, -1);
-				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mUserId && status_id > 0
-						&& !intent.getBooleanExtra(INTENT_KEY_FAVORITED, true)) {
-					deleteStatus(status_id);
+				final ParcelableStatus status = intent.getParcelableExtra(INTENT_KEY_STATUS);
+				if (status == null) return;
+				if ((isSameAccount(context, status.account_id, mUserId) || isSameAccount(context, status.account_id,
+						mUserScreenName)) && status.id > 0 && !intent.getBooleanExtra(INTENT_KEY_FAVORITED, true)) {
+					deleteStatus(status.id);
 				}
 			}
 		}

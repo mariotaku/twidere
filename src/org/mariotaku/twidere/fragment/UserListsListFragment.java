@@ -66,7 +66,7 @@ import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 
-public class UserListsListFragment extends PullToRefreshListFragment implements Constants,
+public class UserListsListFragment extends BasePullToRefreshListFragment implements Constants,
 		LoaderCallbacks<UserListsLoader.UserListsData>, OnItemClickListener, OnItemLongClickListener, Panes.Left,
 		OnMenuItemClickListener {
 

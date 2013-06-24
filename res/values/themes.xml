@@ -49,7 +49,7 @@
 	<style name="Theme.Twidere.Viewer" parent="android:Theme.NoTitleBar">
 		<item name="android:windowIsTranslucent">true</item>
 		<item name="android:windowContentOverlay">@null</item>
-		<item name="android:windowBackground">@drawable/viewer_background</item>
+		<item name="android:windowBackground">@android:color/black</item>
 		<!-- <item name="android:windowAnimationStyle">@style/Animation.ImageViewer</item> -->
 		<item name="borderlessButtonStyle">@style/Widget.Twidere.Button.Borderless</item>
 		<item name="borderlessImageButtonStyle">@style/Widget.Twidere.ImageButton.Borderless</item>

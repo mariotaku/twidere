@@ -32,6 +32,7 @@ import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
+import static org.mariotaku.twidere.util.Utils.isSameAccount;
 import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.openStatusRetweeters;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
@@ -162,8 +163,9 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 					showFollowInfo(true);
 				}
 			} else if (BROADCAST_FAVORITE_CHANGED.equals(action)) {
-				final long status_id = intent.getLongExtra(INTENT_KEY_STATUS_ID, -1);
-				if (status_id > 0 && status_id == mStatusId) {
+				final ParcelableStatus status = intent.getParcelableExtra(INTENT_KEY_STATUS);
+				if (mStatus != null && status != null && isSameAccount(context, status.account_id, mStatus.account_id)
+						&& status.id == mStatusId) {
 					getStatus(true);
 				}
 			} else if (BROADCAST_RETWEET_CHANGED.equals(action)) {

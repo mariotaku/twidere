@@ -42,7 +42,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class SavedSearchesListFragment extends PullToRefreshListFragment implements
+public class SavedSearchesListFragment extends BasePullToRefreshListFragment implements
 		LoaderCallbacks<ResponseList<SavedSearch>>, OnItemClickListener, Panes.Left {
 
 	private SavedSearchesAdapter mAdapter;

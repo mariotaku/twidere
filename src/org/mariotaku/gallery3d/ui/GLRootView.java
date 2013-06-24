@@ -32,10 +32,12 @@ import org.mariotaku.gallery3d.util.MotionEventHelper;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.ViewAccessor;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
+import android.os.Build;
 import android.os.Process;
 import android.os.SystemClock;
 import android.util.AttributeSet;
@@ -52,6 +54,7 @@ import android.view.View;
 // (1) The public methods of HeadUpDisplay
 // (2) The public methods of CameraHeadUpDisplay
 // (3) The overridden methods in GLRootView.
+@TargetApi(Build.VERSION_CODES.GINGERBREAD_MR1)
 public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer, GLRoot {
 	private static final String TAG = "GLRootView";
 

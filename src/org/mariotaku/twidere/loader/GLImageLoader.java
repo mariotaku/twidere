@@ -26,6 +26,7 @@ import java.io.IOException;
 import org.mariotaku.gallery3d.util.BitmapUtils;
 import org.mariotaku.twidere.util.Exif;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -33,8 +34,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Build;
 import android.util.DisplayMetrics;
 
+@TargetApi(Build.VERSION_CODES.GINGERBREAD_MR1)
 public class GLImageLoader extends AbstractImageLoader {
 
 	private final float mBackupSize;

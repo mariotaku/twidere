@@ -55,7 +55,7 @@ public class TwidereImageDownloader implements ImageDownloader {
 			final HttpResponse resp = Utils.getRedirectedHttpResponse(client, uri_string);
 			is = new ContentLengthInputStream(resp.asStream(), (int) resp.getContentLength());
 		} catch (final TwitterException e) {
-			throw new IOException(e);
+			throw new IOException(e.getMessage());
 		}
 		return is;
 	}

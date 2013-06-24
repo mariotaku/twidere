@@ -43,7 +43,7 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.widget.ListView;
 
-public class TrendsFragment extends PullToRefreshListFragment implements LoaderCallbacks<Cursor>, Panes.Left {
+public class TrendsFragment extends BasePullToRefreshListFragment implements LoaderCallbacks<Cursor>, Panes.Left {
 
 	private TwidereApplication mApplication;
 	private AsyncTwitterWrapper mTwitterWrapper;

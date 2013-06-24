@@ -14,6 +14,11 @@
 		android:icon="@drawable/ic_menu_gallery"
 		android:title="@string/add_image"/>
 	<item
+		android:id="@id/view"
+		android:icon="@drawable/ic_menu_reply"
+		android:title="@string/original_status"
+		android:visible="false"/>
+	<item
 		android:id="@+id/more_submenu"
 		android:icon="@drawable/ic_menu_more"
 		android:title="@string/more">
@@ -37,6 +42,7 @@
 	<item
 		android:id="@id/send"
 		android:icon="@drawable/ic_menu_send"
-		android:title="@string/send"/>
+		android:title="@string/send"
+		android:visible="false"/>
 
 </menu>

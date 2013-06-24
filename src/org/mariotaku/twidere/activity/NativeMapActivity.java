@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.Utils;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -57,14 +58,15 @@ public class NativeMapActivity extends MapActivity implements Constants {
 	}
 
 	@Override
-	protected void onCreate(final Bundle icicle) {
-		super.onCreate(icicle);
+	protected void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 		final Bundle extras = getIntent().getExtras();
 		if (extras == null || !extras.containsKey(INTENT_KEY_LATITUDE) || !extras.containsKey(INTENT_KEY_LONGITUDE)) {
 			finish();
 			return;
 		}
-		mMapView = new MapView(this, GOOGLE_MAPS_API_KEY);
+		final boolean debug_build = Utils.isDebugBuild(this);
+		mMapView = new MapView(this, debug_build ? GOOGLE_MAPS_API_KEY_DEBUG : GOOGLE_MAPS_API_KEY_RELEASE);
 		mMapView.setClickable(true);
 		final List<Overlay> overlays = mMapView.getOverlays();
 		final double lat = extras.getDouble(INTENT_KEY_LATITUDE, 0.0), lng = extras

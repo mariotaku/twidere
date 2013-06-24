@@ -34,7 +34,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 
-public abstract class BaseActivitiesListFragment extends PullToRefreshListFragment implements
+public abstract class BaseActivitiesListFragment extends BasePullToRefreshListFragment implements
 		LoaderCallbacks<List<ParcelableActivity>> {
 
 	private ParcelableActivitiesAdapter mAdapter;

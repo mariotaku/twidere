@@ -4,7 +4,7 @@
 	android:layout_height="wrap_content"
 	android:padding="8dp">
 
-	<ImageView
+	<org.mariotaku.twidere.view.ClickableImageView
 		android:id="@+id/profile_image"
 		android:layout_width="@dimen/profile_image_size"
 		android:layout_height="@dimen/profile_image_size"

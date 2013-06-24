@@ -30,6 +30,7 @@ import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.Conversat
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
+import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
 import java.text.DateFormat;
 
@@ -40,16 +41,17 @@ import org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEnt
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.view.holder.DirectMessageEntryViewHolder;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
-public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements IBaseAdapter {
+public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements IBaseAdapter, OnClickListener {
 
-	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mFastProcessingEnabled;
+	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mMultiSelectEnabled;
 	private final ImageLoaderWrapper mLazyImageLoader;
 	private float mTextSize;
 
@@ -63,7 +65,7 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 	@Override
 	public void bindView(final View view, final Context context, final Cursor cursor) {
 		final DirectMessageEntryViewHolder holder = (DirectMessageEntryViewHolder) view.getTag();
-
+		final int position = cursor.getPosition();
 		final long account_id = cursor.getLong(ConversationsEntry.IDX_ACCOUNT_ID);
 		final long conversation_id = cursor.getLong(ConversationsEntry.IDX_CONVERSATION_ID);
 		final long message_timestamp = cursor.getLong(ConversationsEntry.IDX_MESSAGE_TIMESTAMP);
@@ -78,11 +80,7 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 			holder.setAccountColor(getAccountColor(mContext, account_id));
 		}
 
-		if (!mFastProcessingEnabled) {
-			holder.setUserColor(getUserColor(mContext, conversation_id));
-		} else {
-			holder.setUserColor(Color.TRANSPARENT);
-		}
+		holder.setUserColor(getUserColor(mContext, conversation_id));
 
 		holder.setTextSize(mTextSize);
 		switch (mNameDisplayOption) {
@@ -112,10 +110,10 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 		} else {
 			holder.time.setText(getRelativeTimeSpanString(message_timestamp));
 		}
-		holder.text.setCompoundDrawablesWithIntrinsicBounds(is_outgoing ? R.drawable.ic_indicator_outgoing
-				: 0, 0, 0, 0);
+		holder.setIsOutgoing(is_outgoing);
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
+			holder.profile_image.setTag(position);
 			final String profile_image_url_string = cursor.getString(IDX_PROFILE_IMAGE_URL);
 			mLazyImageLoader.displayProfileImage(holder.profile_image, profile_image_url_string);
 		}
@@ -139,9 +137,30 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 		final View view = super.newView(context, cursor, parent);
 		final Object tag = view.getTag();
 		if (!(tag instanceof DirectMessageEntryViewHolder)) {
-			view.setTag(new DirectMessageEntryViewHolder(view));
+			final DirectMessageEntryViewHolder holder = new DirectMessageEntryViewHolder(view);
+			view.setTag(holder);
+			holder.profile_image.setOnClickListener(this);
 		}
 		return view;
+	}
+
+	@Override
+	public void onClick(final View view) {
+		if (mMultiSelectEnabled) return;
+		final Object tag = view.getTag();
+		final int position = tag instanceof Integer ? (Integer) tag : -1;
+		if (position == -1) return;
+		switch (view.getId()) {
+			case R.id.profile_image: {
+				if (mContext instanceof Activity) {
+					final long account_id = getAccountId(position);
+					final long user_id = getConversationId(position);
+					final String screen_name = getScreenName(position);
+					openUserProfile((Activity) mContext, account_id, user_id, screen_name);
+				}
+				break;
+			}
+		}
 	}
 
 	@Override
@@ -152,11 +171,11 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 		}
 	}
 
-	public void setFastProcessingEnabled(final boolean enabled) {
-		if (enabled != mFastProcessingEnabled) {
-			mFastProcessingEnabled = enabled;
-			notifyDataSetChanged();
-		}
+	@Override
+	public void setMultiSelectEnabled(final boolean multi) {
+		if (mMultiSelectEnabled == multi) return;
+		mMultiSelectEnabled = multi;
+		notifyDataSetChanged();
 	}
 
 	@Override
