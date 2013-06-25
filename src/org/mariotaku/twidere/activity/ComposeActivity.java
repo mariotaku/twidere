@@ -420,6 +420,11 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_compose_actionbar, menu);
+		final MenuItem more_submenu = menu != null ? menu.findItem(R.id.more_submenu) : null;
+		if (more_submenu != null) {
+			final Intent extensions_intent = new Intent(INTENT_ACTION_EXTENSION_COMPOSE);
+			addIntentToMenu(this, more_submenu.getSubMenu(), extensions_intent);
+		}
 		return super.onCreateOptionsMenu(menu);
 	}
 
