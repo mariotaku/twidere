@@ -54,7 +54,6 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.Editable;
-import android.text.Html;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -335,7 +334,7 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 					break;
 				}
 				case MENU_COPY: {
-					if (ClipboardUtils.setText(getActivity(), Html.fromHtml(mSelectedDirectMessage.text_html))) {
+					if (ClipboardUtils.setText(getActivity(), mSelectedDirectMessage.text_plain)) {
 						showOkMessage(getActivity(), R.string.text_copied, false);
 					}
 					break;

@@ -32,6 +32,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.view.View;
+import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -126,10 +127,11 @@ public class StatusViewHolder implements Constants {
 	public void setIsMyStatus(final boolean my_status) {
 		profile_image.setVisibility(my_status ? View.GONE : View.VISIBLE);
 		my_profile_image.setVisibility(my_status ? View.VISIBLE : View.GONE);
+		final MarginLayoutParams lp = (MarginLayoutParams) time.getLayoutParams();
 		if (is_rtl) {
-			time.setPadding((int) (my_status ? 6 * density : 0), 0, 0, 0);
+			lp.leftMargin = (int) (my_status ? 6 * density : 0);
 		} else {
-			time.setPadding(0, 0, (int) (my_status ? 6 * density : 0), 0);
+			lp.rightMargin = (int) (my_status ? 6 * density : 0);
 		}
 	}
 

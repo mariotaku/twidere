@@ -83,7 +83,7 @@ public class RingtonePreference extends ListPreference {
 			}
 		});
 	}
-	
+
 	private void loadRingtones(final Context context) {
 		final RingtoneManager manager = new RingtoneManager(context);
 		manager.setType(RingtoneManager.TYPE_NOTIFICATION);

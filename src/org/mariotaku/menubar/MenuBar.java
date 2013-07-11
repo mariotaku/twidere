@@ -14,16 +14,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView.ScaleType;
-import android.widget.TableRow;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
-public class MenuBar extends TableRow implements PopupMenu.OnMenuItemClickListener {
+public class MenuBar extends LinearLayout implements PopupMenu.OnMenuItemClickListener {
 
 	private final Menu mMenu;
 	private final Context mContext;
 	private OnMenuItemClickListener mItemClickListener;
 
 	private PopupMenu mPopupMenu;
+
+	private boolean mStretchButtonsEnabled = true;
 
 	public MenuBar(final Context context) {
 		this(context, null);
@@ -33,6 +35,7 @@ public class MenuBar extends TableRow implements PopupMenu.OnMenuItemClickListen
 		super(context, attrs);
 		mContext = context;
 		mMenu = new MenuImpl(context);
+		setOrientation(HORIZONTAL);
 	}
 
 	public Menu getMenu() {
@@ -63,6 +66,12 @@ public class MenuBar extends TableRow implements PopupMenu.OnMenuItemClickListen
 		mItemClickListener = listener;
 	}
 
+	public void setStretchButtonsEnabled(final boolean enabled) {
+		if (mStretchButtonsEnabled == enabled) return;
+		mStretchButtonsEnabled = enabled;
+		show();
+	}
+
 	public void show() {
 		if (mPopupMenu != null) {
 			mPopupMenu.dismiss();
@@ -90,8 +99,8 @@ public class MenuBar extends TableRow implements PopupMenu.OnMenuItemClickListen
 
 		final LayoutParams params = new LayoutParams((int) getResources().getDimension(R.dimen.actionbar_button_width),
 				ViewGroup.LayoutParams.MATCH_PARENT);
+		// params.weight = mStretchButtonsEnabled ? 1 : 0;
 		params.weight = 1;
-
 		actionButton.setLayoutParams(params);
 
 		actionButton.setImageDrawable(item.getIcon());

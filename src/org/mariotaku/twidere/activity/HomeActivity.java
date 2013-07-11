@@ -38,6 +38,7 @@ import org.mariotaku.twidere.fragment.DirectMessagesFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.model.TabSpec;
+import org.mariotaku.twidere.preference.ThemeColorPreference;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ActivityAccessor;
 import org.mariotaku.twidere.util.ArrayUtils;
@@ -391,6 +392,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 
 		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
+		ThemeColorPreference.applyBackground(mIndicator);
 		final boolean tab_display_label = res.getBoolean(R.bool.tab_display_label);
 		mAdapter = new TabsAdapter(this, getSupportFragmentManager(), mIndicator);
 		mShowHomeTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_HOME_TAB, true);

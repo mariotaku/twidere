@@ -4,13 +4,23 @@
 	android:layout_height="match_parent"
 	android:orientation="vertical">
 
-	<view
-		android:id="@android:id/tabs"
+	<FrameLayout
 		android:layout_width="match_parent"
 		android:layout_height="48dp"
 		android:layout_weight="0"
-		class="org.mariotaku.twidere.view.TabPageIndicator"
-		android:background="?actionBarBackground"/>
+		android:background="?actionBarBackground">
+
+		<View
+			android:id="@+id/tab_highlight"
+			android:layout_width="match_parent"
+			android:layout_height="2dp"
+			android:layout_gravity="bottom"/>
+
+		<org.mariotaku.twidere.view.TabPageIndicator
+			android:id="@android:id/tabs"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"/>
+	</FrameLayout>
 
 	<org.mariotaku.twidere.view.ExtendedViewPager
 		android:id="@+id/pager"

@@ -6,62 +6,160 @@
 	android:minWidth="@dimen/compose_min_width"
 	android:orientation="vertical">
 
-	<org.mariotaku.twidere.view.AccountsColorFrameLayout
-		android:id="@+id/account_colors"
+	<FrameLayout
 		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		android:layout_weight="1">
+		android:layout_height="@dimen/actionbar_height"
+		android:background="?actionBarBackground">
 
-		<org.mariotaku.twidere.view.StatusComposeEditText
-			android:id="@+id/edit_text"
+		<View
+			android:id="@+id/actionbar_highlight"
 			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:layout_margin="8dp"
-			android:completionThreshold="1"
-			android:gravity="top"
-			android:hint="@string/tweet_hint"
-			android:imeOptions="actionDone"
-			android:minLines="10">
+			android:layout_height="2dp"
+			android:layout_gravity="bottom"/>
 
-			<requestFocus/>
-		</org.mariotaku.twidere.view.StatusComposeEditText>
-
-		<FrameLayout
+		<LinearLayout
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_gravity="bottom"
-			android:layout_margin="16dp">
+			android:layout_height="@dimen/actionbar_height"
+			android:baselineAligned="false"
+			android:gravity="center_vertical"
+			android:orientation="horizontal">
 
-			<ImageView
-				android:id="@+id/image_thumbnail_preview"
-				style="?selectableViewStyle"
-				android:layout_width="42dp"
-				android:layout_height="42dp"
-				android:layout_gravity="center_vertical|left"
-				android:alpha="0.5"
-				android:radius="3dp"
-				android:scaleType="fitCenter"
-				android:visibility="gone"/>
+			<LinearLayout
+				android:id="@id/actionbar_place_holder"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_weight="1">
 
-			<TextView
-				android:id="@+id/text_count"
+				<LinearLayout
+					android:id="@+id/close"
+					style="@style/Widget.ActionBarHomeItem"
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:clickable="true"
+					android:focusable="true"
+					android:onClick="onClick"
+					android:orientation="horizontal">
+
+					<ImageView
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:gravity="center_vertical|left"
+						android:scaleType="fitCenter"
+						android:src="@drawable/actionbar_back_dark"/>
+
+					<ImageView
+						android:layout_width="@dimen/actionbar_home_width"
+						android:layout_height="match_parent"
+						android:gravity="center_vertical|left"
+						android:scaleType="fitCenter"
+						android:src="@drawable/ic_launcher"/>
+
+					<LinearLayout
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:gravity="center_vertical"
+						android:orientation="vertical">
+
+						<TextView
+							android:id="@id/actionbar_title"
+							style="?attr/actionBarTitleStyle"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:singleLine="true"/>
+
+						<TextView
+							android:id="@id/actionbar_subtitle"
+							style="?attr/actionBarSubtitleStyle"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:singleLine="true"
+							android:text="@string/quote_protected_tweet_notice"
+							android:visibility="gone"/>
+					</LinearLayout>
+				</LinearLayout>
+			</LinearLayout>
+			
+		<org.mariotaku.twidere.view.HoloProgressBar
+			android:id="@id/actionbar_progress_indeterminate"
+			style="?actionBarIndeterminateProgressStyle"
+			android:layout_width="@dimen/actionbar_height"
+			android:layout_height="@dimen/actionbar_height"
+			android:layout_gravity="center_vertical"
+			android:layout_weight="0"
+			android:indeterminateOnly="true"
+			android:padding="2dp"
+			android:visibility="gone"/>
+
+			<org.mariotaku.menubar.MenuBar
+				android:id="@+id/action_menu"
 				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_gravity="bottom|right"
-				android:gravity="center"
-				
-				android:paddingLeft="8dp"
-				android:paddingRight="8dp"
-				android:singleLine="true"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:textColor="#80808080"/>
-		</FrameLayout>
-	</org.mariotaku.twidere.view.AccountsColorFrameLayout>
+				android:layout_height="match_parent"
+				android:layout_weight="0"/>
+		</LinearLayout>
+	</FrameLayout>
 
-	<org.mariotaku.menubar.MenuBar
-		android:id="@+id/menu_bar"
+	<LinearLayout
 		android:layout_width="match_parent"
-		android:layout_height="48dp"
-		android:background="?menuBarBackground"/>
+		android:layout_height="wrap_content"
+		android:background="@drawable/actionbar_shadow"
+		android:orientation="vertical">
+
+		<org.mariotaku.twidere.view.AccountsColorFrameLayout
+			android:id="@+id/account_colors"
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1">
+
+			<org.mariotaku.twidere.view.StatusComposeEditText
+				android:id="@+id/edit_text"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_margin="8dp"
+				android:completionThreshold="1"
+				android:gravity="top"
+				android:hint="@string/tweet_hint"
+				android:imeOptions="actionDone"
+				android:minLines="10">
+
+				<requestFocus/>
+			</org.mariotaku.twidere.view.StatusComposeEditText>
+
+			<FrameLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_gravity="bottom"
+				android:layout_margin="16dp">
+
+				<ImageView
+					android:id="@+id/image_thumbnail_preview"
+					style="?selectableViewStyle"
+					android:layout_width="42dp"
+					android:layout_height="42dp"
+					android:layout_gravity="center_vertical|left"
+					android:alpha="0.5"
+					android:radius="3dp"
+					android:scaleType="fitCenter"
+					android:visibility="gone"/>
+
+				<TextView
+					android:id="@+id/text_count"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="bottom|right"
+					android:gravity="center"
+					android:paddingLeft="8dp"
+					android:paddingRight="8dp"
+					android:singleLine="true"
+					android:textAppearance="?android:attr/textAppearanceMedium"
+					android:textColor="#80808080"/>
+			</FrameLayout>
+		</org.mariotaku.twidere.view.AccountsColorFrameLayout>
+
+		<org.mariotaku.menubar.MenuBar
+			android:id="@+id/menu_bar"
+			android:layout_width="match_parent"
+			android:layout_height="48dp"
+			android:background="?menuBarBackground"/>
+	</LinearLayout>
 
 </LinearLayout>

@@ -23,6 +23,7 @@ import static android.os.Environment.getExternalStorageState;
 import static android.text.TextUtils.isEmpty;
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static org.mariotaku.twidere.model.ParcelableLocation.isValidLocation;
+import static org.mariotaku.twidere.util.ParseUtils.parseString;
 import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
 import static org.mariotaku.twidere.util.Utils.copyStream;
 import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
@@ -50,7 +51,6 @@ import java.io.OutputStream;
 import java.util.Locale;
 import java.util.Set;
 
-import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.popupmenu.PopupMenu;
@@ -61,6 +61,7 @@ import org.mariotaku.twidere.model.DraftItem;
 import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.preference.ThemeColorPreference;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.util.ActivityAccessor;
 import org.mariotaku.twidere.util.ArrayUtils;
@@ -111,9 +112,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
@@ -125,35 +126,38 @@ import com.twitter.Validator;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 
-public class ComposeActivity extends BaseDialogWhenLargeActivity implements TextWatcher, LocationListener,
+public class ComposeActivity extends BaseDialogActivity implements TextWatcher, LocationListener,
 		OnMenuItemClickListener, OnClickListener, OnLongClickListener, PopupMenu.OnMenuItemClickListener,
 		OnEditorActionListener {
 
 	private static final String FAKE_IMAGE_LINK = "https://www.example.com/fake_image.jpg";
+
 	private static final String INTENT_KEY_IS_POSSIBLY_SENSITIVE = "is_possibly_sensitive";
+
 	private static final String INTENT_KEY_SHOULD_SAVE_ACCOUNTS = "should_save_accounts";
 	private static final String INTENT_KEY_ORIGINAL_TEXT = "original_text";
-
 	private AsyncTwitterWrapper mTwitterWrapper;
 	private LocationManager mLocationManager;
+
 	private SharedPreferences mPreferences;
 	private ParcelableLocation mRecentLocation;
 	private ContentResolver mResolver;
 	private final Validator mValidator = new Validator();
 	private ImageLoaderWrapper mImageLoader;
 	private AsyncTask<Void, Void, ?> mTask;
-
-	private ActionBar mActionBar;
 	private PopupMenu mPopupMenu;
 
+	private TextView mTextCountView, mTitleView, mSubtitleView;
+	private ImageView mImageThumbnailPreview;
+	private MenuBar mMenuBar, mActionMenuBar;
 	private AccountsColorFrameLayout mColorIndicator;
 	private EditText mEditText;
-	private TextView mTextCountView;
-	private ImageView mImageThumbnailPreview;
-	private MenuBar mMenuBar;
-
+	private ProgressBar mProgress;
+	
+	
 	private boolean mIsImageAttached, mIsPhotoAttached, mIsPossiblySensitive, mShouldSaveAccounts;
 	private long[] mAccountIds;
+
 	private Uri mImageUri, mTempPhotoUri;
 	private boolean mImageUploaderUsed, mTweetShortenerUsed;
 	private ParcelableStatus mInReplyToStatus;
@@ -162,7 +166,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	private long mInReplyToStatusId;
 	private String mOriginalText;
 	private Locale mLocale;
-
+	
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -382,9 +386,10 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		final String option = mPreferences.getString(PREFERENCE_KEY_COMPOSE_QUIT_ACTION, COMPOSE_QUIT_ACTION_ASK);
 		final String text = mEditText != null ? ParseUtils.parseString(mEditText.getText()) : null;
 		final boolean text_changed = !isEmpty(text) && !text.equals(mOriginalText);
+		final boolean is_editing_draft = INTENT_ACTION_EDIT_DRAFT.equals(getIntent().getAction());
 		if (COMPOSE_QUIT_ACTION_DISCARD.equals(option)) {
 			mTask = new DiscardTweetTask(this).execute();
-		} else if (text_changed || mImageUri != null) {
+		} else if (text_changed || mImageUri != null || is_editing_draft) {
 			if (COMPOSE_QUIT_ACTION_SAVE.equals(option)) {
 				saveToDrafts();
 				Toast.makeText(this, R.string.tweet_saved_to_draft, Toast.LENGTH_SHORT).show();
@@ -404,6 +409,10 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 				openImageMenu();
 				break;
 			}
+			case R.id.close: {
+				onBackPressed();
+				break;
+			}
 		}
 	}
 
@@ -413,19 +422,13 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		mColorIndicator = (AccountsColorFrameLayout) findViewById(R.id.account_colors);
 		mEditText = (EditText) findViewById(R.id.edit_text);
 		mTextCountView = (TextView) findViewById(R.id.text_count);
+		mTitleView = (TextView) findViewById(R.id.actionbar_title);
+		mSubtitleView = (TextView) findViewById(R.id.actionbar_subtitle);
 		mImageThumbnailPreview = (ImageView) findViewById(R.id.image_thumbnail_preview);
 		mMenuBar = (MenuBar) findViewById(R.id.menu_bar);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(final Menu menu) {
-		getMenuInflater().inflate(R.menu.menu_compose_actionbar, menu);
-		final MenuItem more_submenu = menu != null ? menu.findItem(R.id.more_submenu) : null;
-		if (more_submenu != null) {
-			final Intent extensions_intent = new Intent(INTENT_ACTION_EXTENSION_COMPOSE);
-			addIntentToMenu(this, more_submenu.getSubMenu(), extensions_intent);
-		}
-		return super.onCreateOptionsMenu(menu);
+		mActionMenuBar = (MenuBar) findViewById(R.id.action_menu);
+		mProgress = (ProgressBar) findViewById(R.id.actionbar_progress_indeterminate);
+		findViewById(R.id.actionbar_highlight).setBackgroundColor(ThemeColorPreference.getThemeColor(this));
 	}
 
 	@Override
@@ -462,51 +465,6 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	@Override
 	public boolean onMenuItemClick(final MenuItem item) {
 		return handleMenuItem(item);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
-		switch (item.getItemId()) {
-			case MENU_HOME: {
-				onBackPressed();
-				break;
-			}
-			default: {
-				return handleMenuItem(item);
-			}
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public boolean onPrepareOptionsMenu(final Menu menu) {
-		final String text_orig = mEditText != null ? ParseUtils.parseString(mEditText.getText()) : null;
-		final String text = mImageUri != null && text_orig != null ? mImageUploaderUsed ? getImageUploadStatus(this,
-				FAKE_IMAGE_LINK, text_orig) : text_orig + " " + FAKE_IMAGE_LINK : text_orig;
-		final int count = text != null ? mValidator.getTweetLength(text) : 0;
-		final boolean exceeded_limit = count < Validator.MAX_TWEET_LENGTH;
-		final boolean near_limit = count >= Validator.MAX_TWEET_LENGTH - 10;
-		final float hue = exceeded_limit ? near_limit ? 5 * (Validator.MAX_TWEET_LENGTH - count) : 50 : 0;
-		final float[] hsv = new float[] { hue, 1.0f, 1.0f };
-		if (mTextCountView != null) {
-			mTextCountView.setTextColor(count >= Validator.MAX_TWEET_LENGTH - 10 ? Color.HSVToColor(0x80, hsv)
-					: 0x80808080);
-			mTextCountView.setText(getLocalizedNumber(mLocale, Validator.MAX_TWEET_LENGTH - count));
-		}
-		if (menu != null) {
-			final boolean bottom_send_button = mPreferences.getBoolean(PREFERENCE_KEY_BOTTOM_SEND_BUTTON, false);
-			final MenuItem sendItem = menu.findItem(MENU_SEND);
-			if (sendItem != null) {
-				sendItem.setVisible(!bottom_send_button);
-				sendItem.setEnabled(!isEmpty(text_orig));
-			}
-			final MenuItem moreItem = menu.findItem(R.id.more_submenu);
-			if (moreItem != null) {
-				moreItem.setVisible(bottom_send_button);
-			}
-			setCommonMenu(menu);
-		}
-		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
@@ -560,9 +518,24 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		mResolver.insert(Drafts.CONTENT_URI, values);
 	}
 
+	public void setSupportProgressBarIndeterminateVisibility(final boolean visible) {
+		if (mProgress == null) return;
+		mProgress.setVisibility(visible ? View.VISIBLE : View.GONE);
+	}
+
+	@Override
+	protected int getDarkThemeRes() {
+		return R.style.Theme_Twidere_Compose;
+	}
+
+	@Override
+	protected int getLightThemeRes() {
+		return R.style.Theme_Twidere_Light_Compose;
+	}
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		// requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mTwitterWrapper = getTwidereApplication().getTwitterWrapper();
@@ -581,11 +554,12 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			finish();
 			return;
 		}
-		mActionBar = getSupportActionBar();
-		mActionBar.setDisplayHomeAsUpEnabled(true);
+		// mActionBar = getSupportActionBar();
+		// mActionBar.setDisplayHomeAsUpEnabled(true);
 		mImageThumbnailPreview.setOnClickListener(this);
 		mImageThumbnailPreview.setOnLongClickListener(this);
 		mMenuBar.setOnMenuItemClickListener(this);
+		mActionMenuBar.setOnMenuItemClickListener(this);
 		mEditText.setOnEditorActionListener(mPreferences.getBoolean(PREFERENCE_KEY_QUICK_SEND, false) ? this : null);
 		mEditText.addTextChangedListener(this);
 
@@ -633,22 +607,27 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		reloadAttachedImageThumbnail();
 
 		mMenuBar.inflate(R.menu.menu_compose);
-		final Menu menu = mMenuBar.getMenu();
-		final MenuItem more_submenu = menu.findItem(R.id.more_submenu);
+		mActionMenuBar.inflate(R.menu.menu_compose_actionbar);
+		final boolean bottom_send_button = mPreferences.getBoolean(PREFERENCE_KEY_BOTTOM_SEND_BUTTON, false);
+		final Menu menu = mMenuBar.getMenu(), actionBarMenu = mActionMenuBar.getMenu();
+		final MenuItem more_submenu = (bottom_send_button ? actionBarMenu : menu).findItem(R.id.more_submenu);
 		if (more_submenu != null) {
 			final Intent extensions_intent = new Intent(INTENT_ACTION_EXTENSION_COMPOSE);
 			addIntentToMenu(this, more_submenu.getSubMenu(), extensions_intent);
 		}
-		final boolean bottom_send_button = mPreferences.getBoolean(PREFERENCE_KEY_BOTTOM_SEND_BUTTON, false);
-		final MenuItem sendItem = menu.findItem(MENU_SEND);
-		if (sendItem != null) {
+		final MenuItem sendItem = menu.findItem(MENU_SEND), sendActionItem = actionBarMenu.findItem(MENU_SEND);
+		if (sendItem != null && sendActionItem != null) {
 			sendItem.setVisible(bottom_send_button);
+			sendActionItem.setVisible(!bottom_send_button);
 		}
-		final MenuItem moreItem = menu.findItem(R.id.more_submenu);
-		if (moreItem != null) {
+		final MenuItem moreItem = menu.findItem(R.id.more_submenu), sendMoreItem = actionBarMenu
+				.findItem(R.id.more_submenu);
+		if (moreItem != null && sendMoreItem != null) {
 			moreItem.setVisible(!bottom_send_button);
+			sendMoreItem.setVisible(bottom_send_button);
 		}
 		mMenuBar.show();
+		mActionMenuBar.show();
 		setMenu();
 		mColorIndicator.setColors(getAccountColors(this, mAccountIds));
 	}
@@ -677,6 +656,12 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 		}
 		mLocationManager.removeUpdates(this);
 		super.onStop();
+	}
+
+	@Override
+	protected void onTitleChanged(final CharSequence title, final int color) {
+		super.onTitleChanged(title, color);
+		mTitleView.setText(title);
 	}
 
 	private Uri createTempImageUri() {
@@ -925,10 +910,8 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			if (mInReplyToStatus == null) return false;
 			setTitle(getString(R.string.quote_user, display_screen_name ? "@" + mInReplyToStatus.user_screen_name
 					: mInReplyToStatus.user_name));
-			mActionBar
-					.setSubtitle(mInReplyToStatus.user_is_protected
-							&& mInReplyToStatus.account_id != mInReplyToStatus.user_id ? getString(R.string.quote_protected_tweet_notice)
-							: null);
+			mSubtitleView.setVisibility(mInReplyToStatus.user_is_protected
+					&& mInReplyToStatus.account_id != mInReplyToStatus.user_id ? View.VISIBLE : View.GONE);
 		} else if (INTENT_ACTION_EDIT_DRAFT.equals(action)) {
 			if (mDraftItem == null) return false;
 			setTitle(R.string.edit_draft);
@@ -947,10 +930,23 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 	}
 
 	private void setMenu() {
-		final Menu menu = mMenuBar.getMenu();
-		if (menu.size() == 0) return;
+		final String text_orig = mEditText != null ? parseString(mEditText.getText()) : null;
+		final String text = mImageUri != null && text_orig != null ? mImageUploaderUsed ? getImageUploadStatus(this,
+				FAKE_IMAGE_LINK, text_orig) : text_orig + " " + FAKE_IMAGE_LINK : text_orig;
+		final int validated_count = text != null ? mValidator.getTweetLength(text) : 0;
+		final boolean exceeded_limit = validated_count < Validator.MAX_TWEET_LENGTH;
+		final boolean near_limit = validated_count >= Validator.MAX_TWEET_LENGTH - 10;
+		final float hue = exceeded_limit ? near_limit ? 5 * (Validator.MAX_TWEET_LENGTH - validated_count) : 50 : 0;
+		final float[] hsv = new float[] { hue, 1.0f, 1.0f };
+		if (mTextCountView != null) {
+			mTextCountView.setTextColor(validated_count >= Validator.MAX_TWEET_LENGTH - 10 ? Color
+					.HSVToColor(0x80, hsv) : 0x80808080);
+			mTextCountView.setText(getLocalizedNumber(mLocale, Validator.MAX_TWEET_LENGTH - validated_count));
+		}
+		final Menu bottomMenu = mMenuBar.getMenu(), actionMenu = mActionMenuBar.getMenu();
+		if (bottomMenu.size() == 0) return;
 		final int activated_color = getThemeColor(this);
-		final MenuItem itemAddImage = menu.findItem(MENU_ADD_IMAGE);
+		final MenuItem itemAddImage = bottomMenu.findItem(MENU_ADD_IMAGE);
 		final Drawable iconAddImage = itemAddImage.getIcon().mutate();
 		if (mIsImageAttached && !mIsPhotoAttached) {
 			iconAddImage.setColorFilter(activated_color, Mode.MULTIPLY);
@@ -959,7 +955,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			iconAddImage.clearColorFilter();
 			itemAddImage.setTitle(R.string.add_image);
 		}
-		final MenuItem itemTakePhoto = menu.findItem(MENU_TAKE_PHOTO);
+		final MenuItem itemTakePhoto = bottomMenu.findItem(MENU_TAKE_PHOTO);
 		final Drawable iconTakePhoto = itemTakePhoto.getIcon().mutate();
 		if (!mIsImageAttached && mIsPhotoAttached) {
 			iconTakePhoto.setColorFilter(activated_color, Mode.MULTIPLY);
@@ -968,7 +964,7 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			iconTakePhoto.clearColorFilter();
 			itemTakePhoto.setTitle(R.string.take_photo);
 		}
-		final MenuItem itemAttachLocation = menu.findItem(MENU_ADD_LOCATION);
+		final MenuItem itemAttachLocation = bottomMenu.findItem(MENU_ADD_LOCATION);
 		final Drawable iconAttachLocation = itemAttachLocation.getIcon().mutate();
 		final boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
 		if (attach_location && getLocation()) {
@@ -980,13 +976,14 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			iconAttachLocation.clearColorFilter();
 			itemAttachLocation.setTitle(R.string.add_location);
 		}
-		final MenuItem viewItem = menu.findItem(MENU_VIEW);
+		final MenuItem viewItem = bottomMenu.findItem(MENU_VIEW);
 		if (viewItem != null) {
 			viewItem.setVisible(mInReplyToStatus != null);
 		}
-		setCommonMenu(menu);
+		setCommonMenu(bottomMenu);
+		setCommonMenu(actionMenu);
 		mMenuBar.show();
-		invalidateSupportOptionsMenu();
+
 	}
 
 	private void takePhoto() {
@@ -1042,13 +1039,12 @@ public class ComposeActivity extends BaseDialogWhenLargeActivity implements Text
 			mDraftItem = null;
 			mInReplyToStatusId = -1;
 			mOriginalText = null;
-			mEditText.setText(null);
 			final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
 			setIntent(intent);
 			setComposeTitle(intent.getAction());
 			handleIntent(intent.getAction(), intent.getExtras());
 			reloadAttachedImageThumbnail();
-			invalidateSupportOptionsMenu();
+			mEditText.setText(null);
 			setMenu();
 		} else {
 			setResult(Activity.RESULT_OK);

@@ -99,7 +99,6 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 		mTabLayout = new LinearLayout(context);
 		addView(mTabLayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
 				ViewGroup.LayoutParams.MATCH_PARENT));
-		ThemeColorPreference.applyBackground(this, mTabColor);
 	}
 
 	public void notifyDataSetChanged() {

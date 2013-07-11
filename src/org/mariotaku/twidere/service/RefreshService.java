@@ -33,7 +33,7 @@ import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import org.mariotaku.twidere.util.ParseUtils;
+import static org.mariotaku.twidere.util.ParseUtils.*;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -182,8 +182,9 @@ public class RefreshService extends Service implements Constants {
 	private void rescheduleDirectMessagesRefreshing() {
 		mAlarmManager.cancel(mPendingRefreshDirectMessagesIntent);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
-			final long update_interval = ParseUtils.parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL,
-					"30")) * 60 * 1000;
+			final long update_interval_mins = Math.max(
+					parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")), 3);
+			final long update_interval = update_interval_mins * 60 * 1000;
 			if (update_interval > 0) {
 				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
 						update_interval, mPendingRefreshDirectMessagesIntent);
@@ -194,8 +195,9 @@ public class RefreshService extends Service implements Constants {
 	private void rescheduleHomeTimelineRefreshing() {
 		mAlarmManager.cancel(mPendingRefreshHomeTimelineIntent);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
-			final long update_interval = ParseUtils.parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL,
-					"30")) * 60 * 1000;
+			final long update_interval_mins = Math.max(
+					parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")), 3);
+			final long update_interval = update_interval_mins * 60 * 1000;
 			if (update_interval > 0) {
 				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
 						update_interval, mPendingRefreshHomeTimelineIntent);
@@ -206,8 +208,9 @@ public class RefreshService extends Service implements Constants {
 	private void rescheduleMentionsRefreshing() {
 		mAlarmManager.cancel(mPendingRefreshMentionsIntent);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
-			final long update_interval = ParseUtils.parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL,
-					"30")) * 60 * 1000;
+			final long update_interval_mins = Math.max(
+					parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")), 3);
+			final long update_interval = update_interval_mins * 60 * 1000;
 			if (update_interval > 0) {
 				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
 						update_interval, mPendingRefreshMentionsIntent);
@@ -218,8 +221,9 @@ public class RefreshService extends Service implements Constants {
 	private boolean startAutoRefresh() {
 		stopAutoRefresh();
 		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
-			final long update_interval = ParseUtils.parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL,
-					"30")) * 60 * 1000;
+			final long update_interval_mins = Math.max(
+					parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")), 3);
+			final long update_interval = update_interval_mins * 60 * 1000;
 			if (update_interval <= 0) return false;
 			mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
 					update_interval, mPendingRefreshHomeTimelineIntent);

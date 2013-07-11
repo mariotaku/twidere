@@ -410,12 +410,18 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 					fragment = new StatusesListFragment();
 					break;
 				}
-				case LINK_ID_RETWEETERS: {
+				case LINK_ID_STATUS_RETWEETERS: {
+					setTitle(R.string.users_retweeted_this);
 					fragment = new StatusRetweetersListFragment();
+					if (!args.containsKey(INTENT_KEY_STATUS_ID)) {
+						final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
+						args.putLong(INTENT_KEY_STATUS_ID, ParseUtils.parseLong(param_status_id));
+					}
 					break;
 				}
 				default: {
-					break;
+					finish();
+					return false;
 				}
 			}
 			final String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);

@@ -19,12 +19,17 @@
 
 package org.mariotaku.twidere.activity;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.DraftItem;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -33,20 +38,28 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 
 public class DraftsActivity extends BaseDialogWhenLargeActivity implements LoaderCallbacks<Cursor>,
 		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener {
@@ -225,25 +238,105 @@ public class DraftsActivity extends BaseDialogWhenLargeActivity implements Loade
 				draft.is_possibly_sensitive, draft.is_photo_attached && !draft.is_image_attached);
 	}
 
-	static class DraftsAdapter extends SimpleCursorAdapter {
+	static class DraftsAdapter extends SimpleCursorAdapter implements ImageLoadingListener {
 
-		private static final String[] mFrom = new String[] { Drafts.TEXT };
-		private static final int[] mTo = new int[] { R.id.text };
+		private static final String[] FROM = new String[] { Drafts.TEXT };
+		private static final int[] TO = new int[] { R.id.text };
+		private final Map<View, String> mLoadingViewsMap = new HashMap<View, String>();
 		private float mTextSize;
+		private int mImageUriIdx;
+		private ImageLoaderWrapper mImageLoader;
 
 		public DraftsAdapter(final Context context) {
-			super(context, R.layout.draft_list_item, null, mFrom, mTo, 0);
+			super(context, R.layout.draft_list_item, null, FROM, TO, 0);
+			mImageLoader = TwidereApplication.getInstance(context).getImageLoaderWrapper();
+		}
+
+		public Cursor swapCursor(final Cursor c) {
+			if (c != null) {
+				mImageUriIdx = c.getColumnIndex(Drafts.IMAGE_URI);
+			}
+			return super.swapCursor(c);
 		}
 
 		@Override
 		public void bindView(final View view, final Context context, final Cursor cursor) {
-			((TextView) view.findViewById(R.id.text)).setTextSize(mTextSize);
 			super.bindView(view, context, cursor);
+			final TextView text = (TextView) view.findViewById(R.id.text);
+			final ImageView image = (ImageView) view.findViewById(R.id.image_preview);
+			text.setTextSize(mTextSize);
+			final boolean empty_content = text.length() == 0;
+			if (empty_content) {
+				text.setText(R.string.empty_content);
+			}
+			text.setTypeface(Typeface.DEFAULT, empty_content ? Typeface.ITALIC : Typeface.NORMAL);
+			final String image_uri = cursor.getString(mImageUriIdx);
+			final View image_preview_container = view.findViewById(R.id.image_preview_container);
+			image_preview_container.setVisibility(TextUtils.isEmpty(image_uri) ? View.GONE : View.VISIBLE);
+			if (!TextUtils.isEmpty(image_uri)) {
+				mImageLoader.displayPreviewImage(image, image_uri, this);
+			}
 		}
 
 		public void setTextSize(final float text_size) {
 			mTextSize = text_size;
 		}
 
+		@Override
+		public void onLoadingCancelled(final String url, final View view) {
+			if (view == null || url == null || url.equals(mLoadingViewsMap.get(view))) return;
+			mLoadingViewsMap.remove(view);
+			final View parent = (View) view.getParent();
+			final View progress = parent.findViewById(R.id.image_preview_progress);
+			if (progress != null) {
+				progress.setVisibility(View.GONE);
+			}
+		}
+
+		@Override
+		public void onLoadingComplete(final String url, final View view, final Bitmap bitmap) {
+			if (view == null) return;
+			mLoadingViewsMap.remove(view);
+			final View parent = (View) view.getParent();
+			final View progress = parent.findViewById(R.id.image_preview_progress);
+			if (progress != null) {
+				progress.setVisibility(View.GONE);
+			}
+		}
+
+		@Override
+		public void onLoadingFailed(final String url, final View view, final FailReason reason) {
+			if (view == null) return;
+			mLoadingViewsMap.remove(view);
+			final View parent = (View) view.getParent();
+			final View progress = parent.findViewById(R.id.image_preview_progress);
+			if (progress != null) {
+				progress.setVisibility(View.GONE);
+			}
+		}
+
+		@Override
+		public void onLoadingProgressChanged(final String imageUri, final View view, final int current, final int total) {
+			if (total == 0) return;
+			final View parent = (View) view.getParent();
+			final ProgressBar progress = (ProgressBar) parent.findViewById(R.id.image_preview_progress);
+			if (progress != null) {
+				progress.setIndeterminate(false);
+				progress.setProgress(100 * current / total);
+			}
+		}
+
+		@Override
+		public void onLoadingStarted(final String url, final View view) {
+			if (view == null || url == null || url.equals(mLoadingViewsMap.get(view))) return;
+			mLoadingViewsMap.put(view, url);
+			final View parent = (View) view.getParent();
+			final ProgressBar progress = (ProgressBar) parent.findViewById(R.id.image_preview_progress);
+			if (progress != null) {
+				progress.setVisibility(View.VISIBLE);
+				progress.setIndeterminate(true);
+				progress.setMax(100);
+			}
+		}
 	}
 }

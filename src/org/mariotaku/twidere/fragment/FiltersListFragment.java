@@ -27,6 +27,7 @@ import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredLinksFragment;
 import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredSourcesFragment;
 import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredUsersFragment;
 import org.mariotaku.twidere.model.Panes;
+import org.mariotaku.twidere.preference.ThemeColorPreference;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.view.TabPageIndicator;
 
@@ -89,6 +90,7 @@ public class FiltersListFragment extends BaseFragment implements Panes.Right {
 		final View view = inflater.inflate(R.layout.filters, null);
 		mViewPager = (ViewPager) view.findViewById(R.id.pager);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
+		view.findViewById(R.id.tab_highlight).setBackgroundColor(ThemeColorPreference.getThemeColor(getActivity()));
 		return view;
 	}
 

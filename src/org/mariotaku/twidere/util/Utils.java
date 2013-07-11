@@ -254,7 +254,7 @@ public final class Utils implements Constants {
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_INCOMING_FRIENDSHIPS, null, LINK_ID_INCOMING_FRIENDSHIPS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USERS, null, LINK_ID_USERS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_STATUSES, null, LINK_ID_STATUSES);
-		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_STATUS_RETWEETERS, null, LINK_ID_RETWEETERS);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_STATUS_RETWEETERS, null, LINK_ID_STATUS_RETWEETERS);
 
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LISTS, UserListsListFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LIST_MEMBERS, UserListMembersFragment.class);
@@ -1259,14 +1259,14 @@ public final class Utils implements Constants {
 		return images;
 	}
 
-	public static String getImageUploadStatus(final Context context, final String link, final String text) {
+	public static String getImageUploadStatus(final Context context, final CharSequence link, final CharSequence text) {
 		if (context == null) return null;
 		String image_upload_format = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
 				.getString(PREFERENCE_KEY_IMAGE_UPLOAD_FORMAT, PREFERENCE_DEFAULT_IMAGE_UPLOAD_FORMAT);
 		if (isEmpty(image_upload_format)) {
 			image_upload_format = PREFERENCE_DEFAULT_IMAGE_UPLOAD_FORMAT;
 		}
-		if (link == null) return text;
+		if (link == null) return ParseUtils.parseString(text);
 		return image_upload_format.replace(FORMAT_PATTERN_LINK, link).replace(FORMAT_PATTERN_TEXT, text);
 	}
 

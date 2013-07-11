@@ -19,7 +19,7 @@
 		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_dark_holo</item>
 	</style>
 
-	<style name="Theme.Twidere.Light.DialogWhenLarge" parent="Theme.Twidere.Light.Dialog"><item name="android:windowActionBar">false</item>
+	<style name="Theme.Twidere.Light.DialogWhenLarge" parent="Theme.Twidere.Light.Dialog">
 		<item name="android:windowNoTitle">true</item>
 		<item name="android:windowBackground">@drawable/dialog_full_holo_light_darkactionbar</item>
 

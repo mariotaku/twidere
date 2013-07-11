@@ -28,12 +28,6 @@
 				android:icon="@drawable/ic_menu_report_image"
 				android:title="@string/mark_as_sensitive"/>
 			<item
-				android:id="@id/extensions_submenu"
-				android:icon="@drawable/ic_menu_extension"
-				android:title="@string/extensions">
-				<menu/>
-			</item>
-			<item
 				android:id="@id/drafts"
 				android:icon="@drawable/ic_menu_save"
 				android:title="@string/drafts"/>

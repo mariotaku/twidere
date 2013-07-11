@@ -5,7 +5,7 @@
 	android:minHeight="?android:attr/listPreferredItemHeight"
 	android:padding="8dp">
 
-	<TextView 
+	<TextView
 		android:id="@+id/text"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
@@ -13,5 +13,32 @@
 		android:layout_alignParentTop="true"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorPrimary"/>
+
+	<RelativeLayout
+		android:id="@+id/image_preview_container"
+		android:layout_width="@dimen/image_preview_width"
+		android:layout_height="wrap_content"
+		android:layout_alignWithParentIfMissing="true"
+		android:layout_below="@+id/text"
+		android:layout_marginLeft="24dp"
+		android:layout_marginTop="8dp"
+		android:background="@drawable/image_shadow">
+
+		<org.mariotaku.twidere.view.StatusImagePreviewItemView
+			android:id="@+id/image_preview"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+
+		<org.mariotaku.twidere.view.HoloProgressBar
+			android:id="@+id/image_preview_progress"
+			style="?android:attr/progressBarStyleHorizontal"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignLeft="@+id/image_preview"
+			android:layout_alignRight="@+id/image_preview"
+			android:layout_centerVertical="true"
+			android:layout_gravity="center"
+			android:layout_margin="16dp"/>
+	</RelativeLayout>
 
 </RelativeLayout>

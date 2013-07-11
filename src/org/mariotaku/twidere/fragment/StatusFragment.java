@@ -279,8 +279,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 					break;
 				}
 				case MENU_COPY: {
-					final CharSequence text = Html.fromHtml(mStatus.text_html);
-					if (ClipboardUtils.setText(getActivity(), text)) {
+					if (ClipboardUtils.setText(getActivity(), mStatus.text_plain)) {
 						showOkMessage(getActivity(), R.string.text_copied, false);
 					}
 					break;

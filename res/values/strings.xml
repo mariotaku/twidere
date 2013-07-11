@@ -465,5 +465,6 @@
 	<string name="tweet_saved_to_draft">Tweet saved to draft.</string>
 	<string name="default_account">Default</string>
 	<string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g> (<xliff:g id="daily_tweet">%2$d</xliff:g> tweet(s) per day)</string>
+	<string name="empty_content">Empty content</string>
 
 </resources>

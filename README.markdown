@@ -1,30 +1,31 @@
 ##Twidere - Twitter client, ∞##
 
-Twidere is a powerful twitter client for Android 1.6+, which gives you a full Holo theme and much more.
+Twidere is a powerful twitter client for Android 1.6+, which gives you a full Holo experience and nearly full Twitter's feature.
 
 ---
 
 ###Features###
 
-* Pure & Clean Holo design works for pre-ICS devices
-* Two themes (dark and light theme)
+* Pure & Clean Holo design works for both ICS and pre-ICS devices
+* Two themes (dark and light theme), theme color will change if you're using CM9+/AOKP
 * Dual pane layout for Tablets
-* Inline image preview
+* Image preview (disabled by default in order to reduce network usage)
 * Built in image viewer and map viewer
 * Custom tabs
+* Profile banner(header) image support
 * Direct messages with conversation style
-* Filters (block unwanted tweets)
+* Filters (mute unwanted tweets)
 * Drafts feature
-* Extension support like [Twicca](http://twicca.r246.jp/), but more friendly for users and developers
+* Extension support like [Twicca](http://twicca.r246.jp/), but more friendly to users and developers
 * t.co link auto expanding
 * Multiple account support
 * Custom OAuth consumer key/secret
-* Basic features supported for StatusNet/Fanfou
-* Direct login with user name and password (Don't worry! It's safe!)
-* Custom API Proxy (gtap, twip, jtapi supported)
+* Direct login with user name and password (Don't worry! It's TOTALLY safe!)
+* Custom API Proxy (jtapi recommended, gtap and twip o mode works)
 * GZip compressing for API requests
 * TCP DNS query and custom host mapping to fight against censorship
-* Free and open source, without any ads!
+* Many many many other configurations to fit your habit
+* Free, open source, NO ads, forever!
 
 <a href="https://play.google.com/store/apps/details?id=org.mariotaku.twidere"><img src="http://www.android.com/images/brand/get_it_on_play_logo_large.png"/></a>
 
@@ -56,7 +57,7 @@ Buy me a bread or anything you want :)
 
 **Donate Via Paypal or Alipay(支付宝)**
 
-Email address:
+PayPal: "mariotaku.lee#gmail.com".replace("#", "@");
 
-"mariotaku.lee#gmail.com".replace("#", "@");
+AliPay: http://me.alipay.com/mariotaku
 

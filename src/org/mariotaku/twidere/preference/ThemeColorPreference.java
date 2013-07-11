@@ -45,6 +45,11 @@ public class ThemeColorPreference extends ColorPickerPreference implements Const
 		setKey(key);
 	}
 
+	public static void applyBackground(final View view) {
+		if (view == null) return;
+		applyBackground(view, getThemeColor(view.getContext()));
+	}
+
 	public static void applyBackground(final View view, final int color) {
 		if (view == null) return;
 		try {

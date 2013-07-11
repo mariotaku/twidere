@@ -52,7 +52,6 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -263,8 +262,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 				break;
 			}
 			case MENU_COPY: {
-				final CharSequence text = Html.fromHtml(status.text_html);
-				if (ClipboardUtils.setText(getActivity(), text)) {
+				if (ClipboardUtils.setText(getActivity(), status.text_plain)) {
 					showOkMessage(getActivity(), R.string.text_copied, false);
 				}
 				break;
