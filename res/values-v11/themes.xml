@@ -23,7 +23,6 @@
 		<item name="borderlessButtonStyle">@style/Widget.Twidere.Button.Borderless</item>
 		<item name="borderlessImageButtonStyle">@style/Widget.Twidere.ImageButton.Borderless</item>
 		<item name="selectableViewStyle">@style/Widget.Twidere.SelectableView</item>
-		<item name="editTextStyle">@style/Widget.Holo.EditText</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Medium</item>
 		<item name="contentBackground">#20000000</item>
 
@@ -45,7 +44,6 @@
 		<item name="borderlessButtonStyle">@style/Widget.Twidere.Light.Button.Borderless</item>
 		<item name="borderlessImageButtonStyle">@style/Widget.Twidere.Light.ImageButton.Borderless</item>
 		<item name="selectableViewStyle">@style/Widget.Twidere.Light.SelectableView</item>
-		<item name="editTextStyle">@style/Widget.Holo.Light.EditText</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Light.Medium</item>
 		<item name="contentBackground">#20808080</item>
 
