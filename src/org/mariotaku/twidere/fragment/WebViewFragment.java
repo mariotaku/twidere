@@ -22,6 +22,7 @@ package org.mariotaku.twidere.fragment;
 import static org.mariotaku.twidere.util.Utils.showErrorMessage;
 
 import org.mariotaku.twidere.activity.BaseActivity;
+import org.mariotaku.twidere.view.WebSettingsAccessor;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -39,6 +40,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.SslErrorHandler;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -59,8 +61,10 @@ public class WebViewFragment extends BaseFragment {
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mWebView.setWebViewClient(new DefaultWebViewClient(getActivity()));
-		mWebView.getSettings().setBuiltInZoomControls(true);
-		mWebView.getSettings().setJavaScriptEnabled(true);
+		final WebSettings settings = mWebView.getSettings();
+		settings.setBuiltInZoomControls(true);
+		settings.setJavaScriptEnabled(true);
+		WebSettingsAccessor.setAllowUniversalAccessFromFileURLs(settings, true);
 		final Bundle bundle = getArguments();
 		if (bundle != null) {
 			final String url = bundle.getString(INTENT_KEY_URI);

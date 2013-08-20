@@ -481,6 +481,11 @@
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</activity>
+		<activity
+			android:name=".activity.RestTestActivity"
+			android:label="Rest Test"
+			android:launchMode="singleTop"
+			android:windowSoftInputMode="adjustResize"/>
 
 		<service
 			android:name=".service.RefreshService"
@@ -506,6 +511,15 @@
 		<receiver android:name=".receiver.ConnectivityStateReceiver">
 			<intent-filter>
 				<action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+			</intent-filter>
+		</receiver>
+		<receiver android:name=".receiver.TestBroadcastReceiver">
+			<intent-filter>
+				<action android:name="android.provider.Telephony.SECRET_CODE"/>
+
+				<data
+					android:host="8943373"
+					android:scheme="android_secret_code"/>
 			</intent-filter>
 		</receiver>
 		<receiver

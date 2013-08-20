@@ -9,7 +9,8 @@
 	<FrameLayout
 		android:layout_width="match_parent"
 		android:layout_height="@dimen/actionbar_height"
-		android:background="?actionBarBackground">
+		android:background="?actionBarBackground"
+		android:clickable="true">
 
 		<View
 			android:id="@+id/actionbar_highlight"
@@ -78,17 +79,17 @@
 					</LinearLayout>
 				</LinearLayout>
 			</LinearLayout>
-			
-		<org.mariotaku.twidere.view.HoloProgressBar
-			android:id="@id/actionbar_progress_indeterminate"
-			style="?actionBarIndeterminateProgressStyle"
-			android:layout_width="@dimen/actionbar_height"
-			android:layout_height="@dimen/actionbar_height"
-			android:layout_gravity="center_vertical"
-			android:layout_weight="0"
-			android:indeterminateOnly="true"
-			android:padding="2dp"
-			android:visibility="gone"/>
+
+			<org.mariotaku.twidere.view.HoloProgressBar
+				android:id="@id/actionbar_progress_indeterminate"
+				style="?actionBarIndeterminateProgressStyle"
+				android:layout_width="@dimen/actionbar_height"
+				android:layout_height="@dimen/actionbar_height"
+				android:layout_gravity="center_vertical"
+				android:layout_weight="0"
+				android:indeterminateOnly="true"
+				android:padding="2dp"
+				android:visibility="gone"/>
 
 			<org.mariotaku.menubar.MenuBar
 				android:id="@+id/action_menu"

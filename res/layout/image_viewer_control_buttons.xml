@@ -5,6 +5,7 @@
 	android:layout_height="match_parent"
 	android:background="#80000000"
 	android:baselineAligned="false"
+	android:clickable="true"
 	android:gravity="center_vertical"
 	android:orientation="horizontal">
 

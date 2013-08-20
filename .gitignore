@@ -19,6 +19,3 @@ local.properties
 *.old
 *.*~
 *~
-
-# private constants
-src/org/mariotaku/twidere/PrivateConstants.java
