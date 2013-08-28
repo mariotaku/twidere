@@ -41,20 +41,25 @@
 			robobunny:unitsRight="s"/>
 
 		<CheckBoxPreference
+			android:defaultValue="true"
+			android:key="fast_image_loading"
+			android:summary="@string/fast_image_loading_summary"
+			android:title="@string/fast_image_loading"/>
+		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="ignore_ssl_error"
 			android:summary="@string/ignore_ssl_error_summary"
 			android:title="@string/ignore_ssl_error"/>
 		<CheckBoxPreference
-			android:dependency="ignore_ssl_error"
 			android:defaultValue="false"
+			android:dependency="ignore_ssl_error"
 			android:key="tcp_dns_query"
 			android:summary="@string/tcp_dns_query_summary"
 			android:title="@string/tcp_dns_query"/>
 
 		<EditTextPreference
-			android:dependency="ignore_ssl_error"
 			android:defaultValue="8.8.8.8"
+			android:dependency="ignore_ssl_error"
 			android:dialogTitle="@string/dns_server"
 			android:inputType="textVisiblePassword"
 			android:key="dns_server"

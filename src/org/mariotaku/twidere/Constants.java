@@ -48,10 +48,12 @@ public interface Constants {
 	public static final String TIMELINE_POSITIONS_PREFERENCES_NAME = "timeline_positions";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 43;
+	public static final int DATABASES_VERSION = 44;
 
 	public static final String TWITTER_CONSUMER_KEY = "uAFVpMhBntJutfVj6abfA";
 	public static final String TWITTER_CONSUMER_SECRET = "JARXkJTfxo0F8MyctYy9bUmrLISjo8vXAHsZHYuk2E";
+	public static final String TWITTER_CONSUMER_KEY_2 = "UyaS0xmUQXKiJ48vZP4dXQ";
+	public static final String TWITTER_CONSUMER_SECRET_2 = "QlYVMWA751Dl5yNve41CNEN46GV4nxk57FmLeAXAV0";
 
 	public static final String GOOGLE_MAPS_API_KEY_RELEASE = "0kjPwJOe_zwYjzGc9uYak7vhm_Sf3eob-2L3Xzw";
 	public static final String GOOGLE_MAPS_API_KEY_DEBUG = "0kjPwJOe_zwY9p6kT-kygu4mxwysyOOpfkaXqTA";
@@ -209,6 +211,7 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_BACKGROUND_TOAST_NOTIFICATION = "background_toast_notification";
 	public static final String PREFERENCE_KEY_COMPOSE_QUIT_ACTION = "compose_quit_action";
 	public static final String PREFERENCE_KEY_NO_CLOSE_AFTER_TWEET_SENT = "no_close_after_tweet_sent";
+	public static final String PREFERENCE_KEY_FAST_IMAGE_LOADING = "fast_image_loading";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;
@@ -264,6 +267,7 @@ public interface Constants {
 	public static final String INTENT_ACTION_EDIT_USER_PROFILE = INTENT_PACKAGE_PREFIX + "EDIT_USER_PROFILE";
 	public static final String INTENT_ACTION_SERVICE_COMMAND = INTENT_PACKAGE_PREFIX + "SERVICE_COMMAND";
 	public static final String INTENT_ACTION_REQUEST_PERMISSIONS = INTENT_PACKAGE_PREFIX + "REQUEST_PERMISSIONS";
+	public static final String INTENT_ACTION_SELECT_USER_LIST = INTENT_PACKAGE_PREFIX + "SELECT_USER_LIST";
 
 	public static final String INTENT_ACTION_EXTENSION_EDIT_IMAGE = INTENT_PACKAGE_PREFIX + "EXTENSION_EDIT_IMAGE";
 	public static final String INTENT_ACTION_EXTENSION_UPLOAD = INTENT_PACKAGE_PREFIX + "EXTENSION_UPLOAD";
@@ -410,6 +414,7 @@ public interface Constants {
 	public static final String INTENT_KEY_URL = "url";
 	public static final String INTENT_KEY_NEXT_CURSOR = "next_cursor";
 	public static final String INTENT_KEY_PREV_CURSOR = "prev_cursor";
+	public static final String INTENT_KEY_EXTRA_INTENT = "extra_intent";
 
 	public static final String QUERY_PARAM_NEW_ITEMS_COUNT = "new_items_count";
 

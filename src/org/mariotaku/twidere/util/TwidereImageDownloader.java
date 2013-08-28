@@ -19,8 +19,28 @@
 
 package org.mariotaku.twidere.util;
 
+import static org.mariotaku.twidere.util.Utils.getImageLoaderHttpClient;
+import static org.mariotaku.twidere.util.Utils.getProxy;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.Proxy;
+import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+import org.mariotaku.twidere.Constants;
 
 import twitter4j.TwitterException;
 import twitter4j.http.HttpClientWrapper;
@@ -31,11 +51,30 @@ import android.net.Uri;
 
 import com.nostra13.universalimageloader.core.download.ImageDownloader;
 
-public class TwidereImageDownloader implements ImageDownloader {
+public class TwidereImageDownloader implements ImageDownloader, Constants {
+
+	private static final HostnameVerifier ALLOW_ALL_HOSTNAME_VERIFIER = new AllowAllHostnameVerifier();
+	private static final TrustManager[] TRUST_ALL_CERTS = new TrustManager[] { new TrustAllX509TrustManager() };
+	private static final SSLSocketFactory IGNORE_ERROR_SSL_FACTORY;
+
+	static {
+		System.setProperty("http.keepAlive", "false");
+		SSLSocketFactory factory = null;
+		try {
+			final SSLContext sc = SSLContext.getInstance("TLS");
+			sc.init(null, TRUST_ALL_CERTS, new SecureRandom());
+			factory = sc.getSocketFactory();
+		} catch (final KeyManagementException e) {
+		} catch (final NoSuchAlgorithmException e) {
+		}
+		IGNORE_ERROR_SSL_FACTORY = factory;
+	}
 
 	private final Context context;
 	private final ContentResolver resolver;
 	private HttpClientWrapper client;
+	private Proxy proxy;
+	private boolean fast_image_loading;
 
 	public TwidereImageDownloader(final Context context) {
 		this.context = context;
@@ -52,8 +91,22 @@ public class TwidereImageDownloader implements ImageDownloader {
 		try {
 			if (ContentResolver.SCHEME_ANDROID_RESOURCE.equals(scheme) || ContentResolver.SCHEME_CONTENT.equals(scheme)
 					|| ContentResolver.SCHEME_FILE.equals(scheme)) return resolver.openInputStream(uri);
-			final HttpResponse resp = Utils.getRedirectedHttpResponse(client, uri_string);
-			is = new ContentLengthInputStream(resp.asStream(), (int) resp.getContentLength());
+			if (fast_image_loading) {
+				final URL url = new URL(uri_string);
+				final HttpURLConnection conn = (HttpURLConnection) (proxy != null ? url.openConnection(proxy) : url
+						.openConnection());
+				if (conn instanceof HttpsURLConnection) {
+					((HttpsURLConnection) conn).setHostnameVerifier(ALLOW_ALL_HOSTNAME_VERIFIER);
+					if (IGNORE_ERROR_SSL_FACTORY != null) {
+						((HttpsURLConnection) conn).setSSLSocketFactory(IGNORE_ERROR_SSL_FACTORY);
+					}
+				}
+				conn.setInstanceFollowRedirects(true);
+				is = new ContentLengthInputStream(conn.getInputStream(), conn.getContentLength());
+			} else {
+				final HttpResponse resp = Utils.getRedirectedHttpResponse(client, uri_string);
+				is = new ContentLengthInputStream(resp.asStream(), (int) resp.getContentLength());
+			}
 		} catch (final TwitterException e) {
 			throw new IOException(e.getMessage());
 		}
@@ -61,7 +114,31 @@ public class TwidereImageDownloader implements ImageDownloader {
 	}
 
 	public void initHttpClient() {
-		client = Utils.getImageLoaderHttpClient(context);
+		client = getImageLoaderHttpClient(context);
+		fast_image_loading = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getBoolean(
+				PREFERENCE_KEY_FAST_IMAGE_LOADING, true);
+		proxy = getProxy(context);
 	}
 
+	private static final class AllowAllHostnameVerifier implements HostnameVerifier {
+		@Override
+		public boolean verify(final String hostname, final SSLSession session) {
+			return true;
+		}
+	}
+
+	private static final class TrustAllX509TrustManager implements X509TrustManager {
+		@Override
+		public void checkClientTrusted(final X509Certificate[] chain, final String authType) {
+		}
+
+		@Override
+		public void checkServerTrusted(final X509Certificate[] chain, final String authType) {
+		}
+
+		@Override
+		public X509Certificate[] getAcceptedIssuers() {
+			return new X509Certificate[] {};
+		}
+	}
 }

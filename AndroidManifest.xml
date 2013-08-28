@@ -2,12 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
-	android:versionCode="76"
-	android:versionName="0.2.8.6">
+	android:versionCode="77"
+	android:versionName="0.2.8.7">
 
 	<uses-sdk
 		android:minSdkVersion="4"
-		android:targetSdkVersion="17"/>
+		android:targetSdkVersion="18"/>
 
 	<uses-feature
 		android:name="android.hardware.camera"
@@ -37,14 +37,13 @@
 		android:name=".app.TwidereApplication"
 		android:allowBackup="true"
 		android:backupAgent="org.mariotaku.twidere.backup.TwidereBackupAgentHelper"
-		android:hardwareAccelerated="false"
+		android:hardwareAccelerated="true"
 		android:icon="@drawable/ic_launcher"
 		android:label="@string/app_name"
 		android:theme="@style/Theme.Blank">
 		<uses-library
 			android:name="com.google.android.maps"
 			android:required="false"/>
-		<!--
 		<uses-library
 			android:name="com.sec.android.app.multiwindow"
 			android:required="false"/>
@@ -64,7 +63,6 @@
 		<meta-data
 			android:name="com.sec.android.multiwindow.MINIMUM_SIZE_H"
 			android:value="320dp"/>
-		-->
 		<meta-data
 			android:name="com.google.android.backup.api_key"
 			android:value="AEdPqrEAAAAIKbKATV1AGbLB4kem3w8QaPVJSPVVumbMHxkfwA"/>
@@ -194,7 +192,7 @@
 			android:theme="@style/Theme.Twidere.Light.Dialog"/>
 		<activity
 			android:name=".activity.LinkHandlerActivity"
-			android:theme="@style/Theme.Blank.DialogWhenLarge"
+			android:theme="@style/Theme.Blank.LinkHandler"
 			android:windowSoftInputMode="adjustResize">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
@@ -482,9 +480,25 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".activity.RestTestActivity"
-			android:label="Rest Test"
+			android:name=".activity.UserListSelectorActivity"
+			android:label="@string/select_user_list"
+			android:theme="@style/Theme.Blank.Dialog">
+			<intent-filter>
+				<action android:name="org.mariotaku.twidere.SELECT_USER_LIST"/>
+
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN"/>
+
+				<category android:name="android.intent.category.LAUNCHER"/>
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
+		<activity
+			android:name=".activity.TestActivity"
 			android:launchMode="singleTop"
+			android:theme="@style/Theme.Test"
 			android:windowSoftInputMode="adjustResize"/>
 
 		<service

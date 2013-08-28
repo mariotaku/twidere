@@ -30,7 +30,7 @@ public class ProfilingUtil {
 	}
 
 	public static boolean log(final Context context, final String msg) {
-		if (Utils.isDebugBuild(context)) {
+		if (Utils.isDebuggable(context)) {
 			final StackTraceElement ste = new Throwable().fillInStackTrace().getStackTrace()[1];
 			final String fullname = ste.getClassName();
 			final String name = fullname.substring(fullname.lastIndexOf('.'));

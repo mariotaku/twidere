@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+	<dimen name="default_element_spacing">8dp</dimen>
 	<dimen name="profile_image_size">56dp</dimen>
 	<dimen name="activity_profile_image_size">32dp</dimen>
 	<dimen name="image_preview_height">140dp</dimen>
@@ -22,5 +23,6 @@
 	<dimen name="compose_min_width">400dp</dimen>
 	<dimen name="compose_min_height">320dp</dimen>
 	<dimen name="button_bar_height">52dp</dimen>
+	<dimen name="minimum_element_size">48dp</dimen>
 
 </resources>

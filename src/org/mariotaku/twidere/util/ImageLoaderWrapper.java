@@ -54,23 +54,23 @@ public class ImageLoaderWrapper implements Constants {
 	public ImageLoaderWrapper(final ImageLoader loader) {
 		mImageLoader = loader;
 		final DisplayImageOptions.Builder profile_opts_builder = new DisplayImageOptions.Builder();
-		profile_opts_builder.cacheInMemory();
-		profile_opts_builder.cacheOnDisc();
+		profile_opts_builder.cacheInMemory(true);
+		profile_opts_builder.cacheOnDisc(true);
 		profile_opts_builder.showStubImage(R.drawable.ic_profile_image_default);
 		profile_opts_builder.bitmapConfig(Bitmap.Config.ARGB_8888);
-		profile_opts_builder.resetViewBeforeLoading();
+		profile_opts_builder.resetViewBeforeLoading(true);
 		mProfileImageDisplayOptions = profile_opts_builder.build();
 		final DisplayImageOptions.Builder image_opts_builder = new DisplayImageOptions.Builder();
-		image_opts_builder.cacheInMemory();
-		image_opts_builder.cacheOnDisc();
+		image_opts_builder.cacheInMemory(true);
+		image_opts_builder.cacheOnDisc(true);
 		image_opts_builder.bitmapConfig(Bitmap.Config.RGB_565);
-		image_opts_builder.resetViewBeforeLoading();
+		image_opts_builder.resetViewBeforeLoading(true);
 		mImageDisplayOptions = image_opts_builder.build();
 		final DisplayImageOptions.Builder banner_opts_builder = new DisplayImageOptions.Builder();
-		banner_opts_builder.cacheInMemory();
-		banner_opts_builder.cacheOnDisc();
+		banner_opts_builder.cacheInMemory(true);
+		banner_opts_builder.cacheOnDisc(true);
 		banner_opts_builder.bitmapConfig(Bitmap.Config.RGB_565);
-		banner_opts_builder.resetViewBeforeLoading();
+		banner_opts_builder.resetViewBeforeLoading(true);
 		banner_opts_builder.showStubImage(R.drawable.profile_banner_default);
 		mBannerDisplayOptions = banner_opts_builder.build();
 	}

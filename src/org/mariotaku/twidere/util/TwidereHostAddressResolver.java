@@ -68,7 +68,7 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 		final String address = mPreferences.getString(PREFERENCE_KEY_DNS_SERVER, DEFAULT_DNS_SERVER_ADDRESS);
 		mDnsAddress = isValidIpAddress(address) ? address : DEFAULT_DNS_SERVER_ADDRESS;
 		mLocalMappingOnly = local_only;
-		mIsDebugBuild = Utils.isDebugBuild(context);
+		mIsDebugBuild = Utils.isDebuggable(context);
 	}
 
 	@Override

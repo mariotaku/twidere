@@ -28,7 +28,7 @@
 		<enum name="both" value="3"/>
 	</attr>
 
-	<declare-styleable name="ActionsContentView">
+	<declare-styleable name="SlidingPaneView">
 
 		<!-- Spacing value. -->
 		<attr name="spacingRight" format="dimension"/>
@@ -50,5 +50,14 @@
 		<!-- Indicates how long flinging will take time in milliseconds. -->
 		<attr name="flingDuration" format="integer"/>
 	</declare-styleable>
+	<declare-styleable name="SwipeBackLayout">
+		<attr name="edgeSize" format="dimension"/>
+		<attr name="edgeFlag" format="enum"/>
+		<attr name="shadowLeft" format="reference"/>
+		<attr name="shadowRight" format="reference"/>
+		<attr name="shadowBottom" format="reference"/>
+	</declare-styleable>
+
+	<attr name="swipeBackLayoutStyle" format="reference"/>
 
 </resources>

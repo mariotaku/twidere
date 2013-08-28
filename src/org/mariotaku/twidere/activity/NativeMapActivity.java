@@ -65,7 +65,7 @@ public class NativeMapActivity extends MapActivity implements Constants {
 			finish();
 			return;
 		}
-		final boolean debug_build = Utils.isDebugBuild(this);
+		final boolean debug_build = Utils.isDebuggable(this);
 		mMapView = new MapView(this, debug_build ? GOOGLE_MAPS_API_KEY_DEBUG : GOOGLE_MAPS_API_KEY_RELEASE);
 		mMapView.setClickable(true);
 		final List<Overlay> overlays = mMapView.getOverlays();

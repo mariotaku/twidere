@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.util;
 
 import static org.mariotaku.twidere.util.DatabaseUpgradeHelper.safeUpgrade;
+import static org.mariotaku.twidere.util.Utils.trim;
 
 import java.util.HashMap;
 
@@ -36,14 +37,19 @@ import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.provider.TweetStore.Tabs;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public final class DatabaseHelper extends SQLiteOpenHelper implements Constants {
 
+	private final Context mContext;
+
 	public DatabaseHelper(final Context context, final String name, final int version) {
 		super(context, name, null, version);
+		mContext = context;
 	}
 
 	@Override
@@ -78,6 +84,19 @@ public final class DatabaseHelper extends SQLiteOpenHelper implements Constants 
 	@Override
 	public void onUpgrade(final SQLiteDatabase db, final int oldVersion, final int newVersion) {
 		handleVersionChange(db);
+		if (oldVersion <= 43 && newVersion >= 44) {
+			final ContentValues values = new ContentValues();
+			final SharedPreferences prefs = mContext
+					.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+			// Here I use old consumer key/secret because it's default key for
+			// older versions
+			final String pref_consumer_key = prefs.getString(PREFERENCE_KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY);
+			final String pref_consumer_secret = prefs
+					.getString(PREFERENCE_KEY_CONSUMER_SECRET, TWITTER_CONSUMER_SECRET);
+			values.put(Accounts.CONSUMER_KEY, trim(pref_consumer_key));
+			values.put(Accounts.CONSUMER_SECRET, trim(pref_consumer_secret));
+			db.update(TABLE_ACCOUNTS, values, null, null);
+		}
 	}
 
 	private String createTable(final String tableName, final String[] columns, final String[] types,

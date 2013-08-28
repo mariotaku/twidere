@@ -245,18 +245,11 @@ public class DraftsActivity extends BaseDialogWhenLargeActivity implements Loade
 		private final Map<View, String> mLoadingViewsMap = new HashMap<View, String>();
 		private float mTextSize;
 		private int mImageUriIdx;
-		private ImageLoaderWrapper mImageLoader;
+		private final ImageLoaderWrapper mImageLoader;
 
 		public DraftsAdapter(final Context context) {
 			super(context, R.layout.draft_list_item, null, FROM, TO, 0);
 			mImageLoader = TwidereApplication.getInstance(context).getImageLoaderWrapper();
-		}
-
-		public Cursor swapCursor(final Cursor c) {
-			if (c != null) {
-				mImageUriIdx = c.getColumnIndex(Drafts.IMAGE_URI);
-			}
-			return super.swapCursor(c);
 		}
 
 		@Override
@@ -276,10 +269,6 @@ public class DraftsActivity extends BaseDialogWhenLargeActivity implements Loade
 			if (!TextUtils.isEmpty(image_uri)) {
 				mImageLoader.displayPreviewImage(image, image_uri, this);
 			}
-		}
-
-		public void setTextSize(final float text_size) {
-			mTextSize = text_size;
 		}
 
 		@Override
@@ -337,6 +326,18 @@ public class DraftsActivity extends BaseDialogWhenLargeActivity implements Loade
 				progress.setIndeterminate(true);
 				progress.setMax(100);
 			}
+		}
+
+		public void setTextSize(final float text_size) {
+			mTextSize = text_size;
+		}
+
+		@Override
+		public Cursor swapCursor(final Cursor c) {
+			if (c != null) {
+				mImageUriIdx = c.getColumnIndex(Drafts.IMAGE_URI);
+			}
+			return super.swapCursor(c);
 		}
 	}
 }

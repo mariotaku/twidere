@@ -22,23 +22,25 @@ package org.mariotaku.twidere.model;
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.Constants.IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE;
 import static org.mariotaku.twidere.Constants.IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE;
+import static org.mariotaku.twidere.util.Utils.matcherGroup;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.mariotaku.twidere.util.HtmlLinkExtractor;
 import org.mariotaku.twidere.util.HtmlLinkExtractor.HtmlLink;
-import org.mariotaku.twidere.util.Utils;
 
 public class PreviewImage {
 
 	public static final String AVAILABLE_URL_SCHEME_PREFIX = "(https?:\\/\\/)?";
 	public static final String AVAILABLE_IMAGE_SHUFFIX = "(png|jpeg|jpg|gif|bmp)";
 	public static final String SINA_WEIBO_IMAGES_AVAILABLE_SIZES = "(woriginal|large|thumbnail|bmiddle|mw[\\d]+)";
+	public static final String GOOGLE_IMAGES_AVAILABLE_SIZES = "(((w|h|s)\\d+\\-?)+)";
 
 	private static final String STRING_PATTERN_TWITTER_IMAGES_DOMAIN = "(p|pbs)\\.twimg\\.com";
 	private static final String STRING_PATTERN_SINA_WEIBO_IMAGES_DOMAIN = "[\\w\\d]+\\.sinaimg\\.cn|[\\w\\d]+\\.sina\\.cn";
-	private static final String STRING_PATTERN_LOCKERZ_AND_PLIXI_DOMAIN = "plixi\\.com\\/p|lockerz\\.com\\/s";
+	private static final String STRING_PATTERN_LOCKERZ_DOMAIN = "lockerz\\.com";
+	private static final String STRING_PATTERN_PLIXI_DOMAIN = "plixi\\.com";
 	private static final String STRING_PATTERN_INSTAGRAM_DOMAIN = "instagr\\.am|instagram\\.com";
 	private static final String STRING_PATTERN_TWITPIC_DOMAIN = "twitpic\\.com";
 	private static final String STRING_PATTERN_IMGLY_DOMAIN = "img\\.ly";
@@ -47,15 +49,18 @@ public class PreviewImage {
 	private static final String STRING_PATTERN_MOBYPICTURE_DOMAIN = "moby\\.to";
 	private static final String STRING_PATTERN_IMGUR_DOMAIN = "imgur\\.com|i\\.imgur\\.com";
 	private static final String STRING_PATTERN_PHOTOZOU_DOMAIN = "photozou\\.jp";
+	private static final String STRING_PATTERN_GOOGLE_IMAGES_DOMAIN = "(lh|gp|s)(\\d+)?\\.(ggpht|googleusercontent)\\.com";
 
 	private static final String STRING_PATTERN_IMAGES_NO_SCHEME = "[^:\\/\\/].+?\\." + AVAILABLE_IMAGE_SHUFFIX;
 	private static final String STRING_PATTERN_TWITTER_IMAGES_NO_SCHEME = STRING_PATTERN_TWITTER_IMAGES_DOMAIN
-			+ "(\\/media)?\\/([\\d\\w\\-_]+)\\.(png|jpeg|jpg|gif|bmp)";
+			+ "(\\/media)?\\/([\\d\\w\\-_]+)\\." + AVAILABLE_IMAGE_SHUFFIX;
 	private static final String STRING_PATTERN_SINA_WEIBO_IMAGES_NO_SCHEME = "("
 			+ STRING_PATTERN_SINA_WEIBO_IMAGES_DOMAIN + ")" + "\\/" + SINA_WEIBO_IMAGES_AVAILABLE_SIZES
-			+ "\\/(([\\d\\w]+)\\.(png|jpeg|jpg|gif|bmp))";
-	private static final String STRING_PATTERN_LOCKERZ_AND_PLIXI_NO_SCHEME = "("
-			+ STRING_PATTERN_LOCKERZ_AND_PLIXI_DOMAIN + ")" + "\\/(\\w+)\\/?";
+			+ "\\/(([\\d\\w]+)\\." + AVAILABLE_IMAGE_SHUFFIX + ")";
+	private static final String STRING_PATTERN_LOCKERZ_NO_SCHEME = "(" + STRING_PATTERN_LOCKERZ_DOMAIN + ")"
+			+ "\\/s\\/(\\w+)\\/?";
+	private static final String STRING_PATTERN_PLIXI_NO_SCHEME = "(" + STRING_PATTERN_PLIXI_DOMAIN + ")"
+			+ "\\/p\\/(\\w+)\\/?";
 	private static final String STRING_PATTERN_INSTAGRAM_NO_SCHEME = "(" + STRING_PATTERN_INSTAGRAM_DOMAIN + ")"
 			+ "\\/p\\/([_\\-\\d\\w]+)\\/?";
 	private static final String STRING_PATTERN_TWITPIC_NO_SCHEME = STRING_PATTERN_TWITPIC_DOMAIN + "\\/([\\d\\w]+)\\/?";
@@ -68,14 +73,19 @@ public class PreviewImage {
 			+ "\\/([\\d\\w]+)((?-i)s|(?-i)l)?(\\." + AVAILABLE_IMAGE_SHUFFIX + ")?";
 	private static final String STRING_PATTERN_PHOTOZOU_NO_SCHEME = STRING_PATTERN_PHOTOZOU_DOMAIN
 			+ "\\/photo\\/show\\/([\\d]+)\\/([\\d]+)\\/?";
+	private static final String STRING_PATTERN_GOOGLE_IMAGES_NO_SCHEME = "(" + STRING_PATTERN_GOOGLE_IMAGES_DOMAIN
+			+ ")" + "((\\/[\\w\\d\\-\\_]+)+)\\/" + GOOGLE_IMAGES_AVAILABLE_SIZES + "\\/.+";
+	private static final String STRING_PATTERN_GOOGLE_PROXY_IMAGES_NO_SCHEME = "("
+			+ STRING_PATTERN_GOOGLE_IMAGES_DOMAIN + ")" + "\\/proxy\\/([\\w\\d\\-\\_]+)="
+			+ GOOGLE_IMAGES_AVAILABLE_SIZES;
 
 	private static final String STRING_PATTERN_IMAGES = AVAILABLE_URL_SCHEME_PREFIX + STRING_PATTERN_IMAGES_NO_SCHEME;
 	private static final String STRING_PATTERN_TWITTER_IMAGES = AVAILABLE_URL_SCHEME_PREFIX
 			+ STRING_PATTERN_TWITTER_IMAGES_NO_SCHEME;
 	private static final String STRING_PATTERN_SINA_WEIBO_IMAGES = AVAILABLE_URL_SCHEME_PREFIX
 			+ STRING_PATTERN_SINA_WEIBO_IMAGES_NO_SCHEME;
-	private static final String STRING_PATTERN_LOCKERZ_AND_PLIXI = AVAILABLE_URL_SCHEME_PREFIX
-			+ STRING_PATTERN_LOCKERZ_AND_PLIXI_NO_SCHEME;
+	private static final String STRING_PATTERN_LOCKERZ = AVAILABLE_URL_SCHEME_PREFIX + STRING_PATTERN_LOCKERZ_NO_SCHEME;
+	private static final String STRING_PATTERN_PLIXI = AVAILABLE_URL_SCHEME_PREFIX + STRING_PATTERN_PLIXI_NO_SCHEME;
 	private static final String STRING_PATTERN_INSTAGRAM = AVAILABLE_URL_SCHEME_PREFIX
 			+ STRING_PATTERN_INSTAGRAM_NO_SCHEME;
 	private static final String STRING_PATTERN_TWITPIC = AVAILABLE_URL_SCHEME_PREFIX + STRING_PATTERN_TWITPIC_NO_SCHEME;
@@ -87,19 +97,25 @@ public class PreviewImage {
 	private static final String STRING_PATTERN_IMGUR = AVAILABLE_URL_SCHEME_PREFIX + STRING_PATTERN_IMGUR_NO_SCHEME;
 	private static final String STRING_PATTERN_PHOTOZOU = AVAILABLE_URL_SCHEME_PREFIX
 			+ STRING_PATTERN_PHOTOZOU_NO_SCHEME;
+	private static final String STRING_PATTERN_GOOGLE_IMAGES = AVAILABLE_URL_SCHEME_PREFIX
+			+ STRING_PATTERN_GOOGLE_IMAGES_NO_SCHEME;
+	private static final String STRING_PATTERN_GOOGLE_PROXY_IMAGES = AVAILABLE_URL_SCHEME_PREFIX
+			+ STRING_PATTERN_GOOGLE_PROXY_IMAGES_NO_SCHEME;
 
 	public static final Pattern PATTERN_ALL_AVAILABLE_IMAGES = Pattern.compile(AVAILABLE_URL_SCHEME_PREFIX + "("
 			+ STRING_PATTERN_IMAGES_NO_SCHEME + "|" + STRING_PATTERN_TWITTER_IMAGES_NO_SCHEME + "|"
-			+ STRING_PATTERN_SINA_WEIBO_IMAGES_NO_SCHEME + "|" + STRING_PATTERN_LOCKERZ_AND_PLIXI_NO_SCHEME + "|"
-			+ STRING_PATTERN_INSTAGRAM_NO_SCHEME + "|" + STRING_PATTERN_TWITPIC_NO_SCHEME + "|"
+			+ STRING_PATTERN_INSTAGRAM_NO_SCHEME + "|" + STRING_PATTERN_GOOGLE_IMAGES_NO_SCHEME + "|"
+			+ STRING_PATTERN_SINA_WEIBO_IMAGES_NO_SCHEME + "|" + STRING_PATTERN_LOCKERZ_NO_SCHEME + "|"
+			+ STRING_PATTERN_PLIXI_NO_SCHEME + "|" + STRING_PATTERN_TWITPIC_NO_SCHEME + "|"
 			+ STRING_PATTERN_IMGLY_NO_SCHEME + "|" + STRING_PATTERN_YFROG_NO_SCHEME + "|"
 			+ STRING_PATTERN_TWITGOO_NO_SCHEME + "|" + STRING_PATTERN_MOBYPICTURE_NO_SCHEME + "|"
 			+ STRING_PATTERN_IMGUR_NO_SCHEME + "|" + STRING_PATTERN_PHOTOZOU_NO_SCHEME + ")", Pattern.CASE_INSENSITIVE);
 
 	public static final Pattern PATTERN_PREVIEW_AVAILABLE_IMAGES_MATCH_ONLY = Pattern.compile(
 			AVAILABLE_URL_SCHEME_PREFIX + "(" + STRING_PATTERN_IMAGES_NO_SCHEME + "|"
-					+ STRING_PATTERN_TWITTER_IMAGES_DOMAIN + "|" + STRING_PATTERN_SINA_WEIBO_IMAGES_DOMAIN + "|"
-					+ STRING_PATTERN_LOCKERZ_AND_PLIXI_DOMAIN + "|" + STRING_PATTERN_INSTAGRAM_DOMAIN + "|"
+					+ STRING_PATTERN_TWITTER_IMAGES_DOMAIN + "|" + STRING_PATTERN_INSTAGRAM_DOMAIN + "|"
+					+ STRING_PATTERN_GOOGLE_IMAGES_DOMAIN + "|" + STRING_PATTERN_SINA_WEIBO_IMAGES_DOMAIN + "|"
+					+ STRING_PATTERN_LOCKERZ_DOMAIN + "|" + STRING_PATTERN_PLIXI_DOMAIN + "|"
 					+ STRING_PATTERN_TWITPIC_DOMAIN + "|" + STRING_PATTERN_IMGLY_DOMAIN + "|"
 					+ STRING_PATTERN_YFROG_DOMAIN + "|" + STRING_PATTERN_TWITGOO_DOMAIN + "|"
 					+ STRING_PATTERN_MOBYPICTURE_DOMAIN + "|" + STRING_PATTERN_IMGUR_DOMAIN + "|"
@@ -110,8 +126,8 @@ public class PreviewImage {
 			Pattern.CASE_INSENSITIVE);
 	public static final Pattern PATTERN_SINA_WEIBO_IMAGES = Pattern.compile(STRING_PATTERN_SINA_WEIBO_IMAGES,
 			Pattern.CASE_INSENSITIVE);
-	public static final Pattern PATTERN_LOCKERZ_AND_PLIXI = Pattern.compile(STRING_PATTERN_LOCKERZ_AND_PLIXI,
-			Pattern.CASE_INSENSITIVE);
+	public static final Pattern PATTERN_LOCKERZ = Pattern.compile(STRING_PATTERN_LOCKERZ, Pattern.CASE_INSENSITIVE);
+	public static final Pattern PATTERN_PLIXI = Pattern.compile(STRING_PATTERN_PLIXI, Pattern.CASE_INSENSITIVE);
 
 	public static final Pattern PATTERN_INSTAGRAM = Pattern.compile(STRING_PATTERN_INSTAGRAM, Pattern.CASE_INSENSITIVE);
 	public static final int INSTAGRAM_GROUP_ID = 3;
@@ -137,6 +153,17 @@ public class PreviewImage {
 
 	public static final Pattern PATTERN_PHOTOZOU = Pattern.compile(STRING_PATTERN_PHOTOZOU, Pattern.CASE_INSENSITIVE);
 	public static final int PHOTOZOU_GROUP_ID = 3;
+
+	public static final Pattern PATTERN_GOOGLE_IMAGES = Pattern.compile(STRING_PATTERN_GOOGLE_IMAGES,
+			Pattern.CASE_INSENSITIVE);
+	public static final int GOOGLE_IMAGES_GROUP_SERVER = 2;
+	public static final int GOOGLE_IMAGES_GROUP_ID = 6;
+
+	public static final Pattern PATTERN_GOOGLE_PROXY_IMAGES = Pattern.compile(STRING_PATTERN_GOOGLE_PROXY_IMAGES,
+			Pattern.CASE_INSENSITIVE);
+	public static final int GOOGLE_PROXY_IMAGES_GROUP_SERVER = 2;
+	public static final int GOOGLE_PROXY_IMAGES_GROUP_ID = 6;
+
 	private static final PreviewImage EMPTY_INSTANCE = new PreviewImage(null, null, null);
 
 	public final String image_preview_url, image_full_url, image_original_url;
@@ -158,35 +185,54 @@ public class PreviewImage {
 		Matcher m;
 		m = PATTERN_TWITTER_IMAGES.matcher(link);
 		if (m.matches()) return getTwitterImage(link, large_image_preview);
-		m = PATTERN_TWITPIC.matcher(link);
-		if (m.matches()) return getTwitpicImage(Utils.matcherGroup(m, TWITPIC_GROUP_ID), link, large_image_preview);
 		m = PATTERN_INSTAGRAM.matcher(link);
-		if (m.matches())
-			return getInstagramImage(Utils.matcherGroup(m, INSTAGRAM_GROUP_ID), link, large_image_preview);
-		m = PATTERN_IMGUR.matcher(link);
-		if (m.matches())
-			return PreviewImage.getImgurImage(Utils.matcherGroup(m, IMGUR_GROUP_ID), link, large_image_preview);
-		m = PATTERN_IMGLY.matcher(link);
-		if (m.matches())
-			return PreviewImage.getImglyImage(Utils.matcherGroup(m, IMGLY_GROUP_ID), link, large_image_preview);
-		m = PATTERN_YFROG.matcher(link);
-		if (m.matches()) return getYfrogImage(Utils.matcherGroup(m, YFROG_GROUP_ID), link, large_image_preview);
-		m = PATTERN_LOCKERZ_AND_PLIXI.matcher(link);
-		if (m.matches()) return getLockerzAndPlixiImage(link, large_image_preview);
+		if (m.matches()) return getInstagramImage(matcherGroup(m, INSTAGRAM_GROUP_ID), link, large_image_preview);
+		m = PATTERN_GOOGLE_IMAGES.matcher(link);
+		if (m.matches()) return getGoogleImage(m, large_image_preview);
+		m = PATTERN_GOOGLE_PROXY_IMAGES.matcher(link);
+		if (m.matches()) return getGoogleProxyImage(m, large_image_preview);
 		m = PATTERN_SINA_WEIBO_IMAGES.matcher(link);
 		if (m.matches()) return getSinaWeiboImage(link, large_image_preview);
+		m = PATTERN_TWITPIC.matcher(link);
+		if (m.matches()) return getTwitpicImage(matcherGroup(m, TWITPIC_GROUP_ID), link, large_image_preview);
+		m = PATTERN_IMGUR.matcher(link);
+		if (m.matches()) return getImgurImage(matcherGroup(m, IMGUR_GROUP_ID), link, large_image_preview);
+		m = PATTERN_IMGLY.matcher(link);
+		if (m.matches()) return getImglyImage(matcherGroup(m, IMGLY_GROUP_ID), link, large_image_preview);
+		m = PATTERN_YFROG.matcher(link);
+		if (m.matches()) return getYfrogImage(matcherGroup(m, YFROG_GROUP_ID), link, large_image_preview);
+		m = PATTERN_LOCKERZ.matcher(link);
+		if (m.matches()) return getLockerzAndPlixiImage(link, large_image_preview);
+		m = PATTERN_PLIXI.matcher(link);
+		if (m.matches()) return getLockerzAndPlixiImage(link, large_image_preview);
 		m = PATTERN_TWITGOO.matcher(link);
-		if (m.matches()) return getTwitgooImage(Utils.matcherGroup(m, TWITGOO_GROUP_ID), link, large_image_preview);
+		if (m.matches()) return getTwitgooImage(matcherGroup(m, TWITGOO_GROUP_ID), link, large_image_preview);
 		m = PATTERN_MOBYPICTURE.matcher(link);
-		if (m.matches())
-			return getMobyPictureImage(Utils.matcherGroup(m, MOBYPICTURE_GROUP_ID), link, large_image_preview);
+		if (m.matches()) return getMobyPictureImage(matcherGroup(m, MOBYPICTURE_GROUP_ID), link, large_image_preview);
 		m = PATTERN_PHOTOZOU.matcher(link);
-		if (m.matches()) return getPhotozouImage(Utils.matcherGroup(m, PHOTOZOU_GROUP_ID), link, large_image_preview);
+		if (m.matches()) return getPhotozouImage(matcherGroup(m, PHOTOZOU_GROUP_ID), link, large_image_preview);
 		return null;
 	}
 
 	public static PreviewImage getEmpty() {
 		return EMPTY_INSTANCE;
+	}
+
+	public static PreviewImage getGoogleImage(final Matcher m, final boolean large_image_preview) {
+		final String server = matcherGroup(m, GOOGLE_IMAGES_GROUP_SERVER), id = matcherGroup(m, GOOGLE_IMAGES_GROUP_ID);
+		if (isEmpty(server) || isEmpty(id)) return null;
+		final String full = "https://" + server + id + "/s0/full";
+		final String preview = "https://" + server + id + "/s" + (large_image_preview ? 512 : 128) + "/thumbnail";
+		return new PreviewImage(preview, full, full);
+	}
+
+	public static PreviewImage getGoogleProxyImage(final Matcher m, final boolean large_image_preview) {
+		final String server = matcherGroup(m, GOOGLE_PROXY_IMAGES_GROUP_SERVER);
+		final String id = matcherGroup(m, GOOGLE_PROXY_IMAGES_GROUP_ID);
+		if (isEmpty(server) || isEmpty(id)) return null;
+		final String full = "https://" + server + "/proxy/" + id + "=s0";
+		final String preview = "https://" + server + "/proxy/" + id + "=s" + (large_image_preview ? 512 : 128);
+		return new PreviewImage(preview, full, full);
 	}
 
 	public static PreviewImage getImglyImage(final String id, final String orig, final boolean large_image_preview) {
@@ -243,7 +289,9 @@ public class PreviewImage {
 						|| html.contains("://img.ly/") || html.contains("://yfrog.com/")
 						|| html.contains("://twitgoo.com/") || html.contains("://moby.to/")
 						|| html.contains("://plixi.com/p/") || html.contains("://lockerz.com/s/")
-						|| html.contains(".sinaimg.cn/") || html.contains("://photozou.jp/"))) return getEmpty();
+						|| html.contains(".sinaimg.cn/") || html.contains("://photozou.jp/")
+						|| html.contains(".googleusercontent.com/") || html.contains(".ggpht.com/")))
+			return getEmpty();
 		final boolean large_image_preview = display_option == IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE;
 		final HtmlLinkExtractor extractor = new HtmlLinkExtractor();
 		for (final HtmlLink link : extractor.grabLinks(html)) {

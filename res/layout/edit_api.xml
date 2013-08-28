@@ -10,12 +10,13 @@
 		android:layout_weight="1"
 		android:fadingEdgeLength="16dp">
 
-		<RelativeLayout
+		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
+			android:orientation="vertical"
 			android:padding="16dp">
 
-			<TextView 
+			<TextView
 				android:id="@+id/label_rest_base_url"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
@@ -25,31 +26,23 @@
 
 			<EditText
 				android:id="@+id/rest_base_url"
-				android:layout_width="wrap_content"
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_alignParentLeft="true"
-				android:layout_alignParentRight="true"
-				android:layout_below="@+id/label_rest_base_url"
 				android:ems="10"
 				android:inputType="textUri"
 				android:singleLine="true"/>
 
-			<TextView 
+			<TextView
 				android:id="@+id/label_auth_type"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_alignParentLeft="true"
-				android:layout_below="@+id/rest_base_url"
 				android:text="@string/auth_type"
 				android:textAppearance="?android:attr/textAppearanceSmall"/>
 
 			<HorizontalScrollView
 				android:id="@+id/auth_type_scroll"
 				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_alignParentLeft="true"
-				android:layout_alignParentRight="true"
-				android:layout_below="@+id/label_auth_type">
+				android:layout_height="wrap_content">
 
 				<RadioGroup
 					android:id="@+id/auth_type"
@@ -77,7 +70,7 @@
 						android:layout_height="wrap_content"
 						android:layout_weight="1"
 						android:text="@string/twip_o"/>
-						
+
 					<!-- This auth method is not available for now -->
 
 					<RadioButton
@@ -85,33 +78,38 @@
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_weight="1"
-						android:text="@string/xauth"/>	
+						android:text="@string/xauth"/>
 				</RadioGroup>
 			</HorizontalScrollView>
 
-			<Button 
-				android:id="@+id/advanced_api_config_label"
+			<LinearLayout
+				android:id="@+id/advanced_api_config_container"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_below="@+id/auth_type_scroll"
-				android:drawableLeft="@drawable/expander_close_holo"
-				android:drawablePadding="4dp"
-				android:gravity="center_vertical"
-				android:paddingBottom="4dp"
-				android:paddingTop="4dp"
-				android:text="@string/advanced"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				style="?borderlessButtonStyle"/>
+				android:orientation="vertical">
 
-			<ViewStub
-				android:id="@+id/stub_advanced_api_config"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_below="@+id/advanced_api_config_label"
-				android:inflatedId="@+id/advanced_api_config"
-				android:layout="@layout/edit_api_advanced_fields"
-				android:visibility="gone"/>
-		</RelativeLayout>
+				<Button
+					android:id="@+id/advanced_api_config_label"
+					style="?borderlessButtonStyle"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:drawableLeft="@drawable/expander_close_holo"
+					android:drawablePadding="4dp"
+					android:gravity="center_vertical"
+					android:paddingBottom="4dp"
+					android:paddingTop="4dp"
+					android:text="@string/advanced"
+					android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+				<ViewStub
+					android:id="@+id/stub_advanced_api_config"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:inflatedId="@+id/advanced_api_config"
+					android:layout="@layout/edit_api_advanced_fields"
+					android:visibility="gone"/>
+			</LinearLayout>
+		</LinearLayout>
 	</ScrollView>
 
 	<View
@@ -121,11 +119,11 @@
 
 	<Button
 		android:id="@+id/save"
+		style="?borderlessButtonStyle"
 		android:layout_width="match_parent"
 		android:layout_height="@dimen/button_bar_height"
 		android:layout_gravity="center_horizontal"
 		android:gravity="center"
-		android:text="@android:string/ok"
-		style="?borderlessButtonStyle"/>
+		android:text="@android:string/ok"/>
 
 </LinearLayout>

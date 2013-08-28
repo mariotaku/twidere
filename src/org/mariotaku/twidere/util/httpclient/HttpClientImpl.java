@@ -129,7 +129,7 @@ public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCo
 			} catch (final URISyntaxException e) {
 				throw new TwitterException(e);
 			}
-			final String host = url_orig.getHost();
+			final String host = url_orig.getHost(), authority = url_orig.getAuthority();
 			final String resolved_host = resolver != null ? resolver.resolve(host) : null;
 			final String resolved_url = !isEmpty(resolved_host) ? url_string.replace("://" + host, "://"
 					+ resolved_host) : url_string;
@@ -187,7 +187,7 @@ public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCo
 				commonsRequest.addHeader("Authorization", authorizationHeader);
 			}
 			if (!isEmpty(resolved_host) && !resolved_host.equals(host)) {
-				commonsRequest.addHeader("Host", host);
+				commonsRequest.addHeader("Host", authority);
 			}
 
 			final ApacheHttpClientHttpResponseImpl res;

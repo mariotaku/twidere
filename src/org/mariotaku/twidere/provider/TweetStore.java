@@ -127,6 +127,10 @@ public final class TweetStore {
 		 */
 		public static final String IS_ACTIVATED = "is_activated";
 
+		public static final String CONSUMER_KEY = "consumer_key";
+
+		public static final String CONSUMER_SECRET = "consumer_secret";
+
 		/**
 		 * User's profile image URL of the status. <br>
 		 * Type: TEXT
@@ -134,12 +138,13 @@ public final class TweetStore {
 		public static final String PROFILE_IMAGE_URL = "profile_image_url";
 
 		public static final String[] COLUMNS = new String[] { _ID, NAME, SCREEN_NAME, ACCOUNT_ID, AUTH_TYPE,
-				BASIC_AUTH_PASSWORD, OAUTH_TOKEN, TOKEN_SECRET, REST_BASE_URL, SIGNING_REST_BASE_URL, OAUTH_BASE_URL,
-				SIGNING_OAUTH_BASE_URL, PROFILE_IMAGE_URL, USER_COLOR, IS_ACTIVATED };
+				BASIC_AUTH_PASSWORD, OAUTH_TOKEN, TOKEN_SECRET, CONSUMER_KEY, CONSUMER_SECRET, REST_BASE_URL,
+				SIGNING_REST_BASE_URL, OAUTH_BASE_URL, SIGNING_OAUTH_BASE_URL, PROFILE_IMAGE_URL, USER_COLOR,
+				IS_ACTIVATED };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT_NOT_NULL, TYPE_TEXT_NOT_NULL,
 				TYPE_INT_UNIQUE, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,
-				TYPE_TEXT, TYPE_INT, TYPE_BOOLEAN };
+				TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_BOOLEAN };
 
 	}
 

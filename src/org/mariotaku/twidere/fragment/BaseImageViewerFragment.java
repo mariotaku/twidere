@@ -20,23 +20,25 @@ public abstract class BaseImageViewerFragment extends BaseFragment implements Lo
 	}
 
 	@Override
-	public final Loader<Result> onCreateLoader(int id, Bundle args) {
+	public final Loader<Result> onCreateLoader(final int id, final Bundle args) {
 		final FragmentActivity activity = getActivity();
-		return newLoaderInstance(activity, args, activity instanceof DownloadListener ? (DownloadListener) activity : null);
-	}
-
-	private Loader<Result> newLoaderInstance(FragmentActivity activity, Bundle args, DownloadListener downloadListener) {
-		return null;
+		return newLoaderInstance(activity, args, activity instanceof DownloadListener ? (DownloadListener) activity
+				: null);
 	}
 
 	@Override
-	public void onLoadFinished(Loader<Result> loader, Result data) {
-		mImageFile = data.file;
-		
-	}
-
-	@Override
-	public final void onLoaderReset(Loader<Result> loader) {
+	public final void onLoaderReset(final Loader<Result> loader) {
 		mImageFile = null;
+	}
+
+	@Override
+	public void onLoadFinished(final Loader<Result> loader, final Result data) {
+		mImageFile = data.file;
+
+	}
+
+	private Loader<Result> newLoaderInstance(final FragmentActivity activity, final Bundle args,
+			final DownloadListener downloadListener) {
+		return null;
 	}
 }

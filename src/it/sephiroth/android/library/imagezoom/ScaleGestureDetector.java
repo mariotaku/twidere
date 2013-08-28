@@ -16,7 +16,9 @@
 
 package it.sephiroth.android.library.imagezoom;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.support.v4.view.MotionEventCompat;
 import android.util.DisplayMetrics;
 import android.util.FloatMath;
@@ -40,6 +42,7 @@ import android.view.ViewConfiguration;
  * be executed when the events occur.
  * </ul>
  */
+@TargetApi(Build.VERSION_CODES.ECLAIR)
 public class ScaleGestureDetector {
 	/**
 	 * This value is the threshold ratio between our previous combined pressure

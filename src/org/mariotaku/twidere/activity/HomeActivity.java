@@ -357,14 +357,14 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 			setDefaultAccount();
 		}
 		final boolean refresh_on_start = mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ON_START, false);
-		final Bundle bundle = getIntent().getExtras();
+		final Bundle extras = getIntent().getExtras();
 		int initial_tab = -1;
-		if (bundle != null) {
-			final long[] refreshed_ids = bundle.getLongArray(INTENT_KEY_IDS);
+		if (extras != null) {
+			final long[] refreshed_ids = extras.getLongArray(INTENT_KEY_IDS);
 			if (refreshed_ids != null && !refresh_on_start && savedInstanceState == null) {
 				mTwitterWrapper.refreshAll();
 			}
-			initial_tab = bundle.getInt(INTENT_KEY_INITIAL_TAB, -1);
+			initial_tab = extras.getInt(INTENT_KEY_INITIAL_TAB, -1);
 			switch (initial_tab) {
 				case TAB_POSITION_HOME: {
 					mTwitterWrapper.clearNotification(NOTIFICATION_ID_HOME_TIMELINE);
@@ -377,6 +377,12 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 				case TAB_POSITION_MESSAGES: {
 					mTwitterWrapper.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
 					break;
+				}
+			}
+			if (savedInstanceState == null) {
+				final Intent extra_intent = extras.getParcelable(INTENT_KEY_EXTRA_INTENT);
+				if (extra_intent != null) {
+					startActivity(extra_intent);
 				}
 			}
 		}

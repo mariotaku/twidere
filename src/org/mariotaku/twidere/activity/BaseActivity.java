@@ -32,6 +32,7 @@ import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MessagesManager;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
@@ -91,6 +92,14 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 
 	protected boolean isDarkTheme() {
 		return mIsDarkTheme;
+	}
+
+	protected boolean isDialogMode() {
+		if (this instanceof BaseDialogWhenLargeActivity) {
+			final BaseDialogWhenLargeActivity a = (BaseDialogWhenLargeActivity) this;
+			return !a.shouldDisableDialogWhenLargeMode() && getResources().getBoolean(R.bool.is_dialog_when_large);
+		}
+		return false;
 	}
 
 	protected boolean isHardwareAccelerationChanged() {
@@ -180,6 +189,7 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 		return true;
 	}
 
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private void setHardwareAcceleration() {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return;
 		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);

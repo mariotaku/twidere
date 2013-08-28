@@ -51,6 +51,8 @@ import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.SetColorActivity;
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
+import org.mariotaku.twidere.adapter.PreviewPagerAdapter;
+import org.mariotaku.twidere.adapter.PreviewPagerAdapter.OnImageClickListener;
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Panes;
@@ -68,8 +70,6 @@ import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 import org.mariotaku.twidere.view.ExtendedFrameLayout;
-import org.mariotaku.twidere.view.StatusImagePreviewLayout;
-import org.mariotaku.twidere.view.StatusImagePreviewLayout.OnImageClickListener;
 
 import twitter4j.Relationship;
 import twitter4j.Twitter;
@@ -93,6 +93,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.ViewPager;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -143,11 +144,13 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private ColorLabelRelativeLayout mProfileView;
 	private MenuBar mMenuBar;
 	private ProgressBar mStatusLoadProgress, mFollowInfoProgress;
-	private StatusImagePreviewLayout mImagePreviewView;
+	private ViewPager mImagePreviewPager;
 	private View mStatusView;
 	private View mLoadImagesIndicator;
 	private ExtendedFrameLayout mStatusContainer;
 	private ListView mListView;
+
+	private PreviewPagerAdapter mImagePreviewAdapter;
 
 	private LoadConversationTask mConversationTask;
 
@@ -458,10 +461,9 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			mProfileImageView.setImageResource(R.drawable.ic_profile_image_default);
 		}
 		final List<PreviewImage> images = getImagesInStatus(status.text_html);
-		mImagePreviewContainer.setVisibility(images.size() > 0 ? View.VISIBLE : View.GONE);
-		loadPreviewImages(images);
+		mImagePreviewContainer.setVisibility(images.isEmpty() ? View.GONE : View.VISIBLE);
 		if (mLoadMoreAutomatically) {
-			showPreviewImages();
+			loadPreviewImages();
 		}
 		mRetweetedStatusView.setVisibility(!status.user_is_protected ? View.VISIBLE : View.GONE);
 		if (status.is_retweet && status.retweet_id > 0) {
@@ -506,6 +508,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mProfileImageLoader = application.getImageLoaderWrapper();
 		mTwitterWrapper = getTwitterWrapper();
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
+		mImagePreviewAdapter = new PreviewPagerAdapter(getActivity());
 		if (mLoadMoreAutomatically) {
 			setMode(Mode.DISABLED);
 		} else {
@@ -526,7 +529,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mRetweetedStatusView.setOnClickListener(this);
 		mMenuBar.setOnMenuItemClickListener(mMenuItemClickListener);
 		getStatus(false);
-		mImagePreviewView.setOnImageClickListener(this);
+		mImagePreviewPager.setAdapter(mImagePreviewAdapter);
+		mImagePreviewAdapter.setOnImageClickListener(this);
 	}
 
 	@Override
@@ -574,7 +578,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 				break;
 			}
 			case R.id.load_images: {
-				showPreviewImages();
+				loadPreviewImages();
 				// UCD
 				ProfilingUtil.profile(getActivity(), mAccountId, "Thumbnail click, " + mStatusId);
 				break;
@@ -611,7 +615,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mFollowIndicator = mStatusView.findViewById(R.id.follow_indicator);
 		mFollowInfoProgress = (ProgressBar) mStatusView.findViewById(R.id.follow_info_progress);
 		mProfileView = (ColorLabelRelativeLayout) mStatusView.findViewById(R.id.profile);
-		mImagePreviewView = (StatusImagePreviewLayout) mStatusView.findViewById(R.id.preview_gallery);
+		mImagePreviewPager = (ViewPager) mStatusView.findViewById(R.id.preview_pager);
 		mLoadImagesIndicator = mStatusView.findViewById(R.id.load_images);
 		return view;
 	}
@@ -691,7 +695,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	}
 
 	private void clearPreviewImages() {
-		mImagePreviewView.clear();
+		mImagePreviewAdapter.clear();
 	}
 
 	private void getStatus(final boolean omit_intent_extra) {
@@ -709,12 +713,16 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	private void hidePreviewImages() {
 		mLoadImagesIndicator.setVisibility(View.VISIBLE);
-		mImagePreviewView.setVisibility(View.GONE);
+		mImagePreviewPager.setVisibility(View.GONE);
 	}
 
-	private boolean loadPreviewImages(final Collection<? extends PreviewImage> images) {
-		mImagePreviewView.clear();
-		return mImagePreviewView.addAll(images);
+	private boolean loadPreviewImages() {
+		if (mStatus == null) return false;
+		mLoadImagesIndicator.setVisibility(View.GONE);
+		mImagePreviewPager.setVisibility(View.VISIBLE);
+		mImagePreviewAdapter.clear();
+		final List<PreviewImage> images = getImagesInStatus(mStatus.text_html);
+		return mImagePreviewAdapter.addAll(images, mStatus.is_possibly_sensitive);
 	}
 
 	private void showConversation() {
@@ -755,13 +763,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		} else {
 			lm.restartLoader(LOADER_ID_LOCATION, null, mLocationLoaderCallbacks);
 		}
-	}
-
-	private void showPreviewImages() {
-		if (mStatus == null) return;
-		mLoadImagesIndicator.setVisibility(View.GONE);
-		mImagePreviewView.setVisibility(View.VISIBLE);
-		mImagePreviewView.show(mStatus.is_possibly_sensitive);
 	}
 
 	private void updatePullRefresh() {

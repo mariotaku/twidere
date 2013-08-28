@@ -26,6 +26,7 @@ import static org.mariotaku.twidere.util.Utils.isUserLoggedIn;
 import static org.mariotaku.twidere.util.Utils.makeAccountContentValues;
 import static org.mariotaku.twidere.util.Utils.setUserAgent;
 import static org.mariotaku.twidere.util.Utils.showErrorMessage;
+import static org.mariotaku.twidere.util.Utils.trim;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -88,7 +89,9 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 
 	private static final String TWITTER_SIGNUP_URL = "https://twitter.com/signup";
 
-	private String mRESTBaseURL, mSigningRESTBaseURL, mOAuthBaseURL, mSigningOAuthBaseURL;
+	private String mRestBaseURL, mSigningRestBaseURL;
+	private String mOAuthBaseURL, mSigningOAuthBaseURL;
+	private String mConsumerKey, mConsumerSecret;
 	private String mUsername, mPassword;
 	private int mAuthType;
 	private Integer mUserColor;
@@ -125,8 +128,8 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 						bundle = data.getExtras();
 					}
 					if (bundle != null) {
-						mRESTBaseURL = bundle.getString(Accounts.REST_BASE_URL);
-						mSigningRESTBaseURL = bundle.getString(Accounts.SIGNING_REST_BASE_URL);
+						mRestBaseURL = bundle.getString(Accounts.REST_BASE_URL);
+						mSigningRestBaseURL = bundle.getString(Accounts.SIGNING_REST_BASE_URL);
 						mOAuthBaseURL = bundle.getString(Accounts.OAUTH_BASE_URL);
 						mSigningOAuthBaseURL = bundle.getString(Accounts.SIGNING_OAUTH_BASE_URL);
 						mAuthType = bundle.getInt(Accounts.AUTH_TYPE);
@@ -251,8 +254,8 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 				if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) return false;
 				final Intent intent = new Intent(this, EditAPIActivity.class);
 				final Bundle bundle = new Bundle();
-				bundle.putString(Accounts.REST_BASE_URL, mRESTBaseURL);
-				bundle.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRESTBaseURL);
+				bundle.putString(Accounts.REST_BASE_URL, mRestBaseURL);
+				bundle.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRestBaseURL);
 				bundle.putString(Accounts.OAUTH_BASE_URL, mOAuthBaseURL);
 				bundle.putString(Accounts.SIGNING_OAUTH_BASE_URL, mSigningOAuthBaseURL);
 				bundle.putInt(Accounts.AUTH_TYPE, mAuthType);
@@ -272,10 +275,12 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
 		saveEditedText();
-		outState.putString(Accounts.REST_BASE_URL, mRESTBaseURL);
+		outState.putString(Accounts.REST_BASE_URL, mRestBaseURL);
 		outState.putString(Accounts.OAUTH_BASE_URL, mOAuthBaseURL);
-		outState.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRESTBaseURL);
+		outState.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRestBaseURL);
 		outState.putString(Accounts.SIGNING_OAUTH_BASE_URL, mSigningOAuthBaseURL);
+		outState.putString(Accounts.CONSUMER_KEY, mConsumerKey);
+		outState.putString(Accounts.CONSUMER_SECRET, mConsumerSecret);
 		outState.putString(Accounts.SCREEN_NAME, mUsername);
 		outState.putString(Accounts.PASSWORD, mPassword);
 		outState.putInt(Accounts.AUTH_TYPE, mAuthType);
@@ -288,6 +293,11 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 	@Override
 	public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
 		setSignInButton();
+	}
+
+	@Override
+	public void setSupportProgressBarIndeterminateVisibility(final boolean visible) {
+		super.setSupportProgressBarIndeterminateVisibility(visible);
 	}
 
 	@Override
@@ -304,10 +314,12 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 
 		final Bundle extras = getIntent().getExtras();
 		if (savedInstanceState != null) {
-			mRESTBaseURL = savedInstanceState.getString(Accounts.REST_BASE_URL);
+			mRestBaseURL = savedInstanceState.getString(Accounts.REST_BASE_URL);
 			mOAuthBaseURL = savedInstanceState.getString(Accounts.OAUTH_BASE_URL);
-			mSigningRESTBaseURL = savedInstanceState.getString(Accounts.SIGNING_REST_BASE_URL);
+			mSigningRestBaseURL = savedInstanceState.getString(Accounts.SIGNING_REST_BASE_URL);
 			mSigningOAuthBaseURL = savedInstanceState.getString(Accounts.SIGNING_OAUTH_BASE_URL);
+			mConsumerKey = trim(savedInstanceState.getString(Accounts.CONSUMER_KEY));
+			mConsumerSecret = trim(savedInstanceState.getString(Accounts.CONSUMER_SECRET));
 			mUsername = savedInstanceState.getString(Accounts.SCREEN_NAME);
 			mPassword = savedInstanceState.getString(Accounts.PASSWORD);
 			mAuthType = savedInstanceState.getInt(Accounts.AUTH_TYPE);
@@ -315,22 +327,33 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 				mUserColor = savedInstanceState.getInt(Accounts.USER_COLOR, Color.TRANSPARENT);
 			}
 		} else if (extras != null) {
-			mRESTBaseURL = extras.getString(Accounts.REST_BASE_URL);
+			mRestBaseURL = extras.getString(Accounts.REST_BASE_URL);
 			mOAuthBaseURL = extras.getString(Accounts.OAUTH_BASE_URL);
-			mSigningRESTBaseURL = extras.getString(Accounts.SIGNING_REST_BASE_URL);
+			mSigningRestBaseURL = extras.getString(Accounts.SIGNING_REST_BASE_URL);
 			mSigningOAuthBaseURL = extras.getString(Accounts.SIGNING_OAUTH_BASE_URL);
+			mConsumerKey = trim(extras.getString(Accounts.CONSUMER_KEY));
+			mConsumerSecret = trim(extras.getString(Accounts.CONSUMER_SECRET));
 		}
-		if (isEmpty(mRESTBaseURL)) {
-			mRESTBaseURL = DEFAULT_REST_BASE_URL;
+		if (isEmpty(mRestBaseURL)) {
+			mRestBaseURL = DEFAULT_REST_BASE_URL;
 		}
 		if (isEmpty(mOAuthBaseURL)) {
 			mOAuthBaseURL = DEFAULT_OAUTH_BASE_URL;
 		}
-		if (isEmpty(mSigningRESTBaseURL)) {
-			mSigningRESTBaseURL = DEFAULT_SIGNING_REST_BASE_URL;
+		if (isEmpty(mSigningRestBaseURL)) {
+			mSigningRestBaseURL = DEFAULT_SIGNING_REST_BASE_URL;
 		}
 		if (isEmpty(mSigningOAuthBaseURL)) {
 			mSigningOAuthBaseURL = DEFAULT_SIGNING_OAUTH_BASE_URL;
+		}
+		final String consumer_key = mPreferences.getString(PREFERENCE_KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY_2);
+		final String consumer_secret = mPreferences
+				.getString(PREFERENCE_KEY_CONSUMER_SECRET, TWITTER_CONSUMER_SECRET_2);
+		if (isEmpty(mConsumerKey)) {
+			mConsumerKey = consumer_key;
+		}
+		if (isEmpty(mConsumerSecret)) {
+			mConsumerSecret = consumer_secret;
 		}
 
 		mUsernamePasswordContainer
@@ -380,32 +403,29 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 		final boolean enable_gzip_compressing = mPreferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
 		final boolean ignore_ssl_error = mPreferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 		final boolean enable_proxy = mPreferences.getBoolean(PREFERENCE_KEY_ENABLE_PROXY, false);
-		final String consumer_key = mPreferences.getString(PREFERENCE_KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY).trim();
-		final String consumer_secret = mPreferences.getString(PREFERENCE_KEY_CONSUMER_SECRET, TWITTER_CONSUMER_SECRET)
-				.trim();
 		cb.setHostAddressResolver(mApplication.getHostAddressResolver());
 		if (mPassword == null || !mPassword.contains("*")) {
 			cb.setHttpClientImplementation(HttpClientImpl.class);
 		}
 		setUserAgent(this, cb);
-		if (!isEmpty(mRESTBaseURL)) {
-			cb.setRestBaseURL(mRESTBaseURL);
+		if (!isEmpty(mRestBaseURL)) {
+			cb.setRestBaseURL(mRestBaseURL);
 		}
 		if (!isEmpty(mOAuthBaseURL)) {
 			cb.setOAuthBaseURL(mOAuthBaseURL);
 		}
-		if (!isEmpty(mSigningRESTBaseURL)) {
-			cb.setSigningRestBaseURL(mSigningRESTBaseURL);
+		if (!isEmpty(mSigningRestBaseURL)) {
+			cb.setSigningRestBaseURL(mSigningRestBaseURL);
 		}
 		if (!isEmpty(mSigningOAuthBaseURL)) {
 			cb.setSigningOAuthBaseURL(mSigningOAuthBaseURL);
 		}
-		if (isEmpty(consumer_key) || isEmpty(consumer_secret)) {
-			cb.setOAuthConsumerKey(TWITTER_CONSUMER_KEY);
-			cb.setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET);
+		if (isEmpty(mConsumerKey) || isEmpty(mConsumerSecret)) {
+			cb.setOAuthConsumerKey(TWITTER_CONSUMER_KEY_2);
+			cb.setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET_2);
 		} else {
-			cb.setOAuthConsumerKey(consumer_key);
-			cb.setOAuthConsumerSecret(consumer_secret);
+			cb.setOAuthConsumerKey(mConsumerKey);
+			cb.setOAuthConsumerSecret(mConsumerSecret);
 		}
 		cb.setGZIPEnabled(enable_gzip_compressing);
 		cb.setIgnoreSSLError(ignore_ssl_error);

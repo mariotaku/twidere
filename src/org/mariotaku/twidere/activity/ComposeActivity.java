@@ -153,8 +153,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 	private AccountsColorFrameLayout mColorIndicator;
 	private EditText mEditText;
 	private ProgressBar mProgress;
-	
-	
+
 	private boolean mIsImageAttached, mIsPhotoAttached, mIsPossiblySensitive, mShouldSaveAccounts;
 	private long[] mAccountIds;
 
@@ -166,7 +165,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 	private long mInReplyToStatusId;
 	private String mOriginalText;
 	private Locale mLocale;
-	
+
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override

@@ -42,8 +42,8 @@ public class StatusImagePreviewItemView extends ClickableImageView {
 	protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
 		final int width = MeasureSpec.getSize(widthMeasureSpec);
 		final int hSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
-		setMeasuredDimension(width, width);
 		super.onMeasure(widthMeasureSpec, hSpec);
+		setMeasuredDimension(width, width);
 	}
 
 }

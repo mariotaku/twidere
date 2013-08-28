@@ -555,21 +555,21 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		}
 		final int screen_names_size = mNewMentionScreenNames.size();
 		final ParcelableStatus status = mNewMentions.get(0);
+		content_intent = new Intent(context, HomeActivity.class);
+		content_intent.setAction(Intent.ACTION_MAIN);
+		content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
+		final Bundle content_extras = new Bundle();
+		content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MENTIONS);
 		if (mentions_size == 1) {
 			final Uri.Builder uri_builder = new Uri.Builder();
 			uri_builder.scheme(SCHEME_TWIDERE);
 			uri_builder.authority(AUTHORITY_STATUS);
 			uri_builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(status.account_id));
 			uri_builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status.id));
-			content_intent = new Intent(Intent.ACTION_VIEW, uri_builder.build());
-		} else {
-			content_intent = new Intent(context, HomeActivity.class);
-			content_intent.setAction(Intent.ACTION_MAIN);
-			content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
-			final Bundle content_extras = new Bundle();
-			content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MENTIONS);
-			content_intent.putExtras(content_extras);
+			content_extras.putParcelable(INTENT_KEY_EXTRA_INTENT, new Intent(Intent.ACTION_VIEW, uri_builder.build()));
 		}
+		content_intent.putExtras(content_extras);
+
 		if (screen_names_size > 1) {
 			title = res.getString(R.string.notification_mention_multiple, display_screen_name ? "@"
 					+ status.user_screen_name : status.user_name, screen_names_size - 1);
@@ -661,6 +661,12 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		}
 		final int screen_names_size = mNewMessageScreenNames.size();
 		final ParcelableDirectMessage message = mNewMessages.get(0);
+
+		content_intent = new Intent(context, HomeActivity.class);
+		content_intent.setAction(Intent.ACTION_MAIN);
+		content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
+		final Bundle content_extras = new Bundle();
+		content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MESSAGES);
 		if (messages_size == 1) {
 			final Uri.Builder uri_builder = new Uri.Builder();
 			final long account_id = message.account_id;
@@ -669,15 +675,10 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			uri_builder.authority(AUTHORITY_DIRECT_MESSAGES_CONVERSATION);
 			uri_builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
 			uri_builder.appendQueryParameter(QUERY_PARAM_CONVERSATION_ID, String.valueOf(conversation_id));
-			content_intent = new Intent(Intent.ACTION_VIEW, uri_builder.build());
-		} else {
-			content_intent = new Intent(context, HomeActivity.class);
-			content_intent.setAction(Intent.ACTION_MAIN);
-			content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
-			final Bundle content_extras = new Bundle();
-			content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MESSAGES);
-			content_intent.putExtras(content_extras);
+			content_extras.putParcelable(INTENT_KEY_EXTRA_INTENT, new Intent(Intent.ACTION_VIEW, uri_builder.build()));
 		}
+		content_intent.putExtras(content_extras);
+
 		if (screen_names_size > 1) {
 			title = res.getString(R.string.notification_direct_message_multiple, display_screen_name ? "@"
 					+ message.sender_screen_name : message.sender_name, screen_names_size - 1);

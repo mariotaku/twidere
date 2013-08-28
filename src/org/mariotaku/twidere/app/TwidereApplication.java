@@ -28,7 +28,6 @@ import java.io.File;
 
 import org.mariotaku.gallery3d.util.GalleryUtils;
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.service.RefreshService;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
@@ -55,6 +54,7 @@ import android.webkit.WebView;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.download.ImageDownloader;
 
 import edu.ucdavis.earlybird.UCDService;
 
@@ -94,6 +94,11 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		return mResolver = new TwidereHostAddressResolver(this);
 	}
 
+	public ImageDownloader getImageDownloader() {
+		if (mImageDownloader != null) return mImageDownloader;
+		return mImageDownloader = new TwidereImageDownloader(this);
+	}
+
 	public ImageLoader getImageLoader() {
 		if (mImageLoader != null) return mImageLoader;
 		final File cache_dir = getBestCacheDir(this, DIR_NAME_IMAGE_CACHE);
@@ -102,7 +107,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		cb.threadPoolSize(8);
 		cb.memoryCache(new ImageMemoryCache(40));
 		cb.discCache(new UnlimitedDiscCache(cache_dir, new URLFileNameGenerator()));
-		cb.imageDownloader(mImageDownloader);
+		cb.imageDownloader(getImageDownloader());
 		loader.init(cb.build());
 		return mImageLoader = loader;
 	}
@@ -145,7 +150,6 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		initializeAsyncTask();
 		GalleryUtils.initialize(this);
 		mBrowserUserAgent = new WebView(this).getSettings().getUserAgentString();
-		mImageDownloader = new TwidereImageDownloader(this);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_UCD_DATA_PROFILING, false)) {
 			startService(new Intent(this, UCDService.class));
 		}
@@ -181,8 +185,6 @@ public class TwidereApplication extends Application implements Constants, OnShar
 			} else {
 				stopService(intent);
 			}
-		} else if (PREFERENCE_KEY_CONSUMER_KEY.equals(key) || PREFERENCE_KEY_CONSUMER_SECRET.equals(key)) {
-			mCroutonsManager.showWarnMessage(R.string.re_sign_in_needed, false);
 		}
 	}
 
@@ -205,7 +207,8 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	}
 
 	public static TwidereApplication getInstance(final Context context) {
-		return context != null ? (TwidereApplication) context.getApplicationContext() : null;
+		final Context app = context.getApplicationContext();
+		return app instanceof TwidereApplication ? (TwidereApplication) app : null;
 	}
 
 }

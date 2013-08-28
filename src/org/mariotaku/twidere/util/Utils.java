@@ -1685,23 +1685,23 @@ public final class Utils implements Constants {
 		}
 		if (context == null) return null;
 		final TwidereApplication app = TwidereApplication.getInstance(context);
-		final SharedPreferences preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
-				Context.MODE_PRIVATE);
-		final int connection_timeout = preferences.getInt(PREFERENCE_KEY_CONNECTION_TIMEOUT, 10) * 1000;
-		final boolean enable_gzip_compressing = preferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, true);
-		final boolean ignore_ssl_error = preferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
-		final boolean enable_proxy = preferences.getBoolean(PREFERENCE_KEY_ENABLE_PROXY, false);
-		final String consumer_key = preferences.getString(PREFERENCE_KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY).trim();
-		final String consumer_secret = preferences.getString(PREFERENCE_KEY_CONSUMER_SECRET, TWITTER_CONSUMER_SECRET)
-				.trim();
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final int connection_timeout = prefs.getInt(PREFERENCE_KEY_CONNECTION_TIMEOUT, 10) * 1000;
+		final boolean enable_gzip_compressing = prefs.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, true);
+		final boolean ignore_ssl_error = prefs.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
+		final boolean enable_proxy = prefs.getBoolean(PREFERENCE_KEY_ENABLE_PROXY, false);
+		// Here I use old consumer key/secret because it's default key for older
+		// versions
+		final String pref_consumer_key = prefs.getString(PREFERENCE_KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY);
+		final String pref_consumer_secret = prefs.getString(PREFERENCE_KEY_CONSUMER_SECRET, TWITTER_CONSUMER_SECRET);
 		final StringBuilder where = new StringBuilder();
 		where.append(Accounts.ACCOUNT_ID + " = " + account_id);
-		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, Accounts.COLUMNS, where.toString(),
+		final Cursor c = context.getContentResolver().query(Accounts.CONTENT_URI, Accounts.COLUMNS, where.toString(),
 				null, null);
-		if (cur == null) return null;
+		if (c == null) return null;
 		try {
-			if (cur.getCount() > 0) {
-				cur.moveToFirst();
+			if (c.getCount() > 0) {
+				c.moveToFirst();
 				final ConfigurationBuilder cb = new ConfigurationBuilder();
 				cb.setHostAddressResolver(app.getHostAddressResolver());
 				if (use_apache_httpclient) {
@@ -1712,19 +1712,19 @@ public final class Utils implements Constants {
 				cb.setGZIPEnabled(enable_gzip_compressing);
 				cb.setIgnoreSSLError(ignore_ssl_error);
 				if (enable_proxy) {
-					final String proxy_host = preferences.getString(PREFERENCE_KEY_PROXY_HOST, null);
-					final int proxy_port = ParseUtils.parseInt(preferences.getString(PREFERENCE_KEY_PROXY_PORT, "-1"));
+					final String proxy_host = prefs.getString(PREFERENCE_KEY_PROXY_HOST, null);
+					final int proxy_port = ParseUtils.parseInt(prefs.getString(PREFERENCE_KEY_PROXY_PORT, "-1"));
 					if (!isEmpty(proxy_host) && proxy_port > 0) {
 						cb.setHttpProxyHost(proxy_host);
 						cb.setHttpProxyPort(proxy_port);
 					}
 				}
-				final String rest_base_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.REST_BASE_URL));
-				final String signing_rest_base_url = cur.getString(cur
-						.getColumnIndexOrThrow(Accounts.SIGNING_REST_BASE_URL));
-				final String oauth_base_url = cur.getString(cur.getColumnIndexOrThrow(Accounts.OAUTH_BASE_URL));
-				final String signing_oauth_base_url = cur.getString(cur
-						.getColumnIndexOrThrow(Accounts.SIGNING_OAUTH_BASE_URL));
+				final String rest_base_url = c.getString(c.getColumnIndex(Accounts.REST_BASE_URL));
+				final String signing_rest_base_url = c.getString(c.getColumnIndex(Accounts.SIGNING_REST_BASE_URL));
+				final String oauth_base_url = c.getString(c.getColumnIndex(Accounts.OAUTH_BASE_URL));
+				final String signing_oauth_base_url = c.getString(c.getColumnIndex(Accounts.SIGNING_OAUTH_BASE_URL));
+				final String consumer_key = trim(c.getString(c.getColumnIndex(Accounts.CONSUMER_KEY)));
+				final String consumer_secret = trim(c.getString(c.getColumnIndex(Accounts.CONSUMER_SECRET)));
 				if (!isEmpty(rest_base_url)) {
 					cb.setRestBaseURL(rest_base_url);
 				}
@@ -1739,24 +1739,27 @@ public final class Utils implements Constants {
 				}
 				cb.setIncludeEntitiesEnabled(include_entities);
 				cb.setIncludeRTsEnabled(include_retweets);
-				switch (cur.getInt(cur.getColumnIndexOrThrow(Accounts.AUTH_TYPE))) {
+				switch (c.getInt(c.getColumnIndexOrThrow(Accounts.AUTH_TYPE))) {
 					case Accounts.AUTH_TYPE_OAUTH:
 					case Accounts.AUTH_TYPE_XAUTH: {
-						if (isEmpty(consumer_key) || isEmpty(consumer_secret)) {
-							cb.setOAuthConsumerKey(TWITTER_CONSUMER_KEY);
-							cb.setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET);
-						} else {
+						if (!isEmpty(consumer_key) && !isEmpty(consumer_secret)) {
 							cb.setOAuthConsumerKey(consumer_key);
 							cb.setOAuthConsumerSecret(consumer_secret);
+						} else if (!isEmpty(pref_consumer_key) && !isEmpty(pref_consumer_secret)) {
+							cb.setOAuthConsumerKey(pref_consumer_key);
+							cb.setOAuthConsumerSecret(pref_consumer_secret);
+						} else {
+							cb.setOAuthConsumerKey(TWITTER_CONSUMER_KEY);
+							cb.setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET);
 						}
-						final String oauth_token = cur.getString(cur.getColumnIndexOrThrow(Accounts.OAUTH_TOKEN));
-						final String token_secret = cur.getString(cur.getColumnIndexOrThrow(Accounts.TOKEN_SECRET));
+						final String oauth_token = c.getString(c.getColumnIndexOrThrow(Accounts.OAUTH_TOKEN));
+						final String token_secret = c.getString(c.getColumnIndexOrThrow(Accounts.TOKEN_SECRET));
 						if (isEmpty(oauth_token) || isEmpty(token_secret)) return null;
 						return new TwitterFactory(cb.build()).getInstance(new AccessToken(oauth_token, token_secret));
 					}
 					case Accounts.AUTH_TYPE_BASIC: {
-						final String screen_name = cur.getString(cur.getColumnIndexOrThrow(Accounts.SCREEN_NAME));
-						final String password = cur.getString(cur.getColumnIndexOrThrow(Accounts.BASIC_AUTH_PASSWORD));
+						final String screen_name = c.getString(c.getColumnIndexOrThrow(Accounts.SCREEN_NAME));
+						final String password = c.getString(c.getColumnIndexOrThrow(Accounts.BASIC_AUTH_PASSWORD));
 						if (isEmpty(screen_name) || isEmpty(password)) return null;
 						return new TwitterFactory(cb.build())
 								.getInstance(new BasicAuthorization(screen_name, password));
@@ -1769,7 +1772,7 @@ public final class Utils implements Constants {
 			}
 			return null;
 		} finally {
-			cur.close();
+			c.close();
 		}
 	}
 
@@ -1858,7 +1861,7 @@ public final class Utils implements Constants {
 		return plugged || level / scale > 0.15f;
 	}
 
-	public static boolean isDebugBuild(final Context context) {
+	public static boolean isDebuggable(final Context context) {
 		if (context == null) return false;
 		final ApplicationInfo info;
 		try {
@@ -2084,6 +2087,8 @@ public final class Utils implements Constants {
 				if (user.getId() != access_token.getUserId()) return null;
 				values.put(Accounts.OAUTH_TOKEN, access_token.getToken());
 				values.put(Accounts.TOKEN_SECRET, access_token.getTokenSecret());
+				values.put(Accounts.CONSUMER_KEY, conf.getOAuthConsumerKey());
+				values.put(Accounts.CONSUMER_SECRET, conf.getOAuthConsumerSecret());
 				break;
 			}
 		}
@@ -3287,6 +3292,10 @@ public final class Utils implements Constants {
 	public static void showWarnMessage(final Context context, final int resId, final boolean long_message) {
 		if (context == null) return;
 		showWarnMessage(context, context.getText(resId), long_message);
+	}
+
+	public static String trim(final String str) {
+		return str != null ? str.trim() : null;
 	}
 
 	public static String trimLineBreak(final String orig) {

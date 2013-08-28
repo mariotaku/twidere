@@ -3,9 +3,21 @@
 
 	<style name="Theme.Blank" parent="android:Theme.NoTitleBar"/>
 
+	<style name="Theme.Blank.LinkHandler" parent="Theme.Blank">
+		<item name="android:windowIsTranslucent">true</item>
+	</style>
+
+	<style name="Theme.LinkHandler" parent="Theme.Twidere">
+		<item name="android:windowIsTranslucent">true</item>
+	</style>
+
+	<style name="Theme.LinkHandler.Light" parent="Theme.Twidere.Light">
+		<item name="android:windowIsTranslucent">true</item>
+	</style>
+
 	<style name="Theme.Blank.Dialog" parent="Theme.Twidere.Dialog"/>
 
-	<style name="Theme.Blank.DialogWhenLarge" parent="android:Theme.NoTitleBar"/>
+	<style name="Theme.Blank.DialogWhenLarge" parent="android:Theme.NoTitleBar"></style>
 
 	<style name="Theme.Twidere" parent="Theme.Holo">
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
@@ -168,5 +180,7 @@
 		<item name="actionModeBackground">@drawable/cab_background_top_holo_dark</item>
 		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_light_darkactionbar_holo</item>
 	</style>
+
+	<style name="Theme.Test" parent="android:Theme"/>
 
 </resources>

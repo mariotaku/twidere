@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.service;
 
+import static org.mariotaku.twidere.util.ParseUtils.parseInt;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getNewestMessageIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.getNewestStatusIdsFromDatabase;
@@ -33,7 +34,6 @@ import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import static org.mariotaku.twidere.util.ParseUtils.*;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;

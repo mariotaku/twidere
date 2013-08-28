@@ -30,7 +30,6 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.ProgressDialogFragment;
 
 import android.content.Context;
-import android.media.MediaScannerConnection;
 import android.os.AsyncTask;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -110,7 +109,7 @@ public class SaveImageTask extends AsyncTask<Void, Void, File> implements Consta
 			final File save_file = new File(save_dir, name_to_save);
 			FileUtils.copyFile(image_file, save_file);
 			if (save_file != null && mime_type != null) {
-				MediaScannerConnection.scanFile(context, new String[] { save_file.getPath() },
+				MediaScannerConnectionAccessor.scanFile(context, new String[] { save_file.getPath() },
 						new String[] { mime_type }, null);
 			}
 			return save_file;
