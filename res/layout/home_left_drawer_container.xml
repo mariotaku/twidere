@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="#ff333333"
+	android:orientation="vertical">
+
+	<fragment
+		android:id="@+id/left_drawer"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		class="org.mariotaku.twidere.fragment.AccountsDrawerFragment"/>
+
+</LinearLayout>

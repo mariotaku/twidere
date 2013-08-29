@@ -11,6 +11,7 @@ import android.graphics.Rect;
 import android.graphics.Region;
 import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -173,17 +174,6 @@ public class SwipeBackLayout extends FrameLayout {
 		if (!mInLayout) {
 			super.requestLayout();
 		}
-	}
-
-	/**
-	 * Set the size of an edge. This is the range in pixels along the edges of
-	 * this view that will actively detect edge touches or drags if edge
-	 * tracking is enabled.
-	 * 
-	 * @param size The size of an edge in pixels
-	 */
-	public void setEdgeSize(final int size) {
-		mDragHelper.setEdgeSize(size);
 	}
 
 	/**

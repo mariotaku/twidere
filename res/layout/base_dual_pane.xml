@@ -10,5 +10,5 @@
 	twidere:shadowDrawable="@drawable/shadow_holo"
 	twidere:shadowSlidable="@bool/shadow_slidable"
 	twidere:shadowWidth="@dimen/default_slidingpane_shadow_width"
-	twidere:spacingLeft="@dimen/pane_spacing_right"
+	twidere:spacingLeft="@dimen/pane_spacing_left"
 	twidere:spacingRight="@dimen/pane_spacing_right"/>

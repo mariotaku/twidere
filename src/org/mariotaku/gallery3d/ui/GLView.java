@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import org.mariotaku.gallery3d.anim.CanvasAnimation;
 import org.mariotaku.gallery3d.util.GalleryUtils;
 
+import android.annotation.SuppressLint;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 
@@ -143,6 +144,7 @@ public class GLView {
 		}
 	}
 
+	@SuppressLint("WrongCall")
 	public void layout(final int left, final int top, final int right, final int bottom) {
 		final boolean sizeChanged = setBounds(left, top, right, bottom);
 		mViewFlags &= ~FLAG_LAYOUT_REQUESTED;

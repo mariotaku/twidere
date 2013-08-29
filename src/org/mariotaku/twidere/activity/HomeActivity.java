@@ -43,6 +43,7 @@ import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ActivityAccessor;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.MultiSelectEventHandler;
 import org.mariotaku.twidere.view.ExtendedViewPager;
 import org.mariotaku.twidere.view.TabPageIndicator;
 
@@ -72,11 +73,12 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import edu.ucdavis.earlybird.ProfilingUtil;
 
-public class HomeActivity extends MultiSelectActivity implements OnClickListener, OnPageChangeListener {
+public class HomeActivity extends DualPaneActivity implements OnClickListener, OnPageChangeListener {
 
 	private SharedPreferences mPreferences;
 	private AsyncTwitterWrapper mTwitterWrapper;
 	private NotificationManager mNotificationManager;
+	private MultiSelectEventHandler mMultiSelectHandler;
 
 	private ActionBar mActionBar;
 	private TabsAdapter mAdapter;
@@ -342,6 +344,8 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 		mTwitterWrapper = getTwitterWrapper();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		mMultiSelectHandler = new MultiSelectEventHandler(this);
+		mMultiSelectHandler.dispatchOnCreate();
 		super.onCreate(savedInstanceState);
 		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONCREATE));
 		final Resources res = getResources();
@@ -502,6 +506,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 	@Override
 	protected void onStart() {
 		super.onStart();
+		mMultiSelectHandler.dispatchOnStart();
 		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONSTART));
 		setSupportProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
 		final IntentFilter filter = new IntentFilter(BROADCAST_TASK_STATE_CHANGED);
@@ -522,6 +527,7 @@ public class HomeActivity extends MultiSelectActivity implements OnClickListener
 
 	@Override
 	protected void onStop() {
+		mMultiSelectHandler.dispatchOnStop();
 		unregisterReceiver(mStateReceiver);
 		mPreferences.edit().putInt(PREFERENCE_KEY_SAVED_TAB_POSITION, mViewPager.getCurrentItem()).commit();
 		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONSTOP));

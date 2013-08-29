@@ -31,6 +31,7 @@ import org.mariotaku.twidere.adapter.TabsAdapter;
 import org.mariotaku.twidere.fragment.SearchTweetsFragment;
 import org.mariotaku.twidere.fragment.SearchUsersFragment;
 import org.mariotaku.twidere.provider.RecentSearchProvider;
+import org.mariotaku.twidere.util.MultiSelectEventHandler;
 import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.view.ExtendedViewPager;
 
@@ -48,10 +49,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-public class SearchActivity extends MultiSelectActivity {
+public class SearchActivity extends DualPaneActivity {
 
 	private ActionBar mActionBar;
 	private TabsAdapter mAdapter;
+	private MultiSelectEventHandler mMultiSelectHandler;
 
 	private ExtendedViewPager mViewPager;
 	private PagerTabStrip mIndicator;
@@ -150,6 +152,8 @@ public class SearchActivity extends MultiSelectActivity {
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
+		mMultiSelectHandler = new MultiSelectEventHandler(this);
+		mMultiSelectHandler.dispatchOnCreate();
 		super.onCreate(savedInstanceState);
 		setTitle(android.R.string.search_go);
 		final Intent intent = getIntent();
@@ -203,6 +207,18 @@ public class SearchActivity extends MultiSelectActivity {
 		mViewPager.setCurrentItem(mIsSearchUsers ? 1 : 0);
 		mIndicator.setTabIndicatorColor(getThemeColor(this));
 		mIndicator.setVisibility(mIsSearchUsers || mIsSearchTweets ? View.GONE : View.VISIBLE);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		mMultiSelectHandler.dispatchOnStart();
+	}
+
+	@Override
+	protected void onStop() {
+		mMultiSelectHandler.dispatchOnStop();
+		super.onStop();
 	}
 
 	protected void setPagingEnabled(final boolean enabled) {

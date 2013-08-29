@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.adapter;
 
+import static org.mariotaku.twidere.util.Utils.configBaseAdapter;
 import static org.mariotaku.twidere.util.Utils.findDirectMessageInDatabases;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
@@ -62,6 +63,7 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		mContext = context;
 		mImageLoader = TwidereApplication.getInstance(context).getImageLoaderWrapper();
 		mLinkify = new TwidereLinkify(new OnDirectMessageLinkClickHandler(context));
+		configBaseAdapter(context, this);
 	}
 
 	@Override

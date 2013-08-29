@@ -3,15 +3,7 @@
 
 	<style name="Theme.Blank" parent="android:Theme.NoTitleBar"/>
 
-	<style name="Theme.Blank.LinkHandler" parent="Theme.Blank">
-		<item name="android:windowIsTranslucent">true</item>
-	</style>
-
-	<style name="Theme.LinkHandler" parent="Theme.Twidere">
-		<item name="android:windowIsTranslucent">true</item>
-	</style>
-
-	<style name="Theme.LinkHandler.Light" parent="Theme.Twidere.Light">
+	<style name="Theme.Blank.SwipeBack" parent="Theme.Blank">
 		<item name="android:windowIsTranslucent">true</item>
 	</style>
 

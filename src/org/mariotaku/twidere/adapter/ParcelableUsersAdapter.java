@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.adapter;
 
+import static org.mariotaku.twidere.util.Utils.configBaseAdapter;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
@@ -60,6 +61,7 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mProfileImageLoader = application.getImageLoaderWrapper();
 		mMultiSelectManager = application.getMultiSelectManager();
+		configBaseAdapter(context, this);
 	}
 
 	@Override

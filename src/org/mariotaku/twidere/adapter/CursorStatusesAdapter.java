@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.adapter;
 
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
+import static org.mariotaku.twidere.util.Utils.configBaseAdapter;
 import static org.mariotaku.twidere.util.Utils.findStatusInDatabases;
 import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
@@ -90,6 +91,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 		mImageLoader = application.getImageLoaderWrapper();
 		mDatabase = application.getSQLiteDatabase();
 		mLinkify = new TwidereLinkify(new OnLinkClickHandler(mContext));
+		configBaseAdapter(context, this);
 	}
 
 	@Override

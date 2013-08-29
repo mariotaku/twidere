@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.adapter;
 
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
+import static org.mariotaku.twidere.util.Utils.configBaseAdapter;
 import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 import static org.mariotaku.twidere.util.Utils.getNameDisplayOptionInt;
 
@@ -56,6 +57,7 @@ public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity
 		mContext = context;
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mProfileImageLoader = application.getImageLoaderWrapper();
+		configBaseAdapter(context, this);
 	}
 
 	@Override

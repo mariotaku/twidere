@@ -63,6 +63,14 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 		return getTwidereApplication() != null ? getTwidereApplication().getTwitterWrapper() : null;
 	}
 
+	public boolean isDialogMode() {
+		if (this instanceof BaseDialogWhenLargeActivity) {
+			final BaseDialogWhenLargeActivity a = (BaseDialogWhenLargeActivity) this;
+			return !a.shouldDisableDialogWhenLargeMode() && getResources().getBoolean(R.bool.is_dialog_when_large);
+		}
+		return false;
+	}
+
 	public boolean isOnTop() {
 		return mIsOnTop;
 	}
@@ -92,14 +100,6 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 
 	protected boolean isDarkTheme() {
 		return mIsDarkTheme;
-	}
-
-	protected boolean isDialogMode() {
-		if (this instanceof BaseDialogWhenLargeActivity) {
-			final BaseDialogWhenLargeActivity a = (BaseDialogWhenLargeActivity) this;
-			return !a.shouldDisableDialogWhenLargeMode() && getResources().getBoolean(R.bool.is_dialog_when_large);
-		}
-		return false;
 	}
 
 	protected boolean isHardwareAccelerationChanged() {

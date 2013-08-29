@@ -19,8 +19,11 @@
 
 package org.mariotaku.twidere.util;
 
+import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITTER_PROFILE_IMAGES;
+import static org.mariotaku.twidere.util.TwidereLinkify.TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES;
 import static org.mariotaku.twidere.util.Utils.getImageLoaderHttpClient;
 import static org.mariotaku.twidere.util.Utils.getProxy;
+import static org.mariotaku.twidere.util.Utils.replaceLast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -108,7 +111,11 @@ public class TwidereImageDownloader implements ImageDownloader, Constants {
 				is = new ContentLengthInputStream(resp.asStream(), (int) resp.getContentLength());
 			}
 		} catch (final TwitterException e) {
-			throw new IOException(e.getMessage());
+			if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(uri_string).matches() && !uri_string.contains("_normal."))
+				return getStream(replaceLast(uri_string, "_" + TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES, "_normal"),
+						extras);
+			throw new IOException(String.format("Error downloading image %s, error code: %d", uri_string,
+					e.getStatusCode()));
 		}
 		return is;
 	}

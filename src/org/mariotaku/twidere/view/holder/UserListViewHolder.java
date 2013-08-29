@@ -28,14 +28,14 @@ import android.widget.TextView;
 public class UserListViewHolder {
 
 	public final ImageView profile_image;
-	public final TextView name, description, owner;
+	public final TextView name, description, created_by;
 	private float text_size;
 
 	public UserListViewHolder(final View view) {
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		name = (TextView) view.findViewById(R.id.name);
 		description = (TextView) view.findViewById(R.id.description);
-		owner = (TextView) view.findViewById(R.id.owner);
+		created_by = (TextView) view.findViewById(R.id.created_by);
 	}
 
 	public void setTextSize(final float text_size) {
@@ -43,7 +43,7 @@ public class UserListViewHolder {
 			this.text_size = text_size;
 			description.setTextSize(text_size);
 			name.setTextSize(text_size * 1.05f);
-			owner.setTextSize(text_size * 0.65f);
+			created_by.setTextSize(text_size * 0.65f);
 		}
 	}
 

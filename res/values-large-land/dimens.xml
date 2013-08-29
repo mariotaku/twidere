@@ -2,5 +2,6 @@
 <resources>
 
 	<dimen name="pane_spacing_left">400dp</dimen>
+	<dimen name="pane_spacing_right">400dp</dimen>
 
 </resources>

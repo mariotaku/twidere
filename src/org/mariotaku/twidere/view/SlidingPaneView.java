@@ -237,7 +237,7 @@ public class SlidingPaneView extends ViewGroup {
 		return mShadowWidth;
 	}
 
-	public int getSpacingWidth() {
+	public int getRightSpacingWidth() {
 		return mRightSpacing;
 	}
 
@@ -269,8 +269,6 @@ public class SlidingPaneView extends ViewGroup {
 
 		mController.mIsRightPaneShown = ss.mIsRightPaneShown;
 
-		mRightSpacing = ss.mSpacing;
-		mLeftSpacing = ss.mLeftPaneSpacing;
 		mShadowWidth = ss.mShadowWidth;
 		mFlingDuration = ss.mFlingDuration;
 		mFadeType = ss.mFadeType;
@@ -286,8 +284,6 @@ public class SlidingPaneView extends ViewGroup {
 		final Parcelable superState = super.onSaveInstanceState();
 		final SavedState ss = new SavedState(superState);
 		ss.mIsRightPaneShown = isContentShown();
-		ss.mSpacing = getSpacingWidth();
-		ss.mLeftPaneSpacing = getLeftPaneSpacingWidth();
 		ss.mIsShadowVisible = isShadowVisible();
 		ss.mShadowWidth = getShadowWidth();
 		ss.mFlingDuration = getFlingDuration();
@@ -514,16 +510,6 @@ public class SlidingPaneView extends ViewGroup {
 		private boolean mIsRightPaneShown;
 
 		/**
-		 * Value of spacing to use.
-		 */
-		private int mSpacing;
-
-		/**
-		 * Value of actions container spacing to use.
-		 */
-		private int mLeftPaneSpacing;
-
-		/**
 		 * Indicates whether shadow is visible.
 		 */
 		private boolean mIsShadowVisible;
@@ -567,8 +553,6 @@ public class SlidingPaneView extends ViewGroup {
 			super(in);
 
 			mIsRightPaneShown = in.readInt() == 1;
-			mSpacing = in.readInt();
-			mLeftPaneSpacing = in.readInt();
 			mIsShadowVisible = in.readInt() == 1;
 			mShadowWidth = in.readInt();
 			mFlingDuration = in.readInt();
@@ -581,8 +565,6 @@ public class SlidingPaneView extends ViewGroup {
 			super.writeToParcel(out, flags);
 
 			out.writeInt(mIsRightPaneShown ? 1 : 0);
-			out.writeInt(mSpacing);
-			out.writeInt(mLeftPaneSpacing);
 			out.writeInt(mIsShadowVisible ? 1 : 0);
 			out.writeInt(mShadowWidth);
 			out.writeInt(mFlingDuration);

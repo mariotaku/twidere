@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.adapter;
 
+import static org.mariotaku.twidere.util.Utils.configBaseAdapter;
+import static org.mariotaku.twidere.util.Utils.getNameDisplayOptionInt;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
 import java.util.List;
@@ -32,6 +34,7 @@ import org.mariotaku.twidere.view.holder.UserListViewHolder;
 
 import android.app.Activity;
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -44,12 +47,14 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 	private boolean mDisplayProfileImage, mMultiSelectEnabled;
 
 	private float mTextSize;
+	private boolean mDisplayName;
 
 	public UserListsAdapter(final Context context) {
 		super(context, R.layout.user_list_list_item);
 		mContext = context;
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mProfileImageLoader = application.getImageLoaderWrapper();
+		configBaseAdapter(context, this);
 	}
 
 	public void appendData(final List<ParcelableUserList> data) {
@@ -74,9 +79,11 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 			view.setTag(holder);
 		}
 		final ParcelableUserList user_list = getItem(position);
+		final String created_by = mDisplayName ? user_list.user_name : "@" + user_list.user_screen_name;
 		holder.setTextSize(mTextSize);
-		holder.name.setText("@" + user_list.user_screen_name + "/" + user_list.name);
-		holder.owner.setText(user_list.user_name);
+		holder.name.setText(user_list.name);
+		holder.created_by.setText(mContext.getString(R.string.created_by, created_by));
+		holder.description.setVisibility(TextUtils.isEmpty(user_list.description) ? View.GONE : View.VISIBLE);
 		holder.description.setText(user_list.description);
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
@@ -131,7 +138,11 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 
 	@Override
 	public void setNameDisplayOption(final String option) {
-		// TODO: Implement this method
+		final int option_int = getNameDisplayOptionInt(option);
+		final boolean display_name = NAME_DISPLAY_OPTION_CODE_SCREEN_NAME != option_int;
+		if (display_name == mDisplayName) return;
+		mDisplayName = display_name;
+		notifyDataSetChanged();
 	}
 
 	@Override

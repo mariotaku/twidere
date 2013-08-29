@@ -150,15 +150,15 @@ public final class MessagesManager implements Constants {
 
 	private Activity getBestActivity() {
 		for (final Activity activity : mMessageCallbacks) {
-			if (activity instanceof HomeActivity) {
-				final HomeActivity home = (HomeActivity) activity;
-				if (home.isVisible()) return home;
+			if (activity instanceof BaseActivity) {
+				final BaseActivity base = (BaseActivity) activity;
+				if (base.isOnTop() && !base.isDialogMode()) return base;
 			}
 		}
 		for (final Activity activity : mMessageCallbacks) {
-			if (activity instanceof BaseActivity) {
-				final BaseActivity base = (BaseActivity) activity;
-				if (base.isOnTop()) return base;
+			if (activity instanceof HomeActivity) {
+				final HomeActivity home = (HomeActivity) activity;
+				if (home.isVisible()) return home;
 			}
 		}
 		for (final Activity activity : mMessageCallbacks)

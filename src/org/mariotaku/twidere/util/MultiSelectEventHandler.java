@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.activity;
+package org.mariotaku.twidere.util;
 
 import static org.mariotaku.twidere.util.ContentResolverUtils.bulkDelete;
 import static org.mariotaku.twidere.util.ContentResolverUtils.bulkInsert;
@@ -28,14 +28,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.mariotaku.actionbarcompat.ActionMode;
+import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.BaseActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
-import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import org.mariotaku.twidere.util.MultiSelectManager;
-import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
@@ -53,7 +52,7 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 
 @SuppressLint("Registered")
-public class MultiSelectActivity extends DualPaneActivity implements ActionMode.Callback, MultiSelectManager.Callback {
+public class MultiSelectEventHandler implements Constants, ActionMode.Callback, MultiSelectManager.Callback {
 
 	private TwidereApplication mApplication;
 
@@ -62,6 +61,36 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 	private MultiSelectManager mMultiSelectManager;
 
 	private ActionMode mActionMode;
+
+	private final BaseActivity mActivity;
+
+	public MultiSelectEventHandler(final BaseActivity activity) {
+		mActivity = activity;
+	}
+
+	/**
+	 * Call before super.onCreate
+	 */
+	public void dispatchOnCreate() {
+		mApplication = mActivity.getTwidereApplication();
+		mTwitterWrapper = mApplication.getTwitterWrapper();
+		mMultiSelectManager = mApplication.getMultiSelectManager();
+	}
+
+	/**
+	 * Call after super.onStart
+	 */
+	public void dispatchOnStart() {
+		mMultiSelectManager.registerCallback(this);
+		updateMultiSelectState();
+	}
+
+	/**
+	 * Call before super.onStop
+	 */
+	public void dispatchOnStop() {
+		mMultiSelectManager.unregisterCallback(this);
+	}
 
 	@Override
 	public boolean onActionItemClicked(final ActionMode mode, final MenuItem item) {
@@ -72,7 +101,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 				final Extractor extractor = new Extractor();
 				final Intent intent = new Intent(INTENT_ACTION_REPLY_MULTIPLE);
 				final Bundle bundle = new Bundle();
-				final String[] account_names = getAccountScreenNames(this);
+				final String[] account_names = getAccountScreenNames(mActivity);
 				final NoDuplicatesArrayList<String> all_mentions = new NoDuplicatesArrayList<String>();
 				for (final Object object : selected_items) {
 					if (object instanceof ParcelableStatus) {
@@ -97,12 +126,12 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 				bundle.putStringArray(INTENT_KEY_SCREEN_NAMES, all_mentions.toArray(new String[all_mentions.size()]));
 				intent.putExtras(bundle);
 				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				startActivity(intent);
+				mActivity.startActivity(intent);
 				mode.finish();
 				break;
 			}
 			case MENU_MUTE_USER: {
-				final ContentResolver resolver = getContentResolver();
+				final ContentResolver resolver = mActivity.getContentResolver();
 				final Uri uri = Filters.Users.CONTENT_URI;
 				final ArrayList<ContentValues> values_list = new ArrayList<ContentValues>();
 				final List<String> names_list = new NoDuplicatesArrayList<String>();
@@ -124,9 +153,9 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 					values_list.add(values);
 				}
 				bulkInsert(resolver, uri, values_list);
-				Crouton.showText(this, R.string.users_muted, CroutonStyle.INFO);
+				Crouton.showText(mActivity, R.string.users_muted, CroutonStyle.INFO);
 				mode.finish();
-				sendBroadcast(new Intent(BROADCAST_MULTI_MUTESTATE_CHANGED));
+				mActivity.sendBroadcast(new Intent(BROADCAST_MULTI_MUTESTATE_CHANGED));
 				break;
 			}
 			case MENU_BLOCK: {
@@ -153,7 +182,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 
 	@Override
 	public boolean onCreateActionMode(final ActionMode mode, final Menu menu) {
-		new MenuInflater(this).inflate(R.menu.action_multi_select, menu);
+		new MenuInflater(mActivity).inflate(R.menu.action_multi_select, menu);
 		return true;
 	}
 
@@ -185,35 +214,13 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 		return true;
 	}
 
-	/** Called when the activity is first created. */
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		mApplication = getTwidereApplication();
-		mTwitterWrapper = mApplication.getTwitterWrapper();
-		mMultiSelectManager = mApplication.getMultiSelectManager();
-		super.onCreate(savedInstanceState);
-	}
-
-	@Override
-	protected void onStart() {
-		super.onStart();
-		mMultiSelectManager.registerCallback(this);
-		updateMultiSelectState();
-	}
-
-	@Override
-	protected void onStop() {
-		mMultiSelectManager.unregisterCallback(this);
-		super.onStop();
-	}
-
 	private void updateMultiSelectState() {
 		if (mMultiSelectManager.isActive()) {
 			if (mActionMode == null) {
-				mActionMode = startActionMode(this);
+				mActionMode = mActivity.startActionMode(this);
 			}
 			final int count = mMultiSelectManager.getCount();
-			mActionMode.setTitle(getResources().getQuantityString(R.plurals.Nitems_selected, count, count));
+			mActionMode.setTitle(mActivity.getResources().getQuantityString(R.plurals.Nitems_selected, count, count));
 		} else {
 			if (mActionMode != null) {
 				mActionMode.finish();

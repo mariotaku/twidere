@@ -63,6 +63,7 @@ import org.mariotaku.twidere.activity.CameraCropActivity;
 import org.mariotaku.twidere.activity.DualPaneActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.activity.ImageViewerActivity;
+import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.ActivitiesAboutMeFragment;
 import org.mariotaku.twidere.fragment.ActivitiesByFriendsFragment;
@@ -562,6 +563,14 @@ public final class Utils implements Constants {
 			return false;
 		}
 		return true;
+	}
+
+	public static void configBaseAdapter(final Context context, final IBaseAdapter adapter) {
+		if (context == null) return;
+		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		adapter.setDisplayProfileImage(pref.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true));
+		adapter.setNameDisplayOption(pref.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH));
+		adapter.setTextSize(pref.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE));
 	}
 
 	public static void copyStream(final InputStream is, final OutputStream os) throws IOException {
@@ -2097,6 +2106,7 @@ public final class Utils implements Constants {
 		values.put(Accounts.SCREEN_NAME, user.getScreenName());
 		values.put(Accounts.NAME, user.getName());
 		values.put(Accounts.PROFILE_IMAGE_URL, ParseUtils.parseString(user.getProfileImageUrlHttps()));
+		values.put(Accounts.PROFILE_BANNER_URL, ParseUtils.parseString(user.getProfileBannerImageUrl()));
 		values.put(Accounts.USER_COLOR, color);
 		values.put(Accounts.IS_ACTIVATED, 1);
 		values.put(Accounts.REST_BASE_URL, conf.getRestBaseURL());

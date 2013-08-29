@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.Constants;
@@ -27,10 +28,10 @@ import org.mariotaku.twidere.model.ParcelableUser;
 
 public class MultiSelectManager implements Constants {
 
-	private final ItemsList mSelectedItems = new ItemsList();
 	private final NoDuplicatesArrayList<Long> mSelectedStatusIds = new NoDuplicatesArrayList<Long>();
 	private final NoDuplicatesArrayList<Long> mSelectedUserIds = new NoDuplicatesArrayList<Long>();
 	private final NoDuplicatesArrayList<Callback> mCallbacks = new NoDuplicatesArrayList<Callback>();
+	private final ItemsList mSelectedItems = new ItemsList(this);
 
 	public void clearSelectedItems() {
 		mSelectedItems.clear();
@@ -95,6 +96,26 @@ public class MultiSelectManager implements Constants {
 		}
 	}
 
+	public static long getFirstSelectAccountId(final List<Object> selected_items) {
+		final Object obj = selected_items.get(0);
+		if (obj instanceof ParcelableUser)
+			return ((ParcelableUser) obj).account_id;
+		else if (obj instanceof ParcelableStatus) return ((ParcelableStatus) obj).account_id;
+		return -1;
+	}
+
+	public static long[] getSelectedUserIds(final List<Object> selected_items) {
+		final ArrayList<Long> ids_list = new ArrayList<Long>();
+		for (final Object item : selected_items) {
+			if (item instanceof ParcelableUser) {
+				ids_list.add(((ParcelableUser) item).id);
+			} else if (item instanceof ParcelableStatus) {
+				ids_list.add(((ParcelableStatus) item).user_id);
+			}
+		}
+		return ArrayUtils.fromList(ids_list);
+	}
+
 	public static interface Callback {
 
 		public void onItemsCleared();
@@ -106,42 +127,48 @@ public class MultiSelectManager implements Constants {
 	}
 
 	@SuppressWarnings("serial")
-	class ItemsList extends NoDuplicatesArrayList<Object> {
+	static class ItemsList extends NoDuplicatesArrayList<Object> {
+
+		private final MultiSelectManager manager;
+
+		ItemsList(final MultiSelectManager manager) {
+			this.manager = manager;
+		}
 
 		@Override
 		public boolean add(final Object object) {
 			if (object instanceof ParcelableStatus) {
-				mSelectedStatusIds.add(((ParcelableStatus) object).id);
+				manager.mSelectedStatusIds.add(((ParcelableStatus) object).id);
 			} else if (object instanceof ParcelableUser) {
-				mSelectedUserIds.add(((ParcelableUser) object).id);
+				manager.mSelectedUserIds.add(((ParcelableUser) object).id);
 			} else
 				return false;
 			final boolean ret = super.add(object);
-			onItemSelected(object);
+			manager.onItemSelected(object);
 			return ret;
 		}
 
 		@Override
 		public void clear() {
 			super.clear();
-			mSelectedStatusIds.clear();
-			mSelectedUserIds.clear();
-			onItemsCleared();
+			manager.mSelectedStatusIds.clear();
+			manager.mSelectedUserIds.clear();
+			manager.onItemsCleared();
 		}
 
 		@Override
 		public boolean remove(final Object object) {
 			final boolean ret = super.remove(object);
 			if (object instanceof ParcelableStatus) {
-				mSelectedStatusIds.remove(((ParcelableStatus) object).id);
+				manager.mSelectedStatusIds.remove(((ParcelableStatus) object).id);
 			} else if (object instanceof ParcelableUser) {
-				mSelectedUserIds.remove(((ParcelableUser) object).id);
+				manager.mSelectedUserIds.remove(((ParcelableUser) object).id);
 			}
 			if (ret) {
 				if (isEmpty()) {
-					onItemsCleared();
+					manager.onItemsCleared();
 				} else {
-					onItemUnselected(object);
+					manager.onItemUnselected(object);
 				}
 			}
 			return ret;

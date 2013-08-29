@@ -343,11 +343,10 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 		if (isMyAccount(getActivity(), user.id)) {
 			final ContentResolver resolver = getContentResolver();
 			final ContentValues values = new ContentValues();
-			if (user.profile_image_url != null) {
-				values.put(Accounts.PROFILE_IMAGE_URL, user.profile_image_url);
-			}
 			values.put(Accounts.NAME, user.name);
 			values.put(Accounts.SCREEN_NAME, user.screen_name);
+			values.put(Accounts.PROFILE_IMAGE_URL, user.profile_image_url);
+			values.put(Accounts.PROFILE_BANNER_URL, user.profile_banner_url);
 			final String where = Accounts.ACCOUNT_ID + " = " + user.id;
 			resolver.update(Accounts.CONTENT_URI, values, where, null);
 		}

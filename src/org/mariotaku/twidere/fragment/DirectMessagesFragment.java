@@ -30,6 +30,7 @@ import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.AsyncTask;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.MultiSelectManager;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -55,12 +56,13 @@ import android.widget.ListView;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 
 public class DirectMessagesFragment extends BasePullToRefreshListFragment implements LoaderCallbacks<Cursor>,
-		OnScrollListener, OnTouchListener {
+		OnScrollListener, OnTouchListener, MultiSelectManager.Callback {
 
 	private static final long TICKER_DURATION = 5000L;
 
 	private TwidereApplication mApplication;
 	private AsyncTwitterWrapper mTwitterWrapper;
+	private MultiSelectManager mMultiSelectManager;
 	private SharedPreferences mPreferences;
 	private Handler mHandler;
 	private Runnable mTicker;
@@ -103,6 +105,7 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 		super.onActivityCreated(savedInstanceState);
 		mApplication = getApplication();
 		mTwitterWrapper.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
+		mMultiSelectManager = getMultiSelectManager();
 		mAdapter = new DirectMessagesEntryAdapter(getActivity());
 
 		setListAdapter(mAdapter);
@@ -121,6 +124,21 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 		final String where = DirectMessages.ACCOUNT_ID + " IN ("
 				+ ArrayUtils.toString(getActivatedAccountIds(getActivity()), ',', false) + ")";
 		return new CursorLoader(getActivity(), uri, null, where, null, null);
+	}
+
+	@Override
+	public void onItemsCleared() {
+		mAdapter.setMultiSelectEnabled(false);
+	}
+
+	@Override
+	public void onItemSelected(final Object item) {
+		mAdapter.setMultiSelectEnabled(true);
+	}
+
+	@Override
+	public void onItemUnselected(final Object item) {
+		mAdapter.notifyDataSetChanged();
 	}
 
 	@Override
@@ -224,6 +242,7 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 		mAdapter.setTextSize(text_size);
 		mAdapter.setShowAbsoluteTime(show_absolute_time);
 		mAdapter.setNameDisplayOption(name_display_option);
+		mAdapter.setMultiSelectEnabled(mMultiSelectManager.isActive());
 	}
 
 	@Override
@@ -288,11 +307,13 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 		} else {
 			onRefreshComplete();
 		}
+		mMultiSelectManager.registerCallback(this);
 	}
 
 	@Override
 	public void onStop() {
 		unregisterReceiver(mStatusReceiver);
+		mMultiSelectManager.unregisterCallback(this);
 		mTickerStopped = true;
 		super.onStop();
 	}

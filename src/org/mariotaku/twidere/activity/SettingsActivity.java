@@ -175,7 +175,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 
 	@Override
 	protected boolean shouldForceEnableDualPaneMode() {
-		return getResources().getBoolean(R.bool.default_dual_pane_mode);
+		return getResources().getBoolean(R.bool.is_large_screen);
 	}
 
 	void showFragment(final Fragment fragment) {

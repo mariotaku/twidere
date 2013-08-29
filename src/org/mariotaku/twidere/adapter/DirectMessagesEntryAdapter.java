@@ -28,6 +28,7 @@ import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.Conversat
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_SCREEN_NAME;
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_TEXT;
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
+import static org.mariotaku.twidere.util.Utils.configBaseAdapter;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
@@ -60,6 +61,7 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 	public DirectMessagesEntryAdapter(final Context context) {
 		super(context, R.layout.direct_messages_entry_item, null, new String[0], new int[0], 0);
 		mLazyImageLoader = TwidereApplication.getInstance(context).getImageLoaderWrapper();
+		configBaseAdapter(context, this);
 	}
 
 	@Override

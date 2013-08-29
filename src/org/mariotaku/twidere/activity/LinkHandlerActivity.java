@@ -46,6 +46,7 @@ import org.mariotaku.twidere.fragment.UserMentionsFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
 import org.mariotaku.twidere.fragment.UsersListFragment;
+import org.mariotaku.twidere.util.MultiSelectEventHandler;
 import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.ViewAccessor;
 
@@ -55,8 +56,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
@@ -64,11 +63,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 
-public class LinkHandlerActivity extends MultiSelectActivity {
+public class LinkHandlerActivity extends BaseDialogWhenLargeActivity {
 
 	private SwipeBackLayout mSwipeBackLayout;
 
 	private Fragment mFragment;
+
+	private MultiSelectEventHandler mMultiSelectHandler;
 
 	@Override
 	public View findViewById(final int id) {
@@ -100,22 +101,8 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME: {
-				final FragmentManager fm = getSupportFragmentManager();
-				if (isDualPaneMode()) {
-					final int count = fm.getBackStackEntryCount();
-					if (count == 0) {
-						NavUtils.navigateUpFromSameTask(this);
-						// onBackPressed();
-					} else if (!FragmentManagerTrojan.isStateSaved(fm)) {
-						for (int i = 0; i < count; i++) {
-							fm.popBackStackImmediate();
-						}
-						setSupportProgressBarIndeterminateVisibility(false);
-					}
-				} else {
-					NavUtils.navigateUpFromSameTask(this);
-					// onBackPressed();
-				}
+				NavUtils.navigateUpFromSameTask(this);
+				// onBackPressed();
 				break;
 			}
 		}
@@ -133,26 +120,18 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 		return R.style.Theme_Twidere_DialogWhenLarge;
 	}
 
-	// This simply disables dual pane layout.
-	@Override
-	protected int getDualPaneLayoutRes() {
-		return getNormalLayoutRes();
-	}
-
 	@Override
 	protected int getLightThemeRes() {
 		return R.style.Theme_Twidere_Light_DialogWhenLarge;
 	}
 
 	@Override
-	protected int getNormalLayoutRes() {
-		return R.layout.link_handler;
-	}
-
-	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		mMultiSelectHandler = new MultiSelectEventHandler(this);
+		mMultiSelectHandler.dispatchOnCreate();
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.link_handler);
 		final Window w = getWindow();
 		if (!isDialogMode()) {
 			w.setBackgroundDrawable(new ColorDrawable(0));
@@ -166,13 +145,9 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 		if (data != null) {
 			if (setFragment(data)) {
 				if (mFragment != null) {
-					if (isDualPaneMode()) {
-						showFragment(mFragment, true);
-					} else {
-						final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-						ft.replace(R.id.main, mFragment);
-						ft.commit();
-					}
+					final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+					ft.replace(R.id.main, mFragment);
+					ft.commit();
 					return;
 				} else {
 					finish();
@@ -193,16 +168,14 @@ public class LinkHandlerActivity extends MultiSelectActivity {
 
 	@Override
 	protected void onStart() {
-		if (isDualPaneMode() && mFragment != null) {
-			final FragmentManager fm = getSupportFragmentManager();
-			final Fragment f = fm.findFragmentById(R.id.main);
-			if (f != null) {
-				final FragmentTransaction ft = fm.beginTransaction();
-				ft.remove(f);
-				ft.commit();
-			}
-		}
 		super.onStart();
+		mMultiSelectHandler.dispatchOnStart();
+	}
+
+	@Override
+	protected void onStop() {
+		mMultiSelectHandler.dispatchOnStop();
+		super.onStop();
 	}
 
 	@Override

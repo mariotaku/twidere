@@ -19,23 +19,10 @@
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_marginLeft="8dp"
 		android:layout_toRightOf="@+id/profile_image"
-		
 		android:singleLine="true"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorPrimary"
 		android:textStyle="bold"/>
-
-	<TextView
-		android:id="@+id/owner"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignLeft="@+id/name"
-		android:layout_alignWithParentIfMissing="true"
-		android:layout_below="@+id/name"
-		android:layout_marginRight="8dp"
-		android:drawablePadding="4dp"
-		
-		android:textColor="?android:attr/textColorSecondary"/>
 
 	<TextView
 		android:id="@+id/description"
@@ -44,9 +31,19 @@
 		android:layout_alignLeft="@+id/name"
 		android:layout_alignParentRight="true"
 		android:layout_alignWithParentIfMissing="true"
-		android:layout_below="@+id/owner"
-		
+		android:layout_below="@+id/name"
 		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textColor="?android:attr/textColorSecondary"/>
+
+	<TextView
+		android:id="@+id/created_by"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignLeft="@+id/name"
+		android:layout_alignWithParentIfMissing="true"
+		android:layout_below="@+id/description"
+		android:layout_marginRight="8dp"
+		android:drawablePadding="4dp"
 		android:textColor="?android:attr/textColorSecondary"/>
 
 </RelativeLayout>
