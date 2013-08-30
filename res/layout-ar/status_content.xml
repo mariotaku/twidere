@@ -6,10 +6,10 @@
 
 	<org.mariotaku.twidere.view.ColorLabelRelativeLayout
 		android:id="@+id/profile"
+		style="?selectableViewStyle"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:padding="6dp"
-		style="?selectableViewStyle">
+		android:padding="6dp">
 
 		<ImageView
 			android:id="@+id/profile_image"
@@ -74,6 +74,7 @@
 
 	<TextView
 		android:id="@+id/in_reply_to"
+		style="?selectableViewStyle"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:drawableLeft="@drawable/ic_indicator_reply"
@@ -82,8 +83,7 @@
 		android:padding="8dp"
 		android:singleLine="true"
 		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:visibility="gone"
-		style="?selectableViewStyle"/>
+		android:visibility="gone"/>
 
 	<TextView
 		android:id="@+id/text"
@@ -99,6 +99,7 @@
 
 	<TextView
 		android:id="@+id/retweet_view"
+		style="?selectableViewStyle"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:drawableLeft="@drawable/ic_indicator_retweet"
@@ -107,30 +108,27 @@
 		android:padding="8dp"
 		android:singleLine="true"
 		android:text="@string/users_retweeted_this"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		style="?selectableViewStyle"/>
+		android:textAppearance="?android:attr/textAppearanceSmall"/>
 
 	<TextView
 		android:id="@+id/location_view"
+		style="?selectableViewStyle"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:drawableLeft="@drawable/ic_indicator_has_location"
 		android:drawablePadding="4dp"
 		android:gravity="center_vertical|right"
-		
 		android:padding="8dp"
 		android:singleLine="true"
 		android:text="@string/view_map"
 		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:visibility="gone"
-		style="?selectableViewStyle"/>
+		android:visibility="gone"/>
 
 	<TextView
 		android:id="@+id/time_source"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:gravity="right"
-		
 		android:padding="8dp"
 		android:textAppearance="?android:attr/textAppearanceSmall"/>
 
