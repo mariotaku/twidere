@@ -21,8 +21,10 @@ package org.mariotaku.twidere.util;
 
 import static org.mariotaku.twidere.util.TwidereLinkify.PATTERN_TWITTER_PROFILE_IMAGES;
 import static org.mariotaku.twidere.util.TwidereLinkify.TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES;
+import static org.mariotaku.twidere.util.Utils.generateBrowserUserAgent;
 import static org.mariotaku.twidere.util.Utils.getImageLoaderHttpClient;
 import static org.mariotaku.twidere.util.Utils.getProxy;
+import static org.mariotaku.twidere.util.Utils.getRedirectedHttpResponse;
 import static org.mariotaku.twidere.util.Utils.replaceLast;
 
 import java.io.IOException;
@@ -73,15 +75,16 @@ public class TwidereImageDownloader implements ImageDownloader, Constants {
 		IGNORE_ERROR_SSL_FACTORY = factory;
 	}
 
-	private final Context context;
-	private final ContentResolver resolver;
-	private HttpClientWrapper client;
-	private Proxy proxy;
-	private boolean fast_image_loading;
+	private final Context mContext;
+	private final ContentResolver mResolver;
+	private HttpClientWrapper mClient;
+	private Proxy mProxy;
+	private boolean mFastImageLoading;
+	private String mUserAgent;
 
 	public TwidereImageDownloader(final Context context) {
-		this.context = context;
-		resolver = context.getContentResolver();
+		mContext = context;
+		mResolver = context.getContentResolver();
 		initHttpClient();
 	}
 
@@ -93,10 +96,10 @@ public class TwidereImageDownloader implements ImageDownloader, Constants {
 		final String scheme = uri.getScheme();
 		try {
 			if (ContentResolver.SCHEME_ANDROID_RESOURCE.equals(scheme) || ContentResolver.SCHEME_CONTENT.equals(scheme)
-					|| ContentResolver.SCHEME_FILE.equals(scheme)) return resolver.openInputStream(uri);
-			if (fast_image_loading) {
+					|| ContentResolver.SCHEME_FILE.equals(scheme)) return mResolver.openInputStream(uri);
+			if (mFastImageLoading) {
 				final URL url = new URL(uri_string);
-				final HttpURLConnection conn = (HttpURLConnection) (proxy != null ? url.openConnection(proxy) : url
+				final HttpURLConnection conn = (HttpURLConnection) (mProxy != null ? url.openConnection(mProxy) : url
 						.openConnection());
 				if (conn instanceof HttpsURLConnection) {
 					((HttpsURLConnection) conn).setHostnameVerifier(ALLOW_ALL_HOSTNAME_VERIFIER);
@@ -104,10 +107,11 @@ public class TwidereImageDownloader implements ImageDownloader, Constants {
 						((HttpsURLConnection) conn).setSSLSocketFactory(IGNORE_ERROR_SSL_FACTORY);
 					}
 				}
+				conn.setRequestProperty("User-Agent", mUserAgent);
 				conn.setInstanceFollowRedirects(true);
 				is = new ContentLengthInputStream(conn.getInputStream(), conn.getContentLength());
 			} else {
-				final HttpResponse resp = Utils.getRedirectedHttpResponse(client, uri_string);
+				final HttpResponse resp = getRedirectedHttpResponse(mClient, uri_string);
 				is = new ContentLengthInputStream(resp.asStream(), (int) resp.getContentLength());
 			}
 		} catch (final TwitterException e) {
@@ -121,10 +125,11 @@ public class TwidereImageDownloader implements ImageDownloader, Constants {
 	}
 
 	public void initHttpClient() {
-		client = getImageLoaderHttpClient(context);
-		fast_image_loading = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getBoolean(
+		mClient = getImageLoaderHttpClient(mContext);
+		mFastImageLoading = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getBoolean(
 				PREFERENCE_KEY_FAST_IMAGE_LOADING, true);
-		proxy = getProxy(context);
+		mProxy = getProxy(mContext);
+		mUserAgent = generateBrowserUserAgent();
 	}
 
 	private static final class AllowAllHostnameVerifier implements HostnameVerifier {

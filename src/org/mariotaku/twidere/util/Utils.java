@@ -194,6 +194,8 @@ import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 
 public final class Utils implements Constants {
 
+	private static final String UA_TEMPLATE = "Mozilla/5.0 (Linux; Android %s; %s Build/%s) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.111 Safari/537.36";
+
 	private static final UriMatcher CONTENT_PROVIDER_URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 	private static final UriMatcher LINK_HANDLER_URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
@@ -819,6 +821,10 @@ public final class Utils implements Constants {
 		return builder.build().replace("\n", "<br/>");
 	}
 
+	public static String generateBrowserUserAgent() {
+		return String.format(UA_TEMPLATE, Build.VERSION.RELEASE, Build.MODEL, Build.ID);
+	}
+
 	public static int getAccountColor(final Context context, final long account_id) {
 		if (context == null) return Color.TRANSPARENT;
 		Integer color = sAccountColors.get(account_id);
@@ -1079,11 +1085,6 @@ public final class Utils implements Constants {
 		return null;
 	}
 
-	public static String getBrowserUserAgent(final Context context) {
-		if (context == null) return null;
-		return TwidereApplication.getInstance(context).getBrowserUserAgent();
-	}
-
 	public static Bitmap getColorPreviewBitmap(final Context context, final int color) {
 		if (context == null) return null;
 		final float density = context.getResources().getDisplayMetrics().density;
@@ -1165,10 +1166,12 @@ public final class Utils implements Constants {
 	}
 
 	public static HttpClientWrapper getHttpClient(final int timeout_millis, final boolean ignore_ssl_error,
-			final Proxy proxy, final HostAddressResolver resolver, final String user_agent) {
+			final Proxy proxy, final HostAddressResolver resolver, final String user_agent,
+			final boolean twitter_client_header) {
 		final ConfigurationBuilder cb = new ConfigurationBuilder();
 		cb.setHttpConnectionTimeout(timeout_millis);
 		cb.setIgnoreSSLError(ignore_ssl_error);
+		cb.setIncludeTwitterClientHeader(twitter_client_header);
 		if (proxy != null && !Proxy.NO_PROXY.equals(proxy)) {
 			final SocketAddress address = proxy.address();
 			if (address instanceof InetSocketAddress) {
@@ -1189,9 +1192,9 @@ public final class Utils implements Constants {
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final int timeout_millis = prefs.getInt(PREFERENCE_KEY_CONNECTION_TIMEOUT, 10000) * 1000;
 		final Proxy proxy = getProxy(context);
-		final String user_agent = getBrowserUserAgent(context);
+		final String user_agent = generateBrowserUserAgent();
 		final HostAddressResolver resolver = TwidereApplication.getInstance(context).getHostAddressResolver();
-		return getHttpClient(timeout_millis, true, proxy, resolver, user_agent);
+		return getHttpClient(timeout_millis, true, proxy, resolver, user_agent, false);
 	}
 
 	public static String getImageMimeType(final File image) {

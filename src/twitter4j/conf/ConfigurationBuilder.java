@@ -162,6 +162,12 @@ public final class ConfigurationBuilder {
 		return this;
 	}
 
+	public ConfigurationBuilder setIncludeTwitterClientHeader(final boolean includeTwitterClientHeader) {
+		checkNotBuilt();
+		configuration.setIncludeTwitterClientHeader(includeTwitterClientHeader);
+		return this;
+	}
+
 	public ConfigurationBuilder setOAuthAccessToken(final String oAuthAccessToken) {
 		checkNotBuilt();
 		configuration.setOAuthAccessToken(oAuthAccessToken);

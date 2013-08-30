@@ -49,7 +49,6 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.webkit.WebView;
 
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -74,15 +73,9 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	private Handler mHandler;
 
-	private String mBrowserUserAgent;
-
 	public AsyncTaskManager getAsyncTaskManager() {
 		if (mAsyncTaskManager != null) return mAsyncTaskManager;
 		return mAsyncTaskManager = AsyncTaskManager.getInstance();
-	}
-
-	public String getBrowserUserAgent() {
-		return mBrowserUserAgent;
 	}
 
 	public Handler getHandler() {
@@ -149,7 +142,6 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		super.onCreate();
 		initializeAsyncTask();
 		GalleryUtils.initialize(this);
-		mBrowserUserAgent = new WebView(this).getSettings().getUserAgentString();
 		if (mPreferences.getBoolean(PREFERENCE_KEY_UCD_DATA_PROFILING, false)) {
 			startService(new Intent(this, UCDService.class));
 		}

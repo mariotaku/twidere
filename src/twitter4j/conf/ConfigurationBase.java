@@ -85,6 +85,8 @@ class ConfigurationBase implements TwitterConstants, Configuration {
 
 	private boolean includeEntitiesEnabled;
 
+	private boolean includeTwitterClientHeader;
+
 	// hidden portion
 	private String clientVersion;
 	private String clientURL;
@@ -157,6 +159,9 @@ class ConfigurationBase implements TwitterConstants, Configuration {
 		if (hostAddressResolver == null) {
 			if (other.hostAddressResolver != null) return false;
 		} else if (!hostAddressResolver.equals(other.hostAddressResolver)) return false;
+		if (httpClientImplementation == null) {
+			if (other.httpClientImplementation != null) return false;
+		} else if (!httpClientImplementation.equals(other.httpClientImplementation)) return false;
 		if (httpConnectionTimeout != other.httpConnectionTimeout) return false;
 		if (httpProxyHost == null) {
 			if (other.httpProxyHost != null) return false;
@@ -174,6 +179,7 @@ class ConfigurationBase implements TwitterConstants, Configuration {
 		if (ignoreSSLError != other.ignoreSSLError) return false;
 		if (includeEntitiesEnabled != other.includeEntitiesEnabled) return false;
 		if (includeRTsEnabled != other.includeRTsEnabled) return false;
+		if (includeTwitterClientHeader != other.includeTwitterClientHeader) return false;
 		if (maxTotalConnections != other.maxTotalConnections) return false;
 		if (oAuthAccessToken == null) {
 			if (other.oAuthAccessToken != null) return false;
@@ -426,6 +432,7 @@ class ConfigurationBase implements TwitterConstants, Configuration {
 		result = prime * result + defaultMaxPerRoute;
 		result = prime * result + (gzipEnabled ? 1231 : 1237);
 		result = prime * result + (hostAddressResolver == null ? 0 : hostAddressResolver.hashCode());
+		result = prime * result + (httpClientImplementation == null ? 0 : httpClientImplementation.hashCode());
 		result = prime * result + httpConnectionTimeout;
 		result = prime * result + (httpProxyHost == null ? 0 : httpProxyHost.hashCode());
 		result = prime * result + (httpProxyPassword == null ? 0 : httpProxyPassword.hashCode());
@@ -437,6 +444,7 @@ class ConfigurationBase implements TwitterConstants, Configuration {
 		result = prime * result + (ignoreSSLError ? 1231 : 1237);
 		result = prime * result + (includeEntitiesEnabled ? 1231 : 1237);
 		result = prime * result + (includeRTsEnabled ? 1231 : 1237);
+		result = prime * result + (includeTwitterClientHeader ? 1231 : 1237);
 		result = prime * result + maxTotalConnections;
 		result = prime * result + (oAuthAccessToken == null ? 0 : oAuthAccessToken.hashCode());
 		result = prime * result + (oAuthAccessTokenSecret == null ? 0 : oAuthAccessTokenSecret.hashCode());
@@ -519,6 +527,30 @@ class ConfigurationBase implements TwitterConstants, Configuration {
 		} else {
 			this.httpClientImplementation = HttpClientImpl.class.getName();
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "ConfigurationBase{debug=" + debug + ", userAgent=" + userAgent + ", user=" + user + ", password="
+				+ password + ", useSSL=" + useSSL + ", ignoreSSLError=" + ignoreSSLError + ", prettyDebug="
+				+ prettyDebug + ", gzipEnabled=" + gzipEnabled + ", httpProxyHost=" + httpProxyHost
+				+ ", httpProxyUser=" + httpProxyUser + ", httpProxyPassword=" + httpProxyPassword + ", httpProxyPort="
+				+ httpProxyPort + ", httpConnectionTimeout=" + httpConnectionTimeout + ", httpReadTimeout="
+				+ httpReadTimeout + ", httpClientImplementation=" + httpClientImplementation + ", httpRetryCount="
+				+ httpRetryCount + ", httpRetryIntervalSeconds=" + httpRetryIntervalSeconds + ", maxTotalConnections="
+				+ maxTotalConnections + ", defaultMaxPerRoute=" + defaultMaxPerRoute + ", oAuthConsumerKey="
+				+ oAuthConsumerKey + ", oAuthConsumerSecret=" + oAuthConsumerSecret + ", oAuthAccessToken="
+				+ oAuthAccessToken + ", oAuthAccessTokenSecret=" + oAuthAccessTokenSecret + ", oAuthRequestTokenURL="
+				+ oAuthRequestTokenURL + ", oAuthAuthorizationURL=" + oAuthAuthorizationURL + ", oAuthAccessTokenURL="
+				+ oAuthAccessTokenURL + ", oAuthAuthenticationURL=" + oAuthAuthenticationURL
+				+ ", signingOAuthRequestTokenURL=" + signingOAuthRequestTokenURL + ", signingOAuthAuthorizationURL="
+				+ signingOAuthAuthorizationURL + ", signingOAuthAccessTokenURL=" + signingOAuthAccessTokenURL
+				+ ", signingOAuthAuthenticationURL=" + signingOAuthAuthenticationURL + ", oAuthBaseURL=" + oAuthBaseURL
+				+ ", signingOAuthBaseURL=" + signingOAuthBaseURL + ", signingRestBaseURL=" + signingRestBaseURL
+				+ ", restBaseURL=" + restBaseURL + ", includeRTsEnabled=" + includeRTsEnabled
+				+ ", includeEntitiesEnabled=" + includeEntitiesEnabled + ", includeTwitterClientHeader="
+				+ includeTwitterClientHeader + ", clientVersion=" + clientVersion + ", clientURL=" + clientURL
+				+ ", clientName=" + clientName + ", hostAddressResolver=" + hostAddressResolver + "}";
 	}
 
 	protected void cacheInstance() {
@@ -607,6 +639,11 @@ class ConfigurationBase implements TwitterConstants, Configuration {
 
 	protected final void setIncludeRTsEnbled(final boolean enabled) {
 		includeRTsEnabled = enabled;
+	}
+
+	protected final void setIncludeTwitterClientHeader(final boolean includeTwitterClientHeader) {
+		this.includeTwitterClientHeader = includeTwitterClientHeader;
+		initRequestHeaders();
 	}
 
 	protected final void setOAuthAccessToken(final String oAuthAccessToken) {
@@ -752,9 +789,11 @@ class ConfigurationBase implements TwitterConstants, Configuration {
 
 	final void initRequestHeaders() {
 		requestHeaders = new HashMap<String, String>();
-		requestHeaders.put("X-Twitter-Client-Version", getClientVersion());
-		requestHeaders.put("X-Twitter-Client-URL", getClientURL());
-		requestHeaders.put("X-Twitter-Client", getClientName());
+		if (includeTwitterClientHeader) {
+			requestHeaders.put("X-Twitter-Client-Version", getClientVersion());
+			requestHeaders.put("X-Twitter-Client-URL", getClientURL());
+			requestHeaders.put("X-Twitter-Client", getClientName());
+		}
 
 		requestHeaders.put("User-Agent", getUserAgent());
 		if (gzipEnabled) {
