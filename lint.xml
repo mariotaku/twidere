@@ -11,6 +11,7 @@
     <issue id="NamespaceTypo" severity="error" />
     <issue id="NestedScrolling" severity="error" />
     <issue id="NewApi">
+        <ignore path="res/values/holo__styles.xml" />
         <ignore path="src/org/mariotaku/twidere/activity/SettingsDetailsActivity.java" />
     </issue>
     <issue id="PxUsage" severity="error" />

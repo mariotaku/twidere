@@ -156,6 +156,9 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 		if (croutons != null) {
 			croutons.addMessageCallback(this);
 		}
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+			postDelayed(new SetActionBarBackgroundRunnable(), 50);
+		}
 	}
 
 	@Override
@@ -211,5 +214,14 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 		if (mIsSolidColorBackground && shouldSetBackground()) {
 			getWindow().setBackgroundDrawableResource(is_dark_theme ? android.R.color.black : android.R.color.white);
 		}
+	}
+
+	private class SetActionBarBackgroundRunnable implements Runnable {
+
+		@Override
+		public void run() {
+			setActionBarBackground();
+		}
+
 	}
 }

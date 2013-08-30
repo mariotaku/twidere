@@ -93,6 +93,7 @@
 		<item name="android:progressBarStyleInverse">@style/Widget.Holo.ProgressBar.Inverse</item>
 		<item name="android:progressBarStyleSmallInverse">@style/Widget.Holo.ProgressBar.Small.Inverse</item>
 		<item name="android:progressBarStyleLargeInverse">@style/Widget.Holo.ProgressBar.Large.Inverse</item>
+		<item name="android:progressBarStyleHorizontal">@style/Widget.Holo.ProgressBar.Horizontal</item>
 		<item name="android:radioButtonStyle">@style/Widget.Holo.CompoundButton.RadioButton</item>
 		<item name="android:seekBarStyle">@style/Widget.Holo.SeekBar</item>
 		<item name="android:spinnerStyle">@style/Widget.Holo.Spinner</item>

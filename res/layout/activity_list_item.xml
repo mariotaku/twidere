@@ -19,7 +19,6 @@
 		android:layout_marginLeft="4dp"
 		android:layout_toLeftOf="@+id/time"
 		android:layout_toRightOf="@+id/profile_image"
-		
 		android:singleLine="false"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorPrimary"
@@ -33,7 +32,6 @@
 		android:layout_alignParentRight="true"
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_below="@+id/title"
-		
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorSecondary"/>
 
@@ -46,7 +44,6 @@
 		android:layout_alignWithParentIfMissing="true"
 		android:drawablePadding="4dp"
 		android:gravity="center_vertical|right"
-		
 		android:textColor="?android:attr/textColorSecondary"/>
 
 	<LinearLayout
@@ -65,35 +62,35 @@
 			android:layout_width="@dimen/activity_profile_image_size"
 			android:layout_height="@dimen/activity_profile_image_size"
 			android:layout_margin="2dp"
-				android:scaleType="fitCenter"/>
+			android:scaleType="fitCenter"/>
 
 		<ImageView
 			android:id="@+id/activity_profile_image_2"
 			android:layout_width="@dimen/activity_profile_image_size"
 			android:layout_height="@dimen/activity_profile_image_size"
 			android:layout_margin="2dp"
-				android:scaleType="fitCenter"/>
+			android:scaleType="fitCenter"/>
 
 		<ImageView
 			android:id="@+id/activity_profile_image_3"
 			android:layout_width="@dimen/activity_profile_image_size"
 			android:layout_height="@dimen/activity_profile_image_size"
 			android:layout_margin="2dp"
-				android:scaleType="fitCenter"/>
+			android:scaleType="fitCenter"/>
 
 		<ImageView
 			android:id="@+id/activity_profile_image_4"
 			android:layout_width="@dimen/activity_profile_image_size"
 			android:layout_height="@dimen/activity_profile_image_size"
 			android:layout_margin="2dp"
-				android:scaleType="fitCenter"/>
+			android:scaleType="fitCenter"/>
 
 		<ImageView
 			android:id="@+id/activity_profile_image_5"
 			android:layout_width="@dimen/activity_profile_image_size"
 			android:layout_height="@dimen/activity_profile_image_size"
 			android:layout_margin="2dp"
-				android:scaleType="fitCenter"/>
+			android:scaleType="fitCenter"/>
 	</LinearLayout>
 
 	<TextView

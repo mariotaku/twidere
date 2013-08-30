@@ -67,8 +67,7 @@ public class PreviewPagerAdapter extends PagerAdapter implements Constants, View
 	@Override
 	public Object instantiateItem(final ViewGroup container, final int position) {
 		final PreviewImage spec = mImages.get(position);
-		final ExtendedFrameLayout view = (ExtendedFrameLayout) mInflater.inflate(R.layout.image_preview_item,
-				container, false);
+		final View view = mInflater.inflate(R.layout.image_preview_item, container, false);
 		((ViewPager) container).addView(view, 0);
 		final ImageView image_view = (ImageView) view.findViewById(R.id.image_preview_item);
 		image_view.setTag(spec);

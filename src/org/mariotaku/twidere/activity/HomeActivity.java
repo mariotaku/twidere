@@ -273,7 +273,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			if (composeItem != null) {
 				composeItem.setIcon(icon);
 				composeItem.setTitle(title);
-				composeItem.setEnabled(!bottom_actions && mViewPager.getVisibility() == View.VISIBLE);
+				composeItem.setEnabled(mViewPager.getVisibility() == View.VISIBLE);
+				composeItem.setVisible(!bottom_actions);
 			}
 			if (mComposeButton != null) {
 				mComposeButton.setImageResource(icon);

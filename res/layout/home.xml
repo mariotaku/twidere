@@ -20,7 +20,8 @@
 			android:layout_gravity="bottom|right"
 			android:contentDescription="@string/compose"
 			android:onClick="onClick"
-			android:src="@drawable/ic_menu_tweet"/>
+			android:src="@drawable/ic_menu_tweet"
+			android:visibility="gone"/>
 	</FrameLayout>
 
 	<include

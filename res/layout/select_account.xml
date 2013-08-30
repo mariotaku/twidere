@@ -18,7 +18,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="@dimen/button_bar_height"
 		android:orientation="horizontal">
-		
+
 		<Button
 			android:id="@+id/add_account"
 			style="?borderlessButtonStyle"
@@ -28,7 +28,7 @@
 			android:gravity="center"
 			android:onClick="onClick"
 			android:text="@string/add_account"/>
-			
+
 		<View
 			android:id="@+id/button_divider"
 			android:layout_width="0.2dp"
@@ -45,4 +45,5 @@
 			android:onClick="onClick"
 			android:text="@android:string/ok"/>
 	</LinearLayout>
+
 </LinearLayout>

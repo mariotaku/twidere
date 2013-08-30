@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
+	<!-- Workaround for Android 1.6 -->
+	<item android:drawable="@android:color/transparent"/>
+	<item android:drawable="@android:color/transparent"/>
+	<item android:drawable="@android:color/transparent"/>
+	<item android:drawable="@android:color/transparent"/>
+	<item android:drawable="@android:color/transparent"/>
+	<item android:drawable="@android:color/transparent"/>
+	<item android:drawable="@android:color/transparent"/>
+	<item android:drawable="@android:color/transparent"/>
+
+	<!-- Real contents -->
 	<item android:drawable="@drawable/actionbar_bg_light_darkactionbar_holo"/>
-	
 	<item
 		android:id="@+id/color_layer"
 		android:drawable="@drawable/actionbar_bg_dark_holo"/>

@@ -3,6 +3,7 @@ package org.mariotaku.actionbarcompat;
 import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -19,6 +20,7 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 	protected Fragment mAttachedFragment;
 
 	private ActionModeCompat mActionModeCompat;
+	private final Handler mHandler = new Handler();
 
 	private int mWindowFeatureId;
 
@@ -159,4 +161,24 @@ public class ActionBarFragmentActivity extends FragmentActivity {
 		}
 	}
 
+	private class InvalidateOptionsMenuRunnable implements Runnable {
+
+		@Override
+		public void run() {
+			invalidateSupportOptionsMenu();
+		}
+
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+			postDelayed(new InvalidateOptionsMenuRunnable(), 750);
+		}
+	}
+
+	public final boolean postDelayed(Runnable r, long delayMillis) {
+		return mHandler.postDelayed(r, delayMillis);
+	}
 }

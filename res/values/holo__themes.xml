@@ -28,6 +28,7 @@
 		<item name="android:checkboxStyle">@style/Widget.Holo.CompoundButton.CheckBox</item>
 		<item name="android:gridViewStyle">@style/Widget.Holo.GridView</item>
 		<item name="android:listViewStyle">@style/Widget.Holo.ListView</item>
+		<item name="android:expandableListViewStyle">@style/Widget.Holo.ExpandableListView</item>
 		<item name="android:progressBarStyle">@style/Widget.Holo.ProgressBar</item>
 		<item name="android:progressBarStyleSmall">@style/Widget.Holo.ProgressBar.Small</item>
 		<item name="android:progressBarStyleSmallTitle">@style/Widget.Holo.ProgressBar.Small.Title</item>
@@ -35,6 +36,7 @@
 		<item name="android:progressBarStyleInverse">@style/Widget.Holo.ProgressBar.Inverse</item>
 		<item name="android:progressBarStyleSmallInverse">@style/Widget.Holo.ProgressBar.Small.Inverse</item>
 		<item name="android:progressBarStyleLargeInverse">@style/Widget.Holo.ProgressBar.Large.Inverse</item>
+		<item name="android:progressBarStyleHorizontal">@style/Widget.Holo.ProgressBar.Horizontal</item>
 		<item name="android:radioButtonStyle">@style/Widget.Holo.CompoundButton.RadioButton</item>
 		<item name="android:seekBarStyle">@style/Widget.Holo.SeekBar</item>
 		<item name="android:spinnerStyle">@style/Widget.Holo.Spinner</item>
@@ -70,6 +72,7 @@
 		<item name="android:checkboxStyle">@style/Widget.Holo.Light.CompoundButton.CheckBox</item>
 		<item name="android:gridViewStyle">@style/Widget.Holo.GridView</item>
 		<item name="android:listViewStyle">@style/Widget.Holo.Light.ListView</item>
+		<item name="android:expandableListViewStyle">@style/Widget.Holo.Light.ExpandableListView</item>
 		<item name="android:progressBarStyle">@style/Widget.Holo.ProgressBar</item>
 		<item name="android:progressBarStyleSmall">@style/Widget.Holo.ProgressBar.Small</item>
 		<item name="android:progressBarStyleSmallTitle">@style/Widget.Holo.ProgressBar.Small.Title</item>
@@ -77,6 +80,7 @@
 		<item name="android:progressBarStyleInverse">@style/Widget.Holo.ProgressBar.Inverse</item>
 		<item name="android:progressBarStyleSmallInverse">@style/Widget.Holo.ProgressBar.Small.Inverse</item>
 		<item name="android:progressBarStyleLargeInverse">@style/Widget.Holo.ProgressBar.Large.Inverse</item>
+		<item name="android:progressBarStyleHorizontal">@style/Widget.Holo.Light.ProgressBar.Horizontal</item>
 		<item name="android:radioButtonStyle">@style/Widget.Holo.Light.CompoundButton.RadioButton</item>
 		<item name="android:seekBarStyle">@style/Widget.Holo.Light.SeekBar</item>
 		<item name="android:spinnerStyle">@style/Widget.Holo.Light.Spinner</item>
@@ -110,6 +114,7 @@
 		<item name="android:editTextStyle">@style/Widget.Holo.EditText</item>
 		<item name="android:gridViewStyle">@style/Widget.Holo.GridView</item>
 		<item name="android:listViewStyle">@style/Widget.Holo.ListView</item>
+		<item name="android:expandableListViewStyle">@style/Widget.Holo.ExpandableListView</item>
 		<item name="android:progressBarStyle">@style/Widget.Holo.ProgressBar</item>
 		<item name="android:progressBarStyleSmall">@style/Widget.Holo.ProgressBar.Small</item>
 		<item name="android:progressBarStyleSmallTitle">@style/Widget.Holo.ProgressBar.Small.Title</item>
@@ -117,6 +122,7 @@
 		<item name="android:progressBarStyleInverse">@style/Widget.Holo.ProgressBar.Inverse</item>
 		<item name="android:progressBarStyleSmallInverse">@style/Widget.Holo.ProgressBar.Small.Inverse</item>
 		<item name="android:progressBarStyleLargeInverse">@style/Widget.Holo.ProgressBar.Large.Inverse</item>
+		<item name="android:progressBarStyleHorizontal">@style/Widget.Holo.ProgressBar.Horizontal</item>
 		<item name="android:radioButtonStyle">@style/Widget.Holo.CompoundButton.RadioButton</item>
 		<item name="android:seekBarStyle">@style/Widget.Holo.SeekBar</item>
 		<item name="android:spinnerStyle">@style/Widget.Holo.Spinner</item>
@@ -150,6 +156,7 @@
 		<item name="android:editTextStyle">@style/Widget.Holo.Light.EditText</item>
 		<item name="android:gridViewStyle">@style/Widget.Holo.Light.GridView</item>
 		<item name="android:listViewStyle">@style/Widget.Holo.Light.ListView</item>
+		<item name="android:expandableListViewStyle">@style/Widget.Holo.Light.ExpandableListView</item>
 		<item name="android:progressBarStyle">@style/Widget.Holo.Light.ProgressBar</item>
 		<item name="android:progressBarStyleSmall">@style/Widget.Holo.Light.ProgressBar.Small</item>
 		<item name="android:progressBarStyleSmallTitle">@style/Widget.Holo.Light.ProgressBar.Small.Title</item>
@@ -157,6 +164,7 @@
 		<item name="android:progressBarStyleInverse">@style/Widget.Holo.Light.ProgressBar.Inverse</item>
 		<item name="android:progressBarStyleSmallInverse">@style/Widget.Holo.Light.ProgressBar.Small.Inverse</item>
 		<item name="android:progressBarStyleLargeInverse">@style/Widget.Holo.Light.ProgressBar.Large.Inverse</item>
+		<item name="android:progressBarStyleHorizontal">@style/Widget.Holo.Light.ProgressBar.Horizontal</item>
 		<item name="android:radioButtonStyle">@style/Widget.Holo.Light.CompoundButton.RadioButton</item>
 		<item name="android:seekBarStyle">@style/Widget.Holo.Light.SeekBar</item>
 		<item name="android:spinnerStyle">@style/Widget.Holo.Light.Spinner</item>

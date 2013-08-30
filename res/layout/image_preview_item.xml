@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.mariotaku.twidere.view.ExtendedFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:layout_margin="18dp"
@@ -10,13 +10,15 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:clickable="true"/>
-	
+
 	<org.mariotaku.twidere.view.HoloProgressBar
 		android:id="@+id/image_preview_progress"
 		style="?android:attr/progressBarStyleHorizontal"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_margin="16dp"
-		android:layout_gravity="center"/>
-	
-</org.mariotaku.twidere.view.ExtendedFrameLayout>
+		android:layout_alignLeft="@+id/image_preview_item"
+		android:layout_alignRight="@+id/image_preview_item"
+		android:layout_centerVertical="true"
+		android:layout_margin="16dp"/>
+
+</RelativeLayout>

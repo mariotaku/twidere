@@ -94,6 +94,7 @@ final class ActionBarCompatBase extends ActionBarCompat implements ActionBar {
 
 	@Override
 	public void setBackgroundDrawable(final Drawable d) {
+		initViews();
 		if (mActionBarView != null) {
 			ViewAccessor.setBackground(mActionBarView, d);
 		}

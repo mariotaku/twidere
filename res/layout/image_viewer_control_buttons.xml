@@ -52,7 +52,7 @@
 		<ImageButton
 			android:id="@id/open_in_browser"
 			style="@style/Widget.ActionBarItem"
-			android:layout_width="wrap_content"
+			android:layout_width="@dimen/actionbar_button_width"
 			android:layout_height="match_parent"
 			android:onClick="onClick"
 			android:src="@drawable/ic_menu_browser"/>
@@ -60,7 +60,7 @@
 		<ImageButton
 			android:id="@id/share"
 			style="@style/Widget.ActionBarItem"
-			android:layout_width="wrap_content"
+			android:layout_width="@dimen/actionbar_button_width"
 			android:layout_height="match_parent"
 			android:onClick="onClick"
 			android:src="@drawable/ic_menu_share"/>
@@ -68,7 +68,7 @@
 		<ImageButton
 			android:id="@+id/refresh_stop_save"
 			style="@style/Widget.ActionBarItem"
-			android:layout_width="wrap_content"
+			android:layout_width="@dimen/actionbar_button_width"
 			android:layout_height="match_parent"
 			android:onClick="onClick"
 			android:src="@drawable/ic_menu_refresh"/>

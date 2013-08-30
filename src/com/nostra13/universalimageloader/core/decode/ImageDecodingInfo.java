@@ -129,22 +129,36 @@ public class ImageDecodingInfo {
 		destOptions.inScreenDensity = srcOptions.inScreenDensity;
 		destOptions.inTargetDensity = srcOptions.inTargetDensity;
 		destOptions.inTempStorage = srcOptions.inTempStorage;
-		if (Build.VERSION.SDK_INT >= 10) {
-			copyOptions10(srcOptions, destOptions);
+		BitmapFactoryOptionAccessor.copyOptions(srcOptions, destOptions);
+	}
+
+	private static class BitmapFactoryOptionAccessor {
+
+		private static void copyOptions(final Options srcOptions, final Options destOptions) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1) {
+				BitmapFactoryOptionAccessorSDK10.copyOptions(srcOptions, destOptions);
+			}
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+				BitmapFactoryOptionAccessorSDK11.copyOptions(srcOptions, destOptions);
+			}
 		}
-		if (Build.VERSION.SDK_INT >= 11) {
-			copyOptions11(srcOptions, destOptions);
+
+		@TargetApi(Build.VERSION_CODES.GINGERBREAD_MR1)
+		private static class BitmapFactoryOptionAccessorSDK10 {
+
+			private static void copyOptions(final Options srcOptions, final Options destOptions) {
+				destOptions.inPreferQualityOverSpeed = srcOptions.inPreferQualityOverSpeed;
+			}
+		}
+
+		@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+		private static class BitmapFactoryOptionAccessorSDK11 {
+			
+			private static void copyOptions(final Options srcOptions, final Options destOptions) {
+				destOptions.inBitmap = srcOptions.inBitmap;
+				destOptions.inMutable = srcOptions.inMutable;
+			}
 		}
 	}
 
-	@TargetApi(10)
-	private void copyOptions10(final Options srcOptions, final Options destOptions) {
-		destOptions.inPreferQualityOverSpeed = srcOptions.inPreferQualityOverSpeed;
-	}
-
-	@TargetApi(11)
-	private void copyOptions11(final Options srcOptions, final Options destOptions) {
-		destOptions.inBitmap = srcOptions.inBitmap;
-		destOptions.inMutable = srcOptions.inMutable;
-	}
 }

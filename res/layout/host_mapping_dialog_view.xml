@@ -10,7 +10,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:hint="@string/host"
-		android:inputType="text"
+		android:inputType="text|textUri"
 		android:singleLine="true"/>
 
 	<EditText
@@ -19,7 +19,7 @@
 		android:layout_height="wrap_content"
 		android:layout_marginTop="16dp"
 		android:hint="@string/address"
-		android:inputType="text"
+		android:inputType="text|textUri"
 		android:singleLine="true"/>
 
 </LinearLayout>

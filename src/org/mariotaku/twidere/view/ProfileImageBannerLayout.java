@@ -22,11 +22,7 @@ package org.mariotaku.twidere.view;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.LinearGradient;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Shader;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -89,41 +85,6 @@ public class ProfileImageBannerLayout extends ExtendedFrameLayout {
 		}
 	}
 
-	private static class ProfileBannerImageView extends ClickableImageView {
-
-		private static final int[] COLORS = new int[] { 0xFFFFFFFF, 0x00FFFFFF };
-		private static final float[] POSITIONS = new float[] { 0.0f, 1.0f };
-		private static final PorterDuffXfermode DST_IN = new PorterDuffXfermode(PorterDuff.Mode.DST_IN);
-		private final Paint mPaint = new Paint();
-
-		private LinearGradient mShader;
-
-		private ProfileBannerImageView(final Context context) {
-			super(context, null, 0);
-			ViewCompat.setLayerType(this, LAYER_TYPE_SOFTWARE, null);
-			setScaleType(ScaleType.FIT_XY);
-		}
-
-		@Override
-		protected void onDraw(final Canvas canvas) {
-			final int width = getWidth(), height = getHeight();
-			if (mShader == null) return;
-			super.onDraw(canvas);
-			mPaint.setShader(mShader);
-			mPaint.setXfermode(DST_IN);
-			canvas.drawRect(0, 0, width, height, mPaint);
-		}
-
-		@Override
-		protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
-			final int width = MeasureSpec.getSize(widthMeasureSpec), height = width / 2;
-			setMeasuredDimension(width, height);
-			if (width > 0) {
-				mShader = new LinearGradient(width / 2, 0, width / 2, height, COLORS, POSITIONS, Shader.TileMode.CLAMP);
-			}
-			super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
-		}
-	}
 
 	private static class ProfileImageView extends ClickableImageView {
 

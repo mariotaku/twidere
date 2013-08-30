@@ -35,7 +35,6 @@
 				android:id="@+id/name"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:ellipsize="marquee"
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceMedium"/>
 
@@ -43,7 +42,6 @@
 				android:id="@+id/screen_name"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:ellipsize="marquee"
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:textColor="?android:attr/textColorSecondary"/>
@@ -82,7 +80,6 @@
 		android:layout_height="wrap_content"
 		android:drawableLeft="@drawable/ic_indicator_reply"
 		android:drawablePadding="4dp"
-		android:ellipsize="marquee"
 		android:gravity="center_vertical"
 		android:padding="8dp"
 		android:singleLine="true"
@@ -107,7 +104,6 @@
 		android:layout_height="wrap_content"
 		android:drawableLeft="@drawable/ic_indicator_retweet"
 		android:drawablePadding="4dp"
-		android:ellipsize="marquee"
 		android:gravity="center_vertical"
 		android:padding="8dp"
 		android:singleLine="true"
@@ -121,7 +117,6 @@
 		android:layout_height="wrap_content"
 		android:drawableLeft="@drawable/ic_indicator_has_location"
 		android:drawablePadding="4dp"
-		android:ellipsize="marquee"
 		android:gravity="center_vertical"
 		android:padding="8dp"
 		android:singleLine="true"

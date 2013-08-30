@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
-
-	<org.mariotaku.twidere.view.HoloProgressBar
-		android:id="@+id/progress"
-		style="?android:attr/progressBarStyleHorizontal"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_gravity="center"
-		android:layout_margin="32dp"/>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
 
 	<it.sephiroth.android.library.imagezoom.ImageViewTouch
 		android:id="@+id/image_viewer"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"/>
 
+	<org.mariotaku.twidere.view.HoloProgressBar
+		android:id="@+id/progress"
+		style="?android:attr/progressBarStyleHorizontal"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignLeft="@+id/image_viewer"
+		android:layout_alignRight="@+id/image_viewer"
+		android:layout_centerInParent="true"
+		android:layout_margin="32dp"/>
+
 	<include
 		android:layout_width="match_parent"
 		android:layout_height="@dimen/actionbar_height"
-		android:layout_gravity="top"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentRight="true"
+		android:layout_alignParentTop="true"
 		layout="@layout/image_viewer_control_buttons"/>
 
-</merge>
+</RelativeLayout>

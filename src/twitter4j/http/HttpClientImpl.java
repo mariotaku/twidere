@@ -253,7 +253,7 @@ public class HttpClientImpl extends HttpClientBase implements HttpClient, HttpRe
 		try {
 			url_orig = new URI(url_string);
 		} catch (final URISyntaxException e) {
-			throw new IOException(e);
+			throw new IOException("Invalid URI " + url_string);
 		}
 		final String host = url_orig.getHost(), authority = url_orig.getAuthority();
 		final String resolved_host = resolver != null ? resolver.resolve(host) : null;

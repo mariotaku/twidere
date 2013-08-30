@@ -40,7 +40,6 @@
 					android:id="@+id/name"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:ellipsize="marquee"
 					android:singleLine="true"
 					android:textAppearance="?android:attr/textAppearanceMedium"/>
 
@@ -48,7 +47,6 @@
 					android:id="@+id/screen_name"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:ellipsize="marquee"			
 					android:singleLine="true"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:textColor="?android:attr/textColorSecondary"/>
@@ -57,7 +55,6 @@
 					android:id="@+id/following_you_indicator"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:ellipsize="marquee"
 					android:singleLine="true"
 					android:text="@string/following_you"
 					android:textAppearance="?android:attr/textAppearanceMedium"
