@@ -9,7 +9,6 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.PreviewImage;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
-import org.mariotaku.twidere.view.ExtendedFrameLayout;
 
 import android.content.Context;
 import android.content.SharedPreferences;

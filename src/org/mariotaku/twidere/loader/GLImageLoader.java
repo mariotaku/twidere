@@ -20,7 +20,6 @@
 package org.mariotaku.twidere.loader;
 
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.IOException;
 
 import org.mariotaku.gallery3d.util.BitmapUtils;
@@ -50,26 +49,26 @@ public class GLImageLoader extends AbstractImageLoader {
 	}
 
 	@Override
-	protected AbstractImageLoader.Result decodeImage(final FileDescriptor fd) {
+	protected AbstractImageLoader.Result decodeImage(final File file) {
+		final String path = file.getAbsolutePath();
 		try {
-			final BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(fd, false);
+			final BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(path, false);
 			final int width = decoder.getWidth();
 			final int height = decoder.getHeight();
 			final BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inSampleSize = BitmapUtils.computeSampleSize(mBackupSize / Math.max(width, height));
 			final Bitmap bitmap = decoder.decodeRegion(new Rect(0, 0, width, height), options);
-			return new GLImageResult(decoder, bitmap, Exif.getOrientation(fd), mImageFile);
+			return new GLImageResult(decoder, bitmap, Exif.getOrientation(file), mImageFile);
 		} catch (final IOException e) {
-			final BitmapFactory.Options o1 = new BitmapFactory.Options();
-			o1.inJustDecodeBounds = true;
-			BitmapFactory.decodeFileDescriptor(fd, null, o1);
-			final int width = o1.outWidth;
-			final int height = o1.outHeight;
-			if (width == 0 || height == 0) return new AbstractImageLoader.Result(null, mImageFile, e);
-			final BitmapFactory.Options o2 = new BitmapFactory.Options();
-			o2.inSampleSize = BitmapUtils.computeSampleSize(mBackupSize / Math.max(width, height));
-			final Bitmap bitmap = BitmapFactory.decodeFileDescriptor(fd, null, o2);
-			return new GLImageResult(null, bitmap, Exif.getOrientation(fd), mImageFile);
+			final BitmapFactory.Options o = new BitmapFactory.Options();
+			o.inJustDecodeBounds = true;
+			BitmapFactory.decodeFile(path, o);
+			final int width = o.outWidth, height = o.outHeight;
+			if (width <= 0 || height <= 0) return new AbstractImageLoader.Result(null, mImageFile, e);
+			o.inJustDecodeBounds = false;
+			o.inSampleSize = BitmapUtils.computeSampleSize(mBackupSize / Math.max(width, height));
+			final Bitmap bitmap = BitmapFactory.decodeFile(path, o);
+			return new GLImageResult(null, bitmap, Exif.getOrientation(file), mImageFile);
 		}
 	}
 

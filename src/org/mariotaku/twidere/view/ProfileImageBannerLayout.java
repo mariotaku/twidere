@@ -85,7 +85,6 @@ public class ProfileImageBannerLayout extends ExtendedFrameLayout {
 		}
 	}
 
-
 	private static class ProfileImageView extends ClickableImageView {
 
 		private final Paint mWhitePaint, mBlackPaint;

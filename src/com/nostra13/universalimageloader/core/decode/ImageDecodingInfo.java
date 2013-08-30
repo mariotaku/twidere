@@ -153,7 +153,7 @@ public class ImageDecodingInfo {
 
 		@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 		private static class BitmapFactoryOptionAccessorSDK11 {
-			
+
 			private static void copyOptions(final Options srcOptions, final Options destOptions) {
 				destOptions.inBitmap = srcOptions.inBitmap;
 				destOptions.inMutable = srcOptions.inMutable;

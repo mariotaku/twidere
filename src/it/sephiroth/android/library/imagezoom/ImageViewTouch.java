@@ -37,7 +37,7 @@ public class ImageViewTouch extends ImageViewTouchBase implements Constants {
 	private OnImageViewTouchDoubleTapListener doubleTapListener;
 
 	public ImageViewTouch(final Context context, final AttributeSet attrs) {
-		super(context, attrs); 
+		super(context, attrs);
 	}
 
 	/**

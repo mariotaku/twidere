@@ -51,7 +51,9 @@ public class ImageViewerActivity extends SwipeBackActivity implements Constants,
 	private ImageViewTouch mImageView;
 	private ProgressBar mProgress;
 	private ImageButton mRefreshStopSaveButton;
+
 	private boolean mImageLoaded;
+	private boolean mLoaderInitialized;
 	private File mImageFile;
 	private long mContentLength;
 
@@ -68,7 +70,7 @@ public class ImageViewerActivity extends SwipeBackActivity implements Constants,
 			case R.id.refresh_stop_save: {
 				final LoaderManager lm = getSupportLoaderManager();
 				if (!mImageLoaded && !lm.hasRunningLoaders()) {
-					loadImage(false);
+					loadImage();
 				} else if (!mImageLoaded && lm.hasRunningLoaders()) {
 					stopLoading();
 				} else if (mImageLoaded) {
@@ -182,7 +184,7 @@ public class ImageViewerActivity extends SwipeBackActivity implements Constants,
 	protected void onCreate(final Bundle icicle) {
 		super.onCreate(icicle);
 		setContentView(R.layout.image_viewer);
-		loadImage(true);
+		loadImage();
 	}
 
 	@Override
@@ -195,10 +197,10 @@ public class ImageViewerActivity extends SwipeBackActivity implements Constants,
 	protected void onNewIntent(final Intent intent) {
 		super.onNewIntent(intent);
 		setIntent(intent);
-		loadImage(false);
+		loadImage();
 	}
 
-	private void loadImage(final boolean init) {
+	private void loadImage() {
 		getSupportLoaderManager().destroyLoader(0);
 		final Uri uri = getIntent().getData();
 		if (uri == null) {
@@ -208,8 +210,9 @@ public class ImageViewerActivity extends SwipeBackActivity implements Constants,
 		mImageView.setImageBitmap(null);
 		final Bundle args = new Bundle();
 		args.putParcelable(INTENT_KEY_URI, uri);
-		if (init) {
+		if (!mLoaderInitialized) {
 			getSupportLoaderManager().initLoader(0, args, this);
+			mLoaderInitialized = true;
 		} else {
 			getSupportLoaderManager().restartLoader(0, args, this);
 		}

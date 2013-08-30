@@ -57,8 +57,9 @@ public class ProfileBannerImageView extends ClickableImageView implements IExten
 	public ProfileBannerImageView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		ViewCompat.setLayerType(this, LAYER_TYPE_SOFTWARE, null);
-		final SharedPreferences prefs =  context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);;
-		final boolean is_dark_theme =prefs.getBoolean(PREFERENCE_KEY_DARK_THEME, false);
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		;
+		final boolean is_dark_theme = prefs.getBoolean(PREFERENCE_KEY_DARK_THEME, false);
 		COLORS_REVERSED[1] = is_dark_theme ? 0xFF000000 : 0xFFFFFFFF;
 	}
 

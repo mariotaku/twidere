@@ -115,11 +115,12 @@ public class TwidereImageDownloader implements ImageDownloader, Constants {
 				is = new ContentLengthInputStream(resp.asStream(), (int) resp.getContentLength());
 			}
 		} catch (final TwitterException e) {
-			if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(uri_string).matches() && !uri_string.contains("_normal."))
+			final int status_code = e.getStatusCode();
+			if (status_code != -1 && PATTERN_TWITTER_PROFILE_IMAGES.matcher(uri_string).matches()
+					&& !uri_string.contains("_normal."))
 				return getStream(replaceLast(uri_string, "_" + TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES, "_normal"),
 						extras);
-			throw new IOException(String.format("Error downloading image %s, error code: %d", uri_string,
-					e.getStatusCode()));
+			throw new IOException(String.format("Error downloading image %s, error code: %d", uri_string, status_code));
 		}
 		return is;
 	}

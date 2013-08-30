@@ -24,7 +24,6 @@ import static org.mariotaku.twidere.util.Utils.getImageLoaderHttpClient;
 import static org.mariotaku.twidere.util.Utils.getRedirectedHttpResponse;
 
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -86,7 +85,7 @@ public abstract class AbstractImageLoader extends AsyncTaskLoader<AbstractImageL
 			final File cache_file = mImageFile = new File(mCacheDir, mGenerator.generate(url));
 			try {
 				// from SD cache
-				if (ImageValidator.checkImageValidity(cache_file)) return decodeImage(cache_file);
+				if (ImageValidator.checkImageValidity(cache_file)) return decodeImageInternal(cache_file);
 				final HttpResponse resp = getRedirectedHttpResponse(mClient, url);
 				// from web
 				if (resp == null) return null;
@@ -109,7 +108,7 @@ public abstract class AbstractImageLoader extends AsyncTaskLoader<AbstractImageL
 					}
 					throw new IOException("Invalid image");
 				}
-				return decodeImage(cache_file);
+				return decodeImageInternal(cache_file);
 			} catch (final Exception e) {
 				mHandler.post(new DownloadErrorRunnable(this, mListener, e));
 				return new Result(null, null, e);
@@ -117,7 +116,7 @@ public abstract class AbstractImageLoader extends AsyncTaskLoader<AbstractImageL
 		} else if (ContentResolver.SCHEME_FILE.equals(scheme)) {
 			mImageFile = new File(mUri.getPath());
 			try {
-				return decodeImage(mUri);
+				return decodeImage(mImageFile);
 			} catch (final Exception e) {
 				return new Result(null, null, e);
 			}
@@ -125,20 +124,16 @@ public abstract class AbstractImageLoader extends AsyncTaskLoader<AbstractImageL
 		return new Result(null, null, null);
 	}
 
-	protected Result decodeImage(final File file) throws IOException {
-		if (ImageValidator.checkImageValidity(file)) return decodeImage(Uri.fromFile(file));
-		throw new InvalidImageException();
-	}
-
-	protected abstract Result decodeImage(FileDescriptor fd) throws IOException;
-
-	protected Result decodeImage(final Uri uri) throws IOException {
-		return decodeImage(mResolver.openFileDescriptor(uri, "r").getFileDescriptor());
-	}
+	protected abstract Result decodeImage(final File file) throws IOException;
 
 	@Override
 	protected void onStartLoading() {
 		forceLoad();
+	}
+
+	private Result decodeImageInternal(final File file) throws IOException {
+		if (ImageValidator.checkImageValidity(file)) return decodeImage(file);
+		throw new InvalidImageException();
 	}
 
 	private void dump(final InputStream is, final OutputStream os) throws IOException {
