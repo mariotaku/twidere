@@ -24,6 +24,8 @@ import it.sephiroth.android.library.imagezoom.ImageViewTouch;
 
 import java.io.File;
 
+import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
+
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.loader.AbstractImageLoader.DownloadListener;
@@ -35,7 +37,6 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -44,7 +45,7 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
-public class ImageViewerActivity extends FragmentActivity implements Constants, OnClickListener,
+public class ImageViewerActivity extends SwipeBackActivity implements Constants, OnClickListener,
 		LoaderCallbacks<ImageLoader.Result>, DownloadListener {
 
 	private ImageViewTouch mImageView;

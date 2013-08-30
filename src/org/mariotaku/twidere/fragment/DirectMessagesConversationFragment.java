@@ -422,17 +422,14 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 	}
 
 	private void updateTextCount() {
-		if (mTextCountView != null) {
-			final String text = mEditText != null ? ParseUtils.parseString(mEditText.getText()) : null;
-			final int count = mValidator.getTweetLength(text);
-			final float hue = count < Validator.MAX_TWEET_LENGTH ? count >= Validator.MAX_TWEET_LENGTH - 10 ? 5 * (Validator.MAX_TWEET_LENGTH - count)
-					: 50
-					: 0;
-			final float[] hsv = new float[] { hue, 1.0f, 1.0f };
-			mTextCountView.setTextColor(count >= Validator.MAX_TWEET_LENGTH - 10 ? Color.HSVToColor(0x80, hsv)
-					: 0x80808080);
-			mTextCountView.setText(getLocalizedNumber(mLocale, Validator.MAX_TWEET_LENGTH - count));
-		}
+		if (mTextCountView == null) return;
+		final int max = Validator.MAX_TWEET_LENGTH;
+		final String text = mEditText != null ? ParseUtils.parseString(mEditText.getText()) : null;
+		final int count = mValidator.getTweetLength(text);
+		final float hue = count < max ? count >= max - 10 ? 5 * (max - count) : 50 : 0;
+		final float[] hsv = new float[] { hue, 1.0f, 1.0f };
+		mTextCountView.setTextColor(count >= max - 10 ? Color.HSVToColor(0x80, hsv) : 0x80808080);
+		mTextCountView.setText(getLocalizedNumber(mLocale, max - count));
 	}
 
 	private static class AccountsAdapter extends ArrayAdapter<Account> {

@@ -36,7 +36,7 @@ import android.widget.ImageView;
 public class ProfileImageBannerLayout extends ExtendedFrameLayout {
 
 	public static final int VIEW_ID_PROFILE_IMAGE = 0x10000001;
-	public static final int VIEW_ID_PROFILE_BANNER_IMAGE = 0x10000002;
+	public static final int VIEW_ID_PROFILE_BANNER = 0x10000002;
 
 	private static final double PROFILE_IMAGE_WIDTH_FACTOR = 0.1425;
 	private static final double PROFILE_IMAGE_TOP_MARGIN_FACTOR = 0.0875;
@@ -55,9 +55,9 @@ public class ProfileImageBannerLayout extends ExtendedFrameLayout {
 
 	public ProfileImageBannerLayout(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		mBorderWidth = (int) (getResources().getDisplayMetrics().density * 3.5);
+		mBorderWidth = (int) (getResources().getDisplayMetrics().density * 2);
 		mProfileBannerImageView = new ProfileBannerImageView(context);
-		mProfileBannerImageView.setId(VIEW_ID_PROFILE_BANNER_IMAGE);
+		mProfileBannerImageView.setId(VIEW_ID_PROFILE_BANNER);
 		addView(mProfileBannerImageView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		mProfileImageView = new ProfileImageView(context, mBorderWidth);
 		mProfileImageView.setId(VIEW_ID_PROFILE_IMAGE);
@@ -93,6 +93,7 @@ public class ProfileImageBannerLayout extends ExtendedFrameLayout {
 
 		private static final int[] COLORS = new int[] { 0xFFFFFFFF, 0x00FFFFFF };
 		private static final float[] POSITIONS = new float[] { 0.0f, 1.0f };
+		private static final PorterDuffXfermode DST_IN = new PorterDuffXfermode(PorterDuff.Mode.DST_IN);
 		private final Paint mPaint = new Paint();
 
 		private LinearGradient mShader;
@@ -109,7 +110,7 @@ public class ProfileImageBannerLayout extends ExtendedFrameLayout {
 			if (mShader == null) return;
 			super.onDraw(canvas);
 			mPaint.setShader(mShader);
-			mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+			mPaint.setXfermode(DST_IN);
 			canvas.drawRect(0, 0, width, height, mPaint);
 		}
 

@@ -119,11 +119,11 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 				break;
 			}
 		}
-		holder.description.setVisibility(user.description_unescaped != null ? View.VISIBLE : View.GONE);
+		holder.description.setVisibility(TextUtils.isEmpty(user.description_unescaped) ? View.GONE : View.VISIBLE);
 		holder.description.setText(user.description_unescaped);
-		holder.location.setVisibility(!TextUtils.isEmpty(user.location) ? View.VISIBLE : View.GONE);
+		holder.location.setVisibility(TextUtils.isEmpty(user.location) ? View.GONE : View.VISIBLE);
 		holder.location.setText(user.location);
-		holder.url.setVisibility(user.url_expanded != null ? View.VISIBLE : View.GONE);
+		holder.url.setVisibility(TextUtils.isEmpty(user.url_expanded) ? View.GONE : View.VISIBLE);
 		holder.url.setText(user.url_expanded);
 		holder.statuses_count.setText(getLocalizedNumber(mLocale, user.statuses_count));
 		holder.followers_count.setText(getLocalizedNumber(mLocale, user.followers_count));

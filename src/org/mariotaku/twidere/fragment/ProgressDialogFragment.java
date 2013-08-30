@@ -24,6 +24,7 @@ import org.mariotaku.twidere.R;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 
 public class ProgressDialogFragment extends BaseDialogFragment {
 
@@ -32,6 +33,13 @@ public class ProgressDialogFragment extends BaseDialogFragment {
 		final ProgressDialog dialog = new ProgressDialog(getActivity());
 		dialog.setMessage(getString(R.string.please_wait));
 		return dialog;
+	}
+
+	public static ProgressDialogFragment show(final FragmentActivity activity, final String tag) {
+		if (activity == null) return null;
+		final ProgressDialogFragment f = new ProgressDialogFragment();
+		f.show(activity.getSupportFragmentManager(), tag);
+		return f;
 	}
 
 }

@@ -189,17 +189,14 @@ public final class ImageSizeUtils {
 		final DisplayMetrics displayMetrics = imageView.getContext().getResources().getDisplayMetrics();
 
 		final LayoutParams params = imageView.getLayoutParams();
-		int width = params != null && params.width == LayoutParams.WRAP_CONTENT ? 0 : imageView.getWidth(); // Get
-																											// actual
-																											// image
-																											// width
+		// Get actual image width
+		int width = params != null && params.width == LayoutParams.WRAP_CONTENT ? 0 : imageView.getWidth();
 		if (width <= 0 && params != null) {
 			width = params.width; // Get layout width parameter
 		}
 		if (width <= 0) {
-			width = getImageViewFieldValue(imageView, "mMaxWidth"); // Check
-																	// maxWidth
-																	// parameter
+			// Check maxWidth parameter
+			width = getImageViewFieldValue(imageView, "mMaxWidth");
 		}
 		if (width <= 0) {
 			width = maxImageWidth;

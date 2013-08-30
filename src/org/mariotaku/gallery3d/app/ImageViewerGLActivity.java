@@ -18,6 +18,8 @@ package org.mariotaku.gallery3d.app;
 
 import java.io.File;
 
+import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
+
 import org.mariotaku.gallery3d.ui.GLRoot;
 import org.mariotaku.gallery3d.ui.GLRootView;
 import org.mariotaku.gallery3d.ui.GLView;
@@ -38,7 +40,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.view.View;
@@ -47,7 +48,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-public final class ImageViewerGLActivity extends FragmentActivity implements Constants, View.OnClickListener,
+public final class ImageViewerGLActivity extends SwipeBackActivity implements Constants, View.OnClickListener,
 		PhotoView.Listener, GLImageLoader.DownloadListener, LoaderManager.LoaderCallbacks<GLImageLoader.Result> {
 
 	private final GLView mRootPane = new GLView() {

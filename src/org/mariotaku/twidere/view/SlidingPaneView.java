@@ -233,12 +233,12 @@ public class SlidingPaneView extends ViewGroup {
 		return mRightPaneView;
 	}
 
-	public int getShadowWidth() {
-		return mShadowWidth;
-	}
-
 	public int getRightSpacingWidth() {
 		return mRightSpacing;
+	}
+
+	public int getShadowWidth() {
+		return mShadowWidth;
 	}
 
 	public boolean isContentShown() {

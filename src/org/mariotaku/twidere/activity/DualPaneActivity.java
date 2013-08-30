@@ -164,6 +164,12 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 		return R.layout.base;
 	}
 
+	protected int getPaneBackground() {
+		final boolean dark = isDarkTheme(), solid = isSolidColorBackground();
+		return dark ? solid ? android.R.color.black : R.drawable.background_holo_dark : solid ? android.R.color.white
+				: R.drawable.background_holo_light;
+	}
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -227,11 +233,5 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 
 	protected boolean shouldForceEnableDualPaneMode() {
 		return false;
-	}
-
-	private int getPaneBackground() {
-		final boolean dark = isDarkTheme(), solid = isSolidColorBackground();
-		return dark ? solid ? android.R.color.black : R.drawable.background_holo_dark : solid ? android.R.color.white
-				: R.drawable.background_holo_light;
 	}
 }

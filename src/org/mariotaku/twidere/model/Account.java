@@ -27,36 +27,21 @@ import org.mariotaku.twidere.provider.TweetStore.Accounts;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 
-public class Account implements CharSequence {
+public class Account {
 
-	public final String screen_name, name;
+	public final String screen_name, name, profile_image_url, profile_banner_url;
 	public final long account_id;
+	public final int user_color;
 
-	Account(final Cursor cursor, final Indices indices) {
-		screen_name = cursor.getString(indices.screen_name);
-		name = cursor.getString(indices.name);
-		account_id = cursor.getLong(indices.account_id);
-	}
-
-	@Override
-	public char charAt(final int index) {
-		return screen_name.charAt(index);
-	}
-
-	@Override
-	public int length() {
-		return screen_name.length();
-	}
-
-	@Override
-	public CharSequence subSequence(final int start, final int end) {
-		return screen_name.subSequence(start, end);
-	}
-
-	@Override
-	public String toString() {
-		return screen_name;
+	public Account(final Cursor cursor, final Indices indices) {
+		screen_name = indices.screen_name != -1 ? cursor.getString(indices.screen_name) : null;
+		name = indices.name != -1 ? cursor.getString(indices.name) : null;
+		account_id = indices.account_id != -1 ? cursor.getLong(indices.account_id) : -1;
+		profile_image_url = indices.profile_image_url != -1 ? cursor.getString(indices.profile_image_url) : null;
+		profile_banner_url = indices.profile_banner_url != -1 ? cursor.getString(indices.profile_banner_url) : null;
+		user_color = indices.user_color != -1 ? cursor.getInt(indices.user_color) : Color.TRANSPARENT;
 	}
 
 	public static List<Account> getAccounts(final Context context, final boolean activated_only) {
@@ -80,12 +65,15 @@ public class Account implements CharSequence {
 
 	public static class Indices {
 
-		public final int screen_name, name, account_id;
+		public final int screen_name, name, account_id, profile_image_url, profile_banner_url, user_color;
 
 		public Indices(final Cursor cursor) {
 			screen_name = cursor.getColumnIndex(Accounts.SCREEN_NAME);
 			name = cursor.getColumnIndex(Accounts.NAME);
 			account_id = cursor.getColumnIndex(Accounts.ACCOUNT_ID);
+			profile_image_url = cursor.getColumnIndex(Accounts.PROFILE_IMAGE_URL);
+			profile_banner_url = cursor.getColumnIndex(Accounts.PROFILE_BANNER_URL);
+			user_color = cursor.getColumnIndex(Accounts.USER_COLOR);
 		}
 	}
 }

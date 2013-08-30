@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content">
+
+	<org.mariotaku.twidere.view.ProfileImageBannerLayout
+		android:id="@+id/profile_image_banner"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"/>
+
+	<org.mariotaku.twidere.view.ColorLabelRelativeLayout
+		android:id="@+id/name_container"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="bottom"
+		android:descendantFocusability="blocksDescendants"
+		android:gravity="center_vertical"
+		android:padding="8dp">
+
+		<TwoLineListItem
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:layout_alignWithParentIfMissing="true"
+			android:layout_centerVertical="true"
+			android:layout_toLeftOf="@+id/expand_indicator"
+			android:mode="twoLine">
+
+			<TextView
+				android:id="@+id/name"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:singleLine="true"
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:textSize="@dimen/accounts_drawer_name_size"/>
+
+			<TextView
+				android:id="@+id/screen_name"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_alignLeft="@+id/name"
+				android:layout_below="@+id/name"
+				android:singleLine="true"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:textSize="@dimen/accounts_drawer_screen_name_size"/>
+		</TwoLineListItem>
+
+		<ImageView
+			android:id="@+id/expand_indicator"
+			android:layout_width="36dp"
+			android:layout_height="36dp"
+			android:layout_alignParentRight="true"
+			android:layout_centerVertical="true"
+			android:scaleType="centerInside"
+			android:src="@drawable/expander_close_holo"/>
+	</org.mariotaku.twidere.view.ColorLabelRelativeLayout>
+
+</FrameLayout>

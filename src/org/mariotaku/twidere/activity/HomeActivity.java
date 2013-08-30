@@ -63,6 +63,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -87,6 +88,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private ImageButton mComposeButton;
 	private TabPageIndicator mIndicator;
 	private ProgressBar mProgress;
+	private DrawerLayout mDrawerLayout;
+	private View mLeftDrawerContainer;
 
 	private boolean mProgressBarIndeterminateVisible = false;
 
@@ -110,6 +113,11 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		}
 
 	};
+
+	public void closeAccountsDrawer() {
+		if (mDrawerLayout == null) return;
+		mDrawerLayout.closeDrawer(Gravity.LEFT);
+	}
 
 	@Override
 	public void onBackStackChanged() {
@@ -154,6 +162,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		super.onContentChanged();
 		mViewPager = (ExtendedViewPager) findViewById(R.id.main);
 		mComposeButton = (ImageButton) findViewById(R.id.button_compose);
+		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		mLeftDrawerContainer = findViewById(R.id.left_drawer_container);
 	}
 
 	@Override
@@ -166,6 +176,10 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME: {
+				if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+					mDrawerLayout.closeDrawer(Gravity.LEFT);
+					return true;
+				}
 				final FragmentManager fm = getSupportFragmentManager();
 				if (isDualPaneMode() && !FragmentManagerTrojan.isStateSaved(fm)) {
 					final int count = fm.getBackStackEntryCount();
@@ -227,6 +241,9 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 				break;
 			}
 		}
+		if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+			mDrawerLayout.closeDrawer(Gravity.LEFT);
+		}
 		invalidateSupportOptionsMenu();
 	}
 
@@ -256,7 +273,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			if (composeItem != null) {
 				composeItem.setIcon(icon);
 				composeItem.setTitle(title);
-				composeItem.setVisible(!bottom_actions && mViewPager.getVisibility() == View.VISIBLE);
+				composeItem.setEnabled(!bottom_actions && mViewPager.getVisibility() == View.VISIBLE);
 			}
 			if (mComposeButton != null) {
 				mComposeButton.setImageResource(icon);
@@ -415,6 +432,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mIndicator.setViewPager(mViewPager);
 		mIndicator.setOnPageChangeListener(this);
 		mIndicator.setDisplayLabel(tab_display_label);
+		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.LEFT);
+		mLeftDrawerContainer.setBackgroundResource(getPaneBackground());
 		getSupportFragmentManager().addOnBackStackChangedListener(this);
 
 		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true);

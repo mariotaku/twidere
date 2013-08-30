@@ -451,8 +451,8 @@
 	<string name="updated_list_details">Updated list \"<xliff:g id="list">%s</xliff:g>\"\'s details.</string>
 	<string name="subscribed_to_list">Subscribed to list \"<xliff:g id="list">%s</xliff:g>\".</string>
 	<string name="unsubscribed_from_list">Unsubscribed from list \"<xliff:g id="list">%s</xliff:g>\".</string>
-	<string name="added_user_to_list">Added user(s) to list \"<xliff:g id="list">%s</xliff:g>\".</string>
-	<string name="deleted_user_from_list">Deleted user(s) from list \"<xliff:g id="list">%s</xliff:g>\".</string>
+	<string name="added_users_to_list">Added user(s) to list \"<xliff:g id="list">%s</xliff:g>\".</string>
+	<string name="deleted_users_from_list">Deleted user(s) from list \"<xliff:g id="list">%s</xliff:g>\".</string>
 	<string name="subscribe">Subscribe</string>
 	<string name="unsubscribe">Unsubscribe</string>
 	<string name="background_toast_notification">Background Toast notification</string>
@@ -470,5 +470,6 @@
 	<string name="fast_image_loading_summary">Enable to make images load faster, disable this if some image can\'t be displayed.</string>
 	<string name="select_user_list">Select user list</string>
 	<string name="created_by">Created by <xliff:g id="created_by">%s</xliff:g></string>
+	<string name="add_to_list">Add to list</string>
 
 </resources>

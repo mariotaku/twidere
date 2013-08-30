@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<org.mariotaku.twidere.view.ExtendedLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:orientation="vertical">
 
-	<Button
-		android:id="@+id/button1"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="Button"/>
+	<ExpandableListView
+		android:id="@android:id/list"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:groupIndicator="@null"/>
 
-</LinearLayout>
+	<View
+		android:layout_width="match_parent"
+		android:layout_height="0.2dp"
+		android:background="#40808080"/>
+
+	<Button
+		android:id="@+id/add_account"
+		style="?borderlessButtonStyle"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/button_bar_height"
+		android:layout_weight="0"
+		android:gravity="center"
+		android:text="@string/add_account"/>
+
+</org.mariotaku.twidere.view.ExtendedLinearLayout>

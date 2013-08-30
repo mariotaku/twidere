@@ -104,20 +104,4 @@ public class RingtonePreference extends ListPreference {
 		cur.close();
 	}
 
-	// static final class RingtoneNameComparator implements Comparator<Ringtone>
-	// {
-	//
-	// private final Context context;
-	//
-	// RingtoneNameComparator(final Context context) {
-	// this.context = context;
-	// }
-	//
-	// @Override
-	// public int compare(final Ringtone value1, final Ringtone value2) {
-	// if (value1 == null || value2 == null) return 0;
-	// return
-	// value1.getTitle(context).compareToIgnoreCase(value2.getTitle(context));
-	// }
-	// }
 }

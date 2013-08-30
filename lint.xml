@@ -5,6 +5,7 @@
     </issue>
     <issue id="DuplicateIds" severity="error" />
     <issue id="ExtraTranslation" severity="error" />
+    <issue id="InlinedApi" severity="ignore" />
     <issue id="MissingPrefix" severity="error" />
     <issue id="MissingTranslation" severity="informational" />
     <issue id="NamespaceTypo" severity="error" />

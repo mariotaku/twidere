@@ -415,6 +415,7 @@ public interface Constants {
 	public static final String INTENT_KEY_NEXT_CURSOR = "next_cursor";
 	public static final String INTENT_KEY_PREV_CURSOR = "prev_cursor";
 	public static final String INTENT_KEY_EXTRA_INTENT = "extra_intent";
+	public static final String INTENT_KEY_IS_MY_ACCOUNT = "is_my_account";
 
 	public static final String QUERY_PARAM_NEW_ITEMS_COUNT = "new_items_count";
 
@@ -469,6 +470,7 @@ public interface Constants {
 	public static final int MENU_TOGGLE_SENSITIVE = R.id.toggle_sensitive;
 	public static final int MENU_REVOKE = R.id.revoke;
 	public static final int MENU_IMPORT_FROM = R.id.import_from;
+	public static final int MENU_ADD_TO_LIST = R.id.add_to_list;
 
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_PICK_IMAGE = 2;
@@ -484,6 +486,7 @@ public interface Constants {
 	public static final int REQUEST_EDIT_TAB = 12;
 	public static final int REQUEST_PICK_FILE = 13;
 	public static final int REQUEST_PICK_DIRECTORY = 14;
+	public static final int REQUEST_ADD_TO_LIST = 15;
 
 	public static final String TABLE_ACCOUNTS = Accounts.TABLE_NAME;
 	public static final String TABLE_STATUSES = Statuses.TABLE_NAME;

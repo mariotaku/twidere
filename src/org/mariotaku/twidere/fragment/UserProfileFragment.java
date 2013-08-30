@@ -24,6 +24,7 @@ import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
 import static org.mariotaku.twidere.util.Utils.clearUserColor;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
+import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getErrorMessage;
 import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
 import static org.mariotaku.twidere.util.Utils.getOriginalTwitterProfileImage;
@@ -54,11 +55,13 @@ import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.EditUserProfileActivity;
 import org.mariotaku.twidere.activity.SetColorActivity;
+import org.mariotaku.twidere.activity.UserListSelectorActivity;
 import org.mariotaku.twidere.adapter.ListActionAdapter;
 import org.mariotaku.twidere.loader.ParcelableUserLoader;
 import org.mariotaku.twidere.model.ListAction;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.model.SingleResponse;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
@@ -444,6 +447,14 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				}
 				break;
 			}
+			case REQUEST_ADD_TO_LIST: {
+				if (resultCode == Activity.RESULT_OK && intent != null) {
+					final ParcelableUserList list = intent.getParcelableExtra(INTENT_KEY_USER_LIST);
+					if (list == null) return;
+					mTwitterWrapper.addUserListMembers(mAccountId, list.id, mUserId);
+				}
+				break;
+			}
 		}
 
 	}
@@ -500,7 +511,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				openImage(getActivity(), profile_image_url_string, null, false);
 				break;
 			}
-			case ProfileImageBannerLayout.VIEW_ID_PROFILE_BANNER_IMAGE: {
+			case ProfileImageBannerLayout.VIEW_ID_PROFILE_BANNER: {
 				final String profile_banner_url = mUser.profile_banner_url;
 				if (profile_banner_url == null) return;
 				openImage(getActivity(), profile_banner_url + "/ipad_retina", null, false);
@@ -723,6 +734,16 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 			case MENU_CLEAR_COLOR: {
 				clearUserColor(getActivity(), mUserId);
 				mProfileNameContainer.drawLeft(getUserColor(getActivity(), mUserId));
+				break;
+			}
+			case MENU_ADD_TO_LIST: {
+				final Bundle extras = new Bundle();
+				extras.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
+				extras.putString(INTENT_KEY_SCREEN_NAME, getAccountScreenName(getActivity(), mAccountId));
+				final Intent intent = new Intent(INTENT_ACTION_SELECT_USER_LIST);
+				intent.setClass(getActivity(), UserListSelectorActivity.class);
+				intent.putExtras(extras);
+				startActivityForResult(intent, REQUEST_ADD_TO_LIST);
 				break;
 			}
 			default: {

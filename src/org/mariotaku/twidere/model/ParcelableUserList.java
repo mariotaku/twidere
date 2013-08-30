@@ -96,8 +96,8 @@ public class ParcelableUserList implements Parcelable, JSONParcelable, Comparabl
 		subscribers_count = in.readInt();
 	}
 
-	public ParcelableUserList(final UserList user, final long account_id, final boolean large_profile_image) {
-		this(user, account_id, 0, large_profile_image);
+	public ParcelableUserList(final UserList list, final long account_id, final boolean large_profile_image) {
+		this(list, account_id, 0, large_profile_image);
 	}
 
 	public ParcelableUserList(final UserList list, final long account_id, final long position,

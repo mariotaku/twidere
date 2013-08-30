@@ -243,7 +243,7 @@ public class EditUserProfileActivity extends BaseDialogWhenLargeActivity impleme
 				mPopupMenu.setOnMenuItemClickListener(mProfileImageMenuListener);
 				break;
 			}
-			case ProfileImageBannerLayout.VIEW_ID_PROFILE_BANNER_IMAGE: {
+			case ProfileImageBannerLayout.VIEW_ID_PROFILE_BANNER: {
 				mPopupMenu = PopupMenu.getInstance(this, view);
 				mPopupMenu.inflate(R.menu.action_profile_banner_image);
 				final Menu menu = mPopupMenu.getMenu();

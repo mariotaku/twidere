@@ -139,6 +139,8 @@ public final class TweetStore {
 
 		public static final String PROFILE_BANNER_URL = "profile_banner_url";
 
+		public static final String DEFAULT_SORT_ORDER = IS_ACTIVATED + " DESC";
+
 		public static final String[] COLUMNS = new String[] { _ID, NAME, SCREEN_NAME, ACCOUNT_ID, AUTH_TYPE,
 				BASIC_AUTH_PASSWORD, OAUTH_TOKEN, TOKEN_SECRET, CONSUMER_KEY, CONSUMER_SECRET, REST_BASE_URL,
 				SIGNING_REST_BASE_URL, OAUTH_BASE_URL, SIGNING_OAUTH_BASE_URL, PROFILE_IMAGE_URL, PROFILE_BANNER_URL,

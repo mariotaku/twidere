@@ -11,6 +11,10 @@
 		android:title="@string/send_direct_message"
 		android:visible="false"/>
 	<item
+		android:id="@id/add_to_list"
+		android:icon="@drawable/ic_menu_add"
+		android:title="@string/add_to_list"/>
+	<item
 		android:id="@+id/set_color_submenu"
 		android:icon="@drawable/ic_menu_color_palette"
 		android:title="@string/set_color">

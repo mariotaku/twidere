@@ -530,7 +530,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		protected void onPostExecute(final SingleResponse<ParcelableUserList> result) {
 			final boolean succeed = result != null && result.data != null && result.data.id > 0;
 			if (succeed) {
-				final String message = mContext.getString(R.string.added_user_to_list, result.data.name);
+				final String message = mContext.getString(R.string.added_users_to_list, result.data.name);
 				mMessagesManager.showOkMessage(message, false);
 			} else {
 				mMessagesManager.showErrorMessage(R.string.adding_member, result.exception, true);
@@ -891,7 +891,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		protected void onPostExecute(final SingleResponse<ParcelableUserList> result) {
 			final boolean succeed = result != null && result.data != null && result.data.id > 0;
 			if (succeed) {
-				final String message = mContext.getString(R.string.deleted_user_from_list, result.data.name);
+				final String message = mContext.getString(R.string.deleted_users_from_list, result.data.name);
 				mMessagesManager.showInfoMessage(message, false);
 			} else {
 				mMessagesManager.showErrorMessage(R.string.deleting, result.exception, true);
