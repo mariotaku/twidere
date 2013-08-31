@@ -28,7 +28,7 @@ import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.loader.AbstractImageLoader.DownloadListener;
+import org.mariotaku.twidere.loader.AbsImageLoader.DownloadListener;
 import org.mariotaku.twidere.loader.ImageLoader;
 import org.mariotaku.twidere.util.SaveImageTask;
 

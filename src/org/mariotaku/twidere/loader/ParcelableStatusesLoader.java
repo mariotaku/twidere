@@ -29,6 +29,7 @@ import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
+import android.util.Log;
 
 public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<ParcelableStatus>> implements Constants {
 
@@ -41,6 +42,7 @@ public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<Parc
 
 	public ParcelableStatusesLoader(final Context context, final List<ParcelableStatus> data, final int tab_position) {
 		super(context);
+		Log.w(LOGTAG, new Exception("has data: " + (data != null)));
 		mFirstLoad = data == null;
 		if (data != null) {
 			mData.addAll(data);

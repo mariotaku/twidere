@@ -47,6 +47,7 @@ import android.view.ViewGroup;
 public class BaseListFragment extends ListFragment implements Constants {
 
 	private boolean mActivityFirstCreated;
+	private boolean mIsInstanceStateSaved;
 
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -114,10 +115,15 @@ public class BaseListFragment extends ListFragment implements Constants {
 	public boolean isActivityFirstCreated() {
 		return mActivityFirstCreated;
 	}
+	
+	public boolean isInstanceStateSaved() {
+		return mIsInstanceStateSaved;
+	}
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		mIsInstanceStateSaved = savedInstanceState != null;
 	}
 
 	@Override

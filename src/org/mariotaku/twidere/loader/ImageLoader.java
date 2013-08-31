@@ -28,7 +28,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 
-public class ImageLoader extends AbstractImageLoader {
+public class ImageLoader extends AbsImageLoader {
 
 	public ImageLoader(final Context context, final DownloadListener listener, final Uri uri) {
 		super(context, listener, uri);

@@ -26,10 +26,12 @@ import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.matchLinkId;
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
 
+import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.DirectMessagesConversationFragment;
 import org.mariotaku.twidere.fragment.IncomingFriendshipsFragment;
 import org.mariotaku.twidere.fragment.SavedSearchesListFragment;
+import org.mariotaku.twidere.fragment.SearchFragment;
 import org.mariotaku.twidere.fragment.StatusFragment;
 import org.mariotaku.twidere.fragment.StatusRetweetersListFragment;
 import org.mariotaku.twidere.fragment.StatusesListFragment;
@@ -70,6 +72,8 @@ public class LinkHandlerActivity extends BaseDialogWhenLargeActivity {
 	private Fragment mFragment;
 
 	private MultiSelectEventHandler mMultiSelectHandler;
+
+	private ActionBar mActionBar;
 
 	@Override
 	public View findViewById(final int id) {
@@ -138,7 +142,8 @@ public class LinkHandlerActivity extends BaseDialogWhenLargeActivity {
 			ViewAccessor.setBackground(getWindow().getDecorView(), null);
 			mSwipeBackLayout = new SwipeBackLayout(this);
 		}
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		mActionBar = getSupportActionBar();
+		mActionBar.setDisplayHomeAsUpEnabled(true);
 		setSupportProgressBarIndeterminateVisibility(false);
 		final Intent intent = getIntent();
 		final Uri data = intent.getData();
@@ -427,6 +432,18 @@ public class LinkHandlerActivity extends BaseDialogWhenLargeActivity {
 						final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
 						args.putLong(INTENT_KEY_STATUS_ID, ParseUtils.parseLong(param_status_id));
 					}
+					break;
+				}
+				case LINK_ID_SEARCH: {
+					setTitle(android.R.string.search_go);
+					final String param_query = uri.getQueryParameter(QUERY_PARAM_QUERY);
+					if (isEmpty(param_query)) {
+						finish();
+						return false;
+					}
+					args.putString(INTENT_KEY_QUERY, param_query);
+					mActionBar.setSubtitle(param_query);
+					fragment = new SearchFragment();
 					break;
 				}
 				default: {

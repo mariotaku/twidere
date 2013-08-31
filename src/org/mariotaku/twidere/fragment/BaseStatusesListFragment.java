@@ -214,7 +214,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 
 	@Override
 	public final void onLoadFinished(final Loader<Data> loader, final Data data) {
-		mData = data;
+		setData(data);
 		final int first_visible_position = mListView.getFirstVisiblePosition();
 		if (mListView.getChildCount() > 0) {
 			final View first_child = mListView.getChildAt(0);

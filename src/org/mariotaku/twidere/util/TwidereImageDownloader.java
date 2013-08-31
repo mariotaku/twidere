@@ -85,7 +85,7 @@ public class TwidereImageDownloader implements ImageDownloader, Constants {
 	public TwidereImageDownloader(final Context context) {
 		mContext = context;
 		mResolver = context.getContentResolver();
-		initHttpClient();
+		reloadConnectivitySettings();
 	}
 
 	@Override
@@ -125,7 +125,7 @@ public class TwidereImageDownloader implements ImageDownloader, Constants {
 		return is;
 	}
 
-	public void initHttpClient() {
+	public void reloadConnectivitySettings() {
 		mClient = getImageLoaderHttpClient(mContext);
 		mFastImageLoading = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getBoolean(
 				PREFERENCE_KEY_FAST_IMAGE_LOADING, true);

@@ -46,7 +46,7 @@ import android.support.v4.content.AsyncTaskLoader;
 
 import com.nostra13.universalimageloader.cache.disc.naming.FileNameGenerator;
 
-public abstract class AbstractImageLoader extends AsyncTaskLoader<AbstractImageLoader.Result> implements Constants {
+public abstract class AbsImageLoader extends AsyncTaskLoader<AbsImageLoader.Result> implements Constants {
 
 	private static final String CACHE_DIR_NAME = DIR_NAME_IMAGE_CACHE;
 
@@ -55,25 +55,23 @@ public abstract class AbstractImageLoader extends AsyncTaskLoader<AbstractImageL
 	private final HttpClientWrapper mClient;
 	private final Handler mHandler;
 	private final DownloadListener mListener;
-	private final ContentResolver mResolver;
 	private final FileNameGenerator mGenerator;
 
 	protected File mCacheDir, mImageFile;
 
-	public AbstractImageLoader(final Context context, final DownloadListener listener, final Uri uri) {
+	public AbsImageLoader(final Context context, final DownloadListener listener, final Uri uri) {
 		super(context);
 		mContext = context;
 		mHandler = new Handler();
 		mUri = uri;
 		mClient = getImageLoaderHttpClient(context);
 		mListener = listener;
-		mResolver = context.getContentResolver();
 		mGenerator = new URLFileNameGenerator();
 		init();
 	}
 
 	@Override
-	public AbstractImageLoader.Result loadInBackground() {
+	public AbsImageLoader.Result loadInBackground() {
 		if (mUri == null) return new Result(null, null, null);
 		final String scheme = mUri.getScheme();
 		if ("http".equals(scheme) || "https".equals(scheme)) {
@@ -186,11 +184,11 @@ public abstract class AbstractImageLoader extends AsyncTaskLoader<AbstractImageL
 
 	private final static class DownloadErrorRunnable implements Runnable {
 
-		private final AbstractImageLoader loader;
+		private final AbsImageLoader loader;
 		private final DownloadListener listener;
 		private final Throwable t;
 
-		DownloadErrorRunnable(final AbstractImageLoader loader, final DownloadListener listener, final Throwable t) {
+		DownloadErrorRunnable(final AbsImageLoader loader, final DownloadListener listener, final Throwable t) {
 			this.loader = loader;
 			this.listener = listener;
 			this.t = t;
@@ -205,10 +203,10 @@ public abstract class AbstractImageLoader extends AsyncTaskLoader<AbstractImageL
 
 	private final static class DownloadFinishRunnable implements Runnable {
 
-		private final AbstractImageLoader loader;
+		private final AbsImageLoader loader;
 		private final DownloadListener listener;
 
-		DownloadFinishRunnable(final AbstractImageLoader loader, final DownloadListener listener) {
+		DownloadFinishRunnable(final AbsImageLoader loader, final DownloadListener listener) {
 			this.loader = loader;
 			this.listener = listener;
 		}
@@ -222,11 +220,11 @@ public abstract class AbstractImageLoader extends AsyncTaskLoader<AbstractImageL
 
 	private final static class DownloadStartRunnable implements Runnable {
 
-		private final AbstractImageLoader loader;
+		private final AbsImageLoader loader;
 		private final DownloadListener listener;
 		private final long total;
 
-		DownloadStartRunnable(final AbstractImageLoader loader, final DownloadListener listener, final long total) {
+		DownloadStartRunnable(final AbsImageLoader loader, final DownloadListener listener, final long total) {
 			this.loader = loader;
 			this.listener = listener;
 			this.total = total;

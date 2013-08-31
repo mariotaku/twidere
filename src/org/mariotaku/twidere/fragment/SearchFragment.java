@@ -21,21 +21,31 @@ public class SearchFragment extends BaseFragment {
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
+		setRetainInstance(true);
 		super.onActivityCreated(savedInstanceState);
-		final Bundle arguments = getArguments();
-		mAdapter = new TabsAdapter(getActivity(), getFragmentManager(), null);
-		mAdapter.addTab(SearchTweetsFragment.class, arguments, getString(R.string.tweets), R.drawable.ic_tab_twitter, 0);
-		mAdapter.addTab(SearchUsersFragment.class, arguments, getString(R.string.users), R.drawable.ic_tab_person, 1);
+		final Bundle args = getArguments();
+		mAdapter = new TabsAdapter(getActivity(), getChildFragmentManager(), null);
+		mAdapter.addTab(SearchTweetsFragment.class, args != null ? args : savedInstanceState, getString(R.string.tweets), R.drawable.ic_tab_twitter, 0);
+		mAdapter.addTab(SearchUsersFragment.class, args != null ? args : savedInstanceState, getString(R.string.users), R.drawable.ic_tab_person, 1);
 		mViewPager.setAdapter(mAdapter);
 		mIndicator.setTabIndicatorColor(getThemeColor(getActivity()));
 	}
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		final View view = super.onCreateView(inflater, container, savedInstanceState);
-		mViewPager = (ExtendedViewPager) view.findViewById(R.id.main);
-		mIndicator = (PagerTabStrip) view.findViewById(R.id.pager_tab);
+		final View view = inflater.inflate(R.layout.search, container, false);
+		mViewPager = (ExtendedViewPager) view.findViewById(R.id.search_pager);
+		mIndicator = (PagerTabStrip) view.findViewById(R.id.search_pager_tab);
 		return view;
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		final Bundle args = getArguments();
+		if (args != null) {
+			outState.putAll(args);
+		}
 	}
 
 }

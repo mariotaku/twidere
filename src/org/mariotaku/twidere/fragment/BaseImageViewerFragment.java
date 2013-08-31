@@ -2,8 +2,8 @@ package org.mariotaku.twidere.fragment;
 
 import java.io.File;
 
-import org.mariotaku.twidere.loader.AbstractImageLoader.DownloadListener;
-import org.mariotaku.twidere.loader.AbstractImageLoader.Result;
+import org.mariotaku.twidere.loader.AbsImageLoader.DownloadListener;
+import org.mariotaku.twidere.loader.AbsImageLoader.Result;
 import org.mariotaku.twidere.loader.ImageLoader;
 
 import android.os.Bundle;

@@ -85,8 +85,8 @@ public class SearchActivity extends DualPaneActivity {
 	@Override
 	public void onContentChanged() {
 		super.onContentChanged();
-		mViewPager = (ExtendedViewPager) findViewById(R.id.main);
-		mIndicator = (PagerTabStrip) findViewById(R.id.pager_tab);
+		mViewPager = (ExtendedViewPager) findViewById(R.id.search_pager);
+		mIndicator = (PagerTabStrip) findViewById(R.id.search_pager_tab);
 	}
 
 	@Override

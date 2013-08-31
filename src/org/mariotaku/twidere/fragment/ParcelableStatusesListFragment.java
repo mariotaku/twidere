@@ -48,6 +48,8 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 
 	private boolean mIsStatusesSaved;
 
+	private boolean mStatusesRestored;
+
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -92,6 +94,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 
 	@Override
 	public final int getStatuses(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
+		mStatusesRestored = true;
 		final long max_id = max_ids != null && max_ids.length == 1 ? max_ids[0] : -1;
 		final long since_id = since_ids != null && since_ids.length == 1 ? since_ids[0] : -1;
 		final Bundle args = new Bundle(getArguments());
@@ -107,6 +110,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
+		mStatusesRestored = false;
 		if (savedInstanceState != null) {
 			final List<ParcelableStatus> saved = savedInstanceState.getParcelableArrayList(INTENT_KEY_DATA);
 			if (saved != null) {
@@ -121,6 +125,10 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	public final Loader<List<ParcelableStatus>> onCreateLoader(final int id, final Bundle args) {
 		if (isLoaderUsed()) {
 			setProgressBarIndeterminateVisibility(true);
+		}
+		final List<ParcelableStatus> data = getData();
+		if (isInstanceStateSaved() && data != null && !mStatusesRestored) {
+			return new DummyParcelableStatusesLoader(getActivity(), data);
 		}
 		final Loader<List<ParcelableStatus>> loader = newLoaderInstance(getActivity(), args);
 		return loader != null ? loader : new DummyParcelableStatusesLoader(getActivity());
@@ -185,8 +193,9 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
-		if (getData() != null) {
-			outState.putParcelableArrayList(INTENT_KEY_DATA, new ArrayList<ParcelableStatus>(getData()));
+		final List<ParcelableStatus> data = getData();
+		if (data != null) {
+			outState.putParcelableArrayList(INTENT_KEY_DATA, new ArrayList<ParcelableStatus>(data));
 		}
 		super.onSaveInstanceState(outState);
 	}

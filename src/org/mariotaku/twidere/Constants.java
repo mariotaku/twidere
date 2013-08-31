@@ -558,6 +558,7 @@ public interface Constants {
 	public static final int LINK_ID_USERS = 23;
 	public static final int LINK_ID_STATUSES = 24;
 	public static final int LINK_ID_STATUS_RETWEETERS = 25;
+	public static final int LINK_ID_SEARCH = 26;
 
 	public static final String DIR_NAME_IMAGE_CACHE = "image_cache";
 

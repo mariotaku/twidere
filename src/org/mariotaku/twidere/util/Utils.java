@@ -70,6 +70,7 @@ import org.mariotaku.twidere.fragment.ActivitiesByFriendsFragment;
 import org.mariotaku.twidere.fragment.DirectMessagesConversationFragment;
 import org.mariotaku.twidere.fragment.IncomingFriendshipsFragment;
 import org.mariotaku.twidere.fragment.SavedSearchesListFragment;
+import org.mariotaku.twidere.fragment.SearchFragment;
 import org.mariotaku.twidere.fragment.SearchTweetsFragment;
 import org.mariotaku.twidere.fragment.SearchUsersFragment;
 import org.mariotaku.twidere.fragment.SensitiveContentWarningDialogFragment;
@@ -258,6 +259,7 @@ public final class Utils implements Constants {
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USERS, null, LINK_ID_USERS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_STATUSES, null, LINK_ID_STATUSES);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_STATUS_RETWEETERS, null, LINK_ID_STATUS_RETWEETERS);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_SEARCH, null, LINK_ID_SEARCH);
 
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LISTS, UserListsListFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_LIST_MEMBERS, UserListMembersFragment.class);
@@ -1305,8 +1307,12 @@ public final class Utils implements Constants {
 	}
 
 	public static long[] getNewestMessageIdsFromDatabase(final Context context, final Uri uri) {
-		if (context == null || uri == null) return null;
 		final long[] account_ids = getActivatedAccountIds(context);
+		return getNewestMessageIdsFromDatabase(context, uri, account_ids);
+	}
+
+	public static long[] getNewestMessageIdsFromDatabase(final Context context, final Uri uri, final long[] account_ids) {
+		if (context == null || uri == null || account_ids == null) return null;
 		final String[] cols = new String[] { DirectMessages.MESSAGE_ID };
 		final ContentResolver resolver = context.getContentResolver();
 		final long[] status_ids = new long[account_ids.length];
@@ -1329,8 +1335,12 @@ public final class Utils implements Constants {
 	}
 
 	public static long[] getNewestStatusIdsFromDatabase(final Context context, final Uri uri) {
-		if (context == null || uri == null) return null;
 		final long[] account_ids = getActivatedAccountIds(context);
+		return getNewestStatusIdsFromDatabase(context, uri, account_ids);
+	}
+
+	public static long[] getNewestStatusIdsFromDatabase(final Context context, final Uri uri, final long[] account_ids) {
+		if (context == null || uri == null || account_ids == null) return null;
 		final String[] cols = new String[] { Statuses.STATUS_ID };
 		final ContentResolver resolver = context.getContentResolver();
 		final long[] status_ids = new long[account_ids.length];
@@ -2553,6 +2563,26 @@ public final class Utils implements Constants {
 		}
 	}
 
+	public static void openSearch(final Activity activity, final long account_id, final String query) {
+		if (activity == null) return;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
+			final Fragment fragment = new SearchFragment();
+			final Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			args.putString(INTENT_KEY_QUERY, query);
+			fragment.setArguments(args);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
+		} else {
+			final Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_SEARCH);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			builder.appendQueryParameter(QUERY_PARAM_QUERY, query);
+			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
+	}
+	
 	public static void openUserFavorites(final Activity activity, final long account_id, final long user_id,
 			final String screen_name) {
 		if (activity == null) return;

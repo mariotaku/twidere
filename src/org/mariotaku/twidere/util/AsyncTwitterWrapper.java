@@ -269,16 +269,21 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	public int refreshAll() {
 		final long[] account_ids = getActivatedAccountIds(mContext);
+		return refreshAll(account_ids);
+	}
+
+	public int refreshAll(final long[] account_ids) {
 		if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_MENTIONS, false)) {
-			final long[] since_ids = getNewestStatusIdsFromDatabase(mContext, Mentions.CONTENT_URI);
+			final long[] since_ids = getNewestStatusIdsFromDatabase(mContext, Mentions.CONTENT_URI, account_ids);
 			getMentions(account_ids, null, since_ids);
 		}
 		if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES, false)) {
-			final long[] since_ids = getNewestMessageIdsFromDatabase(mContext, DirectMessages.Inbox.CONTENT_URI);
+			final long[] since_ids = getNewestMessageIdsFromDatabase(mContext, DirectMessages.Inbox.CONTENT_URI,
+					account_ids);
 			getReceivedDirectMessages(account_ids, null, since_ids);
 			getSentDirectMessages(account_ids, null, null);
 		}
-		final long[] since_ids = getNewestStatusIdsFromDatabase(mContext, Statuses.CONTENT_URI);
+		final long[] since_ids = getNewestStatusIdsFromDatabase(mContext, Statuses.CONTENT_URI, account_ids);
 		return getHomeTimeline(account_ids, null, since_ids);
 	}
 

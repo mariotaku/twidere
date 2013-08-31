@@ -29,11 +29,17 @@ import android.content.Context;
 public final class DummyParcelableStatusesLoader extends ParcelableStatusesLoader {
 
 	public DummyParcelableStatusesLoader(final Context context) {
-		super(context, null, -1);
+		this(context, null);
+	}
+
+	public DummyParcelableStatusesLoader(final Context context, final List<ParcelableStatus> data) {
+		super(context, data, -1);
 	}
 
 	@Override
 	public List<ParcelableStatus> loadInBackground() {
+		final List<ParcelableStatus> data = getData();
+		if (data != null) return data;
 		return Collections.emptyList();
 	}
 

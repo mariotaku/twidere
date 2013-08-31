@@ -168,7 +168,9 @@ public class TwidereApplication extends Application implements Constants, OnShar
 			if (preferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false) && hasActiveConnection(this)) {
 				startService(intent);
 			}
-		} else if (PREFERENCE_KEY_ENABLE_PROXY.equals(key) || PREFERENCE_KEY_CONNECTION_TIMEOUT.equals(key)) {
+		} else if (PREFERENCE_KEY_ENABLE_PROXY.equals(key) || PREFERENCE_KEY_CONNECTION_TIMEOUT.equals(key)
+				|| PREFERENCE_KEY_PROXY_HOST.equals(key) || PREFERENCE_KEY_PROXY_PORT.equals(key)
+				|| PREFERENCE_KEY_FAST_IMAGE_LOADING.equals(key)) {
 			reloadConnectivitySettings();
 		} else if (PREFERENCE_KEY_UCD_DATA_PROFILING.equals(key)) {
 			final Intent intent = new Intent(this, UCDService.class);
@@ -181,11 +183,8 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	}
 
 	public void reloadConnectivitySettings() {
-		if (mImageLoaderWrapper != null) {
-			mImageLoaderWrapper.reloadConnectivitySettings();
-		}
 		if (mImageDownloader != null) {
-			mImageDownloader.initHttpClient();
+			mImageDownloader.reloadConnectivitySettings();
 		}
 	}
 

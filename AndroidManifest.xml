@@ -86,10 +86,18 @@
 
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.SEARCH"/>
+
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
 
 			<meta-data
+				android:name="android.app.searchable"
+				android:resource="@xml/searchable"/>
+			<meta-data
 				android:name="android.app.default_searchable"
-				android:value=".activity.SearchActivity"/>
+				android:value=".activity.HomeActivity"/>
 		</activity>
 		<activity
 			android:name=".activity.ComposeActivity"
@@ -263,27 +271,6 @@
 				<data
 					android:host="incoming_friendships"
 					android:scheme="twidere"/>
-			</intent-filter>
-		</activity>
-		<activity
-			android:name=".activity.SearchActivity"
-			android:windowSoftInputMode="adjustNothing">
-			<meta-data
-				android:name="android.app.searchable"
-				android:resource="@xml/searchable"/>
-			<meta-data
-				android:name="android.support.PARENT_ACTIVITY"
-				android:value=".activity.HomeActivity"/>
-
-			<intent-filter>
-				<action android:name="android.intent.action.SEARCH"/>
-			</intent-filter>
-			<intent-filter>
-				<action android:name="android.intent.action.VIEW"/>
-
-				<category android:name="android.intent.category.BROWSABLE"/>
-				<category android:name="android.intent.category.DEFAULT"/>
-
 				<data
 					android:host="search"
 					android:scheme="twidere"/>
@@ -307,7 +294,6 @@
 		</activity>
 		<activity
 			android:name=".activity.ImageViewerActivity"
-			android:exported="false"
 			android:hardwareAccelerated="true"
 			android:label="@string/view_image"
 			android:launchMode="singleTop"
@@ -326,7 +312,6 @@
 		<activity
 			android:name="org.mariotaku.gallery3d.app.ImageViewerGLActivity"
 			android:configChanges="keyboardHidden|orientation|screenSize"
-			android:exported="false"
 			android:hardwareAccelerated="true"
 			android:label="@string/view_image"
 			android:launchMode="singleTop"

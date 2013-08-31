@@ -37,7 +37,7 @@ import android.os.Build;
 import android.util.DisplayMetrics;
 
 @TargetApi(Build.VERSION_CODES.GINGERBREAD_MR1)
-public class GLImageLoader extends AbstractImageLoader {
+public class GLImageLoader extends AbsImageLoader {
 
 	private final float mBackupSize;
 
@@ -49,7 +49,7 @@ public class GLImageLoader extends AbstractImageLoader {
 	}
 
 	@Override
-	protected AbstractImageLoader.Result decodeImage(final File file) {
+	protected AbsImageLoader.Result decodeImage(final File file) {
 		final String path = file.getAbsolutePath();
 		try {
 			final BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(path, false);
@@ -64,7 +64,7 @@ public class GLImageLoader extends AbstractImageLoader {
 			o.inJustDecodeBounds = true;
 			BitmapFactory.decodeFile(path, o);
 			final int width = o.outWidth, height = o.outHeight;
-			if (width <= 0 || height <= 0) return new AbstractImageLoader.Result(null, mImageFile, e);
+			if (width <= 0 || height <= 0) return new AbsImageLoader.Result(null, mImageFile, e);
 			o.inJustDecodeBounds = false;
 			o.inSampleSize = BitmapUtils.computeSampleSize(mBackupSize / Math.max(width, height));
 			final Bitmap bitmap = BitmapFactory.decodeFile(path, o);

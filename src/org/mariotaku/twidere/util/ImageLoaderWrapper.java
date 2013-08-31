@@ -59,19 +59,20 @@ public class ImageLoaderWrapper implements Constants {
 		profile_opts_builder.showStubImage(R.drawable.ic_profile_image_default);
 		profile_opts_builder.bitmapConfig(Bitmap.Config.ARGB_8888);
 		profile_opts_builder.resetViewBeforeLoading(true);
-		mProfileImageDisplayOptions = profile_opts_builder.build();
 		final DisplayImageOptions.Builder image_opts_builder = new DisplayImageOptions.Builder();
 		image_opts_builder.cacheInMemory(true);
 		image_opts_builder.cacheOnDisc(true);
 		image_opts_builder.bitmapConfig(Bitmap.Config.RGB_565);
 		image_opts_builder.resetViewBeforeLoading(true);
-		mImageDisplayOptions = image_opts_builder.build();
 		final DisplayImageOptions.Builder banner_opts_builder = new DisplayImageOptions.Builder();
 		banner_opts_builder.cacheInMemory(true);
 		banner_opts_builder.cacheOnDisc(true);
 		banner_opts_builder.bitmapConfig(Bitmap.Config.RGB_565);
 		banner_opts_builder.resetViewBeforeLoading(true);
-		banner_opts_builder.showStubImage(R.drawable.profile_banner_default);
+		banner_opts_builder.showStubImage(android.R.color.transparent);
+
+		mProfileImageDisplayOptions = profile_opts_builder.build();
+		mImageDisplayOptions = image_opts_builder.build();
 		mBannerDisplayOptions = banner_opts_builder.build();
 	}
 
@@ -99,9 +100,6 @@ public class ImageLoaderWrapper implements Constants {
 
 	public void displayProfileImage(final ImageView view, final String url) {
 		mImageLoader.displayImage(url, view, mProfileImageDisplayOptions);
-	}
-
-	public void reloadConnectivitySettings() {
 	}
 
 }

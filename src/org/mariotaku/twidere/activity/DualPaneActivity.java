@@ -197,7 +197,17 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 		if (mSlidingPane != null) {
 			mSlidingPane.setRightPaneBackground(getPaneBackground());
 		}
-		getSupportFragmentManager().addOnBackStackChangedListener(this);
+		final FragmentManager fm = getSupportFragmentManager();
+		fm.addOnBackStackChangedListener(this);
+		if (savedInstanceState != null) {
+			final Fragment left_pane_fragment = fm.findFragmentById(PANE_LEFT);
+			final View main_view = findViewById(R.id.main);
+			final boolean left_pane_used = left_pane_fragment != null && left_pane_fragment.isAdded();
+			if (main_view != null) {
+				final int visibility = left_pane_used ? View.GONE : View.VISIBLE;
+				main_view.setVisibility(visibility);
+			}
+		}
 	}
 
 	@Override
