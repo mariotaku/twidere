@@ -8,5 +8,7 @@
 	<dimen name="left_drawer_width">340dp</dimen>
 	<dimen name="accounts_drawer_name_size">16sp</dimen>
 	<dimen name="accounts_drawer_screen_name_size">14sp</dimen>
+	<dimen name="accounts_drawer_default_indicator_size">12sp</dimen>
+	<dimen name="accounts_drawer_child_size">18sp</dimen>
 
 </resources>

@@ -30,6 +30,7 @@ public class AutoRefreshContentPreference extends MultiSelectListPreference impl
 	public static final boolean DEFAULT_ENABLE_HOME_TTMELINE = false;
 	public static final boolean DEFAULT_ENABLE_MENTIONS = true;
 	public static final boolean DEFAULT_ENABLE_DIRECT_MESSAGES = true;
+	public static final boolean DEFAULT_ENABLE_TRENDS = false;
 
 	public AutoRefreshContentPreference(final Context context) {
 		this(context, null);
@@ -45,18 +46,19 @@ public class AutoRefreshContentPreference extends MultiSelectListPreference impl
 
 	@Override
 	protected boolean[] getDefaults() {
-		return new boolean[] { DEFAULT_ENABLE_HOME_TTMELINE, DEFAULT_ENABLE_MENTIONS, DEFAULT_ENABLE_DIRECT_MESSAGES };
+		return new boolean[] { DEFAULT_ENABLE_HOME_TTMELINE, DEFAULT_ENABLE_MENTIONS, DEFAULT_ENABLE_DIRECT_MESSAGES,
+				DEFAULT_ENABLE_TRENDS };
 	}
 
 	@Override
 	protected String[] getKeys() {
 		return new String[] { PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE, PREFERENCE_KEY_REFRESH_ENABLE_MENTIONS,
-				PREFERENCE_KEY_REFRESH_ENABLE_DIRECT_MESSAGES };
+				PREFERENCE_KEY_REFRESH_ENABLE_DIRECT_MESSAGES, PREFERENCE_KEY_REFRESH_ENABLE_TRENDS };
 	}
 
 	@Override
 	protected String[] getNames() {
-		return getContext().getResources().getStringArray(R.array.entries_refresh_notification_content);
+		return getContext().getResources().getStringArray(R.array.entries_auto_refresh_content);
 	}
 
 }

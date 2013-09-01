@@ -60,16 +60,7 @@ public class SearchTweetsFragment extends ParcelableStatusesListFragment {
 	}
 
 	@Override
-	protected String[] getSavedStatusesFileArgs() {
-		final Bundle args = getArguments();
-		if (args == null) return null;
-		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-		final String query = args.getString(INTENT_KEY_QUERY);
-		return new String[] { AUTHORITY_SEARCH_TWEETS, "account" + account_id, "query" + query };
-	}
-
-	@Override
-	public void onScrollStateChanged(AbsListView view, int scrollState) {
+	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
 		super.onScrollStateChanged(view, scrollState);
 		if (scrollState == OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
 			final Fragment parent = getParentFragment();
@@ -77,6 +68,15 @@ public class SearchTweetsFragment extends ParcelableStatusesListFragment {
 				((SearchFragment) parent).hideIndicator();
 			}
 		}
+	}
+
+	@Override
+	protected String[] getSavedStatusesFileArgs() {
+		final Bundle args = getArguments();
+		if (args == null) return null;
+		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+		final String query = args.getString(INTENT_KEY_QUERY);
+		return new String[] { AUTHORITY_SEARCH_TWEETS, "account" + account_id, "query" + query };
 	}
 
 }

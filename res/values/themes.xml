@@ -11,6 +11,10 @@
 
 	<style name="Theme.Blank.DialogWhenLarge" parent="android:Theme.NoTitleBar"></style>
 
+	<style name="Theme.Nyan" parent="android:Theme.NoTitleBar">
+		<item name="android:windowBackground">@color/nyan_background</item>
+	</style>
+
 	<style name="Theme.Twidere" parent="Theme.Holo">
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>

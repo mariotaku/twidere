@@ -890,12 +890,6 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 				}
 			}
 		}
-		final String text_orig = mEditText != null ? ParseUtils.parseString(mEditText.getText()) : null;
-		final MenuItem sendItem = menu.findItem(MENU_SEND);
-		if (sendItem != null) {
-			sendItem.setEnabled(!isEmpty(text_orig));
-		}
-
 	}
 
 	private boolean setComposeTitle(final String action) {
@@ -1001,13 +995,16 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 	}
 
 	private void updateStatus() {
+		if (isFinishing()) return;
 		final String text = mEditText != null ? ParseUtils.parseString(mEditText.getText()) : null;
-		if (isEmpty(text) || isFinishing()) return;
 		final int tweet_length = mValidator.getTweetLength(text);
 		if (!mTweetShortenerUsed && tweet_length > Validator.MAX_TWEET_LENGTH) {
 			mEditText.setError(getString(R.string.error_message_status_too_long));
-			mEditText
-					.setSelection(mEditText.length() - (tweet_length - Validator.MAX_TWEET_LENGTH), mEditText.length());
+			final int text_length = mEditText.length();
+			mEditText.setSelection(text_length - (tweet_length - Validator.MAX_TWEET_LENGTH), text_length);
+			return;
+		} else if ((mImageUri != null && !mImageUploaderUsed || mImageUri == null) && isEmpty(text)) {
+			mEditText.setError(getString(R.string.error_message_no_content));
 			return;
 		}
 		final boolean has_media = (mIsImageAttached || mIsPhotoAttached) && mImageUri != null;

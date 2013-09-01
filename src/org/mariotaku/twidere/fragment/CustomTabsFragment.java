@@ -688,8 +688,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 					PREFERENCE_KEY_SHOW_MENTIONS_TAB));
 			add(new DefaultTabSpec(prefs, mContext.getString(R.string.direct_messages), "message",
 					PREFERENCE_KEY_SHOW_MESSAGES_TAB));
-			add(new DefaultTabSpec(prefs, mContext.getString(R.string.accounts), "accounts",
-					PREFERENCE_KEY_SHOW_ACCOUNTS_TAB));
+			add(new DefaultTabSpec(prefs, mContext.getString(R.string.trends), "trends", PREFERENCE_KEY_SHOW_TRENDS_TAB));
 		}
 
 		static class DefaultTabSpec implements ITabsAdapter.TabSpec {

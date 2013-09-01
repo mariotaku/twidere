@@ -21,6 +21,7 @@ package org.mariotaku.twidere.activity;
 
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.ParseUtils.parseString;
+import static org.mariotaku.twidere.util.Utils.getNonEmptyString;
 import static org.mariotaku.twidere.util.Utils.isValidUrl;
 import static org.mariotaku.twidere.util.Utils.trim;
 
@@ -83,20 +84,26 @@ public class EditAPIActivity extends BaseDialogActivity implements TwitterConsta
 	@Override
 	public void onClick(final View v) {
 		final SharedPreferences pref = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final String consumer_key = pref.getString(PREFERENCE_KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY_2);
-		final String consumer_secret = pref.getString(PREFERENCE_KEY_CONSUMER_SECRET, TWITTER_CONSUMER_SECRET_2);
+		final String consumer_key = getNonEmptyString(pref, PREFERENCE_KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY_2);
+		final String consumer_secret = getNonEmptyString(pref, PREFERENCE_KEY_CONSUMER_SECRET,
+				TWITTER_CONSUMER_SECRET_2);
+		final String rest_base_url = getNonEmptyString(pref, PREFERENCE_KEY_REST_BASE_URL, DEFAULT_REST_BASE_URL);
+		final String oauth_base_url = getNonEmptyString(pref, PREFERENCE_KEY_OAUTH_BASE_URL, DEFAULT_OAUTH_BASE_URL);
+		final String signing_rest_base_url = getNonEmptyString(pref, PREFERENCE_KEY_SIGNING_REST_BASE_URL,
+				DEFAULT_SIGNING_REST_BASE_URL);
+		final String signing_oauth_base_url = getNonEmptyString(pref, PREFERENCE_KEY_SIGNING_OAUTH_BASE_URL,
+				DEFAULT_SIGNING_OAUTH_BASE_URL);
 		switch (v.getId()) {
 			case R.id.save: {
 				saveEditedText();
 				if (checkUrlErrors()) return;
 				final Bundle extras = new Bundle();
-				extras.putString(Accounts.REST_BASE_URL, isEmpty(mRestBaseURL) ? DEFAULT_REST_BASE_URL : mRestBaseURL);
-				extras.putString(Accounts.OAUTH_BASE_URL, isEmpty(mOAuthBaseURL) ? DEFAULT_OAUTH_BASE_URL
-						: mOAuthBaseURL);
-				extras.putString(Accounts.SIGNING_REST_BASE_URL,
-						isEmpty(mSigningRestBaseURL) ? DEFAULT_SIGNING_REST_BASE_URL : mSigningRestBaseURL);
+				extras.putString(Accounts.REST_BASE_URL, isEmpty(mRestBaseURL) ? rest_base_url : mRestBaseURL);
+				extras.putString(Accounts.OAUTH_BASE_URL, isEmpty(mOAuthBaseURL) ? oauth_base_url : mOAuthBaseURL);
+				extras.putString(Accounts.SIGNING_REST_BASE_URL, isEmpty(mSigningRestBaseURL) ? signing_rest_base_url
+						: mSigningRestBaseURL);
 				extras.putString(Accounts.SIGNING_OAUTH_BASE_URL,
-						isEmpty(mSigningOAuthBaseURL) ? DEFAULT_SIGNING_OAUTH_BASE_URL : mSigningOAuthBaseURL);
+						isEmpty(mSigningOAuthBaseURL) ? signing_oauth_base_url : mSigningOAuthBaseURL);
 				extras.putString(Accounts.CONSUMER_KEY, isEmpty(mConsumerKey) ? consumer_key : mConsumerKey);
 				extras.putString(Accounts.CONSUMER_SECRET, isEmpty(mConsumerSecret) ? consumer_secret : mConsumerSecret);
 				extras.putInt(Accounts.AUTH_TYPE, mAuthType);

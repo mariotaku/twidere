@@ -71,6 +71,7 @@ public class ProfileImageBannerLayout extends ExtendedFrameLayout {
 		return mProfileImageView;
 	}
 
+	@Override
 	public void setAlpha(final int alpha) {
 		mAlpha = alpha;
 		invalidate();

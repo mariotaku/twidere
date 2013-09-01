@@ -257,6 +257,7 @@
 	<string name="tweet_shortener">Tweet shortener</string>
 	<string name="tweet_shortener_default">None (Abort sending)</string>
 	<string name="error_message_status_too_long">Tweet too long.</string>
+	<string name="error_message_no_content">No content</string>
 	<string name="error_message_tweet_shorten_failed">Tweet shorten failed.</string>
 	<string name="error_message_tweet_shortener_not_found">Tweet shortener not found, maybe it was uninstalled.</string>
 	<string name="multimedia_contents">Multimedia content</string>
@@ -470,7 +471,8 @@
 	<string name="select_user_list">Select user list</string>
 	<string name="created_by">Created by <xliff:g id="created_by">%s</xliff:g></string>
 	<string name="add_to_list">Add to list</string>
-	<string name="enable">Enable</string>
-	<string name="disable">Disable</string>
+	<string name="account_delete_confirm_title">Delete account</string>
+	<string name="account_delete_confirm_message">This account will be deleted from Twidere.</string>
+	<string name="for_advanced_users_only">FOR ADVANCED USERS ONLY!</string>
 
 </resources>

@@ -26,6 +26,7 @@ import static org.mariotaku.twidere.util.Utils.appendQueryParameters;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getAllStatusesIds;
+import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getImageUploadStatus;
 import static org.mariotaku.twidere.util.Utils.getNewestMessageIdsFromDatabase;
@@ -50,6 +51,7 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.model.SingleResponse;
+import org.mariotaku.twidere.preference.HomeRefreshContentPreference;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
 import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
@@ -273,15 +275,23 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 	}
 
 	public int refreshAll(final long[] account_ids) {
-		if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_MENTIONS, false)) {
+		if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_MENTIONS,
+				HomeRefreshContentPreference.DEFAULT_ENABLE_MENTIONS)) {
 			final long[] since_ids = getNewestStatusIdsFromDatabase(mContext, Mentions.CONTENT_URI, account_ids);
 			getMentions(account_ids, null, since_ids);
 		}
-		if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES, false)) {
+		if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES,
+				HomeRefreshContentPreference.DEFAULT_ENABLE_DIRECT_MESSAGES)) {
 			final long[] since_ids = getNewestMessageIdsFromDatabase(mContext, DirectMessages.Inbox.CONTENT_URI,
 					account_ids);
 			getReceivedDirectMessages(account_ids, null, since_ids);
 			getSentDirectMessages(account_ids, null, null);
+		}
+		if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_TRENDS,
+				HomeRefreshContentPreference.DEFAULT_ENABLE_TRENDS)) {
+			final long account_id = getDefaultAccountId(mContext);
+			final int woeid = mPreferences.getInt(PREFERENCE_KEY_LOCAL_TRENDS_WOEID, 1);
+			getLocalTrends(account_id, woeid);
 		}
 		final long[] since_ids = getNewestStatusIdsFromDatabase(mContext, Statuses.CONTENT_URI, account_ids);
 		return getHomeTimeline(account_ids, null, since_ids);

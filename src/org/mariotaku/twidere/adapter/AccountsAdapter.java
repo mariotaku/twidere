@@ -21,9 +21,9 @@ package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 
+import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.fragment.AccountsFragment;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.view.holder.AccountViewHolder;
@@ -36,7 +36,7 @@ import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class AccountsAdapter extends SimpleCursorAdapter {
+public class AccountsAdapter extends SimpleCursorAdapter implements Constants {
 
 	private boolean mDisplayProfileImage;
 
@@ -56,7 +56,7 @@ public class AccountsAdapter extends SimpleCursorAdapter {
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mMultiSelectEnabled = multi_select;
 		mLazyImageLoader = application.getImageLoaderWrapper();
-		mPreferences = context.getSharedPreferences(AccountsFragment.SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
@@ -103,7 +103,7 @@ public class AccountsAdapter extends SimpleCursorAdapter {
 
 	@Override
 	public void notifyDataSetChanged() {
-		mDefaultAccountId = mPreferences.getLong(AccountsFragment.PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1);
+		mDefaultAccountId = mPreferences.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1);
 		super.notifyDataSetChanged();
 	}
 

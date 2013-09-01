@@ -19,13 +19,28 @@
 
 package org.mariotaku.twidere.preference;
 
+import org.mariotaku.twidere.activity.NyanActivity;
+
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Handler;
 import android.preference.Preference;
 import android.util.AttributeSet;
 
 public class AppVersionPreference extends Preference {
+
+	public Handler mHandler = new Handler();
+	protected int mClickCount;
+
+	private final Runnable mResetCounterRunnable = new Runnable() {
+
+		@Override
+		public void run() {
+			mClickCount = 0;
+		}
+	};
 
 	public AppVersionPreference(final Context context) {
 		this(context, null);
@@ -45,6 +60,19 @@ public class AppVersionPreference extends Preference {
 		} catch (final PackageManager.NameNotFoundException e) {
 
 		}
+	}
+
+	@Override
+	protected void onClick() {
+		mHandler.removeCallbacks(mResetCounterRunnable);
+		mClickCount++;
+		if (mClickCount >= 7) {
+			final Context context = getContext();
+			if (context != null) {
+				context.startActivity(new Intent(context, NyanActivity.class));
+			}
+		}
+		mHandler.postDelayed(mResetCounterRunnable, 3000);
 	}
 
 }

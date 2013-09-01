@@ -1,6 +1,6 @@
 package org.mariotaku.twidere.adapter;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
@@ -8,6 +8,7 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.view.holder.AccountDrawerGroupViewHolder;
+import org.mariotaku.twidere.view.iface.IExtendedView;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -15,30 +16,40 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements Constants {
 
+	private static final int ITEM_ACTIVATED_ALPHA = 0xFF;
+	private static final int ITEM_INACTIVATED_ALPHA = 0x40;
 	private static final int GROUP_LAYOUT = R.layout.accounts_drawer_item_group;
-	private static final int CHILD_LAYOUT = R.layout.menu_list_item;
-	private final ArrayList<int[]> mAccountActions = new ArrayList<int[]>();
+	private static final int CHILD_LAYOUT = R.layout.accounts_drawer_item_child;
+	private static final AccountAction[] DEFAULT_ACCOUNT_ACTIONS = new AccountAction[4];
+	private static final AccountAction[] ACCOUNT_ACTIONS = new AccountAction[5];
 
-	{
-		mAccountActions.add(new int[] { R.string.view_user_profile, R.drawable.ic_menu_profile, MENU_VIEW_PROFILE });
-		mAccountActions.add(new int[] { R.string.edit_profile, R.drawable.ic_menu_edit, MENU_EDIT });
-		mAccountActions.add(new int[] { R.string.set_color, R.drawable.ic_menu_color_palette, MENU_SET_COLOR });
-		mAccountActions.add(new int[] { R.string.enable, R.drawable.ic_menu_mark, MENU_TOGGLE });
-		mAccountActions.add(new int[] { R.string.delete, R.drawable.ic_menu_delete, MENU_DELETE });
+	static {
+		DEFAULT_ACCOUNT_ACTIONS[0] = new AccountAction(R.string.view_user_profile, R.drawable.ic_menu_profile,
+				MENU_VIEW_PROFILE);
+		DEFAULT_ACCOUNT_ACTIONS[1] = new AccountAction(R.string.edit_profile, R.drawable.ic_menu_edit, MENU_EDIT);
+		DEFAULT_ACCOUNT_ACTIONS[2] = new AccountAction(R.string.set_color, R.drawable.ic_menu_color_palette,
+				MENU_SET_COLOR);
+		DEFAULT_ACCOUNT_ACTIONS[3] = new AccountAction(R.string.delete, R.drawable.ic_menu_delete, MENU_DELETE);
+		ACCOUNT_ACTIONS[0] = new AccountAction(R.string.view_user_profile, R.drawable.ic_menu_profile,
+				MENU_VIEW_PROFILE);
+		ACCOUNT_ACTIONS[1] = new AccountAction(R.string.edit_profile, R.drawable.ic_menu_edit, MENU_EDIT);
+		ACCOUNT_ACTIONS[2] = new AccountAction(R.string.set_color, R.drawable.ic_menu_color_palette, MENU_SET_COLOR);
+		ACCOUNT_ACTIONS[3] = new AccountAction(R.string.set_as_default, R.drawable.ic_menu_mark, MENU_SET_AS_DEFAULT);
+		ACCOUNT_ACTIONS[4] = new AccountAction(R.string.delete, R.drawable.ic_menu_delete, MENU_DELETE);
 	}
 
 	private final ImageLoaderWrapper mImageLoader;
-	private final LayoutInflater mInflater;
 
+	private final LayoutInflater mInflater;
 	private final int mDefaultBannerWidth;
 
 	private Cursor mCursor;
+
 	private Account.Indices mIndices;
 	private int mBannerWidth;
 	private long mDefaultAccountId;
@@ -51,29 +62,35 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 	}
 
 	@Override
-	public Integer getChild(final int groupPosition, final int childPosition) {
-		return mAccountActions.get(childPosition)[2];
+	public AccountAction getChild(final int groupPosition, final int childPosition) {
+		final Account account = getGroup(groupPosition);
+		final boolean is_default = mDefaultAccountId == account.account_id;
+		return is_default ? DEFAULT_ACCOUNT_ACTIONS[childPosition] : ACCOUNT_ACTIONS[childPosition];
 	}
 
 	@Override
 	public long getChildId(final int groupPosition, final int childPosition) {
-		return ExpandableListView.getPackedPositionForChild(groupPosition, childPosition);
+		return Arrays.hashCode(new long[] { getGroupId(groupPosition), getChild(groupPosition, childPosition).id });
 	}
 
 	@Override
 	public int getChildrenCount(final int groupPosition) {
-		return mAccountActions.size();
+		final Account account = getGroup(groupPosition);
+		final boolean is_default = mDefaultAccountId == account.account_id;
+		return is_default ? DEFAULT_ACCOUNT_ACTIONS.length : ACCOUNT_ACTIONS.length;
 	}
 
 	@Override
 	public View getChildView(final int groupPosition, final int childPosition, final boolean isLastChild,
 			final View convertView, final ViewGroup parent) {
 		final View view = convertView != null ? convertView : mInflater.inflate(CHILD_LAYOUT, null);
-		final int[] item = mAccountActions.get(childPosition);
+		final Account account = getGroup(groupPosition);
+		final AccountAction action = getChild(groupPosition, childPosition);
+		((IExtendedView) view).setAlpha(account.is_activated ? ITEM_ACTIVATED_ALPHA : ITEM_INACTIVATED_ALPHA);
 		final TextView text1 = (TextView) view.findViewById(android.R.id.text1);
 		final ImageView icon = (ImageView) view.findViewById(android.R.id.icon);
-		text1.setText(item[0]);
-		icon.setImageResource(item[1]);
+		text1.setText(action.name);
+		icon.setImageResource(action.icon);
 		return view;
 	}
 
@@ -108,16 +125,16 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 			holder = new AccountDrawerGroupViewHolder(view);
 			view.setTag(holder);
 		}
-		final Account item = getGroup(groupPosition);
-		holder.setActivated(item.is_activated);
-		holder.name.setText(item.name);
-		holder.screen_name.setText("@" + item.screen_name);
-		holder.name_container.drawRight(item.user_color);
+		final Account account = getGroup(groupPosition);
+		((IExtendedView) view).setAlpha(account.is_activated ? ITEM_ACTIVATED_ALPHA : ITEM_INACTIVATED_ALPHA);
+		holder.name.setText(account.name);
+		holder.screen_name.setText("@" + account.screen_name);
+		holder.name_container.drawRight(account.user_color);
 		holder.expand_indicator.setImageResource(expander_res);
-		holder.default_indicator.setVisibility(mDefaultAccountId == item.account_id ? View.VISIBLE : View.GONE);
+		holder.default_indicator.setVisibility(mDefaultAccountId == account.account_id ? View.VISIBLE : View.GONE);
 		final int width = mBannerWidth > 0 ? mBannerWidth : mDefaultBannerWidth;
-		mImageLoader.displayProfileBanner(holder.profile_banner, item.profile_banner_url, width);
-		mImageLoader.displayProfileImage(holder.profile_image, item.profile_image_url);
+		mImageLoader.displayProfileBanner(holder.profile_banner, account.profile_banner_url, width);
+		mImageLoader.displayProfileImage(holder.profile_image, account.profile_image_url);
 		return view;
 	}
 
@@ -143,10 +160,21 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 		notifyDataSetChanged();
 	}
 
-	public void setDefaultAccountId(long account_id) {
+	public void setDefaultAccountId(final long account_id) {
 		if (mDefaultAccountId == account_id) return;
 		mDefaultAccountId = account_id;
 		notifyDataSetChanged();
+	}
+
+	public static class AccountAction {
+
+		public int name, icon, id;
+
+		AccountAction(final int name, final int icon, final int id) {
+			this.name = name;
+			this.icon = icon;
+			this.id = id;
+		}
 	}
 
 }

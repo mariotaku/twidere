@@ -112,6 +112,7 @@ public interface Constants {
 	public static final String QUERY_PARAM_LNG = "lng";
 	public static final String QUERY_PARAM_CONVERSATION_ID = "conversation_id";
 	public static final String QUERY_PARAM_URL = "url";
+	public static final String QUERY_PARAM_FINISH_ONLY = "finish_only";
 
 	public static final String DEFAULT_PROTOCOL = PROTOCOL_HTTPS;
 
@@ -160,6 +161,7 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE = "refresh_enable_home_timeline";
 	public static final String PREFERENCE_KEY_REFRESH_ENABLE_MENTIONS = "refresh_enable_mentions";
 	public static final String PREFERENCE_KEY_REFRESH_ENABLE_DIRECT_MESSAGES = "refresh_enable_direct_messages";
+	public static final String PREFERENCE_KEY_REFRESH_ENABLE_TRENDS = "refresh_enable_trends";
 	public static final String PREFERENCE_KEY_NOTIFICATION_ENABLE_HOME_TIMELINE = "notification_enable_home_timeline";
 	public static final String PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS = "notification_enable_mentions";
 	public static final String PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES = "notification_enable_direct_messages";
@@ -173,6 +175,7 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_IMAGE_UPLOADER = "image_uploader";
 	public static final String PREFERENCE_KEY_HOME_REFRESH_MENTIONS = "home_refresh_mentions";
 	public static final String PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES = "home_refresh_direct_messages";
+	public static final String PREFERENCE_KEY_HOME_REFRESH_TRENDS = "home_refresh_trends";
 	public static final String PREFERENCE_KEY_IMAGE_UPLOAD_FORMAT = "image_upload_format";
 	public static final String PREFERENCE_KEY_TWEET_SHORTENER = "tweet_shortener";
 	public static final String PREFERENCE_KEY_SHOW_ABSOLUTE_TIME = "show_absolute_time";
@@ -194,7 +197,7 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_SHOW_HOME_TAB = "show_home_tab";
 	public static final String PREFERENCE_KEY_SHOW_MENTIONS_TAB = "show_mentions_tab";
 	public static final String PREFERENCE_KEY_SHOW_MESSAGES_TAB = "show_messages_tab";
-	public static final String PREFERENCE_KEY_SHOW_ACCOUNTS_TAB = "show_accounts_tab";
+	public static final String PREFERENCE_KEY_SHOW_TRENDS_TAB = "show_trends_tab";
 	public static final String PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS = "display_sensitive_contents";
 	public static final String PREFERENCE_KEY_PHISHING_LINK_WARNING = "phishing_link_warning";
 	public static final String PREFERENCE_KEY_FAST_SCROLL_THUMB = "fast_scroll_thumb";
@@ -212,6 +215,10 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_COMPOSE_QUIT_ACTION = "compose_quit_action";
 	public static final String PREFERENCE_KEY_NO_CLOSE_AFTER_TWEET_SENT = "no_close_after_tweet_sent";
 	public static final String PREFERENCE_KEY_FAST_IMAGE_LOADING = "fast_image_loading";
+	public static final String PREFERENCE_KEY_REST_BASE_URL = "rest_base_url";
+	public static final String PREFERENCE_KEY_OAUTH_BASE_URL = "oauth_base_url";
+	public static final String PREFERENCE_KEY_SIGNING_REST_BASE_URL = "signing_rest_base_url";
+	public static final String PREFERENCE_KEY_SIGNING_OAUTH_BASE_URL = "signing_oauth_base_url";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;
@@ -323,12 +330,15 @@ public interface Constants {
 	public static final String BROADCAST_REFRESH_HOME_TIMELINE = INTENT_PACKAGE_PREFIX + "REFRESH_HOME_TIMELINE";
 	public static final String BROADCAST_REFRESH_MENTIONS = INTENT_PACKAGE_PREFIX + "REFRESH_MENTIONS";
 	public static final String BROADCAST_REFRESH_DIRECT_MESSAGES = INTENT_PACKAGE_PREFIX + "REFRESH_DIRECT_MESSAGES";
+	public static final String BROADCAST_REFRESH_TRENDS = INTENT_PACKAGE_PREFIX + "REFRESH_TRENDS";
 	public static final String BROADCAST_RESCHEDULE_HOME_TIMELINE_REFRESHING = INTENT_PACKAGE_PREFIX
-			+ "RESCHEDULE_REFRESH_HOME_TIMELINE";
+			+ "RESCHEDULE_HOME_TIMELINE_REFRESHING";
 	public static final String BROADCAST_RESCHEDULE_MENTIONS_REFRESHING = INTENT_PACKAGE_PREFIX
-			+ "RESCHEDULE_REFRESH_MENTIONS";
+			+ "RESCHEDULE_MENTIONS_REFRESHING";
 	public static final String BROADCAST_RESCHEDULE_DIRECT_MESSAGES_REFRESHING = INTENT_PACKAGE_PREFIX
 			+ "RESCHEDULE_DIRECT_MESSAGES_REFRESHING";
+	public static final String BROADCAST_RESCHEDULE_TRENDS_REFRESHING = INTENT_PACKAGE_PREFIX
+			+ "RESCHEDULE_TRENDS_REFRESHING";
 	public static final String BROADCAST_MULTI_BLOCKSTATE_CHANGED = INTENT_PACKAGE_PREFIX + "MULTI_BLOCKSTATE_CHANGED";
 	public static final String BROADCAST_MULTI_MUTESTATE_CHANGED = INTENT_PACKAGE_PREFIX + "MULTI_MUTESTATE_CHANGED";
 	public static final String BROADCAST_HOME_ACTIVITY_ONCREATE = INTENT_PACKAGE_PREFIX + "HOME_ACTIVITY_ONCREATE";

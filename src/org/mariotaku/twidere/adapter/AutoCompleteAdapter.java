@@ -71,11 +71,9 @@ public class AutoCompleteAdapter extends SimpleCursorAdapter implements Constant
 		mEditText = view;
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mResolver = context.getContentResolver();
-		final Context app_context = context.getApplicationContext();
-		mProfileImageLoader = app_context instanceof TwidereApplication ? ((TwidereApplication) app_context)
-				.getImageLoaderWrapper() : null;
-		mDatabase = app_context instanceof TwidereApplication ? ((TwidereApplication) app_context).getSQLiteDatabase()
-				: null;
+		final TwidereApplication app = TwidereApplication.getInstance(context);
+		mProfileImageLoader = app != null ? app.getImageLoaderWrapper() : null;
+		mDatabase = app != null ? app.getSQLiteDatabase() : null;
 		mDisplayProfileImage = mPreferences != null ? mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE,
 				true) : true;
 	}

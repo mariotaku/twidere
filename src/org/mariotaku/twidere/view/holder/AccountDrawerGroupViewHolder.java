@@ -3,7 +3,6 @@ package org.mariotaku.twidere.view.holder;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 import org.mariotaku.twidere.view.ProfileImageBannerLayout;
-import org.mariotaku.twidere.view.iface.IExtendedView;
 
 import android.view.View;
 import android.widget.ImageView;
@@ -11,7 +10,6 @@ import android.widget.TextView;
 
 public class AccountDrawerGroupViewHolder {
 
-	private final IExtendedView root_view;
 	public final ProfileImageBannerLayout profile_image_banner;
 	public final ColorLabelRelativeLayout name_container;
 	public final ImageView profile_banner, profile_image;
@@ -20,7 +18,6 @@ public class AccountDrawerGroupViewHolder {
 	public final View default_indicator;
 
 	public AccountDrawerGroupViewHolder(final View view) {
-		root_view = (IExtendedView) view;
 		name = (TextView) view.findViewById(R.id.name);
 		screen_name = (TextView) view.findViewById(R.id.screen_name);
 		name_container = (ColorLabelRelativeLayout) view.findViewById(R.id.name_container);
@@ -29,10 +26,6 @@ public class AccountDrawerGroupViewHolder {
 		profile_banner = (ImageView) profile_image_banner.findViewById(ProfileImageBannerLayout.VIEW_ID_PROFILE_BANNER);
 		expand_indicator = (ImageView) view.findViewById(R.id.expand_indicator);
 		default_indicator = view.findViewById(R.id.default_indicator);
-	}
-
-	public void setActivated(final boolean activated) {
-		root_view.setAlpha(activated ? 0xFF : 0x40);
 	}
 
 }

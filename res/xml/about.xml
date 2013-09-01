@@ -4,12 +4,13 @@
 
 	<PreferenceCategory android:title="ABOUT TWIDERE">
 		<org.mariotaku.twidere.preference.AppVersionPreference/>
+
 		<Preference
 			android:summary="Mariotaku Lee"
 			android:title="Developer">
 			<intent
 				android:action="android.intent.action.VIEW"
-				android:data="twidere://user?user_id=57610574"/>
+				android:data="twidere://user?user_id=57610574&amp;finish_only=true"/>
 		</Preference>
 		<Preference
 			android:summary="Donate to Twidere to support my development"
@@ -32,42 +33,42 @@
 			android:title="Cem Uluer">
 			<intent
 				android:action="android.intent.action.VIEW"
-				android:data="twidere://user?user_id=289472337"/>
+				android:data="twidere://user?user_id=289472337&amp;finish_only=true"/>
 		</Preference>
 		<Preference
 			android:summary="Türkçe"
 			android:title="Ahmet Okur">
 			<intent
 				android:action="android.intent.action.VIEW"
-				android:data="twidere://user?user_id=930853520"/>
+				android:data="twidere://user?user_id=930853520&amp;finish_only=true"/>
 		</Preference>
 		<Preference
 			android:summary="Français"
 			android:title="Marc Plano-Lesay">
 			<intent
 				android:action="android.intent.action.VIEW"
-				android:data="twidere://user?user_id=250570612"/>
+				android:data="twidere://user?user_id=250570612&amp;finish_only=true"/>
 		</Preference>
 		<Preference
 			android:summary="Español"
 			android:title="Edward G">
 			<intent
 				android:action="android.intent.action.VIEW"
-				android:data="twidere://user?user_id=17852917"/>
+				android:data="twidere://user?user_id=17852917&amp;finish_only=true"/>
 		</Preference>
 		<Preference
 			android:summary="Hindi"
 			android:title="Debarun Sarkar">
 			<intent
 				android:action="android.intent.action.VIEW"
-				android:data="twidere://user?user_id=55809644"/>
+				android:data="twidere://user?user_id=55809644&amp;finish_only=true"/>
 		</Preference>
 		<Preference
 			android:summary="Hungarian"
 			android:title="lipilee">
 			<intent
 				android:action="android.intent.action.VIEW"
-				android:data="twidere://user?user_id=14698389"/>
+				android:data="twidere://user?user_id=14698389&amp;finish_only=true"/>
 		</Preference>
 		<Preference
 			android:summary="Deutsch"
@@ -95,28 +96,28 @@
 			android:title="ilovinheart">
 			<intent
 				android:action="android.intent.action.VIEW"
-				android:data="twidere://user?user_id=144878723"/>
+				android:data="twidere://user?user_id=144878723&amp;finish_only=true"/>
 		</Preference>
 		<Preference
 			android:summary="Adjusted icon for 0.0.13 version and above"
 			android:title="lordfriend">
 			<intent
 				android:action="android.intent.action.VIEW"
-				android:data="twidere://user?user_id=450691326"/>
+				android:data="twidere://user?user_id=450691326&amp;finish_only=true"/>
 		</Preference>
 		<Preference
 			android:summary="He taught me some useful things about SQLite"
 			android:title="impulseplus">
 			<intent
 				android:action="android.intent.action.VIEW"
-				android:data="twidere://user?user_id=332135263"/>
+				android:data="twidere://user?user_id=332135263&amp;finish_only=true"/>
 		</Preference>
 		<Preference
 			android:summary="Checked Japanese translation for Luigi Van"
 			android:title="Lin Yan">
 			<intent
 				android:action="android.intent.action.VIEW"
-				android:data="twidere://user?user_id=218536728"/>
+				android:data="twidere://user?user_id=218536728&amp;finish_only=true"/>
 		</Preference>
 	</PreferenceCategory>
 

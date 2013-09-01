@@ -67,7 +67,8 @@ public class Account {
 
 	public static class Indices {
 
-		public final int screen_name, name, account_id, profile_image_url, profile_banner_url, user_color, is_activated;
+		public final int screen_name, name, account_id, profile_image_url, profile_banner_url, user_color,
+				is_activated;
 
 		public Indices(final Cursor cursor) {
 			screen_name = cursor.getColumnIndex(Accounts.SCREEN_NAME);
@@ -77,6 +78,13 @@ public class Account {
 			profile_banner_url = cursor.getColumnIndex(Accounts.PROFILE_BANNER_URL);
 			user_color = cursor.getColumnIndex(Accounts.USER_COLOR);
 			is_activated = cursor.getColumnIndex(Accounts.IS_ACTIVATED);
+		}
+
+		@Override
+		public String toString() {
+			return "Indices{screen_name=" + screen_name + ", name=" + name + ", account_id=" + account_id
+					+ ", profile_image_url=" + profile_image_url + ", profile_banner_url=" + profile_banner_url
+					+ ", user_color=" + user_color + ", is_activated=" + is_activated + "}";
 		}
 	}
 }

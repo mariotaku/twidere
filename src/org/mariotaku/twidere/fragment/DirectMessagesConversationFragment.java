@@ -436,7 +436,25 @@ public class DirectMessagesConversationFragment extends BaseListFragment impleme
 
 		public AccountsAdapter(final Context context) {
 			super(context, R.layout.spinner_item, Account.getAccounts(context, true));
-			setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			setDropDownViewResource(android.R.layout.simple_list_item_1);
+		}
+
+		@Override
+		public View getDropDownView(final int position, final View convertView, final ViewGroup parent) {
+			final View view = super.getDropDownView(position, convertView, parent);
+			final TextView text1 = (TextView) view.findViewById(android.R.id.text1);
+			final Account account = getItem(position);
+			text1.setText(account.name);
+			return view;
+		}
+
+		@Override
+		public View getView(final int position, final View convertView, final ViewGroup parent) {
+			final View view = super.getView(position, convertView, parent);
+			final TextView text1 = (TextView) view.findViewById(android.R.id.text1);
+			final Account account = getItem(position);
+			text1.setText(account.name);
+			return view;
 		}
 
 	}

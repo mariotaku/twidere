@@ -75,6 +75,8 @@ public class LinkHandlerActivity extends BaseDialogWhenLargeActivity {
 
 	private ActionBar mActionBar;
 
+	private boolean mFinishOnly;
+
 	@Override
 	public View findViewById(final int id) {
 		final View v = super.findViewById(id);
@@ -105,8 +107,11 @@ public class LinkHandlerActivity extends BaseDialogWhenLargeActivity {
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME: {
-				NavUtils.navigateUpFromSameTask(this);
-				// onBackPressed();
+				if (mFinishOnly) {
+					finish();
+				} else {
+					NavUtils.navigateUpFromSameTask(this);
+				}
 				break;
 			}
 		}
@@ -452,6 +457,7 @@ public class LinkHandlerActivity extends BaseDialogWhenLargeActivity {
 				}
 			}
 			final String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
+			mFinishOnly = Boolean.parseBoolean(uri.getQueryParameter(QUERY_PARAM_FINISH_ONLY));
 			if (param_account_id != null) {
 				args.putLong(INTENT_KEY_ACCOUNT_ID, ParseUtils.parseLong(param_account_id));
 			} else {

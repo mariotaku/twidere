@@ -1,5 +1,6 @@
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
 import org.mariotaku.twidere.R;
@@ -8,16 +9,25 @@ import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.activity.SetColorActivity;
 import org.mariotaku.twidere.activity.SignInActivity;
 import org.mariotaku.twidere.adapter.AccountsDrawerAdapter;
+import org.mariotaku.twidere.adapter.AccountsDrawerAdapter.AccountAction;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
+import org.mariotaku.twidere.provider.TweetStore.DirectMessages.Inbox;
+import org.mariotaku.twidere.provider.TweetStore.DirectMessages.Outbox;
+import org.mariotaku.twidere.provider.TweetStore.Mentions;
+import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.view.iface.IExtendedView;
 import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -39,11 +49,14 @@ import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupExpandListener;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 
 public class AccountsDrawerFragment extends BaseFragment implements LoaderCallbacks<Cursor>, OnSizeChangedListener,
 		OnGroupExpandListener, OnChildClickListener, OnClickListener, OnSharedPreferenceChangeListener,
 		OnItemLongClickListener {
 
+	private static final String FRAGMENT_TAG_ACCOUNT_DELETION = "account_deletion";
 	private ContentResolver mResolver;
 	private SharedPreferences mPreferences;
 
@@ -107,8 +120,8 @@ public class AccountsDrawerFragment extends BaseFragment implements LoaderCallba
 		final Account account = mAdapter.getGroup(groupPosition);
 		if (account == null) return false;
 		mSelectedAccountId = account.account_id;
-		final int action = mAdapter.getChild(groupPosition, childPosition);
-		switch (action) {
+		final AccountAction action = mAdapter.getChild(groupPosition, childPosition);
+		switch (action.id) {
 			case MENU_VIEW_PROFILE: {
 				openUserProfile(getActivity(), account.account_id, account.account_id, account.screen_name);
 				closeAccountsDrawer();
@@ -131,10 +144,16 @@ public class AccountsDrawerFragment extends BaseFragment implements LoaderCallba
 				startActivityForResult(intent, REQUEST_SET_COLOR);
 				break;
 			}
-			case MENU_TOGGLE: {
+			case MENU_SET_AS_DEFAULT: {
+				mPreferences.edit().putLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, account.account_id).commit();
 				break;
 			}
 			case MENU_DELETE: {
+				final AccountDeletionDialogFragment f = new AccountDeletionDialogFragment();
+				final Bundle args = new Bundle();
+				args.putLong(INTENT_KEY_ACCOUNT_ID, account.account_id);
+				f.setArguments(args);
+				f.show(getChildFragmentManager(), FRAGMENT_TAG_ACCOUNT_DELETION);
 				break;
 			}
 		}
@@ -156,8 +175,7 @@ public class AccountsDrawerFragment extends BaseFragment implements LoaderCallba
 
 	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
-		return new CursorLoader(getActivity(), Accounts.CONTENT_URI, Accounts.COLUMNS, null, null,
-				Accounts.DEFAULT_SORT_ORDER);
+		return new CursorLoader(getActivity(), Accounts.CONTENT_URI, Accounts.COLUMNS, null, null, null);
 	}
 
 	@Override
@@ -188,13 +206,14 @@ public class AccountsDrawerFragment extends BaseFragment implements LoaderCallba
 		if (groupPosition == -1) return false;
 		final Account account = mAdapter.getGroup(groupPosition);
 		if (account == null) return false;
-		if (!account.is_activated) {
-			final ContentValues values = new ContentValues();
-			values.put(Accounts.IS_ACTIVATED, 1);
-			final String where = Accounts.ACCOUNT_ID + " = " + account.account_id;
-			mResolver.update(Accounts.CONTENT_URI, values, where, null);
+		if (account.is_activated && getActivatedAccountIds(getActivity()).length == 1) {
+			Crouton.showText(getActivity(), R.string.no_account_selected, CroutonStyle.WARN);
+			return true;
 		}
-		mPreferences.edit().putLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, account.account_id).commit();
+		final ContentValues values = new ContentValues();
+		values.put(Accounts.IS_ACTIVATED, account.is_activated ? 0 : 1);
+		final String where = Accounts.ACCOUNT_ID + " = " + account.account_id;
+		mResolver.update(Accounts.CONTENT_URI, values, where, null);
 		return true;
 	}
 
@@ -251,6 +270,41 @@ public class AccountsDrawerFragment extends BaseFragment implements LoaderCallba
 		if (activity instanceof HomeActivity) {
 			((HomeActivity) activity).closeAccountsDrawer();
 		}
+	}
+
+	public static final class AccountDeletionDialogFragment extends BaseDialogFragment implements
+			DialogInterface.OnClickListener {
+
+		@Override
+		public void onClick(final DialogInterface dialog, final int which) {
+			final Bundle args = getArguments();
+			final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
+			if (account_id < 0) return;
+			final ContentResolver resolver = getContentResolver();
+			switch (which) {
+				case DialogInterface.BUTTON_POSITIVE: {
+					resolver.delete(Accounts.CONTENT_URI, Accounts.ACCOUNT_ID + " = " + account_id, null);
+					// Also delete tweets related to the account we previously
+					// deleted.
+					resolver.delete(Statuses.CONTENT_URI, Statuses.ACCOUNT_ID + " = " + account_id, null);
+					resolver.delete(Mentions.CONTENT_URI, Mentions.ACCOUNT_ID + " = " + account_id, null);
+					resolver.delete(Inbox.CONTENT_URI, DirectMessages.ACCOUNT_ID + " = " + account_id, null);
+					resolver.delete(Outbox.CONTENT_URI, DirectMessages.ACCOUNT_ID + " = " + account_id, null);
+					break;
+				}
+			}
+		}
+
+		@Override
+		public Dialog onCreateDialog(final Bundle savedInstanceState) {
+			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			builder.setNegativeButton(android.R.string.cancel, null);
+			builder.setPositiveButton(android.R.string.ok, this);
+			builder.setTitle(R.string.account_delete_confirm_title);
+			builder.setMessage(R.string.account_delete_confirm_message);
+			return builder.create();
+		}
+
 	}
 
 }

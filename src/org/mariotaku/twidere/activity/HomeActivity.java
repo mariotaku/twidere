@@ -35,13 +35,12 @@ import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.TabsAdapter;
 import org.mariotaku.twidere.fragment.APIUpgradeConfirmDialog;
-import org.mariotaku.twidere.fragment.AccountsFragment;
 import org.mariotaku.twidere.fragment.DirectMessagesFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
+import org.mariotaku.twidere.fragment.TrendsFragment;
 import org.mariotaku.twidere.model.TabSpec;
 import org.mariotaku.twidere.preference.ThemeColorPreference;
-import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ActivityAccessor;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
@@ -54,8 +53,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -99,12 +96,13 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private boolean mProgressBarIndeterminateVisible = false;
 
 	private boolean mDisplayAppIcon;
-	private boolean mShowHomeTab, mShowMentionsTab, mShowMessagesTab, mShowAccountsTab;
+	private boolean mShowHomeTab, mShowMentionsTab, mShowMessagesTab, mShowTrendsTab;
 
 	public static final int TAB_POSITION_HOME = 0;
-
 	public static final int TAB_POSITION_MENTIONS = 1;
 	public static final int TAB_POSITION_MESSAGES = 2;
+	public static final int TAB_POSITION_TRENDS = 3;
+
 	private final ArrayList<TabSpec> mCustomTabs = new ArrayList<TabSpec>();
 
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
@@ -114,6 +112,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			final String action = intent.getAction();
 			if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
 				setSupportProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
+			} else if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
+				notifyAccountsChanged();
 			}
 		}
 
@@ -122,6 +122,17 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	public void closeAccountsDrawer() {
 		if (mDrawerLayout == null) return;
 		mDrawerLayout.closeDrawer(Gravity.LEFT);
+	}
+
+	public void notifyAccountsChanged() {
+		if (mPreferences == null) return;
+		final long[] account_ids = getAccountIds(this);
+		final long default_id = mPreferences.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1);
+		if (account_ids == null || account_ids.length == 0) {
+			finish();
+		} else if (account_ids.length > 0 && !ArrayUtils.contains(account_ids, default_id)) {
+			mPreferences.edit().putLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, account_ids[0]).commit();
+		}
 	}
 
 	@Override
@@ -153,6 +164,9 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 					switch (tab.position) {
 						case TAB_POSITION_MESSAGES:
 							openDirectMessagesConversation(this, -1, -1, null);
+							break;
+						case TAB_POSITION_TRENDS:
+							onSearchRequested();
 							break;
 						default:
 							startActivity(new Intent(INTENT_ACTION_COMPOSE));
@@ -206,10 +220,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			}
 			case MENU_SEARCH: {
 				onSearchRequested();
-				return true;
-			}
-			case MENU_SELECT_ACCOUNT: {
-				startActivityForResult(new Intent(INTENT_ACTION_SELECT_ACCOUNT), REQUEST_SELECT_ACCOUNT);
 				return true;
 			}
 			case MENU_SETTINGS: {
@@ -266,13 +276,18 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 				title = R.string.compose;
 				icon = R.drawable.ic_menu_tweet;
 			} else {
-				title = R.string.compose;
 				switch (tab.position) {
 					case TAB_POSITION_MESSAGES:
 						icon = R.drawable.ic_menu_compose;
+						title = R.string.compose;
+						break;
+					case TAB_POSITION_TRENDS:
+						icon = R.drawable.ic_menu_search;
+						title = android.R.string.search_go;
 						break;
 					default:
 						icon = R.drawable.ic_menu_tweet;
+						title = R.string.compose;
 				}
 			}
 
@@ -297,16 +312,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		return super.onPrepareOptionsMenu(menu);
 	}
 
-	public void setDefaultAccount() {
-		if (mPreferences == null) return;
-		final long[] activated_ids = getActivatedAccountIds(this);
-		final long default_account_id = mPreferences.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1);
-		if (activated_ids != null && activated_ids.length > 0
-				&& !ArrayUtils.contains(activated_ids, default_account_id)) {
-			mPreferences.edit().putLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, activated_ids[0]).commit();
-		}
-	}
-
 	@Override
 	public void setSupportProgressBarIndeterminateVisibility(final boolean visible) {
 		mProgressBarIndeterminateVisible = visible;
@@ -323,46 +328,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		return R.layout.home;
 	}
 
-	@Override
-	protected void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
-		final ContentResolver resolver = getContentResolver();
-		ContentValues values;
-		switch (requestCode) {
-			case REQUEST_SELECT_ACCOUNT: {
-				if (resultCode == RESULT_OK) {
-					if (intent == null || intent.getExtras() == null) {
-						break;
-					}
-					final Bundle bundle = intent.getExtras();
-					if (bundle == null) {
-						break;
-					}
-					final long[] account_ids = bundle.getLongArray(INTENT_KEY_IDS);
-					if (account_ids != null) {
-						values = new ContentValues();
-						values.put(Accounts.IS_ACTIVATED, 0);
-						resolver.update(Accounts.CONTENT_URI, values, null, null);
-						values = new ContentValues();
-						values.put(Accounts.IS_ACTIVATED, 1);
-						for (final long account_id : account_ids) {
-							final String where = Accounts.ACCOUNT_ID + " = " + account_id;
-							resolver.update(Accounts.CONTENT_URI, values, where, null);
-						}
-					}
-					setDefaultAccount();
-				} else if (resultCode == RESULT_CANCELED) {
-					if (getActivatedAccountIds(this).length <= 0) {
-						finish();
-					} else {
-						setDefaultAccount();
-					}
-				}
-				break;
-			}
-		}
-		super.onActivityResult(requestCode, resultCode, intent);
-	}
-
 	/** Called when the activity is first created. */
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -376,14 +341,14 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		final Resources res = getResources();
 		mDisplayAppIcon = res.getBoolean(R.bool.home_display_icon);
 		final long[] account_ids = getAccountIds(this);
-		if (account_ids.length <= 0) {
+		if (account_ids.length == 0) {
 			final Intent intent = new Intent(INTENT_ACTION_TWITTER_LOGIN);
 			intent.setClass(this, SignInActivity.class);
 			startActivity(intent);
 			finish();
 			return;
 		} else {
-			setDefaultAccount();
+			notifyAccountsChanged();
 		}
 		final boolean refresh_on_start = mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ON_START, false);
 		final int initial_tab = handleIntent(getIntent(), savedInstanceState == null);
@@ -405,7 +370,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mShowHomeTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_HOME_TAB, true);
 		mShowMentionsTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_MENTIONS_TAB, true);
 		mShowMessagesTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_MESSAGES_TAB, true);
-		mShowAccountsTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ACCOUNTS_TAB, true);
+		mShowTrendsTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_TRENDS_TAB, true);
 		initTabs(getTabs(this));
 		mViewPager.setAdapter(mAdapter);
 		mViewPager.setOffscreenPageLimit(3);
@@ -464,11 +429,11 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		final boolean show_home_tab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_HOME_TAB, true);
 		final boolean show_mentions_tab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_MENTIONS_TAB, true);
 		final boolean show_messages_tab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_MESSAGES_TAB, true);
-		final boolean show_accounts_tab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ACCOUNTS_TAB, true);
+		final boolean show_trends_tab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_TRENDS_TAB, true);
 
 		final List<TabSpec> tabs = getTabs(this);
 		if (isTabsChanged(tabs) || show_home_tab != mShowHomeTab || show_mentions_tab != mShowMentionsTab
-				|| show_messages_tab != mShowMessagesTab || show_accounts_tab != mShowAccountsTab) {
+				|| show_messages_tab != mShowMessagesTab || show_trends_tab != mShowTrendsTab) {
 			restart();
 		}
 		// UCD
@@ -560,12 +525,11 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			mAdapter.addTab(DirectMessagesFragment.class, null, getString(R.string.direct_messages),
 					R.drawable.ic_tab_message, TAB_POSITION_MESSAGES);
 		}
-		mAdapter.addTabs(tabs);
-		if (mShowAccountsTab) {
-			mAdapter.addTab(AccountsFragment.class, null, getString(R.string.accounts), R.drawable.ic_tab_accounts,
-					Integer.MAX_VALUE);
+		if (mShowTrendsTab) {
+			mAdapter.addTab(TrendsFragment.class, null, getString(R.string.trends), R.drawable.ic_tab_trends,
+					TAB_POSITION_TRENDS);
 		}
-
+		mAdapter.addTabs(tabs);
 	}
 
 	private boolean isTabsChanged(final List<TabSpec> tabs) {

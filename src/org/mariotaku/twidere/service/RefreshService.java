@@ -21,6 +21,7 @@ package org.mariotaku.twidere.service;
 
 import static org.mariotaku.twidere.util.ParseUtils.parseInt;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
+import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
 import static org.mariotaku.twidere.util.Utils.getNewestMessageIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.getNewestStatusIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.hasActiveConnection;
@@ -56,7 +57,7 @@ public class RefreshService extends Service implements Constants {
 	private AsyncTwitterWrapper mTwitterWrapper;
 
 	private PendingIntent mPendingRefreshHomeTimelineIntent, mPendingRefreshMentionsIntent,
-			mPendingRefreshDirectMessagesIntent;
+			mPendingRefreshDirectMessagesIntent, mPendingRefreshTrendsIntent;
 
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -74,6 +75,8 @@ public class RefreshService extends Service implements Constants {
 				rescheduleMentionsRefreshing();
 			} else if (BROADCAST_RESCHEDULE_DIRECT_MESSAGES_REFRESHING.equals(action)) {
 				rescheduleDirectMessagesRefreshing();
+			} else if (BROADCAST_RESCHEDULE_TRENDS_REFRESHING.equals(action)) {
+				rescheduleTrendsRefreshing();
 			} else if (hasActiveConnection(context)
 					&& (isBatteryOkay(context) || !mPreferences.getBoolean(
 							PREFERENCE_KEY_STOP_AUTO_REFRESH_WHEN_BATTERY_LOW, true))) {
@@ -81,28 +84,28 @@ public class RefreshService extends Service implements Constants {
 					final long[] activated_ids = getActivatedAccountIds(context);
 					final long[] since_ids = getNewestStatusIdsFromDatabase(context, Statuses.CONTENT_URI);
 					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE,
-							AutoRefreshContentPreference.DEFAULT_ENABLE_HOME_TTMELINE)) {
-						if (!isHomeTimelineRefreshing()) {
-							getHomeTimeline(activated_ids, null, since_ids);
-						}
+							AutoRefreshContentPreference.DEFAULT_ENABLE_HOME_TTMELINE) && !isHomeTimelineRefreshing()) {
+						getHomeTimeline(activated_ids, null, since_ids);
 					}
 				} else if (BROADCAST_REFRESH_MENTIONS.equals(action)) {
 					final long[] activated_ids = getActivatedAccountIds(context);
 					final long[] since_ids = getNewestStatusIdsFromDatabase(context, Mentions.CONTENT_URI);
 					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_MENTIONS,
-							AutoRefreshContentPreference.DEFAULT_ENABLE_MENTIONS)) {
-						if (!isMentionsRefreshing()) {
-							getMentions(activated_ids, null, since_ids);
-						}
+							AutoRefreshContentPreference.DEFAULT_ENABLE_MENTIONS) && !isMentionsRefreshing()) {
+						getMentions(activated_ids, null, since_ids);
 					}
 				} else if (BROADCAST_REFRESH_DIRECT_MESSAGES.equals(action)) {
 					final long[] activated_ids = getActivatedAccountIds(context);
 					final long[] since_ids = getNewestMessageIdsFromDatabase(context, DirectMessages.Inbox.CONTENT_URI);
 					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_DIRECT_MESSAGES,
-							AutoRefreshContentPreference.DEFAULT_ENABLE_DIRECT_MESSAGES)) {
-						if (!isReceivedDirectMessagesRefreshing()) {
-							getReceivedDirectMessages(activated_ids, null, since_ids);
-						}
+							AutoRefreshContentPreference.DEFAULT_ENABLE_DIRECT_MESSAGES)
+							&& !isReceivedDirectMessagesRefreshing()) {
+						getReceivedDirectMessages(activated_ids, null, since_ids);
+					}
+				} else if (BROADCAST_REFRESH_TRENDS.equals(action)) {
+					if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ENABLE_TRENDS,
+							AutoRefreshContentPreference.DEFAULT_ENABLE_TRENDS) && !isLocalTrendsRefreshing()) {
+						getLocalTrends();
 					}
 				}
 			}
@@ -128,6 +131,7 @@ public class RefreshService extends Service implements Constants {
 		mPendingRefreshMentionsIntent = PendingIntent.getBroadcast(this, 0, new Intent(BROADCAST_REFRESH_MENTIONS), 0);
 		mPendingRefreshDirectMessagesIntent = PendingIntent.getBroadcast(this, 0, new Intent(
 				BROADCAST_REFRESH_DIRECT_MESSAGES), 0);
+		mPendingRefreshTrendsIntent = PendingIntent.getBroadcast(this, 0, new Intent(BROADCAST_REFRESH_TRENDS), 0);
 		final IntentFilter filter = new IntentFilter(BROADCAST_NOTIFICATION_CLEARED);
 		filter.addAction(BROADCAST_REFRESH_HOME_TIMELINE);
 		filter.addAction(BROADCAST_REFRESH_MENTIONS);
@@ -159,6 +163,12 @@ public class RefreshService extends Service implements Constants {
 		return mTwitterWrapper.getHomeTimeline(account_ids, max_ids, since_ids);
 	}
 
+	private int getLocalTrends() {
+		final long account_id = getDefaultAccountId(this);
+		final int woeid = mPreferences.getInt(PREFERENCE_KEY_LOCAL_TRENDS_WOEID, 1);
+		return mTwitterWrapper.getLocalTrends(account_id, woeid);
+	}
+
 	private int getMentions(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
 		return mTwitterWrapper.getMentions(account_ids, max_ids, since_ids);
 	}
@@ -169,6 +179,10 @@ public class RefreshService extends Service implements Constants {
 
 	private boolean isHomeTimelineRefreshing() {
 		return mTwitterWrapper.isHomeTimelineRefreshing();
+	}
+
+	private boolean isLocalTrendsRefreshing() {
+		return mTwitterWrapper.isLocalTrendsRefreshing();
 	}
 
 	private boolean isMentionsRefreshing() {
@@ -214,6 +228,19 @@ public class RefreshService extends Service implements Constants {
 			if (update_interval > 0) {
 				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
 						update_interval, mPendingRefreshMentionsIntent);
+			}
+		}
+	}
+
+	private void rescheduleTrendsRefreshing() {
+		mAlarmManager.cancel(mPendingRefreshTrendsIntent);
+		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
+			final long update_interval_mins = Math.max(
+					parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")), 3);
+			final long update_interval = update_interval_mins * 60 * 1000;
+			if (update_interval > 0) {
+				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
+						update_interval, mPendingRefreshTrendsIntent);
 			}
 		}
 	}

@@ -27,5 +27,8 @@
 	<dimen name="left_drawer_width">260dp</dimen>
 	<dimen name="accounts_drawer_name_size">14sp</dimen>
 	<dimen name="accounts_drawer_screen_name_size">12sp</dimen>
+	<dimen name="accounts_drawer_default_indicator_size">10sp</dimen>
+	<dimen name="accounts_drawer_child_size">16sp</dimen>
+	<dimen name="nyan_star_dot_size">4dp</dimen>
 
 </resources>

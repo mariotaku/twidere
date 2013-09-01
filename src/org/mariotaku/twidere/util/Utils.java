@@ -77,7 +77,6 @@ import org.mariotaku.twidere.fragment.SensitiveContentWarningDialogFragment;
 import org.mariotaku.twidere.fragment.StatusFragment;
 import org.mariotaku.twidere.fragment.StatusRetweetersListFragment;
 import org.mariotaku.twidere.fragment.StatusesListFragment;
-import org.mariotaku.twidere.fragment.TrendsFragment;
 import org.mariotaku.twidere.fragment.UserBlocksListFragment;
 import org.mariotaku.twidere.fragment.UserFavoritesFragment;
 import org.mariotaku.twidere.fragment.UserFollowersFragment;
@@ -273,7 +272,6 @@ public final class Utils implements Constants {
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_USER_FRIENDS, UserFriendsFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_USER_MENTIONS, UserMentionsFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_USER_TIMELINE, UserTimelineFragment.class);
-		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_TRENDS, TrendsFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_ACTIVITIES_ABOUT_ME, ActivitiesAboutMeFragment.class);
 		CUSTOM_TABS_FRAGMENT_MAP.put(AUTHORITY_ACTIVITIES_BY_FRIENDS, ActivitiesByFriendsFragment.class);
 
@@ -288,7 +286,6 @@ public final class Utils implements Constants {
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_USER_FRIENDS, R.string.following);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_USER_MENTIONS, R.string.user_mentions);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_USER_TIMELINE, R.string.user_timeline);
-		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_TRENDS, R.string.trends);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_ACTIVITIES_ABOUT_ME, R.string.activities_about_me);
 		CUSTOM_TABS_TYPE_NAME_MAP.put(AUTHORITY_ACTIVITIES_BY_FRIENDS, R.string.activities_by_friends);
 
@@ -1362,6 +1359,12 @@ public final class Utils implements Constants {
 		return status_ids;
 	}
 
+	public static String getNonEmptyString(final SharedPreferences pref, final String key, final String def) {
+		if (pref == null) return def;
+		final String val = pref.getString(key, def);
+		return isEmpty(val) ? def : val;
+	}
+
 	public static String getNormalTwitterProfileImage(final String url) {
 		if (url == null) return null;
 		if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(url).matches())
@@ -1630,7 +1633,7 @@ public final class Utils implements Constants {
 					.getColumnIndex(Tabs.TYPE), idx_arguments = cur.getColumnIndex(Tabs.ARGUMENTS), idx_position = cur
 					.getColumnIndex(Tabs.POSITION);
 			while (!cur.isAfterLast()) {
-				final int position = cur.getInt(idx_position) + HomeActivity.TAB_POSITION_MESSAGES + 1;
+				final int position = cur.getInt(idx_position) + HomeActivity.TAB_POSITION_TRENDS + 1;
 				final String icon_type = cur.getString(idx_icon);
 				final String type = cur.getString(idx_type);
 				final String name = cur.getString(idx_name);

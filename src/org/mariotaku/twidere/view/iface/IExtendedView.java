@@ -23,10 +23,10 @@ import android.view.View;
 
 public interface IExtendedView {
 
+	public void setAlpha(final int alpha);
+
 	public void setOnSizeChangedListener(final OnSizeChangedListener listener);
 
-	public void setAlpha(final int alpha);
-	
 	public static interface OnSizeChangedListener {
 		void onSizeChanged(View view, int w, int h, int oldw, int oldh);
 	}

@@ -72,7 +72,7 @@ public class SearchUsersFragment extends BaseUsersListFragment {
 	}
 
 	@Override
-	public void onScrollStateChanged(AbsListView view, int scrollState) {
+	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
 		super.onScrollStateChanged(view, scrollState);
 		if (scrollState == OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
 			final Fragment parent = getParentFragment();

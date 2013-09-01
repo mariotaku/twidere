@@ -21,6 +21,12 @@
 		<item>120</item>
 		<item>240</item>
 	</string-array>
+	<string-array name="entries_auto_refresh_content">
+		<item>@string/home</item>
+		<item>@string/mentions</item>
+		<item>@string/inbox</item>
+		<item>@string/trends</item>
+	</string-array>
 	<string-array name="entries_refresh_notification_content">
 		<item>@string/home</item>
 		<item>@string/mentions</item>
@@ -29,6 +35,7 @@
 	<string-array name="entries_home_refresh_content">
 		<item>@string/mentions</item>
 		<item>@string/inbox</item>
+		<item>@string/trends</item>
 	</string-array>
 	<string-array name="entries_notification_type">
 		<item>@string/sound</item>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<integer name="nyan_star_rows">10</integer>
+	<integer name="nyan_star_cols">6</integer>
+
+</resources>

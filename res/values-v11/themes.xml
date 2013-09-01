@@ -3,6 +3,10 @@
 
 	<style name="Theme.Blank" parent="android:Theme.Holo.NoActionBar"/>
 
+	<style name="Theme.Nyan" parent="android:Theme.Holo.NoActionBar">
+		<item name="android:windowBackground">@color/nyan_background</item>
+	</style>
+
 	<style name="Theme.Twidere.Viewer" parent="android:Theme.Holo.NoActionBar">
 		<item name="android:windowIsTranslucent">true</item>
 		<item name="android:windowContentOverlay">@null</item>

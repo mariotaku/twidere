@@ -22,6 +22,7 @@ package org.mariotaku.twidere.activity;
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getColorPreviewBitmap;
+import static org.mariotaku.twidere.util.Utils.getNonEmptyString;
 import static org.mariotaku.twidere.util.Utils.isUserLoggedIn;
 import static org.mariotaku.twidere.util.Utils.makeAccountContentValues;
 import static org.mariotaku.twidere.util.Utils.setUserAgent;
@@ -252,6 +253,7 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 			}
 			case MENU_EDIT_API: {
 				if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) return false;
+				setDefaultAPI();
 				final Intent intent = new Intent(this, EditAPIActivity.class);
 				final Bundle bundle = new Bundle();
 				bundle.putString(Accounts.REST_BASE_URL, mRestBaseURL);
@@ -275,6 +277,7 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
 		saveEditedText();
+		setDefaultAPI();
 		outState.putString(Accounts.REST_BASE_URL, mRestBaseURL);
 		outState.putString(Accounts.OAUTH_BASE_URL, mOAuthBaseURL);
 		outState.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRestBaseURL);
@@ -312,7 +315,6 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 		final long[] account_ids = getActivatedAccountIds(this);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(account_ids.length > 0);
 
-		final Bundle extras = getIntent().getExtras();
 		if (savedInstanceState != null) {
 			mRestBaseURL = savedInstanceState.getString(Accounts.REST_BASE_URL);
 			mOAuthBaseURL = savedInstanceState.getString(Accounts.OAUTH_BASE_URL);
@@ -326,34 +328,6 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 			if (savedInstanceState.containsKey(Accounts.USER_COLOR)) {
 				mUserColor = savedInstanceState.getInt(Accounts.USER_COLOR, Color.TRANSPARENT);
 			}
-		} else if (extras != null) {
-			mRestBaseURL = extras.getString(Accounts.REST_BASE_URL);
-			mOAuthBaseURL = extras.getString(Accounts.OAUTH_BASE_URL);
-			mSigningRestBaseURL = extras.getString(Accounts.SIGNING_REST_BASE_URL);
-			mSigningOAuthBaseURL = extras.getString(Accounts.SIGNING_OAUTH_BASE_URL);
-			mConsumerKey = trim(extras.getString(Accounts.CONSUMER_KEY));
-			mConsumerSecret = trim(extras.getString(Accounts.CONSUMER_SECRET));
-		}
-		if (isEmpty(mRestBaseURL)) {
-			mRestBaseURL = DEFAULT_REST_BASE_URL;
-		}
-		if (isEmpty(mOAuthBaseURL)) {
-			mOAuthBaseURL = DEFAULT_OAUTH_BASE_URL;
-		}
-		if (isEmpty(mSigningRestBaseURL)) {
-			mSigningRestBaseURL = DEFAULT_SIGNING_REST_BASE_URL;
-		}
-		if (isEmpty(mSigningOAuthBaseURL)) {
-			mSigningOAuthBaseURL = DEFAULT_SIGNING_OAUTH_BASE_URL;
-		}
-		final String consumer_key = mPreferences.getString(PREFERENCE_KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY_2);
-		final String consumer_secret = mPreferences
-				.getString(PREFERENCE_KEY_CONSUMER_SECRET, TWITTER_CONSUMER_SECRET_2);
-		if (isEmpty(mConsumerKey)) {
-			mConsumerKey = consumer_key;
-		}
-		if (isEmpty(mConsumerSecret)) {
-			mConsumerSecret = consumer_secret;
 		}
 
 		mUsernamePasswordContainer
@@ -385,6 +359,7 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 			mTask.cancel(true);
 		}
 		saveEditedText();
+		setDefaultAPI();
 		final Configuration conf = getConfiguration();
 		if (is_browser_sign_in) {
 			if (extras == null) return;
@@ -396,6 +371,38 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 			mTask = new SignInTask(this, conf, mUsername, mPassword, mAuthType, mUserColor);
 		}
 		mTask.execute();
+	}
+
+	private void setDefaultAPI() {
+		final String consumer_key = getNonEmptyString(mPreferences, PREFERENCE_KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY_2);
+		final String consumer_secret = getNonEmptyString(mPreferences, PREFERENCE_KEY_CONSUMER_SECRET,
+				TWITTER_CONSUMER_SECRET_2);
+		final String rest_base_url = getNonEmptyString(mPreferences, PREFERENCE_KEY_REST_BASE_URL,
+				DEFAULT_REST_BASE_URL);
+		final String oauth_base_url = getNonEmptyString(mPreferences, PREFERENCE_KEY_OAUTH_BASE_URL,
+				DEFAULT_OAUTH_BASE_URL);
+		final String signing_rest_base_url = getNonEmptyString(mPreferences, PREFERENCE_KEY_SIGNING_REST_BASE_URL,
+				DEFAULT_SIGNING_REST_BASE_URL);
+		final String signing_oauth_base_url = getNonEmptyString(mPreferences, PREFERENCE_KEY_SIGNING_OAUTH_BASE_URL,
+				DEFAULT_SIGNING_OAUTH_BASE_URL);
+		if (isEmpty(mConsumerKey)) {
+			mConsumerKey = consumer_key;
+		}
+		if (isEmpty(mConsumerSecret)) {
+			mConsumerSecret = consumer_secret;
+		}
+		if (isEmpty(mRestBaseURL)) {
+			mRestBaseURL = rest_base_url;
+		}
+		if (isEmpty(mOAuthBaseURL)) {
+			mOAuthBaseURL = oauth_base_url;
+		}
+		if (isEmpty(mSigningRestBaseURL)) {
+			mSigningRestBaseURL = signing_rest_base_url;
+		}
+		if (isEmpty(mSigningOAuthBaseURL)) {
+			mSigningOAuthBaseURL = signing_oauth_base_url;
+		}
 	}
 
 	private Configuration getConfiguration() {

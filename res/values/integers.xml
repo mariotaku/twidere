@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<integer name="pane_left_content_weight">5</integer>
-	<integer name="pane_right_content_weight">5</integer>
 	<integer name="default_sliding_pane_fade_max">128</integer>
 	<integer name="default_sliding_pane_fling_duration">900</integer>
+	<integer name="nyan_star_rows">8</integer>
+	<integer name="nyan_star_cols">5</integer>
 
 </resources>
