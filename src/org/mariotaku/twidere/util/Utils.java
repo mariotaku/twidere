@@ -2428,6 +2428,26 @@ public final class Utils implements Constants {
 		}
 	}
 
+	public static void openSearch(final Activity activity, final long account_id, final String query) {
+		if (activity == null) return;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
+			final Fragment fragment = new SearchFragment();
+			final Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			args.putString(INTENT_KEY_QUERY, query);
+			fragment.setArguments(args);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
+		} else {
+			final Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_SEARCH);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			builder.appendQueryParameter(QUERY_PARAM_QUERY, query);
+			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+		}
+	}
+
 	public static void openStatus(final Activity activity, final long account_id, final long status_id) {
 		if (activity == null || account_id <= 0 || status_id <= 0) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
@@ -2563,26 +2583,6 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openSearch(final Activity activity, final long account_id, final String query) {
-		if (activity == null) return;
-		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
-			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
-			final Fragment fragment = new SearchFragment();
-			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			args.putString(INTENT_KEY_QUERY, query);
-			fragment.setArguments(args);
-			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
-		} else {
-			final Uri.Builder builder = new Uri.Builder();
-			builder.scheme(SCHEME_TWIDERE);
-			builder.authority(AUTHORITY_SEARCH);
-			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-			builder.appendQueryParameter(QUERY_PARAM_QUERY, query);
-			activity.startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
-		}
-	}
-	
 	public static void openUserFavorites(final Activity activity, final long account_id, final long user_id,
 			final String screen_name) {
 		if (activity == null) return;

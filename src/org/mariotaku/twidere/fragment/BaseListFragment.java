@@ -115,7 +115,7 @@ public class BaseListFragment extends ListFragment implements Constants {
 	public boolean isActivityFirstCreated() {
 		return mActivityFirstCreated;
 	}
-	
+
 	public boolean isInstanceStateSaved() {
 		return mIsInstanceStateSaved;
 	}

@@ -34,6 +34,7 @@ public class Account {
 	public final String screen_name, name, profile_image_url, profile_banner_url;
 	public final long account_id;
 	public final int user_color;
+	public final boolean is_activated;
 
 	public Account(final Cursor cursor, final Indices indices) {
 		screen_name = indices.screen_name != -1 ? cursor.getString(indices.screen_name) : null;
@@ -42,6 +43,7 @@ public class Account {
 		profile_image_url = indices.profile_image_url != -1 ? cursor.getString(indices.profile_image_url) : null;
 		profile_banner_url = indices.profile_banner_url != -1 ? cursor.getString(indices.profile_banner_url) : null;
 		user_color = indices.user_color != -1 ? cursor.getInt(indices.user_color) : Color.TRANSPARENT;
+		is_activated = indices.is_activated != -1 ? cursor.getInt(indices.is_activated) == 1 : false;
 	}
 
 	public static List<Account> getAccounts(final Context context, final boolean activated_only) {
@@ -65,7 +67,7 @@ public class Account {
 
 	public static class Indices {
 
-		public final int screen_name, name, account_id, profile_image_url, profile_banner_url, user_color;
+		public final int screen_name, name, account_id, profile_image_url, profile_banner_url, user_color, is_activated;
 
 		public Indices(final Cursor cursor) {
 			screen_name = cursor.getColumnIndex(Accounts.SCREEN_NAME);
@@ -74,6 +76,7 @@ public class Account {
 			profile_image_url = cursor.getColumnIndex(Accounts.PROFILE_IMAGE_URL);
 			profile_banner_url = cursor.getColumnIndex(Accounts.PROFILE_BANNER_URL);
 			user_color = cursor.getColumnIndex(Accounts.USER_COLOR);
+			is_activated = cursor.getColumnIndex(Accounts.IS_ACTIVATED);
 		}
 	}
 }

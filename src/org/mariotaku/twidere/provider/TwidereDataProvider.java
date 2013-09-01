@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.provider;
 
 import static android.text.TextUtils.isEmpty;
+import static org.mariotaku.twidere.util.SQLiteDatabaseAccessor.insertWithOnConflict;
 import static org.mariotaku.twidere.util.Utils.clearAccountColor;
 import static org.mariotaku.twidere.util.Utils.clearAccountName;
 import static org.mariotaku.twidere.util.Utils.getAccountName;
@@ -152,8 +153,14 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 						old_count = 0;
 				}
 				mDatabase.beginTransaction();
+				final boolean replace_on_conflict = table_id == TABLE_ID_CACHED_HASHTAGS
+						|| table_id == TABLE_ID_CACHED_STATUSES || table_id == TABLE_ID_CACHED_USERS;
 				for (final ContentValues contentValues : values) {
-					mDatabase.insert(table, null, contentValues);
+					if (replace_on_conflict) {
+						insertWithOnConflict(mDatabase, table, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+					} else {
+						mDatabase.insert(table, null, contentValues);
+					}
 					result++;
 				}
 				mDatabase.setTransactionSuccessful();

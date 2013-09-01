@@ -127,9 +127,8 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 			setProgressBarIndeterminateVisibility(true);
 		}
 		final List<ParcelableStatus> data = getData();
-		if (isInstanceStateSaved() && data != null && !mStatusesRestored) {
+		if (isInstanceStateSaved() && data != null && !mStatusesRestored)
 			return new DummyParcelableStatusesLoader(getActivity(), data);
-		}
 		final Loader<List<ParcelableStatus>> loader = newLoaderInstance(getActivity(), args);
 		return loader != null ? loader : new DummyParcelableStatusesLoader(getActivity());
 	}

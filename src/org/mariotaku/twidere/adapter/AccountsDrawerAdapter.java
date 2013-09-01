@@ -23,21 +23,25 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 
 	private static final int GROUP_LAYOUT = R.layout.accounts_drawer_item_group;
 	private static final int CHILD_LAYOUT = R.layout.menu_list_item;
-	private final int mDefaultBannerWidth;
 	private final ArrayList<int[]> mAccountActions = new ArrayList<int[]>();
 
 	{
 		mAccountActions.add(new int[] { R.string.view_user_profile, R.drawable.ic_menu_profile, MENU_VIEW_PROFILE });
 		mAccountActions.add(new int[] { R.string.edit_profile, R.drawable.ic_menu_edit, MENU_EDIT });
 		mAccountActions.add(new int[] { R.string.set_color, R.drawable.ic_menu_color_palette, MENU_SET_COLOR });
+		mAccountActions.add(new int[] { R.string.enable, R.drawable.ic_menu_mark, MENU_TOGGLE });
+		mAccountActions.add(new int[] { R.string.delete, R.drawable.ic_menu_delete, MENU_DELETE });
 	}
 
-	private int mBannerWidth;
-
 	private final ImageLoaderWrapper mImageLoader;
+	private final LayoutInflater mInflater;
+
+	private final int mDefaultBannerWidth;
+
 	private Cursor mCursor;
 	private Account.Indices mIndices;
-	private final LayoutInflater mInflater;
+	private int mBannerWidth;
+	private long mDefaultAccountId;
 
 	public AccountsDrawerAdapter(final Context context) {
 		final TwidereApplication app = TwidereApplication.getInstance(context);
@@ -88,7 +92,7 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 
 	@Override
 	public long getGroupId(final int groupPosition) {
-		return ExpandableListView.getPackedPositionForGroup(groupPosition);
+		return getGroup(groupPosition).account_id;
 	}
 
 	@Override
@@ -105,10 +109,12 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 			view.setTag(holder);
 		}
 		final Account item = getGroup(groupPosition);
+		holder.setActivated(item.is_activated);
 		holder.name.setText(item.name);
 		holder.screen_name.setText("@" + item.screen_name);
 		holder.name_container.drawRight(item.user_color);
 		holder.expand_indicator.setImageResource(expander_res);
+		holder.default_indicator.setVisibility(mDefaultAccountId == item.account_id ? View.VISIBLE : View.GONE);
 		final int width = mBannerWidth > 0 ? mBannerWidth : mDefaultBannerWidth;
 		mImageLoader.displayProfileBanner(holder.profile_banner, item.profile_banner_url, width);
 		mImageLoader.displayProfileImage(holder.profile_image, item.profile_image_url);
@@ -134,6 +140,12 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 	public void setBannerWidth(final int width) {
 		if (mBannerWidth == width) return;
 		mBannerWidth = width;
+		notifyDataSetChanged();
+	}
+
+	public void setDefaultAccountId(long account_id) {
+		if (mDefaultAccountId == account_id) return;
+		mDefaultAccountId = account_id;
 		notifyDataSetChanged();
 	}
 

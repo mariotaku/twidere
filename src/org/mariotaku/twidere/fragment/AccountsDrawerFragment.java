@@ -20,6 +20,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -31,15 +33,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupExpandListener;
 
 public class AccountsDrawerFragment extends BaseFragment implements LoaderCallbacks<Cursor>, OnSizeChangedListener,
-		OnGroupExpandListener, OnChildClickListener, OnClickListener {
+		OnGroupExpandListener, OnChildClickListener, OnClickListener, OnSharedPreferenceChangeListener,
+		OnItemLongClickListener {
 
 	private ContentResolver mResolver;
+	private SharedPreferences mPreferences;
 
 	private ExpandableListView mListView;
 	private AccountsDrawerAdapter mAdapter;
@@ -62,12 +68,15 @@ public class AccountsDrawerFragment extends BaseFragment implements LoaderCallba
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mResolver = getContentResolver();
 		mAdapter = new AccountsDrawerAdapter(getActivity());
 		mListView.setAdapter(mAdapter);
+		mListView.setOnItemLongClickListener(this);
 		mListView.setOnGroupExpandListener(this);
 		mListView.setOnChildClickListener(this);
 		mAddAccountButton.setOnClickListener(this);
+		mPreferences.registerOnSharedPreferenceChangeListener(this);
 		if (savedInstanceState != null) {
 			mSelectedAccountId = savedInstanceState.getLong(INTENT_KEY_ACCOUNT_ID);
 		}
@@ -122,6 +131,12 @@ public class AccountsDrawerFragment extends BaseFragment implements LoaderCallba
 				startActivityForResult(intent, REQUEST_SET_COLOR);
 				break;
 			}
+			case MENU_TOGGLE: {
+				break;
+			}
+			case MENU_DELETE: {
+				break;
+			}
 		}
 		return true;
 	}
@@ -165,6 +180,25 @@ public class AccountsDrawerFragment extends BaseFragment implements LoaderCallba
 	}
 
 	@Override
+	public boolean onItemLongClick(final AdapterView<?> view, final View child, final int position, final long id) {
+		final long packedPos = mListView.getExpandableListPosition(position);
+		if (ExpandableListView.getPackedPositionType(packedPos) != ExpandableListView.PACKED_POSITION_TYPE_GROUP)
+			return false;
+		final int groupPosition = ExpandableListView.getPackedPositionGroup(packedPos);
+		if (groupPosition == -1) return false;
+		final Account account = mAdapter.getGroup(groupPosition);
+		if (account == null) return false;
+		if (!account.is_activated) {
+			final ContentValues values = new ContentValues();
+			values.put(Accounts.IS_ACTIVATED, 1);
+			final String where = Accounts.ACCOUNT_ID + " = " + account.account_id;
+			mResolver.update(Accounts.CONTENT_URI, values, where, null);
+		}
+		mPreferences.edit().putLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, account.account_id).commit();
+		return true;
+	}
+
+	@Override
 	public void onLoaderReset(final Loader<Cursor> loader) {
 		mAdapter.setAccountsCursor(null);
 	}
@@ -175,9 +209,22 @@ public class AccountsDrawerFragment extends BaseFragment implements LoaderCallba
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+		mAdapter.setDefaultAccountId(mPreferences.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1));
+	}
+
+	@Override
 	public void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putLong(INTENT_KEY_ACCOUNT_ID, mSelectedAccountId);
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
+		if (PREFERENCE_KEY_DEFAULT_ACCOUNT_ID.equals(key)) {
+			mAdapter.setDefaultAccountId(mPreferences.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1));
+		}
 	}
 
 	@Override

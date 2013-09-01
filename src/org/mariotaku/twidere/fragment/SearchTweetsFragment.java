@@ -27,7 +27,10 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 
 public class SearchTweetsFragment extends ParcelableStatusesListFragment {
 
@@ -63,6 +66,17 @@ public class SearchTweetsFragment extends ParcelableStatusesListFragment {
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 		final String query = args.getString(INTENT_KEY_QUERY);
 		return new String[] { AUTHORITY_SEARCH_TWEETS, "account" + account_id, "query" + query };
+	}
+
+	@Override
+	public void onScrollStateChanged(AbsListView view, int scrollState) {
+		super.onScrollStateChanged(view, scrollState);
+		if (scrollState == OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+			final Fragment parent = getParentFragment();
+			if (parent instanceof SearchFragment) {
+				((SearchFragment) parent).hideIndicator();
+			}
+		}
 	}
 
 }

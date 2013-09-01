@@ -26,7 +26,10 @@ import org.mariotaku.twidere.model.ParcelableUser;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 
 public class SearchUsersFragment extends BaseUsersListFragment {
 
@@ -66,6 +69,17 @@ public class SearchUsersFragment extends BaseUsersListFragment {
 	public void onSaveInstanceState(final Bundle outState) {
 		outState.putInt(INTENT_KEY_PAGE, mPage);
 		super.onSaveInstanceState(outState);
+	}
+
+	@Override
+	public void onScrollStateChanged(AbsListView view, int scrollState) {
+		super.onScrollStateChanged(view, scrollState);
+		if (scrollState == OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+			final Fragment parent = getParentFragment();
+			if (parent instanceof SearchFragment) {
+				((SearchFragment) parent).hideIndicator();
+			}
+		}
 	}
 
 }

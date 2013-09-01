@@ -38,8 +38,9 @@ public class ProfileImageBannerLayout extends ExtendedFrameLayout {
 	private static final double PROFILE_IMAGE_TOP_MARGIN_FACTOR = 0.0875;
 
 	private final int mBorderWidth;
-
 	private final ImageView mProfileBannerImageView, mProfileImageView;
+
+	private int mAlpha;
 
 	public ProfileImageBannerLayout(final Context context) {
 		this(context, null);
@@ -51,6 +52,7 @@ public class ProfileImageBannerLayout extends ExtendedFrameLayout {
 
 	public ProfileImageBannerLayout(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
+		mAlpha = 0xFF;
 		mBorderWidth = (int) (getResources().getDisplayMetrics().density * 2);
 		mProfileBannerImageView = new ProfileBannerImageView(context);
 		mProfileBannerImageView.setId(VIEW_ID_PROFILE_BANNER);
@@ -67,6 +69,22 @@ public class ProfileImageBannerLayout extends ExtendedFrameLayout {
 
 	public ImageView getProfileImageView() {
 		return mProfileImageView;
+	}
+
+	public void setAlpha(final int alpha) {
+		mAlpha = alpha;
+		invalidate();
+	}
+
+	@Override
+	protected void dispatchDraw(final Canvas canvas) {
+		try {
+			canvas.saveLayerAlpha(null, mAlpha, Canvas.ALL_SAVE_FLAG);
+			super.dispatchDraw(canvas);
+			canvas.restore();
+		} catch (final NullPointerException e) {
+			super.dispatchDraw(canvas);
+		}
 	}
 
 	@Override

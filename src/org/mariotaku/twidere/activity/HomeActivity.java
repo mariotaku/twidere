@@ -181,13 +181,16 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME: {
+				final FragmentManager fm = getSupportFragmentManager();
+				final int count = fm.getBackStackEntryCount();
 				if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
 					mDrawerLayout.closeDrawer(Gravity.LEFT);
 					return true;
+				} else if (count == 0 && !mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+					mDrawerLayout.openDrawer(Gravity.LEFT);
+					return true;
 				}
-				final FragmentManager fm = getSupportFragmentManager();
 				if (isDualPaneMode() && !FragmentManagerTrojan.isStateSaved(fm)) {
-					final int count = fm.getBackStackEntryCount();
 					for (int i = 0; i < count; i++) {
 						fm.popBackStackImmediate();
 					}
