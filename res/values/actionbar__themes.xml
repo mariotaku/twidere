@@ -18,6 +18,8 @@
 		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_dark_holo</item>
 		<item name="popupBackground">@drawable/popup_holo_dark</item>
 		<item name="actionModeBackground">@drawable/cab_background_top_holo_dark</item>
+		<item name="listPopupWindowStyle">@style/Widget.Holo.PopupMenu</item>
+		<item name="dropDownListViewStyle">@style/Widget.Holo.ListView.DropDown</item>
 	</style>
 
 	<style name="Theme.ActionBar.Light.DarkActionBar" parent="android:Theme.Light">
@@ -37,6 +39,8 @@
 		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_light_darkactionbar_holo</item>
 		<item name="popupBackground">@drawable/popup_holo_light</item>
 		<item name="actionModeBackground">@drawable/cab_background_top_holo_dark</item>
+		<item name="listPopupWindowStyle">@style/Widget.Holo.Light.PopupMenu</item>
+		<item name="dropDownListViewStyle">@style/Widget.Holo.Light.ListView.DropDown</item>
 	</style>
 
 	<style name="Theme.ActionBar.Dialog" parent="android:Theme">
@@ -58,6 +62,8 @@
 		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_dark_holo</item>
 		<item name="popupBackground">@drawable/popup_holo_light</item>
 		<item name="actionModeBackground">@drawable/cab_background_top_holo_dark</item>
+		<item name="listPopupWindowStyle">@style/Widget.Holo.PopupMenu</item>
+		<item name="dropDownListViewStyle">@style/Widget.Holo.ListView.DropDown</item>
 	</style>
 
 	<style name="Theme.ActionBar.Light.Dialog" parent="android:Theme.Light">
@@ -68,7 +74,7 @@
 		<item name="android:windowContentOverlay">@null</item>
 		<item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
 		<item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
-			
+
 		<!-- for programmatic instantiation -->
 		<item name="actionBarBackground">@drawable/actionbar_bg_light_darkactionbar_holo</item>
 		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle.Inverse</item>
@@ -79,6 +85,8 @@
 		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_light_holo</item>
 		<item name="popupBackground">@drawable/popup_holo_light</item>
 		<item name="actionModeBackground">@drawable/cab_background_top_holo_light</item>
+		<item name="listPopupWindowStyle">@style/Widget.Holo.Light.PopupMenu</item>
+		<item name="dropDownListViewStyle">@style/Widget.Holo.Light.ListView.DropDown</item>
 	</style>
 
 	<style name="Theme.ActionBar.NoActionBar" parent="Theme.ActionBar">

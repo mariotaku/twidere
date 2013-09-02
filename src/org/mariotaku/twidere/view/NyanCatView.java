@@ -10,17 +10,28 @@ import android.widget.ImageView;
 public class NyanCatView extends ImageView {
 
 	public NyanCatView(final Context context) {
-		this(context, null);
+		super(context);
 	}
 
 	public NyanCatView(final Context context, final AttributeSet attrs) {
-		this(context, attrs, 0);
+		super(context, attrs);
 	}
 
 	public NyanCatView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
+	}
+
+	@Override
+	protected void onAttachedToWindow() {
+		super.onAttachedToWindow();
 		setBackgroundResource(R.drawable.nyan_sakamoto_8x);
 		((AnimationDrawable) getBackground()).start();
+	}
+
+	@Override
+	protected void onDetachedFromWindow() {
+		super.onDetachedFromWindow();
+		setBackgroundResource(0);
 	}
 
 }

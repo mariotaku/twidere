@@ -21,6 +21,7 @@ package org.mariotaku.twidere.activity;
 
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
 
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.ViewAccessor;
 
 import android.annotation.SuppressLint;
@@ -42,7 +43,7 @@ public class TwidereSwipeBackActivity extends BaseActivity {
 	public View findViewById(final int id) {
 		final View v = super.findViewById(id);
 		if (v != null) return v;
-		return mSwipeBackLayout.findViewById(id);
+		return mSwipeBackLayout != null ? mSwipeBackLayout.findViewById(id) : null;
 	}
 
 	@Override
@@ -64,6 +65,7 @@ public class TwidereSwipeBackActivity extends BaseActivity {
 	 * Scroll out contentView and finish the activity
 	 */
 	public void scrollToFinishActivity() {
+		if (mSwipeBackLayout == null) return;
 		mSwipeBackLayout.scrollToFinishActivity();
 	}
 
@@ -77,7 +79,18 @@ public class TwidereSwipeBackActivity extends BaseActivity {
 	}
 
 	public void setSwipeBackEnable(final boolean enable) {
+		if (mSwipeBackLayout == null) return;
 		mSwipeBackLayout.setEnableGesture(enable);
+	}
+
+	@Override
+	protected int getDarkThemeRes() {
+		return R.style.Theme_SwipeBack;
+	}
+
+	@Override
+	protected int getLightThemeRes() {
+		return R.style.Theme_SwipeBack_Light;
 	}
 
 	@Override
@@ -92,6 +105,8 @@ public class TwidereSwipeBackActivity extends BaseActivity {
 	@Override
 	protected void onPostCreate(final Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-		mSwipeBackLayout.attachToActivity(this);
+		if (mSwipeBackLayout != null) {
+			mSwipeBackLayout.attachToActivity(this);
+		}
 	}
 }

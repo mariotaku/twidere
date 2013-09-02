@@ -22,6 +22,7 @@ package org.mariotaku.twidere.preference;
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
 import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
+import static org.mariotaku.twidere.util.Utils.getDefaultTextSize;
 import static org.mariotaku.twidere.util.Utils.getImagePreviewDisplayOptionInt;
 
 import org.mariotaku.twidere.Constants;
@@ -170,7 +171,7 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 
 	private void setTextSize() {
 		if (mHolder == null) return;
-		mHolder.setTextSize(mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE));
+		mHolder.setTextSize(mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(getContext())));
 	}
 
 	private void setTime() {

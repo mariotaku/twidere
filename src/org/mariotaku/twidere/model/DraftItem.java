@@ -43,8 +43,9 @@ public class DraftItem implements Parcelable {
 	public final long[] account_ids;
 	public final long _id, in_reply_to_status_id;
 	public final String text, media_uri;
-	public final boolean is_image_attached, is_photo_attached, is_possibly_sensitive;
+	public final boolean is_possibly_sensitive;
 	public final ParcelableLocation location;
+	public final int attached_image_type;
 
 	public DraftItem(final Cursor cursor, final int position) {
 		cursor.moveToPosition(position);
@@ -53,8 +54,7 @@ public class DraftItem implements Parcelable {
 		media_uri = cursor.getString(cursor.getColumnIndex(Drafts.IMAGE_URI));
 		account_ids = ArrayUtils.fromString(cursor.getString(cursor.getColumnIndex(Drafts.ACCOUNT_IDS)), ',');
 		in_reply_to_status_id = cursor.getLong(cursor.getColumnIndex(Drafts.IN_REPLY_TO_STATUS_ID));
-		is_image_attached = cursor.getShort(cursor.getColumnIndex(Drafts.IS_IMAGE_ATTACHED)) == 1;
-		is_photo_attached = cursor.getShort(cursor.getColumnIndex(Drafts.IS_PHOTO_ATTACHED)) == 1;
+		attached_image_type = cursor.getShort(cursor.getColumnIndex(Drafts.ATTACHED_IMAGE_TYPE));
 		is_possibly_sensitive = cursor.getShort(cursor.getColumnIndex(Drafts.IS_POSSIBLY_SENSITIVE)) == 1;
 		location = new ParcelableLocation(cursor.getString(cursor.getColumnIndex(Drafts.LOCATION)));
 	}
@@ -65,8 +65,7 @@ public class DraftItem implements Parcelable {
 		in_reply_to_status_id = in.readLong();
 		text = in.readString();
 		media_uri = in.readString();
-		is_image_attached = in.readInt() == 1;
-		is_photo_attached = in.readInt() == 1;
+		attached_image_type = in.readInt();
 		is_possibly_sensitive = in.readInt() == 1;
 		location = ParcelableLocation.fromString(in.readString());
 	}
@@ -83,8 +82,7 @@ public class DraftItem implements Parcelable {
 		out.writeLong(in_reply_to_status_id);
 		out.writeString(text);
 		out.writeString(media_uri);
-		out.writeInt(is_image_attached ? 1 : 0);
-		out.writeInt(is_photo_attached ? 1 : 0);
+		out.writeInt(attached_image_type);
 		out.writeInt(is_possibly_sensitive ? 1 : 0);
 		out.writeString(ParcelableLocation.toString(location));
 	}

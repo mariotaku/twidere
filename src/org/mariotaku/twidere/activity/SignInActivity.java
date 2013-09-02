@@ -190,7 +190,7 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 				break;
 			}
 			case R.id.set_color: {
-				final Intent intent = new Intent(this, SetColorActivity.class);
+				final Intent intent = new Intent(this, ColorPickerActivity.class);
 				final Bundle bundle = new Bundle();
 				if (mUserColor != null) {
 					bundle.putInt(Accounts.USER_COLOR, mUserColor);

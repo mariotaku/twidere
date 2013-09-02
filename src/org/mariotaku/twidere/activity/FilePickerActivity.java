@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import org.mariotaku.twidere.R;
@@ -205,7 +206,8 @@ public class FilePickerActivity extends BaseActivity implements OnItemClickListe
 		private static final Comparator<File> NAME_COMPARATOR = new Comparator<File>() {
 			@Override
 			public int compare(final File file1, final File file2) {
-				return file1.getName().toLowerCase().compareTo(file2.getName().toLowerCase());
+				final Locale loc = Locale.getDefault();
+				return file1.getName().toLowerCase(loc).compareTo(file2.getName().toLowerCase(loc));
 			}
 		};
 

@@ -4,6 +4,7 @@
 	<integer name="default_sliding_pane_fade_max">128</integer>
 	<integer name="default_sliding_pane_fling_duration">900</integer>
 	<integer name="nyan_star_rows">8</integer>
-	<integer name="nyan_star_cols">5</integer>
+	<integer name="nyan_star_cols">11</integer>
+	<integer name="default_text_size">15</integer>
 
 </resources>

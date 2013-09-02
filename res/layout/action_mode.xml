@@ -12,7 +12,18 @@
 		android:layout_width="56dp"
 		android:layout_height="match_parent"
 		android:background="@drawable/list_selector_holo_dark"
-		android:src="@drawable/ic_menu_close_clear_cancel"/>
+		android:contentDescription="@android:string/cancel"
+		android:paddingRight="8dp"
+		android:scaleType="centerInside"
+		android:src="@drawable/ic_cab_done_holo_dark"/>
+
+	<View
+		android:id="@+id/button_divider"
+		android:layout_width="0.5dp"
+		android:layout_height="match_parent"
+		android:layout_marginBottom="12dp"
+		android:layout_marginTop="12dp"
+		android:background="#40808080"/>
 
 	<LinearLayout
 		android:id="@+id/action_mode_title_view"

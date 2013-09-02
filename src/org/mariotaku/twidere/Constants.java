@@ -32,6 +32,8 @@ import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.provider.TweetStore.Tabs;
 
+import android.annotation.SuppressLint;
+
 public interface Constants {
 
 	public static final String APP_NAME = "Twidere";
@@ -48,7 +50,7 @@ public interface Constants {
 	public static final String TIMELINE_POSITIONS_PREFERENCES_NAME = "timeline_positions";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 45;
+	public static final int DATABASES_VERSION = 46;
 
 	public static final String TWITTER_CONSUMER_KEY = "uAFVpMhBntJutfVj6abfA";
 	public static final String TWITTER_CONSUMER_SECRET = "JARXkJTfxo0F8MyctYy9bUmrLISjo8vXAHsZHYuk2E";
@@ -227,7 +229,6 @@ public interface Constants {
 
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
 	public static final int PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT = 20;
-	public static final int PREFERENCE_DEFAULT_TEXT_SIZE = 15;
 	public static final boolean PREFERENCE_DEFAULT_HARDWARE_ACCELERATION = true;
 
 	public static final String NAME_DISPLAY_OPTION_BOTH = "both";
@@ -406,8 +407,7 @@ public interface Constants {
 	public static final String INTENT_KEY_ID = "id";
 	public static final String INTENT_KEY_RESID = "resid";
 	public static final String INTENT_KEY_IMAGE_URI = "image_uri";
-	public static final String INTENT_KEY_IS_PHOTO_ATTACHED = "is_photo_attached";
-	public static final String INTENT_KEY_IS_IMAGE_ATTACHED = "is_image_attached";
+	public static final String INTENT_KEY_ATTACHED_IMAGE_TYPE = "attached_image_type";
 	public static final String INTENT_KEY_ACTIVATED_ONLY = "activated_only";
 	public static final String INTENT_KEY_TAB_POSITION = "tab_position";
 	public static final String INTENT_KEY_HAS_RUNNING_TASK = "has_running_task";
@@ -429,6 +429,7 @@ public interface Constants {
 
 	public static final String QUERY_PARAM_NEW_ITEMS_COUNT = "new_items_count";
 
+	@SuppressLint("InlinedApi")
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_SEARCH = R.id.search;
 	public static final int MENU_COMPOSE = R.id.compose;
@@ -517,7 +518,7 @@ public interface Constants {
 	public static final String TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY = DirectMessages.ConversationsEntry.TABLE_NAME;
 	public static final String TABLE_TRENDS_LOCAL = CachedTrends.Local.TABLE_NAME;
 	public static final String TABLE_TABS = Tabs.TABLE_NAME;
-	public static final String TABLE_NOTIFICATIONS = TweetStore.TABLE_NAME_NOTIFICATIONS;
+	public static final String TABLE_NOTIFICATIONS = TweetStore.Notifications.TABLE_NAME;
 	public static final String TABLE_PREFERENCES = TweetStore.Preferences.TABLE_NAME;
 	public static final String TABLE_PERMISSIONS = TweetStore.Permissions.TABLE_NAME;
 	public static final String TABLE_DNS = TweetStore.DNS.TABLE_NAME;
@@ -615,5 +616,9 @@ public interface Constants {
 	public static final int PERMISSION_DIRECT_MESSAGES = 7;
 	public static final int PERMISSION_ACCOUNTS = 11;
 	public static final int PERMISSION_PREFERENCES = 13;
+
+	public static final int ATTACHED_IMAGE_TYPE_NONE = 0;
+	public static final int ATTACHED_IMAGE_TYPE_PHOTO = 1;
+	public static final int ATTACHED_IMAGE_TYPE_IMAGE = 2;
 
 }

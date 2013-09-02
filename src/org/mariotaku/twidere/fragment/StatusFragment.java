@@ -26,6 +26,7 @@ import static org.mariotaku.twidere.util.Utils.findStatus;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
+import static org.mariotaku.twidere.util.Utils.getDefaultTextSize;
 import static org.mariotaku.twidere.util.Utils.getImagesInStatus;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
@@ -49,7 +50,7 @@ import java.util.List;
 import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.SetColorActivity;
+import org.mariotaku.twidere.activity.ColorPickerActivity;
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.adapter.PreviewPagerAdapter;
 import org.mariotaku.twidere.adapter.PreviewPagerAdapter.OnImageClickListener;
@@ -338,7 +339,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 					break;
 				}
 				case MENU_SET_COLOR: {
-					final Intent intent = new Intent(getActivity(), SetColorActivity.class);
+					final Intent intent = new Intent(getActivity(), ColorPickerActivity.class);
 					startActivityForResult(intent, REQUEST_SET_COLOR);
 					break;
 				}
@@ -668,7 +669,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		filter.addAction(BROADCAST_RETWEET_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
 		updateUserColor();
-		final int text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
+		final int text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(getActivity()));
 		mNameView.setTextSize(text_size * 1.25f);
 		mTextView.setTextSize(text_size * 1.25f);
 		mScreenNameView.setTextSize(text_size * 0.85f);

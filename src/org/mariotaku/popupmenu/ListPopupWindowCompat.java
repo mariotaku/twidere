@@ -18,14 +18,11 @@ package org.mariotaku.popupmenu;
 
 import org.mariotaku.twidere.R;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.Resources.Theme;
-import android.content.res.TypedArray;
+import android.content.res.Resources;
 import android.database.DataSetObserver;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -36,7 +33,7 @@ import android.view.View.MeasureSpec;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.widget.AbsListView.LayoutParams;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -54,8 +51,11 @@ import android.widget.PopupWindow;
  * 
  * @see android.widget.AutoCompleteTextView
  * @see android.widget.Spinner
+ * 
+ * @hide
  */
 public class ListPopupWindowCompat implements ListPopupWindow {
+
 	private static final String TAG = "ListPopupWindow";
 	private static final boolean DEBUG = false;
 
@@ -95,8 +95,7 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 
 	private final ResizePopupRunnable mResizePopupRunnable = new ResizePopupRunnable();
 	private final PopupTouchInterceptor mTouchInterceptor = new PopupTouchInterceptor();
-	// private final PopupScrollListener mScrollListener = new
-	// PopupScrollListener();
+	private final PopupScrollListener mScrollListener = new PopupScrollListener();
 	private final ListSelectorHider mHideSelector = new ListSelectorHider();
 	private Runnable mShowDropDownRunnable;
 
@@ -106,8 +105,59 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 
 	private boolean mModal;
 
-	// from ICS ListView
-	static final int NO_POSITION = -1;
+	/**
+	 * The provided prompt view should appear above list content.
+	 * 
+	 * @see #setPromptPosition(int)
+	 * @see #getPromptPosition()
+	 * @see #setPromptView(View)
+	 */
+	public static final int POSITION_PROMPT_ABOVE = 0;
+
+	/**
+	 * The provided prompt view should appear below list content.
+	 * 
+	 * @see #setPromptPosition(int)
+	 * @see #getPromptPosition()
+	 * @see #setPromptView(View)
+	 */
+	public static final int POSITION_PROMPT_BELOW = 1;
+
+	/**
+	 * Alias for {@link ViewGroup.LayoutParams#MATCH_PARENT}. If used to specify
+	 * a popup width, the popup will match the width of the anchor view. If used
+	 * to specify a popup height, the popup will fill available space.
+	 */
+	public static final int MATCH_PARENT = ViewGroup.LayoutParams.MATCH_PARENT;
+
+	/**
+	 * Alias for {@link ViewGroup.LayoutParams#WRAP_CONTENT}. If used to specify
+	 * a popup width, the popup will use the width of its content.
+	 */
+	public static final int WRAP_CONTENT = ViewGroup.LayoutParams.WRAP_CONTENT;
+
+	/**
+	 * Mode for {@link #setInputMethodMode(int)}: the requirements for the input
+	 * method should be based on the focusability of the popup. That is if it is
+	 * focusable than it needs to work with the input method, else it doesn't.
+	 */
+	public static final int INPUT_METHOD_FROM_FOCUSABLE = PopupWindow.INPUT_METHOD_FROM_FOCUSABLE;
+
+	/**
+	 * Mode for {@link #setInputMethodMode(int)}: this popup always needs to
+	 * work with an input method, regardless of whether it is focusable. This
+	 * means that it will always be displayed so that the user can also operate
+	 * the input method while it is shown.
+	 */
+	public static final int INPUT_METHOD_NEEDED = PopupWindow.INPUT_METHOD_NEEDED;
+
+	/**
+	 * Mode for {@link #setInputMethodMode(int)}: this popup never needs to work
+	 * with an input method, regardless of whether it is focusable. This means
+	 * that it will always be displayed to use as much space on the screen as
+	 * needed, regardless of whether this covers the input method.
+	 */
+	public static final int INPUT_METHOD_NOT_NEEDED = PopupWindow.INPUT_METHOD_NOT_NEEDED;
 
 	/**
 	 * Create a new, empty popup window capable of displaying items from a
@@ -117,7 +167,7 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 	 * @param context Context used for contained views.
 	 */
 	public ListPopupWindowCompat(final Context context) {
-		this(context, null, 0, 0);
+		this(context, null, R.attr.listPopupWindowStyle);
 	}
 
 	/**
@@ -130,7 +180,7 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 	 *            popup.
 	 */
 	public ListPopupWindowCompat(final Context context, final AttributeSet attrs) {
-		this(context, attrs, 0, 0);
+		this(context, attrs, R.attr.listPopupWindowStyle);
 	}
 
 	/**
@@ -144,34 +194,10 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 	 * @param defStyleAttr Default style attribute to use for popup content.
 	 */
 	public ListPopupWindowCompat(final Context context, final AttributeSet attrs, final int defStyleAttr) {
-		this(context, attrs, defStyleAttr, 0);
-	}
-
-	/**
-	 * Create a new, empty popup window capable of displaying items from a
-	 * ListAdapter. Backgrounds should be set using
-	 * {@link #setBackgroundDrawable(Drawable)}.
-	 * 
-	 * @param context Context used for contained views.
-	 * @param attrs Attributes from inflating parent views used to style the
-	 *            popup.
-	 * @param defStyleAttr Style attribute to read for default styling of popup
-	 *            content.
-	 * @param defStyleRes Style resource ID to use for default styling of popup
-	 *            content.
-	 */
-	public ListPopupWindowCompat(final Context context, final AttributeSet attrs, final int defStyleAttr,
-			final int defStyleRes) {
 		mContext = context;
-		mPopup = new PopupWindow(context, attrs);
+		mPopup = new PopupWindow(context, attrs, defStyleAttr);
 		mPopup.setInputMethodMode(PopupWindow.INPUT_METHOD_NEEDED);
-
-		final Theme theme = context.getTheme();
-		final TypedArray array = theme.obtainStyledAttributes(new int[] { R.attr.popupBackground,
-				android.R.attr.listSelector });
-		mPopup.setBackgroundDrawable(array.getDrawable(0));
-		mDropDownListHighlight = array.getDrawable(1);
-		array.recycle();
+		// Set the default layout direction to match the default locale one
 	}
 
 	/**
@@ -267,8 +293,50 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 	}
 
 	/**
-	 * @return Where the optional prompt view should appear.
+	 * Copied from PopupWindow.java of JB
 	 * 
+	 * Returns the maximum height that is available for the popup to be
+	 * completely shown, optionally ignoring any bottom decorations such as the
+	 * input method. It is recommended that this height be the maximum for the
+	 * popup's height, otherwise it is possible that the popup will be clipped.
+	 * 
+	 * @param anchor The view on which the popup window must be anchored.
+	 * @param yOffset y offset from the view's bottom edge
+	 * @param ignoreBottomDecorations if true, the height returned will be all
+	 *            the way to the bottom of the display, ignoring any bottom
+	 *            decorations
+	 * @return The maximum available height for the popup to be completely
+	 *         shown.
+	 * @hide Pending API council approval.
+	 */
+	public int getMaxAvailableHeight(final View anchor, final int yOffset, final boolean ignoreBottomDecorations) {
+		final Rect displayFrame = new Rect();
+		anchor.getWindowVisibleDisplayFrame(displayFrame);
+
+		final int[] mDrawingLocation = new int[2];
+		final int[] anchorPos = mDrawingLocation;
+		anchor.getLocationOnScreen(anchorPos);
+
+		int bottomEdge = displayFrame.bottom;
+		if (ignoreBottomDecorations) {
+			final Resources res = anchor.getContext().getResources();
+			bottomEdge = res.getDisplayMetrics().heightPixels;
+		}
+		final int distanceToBottom = bottomEdge - (anchorPos[1] + anchor.getHeight()) - yOffset;
+		final int distanceToTop = anchorPos[1] - displayFrame.top + yOffset;
+
+		// anchorPos[1] is distance from anchor to top of screen
+		int returnedHeight = Math.max(distanceToBottom, distanceToTop);
+		if (mPopup.getBackground() != null) {
+			mPopup.getBackground().getPadding(mTempRect);
+			returnedHeight -= mTempRect.top + mTempRect.bottom;
+		}
+
+		return returnedHeight;
+	}
+
+	/**
+	 * @return Where the optional prompt view should appear.
 	 * @see #POSITION_PROMPT_ABOVE
 	 * @see #POSITION_PROMPT_BELOW
 	 */
@@ -290,7 +358,6 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 	 * @return The ID of the currently selected item or
 	 *         {@link ListView#INVALID_ROW_ID} if {@link #isShowing()} ==
 	 *         {@code false}.
-	 * 
 	 * @see ListView#getSelectedItemId()
 	 */
 	@Override
@@ -303,7 +370,6 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 	 * @return The position of the currently selected item or
 	 *         {@link ListView#INVALID_POSITION} if {@link #isShowing()} ==
 	 *         {@code false}.
-	 * 
 	 * @see ListView#getSelectedItemPosition()
 	 */
 	@Override
@@ -315,7 +381,6 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 	/**
 	 * @return The View for the currently selected item or null if
 	 *         {@link #isShowing()} == {@code false}.
-	 * 
 	 * @see ListView#getSelectedView()
 	 */
 	@Override
@@ -354,7 +419,6 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 
 	/**
 	 * @return Whether the drop-down is visible under special conditions.
-	 * 
 	 * @hide Only used by AutoCompleteTextView under special conditions.
 	 */
 	public boolean isDropDownAlwaysVisible() {
@@ -399,7 +463,6 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 	 * @param keyCode keyCode param passed to the host view's onKeyDown
 	 * @param event event param passed to the host view's onKeyDown
 	 * @return true if the event was handled, false if it was ignored.
-	 * 
 	 * @see #setModal(boolean)
 	 */
 	public boolean onKeyDown(final int keyCode, final KeyEvent event) {
@@ -420,17 +483,15 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 
 				final ListAdapter adapter = mAdapter;
 
+				boolean allEnabled;
 				int firstItem = Integer.MAX_VALUE;
 				int lastItem = Integer.MIN_VALUE;
 
 				if (adapter != null) {
-					firstItem = 0;
-					lastItem = adapter.getCount() - 1;
-					// firstItem = allEnabled ? 0 :
-					// mDropDownList.lookForSelectablePosition(0, true);
-					// lastItem = allEnabled ? adapter.getCount() - 1 :
-					// mDropDownList.lookForSelectablePosition(adapter.getCount()
-					// - 1, false);
+					allEnabled = adapter.areAllItemsEnabled();
+					firstItem = allEnabled ? 0 : mDropDownList.lookForSelectablePosition(0, true);
+					lastItem = allEnabled ? adapter.getCount() - 1 : mDropDownList.lookForSelectablePosition(
+							adapter.getCount() - 1, false);
 				}
 
 				if (below && keyCode == KeyEvent.KEYCODE_DPAD_UP && curIndex <= firstItem || !below
@@ -487,24 +548,6 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 	}
 
 	/**
-	 * Filter pre-IME key events. By forwarding
-	 * {@link View#onKeyPreIme(int, KeyEvent)} events to this function, views
-	 * using ListPopupWindow can have it dismiss the popup when the back key is
-	 * pressed.
-	 * 
-	 * @param keyCode keyCode param passed to the host view's onKeyPreIme
-	 * @param event event param passed to the host view's onKeyPreIme
-	 * @return true if the event was handled, false if it was ignored.
-	 * 
-	 * @see #setModal(boolean)
-	 */
-	public boolean onKeyPreIme(final int keyCode, final KeyEvent event) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR)
-			return OnKeyPreImeAccessor.onKeyPreIme(this, keyCode, event);
-		return false;
-	}
-
-	/**
 	 * Filter key down events. By forwarding key up events to this function,
 	 * views using non-modal ListPopupWindow can have it handle key selection of
 	 * items.
@@ -512,7 +555,6 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 	 * @param keyCode keyCode param passed to the host view's onKeyUp
 	 * @param event event param passed to the host view's onKeyUp
 	 * @return true if the event was handled, false if it was ignored.
-	 * 
 	 * @see #setModal(boolean)
 	 */
 	public boolean onKeyUp(final int keyCode, final KeyEvent event) {
@@ -644,7 +686,6 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 	 * will fill any space that is not used by the list.
 	 * 
 	 * @param dropDownAlwaysVisible Whether to keep the drop-down visible.
-	 * 
 	 * @hide Only used by AutoCompleteTextView under special conditions.
 	 */
 	public void setDropDownAlwaysVisible(final boolean dropDownAlwaysVisible) {
@@ -746,7 +787,6 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 	 * Sets a listener to receive events when a list item is clicked.
 	 * 
 	 * @param clickListener Listener to register
-	 * 
 	 * @see ListView#setOnItemClickListener(android.widget.AdapterView.OnItemClickListener)
 	 */
 	@Override
@@ -758,7 +798,6 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 	 * Sets a listener to receive events when a list item is selected.
 	 * 
 	 * @param selectedListener Listener to register.
-	 * 
 	 * @see ListView#setOnItemSelectedListener(android.widget.AdapterView.OnItemSelectedListener)
 	 */
 	@Override
@@ -772,7 +811,6 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 	 * 
 	 * @param position A position constant declaring where the prompt should be
 	 *            displayed.
-	 * 
 	 * @see #POSITION_PROMPT_ABOVE
 	 * @see #POSITION_PROMPT_BELOW
 	 */
@@ -823,7 +861,6 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 	 * @param mode The desired mode, see
 	 *            {@link android.view.WindowManager.LayoutParams#softInputMode}
 	 *            for the full list
-	 * 
 	 * @see android.view.WindowManager.LayoutParams#softInputMode
 	 * @see #getSoftInputMode()
 	 */
@@ -866,7 +903,6 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 		int heightSpec = 0;
 
 		final boolean noInputMethod = isInputMethodNotNeeded();
-		// mPopup.setAllowScrollingAnchorParent(!noInputMethod);
 
 		if (mPopup.isShowing()) {
 			if (mDropDownWidth == ViewGroup.LayoutParams.MATCH_PARENT) {
@@ -925,7 +961,6 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 			}
 
 			mPopup.setWindowLayoutMode(widthSpec, heightSpec);
-			// mPopup.setClipToScreenEnabled(true); might be important aap
 
 			// use outside touchable to dismiss drop down when touching outside
 			// of it, so
@@ -1005,7 +1040,7 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 				public void onNothingSelected(final AdapterView<?> parent) {
 				}
 			});
-			// mDropDownList.setOnScrollListener(mScrollListener);
+			mDropDownList.setOnScrollListener(mScrollListener);
 
 			if (mItemSelectedListener != null) {
 				mDropDownList.setOnItemSelectedListener(mItemSelectedListener);
@@ -1015,8 +1050,8 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 
 			final View hintView = mPromptView;
 			if (hintView != null) {
-				// if an hint has been specified, we accomodate more space for
-				// it and
+				// if a hint has been specified, we accomodate more space for it
+				// and
 				// add a text view in the drop down menu, at the bottom of the
 				// list
 				final LinearLayout hintContainer = new LinearLayout(context);
@@ -1078,15 +1113,34 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 			if (!mDropDownVerticalOffsetSet) {
 				mDropDownVerticalOffset = -mTempRect.top;
 			}
+		} else {
+			mTempRect.setEmpty();
 		}
 
-		final int maxHeight = mPopup.getMaxAvailableHeight(getAnchorView(), mDropDownVerticalOffset);
+		// Max height available on the screen for a popup.
+		final boolean ignoreBottomDecorations = mPopup.getInputMethodMode() == PopupWindow.INPUT_METHOD_NOT_NEEDED;
+		final int maxHeight = getMaxAvailableHeight(getAnchorView(), mDropDownVerticalOffset, ignoreBottomDecorations);
 
 		if (mDropDownAlwaysVisible || mDropDownHeight == ViewGroup.LayoutParams.MATCH_PARENT)
 			return maxHeight + padding;
 
-		final int listContent = measureHeightOfChildren(MeasureSpec.UNSPECIFIED, 0, NO_POSITION, maxHeight
-				- otherHeights, -1);
+		final int childWidthSpec;
+		switch (mDropDownWidth) {
+			case ViewGroup.LayoutParams.WRAP_CONTENT:
+				childWidthSpec = MeasureSpec.makeMeasureSpec(mContext.getResources().getDisplayMetrics().widthPixels
+						- (mTempRect.left + mTempRect.right), MeasureSpec.AT_MOST);
+				break;
+			case ViewGroup.LayoutParams.MATCH_PARENT:
+				childWidthSpec = MeasureSpec.makeMeasureSpec(mContext.getResources().getDisplayMetrics().widthPixels
+						- (mTempRect.left + mTempRect.right), MeasureSpec.EXACTLY);
+				break;
+			default:
+				childWidthSpec = MeasureSpec.makeMeasureSpec(mDropDownWidth, MeasureSpec.EXACTLY);
+				break;
+		}
+
+		final int listContent = mDropDownList.measureHeightOfChildrenCompat(childWidthSpec, 0,
+				DropDownListView.NO_POSITION, maxHeight - otherHeights, -1);
 		// add padding only if the list has items in it, that way we don't show
 		// the popup if it is not needed
 		if (listContent > 0) {
@@ -1094,27 +1148,6 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 		}
 
 		return listContent + otherHeights;
-	}
-
-	private void measureScrapChild(final View child, final int position, final int widthMeasureSpec, final Rect padding) {
-		LayoutParams p = (LayoutParams) child.getLayoutParams();
-		if (p == null) {
-			p = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 0);
-			child.setLayoutParams(p);
-		}
-		// p.viewType = mAdapter.getItemViewType(position);
-		// p.forceAdd = true;
-
-		final int childWidthSpec = ViewGroup.getChildMeasureSpec(widthMeasureSpec, padding.left + padding.right,
-				p.width);
-		final int lpHeight = p.height;
-		int childHeightSpec;
-		if (lpHeight > 0) {
-			childHeightSpec = MeasureSpec.makeMeasureSpec(lpHeight, MeasureSpec.EXACTLY);
-		} else {
-			childHeightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
-		}
-		child.measure(childWidthSpec, childHeightSpec);
 	}
 
 	private void removePromptView() {
@@ -1125,104 +1158,6 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 				group.removeView(mPromptView);
 			}
 		}
-	}
-
-	/**
-	 * This method borrowed from ICS ListView.
-	 * 
-	 * Measures the height of the given range of children (inclusive) and
-	 * returns the height with this ListView's padding and divider heights
-	 * included. If maxHeight is provided, the measuring will stop when the
-	 * current height reaches maxHeight.
-	 * 
-	 * @param widthMeasureSpec The width measure spec to be given to a child's
-	 *            {@link View#measure(int, int)}.
-	 * @param startPosition The position of the first child to be shown.
-	 * @param endPosition The (inclusive) position of the last child to be
-	 *            shown. Specify {@link #NO_POSITION} if the last child should
-	 *            be the last available child from the adapter.
-	 * @param maxHeight The maximum height that will be returned (if all the
-	 *            children don't fit in this value, this value will be
-	 *            returned).
-	 * @param disallowPartialChildPosition In general, whether the returned
-	 *            height should only contain entire children. This is more
-	 *            powerful--it is the first inclusive position at which partial
-	 *            children will not be allowed. Example: it looks nice to have
-	 *            at least 3 completely visible children, and in portrait this
-	 *            will most likely fit; but in landscape there could be times
-	 *            when even 2 children can not be completely shown, so a value
-	 *            of 2 (remember, inclusive) would be good (assuming
-	 *            startPosition is 0).
-	 * @return The height of this ListView with the given children.
-	 */
-	final int measureHeightOfChildren(final int widthMeasureSpec, final int startPosition, int endPosition,
-			final int maxHeight, final int disallowPartialChildPosition) {
-
-		final Rect padding = new Rect();
-		// not sure if this is the right padding to use...
-		mPopup.getBackground().getPadding(padding);
-
-		final ListAdapter adapter = mAdapter;
-		if (adapter == null) return padding.top + padding.bottom;
-
-		// Include the padding of the list
-		int returnedHeight = padding.top + padding.bottom;
-		final int dividerHeight = 0; // ((mDividerHeight > 0) && mDivider !=
-										// null) ? mDividerHeight : 0;
-		// The previous height value that was less than maxHeight and contained
-		// no partial children
-		int prevHeightWithoutPartialChild = 0;
-		int i;
-		View child;
-
-		// mItemCount - 1 since endPosition parameter is inclusive
-		endPosition = endPosition == NO_POSITION ? adapter.getCount() - 1 : endPosition;
-		// final AbsListView.RecycleBin recycleBin = mRecycler;
-		// final boolean recyle = recycleOnMeasure();
-		// final boolean[] isScrap = mIsScrap;
-
-		for (i = startPosition; i <= endPosition; ++i) {
-			// child = mDropDownList.obtainView(i);
-
-			child = mAdapter.getView(i, null, mDropDownList);
-
-			measureScrapChild(child, i, widthMeasureSpec, padding);
-
-			if (i > 0) {
-				// Count the divider for all but one child
-				returnedHeight += dividerHeight;
-			}
-
-			// Recycle the view before we possibly return from the method
-			// if (recyle && recycleBin.shouldRecycleViewType(
-			// ((LayoutParams) child.getLayoutParams()).viewType)) {
-			// recycleBin.addScrapView(child, -1);
-			// }
-
-			returnedHeight += child.getMeasuredHeight();
-
-			if (returnedHeight >= maxHeight) // We went over, figure out which
-												// height to return. If
-				// returnedHeight > maxHeight,
-				// then the i'th position did not fit completely.
-				return disallowPartialChildPosition >= 0 // Disallowing is
-															// enabled (> -1)
-						&& i > disallowPartialChildPosition // We've past the
-															// min pos
-						&& prevHeightWithoutPartialChild > 0 // We have a prev
-																// height
-						&& returnedHeight != maxHeight // i'th child did not
-														// fit completely
-				? prevHeightWithoutPartialChild : maxHeight;
-
-			if (disallowPartialChildPosition >= 0 && i >= disallowPartialChildPosition) {
-				prevHeightWithoutPartialChild = returnedHeight;
-			}
-		}
-
-		// At this point, we went through the range of children, and they each
-		// completely fit, so return the returnedHeight
-		return returnedHeight;
 	}
 
 	/**
@@ -1245,6 +1180,7 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 	 * </p>
 	 */
 	private static class DropDownListView extends ListView {
+
 		/*
 		 * WARNING: This is a workaround for a touch mode issue.
 		 * 
@@ -1274,6 +1210,10 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 		 */
 		private boolean mListSelectionHidden;
 
+		public static final int INVALID_POSITION = -1;
+
+		static final int NO_POSITION = -1;
+
 		/**
 		 * True if this wrapper should fake focus.
 		 */
@@ -1287,10 +1227,10 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 		 * @param context this view's context
 		 */
 		public DropDownListView(final Context context, final boolean hijackFocus) {
-			super(context, null, android.R.attr.dropDownListViewStyle);
+			super(context, null, R.attr.dropDownListViewStyle);
 			mHijackFocus = hijackFocus;
-			// setCacheColorHint(0);
-			setPadding(0, 0, 0, 0);
+			setCacheColorHint(0); // Transparent, since the background drawable
+									// could be anything.
 		}
 
 		/**
@@ -1336,9 +1276,148 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 			return mHijackFocus && mListSelectionHidden || super.isInTouchMode();
 		}
 
+		/**
+		 * Find a position that can be selected (i.e., is not a separator).
+		 * 
+		 * @param position The starting position to look at.
+		 * @param lookDown Whether to look down for other positions.
+		 * @return The next selectable position starting at position and then
+		 *         searching either up or down. Returns
+		 *         {@link #INVALID_POSITION} if nothing can be found.
+		 */
+		private int lookForSelectablePosition(int position, final boolean lookDown) {
+			final ListAdapter adapter = getAdapter();
+			if (adapter == null || isInTouchMode()) return INVALID_POSITION;
+
+			final int count = adapter.getCount();
+			if (!getAdapter().areAllItemsEnabled()) {
+				if (lookDown) {
+					position = Math.max(0, position);
+					while (position < count && !adapter.isEnabled(position)) {
+						position++;
+					}
+				} else {
+					position = Math.min(position, count - 1);
+					while (position >= 0 && !adapter.isEnabled(position)) {
+						position--;
+					}
+				}
+
+				if (position < 0 || position >= count) return INVALID_POSITION;
+				return position;
+			} else {
+				if (position < 0 || position >= count) return INVALID_POSITION;
+				return position;
+			}
+		}
+
+		/**
+		 * Measures the height of the given range of children (inclusive) and
+		 * returns the height with this ListView's padding and divider heights
+		 * included. If maxHeight is provided, the measuring will stop when the
+		 * current height reaches maxHeight.
+		 * 
+		 * @param widthMeasureSpec The width measure spec to be given to a
+		 *            child's {@link View#measure(int, int)}.
+		 * @param startPosition The position of the first child to be shown.
+		 * @param endPosition The (inclusive) position of the last child to be
+		 *            shown. Specify {@link #NO_POSITION} if the last child
+		 *            should be the last available child from the adapter.
+		 * @param maxHeight The maximum height that will be returned (if all the
+		 *            children don't fit in this value, this value will be
+		 *            returned).
+		 * @param disallowPartialChildPosition In general, whether the returned
+		 *            height should only contain entire children. This is more
+		 *            powerful--it is the first inclusive position at which
+		 *            partial children will not be allowed. Example: it looks
+		 *            nice to have at least 3 completely visible children, and
+		 *            in portrait this will most likely fit; but in landscape
+		 *            there could be times when even 2 children can not be
+		 *            completely shown, so a value of 2 (remember, inclusive)
+		 *            would be good (assuming startPosition is 0).
+		 * @return The height of this ListView with the given children.
+		 */
+		final int measureHeightOfChildrenCompat(final int widthMeasureSpec, final int startPosition,
+				final int endPosition, final int maxHeight, final int disallowPartialChildPosition) {
+
+			final int paddingTop = getListPaddingTop();
+			final int paddingBottom = getListPaddingBottom();
+			final int reportedDividerHeight = getDividerHeight();
+			final Drawable divider = getDivider();
+
+			final ListAdapter adapter = getAdapter();
+
+			if (adapter == null) return paddingTop + paddingBottom;
+
+			// Include the padding of the list
+			int returnedHeight = paddingTop + paddingBottom;
+			final int dividerHeight = reportedDividerHeight > 0 && divider != null ? reportedDividerHeight : 0;
+
+			// The previous height value that was less than maxHeight and
+			// contained
+			// no partial children
+			int prevHeightWithoutPartialChild = 0;
+
+			View child = null;
+			int viewType = 0;
+			final int count = adapter.getCount();
+			for (int i = 0; i < count; i++) {
+				final int newType = adapter.getItemViewType(i);
+				if (newType != viewType) {
+					child = null;
+					viewType = newType;
+				}
+				child = adapter.getView(i, child, this);
+				;
+
+				// Compute child height spec
+				int heightMeasureSpec;
+				final int childHeight = child.getLayoutParams().height;
+				if (childHeight > 0) {
+					heightMeasureSpec = MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.EXACTLY);
+				} else {
+					heightMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
+				}
+				child.measure(widthMeasureSpec, heightMeasureSpec);
+
+				if (i > 0) {
+					// Count the divider for all but one child
+					returnedHeight += dividerHeight;
+				}
+
+				returnedHeight += child.getMeasuredHeight();
+
+				if (returnedHeight >= maxHeight) // We went over, figure out
+													// which height to return.
+													// If returnedHeight >
+					// maxHeight, then the i'th position did not fit completely.
+					return disallowPartialChildPosition >= 0 // Disallowing is
+																// enabled (>
+																// -1)
+							&& i > disallowPartialChildPosition // We've past
+																// the min pos
+							&& prevHeightWithoutPartialChild > 0 // We have a
+																	// prev
+																	// height
+							&& returnedHeight != maxHeight // i'th child did not
+															// fit completely
+					? prevHeightWithoutPartialChild : maxHeight;
+
+				if (disallowPartialChildPosition >= 0 && i >= disallowPartialChildPosition) {
+					prevHeightWithoutPartialChild = returnedHeight;
+				}
+			}
+
+			// At this point, we went through the range of children, and they
+			// each
+			// completely fit, so return the returnedHeight
+			return returnedHeight;
+		}
+
 	}
 
 	private class ListSelectorHider implements Runnable {
+
 		@Override
 		public void run() {
 			clearListSelection();
@@ -1346,6 +1425,7 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 	}
 
 	private class PopupDataSetObserver extends DataSetObserver {
+
 		@Override
 		public void onChanged() {
 			if (isShowing()) {
@@ -1360,7 +1440,26 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 		}
 	}
 
+	private class PopupScrollListener implements ListView.OnScrollListener {
+
+		@Override
+		public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
+				final int totalItemCount) {
+
+		}
+
+		@Override
+		public void onScrollStateChanged(final AbsListView view, final int scrollState) {
+			if (scrollState == SCROLL_STATE_TOUCH_SCROLL && !isInputMethodNotNeeded()
+					&& mPopup.getContentView() != null) {
+				mHandler.removeCallbacks(mResizePopupRunnable);
+				mResizePopupRunnable.run();
+			}
+		}
+	}
+
 	private class PopupTouchInterceptor implements OnTouchListener {
+
 		@Override
 		public boolean onTouch(final View v, final MotionEvent event) {
 			final int action = event.getAction();
@@ -1378,6 +1477,7 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 	}
 
 	private class ResizePopupRunnable implements Runnable {
+
 		@Override
 		public void run() {
 			if (mDropDownList != null && mDropDownList.getCount() > mDropDownList.getChildCount()
@@ -1387,33 +1487,4 @@ public class ListPopupWindowCompat implements ListPopupWindow {
 			}
 		}
 	}
-
-	@SuppressLint("NewApi")
-	static class OnKeyPreImeAccessor {
-		public static boolean onKeyPreIme(final ListPopupWindowCompat window, final int keyCode, final KeyEvent event) {
-			if (keyCode == KeyEvent.KEYCODE_BACK && window.isShowing()) {
-				// special case for the back key, we do not even try to send it
-				// to the drop down list but instead, consume it immediately
-				final View anchorView = window.mDropDownAnchorView;
-				if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
-					final KeyEvent.DispatcherState state = anchorView.getKeyDispatcherState();
-					if (state != null) {
-						state.startTracking(event, window);
-					}
-					return true;
-				} else if (event.getAction() == KeyEvent.ACTION_UP) {
-					final KeyEvent.DispatcherState state = anchorView.getKeyDispatcherState();
-					if (state != null) {
-						state.handleUpEvent(event);
-					}
-					if (event.isTracking() && !event.isCanceled()) {
-						window.dismiss();
-						return true;
-					}
-				}
-			}
-			return false;
-		}
-	}
-
 }

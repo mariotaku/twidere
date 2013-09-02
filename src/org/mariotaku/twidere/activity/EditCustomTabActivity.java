@@ -28,6 +28,7 @@ import static org.mariotaku.twidere.util.Utils.getTabTypeName;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.mariotaku.twidere.Constants;
@@ -417,7 +418,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 				if (ICON_SPECIAL_TYPE_CUSTOMIZE.equals(key)) {
 					mNames[i] = getString(R.string.customize);
 				} else {
-					mNames[i] = key.substring(0, 1).toUpperCase() + key.substring(1, key.length());
+					mNames[i] = key.substring(0, 1).toUpperCase(Locale.US) + key.substring(1, key.length());
 				}
 			}
 			setTitle(R.string.icon);

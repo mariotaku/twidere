@@ -54,7 +54,7 @@ import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.EditUserProfileActivity;
-import org.mariotaku.twidere.activity.SetColorActivity;
+import org.mariotaku.twidere.activity.ColorPickerActivity;
 import org.mariotaku.twidere.activity.UserListSelectorActivity;
 import org.mariotaku.twidere.adapter.ListActionAdapter;
 import org.mariotaku.twidere.loader.ParcelableUserLoader;
@@ -727,7 +727,7 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 				break;
 			}
 			case MENU_SET_COLOR: {
-				final Intent intent = new Intent(getActivity(), SetColorActivity.class);
+				final Intent intent = new Intent(getActivity(), ColorPickerActivity.class);
 				startActivityForResult(intent, REQUEST_SET_COLOR);
 				break;
 			}

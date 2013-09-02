@@ -19,6 +19,7 @@ package twitter4j;
 import static twitter4j.internal.util.InternalParseUtil.getInt;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -164,9 +165,9 @@ public class TwitterException extends Exception implements TwitterResponse, Http
 	@Override
 	public String getMessage() {
 		if (errorMessage != null && errorCode != -1)
-			return String.format("Error %d: %s", errorCode, errorMessage);
+			return String.format(Locale.getDefault(), "Error %d: %s", errorCode, errorMessage);
 		else if (statusCode != -1)
-			return String.format("Error %d", statusCode);
+			return String.format(Locale.getDefault(), "Error %d", statusCode);
 		else
 			return super.getMessage();
 	}

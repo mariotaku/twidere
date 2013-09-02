@@ -1,5 +1,7 @@
 package com.twitter;
 
+import java.util.Locale;
+
 /**
  * A class for validating Tweet texts.
  */
@@ -24,7 +26,8 @@ public class Validator {
 
 		for (final Extractor.Entity urlEntity : extractor.extractURLsWithIndices(text)) {
 			length += urlEntity.start - urlEntity.end;
-			length += urlEntity.value.toLowerCase().startsWith("https://") ? shortUrlLengthHttps : shortUrlLength;
+			length += urlEntity.value.toLowerCase(Locale.getDefault()).startsWith("https://") ? shortUrlLengthHttps
+					: shortUrlLength;
 		}
 
 		return length;

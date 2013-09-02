@@ -32,7 +32,7 @@ import static org.mariotaku.twidere.util.Utils.getAccountColors;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getAccountName;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
-import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
+import static org.mariotaku.twidere.util.Utils.getDefaultTextSize;
 import static org.mariotaku.twidere.util.Utils.getImageUploadStatus;
 import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
 import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
@@ -54,6 +54,7 @@ import java.util.Set;
 import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.popupmenu.PopupMenu;
+import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.BaseDialogFragment;
@@ -154,8 +155,9 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 	private EditText mEditText;
 	private ProgressBar mProgress;
 
-	private boolean mIsImageAttached, mIsPhotoAttached, mIsPossiblySensitive, mShouldSaveAccounts;
+	private boolean mIsPossiblySensitive, mShouldSaveAccounts;
 	private long[] mAccountIds;
+	private int mAttachedImageType;
 
 	private Uri mImageUri, mTempPhotoUri;
 	private boolean mImageUploaderUsed, mTweetShortenerUsed;
@@ -164,7 +166,6 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 	private DraftItem mDraftItem;
 	private long mInReplyToStatusId;
 	private String mOriginalText;
-	private Locale mLocale;
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -190,7 +191,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 	public boolean handleMenuItem(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_TAKE_PHOTO: {
-				if (!mIsPhotoAttached) {
+				if (mAttachedImageType != Constants.ATTACHED_IMAGE_TYPE_PHOTO) {
 					takePhoto();
 				} else {
 					new DeleteImageTask(this).execute();
@@ -198,7 +199,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 				break;
 			}
 			case MENU_ADD_IMAGE: {
-				if (!mIsImageAttached) {
+				if (mAttachedImageType != Constants.ATTACHED_IMAGE_TYPE_IMAGE) {
 					pickImage();
 				} else {
 					new DeleteImageTask(this).execute();
@@ -229,7 +230,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 				break;
 			}
 			case MENU_TOGGLE_SENSITIVE: {
-				final boolean has_media = (mIsImageAttached || mIsPhotoAttached) && mImageUri != null;
+				final boolean has_media = mAttachedImageType != Constants.ATTACHED_IMAGE_TYPE_NONE && mImageUri != null;
 				if (!has_media) return false;
 				mIsPossiblySensitive = !mIsPossiblySensitive;
 				setMenu();
@@ -305,8 +306,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 		switch (requestCode) {
 			case REQUEST_TAKE_PHOTO: {
 				if (resultCode == Activity.RESULT_OK) {
-					mIsPhotoAttached = true;
-					mIsImageAttached = false;
+					mAttachedImageType = Constants.ATTACHED_IMAGE_TYPE_PHOTO;
 					mTask = new CopyImageTask(this, mImageUri, mTempPhotoUri, createTempImageUri(), true).execute();
 				}
 				break;
@@ -314,8 +314,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 			case REQUEST_PICK_IMAGE: {
 				if (resultCode == Activity.RESULT_OK) {
 					final Uri src = intent.getData();
-					mIsPhotoAttached = false;
-					mIsImageAttached = true;
+					mAttachedImageType = Constants.ATTACHED_IMAGE_TYPE_IMAGE;
 					mTask = new CopyImageTask(this, mImageUri, src, createTempImageUri(), false).execute();
 				}
 				break;
@@ -332,7 +331,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 						if (mShouldSaveAccounts) {
 							final SharedPreferences.Editor editor = mPreferences.edit();
 							editor.putString(PREFERENCE_KEY_COMPOSE_ACCOUNTS,
-									ArrayUtils.toString(mAccountIds, ',', false));
+									ArrayUtils.toString(account_ids, ',', false));
 							editor.commit();
 						}
 						mColorIndicator.setColors(getAccountColors(this, account_ids));
@@ -478,8 +477,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
 		outState.putLongArray(INTENT_KEY_ACCOUNT_IDS, mAccountIds);
-		outState.putBoolean(INTENT_KEY_IS_IMAGE_ATTACHED, mIsImageAttached);
-		outState.putBoolean(INTENT_KEY_IS_PHOTO_ATTACHED, mIsPhotoAttached);
+		outState.putInt(INTENT_KEY_ATTACHED_IMAGE_TYPE, mAttachedImageType);
 		outState.putParcelable(INTENT_KEY_IMAGE_URI, mImageUri);
 		outState.putBoolean(INTENT_KEY_IS_POSSIBLY_SENSITIVE, mIsPossiblySensitive);
 		outState.putParcelable(INTENT_KEY_STATUS, mInReplyToStatus);
@@ -510,8 +508,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 		values.put(Drafts.LOCATION, ParcelableLocation.toString(mRecentLocation));
 		values.put(Drafts.IS_POSSIBLY_SENSITIVE, mIsPossiblySensitive);
 		if (mImageUri != null) {
-			values.put(Drafts.IS_IMAGE_ATTACHED, mIsImageAttached);
-			values.put(Drafts.IS_PHOTO_ATTACHED, mIsPhotoAttached);
+			values.put(Drafts.ATTACHED_IMAGE_TYPE, mAttachedImageType);
 			values.put(Drafts.IMAGE_URI, ParseUtils.parseString(mImageUri));
 		}
 		mResolver.insert(Drafts.CONTENT_URI, values);
@@ -535,13 +532,12 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		// requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		super.onCreate(savedInstanceState);
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mTwitterWrapper = getTwidereApplication().getTwitterWrapper();
 		mResolver = getContentResolver();
 		mImageLoader = getTwidereApplication().getImageLoaderWrapper();
-		mLocale = getResources().getConfiguration().locale;
-		super.onCreate(savedInstanceState);
 		setContentView(R.layout.compose);
 		setSupportProgressBarIndeterminateVisibility(false);
 		ActivityAccessor.setFinishOnTouchOutside(this, false);
@@ -553,8 +549,6 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 			finish();
 			return;
 		}
-		// mActionBar = getSupportActionBar();
-		// mActionBar.setDisplayHomeAsUpEnabled(true);
 		mImageThumbnailPreview.setOnClickListener(this);
 		mImageThumbnailPreview.setOnLongClickListener(this);
 		mMenuBar.setOnMenuItemClickListener(this);
@@ -568,15 +562,15 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 		if (savedInstanceState != null) {
 			// Restore from previous saved state
 			mAccountIds = savedInstanceState.getLongArray(INTENT_KEY_IDS);
-			mIsImageAttached = savedInstanceState.getBoolean(INTENT_KEY_IS_IMAGE_ATTACHED);
-			mIsPhotoAttached = savedInstanceState.getBoolean(INTENT_KEY_IS_PHOTO_ATTACHED);
+			mAttachedImageType = savedInstanceState.getInt(INTENT_KEY_ATTACHED_IMAGE_TYPE,
+					Constants.ATTACHED_IMAGE_TYPE_NONE);
 			mIsPossiblySensitive = savedInstanceState.getBoolean(INTENT_KEY_IS_POSSIBLY_SENSITIVE);
 			mImageUri = savedInstanceState.getParcelable(INTENT_KEY_IMAGE_URI);
 			mInReplyToStatus = savedInstanceState.getParcelable(INTENT_KEY_STATUS);
 			mInReplyToStatusId = savedInstanceState.getLong(INTENT_KEY_STATUS_ID);
 			mMentionUser = savedInstanceState.getParcelable(INTENT_KEY_USER);
 			mDraftItem = savedInstanceState.getParcelable(INTENT_KEY_DRAFT);
-			mShouldSaveAccounts = savedInstanceState.getBoolean(INTENT_KEY_SHOULD_SAVE_ACCOUNTS, false);
+			mShouldSaveAccounts = savedInstanceState.getBoolean(INTENT_KEY_SHOULD_SAVE_ACCOUNTS);
 			mOriginalText = savedInstanceState.getString(INTENT_KEY_ORIGINAL_TEXT);
 		} else {
 			// The activity was first created
@@ -593,9 +587,6 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 						mPreferences.getString(PREFERENCE_KEY_COMPOSE_ACCOUNTS, null), ',');
 				final long[] intersection = ArrayUtils.intersection(ids_in_prefs, account_ids);
 				mAccountIds = intersection.length > 0 ? intersection : account_ids;
-				if (mAccountIds.length == 1 && mAccountIds[0] != getDefaultAccountId(this)) {
-					mAccountIds[0] = getDefaultAccountId(this);
-				}
 			}
 			mOriginalText = ParseUtils.parseString(mEditText.getText());
 		}
@@ -641,7 +632,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 		if (mMenuBar != null) {
 			setMenu();
 		}
-		final int text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
+		final int text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(this));
 		mEditText.setTextSize(text_size * 1.25f);
 		final IntentFilter filter = new IntentFilter(BROADCAST_DRAFTS_DATABASE_UPDATED);
 		registerReceiver(mStatusReceiver, filter);
@@ -715,8 +706,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 			mEditText.setText(getShareStatus(this, extra_subject, extra_text));
 		}
 		if (mImageUri != null) {
-			mIsImageAttached = true;
-			mIsPhotoAttached = false;
+			mAttachedImageType = Constants.ATTACHED_IMAGE_TYPE_IMAGE;
 		}
 		final int selection_end = mEditText.length();
 		mEditText.setSelection(selection_end);
@@ -730,8 +720,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 		mEditText.setSelection(selection_end);
 		mAccountIds = draft.account_ids;
 		mImageUri = draft.media_uri != null ? Uri.parse(draft.media_uri) : null;
-		mIsImageAttached = draft.is_image_attached;
-		mIsPhotoAttached = draft.is_photo_attached;
+		mAttachedImageType = draft.attached_image_type;
 		mIsPossiblySensitive = draft.is_possibly_sensitive;
 		mInReplyToStatusId = draft.in_reply_to_status_id;
 		return true;
@@ -876,7 +865,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 				}
 			}
 			if (itemToggleSensitive != null) {
-				final boolean has_media = (mIsImageAttached || mIsPhotoAttached) && mImageUri != null;
+				final boolean has_media = mAttachedImageType != Constants.ATTACHED_IMAGE_TYPE_NONE && mImageUri != null;
 				itemToggleSensitive.setVisible(has_media);
 				if (has_media) {
 					final Drawable iconToggleSensitive = itemToggleSensitive.getIcon().mutate();
@@ -934,14 +923,15 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 		if (mTextCountView != null) {
 			mTextCountView.setTextColor(validated_count >= Validator.MAX_TWEET_LENGTH - 10 ? Color
 					.HSVToColor(0x80, hsv) : 0x80808080);
-			mTextCountView.setText(getLocalizedNumber(mLocale, Validator.MAX_TWEET_LENGTH - validated_count));
+			mTextCountView
+					.setText(getLocalizedNumber(Locale.getDefault(), Validator.MAX_TWEET_LENGTH - validated_count));
 		}
 		final Menu bottomMenu = mMenuBar.getMenu(), actionMenu = mActionMenuBar.getMenu();
 		if (bottomMenu.size() == 0) return;
 		final int activated_color = getThemeColor(this);
 		final MenuItem itemAddImage = bottomMenu.findItem(MENU_ADD_IMAGE);
 		final Drawable iconAddImage = itemAddImage.getIcon().mutate();
-		if (mIsImageAttached && !mIsPhotoAttached) {
+		if (mAttachedImageType == Constants.ATTACHED_IMAGE_TYPE_IMAGE) {
 			iconAddImage.setColorFilter(activated_color, Mode.MULTIPLY);
 			itemAddImage.setTitle(R.string.remove_image);
 		} else {
@@ -950,7 +940,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 		}
 		final MenuItem itemTakePhoto = bottomMenu.findItem(MENU_TAKE_PHOTO);
 		final Drawable iconTakePhoto = itemTakePhoto.getIcon().mutate();
-		if (!mIsImageAttached && mIsPhotoAttached) {
+		if (mAttachedImageType == Constants.ATTACHED_IMAGE_TYPE_PHOTO) {
 			iconTakePhoto.setColorFilter(activated_color, Mode.MULTIPLY);
 			itemTakePhoto.setTitle(R.string.remove_photo);
 		} else {
@@ -1007,7 +997,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 			mEditText.setError(getString(R.string.error_message_no_content));
 			return;
 		}
-		final boolean has_media = (mIsImageAttached || mIsPhotoAttached) && mImageUri != null;
+		final boolean has_media = mAttachedImageType != Constants.ATTACHED_IMAGE_TYPE_NONE && mImageUri != null;
 		final boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
 		if (mRecentLocation == null && attach_location) {
 			final Location location;
@@ -1019,13 +1009,16 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 			mRecentLocation = location != null ? new ParcelableLocation(location) : null;
 		}
 		final boolean is_quote = INTENT_ACTION_QUOTE.equals(getIntent().getAction());
-		mTwitterWrapper.updateStatus(mAccountIds, text, attach_location ? mRecentLocation : null, mImageUri, !is_quote
-				|| mPreferences.getBoolean(PREFERENCE_KEY_LINK_TO_QUOTED_TWEET, true) ? mInReplyToStatusId : -1,
-				has_media && mIsPossiblySensitive, mIsPhotoAttached && !mIsImageAttached);
+		final ParcelableLocation status_loc = attach_location ? mRecentLocation : null;
+		final boolean link_to_quoted_tweet = mPreferences.getBoolean(PREFERENCE_KEY_LINK_TO_QUOTED_TWEET, true);
+		final long in_reply_to = !is_quote || link_to_quoted_tweet ? mInReplyToStatusId : -1;
+		final boolean possibly_sensitive = has_media && mIsPossiblySensitive;
+		final boolean delete_image = mAttachedImageType == Constants.ATTACHED_IMAGE_TYPE_PHOTO;
+		mTwitterWrapper.updateStatus(mAccountIds, text, status_loc, mImageUri, in_reply_to, possibly_sensitive,
+				delete_image);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_NO_CLOSE_AFTER_TWEET_SENT, false)
 				&& (mInReplyToStatus == null || mInReplyToStatusId <= 0)) {
-			mIsImageAttached = false;
-			mIsPhotoAttached = false;
+			mAttachedImageType = Constants.ATTACHED_IMAGE_TYPE_NONE;
 			mIsPossiblySensitive = false;
 			mShouldSaveAccounts = true;
 			mImageUri = null;
@@ -1102,7 +1095,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 			final ParcelableStatus status = args.getParcelable(INTENT_KEY_STATUS);
 			mHolder.setShowAsGap(false);
 			mHolder.setAccountColorEnabled(true);
-			mHolder.setTextSize(prefs.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE));
+			mHolder.setTextSize(prefs.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(getActivity())));
 			mHolder.text.setText(status.text_unescaped);
 			final String name_option = prefs.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH);
 			if (NAME_DISPLAY_OPTION_NAME.equals(name_option)) {
@@ -1276,8 +1269,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 		protected void onPostExecute(final Boolean result) {
 			activity.setSupportProgressBarIndeterminateVisibility(false);
 			activity.mImageUri = null;
-			activity.mIsImageAttached = false;
-			activity.mIsPhotoAttached = false;
+			activity.mAttachedImageType = Constants.ATTACHED_IMAGE_TYPE_NONE;
 			activity.mIsPossiblySensitive = false;
 			activity.setMenu();
 			activity.reloadAttachedImageThumbnail();

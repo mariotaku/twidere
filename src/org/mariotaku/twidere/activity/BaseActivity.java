@@ -82,11 +82,11 @@ public class BaseActivity extends ActionBarFragmentActivity implements Constants
 		restartActivity(this);
 	}
 
-	protected final int getDarkThemeRes() {
+	protected int getDarkThemeRes() {
 		return R.style.Theme_Twidere;
 	}
 
-	protected final int getLightThemeRes() {
+	protected int getLightThemeRes() {
 		return R.style.Theme_Twidere_Light;
 	}
 

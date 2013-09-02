@@ -4,58 +4,12 @@
 	android:key="settings_network"
 	android:title="@string/network">
 
-	<PreferenceCategory
-		android:key="category_api"
-		android:title="@string/api">
-		<CheckBoxPreference
-			android:defaultValue="true"
-			android:key="gzip_compressing"
-			android:summary="@string/gzip_compressing_summary"
-			android:title="@string/gzip_compressing"/>
+	<CheckBoxPreference
+		android:defaultValue="true"
+		android:key="gzip_compressing"
+		android:summary="@string/gzip_compressing_summary"
+		android:title="@string/gzip_compressing"/>
 
-		<EditTextPreference
-			android:dialogTitle="@string/consumer_key"
-			android:inputType="textVisiblePassword"
-			android:key="consumer_key"
-			android:singleLine="true"
-			android:summary="@string/consumer_key_summary"
-			android:title="@string/consumer_key"/>
-		<EditTextPreference
-			android:dialogTitle="@string/consumer_secret"
-			android:inputType="textVisiblePassword"
-			android:key="consumer_secret"
-			android:singleLine="true"
-			android:summary="@string/consumer_secret_summary"
-			android:title="@string/consumer_secret"/>
-		<EditTextPreference
-			android:dialogTitle="@string/rest_base_url"
-			android:inputType="textUri"
-			android:key="rest_base_url"
-			android:singleLine="true"
-			android:summary="@string/for_advanced_users_only"
-			android:title="@string/rest_base_url"/>
-		<EditTextPreference
-			android:dialogTitle="@string/oauth_base_url"
-			android:inputType="textUri"
-			android:key="oauth_base_url"
-			android:singleLine="true"
-			android:summary="@string/for_advanced_users_only"
-			android:title="@string/oauth_base_url"/>
-		<EditTextPreference
-			android:dialogTitle="@string/signing_rest_base_url"
-			android:inputType="textUri"
-			android:key="signing_rest_base_url"
-			android:singleLine="true"
-			android:summary="@string/for_advanced_users_only"
-			android:title="@string/signing_rest_base_url"/>
-		<EditTextPreference
-			android:dialogTitle="@string/signing_oauth_base_url"
-			android:inputType="textUri"
-			android:key="signing_oauth_base_url"
-			android:singleLine="true"
-			android:summary="@string/for_advanced_users_only"
-			android:title="@string/signing_oauth_base_url"/>
-	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="category_connectivity"
 		android:title="@string/connectivity">
@@ -126,6 +80,52 @@
 			android:key="proxy_port"
 			android:singleLine="true"
 			android:title="@string/proxy_port"/>
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:key="category_api"
+		android:title="@string/api">
+		<EditTextPreference
+			android:dialogTitle="@string/consumer_key"
+			android:inputType="textVisiblePassword"
+			android:key="consumer_key"
+			android:singleLine="true"
+			android:summary="@string/consumer_key_summary"
+			android:title="@string/consumer_key"/>
+		<EditTextPreference
+			android:dialogTitle="@string/consumer_secret"
+			android:inputType="textVisiblePassword"
+			android:key="consumer_secret"
+			android:singleLine="true"
+			android:summary="@string/consumer_secret_summary"
+			android:title="@string/consumer_secret"/>
+		<EditTextPreference
+			android:dialogTitle="@string/rest_base_url"
+			android:inputType="textUri"
+			android:key="rest_base_url"
+			android:singleLine="true"
+			android:summary="@string/for_advanced_users_only"
+			android:title="@string/rest_base_url"/>
+		<EditTextPreference
+			android:dialogTitle="@string/oauth_base_url"
+			android:inputType="textUri"
+			android:key="oauth_base_url"
+			android:singleLine="true"
+			android:summary="@string/for_advanced_users_only"
+			android:title="@string/oauth_base_url"/>
+		<EditTextPreference
+			android:dialogTitle="@string/signing_rest_base_url"
+			android:inputType="textUri"
+			android:key="signing_rest_base_url"
+			android:singleLine="true"
+			android:summary="@string/for_advanced_users_only"
+			android:title="@string/signing_rest_base_url"/>
+		<EditTextPreference
+			android:dialogTitle="@string/signing_oauth_base_url"
+			android:inputType="textUri"
+			android:key="signing_oauth_base_url"
+			android:singleLine="true"
+			android:summary="@string/for_advanced_users_only"
+			android:title="@string/signing_oauth_base_url"/>
 	</PreferenceCategory>
 
 </PreferenceScreen>

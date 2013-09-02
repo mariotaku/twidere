@@ -59,6 +59,7 @@ import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
+import org.mariotaku.twidere.provider.TweetStore.Notifications;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 
 import twitter4j.DirectMessage;
@@ -130,7 +131,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 	}
 
 	public void clearNotification(final int id) {
-		final Uri uri = TweetStore.CONTENT_URI_NOTOFICATIONS.buildUpon().appendPath(String.valueOf(id)).build();
+		final Uri uri = Notifications.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
 		mResolver.delete(uri, null, null);
 	}
 
@@ -2303,8 +2304,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			values.put(Drafts.IN_REPLY_TO_STATUS_ID, in_reply_to);
 			values.put(Drafts.TEXT, content);
 			if (image_uri != null) {
-				values.put(Drafts.IS_IMAGE_ATTACHED, !delete_image);
-				values.put(Drafts.IS_PHOTO_ATTACHED, delete_image);
+				final int image_type = delete_image ? ATTACHED_IMAGE_TYPE_PHOTO : ATTACHED_IMAGE_TYPE_IMAGE;
+				values.put(Drafts.ATTACHED_IMAGE_TYPE, image_type);
 				values.put(Drafts.IMAGE_URI, ParseUtils.parseString(image_uri));
 			}
 			mResolver.insert(Drafts.CONTENT_URI, values);

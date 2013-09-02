@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<style name="Widget.Holo.PopupMenu" parent="android:Widget.Holo.PopupMenu"/>
+
+	<style name="Widget.Holo.Light.PopupMenu" parent="android:Widget.Holo.Light.PopupMenu"/>
+
+</resources>

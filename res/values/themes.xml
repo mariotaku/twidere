@@ -5,6 +5,17 @@
 
 	<style name="Theme.Blank.SwipeBack" parent="Theme.Blank">
 		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
+	</style>
+
+	<style name="Theme.SwipeBack" parent="Theme.Twidere">
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
+	</style>
+
+	<style name="Theme.SwipeBack.Light" parent="Theme.Twidere.Light">
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
 	</style>
 
 	<style name="Theme.Blank.Dialog" parent="Theme.Twidere.Dialog"/>
@@ -17,7 +28,7 @@
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@null</item>
-		<item name="borderlessButtonStyle">@style/Widget.Twidere.Button.Borderless</item>
+		<item name="borderlessButtonStyle">@style/Widget.Holo.Button.Borderless.Small</item>
 		<item name="borderlessImageButtonStyle">@style/Widget.Twidere.ImageButton.Borderless</item>
 		<item name="selectableViewStyle">@style/Widget.Twidere.SelectableView</item>
 		<item name="editTextStyle">@style/Widget.Holo.EditText</item>
@@ -25,19 +36,13 @@
 		<item name="contentBackground">#20000000</item>
 		<item name="android:itemBackground">@drawable/item_background_holo_dark</item>
 		<item name="android:windowBackground">@drawable/background_holo_dark</item>
-
-		<!-- Button styles -->
-		<item name="android:buttonStyle">@style/Widget.Twidere.Button</item>
-		<item name="android:buttonStyleSmall">@style/Widget.Twidere.Button.Small</item>
-		<item name="android:buttonStyleInset">@style/Widget.Twidere.Button.Inset</item>
-		<item name="android:imageButtonStyle">@style/Widget.Twidere.ImageButton</item>
 	</style>
 
 	<style name="Theme.Twidere.Light" parent="Theme.Holo.Light.DarkActionBar">
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@drawable/tab_background_dark</item>
-		<item name="borderlessButtonStyle">@style/Widget.Twidere.Light.Button.Borderless</item>
+		<item name="borderlessButtonStyle">@style/Widget.Holo.Light.Button.Borderless.Small</item>
 		<item name="borderlessImageButtonStyle">@style/Widget.Twidere.Light.ImageButton.Borderless</item>
 		<item name="selectableViewStyle">@style/Widget.Twidere.Light.SelectableView</item>
 		<item name="editTextStyle">@style/Widget.Holo.Light.EditText</item>
@@ -46,20 +51,15 @@
 		<item name="android:itemBackground">@drawable/item_background_holo_light</item>
 		<item name="android:windowBackground">@drawable/background_holo_light</item>
 		<item name="actionBarBackground">@drawable/actionbar_bg_light_darkactionbar_twidere_holo</item>
-
-		<!-- Button styles -->
-		<item name="android:buttonStyle">@style/Widget.Twidere.Light.Button</item>
-		<item name="android:buttonStyleSmall">@style/Widget.Twidere.Light.Button.Small</item>
-		<item name="android:buttonStyleInset">@style/Widget.Twidere.Light.Button.Inset</item>
-		<item name="android:imageButtonStyle">@style/Widget.Twidere.Light.ImageButton</item>
 	</style>
 
 	<style name="Theme.Twidere.Viewer" parent="android:Theme.NoTitleBar">
 		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
 		<item name="android:windowContentOverlay">@null</item>
 		<item name="android:windowBackground">@android:color/black</item>
 		<!-- <item name="android:windowAnimationStyle">@style/Animation.ImageViewer</item> -->
-		<item name="borderlessButtonStyle">@style/Widget.Twidere.Button.Borderless</item>
+		<item name="borderlessButtonStyle">@style/Widget.Holo.Button.Borderless.Small</item>
 		<item name="borderlessImageButtonStyle">@style/Widget.Twidere.ImageButton.Borderless</item>
 		<item name="selectableViewStyle">@style/Widget.Twidere.SelectableView</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Large</item>
@@ -108,36 +108,24 @@
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@null</item>
-		<item name="borderlessButtonStyle">@style/Widget.Twidere.Button.Borderless</item>
+		<item name="borderlessButtonStyle">@style/Widget.Holo.Button.Borderless.Small</item>
 		<item name="borderlessImageButtonStyle">@style/Widget.Twidere.ImageButton.Borderless</item>
 		<item name="selectableViewStyle">@style/Widget.Twidere.SelectableView</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Large</item>
 		<item name="contentBackground">#20000000</item>
 		<item name="android:itemBackground">@drawable/item_background_holo_dark</item>
-
-		<!-- Button styles -->
-		<item name="android:buttonStyle">@style/Widget.Twidere.Button</item>
-		<item name="android:buttonStyleSmall">@style/Widget.Twidere.Button.Small</item>
-		<item name="android:buttonStyleInset">@style/Widget.Twidere.Button.Inset</item>
-		<item name="android:imageButtonStyle">@style/Widget.Twidere.ImageButton</item>
 	</style>
 
 	<style name="Theme.Twidere.Light.Dialog" parent="Theme.Holo.Light.Dialog">
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@drawable/tab_background_dark</item>
-		<item name="borderlessButtonStyle">@style/Widget.Twidere.Light.Button.Borderless</item>
+		<item name="borderlessButtonStyle">@style/Widget.Holo.Light.Button.Borderless.Small</item>
 		<item name="borderlessImageButtonStyle">@style/Widget.Twidere.Light.ImageButton.Borderless</item>
 		<item name="selectableViewStyle">@style/Widget.Twidere.Light.SelectableView</item>
 		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Light.Large</item>
 		<item name="contentBackground">#20808080</item>
 		<item name="android:itemBackground">@drawable/item_background_holo_light</item>
-
-		<!-- Button styles -->
-		<item name="android:buttonStyle">@style/Widget.Twidere.Light.Button</item>
-		<item name="android:buttonStyleSmall">@style/Widget.Twidere.Light.Button.Small</item>
-		<item name="android:buttonStyleInset">@style/Widget.Twidere.Light.Button.Inset</item>
-		<item name="android:imageButtonStyle">@style/Widget.Twidere.Light.ImageButton</item>
 	</style>
 
 	<style name="Theme.Twidere.Compose" parent="Theme.Twidere.Dialog">

@@ -1,46 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:orientation="vertical">
+	android:orientation="vertical"
+	tools:context=".activity.SelectAccountActivity">
 
 	<ListView
 		android:id="@android:id/list"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"/>
-
-	<View
-		android:layout_width="match_parent"
-		android:layout_height="0.2dp"
-		android:background="#40808080"/>
+		android:layout_height="match_parent"
+		android:layout_weight="1"/>
 
 	<LinearLayout
 		android:layout_width="match_parent"
-		android:layout_height="@dimen/button_bar_height"
-		android:orientation="horizontal">
-
-		<Button
-			android:id="@+id/add_account"
-			style="?borderlessButtonStyle"
-			android:layout_width="0dp"
-			android:layout_height="match_parent"
-			android:layout_weight="1"
-			android:gravity="center"
-			android:onClick="onClick"
-			android:text="@string/add_account"/>
+		android:layout_height="wrap_content"
+		android:layout_weight="0"
+		android:orientation="vertical">
 
 		<View
-			android:id="@+id/button_divider"
-			android:layout_width="0.2dp"
-			android:layout_height="match_parent"
+			android:layout_width="match_parent"
+			android:layout_height="0.2dp"
 			android:background="#40808080"/>
 
 		<Button
 			android:id="@+id/save"
 			style="?borderlessButtonStyle"
-			android:layout_width="0dp"
-			android:layout_height="match_parent"
-			android:layout_weight="1"
+			android:layout_width="match_parent"
+			android:layout_height="@dimen/button_bar_height"
 			android:gravity="center"
 			android:onClick="onClick"
 			android:text="@android:string/ok"/>

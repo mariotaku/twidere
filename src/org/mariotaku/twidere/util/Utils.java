@@ -131,6 +131,7 @@ import twitter4j.conf.ConfigurationBuilder;
 import twitter4j.http.HostAddressResolver;
 import twitter4j.http.HttpClientWrapper;
 import twitter4j.http.HttpResponse;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -229,8 +230,7 @@ public final class Utils implements Constants {
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_STATUSES, TABLE_ID_CACHED_STATUSES);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_HASHTAGS, TABLE_ID_CACHED_HASHTAGS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_HASHTAGS, TABLE_ID_CACHED_HASHTAGS);
-		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_NOTIFICATIONS + "/#",
-				VIRTUAL_TABLE_ID_NOTIFICATIONS);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_NOTIFICATIONS, VIRTUAL_TABLE_ID_NOTIFICATIONS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_PERMISSIONS, VIRTUAL_TABLE_ID_PERMISSIONS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DNS + "/*", VIRTUAL_TABLE_ID_DNS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_IMAGES, VIRTUAL_TABLE_ID_CACHED_IMAGES);
@@ -571,7 +571,7 @@ public final class Utils implements Constants {
 		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		adapter.setDisplayProfileImage(pref.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true));
 		adapter.setNameDisplayOption(pref.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH));
-		adapter.setTextSize(pref.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE));
+		adapter.setTextSize(pref.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(context)));
 	}
 
 	public static void copyStream(final InputStream is, final OutputStream os) throws IOException {
@@ -1139,6 +1139,11 @@ public final class Utils implements Constants {
 		return getAccountScreenName(context, getDefaultAccountId(context));
 	}
 
+	public static int getDefaultTextSize(final Context context) {
+		if (context == null) return 15;
+		return context.getResources().getInteger(R.integer.default_text_size);
+	}
+
 	public static Twitter getDefaultTwitterInstance(final Context context, final boolean include_entities) {
 		if (context == null) return null;
 		return getDefaultTwitterInstance(context, include_entities, true, true);
@@ -1667,6 +1672,7 @@ public final class Utils implements Constants {
 		return getTextCount(string);
 	}
 
+	@SuppressLint("InlinedApi")
 	public static int getThemeColor(final Context context) {
 		if (context == null) return Color.TRANSPARENT;
 		final int def = context.getResources().getColor(R.color.holo_blue_light);
@@ -1874,6 +1880,7 @@ public final class Utils implements Constants {
 		}
 	}
 
+	@SuppressLint("InlinedApi")
 	public static boolean isBatteryOkay(final Context context) {
 		if (context == null) return false;
 		final Context app = context.getApplicationContext();

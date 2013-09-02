@@ -46,7 +46,7 @@
 
 	<style name="Theme.ActionBar.Dialog" parent="android:Theme.Holo.Dialog">
 		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_dark_holo</item>
-		<item name="popupBackground">@drawable/popup_holo_light</item>
+		<item name="popupBackground">@drawable/popup_holo_dark</item>
 	</style>
 
 	<style name="Theme.ActionBar.Light.Dialog" parent="android:Theme.Holo.Light.Dialog">
@@ -56,7 +56,7 @@
 
 	<style name="Theme.ActionBar.Dialog.NoActionBar" parent="android:Theme.Holo.Dialog.NoActionBar">
 		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_dark_holo</item>
-		<item name="popupBackground">@drawable/popup_holo_light</item>
+		<item name="popupBackground">@drawable/popup_holo_dark</item>
 	</style>
 
 	<style name="Theme.ActionBar.Light.Dialog.NoActionBar" parent="android:Theme.Holo.Light.Dialog.NoActionBar">

@@ -160,7 +160,7 @@
 			android:theme="@style/Theme.Twidere.Light.Dialog"
 			android:windowSoftInputMode="adjustResize"/>
 		<activity
-			android:name=".activity.SelectAccountActivity"
+			android:name=".activity.AccountSelectorActivity"
 			android:label="@string/select_account"
 			android:theme="@style/Theme.Twidere.Light.Dialog">
 			<intent-filter>
@@ -197,7 +197,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".activity.SetColorActivity"
+			android:name=".activity.ColorPickerActivity"
 			android:label="@string/set_color"
 			android:theme="@style/Theme.Twidere.Light.Dialog"/>
 		<activity

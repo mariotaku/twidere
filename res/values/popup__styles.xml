@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<style name="Widget.Holo.PopupMenu" parent="android:Widget">
+		<item name="android:dropDownSelector">@drawable/list_selector_holo_dark</item>
+		<item name="android:popupBackground">@drawable/menu_dropdown_panel_holo_dark</item>
+		<item name="android:dropDownVerticalOffset">0dip</item>
+		<item name="android:dropDownHorizontalOffset">0dip</item>
+		<item name="android:dropDownWidth">wrap_content</item>
+	</style>
+
+	<style name="Widget.Holo.Light.PopupMenu" parent="android:Widget">
+		<item name="android:dropDownSelector">@drawable/list_selector_holo_light</item>
+		<item name="android:popupBackground">@drawable/menu_dropdown_panel_holo_light</item>
+		<item name="android:dropDownVerticalOffset">0dip</item>
+		<item name="android:dropDownHorizontalOffset">0dip</item>
+		<item name="android:dropDownWidth">wrap_content</item>
+	</style>
+
+</resources>

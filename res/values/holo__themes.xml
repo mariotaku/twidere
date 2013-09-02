@@ -17,16 +17,22 @@
 		<!-- Window attributes -->
 		<item name="android:windowBackground">@drawable/background_holo_dark</item>
 
+		<!-- Button styles -->
+		<item name="android:buttonStyle">@style/Widget.Holo.Button</item>
+		<item name="android:buttonStyleSmall">@style/Widget.Holo.Button.Small</item>
+
 		<!-- List attributes -->
 		<item name="android:listChoiceIndicatorSingle">@drawable/btn_radio_holo_dark</item>
 		<item name="android:listChoiceIndicatorMultiple">@drawable/btn_checkbox_holo_dark</item>
 		<item name="android:scrollbarThumbHorizontal">@drawable/scrollbar_handle_holo_dark</item>
 		<item name="android:scrollbarThumbVertical">@drawable/scrollbar_handle_holo_dark</item>
 		<item name="android:listSelector">@drawable/list_selector_holo_dark</item>
+
 		<!-- Widget styles -->
 		<item name="android:autoCompleteTextViewStyle">@style/Widget.Holo.AutoCompleteTextView</item>
 		<item name="android:checkboxStyle">@style/Widget.Holo.CompoundButton.CheckBox</item>
 		<item name="android:gridViewStyle">@style/Widget.Holo.GridView</item>
+		<item name="android:imageButtonStyle">@style/Widget.Holo.ImageButton</item>
 		<item name="android:listViewStyle">@style/Widget.Holo.ListView</item>
 		<item name="android:expandableListViewStyle">@style/Widget.Holo.ExpandableListView</item>
 		<item name="android:progressBarStyle">@style/Widget.Holo.ProgressBar</item>
@@ -38,6 +44,7 @@
 		<item name="android:progressBarStyleLargeInverse">@style/Widget.Holo.ProgressBar.Large.Inverse</item>
 		<item name="android:progressBarStyleHorizontal">@style/Widget.Holo.ProgressBar.Horizontal</item>
 		<item name="android:radioButtonStyle">@style/Widget.Holo.CompoundButton.RadioButton</item>
+		<item name="android:scrollViewStyle">@style/Widget.Holo.ScrollView</item>
 		<item name="android:seekBarStyle">@style/Widget.Holo.SeekBar</item>
 		<item name="android:spinnerStyle">@style/Widget.Holo.Spinner</item>
 		<item name="android:spinnerItemStyle">@style/Widget.Holo.TextView.SpinnerItem</item>
@@ -61,16 +68,22 @@
 		<!-- Window attributes -->
 		<item name="android:windowBackground">@drawable/background_holo_light</item>
 
+		<!-- Button styles -->
+		<item name="android:buttonStyle">@style/Widget.Holo.Light.Button</item>
+		<item name="android:buttonStyleSmall">@style/Widget.Holo.Light.Button.Small</item>
+
 		<!-- List attributes -->
 		<item name="android:listChoiceIndicatorSingle">@drawable/btn_radio_holo_light</item>
 		<item name="android:listChoiceIndicatorMultiple">@drawable/btn_checkbox_holo_light</item>
 		<item name="android:scrollbarThumbHorizontal">@drawable/scrollbar_handle_holo_light</item>
 		<item name="android:scrollbarThumbVertical">@drawable/scrollbar_handle_holo_light</item>
 		<item name="android:listSelector">@drawable/list_selector_holo_light</item>
+
 		<!-- Widget styles -->
 		<item name="android:autoCompleteTextViewStyle">@style/Widget.Holo.Light.AutoCompleteTextView</item>
 		<item name="android:checkboxStyle">@style/Widget.Holo.Light.CompoundButton.CheckBox</item>
 		<item name="android:gridViewStyle">@style/Widget.Holo.GridView</item>
+		<item name="android:imageButtonStyle">@style/Widget.Holo.Light.ImageButton</item>
 		<item name="android:listViewStyle">@style/Widget.Holo.Light.ListView</item>
 		<item name="android:expandableListViewStyle">@style/Widget.Holo.Light.ExpandableListView</item>
 		<item name="android:progressBarStyle">@style/Widget.Holo.ProgressBar</item>
@@ -82,6 +95,7 @@
 		<item name="android:progressBarStyleLargeInverse">@style/Widget.Holo.ProgressBar.Large.Inverse</item>
 		<item name="android:progressBarStyleHorizontal">@style/Widget.Holo.Light.ProgressBar.Horizontal</item>
 		<item name="android:radioButtonStyle">@style/Widget.Holo.Light.CompoundButton.RadioButton</item>
+		<item name="android:scrollViewStyle">@style/Widget.Holo.Light.ScrollView</item>
 		<item name="android:seekBarStyle">@style/Widget.Holo.Light.SeekBar</item>
 		<item name="android:spinnerStyle">@style/Widget.Holo.Light.Spinner</item>
 		<item name="android:spinnerItemStyle">@style/Widget.Holo.Light.TextView.SpinnerItem</item>
@@ -102,17 +116,23 @@
 		<item name="android:textAppearanceSmallInverse">@style/TextAppearance.Holo.Small.Inverse</item>
 		<item name="android:textAppearanceButton">@style/TextAppearance.Holo.Widget.Button</item>
 
+		<!-- Button styles -->
+		<item name="android:buttonStyle">@style/Widget.Holo.Button</item>
+		<item name="android:buttonStyleSmall">@style/Widget.Holo.Button.Small</item>
+
 		<!-- List attributes -->
 		<item name="android:listChoiceIndicatorSingle">@drawable/btn_radio_holo_dark</item>
 		<item name="android:listChoiceIndicatorMultiple">@drawable/btn_checkbox_holo_dark</item>
 		<item name="android:scrollbarThumbHorizontal">@drawable/scrollbar_handle_holo_dark</item>
 		<item name="android:scrollbarThumbVertical">@drawable/scrollbar_handle_holo_dark</item>
 		<item name="android:listSelector">@drawable/list_selector_holo_dark</item>
+
 		<!-- Widget styles -->
 		<item name="android:autoCompleteTextViewStyle">@style/Widget.Holo.AutoCompleteTextView</item>
 		<item name="android:checkboxStyle">@style/Widget.Holo.CompoundButton.CheckBox</item>
 		<item name="android:editTextStyle">@style/Widget.Holo.EditText</item>
 		<item name="android:gridViewStyle">@style/Widget.Holo.GridView</item>
+		<item name="android:imageButtonStyle">@style/Widget.Holo.ImageButton</item>
 		<item name="android:listViewStyle">@style/Widget.Holo.ListView</item>
 		<item name="android:expandableListViewStyle">@style/Widget.Holo.ExpandableListView</item>
 		<item name="android:progressBarStyle">@style/Widget.Holo.ProgressBar</item>
@@ -124,6 +144,7 @@
 		<item name="android:progressBarStyleLargeInverse">@style/Widget.Holo.ProgressBar.Large.Inverse</item>
 		<item name="android:progressBarStyleHorizontal">@style/Widget.Holo.ProgressBar.Horizontal</item>
 		<item name="android:radioButtonStyle">@style/Widget.Holo.CompoundButton.RadioButton</item>
+		<item name="android:scrollViewStyle">@style/Widget.Holo.ScrollView</item>
 		<item name="android:seekBarStyle">@style/Widget.Holo.SeekBar</item>
 		<item name="android:spinnerStyle">@style/Widget.Holo.Spinner</item>
 		<item name="android:spinnerItemStyle">@style/Widget.Holo.TextView.SpinnerItem</item>
@@ -144,17 +165,23 @@
 		<item name="android:textAppearanceSmallInverse">@style/TextAppearance.Holo.Light.Small.Inverse</item>
 		<item name="android:textAppearanceButton">@style/TextAppearance.Holo.Light.Widget.Button</item>
 
+		<!-- Button styles -->
+		<item name="android:buttonStyle">@style/Widget.Holo.Light.Button</item>
+		<item name="android:buttonStyleSmall">@style/Widget.Holo.Light.Button.Small</item>
+
 		<!-- List attributes -->
 		<item name="android:listChoiceIndicatorSingle">@drawable/btn_radio_holo_light</item>
 		<item name="android:listChoiceIndicatorMultiple">@drawable/btn_checkbox_holo_light</item>
 		<item name="android:scrollbarThumbHorizontal">@drawable/scrollbar_handle_holo_light</item>
 		<item name="android:scrollbarThumbVertical">@drawable/scrollbar_handle_holo_light</item>
 		<item name="android:listSelector">@drawable/list_selector_holo_light</item>
+
 		<!-- Widget styles -->
 		<item name="android:autoCompleteTextViewStyle">@style/Widget.Holo.Light.AutoCompleteTextView</item>
 		<item name="android:checkboxStyle">@style/Widget.Holo.Light.CompoundButton.CheckBox</item>
 		<item name="android:editTextStyle">@style/Widget.Holo.Light.EditText</item>
 		<item name="android:gridViewStyle">@style/Widget.Holo.Light.GridView</item>
+		<item name="android:imageButtonStyle">@style/Widget.Holo.Light.ImageButton</item>
 		<item name="android:listViewStyle">@style/Widget.Holo.Light.ListView</item>
 		<item name="android:expandableListViewStyle">@style/Widget.Holo.Light.ExpandableListView</item>
 		<item name="android:progressBarStyle">@style/Widget.Holo.Light.ProgressBar</item>
@@ -166,6 +193,7 @@
 		<item name="android:progressBarStyleLargeInverse">@style/Widget.Holo.Light.ProgressBar.Large.Inverse</item>
 		<item name="android:progressBarStyleHorizontal">@style/Widget.Holo.Light.ProgressBar.Horizontal</item>
 		<item name="android:radioButtonStyle">@style/Widget.Holo.Light.CompoundButton.RadioButton</item>
+		<item name="android:scrollViewStyle">@style/Widget.Holo.Light.ScrollView</item>
 		<item name="android:seekBarStyle">@style/Widget.Holo.Light.SeekBar</item>
 		<item name="android:spinnerStyle">@style/Widget.Holo.Light.Spinner</item>
 		<item name="android:spinnerItemStyle">@style/Widget.Holo.Light.TextView.SpinnerItem</item>

@@ -435,11 +435,6 @@ public class SwipeBackLayout extends FrameLayout {
 			if (mSwipeListener != null) {
 				mSwipeListener.onScrollStateChange(state, mScrollPercent);
 			}
-			if (state == ViewDragHelper.STATE_IDLE) {
-				ViewCompat.setLayerType(SwipeBackLayout.this, ViewCompat.LAYER_TYPE_NONE, null);
-			} else if (state == ViewDragHelper.STATE_SETTLING) {
-				ViewCompat.setLayerType(SwipeBackLayout.this, ViewCompat.LAYER_TYPE_HARDWARE, null);
-			}
 		}
 
 		@Override

@@ -21,6 +21,7 @@ public class NyanStarsView extends View {
 	private final Paint mPaint;
 	private final ArrayList<Star> mStars = new ArrayList<Star>();
 	private final Random mRandom = new Random();
+	private final InvalidateRunnable mInvalidateRunnable;
 
 	public NyanStarsView(final Context context) {
 		this(context, null);
@@ -39,7 +40,19 @@ public class NyanStarsView extends View {
 		mStarDotSize = res.getDimensionPixelSize(R.dimen.nyan_star_dot_size);
 		mPaint = new Paint();
 		mPaint.setColor(Color.WHITE);
-		post(new InvalidateRunnable(this));
+		mInvalidateRunnable = new InvalidateRunnable(this);
+	}
+
+	@Override
+	protected void onAttachedToWindow() {
+		super.onAttachedToWindow();
+		post(mInvalidateRunnable);
+	}
+
+	@Override
+	protected void onDetachedFromWindow() {
+		removeCallbacks(mInvalidateRunnable);
+		super.onDetachedFromWindow();
 	}
 
 	@Override

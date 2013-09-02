@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.activity;
 
+import static org.mariotaku.twidere.util.Utils.getDefaultTextSize;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -190,7 +192,7 @@ public class DraftsActivity extends TwidereSwipeBackActivity implements LoaderCa
 		mResolver = getContentResolver();
 		mTwitterWrapper = getTwidereApplication().getTwitterWrapper();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mTextSize = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
+		mTextSize = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(this));
 		setContentView(R.layout.base_list);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		mAdapter = new DraftsAdapter(this);
@@ -204,7 +206,7 @@ public class DraftsActivity extends TwidereSwipeBackActivity implements LoaderCa
 	@Override
 	protected void onResume() {
 		super.onResume();
-		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, PREFERENCE_DEFAULT_TEXT_SIZE);
+		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(this));
 		mAdapter.setTextSize(text_size);
 		if (mTextSize != text_size) {
 			mTextSize = text_size;
@@ -235,7 +237,7 @@ public class DraftsActivity extends TwidereSwipeBackActivity implements LoaderCa
 		final Uri uri = draft.media_uri == null ? null : Uri.parse(draft.media_uri);
 		mResolver.delete(Drafts.CONTENT_URI, Drafts._ID + " = " + draft._id, null);
 		mTwitterWrapper.updateStatus(draft.account_ids, draft.text, draft.location, uri, draft.in_reply_to_status_id,
-				draft.is_possibly_sensitive, draft.is_photo_attached && !draft.is_image_attached);
+				draft.is_possibly_sensitive, draft.attached_image_type == ATTACHED_IMAGE_TYPE_PHOTO);
 	}
 
 	static class DraftsAdapter extends SimpleCursorAdapter implements ImageLoadingListener {

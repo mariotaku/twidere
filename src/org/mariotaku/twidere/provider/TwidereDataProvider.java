@@ -66,6 +66,7 @@ import org.mariotaku.twidere.util.PermissionsManager;
 import org.mariotaku.twidere.util.Utils;
 
 import twitter4j.http.HostAddressResolver;
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -125,6 +126,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 
 	};
 
+	@SuppressLint("InlinedApi")
 	@Override
 	public int bulkInsert(final Uri uri, final ContentValues[] values) {
 		try {
@@ -194,6 +196,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				final List<String> segments = uri.getPathSegments();
 				if (segments.size() != 2) return 0;
 				clearNotification(ParseUtils.parseInt(segments.get(1)));
+				return 1;
 			}
 			switch (table_id) {
 				case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
@@ -320,6 +323,9 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				}
 				case VIRTUAL_TABLE_ID_CACHED_IMAGES: {
 					return getCachedImageCursor(uri.getQueryParameter(QUERY_PARAM_URL));
+				}
+				case VIRTUAL_TABLE_ID_NOTIFICATIONS: {
+					return getNotificationsCursor();
 				}
 				case TABLE_ID_DIRECT_MESSAGES_CONVERSATION: {
 					final List<String> segments = uri.getPathSegments();
@@ -766,6 +772,14 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		} catch (final IOException e) {
 
 		}
+		return c;
+	}
+
+	private Cursor getNotificationsCursor() {
+		final MatrixCursor c = new MatrixCursor(TweetStore.Notifications.MATRIX_COLUMNS);
+		c.addRow(new Integer[] { NOTIFICATION_ID_HOME_TIMELINE, mNewStatusesCount });
+		c.addRow(new Integer[] { NOTIFICATION_ID_MENTIONS, mNewMentions.size() });
+		c.addRow(new Integer[] { NOTIFICATION_ID_DIRECT_MESSAGES, mNewMessages.size() });
 		return c;
 	}
 
