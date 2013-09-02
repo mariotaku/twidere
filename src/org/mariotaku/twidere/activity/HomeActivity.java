@@ -222,6 +222,14 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 				onSearchRequested();
 				return true;
 			}
+			case MENU_SELECT_ACCOUNT: {
+				if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+					mDrawerLayout.closeDrawer(Gravity.LEFT);
+				} else {
+					mDrawerLayout.openDrawer(Gravity.LEFT);
+				}
+				return true;
+			}
 			case MENU_SETTINGS: {
 				final Intent intent = new Intent(this, SettingsActivity.class);
 				intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
