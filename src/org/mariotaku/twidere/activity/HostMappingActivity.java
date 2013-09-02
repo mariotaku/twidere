@@ -57,8 +57,7 @@ import android.widget.TextView;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 
-public class HostMappingActivity extends BaseDialogWhenLargeActivity implements OnItemClickListener,
-		OnItemLongClickListener {
+public class HostMappingActivity extends BaseActivity implements OnItemClickListener, OnItemLongClickListener {
 
 	private ListView mListView;
 	private HostMappingAdapter mAdapter;

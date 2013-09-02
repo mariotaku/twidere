@@ -27,7 +27,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 
-public class ExtensionsListActivity extends BaseDialogWhenLargeActivity {
+public class ExtensionsListActivity extends BaseActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {

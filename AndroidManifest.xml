@@ -3,7 +3,7 @@
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
 	android:versionCode="77"
-	android:versionName="0.2.8.7">
+	android:versionName="0.2.9">
 
 	<uses-sdk
 		android:minSdkVersion="4"
@@ -173,7 +173,7 @@
 			android:name=".activity.BrowserActivity"
 			android:exported="false"
 			android:label="@string/browser"
-			android:theme="@style/Theme.Blank.DialogWhenLarge">
+			android:theme="@style/Theme.Blank.SwipeBack">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.VIEW_WEBPAGE"/>
 
@@ -188,7 +188,7 @@
 			android:name=".activity.FiltersActivity"
 			android:exported="false"
 			android:label="@string/filter"
-			android:theme="@style/Theme.Blank.DialogWhenLarge"
+			android:theme="@style/Theme.Blank.SwipeBack"
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.FILTERS"/>
@@ -281,7 +281,7 @@
 			android:exported="false"
 			android:label="@string/drafts"
 			android:launchMode="singleTop"
-			android:theme="@style/Theme.Blank.DialogWhenLarge">
+			android:theme="@style/Theme.Blank.SwipeBack">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.DRAFTS"/>
 
@@ -350,7 +350,7 @@
 		<activity
 			android:name=".activity.SettingsDetailsActivity"
 			android:label="@string/settings"
-			android:theme="@style/Theme.Blank.DialogWhenLarge"
+			android:theme="@style/Theme.Blank.SwipeBack"
 			android:windowSoftInputMode="adjustResize"/>
 		<activity
 			android:name=".activity.InternalSettingsActivity"
@@ -361,12 +361,13 @@
 		<activity
 			android:name=".activity.DonateActivity"
 			android:label="@string/donate"
-			android:theme="@style/Theme.Blank.DialogWhenLarge"/>
+			android:theme="@style/Theme.Blank.SwipeBack"
+			android:windowSoftInputMode="adjustResize"/>
 		<activity
 			android:name=".activity.FilePickerActivity"
 			android:exported="false"
 			android:label="@string/pick_file"
-			android:theme="@style/Theme.Blank.DialogWhenLarge"
+			android:theme="@style/Theme.Blank.SwipeBack"
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.PICK_FILE"/>
@@ -379,7 +380,7 @@
 			android:name=".activity.ExtensionsListActivity"
 			android:exported="false"
 			android:label="@string/extensions"
-			android:theme="@style/Theme.Blank.DialogWhenLarge">
+			android:theme="@style/Theme.Blank.SwipeBack">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.EXTENSIONS"/>
 
@@ -390,7 +391,7 @@
 			android:name=".activity.CustomTabsActivity"
 			android:exported="false"
 			android:label="@string/custom_tabs"
-			android:theme="@style/Theme.Blank.DialogWhenLarge"
+			android:theme="@style/Theme.Blank.SwipeBack"
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.CUSTOM_TABS"/>
@@ -402,7 +403,7 @@
 			android:name=".activity.EditUserProfileActivity"
 			android:exported="false"
 			android:label="@string/edit_profile"
-			android:theme="@style/Theme.Blank.DialogWhenLarge"
+			android:theme="@style/Theme.Blank.SwipeBack"
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.EDIT_USER_PROFILE"/>
@@ -425,7 +426,7 @@
 			android:name=".activity.HostMappingActivity"
 			android:exported="false"
 			android:label="@string/custom_host_mapping"
-			android:theme="@style/Theme.Blank.DialogWhenLarge">
+			android:theme="@style/Theme.Blank.SwipeBack">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.EDIT_HOST_MAPPING"/>
 
@@ -446,7 +447,7 @@
 			android:name=".activity.DataProfilingSettingsActivity"
 			android:exported="false"
 			android:label="@string/data_profiling"
-			android:theme="@style/Theme.Blank.DialogWhenLarge"/>
+			android:theme="@style/Theme.Blank.SwipeBack"/>
 		<activity
 			android:name=".activity.RequestPermissionsActivity"
 			android:label="@string/permissions_request"

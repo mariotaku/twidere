@@ -38,7 +38,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class DonateActivity extends BaseDialogWhenLargeActivity implements OnClickListener, TextWatcher {
+public class DonateActivity extends BaseActivity implements OnClickListener, TextWatcher {
 
 	private EditText mEditName, mEditAmount;
 	private Button mDonateButton;

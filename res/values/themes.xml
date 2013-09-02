@@ -9,8 +9,6 @@
 
 	<style name="Theme.Blank.Dialog" parent="Theme.Twidere.Dialog"/>
 
-	<style name="Theme.Blank.DialogWhenLarge" parent="android:Theme.NoTitleBar"></style>
-
 	<style name="Theme.Nyan" parent="android:Theme.NoTitleBar">
 		<item name="android:windowBackground">@color/nyan_background</item>
 	</style>
@@ -141,10 +139,6 @@
 		<item name="android:buttonStyleInset">@style/Widget.Twidere.Light.Button.Inset</item>
 		<item name="android:imageButtonStyle">@style/Widget.Twidere.Light.ImageButton</item>
 	</style>
-
-	<style name="Theme.Twidere.DialogWhenLarge"/>
-
-	<style name="Theme.Twidere.Light.DialogWhenLarge"/>
 
 	<style name="Theme.Twidere.Compose" parent="Theme.Twidere.Dialog">
 		<item name="android:windowNoTitle">true</item>

@@ -26,7 +26,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 
-public class CustomTabsActivity extends BaseDialogWhenLargeActivity {
+public class CustomTabsActivity extends BaseActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {

@@ -61,8 +61,8 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 
-public class DraftsActivity extends BaseDialogWhenLargeActivity implements LoaderCallbacks<Cursor>,
-		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener {
+public class DraftsActivity extends TwidereSwipeBackActivity implements LoaderCallbacks<Cursor>, OnItemClickListener,
+		OnItemLongClickListener, OnMenuItemClickListener {
 
 	private ContentResolver mResolver;
 	private AsyncTwitterWrapper mTwitterWrapper;

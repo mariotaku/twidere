@@ -373,38 +373,6 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 		mTask.execute();
 	}
 
-	private void setDefaultAPI() {
-		final String consumer_key = getNonEmptyString(mPreferences, PREFERENCE_KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY_2);
-		final String consumer_secret = getNonEmptyString(mPreferences, PREFERENCE_KEY_CONSUMER_SECRET,
-				TWITTER_CONSUMER_SECRET_2);
-		final String rest_base_url = getNonEmptyString(mPreferences, PREFERENCE_KEY_REST_BASE_URL,
-				DEFAULT_REST_BASE_URL);
-		final String oauth_base_url = getNonEmptyString(mPreferences, PREFERENCE_KEY_OAUTH_BASE_URL,
-				DEFAULT_OAUTH_BASE_URL);
-		final String signing_rest_base_url = getNonEmptyString(mPreferences, PREFERENCE_KEY_SIGNING_REST_BASE_URL,
-				DEFAULT_SIGNING_REST_BASE_URL);
-		final String signing_oauth_base_url = getNonEmptyString(mPreferences, PREFERENCE_KEY_SIGNING_OAUTH_BASE_URL,
-				DEFAULT_SIGNING_OAUTH_BASE_URL);
-		if (isEmpty(mConsumerKey)) {
-			mConsumerKey = consumer_key;
-		}
-		if (isEmpty(mConsumerSecret)) {
-			mConsumerSecret = consumer_secret;
-		}
-		if (isEmpty(mRestBaseURL)) {
-			mRestBaseURL = rest_base_url;
-		}
-		if (isEmpty(mOAuthBaseURL)) {
-			mOAuthBaseURL = oauth_base_url;
-		}
-		if (isEmpty(mSigningRestBaseURL)) {
-			mSigningRestBaseURL = signing_rest_base_url;
-		}
-		if (isEmpty(mSigningOAuthBaseURL)) {
-			mSigningOAuthBaseURL = signing_oauth_base_url;
-		}
-	}
-
 	private Configuration getConfiguration() {
 		final ConfigurationBuilder cb = new ConfigurationBuilder();
 		final boolean enable_gzip_compressing = mPreferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
@@ -450,6 +418,38 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 	private void saveEditedText() {
 		mUsername = ParseUtils.parseString(mEditUsername.getText());
 		mPassword = ParseUtils.parseString(mEditPassword.getText());
+	}
+
+	private void setDefaultAPI() {
+		final String consumer_key = getNonEmptyString(mPreferences, PREFERENCE_KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY_2);
+		final String consumer_secret = getNonEmptyString(mPreferences, PREFERENCE_KEY_CONSUMER_SECRET,
+				TWITTER_CONSUMER_SECRET_2);
+		final String rest_base_url = getNonEmptyString(mPreferences, PREFERENCE_KEY_REST_BASE_URL,
+				DEFAULT_REST_BASE_URL);
+		final String oauth_base_url = getNonEmptyString(mPreferences, PREFERENCE_KEY_OAUTH_BASE_URL,
+				DEFAULT_OAUTH_BASE_URL);
+		final String signing_rest_base_url = getNonEmptyString(mPreferences, PREFERENCE_KEY_SIGNING_REST_BASE_URL,
+				DEFAULT_SIGNING_REST_BASE_URL);
+		final String signing_oauth_base_url = getNonEmptyString(mPreferences, PREFERENCE_KEY_SIGNING_OAUTH_BASE_URL,
+				DEFAULT_SIGNING_OAUTH_BASE_URL);
+		if (isEmpty(mConsumerKey)) {
+			mConsumerKey = consumer_key;
+		}
+		if (isEmpty(mConsumerSecret)) {
+			mConsumerSecret = consumer_secret;
+		}
+		if (isEmpty(mRestBaseURL)) {
+			mRestBaseURL = rest_base_url;
+		}
+		if (isEmpty(mOAuthBaseURL)) {
+			mOAuthBaseURL = oauth_base_url;
+		}
+		if (isEmpty(mSigningRestBaseURL)) {
+			mSigningRestBaseURL = signing_rest_base_url;
+		}
+		if (isEmpty(mSigningOAuthBaseURL)) {
+			mSigningOAuthBaseURL = signing_oauth_base_url;
+		}
 	}
 
 	private void setSignInButton() {

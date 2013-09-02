@@ -152,7 +152,7 @@ public final class MessagesManager implements Constants {
 		for (final Activity activity : mMessageCallbacks) {
 			if (activity instanceof BaseActivity) {
 				final BaseActivity base = (BaseActivity) activity;
-				if (base.isOnTop() && !base.isDialogMode()) return base;
+				if (base.isOnTop()) return base;
 			}
 		}
 		for (final Activity activity : mMessageCallbacks) {

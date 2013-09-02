@@ -49,8 +49,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class FilePickerActivity extends BaseDialogWhenLargeActivity implements OnItemClickListener,
-		LoaderCallbacks<List<File>> {
+public class FilePickerActivity extends BaseActivity implements OnItemClickListener, LoaderCallbacks<List<File>> {
 
 	private File mCurrentDirectory;
 	private ListView mListView;

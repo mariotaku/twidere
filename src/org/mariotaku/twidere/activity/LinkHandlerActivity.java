@@ -24,7 +24,6 @@ import static org.mariotaku.twidere.util.Utils.getAccountId;
 import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.matchLinkId;
-import me.imid.swipebacklayout.lib.SwipeBackLayout;
 
 import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.twidere.R;
@@ -50,11 +49,9 @@ import org.mariotaku.twidere.fragment.UserTimelineFragment;
 import org.mariotaku.twidere.fragment.UsersListFragment;
 import org.mariotaku.twidere.util.MultiSelectEventHandler;
 import org.mariotaku.twidere.util.ParseUtils;
-import org.mariotaku.twidere.util.ViewAccessor;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -62,12 +59,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
 
-public class LinkHandlerActivity extends BaseDialogWhenLargeActivity {
-
-	private SwipeBackLayout mSwipeBackLayout;
+public class LinkHandlerActivity extends TwidereSwipeBackActivity {
 
 	private Fragment mFragment;
 
@@ -76,17 +70,6 @@ public class LinkHandlerActivity extends BaseDialogWhenLargeActivity {
 	private ActionBar mActionBar;
 
 	private boolean mFinishOnly;
-
-	@Override
-	public View findViewById(final int id) {
-		final View v = super.findViewById(id);
-		if (v != null) return v;
-		return mSwipeBackLayout != null ? mSwipeBackLayout.findViewById(id) : null;
-	}
-
-	public final SwipeBackLayout getSwipeBackLayout() {
-		return mSwipeBackLayout;
-	}
 
 	/**
 	 * Base action bar-aware implementation for
@@ -118,22 +101,6 @@ public class LinkHandlerActivity extends BaseDialogWhenLargeActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	public final void setSwipeBackEnabled(final boolean enable) {
-		if (mSwipeBackLayout != null) {
-			mSwipeBackLayout.setEnableGesture(enable);
-		}
-	}
-
-	@Override
-	protected int getDarkThemeRes() {
-		return R.style.Theme_Twidere_DialogWhenLarge;
-	}
-
-	@Override
-	protected int getLightThemeRes() {
-		return R.style.Theme_Twidere_Light_DialogWhenLarge;
-	}
-
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
@@ -141,12 +108,6 @@ public class LinkHandlerActivity extends BaseDialogWhenLargeActivity {
 		mMultiSelectHandler.dispatchOnCreate();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.link_handler);
-		final Window w = getWindow();
-		if (!isDialogMode()) {
-			w.setBackgroundDrawable(new ColorDrawable(0));
-			ViewAccessor.setBackground(getWindow().getDecorView(), null);
-			mSwipeBackLayout = new SwipeBackLayout(this);
-		}
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 		setSupportProgressBarIndeterminateVisibility(false);
@@ -169,14 +130,6 @@ public class LinkHandlerActivity extends BaseDialogWhenLargeActivity {
 	}
 
 	@Override
-	protected void onPostCreate(final Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
-		if (mSwipeBackLayout != null) {
-			mSwipeBackLayout.attachToActivity(this);
-		}
-	}
-
-	@Override
 	protected void onStart() {
 		super.onStart();
 		mMultiSelectHandler.dispatchOnStart();
@@ -188,7 +141,7 @@ public class LinkHandlerActivity extends BaseDialogWhenLargeActivity {
 		super.onStop();
 	}
 
-	@Override
+	// @Override
 	protected boolean shouldDisableDialogWhenLargeMode() {
 		return false;
 	}

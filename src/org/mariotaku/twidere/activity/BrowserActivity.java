@@ -31,7 +31,7 @@ import android.view.Window;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 
-public class BrowserActivity extends BaseDialogWhenLargeActivity {
+public class BrowserActivity extends BaseActivity {
 
 	private Uri mUri = Uri.parse("about:blank");
 
