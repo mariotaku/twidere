@@ -24,7 +24,7 @@ public class NyanRainbowView extends ImageView {
 	@Override
 	protected void onAttachedToWindow() {
 		super.onAttachedToWindow();
-		setBackgroundResource(R.drawable.nyan_rainbow_4x);
+		setBackgroundResource(R.drawable.nyan_rainbow);
 		((AnimationDrawable) getBackground()).start();
 	}
 

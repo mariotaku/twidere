@@ -2,6 +2,7 @@ package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
+import static org.mariotaku.twidere.util.Utils.*;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.EditUserProfileActivity;
@@ -124,6 +125,21 @@ public class AccountsDrawerFragment extends BaseFragment implements LoaderCallba
 		switch (action.id) {
 			case MENU_VIEW_PROFILE: {
 				openUserProfile(getActivity(), account.account_id, account.account_id, account.screen_name);
+				closeAccountsDrawer();
+				break;
+			}
+			case MENU_STATUSES: {
+				openUserTimeline(getActivity(), account.account_id, account.account_id, account.screen_name);
+				closeAccountsDrawer();
+				break;
+			}
+			case MENU_FAVORITES: {
+				openUserFavorites(getActivity(), account.account_id, account.account_id, account.screen_name);
+				closeAccountsDrawer();
+				break;
+			}
+			case MENU_LISTS: {
+				openUserLists(getActivity(), account.account_id, account.account_id, account.screen_name);
 				closeAccountsDrawer();
 				break;
 			}

@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
-	android:versionCode="78"
-	android:versionName="0.2.9.1">
+	android:versionCode="79"
+	android:versionName="0.2.9.2">
 
 	<uses-sdk
 		android:minSdkVersion="4"

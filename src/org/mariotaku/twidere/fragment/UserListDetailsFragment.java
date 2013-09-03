@@ -23,6 +23,7 @@ import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
+import static org.mariotaku.twidere.util.Utils.getNameDisplayOptionInt;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.openUserListMembers;
@@ -94,7 +95,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 	private AsyncTwitterWrapper mTwitterWrapper;
 
 	private ImageView mProfileImageView;
-	private TextView mListNameView, mUserNameView, mDescriptionView, mErrorMessageView;
+	private TextView mListNameView, mCreatedByView, mDescriptionView, mErrorMessageView;
 	private View mListContainer, mErrorRetryContainer;
 	private ColorLabelRelativeLayout mProfileContainer;
 	private View mNameContainer, mDescriptionContainer;
@@ -136,8 +137,10 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		mErrorRetryContainer.setVisibility(View.GONE);
 		mUserList = list;
 		mProfileContainer.drawRight(getAccountColor(getActivity(), list.account_id));
-		mListNameView.setText("@" + list.user_screen_name + "/" + list.name);
-		mUserNameView.setText(list.user_name);
+		mListNameView.setText(list.name);
+		final boolean display_screen_name = getNameDisplayOptionInt(getActivity()) == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
+		final String name = display_screen_name ? "@" + list.user_screen_name : list.user_name;
+		mCreatedByView.setText(getString(R.string.created_by, name));
 		final String description = list.description;
 		mDescriptionContainer
 				.setVisibility(is_my_activated_account || !isEmpty(description) ? View.VISIBLE : View.GONE);
@@ -277,7 +280,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		mProfileContainer = (ColorLabelRelativeLayout) mHeaderView.findViewById(R.id.profile_name_container);
 		mNameContainer = mHeaderView.findViewById(R.id.name_container);
 		mListNameView = (TextView) mHeaderView.findViewById(R.id.list_name);
-		mUserNameView = (TextView) mHeaderView.findViewById(R.id.user_name);
+		mCreatedByView = (TextView) mHeaderView.findViewById(R.id.created_by);
 		mDescriptionView = (TextView) mHeaderView.findViewById(R.id.description);
 		mProfileImageView = (ImageView) mHeaderView.findViewById(R.id.profile_image);
 		mDescriptionContainer = mHeaderView.findViewById(R.id.description_container);

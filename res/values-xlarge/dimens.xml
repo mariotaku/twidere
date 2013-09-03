@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<dimen name="pane_spacing_left">270dp</dimen>
+	<dimen name="pane_spacing_right">270dp</dimen>
+	<dimen name="left_drawer_width">500dp</dimen>
+	<dimen name="accounts_drawer_name_size">18sp</dimen>
+	<dimen name="accounts_drawer_screen_name_size">16sp</dimen>
+	<dimen name="accounts_drawer_default_indicator_size">14sp</dimen>
+
+</resources>

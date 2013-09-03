@@ -56,5 +56,8 @@
 	<item name="toggle_sensitive" type="id"/>
 	<item name="revoke" type="id"/>
 	<item name="add_to_list" type="id"/>
+	<item name="statuses" type="id"/>
+	<item name="favorites" type="id"/>
+	<item name="lists" type="id"/>
 
 </resources>

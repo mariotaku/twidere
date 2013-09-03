@@ -482,6 +482,9 @@ public interface Constants {
 	public static final int MENU_REVOKE = R.id.revoke;
 	public static final int MENU_IMPORT_FROM = R.id.import_from;
 	public static final int MENU_ADD_TO_LIST = R.id.add_to_list;
+	public static final int MENU_STATUSES = R.id.statuses;
+	public static final int MENU_FAVORITES = R.id.favorites;
+	public static final int MENU_LISTS = R.id.lists;
 
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_PICK_IMAGE = 2;

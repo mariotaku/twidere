@@ -104,12 +104,15 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	private HostAddressResolver mHostAddressResolver;
 
 	private int mNewStatusesCount;
-	private final List<ParcelableStatus> mNewMentions = new ArrayList<ParcelableStatus>();
-	private final List<String> mNewMentionScreenNames = new NoDuplicatesArrayList<String>();
-	private final List<Long> mNewMentionAccounts = new NoDuplicatesArrayList<Long>();
-	private final List<ParcelableDirectMessage> mNewMessages = new ArrayList<ParcelableDirectMessage>();
-	private final List<String> mNewMessageScreenNames = new NoDuplicatesArrayList<String>();
-	private final List<Long> mNewMessageAccounts = new NoDuplicatesArrayList<Long>();
+	private final List<ParcelableStatus> mNewMentions = Collections.synchronizedList(new ArrayList<ParcelableStatus>());
+	private final List<String> mNewMentionScreenNames = Collections
+			.synchronizedList(new NoDuplicatesArrayList<String>());
+	private final List<Long> mNewMentionAccounts = Collections.synchronizedList(new NoDuplicatesArrayList<Long>());
+	private final List<ParcelableDirectMessage> mNewMessages = Collections
+			.synchronizedList(new ArrayList<ParcelableDirectMessage>());
+	private final List<String> mNewMessageScreenNames = Collections
+			.synchronizedList(new NoDuplicatesArrayList<String>());
+	private final List<Long> mNewMessageAccounts = Collections.synchronizedList(new NoDuplicatesArrayList<Long>());
 
 	private boolean mNotificationIsAudible;
 
@@ -538,6 +541,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	}
 
 	private void displayMentionsNotification(final Context context, final ContentValues[] values) {
+		if (mNewMentions.isEmpty()) return;
 		final Resources res = context.getResources();
 		final NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 		final boolean display_screen_name = NAME_DISPLAY_OPTION_SCREEN_NAME.equals(mPreferences.getString(
@@ -563,7 +567,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		final int mentions_size = mNewMentions.size();
 		if (notified_count == 0 || mentions_size == 0 || mNewMentionScreenNames.size() == 0) return;
 		final String title;
-		if (mentions_size > 1) {
+		if (mNewMentions.size() > 1) {
 			builder.setNumber(mentions_size);
 		}
 		final int screen_names_size = mNewMentionScreenNames.size();
@@ -573,7 +577,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
 		final Bundle content_extras = new Bundle();
 		content_extras.putInt(INTENT_KEY_INITIAL_TAB, HomeActivity.TAB_POSITION_MENTIONS);
-		if (mentions_size == 1) {
+		if (mNewMentions.size() == 1) {
 			final Uri.Builder uri_builder = new Uri.Builder();
 			uri_builder.scheme(SCHEME_TWIDERE);
 			uri_builder.authority(AUTHORITY_STATUS);
@@ -603,11 +607,13 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				w, h, true));
 		buildNotification(builder, title, title, status.text_plain, R.drawable.ic_stat_mention, null, content_intent,
 				delete_intent);
-		if (mentions_size > 1) {
+		if (mNewMentions.isEmpty()) return;
+		if (mNewMentions.size() > 1) {
 			final NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle(builder);
-			final int max = Math.min(4, mentions_size);
+			final int max = Math.min(4, mNewMentions.size());
 			for (int i = 0; i < max; i++) {
-				final ParcelableStatus s = mNewMentions.get(i);
+				final ParcelableStatus s = safeGet(mNewMentions, i);
+				if (s == null) return;
 				final String name = display_screen_name ? "@" + s.user_screen_name : s.user_name;
 				style.addLine(Html.fromHtml("<b>" + name + "</b>: "
 						+ stripMentionText(s.text_unescaped, getAccountScreenName(context, s.account_id))));
@@ -646,6 +652,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	}
 
 	private void displayMessagesNotification(final Context context, final ContentValues[] values) {
+		if (mNewMessages.isEmpty()) return;
 		final Resources res = context.getResources();
 		final NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 		final boolean display_screen_name = NAME_DISPLAY_OPTION_SCREEN_NAME.equals(mPreferences.getString(
@@ -717,9 +724,9 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		final int accounts_count = mNewMessageAccounts.size();
 		if (accounts_count > 0) {
 			for (int i = 0; i < accounts_count; i++) {
-				final String name = display_screen_name ? "@"
-						+ getAccountScreenName(context, mNewMessageAccounts.get(i)) : getAccountName(context,
-						mNewMessageAccounts.get(i));
+				final long id = mNewMessageAccounts.get(i);
+				final String name = display_screen_name ? "@" + getAccountScreenName(context, id) : getAccountName(
+						context, id);
 				summary.append(name);
 				if (i != accounts_count - 1) {
 					summary.append(", ");
@@ -728,9 +735,10 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		}
 		if (messages_size > 1) {
 			final NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle(builder);
-			final int max = Math.min(4, messages_size);
+			final int max = Math.min(4, mNewMessages.size());
 			for (int i = 0; i < max; i++) {
-				final ParcelableDirectMessage s = mNewMessages.get(i);
+				final ParcelableDirectMessage s = safeGet(mNewMessages, i);
+				if (s == null) return;
 				final String name = display_screen_name ? "@" + s.sender_screen_name : s.sender_name;
 				style.addLine(Html.fromHtml("<b>" + name + "</b>: " + s.text_plain));
 			}
@@ -937,5 +945,9 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		final String temp = "@" + my_screen_name + " ";
 		if (text.startsWith(temp)) return text.substring(temp.length());
 		return text;
+	}
+
+	private static <T> T safeGet(List<T> list, int index) {
+		return index >= 0 && index < list.size() ? list.get(index) : null;
 	}
 }

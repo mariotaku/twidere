@@ -25,22 +25,28 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 	private static final int ITEM_INACTIVATED_ALPHA = 0x40;
 	private static final int GROUP_LAYOUT = R.layout.accounts_drawer_item_group;
 	private static final int CHILD_LAYOUT = R.layout.accounts_drawer_item_child;
-	private static final AccountAction[] DEFAULT_ACCOUNT_ACTIONS = new AccountAction[4];
-	private static final AccountAction[] ACCOUNT_ACTIONS = new AccountAction[5];
+	private static final AccountAction[] DEFAULT_ACCOUNT_ACTIONS = new AccountAction[7];
+	private static final AccountAction[] ACCOUNT_ACTIONS = new AccountAction[8];
 
 	static {
 		DEFAULT_ACCOUNT_ACTIONS[0] = new AccountAction(R.string.view_user_profile, R.drawable.ic_menu_profile,
 				MENU_VIEW_PROFILE);
-		DEFAULT_ACCOUNT_ACTIONS[1] = new AccountAction(R.string.edit_profile, R.drawable.ic_menu_edit, MENU_EDIT);
-		DEFAULT_ACCOUNT_ACTIONS[2] = new AccountAction(R.string.set_color, R.drawable.ic_menu_color_palette,
+		DEFAULT_ACCOUNT_ACTIONS[1] = new AccountAction(R.string.tweets, R.drawable.ic_menu_quote, MENU_STATUSES);
+		DEFAULT_ACCOUNT_ACTIONS[2] = new AccountAction(R.string.favorites, R.drawable.ic_menu_star, MENU_FAVORITES);
+		DEFAULT_ACCOUNT_ACTIONS[3] = new AccountAction(R.string.user_list, R.drawable.ic_menu_list, MENU_LISTS);
+		DEFAULT_ACCOUNT_ACTIONS[4] = new AccountAction(R.string.edit_profile, R.drawable.ic_menu_edit, MENU_EDIT);
+		DEFAULT_ACCOUNT_ACTIONS[5] = new AccountAction(R.string.set_color, R.drawable.ic_menu_color_palette,
 				MENU_SET_COLOR);
-		DEFAULT_ACCOUNT_ACTIONS[3] = new AccountAction(R.string.delete, R.drawable.ic_menu_delete, MENU_DELETE);
+		DEFAULT_ACCOUNT_ACTIONS[6] = new AccountAction(R.string.delete, R.drawable.ic_menu_delete, MENU_DELETE);
 		ACCOUNT_ACTIONS[0] = new AccountAction(R.string.view_user_profile, R.drawable.ic_menu_profile,
 				MENU_VIEW_PROFILE);
-		ACCOUNT_ACTIONS[1] = new AccountAction(R.string.edit_profile, R.drawable.ic_menu_edit, MENU_EDIT);
-		ACCOUNT_ACTIONS[2] = new AccountAction(R.string.set_color, R.drawable.ic_menu_color_palette, MENU_SET_COLOR);
-		ACCOUNT_ACTIONS[3] = new AccountAction(R.string.set_as_default, R.drawable.ic_menu_mark, MENU_SET_AS_DEFAULT);
-		ACCOUNT_ACTIONS[4] = new AccountAction(R.string.delete, R.drawable.ic_menu_delete, MENU_DELETE);
+		ACCOUNT_ACTIONS[1] = new AccountAction(R.string.tweets, R.drawable.ic_menu_quote, MENU_STATUSES);
+		ACCOUNT_ACTIONS[2] = new AccountAction(R.string.favorites, R.drawable.ic_menu_star, MENU_FAVORITES);
+		ACCOUNT_ACTIONS[3] = new AccountAction(R.string.user_list, R.drawable.ic_menu_list, MENU_LISTS);
+		ACCOUNT_ACTIONS[4] = new AccountAction(R.string.edit_profile, R.drawable.ic_menu_edit, MENU_EDIT);
+		ACCOUNT_ACTIONS[5] = new AccountAction(R.string.set_color, R.drawable.ic_menu_color_palette, MENU_SET_COLOR);
+		ACCOUNT_ACTIONS[6] = new AccountAction(R.string.set_as_default, R.drawable.ic_menu_mark, MENU_SET_AS_DEFAULT);
+		ACCOUNT_ACTIONS[7] = new AccountAction(R.string.delete, R.drawable.ic_menu_delete, MENU_DELETE);
 	}
 
 	private final ImageLoaderWrapper mImageLoader;

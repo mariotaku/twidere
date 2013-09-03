@@ -24,7 +24,7 @@ public class NyanCatView extends ImageView {
 	@Override
 	protected void onAttachedToWindow() {
 		super.onAttachedToWindow();
-		setBackgroundResource(R.drawable.nyan_sakamoto_8x);
+		setBackgroundResource(R.drawable.nyan_sakamoto);
 		((AnimationDrawable) getBackground()).start();
 	}
 
