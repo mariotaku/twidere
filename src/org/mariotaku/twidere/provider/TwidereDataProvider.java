@@ -541,7 +541,6 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	}
 
 	private void displayMentionsNotification(final Context context, final ContentValues[] values) {
-		if (mNewMentions.isEmpty()) return;
 		final Resources res = context.getResources();
 		final NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 		final boolean display_screen_name = NAME_DISPLAY_OPTION_SCREEN_NAME.equals(mPreferences.getString(
@@ -652,7 +651,6 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	}
 
 	private void displayMessagesNotification(final Context context, final ContentValues[] values) {
-		if (mNewMessages.isEmpty()) return;
 		final Resources res = context.getResources();
 		final NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 		final boolean display_screen_name = NAME_DISPLAY_OPTION_SCREEN_NAME.equals(mPreferences.getString(

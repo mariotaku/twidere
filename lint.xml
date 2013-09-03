@@ -4,6 +4,9 @@
         <ignore path="res/layout/accounts_drawer_item_group.xml" />
         <ignore path="res/layout/pull_to_refresh_header.xml" />
     </issue>
+    <issue id="ExportedContentProvider">
+        <ignore path="AndroidManifest.xml" />
+    </issue>
     <issue id="NewApi">
         <ignore path="res/values/holo__styles.xml" />
         <ignore path="res/values/popup__styles.xml" />

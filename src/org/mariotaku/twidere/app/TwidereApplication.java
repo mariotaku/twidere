@@ -198,6 +198,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	}
 
 	public static TwidereApplication getInstance(final Context context) {
+		if (context == null) return null;
 		final Context app = context.getApplicationContext();
 		return app instanceof TwidereApplication ? (TwidereApplication) app : null;
 	}
