@@ -3,15 +3,15 @@
 
 	<item
 		android:id="@id/add_location"
-		android:icon="@drawable/ic_menu_mylocation"
+		android:icon="@android:drawable/ic_menu_mylocation"
 		android:title="@string/add_location"/>
 	<item
 		android:id="@id/take_photo"
-		android:icon="@drawable/ic_menu_camera"
+		android:icon="@android:drawable/ic_menu_camera"
 		android:title="@string/take_photo"/>
 	<item
 		android:id="@id/add_image"
-		android:icon="@drawable/ic_menu_gallery"
+		android:icon="@android:drawable/ic_menu_gallery"
 		android:title="@string/add_image"/>
 	<item
 		android:id="@id/view"
@@ -25,17 +25,17 @@
 		<menu>
 			<item
 				android:id="@id/toggle_sensitive"
-				android:icon="@drawable/ic_menu_report_image"
+				android:icon="@android:drawable/ic_menu_report_image"
 				android:title="@string/mark_as_sensitive"/>
 			<item
 				android:id="@id/drafts"
-				android:icon="@drawable/ic_menu_save"
+				android:icon="@android:drawable/ic_menu_save"
 				android:title="@string/drafts"/>
 		</menu>
 	</item>
 	<item
 		android:id="@id/send"
-		android:icon="@drawable/ic_menu_send"
+		android:icon="@android:drawable/ic_menu_send"
 		android:title="@string/send"
 		android:visible="false"/>
 

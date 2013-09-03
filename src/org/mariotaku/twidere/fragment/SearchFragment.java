@@ -1,10 +1,9 @@
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.getThemeColor;
-
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.TabsAdapter;
 import org.mariotaku.twidere.model.Panes;
+import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.view.ExtendedViewPager;
 import org.mariotaku.twidere.view.SquareImageView;
 
@@ -40,7 +39,7 @@ public class SearchFragment extends BaseFragment implements Panes.Left, OnPageCh
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		final Bundle args = getArguments();
-		mThemeColor = getThemeColor(getActivity());
+		mThemeColor = ThemeUtils.getThemeColor(getActivity());
 		mAdapter = new TabsAdapter(getActivity(), getChildFragmentManager(), null);
 		mAdapter.addTab(SearchTweetsFragment.class, args, getString(R.string.tweets), R.drawable.ic_tab_twitter, 0);
 		mAdapter.addTab(SearchUsersFragment.class, args, getString(R.string.users), R.drawable.ic_tab_person, 1);

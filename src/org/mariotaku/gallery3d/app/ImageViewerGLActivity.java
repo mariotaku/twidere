@@ -33,6 +33,8 @@ import org.mariotaku.twidere.loader.GLImageLoader;
 import org.mariotaku.twidere.util.SaveImageTask;
 import org.mariotaku.twidere.util.Utils;
 
+import android.app.ActionBar;
+import android.app.ActionBar.OnMenuVisibilityListener;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
@@ -42,14 +44,17 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.ShareActionProvider;
 
 public final class ImageViewerGLActivity extends SwipeBackActivity implements Constants, View.OnClickListener,
-		PhotoView.Listener, GLImageLoader.DownloadListener, LoaderManager.LoaderCallbacks<GLImageLoader.Result> {
+		PhotoView.Listener, GLImageLoader.DownloadListener, LoaderManager.LoaderCallbacks<GLImageLoader.Result>, OnMenuVisibilityListener {
 
 	private final GLView mRootPane = new GLView() {
 		@Override
@@ -60,8 +65,6 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 
 	private GLRootView mGLRootView;
 	private ProgressBar mProgress;
-	private View mControlButtons;
-	private ImageButton mRefreshStopSaveButton;
 
 	protected static final int FLAG_HIDE_ACTION_BAR = 1;
 	protected static final int FLAG_HIDE_STATUS_BAR = 2;
@@ -98,6 +101,11 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 
 	private ImageView mImageViewer;
 
+	private ShareActionProvider mShareActionProvider;
+
+	private ActionBar mActionBar;
+
+
 	public GLRoot getGLRoot() {
 		return mGLRootView;
 	}
@@ -108,8 +116,7 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 	}
 
 	public void hideControls() {
-		mControlButtons.startAnimation(AnimationUtils.loadAnimation(this, android.R.anim.fade_out));
-		mControlButtons.setVisibility(View.GONE);
+		mActionBar.hide();
 	}
 
 	public void hideProgress() {
@@ -138,17 +145,17 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 				onBackPressed();
 				break;
 			}
-			case R.id.refresh_stop_save: {
-				final LoaderManager lm = getSupportLoaderManager();
-				if (!mImageLoaded && !lm.hasRunningLoaders()) {
-					loadImage();
-				} else if (!mImageLoaded && lm.hasRunningLoaders()) {
-					stopLoading();
-				} else if (mImageLoaded) {
-					new SaveImageTask(this, mImageFile).execute();
-				}
-				break;
-			}
+//			case R.id.refresh_stop_save: {
+//				final LoaderManager lm = getSupportLoaderManager();
+//				if (!mImageLoaded && !lm.hasRunningLoaders()) {
+//					loadImage();
+//				} else if (!mImageLoaded && lm.hasRunningLoaders()) {
+//					stopLoading();
+//				} else if (mImageLoaded) {
+//					new SaveImageTask(this, mImageFile).execute();
+//				}
+//				break;
+//			}
 			case R.id.share: {
 				if (uri == null) {
 					break;
@@ -188,17 +195,27 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 		mGLRootView = (GLRootView) findViewById(R.id.gl_root_view);
 		mImageViewer = (ImageView) findViewById(R.id.image_viewer);
 		mProgress = (ProgressBar) findViewById(R.id.progress);
-		mControlButtons = findViewById(R.id.control_buttons);
-		mRefreshStopSaveButton = (ImageButton) findViewById(R.id.refresh_stop_save);
 	}
 
 	@Override
 	public Loader<GLImageLoader.Result> onCreateLoader(final int id, final Bundle args) {
 		mProgress.setVisibility(View.VISIBLE);
 		mProgress.setIndeterminate(true);
-		mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_stop);
+		// mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_stop);
+		// TODO
 		final Uri uri = args != null ? (Uri) args.getParcelable(INTENT_KEY_URI) : null;
 		return new GLImageLoader(this, this, uri);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(final Menu menu) {
+		getMenuInflater().inflate(R.menu.menu_image_viewer, menu);
+		// Locate MenuItem with ShareActionProvider
+		final MenuItem item = menu.findItem(R.id.share);
+
+		// Fetch and store ShareActionProvider
+		mShareActionProvider = (ShareActionProvider) item.getActionProvider();
+		return true;
 	}
 
 	@Override
@@ -244,15 +261,17 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 			}
 			mImageFile = data.file;
 			mImageLoaded = true;
-			mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_save);
+			// mRefreshStopSaveButton.setImageResource(android.R.drawable.ic_menu_save);
 		} else {
 			mImageFile = null;
 			mImageLoaded = false;
-			mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
+			// mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
+			// TODO
 			if (data != null) {
 				Utils.showErrorMessage(this, null, data.exception, true);
 			}
 		}
+		updateShareIntent();
 		mProgress.setVisibility(View.GONE);
 		mProgress.setProgress(0);
 	}
@@ -278,8 +297,7 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 	}
 
 	public void showControls() {
-		mControlButtons.startAnimation(AnimationUtils.loadAnimation(this, android.R.anim.fade_in));
-		mControlButtons.setVisibility(View.VISIBLE);
+		mActionBar.show();
 	}
 
 	public void showProgress() {
@@ -291,6 +309,8 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.image_viewer_gl);
+		mActionBar = getActionBar();
+		mActionBar.addOnMenuVisibilityListener(this);
 		mHandler = new MyHandler(this);
 		mPhotoView = new PhotoView(this);
 		mPhotoView.setListener(this);
@@ -304,6 +324,7 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 
 	@Override
 	protected void onDestroy() {
+		mActionBar.removeOnMenuVisibilityListener(this);
 		super.onDestroy();
 		mGLRootView.lockRenderThread();
 		try {
@@ -427,7 +448,8 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 	private void stopLoading() {
 		getSupportLoaderManager().destroyLoader(0);
 		if (!mImageLoaded) {
-			mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
+			// mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
+			// TODO
 			mProgress.setVisibility(View.GONE);
 		}
 	}
@@ -452,6 +474,21 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 		if (canShowBars()) {
 			showBars();
 		}
+	}
+
+	void updateShareIntent() {
+		if (mShareActionProvider == null) return;
+		final Intent intent = getIntent();
+		final Uri uri = intent.getData();
+		final Intent share_intent = new Intent(Intent.ACTION_SEND);
+		if (mImageFile != null && mImageFile.exists()) {
+			share_intent.setType("image/*");
+			share_intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(mImageFile));
+		} else {
+			share_intent.setType("text/plain");
+			share_intent.putExtra(Intent.EXTRA_TEXT, uri.toString());
+		}
+		mShareActionProvider.setShareIntent(share_intent);
 	}
 
 	private static class MyHandler extends SynchronizedHandler {
@@ -489,6 +526,11 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 				}
 			}
 		}
+	}
+
+	@Override
+	public void onMenuVisibilityChanged(boolean isVisible) {
+		mIsMenuVisible = isVisible;
 	}
 
 }

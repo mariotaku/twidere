@@ -34,7 +34,7 @@
 				android:gravity="center_vertical"
 				android:orientation="vertical"
 				android:padding="8dp"
-				style="?selectableViewStyle">
+				android:background="?android:selectableItemBackground">
 
 				<TextView
 					android:id="@+id/name"
@@ -82,7 +82,7 @@
 					android:layout_gravity="center"
 					android:text="@string/follow"/>
 
-				<org.mariotaku.twidere.view.HoloProgressBar
+				<ProgressBar
 					android:id="@+id/follow_progress"
 					style="?android:attr/progressBarStyleSmall"
 					android:layout_width="wrap_content"
@@ -101,7 +101,7 @@
 		android:clickable="true"
 		android:orientation="vertical"
 		android:padding="4dp"
-		style="?selectableViewStyle">
+		android:background="?android:selectableItemBackground">
 
 		<TextView
 			android:layout_width="match_parent"
@@ -124,7 +124,7 @@
 		android:clickable="true"
 		android:orientation="vertical"
 		android:padding="4dp"
-		style="?selectableViewStyle">
+		android:background="?android:selectableItemBackground">
 
 		<TextView
 			android:layout_width="match_parent"
@@ -149,7 +149,7 @@
 		android:clickable="true"
 		android:orientation="vertical"
 		android:padding="4dp"
-		style="?selectableViewStyle">
+		android:background="?android:selectableItemBackground">
 
 		<TextView
 			android:layout_width="match_parent"
@@ -183,7 +183,7 @@
 			android:clickable="true"
 			android:orientation="vertical"
 			android:padding="4dp"
-			style="?selectableViewStyle">
+			android:background="?android:selectableItemBackground">
 
 			<TextView
 				android:layout_width="wrap_content"
@@ -221,7 +221,7 @@
 				android:gravity="center"
 				android:text="@string/more"/>
 
-			<org.mariotaku.twidere.view.HoloProgressBar
+			<ProgressBar
 				android:id="@+id/more_options_progress"
 				style="?android:attr/progressBarStyleSmall"
 				android:layout_width="wrap_content"
@@ -250,7 +250,7 @@
 			android:gravity="center"
 			android:orientation="vertical"
 			android:padding="4dp"
-			style="?selectableViewStyle">
+			android:background="?android:selectableItemBackground">
 
 			<TextView
 				android:id="@+id/statuses_count"
@@ -284,7 +284,7 @@
 			android:gravity="center"
 			android:orientation="vertical"
 			android:padding="4dp"
-			style="?selectableViewStyle">
+			android:background="?android:selectableItemBackground">
 
 			<TextView
 				android:id="@+id/followers_count"
@@ -318,7 +318,7 @@
 			android:gravity="center"
 			android:orientation="vertical"
 			android:padding="4dp"
-			style="?selectableViewStyle">
+			android:background="?android:selectableItemBackground">
 
 			<TextView
 				android:id="@+id/friends_count"

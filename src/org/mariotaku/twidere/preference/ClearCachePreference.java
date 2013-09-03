@@ -19,15 +19,10 @@
 
 package org.mariotaku.twidere.preference;
 
-import static android.os.Environment.getExternalStorageDirectory;
-
 import java.io.File;
 import java.io.FileFilter;
 
-import org.mariotaku.twidere.util.EnvironmentAccessor;
-
 import android.content.Context;
-import android.os.Build;
 import android.util.AttributeSet;
 
 public class ClearCachePreference extends AsyncTaskPreference {
@@ -48,11 +43,7 @@ public class ClearCachePreference extends AsyncTaskPreference {
 	protected void doInBackground() {
 		final Context context = getContext();
 		if (context == null) return;
-		final File external_cache_dir = Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? EnvironmentAccessor
-				.getExternalCacheDir(context) : getExternalStorageDirectory() != null ? new File(
-				getExternalStorageDirectory().getPath() + "/Android/data/" + context.getPackageName() + "/cache/")
-				: null;
-
+		final File external_cache_dir = context.getExternalCacheDir();
 		if (external_cache_dir != null) {
 			for (final File file : external_cache_dir.listFiles((FileFilter) null)) {
 				deleteRecursive(file);

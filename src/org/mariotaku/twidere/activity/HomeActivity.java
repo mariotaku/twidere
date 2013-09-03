@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.TabsAdapter;
 import org.mariotaku.twidere.fragment.APIUpgradeConfirmDialog;
@@ -40,15 +39,15 @@ import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.fragment.TrendsFragment;
 import org.mariotaku.twidere.model.TabSpec;
-import org.mariotaku.twidere.preference.ThemeColorPreference;
-import org.mariotaku.twidere.util.ActivityAccessor;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MathUtils;
 import org.mariotaku.twidere.util.MultiSelectEventHandler;
+import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.view.ExtendedViewPager;
 import org.mariotaku.twidere.view.TabPageIndicator;
 
+import android.app.ActionBar;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.SearchManager;
@@ -93,7 +92,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private DrawerLayout mDrawerLayout;
 	private View mLeftDrawerContainer;
 
-	private boolean mProgressBarIndeterminateVisible = false;
+	private final boolean mProgressBarIndeterminateVisible = false;
 
 	private boolean mDisplayAppIcon;
 	private boolean mShowHomeTab, mShowMentionsTab, mShowMessagesTab, mShowTrendsTab;
@@ -111,7 +110,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
-				setSupportProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
+				setProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
 			} else if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
 				notifyAccountsChanged();
 			}
@@ -147,7 +146,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		if (count == 0) {
 			showLeftPane();
 		}
-		invalidateSupportOptionsMenu();
+		invalidateOptionsMenu();
 	}
 
 	@Override
@@ -208,7 +207,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 					for (int i = 0; i < count; i++) {
 						fm.popBackStackImmediate();
 					}
-					setSupportProgressBarIndeterminateVisibility(false);
+					setProgressBarIndeterminateVisibility(false);
 				}
 				return true;
 			}
@@ -269,7 +268,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
 			mDrawerLayout.closeDrawer(Gravity.LEFT);
 		}
-		invalidateSupportOptionsMenu();
+		invalidateOptionsMenu();
 	}
 
 	@Override
@@ -290,7 +289,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 						title = R.string.compose;
 						break;
 					case TAB_POSITION_TRENDS:
-						icon = R.drawable.ic_menu_search;
+						icon = android.R.drawable.ic_menu_search;
 						title = android.R.string.search_go;
 						break;
 					default:
@@ -318,12 +317,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			}
 		}
 		return super.onPrepareOptionsMenu(menu);
-	}
-
-	@Override
-	public void setSupportProgressBarIndeterminateVisibility(final boolean visible) {
-		mProgressBarIndeterminateVisible = visible;
-		mProgress.setVisibility(visible || mTwitterWrapper.hasActivatedTask() ? View.VISIBLE : View.INVISIBLE);
 	}
 
 	@Override
@@ -360,19 +353,19 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		}
 		final boolean refresh_on_start = mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ON_START, false);
 		final int initial_tab = handleIntent(getIntent(), savedInstanceState == null);
-		mActionBar = getSupportActionBar();
+		mActionBar = getActionBar();
 		mActionBar.setCustomView(R.layout.base_tabs);
 		mActionBar.setDisplayShowTitleEnabled(false);
 		mActionBar.setDisplayShowCustomEnabled(true);
 		mActionBar.setDisplayShowHomeEnabled(mDisplayAppIcon);
 		if (mDisplayAppIcon) {
-			ActivityAccessor.setHomeButtonEnabled(this, true);
+			mActionBar.setHomeButtonEnabled(true);
 		}
 		final View view = mActionBar.getCustomView();
 
 		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
-		ThemeColorPreference.applyBackground(mIndicator);
+		ThemeUtils.applyBackground(mIndicator);
 		final boolean tab_display_label = res.getBoolean(R.bool.tab_display_label);
 		mAdapter = new TabsAdapter(this, getSupportFragmentManager(), mIndicator);
 		mShowHomeTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_HOME_TAB, true);
@@ -422,7 +415,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	@Override
 	protected void onResume() {
 		super.onResume();
-		invalidateSupportOptionsMenu();
+		invalidateOptionsMenu();
 		mViewPager.setPagingEnabled(!mPreferences.getBoolean(PREFERENCE_KEY_DISABLE_TAB_SWIPE, false));
 	}
 
@@ -431,7 +424,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		super.onStart();
 		mMultiSelectHandler.dispatchOnStart();
 		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONSTART));
-		setSupportProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
+		setProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
 		final IntentFilter filter = new IntentFilter(BROADCAST_TASK_STATE_CHANGED);
 		registerReceiver(mStateReceiver, filter);
 		final boolean show_home_tab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_HOME_TAB, true);

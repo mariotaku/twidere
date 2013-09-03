@@ -22,9 +22,6 @@ package org.mariotaku.twidere.fragment;
 import static android.support.v4.app.ListFragmentTrojan.INTERNAL_EMPTY_ID;
 import static android.support.v4.app.ListFragmentTrojan.INTERNAL_LIST_CONTAINER_ID;
 import static android.support.v4.app.ListFragmentTrojan.INTERNAL_PROGRESS_CONTAINER_ID;
-
-import org.mariotaku.twidere.view.HoloProgressBar;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -106,7 +103,7 @@ public abstract class BasePullToRefreshListFragment extends BaseListFragment imp
 		pframe.setVisibility(View.GONE);
 		pframe.setGravity(Gravity.CENTER);
 
-		final ProgressBar progress = new HoloProgressBar(context, null, android.R.attr.progressBarStyleLarge);
+		final ProgressBar progress = new ProgressBar(context, null, android.R.attr.progressBarStyleLarge);
 		pframe.addView(progress, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
 				ViewGroup.LayoutParams.WRAP_CONTENT));
 

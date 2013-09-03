@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
-
-	<bool name="should_set_background">false</bool>
-	<bool name="is_dialog_when_large">true</bool>
-
-</resources>

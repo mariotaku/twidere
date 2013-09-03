@@ -21,7 +21,7 @@ package org.mariotaku.twidere.activity;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.util.ActivityAccessor;
+import org.mariotaku.twidere.util.ThemeUtils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -45,7 +45,7 @@ public class InternalSettingsActivity extends PreferenceActivity implements Cons
 			case KeyEvent.KEYCODE_BACK: {
 				final Activity activity = getParent();
 				if (activity instanceof SettingsActivity && Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
-					ActivityAccessor.onBackPressed(activity);
+					activity.onBackPressed();
 					return true;
 				}
 				break;
@@ -78,9 +78,9 @@ public class InternalSettingsActivity extends PreferenceActivity implements Cons
 
 	public void setTheme() {
 		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final boolean is_dark_theme = preferences.getBoolean(PREFERENCE_KEY_DARK_THEME, false);
+		final boolean is_dark_theme = ThemeUtils.isDarkTheme(this);
 		final boolean solid_color_background = preferences.getBoolean(PREFERENCE_KEY_SOLID_COLOR_BACKGROUND, false);
-		setTheme(is_dark_theme ? R.style.Theme_Twidere : R.style.Theme_Twidere_Light);
+		setTheme(ThemeUtils.getThemeResource(this));
 		if (solid_color_background) {
 			getWindow().setBackgroundDrawableResource(is_dark_theme ? android.R.color.black : android.R.color.white);
 		}

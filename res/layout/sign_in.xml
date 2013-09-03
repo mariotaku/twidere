@@ -21,7 +21,6 @@
 
 				<EditText
 					android:id="@+id/username"
-					style="?editTextStyle"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:ems="10"
@@ -32,7 +31,6 @@
 
 				<EditText
 					android:id="@+id/password"
-					style="?editTextStyle"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:layout_marginTop="8dp"
@@ -72,7 +70,7 @@
 
 			<Button
 				android:id="@+id/sign_in_method_introduction"
-				style="?borderlessButtonStyle"
+				style="?android:borderlessButtonStyle"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_below="@+id/sign_in_sign_up"

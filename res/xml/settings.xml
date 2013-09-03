@@ -3,22 +3,24 @@
 	android:key="settings"
 	android:title="@string/settings">
 
-	<CheckBoxPreference
-		android:defaultValue="false"
-		android:key="dark_theme"
-		android:summary="@string/dark_theme_summary"
-		android:title="@string/dark_theme"/>
+	<ListPreference
+		android:defaultValue="twidere"
+		android:entries="@array/entries_theme"
+		android:entryValues="@array/values_theme"
+		android:key="theme"
+		android:title="@string/theme"/>
+
 	<CheckBoxPreference
 		android:defaultValue="false"
 		android:key="solid_color_background"
 		android:summary="@string/solid_color_background_summary"
 		android:title="@string/solid_color_background"/>
-	
+
 	<!--
 	<org.mariotaku.twidere.preference.ThemeColorPreference
 		android:title="@string/theme_color"/>
 	-->
-	
+
 	<PreferenceCategory
 		android:key="category_settings"
 		android:title="@string/settings">

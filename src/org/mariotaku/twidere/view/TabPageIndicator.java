@@ -17,11 +17,8 @@
  */
 package org.mariotaku.twidere.view;
 
-import static org.mariotaku.twidere.util.Utils.getThemeColor;
-
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.preference.ThemeColorPreference;
-import org.mariotaku.twidere.util.MotionEventAccessor;
+import org.mariotaku.twidere.util.ThemeUtils;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -94,7 +91,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 	public TabPageIndicator(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
 		setHorizontalScrollBarEnabled(false);
-		mTabColor = getThemeColor(context);
+		mTabColor = ThemeUtils.getThemeColor(context);
 		mInflater = LayoutInflater.from(context);
 		mTabLayout = new LinearLayout(context);
 		addView(mTabLayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -146,10 +143,10 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 	public boolean onGenericMotionEvent(final MotionEvent event) {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1) return false;
 		if (mAdapter == null) return false;
-		if ((MotionEventAccessor.getSource(event) & InputDevice.SOURCE_CLASS_POINTER) != 0) {
+		if ((event.getSource() & InputDevice.SOURCE_CLASS_POINTER) != 0) {
 			switch (event.getAction()) {
 				case MotionEvent.ACTION_SCROLL: {
-					final float vscroll = MotionEventAccessor.getAxisValue(event, MotionEvent.AXIS_VSCROLL);
+					final float vscroll = event.getAxisValue(MotionEvent.AXIS_VSCROLL);
 					if (vscroll < 0) {
 						if (mCurrentItem + 1 < mAdapter.getCount()) {
 							setCurrentItem(mCurrentItem + 1);
@@ -291,7 +288,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 		tabView.setOnLongClickListener(mTabLongClickListener);
 		tabView.setContentDescription(label);
 		mTabLayout.addView(tabView, new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1));
-		ThemeColorPreference.applyBackground(tabView, mTabColor);
+		ThemeUtils.applyBackground(tabView, mTabColor);
 	}
 
 	private void animateToTab(final int position) {

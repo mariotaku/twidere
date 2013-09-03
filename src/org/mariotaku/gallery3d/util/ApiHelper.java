@@ -23,5 +23,4 @@ public class ApiHelper {
 
 	public static final boolean HAS_REUSING_BITMAP_IN_BITMAP_REGION_DECODER = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
 
-	public static final boolean HAS_MOTION_EVENT_TRANSFORM = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
 }

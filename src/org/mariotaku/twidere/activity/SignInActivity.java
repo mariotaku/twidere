@@ -299,21 +299,16 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 	}
 
 	@Override
-	public void setSupportProgressBarIndeterminateVisibility(final boolean visible) {
-		super.setSupportProgressBarIndeterminateVisibility(visible);
-	}
-
-	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		mResolver = getContentResolver();
 		mApplication = TwidereApplication.getInstance(this);
 		setContentView(R.layout.sign_in);
-		setSupportProgressBarIndeterminateVisibility(false);
+		setProgressBarIndeterminateVisibility(false);
 		final long[] account_ids = getActivatedAccountIds(this);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(account_ids.length > 0);
+		getActionBar().setDisplayHomeAsUpEnabled(account_ids.length > 0);
 
 		if (savedInstanceState != null) {
 			mRestBaseURL = savedInstanceState.getString(Accounts.REST_BASE_URL);
@@ -495,7 +490,7 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 				}
 			}
 		}
-		setSupportProgressBarIndeterminateVisibility(false);
+		setProgressBarIndeterminateVisibility(false);
 		mEditPassword.setEnabled(true);
 		mEditUsername.setEnabled(true);
 		mSignInButton.setEnabled(true);
@@ -505,7 +500,7 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 	}
 
 	void onSignInStart() {
-		setSupportProgressBarIndeterminateVisibility(true);
+		setProgressBarIndeterminateVisibility(true);
 		mEditPassword.setEnabled(false);
 		mEditUsername.setEnabled(false);
 		mSignInButton.setEnabled(false);

@@ -31,9 +31,8 @@
 		android:layout_weight="1"
 		class="org.mariotaku.twidere.view.TabPageIndicator"/>
 
-	<org.mariotaku.twidere.view.HoloProgressBar
+	<ProgressBar
 		android:id="@android:id/progress"
-		style="@style/Widget.Holo.ProgressBar.Small"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_vertical"

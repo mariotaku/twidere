@@ -6,7 +6,7 @@
 
 	<org.mariotaku.twidere.view.ColorLabelRelativeLayout
 		android:id="@+id/profile"
-		style="?selectableViewStyle"
+		android:background="?android:selectableItemBackground"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:padding="6dp">
@@ -61,7 +61,7 @@
 				android:layout_height="wrap_content"
 				android:text="@string/follow"/>
 
-			<org.mariotaku.twidere.view.HoloProgressBar
+			<ProgressBar
 				android:id="@+id/follow_info_progress"
 				style="?android:attr/progressBarStyleSmall"
 				android:layout_width="wrap_content"
@@ -74,7 +74,7 @@
 
 	<TextView
 		android:id="@+id/in_reply_to"
-		style="?selectableViewStyle"
+		android:background="?android:selectableItemBackground"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:drawableLeft="@drawable/ic_indicator_reply"
@@ -99,7 +99,7 @@
 
 	<TextView
 		android:id="@+id/retweet_view"
-		style="?selectableViewStyle"
+		android:background="?android:selectableItemBackground"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:drawableLeft="@drawable/ic_indicator_retweet"
@@ -112,7 +112,7 @@
 
 	<TextView
 		android:id="@+id/location_view"
-		style="?selectableViewStyle"
+		android:background="?android:selectableItemBackground"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:drawableLeft="@drawable/ic_indicator_has_location"

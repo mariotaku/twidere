@@ -21,7 +21,7 @@ package org.mariotaku.twidere.activity;
 
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
 
-import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.ViewAccessor;
 
 import android.annotation.SuppressLint;
@@ -84,13 +84,8 @@ public class TwidereSwipeBackActivity extends BaseActivity {
 	}
 
 	@Override
-	protected int getDarkThemeRes() {
-		return R.style.Theme_SwipeBack;
-	}
-
-	@Override
-	protected int getLightThemeRes() {
-		return R.style.Theme_SwipeBack_Light;
+	protected int getThemeResource() {
+		return ThemeUtils.getSwipeBackThemeResource(this);
 	}
 
 	@Override

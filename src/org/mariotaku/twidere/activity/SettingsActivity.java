@@ -155,7 +155,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 
 	@Override
 	public void onSharedPreferenceChanged(final SharedPreferences preferences, final String key) {
-		if (PREFERENCE_KEY_DARK_THEME.equals(key) || PREFERENCE_KEY_SOLID_COLOR_BACKGROUND.equals(key)) {
+		if (PREFERENCE_KEY_THEME.equals(key) || PREFERENCE_KEY_SOLID_COLOR_BACKGROUND.equals(key)) {
 			restartActivity(this);
 		}
 	}
@@ -165,7 +165,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
 		setIntent(getIntent().addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
 		final Fragment fragment = new InternalSettingsFragment();
 		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

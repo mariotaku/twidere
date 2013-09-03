@@ -2,9 +2,10 @@ package org.mariotaku.menubar;
 
 import org.mariotaku.internal.menu.MenuImpl;
 import org.mariotaku.popupmenu.PopupMenu;
-import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.ViewAccessor;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.Menu;
@@ -33,6 +34,12 @@ public class MenuBar extends LinearLayout implements PopupMenu.OnMenuItemClickLi
 
 	public MenuBar(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
+		if (getBackground() == null) {
+			final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.backgroundSplit },
+					android.R.attr.actionBarStyle, android.R.style.Widget_Holo_ActionBar);
+			ViewAccessor.setBackground(this, a.getDrawable(0));
+			a.recycle();
+		}
 		mContext = context;
 		mMenu = new MenuImpl(context);
 		setOrientation(HORIZONTAL);
@@ -95,9 +102,8 @@ public class MenuBar extends LinearLayout implements PopupMenu.OnMenuItemClickLi
 
 	private View addMenuButton(final MenuItem item) {
 
-		final ImageButton actionButton = new ImageButton(mContext, null, R.attr.actionBarItemStyle);
-
-		final LayoutParams params = new LayoutParams((int) getResources().getDimension(R.dimen.actionbar_button_width),
+		final ImageButton actionButton = new ImageButton(mContext, null, android.R.attr.actionButtonStyle);
+		final LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.MATCH_PARENT);
 		// params.weight = mStretchButtonsEnabled ? 1 : 0;
 		params.weight = 1;

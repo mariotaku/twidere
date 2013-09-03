@@ -20,7 +20,6 @@
 package org.mariotaku.twidere.provider;
 
 import static android.text.TextUtils.isEmpty;
-import static org.mariotaku.twidere.util.SQLiteDatabaseAccessor.insertWithOnConflict;
 import static org.mariotaku.twidere.util.Utils.clearAccountColor;
 import static org.mariotaku.twidere.util.Utils.clearAccountName;
 import static org.mariotaku.twidere.util.Utils.getAccountName;
@@ -162,7 +161,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 						|| table_id == TABLE_ID_CACHED_STATUSES || table_id == TABLE_ID_CACHED_USERS;
 				for (final ContentValues contentValues : values) {
 					if (replace_on_conflict) {
-						insertWithOnConflict(mDatabase, table, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+						mDatabase.insertWithOnConflict(table, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
 					} else {
 						mDatabase.insert(table, null, contentValues);
 					}
@@ -416,7 +415,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			}
 		}
 		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_LIGHTS, false)) {
-			final int color_def = context.getResources().getColor(R.color.holo_blue_dark);
+			final int color_def = context.getResources().getColor(android.R.color.holo_blue_dark);
 			final int color = mPreferences.getInt(PREFERENCE_KEY_NOTIFICATION_LIGHT_COLOR, color_def);
 			builder.setLights(color, 1000, 2000);
 		}
@@ -938,14 +937,14 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		return Preferences.TYPE_INVALID;
 	}
 
+	private static <T> T safeGet(final List<T> list, final int index) {
+		return index >= 0 && index < list.size() ? list.get(index) : null;
+	}
+
 	private static String stripMentionText(final String text, final String my_screen_name) {
 		if (text == null || my_screen_name == null) return text;
 		final String temp = "@" + my_screen_name + " ";
 		if (text.startsWith(temp)) return text.substring(temp.length());
 		return text;
-	}
-
-	private static <T> T safeGet(List<T> list, int index) {
-		return index >= 0 && index < list.size() ? list.get(index) : null;
 	}
 }

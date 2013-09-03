@@ -3,23 +3,23 @@
 
 	<item
 		android:id="@id/take_photo"
-		android:icon="@drawable/ic_menu_camera"
+		android:icon="@android:drawable/ic_menu_camera"
 		android:title="@string/take_photo"/>
 	<item
 		android:id="@id/pick_from_gallery"
-		android:icon="@drawable/ic_menu_gallery"
+		android:icon="@android:drawable/ic_menu_gallery"
 		android:title="@string/pick_from_gallery"/>
 	<item
 		android:id="@+id/delete_submenu"
-		android:icon="@drawable/ic_menu_delete"
+		android:icon="@android:drawable/ic_menu_delete"
 		android:title="@string/delete">
 		<menu>
 			<item
 				android:id="@id/delete"
-				android:icon="@drawable/ic_menu_delete"
+				android:icon="@android:drawable/ic_menu_delete"
 				android:title="@string/delete"/>
 			<item
-				android:icon="@drawable/ic_menu_close_clear_cancel"
+				android:icon="@android:drawable/ic_menu_close_clear_cancel"
 				android:title="@android:string/cancel"/>
 		</menu>
 	</item>

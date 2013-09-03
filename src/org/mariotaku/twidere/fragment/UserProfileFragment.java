@@ -28,7 +28,6 @@ import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getErrorMessage;
 import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
 import static org.mariotaku.twidere.util.Utils.getOriginalTwitterProfileImage;
-import static org.mariotaku.twidere.util.Utils.getThemeColor;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
@@ -53,8 +52,8 @@ import java.util.Locale;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.EditUserProfileActivity;
 import org.mariotaku.twidere.activity.ColorPickerActivity;
+import org.mariotaku.twidere.activity.EditUserProfileActivity;
 import org.mariotaku.twidere.activity.UserListSelectorActivity;
 import org.mariotaku.twidere.adapter.ListActionAdapter;
 import org.mariotaku.twidere.loader.ParcelableUserLoader;
@@ -68,6 +67,7 @@ import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
+import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
@@ -544,7 +544,8 @@ public class UserProfileFragment extends BaseListFragment implements OnClickList
 						final Drawable blockIcon = blockItem.getIcon();
 						if (mFriendship.isSourceBlockingTarget()) {
 							blockItem.setTitle(R.string.unblock);
-							blockIcon.mutate().setColorFilter(getThemeColor(getActivity()), PorterDuff.Mode.MULTIPLY);
+							blockIcon.mutate().setColorFilter(ThemeUtils.getThemeColor(getActivity()),
+									PorterDuff.Mode.MULTIPLY);
 						} else {
 							blockItem.setTitle(R.string.block);
 							blockIcon.clearColorFilter();

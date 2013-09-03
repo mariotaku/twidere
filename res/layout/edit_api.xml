@@ -90,7 +90,7 @@
 
 				<Button
 					android:id="@+id/advanced_api_config_label"
-					style="?borderlessButtonStyle"
+					style="?android:borderlessButtonStyle"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:drawableLeft="@drawable/expander_close_holo"
@@ -119,7 +119,7 @@
 
 	<Button
 		android:id="@+id/save"
-		style="?borderlessButtonStyle"
+		style="?android:borderlessButtonStyle"
 		android:layout_width="match_parent"
 		android:layout_height="@dimen/button_bar_height"
 		android:layout_gravity="center_horizontal"

@@ -59,5 +59,6 @@
 	<item name="statuses" type="id"/>
 	<item name="favorites" type="id"/>
 	<item name="lists" type="id"/>
+	<item name="center" type="id"/>
 
 </resources>

@@ -34,19 +34,20 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 		DEFAULT_ACCOUNT_ACTIONS[1] = new AccountAction(R.string.tweets, R.drawable.ic_menu_quote, MENU_STATUSES);
 		DEFAULT_ACCOUNT_ACTIONS[2] = new AccountAction(R.string.favorites, R.drawable.ic_menu_star, MENU_FAVORITES);
 		DEFAULT_ACCOUNT_ACTIONS[3] = new AccountAction(R.string.user_list, R.drawable.ic_menu_list, MENU_LISTS);
-		DEFAULT_ACCOUNT_ACTIONS[4] = new AccountAction(R.string.edit_profile, R.drawable.ic_menu_edit, MENU_EDIT);
+		DEFAULT_ACCOUNT_ACTIONS[4] = new AccountAction(R.string.edit_profile, android.R.drawable.ic_menu_edit,
+				MENU_EDIT);
 		DEFAULT_ACCOUNT_ACTIONS[5] = new AccountAction(R.string.set_color, R.drawable.ic_menu_color_palette,
 				MENU_SET_COLOR);
-		DEFAULT_ACCOUNT_ACTIONS[6] = new AccountAction(R.string.delete, R.drawable.ic_menu_delete, MENU_DELETE);
+		DEFAULT_ACCOUNT_ACTIONS[6] = new AccountAction(R.string.delete, android.R.drawable.ic_menu_delete, MENU_DELETE);
 		ACCOUNT_ACTIONS[0] = new AccountAction(R.string.view_user_profile, R.drawable.ic_menu_profile,
 				MENU_VIEW_PROFILE);
 		ACCOUNT_ACTIONS[1] = new AccountAction(R.string.tweets, R.drawable.ic_menu_quote, MENU_STATUSES);
 		ACCOUNT_ACTIONS[2] = new AccountAction(R.string.favorites, R.drawable.ic_menu_star, MENU_FAVORITES);
 		ACCOUNT_ACTIONS[3] = new AccountAction(R.string.user_list, R.drawable.ic_menu_list, MENU_LISTS);
-		ACCOUNT_ACTIONS[4] = new AccountAction(R.string.edit_profile, R.drawable.ic_menu_edit, MENU_EDIT);
+		ACCOUNT_ACTIONS[4] = new AccountAction(R.string.edit_profile, android.R.drawable.ic_menu_edit, MENU_EDIT);
 		ACCOUNT_ACTIONS[5] = new AccountAction(R.string.set_color, R.drawable.ic_menu_color_palette, MENU_SET_COLOR);
 		ACCOUNT_ACTIONS[6] = new AccountAction(R.string.set_as_default, R.drawable.ic_menu_mark, MENU_SET_AS_DEFAULT);
-		ACCOUNT_ACTIONS[7] = new AccountAction(R.string.delete, R.drawable.ic_menu_delete, MENU_DELETE);
+		ACCOUNT_ACTIONS[7] = new AccountAction(R.string.delete, android.R.drawable.ic_menu_delete, MENU_DELETE);
 	}
 
 	private final ImageLoaderWrapper mImageLoader;

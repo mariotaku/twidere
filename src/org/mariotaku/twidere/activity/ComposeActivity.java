@@ -39,7 +39,6 @@ import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.getShareStatus;
 import static org.mariotaku.twidere.util.Utils.getStatusBackground;
 import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
-import static org.mariotaku.twidere.util.Utils.getThemeColor;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.openImageDirectly;
@@ -64,13 +63,12 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.preference.ThemeColorPreference;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
-import org.mariotaku.twidere.util.ActivityAccessor;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.AsyncTask;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import org.mariotaku.twidere.util.EnvironmentAccessor;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.ParseUtils;
+import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.view.AccountsColorFrameLayout;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
@@ -445,7 +443,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 	public void onLocationChanged(final Location location) {
 		if (mRecentLocation == null) {
 			mRecentLocation = location != null ? new ParcelableLocation(location) : null;
-			setSupportProgressBarIndeterminateVisibility(false);
+			setProgressBarIndeterminateVisibility(false);
 		}
 	}
 
@@ -467,7 +465,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 
 	@Override
 	public void onProviderDisabled(final String provider) {
-		setSupportProgressBarIndeterminateVisibility(false);
+		setProgressBarIndeterminateVisibility(false);
 	}
 
 	@Override
@@ -514,24 +512,14 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 		mResolver.insert(Drafts.CONTENT_URI, values);
 	}
 
-	public void setSupportProgressBarIndeterminateVisibility(final boolean visible) {
-		if (mProgress == null) return;
-		mProgress.setVisibility(visible ? View.VISIBLE : View.GONE);
-	}
-
 	@Override
-	protected int getDarkThemeRes() {
-		return R.style.Theme_Twidere_Compose;
-	}
-
-	@Override
-	protected int getLightThemeRes() {
-		return R.style.Theme_Twidere_Light_Compose;
+	protected int getThemeResource() {
+		return ThemeUtils.getComposeThemeResource(this);
 	}
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		// requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		// requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -539,8 +527,8 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 		mResolver = getContentResolver();
 		mImageLoader = getTwidereApplication().getImageLoaderWrapper();
 		setContentView(R.layout.compose);
-		setSupportProgressBarIndeterminateVisibility(false);
-		ActivityAccessor.setFinishOnTouchOutside(this, false);
+		setProgressBarIndeterminateVisibility(false);
+		setFinishOnTouchOutside(false);
 		final long[] account_ids = getAccountIds(this);
 		if (account_ids.length <= 0) {
 			final Intent intent = new Intent(INTENT_ACTION_TWITTER_LOGIN);
@@ -678,7 +666,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 			}
 			if (location == null) {
 				mLocationManager.requestLocationUpdates(provider, 0, 0, this);
-				setSupportProgressBarIndeterminateVisibility(true);
+				setProgressBarIndeterminateVisibility(true);
 			}
 			mRecentLocation = location != null ? new ParcelableLocation(location) : null;
 		} else {
@@ -850,7 +838,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 	private void setCommonMenu(final Menu menu) {
 		final MenuItem itemMore = menu.findItem(R.id.more_submenu);
 		if (itemMore != null) {
-			final int activated_color = getThemeColor(this);
+			final int activated_color = ThemeUtils.getThemeColor(this);
 			final MenuItem itemDrafts = menu.findItem(MENU_DRAFTS);
 			final MenuItem itemToggleSensitive = menu.findItem(MENU_TOGGLE_SENSITIVE);
 			if (itemDrafts != null) {
@@ -928,7 +916,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 		}
 		final Menu bottomMenu = mMenuBar.getMenu(), actionMenu = mActionMenuBar.getMenu();
 		if (bottomMenu.size() == 0) return;
-		final int activated_color = getThemeColor(this);
+		final int activated_color = ThemeUtils.getThemeColor(this);
 		final MenuItem itemAddImage = bottomMenu.findItem(MENU_ADD_IMAGE);
 		final Drawable iconAddImage = itemAddImage.getIcon().mutate();
 		if (mAttachedImageType == Constants.ATTACHED_IMAGE_TYPE_IMAGE) {
@@ -954,7 +942,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 			iconAttachLocation.setColorFilter(activated_color, Mode.MULTIPLY);
 			itemAttachLocation.setTitle(R.string.remove_location);
 		} else {
-			setSupportProgressBarIndeterminateVisibility(false);
+			setProgressBarIndeterminateVisibility(false);
 			mPreferences.edit().putBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false).commit();
 			iconAttachLocation.clearColorFilter();
 			itemAttachLocation.setTitle(R.string.add_location);
@@ -972,7 +960,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 	private void takePhoto() {
 		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		if (getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-			final File cache_dir = EnvironmentAccessor.getExternalCacheDir(this);
+			final File cache_dir = getExternalCacheDir();
 			final File file = new File(cache_dir, "tmp_photo_" + System.currentTimeMillis());
 			mTempPhotoUri = Uri.fromFile(file);
 			intent.putExtra(MediaStore.EXTRA_OUTPUT, mTempPhotoUri);
@@ -1220,7 +1208,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 
 		@Override
 		protected void onPostExecute(final Boolean result) {
-			activity.setSupportProgressBarIndeterminateVisibility(false);
+			activity.setProgressBarIndeterminateVisibility(false);
 			activity.mImageUri = dst;
 			activity.setMenu();
 			activity.reloadAttachedImageThumbnail();
@@ -1231,7 +1219,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 
 		@Override
 		protected void onPreExecute() {
-			activity.setSupportProgressBarIndeterminateVisibility(true);
+			activity.setProgressBarIndeterminateVisibility(true);
 		}
 	}
 
@@ -1267,7 +1255,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 
 		@Override
 		protected void onPostExecute(final Boolean result) {
-			activity.setSupportProgressBarIndeterminateVisibility(false);
+			activity.setProgressBarIndeterminateVisibility(false);
 			activity.mImageUri = null;
 			activity.mAttachedImageType = Constants.ATTACHED_IMAGE_TYPE_NONE;
 			activity.mIsPossiblySensitive = false;
@@ -1280,7 +1268,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 
 		@Override
 		protected void onPreExecute() {
-			activity.setSupportProgressBarIndeterminateVisibility(true);
+			activity.setProgressBarIndeterminateVisibility(true);
 		}
 	}
 
@@ -1307,13 +1295,13 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 
 		@Override
 		protected void onPostExecute(final Void result) {
-			activity.setSupportProgressBarIndeterminateVisibility(false);
+			activity.setProgressBarIndeterminateVisibility(false);
 			activity.finish();
 		}
 
 		@Override
 		protected void onPreExecute() {
-			activity.setSupportProgressBarIndeterminateVisibility(true);
+			activity.setProgressBarIndeterminateVisibility(true);
 		}
 	}
 }

@@ -107,7 +107,7 @@ public class FilePickerActivity extends BaseActivity implements OnItemClickListe
 	public void onLoadFinished(final Loader<List<File>> loader, final List<File> data) {
 		mAdapter.setData(data);
 		if (mCurrentDirectory != null) {
-			getSupportActionBar().setTitle(mCurrentDirectory.getName());
+			getActionBar().setTitle(mCurrentDirectory.getName());
 		}
 	}
 
@@ -141,7 +141,7 @@ public class FilePickerActivity extends BaseActivity implements OnItemClickListe
 			return;
 		}
 		setContentView(R.layout.base_list);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		mAdapter = new FilesAdapter(this);
 		mListView = (ListView) findViewById(android.R.id.list);

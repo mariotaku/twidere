@@ -9,18 +9,12 @@
 		android:layout_height="match_parent"
 		android:background="@android:color/black"/>
 
-	<org.mariotaku.twidere.view.HoloProgressBar
+	<ProgressBar
 		android:id="@+id/progress"
 		style="?android:attr/progressBarStyleHorizontal"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center"
 		android:layout_margin="32dp"/>
-
-	<include
-		android:layout_width="match_parent"
-		android:layout_height="@dimen/actionbar_height"
-		android:layout_gravity="top"
-		layout="@layout/image_viewer_control_buttons"/>
 
 </merge>

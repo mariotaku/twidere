@@ -27,10 +27,10 @@
 	<item>
 		<rotate
 			android:drawable="@drawable/spinner_48_inner_holo"
-			android:fromDegrees="0"
+			android:fromDegrees="720"
 			android:pivotX="50%"
 			android:pivotY="50%"
-			android:toDegrees="720"/>
+			android:toDegrees="0"/>
 	</item>
 
 </layer-list>

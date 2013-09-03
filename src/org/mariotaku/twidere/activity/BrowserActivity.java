@@ -47,10 +47,10 @@ public class BrowserActivity extends BaseActivity {
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.base);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		mUri = getIntent().getData();
 		if (mUri == null) {
 			Crouton.showText(this, R.string.error_occurred, CroutonStyle.ALERT);

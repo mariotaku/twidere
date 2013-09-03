@@ -21,7 +21,7 @@
 						android:icon="@drawable/ic_menu_mute"
 						android:title="@string/mute_user"/>
 					<item
-						android:icon="@drawable/ic_menu_close_clear_cancel"
+						android:icon="@android:drawable/ic_menu_close_clear_cancel"
 						android:title="@android:string/cancel"/>
 				</menu>
 			</item>
@@ -35,7 +35,7 @@
 						android:icon="@drawable/ic_menu_block"
 						android:title="@string/block"/>
 					<item
-						android:icon="@drawable/ic_menu_close_clear_cancel"
+						android:icon="@android:drawable/ic_menu_close_clear_cancel"
 						android:title="@android:string/cancel"/>
 				</menu>
 			</item>
@@ -49,7 +49,7 @@
 						android:icon="@drawable/ic_menu_report_user"
 						android:title="@string/report_for_spam"/>
 					<item
-						android:icon="@drawable/ic_menu_close_clear_cancel"
+						android:icon="@android:drawable/ic_menu_close_clear_cancel"
 						android:title="@android:string/cancel"/>
 				</menu>
 			</item>

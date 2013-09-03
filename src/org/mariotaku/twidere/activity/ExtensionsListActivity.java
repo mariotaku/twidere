@@ -43,7 +43,7 @@ public class ExtensionsListActivity extends BaseActivity {
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.base);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		final Fragment fragment = new ExtensionsListFragment();
 		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		ft.replace(R.id.main, fragment);

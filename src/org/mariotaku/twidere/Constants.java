@@ -133,7 +133,7 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_DATABASE_ITEM_LIMIT = "database_item_limit";
 	public static final String PREFERENCE_KEY_LOAD_ITEM_LIMIT = "load_item_limit";
 	public static final String PREFERENCE_KEY_TEXT_SIZE = "text_size_int";
-	public static final String PREFERENCE_KEY_DARK_THEME = "dark_theme";
+	public static final String PREFERENCE_KEY_THEME = "theme";
 	public static final String PREFERENCE_KEY_SOLID_COLOR_BACKGROUND = "solid_color_background";
 	public static final String PREFERENCE_KEY_CLEAR_DATABASES = "clear_databases";
 	public static final String PREFERENCE_KEY_CLEAR_CACHE = "clear_cache";
@@ -185,7 +185,6 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_DUAL_PANE_IN_PORTRAIT = "dual_pane_in_portrait";
 	public static final String PREFERENCE_KEY_QUICK_SEND = "quick_send";
 	public static final String PREFERENCE_KEY_COMPOSE_ACCOUNTS = "compose_accounts";
-	public static final String PREFERENCE_KEY_HARDWARE_ACCELERATION = "hardware_acceleration";
 	public static final String PREFERENCE_KEY_TCP_DNS_QUERY = "tcp_dns_query";
 	public static final String PREFERENCE_KEY_DNS_SERVER = "dns_server";
 	public static final String PREFERENCE_KEY_CLICK_TO_OPEN_MENU = "click_to_open_menu";
@@ -485,6 +484,7 @@ public interface Constants {
 	public static final int MENU_STATUSES = R.id.statuses;
 	public static final int MENU_FAVORITES = R.id.favorites;
 	public static final int MENU_LISTS = R.id.lists;
+	public static final int MENU_CENTER = R.id.center;
 
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_PICK_IMAGE = 2;

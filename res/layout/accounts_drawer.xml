@@ -18,11 +18,12 @@
 
 	<Button
 		android:id="@+id/add_account"
-		style="?borderlessButtonStyle"
+		style="?android:borderlessButtonStyle"
 		android:layout_width="match_parent"
 		android:layout_height="@dimen/button_bar_height"
 		android:layout_weight="0"
 		android:gravity="center"
-		android:text="@string/add_account"/>
+		android:text="@string/add_account"
+		android:textAppearance="?android:textAppearanceSmall"/>
 
 </org.mariotaku.twidere.view.ExtendedLinearLayout>

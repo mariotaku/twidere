@@ -30,5 +30,6 @@
 	<dimen name="accounts_drawer_default_indicator_size">10sp</dimen>
 	<dimen name="accounts_drawer_child_size">16sp</dimen>
 	<dimen name="nyan_star_dot_size">4dp</dimen>
+	<dimen name="actionbar_item_width">52dp</dimen>
 
 </resources>

@@ -195,7 +195,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 			}
 		}
 		addPreferencesFromResource(R.xml.edit_tab);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		mText1Preference = new Text1Preference(this, R.string.unused);
 		mText2Preference = new Text2Preference(this, R.string.unused);
 		mTabIconPreference = new TabIconPreference(this);

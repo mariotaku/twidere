@@ -19,7 +19,7 @@
 
 package org.mariotaku.twidere.view;
 
-import org.mariotaku.twidere.util.Utils;
+import org.mariotaku.twidere.util.ThemeUtils;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -45,7 +45,7 @@ public class ClickableImageView extends ImageView {
 
 	public ClickableImageView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		final int color = Utils.getThemeColor(context);
+		final int color = ThemeUtils.getThemeColor(context);
 		mHightlightColor = Color.argb(0x80, Color.red(color), Color.green(color), Color.blue(color));
 		mRect = new Rect();
 	}

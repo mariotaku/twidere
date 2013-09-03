@@ -23,7 +23,6 @@ import static org.mariotaku.twidere.util.Utils.cancelRetweet;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getDefaultTextSize;
-import static org.mariotaku.twidere.util.Utils.getThemeColor;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.openStatus;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
@@ -40,6 +39,7 @@ import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.PositionManager;
+import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
 import android.content.ActivityNotFoundException;
@@ -470,7 +470,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 
 	private void openMenu(final View view, final ParcelableStatus status) {
 		if (view == null || status == null) return;
-		final int activated_color = getThemeColor(getActivity());
+		final int activated_color = ThemeUtils.getThemeColor(getActivity());
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_status);
 		final boolean click_to_open_menu = mPreferences.getBoolean(PREFERENCE_KEY_CLICK_TO_OPEN_MENU, false);

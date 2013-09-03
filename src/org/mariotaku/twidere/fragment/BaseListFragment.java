@@ -21,12 +21,10 @@ package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.scrollListToTop;
 
-import org.mariotaku.actionbarcompat.ActionBarFragmentActivity;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.activity.BaseActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import org.mariotaku.twidere.util.InvalidateProgressBarRunnable;
 import org.mariotaku.twidere.util.MultiSelectManager;
 
 import android.app.Activity;
@@ -39,7 +37,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
-import android.support.v4.app.ListFragmentTrojan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,12 +57,6 @@ public class BaseListFragment extends ListFragment implements Constants {
 			}
 		}
 	};
-
-	public final ActionBarFragmentActivity getActionBarActivity() {
-		final Activity activity = getActivity();
-		if (activity instanceof ActionBarFragmentActivity) return (ActionBarFragmentActivity) activity;
-		return null;
-	}
 
 	public final TwidereApplication getApplication() {
 		return TwidereApplication.getInstance(getActivity());
@@ -106,7 +97,7 @@ public class BaseListFragment extends ListFragment implements Constants {
 		final FragmentActivity activity = getActivity();
 		if (activity == null) return;
 		if (activity instanceof BaseActivity) {
-			((BaseActivity) activity).invalidateSupportOptionsMenu();
+			((BaseActivity) activity).invalidateOptionsMenu();
 		} else {
 			activity.supportInvalidateOptionsMenu();
 		}
@@ -134,12 +125,7 @@ public class BaseListFragment extends ListFragment implements Constants {
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		final View view = super.onCreateView(inflater, container, savedInstanceState);
-		final ViewGroup progress_container = (ViewGroup) view
-				.findViewById(ListFragmentTrojan.INTERNAL_PROGRESS_CONTAINER_ID);
-		final View progress = progress_container.getChildAt(0);
-		progress.post(new InvalidateProgressBarRunnable(progress));
-		return view;
+		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 
 	@Override
@@ -174,9 +160,8 @@ public class BaseListFragment extends ListFragment implements Constants {
 
 	public void setProgressBarIndeterminateVisibility(final boolean visible) {
 		final Activity activity = getActivity();
-		if (activity instanceof ActionBarFragmentActivity) {
-			((ActionBarFragmentActivity) activity).setSupportProgressBarIndeterminateVisibility(visible);
-		}
+		if (activity == null) return;
+		activity.setProgressBarIndeterminateVisibility(visible);
 	}
 
 	public void unregisterReceiver(final BroadcastReceiver receiver) {

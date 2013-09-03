@@ -12,15 +12,15 @@
 
 	<FrameLayout
 		android:id="@+id/load_images"
-		style="?selectableViewStyle"
 		android:layout_width="match_parent"
-		android:layout_height="@dimen/image_preview_height">
+		android:layout_height="@dimen/image_preview_height"
+		android:background="?android:selectableItemBackground">
 
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center"
-			android:drawableLeft="@drawable/ic_menu_gallery"
+			android:drawableLeft="@android:drawable/ic_menu_gallery"
 			android:gravity="center"
 			android:text="@string/load_images"
 			android:textAppearance="?android:attr/textAppearanceMedium"

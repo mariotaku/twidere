@@ -2,11 +2,9 @@ package org.mariotaku.popupmenu;
 
 import org.mariotaku.internal.menu.MenuAdapter;
 import org.mariotaku.internal.menu.MenuImpl;
-import org.mariotaku.popupmenu.ListPopupWindow.InstanceHelper;
 import org.mariotaku.twidere.R;
 
 import android.content.Context;
-import android.os.Build;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,6 +14,7 @@ import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListPopupWindow;
 import android.widget.PopupWindow.OnDismissListener;
 
 public class PopupMenu implements OnDismissListener, OnItemClickListener, OnTouchListener {
@@ -42,8 +41,7 @@ public class PopupMenu implements OnDismissListener, OnItemClickListener, OnTouc
 		mView = view;
 		mAdapter = new MenuAdapter(context);
 		mMenu = new MenuImpl(mContext, mAdapter);
-		mWindow = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ? InstanceHelper.getInstance(context)
-				: new ListPopupWindowCompat(context);
+		mWindow = new ListPopupWindow(context);
 		mWindow.setInputMethodMode(ListPopupWindow.INPUT_METHOD_NOT_NEEDED);
 		mWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 		mWindow.setAnchorView(mView);

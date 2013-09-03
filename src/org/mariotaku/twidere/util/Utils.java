@@ -62,7 +62,6 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.CameraCropActivity;
 import org.mariotaku.twidere.activity.DualPaneActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
-import org.mariotaku.twidere.activity.ImageViewerActivity;
 import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.ActivitiesAboutMeFragment;
@@ -146,7 +145,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -230,7 +228,8 @@ public final class Utils implements Constants {
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_STATUSES, TABLE_ID_CACHED_STATUSES);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_HASHTAGS, TABLE_ID_CACHED_HASHTAGS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_HASHTAGS, TABLE_ID_CACHED_HASHTAGS);
-		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_NOTIFICATIONS + "/#", VIRTUAL_TABLE_ID_NOTIFICATIONS);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_NOTIFICATIONS + "/#",
+				VIRTUAL_TABLE_ID_NOTIFICATIONS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_NOTIFICATIONS, VIRTUAL_TABLE_ID_NOTIFICATIONS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_PERMISSIONS, VIRTUAL_TABLE_ID_PERMISSIONS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DNS + "/*", VIRTUAL_TABLE_ID_DNS);
@@ -368,7 +367,7 @@ public final class Utils implements Constants {
 		event.getText().add(text);
 		event.setClassName(cls.getName());
 		event.setPackageName(context.getPackageName());
-		AccessibilityEventAccessor.setSource(event, view);
+		event.setSource(view);
 
 		// Sends the event directly through the accessibility manager. If your
 		// application only targets SDK 14+, you should just call
@@ -1056,7 +1055,7 @@ public final class Utils implements Constants {
 	}
 
 	public static File getBestCacheDir(final Context context, final String cache_dir_name) {
-		final File ext_cache_dir = EnvironmentAccessor.getExternalCacheDir(context);
+		final File ext_cache_dir = context.getExternalCacheDir();
 		if (ext_cache_dir != null && ext_cache_dir.isDirectory()) {
 			final File cache_dir = new File(ext_cache_dir, cache_dir_name);
 			if (cache_dir.isDirectory() || cache_dir.mkdirs()) return cache_dir;
@@ -1671,21 +1670,6 @@ public final class Utils implements Constants {
 		if (view == null) return 0;
 		final String string = ParseUtils.parseString(view.getText());
 		return getTextCount(string);
-	}
-
-	@SuppressLint("InlinedApi")
-	public static int getThemeColor(final Context context) {
-		if (context == null) return Color.TRANSPARENT;
-		final int def = context.getResources().getColor(R.color.holo_blue_light);
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) return def;
-		try {
-			final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.colorActivatedHighlight });
-			final int color = a.getColor(0, def);
-			a.recycle();
-			return color;
-		} catch (final Exception e) {
-			return def;
-		}
 	}
 
 	public static long getTimestampFromDate(final Date date) {
@@ -2395,11 +2379,7 @@ public final class Utils implements Constants {
 		if (orig != null) {
 			intent.putExtra(INTENT_KEY_URI_ORIG, Uri.parse(orig));
 		}
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1) {
-			intent.setClass(context, ImageViewerGLActivity.class);
-		} else {
-			intent.setClass(context, ImageViewerActivity.class);
-		}
+		intent.setClass(context, ImageViewerGLActivity.class);
 		context.startActivity(intent);
 	}
 
@@ -3059,17 +3039,9 @@ public final class Utils implements Constants {
 		if (activity == null) return;
 		final int enter_anim = android.R.anim.fade_in;
 		final int exit_anim = android.R.anim.fade_out;
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
-			ActivityAccessor.overridePendingTransition(activity, enter_anim, exit_anim);
-		} else {
-			activity.getWindow().setWindowAnimations(0);
-		}
+		activity.overridePendingTransition(enter_anim, exit_anim);
 		activity.finish();
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
-			ActivityAccessor.overridePendingTransition(activity, enter_anim, exit_anim);
-		} else {
-			activity.getWindow().setWindowAnimations(0);
-		}
+		activity.overridePendingTransition(enter_anim, exit_anim);
 		activity.startActivity(activity.getIntent());
 	}
 
@@ -3095,7 +3067,7 @@ public final class Utils implements Constants {
 
 	public static void setMenuForStatus(final Context context, final Menu menu, final ParcelableStatus status) {
 		if (context == null || menu == null || status == null) return;
-		final int activated_color = getThemeColor(context);
+		final int activated_color = ThemeUtils.getThemeColor(context);
 		final MenuItem delete = menu.findItem(R.id.delete_submenu);
 		if (delete != null) {
 			delete.setVisible(status.account_id == status.user_id && !isMyRetweet(status));

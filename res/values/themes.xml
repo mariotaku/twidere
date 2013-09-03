@@ -13,6 +13,11 @@
 		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
 	</style>
 
+	<style name="Theme.SwipeBack.Dark" parent="Theme.Twidere.Dark">
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
+	</style>
+
 	<style name="Theme.SwipeBack.Light" parent="Theme.Twidere.Light">
 		<item name="android:windowIsTranslucent">true</item>
 		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
@@ -20,146 +25,67 @@
 
 	<style name="Theme.Blank.Dialog" parent="Theme.Twidere.Dialog"/>
 
-	<style name="Theme.Nyan" parent="android:Theme.NoTitleBar">
-		<item name="android:windowBackground">@color/nyan_background</item>
-	</style>
-
-	<style name="Theme.Twidere" parent="Theme.Holo">
+	<style name="Theme.Twidere" parent="android:Theme.Holo.Light.DarkActionBar">
+		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar</item>
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@null</item>
-		<item name="borderlessButtonStyle">@style/Widget.Holo.Button.Borderless.Small</item>
-		<item name="borderlessImageButtonStyle">@style/Widget.Twidere.ImageButton.Borderless</item>
-		<item name="selectableViewStyle">@style/Widget.Twidere.SelectableView</item>
-		<item name="editTextStyle">@style/Widget.Holo.EditText</item>
-		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Large</item>
-		<item name="contentBackground">#20000000</item>
-		<item name="android:itemBackground">@drawable/item_background_holo_dark</item>
-		<item name="android:windowBackground">@drawable/background_holo_dark</item>
+		<item name="contentBackground">#20808080</item>
 	</style>
 
-	<style name="Theme.Twidere.Light" parent="Theme.Holo.Light.DarkActionBar">
+	<style name="Theme.Twidere.Dark" parent="android:Theme.Holo">
+		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Dark</item>
+		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
+		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
+		<item name="tabBackground">@null</item>
+		<item name="contentBackground">#20000000</item>
+	</style>
+
+	<style name="Theme.Twidere.Light" parent="android:Theme.Holo.Light.DarkActionBar">
+		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Light</item>
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@drawable/tab_background_dark</item>
-		<item name="borderlessButtonStyle">@style/Widget.Holo.Light.Button.Borderless.Small</item>
-		<item name="borderlessImageButtonStyle">@style/Widget.Twidere.Light.ImageButton.Borderless</item>
-		<item name="selectableViewStyle">@style/Widget.Twidere.Light.SelectableView</item>
-		<item name="editTextStyle">@style/Widget.Holo.Light.EditText</item>
-		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Light.Large</item>
 		<item name="contentBackground">#20808080</item>
-		<item name="android:itemBackground">@drawable/item_background_holo_light</item>
-		<item name="android:windowBackground">@drawable/background_holo_light</item>
-		<item name="actionBarBackground">@drawable/actionbar_bg_light_darkactionbar_twidere_holo</item>
 	</style>
 
-	<style name="Theme.Twidere.Viewer" parent="android:Theme.NoTitleBar">
+	<style name="Theme.Twidere.Viewer" parent="android:Theme.Holo">
 		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:actionBarStyle">@style/Widget.Twidere.Viewer.ActionBar</item>
+		<item name="android:windowActionBarOverlay">true</item>
 		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
 		<item name="android:windowContentOverlay">@null</item>
 		<item name="android:windowBackground">@android:color/black</item>
-		<!-- <item name="android:windowAnimationStyle">@style/Animation.ImageViewer</item> -->
-		<item name="borderlessButtonStyle">@style/Widget.Holo.Button.Borderless.Small</item>
-		<item name="borderlessImageButtonStyle">@style/Widget.Twidere.ImageButton.Borderless</item>
-		<item name="selectableViewStyle">@style/Widget.Twidere.SelectableView</item>
-		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Large</item>
-		<item name="android:itemBackground">@drawable/item_background_holo_dark</item>
 		<item name="contentBackground">#20000000</item>
-
-		<!-- Text styles -->
-		<item name="android:textAppearance">@style/TextAppearance.Holo</item>
-		<item name="android:textAppearanceInverse">@style/TextAppearance.Holo.Inverse</item>
-		<item name="android:textAppearanceLarge">@style/TextAppearance.Holo.Large</item>
-		<item name="android:textAppearanceMedium">@style/TextAppearance.Holo.Medium</item>
-		<item name="android:textAppearanceSmall">@style/TextAppearance.Holo.Small</item>
-		<item name="android:textAppearanceLargeInverse">@style/TextAppearance.Holo.Large.Inverse</item>
-		<item name="android:textAppearanceMediumInverse">@style/TextAppearance.Holo.Medium.Inverse</item>
-		<item name="android:textAppearanceSmallInverse">@style/TextAppearance.Holo.Small.Inverse</item>
-		<item name="android:textAppearanceButton">@style/TextAppearance.Holo.Widget.Button</item>
-
-		<!-- List attributes -->
-		<item name="android:listChoiceIndicatorSingle">@drawable/btn_radio_holo_dark</item>
-		<item name="android:listChoiceIndicatorMultiple">@drawable/btn_checkbox_holo_dark</item>
-		<item name="android:scrollbarThumbHorizontal">@drawable/scrollbar_handle_holo_dark</item>
-		<item name="android:scrollbarThumbVertical">@drawable/scrollbar_handle_holo_dark</item>
-		<item name="android:listSelector">@drawable/list_selector_holo_dark</item>
-		<!-- Widget styles -->
-		<item name="android:autoCompleteTextViewStyle">@style/Widget.Holo.AutoCompleteTextView</item>
-		<item name="android:checkboxStyle">@style/Widget.Holo.CompoundButton.CheckBox</item>
-		<item name="android:gridViewStyle">@style/Widget.Holo.GridView</item>
-		<item name="android:listViewStyle">@style/Widget.Holo.ListView</item>
-		<item name="android:progressBarStyle">@style/Widget.Holo.ProgressBar</item>
-		<item name="android:progressBarStyleSmall">@style/Widget.Holo.ProgressBar.Small</item>
-		<item name="android:progressBarStyleSmallTitle">@style/Widget.Holo.ProgressBar.Small.Title</item>
-		<item name="android:progressBarStyleLarge">@style/Widget.Holo.ProgressBar.Large</item>
-		<item name="android:progressBarStyleInverse">@style/Widget.Holo.ProgressBar.Inverse</item>
-		<item name="android:progressBarStyleSmallInverse">@style/Widget.Holo.ProgressBar.Small.Inverse</item>
-		<item name="android:progressBarStyleLargeInverse">@style/Widget.Holo.ProgressBar.Large.Inverse</item>
-		<item name="android:progressBarStyleHorizontal">@style/Widget.Holo.ProgressBar.Horizontal</item>
-		<item name="android:radioButtonStyle">@style/Widget.Holo.CompoundButton.RadioButton</item>
-		<item name="android:seekBarStyle">@style/Widget.Holo.SeekBar</item>
-		<item name="android:spinnerStyle">@style/Widget.Holo.Spinner</item>
-		<item name="android:spinnerItemStyle">@style/Widget.Holo.TextView.SpinnerItem</item>
-		<item name="android:dropDownHintAppearance">@style/TextAppearance.Holo.Widget.DropDownHint</item>
-		<item name="android:dropDownListViewStyle">@style/Widget.Holo.ListView.DropDown</item>
 	</style>
 
-	<style name="Theme.Twidere.Dialog" parent="Theme.Holo.Dialog">
+	<style name="Theme.Twidere.Dialog" parent="android:Theme.Holo.Dialog">
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@null</item>
-		<item name="borderlessButtonStyle">@style/Widget.Holo.Button.Borderless.Small</item>
-		<item name="borderlessImageButtonStyle">@style/Widget.Twidere.ImageButton.Borderless</item>
-		<item name="selectableViewStyle">@style/Widget.Twidere.SelectableView</item>
-		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Large</item>
 		<item name="contentBackground">#20000000</item>
-		<item name="android:itemBackground">@drawable/item_background_holo_dark</item>
 	</style>
 
-	<style name="Theme.Twidere.Light.Dialog" parent="Theme.Holo.Light.Dialog">
+	<style name="Theme.Twidere.Light.Dialog" parent="android:Theme.Holo.Light.Dialog">
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@drawable/tab_background_dark</item>
-		<item name="borderlessButtonStyle">@style/Widget.Holo.Light.Button.Borderless.Small</item>
-		<item name="borderlessImageButtonStyle">@style/Widget.Twidere.Light.ImageButton.Borderless</item>
-		<item name="selectableViewStyle">@style/Widget.Twidere.Light.SelectableView</item>
-		<item name="preferenceTitleStyle">@style/TextAppearance.Holo.Light.Large</item>
 		<item name="contentBackground">#20808080</item>
-		<item name="android:itemBackground">@drawable/item_background_holo_light</item>
 	</style>
 
 	<style name="Theme.Twidere.Compose" parent="Theme.Twidere.Dialog">
 		<item name="android:windowNoTitle">true</item>
-		<item name="android:windowBackground">@drawable/dialog_full_holo_dark</item>
-
-		<!-- for programmatic instantiation -->
-		<item name="actionBarBackground">@drawable/actionbar_bg_dark_holo</item>
-		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle</item>
-		<item name="actionBarSubtitleStyle">@style/Widget.ActionBarSubtitle</item>
-		<item name="actionBarItemStyle">@style/Widget.ActionBarItem</item>
-		<item name="actionBarItemHomeStyle">@style/Widget.ActionBarHomeItem</item>
-		<item name="actionBarHomeAsUpIndicator">@drawable/actionbar_back_dark</item>
-		<item name="actionBarIndeterminateProgressStyle">?android:attr/progressBarStyle</item>
-		<item name="actionModeBackground">@drawable/cab_background_top_holo_dark</item>
-		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_dark_holo</item>
 	</style>
 
 	<style name="Theme.Twidere.Light.Compose" parent="Theme.Twidere.Light.Dialog">
 		<item name="android:windowNoTitle">true</item>
 		<item name="android:windowBackground">@drawable/dialog_full_holo_light_darkactionbar</item>
-
-		<!-- for programmatic instantiation -->
-		<item name="actionBarBackground">@drawable/actionbar_bg_light_darkactionbar_twidere_holo</item>
-		<item name="actionBarTitleStyle">@style/Widget.ActionBarTitle.Inverse</item>
-		<item name="actionBarSubtitleStyle">@style/Widget.ActionBarSubtitle.Inverse</item>
-		<item name="actionBarItemStyle">@style/Widget.ActionBarItem</item>
-		<item name="actionBarItemHomeStyle">@style/Widget.ActionBarHomeItem</item>
-		<item name="actionBarHomeAsUpIndicator">@drawable/actionbar_back_dark</item>
-		<item name="actionBarIndeterminateProgressStyle">?android:attr/progressBarStyle</item>
-		<item name="actionModeBackground">@drawable/cab_background_top_holo_dark</item>
-		<item name="menuBarBackground">@drawable/actionbar_bg_bottom_light_darkactionbar_holo</item>
 	</style>
 
-	<style name="Theme.Test" parent="android:Theme"/>
+	<style name="Theme.Test" parent="android:Theme.Holo"/>
+
+	<style name="Theme.Nyan" parent="android:Theme.Holo.NoActionBar">
+		<item name="android:windowBackground">@color/nyan_background</item>
+	</style>
 
 </resources>

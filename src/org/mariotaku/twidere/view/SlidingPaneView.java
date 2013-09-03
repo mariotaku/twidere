@@ -501,7 +501,7 @@ public class SlidingPaneView extends ViewGroup {
 				canvas.saveLayerAlpha(null, mFadeFactor, Canvas.ALL_SAVE_FLAG);
 				super.dispatchDraw(canvas);
 				canvas.restore();
-			} catch (NullPointerException e) {
+			} catch (final NullPointerException e) {
 				super.dispatchDraw(canvas);
 			}
 		}

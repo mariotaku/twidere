@@ -42,7 +42,7 @@ public class CustomTabsActivity extends BaseActivity {
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.base);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		ft.replace(R.id.main, new CustomTabsFragment());
 		ft.commit();

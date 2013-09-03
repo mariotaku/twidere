@@ -165,9 +165,15 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 	}
 
 	protected int getPaneBackground() {
-		final boolean dark = isDarkTheme(), solid = isSolidColorBackground();
-		return dark ? solid ? android.R.color.black : R.drawable.background_holo_dark : solid ? android.R.color.white
-				: R.drawable.background_holo_light;
+		final boolean solid = isSolidColorBackground();
+		switch (getCurrentThemeResource()) {
+			case R.style.Theme_Twidere:
+			case R.style.Theme_Twidere_Light:
+				return solid ? android.R.color.white : R.drawable.background_holo_light;
+			case R.style.Theme_Twidere_Dark:
+				return solid ? android.R.color.black : R.drawable.background_holo_dark;
+		}
+		return 0;
 	}
 
 	@Override

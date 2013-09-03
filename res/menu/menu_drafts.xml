@@ -12,7 +12,7 @@
 				android:icon="@drawable/ic_menu_clear_list"
 				android:title="@string/delete_all"/>
 			<item
-				android:icon="@drawable/ic_menu_close_clear_cancel"
+				android:icon="@android:drawable/ic_menu_close_clear_cancel"
 				android:title="@android:string/cancel"/>
 		</menu>
 	</item>

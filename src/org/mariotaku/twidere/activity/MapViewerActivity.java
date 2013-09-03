@@ -30,19 +30,26 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.view.View;
-import android.view.View.OnClickListener;
+import android.view.Menu;
+import android.view.MenuItem;
 
-public class MapViewerActivity extends FragmentActivity implements Constants, OnClickListener {
+public class MapViewerActivity extends FragmentActivity implements Constants {
+
 
 	@Override
-	public void onClick(final View view) {
-		switch (view.getId()) {
-			case R.id.close: {
+	public boolean onCreateOptionsMenu(final Menu menu) {
+		getMenuInflater().inflate(R.menu.menu_map_viewer, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_HOME: {
 				onBackPressed();
 				break;
 			}
-			case R.id.center: {
+			case MENU_CENTER: {
 				final Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.map_frame);
 				if (!(fragment instanceof MapInterface)) {
 					break;
@@ -51,7 +58,7 @@ public class MapViewerActivity extends FragmentActivity implements Constants, On
 				break;
 			}
 		}
-
+		return true;
 	}
 
 	@Override

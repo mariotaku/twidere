@@ -3,15 +3,15 @@
 
 	<item
 		android:id="@id/settings"
-		android:icon="@drawable/ic_menu_preferences"
+		android:icon="@android:drawable/ic_menu_preferences"
 		android:title="@string/settings"/>
 	<item
 		android:id="@id/revoke"
-		android:icon="@drawable/ic_menu_revert"
+		android:icon="@android:drawable/ic_menu_revert"
 		android:title="@string/revoke_permissions"/>
 	<item
 		android:id="@id/delete"
-		android:icon="@drawable/ic_menu_delete"
+		android:icon="@android:drawable/ic_menu_delete"
 		android:title="@string/uninstall"/>
 
 </menu>

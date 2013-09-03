@@ -20,11 +20,11 @@
 package org.mariotaku.twidere.view;
 
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.view.iface.IExtendedView;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
@@ -57,8 +57,7 @@ public class ProfileBannerImageView extends ClickableImageView implements IExten
 	public ProfileBannerImageView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		ViewCompat.setLayerType(this, LAYER_TYPE_SOFTWARE, null);
-		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final boolean is_dark_theme = prefs != null ? prefs.getBoolean(PREFERENCE_KEY_DARK_THEME, false) : false;
+		final boolean is_dark_theme = ThemeUtils.isDarkTheme(context);
 		COLORS_REVERSED[1] = is_dark_theme ? 0xFF000000 : 0xFFFFFFFF;
 	}
 

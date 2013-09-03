@@ -33,7 +33,7 @@
 
 			<Button
 				android:id="@+id/create_list"
-				style="?borderlessButtonStyle"
+				style="?android:borderlessButtonStyle"
 				android:layout_width="match_parent"
 				android:layout_height="@dimen/button_bar_height"
 				android:gravity="center"
@@ -70,7 +70,7 @@
 				android:layout_weight="0"
 				android:contentDescription="@android:string/search_go"
 				android:onClick="onClick"
-				android:src="@drawable/ic_menu_search"/>
+				android:src="@android:drawable/ic_menu_search"/>
 		</LinearLayout>
 
 		<ListView

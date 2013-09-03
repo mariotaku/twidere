@@ -124,7 +124,7 @@
 		</LinearLayout>
 	</ScrollView>
 
-	<org.mariotaku.twidere.view.HoloProgressBar
+	<ProgressBar
 		android:id="@+id/progress"
 		style="?android:attr/progressBarStyleLarge"
 		android:layout_width="wrap_content"

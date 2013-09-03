@@ -7,9 +7,9 @@
 	android:orientation="vertical">
 
 	<FrameLayout
+		style="?android:actionBarStyle"
 		android:layout_width="match_parent"
-		android:layout_height="@dimen/actionbar_height"
-		android:background="?actionBarBackground"
+		android:layout_height="?android:actionBarSize"
 		android:clickable="true">
 
 		<View
@@ -20,71 +20,71 @@
 
 		<LinearLayout
 			android:layout_width="match_parent"
-			android:layout_height="@dimen/actionbar_height"
+			android:layout_height="?android:actionBarSize"
 			android:baselineAligned="false"
 			android:gravity="center_vertical"
 			android:orientation="horizontal">
 
 			<LinearLayout
-				android:id="@id/actionbar_place_holder"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				android:layout_weight="1">
 
 				<LinearLayout
 					android:id="@+id/close"
-					style="@style/Widget.ActionBarHomeItem"
+					style="?android:actionButtonStyle"
 					android:layout_width="wrap_content"
 					android:layout_height="match_parent"
 					android:clickable="true"
 					android:focusable="true"
 					android:onClick="onClick"
-					android:orientation="horizontal">
+					android:orientation="horizontal"
+					android:paddingLeft="4dp">
 
 					<ImageView
 						android:layout_width="wrap_content"
 						android:layout_height="match_parent"
-						android:gravity="center_vertical|left"
 						android:scaleType="fitCenter"
 						android:src="@drawable/actionbar_back_dark"/>
 
 					<ImageView
-						android:layout_width="@dimen/actionbar_home_width"
-						android:layout_height="match_parent"
-						android:gravity="center_vertical|left"
-						android:scaleType="fitCenter"
+						android:layout_width="48dp"
+						android:layout_height="48dp"
+						android:paddingBottom="8dp"
+						android:paddingTop="8dp"
+						android:scaleType="centerInside"
 						android:src="@drawable/ic_launcher"/>
 
 					<LinearLayout
 						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
+						android:layout_height="match_parent"
 						android:gravity="center_vertical"
 						android:orientation="vertical">
 
 						<TextView
-							android:id="@id/actionbar_title"
-							style="?attr/actionBarTitleStyle"
+							android:id="@+id/actionbar_title"
 							android:layout_width="wrap_content"
 							android:layout_height="wrap_content"
-							android:singleLine="true"/>
+							android:singleLine="true"
+							android:textAppearance="?android:textAppearanceMedium"/>
 
 						<TextView
-							android:id="@id/actionbar_subtitle"
-							style="?attr/actionBarSubtitleStyle"
+							android:id="@+id/actionbar_subtitle"
 							android:layout_width="wrap_content"
 							android:layout_height="wrap_content"
 							android:singleLine="true"
 							android:text="@string/quote_protected_tweet_notice"
+							android:textAppearance="?android:textAppearanceSmall"
 							android:visibility="gone"/>
 					</LinearLayout>
 				</LinearLayout>
 			</LinearLayout>
 
-			<org.mariotaku.twidere.view.HoloProgressBar
-				android:id="@id/actionbar_progress_indeterminate"
-				style="?actionBarIndeterminateProgressStyle"
-				android:layout_width="@dimen/actionbar_height"
-				android:layout_height="@dimen/actionbar_height"
+			<ProgressBar
+				android:id="@+id/actionbar_progress_indeterminate"
+				style="?android:progressBarStyle"
+				android:layout_width="?android:actionBarSize"
+				android:layout_height="?android:actionBarSize"
 				android:layout_gravity="center_vertical"
 				android:layout_weight="0"
 				android:indeterminateOnly="true"
@@ -95,7 +95,8 @@
 				android:id="@+id/action_menu"
 				android:layout_width="wrap_content"
 				android:layout_height="match_parent"
-				android:layout_weight="0"/>
+				android:layout_weight="0"
+				android:background="@android:color/transparent"/>
 		</LinearLayout>
 	</FrameLayout>
 
@@ -133,7 +134,7 @@
 
 				<ImageView
 					android:id="@+id/image_thumbnail_preview"
-					style="?selectableViewStyle"
+					style="?android:borderlessButtonStyle"
 					android:layout_width="42dp"
 					android:layout_height="42dp"
 					android:layout_gravity="center_vertical|left"
@@ -159,8 +160,7 @@
 		<org.mariotaku.menubar.MenuBar
 			android:id="@+id/menu_bar"
 			android:layout_width="match_parent"
-			android:layout_height="48dp"
-			android:background="?menuBarBackground"/>
+			android:layout_height="48dp"/>
 	</LinearLayout>
 
 </LinearLayout>

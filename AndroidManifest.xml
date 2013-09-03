@@ -3,12 +3,11 @@
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
 	android:versionCode="79"
-	android:versionName="0.2.9.2-legacy">
+	android:versionName="0.2.9.2">
 
 	<uses-sdk
-		android:maxSdkVersion="13"
-		android:minSdkVersion="4"
-		android:targetSdkVersion="13"/>
+		android:minSdkVersion="14"
+		android:targetSdkVersion="18"/>
 
 	<uses-feature
 		android:name="android.hardware.camera"
@@ -292,23 +291,6 @@
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value=".activity.HomeActivity"/>
-		</activity>
-		<activity
-			android:name=".activity.ImageViewerActivity"
-			android:hardwareAccelerated="true"
-			android:label="@string/view_image"
-			android:launchMode="singleTop"
-			android:process=":image_viewer"
-			android:theme="@style/Theme.Twidere.Viewer">
-			<intent-filter>
-				<action android:name="org.mariotaku.twidere.VIEW_IMAGE"/>
-
-				<category android:name="android.intent.category.DEFAULT"/>
-
-				<data android:scheme="file"/>
-				<data android:scheme="http"/>
-				<data android:scheme="https"/>
-			</intent-filter>
 		</activity>
 		<activity
 			android:name="org.mariotaku.gallery3d.app.ImageViewerGLActivity"

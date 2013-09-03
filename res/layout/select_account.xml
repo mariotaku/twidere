@@ -25,7 +25,7 @@
 
 		<Button
 			android:id="@+id/save"
-			style="?borderlessButtonStyle"
+			style="?android:borderlessButtonStyle"
 			android:layout_width="match_parent"
 			android:layout_height="@dimen/button_bar_height"
 			android:gravity="center"

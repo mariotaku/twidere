@@ -17,7 +17,7 @@
 package org.mariotaku.gallery3d.ui;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.util.Utils;
+import org.mariotaku.twidere.util.ThemeUtils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -141,7 +141,7 @@ public class EdgeEffect {
 	 *            for the EdgeEffect
 	 */
 	public EdgeEffect(final Context context) {
-		final int theme_color = Utils.getThemeColor(context);
+		final int theme_color = ThemeUtils.getThemeColor(context);
 		mEdge = new Drawable(context, R.drawable.overscroll_edge);
 		mEdge.setColorFilter(theme_color, PorterDuff.Mode.MULTIPLY);
 		mGlow = new Drawable(context, R.drawable.overscroll_glow);

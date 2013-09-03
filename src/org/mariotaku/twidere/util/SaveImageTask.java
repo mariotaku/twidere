@@ -30,7 +30,9 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.ProgressDialogFragment;
 
 import android.content.Context;
+import android.media.MediaScannerConnection;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -101,15 +103,14 @@ public class SaveImageTask extends AsyncTask<Void, Void, File> implements Consta
 			final String extension = map.getExtensionFromMimeType(mime_type);
 			if (extension == null) return null;
 			final String name_to_save = name.indexOf(".") != -1 ? name : name + "." + extension;
-			final File pub_dir = EnvironmentAccessor
-					.getExternalStoragePublicDirectory(EnvironmentAccessor.DIRECTORY_PICTURES);
+			final File pub_dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 			if (pub_dir == null) return null;
 			final File save_dir = new File(pub_dir, "Twidere");
 			if (!save_dir.isDirectory() && !save_dir.mkdirs()) return null;
 			final File save_file = new File(save_dir, name_to_save);
 			FileUtils.copyFile(image_file, save_file);
 			if (save_file != null && mime_type != null) {
-				MediaScannerConnectionAccessor.scanFile(context, new String[] { save_file.getPath() },
+				MediaScannerConnection.scanFile(context, new String[] { save_file.getPath() },
 						new String[] { mime_type }, null);
 			}
 			return save_file;

@@ -44,7 +44,7 @@
 
 		<Button
 			android:id="@+id/preview"
-			style="?borderlessButtonStyle"
+			style="?android:borderlessButtonStyle"
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
 			android:layout_weight="1"
@@ -58,7 +58,7 @@
 
 		<Button
 			android:id="@+id/save"
-			style="?borderlessButtonStyle"
+			style="?android:borderlessButtonStyle"
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
 			android:layout_weight="1"

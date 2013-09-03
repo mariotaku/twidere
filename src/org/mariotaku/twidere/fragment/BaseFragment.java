@@ -19,7 +19,6 @@
 
 package org.mariotaku.twidere.fragment;
 
-import org.mariotaku.actionbarcompat.ActionBarFragmentActivity;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.activity.BaseActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -38,12 +37,6 @@ public class BaseFragment extends Fragment implements Constants {
 
 	public BaseFragment() {
 
-	}
-
-	public ActionBarFragmentActivity getActionBarActivity() {
-		final Activity activity = getActivity();
-		if (activity instanceof ActionBarFragmentActivity) return (ActionBarFragmentActivity) activity;
-		return null;
 	}
 
 	public TwidereApplication getApplication() {
@@ -82,7 +75,7 @@ public class BaseFragment extends Fragment implements Constants {
 		final FragmentActivity activity = getActivity();
 		if (activity == null) return;
 		if (activity instanceof BaseActivity) {
-			((BaseActivity) activity).invalidateSupportOptionsMenu();
+			((BaseActivity) activity).invalidateOptionsMenu();
 		} else {
 			activity.supportInvalidateOptionsMenu();
 		}
@@ -97,7 +90,7 @@ public class BaseFragment extends Fragment implements Constants {
 	public void setProgressBarIndeterminateVisibility(final boolean visible) {
 		final Activity activity = getActivity();
 		if (activity instanceof BaseActivity) {
-			((BaseActivity) activity).setSupportProgressBarIndeterminateVisibility(visible);
+			((BaseActivity) activity).setProgressBarIndeterminateVisibility(visible);
 		}
 	}
 

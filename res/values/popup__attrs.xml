@@ -16,11 +16,4 @@
 
 <resources>
 
-	<attr name="menuBarBackground" format="reference"/>
-	<attr name="popupBackground" format="reference"/>
-
-	<!-- ListPopupWindow comaptibility -->
-	<attr name="dropDownListViewStyle" format="reference"/>
-	<attr name="listPopupWindowStyle" format="reference"/>
-
 </resources>

@@ -25,7 +25,7 @@
 
 		<LinearLayout
 			android:id="@+id/name_container"
-			style="?selectableViewStyle"
+			android:background="?android:selectableItemBackground"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_alignBottom="@+id/profile_image"
@@ -74,7 +74,7 @@
 
 	<LinearLayout
 		android:id="@+id/description_container"
-		style="?selectableViewStyle"
+		android:background="?android:selectableItemBackground"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:orientation="vertical"

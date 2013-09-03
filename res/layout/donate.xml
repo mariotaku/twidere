@@ -25,7 +25,6 @@
 
 		<EditText
 			android:id="@+id/name"
-			style="?editTextStyle"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:ems="10"
@@ -49,7 +48,6 @@
 
 		<EditText
 			android:id="@+id/amount"
-			style="?editTextStyle"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:ems="10"

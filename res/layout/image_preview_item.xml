@@ -11,7 +11,7 @@
 		android:layout_height="wrap_content"
 		android:clickable="true"/>
 
-	<org.mariotaku.twidere.view.HoloProgressBar
+	<ProgressBar
 		android:id="@+id/image_preview_progress"
 		style="?android:attr/progressBarStyleHorizontal"
 		android:layout_width="match_parent"

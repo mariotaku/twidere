@@ -2,11 +2,6 @@
 <resources>
 
 	<declare-styleable name="Twidere">
-		<attr name="borderlessButtonStyle" format="reference"/>
-		<attr name="borderlessImageButtonStyle" format="reference"/>
-		<attr name="selectableViewStyle" format="reference"/>
-		<attr name="editTextStyle" format="reference"/>
-		<attr name="preferenceTitleStyle" format="reference"/>
 		<attr name="contentBackground" format="reference|color"/>
 	</declare-styleable>
 	<declare-styleable name="ViewPagerIndicator">

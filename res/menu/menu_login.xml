@@ -8,7 +8,7 @@
 		android:title="@string/edit_api"/>
 	<item
 		android:id="@id/settings"
-		android:icon="@drawable/ic_menu_preferences"
+		android:icon="@android:drawable/ic_menu_preferences"
 		android:showAsAction="ifRoom"
 		android:title="@string/settings"/>
 

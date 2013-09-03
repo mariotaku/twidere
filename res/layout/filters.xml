@@ -5,10 +5,10 @@
 	android:orientation="vertical">
 
 	<FrameLayout
+		style="?android:attr/actionBarTabBarStyle"
 		android:layout_width="match_parent"
 		android:layout_height="48dp"
-		android:layout_weight="0"
-		android:background="?actionBarBackground">
+		android:layout_weight="0">
 
 		<View
 			android:id="@+id/tab_highlight"

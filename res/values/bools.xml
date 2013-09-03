@@ -3,12 +3,9 @@
 
 	<bool name="tab_display_label">false</bool>
 	<bool name="home_display_icon">false</bool>
-	<bool name="hw_accel_supported">false</bool>
 	<bool name="hires_profile_image">false</bool>
 	<bool name="is_large_screen">false</bool>
 	<bool name="default_shadow_slidable">true</bool>
 	<bool name="shadow_slidable">true</bool>
-	<bool name="should_set_background">true</bool>
-	<bool name="is_dialog_when_large">false</bool>
 
 </resources>

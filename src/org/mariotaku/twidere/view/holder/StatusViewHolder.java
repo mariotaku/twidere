@@ -20,11 +20,11 @@
 package org.mariotaku.twidere.view.holder;
 
 import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
-import static org.mariotaku.twidere.util.Utils.getThemeColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
@@ -72,7 +72,7 @@ public class StatusViewHolder implements Constants {
 		time = (TextView) view.findViewById(R.id.time);
 		reply_retweet_status = (TextView) view.findViewById(R.id.reply_retweet_status);
 		show_as_gap = gap_indicator.isShown();
-		final int color = getThemeColor(context);
+		final int color = ThemeUtils.getThemeColor(context);
 		theme_color = Color.argb(0x60, Color.red(color), Color.green(color), Color.blue(color));
 		image_preview_small_width = res.getDimensionPixelSize(R.dimen.image_preview_width);
 		is_rtl = Utils.isRTL(context);

@@ -96,7 +96,7 @@ public class WebViewFragment extends BaseFragment {
 			super.onPageFinished(view, url);
 			if (mActivity instanceof BaseActivity) {
 				mActivity.setTitle(view.getTitle());
-				((BaseActivity) mActivity).setSupportProgressBarIndeterminateVisibility(false);
+				((BaseActivity) mActivity).setProgressBarIndeterminateVisibility(false);
 			}
 		}
 
@@ -104,7 +104,7 @@ public class WebViewFragment extends BaseFragment {
 		public void onPageStarted(final WebView view, final String url, final Bitmap favicon) {
 			super.onPageStarted(view, url, favicon);
 			if (mActivity instanceof BaseActivity) {
-				((BaseActivity) mActivity).setSupportProgressBarIndeterminateVisibility(true);
+				((BaseActivity) mActivity).setProgressBarIndeterminateVisibility(true);
 			}
 		}
 

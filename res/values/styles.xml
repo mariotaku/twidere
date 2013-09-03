@@ -1,66 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<style name="Widget.Twidere.Button" parent="android:Widget.Button">
-		<item name="android:background">@drawable/btn_default_holo</item>
-		<item name="android:textColor">#ffffff</item>
+	<style name="Widget.Twidere.ActionBar" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse">
+		<item name="android:background">?android:colorActivatedHighlight</item>
 	</style>
 
-	<style name="Widget.Twidere.Button.Borderless" parent="Widget.Twidere.Button.Small">
-		<item name="android:background">?android:attr/itemBackground</item>
+	<style name="Widget.Twidere.ActionBar.Dark" parent="android:Widget.Holo.ActionBar"></style>
+
+	<style name="Widget.Twidere.ActionBar.Light" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse"></style>
+
+	<style name="Widget.Twidere.Viewer.ActionBar" parent="android:Widget.Holo.ActionBar">
+		<item name="android:background">#80000000</item>
 	</style>
 
-	<style name="Widget.Twidere.Button.Small" parent="android:Widget.Button.Small">
-		<item name="android:background">@drawable/btn_default_holo</item>
-		<item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
-		<item name="android:textColor">@color/primary_text_holo_dark</item>
-		<item name="android:minHeight">48dp</item>
-		<item name="android:minWidth">48dp</item>
+	<style name="Widget.Twidere.ImageButton.Borderless" parent="android:Widget.Holo.ImageButton">
+		<item name="android:background">?android:attr/selectableItemBackground</item>
 	</style>
 
-	<style name="Widget.Twidere.Button.Inset" parent="android:Widget.Button.Inset"/>
-
-	<style name="Widget.Twidere.ImageButton" parent="android:Widget.ImageButton">
-		<item name="android:background">@drawable/btn_default_holo</item>
+	<style name="Widget.Twidere.Light.ImageButton.Borderless" parent="android:Widget.Holo.Light.ImageButton">
+		<item name="android:background">?android:attr/selectableItemBackground</item>
 	</style>
 
-	<style name="Widget.Twidere.ImageButton.Borderless">
-		<item name="android:background">?android:attr/itemBackground</item>
+	<style name="Widget.Twidere.SelectableView" parent="android:Widget.Holo">
+		<item name="android:background">?android:attr/selectableItemBackground</item>
 	</style>
 
-	<style name="Widget.Twidere.Light.Button" parent="android:Widget.Button">
-		<item name="android:background">@drawable/btn_default_holo</item>
-		<item name="android:textColor">#000000</item>
-	</style>
-
-	<style name="Widget.Twidere.Light.Button.Borderless" parent="Widget.Twidere.Light.Button.Small">
-		<item name="android:background">?android:attr/itemBackground</item>
-	</style>
-
-	<style name="Widget.Twidere.Light.Button.Small">
-		<item name="android:background">@drawable/btn_default_holo</item>
-		<item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
-		<item name="android:textColor">@color/primary_text_holo_light</item>
-		<item name="android:minHeight">48dp</item>
-		<item name="android:minWidth">48dp</item>
-	</style>
-
-	<style name="Widget.Twidere.Light.Button.Inset"></style>
-
-	<style name="Widget.Twidere.Light.ImageButton" parent="android:Widget.ImageButton">
-		<item name="android:background">@drawable/btn_default_holo</item>
-	</style>
-
-	<style name="Widget.Twidere.Light.ImageButton.Borderless">
-		<item name="android:background">?android:attr/itemBackground</item>
-	</style>
-
-	<style name="Widget.Twidere.SelectableView" parent="Widget.Holo">
-		<item name="android:background">?android:attr/itemBackground</item>
-	</style>
-
-	<style name="Widget.Twidere.Light.SelectableView" parent="Widget.Holo.Light">
-		<item name="android:background">?android:attr/itemBackground</item>
+	<style name="Widget.Twidere.Light.SelectableView" parent="android:Widget.Holo.Light">
+		<item name="android:background">?android:attr/selectableItemBackground</item>
 	</style>
 
 	<style name="Animation.ImageViewer" parent="android:Animation">
@@ -85,7 +51,7 @@
 
 	<style name="Widget.TabPageIndicator.TextView" parent="@android:style/Widget.TextView">
 		<item name="android:textAppearance">@style/TextAppearance.TabPageIndicator</item>
-		<item name="android:textColor">@color/vpi__dark_theme</item>
+		<item name="android:textColor">@android:color/tab_indicator_text</item>
 		<item name="android:textStyle">bold</item>
 		<item name="android:layout_gravity">center</item>
 		<item name="android:gravity">center</item>
@@ -94,9 +60,7 @@
 		<item name="android:maxLines">1</item>
 	</style>
 
-	<style name="Widget.TabPageIndicator.TextView.Light">
-		<item name="android:textColor">@color/vpi__light_theme</item>
-	</style>
+	<style name="Widget.TabPageIndicator.TextView.Light"></style>
 
 	<style name="TextAppearance.TabPageIndicator" parent="@android:style/TextAppearance.Small"></style>
 

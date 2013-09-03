@@ -15,9 +15,7 @@
  *******************************************************************************/
 package com.nostra13.universalimageloader.core.decode;
 
-import android.annotation.TargetApi;
 import android.graphics.BitmapFactory.Options;
-import android.os.Build;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
@@ -129,36 +127,9 @@ public class ImageDecodingInfo {
 		destOptions.inScreenDensity = srcOptions.inScreenDensity;
 		destOptions.inTargetDensity = srcOptions.inTargetDensity;
 		destOptions.inTempStorage = srcOptions.inTempStorage;
-		BitmapFactoryOptionAccessor.copyOptions(srcOptions, destOptions);
-	}
-
-	private static class BitmapFactoryOptionAccessor {
-
-		private static void copyOptions(final Options srcOptions, final Options destOptions) {
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1) {
-				BitmapFactoryOptionAccessorSDK10.copyOptions(srcOptions, destOptions);
-			}
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-				BitmapFactoryOptionAccessorSDK11.copyOptions(srcOptions, destOptions);
-			}
-		}
-
-		@TargetApi(Build.VERSION_CODES.GINGERBREAD_MR1)
-		private static class BitmapFactoryOptionAccessorSDK10 {
-
-			private static void copyOptions(final Options srcOptions, final Options destOptions) {
-				destOptions.inPreferQualityOverSpeed = srcOptions.inPreferQualityOverSpeed;
-			}
-		}
-
-		@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-		private static class BitmapFactoryOptionAccessorSDK11 {
-
-			private static void copyOptions(final Options srcOptions, final Options destOptions) {
-				destOptions.inBitmap = srcOptions.inBitmap;
-				destOptions.inMutable = srcOptions.inMutable;
-			}
-		}
+		destOptions.inPreferQualityOverSpeed = srcOptions.inPreferQualityOverSpeed;
+		destOptions.inBitmap = srcOptions.inBitmap;
+		destOptions.inMutable = srcOptions.inMutable;
 	}
 
 }

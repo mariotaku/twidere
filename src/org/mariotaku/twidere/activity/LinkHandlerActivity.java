@@ -25,7 +25,6 @@ import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.matchLinkId;
 
-import org.mariotaku.actionbarcompat.ActionBar;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.DirectMessagesConversationFragment;
 import org.mariotaku.twidere.fragment.IncomingFriendshipsFragment;
@@ -50,14 +49,13 @@ import org.mariotaku.twidere.fragment.UsersListFragment;
 import org.mariotaku.twidere.util.MultiSelectEventHandler;
 import org.mariotaku.twidere.util.ParseUtils;
 
-import android.app.Activity;
+import android.app.ActionBar;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 
@@ -70,21 +68,6 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity {
 	private ActionBar mActionBar;
 
 	private boolean mFinishOnly;
-
-	/**
-	 * Base action bar-aware implementation for
-	 * {@link Activity#onCreateOptionsMenu(android.view.Menu)}.
-	 * 
-	 * Note: marking menu items as invisible/visible is not currently supported.
-	 */
-	@Override
-	public boolean onCreateOptionsMenu(final Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		if (mAttachedFragment != null) {
-			mAttachedFragment.onCreateOptionsMenu(menu, getMenuInflater());
-		}
-		return true;
-	}
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
@@ -103,14 +86,14 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity {
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		mMultiSelectHandler = new MultiSelectEventHandler(this);
 		mMultiSelectHandler.dispatchOnCreate();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.link_handler);
-		mActionBar = getSupportActionBar();
+		mActionBar = getActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
-		setSupportProgressBarIndeterminateVisibility(false);
+		setProgressBarIndeterminateVisibility(false);
 		final Intent intent = getIntent();
 		final Uri data = intent.getData();
 		if (data != null) {

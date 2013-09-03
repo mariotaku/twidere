@@ -40,8 +40,6 @@ import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper.UpdateProfileBannerImageTask;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper.UpdateProfileImageTask;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper.UpdateProfileTask;
-import org.mariotaku.twidere.util.BundleAccessor;
-import org.mariotaku.twidere.util.EnvironmentAccessor;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.TwitterWrapper;
@@ -118,7 +116,7 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 		public Loader<SingleResponse<ParcelableUser>> onCreateLoader(final int id, final Bundle args) {
 			mProgress.setVisibility(View.VISIBLE);
 			mContent.setVisibility(View.GONE);
-			setSupportProgressBarIndeterminateVisibility(true);
+			setProgressBarIndeterminateVisibility(true);
 			return new ParcelableUserLoader(EditUserProfileActivity.this, mAccountId, mAccountId, null, getIntent()
 					.getExtras(), false, false);
 		}
@@ -136,7 +134,7 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 			} else {
 				finish();
 			}
-			setSupportProgressBarIndeterminateVisibility(false);
+			setProgressBarIndeterminateVisibility(false);
 		}
 
 	};
@@ -326,7 +324,7 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 
 	@Override
 	public void onTextChanged(final CharSequence s, final int length, final int start, final int end) {
-		invalidateSupportOptionsMenu();
+		invalidateOptionsMenu();
 	}
 
 	@Override
@@ -348,7 +346,7 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		requestSupportWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		final Bundle extras = getIntent().getExtras();
 		if (extras == null || !isMyAccount(this, extras.getLong(INTENT_KEY_ACCOUNT_ID))) {
@@ -359,7 +357,7 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 		mLazyImageLoader = TwidereApplication.getInstance(this).getImageLoaderWrapper();
 		mAccountId = extras.getLong(INTENT_KEY_ACCOUNT_ID);
 		setContentView(R.layout.edit_user_profile);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		mProfileImageBannerLayout.setOnSizeChangedListener(this);
 		mEditName.addTextChangedListener(this);
 		mEditDescription.addTextChangedListener(this);
@@ -370,11 +368,10 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 		if (savedInstanceState != null && savedInstanceState.getParcelable(INTENT_KEY_USER) != null) {
 			final ParcelableUser user = savedInstanceState.getParcelable(INTENT_KEY_USER);
 			displayUser(user);
-			mEditName.setText(BundleAccessor.getString(savedInstanceState, INTENT_KEY_NAME, user.name));
-			mEditLocation.setText(BundleAccessor.getString(savedInstanceState, INTENT_KEY_LOCATION, user.location));
-			mEditDescription.setText(BundleAccessor.getString(savedInstanceState, INTENT_KEY_DESCRIPTION,
-					user.description_expanded));
-			mEditUrl.setText(BundleAccessor.getString(savedInstanceState, INTENT_KEY_URL, user.url_expanded));
+			mEditName.setText(savedInstanceState.getString(INTENT_KEY_NAME, user.name));
+			mEditLocation.setText(savedInstanceState.getString(INTENT_KEY_LOCATION, user.location));
+			mEditDescription.setText(savedInstanceState.getString(INTENT_KEY_DESCRIPTION, user.description_expanded));
+			mEditUrl.setText(savedInstanceState.getString(INTENT_KEY_URL, user.url_expanded));
 		} else {
 			getUserInfo();
 		}
@@ -404,7 +401,7 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 	}
 
 	private Uri createTempFileUri() {
-		final File cache_dir = EnvironmentAccessor.getExternalCacheDir(this);
+		final File cache_dir = getExternalCacheDir();
 		final File file = new File(cache_dir, "tmp_image_" + System.currentTimeMillis());
 		return Uri.fromFile(file);
 	}
@@ -440,7 +437,7 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 	}
 
 	private void setUpdateState(final boolean start) {
-		setSupportProgressBarIndeterminateVisibility(start);
+		setProgressBarIndeterminateVisibility(start);
 		mEditName.setEnabled(!start);
 		mEditDescription.setEnabled(!start);
 		mEditLocation.setEnabled(!start);
@@ -449,7 +446,7 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 		mProfileImageView.setOnClickListener(start ? null : this);
 		mProfileBannerView.setEnabled(!start);
 		mProfileBannerView.setOnClickListener(start ? null : this);
-		invalidateSupportOptionsMenu();
+		invalidateOptionsMenu();
 	}
 
 	boolean mHasUnsavedChanges() {

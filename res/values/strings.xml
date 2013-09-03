@@ -474,5 +474,9 @@
 	<string name="account_delete_confirm_title">Delete account</string>
 	<string name="account_delete_confirm_message">This account will be deleted from Twidere.</string>
 	<string name="for_advanced_users_only">FOR ADVANCED USERS ONLY!</string>
+	<string name="theme">Theme</string>
+	<string name="theme_twidere">Twidere</string>
+	<string name="theme_dark">Dark</string>
+	<string name="theme_light">Light</string>
 
 </resources>

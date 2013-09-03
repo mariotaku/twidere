@@ -19,9 +19,7 @@
 
 package org.mariotaku.twidere.fragment;
 
-import org.mariotaku.actionbarcompat.ActionBarFragmentActivity;
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.activity.BaseActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 
 import android.app.Activity;
@@ -35,12 +33,6 @@ public class BaseDialogFragment extends DialogFragment implements Constants {
 
 	public BaseDialogFragment() {
 
-	}
-
-	public ActionBarFragmentActivity getActionBarActivity() {
-		final Activity activity = getActivity();
-		if (activity instanceof ActionBarFragmentActivity) return (ActionBarFragmentActivity) activity;
-		return null;
 	}
 
 	public TwidereApplication getApplication() {
@@ -75,9 +67,8 @@ public class BaseDialogFragment extends DialogFragment implements Constants {
 
 	public void setProgressBarIndeterminateVisibility(final boolean visible) {
 		final Activity activity = getActivity();
-		if (activity instanceof BaseActivity) {
-			((BaseActivity) activity).setSupportProgressBarIndeterminateVisibility(visible);
-		}
+		if (activity == null) return;
+		activity.setProgressBarIndeterminateVisibility(visible);
 	}
 
 	public void unregisterReceiver(final BroadcastReceiver receiver) {

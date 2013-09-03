@@ -18,11 +18,10 @@
 		<org.mariotaku.menubar.MenuBar
 			android:id="@+id/menu_bar"
 			android:layout_width="match_parent"
-			android:layout_height="48dp"
-			android:background="?menuBarBackground"/>
+			android:layout_height="48dp"/>
 	</LinearLayout>
 
-	<org.mariotaku.twidere.view.HoloProgressBar
+	<ProgressBar
 		android:id="@+id/status_load_progress"
 		style="?android:attr/progressBarStyleLarge"
 		android:layout_width="wrap_content"

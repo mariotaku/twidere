@@ -1,13 +1,15 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
+import static org.mariotaku.twidere.util.Utils.openUserFavorites;
+import static org.mariotaku.twidere.util.Utils.openUserLists;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
-import static org.mariotaku.twidere.util.Utils.*;
+import static org.mariotaku.twidere.util.Utils.openUserTimeline;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.ColorPickerActivity;
 import org.mariotaku.twidere.activity.EditUserProfileActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
-import org.mariotaku.twidere.activity.ColorPickerActivity;
 import org.mariotaku.twidere.activity.SignInActivity;
 import org.mariotaku.twidere.adapter.AccountsDrawerAdapter;
 import org.mariotaku.twidere.adapter.AccountsDrawerAdapter.AccountAction;
