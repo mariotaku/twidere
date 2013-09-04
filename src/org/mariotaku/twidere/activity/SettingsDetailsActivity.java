@@ -22,8 +22,9 @@ package org.mariotaku.twidere.activity;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.SettingsDetailsFragment;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 
 public class SettingsDetailsActivity extends BaseActivity {
@@ -41,11 +42,16 @@ public class SettingsDetailsActivity extends BaseActivity {
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		final Bundle extras = getIntent().getExtras();
+		if (extras == null) {
+			finish();
+			return;
+		}
 		setContentView(R.layout.base);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		final SettingsDetailsFragment fragment = new SettingsDetailsFragment();
-		fragment.setArguments(getIntent().getExtras());
+		final FragmentTransaction ft = getFragmentManager().beginTransaction();
+		final Fragment fragment = new SettingsDetailsFragment();
+		fragment.setArguments(extras);
 		ft.replace(R.id.main, fragment);
 		ft.commit();
 	}

@@ -22,9 +22,9 @@ package org.mariotaku.twidere.activity;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.ExtensionsListFragment;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 
 public class ExtensionsListActivity extends BaseActivity {
@@ -45,7 +45,7 @@ public class ExtensionsListActivity extends BaseActivity {
 		setContentView(R.layout.base);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		final Fragment fragment = new ExtensionsListFragment();
-		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		final FragmentTransaction ft = getFragmentManager().beginTransaction();
 		ft.replace(R.id.main, fragment);
 		ft.commit();
 	}

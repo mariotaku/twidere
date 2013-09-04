@@ -21,10 +21,10 @@ package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.util.MapInterface;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
@@ -98,7 +98,7 @@ public class WebMapFragment extends WebViewFragment implements MapInterface {
 
 	class MapWebViewClient extends DefaultWebViewClient {
 
-		public MapWebViewClient(final FragmentActivity activity) {
+		public MapWebViewClient(final Activity activity) {
 			super(activity);
 		}
 

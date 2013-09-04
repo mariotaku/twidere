@@ -37,12 +37,12 @@ import org.mariotaku.twidere.util.URLFileNameGenerator;
 
 import twitter4j.http.HttpClientWrapper;
 import twitter4j.http.HttpResponse;
+import android.content.AsyncTaskLoader;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Handler;
-import android.support.v4.content.AsyncTaskLoader;
 
 import com.nostra13.universalimageloader.cache.disc.naming.FileNameGenerator;
 

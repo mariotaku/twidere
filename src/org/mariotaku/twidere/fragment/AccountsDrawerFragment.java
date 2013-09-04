@@ -26,22 +26,21 @@ import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -284,7 +283,7 @@ public class AccountsDrawerFragment extends BaseFragment implements LoaderCallba
 	}
 
 	private void closeAccountsDrawer() {
-		final FragmentActivity activity = getActivity();
+		final Activity activity = getActivity();
 		if (activity instanceof HomeActivity) {
 			((HomeActivity) activity).closeAccountsDrawer();
 		}

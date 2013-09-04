@@ -36,16 +36,16 @@ import org.mariotaku.twidere.loader.UserListsLoader.UserListsData;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUserList;
 
+import android.app.DialogFragment;
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -56,8 +56,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 
 public class UserListsListFragment extends BasePullToRefreshListFragment implements Constants,
 		LoaderCallbacks<UserListsLoader.UserListsData>, OnItemClickListener, OnItemLongClickListener, Panes.Left,
@@ -119,7 +117,7 @@ public class UserListsListFragment extends BasePullToRefreshListFragment impleme
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
 		getLoaderManager().initLoader(0, getArguments(), this);
-		setMode(Mode.PULL_FROM_END);
+		// setEnabled("from_end");
 		setListShown(false);
 	}
 
@@ -184,7 +182,7 @@ public class UserListsListFragment extends BasePullToRefreshListFragment impleme
 			mAdapter.notifyDataSetChanged();
 			invalidateOptionsMenu();
 		}
-		onRefreshComplete();
+		setRefreshComplete();
 		setListShown(true);
 	}
 
@@ -235,14 +233,13 @@ public class UserListsListFragment extends BasePullToRefreshListFragment impleme
 		item.setVisible(mUserId == mAccountId || screen_name != null && screen_name.equalsIgnoreCase(mScreenName));
 	}
 
-	@Override
-	public void onPullDownToRefresh() {
-
+	public void onPullUpToRefresh() {
+		getLoaderManager().restartLoader(0, null, this);
 	}
 
 	@Override
-	public void onPullUpToRefresh() {
-		getLoaderManager().restartLoader(0, null, this);
+	public void onRefreshStarted(final View view) {
+
 	}
 
 	@Override

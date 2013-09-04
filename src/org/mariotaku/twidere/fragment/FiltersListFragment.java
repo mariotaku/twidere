@@ -27,19 +27,20 @@ import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredLinksFragment;
 import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredSourcesFragment;
 import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredUsersFragment;
 import org.mariotaku.twidere.model.Panes;
-import org.mariotaku.twidere.preference.ThemeColorPreference;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
+import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.util.ViewAccessor;
 import org.mariotaku.twidere.view.TabPageIndicator;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.Fragment;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -82,7 +83,7 @@ public class FiltersListFragment extends BaseFragment implements Panes.Right {
 		final View view = inflater.inflate(R.layout.filters, null);
 		mViewPager = (ViewPager) view.findViewById(R.id.pager);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
-		view.findViewById(R.id.tab_highlight).setBackgroundColor(ThemeColorPreference.getThemeColor(getActivity()));
+		ViewAccessor.setBackground(mIndicator, ThemeUtils.getActionBarBackground(getActivity()));
 		return view;
 	}
 

@@ -37,12 +37,15 @@ import org.mariotaku.twidere.provider.TweetStore.Tabs;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.CharArrayBuffer;
@@ -53,10 +56,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -71,6 +70,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 public class CustomTabsFragment extends BaseListFragment implements LoaderCallbacks<Cursor>, OnItemLongClickListener,
@@ -335,11 +335,14 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 
 	public static class CustomTabsAdapter extends SimpleCursorAdapter implements ITabsAdapter, OnClickListener {
 
+		private final Context mContext;
+
 		private CursorIndices mIndices;
 
 		public CustomTabsAdapter(final Context context) {
 			super(context, R.layout.two_line_with_icon_list_item, null, new String[] { Tabs.NAME },
 					new int[] { android.R.id.text1 }, 0);
+			mContext = context;
 		}
 
 		@Override

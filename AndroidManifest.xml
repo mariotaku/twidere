@@ -336,12 +336,6 @@
 			android:theme="@style/Theme.Blank.SwipeBack"
 			android:windowSoftInputMode="adjustResize"/>
 		<activity
-			android:name=".activity.InternalSettingsActivity"
-			android:label="@string/settings"/>
-		<activity
-			android:name=".activity.InternalSettingsDetailsActivity"
-			android:label="@string/settings"/>
-		<activity
 			android:name=".activity.DonateActivity"
 			android:label="@string/donate"
 			android:theme="@style/Theme.Blank.SwipeBack"

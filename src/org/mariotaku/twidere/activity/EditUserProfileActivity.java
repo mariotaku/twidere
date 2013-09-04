@@ -46,15 +46,15 @@ import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.view.ProfileImageBannerLayout;
 import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
 
+import android.app.LoaderManager;
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.Loader;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -426,7 +426,7 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 	}
 
 	private void getUserInfo() {
-		final LoaderManager lm = getSupportLoaderManager();
+		final LoaderManager lm = getLoaderManager();
 		lm.destroyLoader(LOADER_ID_USER);
 		if (mUserInfoLoaderInitialized) {
 			lm.restartLoader(LOADER_ID_USER, null, mUserInfoLoaderCallbacks);

@@ -37,15 +37,13 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
 			if (BROADCAST_HOME_TIMELINE_REFRESHED.equals(action)) {
-				onRefreshComplete();
+				setRefreshComplete();
 				getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
 			} else if (BROADCAST_HOME_TIMELINE_DATABASE_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
 			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
 				final AsyncTwitterWrapper twitter = getTwitterWrapper();
-				if (twitter != null && twitter.isHomeTimelineRefreshing()) {
-					setRefreshing(false);
-				}
+				setRefreshing(twitter != null && twitter.isHomeTimelineRefreshing());
 			}
 		}
 	};
@@ -70,7 +68,7 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 		if (twitter != null && twitter.isHomeTimelineRefreshing()) {
 			setRefreshing(false);
 		} else {
-			onRefreshComplete();
+			setRefreshComplete();
 		}
 	}
 

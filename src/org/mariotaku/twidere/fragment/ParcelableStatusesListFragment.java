@@ -38,9 +38,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
+import android.view.View;
 
 public abstract class ParcelableStatusesListFragment extends BaseStatusesListFragment<List<ParcelableStatus>> {
 
@@ -172,21 +173,12 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	// }
 
 	@Override
-	public void onPullDownToRefresh() {
+	public void onRefreshStarted(final View view) {
 		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();
 		final int count = adapter.getCount();
 		final ParcelableStatus status = count > 0 ? adapter.getStatus(0) : null;
 		if (status != null) {
 			getStatuses(new long[] { status.account_id }, null, new long[] { status.id });
-		}
-	}
-
-	@Override
-	public void onPullUpToRefresh() {
-		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();
-		final ParcelableStatus status = adapter.getLastStatus();
-		if (status != null) {
-			getStatuses(new long[] { status.account_id }, new long[] { status.id }, null);
 		}
 	}
 
@@ -241,6 +233,16 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	}
 
 	protected abstract Object[] getSavedStatusesFileArgs();
+
+	@Override
+	protected void loadMoreStatuses() {
+		if (isRefreshing()) return;
+		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();
+		final ParcelableStatus status = adapter.getLastStatus();
+		if (status != null) {
+			getStatuses(new long[] { status.account_id }, new long[] { status.id }, null);
+		}
+	}
 
 	@Override
 	protected ParcelableStatusesAdapter newAdapterInstance() {

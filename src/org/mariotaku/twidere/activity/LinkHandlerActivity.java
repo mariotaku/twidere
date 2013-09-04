@@ -50,11 +50,11 @@ import org.mariotaku.twidere.util.MultiSelectEventHandler;
 import org.mariotaku.twidere.util.ParseUtils;
 
 import android.app.ActionBar;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.view.Window;
@@ -99,7 +99,7 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity {
 		if (data != null) {
 			if (setFragment(data)) {
 				if (mFragment != null) {
-					final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+					final FragmentTransaction ft = getFragmentManager().beginTransaction();
 					ft.replace(R.id.main, mFragment);
 					ft.commit();
 					return;

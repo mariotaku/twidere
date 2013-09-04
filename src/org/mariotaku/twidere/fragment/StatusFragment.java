@@ -76,13 +76,17 @@ import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.app.Activity;
+import android.app.LoaderManager;
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ActivityNotFoundException;
+import android.content.AsyncTaskLoader;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Address;
@@ -90,10 +94,6 @@ import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -110,9 +110,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 import edu.ucdavis.earlybird.ProfilingUtil;
@@ -382,7 +379,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	};
 
 	public void displayStatus(final ParcelableStatus status) {
-		onRefreshComplete();
+		setRefreshComplete();
 		updatePullRefresh();
 		final boolean status_unchanged = mStatus != null && status != null && status.equals(mStatus);
 		if (!status_unchanged) {
@@ -432,7 +429,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		final boolean is_reply = status.in_reply_to_status_id > 0;
 		final String time = formatToLongTimeString(getActivity(), status.timestamp);
 		final String source_html = status.source;
-		setMode(!mLoadMoreAutomatically && is_reply ? Mode.PULL_FROM_START : Mode.DISABLED);
+		setEnabled(!mLoadMoreAutomatically && is_reply);
 		if (!isEmpty(time) && !isEmpty(source_html)) {
 			mTimeAndSourceView.setText(Html.fromHtml(getString(R.string.time_source, time, source_html)));
 		} else if (isEmpty(time) && !isEmpty(source_html)) {
@@ -511,11 +508,14 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 		mImagePreviewAdapter = new PreviewPagerAdapter(getActivity());
 		if (mLoadMoreAutomatically) {
-			setMode(Mode.DISABLED);
+			// TODO
+			// setMode(Mode.DISABLED);
 		} else {
-			setMode(Mode.PULL_FROM_START);
-			setPullLabel(getString(R.string.pull_to_load_conversation_label), Mode.BOTH);
-			setReleaseLabel(getString(R.string.pull_to_load_conversation_release_label), Mode.BOTH);
+			// setMode(Mode.PULL_FROM_START);
+			// setPullLabel(getString(R.string.pull_to_load_conversation_label),
+			// Mode.BOTH);
+			// setReleaseLabel(getString(R.string.pull_to_load_conversation_release_label),
+			// Mode.BOTH);
 		}
 		final Bundle bundle = getArguments();
 		if (bundle != null) {
@@ -648,9 +648,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		openImage(getActivity(), spec.image_full_url, spec.image_original_url, mStatus.is_possibly_sensitive);
 	}
 
-	@Override
-	public void onPullDownToRefresh() {
-		onRefreshComplete();
+	public void onRefreshStarted() {
+		setRefreshComplete();
 		showConversation();
 	}
 
@@ -774,7 +773,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mListView
 				.setTranscriptMode(should_enable ? ListView.TRANSCRIPT_MODE_NORMAL : ListView.TRANSCRIPT_MODE_DISABLED);
 		mInReplyToView.setClickable(should_enable);
-		setMode(should_enable ? Mode.PULL_FROM_START : Mode.DISABLED);
+		setEnabled(should_enable);
 	}
 
 	private void updateUserColor() {

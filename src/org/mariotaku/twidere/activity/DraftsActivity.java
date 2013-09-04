@@ -33,20 +33,20 @@ import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -86,7 +86,7 @@ public class DraftsActivity extends TwidereSwipeBackActivity implements LoaderCa
 		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_DRAFTS_DATABASE_UPDATED.equals(action)) {
-				getSupportLoaderManager().restartLoader(0, null, DraftsActivity.this);
+				getLoaderManager().restartLoader(0, null, DraftsActivity.this);
 			}
 		}
 	};
@@ -146,7 +146,7 @@ public class DraftsActivity extends TwidereSwipeBackActivity implements LoaderCa
 		switch (item.getItemId()) {
 			case MENU_SEND: {
 				sendDraft(mDraftItem);
-				getSupportLoaderManager().restartLoader(0, null, this);
+				getLoaderManager().restartLoader(0, null, this);
 				break;
 			}
 			case MENU_EDIT: {
@@ -155,7 +155,7 @@ public class DraftsActivity extends TwidereSwipeBackActivity implements LoaderCa
 			}
 			case MENU_DELETE: {
 				mResolver.delete(Drafts.CONTENT_URI, Drafts._ID + " = " + mSelectedId, null);
-				getSupportLoaderManager().restartLoader(0, null, this);
+				getLoaderManager().restartLoader(0, null, this);
 				break;
 			}
 		}
@@ -171,7 +171,7 @@ public class DraftsActivity extends TwidereSwipeBackActivity implements LoaderCa
 			}
 			case MENU_DELETE_ALL: {
 				mResolver.delete(Drafts.CONTENT_URI, null, null);
-				getSupportLoaderManager().restartLoader(0, null, this);
+				getLoaderManager().restartLoader(0, null, this);
 				break;
 			}
 		}
@@ -200,7 +200,7 @@ public class DraftsActivity extends TwidereSwipeBackActivity implements LoaderCa
 		mListView.setAdapter(mAdapter);
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
-		getSupportLoaderManager().initLoader(0, null, this);
+		getLoaderManager().initLoader(0, null, this);
 	}
 
 	@Override

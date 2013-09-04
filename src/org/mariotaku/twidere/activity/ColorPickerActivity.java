@@ -29,12 +29,12 @@ import org.mariotaku.twidere.fragment.ColorPickerDialogFragment;
 import org.mariotaku.twidere.fragment.ColorPickerDialogFragment.OnColorSelectedListener;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -116,7 +116,7 @@ public class ColorPickerActivity extends BaseDialogActivity implements OnItemCli
 	}
 
 	private void showDialog() {
-		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		final FragmentTransaction ft = getFragmentManager().beginTransaction();
 		mFragment.setInitialColor(mCustomizedColor);
 		mFragment.show(ft, "dialog");
 	}

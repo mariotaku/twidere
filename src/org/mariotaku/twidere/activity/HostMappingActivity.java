@@ -30,18 +30,18 @@ import org.mariotaku.twidere.util.AsyncTask;
 import org.mariotaku.twidere.util.HostsFileParser;
 import org.mariotaku.twidere.util.ParseUtils;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -93,7 +93,7 @@ public class HostMappingActivity extends BaseActivity implements OnItemClickList
 				break;
 			case MENU_ADD:
 				mDialogFragment = (DialogFragment) Fragment.instantiate(this, AddMappingDialogFragment.class.getName());
-				mDialogFragment.show(getSupportFragmentManager(), "add_mapping");
+				mDialogFragment.show(getFragmentManager(), "add_mapping");
 				break;
 			case MENU_IMPORT_FROM:
 				final Intent intent = new Intent(INTENT_ACTION_PICK_FILE);
@@ -156,7 +156,7 @@ public class HostMappingActivity extends BaseActivity implements OnItemClickList
 					final SharedPreferences.Editor editor = prefs.edit();
 					editor.putString(mHost, mAddress);
 					editor.commit();
-					final FragmentActivity activity = getActivity();
+					final Activity activity = getActivity();
 					if (activity instanceof HostMappingActivity) {
 						((HostMappingActivity) activity).reload();
 					}
@@ -270,7 +270,7 @@ public class HostMappingActivity extends BaseActivity implements OnItemClickList
 
 		@Override
 		protected void onPostExecute(final Boolean result) {
-			final FragmentManager fm = mActivity.getSupportFragmentManager();
+			final FragmentManager fm = mActivity.getFragmentManager();
 			final Fragment f = fm.findFragmentByTag("import_hosts_progress");
 			if (f instanceof DialogFragment) {
 				((DialogFragment) f).dismiss();
@@ -280,7 +280,7 @@ public class HostMappingActivity extends BaseActivity implements OnItemClickList
 
 		@Override
 		protected void onPreExecute() {
-			final FragmentManager fm = mActivity.getSupportFragmentManager();
+			final FragmentManager fm = mActivity.getFragmentManager();
 			final DialogFragment f = new ProgressDialogFragment();
 			f.setCancelable(false);
 			f.show(fm, "import_hosts_progress");

@@ -25,16 +25,15 @@ import org.mariotaku.twidere.fragment.NativeMapFragment;
 import org.mariotaku.twidere.fragment.WebMapFragment;
 import org.mariotaku.twidere.util.MapInterface;
 
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MapViewerActivity extends FragmentActivity implements Constants {
-
+public class MapViewerActivity extends Activity implements Constants {
 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
@@ -50,7 +49,7 @@ public class MapViewerActivity extends FragmentActivity implements Constants {
 				break;
 			}
 			case MENU_CENTER: {
-				final Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.map_frame);
+				final Fragment fragment = getFragmentManager().findFragmentById(R.id.map_frame);
 				if (!(fragment instanceof MapInterface)) {
 					break;
 				}
@@ -86,7 +85,7 @@ public class MapViewerActivity extends FragmentActivity implements Constants {
 		}
 		final Fragment fragment = isNativeMapSupported() ? new NativeMapFragment() : new WebMapFragment();
 		fragment.setArguments(bundle);
-		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		final FragmentTransaction ft = getFragmentManager().beginTransaction();
 		ft.replace(R.id.map_frame, fragment).commit();
 	}
 

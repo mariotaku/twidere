@@ -1,26 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:orientation="vertical">
+	android:orientation="vertical"
+	tools:context=".fragment.FiltersListFragment">
 
-	<FrameLayout
-		style="?android:attr/actionBarTabBarStyle"
+	<org.mariotaku.twidere.view.TabPageIndicator
+		android:id="@android:id/tabs"
+		style="?android:attr/actionBarStyle"
 		android:layout_width="match_parent"
-		android:layout_height="48dp"
-		android:layout_weight="0">
-
-		<View
-			android:id="@+id/tab_highlight"
-			android:layout_width="match_parent"
-			android:layout_height="2dp"
-			android:layout_gravity="bottom"/>
-
-		<org.mariotaku.twidere.view.TabPageIndicator
-			android:id="@android:id/tabs"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"/>
-	</FrameLayout>
+		android:layout_height="?android:actionBarSize"/>
 
 	<org.mariotaku.twidere.view.ExtendedViewPager
 		android:id="@+id/pager"

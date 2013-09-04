@@ -132,6 +132,9 @@ import twitter4j.http.HttpClientWrapper;
 import twitter4j.http.HttpResponse;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -169,10 +172,6 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.accessibility.AccessibilityEventCompat;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
@@ -2355,10 +2354,10 @@ public final class Utils implements Constants {
 			final boolean is_possibly_sensitive) {
 		if (context == null || uri == null) return;
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		if (context instanceof FragmentActivity && is_possibly_sensitive
+		if (context instanceof Activity && is_possibly_sensitive
 				&& !prefs.getBoolean(PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS, false)) {
-			final FragmentActivity activity = (FragmentActivity) context;
-			final FragmentManager fm = activity.getSupportFragmentManager();
+			final Activity activity = (Activity) context;
+			final FragmentManager fm = activity.getFragmentManager();
 			final DialogFragment fragment = new SensitiveContentWarningDialogFragment();
 			final Bundle args = new Bundle();
 			args.putParcelable(INTENT_KEY_URI, Uri.parse(uri));

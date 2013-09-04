@@ -5,14 +5,14 @@ import me.imid.swipebacklayout.lib.SwipeBackLayout;
 import org.mariotaku.twidere.util.ViewAccessor;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.Window;
 
 @SuppressLint("Registered")
-public class SwipeBackActivity extends FragmentActivity {
+public class SwipeBackActivity extends Activity {
 
 	private SwipeBackLayout mSwipeBackLayout;
 

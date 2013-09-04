@@ -2,12 +2,16 @@
 <resources>
 
 	<style name="Widget.Twidere.ActionBar" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse">
-		<item name="android:background">?android:colorActivatedHighlight</item>
+		<item name="android:background">@drawable/ab_twidere_holo</item>
 	</style>
 
-	<style name="Widget.Twidere.ActionBar.Dark" parent="android:Widget.Holo.ActionBar"></style>
+	<style name="Widget.Twidere.ActionBar.Dark" parent="android:Widget.Holo.ActionBar">
+		<item name="android:background">@drawable/ab_twidere_dark_holo</item>
+	</style>
 
-	<style name="Widget.Twidere.ActionBar.Light" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse"></style>
+	<style name="Widget.Twidere.ActionBar.Light" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse">
+		<item name="android:background">@drawable/ab_twidere_light_holo</item>
+	</style>
 
 	<style name="Widget.Twidere.Viewer.ActionBar" parent="android:Widget.Holo.ActionBar">
 		<item name="android:background">#80000000</item>
@@ -51,7 +55,7 @@
 
 	<style name="Widget.TabPageIndicator.TextView" parent="@android:style/Widget.TextView">
 		<item name="android:textAppearance">@style/TextAppearance.TabPageIndicator</item>
-		<item name="android:textColor">@android:color/tab_indicator_text</item>
+		<item name="android:textColor">#fff3f3f3</item>
 		<item name="android:textStyle">bold</item>
 		<item name="android:layout_gravity">center</item>
 		<item name="android:gravity">center</item>
@@ -62,7 +66,7 @@
 
 	<style name="Widget.TabPageIndicator.TextView.Light"></style>
 
-	<style name="TextAppearance.TabPageIndicator" parent="@android:style/TextAppearance.Small"></style>
+	<style name="TextAppearance.TabPageIndicator" parent="@android:style/TextAppearance.Small"/>
 
 	<style name="SwipeBackLayout">
 		<item name="edgeSize">16dip</item>

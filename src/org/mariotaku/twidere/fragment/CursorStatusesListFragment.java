@@ -31,22 +31,20 @@ import org.mariotaku.twidere.adapter.CursorStatusesAdapter;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTask;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
 
-public abstract class CursorStatusesListFragment extends BaseStatusesListFragment<Cursor> implements
-		View.OnTouchListener {
+public abstract class CursorStatusesListFragment extends BaseStatusesListFragment<Cursor> {
 
 	private static final String[] CURSOR_COLS = new String[] { Statuses._ID, Statuses.ACCOUNT_ID, Statuses.STATUS_ID,
 			Statuses.USER_ID, Statuses.STATUS_TIMESTAMP, Statuses.TEXT_HTML, Statuses.TEXT_PLAIN, Statuses.NAME,
@@ -69,7 +67,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	};
 
 	public HomeActivity getHomeActivity() {
-		final FragmentActivity activity = getActivity();
+		final Activity activity = getActivity();
 		if (activity instanceof HomeActivity) return (HomeActivity) activity;
 		return null;
 	}
@@ -77,7 +75,6 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		getListView().setOnTouchListener(this);
 		getListAdapter().setFiltersEnabled(true);
 	}
 
@@ -100,7 +97,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	}
 
 	@Override
-	public void onPullDownToRefresh() {
+	public void onRefreshStarted(final View view) {
 		savePosition();
 		new AsyncTask<Void, Void, long[][]>() {
 
@@ -121,30 +118,14 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	}
 
 	@Override
-	public void onPullUpToRefresh() {
-		savePosition();
-		new AsyncTask<Void, Void, long[][]>() {
-
-			@Override
-			protected long[][] doInBackground(final Void... params) {
-				final long[][] result = new long[3][];
-				result[0] = getActivatedAccountIds(getActivity());
-				result[1] = getOldestStatusIds();
-				return result;
-			}
-
-			@Override
-			protected void onPostExecute(final long[][] result) {
-				getStatuses(result[0], result[1], result[2]);
-			}
-
-		}.execute();
-	}
-
-	@Override
 	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
 		super.onScrollStateChanged(view, scrollState);
 		switch (scrollState) {
+			case SCROLL_STATE_FLING:
+			case SCROLL_STATE_TOUCH_SCROLL: {
+				getTwitterWrapper().clearNotification(getNotificationIdToClear());
+				break;
+			}
 			case SCROLL_STATE_IDLE:
 				savePosition();
 				break;
@@ -166,17 +147,6 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 		super.onStop();
 	}
 
-	@Override
-	public boolean onTouch(final View view, final MotionEvent ev) {
-		switch (ev.getAction()) {
-			case MotionEvent.ACTION_DOWN: {
-				getTwitterWrapper().clearNotification(getNotificationIdToClear());
-				break;
-			}
-		}
-		return false;
-	}
-
 	protected abstract Uri getContentUri();
 
 	@Override
@@ -192,7 +162,30 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	}
 
 	@Override
+	protected void loadMoreStatuses() {
+		if (isRefreshing()) return;
+		savePosition();
+		new AsyncTask<Void, Void, long[][]>() {
+
+			@Override
+			protected long[][] doInBackground(final Void... params) {
+				final long[][] result = new long[3][];
+				result[0] = getActivatedAccountIds(getActivity());
+				result[1] = getOldestStatusIds();
+				return result;
+			}
+
+			@Override
+			protected void onPostExecute(final long[][] result) {
+				getStatuses(result[0], result[1], result[2]);
+			}
+
+		}.execute();
+	}
+
+	@Override
 	protected CursorStatusesAdapter newAdapterInstance() {
 		return new CursorStatusesAdapter(getActivity());
 	}
+
 }

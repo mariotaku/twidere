@@ -28,15 +28,15 @@ import org.mariotaku.twidere.fragment.FiltersListFragment;
 import org.mariotaku.twidere.fragment.InternalSettingsFragment;
 import org.mariotaku.twidere.fragment.SettingsDetailsFragment;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
@@ -70,31 +70,26 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 		return super.onOptionsItemSelected(item);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void onPostCreate(final Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-		final InternalSettingsFragment fragment = (InternalSettingsFragment) getSupportFragmentManager()
-				.findFragmentById(R.id.main);
+		final InternalSettingsFragment fragment = (InternalSettingsFragment) getFragmentManager().findFragmentById(
+				R.id.main);
 		if (fragment == null) return;
-		final InternalSettingsActivity activity = fragment.getAttachedActivity();
-		if (activity != null) {
-			activity.findPreference(KEY_ABOUT).setOnPreferenceClickListener(this);
-			activity.findPreference(KEY_EXTENSIONS).setOnPreferenceClickListener(this);
-			activity.findPreference(KEY_CUSTOM_TABS).setOnPreferenceClickListener(this);
-			activity.findPreference(KEY_FILTERS).setOnPreferenceClickListener(this);
-			activity.findPreference(KEY_SETTINGS_APPEARANCE).setOnPreferenceClickListener(this);
-			activity.findPreference(KEY_SETTINGS_CONTENT_AND_STORAGE).setOnPreferenceClickListener(this);
-			activity.findPreference(KEY_SETTINGS_NETWORK).setOnPreferenceClickListener(this);
-			activity.findPreference(KEY_SETTINGS_REFRESH_AND_NOTIFICATIONS).setOnPreferenceClickListener(this);
-			activity.findPreference(KEY_SETTINGS_OTHER).setOnPreferenceClickListener(this);
-		}
+		fragment.findPreference(KEY_ABOUT).setOnPreferenceClickListener(this);
+		fragment.findPreference(KEY_EXTENSIONS).setOnPreferenceClickListener(this);
+		fragment.findPreference(KEY_CUSTOM_TABS).setOnPreferenceClickListener(this);
+		fragment.findPreference(KEY_FILTERS).setOnPreferenceClickListener(this);
+		fragment.findPreference(KEY_SETTINGS_APPEARANCE).setOnPreferenceClickListener(this);
+		fragment.findPreference(KEY_SETTINGS_CONTENT_AND_STORAGE).setOnPreferenceClickListener(this);
+		fragment.findPreference(KEY_SETTINGS_NETWORK).setOnPreferenceClickListener(this);
+		fragment.findPreference(KEY_SETTINGS_REFRESH_AND_NOTIFICATIONS).setOnPreferenceClickListener(this);
+		fragment.findPreference(KEY_SETTINGS_OTHER).setOnPreferenceClickListener(this);
 	}
 
 	@Override
 	public boolean onPreferenceClick(final Preference preference) {
 		final String key = preference.getKey();
-		final Bundle args = new Bundle();
 		final int res_id;
 		if (KEY_CUSTOM_TABS.equals(key)) {
 			if (isDualPaneMode()) {
@@ -139,14 +134,15 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 			res_id = -1;
 		}
 		if (res_id > 0) {
-			args.putInt(INTENT_KEY_RESID, res_id);
+			final Bundle bundle = new Bundle();
+			bundle.putInt(INTENT_KEY_RESID, res_id);
 			if (isDualPaneMode()) {
 				final Fragment fragment = new SettingsDetailsFragment();
-				fragment.setArguments(args);
+				fragment.setArguments(bundle);
 				showFragment(fragment);
 			} else {
 				final Intent intent = new Intent(this, SettingsDetailsActivity.class);
-				intent.putExtras(args);
+				intent.putExtras(bundle);
 				startActivity(intent);
 			}
 		}
@@ -168,7 +164,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
 		final Fragment fragment = new InternalSettingsFragment();
-		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		final FragmentTransaction ft = getFragmentManager().beginTransaction();
 		ft.replace(R.id.main, fragment);
 		ft.commit();
 	}
@@ -179,7 +175,7 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 	}
 
 	void showFragment(final Fragment fragment) {
-		final FragmentManager fm = getSupportFragmentManager();
+		final FragmentManager fm = getFragmentManager();
 		final int entry_count = fm.getBackStackEntryCount();
 		final FragmentTransaction ft = fm.beginTransaction();
 		for (int i = 0; i < entry_count; i++) {

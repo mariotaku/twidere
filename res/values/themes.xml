@@ -1,29 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-	<style name="Theme.Blank" parent="android:Theme.NoTitleBar"/>
+	<style name="Theme.Blank" parent="android:Theme.Holo.NoActionBar"/>
 
 	<style name="Theme.Blank.SwipeBack" parent="Theme.Blank">
 		<item name="android:windowIsTranslucent">true</item>
 		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
 	</style>
 
-	<style name="Theme.SwipeBack" parent="Theme.Twidere">
+	<style name="Theme.Twidere.SwipeBack">
 		<item name="android:windowIsTranslucent">true</item>
 		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
 	</style>
 
-	<style name="Theme.SwipeBack.Dark" parent="Theme.Twidere.Dark">
+	<style name="Theme.Twidere.Dark.SwipeBack">
 		<item name="android:windowIsTranslucent">true</item>
 		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
 	</style>
 
-	<style name="Theme.SwipeBack.Light" parent="Theme.Twidere.Light">
+	<style name="Theme.Twidere.Light.SwipeBack">
 		<item name="android:windowIsTranslucent">true</item>
 		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
 	</style>
 
-	<style name="Theme.Blank.Dialog" parent="Theme.Twidere.Dialog"/>
+	<style name="Theme.Twidere.SwipeBack.SolidBackground">
+		<item name="android:windowBackground">@android:color/white</item>
+	</style>
+
+	<style name="Theme.Twidere.Dark.SwipeBack.SolidBackground">
+		<item name="android:windowBackground">@android:color/black</item>
+	</style>
+
+	<style name="Theme.Twidere.Light.SwipeBack.SolidBackground">
+		<item name="android:windowBackground">@android:color/white</item>
+	</style>
+
+	<style name="Theme.Blank.Dialog" parent="Theme.Twidere.Dark.Dialog"/>
 
 	<style name="Theme.Twidere" parent="android:Theme.Holo.Light.DarkActionBar">
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar</item>
@@ -49,6 +61,18 @@
 		<item name="contentBackground">#20808080</item>
 	</style>
 
+	<style name="Theme.Twidere.SolidBackground">
+		<item name="android:windowBackground">@android:color/white</item>
+	</style>
+
+	<style name="Theme.Twidere.Dark.SolidBackground">
+		<item name="android:windowBackground">@android:color/black</item>
+	</style>
+
+	<style name="Theme.Twidere.Light.SolidBackground">
+		<item name="android:windowBackground">@android:color/white</item>
+	</style>
+
 	<style name="Theme.Twidere.Viewer" parent="android:Theme.Holo">
 		<item name="android:windowIsTranslucent">true</item>
 		<item name="android:actionBarStyle">@style/Widget.Twidere.Viewer.ActionBar</item>
@@ -59,7 +83,7 @@
 		<item name="contentBackground">#20000000</item>
 	</style>
 
-	<style name="Theme.Twidere.Dialog" parent="android:Theme.Holo.Dialog">
+	<style name="Theme.Twidere.Dark.Dialog" parent="android:Theme.Holo.Dialog">
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@null</item>
@@ -73,13 +97,20 @@
 		<item name="contentBackground">#20808080</item>
 	</style>
 
-	<style name="Theme.Twidere.Compose" parent="Theme.Twidere.Dialog">
+	<style name="Theme.Twidere.Compose" parent="Theme.Twidere.Light.Dialog">
+		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar</item>
 		<item name="android:windowNoTitle">true</item>
 	</style>
 
 	<style name="Theme.Twidere.Light.Compose" parent="Theme.Twidere.Light.Dialog">
+		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Light</item>
 		<item name="android:windowNoTitle">true</item>
 		<item name="android:windowBackground">@drawable/dialog_full_holo_light_darkactionbar</item>
+	</style>
+
+	<style name="Theme.Twidere.Dark.Compose" parent="Theme.Twidere.Dark.Dialog">
+		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Dark</item>
+		<item name="android:windowNoTitle">true</item>
 	</style>
 
 	<style name="Theme.Test" parent="android:Theme.Holo"/>

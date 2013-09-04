@@ -29,13 +29,13 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.ProgressDialogFragment;
 
+import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.media.MediaScannerConnection;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -46,9 +46,9 @@ public class SaveImageTask extends AsyncTask<Void, Void, File> implements Consta
 	private static final String PROGRESS_FRAGMENT_TAG = "progress";
 
 	private final File src;
-	private final FragmentActivity activity;
+	private final Activity activity;
 
-	public SaveImageTask(final FragmentActivity activity, final File src) {
+	public SaveImageTask(final Activity activity, final File src) {
 		this.activity = activity;
 		this.src = src;
 	}
@@ -61,7 +61,7 @@ public class SaveImageTask extends AsyncTask<Void, Void, File> implements Consta
 
 	@Override
 	protected void onCancelled() {
-		final FragmentManager fm = activity.getSupportFragmentManager();
+		final FragmentManager fm = activity.getFragmentManager();
 		final DialogFragment fragment = (DialogFragment) fm.findFragmentByTag(PROGRESS_FRAGMENT_TAG);
 		if (fragment != null && fragment.isVisible()) {
 			fragment.dismiss();
@@ -71,7 +71,7 @@ public class SaveImageTask extends AsyncTask<Void, Void, File> implements Consta
 
 	@Override
 	protected void onPostExecute(final File result) {
-		final FragmentManager fm = activity.getSupportFragmentManager();
+		final FragmentManager fm = activity.getFragmentManager();
 		final DialogFragment fragment = (DialogFragment) fm.findFragmentByTag(PROGRESS_FRAGMENT_TAG);
 		if (fragment != null) {
 			fragment.dismiss();
@@ -89,7 +89,7 @@ public class SaveImageTask extends AsyncTask<Void, Void, File> implements Consta
 	protected void onPreExecute() {
 		final DialogFragment fragment = new ProgressDialogFragment();
 		fragment.setCancelable(false);
-		fragment.show(activity.getSupportFragmentManager(), PROGRESS_FRAGMENT_TAG);
+		fragment.show(activity.getFragmentManager(), PROGRESS_FRAGMENT_TAG);
 		super.onPreExecute();
 	}
 

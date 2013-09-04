@@ -58,6 +58,8 @@ import twitter4j.http.HttpClientWrapper;
 import twitter4j.http.HttpResponse;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -68,8 +70,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -162,14 +162,12 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 
 	@Override
 	public void onBackPressed() {
-		if (getSupportLoaderManager().hasRunningLoaders()) {
-			if (!mBackPressed) {
-				final CroutonStyle.Builder builder = new CroutonStyle.Builder(CroutonStyle.INFO);
-				final Crouton crouton = Crouton.makeText(this, R.string.signing_in_please_wait, builder.build());
-				crouton.setLifecycleCallback(this);
-				crouton.show();
-				return;
-			}
+		if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING && !mBackPressed) {
+			final CroutonStyle.Builder builder = new CroutonStyle.Builder(CroutonStyle.INFO);
+			final Crouton crouton = Crouton.makeText(this, R.string.signing_in_please_wait, builder.build());
+			crouton.setLifecycleCallback(this);
+			crouton.show();
+			return;
 		}
 		if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) {
 			mTask.cancel(false);
@@ -200,8 +198,7 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 				break;
 			}
 			case R.id.sign_in_method_introduction: {
-				new SignInMethodIntroductionDialogFragment().show(getSupportFragmentManager(),
-						"sign_in_method_introduction");
+				new SignInMethodIntroductionDialogFragment().show(getFragmentManager(), "sign_in_method_introduction");
 				break;
 			}
 		}
@@ -227,7 +224,7 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 
 	@Override
 	public void onDestroy() {
-		getSupportLoaderManager().destroyLoader(0);
+		getLoaderManager().destroyLoader(0);
 		super.onDestroy();
 	}
 
@@ -337,10 +334,10 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 		setSignInButton();
 		setUserColorButton();
 		if (!mPreferences.getBoolean(PREFERENCE_KEY_API_UPGRADE_CONFIRMED, false)) {
-			final FragmentManager fm = getSupportFragmentManager();
+			final FragmentManager fm = getFragmentManager();
 			final Fragment fragment = fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE);
 			if (fragment == null || !fragment.isAdded()) {
-				new APIUpgradeConfirmDialog().show(getSupportFragmentManager(), FRAGMENT_TAG_API_UPGRADE_NOTICE);
+				new APIUpgradeConfirmDialog().show(getFragmentManager(), FRAGMENT_TAG_API_UPGRADE_NOTICE);
 			}
 		}
 	}

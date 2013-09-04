@@ -38,15 +38,15 @@ import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -56,8 +56,6 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
-
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 
 abstract class BaseUsersListFragment extends BasePullToRefreshListFragment implements
 		LoaderCallbacks<List<ParcelableUser>>, OnScrollListener, OnItemLongClickListener, Panes.Left,
@@ -79,7 +77,7 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 	private long mAccountId;
 	private final List<ParcelableUser> mData = Collections
 			.synchronizedList(new NoDuplicatesArrayList<ParcelableUser>());
-	private volatile boolean mReachedBottom, mNotReachedBottomBefore = true, mTickerStopped, mBusy;
+	private boolean mTickerStopped, mBusy;
 
 	private ParcelableUser mSelectedUser;
 
@@ -100,6 +98,20 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 		return mPreferences;
 	}
 
+	public void loadMoreUsers() {
+		if (isRefreshing()) return;
+		final int count = mAdapter.getCount();
+		if (count - 1 > 0) {
+			final Bundle args = getArguments();
+			if (args != null) {
+				args.putLong(INTENT_KEY_MAX_ID, mAdapter.getItem(count - 1).id);
+			}
+			// if (!getLoaderManager().hasRunningLoaders()) {
+			getLoaderManager().restartLoader(0, args, this);
+			// }
+		}
+	}
+
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -117,7 +129,7 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 		mAccountId = account_id;
 		mListView.setOnItemLongClickListener(this);
 		mListView.setOnScrollListener(this);
-		setMode(Mode.PULL_FROM_END);
+		// setEnabled("from_end");
 		setListAdapter(mAdapter);
 		getLoaderManager().initLoader(0, getArguments(), this);
 		setListShown(false);
@@ -198,7 +210,7 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 		setProgressBarIndeterminateVisibility(false);
 		mAdapter.setData(data);
 		mAdapter.setShowAccountColor(getActivatedAccountIds(getActivity()).length > 1);
-		onRefreshComplete();
+		setRefreshComplete();
 		setListShown(true);
 	}
 
@@ -231,22 +243,20 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 	}
 
 	@Override
-	public void onPullDownToRefresh() {
-		getLoaderManager().restartLoader(0, getArguments(), this);
+	public void onReachedBottom() {
+		if (!mLoadMoreAutomatically) return;
+		loadMoreUsers();
 	}
 
 	@Override
-	public void onPullUpToRefresh() {
-		final int count = mAdapter.getCount();
-		if (count - 1 > 0) {
-			final Bundle args = getArguments();
-			if (args != null) {
-				args.putLong(INTENT_KEY_MAX_ID, mAdapter.getItem(count - 1).id);
-			}
-			if (!getLoaderManager().hasRunningLoaders()) {
-				getLoaderManager().restartLoader(0, args, this);
-			}
-		}
+	protected void onPullUp() {
+		if (mLoadMoreAutomatically) return;
+		loadMoreUsers();
+	}
+
+	@Override
+	public void onRefreshStarted(final View view) {
+		getLoaderManager().restartLoader(0, getArguments(), this);
 	}
 
 	@Override
@@ -261,26 +271,6 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 		mAdapter.setDisplayProfileImage(display_profile_image);
 		mAdapter.setTextSize(text_size);
 		mAdapter.setNameDisplayOption(name_display_option);
-	}
-
-	@Override
-	public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
-			final int totalItemCount) {
-		final boolean reached = firstVisibleItem + visibleItemCount >= totalItemCount
-				&& totalItemCount >= visibleItemCount;
-
-		if (mReachedBottom != reached) {
-			mReachedBottom = reached;
-			if (mReachedBottom && mNotReachedBottomBefore) {
-				mNotReachedBottomBefore = false;
-				return;
-			}
-			final int count = mAdapter.getCount();
-			if (mLoadMoreAutomatically && mReachedBottom && count > visibleItemCount) {
-				onPullUpToRefresh();
-			}
-		}
-
 	}
 
 	@Override

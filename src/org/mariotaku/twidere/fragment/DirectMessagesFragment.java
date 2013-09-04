@@ -33,31 +33,27 @@ import org.mariotaku.twidere.util.AsyncTask;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
 
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListView;
 
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-
 public class DirectMessagesFragment extends BasePullToRefreshListFragment implements LoaderCallbacks<Cursor>,
-		OnScrollListener, OnTouchListener, MultiSelectManager.Callback {
+		OnScrollListener, MultiSelectManager.Callback {
 
 	private static final long TICKER_DURATION = 5000L;
 
@@ -70,10 +66,10 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 
 	private ListView mListView;
 
-	private volatile boolean mBusy, mTickerStopped, mReachedBottom, mNotReachedBottomBefore = true;
+	private boolean mBusy, mTickerStopped;
+	private boolean mLoadMoreAutomatically;
 
 	private DirectMessagesEntryAdapter mAdapter;
-
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -93,11 +89,16 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 						|| mTwitterWrapper.isSentDirectMessagesRefreshing()) {
 					setRefreshing(false);
 				} else {
-					onRefreshComplete();
+					setRefreshComplete();
 				}
 			}
 		}
 	};
+
+	@Override
+	public String getPullToRefreshTag() {
+		return "direct_messages_" + getTabPosition();
+	}
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
@@ -108,13 +109,9 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 		mTwitterWrapper.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
 		mMultiSelectManager = getMultiSelectManager();
 		mAdapter = new DirectMessagesEntryAdapter(getActivity());
-
 		setListAdapter(mAdapter);
 		mListView = getListView();
-		mListView.setOnTouchListener(this);
 		mListView.setOnScrollListener(this);
-		setMode(Mode.BOTH);
-
 		getLoaderManager().initLoader(0, null, this);
 		setListShown(false);
 	}
@@ -186,7 +183,7 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 	}
 
 	@Override
-	public void onPullDownToRefresh() {
+	public void onRefreshStarted(final View view) {
 		if (mTwitterWrapper == null) return;
 		new AsyncTask<Void, Void, long[][]>() {
 
@@ -208,29 +205,6 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 	}
 
 	@Override
-	public void onPullUpToRefresh() {
-		if (mTwitterWrapper == null) return;
-		new AsyncTask<Void, Void, long[][]>() {
-
-			@Override
-			protected long[][] doInBackground(final Void... params) {
-				final long[][] result = new long[3][];
-				result[0] = getActivatedAccountIds(getActivity());
-				result[1] = getOldestMessageIdsFromDatabase(getActivity(), DirectMessages.Inbox.CONTENT_URI);
-				result[2] = getOldestMessageIdsFromDatabase(getActivity(), DirectMessages.Outbox.CONTENT_URI);
-				return result;
-			}
-
-			@Override
-			protected void onPostExecute(final long[][] result) {
-				mTwitterWrapper.getReceivedDirectMessages(result[0], result[1], null);
-				mTwitterWrapper.getSentDirectMessages(result[0], result[2], null);
-			}
-
-		}.execute();
-	}
-
-	@Override
 	public void onResume() {
 		super.onResume();
 		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
@@ -244,22 +218,8 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 		mAdapter.setShowAbsoluteTime(show_absolute_time);
 		mAdapter.setNameDisplayOption(name_display_option);
 		mAdapter.setMultiSelectEnabled(mMultiSelectManager.isActive());
-	}
 
-	@Override
-	public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
-			final int totalItemCount) {
-		final boolean reached = firstVisibleItem + visibleItemCount >= totalItemCount
-				&& totalItemCount >= visibleItemCount;
-
-		if (mReachedBottom != reached) {
-			mReachedBottom = reached;
-			if (mReachedBottom && mNotReachedBottomBefore) {
-				mNotReachedBottomBefore = false;
-				return;
-			}
-		}
-
+		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 	}
 
 	@Override
@@ -267,6 +227,7 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 		switch (scrollState) {
 			case SCROLL_STATE_FLING:
 			case SCROLL_STATE_TOUCH_SCROLL:
+				mTwitterWrapper.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
 				mBusy = true;
 				break;
 			case SCROLL_STATE_IDLE:
@@ -306,7 +267,7 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 		if (mTwitterWrapper.isReceivedDirectMessagesRefreshing() || mTwitterWrapper.isSentDirectMessagesRefreshing()) {
 			setRefreshing(false);
 		} else {
-			onRefreshComplete();
+			setRefreshComplete();
 		}
 		mMultiSelectManager.registerCallback(this);
 	}
@@ -320,14 +281,37 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 	}
 
 	@Override
-	public boolean onTouch(final View view, final MotionEvent ev) {
-		switch (ev.getAction()) {
-			case MotionEvent.ACTION_DOWN: {
-				mTwitterWrapper.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
-				break;
+	protected void onReachedBottom() {
+		if (!mLoadMoreAutomatically) return;
+		loadMoreMessages();
+	}
+
+	@Override
+	protected void onPullUp() {
+		if (mLoadMoreAutomatically) return;
+		loadMoreMessages();
+	}
+	
+	private void loadMoreMessages() {
+		if (mTwitterWrapper == null || isRefreshing()) return;
+		new AsyncTask<Void, Void, long[][]>() {
+
+			@Override
+			protected long[][] doInBackground(final Void... params) {
+				final long[][] result = new long[3][];
+				result[0] = getActivatedAccountIds(getActivity());
+				result[1] = getOldestMessageIdsFromDatabase(getActivity(), DirectMessages.Inbox.CONTENT_URI);
+				result[2] = getOldestMessageIdsFromDatabase(getActivity(), DirectMessages.Outbox.CONTENT_URI);
+				return result;
 			}
-		}
-		return false;
+
+			@Override
+			protected void onPostExecute(final long[][] result) {
+				mTwitterWrapper.getReceivedDirectMessages(result[0], result[1], null);
+				mTwitterWrapper.getSentDirectMessages(result[0], result[2], null);
+			}
+
+		}.execute();
 	}
 
 }

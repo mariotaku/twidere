@@ -42,17 +42,17 @@ import org.mariotaku.twidere.util.PositionManager;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -62,8 +62,6 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
-
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 
 abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragment implements LoaderCallbacks<Data>,
 		OnScrollListener, OnItemLongClickListener, OnMenuItemClickListener, Panes.Left, MultiSelectManager.Callback {
@@ -84,9 +82,8 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 	private Data mData;
 	private ParcelableStatus mSelectedStatus;
 
+	private boolean mBusy, mTickerStopped;
 	private boolean mLoadMoreAutomatically;
-
-	private boolean mBusy, mTickerStopped, mReachedBottom, mNotReachedBottomBefore = true;
 	private int mListScrollOffset;
 
 	private MultiSelectManager mMultiSelectManager;
@@ -103,6 +100,11 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 	@Override
 	public IStatusesAdapter<Data> getListAdapter() {
 		return mAdapter;
+	}
+
+	@Override
+	public String getPullToRefreshTag() {
+		return getPositionKey();
 	}
 
 	public ParcelableStatus getSelectedStatus() {
@@ -130,7 +132,6 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		setListAdapter(mAdapter);
 		mListView.setOnScrollListener(this);
 		mListView.setOnItemLongClickListener(this);
-		setMode(Mode.BOTH);
 		setListShown(false);
 		getLoaderManager().initLoader(0, getArguments(), this);
 	}
@@ -224,7 +225,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		final long last_viewed_id = mAdapter.findItemIdByPosition(first_visible_position);
 		mAdapter.setData(data);
 		setListShown(true);
-		onRefreshComplete();
+		setRefreshComplete();
 		setProgressBarIndeterminateVisibility(false);
 		mAdapter.setShowAccountColor(getActivatedAccountIds(getActivity()).length > 1);
 		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true);
@@ -331,12 +332,9 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 	}
 
 	@Override
-	public abstract void onPullDownToRefresh();
-
-	@Override
 	public void onResume() {
 		super.onResume();
-		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
+
 		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
 		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(getActivity()));
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
@@ -360,27 +358,8 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		mAdapter.setLinkHightlightingEnabled(link_highlighting);
 		mAdapter.setIndicateMyStatusDisabled(isMyTimeline() || !indicate_my_status);
 		mAdapter.setLinkUnderlineOnly(link_underline_only);
-	}
 
-	@Override
-	public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
-			final int totalItemCount) {
-		final boolean reached = firstVisibleItem + visibleItemCount >= totalItemCount
-				&& totalItemCount >= visibleItemCount;
-
-		if (mReachedBottom != reached) {
-			mReachedBottom = reached;
-			if (mReachedBottom && mNotReachedBottomBefore) {
-				mNotReachedBottomBefore = false;
-				return;
-			}
-			if (mLoadMoreAutomatically && mReachedBottom && getListAdapter().getCount() > visibleItemCount) {
-				if (!isRefreshing()) {
-					onPullUpToRefresh();
-				}
-			}
-		}
-
+		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 	}
 
 	@Override
@@ -436,7 +415,21 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 
 	protected abstract String getPositionKey();
 
+	protected abstract void loadMoreStatuses();
+
 	protected abstract IStatusesAdapter<Data> newAdapterInstance();
+
+	@Override
+	protected void onReachedBottom() {
+		if (!mLoadMoreAutomatically) return;
+		loadMoreStatuses();
+	}
+	
+	@Override
+	protected void onPullUp() {
+		if (mLoadMoreAutomatically) return;
+		loadMoreStatuses();
+	}
 
 	protected void savePosition() {
 		final int first_visible_position = mListView.getFirstVisiblePosition();

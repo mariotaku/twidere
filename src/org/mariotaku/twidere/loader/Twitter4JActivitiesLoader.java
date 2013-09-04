@@ -36,9 +36,9 @@ import twitter4j.Activity;
 import twitter4j.Paging;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.v4.content.AsyncTaskLoader;
 
 public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<ParcelableActivity>> implements Constants {
 	private final Context mContext;

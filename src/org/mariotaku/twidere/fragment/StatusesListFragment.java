@@ -25,8 +25,8 @@ import org.mariotaku.twidere.loader.IntentExtrasStatusesLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
 
 import android.content.Context;
+import android.content.Loader;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
 
 public class StatusesListFragment extends ParcelableStatusesListFragment {
 

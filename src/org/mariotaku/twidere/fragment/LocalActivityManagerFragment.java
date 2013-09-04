@@ -19,9 +19,9 @@
 
 package org.mariotaku.twidere.fragment;
 
+import android.app.Fragment;
 import android.app.LocalActivityManager;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 
 /**
  * This is a fragment that will be used during transition from activities to

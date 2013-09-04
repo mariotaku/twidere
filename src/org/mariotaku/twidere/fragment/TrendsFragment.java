@@ -28,17 +28,17 @@ import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.widget.ListView;
@@ -60,11 +60,16 @@ public class TrendsFragment extends BasePullToRefreshListFragment implements Loa
 			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
 			if (BROADCAST_TRENDS_UPDATED.equals(action)) {
-				onRefreshComplete();
+				setRefreshComplete();
 				getLoaderManager().restartLoader(0, null, TrendsFragment.this);
 			}
 		}
 	};
+
+	@Override
+	public String getPullToRefreshTag() {
+		return "trends_" + getTabPosition();
+	}
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
@@ -106,13 +111,8 @@ public class TrendsFragment extends BasePullToRefreshListFragment implements Loa
 	}
 
 	@Override
-	public void onPullDownToRefresh() {
+	public void onRefreshStarted(final View view) {
 		mTwitterWrapper.getLocalTrends(mAccountId, mPreferences.getInt(PREFERENCE_KEY_LOCAL_TRENDS_WOEID, 1));
-	}
-
-	@Override
-	public void onPullUpToRefresh() {
-
 	}
 
 	@Override
@@ -120,9 +120,8 @@ public class TrendsFragment extends BasePullToRefreshListFragment implements Loa
 		super.onStart();
 		final IntentFilter filter = new IntentFilter(BROADCAST_TRENDS_UPDATED);
 		registerReceiver(mStatusReceiver, filter);
-		if (mTwitterWrapper.isLocalTrendsRefreshing()) {
-			setRefreshing(false);
-		}
+		// TODO
+		// setRefreshing(mTwitterWrapper.isLocalTrendsRefreshing());
 	}
 
 	@Override

@@ -22,10 +22,10 @@ package org.mariotaku.twidere.activity;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.WebViewFragment;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 import android.view.Window;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -57,7 +57,7 @@ public class BrowserActivity extends BaseActivity {
 			finish();
 			return;
 		}
-		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		final FragmentTransaction ft = getFragmentManager().beginTransaction();
 		final Fragment fragment = Fragment.instantiate(this, WebViewFragment.class.getName());
 		final Bundle bundle = new Bundle();
 		bundle.putString(INTENT_KEY_URI, mUri.toString());

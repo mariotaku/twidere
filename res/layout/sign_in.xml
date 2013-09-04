@@ -51,6 +51,7 @@
 
 				<Button
 					android:id="@+id/sign_in"
+					style="?android:buttonStyleSmall"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:layout_weight="1"
@@ -60,6 +61,7 @@
 
 				<Button
 					android:id="@+id/sign_up"
+					style="?android:buttonStyleSmall"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:layout_weight="1"
@@ -79,7 +81,8 @@
 				android:gravity="center_vertical"
 				android:minHeight="36dp"
 				android:onClick="onClick"
-				android:text="@string/sign_in_method_introduction_title"/>
+				android:text="@string/sign_in_method_introduction_title"
+				android:textAppearance="?android:textAppearanceSmall"/>
 		</RelativeLayout>
 	</ScrollView>
 

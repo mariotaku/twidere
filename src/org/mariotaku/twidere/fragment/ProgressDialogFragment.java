@@ -21,10 +21,10 @@ package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.R;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 
 public class ProgressDialogFragment extends BaseDialogFragment {
 
@@ -35,10 +35,10 @@ public class ProgressDialogFragment extends BaseDialogFragment {
 		return dialog;
 	}
 
-	public static ProgressDialogFragment show(final FragmentActivity activity, final String tag) {
+	public static ProgressDialogFragment show(final Activity activity, final String tag) {
 		if (activity == null) return null;
 		final ProgressDialogFragment f = new ProgressDialogFragment();
-		f.show(activity.getSupportFragmentManager(), tag);
+		f.show(activity.getFragmentManager(), tag);
 		return f;
 	}
 

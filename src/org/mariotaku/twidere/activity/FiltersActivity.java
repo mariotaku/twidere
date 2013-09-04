@@ -22,8 +22,8 @@ package org.mariotaku.twidere.activity;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.FiltersListFragment;
 
+import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 
 public class FiltersActivity extends BaseActivity {
@@ -43,7 +43,7 @@ public class FiltersActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.base);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		final FragmentTransaction ft = getFragmentManager().beginTransaction();
 		ft.replace(R.id.main, new FiltersListFragment());
 		ft.commit();
 	}

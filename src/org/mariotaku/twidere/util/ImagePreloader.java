@@ -23,22 +23,12 @@ import java.io.File;
 
 import org.mariotaku.twidere.Constants;
 
-import android.content.Context;
 import android.os.Handler;
-import android.widget.GridView;
-import android.widget.ListView;
 
 import com.nostra13.universalimageloader.cache.disc.DiscCacheAware;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 /**
- * Lazy image loader for {@link ListView} and {@link GridView} etc.</br> </br>
- * Inspired by <a href="https://github.com/thest1/LazyList">LazyList</a>, this
- * class has extra features like image loading/caching image to
- * /mnt/sdcard/Android/data/[package name]/cache features.</br> </br> Requires
- * Android 2.2, you can modify {@link Context#getExternalCacheDir()} to other to
- * support Android 2.1 and below.
- * 
  * @author mariotaku
  * 
  */

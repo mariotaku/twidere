@@ -33,13 +33,13 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.ArrayAdapter;
 import org.mariotaku.twidere.util.ArrayUtils;
 
+import android.app.LoaderManager.LoaderCallbacks;
+import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.Loader;
 import android.text.TextUtils.TruncateAt;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -62,7 +62,7 @@ public class FilePickerActivity extends BaseActivity implements OnItemClickListe
 			final File parent = mCurrentDirectory.getParentFile();
 			if (parent != null) {
 				mCurrentDirectory = parent;
-				getSupportLoaderManager().restartLoader(0, getIntent().getExtras(), this);
+				getLoaderManager().restartLoader(0, getIntent().getExtras(), this);
 				return;
 			}
 		}
@@ -88,7 +88,7 @@ public class FilePickerActivity extends BaseActivity implements OnItemClickListe
 		if (file == null) return;
 		if (file.isDirectory()) {
 			mCurrentDirectory = file;
-			getSupportLoaderManager().restartLoader(0, getIntent().getExtras(), this);
+			getLoaderManager().restartLoader(0, getIntent().getExtras(), this);
 		} else if (file.isFile() && !isPickDirectory()) {
 			final Intent intent = new Intent();
 			intent.setData(Uri.fromFile(file));
@@ -147,7 +147,7 @@ public class FilePickerActivity extends BaseActivity implements OnItemClickListe
 		mListView = (ListView) findViewById(android.R.id.list);
 		mListView.setAdapter(mAdapter);
 		mListView.setOnItemClickListener(this);
-		getSupportLoaderManager().initLoader(0, getIntent().getExtras(), this);
+		getLoaderManager().initLoader(0, getIntent().getExtras(), this);
 	}
 
 	@Override

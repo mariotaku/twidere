@@ -6,10 +6,10 @@ import org.mariotaku.twidere.loader.AbsImageLoader.DownloadListener;
 import org.mariotaku.twidere.loader.AbsImageLoader.Result;
 import org.mariotaku.twidere.loader.ImageLoader;
 
+import android.app.Activity;
+import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Loader;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
 
 public abstract class BaseImageViewerFragment extends BaseFragment implements LoaderCallbacks<ImageLoader.Result> {
 
@@ -21,9 +21,9 @@ public abstract class BaseImageViewerFragment extends BaseFragment implements Lo
 
 	@Override
 	public final Loader<Result> onCreateLoader(final int id, final Bundle args) {
-		final FragmentActivity activity = getActivity();
-		return newLoaderInstance(activity, args, activity instanceof DownloadListener ? (DownloadListener) activity
-				: null);
+		final Activity activity = getActivity();
+		final DownloadListener listener = activity instanceof DownloadListener ? (DownloadListener) activity : null;
+		return newLoaderInstance(getActivity(), args, listener);
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public abstract class BaseImageViewerFragment extends BaseFragment implements Lo
 
 	}
 
-	private Loader<Result> newLoaderInstance(final FragmentActivity activity, final Bundle args,
+	private Loader<Result> newLoaderInstance(final Activity activity, final Bundle args,
 			final DownloadListener downloadListener) {
 		return null;
 	}

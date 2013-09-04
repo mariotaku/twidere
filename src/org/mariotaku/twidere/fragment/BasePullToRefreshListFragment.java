@@ -19,32 +19,28 @@
 
 package org.mariotaku.twidere.fragment;
 
-import static android.support.v4.app.ListFragmentTrojan.INTERNAL_EMPTY_ID;
-import static android.support.v4.app.ListFragmentTrojan.INTERNAL_LIST_CONTAINER_ID;
-import static android.support.v4.app.ListFragmentTrojan.INTERNAL_PROGRESS_CONTAINER_ID;
+import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.view.Gravity;
+import android.view.GestureDetector;
+import android.view.GestureDetector.OnGestureListener;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
-import com.handmark.pulltorefresh.library.ILoadingLayout;
-import com.handmark.pulltorefresh.library.PullToRefreshBase;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
-import com.handmark.pulltorefresh.library.PullToRefreshListView;
-import com.handmark.pulltorefresh.library.extras.AccessibilityPullEventListener;
+public abstract class BasePullToRefreshListFragment extends BaseListFragment implements
+		PullToRefreshAttacher.OnRefreshListener, OnTouchListener, OnGestureListener {
 
-public abstract class BasePullToRefreshListFragment extends BaseListFragment implements OnRefreshListener2<ListView> {
+	private PullToRefreshAttacherActivity mPullToRefreshAttacherActivity;
+	private PullToRefreshAttacher mPullToRefreshAttacher;
+	private GestureDetector mGestureDector;
+	private boolean mPulledUp;
 
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -53,132 +49,93 @@ public abstract class BasePullToRefreshListFragment extends BaseListFragment imp
 			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
 			if ((BasePullToRefreshListFragment.this.getClass().getName() + SHUFFIX_REFRESH_TAB).equals(action)) {
-				onPullDownToRefresh(mPullToRefreshListView);
+				onRefreshStarted(getListView());
 			}
 		}
 	};
 
-	private PullToRefreshListView mPullToRefreshListView;
-
-	public final PullToRefreshListView getPullToRefreshListView() {
-		return mPullToRefreshListView;
+	public String getPullToRefreshTag() {
+		return getTag();
 	}
 
-	/**
-	 * Returns whether the Widget is currently in the Refreshing mState
-	 * 
-	 * @return true if the Widget is currently refreshing
-	 */
 	public boolean isRefreshing() {
-		if (mPullToRefreshListView == null) return false;
-		return mPullToRefreshListView.isRefreshing();
+		if (mPullToRefreshAttacherActivity == null) return false;
+		return mPullToRefreshAttacherActivity.isRefreshing(this);
 	}
 
-	/**
-	 * Provide default implementation to return a simple list view. Subclasses
-	 * can override to replace with their own layout. If doing so, the returned
-	 * view hierarchy <em>must</em> have a ListView whose id is
-	 * {@link android.R.id#list android.R.id.list} and can optionally have a
-	 * sibling view id {@link android.R.id#empty android.R.id.empty} that is to
-	 * be shown when the list is empty.
-	 * 
-	 * <p>
-	 * If you are overriding this method with your own custom content, consider
-	 * including the standard layout {@link android.R.layout#list_content} in
-	 * your layout file, so that you continue to retain all of the standard
-	 * behavior of ListFragment. In particular, this is currently the only way
-	 * to have the built-in indeterminant progress state be shown.
-	 */
+	@Override
+	public void onActivityCreated(final Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		final Activity activity = getActivity();
+		if (activity instanceof PullToRefreshAttacherActivity) {
+			mPullToRefreshAttacherActivity = (PullToRefreshAttacherActivity) activity;
+		} else
+			throw new IllegalStateException("Activity class must implement PullToRefreshAttacherActivity");
+		mPullToRefreshAttacher.setOnTouchListener(getListView(), this);
+		mGestureDector = new GestureDetector(getActivity(), this);
+	}
+
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		final Context context = getActivity();
-
-		final FrameLayout root = new FrameLayout(context);
-
-		// ------------------------------------------------------------------
-
-		final LinearLayout pframe = new LinearLayout(context);
-		pframe.setId(INTERNAL_PROGRESS_CONTAINER_ID);
-		pframe.setOrientation(LinearLayout.VERTICAL);
-		pframe.setVisibility(View.GONE);
-		pframe.setGravity(Gravity.CENTER);
-
-		final ProgressBar progress = new ProgressBar(context, null, android.R.attr.progressBarStyleLarge);
-		pframe.addView(progress, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-				ViewGroup.LayoutParams.WRAP_CONTENT));
-
-		root.addView(pframe, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-				ViewGroup.LayoutParams.MATCH_PARENT));
-
-		// ------------------------------------------------------------------
-
-		final FrameLayout lframe = new FrameLayout(context);
-		lframe.setId(INTERNAL_LIST_CONTAINER_ID);
-
-		final TextView tv = new TextView(getActivity());
-		tv.setId(INTERNAL_EMPTY_ID);
-		tv.setGravity(Gravity.CENTER);
-		lframe.addView(tv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-				ViewGroup.LayoutParams.MATCH_PARENT));
-
-		final PullToRefreshListView plv = new PullToRefreshListView(context);
-		plv.setOnRefreshListener(this);
-		plv.setShowIndicator(false);
-		plv.setOnPullEventListener(new AccessibilityPullEventListener<ListView>(context));
-		plv.setPullToRefreshOverScrollEnabled(false);
-		mPullToRefreshListView = plv;
-
-		final ListView lv = plv.getRefreshableView();
-		lv.setId(android.R.id.list);
-		lv.setDrawSelectorOnTop(false);
-		// ViewCompat.setOverScrollMode(lv, ViewCompat.OVER_SCROLL_NEVER);
-		lframe.addView(plv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-				ViewGroup.LayoutParams.MATCH_PARENT));
-
-		root.addView(lframe, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-				ViewGroup.LayoutParams.MATCH_PARENT));
-
-		// ------------------------------------------------------------------
-
-		root.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-				ViewGroup.LayoutParams.MATCH_PARENT));
-
-		return root;
+		final View view = super.onCreateView(inflater, container, savedInstanceState);
+		final Activity activity = getActivity();
+		if (activity instanceof PullToRefreshAttacherActivity) {
+			mPullToRefreshAttacher = ((PullToRefreshAttacherActivity) activity).getPullToRefreshAttacher();
+			// Set the Refreshable View to be the ListView and the refresh
+			// listener
+			// to be this.
+			mPullToRefreshAttacher.addRefreshableView(view.findViewById(android.R.id.list), this);
+		} else
+			throw new IllegalStateException("Activity class must implement PullToRefreshAttacherActivity");
+		return view;
 	}
 
-	/**
-	 * onPullDownToRefresh will be called only when the user has Pulled from the
-	 * start, and released.
-	 */
 	@Override
-	public final void onPullDownToRefresh(final PullToRefreshBase<ListView> refreshView) {
-		onPullDownToRefresh();
+	public boolean onDown(final MotionEvent e) {
+		return true;
 	}
 
-	/**
-	 * onPullUpToRefresh will be called only when the user has Pulled from the
-	 * end, and released.
-	 */
 	@Override
-	public final void onPullUpToRefresh(final PullToRefreshBase<ListView> refreshView) {
-		onPullUpToRefresh();
+	public boolean onFling(final MotionEvent e1, final MotionEvent e2, final float velocityX, final float velocityY) {
+		return true;
 	}
 
-	/**
-	 * Mark the current Refresh as complete. Will Reset the UI and hide the
-	 * Refreshing View
-	 */
-	public final void onRefreshComplete() {
-		if (mPullToRefreshListView == null) return;
-		mPullToRefreshListView.onRefreshComplete();
+	@Override
+	public void onLongPress(final MotionEvent e) {
+
+	}
+
+	@Override
+	public void onRefreshStarted(final View view) {
+	}
+
+	@Override
+	public boolean onScroll(final MotionEvent e1, final MotionEvent e2, final float distanceX, final float distanceY) {
+		if (isReachedBottom() && distanceY > 0 && !mPulledUp && !isRefreshing()) {
+			mPulledUp = true;
+			onPullUp();
+			return true;
+		}
+		if (distanceY < 0) {
+			mPulledUp = false;
+		}
+		return true;
+	}
+
+	@Override
+	public void onShowPress(final MotionEvent e) {
+
+	}
+
+	@Override
+	public boolean onSingleTapUp(final MotionEvent e) {
+		return true;
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
-		final IntentFilter filter = new IntentFilter(getClass().getName() + SHUFFIX_REFRESH_TAB);
-		registerReceiver(mStateReceiver, filter);
-		onPostStart();
+		registerReceiver(mStateReceiver, new IntentFilter(getClass().getName() + SHUFFIX_REFRESH_TAB));
 	}
 
 	@Override
@@ -187,140 +144,48 @@ public abstract class BasePullToRefreshListFragment extends BaseListFragment imp
 		super.onStop();
 	}
 
-	/**
-	 * Set the mode of Pull-to-Refresh that this view will use.
-	 * 
-	 * @param mode - Mode to set the View to
-	 */
-	public final void setMode(final Mode mode) {
-		if (mPullToRefreshListView == null) return;
-		mPullToRefreshListView.setMode(mode);
+	@Override
+	public final boolean onTouch(final View v, final MotionEvent event) {
+		mGestureDector.onTouchEvent(event);
+		return false;
 	}
 
-	/**
-	 * Set Text to show when the Widget is being Pulled
-	 * 
-	 * @param pullLabel - String to display
-	 * @param mode - Controls which Header/Footer Views will be updated.
-	 *            <code>Mode.BOTH</code> will update all available, other values
-	 *            will update the relevant View.
-	 */
-	public void setPullLabel(final String pullLabel, final Mode mode) {
-		if (mPullToRefreshListView == null) return;
-		final ILoadingLayout layout;
-		if (mode != null) {
-			layout = mPullToRefreshListView.getLoadingLayoutProxy(mode.showHeaderLoadingLayout(),
-					mode.showFooterLoadingLayout());
-		} else {
-			layout = mPullToRefreshListView.getLoadingLayoutProxy();
+	public void setEnabled(final boolean enabled) {
+		if (mPullToRefreshAttacherActivity == null) return;
+		mPullToRefreshAttacherActivity.setEnabled(this, enabled);
+	}
+
+	public void setRefreshComplete() {
+		if (mPullToRefreshAttacherActivity == null) return;
+		mPulledUp = false;
+		mPullToRefreshAttacherActivity.setRefreshComplete(this);
+	}
+
+	public void setRefreshing(final boolean refreshing) {
+		if (mPullToRefreshAttacherActivity == null) return;
+		if (!refreshing) {
+			mPulledUp = false;
 		}
-		if (layout == null) return;
-		layout.setPullLabel(pullLabel);
+		mPullToRefreshAttacherActivity.setRefreshing(this, true);
 	}
 
-	/**
-	 * Sets the Widget to be in the refresh State. The UI will be updated to
-	 * show the 'Refreshing' view.
-	 * 
-	 * @param doScroll - true if you want to force a scroll to the Refreshing
-	 *            view.
-	 */
-	public final void setRefreshing(final boolean doScroll) {
-		if (mPullToRefreshListView == null) return;
-		mPullToRefreshListView.setRefreshing(doScroll);
-
+	protected PullToRefreshAttacher getPullToRefreshAttacher() {
+		return mPullToRefreshAttacher;
 	}
 
-	/**
-	 * Set Text to show when the Widget is refreshing
-	 * <code>setRefreshingLabel(releaseLabel, Mode.BOTH)</code>
-	 * 
-	 * @param releaseLabel - String to display
-	 */
-	public void setRefreshingLabel(final String refreshingLabel) {
-		if (mPullToRefreshListView == null) return;
-		final ILoadingLayout layout = mPullToRefreshListView.getLoadingLayoutProxy();
-		if (layout == null) return;
-		layout.setRefreshingLabel(refreshingLabel);
+	protected void onPullUp() {
 	}
 
-	/**
-	 * Set Text to show when the Widget is refreshing
-	 * 
-	 * @param refreshingLabel - String to display
-	 * @param mode - Controls which Header/Footer Views will be updated.
-	 *            <code>Mode.BOTH</code> will update all available, other values
-	 *            will update the relevant View.
-	 */
-	public void setRefreshingLabel(final String refreshingLabel, final Mode mode) {
-		if (mPullToRefreshListView == null) return;
-		final ILoadingLayout layout;
-		if (mode != null) {
-			layout = mPullToRefreshListView.getLoadingLayoutProxy(mode.showHeaderLoadingLayout(),
-					mode.showFooterLoadingLayout());
-		} else {
-			layout = mPullToRefreshListView.getLoadingLayoutProxy();
-		}
-		if (layout == null) return;
-		layout.setRefreshingLabel(refreshingLabel);
+	public static interface PullToRefreshAttacherActivity {
+		public PullToRefreshAttacher getPullToRefreshAttacher();
+
+		public boolean isRefreshing(BasePullToRefreshListFragment fragment);
+
+		public void setEnabled(final BasePullToRefreshListFragment fragment, final boolean enabled);
+
+		public void setRefreshComplete(final BasePullToRefreshListFragment fragment);
+
+		public void setRefreshing(final BasePullToRefreshListFragment fragment, final boolean refreshing);
 	}
 
-	/**
-	 * Set Text to show when the Widget is being pulled, and will refresh when
-	 * released. This is the same as calling
-	 * <code>setReleaseLabel(releaseLabel, Mode.BOTH)</code>
-	 * 
-	 * @param releaseLabel - String to display
-	 */
-	public void setReleaseLabel(final String releaseLabel) {
-		if (mPullToRefreshListView == null) return;
-		final ILoadingLayout layout = mPullToRefreshListView.getLoadingLayoutProxy();
-		if (layout == null) return;
-		layout.setReleaseLabel(releaseLabel);
-	}
-
-	/**
-	 * Set Text to show when the Widget is being pulled, and will refresh when
-	 * released
-	 * 
-	 * @param releaseLabel - String to display
-	 * @param mode - Controls which Header/Footer Views will be updated.
-	 *            <code>Mode.BOTH</code> will update all available, other values
-	 *            will update the relevant View.
-	 */
-	public void setReleaseLabel(final String releaseLabel, final Mode mode) {
-		if (mPullToRefreshListView == null) return;
-		final ILoadingLayout layout;
-		if (mode != null) {
-			layout = mPullToRefreshListView.getLoadingLayoutProxy(mode.showHeaderLoadingLayout(),
-					mode.showFooterLoadingLayout());
-		} else {
-			layout = mPullToRefreshListView.getLoadingLayoutProxy();
-		}
-		if (layout == null) return;
-		layout.setReleaseLabel(releaseLabel);
-	}
-
-	/**
-	 * A mutator to enable/disable whether the 'Refreshing' View should be
-	 * automatically shown when refreshing.
-	 * 
-	 * @param showView
-	 */
-	public final void setShowViewWhileRefreshing(final boolean showView) {
-		if (mPullToRefreshListView == null) return;
-		mPullToRefreshListView.setShowViewWhileRefreshing(showView);
-	}
-
-	/**
-	 * onPullDownToRefresh will be called only when the user has Pulled from the
-	 * start, and released.
-	 */
-	protected abstract void onPullDownToRefresh();
-
-	/**
-	 * onPullUpToRefresh will be called only when the user has Pulled from the
-	 * end, and released.
-	 */
-	protected abstract void onPullUpToRefresh();
 }

@@ -38,9 +38,11 @@ import org.mariotaku.twidere.fragment.DirectMessagesFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.fragment.TrendsFragment;
+import org.mariotaku.twidere.fragment.iface.FragmentCallback;
 import org.mariotaku.twidere.model.TabSpec;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.FragmentManagerAccessor;
 import org.mariotaku.twidere.util.MathUtils;
 import org.mariotaku.twidere.util.MultiSelectEventHandler;
 import org.mariotaku.twidere.util.ThemeUtils;
@@ -48,6 +50,8 @@ import org.mariotaku.twidere.view.ExtendedViewPager;
 import org.mariotaku.twidere.view.TabPageIndicator;
 
 import android.app.ActionBar;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.SearchManager;
@@ -58,9 +62,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v4.widget.DrawerLayout;
@@ -72,10 +73,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import edu.ucdavis.earlybird.ProfilingUtil;
 
-public class HomeActivity extends DualPaneActivity implements OnClickListener, OnPageChangeListener {
+public class HomeActivity extends DualPaneActivity implements OnClickListener, OnPageChangeListener, FragmentCallback {
 
 	private SharedPreferences mPreferences;
 	private AsyncTwitterWrapper mTwitterWrapper;
@@ -88,14 +88,13 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private ExtendedViewPager mViewPager;
 	private ImageButton mComposeButton;
 	private TabPageIndicator mIndicator;
-	private ProgressBar mProgress;
 	private DrawerLayout mDrawerLayout;
 	private View mLeftDrawerContainer;
 
-	private final boolean mProgressBarIndeterminateVisible = false;
-
 	private boolean mDisplayAppIcon;
 	private boolean mShowHomeTab, mShowMentionsTab, mShowMessagesTab, mShowTrendsTab;
+
+	private Fragment mCurrentVisibleFragment;
 
 	public static final int TAB_POSITION_HOME = 0;
 	public static final int TAB_POSITION_MENTIONS = 1;
@@ -110,7 +109,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
-				setProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
+				setRefreshing(hasActivatedTask());
 			} else if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
 				notifyAccountsChanged();
 			}
@@ -138,7 +137,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	public void onBackStackChanged() {
 		super.onBackStackChanged();
 		if (!isDualPaneMode()) return;
-		final FragmentManager fm = getSupportFragmentManager();
+		final FragmentManager fm = getFragmentManager();
 		final Fragment left_pane_fragment = fm.findFragmentById(PANE_LEFT);
 		final boolean left_pane_used = left_pane_fragment != null && left_pane_fragment.isAdded();
 		setPagingEnabled(!left_pane_used);
@@ -194,7 +193,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME: {
-				final FragmentManager fm = getSupportFragmentManager();
+				final FragmentManager fm = getFragmentManager();
 				final int count = fm.getBackStackEntryCount();
 				if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
 					mDrawerLayout.closeDrawer(Gravity.LEFT);
@@ -203,15 +202,15 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 					mDrawerLayout.openDrawer(Gravity.LEFT);
 					return true;
 				}
-				if (isDualPaneMode() && !FragmentManagerTrojan.isStateSaved(fm)) {
+				if (isDualPaneMode() && !FragmentManagerAccessor.isStateSaved(fm)) {
 					for (int i = 0; i < count; i++) {
 						fm.popBackStackImmediate();
 					}
-					setProgressBarIndeterminateVisibility(false);
+					setRefreshing(hasActivatedTask());
 				}
 				return true;
 			}
-			case MENU_COMPOSE: {
+			case MENU_ACTIONS: {
 				if (mComposeButton != null) {
 					onClick(mComposeButton);
 				}
@@ -298,12 +297,12 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 				}
 			}
 
-			final MenuItem composeItem = menu.findItem(MENU_COMPOSE);
-			if (composeItem != null) {
-				composeItem.setIcon(icon);
-				composeItem.setTitle(title);
-				composeItem.setEnabled(mViewPager.getVisibility() == View.VISIBLE);
-				composeItem.setVisible(!bottom_actions);
+			final MenuItem actionsItem = menu.findItem(MENU_ACTIONS);
+			if (actionsItem != null) {
+				actionsItem.setIcon(icon);
+				actionsItem.setTitle(title);
+				actionsItem.setEnabled(mViewPager.getVisibility() == View.VISIBLE);
+				actionsItem.setVisible(!bottom_actions);
 			}
 			if (mComposeButton != null) {
 				mComposeButton.setImageResource(icon);
@@ -363,11 +362,10 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		}
 		final View view = mActionBar.getCustomView();
 
-		mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		ThemeUtils.applyBackground(mIndicator);
 		final boolean tab_display_label = res.getBoolean(R.bool.tab_display_label);
-		mAdapter = new TabsAdapter(this, getSupportFragmentManager(), mIndicator);
+		mAdapter = new TabsAdapter(this, getFragmentManager(), mIndicator);
 		mShowHomeTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_HOME_TAB, true);
 		mShowMentionsTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_MENTIONS_TAB, true);
 		mShowMessagesTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_MESSAGES_TAB, true);
@@ -380,7 +378,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mIndicator.setDisplayLabel(tab_display_label);
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.LEFT);
 		mLeftDrawerContainer.setBackgroundResource(getPaneBackground());
-		getSupportFragmentManager().addOnBackStackChangedListener(this);
+		getFragmentManager().addOnBackStackChangedListener(this);
 
 		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true);
 		final long[] activated_ids = getActivatedAccountIds(this);
@@ -424,7 +422,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		super.onStart();
 		mMultiSelectHandler.dispatchOnStart();
 		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONSTART));
-		setProgressBarIndeterminateVisibility(mProgressBarIndeterminateVisible);
+		setRefreshing(hasActivatedTask());
 		final IntentFilter filter = new IntentFilter(BROADCAST_TASK_STATE_CHANGED);
 		registerReceiver(mStateReceiver, filter);
 		final boolean show_home_tab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_HOME_TAB, true);
@@ -510,6 +508,11 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		return initial_tab;
 	}
 
+	private boolean hasActivatedTask() {
+		if (mTwitterWrapper == null) return false;
+		return mTwitterWrapper.hasActivatedTask();
+	}
+
 	private void initTabs(final Collection<? extends TabSpec> tabs) {
 		mCustomTabs.clear();
 		mCustomTabs.addAll(tabs);
@@ -545,10 +548,10 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 
 	private void showAPIUpgradeNotice() {
 		if (!mPreferences.getBoolean(PREFERENCE_KEY_API_UPGRADE_CONFIRMED, false)) {
-			final FragmentManager fm = getSupportFragmentManager();
+			final FragmentManager fm = getFragmentManager();
 			if (fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE) == null
 					|| !fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE).isAdded()) {
-				new APIUpgradeConfirmDialog().show(getSupportFragmentManager(), "api_upgrade_notice");
+				new APIUpgradeConfirmDialog().show(getFragmentManager(), "api_upgrade_notice");
 			}
 		}
 	}
@@ -566,6 +569,15 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			builder.setContentIntent(content_intent);
 			mNotificationManager.notify(NOTIFICATION_ID_DATA_PROFILING, builder.build());
 		}
+	}
+
+	@Override
+	public void onSetUserVisibleHint(Fragment fragment, boolean isVisibleToUser) {
+		// TODO Auto-generated method stub
+		if (isVisibleToUser) {
+			mCurrentVisibleFragment = fragment;
+		}
+		
 	}
 
 }

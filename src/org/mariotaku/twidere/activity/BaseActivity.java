@@ -19,27 +19,37 @@
 
 package org.mariotaku.twidere.activity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.activity.iface.IThemedActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.fragment.BasePullToRefreshListFragment;
+import org.mariotaku.twidere.fragment.BasePullToRefreshListFragment.PullToRefreshAttacherActivity;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MessagesManager;
 import org.mariotaku.twidere.util.ThemeUtils;
 
+import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 @SuppressLint("Registered")
-public class BaseActivity extends BaseThemedActivity implements Constants, IThemedActivity {
+public class BaseActivity extends BaseThemedActivity implements Constants, PullToRefreshAttacherActivity {
 
-	private boolean mIsSolidColorBackground;
+	private final Set<String> mEnabledStates = new HashSet<String>();
+	private final Set<String> mRefreshingStates = new HashSet<String>();
 
 	private boolean mInstanceStateSaved, mIsVisible, mIsOnTop;
+	private PullToRefreshAttacher mPullToRefreshAttacher;
 
 	public MessagesManager getMessagesManager() {
 		return getTwidereApplication() != null ? getTwidereApplication().getMessagesManager() : null;
+	}
+
+	@Override
+	public PullToRefreshAttacher getPullToRefreshAttacher() {
+		return mPullToRefreshAttacher;
 	}
 
 	public TwidereApplication getTwidereApplication() {
@@ -54,17 +64,51 @@ public class BaseActivity extends BaseThemedActivity implements Constants, IThem
 		return mIsOnTop;
 	}
 
+	@Override
+	public boolean isRefreshing(final BasePullToRefreshListFragment fragment) {
+		return mRefreshingStates.contains(fragment);
+	}
+
 	public boolean isVisible() {
 		return mIsVisible;
 	}
 
 	@Override
-	protected int getThemeResource() {
-		return ThemeUtils.getThemeResource(this);
+	public void setEnabled(final BasePullToRefreshListFragment fragment, final boolean enabled) {
+		final String tag = fragment.getPullToRefreshTag();
+		if (tag == null) return;
+		if (enabled) {
+			mEnabledStates.add(tag);
+		} else {
+			mEnabledStates.remove(tag);
+		}
 	}
 
-	protected boolean isSolidColorBackground() {
-		return mIsSolidColorBackground;
+	@Override
+	public void setRefreshComplete(final BasePullToRefreshListFragment fragment) {
+		final String tag = fragment.getPullToRefreshTag();
+		if (tag == null) return;
+		mRefreshingStates.remove(tag);
+	}
+
+	@Override
+	public void setRefreshing(final BasePullToRefreshListFragment fragment, final boolean refreshing) {
+		final String tag = fragment.getPullToRefreshTag();
+		if (tag == null) return;
+		if (refreshing) {
+			mRefreshingStates.add(tag);
+		} else {
+			mRefreshingStates.remove(tag);
+		}
+	}
+
+	public void setRefreshing(final boolean refreshing) {
+		mPullToRefreshAttacher.setRefreshing(refreshing);
+	}
+
+	@Override
+	protected int getThemeResource() {
+		return ThemeUtils.getThemeResource(this);
 	}
 
 	protected boolean isStateSaved() {
@@ -73,9 +117,14 @@ public class BaseActivity extends BaseThemedActivity implements Constants, IThem
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		setTheme();
 		super.onCreate(savedInstanceState);
 		setActionBarBackground();
+		/**
+		 * Here we create a PullToRefreshAttacher manually without an Options
+		 * instance. PullToRefreshAttacher will manually create one using
+		 * default values.
+		 */
+		mPullToRefreshAttacher = PullToRefreshAttacher.get(this);
 	}
 
 	@Override
@@ -89,10 +138,6 @@ public class BaseActivity extends BaseThemedActivity implements Constants, IThem
 		super.onResume();
 		mInstanceStateSaved = false;
 		mIsOnTop = true;
-		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		if (preferences.getBoolean(PREFERENCE_KEY_SOLID_COLOR_BACKGROUND, false) != mIsSolidColorBackground) {
-			restart();
-		}
 	}
 
 	@Override
@@ -121,36 +166,8 @@ public class BaseActivity extends BaseThemedActivity implements Constants, IThem
 		super.onStop();
 	}
 
-	protected void setActionBarBackground() {
-		// final ActionBar ab = getActionBar();
-		// final TypedArray a = obtainStyledAttributes(new int[] {
-		// R.attr.actionBarBackground });
-		// final int color = getThemeColor(this);
-		// final Drawable d = a.getDrawable(0);
-		// if (d == null) return;
-		// if (mIsDarkTheme) {
-		// final Drawable mutated = d.mutate();
-		// mutated.setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-		// ab.setBackgroundDrawable(mutated);
-		// } else if (d instanceof LayerDrawable) {
-		// final LayerDrawable ld = (LayerDrawable) d.mutate();
-		// ld.findDrawableByLayerId(R.id.color_layer).setColorFilter(color,
-		// PorterDuff.Mode.MULTIPLY);
-		// ab.setBackgroundDrawable(ld);
-		// }
-	}
-
-	protected boolean shouldSetBackground() {
-		return true;
-	}
-
-	private void setTheme() {
-		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final boolean is_dark_theme = ThemeUtils.isDarkTheme(getCurrentThemeResource());
-		mIsSolidColorBackground = preferences.getBoolean(PREFERENCE_KEY_SOLID_COLOR_BACKGROUND, false);
-		if (mIsSolidColorBackground && shouldSetBackground()) {
-			getWindow().setBackgroundDrawableResource(is_dark_theme ? android.R.color.black : android.R.color.white);
-		}
+	private final void setActionBarBackground() {
+		getActionBar().setBackgroundDrawable(ThemeUtils.getActionBarBackground(this));
 	}
 
 }

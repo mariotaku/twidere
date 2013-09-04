@@ -6,99 +6,92 @@
 	android:minWidth="@dimen/compose_min_width"
 	android:orientation="vertical">
 
-	<FrameLayout
+	<LinearLayout
+		android:id="@+id/compose_actionbar"
 		style="?android:actionBarStyle"
 		android:layout_width="match_parent"
 		android:layout_height="?android:actionBarSize"
-		android:clickable="true">
-
-		<View
-			android:id="@+id/actionbar_highlight"
-			android:layout_width="match_parent"
-			android:layout_height="2dp"
-			android:layout_gravity="bottom"/>
+		android:baselineAligned="false"
+		android:gravity="center_vertical"
+		android:orientation="horizontal">
 
 		<LinearLayout
 			android:layout_width="match_parent"
-			android:layout_height="?android:actionBarSize"
-			android:baselineAligned="false"
-			android:gravity="center_vertical"
-			android:orientation="horizontal">
+			android:layout_height="match_parent"
+			android:layout_weight="1">
 
 			<LinearLayout
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:layout_weight="1">
-
-				<LinearLayout
-					android:id="@+id/close"
-					style="?android:actionButtonStyle"
-					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
-					android:clickable="true"
-					android:focusable="true"
-					android:onClick="onClick"
-					android:orientation="horizontal"
-					android:paddingLeft="4dp">
-
-					<ImageView
-						android:layout_width="wrap_content"
-						android:layout_height="match_parent"
-						android:scaleType="fitCenter"
-						android:src="@drawable/actionbar_back_dark"/>
-
-					<ImageView
-						android:layout_width="48dp"
-						android:layout_height="48dp"
-						android:paddingBottom="8dp"
-						android:paddingTop="8dp"
-						android:scaleType="centerInside"
-						android:src="@drawable/ic_launcher"/>
-
-					<LinearLayout
-						android:layout_width="wrap_content"
-						android:layout_height="match_parent"
-						android:gravity="center_vertical"
-						android:orientation="vertical">
-
-						<TextView
-							android:id="@+id/actionbar_title"
-							android:layout_width="wrap_content"
-							android:layout_height="wrap_content"
-							android:singleLine="true"
-							android:textAppearance="?android:textAppearanceMedium"/>
-
-						<TextView
-							android:id="@+id/actionbar_subtitle"
-							android:layout_width="wrap_content"
-							android:layout_height="wrap_content"
-							android:singleLine="true"
-							android:text="@string/quote_protected_tweet_notice"
-							android:textAppearance="?android:textAppearanceSmall"
-							android:visibility="gone"/>
-					</LinearLayout>
-				</LinearLayout>
-			</LinearLayout>
-
-			<ProgressBar
-				android:id="@+id/actionbar_progress_indeterminate"
-				style="?android:progressBarStyle"
-				android:layout_width="?android:actionBarSize"
-				android:layout_height="?android:actionBarSize"
-				android:layout_gravity="center_vertical"
-				android:layout_weight="0"
-				android:indeterminateOnly="true"
-				android:padding="2dp"
-				android:visibility="gone"/>
-
-			<org.mariotaku.menubar.MenuBar
-				android:id="@+id/action_menu"
+				android:id="@+id/close"
+				style="?android:actionButtonStyle"
 				android:layout_width="wrap_content"
 				android:layout_height="match_parent"
-				android:layout_weight="0"
-				android:background="@android:color/transparent"/>
+				android:clickable="true"
+				android:focusable="true"
+				android:onClick="onClick"
+				android:orientation="horizontal"
+				android:paddingLeft="4dp"
+				android:paddingRight="8dp">
+
+				<ImageView
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:scaleType="fitCenter"
+					android:src="@drawable/actionbar_back_dark"/>
+
+				<ImageView
+					android:layout_width="?android:actionBarSize"
+					android:layout_height="match_parent"
+					android:paddingBottom="8dp"
+					android:paddingTop="8dp"
+					android:scaleType="centerInside"
+					android:src="@drawable/ic_launcher"/>
+
+				<LinearLayout
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:gravity="center_vertical"
+					android:orientation="vertical"
+					android:paddingLeft="4dp">
+
+					<TextView
+						android:id="@+id/actionbar_title"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:singleLine="true"
+						android:textAppearance="?android:textAppearanceMedium"
+						android:textColor="@android:color/white"/>
+
+					<TextView
+						android:id="@+id/actionbar_subtitle"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:singleLine="true"
+						android:text="@string/quote_protected_tweet_notice"
+						android:textAppearance="?android:textAppearanceSmall"
+						android:textColor="@android:color/holo_orange_dark"
+						android:visibility="gone"/>
+				</LinearLayout>
+			</LinearLayout>
 		</LinearLayout>
-	</FrameLayout>
+
+		<ProgressBar
+			android:id="@+id/actionbar_progress_indeterminate"
+			style="?android:progressBarStyle"
+			android:layout_width="?android:actionBarSize"
+			android:layout_height="?android:actionBarSize"
+			android:layout_gravity="center_vertical"
+			android:layout_weight="0"
+			android:indeterminateOnly="true"
+			android:padding="2dp"
+			android:visibility="gone"/>
+
+		<org.mariotaku.menubar.MenuBar
+			android:id="@+id/action_menu"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:layout_weight="0"
+			android:background="@android:color/transparent"/>
+	</LinearLayout>
 
 	<LinearLayout
 		android:layout_width="match_parent"

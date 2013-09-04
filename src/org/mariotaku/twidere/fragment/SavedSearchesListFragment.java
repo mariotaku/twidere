@@ -29,10 +29,10 @@ import org.mariotaku.twidere.model.Panes;
 
 import twitter4j.ResponseList;
 import twitter4j.SavedSearch;
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
+import android.content.Loader;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -95,17 +95,16 @@ public class SavedSearchesListFragment extends BasePullToRefreshListFragment imp
 		}
 		mAdapter.setData(data);
 		setListShown(true);
-		onRefreshComplete();
+		setRefreshComplete();
 	}
 
-	@Override
-	public void onPullDownToRefresh() {
-		getLoaderManager().restartLoader(0, null, this);
-	}
-
-	@Override
 	public void onPullUpToRefresh() {
 
+	}
+
+	@Override
+	public void onRefreshStarted(final View view) {
+		getLoaderManager().restartLoader(0, null, this);
 	}
 
 	static class SavedSearchesAdapter extends BaseAdapter {

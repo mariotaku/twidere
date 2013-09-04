@@ -26,12 +26,11 @@ import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 
 public class BaseFragment extends Fragment implements Constants {
 
@@ -72,13 +71,9 @@ public class BaseFragment extends Fragment implements Constants {
 	}
 
 	public void invalidateOptionsMenu() {
-		final FragmentActivity activity = getActivity();
+		final Activity activity = getActivity();
 		if (activity == null) return;
-		if (activity instanceof BaseActivity) {
-			((BaseActivity) activity).invalidateOptionsMenu();
-		} else {
-			activity.supportInvalidateOptionsMenu();
-		}
+		activity.invalidateOptionsMenu();
 	}
 
 	public void registerReceiver(final BroadcastReceiver receiver, final IntentFilter filter) {

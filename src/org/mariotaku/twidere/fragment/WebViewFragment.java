@@ -26,6 +26,7 @@ import org.mariotaku.twidere.view.WebSettingsAccessor;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -35,7 +36,6 @@ import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -83,10 +83,10 @@ public class WebViewFragment extends BaseFragment {
 
 	public static class DefaultWebViewClient extends WebViewClient {
 
-		private final FragmentActivity mActivity;
+		private final Activity mActivity;
 		private final SharedPreferences mPreferences;
 
-		public DefaultWebViewClient(final FragmentActivity activity) {
+		public DefaultWebViewClient(final Activity activity) {
 			mActivity = activity;
 			mPreferences = activity.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		}

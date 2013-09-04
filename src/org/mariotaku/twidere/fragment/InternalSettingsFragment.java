@@ -19,13 +19,20 @@
 
 package org.mariotaku.twidere.fragment;
 
-import org.mariotaku.twidere.activity.InternalSettingsActivity;
+import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.Panes;
 
-public class InternalSettingsFragment extends ActivityHostFragment<InternalSettingsActivity> implements Panes.Left {
+import android.os.Bundle;
+import android.preference.PreferenceFragment;
+
+public class InternalSettingsFragment extends PreferenceFragment implements Constants, Panes.Left {
 
 	@Override
-	protected Class<InternalSettingsActivity> getActivityClass() {
-		return InternalSettingsActivity.class;
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		getPreferenceManager().setSharedPreferencesName(SHARED_PREFERENCES_NAME);
+		addPreferencesFromResource(R.xml.settings);
 	}
+
 }

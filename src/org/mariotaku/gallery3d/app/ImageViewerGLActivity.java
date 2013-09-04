@@ -30,31 +30,29 @@ import org.mariotaku.gallery3d.util.ThreadPool;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.loader.GLImageLoader;
-import org.mariotaku.twidere.util.SaveImageTask;
 import org.mariotaku.twidere.util.Utils;
 
 import android.app.ActionBar;
 import android.app.ActionBar.OnMenuVisibilityListener;
+import android.app.LoaderManager;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.Loader;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ShareActionProvider;
 
 public final class ImageViewerGLActivity extends SwipeBackActivity implements Constants, View.OnClickListener,
-		PhotoView.Listener, GLImageLoader.DownloadListener, LoaderManager.LoaderCallbacks<GLImageLoader.Result>, OnMenuVisibilityListener {
+		PhotoView.Listener, GLImageLoader.DownloadListener, LoaderManager.LoaderCallbacks<GLImageLoader.Result>,
+		OnMenuVisibilityListener {
 
 	private final GLView mRootPane = new GLView() {
 		@Override
@@ -105,7 +103,6 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 
 	private ActionBar mActionBar;
 
-
 	public GLRoot getGLRoot() {
 		return mGLRootView;
 	}
@@ -113,10 +110,6 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 	public ThreadPool getThreadPool() {
 		if (mThreadPool != null) return mThreadPool;
 		return mThreadPool = new ThreadPool();
-	}
-
-	public void hideControls() {
-		mActionBar.hide();
 	}
 
 	public void hideProgress() {
@@ -145,17 +138,17 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 				onBackPressed();
 				break;
 			}
-//			case R.id.refresh_stop_save: {
-//				final LoaderManager lm = getSupportLoaderManager();
-//				if (!mImageLoaded && !lm.hasRunningLoaders()) {
-//					loadImage();
-//				} else if (!mImageLoaded && lm.hasRunningLoaders()) {
-//					stopLoading();
-//				} else if (mImageLoaded) {
-//					new SaveImageTask(this, mImageFile).execute();
-//				}
-//				break;
-//			}
+			// case R.id.refresh_stop_save: {
+			// final LoaderManager lm = getLoaderManager();
+			// if (!mImageLoaded && !lm.hasRunningLoaders()) {
+			// loadImage();
+			// } else if (!mImageLoaded && lm.hasRunningLoaders()) {
+			// stopLoading();
+			// } else if (mImageLoaded) {
+			// new SaveImageTask(this, mImageFile).execute();
+			// }
+			// break;
+			// }
 			case R.id.share: {
 				if (uri == null) {
 					break;
@@ -277,6 +270,22 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 	}
 
 	@Override
+	public void onMenuVisibilityChanged(final boolean isVisible) {
+		mIsMenuVisible = isVisible;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_HOME: {
+				onBackPressed();
+				break;
+			}
+		}
+		return true;
+	}
+
+	@Override
 	public void onPictureCenter() {
 		mPhotoView.setWantPictureCenterCallbacks(false);
 	}
@@ -296,10 +305,6 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 		toggleBars();
 	}
 
-	public void showControls() {
-		mActionBar.show();
-	}
-
 	public void showProgress() {
 		mProgress.setVisibility(View.VISIBLE);
 		mProgress.setIndeterminate(true);
@@ -310,6 +315,7 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.image_viewer_gl);
 		mActionBar = getActionBar();
+		mActionBar.setDisplayHomeAsUpEnabled(true);
 		mActionBar.addOnMenuVisibilityListener(this);
 		mHandler = new MyHandler(this);
 		mPhotoView = new PhotoView(this);
@@ -376,7 +382,7 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 
 			mPhotoView.resume();
 			if (!mShowBars) {
-				hideControls();
+				hideBars();
 			}
 			mHandler.sendEmptyMessageDelayed(MSG_UNFREEZE_GLROOT, UNFREEZE_GLROOT_TIMEOUT);
 		} finally {
@@ -410,12 +416,12 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 	private void hideBars() {
 		if (!mShowBars) return;
 		mShowBars = false;
-		hideControls();
+		mActionBar.hide();
 		mHandler.removeMessages(MSG_HIDE_BARS);
 	}
 
 	private void loadImage() {
-		getSupportLoaderManager().destroyLoader(0);
+		getLoaderManager().destroyLoader(0);
 		final Uri uri = getIntent().getData();
 		if (uri == null) {
 			finish();
@@ -424,10 +430,10 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 		final Bundle args = new Bundle();
 		args.putParcelable(INTENT_KEY_URI, uri);
 		if (!mLoaderInitialized) {
-			getSupportLoaderManager().initLoader(0, args, this);
+			getLoaderManager().initLoader(0, args, this);
 			mLoaderInitialized = true;
 		} else {
-			getSupportLoaderManager().restartLoader(0, args, this);
+			getLoaderManager().restartLoader(0, args, this);
 		}
 	}
 
@@ -441,12 +447,12 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 	private void showBars() {
 		if (mShowBars) return;
 		mShowBars = true;
-		showControls();
+		mActionBar.show();
 		refreshHidingMessage();
 	}
 
 	private void stopLoading() {
-		getSupportLoaderManager().destroyLoader(0);
+		getLoaderManager().destroyLoader(0);
 		if (!mImageLoaded) {
 			// mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
 			// TODO
@@ -526,11 +532,6 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 				}
 			}
 		}
-	}
-
-	@Override
-	public void onMenuVisibilityChanged(boolean isVisible) {
-		mIsMenuVisible = isVisible;
 	}
 
 }

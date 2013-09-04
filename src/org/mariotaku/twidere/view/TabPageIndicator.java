@@ -58,7 +58,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 	private final int mTabColor;
 
 	private boolean mSwitchingEnabled = true;
-	private boolean mDisplayLabel, mDisplayColor = true;
+	private boolean mDisplayLabel, mDisplayIcon = true;
 
 	private final OnClickListener mTabClickListener = new OnClickListener() {
 
@@ -231,7 +231,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 	}
 
 	public void setDisplayIcon(final boolean display) {
-		mDisplayColor = display;
+		mDisplayIcon = display;
 		notifyDataSetChanged();
 	}
 
@@ -282,13 +282,15 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 	private void addTab(final CharSequence label, final Drawable icon, final int index) {
 		// Workaround for not being able to pass a defStyle on pre-3.0
 		final TabView tabView = (TabView) mInflater.inflate(R.layout.vpi__tab, null);
-		tabView.init(this, mDisplayLabel ? label : null, mDisplayColor ? icon : null, index);
+		tabView.init(this, mDisplayLabel ? label : null, mDisplayIcon ? icon : null, index);
 		tabView.setFocusable(true);
 		tabView.setOnClickListener(mTabClickListener);
 		tabView.setOnLongClickListener(mTabLongClickListener);
 		tabView.setContentDescription(label);
 		mTabLayout.addView(tabView, new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1));
-		ThemeUtils.applyBackground(tabView, mTabColor);
+		if (ThemeUtils.shouldSetTabColor(getContext())) {
+			ThemeUtils.applyBackground(tabView, mTabColor);
+		}
 	}
 
 	private void animateToTab(final int position) {

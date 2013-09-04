@@ -28,18 +28,18 @@ import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -75,7 +75,7 @@ public class AccountSelectorActivity extends BaseDialogActivity implements Loade
 			final String action = intent.getAction();
 			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
 				if (!isFinishing()) {
-					getSupportLoaderManager().restartLoader(0, null, AccountSelectorActivity.this);
+					getLoaderManager().restartLoader(0, null, AccountSelectorActivity.this);
 				}
 			}
 		}
@@ -240,7 +240,7 @@ public class AccountSelectorActivity extends BaseDialogActivity implements Loade
 				mSelectedIds.add(id);
 			}
 		}
-		getSupportLoaderManager().initLoader(0, null, this);
+		getLoaderManager().initLoader(0, null, this);
 
 	}
 

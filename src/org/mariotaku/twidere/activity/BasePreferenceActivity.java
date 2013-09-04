@@ -22,69 +22,27 @@ package org.mariotaku.twidere.activity;
 import static org.mariotaku.twidere.util.Utils.restartActivity;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.iface.IThemedActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.ThemeUtils;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
 class BasePreferenceActivity extends PreferenceActivity implements Constants, IThemedActivity {
 
-	private int mThemeRes;
-	private boolean mIsSolidColorBackground;
+	private int mCurrentThemeResource;
 
 	public TwidereApplication getTwidereApplication() {
 		return (TwidereApplication) getApplication();
 	}
 
-	public boolean isSolidColorBackground() {
-		return mIsSolidColorBackground;
+	protected final int getCurrentThemeResource() {
+		return mCurrentThemeResource;
 	}
 
-	public boolean isThemeChanged() {
-		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final int theme_res = ThemeUtils.getThemeResource(this);
-		final boolean solid_color_background = preferences.getBoolean(PREFERENCE_KEY_SOLID_COLOR_BACKGROUND, false);
-		return theme_res != mThemeRes || solid_color_background != mIsSolidColorBackground;
-	}
-
-	public void restart() {
-		restartActivity(this);
-	}
-
-	public void setActionBarBackground() {
-		// final ActionBar ab = getActionBar();
-		// final TypedArray a = obtainStyledAttributes(new int[] {
-		// R.attr.actionBarBackground });
-		// final int color = getThemeColor(this);
-		// final Drawable d = a.getDrawable(0);
-		// if (d == null) return;
-		// if (mIsDarkTheme) {
-		// final Drawable mutated = d.mutate();
-		// mutated.setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-		// ab.setBackgroundDrawable(mutated);
-		// } else if (d instanceof LayerDrawable) {
-		// final LayerDrawable ld = (LayerDrawable) d.mutate();
-		// ld.findDrawableByLayerId(R.id.color_layer).setColorFilter(color,
-		// PorterDuff.Mode.MULTIPLY);
-		// ab.setBackgroundDrawable(ld);
-		// }
-	}
-
-	protected int getDarkThemeRes() {
-		return R.style.Theme_Twidere;
-	}
-
-	protected int getLightThemeRes() {
-		return R.style.Theme_Twidere_Light;
-	}
-
-	protected boolean isDarkTheme() {
-		return ThemeUtils.isDarkTheme(mThemeRes);
+	protected int getThemeResource() {
+		return ThemeUtils.getThemeResource(this);
 	}
 
 	@Override
@@ -102,19 +60,20 @@ class BasePreferenceActivity extends PreferenceActivity implements Constants, IT
 		}
 	}
 
-	protected boolean shouldSetBackground() {
-		return true;
+	protected final void restart() {
+		restartActivity(this);
 	}
 
-	private void setTheme() {
-		final SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mThemeRes = ThemeUtils.getThemeResource(this);
-		final boolean is_dark_theme = ThemeUtils.isDarkTheme(mThemeRes);
-		mIsSolidColorBackground = preferences.getBoolean(PREFERENCE_KEY_SOLID_COLOR_BACKGROUND, false);
-		setTheme(mThemeRes);
-		if (mIsSolidColorBackground && shouldSetBackground()) {
-			getWindow().setBackgroundDrawableResource(is_dark_theme ? android.R.color.black : android.R.color.white);
-		}
+	private final boolean isThemeChanged() {
+		return getThemeResource() != mCurrentThemeResource;
 	}
 
+	private final void setActionBarBackground() {
+		getActionBar().setBackgroundDrawable(ThemeUtils.getActionBarBackground(this));
+	}
+
+	private final void setTheme() {
+		mCurrentThemeResource = getThemeResource();
+		setTheme(mCurrentThemeResource);
+	}
 }

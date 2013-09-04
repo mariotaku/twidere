@@ -21,21 +21,22 @@ package org.mariotaku.twidere.activity;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.Panes;
+import org.mariotaku.twidere.util.BackStackEntryAccessor;
+import org.mariotaku.twidere.util.FragmentManagerAccessor;
 import org.mariotaku.twidere.view.SlidingPaneView;
 
 import android.annotation.SuppressLint;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentManager.BackStackEntry;
+import android.app.FragmentManager.OnBackStackChangedListener;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.os.Bundle;
-import android.support.v4.app.BackStackEntryTrojan;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentManager.BackStackEntry;
-import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
-import android.support.v4.app.FragmentManagerTrojan;
-import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -61,7 +62,7 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 	}
 
 	public final boolean isRightPaneUsed() {
-		final FragmentManager fm = getSupportFragmentManager();
+		final FragmentManager fm = getFragmentManager();
 		final Fragment right_pane_fragment = fm.findFragmentById(PANE_RIGHT);
 		return right_pane_fragment != null && right_pane_fragment.isAdded();
 	}
@@ -69,7 +70,7 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 	@Override
 	public void onBackStackChanged() {
 		if (isDualPaneMode()) {
-			final FragmentManager fm = getSupportFragmentManager();
+			final FragmentManager fm = getFragmentManager();
 			final int count = fm.getBackStackEntryCount();
 			final Fragment left_pane_fragment = fm.findFragmentById(PANE_LEFT);
 			final Fragment right_pane_fragment = fm.findFragmentById(PANE_RIGHT);
@@ -79,7 +80,7 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 			if (count > 0) {
 				final BackStackEntry entry = fm.getBackStackEntryAt(count - 1);
 				if (entry == null) return;
-				final Fragment fragment = BackStackEntryTrojan.getFragmentInBackStackRecord(entry);
+				final Fragment fragment = BackStackEntryAccessor.getFragmentInBackStackRecord(entry);
 				if (fragment instanceof Panes.Right) {
 					showRightPane();
 				} else if (fragment instanceof Panes.Left) {
@@ -113,9 +114,8 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 
 	public final void showAtPane(final int pane, final Fragment fragment, final boolean addToBackStack) {
 		if (isStateSaved()) return;
-		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in,
-				android.R.anim.fade_out);
+		final FragmentTransaction ft = getFragmentManager().beginTransaction();
+		ft.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
 		switch (pane) {
 			case PANE_LEFT: {
 				showLeftPane();
@@ -165,15 +165,10 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 	}
 
 	protected int getPaneBackground() {
-		final boolean solid = isSolidColorBackground();
-		switch (getCurrentThemeResource()) {
-			case R.style.Theme_Twidere:
-			case R.style.Theme_Twidere_Light:
-				return solid ? android.R.color.white : R.drawable.background_holo_light;
-			case R.style.Theme_Twidere_Dark:
-				return solid ? android.R.color.black : R.drawable.background_holo_dark;
-		}
-		return 0;
+		final TypedArray a = obtainStyledAttributes(new int[] { android.R.attr.windowBackground });
+		final int background = a.getResourceId(0, 0);
+		a.recycle();
+		return background;
 	}
 
 	@Override
@@ -203,7 +198,7 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 		if (mSlidingPane != null) {
 			mSlidingPane.setRightPaneBackground(getPaneBackground());
 		}
-		final FragmentManager fm = getSupportFragmentManager();
+		final FragmentManager fm = getFragmentManager();
 		fm.addOnBackStackChangedListener(this);
 		if (savedInstanceState != null) {
 			final Fragment left_pane_fragment = fm.findFragmentById(PANE_LEFT);
@@ -218,8 +213,8 @@ public class DualPaneActivity extends BaseActivity implements OnBackStackChanged
 
 	@Override
 	protected void onStart() {
-		final FragmentManager fm = getSupportFragmentManager();
-		if (!isDualPaneMode() && !FragmentManagerTrojan.isStateSaved(fm)) {
+		final FragmentManager fm = getFragmentManager();
+		if (!isDualPaneMode() && !FragmentManagerAccessor.isStateSaved(fm)) {
 			final int count = fm.getBackStackEntryCount();
 			for (int i = 0; i < count; i++) {
 				fm.popBackStackImmediate();

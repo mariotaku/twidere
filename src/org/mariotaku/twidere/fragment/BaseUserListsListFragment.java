@@ -35,13 +35,13 @@ import org.mariotaku.twidere.loader.BaseUserListsLoader;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUserList;
 
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,8 +52,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
-
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 
 abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment implements
 		LoaderCallbacks<List<ParcelableUserList>>, OnItemClickListener, OnScrollListener, OnItemLongClickListener,
@@ -126,7 +124,6 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
 		mListView.setOnScrollListener(this);
-		setMode(Mode.BOTH);
 		setListAdapter(mAdapter);
 		getLoaderManager().initLoader(0, getArguments(), this);
 		setListShown(false);
@@ -181,7 +178,7 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 				mCursor = cursor;
 			}
 		}
-		onRefreshComplete();
+		setRefreshComplete();
 		setListShown(true);
 	}
 
@@ -209,12 +206,6 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 		return true;
 	}
 
-	@Override
-	public void onPullDownToRefresh() {
-		getLoaderManager().restartLoader(0, getArguments(), this);
-	}
-
-	@Override
 	public void onPullUpToRefresh() {
 		final int count = mAdapter.getCount();
 		if (count - 1 > 0) {
@@ -222,10 +213,15 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 			if (args != null) {
 				args.putLong(INTENT_KEY_MAX_ID, mAdapter.getItem(count - 1).user_id);
 			}
-			if (!getLoaderManager().hasRunningLoaders()) {
-				getLoaderManager().restartLoader(0, args, this);
-			}
+			// if (!getLoaderManager().hasRunningLoaders()) {
+			getLoaderManager().restartLoader(0, args, this);
+			// }
 		}
+	}
+
+	@Override
+	public void onRefreshStarted(final View view) {
+		getLoaderManager().restartLoader(0, getArguments(), this);
 	}
 
 	@Override

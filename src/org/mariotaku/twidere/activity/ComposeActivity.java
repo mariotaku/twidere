@@ -61,7 +61,6 @@ import org.mariotaku.twidere.model.DraftItem;
 import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
-import org.mariotaku.twidere.preference.ThemeColorPreference;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.AsyncTask;
@@ -69,12 +68,14 @@ import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.util.ViewAccessor;
 import org.mariotaku.twidere.view.AccountsColorFrameLayout;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -97,8 +98,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -244,7 +243,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 				final Bundle args = new Bundle();
 				args.putParcelable(INTENT_KEY_STATUS, mInReplyToStatus);
 				fragment.setArguments(args);
-				fragment.show(getSupportFragmentManager(), "view_status");
+				fragment.show(getFragmentManager(), "view_status");
 				break;
 			}
 			case MENU_SELECT_ACCOUNT: {
@@ -391,7 +390,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 				Toast.makeText(this, R.string.tweet_saved_to_draft, Toast.LENGTH_SHORT).show();
 				finish();
 			} else {
-				new UnsavedTweetDialogFragment().show(getSupportFragmentManager(), "unsaved_tweet");
+				new UnsavedTweetDialogFragment().show(getFragmentManager(), "unsaved_tweet");
 			}
 		} else {
 			mTask = new DiscardTweetTask(this).execute();
@@ -424,7 +423,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 		mMenuBar = (MenuBar) findViewById(R.id.menu_bar);
 		mActionMenuBar = (MenuBar) findViewById(R.id.action_menu);
 		mProgress = (ProgressBar) findViewById(R.id.actionbar_progress_indeterminate);
-		findViewById(R.id.actionbar_highlight).setBackgroundColor(ThemeColorPreference.getThemeColor(this));
+		ViewAccessor.setBackground(findViewById(R.id.compose_actionbar), ThemeUtils.getActionBarBackground(this));
 	}
 
 	@Override
@@ -666,7 +665,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 			}
 			if (location == null) {
 				mLocationManager.requestLocationUpdates(provider, 0, 0, this);
-				setProgressBarIndeterminateVisibility(true);
+				setProgressVisibility(true);
 			}
 			mRecentLocation = location != null ? new ParcelableLocation(location) : null;
 		} else {
@@ -942,7 +941,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 			iconAttachLocation.setColorFilter(activated_color, Mode.MULTIPLY);
 			itemAttachLocation.setTitle(R.string.remove_location);
 		} else {
-			setProgressBarIndeterminateVisibility(false);
+			setProgressVisibility(false);
 			mPreferences.edit().putBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false).commit();
 			iconAttachLocation.clearColorFilter();
 			itemAttachLocation.setTitle(R.string.add_location);
@@ -955,6 +954,10 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 		setCommonMenu(actionMenu);
 		mMenuBar.show();
 
+	}
+
+	private void setProgressVisibility(final boolean visible) {
+		mProgress.setVisibility(visible ? View.VISIBLE : View.GONE);
 	}
 
 	private void takePhoto() {
@@ -1034,7 +1037,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 
 		@Override
 		public void onClick(final DialogInterface dialog, final int which) {
-			final FragmentActivity activity = getActivity();
+			final Activity activity = getActivity();
 			switch (which) {
 				case DialogInterface.BUTTON_POSITIVE: {
 					if (activity instanceof ComposeActivity) {
@@ -1208,7 +1211,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 
 		@Override
 		protected void onPostExecute(final Boolean result) {
-			activity.setProgressBarIndeterminateVisibility(false);
+			activity.setProgressVisibility(false);
 			activity.mImageUri = dst;
 			activity.setMenu();
 			activity.reloadAttachedImageThumbnail();
@@ -1219,7 +1222,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 
 		@Override
 		protected void onPreExecute() {
-			activity.setProgressBarIndeterminateVisibility(true);
+			activity.setProgressVisibility(true);
 		}
 	}
 
@@ -1255,7 +1258,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 
 		@Override
 		protected void onPostExecute(final Boolean result) {
-			activity.setProgressBarIndeterminateVisibility(false);
+			activity.setProgressVisibility(false);
 			activity.mImageUri = null;
 			activity.mAttachedImageType = Constants.ATTACHED_IMAGE_TYPE_NONE;
 			activity.mIsPossiblySensitive = false;
@@ -1268,7 +1271,7 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 
 		@Override
 		protected void onPreExecute() {
-			activity.setProgressBarIndeterminateVisibility(true);
+			activity.setProgressVisibility(true);
 		}
 	}
 
@@ -1295,13 +1298,13 @@ public class ComposeActivity extends BaseDialogActivity implements TextWatcher, 
 
 		@Override
 		protected void onPostExecute(final Void result) {
-			activity.setProgressBarIndeterminateVisibility(false);
+			activity.setProgressVisibility(false);
 			activity.finish();
 		}
 
 		@Override
 		protected void onPreExecute() {
-			activity.setProgressBarIndeterminateVisibility(true);
+			activity.setProgressVisibility(true);
 		}
 	}
 }

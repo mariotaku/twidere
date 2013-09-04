@@ -32,8 +32,6 @@ import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.provider.TweetStore.Tabs;
 
-import android.annotation.SuppressLint;
-
 public interface Constants {
 
 	public static final String APP_NAME = "Twidere";
@@ -428,9 +426,9 @@ public interface Constants {
 
 	public static final String QUERY_PARAM_NEW_ITEMS_COUNT = "new_items_count";
 
-	@SuppressLint("InlinedApi")
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_SEARCH = R.id.search;
+	public static final int MENU_ACTIONS = R.id.actions;
 	public static final int MENU_COMPOSE = R.id.compose;
 	public static final int MENU_SEND = R.id.send;
 	public static final int MENU_EDIT = R.id.edit;

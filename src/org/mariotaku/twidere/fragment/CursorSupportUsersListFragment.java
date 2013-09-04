@@ -25,10 +25,8 @@ import org.mariotaku.twidere.loader.BaseCursorSupportUsersLoader;
 import org.mariotaku.twidere.model.ParcelableUser;
 
 import android.content.Context;
+import android.content.Loader;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
-
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 
 public abstract class CursorSupportUsersListFragment extends BaseUsersListFragment {
 
@@ -66,7 +64,8 @@ public abstract class CursorSupportUsersListFragment extends BaseUsersListFragme
 		final BaseCursorSupportUsersLoader c_loader = (BaseCursorSupportUsersLoader) loader;
 		mNextCursor = c_loader.getNextCursor();
 		mPrevCursor = c_loader.getPrevCursor();
-		setMode(mNextCursor > 0 ? Mode.PULL_FROM_END : Mode.DISABLED);
+		// TODO
+		// setEnabled(mNextCursor > 0 ? "from_end" : "disabled");
 	}
 
 	@Override
