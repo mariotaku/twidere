@@ -29,7 +29,6 @@ import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.Utils;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.ListFragment;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -38,7 +37,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -127,6 +125,11 @@ public class BaseListFragment extends ListFragment implements Constants, OnScrol
 	}
 
 	@Override
+	public void onAttach(final Activity activity) {
+		super.onAttach(activity);
+	}
+
+	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mActivityFirstCreated = true;
@@ -166,24 +169,6 @@ public class BaseListFragment extends ListFragment implements Constants, OnScrol
 	}
 
 	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-	}
-	
-	public void setSelection(int position) {
-		Utils.scrollListToPosition(getListView(), position);
-	}
-
-	@Override
-	public void setUserVisibleHint(boolean isVisibleToUser) {
-		super.setUserVisibleHint(isVisibleToUser);
-		final Activity activity = getActivity();
-		if (activity instanceof FragmentCallback) {
-			((FragmentCallback) activity).onSetUserVisibleHint(this, isVisibleToUser);
-		}
-	}
-
-	@Override
 	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
 
 	}
@@ -213,6 +198,20 @@ public class BaseListFragment extends ListFragment implements Constants, OnScrol
 		final Activity activity = getActivity();
 		if (activity == null) return;
 		activity.setProgressBarIndeterminateVisibility(visible);
+	}
+
+	@Override
+	public void setSelection(final int position) {
+		Utils.scrollListToPosition(getListView(), position);
+	}
+
+	@Override
+	public void setUserVisibleHint(final boolean isVisibleToUser) {
+		super.setUserVisibleHint(isVisibleToUser);
+		final Activity activity = getActivity();
+		if (activity instanceof FragmentCallback) {
+			((FragmentCallback) activity).onSetUserVisibleHint(this, isVisibleToUser);
+		}
 	}
 
 	public void unregisterReceiver(final BroadcastReceiver receiver) {

@@ -24,7 +24,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.PixelFormat;
-import android.graphics.PorterDuff;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.TypedValue;
@@ -263,10 +263,8 @@ public class DefaultHeaderTransformer extends PullToRefreshAttacher.HeaderTransf
 	private void applyProgressBarColor() {
 		if (mHeaderProgressBar != null) {
 			if (mUseCustomProgressColor) {
-				mHeaderProgressBar.getProgressDrawable().setColorFilter(mProgressDrawableColor,
-						PorterDuff.Mode.SRC_ATOP);
-				mHeaderProgressBar.getIndeterminateDrawable().setColorFilter(mProgressDrawableColor,
-						PorterDuff.Mode.SRC_ATOP);
+				mHeaderProgressBar.getProgressDrawable().setColorFilter(mProgressDrawableColor, Mode.SRC_ATOP);
+				mHeaderProgressBar.getIndeterminateDrawable().setColorFilter(mProgressDrawableColor, Mode.SRC_ATOP);
 			} else {
 				mHeaderProgressBar.getProgressDrawable().clearColorFilter();
 				mHeaderProgressBar.getIndeterminateDrawable().clearColorFilter();

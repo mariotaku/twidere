@@ -164,11 +164,11 @@ public class ThemeUtils implements Constants {
 		return pref.getBoolean(PREFERENCE_KEY_SOLID_COLOR_BACKGROUND, false);
 	}
 
-	public static boolean shouldSetTabColor(final Context context) {
-		return shouldSetTabColor(getThemeResource(context));
+	public static boolean shouldApplyColorFilter(final Context context) {
+		return shouldApplyColorFilter(getThemeResource(context));
 	}
 
-	public static boolean shouldSetTabColor(final int res) {
+	public static boolean shouldApplyColorFilter(final int res) {
 		switch (res) {
 			case R.style.Theme_Twidere:
 			case R.style.Theme_Twidere_SwipeBack:

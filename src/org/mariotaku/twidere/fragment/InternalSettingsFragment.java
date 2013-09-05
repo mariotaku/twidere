@@ -29,7 +29,7 @@ import android.preference.PreferenceFragment;
 public class InternalSettingsFragment extends PreferenceFragment implements Constants, Panes.Left {
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		getPreferenceManager().setSharedPreferencesName(SHARED_PREFERENCES_NAME);
 		addPreferencesFromResource(R.xml.settings);

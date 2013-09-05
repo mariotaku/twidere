@@ -34,6 +34,7 @@ import java.util.List;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.TabsAdapter;
 import org.mariotaku.twidere.fragment.APIUpgradeConfirmDialog;
+import org.mariotaku.twidere.fragment.BasePullToRefreshListFragment;
 import org.mariotaku.twidere.fragment.DirectMessagesFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
@@ -319,6 +320,21 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	@Override
+	public void onSetUserVisibleHint(final Fragment fragment, final boolean isVisibleToUser) {
+		if (isVisibleToUser) {
+			mCurrentVisibleFragment = fragment;
+		}
+		updateRefreshingState();
+	}
+
+	@Override
+	protected BasePullToRefreshListFragment getCurrentPullToRefreshFragment() {
+		if (mCurrentVisibleFragment instanceof BasePullToRefreshListFragment)
+			return (BasePullToRefreshListFragment) mCurrentVisibleFragment;
+		return null;
+	}
+
+	@Override
 	protected int getDualPaneLayoutRes() {
 		return R.layout.home_dual_pane;
 	}
@@ -569,15 +585,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			builder.setContentIntent(content_intent);
 			mNotificationManager.notify(NOTIFICATION_ID_DATA_PROFILING, builder.build());
 		}
-	}
-
-	@Override
-	public void onSetUserVisibleHint(Fragment fragment, boolean isVisibleToUser) {
-		// TODO Auto-generated method stub
-		if (isVisibleToUser) {
-			mCurrentVisibleFragment = fragment;
-		}
-		
 	}
 
 }

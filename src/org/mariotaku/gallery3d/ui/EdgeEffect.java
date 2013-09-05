@@ -143,9 +143,9 @@ public class EdgeEffect {
 	public EdgeEffect(final Context context) {
 		final int theme_color = ThemeUtils.getThemeColor(context);
 		mEdge = new Drawable(context, R.drawable.overscroll_edge);
-		mEdge.setColorFilter(theme_color, PorterDuff.Mode.MULTIPLY);
+		mEdge.setColorFilter(theme_color, PorterDuff.Mode.SRC_ATOP);
 		mGlow = new Drawable(context, R.drawable.overscroll_glow);
-		mGlow.setColorFilter(theme_color, PorterDuff.Mode.MULTIPLY);
+		mGlow.setColorFilter(theme_color, PorterDuff.Mode.SRC_ATOP);
 		mMinWidth = (int) (context.getResources().getDisplayMetrics().density * MIN_WIDTH + 0.5f);
 		mInterpolator = new DecelerateInterpolator();
 	}

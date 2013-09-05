@@ -19,7 +19,11 @@
 
 package org.mariotaku.twidere.fragment;
 
+import org.mariotaku.twidere.util.ThemeUtils;
+
+import uk.co.senab.actionbarpulltorefresh.library.DefaultHeaderTransformer;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
+import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher.HeaderTransformer;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -72,6 +76,12 @@ public abstract class BasePullToRefreshListFragment extends BaseListFragment imp
 		} else
 			throw new IllegalStateException("Activity class must implement PullToRefreshAttacherActivity");
 		mPullToRefreshAttacher.setOnTouchListener(getListView(), this);
+		final HeaderTransformer transformer = mPullToRefreshAttacher.getHeaderTransformer();
+		if (transformer instanceof DefaultHeaderTransformer) {
+			final DefaultHeaderTransformer t = (DefaultHeaderTransformer) transformer;
+			t.setProgressBarColor(ThemeUtils.getThemeColor(activity));
+			t.setProgressBarColorEnabled(ThemeUtils.shouldApplyColorFilter(activity));
+		}
 		mGestureDector = new GestureDetector(getActivity(), this);
 	}
 

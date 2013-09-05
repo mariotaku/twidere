@@ -66,6 +66,7 @@ public class BaseActivity extends BaseThemedActivity implements Constants, PullT
 
 	@Override
 	public boolean isRefreshing(final BasePullToRefreshListFragment fragment) {
+		if (fragment == null) return false;
 		return mRefreshingStates.contains(fragment);
 	}
 
@@ -104,6 +105,14 @@ public class BaseActivity extends BaseThemedActivity implements Constants, PullT
 
 	public void setRefreshing(final boolean refreshing) {
 		mPullToRefreshAttacher.setRefreshing(refreshing);
+	}
+
+	public void updateRefreshingState() {
+		setRefreshing(isRefreshing(getCurrentPullToRefreshFragment()));
+	}
+
+	protected BasePullToRefreshListFragment getCurrentPullToRefreshFragment() {
+		return null;
 	}
 
 	@Override

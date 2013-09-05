@@ -88,7 +88,7 @@ public class SearchFragment extends BaseFragment implements Panes.Left, OnPageCh
 		for (int i = 0; i < count; i++) {
 			final ImageView v = (ImageView) mIndicator.getChildAt(i);
 			if (i == position) {
-				v.setColorFilter(mThemeColor, Mode.MULTIPLY);
+				v.setColorFilter(mThemeColor, Mode.SRC_ATOP);
 			} else {
 				v.clearColorFilter();
 			}

@@ -281,17 +281,17 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 	}
 
 	@Override
+	protected void onPullUp() {
+		if (mLoadMoreAutomatically) return;
+		loadMoreMessages();
+	}
+
+	@Override
 	protected void onReachedBottom() {
 		if (!mLoadMoreAutomatically) return;
 		loadMoreMessages();
 	}
 
-	@Override
-	protected void onPullUp() {
-		if (mLoadMoreAutomatically) return;
-		loadMoreMessages();
-	}
-	
 	private void loadMoreMessages() {
 		if (mTwitterWrapper == null || isRefreshing()) return;
 		new AsyncTask<Void, Void, long[][]>() {

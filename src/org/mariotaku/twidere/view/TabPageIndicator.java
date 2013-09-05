@@ -288,7 +288,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 		tabView.setOnLongClickListener(mTabLongClickListener);
 		tabView.setContentDescription(label);
 		mTabLayout.addView(tabView, new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1));
-		if (ThemeUtils.shouldSetTabColor(getContext())) {
+		if (ThemeUtils.shouldApplyColorFilter(getContext())) {
 			ThemeUtils.applyBackground(tabView, mTabColor);
 		}
 	}

@@ -249,12 +249,6 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 	}
 
 	@Override
-	protected void onPullUp() {
-		if (mLoadMoreAutomatically) return;
-		loadMoreUsers();
-	}
-
-	@Override
 	public void onRefreshStarted(final View view) {
 		getLoaderManager().restartLoader(0, getArguments(), this);
 	}
@@ -320,6 +314,12 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 	}
 
 	protected abstract Loader<List<ParcelableUser>> newLoaderInstance(Context context, Bundle args);
+
+	@Override
+	protected void onPullUp() {
+		if (mLoadMoreAutomatically) return;
+		loadMoreUsers();
+	}
 
 	protected final void removeUsers(final long... user_ids) {
 		if (user_ids == null || user_ids.length == 0) return;

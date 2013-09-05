@@ -420,14 +420,14 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 	protected abstract IStatusesAdapter<Data> newAdapterInstance();
 
 	@Override
-	protected void onReachedBottom() {
-		if (!mLoadMoreAutomatically) return;
-		loadMoreStatuses();
-	}
-	
-	@Override
 	protected void onPullUp() {
 		if (mLoadMoreAutomatically) return;
+		loadMoreStatuses();
+	}
+
+	@Override
+	protected void onReachedBottom() {
+		if (!mLoadMoreAutomatically) return;
 		loadMoreStatuses();
 	}
 
