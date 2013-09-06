@@ -62,7 +62,7 @@ public class FiltersListFragment extends BaseFragment implements Panes.Right {
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
-		mAdapter = new TabsAdapter(getActivity(), getChildFragmentManager(), mIndicator);
+		mAdapter = new TabsAdapter(getActivity(), getFragmentManager(), mIndicator);
 		mAdapter.addTab(FilteredUsersFragment.class, null, getString(R.string.users), null, 0);
 		mAdapter.addTab(FilteredKeywordsFragment.class, null, getString(R.string.keywords), null, 1);
 		mAdapter.addTab(FilteredSourcesFragment.class, null, getString(R.string.sources), null, 2);

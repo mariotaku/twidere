@@ -50,13 +50,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLException;
 
 import org.apache.http.NameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mariotaku.gallery3d.app.ImageViewerGLActivity;
+import org.mariotaku.gallery3d.ImageViewerGLActivity;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.CameraCropActivity;
@@ -96,7 +97,7 @@ import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.model.PreviewImage;
 import org.mariotaku.twidere.model.StatusCursorIndices;
-import org.mariotaku.twidere.model.TabSpec;
+import org.mariotaku.twidere.model.SupportTabSpec;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedStatuses;
@@ -132,9 +133,6 @@ import twitter4j.http.HttpClientWrapper;
 import twitter4j.http.HttpResponse;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -172,6 +170,10 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.accessibility.AccessibilityEventCompat;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
@@ -193,6 +195,9 @@ import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 public final class Utils implements Constants {
 
 	private static final String UA_TEMPLATE = "Mozilla/5.0 (Linux; Android %s; %s Build/%s) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.111 Safari/537.36";
+
+	public static final Pattern PATTERN_XML_RESOURCE_IDENTIFIER = Pattern.compile("res\\/xml\\/([\\w_]+)\\.xml");
+	public static final Pattern PATTERN_RESOURCE_IDENTIFIER = Pattern.compile("@([\\w_]+)\\/([\\w_]+)");
 
 	private static final UriMatcher CONTENT_PROVIDER_URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 	private static final UriMatcher LINK_HANDLER_URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
@@ -309,9 +314,10 @@ public final class Utils implements Constants {
 	}
 
 	private static Map<Long, Integer> sAccountColors = new LinkedHashMap<Long, Integer>();
-	private static Map<Long, Integer> sUserColors = new LinkedHashMap<Long, Integer>(512, 0.75f, true);
 
+	private static Map<Long, Integer> sUserColors = new LinkedHashMap<Long, Integer>(512, 0.75f, true);
 	private static Map<Long, String> sAccountScreenNames = new LinkedHashMap<Long, String>();
+
 	private static Map<Long, String> sAccountNames = new LinkedHashMap<Long, String>();
 
 	private Utils() {
@@ -1168,6 +1174,34 @@ public final class Utils implements Constants {
 		return t.getMessage();
 	}
 
+	public static List<SupportTabSpec> getHomeTabs(final Context context) {
+		if (context == null) return Collections.emptyList();
+		final ArrayList<SupportTabSpec> tabs = new ArrayList<SupportTabSpec>();
+		final ContentResolver resolver = context.getContentResolver();
+		final Cursor cur = resolver.query(Tabs.CONTENT_URI, Tabs.COLUMNS, null, null, Tabs.DEFAULT_SORT_ORDER);
+		if (cur != null) {
+			cur.moveToFirst();
+			final int idx_name = cur.getColumnIndex(Tabs.NAME), idx_icon = cur.getColumnIndex(Tabs.ICON), idx_type = cur
+					.getColumnIndex(Tabs.TYPE), idx_arguments = cur.getColumnIndex(Tabs.ARGUMENTS), idx_position = cur
+					.getColumnIndex(Tabs.POSITION);
+			while (!cur.isAfterLast()) {
+				final int position = cur.getInt(idx_position) + HomeActivity.TAB_POSITION_TRENDS + 1;
+				final String icon_type = cur.getString(idx_icon);
+				final String type = cur.getString(idx_type);
+				final String name = cur.getString(idx_name);
+				final Bundle args = ParseUtils.parseArguments(cur.getString(idx_arguments));
+				args.putInt(INTENT_KEY_TAB_POSITION, position);
+				final Class<? extends Fragment> fragment = CUSTOM_TABS_FRAGMENT_MAP.get(type);
+				if (name != null && fragment != null) {
+					tabs.add(new SupportTabSpec(name, getTabIconObject(icon_type), fragment, args, position));
+				}
+				cur.moveToNext();
+			}
+			cur.close();
+		}
+		return tabs;
+	}
+
 	public static HttpClientWrapper getHttpClient(final int timeout_millis, final boolean ignore_ssl_error,
 			final Proxy proxy, final HostAddressResolver resolver, final String user_agent,
 			final boolean twitter_client_header) {
@@ -1486,6 +1520,16 @@ public final class Utils implements Constants {
 		return resp;
 	}
 
+	public static int getResId(final Context context, final String string) {
+		if (context == null || string == null) return 0;
+		Matcher m = PATTERN_RESOURCE_IDENTIFIER.matcher(string);
+		final Resources res = context.getResources();
+		if (m.matches()) return res.getIdentifier(m.group(2), m.group(1), context.getPackageName());
+		m = PATTERN_XML_RESOURCE_IDENTIFIER.matcher(string);
+		if (m.matches()) return res.getIdentifier(m.group(1), "xml", context.getPackageName());
+		return 0;
+	}
+
 	public static String getSenderUserName(final Context context, final ParcelableDirectMessage user) {
 		if (context == null || user == null) return null;
 		final boolean display_screen_name = getNameDisplayOptionInt(context) == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
@@ -1624,34 +1668,6 @@ public final class Utils implements Constants {
 	public static String getTableNameByUri(final Uri uri) {
 		if (uri == null) return null;
 		return getTableNameById(getTableId(uri));
-	}
-
-	public static List<TabSpec> getTabs(final Context context) {
-		if (context == null) return Collections.emptyList();
-		final ArrayList<TabSpec> tabs = new ArrayList<TabSpec>();
-		final ContentResolver resolver = context.getContentResolver();
-		final Cursor cur = resolver.query(Tabs.CONTENT_URI, Tabs.COLUMNS, null, null, Tabs.DEFAULT_SORT_ORDER);
-		if (cur != null) {
-			cur.moveToFirst();
-			final int idx_name = cur.getColumnIndex(Tabs.NAME), idx_icon = cur.getColumnIndex(Tabs.ICON), idx_type = cur
-					.getColumnIndex(Tabs.TYPE), idx_arguments = cur.getColumnIndex(Tabs.ARGUMENTS), idx_position = cur
-					.getColumnIndex(Tabs.POSITION);
-			while (!cur.isAfterLast()) {
-				final int position = cur.getInt(idx_position) + HomeActivity.TAB_POSITION_TRENDS + 1;
-				final String icon_type = cur.getString(idx_icon);
-				final String type = cur.getString(idx_type);
-				final String name = cur.getString(idx_name);
-				final Bundle args = ParseUtils.parseArguments(cur.getString(idx_arguments));
-				args.putInt(INTENT_KEY_TAB_POSITION, position);
-				final Class<? extends Fragment> fragment = CUSTOM_TABS_FRAGMENT_MAP.get(type);
-				if (name != null && fragment != null) {
-					tabs.add(new TabSpec(name, getTabIconObject(icon_type), fragment, args, position));
-				}
-				cur.moveToNext();
-			}
-			cur.close();
-		}
-		return tabs;
 	}
 
 	public static String getTabTypeName(final Context context, final String type) {
@@ -2314,7 +2330,7 @@ public final class Utils implements Constants {
 		context.sendBroadcast(new Intent(BROADCAST_DATABASE_UPDATED));
 	}
 
-	public static void openDirectMessagesConversation(final Activity activity, final long account_id,
+	public static void openDirectMessagesConversation(final FragmentActivity activity, final long account_id,
 			final long conversation_id, final String screen_name) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
@@ -2354,10 +2370,10 @@ public final class Utils implements Constants {
 			final boolean is_possibly_sensitive) {
 		if (context == null || uri == null) return;
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		if (context instanceof Activity && is_possibly_sensitive
+		if (context instanceof FragmentActivity && is_possibly_sensitive
 				&& !prefs.getBoolean(PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS, false)) {
-			final Activity activity = (Activity) context;
-			final FragmentManager fm = activity.getFragmentManager();
+			final FragmentActivity activity = (FragmentActivity) context;
+			final FragmentManager fm = activity.getSupportFragmentManager();
 			final DialogFragment fragment = new SensitiveContentWarningDialogFragment();
 			final Bundle args = new Bundle();
 			args.putParcelable(INTENT_KEY_URI, Uri.parse(uri));

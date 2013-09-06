@@ -18,7 +18,7 @@ package org.mariotaku.gallery3d.ui;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.mariotaku.gallery3d.app.ImageViewerGLActivity;
+import org.mariotaku.gallery3d.ImageViewerGLActivity;
 import org.mariotaku.gallery3d.util.ApiHelper;
 import org.mariotaku.gallery3d.util.BitmapPool;
 import org.mariotaku.gallery3d.util.DecodeUtils;

@@ -372,6 +372,8 @@ public class PullToRefreshAttacher implements View.OnTouchListener {
 	}
 
 	private void setRefreshingInt(final View view, final boolean refreshing, final boolean fromTouch) {
+		Log.w(LOG_TAG,
+				new Exception(String.format("setRefreshingInt, refreshing: %s, fromTouch, %s", refreshing, fromTouch)));
 		if (DEBUG) {
 			Log.d(LOG_TAG, "setRefreshingInt: " + refreshing);
 		}

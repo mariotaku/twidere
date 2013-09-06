@@ -53,22 +53,18 @@
 					android:orientation="vertical"
 					android:paddingLeft="4dp">
 
-					<TextView
+					<org.mariotaku.twidere.view.ActionBarTitleView
 						android:id="@+id/actionbar_title"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:singleLine="true"
-						android:textAppearance="?android:textAppearanceMedium"
-						android:textColor="@android:color/white"/>
+						android:singleLine="true"/>
 
-					<TextView
+					<org.mariotaku.twidere.view.ActionBarSubtitleView
 						android:id="@+id/actionbar_subtitle"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:singleLine="true"
 						android:text="@string/quote_protected_tweet_notice"
-						android:textAppearance="?android:textAppearanceSmall"
-						android:textColor="@android:color/holo_orange_dark"
 						android:visibility="gone"/>
 				</LinearLayout>
 			</LinearLayout>

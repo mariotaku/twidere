@@ -4,11 +4,25 @@
 	android:layout_height="wrap_content"
 	android:orientation="vertical">
 
-	<org.mariotaku.twidere.view.ColorLabelRelativeLayout
-		android:id="@+id/profile"
-		android:background="?android:selectableItemBackground"
+	<TextView
+		android:id="@+id/in_reply_to"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
+		android:background="?android:selectableItemBackground"
+		android:clickable="true"
+		android:drawableLeft="@drawable/ic_indicator_reply"
+		android:drawablePadding="4dp"
+		android:gravity="center_vertical|right"
+		android:padding="8dp"
+		android:singleLine="true"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:visibility="gone"/>
+
+	<org.mariotaku.twidere.view.ColorLabelRelativeLayout
+		android:id="@+id/profile"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="?android:selectableItemBackground"
 		android:padding="6dp">
 
 		<ImageView
@@ -16,6 +30,7 @@
 			android:layout_width="@dimen/profile_image_size"
 			android:layout_height="@dimen/profile_image_size"
 			android:layout_alignParentRight="true"
+			android:contentDescription="@string/profile_image"
 			android:scaleType="fitCenter"/>
 
 		<LinearLayout
@@ -73,19 +88,6 @@
 	</org.mariotaku.twidere.view.ColorLabelRelativeLayout>
 
 	<TextView
-		android:id="@+id/in_reply_to"
-		android:background="?android:selectableItemBackground"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:drawableLeft="@drawable/ic_indicator_reply"
-		android:drawablePadding="4dp"
-		android:gravity="center_vertical|right"
-		android:padding="8dp"
-		android:singleLine="true"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:visibility="gone"/>
-
-	<TextView
 		android:id="@+id/text"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
@@ -99,9 +101,9 @@
 
 	<TextView
 		android:id="@+id/retweet_view"
-		android:background="?android:selectableItemBackground"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
+		android:background="?android:selectableItemBackground"
 		android:drawableLeft="@drawable/ic_indicator_retweet"
 		android:drawablePadding="4dp"
 		android:gravity="center_vertical|right"
@@ -112,9 +114,9 @@
 
 	<TextView
 		android:id="@+id/location_view"
-		android:background="?android:selectableItemBackground"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
+		android:background="?android:selectableItemBackground"
 		android:drawableLeft="@drawable/ic_indicator_has_location"
 		android:drawablePadding="4dp"
 		android:gravity="center_vertical|right"

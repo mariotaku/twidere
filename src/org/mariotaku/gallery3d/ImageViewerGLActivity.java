@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.mariotaku.gallery3d.app;
+package org.mariotaku.gallery3d;
 
 import java.io.File;
 
@@ -29,7 +29,6 @@ import org.mariotaku.gallery3d.util.GalleryUtils;
 import org.mariotaku.gallery3d.util.ThreadPool;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.loader.GLImageLoader;
 import org.mariotaku.twidere.util.Utils;
 
 import android.app.ActionBar;
@@ -50,9 +49,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ShareActionProvider;
 
-public final class ImageViewerGLActivity extends SwipeBackActivity implements Constants, View.OnClickListener,
-		PhotoView.Listener, GLImageLoader.DownloadListener, LoaderManager.LoaderCallbacks<GLImageLoader.Result>,
-		OnMenuVisibilityListener {
+public final class ImageViewerGLActivity extends SwipeBackActivity implements Constants, PhotoView.Listener,
+		GLImageLoader.DownloadListener, LoaderManager.LoaderCallbacks<GLImageLoader.Result>, OnMenuVisibilityListener {
 
 	private final GLView mRootPane = new GLView() {
 		@Override
@@ -128,7 +126,6 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 		mHandler.sendEmptyMessage(MSG_WANT_BARS);
 	}
 
-	@Override
 	public void onClick(final View view) {
 		final Intent intent = getIntent();
 		final Uri uri = intent.getData();
@@ -240,17 +237,16 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 
 	@Override
 	public void onLoadFinished(final Loader<GLImageLoader.Result> loader, final GLImageLoader.Result data) {
-		if (data instanceof GLImageLoader.GLImageResult) {
-			final GLImageLoader.GLImageResult data_gl = (GLImageLoader.GLImageResult) data;
-			if (data_gl.decoder != null) {
+		if (data.decoder != null || data.bitmap != null) {
+			if (data.decoder != null) {
 				mGLRootView.setVisibility(View.VISIBLE);
 				mImageViewer.setVisibility(View.GONE);
-				mAdapter.setData(data_gl.decoder, data_gl.bitmap, data_gl.orientation);
+				mAdapter.setData(data.decoder, data.bitmap, data.orientation);
 				mImageViewer.setImageBitmap(null);
-			} else {
+			} else if (data.bitmap != null) {
 				mGLRootView.setVisibility(View.GONE);
 				mImageViewer.setVisibility(View.VISIBLE);
-				mImageViewer.setImageBitmap(data_gl.bitmap);
+				mImageViewer.setImageBitmap(data.bitmap);
 			}
 			mImageFile = data.file;
 			mImageLoaded = true;
@@ -259,7 +255,6 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 			mImageFile = null;
 			mImageLoaded = false;
 			// mRefreshStopSaveButton.setImageResource(R.drawable.ic_menu_refresh);
-			// TODO
 			if (data != null) {
 				Utils.showErrorMessage(this, null, data.exception, true);
 			}
@@ -276,9 +271,27 @@ public final class ImageViewerGLActivity extends SwipeBackActivity implements Co
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
+		final Intent intent = getIntent();
+		final Uri uri = intent.getData();
+		final Uri orig = intent.getParcelableExtra(INTENT_KEY_URI_ORIG);
 		switch (item.getItemId()) {
 			case MENU_HOME: {
 				onBackPressed();
+				break;
+			}
+			case MENU_OPEN_IN_BROWSER: {
+				final Uri uri_preferred = orig != null ? orig : uri;
+				if (uri_preferred == null) return false;
+				final String scheme = uri_preferred.getScheme();
+				if ("http".equals(scheme) || "https".equals(scheme)) {
+					final Intent open_intent = new Intent(Intent.ACTION_VIEW, uri_preferred);
+					open_intent.addCategory(Intent.CATEGORY_BROWSABLE);
+					try {
+						startActivity(open_intent);
+					} catch (final ActivityNotFoundException e) {
+						// Ignore.
+					}
+				}
 				break;
 			}
 		}

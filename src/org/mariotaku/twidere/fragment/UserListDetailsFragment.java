@@ -54,17 +54,17 @@ import twitter4j.TwitterException;
 import twitter4j.UserList;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
-import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ActivityNotFoundException;
-import android.content.AsyncTaskLoader;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.Loader;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.text.InputFilter;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -87,7 +87,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class UserListDetailsFragment extends BaseListFragment implements OnClickListener, OnLongClickListener,
+public class UserListDetailsFragment extends BaseSupportListFragment implements OnClickListener, OnLongClickListener,
 		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener,
 		LoaderCallbacks<SingleResponse<ParcelableUserList>>, Panes.Right {
 
@@ -420,7 +420,8 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 		getUserListInfo(false, account_id, list_id, list_name, user_id, screen_name);
 	}
 
-	public static class AddMemberDialogFragment extends BaseDialogFragment implements DialogInterface.OnClickListener {
+	public static class AddMemberDialogFragment extends BaseSupportDialogFragment implements
+			DialogInterface.OnClickListener {
 
 		private AutoCompleteTextView mEditText;
 		private String mText;
@@ -477,7 +478,7 @@ public class UserListDetailsFragment extends BaseListFragment implements OnClick
 
 	}
 
-	public static class EditUserListDialogFragment extends BaseDialogFragment implements
+	public static class EditUserListDialogFragment extends BaseSupportDialogFragment implements
 			DialogInterface.OnClickListener {
 
 		private EditText mEditName, mEditDescription;

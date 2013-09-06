@@ -13,7 +13,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
-public class CreateUserListDialogFragment extends BaseDialogFragment implements DialogInterface.OnClickListener {
+public class CreateUserListDialogFragment extends BaseSupportDialogFragment implements DialogInterface.OnClickListener {
 
 	private EditText mEditName, mEditDescription;
 	private CheckBox mPublicCheckBox;

@@ -63,7 +63,7 @@
   <string name="friends">เพื่อน</string>
   <string name="about">เกี่ยวกับ</string>
   <string name="about_summary">เกี่ยวกับ Twidere</string>
-  <string name="license">ลิขสิทธิ์ซอฟต์แวร์เปิด</string>
+  <string name="open_source_license">ลิขสิทธิ์ซอฟต์แวร์เปิด</string>
   <string name="license_summary">Twidere แจกจ่ายภายใต้สัญญาอนุญาต GPLv3</string>
   <string name="api">API</string>
   <string name="consumer_key">Consumer key</string>

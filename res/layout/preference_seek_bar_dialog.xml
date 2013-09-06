@@ -1,0 +1,31 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical">
+
+	<TextView
+		android:id="@+id/text_dialog_message"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="6dip"
+		android:paddingLeft="12dip"
+		android:paddingRight="12dip">
+	</TextView>
+
+	<TextView
+		android:id="@+id/text_progress"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="6dip"
+		android:gravity="center_horizontal">
+	</TextView>
+
+	<SeekBar
+		android:id="@+id/seek_bar"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="6dip"
+		android:layout_marginTop="6dip"/>
+
+</LinearLayout>

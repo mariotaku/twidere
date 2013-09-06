@@ -26,21 +26,21 @@ import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.LoaderManager.LoaderCallbacks;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.Loader;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -54,9 +54,9 @@ import android.widget.ExpandableListView.OnGroupExpandListener;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 
-public class AccountsDrawerFragment extends BaseFragment implements LoaderCallbacks<Cursor>, OnSizeChangedListener,
-		OnGroupExpandListener, OnChildClickListener, OnClickListener, OnSharedPreferenceChangeListener,
-		OnItemLongClickListener {
+public class AccountsDrawerFragment extends BaseSupportFragment implements LoaderCallbacks<Cursor>,
+		OnSizeChangedListener, OnGroupExpandListener, OnChildClickListener, OnClickListener,
+		OnSharedPreferenceChangeListener, OnItemLongClickListener {
 
 	private static final String FRAGMENT_TAG_ACCOUNT_DELETION = "account_deletion";
 	private ContentResolver mResolver;
@@ -289,7 +289,7 @@ public class AccountsDrawerFragment extends BaseFragment implements LoaderCallba
 		}
 	}
 
-	public static final class AccountDeletionDialogFragment extends BaseDialogFragment implements
+	public static final class AccountDeletionDialogFragment extends BaseSupportDialogFragment implements
 			DialogInterface.OnClickListener {
 
 		@Override

@@ -57,7 +57,7 @@
   <string name="followers">Követők</string>
   <string name="about">Általános infó</string>
   <string name="about_summary">A Twidere-ről</string>
-  <string name="license">Nyílt forráskódú licensz</string>
+  <string name="open_source_license">Nyílt forráskódú licensz</string>
   <string name="license_summary">A Twidere GPLv3 licensz alatt érhető el.</string>
   <string name="api">API</string>
   <string name="consumer_key">Felhasználói kulcs</string>

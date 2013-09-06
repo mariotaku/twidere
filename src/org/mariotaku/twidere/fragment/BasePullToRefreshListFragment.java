@@ -38,7 +38,7 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 
-public abstract class BasePullToRefreshListFragment extends BaseListFragment implements
+public abstract class BasePullToRefreshListFragment extends BaseSupportListFragment implements
 		PullToRefreshAttacher.OnRefreshListener, OnTouchListener, OnGestureListener {
 
 	private PullToRefreshAttacherActivity mPullToRefreshAttacherActivity;
@@ -115,8 +115,15 @@ public abstract class BasePullToRefreshListFragment extends BaseListFragment imp
 
 	}
 
+	public void onRefreshStarted() {
+	}
+
 	@Override
-	public void onRefreshStarted(final View view) {
+	public final void onRefreshStarted(final View view) {
+		if (mPullToRefreshAttacherActivity != null) {
+			mPullToRefreshAttacherActivity.addRefreshingState(this);
+		}
+		onRefreshStarted();
 	}
 
 	@Override
@@ -160,9 +167,9 @@ public abstract class BasePullToRefreshListFragment extends BaseListFragment imp
 		return false;
 	}
 
-	public void setEnabled(final boolean enabled) {
+	public void setPullToRefreshEnabled(final boolean enabled) {
 		if (mPullToRefreshAttacherActivity == null) return;
-		mPullToRefreshAttacherActivity.setEnabled(this, enabled);
+		mPullToRefreshAttacherActivity.setPullToRefreshEnabled(this, enabled);
 	}
 
 	public void setRefreshComplete() {
@@ -176,7 +183,7 @@ public abstract class BasePullToRefreshListFragment extends BaseListFragment imp
 		if (!refreshing) {
 			mPulledUp = false;
 		}
-		mPullToRefreshAttacherActivity.setRefreshing(this, true);
+		mPullToRefreshAttacherActivity.setRefreshing(this, refreshing);
 	}
 
 	protected PullToRefreshAttacher getPullToRefreshAttacher() {
@@ -187,11 +194,13 @@ public abstract class BasePullToRefreshListFragment extends BaseListFragment imp
 	}
 
 	public static interface PullToRefreshAttacherActivity {
+		public void addRefreshingState(BasePullToRefreshListFragment fragment);
+
 		public PullToRefreshAttacher getPullToRefreshAttacher();
 
 		public boolean isRefreshing(BasePullToRefreshListFragment fragment);
 
-		public void setEnabled(final BasePullToRefreshListFragment fragment, final boolean enabled);
+		public void setPullToRefreshEnabled(final BasePullToRefreshListFragment fragment, final boolean enabled);
 
 		public void setRefreshComplete(final BasePullToRefreshListFragment fragment);
 

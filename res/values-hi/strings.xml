@@ -57,7 +57,7 @@
   <string name="followers">फ़ॉलोअर</string>
   <string name="about">विवरण</string>
   <string name="about_summary">ट्विदेर के बारे में।</string>
-  <string name="license">ओपन सोर्स लाइसेंस</string>
+  <string name="open_source_license">ओपन सोर्स लाइसेंस</string>
   <string name="license_summary">ट्विदेर GPLv3 के अंतर्गत लाइसेंस है|</string>
   <string name="api">API</string>
   <string name="consumer_key">उपभोक्ता कुंजी</string>

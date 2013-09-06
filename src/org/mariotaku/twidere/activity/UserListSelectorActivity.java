@@ -25,13 +25,13 @@ import twitter4j.TwitterException;
 import twitter4j.User;
 import twitter4j.UserList;
 import twitter4j.http.HttpResponseCode;
-import android.app.DialogFragment;
-import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -75,7 +75,7 @@ public class UserListSelectorActivity extends BaseDialogActivity implements OnCl
 				final Bundle args = new Bundle();
 				args.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
 				f.setArguments(args);
-				f.show(getFragmentManager(), null);
+				f.show(getSupportFragmentManager(), null);
 				break;
 			}
 		}
@@ -224,7 +224,7 @@ public class UserListSelectorActivity extends BaseDialogActivity implements OnCl
 
 		@Override
 		protected void onPostExecute(final SingleResponse<List<ParcelableUserList>> result) {
-			final Fragment f = mActivity.getFragmentManager().findFragmentByTag(FRAGMENT_TAG_GET_USER_LISTS);
+			final Fragment f = mActivity.getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG_GET_USER_LISTS);
 			if (f instanceof DialogFragment) {
 				((DialogFragment) f).dismiss();
 			}
@@ -278,7 +278,7 @@ public class UserListSelectorActivity extends BaseDialogActivity implements OnCl
 
 		@Override
 		protected void onPostExecute(final SingleResponse<List<ParcelableUser>> result) {
-			final Fragment f = mActivity.getFragmentManager().findFragmentByTag(FRAGMENT_TAG_SEARCH_USERS);
+			final Fragment f = mActivity.getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG_SEARCH_USERS);
 			if (f instanceof DialogFragment) {
 				((DialogFragment) f).dismiss();
 			}

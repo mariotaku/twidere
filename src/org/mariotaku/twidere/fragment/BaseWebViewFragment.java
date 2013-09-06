@@ -21,11 +21,11 @@ package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.showErrorMessage;
 
+import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.activity.BaseActivity;
 import org.mariotaku.twidere.view.WebSettingsAccessor;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -34,51 +34,25 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.WebViewFragment;
 
 @SuppressLint("SetJavaScriptEnabled")
-public class WebViewFragment extends BaseFragment {
-
-	private WebView mWebView;
-
-	public final WebView getWebView() {
-		return mWebView;
-	}
-
-	public final void loadUrl(final String url) {
-		mWebView.loadUrl(url == null ? "about:blank" : url);
-	}
+public class BaseWebViewFragment extends WebViewFragment implements Constants {
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mWebView.setWebViewClient(new DefaultWebViewClient(getActivity()));
-		final WebSettings settings = mWebView.getSettings();
+		final WebView view = getWebView();
+		view.setWebViewClient(new DefaultWebViewClient(getActivity()));
+		final WebSettings settings = view.getSettings();
 		settings.setBuiltInZoomControls(true);
 		settings.setJavaScriptEnabled(true);
 		WebSettingsAccessor.setAllowUniversalAccessFromFileURLs(settings, true);
-		final Bundle bundle = getArguments();
-		if (bundle != null) {
-			final String url = bundle.getString(INTENT_KEY_URI);
-			loadUrl(url);
-		}
-	}
-
-	@Override
-	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		return mWebView = new WebView(getActivity());
-	}
-
-	public final void setWebViewClient(final WebViewClient client) {
-		mWebView.setWebViewClient(client);
 	}
 
 	public static class DefaultWebViewClient extends WebViewClient {
@@ -108,7 +82,6 @@ public class WebViewFragment extends BaseFragment {
 			}
 		}
 
-		@TargetApi(Build.VERSION_CODES.FROYO)
 		@Override
 		public void onReceivedSslError(final WebView view, final SslErrorHandler handler, final SslError error) {
 			if (mPreferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false)) {

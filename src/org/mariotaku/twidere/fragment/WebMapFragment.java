@@ -30,9 +30,9 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
-public class WebMapFragment extends WebViewFragment implements MapInterface {
+public class WebMapFragment extends BaseWebViewFragment implements MapInterface {
 
-	private final Uri mUri = Uri.parse("file:///android_asset/mapview.html");
+	private static final String MAPVIEW_URI = "file:///android_asset/mapview.html";
 
 	private double latitude, longitude;
 
@@ -67,8 +67,8 @@ public class WebMapFragment extends WebViewFragment implements MapInterface {
 
 		final WebView webview = getWebView();
 		webview.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-		setWebViewClient(new MapWebViewClient(getActivity()));
-		loadUrl(mUri.toString());
+		webview.setWebViewClient(new MapWebViewClient(getActivity()));
+		webview.loadUrl(MAPVIEW_URI);
 
 		final WebSettings settings = webview.getSettings();
 		settings.setBuiltInZoomControls(false);
@@ -105,8 +105,7 @@ public class WebMapFragment extends WebViewFragment implements MapInterface {
 		@Override
 		public boolean shouldOverrideUrlLoading(final WebView view, final String url) {
 			final Uri uri = Uri.parse(url);
-			if (uri.getScheme().equals(mUri.getScheme())) return false;
-
+			if (uri.getScheme().equals(Uri.parse(MAPVIEW_URI).getScheme())) return false;
 			final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
 			startActivity(intent);
 			return true;

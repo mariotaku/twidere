@@ -38,10 +38,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.Loader;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
+import android.support.v4.content.Loader;
 
 public abstract class ParcelableStatusesListFragment extends BaseStatusesListFragment<List<ParcelableStatus>> {
 
@@ -153,27 +152,9 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 		}
 	}
 
-	// @Override
-	// public final void onLoaderReset(final Loader<List<ParcelableStatus>>
-	// loader) {
-	// super.onLoaderReset(loader);
-	// if (!isLoaderUsed()) return;
-	// onRefreshComplete();
-	// setProgressBarIndeterminateVisibility(false);
-	// }
-
-	// @Override
-	// public final void onLoadFinished(final Loader<List<ParcelableStatus>>
-	// loader, final List<ParcelableStatus> data) {
-	// super.onLoadFinished(loader, data);
-	// if (!isLoaderUsed()) return;
-	// mAdapter.setData(data);
-	// onRefreshComplete();
-	// setProgressBarIndeterminateVisibility(false);
-	// }
-
 	@Override
-	public void onRefreshStarted(final View view) {
+	public void onRefreshStarted() {
+		super.onRefreshStarted();
 		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();
 		final int count = adapter.getCount();
 		final ParcelableStatus status = count > 0 ? adapter.getStatus(0) : null;

@@ -63,7 +63,7 @@
   <string name="friends">Vrienden</string>
   <string name="about">Over</string>
   <string name="about_summary">Over Twidere</string>
-  <string name="license">Open source licentie</string>
+  <string name="open_source_license">Open source licentie</string>
   <string name="license_summary">Twidere is gelicentieerd onder GPLv3.</string>
   <string name="api">API</string>
   <string name="consumer_key">Consumenten sleutel</string>

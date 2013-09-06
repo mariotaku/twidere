@@ -63,7 +63,7 @@
   <string name="friends">Teman</string>
   <string name="about">Tentang</string>
   <string name="about_summary">Tentang Twidere</string>
-  <string name="license">Lisensi Open Source</string>
+  <string name="open_source_license">Lisensi Open Source</string>
   <string name="license_summary">Twidere berlisensi GPLv3.</string>
   <string name="api">API</string>
   <string name="consumer_key">Kode Consumer Key</string>

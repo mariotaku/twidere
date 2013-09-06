@@ -2,15 +2,19 @@
 <resources>
 
 	<style name="Widget.Twidere.ActionBar" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse">
-		<item name="android:background">@drawable/ab_twidere_holo</item>
+		<item name="android:background">@drawable/ab_twidere_solid_color_holo</item>
 	</style>
 
 	<style name="Widget.Twidere.ActionBar.Dark" parent="android:Widget.Holo.ActionBar">
-		<item name="android:background">@drawable/ab_twidere_dark_holo</item>
+		<item name="android:background">@drawable/ab_twidere_transparent_dark_holo</item>
 	</style>
 
-	<style name="Widget.Twidere.ActionBar.Light" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse">
-		<item name="android:background">@drawable/ab_twidere_light_holo</item>
+	<style name="Widget.Twidere.ActionBar.Light" parent="android:Widget.Holo.Light.ActionBar.Solid">
+		<item name="android:background">@drawable/ab_twidere_solid_light_holo</item>
+	</style>
+
+	<style name="Widget.Twidere.ActionBar.Light.DarkActionBar" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse">
+		<item name="android:background">@drawable/ab_twidere_solid_dark_holo</item>
 	</style>
 
 	<style name="Widget.Twidere.Viewer.ActionBar" parent="android:Widget.Holo.ActionBar">

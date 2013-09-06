@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +56,7 @@ public class ArrayAdapter<T> extends BaseAdapter {
 
 	public final void clear() {
 		mData.clear();
+		Log.w("ArrayAdapter", new Exception());
 		notifyDataSetChanged();
 	}
 

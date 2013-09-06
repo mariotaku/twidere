@@ -55,7 +55,7 @@
   <string name="friends">Arkadaşlar</string>
   <string name="about">Hakkında</string>
   <string name="about_summary">Twidere hakkında</string>
-  <string name="license">Kaynak lisansını aç</string>
+  <string name="open_source_license">Kaynak lisansını aç</string>
   <string name="license_summary">Twidere GPLv3 altında lisanslıdır.</string>
   <string name="gzip_compressing">GZip sıkıştırması</string>
   <string name="gzip_compressing_summary">Tüm API isteklerini sıkıştırır, veri kullanımını azaltabilir, fakat tüm API sunucularında çalışmayabilir.</string>

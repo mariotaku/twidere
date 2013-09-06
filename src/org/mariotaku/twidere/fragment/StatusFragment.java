@@ -56,6 +56,7 @@ import org.mariotaku.twidere.adapter.PreviewPagerAdapter;
 import org.mariotaku.twidere.adapter.PreviewPagerAdapter.OnImageClickListener;
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.loader.DummyParcelableStatusesLoader;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -76,17 +77,13 @@ import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import android.app.Activity;
-import android.app.LoaderManager;
-import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ActivityNotFoundException;
-import android.content.AsyncTaskLoader;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.Loader;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Address;
@@ -94,6 +91,10 @@ import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -367,20 +368,12 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		public void onSizeChanged(final View view, final int w, final int h, final int oldw, final int oldh) {
 			if (getActivity() == null) return;
 			final float density = getResources().getDisplayMetrics().density;
-			final ViewGroup.LayoutParams lp = mStatusView.getLayoutParams();
-			if (lp != null) {
-				lp.height = h - (int) (density * 2);
-				mStatusView.setLayoutParams(lp);
-			} else {
-				mStatusView.setMinimumHeight(h - (int) (density * 2));
-			}
+			mStatusView.setMinimumHeight(h - (int) (density * 2));
 		}
 
 	};
 
 	public void displayStatus(final ParcelableStatus status) {
-		setRefreshComplete();
-		updatePullRefresh();
 		final boolean status_unchanged = mStatus != null && status != null && status.equals(mStatus);
 		if (!status_unchanged) {
 			getListAdapter().setData(null);
@@ -426,10 +419,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mTextView.setText(Html.fromHtml(status.text_html));
 		final TwidereLinkify linkify = new TwidereLinkify(new OnLinkClickHandler(getActivity()));
 		linkify.applyAllLinks(mTextView, status.account_id, status.is_possibly_sensitive);
-		final boolean is_reply = status.in_reply_to_status_id > 0;
 		final String time = formatToLongTimeString(getActivity(), status.timestamp);
 		final String source_html = status.source;
-		setEnabled(!mLoadMoreAutomatically && is_reply);
 		if (!isEmpty(time) && !isEmpty(source_html)) {
 			mTimeAndSourceView.setText(Html.fromHtml(getString(R.string.time_source, time, source_html)));
 		} else if (isEmpty(time) && !isEmpty(source_html)) {
@@ -440,15 +431,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mTimeAndSourceView.setMovementMethod(LinkMovementMethod.getInstance());
 		final boolean display_screen_name = NAME_DISPLAY_OPTION_SCREEN_NAME.equals(mPreferences.getString(
 				PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH));
-		mInReplyToView.setVisibility(is_reply ? View.VISIBLE : View.GONE);
-		if (is_reply) {
-			if (mLoadMoreAutomatically) {
-				mInReplyToView.setText(getString(R.string.in_reply_to, "@" + status.in_reply_to_screen_name));
-			} else {
-				mInReplyToView.setText(getString(R.string.in_reply_to_pull_to_load_conversation, "@"
-						+ status.in_reply_to_screen_name));
-			}
-		}
+		mInReplyToView.setText(getString(R.string.in_reply_to, "@" + status.in_reply_to_screen_name));
 
 		if (mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true)) {
 			final boolean hires_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
@@ -487,11 +470,17 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		} else {
 			mFollowIndicator.setVisibility(View.GONE);
 		}
+		updateConversationInfo();
+	}
+
+	@Override
+	public String getPullToRefreshTag() {
+		return "view_status";
 	}
 
 	@Override
 	public Loader<List<ParcelableStatus>> newLoaderInstance(final Context context, final Bundle args) {
-		return null;
+		return new DummyParcelableStatusesLoader(getActivity(), getData());
 	}
 
 	@Override
@@ -507,16 +496,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mTwitterWrapper = getTwitterWrapper();
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 		mImagePreviewAdapter = new PreviewPagerAdapter(getActivity());
-		if (mLoadMoreAutomatically) {
-			// TODO
-			// setMode(Mode.DISABLED);
-		} else {
-			// setMode(Mode.PULL_FROM_START);
-			// setPullLabel(getString(R.string.pull_to_load_conversation_label),
-			// Mode.BOTH);
-			// setReleaseLabel(getString(R.string.pull_to_load_conversation_release_label),
-			// Mode.BOTH);
-		}
+		setPullToRefreshEnabled(false);
 		final Bundle bundle = getArguments();
 		if (bundle != null) {
 			mAccountId = bundle.getLong(INTENT_KEY_ACCOUNT_ID);
@@ -648,9 +628,9 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		openImage(getActivity(), spec.image_full_url, spec.image_original_url, mStatus.is_possibly_sensitive);
 	}
 
-	public void onRefreshStarted() {
-		setRefreshComplete();
-		showConversation();
+	@Override
+	public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
+			final int totalItemCount) {
 	}
 
 	@Override
@@ -690,8 +670,24 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	}
 
 	@Override
+	protected void onReachedBottom() {
+
+	}
+
+	@Override
 	protected void setListHeaderFooters(final ListView list) {
 		list.addFooterView(mStatusView);
+	}
+
+	private void addConversationStatus(final ParcelableStatus status) {
+		final List<ParcelableStatus> data = getData();
+		data.add(status);
+		final ParcelableStatusesAdapter adapter = (ParcelableStatusesAdapter) getListAdapter();
+		adapter.setData(data);
+		adapter.sort(ParcelableStatus.REVERSE_ID_COMPARATOR);
+		if (!mLoadMoreAutomatically && mShouldScroll) {
+			setSelection(0 + mListView.getHeaderViewsCount());
+		}
 	}
 
 	private void clearPreviewImages() {
@@ -765,15 +761,14 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		}
 	}
 
-	private void updatePullRefresh() {
+	private void updateConversationInfo() {
 		final boolean has_converstion = mStatus != null && mStatus.in_reply_to_status_id > 0;
 		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();
-		final boolean load_not_finished = adapter.getCount() > 0 && adapter.getStatus(0).in_reply_to_status_id > 0;
-		final boolean should_enable = has_converstion && load_not_finished;
-		mListView
-				.setTranscriptMode(should_enable ? ListView.TRANSCRIPT_MODE_NORMAL : ListView.TRANSCRIPT_MODE_DISABLED);
-		mInReplyToView.setClickable(should_enable);
-		setEnabled(should_enable);
+		final boolean load_not_finished = adapter.isEmpty() || adapter.getStatus(0).in_reply_to_status_id > 0;
+		final boolean enable = has_converstion && load_not_finished;
+		mListView.setTranscriptMode(enable ? ListView.TRANSCRIPT_MODE_NORMAL : ListView.TRANSCRIPT_MODE_DISABLED);
+		mInReplyToView.setVisibility(enable ? View.VISIBLE : View.GONE);
+		mInReplyToView.setClickable(enable);
 	}
 
 	private void updateUserColor() {
@@ -815,13 +810,13 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		@Override
 		protected void onCancelled() {
 			fragment.setProgressBarIndeterminateVisibility(false);
-			fragment.updatePullRefresh();
+			fragment.updateConversationInfo();
 		}
 
 		@Override
 		protected void onPostExecute(final Response<Boolean> data) {
 			fragment.setProgressBarIndeterminateVisibility(false);
-			fragment.updatePullRefresh();
+			fragment.updateConversationInfo();
 			if (data == null || data.value == null || !data.value) {
 				showErrorMessage(context, context.getString(R.string.getting_status), data.exception, true);
 			}
@@ -830,7 +825,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		@Override
 		protected void onPreExecute() {
 			fragment.setProgressBarIndeterminateVisibility(true);
-			fragment.updatePullRefresh();
+			fragment.updateConversationInfo();
 		}
 
 		class AddStatusRunnable implements Runnable {
@@ -843,12 +838,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 			@Override
 			public void run() {
-				final ParcelableStatusesAdapter adapter = (ParcelableStatusesAdapter) fragment.getListAdapter();
-				adapter.add(status);
-				adapter.sort(ParcelableStatus.REVERSE_ID_COMPARATOR);
-				if (!fragment.mLoadMoreAutomatically && fragment.mShouldScroll) {
-					fragment.mListView.setSelection(0 + fragment.mListView.getHeaderViewsCount());
-				}
+				fragment.addConversationStatus(status);
 			}
 		}
 	}

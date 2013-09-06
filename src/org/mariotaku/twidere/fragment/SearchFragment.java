@@ -1,7 +1,7 @@
 package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.TabsAdapter;
+import org.mariotaku.twidere.adapter.SupportTabsAdapter;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.view.ExtendedViewPager;
@@ -20,12 +20,12 @@ import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
-public class SearchFragment extends BaseFragment implements Panes.Left, OnPageChangeListener {
+public class SearchFragment extends BaseSupportFragment implements Panes.Left, OnPageChangeListener {
 
 	private ExtendedViewPager mViewPager;
 	private LinearLayout mIndicator;
 
-	private TabsAdapter mAdapter;
+	private SupportTabsAdapter mAdapter;
 
 	private int mThemeColor;
 
@@ -40,7 +40,7 @@ public class SearchFragment extends BaseFragment implements Panes.Left, OnPageCh
 		super.onActivityCreated(savedInstanceState);
 		final Bundle args = getArguments();
 		mThemeColor = ThemeUtils.getThemeColor(getActivity());
-		mAdapter = new TabsAdapter(getActivity(), getChildFragmentManager(), null);
+		mAdapter = new SupportTabsAdapter(getActivity(), getChildFragmentManager(), null);
 		mAdapter.addTab(SearchTweetsFragment.class, args, getString(R.string.tweets), R.drawable.ic_tab_twitter, 0);
 		mAdapter.addTab(SearchUsersFragment.class, args, getString(R.string.users), R.drawable.ic_tab_person, 1);
 		mViewPager.setAdapter(mAdapter);

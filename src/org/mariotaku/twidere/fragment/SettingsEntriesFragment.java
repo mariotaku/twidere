@@ -17,36 +17,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.activity;
+package org.mariotaku.twidere.fragment;
 
+import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.fragment.ExtensionsListFragment;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.view.MenuItem;
+import android.preference.PreferenceFragment;
 
-public class ExtensionsListActivity extends BaseActivity {
-
-	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
-		switch (item.getItemId()) {
-			case MENU_HOME:
-				onBackPressed();
-				break;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+public class SettingsEntriesFragment extends PreferenceFragment implements Constants {
 
 	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.base);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-		final Fragment fragment = new ExtensionsListFragment();
-		final FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.replace(R.id.main, fragment);
-		ft.commit();
+	public void onActivityCreated(final Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		getPreferenceManager().setSharedPreferencesName(SHARED_PREFERENCES_NAME);
+		addPreferencesFromResource(R.xml.settings_headers);
 	}
+
 }

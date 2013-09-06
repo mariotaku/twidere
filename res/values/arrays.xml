@@ -100,11 +100,13 @@
 		<item>@string/theme_twidere</item>
 		<item>@string/theme_dark</item>
 		<item>@string/theme_light</item>
+		<item>@string/theme_light_darkactionbar</item>
 	</string-array>
 	<string-array name="values_theme">
 		<item>twidere</item>
 		<item>dark</item>
 		<item>light</item>
+		<item>light_darkactionbar</item>
 	</string-array>
 
 </resources>

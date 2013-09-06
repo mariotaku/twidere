@@ -63,7 +63,7 @@
   <string name="friends">好友</string>
   <string name="about">關於</string>
   <string name="about_summary">關於 Twidere</string>
-  <string name="license">開源許可</string>
+  <string name="open_source_license">開源許可</string>
   <string name="license_summary">Twidere 以 GPLv3 許可發佈</string>
   <string name="api">API</string>
   <string name="consumer_key">Consumer key</string>

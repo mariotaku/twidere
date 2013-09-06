@@ -30,12 +30,11 @@ import org.mariotaku.jsonserializer.JSONSerializer;
 import org.mariotaku.twidere.adapter.ParcelableActivitiesAdapter;
 import org.mariotaku.twidere.model.ParcelableActivity;
 
-import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
-import android.content.Loader;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
 
 public abstract class BaseActivitiesListFragment extends BasePullToRefreshListFragment implements
 		LoaderCallbacks<List<ParcelableActivity>> {
@@ -90,7 +89,8 @@ public abstract class BaseActivitiesListFragment extends BasePullToRefreshListFr
 	}
 
 	@Override
-	public void onRefreshStarted(final View view) {
+	public void onRefreshStarted() {
+		super.onRefreshStarted();
 		getLoaderManager().restartLoader(0, getArguments(), this);
 	}
 

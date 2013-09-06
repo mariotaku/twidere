@@ -38,15 +38,15 @@ import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
-import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -106,9 +106,9 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 			if (args != null) {
 				args.putLong(INTENT_KEY_MAX_ID, mAdapter.getItem(count - 1).id);
 			}
-			// if (!getLoaderManager().hasRunningLoaders()) {
-			getLoaderManager().restartLoader(0, args, this);
-			// }
+			if (!getLoaderManager().hasRunningLoaders()) {
+				getLoaderManager().restartLoader(0, args, this);
+			}
 		}
 	}
 
@@ -249,7 +249,8 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 	}
 
 	@Override
-	public void onRefreshStarted(final View view) {
+	public void onRefreshStarted() {
+		super.onRefreshStarted();
 		getLoaderManager().restartLoader(0, getArguments(), this);
 	}
 

@@ -63,7 +63,7 @@
 </string>
   <string name="about">정보</string>
   <string name="about_summary">Twidere에 대해서</string>
-  <string name="license">오픈소스 라이센스</string>
+  <string name="open_source_license">오픈소스 라이센스</string>
   <string name="license_summary">Twidere의 라이센스는 GPLv3을 따릅니다.</string>
   <string name="api">API</string>
   <string name="consumer_key">컨슈머 키</string>

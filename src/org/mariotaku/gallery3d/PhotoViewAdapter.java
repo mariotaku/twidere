@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.mariotaku.gallery3d.app;
+package org.mariotaku.gallery3d;
 
 import org.mariotaku.gallery3d.ui.BitmapScreenNail;
 import org.mariotaku.gallery3d.ui.PhotoView;

@@ -24,10 +24,10 @@ import java.util.List;
 import org.mariotaku.twidere.loader.UserSearchLoader;
 import org.mariotaku.twidere.model.ParcelableUser;
 
-import android.app.Fragment;
 import android.content.Context;
-import android.content.Loader;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.content.Loader;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 

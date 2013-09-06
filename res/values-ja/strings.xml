@@ -63,7 +63,7 @@
   <string name="friends">フォロー中</string>
   <string name="about">バージョン情報</string>
   <string name="about_summary">ツイデレについて</string>
-  <string name="license">オープンソースライセンス</string>
+  <string name="open_source_license">オープンソースライセンス</string>
   <string name="license_summary">ツイデレ は GPLv3 ライセンスの下で提供されています。</string>
   <string name="api">API</string>
   <string name="consumer_key">Consumer key</string>

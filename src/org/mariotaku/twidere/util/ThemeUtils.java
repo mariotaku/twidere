@@ -21,6 +21,7 @@ public class ThemeUtils implements Constants {
 	private static final String THEME_NAME_TWIDERE = "twidere";
 	private static final String THEME_NAME_DARK = "dark";
 	private static final String THEME_NAME_LIGHT = "light";
+	private static final String THEME_NAME_LIGHT_DARKACTIONBAR = "light_darkactionbar";
 
 	private static final HashMap<String, Integer> THEMES = new HashMap<String, Integer>();
 	private static final HashMap<String, Integer> THEMES_SWIPEBACK = new HashMap<String, Integer>();
@@ -33,21 +34,27 @@ public class ThemeUtils implements Constants {
 		THEMES.put(THEME_NAME_TWIDERE, R.style.Theme_Twidere);
 		THEMES.put(THEME_NAME_DARK, R.style.Theme_Twidere_Dark);
 		THEMES.put(THEME_NAME_LIGHT, R.style.Theme_Twidere_Light);
+		THEMES.put(THEME_NAME_LIGHT_DARKACTIONBAR, R.style.Theme_Twidere_Light_DarkActionBar);
 		THEMES_SWIPEBACK.put(THEME_NAME_TWIDERE, R.style.Theme_Twidere_SwipeBack);
 		THEMES_SWIPEBACK.put(THEME_NAME_DARK, R.style.Theme_Twidere_Dark_SwipeBack);
 		THEMES_SWIPEBACK.put(THEME_NAME_LIGHT, R.style.Theme_Twidere_Light_SwipeBack);
+		THEMES_SWIPEBACK.put(THEME_NAME_LIGHT_DARKACTIONBAR, R.style.Theme_Twidere_Light_DarkActionBar_SwipeBack);
 		THEMES_SOLIDBG.put(THEME_NAME_TWIDERE, R.style.Theme_Twidere_SolidBackground);
 		THEMES_SOLIDBG.put(THEME_NAME_DARK, R.style.Theme_Twidere_Dark_SolidBackground);
 		THEMES_SOLIDBG.put(THEME_NAME_LIGHT, R.style.Theme_Twidere_Light_SolidBackground);
+		THEMES_SOLIDBG.put(THEME_NAME_LIGHT_DARKACTIONBAR, R.style.Theme_Twidere_Light_DarkActionBar_SolidBackground);
 		THEMES_SWIPEBACK_SOLIDBG.put(THEME_NAME_TWIDERE, R.style.Theme_Twidere_SwipeBack_SolidBackground);
 		THEMES_SWIPEBACK_SOLIDBG.put(THEME_NAME_DARK, R.style.Theme_Twidere_Dark_SwipeBack_SolidBackground);
 		THEMES_SWIPEBACK_SOLIDBG.put(THEME_NAME_LIGHT, R.style.Theme_Twidere_Light_SwipeBack_SolidBackground);
+		THEMES_SWIPEBACK_SOLIDBG.put(THEME_NAME_LIGHT_DARKACTIONBAR,
+				R.style.Theme_Twidere_Light_DarkActionBar_SwipeBack_SolidBackground);
 		THEMES_DIALOG.put(THEME_NAME_TWIDERE, R.style.Theme_Twidere_Light_Dialog);
 		THEMES_DIALOG.put(THEME_NAME_DARK, R.style.Theme_Twidere_Dark_Dialog);
 		THEMES_DIALOG.put(THEME_NAME_LIGHT, R.style.Theme_Twidere_Light_Dialog);
 		THEMES_COMPOSE.put(THEME_NAME_TWIDERE, R.style.Theme_Twidere_Compose);
 		THEMES_COMPOSE.put(THEME_NAME_DARK, R.style.Theme_Twidere_Dark_Compose);
 		THEMES_COMPOSE.put(THEME_NAME_LIGHT, R.style.Theme_Twidere_Light_Compose);
+		THEMES_COMPOSE.put(THEME_NAME_LIGHT_DARKACTIONBAR, R.style.Theme_Twidere_Light_DarkActionBar_Compose);
 	}
 
 	private ThemeUtils() {
@@ -80,7 +87,10 @@ public class ThemeUtils implements Constants {
 		final Drawable d = a.getDrawable(0);
 		if (!(d instanceof LayerDrawable)) return d;
 		final LayerDrawable ld = (LayerDrawable) d.mutate();
-		ld.findDrawableByLayerId(R.id.color_layer).setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+		final Drawable color_layer = ld.findDrawableByLayerId(R.id.color_layer);
+		if (color_layer != null) {
+			color_layer.setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+		}
 		return ld;
 	}
 
@@ -109,6 +119,22 @@ public class ThemeUtils implements Constants {
 	public static int getSwipeBackThemeResource(final String name, final boolean solid_background) {
 		final Integer res = (solid_background ? THEMES_SWIPEBACK_SOLIDBG : THEMES_SWIPEBACK).get(name);
 		return res != null ? res : R.style.Theme_Twidere_SwipeBack;
+	}
+
+	public static int getTabIconColor(final Context context) {
+		return getTabIconColor(getThemeResource(context));
+	}
+
+	public static int getTabIconColor(final int res) {
+		switch (res) {
+			case R.style.Theme_Twidere_Light:
+			case R.style.Theme_Twidere_Light_SwipeBack:
+			case R.style.Theme_Twidere_Light_SolidBackground:
+			case R.style.Theme_Twidere_Light_SwipeBack_SolidBackground:
+			case R.style.Theme_Twidere_Light_Compose:
+				return 0xFF333333;
+		}
+		return Color.WHITE;
 	}
 
 	@SuppressLint("InlinedApi")
@@ -174,9 +200,26 @@ public class ThemeUtils implements Constants {
 			case R.style.Theme_Twidere_SwipeBack:
 			case R.style.Theme_Twidere_SolidBackground:
 			case R.style.Theme_Twidere_SwipeBack_SolidBackground:
+			case R.style.Theme_Twidere_Compose:
 				return false;
 		}
 		return true;
+	}
+
+	public static boolean shouldApplyColorFilterToTabIcons(final Context context) {
+		return shouldApplyColorFilterToTabIcons(getThemeResource(context));
+	}
+
+	public static boolean shouldApplyColorFilterToTabIcons(final int res) {
+		switch (res) {
+			case R.style.Theme_Twidere_Light:
+			case R.style.Theme_Twidere_Light_SwipeBack:
+			case R.style.Theme_Twidere_Light_SolidBackground:
+			case R.style.Theme_Twidere_Light_SwipeBack_SolidBackground:
+			case R.style.Theme_Twidere_Light_Compose:
+				return true;
+		}
+		return false;
 	}
 
 }

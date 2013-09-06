@@ -20,27 +20,22 @@
 package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.activity.SettingsDetailsActivity;
-import org.mariotaku.twidere.model.Panes;
+import org.mariotaku.twidere.util.Utils;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
-public class SettingsDetailsFragment extends PreferenceFragment implements Constants, Panes.Right {
+public class SettingsDetailsFragment extends PreferenceFragment implements Constants {
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		getPreferenceManager().setSharedPreferencesName(SHARED_PREFERENCES_NAME);
 		final Bundle args = getArguments();
-		final int resId = args != null ? args.getInt(INTENT_KEY_RESID) : 0;
+		final String rawResId = args != null ? args.getString(INTENT_KEY_RESID) : null;
+		final int resId = Utils.getResId(getActivity(), rawResId);
 		if (resId != 0) {
 			addPreferencesFromResource(resId);
-		}
-		final Activity activity = getActivity();
-		if (activity instanceof SettingsDetailsActivity) {
-			activity.setTitle(getPreferenceScreen().getTitle());
 		}
 	}
 

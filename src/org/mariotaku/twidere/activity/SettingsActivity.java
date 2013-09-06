@@ -21,129 +21,49 @@ package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.Utils.restartActivity;
 
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.fragment.CustomTabsFragment;
-import org.mariotaku.twidere.fragment.ExtensionsListFragment;
-import org.mariotaku.twidere.fragment.FiltersListFragment;
-import org.mariotaku.twidere.fragment.InternalSettingsFragment;
-import org.mariotaku.twidere.fragment.SettingsDetailsFragment;
+import java.util.List;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.ArrayAdapter;
+
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.res.Resources;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.Preference.OnPreferenceClickListener;
-import android.support.v4.app.NavUtils;
+import android.text.TextUtils;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.TextView;
 
-public class SettingsActivity extends DualPaneActivity implements OnSharedPreferenceChangeListener,
-		OnPreferenceClickListener {
+public class SettingsActivity extends BasePreferenceActivity implements OnSharedPreferenceChangeListener {
 
 	private SharedPreferences mPreferences;
+	private HeaderAdapter mAdapter;
 
-	private static final String KEY_ABOUT = "about";
-	private static final String KEY_CUSTOM_TABS = "custom_tabs";
-	private static final String KEY_EXTENSIONS = "extensions";
-	private static final String KEY_FILTERS = "filters";
-	private static final String KEY_SETTINGS_APPEARANCE = "settings_appearance";
-	private static final String KEY_SETTINGS_CONTENT_AND_STORAGE = "settings_content_and_storage";
-	private static final String KEY_SETTINGS_NETWORK = "settings_network";
-	private static final String KEY_SETTINGS_REFRESH_AND_NOTIFICATIONS = "settings_refresh_and_notifications";
-	private static final String KEY_SETTINGS_OTHER = "settings_other";
+	public HeaderAdapter getHeaderAdapter() {
+		if (mAdapter != null) return mAdapter;
+		return mAdapter = new HeaderAdapter(this);
+	}
 
 	@Override
-	public void onBackPressed() {
-		NavUtils.navigateUpFromSameTask(this);
+	public void onBuildHeaders(final List<Header> target) {
+		loadHeadersFromResource(R.xml.settings_headers, target);
+		final HeaderAdapter adapter = getHeaderAdapter();
+		adapter.clear();
+		adapter.addAll(target);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
-			case MENU_HOME:
+			case MENU_HOME: {
 				onBackPressed();
-				return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public void onPostCreate(final Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
-		final InternalSettingsFragment fragment = (InternalSettingsFragment) getFragmentManager().findFragmentById(
-				R.id.main);
-		if (fragment == null) return;
-		fragment.findPreference(KEY_ABOUT).setOnPreferenceClickListener(this);
-		fragment.findPreference(KEY_EXTENSIONS).setOnPreferenceClickListener(this);
-		fragment.findPreference(KEY_CUSTOM_TABS).setOnPreferenceClickListener(this);
-		fragment.findPreference(KEY_FILTERS).setOnPreferenceClickListener(this);
-		fragment.findPreference(KEY_SETTINGS_APPEARANCE).setOnPreferenceClickListener(this);
-		fragment.findPreference(KEY_SETTINGS_CONTENT_AND_STORAGE).setOnPreferenceClickListener(this);
-		fragment.findPreference(KEY_SETTINGS_NETWORK).setOnPreferenceClickListener(this);
-		fragment.findPreference(KEY_SETTINGS_REFRESH_AND_NOTIFICATIONS).setOnPreferenceClickListener(this);
-		fragment.findPreference(KEY_SETTINGS_OTHER).setOnPreferenceClickListener(this);
-	}
-
-	@Override
-	public boolean onPreferenceClick(final Preference preference) {
-		final String key = preference.getKey();
-		final int res_id;
-		if (KEY_CUSTOM_TABS.equals(key)) {
-			if (isDualPaneMode()) {
-				showFragment(new CustomTabsFragment());
-			} else {
-				final Intent intent = new Intent(INTENT_ACTION_CUSTOM_TABS);
-				intent.setPackage(getPackageName());
-				startActivity(intent);
-			}
-			return true;
-		} else if (KEY_EXTENSIONS.equals(key)) {
-			if (isDualPaneMode()) {
-				showFragment(new ExtensionsListFragment());
-			} else {
-				final Intent intent = new Intent(INTENT_ACTION_EXTENSIONS);
-				intent.setPackage(getPackageName());
-				startActivity(intent);
-			}
-			return true;
-		} else if (KEY_FILTERS.equals(key)) {
-			if (isDualPaneMode()) {
-				showFragment(new FiltersListFragment());
-			} else {
-				final Intent intent = new Intent(INTENT_ACTION_FILTERS);
-				intent.setClass(this, FiltersActivity.class);
-				startActivity(intent);
-			}
-			return true;
-		} else if (KEY_SETTINGS_APPEARANCE.equals(key)) {
-			res_id = R.xml.settings_appearance;
-		} else if (KEY_SETTINGS_CONTENT_AND_STORAGE.equals(key)) {
-			res_id = R.xml.settings_content_and_storage;
-		} else if (KEY_SETTINGS_NETWORK.equals(key)) {
-			res_id = R.xml.settings_network;
-		} else if (KEY_SETTINGS_REFRESH_AND_NOTIFICATIONS.equals(key)) {
-			res_id = R.xml.settings_refresh_and_notifications;
-		} else if (KEY_SETTINGS_OTHER.equals(key)) {
-			res_id = R.xml.settings_other;
-		} else if (KEY_ABOUT.equals(key)) {
-			res_id = R.xml.about;
-		} else {
-			res_id = -1;
-		}
-		if (res_id > 0) {
-			final Bundle bundle = new Bundle();
-			bundle.putInt(INTENT_KEY_RESID, res_id);
-			if (isDualPaneMode()) {
-				final Fragment fragment = new SettingsDetailsFragment();
-				fragment.setArguments(bundle);
-				showFragment(fragment);
-			} else {
-				final Intent intent = new Intent(this, SettingsDetailsActivity.class);
-				intent.putExtras(bundle);
-				startActivity(intent);
+				break;
 			}
 		}
 		return true;
@@ -157,33 +77,115 @@ public class SettingsActivity extends DualPaneActivity implements OnSharedPrefer
 	}
 
 	@Override
+	public void setListAdapter(final ListAdapter adapter) {
+		if (adapter == null) {
+			super.setListAdapter(null);
+		} else {
+			super.setListAdapter(getHeaderAdapter());
+		}
+	}
+
+	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
 		setIntent(getIntent().addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
-		final Fragment fragment = new InternalSettingsFragment();
-		final FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.replace(R.id.main, fragment);
-		ft.commit();
 	}
 
-	@Override
-	protected boolean shouldForceEnableDualPaneMode() {
-		return getResources().getBoolean(R.bool.is_large_screen);
-	}
+	static class HeaderAdapter extends ArrayAdapter<Header> {
 
-	void showFragment(final Fragment fragment) {
-		final FragmentManager fm = getFragmentManager();
-		final int entry_count = fm.getBackStackEntryCount();
-		final FragmentTransaction ft = fm.beginTransaction();
-		for (int i = 0; i < entry_count; i++) {
-			final int id = fm.getBackStackEntryAt(i).getId();
-			ft.remove(fm.findFragmentById(id));
+		static final int HEADER_TYPE_CATEGORY = 0;
+		static final int HEADER_TYPE_NORMAL = 1;
+
+		private final Context mContext;
+		private final Resources mResources;
+
+		public HeaderAdapter(final Context context) {
+			super(context, R.layout.settings_list_item);
+			mContext = context;
+			mResources = context.getResources();
 		}
-		ft.commitAllowingStateLoss();
-		showFragment(fragment, false);
+
+		@Override
+		public boolean areAllItemsEnabled() {
+			return false;
+		}
+
+		@Override
+		public int getItemViewType(final int position) {
+			final Header header = getItem(position);
+			return getHeaderType(header);
+		}
+
+		@Override
+		public View getView(final int position, final View convertView, final ViewGroup parent) {
+			final Header header = getItem(position);
+			final int viewType = getHeaderType(header);
+			final View view;
+			switch (viewType) {
+				case HEADER_TYPE_CATEGORY: {
+					view = new TextView(mContext, null, android.R.attr.listSeparatorTextViewStyle);
+					((TextView) view).setText(header.getTitle(mResources));
+					break;
+				}
+				default: {
+					final boolean is_switch_item = convertView != null
+							&& convertView.findViewById(android.R.id.toggle) != null;
+					final boolean should_create_new = convertView instanceof TextView || is_switch_item;
+					view = super.getView(position, should_create_new ? null : convertView, parent);
+					final ViewHolder holder;
+					final Object tag = view.getTag();
+					if (tag instanceof ViewHolder) {
+						holder = (ViewHolder) tag;
+					} else {
+						holder = new ViewHolder(view);
+						view.setTag(holder);
+					}
+					final CharSequence title = header.getTitle(mResources);
+					holder.title.setText(title);
+					final CharSequence summary = header.getSummary(mResources);
+					if (!TextUtils.isEmpty(summary)) {
+						holder.summary.setVisibility(View.VISIBLE);
+						holder.summary.setText(summary);
+					} else {
+						holder.summary.setVisibility(View.GONE);
+					}
+					if (header.iconRes != 0) {
+						holder.icon.setImageResource(header.iconRes);
+					} else {
+						holder.icon.setImageDrawable(null);
+					}
+					break;
+				}
+			}
+			return view;
+		}
+
+		@Override
+		public boolean isEnabled(final int position) {
+			return getItemViewType(position) != HEADER_TYPE_CATEGORY;
+		}
+
+		static int getHeaderType(final Header header) {
+			if (header.fragment == null && header.intent == null)
+				return HEADER_TYPE_CATEGORY;
+			else
+				return HEADER_TYPE_NORMAL;
+		}
+
+		private static class ViewHolder {
+			private final TextView title, summary;
+			private final ImageView icon;
+
+			ViewHolder(final View view) {
+				title = (TextView) view.findViewById(android.R.id.title);
+				summary = (TextView) view.findViewById(android.R.id.summary);
+				icon = (ImageView) view.findViewById(android.R.id.icon);
+			}
+		}
+
 	}
 
 }

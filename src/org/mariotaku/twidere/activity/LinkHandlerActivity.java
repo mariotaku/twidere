@@ -26,6 +26,7 @@ import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.matchLinkId;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.fragment.BasePullToRefreshListFragment;
 import org.mariotaku.twidere.fragment.DirectMessagesConversationFragment;
 import org.mariotaku.twidere.fragment.IncomingFriendshipsFragment;
 import org.mariotaku.twidere.fragment.SavedSearchesListFragment;
@@ -50,18 +51,16 @@ import org.mariotaku.twidere.util.MultiSelectEventHandler;
 import org.mariotaku.twidere.util.ParseUtils;
 
 import android.app.ActionBar;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.view.Window;
 
 public class LinkHandlerActivity extends TwidereSwipeBackActivity {
-
-	private Fragment mFragment;
 
 	private MultiSelectEventHandler mMultiSelectHandler;
 
@@ -85,6 +84,12 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity {
 	}
 
 	@Override
+	protected BasePullToRefreshListFragment getCurrentPullToRefreshFragment() {
+		final Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
+		return fragment instanceof BasePullToRefreshListFragment ? (BasePullToRefreshListFragment) fragment : null;
+	}
+
+	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		mMultiSelectHandler = new MultiSelectEventHandler(this);
@@ -96,18 +101,7 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity {
 		setProgressBarIndeterminateVisibility(false);
 		final Intent intent = getIntent();
 		final Uri data = intent.getData();
-		if (data != null) {
-			if (setFragment(data)) {
-				if (mFragment != null) {
-					final FragmentTransaction ft = getFragmentManager().beginTransaction();
-					ft.replace(R.id.main, mFragment);
-					ft.commit();
-					return;
-				} else {
-					finish();
-				}
-			}
-		} else {
+		if (data == null || !showFragment(data)) {
 			finish();
 		}
 	}
@@ -129,7 +123,7 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity {
 		return false;
 	}
 
-	private boolean setFragment(final Uri uri) {
+	private boolean showFragment(final Uri uri) {
 		final Bundle extras = getIntent().getExtras();
 		Fragment fragment = null;
 		if (uri != null) {
@@ -414,8 +408,13 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity {
 				fragment.setArguments(args);
 			}
 		}
-		mFragment = fragment;
-		return true;
+		if (fragment != null) {
+			final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+			ft.replace(R.id.main, fragment);
+			ft.commit();
+			return true;
+		}
+		return false;
 	}
 
 }

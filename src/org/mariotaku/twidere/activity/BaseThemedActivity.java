@@ -1,10 +1,10 @@
 package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.Utils.restartActivity;
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 
-public abstract class BaseThemedActivity extends Activity {
+public abstract class BaseThemedActivity extends FragmentActivity {
 
 	private int mCurrentThemeResource;
 

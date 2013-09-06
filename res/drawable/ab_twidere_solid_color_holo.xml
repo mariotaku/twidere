@@ -4,5 +4,6 @@
 	<item
 		android:id="@+id/color_layer"
 		android:drawable="@drawable/ab_solid_light_nocolor_holo"/>
+	<item android:drawable="@drawable/ab_transparent_noclor_holo"/>
 
 </layer-list>

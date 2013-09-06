@@ -35,13 +35,25 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 @SuppressLint("Registered")
-public class BaseActivity extends BaseThemedActivity implements Constants, PullToRefreshAttacherActivity {
+public class BaseActivity extends BaseSupportThemedActivity implements Constants, PullToRefreshAttacherActivity {
 
 	private final Set<String> mEnabledStates = new HashSet<String>();
 	private final Set<String> mRefreshingStates = new HashSet<String>();
 
 	private boolean mInstanceStateSaved, mIsVisible, mIsOnTop;
 	private PullToRefreshAttacher mPullToRefreshAttacher;
+
+	@Override
+	public void addRefreshingState(final BasePullToRefreshListFragment fragment) {
+		final String tag = fragment.getPullToRefreshTag();
+		if (tag == null) return;
+		mEnabledStates.add(tag);
+		// final BasePullToRefreshListFragment curr =
+		// getCurrentPullToRefreshFragment();
+		// if (curr != null && tag.equals(curr.getPullToRefreshTag())) {
+		// mPullToRefreshAttacher.setEnabled(true);
+		// }
+	}
 
 	public MessagesManager getMessagesManager() {
 		return getTwidereApplication() != null ? getTwidereApplication().getMessagesManager() : null;
@@ -67,7 +79,7 @@ public class BaseActivity extends BaseThemedActivity implements Constants, PullT
 	@Override
 	public boolean isRefreshing(final BasePullToRefreshListFragment fragment) {
 		if (fragment == null) return false;
-		return mRefreshingStates.contains(fragment);
+		return mRefreshingStates.contains(fragment.getPullToRefreshTag());
 	}
 
 	public boolean isVisible() {
@@ -75,13 +87,17 @@ public class BaseActivity extends BaseThemedActivity implements Constants, PullT
 	}
 
 	@Override
-	public void setEnabled(final BasePullToRefreshListFragment fragment, final boolean enabled) {
+	public void setPullToRefreshEnabled(final BasePullToRefreshListFragment fragment, final boolean enabled) {
 		final String tag = fragment.getPullToRefreshTag();
 		if (tag == null) return;
 		if (enabled) {
 			mEnabledStates.add(tag);
 		} else {
 			mEnabledStates.remove(tag);
+		}
+		final BasePullToRefreshListFragment curr = getCurrentPullToRefreshFragment();
+		if (curr != null && tag.equals(curr.getPullToRefreshTag())) {
+			mPullToRefreshAttacher.setEnabled(enabled);
 		}
 	}
 
@@ -90,6 +106,10 @@ public class BaseActivity extends BaseThemedActivity implements Constants, PullT
 		final String tag = fragment.getPullToRefreshTag();
 		if (tag == null) return;
 		mRefreshingStates.remove(tag);
+		final BasePullToRefreshListFragment curr = getCurrentPullToRefreshFragment();
+		if (curr != null && tag.equals(curr.getPullToRefreshTag())) {
+			mPullToRefreshAttacher.setRefreshComplete();
+		}
 	}
 
 	@Override
@@ -100,6 +120,10 @@ public class BaseActivity extends BaseThemedActivity implements Constants, PullT
 			mRefreshingStates.add(tag);
 		} else {
 			mRefreshingStates.remove(tag);
+		}
+		final BasePullToRefreshListFragment curr = getCurrentPullToRefreshFragment();
+		if (curr != null && tag.equals(curr.getPullToRefreshTag())) {
+			mPullToRefreshAttacher.setRefreshing(refreshing);
 		}
 	}
 

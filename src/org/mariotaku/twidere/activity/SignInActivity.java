@@ -337,7 +337,7 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 			final FragmentManager fm = getFragmentManager();
 			final Fragment fragment = fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE);
 			if (fragment == null || !fragment.isAdded()) {
-				new APIUpgradeConfirmDialog().show(getFragmentManager(), FRAGMENT_TAG_API_UPGRADE_NOTICE);
+				new APIUpgradeConfirmDialog().show(getSupportFragmentManager(), FRAGMENT_TAG_API_UPGRADE_NOTICE);
 			}
 		}
 	}

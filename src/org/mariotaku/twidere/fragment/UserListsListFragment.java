@@ -36,16 +36,16 @@ import org.mariotaku.twidere.loader.UserListsLoader.UserListsData;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUserList;
 
-import android.app.DialogFragment;
-import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.Loader;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -238,8 +238,8 @@ public class UserListsListFragment extends BasePullToRefreshListFragment impleme
 	}
 
 	@Override
-	public void onRefreshStarted(final View view) {
-
+	public void onRefreshStarted() {
+		super.onRefreshStarted();
 	}
 
 	@Override

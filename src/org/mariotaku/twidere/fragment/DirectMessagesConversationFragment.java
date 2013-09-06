@@ -42,18 +42,18 @@ import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.view.holder.DirectMessageConversationViewHolder;
 
-import android.app.LoaderManager.LoaderCallbacks;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -80,7 +80,7 @@ import android.widget.TextView.OnEditorActionListener;
 
 import com.twitter.Validator;
 
-public class DirectMessagesConversationFragment extends BaseListFragment implements LoaderCallbacks<Cursor>,
+public class DirectMessagesConversationFragment extends BaseSupportListFragment implements LoaderCallbacks<Cursor>,
 		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener, TextWatcher, OnClickListener,
 		Panes.Right, OnItemSelectedListener, OnEditorActionListener {
 

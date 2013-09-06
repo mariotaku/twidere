@@ -34,14 +34,13 @@ import org.mariotaku.twidere.util.AsyncTask;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.widget.AbsListView;
 
 public abstract class CursorStatusesListFragment extends BaseStatusesListFragment<Cursor> {
@@ -97,7 +96,8 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	}
 
 	@Override
-	public void onRefreshStarted(final View view) {
+	public void onRefreshStarted() {
+		super.onRefreshStarted();
 		savePosition();
 		new AsyncTask<Void, Void, long[][]>() {
 

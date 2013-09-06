@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	android:title="@string/theme">
+
+	<ListPreference
+		android:defaultValue="twidere"
+		android:entries="@array/entries_theme"
+		android:entryValues="@array/values_theme"
+		android:key="theme"
+		android:title="@string/theme"/>
+
+	<CheckBoxPreference
+		android:defaultValue="false"
+		android:key="solid_color_background"
+		android:summary="@string/solid_color_background_summary"
+		android:title="@string/solid_color_background"/>
+
+</PreferenceScreen>

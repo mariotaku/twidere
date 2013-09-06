@@ -16,7 +16,7 @@
 
 package org.mariotaku.gallery3d.ui;
 
-import org.mariotaku.gallery3d.app.ImageViewerGLActivity;
+import org.mariotaku.gallery3d.ImageViewerGLActivity;
 import org.mariotaku.gallery3d.util.BitmapPool;
 
 import android.content.Context;

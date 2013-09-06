@@ -25,8 +25,8 @@ import org.mariotaku.twidere.loader.BaseCursorSupportUsersLoader;
 import org.mariotaku.twidere.model.ParcelableUser;
 
 import android.content.Context;
-import android.content.Loader;
 import android.os.Bundle;
+import android.support.v4.content.Loader;
 
 public abstract class CursorSupportUsersListFragment extends BaseUsersListFragment {
 

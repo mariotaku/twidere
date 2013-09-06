@@ -42,29 +42,28 @@ import org.mariotaku.twidere.util.PositionManager;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
-import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragment implements LoaderCallbacks<Data>,
-		OnScrollListener, OnItemLongClickListener, OnMenuItemClickListener, Panes.Left, MultiSelectManager.Callback {
+		OnItemLongClickListener, OnMenuItemClickListener, Panes.Left, MultiSelectManager.Callback {
 
 	private static final long TICKER_DURATION = 5000L;
 
@@ -130,7 +129,6 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		setListAdapter(null);
 		setListHeaderFooters(mListView);
 		setListAdapter(mAdapter);
-		mListView.setOnScrollListener(this);
 		mListView.setOnItemLongClickListener(this);
 		setListShown(false);
 		getLoaderManager().initLoader(0, getArguments(), this);

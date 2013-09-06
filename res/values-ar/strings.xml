@@ -63,7 +63,7 @@
   <string name="friends">المتابَعون</string>
   <string name="about">حول</string>
   <string name="about_summary">حول Twidere</string>
-  <string name="license">رخصة المصدر المفتوح</string>
+  <string name="open_source_license">رخصة المصدر المفتوح</string>
   <string name="license_summary">Twidere مرخص تحت رخصة GPLv3.</string>
   <string name="api">API</string>
   <string name="consumer_key">شفرة الـConsumer key</string>

@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.loader;
+package org.mariotaku.gallery3d;
 
 import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
 import static org.mariotaku.twidere.util.Utils.getImageLoaderHttpClient;
@@ -29,8 +29,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.mariotaku.gallery3d.util.BitmapUtils;
 import org.mariotaku.gallery3d.util.GalleryUtils;
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.util.Exif;
 import org.mariotaku.twidere.util.ImageValidator;
 import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.URLFileNameGenerator;
@@ -40,13 +42,18 @@ import twitter4j.http.HttpResponse;
 import android.content.AsyncTaskLoader;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapRegionDecoder;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 
 import com.nostra13.universalimageloader.cache.disc.naming.FileNameGenerator;
 
-public abstract class AbsImageLoader extends AsyncTaskLoader<AbsImageLoader.Result> implements Constants {
+public class GLImageLoader extends AsyncTaskLoader<GLImageLoader.Result> implements Constants {
 
 	private static final String CACHE_DIR_NAME = DIR_NAME_IMAGE_CACHE;
 
@@ -56,10 +63,11 @@ public abstract class AbsImageLoader extends AsyncTaskLoader<AbsImageLoader.Resu
 	private final Handler mHandler;
 	private final DownloadListener mListener;
 	private final FileNameGenerator mGenerator;
+	private final float mBackupSize;
 
 	protected File mCacheDir, mImageFile;
 
-	public AbsImageLoader(final Context context, final DownloadListener listener, final Uri uri) {
+	public GLImageLoader(final Context context, final DownloadListener listener, final Uri uri) {
 		super(context);
 		mContext = context;
 		mHandler = new Handler();
@@ -67,16 +75,21 @@ public abstract class AbsImageLoader extends AsyncTaskLoader<AbsImageLoader.Resu
 		mClient = getImageLoaderHttpClient(context);
 		mListener = listener;
 		mGenerator = new URLFileNameGenerator();
+		final Resources res = context.getResources();
+		final DisplayMetrics dm = res.getDisplayMetrics();
+		mBackupSize = Math.max(dm.heightPixels, dm.widthPixels);
 		init();
 	}
 
 	@Override
-	public AbsImageLoader.Result loadInBackground() {
-		if (mUri == null) return new Result(null, null, null);
+	public GLImageLoader.Result loadInBackground() {
+		if (mUri == null) {
+			Result.nullInstance();
+		}
 		final String scheme = mUri.getScheme();
 		if ("http".equals(scheme) || "https".equals(scheme)) {
 			final String url = ParseUtils.parseString(mUri.toString());
-			if (url == null) return new Result(null, null, null);
+			if (url == null) return Result.nullInstance();
 			if (mCacheDir == null || !mCacheDir.exists()) {
 				init();
 			}
@@ -101,28 +114,55 @@ public abstract class AbsImageLoader extends AsyncTaskLoader<AbsImageLoader.Resu
 				if (!ImageValidator.checkImageValidity(cache_file)) {
 					// The file is corrupted, so we remove it from
 					// cache.
+					final Result result = decodeBitmapOnly(cache_file);
 					if (cache_file.isFile()) {
 						cache_file.delete();
 					}
-					throw new IOException("Invalid image");
+					return result;
 				}
 				return decodeImageInternal(cache_file);
 			} catch (final Exception e) {
 				mHandler.post(new DownloadErrorRunnable(this, mListener, e));
-				return new Result(null, null, e);
+				return Result.getInstance(mImageFile, e);
 			}
 		} else if (ContentResolver.SCHEME_FILE.equals(scheme)) {
 			mImageFile = new File(mUri.getPath());
 			try {
 				return decodeImage(mImageFile);
 			} catch (final Exception e) {
-				return new Result(null, null, e);
+				return Result.getInstance(mImageFile, e);
 			}
 		}
-		return new Result(null, null, null);
+		return Result.nullInstance();
 	}
 
-	protected abstract Result decodeImage(final File file) throws IOException;
+	protected Result decodeBitmapOnly(final File file) {
+		final String path = file.getAbsolutePath();
+		final BitmapFactory.Options o = new BitmapFactory.Options();
+		o.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(path, o);
+		final int width = o.outWidth, height = o.outHeight;
+		if (width <= 0 || height <= 0) return Result.getInstance(mImageFile, null);
+		o.inJustDecodeBounds = false;
+		o.inSampleSize = BitmapUtils.computeSampleSize(mBackupSize / Math.max(width, height));
+		final Bitmap bitmap = BitmapFactory.decodeFile(path, o);
+		return Result.getInstance(bitmap, Exif.getOrientation(file), mImageFile);
+	}
+
+	protected Result decodeImage(final File file) {
+		final String path = file.getAbsolutePath();
+		try {
+			final BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(path, false);
+			final int width = decoder.getWidth();
+			final int height = decoder.getHeight();
+			final BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inSampleSize = BitmapUtils.computeSampleSize(mBackupSize / Math.max(width, height));
+			final Bitmap bitmap = decoder.decodeRegion(new Rect(0, 0, width, height), options);
+			return Result.getInstance(decoder, bitmap, Exif.getOrientation(file), mImageFile);
+		} catch (final IOException e) {
+			return decodeBitmapOnly(file);
+		}
+	}
 
 	@Override
 	protected void onStartLoading() {
@@ -174,21 +214,43 @@ public abstract class AbsImageLoader extends AsyncTaskLoader<AbsImageLoader.Resu
 		public final Bitmap bitmap;
 		public final File file;
 		public final Exception exception;
+		public final BitmapRegionDecoder decoder;
+		public final int orientation;
 
-		public Result(final Bitmap bitmap, final File file, final Exception exception) {
+		public Result(final BitmapRegionDecoder decoder, final Bitmap bitmap, final int orientation, final File file,
+				final Exception exception) {
 			this.bitmap = bitmap;
 			this.file = file;
+			this.decoder = decoder;
+			this.orientation = orientation;
 			this.exception = exception;
+		}
+
+		public static Result getInstance(final Bitmap bitmap, final int orientation, final File file) {
+			return new Result(null, bitmap, orientation, file, null);
+		}
+
+		public static Result getInstance(final BitmapRegionDecoder decoder, final Bitmap bitmap, final int orientation,
+				final File file) {
+			return new Result(decoder, bitmap, orientation, file, null);
+		}
+
+		public static Result getInstance(final File file, final Exception e) {
+			return new Result(null, null, 0, file, e);
+		}
+
+		public static Result nullInstance() {
+			return new Result(null, null, 0, null, null);
 		}
 	}
 
 	private final static class DownloadErrorRunnable implements Runnable {
 
-		private final AbsImageLoader loader;
+		private final GLImageLoader loader;
 		private final DownloadListener listener;
 		private final Throwable t;
 
-		DownloadErrorRunnable(final AbsImageLoader loader, final DownloadListener listener, final Throwable t) {
+		DownloadErrorRunnable(final GLImageLoader loader, final DownloadListener listener, final Throwable t) {
 			this.loader = loader;
 			this.listener = listener;
 			this.t = t;
@@ -203,10 +265,10 @@ public abstract class AbsImageLoader extends AsyncTaskLoader<AbsImageLoader.Resu
 
 	private final static class DownloadFinishRunnable implements Runnable {
 
-		private final AbsImageLoader loader;
+		private final GLImageLoader loader;
 		private final DownloadListener listener;
 
-		DownloadFinishRunnable(final AbsImageLoader loader, final DownloadListener listener) {
+		DownloadFinishRunnable(final GLImageLoader loader, final DownloadListener listener) {
 			this.loader = loader;
 			this.listener = listener;
 		}
@@ -220,11 +282,11 @@ public abstract class AbsImageLoader extends AsyncTaskLoader<AbsImageLoader.Resu
 
 	private final static class DownloadStartRunnable implements Runnable {
 
-		private final AbsImageLoader loader;
+		private final GLImageLoader loader;
 		private final DownloadListener listener;
 		private final long total;
 
-		DownloadStartRunnable(final AbsImageLoader loader, final DownloadListener listener, final long total) {
+		DownloadStartRunnable(final GLImageLoader loader, final DownloadListener listener, final long total) {
 			this.loader = loader;
 			this.listener = listener;
 			this.total = total;

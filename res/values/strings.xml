@@ -64,7 +64,7 @@
 	<string name="friends">Friends</string>
 	<string name="about">About</string>
 	<string name="about_summary">About Twidere</string>
-	<string name="license">Open source license</string>
+	<string name="open_source_license">Open source license</string>
 	<string name="license_summary">Twidere is licensed under GPLv3.</string>
 	<string name="api">API</string>
 	<string name="consumer_key">Consumer key</string>
@@ -205,7 +205,7 @@
 	<string name="item_1_hour">1 hour</string>
 	<string name="item_2_hours">2 hours</string>
 	<string name="item_4_hours">4 hours</string>
-	<string name="image_preview_display_option">Inline image preview display option</string>
+	<string name="image_preview_display_option">Image preview display option</string>
 	<string name="solid_color_background">Solid color background</string>
 	<string name="solid_color_background_summary">This may be useful if screen of your device is AMOLED.</string>
 	<string name="following_you">Following you</string>
@@ -478,5 +478,7 @@
 	<string name="theme_twidere">Twidere</string>
 	<string name="theme_dark">Dark</string>
 	<string name="theme_light">Light</string>
+	<string name="theme_light_darkactionbar">Light with dark ActionBar</string>
+	<string name="settings_interface">Interface</string>
 
 </resources>

@@ -28,17 +28,17 @@ import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
-import android.app.LoaderManager.LoaderCallbacks;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.widget.ListView;
@@ -46,7 +46,6 @@ import android.widget.ListView;
 public class TrendsFragment extends BasePullToRefreshListFragment implements LoaderCallbacks<Cursor>, Panes.Left {
 
 	private TwidereApplication mApplication;
-	private AsyncTwitterWrapper mTwitterWrapper;
 	private SharedPreferences mPreferences;
 
 	private TrendsAdapter mTrendsAdapter;
@@ -62,18 +61,20 @@ public class TrendsFragment extends BasePullToRefreshListFragment implements Loa
 			if (BROADCAST_TRENDS_UPDATED.equals(action)) {
 				setRefreshComplete();
 				getLoaderManager().restartLoader(0, null, TrendsFragment.this);
+			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
+				final AsyncTwitterWrapper twitter = getTwitterWrapper();
+				setRefreshing(twitter != null && twitter.isLocalTrendsRefreshing());
 			}
 		}
 	};
 
 	@Override
 	public String getPullToRefreshTag() {
-		return "trends_" + getTabPosition();
+		return "trends";
 	}
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
-		mTwitterWrapper = getTwitterWrapper();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onActivityCreated(savedInstanceState);
 		mApplication = getApplication();
@@ -111,17 +112,21 @@ public class TrendsFragment extends BasePullToRefreshListFragment implements Loa
 	}
 
 	@Override
-	public void onRefreshStarted(final View view) {
-		mTwitterWrapper.getLocalTrends(mAccountId, mPreferences.getInt(PREFERENCE_KEY_LOCAL_TRENDS_WOEID, 1));
+	public void onRefreshStarted() {
+		super.onRefreshStarted();
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		if (twitter == null) return;
+		twitter.getLocalTrends(mAccountId, mPreferences.getInt(PREFERENCE_KEY_LOCAL_TRENDS_WOEID, 1));
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
 		final IntentFilter filter = new IntentFilter(BROADCAST_TRENDS_UPDATED);
+		filter.addAction(BROADCAST_TASK_STATE_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
-		// TODO
-		// setRefreshing(mTwitterWrapper.isLocalTrendsRefreshing());
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		setRefreshing(twitter != null && twitter.isLocalTrendsRefreshing());
 	}
 
 	@Override

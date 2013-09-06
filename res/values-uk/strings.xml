@@ -63,7 +63,7 @@
   <string name="friends">Друзі</string>
   <string name="about">Про</string>
   <string name="about_summary">Про Twidere</string>
-  <string name="license">Ліцензія відкритого вихідного коду</string>
+  <string name="open_source_license">Ліцензія відкритого вихідного коду</string>
   <string name="license_summary">Twidere використовує ліцензію GPLv3.</string>
   <string name="api">API</string>
   <string name="consumer_key">Ключ авторизації користувача</string>

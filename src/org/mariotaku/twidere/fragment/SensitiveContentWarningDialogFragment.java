@@ -32,7 +32,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.net.Uri;
 import android.os.Bundle;
 
-public class SensitiveContentWarningDialogFragment extends BaseDialogFragment implements OnClickListener {
+public class SensitiveContentWarningDialogFragment extends BaseSupportDialogFragment implements OnClickListener {
 
 	@Override
 	public void onClick(final DialogInterface dialog, final int which) {

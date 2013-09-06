@@ -1,5 +1,5 @@
 /*
- *				Twidere - Twitter client for Android
+ *				Tweetings - Twitter client for Android
  * 
  * Copyright (C) 2012  Mariotaku Lee <mariotaku.lee@gmail.com>
  *

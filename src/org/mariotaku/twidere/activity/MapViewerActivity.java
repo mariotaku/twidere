@@ -25,7 +25,6 @@ import org.mariotaku.twidere.fragment.NativeMapFragment;
 import org.mariotaku.twidere.fragment.WebMapFragment;
 import org.mariotaku.twidere.util.MapInterface;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.net.Uri;
@@ -33,7 +32,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MapViewerActivity extends Activity implements Constants {
+public class MapViewerActivity extends TwidereSwipeBackActivity implements Constants {
 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {

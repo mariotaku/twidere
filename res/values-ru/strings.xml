@@ -63,7 +63,7 @@
   <string name="friends">Друзья</string>
   <string name="about">О программе</string>
   <string name="about_summary">О программе Twidere</string>
-  <string name="license">Лицензия открытого исходного кода</string>
+  <string name="open_source_license">Лицензия открытого исходного кода</string>
   <string name="license_summary">Twidere использует лицензию GPLv3.</string>
   <string name="api">API</string>
   <string name="consumer_key">Ключ авторизации пользователя</string>

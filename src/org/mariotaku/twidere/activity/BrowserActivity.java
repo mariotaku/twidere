@@ -20,7 +20,7 @@
 package org.mariotaku.twidere.activity;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.fragment.WebViewFragment;
+import org.mariotaku.twidere.fragment.BaseWebViewFragment;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -58,7 +58,7 @@ public class BrowserActivity extends BaseActivity {
 			return;
 		}
 		final FragmentTransaction ft = getFragmentManager().beginTransaction();
-		final Fragment fragment = Fragment.instantiate(this, WebViewFragment.class.getName());
+		final Fragment fragment = Fragment.instantiate(this, BaseWebViewFragment.class.getName());
 		final Bundle bundle = new Bundle();
 		bundle.putString(INTENT_KEY_URI, mUri.toString());
 		fragment.setArguments(bundle);

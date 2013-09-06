@@ -28,7 +28,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-public class APIUpgradeConfirmDialog extends BaseDialogFragment implements DialogInterface.OnClickListener {
+public class APIUpgradeConfirmDialog extends BaseSupportDialogFragment implements DialogInterface.OnClickListener {
 
 	@Override
 	public void onClick(final DialogInterface dialog, final int which) {

@@ -33,19 +33,19 @@ import org.mariotaku.twidere.util.AsyncTask;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
 
-import android.app.LoaderManager.LoaderCallbacks;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
@@ -58,7 +58,6 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 	private static final long TICKER_DURATION = 5000L;
 
 	private TwidereApplication mApplication;
-	private AsyncTwitterWrapper mTwitterWrapper;
 	private MultiSelectManager mMultiSelectManager;
 	private SharedPreferences mPreferences;
 	private Handler mHandler;
@@ -85,28 +84,23 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 					|| BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, DirectMessagesFragment.this);
 			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
-				if (mTwitterWrapper.isReceivedDirectMessagesRefreshing()
-						|| mTwitterWrapper.isSentDirectMessagesRefreshing()) {
-					setRefreshing(false);
-				} else {
-					setRefreshComplete();
-				}
+				final AsyncTwitterWrapper twitter = getTwitterWrapper();
+				setRefreshing(twitter != null
+						&& (twitter.isReceivedDirectMessagesRefreshing() || twitter.isSentDirectMessagesRefreshing()));
 			}
 		}
 	};
 
 	@Override
 	public String getPullToRefreshTag() {
-		return "direct_messages_" + getTabPosition();
+		return "direct_messages";
 	}
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mTwitterWrapper = getTwitterWrapper();
 		super.onActivityCreated(savedInstanceState);
 		mApplication = getApplication();
-		mTwitterWrapper.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
 		mMultiSelectManager = getMultiSelectManager();
 		mAdapter = new DirectMessagesEntryAdapter(getActivity());
 		setListAdapter(mAdapter);
@@ -183,8 +177,8 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 	}
 
 	@Override
-	public void onRefreshStarted(final View view) {
-		if (mTwitterWrapper == null) return;
+	public void onRefreshStarted() {
+		super.onRefreshStarted();
 		new AsyncTask<Void, Void, long[][]>() {
 
 			@Override
@@ -197,8 +191,10 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 
 			@Override
 			protected void onPostExecute(final long[][] result) {
-				mTwitterWrapper.getReceivedDirectMessages(result[0], null, result[1]);
-				mTwitterWrapper.getSentDirectMessages(result[0], null, null);
+				final AsyncTwitterWrapper twitter = getTwitterWrapper();
+				if (twitter == null) return;
+				twitter.getReceivedDirectMessages(result[0], null, result[1]);
+				twitter.getSentDirectMessages(result[0], null, null);
 			}
 
 		}.execute();
@@ -226,10 +222,14 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
 		switch (scrollState) {
 			case SCROLL_STATE_FLING:
-			case SCROLL_STATE_TOUCH_SCROLL:
-				mTwitterWrapper.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
+			case SCROLL_STATE_TOUCH_SCROLL: {
+				final AsyncTwitterWrapper twitter = getTwitterWrapper();
+				if (twitter != null) {
+					twitter.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
+				}
 				mBusy = true;
 				break;
+			}
 			case SCROLL_STATE_IDLE:
 				mBusy = false;
 				break;
@@ -264,11 +264,9 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 		filter.addAction(BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED);
 		filter.addAction(BROADCAST_TASK_STATE_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
-		if (mTwitterWrapper.isReceivedDirectMessagesRefreshing() || mTwitterWrapper.isSentDirectMessagesRefreshing()) {
-			setRefreshing(false);
-		} else {
-			setRefreshComplete();
-		}
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		setRefreshing(twitter != null
+				&& (twitter.isReceivedDirectMessagesRefreshing() || twitter.isSentDirectMessagesRefreshing()));
 		mMultiSelectManager.registerCallback(this);
 	}
 
@@ -293,7 +291,7 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 	}
 
 	private void loadMoreMessages() {
-		if (mTwitterWrapper == null || isRefreshing()) return;
+		if (isRefreshing()) return;
 		new AsyncTask<Void, Void, long[][]>() {
 
 			@Override
@@ -307,8 +305,10 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 
 			@Override
 			protected void onPostExecute(final long[][] result) {
-				mTwitterWrapper.getReceivedDirectMessages(result[0], result[1], null);
-				mTwitterWrapper.getSentDirectMessages(result[0], result[2], null);
+				final AsyncTwitterWrapper twitter = getTwitterWrapper();
+				if (twitter == null) return;
+				twitter.getReceivedDirectMessages(result[0], result[1], null);
+				twitter.getSentDirectMessages(result[0], result[2], null);
 			}
 
 		}.execute();

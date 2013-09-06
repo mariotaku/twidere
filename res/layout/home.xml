@@ -13,15 +13,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"/>
 
-		<ImageButton
-			android:id="@+id/button_compose"
-			android:layout_width="56dp"
-			android:layout_height="56dp"
-			android:layout_gravity="bottom|right"
-			android:contentDescription="@string/compose"
-			android:onClick="onClick"
-			android:src="@drawable/ic_menu_tweet"
-			android:visibility="gone"/>
+		<include layout="@layout/home_actions_button_layout"/>
 	</FrameLayout>
 
 	<include

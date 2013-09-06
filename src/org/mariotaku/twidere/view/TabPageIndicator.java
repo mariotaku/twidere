@@ -22,6 +22,7 @@ import org.mariotaku.twidere.util.ThemeUtils;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v4.view.PagerAdapter;
@@ -53,13 +54,16 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 
 	private final LayoutInflater mInflater;
 
+	private final boolean mShouldApplyColorFilterToTabIcons;
+	private final int mTabIconColor;
+
 	int mMaxTabWidth;
+
 	private int mSelectedTabIndex;
 	private final int mTabColor;
-
 	private boolean mSwitchingEnabled = true;
-	private boolean mDisplayLabel, mDisplayIcon = true;
 
+	private boolean mDisplayLabel, mDisplayIcon = true;
 	private final OnClickListener mTabClickListener = new OnClickListener() {
 
 		@Override
@@ -94,6 +98,8 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 		mTabColor = ThemeUtils.getThemeColor(context);
 		mInflater = LayoutInflater.from(context);
 		mTabLayout = new LinearLayout(context);
+		mShouldApplyColorFilterToTabIcons = ThemeUtils.shouldApplyColorFilterToTabIcons(context);
+		mTabIconColor = ThemeUtils.getTabIconColor(context);
 		addView(mTabLayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
 				ViewGroup.LayoutParams.MATCH_PARENT));
 	}
@@ -310,6 +316,14 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 		post(mTabSelector);
 	}
 
+	private int getTabIconColor() {
+		return mTabIconColor;
+	}
+
+	private boolean shouldApplyColorFilterToTabIcons() {
+		return mShouldApplyColorFilterToTabIcons;
+	}
+
 	public static class TabView extends LinearLayout {
 
 		private TabPageIndicator mParent;
@@ -330,6 +344,9 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 			final ImageView imageView = (ImageView) findViewById(android.R.id.icon);
 			imageView.setVisibility(icon != null ? View.VISIBLE : View.GONE);
 			imageView.setImageDrawable(icon);
+			if (parent.shouldApplyColorFilterToTabIcons()) {
+				imageView.setColorFilter(parent.getTabIconColor(), Mode.SRC_ATOP);
+			}
 
 			final TextView textView = (TextView) findViewById(android.R.id.text1);
 			textView.setVisibility(label != null ? View.VISIBLE : View.GONE);

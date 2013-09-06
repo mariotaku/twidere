@@ -63,7 +63,7 @@
   <string name="friends">Amigos</string>
   <string name="about">Sobre</string>
   <string name="about_summary">Sobre o Twidere</string>
-  <string name="license">Licença dos recursos abertos</string>
+  <string name="open_source_license">Licença dos recursos abertos</string>
   <string name="license_summary">O Twidere está licenciado sobre o GPLv3.</string>
   <string name="api">API</string>
   <string name="consumer_key">Chave de consumidor</string>
