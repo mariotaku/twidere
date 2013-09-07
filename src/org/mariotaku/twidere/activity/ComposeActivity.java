@@ -124,7 +124,7 @@ import com.twitter.Validator;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 
-public class ComposeActivity extends BaseDialogActivity implements TextWatcher, LocationListener,
+public class ComposeActivity extends BaseSupportDialogActivity implements TextWatcher, LocationListener,
 		OnMenuItemClickListener, OnClickListener, OnLongClickListener, PopupMenu.OnMenuItemClickListener,
 		OnEditorActionListener {
 

@@ -43,7 +43,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 @SuppressLint("Registered")
-public class DualPaneActivity extends BaseActivity implements OnBackStackChangedListener {
+public class DualPaneActivity extends BaseSupportActivity implements OnBackStackChangedListener {
 
 	private SharedPreferences mPreferences;
 

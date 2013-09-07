@@ -43,7 +43,7 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-public class ColorPickerActivity extends BaseDialogActivity implements OnItemClickListener, OnColorSelectedListener {
+public class ColorPickerActivity extends BaseSupportDialogActivity implements OnItemClickListener, OnColorSelectedListener {
 
 	private GridView mColorsGrid;
 

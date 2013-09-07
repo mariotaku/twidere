@@ -85,7 +85,7 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.CroutonLifecycleCallback;
 import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 
-public class SignInActivity extends BaseActivity implements TwitterConstants, OnClickListener, TextWatcher,
+public class SignInActivity extends BaseSupportActivity implements TwitterConstants, OnClickListener, TextWatcher,
 		CroutonLifecycleCallback {
 
 	private static final String TWITTER_SIGNUP_URL = "https://twitter.com/signup";
@@ -144,14 +144,14 @@ public class SignInActivity extends BaseActivity implements TwitterConstants, On
 				break;
 			}
 			case REQUEST_SET_COLOR: {
-				if (resultCode == BaseActivity.RESULT_OK) if (data != null) {
+				if (resultCode == BaseSupportActivity.RESULT_OK) if (data != null) {
 					mUserColor = data.getIntExtra(Accounts.USER_COLOR, Color.TRANSPARENT);
 				}
 				setUserColorButton();
 				break;
 			}
 			case REQUEST_BROWSER_SIGN_IN: {
-				if (resultCode == BaseActivity.RESULT_OK) if (data != null && data.getExtras() != null) {
+				if (resultCode == BaseSupportActivity.RESULT_OK) if (data != null && data.getExtras() != null) {
 					doLogin(true, data.getExtras());
 				}
 				break;

@@ -19,9 +19,6 @@
 
 package org.mariotaku.twidere.adapter;
 
-import static org.mariotaku.twidere.util.Utils.getTableId;
-import static org.mariotaku.twidere.util.Utils.getTableNameById;
-
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -42,7 +39,7 @@ import android.widget.FilterQueryProvider;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class AutoCompleteAdapter extends SimpleCursorAdapter implements Constants {
+public class UserHashtagAutoCompleteAdapter extends SimpleCursorAdapter implements Constants {
 
 	private static final String[] FROM = new String[0];
 	private static final int[] TO = new int[0];
@@ -58,15 +55,14 @@ public class AutoCompleteAdapter extends SimpleCursorAdapter implements Constant
 
 	private final boolean mDisplayProfileImage;
 
-	private Cursor mCursor;
 	private int mProfileImageUrlIdx, mNameIdx, mScreenNameIdx;
 	private char mToken = '@';
 
-	public AutoCompleteAdapter(final Context context) {
+	public UserHashtagAutoCompleteAdapter(final Context context) {
 		this(context, null);
 	}
 
-	public AutoCompleteAdapter(final Context context, final EditText view) {
+	public UserHashtagAutoCompleteAdapter(final Context context, final EditText view) {
 		super(context, R.layout.user_autocomplete_list_item, null, FROM, TO, 0);
 		mEditText = view;
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -78,7 +74,7 @@ public class AutoCompleteAdapter extends SimpleCursorAdapter implements Constant
 				true) : true;
 	}
 
-	public AutoCompleteAdapter(final EditText view) {
+	public UserHashtagAutoCompleteAdapter(final EditText view) {
 		this(view.getContext(), view);
 	}
 
@@ -110,22 +106,21 @@ public class AutoCompleteAdapter extends SimpleCursorAdapter implements Constant
 	}
 
 	@Override
-	public void changeCursor(final Cursor cursor) {
+	public Cursor swapCursor(final Cursor cursor) {
 		if (cursor != null) {
 			mNameIdx = cursor.getColumnIndex(CachedValues.NAME);
 			mScreenNameIdx = cursor.getColumnIndex(CachedUsers.SCREEN_NAME);
 			mProfileImageUrlIdx = cursor.getColumnIndex(CachedUsers.PROFILE_IMAGE_URL);
 		}
-		mCursor = cursor;
-		super.changeCursor(mCursor);
+		return super.swapCursor(cursor);
 	}
 
 	public void closeCursor() {
-		if (mCursor == null) return;
-		if (!mCursor.isClosed()) {
-			mCursor.close();
+		final Cursor cursor = getCursor();
+		if (cursor == null) return;
+		if (!cursor.isClosed()) {
+			cursor.close();
 		}
-		mCursor = null;
 	}
 
 	@Override
@@ -135,7 +130,8 @@ public class AutoCompleteAdapter extends SimpleCursorAdapter implements Constant
 	}
 
 	public boolean isCursorClosed() {
-		return mCursor == null || mCursor.isClosed();
+		final Cursor cursor = getCursor();
+		return cursor == null || cursor.isClosed();
 	}
 
 	@Override
@@ -150,20 +146,23 @@ public class AutoCompleteAdapter extends SimpleCursorAdapter implements Constant
 			if (filter != null) return filter.runQuery(constraint);
 		}
 		mToken = token;
-		final CharSequence constraint_escaped = constraint != null ? constraint.toString().replaceAll("_", "^_") : null;
+		final String constraint_escaped = constraint != null ? constraint.toString().replaceAll("_", "^_") : null;
 		if (isAtSymbol(token)) {
-			final StringBuilder where = new StringBuilder();
-			where.append(CachedUsers.SCREEN_NAME + " LIKE '" + constraint_escaped + "%' ESCAPE '^'");
-			where.append(" OR ");
-			where.append(CachedUsers.NAME + " LIKE '" + constraint_escaped + "%' ESCAPE '^'");
-			return mResolver.query(CachedUsers.CONTENT_URI, CACHED_USERS_COLUMNS,
-					constraint_escaped != null ? where.toString() : null, null, CachedUsers.SCREEN_NAME + ", "
-							+ CachedUsers.SCREEN_NAME);
+			final StringBuilder builder = new StringBuilder();
+			builder.append(CachedUsers.SCREEN_NAME + " LIKE ?||'%' ESCAPE '^'");
+			builder.append(" OR ");
+			builder.append(CachedUsers.NAME + " LIKE ?||'%' ESCAPE '^'");
+			final String selection = constraint_escaped != null ? builder.toString() : null;
+			final String[] selectionArgs = constraint_escaped != null ? new String[] { constraint_escaped,
+					constraint_escaped } : null;
+			final String orderBy = CachedUsers.SCREEN_NAME + ", " + CachedUsers.NAME;
+			return mResolver.query(CachedUsers.CONTENT_URI, CACHED_USERS_COLUMNS, selection, selectionArgs, orderBy);
 		} else {
-			final String where = CachedHashtags.NAME + " LIKE '" + constraint_escaped + "%' ESCAPE '^'";
-			final String table = getTableNameById(getTableId(CachedHashtags.CONTENT_URI));
-			return mDatabase.query(true, table, CachedHashtags.COLUMNS, constraint_escaped != null ? where : null,
-					null, null, null, CachedHashtags.NAME, null);
+			final String selection = constraint_escaped != null ? CachedHashtags.NAME + " LIKE ?||'%' ESCAPE '^'"
+					: null;
+			final String[] selectionArgs = constraint_escaped != null ? new String[] { constraint_escaped } : null;
+			return mDatabase.query(true, CachedHashtags.TABLE_NAME, CachedHashtags.COLUMNS, selection, selectionArgs,
+					null, null, CachedHashtags.NAME, null);
 		}
 	}
 

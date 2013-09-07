@@ -31,7 +31,7 @@ import java.util.Locale;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.AutoCompleteAdapter;
+import org.mariotaku.twidere.adapter.UserHashtagAutoCompleteAdapter;
 import org.mariotaku.twidere.adapter.DirectMessagesConversationAdapter;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.model.Panes;
@@ -105,7 +105,7 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 	private Locale mLocale;
 
 	private DirectMessagesConversationAdapter mAdapter;
-	private AutoCompleteAdapter mUserAutoCompleteAdapter;
+	private UserHashtagAutoCompleteAdapter mUserAutoCompleteAdapter;
 	private AccountsAdapter mAccountsAdapter;
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
@@ -190,7 +190,7 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 		mAccountSelector.setAdapter(mAccountsAdapter);
 		mAccountSelector.setOnItemSelectedListener(this);
 
-		mUserAutoCompleteAdapter = new AutoCompleteAdapter(getActivity());
+		mUserAutoCompleteAdapter = new UserHashtagAutoCompleteAdapter(getActivity());
 
 		mEditScreenName.addTextChangedListener(mScreenNameTextWatcher);
 		mEditScreenName.setAdapter(mUserAutoCompleteAdapter);

@@ -19,7 +19,7 @@
 
 package org.mariotaku.twidere.view;
 
-import org.mariotaku.twidere.adapter.AutoCompleteAdapter;
+import org.mariotaku.twidere.adapter.UserHashtagAutoCompleteAdapter;
 
 import android.content.Context;
 import android.text.InputType;
@@ -32,7 +32,7 @@ import android.widget.MultiAutoCompleteTextView;
 
 public class StatusComposeEditText extends MultiAutoCompleteTextView implements InputType {
 
-	private AutoCompleteAdapter mAdapter;
+	private UserHashtagAutoCompleteAdapter mAdapter;
 
 	public StatusComposeEditText(final Context context) {
 		this(context, null);
@@ -44,7 +44,7 @@ public class StatusComposeEditText extends MultiAutoCompleteTextView implements 
 
 	public StatusComposeEditText(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		mAdapter = new AutoCompleteAdapter(this);
+		mAdapter = new UserHashtagAutoCompleteAdapter(this);
 		setTokenizer(new ScreenNameTokenizer());
 		setMovementMethod(ArrowKeyMovementMethod.getInstance());
 		// Workaround to force auto complete and IME suggestions work.
@@ -55,7 +55,7 @@ public class StatusComposeEditText extends MultiAutoCompleteTextView implements 
 	protected void onAttachedToWindow() {
 		super.onAttachedToWindow();
 		if (mAdapter == null || mAdapter.isCursorClosed()) {
-			mAdapter = new AutoCompleteAdapter(this);
+			mAdapter = new UserHashtagAutoCompleteAdapter(this);
 		}
 		setAdapter(mAdapter);
 	}

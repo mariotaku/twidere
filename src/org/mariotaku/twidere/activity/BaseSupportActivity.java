@@ -35,7 +35,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 @SuppressLint("Registered")
-public class BaseActivity extends BaseThemedActivity implements Constants, PullToRefreshAttacherActivity {
+public class BaseSupportActivity extends BaseSupportThemedActivity implements Constants, PullToRefreshAttacherActivity {
 
 	private final Set<String> mEnabledStates = new HashSet<String>();
 	private final Set<String> mRefreshingStates = new HashSet<String>();

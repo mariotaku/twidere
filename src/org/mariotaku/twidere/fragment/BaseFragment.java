@@ -20,7 +20,7 @@
 package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.activity.BaseActivity;
+import org.mariotaku.twidere.activity.BaseSupportActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
@@ -84,8 +84,8 @@ public class BaseFragment extends Fragment implements Constants {
 
 	public void setProgressBarIndeterminateVisibility(final boolean visible) {
 		final Activity activity = getActivity();
-		if (activity instanceof BaseActivity) {
-			((BaseActivity) activity).setProgressBarIndeterminateVisibility(visible);
+		if (activity instanceof BaseSupportActivity) {
+			((BaseSupportActivity) activity).setProgressBarIndeterminateVisibility(visible);
 		}
 	}
 

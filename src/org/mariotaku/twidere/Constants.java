@@ -153,7 +153,6 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_ENABLE_PROXY = "enable_proxy";
 	public static final String PREFERENCE_KEY_PROXY_HOST = "proxy_host";
 	public static final String PREFERENCE_KEY_PROXY_PORT = "proxy_port";
-	public static final String PREFERENCE_KEY_SORT_TIMELINE_BY_TIME = "sort_timeline_by_time";
 	public static final String PREFERENCE_KEY_REFRESH_ON_START = "refresh_on_start";
 	public static final String PREFERENCE_KEY_REFRESH_AFTER_TWEET = "refresh_after_tweet";
 	public static final String PREFERENCE_KEY_AUTO_REFRESH = "auto_refresh";
@@ -218,6 +217,8 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_OAUTH_BASE_URL = "oauth_base_url";
 	public static final String PREFERENCE_KEY_SIGNING_REST_BASE_URL = "signing_rest_base_url";
 	public static final String PREFERENCE_KEY_SIGNING_OAUTH_BASE_URL = "signing_oauth_base_url";
+	public static final String PREFERENCE_KEY_FILTERS_IN_HOME_TIMELINE = "enable_filters_in_home_timeline";
+	public static final String PREFERENCE_KEY_FILTERS_IN_MENTIONS = "enable_filters_in_mentions";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;
@@ -483,6 +484,7 @@ public interface Constants {
 	public static final int MENU_FAVORITES = R.id.favorites;
 	public static final int MENU_LISTS = R.id.lists;
 	public static final int MENU_CENTER = R.id.center;
+	public static final int MENU_FILTERS = R.id.filters;
 
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_PICK_IMAGE = 2;

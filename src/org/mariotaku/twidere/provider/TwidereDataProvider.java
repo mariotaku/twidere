@@ -157,8 +157,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 						old_count = 0;
 				}
 				mDatabase.beginTransaction();
-				final boolean replace_on_conflict = table_id == TABLE_ID_CACHED_HASHTAGS
-						|| table_id == TABLE_ID_CACHED_STATUSES || table_id == TABLE_ID_CACHED_USERS;
+				final boolean replace_on_conflict = shouldReplaceOnConflict(table_id);
 				for (final ContentValues contentValues : values) {
 					if (replace_on_conflict) {
 						mDatabase.insertWithOnConflict(table, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
@@ -187,6 +186,20 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			throw new IllegalStateException(e);
 		}
 	};
+
+	private boolean shouldReplaceOnConflict(int table_id) {
+		switch (table_id) {
+			case TABLE_ID_CACHED_HASHTAGS:
+			case TABLE_ID_CACHED_STATUSES:
+			case TABLE_ID_CACHED_USERS:
+			case TABLE_ID_FILTERED_USERS:
+			case TABLE_ID_FILTERED_KEYWORDS:
+			case TABLE_ID_FILTERED_SOURCES:
+			case TABLE_ID_FILTERED_LINKS:
+				return true;
+		}
+		return false;
+	}
 
 	@Override
 	public int delete(final Uri uri, final String selection, final String[] selectionArgs) {
@@ -235,7 +248,13 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 					return null;
 			}
 			if (table == null) return null;
-			final long row_id = mDatabase.insert(table, null, values);
+			final boolean replace_on_conflict = shouldReplaceOnConflict(table_id);
+			final long row_id;
+			if (replace_on_conflict) {
+				row_id = mDatabase.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+			} else {
+				row_id = mDatabase.insert(table, null, values);
+			}
 			if (!"false".equals(uri.getQueryParameter(QUERY_PARAM_NOTIFY))) {
 				switch (getTableId(uri)) {
 					case TABLE_ID_STATUSES: {

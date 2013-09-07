@@ -155,6 +155,19 @@
 				android:value=".activity.HomeActivity"/>
 		</activity>
 		<activity
+			android:name=".activity.FiltersActivity"
+			android:label="@string/filters">
+			<intent-filter>
+				<action android:name="org.mariotaku.twidere.FILTERS"/>
+
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value=".activity.HomeActivity"/>
+		</activity>
+		<activity
 			android:name=".activity.EditAPIActivity"
 			android:label="@string/edit_api"
 			android:theme="@style/Theme.Twidere.Light.Dialog"

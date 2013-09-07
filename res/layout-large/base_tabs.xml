@@ -9,6 +9,8 @@
 		android:id="@android:id/tabs"
 		android:layout_width="wrap_content"
 		android:layout_height="match_parent"
-		android:layout_gravity="left"/>
+		android:layout_gravity="left"
+		android:dividerPadding="4dp"
+		android:dividerVertical="?android:dividerVertical"/>
 
 </LinearLayout>

@@ -50,7 +50,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class AccountSelectorActivity extends BaseDialogActivity implements LoaderCallbacks<Cursor>,
+public class AccountSelectorActivity extends BaseSupportDialogActivity implements LoaderCallbacks<Cursor>,
 		OnItemClickListener, OnClickListener, OnScrollListener {
 
 	private static final long TICKER_DURATION = 5000L;

@@ -23,6 +23,7 @@ import static org.mariotaku.twidere.util.Utils.showInfoMessage;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
+import org.mariotaku.twidere.util.ArrayUtils;
 
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.BroadcastReceiver;
@@ -36,20 +37,28 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 public abstract class BaseFiltersFragment extends BaseListFragment implements LoaderCallbacks<Cursor>,
-		OnItemLongClickListener {
+		MultiChoiceModeListener {
+
+	private ListView mListView;
 
 	private FilterListAdapter mAdapter;
 
 	private ContentResolver mResolver;
+
+	private ActionMode mActionMode;
 
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -64,14 +73,46 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 
 	};
 
+	public abstract Uri getContentUri();
+
+	@Override
+	public boolean onActionItemClicked(final ActionMode mode, final MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_DELETE: {
+				final StringBuilder builder = new StringBuilder();
+				builder.append(Filters._ID + " IN(");
+				builder.append(ArrayUtils.toString(mListView.getCheckedItemIds(), ',', false));
+				builder.append(")");
+				mResolver.delete(getContentUri(), builder.toString(), null);
+				getLoaderManager().restartLoader(0, null, this);
+				break;
+			}
+			default: {
+				return false;
+			}
+		}
+		mode.finish();
+		return true;
+	}
+
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		mResolver = getContentResolver();
 		super.onActivityCreated(savedInstanceState);
 		mAdapter = new FilterListAdapter(getActivity());
 		setListAdapter(mAdapter);
-		getListView().setOnItemLongClickListener(this);
+		mListView = getListView();
+		mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+		mListView.setMultiChoiceModeListener(this);
+		setEmptyText(getString(R.string.no_rule));
 		getLoaderManager().initLoader(0, null, this);
+	}
+
+	@Override
+	public boolean onCreateActionMode(final ActionMode mode, final Menu menu) {
+		mActionMode = mode;
+		getActivity().getMenuInflater().inflate(R.menu.action_filters_multi_select, menu);
+		return true;
 	}
 
 	@Override
@@ -94,17 +135,14 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 	}
 
 	@Override
-	public boolean onItemLongClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
-		final String where = Filters._ID + " = " + id;
-		mResolver.delete(getContentUri(), where, null);
-		getLoaderManager().restartLoader(0, null, this);
-		return true;
+	public void onDestroyActionMode(final ActionMode mode) {
+
 	}
 
 	@Override
-	public void onListItemClick(final ListView l, final View v, final int position, final long id) {
-		showInfoMessage(getActivity(), R.string.longclick_to_delete, false);
-		super.onListItemClick(l, v, position, id);
+	public void onItemCheckedStateChanged(final ActionMode mode, final int position, final long id,
+			final boolean checked) {
+		updateSubtitle(mode);
 	}
 
 	@Override
@@ -115,6 +153,11 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 	@Override
 	public void onLoadFinished(final Loader<Cursor> loader, final Cursor data) {
 		mAdapter.swapCursor(data);
+	}
+
+	@Override
+	public boolean onPrepareActionMode(final ActionMode mode, final Menu menu) {
+		return true;
 	}
 
 	@Override
@@ -130,9 +173,21 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 		super.onStop();
 	}
 
+	@Override
+	public void setUserVisibleHint(final boolean isVisibleToUser) {
+		super.setUserVisibleHint(isVisibleToUser);
+		if (!isVisibleToUser && mActionMode != null) {
+			mActionMode.finish();
+		}
+	}
+
 	protected abstract String[] getContentColumns();
 
-	protected abstract Uri getContentUri();
+	private void updateSubtitle(final ActionMode mode) {
+		if (mListView == null) return;
+		final int count = mListView.getCheckedItemCount();
+		mode.setTitle(getResources().getQuantityString(R.plurals.Nitems_selected, count, count));
+	}
 
 	public static final class FilteredKeywordsFragment extends BaseFiltersFragment {
 
@@ -197,7 +252,7 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 		private static final int[] to = new int[] { android.R.id.text1 };
 
 		public FilterListAdapter(final Context context) {
-			super(context, android.R.layout.simple_list_item_1, null, from, to, 0);
+			super(context, android.R.layout.simple_list_item_activated_1, null, from, to, 0);
 		}
 
 	}

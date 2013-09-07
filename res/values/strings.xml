@@ -98,6 +98,7 @@
 	<string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>
 	<string name="source">via <xliff:g id="source">%s</xliff:g></string>
 	<string name="filter">Filter</string>
+	<string name="filters">Filters</string>
 	<string name="users">Users</string>
 	<string name="keywords">Keywords</string>
 	<string name="sources">Sources</string>
@@ -480,5 +481,8 @@
 	<string name="theme_light">Light</string>
 	<string name="theme_light_darkactionbar">Light with dark ActionBar</string>
 	<string name="settings_interface">Interface</string>
+	<string name="no_rule">No rule</string>
+	<string name="enable_in_mentions">Enable in mentions</string>
+	<string name="enable_in_home_timeline">Enable in home timeline</string>
 
 </resources>

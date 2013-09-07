@@ -29,7 +29,7 @@ import java.util.List;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.BaseActivity;
+import org.mariotaku.twidere.activity.BaseSupportActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
@@ -62,9 +62,9 @@ public class MultiSelectEventHandler implements Constants, ActionMode.Callback, 
 
 	private ActionMode mActionMode;
 
-	private final BaseActivity mActivity;
+	private final BaseSupportActivity mActivity;
 
-	public MultiSelectEventHandler(final BaseActivity activity) {
+	public MultiSelectEventHandler(final BaseSupportActivity activity) {
 		mActivity = activity;
 	}
 

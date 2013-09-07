@@ -26,6 +26,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.Uri;
 
 public class HomeTimelineFragment extends CursorStatusesListFragment {
@@ -88,6 +89,12 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 	@Override
 	protected String getPositionKey() {
 		return "home_timeline";
+	}
+
+	@Override
+	protected boolean isFiltersEnabled() {
+		final SharedPreferences pref = getSharedPreferences();
+		return pref != null && pref.getBoolean(PREFERENCE_KEY_FILTERS_IN_HOME_TIMELINE, true);
 	}
 
 }

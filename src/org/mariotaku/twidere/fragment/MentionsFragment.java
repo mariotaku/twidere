@@ -26,6 +26,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -94,6 +95,12 @@ public class MentionsFragment extends CursorStatusesListFragment {
 	@Override
 	protected String getPositionKey() {
 		return "mentions_timeline";
+	}
+
+	@Override
+	protected boolean isFiltersEnabled() {
+		final SharedPreferences pref = getSharedPreferences();
+		return pref != null && pref.getBoolean(PREFERENCE_KEY_FILTERS_IN_MENTIONS, true);
 	}
 
 }

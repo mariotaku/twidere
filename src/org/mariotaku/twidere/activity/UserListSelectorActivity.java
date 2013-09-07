@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.AutoCompleteAdapter;
+import org.mariotaku.twidere.adapter.UserHashtagAutoCompleteAdapter;
 import org.mariotaku.twidere.adapter.ParcelableUsersAdapter;
 import org.mariotaku.twidere.adapter.UserListsAdapter;
 import org.mariotaku.twidere.fragment.CreateUserListDialogFragment;
@@ -39,7 +39,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 
-public class UserListSelectorActivity extends BaseDialogActivity implements OnClickListener, OnItemClickListener {
+public class UserListSelectorActivity extends BaseSupportDialogActivity implements OnClickListener, OnItemClickListener {
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -134,7 +134,7 @@ public class UserListSelectorActivity extends BaseDialogActivity implements OnCl
 			getUserLists(mScreenName);
 		}
 		setContentView(R.layout.select_user_list);
-		mEditScreenName.setAdapter(new AutoCompleteAdapter(this));
+		mEditScreenName.setAdapter(new UserHashtagAutoCompleteAdapter(this));
 		mEditScreenName.setText(mScreenName);
 		mUserListsListView.setAdapter(mUserListsAdapter = new UserListsAdapter(this));
 		mUsersListView.setAdapter(mUsersAdapter = new ParcelableUsersAdapter(this));

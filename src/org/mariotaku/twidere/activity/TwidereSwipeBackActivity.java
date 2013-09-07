@@ -31,7 +31,7 @@ import android.view.View;
 import android.view.Window;
 
 @SuppressLint("Registered")
-public class TwidereSwipeBackActivity extends BaseActivity {
+public class TwidereSwipeBackActivity extends BaseSupportActivity {
 
 	private SwipeBackLayout mSwipeBackLayout;
 

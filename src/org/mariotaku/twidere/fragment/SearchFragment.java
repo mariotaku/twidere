@@ -45,6 +45,7 @@ public class SearchFragment extends BaseSupportFragment implements Panes.Left, O
 		mAdapter.addTab(SearchUsersFragment.class, args, getString(R.string.users), R.drawable.ic_tab_person, 1);
 		mViewPager.setAdapter(mAdapter);
 		mViewPager.setOnPageChangeListener(this);
+		mViewPager.setOffscreenPageLimit(2);
 		final int current = mViewPager.getCurrentItem();
 		final int count = mAdapter.getCount();
 		for (int i = 0; i < count; i++) {

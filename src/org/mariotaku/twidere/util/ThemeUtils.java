@@ -155,7 +155,7 @@ public class ThemeUtils implements Constants {
 	public static String getThemeName(final Context context) {
 		if (context == null) return THEME_NAME_TWIDERE;
 		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		return pref.getString(PREFERENCE_KEY_THEME, THEME_NAME_TWIDERE);
+		return pref != null ? pref.getString(PREFERENCE_KEY_THEME, THEME_NAME_TWIDERE) : THEME_NAME_TWIDERE;
 	}
 
 	public static int getThemeResource(final Context context) {
@@ -203,7 +203,7 @@ public class ThemeUtils implements Constants {
 	public static boolean isSolidBackground(final Context context) {
 		if (context == null) return false;
 		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		return pref.getBoolean(PREFERENCE_KEY_SOLID_COLOR_BACKGROUND, false);
+		return pref != null ? pref.getBoolean(PREFERENCE_KEY_SOLID_COLOR_BACKGROUND, false) : false;
 	}
 
 	public static boolean shouldApplyColorFilter(final Context context) {

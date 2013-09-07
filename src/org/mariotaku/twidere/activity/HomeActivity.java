@@ -234,6 +234,12 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 				}
 				return true;
 			}
+			case MENU_FILTERS: {
+				final Intent intent = new Intent(this, FiltersActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+				startActivity(intent);
+				return true;
+			}
 			case MENU_SETTINGS: {
 				final Intent intent = new Intent(this, SettingsActivity.class);
 				intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);

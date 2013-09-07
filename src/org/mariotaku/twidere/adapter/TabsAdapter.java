@@ -117,7 +117,7 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 
 	@Override
 	public void onPageSelected(final int position) {
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.DONUT) return;
+		if (mIndicator == null) return;
 		announceForAccessibilityCompat(mContext, mIndicator, getPageTitle(position), getClass());
 	}
 

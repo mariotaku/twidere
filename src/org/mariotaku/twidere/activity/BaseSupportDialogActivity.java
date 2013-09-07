@@ -28,7 +28,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 @SuppressLint("Registered")
-class BaseDialogActivity extends BaseThemedActivity implements Constants, IThemedActivity {
+public class BaseSupportDialogActivity extends BaseSupportThemedActivity implements Constants, IThemedActivity {
 
 	private boolean mInstanceStateSaved;
 

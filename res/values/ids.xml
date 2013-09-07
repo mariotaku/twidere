@@ -61,5 +61,6 @@
 	<item name="favorites" type="id"/>
 	<item name="lists" type="id"/>
 	<item name="center" type="id"/>
+	<item name="filters" type="id"/>
 
 </resources>

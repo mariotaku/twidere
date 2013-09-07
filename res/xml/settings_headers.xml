@@ -36,10 +36,6 @@
 		android:icon="@drawable/ic_menu_extension"
 		android:title="@string/extensions"/>
 	<header
-		android:fragment="org.mariotaku.twidere.fragment.FiltersListFragment"
-		android:icon="@drawable/ic_menu_mute"
-		android:title="@string/filter"/>
-	<header
 		android:fragment="org.mariotaku.twidere.fragment.SettingsDetailsFragment"
 		android:icon="@drawable/ic_menu_server"
 		android:title="@string/network">

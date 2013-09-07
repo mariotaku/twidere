@@ -36,7 +36,7 @@ import java.util.Locale;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.AutoCompleteAdapter;
+import org.mariotaku.twidere.adapter.UserHashtagAutoCompleteAdapter;
 import org.mariotaku.twidere.adapter.ListActionAdapter;
 import org.mariotaku.twidere.model.ListAction;
 import org.mariotaku.twidere.model.Panes;
@@ -428,7 +428,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		private long mAccountId;
 		private AsyncTwitterWrapper mTwitterWrapper;
 		private int mListId;
-		private AutoCompleteAdapter mUserAutoCompleteAdapter;
+		private UserHashtagAutoCompleteAdapter mUserAutoCompleteAdapter;
 
 		@Override
 		public void onClick(final DialogInterface dialog, final int which) {
@@ -451,14 +451,14 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 			mListId = bundle != null ? bundle.getInt(INTENT_KEY_LIST_ID, -1) : -1;
 			mText = bundle != null ? bundle.getString(INTENT_KEY_TEXT) : null;
 			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			final View view = LayoutInflater.from(getActivity()).inflate(R.layout.auto_complete_textview_default_style,
+			final View view = LayoutInflater.from(getActivity()).inflate(R.layout.auto_complete_textview,
 					null);
 			builder.setView(view);
 			mEditText = (AutoCompleteTextView) view.findViewById(R.id.edit_text);
 			if (mText != null) {
 				mEditText.setText(mText);
 			}
-			mUserAutoCompleteAdapter = new AutoCompleteAdapter(getActivity());
+			mUserAutoCompleteAdapter = new UserHashtagAutoCompleteAdapter(getActivity());
 			mEditText.setAdapter(mUserAutoCompleteAdapter);
 			mEditText.setThreshold(1);
 			mEditText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(20) });

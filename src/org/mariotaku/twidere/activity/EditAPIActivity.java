@@ -42,7 +42,7 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
-public class EditAPIActivity extends BaseDialogActivity implements TwitterConstants, OnCheckedChangeListener,
+public class EditAPIActivity extends BaseSupportDialogActivity implements TwitterConstants, OnCheckedChangeListener,
 		OnClickListener {
 
 	private EditText mEditRestBaseURL, mEditSigningRESTBaseURL, mEditOAuthBaseURL, mEditSigningOAuthBaseURL;

@@ -6,5 +6,17 @@
 		android:icon="@android:drawable/ic_menu_add"
 		android:showAsAction="always"
 		android:title="@string/add_rule"/>
+	<item
+		android:id="@+id/enable_in_home_timeline"
+		android:checkable="true"
+		android:checked="true"
+		android:icon="@drawable/ic_menu_home"
+		android:title="@string/enable_in_home_timeline"/>
+	<item
+		android:id="@+id/enable_in_mentions"
+		android:checkable="true"
+		android:checked="true"
+		android:icon="@drawable/ic_menu_mention"
+		android:title="@string/enable_in_mentions"/>
 
 </menu>

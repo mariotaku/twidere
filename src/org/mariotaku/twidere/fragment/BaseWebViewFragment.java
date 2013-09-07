@@ -22,7 +22,7 @@ package org.mariotaku.twidere.fragment;
 import static org.mariotaku.twidere.util.Utils.showErrorMessage;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.activity.BaseActivity;
+import org.mariotaku.twidere.activity.BaseSupportActivity;
 import org.mariotaku.twidere.view.WebSettingsAccessor;
 
 import android.annotation.SuppressLint;
@@ -68,17 +68,17 @@ public class BaseWebViewFragment extends WebViewFragment implements Constants {
 		@Override
 		public void onPageFinished(final WebView view, final String url) {
 			super.onPageFinished(view, url);
-			if (mActivity instanceof BaseActivity) {
+			if (mActivity instanceof BaseSupportActivity) {
 				mActivity.setTitle(view.getTitle());
-				((BaseActivity) mActivity).setProgressBarIndeterminateVisibility(false);
+				((BaseSupportActivity) mActivity).setProgressBarIndeterminateVisibility(false);
 			}
 		}
 
 		@Override
 		public void onPageStarted(final WebView view, final String url, final Bitmap favicon) {
 			super.onPageStarted(view, url, favicon);
-			if (mActivity instanceof BaseActivity) {
-				((BaseActivity) mActivity).setProgressBarIndeterminateVisibility(true);
+			if (mActivity instanceof BaseSupportActivity) {
+				((BaseSupportActivity) mActivity).setProgressBarIndeterminateVisibility(true);
 			}
 		}
 

@@ -352,7 +352,6 @@ public final class Utils implements Constants {
 
 	public static void announceForAccessibilityCompat(final Context context, final View view, final CharSequence text,
 			final Class<?> cls) {
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.DONUT) return;
 		final AccessibilityManager accessibilityManager = (AccessibilityManager) context
 				.getSystemService(Context.ACCESSIBILITY_SERVICE);
 		if (!accessibilityManager.isEnabled()) return;

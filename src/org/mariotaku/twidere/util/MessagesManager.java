@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.activity.BaseActivity;
+import org.mariotaku.twidere.activity.BaseSupportActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
 
 import android.app.Activity;
@@ -150,8 +150,8 @@ public final class MessagesManager implements Constants {
 
 	private Activity getBestActivity() {
 		for (final Activity activity : mMessageCallbacks) {
-			if (activity instanceof BaseActivity) {
-				final BaseActivity base = (BaseActivity) activity;
+			if (activity instanceof BaseSupportActivity) {
+				final BaseSupportActivity base = (BaseSupportActivity) activity;
 				if (base.isOnTop()) return base;
 			}
 		}

@@ -21,6 +21,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.ThemeUtils;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
@@ -98,6 +99,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 		mTabColor = ThemeUtils.getThemeColor(context);
 		mInflater = LayoutInflater.from(context);
 		mTabLayout = new LinearLayout(context);
+		mTabLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
 		mShouldApplyColorFilterToTabIcons = ThemeUtils.shouldApplyColorFilterToTabIcons(context);
 		mTabIconColor = ThemeUtils.getTabIconColor(context);
 		addView(mTabLayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -401,5 +403,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 		public void onPageSelected(int position);
 
 		public boolean onTabLongClick(int position);
+
+		public float getPageWidth(int position);
 	}
 }
