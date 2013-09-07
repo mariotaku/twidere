@@ -217,6 +217,8 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_OAUTH_BASE_URL = "oauth_base_url";
 	public static final String PREFERENCE_KEY_SIGNING_REST_BASE_URL = "signing_rest_base_url";
 	public static final String PREFERENCE_KEY_SIGNING_OAUTH_BASE_URL = "signing_oauth_base_url";
+	public static final String PREFERENCE_KEY_AUTH_TYPE = "auth_type";
+	public static final String PREFERENCE_KEY_API_LAST_CHANGE = "api_last_change";
 	public static final String PREFERENCE_KEY_FILTERS_IN_HOME_TIMELINE = "enable_filters_in_home_timeline";
 	public static final String PREFERENCE_KEY_FILTERS_IN_MENTIONS = "enable_filters_in_mentions";
 

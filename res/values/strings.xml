@@ -67,6 +67,7 @@
 	<string name="open_source_license">Open source license</string>
 	<string name="license_summary">Twidere is licensed under GPLv3.</string>
 	<string name="api">API</string>
+	<string name="default_api_settings">Default API settings</string>
 	<string name="consumer_key">Consumer key</string>
 	<string name="consumer_key_summary">Consumer key for new logged accounts in OAuth/xAuth mode</string>
 	<string name="consumer_secret">Consumer secret</string>

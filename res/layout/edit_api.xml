@@ -4,113 +4,13 @@
 	android:layout_height="wrap_content"
 	android:orientation="vertical">
 
-	<ScrollView
+	<FrameLayout
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
-		android:layout_weight="1"
-		android:fadingEdgeLength="16dp">
+		android:layout_weight="1">
 
-		<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="vertical"
-			android:padding="16dp">
-
-			<TextView
-				android:id="@+id/label_rest_base_url"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:singleLine="true"
-				android:text="@string/rest_base_url"
-				android:textAppearance="?android:attr/textAppearanceSmall"/>
-
-			<EditText
-				android:id="@+id/rest_base_url"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:ems="10"
-				android:inputType="textUri"
-				android:singleLine="true"/>
-
-			<TextView
-				android:id="@+id/label_auth_type"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/auth_type"
-				android:textAppearance="?android:attr/textAppearanceSmall"/>
-
-			<HorizontalScrollView
-				android:id="@+id/auth_type_scroll"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content">
-
-				<RadioGroup
-					android:id="@+id/auth_type"
-					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
-					android:orientation="horizontal">
-
-					<RadioButton
-						android:id="@+id/oauth"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_weight="1"
-						android:text="@string/oauth"/>
-
-					<RadioButton
-						android:id="@+id/basic"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_weight="1"
-						android:text="@string/basic"/>
-
-					<RadioButton
-						android:id="@+id/twip_o"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_weight="1"
-						android:text="@string/twip_o"/>
-
-					<!-- This auth method is not available for now -->
-
-					<RadioButton
-						android:id="@+id/xauth"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_weight="1"
-						android:text="@string/xauth"/>
-				</RadioGroup>
-			</HorizontalScrollView>
-
-			<LinearLayout
-				android:id="@+id/advanced_api_config_container"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:orientation="vertical">
-
-				<Button
-					android:id="@+id/advanced_api_config_label"
-					style="?android:borderlessButtonStyle"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:drawableLeft="@drawable/expander_close_holo"
-					android:drawablePadding="4dp"
-					android:gravity="center_vertical"
-					android:paddingBottom="4dp"
-					android:paddingTop="4dp"
-					android:text="@string/advanced"
-					android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-				<ViewStub
-					android:id="@+id/stub_advanced_api_config"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:inflatedId="@+id/advanced_api_config"
-					android:layout="@layout/edit_api_advanced_fields"
-					android:visibility="gone"/>
-			</LinearLayout>
-		</LinearLayout>
-	</ScrollView>
+		<include layout="@layout/edit_api_content"/>
+	</FrameLayout>
 
 	<View
 		android:layout_width="match_parent"

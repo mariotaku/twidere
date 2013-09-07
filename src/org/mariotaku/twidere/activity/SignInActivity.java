@@ -413,6 +413,8 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 	}
 
 	private void setDefaultAPI() {
+		final long current = System.currentTimeMillis();
+		final boolean default_api_changed = mPreferences.getLong(PREFERENCE_KEY_API_LAST_CHANGE, current) != current;
 		final String consumer_key = getNonEmptyString(mPreferences, PREFERENCE_KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY_2);
 		final String consumer_secret = getNonEmptyString(mPreferences, PREFERENCE_KEY_CONSUMER_SECRET,
 				TWITTER_CONSUMER_SECRET_2);
@@ -424,23 +426,27 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 				DEFAULT_SIGNING_REST_BASE_URL);
 		final String signing_oauth_base_url = getNonEmptyString(mPreferences, PREFERENCE_KEY_SIGNING_OAUTH_BASE_URL,
 				DEFAULT_SIGNING_OAUTH_BASE_URL);
-		if (isEmpty(mConsumerKey)) {
+		final int auth_type = mPreferences.getInt(PREFERENCE_KEY_AUTH_TYPE, Accounts.AUTH_TYPE_OAUTH);
+		if (isEmpty(mConsumerKey) || default_api_changed) {
 			mConsumerKey = consumer_key;
 		}
-		if (isEmpty(mConsumerSecret)) {
+		if (isEmpty(mConsumerSecret) || default_api_changed) {
 			mConsumerSecret = consumer_secret;
 		}
-		if (isEmpty(mRestBaseURL)) {
+		if (isEmpty(mRestBaseURL) || default_api_changed) {
 			mRestBaseURL = rest_base_url;
 		}
-		if (isEmpty(mOAuthBaseURL)) {
+		if (isEmpty(mOAuthBaseURL) || default_api_changed) {
 			mOAuthBaseURL = oauth_base_url;
 		}
-		if (isEmpty(mSigningRestBaseURL)) {
+		if (isEmpty(mSigningRestBaseURL) || default_api_changed) {
 			mSigningRestBaseURL = signing_rest_base_url;
 		}
-		if (isEmpty(mSigningOAuthBaseURL)) {
+		if (isEmpty(mSigningOAuthBaseURL) || default_api_changed) {
 			mSigningOAuthBaseURL = signing_oauth_base_url;
+		}
+		if (mAuthType == 0 || default_api_changed) {
+			mAuthType = auth_type;
 		}
 	}
 
