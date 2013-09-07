@@ -108,10 +108,6 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 		}
 	}
 
-	private boolean isSelectingUser() {
-		return INTENT_ACTION_SELECT_USER.equals(getIntent().getAction());
-	}
-
 	public void setUsersData(final List<ParcelableUser> data) {
 		mUsersAdapter.setData(data, true);
 		mUsersListContainer.setVisibility(View.VISIBLE);
@@ -181,6 +177,10 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 		mScreenName = screen_name;
 		final GetUserListsTask task = new GetUserListsTask(this, mAccountId, screen_name);
 		task.execute();
+	}
+
+	private boolean isSelectingUser() {
+		return INTENT_ACTION_SELECT_USER.equals(getIntent().getAction());
 	}
 
 	private void searchUser(final String name) {

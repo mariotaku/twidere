@@ -26,7 +26,6 @@ import org.mariotaku.twidere.view.iface.IExtendedViewGroup.TouchInterceptor;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -492,19 +491,9 @@ public class SlidingPaneView extends ViewGroup {
 
 		public void setFadeFactor(final int fadeFactor) {
 			mFadeFactor = fadeFactor;
-			invalidate();
+			setAlpha((float) mFadeFactor / 0xFF);
 		}
 
-		@Override
-		protected void dispatchDraw(final Canvas canvas) {
-			try {
-				canvas.saveLayerAlpha(null, mFadeFactor, Canvas.ALL_SAVE_FLAG);
-				super.dispatchDraw(canvas);
-				canvas.restore();
-			} catch (final NullPointerException e) {
-				super.dispatchDraw(canvas);
-			}
-		}
 	}
 
 	public static class SavedState extends BaseSavedState {
@@ -771,13 +760,7 @@ public class SlidingPaneView extends ViewGroup {
 		public void setFadeFactor(final int fadeFactor) {
 			mFadeFactor = fadeFactor;
 			invalidate();
-		}
-
-		@Override
-		protected void dispatchDraw(final Canvas canvas) {
-			canvas.saveLayerAlpha(null, mFadeFactor, Canvas.ALL_SAVE_FLAG);
-			super.dispatchDraw(canvas);
-			canvas.restore();
+			setAlpha((float) mFadeFactor / 0xFF);
 		}
 	}
 

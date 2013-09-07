@@ -89,13 +89,22 @@ public class TwidereLinkify {
 	public static final Pattern PATTERN_TWITTER_PROFILE_IMAGES = Pattern.compile(STRING_PATTERN_TWITTER_PROFILE_IMAGES,
 			Pattern.CASE_INSENSITIVE);
 
-	private static final String STRING_PATTERN_TWITTER_STATUS_NO_SCHEME = "((mobile|www)\\.)?twitter\\.com\\/([^\\/]+)\\/status\\/(\\d+)(\\/photo\\/\\d)?(\\/)?";
+	private static final String STRING_PATTERN_TWITTER_STATUS_NO_SCHEME = "((mobile|www)\\.)?twitter\\.com\\/(?:#!\\/)?(\\w+)\\/status(es)?\\/(\\d+)(\\/photo\\/\\d)?\\/?";
 	private static final String STRING_PATTERN_TWITTER_STATUS = AVAILABLE_URL_SCHEME_PREFIX
 			+ STRING_PATTERN_TWITTER_STATUS_NO_SCHEME;
 	public static final Pattern PATTERN_TWITTER_STATUS = Pattern.compile(STRING_PATTERN_TWITTER_STATUS,
 			Pattern.CASE_INSENSITIVE);
-	public static final int TWITTER_SCREEN_NAME = 4;
-	public static final int TWITTER_STATUS_ID = 5;
+	public static final int GROUP_ID_TWITTER_STATUS_SCREEN_NAME = 4;
+	public static final int GROUP_ID_TWITTER_STATUS_STATUS_ID = 6;
+	
+	private static final String STRING_PATTERN_TWITTER_LIST_NO_SCHEME = "((mobile|www)\\.)?twitter\\.com\\/(?:#!\\/)?(\\w+)\\/lists\\/(.+)\\/?";
+	private static final String STRING_PATTERN_TWITTER_LIST = AVAILABLE_URL_SCHEME_PREFIX
+			+ STRING_PATTERN_TWITTER_LIST_NO_SCHEME;
+	public static final Pattern PATTERN_TWITTER_LIST = Pattern.compile(STRING_PATTERN_TWITTER_LIST,
+			Pattern.CASE_INSENSITIVE);
+
+	public static final int GROUP_ID_TWITTER_LIST_SCREEN_NAME = 4;
+	public static final int GROUP_ID_TWITTER_LIST_LIST_NAME = 5;
 
 	private final OnLinkClickListener mOnLinkClickListener;
 	private final Extractor mExtractor = new Extractor();
@@ -255,7 +264,7 @@ public class TwidereLinkify {
 					if (matcher.matches()) {
 						final int start = string.getSpanStart(span);
 						final int end = string.getSpanEnd(span);
-						final String url = matcherGroup(matcher, TWITTER_STATUS_ID);
+						final String url = matcherGroup(matcher, GROUP_ID_TWITTER_STATUS_STATUS_ID);
 						string.removeSpan(span);
 						applyLink(url, start, end, string, account_id, LINK_TYPE_STATUS, sensitive);
 					}
@@ -290,7 +299,18 @@ public class TwidereLinkify {
 			}
 			hasMatches = true;
 		}
-
+		final URLSpan[] spans = spannable.getSpans(0, spannable.length(), URLSpan.class);
+		for (final URLSpan span : spans) {
+			final Matcher m = PATTERN_TWITTER_LIST.matcher(span.getURL());
+			if (m.matches()) {
+				final int start = spannable.getSpanStart(span);
+				final int end = spannable.getSpanEnd(span);
+				final String screen_name = matcherGroup(m, GROUP_ID_TWITTER_LIST_SCREEN_NAME);
+				final String list_name = matcherGroup(m, GROUP_ID_TWITTER_LIST_LIST_NAME);
+				spannable.removeSpan(span);
+				applyLink(screen_name + "/" + list_name, start, end, spannable, account_id, LINK_TYPE_LIST, false);
+			}
+		}
 		return hasMatches;
 	}
 

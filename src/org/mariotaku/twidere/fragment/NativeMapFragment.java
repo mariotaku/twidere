@@ -35,6 +35,7 @@ public class NativeMapFragment extends MapFragment implements Constants, MapInte
 
 	private GoogleMap mMapView;
 
+	@Override
 	public void center() {
 		final Bundle args = getArguments();
 		if (mMapView == null || args == null || !args.containsKey(INTENT_KEY_LATITUDE)
@@ -48,9 +49,7 @@ public class NativeMapFragment extends MapFragment implements Constants, MapInte
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		final Bundle args = getArguments();
-		if (args == null || !args.containsKey(INTENT_KEY_LATITUDE) || !args.containsKey(INTENT_KEY_LONGITUDE)) {
-			return;
-		}
+		if (args == null || !args.containsKey(INTENT_KEY_LATITUDE) || !args.containsKey(INTENT_KEY_LONGITUDE)) return;
 		final double lat = args.getDouble(INTENT_KEY_LATITUDE, 0.0), lng = args.getDouble(INTENT_KEY_LONGITUDE, 0.0);
 		mMapView = getMap();
 		final MarkerOptions marker = new MarkerOptions();

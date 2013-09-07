@@ -21,7 +21,6 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.ThemeUtils;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -247,6 +246,12 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 		notifyDataSetChanged();
 	}
 
+	@Override
+	public void setEnabled(final boolean enabled) {
+		super.setEnabled(enabled);
+		setAlpha(enabled ? 1 : 0.5f);
+	}
+
 	public void setOnPageChangeListener(final ViewPager.OnPageChangeListener listener) {
 		mListener = listener;
 	}
@@ -273,17 +278,6 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 	public void setViewPager(final ViewPager pager, final int initialPosition) {
 		setViewPager(pager);
 		setCurrentItem(initialPosition);
-	}
-
-	@Override
-	protected void dispatchDraw(final Canvas canvas) {
-		try {
-			canvas.saveLayerAlpha(null, isEnabled() ? 0xFF : 0x80, Canvas.ALL_SAVE_FLAG);
-			super.dispatchDraw(canvas);
-			canvas.restore();
-		} catch (final NullPointerException e) {
-			super.dispatchDraw(canvas);
-		}
 	}
 
 	private void addTab(final CharSequence label, final Drawable icon, final int index) {

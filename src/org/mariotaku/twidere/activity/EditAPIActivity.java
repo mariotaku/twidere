@@ -119,9 +119,11 @@ public class EditAPIActivity extends BaseSupportDialogActivity implements Twitte
 					stub_view.setVisibility(View.VISIBLE);
 					mAdvancedAPIConfigLabel.setCompoundDrawablesWithIntrinsicBounds(R.drawable.expander_open_holo, 0,
 							0, 0);
-					mEditSigningRESTBaseURL = (EditText) mAdvancedAPIConfigContainer.findViewById(R.id.signing_rest_base_url);
+					mEditSigningRESTBaseURL = (EditText) mAdvancedAPIConfigContainer
+							.findViewById(R.id.signing_rest_base_url);
 					mEditOAuthBaseURL = (EditText) mAdvancedAPIConfigContainer.findViewById(R.id.oauth_base_url);
-					mEditSigningOAuthBaseURL = (EditText) mAdvancedAPIConfigContainer.findViewById(R.id.signing_oauth_base_url);
+					mEditSigningOAuthBaseURL = (EditText) mAdvancedAPIConfigContainer
+							.findViewById(R.id.signing_oauth_base_url);
 					mEditConsumerKey = (EditText) mAdvancedAPIConfigContainer.findViewById(R.id.consumer_key);
 					mEditConsumerSecret = (EditText) mAdvancedAPIConfigContainer.findViewById(R.id.consumer_secret);
 

@@ -8,7 +8,6 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.view.holder.AccountDrawerGroupViewHolder;
-import org.mariotaku.twidere.view.iface.IExtendedView;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -21,8 +20,8 @@ import android.widget.TextView;
 
 public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements Constants {
 
-	private static final int ITEM_ACTIVATED_ALPHA = 0xFF;
-	private static final int ITEM_INACTIVATED_ALPHA = 0x40;
+	private static final float ITEM_ACTIVATED_ALPHA = 1f;
+	private static final float ITEM_INACTIVATED_ALPHA = 0.5f;
 	private static final int GROUP_LAYOUT = R.layout.accounts_drawer_item_group;
 	private static final int CHILD_LAYOUT = R.layout.accounts_drawer_item_child;
 	private static final AccountAction[] DEFAULT_ACCOUNT_ACTIONS = new AccountAction[7];
@@ -93,7 +92,7 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 		final View view = convertView != null ? convertView : mInflater.inflate(CHILD_LAYOUT, null);
 		final Account account = getGroup(groupPosition);
 		final AccountAction action = getChild(groupPosition, childPosition);
-		((IExtendedView) view).setAlpha(account.is_activated ? ITEM_ACTIVATED_ALPHA : ITEM_INACTIVATED_ALPHA);
+//		view.setAlpha(account.is_activated ? ITEM_ACTIVATED_ALPHA : ITEM_INACTIVATED_ALPHA);
 		final TextView text1 = (TextView) view.findViewById(android.R.id.text1);
 		final ImageView icon = (ImageView) view.findViewById(android.R.id.icon);
 		text1.setText(action.name);
@@ -133,7 +132,7 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 			view.setTag(holder);
 		}
 		final Account account = getGroup(groupPosition);
-		((IExtendedView) view).setAlpha(account.is_activated ? ITEM_ACTIVATED_ALPHA : ITEM_INACTIVATED_ALPHA);
+		view.setAlpha(account.is_activated ? ITEM_ACTIVATED_ALPHA : ITEM_INACTIVATED_ALPHA);
 		holder.name.setText(account.name);
 		holder.screen_name.setText("@" + account.screen_name);
 		holder.name_container.drawRight(account.user_color);

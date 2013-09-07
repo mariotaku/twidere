@@ -4,7 +4,7 @@ import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.ParseUtils.parseString;
 import static org.mariotaku.twidere.util.Utils.getNonEmptyString;
 import static org.mariotaku.twidere.util.Utils.trim;
-import static android.text.TextUtils.isEmpty;
+
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
@@ -15,7 +15,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.DialogPreference;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -38,6 +37,16 @@ public class DefaultAPIPreference extends DialogPreference implements Constants,
 	private String mRestBaseURL, mSigningRestBaseURL, mOAuthBaseURL, mSigningOAuthBaseURL;
 	private String mConsumerKey, mConsumerSecret;
 	private int mAuthType;
+
+	public DefaultAPIPreference(final Context context, final AttributeSet attrs) {
+		this(context, attrs, android.R.attr.preferenceStyle);
+	}
+
+	public DefaultAPIPreference(final Context context, final AttributeSet attrs, final int defStyle) {
+		super(context, attrs, defStyle);
+		setDialogLayoutResource(R.layout.edit_api_content);
+		setPositiveButtonText(android.R.string.ok);
+	}
 
 	@Override
 	public void onCheckedChanged(final RadioGroup group, final int checkedId) {
@@ -63,18 +72,36 @@ public class DefaultAPIPreference extends DialogPreference implements Constants,
 		mAdvancedAPIConfigContainer.setVisibility(is_oauth ? View.VISIBLE : View.GONE);
 	}
 
-	public DefaultAPIPreference(Context context, AttributeSet attrs) {
-		this(context, attrs, android.R.attr.preferenceStyle);
-	}
+	@Override
+	public void onClick(final View v) {
+		final View stub_view = mAdvancedAPIConfigContainer.findViewById(R.id.stub_advanced_api_config);
+		final View inflated_view = mAdvancedAPIConfigContainer.findViewById(R.id.advanced_api_config);
+		if (stub_view != null) {
+			stub_view.setVisibility(View.VISIBLE);
+			mAdvancedAPIConfigLabel.setCompoundDrawablesWithIntrinsicBounds(R.drawable.expander_open_holo, 0, 0, 0);
+			mEditSigningRESTBaseURL = (EditText) mAdvancedAPIConfigContainer.findViewById(R.id.signing_rest_base_url);
+			mEditOAuthBaseURL = (EditText) mAdvancedAPIConfigContainer.findViewById(R.id.oauth_base_url);
+			mEditSigningOAuthBaseURL = (EditText) mAdvancedAPIConfigContainer.findViewById(R.id.signing_oauth_base_url);
+			mEditConsumerKey = (EditText) mAdvancedAPIConfigContainer.findViewById(R.id.consumer_key);
+			mEditConsumerSecret = (EditText) mAdvancedAPIConfigContainer.findViewById(R.id.consumer_secret);
 
-	public DefaultAPIPreference(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-		setDialogLayoutResource(R.layout.edit_api_content);
-		setPositiveButtonText(android.R.string.ok);
+			mEditSigningRESTBaseURL.setText(isEmpty(mSigningRestBaseURL) ? DEFAULT_SIGNING_REST_BASE_URL
+					: mSigningRestBaseURL);
+			mEditOAuthBaseURL.setText(isEmpty(mOAuthBaseURL) ? DEFAULT_OAUTH_BASE_URL : mOAuthBaseURL);
+			mEditSigningOAuthBaseURL.setText(isEmpty(mSigningOAuthBaseURL) ? DEFAULT_SIGNING_OAUTH_BASE_URL
+					: mSigningOAuthBaseURL);
+			mEditConsumerKey.setText(isEmpty(mConsumerKey) ? TWITTER_CONSUMER_KEY_2 : mConsumerKey);
+			mEditConsumerSecret.setText(isEmpty(mConsumerSecret) ? TWITTER_CONSUMER_SECRET_2 : mConsumerSecret);
+		} else if (inflated_view != null) {
+			final boolean is_visible = inflated_view.getVisibility() == View.VISIBLE;
+			final int compound_res = is_visible ? R.drawable.expander_close_holo : R.drawable.expander_open_holo;
+			mAdvancedAPIConfigLabel.setCompoundDrawablesWithIntrinsicBounds(compound_res, 0, 0, 0);
+			inflated_view.setVisibility(is_visible ? View.GONE : View.VISIBLE);
+		}
 	}
 
 	@Override
-	protected void onBindDialogView(View view) {
+	protected void onBindDialogView(final View view) {
 		final SharedPreferences pref = getSharedPreferences();
 		mConsumerKey = getNonEmptyString(pref, PREFERENCE_KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY_2);
 		mConsumerSecret = getNonEmptyString(pref, PREFERENCE_KEY_CONSUMER_SECRET, TWITTER_CONSUMER_SECRET_2);
@@ -97,7 +124,25 @@ public class DefaultAPIPreference extends DialogPreference implements Constants,
 	}
 
 	@Override
-	protected void onDialogClosed(boolean positiveResult) {
+	protected View onCreateDialogView() {
+		final View view = super.onCreateDialogView();
+		mEditRestBaseURL = (EditText) view.findViewById(R.id.rest_base_url);
+		mEditAuthType = (RadioGroup) view.findViewById(R.id.auth_type);
+		mButtonOAuth = (RadioButton) view.findViewById(R.id.oauth);
+		mButtonxAuth = (RadioButton) view.findViewById(R.id.xauth);
+		mButtonBasic = (RadioButton) view.findViewById(R.id.basic);
+		mButtonTwipOMode = (RadioButton) view.findViewById(R.id.twip_o);
+		mAdvancedAPIConfigContainer = view.findViewById(R.id.advanced_api_config_container);
+		mAdvancedAPIConfigLabel = (TextView) view.findViewById(R.id.advanced_api_config_label);
+
+		mEditAuthType.setOnCheckedChangeListener(this);
+		mAdvancedAPIConfigLabel.setOnClickListener(this);
+
+		return view;
+	}
+
+	@Override
+	protected void onDialogClosed(final boolean positiveResult) {
 		if (!positiveResult) return;
 		saveEditedText();
 		final SharedPreferences.Editor editor = getSharedPreferences().edit();
@@ -120,25 +165,7 @@ public class DefaultAPIPreference extends DialogPreference implements Constants,
 	}
 
 	@Override
-	protected View onCreateDialogView() {
-		View view = super.onCreateDialogView();
-		mEditRestBaseURL = (EditText) view.findViewById(R.id.rest_base_url);
-		mEditAuthType = (RadioGroup) view.findViewById(R.id.auth_type);
-		mButtonOAuth = (RadioButton) view.findViewById(R.id.oauth);
-		mButtonxAuth = (RadioButton) view.findViewById(R.id.xauth);
-		mButtonBasic = (RadioButton) view.findViewById(R.id.basic);
-		mButtonTwipOMode = (RadioButton) view.findViewById(R.id.twip_o);
-		mAdvancedAPIConfigContainer = view.findViewById(R.id.advanced_api_config_container);
-		mAdvancedAPIConfigLabel = (TextView) view.findViewById(R.id.advanced_api_config_label);
-
-		mEditAuthType.setOnCheckedChangeListener(this);
-		mAdvancedAPIConfigLabel.setOnClickListener(this);
-
-		return view;
-	}
-
-	@Override
-	protected void onRestoreInstanceState(Parcelable state) {
+	protected void onRestoreInstanceState(final Parcelable state) {
 		final Bundle savedInstanceState = (Bundle) state;
 		super.onRestoreInstanceState(savedInstanceState.getParcelable(INTENT_KEY_DATA));
 		mRestBaseURL = savedInstanceState.getString(Accounts.REST_BASE_URL);
@@ -183,34 +210,6 @@ public class DefaultAPIPreference extends DialogPreference implements Constants,
 		}
 		if (mEditConsumerSecret != null) {
 			mConsumerSecret = parseString(mEditConsumerSecret.getText());
-		}
-	}
-
-	@Override
-	public void onClick(final View v) {
-		final View stub_view = mAdvancedAPIConfigContainer.findViewById(R.id.stub_advanced_api_config);
-		final View inflated_view = mAdvancedAPIConfigContainer.findViewById(R.id.advanced_api_config);
-		if (stub_view != null) {
-			stub_view.setVisibility(View.VISIBLE);
-			mAdvancedAPIConfigLabel.setCompoundDrawablesWithIntrinsicBounds(R.drawable.expander_open_holo, 0, 0, 0);
-			mEditSigningRESTBaseURL = (EditText) mAdvancedAPIConfigContainer.findViewById(R.id.signing_rest_base_url);
-			mEditOAuthBaseURL = (EditText) mAdvancedAPIConfigContainer.findViewById(R.id.oauth_base_url);
-			mEditSigningOAuthBaseURL = (EditText) mAdvancedAPIConfigContainer.findViewById(R.id.signing_oauth_base_url);
-			mEditConsumerKey = (EditText) mAdvancedAPIConfigContainer.findViewById(R.id.consumer_key);
-			mEditConsumerSecret = (EditText) mAdvancedAPIConfigContainer.findViewById(R.id.consumer_secret);
-
-			mEditSigningRESTBaseURL.setText(isEmpty(mSigningRestBaseURL) ? DEFAULT_SIGNING_REST_BASE_URL
-					: mSigningRestBaseURL);
-			mEditOAuthBaseURL.setText(isEmpty(mOAuthBaseURL) ? DEFAULT_OAUTH_BASE_URL : mOAuthBaseURL);
-			mEditSigningOAuthBaseURL.setText(isEmpty(mSigningOAuthBaseURL) ? DEFAULT_SIGNING_OAUTH_BASE_URL
-					: mSigningOAuthBaseURL);
-			mEditConsumerKey.setText(isEmpty(mConsumerKey) ? TWITTER_CONSUMER_KEY_2 : mConsumerKey);
-			mEditConsumerSecret.setText(isEmpty(mConsumerSecret) ? TWITTER_CONSUMER_SECRET_2 : mConsumerSecret);
-		} else if (inflated_view != null) {
-			final boolean is_visible = inflated_view.getVisibility() == View.VISIBLE;
-			final int compound_res = is_visible ? R.drawable.expander_close_holo : R.drawable.expander_open_holo;
-			mAdvancedAPIConfigLabel.setCompoundDrawablesWithIntrinsicBounds(compound_res, 0, 0, 0);
-			inflated_view.setVisibility(is_visible ? View.GONE : View.VISIBLE);
 		}
 	}
 }

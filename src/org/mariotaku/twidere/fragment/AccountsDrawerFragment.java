@@ -274,6 +274,7 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 		super.onStart();
 		final IntentFilter filter = new IntentFilter(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
 		registerReceiver(mStatusReceiver, filter);
+		getLoaderManager().restartLoader(0, null, this);
 	}
 
 	@Override
