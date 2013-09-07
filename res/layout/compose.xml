@@ -29,20 +29,20 @@
 				android:focusable="true"
 				android:onClick="onClick"
 				android:orientation="horizontal"
-				android:paddingLeft="4dp"
+				android:paddingLeft="0dp"
 				android:paddingRight="8dp">
 
-				<ImageView
+				<org.mariotaku.twidere.view.ActionBarHomeAsUpIndicator
 					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
-					android:scaleType="fitCenter"
-					android:src="@drawable/actionbar_back_dark"/>
+					android:layout_height="match_parent"/>
 
 				<ImageView
 					android:layout_width="?android:actionBarSize"
 					android:layout_height="match_parent"
-					android:paddingBottom="8dp"
-					android:paddingTop="8dp"
+					android:layout_marginLeft="-8dp"
+					android:layout_marginRight="-8dp"
+					android:paddingBottom="6dp"
+					android:paddingTop="6dp"
 					android:scaleType="centerInside"
 					android:src="@drawable/ic_launcher"/>
 

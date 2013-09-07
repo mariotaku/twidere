@@ -131,7 +131,6 @@
 	<style name="Theme.Twidere.Light.Compose" parent="Theme.Twidere.Light.Dialog">
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Light</item>
 		<item name="android:windowNoTitle">true</item>
-		<item name="android:windowBackground">@drawable/dialog_full_holo_light_darkactionbar</item>
 	</style>
 
 	<style name="Theme.Twidere.Light.DarkActionBar.Compose" parent="Theme.Twidere.Light.Dialog">
