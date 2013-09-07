@@ -21,7 +21,6 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.ThemeUtils;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
@@ -398,12 +397,12 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 		 */
 		public CharSequence getPageTitle(int position);
 
+		public float getPageWidth(int position);
+
 		public void onPageReselected(int position);
 
 		public void onPageSelected(int position);
 
 		public boolean onTabLongClick(int position);
-
-		public float getPageWidth(int position);
 	}
 }

@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.fragment;
 
 import static android.text.TextUtils.isEmpty;
+import static org.mariotaku.twidere.util.ParseUtils.parseLong;
 import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
 import static org.mariotaku.twidere.util.Utils.clearUserColor;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
@@ -35,6 +36,7 @@ import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.openIncomingFriendships;
 import static org.mariotaku.twidere.util.Utils.openSavedSearches;
+import static org.mariotaku.twidere.util.Utils.openStatus;
 import static org.mariotaku.twidere.util.Utils.openTweetSearch;
 import static org.mariotaku.twidere.util.Utils.openUserBlocks;
 import static org.mariotaku.twidere.util.Utils.openUserFavorites;
@@ -675,6 +677,10 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				if (mention_list == null || mention_list.length != 2) {
 					break;
 				}
+				break;
+			}
+			case TwidereLinkify.LINK_TYPE_STATUS: {
+				openStatus(getActivity(), account_id, parseLong(link));
 				break;
 			}
 		}

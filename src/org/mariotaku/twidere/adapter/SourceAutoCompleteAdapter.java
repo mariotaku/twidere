@@ -56,14 +56,6 @@ public class SourceAutoCompleteAdapter extends SimpleCursorAdapter implements Co
 	}
 
 	@Override
-	public Cursor swapCursor(final Cursor cursor) {
-		if (cursor != null) {
-			mSourceIdx = cursor.getColumnIndex(CachedStatuses.SOURCE);
-		}
-		return super.swapCursor(cursor);
-	}
-
-	@Override
 	public CharSequence convertToString(final Cursor cursor) {
 		if (isCursorClosed() || mSourceIdx == -1) return null;
 		return HtmlEscapeHelper.toPlainText(cursor.getString(mSourceIdx));
@@ -82,6 +74,14 @@ public class SourceAutoCompleteAdapter extends SimpleCursorAdapter implements Co
 		final String[] selectionArgs = constraint != null ? new String[] { constraint_escaped } : null;
 		return mDatabase.query(true, CachedStatuses.TABLE_NAME, COLUMNS, selection, selectionArgs,
 				CachedStatuses.SOURCE, null, null, null);
+	}
+
+	@Override
+	public Cursor swapCursor(final Cursor cursor) {
+		if (cursor != null) {
+			mSourceIdx = cursor.getColumnIndex(CachedStatuses.SOURCE);
+		}
+		return super.swapCursor(cursor);
 	}
 
 }

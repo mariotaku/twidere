@@ -382,7 +382,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 				ProfilingUtil.profile(getActivity(), mStatus.account_id, "End, " + mStatus.id);
 			}
 		} else {
-			mListView.setSelection(0);
+			setSelection(0);
 		}
 		if (mConversationTask != null && mConversationTask.getStatus() == AsyncTask.Status.RUNNING) {
 			mConversationTask.cancel(true);

@@ -41,8 +41,8 @@ import android.app.FragmentTransaction;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -149,6 +149,15 @@ public class FiltersActivity extends BaseActivity implements TabListener, OnPage
 	}
 
 	@Override
+	public boolean onPrepareOptionsMenu(final Menu menu) {
+		final boolean enable_in_home_timeline = mPreferences.getBoolean(PREFERENCE_KEY_FILTERS_IN_HOME_TIMELINE, true);
+		final boolean enable_in_mentions = mPreferences.getBoolean(PREFERENCE_KEY_FILTERS_IN_MENTIONS, true);
+		menu.findItem(R.id.enable_in_home_timeline).setChecked(enable_in_home_timeline);
+		menu.findItem(R.id.enable_in_mentions).setChecked(enable_in_mentions);
+		return true;
+	}
+
+	@Override
 	public void onTabReselected(final Tab tab, final FragmentTransaction ft) {
 
 	}
@@ -215,15 +224,6 @@ public class FiltersActivity extends BaseActivity implements TabListener, OnPage
 			return builder.create();
 		}
 
-	}
-
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		final boolean enable_in_home_timeline = mPreferences.getBoolean(PREFERENCE_KEY_FILTERS_IN_HOME_TIMELINE, true);
-		final boolean enable_in_mentions = mPreferences.getBoolean(PREFERENCE_KEY_FILTERS_IN_MENTIONS, true);
-		menu.findItem(R.id.enable_in_home_timeline).setChecked(enable_in_home_timeline);
-		menu.findItem(R.id.enable_in_mentions).setChecked(enable_in_mentions);
-		return true;
 	}
 
 }

@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.UserHashtagAutoCompleteAdapter;
 import org.mariotaku.twidere.adapter.ParcelableUsersAdapter;
+import org.mariotaku.twidere.adapter.UserHashtagAutoCompleteAdapter;
 import org.mariotaku.twidere.adapter.UserListsAdapter;
 import org.mariotaku.twidere.fragment.CreateUserListDialogFragment;
 import org.mariotaku.twidere.fragment.ProgressDialogFragment;
@@ -106,7 +106,10 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 			setResult(RESULT_OK, data);
 			finish();
 		}
+	}
 
+	private boolean isSelectingUser() {
+		return INTENT_ACTION_SELECT_USER.equals(getIntent().getAction());
 	}
 
 	public void setUsersData(final List<ParcelableUser> data) {
@@ -123,6 +126,7 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 			finish();
 			return;
 		}
+		setContentView(R.layout.select_user_list);
 		mAccountId = extras.getLong(INTENT_KEY_ACCOUNT_ID);
 		if (savedInstanceState == null) {
 			mScreenName = extras.getString(INTENT_KEY_SCREEN_NAME);
@@ -130,18 +134,27 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 			mScreenName = savedInstanceState.getString(INTENT_KEY_SCREEN_NAME);
 		}
 
+		final boolean selecting_user = isSelectingUser();
 		if (!isEmpty(mScreenName)) {
-			getUserLists(mScreenName);
+			if (selecting_user) {
+				searchUser(mScreenName);
+			} else {
+				getUserLists(mScreenName);
+			}
 		}
-		setContentView(R.layout.select_user_list);
 		mEditScreenName.setAdapter(new UserHashtagAutoCompleteAdapter(this));
 		mEditScreenName.setText(mScreenName);
 		mUserListsListView.setAdapter(mUserListsAdapter = new UserListsAdapter(this));
 		mUsersListView.setAdapter(mUsersAdapter = new ParcelableUsersAdapter(this));
 		mUserListsListView.setOnItemClickListener(this);
 		mUsersListView.setOnItemClickListener(this);
-		mUsersListContainer.setVisibility(isEmpty(mScreenName) ? View.VISIBLE : View.GONE);
-		mUserListsContainer.setVisibility(isEmpty(mScreenName) ? View.GONE : View.VISIBLE);
+		if (selecting_user) {
+			mUsersListContainer.setVisibility(View.VISIBLE);
+			mUserListsContainer.setVisibility(View.GONE);
+		} else {
+			mUsersListContainer.setVisibility(isEmpty(mScreenName) ? View.VISIBLE : View.GONE);
+			mUserListsContainer.setVisibility(isEmpty(mScreenName) ? View.GONE : View.VISIBLE);
+		}
 	}
 
 	@Override

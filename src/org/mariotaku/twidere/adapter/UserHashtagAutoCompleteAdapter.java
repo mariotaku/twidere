@@ -105,16 +105,6 @@ public class UserHashtagAutoCompleteAdapter extends SimpleCursorAdapter implemen
 		super.bindView(view, context, cursor);
 	}
 
-	@Override
-	public Cursor swapCursor(final Cursor cursor) {
-		if (cursor != null) {
-			mNameIdx = cursor.getColumnIndex(CachedValues.NAME);
-			mScreenNameIdx = cursor.getColumnIndex(CachedUsers.SCREEN_NAME);
-			mProfileImageUrlIdx = cursor.getColumnIndex(CachedUsers.PROFILE_IMAGE_URL);
-		}
-		return super.swapCursor(cursor);
-	}
-
 	public void closeCursor() {
 		final Cursor cursor = getCursor();
 		if (cursor == null) return;
@@ -164,6 +154,16 @@ public class UserHashtagAutoCompleteAdapter extends SimpleCursorAdapter implemen
 			return mDatabase.query(true, CachedHashtags.TABLE_NAME, CachedHashtags.COLUMNS, selection, selectionArgs,
 					null, null, CachedHashtags.NAME, null);
 		}
+	}
+
+	@Override
+	public Cursor swapCursor(final Cursor cursor) {
+		if (cursor != null) {
+			mNameIdx = cursor.getColumnIndex(CachedValues.NAME);
+			mScreenNameIdx = cursor.getColumnIndex(CachedUsers.SCREEN_NAME);
+			mProfileImageUrlIdx = cursor.getColumnIndex(CachedUsers.PROFILE_IMAGE_URL);
+		}
+		return super.swapCursor(cursor);
 	}
 
 	private static boolean isAtSymbol(final char character) {

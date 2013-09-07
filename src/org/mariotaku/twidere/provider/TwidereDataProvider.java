@@ -187,20 +187,6 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		}
 	};
 
-	private boolean shouldReplaceOnConflict(int table_id) {
-		switch (table_id) {
-			case TABLE_ID_CACHED_HASHTAGS:
-			case TABLE_ID_CACHED_STATUSES:
-			case TABLE_ID_CACHED_USERS:
-			case TABLE_ID_FILTERED_USERS:
-			case TABLE_ID_FILTERED_KEYWORDS:
-			case TABLE_ID_FILTERED_SOURCES:
-			case TABLE_ID_FILTERED_LINKS:
-				return true;
-		}
-		return false;
-	}
-
 	@Override
 	public int delete(final Uri uri, final String selection, final String[] selectionArgs) {
 		try {
@@ -958,6 +944,20 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 
 	private static <T> T safeGet(final List<T> list, final int index) {
 		return index >= 0 && index < list.size() ? list.get(index) : null;
+	}
+
+	private static boolean shouldReplaceOnConflict(final int table_id) {
+		switch (table_id) {
+			case TABLE_ID_CACHED_HASHTAGS:
+			case TABLE_ID_CACHED_STATUSES:
+			case TABLE_ID_CACHED_USERS:
+			case TABLE_ID_FILTERED_USERS:
+			case TABLE_ID_FILTERED_KEYWORDS:
+			case TABLE_ID_FILTERED_SOURCES:
+			case TABLE_ID_FILTERED_LINKS:
+				return true;
+		}
+		return false;
 	}
 
 	private static String stripMentionText(final String text, final String my_screen_name) {

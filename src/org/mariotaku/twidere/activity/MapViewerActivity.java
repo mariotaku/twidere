@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.activity;
 
+import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
+
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.NativeMapFragment;
@@ -32,7 +34,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MapViewerActivity extends TwidereSwipeBackActivity implements Constants {
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+
+public class MapViewerActivity extends SwipeBackActivity implements Constants {
 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
@@ -48,7 +53,7 @@ public class MapViewerActivity extends TwidereSwipeBackActivity implements Const
 				break;
 			}
 			case MENU_CENTER: {
-				final Fragment fragment = getFragmentManager().findFragmentById(R.id.map_frame);
+				final Fragment fragment = getFragmentManager().findFragmentById(android.R.id.content);
 				if (!(fragment instanceof MapInterface)) {
 					break;
 				}
@@ -62,7 +67,7 @@ public class MapViewerActivity extends TwidereSwipeBackActivity implements Const
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.map_viewer);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		final Uri uri = getIntent().getData();
 		if (uri == null || !AUTHORITY_MAP.equals(uri.getAuthority())) {
 			finish();
@@ -85,16 +90,10 @@ public class MapViewerActivity extends TwidereSwipeBackActivity implements Const
 		final Fragment fragment = isNativeMapSupported() ? new NativeMapFragment() : new WebMapFragment();
 		fragment.setArguments(bundle);
 		final FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.replace(R.id.map_frame, fragment).commit();
+		ft.replace(android.R.id.content, fragment).commit();
 	}
 
-	private static boolean isNativeMapSupported() {
-		try {
-			Class.forName("com.google.android.maps.MapActivity");
-			Class.forName("com.google.android.maps.MapView");
-		} catch (final ClassNotFoundException e) {
-			return false;
-		}
-		return true;
+	private boolean isNativeMapSupported() {
+		return GooglePlayServicesUtil.isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS;
 	}
 }

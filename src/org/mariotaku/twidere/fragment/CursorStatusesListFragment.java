@@ -88,8 +88,6 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 		return new CursorLoader(getActivity(), uri, CURSOR_COLS, where, null, sort_by);
 	}
 
-	protected abstract boolean isFiltersEnabled();
-
 	@Override
 	public void onPostStart() {
 		if (!isActivityFirstCreated()) {
@@ -162,6 +160,8 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	protected long[] getOldestStatusIds() {
 		return getOldestStatusIdsFromDatabase(getActivity(), getContentUri());
 	}
+
+	protected abstract boolean isFiltersEnabled();
 
 	@Override
 	protected void loadMoreStatuses() {

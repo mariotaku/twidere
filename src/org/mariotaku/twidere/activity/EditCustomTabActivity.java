@@ -343,8 +343,7 @@ public class EditCustomTabActivity extends BasePreferenceActivity {
 			if (mDialog != null && mDialog.isShowing()) {
 				mDialog.dismiss();
 			}
-			final View view = LayoutInflater.from(getContext()).inflate(R.layout.auto_complete_textview,
-					null);
+			final View view = LayoutInflater.from(getContext()).inflate(R.layout.auto_complete_textview, null);
 			mEditText = (AutoCompleteTextView) view.findViewById(R.id.edit_text);
 			mEditText.setAdapter(shouldCompleteUserName() ? new UserHashtagAutoCompleteAdapter(getContext()) : null);
 			mEditText.setText(getTextToSet());

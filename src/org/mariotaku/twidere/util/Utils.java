@@ -58,6 +58,7 @@ import org.apache.http.NameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mariotaku.gallery3d.ImageViewerGLActivity;
+import org.mariotaku.twidere.BuildConfig;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.CameraCropActivity;
@@ -1890,6 +1891,10 @@ public final class Utils implements Constants {
 		final float level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
 		final float scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
 		return plugged || level / scale > 0.15f;
+	}
+
+	public static boolean isDebugBuild() {
+		return BuildConfig.DEBUG;
 	}
 
 	public static boolean isDebuggable(final Context context) {

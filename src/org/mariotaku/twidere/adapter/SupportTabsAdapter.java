@@ -130,9 +130,9 @@ public class SupportTabsAdapter extends FragmentStatePagerAdapter implements Tit
 		return true;
 	}
 
-//	@Override
-//	public float getPageWidth(int position) {
-//		return 0.5f;
-//	}
+	// @Override
+	// public float getPageWidth(int position) {
+	// return 0.5f;
+	// }
 
 }
