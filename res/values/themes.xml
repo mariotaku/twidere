@@ -8,42 +8,6 @@
 		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
 	</style>
 
-	<style name="Theme.Twidere.SwipeBack">
-		<item name="android:windowIsTranslucent">true</item>
-		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
-	</style>
-
-	<style name="Theme.Twidere.Dark.SwipeBack">
-		<item name="android:windowIsTranslucent">true</item>
-		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
-	</style>
-
-	<style name="Theme.Twidere.Light.SwipeBack">
-		<item name="android:windowIsTranslucent">true</item>
-		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
-	</style>
-
-	<style name="Theme.Twidere.Light.DarkActionBar.SwipeBack">
-		<item name="android:windowIsTranslucent">true</item>
-		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
-	</style>
-
-	<style name="Theme.Twidere.SwipeBack.SolidBackground">
-		<item name="android:windowBackground">@android:color/white</item>
-	</style>
-
-	<style name="Theme.Twidere.Dark.SwipeBack.SolidBackground">
-		<item name="android:windowBackground">@android:color/black</item>
-	</style>
-
-	<style name="Theme.Twidere.Light.SwipeBack.SolidBackground">
-		<item name="android:windowBackground">@android:color/white</item>
-	</style>
-
-	<style name="Theme.Twidere.Light.DarkActionBar.SwipeBack.SolidBackground">
-		<item name="android:windowBackground">@android:color/white</item>
-	</style>
-
 	<style name="Theme.Blank.Dialog" parent="Theme.Twidere.Dark.Dialog"/>
 
 	<style name="Theme.Twidere" parent="android:Theme.Holo.Light.DarkActionBar">
@@ -94,14 +58,40 @@
 		<item name="android:windowBackground">@android:color/white</item>
 	</style>
 
-	<style name="Theme.Twidere.Viewer" parent="android:Theme.Holo">
+	<style name="Theme.Twidere.SwipeBack">
 		<item name="android:windowIsTranslucent">true</item>
-		<item name="android:actionBarStyle">@style/Widget.Twidere.Viewer.ActionBar</item>
-		<item name="android:windowActionBarOverlay">true</item>
 		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
-		<item name="android:windowContentOverlay">@null</item>
+	</style>
+
+	<style name="Theme.Twidere.Dark.SwipeBack">
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
+	</style>
+
+	<style name="Theme.Twidere.Light.SwipeBack">
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
+	</style>
+
+	<style name="Theme.Twidere.Light.DarkActionBar.SwipeBack">
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
+	</style>
+
+	<style name="Theme.Twidere.SwipeBack.SolidBackground">
+		<item name="android:windowBackground">@android:color/white</item>
+	</style>
+
+	<style name="Theme.Twidere.Dark.SwipeBack.SolidBackground">
 		<item name="android:windowBackground">@android:color/black</item>
-		<item name="contentBackground">#20000000</item>
+	</style>
+
+	<style name="Theme.Twidere.Light.SwipeBack.SolidBackground">
+		<item name="android:windowBackground">@android:color/white</item>
+	</style>
+
+	<style name="Theme.Twidere.Light.DarkActionBar.SwipeBack.SolidBackground">
+		<item name="android:windowBackground">@android:color/white</item>
 	</style>
 
 	<style name="Theme.Twidere.Dark.Dialog" parent="android:Theme.Holo.Dialog">
@@ -118,25 +108,58 @@
 		<item name="contentBackground">#20808080</item>
 	</style>
 
-	<style name="Theme.Twidere.Compose" parent="Theme.Twidere.Light.Dialog">
-		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar</item>
+	<style name="Theme.Twidere.Compose">
 		<item name="android:windowNoTitle">true</item>
+		<item name="android:windowActionBar">false</item>
+		<item name="android:windowBackground">@drawable/dialog_full_holo_light</item>
+		<item name="android:windowIsFloating">true</item>
+		<item name="android:windowContentOverlay">@null</item>
+		<item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+		<item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+		<item name="android:windowActionModeOverlay">true</item>
 	</style>
 
-	<style name="Theme.Twidere.Dark.Compose" parent="Theme.Twidere.Dark.Dialog">
-		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Dark</item>
+	<style name="Theme.Twidere.Dark.Compose">
 		<item name="android:windowNoTitle">true</item>
+		<item name="android:windowActionBar">false</item>
+		<item name="android:windowBackground">@drawable/dialog_full_holo_dark</item>
+		<item name="android:windowIsFloating">true</item>
+		<item name="android:windowContentOverlay">@null</item>
+		<item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+		<item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+		<item name="android:windowActionModeOverlay">true</item>
 	</style>
 
-	<style name="Theme.Twidere.Light.Compose" parent="Theme.Twidere.Light.Dialog">
-		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Light</item>
+	<style name="Theme.Twidere.Light.Compose">
 		<item name="android:windowNoTitle">true</item>
+		<item name="android:windowActionBar">false</item>
+		<item name="android:windowBackground">@drawable/dialog_full_holo_light</item>
+		<item name="android:windowIsFloating">true</item>
+		<item name="android:windowContentOverlay">@null</item>
+		<item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+		<item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+		<item name="android:windowActionModeOverlay">true</item>
 	</style>
 
-	<style name="Theme.Twidere.Light.DarkActionBar.Compose" parent="Theme.Twidere.Light.Dialog">
-		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Light.DarkActionBar</item>
+	<style name="Theme.Twidere.Light.DarkActionBar.Compose">
 		<item name="android:windowNoTitle">true</item>
+		<item name="android:windowActionBar">false</item>
 		<item name="android:windowBackground">@drawable/dialog_full_holo_light_darkactionbar</item>
+		<item name="android:windowIsFloating">true</item>
+		<item name="android:windowContentOverlay">@null</item>
+		<item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+		<item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+		<item name="android:windowActionModeOverlay">true</item>
+	</style>
+
+	<style name="Theme.Twidere.Viewer" parent="android:Theme.Holo">
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:actionBarStyle">@style/Widget.Twidere.Viewer.ActionBar</item>
+		<item name="android:windowActionBarOverlay">true</item>
+		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
+		<item name="android:windowContentOverlay">@null</item>
+		<item name="android:windowBackground">@android:color/black</item>
+		<item name="contentBackground">#20000000</item>
 	</style>
 
 	<style name="Theme.Test" parent="android:Theme.Holo"/>

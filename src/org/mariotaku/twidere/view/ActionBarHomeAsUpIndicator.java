@@ -18,8 +18,7 @@ public class ActionBarHomeAsUpIndicator extends ImageView {
 
 	public ActionBarHomeAsUpIndicator(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.homeAsUpIndicator },
-				android.R.attr.actionBarStyle, android.R.style.Widget_Holo_ActionBar);
+		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.homeAsUpIndicator });
 		final Drawable d = a.getDrawable(0);
 		a.recycle();
 		setImageDrawable(d);

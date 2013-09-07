@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
-	android:dither="true"
-	android:src="@drawable/profile_banner_default_tile"
-	android:tileMode="repeat"/>

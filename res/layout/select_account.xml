@@ -12,22 +12,23 @@
 		android:layout_height="match_parent"
 		android:layout_weight="1"/>
 
+	<View
+		android:layout_width="match_parent"
+		android:layout_height="0.2dp"
+		android:background="#40808080"/>
+
 	<LinearLayout
+		style="?android:buttonBarStyle"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_weight="0"
-		android:orientation="vertical">
-
-		<View
-			android:layout_width="match_parent"
-			android:layout_height="0.2dp"
-			android:background="#40808080"/>
+		android:orientation="horizontal">
 
 		<Button
 			android:id="@+id/save"
 			style="?android:borderlessButtonStyle"
 			android:layout_width="match_parent"
-			android:layout_height="@dimen/button_bar_height"
+			android:layout_height="wrap_content"
 			android:gravity="center"
 			android:onClick="onClick"
 			android:text="@android:string/ok"/>

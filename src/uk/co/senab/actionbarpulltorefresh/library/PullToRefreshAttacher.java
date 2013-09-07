@@ -47,7 +47,7 @@ public class PullToRefreshAttacher implements View.OnTouchListener {
 	private static final int DEFAULT_HEADER_LAYOUT = R.layout.pull_refresh_default_header;
 	private static final int DEFAULT_ANIM_HEADER_IN = R.anim.pull_refresh_fade_in;
 	private static final int DEFAULT_ANIM_HEADER_OUT = R.anim.pull_refresh_fade_out;
-	private static final float DEFAULT_REFRESH_SCROLL_DISTANCE = 0.5f;
+	private static final float DEFAULT_REFRESH_SCROLL_DISTANCE = 0.3f;
 	private static final boolean DEFAULT_REFRESH_ON_UP = false;
 	private static final int DEFAULT_REFRESH_MINIMIZED_DELAY = 3 * 1000;
 	private static final boolean DEFAULT_REFRESH_MINIMIZE = true;
@@ -372,8 +372,6 @@ public class PullToRefreshAttacher implements View.OnTouchListener {
 	}
 
 	private void setRefreshingInt(final View view, final boolean refreshing, final boolean fromTouch) {
-		Log.w(LOG_TAG,
-				new Exception(String.format("setRefreshingInt, refreshing: %s, fromTouch, %s", refreshing, fromTouch)));
 		if (DEBUG) {
 			Log.d(LOG_TAG, "setRefreshingInt: " + refreshing);
 		}

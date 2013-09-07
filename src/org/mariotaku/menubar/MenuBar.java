@@ -34,7 +34,7 @@ public class MenuBar extends LinearLayout implements PopupMenu.OnMenuItemClickLi
 
 	public MenuBar(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
-		if (getBackground() == null) {
+		if (!hasBackground(attrs)) {
 			final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.backgroundSplit },
 					android.R.attr.actionBarStyle, android.R.style.Widget_Holo_ActionBar);
 			ViewAccessor.setBackground(this, a.getDrawable(0));
@@ -150,6 +150,14 @@ public class MenuBar extends LinearLayout implements PopupMenu.OnMenuItemClickLi
 
 		addView(actionButton);
 		return actionButton;
+	}
+
+	private static boolean hasBackground(final AttributeSet attrs) {
+		final int count = attrs.getAttributeCount();
+		for (int i = 0; i < count; i++) {
+			if (attrs.getAttributeNameResource(i) == android.R.attr.background) return true;
+		}
+		return false;
 	}
 
 	/**

@@ -115,7 +115,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			final String action = intent.getAction();
 			if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
 				updateActionsButton();
-//				updateRefreshingState();
+				// updateRefreshingState();
 			} else if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
 				notifyAccountsChanged();
 			}
@@ -567,24 +567,33 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 
 	private void updateActionsButton() {
 		if (mViewPager == null || mAdapter == null) return;
-		int icon = R.drawable.ic_menu_status_compose, title = R.string.compose;
+		final int action_icon, button_icon, title;
 		final int position = mViewPager.getCurrentItem();
 		final SupportTabSpec tab = mAdapter.getTab(position);
+		final boolean light_action_bar = ThemeUtils.isLightActionBar(getCurrentThemeResource());
 		if (tab == null) {
 			title = R.string.compose;
-			icon = R.drawable.ic_menu_status_compose;
+			action_icon = light_action_bar ? R.drawable.ic_action_status_compose_light
+					: R.drawable.ic_action_status_compose_dark;
+			button_icon = R.drawable.ic_menu_status_compose;
 		} else {
 			switch (tab.position) {
 				case TAB_POSITION_MESSAGES:
-					icon = R.drawable.ic_menu_compose;
+					action_icon = light_action_bar ? R.drawable.ic_action_compose_light
+							: R.drawable.ic_action_compose_dark;
+					button_icon = R.drawable.ic_menu_compose;
 					title = R.string.compose;
 					break;
 				case TAB_POSITION_TRENDS:
-					icon = android.R.drawable.ic_menu_search;
+					action_icon = light_action_bar ? R.drawable.ic_action_search_light
+							: R.drawable.ic_action_search_dark;
+					button_icon = android.R.drawable.ic_menu_search;
 					title = android.R.string.search_go;
 					break;
 				default:
-					icon = R.drawable.ic_menu_status_compose;
+					action_icon = light_action_bar ? R.drawable.ic_action_status_compose_light
+							: R.drawable.ic_action_status_compose_dark;
+					button_icon = R.drawable.ic_menu_status_compose;
 					title = R.string.compose;
 			}
 		}
@@ -593,10 +602,9 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		final boolean has_task = hasActivatedTask();
 		final ImageView actions_icon = (ImageView) view.findViewById(R.id.actions_icon);
 		final ProgressBar progress = (ProgressBar) view.findViewById(R.id.progress);
-		actions_icon.setImageResource(icon);
+		actions_icon.setImageResource(mBottomActionsButton ? button_icon : action_icon);
 		actions_icon.setContentDescription(getString(title));
 		actions_icon.setVisibility(has_task ? View.GONE : View.VISIBLE);
 		progress.setVisibility(has_task ? View.VISIBLE : View.GONE);
 	}
-
 }

@@ -132,7 +132,7 @@ public class ThemeUtils implements Constants {
 			case R.style.Theme_Twidere_Light_SolidBackground:
 			case R.style.Theme_Twidere_Light_SwipeBack_SolidBackground:
 			case R.style.Theme_Twidere_Light_Compose:
-				return 0xFF333333;
+				return 0xC0333333;
 		}
 		return Color.WHITE;
 	}
@@ -184,6 +184,22 @@ public class ThemeUtils implements Constants {
 		return false;
 	}
 
+	public static boolean isLightActionBar(final Context context) {
+		return isLightActionBar(getThemeResource(context));
+	}
+
+	public static boolean isLightActionBar(final int res) {
+		switch (res) {
+			case R.style.Theme_Twidere_Light:
+			case R.style.Theme_Twidere_Light_SwipeBack:
+			case R.style.Theme_Twidere_Light_SolidBackground:
+			case R.style.Theme_Twidere_Light_SwipeBack_SolidBackground:
+			case R.style.Theme_Twidere_Light_Compose:
+				return true;
+		}
+		return false;
+	}
+
 	public static boolean isSolidBackground(final Context context) {
 		if (context == null) return false;
 		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -211,15 +227,7 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static boolean shouldApplyColorFilterToTabIcons(final int res) {
-		switch (res) {
-			case R.style.Theme_Twidere_Light:
-			case R.style.Theme_Twidere_Light_SwipeBack:
-			case R.style.Theme_Twidere_Light_SolidBackground:
-			case R.style.Theme_Twidere_Light_SwipeBack_SolidBackground:
-			case R.style.Theme_Twidere_Light_Compose:
-				return true;
-		}
-		return false;
+		return isLightActionBar(res);
 	}
 
 }
