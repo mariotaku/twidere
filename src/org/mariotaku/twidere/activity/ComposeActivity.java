@@ -548,7 +548,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 
 		if (savedInstanceState != null) {
 			// Restore from previous saved state
-			mAccountIds = savedInstanceState.getLongArray(INTENT_KEY_IDS);
+			mAccountIds = savedInstanceState.getLongArray(INTENT_KEY_ACCOUNT_IDS);
 			mAttachedImageType = savedInstanceState.getInt(INTENT_KEY_ATTACHED_IMAGE_TYPE,
 					Constants.ATTACHED_IMAGE_TYPE_NONE);
 			mIsPossiblySensitive = savedInstanceState.getBoolean(INTENT_KEY_IS_POSSIBLY_SENSITIVE);
@@ -603,8 +603,6 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 			moreItem.setVisible(!bottom_send_button);
 			sendMoreItem.setVisible(bottom_send_button);
 		}
-		mMenuBar.show();
-		mActionMenuBar.show();
 		setMenu();
 		mColorIndicator.setColors(getAccountColors(this, mAccountIds));
 	}
@@ -952,8 +950,8 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		}
 		setCommonMenu(bottomMenu);
 		setCommonMenu(actionMenu);
+		mActionMenuBar.show();
 		mMenuBar.show();
-
 	}
 
 	private void setProgressVisibility(final boolean visible) {
