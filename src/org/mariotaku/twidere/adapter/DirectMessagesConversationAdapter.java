@@ -159,7 +159,7 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 
 	@Override
 	public void onClick(final View view) {
-		if (!mMultiSelectManager.isActive()) return;
+		if (mMultiSelectManager.isActive()) return;
 		final Object tag = view.getTag();
 		final ParcelableDirectMessage status = tag instanceof Integer ? getDirectMessage((Integer) tag) : null;
 		if (status == null) return;

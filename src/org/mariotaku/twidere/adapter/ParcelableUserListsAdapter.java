@@ -97,7 +97,7 @@ public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList>
 
 	@Override
 	public void onClick(final View view) {
-		if (!mMultiSelectManager.isActive()) return;
+		if (mMultiSelectManager.isActive()) return;
 		final Object tag = view.getTag();
 		final int position = tag instanceof Integer ? (Integer) tag : -1;
 		if (position == -1) return;

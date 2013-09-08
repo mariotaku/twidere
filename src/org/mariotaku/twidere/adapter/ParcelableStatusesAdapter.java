@@ -238,7 +238,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 
 	@Override
 	public void onClick(final View view) {
-		if (!mMultiSelectManager.isActive()) return;
+		if (mMultiSelectManager.isActive()) return;
 		final Object tag = view.getTag();
 		final ParcelableStatus status = tag instanceof Integer ? getStatus((Integer) tag) : null;
 		if (status == null) return;
