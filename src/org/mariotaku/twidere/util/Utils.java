@@ -3197,7 +3197,6 @@ public final class Utils implements Constants {
 			showTwitterErrorMessage(context, action, (TwitterException) t, long_message);
 			return;
 		} else if (t != null) {
-			t.printStackTrace();
 			final String t_message = trimLineBreak(t.getMessage());
 			if (action != null) {
 				message = context.getString(R.string.error_message_with_action, action, t_message);
@@ -3274,7 +3273,6 @@ public final class Utils implements Constants {
 		if (context == null) return;
 		final String message;
 		if (te != null) {
-			te.printStackTrace();
 			if (action != null) {
 				if (te.exceededRateLimitation()) {
 					final RateLimitStatus status = te.getRateLimitStatus();

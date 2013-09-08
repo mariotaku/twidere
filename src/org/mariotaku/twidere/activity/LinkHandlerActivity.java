@@ -144,6 +144,7 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnC
 		mMultiSelectHandler = new MultiSelectEventHandler(this);
 		mMultiSelectHandler.dispatchOnCreate();
 		super.onCreate(savedInstanceState);
+		setOverrideExitAniamtion(false);
 		mActionBar = getActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 		mActionBar.setDisplayShowTitleEnabled(true);

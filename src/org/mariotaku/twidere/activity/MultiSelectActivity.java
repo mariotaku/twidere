@@ -153,7 +153,7 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 
 	@Override
 	public boolean onCreateActionMode(final ActionMode mode, final Menu menu) {
-		new MenuInflater(this).inflate(R.menu.action_multi_select, menu);
+		new MenuInflater(this).inflate(R.menu.action_multi_select_contents, menu);
 		return true;
 	}
 

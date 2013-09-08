@@ -107,7 +107,7 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 	@Override
 	public boolean onCreateActionMode(final ActionMode mode, final Menu menu) {
 		mActionMode = mode;
-		getActivity().getMenuInflater().inflate(R.menu.action_filters_multi_select, menu);
+		getActivity().getMenuInflater().inflate(R.menu.action_multi_select_items, menu);
 		return true;
 	}
 
@@ -138,7 +138,7 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 	@Override
 	public void onItemCheckedStateChanged(final ActionMode mode, final int position, final long id,
 			final boolean checked) {
-		updateSubtitle(mode);
+		updateTitle(mode);
 	}
 
 	@Override
@@ -179,7 +179,7 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 
 	protected abstract String[] getContentColumns();
 
-	private void updateSubtitle(final ActionMode mode) {
+	private void updateTitle(final ActionMode mode) {
 		if (mListView == null) return;
 		final int count = mListView.getCheckedItemCount();
 		mode.setTitle(getResources().getQuantityString(R.plurals.Nitems_selected, count, count));

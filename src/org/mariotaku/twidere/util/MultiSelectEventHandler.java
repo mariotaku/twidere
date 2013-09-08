@@ -182,7 +182,7 @@ public class MultiSelectEventHandler implements Constants, ActionMode.Callback, 
 
 	@Override
 	public boolean onCreateActionMode(final ActionMode mode, final Menu menu) {
-		new MenuInflater(mActivity).inflate(R.menu.action_multi_select, menu);
+		new MenuInflater(mActivity).inflate(R.menu.action_multi_select_contents, menu);
 		return true;
 	}
 

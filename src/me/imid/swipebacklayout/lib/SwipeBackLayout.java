@@ -182,6 +182,7 @@ public class SwipeBackLayout extends FrameLayout {
 	 * Scroll out contentView and finish the activity
 	 */
 	public void scrollToFinishActivity() {
+		if (mContentView == null) return;
 		final int childWidth = mContentView.getWidth();
 		final int childHeight = mContentView.getHeight();
 

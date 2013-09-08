@@ -92,7 +92,6 @@ public class ProfileImageBannerLayout extends ExtendedFrameLayout {
 		private ProfileImageView(final Context context, final int padding) {
 			super(context, null, 0);
 			ViewCompat.setLayerType(this, LAYER_TYPE_SOFTWARE, null);
-			// setScaleType(ScaleType.FIT_XY);
 			mWhitePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 			mWhitePaint.setColor(Color.WHITE);
 			mBlackPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
