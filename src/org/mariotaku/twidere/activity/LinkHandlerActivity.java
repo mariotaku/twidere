@@ -47,6 +47,8 @@ import org.mariotaku.twidere.fragment.UserMentionsFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
 import org.mariotaku.twidere.fragment.UsersListFragment;
+import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;
+import org.mariotaku.twidere.fragment.iface.SupportFragmentCallback;
 import org.mariotaku.twidere.util.MultiSelectEventHandler;
 import org.mariotaku.twidere.util.ParseUtils;
 
@@ -56,17 +58,54 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ListFragment;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.Window;
+import android.widget.TextView;
 
-public class LinkHandlerActivity extends TwidereSwipeBackActivity {
+public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnClickListener, OnLongClickListener {
 
 	private MultiSelectEventHandler mMultiSelectHandler;
 
 	private ActionBar mActionBar;
 
 	private boolean mFinishOnly;
+
+	private View mGoTopView;
+	private TextView mTitleView, mSubtitleView;
+
+	@Override
+	public void onClick(final View v) {
+		switch (v.getId()) {
+			case R.id.go_top: {
+				final Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
+				if (fragment instanceof RefreshScrollTopInterface) {
+					((RefreshScrollTopInterface) fragment).scrollToTop();
+				} else if (fragment instanceof ListFragment) {
+					((ListFragment) fragment).setSelection(0);
+				}
+				break;
+			}
+		}
+	}
+
+	@Override
+	public boolean onLongClick(final View v) {
+		switch (v.getId()) {
+			case R.id.go_top: {
+				final Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
+				if (fragment instanceof RefreshScrollTopInterface) {
+					((RefreshScrollTopInterface) fragment).triggerRefresh();
+				}
+				return true;
+			}
+		}
+		return false;
+	}
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
@@ -83,10 +122,20 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	public void setSubtitle(final CharSequence subtitle) {
+		mSubtitleView.setText(subtitle);
+	}
+
 	@Override
 	protected BasePullToRefreshListFragment getCurrentPullToRefreshFragment() {
-		final Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
-		return fragment instanceof BasePullToRefreshListFragment ? (BasePullToRefreshListFragment) fragment : null;
+		final Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
+		if (fragment instanceof BasePullToRefreshListFragment)
+			return (BasePullToRefreshListFragment) fragment;
+		else if (fragment instanceof SupportFragmentCallback) {
+			final Fragment curr = ((SupportFragmentCallback) fragment).getCurrentVisibleFragment();
+			if (curr instanceof BasePullToRefreshListFragment) return (BasePullToRefreshListFragment) curr;
+		}
+		return null;
 	}
 
 	@Override
@@ -95,9 +144,17 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity {
 		mMultiSelectHandler = new MultiSelectEventHandler(this);
 		mMultiSelectHandler.dispatchOnCreate();
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.link_handler);
 		mActionBar = getActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
+		mActionBar.setDisplayShowTitleEnabled(true);
+		mActionBar.setDisplayShowCustomEnabled(true);
+		mActionBar.setCustomView(R.layout.link_handler_actionbar);
+		final View view = mActionBar.getCustomView();
+		mGoTopView = view.findViewById(R.id.go_top);
+		mTitleView = (TextView) view.findViewById(R.id.actionbar_title);
+		mSubtitleView = (TextView) view.findViewById(R.id.actionbar_subtitle);
+		mGoTopView.setOnClickListener(this);
+		mGoTopView.setOnLongClickListener(this);
 		setProgressBarIndeterminateVisibility(false);
 		final Intent intent = getIntent();
 		final Uri data = intent.getData();
@@ -118,9 +175,10 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity {
 		super.onStop();
 	}
 
-	// @Override
-	protected boolean shouldDisableDialogWhenLargeMode() {
-		return false;
+	@Override
+	protected void onTitleChanged(final CharSequence title, final int color) {
+		super.onTitleChanged(title, color);
+		mTitleView.setText(title);
 	}
 
 	private boolean showFragment(final Uri uri) {
@@ -377,7 +435,7 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity {
 						return false;
 					}
 					args.putString(INTENT_KEY_QUERY, param_query);
-					mActionBar.setSubtitle(param_query);
+					setSubtitle(param_query);
 					fragment = new SearchFragment();
 					break;
 				}
@@ -410,7 +468,7 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity {
 		}
 		if (fragment != null) {
 			final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			ft.replace(R.id.main, fragment);
+			ft.replace(android.R.id.content, fragment);
 			ft.commit();
 			return true;
 		}

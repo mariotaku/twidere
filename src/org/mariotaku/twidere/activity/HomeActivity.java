@@ -41,6 +41,7 @@ import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.fragment.TrendsFragment;
 import org.mariotaku.twidere.fragment.iface.SupportFragmentCallback;
 import org.mariotaku.twidere.model.SupportTabSpec;
+import org.mariotaku.twidere.provider.RecentSearchProvider;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MathUtils;
@@ -60,6 +61,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManagerTrojan;
@@ -126,6 +128,11 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	public void closeAccountsDrawer() {
 		if (mDrawerLayout == null) return;
 		mDrawerLayout.closeDrawer(Gravity.LEFT);
+	}
+
+	@Override
+	public Fragment getCurrentVisibleFragment() {
+		return mCurrentVisibleFragment;
 	}
 
 	public void notifyAccountsChanged() {
@@ -312,6 +319,10 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	protected BasePullToRefreshListFragment getCurrentPullToRefreshFragment() {
 		if (mCurrentVisibleFragment instanceof BasePullToRefreshListFragment)
 			return (BasePullToRefreshListFragment) mCurrentVisibleFragment;
+		else if (mCurrentVisibleFragment instanceof SupportFragmentCallback) {
+			final Fragment curr = ((SupportFragmentCallback) mCurrentVisibleFragment).getCurrentVisibleFragment();
+			if (curr instanceof BasePullToRefreshListFragment) return (BasePullToRefreshListFragment) curr;
+		}
 		return null;
 	}
 
@@ -466,6 +477,11 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		final String action = intent.getAction();
 		if (Intent.ACTION_SEARCH.equals(action)) {
 			final String query = intent.getStringExtra(SearchManager.QUERY);
+			if (first_create) {
+				final SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+						RecentSearchProvider.AUTHORITY, RecentSearchProvider.MODE);
+				suggestions.saveRecentQuery(query, null);
+			}
 			final long account_id = getDefaultAccountId(this);
 			openSearch(this, account_id, query);
 			return -1;

@@ -25,10 +25,6 @@ import uk.co.senab.actionbarpulltorefresh.library.DefaultHeaderTransformer;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher.HeaderTransformer;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
@@ -45,18 +41,6 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 	private PullToRefreshAttacher mPullToRefreshAttacher;
 	private GestureDetector mGestureDector;
 	private boolean mPulledUp;
-
-	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(final Context context, final Intent intent) {
-			if (getActivity() == null || !isAdded() || isDetached()) return;
-			final String action = intent.getAction();
-			if ((BasePullToRefreshListFragment.this.getClass().getName() + SHUFFIX_REFRESH_TAB).equals(action)) {
-				onRefreshStarted(getListView());
-			}
-		}
-	};
 
 	public String getPullToRefreshTag() {
 		return getTag();
@@ -150,18 +134,6 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 	}
 
 	@Override
-	public void onStart() {
-		super.onStart();
-		registerReceiver(mStateReceiver, new IntentFilter(getClass().getName() + SHUFFIX_REFRESH_TAB));
-	}
-
-	@Override
-	public void onStop() {
-		unregisterReceiver(mStateReceiver);
-		super.onStop();
-	}
-
-	@Override
 	public final boolean onTouch(final View v, final MotionEvent event) {
 		mGestureDector.onTouchEvent(event);
 		return false;
@@ -184,6 +156,11 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 			mPulledUp = false;
 		}
 		mPullToRefreshAttacherActivity.setRefreshing(this, refreshing);
+	}
+
+	@Override
+	public void triggerRefresh() {
+		onRefreshStarted(getListView());
 	}
 
 	protected PullToRefreshAttacher getPullToRefreshAttacher() {

@@ -16,7 +16,7 @@
 		android:id="@id/select_account"
 		android:icon="@drawable/ic_menu_accounts"
 		android:showAsAction="never"
-		android:title="@string/select_account"/>
+		android:title="@string/accounts"/>
 	<item
 		android:id="@id/filters"
 		android:icon="@drawable/ic_menu_mute"

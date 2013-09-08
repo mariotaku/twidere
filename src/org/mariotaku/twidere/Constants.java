@@ -120,9 +120,6 @@ public interface Constants {
 
 	public static final String OAUTH_CALLBACK_OOB = "oob";
 
-	public static final String SHUFFIX_SCROLL_TO_TOP = ".SCROLL_TO_TOP";
-	public static final String SHUFFIX_REFRESH_TAB = ".REFRESH_TAB";
-
 	public static final String FORMAT_PATTERN_TITLE = "[TITLE]";
 	public static final String FORMAT_PATTERN_TEXT = "[TEXT]";
 	public static final String FORMAT_PATTERN_NAME = "[NAME]";

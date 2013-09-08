@@ -2,6 +2,8 @@ package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.SupportTabsAdapter;
+import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;
+import org.mariotaku.twidere.fragment.iface.SupportFragmentCallback;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.view.ExtendedViewPager;
@@ -9,6 +11,7 @@ import org.mariotaku.twidere.view.SquareImageView;
 
 import android.graphics.PorterDuff.Mode;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.LayoutInflater;
@@ -20,7 +23,8 @@ import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
-public class SearchFragment extends BaseSupportFragment implements Panes.Left, OnPageChangeListener {
+public class SearchFragment extends BaseSupportFragment implements Panes.Left, OnPageChangeListener,
+		RefreshScrollTopInterface, SupportFragmentCallback {
 
 	private ExtendedViewPager mViewPager;
 	private LinearLayout mIndicator;
@@ -28,6 +32,12 @@ public class SearchFragment extends BaseSupportFragment implements Panes.Left, O
 	private SupportTabsAdapter mAdapter;
 
 	private int mThemeColor;
+	private Fragment mCurrentVisibleFragment;
+
+	@Override
+	public Fragment getCurrentVisibleFragment() {
+		return mCurrentVisibleFragment;
+	}
 
 	public void hideIndicator() {
 		if (mIndicator.getVisibility() == View.GONE) return;
@@ -96,10 +106,29 @@ public class SearchFragment extends BaseSupportFragment implements Panes.Left, O
 		}
 	}
 
+	@Override
+	public void onSetUserVisibleHint(final Fragment fragment, final boolean isVisibleToUser) {
+		if (isVisibleToUser) {
+			mCurrentVisibleFragment = fragment;
+		}
+	}
+
+	@Override
+	public void scrollToTop() {
+		if (!(mCurrentVisibleFragment instanceof RefreshScrollTopInterface)) return;
+		((RefreshScrollTopInterface) mCurrentVisibleFragment).scrollToTop();
+	}
+
 	public void showIndicator() {
 		if (mIndicator.getVisibility() == View.VISIBLE) return;
 		mIndicator.setVisibility(View.VISIBLE);
 		mIndicator.startAnimation(AnimationUtils.loadAnimation(getActivity(), android.R.anim.fade_in));
+	}
+
+	@Override
+	public void triggerRefresh() {
+		if (!(mCurrentVisibleFragment instanceof RefreshScrollTopInterface)) return;
+		((RefreshScrollTopInterface) mCurrentVisibleFragment).triggerRefresh();
 	}
 
 }

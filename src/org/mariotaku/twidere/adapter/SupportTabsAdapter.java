@@ -26,20 +26,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;
+import org.mariotaku.twidere.fragment.iface.SupportFragmentCallback;
 import org.mariotaku.twidere.model.SupportTabSpec;
 import org.mariotaku.twidere.view.TabPageIndicator;
-import org.mariotaku.twidere.view.TabPageIndicator.TitleProvider;
+import org.mariotaku.twidere.view.TabPageIndicator.TabListener;
+import org.mariotaku.twidere.view.TabPageIndicator.TabProvider;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-public class SupportTabsAdapter extends FragmentStatePagerAdapter implements TitleProvider, Constants {
+public class SupportTabsAdapter extends FragmentStatePagerAdapter implements TabProvider, TabListener, Constants {
 
 	private final ArrayList<SupportTabSpec> mTabs = new ArrayList<SupportTabSpec>();
 
@@ -109,24 +110,26 @@ public class SupportTabsAdapter extends FragmentStatePagerAdapter implements Tit
 
 	@Override
 	public void onPageReselected(final int position) {
-		final String action = mTabs.get(position).cls.getName() + SHUFFIX_SCROLL_TO_TOP;
-		final Intent intent = new Intent(action);
-		intent.setPackage(mContext.getPackageName());
-		mContext.sendBroadcast(intent);
+		if (!(mContext instanceof SupportFragmentCallback)) return;
+		final Fragment f = ((SupportFragmentCallback) mContext).getCurrentVisibleFragment();
+		if (f instanceof RefreshScrollTopInterface) {
+			((RefreshScrollTopInterface) f).scrollToTop();
+		}
 	}
 
 	@Override
 	public void onPageSelected(final int position) {
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.DONUT) return;
+		if (mIndicator == null) return;
 		announceForAccessibilityCompat(mContext, mIndicator, getPageTitle(position), getClass());
 	}
 
 	@Override
 	public boolean onTabLongClick(final int position) {
-		final String action = mTabs.get(position).cls.getName() + SHUFFIX_REFRESH_TAB;
-		final Intent intent = new Intent(action);
-		intent.setPackage(mContext.getPackageName());
-		mContext.sendBroadcast(intent);
+		if (!(mContext instanceof SupportFragmentCallback)) return false;
+		final Fragment f = ((SupportFragmentCallback) mContext).getCurrentVisibleFragment();
+		if (f instanceof RefreshScrollTopInterface) {
+			((RefreshScrollTopInterface) f).triggerRefresh();
+		}
 		return true;
 	}
 
@@ -134,5 +137,4 @@ public class SupportTabsAdapter extends FragmentStatePagerAdapter implements Tit
 	// public float getPageWidth(int position) {
 	// return 0.5f;
 	// }
-
 }

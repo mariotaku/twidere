@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 
 public interface SupportFragmentCallback {
 
-	public void onSetUserVisibleHint(Fragment fragment, boolean isVisibleToUser);
+	public Fragment getCurrentVisibleFragment();
 
+	public void onSetUserVisibleHint(Fragment fragment, boolean isVisibleToUser);
 }

@@ -19,10 +19,9 @@
 
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.scrollListToTop;
-
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;
 import org.mariotaku.twidere.fragment.iface.SupportFragmentCallback;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
@@ -31,11 +30,10 @@ import org.mariotaku.twidere.util.Utils;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
-import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,24 +42,13 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListView;
 
-public class BaseSupportListFragment extends ListFragment implements Constants, OnScrollListener {
+public class BaseSupportListFragment extends ListFragment implements Constants, OnScrollListener,
+		RefreshScrollTopInterface {
 
 	private boolean mActivityFirstCreated;
 	private boolean mIsInstanceStateSaved;
 
 	private boolean mReachedBottom, mNotReachedBottomBefore = true;
-
-	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(final Context context, final Intent intent) {
-			if (getActivity() == null || !isAdded() || isDetached()) return;
-			final String action = intent.getAction();
-			if ((BaseSupportListFragment.this.getClass().getName() + SHUFFIX_SCROLL_TO_TOP).equals(action)) {
-				scrollListToTop(getListView());
-			}
-		}
-	};
 
 	public final TwidereApplication getApplication() {
 		return TwidereApplication.getInstance(getActivity());
@@ -176,15 +163,12 @@ public class BaseSupportListFragment extends ListFragment implements Constants, 
 	@Override
 	public void onStart() {
 		super.onStart();
-		final IntentFilter filter = new IntentFilter(getClass().getName() + SHUFFIX_SCROLL_TO_TOP);
-		registerReceiver(mStateReceiver, filter);
 		onPostStart();
 	}
 
 	@Override
 	public void onStop() {
 		mActivityFirstCreated = false;
-		unregisterReceiver(mStateReceiver);
 		super.onStop();
 	}
 
@@ -192,6 +176,11 @@ public class BaseSupportListFragment extends ListFragment implements Constants, 
 		final Activity activity = getActivity();
 		if (activity == null) return;
 		activity.registerReceiver(receiver, filter);
+	}
+
+	@Override
+	public void scrollToTop() {
+		Utils.scrollListToTop(getListView());
 	}
 
 	public void setProgressBarIndeterminateVisibility(final boolean visible) {
@@ -212,6 +201,15 @@ public class BaseSupportListFragment extends ListFragment implements Constants, 
 		if (activity instanceof SupportFragmentCallback) {
 			((SupportFragmentCallback) activity).onSetUserVisibleHint(this, isVisibleToUser);
 		}
+		final Fragment fragment = getParentFragment();
+		if (fragment instanceof SupportFragmentCallback) {
+			((SupportFragmentCallback) fragment).onSetUserVisibleHint(this, isVisibleToUser);
+		}
+	}
+
+	@Override
+	public void triggerRefresh() {
+
 	}
 
 	public void unregisterReceiver(final BroadcastReceiver receiver) {

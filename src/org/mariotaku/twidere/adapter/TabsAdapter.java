@@ -26,19 +26,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.fragment.iface.FragmentCallback;
+import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;
 import org.mariotaku.twidere.model.TabSpec;
 import org.mariotaku.twidere.view.TabPageIndicator;
-import org.mariotaku.twidere.view.TabPageIndicator.TitleProvider;
+import org.mariotaku.twidere.view.TabPageIndicator.TabListener;
+import org.mariotaku.twidere.view.TabPageIndicator.TabProvider;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
 
-public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvider, Constants {
+public class TabsAdapter extends FragmentStatePagerAdapter implements TabProvider, TabListener, Constants {
 
 	private final ArrayList<TabSpec> mTabs = new ArrayList<TabSpec>();
 
@@ -108,10 +110,11 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 
 	@Override
 	public void onPageReselected(final int position) {
-		final String action = mTabs.get(position).cls.getName() + SHUFFIX_SCROLL_TO_TOP;
-		final Intent intent = new Intent(action);
-		intent.setPackage(mContext.getPackageName());
-		mContext.sendBroadcast(intent);
+		if (!(mContext instanceof FragmentCallback)) return;
+		final Fragment f = ((FragmentCallback) mContext).getCurrentVisibleFragment();
+		if (f instanceof RefreshScrollTopInterface) {
+			((RefreshScrollTopInterface) f).scrollToTop();
+		}
 	}
 
 	@Override
@@ -122,10 +125,11 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TitleProvi
 
 	@Override
 	public boolean onTabLongClick(final int position) {
-		final String action = mTabs.get(position).cls.getName() + SHUFFIX_REFRESH_TAB;
-		final Intent intent = new Intent(action);
-		intent.setPackage(mContext.getPackageName());
-		mContext.sendBroadcast(intent);
+		if (!(mContext instanceof FragmentCallback)) return false;
+		final Fragment f = ((FragmentCallback) mContext).getCurrentVisibleFragment();
+		if (f instanceof RefreshScrollTopInterface) {
+			((RefreshScrollTopInterface) f).triggerRefresh();
+		}
 		return true;
 	}
 

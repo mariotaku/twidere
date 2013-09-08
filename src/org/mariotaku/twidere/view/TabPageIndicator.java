@@ -45,11 +45,12 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 
 	private Runnable mTabSelector;
 	private int mCurrentItem;
-	private TitleProvider mAdapter;
+	private TabProvider mTabProvider;
+	private TabListener mTabListener;
 
 	private final LinearLayout mTabLayout;
 	private ViewPager mViewPager;
-	private ViewPager.OnPageChangeListener mListener;
+	private ViewPager.OnPageChangeListener mPageListener;
 
 	private final LayoutInflater mInflater;
 
@@ -69,8 +70,8 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 		public void onClick(final View view) {
 			if (!mSwitchingEnabled) return;
 			final TabView tabView = (TabView) view;
-			if (mCurrentItem == tabView.getIndex()) {
-				mAdapter.onPageReselected(mCurrentItem);
+			if (mCurrentItem == tabView.getIndex() && mTabListener != null) {
+				mTabListener.onPageReselected(mCurrentItem);
 			}
 			mCurrentItem = tabView.getIndex();
 			setCurrentItem(mCurrentItem);
@@ -83,7 +84,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 		public boolean onLongClick(final View view) {
 			if (!mSwitchingEnabled) return false;
 			final TabView tabView = (TabView) view;
-			return mAdapter.onTabLongClick(tabView.getIndex());
+			return mTabListener != null && mTabListener.onTabLongClick(tabView.getIndex());
 		}
 	};
 
@@ -107,12 +108,14 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 	public void notifyDataSetChanged() {
 		if (mTabLayout == null || mViewPager == null) return;
 		mTabLayout.removeAllViews();
-		mAdapter = (TitleProvider) mViewPager.getAdapter();
-		if (mAdapter == null) return;
-		final int count = ((PagerAdapter) mAdapter).getCount();
+		final PagerAdapter adapter = mViewPager.getAdapter();
+		mTabProvider = adapter instanceof TabProvider ? (TabProvider) adapter : null;
+		mTabListener = adapter instanceof TabListener ? (TabListener) adapter : null;
+		if (mTabProvider == null) return;
+		final int count = adapter.getCount();
 		for (int i = 0; i < count; i++) {
-			final CharSequence title = mAdapter.getPageTitle(i);
-			final Drawable icon = mAdapter.getPageIcon(i);
+			final CharSequence title = mTabProvider.getPageTitle(i);
+			final Drawable icon = mTabProvider.getPageIcon(i);
 			if (title != null && icon != null) {
 				addTab(title, icon, i);
 			} else if (title == null && icon != null) {
@@ -148,13 +151,13 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 	@Override
 	public boolean onGenericMotionEvent(final MotionEvent event) {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1) return false;
-		if (mAdapter == null) return false;
+		if (mTabProvider == null) return false;
 		if ((event.getSource() & InputDevice.SOURCE_CLASS_POINTER) != 0) {
 			switch (event.getAction()) {
 				case MotionEvent.ACTION_SCROLL: {
 					final float vscroll = event.getAxisValue(MotionEvent.AXIS_VSCROLL);
 					if (vscroll < 0) {
-						if (mCurrentItem + 1 < mAdapter.getCount()) {
+						if (mCurrentItem + 1 < mTabProvider.getCount()) {
 							setCurrentItem(mCurrentItem + 1);
 						}
 					} else if (vscroll > 0) {
@@ -197,24 +200,26 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 
 	@Override
 	public void onPageScrolled(final int position, final float positionOffset, final int positionOffsetPixels) {
-		if (mListener != null) {
-			mListener.onPageScrolled(position, positionOffset, positionOffsetPixels);
+		if (mPageListener != null) {
+			mPageListener.onPageScrolled(position, positionOffset, positionOffsetPixels);
 		}
 	}
 
 	@Override
 	public void onPageScrollStateChanged(final int state) {
-		if (mListener != null) {
-			mListener.onPageScrollStateChanged(state);
+		if (mPageListener != null) {
+			mPageListener.onPageScrollStateChanged(state);
 		}
 	}
 
 	@Override
 	public void onPageSelected(final int position) {
 		setCurrentItem(position);
-		mAdapter.onPageSelected(position);
-		if (mListener != null) {
-			mListener.onPageSelected(position);
+		if (mTabListener != null) {
+			mTabListener.onPageSelected(position);
+		}
+		if (mPageListener != null) {
+			mPageListener.onPageSelected(position);
 
 		}
 	}
@@ -253,7 +258,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 	}
 
 	public void setOnPageChangeListener(final ViewPager.OnPageChangeListener listener) {
-		mListener = listener;
+		mPageListener = listener;
 	}
 
 	public void setSwitchingEnabled(final boolean enabled) {
@@ -267,7 +272,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 		final PagerAdapter adapter = pager.getAdapter();
 		if (adapter == null) return;
 		// throw new IllegalStateException("ViewPager has not been bound.");
-		if (!(adapter instanceof TitleProvider))
+		if (!(adapter instanceof TabProvider))
 			throw new IllegalStateException(
 					"ViewPager adapter must implement TitleProvider to be used with TitlePageIndicator.");
 		mViewPager = pager;
@@ -319,6 +324,41 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 		return mShouldApplyColorFilterToTabIcons;
 	}
 
+	public interface TabListener {
+
+		public void onPageReselected(int position);
+
+		public void onPageSelected(int position);
+
+		public boolean onTabLongClick(int position);
+	}
+
+	/**
+	 * A TitleProvider provides the title to display according to a view.
+	 */
+	public interface TabProvider {
+
+		public int getCount();
+
+		/**
+		 * Returns the icon of the view at position
+		 * 
+		 * @param position
+		 * @return
+		 */
+		public Drawable getPageIcon(int position);
+
+		/**
+		 * Returns the title of the view at position
+		 * 
+		 * @param position
+		 * @return
+		 */
+		public CharSequence getPageTitle(int position);
+
+		public float getPageWidth(int position);
+	}
+
 	public static class TabView extends LinearLayout {
 
 		private TabPageIndicator mParent;
@@ -366,37 +406,5 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 						heightMeasureSpec);
 			}
 		}
-	}
-
-	/**
-	 * A TitleProvider provides the title to display according to a view.
-	 */
-	public interface TitleProvider {
-
-		public int getCount();
-
-		/**
-		 * Returns the icon of the view at position
-		 * 
-		 * @param position
-		 * @return
-		 */
-		public Drawable getPageIcon(int position);
-
-		/**
-		 * Returns the title of the view at position
-		 * 
-		 * @param position
-		 * @return
-		 */
-		public CharSequence getPageTitle(int position);
-
-		public float getPageWidth(int position);
-
-		public void onPageReselected(int position);
-
-		public void onPageSelected(int position);
-
-		public boolean onTabLongClick(int position);
 	}
 }

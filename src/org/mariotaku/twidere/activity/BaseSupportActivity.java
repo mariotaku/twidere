@@ -48,11 +48,6 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 		final String tag = fragment.getPullToRefreshTag();
 		if (tag == null) return;
 		mEnabledStates.add(tag);
-		// final BasePullToRefreshListFragment curr =
-		// getCurrentPullToRefreshFragment();
-		// if (curr != null && tag.equals(curr.getPullToRefreshTag())) {
-		// mPullToRefreshAttacher.setEnabled(true);
-		// }
 	}
 
 	public MessagesManager getMessagesManager() {

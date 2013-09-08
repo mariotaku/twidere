@@ -96,7 +96,7 @@ public class TwidereLinkify {
 			Pattern.CASE_INSENSITIVE);
 	public static final int GROUP_ID_TWITTER_STATUS_SCREEN_NAME = 4;
 	public static final int GROUP_ID_TWITTER_STATUS_STATUS_ID = 6;
-	
+
 	private static final String STRING_PATTERN_TWITTER_LIST_NO_SCHEME = "((mobile|www)\\.)?twitter\\.com\\/(?:#!\\/)?(\\w+)\\/lists\\/(.+)\\/?";
 	private static final String STRING_PATTERN_TWITTER_LIST = AVAILABLE_URL_SCHEME_PREFIX
 			+ STRING_PATTERN_TWITTER_LIST_NO_SCHEME;
