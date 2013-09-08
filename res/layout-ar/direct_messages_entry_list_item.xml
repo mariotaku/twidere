@@ -2,6 +2,7 @@
 <org.mariotaku.twidere.view.ColorLabelRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
+	android:background="?android:attr/activatedBackgroundIndicator"
 	android:descendantFocusability="blocksDescendants"
 	android:padding="8dp">
 

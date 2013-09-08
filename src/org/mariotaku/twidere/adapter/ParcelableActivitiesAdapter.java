@@ -34,6 +34,7 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
+import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.view.holder.ActivityViewHolder;
 
 import android.content.Context;
@@ -45,18 +46,20 @@ import android.widget.ImageView;
 
 public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity> implements IBaseAdapter {
 
-	private boolean mDisplayProfileImage, mShowAbsoluteTime, mMultiSelectEnabled;
+	private final Context mContext;
+	private final MultiSelectManager mMultiSelectManager;
+	private final ImageLoaderWrapper mProfileImageLoader;
+
+	private boolean mDisplayProfileImage, mShowAbsoluteTime;
 	private int mNameDisplayOption;
 	private float mTextSize;
-
-	private final ImageLoaderWrapper mProfileImageLoader;
-	private final Context mContext;
 
 	public ParcelableActivitiesAdapter(final Context context) {
 		super(context, R.layout.activity_list_item);
 		mContext = context;
-		final TwidereApplication application = TwidereApplication.getInstance(context);
-		mProfileImageLoader = application.getImageLoaderWrapper();
+		final TwidereApplication app = TwidereApplication.getInstance(context);
+		mMultiSelectManager = app.getMultiSelectManager();
+		mProfileImageLoader = app.getImageLoaderWrapper();
 		configBaseAdapter(context, this);
 	}
 
@@ -111,13 +114,6 @@ public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
 		}
-	}
-
-	@Override
-	public void setMultiSelectEnabled(final boolean multi) {
-		if (mMultiSelectEnabled == multi) return;
-		mMultiSelectEnabled = multi;
-		notifyDataSetChanged();
 	}
 
 	@Override

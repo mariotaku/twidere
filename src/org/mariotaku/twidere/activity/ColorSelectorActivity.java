@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.ArrayAdapter;
 import org.mariotaku.twidere.fragment.ColorPickerDialogFragment;
 import org.mariotaku.twidere.fragment.ColorPickerDialogFragment.OnColorSelectedListener;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
@@ -39,11 +40,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-public class ColorPickerActivity extends BaseSupportDialogActivity implements OnItemClickListener,
+public class ColorSelectorActivity extends BaseSupportDialogActivity implements OnItemClickListener,
 		OnColorSelectedListener {
 
 	private GridView mColorsGrid;
@@ -96,7 +96,9 @@ public class ColorPickerActivity extends BaseSupportDialogActivity implements On
 		if (mColors.contains(mCustomizedColor)) {
 
 		}
-		mColorsGrid.setAdapter(new ColorsAdapter(this, mColors));
+		final ColorsAdapter adapter = new ColorsAdapter(this, mColors);
+		adapter.setCustomizedColor(mCustomizedColor);
+		mColorsGrid.setAdapter(adapter);
 		mColorsGrid.setOnItemClickListener(this);
 
 	}
@@ -122,27 +124,31 @@ public class ColorPickerActivity extends BaseSupportDialogActivity implements On
 		mFragment.show(ft, "dialog");
 	}
 
-	class ColorsAdapter extends ArrayAdapter<Integer> {
+	static class ColorsAdapter extends ArrayAdapter<Integer> {
 
 		private final Context mContext;
+		private int mCustomizedColor;
 
 		public ColorsAdapter(final Context context, final List<Integer> objects) {
-			super(context, 0, objects);
+			super(context, R.layout.color_grid_item, objects);
 			mContext = context;
 		}
 
 		@Override
 		public View getView(final int position, final View convertView, final ViewGroup parent) {
-			final View view = getLayoutInflater().inflate(R.layout.color_grid_item, parent, false);
+			final View view = super.getView(position, convertView, parent);
 			final ImageView color = (ImageView) view.findViewById(R.id.color);
-			color.setImageBitmap(getColorPreviewBitmap(mContext, getItem(position)));
-			if (position == getCount() - 1) {
-				view.findViewById(R.id.text).setVisibility(View.VISIBLE);
-				color.setImageBitmap(getColorPreviewBitmap(mContext, mCustomizedColor));
-			}
+			final boolean is_last = position == getCount() - 1;
+			view.findViewById(R.id.text).setVisibility(is_last ? View.VISIBLE : View.GONE);
+			color.setImageBitmap(getColorPreviewBitmap(mContext, is_last ? mCustomizedColor : getItem(position)));
 			return view;
 		}
 
+		public void setCustomizedColor(final int color) {
+			if (mCustomizedColor == color) return;
+			mCustomizedColor = color;
+			notifyDataSetChanged();
+		}
 	}
 
 }

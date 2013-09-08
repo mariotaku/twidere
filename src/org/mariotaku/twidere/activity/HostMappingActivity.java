@@ -123,7 +123,7 @@ public class HostMappingActivity extends BaseSupportActivity implements MultiCho
 				break;
 			case MENU_IMPORT_FROM:
 				final Intent intent = new Intent(INTENT_ACTION_PICK_FILE);
-				intent.setClass(this, FilePickerActivity.class);
+				intent.setClass(this, FileSelectorActivity.class);
 				startActivityForResult(intent, REQUEST_PICK_FILE);
 				break;
 		}

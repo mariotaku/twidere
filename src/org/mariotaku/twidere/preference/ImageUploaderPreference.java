@@ -36,21 +36,21 @@ import android.content.pm.ResolveInfo;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 
-public class ImageUploaderPickerPreference extends DialogPreference implements Constants, OnClickListener {
+public class ImageUploaderPreference extends DialogPreference implements Constants, OnClickListener {
 
 	private SharedPreferences mPreferences;
 	private final PackageManager mPackageManager;
 	private ImageUploaderSpec[] mAvailableImageUploaders;
 
-	public ImageUploaderPickerPreference(final Context context) {
+	public ImageUploaderPreference(final Context context) {
 		this(context, null);
 	}
 
-	public ImageUploaderPickerPreference(final Context context, final AttributeSet attrs) {
+	public ImageUploaderPreference(final Context context, final AttributeSet attrs) {
 		this(context, attrs, android.R.attr.preferenceStyle);
 	}
 
-	public ImageUploaderPickerPreference(final Context context, final AttributeSet attrs, final int defStyle) {
+	public ImageUploaderPreference(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		mPackageManager = context.getPackageManager();
 	}
@@ -82,7 +82,7 @@ public class ImageUploaderPickerPreference extends DialogPreference implements C
 					+ "/" + info.serviceInfo.name));
 		}
 		mAvailableImageUploaders = specs.toArray(new ImageUploaderSpec[specs.size()]);
-		builder.setSingleChoiceItems(mAvailableImageUploaders, getIndex(component), ImageUploaderPickerPreference.this);
+		builder.setSingleChoiceItems(mAvailableImageUploaders, getIndex(component), ImageUploaderPreference.this);
 		builder.setNegativeButton(android.R.string.cancel, null);
 	}
 

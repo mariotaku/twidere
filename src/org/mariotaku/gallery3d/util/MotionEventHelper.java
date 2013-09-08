@@ -15,12 +15,9 @@
  */
 package org.mariotaku.gallery3d.util;
 
-import android.annotation.TargetApi;
 import android.graphics.Matrix;
-import android.os.Build;
 import android.view.MotionEvent;
 
-@TargetApi(Build.VERSION_CODES.GINGERBREAD_MR1)
 public final class MotionEventHelper {
 
 	private MotionEventHelper() {

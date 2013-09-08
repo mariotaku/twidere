@@ -280,20 +280,20 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		if (uri == null || mode == null) throw new IllegalArgumentException();
 		final int table_id = getTableId(uri);
 		final String table = getTableNameById(table_id);
-		if ("r".equals(mode)) {
-			checkReadPermission(table_id, table, null);
-		} else if ("rw".equals(mode) || "rwt".equals(mode)) {
-			checkReadPermission(table_id, table, null);
-			checkWritePermission(table_id, table);
-		} else
-			throw new IllegalArgumentException();
 		final int mode_code;
 		if ("r".equals(mode)) {
 			mode_code = ParcelFileDescriptor.MODE_READ_ONLY;
 		} else if ("rw".equals(mode)) {
 			mode_code = ParcelFileDescriptor.MODE_READ_WRITE;
-		} else {
+		} else if ("rwt".equals(mode)) {
 			mode_code = ParcelFileDescriptor.MODE_READ_WRITE | ParcelFileDescriptor.MODE_TRUNCATE;
+		} else
+			throw new IllegalArgumentException();
+		if (mode_code == ParcelFileDescriptor.MODE_READ_ONLY) {
+			checkReadPermission(table_id, table, null);
+		} else if ((mode_code & ParcelFileDescriptor.MODE_READ_WRITE) != 0) {
+			checkReadPermission(table_id, table, null);
+			checkWritePermission(table_id, table);
 		}
 		switch (table_id) {
 			case VIRTUAL_TABLE_ID_CACHED_IMAGES: {

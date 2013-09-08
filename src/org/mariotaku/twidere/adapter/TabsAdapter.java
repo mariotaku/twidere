@@ -26,8 +26,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.fragment.iface.FragmentCallback;
-import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;
 import org.mariotaku.twidere.model.TabSpec;
 import org.mariotaku.twidere.view.TabPageIndicator;
 import org.mariotaku.twidere.view.TabPageIndicator.TabListener;
@@ -110,11 +108,6 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TabProvide
 
 	@Override
 	public void onPageReselected(final int position) {
-		if (!(mContext instanceof FragmentCallback)) return;
-		final Fragment f = ((FragmentCallback) mContext).getCurrentVisibleFragment();
-		if (f instanceof RefreshScrollTopInterface) {
-			((RefreshScrollTopInterface) f).scrollToTop();
-		}
 	}
 
 	@Override
@@ -125,11 +118,6 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TabProvide
 
 	@Override
 	public boolean onTabLongClick(final int position) {
-		if (!(mContext instanceof FragmentCallback)) return false;
-		final Fragment f = ((FragmentCallback) mContext).getCurrentVisibleFragment();
-		if (f instanceof RefreshScrollTopInterface) {
-			((RefreshScrollTopInterface) f).triggerRefresh();
-		}
 		return true;
 	}
 

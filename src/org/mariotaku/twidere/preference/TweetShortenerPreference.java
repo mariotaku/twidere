@@ -36,7 +36,7 @@ import android.content.pm.ResolveInfo;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 
-public class TweetShortenerPickerPreference extends DialogPreference implements Constants, OnClickListener {
+public class TweetShortenerPreference extends DialogPreference implements Constants, OnClickListener {
 
 	private SharedPreferences mPreferences;
 
@@ -44,15 +44,15 @@ public class TweetShortenerPickerPreference extends DialogPreference implements 
 
 	private TweetShortenerSpec[] mAvailableTweetShorteners;
 
-	public TweetShortenerPickerPreference(final Context context) {
+	public TweetShortenerPreference(final Context context) {
 		this(context, null);
 	}
 
-	public TweetShortenerPickerPreference(final Context context, final AttributeSet attrs) {
+	public TweetShortenerPreference(final Context context, final AttributeSet attrs) {
 		this(context, attrs, android.R.attr.preferenceStyle);
 	}
 
-	public TweetShortenerPickerPreference(final Context context, final AttributeSet attrs, final int defStyle) {
+	public TweetShortenerPreference(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		mPackageManager = context.getPackageManager();
 	}
@@ -84,8 +84,7 @@ public class TweetShortenerPickerPreference extends DialogPreference implements 
 					+ "/" + info.serviceInfo.name));
 		}
 		mAvailableTweetShorteners = specs.toArray(new TweetShortenerSpec[specs.size()]);
-		builder.setSingleChoiceItems(mAvailableTweetShorteners, getIndex(component),
-				TweetShortenerPickerPreference.this);
+		builder.setSingleChoiceItems(mAvailableTweetShorteners, getIndex(component), TweetShortenerPreference.this);
 		builder.setNegativeButton(android.R.string.cancel, null);
 	}
 

@@ -50,7 +50,7 @@ import java.util.List;
 import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.ColorPickerActivity;
+import org.mariotaku.twidere.activity.ColorSelectorActivity;
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.adapter.PreviewPagerAdapter;
 import org.mariotaku.twidere.adapter.PreviewPagerAdapter.OnImageClickListener;
@@ -337,7 +337,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 					break;
 				}
 				case MENU_SET_COLOR: {
-					final Intent intent = new Intent(getActivity(), ColorPickerActivity.class);
+					final Intent intent = new Intent(getActivity(), ColorSelectorActivity.class);
 					startActivityForResult(intent, REQUEST_SET_COLOR);
 					break;
 				}

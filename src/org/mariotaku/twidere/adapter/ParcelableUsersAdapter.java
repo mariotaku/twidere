@@ -48,19 +48,17 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 	private final Context mContext;
 	private final Locale mLocale;
 
-	private boolean mDisplayProfileImage, mShowAccountColor, mMultiSelectEnabled;
-
+	private boolean mDisplayProfileImage, mShowAccountColor;
 	private float mTextSize;
-
 	private int mNameDisplayOption;
 
 	public ParcelableUsersAdapter(final Context context) {
 		super(context, R.layout.user_list_item);
 		mContext = context;
 		mLocale = context.getResources().getConfiguration().locale;
-		final TwidereApplication application = TwidereApplication.getInstance(context);
-		mProfileImageLoader = application.getImageLoaderWrapper();
-		mMultiSelectManager = application.getMultiSelectManager();
+		final TwidereApplication app = TwidereApplication.getInstance(context);
+		mProfileImageLoader = app.getImageLoaderWrapper();
+		mMultiSelectManager = app.getMultiSelectManager();
 		configBaseAdapter(context, this);
 	}
 
@@ -81,12 +79,6 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 			view.setTag(holder);
 		}
 		final ParcelableUser user = getItem(position);
-
-		if (mMultiSelectEnabled) {
-			holder.setSelected(mMultiSelectManager.isUserSelected(user.id));
-		} else {
-			holder.setSelected(false);
-		}
 
 		holder.setAccountColorEnabled(mShowAccountColor);
 
@@ -155,14 +147,6 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 	public void setDisplayProfileImage(final boolean display) {
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
-			notifyDataSetChanged();
-		}
-	}
-
-	@Override
-	public void setMultiSelectEnabled(final boolean multi) {
-		if (mMultiSelectEnabled != multi) {
-			mMultiSelectEnabled = multi;
 			notifyDataSetChanged();
 		}
 	}

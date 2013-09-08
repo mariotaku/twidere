@@ -75,7 +75,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	private final SQLiteDatabase mDatabase;
 	private final Map<View, String> mLoadingViewsMap = new HashMap<View, String>();
 
-	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed, mMultiSelectEnabled,
+	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed,
 			mMentionsHighlightDisabled, mDisplaySensitiveContents, mIndicateMyStatusDisabled, mLinkHighlightingEnabled,
 			mIsLastItemFiltered, mFiltersEnabled = true;
 	private float mTextSize;
@@ -114,7 +114,6 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 
 			final long account_id = cursor.getLong(mIndices.account_id);
 			final long user_id = cursor.getLong(mIndices.user_id);
-			final long status_id = cursor.getLong(mIndices.status_id);
 			final long status_timestamp = cursor.getLong(mIndices.status_timestamp);
 			final long retweet_count = cursor.getLong(mIndices.retweet_count);
 
@@ -145,12 +144,6 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			final boolean is_mention = TextUtils.isEmpty(text) || TextUtils.isEmpty(account_screen_name) ? false : text
 					.toLowerCase(Locale.US).contains('@' + account_screen_name.toLowerCase(Locale.US));
 			final boolean is_my_status = account_id == user_id;
-
-			if (mMultiSelectEnabled) {
-				holder.setSelected(mMultiSelectManager.isStatusSelected(status_id));
-			} else {
-				holder.setSelected(false);
-			}
 
 			holder.setUserColor(getUserColor(mContext, user_id));
 			holder.setHighlightColor(getStatusBackground(mMentionsHighlightDisabled ? false : is_mention, is_favorite,
@@ -286,7 +279,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 
 	@Override
 	public void onClick(final View view) {
-		if (mMultiSelectEnabled) return;
+		if (!mMultiSelectManager.isActive()) return;
 		final Object tag = view.getTag();
 		final ParcelableStatus status = tag instanceof Integer ? getStatus((Integer) tag) : null;
 		if (status == null) return;
@@ -448,13 +441,6 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	public void setMentionsHightlightDisabled(final boolean disable) {
 		if (disable == mMentionsHighlightDisabled) return;
 		mMentionsHighlightDisabled = disable;
-		notifyDataSetChanged();
-	}
-
-	@Override
-	public void setMultiSelectEnabled(final boolean multi) {
-		if (mMultiSelectEnabled == multi) return;
-		mMultiSelectEnabled = multi;
 		notifyDataSetChanged();
 	}
 

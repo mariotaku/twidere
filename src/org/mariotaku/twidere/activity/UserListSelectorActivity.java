@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.ParcelableUserListsAdapter;
 import org.mariotaku.twidere.adapter.ParcelableUsersAdapter;
 import org.mariotaku.twidere.adapter.UserHashtagAutoCompleteAdapter;
-import org.mariotaku.twidere.adapter.UserListsAdapter;
 import org.mariotaku.twidere.fragment.CreateUserListDialogFragment;
 import org.mariotaku.twidere.fragment.ProgressDialogFragment;
 import org.mariotaku.twidere.model.ParcelableUser;
@@ -54,7 +54,7 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 
 	private AutoCompleteTextView mEditScreenName;
 	private ListView mUserListsListView, mUsersListView;
-	private UserListsAdapter mUserListsAdapter;
+	private ParcelableUserListsAdapter mUserListsAdapter;
 	private ParcelableUsersAdapter mUsersAdapter;
 	private View mUsersListContainer, mUserListsContainer, mCreateUserListContainer;
 
@@ -140,7 +140,7 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 		}
 		mEditScreenName.setAdapter(new UserHashtagAutoCompleteAdapter(this));
 		mEditScreenName.setText(mScreenName);
-		mUserListsListView.setAdapter(mUserListsAdapter = new UserListsAdapter(this));
+		mUserListsListView.setAdapter(mUserListsAdapter = new ParcelableUserListsAdapter(this));
 		mUsersListView.setAdapter(mUsersAdapter = new ParcelableUsersAdapter(this));
 		mUserListsListView.setOnItemClickListener(this);
 		mUsersListView.setOnItemClickListener(this);

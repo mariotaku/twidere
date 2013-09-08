@@ -39,12 +39,11 @@ public class UserListViewHolder {
 	}
 
 	public void setTextSize(final float text_size) {
-		if (this.text_size != text_size) {
-			this.text_size = text_size;
-			description.setTextSize(text_size);
-			name.setTextSize(text_size * 1.05f);
-			created_by.setTextSize(text_size * 0.65f);
-		}
+		if (this.text_size == text_size) return;
+		this.text_size = text_size;
+		description.setTextSize(text_size);
+		name.setTextSize(text_size * 1.05f);
+		created_by.setTextSize(text_size * 0.65f);
 	}
 
 }

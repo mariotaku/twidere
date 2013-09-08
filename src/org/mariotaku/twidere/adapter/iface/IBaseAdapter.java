@@ -29,8 +29,6 @@ public interface IBaseAdapter extends Constants, ListAdapter {
 
 	public void setDisplayProfileImage(boolean display);
 
-	public void setMultiSelectEnabled(boolean multi);
-
 	public void setNameDisplayOption(String option);
 
 	public void setTextSize(float text_size);

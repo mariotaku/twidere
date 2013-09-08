@@ -54,7 +54,7 @@ import java.util.Locale;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.ColorPickerActivity;
+import org.mariotaku.twidere.activity.ColorSelectorActivity;
 import org.mariotaku.twidere.activity.EditUserProfileActivity;
 import org.mariotaku.twidere.activity.UserListSelectorActivity;
 import org.mariotaku.twidere.adapter.ListActionAdapter;
@@ -734,7 +734,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				break;
 			}
 			case MENU_SET_COLOR: {
-				final Intent intent = new Intent(getActivity(), ColorPickerActivity.class);
+				final Intent intent = new Intent(getActivity(), ColorSelectorActivity.class);
 				startActivityForResult(intent, REQUEST_SET_COLOR);
 				break;
 			}

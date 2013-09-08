@@ -3,6 +3,7 @@
 	android:id="@+id/user_content"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
+	android:background="?android:attr/activatedBackgroundIndicator"
 	android:padding="8dp">
 
 	<ImageView

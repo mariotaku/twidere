@@ -186,6 +186,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
+import android.widget.Checkable;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -206,7 +207,6 @@ public final class Utils implements Constants {
 	public static final HashMap<String, Class<? extends Fragment>> CUSTOM_TABS_FRAGMENT_MAP = new HashMap<String, Class<? extends Fragment>>();
 	public static final HashMap<String, Integer> CUSTOM_TABS_TYPE_NAME_MAP = new HashMap<String, Integer>();
 	public static final HashMap<String, Integer> CUSTOM_TABS_ICON_NAME_MAP = new HashMap<String, Integer>();
-
 	static {
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_STATUSES, TABLE_ID_STATUSES);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_ACCOUNTS, TABLE_ID_ACCOUNTS);
@@ -313,10 +313,10 @@ public final class Utils implements Constants {
 		CUSTOM_TABS_ICON_NAME_MAP.put(ICON_SPECIAL_TYPE_CUSTOMIZE, -1);
 
 	}
-
 	private static Map<Long, Integer> sAccountColors = new LinkedHashMap<Long, Integer>();
 
 	private static Map<Long, Integer> sUserColors = new LinkedHashMap<Long, Integer>(512, 0.75f, true);
+
 	private static Map<Long, String> sAccountScreenNames = new LinkedHashMap<Long, String>();
 
 	private static Map<Long, String> sAccountNames = new LinkedHashMap<Long, String>();
@@ -550,6 +550,20 @@ public final class Utils implements Constants {
 
 	public static void clearAccountName() {
 		sAccountScreenNames.clear();
+	}
+
+	public static void clearListViewChoices(final ListView view) {
+		if (view == null) return;
+		view.clearChoices();
+		// Workaround for Android bug
+		// http://stackoverflow.com/questions/9754170/listview-selection-remains-persistent-after-exiting-choice-mode
+		final int childCount = view.getChildCount();
+		for (int i = 0; i < childCount; i++) {
+			final View child = view.getChildAt(i);
+			if (child instanceof Checkable) {
+				((Checkable) child).setChecked(false);
+			}
+		}
 	}
 
 	public static void clearUserColor(final Context context, final long user_id) {
@@ -1172,6 +1186,11 @@ public final class Utils implements Constants {
 		if (context != null && t instanceof TwitterException)
 			return getTwitterErrorMessage(context, (TwitterException) t);
 		return t.getMessage();
+	}
+
+	public static int getFirstChildOffset(final ListView list) {
+		if (list == null || list.getChildCount() == 0) return 0;
+		return list.getChildAt(0).getTop();
 	}
 
 	public static List<SupportTabSpec> getHomeTabs(final Context context) {
@@ -3065,9 +3084,13 @@ public final class Utils implements Constants {
 	}
 
 	public static void scrollListToPosition(final ListView list, final int position) {
+		scrollListToPosition(list, position, 0);
+	}
+
+	public static void scrollListToPosition(final ListView list, final int position, final int offset) {
 		if (list == null) return;
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-			list.setSelection(position);
+			list.setSelectionFromTop(position, offset);
 			list.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(),
 					MotionEvent.ACTION_CANCEL, 0, 0, 0));
 		} else {
@@ -3075,7 +3098,7 @@ public final class Utils implements Constants {
 					MotionEvent.ACTION_DOWN, 0, 0, 0));
 			list.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(),
 					MotionEvent.ACTION_UP, 0, 0, 0));
-			list.setSelection(position);
+			list.setSelectionFromTop(position, offset);
 		}
 	}
 

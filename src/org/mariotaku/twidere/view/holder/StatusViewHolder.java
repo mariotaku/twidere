@@ -24,7 +24,6 @@ import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
@@ -47,7 +46,7 @@ public class StatusViewHolder implements Constants {
 	private final View gap_indicator;
 	private final ColorLabelRelativeLayout content;
 	private final Resources res;
-	private final int theme_color, image_preview_small_width;
+	private final int image_preview_small_width;
 	private final float density;
 	private final boolean is_rtl;
 	public boolean show_as_gap;
@@ -72,8 +71,6 @@ public class StatusViewHolder implements Constants {
 		time = (TextView) view.findViewById(R.id.time);
 		reply_retweet_status = (TextView) view.findViewById(R.id.reply_retweet_status);
 		show_as_gap = gap_indicator.isShown();
-		final int color = ThemeUtils.getThemeColor(context);
-		theme_color = Color.argb(0x60, Color.red(color), Color.green(color), Color.blue(color));
 		image_preview_small_width = res.getDimensionPixelSize(R.dimen.image_preview_width);
 		is_rtl = Utils.isRTL(context);
 		density = res.getDisplayMetrics().density;
@@ -184,14 +181,9 @@ public class StatusViewHolder implements Constants {
 		reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_retweet, 0, 0, 0);
 	}
 
-	public void setSelected(final boolean selected) {
-		content.setBackgroundColor(selected && !show_as_gap ? theme_color : Color.TRANSPARENT);
-	}
-
 	public void setShowAsGap(final boolean show_gap) {
 		show_as_gap = show_gap;
 		if (show_as_gap) {
-			content.setBackgroundResource(0);
 			content.drawLabel(Color.TRANSPARENT, Color.TRANSPARENT, Color.TRANSPARENT);
 		}
 		profile_image.setVisibility(show_gap ? View.GONE : View.VISIBLE);

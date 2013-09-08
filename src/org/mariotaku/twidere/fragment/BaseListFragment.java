@@ -21,7 +21,6 @@ package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.fragment.iface.FragmentCallback;
 import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
@@ -190,15 +189,6 @@ public class BaseListFragment extends ListFragment implements Constants, OnScrol
 	@Override
 	public void setSelection(final int position) {
 		Utils.scrollListToPosition(getListView(), position);
-	}
-
-	@Override
-	public void setUserVisibleHint(final boolean isVisibleToUser) {
-		super.setUserVisibleHint(isVisibleToUser);
-		final Activity activity = getActivity();
-		if (activity instanceof FragmentCallback) {
-			((FragmentCallback) activity).onSetUserVisibleHint(this, isVisibleToUser);
-		}
 	}
 
 	@Override

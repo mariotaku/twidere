@@ -40,6 +40,7 @@ import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.PositionManager;
 import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
 import android.content.ActivityNotFoundException;
@@ -148,11 +149,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 			final ParcelableStatus status = mSelectedStatus = mAdapter.getStatus(position
 					- mListView.getHeaderViewsCount());
 			if (mMultiSelectManager.isActive() || click_to_open_menu) {
-				if (!mMultiSelectManager.isSelected(status)) {
-					mMultiSelectManager.selectItem(status);
-				} else {
-					mMultiSelectManager.unselectItem(mSelectedStatus);
-				}
+				setItemSelected(status, position, !mMultiSelectManager.isSelected(status));
 				return true;
 			}
 			openMenu(view, status);
@@ -163,19 +160,22 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 
 	@Override
 	public void onItemsCleared() {
-		mAdapter.setMultiSelectEnabled(false);
-		mAdapter.notifyDataSetChanged();
+		mListView.clearChoices();
+		mListView.setChoiceMode(ListView.CHOICE_MODE_NONE);
+		// Workaround for Android bug
+		// http://stackoverflow.com/questions/9754170/listview-selection-remains-persistent-after-exiting-choice-mode
+		final int position = mListView.getFirstVisiblePosition(), offset = Utils.getFirstChildOffset(mListView);
+		mListView.setAdapter(mAdapter);
+		Utils.scrollListToPosition(mListView, position, offset);
 	}
 
 	@Override
 	public void onItemSelected(final Object item) {
-		mAdapter.setMultiSelectEnabled(true);
-		mAdapter.notifyDataSetChanged();
+		mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 	}
 
 	@Override
 	public void onItemUnselected(final Object item) {
-		mAdapter.notifyDataSetChanged();
 	}
 
 	@Override
@@ -191,11 +191,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 				getStatuses(new long[] { status.account_id }, new long[] { status.id }, null);
 			} else {
 				if (mMultiSelectManager.isActive()) {
-					if (!mMultiSelectManager.isSelected(status)) {
-						mMultiSelectManager.selectItem(status);
-					} else {
-						mMultiSelectManager.unselectItem(status);
-					}
+					setItemSelected(status, position, !mMultiSelectManager.isSelected(status));
 					return;
 				}
 				if (click_to_open_menu) {
@@ -312,7 +308,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 				break;
 			}
 			case MENU_MULTI_SELECT: {
-				mMultiSelectManager.selectItem(status);
+				setItemSelected(status, mAdapter.findItemPositionByStatusId(status.id), true);
 				break;
 			}
 			default: {
@@ -347,7 +343,6 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		final String name_display_option = mPreferences.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION,
 				NAME_DISPLAY_OPTION_BOTH);
 		final boolean link_underline_only = mPreferences.getBoolean(PREFERENCE_KEY_LINK_UNDERLINE_ONLY, false);
-		mAdapter.setMultiSelectEnabled(mMultiSelectManager.isActive());
 		mAdapter.setDisplayProfileImage(display_profile_image);
 		mAdapter.setTextSize(text_size);
 		mAdapter.setShowAbsoluteTime(show_absolute_time);
@@ -442,6 +437,15 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 
 	protected final void setData(final Data data) {
 		mData = data;
+	}
+
+	protected void setItemSelected(final ParcelableStatus status, final int position, final boolean selected) {
+		if (selected) {
+			mMultiSelectManager.selectItem(status);
+		} else {
+			mMultiSelectManager.unselectItem(status);
+		}
+		mListView.setItemChecked(position, selected);
 	}
 
 	protected void setListHeaderFooters(final ListView list) {

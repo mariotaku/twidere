@@ -38,8 +38,15 @@ public class ArrayAdapter<T> extends BaseAdapter {
 	private final ArrayList<T> mData = new ArrayList<T>();
 
 	public ArrayAdapter(final Context context, final int layoutRes) {
+		this(context, layoutRes, null);
+	}
+
+	public ArrayAdapter(final Context context, final int layoutRes, final Collection<? extends T> collection) {
 		mInflater = LayoutInflater.from(context);
 		mLayoutRes = layoutRes;
+		if (collection != null) {
+			addAll(collection);
+		}
 	}
 
 	public final void add(final T item) {

@@ -188,7 +188,7 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 				break;
 			}
 			case R.id.set_color: {
-				final Intent intent = new Intent(this, ColorPickerActivity.class);
+				final Intent intent = new Intent(this, ColorSelectorActivity.class);
 				final Bundle bundle = new Bundle();
 				if (mUserColor != null) {
 					bundle.putInt(Accounts.USER_COLOR, mUserColor);

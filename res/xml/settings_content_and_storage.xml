@@ -7,7 +7,7 @@
 	<PreferenceCategory
 		android:key="category_multimedia_contents"
 		android:title="@string/multimedia_contents">
-		<org.mariotaku.twidere.preference.ImageUploaderPickerPreference
+		<org.mariotaku.twidere.preference.ImageUploaderPreference
 			android:key="image_uploader"
 			android:title="@string/image_uploader"/>
 
@@ -22,7 +22,7 @@
 	<PreferenceCategory
 		android:key="category_content"
 		android:title="@string/content">
-		<org.mariotaku.twidere.preference.TweetShortenerPickerPreference
+		<org.mariotaku.twidere.preference.TweetShortenerPreference
 			android:key="tweet_shortener"
 			android:title="@string/tweet_shortener"/>
 

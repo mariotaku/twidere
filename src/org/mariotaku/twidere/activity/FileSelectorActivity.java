@@ -50,7 +50,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class FilePickerActivity extends BaseSupportActivity implements OnItemClickListener, LoaderCallbacks<List<File>> {
+public class FileSelectorActivity extends BaseSupportActivity implements OnItemClickListener,
+		LoaderCallbacks<List<File>> {
 
 	private File mCurrentDirectory;
 	private ListView mListView;

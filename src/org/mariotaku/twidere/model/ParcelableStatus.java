@@ -78,9 +78,8 @@ public class ParcelableStatus implements Parcelable, JSONParcelable, Comparable<
 	public final String retweeted_by_name, retweeted_by_screen_name, text_html, text_plain, user_name,
 			user_screen_name, in_reply_to_screen_name, source, user_profile_image_url, image_preview_url,
 			image_original_url, text_unescaped;
-	public final ParcelableLocation location;
 
-	// public final Spanned text;
+	public final ParcelableLocation location;
 
 	public static final Comparator<ParcelableStatus> TIMESTAMP_COMPARATOR = new Comparator<ParcelableStatus>() {
 

@@ -7,7 +7,7 @@ import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.openUserTimeline;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.ColorPickerActivity;
+import org.mariotaku.twidere.activity.ColorSelectorActivity;
 import org.mariotaku.twidere.activity.EditUserProfileActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.activity.SignInActivity;
@@ -154,7 +154,7 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 				break;
 			}
 			case MENU_SET_COLOR: {
-				final Intent intent = new Intent(getActivity(), ColorPickerActivity.class);
+				final Intent intent = new Intent(getActivity(), ColorSelectorActivity.class);
 				final Bundle bundle = new Bundle();
 				bundle.putInt(Accounts.USER_COLOR, account.user_color);
 				intent.putExtras(bundle);

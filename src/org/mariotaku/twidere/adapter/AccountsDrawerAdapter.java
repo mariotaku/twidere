@@ -90,10 +90,7 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 	public View getChildView(final int groupPosition, final int childPosition, final boolean isLastChild,
 			final View convertView, final ViewGroup parent) {
 		final View view = convertView != null ? convertView : mInflater.inflate(CHILD_LAYOUT, null);
-		final Account account = getGroup(groupPosition);
 		final AccountAction action = getChild(groupPosition, childPosition);
-		// view.setAlpha(account.is_activated ? ITEM_ACTIVATED_ALPHA :
-		// ITEM_INACTIVATED_ALPHA);
 		final TextView text1 = (TextView) view.findViewById(android.R.id.text1);
 		final ImageView icon = (ImageView) view.findViewById(android.R.id.icon);
 		text1.setText(action.name);

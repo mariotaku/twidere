@@ -37,6 +37,7 @@ import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
+import org.mariotaku.twidere.util.Utils;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -147,12 +148,10 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 		mSelectedUser = null;
 		final ParcelableUsersAdapter adapter = getListAdapter();
 		mSelectedUser = adapter.findItem(id);
+		if (mSelectedUser == null) return false;
+		final ParcelableUser user = mSelectedUser;
 		if (mMultiSelectManager.isActive()) {
-			if (!mMultiSelectManager.isSelected(mSelectedUser)) {
-				mMultiSelectManager.selectItem(mSelectedUser);
-			} else {
-				mMultiSelectManager.unselectItem(mSelectedUser);
-			}
+			setItemSelected(user, position, !mMultiSelectManager.isSelected(user));
 			return true;
 		}
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
@@ -160,7 +159,7 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 		final Menu menu = mPopupMenu.getMenu();
 		final Intent extensions_intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER);
 		final Bundle extensions_extras = new Bundle();
-		extensions_extras.putParcelable(INTENT_KEY_USER, mSelectedUser);
+		extensions_extras.putParcelable(INTENT_KEY_USER, user);
 		extensions_intent.putExtras(extensions_extras);
 		addIntentToMenu(getActivity(), menu, extensions_intent);
 		mPopupMenu.setOnMenuItemClickListener(this);
@@ -170,19 +169,22 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 
 	@Override
 	public void onItemsCleared() {
-		mAdapter.setMultiSelectEnabled(false);
-		mAdapter.notifyDataSetChanged();
+		mListView.clearChoices();
+		mListView.setChoiceMode(ListView.CHOICE_MODE_NONE);
+		// Workaround for Android bug
+		// http://stackoverflow.com/questions/9754170/listview-selection-remains-persistent-after-exiting-choice-mode
+		final int position = mListView.getFirstVisiblePosition(), offset = Utils.getFirstChildOffset(mListView);
+		mListView.setAdapter(mAdapter);
+		Utils.scrollListToPosition(mListView, position, offset);
 	}
 
 	@Override
 	public void onItemSelected(final Object item) {
-		mAdapter.setMultiSelectEnabled(true);
-		mAdapter.notifyDataSetChanged();
+		mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 	}
 
 	@Override
 	public void onItemUnselected(final Object item) {
-		mAdapter.notifyDataSetChanged();
 	}
 
 	@Override
@@ -190,11 +192,7 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 		final ParcelableUser user = mAdapter.findItem(id);
 		if (user == null) return;
 		if (mMultiSelectManager.isActive()) {
-			if (!mMultiSelectManager.isSelected(user)) {
-				mMultiSelectManager.selectItem(user);
-			} else {
-				mMultiSelectManager.unselectItem(user);
-			}
+			setItemSelected(user, position, !mMultiSelectManager.isSelected(user));
 			return;
 		}
 		openUserProfile(getActivity(), user);
@@ -224,7 +222,7 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 				break;
 			}
 			case MENU_MULTI_SELECT: {
-				mMultiSelectManager.selectItem(user);
+				setItemSelected(user, mAdapter.findItemPosition(user.id), !mMultiSelectManager.isSelected(user));
 				break;
 			}
 			default: {
@@ -262,7 +260,6 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		final String name_display_option = mPreferences.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION,
 				NAME_DISPLAY_OPTION_BOTH);
-		mAdapter.setMultiSelectEnabled(mMultiSelectManager.isActive());
 		mAdapter.setDisplayProfileImage(display_profile_image);
 		mAdapter.setTextSize(text_size);
 		mAdapter.setNameDisplayOption(name_display_option);
@@ -330,5 +327,14 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 		}
 		mData.removeAll(items_to_remove);
 		mAdapter.setData(mData, true);
+	}
+
+	protected void setItemSelected(final ParcelableUser user, final int position, final boolean selected) {
+		if (selected) {
+			mMultiSelectManager.selectItem(user);
+		} else {
+			mMultiSelectManager.unselectItem(user);
+		}
+		mListView.setItemChecked(position, selected);
 	}
 }

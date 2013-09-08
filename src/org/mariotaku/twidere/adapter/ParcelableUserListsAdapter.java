@@ -30,6 +30,7 @@ import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
+import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.view.holder.UserListViewHolder;
 
 import android.app.Activity;
@@ -39,21 +40,23 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
-public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implements IBaseAdapter, OnClickListener {
+public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList> implements IBaseAdapter,
+		OnClickListener {
 
 	private final Context mContext;
 	private final ImageLoaderWrapper mProfileImageLoader;
+	private final MultiSelectManager mMultiSelectManager;
 
-	private boolean mDisplayProfileImage, mMultiSelectEnabled;
-
+	private boolean mDisplayProfileImage;
 	private float mTextSize;
 	private boolean mDisplayName;
 
-	public UserListsAdapter(final Context context) {
+	public ParcelableUserListsAdapter(final Context context) {
 		super(context, R.layout.user_list_list_item);
 		mContext = context;
-		final TwidereApplication application = TwidereApplication.getInstance(context);
-		mProfileImageLoader = application.getImageLoaderWrapper();
+		final TwidereApplication app = TwidereApplication.getInstance(context);
+		mProfileImageLoader = app.getImageLoaderWrapper();
+		mMultiSelectManager = app.getMultiSelectManager();
 		configBaseAdapter(context, this);
 	}
 
@@ -94,7 +97,7 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 
 	@Override
 	public void onClick(final View view) {
-		if (mMultiSelectEnabled) return;
+		if (!mMultiSelectManager.isActive()) return;
 		final Object tag = view.getTag();
 		final int position = tag instanceof Integer ? (Integer) tag : -1;
 		if (position == -1) return;
@@ -127,13 +130,6 @@ public class UserListsAdapter extends ArrayAdapter<ParcelableUserList> implement
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
 		}
-	}
-
-	@Override
-	public void setMultiSelectEnabled(final boolean multi) {
-		if (mMultiSelectEnabled == multi) return;
-		mMultiSelectEnabled = multi;
-		notifyDataSetChanged();
 	}
 
 	@Override

@@ -178,7 +178,7 @@
 			android:theme="@style/Theme.Twidere.Light.Dialog"
 			android:windowSoftInputMode="adjustResize"/>
 		<activity
-			android:name=".activity.AccountSelectorActivity"
+			android:name="org.mariotaku.twidere.activity.AccountSelectorActivity"
 			android:label="@string/select_account"
 			android:theme="@style/Theme.Twidere.Light.Dialog">
 			<intent-filter>
@@ -188,7 +188,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".activity.BrowserActivity"
+			android:name="org.mariotaku.twidere.activity.BrowserActivity"
 			android:exported="false"
 			android:label="@string/browser"
 			android:theme="@style/Theme.Blank.SwipeBack">
@@ -203,7 +203,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".activity.ColorPickerActivity"
+			android:name=".activity.ColorSelectorActivity"
 			android:label="@string/set_color"
 			android:theme="@style/Theme.Twidere.Light.Dialog"/>
 		<activity
@@ -339,7 +339,7 @@
 			android:theme="@style/Theme.Blank"
 			android:windowSoftInputMode="adjustResize"/>
 		<activity
-			android:name=".activity.FilePickerActivity"
+			android:name=".activity.FileSelectorActivity"
 			android:exported="false"
 			android:label="@string/pick_file"
 			android:theme="@style/Theme.Blank"
@@ -401,7 +401,7 @@
 			android:label="@string/data_profiling"
 			android:theme="@style/Theme.Blank"/>
 		<activity
-			android:name=".activity.RequestPermissionsActivity"
+			android:name="org.mariotaku.twidere.activity.RequestPermissionsActivity"
 			android:label="@string/permissions_request"
 			android:theme="@style/Theme.Twidere.Light.Dialog">
 			<intent-filter>
@@ -420,7 +420,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".activity.UserListSelectorActivity"
+			android:name="org.mariotaku.twidere.activity.UserListSelectorActivity"
 			android:label="@string/select_user_list"
 			android:theme="@style/Theme.Blank.Dialog">
 			<intent-filter>

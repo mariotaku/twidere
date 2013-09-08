@@ -28,8 +28,8 @@ import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.ParcelableUserListsAdapter;
 import org.mariotaku.twidere.adapter.SeparatedListAdapter;
-import org.mariotaku.twidere.adapter.UserListsAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.UserListsLoader;
 import org.mariotaku.twidere.loader.UserListsLoader.UserListsData;
@@ -61,8 +61,8 @@ public class UserListsListFragment extends BasePullToRefreshListFragment impleme
 		LoaderCallbacks<UserListsLoader.UserListsData>, OnItemClickListener, OnItemLongClickListener, Panes.Left,
 		OnMenuItemClickListener {
 
-	private SeparatedListAdapter<UserListsAdapter> mAdapter;
-	private UserListsAdapter mUserListsAdapter, mUserListMembershipsAdapter;
+	private SeparatedListAdapter<ParcelableUserListsAdapter> mAdapter;
+	private ParcelableUserListsAdapter mUserListsAdapter, mUserListMembershipsAdapter;
 
 	private SharedPreferences mPreferences;
 	private ListView mListView;
@@ -106,9 +106,9 @@ public class UserListsListFragment extends BasePullToRefreshListFragment impleme
 			mUserId = args.getLong(INTENT_KEY_USER_ID, -1);
 			mScreenName = args.getString(INTENT_KEY_SCREEN_NAME);
 		}
-		mAdapter = new SeparatedListAdapter<UserListsAdapter>(getActivity());
-		mUserListsAdapter = new UserListsAdapter(getActivity());
-		mUserListMembershipsAdapter = new UserListsAdapter(getActivity());
+		mAdapter = new SeparatedListAdapter<ParcelableUserListsAdapter>(getActivity());
+		mUserListsAdapter = new ParcelableUserListsAdapter(getActivity());
+		mUserListMembershipsAdapter = new ParcelableUserListsAdapter(getActivity());
 		mAdapter.addSection(getString(R.string.users_lists), mUserListsAdapter);
 		mAdapter.addSection(getString(R.string.lists_following_user), mUserListMembershipsAdapter);
 		mListView = getListView();
@@ -247,7 +247,7 @@ public class UserListsListFragment extends BasePullToRefreshListFragment impleme
 		super.onStart();
 		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(getActivity()));
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		for (final UserListsAdapter item : mAdapter.getAdapters()) {
+		for (final ParcelableUserListsAdapter item : mAdapter.getAdapters()) {
 			item.setDisplayProfileImage(display_profile_image);
 			item.setTextSize(text_size);
 		}

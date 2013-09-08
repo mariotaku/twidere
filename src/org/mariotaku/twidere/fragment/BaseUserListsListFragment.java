@@ -29,7 +29,7 @@ import java.util.List;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.UserListsAdapter;
+import org.mariotaku.twidere.adapter.ParcelableUserListsAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.BaseUserListsLoader;
 import org.mariotaku.twidere.model.Panes;
@@ -57,7 +57,7 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 		LoaderCallbacks<List<ParcelableUserList>>, OnItemClickListener, OnScrollListener, OnItemLongClickListener,
 		Panes.Left, OnMenuItemClickListener {
 
-	private UserListsAdapter mAdapter;
+	private ParcelableUserListsAdapter mAdapter;
 
 	private SharedPreferences mPreferences;
 	private boolean mLoadMoreAutomatically;
@@ -87,7 +87,7 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 	}
 
 	@Override
-	public UserListsAdapter getListAdapter() {
+	public ParcelableUserListsAdapter getListAdapter() {
 		return mAdapter;
 	}
 
@@ -112,7 +112,7 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 			mUserId = args.getLong(INTENT_KEY_USER_ID, -1);
 			mScreenName = args.getString(INTENT_KEY_SCREEN_NAME);
 		}
-		mAdapter = new UserListsAdapter(getActivity());
+		mAdapter = new ParcelableUserListsAdapter(getActivity());
 		mListView = getListView();
 		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
@@ -148,7 +148,7 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 	public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 		if (mApplication.isMultiSelectActive()) return true;
 		mSelectedUserList = null;
-		final UserListsAdapter adapter = getListAdapter();
+		final ParcelableUserListsAdapter adapter = getListAdapter();
 		mSelectedUserList = adapter.findItem(id);
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_user_list);
