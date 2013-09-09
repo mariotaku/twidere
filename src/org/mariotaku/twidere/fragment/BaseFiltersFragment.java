@@ -80,7 +80,7 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 				builder.append(ArrayUtils.toString(mListView.getCheckedItemIds(), ',', false));
 				builder.append(")");
 				mResolver.delete(getContentUri(), builder.toString(), null);
-				getLoaderManager().restartLoader(0, null, this);
+//				getLoaderManager().restartLoader(0, null, this);
 				break;
 			}
 			default: {

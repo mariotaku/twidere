@@ -803,6 +803,12 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		}
 	}
 
+	private boolean noReplyContent(final String text) {
+		if (text == null) return true;
+		return !INTENT_ACTION_EDIT_DRAFT.equals(getIntent().getAction()) && mInReplyToStatusId > 0
+				&& text.equals(mOriginalText);
+	}
+
 	private void openImageMenu() {
 		if (mPopupMenu != null) {
 			mPopupMenu.dismiss();
@@ -982,7 +988,8 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 			final int text_length = mEditText.length();
 			mEditText.setSelection(text_length - (tweet_length - Validator.MAX_TWEET_LENGTH), text_length);
 			return;
-		} else if ((mImageUri != null && !mImageUploaderUsed || mImageUri == null) && isEmpty(text)) {
+		} else if ((mImageUri != null && !mImageUploaderUsed || mImageUri == null)
+				&& (isEmpty(text) || noReplyContent(text))) {
 			mEditText.setError(getString(R.string.error_message_no_content));
 			return;
 		}

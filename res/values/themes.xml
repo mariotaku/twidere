@@ -21,7 +21,7 @@
 	<style name="Theme.Twidere.Dark" parent="android:Theme.Holo">
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Dark</item>
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
-		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
+		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView.Dark</item>
 		<item name="tabBackground">@null</item>
 		<item name="contentBackground">#20000000</item>
 	</style>
@@ -29,7 +29,7 @@
 	<style name="Theme.Twidere.Light" parent="android:Theme.Holo.Light">
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Light</item>
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
-		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
+		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView.Light</item>
 		<item name="tabBackground">@drawable/tab_background_dark</item>
 		<item name="contentBackground">#20808080</item>
 	</style>
@@ -37,7 +37,7 @@
 	<style name="Theme.Twidere.Light.DarkActionBar" parent="android:Theme.Holo.Light.DarkActionBar">
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Light.DarkActionBar</item>
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
-		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
+		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView.Light.DarkActionBar</item>
 		<item name="tabBackground">@drawable/tab_background_dark</item>
 		<item name="contentBackground">#20808080</item>
 	</style>

@@ -52,7 +52,7 @@
 		<item name="android:orientation">horizontal</item>
 	</style>
 
-	<style name="Widget.TabPageIndicator.TextView" parent="@android:style/Widget.TextView">
+	<style name="Widget.TabPageIndicator.TextView" parent="@android:style/Widget.Holo.TextView">
 		<item name="android:textAppearance">@style/TextAppearance.TabPageIndicator</item>
 		<item name="android:textColor">#fff3f3f3</item>
 		<item name="android:textStyle">bold</item>
@@ -63,7 +63,17 @@
 		<item name="android:maxLines">1</item>
 	</style>
 
-	<style name="Widget.TabPageIndicator.TextView.Light"></style>
+	<style name="Widget.TabPageIndicator.TextView.Dark">
+		<item name="android:textColor">#fff3f3f3</item>
+	</style>
+
+	<style name="Widget.TabPageIndicator.TextView.Light">
+		<item name="android:textColor">#ff000000</item>
+	</style>
+
+	<style name="Widget.TabPageIndicator.TextView.Light.DarkActionBar">
+		<item name="android:textColor">#fff3f3f3</item>
+	</style>
 
 	<style name="TextAppearance.TabPageIndicator" parent="@android:style/TextAppearance.Small"/>
 

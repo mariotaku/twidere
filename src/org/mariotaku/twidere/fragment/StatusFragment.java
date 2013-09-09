@@ -680,7 +680,9 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	}
 
 	private void addConversationStatus(final ParcelableStatus status) {
+		if (getActivity() == null || isDetached()) return;
 		final List<ParcelableStatus> data = getData();
+		if (data == null) return;
 		data.add(status);
 		final ParcelableStatusesAdapter adapter = (ParcelableStatusesAdapter) getListAdapter();
 		adapter.setData(data);

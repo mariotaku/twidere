@@ -395,10 +395,10 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			// TODO set activated account automatically
 			startActivityForResult(new Intent(INTENT_ACTION_SELECT_ACCOUNT), REQUEST_SELECT_ACCOUNT);
 		} else if (initial_tab >= 0) {
-			mViewPager.setCurrentItem(MathUtils.clamp(initial_tab, mViewPager.getChildCount(), 0));
+			mViewPager.setCurrentItem(MathUtils.clamp(initial_tab, mAdapter.getCount(), 0));
 		} else if (remember_position) {
 			final int position = mPreferences.getInt(PREFERENCE_KEY_SAVED_TAB_POSITION, TAB_POSITION_HOME);
-			mViewPager.setCurrentItem(MathUtils.clamp(position, mViewPager.getChildCount(), 0));
+			mViewPager.setCurrentItem(MathUtils.clamp(position, mAdapter.getCount(), 0));
 		}
 		if (refresh_on_start && savedInstanceState == null) {
 			mTwitterWrapper.refreshAll();
