@@ -321,11 +321,9 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 
 	protected final void removeUsers(final long... user_ids) {
 		if (user_ids == null || user_ids.length == 0) return;
-		final ArrayList<ParcelableUser> items_to_remove = new ArrayList<ParcelableUser>();
 		for (final long user_id : user_ids) {
-			items_to_remove.add(mAdapter.findItem(user_id));
+			mData.remove(mAdapter.findItem(user_id));
 		}
-		mData.removeAll(items_to_remove);
 		mAdapter.setData(mData, true);
 	}
 

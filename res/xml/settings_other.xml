@@ -28,10 +28,6 @@
 		android:key="no_close_after_tweet_sent"
 		android:summary="@string/no_close_after_tweet_sent_summary"
 		android:title="@string/no_close_after_tweet_sent"/>
-	<CheckBoxPreference
-		android:defaultValue="false"
-		android:key="disable_tab_swipe"
-		android:title="@string/disable_tab_swipe"/>
 
 	<Preference
 		android:key="data_profiling_settings"

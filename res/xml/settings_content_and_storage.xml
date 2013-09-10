@@ -18,6 +18,15 @@
 			android:singleLine="true"
 			android:summary="@string/image_upload_format_summary"
 			android:title="@string/image_upload_format"/>
+
+		<org.mariotaku.twidere.preference.ImagePreloadPreference
+			android:key="image_preload_options"
+			android:title="@string/image_preload_options"/>
+
+		<CheckBoxPreference
+			android:defaultValue="true"
+			android:key="preload_wifi_only"
+			android:title="@string/preload_wifi_only"/>
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="category_content"
@@ -53,15 +62,6 @@
 			android:summary="@string/load_more_automatically_summary"
 			android:title="@string/load_more_automatically"/>
 
-		<org.mariotaku.twidere.preference.ImagePreloadPreference
-			android:key="image_preload_options"
-			android:title="@string/image_preload_options"/>
-
-		<CheckBoxPreference
-			android:defaultValue="true"
-			android:key="preload_wifi_only"
-			android:title="@string/preload_wifi_only"/>
-
 		<org.mariotaku.twidere.preference.SeekBarDialogPreference
 			android:defaultValue="20"
 			android:key="load_item_limit"
@@ -75,27 +75,11 @@
 			android:key="remember_position"
 			android:summary="@string/remember_position_summary"
 			android:title="@string/remember_position"/>
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:key="sort_timeline_by_time"
-			android:summary="@string/sort_timeline_by_time_summary"
-			android:title="@string/sort_timeline_by_time"/>
 
 		<org.mariotaku.twidere.preference.TrendsLocationPreference
 			android:key="trends_location"
 			android:summary="@string/trends_location_summary"
 			android:title="@string/trends_location"/>
-
-		<CheckBoxPreference
-			android:defaultValue="true"
-			android:key="phishing_link_warning"
-			android:summary="@string/phishing_link_warning_summary"
-			android:title="@string/phishing_link_warning"/>
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:key="display_sensitive_contents"
-			android:summary="@string/display_sensitive_contents_summary"
-			android:title="@string/display_sensitive_contents"/>
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="category_storage"
@@ -120,6 +104,20 @@
 			android:key="clear_databases"
 			android:summary="@string/clear_databases_summary"
 			android:title="@string/clear_databases"/>
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:key="category_safety"
+		android:title="@string/safety">
+		<CheckBoxPreference
+			android:defaultValue="true"
+			android:key="phishing_link_warning"
+			android:summary="@string/phishing_link_warning_summary"
+			android:title="@string/phishing_link_warning"/>
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="display_sensitive_contents"
+			android:summary="@string/display_sensitive_contents_summary"
+			android:title="@string/display_sensitive_contents"/>
 	</PreferenceCategory>
 
 </PreferenceScreen>
