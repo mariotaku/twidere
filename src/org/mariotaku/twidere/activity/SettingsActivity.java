@@ -63,10 +63,10 @@ public class SettingsActivity extends BasePreferenceActivity implements OnShared
 		switch (item.getItemId()) {
 			case MENU_HOME: {
 				onBackPressed();
-				break;
+				return true;
 			}
 		}
-		return true;
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
