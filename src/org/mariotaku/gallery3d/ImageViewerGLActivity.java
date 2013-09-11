@@ -51,7 +51,7 @@ import android.widget.ShareActionProvider;
 
 public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implements Constants, PhotoView.Listener,
 		GLImageLoader.DownloadListener, LoaderManager.LoaderCallbacks<GLImageLoader.Result>, OnMenuVisibilityListener {
-	
+
 	private final GLView mRootPane = new GLView() {
 		@Override
 		protected void onLayout(final boolean changed, final int left, final int top, final int right, final int bottom) {
@@ -220,13 +220,10 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 				break;
 			}
 			case MENU_ACTIONS: {
-				final LoaderManager lm = getSupportLoaderManager();
-				if (!mImageLoaded && !lm.hasRunningLoaders()) {
-					loadImage();
-				} else if (!mImageLoaded && lm.hasRunningLoaders()) {
-					stopLoading();
-				} else if (mImageLoaded) {
+				if (mImageLoaded) {
 					new SaveImageTask(this, mImageFile).execute();
+				} else {
+					loadImage();
 				}
 				break;
 			}
@@ -258,10 +255,8 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 	public boolean onPrepareOptionsMenu(final Menu menu) {
 		final MenuItem itemActions = menu.findItem(MENU_ACTIONS);
 		final LoaderManager lm = getSupportLoaderManager();
-		if (lm.hasRunningLoaders()) {
-			itemActions.setTitle(android.R.string.cancel);
-			itemActions.setIcon(R.drawable.ic_menu_stop);
-		} else if (mImageLoaded) {
+		itemActions.setVisible(!lm.hasRunningLoaders());
+		if (mImageLoaded) {
 			itemActions.setTitle(R.string.save);
 			itemActions.setIcon(android.R.drawable.ic_menu_save);
 		} else {
@@ -436,14 +431,6 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 		mShowBars = true;
 		mActionBar.show();
 		refreshHidingMessage();
-	}
-
-	private void stopLoading() {
-		getSupportLoaderManager().destroyLoader(0);
-		if (!mImageLoaded) {
-			invalidateOptionsMenu();
-			mProgress.setVisibility(View.GONE);
-		}
 	}
 
 	private void toggleBars() {
