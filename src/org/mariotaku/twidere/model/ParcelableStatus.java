@@ -19,8 +19,6 @@
 
 package org.mariotaku.twidere.model;
 
-import static org.mariotaku.twidere.Constants.IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE;
-import static org.mariotaku.twidere.Constants.IMAGE_PREVIEW_DISPLAY_OPTION_CODE_SMALL;
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
 import static org.mariotaku.twidere.util.Utils.formatStatusText;
 import static org.mariotaku.twidere.util.Utils.getAsBoolean;
@@ -129,7 +127,7 @@ public class ParcelableStatus implements Parcelable, JSONParcelable, Comparable<
 		source = values.getAsString(Statuses.SOURCE);
 		retweet_count = getAsInteger(values, Statuses.RETWEET_COUNT, 0);
 		text_unescaped = values.getAsString(Statuses.TEXT_UNESCAPED);
-		final PreviewImage preview = PreviewImage.getPreviewImage(text_html, IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE);
+		final PreviewImage preview = PreviewImage.getPreviewImage(text_html, true);
 		has_media = preview != null;
 		image_preview_url = preview != null ? preview.image_preview_url : null;
 		image_original_url = preview != null ? preview.image_original_url : null;
@@ -156,7 +154,7 @@ public class ParcelableStatus implements Parcelable, JSONParcelable, Comparable<
 		retweeted_by_screen_name = indices.retweeted_by_screen_name != -1 ? cursor
 				.getString(indices.retweeted_by_screen_name) : null;
 		text_html = indices.text_html != -1 ? cursor.getString(indices.text_html) : null;
-		final PreviewImage preview = PreviewImage.getPreviewImage(text_html, IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE);
+		final PreviewImage preview = PreviewImage.getPreviewImage(text_html, true);
 		has_media = preview != null;
 		image_preview_url = preview != null ? preview.image_preview_url : null;
 		image_original_url = preview != null ? preview.image_original_url : null;
@@ -242,13 +240,8 @@ public class ParcelableStatus implements Parcelable, JSONParcelable, Comparable<
 		text_unescaped = in.readString();
 	}
 
-	public ParcelableStatus(final Status status, final long account_id, final boolean is_gap,
-			final boolean large_profile_image) {
-		this(status, account_id, is_gap, large_profile_image, true);
-	}
-
 	public ParcelableStatus(Status status, final long account_id, final boolean is_gap,
-			final boolean large_profile_image, final boolean large_image_preview) {
+			final boolean large_profile_image) {
 		this.is_gap = is_gap;
 		this.account_id = account_id;
 		id = status.getId();
@@ -276,9 +269,7 @@ public class ParcelableStatus implements Parcelable, JSONParcelable, Comparable<
 		user_is_verified = user != null ? user.isVerified() : false;
 		timestamp = getTime(status.getCreatedAt());
 		text_html = formatStatusText(status);
-		final PreviewImage preview = PreviewImage
-				.getPreviewImage(text_html, large_image_preview ? IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE
-						: IMAGE_PREVIEW_DISPLAY_OPTION_CODE_SMALL);
+		final PreviewImage preview = PreviewImage.getPreviewImage(text_html, true);
 		has_media = preview != null;
 		image_preview_url = preview != null ? preview.image_preview_url : null;
 		image_original_url = preview != null ? preview.image_original_url : null;

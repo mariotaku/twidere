@@ -28,14 +28,11 @@
 		android:key="display_profile_image"
 		android:summary="@string/image_load_summary"
 		android:title="@string/display_profile_image"/>
-
-	<ListPreference
-		android:defaultValue="none"
-		android:entries="@array/entries_image_preview_display_option"
-		android:entryValues="@array/values_image_preview_display_option"
-		android:key="image_preview_display_option"
-		android:title="@string/image_preview_display_option"/>
-
+	<CheckBoxPreference
+		android:defaultValue="false"
+		android:key="display_image_preview"
+		android:summary="@string/image_load_summary"
+		android:title="@string/display_image_preview"/>
 	<CheckBoxPreference
 		android:defaultValue="false"
 		android:key="link_highlighting"

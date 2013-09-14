@@ -23,7 +23,6 @@ import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
 import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 import static org.mariotaku.twidere.util.Utils.getDefaultTextSize;
-import static org.mariotaku.twidere.util.Utils.getImagePreviewDisplayOptionInt;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
@@ -74,7 +73,7 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 			setTextSize();
 		} else if (PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE.equals(key)) {
 			setProfileImage();
-		} else if (PREFERENCE_KEY_IMAGE_PREVIEW_DISPLAY_OPTION.equals(key)) {
+		} else if (PREFERENCE_KEY_DISPLAY_IMAGE_PREVIEW.equals(key)) {
 			setImagePreview();
 		} else if (PREFERENCE_KEY_SHOW_ABSOLUTE_TIME.equals(key)) {
 			setTime();
@@ -116,13 +115,9 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 
 	private void setImagePreview() {
 		if (mHolder == null) return;
-		final String option_string = mPreferences.getString(PREFERENCE_KEY_IMAGE_PREVIEW_DISPLAY_OPTION,
-				IMAGE_PREVIEW_DISPLAY_OPTION_NONE);
-		final int option = getImagePreviewDisplayOptionInt(option_string);
-		mHolder.image_preview_container.setVisibility(option != IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE ? View.VISIBLE
-				: View.GONE);
+		final boolean display = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_IMAGE_PREVIEW, false);
+		mHolder.image_preview_container.setVisibility(display ? View.VISIBLE : View.GONE);
 		mHolder.image_preview_progress.setVisibility(View.GONE);
-		mHolder.setImagePreviewDisplayOption(option);
 	}
 
 	private void setName() {
@@ -158,10 +153,11 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 		}
 		if (mPreferences.getBoolean(PREFERENCE_KEY_LINK_HIGHLIGHTING, false)) {
 			mHolder.text.setText(Html.fromHtml(TEXT_HTML));
-			mLinkify.applyAllLinks(mHolder.text, 0, false);
+			// TODO
+			// mLinkify.applyAllLinks(mHolder.text, 0, false);
 			mLinkify.applyUserProfileLink(mHolder.name, 0, 0, SCREEN_NAME);
 			mLinkify.applyUserProfileLink(mHolder.screen_name, 0, 0, SCREEN_NAME);
-			mHolder.text.setMovementMethod(null);
+			// mHolder.text.setMovementMethod(null);
 			mHolder.name.setMovementMethod(null);
 			mHolder.screen_name.setMovementMethod(null);
 		} else {

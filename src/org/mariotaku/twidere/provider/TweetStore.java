@@ -19,7 +19,14 @@
 
 package org.mariotaku.twidere.provider;
 
-import org.mariotaku.twidere.util.ArrayUtils;
+import org.mariotaku.querybuilder.Columns;
+import org.mariotaku.querybuilder.Columns.Column;
+import org.mariotaku.querybuilder.OrderBy;
+import org.mariotaku.querybuilder.SQLQueryBuilder;
+import org.mariotaku.querybuilder.Selectable;
+import org.mariotaku.querybuilder.Tables;
+import org.mariotaku.querybuilder.Where;
+import org.mariotaku.twidere.util.Utils;
 
 import android.content.ContentResolver;
 import android.net.Uri;
@@ -317,52 +324,60 @@ public final class TweetStore {
 
 				public static final String buildByConversationId(final String[] projection, final long account_id,
 						final long conversation_id, final String selection, final String sortOrder) {
-					final String projection_string = projection != null ? ArrayUtils.toString(projection, ',', false)
-							: "*";
-					final StringBuilder sql_builder = new StringBuilder();
-					sql_builder.append("SELECT " + projection_string);
-					sql_builder.append(" FROM " + Inbox.TABLE_NAME);
-					sql_builder.append(" WHERE " + DirectMessages.ACCOUNT_ID + " = " + account_id);
-					sql_builder.append(" AND " + DirectMessages.SENDER_ID + " = " + conversation_id);
+					final SQLQueryBuilder qb = new SQLQueryBuilder();
+					final Selectable select = Utils.getColumnsFromProjection(projection);
+					qb.select(select);
+					qb.from(new Tables(Inbox.TABLE_NAME));
+					final Where account_id_where = new Where(String.format("%s = %d", ACCOUNT_ID, account_id));
+					final Where sender_where = new Where(String.format("%s = %d", SENDER_ID, conversation_id))
+							.and(account_id_where);
+					final Where recipient_where = new Where(String.format("%s = %d", RECIPIENT_ID, conversation_id))
+							.and(account_id_where);
 					if (selection != null) {
-						sql_builder.append(" AND " + selection);
+						qb.where(new Where(selection).and(sender_where));
+					} else {
+						qb.where(sender_where);
 					}
-					sql_builder.append(" UNION ");
-					sql_builder.append("SELECT " + projection_string);
-					sql_builder.append(" FROM " + Outbox.TABLE_NAME);
-					sql_builder.append(" WHERE " + DirectMessages.ACCOUNT_ID + " = " + account_id);
-					sql_builder.append(" AND " + DirectMessages.RECIPIENT_ID + " = " + conversation_id);
+					qb.union();
+					qb.select(select);
+					qb.from(new Tables(Outbox.TABLE_NAME));
 					if (selection != null) {
-						sql_builder.append(" AND " + selection);
+						qb.where(new Where(selection).and(recipient_where));
+					} else {
+						qb.where(recipient_where);
 					}
-					sql_builder.append(" ORDER BY "
-							+ (sortOrder != null ? sortOrder : DirectMessages.Conversation.DEFAULT_SORT_ORDER));
-					return sql_builder.toString();
+					qb.orderBy(new OrderBy(sortOrder != null ? sortOrder
+							: DirectMessages.Conversation.DEFAULT_SORT_ORDER));
+					return qb.build().getSQL();
 				}
 
 				public static final String buildByScreenName(final String[] projection, final long account_id,
 						final String screen_name, final String selection, final String sortOrder) {
-					final String projection_string = projection != null ? ArrayUtils.toString(projection, ',', false)
-							: "*";
-					final StringBuilder sql_builder = new StringBuilder();
-					sql_builder.append("SELECT " + projection_string);
-					sql_builder.append(" FROM " + Inbox.TABLE_NAME);
-					sql_builder.append(" WHERE " + DirectMessages.ACCOUNT_ID + " = " + account_id);
-					sql_builder.append(" AND " + DirectMessages.SENDER_SCREEN_NAME + " = '" + screen_name + "'");
+					final SQLQueryBuilder qb = new SQLQueryBuilder();
+					final Selectable select = Utils.getColumnsFromProjection(projection);
+					qb.select(select);
+					qb.from(new Tables(Inbox.TABLE_NAME));
+					final Where account_id_where = new Where(String.format("%s = %d", ACCOUNT_ID, account_id));
+					final Where sender_where = new Where(String.format("%s = '%s'", SENDER_ID, screen_name))
+							.and(account_id_where);
+					final Where recipient_where = new Where(String.format("%s = '%s'", RECIPIENT_ID, screen_name))
+							.and(account_id_where);
 					if (selection != null) {
-						sql_builder.append(" AND " + selection);
+						qb.where(new Where(selection).and(sender_where));
+					} else {
+						qb.where(sender_where);
 					}
-					sql_builder.append(" UNION ");
-					sql_builder.append("SELECT " + projection_string);
-					sql_builder.append(" FROM " + Outbox.TABLE_NAME);
-					sql_builder.append(" WHERE " + DirectMessages.ACCOUNT_ID + " = " + account_id);
-					sql_builder.append(" AND " + DirectMessages.RECIPIENT_SCREEN_NAME + " = '" + screen_name + "'");
+					qb.union();
+					qb.select(select);
+					qb.from(new Tables(Outbox.TABLE_NAME));
 					if (selection != null) {
-						sql_builder.append(" AND " + selection);
+						qb.where(new Where(selection).and(recipient_where));
+					} else {
+						qb.where(recipient_where);
 					}
-					sql_builder.append(" ORDER BY "
-							+ (sortOrder != null ? sortOrder : DirectMessages.Conversation.DEFAULT_SORT_ORDER));
-					return sql_builder.toString();
+					qb.orderBy(new OrderBy(sortOrder != null ? sortOrder
+							: DirectMessages.Conversation.DEFAULT_SORT_ORDER));
+					return qb.build().getSQL();
 				}
 
 			}
@@ -395,40 +410,54 @@ public final class TweetStore {
 
 			public static class QueryBuilder {
 				public static String build(final String where) {
-					final StringBuilder builder = new StringBuilder();
-					builder.append("SELECT " + _ID + ", " + MESSAGE_TIMESTAMP + ", " + MESSAGE_ID + ", " + ACCOUNT_ID
-							+ ", " + IS_OUTGOING + ", " + NAME + ", " + SCREEN_NAME + ", " + PROFILE_IMAGE_URL + ", "
-							+ TEXT_HTML + ", " + CONVERSATION_ID);
-					builder.append(" FROM(");
-					builder.append("SELECT " + _ID + ", " + MESSAGE_TIMESTAMP + ", " + MESSAGE_ID + ", " + ACCOUNT_ID
-							+ ", " + "0 AS " + IS_OUTGOING + ", " + SENDER_NAME + " AS " + NAME + ", "
-							+ SENDER_SCREEN_NAME + " AS " + SCREEN_NAME + ", " + SENDER_PROFILE_IMAGE_URL + " AS "
-							+ PROFILE_IMAGE_URL + ", " + TEXT_HTML + ", " + SENDER_ID + " AS " + CONVERSATION_ID);
-					builder.append(" FROM " + Inbox.TABLE_NAME);
-					builder.append(" UNION ");
-					builder.append("SELECT " + _ID + ", " + MESSAGE_TIMESTAMP + ", " + MESSAGE_ID + ", " + ACCOUNT_ID
-							+ ", " + "1 AS " + IS_OUTGOING + ", " + RECIPIENT_NAME + " AS " + NAME + ", "
-							+ RECIPIENT_SCREEN_NAME + " AS " + SCREEN_NAME + ", " + RECIPIENT_PROFILE_IMAGE_URL
-							+ " AS " + PROFILE_IMAGE_URL + ", " + TEXT_HTML + ", " + RECIPIENT_ID + " AS "
-							+ CONVERSATION_ID);
-					builder.append(" FROM " + Outbox.TABLE_NAME);
-					builder.append(")");
-					builder.append(" WHERE ");
-					builder.append(MESSAGE_ID + " IN(");
-					builder.append("SELECT " + MESSAGE_ID + " FROM (" + " SELECT " + MESSAGE_ID + ", " + SENDER_ID
-							+ " AS " + CONVERSATION_ID + " FROM " + Inbox.TABLE_NAME + " WHERE " + MESSAGE_ID
-							+ " IN (SELECT " + "MAX(" + MESSAGE_ID + ") FROM " + Inbox.TABLE_NAME + " GROUP BY "
-							+ SENDER_ID + ")" + " UNION " + " SELECT " + MESSAGE_ID + ", " + RECIPIENT_ID + " AS "
-							+ CONVERSATION_ID + " FROM " + Outbox.TABLE_NAME + " WHERE " + MESSAGE_ID + " IN ("
-							+ " SELECT " + "MAX(" + MESSAGE_ID + ") FROM " + Outbox.TABLE_NAME + " GROUP BY "
-							+ RECIPIENT_ID + ")) " + " GROUP BY " + CONVERSATION_ID);
-					builder.append(")");
+					final SQLQueryBuilder qb = new SQLQueryBuilder();
+					qb.select(new Columns(new Column(_ID), new Column(MESSAGE_TIMESTAMP), new Column(MESSAGE_ID),
+							new Column(ACCOUNT_ID), new Column(IS_OUTGOING), new Column(NAME), new Column(SCREEN_NAME),
+							new Column(PROFILE_IMAGE_URL), new Column(TEXT_HTML), new Column(CONVERSATION_ID)));
+					final SQLQueryBuilder entry_ids = new SQLQueryBuilder();
+					entry_ids.select(new Columns(new Column(_ID), new Column(MESSAGE_TIMESTAMP),
+							new Column(MESSAGE_ID), new Column(ACCOUNT_ID), new Column("0", IS_OUTGOING), new Column(
+									SENDER_NAME, NAME), new Column(SENDER_SCREEN_NAME, SCREEN_NAME), new Column(
+									SENDER_PROFILE_IMAGE_URL, PROFILE_IMAGE_URL), new Column(TEXT_HTML), new Column(
+									SENDER_ID, CONVERSATION_ID)));
+					entry_ids.from(new Tables(Inbox.TABLE_NAME));
+					entry_ids.union();
+					entry_ids.select(new Columns(new Column(_ID), new Column(MESSAGE_TIMESTAMP),
+							new Column(MESSAGE_ID), new Column(ACCOUNT_ID), new Column("1", IS_OUTGOING), new Column(
+									RECIPIENT_NAME, NAME), new Column(RECIPIENT_SCREEN_NAME, SCREEN_NAME), new Column(
+									RECIPIENT_PROFILE_IMAGE_URL, PROFILE_IMAGE_URL), new Column(TEXT_HTML), new Column(
+									RECIPIENT_ID, CONVERSATION_ID)));
+					entry_ids.from(new Tables(Outbox.TABLE_NAME));
+					qb.from(entry_ids.build());
+					final SQLQueryBuilder recent_inbox_msg_ids = new SQLQueryBuilder()
+							.select(new Column("MAX(" + MESSAGE_ID + ")")).from(new Tables(Inbox.TABLE_NAME))
+							.groupBy(new Column(SENDER_ID));
+					final SQLQueryBuilder recent_outbox_msg_ids = new SQLQueryBuilder()
+							.select(new Column("MAX(" + MESSAGE_ID + ")")).from(new Tables(Outbox.TABLE_NAME))
+							.groupBy(new Column(RECIPIENT_ID));
+					final SQLQueryBuilder message_conversation_ids = new SQLQueryBuilder();
+					message_conversation_ids.select(new Columns(new Column(MESSAGE_ID), new Column(SENDER_ID,
+							CONVERSATION_ID)));
+					message_conversation_ids.from(new Tables(Inbox.TABLE_NAME));
+					message_conversation_ids.where(Where.in(new Column(MESSAGE_ID), recent_inbox_msg_ids.build()));
+					message_conversation_ids.union();
+					message_conversation_ids.select(new Columns(new Column(MESSAGE_ID), new Column(RECIPIENT_ID,
+							CONVERSATION_ID)));
+					message_conversation_ids.from(new Tables(Outbox.TABLE_NAME));
+					message_conversation_ids.where(Where.in(new Column(MESSAGE_ID), recent_outbox_msg_ids.build()));
+					final SQLQueryBuilder grouped_message_conversation_ids = new SQLQueryBuilder();
+					grouped_message_conversation_ids.select(new Column(MESSAGE_ID));
+					grouped_message_conversation_ids.from(message_conversation_ids.build());
+					grouped_message_conversation_ids.groupBy(new Column(CONVERSATION_ID));
+					final Where grouped_where = Where.in(new Column(MESSAGE_ID),
+							grouped_message_conversation_ids.build());
+					qb.where(grouped_where);
 					if (where != null) {
-						builder.append(" AND " + where);
+						grouped_where.and(new Where(where));
 					}
-					builder.append(" GROUP BY " + CONVERSATION_ID + ", " + ACCOUNT_ID);
-					builder.append(" ORDER BY " + MESSAGE_TIMESTAMP + " DESC");
-					return builder.toString();
+					qb.groupBy(Utils.getColumnsFromProjection(CONVERSATION_ID, ACCOUNT_ID));
+					qb.orderBy(new OrderBy(MESSAGE_TIMESTAMP + " DESC"));
+					return qb.build().getSQL();
 				}
 			}
 		}
@@ -455,21 +484,19 @@ public final class TweetStore {
 
 		public static final class QueryBuilder {
 			public static final String build(final String[] projection, final String selection, final String sortOrder) {
-				final String projection_string = projection != null ? ArrayUtils.toString(projection, ',', false) : "*";
-				final StringBuilder sql_builder = new StringBuilder();
-				sql_builder.append("SELECT " + projection_string);
-				sql_builder.append(" FROM " + Inbox.TABLE_NAME);
+				final SQLQueryBuilder qb = new SQLQueryBuilder();
+				final Selectable select = Utils.getColumnsFromProjection(projection);
+				qb.select(select).from(new Tables(Inbox.TABLE_NAME));
 				if (selection != null) {
-					sql_builder.append(" WHERE " + selection);
+					qb.where(new Where(selection));
 				}
-				sql_builder.append(" UNION ");
-				sql_builder.append("SELECT " + projection_string);
-				sql_builder.append(" FROM " + Outbox.TABLE_NAME);
+				qb.union();
+				qb.select(select).from(new Tables(Outbox.TABLE_NAME));
 				if (selection != null) {
-					sql_builder.append(" WHERE " + selection);
+					qb.where(new Where(selection));
 				}
-				sql_builder.append(" ORDER BY " + (sortOrder != null ? sortOrder : DirectMessages.DEFAULT_SORT_ORDER));
-				return sql_builder.toString();
+				qb.orderBy(new OrderBy(sortOrder != null ? sortOrder : DirectMessages.DEFAULT_SORT_ORDER));
+				return qb.build().getSQL();
 			}
 		}
 

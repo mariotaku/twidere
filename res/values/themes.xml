@@ -16,6 +16,8 @@
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@null</item>
 		<item name="contentBackground">#20808080</item>
+		<item name="cardListBackgroundColor">@color/bg_card_list_light</item>
+		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
 	</style>
 
 	<style name="Theme.Twidere.Dark" parent="android:Theme.Holo">
@@ -24,6 +26,8 @@
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView.Dark</item>
 		<item name="tabBackground">@null</item>
 		<item name="contentBackground">#20000000</item>
+		<item name="cardListBackgroundColor">@color/bg_card_list_dark</item>
+		<item name="cardItemBackground">@drawable/bg_card_item_dark</item>
 	</style>
 
 	<style name="Theme.Twidere.Light" parent="android:Theme.Holo.Light">
@@ -32,6 +36,8 @@
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView.Light</item>
 		<item name="tabBackground">@drawable/tab_background_dark</item>
 		<item name="contentBackground">#20808080</item>
+		<item name="cardListBackgroundColor">@color/bg_card_list_light</item>
+		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
 	</style>
 
 	<style name="Theme.Twidere.Light.DarkActionBar" parent="android:Theme.Holo.Light.DarkActionBar">
@@ -40,6 +46,8 @@
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView.Light.DarkActionBar</item>
 		<item name="tabBackground">@drawable/tab_background_dark</item>
 		<item name="contentBackground">#20808080</item>
+		<item name="cardListBackgroundColor">@color/bg_card_list_light</item>
+		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
 	</style>
 
 	<style name="Theme.Twidere.SolidBackground">
@@ -99,6 +107,7 @@
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@null</item>
 		<item name="contentBackground">#20000000</item>
+		<item name="cardItemBackground">@drawable/bg_card_item_dark</item>
 	</style>
 
 	<style name="Theme.Twidere.Light.Dialog" parent="android:Theme.Holo.Light.Dialog">
@@ -106,6 +115,7 @@
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@drawable/tab_background_dark</item>
 		<item name="contentBackground">#20808080</item>
+		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
 	</style>
 
 	<style name="Theme.Twidere.Compose">
@@ -160,6 +170,7 @@
 		<item name="android:windowContentOverlay">@null</item>
 		<item name="android:windowBackground">@android:color/black</item>
 		<item name="contentBackground">#20000000</item>
+		<item name="cardItemBackground">@drawable/bg_card_item_dark</item>
 	</style>
 
 	<style name="Theme.Test" parent="android:Theme.Holo"/>

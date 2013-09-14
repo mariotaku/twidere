@@ -21,10 +21,12 @@ package org.mariotaku.twidere.view;
 
 import static org.mariotaku.twidere.util.Utils.isRTL;
 
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.view.iface.IColorLabelView;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -34,10 +36,12 @@ import android.widget.RelativeLayout;
 
 public class ColorLabelRelativeLayout extends RelativeLayout implements IColorLabelView {
 
-	private final Paint mPaintLeft = new Paint(), mPaintRight = new Paint(), mPaintBackground = new Paint();
-	private final Rect mRectLeft = new Rect(), mRectRight = new Rect(), mRectBackground = new Rect();
+	private final Paint mPaintStart = new Paint(), mPaintEnd = new Paint(), mPaintBackground = new Paint();
+	private final Rect mRectStart = new Rect(), mRectEnd = new Rect(), mRectBackground = new Rect();
 	private final float mDensity;
 	private final boolean mIsRTL;
+
+	private boolean mIgnorePaddings;
 
 	public ColorLabelRelativeLayout(final Context context) {
 		this(context, null);
@@ -49,55 +53,73 @@ public class ColorLabelRelativeLayout extends RelativeLayout implements IColorLa
 
 	public ColorLabelRelativeLayout(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
+		final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.IColorLabelView);
+		mIgnorePaddings = a.getBoolean(R.styleable.IColorLabelView_ignorePaddings, false);
+		a.recycle();
 		final Resources res = context.getResources();
 		mDensity = res.getDisplayMetrics().density;
-		mPaintLeft.setColor(Color.TRANSPARENT);
-		mPaintRight.setColor(Color.TRANSPARENT);
+		mPaintStart.setColor(Color.TRANSPARENT);
+		mPaintEnd.setColor(Color.TRANSPARENT);
 		mPaintBackground.setColor(Color.TRANSPARENT);
 		mIsRTL = isRTL(context);
 	}
 
 	@Override
 	public void drawBackground(final int color) {
-		drawLabel(mPaintLeft.getColor(), mPaintRight.getColor(), color);
+		drawLabel(mPaintStart.getColor(), mPaintEnd.getColor(), color);
+	}
+
+	@Override
+	public void drawEnd(final int color) {
+		drawLabel(mPaintStart.getColor(), color, mPaintBackground.getColor());
 	}
 
 	@Override
 	public void drawLabel(final int left, final int right, final int background) {
 		mPaintBackground.setColor(background);
-		mPaintLeft.setColor(left);
-		mPaintRight.setColor(right);
+		mPaintStart.setColor(left);
+		mPaintEnd.setColor(right);
 		invalidate();
 	}
 
 	@Override
-	public void drawLeft(final int color) {
-		drawLabel(color, mPaintRight.getColor(), mPaintBackground.getColor());
+	public void drawStart(final int color) {
+		drawLabel(color, mPaintEnd.getColor(), mPaintBackground.getColor());
 	}
 
 	@Override
-	public void drawRight(final int color) {
-		drawLabel(mPaintLeft.getColor(), color, mPaintBackground.getColor());
+	public boolean isPaddingsIgnored() {
+		return mIgnorePaddings;
+	}
+
+	@Override
+	public void setIgnorePaddings(final boolean ignorePaddings) {
+		mIgnorePaddings = ignorePaddings;
+		invalidate();
 	}
 
 	@Override
 	protected void dispatchDraw(final Canvas canvas) {
 		canvas.drawRect(mRectBackground, mPaintBackground);
-		canvas.drawRect(mRectLeft, mPaintLeft);
-		canvas.drawRect(mRectRight, mPaintRight);
 		super.dispatchDraw(canvas);
+		canvas.drawRect(mRectStart, mPaintStart);
+		canvas.drawRect(mRectEnd, mPaintEnd);
 	}
 
 	@Override
 	protected void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
-		mRectBackground.set(0, 0, w, h);
-		if (mIsRTL) {
-			mRectRight.set(0, 0, (int) (LABEL_WIDTH * mDensity), h);
-			mRectLeft.set(w - (int) (LABEL_WIDTH * mDensity), 0, w, h);
+		final int pl, pt, pr, pb;
+		if (mIgnorePaddings) {
+			pl = pt = pr = pb = 0;
 		} else {
-			mRectLeft.set(0, 0, (int) (LABEL_WIDTH * mDensity), h);
-			mRectRight.set(w - (int) (LABEL_WIDTH * mDensity), 0, w, h);
+			pl = getPaddingLeft();
+			pt = getPaddingTop();
+			pr = getPaddingRight();
+			pb = getPaddingBottom();
 		}
+		mRectBackground.set(pl, pt, w - pr, h - pb);
+		(mIsRTL ? mRectEnd : mRectStart).set(pl, pt, (int) (LABEL_WIDTH * mDensity) + pl, h - pb);
+		(mIsRTL ? mRectStart : mRectEnd).set(w - (int) (LABEL_WIDTH * mDensity) - pr, pt, w - pr, h - pb);
 		super.onSizeChanged(w, h, oldw, oldh);
 	}
 }

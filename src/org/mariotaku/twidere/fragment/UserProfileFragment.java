@@ -311,8 +311,8 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		mUser = user;
 		mUserId = user.id;
 		mScreenName = user.screen_name;
-		mProfileNameContainer.drawLeft(getUserColor(getActivity(), mUserId));
-		mProfileNameContainer.drawRight(getAccountColor(getActivity(), user.account_id));
+		mProfileNameContainer.drawStart(getUserColor(getActivity(), mUserId));
+		mProfileNameContainer.drawEnd(getAccountColor(getActivity(), user.account_id));
 		mNameView.setText(user.name);
 		mNameView.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 				getUserTypeIconRes(user.is_verified, user.is_protected), 0);
@@ -445,7 +445,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				if (resultCode == Activity.RESULT_OK && intent != null) {
 					final int color = intent.getIntExtra(Accounts.USER_COLOR, Color.TRANSPARENT);
 					setUserColor(getActivity(), mUserId, color);
-					mProfileNameContainer.drawLeft(getUserColor(getActivity(), mUserId));
+					mProfileNameContainer.drawStart(getUserColor(getActivity(), mUserId));
 				}
 				break;
 			}
@@ -740,7 +740,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 			}
 			case MENU_CLEAR_COLOR: {
 				clearUserColor(getActivity(), mUserId);
-				mProfileNameContainer.drawLeft(getUserColor(getActivity(), mUserId));
+				mProfileNameContainer.drawStart(getUserColor(getActivity(), mUserId));
 				break;
 			}
 			case MENU_ADD_TO_LIST: {
@@ -791,7 +791,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		filter.addAction(BROADCAST_PROFILE_IMAGE_UPDATED);
 		filter.addAction(BROADCAST_PROFILE_BANNER_UPDATED);
 		registerReceiver(mStatusReceiver, filter);
-		mProfileNameContainer.drawLeft(getUserColor(getActivity(), mUserId));
+		mProfileNameContainer.drawStart(getUserColor(getActivity(), mUserId));
 	}
 
 	@Override

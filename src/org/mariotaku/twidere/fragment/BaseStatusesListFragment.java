@@ -130,6 +130,10 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		setListAdapter(null);
 		setListHeaderFooters(mListView);
 		setListAdapter(mAdapter);
+		mListView.setDivider(null);
+		final int listBackgroundColor = ThemeUtils.getCardListBackgroundColor(getActivity());
+		mListView.setBackgroundColor(listBackgroundColor);
+		mListView.setCacheColorHint(listBackgroundColor);
 		mListView.setOnItemLongClickListener(this);
 		setListShown(false);
 		getLoaderManager().initLoader(0, getArguments(), this);
@@ -333,8 +337,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
 		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(getActivity()));
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		final String image_preview_display_option = mPreferences.getString(PREFERENCE_KEY_IMAGE_PREVIEW_DISPLAY_OPTION,
-				IMAGE_PREVIEW_DISPLAY_OPTION_NONE);
+		final boolean display_image_preview = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_IMAGE_PREVIEW, false);
 		final boolean show_absolute_time = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false);
 		final boolean display_sensitive_contents = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS,
 				false);
@@ -347,7 +350,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		mAdapter.setTextSize(text_size);
 		mAdapter.setShowAbsoluteTime(show_absolute_time);
 		mAdapter.setNameDisplayOption(name_display_option);
-		mAdapter.setImagePreviewDisplayOption(image_preview_display_option);
+		mAdapter.setDisplayImagePreview(display_image_preview);
 		mAdapter.setDisplaySensitiveContents(display_sensitive_contents);
 		mAdapter.setLinkHightlightingEnabled(link_highlighting);
 		mAdapter.setIndicateMyStatusDisabled(isMyTimeline() || !indicate_my_status);

@@ -91,7 +91,7 @@ public class FiltersActivity extends BaseActivity implements TabListener, OnPage
 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
-		getMenuInflater().inflate(R.menu.menu_filter, menu);
+		getMenuInflater().inflate(R.menu.menu_filters, menu);
 		return true;
 	}
 
@@ -129,6 +129,12 @@ public class FiltersActivity extends BaseActivity implements TabListener, OnPage
 				editor.apply();
 				break;
 			}
+			case R.id.enable_for_rts: {
+				final SharedPreferences.Editor editor = mPreferences.edit();
+				editor.putBoolean(PREFERENCE_KEY_FILTERS_FOR_RTS, !item.isChecked());
+				editor.apply();
+				break;
+			}
 		}
 		return false;
 	}
@@ -152,8 +158,10 @@ public class FiltersActivity extends BaseActivity implements TabListener, OnPage
 	public boolean onPrepareOptionsMenu(final Menu menu) {
 		final boolean enable_in_home_timeline = mPreferences.getBoolean(PREFERENCE_KEY_FILTERS_IN_HOME_TIMELINE, true);
 		final boolean enable_in_mentions = mPreferences.getBoolean(PREFERENCE_KEY_FILTERS_IN_MENTIONS, true);
+		final boolean enable_for_rts = mPreferences.getBoolean(PREFERENCE_KEY_FILTERS_FOR_RTS, true);
 		menu.findItem(R.id.enable_in_home_timeline).setChecked(enable_in_home_timeline);
 		menu.findItem(R.id.enable_in_mentions).setChecked(enable_in_mentions);
+		menu.findItem(R.id.enable_for_rts).setChecked(enable_for_rts);
 		return true;
 	}
 

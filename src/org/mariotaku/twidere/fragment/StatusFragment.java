@@ -70,6 +70,7 @@ import org.mariotaku.twidere.util.HtmlEscapeHelper;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.TwidereLinkify;
+import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 import org.mariotaku.twidere.view.ExtendedFrameLayout;
 
@@ -410,7 +411,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mMenuBar.show();
 
 		updateUserColor();
-		mProfileView.drawRight(getAccountColor(getActivity(), status.account_id));
+		mProfileView.drawEnd(getAccountColor(getActivity(), status.account_id));
 
 		mNameView.setText(status.user_name);
 		mNameView.setCompoundDrawablesWithIntrinsicBounds(0, 0,
@@ -471,6 +472,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			mFollowIndicator.setVisibility(View.GONE);
 		}
 		updateConversationInfo();
+		scrollToTop();
 	}
 
 	@Override
@@ -775,7 +777,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	private void updateUserColor() {
 		if (mStatus == null) return;
-		mProfileView.drawLeft(getUserColor(getActivity(), mStatus.user_id));
+		mProfileView.drawStart(getUserColor(getActivity(), mStatus.user_id));
 	}
 
 	public static class LoadConversationTask extends AsyncTask<ParcelableStatus, Void, Response<Boolean>> {
@@ -1018,6 +1020,13 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			return view;
 		}
 
+	}
+
+	@Override
+	public void scrollToTop() {
+		if (mListView == null) return;
+		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();
+		Utils.scrollListToPosition(mListView, adapter.getCount() + mListView.getFooterViewsCount() - 1, 0);
 	}
 
 }

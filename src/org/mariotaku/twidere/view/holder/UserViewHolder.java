@@ -50,13 +50,13 @@ public class UserViewHolder {
 	}
 
 	public void setAccountColor(final int color) {
-		content.drawRight(account_color_enabled ? color : Color.TRANSPARENT);
+		content.drawEnd(account_color_enabled ? color : Color.TRANSPARENT);
 	}
 
 	public void setAccountColorEnabled(final boolean enabled) {
 		account_color_enabled = enabled;
 		if (!account_color_enabled) {
-			content.drawRight(Color.TRANSPARENT);
+			content.drawEnd(Color.TRANSPARENT);
 		}
 	}
 
@@ -78,7 +78,7 @@ public class UserViewHolder {
 	}
 
 	public void setUserColor(final int color) {
-		content.drawLeft(color);
+		content.drawStart(color);
 	}
 
 }

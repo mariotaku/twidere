@@ -35,6 +35,8 @@ public interface IStatusesAdapter<Data> extends IBaseAdapter {
 
 	public void setData(Data data);
 
+	public void setDisplayImagePreview(boolean display);
+
 	public void setDisplaySensitiveContents(boolean display);
 
 	public void setFiltersEnabled(boolean enabled);
@@ -42,8 +44,6 @@ public interface IStatusesAdapter<Data> extends IBaseAdapter {
 	public void setGapDisallowed(boolean disallowed);
 
 	public void setIgnoredFilterFields(boolean text_plain, boolean text_html, boolean screen_name, boolean source);
-
-	public void setImagePreviewDisplayOption(String option);
 
 	public void setIndicateMyStatusDisabled(boolean disable);
 

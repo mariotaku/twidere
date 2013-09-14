@@ -8,7 +8,7 @@ import android.os.Bundle;
 public class TestActivity extends Activity implements Constants {
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 	}
 

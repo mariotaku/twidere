@@ -47,11 +47,9 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> implemen
 	private final TwitterListResponse<twitter4j.Status>[] all_statuses;
 	private final ContentResolver resolver;
 	private final boolean large_profile_image;
-	private final Context context;
 
 	public CacheUsersStatusesTask(final Context context, final TwitterListResponse<twitter4j.Status>... all_statuses) {
 		resolver = context.getContentResolver();
-		this.context = context;
 		this.all_statuses = all_statuses;
 		large_profile_image = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
@@ -67,7 +65,6 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> implemen
 		final Set<Long> status_ids = new HashSet<Long>();
 		final Set<String> hashtags = new HashSet<String>();
 		final Set<User> users = new HashSet<User>();
-		final boolean large_preview_image = Utils.getImagePreviewDisplayOptionInt(context) == IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE;
 
 		for (final TwitterListResponse<twitter4j.Status> values : all_statuses) {
 			if (values == null || values.list == null) {
@@ -79,8 +76,7 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> implemen
 					continue;
 				}
 				status_ids.add(status.getId());
-				cached_statuses_values.add(makeStatusContentValues(status, values.account_id, large_profile_image,
-						large_preview_image));
+				cached_statuses_values.add(makeStatusContentValues(status, values.account_id, large_profile_image));
 				hashtags.addAll(extractor.extractHashtags(status.getText()));
 				final User user = status.getUser();
 				if (user != null && user.getId() > 0) {

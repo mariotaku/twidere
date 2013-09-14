@@ -26,7 +26,7 @@ public class DecodeUtils {
 	// if the bitmap will be uploaded to GL.
 	public static Bitmap ensureGLCompatibleBitmap(final Bitmap bitmap) {
 		if (bitmap == null || bitmap.getConfig() != null) return bitmap;
-		final Bitmap newBitmap = bitmap.copy(Config.ARGB_8888, false);
+		final Bitmap newBitmap = bitmap.copy(Config.RGB_565, false);
 		bitmap.recycle();
 		return newBitmap;
 	}

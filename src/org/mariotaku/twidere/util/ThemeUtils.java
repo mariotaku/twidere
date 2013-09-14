@@ -93,6 +93,13 @@ public class ThemeUtils implements Constants {
 		}
 		return ld;
 	}
+	
+	public static int getCardListBackgroundColor(final Context context) {
+		final TypedArray a = context.obtainStyledAttributes(new int[] { R.attr.cardListBackgroundColor });
+		final int color = a.getColor(0, Color.TRANSPARENT);
+		a.recycle();
+		return color;
+	}
 
 	public static int getComposeThemeResource(final Context context) {
 		return getComposeThemeResource(getThemeName(context));

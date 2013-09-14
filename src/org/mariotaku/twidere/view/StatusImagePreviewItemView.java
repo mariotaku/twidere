@@ -35,7 +35,7 @@ public class StatusImagePreviewItemView extends ClickableImageView {
 	public StatusImagePreviewItemView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		setAdjustViewBounds(true);
-		setScaleType(ScaleType.CENTER);
+		setScaleType(ScaleType.CENTER_CROP);
 	}
 
 	@Override

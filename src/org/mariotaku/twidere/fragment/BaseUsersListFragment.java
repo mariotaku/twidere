@@ -24,7 +24,6 @@ import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getDefaultTextSize;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 

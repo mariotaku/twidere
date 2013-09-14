@@ -19,7 +19,6 @@
 
 package org.mariotaku.twidere.loader;
 
-import static org.mariotaku.twidere.util.Utils.getImagePreviewDisplayOptionInt;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 
 import java.io.File;
@@ -52,7 +51,6 @@ public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 	private final long mAccountId;
 	private final long mMaxId, mSinceId;
 	private final boolean mHiResProfileImage;
-	private final boolean mLargeInlineImagePreview;
 	private final SQLiteDatabase mDatabase;
 	private final Handler mHandler;
 	private final Object[] mSavedStatusesFileArgs;
@@ -66,7 +64,6 @@ public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 		mMaxId = max_id;
 		mSinceId = since_id;
 		mHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
-		mLargeInlineImagePreview = getImagePreviewDisplayOptionInt(context) == IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE;
 		mDatabase = TwidereApplication.getInstance(context).getSQLiteDatabase();
 		mHandler = new Handler();
 		mSavedStatusesFileArgs = saved_statuses_args;
@@ -115,8 +112,7 @@ public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 			for (final Status status : statuses) {
 				final long id = status.getId();
 				deleteStatus(id);
-				data.add(new ParcelableStatus(status, mAccountId, min_status_id == id && insert_gap,
-						mHiResProfileImage, mLargeInlineImagePreview));
+				data.add(new ParcelableStatus(status, mAccountId, min_status_id == id && insert_gap, mHiResProfileImage));
 			}
 		}
 		try {

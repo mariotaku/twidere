@@ -45,7 +45,7 @@ public class AccountViewHolder {
 	}
 
 	public void setAccountColor(final int color) {
-		content.drawRight(color);
+		content.drawEnd(color);
 	}
 
 	public void setIsDefault(final boolean is_default) {

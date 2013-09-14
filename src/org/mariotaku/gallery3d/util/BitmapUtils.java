@@ -51,7 +51,7 @@ public class BitmapUtils {
 	private static Bitmap.Config getConfig(final Bitmap bitmap) {
 		Bitmap.Config config = bitmap.getConfig();
 		if (config == null) {
-			config = Bitmap.Config.ARGB_8888;
+			config = Bitmap.Config.RGB_565;
 		}
 		return config;
 	}

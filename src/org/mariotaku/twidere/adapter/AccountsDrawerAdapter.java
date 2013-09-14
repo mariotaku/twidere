@@ -133,7 +133,7 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 		view.setAlpha(account.is_activated ? ITEM_ACTIVATED_ALPHA : ITEM_INACTIVATED_ALPHA);
 		holder.name.setText(account.name);
 		holder.screen_name.setText("@" + account.screen_name);
-		holder.name_container.drawRight(account.user_color);
+		holder.name_container.drawEnd(account.user_color);
 		holder.expand_indicator.setImageResource(expander_res);
 		holder.default_indicator.setVisibility(mDefaultAccountId == account.account_id ? View.VISIBLE : View.GONE);
 		final int width = mBannerWidth > 0 ? mBannerWidth : mDefaultBannerWidth;

@@ -18,5 +18,11 @@
 		android:checked="true"
 		android:icon="@drawable/ic_menu_mention"
 		android:title="@string/enable_in_mentions"/>
+	<item
+		android:id="@+id/enable_for_rts"
+		android:checkable="true"
+		android:checked="true"
+		android:icon="@drawable/ic_menu_retweet"
+		android:title="@string/enable_for_rts"/>
 
 </menu>

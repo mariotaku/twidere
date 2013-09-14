@@ -140,6 +140,7 @@ public class GLImageLoader extends AsyncTaskLoader<GLImageLoader.Result> impleme
 		final String path = file.getAbsolutePath();
 		final BitmapFactory.Options o = new BitmapFactory.Options();
 		o.inJustDecodeBounds = true;
+		o.inPreferredConfig = Bitmap.Config.RGB_565;
 		BitmapFactory.decodeFile(path, o);
 		final int width = o.outWidth, height = o.outHeight;
 		if (width <= 0 || height <= 0) return Result.getInstance(mImageFile, null);
@@ -157,6 +158,7 @@ public class GLImageLoader extends AsyncTaskLoader<GLImageLoader.Result> impleme
 			final int height = decoder.getHeight();
 			final BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inSampleSize = BitmapUtils.computeSampleSize(mBackupSize / Math.max(width, height));
+			options.inPreferredConfig = Bitmap.Config.RGB_565;
 			final Bitmap bitmap = decoder.decodeRegion(new Rect(0, 0, width, height), options);
 			return Result.getInstance(decoder, bitmap, Exif.getOrientation(file), mImageFile);
 		} catch (final IOException e) {

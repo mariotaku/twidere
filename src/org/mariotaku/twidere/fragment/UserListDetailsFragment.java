@@ -136,7 +136,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		final boolean is_my_activated_account = isMyActivatedAccount(getActivity(), list.user_id);
 		mErrorRetryContainer.setVisibility(View.GONE);
 		mUserList = list;
-		mProfileContainer.drawRight(getAccountColor(getActivity(), list.account_id));
+		mProfileContainer.drawEnd(getAccountColor(getActivity(), list.account_id));
 		mListNameView.setText(list.name);
 		final boolean display_screen_name = getNameDisplayOptionInt(getActivity()) == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
 		final String name = display_screen_name ? "@" + list.user_screen_name : list.user_name;

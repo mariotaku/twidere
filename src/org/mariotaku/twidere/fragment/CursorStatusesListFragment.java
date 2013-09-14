@@ -25,6 +25,7 @@ import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getNewestStatusIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.getOldestStatusIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.getTableNameByUri;
+import static org.mariotaku.twidere.util.Utils.shouldEnableFiltersForRTs;
 
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.CursorStatusesAdapter;
@@ -83,8 +84,8 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 		final String table = getTableNameByUri(uri);
 		final String sort_by = Statuses.SORT_ORDER_STATUS_ID_DESC;
 		final String activated_where = buildActivatedStatsWhereClause(getActivity(), null);
-		final String where = isFiltersEnabled() ? buildStatusFilterWhereClause(table, activated_where)
-				: activated_where;
+		final String where = isFiltersEnabled() ? buildStatusFilterWhereClause(table, activated_where,
+				shouldEnableFiltersForRTs(getActivity())) : activated_where;
 		return new CursorLoader(getActivity(), uri, CURSOR_COLS, where, null, sort_by);
 	}
 

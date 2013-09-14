@@ -805,8 +805,9 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 
 	private boolean noReplyContent(final String text) {
 		if (text == null) return true;
-		return !INTENT_ACTION_EDIT_DRAFT.equals(getIntent().getAction()) && mInReplyToStatusId > 0
-				&& text.equals(mOriginalText);
+		final String action = getIntent().getAction();
+		final boolean is_reply = INTENT_ACTION_REPLY.equals(action) || INTENT_ACTION_REPLY_MULTIPLE.equals(action);
+		return is_reply && text.equals(mOriginalText);
 	}
 
 	private void openImageMenu() {
@@ -1075,6 +1076,10 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 
 	public static class ViewStatusDialogFragment extends BaseDialogFragment {
 
+		public ViewStatusDialogFragment() {
+			setStyle(STYLE_NO_TITLE, 0);
+		}
+
 		private StatusViewHolder mHolder;
 
 		@Override
@@ -1125,11 +1130,9 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 			} else {
 				mHolder.time.setText(getRelativeTimeSpanString(status.timestamp));
 			}
-			mHolder.time.setCompoundDrawablesWithIntrinsicBounds(
-					0,
-					0,
-					getStatusTypeIconRes(status.is_favorite, isValidLocation(status.location), status.has_media,
-							status.is_possibly_sensitive), 0);
+			final int type_icon = getStatusTypeIconRes(status.is_favorite, isValidLocation(status.location),
+					status.has_media, status.is_possibly_sensitive);
+			mHolder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, type_icon, 0);
 			mHolder.reply_retweet_status
 					.setVisibility(status.in_reply_to_status_id != -1 || status.is_retweet ? View.VISIBLE : View.GONE);
 			if (status.is_retweet && !TextUtils.isEmpty(retweeted_by_name)
@@ -1161,13 +1164,6 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 				mHolder.my_profile_image.setVisibility(View.GONE);
 			}
 			mHolder.image_preview_container.setVisibility(View.GONE);
-		}
-
-		@Override
-		public Dialog onCreateDialog(final Bundle savedInstanceState) {
-			final Dialog dialog = super.onCreateDialog(savedInstanceState);
-			dialog.setTitle(R.string.view_status);
-			return dialog;
 		}
 
 		@Override

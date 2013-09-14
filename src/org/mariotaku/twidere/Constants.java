@@ -133,7 +133,7 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_CLEAR_DATABASES = "clear_databases";
 	public static final String PREFERENCE_KEY_CLEAR_CACHE = "clear_cache";
 	public static final String PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE = "display_profile_image";
-	public static final String PREFERENCE_KEY_IMAGE_PREVIEW_DISPLAY_OPTION = "image_preview_display_option";
+	public static final String PREFERENCE_KEY_DISPLAY_IMAGE_PREVIEW = "display_image_preview";
 	public static final String PREFERENCE_KEY_BOTTOM_COMPOSE_BUTTON = "bottom_compose_button";
 	public static final String PREFERENCE_KEY_LEFTSIDE_COMPOSE_BUTTON = "leftside_compose_button";
 	public static final String PREFERENCE_KEY_BOTTOM_SEND_BUTTON = "bottom_send_button";
@@ -216,8 +216,9 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_SIGNING_OAUTH_BASE_URL = "signing_oauth_base_url";
 	public static final String PREFERENCE_KEY_AUTH_TYPE = "auth_type";
 	public static final String PREFERENCE_KEY_API_LAST_CHANGE = "api_last_change";
-	public static final String PREFERENCE_KEY_FILTERS_IN_HOME_TIMELINE = "enable_filters_in_home_timeline";
-	public static final String PREFERENCE_KEY_FILTERS_IN_MENTIONS = "enable_filters_in_mentions";
+	public static final String PREFERENCE_KEY_FILTERS_IN_HOME_TIMELINE = "filters_in_home_timeline";
+	public static final String PREFERENCE_KEY_FILTERS_IN_MENTIONS = "filters_in_mentions";
+	public static final String PREFERENCE_KEY_FILTERS_FOR_RTS = "filters_for_rts";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;
@@ -234,13 +235,6 @@ public interface Constants {
 	public static final int NAME_DISPLAY_OPTION_CODE_BOTH = 0;
 	public static final int NAME_DISPLAY_OPTION_CODE_NAME = 1;
 	public static final int NAME_DISPLAY_OPTION_CODE_SCREEN_NAME = 2;
-
-	public static final String IMAGE_PREVIEW_DISPLAY_OPTION_NONE = "none";
-	public static final String IMAGE_PREVIEW_DISPLAY_OPTION_LARGE = "large";
-	public static final String IMAGE_PREVIEW_DISPLAY_OPTION_SMALL = "small";
-	public static final int IMAGE_PREVIEW_DISPLAY_OPTION_CODE_NONE = 0;
-	public static final int IMAGE_PREVIEW_DISPLAY_OPTION_CODE_LARGE = 1;
-	public static final int IMAGE_PREVIEW_DISPLAY_OPTION_CODE_SMALL = 2;
 
 	public static final String COMPOSE_QUIT_ACTION_ASK = "ask";
 	public static final String COMPOSE_QUIT_ACTION_SAVE = "save";

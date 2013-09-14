@@ -25,9 +25,15 @@ public interface IColorLabelView {
 
 	public void drawBackground(final int color);
 
+	public void drawEnd(final int color);
+
 	public void drawLabel(final int left, final int right, final int background);
 
-	public void drawLeft(final int color);
+	public void drawStart(final int color);
 
-	public void drawRight(final int color);
+	public boolean isPaddingsIgnored();
+
+	public void setIgnorePaddings(final boolean ignorePaddings);
+
+	public void setVisibility(int visibility);
 }

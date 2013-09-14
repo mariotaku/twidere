@@ -207,7 +207,7 @@
 	<string name="item_1_hour">1 hour</string>
 	<string name="item_2_hours">2 hours</string>
 	<string name="item_4_hours">4 hours</string>
-	<string name="image_preview_display_option">Image preview display option</string>
+	<string name="display_image_preview">Display image preview</string>
 	<string name="solid_color_background">Solid color background</string>
 	<string name="solid_color_background_summary">This may be useful if screen of your device is AMOLED.</string>
 	<string name="following_you">Following you</string>
@@ -484,6 +484,7 @@
 	<string name="no_rule">No rule</string>
 	<string name="enable_in_mentions">Enable in mentions</string>
 	<string name="enable_in_home_timeline">Enable in home timeline</string>
+	<string name="enable_for_rts">Enable for RTs</string>
 	<string name="safety">Safety</string>
 
 </resources>
