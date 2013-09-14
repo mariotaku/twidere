@@ -31,11 +31,13 @@ import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.ParcelableUsersAdapter;
+import org.mariotaku.twidere.adapter.iface.IBaseAdapter.MenuButtonClickListener;
 import org.mariotaku.twidere.loader.DummyParcelableUsersLoader;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
+import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.Utils;
 
 import android.content.ActivityNotFoundException;
@@ -52,14 +54,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 abstract class BaseUsersListFragment extends BasePullToRefreshListFragment implements
-		LoaderCallbacks<List<ParcelableUser>>, OnScrollListener, OnItemLongClickListener, Panes.Left,
-		OnMenuItemClickListener, MultiSelectManager.Callback {
+		LoaderCallbacks<List<ParcelableUser>>, OnItemLongClickListener, Panes.Left, OnMenuItemClickListener,
+		MultiSelectManager.Callback, MenuButtonClickListener {
 
 	private static final long TICKER_DURATION = 5000L;
 
@@ -117,6 +118,7 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 		super.onActivityCreated(savedInstanceState);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mAdapter = new ParcelableUsersAdapter(getActivity());
+		mAdapter.setMenuButtonClickListener(this);
 		mMultiSelectManager = getMultiSelectManager();
 		mListView = getListView();
 		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
@@ -127,9 +129,11 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 			mData.clear();
 		}
 		mAccountId = account_id;
+		mListView.setDivider(null);
+		final int listBackgroundColor = ThemeUtils.getCardListBackgroundColor(getActivity());
+		mListView.setBackgroundColor(listBackgroundColor);
+		mListView.setCacheColorHint(listBackgroundColor);
 		mListView.setOnItemLongClickListener(this);
-		mListView.setOnScrollListener(this);
-		// setEnabled("from_end");
 		setListAdapter(mAdapter);
 		getLoaderManager().initLoader(0, getArguments(), this);
 		setListShown(false);
@@ -144,25 +148,10 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 
 	@Override
 	public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-		mSelectedUser = null;
 		final ParcelableUsersAdapter adapter = getListAdapter();
-		mSelectedUser = adapter.findItem(id);
-		if (mSelectedUser == null) return false;
-		final ParcelableUser user = mSelectedUser;
-		if (mMultiSelectManager.isActive()) {
-			setItemSelected(user, position, !mMultiSelectManager.isSelected(user));
-			return true;
-		}
-		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
-		mPopupMenu.inflate(R.menu.action_user);
-		final Menu menu = mPopupMenu.getMenu();
-		final Intent extensions_intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER);
-		final Bundle extensions_extras = new Bundle();
-		extensions_extras.putParcelable(INTENT_KEY_USER, user);
-		extensions_intent.putExtras(extensions_extras);
-		addIntentToMenu(getActivity(), menu, extensions_intent);
-		mPopupMenu.setOnMenuItemClickListener(this);
-		mPopupMenu.show();
+		final ParcelableUser user = adapter.findItem(id);
+		if (user == null) return false;
+		setItemSelected(user, position, !mMultiSelectManager.isSelected(user));
 		return true;
 	}
 
@@ -212,16 +201,19 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 	}
 
 	@Override
+	public void onMenuButtonClick(final View button, final int position, final long id) {
+		final ParcelableUser user = mAdapter.findItem(id);
+		if (user == null) return;
+		showMenu(button, user);
+	}
+
+	@Override
 	public boolean onMenuItemClick(final MenuItem item) {
 		if (mSelectedUser == null) return false;
 		final ParcelableUser user = mSelectedUser;
 		switch (item.getItemId()) {
 			case MENU_VIEW_PROFILE: {
 				openUserProfile(getActivity(), user);
-				break;
-			}
-			case MENU_MULTI_SELECT: {
-				setItemSelected(user, mAdapter.findItemPosition(user.id), !mMultiSelectManager.isSelected(user));
 				break;
 			}
 			default: {
@@ -333,5 +325,18 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 			mMultiSelectManager.unselectItem(user);
 		}
 		mListView.setItemChecked(position, selected);
+	}
+
+	private void showMenu(final View view, final ParcelableUser user) {
+		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
+		mPopupMenu.inflate(R.menu.action_user);
+		final Menu menu = mPopupMenu.getMenu();
+		final Intent extensions_intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER);
+		final Bundle extensions_extras = new Bundle();
+		extensions_extras.putParcelable(INTENT_KEY_USER, user);
+		extensions_intent.putExtras(extensions_extras);
+		addIntentToMenu(getActivity(), menu, extensions_intent);
+		mPopupMenu.setOnMenuItemClickListener(this);
+		mPopupMenu.show();
 	}
 }

@@ -2,10 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item
-		android:id="@id/view"
-		android:icon="@android:drawable/ic_menu_view"
-		android:title="@string/view"/>
-	<item
 		android:id="@id/reply"
 		android:icon="@drawable/ic_menu_reply"
 		android:title="@string/reply"/>
@@ -63,9 +59,5 @@
 		android:id="@id/load_from_position"
 		android:icon="@drawable/ic_menu_refresh"
 		android:title="@string/load_from_here"/>
-	<item
-		android:id="@id/multi_select"
-		android:icon="@drawable/ic_menu_mark"
-		android:title="@string/multi_select"/>
 
 </menu>

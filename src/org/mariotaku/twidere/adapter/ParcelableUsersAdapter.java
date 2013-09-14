@@ -39,9 +39,10 @@ import org.mariotaku.twidere.view.holder.UserViewHolder;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
-public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseAdapter {
+public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseAdapter, OnClickListener {
 
 	private final ImageLoaderWrapper mProfileImageLoader;
 	private final MultiSelectManager mMultiSelectManager;
@@ -51,6 +52,8 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 	private boolean mDisplayProfileImage, mShowAccountColor;
 	private float mTextSize;
 	private int mNameDisplayOption;
+
+	private MenuButtonClickListener mListener;
 
 	public ParcelableUsersAdapter(final Context context) {
 		super(context, R.layout.user_list_item);
@@ -76,6 +79,7 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 			holder = (UserViewHolder) tag;
 		} else {
 			holder = new UserViewHolder(view);
+			holder.item_menu.setOnClickListener(this);
 			view.setTag(holder);
 		}
 		final ParcelableUser user = getItem(position);
@@ -124,7 +128,23 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 		if (mDisplayProfileImage) {
 			mProfileImageLoader.displayProfileImage(holder.profile_image, user.profile_image_url);
 		}
+		holder.item_menu.setTag(position);
 		return view;
+	}
+
+	@Override
+	public void onClick(final View view) {
+		if (mMultiSelectManager.isActive()) return;
+		final Object tag = view.getTag();
+		final int position = tag instanceof Integer ? (Integer) tag : -1;
+		if (position == -1) return;
+		switch (view.getId()) {
+			case R.id.item_menu: {
+				if (position == -1 || mListener == null) return;
+				mListener.onMenuButtonClick(view, position, getItemId(position));
+				break;
+			}
+		}
 	}
 
 	public void setData(final List<ParcelableUser> data) {
@@ -152,6 +172,11 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 	}
 
 	@Override
+	public void setMenuButtonClickListener(final MenuButtonClickListener listener) {
+		mListener = listener;
+	}
+
+	@Override
 	public void setNameDisplayOption(final String option) {
 		if (NAME_DISPLAY_OPTION_NAME.equals(option)) {
 			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_NAME;
@@ -176,4 +201,5 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 			notifyDataSetChanged();
 		}
 	}
+
 }

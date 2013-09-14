@@ -25,7 +25,7 @@ import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
 import static org.mariotaku.twidere.util.Utils.getNameDisplayOptionInt;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
-import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
+import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.openUserListMembers;
 import static org.mariotaku.twidere.util.Utils.openUserListSubscribers;
 import static org.mariotaku.twidere.util.Utils.openUserListTimeline;
@@ -133,7 +133,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 	public void changeUserList(final ParcelableUserList list) {
 		if (list == null || getActivity() == null) return;
 		getLoaderManager().destroyLoader(0);
-		final boolean is_my_activated_account = isMyActivatedAccount(getActivity(), list.user_id);
+		final boolean is_myself = list.account_id == list.user_id;
 		mErrorRetryContainer.setVisibility(View.GONE);
 		mUserList = list;
 		mProfileContainer.drawEnd(getAccountColor(getActivity(), list.account_id));
@@ -142,8 +142,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		final String name = display_screen_name ? "@" + list.user_screen_name : list.user_name;
 		mCreatedByView.setText(getString(R.string.created_by, name));
 		final String description = list.description;
-		mDescriptionContainer
-				.setVisibility(is_my_activated_account || !isEmpty(description) ? View.VISIBLE : View.GONE);
+		mDescriptionContainer.setVisibility(is_myself || !isEmpty(description) ? View.VISIBLE : View.GONE);
 		mDescriptionContainer.setOnLongClickListener(this);
 		mDescriptionView.setText(description);
 		final TwidereLinkify linkify = new TwidereLinkify(new OnLinkClickHandler(getActivity()));
@@ -163,7 +162,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 	public void getUserListInfo(final boolean init, final long account_id, final int list_id, final String list_name,
 			final long user_id, final String screen_name) {
 		getLoaderManager().destroyLoader(0);
-		if (!isMyActivatedAccount(getActivity(), account_id)) {
+		if (!isMyAccount(getActivity(), account_id)) {
 			mListContainer.setVisibility(View.GONE);
 			mErrorRetryContainer.setVisibility(View.GONE);
 			return;

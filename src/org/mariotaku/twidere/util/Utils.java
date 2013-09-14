@@ -2012,35 +2012,6 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static boolean isMyActivatedAccount(final Context context, final long account_id) {
-		if (context == null || account_id <= 0) return false;
-		final ContentResolver resolver = context.getContentResolver();
-		final String where = Accounts.IS_ACTIVATED + " = 1 AND " + Accounts.ACCOUNT_ID + " = " + account_id;
-		final Cursor cur = resolver.query(Accounts.CONTENT_URI, new String[0], where, null, null);
-		try {
-			return cur != null && cur.getCount() > 0;
-		} finally {
-			if (cur != null) {
-				cur.close();
-			}
-		}
-	}
-
-	public static boolean isMyActivatedAccount(final Context context, final String screen_name) {
-		if (context == null) return false;
-		final ContentResolver resolver = context.getContentResolver();
-		final String where = Accounts.IS_ACTIVATED + " = 1 AND " + Accounts.SCREEN_NAME + " = ?";
-		final Cursor cur = resolver.query(Accounts.CONTENT_URI, new String[0], where, new String[] { screen_name },
-				null);
-		try {
-			return cur != null && cur.getCount() > 0;
-		} finally {
-			if (cur != null) {
-				cur.close();
-			}
-		}
-	}
-
 	public static boolean isMyRetweet(final ParcelableStatus status) {
 		if (status == null) return false;
 		return status.retweeted_by_id == status.account_id || status.my_retweet_id > 0;

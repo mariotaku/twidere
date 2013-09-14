@@ -20,7 +20,7 @@
 package org.mariotaku.twidere.view.holder;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
+import org.mariotaku.twidere.view.iface.IColorLabelView;
 
 import android.graphics.Color;
 import android.view.View;
@@ -32,12 +32,13 @@ public class UserViewHolder {
 	public final ImageView profile_image;
 	public final TextView name, screen_name, description, location, url, statuses_count, followers_count,
 			friends_count;
-	private final ColorLabelRelativeLayout content;
+	public final View item_menu;
+	private final IColorLabelView content;
 	private boolean account_color_enabled;
 	private float text_size;
 
 	public UserViewHolder(final View view) {
-		content = (ColorLabelRelativeLayout) view;
+		content = (IColorLabelView) view.findViewById(R.id.content);
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		name = (TextView) view.findViewById(R.id.name);
 		screen_name = (TextView) view.findViewById(R.id.screen_name);
@@ -47,6 +48,7 @@ public class UserViewHolder {
 		statuses_count = (TextView) view.findViewById(R.id.statuses_count);
 		followers_count = (TextView) view.findViewById(R.id.followers_count);
 		friends_count = (TextView) view.findViewById(R.id.friends_count);
+		item_menu = view.findViewById(R.id.item_menu);
 	}
 
 	public void setAccountColor(final int color) {

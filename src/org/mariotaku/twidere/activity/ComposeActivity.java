@@ -1076,11 +1076,11 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 
 	public static class ViewStatusDialogFragment extends BaseDialogFragment {
 
+		private StatusViewHolder mHolder;
+
 		public ViewStatusDialogFragment() {
 			setStyle(STYLE_NO_TITLE, 0);
 		}
-
-		private StatusViewHolder mHolder;
 
 		@Override
 		public void onActivityCreated(final Bundle savedInstanceState) {

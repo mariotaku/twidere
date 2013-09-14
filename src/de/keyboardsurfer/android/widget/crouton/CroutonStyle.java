@@ -48,7 +48,7 @@ public class CroutonStyle {
 
 	/**
 	 * The {@link CroutonConfiguration} for this {@link CroutonStyle}. It can be
-	 * overridden via {@link Crouton#setConfiguration(Configuration)}.
+	 * overridden via {@link Crouton#setConfiguration(CroutonConfiguration)}.
 	 */
 	final CroutonConfiguration configuration;
 

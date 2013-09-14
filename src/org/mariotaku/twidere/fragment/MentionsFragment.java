@@ -39,9 +39,8 @@ public class MentionsFragment extends CursorStatusesListFragment {
 			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
 			if (BROADCAST_MENTIONS_REFRESHED.equals(action)) {
-				// setRefreshComplete();
-				// getLoaderManager().restartLoader(0, null,
-				// MentionsFragment.this);
+				setRefreshComplete();
+				getLoaderManager().restartLoader(0, null, MentionsFragment.this);
 			} else if (BROADCAST_MENTIONS_DATABASE_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, MentionsFragment.this);
 			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {

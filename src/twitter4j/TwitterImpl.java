@@ -839,8 +839,8 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 		return factory.createStatusList(get(
 				conf.getRestBaseURL() + ENDPOINT_LISTS_STATUSES,
 				conf.getSigningRestBaseURL() + ENDPOINT_LISTS_STATUSES,
-				mergeParameters(paging.asPostParameterArray(Paging.SMCP, Paging.PER_PAGE), new HttpParameter("list_id",
-						listId), INCLUDE_ENTITIES, INCLUDE_RTS)));
+				mergeParameters(paging.asPostParameterArray(), new HttpParameter("list_id", listId), INCLUDE_ENTITIES,
+						INCLUDE_RTS)));
 	}
 
 	@Override
@@ -849,21 +849,19 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 		return factory.createStatusList(get(
 				conf.getRestBaseURL() + ENDPOINT_LISTS_STATUSES,
 				conf.getSigningRestBaseURL() + ENDPOINT_LISTS_STATUSES,
-				mergeParameters(paging.asPostParameterArray(Paging.SMCP, Paging.PER_PAGE), new HttpParameter("slug",
-						slug), new HttpParameter("owner_id", ownerId), INCLUDE_ENTITIES, INCLUDE_RTS)));
+				mergeParameters(paging.asPostParameterArray(), new HttpParameter("slug", slug), new HttpParameter(
+						"owner_id", ownerId), INCLUDE_ENTITIES, INCLUDE_RTS)));
 
 	}
 
 	@Override
 	public ResponseList<Status> getUserListStatuses(final String slug, final String ownerScreenName, final Paging paging)
 			throws TwitterException {
-		return factory
-				.createStatusList(get(
-						conf.getRestBaseURL() + ENDPOINT_LISTS_STATUSES,
-						conf.getSigningRestBaseURL() + ENDPOINT_LISTS_STATUSES,
-						mergeParameters(paging.asPostParameterArray(Paging.SMCP, Paging.PER_PAGE), new HttpParameter(
-								"slug", slug), new HttpParameter("owner_screen_name", ownerScreenName),
-								INCLUDE_ENTITIES, INCLUDE_RTS)));
+		return factory.createStatusList(get(
+				conf.getRestBaseURL() + ENDPOINT_LISTS_STATUSES,
+				conf.getSigningRestBaseURL() + ENDPOINT_LISTS_STATUSES,
+				mergeParameters(paging.asPostParameterArray(), new HttpParameter("slug", slug), new HttpParameter(
+						"owner_screen_name", ownerScreenName), INCLUDE_ENTITIES, INCLUDE_RTS)));
 	}
 
 	@Override

@@ -60,6 +60,8 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 	private boolean mDisplayProfileImage;
 	private float mTextSize;
 
+	private MenuButtonClickListener mListener;
+
 	public DirectMessagesConversationAdapter(final Context context) {
 		super(context, R.layout.direct_message_list_item, null, new String[0], new int[0], 0);
 		mContext = context;
@@ -161,14 +163,22 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 	public void onClick(final View view) {
 		if (mMultiSelectManager.isActive()) return;
 		final Object tag = view.getTag();
-		final ParcelableDirectMessage status = tag instanceof Integer ? getDirectMessage((Integer) tag) : null;
-		if (status == null) return;
+		final int position = tag instanceof Integer ? (Integer) tag : -1;
+		if (position == -1) return;
 		switch (view.getId()) {
 			case R.id.profile_image_left:
 			case R.id.profile_image_right: {
+				final ParcelableDirectMessage message = getDirectMessage(position);
+				if (message == null) return;
 				if (mContext instanceof Activity) {
-					openUserProfile((Activity) mContext, status.account_id, status.sender_id, status.sender_screen_name);
+					openUserProfile((Activity) mContext, message.account_id, message.sender_id,
+							message.sender_screen_name);
 				}
+				break;
+			}
+			case R.id.item_menu: {
+				if (position == -1 || mListener == null) return;
+				mListener.onMenuButtonClick(view, position, getItemId(position));
 				break;
 			}
 		}
@@ -180,6 +190,11 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
 		}
+	}
+
+	@Override
+	public void setMenuButtonClickListener(final MenuButtonClickListener listener) {
+		mListener = listener;
 	}
 
 	@Override

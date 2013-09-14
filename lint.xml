@@ -10,6 +10,7 @@
     <issue id="NewApi">
         <ignore path="res/values/holo__styles.xml" />
         <ignore path="res/values/popup__styles.xml" />
+        <ignore path="res/values/styles.xml" />
         <ignore path="src/org/mariotaku/twidere/activity/SettingsDetailsActivity.java" />
     </issue>
     <issue id="UseSparseArrays">

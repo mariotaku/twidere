@@ -60,6 +60,8 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 	private float mTextSize;
 	private int mNameDisplayOption;
 
+	private MenuButtonClickListener mListener;
+
 	public DirectMessagesEntryAdapter(final Context context) {
 		super(context, R.layout.direct_messages_entry_list_item, null, new String[0], new int[0], 0);
 		final TwidereApplication app = TwidereApplication.getInstance(context);
@@ -166,6 +168,11 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 				}
 				break;
 			}
+			case R.id.item_menu: {
+				if (position == -1 || mListener == null) return;
+				mListener.onMenuButtonClick(view, position, getItemId(position));
+				break;
+			}
 		}
 	}
 
@@ -175,6 +182,11 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
 		}
+	}
+
+	@Override
+	public void setMenuButtonClickListener(final MenuButtonClickListener listener) {
+		mListener = listener;
 	}
 
 	@Override

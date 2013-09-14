@@ -31,7 +31,7 @@ import android.widget.ImageView;
 
 public class ClickableImageView extends ImageView {
 
-	private final int mHightlightColor;
+	private final int mHighlightColor;
 	private final Rect mRect;
 	private boolean mIsDown;
 
@@ -46,7 +46,7 @@ public class ClickableImageView extends ImageView {
 	public ClickableImageView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		final int color = ThemeUtils.getThemeColor(context);
-		mHightlightColor = Color.argb(0x80, Color.red(color), Color.green(color), Color.blue(color));
+		mHighlightColor = Color.argb(0x80, Color.red(color), Color.green(color), Color.blue(color));
 		mRect = new Rect();
 	}
 
@@ -58,11 +58,6 @@ public class ClickableImageView extends ImageView {
 				mIsDown = true;
 				invalidate();
 				break;
-			case MotionEvent.ACTION_CANCEL:
-			case MotionEvent.ACTION_UP:
-				mIsDown = false;
-				invalidate();
-				break;
 			case MotionEvent.ACTION_MOVE:
 				if (mRect.contains(getLeft() + (int) e.getX(), getTop() + (int) e.getY())) {
 					break;
@@ -72,6 +67,10 @@ public class ClickableImageView extends ImageView {
 					invalidate();
 				}
 				break;
+			default:
+				mIsDown = false;
+				invalidate();
+				break;
 		}
 		return super.onTouchEvent(e);
 	}
@@ -80,7 +79,7 @@ public class ClickableImageView extends ImageView {
 	protected void onDraw(final Canvas canvas) {
 		super.onDraw(canvas);
 		if (mIsDown && isClickable() && isEnabled()) {
-			canvas.drawColor(mHightlightColor);
+			canvas.drawColor(mHighlightColor);
 		}
 	}
 

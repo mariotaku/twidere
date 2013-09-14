@@ -72,13 +72,13 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	private final SQLiteDatabase mDatabase;
 	private final Map<View, String> mLoadingViewsMap = new HashMap<View, String>();
 
+	private MenuButtonClickListener mListener;
 	private boolean mDisplayProfileImage, mDisplayImagePreview, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed,
 			mMentionsHighlightDisabled, mDisplaySensitiveContents, mIndicateMyStatusDisabled, mLinkHighlightingEnabled,
 			mIsLastItemFiltered, mFiltersEnabled;
 	private float mTextSize;
 	private int mNameDisplayOption, mLinkHighlightStyle;
 	private boolean mFilterIgnoreSource, mFilterIgnoreScreenName, mFilterIgnoreTextHtml, mFilterIgnoreTextPlain;
-	
 	private int mLastPosition;
 
 	public ParcelableStatusesAdapter(final Context context) {
@@ -143,6 +143,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			holder.profile_image.setOnClickListener(this);
 			holder.my_profile_image.setOnClickListener(this);
 			holder.image_preview.setOnClickListener(this);
+			holder.item_menu.setOnClickListener(this);
 			view.setTag(holder);
 		}
 
@@ -229,6 +230,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 				}
 				holder.image_preview.setTag(position);
 			}
+			holder.item_menu.setTag(position);
 		}
 		if (position > mLastPosition) {
 			view.startAnimation(new CardItemAnimation());
@@ -246,10 +248,12 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	public void onClick(final View view) {
 		if (mMultiSelectManager.isActive()) return;
 		final Object tag = view.getTag();
-		final ParcelableStatus status = tag instanceof Integer ? getStatus((Integer) tag) : null;
-		if (status == null) return;
+		final int position = tag instanceof Integer ? (Integer) tag : -1;
+		if (position == -1) return;
 		switch (view.getId()) {
 			case R.id.image_preview: {
+				final ParcelableStatus status = getStatus(position);
+				if (status == null) return;
 				final PreviewImage spec = PreviewImage.getAllAvailableImage(status.image_original_url);
 				if (spec != null) {
 					openImage(mContext, spec.image_full_url, spec.image_original_url, status.is_possibly_sensitive);
@@ -260,9 +264,16 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			}
 			case R.id.my_profile_image:
 			case R.id.profile_image: {
+				final ParcelableStatus status = getStatus(position);
+				if (status == null) return;
 				if (mContext instanceof Activity) {
 					openUserProfile((Activity) mContext, status.account_id, status.user_id, status.user_screen_name);
 				}
+				break;
+			}
+			case R.id.item_menu: {
+				if (position == -1 || mListener == null) return;
+				mListener.onMenuButtonClick(view, position, getItemId(position));
 				break;
 			}
 		}
@@ -412,6 +423,11 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		if (disable == mMentionsHighlightDisabled) return;
 		mMentionsHighlightDisabled = disable;
 		notifyDataSetChanged();
+	}
+
+	@Override
+	public void setMenuButtonClickListener(final MenuButtonClickListener listener) {
+		mListener = listener;
 	}
 
 	@Override

@@ -31,7 +31,6 @@ import static org.mariotaku.twidere.util.Utils.getImagesInStatus;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
-import static org.mariotaku.twidere.util.Utils.isMyActivatedAccount;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.isSameAccount;
 import static org.mariotaku.twidere.util.Utils.openImage;
@@ -499,6 +498,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 		mImagePreviewAdapter = new PreviewPagerAdapter(getActivity());
 		setPullToRefreshEnabled(false);
+		getPullToRefreshAttacher().setEnabled(false);
 		final Bundle bundle = getArguments();
 		if (bundle != null) {
 			mAccountId = bundle.getLong(INTENT_KEY_ACCOUNT_ID);
@@ -664,6 +664,13 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	public void onStop() {
 		unregisterReceiver(mStatusReceiver);
 		super.onStop();
+	}
+
+	@Override
+	public void scrollToTop() {
+		if (mListView == null) return;
+		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();
+		Utils.scrollListToPosition(mListView, adapter.getCount() + mListView.getFooterViewsCount() - 1, 0);
 	}
 
 	@Override
@@ -960,7 +967,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 		private Response<Boolean> isAllFollowing() {
 			if (status == null) return new Response<Boolean>(null, null);
-			if (isMyActivatedAccount(context, status.user_id)) return new Response<Boolean>(true, null);
+			if (status.user_id == status.account_id) return new Response<Boolean>(true, null);
 			final Twitter twitter = getTwitterInstance(context, status.account_id, false);
 			if (twitter == null) return new Response<Boolean>(null, null);
 			try {
@@ -1020,13 +1027,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			return view;
 		}
 
-	}
-
-	@Override
-	public void scrollToTop() {
-		if (mListView == null) return;
-		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();
-		Utils.scrollListToPosition(mListView, adapter.getCount() + mListView.getFooterViewsCount() - 1, 0);
 	}
 
 }

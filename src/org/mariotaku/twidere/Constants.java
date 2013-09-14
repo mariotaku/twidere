@@ -181,7 +181,6 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_COMPOSE_ACCOUNTS = "compose_accounts";
 	public static final String PREFERENCE_KEY_TCP_DNS_QUERY = "tcp_dns_query";
 	public static final String PREFERENCE_KEY_DNS_SERVER = "dns_server";
-	public static final String PREFERENCE_KEY_CLICK_TO_OPEN_MENU = "click_to_open_menu";
 	public static final String PREFERENCE_KEY_SEPARATE_RETWEET_ACTION = "separate_retweet_action";
 	public static final String PREFERENCE_KEY_API_UPGRADE_CONFIRMED = "api_upgrade_confirmed";
 	public static final String PREFERENCE_KEY_CONNECTION_TIMEOUT = "connection_timeout";

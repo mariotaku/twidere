@@ -47,30 +47,27 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment implements
-		LoaderCallbacks<List<ParcelableUserList>>, OnItemClickListener, OnScrollListener, OnItemLongClickListener,
-		Panes.Left, OnMenuItemClickListener {
+		LoaderCallbacks<List<ParcelableUserList>>, OnItemClickListener, OnItemLongClickListener, Panes.Left,
+		OnMenuItemClickListener {
 
 	private ParcelableUserListsAdapter mAdapter;
 
 	private SharedPreferences mPreferences;
-	private boolean mLoadMoreAutomatically;
 	private ListView mListView;
+	private PopupMenu mPopupMenu;
+
 	private long mAccountId, mUserId;
 	private String mScreenName;
 	private final ArrayList<ParcelableUserList> mData = new ArrayList<ParcelableUserList>();
-	private volatile boolean mReachedBottom, mNotReachedBottomBefore = true;
-
-	private PopupMenu mPopupMenu;
 	private ParcelableUserList mSelectedUserList;
-
 	private long mCursor = -1;
+	private boolean mLoadMoreAutomatically;
 
 	private TwidereApplication mApplication;
 
@@ -99,6 +96,19 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 		return mUserId;
 	}
 
+	public void loadMoreUserLists() {
+		final int count = mAdapter.getCount();
+		if (count - 1 > 0) {
+			final Bundle args = getArguments();
+			if (args != null) {
+				args.putLong(INTENT_KEY_MAX_ID, mAdapter.getItem(count - 1).user_id);
+			}
+			if (!getLoaderManager().hasRunningLoaders()) {
+				getLoaderManager().restartLoader(0, args, this);
+			}
+		}
+	}
+
 	public abstract Loader<List<ParcelableUserList>> newLoaderInstance(long account_id, long user_id, String screen_name);
 
 	@Override
@@ -123,7 +133,6 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 		mAccountId = account_id;
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
-		mListView.setOnScrollListener(this);
 		setListAdapter(mAdapter);
 		getLoaderManager().initLoader(0, getArguments(), this);
 		setListShown(false);
@@ -206,19 +215,6 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 		return true;
 	}
 
-	public void onPullUpToRefresh() {
-		final int count = mAdapter.getCount();
-		if (count - 1 > 0) {
-			final Bundle args = getArguments();
-			if (args != null) {
-				args.putLong(INTENT_KEY_MAX_ID, mAdapter.getItem(count - 1).user_id);
-			}
-			// if (!getLoaderManager().hasRunningLoaders()) {
-			getLoaderManager().restartLoader(0, args, this);
-			// }
-		}
-	}
-
 	@Override
 	public void onRefreshStarted() {
 		super.onRefreshStarted();
@@ -226,32 +222,8 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 	}
 
 	@Override
-	public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
-			final int totalItemCount) {
-		final boolean reached = firstVisibleItem + visibleItemCount >= totalItemCount
-				&& totalItemCount >= visibleItemCount;
-
-		if (mReachedBottom != reached) {
-			mReachedBottom = reached;
-			if (mReachedBottom && mNotReachedBottomBefore) {
-				mNotReachedBottomBefore = false;
-				return;
-			}
-			final int count = mAdapter.getCount();
-			if (mLoadMoreAutomatically && mReachedBottom && count > visibleItemCount) {
-				onPullUpToRefresh();
-			}
-		}
-
-	}
-
-	@Override
-	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
-	}
-
-	@Override
-	public void onStart() {
-		super.onStart();
+	public void onResume() {
+		super.onResume();
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(getActivity()));
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
@@ -260,11 +232,27 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 	}
 
 	@Override
+	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
+	}
+
+	@Override
 	public void onStop() {
 		if (mPopupMenu != null) {
 			mPopupMenu.dismiss();
 		}
 		super.onStop();
+	}
+
+	@Override
+	protected void onPullUp() {
+		if (mLoadMoreAutomatically) return;
+		loadMoreUserLists();
+	}
+
+	@Override
+	protected void onReachedBottom() {
+		if (!mLoadMoreAutomatically) return;
+		loadMoreUserLists();
 	}
 
 }

@@ -51,6 +51,8 @@ public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList>
 	private float mTextSize;
 	private boolean mDisplayName;
 
+	private MenuButtonClickListener mListener;
+
 	public ParcelableUserListsAdapter(final Context context) {
 		super(context, R.layout.user_list_list_item);
 		mContext = context;
@@ -130,6 +132,11 @@ public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList>
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
 		}
+	}
+
+	@Override
+	public void setMenuButtonClickListener(final MenuButtonClickListener listener) {
+		mListener = listener;
 	}
 
 	@Override

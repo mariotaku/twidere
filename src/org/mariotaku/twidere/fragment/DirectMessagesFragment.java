@@ -49,11 +49,9 @@ import android.support.v4.content.Loader;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListView;
 
-public class DirectMessagesFragment extends BasePullToRefreshListFragment implements LoaderCallbacks<Cursor>,
-		OnScrollListener {
+public class DirectMessagesFragment extends BasePullToRefreshListFragment implements LoaderCallbacks<Cursor> {
 
 	private static final long TICKER_DURATION = 5000L;
 
@@ -105,7 +103,6 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 		mAdapter = new DirectMessagesEntryAdapter(getActivity());
 		setListAdapter(mAdapter);
 		mListView = getListView();
-		mListView.setOnScrollListener(this);
 		getLoaderManager().initLoader(0, null, this);
 		setListShown(false);
 	}

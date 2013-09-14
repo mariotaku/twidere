@@ -37,6 +37,14 @@
 		<item name="android:background">?android:attr/selectableItemBackground</item>
 	</style>
 
+	<style name="Widget.Twidere.TextView" parent="android:Widget.Holo.TextView">
+		<item name="android:fontFamily">sans-serif-light</item>
+	</style>
+
+	<style name="Widget.Twidere.Light.TextView" parent="android:Widget.Holo.Light.TextView">
+		<item name="android:fontFamily">sans-serif-light</item>
+	</style>
+
 	<style name="Animation.SwipeBack" parent="android:Animation.Activity">
 		<item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>
 		<item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>

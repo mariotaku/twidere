@@ -93,7 +93,7 @@ public class ThemeUtils implements Constants {
 		}
 		return ld;
 	}
-	
+
 	public static int getCardListBackgroundColor(final Context context) {
 		final TypedArray a = context.obtainStyledAttributes(new int[] { R.attr.cardListBackgroundColor });
 		final int color = a.getColor(0, Color.TRANSPARENT);
@@ -117,6 +117,15 @@ public class ThemeUtils implements Constants {
 	public static int getDialogThemeResource(final String name) {
 		final Integer res = THEMES_DIALOG.get(name);
 		return res != null ? res : R.style.Theme_Twidere_Dark_Dialog;
+	}
+
+	public static Drawable getListMenuOverflowButtonDrawable(final Context context) {
+		final TypedArray a = context.obtainStyledAttributes(new int[] { R.attr.listMenuOverflowButton });
+		final Drawable d = a.getDrawable(0);
+		a.recycle();
+		if (d == null)
+			return context.getResources().getDrawable(R.drawable.ic_list_menu_moreoverflow_normal_holo_light);
+		return d;
 	}
 
 	public static int getSwipeBackThemeResource(final Context context) {

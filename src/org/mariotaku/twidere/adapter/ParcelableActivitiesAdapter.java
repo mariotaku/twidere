@@ -54,6 +54,8 @@ public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity
 	private int mNameDisplayOption;
 	private float mTextSize;
 
+	private MenuButtonClickListener mListener;
+
 	public ParcelableActivitiesAdapter(final Context context) {
 		super(context, R.layout.activity_list_item);
 		mContext = context;
@@ -114,6 +116,11 @@ public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
 		}
+	}
+
+	@Override
+	public void setMenuButtonClickListener(final MenuButtonClickListener listener) {
+		mListener = listener;
 	}
 
 	@Override

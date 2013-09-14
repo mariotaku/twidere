@@ -26,7 +26,6 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.animation.CardItemAnimation;
 import org.mariotaku.twidere.util.Utils;
-import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 import org.mariotaku.twidere.view.iface.IColorLabelView;
 
 import android.content.Context;
@@ -44,7 +43,7 @@ public class StatusViewHolder implements Constants {
 	public final ImageView my_profile_image, profile_image, image_preview;
 	public final TextView name, screen_name, time, reply_retweet_status;
 	public final TextView text;
-	public final View image_preview_container;
+	public final View image_preview_container, item_menu;
 	public final ProgressBar image_preview_progress;
 	public final Animation item_animation;
 	private final View gap_indicator;
@@ -75,6 +74,7 @@ public class StatusViewHolder implements Constants {
 		show_as_gap = gap_indicator != null ? gap_indicator.isShown() : false;
 		is_rtl = Utils.isRTL(context);
 		density = res.getDisplayMetrics().density;
+		item_menu = view.findViewById(R.id.item_menu);
 		item_animation = new CardItemAnimation();
 	}
 

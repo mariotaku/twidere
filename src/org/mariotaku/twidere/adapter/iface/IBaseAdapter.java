@@ -21,6 +21,7 @@ package org.mariotaku.twidere.adapter.iface;
 
 import org.mariotaku.twidere.Constants;
 
+import android.view.View;
 import android.widget.ListAdapter;
 
 public interface IBaseAdapter extends Constants, ListAdapter {
@@ -29,8 +30,13 @@ public interface IBaseAdapter extends Constants, ListAdapter {
 
 	public void setDisplayProfileImage(boolean display);
 
+	public void setMenuButtonClickListener(MenuButtonClickListener listener);
+
 	public void setNameDisplayOption(String option);
 
 	public void setTextSize(float text_size);
 
+	public static interface MenuButtonClickListener {
+		void onMenuButtonClick(View button, int position, long id);
+	}
 }

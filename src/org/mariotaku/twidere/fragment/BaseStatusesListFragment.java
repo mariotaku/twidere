@@ -31,6 +31,7 @@ import static org.mariotaku.twidere.util.Utils.showOkMessage;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.iface.IBaseAdapter.MenuButtonClickListener;
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -64,7 +65,8 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragment implements LoaderCallbacks<Data>,
-		OnItemLongClickListener, OnMenuItemClickListener, Panes.Left, MultiSelectManager.Callback {
+		OnItemLongClickListener, OnMenuItemClickListener, Panes.Left, MultiSelectManager.Callback,
+		MenuButtonClickListener {
 
 	private static final long TICKER_DURATION = 5000L;
 
@@ -127,6 +129,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		mMultiSelectManager = getMultiSelectManager();
 		mListView = getListView();
 		mAdapter = newAdapterInstance();
+		mAdapter.setMenuButtonClickListener(this);
 		setListAdapter(null);
 		setListHeaderFooters(mListView);
 		setListAdapter(mAdapter);
@@ -144,19 +147,12 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 
 	@Override
 	public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-		mSelectedStatus = null;
 		final Object tag = view.getTag();
 		if (tag instanceof StatusViewHolder) {
-			final boolean click_to_open_menu = mPreferences.getBoolean(PREFERENCE_KEY_CLICK_TO_OPEN_MENU, false);
 			final StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) return false;
-			final ParcelableStatus status = mSelectedStatus = mAdapter.getStatus(position
-					- mListView.getHeaderViewsCount());
-			if (mMultiSelectManager.isActive() || click_to_open_menu) {
-				setItemSelected(status, position, !mMultiSelectManager.isSelected(status));
-				return true;
-			}
-			openMenu(view, status);
+			final ParcelableStatus status = mAdapter.getStatus(position - mListView.getHeaderViewsCount());
+			setItemSelected(status, position, !mMultiSelectManager.isSelected(status));
 			return true;
 		}
 		return false;
@@ -187,22 +183,18 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		mSelectedStatus = null;
 		final Object tag = v.getTag();
 		if (tag instanceof StatusViewHolder) {
-			final boolean click_to_open_menu = mPreferences.getBoolean(PREFERENCE_KEY_CLICK_TO_OPEN_MENU, false);
 			final ParcelableStatus status = mSelectedStatus = mAdapter.getStatus(position - l.getHeaderViewsCount());
 			if (status == null) return;
 			final StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) {
 				getStatuses(new long[] { status.account_id }, new long[] { status.id }, null);
+				mListView.setItemChecked(position, false);
 			} else {
 				if (mMultiSelectManager.isActive()) {
 					setItemSelected(status, position, !mMultiSelectManager.isSelected(status));
 					return;
 				}
-				if (click_to_open_menu) {
-					openMenu(v, status);
-				} else {
-					openStatus(getActivity(), status);
-				}
+				openStatus(getActivity(), status);
 			}
 		}
 	}
@@ -244,6 +236,14 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 			mListView.setSelectionFromTop(position, mListScrollOffset);
 			mListScrollOffset = 0;
 		}
+	}
+
+	@Override
+	public void onMenuButtonClick(final View button, final int position, final long id) {
+		final ParcelableStatus status = mSelectedStatus = mAdapter
+				.getStatus(position - mListView.getHeaderViewsCount());
+		if (status == null) return;
+		openMenu(button, status);
 	}
 
 	@Override
@@ -309,10 +309,6 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 			}
 			case MENU_LOAD_FROM_POSITION: {
 				getStatuses(new long[] { status.account_id }, new long[] { status.id }, null);
-				break;
-			}
-			case MENU_MULTI_SELECT: {
-				setItemSelected(status, mAdapter.findItemPositionByStatusId(status.id), true);
 				break;
 			}
 			default: {
@@ -472,14 +468,9 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		final int activated_color = ThemeUtils.getThemeColor(getActivity());
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_status);
-		final boolean click_to_open_menu = mPreferences.getBoolean(PREFERENCE_KEY_CLICK_TO_OPEN_MENU, false);
 		final boolean separate_retweet_action = mPreferences.getBoolean(PREFERENCE_KEY_SEPARATE_RETWEET_ACTION, false);
 		final Menu menu = mPopupMenu.getMenu();
 		setMenuForStatus(getActivity(), menu, status);
-		final MenuItem view_status = menu.findItem(MENU_VIEW);
-		if (view_status != null) {
-			view_status.setVisible(click_to_open_menu);
-		}
 		final MenuItem retweet_submenu = menu.findItem(R.id.retweet_submenu);
 		if (retweet_submenu != null) {
 			retweet_submenu.setVisible(!separate_retweet_action);

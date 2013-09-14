@@ -12,42 +12,58 @@
 
 	<style name="Theme.Twidere" parent="android:Theme.Holo.Light.DarkActionBar">
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar</item>
+		<!-- Custom view styles -->
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@null</item>
 		<item name="contentBackground">#20808080</item>
 		<item name="cardListBackgroundColor">@color/bg_card_list_light</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
+		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_light</item>
+		<!-- Widget styles -->
+		<item name="android:textViewStyle">@style/Widget.Twidere.Light.TextView</item>
 	</style>
 
 	<style name="Theme.Twidere.Dark" parent="android:Theme.Holo">
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Dark</item>
+		<!-- Custom view styles -->
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView.Dark</item>
 		<item name="tabBackground">@null</item>
 		<item name="contentBackground">#20000000</item>
 		<item name="cardListBackgroundColor">@color/bg_card_list_dark</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_dark</item>
+		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_dark</item>
+		<!-- Widget styles -->
+		<item name="android:textViewStyle">@style/Widget.Twidere.TextView</item>
 	</style>
 
 	<style name="Theme.Twidere.Light" parent="android:Theme.Holo.Light">
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Light</item>
+		<!-- Custom view styles -->
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView.Light</item>
 		<item name="tabBackground">@drawable/tab_background_dark</item>
 		<item name="contentBackground">#20808080</item>
 		<item name="cardListBackgroundColor">@color/bg_card_list_light</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
+		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_light</item>
+		<!-- Widget styles -->
+		<item name="android:textViewStyle">@style/Widget.Twidere.Light.TextView</item>
 	</style>
 
 	<style name="Theme.Twidere.Light.DarkActionBar" parent="android:Theme.Holo.Light.DarkActionBar">
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Light.DarkActionBar</item>
+		<!-- Custom view styles -->
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView.Light.DarkActionBar</item>
 		<item name="tabBackground">@drawable/tab_background_dark</item>
 		<item name="contentBackground">#20808080</item>
 		<item name="cardListBackgroundColor">@color/bg_card_list_light</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
+		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_light</item>
+		<!-- Widget styles -->
+		<item name="android:textViewStyle">@style/Widget.Twidere.Light.TextView</item>
 	</style>
 
 	<style name="Theme.Twidere.SolidBackground">
@@ -103,19 +119,29 @@
 	</style>
 
 	<style name="Theme.Twidere.Dark.Dialog" parent="android:Theme.Holo.Dialog">
+
+		<!-- Custom view styles -->
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@null</item>
 		<item name="contentBackground">#20000000</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_dark</item>
+		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_dark</item>
+		<!-- Widget styles -->
+		<item name="android:textViewStyle">@style/Widget.Twidere.TextView</item>
 	</style>
 
 	<style name="Theme.Twidere.Light.Dialog" parent="android:Theme.Holo.Light.Dialog">
+
+		<!-- Custom view styles -->
 		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@drawable/tab_background_dark</item>
 		<item name="contentBackground">#20808080</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
+		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_light</item>
+		<!-- Widget styles -->
+		<item name="android:textViewStyle">@style/Widget.Twidere.Light.TextView</item>
 	</style>
 
 	<style name="Theme.Twidere.Compose">
@@ -169,8 +195,12 @@
 		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
 		<item name="android:windowContentOverlay">@null</item>
 		<item name="android:windowBackground">@android:color/black</item>
+		<!-- Custom view styles -->
 		<item name="contentBackground">#20000000</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_dark</item>
+		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_dark</item>
+		<!-- Widget styles -->
+		<item name="android:textViewStyle">@style/Widget.Twidere.TextView</item>
 	</style>
 
 	<style name="Theme.Test" parent="android:Theme.Holo"/>
