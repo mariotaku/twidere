@@ -230,7 +230,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 				&& last_viewed_id != curr_viewed_id) {
 			status_id = last_viewed_id;
 		} else {
-			if (first_visible_position == 0) {
+			if (first_visible_position == 0 && mAdapter.findItemIdByPosition(0) != last_viewed_id) {
 				mAdapter.setMaxAnimationPosition(-1);
 			}
 			return;
