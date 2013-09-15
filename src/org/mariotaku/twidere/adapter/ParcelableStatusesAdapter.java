@@ -38,7 +38,6 @@ import java.util.Map;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
-import org.mariotaku.twidere.animation.CardItemAnimation;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.PreviewImage;
@@ -79,7 +78,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	private float mTextSize;
 	private int mNameDisplayOption, mLinkHighlightStyle;
 	private boolean mFilterIgnoreSource, mFilterIgnoreScreenName, mFilterIgnoreTextHtml, mFilterIgnoreTextPlain;
-	private int mLastPosition;
+	private int mMaxAnimationPosition;
 
 	public ParcelableStatusesAdapter(final Context context) {
 		super(context, R.layout.status_list_item);
@@ -90,6 +89,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		mDatabase = app.getSQLiteDatabase();
 		mLinkify = new TwidereLinkify(new OnLinkClickHandler(mContext));
 		configBaseAdapter(context, this);
+		setMaxAnimationPosition(-1);
 	}
 
 	@Override
@@ -232,9 +232,9 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			}
 			holder.item_menu.setTag(position);
 		}
-		if (position > mLastPosition) {
-			view.startAnimation(new CardItemAnimation());
-			mLastPosition = position;
+		if (position > mMaxAnimationPosition) {
+			view.startAnimation(holder.item_animation);
+			mMaxAnimationPosition = position;
 		}
 		return view;
 	}
@@ -344,7 +344,6 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			notifyDataSetChanged();
 		}
 		rebuildFilterInfo();
-		mLastPosition = 0;
 	}
 
 	@Override
@@ -416,6 +415,11 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		mLinkify.setHighlightStyle(style);
 		mLinkHighlightStyle = style;
 		notifyDataSetChanged();
+	}
+
+	@Override
+	public void setMaxAnimationPosition(final int position) {
+		mMaxAnimationPosition = position;
 	}
 
 	@Override

@@ -57,4 +57,6 @@ public interface IStatusesAdapter<Data> extends IBaseAdapter {
 
 	public void setShowAccountColor(boolean show);
 
+	public void setMaxAnimationPosition(int position);
+
 }

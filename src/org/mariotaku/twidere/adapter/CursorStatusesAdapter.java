@@ -83,7 +83,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	private int mNameDisplayOption, mLinkHighlightStyle;
 	private boolean mFilterIgnoreSource, mFilterIgnoreScreenName, mFilterIgnoreTextHtml, mFilterIgnoreTextPlain;
 
-	private int mLastPosition;
+	private int mMaxAnimationPosition;
 
 	private StatusCursorIndices mIndices;
 
@@ -96,6 +96,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 		mDatabase = application.getSQLiteDatabase();
 		mLinkify = new TwidereLinkify(new OnLinkClickHandler(mContext));
 		configBaseAdapter(context, this);
+		setMaxAnimationPosition(-1);
 	}
 
 	@Override
@@ -267,9 +268,9 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 		final View view = super.getView(position, convertView, parent);
 		final Object tag = view.getTag();
 		// animate the item
-		if (position > mLastPosition && tag instanceof StatusViewHolder) {
+		if (tag instanceof StatusViewHolder && position > mMaxAnimationPosition) {
 			view.startAnimation(((StatusViewHolder) tag).item_animation);
-			mLastPosition = position;
+			mMaxAnimationPosition = position;
 		}
 		return view;
 	}
@@ -384,6 +385,11 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			progress.setIndeterminate(true);
 			progress.setMax(100);
 		}
+	}
+
+	@Override
+	public void setMaxAnimationPosition(final int position) {
+		mMaxAnimationPosition = position;
 	}
 
 	@Override
@@ -507,7 +513,6 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	public Cursor swapCursor(final Cursor cursor) {
 		mIndices = cursor != null ? new StatusCursorIndices(cursor) : null;
 		rebuildFilterInfo();
-		mLastPosition = 0;
 		return super.swapCursor(cursor);
 	}
 

@@ -229,10 +229,15 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		} else if ((first_visible_position > 0 || remember_position) && curr_viewed_id > 0
 				&& last_viewed_id != curr_viewed_id) {
 			status_id = last_viewed_id;
-		} else
+		} else {
+			if (first_visible_position == 0) {
+				mAdapter.setMaxAnimationPosition(-1);
+			}
 			return;
+		}
 		final int position = mAdapter.findItemPositionByStatusId(status_id);
 		if (position > -1 && position < mListView.getCount()) {
+			mAdapter.setMaxAnimationPosition(mListView.getLastVisiblePosition());
 			mListView.setSelectionFromTop(position, mListScrollOffset);
 			mListScrollOffset = 0;
 		}
