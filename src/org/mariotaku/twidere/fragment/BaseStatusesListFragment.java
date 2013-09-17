@@ -180,10 +180,9 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 
 	@Override
 	public void onListItemClick(final ListView l, final View v, final int position, final long id) {
-		mSelectedStatus = null;
 		final Object tag = v.getTag();
 		if (tag instanceof StatusViewHolder) {
-			final ParcelableStatus status = mSelectedStatus = mAdapter.getStatus(position - l.getHeaderViewsCount());
+			final ParcelableStatus status = mAdapter.getStatus(position - l.getHeaderViewsCount());
 			if (status == null) return;
 			final StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) {
@@ -245,8 +244,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 
 	@Override
 	public void onMenuButtonClick(final View button, final int position, final long id) {
-		final ParcelableStatus status = mSelectedStatus = mAdapter
-				.getStatus(position - mListView.getHeaderViewsCount());
+		final ParcelableStatus status = mAdapter.getStatus(position - mListView.getHeaderViewsCount());
 		if (status == null) return;
 		openMenu(button, status);
 	}
@@ -469,7 +467,11 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 	}
 
 	private void openMenu(final View view, final ParcelableStatus status) {
+		mSelectedStatus = status;
 		if (view == null || status == null) return;
+		if (mPopupMenu != null && mPopupMenu.isShowing()) {
+			mPopupMenu.dismiss();
+		}
 		final int activated_color = ThemeUtils.getThemeColor(getActivity());
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_status);

@@ -159,6 +159,9 @@ public class StatusViewHolder implements Constants {
 		if (gap_indicator != null) {
 			gap_indicator.setVisibility(!show_gap ? View.GONE : View.VISIBLE);
 		}
+		if (item_menu != null) {
+			item_menu.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		}
 	}
 
 	public void setStatusType(final boolean is_favorite, final boolean has_location, final boolean has_media,

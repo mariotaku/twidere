@@ -52,7 +52,6 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.ColorSelectorActivity;
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.adapter.PreviewPagerAdapter;
-import org.mariotaku.twidere.adapter.PreviewPagerAdapter.OnImageClickListener;
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.DummyParcelableStatusesLoader;
@@ -95,7 +94,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.view.ViewPager;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -111,12 +109,17 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.scvngr.levelup.views.gallery.AdapterView;
+import com.scvngr.levelup.views.gallery.AdapterView.OnItemClickListener;
+import com.scvngr.levelup.views.gallery.Gallery;
+
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 import edu.ucdavis.earlybird.ProfilingUtil;
 
 public class StatusFragment extends ParcelableStatusesListFragment implements OnClickListener, Panes.Right,
-		OnImageClickListener {
+		OnItemClickListener {
 
 	private static final int LOADER_ID_STATUS = 1;
 	private static final int LOADER_ID_FOLLOW = 2;
@@ -143,7 +146,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private ColorLabelRelativeLayout mProfileView;
 	private MenuBar mMenuBar;
 	private ProgressBar mStatusLoadProgress, mFollowInfoProgress;
-	private ViewPager mImagePreviewPager;
+	private Gallery mImagePreviewGallery;
 	private View mStatusView;
 	private View mLoadImagesIndicator;
 	private ExtendedFrameLayout mStatusContainer;
@@ -512,8 +515,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mRetweetedStatusView.setOnClickListener(this);
 		mMenuBar.setOnMenuItemClickListener(mMenuItemClickListener);
 		getStatus(false);
-		mImagePreviewPager.setAdapter(mImagePreviewAdapter);
-		mImagePreviewAdapter.setOnImageClickListener(this);
+		mImagePreviewGallery.setAdapter(mImagePreviewAdapter);
+		mImagePreviewGallery.setOnItemClickListener(this);
 	}
 
 	@Override
@@ -598,7 +601,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mFollowIndicator = mStatusView.findViewById(R.id.follow_indicator);
 		mFollowInfoProgress = (ProgressBar) mStatusView.findViewById(R.id.follow_info_progress);
 		mProfileView = (ColorLabelRelativeLayout) mStatusView.findViewById(R.id.profile);
-		mImagePreviewPager = (ViewPager) mStatusView.findViewById(R.id.preview_pager);
+		mImagePreviewGallery = (Gallery) mStatusView.findViewById(R.id.preview_gallery);
 		mLoadImagesIndicator = mStatusView.findViewById(R.id.load_images);
 		return view;
 	}
@@ -623,11 +626,12 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	}
 
 	@Override
-	public void onImageClick(final PreviewImage spec) {
-		if (mStatus == null || spec == null) return;
+	public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+		final PreviewImage image = mImagePreviewAdapter.getItem(position);
+		if (mStatus == null || image == null) return;
 		// UCD
-		ProfilingUtil.profile(getActivity(), mAccountId, "Large image click, " + mStatusId + ", " + spec);
-		openImage(getActivity(), spec.image_full_url, spec.image_original_url, mStatus.is_possibly_sensitive);
+		ProfilingUtil.profile(getActivity(), mAccountId, "Large image click, " + mStatusId + ", " + image);
+		openImage(getActivity(), image.image_full_url, image.image_original_url, mStatus.is_possibly_sensitive);
 	}
 
 	@Override
@@ -720,16 +724,16 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	private void hidePreviewImages() {
 		mLoadImagesIndicator.setVisibility(View.VISIBLE);
-		mImagePreviewPager.setVisibility(View.GONE);
+		mImagePreviewGallery.setVisibility(View.GONE);
 	}
 
-	private boolean loadPreviewImages() {
-		if (mStatus == null) return false;
+	private void loadPreviewImages() {
+		if (mStatus == null) return;
 		mLoadImagesIndicator.setVisibility(View.GONE);
-		mImagePreviewPager.setVisibility(View.VISIBLE);
+		mImagePreviewGallery.setVisibility(View.VISIBLE);
 		mImagePreviewAdapter.clear();
 		final List<PreviewImage> images = getImagesInStatus(mStatus.text_html);
-		return mImagePreviewAdapter.addAll(images, mStatus.is_possibly_sensitive);
+		mImagePreviewAdapter.addAll(images, mStatus.is_possibly_sensitive);
 	}
 
 	private void showConversation() {

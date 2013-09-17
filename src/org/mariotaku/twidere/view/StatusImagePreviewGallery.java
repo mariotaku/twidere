@@ -25,15 +25,17 @@ import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 
-public class StatusImagePreviewPager extends SquareViewPager {
+import com.scvngr.levelup.views.gallery.Gallery;
+
+public class StatusImagePreviewGallery extends Gallery {
 
 	private final GestureDetector mGestureDetector;
 
-	public StatusImagePreviewPager(final Context context) {
+	public StatusImagePreviewGallery(final Context context) {
 		this(context, null);
 	}
 
-	public StatusImagePreviewPager(final Context context, final AttributeSet attrs) {
+	public StatusImagePreviewGallery(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
 		mGestureDetector = new GestureDetector(context, new YScrollDetector());
 	}

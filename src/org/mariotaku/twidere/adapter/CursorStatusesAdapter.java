@@ -388,11 +388,6 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	}
 
 	@Override
-	public void setMaxAnimationPosition(final int position) {
-		mMaxAnimationPosition = position;
-	}
-
-	@Override
 	public void setData(final Cursor data) {
 		swapCursor(data);
 	}
@@ -466,6 +461,11 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 		mLinkify.setHighlightStyle(style);
 		mLinkHighlightStyle = style;
 		notifyDataSetChanged();
+	}
+
+	@Override
+	public void setMaxAnimationPosition(final int position) {
+		mMaxAnimationPosition = position;
 	}
 
 	@Override

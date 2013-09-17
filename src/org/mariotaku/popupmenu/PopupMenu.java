@@ -55,7 +55,7 @@ public class PopupMenu implements OnDismissListener, OnItemClickListener, OnTouc
 	 * Dismiss the popup window.
 	 */
 	public void dismiss() {
-		if (isPopupWindowShowing()) {
+		if (isShowing()) {
 			mWindow.dismiss();
 		}
 	}
@@ -70,6 +70,10 @@ public class PopupMenu implements OnDismissListener, OnItemClickListener, OnTouc
 
 	public void inflate(final int menuRes) {
 		new MenuInflater(mContext).inflate(menuRes, mMenu);
+	}
+
+	public boolean isShowing() {
+		return mWindow != null && mWindow.isShowing();
 	}
 
 	@Override
@@ -116,7 +120,6 @@ public class PopupMenu implements OnDismissListener, OnItemClickListener, OnTouc
 	 */
 	public void setOnDismissListener(final PopupMenu.OnDismissListener listener) {
 		mWindow.setOnDismissListener(listener != null ? this : null);
-
 		mDismissListener = listener;
 	}
 
@@ -130,15 +133,10 @@ public class PopupMenu implements OnDismissListener, OnItemClickListener, OnTouc
 	}
 
 	public void show() {
-		if (isPopupWindowShowing()) {
+		if (isShowing()) {
 			dismiss();
 		}
 		showMenu(getMenu());
-	}
-
-	private boolean isPopupWindowShowing() {
-		if (mWindow == null) return false;
-		return mWindow.isShowing();
 	}
 
 	private void showMenu(final Menu menu) {

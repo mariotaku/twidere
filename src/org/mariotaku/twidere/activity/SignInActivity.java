@@ -371,9 +371,7 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 		final boolean ignore_ssl_error = mPreferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
 		final boolean enable_proxy = mPreferences.getBoolean(PREFERENCE_KEY_ENABLE_PROXY, false);
 		cb.setHostAddressResolver(mApplication.getHostAddressResolver());
-		if (mPassword == null || !mPassword.contains("*")) {
-			cb.setHttpClientImplementation(HttpClientImpl.class);
-		}
+		cb.setHttpClientImplementation(HttpClientImpl.class);
 		setUserAgent(this, cb);
 		if (!isEmpty(mRestBaseURL)) {
 			cb.setRestBaseURL(mRestBaseURL);

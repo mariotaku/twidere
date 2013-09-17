@@ -51,12 +51,12 @@ public interface IStatusesAdapter<Data> extends IBaseAdapter {
 
 	public void setLinkUnderlineOnly(boolean underline_only);
 
+	public void setMaxAnimationPosition(int position);
+
 	public void setMentionsHightlightDisabled(boolean disable);
 
 	public void setShowAbsoluteTime(boolean show);
 
 	public void setShowAccountColor(boolean show);
-
-	public void setMaxAnimationPosition(int position);
 
 }
