@@ -21,8 +21,9 @@ package org.mariotaku.twidere.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.widget.ImageView;
 
-public class StatusImagePreviewItemView extends ClickableImageView {
+public class StatusImagePreviewItemView extends ImageView {
 
 	public StatusImagePreviewItemView(final Context context) {
 		this(context, null);

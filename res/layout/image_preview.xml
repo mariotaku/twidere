@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<org.mariotaku.twidere.view.SquareFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/image_preview"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content">
@@ -7,13 +7,13 @@
 	<com.scvngr.levelup.views.gallery.Gallery
 		android:id="@+id/preview_gallery"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="match_parent"
 		android:visibility="gone"/>
 
 	<FrameLayout
 		android:id="@+id/load_images"
 		android:layout_width="match_parent"
-		android:layout_height="@dimen/image_preview_height"
+		android:layout_height="match_parent"
 		android:background="?android:selectableItemBackground">
 
 		<TextView
@@ -27,4 +27,4 @@
 			android:textStyle="bold"/>
 	</FrameLayout>
 
-</FrameLayout>
+</org.mariotaku.twidere.view.SquareFrameLayout>

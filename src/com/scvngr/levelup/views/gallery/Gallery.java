@@ -20,7 +20,6 @@ package com.scvngr.levelup.views.gallery;
  * limitations under the License.
  */
 
-import android.R;
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -195,7 +194,7 @@ public class Gallery extends AbsSpinner implements GestureDetector.OnGestureList
 	 * @param attrs the xml attrs
 	 */
 	public Gallery(final Context context, final AttributeSet attrs) {
-		this(context, attrs, R.attr.galleryStyle);
+		this(context, attrs, android.R.attr.galleryStyle);
 	}
 
 	/**
