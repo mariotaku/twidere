@@ -19,14 +19,14 @@ import android.widget.ProgressBar;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 
-public class PreviewPagerAdapter extends ArrayAdapter<PreviewImage> implements Constants, ImageLoadingListener {
+public class ImagePreviewAdapter extends ArrayAdapter<PreviewImage> implements Constants, ImageLoadingListener {
 
 	private final ImageLoaderWrapper mImageLoader;
 	private final SharedPreferences mPreferences;
 
 	private boolean mIsPossiblySensitive;
 
-	public PreviewPagerAdapter(final Context context) {
+	public ImagePreviewAdapter(final Context context) {
 		super(context, R.layout.image_preview_item);
 		mImageLoader = ((TwidereApplication) context.getApplicationContext()).getImageLoaderWrapper();
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -59,6 +59,7 @@ public class PreviewPagerAdapter extends ArrayAdapter<PreviewImage> implements C
 
 	@Override
 	public void onLoadingComplete(final String url, final View view, final Bitmap bitmap) {
+		if (view == null) return;
 		final View parent = (View) view.getParent();
 		final View progress = parent.findViewById(R.id.image_preview_progress);
 		if (progress != null) {
@@ -72,7 +73,7 @@ public class PreviewPagerAdapter extends ArrayAdapter<PreviewImage> implements C
 
 	@Override
 	public void onLoadingProgressChanged(final String imageUri, final View view, final int current, final int total) {
-		if (total == 0) return;
+		if (view == null || total == 0) return;
 		final View parent = (View) view.getParent();
 		final ProgressBar progress = (ProgressBar) parent.findViewById(R.id.image_preview_progress);
 		if (progress != null) {
@@ -83,6 +84,7 @@ public class PreviewPagerAdapter extends ArrayAdapter<PreviewImage> implements C
 
 	@Override
 	public void onLoadingStarted(final String url, final View view) {
+		if (view == null) return;
 		final View parent = (View) view.getParent();
 		final ProgressBar progress = (ProgressBar) parent.findViewById(R.id.image_preview_progress);
 		if (progress != null) {

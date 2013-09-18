@@ -141,7 +141,7 @@ public class FileSelectorActivity extends BaseSupportActivity implements OnItemC
 			finish();
 			return;
 		}
-		setContentView(R.layout.base_list);
+		setContentView(android.R.layout.list_content);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		mAdapter = new FilesAdapter(this);

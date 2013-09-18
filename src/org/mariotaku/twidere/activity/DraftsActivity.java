@@ -32,6 +32,7 @@ import org.mariotaku.twidere.model.DraftItem;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
+import org.mariotaku.twidere.util.ThemeUtils;
 
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.BroadcastReceiver;
@@ -193,11 +194,15 @@ public class DraftsActivity extends TwidereSwipeBackActivity implements LoaderCa
 		mTwitterWrapper = getTwidereApplication().getTwitterWrapper();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mTextSize = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(this));
-		setContentView(R.layout.base_list);
+		setContentView(android.R.layout.list_content);
 		setOverrideExitAniamtion(false);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		mAdapter = new DraftsAdapter(this);
 		mListView = (ListView) findViewById(android.R.id.list);
+		mListView.setDivider(null);
+		final int listBackgroundColor = ThemeUtils.getCardListBackgroundColor(this);
+		mListView.setBackgroundColor(listBackgroundColor);
+		mListView.setCacheColorHint(listBackgroundColor);
 		mListView.setAdapter(mAdapter);
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);

@@ -50,8 +50,8 @@ import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.ColorSelectorActivity;
+import org.mariotaku.twidere.adapter.ImagePreviewAdapter;
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
-import org.mariotaku.twidere.adapter.PreviewPagerAdapter;
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.DummyParcelableStatusesLoader;
@@ -103,6 +103,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AbsSpinner;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -110,12 +114,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.scvngr.levelup.views.gallery.AdapterView;
-import com.scvngr.levelup.views.gallery.AdapterView.OnItemClickListener;
-import com.scvngr.levelup.views.gallery.AdapterView.OnItemSelectedListener;
-import com.scvngr.levelup.views.gallery.Gallery;
-
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 import edu.ucdavis.earlybird.ProfilingUtil;
@@ -148,14 +146,14 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private ColorLabelRelativeLayout mProfileView;
 	private MenuBar mMenuBar;
 	private ProgressBar mStatusLoadProgress, mFollowInfoProgress;
-	private Gallery mImagePreviewGallery;
+	private AbsSpinner mImagePreviewGallery;
 	private ImageButton mPrevImage, mNextImage;
-	private View mStatusView;
+	private View mStatusView; 
 	private View mLoadImagesIndicator;
 	private ExtendedFrameLayout mStatusContainer;
 	private ListView mListView;
 
-	private PreviewPagerAdapter mImagePreviewAdapter;
+	private ImagePreviewAdapter mImagePreviewAdapter;
 
 	private LoadConversationTask mConversationTask;
 
@@ -502,7 +500,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mProfileImageLoader = application.getImageLoaderWrapper();
 		mTwitterWrapper = getTwitterWrapper();
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
-		mImagePreviewAdapter = new PreviewPagerAdapter(getActivity());
+		mImagePreviewAdapter = new ImagePreviewAdapter(getActivity());
 		setPullToRefreshEnabled(false);
 		getPullToRefreshAttacher().setEnabled(false);
 		final Bundle bundle = getArguments();
@@ -619,7 +617,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mFollowIndicator = mStatusView.findViewById(R.id.follow_indicator);
 		mFollowInfoProgress = (ProgressBar) mStatusView.findViewById(R.id.follow_info_progress);
 		mProfileView = (ColorLabelRelativeLayout) mStatusView.findViewById(R.id.profile);
-		mImagePreviewGallery = (Gallery) mStatusView.findViewById(R.id.preview_gallery);
+		mImagePreviewGallery = (AbsSpinner) mStatusView.findViewById(R.id.preview_gallery);
 		mGalleryContainer = mStatusView.findViewById(R.id.gallery_container);
 		mPrevImage = (ImageButton) mStatusView.findViewById(R.id.prev_image);
 		mNextImage = (ImageButton) mStatusView.findViewById(R.id.next_image);
@@ -653,6 +651,29 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		// UCD
 		ProfilingUtil.profile(getActivity(), mAccountId, "Large image click, " + mStatusId + ", " + image);
 		openImage(getActivity(), image.image_full_url, image.image_original_url, mStatus.is_possibly_sensitive);
+	}
+
+	@Override
+	public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long id) {
+		final int count = mImagePreviewAdapter.getCount();
+		if (count <= 1) {
+			mPrevImage.setVisibility(View.GONE);
+			mNextImage.setVisibility(View.GONE);
+		} else if (position == 0) {
+			mPrevImage.setVisibility(View.GONE);
+			mNextImage.setVisibility(View.VISIBLE);
+		} else if (position == count - 1) {
+			mPrevImage.setVisibility(View.VISIBLE);
+			mNextImage.setVisibility(View.GONE);
+		} else {
+			mPrevImage.setVisibility(View.VISIBLE);
+			mNextImage.setVisibility(View.VISIBLE);
+		}
+	}
+
+	@Override
+	public void onNothingSelected(final AdapterView<?> parent) {
+
 	}
 
 	@Override
@@ -1052,29 +1073,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			return view;
 		}
 
-	}
-
-	@Override
-	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-		final int count = mImagePreviewAdapter.getCount();
-		if (count <= 1) {
-			mPrevImage.setVisibility(View.GONE);
-			mNextImage.setVisibility(View.GONE);
-		} else if (position == 0) {
-			mPrevImage.setVisibility(View.GONE);
-			mNextImage.setVisibility(View.VISIBLE);
-		} else if (position == count - 1) {
-			mPrevImage.setVisibility(View.VISIBLE);
-			mNextImage.setVisibility(View.GONE);
-		} else {
-			mPrevImage.setVisibility(View.VISIBLE);
-			mNextImage.setVisibility(View.VISIBLE);
-		}
-	}
-
-	@Override
-	public void onNothingSelected(AdapterView<?> parent) {
-		
 	}
 
 }

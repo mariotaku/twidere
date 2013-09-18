@@ -1,44 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:minHeight="?android:attr/listPreferredItemHeight"
-	android:padding="8dp">
+	android:layout_height="wrap_content"
+	android:background="?android:activatedBackgroundIndicator"
+	android:minHeight="?android:attr/listPreferredItemHeight">
 
-	<TextView
-		android:id="@+id/text"
+	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_alignParentRight="true"
-		android:layout_alignParentTop="true"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:textColor="?android:attr/textColorPrimary"/>
+		android:layout_marginBottom="4dp"
+		android:layout_marginLeft="8dp"
+		android:layout_marginRight="8dp"
+		android:layout_marginTop="4dp"
+		android:background="?cardItemBackground"
+		android:orientation="vertical">
 
-	<RelativeLayout
-		android:id="@+id/image_preview_container"
-		android:layout_width="@dimen/image_preview_width"
-		android:layout_height="wrap_content"
-		android:layout_alignWithParentIfMissing="true"
-		android:layout_below="@+id/text"
-		android:layout_marginLeft="24dp"
-		android:layout_marginTop="8dp"
-		android:background="@drawable/image_shadow">
-
-		<org.mariotaku.twidere.view.StatusImagePreviewItemView
-			android:id="@+id/image_preview"
+		<TextView
+			android:id="@+id/text"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"/>
-
-		<ProgressBar
-			android:id="@+id/image_preview_progress"
-			style="?android:attr/progressBarStyleHorizontal"
-			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_alignLeft="@+id/image_preview"
-			android:layout_alignRight="@+id/image_preview"
-			android:layout_centerVertical="true"
-			android:layout_gravity="center"
-			android:layout_margin="16dp"/>
-	</RelativeLayout>
+			android:paddingBottom="8dp"
+			android:paddingLeft="8dp"
+			android:paddingRight="8dp"
+			android:paddingTop="8dp"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="?android:attr/textColorPrimary"/>
 
-</RelativeLayout>
+		<org.mariotaku.twidere.view.ImagePreviewContainer
+			android:id="@+id/image_preview_container"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:paddingTop="4dp">
+
+			<org.mariotaku.twidere.view.ClickableImageView
+				android:id="@+id/image_preview"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:scaleType="centerCrop"/>
+
+			<ProgressBar
+				android:id="@+id/image_preview_progress"
+				style="?android:attr/progressBarStyleHorizontal"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:layout_margin="16dp"/>
+		</org.mariotaku.twidere.view.ImagePreviewContainer>
+	</LinearLayout>
+
+</FrameLayout>
