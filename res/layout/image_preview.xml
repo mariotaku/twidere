@@ -4,11 +4,34 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content">
 
-	<com.scvngr.levelup.views.gallery.Gallery
-		android:id="@+id/preview_gallery"
+	<FrameLayout
+		android:id="@+id/gallery_container"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:visibility="gone"/>
+		android:layout_height="match_parent">
+
+		<com.scvngr.levelup.views.gallery.Gallery
+			android:id="@+id/preview_gallery"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"/>
+
+		<ImageButton
+			android:id="@+id/prev_image"
+			android:layout_width="64dp"
+			android:layout_height="match_parent"
+			android:layout_gravity="left"
+			android:background="?android:selectableItemBackground"
+			android:src="@drawable/arrow_left_holo"
+			android:visibility="gone"/>
+
+		<ImageButton
+			android:id="@+id/next_image"
+			android:layout_width="64dp"
+			android:layout_height="match_parent"
+			android:layout_gravity="right"
+			android:background="?android:selectableItemBackground"
+			android:src="@drawable/arrow_right_holo"
+			android:visibility="gone"/>
+	</FrameLayout>
 
 	<FrameLayout
 		android:id="@+id/load_images"

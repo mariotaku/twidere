@@ -105,6 +105,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -112,6 +113,7 @@ import android.widget.TextView;
 
 import com.scvngr.levelup.views.gallery.AdapterView;
 import com.scvngr.levelup.views.gallery.AdapterView.OnItemClickListener;
+import com.scvngr.levelup.views.gallery.AdapterView.OnItemSelectedListener;
 import com.scvngr.levelup.views.gallery.Gallery;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -119,7 +121,7 @@ import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 import edu.ucdavis.earlybird.ProfilingUtil;
 
 public class StatusFragment extends ParcelableStatusesListFragment implements OnClickListener, Panes.Right,
-		OnItemClickListener {
+		OnItemClickListener, OnItemSelectedListener {
 
 	private static final int LOADER_ID_STATUS = 1;
 	private static final int LOADER_ID_FOLLOW = 2;
@@ -142,11 +144,12 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			mRetweetedStatusView;
 	private ImageView mProfileImageView;
 	private Button mFollowButton;
-	private View mMainContent, mFollowIndicator, mImagePreviewContainer;
+	private View mMainContent, mFollowIndicator, mImagePreviewContainer, mGalleryContainer;
 	private ColorLabelRelativeLayout mProfileView;
 	private MenuBar mMenuBar;
 	private ProgressBar mStatusLoadProgress, mFollowInfoProgress;
 	private Gallery mImagePreviewGallery;
+	private ImageButton mPrevImage, mNextImage;
 	private View mStatusView;
 	private View mLoadImagesIndicator;
 	private ExtendedFrameLayout mStatusContainer;
@@ -517,6 +520,9 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		getStatus(false);
 		mImagePreviewGallery.setAdapter(mImagePreviewAdapter);
 		mImagePreviewGallery.setOnItemClickListener(this);
+		mImagePreviewGallery.setOnItemSelectedListener(this);
+		mPrevImage.setOnClickListener(this);
+		mNextImage.setOnClickListener(this);
 	}
 
 	@Override
@@ -574,6 +580,18 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 						: mStatus.id);
 				break;
 			}
+			case R.id.prev_image: {
+				final int count = mImagePreviewAdapter.getCount(), pos = mImagePreviewGallery.getSelectedItemPosition();
+				if (count == 0 || pos == 0) return;
+				mImagePreviewGallery.setSelection(pos - 1, true);
+				break;
+			}
+			case R.id.next_image: {
+				final int count = mImagePreviewAdapter.getCount(), pos = mImagePreviewGallery.getSelectedItemPosition();
+				if (count == 0 || pos == count - 1) return;
+				mImagePreviewGallery.setSelection(pos + 1, true);
+				break;
+			}
 		}
 
 	}
@@ -602,6 +620,9 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mFollowInfoProgress = (ProgressBar) mStatusView.findViewById(R.id.follow_info_progress);
 		mProfileView = (ColorLabelRelativeLayout) mStatusView.findViewById(R.id.profile);
 		mImagePreviewGallery = (Gallery) mStatusView.findViewById(R.id.preview_gallery);
+		mGalleryContainer = mStatusView.findViewById(R.id.gallery_container);
+		mPrevImage = (ImageButton) mStatusView.findViewById(R.id.prev_image);
+		mNextImage = (ImageButton) mStatusView.findViewById(R.id.next_image);
 		mLoadImagesIndicator = mStatusView.findViewById(R.id.load_images);
 		return view;
 	}
@@ -724,13 +745,13 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	private void hidePreviewImages() {
 		mLoadImagesIndicator.setVisibility(View.VISIBLE);
-		mImagePreviewGallery.setVisibility(View.GONE);
+		mGalleryContainer.setVisibility(View.GONE);
 	}
 
 	private void loadPreviewImages() {
 		if (mStatus == null) return;
 		mLoadImagesIndicator.setVisibility(View.GONE);
-		mImagePreviewGallery.setVisibility(View.VISIBLE);
+		mGalleryContainer.setVisibility(View.VISIBLE);
 		mImagePreviewAdapter.clear();
 		final List<PreviewImage> images = getImagesInStatus(mStatus.text_html);
 		mImagePreviewAdapter.addAll(images, mStatus.is_possibly_sensitive);
@@ -1031,6 +1052,29 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			return view;
 		}
 
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+		final int count = mImagePreviewAdapter.getCount();
+		if (count <= 1) {
+			mPrevImage.setVisibility(View.GONE);
+			mNextImage.setVisibility(View.GONE);
+		} else if (position == 0) {
+			mPrevImage.setVisibility(View.GONE);
+			mNextImage.setVisibility(View.VISIBLE);
+		} else if (position == count - 1) {
+			mPrevImage.setVisibility(View.VISIBLE);
+			mNextImage.setVisibility(View.GONE);
+		} else {
+			mPrevImage.setVisibility(View.VISIBLE);
+			mNextImage.setVisibility(View.VISIBLE);
+		}
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> parent) {
+		
 	}
 
 }
