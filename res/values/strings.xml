@@ -486,5 +486,6 @@
 	<string name="enable_in_home_timeline">Enable in home timeline</string>
 	<string name="enable_for_rts">Enable for RTs</string>
 	<string name="safety">Safety</string>
+	<string name="updating_status_notification">Updating status…</string>
 
 </resources>

@@ -30,6 +30,7 @@ public class ContentLengthInputStream extends InputStream {
 	private final InputStream stream;
 	private final int length;
 	private int available;
+	private ReadListener readListener;
 
 	public ContentLengthInputStream(final File file) throws FileNotFoundException {
 		this(new FileInputStream(file), file.length());
@@ -57,7 +58,18 @@ public class ContentLengthInputStream extends InputStream {
 	@Override
 	public int read() throws IOException {
 		available--;
+		if (readListener != null) {
+			readListener.onRead(length, available);
+		}
 		return stream.read();
+	}
+
+	public void setReadListener(final ReadListener readListener) {
+		this.readListener = readListener;
+	}
+
+	public interface ReadListener {
+		void onRead(int length, int available);
 	}
 
 }

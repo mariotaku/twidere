@@ -577,6 +577,7 @@ public interface Constants {
 	public static final int NOTIFICATION_ID_DIRECT_MESSAGES = 3;
 	public static final int NOTIFICATION_ID_DRAFTS = 4;
 	public static final int NOTIFICATION_ID_DATA_PROFILING = 5;
+	public static final int NOTIFICATION_ID_UPDATE_STATUS = 6;
 
 	public static final String ICON_SPECIAL_TYPE_CUSTOMIZE = "_customize";
 

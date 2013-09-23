@@ -53,7 +53,6 @@ import java.util.Set;
 import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.popupmenu.PopupMenu;
-import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.BaseDialogFragment;
@@ -188,7 +187,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 	public boolean handleMenuItem(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_TAKE_PHOTO: {
-				if (mAttachedImageType != Constants.ATTACHED_IMAGE_TYPE_PHOTO) {
+				if (mAttachedImageType != ATTACHED_IMAGE_TYPE_PHOTO) {
 					takePhoto();
 				} else {
 					new DeleteImageTask(this).execute();
@@ -196,7 +195,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 				break;
 			}
 			case MENU_ADD_IMAGE: {
-				if (mAttachedImageType != Constants.ATTACHED_IMAGE_TYPE_IMAGE) {
+				if (mAttachedImageType != ATTACHED_IMAGE_TYPE_IMAGE) {
 					pickImage();
 				} else {
 					new DeleteImageTask(this).execute();
@@ -227,7 +226,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 				break;
 			}
 			case MENU_TOGGLE_SENSITIVE: {
-				final boolean has_media = mAttachedImageType != Constants.ATTACHED_IMAGE_TYPE_NONE && mImageUri != null;
+				final boolean has_media = mAttachedImageType != ATTACHED_IMAGE_TYPE_NONE && mImageUri != null;
 				if (!has_media) return false;
 				mIsPossiblySensitive = !mIsPossiblySensitive;
 				setMenu();
@@ -303,7 +302,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		switch (requestCode) {
 			case REQUEST_TAKE_PHOTO: {
 				if (resultCode == Activity.RESULT_OK) {
-					mAttachedImageType = Constants.ATTACHED_IMAGE_TYPE_PHOTO;
+					mAttachedImageType = ATTACHED_IMAGE_TYPE_PHOTO;
 					mTask = new CopyImageTask(this, mImageUri, mTempPhotoUri, createTempImageUri(), true).execute();
 				}
 				break;
@@ -311,7 +310,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 			case REQUEST_PICK_IMAGE: {
 				if (resultCode == Activity.RESULT_OK) {
 					final Uri src = intent.getData();
-					mAttachedImageType = Constants.ATTACHED_IMAGE_TYPE_IMAGE;
+					mAttachedImageType = ATTACHED_IMAGE_TYPE_IMAGE;
 					mTask = new CopyImageTask(this, mImageUri, src, createTempImageUri(), false).execute();
 				}
 				break;
@@ -550,7 +549,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 			// Restore from previous saved state
 			mAccountIds = savedInstanceState.getLongArray(INTENT_KEY_ACCOUNT_IDS);
 			mAttachedImageType = savedInstanceState.getInt(INTENT_KEY_ATTACHED_IMAGE_TYPE,
-					Constants.ATTACHED_IMAGE_TYPE_NONE);
+					ATTACHED_IMAGE_TYPE_NONE);
 			mIsPossiblySensitive = savedInstanceState.getBoolean(INTENT_KEY_IS_POSSIBLY_SENSITIVE);
 			mImageUri = savedInstanceState.getParcelable(INTENT_KEY_IMAGE_URI);
 			mInReplyToStatus = savedInstanceState.getParcelable(INTENT_KEY_STATUS);
@@ -691,7 +690,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 			mEditText.setText(getShareStatus(this, extra_subject, extra_text));
 		}
 		if (mImageUri != null) {
-			mAttachedImageType = Constants.ATTACHED_IMAGE_TYPE_IMAGE;
+			mAttachedImageType = ATTACHED_IMAGE_TYPE_IMAGE;
 		}
 		final int selection_end = mEditText.length();
 		mEditText.setSelection(selection_end);
@@ -857,7 +856,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 				}
 			}
 			if (itemToggleSensitive != null) {
-				final boolean has_media = mAttachedImageType != Constants.ATTACHED_IMAGE_TYPE_NONE && mImageUri != null;
+				final boolean has_media = mImageUri != null;
 				itemToggleSensitive.setVisible(has_media);
 				if (has_media) {
 					final Drawable iconToggleSensitive = itemToggleSensitive.getIcon().mutate();
@@ -923,7 +922,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		final int activated_color = ThemeUtils.getThemeColor(this);
 		final MenuItem itemAddImage = bottomMenu.findItem(MENU_ADD_IMAGE);
 		final Drawable iconAddImage = itemAddImage.getIcon().mutate();
-		if (mAttachedImageType == Constants.ATTACHED_IMAGE_TYPE_IMAGE) {
+		if (mAttachedImageType == ATTACHED_IMAGE_TYPE_IMAGE) {
 			iconAddImage.setColorFilter(activated_color, Mode.MULTIPLY);
 			itemAddImage.setTitle(R.string.remove_image);
 		} else {
@@ -932,7 +931,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		}
 		final MenuItem itemTakePhoto = bottomMenu.findItem(MENU_TAKE_PHOTO);
 		final Drawable iconTakePhoto = itemTakePhoto.getIcon().mutate();
-		if (mAttachedImageType == Constants.ATTACHED_IMAGE_TYPE_PHOTO) {
+		if (mAttachedImageType == ATTACHED_IMAGE_TYPE_PHOTO) {
 			iconTakePhoto.setColorFilter(activated_color, Mode.MULTIPLY);
 			itemTakePhoto.setTitle(R.string.remove_photo);
 		} else {
@@ -994,7 +993,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 			mEditText.setError(getString(R.string.error_message_no_content));
 			return;
 		}
-		final boolean has_media = mAttachedImageType != Constants.ATTACHED_IMAGE_TYPE_NONE && mImageUri != null;
+		final boolean has_media = mAttachedImageType != ATTACHED_IMAGE_TYPE_NONE && mImageUri != null;
 		final boolean attach_location = mPreferences.getBoolean(PREFERENCE_KEY_ATTACH_LOCATION, false);
 		if (mRecentLocation == null && attach_location) {
 			final Location location;
@@ -1010,12 +1009,12 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		final boolean link_to_quoted_tweet = mPreferences.getBoolean(PREFERENCE_KEY_LINK_TO_QUOTED_TWEET, true);
 		final long in_reply_to = !is_quote || link_to_quoted_tweet ? mInReplyToStatusId : -1;
 		final boolean possibly_sensitive = has_media && mIsPossiblySensitive;
-		final boolean delete_image = mAttachedImageType == Constants.ATTACHED_IMAGE_TYPE_PHOTO;
+		final boolean delete_image = mAttachedImageType == ATTACHED_IMAGE_TYPE_PHOTO;
 		mTwitterWrapper.updateStatus(mAccountIds, text, status_loc, mImageUri, in_reply_to, possibly_sensitive,
 				delete_image);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_NO_CLOSE_AFTER_TWEET_SENT, false)
 				&& (mInReplyToStatus == null || mInReplyToStatusId <= 0)) {
-			mAttachedImageType = Constants.ATTACHED_IMAGE_TYPE_NONE;
+			mAttachedImageType = ATTACHED_IMAGE_TYPE_NONE;
 			mIsPossiblySensitive = false;
 			mShouldSaveAccounts = true;
 			mImageUri = null;
@@ -1214,8 +1213,8 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		protected void onPostExecute(final Boolean result) {
 			activity.setProgressVisibility(false);
 			activity.mImageUri = dst;
-			activity.setMenu();
 			activity.reloadAttachedImageThumbnail();
+			activity.setMenu();
 			if (!result) {
 				Crouton.showText(activity, R.string.error_occurred, CroutonStyle.ALERT);
 			}
@@ -1261,7 +1260,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		protected void onPostExecute(final Boolean result) {
 			activity.setProgressVisibility(false);
 			activity.mImageUri = null;
-			activity.mAttachedImageType = Constants.ATTACHED_IMAGE_TYPE_NONE;
+			activity.mAttachedImageType = ATTACHED_IMAGE_TYPE_NONE;
 			activity.mIsPossiblySensitive = false;
 			activity.setMenu();
 			activity.reloadAttachedImageThumbnail();

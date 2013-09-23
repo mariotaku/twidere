@@ -39,6 +39,7 @@ import static org.mariotaku.twidere.util.Utils.makeStatusContentValues;
 import static org.mariotaku.twidere.util.Utils.makeTrendsContentValues;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -48,6 +49,7 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ListResponse;
 import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.model.ParcelableStatusUpdate;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.model.SingleResponse;
@@ -61,6 +63,8 @@ import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Notifications;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.service.UpdateStatusService;
+import org.mariotaku.twidere.util.ContentLengthInputStream.ReadListener;
 
 import twitter4j.DirectMessage;
 import twitter4j.Paging;
@@ -84,6 +88,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import com.twitter.Extractor;
 import com.twitter.Validator;
@@ -340,9 +345,13 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	public int updateStatus(final long[] account_ids, final String content, final ParcelableLocation location,
 			final Uri image_uri, final long in_reply_to, final boolean is_possibly_sensitive, final boolean delete_image) {
-		final UpdateStatusTask task = new UpdateStatusTask(account_ids, content, location, image_uri, in_reply_to,
-				is_possibly_sensitive, delete_image);
-		return mAsyncTaskManager.add(task, true);
+//		final UpdateStatusTask task = new UpdateStatusTask(account_ids, content, location, image_uri, in_reply_to,
+//				is_possibly_sensitive, delete_image);
+//		return mAsyncTaskManager.add(task, true);
+		final Intent intent = new Intent(mContext, UpdateStatusService.class);
+		intent.putExtra(INTENT_KEY_STATUS, new ParcelableStatusUpdate(account_ids, content, location, image_uri, in_reply_to, is_possibly_sensitive, delete_image));
+		mContext.startService(intent);
+		return 0;
 	}
 
 	public int updateUserListDetails(final long account_id, final int list_id, final boolean is_public,
@@ -2159,9 +2168,6 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				values.put(CachedHashtags.NAME, hashtag);
 				hashtag_values.add(values);
 			}
-			mResolver.delete(CachedHashtags.CONTENT_URI,
-					CachedHashtags.NAME + " IN (" + ListUtils.toStringForSQL(hashtags) + ")",
-					hashtags.toArray(new String[hashtags.size()]));
 			mResolver.bulkInsert(CachedHashtags.CONTENT_URI,
 					hashtag_values.toArray(new ContentValues[hashtag_values.size()]));
 
@@ -2218,7 +2224,25 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					status.setLocation(ParcelableLocation.toGeoLocation(location));
 				}
 				if (!use_uploader && image_file != null && image_file.exists()) {
-					status.setMedia(image_file);
+					try {
+						final ContentLengthInputStream is = new ContentLengthInputStream(image_file);
+						is.setReadListener(new ReadListener() {
+
+							int percent;
+
+							@Override
+							public void onRead(final int length, final int available) {
+								final int percent = length > 0 ? (length - available) * 100 / length : 0;
+								if (this.percent != percent) {
+									Log.d(LOGTAG, "onRead, " + percent + "%");
+								}
+								this.percent = percent;
+							}
+						});
+						status.setMedia(image_file.getAbsolutePath(), is);
+					} catch (final FileNotFoundException e) {
+						status.setMedia(image_file);
+					}
 				}
 				status.setPossiblySensitive(is_possibly_sensitive);
 
@@ -2233,6 +2257,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 								false, false);
 						results.add(new SingleResponse<ParcelableStatus>(result, null));
 					} catch (final TwitterException e) {
+						e.printStackTrace();
 						final SingleResponse<ParcelableStatus> response = SingleResponse.exceptionOnly(e);
 						results.add(response);
 					}

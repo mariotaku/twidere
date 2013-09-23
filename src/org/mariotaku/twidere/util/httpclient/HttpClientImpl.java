@@ -55,6 +55,7 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
@@ -156,7 +157,12 @@ public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCo
 						final MultipartEntity me = new MultipartEntity();
 						for (final HttpParameter parameter : params) {
 							if (parameter.isFile()) {
-								final ContentBody body = new FileBody(parameter.getFile(), parameter.getContentType());
+								final ContentBody body;
+								if (parameter.getFile() != null) {
+									body = new FileBody(parameter.getFile(), parameter.getContentType());
+								} else {
+									body = new InputStreamBody(parameter.getFileBody(), parameter.getFileName(), parameter.getContentType());
+								}
 								me.addPart(parameter.getName(), body);
 							} else {
 								final ContentBody body = new StringBody(parameter.getValue(),

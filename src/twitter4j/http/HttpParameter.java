@@ -30,6 +30,7 @@ import java.util.List;
 public final class HttpParameter implements Comparable<HttpParameter> {
 	private String name = null;
 	private String value = null;
+	private String fileName = null;
 	private File file = null;
 	private InputStream fileBody = null;
 
@@ -54,6 +55,7 @@ public final class HttpParameter implements Comparable<HttpParameter> {
 	public HttpParameter(final String name, final File file) {
 		this.name = name;
 		this.file = file;
+		this.fileName = file != null ? file.getName() : null;
 	}
 
 	public HttpParameter(final String name, final int value) {
@@ -73,7 +75,7 @@ public final class HttpParameter implements Comparable<HttpParameter> {
 
 	public HttpParameter(final String name, final String fileName, final InputStream fileBody) {
 		this.name = name;
-		file = new File(fileName);
+		this.fileName = fileName;
 		this.fileBody = fileBody;
 	}
 
@@ -109,7 +111,7 @@ public final class HttpParameter implements Comparable<HttpParameter> {
 	public String getContentType() {
 		if (!isFile()) throw new IllegalStateException("not a file");
 		String contentType;
-		String extensions = file.getName();
+		String extensions = fileName;
 		final int index = extensions.lastIndexOf(".");
 		if (-1 == index) {
 			// no extension
@@ -143,6 +145,10 @@ public final class HttpParameter implements Comparable<HttpParameter> {
 		return file;
 	}
 
+	public String getFileName() {
+		return fileName;
+	}
+	
 	public InputStream getFileBody() {
 		return fileBody;
 	}
@@ -169,7 +175,7 @@ public final class HttpParameter implements Comparable<HttpParameter> {
 	}
 
 	public boolean isFile() {
-		return file != null;
+		return fileName != null;
 	}
 
 	@Override

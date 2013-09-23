@@ -455,6 +455,7 @@
 			android:name=".service.RefreshService"
 			android:label="@string/label_refresh_service"
 			android:settingsActivity=".activity.SettingsActivity"/>
+		<service android:name=".service.UpdateStatusService"/>
 		<service
 			android:name="edu.ucdavis.earlybird.UCDService"
 			android:settingsActivity=".activity.DataProfilingSettingsActivity"/>
