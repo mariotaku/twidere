@@ -53,8 +53,8 @@ public class ColorLabelFrameLayout extends FrameLayout implements IColorLabelVie
 
 	public ColorLabelFrameLayout(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.IColorLabelView);
-		mIgnorePaddings = a.getBoolean(R.styleable.IColorLabelView_ignorePaddings, false);
+		final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Twidere);
+		mIgnorePaddings = a.getBoolean(R.styleable.Twidere_ignorePaddings, false);
 		a.recycle();
 		final Resources res = context.getResources();
 		mDensity = res.getDisplayMetrics().density;

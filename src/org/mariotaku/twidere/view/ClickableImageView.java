@@ -19,11 +19,14 @@
 
 package org.mariotaku.twidere.view;
 
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.ThemeUtils;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -31,9 +34,11 @@ import android.widget.ImageView;
 
 public class ClickableImageView extends ImageView {
 
-	private final int mHighlightColor;
 	private final Rect mRect;
+	private final Paint mHighlightPaint;
+
 	private boolean mIsDown;
+	private boolean mIgnorePaddings;
 
 	public ClickableImageView(final Context context) {
 		this(context, null);
@@ -45,9 +50,18 @@ public class ClickableImageView extends ImageView {
 
 	public ClickableImageView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
+		final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Twidere);
+		mIgnorePaddings = a.getBoolean(R.styleable.Twidere_ignorePaddings, false);
+		a.recycle();
 		final int color = ThemeUtils.getThemeColor(context);
-		mHighlightColor = Color.argb(0x80, Color.red(color), Color.green(color), Color.blue(color));
+		final int mHighlightColor = Color.argb(0x80, Color.red(color), Color.green(color), Color.blue(color));
+		mHighlightPaint = new Paint();
+		mHighlightPaint.setColor(mHighlightColor);
 		mRect = new Rect();
+	}
+
+	public boolean isPaddingsIgnored() {
+		return mIgnorePaddings;
 	}
 
 	@Override
@@ -75,11 +89,26 @@ public class ClickableImageView extends ImageView {
 		return super.onTouchEvent(e);
 	}
 
+	public void setIgnorePaddings(final boolean ignorePaddings) {
+		mIgnorePaddings = ignorePaddings;
+		invalidate();
+	}
+
 	@Override
 	protected void onDraw(final Canvas canvas) {
 		super.onDraw(canvas);
 		if (mIsDown && isClickable() && isEnabled()) {
-			canvas.drawColor(mHighlightColor);
+			final int pl, pt, pr, pb;
+			final int w = getWidth(), h = getHeight();
+			if (mIgnorePaddings) {
+				pl = pt = pr = pb = 0;
+			} else {
+				pl = getPaddingLeft();
+				pt = getPaddingTop();
+				pr = getPaddingRight();
+				pb = getPaddingBottom();
+			}
+			canvas.drawRect(pl, pt, w - pr, h - pb, mHighlightPaint);
 		}
 	}
 

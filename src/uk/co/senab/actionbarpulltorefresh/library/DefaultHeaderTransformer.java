@@ -153,14 +153,15 @@ public class DefaultHeaderTransformer extends PullToRefreshAttacher.HeaderTransf
 					view.setVisibility(View.VISIBLE);
 				}
 			}
-
-			ViewAccessor.setBackground(mHeaderTextView, abBg);
+			if (mHeaderTextView != null) {
+				ViewAccessor.setBackground(mHeaderTextView, abBg);
+			}
 		}
 
 		// Retrieve the Action Bar Title Style from the Action Bar's theme
 		final Context abContext = headerView.getContext();
 		final int titleTextStyle = getActionBarTitleStyle(abContext);
-		if (titleTextStyle != 0) {
+		if (titleTextStyle != 0 && mHeaderTextView != null) {
 			mHeaderTextView.setTextAppearance(abContext, titleTextStyle);
 		}
 

@@ -31,6 +31,7 @@
 				android:id="@+id/profile_image"
 				android:layout_width="@dimen/profile_image_size_small"
 				android:layout_height="@dimen/profile_image_size_small"
+				android:layout_marginRight="8dp"
 				android:layout_weight="0"
 				android:contentDescription="@string/profile_image"
 				android:scaleType="fitCenter"/>
@@ -38,8 +39,7 @@
 			<RelativeLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:paddingLeft="8dp">
+				android:layout_weight="1">
 
 				<FrameLayout
 					android:id="@+id/name_frame"
@@ -83,6 +83,7 @@
 				android:id="@+id/my_profile_image"
 				android:layout_width="@dimen/profile_image_size_small"
 				android:layout_height="@dimen/profile_image_size_small"
+				android:layout_marginLeft="8dp"
 				android:layout_weight="0"
 				android:contentDescription="@string/my_profile_image"
 				android:scaleType="fitCenter"/>

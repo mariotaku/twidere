@@ -72,7 +72,7 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 			mPullToRefreshAttacherActivity = (PullToRefreshAttacherActivity) activity;
 		} else
 			throw new IllegalStateException("Activity class must implement PullToRefreshAttacherActivity");
-		mPullToRefreshAttacher.setOnTouchListener(getListView(), this);
+		getListView().setOnTouchListener(this);
 		final HeaderTransformer transformer = mPullToRefreshAttacher.getHeaderTransformer();
 		if (transformer instanceof DefaultHeaderTransformer) {
 			final DefaultHeaderTransformer t = (DefaultHeaderTransformer) transformer;

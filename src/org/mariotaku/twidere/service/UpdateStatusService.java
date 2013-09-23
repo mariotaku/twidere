@@ -83,8 +83,6 @@ public class UpdateStatusService extends IntentService implements Constants {
 		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		mTwitter = app.getTwitterWrapper();
 		mBuilder = new NotificationCompat.Builder(this);
-		mBuilder.setContentTitle(getString(R.string.updating_status_notification)).setSmallIcon(
-				R.drawable.ic_stat_tweet);
 		mMessagesManager = app.getMessagesManager();
 		final String uploader_component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
 		final String shortener_component = mPreferences.getString(PREFERENCE_KEY_TWEET_SHORTENER, null);
@@ -148,50 +146,7 @@ public class UpdateStatusService extends IntentService implements Constants {
 	@Override
 	protected void onHandleIntent(final Intent intent) {
 		if (intent == null) return;
-		final ParcelableStatusUpdate status = intent.getParcelableExtra(INTENT_KEY_STATUS);
-		if (status == null) return;
-		startForeground(NOTIFICATION_ID_UPDATE_STATUS, updateNotificaion(0));
-		final List<SingleResponse<ParcelableStatus>> result = updateStatus(status);
-		boolean failed = false;
-		Exception exception = null;
-		final List<Long> failed_account_ids = ListUtils.fromArray(status.account_ids);
-
-		for (final SingleResponse<ParcelableStatus> response : result) {
-			if (response.data == null) {
-				failed = true;
-				if (exception == null) {
-					exception = response.exception;
-				}
-			} else if (response.data.account_id > 0) {
-				failed_account_ids.remove(response.data.account_id);
-			}
-		}
-		if (result.isEmpty()) {
-			saveDrafts(status, failed_account_ids);
-			showErrorMessage(R.string.sending_status, getString(R.string.no_account_selected), false);
-		} else if (failed) {
-			// If the status is a duplicate, there's no need to save it to
-			// drafts.
-			if (exception instanceof TwitterException
-					&& ((TwitterException) exception).getErrorCode() == TwitterErrorCodes.STATUS_IS_DUPLICATE) {
-				showErrorMessage(getString(R.string.status_is_duplicate), false);
-			} else {
-				saveDrafts(status, failed_account_ids);
-				showErrorMessage(R.string.sending_status, exception, true);
-			}
-		} else {
-			showOkMessage(R.string.status_updated, false);
-			if (status.image_uri != null && status.delete_image) {
-				final String path = getImagePathFromUri(this, status.image_uri);
-				if (path != null) {
-					new File(path).delete();
-				}
-			}
-		}
-		if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_AFTER_TWEET, false)) {
-			mTwitter.refreshAll();
-		}
-		stopForeground(true);
+		handleUpdateStatusIntent(intent);
 	}
 
 	protected List<SingleResponse<ParcelableStatus>> updateStatus(final ParcelableStatusUpdate pstatus) {
@@ -270,7 +225,7 @@ public class UpdateStatusService extends IntentService implements Constants {
 								final int percent = length > 0 ? (length - available) * 100 / length : 0;
 								if (this.percent != percent) {
 									mNotificationManager.notify(NOTIFICATION_ID_UPDATE_STATUS,
-											updateNotificaion(percent));
+											updateUpdateStatusNotificaion(percent, pstatus));
 								}
 								this.percent = percent;
 							}
@@ -339,6 +294,53 @@ public class UpdateStatusService extends IntentService implements Constants {
 		return builder.build();
 	}
 
+	private void handleUpdateStatusIntent(final Intent intent) {
+		final ParcelableStatusUpdate status = intent.getParcelableExtra(INTENT_KEY_STATUS);
+		if (status == null) return;
+		startForeground(NOTIFICATION_ID_UPDATE_STATUS, updateUpdateStatusNotificaion(0, status));
+		final List<SingleResponse<ParcelableStatus>> result = updateStatus(status);
+		boolean failed = false;
+		Exception exception = null;
+		final List<Long> failed_account_ids = ListUtils.fromArray(status.account_ids);
+
+		for (final SingleResponse<ParcelableStatus> response : result) {
+			if (response.data == null) {
+				failed = true;
+				if (exception == null) {
+					exception = response.exception;
+				}
+			} else if (response.data.account_id > 0) {
+				failed_account_ids.remove(response.data.account_id);
+			}
+		}
+		if (result.isEmpty()) {
+			saveDrafts(status, failed_account_ids);
+			showErrorMessage(R.string.sending_status, getString(R.string.no_account_selected), false);
+		} else if (failed) {
+			// If the status is a duplicate, there's no need to save it to
+			// drafts.
+			if (exception instanceof TwitterException
+					&& ((TwitterException) exception).getErrorCode() == TwitterErrorCodes.STATUS_IS_DUPLICATE) {
+				showErrorMessage(getString(R.string.status_is_duplicate), false);
+			} else {
+				saveDrafts(status, failed_account_ids);
+				showErrorMessage(R.string.sending_status, exception, true);
+			}
+		} else {
+			showOkMessage(R.string.status_updated, false);
+			if (status.image_uri != null && status.delete_image) {
+				final String path = getImagePathFromUri(this, status.image_uri);
+				if (path != null) {
+					new File(path).delete();
+				}
+			}
+		}
+		if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_AFTER_TWEET, false)) {
+			mTwitter.refreshAll();
+		}
+		stopForeground(true);
+	}
+
 	private void saveDrafts(final ParcelableStatusUpdate status, final List<Long> account_ids) {
 		final ContentValues values = new ContentValues();
 		values.put(Drafts.ACCOUNT_IDS, ListUtils.toString(account_ids, ';', false));
@@ -357,7 +359,10 @@ public class UpdateStatusService extends IntentService implements Constants {
 		mNotificationManager.notify(NOTIFICATION_ID_DRAFTS, notification);
 	}
 
-	private Notification updateNotificaion(final int progress) {
+	private Notification updateUpdateStatusNotificaion(final int progress, final ParcelableStatusUpdate status) {
+		mBuilder.setContentTitle(getString(R.string.updating_status_notification));
+		mBuilder.setContentText(status.content);
+		mBuilder.setSmallIcon(R.drawable.ic_stat_tweet);
 		mBuilder.setProgress(100, progress, progress >= 100 || progress <= 0);
 		final Notification notification = mBuilder.build();
 		mNotificationManager.notify(NOTIFICATION_ID_UPDATE_STATUS, notification);
