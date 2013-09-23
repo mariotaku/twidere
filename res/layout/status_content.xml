@@ -12,20 +12,6 @@
 		android:background="?cardItemBackground"
 		android:orientation="vertical">
 
-		<TextView
-			android:id="@+id/in_reply_to"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="?android:selectableItemBackground"
-			android:clickable="true"
-			android:drawableLeft="@drawable/ic_indicator_reply"
-			android:drawablePadding="4dp"
-			android:gravity="center_vertical"
-			android:padding="8dp"
-			android:singleLine="true"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:visibility="gone"/>
-
 		<org.mariotaku.twidere.view.ColorLabelRelativeLayout
 			android:id="@+id/profile"
 			android:layout_width="match_parent"
@@ -113,6 +99,13 @@
 		<include layout="@layout/image_preview"/>
 
 		<TextView
+			android:id="@+id/time_source"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:padding="8dp"
+			android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+		<TextView
 			android:id="@+id/retweet_view"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -140,11 +133,18 @@
 			android:visibility="gone"/>
 
 		<TextView
-			android:id="@+id/time_source"
+			android:id="@+id/in_reply_to"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
+			android:background="?android:selectableItemBackground"
+			android:clickable="true"
+			android:drawableLeft="@drawable/ic_indicator_reply"
+			android:drawablePadding="4dp"
+			android:gravity="center_vertical"
 			android:padding="8dp"
-			android:textAppearance="?android:attr/textAppearanceSmall"/>
+			android:singleLine="true"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:visibility="gone"/>
 	</LinearLayout>
 
 </FrameLayout>

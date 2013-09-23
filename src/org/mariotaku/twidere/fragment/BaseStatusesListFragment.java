@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.cancelRetweet;
+import static org.mariotaku.twidere.util.Utils.clearListViewChoices;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getDefaultTextSize;
@@ -41,7 +42,6 @@ import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.PositionManager;
 import org.mariotaku.twidere.util.ThemeUtils;
-import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
 import android.content.ActivityNotFoundException;
@@ -134,9 +134,6 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		setListHeaderFooters(mListView);
 		setListAdapter(mAdapter);
 		mListView.setDivider(null);
-		final int listBackgroundColor = ThemeUtils.getCardListBackgroundColor(getActivity());
-		mListView.setBackgroundColor(listBackgroundColor);
-		mListView.setCacheColorHint(listBackgroundColor);
 		mListView.setOnItemLongClickListener(this);
 		setListShown(false);
 		getLoaderManager().initLoader(0, getArguments(), this);
@@ -160,13 +157,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 
 	@Override
 	public void onItemsCleared() {
-		mListView.clearChoices();
-		mListView.setChoiceMode(ListView.CHOICE_MODE_NONE);
-		// Workaround for Android bug
-		// http://stackoverflow.com/questions/9754170/listview-selection-remains-persistent-after-exiting-choice-mode
-		final int position = mListView.getFirstVisiblePosition(), offset = Utils.getFirstChildOffset(mListView);
-		mListView.setAdapter(mAdapter);
-		Utils.scrollListToPosition(mListView, position, offset);
+		clearListViewChoices(mListView);
 	}
 
 	@Override
@@ -447,7 +438,9 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		} else {
 			mMultiSelectManager.unselectItem(status);
 		}
-		mListView.setItemChecked(position, selected);
+		if (position >= 0) {
+			mListView.setItemChecked(position, selected);
+		}
 	}
 
 	protected void setListHeaderFooters(final ListView list) {

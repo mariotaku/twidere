@@ -124,16 +124,15 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 		switch (requestCode) {
 			case REQUEST_EDIT_API: {
 				if (resultCode == RESULT_OK) {
-					Bundle bundle = new Bundle();
-					if (data != null) {
-						bundle = data.getExtras();
-					}
-					if (bundle != null) {
-						mRestBaseURL = bundle.getString(Accounts.REST_BASE_URL);
-						mSigningRestBaseURL = bundle.getString(Accounts.SIGNING_REST_BASE_URL);
-						mOAuthBaseURL = bundle.getString(Accounts.OAUTH_BASE_URL);
-						mSigningOAuthBaseURL = bundle.getString(Accounts.SIGNING_OAUTH_BASE_URL);
-						mAuthType = bundle.getInt(Accounts.AUTH_TYPE);
+					final Bundle extras = data != null ? data.getExtras() : null;
+					if (extras != null) {
+						mRestBaseURL = extras.getString(Accounts.REST_BASE_URL);
+						mSigningRestBaseURL = extras.getString(Accounts.SIGNING_REST_BASE_URL);
+						mOAuthBaseURL = extras.getString(Accounts.OAUTH_BASE_URL);
+						mSigningOAuthBaseURL = extras.getString(Accounts.SIGNING_OAUTH_BASE_URL);
+						mAuthType = extras.getInt(Accounts.AUTH_TYPE);
+						mConsumerKey = extras.getString(Accounts.CONSUMER_KEY);
+						mConsumerSecret = extras.getString(Accounts.CONSUMER_SECRET);
 						final boolean is_twip_o_mode = mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE;
 						mUsernamePasswordContainer.setVisibility(is_twip_o_mode ? View.GONE : View.VISIBLE);
 						mSigninSignupContainer.setOrientation(is_twip_o_mode ? LinearLayout.VERTICAL

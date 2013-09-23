@@ -44,14 +44,14 @@ public class PullToRefreshLayout extends FrameLayout {
 
 	@Override
 	public boolean onInterceptTouchEvent(final MotionEvent event) {
-		if (mPullToRefreshAttacher != null && getChildCount() > 0)
+		if (isEnabled() && mPullToRefreshAttacher != null && getChildCount() > 0)
 			return mPullToRefreshAttacher.onInterceptTouchEvent(getChildAt(0), event);
 		return super.onInterceptTouchEvent(event);
 	}
 
 	@Override
 	public boolean onTouchEvent(final MotionEvent event) {
-		if (mPullToRefreshAttacher != null && getChildCount() > 0)
+		if (isEnabled() && mPullToRefreshAttacher != null && getChildCount() > 0)
 			return mPullToRefreshAttacher.onTouchEvent(getChildAt(0), event);
 		return super.onTouchEvent(event);
 	}
@@ -70,7 +70,6 @@ public class PullToRefreshLayout extends FrameLayout {
 			if (mPullToRefreshAttacher != null) {
 				mPullToRefreshAttacher.removeRefreshableView(view);
 			}
-
 			if (attacher != null) {
 				attacher.addRefreshableView(view, null, refreshListener, false);
 			}

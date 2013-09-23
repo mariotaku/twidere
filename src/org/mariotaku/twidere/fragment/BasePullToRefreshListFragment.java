@@ -19,20 +19,32 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static android.support.v4.app.ListFragmentTrojan.INTERNAL_EMPTY_ID;
+import static android.support.v4.app.ListFragmentTrojan.INTERNAL_LIST_CONTAINER_ID;
+import static android.support.v4.app.ListFragmentTrojan.INTERNAL_PROGRESS_CONTAINER_ID;
+
 import org.mariotaku.twidere.util.ThemeUtils;
 
 import uk.co.senab.actionbarpulltorefresh.library.DefaultHeaderTransformer;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher.HeaderTransformer;
+import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 public abstract class BasePullToRefreshListFragment extends BaseSupportListFragment implements
 		PullToRefreshAttacher.OnRefreshListener, OnTouchListener, OnGestureListener {
@@ -41,6 +53,7 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 	private PullToRefreshAttacher mPullToRefreshAttacher;
 	private GestureDetector mGestureDector;
 	private boolean mPulledUp;
+	private PullToRefreshLayout mPullToRefreshLayout;
 
 	public String getPullToRefreshTag() {
 		return getTag();
@@ -69,19 +82,76 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 		mGestureDector = new GestureDetector(getActivity(), this);
 	}
 
+	/**
+	 * Provide default implementation to return a simple list view. Subclasses
+	 * can override to replace with their own layout. If doing so, the returned
+	 * view hierarchy <em>must</em> have a ListView whose id is
+	 * {@link android.R.id#list android.R.id.list} and can optionally have a
+	 * sibling view id {@link android.R.id#empty android.R.id.empty} that is to
+	 * be shown when the list is empty.
+	 * 
+	 * <p>
+	 * If you are overriding this method with your own custom content, consider
+	 * including the standard layout {@link android.R.layout#list_content} in
+	 * your layout file, so that you continue to retain all of the standard
+	 * behavior of ListFragment. In particular, this is currently the only way
+	 * to have the built-in indeterminant progress state be shown.
+	 */
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		final View view = super.onCreateView(inflater, container, savedInstanceState);
-		final Activity activity = getActivity();
-		if (activity instanceof PullToRefreshAttacherActivity) {
-			mPullToRefreshAttacher = ((PullToRefreshAttacherActivity) activity).getPullToRefreshAttacher();
-			// Set the Refreshable View to be the ListView and the refresh
-			// listener
-			// to be this.
-			mPullToRefreshAttacher.addRefreshableView(view.findViewById(android.R.id.list), this);
-		} else
+		final Context context = getActivity();
+		if (!(context instanceof PullToRefreshAttacherActivity))
 			throw new IllegalStateException("Activity class must implement PullToRefreshAttacherActivity");
-		return view;
+		mPullToRefreshAttacher = ((PullToRefreshAttacherActivity) context).getPullToRefreshAttacher();
+		final FrameLayout root = new FrameLayout(context);
+
+		// ------------------------------------------------------------------
+
+		final LinearLayout pframe = new LinearLayout(context);
+		pframe.setId(INTERNAL_PROGRESS_CONTAINER_ID);
+		pframe.setOrientation(LinearLayout.VERTICAL);
+		pframe.setVisibility(View.GONE);
+		pframe.setGravity(Gravity.CENTER);
+
+		final ProgressBar progress = new ProgressBar(context, null, android.R.attr.progressBarStyleLarge);
+		pframe.addView(progress, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+				ViewGroup.LayoutParams.WRAP_CONTENT));
+
+		root.addView(pframe, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+				ViewGroup.LayoutParams.MATCH_PARENT));
+
+		// ------------------------------------------------------------------
+
+		final FrameLayout lframe = new FrameLayout(context);
+		lframe.setId(INTERNAL_LIST_CONTAINER_ID);
+
+		final TextView tv = new TextView(getActivity());
+		tv.setId(INTERNAL_EMPTY_ID);
+		tv.setGravity(Gravity.CENTER);
+		lframe.addView(tv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+				ViewGroup.LayoutParams.MATCH_PARENT));
+
+		final PullToRefreshLayout plv = new PullToRefreshLayout(context);
+		mPullToRefreshLayout = plv;
+
+		final ListView lv = new ListView(context);
+		lv.setId(android.R.id.list);
+		lv.setDrawSelectorOnTop(false);
+		plv.addView(lv, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+		plv.setPullToRefreshAttacher(mPullToRefreshAttacher, this);
+		// ViewCompat.setOverScrollMode(lv, ViewCompat.OVER_SCROLL_NEVER);
+		lframe.addView(plv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+				ViewGroup.LayoutParams.MATCH_PARENT));
+
+		root.addView(lframe, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+				ViewGroup.LayoutParams.MATCH_PARENT));
+
+		// ------------------------------------------------------------------
+
+		root.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+				ViewGroup.LayoutParams.MATCH_PARENT));
+
+		return root;
 	}
 
 	@Override
@@ -140,8 +210,11 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 	}
 
 	public void setPullToRefreshEnabled(final boolean enabled) {
-		if (mPullToRefreshAttacherActivity == null) return;
-		mPullToRefreshAttacherActivity.setPullToRefreshEnabled(this, enabled);
+		// if (mPullToRefreshAttacherActivity == null) return;
+		// mPullToRefreshAttacherActivity.setPullToRefreshEnabled(this,
+		// enabled);
+		if (mPullToRefreshLayout == null) return;
+		mPullToRefreshLayout.setEnabled(enabled);
 	}
 
 	public void setRefreshComplete() {
@@ -165,6 +238,10 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 
 	protected PullToRefreshAttacher getPullToRefreshAttacher() {
 		return mPullToRefreshAttacher;
+	}
+
+	protected PullToRefreshLayout getPullToRefreshLayout() {
+		return mPullToRefreshLayout;
 	}
 
 	protected void onPullUp() {

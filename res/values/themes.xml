@@ -17,7 +17,7 @@
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
 		<item name="tabBackground">@null</item>
 		<item name="contentBackground">#20808080</item>
-		<item name="cardListBackgroundColor">@color/bg_card_list_light</item>
+		<item name="cardListBackgroundColor">@color/bg_color_light</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_light</item>
 		<!-- Widget styles -->
@@ -31,7 +31,7 @@
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView.Dark</item>
 		<item name="tabBackground">@null</item>
 		<item name="contentBackground">#20000000</item>
-		<item name="cardListBackgroundColor">@color/bg_card_list_dark</item>
+		<item name="cardListBackgroundColor">@color/bg_color_dark</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_dark</item>
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_dark</item>
 		<!-- Widget styles -->
@@ -45,7 +45,7 @@
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView.Light</item>
 		<item name="tabBackground">@drawable/tab_background_dark</item>
 		<item name="contentBackground">#20808080</item>
-		<item name="cardListBackgroundColor">@color/bg_card_list_light</item>
+		<item name="cardListBackgroundColor">@color/bg_color_light</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_light</item>
 		<!-- Widget styles -->
@@ -59,7 +59,7 @@
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView.Light.DarkActionBar</item>
 		<item name="tabBackground">@drawable/tab_background_dark</item>
 		<item name="contentBackground">#20808080</item>
-		<item name="cardListBackgroundColor">@color/bg_card_list_light</item>
+		<item name="cardListBackgroundColor">@color/bg_color_light</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_light</item>
 		<!-- Widget styles -->

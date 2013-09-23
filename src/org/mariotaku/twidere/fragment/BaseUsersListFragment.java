@@ -37,7 +37,6 @@ import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
-import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.Utils;
 
 import android.content.ActivityNotFoundException;
@@ -130,9 +129,6 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 		}
 		mAccountId = account_id;
 		mListView.setDivider(null);
-		final int listBackgroundColor = ThemeUtils.getCardListBackgroundColor(getActivity());
-		mListView.setBackgroundColor(listBackgroundColor);
-		mListView.setCacheColorHint(listBackgroundColor);
 		mListView.setOnItemLongClickListener(this);
 		setListAdapter(mAdapter);
 		getLoaderManager().initLoader(0, getArguments(), this);

@@ -2,7 +2,7 @@
 <resources>
 
 	<color name="nyan_background">#003366</color>
-	<color name="bg_card_list_light">#e0e0e0</color>
-	<color name="bg_card_list_dark">#333333</color>
+	<color name="bg_color_light">#e0e0e0</color>
+	<color name="bg_color_dark">#333333</color>
 
 </resources>

@@ -194,7 +194,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
-import android.widget.Checkable;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -565,16 +565,15 @@ public final class Utils implements Constants {
 
 	public static void clearListViewChoices(final ListView view) {
 		if (view == null) return;
+		final ListAdapter adapter = view.getAdapter();
+		if (adapter == null) return;
 		view.clearChoices();
+		view.setChoiceMode(ListView.CHOICE_MODE_NONE);
 		// Workaround for Android bug
 		// http://stackoverflow.com/questions/9754170/listview-selection-remains-persistent-after-exiting-choice-mode
-		final int childCount = view.getChildCount();
-		for (int i = 0; i < childCount; i++) {
-			final View child = view.getChildAt(i);
-			if (child instanceof Checkable) {
-				((Checkable) child).setChecked(false);
-			}
-		}
+		final int position = view.getFirstVisiblePosition(), offset = Utils.getFirstChildOffset(view);
+		view.setAdapter(adapter);
+		Utils.scrollListToPosition(view, position, offset);
 	}
 
 	public static void clearUserColor(final Context context, final long user_id) {

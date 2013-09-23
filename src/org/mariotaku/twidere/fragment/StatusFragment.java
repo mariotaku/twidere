@@ -148,7 +148,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private ProgressBar mStatusLoadProgress, mFollowInfoProgress;
 	private AbsSpinner mImagePreviewGallery;
 	private ImageButton mPrevImage, mNextImage;
-	private View mStatusView; 
+	private View mStatusView;
 	private View mLoadImagesIndicator;
 	private ExtendedFrameLayout mStatusContainer;
 	private ListView mListView;
@@ -371,8 +371,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		@Override
 		public void onSizeChanged(final View view, final int w, final int h, final int oldw, final int oldh) {
 			if (getActivity() == null) return;
-			final float density = getResources().getDisplayMetrics().density;
-			mStatusView.setMinimumHeight(h - (int) (density * 2));
+			// final float density = getResources().getDisplayMetrics().density;
+			// mStatusView.setMinimumHeight(h - (int) (density * 2));
 		}
 
 	};
@@ -493,7 +493,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		super.onActivityCreated(savedInstanceState);
 		setListShownNoAnimation(true);
 		mListView = getListView();
-		mListView.setStackFromBottom(true);
+		// mListView.setStackFromBottom(true);
 		getListAdapter().setGapDisallowed(true);
 		final TwidereApplication application = getApplication();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -502,7 +502,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 		mImagePreviewAdapter = new ImagePreviewAdapter(getActivity());
 		setPullToRefreshEnabled(false);
-		getPullToRefreshAttacher().setEnabled(false);
+		// getPullToRefreshAttacher().setEnabled(false);
 		final Bundle bundle = getArguments();
 		if (bundle != null) {
 			mAccountId = bundle.getLong(INTENT_KEY_ACCOUNT_ID);
@@ -729,9 +729,28 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	}
 
+	// @Override
+	// protected void setItemSelected(final ParcelableStatus status, final int
+	// position, final boolean selected) {
+	// final MultiSelectManager manager = getMultiSelectManager();
+	// final Object only_item = manager.getCount() == 1 ?
+	// manager.getSelectedItems().get(0) : null;
+	// final boolean only_item_selected = only_item != null &&
+	// !only_item.equals(mStatus);
+	// mListView.setItemChecked(0, only_item_selected);
+	// if (mStatus != null) {
+	// if (only_item_selected) {
+	// manager.selectItem(mStatus);
+	// } else {
+	// manager.unselectItem(mStatus);
+	// }
+	// }
+	// super.setItemSelected(status, position, selected);
+	// }
+
 	@Override
 	protected void setListHeaderFooters(final ListView list) {
-		list.addFooterView(mStatusView);
+		list.addHeaderView(mStatusView, null, true);
 	}
 
 	private void addConversationStatus(final ParcelableStatus status) {
@@ -741,9 +760,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		data.add(status);
 		final ParcelableStatusesAdapter adapter = (ParcelableStatusesAdapter) getListAdapter();
 		adapter.setData(data);
-		adapter.sort(ParcelableStatus.REVERSE_ID_COMPARATOR);
 		if (!mLoadMoreAutomatically && mShouldScroll) {
-			setSelection(0 + mListView.getHeaderViewsCount());
+			setSelection(0);
 		}
 	}
 
@@ -787,7 +805,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			mShouldScroll = !mLoadMoreAutomatically;
 			status = mStatus;
 		} else {
-			status = adapter.getStatus(0);
+			status = adapter.getStatus(adapter.getCount() - 1);
 		}
 		if (status == null || status.in_reply_to_status_id <= 0) return;
 		mConversationTask = new LoadConversationTask(this);
@@ -821,9 +839,11 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private void updateConversationInfo() {
 		final boolean has_converstion = mStatus != null && mStatus.in_reply_to_status_id > 0;
 		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();
-		final boolean load_not_finished = adapter.isEmpty() || adapter.getStatus(0).in_reply_to_status_id > 0;
+		final boolean load_not_finished = adapter.isEmpty()
+				|| adapter.getStatus(adapter.getCount() - 1).in_reply_to_status_id > 0;
 		final boolean enable = has_converstion && load_not_finished;
-		mListView.setTranscriptMode(enable ? ListView.TRANSCRIPT_MODE_NORMAL : ListView.TRANSCRIPT_MODE_DISABLED);
+		// mListView.setTranscriptMode(enable ? ListView.TRANSCRIPT_MODE_NORMAL
+		// : ListView.TRANSCRIPT_MODE_DISABLED);
 		mInReplyToView.setVisibility(enable ? View.VISIBLE : View.GONE);
 		mInReplyToView.setClickable(enable);
 	}
