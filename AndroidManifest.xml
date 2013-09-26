@@ -279,6 +279,9 @@
 					android:host="list_subscribers"
 					android:scheme="twidere"/>
 				<data
+					android:host="list_memberships"
+					android:scheme="twidere"/>
+				<data
 					android:host="saved_searches"
 					android:scheme="twidere"/>
 				<data

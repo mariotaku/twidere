@@ -46,8 +46,8 @@
 	</style>
 
 	<style name="Animation.SwipeBack" parent="android:Animation.Activity">
-		<item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>
-		<item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
+		<item name="android:activityOpenEnterAnimation">@anim/swipeback_open_enter</item>
+		<item name="android:activityCloseExitAnimation">@anim/swipeback_close_exit</item>
 	</style>
 
 	<style name="Widget.TabPageIndicator" parent="@android:style/Widget">

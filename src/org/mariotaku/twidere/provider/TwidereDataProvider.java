@@ -22,8 +22,9 @@ package org.mariotaku.twidere.provider;
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.clearAccountColor;
 import static org.mariotaku.twidere.util.Utils.clearAccountName;
-import static org.mariotaku.twidere.util.Utils.getAccountName;
+import static org.mariotaku.twidere.util.Utils.getAccountNames;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
+import static org.mariotaku.twidere.util.Utils.getAccountScreenNames;
 import static org.mariotaku.twidere.util.Utils.getAllStatusesCount;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTableId;
@@ -611,19 +612,12 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			if (max == 4 && mentions_size - max > 0) {
 				style.addLine(context.getString(R.string.and_more, mentions_size - max));
 			}
-			final StringBuilder summary = new StringBuilder();
 			final int accounts_count = mNewMentionAccounts.size();
 			if (accounts_count > 0) {
-				for (int i = 0; i < accounts_count; i++) {
-					final String name = display_screen_name ? "@"
-							+ getAccountScreenName(context, mNewMentionAccounts.get(i)) : getAccountName(context,
-							mNewMentionAccounts.get(i));
-					summary.append(name);
-					if (i != accounts_count - 1) {
-						summary.append(", ");
-					}
-				}
-				style.setSummaryText(summary);
+				final long[] ids = ArrayUtils.fromList(mNewMentionAccounts);
+				final String[] names = display_screen_name ? getAccountScreenNames(context, ids, true)
+						: getAccountNames(context, ids);
+				style.setSummaryText(ArrayUtils.toString(names, ',', true));
 			}
 			mNotificationManager.notify(NOTIFICATION_ID_MENTIONS, style.build());
 		} else {
@@ -687,8 +681,11 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		content_intent.putExtras(content_extras);
 
 		if (screen_names_size > 1) {
-			title = mResources.getString(R.string.notification_direct_message_multiple, display_screen_name ? "@"
-					+ message.sender_screen_name : message.sender_name, screen_names_size - 1);
+			title = mResources.getString(R.string.notification_direct_message_multiple_users, display_screen_name ? "@"
+					+ message.sender_screen_name : message.sender_name, screen_names_size - 1, messages_size);
+		} else if (messages_size > 1) {
+			title = mResources.getString(R.string.notification_direct_message_multiple_messages,
+					display_screen_name ? "@" + message.sender_screen_name : message.sender_name, messages_size);
 		} else {
 			title = mResources.getString(R.string.notification_direct_message, display_screen_name ? "@"
 					+ message.sender_screen_name : message.sender_name);
@@ -697,18 +694,15 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		builder.setLargeIcon(getProfileImageForNotification(message.sender_profile_image_url));
 		buildNotification(builder, title, title, text_plain, R.drawable.ic_stat_direct_message, null, content_intent,
 				delete_intent);
-		final StringBuilder summary = new StringBuilder();
+		final String summary;
 		final int accounts_count = mNewMessageAccounts.size();
 		if (accounts_count > 0) {
-			for (int i = 0; i < accounts_count; i++) {
-				final long id = mNewMessageAccounts.get(i);
-				final String name = display_screen_name ? "@" + getAccountScreenName(context, id) : getAccountName(
-						context, id);
-				summary.append(name);
-				if (i != accounts_count - 1) {
-					summary.append(", ");
-				}
-			}
+			final long[] ids = ArrayUtils.fromList(mNewMessageAccounts);
+			final String[] names = display_screen_name ? getAccountScreenNames(context, ids, true) : getAccountNames(
+					context, ids);
+			summary = ArrayUtils.toString(names, ',', true);
+		} else {
+			summary = null;
 		}
 		if (messages_size > 1) {
 			final NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle(builder);
@@ -722,12 +716,16 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			if (max == 4 && messages_size - max > 0) {
 				style.addLine(context.getString(R.string.and_more, messages_size - max));
 			}
-			style.setSummaryText(summary);
+			if (summary != null) {
+				style.setSummaryText(summary);
+			}
 			mNotificationManager.notify(NOTIFICATION_ID_DIRECT_MESSAGES, style.build());
 		} else {
 			final NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle(builder);
 			style.bigText(message.text_plain);
-			style.setSummaryText(summary);
+			if (summary != null) {
+				style.setSummaryText(summary);
+			}
 			mNotificationManager.notify(NOTIFICATION_ID_DIRECT_MESSAGES, style.build());
 		}
 	}
@@ -848,7 +846,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				content_intent.putExtras(content_extras);
 				builder.setOnlyAlertOnce(true);
 				buildNotification(builder, mResources.getString(R.string.new_notifications), message, message,
-						R.drawable.ic_stat_tweet, null, content_intent, delete_intent);
+						R.drawable.ic_stat_twitter, null, content_intent, delete_intent);
 				mNotificationManager.notify(NOTIFICATION_ID_HOME_TIMELINE, builder.build());
 				break;
 			}

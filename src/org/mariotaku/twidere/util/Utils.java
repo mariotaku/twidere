@@ -92,6 +92,7 @@ import org.mariotaku.twidere.fragment.UserFollowersFragment;
 import org.mariotaku.twidere.fragment.UserFriendsFragment;
 import org.mariotaku.twidere.fragment.UserListDetailsFragment;
 import org.mariotaku.twidere.fragment.UserListMembersFragment;
+import org.mariotaku.twidere.fragment.UserListMembershipsListFragment;
 import org.mariotaku.twidere.fragment.UserListSubscribersFragment;
 import org.mariotaku.twidere.fragment.UserListTimelineFragment;
 import org.mariotaku.twidere.fragment.UserListsListFragment;
@@ -264,6 +265,7 @@ public final class Utils implements Constants {
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_TYPES, null, LINK_ID_LISTS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_TIMELINE, null, LINK_ID_LIST_TIMELINE);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_MEMBERS, null, LINK_ID_LIST_MEMBERS);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LIST_MEMBERSHIPS, null, LINK_ID_LIST_MEMBERSHIPS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_LISTS, null, LINK_ID_LISTS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_SAVED_SEARCHES, null, LINK_ID_SAVED_SEARCHES);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USER_MENTIONS, null, LINK_ID_USER_MENTIONS);
@@ -613,6 +615,253 @@ public final class Utils implements Constants {
 		}
 	}
 
+	public static Fragment createFragmentForIntent(final Context context, final Intent intent) {
+		final Bundle extras = intent.getExtras();
+		final Uri uri = intent.getData();
+		final Fragment fragment;
+		if (uri == null) return null;
+		final Bundle args = new Bundle();
+		if (extras != null) {
+			args.putAll(extras);
+		}
+		switch (matchLinkId(uri)) {
+			case LINK_ID_STATUS: {
+				fragment = new StatusFragment();
+				if (!args.containsKey(INTENT_KEY_STATUS_ID)) {
+					final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
+					args.putLong(INTENT_KEY_STATUS_ID, ParseUtils.parseLong(param_status_id));
+				}
+				break;
+			}
+			case LINK_ID_USER: {
+				fragment = new UserProfileFragment();
+				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
+				if (!args.containsKey(INTENT_KEY_SCREEN_NAME)) {
+					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+				}
+				if (!args.containsKey(INTENT_KEY_USER_ID)) {
+					args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
+				}
+				break;
+			}
+			case LINK_ID_LIST_MEMBERSHIPS: {
+				fragment = new UserListMembershipsListFragment();
+				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
+				if (!args.containsKey(INTENT_KEY_SCREEN_NAME)) {
+					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+				}
+				if (!args.containsKey(INTENT_KEY_USER_ID)) {
+					args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
+				}
+				break;
+			}
+			case LINK_ID_USER_TIMELINE: {
+				fragment = new UserTimelineFragment();
+				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
+				if (!args.containsKey(INTENT_KEY_SCREEN_NAME)) {
+					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+				}
+				if (!args.containsKey(INTENT_KEY_USER_ID)) {
+					args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
+				}
+				if (isEmpty(param_screen_name) && isEmpty(param_user_id)) return null;
+				break;
+			}
+			case LINK_ID_USER_FAVORITES: {
+				fragment = new UserFavoritesFragment();
+				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
+				if (!args.containsKey(INTENT_KEY_SCREEN_NAME)) {
+					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+				}
+				if (!args.containsKey(INTENT_KEY_USER_ID)) {
+					args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
+				}
+				if (isEmpty(param_screen_name) && isEmpty(param_user_id)) return null;
+				break;
+			}
+			case LINK_ID_USER_FOLLOWERS: {
+				fragment = new UserFollowersFragment();
+				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
+				if (!args.containsKey(INTENT_KEY_SCREEN_NAME)) {
+					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+				}
+				if (!args.containsKey(INTENT_KEY_USER_ID)) {
+					args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
+				}
+				if (isEmpty(param_screen_name) && isEmpty(param_user_id)) return null;
+				break;
+			}
+			case LINK_ID_USER_FRIENDS: {
+				fragment = new UserFriendsFragment();
+				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
+				if (!args.containsKey(INTENT_KEY_SCREEN_NAME)) {
+					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+				}
+				if (!args.containsKey(INTENT_KEY_USER_ID)) {
+					args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
+				}
+				if (isEmpty(param_screen_name) && isEmpty(param_user_id)) return null;
+				break;
+			}
+			case LINK_ID_USER_BLOCKS: {
+				fragment = new UserBlocksListFragment();
+				break;
+			}
+			case LINK_ID_DIRECT_MESSAGES_CONVERSATION: {
+				fragment = new DirectMessagesConversationFragment();
+				final String param_conversation_id = uri.getQueryParameter(QUERY_PARAM_CONVERSATION_ID);
+				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				final long conversation_id = ParseUtils.parseLong(param_conversation_id);
+				if (conversation_id > 0) {
+					args.putLong(INTENT_KEY_CONVERSATION_ID, conversation_id);
+				} else if (param_screen_name != null) {
+					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+				}
+				break;
+			}
+			case LINK_ID_LIST_DETAILS: {
+				fragment = new UserListDetailsFragment();
+				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
+				final String param_list_id = uri.getQueryParameter(QUERY_PARAM_LIST_ID);
+				final String param_list_name = uri.getQueryParameter(QUERY_PARAM_LIST_NAME);
+				if (isEmpty(param_list_id)
+						&& (isEmpty(param_list_name) || isEmpty(param_screen_name) && isEmpty(param_user_id)))
+					return null;
+				args.putInt(INTENT_KEY_LIST_ID, ParseUtils.parseInt(param_list_id));
+				args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
+				args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+				args.putString(INTENT_KEY_LIST_NAME, param_list_name);
+				break;
+			}
+			case LINK_ID_LISTS: {
+				fragment = new UserListsListFragment();
+				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
+				if (!args.containsKey(INTENT_KEY_SCREEN_NAME)) {
+					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+				}
+				if (!args.containsKey(INTENT_KEY_USER_ID)) {
+					args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
+				}
+				if (isEmpty(param_screen_name) && isEmpty(param_user_id)) return null;
+				break;
+			}
+			case LINK_ID_LIST_TIMELINE: {
+				fragment = new UserListTimelineFragment();
+				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
+				final String param_list_id = uri.getQueryParameter(QUERY_PARAM_LIST_ID);
+				final String param_list_name = uri.getQueryParameter(QUERY_PARAM_LIST_NAME);
+				if (isEmpty(param_list_id)
+						&& (isEmpty(param_list_name) || isEmpty(param_screen_name) && isEmpty(param_user_id)))
+					return null;
+				args.putInt(INTENT_KEY_LIST_ID, ParseUtils.parseInt(param_list_id));
+				args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
+				args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+				args.putString(INTENT_KEY_LIST_NAME, param_list_name);
+				break;
+			}
+			case LINK_ID_LIST_MEMBERS: {
+				fragment = new UserListMembersFragment();
+				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
+				final String param_list_id = uri.getQueryParameter(QUERY_PARAM_LIST_ID);
+				final String param_list_name = uri.getQueryParameter(QUERY_PARAM_LIST_NAME);
+				if (isEmpty(param_list_id)
+						&& (isEmpty(param_list_name) || isEmpty(param_screen_name) && isEmpty(param_user_id)))
+					return null;
+				args.putInt(INTENT_KEY_LIST_ID, ParseUtils.parseInt(param_list_id));
+				args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
+				args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+				args.putString(INTENT_KEY_LIST_NAME, param_list_name);
+				break;
+			}
+			case LINK_ID_LIST_SUBSCRIBERS: {
+				fragment = new UserListSubscribersFragment();
+				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
+				final String param_list_id = uri.getQueryParameter(QUERY_PARAM_LIST_ID);
+				final String param_list_name = uri.getQueryParameter(QUERY_PARAM_LIST_NAME);
+				if (isEmpty(param_list_id)
+						&& (isEmpty(param_list_name) || isEmpty(param_screen_name) && isEmpty(param_user_id)))
+					return null;
+				args.putInt(INTENT_KEY_LIST_ID, ParseUtils.parseInt(param_list_id));
+				args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
+				args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+				args.putString(INTENT_KEY_LIST_NAME, param_list_name);
+				break;
+			}
+			case LINK_ID_SAVED_SEARCHES: {
+				fragment = new SavedSearchesListFragment();
+				break;
+			}
+			case LINK_ID_USER_MENTIONS: {
+				fragment = new UserMentionsFragment();
+				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				if (!args.containsKey(INTENT_KEY_SCREEN_NAME) && !isEmpty(param_screen_name)) {
+					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+				}
+				if (isEmpty(args.getString(INTENT_KEY_SCREEN_NAME))) return null;
+				break;
+			}
+			case LINK_ID_INCOMING_FRIENDSHIPS: {
+				fragment = new IncomingFriendshipsFragment();
+				break;
+			}
+			case LINK_ID_USERS: {
+				fragment = new UsersListFragment();
+				break;
+			}
+			case LINK_ID_STATUSES: {
+				fragment = new StatusesListFragment();
+				break;
+			}
+			case LINK_ID_STATUS_RETWEETERS: {
+				fragment = new StatusRetweetersListFragment();
+				if (!args.containsKey(INTENT_KEY_STATUS_ID)) {
+					final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
+					args.putLong(INTENT_KEY_STATUS_ID, ParseUtils.parseLong(param_status_id));
+				}
+				break;
+			}
+			case LINK_ID_SEARCH: {
+				final String param_query = uri.getQueryParameter(QUERY_PARAM_QUERY);
+				if (isEmpty(param_query)) return null;
+				args.putString(INTENT_KEY_QUERY, param_query);
+				fragment = new SearchFragment();
+				break;
+			}
+			default: {
+				return null;
+			}
+		}
+		final String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
+		if (param_account_id != null) {
+			args.putLong(INTENT_KEY_ACCOUNT_ID, ParseUtils.parseLong(param_account_id));
+		} else {
+			final String param_account_name = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_NAME);
+			if (param_account_name != null) {
+				args.putLong(INTENT_KEY_ACCOUNT_ID, getAccountId(context, param_account_name));
+			} else {
+				final long account_id = getDefaultAccountId(context);
+				if (isMyAccount(context, account_id)) {
+					args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+				}
+			}
+		}
+		if (fragment != null) {
+			fragment.setArguments(args);
+		}
+		return fragment;
+	}
+
 	public static Intent createPickImageIntent(final Uri uri) {
 		final Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 		intent.setType("image/*");
@@ -934,6 +1183,30 @@ public final class Utils implements Constants {
 		return name;
 	}
 
+	public static String[] getAccountNames(final Context context) {
+		return getAccountScreenNames(context, null);
+	}
+
+	public static String[] getAccountNames(final Context context, final long[] account_ids) {
+		if (context == null) return new String[0];
+		final String[] cols = new String[] { Accounts.NAME };
+		final String where = account_ids != null ? Accounts.ACCOUNT_ID + " IN("
+				+ ArrayUtils.toString(account_ids, ',', false) + ")" : null;
+		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, cols, where, null, null);
+		if (cur == null) return new String[0];
+		final int idx = cur.getColumnIndexOrThrow(Accounts.NAME);
+		cur.moveToFirst();
+		final String[] accounts = new String[cur.getCount()];
+		int i = 0;
+		while (!cur.isAfterLast()) {
+			accounts[i] = cur.getString(idx);
+			i++;
+			cur.moveToNext();
+		}
+		cur.close();
+		return accounts;
+	}
+
 	public static String getAccountScreenName(final Context context, final long account_id) {
 		if (context == null) return null;
 		String screen_name = sAccountScreenNames.get(account_id);
@@ -953,22 +1226,35 @@ public final class Utils implements Constants {
 	}
 
 	public static String[] getAccountScreenNames(final Context context) {
-		String[] accounts = new String[0];
-		if (context == null) return accounts;
+		return getAccountScreenNames(context, false);
+	}
+
+	public static String[] getAccountScreenNames(final Context context, final boolean include_at_char) {
+		return getAccountScreenNames(context, null, include_at_char);
+	}
+
+	public static String[] getAccountScreenNames(final Context context, final long[] account_ids) {
+		return getAccountScreenNames(context, account_ids, false);
+	}
+
+	public static String[] getAccountScreenNames(final Context context, final long[] account_ids,
+			final boolean include_at_char) {
+		if (context == null) return new String[0];
 		final String[] cols = new String[] { Accounts.SCREEN_NAME };
-		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, cols, null, null, null);
-		if (cur != null) {
-			final int idx = cur.getColumnIndexOrThrow(Accounts.SCREEN_NAME);
-			cur.moveToFirst();
-			accounts = new String[cur.getCount()];
-			int i = 0;
-			while (!cur.isAfterLast()) {
-				accounts[i] = cur.getString(idx);
-				i++;
-				cur.moveToNext();
-			}
-			cur.close();
+		final String where = account_ids != null ? Accounts.ACCOUNT_ID + " IN("
+				+ ArrayUtils.toString(account_ids, ',', false) + ")" : null;
+		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, cols, where, null, null);
+		if (cur == null) return new String[0];
+		final int idx = cur.getColumnIndexOrThrow(Accounts.SCREEN_NAME);
+		cur.moveToFirst();
+		final String[] accounts = new String[cur.getCount()];
+		int i = 0;
+		while (!cur.isAfterLast()) {
+			accounts[i] = include_at_char ? "@" + cur.getString(idx) : cur.getString(idx);
+			i++;
+			cur.moveToNext();
 		}
+		cur.close();
 		return accounts;
 	}
 
@@ -2887,6 +3173,38 @@ public final class Utils implements Constants {
 		}
 	}
 
+	public static void openUserListMemberships(final Activity activity, final long account_id, final long user_id,
+			final String screen_name) {
+		if (activity == null || account_id <= 0 || user_id <= 0 && isEmpty(screen_name)) return;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
+			final Fragment fragment = new UserListMembershipsListFragment();
+			final Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			if (user_id > 0) {
+				args.putLong(INTENT_KEY_USER_ID, user_id);
+			}
+			if (screen_name != null) {
+				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+			}
+			fragment.setArguments(args);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
+		} else {
+			final Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_LIST_MEMBERSHIPS);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			if (user_id > 0) {
+				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
+			}
+			if (screen_name != null) {
+				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
+			}
+			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
+			activity.startActivity(intent);
+		}
+	}
+	
 	public static void openUserProfile(final Activity activity, final long account_id, final long user_id,
 			final String screen_name) {
 		if (activity == null || account_id <= 0 || user_id <= 0 && isEmpty(screen_name)) return;

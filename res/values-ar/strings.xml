@@ -294,9 +294,9 @@
   <string name="notification_mention">ذكرك <xliff:g id="user">%s</xliff:g>.</string>
   <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> راسلك مباشرة.</string>
   <string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> و <xliff:g id="count">%d</xliff:g> أخرون ذكروك.</string>
-  <string name="notification_direct_message_multiple"><xliff:g id="user">%s</xliff:g> و <xliff:g id="count">%d</xliff:g> أخرون راسلوك مباشرة.</string>
+  <string name="notification_direct_message_multiple_users"><xliff:g id="user">%s</xliff:g> و <xliff:g id="count">%d</xliff:g> أخرون راسلوك مباشرة.</string>
   <string name="getting_status">الحصول على تغريد</string>
-  <string name="sending_status">إرسال تغريد</string>
+  <string name="updating_status">إرسال تغريد</string>
   <string name="sending_direct_message">إرسال رسالة مباشرة</string>
   <string name="refreshing_timelines">تحديث الخط الزمني</string>
   <string name="refreshing_direct_messages">تحديث الرسائل المباشرة</string>

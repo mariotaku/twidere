@@ -324,10 +324,10 @@
   <string name="notification_mention">Sei stato menzionato da <xliff:g id="user">%s</xliff:g>.</string>
   <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> ti ha inviato un messaggio diretto.</string>
   <string name="notification_mention_multiple">Sei stato menzionato da <xliff:g id="user">%s</xliff:g> e da altri <xliff:g id="count">%d</xliff:g>.</string>
-  <string name="notification_direct_message_multiple"><xliff:g id="user">%s</xliff:g> e altri <xliff:g id="count">%d</xliff:g> ti hanno inviato messaggi diretti.</string>
+  <string name="notification_direct_message_multiple_users"><xliff:g id="user">%s</xliff:g> e altri <xliff:g id="count">%d</xliff:g> ti hanno inviato messaggi diretti.</string>
   <string name="getting_status">recupero tweet</string>
   <string name="getting_statuses">recupero dei tweets</string>
-  <string name="sending_status">invio tweet in corso</string>
+  <string name="updating_status">invio tweet in corso</string>
   <string name="sending_direct_message">invio messaggio diretto in corso</string>
   <string name="refreshing_timelines">aggiornamento timeline</string>
   <string name="refreshing_home_timeline">Aggiornamento della timeline</string>

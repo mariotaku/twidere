@@ -256,6 +256,8 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 				bundle.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRestBaseURL);
 				bundle.putString(Accounts.OAUTH_BASE_URL, mOAuthBaseURL);
 				bundle.putString(Accounts.SIGNING_OAUTH_BASE_URL, mSigningOAuthBaseURL);
+				bundle.putString(Accounts.CONSUMER_KEY, mConsumerKey);
+				bundle.putString(Accounts.CONSUMER_SECRET, mConsumerSecret);
 				bundle.putInt(Accounts.AUTH_TYPE, mAuthType);
 				intent.putExtras(bundle);
 				startActivityForResult(intent, REQUEST_EDIT_API);

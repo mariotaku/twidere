@@ -315,10 +315,10 @@
   <string name="notification_mention"><xliff:g id="user">%s</xliff:g> vous a mentioné.</string>
   <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> vous a envoyé un message privé.</string>
   <string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> et <xliff:g id="count">%d</xliff:g> autres vous ont mentioné.</string>
-  <string name="notification_direct_message_multiple"><xliff:g id="user">%s</xliff:g> et <xliff:g id="count">%d</xliff:g> autres vous ont envoyé un message privé.</string>
+  <string name="notification_direct_message_multiple_users"><xliff:g id="user">%s</xliff:g> et <xliff:g id="count">%d</xliff:g> autres vous ont envoyé un message privé.</string>
   <string name="getting_status">obtient le tweet</string>
   <string name="getting_statuses">obtient les tweets</string>
-  <string name="sending_status">envoi le tweet</string>
+  <string name="updating_status">envoi le tweet</string>
   <string name="sending_direct_message">envoi le message</string>
   <string name="refreshing_timelines">actualise le fil d\'actualités</string>
   <string name="refreshing_home_timeline">actualise le fil d\'actualités</string>

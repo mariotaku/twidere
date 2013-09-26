@@ -312,10 +312,10 @@
   <string name="notification_mention"><xliff:g id="user">%s</xliff:g> t\'ha mencionat.</string>
   <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> t\'ha enviat un missatge directe.</string>
   <string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> i altres <xliff:g id="count">%d</xliff:g> t\'han mencionat.</string>
-  <string name="notification_direct_message_multiple"><xliff:g id="user">%s</xliff:g> y otros <xliff:g id="count">%d</xliff:g> t\'han enviat missatges directes.</string>
+  <string name="notification_direct_message_multiple_users"><xliff:g id="user">%s</xliff:g> y otros <xliff:g id="count">%d</xliff:g> t\'han enviat missatges directes.</string>
   <string name="getting_status">s\'està rebent la piulada</string>
   <string name="getting_statuses">descarregant tuits</string>
-  <string name="sending_status">s\'està enviant la pulada</string>
+  <string name="updating_status">s\'està enviant la pulada</string>
   <string name="sending_direct_message">s\'està enviant missatge directe</string>
   <string name="refreshing_timelines">s\'està actualitzant les cronologies</string>
   <string name="refreshing_home_timeline">actualitzant la cronologia</string>

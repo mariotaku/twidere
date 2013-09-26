@@ -40,6 +40,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.RingtoneManager;
@@ -165,8 +166,8 @@ public class UpdateStatusService extends IntentService implements Constants {
 		if (pstatus.account_ids.length == 0) return Collections.emptyList();
 
 		try {
-			if (mUseUploader && mUploader == null) throw new ImageUploaderNotFoundException();
-			if (mUseShortener && mShortener == null) throw new TweetShortenerNotFoundException();
+			if (mUseUploader && mUploader == null) throw new ImageUploaderNotFoundException(this);
+			if (mUseShortener && mShortener == null) throw new TweetShortenerNotFoundException(this);
 
 			final String image_path = getImagePathFromUri(this, pstatus.image_uri);
 			final File image_file = image_path != null ? new File(image_path) : null;
@@ -179,10 +180,10 @@ public class UpdateStatusService extends IntentService implements Constants {
 				upload_result_uri = image_file != null && image_file.exists() && mUploader != null ? mUploader.upload(
 						Uri.fromFile(image_file), pstatus.content) : null;
 			} catch (final Exception e) {
-				throw new ImageUploadException();
+				throw new ImageUploadException(this);
 			}
 			if (mUseUploader && image_file != null && image_file.exists() && upload_result_uri == null)
-				throw new ImageUploadException();
+				throw new ImageUploadException(this);
 
 			final String unshortened_content = mUseUploader && upload_result_uri != null ? getImageUploadStatus(this,
 					upload_result_uri.toString(), pstatus.content) : pstatus.content;
@@ -197,13 +198,13 @@ public class UpdateStatusService extends IntentService implements Constants {
 				shortened_content = should_shorten && mUseShortener ? mShortener.shorten(unshortened_content,
 						screen_name, pstatus.in_reply_to_status_id) : null;
 			} catch (final Exception e) {
-				throw new TweetShortenException();
+				throw new TweetShortenException(this);
 			}
 
 			if (should_shorten) {
 				if (!mUseShortener)
-					throw new StatusTooLongException();
-				else if (unshortened_content == null) throw new TweetShortenException();
+					throw new StatusTooLongException(this);
+				else if (unshortened_content == null) throw new TweetShortenException(this);
 			}
 
 			for (final long account_id : pstatus.account_ids) {
@@ -315,7 +316,7 @@ public class UpdateStatusService extends IntentService implements Constants {
 		}
 		if (result.isEmpty()) {
 			saveDrafts(status, failed_account_ids);
-			showErrorMessage(R.string.sending_status, getString(R.string.no_account_selected), false);
+			showErrorMessage(R.string.updating_status, getString(R.string.no_account_selected), false);
 		} else if (failed) {
 			// If the status is a duplicate, there's no need to save it to
 			// drafts.
@@ -324,7 +325,7 @@ public class UpdateStatusService extends IntentService implements Constants {
 				showErrorMessage(getString(R.string.status_is_duplicate), false);
 			} else {
 				saveDrafts(status, failed_account_ids);
-				showErrorMessage(R.string.sending_status, exception, true);
+				showErrorMessage(R.string.updating_status, exception, true);
 			}
 		} else {
 			showOkMessage(R.string.status_updated, false);
@@ -355,65 +356,65 @@ public class UpdateStatusService extends IntentService implements Constants {
 		final String title = getString(R.string.tweet_not_sent);
 		final String message = getString(R.string.tweet_not_sent_summary);
 		final Intent intent = new Intent(INTENT_ACTION_DRAFTS);
-		final Notification notification = buildNotification(title, message, R.drawable.ic_stat_tweet, intent, null);
+		final Notification notification = buildNotification(title, message, R.drawable.ic_stat_twitter, intent, null);
 		mNotificationManager.notify(NOTIFICATION_ID_DRAFTS, notification);
 	}
 
 	private Notification updateUpdateStatusNotificaion(final int progress, final ParcelableStatusUpdate status) {
 		mBuilder.setContentTitle(getString(R.string.updating_status_notification));
 		mBuilder.setContentText(status.content);
-		mBuilder.setSmallIcon(R.drawable.ic_stat_tweet);
+		mBuilder.setSmallIcon(R.drawable.ic_stat_send);
 		mBuilder.setProgress(100, progress, progress >= 100 || progress <= 0);
 		final Notification notification = mBuilder.build();
 		mNotificationManager.notify(NOTIFICATION_ID_UPDATE_STATUS, notification);
 		return notification;
 	}
 
-	class ImageUploaderNotFoundException extends UpdateStatusException {
+	static class ImageUploaderNotFoundException extends UpdateStatusException {
 		private static final long serialVersionUID = 1041685850011544106L;
 
-		public ImageUploaderNotFoundException() {
-			super(R.string.error_message_image_uploader_not_found);
+		public ImageUploaderNotFoundException(final Context context) {
+			super(context, R.string.error_message_image_uploader_not_found);
 		}
 	}
 
-	class ImageUploadException extends UpdateStatusException {
+	static class ImageUploadException extends UpdateStatusException {
 		private static final long serialVersionUID = 8596614696393917525L;
 
-		public ImageUploadException() {
-			super(R.string.error_message_image_upload_failed);
+		public ImageUploadException(final Context context) {
+			super(context, R.string.error_message_image_upload_failed);
 		}
 	}
 
-	class StatusTooLongException extends UpdateStatusException {
+	static class StatusTooLongException extends UpdateStatusException {
 		private static final long serialVersionUID = -6469920130856384219L;
 
-		public StatusTooLongException() {
-			super(R.string.error_message_status_too_long);
+		public StatusTooLongException(final Context context) {
+			super(context, R.string.error_message_status_too_long);
 		}
 	}
 
-	class TweetShortenerNotFoundException extends UpdateStatusException {
+	static class TweetShortenerNotFoundException extends UpdateStatusException {
 		private static final long serialVersionUID = -7262474256595304566L;
 
-		public TweetShortenerNotFoundException() {
-			super(R.string.error_message_tweet_shortener_not_found);
+		public TweetShortenerNotFoundException(final Context context) {
+			super(context, R.string.error_message_tweet_shortener_not_found);
 		}
 	}
 
-	class TweetShortenException extends UpdateStatusException {
+	static class TweetShortenException extends UpdateStatusException {
 		private static final long serialVersionUID = 3075877185536740034L;
 
-		public TweetShortenException() {
-			super(R.string.error_message_tweet_shorten_failed);
+		public TweetShortenException(final Context context) {
+			super(context, R.string.error_message_tweet_shorten_failed);
 		}
 	}
 
-	class UpdateStatusException extends Exception {
+	static class UpdateStatusException extends Exception {
 		private static final long serialVersionUID = -1267218921727097910L;
 
-		public UpdateStatusException(final int message) {
-			super(getString(message));
+		public UpdateStatusException(final Context context, final int message) {
+			super(context.getString(message));
 		}
 	}
 }

@@ -84,6 +84,7 @@ public interface Constants {
 	public static final String AUTHORITY_LIST_TYPES = "list_types";
 	public static final String AUTHORITY_LIST_TIMELINE = "list_timeline";
 	public static final String AUTHORITY_LIST_MEMBERS = "list_members";
+	public static final String AUTHORITY_LIST_MEMBERSHIPS = "list_memberships";
 	public static final String AUTHORITY_LISTS = "lists";
 	public static final String AUTHORITY_USERS_RETWEETED_STATUS = "users_retweeted_status";
 	public static final String AUTHORITY_SAVED_SEARCHES = "saved_searches";
@@ -559,6 +560,7 @@ public interface Constants {
 	public static final int LINK_ID_LIST_TIMELINE = 12;
 	public static final int LINK_ID_LIST_MEMBERS = 13;
 	public static final int LINK_ID_LIST_SUBSCRIBERS = 14;
+	public static final int LINK_ID_LIST_MEMBERSHIPS = 15;
 	public static final int LINK_ID_SAVED_SEARCHES = 19;
 	public static final int LINK_ID_USER_MENTIONS = 21;
 	public static final int LINK_ID_INCOMING_FRIENDSHIPS = 22;

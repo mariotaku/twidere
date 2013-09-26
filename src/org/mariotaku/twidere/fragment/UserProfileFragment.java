@@ -42,6 +42,7 @@ import static org.mariotaku.twidere.util.Utils.openUserBlocks;
 import static org.mariotaku.twidere.util.Utils.openUserFavorites;
 import static org.mariotaku.twidere.util.Utils.openUserFollowers;
 import static org.mariotaku.twidere.util.Utils.openUserFriends;
+import static org.mariotaku.twidere.util.Utils.openUserListMemberships;
 import static org.mariotaku.twidere.util.Utils.openUserLists;
 import static org.mariotaku.twidere.util.Utils.openUserMentions;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
@@ -358,12 +359,13 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		mAdapter.add(new FavoritesAction(1));
 		mAdapter.add(new UserMentionsAction(2));
 		mAdapter.add(new UserListsAction(3));
+		mAdapter.add(new UserListMembershipsAction(4));
 		if (user_is_me) {
-			mAdapter.add(new SavedSearchesAction(4));
+			mAdapter.add(new SavedSearchesAction(11));
 			if (user.is_protected) {
-				mAdapter.add(new IncomingFriendshipsAction(5));
+				mAdapter.add(new IncomingFriendshipsAction(12));
 			}
-			mAdapter.add(new UserBlocksAction(6));
+			mAdapter.add(new UserBlocksAction(13));
 		}
 		mAdapter.notifyDataSetChanged();
 		if (!user.is_cache) {
@@ -964,6 +966,23 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 			openUserMentions(getActivity(), mAccountId, mUser.screen_name);
 		}
 
+	}
+	
+	final class UserListMembershipsAction extends ListAction {
+		public UserListMembershipsAction(final int order) {
+			super(order);
+		}
+
+		@Override
+		public String getName() {
+			return getString(R.string.lists_following_user);
+		}
+
+		@Override
+		public void onClick() {
+			if (mUser == null) return;
+			openUserListMemberships(getActivity(), mAccountId, mUser.id, mUser.screen_name);
+		}
 	}
 
 }

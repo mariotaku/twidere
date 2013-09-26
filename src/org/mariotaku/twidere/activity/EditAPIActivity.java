@@ -98,17 +98,17 @@ public class EditAPIActivity extends BaseSupportDialogActivity implements Twitte
 			case R.id.save: {
 				saveEditedText();
 				if (checkUrlErrors()) return;
-				final Bundle extras = new Bundle();
-				extras.putString(Accounts.REST_BASE_URL, isEmpty(mRestBaseURL) ? rest_base_url : mRestBaseURL);
-				extras.putString(Accounts.OAUTH_BASE_URL, isEmpty(mOAuthBaseURL) ? oauth_base_url : mOAuthBaseURL);
-				extras.putString(Accounts.SIGNING_REST_BASE_URL, isEmpty(mSigningRestBaseURL) ? signing_rest_base_url
+				final Intent intent = new Intent();
+				intent.putExtra(Accounts.REST_BASE_URL, isEmpty(mRestBaseURL) ? rest_base_url : mRestBaseURL);
+				intent.putExtra(Accounts.OAUTH_BASE_URL, isEmpty(mOAuthBaseURL) ? oauth_base_url : mOAuthBaseURL);
+				intent.putExtra(Accounts.SIGNING_REST_BASE_URL, isEmpty(mSigningRestBaseURL) ? signing_rest_base_url
 						: mSigningRestBaseURL);
-				extras.putString(Accounts.SIGNING_OAUTH_BASE_URL,
-						isEmpty(mSigningOAuthBaseURL) ? signing_oauth_base_url : mSigningOAuthBaseURL);
-				extras.putString(Accounts.CONSUMER_KEY, isEmpty(mConsumerKey) ? consumer_key : mConsumerKey);
-				extras.putString(Accounts.CONSUMER_SECRET, isEmpty(mConsumerSecret) ? consumer_secret : mConsumerSecret);
-				extras.putInt(Accounts.AUTH_TYPE, mAuthType != 0 ? mAuthType : auth_type);
-				setResult(RESULT_OK, new Intent().putExtras(extras));
+				intent.putExtra(Accounts.SIGNING_OAUTH_BASE_URL, isEmpty(mSigningOAuthBaseURL) ? signing_oauth_base_url
+						: mSigningOAuthBaseURL);
+				intent.putExtra(Accounts.CONSUMER_KEY, isEmpty(mConsumerKey) ? consumer_key : mConsumerKey);
+				intent.putExtra(Accounts.CONSUMER_SECRET, isEmpty(mConsumerSecret) ? consumer_secret : mConsumerSecret);
+				intent.putExtra(Accounts.AUTH_TYPE, mAuthType != 0 ? mAuthType : auth_type);
+				setResult(RESULT_OK, intent);
 				finish();
 				break;
 			}

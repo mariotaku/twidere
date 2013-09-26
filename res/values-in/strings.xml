@@ -317,10 +317,10 @@
   <string name="notification_mention"><xliff:g id="user">%s</xliff:g> menyebut Anda.</string>
   <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> mengirim Anda pesan langsung.</string>
   <string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> dan <xliff:g id="count">%d</xliff:g> lainnya menyebut Anda.</string>
-  <string name="notification_direct_message_multiple"><xliff:g id="user">%s</xliff:g> dan <xliff:g id="count">%d</xliff:g> lainnya mengirim Anda pesan langsung.</string>
+  <string name="notification_direct_message_multiple_users"><xliff:g id="user">%s</xliff:g> dan <xliff:g id="count">%d</xliff:g> lainnya mengirim Anda pesan langsung.</string>
   <string name="getting_status">mendapat tweet</string>
   <string name="getting_statuses">mendapatkan twit</string>
-  <string name="sending_status">mengirim tweet</string>
+  <string name="updating_status">mengirim tweet</string>
   <string name="sending_direct_message">mengirim pesan langsung</string>
   <string name="refreshing_timelines">menyegarkan timeline</string>
   <string name="refreshing_home_timeline">Menyegarkan beranda timeline</string>

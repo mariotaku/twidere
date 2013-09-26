@@ -32,6 +32,7 @@ import org.mariotaku.twidere.util.ThemeUtils;
 
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 
 @SuppressLint("Registered")
@@ -196,6 +197,16 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 
 	private final void setActionBarBackground() {
 		getActionBar().setBackgroundDrawable(ThemeUtils.getActionBarBackground(this));
+	}
+
+	@Override
+	public void startActivityForResult(Intent intent, int requestCode) {
+		super.startActivityForResult(intent, requestCode);
+	}
+
+	@Override
+	public void startActivity(Intent intent) {
+		super.startActivity(intent);
 	}
 
 }

@@ -26,7 +26,7 @@ import org.mariotaku.twidere.model.ParcelableUserList;
 
 import android.support.v4.content.Loader;
 
-public class UserListMembershipsFragment extends BaseUserListsListFragment {
+public class UserListMembershipsListFragment extends BaseUserListsListFragment {
 
 	@Override
 	public Loader<List<ParcelableUserList>> newLoaderInstance(final long account_id, final long user_id,

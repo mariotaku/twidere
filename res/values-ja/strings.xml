@@ -327,10 +327,10 @@
   <string name="notification_mention"><xliff:g id="user">%s</xliff:g>さんからあなた宛のツイートがあります。</string>
   <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g>さんからDMが届きました。</string>
   <string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> と他 <xliff:g id="count">%d</xliff:g> 人からあなた宛のツイートがあります。</string>
-  <string name="notification_direct_message_multiple"><xliff:g id="user">%s</xliff:g> と他 <xliff:g id="count">%d</xliff:g> 人からDMが届きました。</string>
+  <string name="notification_direct_message_multiple_users"><xliff:g id="user">%s</xliff:g> と他 <xliff:g id="count">%d</xliff:g> 人からDMが届きました。</string>
   <string name="getting_status">ツイート取得中</string>
   <string name="getting_statuses">ツイートの取得</string>
-  <string name="sending_status">ツイート送信中</string>
+  <string name="updating_status">ツイート送信中</string>
   <string name="sending_direct_message">DM送信中</string>
   <string name="refreshing_timelines">タイムラインの更新</string>
   <string name="refreshing_home_timeline">タイムラインの更新</string>

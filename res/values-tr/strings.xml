@@ -280,9 +280,9 @@
   <string name="notification_mention"><xliff:g id="user">%s</xliff:g> senden bahsetti.</string>
   <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> sana direkt mesaj gönderdi.</string>
   <string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> ve <xliff:g id="count">%d</xliff:g> kişi daha senden bahsetti.</string>
-  <string name="notification_direct_message_multiple"><xliff:g id="user">%s</xliff:g> ve <xliff:g id="count">%d</xliff:g> kişi daha sana direkt mesajlar gönderdi.</string>
+  <string name="notification_direct_message_multiple_users"><xliff:g id="user">%s</xliff:g> ve <xliff:g id="count">%d</xliff:g> kişi daha sana direkt mesajlar gönderdi.</string>
   <string name="getting_status">tweet alınırken</string>
-  <string name="sending_status">tweet gönderilirken</string>
+  <string name="updating_status">tweet gönderilirken</string>
   <string name="sending_direct_message">Direkt mesaj gönderirken</string>
   <string name="refreshing_timelines">zaman tüneli yenilenirken</string>
   <string name="refreshing_home_timeline">zaman akışı yenilenirken</string>

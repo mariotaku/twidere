@@ -258,9 +258,9 @@
   <string name="notification_mention"><xliff:g id="user">%s</xliff:g> említett téged.</string>
   <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> privát üzenetet küldött neked.</string>
   <string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> és még <xliff:g id="count">%d</xliff:g> személy említett téged.</string>
-  <string name="notification_direct_message_multiple"><xliff:g id="user">%s</xliff:g> és még <xliff:g id="count">%d</xliff:g> személy privát üzenetet küldött neked.</string>
+  <string name="notification_direct_message_multiple_users"><xliff:g id="user">%s</xliff:g> és még <xliff:g id="count">%d</xliff:g> személy privát üzenetet küldött neked.</string>
   <string name="getting_status">twitt betöltése</string>
-  <string name="sending_status">twitt elküldése</string>
+  <string name="updating_status">twitt elküldése</string>
   <string name="sending_direct_message">privát üzenet elküldése</string>
   <string name="refreshing_timelines">Kezdőlap frissítése</string>
   <string name="text_copied">Szöveg másolása vágólapra.</string>

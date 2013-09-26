@@ -71,7 +71,7 @@ import de.keyboardsurfer.android.widget.crouton.CroutonLifecycleCallback;
 import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 
 public class EditUserProfileActivity extends TwidereSwipeBackActivity implements OnSizeChangedListener, TextWatcher,
-		OnClickListener, CroutonLifecycleCallback {
+		OnClickListener, CroutonLifecycleCallback, LoaderCallbacks<SingleResponse<ParcelableUser>> {
 
 	private static final int LOADER_ID_USER = 1;
 
@@ -96,6 +96,8 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 
 	private boolean mUserInfoLoaderInitialized;
 
+	private boolean mGetUserInfoCalled;
+
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -108,35 +110,6 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 				}
 			}
 		}
-	};
-
-	private final LoaderCallbacks<SingleResponse<ParcelableUser>> mUserInfoLoaderCallbacks = new LoaderCallbacks<SingleResponse<ParcelableUser>>() {
-
-		@Override
-		public Loader<SingleResponse<ParcelableUser>> onCreateLoader(final int id, final Bundle args) {
-			mProgress.setVisibility(View.VISIBLE);
-			mContent.setVisibility(View.GONE);
-			setProgressBarIndeterminateVisibility(true);
-			return new ParcelableUserLoader(EditUserProfileActivity.this, mAccountId, mAccountId, null, getIntent()
-					.getExtras(), false, false);
-		}
-
-		@Override
-		public void onLoaderReset(final Loader<SingleResponse<ParcelableUser>> loader) {
-
-		}
-
-		@Override
-		public void onLoadFinished(final Loader<SingleResponse<ParcelableUser>> loader,
-				final SingleResponse<ParcelableUser> data) {
-			if (data.data != null && data.data.id > 0) {
-				displayUser(data.data);
-			} else {
-				finish();
-			}
-			setProgressBarIndeterminateVisibility(false);
-		}
-
 	};
 
 	private final OnMenuItemClickListener mProfileBannerImageMenuListener = new OnMenuItemClickListener() {
@@ -273,6 +246,15 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 	}
 
 	@Override
+	public Loader<SingleResponse<ParcelableUser>> onCreateLoader(final int id, final Bundle args) {
+		mProgress.setVisibility(View.VISIBLE);
+		mContent.setVisibility(View.GONE);
+		setProgressBarIndeterminateVisibility(true);
+		return new ParcelableUserLoader(EditUserProfileActivity.this, mAccountId, mAccountId, null, getIntent()
+				.getExtras(), false, false);
+	}
+
+	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_edit_user_profile, menu);
 		return super.onCreateOptionsMenu(menu);
@@ -281,6 +263,22 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 	@Override
 	public void onDisplayed() {
 		mBackPressed = true;
+	}
+
+	@Override
+	public void onLoaderReset(final Loader<SingleResponse<ParcelableUser>> loader) {
+
+	}
+
+	@Override
+	public void onLoadFinished(final Loader<SingleResponse<ParcelableUser>> loader,
+			final SingleResponse<ParcelableUser> data) {
+		if (data.data != null && data.data.id > 0) {
+			displayUser(data.data);
+		} else if (mUser == null) {
+			finish();
+		}
+		setProgressBarIndeterminateVisibility(false);
 	}
 
 	@Override
@@ -408,6 +406,8 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 	}
 
 	private void displayUser(final ParcelableUser user) {
+		if (!mGetUserInfoCalled) return;
+		mGetUserInfoCalled = false;
 		mUser = user;
 		if (user != null && user.id > 0) {
 			mProgress.setVisibility(View.GONE);
@@ -429,10 +429,11 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 	private void getUserInfo() {
 		final LoaderManager lm = getSupportLoaderManager();
 		lm.destroyLoader(LOADER_ID_USER);
+		mGetUserInfoCalled = true;
 		if (mUserInfoLoaderInitialized) {
-			lm.restartLoader(LOADER_ID_USER, null, mUserInfoLoaderCallbacks);
+			lm.restartLoader(LOADER_ID_USER, null, this);
 		} else {
-			lm.initLoader(LOADER_ID_USER, null, mUserInfoLoaderCallbacks);
+			lm.initLoader(LOADER_ID_USER, null, this);
 			mUserInfoLoaderInitialized = true;
 		}
 	}

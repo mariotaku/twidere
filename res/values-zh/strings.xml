@@ -327,10 +327,10 @@
   <string name="notification_mention"><xliff:g id="user">%s</xliff:g> 提到了你</string>
   <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> 給你發送了一條私信</string>
   <string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> 和其他 <xliff:g id="count">%d</xliff:g> 人提到了你</string>
-  <string name="notification_direct_message_multiple"><xliff:g id="user">%s</xliff:g> 和其他 <xliff:g id="count">%d</xliff:g> 人給你發送了私信</string>
+  <string name="notification_direct_message_multiple_users"><xliff:g id="user">%s</xliff:g> 和其他 <xliff:g id="count">%d</xliff:g> 人給你發送了私信</string>
   <string name="getting_status">獲取推文</string>
   <string name="getting_statuses">獲取推文</string>
-  <string name="sending_status">發送推文</string>
+  <string name="updating_status">發送推文</string>
   <string name="sending_direct_message">發送私信</string>
   <string name="refreshing_timelines">刷新時間綫</string>
   <string name="refreshing_home_timeline">刷新主頁</string>

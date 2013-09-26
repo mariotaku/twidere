@@ -327,10 +327,10 @@
   <string name="notification_mention"><xliff:g id="user">%s</xliff:g> упомянул вас.</string>
   <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> отправил вам личное сообщение.</string>
   <string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> и <xliff:g id="count">%d</xliff:g> других упомянули вас.</string>
-  <string name="notification_direct_message_multiple"><xliff:g id="user">%s</xliff:g> и <xliff:g id="count">%d</xliff:g> других прислали вам несколько личных сообщений.</string>
+  <string name="notification_direct_message_multiple_users"><xliff:g id="user">%s</xliff:g> и <xliff:g id="count">%d</xliff:g> других прислали вам несколько личных сообщений.</string>
   <string name="getting_status">получаем твит</string>
   <string name="getting_statuses">получить твиты</string>
-  <string name="sending_status">отправляем твит</string>
+  <string name="updating_status">отправляем твит</string>
   <string name="sending_direct_message">отправляем личное сообщение</string>
   <string name="refreshing_timelines">обновляем ленту</string>
   <string name="refreshing_home_timeline">обновление ленты</string>

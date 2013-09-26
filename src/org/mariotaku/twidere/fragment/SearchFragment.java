@@ -114,9 +114,10 @@ public class SearchFragment extends BaseSupportFragment implements Panes.Left, O
 	}
 
 	@Override
-	public void scrollToTop() {
-		if (!(mCurrentVisibleFragment instanceof RefreshScrollTopInterface)) return;
+	public boolean scrollToTop() {
+		if (!(mCurrentVisibleFragment instanceof RefreshScrollTopInterface)) return false;
 		((RefreshScrollTopInterface) mCurrentVisibleFragment).scrollToTop();
+		return true;
 	}
 
 	public void showIndicator() {
@@ -126,9 +127,21 @@ public class SearchFragment extends BaseSupportFragment implements Panes.Left, O
 	}
 
 	@Override
-	public void triggerRefresh() {
-		if (!(mCurrentVisibleFragment instanceof RefreshScrollTopInterface)) return;
+	public boolean triggerRefresh() {
+		if (!(mCurrentVisibleFragment instanceof RefreshScrollTopInterface)) return false;
 		((RefreshScrollTopInterface) mCurrentVisibleFragment).triggerRefresh();
+		return true;
+	}
+
+	@Override
+	public void onDetachFragment(Fragment fragment) {
+		
+	}
+
+	@Override
+	public boolean triggerRefresh(int position) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

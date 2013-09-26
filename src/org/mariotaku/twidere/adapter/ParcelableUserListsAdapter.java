@@ -20,10 +20,12 @@
 package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.util.Utils.configBaseAdapter;
+import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
 import static org.mariotaku.twidere.util.Utils.getNameDisplayOptionInt;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
@@ -46,6 +48,7 @@ public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList>
 	private final Context mContext;
 	private final ImageLoaderWrapper mProfileImageLoader;
 	private final MultiSelectManager mMultiSelectManager;
+	private final Locale mLocale;
 
 	private boolean mDisplayProfileImage;
 	private float mTextSize;
@@ -56,6 +59,7 @@ public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList>
 	public ParcelableUserListsAdapter(final Context context) {
 		super(context, R.layout.user_list_list_item);
 		mContext = context;
+		mLocale = context.getResources().getConfiguration().locale;
 		final TwidereApplication app = TwidereApplication.getInstance(context);
 		mProfileImageLoader = app.getImageLoaderWrapper();
 		mMultiSelectManager = app.getMultiSelectManager();
@@ -81,6 +85,7 @@ public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList>
 		} else {
 			holder = new UserListViewHolder(view);
 			holder.profile_image.setOnClickListener(this);
+			holder.item_menu.setOnClickListener(this);
 			view.setTag(holder);
 		}
 		final ParcelableUserList user_list = getItem(position);
@@ -90,10 +95,14 @@ public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList>
 		holder.created_by.setText(mContext.getString(R.string.created_by, created_by));
 		holder.description.setVisibility(TextUtils.isEmpty(user_list.description) ? View.GONE : View.VISIBLE);
 		holder.description.setText(user_list.description);
+		holder.members_count.setText(getLocalizedNumber(mLocale, user_list.members_count));
+		holder.subscribers_count.setText(getLocalizedNumber(mLocale, user_list.subscribers_count));
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
 			mProfileImageLoader.displayProfileImage(holder.profile_image, user_list.user_profile_image_url);
 		}
+		holder.profile_image.setTag(position);
+		holder.item_menu.setTag(position);
 		return view;
 	}
 
@@ -109,6 +118,11 @@ public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList>
 					final ParcelableUserList item = getItem(position);
 					openUserProfile((Activity) mContext, item.account_id, item.user_id, item.user_screen_name);
 				}
+				break;
+			}
+			case R.id.item_menu: {
+				if (position == -1 || mListener == null) return;
+				mListener.onMenuButtonClick(view, position, getItemId(position));
 				break;
 			}
 		}

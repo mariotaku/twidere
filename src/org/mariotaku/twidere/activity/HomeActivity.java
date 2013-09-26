@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.Utils.cleanDatabasesByItemLimit;
+import static org.mariotaku.twidere.util.Utils.createFragmentForIntent;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
@@ -39,6 +40,8 @@ import org.mariotaku.twidere.fragment.DirectMessagesFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.fragment.TrendsFragment;
+import org.mariotaku.twidere.fragment.iface.IBaseFragment;
+import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;
 import org.mariotaku.twidere.fragment.iface.SupportFragmentCallback;
 import org.mariotaku.twidere.model.SupportTabSpec;
 import org.mariotaku.twidere.provider.RecentSearchProvider;
@@ -60,6 +63,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.support.v4.app.Fragment;
@@ -69,6 +73,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -89,7 +94,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private MultiSelectEventHandler mMultiSelectHandler;
 
 	private ActionBar mActionBar;
-	private SupportTabsAdapter mAdapter;
+	private SupportTabsAdapter mPagerAdapter;
 
 	private ExtendedViewPager mViewPager;
 	private TabPageIndicator mIndicator;
@@ -109,6 +114,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	public static final int TAB_POSITION_TRENDS = 3;
 
 	private final ArrayList<SupportTabSpec> mCustomTabs = new ArrayList<SupportTabSpec>();
+	private final SparseArray<Fragment> mAttachedFragments = new SparseArray<Fragment>();
 
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -147,6 +153,13 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	@Override
+	public void onAttachFragment(final Fragment fragment) {
+		if (fragment instanceof IBaseFragment && ((IBaseFragment) fragment).getTabPosition() != -1) {
+			mAttachedFragments.put(((IBaseFragment) fragment).getTabPosition(), fragment);
+		}
+	}
+
+	@Override
 	public void onBackStackChanged() {
 		super.onBackStackChanged();
 		if (!isDualPaneMode()) return;
@@ -167,9 +180,9 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		switch (v.getId()) {
 			case R.id.actions_item:
 			case R.id.actions_button:
-				if (mViewPager == null || mAdapter == null) return;
+				if (mViewPager == null || mPagerAdapter == null) return;
 				final int position = mViewPager.getCurrentItem();
-				final SupportTabSpec tab = mAdapter.getTab(position);
+				final SupportTabSpec tab = mPagerAdapter.getTab(position);
 				if (tab == null) {
 					startActivity(new Intent(INTENT_ACTION_COMPOSE));
 				} else {
@@ -206,6 +219,13 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			updateActionsButton();
 		}
 		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public void onDetachFragment(final Fragment fragment) {
+		if (fragment instanceof IBaseFragment && ((IBaseFragment) fragment).getTabPosition() != -1) {
+			mAttachedFragments.remove(((IBaseFragment) fragment).getTabPosition());
+		}
 	}
 
 	@Override
@@ -268,7 +288,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 
 	@Override
 	public void onPageSelected(final int position) {
-		final SupportTabSpec tab = mAdapter.getTab(position);
+		final SupportTabSpec tab = mPagerAdapter.getTab(position);
 		switch (tab.position) {
 			case TAB_POSITION_HOME: {
 				mTwitterWrapper.clearNotification(NOTIFICATION_ID_HOME_TIMELINE);
@@ -313,6 +333,13 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			mCurrentVisibleFragment = fragment;
 		}
 		updateRefreshingState();
+	}
+
+	@Override
+	public boolean triggerRefresh(final int position) {
+		final Fragment f = mAttachedFragments.get(position);
+		return f instanceof RefreshScrollTopInterface && !f.isDetached()
+				&& ((BasePullToRefreshListFragment) f).triggerRefresh();
 	}
 
 	@Override
@@ -373,13 +400,13 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		ThemeUtils.applyBackground(mIndicator);
 		final boolean tab_display_label = res.getBoolean(R.bool.tab_display_label);
-		mAdapter = new SupportTabsAdapter(this, getSupportFragmentManager(), mIndicator);
+		mPagerAdapter = new SupportTabsAdapter(this, getSupportFragmentManager(), mIndicator);
 		mShowHomeTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_HOME_TAB, true);
 		mShowMentionsTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_MENTIONS_TAB, true);
 		mShowMessagesTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_MESSAGES_TAB, true);
 		mShowTrendsTab = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_TRENDS_TAB, true);
 		initTabs(getHomeTabs(this));
-		mViewPager.setAdapter(mAdapter);
+		mViewPager.setAdapter(mPagerAdapter);
 		mViewPager.setOffscreenPageLimit(3);
 		mIndicator.setViewPager(mViewPager);
 		mIndicator.setOnPageChangeListener(this);
@@ -395,10 +422,10 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			// TODO set activated account automatically
 			startActivityForResult(new Intent(INTENT_ACTION_SELECT_ACCOUNT), REQUEST_SELECT_ACCOUNT);
 		} else if (initial_tab >= 0) {
-			mViewPager.setCurrentItem(MathUtils.clamp(initial_tab, mAdapter.getCount(), 0));
+			mViewPager.setCurrentItem(MathUtils.clamp(initial_tab, mPagerAdapter.getCount(), 0));
 		} else if (remember_position) {
 			final int position = mPreferences.getInt(PREFERENCE_KEY_SAVED_TAB_POSITION, TAB_POSITION_HOME);
-			mViewPager.setCurrentItem(MathUtils.clamp(position, mAdapter.getCount(), 0));
+			mViewPager.setCurrentItem(MathUtils.clamp(position, mPagerAdapter.getCount(), 0));
 		}
 		if (refresh_on_start && savedInstanceState == null) {
 			mTwitterWrapper.refreshAll();
@@ -417,7 +444,10 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 
 	@Override
 	protected void onNewIntent(final Intent intent) {
-		handleIntent(intent, false);
+		final int tab_position = handleIntent(intent, false);
+		if (tab_position >= 0) {
+			mViewPager.setCurrentItem(MathUtils.clamp(tab_position, mPagerAdapter.getCount(), 0));
+		}
 	}
 
 	@Override
@@ -518,7 +548,11 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			}
 			final Intent extra_intent = extras.getParcelable(INTENT_KEY_EXTRA_INTENT);
 			if (extra_intent != null) {
-				startActivity(extra_intent);
+				if (isTwidereLink(extra_intent.getData()) && isDualPaneMode()) {
+					showFragment(createFragmentForIntent(this, extra_intent), true);
+				} else {
+					startActivity(extra_intent);
+				}
 			}
 		}
 		return initial_tab;
@@ -532,24 +566,32 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private void initTabs(final Collection<? extends SupportTabSpec> tabs) {
 		mCustomTabs.clear();
 		mCustomTabs.addAll(tabs);
-		mAdapter.clear();
+		mPagerAdapter.clear();
 		if (mShowHomeTab) {
-			mAdapter.addTab(HomeTimelineFragment.class, null, getString(R.string.home), R.drawable.ic_tab_home,
+			final Bundle args = new Bundle();
+			args.putInt(INTENT_KEY_TAB_POSITION, TAB_POSITION_HOME);
+			mPagerAdapter.addTab(HomeTimelineFragment.class, args, getString(R.string.home), R.drawable.ic_tab_home,
 					TAB_POSITION_HOME);
 		}
 		if (mShowMentionsTab) {
-			mAdapter.addTab(MentionsFragment.class, null, getString(R.string.mentions), R.drawable.ic_tab_mention,
+			final Bundle args = new Bundle();
+			args.putInt(INTENT_KEY_TAB_POSITION, TAB_POSITION_MENTIONS);
+			mPagerAdapter.addTab(MentionsFragment.class, args, getString(R.string.mentions), R.drawable.ic_tab_mention,
 					TAB_POSITION_MENTIONS);
 		}
 		if (mShowMessagesTab) {
-			mAdapter.addTab(DirectMessagesFragment.class, null, getString(R.string.direct_messages),
+			final Bundle args = new Bundle();
+			args.putInt(INTENT_KEY_TAB_POSITION, TAB_POSITION_MESSAGES);
+			mPagerAdapter.addTab(DirectMessagesFragment.class, args, getString(R.string.direct_messages),
 					R.drawable.ic_tab_message, TAB_POSITION_MESSAGES);
 		}
 		if (mShowTrendsTab) {
-			mAdapter.addTab(TrendsFragment.class, null, getString(R.string.trends), R.drawable.ic_tab_trends,
+			final Bundle args = new Bundle();
+			args.putInt(INTENT_KEY_TAB_POSITION, TAB_POSITION_TRENDS);
+			mPagerAdapter.addTab(TrendsFragment.class, args, getString(R.string.trends), R.drawable.ic_tab_trends,
 					TAB_POSITION_TRENDS);
 		}
-		mAdapter.addTabs(tabs);
+		mPagerAdapter.addTabs(tabs);
 	}
 
 	private boolean isTabsChanged(final List<SupportTabSpec> tabs) {
@@ -560,6 +602,10 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			if (!mCustomTabs.get(i).equals(tabs.get(i))) return true;
 		}
 		return false;
+	}
+
+	private boolean isTwidereLink(final Uri data) {
+		return data != null && SCHEME_TWIDERE.equals(data.getScheme());
 	}
 
 	private void showAPIUpgradeNotice() {
@@ -578,7 +624,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			final PendingIntent content_intent = PendingIntent.getActivity(this, 0, intent, 0);
 			final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 			builder.setAutoCancel(true);
-			builder.setSmallIcon(R.drawable.ic_stat_question_mark);
+			builder.setSmallIcon(R.drawable.ic_stat_info);
 			builder.setTicker(getString(R.string.data_profiling_notification_ticker));
 			builder.setContentTitle(getString(R.string.data_profiling_notification_title));
 			builder.setContentText(getString(R.string.data_profiling_notification_desc));
@@ -588,10 +634,10 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	private void updateActionsButton() {
-		if (mViewPager == null || mAdapter == null) return;
+		if (mViewPager == null || mPagerAdapter == null) return;
 		final int action_icon, button_icon, title;
 		final int position = mViewPager.getCurrentItem();
-		final SupportTabSpec tab = mAdapter.getTab(position);
+		final SupportTabSpec tab = mPagerAdapter.getTab(position);
 		final boolean light_action_bar = ThemeUtils.isLightActionBar(getCurrentThemeResource());
 		if (tab == null) {
 			title = R.string.compose;

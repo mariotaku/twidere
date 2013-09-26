@@ -320,9 +320,9 @@
   <string name="notification_mention"><xliff:g id="user">%s</xliff:g> vermeldde jou.</string>
   <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> zond jou een direct message.</string>
   <string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> and <xliff:g id="count">%d</xliff:g> anderen vermeldde jou.</string>
-  <string name="notification_direct_message_multiple"><xliff:g id="user">%s</xliff:g> and <xliff:g id="count">%d</xliff:g> anderen zonden jou een paar direct messages.</string>
+  <string name="notification_direct_message_multiple_users"><xliff:g id="user">%s</xliff:g> and <xliff:g id="count">%d</xliff:g> anderen zonden jou een paar direct messages.</string>
   <string name="getting_status">tweet aan het verkrijgen</string>
-  <string name="sending_status">tweet aan het verzenden</string>
+  <string name="updating_status">tweet aan het verzenden</string>
   <string name="sending_direct_message">direct message aan het verzenden</string>
   <string name="refreshing_timelines">timelines aan het vernieuwen</string>
   <string name="refreshing_home_timeline">home timeline aan het vernieuwen</string>

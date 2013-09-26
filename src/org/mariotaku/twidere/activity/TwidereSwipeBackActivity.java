@@ -19,89 +19,37 @@
 
 package org.mariotaku.twidere.activity;
 
-import me.imid.swipebacklayout.lib.SwipeBackLayout;
-
-import org.mariotaku.twidere.util.ThemeUtils;
-import org.mariotaku.twidere.util.ViewAccessor;
-
 import android.annotation.SuppressLint;
-import android.graphics.drawable.ColorDrawable;
+import android.content.res.TypedArray;
 import android.os.Bundle;
-import android.view.View;
-import android.view.Window;
 
 @SuppressLint("Registered")
-public class TwidereSwipeBackActivity extends BaseSupportActivity {
-
-	private SwipeBackLayout mSwipeBackLayout;
-
-	private boolean mOverrideExitAniamtion = true;
-
-	private boolean mIsFinishing;
-
-	@Override
-	public View findViewById(final int id) {
-		final View v = super.findViewById(id);
-		if (v != null) return v;
-		return mSwipeBackLayout != null ? mSwipeBackLayout.findViewById(id) : null;
-	}
+public class TwidereSwipeBackActivity extends BaseThemedSupportSwipeBackActivity {
+	
+	protected int activityCloseEnterAnimation;
+	protected int activityCloseExitAnimation;
 
 	@Override
 	public void finish() {
-		if (mOverrideExitAniamtion && !mIsFinishing) {
-			scrollToFinishActivity();
-			mIsFinishing = true;
-			return;
-		}
-		mIsFinishing = false;
 		super.finish();
-	}
-
-	public SwipeBackLayout getSwipeBackLayout() {
-		return mSwipeBackLayout;
-	}
-
-	/**
-	 * Scroll out contentView and finish the activity
-	 */
-	public void scrollToFinishActivity() {
-		if (mSwipeBackLayout == null) return;
-		mSwipeBackLayout.scrollToFinishActivity();
-	}
-
-	/**
-	 * Override Exit Animation
-	 * 
-	 * @param override
-	 */
-	public void setOverrideExitAniamtion(final boolean override) {
-		mOverrideExitAniamtion = override;
-	}
-
-	public void setSwipeBackEnable(final boolean enable) {
-		if (mSwipeBackLayout == null) return;
-		mSwipeBackLayout.setEnableGesture(enable);
-	}
-
-	@Override
-	protected int getThemeResource() {
-		return ThemeUtils.getSwipeBackThemeResource(this);
+		overridePendingTransition(activityCloseEnterAnimation, activityCloseExitAnimation);
 	}
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		final Window w = getWindow();
-		w.setBackgroundDrawable(new ColorDrawable(0));
-		ViewAccessor.setBackground(w.getDecorView(), null);
-		mSwipeBackLayout = new SwipeBackLayout(this);
-	}
+		TypedArray activityStyle = getTheme().obtainStyledAttributes(new int[] { android.R.attr.windowAnimationStyle });
+		int windowAnimationStyleResId = activityStyle.getResourceId(0, 0);
+		activityStyle.recycle();
 
-	@Override
-	protected void onPostCreate(final Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
-		if (mSwipeBackLayout != null) {
-			mSwipeBackLayout.attachToActivity(this);
-		}
+		// Now retrieve the resource ids of the actual animations used in the
+		// animation style pointed to by
+		// the window animation resource id.
+		activityStyle = getTheme().obtainStyledAttributes(windowAnimationStyleResId,
+				new int[] { android.R.attr.activityCloseEnterAnimation, android.R.attr.activityCloseExitAnimation });
+		activityCloseEnterAnimation = activityStyle.getResourceId(0, 0);
+		activityCloseExitAnimation = activityStyle.getResourceId(1, 0);
+		activityStyle.recycle();
+		super.onCreate(savedInstanceState);
+		setOverrideExitAniamtion(false);
 	}
 }

@@ -327,10 +327,10 @@
   <string name="notification_mention"><xliff:g id="user">%s</xliff:g> te ha mencionado.</string>
   <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> te ha enviado un mensaje privado.</string>
   <string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> y otros <xliff:g id="count">%d</xliff:g> te han mencionado.</string>
-  <string name="notification_direct_message_multiple"><xliff:g id="user">%s</xliff:g> y otros <xliff:g id="count">%d</xliff:g> te han enviado mensajes privados.</string>
+  <string name="notification_direct_message_multiple_users"><xliff:g id="user">%s</xliff:g> y otros <xliff:g id="count">%d</xliff:g> te han enviado mensajes privados.</string>
   <string name="getting_status">recuperando tweet</string>
   <string name="getting_statuses">cargando tuits</string>
-  <string name="sending_status">enviando tuit</string>
+  <string name="updating_status">enviando tuit</string>
   <string name="sending_direct_message">enviado mensaje directo</string>
   <string name="refreshing_timelines">actualizando timelines</string>
   <string name="refreshing_home_timeline">actualizando la cronología</string>

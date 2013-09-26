@@ -21,6 +21,7 @@ package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.fragment.iface.IBaseFragment;
 import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;
 import org.mariotaku.twidere.fragment.iface.SupportFragmentCallback;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
@@ -42,7 +43,7 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListView;
 
-public class BaseSupportListFragment extends ListFragment implements Constants, OnScrollListener,
+public class BaseSupportListFragment extends ListFragment implements IBaseFragment, Constants, OnScrollListener,
 		RefreshScrollTopInterface {
 
 	private boolean mActivityFirstCreated;
@@ -133,6 +134,19 @@ public class BaseSupportListFragment extends ListFragment implements Constants, 
 		mActivityFirstCreated = true;
 	}
 
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		final Activity activity = getActivity();
+		if (activity instanceof SupportFragmentCallback) {
+			((SupportFragmentCallback) activity).onDetachFragment(this);
+		}
+		final Fragment fragment = getParentFragment();
+		if (fragment instanceof SupportFragmentCallback) {
+			((SupportFragmentCallback) fragment).onDetachFragment(this);
+		}
+	}
+
 	public void onPostStart() {
 	}
 
@@ -179,8 +193,9 @@ public class BaseSupportListFragment extends ListFragment implements Constants, 
 	}
 
 	@Override
-	public void scrollToTop() {
+	public boolean scrollToTop() {
 		Utils.scrollListToTop(getListView());
+		return true;
 	}
 
 	public void setProgressBarIndeterminateVisibility(final boolean visible) {
@@ -208,8 +223,8 @@ public class BaseSupportListFragment extends ListFragment implements Constants, 
 	}
 
 	@Override
-	public void triggerRefresh() {
-
+	public boolean triggerRefresh() {
+		return false;
 	}
 
 	public void unregisterReceiver(final BroadcastReceiver receiver) {

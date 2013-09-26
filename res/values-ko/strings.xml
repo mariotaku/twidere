@@ -301,9 +301,9 @@
   <string name="notification_mention"><xliff:g id="user">%s</xliff:g> 이 당신에게 멘션을 보냈습니다.</string>
   <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> 이 당신에게 DM을 보냈습니다.</string>
   <string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> 와(과) <xliff:g id="count">%d</xliff:g> 명이 당신에게 멘션을 보냈습니다.</string>
-  <string name="notification_direct_message_multiple"><xliff:g id="user">%s</xliff:g> 와(과) <xliff:g id="count">%d</xliff:g> 명이 당신에게 DM을 보냈습니다.</string>
+  <string name="notification_direct_message_multiple_users"><xliff:g id="user">%s</xliff:g> 와(과) <xliff:g id="count">%d</xliff:g> 명이 당신에게 DM을 보냈습니다.</string>
   <string name="getting_status">트윗을 불러옵니다</string>
-  <string name="sending_status">트윗 전송</string>
+  <string name="updating_status">트윗 전송</string>
   <string name="sending_direct_message">쪽지 전송 </string>
   <string name="refreshing_timelines">타임라인 새로고침</string>
   <string name="refreshing_direct_messages">쪽지 새로고침</string>

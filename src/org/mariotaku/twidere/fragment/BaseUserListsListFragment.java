@@ -30,6 +30,7 @@ import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.ParcelableUserListsAdapter;
+import org.mariotaku.twidere.adapter.iface.IBaseAdapter.MenuButtonClickListener;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.BaseUserListsLoader;
 import org.mariotaku.twidere.model.Panes;
@@ -47,14 +48,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment implements
-		LoaderCallbacks<List<ParcelableUserList>>, OnItemClickListener, OnItemLongClickListener, Panes.Left,
-		OnMenuItemClickListener {
+		LoaderCallbacks<List<ParcelableUserList>>, Panes.Left, OnMenuItemClickListener, MenuButtonClickListener {
 
 	private ParcelableUserListsAdapter mAdapter;
 
@@ -124,6 +121,7 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 		}
 		mAdapter = new ParcelableUserListsAdapter(getActivity());
 		mListView = getListView();
+		mListView.setDivider(null);
 		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
 		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
 		if (mAccountId != account_id) {
@@ -131,11 +129,11 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 			mData.clear();
 		}
 		mAccountId = account_id;
-		mListView.setOnItemClickListener(this);
-		mListView.setOnItemLongClickListener(this);
 		setListAdapter(mAdapter);
+		mAdapter.setMenuButtonClickListener(this);
 		getLoaderManager().initLoader(0, getArguments(), this);
 		setListShown(false);
+		setPullToRefreshEnabled(false);
 	}
 
 	@Override
@@ -145,31 +143,12 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 	}
 
 	@Override
-	public final void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
+	public final void onListItemClick(final ListView view, final View child, final int position, final long id) {
 		if (mApplication.isMultiSelectActive()) return;
 		final ParcelableUserList user_list = mAdapter.findItem(id);
 		if (user_list == null) return;
 		openUserListDetails(getActivity(), mAccountId, user_list.id, user_list.user_id, user_list.user_screen_name,
 				user_list.name);
-	}
-
-	@Override
-	public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-		if (mApplication.isMultiSelectActive()) return true;
-		mSelectedUserList = null;
-		final ParcelableUserListsAdapter adapter = getListAdapter();
-		mSelectedUserList = adapter.findItem(id);
-		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
-		mPopupMenu.inflate(R.menu.action_user_list);
-		final Menu menu = mPopupMenu.getMenu();
-		final Intent extensions_intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER_LIST);
-		final Bundle extensions_extras = new Bundle();
-		extensions_extras.putParcelable(INTENT_KEY_USER_LIST, mSelectedUserList);
-		extensions_intent.putExtras(extensions_extras);
-		addIntentToMenu(getActivity(), menu, extensions_intent);
-		mPopupMenu.setOnMenuItemClickListener(this);
-		mPopupMenu.show();
-		return true;
 	}
 
 	@Override
@@ -189,6 +168,13 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 		}
 		setRefreshComplete();
 		setListShown(true);
+	}
+
+	@Override
+	public void onMenuButtonClick(final View button, final int position, final long id) {
+		final ParcelableUserList user_list = mAdapter.getItem(position - mListView.getHeaderViewsCount());
+		if (user_list == null) return;
+		showMenu(button, user_list);
 	}
 
 	@Override
@@ -253,6 +239,24 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 	protected void onReachedBottom() {
 		if (!mLoadMoreAutomatically) return;
 		loadMoreUserLists();
+	}
+
+	private void showMenu(final View view, final ParcelableUserList user_list) {
+		mSelectedUserList = user_list;
+		if (view == null || user_list == null) return;
+		if (mPopupMenu != null && mPopupMenu.isShowing()) {
+			mPopupMenu.dismiss();
+		}
+		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
+		mPopupMenu.inflate(R.menu.action_user_list);
+		final Menu menu = mPopupMenu.getMenu();
+		final Intent extensions_intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER_LIST);
+		final Bundle extensions_extras = new Bundle();
+		extensions_extras.putParcelable(INTENT_KEY_USER_LIST, mSelectedUserList);
+		extensions_intent.putExtras(extensions_extras);
+		addIntentToMenu(getActivity(), menu, extensions_intent);
+		mPopupMenu.setOnMenuItemClickListener(this);
+		mPopupMenu.show();
 	}
 
 }

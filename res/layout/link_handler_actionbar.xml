@@ -1,25 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/go_top"
 	style="?android:actionButtonStyle"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:gravity="center_vertical"
-	android:orientation="vertical"
-	android:paddingLeft="4dp">
+	android:padding="4dp">
 
-	<org.mariotaku.twidere.view.ActionBarTitleView
-		android:id="@+id/actionbar_title"
-		android:layout_width="wrap_content"
+	<LinearLayout
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:singleLine="true"/>
+		android:layout_gravity="center_vertical"
+		android:orientation="vertical">
 
-	<org.mariotaku.twidere.view.ActionBarSubtitleView
-		android:id="@+id/actionbar_subtitle"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:singleLine="true"
-		android:text="@string/quote_protected_tweet_notice"
-		android:visibility="gone"/>
+		<org.mariotaku.twidere.view.ActionBarTitleView
+			android:id="@+id/actionbar_title"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:singleLine="true"/>
 
-</LinearLayout>
+		<org.mariotaku.twidere.view.ActionBarSubtitleView
+			android:id="@+id/actionbar_subtitle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:singleLine="true"
+			android:visibility="gone"/>
+	</LinearLayout>
+
+</FrameLayout>

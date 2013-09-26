@@ -198,7 +198,7 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 
 	@Override
 	public void onMenuButtonClick(final View button, final int position, final long id) {
-		final ParcelableUser user = mAdapter.findItem(id);
+		final ParcelableUser user = mAdapter.getItem(position - mListView.getHeaderViewsCount());
 		if (user == null) return;
 		showMenu(button, user);
 	}
@@ -324,6 +324,11 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 	}
 
 	private void showMenu(final View view, final ParcelableUser user) {
+		mSelectedUser = user;
+		if (view == null || user == null) return;
+		if (mPopupMenu != null && mPopupMenu.isShowing()) {
+			mPopupMenu.dismiss();
+		}
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_user);
 		final Menu menu = mPopupMenu.getMenu();

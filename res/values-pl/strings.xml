@@ -304,10 +304,10 @@
   <string name="notification_mention"><xliff:g id="user">%s</xliff:g> wzmiankował/a o Tobie.</string>
   <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> wysłał/a Ci wiadomość.</string>
   <string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> i <xliff:g id="count">%d</xliff:g> innych wzmiankowali o Tobie.</string>
-  <string name="notification_direct_message_multiple"><xliff:g id="user">%s</xliff:g> i <xliff:g id="count">%d</xliff:g> innych wysłali Ci wiadomości.</string>
+  <string name="notification_direct_message_multiple_users"><xliff:g id="user">%s</xliff:g> i <xliff:g id="count">%d</xliff:g> innych wysłali Ci wiadomości.</string>
   <string name="getting_status">pobieranie ćwierka</string>
   <string name="getting_statuses">pobieranie ćwierków</string>
-  <string name="sending_status">wysyłanie ćwierka</string>
+  <string name="updating_status">wysyłanie ćwierka</string>
   <string name="sending_direct_message">wysyłanie wiadomości</string>
   <string name="refreshing_timelines">odświeżanie strumienia</string>
   <string name="refreshing_home_timeline">odświeżanie strumienia głównego</string>

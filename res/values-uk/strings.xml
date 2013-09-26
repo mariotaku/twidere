@@ -327,10 +327,10 @@
   <string name="notification_mention"><xliff:g id="user">%s</xliff:g> згадав вас.</string>
   <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> надіслав вам приватне повідомлення.</string>
   <string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> і <xliff:g id="count">%d</xliff:g> інших згадали вас.</string>
-  <string name="notification_direct_message_multiple"><xliff:g id="user">%s</xliff:g> та <xliff:g id="count">%d</xliff:g> інших надіслали вам декілька приватних повідомлень.</string>
+  <string name="notification_direct_message_multiple_users"><xliff:g id="user">%s</xliff:g> та <xliff:g id="count">%d</xliff:g> інших надіслали вам декілька приватних повідомлень.</string>
   <string name="getting_status">отримуємо твіт</string>
   <string name="getting_statuses">отримання твітів</string>
-  <string name="sending_status">надсилаємо твіт</string>
+  <string name="updating_status">надсилаємо твіт</string>
   <string name="sending_direct_message">надсилаємо приватне повідомлення</string>
   <string name="refreshing_timelines">оновлення стрічки</string>
   <string name="refreshing_home_timeline">оновлюється домашня стрічка</string>

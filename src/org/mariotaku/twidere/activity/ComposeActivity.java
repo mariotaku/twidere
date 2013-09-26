@@ -27,7 +27,6 @@ import static org.mariotaku.twidere.util.ParseUtils.parseString;
 import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
 import static org.mariotaku.twidere.util.Utils.copyStream;
 import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
-import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getAccountColors;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getAccountName;
@@ -1112,7 +1111,6 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 				mHolder.screen_name.setVisibility(View.VISIBLE);
 			}
 
-			mHolder.setAccountColor(getAccountColor(getActivity(), status.account_id));
 			final String retweeted_by_name = status.retweeted_by_name;
 			final String retweeted_by_screen_name = status.retweeted_by_screen_name;
 

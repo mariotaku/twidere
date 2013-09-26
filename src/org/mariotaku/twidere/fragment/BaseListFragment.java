@@ -176,8 +176,9 @@ public class BaseListFragment extends ListFragment implements Constants, OnScrol
 	}
 
 	@Override
-	public void scrollToTop() {
+	public boolean scrollToTop() {
 		Utils.scrollListToTop(getListView());
+		return true;
 	}
 
 	public void setProgressBarIndeterminateVisibility(final boolean visible) {
@@ -192,8 +193,8 @@ public class BaseListFragment extends ListFragment implements Constants, OnScrol
 	}
 
 	@Override
-	public void triggerRefresh() {
-
+	public boolean triggerRefresh() {
+		return false;
 	}
 
 	public void unregisterReceiver(final BroadcastReceiver receiver) {

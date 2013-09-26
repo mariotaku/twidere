@@ -232,8 +232,9 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 	}
 
 	@Override
-	public void triggerRefresh() {
+	public boolean triggerRefresh() {
 		onRefreshStarted(getListView());
+		return true;
 	}
 
 	protected PullToRefreshAttacher getPullToRefreshAttacher() {

@@ -713,10 +713,11 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	}
 
 	@Override
-	public void scrollToTop() {
-		if (mListView == null) return;
+	public boolean scrollToTop() {
+		if (mListView == null) return false;
 		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();
 		Utils.scrollListToPosition(mListView, adapter.getCount() + mListView.getFooterViewsCount() - 1, 0);
+		return true;
 	}
 
 	@Override

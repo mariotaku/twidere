@@ -28,7 +28,8 @@ import android.widget.TextView;
 public class UserListViewHolder {
 
 	public final ImageView profile_image;
-	public final TextView name, description, created_by;
+	public final TextView name, description, created_by, members_count, subscribers_count;
+	public final View item_menu;
 	private float text_size;
 
 	public UserListViewHolder(final View view) {
@@ -36,6 +37,9 @@ public class UserListViewHolder {
 		name = (TextView) view.findViewById(R.id.name);
 		description = (TextView) view.findViewById(R.id.description);
 		created_by = (TextView) view.findViewById(R.id.created_by);
+		members_count = (TextView) view.findViewById(R.id.members_count);
+		subscribers_count = (TextView) view.findViewById(R.id.subscribers_count);
+		item_menu = view.findViewById(R.id.item_menu);
 	}
 
 	public void setTextSize(final float text_size) {

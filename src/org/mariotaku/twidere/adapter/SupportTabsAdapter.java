@@ -126,11 +126,10 @@ public class SupportTabsAdapter extends FragmentStatePagerAdapter implements Tab
 	@Override
 	public boolean onTabLongClick(final int position) {
 		if (!(mContext instanceof SupportFragmentCallback)) return false;
+		if (((SupportFragmentCallback) mContext).triggerRefresh(position)) return true;
 		final Fragment f = ((SupportFragmentCallback) mContext).getCurrentVisibleFragment();
-		if (f instanceof RefreshScrollTopInterface) {
-			((RefreshScrollTopInterface) f).triggerRefresh();
-		}
-		return true;
+		if (f instanceof RefreshScrollTopInterface) return ((RefreshScrollTopInterface) f).triggerRefresh();
+		return false;
 	}
 
 	// @Override
