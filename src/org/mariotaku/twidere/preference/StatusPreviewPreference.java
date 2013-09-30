@@ -19,9 +19,7 @@
 
 package org.mariotaku.twidere.preference;
 
-import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
-import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 import static org.mariotaku.twidere.util.Utils.getDefaultTextSize;
 
 import org.mariotaku.twidere.Constants;
@@ -109,7 +107,7 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 	}
 
 	private void setDetailsAndMedia() {
-		mHolder.image_preview.setImageResource(R.drawable.twidere_icon_512);
+		mHolder.image_preview.setImageResource(R.drawable.twidere_feature_graphic);
 		mHolder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_indicator_has_media, 0);
 	}
 
@@ -172,11 +170,7 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 
 	private void setTime() {
 		if (mHolder == null) return;
-		if (mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false)) {
-			mHolder.time.setText(formatSameDayTime(getContext(), System.currentTimeMillis() - 360000));
-		} else {
-			mHolder.time.setText(getRelativeTimeSpanString(System.currentTimeMillis() - 360000));
-		}
+		mHolder.time.setTime(System.currentTimeMillis() - 360000);
 	}
 
 }

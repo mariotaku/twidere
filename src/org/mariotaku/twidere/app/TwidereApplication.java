@@ -130,10 +130,6 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		return mTwitterWrapper = AsyncTwitterWrapper.getInstance(this);
 	}
 
-	public boolean isMultiSelectActive() {
-		return getMultiSelectManager().isActive();
-	}
-
 	@Override
 	public void onCreate() {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);

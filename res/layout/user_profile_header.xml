@@ -348,4 +348,12 @@
 		</TableRow>
 	</LinearLayout>
 
+	<org.mariotaku.twidere.view.ListMenuOverflowButton
+		android:id="@+id/item_menu"
+		android:layout_width="36dp"
+		android:layout_height="48dp"
+		android:layout_gravity="right|top"
+		android:clickable="true"
+		android:padding="10dp"/>
+
 </FrameLayout>

@@ -51,15 +51,12 @@ import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
@@ -68,14 +65,9 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		OnItemLongClickListener, OnMenuItemClickListener, Panes.Left, MultiSelectManager.Callback,
 		MenuButtonClickListener {
 
-	private static final long TICKER_DURATION = 5000L;
-
 	private AsyncTaskManager mAsyncTaskManager;
 	private AsyncTwitterWrapper mTwitterWrapper;
 	private SharedPreferences mPreferences;
-
-	private Handler mHandler;
-	private Runnable mTicker;
 
 	private ListView mListView;
 	private IStatusesAdapter<Data> mAdapter;
@@ -84,7 +76,6 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 	private Data mData;
 	private ParcelableStatus mSelectedStatus;
 
-	private boolean mBusy, mTickerStopped;
 	private boolean mLoadMoreAutomatically;
 	private int mListScrollOffset;
 
@@ -235,7 +226,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 
 	@Override
 	public void onMenuButtonClick(final View button, final int position, final long id) {
-		final ParcelableStatus status = mAdapter.getStatus(position - mListView.getHeaderViewsCount());
+		final ParcelableStatus status = mAdapter.getStatus(position);
 		if (status == null) return;
 		openMenu(button, status);
 	}
@@ -328,7 +319,6 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(getActivity()));
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		final boolean display_image_preview = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_IMAGE_PREVIEW, false);
-		final boolean show_absolute_time = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false);
 		final boolean display_sensitive_contents = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS,
 				false);
 		final boolean link_highlighting = mPreferences.getBoolean(PREFERENCE_KEY_LINK_HIGHLIGHTING, false);
@@ -338,7 +328,6 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		final boolean link_underline_only = mPreferences.getBoolean(PREFERENCE_KEY_LINK_UNDERLINE_ONLY, false);
 		mAdapter.setDisplayProfileImage(display_profile_image);
 		mAdapter.setTextSize(text_size);
-		mAdapter.setShowAbsoluteTime(show_absolute_time);
 		mAdapter.setNameDisplayOption(name_display_option);
 		mAdapter.setDisplayImagePreview(display_image_preview);
 		mAdapter.setDisplaySensitiveContents(display_sensitive_contents);
@@ -350,38 +339,8 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 	}
 
 	@Override
-	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
-		switch (scrollState) {
-			case SCROLL_STATE_FLING:
-			case SCROLL_STATE_TOUCH_SCROLL:
-				mBusy = true;
-				break;
-			case SCROLL_STATE_IDLE:
-				mBusy = false;
-				break;
-		}
-	}
-
-	@Override
 	public void onStart() {
 		super.onStart();
-		mTickerStopped = false;
-		mHandler = new Handler();
-
-		mTicker = new Runnable() {
-
-			@Override
-			public void run() {
-				if (mTickerStopped) return;
-				if (mListView != null && !mBusy) {
-					mAdapter.notifyDataSetChanged();
-				}
-				final long now = SystemClock.uptimeMillis();
-				final long next = now + TICKER_DURATION - now % TICKER_DURATION;
-				mHandler.postAtTime(mTicker, next);
-			}
-		};
-		mTicker.run();
 		mMultiSelectManager.registerCallback(this);
 	}
 
@@ -389,7 +348,6 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 	public void onStop() {
 		savePosition();
 		mMultiSelectManager.unregisterCallback(this);
-		mTickerStopped = true;
 		if (mPopupMenu != null) {
 			mPopupMenu.dismiss();
 		}

@@ -21,6 +21,11 @@ public final class MenuAdapter extends ArrayAdapter<MenuItem> {
 	}
 
 	@Override
+	public boolean areAllItemsEnabled() {
+		return false;
+	}
+
+	@Override
 	public long getItemId(final int index) {
 		return getItem(index).getItemId();
 	}
@@ -33,6 +38,11 @@ public final class MenuAdapter extends ArrayAdapter<MenuItem> {
 		icon.setImageDrawable(item.getIcon());
 		icon.setVisibility(item.getIcon() != null ? View.VISIBLE : View.GONE);
 		return view;
+	}
+
+	@Override
+	public boolean isEnabled(final int position) {
+		return getItem(position).isEnabled();
 	}
 
 	public void setMenu(final Menu menu) {

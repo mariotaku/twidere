@@ -345,11 +345,13 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	public int updateStatus(final long[] account_ids, final String content, final ParcelableLocation location,
 			final Uri image_uri, final long in_reply_to, final boolean is_possibly_sensitive, final boolean delete_image) {
-//		final UpdateStatusTask task = new UpdateStatusTask(account_ids, content, location, image_uri, in_reply_to,
-//				is_possibly_sensitive, delete_image);
-//		return mAsyncTaskManager.add(task, true);
+		// final UpdateStatusTask task = new UpdateStatusTask(account_ids,
+		// content, location, image_uri, in_reply_to,
+		// is_possibly_sensitive, delete_image);
+		// return mAsyncTaskManager.add(task, true);
 		final Intent intent = new Intent(mContext, UpdateStatusService.class);
-		intent.putExtra(INTENT_KEY_STATUS, new ParcelableStatusUpdate(account_ids, content, location, image_uri, in_reply_to, is_possibly_sensitive, delete_image));
+		intent.putExtra(INTENT_KEY_STATUS, new ParcelableStatusUpdate(account_ids, content, location, image_uri,
+				in_reply_to, is_possibly_sensitive, delete_image));
 		mContext.startService(intent);
 		return 0;
 	}
@@ -2335,7 +2337,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			final String title = mContext.getString(R.string.tweet_not_sent);
 			final String message = mContext.getString(R.string.tweet_not_sent_summary);
 			final Intent intent = new Intent(INTENT_ACTION_DRAFTS);
-			final Notification notification = buildNotification(title, message, R.drawable.ic_stat_twitter, intent, null);
+			final Notification notification = buildNotification(title, message, R.drawable.ic_stat_twitter, intent,
+					null);
 			mNotificationManager.notify(NOTIFICATION_ID_DRAFTS, notification);
 		}
 

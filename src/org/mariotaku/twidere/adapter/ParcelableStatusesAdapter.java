@@ -19,10 +19,8 @@
 
 package org.mariotaku.twidere.adapter;
 
-import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static org.mariotaku.twidere.model.ParcelableLocation.isValidLocation;
 import static org.mariotaku.twidere.util.Utils.configBaseAdapter;
-import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getNameDisplayOptionInt;
@@ -32,9 +30,7 @@ import static org.mariotaku.twidere.util.Utils.isFiltered;
 import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
@@ -42,6 +38,7 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.PreviewImage;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
+import org.mariotaku.twidere.util.ImageLoadingHandler;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.TwidereLinkify;
@@ -50,29 +47,24 @@ import org.mariotaku.twidere.view.holder.StatusViewHolder;
 import android.app.Activity;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 
 public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> implements
-		IStatusesAdapter<List<ParcelableStatus>>, OnClickListener, ImageLoadingListener {
+		IStatusesAdapter<List<ParcelableStatus>>, OnClickListener {
 
 	private final Context mContext;
 	private final ImageLoaderWrapper mImageLoader;
 	private final MultiSelectManager mMultiSelectManager;
 	private final TwidereLinkify mLinkify;
 	private final SQLiteDatabase mDatabase;
-	private final Map<View, String> mLoadingViewsMap = new HashMap<View, String>();
+	private final ImageLoadingHandler mImageLoadingHandler;
 
 	private MenuButtonClickListener mListener;
-	private boolean mDisplayProfileImage, mDisplayImagePreview, mShowAccountColor, mShowAbsoluteTime, mGapDisallowed,
+	private boolean mDisplayProfileImage, mDisplayImagePreview, mShowAccountColor, mGapDisallowed,
 			mMentionsHighlightDisabled, mDisplaySensitiveContents, mIndicateMyStatusDisabled, mLinkHighlightingEnabled,
 			mIsLastItemFiltered, mFiltersEnabled;
 	private float mTextSize;
@@ -88,6 +80,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		mImageLoader = app.getImageLoaderWrapper();
 		mDatabase = app.getSQLiteDatabase();
 		mLinkify = new TwidereLinkify(new OnLinkClickHandler(mContext));
+		mImageLoadingHandler = new ImageLoadingHandler();
 		configBaseAdapter(context, this);
 		setMaxAnimationPosition(-1);
 	}
@@ -195,11 +188,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 				holder.name.setMovementMethod(null);
 				holder.screen_name.setMovementMethod(null);
 			}
-			if (mShowAbsoluteTime) {
-				holder.time.setText(formatSameDayTime(mContext, status.timestamp));
-			} else {
-				holder.time.setText(getRelativeTimeSpanString(status.timestamp));
-			}
+			holder.time.setTime(status.timestamp);
 			holder.setStatusType(status.is_favorite, isValidLocation(status.location), status.has_media,
 					status.is_possibly_sensitive);
 			holder.setIsReplyRetweet(status.in_reply_to_status_id > 0, status.is_retweet);
@@ -224,9 +213,10 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 					holder.image_preview.setImageDrawable(null);
 					holder.image_preview.setBackgroundResource(R.drawable.image_preview_nsfw);
 					holder.image_preview_progress.setVisibility(View.GONE);
-				} else if (!status.image_preview_url.equals(mLoadingViewsMap.get(holder.image_preview))) {
+				} else if (!status.image_preview_url.equals(mImageLoadingHandler.getLoadingUri(holder.image_preview))) {
 					holder.image_preview.setBackgroundResource(0);
-					mImageLoader.displayPreviewImage(holder.image_preview, status.image_preview_url, this);
+					mImageLoader.displayPreviewImage(holder.image_preview, status.image_preview_url,
+							mImageLoadingHandler);
 				}
 				holder.image_preview.setTag(position);
 			}
@@ -276,63 +266,6 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 				mListener.onMenuButtonClick(view, position, getItemId(position));
 				break;
 			}
-		}
-	}
-
-	@Override
-	public void onLoadingCancelled(final String url, final View view) {
-		if (view == null || url == null || url.equals(mLoadingViewsMap.get(view))) return;
-		mLoadingViewsMap.remove(view);
-		final View parent = (View) view.getParent();
-		final View progress = parent.findViewById(R.id.image_preview_progress);
-		if (progress != null) {
-			progress.setVisibility(View.GONE);
-		}
-	}
-
-	@Override
-	public void onLoadingComplete(final String url, final View view, final Bitmap bitmap) {
-		if (view == null) return;
-		mLoadingViewsMap.remove(view);
-		final View parent = (View) view.getParent();
-		final View progress = parent.findViewById(R.id.image_preview_progress);
-		if (progress != null) {
-			progress.setVisibility(View.GONE);
-		}
-	}
-
-	@Override
-	public void onLoadingFailed(final String url, final View view, final FailReason reason) {
-		if (view == null) return;
-		mLoadingViewsMap.remove(view);
-		final View parent = (View) view.getParent();
-		final View progress = parent.findViewById(R.id.image_preview_progress);
-		if (progress != null) {
-			progress.setVisibility(View.GONE);
-		}
-	}
-
-	@Override
-	public void onLoadingProgressChanged(final String imageUri, final View view, final int current, final int total) {
-		if (total == 0) return;
-		final View parent = (View) view.getParent();
-		final ProgressBar progress = (ProgressBar) parent.findViewById(R.id.image_preview_progress);
-		if (progress != null) {
-			progress.setIndeterminate(false);
-			progress.setProgress(100 * current / total);
-		}
-	}
-
-	@Override
-	public void onLoadingStarted(final String url, final View view) {
-		if (view == null || url == null || url.equals(mLoadingViewsMap.get(view))) return;
-		mLoadingViewsMap.put(view, url);
-		final View parent = (View) view.getParent();
-		final ProgressBar progress = (ProgressBar) parent.findViewById(R.id.image_preview_progress);
-		if (progress != null) {
-			progress.setVisibility(View.VISIBLE);
-			progress.setIndeterminate(true);
-			progress.setMax(100);
 		}
 	}
 
@@ -439,13 +372,6 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		final int option_int = getNameDisplayOptionInt(option);
 		if (option_int == mNameDisplayOption) return;
 		mNameDisplayOption = option_int;
-		notifyDataSetChanged();
-	}
-
-	@Override
-	public void setShowAbsoluteTime(final boolean show) {
-		if (show == mShowAbsoluteTime) return;
-		mShowAbsoluteTime = show;
 		notifyDataSetChanged();
 	}
 

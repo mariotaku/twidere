@@ -161,7 +161,8 @@ public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCo
 								if (parameter.getFile() != null) {
 									body = new FileBody(parameter.getFile(), parameter.getContentType());
 								} else {
-									body = new InputStreamBody(parameter.getFileBody(), parameter.getFileName(), parameter.getContentType());
+									body = new InputStreamBody(parameter.getFileBody(), parameter.getFileName(),
+											parameter.getContentType());
 								}
 								me.addPart(parameter.getName(), body);
 							} else {

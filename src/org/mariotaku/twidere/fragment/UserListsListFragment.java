@@ -30,11 +30,11 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.ParcelableUserListsAdapter;
 import org.mariotaku.twidere.adapter.SeparatedListAdapter;
-import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.UserListsLoader;
 import org.mariotaku.twidere.loader.UserListsLoader.UserListsData;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUserList;
+import org.mariotaku.twidere.util.MultiSelectManager;
 
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -72,7 +72,7 @@ public class UserListsListFragment extends BasePullToRefreshListFragment impleme
 	private PopupMenu mPopupMenu;
 	private ParcelableUserList mSelectedUserList;
 
-	private TwidereApplication mApplication;
+	private MultiSelectManager mMultiSelectManager;
 
 	private UserListsData mUserListsData;
 
@@ -98,7 +98,7 @@ public class UserListsListFragment extends BasePullToRefreshListFragment impleme
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
-		mApplication = getApplication();
+		mMultiSelectManager = getMultiSelectManager();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final Bundle args = getArguments() != null ? getArguments() : new Bundle();
 		if (args != null) {
@@ -134,7 +134,7 @@ public class UserListsListFragment extends BasePullToRefreshListFragment impleme
 
 	@Override
 	public final void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
-		if (mApplication.isMultiSelectActive()) return;
+		if (mMultiSelectManager.isActive()) return;
 		final Object selected = mAdapter.getItem(position - mListView.getHeaderViewsCount());
 		final ParcelableUserList user_list = selected instanceof ParcelableUserList ? (ParcelableUserList) selected
 				: null;
@@ -145,7 +145,7 @@ public class UserListsListFragment extends BasePullToRefreshListFragment impleme
 
 	@Override
 	public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-		if (mApplication.isMultiSelectActive()) return true;
+		if (mMultiSelectManager.isActive()) return true;
 		mSelectedUserList = null;
 		final ListAdapter adapter = getListAdapter();
 		final Object selected = adapter.getItem(position - mListView.getHeaderViewsCount());

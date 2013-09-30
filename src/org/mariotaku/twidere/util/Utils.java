@@ -3042,6 +3042,38 @@ public final class Utils implements Constants {
 		openUserListMembers(activity, list.account_id, list.id, list.user_id, list.user_screen_name, list.name);
 	}
 
+	public static void openUserListMemberships(final Activity activity, final long account_id, final long user_id,
+			final String screen_name) {
+		if (activity == null || account_id <= 0 || user_id <= 0 && isEmpty(screen_name)) return;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
+			final Fragment fragment = new UserListMembershipsListFragment();
+			final Bundle args = new Bundle();
+			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			if (user_id > 0) {
+				args.putLong(INTENT_KEY_USER_ID, user_id);
+			}
+			if (screen_name != null) {
+				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+			}
+			fragment.setArguments(args);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
+		} else {
+			final Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_LIST_MEMBERSHIPS);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
+			if (user_id > 0) {
+				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
+			}
+			if (screen_name != null) {
+				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
+			}
+			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
+			activity.startActivity(intent);
+		}
+	}
+
 	public static void openUserLists(final Activity activity, final long account_id, final long user_id,
 			final String screen_name) {
 		if (activity == null) return;
@@ -3173,38 +3205,6 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openUserListMemberships(final Activity activity, final long account_id, final long user_id,
-			final String screen_name) {
-		if (activity == null || account_id <= 0 || user_id <= 0 && isEmpty(screen_name)) return;
-		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
-			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
-			final Fragment fragment = new UserListMembershipsListFragment();
-			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			if (user_id > 0) {
-				args.putLong(INTENT_KEY_USER_ID, user_id);
-			}
-			if (screen_name != null) {
-				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
-			}
-			fragment.setArguments(args);
-			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
-		} else {
-			final Uri.Builder builder = new Uri.Builder();
-			builder.scheme(SCHEME_TWIDERE);
-			builder.authority(AUTHORITY_LIST_MEMBERSHIPS);
-			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-			if (user_id > 0) {
-				builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
-			}
-			if (screen_name != null) {
-				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
-			}
-			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-			activity.startActivity(intent);
-		}
-	}
-	
 	public static void openUserProfile(final Activity activity, final long account_id, final long user_id,
 			final String screen_name) {
 		if (activity == null || account_id <= 0 || user_id <= 0 && isEmpty(screen_name)) return;

@@ -127,6 +127,16 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 		mPullToRefreshAttacher.setRefreshing(refreshing);
 	}
 
+	@Override
+	public void startActivity(final Intent intent) {
+		super.startActivity(intent);
+	}
+
+	@Override
+	public void startActivityForResult(final Intent intent, final int requestCode) {
+		super.startActivityForResult(intent, requestCode);
+	}
+
 	public void updateRefreshingState() {
 		setRefreshing(isRefreshing(getCurrentPullToRefreshFragment()));
 	}
@@ -197,16 +207,6 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 
 	private final void setActionBarBackground() {
 		getActionBar().setBackgroundDrawable(ThemeUtils.getActionBarBackground(this));
-	}
-
-	@Override
-	public void startActivityForResult(Intent intent, int requestCode) {
-		super.startActivityForResult(intent, requestCode);
-	}
-
-	@Override
-	public void startActivity(Intent intent) {
-		super.startActivity(intent);
 	}
 
 }

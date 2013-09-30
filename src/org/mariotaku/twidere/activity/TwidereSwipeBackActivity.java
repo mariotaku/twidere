@@ -25,7 +25,7 @@ import android.os.Bundle;
 
 @SuppressLint("Registered")
 public class TwidereSwipeBackActivity extends BaseThemedSupportSwipeBackActivity {
-	
+
 	protected int activityCloseEnterAnimation;
 	protected int activityCloseExitAnimation;
 
@@ -38,7 +38,7 @@ public class TwidereSwipeBackActivity extends BaseThemedSupportSwipeBackActivity
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		TypedArray activityStyle = getTheme().obtainStyledAttributes(new int[] { android.R.attr.windowAnimationStyle });
-		int windowAnimationStyleResId = activityStyle.getResourceId(0, 0);
+		final int windowAnimationStyleResId = activityStyle.getResourceId(0, 0);
 		activityStyle.recycle();
 
 		// Now retrieve the resource ids of the actual animations used in the

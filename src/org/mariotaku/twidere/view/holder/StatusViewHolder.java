@@ -26,6 +26,7 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.animation.CardItemAnimation;
 import org.mariotaku.twidere.util.Utils;
+import org.mariotaku.twidere.view.ShortTimeView;
 import org.mariotaku.twidere.view.iface.IColorLabelView;
 
 import android.content.Context;
@@ -41,7 +42,8 @@ import android.widget.TextView;
 public class StatusViewHolder implements Constants {
 
 	public final ImageView my_profile_image, profile_image, image_preview;
-	public final TextView name, screen_name, time, reply_retweet_status;
+	public final TextView name, screen_name, reply_retweet_status;
+	public final ShortTimeView time;
 	public final TextView text;
 	public final View image_preview_container, item_menu;
 	public final ProgressBar image_preview_progress;
@@ -69,7 +71,7 @@ public class StatusViewHolder implements Constants {
 		name = (TextView) view.findViewById(R.id.name);
 		screen_name = (TextView) view.findViewById(R.id.screen_name);
 		text = (TextView) view.findViewById(R.id.text);
-		time = (TextView) view.findViewById(R.id.time);
+		time = (ShortTimeView) view.findViewById(R.id.time);
 		reply_retweet_status = (TextView) view.findViewById(R.id.reply_retweet_status);
 		show_as_gap = gap_indicator != null ? gap_indicator.isShown() : false;
 		is_rtl = Utils.isRTL(context);

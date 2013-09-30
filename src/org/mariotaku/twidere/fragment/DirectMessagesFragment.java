@@ -26,7 +26,6 @@ import static org.mariotaku.twidere.util.Utils.getOldestMessageIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.openDirectMessagesConversation;
 
 import org.mariotaku.twidere.adapter.DirectMessagesEntryAdapter;
-import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.AsyncTask;
@@ -41,8 +40,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -53,17 +50,11 @@ import android.widget.ListView;
 
 public class DirectMessagesFragment extends BasePullToRefreshListFragment implements LoaderCallbacks<Cursor> {
 
-	private static final long TICKER_DURATION = 5000L;
-
-	private TwidereApplication mApplication;
 	private MultiSelectManager mMultiSelectManager;
 	private SharedPreferences mPreferences;
-	private Handler mHandler;
-	private Runnable mTicker;
 
 	private ListView mListView;
 
-	private boolean mBusy, mTickerStopped;
 	private boolean mLoadMoreAutomatically;
 
 	private DirectMessagesEntryAdapter mAdapter;
@@ -98,7 +89,6 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onActivityCreated(savedInstanceState);
-		mApplication = getApplication();
 		mMultiSelectManager = getMultiSelectManager();
 		mAdapter = new DirectMessagesEntryAdapter(getActivity());
 		setListAdapter(mAdapter);
@@ -117,7 +107,7 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 
 	@Override
 	public void onListItemClick(final ListView l, final View v, final int position, final long id) {
-		if (mApplication.isMultiSelectActive()) return;
+		if (mMultiSelectManager.isActive()) return;
 		final int pos = position - l.getHeaderViewsCount();
 		final long conversation_id = mAdapter.getConversationId(pos);
 		final long account_id = mAdapter.getAccountId(pos);
@@ -188,12 +178,10 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
 		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(getActivity()));
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		final boolean show_absolute_time = mPreferences.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false);
 		final String name_display_option = mPreferences.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION,
 				NAME_DISPLAY_OPTION_BOTH);
 		mAdapter.setDisplayProfileImage(display_profile_image);
 		mAdapter.setTextSize(text_size);
-		mAdapter.setShowAbsoluteTime(show_absolute_time);
 		mAdapter.setNameDisplayOption(name_display_option);
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 	}
@@ -207,35 +195,14 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 				if (twitter != null) {
 					twitter.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
 				}
-				mBusy = true;
 				break;
 			}
-			case SCROLL_STATE_IDLE:
-				mBusy = false;
-				break;
 		}
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
-		mTickerStopped = false;
-		mHandler = new Handler();
-
-		mTicker = new Runnable() {
-
-			@Override
-			public void run() {
-				if (mTickerStopped) return;
-				if (mListView != null && !mBusy) {
-					mAdapter.notifyDataSetChanged();
-				}
-				final long now = SystemClock.uptimeMillis();
-				final long next = now + TICKER_DURATION - now % TICKER_DURATION;
-				mHandler.postAtTime(mTicker, next);
-			}
-		};
-		mTicker.run();
 		final IntentFilter filter = new IntentFilter();
 		filter.addAction(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED);
@@ -252,7 +219,6 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 	@Override
 	public void onStop() {
 		unregisterReceiver(mStatusReceiver);
-		mTickerStopped = true;
 		super.onStop();
 	}
 

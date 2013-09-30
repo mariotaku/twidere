@@ -44,15 +44,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
@@ -61,23 +58,17 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 		LoaderCallbacks<List<ParcelableUser>>, OnItemLongClickListener, Panes.Left, OnMenuItemClickListener,
 		MultiSelectManager.Callback, MenuButtonClickListener {
 
-	private static final long TICKER_DURATION = 5000L;
-
 	private SharedPreferences mPreferences;
 	private PopupMenu mPopupMenu;
 	private MultiSelectManager mMultiSelectManager;
 
 	private ParcelableUsersAdapter mAdapter;
 
-	private Handler mHandler;
-	private Runnable mTicker;
-
 	private boolean mLoadMoreAutomatically;
 	private ListView mListView;
 	private long mAccountId;
 	private final List<ParcelableUser> mData = Collections
 			.synchronizedList(new NoDuplicatesArrayList<ParcelableUser>());
-	private boolean mTickerStopped, mBusy;
 
 	private ParcelableUser mSelectedUser;
 
@@ -253,45 +244,14 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 	}
 
 	@Override
-	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
-		switch (scrollState) {
-			case SCROLL_STATE_FLING:
-			case SCROLL_STATE_TOUCH_SCROLL:
-				mBusy = true;
-				break;
-			case SCROLL_STATE_IDLE:
-				mBusy = false;
-				break;
-		}
-	}
-
-	@Override
 	public void onStart() {
 		super.onStart();
-		mTickerStopped = false;
-		mHandler = new Handler();
-
-		mTicker = new Runnable() {
-
-			@Override
-			public void run() {
-				if (mTickerStopped) return;
-				if (mListView != null && !mBusy) {
-					mAdapter.notifyDataSetChanged();
-				}
-				final long now = SystemClock.uptimeMillis();
-				final long next = now + TICKER_DURATION - now % TICKER_DURATION;
-				mHandler.postAtTime(mTicker, next);
-			}
-		};
-		mTicker.run();
 		mMultiSelectManager.registerCallback(this);
 	}
 
 	@Override
 	public void onStop() {
 		mMultiSelectManager.unregisterCallback(this);
-		mTickerStopped = true;
 		if (mPopupMenu != null) {
 			mPopupMenu.dismiss();
 		}

@@ -139,7 +139,6 @@
 		android:layout_width="32dp"
 		android:layout_height="40dp"
 		android:layout_gravity="right|top"
-		android:clickable="true"
 		android:paddingBottom="2dp"
 		android:paddingLeft="6dp"
 		android:paddingRight="10dp"

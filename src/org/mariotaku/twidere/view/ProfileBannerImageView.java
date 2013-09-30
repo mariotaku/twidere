@@ -31,7 +31,6 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Shader;
-import android.os.Build;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 
@@ -72,9 +71,7 @@ public class ProfileBannerImageView extends ClickableImageView implements IExten
 		if (mShader == null) return;
 		super.onDraw(canvas);
 		mPaint.setShader(mShader);
-		if (supportXfermode()) {
-			mPaint.setXfermode(DST_IN);
-		}
+		mPaint.setXfermode(DST_IN);
 		canvas.drawRect(0, 0, width, height, mPaint);
 	}
 
@@ -84,8 +81,7 @@ public class ProfileBannerImageView extends ClickableImageView implements IExten
 		final int width = MeasureSpec.getSize(widthMeasureSpec), height = width / 2;
 		setMeasuredDimension(width, height);
 		if (width > 0) {
-			final int[] colors = supportXfermode() ? COLORS : COLORS_REVERSED;
-			mShader = new LinearGradient(width / 2, 0, width / 2, height, colors, POSITIONS, Shader.TileMode.CLAMP);
+			mShader = new LinearGradient(width / 2, 0, width / 2, height, COLORS, POSITIONS, Shader.TileMode.CLAMP);
 		}
 		super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
 	}
@@ -98,7 +94,4 @@ public class ProfileBannerImageView extends ClickableImageView implements IExten
 		}
 	}
 
-	private static boolean supportXfermode() {
-		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH;
-	}
 }

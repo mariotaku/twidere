@@ -19,8 +19,6 @@
 
 package org.mariotaku.twidere.adapter;
 
-import static android.text.format.DateUtils.formatSameDayTime;
-import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_ACCOUNT_ID;
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_CONVERSATION_ID;
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_NAME;
@@ -32,8 +30,6 @@ import static org.mariotaku.twidere.util.Utils.configBaseAdapter;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
-
-import java.text.DateFormat;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
@@ -56,7 +52,7 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 	private final ImageLoaderWrapper mLazyImageLoader;
 	private final MultiSelectManager mMultiSelectManager;
 
-	private boolean mDisplayProfileImage, mShowAccountColor, mShowAbsoluteTime;
+	private boolean mDisplayProfileImage, mShowAccountColor;
 	private float mTextSize;
 	private int mNameDisplayOption;
 
@@ -112,12 +108,7 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 			}
 		}
 		holder.text.setText(toPlainText(cursor.getString(IDX_TEXT)));
-		if (mShowAbsoluteTime) {
-			holder.time.setText(formatSameDayTime(message_timestamp, System.currentTimeMillis(), DateFormat.MEDIUM,
-					DateFormat.SHORT));
-		} else {
-			holder.time.setText(getRelativeTimeSpanString(message_timestamp));
-		}
+		holder.time.setTime(message_timestamp);
 		holder.setIsOutgoing(is_outgoing);
 		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
@@ -197,13 +188,6 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
 		} else {
 			mNameDisplayOption = 0;
-		}
-	}
-
-	public void setShowAbsoluteTime(final boolean show) {
-		if (show != mShowAbsoluteTime) {
-			mShowAbsoluteTime = show;
-			notifyDataSetChanged();
 		}
 	}
 

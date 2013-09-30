@@ -82,6 +82,11 @@ public class SearchFragment extends BaseSupportFragment implements Panes.Left, O
 	}
 
 	@Override
+	public void onDetachFragment(final Fragment fragment) {
+
+	}
+
+	@Override
 	public void onPageScrolled(final int position, final float positionOffset, final int positionOffsetPixels) {
 	}
 
@@ -134,12 +139,7 @@ public class SearchFragment extends BaseSupportFragment implements Panes.Left, O
 	}
 
 	@Override
-	public void onDetachFragment(Fragment fragment) {
-		
-	}
-
-	@Override
-	public boolean triggerRefresh(int position) {
+	public boolean triggerRefresh(final int position) {
 		// TODO Auto-generated method stub
 		return false;
 	}

@@ -56,6 +56,14 @@ public class ParcelableStatusUpdate implements Parcelable {
 	}
 
 	@Override
+	public String toString() {
+		return "ParcelableStatusUpdate{account_ids=" + Arrays.toString(account_ids) + ", content=" + content
+				+ ", location=" + location + ", image_uri=" + image_uri + ", in_reply_to_status_id="
+				+ in_reply_to_status_id + ", is_possibly_sensitive=" + is_possibly_sensitive + ", delete_image="
+				+ delete_image + "}";
+	}
+
+	@Override
 	public void writeToParcel(final Parcel dest, final int flags) {
 		dest.writeLongArray(account_ids);
 		dest.writeString(content);
@@ -64,14 +72,6 @@ public class ParcelableStatusUpdate implements Parcelable {
 		dest.writeLong(in_reply_to_status_id);
 		dest.writeInt(is_possibly_sensitive ? 1 : 0);
 		dest.writeInt(delete_image ? 1 : 0);
-	}
-
-	@Override
-	public String toString() {
-		return "ParcelableStatusUpdate{account_ids=" + Arrays.toString(account_ids) + ", content=" + content
-				+ ", location=" + location + ", image_uri=" + image_uri + ", in_reply_to_status_id="
-				+ in_reply_to_status_id + ", is_possibly_sensitive=" + is_possibly_sensitive + ", delete_image="
-				+ delete_image + "}";
 	}
 
 }

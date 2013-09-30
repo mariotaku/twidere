@@ -206,7 +206,7 @@
   <string name="item_1_hour">1小时</string>
   <string name="item_2_hours">2小时</string>
   <string name="item_4_hours">4小时</string>
-  <string name="image_preview_display_option">图片预览显示选项</string>
+  <string name="display_image_preview">显示图片预览</string>
   <string name="solid_color_background">纯色背景</string>
   <string name="solid_color_background_summary">如果你的设备是AMOLED屏幕的话，启用这个会有所帮助</string>
   <string name="following_you">正在关注你</string>
@@ -328,8 +328,9 @@
   <string name="stop_auto_refresh_when_battery_low">电量低时停止自动刷新</string>
   <string name="notification_mention"><xliff:g id="user">%s</xliff:g> 提到了你</string>
   <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> 给你发送了一条私信</string>
-  <string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> 和其他 <xliff:g id="count">%d</xliff:g> 人提到了你</string>
-  <string name="notification_direct_message_multiple_users"><xliff:g id="user">%s</xliff:g> 和其他 <xliff:g id="count">%d</xliff:g> 人给你发送了私信</string>
+  <string name="notification_direct_message_multiple_messages"><xliff:g id="user">%1$s</xliff:g>给你发了<xliff:g id="messages_count">%2$d</xliff:g>条私信</string>
+  <string name="notification_mention_multiple"><xliff:g id="user">%1$s</xliff:g>和其他<xliff:g id="count">%2$d</xliff:g>人提到了你</string>
+  <string name="notification_direct_message_multiple_users"><xliff:g id="user">%1$s</xliff:g>和其他<xliff:g id="users_count">%2$d</xliff:g>人给你发了<xliff:g id="messages_count">%3$d</xliff:g>条私信</string>
   <string name="getting_status">获取推文</string>
   <string name="getting_statuses">获取推文</string>
   <string name="updating_status">发送推文</string>
@@ -483,4 +484,7 @@
   <string name="no_rule">没有规则</string>
   <string name="enable_in_mentions">在提及启用</string>
   <string name="enable_in_home_timeline">在主页时间线启用</string>
+  <string name="enable_for_rts">在转推启用</string>
+  <string name="safety">安全</string>
+  <string name="updating_status_notification">正在发送推文…</string>
 </resources>

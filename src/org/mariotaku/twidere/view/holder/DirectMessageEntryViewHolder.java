@@ -22,6 +22,7 @@ package org.mariotaku.twidere.view.holder;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
+import org.mariotaku.twidere.view.ShortTimeView;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -32,7 +33,8 @@ import android.widget.TextView;
 public class DirectMessageEntryViewHolder {
 
 	public final ImageView profile_image;
-	public final TextView name, screen_name, text, time;
+	public final TextView name, screen_name, text;
+	public final ShortTimeView time;
 	private final ColorLabelRelativeLayout content;
 	private float text_size;
 	private boolean account_color_enabled;
@@ -45,7 +47,7 @@ public class DirectMessageEntryViewHolder {
 		name = (TextView) view.findViewById(R.id.name);
 		screen_name = (TextView) view.findViewById(R.id.screen_name);
 		text = (TextView) view.findViewById(R.id.text);
-		time = (TextView) view.findViewById(R.id.time);
+		time = (ShortTimeView) view.findViewById(R.id.time);
 		is_rtl = Utils.isRTL(context);
 	}
 

@@ -23,10 +23,10 @@ import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
 import static org.mariotaku.twidere.util.Utils.getTableNameByUri;
 import static org.mariotaku.twidere.util.Utils.openTweetSearch;
 
-import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.MultiSelectManager;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -45,7 +45,7 @@ import android.widget.ListView;
 
 public class TrendsFragment extends BasePullToRefreshListFragment implements LoaderCallbacks<Cursor>, Panes.Left {
 
-	private TwidereApplication mApplication;
+	private MultiSelectManager mMultiSelectManager;
 	private SharedPreferences mPreferences;
 
 	private TrendsAdapter mTrendsAdapter;
@@ -77,7 +77,7 @@ public class TrendsFragment extends BasePullToRefreshListFragment implements Loa
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onActivityCreated(savedInstanceState);
-		mApplication = getApplication();
+		mMultiSelectManager = getMultiSelectManager();
 		mAccountId = getDefaultAccountId(getActivity());
 		mTrendsAdapter = new TrendsAdapter(getActivity());
 		setListAdapter(mTrendsAdapter);
@@ -95,7 +95,7 @@ public class TrendsFragment extends BasePullToRefreshListFragment implements Loa
 
 	@Override
 	public void onListItemClick(final ListView l, final View v, final int position, final long id) {
-		if (mApplication.isMultiSelectActive()) return;
+		if (mMultiSelectManager.isActive()) return;
 		final Cursor cur = (Cursor) mTrendsAdapter.getItem(position - l.getHeaderViewsCount());
 		if (cur == null) return;
 		openTweetSearch(getActivity(), mAccountId, cur.getString(cur.getColumnIndex(CachedTrends.NAME)));

@@ -38,31 +38,20 @@ import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
 public class AccountSelectorActivity extends BaseSupportDialogActivity implements LoaderCallbacks<Cursor>,
-		OnItemClickListener, OnClickListener, OnScrollListener {
-
-	private static final long TICKER_DURATION = 5000L;
+		OnItemClickListener, OnClickListener {
 
 	private ListView mListView;
 	private AccountsAdapter mAdapter;
 	private final List<Long> mSelectedIds = new NoDuplicatesArrayList<Long>();
-
-	private Handler mHandler;
-	private Runnable mTicker;
-
-	private volatile boolean mBusy, mTickerStopped;
 
 	private SharedPreferences mPreferences;
 
@@ -169,45 +158,8 @@ public class AccountSelectorActivity extends BaseSupportDialogActivity implement
 	}
 
 	@Override
-	public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
-			final int totalItemCount) {
-
-	}
-
-	@Override
-	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
-		switch (scrollState) {
-			case SCROLL_STATE_FLING:
-			case SCROLL_STATE_TOUCH_SCROLL:
-				mBusy = true;
-				break;
-			case SCROLL_STATE_IDLE:
-				mBusy = false;
-				break;
-		}
-	}
-
-	@Override
 	public void onStart() {
 		super.onStart();
-		mTickerStopped = false;
-		mHandler = new Handler();
-
-		mTicker = new Runnable() {
-
-			@Override
-			public void run() {
-				if (mTickerStopped) return;
-				if (mListView != null && !mBusy) {
-					mAdapter.notifyDataSetChanged();
-				}
-				final long now = SystemClock.uptimeMillis();
-				final long next = now + TICKER_DURATION - now % TICKER_DURATION;
-				mHandler.postAtTime(mTicker, next);
-			}
-		};
-		mTicker.run();
-
 		final IntentFilter filter = new IntentFilter(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
 		registerReceiver(mStateReceiver, filter);
 
@@ -223,7 +175,6 @@ public class AccountSelectorActivity extends BaseSupportDialogActivity implement
 		mAdapter = new AccountsAdapter(this, true);
 		mListView.setAdapter(mAdapter);
 		mListView.setOnItemClickListener(this);
-		mListView.setOnScrollListener(this);
 		final long[] activated_ids;
 		if (savedInstanceState != null) {
 			activated_ids = savedInstanceState.getLongArray(INTENT_KEY_IDS);
@@ -253,7 +204,6 @@ public class AccountSelectorActivity extends BaseSupportDialogActivity implement
 
 	@Override
 	protected void onStop() {
-		mTickerStopped = true;
 		unregisterReceiver(mStateReceiver);
 		super.onStop();
 	}

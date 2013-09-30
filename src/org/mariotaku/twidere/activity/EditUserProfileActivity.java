@@ -102,7 +102,6 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
-			if (mUser == null) return;
 			final String action = intent.getAction();
 			if (BROADCAST_PROFILE_UPDATED.equals(action)) {
 				if (mUser == null || intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mUser.id) {
@@ -556,6 +555,7 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 		protected void onPostExecute(final SingleResponse<ParcelableUser> result) {
 			super.onPostExecute(result);
 			if (result != null && result.data != null) {
+				mGetUserInfoCalled = true;
 				displayUser(result.data);
 			}
 			setUpdateState(false);

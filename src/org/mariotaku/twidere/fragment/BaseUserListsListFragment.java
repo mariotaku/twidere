@@ -31,10 +31,10 @@ import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.ParcelableUserListsAdapter;
 import org.mariotaku.twidere.adapter.iface.IBaseAdapter.MenuButtonClickListener;
-import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.BaseUserListsLoader;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUserList;
+import org.mariotaku.twidere.util.MultiSelectManager;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -66,7 +66,7 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 	private long mCursor = -1;
 	private boolean mLoadMoreAutomatically;
 
-	private TwidereApplication mApplication;
+	private MultiSelectManager mMultiSelectManager;
 
 	public long getAccountId() {
 		return mAccountId;
@@ -111,7 +111,7 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mApplication = getApplication();
+		mMultiSelectManager = getMultiSelectManager();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final Bundle args = getArguments() != null ? getArguments() : new Bundle();
 		if (args != null) {
@@ -144,7 +144,7 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 
 	@Override
 	public final void onListItemClick(final ListView view, final View child, final int position, final long id) {
-		if (mApplication.isMultiSelectActive()) return;
+		if (mMultiSelectManager.isActive()) return;
 		final ParcelableUserList user_list = mAdapter.findItem(id);
 		if (user_list == null) return;
 		openUserListDetails(getActivity(), mAccountId, user_list.id, user_list.user_id, user_list.user_screen_name,

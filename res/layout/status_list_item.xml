@@ -67,7 +67,7 @@
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:textColor="?android:attr/textColorSecondary"/>
 
-				<TextView
+				<org.mariotaku.twidere.view.ShortTimeView
 					android:id="@+id/time"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
@@ -90,27 +90,14 @@
 		</LinearLayout>
 
 		<View
-			android:id="@+id/divider"
 			android:layout_width="match_parent"
 			android:layout_height="0.2dp"
 			android:background="#40808080"/>
-
-		<org.mariotaku.twidere.view.HandleSpanClickTextView
-			android:id="@+id/text"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:paddingBottom="8dp"
-			android:paddingLeft="8dp"
-			android:paddingRight="8dp"
-			android:paddingTop="8dp"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:textColor="?android:attr/textColorSecondary"/>
 
 		<org.mariotaku.twidere.view.ImagePreviewContainer
 			android:id="@+id/image_preview_container"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:paddingTop="4dp"
 			android:visibility="gone">
 
 			<org.mariotaku.twidere.view.ClickableImageView
@@ -127,6 +114,17 @@
 				android:layout_gravity="center"
 				android:layout_margin="16dp"/>
 		</org.mariotaku.twidere.view.ImagePreviewContainer>
+
+		<org.mariotaku.twidere.view.HandleSpanClickTextView
+			android:id="@+id/text"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:paddingBottom="8dp"
+			android:paddingLeft="8dp"
+			android:paddingRight="8dp"
+			android:paddingTop="8dp"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="?android:attr/textColorSecondary"/>
 
 		<TextView
 			android:id="@+id/reply_retweet_status"
@@ -145,7 +143,6 @@
 		android:layout_width="32dp"
 		android:layout_height="40dp"
 		android:layout_gravity="right|top"
-		android:clickable="true"
 		android:paddingBottom="2dp"
 		android:paddingLeft="6dp"
 		android:paddingRight="10dp"

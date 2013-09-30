@@ -77,6 +77,7 @@ public class BaseSupportListFragment extends ListFragment implements IBaseFragme
 		return null;
 	}
 
+	@Override
 	public final int getTabPosition() {
 		final Bundle args = getArguments();
 		return args != null ? args.getInt(INTENT_KEY_TAB_POSITION, -1) : -1;

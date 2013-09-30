@@ -13,7 +13,7 @@ import org.mariotaku.twidere.adapter.ParcelableUserListsAdapter;
 import org.mariotaku.twidere.adapter.ParcelableUsersAdapter;
 import org.mariotaku.twidere.adapter.UserHashtagAutoCompleteAdapter;
 import org.mariotaku.twidere.fragment.CreateUserListDialogFragment;
-import org.mariotaku.twidere.fragment.ProgressDialogFragment;
+import org.mariotaku.twidere.fragment.SupportProgressDialogFragment;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.model.SingleResponse;
@@ -141,7 +141,9 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 		mEditScreenName.setAdapter(new UserHashtagAutoCompleteAdapter(this));
 		mEditScreenName.setText(mScreenName);
 		mUserListsListView.setAdapter(mUserListsAdapter = new ParcelableUserListsAdapter(this));
+		mUserListsListView.setDivider(null);
 		mUsersListView.setAdapter(mUsersAdapter = new ParcelableUsersAdapter(this));
+		mUsersListView.setDivider(null);
 		mUserListsListView.setOnItemClickListener(this);
 		mUsersListView.setOnItemClickListener(this);
 		if (selecting_user) {
@@ -253,7 +255,7 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 
 		@Override
 		protected void onPreExecute() {
-			ProgressDialogFragment.show(mActivity, FRAGMENT_TAG_GET_USER_LISTS);
+			SupportProgressDialogFragment.show(mActivity, FRAGMENT_TAG_GET_USER_LISTS);
 		}
 
 	}
@@ -302,7 +304,7 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 
 		@Override
 		protected void onPreExecute() {
-			ProgressDialogFragment.show(mActivity, FRAGMENT_TAG_SEARCH_USERS);
+			SupportProgressDialogFragment.show(mActivity, FRAGMENT_TAG_SEARCH_USERS);
 		}
 
 	}

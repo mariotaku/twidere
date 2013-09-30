@@ -547,8 +547,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		if (savedInstanceState != null) {
 			// Restore from previous saved state
 			mAccountIds = savedInstanceState.getLongArray(INTENT_KEY_ACCOUNT_IDS);
-			mAttachedImageType = savedInstanceState.getInt(INTENT_KEY_ATTACHED_IMAGE_TYPE,
-					ATTACHED_IMAGE_TYPE_NONE);
+			mAttachedImageType = savedInstanceState.getInt(INTENT_KEY_ATTACHED_IMAGE_TYPE, ATTACHED_IMAGE_TYPE_NONE);
 			mIsPossiblySensitive = savedInstanceState.getBoolean(INTENT_KEY_IS_POSSIBLY_SENSITIVE);
 			mImageUri = savedInstanceState.getParcelable(INTENT_KEY_IMAGE_URI);
 			mInReplyToStatus = savedInstanceState.getParcelable(INTENT_KEY_STATUS);

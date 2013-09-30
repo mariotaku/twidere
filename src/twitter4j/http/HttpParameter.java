@@ -55,7 +55,7 @@ public final class HttpParameter implements Comparable<HttpParameter> {
 	public HttpParameter(final String name, final File file) {
 		this.name = name;
 		this.file = file;
-		this.fileName = file != null ? file.getName() : null;
+		fileName = file != null ? file.getName() : null;
 	}
 
 	public HttpParameter(final String name, final int value) {
@@ -145,12 +145,12 @@ public final class HttpParameter implements Comparable<HttpParameter> {
 		return file;
 	}
 
-	public String getFileName() {
-		return fileName;
-	}
-	
 	public InputStream getFileBody() {
 		return fileBody;
+	}
+
+	public String getFileName() {
+		return fileName;
 	}
 
 	public String getName() {
