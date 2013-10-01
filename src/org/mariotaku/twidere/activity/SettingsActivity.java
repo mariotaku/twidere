@@ -21,16 +21,14 @@ package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.Utils.restartActivity;
 
-import java.util.List;
-
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.ArrayAdapter;
-
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -39,6 +37,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.ArrayAdapter;
+import org.mariotaku.twidere.preference.RingtonePreference;
+
+import java.util.List;
 
 public class SettingsActivity extends BasePreferenceActivity implements OnSharedPreferenceChangeListener {
 
@@ -94,6 +98,23 @@ public class SettingsActivity extends BasePreferenceActivity implements OnShared
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
 	}
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        switch (requestCode) {
+            case RingtonePreference.REQUEST_NOTIFICATION_TONE: {
+                final Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+                RingtonePreference.persistNotificationTone(this, uri);
+                break;
+            }
+            default:
+                break;
+        }
+    }
+	
 	static class HeaderAdapter extends ArrayAdapter<Header> {
 
 		static final int HEADER_TYPE_CATEGORY = 0;

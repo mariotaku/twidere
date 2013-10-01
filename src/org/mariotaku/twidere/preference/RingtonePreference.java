@@ -16,92 +16,81 @@
 
 package org.mariotaku.twidere.preference;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.mariotaku.twidere.Constants.PREFERENCE_KEY_NOTIFICATION_RINGTONE;
+import static org.mariotaku.twidere.Constants.SHARED_PREFERENCES_NAME;
 
-import org.mariotaku.twidere.util.ArrayUtils;
-
-import android.app.AlertDialog.Builder;
+import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
-import android.database.Cursor;
-import android.media.Ringtone;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.media.RingtoneManager;
-import android.preference.ListPreference;
+import android.net.Uri;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 
-public class RingtonePreference extends ListPreference {
+/**
+ * A custom {@link Preference} that invokes a
+ * {@link #setOnPreferenceClickListener(OnPreferenceClickListener)} allowing the
+ * user to select a custom notification tone for Twidere
+ */
+public class RingtonePreference extends Preference implements OnPreferenceClickListener {
 
-	private List<Ringtone> mRingtones;
-	private String[] mEntries, mValues;
+    /** The request code for {@link Activity#onActivityResult} */
+    public static final int REQUEST_NOTIFICATION_TONE = 0;
 
-	private int mSelectedItem;
+    /**
+     * Constructor for <code>RingtonePreference</code>
+     * 
+     * @param context The {@link Context} to use
+     * @param attrs The attributes of the XML tag that is inflating the
+     *            preference
+     */
+    public RingtonePreference(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        setOnPreferenceClickListener(this);
+    }
 
-	public RingtonePreference(final Context context, final AttributeSet attrs) {
-		super(context, attrs);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean onPreferenceClick(Preference preference) {
+        openRingtonePicker();
+        return true;
+    }
 
-	public int getSelectedItem() {
-		return mSelectedItem;
-	}
+    private void openRingtonePicker() {
+        final Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+        // Hide the "default" notification tone
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, false);
+        // Hide the "silent" option
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false);
+        // Only show notification tones
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
 
-	public Ringtone getSelectedRingtone() {
-		return mRingtones.get(mSelectedItem);
-	}
+        // Check the current notification tone
+        final String customUri = getSharedPreferences().getString(getKey(), null);
+        if (!TextUtils.isEmpty(customUri)) {
+            final Uri uri = Uri.parse(customUri);
+            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, uri);
+        }
+        ((Activity) getContext()).startActivityForResult(intent, REQUEST_NOTIFICATION_TONE);
+    }
 
-	public void setSelectedItem(final int selected) {
-		mSelectedItem = selected >= 0 && selected < mValues.length ? selected : 0;
-	}
-
-	@Override
-	protected void onDialogClosed(final boolean positiveResult) {
-		final Ringtone ringtone = getSelectedRingtone();
-		if (ringtone != null && ringtone.isPlaying()) {
-			ringtone.stop();
-		}
-		if (positiveResult && mSelectedItem >= 0 && mSelectedItem < mValues.length) {
-			if (callChangeListener(mValues[mSelectedItem])) {
-				persistString(mValues[mSelectedItem]);
-			}
-		}
-	}
-
-	@Override
-	protected void onPrepareDialogBuilder(final Builder builder) {
-		loadRingtones(getContext());
-		setSelectedItem(ArrayUtils.indexOf(mValues, getPersistedString(null)));
-		builder.setSingleChoiceItems(getEntries(), getSelectedItem(), new OnClickListener() {
-			@Override
-			public void onClick(final DialogInterface dialog, final int which) {
-				setSelectedItem(which);
-				final Ringtone ringtone = getSelectedRingtone();
-				if (ringtone.isPlaying()) {
-					ringtone.stop();
-				}
-				ringtone.play();
-			}
-		});
-	}
-
-	private void loadRingtones(final Context context) {
-		final RingtoneManager manager = new RingtoneManager(context);
-		manager.setType(RingtoneManager.TYPE_NOTIFICATION);
-		final Cursor cur = manager.getCursor();
-		cur.moveToFirst();
-		final int count = cur.getCount();
-		mRingtones = new ArrayList<Ringtone>(count);
-		mEntries = new String[count];
-		mValues = new String[count];
-		for (int i = 0; i < count; i++) {
-			final Ringtone ringtone = manager.getRingtone(i);
-			mRingtones.add(ringtone);
-			mEntries[i] = ringtone.getTitle(context);
-			mValues[i] = manager.getRingtoneUri(i).toString();
-		}
-		setEntries(mEntries);
-		setEntryValues(mValues);
-		cur.close();
-	}
+    /**
+     * @param context The {@link Context} to use
+     * @param uri The notification tone uri acquired from
+     *            {@link #openRingtonePicker()}
+     */
+    public static void persistNotificationTone(Context context, Uri uri) {
+        final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
+                Context.MODE_PRIVATE);
+        final Editor editor = prefs.edit();
+        editor.putString(PREFERENCE_KEY_NOTIFICATION_RINGTONE, uri.toString());
+        editor.apply();
+    }
 
 }
