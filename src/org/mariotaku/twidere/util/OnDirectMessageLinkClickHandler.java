@@ -31,7 +31,7 @@ import android.os.Bundle;
 public class OnDirectMessageLinkClickHandler extends OnLinkClickHandler {
 
 	private static final String[] SHORT_LINK_SERVICES = new String[] { "bit.ly", "ow.ly", "tinyurl.com", "goo.gl",
-			"k6.kz", "is.gd", "tr.im" };
+			"k6.kz", "is.gd", "tr.im", "x.co", "weepp.ru" };
 
 	public OnDirectMessageLinkClickHandler(final Context context) {
 		super(context);

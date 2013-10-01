@@ -119,9 +119,9 @@ public class SearchFragment extends BaseSupportFragment implements Panes.Left, O
 	}
 
 	@Override
-	public boolean scrollToTop() {
+	public boolean scrollToStart() {
 		if (!(mCurrentVisibleFragment instanceof RefreshScrollTopInterface)) return false;
-		((RefreshScrollTopInterface) mCurrentVisibleFragment).scrollToTop();
+		((RefreshScrollTopInterface) mCurrentVisibleFragment).scrollToStart();
 		return true;
 	}
 

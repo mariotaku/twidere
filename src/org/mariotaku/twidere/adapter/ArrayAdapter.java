@@ -34,6 +34,7 @@ public class ArrayAdapter<T> extends BaseAdapter {
 
 	private final LayoutInflater mInflater;
 	private final int mLayoutRes;
+	private int mDropDownLayoutRes;
 
 	private final ArrayList<T> mData = new ArrayList<T>();
 
@@ -87,6 +88,12 @@ public class ArrayAdapter<T> extends BaseAdapter {
 	}
 
 	@Override
+	public View getDropDownView(final int position, final View convertView, final ViewGroup parent) {
+		if (mDropDownLayoutRes == 0) return null;
+		return convertView != null ? convertView : mInflater.inflate(mDropDownLayoutRes, parent, false);
+	}
+
+	@Override
 	public final T getItem(final int position) {
 		return mData.get(position);
 	}
@@ -105,6 +112,10 @@ public class ArrayAdapter<T> extends BaseAdapter {
 		final boolean ret = mData.remove(position) != null;
 		notifyDataSetChanged();
 		return ret;
+	}
+
+	public void setDropDownViewResource(final int layoutRes) {
+		mDropDownLayoutRes = layoutRes;
 	}
 
 	public final void sort(final Comparator<? super T> comparator) {

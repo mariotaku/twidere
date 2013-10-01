@@ -188,18 +188,6 @@ public class SlidingPaneView extends ViewGroup {
 		setShadowSlidable(shadowSlidable);
 	}
 
-	public void animateClose() {
-		mController.hideRightPane(mFlingDuration);
-	}
-
-	public void animateOpen() {
-		mController.showRightPane(mFlingDuration);
-	}
-
-	public void close() {
-		mController.hideRightPane(0);
-	}
-
 	public int getFadeType() {
 		return mFadeType;
 	}
@@ -240,13 +228,18 @@ public class SlidingPaneView extends ViewGroup {
 		return mShadowWidth;
 	}
 
-	public boolean isContentShown() {
+	public void hideRightPane() {
+		mController.hideRightPane(mFlingDuration);
+	}
+
+	public void hideRightPaneNoAnimation() {
+		mController.hideRightPane(0);
+	}
+
+	public boolean isRightPaneOpened() {
 		return mController.isContentShown();
 	}
 
-	public boolean isOpened() {
-		return !mController.isContentShown();
-	}
 
 	public boolean isShadowSlidable() {
 		return mShadowSlidable;
@@ -282,17 +275,13 @@ public class SlidingPaneView extends ViewGroup {
 	public Parcelable onSaveInstanceState() {
 		final Parcelable superState = super.onSaveInstanceState();
 		final SavedState ss = new SavedState(superState);
-		ss.mIsRightPaneShown = isContentShown();
+		ss.mIsRightPaneShown = isRightPaneOpened();
 		ss.mIsShadowVisible = isShadowVisible();
 		ss.mShadowWidth = getShadowWidth();
 		ss.mFlingDuration = getFlingDuration();
 		ss.mFadeType = getFadeType();
 		ss.mFadeValue = getFadeValue();
 		return ss;
-	}
-
-	public void open() {
-		mController.showRightPane(0);
 	}
 
 	public void setActionsSpacingWidth(final int width) {
@@ -348,11 +337,19 @@ public class SlidingPaneView extends ViewGroup {
 		requestLayout();
 	}
 
+	public void showRightPane() {
+		mController.showRightPane(mFlingDuration);
+	}
+
+	public void showRightPaneNoAnimation() {
+		mController.showRightPane(0);
+	}
+
 	public void toggle() {
-		if (isOpened()) {
-			animateOpen();
+		if (isRightPaneOpened()) {
+			hideRightPane();
 		} else {
-			animateClose();
+			showRightPane();
 		}
 	}
 
@@ -484,7 +481,7 @@ public class SlidingPaneView extends ViewGroup {
 		@Override
 		public boolean onInterceptTouchEvent(final MotionEvent ev) {
 			if (ev.getAction() == MotionEvent.ACTION_DOWN) {
-				parent.animateClose();
+				parent.hideRightPane();
 			}
 			return super.onInterceptTouchEvent(ev);
 		}
@@ -827,7 +824,7 @@ public class SlidingPaneView extends ViewGroup {
 				if (mActualMoveX != 0 && !mIsVerticalScrolling) {
 					mController.release(mIsVerticalScrolling ? 0 : -mTempDeltaX, -mActualMoveX);
 				} else {
-					mParent.animateOpen();
+					mParent.showRightPane();
 				}
 			}
 			mTempDeltaX = 0;

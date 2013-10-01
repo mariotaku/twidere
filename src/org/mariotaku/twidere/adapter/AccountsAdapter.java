@@ -40,13 +40,12 @@ public class AccountsAdapter extends SimpleCursorAdapter implements Constants {
 
 	private boolean mDisplayProfileImage;
 
-	private final ImageLoaderWrapper mLazyImageLoader;
+	private final ImageLoaderWrapper mImageLoader;
 
 	private final SharedPreferences mPreferences;
-	private int mUserColorIdx, mProfileImageIdx, mScreenNameIdx;
+	private int mUserColorIdx, mProfileImageIdx, mScreenNameIdx, mAccountIdIdx;
 	private long mDefaultAccountId;
 	private final boolean mDisplayHiResProfileImage;
-	private int mAccountIdIdx;
 	private final boolean mMultiSelectEnabled;
 	private final SparseBooleanArray mCheckedItems = new SparseBooleanArray();
 
@@ -55,7 +54,7 @@ public class AccountsAdapter extends SimpleCursorAdapter implements Constants {
 				new int[] { android.R.id.text1 }, 0);
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mMultiSelectEnabled = multi_select;
-		mLazyImageLoader = application.getImageLoaderWrapper();
+		mImageLoader = application.getImageLoaderWrapper();
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
@@ -71,12 +70,12 @@ public class AccountsAdapter extends SimpleCursorAdapter implements Constants {
 		holder.setAccountColor(color);
 		holder.setIsDefault(mDefaultAccountId != -1 && mDefaultAccountId == cursor.getLong(mAccountIdIdx));
 		if (mDisplayProfileImage) {
-			final String profile_image_url_string = cursor.getString(mProfileImageIdx);
+			final String profile_image_url = cursor.getString(mProfileImageIdx);
 			if (mDisplayHiResProfileImage) {
-				mLazyImageLoader.displayProfileImage(holder.profile_image,
-						getBiggerTwitterProfileImage(profile_image_url_string));
+				mImageLoader.displayProfileImage(holder.profile_image,
+						getBiggerTwitterProfileImage(profile_image_url));
 			} else {
-				mLazyImageLoader.displayProfileImage(holder.profile_image, profile_image_url_string);
+				mImageLoader.displayProfileImage(holder.profile_image, profile_image_url);
 			}
 		} else {
 			holder.profile_image.setImageResource(R.drawable.ic_profile_image_default);

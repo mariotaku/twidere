@@ -28,14 +28,14 @@ import android.widget.TextView;
 
 public class DirectMessageConversationViewHolder {
 
-	public final ImageView profile_image_left, profile_image_right;
+	public final ImageView profile_image, my_profile_image;
 	public final TextView name, screen_name, text, time;
 	public final LinearLayout name_container;
 	private float text_size;
 
 	public DirectMessageConversationViewHolder(final View view) {
-		profile_image_left = (ImageView) view.findViewById(R.id.profile_image_left);
-		profile_image_right = (ImageView) view.findViewById(R.id.profile_image_right);
+		profile_image = (ImageView) view.findViewById(R.id.profile_image);
+		my_profile_image = (ImageView) view.findViewById(R.id.my_profile_image);
 		name = (TextView) view.findViewById(R.id.name);
 		screen_name = (TextView) view.findViewById(R.id.screen_name);
 		text = (TextView) view.findViewById(R.id.text);

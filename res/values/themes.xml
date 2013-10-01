@@ -19,6 +19,7 @@
 		<item name="contentBackground">#20808080</item>
 		<item name="cardListBackgroundColor">@color/bg_color_light</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
+		<item name="cardItemBackgroundColor">#f8f8f8</item>
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_light</item>
 		<!-- Widget styles -->
 		<item name="android:textViewStyle">@style/Widget.Twidere.Light.TextView</item>
@@ -33,6 +34,7 @@
 		<item name="contentBackground">#20000000</item>
 		<item name="cardListBackgroundColor">@color/bg_color_dark</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_dark</item>
+		<item name="cardItemBackgroundColor">#1a1a1a</item>
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_dark</item>
 		<!-- Widget styles -->
 		<item name="android:textViewStyle">@style/Widget.Twidere.TextView</item>
@@ -47,6 +49,7 @@
 		<item name="contentBackground">#20808080</item>
 		<item name="cardListBackgroundColor">@color/bg_color_light</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
+		<item name="cardItemBackgroundColor">#f8f8f8</item>
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_light</item>
 		<!-- Widget styles -->
 		<item name="android:textViewStyle">@style/Widget.Twidere.Light.TextView</item>
@@ -61,6 +64,7 @@
 		<item name="contentBackground">#20808080</item>
 		<item name="cardListBackgroundColor">@color/bg_color_light</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
+		<item name="cardItemBackgroundColor">#f8f8f8</item>
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_light</item>
 		<!-- Widget styles -->
 		<item name="android:textViewStyle">@style/Widget.Twidere.Light.TextView</item>

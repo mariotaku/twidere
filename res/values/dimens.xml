@@ -2,7 +2,7 @@
 <resources>
 
 	<dimen name="default_element_spacing">8dp</dimen>
-	<dimen name="profile_image_size_small">48dp</dimen>
+	<dimen name="profile_image_size_cards_ui">48dp</dimen>
 	<dimen name="profile_image_size">56dp</dimen>
 	<dimen name="activity_profile_image_size">32dp</dimen>
 	<dimen name="image_preview_height">140dp</dimen>

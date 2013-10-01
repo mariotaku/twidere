@@ -113,7 +113,7 @@ public class SupportTabsAdapter extends FragmentStatePagerAdapter implements Tab
 		if (!(mContext instanceof SupportFragmentCallback)) return;
 		final Fragment f = ((SupportFragmentCallback) mContext).getCurrentVisibleFragment();
 		if (f instanceof RefreshScrollTopInterface) {
-			((RefreshScrollTopInterface) f).scrollToTop();
+			((RefreshScrollTopInterface) f).scrollToStart();
 		}
 	}
 

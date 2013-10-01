@@ -42,7 +42,7 @@ public class DirectMessageEntryViewHolder {
 
 	public DirectMessageEntryViewHolder(final View view) {
 		final Context context = view.getContext();
-		content = (ColorLabelRelativeLayout) view;
+		content = (ColorLabelRelativeLayout) view.findViewById(R.id.content);
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		name = (TextView) view.findViewById(R.id.name);
 		screen_name = (TextView) view.findViewById(R.id.screen_name);

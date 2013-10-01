@@ -4,6 +4,7 @@
 	<declare-styleable name="Twidere">
 		<attr name="cardListBackgroundColor" format="color"/>
 		<attr name="cardItemBackground" format="reference"/>
+		<attr name="cardItemBackgroundColor" format="color"/>
 		<attr name="listMenuOverflowButton" format="reference"/>
 		<attr name="contentBackground" format="reference|color"/>
 		<attr name="ignorePaddings" format="boolean"/>

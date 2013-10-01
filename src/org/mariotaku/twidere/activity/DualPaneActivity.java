@@ -57,8 +57,18 @@ public class DualPaneActivity extends BaseSupportActivity implements OnBackStack
 		return mDetailsFragment;
 	}
 
+	public final Fragment getRightPaneFragment() {
+		final FragmentManager fm = getSupportFragmentManager();
+		final Fragment right_pane_fragment = fm.findFragmentById(PANE_RIGHT);
+		return right_pane_fragment;
+	}
+
 	public final boolean isDualPaneMode() {
 		return findViewById(PANE_LEFT) instanceof ViewGroup && findViewById(PANE_RIGHT) instanceof ViewGroup;
+	}
+
+	public final boolean isRightPaneOpened() {
+		return mSlidingPane != null && mSlidingPane.isRightPaneOpened();
 	}
 
 	public final boolean isRightPaneUsed() {
@@ -146,13 +156,13 @@ public class DualPaneActivity extends BaseSupportActivity implements OnBackStack
 
 	public final void showLeftPane() {
 		if (mSlidingPane != null) {
-			mSlidingPane.animateClose();
+			mSlidingPane.hideRightPane();
 		}
 	}
 
 	public final void showRightPane() {
 		if (mSlidingPane != null) {
-			mSlidingPane.animateOpen();
+			mSlidingPane.showRightPane();
 		}
 	}
 

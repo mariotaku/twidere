@@ -475,7 +475,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			mFollowIndicator.setVisibility(View.GONE);
 		}
 		updateConversationInfo();
-		scrollToTop();
+		scrollToStart();
 	}
 
 	@Override
@@ -718,7 +718,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	}
 
 	@Override
-	public boolean scrollToTop() {
+	public boolean scrollToStart() {
 		if (mListView == null) return false;
 		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();
 		Utils.scrollListToPosition(mListView, adapter.getCount() + mListView.getFooterViewsCount() - 1, 0);
@@ -852,8 +852,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		final boolean load_not_finished = adapter.isEmpty()
 				|| adapter.getStatus(adapter.getCount() - 1).in_reply_to_status_id > 0;
 		final boolean enable = has_converstion && load_not_finished;
-		// mListView.setTranscriptMode(enable ? ListView.TRANSCRIPT_MODE_NORMAL
-		// : ListView.TRANSCRIPT_MODE_DISABLED);
 		mInReplyToView.setVisibility(enable ? View.VISIBLE : View.GONE);
 		mInReplyToView.setClickable(enable);
 	}

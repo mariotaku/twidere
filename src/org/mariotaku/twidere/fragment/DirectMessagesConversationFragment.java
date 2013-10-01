@@ -21,6 +21,7 @@ package org.mariotaku.twidere.fragment;
 
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.buildDirectMessageConversationUri;
+import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getDefaultTextSize;
 import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
@@ -31,14 +32,17 @@ import java.util.Locale;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.ArrayAdapter;
 import org.mariotaku.twidere.adapter.DirectMessagesConversationAdapter;
 import org.mariotaku.twidere.adapter.UserHashtagAutoCompleteAdapter;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ClipboardUtils;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.view.holder.DirectMessageConversationViewHolder;
 
@@ -67,12 +71,12 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -165,6 +169,7 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 		mAdapter = new DirectMessagesConversationAdapter(getActivity());
 		setListAdapter(mAdapter);
 		mListView = getListView();
+		mListView.setDivider(null);
 		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
 		mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
 		mListView.setStackFromBottom(true);
@@ -402,6 +407,13 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 		mSendButton.setEnabled(mValidator.isValidTweet(s.toString()));
 	}
 
+	@Override
+	public boolean scrollToStart() {
+		if (mAdapter == null || mAdapter.isEmpty()) return false;
+		setSelection(mAdapter.getCount() - 1);
+		return true;
+	}
+
 	public void showConversation(final long account_id, final long conversation_id, final String screen_name) {
 		mArguments.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
 		mArguments.putLong(INTENT_KEY_CONVERSATION_ID, conversation_id);
@@ -435,27 +447,48 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 
 	private static class AccountsAdapter extends ArrayAdapter<Account> {
 
+		private final ImageLoaderWrapper mImageLoader;
+		private final boolean mDisplayProfileImage;
+		private final boolean mDisplayHiResProfileImage;
+
 		public AccountsAdapter(final Context context) {
-			super(context, R.layout.spinner_item, Account.getAccounts(context, true));
-			setDropDownViewResource(android.R.layout.simple_list_item_1);
+			super(context, R.layout.user_autocomplete_list_item, Account.getAccounts(context, false));
+			setDropDownViewResource(R.layout.user_autocomplete_list_item);
+			mImageLoader = TwidereApplication.getInstance(context).getImageLoaderWrapper();
+			mDisplayProfileImage = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+					.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+			mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 		}
 
 		@Override
 		public View getDropDownView(final int position, final View convertView, final ViewGroup parent) {
 			final View view = super.getDropDownView(position, convertView, parent);
-			final TextView text1 = (TextView) view.findViewById(android.R.id.text1);
-			final Account account = getItem(position);
-			text1.setText(account.name);
+			bindView(view, getItem(position));
 			return view;
 		}
 
 		@Override
 		public View getView(final int position, final View convertView, final ViewGroup parent) {
 			final View view = super.getView(position, convertView, parent);
-			final TextView text1 = (TextView) view.findViewById(android.R.id.text1);
-			final Account account = getItem(position);
-			text1.setText(account.name);
+			bindView(view, getItem(position));
 			return view;
+		}
+
+		private void bindView(final View view, final Account item) {
+			final TextView text1 = (TextView) view.findViewById(android.R.id.text1);
+			final TextView text2 = (TextView) view.findViewById(android.R.id.text2);
+			final ImageView icon = (ImageView) view.findViewById(android.R.id.icon);
+			text1.setText(item.name);
+			text2.setText("@" + item.screen_name);
+			if (mDisplayProfileImage) {
+				if (mDisplayHiResProfileImage) {
+					mImageLoader.displayProfileImage(icon, getBiggerTwitterProfileImage(item.profile_image_url));
+				} else {
+					mImageLoader.displayProfileImage(icon, item.profile_image_url);
+				}
+			} else {
+				icon.setImageResource(R.drawable.ic_profile_image_default);
+			}
 		}
 
 	}

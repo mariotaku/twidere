@@ -194,7 +194,7 @@ public class BaseSupportListFragment extends ListFragment implements IBaseFragme
 	}
 
 	@Override
-	public boolean scrollToTop() {
+	public boolean scrollToStart() {
 		Utils.scrollListToTop(getListView());
 		return true;
 	}

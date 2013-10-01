@@ -25,6 +25,7 @@ import static org.mariotaku.twidere.util.Utils.getNewestMessageIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.getOldestMessageIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.openDirectMessagesConversation;
 
+import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.DirectMessagesEntryAdapter;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.util.ArrayUtils;
@@ -40,6 +41,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -93,6 +96,7 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 		mAdapter = new DirectMessagesEntryAdapter(getActivity());
 		setListAdapter(mAdapter);
 		mListView = getListView();
+		mListView.setDivider(null);
 		getLoaderManager().initLoader(0, null, this);
 		setListShown(false);
 	}
@@ -220,6 +224,20 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 	public void onStop() {
 		unregisterReceiver(mStatusReceiver);
 		super.onStop();
+	}
+
+	@Override
+	public boolean scrollToStart() {
+		final FragmentActivity activity = getActivity();
+		if (activity instanceof HomeActivity) {
+			final HomeActivity home = (HomeActivity) activity;
+			if (home.isDualPaneMode() && home.isRightPaneUsed() && home.isRightPaneOpened()) {
+				final Fragment right_pane = home.getRightPaneFragment();
+				if (right_pane instanceof DirectMessagesConversationFragment)
+					return ((DirectMessagesConversationFragment) right_pane).scrollToStart();
+			}
+		}
+		return super.scrollToStart();
 	}
 
 	@Override

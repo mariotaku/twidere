@@ -176,7 +176,7 @@ public class BaseListFragment extends ListFragment implements Constants, OnScrol
 	}
 
 	@Override
-	public boolean scrollToTop() {
+	public boolean scrollToStart() {
 		Utils.scrollListToTop(getListView());
 		return true;
 	}

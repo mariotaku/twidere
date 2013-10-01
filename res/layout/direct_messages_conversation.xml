@@ -8,14 +8,14 @@
 	<RelativeLayout
 		android:id="@+id/conversation_container"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent">
+		android:layout_height="match_parent"
+		android:visibility="gone">
 
 		<FrameLayout
 			android:id="@+id/list_container"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			android:layout_above="@+id/divider_horizontal"
-			android:background="?contentBackground"/>
+			android:layout_above="@+id/divider_horizontal"/>
 
 		<View
 			android:id="@+id/divider_horizontal"
@@ -78,49 +78,49 @@
 		</LinearLayout>
 	</RelativeLayout>
 
-	<RelativeLayout
+	<LinearLayout
 		android:id="@+id/screen_name_container"
-		android:layout_width="300dp"
+		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:layout_gravity="center"
-		android:gravity="center"
-		android:orientation="horizontal"
-		android:padding="16dp"
-		android:visibility="gone">
+		android:orientation="vertical"
+		android:visibility="visible">
 
-		<AutoCompleteTextView
-			android:id="@+id/edit_screen_name"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_below="@+id/account_selector"
-			android:layout_toLeftOf="@+id/screen_name_confirm"
-			android:ems="10"
-			android:hint="@string/screen_name"
-			android:singleLine="true"/>
+		<LinearLayout
+			android:layout_width="300dp"
+			android:layout_height="0dp"
+			android:layout_gravity="center"
+			android:layout_weight="1"
+			android:gravity="center"
+			android:orientation="vertical"
+			android:padding="16dp">
+
+			<Spinner
+				android:id="@+id/account_selector"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:minHeight="42dp"
+				tools:listitem="@layout/user_autocomplete_list_item"/>
+
+			<AutoCompleteTextView
+				android:id="@+id/edit_screen_name"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="@string/screen_name"
+				android:singleLine="true"/>
+		</LinearLayout>
+
+		<View
+			android:layout_width="match_parent"
+			android:layout_height="0.2dp"
+			android:background="#40808080"/>
 
 		<Button
 			android:id="@+id/screen_name_confirm"
-			style="android:attr/buttonStyleLarge"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignBottom="@+id/edit_screen_name"
-			android:layout_alignParentRight="true"
-			android:layout_alignTop="@+id/account_selector"
-			android:layout_marginBottom="16dp"
-			android:layout_marginTop="16dp"
-			android:contentDescription="@android:string/ok"
-			android:minHeight="42dp"
-			android:minWidth="72dp"
+			style="?android:borderlessButtonStyle"
+			android:layout_width="match_parent"
+			android:layout_height="@dimen/button_bar_height"
 			android:text="@android:string/ok"
-			android:textSize="16sp"/>
-
-		<Spinner
-			android:id="@+id/account_selector"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignParentLeft="true"
-			android:layout_toLeftOf="@+id/screen_name_confirm"
-			android:minHeight="42dp"/>
-	</RelativeLayout>
+			android:textAppearance="?android:textAppearanceSmall"/>
+	</LinearLayout>
 
 </FrameLayout>

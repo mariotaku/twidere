@@ -21,8 +21,7 @@ package org.mariotaku.twidere.preference;
 
 import static org.mariotaku.twidere.util.Utils.getDefaultTwitterInstance;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.text.Collator;
 import java.util.Comparator;
 import java.util.List;
 
@@ -44,10 +43,9 @@ import android.os.AsyncTask;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 public class TrendsLocationPreference extends Preference implements Constants, OnPreferenceClickListener,
@@ -61,16 +59,7 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 
 	private final AvailableTrendsAdapter mAdapter;
 
-	private static final Comparator<Location> LOCATION_COMPATATOR = new Comparator<Location>() {
-
-		@Override
-		public int compare(final Location object1, final Location object2) {
-			return object1.getWoeid() - object2.getWoeid();
-		}
-
-	};
-
-	private AlertDialog mDialog;
+	private AlertDialog mDialog;;
 
 	public TrendsLocationPreference(final Context context) {
 		this(context, null);
@@ -113,13 +102,13 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 		return true;
 	}
 
-	class AvailableTrendsAdapter extends BaseAdapter {
+	private static class AvailableTrendsAdapter extends ArrayAdapter<Location> {
 
-		private final ArrayList<Location> mData = new ArrayList<Location>();
-		private final LayoutInflater mInflater;
+		private final Context mContext;
 
 		public AvailableTrendsAdapter(final Context context) {
-			mInflater = LayoutInflater.from(context);
+			super(context, android.R.layout.simple_list_item_single_choice);
+			mContext = context;
 		}
 
 		public int findItemPosition(final int woeid) {
@@ -132,24 +121,8 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 		}
 
 		@Override
-		public int getCount() {
-			return mData.size();
-		}
-
-		@Override
-		public Location getItem(final int position) {
-			return mData.get(position);
-		}
-
-		@Override
-		public long getItemId(final int position) {
-			return getItem(position).hashCode();
-		}
-
-		@Override
 		public View getView(final int position, final View convertView, final ViewGroup parent) {
-			final View view = convertView != null ? convertView : mInflater.inflate(
-					android.R.layout.simple_list_item_single_choice, parent, false);
+			final View view = super.getView(position, convertView, parent);
 			final TextView text = (TextView) (view instanceof TextView ? view : view.findViewById(android.R.id.text1));
 			final Location item = getItem(position);
 			if (item != null && text != null) {
@@ -160,12 +133,11 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 		}
 
 		public void setData(final List<Location> data) {
-			mData.clear();
+			clear();
 			if (data != null) {
-				mData.addAll(data);
+				addAll(data);
 			}
-			Collections.sort(mData, LOCATION_COMPATATOR);
-			notifyDataSetChanged();
+			sort(new LocationComparator(mContext));
 		}
 
 	}
@@ -218,6 +190,22 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 			mProgress.setMessage(getContext().getString(R.string.please_wait));
 			mProgress.setOnCancelListener(this);
 			mProgress.show();
+		}
+
+	}
+
+	private static class LocationComparator implements Comparator<Location> {
+		private final Collator mCollator;
+
+		LocationComparator(final Context context) {
+			mCollator = Collator.getInstance(context.getResources().getConfiguration().locale);
+		}
+
+		@Override
+		public int compare(final Location object1, final Location object2) {
+			if (object1.getWoeid() == 1) return Integer.MIN_VALUE;
+			if (object2.getWoeid() == 1) return Integer.MAX_VALUE;
+			return mCollator.compare(object1.getName(), object2.getName());
 		}
 
 	}

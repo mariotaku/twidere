@@ -61,7 +61,7 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnC
 			case R.id.go_top: {
 				final Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
 				if (fragment instanceof RefreshScrollTopInterface) {
-					((RefreshScrollTopInterface) fragment).scrollToTop();
+					((RefreshScrollTopInterface) fragment).scrollToStart();
 				} else if (fragment instanceof ListFragment) {
 					((ListFragment) fragment).setSelection(0);
 				}

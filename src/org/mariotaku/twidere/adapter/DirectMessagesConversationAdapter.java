@@ -40,12 +40,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.Html;
-import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.FrameLayout.LayoutParams;
 
 public class DirectMessagesConversationAdapter extends SimpleCursorAdapter implements IDirectMessagesAdapter,
 		OnClickListener {
@@ -63,7 +60,7 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 	private MenuButtonClickListener mListener;
 
 	public DirectMessagesConversationAdapter(final Context context) {
-		super(context, R.layout.direct_message_list_item, null, new String[0], new int[0], 0);
+		super(context, R.layout.direct_messages_conversation_list_item, null, new String[0], new int[0], 0);
 		mContext = context;
 		final TwidereApplication app = TwidereApplication.getInstance(context);
 		mMultiSelectManager = app.getMultiSelectManager();
@@ -103,23 +100,18 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 				break;
 			}
 		}
-		final FrameLayout.LayoutParams lp = (LayoutParams) holder.name_container.getLayoutParams();
-		lp.gravity = is_outgoing ? Gravity.LEFT : Gravity.RIGHT;
-		holder.name_container.setLayoutParams(lp);
 		holder.text.setText(Html.fromHtml(cursor.getString(mIndices.text)));
 		mLinkify.applyAllLinks(holder.text, account_id, false);
 		holder.text.setMovementMethod(null);
-		holder.text.setGravity(is_outgoing ? Gravity.LEFT : Gravity.RIGHT);
 		holder.time.setText(formatToLongTimeString(mContext, message_timestamp));
-		holder.time.setGravity(is_outgoing ? Gravity.RIGHT : Gravity.LEFT);
-		holder.profile_image_left.setVisibility(mDisplayProfileImage && is_outgoing ? View.VISIBLE : View.GONE);
-		holder.profile_image_right.setVisibility(mDisplayProfileImage && !is_outgoing ? View.VISIBLE : View.GONE);
+		holder.profile_image.setVisibility(mDisplayProfileImage && is_outgoing ? View.GONE : View.VISIBLE);
+		holder.my_profile_image.setVisibility(mDisplayProfileImage && !is_outgoing ? View.GONE : View.VISIBLE);
 		if (mDisplayProfileImage) {
 			final String profile_image_url_string = cursor.getString(mIndices.sender_profile_image_url);
-			mImageLoader.displayProfileImage(holder.profile_image_left, profile_image_url_string);
-			mImageLoader.displayProfileImage(holder.profile_image_right, profile_image_url_string);
-			holder.profile_image_left.setTag(position);
-			holder.profile_image_right.setTag(position);
+			mImageLoader.displayProfileImage(holder.profile_image, profile_image_url_string);
+			mImageLoader.displayProfileImage(holder.my_profile_image, profile_image_url_string);
+			holder.profile_image.setTag(position);
+			holder.my_profile_image.setTag(position);
 		}
 
 		super.bindView(view, context, cursor);
@@ -153,8 +145,8 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		if (!(tag instanceof DirectMessageConversationViewHolder)) {
 			final DirectMessageConversationViewHolder holder = new DirectMessageConversationViewHolder(view);
 			view.setTag(holder);
-			holder.profile_image_left.setOnClickListener(this);
-			holder.profile_image_right.setOnClickListener(this);
+			holder.profile_image.setOnClickListener(this);
+			holder.my_profile_image.setOnClickListener(this);
 		}
 		return view;
 	}
@@ -166,8 +158,8 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		final int position = tag instanceof Integer ? (Integer) tag : -1;
 		if (position == -1) return;
 		switch (view.getId()) {
-			case R.id.profile_image_left:
-			case R.id.profile_image_right: {
+			case R.id.profile_image:
+			case R.id.my_profile_image: {
 				final ParcelableDirectMessage message = getDirectMessage(position);
 				if (message == null) return;
 				if (mContext instanceof Activity) {
