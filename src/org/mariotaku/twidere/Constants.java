@@ -40,6 +40,7 @@ public interface Constants {
 
 	public static final String LOGTAG = APP_NAME;
 
+	public static final String USER_NICKNAME_PREFERENCES_NAME = "user_nicknames";
 	public static final String USER_COLOR_PREFERENCES_NAME = "user_colors";
 	public static final String HOST_MAPPING_PREFERENCES_NAME = "host_mapping";
 	public static final String SHARED_PREFERENCES_NAME = "preferences";
@@ -479,6 +480,8 @@ public interface Constants {
 	public static final int MENU_LISTS = R.id.lists;
 	public static final int MENU_CENTER = R.id.center;
 	public static final int MENU_FILTERS = R.id.filters;
+	public static final int MENU_SET_NICKNAME = R.id.set_nickname;
+	public static final int MENU_CLEAR_NICKNAME = R.id.clear_nickname;
 
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_PICK_IMAGE = 2;

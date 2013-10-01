@@ -105,6 +105,7 @@
 	<string name="sources">Sources</string>
 	<string name="content">Content</string>
 	<string name="customize">Customize</string>
+	<string name="set_nickname">Set nickname</string>
 	<string name="set_color">Set color</string>
 	<string name="clear">Clear</string>
 	<string name="pick_color">Pick color</string>
@@ -488,5 +489,6 @@
 	<string name="enable_for_rts">Enable for RTs</string>
 	<string name="safety">Safety</string>
 	<string name="updating_status_notification">Sending tweet…</string>
+	<string name="name_with_nickname"><xliff:g id="name">%1$s</xliff:g> (<xliff:g id="nickname">%2$s</xliff:g>)</string>
 
 </resources>

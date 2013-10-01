@@ -110,29 +110,6 @@ public class StatusViewHolder implements Constants {
 		reply_retweet_status.setVisibility(is_retweet || is_reply ? View.VISIBLE : View.GONE);
 	}
 
-	public void setName(final String name, final String screen_name) {
-		switch (name_display_option) {
-			case NAME_DISPLAY_OPTION_CODE_NAME: {
-				this.name.setText(name);
-				this.screen_name.setText(null);
-				this.screen_name.setVisibility(View.GONE);
-				break;
-			}
-			case NAME_DISPLAY_OPTION_CODE_SCREEN_NAME: {
-				this.name.setText("@" + screen_name);
-				this.screen_name.setText(null);
-				this.screen_name.setVisibility(View.GONE);
-				break;
-			}
-			default: {
-				this.name.setText(name);
-				this.screen_name.setText("@" + screen_name);
-				this.screen_name.setVisibility(View.VISIBLE);
-				break;
-			}
-		}
-	}
-
 	public void setNameDisplayOption(final int option) {
 		name_display_option = option;
 	}

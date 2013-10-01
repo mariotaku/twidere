@@ -23,33 +23,36 @@ import org.mariotaku.twidere.R;
 
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class DirectMessageConversationViewHolder {
 
-	public final ImageView profile_image, my_profile_image;
-	public final TextView name, screen_name, text, time;
-	public final LinearLayout name_container;
+	public final ImageView incoming_profile_image, outgoing_profile_image;
+	public final View incoming_message_container, outgoing_message_container, incoming_profile_image_container,
+			outgoing_profile_image_container;
+	public final TextView incoming_text, incoming_time, outgoing_text, outgoing_time;
 	private float text_size;
 
 	public DirectMessageConversationViewHolder(final View view) {
-		profile_image = (ImageView) view.findViewById(R.id.profile_image);
-		my_profile_image = (ImageView) view.findViewById(R.id.my_profile_image);
-		name = (TextView) view.findViewById(R.id.name);
-		screen_name = (TextView) view.findViewById(R.id.screen_name);
-		text = (TextView) view.findViewById(R.id.text);
-		time = (TextView) view.findViewById(R.id.time);
-		name_container = (LinearLayout) view.findViewById(R.id.name_container);
+		incoming_message_container = view.findViewById(R.id.incoming_message_container);
+		outgoing_message_container = view.findViewById(R.id.outgoing_message_container);
+		incoming_profile_image_container = view.findViewById(R.id.incoming_profile_image_container);
+		outgoing_profile_image_container = view.findViewById(R.id.outgoing_profile_image_container);
+		incoming_profile_image = (ImageView) view.findViewById(R.id.incoming_profile_image);
+		outgoing_profile_image = (ImageView) view.findViewById(R.id.outgoing_profile_image);
+		incoming_text = (TextView) view.findViewById(R.id.incoming_text);
+		incoming_time = (TextView) view.findViewById(R.id.incoming_time);
+		outgoing_text = (TextView) view.findViewById(R.id.outgoing_text);
+		outgoing_time = (TextView) view.findViewById(R.id.outgoing_time);
 	}
 
 	public void setTextSize(final float text_size) {
 		if (this.text_size != text_size) {
 			this.text_size = text_size;
-			text.setTextSize(text_size);
-			name.setTextSize(text_size);
-			screen_name.setTextSize(text_size * 0.75f);
-			time.setTextSize(text_size * 0.75f);
+			incoming_text.setTextSize(text_size);
+			incoming_time.setTextSize(text_size * 0.75f);
+			outgoing_text.setTextSize(text_size);
+			outgoing_time.setTextSize(text_size * 0.75f);
 		}
 	}
 }

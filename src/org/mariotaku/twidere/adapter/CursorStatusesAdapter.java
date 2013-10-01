@@ -26,6 +26,7 @@ import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getNameDisplayOptionInt;
 import static org.mariotaku.twidere.util.Utils.getStatusBackground;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
+import static org.mariotaku.twidere.util.Utils.getUserNickname;
 import static org.mariotaku.twidere.util.Utils.isFiltered;
 import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
@@ -163,7 +164,10 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			}
 			holder.setUserType(is_verified, is_protected);
 			holder.setNameDisplayOption(mNameDisplayOption);
-			holder.setName(name, screen_name);
+			final String nick = getUserNickname(context, user_id);
+			holder.name.setText(TextUtils.isEmpty(nick) ? name : context.getString(R.string.name_with_nickname, name,
+					nick));
+			holder.screen_name.setText("@" + screen_name);
 			if (mLinkHighlightingEnabled) {
 				mLinkify.applyUserProfileLink(holder.name, account_id, user_id, screen_name);
 				mLinkify.applyUserProfileLink(holder.screen_name, account_id, user_id, screen_name);

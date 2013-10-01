@@ -1114,7 +1114,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 			final String retweeted_by_screen_name = status.retweeted_by_screen_name;
 
 			final boolean is_my_status = status.account_id == status.user_id;
-			mHolder.setUserColor(getUserColor(getActivity(), status.user_id));
+			mHolder.setUserColor(getUserColor(getActivity(), status.user_id, true));
 			mHolder.setHighlightColor(getStatusBackground(false, status.is_favorite, status.is_retweet));
 
 			mHolder.setIsMyStatus(is_my_status && !prefs.getBoolean(PREFERENCE_KEY_INDICATE_MY_STATUS, true));

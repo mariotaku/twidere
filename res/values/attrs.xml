@@ -4,7 +4,10 @@
 	<declare-styleable name="Twidere">
 		<attr name="cardListBackgroundColor" format="color"/>
 		<attr name="cardItemBackground" format="reference"/>
-		<attr name="cardItemBackgroundColor" format="color"/>
+		<attr name="cardItemMessageIncomingBackground" format="reference"/>
+		<attr name="cardItemMessageOutgoingBackground" format="reference"/>
+		<attr name="cardItemMessageProfileImageIncomingBackground" format="reference"/>
+		<attr name="cardItemMessageProfileImageOutgoingBackground" format="reference"/>
 		<attr name="listMenuOverflowButton" format="reference"/>
 		<attr name="contentBackground" format="reference|color"/>
 		<attr name="ignorePaddings" format="boolean"/>

@@ -327,6 +327,8 @@ public final class Utils implements Constants {
 
 	private static Map<Long, Integer> sUserColors = new LinkedHashMap<Long, Integer>(512, 0.75f, true);
 
+	private static Map<Long, String> sUserNicknames = new LinkedHashMap<Long, String>(512, 0.75f, true);
+
 	private static Map<Long, String> sAccountScreenNames = new LinkedHashMap<Long, String>();
 
 	private static Map<Long, String> sAccountNames = new LinkedHashMap<Long, String>();
@@ -585,6 +587,16 @@ public final class Utils implements Constants {
 		editor.remove(Long.toString(user_id));
 		editor.commit();
 		sUserColors.remove(user_id);
+	}
+
+	public static void clearUserNickname(final Context context, final long user_id) {
+		if (context == null) return;
+		final SharedPreferences prefs = context.getSharedPreferences(USER_NICKNAME_PREFERENCES_NAME,
+				Context.MODE_PRIVATE);
+		final SharedPreferences.Editor editor = prefs.edit();
+		editor.remove(Long.toString(user_id));
+		editor.commit();
+		sUserNicknames.remove(user_id);
 	}
 
 	public static boolean closeSilently(final Closeable c) {
@@ -2123,15 +2135,16 @@ public final class Utils implements Constants {
 	}
 
 	public static int getUserColor(final Context context, final long user_id) {
-		if (context == null) return Color.TRANSPARENT;
-		Integer color = sUserColors.get(user_id);
-		if (color == null) {
-			final SharedPreferences prefs = context.getSharedPreferences(USER_COLOR_PREFERENCES_NAME,
-					Context.MODE_PRIVATE);
-			color = prefs.getInt(Long.toString(user_id), Color.TRANSPARENT);
-			sUserColors.put(user_id, color);
-		}
-		return color != null ? color : Color.TRANSPARENT;
+		return getUserColor(context, user_id, false);
+	}
+
+	public static int getUserColor(final Context context, final long user_id, final boolean ignore_cache) {
+		if (context == null || user_id == -1) return Color.TRANSPARENT;
+		if (!ignore_cache && sUserColors.containsKey(user_id)) return sUserColors.get(user_id);
+		final SharedPreferences prefs = context.getSharedPreferences(USER_COLOR_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final int color = prefs.getInt(Long.toString(user_id), Color.TRANSPARENT);
+		sUserColors.put(user_id, color);
+		return color;
 	}
 
 	public static String getUserName(final Context context, final ParcelableStatus user) {
@@ -2150,6 +2163,20 @@ public final class Utils implements Constants {
 		if (context == null || user == null) return null;
 		final boolean display_screen_name = getNameDisplayOptionInt(context) == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
 		return display_screen_name ? user.getScreenName() : user.getName();
+	}
+
+	public static String getUserNickname(final Context context, final long user_id) {
+		return getUserNickname(context, user_id, false);
+	}
+
+	public static String getUserNickname(final Context context, final long user_id, final boolean ignore_cache) {
+		if (context == null || user_id == -1) return null;
+		if (!ignore_cache && sUserNicknames.containsKey(user_id)) return sUserNicknames.get(user_id);
+		final SharedPreferences prefs = context.getSharedPreferences(USER_NICKNAME_PREFERENCES_NAME,
+				Context.MODE_PRIVATE);
+		final String nickname = prefs.getString(Long.toString(user_id), null);
+		sUserNicknames.put(user_id, nickname);
+		return nickname;
 	}
 
 	public static int getUserTypeIconRes(final boolean is_verified, final boolean is_protected) {
@@ -3455,12 +3482,22 @@ public final class Utils implements Constants {
 	}
 
 	public static void setUserColor(final Context context, final long user_id, final int color) {
-		if (context == null) return;
+		if (context == null || user_id == -1) return;
 		final SharedPreferences prefs = context.getSharedPreferences(USER_COLOR_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final SharedPreferences.Editor editor = prefs.edit();
 		editor.putInt(String.valueOf(user_id), color);
 		editor.commit();
 		sUserColors.put(user_id, color);
+	}
+
+	public static void setUserNickname(final Context context, final long user_id, final String nickname) {
+		if (context == null || user_id == -1) return;
+		final SharedPreferences prefs = context.getSharedPreferences(USER_NICKNAME_PREFERENCES_NAME,
+				Context.MODE_PRIVATE);
+		final SharedPreferences.Editor editor = prefs.edit();
+		editor.putString(String.valueOf(user_id), nickname);
+		editor.commit();
+		sUserNicknames.put(user_id, nickname);
 	}
 
 	public static boolean shouldEnableFiltersForRTs(final Context context) {

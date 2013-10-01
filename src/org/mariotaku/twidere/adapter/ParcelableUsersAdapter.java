@@ -23,6 +23,7 @@ import static org.mariotaku.twidere.util.Utils.configBaseAdapter;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
+import static org.mariotaku.twidere.util.Utils.getUserNickname;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 
 import java.util.List;
@@ -51,7 +52,6 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 
 	private boolean mDisplayProfileImage, mShowAccountColor;
 	private float mTextSize;
-	private int mNameDisplayOption;
 
 	private MenuButtonClickListener mListener;
 
@@ -95,26 +95,10 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 		holder.setTextSize(mTextSize);
 		holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 				getUserTypeIconRes(user.is_verified, user.is_protected), 0);
-		switch (mNameDisplayOption) {
-			case NAME_DISPLAY_OPTION_CODE_NAME: {
-				holder.name.setText(user.name);
-				holder.screen_name.setText(null);
-				holder.screen_name.setVisibility(View.GONE);
-				break;
-			}
-			case NAME_DISPLAY_OPTION_CODE_SCREEN_NAME: {
-				holder.name.setText("@" + user.screen_name);
-				holder.screen_name.setText(null);
-				holder.screen_name.setVisibility(View.GONE);
-				break;
-			}
-			default: {
-				holder.name.setText(user.name);
-				holder.screen_name.setText("@" + user.screen_name);
-				holder.screen_name.setVisibility(View.VISIBLE);
-				break;
-			}
-		}
+		final String nick = getUserNickname(mContext, user.id);
+		holder.name.setText(TextUtils.isEmpty(nick) ? user.name : mContext.getString(R.string.name_with_nickname,
+				user.name, nick));
+		holder.screen_name.setText("@" + user.screen_name);
 		holder.description.setVisibility(TextUtils.isEmpty(user.description_unescaped) ? View.GONE : View.VISIBLE);
 		holder.description.setText(user.description_unescaped);
 		holder.location.setVisibility(TextUtils.isEmpty(user.location) ? View.GONE : View.VISIBLE);
@@ -178,13 +162,6 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 
 	@Override
 	public void setNameDisplayOption(final String option) {
-		if (NAME_DISPLAY_OPTION_NAME.equals(option)) {
-			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_NAME;
-		} else if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) {
-			mNameDisplayOption = NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
-		} else {
-			mNameDisplayOption = 0;
-		}
 	}
 
 	public void setShowAccountColor(final boolean show) {

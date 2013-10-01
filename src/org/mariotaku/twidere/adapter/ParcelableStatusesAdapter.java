@@ -26,6 +26,7 @@ import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getNameDisplayOptionInt;
 import static org.mariotaku.twidere.util.Utils.getStatusBackground;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
+import static org.mariotaku.twidere.util.Utils.getUserNickname;
 import static org.mariotaku.twidere.util.Utils.isFiltered;
 import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
@@ -180,7 +181,10 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 
 			holder.setUserType(status.user_is_verified, status.user_is_protected);
 			holder.setNameDisplayOption(mNameDisplayOption);
-			holder.setName(status.user_name, status.user_screen_name);
+			final String nick = getUserNickname(mContext, status.user_id);
+			holder.name.setText(TextUtils.isEmpty(nick) ? status.user_name : mContext.getString(
+					R.string.name_with_nickname, status.user_name, nick));
+			holder.screen_name.setText("@" + status.user_screen_name);
 			if (mLinkHighlightingEnabled) {
 				mLinkify.applyUserProfileLink(holder.name, status.account_id, status.user_id, status.user_screen_name);
 				mLinkify.applyUserProfileLink(holder.screen_name, status.account_id, status.user_id,

@@ -77,41 +77,25 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		final long account_id = cursor.getLong(mIndices.account_id);
 		final long message_timestamp = cursor.getLong(mIndices.message_timestamp);
 		final boolean is_outgoing = cursor.getInt(mIndices.is_outgoing) == 1;
-		final String name = cursor.getString(mIndices.sender_name);
-		final String screen_name = cursor.getString(mIndices.sender_screen_name);
+		holder.incoming_message_container.setVisibility(is_outgoing ? View.GONE : View.VISIBLE);
+		holder.outgoing_message_container.setVisibility(is_outgoing ? View.VISIBLE : View.GONE);
 		holder.setTextSize(mTextSize);
-		switch (mNameDisplayOption) {
-			case NAME_DISPLAY_OPTION_CODE_NAME: {
-				holder.name.setText(name);
-				holder.screen_name.setText(null);
-				holder.screen_name.setVisibility(View.GONE);
-				break;
-			}
-			case NAME_DISPLAY_OPTION_CODE_SCREEN_NAME: {
-				holder.name.setText("@" + screen_name);
-				holder.screen_name.setText(null);
-				holder.screen_name.setVisibility(View.GONE);
-				break;
-			}
-			default: {
-				holder.name.setText(name);
-				holder.screen_name.setText("@" + screen_name);
-				holder.screen_name.setVisibility(View.VISIBLE);
-				break;
-			}
-		}
-		holder.text.setText(Html.fromHtml(cursor.getString(mIndices.text)));
-		mLinkify.applyAllLinks(holder.text, account_id, false);
-		holder.text.setMovementMethod(null);
-		holder.time.setText(formatToLongTimeString(mContext, message_timestamp));
-		holder.profile_image.setVisibility(mDisplayProfileImage && is_outgoing ? View.GONE : View.VISIBLE);
-		holder.my_profile_image.setVisibility(mDisplayProfileImage && !is_outgoing ? View.GONE : View.VISIBLE);
+		holder.incoming_text.setText(Html.fromHtml(cursor.getString(mIndices.text)));
+		holder.outgoing_text.setText(Html.fromHtml(cursor.getString(mIndices.text)));
+		mLinkify.applyAllLinks(holder.incoming_text, account_id, false);
+		mLinkify.applyAllLinks(holder.outgoing_text, account_id, false);
+		holder.incoming_text.setMovementMethod(null);
+		holder.outgoing_text.setMovementMethod(null);
+		holder.incoming_time.setText(formatToLongTimeString(mContext, message_timestamp));
+		holder.outgoing_time.setText(formatToLongTimeString(mContext, message_timestamp));
+		holder.incoming_profile_image_container.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
+		holder.outgoing_profile_image_container.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
 			final String profile_image_url_string = cursor.getString(mIndices.sender_profile_image_url);
-			mImageLoader.displayProfileImage(holder.profile_image, profile_image_url_string);
-			mImageLoader.displayProfileImage(holder.my_profile_image, profile_image_url_string);
-			holder.profile_image.setTag(position);
-			holder.my_profile_image.setTag(position);
+			mImageLoader.displayProfileImage(holder.incoming_profile_image, profile_image_url_string);
+			mImageLoader.displayProfileImage(holder.outgoing_profile_image, profile_image_url_string);
+			holder.incoming_profile_image.setTag(position);
+			holder.outgoing_profile_image.setTag(position);
 		}
 
 		super.bindView(view, context, cursor);
@@ -145,8 +129,8 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		if (!(tag instanceof DirectMessageConversationViewHolder)) {
 			final DirectMessageConversationViewHolder holder = new DirectMessageConversationViewHolder(view);
 			view.setTag(holder);
-			holder.profile_image.setOnClickListener(this);
-			holder.my_profile_image.setOnClickListener(this);
+			holder.incoming_profile_image.setOnClickListener(this);
+			holder.outgoing_profile_image.setOnClickListener(this);
 		}
 		return view;
 	}

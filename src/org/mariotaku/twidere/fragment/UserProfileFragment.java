@@ -23,6 +23,7 @@ import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.ParseUtils.parseLong;
 import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
 import static org.mariotaku.twidere.util.Utils.clearUserColor;
+import static org.mariotaku.twidere.util.Utils.clearUserNickname;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
@@ -31,6 +32,7 @@ import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
 import static org.mariotaku.twidere.util.Utils.getOriginalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
+import static org.mariotaku.twidere.util.Utils.getUserNickname;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.openImage;
@@ -70,6 +72,7 @@ import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
+import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
@@ -89,6 +92,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -99,6 +103,7 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -117,7 +122,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class UserProfileFragment extends BaseSupportListFragment implements OnClickListener, OnItemClickListener,
-		OnItemLongClickListener, OnMenuItemClickListener, OnLinkClickListener, Panes.Right, OnSizeChangedListener {
+		OnItemLongClickListener, OnMenuItemClickListener, OnLinkClickListener, Panes.Right, OnSizeChangedListener,
+		OnSharedPreferenceChangeListener {
 
 	private static final int LOADER_ID_USER = 1;
 	private static final int LOADER_ID_FRIENDSHIP = 2;
@@ -312,9 +318,11 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		mUser = user;
 		mUserId = user.id;
 		mScreenName = user.screen_name;
-		mProfileNameContainer.drawStart(getUserColor(getActivity(), mUserId));
+		mProfileNameContainer.drawStart(getUserColor(getActivity(), mUserId, true));
 		mProfileNameContainer.drawEnd(getAccountColor(getActivity(), user.account_id));
-		mNameView.setText(user.name);
+		final String nick = getUserNickname(getActivity(), user.id, true);
+		mNameView
+				.setText(TextUtils.isEmpty(nick) ? user.name : getString(R.string.name_with_nickname, user.name, nick));
 		mNameView.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 				getUserTypeIconRes(user.is_verified, user.is_protected), 0);
 		mScreenNameView.setText("@" + user.screen_name);
@@ -405,6 +413,10 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		mTwitterWrapper = getApplication().getTwitterWrapper();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		getSharedPreferences(USER_COLOR_PREFERENCES_NAME, Context.MODE_PRIVATE)
+				.registerOnSharedPreferenceChangeListener(this);
+		getSharedPreferences(USER_NICKNAME_PREFERENCES_NAME, Context.MODE_PRIVATE)
+				.registerOnSharedPreferenceChangeListener(this);
 		mLocale = getResources().getConfiguration().locale;
 		super.onActivityCreated(savedInstanceState);
 		final Bundle args = getArguments();
@@ -447,7 +459,6 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				if (resultCode == Activity.RESULT_OK && intent != null) {
 					final int color = intent.getIntExtra(Accounts.USER_COLOR, Color.TRANSPARENT);
 					setUserColor(getActivity(), mUserId, color);
-					mProfileNameContainer.drawStart(getUserColor(getActivity(), mUserId));
 				}
 				break;
 			}
@@ -742,7 +753,16 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 			}
 			case MENU_CLEAR_COLOR: {
 				clearUserColor(getActivity(), mUserId);
-				mProfileNameContainer.drawStart(getUserColor(getActivity(), mUserId));
+				break;
+			}
+			case MENU_CLEAR_NICKNAME: {
+				clearUserNickname(getActivity(), mUser.id);
+				// TODO
+				break;
+			}
+			case MENU_SET_NICKNAME: {
+				final String nick = getUserNickname(getActivity(), mUser.id, true);
+				SetUserNicknameDialogFragment.show(getFragmentManager(), mUser.id, nick);
 				break;
 			}
 			case MENU_ADD_TO_LIST: {
@@ -780,6 +800,12 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 	}
 
 	@Override
+	public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
+		if (mUser == null || !ParseUtils.parseString(mUser.id).equals(key)) return;
+		displayUser(mUser);
+	}
+
+	@Override
 	public void onSizeChanged(final View view, final int w, final int h, final int oldw, final int oldh) {
 		mBannerWidth = w;
 	}
@@ -793,7 +819,6 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		filter.addAction(BROADCAST_PROFILE_IMAGE_UPDATED);
 		filter.addAction(BROADCAST_PROFILE_BANNER_UPDATED);
 		registerReceiver(mStatusReceiver, filter);
-		mProfileNameContainer.drawStart(getUserColor(getActivity(), mUserId));
 	}
 
 	@Override

@@ -75,8 +75,8 @@ public class DirectMessageEntryViewHolder {
 		if (this.text_size == text_size) return;
 		this.text_size = text_size;
 		text.setTextSize(text_size);
-		name.setTextSize(text_size * 1.25f);
-		screen_name.setTextSize(text_size);
+		name.setTextSize(text_size * 1.2f);
+		screen_name.setTextSize(text_size * 0.85f);
 		time.setTextSize(text_size * 0.65f);
 	}
 

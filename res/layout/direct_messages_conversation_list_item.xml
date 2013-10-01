@@ -1,93 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:background="?android:attr/activatedBackgroundIndicator"
 	android:descendantFocusability="blocksDescendants"
 	android:padding="8dp">
 
-	<FrameLayout
-		android:id="@+id/name_frame"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignParentTop="true"
-		android:layout_alignWithParentIfMissing="true"
-		android:layout_marginLeft="8dp"
-		android:layout_marginRight="8dp"
-		android:layout_toLeftOf="@+id/my_profile_image"
-		android:layout_toRightOf="@+id/profile_image">
+	<RelativeLayout
+		android:id="@+id/incoming_message_container"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
 
-		<LinearLayout
-			android:id="@+id/name_container"
+		<FrameLayout
+			android:id="@+id/incoming_profile_image_container"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_gravity="left"
-			android:orientation="horizontal"
-			android:visibility="gone">
+			android:layout_alignParentLeft="true"
+			android:layout_alignTop="@+id/incoming_message_content_frame"
+			android:layout_marginRight="-12.5dp"
+			android:background="?cardItemMessageProfileImageIncomingBackground">
 
-			<TextView
-				android:id="@+id/name"
-				android:layout_width="0dp"
-				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:singleLine="true"
-				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:textColor="?android:attr/textColorPrimary"
-				android:textStyle="bold"/>
+			<org.mariotaku.twidere.view.ClickableImageView
+				android:id="@+id/incoming_profile_image"
+				android:layout_width="@dimen/profile_image_size_cards_ui"
+				android:layout_height="@dimen/profile_image_size_cards_ui"
+				android:scaleType="fitCenter"
+				android:src="@drawable/ic_profile_image_default"/>
+		</FrameLayout>
 
-			<TextView
-				android:id="@+id/screen_name"
+		<FrameLayout
+			android:id="@+id/incoming_message_content_frame"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toRightOf="@+id/incoming_profile_image_container"
+			android:background="?cardItemMessageIncomingBackground">
+
+			<LinearLayout
+				android:id="@+id/incoming_message_content"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:paddingLeft="4dp"
-				android:paddingRight="4dp"
-				android:singleLine="true"
-				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:textColor="?android:attr/textColorSecondary"/>
-		</LinearLayout>
-	</FrameLayout>
+				android:minHeight="@dimen/profile_image_size_cards_ui"
+				android:orientation="vertical"
+				android:padding="8dp">
 
-	<LinearLayout
-		android:id="@+id/message_content"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_toLeftOf="@+id/my_profile_image"
-		android:layout_toRightOf="@+id/profile_image"
-		android:background="?cardItemBackground"
-		android:minHeight="@dimen/profile_image_size_cards_ui"
-		android:orientation="vertical"
-		android:padding="8dp">
+				<org.mariotaku.twidere.view.HandleSpanClickTextView
+					android:id="@+id/incoming_text"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:textColor="?android:attr/textColorSecondary"/>
 
-		<org.mariotaku.twidere.view.HandleSpanClickTextView
-			android:id="@+id/text"
+				<TextView
+					android:id="@+id/incoming_time"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textColor="?android:attr/textColorSecondary"/>
+			</LinearLayout>
+		</FrameLayout>
+	</RelativeLayout>
+
+	<RelativeLayout
+		android:id="@+id/outgoing_message_container"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+
+		<FrameLayout
+			android:id="@+id/outgoing_profile_image_container"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:textColor="?android:attr/textColorSecondary"/>
+			android:layout_alignBottom="@+id/outgoing_message_content_container"
+			android:layout_alignParentRight="true"
+			android:layout_marginLeft="-12.5dp"
+			android:background="?cardItemMessageProfileImageOutgoingBackground">
 
-		<TextView
-			android:id="@+id/time"
+			<org.mariotaku.twidere.view.ClickableImageView
+				android:id="@+id/outgoing_profile_image"
+				android:layout_width="@dimen/profile_image_size_cards_ui"
+				android:layout_height="@dimen/profile_image_size_cards_ui"
+				android:scaleType="fitCenter"
+				android:src="@drawable/ic_profile_image_default"/>
+		</FrameLayout>
+
+		<FrameLayout
+			android:id="@+id/outgoing_message_content_container"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textColor="?android:attr/textColorSecondary"/>
-	</LinearLayout>
+			android:layout_toLeftOf="@+id/outgoing_profile_image_container"
+			android:background="?cardItemMessageOutgoingBackground">
 
-	<org.mariotaku.twidere.view.ClickableImageView
-		android:id="@+id/profile_image"
-		android:layout_width="@dimen/profile_image_size_cards_ui"
-		android:layout_height="@dimen/profile_image_size_cards_ui"
-		android:layout_alignParentLeft="true"
-		android:layout_alignTop="@+id/message_content"
-		android:scaleType="fitCenter"
-		android:src="@drawable/ic_profile_image_default"/>
+			<LinearLayout
+				android:id="@+id/outgoing_message_content"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:minHeight="@dimen/profile_image_size_cards_ui"
+				android:orientation="vertical"
+				android:padding="8dp">
 
-	<org.mariotaku.twidere.view.ClickableImageView
-		android:id="@+id/my_profile_image"
-		android:layout_width="@dimen/profile_image_size_cards_ui"
-		android:layout_height="@dimen/profile_image_size_cards_ui"
-		android:layout_alignBottom="@+id/message_content"
-		android:layout_alignParentRight="true"
-		android:scaleType="fitCenter"
-		android:src="@drawable/ic_profile_image_default"/>
+				<org.mariotaku.twidere.view.HandleSpanClickTextView
+					android:id="@+id/outgoing_text"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:textColor="?android:attr/textColorSecondary"/>
 
-</RelativeLayout>
+				<TextView
+					android:id="@+id/outgoing_time"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textColor="?android:attr/textColorSecondary"/>
+			</LinearLayout>
+		</FrameLayout>
+	</RelativeLayout>
+
+</FrameLayout>

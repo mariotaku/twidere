@@ -22,6 +22,7 @@ package org.mariotaku.twidere.fragment;
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.cancelRetweet;
 import static org.mariotaku.twidere.util.Utils.clearUserColor;
+import static org.mariotaku.twidere.util.Utils.clearUserNickname;
 import static org.mariotaku.twidere.util.Utils.findStatus;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
@@ -30,6 +31,7 @@ import static org.mariotaku.twidere.util.Utils.getDefaultTextSize;
 import static org.mariotaku.twidere.util.Utils.getImagesInStatus;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
+import static org.mariotaku.twidere.util.Utils.getUserNickname;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.isSameAccount;
@@ -67,6 +69,7 @@ import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.HtmlEscapeHelper;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
+import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
@@ -84,6 +87,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
@@ -95,6 +99,7 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.text.Html;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -119,7 +124,7 @@ import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 import edu.ucdavis.earlybird.ProfilingUtil;
 
 public class StatusFragment extends ParcelableStatusesListFragment implements OnClickListener, Panes.Right,
-		OnItemClickListener, OnItemSelectedListener {
+		OnItemClickListener, OnItemSelectedListener, OnSharedPreferenceChangeListener {
 
 	private static final int LOADER_ID_STATUS = 1;
 	private static final int LOADER_ID_FOLLOW = 2;
@@ -347,7 +352,17 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 				}
 				case MENU_CLEAR_COLOR: {
 					clearUserColor(getActivity(), mStatus.user_id);
-					updateUserColor();
+					displayStatus(mStatus);
+					break;
+				}
+				case MENU_CLEAR_NICKNAME: {
+					clearUserNickname(getActivity(), mStatus.user_id);
+					displayStatus(mStatus);
+					break;
+				}
+				case MENU_SET_NICKNAME: {
+					final String nick = getUserNickname(getActivity(), mStatus.user_id, true);
+					SetUserNicknameDialogFragment.show(getFragmentManager(), mStatus.user_id, nick);
 					break;
 				}
 				default: {
@@ -416,7 +431,9 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		updateUserColor();
 		mProfileView.drawEnd(getAccountColor(getActivity(), status.account_id));
 
-		mNameView.setText(status.user_name);
+		final String nick = getUserNickname(getActivity(), status.user_id, true);
+		mNameView.setText(TextUtils.isEmpty(nick) ? status.user_name : getString(R.string.name_with_nickname,
+				status.user_name, nick));
 		mNameView.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 				getUserTypeIconRes(status.user_is_verified, status.user_is_protected), 0);
 		mScreenNameView.setText("@" + status.user_screen_name);
@@ -497,6 +514,10 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		getListAdapter().setGapDisallowed(true);
 		final TwidereApplication application = getApplication();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		getSharedPreferences(USER_COLOR_PREFERENCES_NAME, Context.MODE_PRIVATE)
+				.registerOnSharedPreferenceChangeListener(this);
+		getSharedPreferences(USER_NICKNAME_PREFERENCES_NAME, Context.MODE_PRIVATE)
+				.registerOnSharedPreferenceChangeListener(this);
 		mProfileImageLoader = application.getImageLoaderWrapper();
 		mTwitterWrapper = getTwitterWrapper();
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
@@ -531,7 +552,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 				if (resultCode == Activity.RESULT_OK) if (intent != null && intent.getExtras() != null) {
 					final int color = intent.getIntExtra(Accounts.USER_COLOR, Color.TRANSPARENT);
 					setUserColor(getActivity(), mStatus.user_id, color);
-					updateUserColor();
 				}
 				break;
 			}
@@ -693,6 +713,12 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	}
 
 	@Override
+	public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
+		if (mStatus == null || !ParseUtils.parseString(mStatus.user_id).equals(key)) return;
+		displayStatus(mStatus);
+	}
+
+	@Override
 	public void onStart() {
 		super.onStart();
 		final IntentFilter filter = new IntentFilter();
@@ -725,11 +751,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		return true;
 	}
 
-	@Override
-	protected String[] getSavedStatusesFileArgs() {
-		return null;
-	}
-
 	// @Override
 	// protected void setItemSelected(final ParcelableStatus status, final int
 	// position, final boolean selected) {
@@ -748,6 +769,11 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	// }
 	// super.setItemSelected(status, position, selected);
 	// }
+
+	@Override
+	protected String[] getSavedStatusesFileArgs() {
+		return null;
+	}
 
 	@Override
 	protected void onReachedBottom() {
@@ -858,7 +884,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	private void updateUserColor() {
 		if (mStatus == null) return;
-		mProfileView.drawStart(getUserColor(getActivity(), mStatus.user_id));
+		mProfileView.drawStart(getUserColor(getActivity(), mStatus.user_id, true));
 	}
 
 	public static class LoadConversationTask extends AsyncTask<ParcelableStatus, Void, Response<Boolean>> {
