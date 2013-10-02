@@ -29,23 +29,30 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.AccountsSpinnerAdapter;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.BaseSupportDialogFragment;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.model.CustomTabConfiguration;
+import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.ParseUtils;
 
 public class EditCustomTabActivity extends BaseSupportDialogActivity implements OnClickListener {
+
+	private AccountsSpinnerAdapter mAccountsAdapter;
+	private ImageLoaderWrapper mImageLoader;
 
 	private View mAccountContainer, mSecondaryFieldContainer;
 	private Spinner mAccountSpinner;
 	private EditText mEditTabName;
 	private TextView mSecondaryFieldLabel;
-	private AccountsSpinnerAdapter mAccountsAdapter;
+
 	private CustomTabConfiguration mTabConfiguration;
 	private Object mSecondaryFieldValue;
 
@@ -57,20 +64,16 @@ public class EditCustomTabActivity extends BaseSupportDialogActivity implements 
 			case R.id.secondary_field: {
 				switch (conf.getSecondaryFieldType()) {
 					case CustomTabConfiguration.FIELD_TYPE_USER: {
-						final Bundle extras = new Bundle();
-						extras.putLong(INTENT_KEY_ACCOUNT_ID, getAccountId());
 						final Intent intent = new Intent(this, UserListSelectorActivity.class);
-						intent.putExtras(extras);
 						intent.setAction(INTENT_ACTION_SELECT_USER);
+						intent.putExtra(INTENT_KEY_ACCOUNT_ID, getAccountId());
 						startActivityForResult(intent, REQUEST_SELECT_USER);
 						break;
 					}
 					case CustomTabConfiguration.FIELD_TYPE_USER_LIST: {
-						final Bundle extras = new Bundle();
-						extras.putLong(INTENT_KEY_ACCOUNT_ID, getAccountId());
 						final Intent intent = new Intent(this, UserListSelectorActivity.class);
-						intent.putExtras(extras);
 						intent.setAction(INTENT_ACTION_SELECT_USER_LIST);
+						intent.putExtra(INTENT_KEY_ACCOUNT_ID, getAccountId());
 						startActivityForResult(intent, REQUEST_SELECT_USER_LIST);
 						break;
 					}
@@ -96,6 +99,30 @@ public class EditCustomTabActivity extends BaseSupportDialogActivity implements 
 
 	public void setSecondaryFieldValue(final Object value) {
 		mSecondaryFieldValue = value;
+		final TextView text1 = (TextView) mSecondaryFieldContainer.findViewById(android.R.id.text1);
+		final TextView text2 = (TextView) mSecondaryFieldContainer.findViewById(android.R.id.text2);
+		final ImageView icon = (ImageView) mSecondaryFieldContainer.findViewById(android.R.id.icon);
+		if (value instanceof ParcelableUser) {
+			final ParcelableUser user = (ParcelableUser) value;
+			text1.setText(user.name);
+			text2.setText("@" + user.screen_name);
+			mImageLoader.displayProfileImage(icon, user.profile_image_url);
+		}
+	}
+
+	@Override
+	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		if (resultCode != RESULT_OK) return;
+		switch (requestCode) {
+			case REQUEST_SELECT_USER: {
+				setSecondaryFieldValue(data.getParcelableExtra(INTENT_KEY_USER));
+				break;
+			}
+			case REQUEST_SELECT_USER_LIST: {
+				setSecondaryFieldValue(data.getParcelableExtra(INTENT_KEY_USER_LIST));
+				break;
+			}
+		}
 	}
 
 	@Override
@@ -111,6 +138,7 @@ public class EditCustomTabActivity extends BaseSupportDialogActivity implements 
 		}
 		final boolean has_secondary_field = conf.getSecondaryFieldType() != CustomTabConfiguration.FIELD_TYPE_NONE;
 		setContentView(R.layout.edit_custom_tab);
+		mImageLoader = TwidereApplication.getInstance(this).getImageLoaderWrapper();
 		mAccountsAdapter = new AccountsSpinnerAdapter(this);
 		mAccountsAdapter.addAll(Account.getAccounts(this, false));
 		mAccountContainer.setVisibility(conf.isAccountIdRequired() ? View.VISIBLE : View.GONE);
@@ -136,7 +164,7 @@ public class EditCustomTabActivity extends BaseSupportDialogActivity implements 
 		mAccountSpinner.setAdapter(mAccountsAdapter);
 		mEditTabName.setText(mTabConfiguration.getDefaultTitle());
 	}
-	
+
 	private long getAccountId() {
 		return mAccountsAdapter.getItem(mAccountSpinner.getSelectedItemPosition()).account_id;
 	}

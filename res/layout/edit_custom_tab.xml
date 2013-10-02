@@ -25,7 +25,8 @@
 				<org.mariotaku.twidere.view.ClickableImageView
 					android:id="@+id/tab_icon"
 					android:layout_width="48dip"
-					android:layout_height="48dip"/>
+					android:layout_height="48dip"
+					android:clickable="true"/>
 
 				<EditText
 					android:id="@+id/tab_name"
@@ -52,6 +53,7 @@
 					android:id="@+id/account_spinner"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
+					android:padding="8dp"
 					tools:listitem="@layout/user_autocomplete_list_item"/>
 			</LinearLayout>
 

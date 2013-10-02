@@ -767,12 +767,10 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				break;
 			}
 			case MENU_ADD_TO_LIST: {
-				final Bundle extras = new Bundle();
-				extras.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
-				extras.putString(INTENT_KEY_SCREEN_NAME, getAccountScreenName(getActivity(), mAccountId));
 				final Intent intent = new Intent(INTENT_ACTION_SELECT_USER_LIST);
 				intent.setClass(getActivity(), UserListSelectorActivity.class);
-				intent.putExtras(extras);
+				intent.putExtra(INTENT_KEY_ACCOUNT_ID, mAccountId);
+				intent.putExtra(INTENT_KEY_SCREEN_NAME, getAccountScreenName(getActivity(), mAccountId));
 				startActivityForResult(intent, REQUEST_ADD_TO_LIST);
 				break;
 			}

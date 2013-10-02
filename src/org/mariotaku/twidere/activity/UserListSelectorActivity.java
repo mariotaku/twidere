@@ -42,6 +42,15 @@ import java.util.List;
 
 public class UserListSelectorActivity extends BaseSupportDialogActivity implements OnClickListener, OnItemClickListener {
 
+	private AutoCompleteTextView mEditScreenName;
+	private ListView mUserListsListView, mUsersListView;
+	private ParcelableUserListsAdapter mUserListsAdapter;
+	private ParcelableUsersAdapter mUsersAdapter;
+	private View mUsersListContainer, mUserListsContainer, mCreateUserListContainer;
+
+	private long mAccountId;
+	private String mScreenName;
+
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -53,22 +62,17 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 		}
 	};
 
-	private AutoCompleteTextView mEditScreenName;
-	private ListView mUserListsListView, mUsersListView;
-	private ParcelableUserListsAdapter mUserListsAdapter;
-	private ParcelableUsersAdapter mUsersAdapter;
-	private View mUsersListContainer, mUserListsContainer, mCreateUserListContainer;
-
-	private long mAccountId;
-	private String mScreenName;
-
 	@Override
 	public void onClick(final View v) {
 		switch (v.getId()) {
 			case R.id.screen_name_confirm: {
 				final String screen_name = parseString(mEditScreenName.getText());
 				if (isEmpty(screen_name)) return;
-				getUserLists(screen_name);
+				if (isSelectingUser()) {
+					searchUser(screen_name);
+				} else {
+					getUserLists(screen_name);
+				}
 				break;
 			}
 			case R.id.create_list: {
@@ -100,7 +104,14 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 		if (view_id == R.id.users_list) {
 			final ParcelableUser user = mUsersAdapter.getItem(position - list.getHeaderViewsCount());
 			if (user == null) return;
-			getUserLists(user.screen_name);
+			if (isSelectingUser()) {
+				final Intent data = new Intent();
+				data.putExtra(INTENT_KEY_USER, user);
+				setResult(RESULT_OK, data);
+				finish();
+			} else {
+				getUserLists(user.screen_name);
+			}
 		} else if (view_id == R.id.user_lists_list) {
 			final Intent data = new Intent();
 			data.putExtra(INTENT_KEY_USER_LIST, mUserListsAdapter.getItem(position - list.getHeaderViewsCount()));
@@ -118,20 +129,21 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		final Bundle extras = getIntent().getExtras();
-		if (extras == null || !extras.containsKey(INTENT_KEY_ACCOUNT_ID)) {
+		final Intent intent = getIntent();
+		if (!intent.hasExtra(INTENT_KEY_ACCOUNT_ID)) {
 			finish();
 			return;
 		}
 		setContentView(R.layout.select_user_list);
-		mAccountId = extras.getLong(INTENT_KEY_ACCOUNT_ID);
+		mAccountId = intent.getLongExtra(INTENT_KEY_ACCOUNT_ID, -1);
 		if (savedInstanceState == null) {
-			mScreenName = extras.getString(INTENT_KEY_SCREEN_NAME);
+			mScreenName = intent.getStringExtra(INTENT_KEY_SCREEN_NAME);
 		} else {
 			mScreenName = savedInstanceState.getString(INTENT_KEY_SCREEN_NAME);
 		}
 
 		final boolean selecting_user = isSelectingUser();
+		setTitle(selecting_user ? R.string.select_user : R.string.select_user_list);
 		if (!isEmpty(mScreenName)) {
 			if (selecting_user) {
 				searchUser(mScreenName);

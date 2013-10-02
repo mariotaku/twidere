@@ -474,6 +474,7 @@
 	<string name="fast_image_loading">Fast image loading</string>
 	<string name="fast_image_loading_summary">Enable to make images load faster, disable this if some image can\'t be displayed.</string>
 	<string name="select_user_list">Select user list</string>
+	<string name="select_user">Select user</string>
 	<string name="created_by">Created by <xliff:g id="created_by">%s</xliff:g></string>
 	<string name="add_to_list">Add to list</string>
 	<string name="account_delete_confirm_title">Delete account</string>
