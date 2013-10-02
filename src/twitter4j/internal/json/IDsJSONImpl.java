@@ -34,122 +34,116 @@ import java.util.Arrays;
  */
 /* package */final class IDsJSONImpl extends TwitterResponseImpl implements IDs {
 
-    /**
+	/**
 	 * 
 	 */
-    private static final long serialVersionUID = 443834529674409001L;
-    private long[] ids;
-    private long previousCursor = -1;
-    private long nextCursor = -1;
+	private static final long serialVersionUID = 443834529674409001L;
+	private long[] ids;
+	private long previousCursor = -1;
+	private long nextCursor = -1;
 
-    /* package */IDsJSONImpl(final HttpResponse res) throws TwitterException {
-        super(res);
-        final String json = res.asString();
-        init(json);
-    }
+	/* package */IDsJSONImpl(final HttpResponse res) throws TwitterException {
+		super(res);
+		final String json = res.asString();
+		init(json);
+	}
 
-    /* package */IDsJSONImpl(final String json) throws TwitterException {
-        init(json);
-    }
+	/* package */IDsJSONImpl(final String json) throws TwitterException {
+		init(json);
+	}
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof IDs))
-            return false;
+	@Override
+	public boolean equals(final Object o) {
+		if (this == o) return true;
+		if (!(o instanceof IDs)) return false;
 
-        final IDs iDs = (IDs) o;
+		final IDs iDs = (IDs) o;
 
-        if (!Arrays.equals(ids, iDs.getIDs()))
-            return false;
+		if (!Arrays.equals(ids, iDs.getIDs())) return false;
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long[] getIDs() {
-        return ids;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public long[] getIDs() {
+		return ids;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long getNextCursor() {
-        return nextCursor;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public long getNextCursor() {
+		return nextCursor;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long getPreviousCursor() {
-        return previousCursor;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public long getPreviousCursor() {
+		return previousCursor;
+	}
 
-    @Override
-    public int hashCode() {
-        return ids != null ? Arrays.hashCode(ids) : 0;
-    }
+	@Override
+	public int hashCode() {
+		return ids != null ? Arrays.hashCode(ids) : 0;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean hasNext() {
-        return 0 != nextCursor;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean hasNext() {
+		return 0 != nextCursor;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean hasPrevious() {
-        return 0 != previousCursor;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean hasPrevious() {
+		return 0 != previousCursor;
+	}
 
-    @Override
-    public String toString() {
-        return "IDsJSONImpl{" + "ids=" + Arrays.toString(ids) + ", previousCursor="
-                + previousCursor + ", nextCursor="
-                + nextCursor + '}';
-    }
+	@Override
+	public String toString() {
+		return "IDsJSONImpl{" + "ids=" + Arrays.toString(ids) + ", previousCursor=" + previousCursor + ", nextCursor="
+				+ nextCursor + '}';
+	}
 
-    private void init(final String jsonStr) throws TwitterException {
-        JSONArray idList;
-        try {
-            if (jsonStr.startsWith("{")) {
-                final JSONObject json = new JSONObject(jsonStr);
-                idList = json.getJSONArray("ids");
-                ids = new long[idList.length()];
-                for (int i = 0; i < idList.length(); i++) {
-                    try {
-                        ids[i] = Long.parseLong(idList.getString(i));
-                    } catch (final NumberFormatException nfe) {
-                        throw new TwitterException("Twitter API returned malformed response: "
-                                + json, nfe);
-                    }
-                }
-                previousCursor = InternalParseUtil.getLong("previous_cursor", json);
-                nextCursor = InternalParseUtil.getLong("next_cursor", json);
-            } else {
-                idList = new JSONArray(jsonStr);
-                ids = new long[idList.length()];
-                for (int i = 0; i < idList.length(); i++) {
-                    try {
-                        ids[i] = Long.parseLong(idList.getString(i));
-                    } catch (final NumberFormatException nfe) {
-                        throw new TwitterException("Twitter API returned malformed response: "
-                                + idList, nfe);
-                    }
-                }
-            }
-        } catch (final JSONException jsone) {
-            throw new TwitterException(jsone);
-        }
-    }
+	private void init(final String jsonStr) throws TwitterException {
+		JSONArray idList;
+		try {
+			if (jsonStr.startsWith("{")) {
+				final JSONObject json = new JSONObject(jsonStr);
+				idList = json.getJSONArray("ids");
+				ids = new long[idList.length()];
+				for (int i = 0; i < idList.length(); i++) {
+					try {
+						ids[i] = Long.parseLong(idList.getString(i));
+					} catch (final NumberFormatException nfe) {
+						throw new TwitterException("Twitter API returned malformed response: " + json, nfe);
+					}
+				}
+				previousCursor = InternalParseUtil.getLong("previous_cursor", json);
+				nextCursor = InternalParseUtil.getLong("next_cursor", json);
+			} else {
+				idList = new JSONArray(jsonStr);
+				ids = new long[idList.length()];
+				for (int i = 0; i < idList.length(); i++) {
+					try {
+						ids[i] = Long.parseLong(idList.getString(i));
+					} catch (final NumberFormatException nfe) {
+						throw new TwitterException("Twitter API returned malformed response: " + idList, nfe);
+					}
+				}
+			}
+		} catch (final JSONException jsone) {
+			throw new TwitterException(jsone);
+		}
+	}
 }

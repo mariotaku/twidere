@@ -117,7 +117,7 @@
   <string name="blocked_users">Engellenmiş kullanıcılar</string>
   <string name="set_as_default">Varsayılan yap</string>
   <string name="search_users">Kullanıcı/lar ara</string>
-  <string name="search_tweets">Tweet/ler ara</string>
+  <string name="search_statuses">Tweet/ler ara</string>
   <string name="created_at">Oluşturuldu:</string>
   <string name="search_hint">Tweet yada kullanıcı ara</string>
   <string name="remember_position">Konumu hatırla</string>

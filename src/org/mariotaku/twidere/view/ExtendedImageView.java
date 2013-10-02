@@ -27,31 +27,31 @@ import org.mariotaku.twidere.view.iface.IExtendedView;
 
 public class ExtendedImageView extends ImageView implements IExtendedView {
 
-    private OnSizeChangedListener mOnSizeChangedListener;
+	private OnSizeChangedListener mOnSizeChangedListener;
 
-    public ExtendedImageView(final Context context) {
-        super(context);
-    }
+	public ExtendedImageView(final Context context) {
+		super(context);
+	}
 
-    public ExtendedImageView(final Context context, final AttributeSet attrs) {
-        super(context, attrs);
-    }
+	public ExtendedImageView(final Context context, final AttributeSet attrs) {
+		super(context, attrs);
+	}
 
-    public ExtendedImageView(final Context context, final AttributeSet attrs, final int defStyle) {
-        super(context, attrs, defStyle);
-    }
+	public ExtendedImageView(final Context context, final AttributeSet attrs, final int defStyle) {
+		super(context, attrs, defStyle);
+	}
 
-    @Override
-    public final void setOnSizeChangedListener(final OnSizeChangedListener listener) {
-        mOnSizeChangedListener = listener;
-    }
+	@Override
+	public final void setOnSizeChangedListener(final OnSizeChangedListener listener) {
+		mOnSizeChangedListener = listener;
+	}
 
-    @Override
-    protected final void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        if (mOnSizeChangedListener != null) {
-            mOnSizeChangedListener.onSizeChanged(this, w, h, oldw, oldh);
-        }
-    }
+	@Override
+	protected final void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
+		super.onSizeChanged(w, h, oldw, oldh);
+		if (mOnSizeChangedListener != null) {
+			mOnSizeChangedListener.onSizeChanged(this, w, h, oldw, oldh);
+		}
+	}
 
 }

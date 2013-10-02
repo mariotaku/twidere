@@ -31,21 +31,21 @@ import java.io.InputStream;
  */
 public class SlowNetworkImageDownloader implements ImageDownloader {
 
-    private final ImageDownloader wrappedDownloader;
+	private final ImageDownloader wrappedDownloader;
 
-    public SlowNetworkImageDownloader(final ImageDownloader wrappedDownloader) {
-        this.wrappedDownloader = wrappedDownloader;
-    }
+	public SlowNetworkImageDownloader(final ImageDownloader wrappedDownloader) {
+		this.wrappedDownloader = wrappedDownloader;
+	}
 
-    @Override
-    public InputStream getStream(final String imageUri, final Object extra) throws IOException {
-        final InputStream imageStream = wrappedDownloader.getStream(imageUri, extra);
-        switch (Scheme.ofUri(imageUri)) {
-            case HTTP:
-            case HTTPS:
-                return new FlushedInputStream(imageStream);
-            default:
-                return imageStream;
-        }
-    }
+	@Override
+	public InputStream getStream(final String imageUri, final Object extra) throws IOException {
+		final InputStream imageStream = wrappedDownloader.getStream(imageUri, extra);
+		switch (Scheme.ofUri(imageUri)) {
+			case HTTP:
+			case HTTPS:
+				return new FlushedInputStream(imageStream);
+			default:
+				return imageStream;
+		}
+	}
 }

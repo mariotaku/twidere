@@ -26,10 +26,10 @@ import java.util.List;
  */
 public interface ResponseList<T> extends TwitterResponse, List<T>, Serializable {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public RateLimitStatus getRateLimitStatus();
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public RateLimitStatus getRateLimitStatus();
 
 }

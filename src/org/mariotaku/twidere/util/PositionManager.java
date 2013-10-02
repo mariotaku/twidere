@@ -27,25 +27,22 @@ import org.mariotaku.twidere.Constants;
 
 public class PositionManager implements Constants {
 
-    private final SharedPreferences mPreferences;
+	private final SharedPreferences mPreferences;
 
-    public PositionManager(final Context context) {
-        mPreferences = context.getSharedPreferences(TIMELINE_POSITIONS_PREFERENCES_NAME,
-                Context.MODE_PRIVATE);
-    }
+	public PositionManager(final Context context) {
+		mPreferences = context.getSharedPreferences(TIMELINE_POSITIONS_PREFERENCES_NAME, Context.MODE_PRIVATE);
+	}
 
-    public long getPosition(final String key) {
-        if (TextUtils.isEmpty(key))
-            return -1;
-        return mPreferences.getLong(key, -1);
-    }
+	public long getPosition(final String key) {
+		if (TextUtils.isEmpty(key)) return -1;
+		return mPreferences.getLong(key, -1);
+	}
 
-    public boolean setPosition(final String key, final long status_id) {
-        if (TextUtils.isEmpty(key))
-            return false;
-        final SharedPreferences.Editor editor = mPreferences.edit();
-        editor.putLong(key, status_id);
-        return editor.commit();
-    }
+	public boolean setPosition(final String key, final long status_id) {
+		if (TextUtils.isEmpty(key)) return false;
+		final SharedPreferences.Editor editor = mPreferences.edit();
+		editor.putLong(key, status_id);
+		return editor.commit();
+	}
 
 }

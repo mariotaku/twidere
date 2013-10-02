@@ -25,8 +25,7 @@
 				<org.mariotaku.twidere.view.ClickableImageView
 					android:id="@+id/tab_icon"
 					android:layout_width="48dip"
-					android:layout_height="48dip"
-					android:src="@drawable/ic_tab_list"/>
+					android:layout_height="48dip"/>
 
 				<EditText
 					android:id="@+id/tab_name"
@@ -37,16 +36,49 @@
 					android:textAppearance="?android:attr/textAppearanceMedium"/>
 			</LinearLayout>
 
-			<Spinner
-				android:id="@+id/account_spinner"
+			<LinearLayout
+				android:id="@+id/account_container"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				tools:listitem="@layout/user_autocomplete_list_item"/>
+				android:orientation="vertical">
 
-			<FrameLayout
+				<TextView
+					style="?android:listSeparatorTextViewStyle"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/account"/>
+
+				<Spinner
+					android:id="@+id/account_spinner"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					tools:listitem="@layout/user_autocomplete_list_item"/>
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/secondary_field_container"
 				android:layout_width="match_parent"
-				android:layout_height="wrap_content">
-			</FrameLayout>
+				android:layout_height="wrap_content"
+				android:orientation="vertical">
+
+				<TextView
+					android:id="@+id/secondary_field_label"
+					style="?android:listSeparatorTextViewStyle"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/user"/>
+
+				<FrameLayout
+					android:id="@+id/secondary_field"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:background="?android:selectableItemBackground"
+					android:clickable="true"
+					android:onClick="onClick">
+
+					<include layout="@layout/two_line_with_icon_list_item"/>
+				</FrameLayout>
+			</LinearLayout>
 		</LinearLayout>
 	</ScrollView>
 

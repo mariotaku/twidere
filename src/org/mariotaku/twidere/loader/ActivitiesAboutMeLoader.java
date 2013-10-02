@@ -32,18 +32,15 @@ import java.util.List;
 
 public class ActivitiesAboutMeLoader extends Twitter4JActivitiesLoader {
 
-    public ActivitiesAboutMeLoader(final Context context, final long account_id,
-            final List<ParcelableActivity> data,
-            final String[] save_file_args, final int tab_position) {
-        super(context, account_id, data, save_file_args, tab_position);
-    }
+	public ActivitiesAboutMeLoader(final Context context, final long account_id, final List<ParcelableActivity> data,
+			final String[] save_file_args, final int tab_position) {
+		super(context, account_id, data, save_file_args, tab_position);
+	}
 
-    @Override
-    protected List<Activity> getActivities(final Twitter twitter, final Paging paging)
-            throws TwitterException {
-        if (twitter == null)
-            return null;
-        return twitter.getActivitiesAboutMe(paging);
-    }
+	@Override
+	protected List<Activity> getActivities(final Twitter twitter, final Paging paging) throws TwitterException {
+		if (twitter == null) return null;
+		return twitter.getActivitiesAboutMe(paging);
+	}
 
 }

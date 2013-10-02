@@ -33,21 +33,21 @@ import java.io.File;
  */
 public class UnlimitedDiscCache extends BaseDiscCache {
 
-    /** @param cacheDir Directory for file caching */
-    public UnlimitedDiscCache(final File cacheDir) {
-        this(cacheDir, DefaultConfigurationFactory.createFileNameGenerator());
-    }
+	/** @param cacheDir Directory for file caching */
+	public UnlimitedDiscCache(final File cacheDir) {
+		this(cacheDir, DefaultConfigurationFactory.createFileNameGenerator());
+	}
 
-    /**
-     * @param cacheDir Directory for file caching
-     * @param fileNameGenerator Name generator for cached files
-     */
-    public UnlimitedDiscCache(final File cacheDir, final FileNameGenerator fileNameGenerator) {
-        super(cacheDir, fileNameGenerator);
-    }
+	/**
+	 * @param cacheDir Directory for file caching
+	 * @param fileNameGenerator Name generator for cached files
+	 */
+	public UnlimitedDiscCache(final File cacheDir, final FileNameGenerator fileNameGenerator) {
+		super(cacheDir, fileNameGenerator);
+	}
 
-    @Override
-    public void put(final String key, final File file) {
-        // Do nothing
-    }
+	@Override
+	public void put(final String key, final File file) {
+		// Do nothing
+	}
 }

@@ -35,61 +35,59 @@ import java.util.Map;
  */
 public class LimitedAgeDiscCache extends BaseDiscCache {
 
-    private final long maxFileAge;
+	private final long maxFileAge;
 
-    private final Map<File, Long> loadingDates = Collections
-            .synchronizedMap(new HashMap<File, Long>());
+	private final Map<File, Long> loadingDates = Collections.synchronizedMap(new HashMap<File, Long>());
 
-    /**
-     * @param cacheDir Directory for file caching
-     * @param fileNameGenerator Name generator for cached files
-     * @param maxAge Max file age (in seconds). If file age will exceed this
-     *            value then it'll be removed on next treatment (and therefore
-     *            be reloaded).
-     */
-    public LimitedAgeDiscCache(final File cacheDir, final FileNameGenerator fileNameGenerator,
-            final long maxAge) {
-        super(cacheDir, fileNameGenerator);
-        maxFileAge = maxAge * 1000; // to milliseconds
-    }
+	/**
+	 * @param cacheDir Directory for file caching
+	 * @param fileNameGenerator Name generator for cached files
+	 * @param maxAge Max file age (in seconds). If file age will exceed this
+	 *            value then it'll be removed on next treatment (and therefore
+	 *            be reloaded).
+	 */
+	public LimitedAgeDiscCache(final File cacheDir, final FileNameGenerator fileNameGenerator, final long maxAge) {
+		super(cacheDir, fileNameGenerator);
+		maxFileAge = maxAge * 1000; // to milliseconds
+	}
 
-    /**
-     * @param cacheDir Directory for file caching
-     * @param maxAge Max file age (in seconds). If file age will exceed this
-     *            value then it'll be removed on next treatment (and therefore
-     *            be reloaded).
-     */
-    public LimitedAgeDiscCache(final File cacheDir, final long maxAge) {
-        this(cacheDir, DefaultConfigurationFactory.createFileNameGenerator(), maxAge);
-    }
+	/**
+	 * @param cacheDir Directory for file caching
+	 * @param maxAge Max file age (in seconds). If file age will exceed this
+	 *            value then it'll be removed on next treatment (and therefore
+	 *            be reloaded).
+	 */
+	public LimitedAgeDiscCache(final File cacheDir, final long maxAge) {
+		this(cacheDir, DefaultConfigurationFactory.createFileNameGenerator(), maxAge);
+	}
 
-    @Override
-    public File get(final String key) {
-        final File file = super.get(key);
-        if (file.exists()) {
-            boolean cached;
-            Long loadingDate = loadingDates.get(file);
-            if (loadingDate == null) {
-                cached = false;
-                loadingDate = file.lastModified();
-            } else {
-                cached = true;
-            }
+	@Override
+	public File get(final String key) {
+		final File file = super.get(key);
+		if (file.exists()) {
+			boolean cached;
+			Long loadingDate = loadingDates.get(file);
+			if (loadingDate == null) {
+				cached = false;
+				loadingDate = file.lastModified();
+			} else {
+				cached = true;
+			}
 
-            if (System.currentTimeMillis() - loadingDate > maxFileAge) {
-                file.delete();
-                loadingDates.remove(file);
-            } else if (!cached) {
-                loadingDates.put(file, loadingDate);
-            }
-        }
-        return file;
-    }
+			if (System.currentTimeMillis() - loadingDate > maxFileAge) {
+				file.delete();
+				loadingDates.remove(file);
+			} else if (!cached) {
+				loadingDates.put(file, loadingDate);
+			}
+		}
+		return file;
+	}
 
-    @Override
-    public void put(final String key, final File file) {
-        final long currentTime = System.currentTimeMillis();
-        file.setLastModified(currentTime);
-        loadingDates.put(file, currentTime);
-    }
+	@Override
+	public void put(final String key, final File file) {
+		final long currentTime = System.currentTimeMillis();
+		file.setLastModified(currentTime);
+		loadingDates.put(file, currentTime);
+	}
 }

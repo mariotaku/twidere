@@ -21,13 +21,13 @@ import android.view.MotionEvent;
 
 public final class MotionEventHelper {
 
-    private MotionEventHelper() {
-        throw new AssertionError();
-    }
+	private MotionEventHelper() {
+		throw new AssertionError();
+	}
 
-    public static MotionEvent transformEvent(final MotionEvent e, final Matrix m) {
-        final MotionEvent newEvent = MotionEvent.obtain(e);
-        newEvent.transform(m);
-        return newEvent;
-    }
+	public static MotionEvent transformEvent(final MotionEvent e, final Matrix m) {
+		final MotionEvent newEvent = MotionEvent.obtain(e);
+		newEvent.transform(m);
+		return newEvent;
+	}
 }

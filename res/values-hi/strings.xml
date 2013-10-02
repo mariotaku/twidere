@@ -113,7 +113,7 @@
   <string name="blocked_users">अवरोधित उपयोगकर्ताओं</string>
   <string name="set_as_default">डिफ़ॉल्ट सेट किजीये</string>
   <string name="search_users">उपयोगकर्ताओं को खोजे</string>
-  <string name="search_tweets">ट्वीट खोजे</string>
+  <string name="search_statuses">ट्वीट खोजे</string>
   <string name="created_at">पर बनाया गया</string>
   <string name="search_hint">उपयोगकर्ताओं या ट्वीट्स खोजे</string>
   <string name="remember_position">स्थिति याद रखें</string>

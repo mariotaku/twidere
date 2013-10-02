@@ -44,63 +44,61 @@ import org.mariotaku.twidere.view.WebSettingsAccessor;
 @SuppressLint("SetJavaScriptEnabled")
 public class BaseWebViewFragment extends WebViewFragment implements Constants {
 
-    @Override
-    public void onActivityCreated(final Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        final WebView view = getWebView();
-        view.setWebViewClient(new DefaultWebViewClient(getActivity()));
-        final WebSettings settings = view.getSettings();
-        settings.setBuiltInZoomControls(true);
-        settings.setJavaScriptEnabled(true);
-        WebSettingsAccessor.setAllowUniversalAccessFromFileURLs(settings, true);
-    }
+	@Override
+	public void onActivityCreated(final Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		final WebView view = getWebView();
+		view.setWebViewClient(new DefaultWebViewClient(getActivity()));
+		final WebSettings settings = view.getSettings();
+		settings.setBuiltInZoomControls(true);
+		settings.setJavaScriptEnabled(true);
+		WebSettingsAccessor.setAllowUniversalAccessFromFileURLs(settings, true);
+	}
 
-    public static class DefaultWebViewClient extends WebViewClient {
+	public static class DefaultWebViewClient extends WebViewClient {
 
-        private final Activity mActivity;
-        private final SharedPreferences mPreferences;
+		private final Activity mActivity;
+		private final SharedPreferences mPreferences;
 
-        public DefaultWebViewClient(final Activity activity) {
-            mActivity = activity;
-            mPreferences = activity.getSharedPreferences(SHARED_PREFERENCES_NAME,
-                    Context.MODE_PRIVATE);
-        }
+		public DefaultWebViewClient(final Activity activity) {
+			mActivity = activity;
+			mPreferences = activity.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		}
 
-        @Override
-        public void onPageFinished(final WebView view, final String url) {
-            super.onPageFinished(view, url);
-            if (mActivity instanceof BaseSupportActivity) {
-                mActivity.setTitle(view.getTitle());
-                ((BaseSupportActivity) mActivity).setProgressBarIndeterminateVisibility(false);
-            }
-        }
+		@Override
+		public void onPageFinished(final WebView view, final String url) {
+			super.onPageFinished(view, url);
+			if (mActivity instanceof BaseSupportActivity) {
+				mActivity.setTitle(view.getTitle());
+				((BaseSupportActivity) mActivity).setProgressBarIndeterminateVisibility(false);
+			}
+		}
 
-        @Override
-        public void onPageStarted(final WebView view, final String url, final Bitmap favicon) {
-            super.onPageStarted(view, url, favicon);
-            if (mActivity instanceof BaseSupportActivity) {
-                ((BaseSupportActivity) mActivity).setProgressBarIndeterminateVisibility(true);
-            }
-        }
+		@Override
+		public void onPageStarted(final WebView view, final String url, final Bitmap favicon) {
+			super.onPageStarted(view, url, favicon);
+			if (mActivity instanceof BaseSupportActivity) {
+				((BaseSupportActivity) mActivity).setProgressBarIndeterminateVisibility(true);
+			}
+		}
 
-        @Override
-        public void onReceivedSslError(final WebView view, final SslErrorHandler handler,
-                final SslError error) {
-            if (mPreferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false)) {
-                handler.proceed();
-            } else {
-                handler.cancel();
-            }
-        }
+		@Override
+		public void onReceivedSslError(final WebView view, final SslErrorHandler handler, final SslError error) {
+			if (mPreferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false)) {
+				handler.proceed();
+			} else {
+				handler.cancel();
+			}
+		}
 
-        @Override
-        public boolean shouldOverrideUrlLoading(final WebView view, final String url) {
-            try {
-                mActivity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-            } catch (final ActivityNotFoundException e) {
-                showErrorMessage(mActivity, null, e, false);
-            }
-            return true;
-        }
-    }
+		@Override
+		public boolean shouldOverrideUrlLoading(final WebView view, final String url) {
+			try {
+				mActivity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+			} catch (final ActivityNotFoundException e) {
+				showErrorMessage(mActivity, null, e, false);
+			}
+			return true;
+		}
+	}
 }

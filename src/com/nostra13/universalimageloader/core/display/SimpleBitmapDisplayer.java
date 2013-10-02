@@ -28,10 +28,9 @@ import com.nostra13.universalimageloader.core.assist.LoadedFrom;
  * @since 1.5.6
  */
 public final class SimpleBitmapDisplayer implements BitmapDisplayer {
-    @Override
-    public Bitmap display(final Bitmap bitmap, final ImageView imageView,
-            final LoadedFrom loadedFrom) {
-        imageView.setImageBitmap(bitmap);
-        return bitmap;
-    }
+	@Override
+	public Bitmap display(final Bitmap bitmap, final ImageView imageView, final LoadedFrom loadedFrom) {
+		imageView.setImageBitmap(bitmap);
+		return bitmap;
+	}
 }

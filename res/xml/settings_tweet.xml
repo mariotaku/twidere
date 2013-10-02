@@ -24,6 +24,11 @@
 		android:title="@string/name_display_option"/>
 
 	<CheckBoxPreference
+		android:defaultValue="false"
+		android:key="nickname_only"
+		android:summary="@string/nickname_only_summary"
+		android:title="@string/nickname_only"/>
+	<CheckBoxPreference
 		android:defaultValue="true"
 		android:key="display_profile_image"
 		android:summary="@string/image_load_summary"

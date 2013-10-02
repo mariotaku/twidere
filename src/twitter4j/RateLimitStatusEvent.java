@@ -27,29 +27,29 @@ import java.util.EventObject;
  */
 public final class RateLimitStatusEvent extends EventObject {
 
-    private static final long serialVersionUID = 3749366911109722414L;
+	private static final long serialVersionUID = 3749366911109722414L;
 
-    private final RateLimitStatus rateLimitStatus;
+	private final RateLimitStatus rateLimitStatus;
 
-    private final boolean isAccountRateLimitStatus;
+	private final boolean isAccountRateLimitStatus;
 
-    RateLimitStatusEvent(final Object source, final RateLimitStatus rateLimitStatus,
-            final boolean isAccountRateLimitStatus) {
-        super(source);
-        this.rateLimitStatus = rateLimitStatus;
-        this.isAccountRateLimitStatus = isAccountRateLimitStatus;
-    }
+	RateLimitStatusEvent(final Object source, final RateLimitStatus rateLimitStatus,
+			final boolean isAccountRateLimitStatus) {
+		super(source);
+		this.rateLimitStatus = rateLimitStatus;
+		this.isAccountRateLimitStatus = isAccountRateLimitStatus;
+	}
 
-    public RateLimitStatus getRateLimitStatus() {
-        return rateLimitStatus;
-    }
+	public RateLimitStatus getRateLimitStatus() {
+		return rateLimitStatus;
+	}
 
-    public boolean isAccountRateLimitStatus() {
-        return isAccountRateLimitStatus;
-    }
+	public boolean isAccountRateLimitStatus() {
+		return isAccountRateLimitStatus;
+	}
 
-    public boolean isIPRateLimitStatus() {
-        return !isAccountRateLimitStatus;
-    }
+	public boolean isIPRateLimitStatus() {
+		return !isAccountRateLimitStatus;
+	}
 
 }

@@ -24,10 +24,9 @@ import android.os.Bundle;
 
 public class HomeTabSpec extends TabSpec {
 
-    public HomeTabSpec(final String name, final Integer icon, final Class<? extends Fragment> cls,
-            final Bundle args,
-            final int position) {
-        super(name, icon, cls, args, position);
-    }
+	public HomeTabSpec(final String name, final Integer icon, final Class<? extends Fragment> cls, final Bundle args,
+			final int position) {
+		super(name, icon, cls, args, position);
+	}
 
 }

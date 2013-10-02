@@ -25,8 +25,8 @@ import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
  */
 public class ScrollYDelegate extends PullToRefreshAttacher.ViewDelegate {
 
-    @Override
-    public boolean isScrolledToTop(final View view) {
-        return view.getScrollY() <= 0;
-    }
+	@Override
+	public boolean isScrolledToTop(final View view) {
+		return view.getScrollY() <= 0;
+	}
 }

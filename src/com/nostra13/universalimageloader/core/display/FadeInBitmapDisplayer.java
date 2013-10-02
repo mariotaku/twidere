@@ -31,32 +31,31 @@ import com.nostra13.universalimageloader.core.assist.LoadedFrom;
  */
 public class FadeInBitmapDisplayer implements BitmapDisplayer {
 
-    private final int durationMillis;
+	private final int durationMillis;
 
-    public FadeInBitmapDisplayer(final int durationMillis) {
-        this.durationMillis = durationMillis;
-    }
+	public FadeInBitmapDisplayer(final int durationMillis) {
+		this.durationMillis = durationMillis;
+	}
 
-    @Override
-    public Bitmap display(final Bitmap bitmap, final ImageView imageView,
-            final LoadedFrom loadedFrom) {
-        imageView.setImageBitmap(bitmap);
+	@Override
+	public Bitmap display(final Bitmap bitmap, final ImageView imageView, final LoadedFrom loadedFrom) {
+		imageView.setImageBitmap(bitmap);
 
-        animate(imageView, durationMillis);
+		animate(imageView, durationMillis);
 
-        return bitmap;
-    }
+		return bitmap;
+	}
 
-    /**
-     * Animates {@link ImageView} with "fade-in" effect
-     * 
-     * @param imageView {@link ImageView} which display image in
-     * @param durationMillis The length of the animation in milliseconds
-     */
-    public static void animate(final ImageView imageView, final int durationMillis) {
-        final AlphaAnimation fadeImage = new AlphaAnimation(0, 1);
-        fadeImage.setDuration(durationMillis);
-        fadeImage.setInterpolator(new DecelerateInterpolator());
-        imageView.startAnimation(fadeImage);
-    }
+	/**
+	 * Animates {@link ImageView} with "fade-in" effect
+	 * 
+	 * @param imageView {@link ImageView} which display image in
+	 * @param durationMillis The length of the animation in milliseconds
+	 */
+	public static void animate(final ImageView imageView, final int durationMillis) {
+		final AlphaAnimation fadeImage = new AlphaAnimation(0, 1);
+		fadeImage.setDuration(durationMillis);
+		fadeImage.setInterpolator(new DecelerateInterpolator());
+		imageView.startAnimation(fadeImage);
+	}
 }

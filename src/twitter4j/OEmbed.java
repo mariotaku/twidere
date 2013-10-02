@@ -24,68 +24,68 @@ import java.io.Serializable;
  * @see <a href="http://oembed.com">oEmded</a>
  */
 public interface OEmbed extends TwitterResponse, Serializable {
-    /**
-     * The name of the author/owner of the resource.
-     * 
-     * @return The name of the author/owner of the resource.
-     */
-    String getAuthorName();
+	/**
+	 * The name of the author/owner of the resource.
+	 * 
+	 * @return The name of the author/owner of the resource.
+	 */
+	String getAuthorName();
 
-    /**
-     * A URL for the author/owner of the resource.
-     * 
-     * @return A URL for the author/owner of the resource.
-     */
-    String getAuthorURL();
+	/**
+	 * A URL for the author/owner of the resource.
+	 * 
+	 * @return A URL for the author/owner of the resource.
+	 */
+	String getAuthorURL();
 
-    // provier_url is always "http://twitter.com/"
-    // String getProviderURL();
+	// provier_url is always "http://twitter.com/"
+	// String getProviderURL();
 
-    /**
-     * The suggested cache lifetime for this resource, in seconds. Consumers may
-     * choose to use this value or not.
-     * 
-     * @return The suggested cache lifetime for this resource, in seconds.
-     *         Consumers may choose to use this value or not.
-     */
-    long getCacheAge();
+	/**
+	 * The suggested cache lifetime for this resource, in seconds. Consumers may
+	 * choose to use this value or not.
+	 * 
+	 * @return The suggested cache lifetime for this resource, in seconds.
+	 *         Consumers may choose to use this value or not.
+	 */
+	long getCacheAge();
 
-    // provider_name is always "Twitter"
-    // String getProviderName();
+	// provider_name is always "Twitter"
+	// String getProviderName();
 
-    /**
-     * The HTML required to display the resource. The HTML should have no
-     * padding or margins. Consumers may wish to load the HTML in an off-domain
-     * iframe to avoid XSS vulnerabilities. The markup should be valid XHTML 1.0
-     * Basic.
-     * 
-     * @return The HTML required to display the resource.
-     */
-    String getHtml();
+	/**
+	 * The HTML required to display the resource. The HTML should have no
+	 * padding or margins. Consumers may wish to load the HTML in an off-domain
+	 * iframe to avoid XSS vulnerabilities. The markup should be valid XHTML 1.0
+	 * Basic.
+	 * 
+	 * @return The HTML required to display the resource.
+	 */
+	String getHtml();
 
-    // type is always "rich"
-    // String getType();
+	// type is always "rich"
+	// String getType();
 
-    /**
-     * The url of the resource provider.<br>
-     * The source URL of the image. Consumers should be able to insert this URL
-     * into an &lt;img&gt; element. Only HTTP and HTTPS URLs are valid.
-     * 
-     * @return The url of the resource provider.
-     */
-    String getURL();
+	/**
+	 * The url of the resource provider.<br>
+	 * The source URL of the image. Consumers should be able to insert this URL
+	 * into an &lt;img&gt; element. Only HTTP and HTTPS URLs are valid.
+	 * 
+	 * @return The url of the resource provider.
+	 */
+	String getURL();
 
-    /**
-     * The oEmbed version number.
-     * 
-     * @return The oEmbed version number.
-     */
-    String getVersion();
+	/**
+	 * The oEmbed version number.
+	 * 
+	 * @return The oEmbed version number.
+	 */
+	String getVersion();
 
-    /**
-     * The width in pixels of the image specified in the url parameter.
-     * 
-     * @return The width in pixels of the image specified in the url parameter.
-     */
-    int getWidth();
+	/**
+	 * The width in pixels of the image specified in the url parameter.
+	 * 
+	 * @return The width in pixels of the image specified in the url parameter.
+	 */
+	int getWidth();
 }

@@ -23,87 +23,84 @@ package twitter4j.management;
  * @author Nick Dellamaggiore (nick.dellamaggiore <at> gmail.com)
  */
 public class InvocationStatisticsCalculator implements InvocationStatistics {
-    private final String name;
-    private long[] times;
-    private int index;
-    private long callCount;
-    private long errorCount;
-    private long totalTime;
+	private final String name;
+	private long[] times;
+	private int index;
+	private long callCount;
+	private long errorCount;
+	private long totalTime;
 
-    /**
-     * @param name the name of this API method
-     * @param historySize the number of calls to track (for invocation time
-     *            averaging)
-     */
-    public InvocationStatisticsCalculator(final String name, final int historySize) {
-        this.name = name;
-        times = new long[historySize];
-    }
+	/**
+	 * @param name the name of this API method
+	 * @param historySize the number of calls to track (for invocation time
+	 *            averaging)
+	 */
+	public InvocationStatisticsCalculator(final String name, final int historySize) {
+		this.name = name;
+		times = new long[historySize];
+	}
 
-    @Override
-    public synchronized long getAverageTime() {
-        final int stopIndex = Math.min(Math.abs((int) callCount), times.length);
-        if (stopIndex == 0)
-            return 0;
+	@Override
+	public synchronized long getAverageTime() {
+		final int stopIndex = Math.min(Math.abs((int) callCount), times.length);
+		if (stopIndex == 0) return 0;
 
-        long totalTime = 0;
-        for (int i = 0; i < stopIndex; i++) {
-            totalTime += times[i];
+		long totalTime = 0;
+		for (int i = 0; i < stopIndex; i++) {
+			totalTime += times[i];
 
-        }
-        return totalTime / stopIndex;
-    }
+		}
+		return totalTime / stopIndex;
+	}
 
-    @Override
-    public long getCallCount() {
-        return callCount;
-    }
+	@Override
+	public long getCallCount() {
+		return callCount;
+	}
 
-    @Override
-    public long getErrorCount() {
-        return errorCount;
-    }
+	@Override
+	public long getErrorCount() {
+		return errorCount;
+	}
 
-    @Override
-    public String getName() {
-        return name;
-    }
+	@Override
+	public String getName() {
+		return name;
+	}
 
-    @Override
-    public long getTotalTime() {
-        return totalTime;
-    }
+	@Override
+	public long getTotalTime() {
+		return totalTime;
+	}
 
-    public void increment(final long time, final boolean success) {
-        callCount++;
-        errorCount += success ? 0 : 1;
-        totalTime += time;
+	public void increment(final long time, final boolean success) {
+		callCount++;
+		errorCount += success ? 0 : 1;
+		totalTime += time;
 
-        times[index] = time;
+		times[index] = time;
 
-        if (++index >= times.length) {
-            index = 0;
-        }
-    }
+		if (++index >= times.length) {
+			index = 0;
+		}
+	}
 
-    @Override
-    public synchronized void reset() {
-        callCount = 0;
-        errorCount = 0;
-        totalTime = 0;
-        times = new long[times.length];
-        index = 0;
-    }
+	@Override
+	public synchronized void reset() {
+		callCount = 0;
+		errorCount = 0;
+		totalTime = 0;
+		times = new long[times.length];
+		index = 0;
+	}
 
-    @Override
-    public String toString() {
-        // StringBuilder is faster... do we still need to support JDK 1.4?
-        final StringBuffer sb = new StringBuffer();
-        sb.append("calls=").append(getCallCount()).append(",").append("errors=")
-                .append(getErrorCount()).append(",")
-                .append("totalTime=").append(getTotalTime()).append(",").append("avgTime=")
-                .append(getAverageTime());
+	@Override
+	public String toString() {
+		// StringBuilder is faster... do we still need to support JDK 1.4?
+		final StringBuffer sb = new StringBuffer();
+		sb.append("calls=").append(getCallCount()).append(",").append("errors=").append(getErrorCount()).append(",")
+				.append("totalTime=").append(getTotalTime()).append(",").append("avgTime=").append(getAverageTime());
 
-        return sb.toString();
-    }
+		return sb.toString();
+	}
 }

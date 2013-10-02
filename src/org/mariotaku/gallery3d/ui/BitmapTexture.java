@@ -26,29 +26,29 @@ import org.mariotaku.gallery3d.util.GalleryUtils;
 // is valid during the texture's lifetime. When the texture is recycled, it
 // does not free the Bitmap.
 public class BitmapTexture extends UploadedTexture {
-    protected Bitmap mContentBitmap;
+	protected Bitmap mContentBitmap;
 
-    public BitmapTexture(final Bitmap bitmap) {
-        this(bitmap, false);
-    }
+	public BitmapTexture(final Bitmap bitmap) {
+		this(bitmap, false);
+	}
 
-    private BitmapTexture(final Bitmap bitmap, final boolean hasBorder) {
-        super(hasBorder);
-        GalleryUtils.assertTrue(bitmap != null && !bitmap.isRecycled());
-        mContentBitmap = bitmap;
-    }
+	private BitmapTexture(final Bitmap bitmap, final boolean hasBorder) {
+		super(hasBorder);
+		GalleryUtils.assertTrue(bitmap != null && !bitmap.isRecycled());
+		mContentBitmap = bitmap;
+	}
 
-    public Bitmap getBitmap() {
-        return mContentBitmap;
-    }
+	public Bitmap getBitmap() {
+		return mContentBitmap;
+	}
 
-    @Override
-    protected void onFreeBitmap(final Bitmap bitmap) {
-        // Do nothing.
-    }
+	@Override
+	protected void onFreeBitmap(final Bitmap bitmap) {
+		// Do nothing.
+	}
 
-    @Override
-    protected Bitmap onGetBitmap() {
-        return mContentBitmap;
-    }
+	@Override
+	protected Bitmap onGetBitmap() {
+		return mContentBitmap;
+	}
 }

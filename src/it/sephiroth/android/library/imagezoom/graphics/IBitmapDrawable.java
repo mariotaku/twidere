@@ -1,4 +1,3 @@
-
 package it.sephiroth.android.library.imagezoom.graphics;
 
 import android.graphics.Bitmap;
@@ -12,5 +11,5 @@ import it.sephiroth.android.library.imagezoom.ImageViewTouchBase;
  */
 public interface IBitmapDrawable {
 
-    Bitmap getBitmap();
+	Bitmap getBitmap();
 }

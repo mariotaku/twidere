@@ -28,101 +28,100 @@ package de.keyboardsurfer.android.widget.crouton;
  */
 public class CroutonConfiguration {
 
-    /**
-     * Display a {@link Crouton} for an infinite amount of time or until
-     * {@link de.keyboardsurfer.android.widget.crouton.Crouton#cancel()} has
-     * been called.
-     */
-    public static final int DURATION_INFINITE = -1;
-    /** The default short display duration of a {@link Crouton}. */
-    public static final int DURATION_SHORT = 3000;
-    /** The default long display duration of a {@link Crouton}. */
-    public static final int DURATION_LONG = 5000;
+	/**
+	 * Display a {@link Crouton} for an infinite amount of time or until
+	 * {@link de.keyboardsurfer.android.widget.crouton.Crouton#cancel()} has
+	 * been called.
+	 */
+	public static final int DURATION_INFINITE = -1;
+	/** The default short display duration of a {@link Crouton}. */
+	public static final int DURATION_SHORT = 3000;
+	/** The default long display duration of a {@link Crouton}. */
+	public static final int DURATION_LONG = 5000;
 
-    /** The default {@link CroutonConfiguration} of a {@link Crouton}. */
-    public static final CroutonConfiguration DEFAULT;
+	/** The default {@link CroutonConfiguration} of a {@link Crouton}. */
+	public static final CroutonConfiguration DEFAULT;
 
-    static {
-        DEFAULT = new Builder().setDuration(DURATION_SHORT).build();
-    }
+	static {
+		DEFAULT = new Builder().setDuration(DURATION_SHORT).build();
+	}
 
-    /**
-     * The durationInMilliseconds the {@link Crouton} will be displayed in
-     * milliseconds.
-     */
-    final int durationInMilliseconds;
-    /** The resource id for the in animation. */
-    final int inAnimationResId;
-    /** The resource id for the out animation. */
-    final int outAnimationResId;
+	/**
+	 * The durationInMilliseconds the {@link Crouton} will be displayed in
+	 * milliseconds.
+	 */
+	final int durationInMilliseconds;
+	/** The resource id for the in animation. */
+	final int inAnimationResId;
+	/** The resource id for the out animation. */
+	final int outAnimationResId;
 
-    private CroutonConfiguration(final Builder builder) {
-        durationInMilliseconds = builder.durationInMilliseconds;
-        inAnimationResId = builder.inAnimationResId;
-        outAnimationResId = builder.outAnimationResId;
-    }
+	private CroutonConfiguration(final Builder builder) {
+		durationInMilliseconds = builder.durationInMilliseconds;
+		inAnimationResId = builder.inAnimationResId;
+		outAnimationResId = builder.outAnimationResId;
+	}
 
-    @Override
-    public String toString() {
-        return "Configuration{" + "durationInMilliseconds=" + durationInMilliseconds
-                + ", inAnimationResId="
-                + inAnimationResId + ", outAnimationResId=" + outAnimationResId + '}';
-    }
+	@Override
+	public String toString() {
+		return "Configuration{" + "durationInMilliseconds=" + durationInMilliseconds + ", inAnimationResId="
+				+ inAnimationResId + ", outAnimationResId=" + outAnimationResId + '}';
+	}
 
-    /** Creates a {@link Builder} to build a {@link CroutonConfiguration} upon. */
-    public static class Builder {
-        private int durationInMilliseconds = DURATION_SHORT;
-        private int inAnimationResId = 0;
-        private int outAnimationResId = 0;
+	/** Creates a {@link Builder} to build a {@link CroutonConfiguration} upon. */
+	public static class Builder {
+		private int durationInMilliseconds = DURATION_SHORT;
+		private int inAnimationResId = 0;
+		private int outAnimationResId = 0;
 
-        /**
-         * Builds the {@link CroutonConfiguration}.
-         * 
-         * @return The built {@link CroutonConfiguration}.
-         */
-        public CroutonConfiguration build() {
-            return new CroutonConfiguration(this);
-        }
+		/**
+		 * Builds the {@link CroutonConfiguration}.
+		 * 
+		 * @return The built {@link CroutonConfiguration}.
+		 */
+		public CroutonConfiguration build() {
+			return new CroutonConfiguration(this);
+		}
 
-        /**
-         * Set the durationInMilliseconds option of the {@link Crouton}.
-         * 
-         * @param duration The durationInMilliseconds the crouton will be
-         *            displayed {@link Crouton} in milliseconds.
-         * @return the {@link Builder}.
-         */
-        public Builder setDuration(final int duration) {
-            durationInMilliseconds = duration;
+		/**
+		 * Set the durationInMilliseconds option of the {@link Crouton}.
+		 * 
+		 * @param duration The durationInMilliseconds the crouton will be
+		 *            displayed {@link Crouton} in milliseconds.
+		 * @return the {@link Builder}.
+		 */
+		public Builder setDuration(final int duration) {
+			durationInMilliseconds = duration;
 
-            return this;
-        }
+			return this;
+		}
 
-        /**
-         * The resource id for the in animation.
-         * 
-         * @param inAnimationResId The resource identifier for the animation
-         *            that's being shown when the {@link Crouton} is going to be
-         *            displayed.
-         * @return the {@link Builder}.
-         */
-        public Builder setInAnimation(final int inAnimationResId) {
-            this.inAnimationResId = inAnimationResId;
+		/**
+		 * The resource id for the in animation.
+		 * 
+		 * @param inAnimationResId The resource identifier for the animation
+		 *            that's being shown when the {@link Crouton} is going to be
+		 *            displayed.
+		 * @return the {@link Builder}.
+		 */
+		public Builder setInAnimation(final int inAnimationResId) {
+			this.inAnimationResId = inAnimationResId;
 
-            return this;
-        }
+			return this;
+		}
 
-        /**
-         * The resource id for the out animation
-         * 
-         * @param outAnimationResId The resource identifier for the animation
-         *            that's being shown when the {@link Crouton} is going to be
-         *            removed.
-         * @return the {@link Builder}.
-         */
-        public Builder setOutAnimation(final int outAnimationResId) {
-            this.outAnimationResId = outAnimationResId;
+		/**
+		 * The resource id for the out animation
+		 * 
+		 * @param outAnimationResId The resource identifier for the animation
+		 *            that's being shown when the {@link Crouton} is going to be
+		 *            removed.
+		 * @return the {@link Builder}.
+		 */
+		public Builder setOutAnimation(final int outAnimationResId) {
+			this.outAnimationResId = outAnimationResId;
 
-            return this;
-        }
-    }
+			return this;
+		}
+	}
 }

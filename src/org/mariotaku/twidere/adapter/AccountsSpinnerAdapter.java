@@ -1,4 +1,3 @@
-
 package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
@@ -17,51 +16,49 @@ import org.mariotaku.twidere.util.ImageLoaderWrapper;
 
 public class AccountsSpinnerAdapter extends ArrayAdapter<Account> {
 
-    private final ImageLoaderWrapper mImageLoader;
-    private final boolean mDisplayProfileImage;
-    private final boolean mDisplayHiResProfileImage;
+	private final ImageLoaderWrapper mImageLoader;
+	private final boolean mDisplayProfileImage;
+	private final boolean mDisplayHiResProfileImage;
 
-    public AccountsSpinnerAdapter(final Context context) {
-        super(context, R.layout.user_autocomplete_list_item);
-        setDropDownViewResource(R.layout.user_autocomplete_list_item);
-        mImageLoader = TwidereApplication.getInstance(context).getImageLoaderWrapper();
-        mDisplayProfileImage = context.getSharedPreferences(
-                DirectMessagesConversationFragment.SHARED_PREFERENCES_NAME,
-                Context.MODE_PRIVATE).getBoolean(
-                DirectMessagesConversationFragment.PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-        mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
-    }
+	public AccountsSpinnerAdapter(final Context context) {
+		super(context, R.layout.user_autocomplete_list_item);
+		setDropDownViewResource(R.layout.user_autocomplete_list_item);
+		mImageLoader = TwidereApplication.getInstance(context).getImageLoaderWrapper();
+		mDisplayProfileImage = context.getSharedPreferences(DirectMessagesConversationFragment.SHARED_PREFERENCES_NAME,
+				Context.MODE_PRIVATE).getBoolean(
+				DirectMessagesConversationFragment.PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
+	}
 
-    @Override
-    public View getDropDownView(final int position, final View convertView, final ViewGroup parent) {
-        final View view = super.getDropDownView(position, convertView, parent);
-        bindView(view, getItem(position));
-        return view;
-    }
+	@Override
+	public View getDropDownView(final int position, final View convertView, final ViewGroup parent) {
+		final View view = super.getDropDownView(position, convertView, parent);
+		bindView(view, getItem(position));
+		return view;
+	}
 
-    @Override
-    public View getView(final int position, final View convertView, final ViewGroup parent) {
-        final View view = super.getView(position, convertView, parent);
-        bindView(view, getItem(position));
-        return view;
-    }
+	@Override
+	public View getView(final int position, final View convertView, final ViewGroup parent) {
+		final View view = super.getView(position, convertView, parent);
+		bindView(view, getItem(position));
+		return view;
+	}
 
-    private void bindView(final View view, final Account item) {
-        final TextView text1 = (TextView) view.findViewById(android.R.id.text1);
-        final TextView text2 = (TextView) view.findViewById(android.R.id.text2);
-        final ImageView icon = (ImageView) view.findViewById(android.R.id.icon);
-        text1.setText(item.name);
-        text2.setText("@" + item.screen_name);
-        if (mDisplayProfileImage) {
-            if (mDisplayHiResProfileImage) {
-                mImageLoader.displayProfileImage(icon,
-                        getBiggerTwitterProfileImage(item.profile_image_url));
-            } else {
-                mImageLoader.displayProfileImage(icon, item.profile_image_url);
-            }
-        } else {
-            icon.setImageResource(R.drawable.ic_profile_image_default);
-        }
-    }
+	private void bindView(final View view, final Account item) {
+		final TextView text1 = (TextView) view.findViewById(android.R.id.text1);
+		final TextView text2 = (TextView) view.findViewById(android.R.id.text2);
+		final ImageView icon = (ImageView) view.findViewById(android.R.id.icon);
+		text1.setText(item.name);
+		text2.setText("@" + item.screen_name);
+		if (mDisplayProfileImage) {
+			if (mDisplayHiResProfileImage) {
+				mImageLoader.displayProfileImage(icon, getBiggerTwitterProfileImage(item.profile_image_url));
+			} else {
+				mImageLoader.displayProfileImage(icon, item.profile_image_url);
+			}
+		} else {
+			icon.setImageResource(R.drawable.ic_profile_image_default);
+		}
+	}
 
 }

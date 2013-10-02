@@ -20,17 +20,17 @@ package twitter4j;
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
 public interface Location {
-    String getCountryCode();
+	String getCountryCode();
 
-    String getCountryName();
+	String getCountryName();
 
-    String getName();
+	String getName();
 
-    int getPlaceCode();
+	int getPlaceCode();
 
-    String getPlaceName();
+	String getPlaceName();
 
-    String getURL();
+	String getURL();
 
-    int getWoeid();
+	int getWoeid();
 }

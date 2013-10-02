@@ -32,79 +32,77 @@ import twitter4j.conf.ConfigurationContext;
  * @since Twitter4J 2.1.0
  */
 public final class TwitterFactory {
-    /* AsyncTwitterFactory and TWitterStream will access this field */
-    static final Authorization DEFAULT_AUTHORIZATION = AuthorizationFactory
-            .getInstance(ConfigurationContext
-                    .getInstance());
-    private static final Twitter SINGLETON;
+	/* AsyncTwitterFactory and TWitterStream will access this field */
+	static final Authorization DEFAULT_AUTHORIZATION = AuthorizationFactory.getInstance(ConfigurationContext
+			.getInstance());
+	private static final Twitter SINGLETON;
 
-    private final Configuration conf;
+	private final Configuration conf;
 
-    static {
-        SINGLETON = new TwitterImpl(ConfigurationContext.getInstance(), DEFAULT_AUTHORIZATION);
-    }
+	static {
+		SINGLETON = new TwitterImpl(ConfigurationContext.getInstance(), DEFAULT_AUTHORIZATION);
+	}
 
-    /**
-     * Creates a TwitterFactory with the root configuration.
-     */
-    public TwitterFactory() {
-        this(ConfigurationContext.getInstance());
-    }
+	/**
+	 * Creates a TwitterFactory with the root configuration.
+	 */
+	public TwitterFactory() {
+		this(ConfigurationContext.getInstance());
+	}
 
-    /**
-     * Creates a TwitterFactory with the given configuration.
-     * 
-     * @param conf the configuration to use
-     * @since Twitter4J 2.1.1
-     */
-    public TwitterFactory(final Configuration conf) {
-        if (conf == null)
-            throw new NullPointerException("configuration cannot be null");
-        this.conf = conf;
-    }
+	/**
+	 * Creates a TwitterFactory with the given configuration.
+	 * 
+	 * @param conf the configuration to use
+	 * @since Twitter4J 2.1.1
+	 */
+	public TwitterFactory(final Configuration conf) {
+		if (conf == null) throw new NullPointerException("configuration cannot be null");
+		this.conf = conf;
+	}
 
-    /**
-     * Returns a instance associated with the configuration bound to this
-     * factory.
-     * 
-     * @return default singleton instance
-     */
-    public Twitter getInstance() {
-        return getInstance(AuthorizationFactory.getInstance(conf));
-    }
+	/**
+	 * Returns a instance associated with the configuration bound to this
+	 * factory.
+	 * 
+	 * @return default singleton instance
+	 */
+	public Twitter getInstance() {
+		return getInstance(AuthorizationFactory.getInstance(conf));
+	}
 
-    /**
-     * Returns a OAuth Authenticated instance.<br>
-     * consumer key and consumer Secret must be provided by
-     * twitter4j.properties, or system properties.<br>
-     * Unlike {@link Twitter#setOAuthAccessToken(twitter4j.auth.AccessToken)} ,
-     * this factory method potentially returns a cached instance.
-     * 
-     * @param accessToken access token
-     * @return an instance
-     * @since Twitter4J 2.1.9
-     */
-    public Twitter getInstance(final AccessToken accessToken) {
-        final String consumerKey = conf.getOAuthConsumerKey();
-        final String consumerSecret = conf.getOAuthConsumerSecret();
-        if (null == consumerKey && null == consumerSecret)
-            throw new IllegalStateException("Consumer key and Consumer secret not supplied.");
-        final OAuthAuthorization oauth = new OAuthAuthorization(conf);
-        oauth.setOAuthAccessToken(accessToken);
-        return getInstance(oauth);
-    }
+	/**
+	 * Returns a OAuth Authenticated instance.<br>
+	 * consumer key and consumer Secret must be provided by
+	 * twitter4j.properties, or system properties.<br>
+	 * Unlike {@link Twitter#setOAuthAccessToken(twitter4j.auth.AccessToken)} ,
+	 * this factory method potentially returns a cached instance.
+	 * 
+	 * @param accessToken access token
+	 * @return an instance
+	 * @since Twitter4J 2.1.9
+	 */
+	public Twitter getInstance(final AccessToken accessToken) {
+		final String consumerKey = conf.getOAuthConsumerKey();
+		final String consumerSecret = conf.getOAuthConsumerSecret();
+		if (null == consumerKey && null == consumerSecret)
+			throw new IllegalStateException("Consumer key and Consumer secret not supplied.");
+		final OAuthAuthorization oauth = new OAuthAuthorization(conf);
+		oauth.setOAuthAccessToken(accessToken);
+		return getInstance(oauth);
+	}
 
-    public Twitter getInstance(final Authorization auth) {
-        return new TwitterImpl(conf, auth);
-    }
+	public Twitter getInstance(final Authorization auth) {
+		return new TwitterImpl(conf, auth);
+	}
 
-    /**
-     * Returns default singleton Twitter instance.
-     * 
-     * @return default singleton Twitter instance
-     * @since Twitter4J 2.2.4
-     */
-    public static Twitter getSingleton() {
-        return SINGLETON;
-    }
+	/**
+	 * Returns default singleton Twitter instance.
+	 * 
+	 * @return default singleton Twitter instance
+	 * @since Twitter4J 2.2.4
+	 */
+	public static Twitter getSingleton() {
+		return SINGLETON;
+	}
 }

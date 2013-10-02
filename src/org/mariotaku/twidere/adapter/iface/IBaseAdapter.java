@@ -26,17 +26,19 @@ import org.mariotaku.twidere.Constants;
 
 public interface IBaseAdapter extends Constants, ListAdapter {
 
-    public void notifyDataSetChanged();
+	public void notifyDataSetChanged();
 
-    public void setDisplayProfileImage(boolean display);
+	public void setDisplayProfileImage(boolean display);
 
-    public void setMenuButtonClickListener(MenuButtonClickListener listener);
+	public void setMenuButtonClickListener(MenuButtonClickListener listener);
 
-    public void setNameDisplayOption(String option);
+	public void setNameDisplayOption(String option);
 
-    public void setTextSize(float text_size);
+	public void setNicknameOnly(boolean nickname_only);
 
-    public static interface MenuButtonClickListener {
-        void onMenuButtonClick(View button, int position, long id);
-    }
+	public void setTextSize(float text_size);
+
+	public static interface MenuButtonClickListener {
+		void onMenuButtonClick(View button, int position, long id);
+	}
 }

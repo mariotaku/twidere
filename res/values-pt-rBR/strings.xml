@@ -132,7 +132,7 @@
   <string name="blocked_users">Usuários bloqueados</string>
   <string name="set_as_default">Selecionado como padrão</string>
   <string name="search_users">Procurar por Usuários</string>
-  <string name="search_tweets">Procurar por Tweets</string>
+  <string name="search_statuses">Procurar por Tweets</string>
   <string name="created_at">Criado em</string>
   <string name="search_hint">Procurar por tweets ou usuários</string>
   <string name="remember_position">Lembrar posição</string>

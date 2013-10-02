@@ -19,46 +19,45 @@ package org.mariotaku.gallery3d.ui;
 import android.view.MotionEvent;
 
 public class DownUpDetector {
-    private boolean mStillDown;
+	private boolean mStillDown;
 
-    private final DownUpListener mListener;
+	private final DownUpListener mListener;
 
-    public DownUpDetector(final DownUpListener listener) {
-        mListener = listener;
-    }
+	public DownUpDetector(final DownUpListener listener) {
+		mListener = listener;
+	}
 
-    public boolean isDown() {
-        return mStillDown;
-    }
+	public boolean isDown() {
+		return mStillDown;
+	}
 
-    public void onTouchEvent(final MotionEvent ev) {
-        switch (ev.getAction() & MotionEvent.ACTION_MASK) {
-            case MotionEvent.ACTION_DOWN:
-                setState(true, ev);
-                break;
+	public void onTouchEvent(final MotionEvent ev) {
+		switch (ev.getAction() & MotionEvent.ACTION_MASK) {
+			case MotionEvent.ACTION_DOWN:
+				setState(true, ev);
+				break;
 
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-            case MotionEvent.ACTION_POINTER_DOWN: // Multitouch event - abort.
-                setState(false, ev);
-                break;
-        }
-    }
+			case MotionEvent.ACTION_UP:
+			case MotionEvent.ACTION_CANCEL:
+			case MotionEvent.ACTION_POINTER_DOWN: // Multitouch event - abort.
+				setState(false, ev);
+				break;
+		}
+	}
 
-    private void setState(final boolean down, final MotionEvent e) {
-        if (down == mStillDown)
-            return;
-        mStillDown = down;
-        if (down) {
-            mListener.onDown(e);
-        } else {
-            mListener.onUp(e);
-        }
-    }
+	private void setState(final boolean down, final MotionEvent e) {
+		if (down == mStillDown) return;
+		mStillDown = down;
+		if (down) {
+			mListener.onDown(e);
+		} else {
+			mListener.onUp(e);
+		}
+	}
 
-    public interface DownUpListener {
-        void onDown(MotionEvent e);
+	public interface DownUpListener {
+		void onDown(MotionEvent e);
 
-        void onUp(MotionEvent e);
-    }
+		void onUp(MotionEvent e);
+	}
 }

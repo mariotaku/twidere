@@ -36,41 +36,35 @@ import java.util.List;
 
 public class UserListTimelineLoader extends Twitter4JStatusesLoader {
 
-    private final long mUserId;
-    private final String mScreenName, mListName;
-    private final int mListId;
+	private final long mUserId;
+	private final String mScreenName, mListName;
+	private final int mListId;
 
-    public UserListTimelineLoader(final Context context, final long account_id, final int list_id,
-            final long user_id,
-            final String screen_name, final String list_name, final long max_id,
-            final long since_id,
-            final List<ParcelableStatus> data, final String[] saved_statuses_args,
-            final int tab_position) {
-        super(context, account_id, max_id, since_id, data, saved_statuses_args, tab_position);
-        mListId = list_id;
-        mUserId = user_id;
-        mScreenName = screen_name;
-        mListName = list_name;
-    }
+	public UserListTimelineLoader(final Context context, final long account_id, final int list_id, final long user_id,
+			final String screen_name, final String list_name, final long max_id, final long since_id,
+			final List<ParcelableStatus> data, final String[] saved_statuses_args, final int tab_position) {
+		super(context, account_id, max_id, since_id, data, saved_statuses_args, tab_position);
+		mListId = list_id;
+		mUserId = user_id;
+		mScreenName = screen_name;
+		mListName = list_name;
+	}
 
-    @Override
-    protected ResponseList<Status> getStatuses(final Twitter twitter, final Paging paging)
-            throws TwitterException {
-        if (twitter == null)
-            return null;
-        if (mListId > 0)
-            return twitter.getUserListStatuses(mListId, paging);
-        else if (mUserId > 0)
-            return twitter.getUserListStatuses(mListName.replace(' ', '-'), mUserId, paging);
-        else if (mScreenName != null)
-            return twitter.getUserListStatuses(mListName.replace(' ', '-'), mScreenName, paging);
-        return null;
-    }
+	@Override
+	protected ResponseList<Status> getStatuses(final Twitter twitter, final Paging paging) throws TwitterException {
+		if (twitter == null) return null;
+		if (mListId > 0)
+			return twitter.getUserListStatuses(mListId, paging);
+		else if (mUserId > 0)
+			return twitter.getUserListStatuses(mListName.replace(' ', '-'), mUserId, paging);
+		else if (mScreenName != null)
+			return twitter.getUserListStatuses(mListName.replace(' ', '-'), mScreenName, paging);
+		return null;
+	}
 
-    @Override
-    protected boolean shouldFilterStatus(final SQLiteDatabase database,
-            final ParcelableStatus status) {
-        return isFiltered(database, status);
-    }
+	@Override
+	protected boolean shouldFilterStatus(final SQLiteDatabase database, final ParcelableStatus status) {
+		return isFiltered(database, status);
+	}
 
 }

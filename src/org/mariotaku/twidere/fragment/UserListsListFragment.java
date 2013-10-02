@@ -41,87 +41,82 @@ import java.util.List;
 
 public class UserListsListFragment extends BaseUserListsListFragment {
 
-    private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            if (getActivity() == null || !isAdded() || isDetached())
-                return;
-            final String action = intent.getAction();
-            if (BROADCAST_USER_LIST_DELETED.equals(action)) {
-                final ParcelableUserList list = intent.getParcelableExtra(INTENT_KEY_USER_LIST);
-                if (list != null && intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
-                    removeUserList(list.id);
-                }
-            }
-        }
-    };
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			if (getActivity() == null || !isAdded() || isDetached()) return;
+			final String action = intent.getAction();
+			if (BROADCAST_USER_LIST_DELETED.equals(action)) {
+				final ParcelableUserList list = intent.getParcelableExtra(INTENT_KEY_USER_LIST);
+				if (list != null && intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
+					removeUserList(list.id);
+				}
+			}
+		}
+	};
 
-    @Override
-    public Loader<List<ParcelableUserList>> newLoaderInstance(final long account_id,
-            final long user_id,
-            final String screen_name) {
-        return new UserListMembershipsLoader(getActivity(), account_id, user_id, screen_name,
-                getCursor(), getData());
-    }
+	@Override
+	public Loader<List<ParcelableUserList>> newLoaderInstance(final long account_id, final long user_id,
+			final String screen_name) {
+		return new UserListMembershipsLoader(getActivity(), account_id, user_id, screen_name, getCursor(), getData());
+	}
 
-    @Override
-    public void onActivityCreated(final Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
+	@Override
+	public void onActivityCreated(final Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		setHasOptionsMenu(true);
+	}
 
-    @Override
-    public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_user_list_created, menu);
-    }
+	@Override
+	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
+		inflater.inflate(R.menu.menu_user_list_created, menu);
+	}
 
-    @Override
-    public boolean onOptionsItemSelected(final MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.new_user_list: {
-                final DialogFragment f = new CreateUserListDialogFragment();
-                final Bundle args = new Bundle();
-                args.putLong(INTENT_KEY_ACCOUNT_ID, getAccountId());
-                f.setArguments(args);
-                f.show(getFragmentManager(), null);
-                return true;
-            }
-        }
-        return super.onOptionsItemSelected(item);
-    }
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.new_user_list: {
+				final DialogFragment f = new CreateUserListDialogFragment();
+				final Bundle args = new Bundle();
+				args.putLong(INTENT_KEY_ACCOUNT_ID, getAccountId());
+				f.setArguments(args);
+				f.show(getFragmentManager(), null);
+				return true;
+			}
+		}
+		return super.onOptionsItemSelected(item);
+	}
 
-    @Override
-    public void onPrepareOptionsMenu(final Menu menu) {
-        final MenuItem item = menu.findItem(R.id.new_user_list);
-        if (item == null)
-            return;
-        final long account_id = getAccountId(), user_id = getUserId();
-        final String screen_name = getAccountScreenName(getActivity(), account_id);
-        item.setVisible(user_id == account_id || screen_name != null
-                && screen_name.equalsIgnoreCase(getScreenName()));
-    }
+	@Override
+	public void onPrepareOptionsMenu(final Menu menu) {
+		final MenuItem item = menu.findItem(R.id.new_user_list);
+		if (item == null) return;
+		final long account_id = getAccountId(), user_id = getUserId();
+		final String screen_name = getAccountScreenName(getActivity(), account_id);
+		item.setVisible(user_id == account_id || screen_name != null && screen_name.equalsIgnoreCase(getScreenName()));
+	}
 
-    public void onPullUpToRefresh() {
-    }
+	public void onPullUpToRefresh() {
+	}
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        registerReceiver(mStatusReceiver, new IntentFilter(BROADCAST_USER_LIST_DELETED));
-    }
+	@Override
+	public void onStart() {
+		super.onStart();
+		registerReceiver(mStatusReceiver, new IntentFilter(BROADCAST_USER_LIST_DELETED));
+	}
 
-    @Override
-    public void onStop() {
-        unregisterReceiver(mStatusReceiver);
-        super.onStop();
-    }
+	@Override
+	public void onStop() {
+		unregisterReceiver(mStatusReceiver);
+		super.onStop();
+	}
 
-    private void removeUserList(final int id) {
-        final ParcelableUserListsAdapter adapter = getListAdapter();
-        final int lists_idx = adapter.findItemPosition(id);
-        if (lists_idx >= 0) {
-            adapter.remove(lists_idx);
-        }
-    }
+	private void removeUserList(final int id) {
+		final ParcelableUserListsAdapter adapter = getListAdapter();
+		final int lists_idx = adapter.findItemPosition(id);
+		if (lists_idx >= 0) {
+			adapter.remove(lists_idx);
+		}
+	}
 }

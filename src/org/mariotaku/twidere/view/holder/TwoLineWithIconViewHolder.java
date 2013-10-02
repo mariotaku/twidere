@@ -24,18 +24,16 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.mariotaku.twidere.R;
-
 public final class TwoLineWithIconViewHolder {
 
-    public final ImageView icon;
-    public final TextView text1, text2;
-    public final CheckBox checkbox;
+	public final ImageView icon;
+	public final TextView text1, text2;
+	public final CheckBox checkbox;
 
-    public TwoLineWithIconViewHolder(final View view) {
-        icon = (ImageView) view.findViewById(android.R.id.icon);
-        text1 = (TextView) view.findViewById(android.R.id.text1);
-        text2 = (TextView) view.findViewById(android.R.id.text2);
-        checkbox = (CheckBox) view.findViewById(R.id.checkbox);
-    }
+	public TwoLineWithIconViewHolder(final View view) {
+		icon = (ImageView) view.findViewById(android.R.id.icon);
+		text1 = (TextView) view.findViewById(android.R.id.text1);
+		text2 = (TextView) view.findViewById(android.R.id.text2);
+		checkbox = (CheckBox) view.findViewById(android.R.id.checkbox);
+	}
 }

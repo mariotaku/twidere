@@ -25,80 +25,80 @@ import java.net.URI;
  * @author Dan Checkoway - dcheckoway at gmail.com
  */
 public interface UserList extends Comparable<UserList>, TwitterResponse, Serializable {
-    /**
-     * Returns the description of the list
-     * 
-     * @return the description of the list
-     */
-    String getDescription();
+	/**
+	 * Returns the description of the list
+	 * 
+	 * @return the description of the list
+	 */
+	String getDescription();
 
-    /**
-     * Returns the full name of the list
-     * 
-     * @return the full name of the list
-     */
-    String getFullName();
+	/**
+	 * Returns the full name of the list
+	 * 
+	 * @return the full name of the list
+	 */
+	String getFullName();
 
-    /**
-     * Returns the id of the list
-     * 
-     * @return the id of the list
-     */
-    int getId();
+	/**
+	 * Returns the id of the list
+	 * 
+	 * @return the id of the list
+	 */
+	int getId();
 
-    /**
-     * Returns the member count of the list
-     * 
-     * @return the member count of the list
-     */
-    int getMemberCount();
+	/**
+	 * Returns the member count of the list
+	 * 
+	 * @return the member count of the list
+	 */
+	int getMemberCount();
 
-    /**
-     * Returns the name of the list
-     * 
-     * @return the name of the list
-     */
-    String getName();
+	/**
+	 * Returns the name of the list
+	 * 
+	 * @return the name of the list
+	 */
+	String getName();
 
-    /**
-     * Returns the slug of the list
-     * 
-     * @return the slug of the list
-     */
-    String getSlug();
+	/**
+	 * Returns the slug of the list
+	 * 
+	 * @return the slug of the list
+	 */
+	String getSlug();
 
-    /**
-     * Returns the subscriber count of the list
-     * 
-     * @return the subscriber count of the list
-     */
-    int getSubscriberCount();
+	/**
+	 * Returns the subscriber count of the list
+	 * 
+	 * @return the subscriber count of the list
+	 */
+	int getSubscriberCount();
 
-    /**
-     * Returns the uri of the list
-     * 
-     * @return the uri of the list
-     */
-    URI getURI();
+	/**
+	 * Returns the uri of the list
+	 * 
+	 * @return the uri of the list
+	 */
+	URI getURI();
 
-    /**
-     * Returns the user of the list
-     * 
-     * @return the user of the list
-     */
-    User getUser();
+	/**
+	 * Returns the user of the list
+	 * 
+	 * @return the user of the list
+	 */
+	User getUser();
 
-    /**
-     * Returns if the authenticated user is following the list
-     * 
-     * @return if the authenticated user is following the list
-     */
-    boolean isFollowing();
+	/**
+	 * Returns if the authenticated user is following the list
+	 * 
+	 * @return if the authenticated user is following the list
+	 */
+	boolean isFollowing();
 
-    /**
-     * tests if the list is public
-     * 
-     * @return if the list is public
-     */
-    boolean isPublic();
+	/**
+	 * tests if the list is public
+	 * 
+	 * @return if the list is public
+	 */
+	boolean isPublic();
 }

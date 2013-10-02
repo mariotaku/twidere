@@ -130,7 +130,7 @@
   <string name="blocked_users">المستخدمين المحظورين</string>
   <string name="set_as_default">تعيين كإفتراضي</string>
   <string name="search_users">البحث في المستخدمين</string>
-  <string name="search_tweets">البحث في التغريدات</string>
+  <string name="search_statuses">البحث في التغريدات</string>
   <string name="created_at">تم إنشاءه في</string>
   <string name="search_hint">البحث في التغريدات أو المستخدمين</string>
   <string name="remember_position">تذكر المكان</string>

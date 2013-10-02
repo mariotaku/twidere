@@ -33,26 +33,24 @@ import java.util.List;
 
 public abstract class IDsUsersLoader extends BaseCursorSupportUsersLoader {
 
-    public IDsUsersLoader(final Context context, final long account_id, final long cursor,
-            final List<ParcelableUser> data) {
-        super(context, account_id, cursor, data);
-    }
+	public IDsUsersLoader(final Context context, final long account_id, final long cursor,
+			final List<ParcelableUser> data) {
+		super(context, account_id, cursor, data);
+	}
 
-    @Override
-    public List<User> getUsers(final Twitter twitter) throws TwitterException {
-        if (twitter == null)
-            return null;
-        final CursorPaging paging = new CursorPaging(getCount());
-        if (getCursor() > 0) {
-            paging.setCursor(getCursor());
-        }
-        final IDs ids = getIDs(twitter, paging);
-        if (ids == null)
-            return null;
-        setCursorIds(ids);
-        return twitter.lookupUsers(ids.getIDs());
-    }
+	@Override
+	public List<User> getUsers(final Twitter twitter) throws TwitterException {
+		if (twitter == null) return null;
+		final CursorPaging paging = new CursorPaging(getCount());
+		if (getCursor() > 0) {
+			paging.setCursor(getCursor());
+		}
+		final IDs ids = getIDs(twitter, paging);
+		if (ids == null) return null;
+		setCursorIds(ids);
+		return twitter.lookupUsers(ids.getIDs());
+	}
 
-    protected abstract IDs getIDs(Twitter twitter, CursorPaging paging) throws TwitterException;
+	protected abstract IDs getIDs(Twitter twitter, CursorPaging paging) throws TwitterException;
 
 }

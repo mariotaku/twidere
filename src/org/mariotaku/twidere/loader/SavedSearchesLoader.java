@@ -31,29 +31,28 @@ import twitter4j.TwitterException;
 
 public class SavedSearchesLoader extends AsyncTaskLoader<ResponseList<SavedSearch>> {
 
-    private final long mAccountId;
+	private final long mAccountId;
 
-    public SavedSearchesLoader(final Context context, final long account_id) {
-        super(context);
-        mAccountId = account_id;
-    }
+	public SavedSearchesLoader(final Context context, final long account_id) {
+		super(context);
+		mAccountId = account_id;
+	}
 
-    @Override
-    public ResponseList<SavedSearch> loadInBackground() {
-        final Twitter twitter = getTwitterInstance(getContext(), mAccountId, false);
-        if (twitter == null)
-            return null;
-        try {
-            return twitter.getSavedSearches();
-        } catch (final TwitterException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+	@Override
+	public ResponseList<SavedSearch> loadInBackground() {
+		final Twitter twitter = getTwitterInstance(getContext(), mAccountId, false);
+		if (twitter == null) return null;
+		try {
+			return twitter.getSavedSearches();
+		} catch (final TwitterException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
-    @Override
-    public void onStartLoading() {
-        forceLoad();
-    }
+	@Override
+	public void onStartLoading() {
+		forceLoad();
+	}
 
 }

@@ -24,18 +24,18 @@ import twitter4j.TwitterException;
  * @author Joern Huxhorn - jhuxhorn at googlemail.com
  */
 public interface SearchResource {
-    /**
-     * Returns tweets that match a specified query. <br>
-     * This method calls http://search.twitter.com/search.json
-     * 
-     * @param query - the search condition
-     * @return the result
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @see <a href="https://dev.twitter.com/docs/api/1.1/get/search">GET search
-     *      | Twitter Developers</a>
-     * @see <a href="http://search.twitter.com/operators">Twitter API / Search
-     *      Operators</a>
-     * @since Twitter4J 1.1.7
-     */
-    QueryResult search(Query query) throws TwitterException;
+	/**
+	 * Returns tweets that match a specified query. <br>
+	 * This method calls http://search.twitter.com/search.json
+	 * 
+	 * @param query - the search condition
+	 * @return the result
+	 * @throws TwitterException when Twitter service or network is unavailable
+	 * @see <a href="https://dev.twitter.com/docs/api/1.1/get/search">GET search
+	 *      | Twitter Developers</a>
+	 * @see <a href="http://search.twitter.com/operators">Twitter API / Search
+	 *      Operators</a>
+	 * @since Twitter4J 1.1.7
+	 */
+	QueryResult search(Query query) throws TwitterException;
 }

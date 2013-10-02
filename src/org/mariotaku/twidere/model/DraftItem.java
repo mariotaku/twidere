@@ -28,64 +28,62 @@ import org.mariotaku.twidere.util.ArrayUtils;
 
 public class DraftItem implements Parcelable {
 
-    public static final Parcelable.Creator<DraftItem> CREATOR = new Parcelable.Creator<DraftItem>() {
-        @Override
-        public DraftItem createFromParcel(final Parcel in) {
-            return new DraftItem(in);
-        }
+	public static final Parcelable.Creator<DraftItem> CREATOR = new Parcelable.Creator<DraftItem>() {
+		@Override
+		public DraftItem createFromParcel(final Parcel in) {
+			return new DraftItem(in);
+		}
 
-        @Override
-        public DraftItem[] newArray(final int size) {
-            return new DraftItem[size];
-        }
-    };
+		@Override
+		public DraftItem[] newArray(final int size) {
+			return new DraftItem[size];
+		}
+	};
 
-    public final long[] account_ids;
-    public final long _id, in_reply_to_status_id;
-    public final String text, media_uri;
-    public final boolean is_possibly_sensitive;
-    public final ParcelableLocation location;
-    public final int attached_image_type;
+	public final long[] account_ids;
+	public final long _id, in_reply_to_status_id;
+	public final String text, media_uri;
+	public final boolean is_possibly_sensitive;
+	public final ParcelableLocation location;
+	public final int attached_image_type;
 
-    public DraftItem(final Cursor cursor, final int position) {
-        cursor.moveToPosition(position);
-        _id = cursor.getLong(cursor.getColumnIndex(Drafts._ID));
-        text = cursor.getString(cursor.getColumnIndex(Drafts.TEXT));
-        media_uri = cursor.getString(cursor.getColumnIndex(Drafts.IMAGE_URI));
-        account_ids = ArrayUtils.fromString(
-                cursor.getString(cursor.getColumnIndex(Drafts.ACCOUNT_IDS)), ',');
-        in_reply_to_status_id = cursor.getLong(cursor.getColumnIndex(Drafts.IN_REPLY_TO_STATUS_ID));
-        attached_image_type = cursor.getShort(cursor.getColumnIndex(Drafts.ATTACHED_IMAGE_TYPE));
-        is_possibly_sensitive = cursor
-                .getShort(cursor.getColumnIndex(Drafts.IS_POSSIBLY_SENSITIVE)) == 1;
-        location = new ParcelableLocation(cursor.getString(cursor.getColumnIndex(Drafts.LOCATION)));
-    }
+	public DraftItem(final Cursor cursor, final int position) {
+		cursor.moveToPosition(position);
+		_id = cursor.getLong(cursor.getColumnIndex(Drafts._ID));
+		text = cursor.getString(cursor.getColumnIndex(Drafts.TEXT));
+		media_uri = cursor.getString(cursor.getColumnIndex(Drafts.IMAGE_URI));
+		account_ids = ArrayUtils.fromString(cursor.getString(cursor.getColumnIndex(Drafts.ACCOUNT_IDS)), ',');
+		in_reply_to_status_id = cursor.getLong(cursor.getColumnIndex(Drafts.IN_REPLY_TO_STATUS_ID));
+		attached_image_type = cursor.getShort(cursor.getColumnIndex(Drafts.ATTACHED_IMAGE_TYPE));
+		is_possibly_sensitive = cursor.getShort(cursor.getColumnIndex(Drafts.IS_POSSIBLY_SENSITIVE)) == 1;
+		location = new ParcelableLocation(cursor.getString(cursor.getColumnIndex(Drafts.LOCATION)));
+	}
 
-    public DraftItem(final Parcel in) {
-        account_ids = in.createLongArray();
-        _id = in.readLong();
-        in_reply_to_status_id = in.readLong();
-        text = in.readString();
-        media_uri = in.readString();
-        attached_image_type = in.readInt();
-        is_possibly_sensitive = in.readInt() == 1;
-        location = ParcelableLocation.fromString(in.readString());
-    }
+	public DraftItem(final Parcel in) {
+		account_ids = in.createLongArray();
+		_id = in.readLong();
+		in_reply_to_status_id = in.readLong();
+		text = in.readString();
+		media_uri = in.readString();
+		attached_image_type = in.readInt();
+		is_possibly_sensitive = in.readInt() == 1;
+		location = ParcelableLocation.fromString(in.readString());
+	}
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
+	@Override
+	public int describeContents() {
+		return 0;
+	}
 
-    @Override
-    public void writeToParcel(final Parcel out, final int flags) {
-        out.writeLongArray(account_ids);
-        out.writeLong(_id);
-        out.writeLong(in_reply_to_status_id);
-        out.writeString(text);
-        out.writeString(media_uri);
-        out.writeInt(attached_image_type);
-        out.writeInt(is_possibly_sensitive ? 1 : 0);
-        out.writeString(ParcelableLocation.toString(location));
-    }
+	@Override
+	public void writeToParcel(final Parcel out, final int flags) {
+		out.writeLongArray(account_ids);
+		out.writeLong(_id);
+		out.writeLong(in_reply_to_status_id);
+		out.writeString(text);
+		out.writeString(media_uri);
+		out.writeInt(attached_image_type);
+		out.writeInt(is_possibly_sensitive ? 1 : 0);
+		out.writeString(ParcelableLocation.toString(location));
+	}
 }

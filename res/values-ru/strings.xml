@@ -138,7 +138,7 @@
   <string name="blocked_users">Заблокированные пользователи</string>
   <string name="set_as_default">Установить по умолчанию</string>
   <string name="search_users">Поиск пользователей</string>
-  <string name="search_tweets">Поиск твитов</string>
+  <string name="search_statuses">Поиск твитов</string>
   <string name="created_at">Создан</string>
   <string name="search_hint">Поиск твитов или пользователей</string>
   <string name="remember_position">Запомнить положение</string>

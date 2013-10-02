@@ -138,7 +138,7 @@
   <string name="blocked_users">已阻止的用戶</string>
   <string name="set_as_default">設為預設</string>
   <string name="search_users">搜索用戶</string>
-  <string name="search_tweets">搜索推文</string>
+  <string name="search_statuses">搜索推文</string>
   <string name="created_at">創建日期</string>
   <string name="search_hint">搜索推文或用戶</string>
   <string name="remember_position">記住位置</string>

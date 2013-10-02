@@ -25,20 +25,20 @@ import android.os.SystemClock;
 // as a approximation.
 //
 public class AnimationTime {
-    private static volatile long sTime;
+	private static volatile long sTime;
 
-    // Returns the animation time.
-    public static long get() {
-        return sTime;
-    }
+	// Returns the animation time.
+	public static long get() {
+		return sTime;
+	}
 
-    public static long startTime() {
-        sTime = SystemClock.uptimeMillis();
-        return sTime;
-    }
+	public static long startTime() {
+		sTime = SystemClock.uptimeMillis();
+		return sTime;
+	}
 
-    // Sets current time as the animation time.
-    public static void update() {
-        sTime = SystemClock.uptimeMillis();
-    }
+	// Sets current time as the animation time.
+	public static void update() {
+		sTime = SystemClock.uptimeMillis();
+	}
 }

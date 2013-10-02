@@ -32,27 +32,24 @@ import java.util.List;
 
 public class UserListsLoader extends BaseUserListsLoader {
 
-    public static final String LOGTAG = UserListsLoader.class.getSimpleName();
+	public static final String LOGTAG = UserListsLoader.class.getSimpleName();
 
-    private final long mUserId;
-    private final String mScreenName;
+	private final long mUserId;
+	private final String mScreenName;
 
-    public UserListsLoader(final Context context, final long account_id, final long user_id,
-            final String screen_name,
-            final List<ParcelableUserList> data) {
-        super(context, user_id, 0, data);
-        mUserId = user_id;
-        mScreenName = screen_name;
-    }
+	public UserListsLoader(final Context context, final long account_id, final long user_id, final String screen_name,
+			final List<ParcelableUserList> data) {
+		super(context, user_id, 0, data);
+		mUserId = user_id;
+		mScreenName = screen_name;
+	}
 
-    @Override
-    public ResponseList<UserList> getUserLists(final Twitter twitter) throws TwitterException {
-        if (twitter == null)
-            return null;
-        if (mUserId > 0)
-            return twitter.getUserLists(mUserId);
-        else if (mScreenName != null)
-            return twitter.getUserLists(mScreenName);
-        return null;
-    }
+	@Override
+	public ResponseList<UserList> getUserLists(final Twitter twitter) throws TwitterException {
+		if (twitter == null) return null;
+		if (mUserId > 0)
+			return twitter.getUserLists(mUserId);
+		else if (mScreenName != null) return twitter.getUserLists(mScreenName);
+		return null;
+	}
 }

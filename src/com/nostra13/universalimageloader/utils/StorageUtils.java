@@ -33,100 +33,97 @@ import java.io.IOException;
  */
 public final class StorageUtils {
 
-    private static final String EXTERNAL_STORAGE_PERMISSION = "android.permission.WRITE_EXTERNAL_STORAGE";
-    private static final String INDIVIDUAL_DIR_NAME = "uil-images";
+	private static final String EXTERNAL_STORAGE_PERMISSION = "android.permission.WRITE_EXTERNAL_STORAGE";
+	private static final String INDIVIDUAL_DIR_NAME = "uil-images";
 
-    private StorageUtils() {
-    }
+	private StorageUtils() {
+	}
 
-    /**
-     * Returns application cache directory. Cache directory will be created on
-     * SD card <i>("/Android/data/[app_package_name]/cache")</i> if card is
-     * mounted and app has appropriate permission. Else - Android defines cache
-     * directory on device's file system.
-     * 
-     * @param context Application context
-     * @return Cache {@link File directory}
-     */
-    public static File getCacheDirectory(final Context context) {
-        File appCacheDir = null;
-        if (MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
-                && hasExternalStoragePermission(context)) {
-            appCacheDir = getExternalCacheDir(context);
-        }
-        if (appCacheDir == null) {
-            appCacheDir = context.getCacheDir();
-        }
-        if (appCacheDir == null) {
-            L.w("Can't define system cache directory! The app should be re-installed.");
-        }
-        return appCacheDir;
-    }
+	/**
+	 * Returns application cache directory. Cache directory will be created on
+	 * SD card <i>("/Android/data/[app_package_name]/cache")</i> if card is
+	 * mounted and app has appropriate permission. Else - Android defines cache
+	 * directory on device's file system.
+	 * 
+	 * @param context Application context
+	 * @return Cache {@link File directory}
+	 */
+	public static File getCacheDirectory(final Context context) {
+		File appCacheDir = null;
+		if (MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) && hasExternalStoragePermission(context)) {
+			appCacheDir = getExternalCacheDir(context);
+		}
+		if (appCacheDir == null) {
+			appCacheDir = context.getCacheDir();
+		}
+		if (appCacheDir == null) {
+			L.w("Can't define system cache directory! The app should be re-installed.");
+		}
+		return appCacheDir;
+	}
 
-    /**
-     * Returns individual application cache directory (for only image caching
-     * from ImageLoader). Cache directory will be created on SD card
-     * <i>("/Android/data/[app_package_name]/cache/uil-images")</i> if card is
-     * mounted and app has appropriate permission. Else - Android defines cache
-     * directory on device's file system.
-     * 
-     * @param context Application context
-     * @return Cache {@link File directory}
-     */
-    public static File getIndividualCacheDirectory(final Context context) {
-        final File cacheDir = getCacheDirectory(context);
-        File individualCacheDir = new File(cacheDir, INDIVIDUAL_DIR_NAME);
-        if (!individualCacheDir.exists()) {
-            if (!individualCacheDir.mkdir()) {
-                individualCacheDir = cacheDir;
-            }
-        }
-        return individualCacheDir;
-    }
+	/**
+	 * Returns individual application cache directory (for only image caching
+	 * from ImageLoader). Cache directory will be created on SD card
+	 * <i>("/Android/data/[app_package_name]/cache/uil-images")</i> if card is
+	 * mounted and app has appropriate permission. Else - Android defines cache
+	 * directory on device's file system.
+	 * 
+	 * @param context Application context
+	 * @return Cache {@link File directory}
+	 */
+	public static File getIndividualCacheDirectory(final Context context) {
+		final File cacheDir = getCacheDirectory(context);
+		File individualCacheDir = new File(cacheDir, INDIVIDUAL_DIR_NAME);
+		if (!individualCacheDir.exists()) {
+			if (!individualCacheDir.mkdir()) {
+				individualCacheDir = cacheDir;
+			}
+		}
+		return individualCacheDir;
+	}
 
-    /**
-     * Returns specified application cache directory. Cache directory will be
-     * created on SD card by defined path if card is mounted and app has
-     * appropriate permission. Else - Android defines cache directory on
-     * device's file system.
-     * 
-     * @param context Application context
-     * @param cacheDir Cache directory path (e.g.: "AppCacheDir",
-     *            "AppDir/cache/images")
-     * @return Cache {@link File directory}
-     */
-    public static File getOwnCacheDirectory(final Context context, final String cacheDir) {
-        File appCacheDir = null;
-        if (MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
-                && hasExternalStoragePermission(context)) {
-            appCacheDir = new File(Environment.getExternalStorageDirectory(), cacheDir);
-        }
-        if (appCacheDir == null || !appCacheDir.exists() && !appCacheDir.mkdirs()) {
-            appCacheDir = context.getCacheDir();
-        }
-        return appCacheDir;
-    }
+	/**
+	 * Returns specified application cache directory. Cache directory will be
+	 * created on SD card by defined path if card is mounted and app has
+	 * appropriate permission. Else - Android defines cache directory on
+	 * device's file system.
+	 * 
+	 * @param context Application context
+	 * @param cacheDir Cache directory path (e.g.: "AppCacheDir",
+	 *            "AppDir/cache/images")
+	 * @return Cache {@link File directory}
+	 */
+	public static File getOwnCacheDirectory(final Context context, final String cacheDir) {
+		File appCacheDir = null;
+		if (MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) && hasExternalStoragePermission(context)) {
+			appCacheDir = new File(Environment.getExternalStorageDirectory(), cacheDir);
+		}
+		if (appCacheDir == null || !appCacheDir.exists() && !appCacheDir.mkdirs()) {
+			appCacheDir = context.getCacheDir();
+		}
+		return appCacheDir;
+	}
 
-    private static File getExternalCacheDir(final Context context) {
-        final File dataDir = new File(
-                new File(Environment.getExternalStorageDirectory(), "Android"), "data");
-        final File appCacheDir = new File(new File(dataDir, context.getPackageName()), "cache");
-        if (!appCacheDir.exists()) {
-            if (!appCacheDir.mkdirs()) {
-                L.w("Unable to create external cache directory");
-                return null;
-            }
-            try {
-                new File(appCacheDir, ".nomedia").createNewFile();
-            } catch (final IOException e) {
-                L.i("Can't create \".nomedia\" file in application external cache directory");
-            }
-        }
-        return appCacheDir;
-    }
+	private static File getExternalCacheDir(final Context context) {
+		final File dataDir = new File(new File(Environment.getExternalStorageDirectory(), "Android"), "data");
+		final File appCacheDir = new File(new File(dataDir, context.getPackageName()), "cache");
+		if (!appCacheDir.exists()) {
+			if (!appCacheDir.mkdirs()) {
+				L.w("Unable to create external cache directory");
+				return null;
+			}
+			try {
+				new File(appCacheDir, ".nomedia").createNewFile();
+			} catch (final IOException e) {
+				L.i("Can't create \".nomedia\" file in application external cache directory");
+			}
+		}
+		return appCacheDir;
+	}
 
-    private static boolean hasExternalStoragePermission(final Context context) {
-        final int perm = context.checkCallingOrSelfPermission(EXTERNAL_STORAGE_PERMISSION);
-        return perm == PackageManager.PERMISSION_GRANTED;
-    }
+	private static boolean hasExternalStoragePermission(final Context context) {
+		final int perm = context.checkCallingOrSelfPermission(EXTERNAL_STORAGE_PERMISSION);
+		return perm == PackageManager.PERMISSION_GRANTED;
+	}
 }

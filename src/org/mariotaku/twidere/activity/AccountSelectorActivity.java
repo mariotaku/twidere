@@ -46,175 +46,166 @@ import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
 import java.util.List;
 
-public class AccountSelectorActivity extends BaseSupportDialogActivity implements
-        LoaderCallbacks<Cursor>,
-        OnItemClickListener, OnClickListener {
+public class AccountSelectorActivity extends BaseSupportDialogActivity implements LoaderCallbacks<Cursor>,
+		OnItemClickListener, OnClickListener {
 
-    private ListView mListView;
-    private AccountsAdapter mAdapter;
-    private final List<Long> mSelectedIds = new NoDuplicatesArrayList<Long>();
+	private ListView mListView;
+	private AccountsAdapter mAdapter;
+	private final List<Long> mSelectedIds = new NoDuplicatesArrayList<Long>();
 
-    private SharedPreferences mPreferences;
+	private SharedPreferences mPreferences;
 
-    private boolean mAllowSelectNone, mOAuthOnly;
+	private boolean mAllowSelectNone, mOAuthOnly;
 
-    private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            final String action = intent.getAction();
-            if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
-                if (!isFinishing()) {
-                    getLoaderManager().restartLoader(0, null, AccountSelectorActivity.this);
-                }
-            }
-        }
-    };
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			final String action = intent.getAction();
+			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
+				if (!isFinishing()) {
+					getLoaderManager().restartLoader(0, null, AccountSelectorActivity.this);
+				}
+			}
+		}
+	};
 
-    @Override
-    public void onClick(final View view) {
-        switch (view.getId()) {
-            case R.id.save: {
-                if (mSelectedIds.size() <= 0 && !mAllowSelectNone) {
-                    Toast.makeText(this, R.string.no_account_selected, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                final Bundle bundle = new Bundle();
-                final long[] ids = new long[mSelectedIds.size()];
-                int i = 0;
-                for (final Long id_long : mSelectedIds) {
-                    ids[i] = id_long;
-                    i++;
-                }
-                bundle.putLongArray(INTENT_KEY_IDS, ids);
-                setResult(RESULT_OK, new Intent().putExtras(bundle));
-                finish();
-                break;
-            }
-            case R.id.add_account: {
-                final Intent intent = new Intent(INTENT_ACTION_TWITTER_LOGIN);
-                intent.setClass(this, SignInActivity.class);
-                startActivity(intent);
-                finish();
-                break;
-            }
-        }
-    }
+	@Override
+	public void onClick(final View view) {
+		switch (view.getId()) {
+			case R.id.save: {
+				if (mSelectedIds.size() <= 0 && !mAllowSelectNone) {
+					Toast.makeText(this, R.string.no_account_selected, Toast.LENGTH_SHORT).show();
+					return;
+				}
+				final Bundle bundle = new Bundle();
+				final long[] ids = new long[mSelectedIds.size()];
+				int i = 0;
+				for (final Long id_long : mSelectedIds) {
+					ids[i] = id_long;
+					i++;
+				}
+				bundle.putLongArray(INTENT_KEY_IDS, ids);
+				setResult(RESULT_OK, new Intent().putExtras(bundle));
+				finish();
+				break;
+			}
+			case R.id.add_account: {
+				final Intent intent = new Intent(INTENT_ACTION_TWITTER_LOGIN);
+				intent.setClass(this, SignInActivity.class);
+				startActivity(intent);
+				finish();
+				break;
+			}
+		}
+	}
 
-    @Override
-    public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
-        final String where = mOAuthOnly ? Accounts.AUTH_TYPE + " = " + Accounts.AUTH_TYPE_OAUTH
-                : null;
-        return new CursorLoader(this, Accounts.CONTENT_URI, Accounts.COLUMNS, where, null, null);
-    }
+	@Override
+	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
+		final String where = mOAuthOnly ? Accounts.AUTH_TYPE + " = " + Accounts.AUTH_TYPE_OAUTH : null;
+		return new CursorLoader(this, Accounts.CONTENT_URI, Accounts.COLUMNS, where, null, null);
+	}
 
-    @Override
-    public void onItemClick(final AdapterView<?> adapter, final View view, final int position,
-            final long id) {
-        final boolean checked = mAdapter.isChecked(position);
-        mAdapter.setItemChecked(position, !checked);
-        final long user_id = mAdapter.getAccountIdAt(position);
-        if (checked) {
-            mSelectedIds.remove(user_id);
-        } else {
-            mSelectedIds.add(user_id);
-        }
-    }
+	@Override
+	public void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
+		final boolean checked = mAdapter.isChecked(position);
+		mAdapter.setItemChecked(position, !checked);
+		final long user_id = mAdapter.getAccountIdAt(position);
+		if (checked) {
+			mSelectedIds.remove(user_id);
+		} else {
+			mSelectedIds.add(user_id);
+		}
+	}
 
-    @Override
-    public void onLoaderReset(final Loader<Cursor> loader) {
-        mAdapter.swapCursor(null);
-    }
+	@Override
+	public void onLoaderReset(final Loader<Cursor> loader) {
+		mAdapter.swapCursor(null);
+	}
 
-    @Override
-    public void onLoadFinished(final Loader<Cursor> loader, final Cursor cursor) {
-        mAdapter.swapCursor(cursor);
-        final SparseBooleanArray checked = new SparseBooleanArray();
-        cursor.moveToFirst();
-        if (mSelectedIds.size() == 0) {
-            if (mAllowSelectNone)
-                return;
-            while (!cursor.isAfterLast()) {
-                final boolean is_activated = cursor.getInt(cursor
-                        .getColumnIndexOrThrow(Accounts.IS_ACTIVATED)) == 1;
-                final long user_id = cursor.getLong(cursor
-                        .getColumnIndexOrThrow(Accounts.ACCOUNT_ID));
-                if (is_activated) {
-                    mSelectedIds.add(user_id);
-                }
-                mAdapter.setItemChecked(cursor.getPosition(), is_activated);
-                cursor.moveToNext();
-            }
-        } else {
-            while (!cursor.isAfterLast()) {
-                final long user_id = cursor.getLong(cursor
-                        .getColumnIndexOrThrow(Accounts.ACCOUNT_ID));
-                if (mSelectedIds.contains(user_id)) {
-                    checked.put(cursor.getPosition(), true);
-                    mAdapter.setItemChecked(cursor.getPosition(), true);
-                }
-                cursor.moveToNext();
-            }
-        }
-    }
+	@Override
+	public void onLoadFinished(final Loader<Cursor> loader, final Cursor cursor) {
+		mAdapter.swapCursor(cursor);
+		final SparseBooleanArray checked = new SparseBooleanArray();
+		cursor.moveToFirst();
+		if (mSelectedIds.size() == 0) {
+			if (mAllowSelectNone) return;
+			while (!cursor.isAfterLast()) {
+				final boolean is_activated = cursor.getInt(cursor.getColumnIndexOrThrow(Accounts.IS_ACTIVATED)) == 1;
+				final long user_id = cursor.getLong(cursor.getColumnIndexOrThrow(Accounts.ACCOUNT_ID));
+				if (is_activated) {
+					mSelectedIds.add(user_id);
+				}
+				mAdapter.setItemChecked(cursor.getPosition(), is_activated);
+				cursor.moveToNext();
+			}
+		} else {
+			while (!cursor.isAfterLast()) {
+				final long user_id = cursor.getLong(cursor.getColumnIndexOrThrow(Accounts.ACCOUNT_ID));
+				if (mSelectedIds.contains(user_id)) {
+					checked.put(cursor.getPosition(), true);
+					mAdapter.setItemChecked(cursor.getPosition(), true);
+				}
+				cursor.moveToNext();
+			}
+		}
+	}
 
-    @Override
-    public void onSaveInstanceState(final Bundle outState) {
-        outState.putLongArray(Constants.INTENT_KEY_IDS, ArrayUtils.fromList(mSelectedIds));
-        super.onSaveInstanceState(outState);
-    }
+	@Override
+	public void onSaveInstanceState(final Bundle outState) {
+		outState.putLongArray(Constants.INTENT_KEY_IDS, ArrayUtils.fromList(mSelectedIds));
+		super.onSaveInstanceState(outState);
+	}
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        final IntentFilter filter = new IntentFilter(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
-        registerReceiver(mStateReceiver, filter);
+	@Override
+	public void onStart() {
+		super.onStart();
+		final IntentFilter filter = new IntentFilter(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
+		registerReceiver(mStateReceiver, filter);
 
-    }
+	}
 
-    @Override
-    protected void onCreate(final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-        final Bundle extras = getIntent().getExtras();
-        setContentView(R.layout.select_account);
-        mListView = (ListView) findViewById(android.R.id.list);
-        mAdapter = new AccountsAdapter(this, true);
-        mListView.setAdapter(mAdapter);
-        mListView.setOnItemClickListener(this);
-        final long[] activated_ids;
-        if (savedInstanceState != null) {
-            activated_ids = savedInstanceState.getLongArray(INTENT_KEY_IDS);
-        } else if (extras != null) {
-            activated_ids = extras.getLongArray(INTENT_KEY_IDS);
-        } else {
-            activated_ids = null;
-        }
-        mAllowSelectNone = extras != null ? extras.getBoolean(INTENT_KEY_ALLOW_SELECT_NONE, false)
-                : false;
-        mOAuthOnly = extras != null ? extras.getBoolean(INTENT_KEY_OAUTH_ONLY, false) : false;
-        mSelectedIds.clear();
-        if (activated_ids != null) {
-            for (final long id : activated_ids) {
-                mSelectedIds.add(id);
-            }
-        }
-        getLoaderManager().initLoader(0, null, this);
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+		final Bundle extras = getIntent().getExtras();
+		setContentView(R.layout.select_account);
+		mListView = (ListView) findViewById(android.R.id.list);
+		mAdapter = new AccountsAdapter(this, true);
+		mListView.setAdapter(mAdapter);
+		mListView.setOnItemClickListener(this);
+		final long[] activated_ids;
+		if (savedInstanceState != null) {
+			activated_ids = savedInstanceState.getLongArray(INTENT_KEY_IDS);
+		} else if (extras != null) {
+			activated_ids = extras.getLongArray(INTENT_KEY_IDS);
+		} else {
+			activated_ids = null;
+		}
+		mAllowSelectNone = extras != null ? extras.getBoolean(INTENT_KEY_ALLOW_SELECT_NONE, false) : false;
+		mOAuthOnly = extras != null ? extras.getBoolean(INTENT_KEY_OAUTH_ONLY, false) : false;
+		mSelectedIds.clear();
+		if (activated_ids != null) {
+			for (final long id : activated_ids) {
+				mSelectedIds.add(id);
+			}
+		}
+		getLoaderManager().initLoader(0, null, this);
 
-    }
+	}
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        final boolean display_profile_image = mPreferences.getBoolean(
-                PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-        mAdapter.setDisplayProfileImage(display_profile_image);
-    }
+	@Override
+	protected void onResume() {
+		super.onResume();
+		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		mAdapter.setDisplayProfileImage(display_profile_image);
+	}
 
-    @Override
-    protected void onStop() {
-        unregisterReceiver(mStateReceiver);
-        super.onStop();
-    }
+	@Override
+	protected void onStop() {
+		unregisterReceiver(mStateReceiver);
+		super.onStop();
+	}
 
 }

@@ -43,118 +43,105 @@ import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
 
-public class TrendsFragment extends BasePullToRefreshListFragment implements
-        LoaderCallbacks<Cursor>, Panes.Left {
+public class TrendsFragment extends BasePullToRefreshListFragment implements LoaderCallbacks<Cursor>, Panes.Left {
 
-    private MultiSelectManager mMultiSelectManager;
-    private SharedPreferences mPreferences;
+	private MultiSelectManager mMultiSelectManager;
+	private SharedPreferences mPreferences;
 
-    private TrendsAdapter mTrendsAdapter;
+	private TrendsAdapter mTrendsAdapter;
 
-    private long mAccountId;
+	private long mAccountId;
 
-    private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            if (getActivity() == null || !isAdded() || isDetached())
-                return;
-            final String action = intent.getAction();
-            if (BROADCAST_TRENDS_UPDATED.equals(action)) {
-                setRefreshComplete();
-                getLoaderManager().restartLoader(0, null, TrendsFragment.this);
-            } else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
-                final AsyncTwitterWrapper twitter = getTwitterWrapper();
-                setRefreshing(twitter != null && twitter.isLocalTrendsRefreshing());
-            }
-        }
-    };
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			if (getActivity() == null || !isAdded() || isDetached()) return;
+			final String action = intent.getAction();
+			if (BROADCAST_TRENDS_UPDATED.equals(action)) {
+				setRefreshComplete();
+				getLoaderManager().restartLoader(0, null, TrendsFragment.this);
+			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
+				final AsyncTwitterWrapper twitter = getTwitterWrapper();
+				setRefreshing(twitter != null && twitter.isLocalTrendsRefreshing());
+			}
+		}
+	};
 
-    @Override
-    public String getPullToRefreshTag() {
-        return "trends";
-    }
+	@Override
+	public String getPullToRefreshTag() {
+		return "trends";
+	}
 
-    @Override
-    public void onActivityCreated(final Bundle savedInstanceState) {
-        mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-        super.onActivityCreated(savedInstanceState);
-        mMultiSelectManager = getMultiSelectManager();
-        mAccountId = getDefaultAccountId(getActivity());
-        mTrendsAdapter = new TrendsAdapter(getActivity());
-        setListAdapter(mTrendsAdapter);
-        getLoaderManager().initLoader(0, null, this);
-    }
+	@Override
+	public void onActivityCreated(final Bundle savedInstanceState) {
+		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		super.onActivityCreated(savedInstanceState);
+		mMultiSelectManager = getMultiSelectManager();
+		mAccountId = getDefaultAccountId(getActivity());
+		mTrendsAdapter = new TrendsAdapter(getActivity());
+		setListAdapter(mTrendsAdapter);
+		getLoaderManager().initLoader(0, null, this);
+	}
 
-    @Override
-    public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
-        final Uri uri = CachedTrends.Local.CONTENT_URI;
-        final String table = getTableNameByUri(uri);
-        final String where = table != null ? CachedTrends.TIMESTAMP + " = " + "(SELECT "
-                + CachedTrends.TIMESTAMP
-                + " FROM " + table + " ORDER BY " + CachedTrends.TIMESTAMP + " DESC LIMIT 1)"
-                : null;
-        return new CursorLoader(getActivity(), uri, CachedTrends.COLUMNS, where, null, null);
-    }
+	@Override
+	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
+		final Uri uri = CachedTrends.Local.CONTENT_URI;
+		final String table = getTableNameByUri(uri);
+		final String where = table != null ? CachedTrends.TIMESTAMP + " = " + "(SELECT " + CachedTrends.TIMESTAMP
+				+ " FROM " + table + " ORDER BY " + CachedTrends.TIMESTAMP + " DESC LIMIT 1)" : null;
+		return new CursorLoader(getActivity(), uri, CachedTrends.COLUMNS, where, null, null);
+	}
 
-    @Override
-    public void onListItemClick(final ListView l, final View v, final int position, final long id) {
-        if (mMultiSelectManager.isActive())
-            return;
-        final Cursor cur = (Cursor) mTrendsAdapter.getItem(position - l.getHeaderViewsCount());
-        if (cur == null)
-            return;
-        openTweetSearch(getActivity(), mAccountId,
-                cur.getString(cur.getColumnIndex(CachedTrends.NAME)));
-    }
+	@Override
+	public void onListItemClick(final ListView l, final View v, final int position, final long id) {
+		if (mMultiSelectManager.isActive()) return;
+		final Cursor cur = (Cursor) mTrendsAdapter.getItem(position - l.getHeaderViewsCount());
+		if (cur == null) return;
+		openTweetSearch(getActivity(), mAccountId, cur.getString(cur.getColumnIndex(CachedTrends.NAME)));
+	}
 
-    @Override
-    public void onLoaderReset(final Loader<Cursor> loader) {
-        mTrendsAdapter.swapCursor(null);
-    }
+	@Override
+	public void onLoaderReset(final Loader<Cursor> loader) {
+		mTrendsAdapter.swapCursor(null);
+	}
 
-    @Override
-    public void onLoadFinished(final Loader<Cursor> loader, final Cursor cursor) {
-        mTrendsAdapter.swapCursor(cursor);
-    }
+	@Override
+	public void onLoadFinished(final Loader<Cursor> loader, final Cursor cursor) {
+		mTrendsAdapter.swapCursor(cursor);
+	}
 
-    @Override
-    public void onRefreshStarted() {
-        super.onRefreshStarted();
-        final AsyncTwitterWrapper twitter = getTwitterWrapper();
-        if (twitter == null)
-            return;
-        twitter.getLocalTrends(mAccountId,
-                mPreferences.getInt(PREFERENCE_KEY_LOCAL_TRENDS_WOEID, 1));
-    }
+	@Override
+	public void onRefreshStarted() {
+		super.onRefreshStarted();
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		if (twitter == null) return;
+		twitter.getLocalTrends(mAccountId, mPreferences.getInt(PREFERENCE_KEY_LOCAL_TRENDS_WOEID, 1));
+	}
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        final IntentFilter filter = new IntentFilter(BROADCAST_TRENDS_UPDATED);
-        filter.addAction(BROADCAST_TASK_STATE_CHANGED);
-        registerReceiver(mStatusReceiver, filter);
-        final AsyncTwitterWrapper twitter = getTwitterWrapper();
-        setRefreshing(twitter != null && twitter.isLocalTrendsRefreshing());
-    }
+	@Override
+	public void onStart() {
+		super.onStart();
+		final IntentFilter filter = new IntentFilter(BROADCAST_TRENDS_UPDATED);
+		filter.addAction(BROADCAST_TASK_STATE_CHANGED);
+		registerReceiver(mStatusReceiver, filter);
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		setRefreshing(twitter != null && twitter.isLocalTrendsRefreshing());
+	}
 
-    @Override
-    public void onStop() {
-        unregisterReceiver(mStatusReceiver);
-        super.onStop();
-    }
+	@Override
+	public void onStop() {
+		unregisterReceiver(mStatusReceiver);
+		super.onStop();
+	}
 
-    static class TrendsAdapter extends SimpleCursorAdapter {
+	static class TrendsAdapter extends SimpleCursorAdapter {
 
-        public TrendsAdapter(final Context context) {
-            super(context, android.R.layout.simple_list_item_1, null, new String[] {
-                CachedTrends.NAME
-            },
-                    new int[] {
-                        android.R.id.text1
-                    }, 0);
-        }
+		public TrendsAdapter(final Context context) {
+			super(context, android.R.layout.simple_list_item_1, null, new String[] { CachedTrends.NAME },
+					new int[] { android.R.id.text1 }, 0);
+		}
 
-    }
+	}
 
 }

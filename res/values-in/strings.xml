@@ -132,7 +132,7 @@
   <string name="blocked_users">Pengguna diblokir</string>
   <string name="set_as_default">Tetapkan sebagai default</string>
   <string name="search_users">Pencarian pengguna</string>
-  <string name="search_tweets">Pencarian tweets</string>
+  <string name="search_statuses">Pencarian tweets</string>
   <string name="created_at">Dibuat pada</string>
   <string name="search_hint">Pencarian tweets atau pengguna</string>
   <string name="remember_position">Ingat posisi</string>

@@ -32,64 +32,64 @@ import android.graphics.drawable.Drawable;
  */
 public class AlphaPatternDrawable extends Drawable {
 
-    private final int mRectangleSize;
+	private final int mRectangleSize;
 
-    private int numRectanglesHorizontal;
-    private int numRectanglesVertical;
+	private int numRectanglesHorizontal;
+	private int numRectanglesVertical;
 
-    private final Rect mRect = new Rect(), mBounds = new Rect();
-    private final Paint mPaint = new Paint();
+	private final Rect mRect = new Rect(), mBounds = new Rect();
+	private final Paint mPaint = new Paint();
 
-    public AlphaPatternDrawable(final int rectangleSize) {
-        mRectangleSize = rectangleSize;
-    }
+	public AlphaPatternDrawable(final int rectangleSize) {
+		mRectangleSize = rectangleSize;
+	}
 
-    @Override
-    public void draw(final Canvas canvas) {
+	@Override
+	public void draw(final Canvas canvas) {
 
-        boolean verticalStartWhite = true;
-        for (int i = 0; i <= numRectanglesVertical; i++) {
-            boolean horizontalStartWhite = verticalStartWhite;
-            for (int j = 0; j <= numRectanglesHorizontal; j++) {
-                mRect.setEmpty();
-                mRect.top = i * mRectangleSize + mBounds.top;
-                mRect.left = j * mRectangleSize + mBounds.left;
-                mRect.bottom = Math.min(mRect.top + mRectangleSize, mBounds.bottom);
-                mRect.right = Math.min(mRect.left + mRectangleSize, mBounds.right);
+		boolean verticalStartWhite = true;
+		for (int i = 0; i <= numRectanglesVertical; i++) {
+			boolean horizontalStartWhite = verticalStartWhite;
+			for (int j = 0; j <= numRectanglesHorizontal; j++) {
+				mRect.setEmpty();
+				mRect.top = i * mRectangleSize + mBounds.top;
+				mRect.left = j * mRectangleSize + mBounds.left;
+				mRect.bottom = Math.min(mRect.top + mRectangleSize, mBounds.bottom);
+				mRect.right = Math.min(mRect.left + mRectangleSize, mBounds.right);
 
-                mPaint.setColor(horizontalStartWhite ? Color.WHITE : Color.GRAY);
-                canvas.drawRect(mRect, mPaint);
+				mPaint.setColor(horizontalStartWhite ? Color.WHITE : Color.GRAY);
+				canvas.drawRect(mRect, mPaint);
 
-                horizontalStartWhite = !horizontalStartWhite;
-            }
-            verticalStartWhite = !verticalStartWhite;
-        }
-    }
+				horizontalStartWhite = !horizontalStartWhite;
+			}
+			verticalStartWhite = !verticalStartWhite;
+		}
+	}
 
-    @Override
-    public int getOpacity() {
-        return 0;
-    }
+	@Override
+	public int getOpacity() {
+		return 0;
+	}
 
-    @Override
-    public void setAlpha(final int alpha) {
+	@Override
+	public void setAlpha(final int alpha) {
 
-    }
+	}
 
-    @Override
-    public void setColorFilter(final ColorFilter cf) {
+	@Override
+	public void setColorFilter(final ColorFilter cf) {
 
-    }
+	}
 
-    @Override
-    protected void onBoundsChange(final Rect bounds) {
-        super.onBoundsChange(bounds);
-        mBounds.set(bounds);
-        final int height = bounds.height();
-        final int width = bounds.width();
-        numRectanglesHorizontal = (int) Math.ceil(width / mRectangleSize);
-        numRectanglesVertical = (int) Math.ceil(height / mRectangleSize);
-        invalidateSelf();
-    }
+	@Override
+	protected void onBoundsChange(final Rect bounds) {
+		super.onBoundsChange(bounds);
+		mBounds.set(bounds);
+		final int height = bounds.height();
+		final int width = bounds.width();
+		numRectanglesHorizontal = (int) Math.ceil(width / mRectangleSize);
+		numRectanglesVertical = (int) Math.ceil(height / mRectangleSize);
+		invalidateSelf();
+	}
 
 }

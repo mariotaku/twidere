@@ -25,30 +25,30 @@ import twitter4j.http.HttpRequest;
  */
 public class TwipOModeAuthorization implements Authorization {
 
-    private static TwipOModeAuthorization SINGLETON = new TwipOModeAuthorization();
+	private static TwipOModeAuthorization SINGLETON = new TwipOModeAuthorization();
 
-    public TwipOModeAuthorization() {
+	public TwipOModeAuthorization() {
 
-    }
+	}
 
-    @Override
-    public boolean equals(final Object o) {
-        return SINGLETON == o;
-    }
+	@Override
+	public boolean equals(final Object o) {
+		return SINGLETON == o;
+	}
 
-    @Override
-    public String getAuthorizationHeader(final HttpRequest req) {
-        return null;
-    }
+	@Override
+	public String getAuthorizationHeader(final HttpRequest req) {
+		return null;
+	}
 
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
 
-    @Override
-    public String toString() {
-        return "TwipOModeAuthentication{SINGLETON}";
-    }
+	@Override
+	public String toString() {
+		return "TwipOModeAuthentication{SINGLETON}";
+	}
 
 }

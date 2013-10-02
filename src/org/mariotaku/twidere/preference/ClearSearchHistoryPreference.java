@@ -27,30 +27,27 @@ import android.util.AttributeSet;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.provider.RecentSearchProvider;
 
-public class ClearSearchHistoryPreference extends AsyncTaskPreference implements Constants,
-        OnPreferenceClickListener {
+public class ClearSearchHistoryPreference extends AsyncTaskPreference implements Constants, OnPreferenceClickListener {
 
-    public ClearSearchHistoryPreference(final Context context) {
-        this(context, null);
-    }
+	public ClearSearchHistoryPreference(final Context context) {
+		this(context, null);
+	}
 
-    public ClearSearchHistoryPreference(final Context context, final AttributeSet attrs) {
-        this(context, attrs, android.R.attr.preferenceStyle);
-    }
+	public ClearSearchHistoryPreference(final Context context, final AttributeSet attrs) {
+		this(context, attrs, android.R.attr.preferenceStyle);
+	}
 
-    public ClearSearchHistoryPreference(final Context context, final AttributeSet attrs,
-            final int defStyle) {
-        super(context, attrs, defStyle);
-    }
+	public ClearSearchHistoryPreference(final Context context, final AttributeSet attrs, final int defStyle) {
+		super(context, attrs, defStyle);
+	}
 
-    @Override
-    protected void doInBackground() {
-        final Context context = getContext();
-        if (context == null)
-            return;
-        final SearchRecentSuggestions suggestions = new SearchRecentSuggestions(context,
-                RecentSearchProvider.AUTHORITY, RecentSearchProvider.MODE);
-        suggestions.clearHistory();
-    }
+	@Override
+	protected void doInBackground() {
+		final Context context = getContext();
+		if (context == null) return;
+		final SearchRecentSuggestions suggestions = new SearchRecentSuggestions(context,
+				RecentSearchProvider.AUTHORITY, RecentSearchProvider.MODE);
+		suggestions.clearHistory();
+	}
 
 }

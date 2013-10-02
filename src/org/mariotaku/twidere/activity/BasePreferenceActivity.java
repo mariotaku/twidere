@@ -31,49 +31,49 @@ import org.mariotaku.twidere.util.ThemeUtils;
 
 class BasePreferenceActivity extends PreferenceActivity implements Constants, IThemedActivity {
 
-    private int mCurrentThemeResource;
+	private int mCurrentThemeResource;
 
-    public TwidereApplication getTwidereApplication() {
-        return (TwidereApplication) getApplication();
-    }
+	public TwidereApplication getTwidereApplication() {
+		return (TwidereApplication) getApplication();
+	}
 
-    protected final int getCurrentThemeResource() {
-        return mCurrentThemeResource;
-    }
+	protected final int getCurrentThemeResource() {
+		return mCurrentThemeResource;
+	}
 
-    protected int getThemeResource() {
-        return ThemeUtils.getThemeResource(this);
-    }
+	protected int getThemeResource() {
+		return ThemeUtils.getThemeResource(this);
+	}
 
-    @Override
-    protected void onCreate(final Bundle savedInstanceState) {
-        setTheme();
-        super.onCreate(savedInstanceState);
-        setActionBarBackground();
-    }
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		setTheme();
+		super.onCreate(savedInstanceState);
+		setActionBarBackground();
+	}
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (isThemeChanged()) {
-            restart();
-        }
-    }
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (isThemeChanged()) {
+			restart();
+		}
+	}
 
-    protected final void restart() {
-        restartActivity(this);
-    }
+	protected final void restart() {
+		restartActivity(this);
+	}
 
-    private final boolean isThemeChanged() {
-        return getThemeResource() != mCurrentThemeResource;
-    }
+	private final boolean isThemeChanged() {
+		return getThemeResource() != mCurrentThemeResource;
+	}
 
-    private final void setActionBarBackground() {
-        getActionBar().setBackgroundDrawable(ThemeUtils.getActionBarBackground(this));
-    }
+	private final void setActionBarBackground() {
+		getActionBar().setBackgroundDrawable(ThemeUtils.getActionBarBackground(this));
+	}
 
-    private final void setTheme() {
-        mCurrentThemeResource = getThemeResource();
-        setTheme(mCurrentThemeResource);
-    }
+	private final void setTheme() {
+		mCurrentThemeResource = getThemeResource();
+		setTheme(mCurrentThemeResource);
+	}
 }

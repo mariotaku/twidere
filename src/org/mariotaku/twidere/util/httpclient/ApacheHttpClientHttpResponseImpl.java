@@ -34,54 +34,53 @@ import java.util.zip.GZIPInputStream;
  * @since Twitter4J 2.1.2
  */
 final class ApacheHttpClientHttpResponseImpl extends twitter4j.http.HttpResponse {
-    private final HttpResponse res;
+	private final HttpResponse res;
 
-    ApacheHttpClientHttpResponseImpl(final HttpResponse res, final HttpClientConfiguration conf)
-            throws IOException {
-        super(conf);
-        this.res = res;
-        is = res.getEntity().getContent();
-        statusCode = res.getStatusLine().getStatusCode();
-        if (is != null && "gzip".equals(getResponseHeader("Content-Encoding"))) {
-            // the response is gzipped
-            is = new GZIPInputStream(is);
-        }
-    }
+	ApacheHttpClientHttpResponseImpl(final HttpResponse res, final HttpClientConfiguration conf) throws IOException {
+		super(conf);
+		this.res = res;
+		is = res.getEntity().getContent();
+		statusCode = res.getStatusLine().getStatusCode();
+		if (is != null && "gzip".equals(getResponseHeader("Content-Encoding"))) {
+			// the response is gzipped
+			is = new GZIPInputStream(is);
+		}
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void disconnect() throws IOException {
-        if (res != null) {
-            res.getEntity().consumeContent();
-        }
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void disconnect() throws IOException {
+		if (res != null) {
+			res.getEntity().consumeContent();
+		}
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final String getResponseHeader(final String name) {
-        final Header[] headers = res.getHeaders(name);
-        if (headers != null && headers.length > 0)
-            return headers[0].getValue();
-        else
-            return null;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final String getResponseHeader(final String name) {
+		final Header[] headers = res.getHeaders(name);
+		if (headers != null && headers.length > 0)
+			return headers[0].getValue();
+		else
+			return null;
+	}
 
-    @Override
-    public Map<String, List<String>> getResponseHeaderFields() {
-        final Header[] headers = res.getAllHeaders();
-        final Map<String, List<String>> maps = new HashMap<String, List<String>>();
-        for (final Header header : headers) {
-            final HeaderElement[] elements = header.getElements();
-            final List<String> values = new ArrayList<String>(1);
-            for (final HeaderElement element : elements) {
-                values.add(element.getValue());
-            }
-            maps.put(header.getName(), values);
-        }
-        return maps;
-    }
+	@Override
+	public Map<String, List<String>> getResponseHeaderFields() {
+		final Header[] headers = res.getAllHeaders();
+		final Map<String, List<String>> maps = new HashMap<String, List<String>>();
+		for (final Header header : headers) {
+			final HeaderElement[] elements = header.getElements();
+			final List<String> values = new ArrayList<String>(1);
+			for (final HeaderElement element : elements) {
+				values.add(element.getValue());
+			}
+			maps.put(header.getName(), values);
+		}
+		return maps;
+	}
 }

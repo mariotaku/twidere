@@ -26,30 +26,28 @@ import org.mariotaku.twidere.R;
 
 public class TwitterErrorCodes {
 
-    public static final int STATUS_IS_DUPLICATE = 187;
+	public static final int STATUS_IS_DUPLICATE = 187;
 
-    private static final SparseIntArray ERROR_CODE_MESSAGES = new SparseIntArray();
+	private static final SparseIntArray ERROR_CODE_MESSAGES = new SparseIntArray();
 
-    static {
-        ERROR_CODE_MESSAGES.put(32, R.string.error_32);
-        ERROR_CODE_MESSAGES.put(34, R.string.error_34);
-        ERROR_CODE_MESSAGES.put(88, R.string.error_88);
-        ERROR_CODE_MESSAGES.put(89, R.string.error_89);
-        ERROR_CODE_MESSAGES.put(64, R.string.error_64);
-        ERROR_CODE_MESSAGES.put(130, R.string.error_130);
-        ERROR_CODE_MESSAGES.put(131, R.string.error_131);
-        ERROR_CODE_MESSAGES.put(135, R.string.error_135);
-        ERROR_CODE_MESSAGES.put(179, R.string.error_179);
-        ERROR_CODE_MESSAGES.put(215, R.string.error_215);
-    }
+	static {
+		ERROR_CODE_MESSAGES.put(32, R.string.error_32);
+		ERROR_CODE_MESSAGES.put(34, R.string.error_34);
+		ERROR_CODE_MESSAGES.put(88, R.string.error_88);
+		ERROR_CODE_MESSAGES.put(89, R.string.error_89);
+		ERROR_CODE_MESSAGES.put(64, R.string.error_64);
+		ERROR_CODE_MESSAGES.put(130, R.string.error_130);
+		ERROR_CODE_MESSAGES.put(131, R.string.error_131);
+		ERROR_CODE_MESSAGES.put(135, R.string.error_135);
+		ERROR_CODE_MESSAGES.put(179, R.string.error_179);
+		ERROR_CODE_MESSAGES.put(215, R.string.error_215);
+	}
 
-    public static String getErrorMessage(final Context context, final int error_code) {
-        if (context == null)
-            return null;
-        final int res_id = ERROR_CODE_MESSAGES.get(error_code, -1);
-        if (res_id > 0)
-            return context.getString(res_id);
-        return null;
-    }
+	public static String getErrorMessage(final Context context, final int error_code) {
+		if (context == null) return null;
+		final int res_id = ERROR_CODE_MESSAGES.get(error_code, -1);
+		if (res_id > 0) return context.getString(res_id);
+		return null;
+	}
 
 }

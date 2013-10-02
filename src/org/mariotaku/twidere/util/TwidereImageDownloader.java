@@ -59,110 +59,100 @@ import javax.net.ssl.X509TrustManager;
 
 public class TwidereImageDownloader implements ImageDownloader, Constants {
 
-    private static final HostnameVerifier ALLOW_ALL_HOSTNAME_VERIFIER = new AllowAllHostnameVerifier();
-    private static final TrustManager[] TRUST_ALL_CERTS = new TrustManager[] {
-        new TrustAllX509TrustManager()
-    };
-    private static final SSLSocketFactory IGNORE_ERROR_SSL_FACTORY;
+	private static final HostnameVerifier ALLOW_ALL_HOSTNAME_VERIFIER = new AllowAllHostnameVerifier();
+	private static final TrustManager[] TRUST_ALL_CERTS = new TrustManager[] { new TrustAllX509TrustManager() };
+	private static final SSLSocketFactory IGNORE_ERROR_SSL_FACTORY;
 
-    static {
-        System.setProperty("http.keepAlive", "false");
-        SSLSocketFactory factory = null;
-        try {
-            final SSLContext sc = SSLContext.getInstance("TLS");
-            sc.init(null, TRUST_ALL_CERTS, new SecureRandom());
-            factory = sc.getSocketFactory();
-        } catch (final KeyManagementException e) {
-        } catch (final NoSuchAlgorithmException e) {
-        }
-        IGNORE_ERROR_SSL_FACTORY = factory;
-    }
+	static {
+		System.setProperty("http.keepAlive", "false");
+		SSLSocketFactory factory = null;
+		try {
+			final SSLContext sc = SSLContext.getInstance("TLS");
+			sc.init(null, TRUST_ALL_CERTS, new SecureRandom());
+			factory = sc.getSocketFactory();
+		} catch (final KeyManagementException e) {
+		} catch (final NoSuchAlgorithmException e) {
+		}
+		IGNORE_ERROR_SSL_FACTORY = factory;
+	}
 
-    private final Context mContext;
-    private final ContentResolver mResolver;
-    private HttpClientWrapper mClient;
-    private Proxy mProxy;
-    private boolean mFastImageLoading;
-    private String mUserAgent;
+	private final Context mContext;
+	private final ContentResolver mResolver;
+	private HttpClientWrapper mClient;
+	private Proxy mProxy;
+	private boolean mFastImageLoading;
+	private String mUserAgent;
 
-    public TwidereImageDownloader(final Context context) {
-        mContext = context;
-        mResolver = context.getContentResolver();
-        reloadConnectivitySettings();
-    }
+	public TwidereImageDownloader(final Context context) {
+		mContext = context;
+		mResolver = context.getContentResolver();
+		reloadConnectivitySettings();
+	}
 
-    @Override
-    public InputStream getStream(final String uri_string, final Object extras) throws IOException {
-        final InputStream is;
-        if (uri_string == null)
-            return null;
-        final Uri uri = Uri.parse(uri_string);
-        final String scheme = uri.getScheme();
-        try {
-            if (ContentResolver.SCHEME_ANDROID_RESOURCE.equals(scheme)
-                    || ContentResolver.SCHEME_CONTENT.equals(scheme)
-                    || ContentResolver.SCHEME_FILE.equals(scheme))
-                return mResolver.openInputStream(uri);
-            if (mFastImageLoading) {
-                final URL url = new URL(uri_string);
-                final HttpURLConnection conn = (HttpURLConnection) (mProxy != null ? url
-                        .openConnection(mProxy) : url
-                        .openConnection());
-                if (conn instanceof HttpsURLConnection) {
-                    ((HttpsURLConnection) conn).setHostnameVerifier(ALLOW_ALL_HOSTNAME_VERIFIER);
-                    if (IGNORE_ERROR_SSL_FACTORY != null) {
-                        ((HttpsURLConnection) conn).setSSLSocketFactory(IGNORE_ERROR_SSL_FACTORY);
-                    }
-                }
-                conn.setRequestProperty("User-Agent", mUserAgent);
-                conn.setInstanceFollowRedirects(true);
-                is = new ContentLengthInputStream(conn.getInputStream(), conn.getContentLength());
-            } else {
-                final HttpResponse resp = getRedirectedHttpResponse(mClient, uri_string);
-                is = new ContentLengthInputStream(resp.asStream(), (int) resp.getContentLength());
-            }
-        } catch (final TwitterException e) {
-            final int status_code = e.getStatusCode();
-            if (status_code != -1 && PATTERN_TWITTER_PROFILE_IMAGES.matcher(uri_string).matches()
-                    && !uri_string.contains("_normal."))
-                return getStream(
-                        replaceLast(uri_string, "_" + TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES,
-                                "_normal"),
-                        extras);
-            throw new IOException(String.format("Error downloading image %s, error code: %d",
-                    uri_string, status_code));
-        }
-        return is;
-    }
+	@Override
+	public InputStream getStream(final String uri_string, final Object extras) throws IOException {
+		final InputStream is;
+		if (uri_string == null) return null;
+		final Uri uri = Uri.parse(uri_string);
+		final String scheme = uri.getScheme();
+		try {
+			if (ContentResolver.SCHEME_ANDROID_RESOURCE.equals(scheme) || ContentResolver.SCHEME_CONTENT.equals(scheme)
+					|| ContentResolver.SCHEME_FILE.equals(scheme)) return mResolver.openInputStream(uri);
+			if (mFastImageLoading) {
+				final URL url = new URL(uri_string);
+				final HttpURLConnection conn = (HttpURLConnection) (mProxy != null ? url.openConnection(mProxy) : url
+						.openConnection());
+				if (conn instanceof HttpsURLConnection) {
+					((HttpsURLConnection) conn).setHostnameVerifier(ALLOW_ALL_HOSTNAME_VERIFIER);
+					if (IGNORE_ERROR_SSL_FACTORY != null) {
+						((HttpsURLConnection) conn).setSSLSocketFactory(IGNORE_ERROR_SSL_FACTORY);
+					}
+				}
+				conn.setRequestProperty("User-Agent", mUserAgent);
+				conn.setInstanceFollowRedirects(true);
+				is = new ContentLengthInputStream(conn.getInputStream(), conn.getContentLength());
+			} else {
+				final HttpResponse resp = getRedirectedHttpResponse(mClient, uri_string);
+				is = new ContentLengthInputStream(resp.asStream(), (int) resp.getContentLength());
+			}
+		} catch (final TwitterException e) {
+			final int status_code = e.getStatusCode();
+			if (status_code != -1 && PATTERN_TWITTER_PROFILE_IMAGES.matcher(uri_string).matches()
+					&& !uri_string.contains("_normal."))
+				return getStream(replaceLast(uri_string, "_" + TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES, "_normal"),
+						extras);
+			throw new IOException(String.format("Error downloading image %s, error code: %d", uri_string, status_code));
+		}
+		return is;
+	}
 
-    public void reloadConnectivitySettings() {
-        mClient = getImageLoaderHttpClient(mContext);
-        mFastImageLoading = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME,
-                Context.MODE_PRIVATE).getBoolean(
-                PREFERENCE_KEY_FAST_IMAGE_LOADING, true);
-        mProxy = getProxy(mContext);
-        mUserAgent = generateBrowserUserAgent();
-    }
+	public void reloadConnectivitySettings() {
+		mClient = getImageLoaderHttpClient(mContext);
+		mFastImageLoading = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getBoolean(
+				PREFERENCE_KEY_FAST_IMAGE_LOADING, true);
+		mProxy = getProxy(mContext);
+		mUserAgent = generateBrowserUserAgent();
+	}
 
-    private static final class AllowAllHostnameVerifier implements HostnameVerifier {
-        @Override
-        public boolean verify(final String hostname, final SSLSession session) {
-            return true;
-        }
-    }
+	private static final class AllowAllHostnameVerifier implements HostnameVerifier {
+		@Override
+		public boolean verify(final String hostname, final SSLSession session) {
+			return true;
+		}
+	}
 
-    private static final class TrustAllX509TrustManager implements X509TrustManager {
-        @Override
-        public void checkClientTrusted(final X509Certificate[] chain, final String authType) {
-        }
+	private static final class TrustAllX509TrustManager implements X509TrustManager {
+		@Override
+		public void checkClientTrusted(final X509Certificate[] chain, final String authType) {
+		}
 
-        @Override
-        public void checkServerTrusted(final X509Certificate[] chain, final String authType) {
-        }
+		@Override
+		public void checkServerTrusted(final X509Certificate[] chain, final String authType) {
+		}
 
-        @Override
-        public X509Certificate[] getAcceptedIssuers() {
-            return new X509Certificate[] {};
-        }
-    }
+		@Override
+		public X509Certificate[] getAcceptedIssuers() {
+			return new X509Certificate[] {};
+		}
+	}
 }

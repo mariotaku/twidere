@@ -138,7 +138,7 @@
   <string name="blocked_users">ブロック済み</string>
   <string name="set_as_default">デフォルトとして設定</string>
   <string name="search_users">ユーザーを検索</string>
-  <string name="search_tweets">ツイートを検索</string>
+  <string name="search_statuses">ツイートを検索</string>
   <string name="created_at">作成日</string>
   <string name="search_hint">ツイートまたユーザーを検索</string>
   <string name="remember_position">位置を記憶</string>

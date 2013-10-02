@@ -35,76 +35,71 @@ import org.mariotaku.twidere.ITweetShortener;
 
 public final class TweetShortenerInterface implements Constants, ITweetShortener {
 
-    private ITweetShortener mShortener;
+	private ITweetShortener mShortener;
 
-    private final ServiceConnection mConntecion = new ServiceConnection() {
+	private final ServiceConnection mConntecion = new ServiceConnection() {
 
-        @Override
-        public void onServiceConnected(final ComponentName service, final IBinder obj) {
-            mShortener = ITweetShortener.Stub.asInterface(obj);
-        }
+		@Override
+		public void onServiceConnected(final ComponentName service, final IBinder obj) {
+			mShortener = ITweetShortener.Stub.asInterface(obj);
+		}
 
-        @Override
-        public void onServiceDisconnected(final ComponentName service) {
-            mShortener = null;
-        }
-    };
+		@Override
+		public void onServiceDisconnected(final ComponentName service) {
+			mShortener = null;
+		}
+	};
 
-    private TweetShortenerInterface(final Context context, final String shortener_name) {
-        final Intent intent = new Intent(INTENT_ACTION_EXTENSION_SHORTEN_TWEET);
-        final ComponentName component = ComponentName.unflattenFromString(shortener_name);
-        intent.setComponent(component);
-        bindToService(context, intent, mConntecion);
-    }
+	private TweetShortenerInterface(final Context context, final String shortener_name) {
+		final Intent intent = new Intent(INTENT_ACTION_EXTENSION_SHORTEN_TWEET);
+		final ComponentName component = ComponentName.unflattenFromString(shortener_name);
+		intent.setComponent(component);
+		bindToService(context, intent, mConntecion);
+	}
 
-    @Override
-    public IBinder asBinder() {
-        // Useless here
-        return mShortener.asBinder();
-    }
+	@Override
+	public IBinder asBinder() {
+		// Useless here
+		return mShortener.asBinder();
+	}
 
-    @Override
-    public String shorten(final String text, final String screen_name,
-            final long in_reply_to_status_id) {
-        if (mShortener == null)
-            return null;
-        try {
-            return mShortener.shorten(text, screen_name, in_reply_to_status_id);
-        } catch (final RemoteException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+	@Override
+	public String shorten(final String text, final String screen_name, final long in_reply_to_status_id) {
+		if (mShortener == null) return null;
+		try {
+			return mShortener.shorten(text, screen_name, in_reply_to_status_id);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
-    public void waitForService() {
-        while (mShortener == null) {
-            try {
-                Thread.sleep(100L);
-            } catch (final InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+	public void waitForService() {
+		while (mShortener == null) {
+			try {
+				Thread.sleep(100L);
+			} catch (final InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
-    public static TweetShortenerInterface getInstance(final Application application,
-            final String shortener_name) {
-        if (shortener_name == null)
-            return null;
-        final Intent intent = new Intent(INTENT_ACTION_EXTENSION_SHORTEN_TWEET);
-        final ComponentName component = ComponentName.unflattenFromString(shortener_name);
-        intent.setComponent(component);
-        if (application.getPackageManager().queryIntentServices(intent, 0).size() != 1)
-            return null;
-        return new TweetShortenerInterface(application, shortener_name);
-    }
+	public static TweetShortenerInterface getInstance(final Application application, final String shortener_name) {
+		if (shortener_name == null) return null;
+		final Intent intent = new Intent(INTENT_ACTION_EXTENSION_SHORTEN_TWEET);
+		final ComponentName component = ComponentName.unflattenFromString(shortener_name);
+		intent.setComponent(component);
+		if (application.getPackageManager().queryIntentServices(intent, 0).size() != 1) return null;
+		return new TweetShortenerInterface(application, shortener_name);
+	}
 
-    public static class ServiceToken {
+	public static class ServiceToken {
 
-        ContextWrapper wrapped_context;
+		ContextWrapper wrapped_context;
 
-        ServiceToken(final ContextWrapper context) {
+		ServiceToken(final ContextWrapper context) {
 
-            wrapped_context = context;
-        }
-    }
+			wrapped_context = context;
+		}
+	}
 }

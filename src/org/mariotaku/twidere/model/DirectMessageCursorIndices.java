@@ -25,27 +25,24 @@ import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 
 public class DirectMessageCursorIndices {
 
-    public final int account_id, message_id, message_timestamp, sender_name, sender_screen_name,
-            text, text_plain,
-            recipient_name, recipient_screen_name, sender_profile_image_url, is_outgoing,
-            recipient_profile_image_url,
-            sender_id, recipient_id;
+	public final int account_id, message_id, message_timestamp, sender_name, sender_screen_name, text, text_plain,
+			recipient_name, recipient_screen_name, sender_profile_image_url, is_outgoing, recipient_profile_image_url,
+			sender_id, recipient_id;
 
-    public DirectMessageCursorIndices(final Cursor cursor) {
-        account_id = cursor.getColumnIndex(DirectMessages.ACCOUNT_ID);
-        message_id = cursor.getColumnIndex(DirectMessages.MESSAGE_ID);
-        message_timestamp = cursor.getColumnIndex(DirectMessages.MESSAGE_TIMESTAMP);
-        sender_id = cursor.getColumnIndex(DirectMessages.SENDER_ID);
-        recipient_id = cursor.getColumnIndex(DirectMessages.RECIPIENT_ID);
-        is_outgoing = cursor.getColumnIndex(DirectMessages.IS_OUTGOING);
-        text = cursor.getColumnIndex(DirectMessages.TEXT_HTML);
-        text_plain = cursor.getColumnIndex(DirectMessages.TEXT_PLAIN);
-        sender_name = cursor.getColumnIndex(DirectMessages.SENDER_NAME);
-        recipient_name = cursor.getColumnIndex(DirectMessages.RECIPIENT_NAME);
-        sender_screen_name = cursor.getColumnIndex(DirectMessages.SENDER_SCREEN_NAME);
-        recipient_screen_name = cursor.getColumnIndex(DirectMessages.RECIPIENT_SCREEN_NAME);
-        sender_profile_image_url = cursor.getColumnIndex(DirectMessages.SENDER_PROFILE_IMAGE_URL);
-        recipient_profile_image_url = cursor
-                .getColumnIndex(DirectMessages.RECIPIENT_PROFILE_IMAGE_URL);
-    }
+	public DirectMessageCursorIndices(final Cursor cursor) {
+		account_id = cursor.getColumnIndex(DirectMessages.ACCOUNT_ID);
+		message_id = cursor.getColumnIndex(DirectMessages.MESSAGE_ID);
+		message_timestamp = cursor.getColumnIndex(DirectMessages.MESSAGE_TIMESTAMP);
+		sender_id = cursor.getColumnIndex(DirectMessages.SENDER_ID);
+		recipient_id = cursor.getColumnIndex(DirectMessages.RECIPIENT_ID);
+		is_outgoing = cursor.getColumnIndex(DirectMessages.IS_OUTGOING);
+		text = cursor.getColumnIndex(DirectMessages.TEXT_HTML);
+		text_plain = cursor.getColumnIndex(DirectMessages.TEXT_PLAIN);
+		sender_name = cursor.getColumnIndex(DirectMessages.SENDER_NAME);
+		recipient_name = cursor.getColumnIndex(DirectMessages.RECIPIENT_NAME);
+		sender_screen_name = cursor.getColumnIndex(DirectMessages.SENDER_SCREEN_NAME);
+		recipient_screen_name = cursor.getColumnIndex(DirectMessages.RECIPIENT_SCREEN_NAME);
+		sender_profile_image_url = cursor.getColumnIndex(DirectMessages.SENDER_PROFILE_IMAGE_URL);
+		recipient_profile_image_url = cursor.getColumnIndex(DirectMessages.RECIPIENT_PROFILE_IMAGE_URL);
+	}
 }

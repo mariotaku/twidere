@@ -33,96 +33,87 @@ import twitter4j.internal.util.InternalParseUtil;
  */
 final class CategoryJSONImpl implements Category {
 
-    /**
+	/**
 	 * 
 	 */
-    private static final long serialVersionUID = 2315575353091021075L;
-    private String name;
-    private String slug;
-    private int size;
+	private static final long serialVersionUID = 2315575353091021075L;
+	private String name;
+	private String slug;
+	private int size;
 
-    CategoryJSONImpl(final JSONObject json) throws JSONException {
-        init(json);
-    }
+	CategoryJSONImpl(final JSONObject json) throws JSONException {
+		init(json);
+	}
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+	@Override
+	public boolean equals(final Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
 
-        final CategoryJSONImpl that = (CategoryJSONImpl) o;
+		final CategoryJSONImpl that = (CategoryJSONImpl) o;
 
-        if (size != that.size)
-            return false;
-        if (name != null ? !name.equals(that.name) : that.name != null)
-            return false;
-        if (slug != null ? !slug.equals(that.slug) : that.slug != null)
-            return false;
+		if (size != that.size) return false;
+		if (name != null ? !name.equals(that.name) : that.name != null) return false;
+		if (slug != null ? !slug.equals(that.slug) : that.slug != null) return false;
 
-        return true;
-    }
+		return true;
+	}
 
-    @Override
-    public String getName() {
-        return name;
-    }
+	@Override
+	public String getName() {
+		return name;
+	}
 
-    /**
-     * @return
-     * @since Twitter4J 2.1.9
-     */
-    @Override
-    public int getSize() {
-        return size;
-    }
+	/**
+	 * @return
+	 * @since Twitter4J 2.1.9
+	 */
+	@Override
+	public int getSize() {
+		return size;
+	}
 
-    @Override
-    public String getSlug() {
-        return slug;
-    }
+	@Override
+	public String getSlug() {
+		return slug;
+	}
 
-    @Override
-    public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (slug != null ? slug.hashCode() : 0);
-        result = 31 * result + size;
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		int result = name != null ? name.hashCode() : 0;
+		result = 31 * result + (slug != null ? slug.hashCode() : 0);
+		result = 31 * result + size;
+		return result;
+	}
 
-    @Override
-    public String toString() {
-        return "CategoryJSONImpl{" + "name='" + name + '\'' + ", slug='" + slug + '\'' + ", size="
-                + size + '}';
-    }
+	@Override
+	public String toString() {
+		return "CategoryJSONImpl{" + "name='" + name + '\'' + ", slug='" + slug + '\'' + ", size=" + size + '}';
+	}
 
-    void init(final JSONObject json) throws JSONException {
-        name = json.getString("name");
-        slug = json.getString("slug");
-        size = InternalParseUtil.getInt("size", json);
-    }
+	void init(final JSONObject json) throws JSONException {
+		name = json.getString("name");
+		slug = json.getString("slug");
+		size = InternalParseUtil.getInt("size", json);
+	}
 
-    static ResponseList<Category> createCategoriesList(final HttpResponse res,
-            final Configuration conf)
-            throws TwitterException {
-        return createCategoriesList(res.asJSONArray(), res, conf);
-    }
+	static ResponseList<Category> createCategoriesList(final HttpResponse res, final Configuration conf)
+			throws TwitterException {
+		return createCategoriesList(res.asJSONArray(), res, conf);
+	}
 
-    static ResponseList<Category> createCategoriesList(final JSONArray array,
-            final HttpResponse res,
-            final Configuration conf) throws TwitterException {
-        try {
-            final ResponseList<Category> categories = new ResponseListImpl<Category>(
-                    array.length(), res);
-            for (int i = 0; i < array.length(); i++) {
-                final JSONObject json = array.getJSONObject(i);
-                final Category category = new CategoryJSONImpl(json);
-                categories.add(category);
-            }
-            return categories;
-        } catch (final JSONException jsone) {
-            throw new TwitterException(jsone);
-        }
-    }
+	static ResponseList<Category> createCategoriesList(final JSONArray array, final HttpResponse res,
+			final Configuration conf) throws TwitterException {
+		try {
+			final ResponseList<Category> categories = new ResponseListImpl<Category>(array.length(), res);
+			for (int i = 0; i < array.length(); i++) {
+				final JSONObject json = array.getJSONObject(i);
+				final Category category = new CategoryJSONImpl(json);
+				categories.add(category);
+			}
+			return categories;
+		} catch (final JSONException jsone) {
+			throw new TwitterException(jsone);
+		}
+	}
 }

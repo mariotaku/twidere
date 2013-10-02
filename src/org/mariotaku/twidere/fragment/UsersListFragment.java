@@ -30,13 +30,11 @@ import java.util.List;
 
 public class UsersListFragment extends BaseUsersListFragment {
 
-    @Override
-    public Loader<List<ParcelableUser>> newLoaderInstance(final Context context, final Bundle args) {
-        if (args == null)
-            return null;
-        if (args.containsKey(INTENT_KEY_USERS))
-            return new IntentExtrasUsersLoader(context, args, getData());
-        return null;
-    }
+	@Override
+	public Loader<List<ParcelableUser>> newLoaderInstance(final Context context, final Bundle args) {
+		if (args == null) return null;
+		if (args.containsKey(INTENT_KEY_USERS)) return new IntentExtrasUsersLoader(context, args, getData());
+		return null;
+	}
 
 }

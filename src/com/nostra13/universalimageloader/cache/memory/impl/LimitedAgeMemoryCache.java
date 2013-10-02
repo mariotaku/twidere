@@ -34,56 +34,56 @@ import java.util.Map;
  */
 public class LimitedAgeMemoryCache<K, V> implements MemoryCacheAware<K, V> {
 
-    private final MemoryCacheAware<K, V> cache;
+	private final MemoryCacheAware<K, V> cache;
 
-    private final long maxAge;
-    private final Map<K, Long> loadingDates = Collections.synchronizedMap(new HashMap<K, Long>());
+	private final long maxAge;
+	private final Map<K, Long> loadingDates = Collections.synchronizedMap(new HashMap<K, Long>());
 
-    /**
-     * @param cache Wrapped memory cache
-     * @param maxAge Max object age <b>(in seconds)</b>. If object age will
-     *            exceed this value then it'll be removed from cache on next
-     *            treatment (and therefore be reloaded).
-     */
-    public LimitedAgeMemoryCache(final MemoryCacheAware<K, V> cache, final long maxAge) {
-        this.cache = cache;
-        this.maxAge = maxAge * 1000; // to milliseconds
-    }
+	/**
+	 * @param cache Wrapped memory cache
+	 * @param maxAge Max object age <b>(in seconds)</b>. If object age will
+	 *            exceed this value then it'll be removed from cache on next
+	 *            treatment (and therefore be reloaded).
+	 */
+	public LimitedAgeMemoryCache(final MemoryCacheAware<K, V> cache, final long maxAge) {
+		this.cache = cache;
+		this.maxAge = maxAge * 1000; // to milliseconds
+	}
 
-    @Override
-    public void clear() {
-        cache.clear();
-        loadingDates.clear();
-    }
+	@Override
+	public void clear() {
+		cache.clear();
+		loadingDates.clear();
+	}
 
-    @Override
-    public V get(final K key) {
-        final Long loadingDate = loadingDates.get(key);
-        if (loadingDate != null && System.currentTimeMillis() - loadingDate > maxAge) {
-            cache.remove(key);
-            loadingDates.remove(key);
-        }
+	@Override
+	public V get(final K key) {
+		final Long loadingDate = loadingDates.get(key);
+		if (loadingDate != null && System.currentTimeMillis() - loadingDate > maxAge) {
+			cache.remove(key);
+			loadingDates.remove(key);
+		}
 
-        return cache.get(key);
-    }
+		return cache.get(key);
+	}
 
-    @Override
-    public Collection<K> keys() {
-        return cache.keys();
-    }
+	@Override
+	public Collection<K> keys() {
+		return cache.keys();
+	}
 
-    @Override
-    public boolean put(final K key, final V value) {
-        final boolean putSuccesfully = cache.put(key, value);
-        if (putSuccesfully) {
-            loadingDates.put(key, System.currentTimeMillis());
-        }
-        return putSuccesfully;
-    }
+	@Override
+	public boolean put(final K key, final V value) {
+		final boolean putSuccesfully = cache.put(key, value);
+		if (putSuccesfully) {
+			loadingDates.put(key, System.currentTimeMillis());
+		}
+		return putSuccesfully;
+	}
 
-    @Override
-    public void remove(final K key) {
-        cache.remove(key);
-        loadingDates.remove(key);
-    }
+	@Override
+	public void remove(final K key) {
+		cache.remove(key);
+		loadingDates.remove(key);
+	}
 }

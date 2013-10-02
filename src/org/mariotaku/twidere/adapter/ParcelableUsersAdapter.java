@@ -43,147 +43,147 @@ import org.mariotaku.twidere.view.holder.UserViewHolder;
 import java.util.List;
 import java.util.Locale;
 
-public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseAdapter,
-        OnClickListener {
+public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseAdapter, OnClickListener {
 
-    private final ImageLoaderWrapper mProfileImageLoader;
-    private final MultiSelectManager mMultiSelectManager;
-    private final Context mContext;
-    private final Locale mLocale;
+	private final ImageLoaderWrapper mProfileImageLoader;
+	private final MultiSelectManager mMultiSelectManager;
+	private final Context mContext;
+	private final Locale mLocale;
 
-    private boolean mDisplayProfileImage, mShowAccountColor;
-    private float mTextSize;
+	private boolean mDisplayProfileImage, mShowAccountColor, mNicknameOnly;
+	private float mTextSize;
 
-    private MenuButtonClickListener mListener;
+	private MenuButtonClickListener mListener;
 
-    public ParcelableUsersAdapter(final Context context) {
-        super(context, R.layout.user_list_item);
-        mContext = context;
-        mLocale = context.getResources().getConfiguration().locale;
-        final TwidereApplication app = TwidereApplication.getInstance(context);
-        mProfileImageLoader = app.getImageLoaderWrapper();
-        mMultiSelectManager = app.getMultiSelectManager();
-        configBaseAdapter(context, this);
-    }
+	public ParcelableUsersAdapter(final Context context) {
+		super(context, R.layout.user_list_item);
+		mContext = context;
+		mLocale = context.getResources().getConfiguration().locale;
+		final TwidereApplication app = TwidereApplication.getInstance(context);
+		mProfileImageLoader = app.getImageLoaderWrapper();
+		mMultiSelectManager = app.getMultiSelectManager();
+		configBaseAdapter(context, this);
+	}
 
-    @Override
-    public long getItemId(final int position) {
-        return getItem(position) != null ? getItem(position).id : -1;
-    }
+	@Override
+	public long getItemId(final int position) {
+		return getItem(position) != null ? getItem(position).id : -1;
+	}
 
-    @Override
-    public View getView(final int position, final View convertView, final ViewGroup parent) {
-        final View view = super.getView(position, convertView, parent);
-        final Object tag = view.getTag();
-        UserViewHolder holder = null;
-        if (tag instanceof UserViewHolder) {
-            holder = (UserViewHolder) tag;
-        } else {
-            holder = new UserViewHolder(view);
-            holder.item_menu.setOnClickListener(this);
-            view.setTag(holder);
-        }
-        final ParcelableUser user = getItem(position);
+	@Override
+	public View getView(final int position, final View convertView, final ViewGroup parent) {
+		final View view = super.getView(position, convertView, parent);
+		final Object tag = view.getTag();
+		UserViewHolder holder = null;
+		if (tag instanceof UserViewHolder) {
+			holder = (UserViewHolder) tag;
+		} else {
+			holder = new UserViewHolder(view);
+			holder.item_menu.setOnClickListener(this);
+			view.setTag(holder);
+		}
+		final ParcelableUser user = getItem(position);
 
-        holder.setAccountColorEnabled(mShowAccountColor);
+		holder.setAccountColorEnabled(mShowAccountColor);
 
-        if (mShowAccountColor) {
-            holder.setAccountColor(getAccountColor(mContext, user.account_id));
-        }
+		if (mShowAccountColor) {
+			holder.setAccountColor(getAccountColor(mContext, user.account_id));
+		}
 
-        holder.setUserColor(getUserColor(mContext, user.id));
+		holder.setUserColor(getUserColor(mContext, user.id));
 
-        holder.setTextSize(mTextSize);
-        holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                getUserTypeIconRes(user.is_verified, user.is_protected), 0);
-        final String nick = getUserNickname(mContext, user.id);
-        holder.name.setText(TextUtils.isEmpty(nick) ? user.name : mContext.getString(
-                R.string.name_with_nickname,
-                user.name, nick));
-        holder.screen_name.setText("@" + user.screen_name);
-        holder.description.setVisibility(TextUtils.isEmpty(user.description_unescaped) ? View.GONE
-                : View.VISIBLE);
-        holder.description.setText(user.description_unescaped);
-        holder.location.setVisibility(TextUtils.isEmpty(user.location) ? View.GONE : View.VISIBLE);
-        holder.location.setText(user.location);
-        holder.url.setVisibility(TextUtils.isEmpty(user.url_expanded) ? View.GONE : View.VISIBLE);
-        holder.url.setText(user.url_expanded);
-        holder.statuses_count.setText(getLocalizedNumber(mLocale, user.statuses_count));
-        holder.followers_count.setText(getLocalizedNumber(mLocale, user.followers_count));
-        holder.friends_count.setText(getLocalizedNumber(mLocale, user.friends_count));
-        holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
-        if (mDisplayProfileImage) {
-            mProfileImageLoader.displayProfileImage(holder.profile_image, user.profile_image_url);
-        }
-        holder.item_menu.setTag(position);
-        return view;
-    }
+		holder.setTextSize(mTextSize);
+		holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+				getUserTypeIconRes(user.is_verified, user.is_protected), 0);
+		final String nick = getUserNickname(mContext, user.id);
+		holder.name.setText(TextUtils.isEmpty(nick) ? user.name : mNicknameOnly ? nick : mContext.getString(
+				R.string.name_with_nickname, user.name, nick));
+		holder.screen_name.setText("@" + user.screen_name);
+		holder.description.setVisibility(TextUtils.isEmpty(user.description_unescaped) ? View.GONE : View.VISIBLE);
+		holder.description.setText(user.description_unescaped);
+		holder.location.setVisibility(TextUtils.isEmpty(user.location) ? View.GONE : View.VISIBLE);
+		holder.location.setText(user.location);
+		holder.url.setVisibility(TextUtils.isEmpty(user.url_expanded) ? View.GONE : View.VISIBLE);
+		holder.url.setText(user.url_expanded);
+		holder.statuses_count.setText(getLocalizedNumber(mLocale, user.statuses_count));
+		holder.followers_count.setText(getLocalizedNumber(mLocale, user.followers_count));
+		holder.friends_count.setText(getLocalizedNumber(mLocale, user.friends_count));
+		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
+		if (mDisplayProfileImage) {
+			mProfileImageLoader.displayProfileImage(holder.profile_image, user.profile_image_url);
+		}
+		holder.item_menu.setTag(position);
+		return view;
+	}
 
-    @Override
-    public void onClick(final View view) {
-        if (mMultiSelectManager.isActive())
-            return;
-        final Object tag = view.getTag();
-        final int position = tag instanceof Integer ? (Integer) tag : -1;
-        if (position == -1)
-            return;
-        switch (view.getId()) {
-            case R.id.item_menu: {
-                if (position == -1 || mListener == null)
-                    return;
-                mListener.onMenuButtonClick(view, position, getItemId(position));
-                break;
-            }
-        }
-    }
+	@Override
+	public void onClick(final View view) {
+		if (mMultiSelectManager.isActive()) return;
+		final Object tag = view.getTag();
+		final int position = tag instanceof Integer ? (Integer) tag : -1;
+		if (position == -1) return;
+		switch (view.getId()) {
+			case R.id.item_menu: {
+				if (position == -1 || mListener == null) return;
+				mListener.onMenuButtonClick(view, position, getItemId(position));
+				break;
+			}
+		}
+	}
 
-    public void setData(final List<ParcelableUser> data) {
-        setData(data, false);
-    }
+	public void setData(final List<ParcelableUser> data) {
+		setData(data, false);
+	}
 
-    public void setData(final List<ParcelableUser> data, final boolean clear_old) {
-        if (clear_old) {
-            clear();
-        }
-        if (data == null)
-            return;
-        for (final ParcelableUser user : data) {
-            if (clear_old || findItem(user.id) == null) {
-                add(user);
-            }
-        }
-    }
+	public void setData(final List<ParcelableUser> data, final boolean clear_old) {
+		if (clear_old) {
+			clear();
+		}
+		if (data == null) return;
+		for (final ParcelableUser user : data) {
+			if (clear_old || findItem(user.id) == null) {
+				add(user);
+			}
+		}
+	}
 
-    @Override
-    public void setDisplayProfileImage(final boolean display) {
-        if (display != mDisplayProfileImage) {
-            mDisplayProfileImage = display;
-            notifyDataSetChanged();
-        }
-    }
+	@Override
+	public void setDisplayProfileImage(final boolean display) {
+		if (display != mDisplayProfileImage) {
+			mDisplayProfileImage = display;
+			notifyDataSetChanged();
+		}
+	}
 
-    @Override
-    public void setMenuButtonClickListener(final MenuButtonClickListener listener) {
-        mListener = listener;
-    }
+	@Override
+	public void setMenuButtonClickListener(final MenuButtonClickListener listener) {
+		mListener = listener;
+	}
 
-    @Override
-    public void setNameDisplayOption(final String option) {
-    }
+	@Override
+	public void setNameDisplayOption(final String option) {
+	}
 
-    public void setShowAccountColor(final boolean show) {
-        if (show != mShowAccountColor) {
-            mShowAccountColor = show;
-            notifyDataSetChanged();
-        }
-    }
+	@Override
+	public void setNicknameOnly(final boolean nickname_only) {
+		if (mNicknameOnly == nickname_only) return;
+		mNicknameOnly = nickname_only;
+		notifyDataSetChanged();
+	}
 
-    @Override
-    public void setTextSize(final float text_size) {
-        if (text_size != mTextSize) {
-            mTextSize = text_size;
-            notifyDataSetChanged();
-        }
-    }
+	public void setShowAccountColor(final boolean show) {
+		if (show != mShowAccountColor) {
+			mShowAccountColor = show;
+			notifyDataSetChanged();
+		}
+	}
+
+	@Override
+	public void setTextSize(final float text_size) {
+		if (text_size != mTextSize) {
+			mTextSize = text_size;
+			notifyDataSetChanged();
+		}
+	}
 
 }

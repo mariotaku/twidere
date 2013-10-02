@@ -27,36 +27,31 @@ import org.mariotaku.twidere.R;
 
 public class ImagePreloadPreference extends MultiSelectListPreference implements Constants {
 
-    public ImagePreloadPreference(final Context context) {
-        this(context, null);
-    }
+	public ImagePreloadPreference(final Context context) {
+		this(context, null);
+	}
 
-    public ImagePreloadPreference(final Context context, final AttributeSet attrs) {
-        this(context, attrs, android.R.attr.preferenceStyle);
-    }
+	public ImagePreloadPreference(final Context context, final AttributeSet attrs) {
+		this(context, attrs, android.R.attr.preferenceStyle);
+	}
 
-    public ImagePreloadPreference(final Context context, final AttributeSet attrs,
-            final int defStyle) {
-        super(context, attrs, defStyle);
-    }
+	public ImagePreloadPreference(final Context context, final AttributeSet attrs, final int defStyle) {
+		super(context, attrs, defStyle);
+	}
 
-    @Override
-    protected boolean[] getDefaults() {
-        return new boolean[] {
-                false, false
-        };
-    }
+	@Override
+	protected boolean[] getDefaults() {
+		return new boolean[] { false, false };
+	}
 
-    @Override
-    protected String[] getKeys() {
-        return new String[] {
-                PREFERENCE_KEY_PRELOAD_PROFILE_IMAGES, PREFERENCE_KEY_PRELOAD_PREVIEW_IMAGES
-        };
-    }
+	@Override
+	protected String[] getKeys() {
+		return new String[] { PREFERENCE_KEY_PRELOAD_PROFILE_IMAGES, PREFERENCE_KEY_PRELOAD_PREVIEW_IMAGES };
+	}
 
-    @Override
-    protected String[] getNames() {
-        return getContext().getResources().getStringArray(R.array.entries_image_preload_option);
-    }
+	@Override
+	protected String[] getNames() {
+		return getContext().getResources().getStringArray(R.array.entries_image_preload_option);
+	}
 
 }

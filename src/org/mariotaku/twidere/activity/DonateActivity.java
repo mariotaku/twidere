@@ -40,72 +40,66 @@ import java.text.ParseException;
 
 public class DonateActivity extends BaseSupportActivity implements OnClickListener, TextWatcher {
 
-    private EditText mEditName, mEditAmount;
-    private Button mDonateButton;
+	private EditText mEditName, mEditAmount;
+	private Button mDonateButton;
 
-    @Override
-    public void afterTextChanged(final Editable s) {
+	@Override
+	public void afterTextChanged(final Editable s) {
 
-    }
+	}
 
-    @Override
-    public void beforeTextChanged(final CharSequence s, final int start, final int count,
-            final int after) {
+	@Override
+	public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {
 
-    }
+	}
 
-    @Override
-    public void onClick(final View view) {
-        switch (view.getId()) {
-            case R.id.donate: {
-                final String amount = ParseUtils.parseString(mEditAmount.getText());
-                if (isEmpty(amount))
-                    return;
-                final String name = ParseUtils.parseString(mEditName.getText());
-                final Uri.Builder builder = Uri.parse("https://www.paypal.com/cgi-bin/webscr")
-                        .buildUpon();
-                builder.appendQueryParameter("cmd", "_xclick");
-                builder.appendQueryParameter("business", "mariotaku.lee@gmail.com");
-                builder.appendQueryParameter("amount", amount);
-                builder.appendQueryParameter("item_name", isEmpty(name) ? "Twidere donation"
-                        : "Twidere donation by "
-                                + name);
-                startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
-                finish();
-                break;
-            }
-        }
+	@Override
+	public void onClick(final View view) {
+		switch (view.getId()) {
+			case R.id.donate: {
+				final String amount = ParseUtils.parseString(mEditAmount.getText());
+				if (isEmpty(amount)) return;
+				final String name = ParseUtils.parseString(mEditName.getText());
+				final Uri.Builder builder = Uri.parse("https://www.paypal.com/cgi-bin/webscr").buildUpon();
+				builder.appendQueryParameter("cmd", "_xclick");
+				builder.appendQueryParameter("business", "mariotaku.lee@gmail.com");
+				builder.appendQueryParameter("amount", amount);
+				builder.appendQueryParameter("item_name", isEmpty(name) ? "Twidere donation" : "Twidere donation by "
+						+ name);
+				startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
+				finish();
+				break;
+			}
+		}
 
-    }
+	}
 
-    @Override
-    public void onContentChanged() {
-        super.onContentChanged();
-        mEditName = (EditText) findViewById(R.id.name);
-        mEditAmount = (EditText) findViewById(R.id.amount);
-        mDonateButton = (Button) findViewById(R.id.donate);
-    }
+	@Override
+	public void onContentChanged() {
+		super.onContentChanged();
+		mEditName = (EditText) findViewById(R.id.name);
+		mEditAmount = (EditText) findViewById(R.id.amount);
+		mDonateButton = (Button) findViewById(R.id.donate);
+	}
 
-    @Override
-    public void onTextChanged(final CharSequence s, final int start, final int before,
-            final int count) {
-        final NumberFormat format = NumberFormat
-                .getInstance(getResources().getConfiguration().locale);
-        try {
-            final Number number = format.parse(ParseUtils.parseString(s));
-            mDonateButton.setEnabled(s.length() > 0 && number.intValue() > 0);
-        } catch (final ParseException e) {
-            mDonateButton.setEnabled(false);
-        }
-    }
+	@Override
+	public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
+		final NumberFormat format = NumberFormat.getInstance(getResources().getConfiguration().locale);
+		try {
+			final Number number = format.parse(ParseUtils.parseString(s));
+			mDonateButton.setEnabled(s.length() > 0 && number.intValue() > 0);
+		} catch (final ParseException e) {
+			mDonateButton.setEnabled(false);
+		}
+	}
 
-    @Override
-    protected void onCreate(final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.donate);
-        mEditAmount.setText("5.00");
-        mEditName.setText(getDefaultAccountScreenName(this));
-        mEditAmount.addTextChangedListener(this);
-        mDonateButton.setOnClickListener(this);
-    }
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.donate);
+		mEditAmount.setText("5.00");
+		mEditName.setText(getDefaultAccountScreenName(this));
+		mEditAmount.addTextChangedListener(this);
+		mDonateButton.setOnClickListener(this);
+	}
 }

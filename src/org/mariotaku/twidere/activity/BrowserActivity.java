@@ -34,36 +34,36 @@ import org.mariotaku.twidere.fragment.BaseWebViewFragment;
 
 public class BrowserActivity extends BaseSupportActivity {
 
-    private Uri mUri = Uri.parse("about:blank");
+	private Uri mUri = Uri.parse("about:blank");
 
-    @Override
-    public boolean onOptionsItemSelected(final MenuItem item) {
-        switch (item.getItemId()) {
-            case MENU_HOME:
-                finish();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_HOME:
+				finish();
+				break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 
-    @Override
-    protected void onCreate(final Bundle savedInstanceState) {
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.base);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        mUri = getIntent().getData();
-        if (mUri == null) {
-            Crouton.showText(this, R.string.error_occurred, CroutonStyle.ALERT);
-            finish();
-            return;
-        }
-        final FragmentTransaction ft = getFragmentManager().beginTransaction();
-        final Fragment fragment = Fragment.instantiate(this, BaseWebViewFragment.class.getName());
-        final Bundle bundle = new Bundle();
-        bundle.putString(INTENT_KEY_URI, mUri.toString());
-        fragment.setArguments(bundle);
-        ft.replace(R.id.main, fragment);
-        ft.commit();
-    }
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.base);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		mUri = getIntent().getData();
+		if (mUri == null) {
+			Crouton.showText(this, R.string.error_occurred, CroutonStyle.ALERT);
+			finish();
+			return;
+		}
+		final FragmentTransaction ft = getFragmentManager().beginTransaction();
+		final Fragment fragment = Fragment.instantiate(this, BaseWebViewFragment.class.getName());
+		final Bundle bundle = new Bundle();
+		bundle.putString(INTENT_KEY_URI, mUri.toString());
+		fragment.setArguments(bundle);
+		ft.replace(R.id.main, fragment);
+		ft.commit();
+	}
 }

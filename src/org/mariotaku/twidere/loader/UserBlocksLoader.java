@@ -33,18 +33,16 @@ import java.util.List;
 
 public class UserBlocksLoader extends CursorSupportUsersLoader {
 
-    public UserBlocksLoader(final Context context, final long account_id, final long cursor,
-            final List<ParcelableUser> data) {
-        super(context, account_id, cursor, data);
-    }
+	public UserBlocksLoader(final Context context, final long account_id, final long cursor,
+			final List<ParcelableUser> data) {
+		super(context, account_id, cursor, data);
+	}
 
-    @Override
-    protected final PagableResponseList<User> getCursoredUsers(final Twitter twitter,
-            final CursorPaging paging)
-            throws TwitterException {
-        if (twitter == null)
-            return null;
-        return twitter.getBlocksList(paging);
-    }
+	@Override
+	protected final PagableResponseList<User> getCursoredUsers(final Twitter twitter, final CursorPaging paging)
+			throws TwitterException {
+		if (twitter == null) return null;
+		return twitter.getBlocksList(paging);
+	}
 
 }

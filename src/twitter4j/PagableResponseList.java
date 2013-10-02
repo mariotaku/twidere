@@ -21,7 +21,6 @@ package twitter4j;
  * 
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
-public interface PagableResponseList<T extends TwitterResponse> extends ResponseList<T>,
-        CursorSupport {
+public interface PagableResponseList<T extends TwitterResponse> extends ResponseList<T>, CursorSupport {
 
 }

@@ -27,33 +27,32 @@ import org.mariotaku.twidere.R;
 
 public class DirectMessageConversationViewHolder {
 
-    public final ImageView incoming_profile_image, outgoing_profile_image;
-    public final View incoming_message_container, outgoing_message_container,
-            incoming_profile_image_container,
-            outgoing_profile_image_container;
-    public final TextView incoming_text, incoming_time, outgoing_text, outgoing_time;
-    private float text_size;
+	public final ImageView incoming_profile_image, outgoing_profile_image;
+	public final View incoming_message_container, outgoing_message_container, incoming_profile_image_container,
+			outgoing_profile_image_container;
+	public final TextView incoming_text, incoming_time, outgoing_text, outgoing_time;
+	private float text_size;
 
-    public DirectMessageConversationViewHolder(final View view) {
-        incoming_message_container = view.findViewById(R.id.incoming_message_container);
-        outgoing_message_container = view.findViewById(R.id.outgoing_message_container);
-        incoming_profile_image_container = view.findViewById(R.id.incoming_profile_image_container);
-        outgoing_profile_image_container = view.findViewById(R.id.outgoing_profile_image_container);
-        incoming_profile_image = (ImageView) view.findViewById(R.id.incoming_profile_image);
-        outgoing_profile_image = (ImageView) view.findViewById(R.id.outgoing_profile_image);
-        incoming_text = (TextView) view.findViewById(R.id.incoming_text);
-        incoming_time = (TextView) view.findViewById(R.id.incoming_time);
-        outgoing_text = (TextView) view.findViewById(R.id.outgoing_text);
-        outgoing_time = (TextView) view.findViewById(R.id.outgoing_time);
-    }
+	public DirectMessageConversationViewHolder(final View view) {
+		incoming_message_container = view.findViewById(R.id.incoming_message_container);
+		outgoing_message_container = view.findViewById(R.id.outgoing_message_container);
+		incoming_profile_image_container = view.findViewById(R.id.incoming_profile_image_container);
+		outgoing_profile_image_container = view.findViewById(R.id.outgoing_profile_image_container);
+		incoming_profile_image = (ImageView) view.findViewById(R.id.incoming_profile_image);
+		outgoing_profile_image = (ImageView) view.findViewById(R.id.outgoing_profile_image);
+		incoming_text = (TextView) view.findViewById(R.id.incoming_text);
+		incoming_time = (TextView) view.findViewById(R.id.incoming_time);
+		outgoing_text = (TextView) view.findViewById(R.id.outgoing_text);
+		outgoing_time = (TextView) view.findViewById(R.id.outgoing_time);
+	}
 
-    public void setTextSize(final float text_size) {
-        if (this.text_size != text_size) {
-            this.text_size = text_size;
-            incoming_text.setTextSize(text_size);
-            incoming_time.setTextSize(text_size * 0.75f);
-            outgoing_text.setTextSize(text_size);
-            outgoing_time.setTextSize(text_size * 0.75f);
-        }
-    }
+	public void setTextSize(final float text_size) {
+		if (this.text_size != text_size) {
+			this.text_size = text_size;
+			incoming_text.setTextSize(text_size);
+			incoming_time.setTextSize(text_size * 0.75f);
+			outgoing_text.setTextSize(text_size);
+			outgoing_time.setTextSize(text_size * 0.75f);
+		}
+	}
 }

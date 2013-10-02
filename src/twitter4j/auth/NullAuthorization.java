@@ -26,38 +26,38 @@ import java.io.ObjectStreamException;
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
 public class NullAuthorization implements Authorization {
-    private static NullAuthorization SINGLETON = new NullAuthorization();
+	private static NullAuthorization SINGLETON = new NullAuthorization();
 
-    private NullAuthorization() {
+	private NullAuthorization() {
 
-    }
+	}
 
-    @Override
-    public boolean equals(final Object o) {
-        return SINGLETON == o;
-    }
+	@Override
+	public boolean equals(final Object o) {
+		return SINGLETON == o;
+	}
 
-    @Override
-    public String getAuthorizationHeader(final HttpRequest req) {
-        return null;
-    }
+	@Override
+	public String getAuthorizationHeader(final HttpRequest req) {
+		return null;
+	}
 
-    @Override
-    public boolean isEnabled() {
-        return false;
-    }
+	@Override
+	public boolean isEnabled() {
+		return false;
+	}
 
-    @Override
-    public String toString() {
-        return "NullAuthentication{SINGLETON}";
-    }
+	@Override
+	public String toString() {
+		return "NullAuthentication{SINGLETON}";
+	}
 
-    private Object readResolve() throws ObjectStreamException {
-        return SINGLETON;
-    }
+	private Object readResolve() throws ObjectStreamException {
+		return SINGLETON;
+	}
 
-    public static NullAuthorization getInstance() {
-        return SINGLETON;
-    }
+	public static NullAuthorization getInstance() {
+		return SINGLETON;
+	}
 
 }

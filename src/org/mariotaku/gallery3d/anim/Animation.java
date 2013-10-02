@@ -46,44 +46,43 @@ import org.mariotaku.gallery3d.util.GalleryUtils;
 // The start() method can be called again to restart the Animation.
 //
 abstract public class Animation {
-    private static final long ANIMATION_START = -1;
-    private static final long NO_ANIMATION = -2;
+	private static final long ANIMATION_START = -1;
+	private static final long NO_ANIMATION = -2;
 
-    private long mStartTime = NO_ANIMATION;
-    private int mDuration;
-    private Interpolator mInterpolator;
+	private long mStartTime = NO_ANIMATION;
+	private int mDuration;
+	private Interpolator mInterpolator;
 
-    public boolean calculate(final long currentTimeMillis) {
-        if (mStartTime == NO_ANIMATION)
-            return false;
-        if (mStartTime == ANIMATION_START) {
-            mStartTime = currentTimeMillis;
-        }
-        final int elapse = (int) (currentTimeMillis - mStartTime);
-        final float x = GalleryUtils.clamp((float) elapse / mDuration, 0f, 1f);
-        final Interpolator i = mInterpolator;
-        onCalculate(i != null ? i.getInterpolation(x) : x);
-        if (elapse >= mDuration) {
-            mStartTime = NO_ANIMATION;
-        }
-        return mStartTime != NO_ANIMATION;
-    }
+	public boolean calculate(final long currentTimeMillis) {
+		if (mStartTime == NO_ANIMATION) return false;
+		if (mStartTime == ANIMATION_START) {
+			mStartTime = currentTimeMillis;
+		}
+		final int elapse = (int) (currentTimeMillis - mStartTime);
+		final float x = GalleryUtils.clamp((float) elapse / mDuration, 0f, 1f);
+		final Interpolator i = mInterpolator;
+		onCalculate(i != null ? i.getInterpolation(x) : x);
+		if (elapse >= mDuration) {
+			mStartTime = NO_ANIMATION;
+		}
+		return mStartTime != NO_ANIMATION;
+	}
 
-    public boolean isActive() {
-        return mStartTime != NO_ANIMATION;
-    }
+	public boolean isActive() {
+		return mStartTime != NO_ANIMATION;
+	}
 
-    public void setDuration(final int duration) {
-        mDuration = duration;
-    }
+	public void setDuration(final int duration) {
+		mDuration = duration;
+	}
 
-    public void setInterpolator(final Interpolator interpolator) {
-        mInterpolator = interpolator;
-    }
+	public void setInterpolator(final Interpolator interpolator) {
+		mInterpolator = interpolator;
+	}
 
-    public void setStartTime(final long time) {
-        mStartTime = time;
-    }
+	public void setStartTime(final long time) {
+		mStartTime = time;
+	}
 
-    abstract protected void onCalculate(float progress);
+	abstract protected void onCalculate(float progress);
 }

@@ -30,80 +30,76 @@ import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
 public class ActivityViewHolder {
 
-    public final ImageView profile_image;
-    public final ImageView activity_profile_image_1, activity_profile_image_2,
-            activity_profile_image_3,
-            activity_profile_image_4, activity_profile_image_5;
-    public final ImageView[] activity_profile_images;
-    public final TextView title, text, time, reply_status;
-    public final ViewGroup activity_profile_image_container;
-    private final ColorLabelRelativeLayout content;
-    private boolean account_color_enabled;
-    private float text_size;
+	public final ImageView profile_image;
+	public final ImageView activity_profile_image_1, activity_profile_image_2, activity_profile_image_3,
+			activity_profile_image_4, activity_profile_image_5;
+	public final ImageView[] activity_profile_images;
+	public final TextView title, text, time, reply_status;
+	public final ViewGroup activity_profile_image_container;
+	private final ColorLabelRelativeLayout content;
+	private boolean account_color_enabled;
+	private float text_size;
 
-    public ActivityViewHolder(final View view) {
-        content = (ColorLabelRelativeLayout) view;
-        profile_image = (ImageView) view.findViewById(R.id.profile_image);
-        title = (TextView) view.findViewById(R.id.title);
-        text = (TextView) view.findViewById(R.id.text);
-        time = (TextView) view.findViewById(R.id.time);
-        reply_status = (TextView) view.findViewById(R.id.reply_status);
-        activity_profile_image_container = (ViewGroup) view
-                .findViewById(R.id.activity_profile_image_container);
-        activity_profile_image_1 = (ImageView) view.findViewById(R.id.activity_profile_image_1);
-        activity_profile_image_2 = (ImageView) view.findViewById(R.id.activity_profile_image_2);
-        activity_profile_image_3 = (ImageView) view.findViewById(R.id.activity_profile_image_3);
-        activity_profile_image_4 = (ImageView) view.findViewById(R.id.activity_profile_image_4);
-        activity_profile_image_5 = (ImageView) view.findViewById(R.id.activity_profile_image_5);
-        activity_profile_images = new ImageView[] {
-                activity_profile_image_1, activity_profile_image_2,
-                activity_profile_image_3, activity_profile_image_4, activity_profile_image_5
-        };
-    }
+	public ActivityViewHolder(final View view) {
+		content = (ColorLabelRelativeLayout) view;
+		profile_image = (ImageView) view.findViewById(R.id.profile_image);
+		title = (TextView) view.findViewById(R.id.title);
+		text = (TextView) view.findViewById(R.id.text);
+		time = (TextView) view.findViewById(R.id.time);
+		reply_status = (TextView) view.findViewById(R.id.reply_status);
+		activity_profile_image_container = (ViewGroup) view.findViewById(R.id.activity_profile_image_container);
+		activity_profile_image_1 = (ImageView) view.findViewById(R.id.activity_profile_image_1);
+		activity_profile_image_2 = (ImageView) view.findViewById(R.id.activity_profile_image_2);
+		activity_profile_image_3 = (ImageView) view.findViewById(R.id.activity_profile_image_3);
+		activity_profile_image_4 = (ImageView) view.findViewById(R.id.activity_profile_image_4);
+		activity_profile_image_5 = (ImageView) view.findViewById(R.id.activity_profile_image_5);
+		activity_profile_images = new ImageView[] { activity_profile_image_1, activity_profile_image_2,
+				activity_profile_image_3, activity_profile_image_4, activity_profile_image_5 };
+	}
 
-    public void reset() {
-        content.drawLabel(Color.TRANSPARENT, Color.TRANSPARENT, Color.TRANSPARENT);
-        profile_image.setImageDrawable(null);
-        title.setText(null);
-        text.setVisibility(View.VISIBLE);
-        text.setText(null);
-        text.setSingleLine(false);
-        text.setEllipsize(null);
-        time.setText(null);
-        time.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-        reply_status.setVisibility(View.GONE);
-        reply_status.setText(null);
-        reply_status.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-        activity_profile_image_container.setVisibility(View.GONE);
-        final int activity_profile_image_count = activity_profile_image_container.getChildCount();
-        for (int i = 0; i < activity_profile_image_count; i++) {
-            ((ImageView) activity_profile_image_container.getChildAt(i)).setImageDrawable(null);
-        }
-    }
+	public void reset() {
+		content.drawLabel(Color.TRANSPARENT, Color.TRANSPARENT, Color.TRANSPARENT);
+		profile_image.setImageDrawable(null);
+		title.setText(null);
+		text.setVisibility(View.VISIBLE);
+		text.setText(null);
+		text.setSingleLine(false);
+		text.setEllipsize(null);
+		time.setText(null);
+		time.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+		reply_status.setVisibility(View.GONE);
+		reply_status.setText(null);
+		reply_status.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+		activity_profile_image_container.setVisibility(View.GONE);
+		final int activity_profile_image_count = activity_profile_image_container.getChildCount();
+		for (int i = 0; i < activity_profile_image_count; i++) {
+			((ImageView) activity_profile_image_container.getChildAt(i)).setImageDrawable(null);
+		}
+	}
 
-    public void setAccountColor(final int color) {
-        content.drawEnd(account_color_enabled ? color : Color.TRANSPARENT);
-    }
+	public void setAccountColor(final int color) {
+		content.drawEnd(account_color_enabled ? color : Color.TRANSPARENT);
+	}
 
-    public void setAccountColorEnabled(final boolean enabled) {
-        account_color_enabled = enabled;
-        if (!account_color_enabled) {
-            content.drawEnd(Color.TRANSPARENT);
-        }
-    }
+	public void setAccountColorEnabled(final boolean enabled) {
+		account_color_enabled = enabled;
+		if (!account_color_enabled) {
+			content.drawEnd(Color.TRANSPARENT);
+		}
+	}
 
-    public void setTextSize(final float text_size) {
-        if (this.text_size != text_size) {
-            this.text_size = text_size;
-            text.setTextSize(text_size);
-            title.setTextSize(text_size * 1.05f);
-            time.setTextSize(text_size * 0.65f);
-            reply_status.setTextSize(text_size * 0.65f);
-        }
-    }
+	public void setTextSize(final float text_size) {
+		if (this.text_size != text_size) {
+			this.text_size = text_size;
+			text.setTextSize(text_size);
+			title.setTextSize(text_size * 1.05f);
+			time.setTextSize(text_size * 0.65f);
+			reply_status.setTextSize(text_size * 0.65f);
+		}
+	}
 
-    public void setUserColor(final int color) {
-        content.drawStart(color);
-    }
+	public void setUserColor(final int color) {
+		content.drawStart(color);
+	}
 
 }

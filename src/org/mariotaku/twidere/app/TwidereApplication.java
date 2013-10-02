@@ -58,160 +58,146 @@ import twitter4j.http.HostAddressResolver;
 
 import java.io.File;
 
-public class TwidereApplication extends Application implements Constants,
-        OnSharedPreferenceChangeListener {
+public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener {
 
-    private ImageLoaderWrapper mImageLoaderWrapper;
-    private ImageLoader mImageLoader;
-    private AsyncTaskManager mAsyncTaskManager;
-    private SharedPreferences mPreferences;
-    private AsyncTwitterWrapper mTwitterWrapper;
-    private MultiSelectManager mMultiSelectManager;
-    private TwidereImageDownloader mImageDownloader;
-    private MessagesManager mCroutonsManager;
+	private ImageLoaderWrapper mImageLoaderWrapper;
+	private ImageLoader mImageLoader;
+	private AsyncTaskManager mAsyncTaskManager;
+	private SharedPreferences mPreferences;
+	private AsyncTwitterWrapper mTwitterWrapper;
+	private MultiSelectManager mMultiSelectManager;
+	private TwidereImageDownloader mImageDownloader;
+	private MessagesManager mCroutonsManager;
 
-    private HostAddressResolver mResolver;
-    private SQLiteDatabase mDatabase;
+	private HostAddressResolver mResolver;
+	private SQLiteDatabase mDatabase;
 
-    private Handler mHandler;
+	private Handler mHandler;
 
-    public AsyncTaskManager getAsyncTaskManager() {
-        if (mAsyncTaskManager != null)
-            return mAsyncTaskManager;
-        return mAsyncTaskManager = AsyncTaskManager.getInstance();
-    }
+	public AsyncTaskManager getAsyncTaskManager() {
+		if (mAsyncTaskManager != null) return mAsyncTaskManager;
+		return mAsyncTaskManager = AsyncTaskManager.getInstance();
+	}
 
-    public Handler getHandler() {
-        return mHandler;
-    }
+	public Handler getHandler() {
+		return mHandler;
+	}
 
-    public HostAddressResolver getHostAddressResolver() {
-        if (mResolver != null)
-            return mResolver;
-        return mResolver = new TwidereHostAddressResolver(this);
-    }
+	public HostAddressResolver getHostAddressResolver() {
+		if (mResolver != null) return mResolver;
+		return mResolver = new TwidereHostAddressResolver(this);
+	}
 
-    public ImageDownloader getImageDownloader() {
-        if (mImageDownloader != null)
-            return mImageDownloader;
-        return mImageDownloader = new TwidereImageDownloader(this);
-    }
+	public ImageDownloader getImageDownloader() {
+		if (mImageDownloader != null) return mImageDownloader;
+		return mImageDownloader = new TwidereImageDownloader(this);
+	}
 
-    public ImageLoader getImageLoader() {
-        if (mImageLoader != null)
-            return mImageLoader;
-        final File cache_dir = getBestCacheDir(this, DIR_NAME_IMAGE_CACHE);
-        final ImageLoader loader = ImageLoader.getInstance();
-        final ImageLoaderConfiguration.Builder cb = new ImageLoaderConfiguration.Builder(this);
-        cb.threadPoolSize(8);
-        cb.memoryCache(new ImageMemoryCache(40));
-        cb.discCache(new UnlimitedDiscCache(cache_dir, new URLFileNameGenerator()));
-        cb.imageDownloader(getImageDownloader());
-        loader.init(cb.build());
-        return mImageLoader = loader;
-    }
+	public ImageLoader getImageLoader() {
+		if (mImageLoader != null) return mImageLoader;
+		final File cache_dir = getBestCacheDir(this, DIR_NAME_IMAGE_CACHE);
+		final ImageLoader loader = ImageLoader.getInstance();
+		final ImageLoaderConfiguration.Builder cb = new ImageLoaderConfiguration.Builder(this);
+		cb.threadPoolSize(8);
+		cb.memoryCache(new ImageMemoryCache(40));
+		cb.discCache(new UnlimitedDiscCache(cache_dir, new URLFileNameGenerator()));
+		cb.imageDownloader(getImageDownloader());
+		loader.init(cb.build());
+		return mImageLoader = loader;
+	}
 
-    public ImageLoaderWrapper getImageLoaderWrapper() {
-        if (mImageLoaderWrapper != null)
-            return mImageLoaderWrapper;
-        return mImageLoaderWrapper = new ImageLoaderWrapper(getImageLoader());
-    }
+	public ImageLoaderWrapper getImageLoaderWrapper() {
+		if (mImageLoaderWrapper != null) return mImageLoaderWrapper;
+		return mImageLoaderWrapper = new ImageLoaderWrapper(getImageLoader());
+	}
 
-    public MessagesManager getMessagesManager() {
-        if (mCroutonsManager != null)
-            return mCroutonsManager;
-        return mCroutonsManager = new MessagesManager(this);
-    }
+	public MessagesManager getMessagesManager() {
+		if (mCroutonsManager != null) return mCroutonsManager;
+		return mCroutonsManager = new MessagesManager(this);
+	}
 
-    public MultiSelectManager getMultiSelectManager() {
-        if (mMultiSelectManager != null)
-            return mMultiSelectManager;
-        return mMultiSelectManager = new MultiSelectManager();
-    }
+	public MultiSelectManager getMultiSelectManager() {
+		if (mMultiSelectManager != null) return mMultiSelectManager;
+		return mMultiSelectManager = new MultiSelectManager();
+	}
 
-    public SQLiteDatabase getSQLiteDatabase() {
-        if (mDatabase != null)
-            return mDatabase;
-        return mDatabase = new DatabaseHelper(this, DATABASES_NAME, DATABASES_VERSION)
-                .getWritableDatabase();
-    }
+	public SQLiteDatabase getSQLiteDatabase() {
+		if (mDatabase != null) return mDatabase;
+		return mDatabase = new DatabaseHelper(this, DATABASES_NAME, DATABASES_VERSION).getWritableDatabase();
+	}
 
-    public AsyncTwitterWrapper getTwitterWrapper() {
-        if (mTwitterWrapper != null)
-            return mTwitterWrapper;
-        return mTwitterWrapper = AsyncTwitterWrapper.getInstance(this);
-    }
+	public AsyncTwitterWrapper getTwitterWrapper() {
+		if (mTwitterWrapper != null) return mTwitterWrapper;
+		return mTwitterWrapper = AsyncTwitterWrapper.getInstance(this);
+	}
 
-    @Override
-    public void onCreate() {
-        mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-        mHandler = new Handler();
-        mPreferences.registerOnSharedPreferenceChangeListener(this);
-        super.onCreate();
-        initializeAsyncTask();
-        GalleryUtils.initialize(this);
-        if (mPreferences.getBoolean(PREFERENCE_KEY_UCD_DATA_PROFILING, false)) {
-            startService(new Intent(this, UCDService.class));
-        }
-        if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
-            startService(new Intent(this, RefreshService.class));
-        }
-        initAccountColor(this);
-        initUserColor(this);
-    }
+	@Override
+	public void onCreate() {
+		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+		mHandler = new Handler();
+		mPreferences.registerOnSharedPreferenceChangeListener(this);
+		super.onCreate();
+		initializeAsyncTask();
+		GalleryUtils.initialize(this);
+		if (mPreferences.getBoolean(PREFERENCE_KEY_UCD_DATA_PROFILING, false)) {
+			startService(new Intent(this, UCDService.class));
+		}
+		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
+			startService(new Intent(this, RefreshService.class));
+		}
+		initAccountColor(this);
+		initUserColor(this);
+	}
 
-    @Override
-    public void onLowMemory() {
-        if (mImageLoaderWrapper != null) {
-            mImageLoaderWrapper.clearMemoryCache();
-        }
-        super.onLowMemory();
-    }
+	@Override
+	public void onLowMemory() {
+		if (mImageLoaderWrapper != null) {
+			mImageLoaderWrapper.clearMemoryCache();
+		}
+		super.onLowMemory();
+	}
 
-    @Override
-    public void onSharedPreferenceChanged(final SharedPreferences preferences, final String key) {
-        if (PREFERENCE_KEY_AUTO_REFRESH.equals(key) || PREFERENCE_KEY_REFRESH_INTERVAL.equals(key)) {
-            final Intent intent = new Intent(this, RefreshService.class);
-            stopService(intent);
-            if (preferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)
-                    && hasActiveConnection(this)) {
-                startService(intent);
-            }
-        } else if (PREFERENCE_KEY_ENABLE_PROXY.equals(key)
-                || PREFERENCE_KEY_CONNECTION_TIMEOUT.equals(key)
-                || PREFERENCE_KEY_PROXY_HOST.equals(key) || PREFERENCE_KEY_PROXY_PORT.equals(key)
-                || PREFERENCE_KEY_FAST_IMAGE_LOADING.equals(key)) {
-            reloadConnectivitySettings();
-        } else if (PREFERENCE_KEY_UCD_DATA_PROFILING.equals(key)) {
-            final Intent intent = new Intent(this, UCDService.class);
-            if (preferences.getBoolean(PREFERENCE_KEY_UCD_DATA_PROFILING, false)) {
-                startService(intent);
-            } else {
-                stopService(intent);
-            }
-        }
-    }
+	@Override
+	public void onSharedPreferenceChanged(final SharedPreferences preferences, final String key) {
+		if (PREFERENCE_KEY_AUTO_REFRESH.equals(key) || PREFERENCE_KEY_REFRESH_INTERVAL.equals(key)) {
+			final Intent intent = new Intent(this, RefreshService.class);
+			stopService(intent);
+			if (preferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false) && hasActiveConnection(this)) {
+				startService(intent);
+			}
+		} else if (PREFERENCE_KEY_ENABLE_PROXY.equals(key) || PREFERENCE_KEY_CONNECTION_TIMEOUT.equals(key)
+				|| PREFERENCE_KEY_PROXY_HOST.equals(key) || PREFERENCE_KEY_PROXY_PORT.equals(key)
+				|| PREFERENCE_KEY_FAST_IMAGE_LOADING.equals(key)) {
+			reloadConnectivitySettings();
+		} else if (PREFERENCE_KEY_UCD_DATA_PROFILING.equals(key)) {
+			final Intent intent = new Intent(this, UCDService.class);
+			if (preferences.getBoolean(PREFERENCE_KEY_UCD_DATA_PROFILING, false)) {
+				startService(intent);
+			} else {
+				stopService(intent);
+			}
+		}
+	}
 
-    public void reloadConnectivitySettings() {
-        if (mImageDownloader != null) {
-            mImageDownloader.reloadConnectivitySettings();
-        }
-    }
+	public void reloadConnectivitySettings() {
+		if (mImageDownloader != null) {
+			mImageDownloader.reloadConnectivitySettings();
+		}
+	}
 
-    private void initializeAsyncTask() {
-        // AsyncTask class needs to be loaded in UI thread.
-        // So we load it here to comply the rule.
-        try {
-            Class.forName(AsyncTask.class.getName());
-        } catch (final ClassNotFoundException e) {
-        }
-    }
+	private void initializeAsyncTask() {
+		// AsyncTask class needs to be loaded in UI thread.
+		// So we load it here to comply the rule.
+		try {
+			Class.forName(AsyncTask.class.getName());
+		} catch (final ClassNotFoundException e) {
+		}
+	}
 
-    public static TwidereApplication getInstance(final Context context) {
-        if (context == null)
-            return null;
-        final Context app = context.getApplicationContext();
-        return app instanceof TwidereApplication ? (TwidereApplication) app : null;
-    }
+	public static TwidereApplication getInstance(final Context context) {
+		if (context == null) return null;
+		final Context app = context.getApplicationContext();
+		return app instanceof TwidereApplication ? (TwidereApplication) app : null;
+	}
 
 }

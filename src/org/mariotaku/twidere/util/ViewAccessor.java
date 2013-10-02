@@ -26,21 +26,20 @@ import android.view.View;
 
 public final class ViewAccessor {
 
-    @SuppressWarnings("deprecation")
-    public static void setBackground(final View view, final Drawable background) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            view.setBackgroundDrawable(background);
-        } else {
-            ViewAccessorJB.setBackground(view, background);
-        }
-    }
+	@SuppressWarnings("deprecation")
+	public static void setBackground(final View view, final Drawable background) {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+			view.setBackgroundDrawable(background);
+		} else {
+			ViewAccessorJB.setBackground(view, background);
+		}
+	}
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    static class ViewAccessorJB {
-        static void setBackground(final View view, final Drawable background) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
-                return;
-            view.setBackground(background);
-        }
-    }
+	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+	static class ViewAccessorJB {
+		static void setBackground(final View view, final Drawable background) {
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) return;
+			view.setBackground(background);
+		}
+	}
 }

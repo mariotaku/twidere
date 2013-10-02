@@ -26,49 +26,37 @@ import android.support.v4.content.Loader;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 
-import org.mariotaku.twidere.loader.UserSearchLoader;
-import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
+import org.mariotaku.twidere.loader.TweetSearchLoader;
+import org.mariotaku.twidere.model.ParcelableStatus;
 
 import java.util.List;
 
-public class SearchUsersFragment extends BaseUsersListFragment {
-
-	private int mPage = 1;
+public class SearchStatusesFragment extends ParcelableStatusesListFragment {
 
 	@Override
-	public Loader<List<ParcelableUser>> newLoaderInstance(final Context context, final Bundle args) {
+	public Loader<List<ParcelableStatus>> newLoaderInstance(final Context context, final Bundle args) {
 		if (args == null) return null;
-		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
-		final String query = args.getString(INTENT_KEY_QUERY);
-		return new UserSearchLoader(context, account_id, query, mPage, getData());
+		long account_id = -1, max_id = -1, since_id = -1;
+		String query = null;
+		int tab_position = -1;
+		if (args != null) {
+			account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
+			max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
+			since_id = args.getLong(INTENT_KEY_SINCE_ID, -1);
+			query = args.getString(INTENT_KEY_QUERY);
+			tab_position = args.getInt(INTENT_KEY_TAB_POSITION, -1);
+		}
+		return new TweetSearchLoader(getActivity(), account_id, query, max_id, since_id, getData(),
+				getSavedStatusesFileArgs(), tab_position);
 	}
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
-		if (savedInstanceState != null) {
-			mPage = savedInstanceState.getInt(INTENT_KEY_PAGE, 1);
-		}
 		super.onActivityCreated(savedInstanceState);
-	}
-
-	@Override
-	public void onDestroyView() {
-		mPage = 1;
-		super.onDestroyView();
-	}
-
-	@Override
-	public void onLoadFinished(final Loader<List<ParcelableUser>> loader, final List<ParcelableUser> data) {
-		if (data != null) {
-			mPage++;
-		}
-		super.onLoadFinished(loader, data);
-	}
-
-	@Override
-	public void onSaveInstanceState(final Bundle outState) {
-		outState.putInt(INTENT_KEY_PAGE, mPage);
-		super.onSaveInstanceState(outState);
+		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();
+		adapter.setFiltersEnabled(true);
+		adapter.setIgnoredFilterFields(false, false, false, false);
 	}
 
 	@Override
@@ -80,6 +68,15 @@ public class SearchUsersFragment extends BaseUsersListFragment {
 				((SearchFragment) parent).hideIndicator();
 			}
 		}
+	}
+
+	@Override
+	protected String[] getSavedStatusesFileArgs() {
+		final Bundle args = getArguments();
+		if (args == null) return null;
+		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+		final String query = args.getString(INTENT_KEY_QUERY);
+		return new String[] { AUTHORITY_SEARCH_TWEETS, "account" + account_id, "query" + query };
 	}
 
 }

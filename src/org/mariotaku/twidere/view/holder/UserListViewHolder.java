@@ -27,28 +27,27 @@ import org.mariotaku.twidere.R;
 
 public class UserListViewHolder {
 
-    public final ImageView profile_image;
-    public final TextView name, description, created_by, members_count, subscribers_count;
-    public final View item_menu;
-    private float text_size;
+	public final ImageView profile_image;
+	public final TextView name, description, created_by, members_count, subscribers_count;
+	public final View item_menu;
+	private float text_size;
 
-    public UserListViewHolder(final View view) {
-        profile_image = (ImageView) view.findViewById(R.id.profile_image);
-        name = (TextView) view.findViewById(R.id.name);
-        description = (TextView) view.findViewById(R.id.description);
-        created_by = (TextView) view.findViewById(R.id.created_by);
-        members_count = (TextView) view.findViewById(R.id.members_count);
-        subscribers_count = (TextView) view.findViewById(R.id.subscribers_count);
-        item_menu = view.findViewById(R.id.item_menu);
-    }
+	public UserListViewHolder(final View view) {
+		profile_image = (ImageView) view.findViewById(R.id.profile_image);
+		name = (TextView) view.findViewById(R.id.name);
+		description = (TextView) view.findViewById(R.id.description);
+		created_by = (TextView) view.findViewById(R.id.created_by);
+		members_count = (TextView) view.findViewById(R.id.members_count);
+		subscribers_count = (TextView) view.findViewById(R.id.subscribers_count);
+		item_menu = view.findViewById(R.id.item_menu);
+	}
 
-    public void setTextSize(final float text_size) {
-        if (this.text_size == text_size)
-            return;
-        this.text_size = text_size;
-        description.setTextSize(text_size);
-        name.setTextSize(text_size * 1.05f);
-        created_by.setTextSize(text_size * 0.65f);
-    }
+	public void setTextSize(final float text_size) {
+		if (this.text_size == text_size) return;
+		this.text_size = text_size;
+		description.setTextSize(text_size);
+		name.setTextSize(text_size * 1.05f);
+		created_by.setTextSize(text_size * 0.65f);
+	}
 
 }

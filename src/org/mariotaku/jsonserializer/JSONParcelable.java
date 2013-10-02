@@ -1,14 +1,13 @@
-
 package org.mariotaku.jsonserializer;
 
 public interface JSONParcelable {
 
-    public void writeToParcel(JSONParcel out);
+	public void writeToParcel(JSONParcel out);
 
-    public interface Creator<T extends JSONParcelable> {
+	public interface Creator<T extends JSONParcelable> {
 
-        public T createFromParcel(JSONParcel in);
+		public T createFromParcel(JSONParcel in);
 
-        public T[] newArray(int size);
-    }
+		public T[] newArray(int size);
+	}
 }

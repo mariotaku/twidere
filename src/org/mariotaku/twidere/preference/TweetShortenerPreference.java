@@ -36,106 +36,96 @@ import org.mariotaku.twidere.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TweetShortenerPreference extends DialogPreference implements Constants,
-        OnClickListener {
+public class TweetShortenerPreference extends DialogPreference implements Constants, OnClickListener {
 
-    private SharedPreferences mPreferences;
+	private SharedPreferences mPreferences;
 
-    private final PackageManager mPackageManager;
+	private final PackageManager mPackageManager;
 
-    private TweetShortenerSpec[] mAvailableTweetShorteners;
+	private TweetShortenerSpec[] mAvailableTweetShorteners;
 
-    public TweetShortenerPreference(final Context context) {
-        this(context, null);
-    }
+	public TweetShortenerPreference(final Context context) {
+		this(context, null);
+	}
 
-    public TweetShortenerPreference(final Context context, final AttributeSet attrs) {
-        this(context, attrs, android.R.attr.preferenceStyle);
-    }
+	public TweetShortenerPreference(final Context context, final AttributeSet attrs) {
+		this(context, attrs, android.R.attr.preferenceStyle);
+	}
 
-    public TweetShortenerPreference(final Context context, final AttributeSet attrs,
-            final int defStyle) {
-        super(context, attrs, defStyle);
-        mPackageManager = context.getPackageManager();
-    }
+	public TweetShortenerPreference(final Context context, final AttributeSet attrs, final int defStyle) {
+		super(context, attrs, defStyle);
+		mPackageManager = context.getPackageManager();
+	}
 
-    @Override
-    public void onClick(final DialogInterface dialog, final int which) {
-        final SharedPreferences.Editor editor = getEditor();
-        if (editor == null)
-            return;
-        final TweetShortenerSpec spec = mAvailableTweetShorteners[which];
-        if (spec != null) {
-            editor.putString(PREFERENCE_KEY_TWEET_SHORTENER, spec.cls);
-            editor.commit();
-        }
-        dialog.dismiss();
-    }
+	@Override
+	public void onClick(final DialogInterface dialog, final int which) {
+		final SharedPreferences.Editor editor = getEditor();
+		if (editor == null) return;
+		final TweetShortenerSpec spec = mAvailableTweetShorteners[which];
+		if (spec != null) {
+			editor.putString(PREFERENCE_KEY_TWEET_SHORTENER, spec.cls);
+			editor.commit();
+		}
+		dialog.dismiss();
+	}
 
-    @Override
-    public void onPrepareDialogBuilder(final AlertDialog.Builder builder) {
-        super.onPrepareDialogBuilder(builder);
-        mPreferences = getSharedPreferences();
-        if (mPreferences == null)
-            return;
-        final String component = mPreferences.getString(PREFERENCE_KEY_TWEET_SHORTENER, null);
-        final ArrayList<TweetShortenerSpec> specs = new ArrayList<TweetShortenerSpec>();
-        specs.add(new TweetShortenerSpec(getContext().getString(R.string.tweet_shortener_default),
-                null));
-        final Intent query_intent = new Intent(INTENT_ACTION_EXTENSION_SHORTEN_TWEET);
-        final List<ResolveInfo> result = mPackageManager.queryIntentServices(query_intent, 0);
-        for (final ResolveInfo info : result) {
-            specs.add(new TweetShortenerSpec(info.loadLabel(mPackageManager).toString(),
-                    info.serviceInfo.packageName
-                            + "/" + info.serviceInfo.name));
-        }
-        mAvailableTweetShorteners = specs.toArray(new TweetShortenerSpec[specs.size()]);
-        builder.setSingleChoiceItems(mAvailableTweetShorteners, getIndex(component),
-                TweetShortenerPreference.this);
-        builder.setNegativeButton(android.R.string.cancel, null);
-    }
+	@Override
+	public void onPrepareDialogBuilder(final AlertDialog.Builder builder) {
+		super.onPrepareDialogBuilder(builder);
+		mPreferences = getSharedPreferences();
+		if (mPreferences == null) return;
+		final String component = mPreferences.getString(PREFERENCE_KEY_TWEET_SHORTENER, null);
+		final ArrayList<TweetShortenerSpec> specs = new ArrayList<TweetShortenerSpec>();
+		specs.add(new TweetShortenerSpec(getContext().getString(R.string.tweet_shortener_default), null));
+		final Intent query_intent = new Intent(INTENT_ACTION_EXTENSION_SHORTEN_TWEET);
+		final List<ResolveInfo> result = mPackageManager.queryIntentServices(query_intent, 0);
+		for (final ResolveInfo info : result) {
+			specs.add(new TweetShortenerSpec(info.loadLabel(mPackageManager).toString(), info.serviceInfo.packageName
+					+ "/" + info.serviceInfo.name));
+		}
+		mAvailableTweetShorteners = specs.toArray(new TweetShortenerSpec[specs.size()]);
+		builder.setSingleChoiceItems(mAvailableTweetShorteners, getIndex(component), TweetShortenerPreference.this);
+		builder.setNegativeButton(android.R.string.cancel, null);
+	}
 
-    private int getIndex(final String cls) {
-        if (mAvailableTweetShorteners == null)
-            return -1;
-        if (cls == null)
-            return 0;
-        final int count = mAvailableTweetShorteners.length;
-        for (int i = 0; i < count; i++) {
-            final TweetShortenerSpec spec = mAvailableTweetShorteners[i];
-            if (cls.equals(spec.cls))
-                return i;
-        }
-        return -1;
-    }
+	private int getIndex(final String cls) {
+		if (mAvailableTweetShorteners == null) return -1;
+		if (cls == null) return 0;
+		final int count = mAvailableTweetShorteners.length;
+		for (int i = 0; i < count; i++) {
+			final TweetShortenerSpec spec = mAvailableTweetShorteners[i];
+			if (cls.equals(spec.cls)) return i;
+		}
+		return -1;
+	}
 
-    static class TweetShortenerSpec implements CharSequence {
-        private final String name, cls;
+	static class TweetShortenerSpec implements CharSequence {
+		private final String name, cls;
 
-        TweetShortenerSpec(final String name, final String cls) {
-            this.name = name;
-            this.cls = cls;
-        }
+		TweetShortenerSpec(final String name, final String cls) {
+			this.name = name;
+			this.cls = cls;
+		}
 
-        @Override
-        public char charAt(final int index) {
-            return name.charAt(index);
-        }
+		@Override
+		public char charAt(final int index) {
+			return name.charAt(index);
+		}
 
-        @Override
-        public int length() {
-            return name.length();
-        }
+		@Override
+		public int length() {
+			return name.length();
+		}
 
-        @Override
-        public CharSequence subSequence(final int start, final int end) {
-            return name.subSequence(start, end);
-        }
+		@Override
+		public CharSequence subSequence(final int start, final int end) {
+			return name.subSequence(start, end);
+		}
 
-        @Override
-        public String toString() {
-            return name;
-        }
-    }
+		@Override
+		public String toString() {
+			return name;
+		}
+	}
 
 }

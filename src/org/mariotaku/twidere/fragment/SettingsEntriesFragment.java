@@ -27,11 +27,11 @@ import org.mariotaku.twidere.R;
 
 public class SettingsEntriesFragment extends PreferenceFragment implements Constants {
 
-    @Override
-    public void onActivityCreated(final Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getPreferenceManager().setSharedPreferencesName(SHARED_PREFERENCES_NAME);
-        addPreferencesFromResource(R.xml.settings_headers);
-    }
+	@Override
+	public void onActivityCreated(final Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		getPreferenceManager().setSharedPreferencesName(SHARED_PREFERENCES_NAME);
+		addPreferencesFromResource(R.xml.settings_headers);
+	}
 
 }

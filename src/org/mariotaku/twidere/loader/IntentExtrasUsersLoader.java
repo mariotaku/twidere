@@ -29,25 +29,24 @@ import java.util.List;
 
 public class IntentExtrasUsersLoader extends ParcelableUsersLoader {
 
-    private final Bundle mExtras;
+	private final Bundle mExtras;
 
-    public IntentExtrasUsersLoader(final Context context, final Bundle extras,
-            final List<ParcelableUser> data) {
-        super(context, data);
-        mExtras = extras;
-    }
+	public IntentExtrasUsersLoader(final Context context, final Bundle extras, final List<ParcelableUser> data) {
+		super(context, data);
+		mExtras = extras;
+	}
 
-    @Override
-    public List<ParcelableUser> loadInBackground() {
-        final List<ParcelableUser> data = getData();
-        if (mExtras != null) {
-            final List<ParcelableUser> users = mExtras.getParcelableArrayList(INTENT_KEY_USERS);
-            if (users != null) {
-                data.addAll(users);
-                Collections.sort(data);
-            }
-        }
-        return data;
-    }
+	@Override
+	public List<ParcelableUser> loadInBackground() {
+		final List<ParcelableUser> data = getData();
+		if (mExtras != null) {
+			final List<ParcelableUser> users = mExtras.getParcelableArrayList(INTENT_KEY_USERS);
+			if (users != null) {
+				data.addAll(users);
+				Collections.sort(data);
+			}
+		}
+		return data;
+	}
 
 }

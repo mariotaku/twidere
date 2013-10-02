@@ -130,7 +130,7 @@
   <string name="blocked_users">Usuaris bloquejats</string>
   <string name="set_as_default">Marcar per defecte</string>
   <string name="search_users">Cerca Usuaris</string>
-  <string name="search_tweets">Cerca Piulades</string>
+  <string name="search_statuses">Cerca Piulades</string>
   <string name="created_at">Creat a les</string>
   <string name="search_hint">Cerca piulades o usuaris</string>
   <string name="remember_position">Recorda la posició</string>

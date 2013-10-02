@@ -26,14 +26,14 @@ import java.util.Date;
  * @since Twitter4J 2.0.8
  */
 public interface SavedSearch extends Comparable<SavedSearch>, TwitterResponse, Serializable {
-    Date getCreatedAt();
+	Date getCreatedAt();
 
-    int getId();
+	int getId();
 
-    String getName();
+	String getName();
 
-    int getPosition();
+	int getPosition();
 
-    String getQuery();
+	String getQuery();
 
 }

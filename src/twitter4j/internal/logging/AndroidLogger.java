@@ -24,129 +24,129 @@ import android.util.Log;
  */
 final class AndroidLogger extends Logger {
 
-    private static final String DEFAULT_LOGTAG = "Twitter4J";
+	private static final String DEFAULT_LOGTAG = "Twitter4J";
 
-    private final String logTag;
+	private final String logTag;
 
-    AndroidLogger() {
-        logTag = DEFAULT_LOGTAG;
-    }
+	AndroidLogger() {
+		logTag = DEFAULT_LOGTAG;
+	}
 
-    AndroidLogger(final String tag) {
-        logTag = tag;
-    }
+	AndroidLogger(final String tag) {
+		logTag = tag;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void debug(final String message) {
-        if (isDebugEnabled()) {
-            Log.d(logTag, message);
-        }
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void debug(final String message) {
+		if (isDebugEnabled()) {
+			Log.d(logTag, message);
+		}
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void debug(final String message, final String message2) {
-        if (isDebugEnabled()) {
-            Log.d(logTag, message + message2);
-        }
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void debug(final String message, final String message2) {
+		if (isDebugEnabled()) {
+			Log.d(logTag, message + message2);
+		}
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void error(final String message) {
-        if (isErrorEnabled()) {
-            Log.e(logTag, message);
-        }
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void error(final String message) {
+		if (isErrorEnabled()) {
+			Log.e(logTag, message);
+		}
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void error(final String message, final Throwable th) {
-        if (isErrorEnabled()) {
-            Log.e(logTag, message, th);
-        }
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void error(final String message, final Throwable th) {
+		if (isErrorEnabled()) {
+			Log.e(logTag, message, th);
+		}
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void info(final String message) {
-        if (isInfoEnabled()) {
-            Log.i(logTag, message);
-        }
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void info(final String message) {
+		if (isInfoEnabled()) {
+			Log.i(logTag, message);
+		}
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void info(final String message, final String message2) {
-        if (isInfoEnabled()) {
-            Log.i(logTag, message + message2);
-        }
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void info(final String message, final String message2) {
+		if (isInfoEnabled()) {
+			Log.i(logTag, message + message2);
+		}
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isDebugEnabled() {
-        return false;
-        // return Log.isLoggable(DEFAULT_LOGTAG, Log.DEBUG);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isDebugEnabled() {
+		return false;
+		// return Log.isLoggable(DEFAULT_LOGTAG, Log.DEBUG);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isErrorEnabled() {
-        return Log.isLoggable(DEFAULT_LOGTAG, Log.ERROR);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isErrorEnabled() {
+		return Log.isLoggable(DEFAULT_LOGTAG, Log.ERROR);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isInfoEnabled() {
-        return false;
-        // return Log.isLoggable(DEFAULT_LOGTAG, Log.INFO);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isInfoEnabled() {
+		return false;
+		// return Log.isLoggable(DEFAULT_LOGTAG, Log.INFO);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isWarnEnabled() {
-        return Log.isLoggable(DEFAULT_LOGTAG, Log.WARN);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isWarnEnabled() {
+		return Log.isLoggable(DEFAULT_LOGTAG, Log.WARN);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void warn(final String message) {
-        if (isWarnEnabled()) {
-            Log.w(logTag, message);
-        }
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void warn(final String message) {
+		if (isWarnEnabled()) {
+			Log.w(logTag, message);
+		}
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void warn(final String message, final String message2) {
-        if (isWarnEnabled()) {
-            Log.w(logTag, message + message2);
-        }
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void warn(final String message, final String message2) {
+		if (isWarnEnabled()) {
+			Log.w(logTag, message + message2);
+		}
+	}
 }

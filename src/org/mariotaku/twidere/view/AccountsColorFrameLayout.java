@@ -29,47 +29,45 @@ import android.widget.FrameLayout;
 
 public class AccountsColorFrameLayout extends FrameLayout {
 
-    private int[] mColors;
-    private final Paint mPaint = new Paint();
-    private final float mColorsWidth;
+	private int[] mColors;
+	private final Paint mPaint = new Paint();
+	private final float mColorsWidth;
 
-    public AccountsColorFrameLayout(final Context context) {
-        this(context, null);
-    }
+	public AccountsColorFrameLayout(final Context context) {
+		this(context, null);
+	}
 
-    public AccountsColorFrameLayout(final Context context, final AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
+	public AccountsColorFrameLayout(final Context context, final AttributeSet attrs) {
+		this(context, attrs, 0);
+	}
 
-    public AccountsColorFrameLayout(final Context context, final AttributeSet attrs,
-            final int defStyle) {
-        super(context, attrs, defStyle);
-        setWillNotDraw(false);
-        final Resources res = getResources();
-        mColorsWidth = 3 * res.getDisplayMetrics().density;
-    }
+	public AccountsColorFrameLayout(final Context context, final AttributeSet attrs, final int defStyle) {
+		super(context, attrs, defStyle);
+		setWillNotDraw(false);
+		final Resources res = getResources();
+		mColorsWidth = 3 * res.getDisplayMetrics().density;
+	}
 
-    public void setColors(final int... colors) {
-        mColors = colors;
-        invalidate();
-    }
+	public void setColors(final int... colors) {
+		mColors = colors;
+		invalidate();
+	}
 
-    @Override
-    protected void onDraw(final Canvas canvas) {
-        super.onDraw(canvas);
-        if (mColors == null || mColors.length == 0) {
-            canvas.drawColor(Color.TRANSPARENT);
-            return;
-        }
-        final int width = getWidth(), height = getHeight();
-        final int length = mColors.length;
-        for (int i = 0; i < length; i++) {
-            final int color = mColors[i];
-            mPaint.setColor(color);
-            canvas.drawRect(width - mColorsWidth, i * (height / length), width, (i + 1)
-                    * (height / length), mPaint);
-        }
+	@Override
+	protected void onDraw(final Canvas canvas) {
+		super.onDraw(canvas);
+		if (mColors == null || mColors.length == 0) {
+			canvas.drawColor(Color.TRANSPARENT);
+			return;
+		}
+		final int width = getWidth(), height = getHeight();
+		final int length = mColors.length;
+		for (int i = 0; i < length; i++) {
+			final int color = mColors[i];
+			mPaint.setColor(color);
+			canvas.drawRect(width - mColorsWidth, i * (height / length), width, (i + 1) * (height / length), mPaint);
+		}
 
-    }
+	}
 
 }

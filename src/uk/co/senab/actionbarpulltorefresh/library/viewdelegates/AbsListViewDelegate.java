@@ -26,17 +26,17 @@ import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
  */
 public class AbsListViewDelegate extends PullToRefreshAttacher.ViewDelegate {
 
-    public static final Class<AbsListView> SUPPORTED_VIEW_CLASS = AbsListView.class;
+	public static final Class<AbsListView> SUPPORTED_VIEW_CLASS = AbsListView.class;
 
-    @Override
-    public boolean isScrolledToTop(final View view) {
-        final AbsListView absListView = (AbsListView) view;
-        if (absListView.getCount() == 0)
-            return true;
-        else if (absListView.getFirstVisiblePosition() == 0) {
-            final View firstVisibleChild = absListView.getChildAt(0);
-            return firstVisibleChild != null && firstVisibleChild.getTop() >= 0;
-        }
-        return false;
-    }
+	@Override
+	public boolean isScrolledToTop(final View view) {
+		final AbsListView absListView = (AbsListView) view;
+		if (absListView.getCount() == 0)
+			return true;
+		else if (absListView.getFirstVisiblePosition() == 0) {
+			final View firstVisibleChild = absListView.getChildAt(0);
+			return firstVisibleChild != null && firstVisibleChild.getTop() >= 0;
+		}
+		return false;
+	}
 }

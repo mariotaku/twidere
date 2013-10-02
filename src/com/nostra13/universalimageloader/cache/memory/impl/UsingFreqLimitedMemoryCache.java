@@ -42,86 +42,85 @@ import java.util.Set;
  * @since 1.0.0
  */
 public class UsingFreqLimitedMemoryCache extends LimitedMemoryCache<String, Bitmap> {
-    /**
-     * Contains strong references to stored objects (keys) and last object usage
-     * date (in milliseconds). If hard cache size will exceed limit then object
-     * with the least frequently usage is deleted (but it continue exist at
-     * {@link #softMap} and can be collected by GC at any time)
-     */
-    private final Map<Bitmap, Integer> usingCounts = Collections
-            .synchronizedMap(new HashMap<Bitmap, Integer>());
+	/**
+	 * Contains strong references to stored objects (keys) and last object usage
+	 * date (in milliseconds). If hard cache size will exceed limit then object
+	 * with the least frequently usage is deleted (but it continue exist at
+	 * {@link #softMap} and can be collected by GC at any time)
+	 */
+	private final Map<Bitmap, Integer> usingCounts = Collections.synchronizedMap(new HashMap<Bitmap, Integer>());
 
-    public UsingFreqLimitedMemoryCache(final int sizeLimit) {
-        super(sizeLimit);
-    }
+	public UsingFreqLimitedMemoryCache(final int sizeLimit) {
+		super(sizeLimit);
+	}
 
-    @Override
-    public void clear() {
-        usingCounts.clear();
-        super.clear();
-    }
+	@Override
+	public void clear() {
+		usingCounts.clear();
+		super.clear();
+	}
 
-    @Override
-    public Bitmap get(final String key) {
-        final Bitmap value = super.get(key);
-        // Increment usage count for value if value is contained in hardCahe
-        if (value != null) {
-            final Integer usageCount = usingCounts.get(value);
-            if (usageCount != null) {
-                usingCounts.put(value, usageCount + 1);
-            }
-        }
-        return value;
-    }
+	@Override
+	public Bitmap get(final String key) {
+		final Bitmap value = super.get(key);
+		// Increment usage count for value if value is contained in hardCahe
+		if (value != null) {
+			final Integer usageCount = usingCounts.get(value);
+			if (usageCount != null) {
+				usingCounts.put(value, usageCount + 1);
+			}
+		}
+		return value;
+	}
 
-    @Override
-    public boolean put(final String key, final Bitmap value) {
-        if (super.put(key, value)) {
-            usingCounts.put(value, 0);
-            return true;
-        } else
-            return false;
-    }
+	@Override
+	public boolean put(final String key, final Bitmap value) {
+		if (super.put(key, value)) {
+			usingCounts.put(value, 0);
+			return true;
+		} else
+			return false;
+	}
 
-    @Override
-    public void remove(final String key) {
-        final Bitmap value = super.get(key);
-        if (value != null) {
-            usingCounts.remove(value);
-        }
-        super.remove(key);
-    }
+	@Override
+	public void remove(final String key) {
+		final Bitmap value = super.get(key);
+		if (value != null) {
+			usingCounts.remove(value);
+		}
+		super.remove(key);
+	}
 
-    @Override
-    protected Reference<Bitmap> createReference(final Bitmap value) {
-        return new WeakReference<Bitmap>(value);
-    }
+	@Override
+	protected Reference<Bitmap> createReference(final Bitmap value) {
+		return new WeakReference<Bitmap>(value);
+	}
 
-    @Override
-    protected int getSize(final Bitmap value) {
-        return value.getRowBytes() * value.getHeight();
-    }
+	@Override
+	protected int getSize(final Bitmap value) {
+		return value.getRowBytes() * value.getHeight();
+	}
 
-    @Override
-    protected Bitmap removeNext() {
-        Integer minUsageCount = null;
-        Bitmap leastUsedValue = null;
-        final Set<Entry<Bitmap, Integer>> entries = usingCounts.entrySet();
-        synchronized (usingCounts) {
-            for (final Entry<Bitmap, Integer> entry : entries) {
-                if (leastUsedValue == null) {
-                    leastUsedValue = entry.getKey();
-                    minUsageCount = entry.getValue();
-                } else {
-                    final Integer lastValueUsage = entry.getValue();
-                    if (lastValueUsage < minUsageCount) {
-                        minUsageCount = lastValueUsage;
-                        leastUsedValue = entry.getKey();
-                    }
-                }
-            }
-        }
-        usingCounts.remove(leastUsedValue);
-        return leastUsedValue;
-    }
+	@Override
+	protected Bitmap removeNext() {
+		Integer minUsageCount = null;
+		Bitmap leastUsedValue = null;
+		final Set<Entry<Bitmap, Integer>> entries = usingCounts.entrySet();
+		synchronized (usingCounts) {
+			for (final Entry<Bitmap, Integer> entry : entries) {
+				if (leastUsedValue == null) {
+					leastUsedValue = entry.getKey();
+					minUsageCount = entry.getValue();
+				} else {
+					final Integer lastValueUsage = entry.getValue();
+					if (lastValueUsage < minUsageCount) {
+						minUsageCount = lastValueUsage;
+						leastUsedValue = entry.getKey();
+					}
+				}
+			}
+		}
+		usingCounts.remove(leastUsedValue);
+		return leastUsedValue;
+	}
 }

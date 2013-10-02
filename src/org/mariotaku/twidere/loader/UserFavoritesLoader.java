@@ -34,38 +34,33 @@ import java.util.List;
 
 public class UserFavoritesLoader extends Twitter4JStatusesLoader {
 
-    private final long mUserId;
-    private final String mUserScreenName;
-    private int mTotalItemsCount;
+	private final long mUserId;
+	private final String mUserScreenName;
+	private int mTotalItemsCount;
 
-    public UserFavoritesLoader(final Context context, final long account_id, final long user_id,
-            final String screen_name, final long max_id, final long since_id,
-            final List<ParcelableStatus> data,
-            final String[] saved_statuses_args, final int tab_position) {
-        super(context, account_id, max_id, since_id, data, saved_statuses_args, tab_position);
-        mUserId = user_id;
-        mUserScreenName = screen_name;
-    }
+	public UserFavoritesLoader(final Context context, final long account_id, final long user_id,
+			final String screen_name, final long max_id, final long since_id, final List<ParcelableStatus> data,
+			final String[] saved_statuses_args, final int tab_position) {
+		super(context, account_id, max_id, since_id, data, saved_statuses_args, tab_position);
+		mUserId = user_id;
+		mUserScreenName = screen_name;
+	}
 
-    @Override
-    public ResponseList<Status> getStatuses(final Twitter twitter, final Paging paging)
-            throws TwitterException {
-        if (twitter == null)
-            return null;
-        if (mUserId != -1)
-            return twitter.getFavorites(mUserId, paging);
-        else if (mUserScreenName != null)
-            return twitter.getFavorites(mUserScreenName, paging);
-        return null;
-    }
+	@Override
+	public ResponseList<Status> getStatuses(final Twitter twitter, final Paging paging) throws TwitterException {
+		if (twitter == null) return null;
+		if (mUserId != -1)
+			return twitter.getFavorites(mUserId, paging);
+		else if (mUserScreenName != null) return twitter.getFavorites(mUserScreenName, paging);
+		return null;
+	}
 
-    public int getTotalItemsCount() {
-        return mTotalItemsCount;
-    }
+	public int getTotalItemsCount() {
+		return mTotalItemsCount;
+	}
 
-    @Override
-    protected boolean shouldFilterStatus(final SQLiteDatabase database,
-            final ParcelableStatus status) {
-        return false;
-    }
+	@Override
+	protected boolean shouldFilterStatus(final SQLiteDatabase database, final ParcelableStatus status) {
+		return false;
+	}
 }

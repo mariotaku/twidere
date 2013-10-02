@@ -28,46 +28,46 @@ import twitter4j.internal.util.InternalParseUtil;
  */
 @SuppressWarnings("rawtypes")
 class PagableResponseListImpl<T> extends ResponseListImpl implements PagableResponseList {
-    private static final long serialVersionUID = 9098876089678648404L;
-    private final long previousCursor;
-    private final long nextCursor;
+	private static final long serialVersionUID = 9098876089678648404L;
+	private final long previousCursor;
+	private final long nextCursor;
 
-    PagableResponseListImpl(final int size, final JSONObject json, final HttpResponse res) {
-        super(size, res);
-        this.previousCursor = InternalParseUtil.getLong("previous_cursor", json);
-        this.nextCursor = InternalParseUtil.getLong("next_cursor", json);
-    }
+	PagableResponseListImpl(final int size, final JSONObject json, final HttpResponse res) {
+		super(size, res);
+		this.previousCursor = InternalParseUtil.getLong("previous_cursor", json);
+		this.nextCursor = InternalParseUtil.getLong("next_cursor", json);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long getNextCursor() {
-        return nextCursor;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public long getNextCursor() {
+		return nextCursor;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long getPreviousCursor() {
-        return previousCursor;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public long getPreviousCursor() {
+		return previousCursor;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean hasNext() {
-        return 0 != nextCursor;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean hasNext() {
+		return 0 != nextCursor;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean hasPrevious() {
-        return 0 != previousCursor;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean hasPrevious() {
+		return 0 != previousCursor;
+	}
 
 }

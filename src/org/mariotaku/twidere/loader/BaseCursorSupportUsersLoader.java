@@ -30,45 +30,42 @@ import java.util.List;
 
 public abstract class BaseCursorSupportUsersLoader extends Twitter4JUsersLoader {
 
-    private final long mCursor;
-    private final SharedPreferences mPreferences;
-    private final int mLoadItemLimit;
+	private final long mCursor;
+	private final SharedPreferences mPreferences;
+	private final int mLoadItemLimit;
 
-    private long mNextCursor, mPrevCursor;
+	private long mNextCursor, mPrevCursor;
 
-    public BaseCursorSupportUsersLoader(final Context context, final long account_id,
-            final long cursor,
-            final List<ParcelableUser> data) {
-        super(context, account_id, data);
-        mCursor = cursor;
-        mPreferences = getContext().getSharedPreferences(SHARED_PREFERENCES_NAME,
-                Context.MODE_PRIVATE);
-        final int prefs_load_item_limit = mPreferences.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT,
-                PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
-        mLoadItemLimit = Math.min(100, prefs_load_item_limit);
-    }
+	public BaseCursorSupportUsersLoader(final Context context, final long account_id, final long cursor,
+			final List<ParcelableUser> data) {
+		super(context, account_id, data);
+		mCursor = cursor;
+		mPreferences = getContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final int prefs_load_item_limit = mPreferences.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT,
+				PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
+		mLoadItemLimit = Math.min(100, prefs_load_item_limit);
+	}
 
-    public final int getCount() {
-        return mLoadItemLimit;
-    }
+	public final int getCount() {
+		return mLoadItemLimit;
+	}
 
-    public final long getCursor() {
-        return mCursor;
-    }
+	public final long getCursor() {
+		return mCursor;
+	}
 
-    public final long getNextCursor() {
-        return mNextCursor;
-    }
+	public final long getNextCursor() {
+		return mNextCursor;
+	}
 
-    public final long getPrevCursor() {
-        return mPrevCursor;
-    }
+	public final long getPrevCursor() {
+		return mPrevCursor;
+	}
 
-    protected final void setCursorIds(final CursorSupport cursor) {
-        if (cursor == null)
-            return;
-        mNextCursor = cursor.getNextCursor();
-        mPrevCursor = cursor.getPreviousCursor();
-    }
+	protected final void setCursorIds(final CursorSupport cursor) {
+		if (cursor == null) return;
+		mNextCursor = cursor.getNextCursor();
+		mPrevCursor = cursor.getPreviousCursor();
+	}
 
 }

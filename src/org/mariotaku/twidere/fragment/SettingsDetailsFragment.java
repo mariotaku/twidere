@@ -27,16 +27,16 @@ import org.mariotaku.twidere.util.Utils;
 
 public class SettingsDetailsFragment extends PreferenceFragment implements Constants {
 
-    @Override
-    public void onActivityCreated(final Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getPreferenceManager().setSharedPreferencesName(SHARED_PREFERENCES_NAME);
-        final Bundle args = getArguments();
-        final String rawResId = args != null ? args.getString(INTENT_KEY_RESID) : null;
-        final int resId = Utils.getResId(getActivity(), rawResId);
-        if (resId != 0) {
-            addPreferencesFromResource(resId);
-        }
-    }
+	@Override
+	public void onActivityCreated(final Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		getPreferenceManager().setSharedPreferencesName(SHARED_PREFERENCES_NAME);
+		final Bundle args = getArguments();
+		final String rawResId = args != null ? args.getString(INTENT_KEY_RESID) : null;
+		final int resId = Utils.getResId(getActivity(), rawResId);
+		if (resId != 0) {
+			addPreferencesFromResource(resId);
+		}
+	}
 
 }

@@ -29,34 +29,32 @@ import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class ParcelableUsersLoader extends AsyncTaskLoader<List<ParcelableUser>> implements
-        Constants {
+public abstract class ParcelableUsersLoader extends AsyncTaskLoader<List<ParcelableUser>> implements Constants {
 
-    private final List<ParcelableUser> mData = Collections
-            .synchronizedList(new NoDuplicatesArrayList<ParcelableUser>());
+	private final List<ParcelableUser> mData = Collections
+			.synchronizedList(new NoDuplicatesArrayList<ParcelableUser>());
 
-    public ParcelableUsersLoader(final Context context, final List<ParcelableUser> data) {
-        super(context);
-        if (data != null) {
-            mData.addAll(data);
-        }
-    }
+	public ParcelableUsersLoader(final Context context, final List<ParcelableUser> data) {
+		super(context);
+		if (data != null) {
+			mData.addAll(data);
+		}
+	}
 
-    @Override
-    public void onStartLoading() {
-        forceLoad();
-    }
+	@Override
+	public void onStartLoading() {
+		forceLoad();
+	}
 
-    protected List<ParcelableUser> getData() {
-        return mData;
-    }
+	protected List<ParcelableUser> getData() {
+		return mData;
+	}
 
-    protected boolean hasId(final long id) {
-        for (final ParcelableUser user : mData) {
-            if (user.id == id)
-                return true;
-        }
-        return false;
-    }
+	protected boolean hasId(final long id) {
+		for (final ParcelableUser user : mData) {
+			if (user.id == id) return true;
+		}
+		return false;
+	}
 
 }

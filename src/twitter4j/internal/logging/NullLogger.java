@@ -21,91 +21,91 @@ package twitter4j.internal.logging;
  * @since Twitter4J 2.1.4
  */
 final class NullLogger extends Logger {
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void debug(final String message) {
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void debug(final String message) {
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void debug(final String message, final String message2) {
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void debug(final String message, final String message2) {
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void error(final String message) {
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void error(final String message) {
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void error(final String message, final Throwable th) {
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void error(final String message, final Throwable th) {
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void info(final String message) {
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void info(final String message) {
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void info(final String message, final String message2) {
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void info(final String message, final String message2) {
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isDebugEnabled() {
-        return false;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isDebugEnabled() {
+		return false;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isErrorEnabled() {
-        return false;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isErrorEnabled() {
+		return false;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isInfoEnabled() {
-        return false;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isInfoEnabled() {
+		return false;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isWarnEnabled() {
-        return false;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isWarnEnabled() {
+		return false;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void warn(final String message) {
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void warn(final String message) {
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void warn(final String message, final String message2) {
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void warn(final String message, final String message2) {
+	}
 }

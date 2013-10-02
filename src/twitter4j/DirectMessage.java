@@ -25,28 +25,28 @@ import java.util.Date;
  */
 public interface DirectMessage extends TwitterResponse, EntitySupport {
 
-    /**
-     * @return created_at
-     * @since Twitter4J 1.1.0
-     */
-    Date getCreatedAt();
+	/**
+	 * @return created_at
+	 * @since Twitter4J 1.1.0
+	 */
+	Date getCreatedAt();
 
-    long getId();
+	long getId();
 
-    String getRawText();
+	String getRawText();
 
-    User getRecipient();
+	User getRecipient();
 
-    long getRecipientId();
+	long getRecipientId();
 
-    String getRecipientScreenName();
+	String getRecipientScreenName();
 
-    User getSender();
+	User getSender();
 
-    long getSenderId();
+	long getSenderId();
 
-    String getSenderScreenName();
+	String getSenderScreenName();
 
-    String getText();
+	String getText();
 
 }

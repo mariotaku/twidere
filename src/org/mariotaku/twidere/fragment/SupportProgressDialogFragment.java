@@ -28,20 +28,18 @@ import org.mariotaku.twidere.R;
 
 public class SupportProgressDialogFragment extends BaseSupportDialogFragment {
 
-    @Override
-    public Dialog onCreateDialog(final Bundle savedInstanceState) {
-        final ProgressDialog dialog = new ProgressDialog(getActivity());
-        dialog.setMessage(getString(R.string.please_wait));
-        return dialog;
-    }
+	@Override
+	public Dialog onCreateDialog(final Bundle savedInstanceState) {
+		final ProgressDialog dialog = new ProgressDialog(getActivity());
+		dialog.setMessage(getString(R.string.please_wait));
+		return dialog;
+	}
 
-    public static SupportProgressDialogFragment show(final FragmentActivity activity,
-            final String tag) {
-        if (activity == null)
-            return null;
-        final SupportProgressDialogFragment f = new SupportProgressDialogFragment();
-        f.show(activity.getSupportFragmentManager(), tag);
-        return f;
-    }
+	public static SupportProgressDialogFragment show(final FragmentActivity activity, final String tag) {
+		if (activity == null) return null;
+		final SupportProgressDialogFragment f = new SupportProgressDialogFragment();
+		f.show(activity.getSupportFragmentManager(), tag);
+		return f;
+	}
 
 }

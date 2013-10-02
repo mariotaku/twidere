@@ -33,10 +33,9 @@ import com.nostra13.universalimageloader.core.assist.LoadedFrom;
  * @since 1.6.0
  */
 public final class FakeBitmapDisplayer implements BitmapDisplayer {
-    @Override
-    public Bitmap display(final Bitmap bitmap, final ImageView imageView,
-            final LoadedFrom loadedFrom) {
-        // Do nothing
-        return bitmap;
-    }
+	@Override
+	public Bitmap display(final Bitmap bitmap, final ImageView imageView, final LoadedFrom loadedFrom) {
+		// Do nothing
+		return bitmap;
+	}
 }

@@ -29,71 +29,60 @@ import org.mariotaku.twidere.util.ArrayUtils;
 
 public class ConsumerKeySecret {
 
-    public final String name, consumer_key, consumer_secret;
+	public final String name, consumer_key, consumer_secret;
 
-    private ConsumerKeySecret(final String consumer_key, final String consumer_secret) {
-        this("API", consumer_key, consumer_secret);
-    }
+	private ConsumerKeySecret(final String consumer_key, final String consumer_secret) {
+		this("API", consumer_key, consumer_secret);
+	}
 
-    private ConsumerKeySecret(final String name, final String consumer_key,
-            final String consumer_secret) {
-        this.name = name;
-        this.consumer_key = consumer_secret;
-        this.consumer_secret = consumer_secret;
-    }
+	private ConsumerKeySecret(final String name, final String consumer_key, final String consumer_secret) {
+		this.name = name;
+		this.consumer_key = consumer_secret;
+		this.consumer_secret = consumer_secret;
+	}
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (!(obj instanceof ConsumerKeySecret))
-            return false;
-        final ConsumerKeySecret other = (ConsumerKeySecret) obj;
-        if (consumer_key == null) {
-            if (other.consumer_key != null)
-                return false;
-        } else if (!consumer_key.equals(other.consumer_key))
-            return false;
-        if (consumer_secret == null) {
-            if (other.consumer_secret != null)
-                return false;
-        } else if (!consumer_secret.equals(other.consumer_secret))
-            return false;
-        return true;
-    }
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (!(obj instanceof ConsumerKeySecret)) return false;
+		final ConsumerKeySecret other = (ConsumerKeySecret) obj;
+		if (consumer_key == null) {
+			if (other.consumer_key != null) return false;
+		} else if (!consumer_key.equals(other.consumer_key)) return false;
+		if (consumer_secret == null) {
+			if (other.consumer_secret != null) return false;
+		} else if (!consumer_secret.equals(other.consumer_secret)) return false;
+		return true;
+	}
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (consumer_key == null ? 0 : consumer_key.hashCode());
-        result = prime * result + (consumer_secret == null ? 0 : consumer_secret.hashCode());
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (consumer_key == null ? 0 : consumer_key.hashCode());
+		result = prime * result + (consumer_secret == null ? 0 : consumer_secret.hashCode());
+		return result;
+	}
 
-    public static ConsumerKeySecret[] getAllOffcialKeys(final Context context) {
-        if (context == null)
-            return new ConsumerKeySecret[0];
-        final Resources res = context.getResources();
-        final String[] entries = res.getStringArray(R.array.entries_consumer_key_secret);
-        final String[] values = res.getStringArray(R.array.values_consumer_key_secret);
-        final int length = entries.length;
-        final ConsumerKeySecret[] keys = new ConsumerKeySecret[length];
-        for (int i = 0; i < length; i++) {
-            final String[] key_secret = values[i].split(";");
-            final String consumer_key = key_secret[0], consumer_secret = key_secret[1];
-            keys[i] = new ConsumerKeySecret(entries[i], consumer_key, consumer_secret);
-        }
-        return keys;
-    }
+	public static ConsumerKeySecret[] getAllOffcialKeys(final Context context) {
+		if (context == null) return new ConsumerKeySecret[0];
+		final Resources res = context.getResources();
+		final String[] entries = res.getStringArray(R.array.entries_consumer_key_secret);
+		final String[] values = res.getStringArray(R.array.values_consumer_key_secret);
+		final int length = entries.length;
+		final ConsumerKeySecret[] keys = new ConsumerKeySecret[length];
+		for (int i = 0; i < length; i++) {
+			final String[] key_secret = values[i].split(";");
+			final String consumer_key = key_secret[0], consumer_secret = key_secret[1];
+			keys[i] = new ConsumerKeySecret(entries[i], consumer_key, consumer_secret);
+		}
+		return keys;
+	}
 
-    public static boolean isOfficial(final Context context, final String consumer_key,
-            final String consumer_secret) {
-        if (context == null || isEmpty(consumer_key) || isEmpty(consumer_secret))
-            return false;
-        final ConsumerKeySecret[] keys = getAllOffcialKeys(context);
-        return ArrayUtils.contains(keys, new ConsumerKeySecret(consumer_key, consumer_secret));
-    }
+	public static boolean isOfficial(final Context context, final String consumer_key, final String consumer_secret) {
+		if (context == null || isEmpty(consumer_key) || isEmpty(consumer_secret)) return false;
+		final ConsumerKeySecret[] keys = getAllOffcialKeys(context);
+		return ArrayUtils.contains(keys, new ConsumerKeySecret(consumer_key, consumer_secret));
+	}
 }

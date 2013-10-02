@@ -130,7 +130,7 @@
   <string name="blocked_users">ผู้ที่ถูกบล็อค</string>
   <string name="set_as_default">ตั้งเป็นปริยาย</string>
   <string name="search_users">ค้นหาผู้ใช้</string>
-  <string name="search_tweets">ค้นหาทวีต</string>
+  <string name="search_statuses">ค้นหาทวีต</string>
   <string name="created_at">สร้างเมื่อ</string>
   <string name="search_hint">ค้นหาทวีตหรือผู้ใช้</string>
   <string name="remember_position">จำตำแหน่ง</string>

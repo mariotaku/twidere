@@ -138,7 +138,7 @@
   <string name="blocked_users">Geblokkeerde gebruikers</string>
   <string name="set_as_default">Als standaard instellen</string>
   <string name="search_users">Zoek gebruikers</string>
-  <string name="search_tweets">Zoek Tweets</string>
+  <string name="search_statuses">Zoek Tweets</string>
   <string name="created_at">Gemaakt op</string>
   <string name="search_hint">Zoek tweets of gebruikers</string>
   <string name="remember_position">Onthoud positie</string>

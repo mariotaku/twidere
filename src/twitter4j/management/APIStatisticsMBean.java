@@ -27,9 +27,9 @@ import java.util.Map;
  *      representation
  */
 public interface APIStatisticsMBean extends InvocationStatistics {
-    public Iterable<? extends InvocationStatistics> getInvocationStatistics();
+	public Iterable<? extends InvocationStatistics> getInvocationStatistics();
 
-    public Map<String, String> getMethodLevelSummariesAsString();
+	public Map<String, String> getMethodLevelSummariesAsString();
 
-    public String getMethodLevelSummary(String methodName);
+	public String getMethodLevelSummary(String methodName);
 }

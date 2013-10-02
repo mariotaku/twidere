@@ -32,59 +32,55 @@ import org.mariotaku.twidere.view.ShortTimeView;
 
 public class DirectMessageEntryViewHolder {
 
-    public final ImageView profile_image;
-    public final TextView name, screen_name, text;
-    public final ShortTimeView time;
-    private final ColorLabelRelativeLayout content;
-    private float text_size;
-    private boolean account_color_enabled;
-    private final boolean is_rtl;
+	public final ImageView profile_image;
+	public final TextView name, screen_name, text;
+	public final ShortTimeView time;
+	private final ColorLabelRelativeLayout content;
+	private float text_size;
+	private boolean account_color_enabled;
+	private final boolean is_rtl;
 
-    public DirectMessageEntryViewHolder(final View view) {
-        final Context context = view.getContext();
-        content = (ColorLabelRelativeLayout) view.findViewById(R.id.content);
-        profile_image = (ImageView) view.findViewById(R.id.profile_image);
-        name = (TextView) view.findViewById(R.id.name);
-        screen_name = (TextView) view.findViewById(R.id.screen_name);
-        text = (TextView) view.findViewById(R.id.text);
-        time = (ShortTimeView) view.findViewById(R.id.time);
-        is_rtl = Utils.isRTL(context);
-    }
+	public DirectMessageEntryViewHolder(final View view) {
+		final Context context = view.getContext();
+		content = (ColorLabelRelativeLayout) view.findViewById(R.id.content);
+		profile_image = (ImageView) view.findViewById(R.id.profile_image);
+		name = (TextView) view.findViewById(R.id.name);
+		screen_name = (TextView) view.findViewById(R.id.screen_name);
+		text = (TextView) view.findViewById(R.id.text);
+		time = (ShortTimeView) view.findViewById(R.id.time);
+		is_rtl = Utils.isRTL(context);
+	}
 
-    public void setAccountColor(final int color) {
-        content.drawEnd(account_color_enabled ? color : Color.TRANSPARENT);
-    }
+	public void setAccountColor(final int color) {
+		content.drawEnd(account_color_enabled ? color : Color.TRANSPARENT);
+	}
 
-    public void setAccountColorEnabled(final boolean enabled) {
-        if (account_color_enabled == enabled)
-            return;
-        account_color_enabled = enabled;
-        if (!account_color_enabled) {
-            content.drawEnd(Color.TRANSPARENT);
-        }
-    }
+	public void setAccountColorEnabled(final boolean enabled) {
+		if (account_color_enabled == enabled) return;
+		account_color_enabled = enabled;
+		if (!account_color_enabled) {
+			content.drawEnd(Color.TRANSPARENT);
+		}
+	}
 
-    public void setIsOutgoing(final boolean is_outgoing) {
-        if (is_rtl) {
-            text.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                    is_outgoing ? R.drawable.ic_indicator_outgoing : 0, 0);
-        } else {
-            text.setCompoundDrawablesWithIntrinsicBounds(
-                    is_outgoing ? R.drawable.ic_indicator_outgoing : 0, 0, 0, 0);
-        }
-    }
+	public void setIsOutgoing(final boolean is_outgoing) {
+		if (is_rtl) {
+			text.setCompoundDrawablesWithIntrinsicBounds(0, 0, is_outgoing ? R.drawable.ic_indicator_outgoing : 0, 0);
+		} else {
+			text.setCompoundDrawablesWithIntrinsicBounds(is_outgoing ? R.drawable.ic_indicator_outgoing : 0, 0, 0, 0);
+		}
+	}
 
-    public void setTextSize(final float text_size) {
-        if (this.text_size == text_size)
-            return;
-        this.text_size = text_size;
-        text.setTextSize(text_size);
-        name.setTextSize(text_size * 1.2f);
-        screen_name.setTextSize(text_size * 0.85f);
-        time.setTextSize(text_size * 0.65f);
-    }
+	public void setTextSize(final float text_size) {
+		if (this.text_size == text_size) return;
+		this.text_size = text_size;
+		text.setTextSize(text_size);
+		name.setTextSize(text_size * 1.2f);
+		screen_name.setTextSize(text_size * 0.85f);
+		time.setTextSize(text_size * 0.65f);
+	}
 
-    public void setUserColor(final int color) {
-        content.drawStart(color);
-    }
+	public void setUserColor(final int color) {
+		content.drawStart(color);
+	}
 }

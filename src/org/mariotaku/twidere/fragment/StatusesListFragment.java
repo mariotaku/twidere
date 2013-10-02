@@ -30,18 +30,17 @@ import java.util.List;
 
 public class StatusesListFragment extends ParcelableStatusesListFragment {
 
-    @Override
-    public Loader<List<ParcelableStatus>> newLoaderInstance(final Context context, final Bundle args) {
-        if (args == null)
-            return null;
-        if (args.containsKey(INTENT_KEY_STATUSES))
-            return new IntentExtrasStatusesLoader(getActivity(), args, getData());
-        return null;
-    }
+	@Override
+	public Loader<List<ParcelableStatus>> newLoaderInstance(final Context context, final Bundle args) {
+		if (args == null) return null;
+		if (args.containsKey(INTENT_KEY_STATUSES))
+			return new IntentExtrasStatusesLoader(getActivity(), args, getData());
+		return null;
+	}
 
-    @Override
-    protected String[] getSavedStatusesFileArgs() {
-        return null;
-    }
+	@Override
+	protected String[] getSavedStatusesFileArgs() {
+		return null;
+	}
 
 }

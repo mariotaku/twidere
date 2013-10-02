@@ -46,160 +46,149 @@ import org.mariotaku.twidere.util.AsyncTask;
 
 public abstract class CursorStatusesListFragment extends BaseStatusesListFragment<Cursor> {
 
-    private static final String[] CURSOR_COLS = new String[] {
-            Statuses._ID, Statuses.ACCOUNT_ID, Statuses.STATUS_ID,
-            Statuses.USER_ID, Statuses.STATUS_TIMESTAMP, Statuses.TEXT_HTML, Statuses.TEXT_PLAIN,
-            Statuses.NAME,
-            Statuses.SCREEN_NAME, Statuses.PROFILE_IMAGE_URL, Statuses.IN_REPLY_TO_SCREEN_NAME,
-            Statuses.IN_REPLY_TO_STATUS_ID, Statuses.LOCATION, Statuses.IS_RETWEET,
-            Statuses.RETWEET_COUNT,
-            Statuses.RETWEET_ID, Statuses.RETWEETED_BY_NAME, Statuses.RETWEETED_BY_SCREEN_NAME,
-            Statuses.IS_FAVORITE,
-            Statuses.IS_PROTECTED, Statuses.IS_VERIFIED, Statuses.IS_GAP,
-            Statuses.IS_POSSIBLY_SENSITIVE,
-            Statuses.SOURCE, Statuses.TEXT_UNESCAPED, Statuses.IMAGE_PREVIEW_URL
-    };
+	private static final String[] CURSOR_COLS = new String[] { Statuses._ID, Statuses.ACCOUNT_ID, Statuses.STATUS_ID,
+			Statuses.USER_ID, Statuses.STATUS_TIMESTAMP, Statuses.TEXT_HTML, Statuses.TEXT_PLAIN, Statuses.NAME,
+			Statuses.SCREEN_NAME, Statuses.PROFILE_IMAGE_URL, Statuses.IN_REPLY_TO_SCREEN_NAME,
+			Statuses.IN_REPLY_TO_STATUS_ID, Statuses.LOCATION, Statuses.IS_RETWEET, Statuses.RETWEET_COUNT,
+			Statuses.RETWEET_ID, Statuses.RETWEETED_BY_NAME, Statuses.RETWEETED_BY_SCREEN_NAME, Statuses.IS_FAVORITE,
+			Statuses.IS_PROTECTED, Statuses.IS_VERIFIED, Statuses.IS_GAP, Statuses.IS_POSSIBLY_SENSITIVE,
+			Statuses.SOURCE, Statuses.TEXT_UNESCAPED, Statuses.IMAGE_PREVIEW_URL };
 
-    private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            if (getActivity() == null || !isAdded() || isDetached())
-                return;
-            final String action = intent.getAction();
-            if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)
-                    || BROADCAST_FILTERS_UPDATED.equals(action)) {
-                getLoaderManager().restartLoader(0, null, CursorStatusesListFragment.this);
-            }
-        }
-    };
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			if (getActivity() == null || !isAdded() || isDetached()) return;
+			final String action = intent.getAction();
+			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action) || BROADCAST_FILTERS_UPDATED.equals(action)) {
+				getLoaderManager().restartLoader(0, null, CursorStatusesListFragment.this);
+			}
+		}
+	};
 
-    public HomeActivity getHomeActivity() {
-        final Activity activity = getActivity();
-        if (activity instanceof HomeActivity)
-            return (HomeActivity) activity;
-        return null;
-    }
+	public HomeActivity getHomeActivity() {
+		final Activity activity = getActivity();
+		if (activity instanceof HomeActivity) return (HomeActivity) activity;
+		return null;
+	}
 
-    @Override
-    public void onActivityCreated(final Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getListAdapter().setFiltersEnabled(isFiltersEnabled());
-    }
+	@Override
+	public void onActivityCreated(final Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		getListAdapter().setFiltersEnabled(isFiltersEnabled());
+	}
 
-    @Override
-    public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
-        final Uri uri = getContentUri();
-        final String table = getTableNameByUri(uri);
-        final String sort_by = Statuses.SORT_ORDER_STATUS_ID_DESC;
-        final String activated_where = buildActivatedStatsWhereClause(getActivity(), null);
-        final String where = isFiltersEnabled() ? buildStatusFilterWhereClause(table,
-                activated_where,
-                shouldEnableFiltersForRTs(getActivity())) : activated_where;
-        return new CursorLoader(getActivity(), uri, CURSOR_COLS, where, null, sort_by);
-    }
+	@Override
+	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
+		final Uri uri = getContentUri();
+		final String table = getTableNameByUri(uri);
+		final String sort_by = Statuses.SORT_ORDER_STATUS_ID_DESC;
+		final String activated_where = buildActivatedStatsWhereClause(getActivity(), null);
+		final String where = isFiltersEnabled() ? buildStatusFilterWhereClause(table, activated_where,
+				shouldEnableFiltersForRTs(getActivity())) : activated_where;
+		return new CursorLoader(getActivity(), uri, CURSOR_COLS, where, null, sort_by);
+	}
 
-    @Override
-    public void onPostStart() {
-        if (!isActivityFirstCreated()) {
-            getLoaderManager().restartLoader(0, null, this);
-        }
-    }
+	@Override
+	public void onPostStart() {
+		if (!isActivityFirstCreated()) {
+			getLoaderManager().restartLoader(0, null, this);
+		}
+	}
 
-    @Override
-    public void onRefreshStarted() {
-        super.onRefreshStarted();
-        savePosition();
-        new AsyncTask<Void, Void, long[][]>() {
+	@Override
+	public void onRefreshStarted() {
+		super.onRefreshStarted();
+		savePosition();
+		new AsyncTask<Void, Void, long[][]>() {
 
-            @Override
-            protected long[][] doInBackground(final Void... params) {
-                final long[][] result = new long[3][];
-                result[0] = getActivatedAccountIds(getActivity());
-                result[2] = getNewestStatusIds();
-                return result;
-            }
+			@Override
+			protected long[][] doInBackground(final Void... params) {
+				final long[][] result = new long[3][];
+				result[0] = getActivatedAccountIds(getActivity());
+				result[2] = getNewestStatusIds();
+				return result;
+			}
 
-            @Override
-            protected void onPostExecute(final long[][] result) {
-                getStatuses(result[0], result[1], result[2]);
-            }
+			@Override
+			protected void onPostExecute(final long[][] result) {
+				getStatuses(result[0], result[1], result[2]);
+			}
 
-        }.execute();
-    }
+		}.execute();
+	}
 
-    @Override
-    public void onScrollStateChanged(final AbsListView view, final int scrollState) {
-        super.onScrollStateChanged(view, scrollState);
-        switch (scrollState) {
-            case SCROLL_STATE_FLING:
-            case SCROLL_STATE_TOUCH_SCROLL: {
-                getTwitterWrapper().clearNotification(getNotificationIdToClear());
-                break;
-            }
-            case SCROLL_STATE_IDLE:
-                savePosition();
-                break;
-        }
-    }
+	@Override
+	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
+		super.onScrollStateChanged(view, scrollState);
+		switch (scrollState) {
+			case SCROLL_STATE_FLING:
+			case SCROLL_STATE_TOUCH_SCROLL: {
+				getTwitterWrapper().clearNotification(getNotificationIdToClear());
+				break;
+			}
+			case SCROLL_STATE_IDLE:
+				savePosition();
+				break;
+		}
+	}
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        final IntentFilter filter = new IntentFilter(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
-        filter.addAction(BROADCAST_FILTERS_UPDATED);
-        registerReceiver(mStatusReceiver, filter);
-    }
+	@Override
+	public void onStart() {
+		super.onStart();
+		final IntentFilter filter = new IntentFilter(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
+		filter.addAction(BROADCAST_FILTERS_UPDATED);
+		registerReceiver(mStatusReceiver, filter);
+	}
 
-    @Override
-    public void onStop() {
-        savePosition();
-        unregisterReceiver(mStatusReceiver);
-        super.onStop();
-    }
+	@Override
+	public void onStop() {
+		savePosition();
+		unregisterReceiver(mStatusReceiver);
+		super.onStop();
+	}
 
-    protected abstract Uri getContentUri();
+	protected abstract Uri getContentUri();
 
-    @Override
-    protected long[] getNewestStatusIds() {
-        return getNewestStatusIdsFromDatabase(getActivity(), getContentUri());
-    }
+	@Override
+	protected long[] getNewestStatusIds() {
+		return getNewestStatusIdsFromDatabase(getActivity(), getContentUri());
+	}
 
-    protected abstract int getNotificationIdToClear();
+	protected abstract int getNotificationIdToClear();
 
-    @Override
-    protected long[] getOldestStatusIds() {
-        return getOldestStatusIdsFromDatabase(getActivity(), getContentUri());
-    }
+	@Override
+	protected long[] getOldestStatusIds() {
+		return getOldestStatusIdsFromDatabase(getActivity(), getContentUri());
+	}
 
-    protected abstract boolean isFiltersEnabled();
+	protected abstract boolean isFiltersEnabled();
 
-    @Override
-    protected void loadMoreStatuses() {
-        if (isRefreshing())
-            return;
-        savePosition();
-        new AsyncTask<Void, Void, long[][]>() {
+	@Override
+	protected void loadMoreStatuses() {
+		if (isRefreshing()) return;
+		savePosition();
+		new AsyncTask<Void, Void, long[][]>() {
 
-            @Override
-            protected long[][] doInBackground(final Void... params) {
-                final long[][] result = new long[3][];
-                result[0] = getActivatedAccountIds(getActivity());
-                result[1] = getOldestStatusIds();
-                return result;
-            }
+			@Override
+			protected long[][] doInBackground(final Void... params) {
+				final long[][] result = new long[3][];
+				result[0] = getActivatedAccountIds(getActivity());
+				result[1] = getOldestStatusIds();
+				return result;
+			}
 
-            @Override
-            protected void onPostExecute(final long[][] result) {
-                getStatuses(result[0], result[1], result[2]);
-            }
+			@Override
+			protected void onPostExecute(final long[][] result) {
+				getStatuses(result[0], result[1], result[2]);
+			}
 
-        }.execute();
-    }
+		}.execute();
+	}
 
-    @Override
-    protected CursorStatusesAdapter newAdapterInstance() {
-        return new CursorStatusesAdapter(getActivity());
-    }
+	@Override
+	protected CursorStatusesAdapter newAdapterInstance() {
+		return new CursorStatusesAdapter(getActivity());
+	}
 
 }

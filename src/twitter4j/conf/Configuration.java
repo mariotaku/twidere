@@ -24,50 +24,50 @@ import twitter4j.http.HttpClientWrapperConfiguration;
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
 public interface Configuration extends HttpClientConfiguration, HttpClientWrapperConfiguration,
-        AuthorizationConfiguration {
+		AuthorizationConfiguration {
 
-    String getClientName();
+	String getClientName();
 
-    String getClientURL();
+	String getClientURL();
 
-    String getClientVersion();
+	String getClientVersion();
 
-    String getHttpClientImplementation();
+	String getHttpClientImplementation();
 
-    String getOAuthAccessTokenURL();
+	String getOAuthAccessTokenURL();
 
-    String getOAuthAuthenticationURL();
+	String getOAuthAuthenticationURL();
 
-    String getOAuthAuthorizationURL();
+	String getOAuthAuthorizationURL();
 
-    String getOAuthBaseURL();
+	String getOAuthBaseURL();
 
-    String getOAuthRequestTokenURL();
+	String getOAuthRequestTokenURL();
 
-    String getRestBaseURL();
+	String getRestBaseURL();
 
-    String getSigningOAuthAccessTokenURL();
+	String getSigningOAuthAccessTokenURL();
 
-    String getSigningOAuthAuthenticationURL();
+	String getSigningOAuthAuthenticationURL();
 
-    String getSigningOAuthAuthorizationURL();
+	String getSigningOAuthAuthorizationURL();
 
-    String getSigningOAuthBaseURL();
+	String getSigningOAuthBaseURL();
 
-    String getSigningOAuthRequestTokenURL();
+	String getSigningOAuthRequestTokenURL();
 
-    String getSigningRestBaseURL();
+	String getSigningRestBaseURL();
 
-    String getUserAgent();
+	String getUserAgent();
 
-    boolean isDebugEnabled();
+	boolean isDebugEnabled();
 
-    boolean isIncludeEntitiesEnabled();
+	boolean isIncludeEntitiesEnabled();
 
-    boolean isIncludeRTsEnabled();
+	boolean isIncludeRTsEnabled();
 
-    boolean isProxyConfigured();
+	boolean isProxyConfigured();
 
-    boolean isSSLEnabled();
+	boolean isSSLEnabled();
 
 }

@@ -40,63 +40,61 @@ import java.util.HashMap;
  */
 public final class ColorAnalyser {
 
-    /**
-     * Get the main color from a {@link Bitmap}.<br>
-     * 
-     * @param bitmap The {@link Bitmap} to analyse
-     * @return The rgb {@link Color} in integer (no alpha)
-     */
-    public static int analyse(final Bitmap bitmap) {
+	/**
+	 * Get the main color from a {@link Bitmap}.<br>
+	 * 
+	 * @param bitmap The {@link Bitmap} to analyse
+	 * @return The rgb {@link Color} in integer (no alpha)
+	 */
+	public static int analyse(final Bitmap bitmap) {
 
-        return analyse(bitmap, 18, 28);
-    }
+		return analyse(bitmap, 18, 28);
+	}
 
-    /**
-     * Get the main color from a {@link Bitmap}.<br>
-     * 
-     * @param bitmap The {@link Bitmap} to analyse
-     * @param width The desired width of scaled bitmap
-     * @param height The desired height of scaled bitmap
-     * @return The rgb {@link Color} in integer (no alpha)
-     */
-    public static int analyse(final Bitmap bitmap, final int width, final int height) {
-        return analyse(bitmap, width, height, WHITE);
-    }
+	/**
+	 * Get the main color from a {@link Bitmap}.<br>
+	 * 
+	 * @param bitmap The {@link Bitmap} to analyse
+	 * @param width The desired width of scaled bitmap
+	 * @param height The desired height of scaled bitmap
+	 * @return The rgb {@link Color} in integer (no alpha)
+	 */
+	public static int analyse(final Bitmap bitmap, final int width, final int height) {
+		return analyse(bitmap, width, height, WHITE);
+	}
 
-    /**
-     * Get the main color from a {@link Bitmap}.<br>
-     * 
-     * @param bitmap The {@link Bitmap} to analyse
-     * @param width The desired width of scaled bitmap
-     * @param height The desired height of scaled bitmap
-     * @param def The default color returned, if bitmap is null
-     * @return The rgb {@link Color} in integer (no alpha)
-     */
-    public static int analyse(final Bitmap bitmap, final int width, final int height, final int def) {
+	/**
+	 * Get the main color from a {@link Bitmap}.<br>
+	 * 
+	 * @param bitmap The {@link Bitmap} to analyse
+	 * @param width The desired width of scaled bitmap
+	 * @param height The desired height of scaled bitmap
+	 * @param def The default color returned, if bitmap is null
+	 * @return The rgb {@link Color} in integer (no alpha)
+	 */
+	public static int analyse(final Bitmap bitmap, final int width, final int height, final int def) {
 
-        if (bitmap == null)
-            return def;
+		if (bitmap == null) return def;
 
-        final HashMap<Float, Integer> colors = new HashMap<Float, Integer>();
+		final HashMap<Float, Integer> colors = new HashMap<Float, Integer>();
 
-        final Bitmap resized = Bitmap.createScaledBitmap(bitmap, width, height, false);
+		final Bitmap resized = Bitmap.createScaledBitmap(bitmap, width, height, false);
 
-        final int resized_height = resized.getHeight(), resized_width = resized.getWidth();
+		final int resized_height = resized.getHeight(), resized_width = resized.getWidth();
 
-        for (int y = 0; y < resized_height; y++) {
-            for (int x = 0; x < resized_width; x++) {
-                final int temp_color = resized.getPixel(x, y);
-                final int color = argb(0xFF, red(temp_color), green(temp_color), blue(temp_color));
-                final float[] hsv = new float[3];
-                colorToHSV(color, hsv);
-                final float score = (hsv[1] * hsv[1] + 0.001f) * (hsv[2] * hsv[2]);
-                colors.put(score, color);
-            }
-        }
+		for (int y = 0; y < resized_height; y++) {
+			for (int x = 0; x < resized_width; x++) {
+				final int temp_color = resized.getPixel(x, y);
+				final int color = argb(0xFF, red(temp_color), green(temp_color), blue(temp_color));
+				final float[] hsv = new float[3];
+				colorToHSV(color, hsv);
+				final float score = (hsv[1] * hsv[1] + 0.001f) * (hsv[2] * hsv[2]);
+				colors.put(score, color);
+			}
+		}
 
-        resized.recycle();
-        if (colors.size() == 0)
-            return def;
-        return colors.get(Collections.max(colors.keySet()));
-    }
+		resized.recycle();
+		if (colors.size() == 0) return def;
+		return colors.get(Collections.max(colors.keySet()));
+	}
 }

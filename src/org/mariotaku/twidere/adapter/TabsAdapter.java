@@ -38,91 +38,87 @@ import org.mariotaku.twidere.view.TabPageIndicator.TabProvider;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class TabsAdapter extends FragmentStatePagerAdapter implements TabProvider, TabListener,
-        Constants {
+public class TabsAdapter extends FragmentStatePagerAdapter implements TabProvider, TabListener, Constants {
 
-    private final ArrayList<TabSpec> mTabs = new ArrayList<TabSpec>();
+	private final ArrayList<TabSpec> mTabs = new ArrayList<TabSpec>();
 
-    private final Context mContext;
-    private final TabPageIndicator mIndicator;
+	private final Context mContext;
+	private final TabPageIndicator mIndicator;
 
-    public TabsAdapter(final Context context, final FragmentManager fm,
-            final TabPageIndicator indicator) {
-        super(fm);
-        mContext = context;
-        mIndicator = indicator;
-        clear();
-    }
+	public TabsAdapter(final Context context, final FragmentManager fm, final TabPageIndicator indicator) {
+		super(fm);
+		mContext = context;
+		mIndicator = indicator;
+		clear();
+	}
 
-    public void addTab(final Class<? extends Fragment> cls, final Bundle args, final String name,
-            final Integer icon,
-            final int position) {
-        addTab(new TabSpec(name, icon, cls, args, position));
-    }
+	public void addTab(final Class<? extends Fragment> cls, final Bundle args, final String name, final Integer icon,
+			final int position) {
+		addTab(new TabSpec(name, icon, cls, args, position));
+	}
 
-    public void addTab(final TabSpec spec) {
-        mTabs.add(spec);
-        notifyDataSetChanged();
-    }
+	public void addTab(final TabSpec spec) {
+		mTabs.add(spec);
+		notifyDataSetChanged();
+	}
 
-    public void addTabs(final Collection<? extends TabSpec> specs) {
-        mTabs.addAll(specs);
-        notifyDataSetChanged();
-    }
+	public void addTabs(final Collection<? extends TabSpec> specs) {
+		mTabs.addAll(specs);
+		notifyDataSetChanged();
+	}
 
-    public void clear() {
-        mTabs.clear();
-        notifyDataSetChanged();
-    }
+	public void clear() {
+		mTabs.clear();
+		notifyDataSetChanged();
+	}
 
-    @Override
-    public int getCount() {
-        return mTabs.size();
-    }
+	@Override
+	public int getCount() {
+		return mTabs.size();
+	}
 
-    @Override
-    public Fragment getItem(final int position) {
-        final Fragment fragment = Fragment.instantiate(mContext, mTabs.get(position).cls.getName());
-        fragment.setArguments(mTabs.get(position).args);
-        return fragment;
-    }
+	@Override
+	public Fragment getItem(final int position) {
+		final Fragment fragment = Fragment.instantiate(mContext, mTabs.get(position).cls.getName());
+		fragment.setArguments(mTabs.get(position).args);
+		return fragment;
+	}
 
-    @Override
-    public Drawable getPageIcon(final int position) {
-        return getTabIconDrawable(mContext, mTabs.get(position).icon);
-    }
+	@Override
+	public Drawable getPageIcon(final int position) {
+		return getTabIconDrawable(mContext, mTabs.get(position).icon);
+	}
 
-    @Override
-    public CharSequence getPageTitle(final int position) {
-        return mTabs.get(position).name;
-    }
+	@Override
+	public CharSequence getPageTitle(final int position) {
+		return mTabs.get(position).name;
+	}
 
-    public TabSpec getTab(final int position) {
-        return position >= 0 && position < mTabs.size() ? mTabs.get(position) : null;
-    }
+	public TabSpec getTab(final int position) {
+		return position >= 0 && position < mTabs.size() ? mTabs.get(position) : null;
+	}
 
-    @Override
-    public void notifyDataSetChanged() {
-        super.notifyDataSetChanged();
-        if (mIndicator != null) {
-            mIndicator.notifyDataSetChanged();
-        }
-    }
+	@Override
+	public void notifyDataSetChanged() {
+		super.notifyDataSetChanged();
+		if (mIndicator != null) {
+			mIndicator.notifyDataSetChanged();
+		}
+	}
 
-    @Override
-    public void onPageReselected(final int position) {
-    }
+	@Override
+	public void onPageReselected(final int position) {
+	}
 
-    @Override
-    public void onPageSelected(final int position) {
-        if (mIndicator == null)
-            return;
-        announceForAccessibilityCompat(mContext, mIndicator, getPageTitle(position), getClass());
-    }
+	@Override
+	public void onPageSelected(final int position) {
+		if (mIndicator == null) return;
+		announceForAccessibilityCompat(mContext, mIndicator, getPageTitle(position), getClass());
+	}
 
-    @Override
-    public boolean onTabLongClick(final int position) {
-        return true;
-    }
+	@Override
+	public boolean onTabLongClick(final int position) {
+		return true;
+	}
 
 }

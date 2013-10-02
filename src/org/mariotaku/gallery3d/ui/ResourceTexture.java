@@ -26,26 +26,26 @@ import org.mariotaku.gallery3d.util.GalleryUtils;
 // By default ResourceTexture is not opaque.
 public class ResourceTexture extends UploadedTexture {
 
-    protected final Context mContext;
-    protected final int mResId;
+	protected final Context mContext;
+	protected final int mResId;
 
-    public ResourceTexture(final Context context, final int resId) {
-        mContext = GalleryUtils.checkNotNull(context);
-        mResId = resId;
-        setOpaque(false);
-    }
+	public ResourceTexture(final Context context, final int resId) {
+		mContext = GalleryUtils.checkNotNull(context);
+		mResId = resId;
+		setOpaque(false);
+	}
 
-    @Override
-    protected void onFreeBitmap(final Bitmap bitmap) {
-        if (!inFinalizer()) {
-            bitmap.recycle();
-        }
-    }
+	@Override
+	protected void onFreeBitmap(final Bitmap bitmap) {
+		if (!inFinalizer()) {
+			bitmap.recycle();
+		}
+	}
 
-    @Override
-    protected Bitmap onGetBitmap() {
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        return BitmapFactory.decodeResource(mContext.getResources(), mResId, options);
-    }
+	@Override
+	protected Bitmap onGetBitmap() {
+		final BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+		return BitmapFactory.decodeResource(mContext.getResources(), mResId, options);
+	}
 }

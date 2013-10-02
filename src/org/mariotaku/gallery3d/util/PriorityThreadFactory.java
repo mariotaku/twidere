@@ -26,24 +26,24 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class PriorityThreadFactory implements ThreadFactory {
 
-    private final int mPriority;
-    private final AtomicInteger mNumber = new AtomicInteger();
-    private final String mName;
+	private final int mPriority;
+	private final AtomicInteger mNumber = new AtomicInteger();
+	private final String mName;
 
-    public PriorityThreadFactory(final String name, final int priority) {
-        mName = name;
-        mPriority = priority;
-    }
+	public PriorityThreadFactory(final String name, final int priority) {
+		mName = name;
+		mPriority = priority;
+	}
 
-    @Override
-    public Thread newThread(final Runnable r) {
-        return new Thread(r, mName + '-' + mNumber.getAndIncrement()) {
-            @Override
-            public void run() {
-                Process.setThreadPriority(mPriority);
-                super.run();
-            }
-        };
-    }
+	@Override
+	public Thread newThread(final Runnable r) {
+		return new Thread(r, mName + '-' + mNumber.getAndIncrement()) {
+			@Override
+			public void run() {
+				Process.setThreadPriority(mPriority);
+				super.run();
+			}
+		};
+	}
 
 }

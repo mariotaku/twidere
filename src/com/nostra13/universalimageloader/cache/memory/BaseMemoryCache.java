@@ -32,43 +32,42 @@ import java.util.Map;
  */
 public abstract class BaseMemoryCache<K, V> implements MemoryCacheAware<K, V> {
 
-    /** Stores not strong references to objects */
-    private final Map<K, Reference<V>> softMap = Collections
-            .synchronizedMap(new HashMap<K, Reference<V>>());
+	/** Stores not strong references to objects */
+	private final Map<K, Reference<V>> softMap = Collections.synchronizedMap(new HashMap<K, Reference<V>>());
 
-    @Override
-    public void clear() {
-        softMap.clear();
-    }
+	@Override
+	public void clear() {
+		softMap.clear();
+	}
 
-    @Override
-    public V get(final K key) {
-        V result = null;
-        final Reference<V> reference = softMap.get(key);
-        if (reference != null) {
-            result = reference.get();
-        }
-        return result;
-    }
+	@Override
+	public V get(final K key) {
+		V result = null;
+		final Reference<V> reference = softMap.get(key);
+		if (reference != null) {
+			result = reference.get();
+		}
+		return result;
+	}
 
-    @Override
-    public Collection<K> keys() {
-        synchronized (softMap) {
-            return new HashSet<K>(softMap.keySet());
-        }
-    }
+	@Override
+	public Collection<K> keys() {
+		synchronized (softMap) {
+			return new HashSet<K>(softMap.keySet());
+		}
+	}
 
-    @Override
-    public boolean put(final K key, final V value) {
-        softMap.put(key, createReference(value));
-        return true;
-    }
+	@Override
+	public boolean put(final K key, final V value) {
+		softMap.put(key, createReference(value));
+		return true;
+	}
 
-    @Override
-    public void remove(final K key) {
-        softMap.remove(key);
-    }
+	@Override
+	public void remove(final K key) {
+		softMap.remove(key);
+	}
 
-    /** Creates {@linkplain Reference not strong} reference of value */
-    protected abstract Reference<V> createReference(V value);
+	/** Creates {@linkplain Reference not strong} reference of value */
+	protected abstract Reference<V> createReference(V value);
 }

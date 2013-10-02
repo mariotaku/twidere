@@ -39,70 +39,68 @@ import java.util.List;
 
 public abstract class BaseUserListsLoader extends AsyncTaskLoader<List<ParcelableUserList>> {
 
-    protected final NoDuplicatesArrayList<ParcelableUserList> mData = new NoDuplicatesArrayList<ParcelableUserList>();
-    protected final boolean mHiResProfileImage;
-    protected final long mAccountId;
-    private final long mCursor;
+	protected final NoDuplicatesArrayList<ParcelableUserList> mData = new NoDuplicatesArrayList<ParcelableUserList>();
+	protected final boolean mHiResProfileImage;
+	protected final long mAccountId;
+	private final long mCursor;
 
-    private long mNextCursor, mPrevCursor;
+	private long mNextCursor, mPrevCursor;
 
-    public BaseUserListsLoader(final Context context, final long account_id, final long cursor,
-            final List<ParcelableUserList> data) {
-        super(context);
-        if (data != null) {
-            mData.addAll(data);
-        }
-        mCursor = cursor;
-        mAccountId = account_id;
-        mHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
-    }
+	public BaseUserListsLoader(final Context context, final long account_id, final long cursor,
+			final List<ParcelableUserList> data) {
+		super(context);
+		if (data != null) {
+			mData.addAll(data);
+		}
+		mCursor = cursor;
+		mAccountId = account_id;
+		mHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
+	}
 
-    public long getCursor() {
-        return mCursor;
-    }
+	public long getCursor() {
+		return mCursor;
+	}
 
-    public long getNextCursor() {
-        return mNextCursor;
-    }
+	public long getNextCursor() {
+		return mNextCursor;
+	}
 
-    public long getPrevCursor() {
-        return mPrevCursor;
-    }
+	public long getPrevCursor() {
+		return mPrevCursor;
+	}
 
-    public abstract List<UserList> getUserLists(final Twitter twitter) throws TwitterException;;
+	public abstract List<UserList> getUserLists(final Twitter twitter) throws TwitterException;;
 
-    @Override
-    public List<ParcelableUserList> loadInBackground() {
-        final Twitter twitter = getTwitterInstance(getContext(), mAccountId, true);
-        List<UserList> list_loaded = null;
-        try {
-            list_loaded = getUserLists(twitter);
-        } catch (final TwitterException e) {
-            e.printStackTrace();
-        }
-        if (list_loaded != null) {
-            final int list_size = list_loaded.size();
-            if (list_loaded instanceof PagableResponseList) {
-                mNextCursor = ((CursorSupport) list_loaded).getNextCursor();
-                mPrevCursor = ((CursorSupport) list_loaded).getPreviousCursor();
-                for (int i = 0; i < list_size; i++) {
-                    mData.add(new ParcelableUserList(list_loaded.get(i), mAccountId, (mCursor + 1)
-                            * 20 + i,
-                            mHiResProfileImage));
-                }
-            } else {
-                for (int i = 0; i < list_size; i++) {
-                    mData.add(new ParcelableUserList(list_loaded.get(i), mAccountId, i,
-                            mHiResProfileImage));
-                }
-            }
-        }
-        Collections.sort(mData);
-        return mData;
-    }
+	@Override
+	public List<ParcelableUserList> loadInBackground() {
+		final Twitter twitter = getTwitterInstance(getContext(), mAccountId, true);
+		List<UserList> list_loaded = null;
+		try {
+			list_loaded = getUserLists(twitter);
+		} catch (final TwitterException e) {
+			e.printStackTrace();
+		}
+		if (list_loaded != null) {
+			final int list_size = list_loaded.size();
+			if (list_loaded instanceof PagableResponseList) {
+				mNextCursor = ((CursorSupport) list_loaded).getNextCursor();
+				mPrevCursor = ((CursorSupport) list_loaded).getPreviousCursor();
+				for (int i = 0; i < list_size; i++) {
+					mData.add(new ParcelableUserList(list_loaded.get(i), mAccountId, (mCursor + 1) * 20 + i,
+							mHiResProfileImage));
+				}
+			} else {
+				for (int i = 0; i < list_size; i++) {
+					mData.add(new ParcelableUserList(list_loaded.get(i), mAccountId, i, mHiResProfileImage));
+				}
+			}
+		}
+		Collections.sort(mData);
+		return mData;
+	}
 
-    @Override
-    public void onStartLoading() {
-        forceLoad();
-    }
+	@Override
+	public void onStartLoading() {
+		forceLoad();
+	}
 }

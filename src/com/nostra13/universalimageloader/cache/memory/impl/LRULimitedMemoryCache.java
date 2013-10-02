@@ -42,67 +42,66 @@ import java.util.Map.Entry;
  */
 public class LRULimitedMemoryCache extends LimitedMemoryCache<String, Bitmap> {
 
-    private static final int INITIAL_CAPACITY = 10;
-    private static final float LOAD_FACTOR = 1.1f;
+	private static final int INITIAL_CAPACITY = 10;
+	private static final float LOAD_FACTOR = 1.1f;
 
-    /** Cache providing Least-Recently-Used logic */
-    private final Map<String, Bitmap> lruCache = Collections
-            .synchronizedMap(new LinkedHashMap<String, Bitmap>(
-                    INITIAL_CAPACITY, LOAD_FACTOR, true));
+	/** Cache providing Least-Recently-Used logic */
+	private final Map<String, Bitmap> lruCache = Collections.synchronizedMap(new LinkedHashMap<String, Bitmap>(
+			INITIAL_CAPACITY, LOAD_FACTOR, true));
 
-    /** @param maxSize Maximum sum of the sizes of the Bitmaps in this cache */
-    public LRULimitedMemoryCache(final int maxSize) {
-        super(maxSize);
-    }
+	/** @param maxSize Maximum sum of the sizes of the Bitmaps in this cache */
+	public LRULimitedMemoryCache(final int maxSize) {
+		super(maxSize);
+	}
 
-    @Override
-    public void clear() {
-        lruCache.clear();
-        super.clear();
-    }
+	@Override
+	public void clear() {
+		lruCache.clear();
+		super.clear();
+	}
 
-    @Override
-    public Bitmap get(final String key) {
-        lruCache.get(key); // call "get" for LRU logic
-        return super.get(key);
-    }
+	@Override
+	public Bitmap get(final String key) {
+		lruCache.get(key); // call "get" for LRU logic
+		return super.get(key);
+	}
 
-    @Override
-    public boolean put(final String key, final Bitmap value) {
-        if (super.put(key, value)) {
-            lruCache.put(key, value);
-            return true;
-        } else
-            return false;
-    }
+	@Override
+	public boolean put(final String key, final Bitmap value) {
+		if (super.put(key, value)) {
+			lruCache.put(key, value);
+			return true;
+		} else
+			return false;
+	}
 
-    @Override
-    public void remove(final String key) {
-        lruCache.remove(key);
-        super.remove(key);
-    }
+	@Override
+	public void remove(final String key) {
+		lruCache.remove(key);
+		super.remove(key);
+	}
 
-    @Override
-    protected Reference<Bitmap> createReference(final Bitmap value) {
-        return new WeakReference<Bitmap>(value);
-    }
+	@Override
+	protected Reference<Bitmap> createReference(final Bitmap value) {
+		return new WeakReference<Bitmap>(value);
+	}
 
-    @Override
-    protected int getSize(final Bitmap value) {
-        return value.getRowBytes() * value.getHeight();
-    }
+	@Override
+	protected int getSize(final Bitmap value) {
+		return value.getRowBytes() * value.getHeight();
+	}
 
-    @Override
-    protected Bitmap removeNext() {
-        Bitmap mostLongUsedValue = null;
-        synchronized (lruCache) {
-            final Iterator<Entry<String, Bitmap>> it = lruCache.entrySet().iterator();
-            if (it.hasNext()) {
-                final Entry<String, Bitmap> entry = it.next();
-                mostLongUsedValue = entry.getValue();
-                it.remove();
-            }
-        }
-        return mostLongUsedValue;
-    }
+	@Override
+	protected Bitmap removeNext() {
+		Bitmap mostLongUsedValue = null;
+		synchronized (lruCache) {
+			final Iterator<Entry<String, Bitmap>> it = lruCache.entrySet().iterator();
+			if (it.hasNext()) {
+				final Entry<String, Bitmap> entry = it.next();
+				mostLongUsedValue = entry.getValue();
+				it.remove();
+			}
+		}
+		return mostLongUsedValue;
+	}
 }

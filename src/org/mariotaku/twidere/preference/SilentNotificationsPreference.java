@@ -25,51 +25,48 @@ import android.util.AttributeSet;
 
 import org.mariotaku.twidere.Constants;
 
-public final class SilentNotificationsPreference extends MultiSelectListPreference implements
-        Constants {
+public final class SilentNotificationsPreference extends MultiSelectListPreference implements Constants {
 
-    public SilentNotificationsPreference(final Context context) {
-        super(context);
-    }
+	public SilentNotificationsPreference(final Context context) {
+		super(context);
+	}
 
-    public SilentNotificationsPreference(final Context context, final AttributeSet attrs) {
-        super(context, attrs);
-    }
+	public SilentNotificationsPreference(final Context context, final AttributeSet attrs) {
+		super(context, attrs);
+	}
 
-    public SilentNotificationsPreference(final Context context, final AttributeSet attrs,
-            final int defStyle) {
-        super(context, attrs, defStyle);
-    }
+	public SilentNotificationsPreference(final Context context, final AttributeSet attrs, final int defStyle) {
+		super(context, attrs, defStyle);
+	}
 
-    @Override
-    protected boolean[] getDefaults() {
-        return new boolean[24];
-    }
+	@Override
+	protected boolean[] getDefaults() {
+		return new boolean[24];
+	}
 
-    @Override
-    protected SharedPreferences getDefaultSharedPreferences() {
-        return getContext().getSharedPreferences(SILENT_NOTIFICATIONS_PREFERENCE_NAME,
-                Context.MODE_PRIVATE);
-    }
+	@Override
+	protected SharedPreferences getDefaultSharedPreferences() {
+		return getContext().getSharedPreferences(SILENT_NOTIFICATIONS_PREFERENCE_NAME, Context.MODE_PRIVATE);
+	}
 
-    @Override
-    protected String[] getKeys() {
-        final String[] keys = new String[24];
-        for (int i = 0; i < 24; i++) {
-            keys[i] = "silent_notifications_at_" + i;
-        }
-        return keys;
-    }
+	@Override
+	protected String[] getKeys() {
+		final String[] keys = new String[24];
+		for (int i = 0; i < 24; i++) {
+			keys[i] = "silent_notifications_at_" + i;
+		}
+		return keys;
+	}
 
-    @Override
-    protected String[] getNames() {
-        final String[] names = new String[24];
-        for (int i = 0; i < 24; i++) {
-            final String value_1 = i + ":00";
-            final String value_2 = (i == 23 ? 0 : i + 1) + ":00";
-            names[i] = value_1 + " - " + value_2;
-        }
-        return names;
-    }
+	@Override
+	protected String[] getNames() {
+		final String[] names = new String[24];
+		for (int i = 0; i < 24; i++) {
+			final String value_1 = i + ":00";
+			final String value_2 = (i == 23 ? 0 : i + 1) + ":00";
+			names[i] = value_1 + " - " + value_2;
+		}
+		return names;
+	}
 
 }

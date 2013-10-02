@@ -22,18 +22,18 @@ package twitter4j.internal.logging;
  */
 final class AndroidLoggerFactory extends LoggerFactory {
 
-    @Override
-    public Logger getLogger() {
-        return new AndroidLogger();
-    }
+	@Override
+	public Logger getLogger() {
+		return new AndroidLogger();
+	}
 
-    @Override
-    public Logger getLogger(final Class<?> clz) {
-        return new AndroidLogger(clz.getName());
-    }
+	@Override
+	public Logger getLogger(final Class<?> clz) {
+		return new AndroidLogger(clz.getName());
+	}
 
-    @Override
-    public Logger getLogger(final String tag) {
-        return new AndroidLogger(tag);
-    }
+	@Override
+	public Logger getLogger(final String tag) {
+		return new AndroidLogger(tag);
+	}
 }

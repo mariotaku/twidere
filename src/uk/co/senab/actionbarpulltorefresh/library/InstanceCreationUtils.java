@@ -32,65 +32,61 @@ import java.util.Set;
 
 class InstanceCreationUtils {
 
-    private static final String LOG_TAG = "InstanceCreationUtils";
+	private static final String LOG_TAG = "InstanceCreationUtils";
 
-    private static final Class<?>[] VIEW_DELEGATE_CONSTRUCTOR_SIGNATURE = new Class[] {};
-    private static final Class<?>[] TRANSFORMER_CONSTRUCTOR_SIGNATURE = new Class[] {};
+	private static final Class<?>[] VIEW_DELEGATE_CONSTRUCTOR_SIGNATURE = new Class[] {};
+	private static final Class<?>[] TRANSFORMER_CONSTRUCTOR_SIGNATURE = new Class[] {};
 
-    private static final HashMap<Class<? extends View>, Class<? extends ViewDelegate>> BUILT_IN_DELEGATES;
-    static {
-        BUILT_IN_DELEGATES = new HashMap<Class<? extends View>, Class<? extends ViewDelegate>>();
-        BUILT_IN_DELEGATES.put(AbsListViewDelegate.SUPPORTED_VIEW_CLASS, AbsListViewDelegate.class);
-        BUILT_IN_DELEGATES.put(WebViewDelegate.SUPPORTED_VIEW_CLASS, WebViewDelegate.class);
-    }
+	private static final HashMap<Class<? extends View>, Class<? extends ViewDelegate>> BUILT_IN_DELEGATES;
+	static {
+		BUILT_IN_DELEGATES = new HashMap<Class<? extends View>, Class<? extends ViewDelegate>>();
+		BUILT_IN_DELEGATES.put(AbsListViewDelegate.SUPPORTED_VIEW_CLASS, AbsListViewDelegate.class);
+		BUILT_IN_DELEGATES.put(WebViewDelegate.SUPPORTED_VIEW_CLASS, WebViewDelegate.class);
+	}
 
-    @SuppressWarnings("unchecked")
-    private static <T> T newInstance(final Context context, final Class<?> clazz,
-            final Class<?>[] constructorSig,
-            final Object[] arguments) {
-        try {
-            final Constructor<?> constructor = clazz.getConstructor(constructorSig);
-            return (T) constructor.newInstance(arguments);
-        } catch (final Exception e) {
-            Log.w(LOG_TAG, "Cannot instantiate class: " + clazz.getName(), e);
-        }
-        return null;
-    }
+	@SuppressWarnings("unchecked")
+	private static <T> T newInstance(final Context context, final Class<?> clazz, final Class<?>[] constructorSig,
+			final Object[] arguments) {
+		try {
+			final Constructor<?> constructor = clazz.getConstructor(constructorSig);
+			return (T) constructor.newInstance(arguments);
+		} catch (final Exception e) {
+			Log.w(LOG_TAG, "Cannot instantiate class: " + clazz.getName(), e);
+		}
+		return null;
+	}
 
-    static PullToRefreshAttacher.ViewDelegate getBuiltInViewDelegate(final View view) {
-        final Set<Entry<Class<? extends View>, Class<? extends ViewDelegate>>> entries = BUILT_IN_DELEGATES
-                .entrySet();
-        for (final Entry<Class<? extends View>, Class<? extends ViewDelegate>> entry : entries) {
-            if (entry.getKey().isInstance(view))
-                return InstanceCreationUtils.newInstance(view.getContext(), entry.getValue(),
-                        VIEW_DELEGATE_CONSTRUCTOR_SIGNATURE, null);
-        }
+	static PullToRefreshAttacher.ViewDelegate getBuiltInViewDelegate(final View view) {
+		final Set<Entry<Class<? extends View>, Class<? extends ViewDelegate>>> entries = BUILT_IN_DELEGATES.entrySet();
+		for (final Entry<Class<? extends View>, Class<? extends ViewDelegate>> entry : entries) {
+			if (entry.getKey().isInstance(view))
+				return InstanceCreationUtils.newInstance(view.getContext(), entry.getValue(),
+						VIEW_DELEGATE_CONSTRUCTOR_SIGNATURE, null);
+		}
 
-        // Default is the ScrollYDelegate
-        return InstanceCreationUtils.newInstance(view.getContext(), ScrollYDelegate.class,
-                VIEW_DELEGATE_CONSTRUCTOR_SIGNATURE, null);
-    }
+		// Default is the ScrollYDelegate
+		return InstanceCreationUtils.newInstance(view.getContext(), ScrollYDelegate.class,
+				VIEW_DELEGATE_CONSTRUCTOR_SIGNATURE, null);
+	}
 
-    static <T> T instantiateTransformer(final Context context, final String className,
-            final Object[] arguments) {
-        try {
-            final Class<?> clazz = context.getClassLoader().loadClass(className);
-            return newInstance(context, clazz, TRANSFORMER_CONSTRUCTOR_SIGNATURE, arguments);
-        } catch (final Exception e) {
-            Log.w(LOG_TAG, "Cannot instantiate class: " + className, e);
-        }
-        return null;
-    }
+	static <T> T instantiateTransformer(final Context context, final String className, final Object[] arguments) {
+		try {
+			final Class<?> clazz = context.getClassLoader().loadClass(className);
+			return newInstance(context, clazz, TRANSFORMER_CONSTRUCTOR_SIGNATURE, arguments);
+		} catch (final Exception e) {
+			Log.w(LOG_TAG, "Cannot instantiate class: " + className, e);
+		}
+		return null;
+	}
 
-    static <T> T instantiateViewDelegate(final Context context, final String className,
-            final Object[] arguments) {
-        try {
-            final Class<?> clazz = context.getClassLoader().loadClass(className);
-            return newInstance(context, clazz, VIEW_DELEGATE_CONSTRUCTOR_SIGNATURE, arguments);
-        } catch (final Exception e) {
-            Log.w(LOG_TAG, "Cannot instantiate class: " + className, e);
-        }
-        return null;
-    }
+	static <T> T instantiateViewDelegate(final Context context, final String className, final Object[] arguments) {
+		try {
+			final Class<?> clazz = context.getClassLoader().loadClass(className);
+			return newInstance(context, clazz, VIEW_DELEGATE_CONSTRUCTOR_SIGNATURE, arguments);
+		} catch (final Exception e) {
+			Log.w(LOG_TAG, "Cannot instantiate class: " + className, e);
+		}
+		return null;
+	}
 
 }

@@ -33,75 +33,75 @@ import java.util.List;
 
 public class RingtonePreference extends ListPreference {
 
-    private List<Ringtone> mRingtones;
-    private String[] mEntries, mValues;
+	private List<Ringtone> mRingtones;
+	private String[] mEntries, mValues;
 
-    private int mSelectedItem;
+	private int mSelectedItem;
 
-    public RingtonePreference(final Context context, final AttributeSet attrs) {
-        super(context, attrs);
-    }
+	public RingtonePreference(final Context context, final AttributeSet attrs) {
+		super(context, attrs);
+	}
 
-    public int getSelectedItem() {
-        return mSelectedItem;
-    }
+	public int getSelectedItem() {
+		return mSelectedItem;
+	}
 
-    public Ringtone getSelectedRingtone() {
-        return mRingtones.get(mSelectedItem);
-    }
+	public Ringtone getSelectedRingtone() {
+		return mRingtones.get(mSelectedItem);
+	}
 
-    public void setSelectedItem(final int selected) {
-        mSelectedItem = selected >= 0 && selected < mValues.length ? selected : 0;
-    }
+	public void setSelectedItem(final int selected) {
+		mSelectedItem = selected >= 0 && selected < mValues.length ? selected : 0;
+	}
 
-    @Override
-    protected void onDialogClosed(final boolean positiveResult) {
-        final Ringtone ringtone = getSelectedRingtone();
-        if (ringtone != null && ringtone.isPlaying()) {
-            ringtone.stop();
-        }
-        if (positiveResult && mSelectedItem >= 0 && mSelectedItem < mValues.length) {
-            if (callChangeListener(mValues[mSelectedItem])) {
-                persistString(mValues[mSelectedItem]);
-            }
-        }
-    }
+	@Override
+	protected void onDialogClosed(final boolean positiveResult) {
+		final Ringtone ringtone = getSelectedRingtone();
+		if (ringtone != null && ringtone.isPlaying()) {
+			ringtone.stop();
+		}
+		if (positiveResult && mSelectedItem >= 0 && mSelectedItem < mValues.length) {
+			if (callChangeListener(mValues[mSelectedItem])) {
+				persistString(mValues[mSelectedItem]);
+			}
+		}
+	}
 
-    @Override
-    protected void onPrepareDialogBuilder(final Builder builder) {
-        loadRingtones(getContext());
-        setSelectedItem(ArrayUtils.indexOf(mValues, getPersistedString(null)));
-        builder.setSingleChoiceItems(getEntries(), getSelectedItem(), new OnClickListener() {
-            @Override
-            public void onClick(final DialogInterface dialog, final int which) {
-                setSelectedItem(which);
-                final Ringtone ringtone = getSelectedRingtone();
-                if (ringtone.isPlaying()) {
-                    ringtone.stop();
-                }
-                ringtone.play();
-            }
-        });
-    }
+	@Override
+	protected void onPrepareDialogBuilder(final Builder builder) {
+		loadRingtones(getContext());
+		setSelectedItem(ArrayUtils.indexOf(mValues, getPersistedString(null)));
+		builder.setSingleChoiceItems(getEntries(), getSelectedItem(), new OnClickListener() {
+			@Override
+			public void onClick(final DialogInterface dialog, final int which) {
+				setSelectedItem(which);
+				final Ringtone ringtone = getSelectedRingtone();
+				if (ringtone.isPlaying()) {
+					ringtone.stop();
+				}
+				ringtone.play();
+			}
+		});
+	}
 
-    private void loadRingtones(final Context context) {
-        final RingtoneManager manager = new RingtoneManager(context);
-        manager.setType(RingtoneManager.TYPE_NOTIFICATION);
-        final Cursor cur = manager.getCursor();
-        cur.moveToFirst();
-        final int count = cur.getCount();
-        mRingtones = new ArrayList<Ringtone>(count);
-        mEntries = new String[count];
-        mValues = new String[count];
-        for (int i = 0; i < count; i++) {
-            final Ringtone ringtone = manager.getRingtone(i);
-            mRingtones.add(ringtone);
-            mEntries[i] = ringtone.getTitle(context);
-            mValues[i] = manager.getRingtoneUri(i).toString();
-        }
-        setEntries(mEntries);
-        setEntryValues(mValues);
-        cur.close();
-    }
+	private void loadRingtones(final Context context) {
+		final RingtoneManager manager = new RingtoneManager(context);
+		manager.setType(RingtoneManager.TYPE_NOTIFICATION);
+		final Cursor cur = manager.getCursor();
+		cur.moveToFirst();
+		final int count = cur.getCount();
+		mRingtones = new ArrayList<Ringtone>(count);
+		mEntries = new String[count];
+		mValues = new String[count];
+		for (int i = 0; i < count; i++) {
+			final Ringtone ringtone = manager.getRingtone(i);
+			mRingtones.add(ringtone);
+			mEntries[i] = ringtone.getTitle(context);
+			mValues[i] = manager.getRingtoneUri(i).toString();
+		}
+		setEntries(mEntries);
+		setEntryValues(mValues);
+		cur.close();
+	}
 
 }

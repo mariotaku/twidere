@@ -27,55 +27,53 @@ import twitter4j.http.HttpResponse;
  *         authorized Access Token
  */
 public final class RequestToken extends OAuthToken {
-    private final Configuration conf;
+	private final Configuration conf;
 
-    public RequestToken(final Configuration conf, final String token, final String tokenSecret) {
-        super(token, tokenSecret);
-        this.conf = conf;
-    }
+	public RequestToken(final Configuration conf, final String token, final String tokenSecret) {
+		super(token, tokenSecret);
+		this.conf = conf;
+	}
 
-    @Deprecated
-    public RequestToken(final String token, final String tokenSecret) {
-        super(token, tokenSecret);
-        conf = ConfigurationContext.getInstance();
-    }
+	@Deprecated
+	public RequestToken(final String token, final String tokenSecret) {
+		super(token, tokenSecret);
+		conf = ConfigurationContext.getInstance();
+	}
 
-    RequestToken(final Configuration conf, final HttpResponse res, final OAuthSupport oauth)
-            throws TwitterException {
-        super(res);
-        this.conf = conf;
-    }
+	RequestToken(final Configuration conf, final HttpResponse res, final OAuthSupport oauth) throws TwitterException {
+		super(res);
+		this.conf = conf;
+	}
 
-    RequestToken(final Configuration conf, final String token, final String tokenSecret,
-            final OAuthSupport oauth) {
-        super(token, tokenSecret);
-        this.conf = conf;
-    }
+	RequestToken(final Configuration conf, final String token, final String tokenSecret, final OAuthSupport oauth) {
+		super(token, tokenSecret);
+		this.conf = conf;
+	}
 
-    @Deprecated
-    RequestToken(final HttpResponse res, final OAuthSupport oauth) throws TwitterException {
-        super(res);
-        conf = ConfigurationContext.getInstance();
-    }
+	@Deprecated
+	RequestToken(final HttpResponse res, final OAuthSupport oauth) throws TwitterException {
+		super(res);
+		conf = ConfigurationContext.getInstance();
+	}
 
-    @Deprecated
-    RequestToken(final String token, final String tokenSecret, final OAuthSupport oauth) {
-        super(token, tokenSecret);
-        conf = ConfigurationContext.getInstance();
-    }
+	@Deprecated
+	RequestToken(final String token, final String tokenSecret, final OAuthSupport oauth) {
+		super(token, tokenSecret);
+		conf = ConfigurationContext.getInstance();
+	}
 
-    /**
-     * @return authentication URL since Twitter4J 2.0.10
-     */
-    public String getAuthenticationURL() {
-        return conf.getOAuthAuthenticationURL() + "?oauth_token=" + getToken();
-    }
+	/**
+	 * @return authentication URL since Twitter4J 2.0.10
+	 */
+	public String getAuthenticationURL() {
+		return conf.getOAuthAuthenticationURL() + "?oauth_token=" + getToken();
+	}
 
-    /**
-     * @return authorization URL since Twitter4J 2.0.0
-     */
-    public String getAuthorizationURL() {
-        return conf.getOAuthAuthorizationURL() + "?oauth_token=" + getToken();
-    }
+	/**
+	 * @return authorization URL since Twitter4J 2.0.0
+	 */
+	public String getAuthorizationURL() {
+		return conf.getOAuthAuthorizationURL() + "?oauth_token=" + getToken();
+	}
 
 }

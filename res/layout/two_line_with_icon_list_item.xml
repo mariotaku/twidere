@@ -22,7 +22,7 @@
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_centerVertical="true"
 		android:layout_marginLeft="8dp"
-		android:layout_toLeftOf="@+id/checkbox"
+		android:layout_toLeftOf="@android:id/checkbox"
 		android:layout_toRightOf="@android:id/icon"
 		android:orientation="vertical">
 
@@ -43,12 +43,13 @@
 	</LinearLayout>
 
 	<CheckBox
-		android:id="@+id/checkbox"
+		android:id="@android:id/checkbox"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentRight="true"
 		android:layout_centerVertical="true"
 		android:clickable="false"
-		android:focusable="false"/>
+		android:focusable="false"
+		android:visibility="gone"/>
 
 </RelativeLayout>

@@ -28,12 +28,10 @@ import java.util.List;
 
 public class UserListMembershipsListFragment extends BaseUserListsListFragment {
 
-    @Override
-    public Loader<List<ParcelableUserList>> newLoaderInstance(final long account_id,
-            final long user_id,
-            final String screen_name) {
-        return new UserListMembershipsLoader(getActivity(), account_id, user_id, screen_name,
-                getCursor(), getData());
-    }
+	@Override
+	public Loader<List<ParcelableUserList>> newLoaderInstance(final long account_id, final long user_id,
+			final String screen_name) {
+		return new UserListMembershipsLoader(getActivity(), account_id, user_id, screen_name, getCursor(), getData());
+	}
 
 }

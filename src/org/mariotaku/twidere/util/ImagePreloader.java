@@ -33,49 +33,48 @@ import java.io.File;
  */
 public class ImagePreloader implements Constants {
 
-    private final Handler mHandler;
-    private final DiscCacheAware mDiscCache;
-    private final ImageLoader mImageLoader;
+	private final Handler mHandler;
+	private final DiscCacheAware mDiscCache;
+	private final ImageLoader mImageLoader;
 
-    public ImagePreloader(final ImageLoader loader) {
-        mImageLoader = loader;
-        mDiscCache = loader.getDiscCache();
-        mHandler = new Handler();
-        reloadConnectivitySettings();
-    }
+	public ImagePreloader(final ImageLoader loader) {
+		mImageLoader = loader;
+		mDiscCache = loader.getDiscCache();
+		mHandler = new Handler();
+		reloadConnectivitySettings();
+	}
 
-    /**
-     * Cancels any downloads, shuts down the executor pool, and then purges the
-     * caches.
-     */
-    public void cancel() {
-        mImageLoader.destroy();
-    }
+	/**
+	 * Cancels any downloads, shuts down the executor pool, and then purges the
+	 * caches.
+	 */
+	public void cancel() {
+		mImageLoader.destroy();
+	}
 
-    public File getCachedImageFile(final String url) {
-        if (url == null)
-            return null;
-        final File cache = mDiscCache.get(url);
-        if (ImageValidator.checkImageValidity(cache))
-            return cache;
-        else {
-            preloadImage(url);
-        }
-        return null;
-    }
+	public File getCachedImageFile(final String url) {
+		if (url == null) return null;
+		final File cache = mDiscCache.get(url);
+		if (ImageValidator.checkImageValidity(cache))
+			return cache;
+		else {
+			preloadImage(url);
+		}
+		return null;
+	}
 
-    public void preloadImage(final String url) {
-        mHandler.post(new Runnable() {
+	public void preloadImage(final String url) {
+		mHandler.post(new Runnable() {
 
-            @Override
-            public void run() {
-                mImageLoader.loadImage(url, null);
-            }
+			@Override
+			public void run() {
+				mImageLoader.loadImage(url, null);
+			}
 
-        });
-    }
+		});
+	}
 
-    public void reloadConnectivitySettings() {
-    }
+	public void reloadConnectivitySettings() {
+	}
 
 }

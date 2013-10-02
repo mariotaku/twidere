@@ -19,18 +19,18 @@ package org.mariotaku.gallery3d.ui;
 import android.graphics.RectF;
 
 public interface ScreenNail {
-    public void draw(GLCanvas canvas, int x, int y, int width, int height);
+	public void draw(GLCanvas canvas, int x, int y, int width, int height);
 
-    // This is only used by TileImageView to back up the tiles not yet loaded.
-    public void draw(GLCanvas canvas, RectF source, RectF dest);
+	// This is only used by TileImageView to back up the tiles not yet loaded.
+	public void draw(GLCanvas canvas, RectF source, RectF dest);
 
-    public int getHeight();
+	public int getHeight();
 
-    public int getWidth();
+	public int getWidth();
 
-    // We do not need to draw this ScreenNail in this frame.
-    public void noDraw();
+	// We do not need to draw this ScreenNail in this frame.
+	public void noDraw();
 
-    // This ScreenNail will not be used anymore. Release related resources.
-    public void recycle();
+	// This ScreenNail will not be used anymore. Release related resources.
+	public void recycle();
 }

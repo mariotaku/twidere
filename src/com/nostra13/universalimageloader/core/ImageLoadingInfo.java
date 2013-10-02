@@ -37,25 +37,23 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 final class ImageLoadingInfo {
 
-    final String uri;
-    final String memoryCacheKey;
-    final Reference<ImageView> imageViewRef;
-    final ImageSize targetSize;
-    final DisplayImageOptions options;
-    final ImageLoadingListener listener;
-    final ReentrantLock loadFromUriLock;
+	final String uri;
+	final String memoryCacheKey;
+	final Reference<ImageView> imageViewRef;
+	final ImageSize targetSize;
+	final DisplayImageOptions options;
+	final ImageLoadingListener listener;
+	final ReentrantLock loadFromUriLock;
 
-    public ImageLoadingInfo(final String uri, final ImageView imageView,
-            final ImageSize targetSize,
-            final String memoryCacheKey, final DisplayImageOptions options,
-            final ImageLoadingListener listener,
-            final ReentrantLock loadFromUriLock) {
-        this.uri = uri;
-        imageViewRef = new WeakReference<ImageView>(imageView);
-        this.targetSize = targetSize;
-        this.options = options;
-        this.listener = listener;
-        this.loadFromUriLock = loadFromUriLock;
-        this.memoryCacheKey = memoryCacheKey;
-    }
+	public ImageLoadingInfo(final String uri, final ImageView imageView, final ImageSize targetSize,
+			final String memoryCacheKey, final DisplayImageOptions options, final ImageLoadingListener listener,
+			final ReentrantLock loadFromUriLock) {
+		this.uri = uri;
+		imageViewRef = new WeakReference<ImageView>(imageView);
+		this.targetSize = targetSize;
+		this.options = options;
+		this.listener = listener;
+		this.loadFromUriLock = loadFromUriLock;
+		this.memoryCacheKey = memoryCacheKey;
+	}
 }

@@ -23,5 +23,5 @@ package com.nostra13.universalimageloader.core.assist;
  * @since 1.6.3
  */
 public enum QueueProcessingType {
-    FIFO, LIFO
+	FIFO, LIFO
 }

@@ -28,13 +28,13 @@ import java.util.List;
 
 public final class DummyParcelableUsersLoader extends ParcelableUsersLoader {
 
-    public DummyParcelableUsersLoader(final Context context) {
-        super(context, null);
-    }
+	public DummyParcelableUsersLoader(final Context context) {
+		super(context, null);
+	}
 
-    @Override
-    public List<ParcelableUser> loadInBackground() {
-        return Collections.emptyList();
-    }
+	@Override
+	public List<ParcelableUser> loadInBackground() {
+		return Collections.emptyList();
+	}
 
 }

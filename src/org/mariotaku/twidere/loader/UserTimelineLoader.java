@@ -38,51 +38,45 @@ import java.util.List;
 
 public class UserTimelineLoader extends Twitter4JStatusesLoader {
 
-    private final long mUserId;
-    private final String mUserScreenName;
-    private final boolean mIsMyTimeline;
-    private int mTotalItemsCount;
+	private final long mUserId;
+	private final String mUserScreenName;
+	private final boolean mIsMyTimeline;
+	private int mTotalItemsCount;
 
-    public UserTimelineLoader(final Context context, final long account_id, final long user_id,
-            final String screen_name, final long max_id, final long since_id,
-            final List<ParcelableStatus> data,
-            final String[] saved_statuses_args, final int tab_position) {
-        super(context, account_id, max_id, since_id, data, saved_statuses_args, tab_position);
-        mUserId = user_id;
-        mUserScreenName = screen_name;
-        mIsMyTimeline = user_id > 0 ? account_id == user_id : account_id == getAccountId(context,
-                screen_name);
-    }
+	public UserTimelineLoader(final Context context, final long account_id, final long user_id,
+			final String screen_name, final long max_id, final long since_id, final List<ParcelableStatus> data,
+			final String[] saved_statuses_args, final int tab_position) {
+		super(context, account_id, max_id, since_id, data, saved_statuses_args, tab_position);
+		mUserId = user_id;
+		mUserScreenName = screen_name;
+		mIsMyTimeline = user_id > 0 ? account_id == user_id : account_id == getAccountId(context, screen_name);
+	}
 
-    public int getTotalItemsCount() {
-        return mTotalItemsCount;
-    }
+	public int getTotalItemsCount() {
+		return mTotalItemsCount;
+	}
 
-    @Override
-    protected ResponseList<Status> getStatuses(final Twitter twitter, final Paging paging)
-            throws TwitterException {
-        if (twitter == null)
-            return null;
-        final ResponseList<Status> statuses;
-        if (mUserId != -1) {
-            statuses = twitter.getUserTimeline(mUserId, paging);
-        } else if (mUserScreenName != null) {
-            statuses = twitter.getUserTimeline(mUserScreenName, paging);
-        } else
-            return null;
-        if (mTotalItemsCount == -1 && !statuses.isEmpty()) {
-            final User user = statuses.get(0).getUser();
-            if (user != null) {
-                mTotalItemsCount = user.getStatusesCount();
-            }
-        }
-        return statuses;
-    }
+	@Override
+	protected ResponseList<Status> getStatuses(final Twitter twitter, final Paging paging) throws TwitterException {
+		if (twitter == null) return null;
+		final ResponseList<Status> statuses;
+		if (mUserId != -1) {
+			statuses = twitter.getUserTimeline(mUserId, paging);
+		} else if (mUserScreenName != null) {
+			statuses = twitter.getUserTimeline(mUserScreenName, paging);
+		} else
+			return null;
+		if (mTotalItemsCount == -1 && !statuses.isEmpty()) {
+			final User user = statuses.get(0).getUser();
+			if (user != null) {
+				mTotalItemsCount = user.getStatusesCount();
+			}
+		}
+		return statuses;
+	}
 
-    @Override
-    protected boolean shouldFilterStatus(final SQLiteDatabase database,
-            final ParcelableStatus status) {
-        return !mIsMyTimeline
-                && isFiltered(database, status.text_plain, status.text_html, null, status.source);
-    }
+	@Override
+	protected boolean shouldFilterStatus(final SQLiteDatabase database, final ParcelableStatus status) {
+		return !mIsMyTimeline && isFiltered(database, status.text_plain, status.text_html, null, status.source);
+	}
 }

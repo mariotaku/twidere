@@ -25,24 +25,24 @@ import java.io.Serializable;
  * @since Twitter4J 2.1.9
  */
 public interface HashtagEntity extends Serializable {
-    /**
-     * Returns the index of the end character of the hashtag.
-     * 
-     * @return the index of the end character of the hashtag
-     */
-    int getEnd();
+	/**
+	 * Returns the index of the end character of the hashtag.
+	 * 
+	 * @return the index of the end character of the hashtag
+	 */
+	int getEnd();
 
-    /**
-     * Returns the index of the start character of the hashtag.
-     * 
-     * @return the index of the start character of the hashtag
-     */
-    int getStart();
+	/**
+	 * Returns the index of the start character of the hashtag.
+	 * 
+	 * @return the index of the start character of the hashtag
+	 */
+	int getStart();
 
-    /**
-     * Returns the text of the hashtag without #.
-     * 
-     * @return the text of the hashtag
-     */
-    String getText();
+	/**
+	 * Returns the text of the hashtag without #.
+	 * 
+	 * @return the text of the hashtag
+	 */
+	String getText();
 }

@@ -34,92 +34,88 @@ import java.util.List;
  */
 public final class MemoryCacheUtil {
 
-    private static final String URI_AND_SIZE_SEPARATOR = "_";
-    private static final String WIDTH_AND_HEIGHT_SEPARATOR = "x";
+	private static final String URI_AND_SIZE_SEPARATOR = "_";
+	private static final String WIDTH_AND_HEIGHT_SEPARATOR = "x";
 
-    private MemoryCacheUtil() {
-    }
+	private MemoryCacheUtil() {
+	}
 
-    public static Comparator<String> createFuzzyKeyComparator() {
-        return new Comparator<String>() {
-            @Override
-            public int compare(final String key1, final String key2) {
-                final String imageUri1 = key1
-                        .substring(0, key1.lastIndexOf(URI_AND_SIZE_SEPARATOR));
-                final String imageUri2 = key2
-                        .substring(0, key2.lastIndexOf(URI_AND_SIZE_SEPARATOR));
-                return imageUri1.compareTo(imageUri2);
-            }
-        };
-    }
+	public static Comparator<String> createFuzzyKeyComparator() {
+		return new Comparator<String>() {
+			@Override
+			public int compare(final String key1, final String key2) {
+				final String imageUri1 = key1.substring(0, key1.lastIndexOf(URI_AND_SIZE_SEPARATOR));
+				final String imageUri2 = key2.substring(0, key2.lastIndexOf(URI_AND_SIZE_SEPARATOR));
+				return imageUri1.compareTo(imageUri2);
+			}
+		};
+	}
 
-    /**
-     * Searches all bitmaps in memory cache which are corresponded to incoming
-     * URI.<br />
-     * <b>Note:</b> Memory cache can contain multiple sizes of the same image if
-     * only you didn't set
-     * {@link ImageLoaderConfiguration.Builder#denyCacheImageMultipleSizesInMemory()
-     * denyCacheImageMultipleSizesInMemory()} option in
-     * {@linkplain ImageLoaderConfiguration configuration}
-     */
-    public static List<Bitmap> findCachedBitmapsForImageUri(final String imageUri,
-            final MemoryCacheAware<String, Bitmap> memoryCache) {
-        final List<Bitmap> values = new ArrayList<Bitmap>();
-        for (final String key : memoryCache.keys()) {
-            if (key.startsWith(imageUri)) {
-                values.add(memoryCache.get(key));
-            }
-        }
-        return values;
-    }
+	/**
+	 * Searches all bitmaps in memory cache which are corresponded to incoming
+	 * URI.<br />
+	 * <b>Note:</b> Memory cache can contain multiple sizes of the same image if
+	 * only you didn't set
+	 * {@link ImageLoaderConfiguration.Builder#denyCacheImageMultipleSizesInMemory()
+	 * denyCacheImageMultipleSizesInMemory()} option in
+	 * {@linkplain ImageLoaderConfiguration configuration}
+	 */
+	public static List<Bitmap> findCachedBitmapsForImageUri(final String imageUri,
+			final MemoryCacheAware<String, Bitmap> memoryCache) {
+		final List<Bitmap> values = new ArrayList<Bitmap>();
+		for (final String key : memoryCache.keys()) {
+			if (key.startsWith(imageUri)) {
+				values.add(memoryCache.get(key));
+			}
+		}
+		return values;
+	}
 
-    /**
-     * Searches all keys in memory cache which are corresponded to incoming URI.<br />
-     * <b>Note:</b> Memory cache can contain multiple sizes of the same image if
-     * only you didn't set
-     * {@link ImageLoaderConfiguration.Builder#denyCacheImageMultipleSizesInMemory()
-     * denyCacheImageMultipleSizesInMemory()} option in
-     * {@linkplain ImageLoaderConfiguration configuration}
-     */
-    public static List<String> findCacheKeysForImageUri(final String imageUri,
-            final MemoryCacheAware<String, Bitmap> memoryCache) {
-        final List<String> values = new ArrayList<String>();
-        for (final String key : memoryCache.keys()) {
-            if (key.startsWith(imageUri)) {
-                values.add(key);
-            }
-        }
-        return values;
-    }
+	/**
+	 * Searches all keys in memory cache which are corresponded to incoming URI.<br />
+	 * <b>Note:</b> Memory cache can contain multiple sizes of the same image if
+	 * only you didn't set
+	 * {@link ImageLoaderConfiguration.Builder#denyCacheImageMultipleSizesInMemory()
+	 * denyCacheImageMultipleSizesInMemory()} option in
+	 * {@linkplain ImageLoaderConfiguration configuration}
+	 */
+	public static List<String> findCacheKeysForImageUri(final String imageUri,
+			final MemoryCacheAware<String, Bitmap> memoryCache) {
+		final List<String> values = new ArrayList<String>();
+		for (final String key : memoryCache.keys()) {
+			if (key.startsWith(imageUri)) {
+				values.add(key);
+			}
+		}
+		return values;
+	}
 
-    /**
-     * Generates key for memory cache for incoming image (URI + size).<br />
-     * Pattern for cache key - <b>[imageUri]_[width]x[height]</b>.
-     */
-    public static String generateKey(final String imageUri, final ImageSize targetSize) {
-        return new StringBuilder(imageUri).append(URI_AND_SIZE_SEPARATOR)
-                .append(targetSize.getWidth())
-                .append(WIDTH_AND_HEIGHT_SEPARATOR).append(targetSize.getHeight()).toString();
-    }
+	/**
+	 * Generates key for memory cache for incoming image (URI + size).<br />
+	 * Pattern for cache key - <b>[imageUri]_[width]x[height]</b>.
+	 */
+	public static String generateKey(final String imageUri, final ImageSize targetSize) {
+		return new StringBuilder(imageUri).append(URI_AND_SIZE_SEPARATOR).append(targetSize.getWidth())
+				.append(WIDTH_AND_HEIGHT_SEPARATOR).append(targetSize.getHeight()).toString();
+	}
 
-    /**
-     * Removes from memory cache all images for incoming URI.<br />
-     * <b>Note:</b> Memory cache can contain multiple sizes of the same image if
-     * only you didn't set
-     * {@link ImageLoaderConfiguration.Builder#denyCacheImageMultipleSizesInMemory()
-     * denyCacheImageMultipleSizesInMemory()} option in
-     * {@linkplain ImageLoaderConfiguration configuration}
-     */
-    public static void removeFromCache(final String imageUri,
-            final MemoryCacheAware<String, Bitmap> memoryCache) {
-        final List<String> keysToRemove = new ArrayList<String>();
-        for (final String key : memoryCache.keys()) {
-            if (key.startsWith(imageUri)) {
-                keysToRemove.add(key);
-            }
-        }
-        for (final String keyToRemove : keysToRemove) {
-            memoryCache.remove(keyToRemove);
-        }
-    }
+	/**
+	 * Removes from memory cache all images for incoming URI.<br />
+	 * <b>Note:</b> Memory cache can contain multiple sizes of the same image if
+	 * only you didn't set
+	 * {@link ImageLoaderConfiguration.Builder#denyCacheImageMultipleSizesInMemory()
+	 * denyCacheImageMultipleSizesInMemory()} option in
+	 * {@linkplain ImageLoaderConfiguration configuration}
+	 */
+	public static void removeFromCache(final String imageUri, final MemoryCacheAware<String, Bitmap> memoryCache) {
+		final List<String> keysToRemove = new ArrayList<String>();
+		for (final String key : memoryCache.keys()) {
+			if (key.startsWith(imageUri)) {
+				keysToRemove.add(key);
+			}
+		}
+		for (final String keyToRemove : keysToRemove) {
+			memoryCache.remove(keyToRemove);
+		}
+	}
 }

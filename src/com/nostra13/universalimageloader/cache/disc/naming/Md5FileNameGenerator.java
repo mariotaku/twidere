@@ -30,25 +30,25 @@ import java.security.NoSuchAlgorithmException;
  */
 public class Md5FileNameGenerator implements FileNameGenerator {
 
-    private static final String HASH_ALGORITHM = "MD5";
-    private static final int RADIX = 10 + 26; // 10 digits + 26 letters
+	private static final String HASH_ALGORITHM = "MD5";
+	private static final int RADIX = 10 + 26; // 10 digits + 26 letters
 
-    @Override
-    public String generate(final String imageUri) {
-        final byte[] md5 = getMD5(imageUri.getBytes());
-        final BigInteger bi = new BigInteger(md5).abs();
-        return bi.toString(RADIX);
-    }
+	@Override
+	public String generate(final String imageUri) {
+		final byte[] md5 = getMD5(imageUri.getBytes());
+		final BigInteger bi = new BigInteger(md5).abs();
+		return bi.toString(RADIX);
+	}
 
-    private byte[] getMD5(final byte[] data) {
-        byte[] hash = null;
-        try {
-            final MessageDigest digest = MessageDigest.getInstance(HASH_ALGORITHM);
-            digest.update(data);
-            hash = digest.digest();
-        } catch (final NoSuchAlgorithmException e) {
-            L.e(e);
-        }
-        return hash;
-    }
+	private byte[] getMD5(final byte[] data) {
+		byte[] hash = null;
+		try {
+			final MessageDigest digest = MessageDigest.getInstance(HASH_ALGORITHM);
+			digest.update(data);
+			hash = digest.digest();
+		} catch (final NoSuchAlgorithmException e) {
+			L.e(e);
+		}
+		return hash;
+	}
 }

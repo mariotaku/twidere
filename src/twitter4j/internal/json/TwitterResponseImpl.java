@@ -32,38 +32,38 @@ import twitter4j.internal.util.InternalParseUtil;
  */
 /* package */abstract class TwitterResponseImpl implements TwitterResponse {
 
-    /**
+	/**
 	 * 
 	 */
-    private static final long serialVersionUID = 8016245009711538262L;
+	private static final long serialVersionUID = 8016245009711538262L;
 
-    private transient RateLimitStatus rateLimitStatus = null;
+	private transient RateLimitStatus rateLimitStatus = null;
 
-    private transient int accessLevel;
+	private transient int accessLevel;
 
-    public TwitterResponseImpl() {
-        accessLevel = NONE;
-    }
+	public TwitterResponseImpl() {
+		accessLevel = NONE;
+	}
 
-    public TwitterResponseImpl(final HttpResponse res) {
-        rateLimitStatus = RateLimitStatusJSONImpl.createFromResponseHeader(res);
-        accessLevel = InternalParseUtil.toAccessLevel(res);
-    }
+	public TwitterResponseImpl(final HttpResponse res) {
+		rateLimitStatus = RateLimitStatusJSONImpl.createFromResponseHeader(res);
+		accessLevel = InternalParseUtil.toAccessLevel(res);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getAccessLevel() {
-        return accessLevel;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int getAccessLevel() {
+		return accessLevel;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public RateLimitStatus getRateLimitStatus() {
-        return rateLimitStatus;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public RateLimitStatus getRateLimitStatus() {
+		return rateLimitStatus;
+	}
 
 }

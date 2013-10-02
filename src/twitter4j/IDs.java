@@ -22,17 +22,17 @@ package twitter4j;
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
 public interface IDs extends TwitterResponse, CursorSupport {
-    long[] getIDs();
+	long[] getIDs();
 
-    @Override
-    long getNextCursor();
+	@Override
+	long getNextCursor();
 
-    @Override
-    long getPreviousCursor();
+	@Override
+	long getPreviousCursor();
 
-    @Override
-    boolean hasNext();
+	@Override
+	boolean hasNext();
 
-    @Override
-    boolean hasPrevious();
+	@Override
+	boolean hasPrevious();
 }

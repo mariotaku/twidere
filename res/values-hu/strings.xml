@@ -116,7 +116,7 @@
   <string name="blocked_users">Blokkolt felhasználók</string>
   <string name="set_as_default">Beállítás alapértelmezettként</string>
   <string name="search_users">Keresés felhasználók között</string>
-  <string name="search_tweets">Keresés tweetek között</string>
+  <string name="search_statuses">Keresés tweetek között</string>
   <string name="created_at">Létrehozva:</string>
   <string name="search_hint">Keresés tweetek és felhasználók között</string>
   <string name="remember_position">Pozíció megjegyzése</string>

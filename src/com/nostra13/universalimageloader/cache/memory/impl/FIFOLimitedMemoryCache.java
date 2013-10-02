@@ -40,48 +40,48 @@ import java.util.List;
  */
 public class FIFOLimitedMemoryCache extends LimitedMemoryCache<String, Bitmap> {
 
-    private final List<Bitmap> queue = Collections.synchronizedList(new LinkedList<Bitmap>());
+	private final List<Bitmap> queue = Collections.synchronizedList(new LinkedList<Bitmap>());
 
-    public FIFOLimitedMemoryCache(final int sizeLimit) {
-        super(sizeLimit);
-    }
+	public FIFOLimitedMemoryCache(final int sizeLimit) {
+		super(sizeLimit);
+	}
 
-    @Override
-    public void clear() {
-        queue.clear();
-        super.clear();
-    }
+	@Override
+	public void clear() {
+		queue.clear();
+		super.clear();
+	}
 
-    @Override
-    public boolean put(final String key, final Bitmap value) {
-        if (super.put(key, value)) {
-            queue.add(value);
-            return true;
-        } else
-            return false;
-    }
+	@Override
+	public boolean put(final String key, final Bitmap value) {
+		if (super.put(key, value)) {
+			queue.add(value);
+			return true;
+		} else
+			return false;
+	}
 
-    @Override
-    public void remove(final String key) {
-        final Bitmap value = super.get(key);
-        if (value != null) {
-            queue.remove(value);
-        }
-        super.remove(key);
-    }
+	@Override
+	public void remove(final String key) {
+		final Bitmap value = super.get(key);
+		if (value != null) {
+			queue.remove(value);
+		}
+		super.remove(key);
+	}
 
-    @Override
-    protected Reference<Bitmap> createReference(final Bitmap value) {
-        return new WeakReference<Bitmap>(value);
-    }
+	@Override
+	protected Reference<Bitmap> createReference(final Bitmap value) {
+		return new WeakReference<Bitmap>(value);
+	}
 
-    @Override
-    protected int getSize(final Bitmap value) {
-        return value.getRowBytes() * value.getHeight();
-    }
+	@Override
+	protected int getSize(final Bitmap value) {
+		return value.getRowBytes() * value.getHeight();
+	}
 
-    @Override
-    protected Bitmap removeNext() {
-        return queue.remove(0);
-    }
+	@Override
+	protected Bitmap removeNext() {
+		return queue.remove(0);
+	}
 }

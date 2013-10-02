@@ -132,7 +132,7 @@
   <string name="blocked_users">Zablokowani użytkownicy</string>
   <string name="set_as_default">Ustaw jako domyślny</string>
   <string name="search_users">Szukaj użytkowników</string>
-  <string name="search_tweets">Szukaj ćwierków</string>
+  <string name="search_statuses">Szukaj ćwierków</string>
   <string name="created_at">Utworzone w</string>
   <string name="search_hint">Szukaj ćwierków lub użytkowników</string>
   <string name="remember_position">Zapamiętaj pozycję</string>

@@ -127,7 +127,7 @@
   <string name="blocked_users">차단된 사용자</string>
   <string name="set_as_default">기본값으로 설정</string>
   <string name="search_users">사용자 검색</string>
-  <string name="search_tweets">트윗 검색</string>
+  <string name="search_statuses">트윗 검색</string>
   <string name="created_at">생성: </string>
   <string name="search_hint">트윗이나 사용자 검색</string>
   <string name="remember_position">위치 기억하기</string>

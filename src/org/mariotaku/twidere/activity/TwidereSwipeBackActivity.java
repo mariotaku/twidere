@@ -26,36 +26,30 @@ import android.os.Bundle;
 @SuppressLint("Registered")
 public class TwidereSwipeBackActivity extends BaseThemedSupportSwipeBackActivity {
 
-    protected int activityCloseEnterAnimation;
-    protected int activityCloseExitAnimation;
+	protected int activityCloseEnterAnimation;
+	protected int activityCloseExitAnimation;
 
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(activityCloseEnterAnimation, activityCloseExitAnimation);
-    }
+	@Override
+	public void finish() {
+		super.finish();
+		overridePendingTransition(activityCloseEnterAnimation, activityCloseExitAnimation);
+	}
 
-    @Override
-    protected void onCreate(final Bundle savedInstanceState) {
-        TypedArray activityStyle = getTheme().obtainStyledAttributes(new int[] {
-            android.R.attr.windowAnimationStyle
-        });
-        final int windowAnimationStyleResId = activityStyle.getResourceId(0, 0);
-        activityStyle.recycle();
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		TypedArray activityStyle = getTheme().obtainStyledAttributes(new int[] { android.R.attr.windowAnimationStyle });
+		final int windowAnimationStyleResId = activityStyle.getResourceId(0, 0);
+		activityStyle.recycle();
 
-        // Now retrieve the resource ids of the actual animations used in the
-        // animation style pointed to by
-        // the window animation resource id.
-        activityStyle = getTheme().obtainStyledAttributes(
-                windowAnimationStyleResId,
-                new int[] {
-                        android.R.attr.activityCloseEnterAnimation,
-                        android.R.attr.activityCloseExitAnimation
-                });
-        activityCloseEnterAnimation = activityStyle.getResourceId(0, 0);
-        activityCloseExitAnimation = activityStyle.getResourceId(1, 0);
-        activityStyle.recycle();
-        super.onCreate(savedInstanceState);
-        setOverrideExitAniamtion(false);
-    }
+		// Now retrieve the resource ids of the actual animations used in the
+		// animation style pointed to by
+		// the window animation resource id.
+		activityStyle = getTheme().obtainStyledAttributes(windowAnimationStyleResId,
+				new int[] { android.R.attr.activityCloseEnterAnimation, android.R.attr.activityCloseExitAnimation });
+		activityCloseEnterAnimation = activityStyle.getResourceId(0, 0);
+		activityCloseExitAnimation = activityStyle.getResourceId(1, 0);
+		activityStyle.recycle();
+		super.onCreate(savedInstanceState);
+		setOverrideExitAniamtion(false);
+	}
 }

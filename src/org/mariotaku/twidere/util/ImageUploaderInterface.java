@@ -36,75 +36,71 @@ import org.mariotaku.twidere.IImageUploader;
 
 public final class ImageUploaderInterface implements Constants, IImageUploader {
 
-    private IImageUploader mUploader;
+	private IImageUploader mUploader;
 
-    private final ServiceConnection mConntecion = new ServiceConnection() {
+	private final ServiceConnection mConntecion = new ServiceConnection() {
 
-        @Override
-        public void onServiceConnected(final ComponentName service, final IBinder obj) {
-            mUploader = IImageUploader.Stub.asInterface(obj);
-        }
+		@Override
+		public void onServiceConnected(final ComponentName service, final IBinder obj) {
+			mUploader = IImageUploader.Stub.asInterface(obj);
+		}
 
-        @Override
-        public void onServiceDisconnected(final ComponentName service) {
-            mUploader = null;
-        }
-    };
+		@Override
+		public void onServiceDisconnected(final ComponentName service) {
+			mUploader = null;
+		}
+	};
 
-    private ImageUploaderInterface(final Context context, final String uploader_name) {
-        final Intent intent = new Intent(INTENT_ACTION_EXTENSION_UPLOAD_IMAGE);
-        final ComponentName component = ComponentName.unflattenFromString(uploader_name);
-        intent.setComponent(component);
-        bindToService(context, intent, mConntecion);
-    }
+	private ImageUploaderInterface(final Context context, final String uploader_name) {
+		final Intent intent = new Intent(INTENT_ACTION_EXTENSION_UPLOAD_IMAGE);
+		final ComponentName component = ComponentName.unflattenFromString(uploader_name);
+		intent.setComponent(component);
+		bindToService(context, intent, mConntecion);
+	}
 
-    @Override
-    public IBinder asBinder() {
-        // Useless here
-        return mUploader.asBinder();
-    }
+	@Override
+	public IBinder asBinder() {
+		// Useless here
+		return mUploader.asBinder();
+	}
 
-    @Override
-    public Uri upload(final Uri file_uri, final String message) {
-        if (mUploader == null)
-            return null;
-        try {
-            return mUploader.upload(file_uri, message);
-        } catch (final RemoteException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+	@Override
+	public Uri upload(final Uri file_uri, final String message) {
+		if (mUploader == null) return null;
+		try {
+			return mUploader.upload(file_uri, message);
+		} catch (final RemoteException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
-    public void waitForService() {
-        while (mUploader == null) {
-            try {
-                Thread.sleep(100L);
-            } catch (final InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+	public void waitForService() {
+		while (mUploader == null) {
+			try {
+				Thread.sleep(100L);
+			} catch (final InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
-    public static ImageUploaderInterface getInstance(final Application application,
-            final String uploader_name) {
-        if (uploader_name == null)
-            return null;
-        final Intent intent = new Intent(INTENT_ACTION_EXTENSION_UPLOAD_IMAGE);
-        final ComponentName component = ComponentName.unflattenFromString(uploader_name);
-        intent.setComponent(component);
-        if (application.getPackageManager().queryIntentServices(intent, 0).size() != 1)
-            return null;
-        return new ImageUploaderInterface(application, uploader_name);
-    }
+	public static ImageUploaderInterface getInstance(final Application application, final String uploader_name) {
+		if (uploader_name == null) return null;
+		final Intent intent = new Intent(INTENT_ACTION_EXTENSION_UPLOAD_IMAGE);
+		final ComponentName component = ComponentName.unflattenFromString(uploader_name);
+		intent.setComponent(component);
+		if (application.getPackageManager().queryIntentServices(intent, 0).size() != 1) return null;
+		return new ImageUploaderInterface(application, uploader_name);
+	}
 
-    public static class ServiceToken {
+	public static class ServiceToken {
 
-        ContextWrapper wrapped_context;
+		ContextWrapper wrapped_context;
 
-        ServiceToken(final ContextWrapper context) {
+		ServiceToken(final ContextWrapper context) {
 
-            wrapped_context = context;
-        }
-    }
+			wrapped_context = context;
+		}
+	}
 }

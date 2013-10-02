@@ -138,7 +138,7 @@
   <string name="blocked_users">Заблоковані користувачі</string>
   <string name="set_as_default">Встановити типовим</string>
   <string name="search_users">Пошук користувачів</string>
-  <string name="search_tweets">Пошук твітів</string>
+  <string name="search_statuses">Пошук твітів</string>
   <string name="created_at">Створено</string>
   <string name="search_hint">Пошук твітів або користувачів</string>
   <string name="remember_position">Запам\'ятати розташування</string>

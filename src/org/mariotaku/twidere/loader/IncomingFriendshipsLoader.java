@@ -32,17 +32,15 @@ import java.util.List;
 
 public class IncomingFriendshipsLoader extends IDsUsersLoader {
 
-    public IncomingFriendshipsLoader(final Context context, final long account_id,
-            final long max_id,
-            final List<ParcelableUser> users_list) {
-        super(context, account_id, max_id, users_list);
-    }
+	public IncomingFriendshipsLoader(final Context context, final long account_id, final long max_id,
+			final List<ParcelableUser> users_list) {
+		super(context, account_id, max_id, users_list);
+	}
 
-    @Override
-    protected IDs getIDs(final Twitter twitter, final CursorPaging paging) throws TwitterException {
-        if (twitter == null)
-            return null;
-        return twitter.getIncomingFriendships(paging);
-    }
+	@Override
+	protected IDs getIDs(final Twitter twitter, final CursorPaging paging) throws TwitterException {
+		if (twitter == null) return null;
+		return twitter.getIncomingFriendships(paging);
+	}
 
 }

@@ -23,8 +23,8 @@ package com.nostra13.universalimageloader.cache.disc.naming;
  * @since 1.3.1
  */
 public class HashCodeFileNameGenerator implements FileNameGenerator {
-    @Override
-    public String generate(final String imageUri) {
-        return String.valueOf(imageUri.hashCode());
-    }
+	@Override
+	public String generate(final String imageUri) {
+		return String.valueOf(imageUri.hashCode());
+	}
 }

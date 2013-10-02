@@ -22,21 +22,21 @@ package twitter4j;
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
 public interface QueryResult {
-    double getCompletedIn();
+	double getCompletedIn();
 
-    long getMaxId();
+	long getMaxId();
 
-    int getPage();
+	int getPage();
 
-    String getQuery();
+	String getQuery();
 
-    String getRefreshUrl();
+	String getRefreshUrl();
 
-    int getResultsPerPage();
+	int getResultsPerPage();
 
-    long getSinceId();
+	long getSinceId();
 
-    Status[] getStatuses();
+	Status[] getStatuses();
 
-    String getWarning();
+	String getWarning();
 }

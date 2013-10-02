@@ -41,193 +41,180 @@ import twitter4j.http.HttpResponse;
  */
 /* package */class RelationshipJSONImpl extends TwitterResponseImpl implements Relationship {
 
-    /**
+	/**
 	 * 
 	 */
-    private static final long serialVersionUID = 2816753598969317818L;
-    private final long targetUserId;
-    private final String targetUserScreenName;
-    private final boolean sourceBlockingTarget;
-    private final boolean sourceNotificationsEnabled;
-    private final boolean sourceFollowingTarget;
-    private final boolean sourceFollowedByTarget;
-    private final long sourceUserId;
-    private final String sourceUserScreenName;
+	private static final long serialVersionUID = 2816753598969317818L;
+	private final long targetUserId;
+	private final String targetUserScreenName;
+	private final boolean sourceBlockingTarget;
+	private final boolean sourceNotificationsEnabled;
+	private final boolean sourceFollowingTarget;
+	private final boolean sourceFollowedByTarget;
+	private final long sourceUserId;
+	private final String sourceUserScreenName;
 
-    /* package */RelationshipJSONImpl(final HttpResponse res, final Configuration conf)
-            throws TwitterException {
-        this(res, res.asJSONObject());
-    }
+	/* package */RelationshipJSONImpl(final HttpResponse res, final Configuration conf) throws TwitterException {
+		this(res, res.asJSONObject());
+	}
 
-    /* package */RelationshipJSONImpl(final HttpResponse res, final JSONObject json)
-            throws TwitterException {
-        super(res);
-        try {
-            final JSONObject relationship = json.getJSONObject("relationship");
-            final JSONObject sourceJson = relationship.getJSONObject("source");
-            final JSONObject targetJson = relationship.getJSONObject("target");
-            sourceUserId = getLong("id", sourceJson);
-            targetUserId = getLong("id", targetJson);
-            sourceUserScreenName = getHTMLUnescapedString("screen_name", sourceJson);
-            targetUserScreenName = getHTMLUnescapedString("screen_name", targetJson);
-            sourceBlockingTarget = getBoolean("blocking", sourceJson);
-            sourceFollowingTarget = getBoolean("following", sourceJson);
-            sourceFollowedByTarget = getBoolean("followed_by", sourceJson);
-            sourceNotificationsEnabled = getBoolean("notifications_enabled", sourceJson);
-        } catch (final JSONException jsone) {
-            throw new TwitterException(jsone.getMessage() + ":" + json.toString(), jsone);
-        }
-    }
+	/* package */RelationshipJSONImpl(final HttpResponse res, final JSONObject json) throws TwitterException {
+		super(res);
+		try {
+			final JSONObject relationship = json.getJSONObject("relationship");
+			final JSONObject sourceJson = relationship.getJSONObject("source");
+			final JSONObject targetJson = relationship.getJSONObject("target");
+			sourceUserId = getLong("id", sourceJson);
+			targetUserId = getLong("id", targetJson);
+			sourceUserScreenName = getHTMLUnescapedString("screen_name", sourceJson);
+			targetUserScreenName = getHTMLUnescapedString("screen_name", targetJson);
+			sourceBlockingTarget = getBoolean("blocking", sourceJson);
+			sourceFollowingTarget = getBoolean("following", sourceJson);
+			sourceFollowedByTarget = getBoolean("followed_by", sourceJson);
+			sourceNotificationsEnabled = getBoolean("notifications_enabled", sourceJson);
+		} catch (final JSONException jsone) {
+			throw new TwitterException(jsone.getMessage() + ":" + json.toString(), jsone);
+		}
+	}
 
-    /* package */RelationshipJSONImpl(final JSONObject json) throws TwitterException {
-        this(null, json);
-    }
+	/* package */RelationshipJSONImpl(final JSONObject json) throws TwitterException {
+		this(null, json);
+	}
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof Relationship))
-            return false;
+	@Override
+	public boolean equals(final Object o) {
+		if (this == o) return true;
+		if (!(o instanceof Relationship)) return false;
 
-        final Relationship that = (Relationship) o;
+		final Relationship that = (Relationship) o;
 
-        if (sourceUserId != that.getSourceUserId())
-            return false;
-        if (targetUserId != that.getTargetUserId())
-            return false;
-        if (!sourceUserScreenName.equals(that.getSourceUserScreenName()))
-            return false;
-        if (!targetUserScreenName.equals(that.getTargetUserScreenName()))
-            return false;
+		if (sourceUserId != that.getSourceUserId()) return false;
+		if (targetUserId != that.getTargetUserId()) return false;
+		if (!sourceUserScreenName.equals(that.getSourceUserScreenName())) return false;
+		if (!targetUserScreenName.equals(that.getTargetUserScreenName())) return false;
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long getSourceUserId() {
-        return sourceUserId;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public long getSourceUserId() {
+		return sourceUserId;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getSourceUserScreenName() {
-        return sourceUserScreenName;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getSourceUserScreenName() {
+		return sourceUserScreenName;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long getTargetUserId() {
-        return targetUserId;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public long getTargetUserId() {
+		return targetUserId;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getTargetUserScreenName() {
-        return targetUserScreenName;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getTargetUserScreenName() {
+		return targetUserScreenName;
+	}
 
-    @Override
-    public int hashCode() {
-        int result = (int) (targetUserId ^ targetUserId >>> 32);
-        result = 31 * result + (targetUserScreenName != null ? targetUserScreenName.hashCode() : 0);
-        result = 31 * result + (sourceBlockingTarget ? 1 : 0);
-        result = 31 * result + (sourceNotificationsEnabled ? 1 : 0);
-        result = 31 * result + (sourceFollowingTarget ? 1 : 0);
-        result = 31 * result + (sourceFollowedByTarget ? 1 : 0);
-        result = 31 * result + (int) (sourceUserId ^ sourceUserId >>> 32);
-        result = 31 * result + (sourceUserScreenName != null ? sourceUserScreenName.hashCode() : 0);
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		int result = (int) (targetUserId ^ targetUserId >>> 32);
+		result = 31 * result + (targetUserScreenName != null ? targetUserScreenName.hashCode() : 0);
+		result = 31 * result + (sourceBlockingTarget ? 1 : 0);
+		result = 31 * result + (sourceNotificationsEnabled ? 1 : 0);
+		result = 31 * result + (sourceFollowingTarget ? 1 : 0);
+		result = 31 * result + (sourceFollowedByTarget ? 1 : 0);
+		result = 31 * result + (int) (sourceUserId ^ sourceUserId >>> 32);
+		result = 31 * result + (sourceUserScreenName != null ? sourceUserScreenName.hashCode() : 0);
+		return result;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isSourceBlockingTarget() {
-        return sourceBlockingTarget;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isSourceBlockingTarget() {
+		return sourceBlockingTarget;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isSourceFollowedByTarget() {
-        return sourceFollowedByTarget;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isSourceFollowedByTarget() {
+		return sourceFollowedByTarget;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isSourceFollowingTarget() {
-        return sourceFollowingTarget;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isSourceFollowingTarget() {
+		return sourceFollowingTarget;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isSourceNotificationsEnabled() {
-        return sourceNotificationsEnabled;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isSourceNotificationsEnabled() {
+		return sourceNotificationsEnabled;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isTargetFollowedBySource() {
-        return sourceFollowingTarget;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isTargetFollowedBySource() {
+		return sourceFollowingTarget;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isTargetFollowingSource() {
-        return sourceFollowedByTarget;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isTargetFollowingSource() {
+		return sourceFollowedByTarget;
+	}
 
-    @Override
-    public String toString() {
-        return "RelationshipJSONImpl{" + "sourceUserId=" + sourceUserId + ", targetUserId="
-                + targetUserId
-                + ", sourceUserScreenName='" + sourceUserScreenName + '\''
-                + ", targetUserScreenName='"
-                + targetUserScreenName + '\'' + ", sourceFollowingTarget=" + sourceFollowingTarget
-                + ", sourceFollowedByTarget=" + sourceFollowedByTarget
-                + ", sourceNotificationsEnabled="
-                + sourceNotificationsEnabled + '}';
-    }
+	@Override
+	public String toString() {
+		return "RelationshipJSONImpl{" + "sourceUserId=" + sourceUserId + ", targetUserId=" + targetUserId
+				+ ", sourceUserScreenName='" + sourceUserScreenName + '\'' + ", targetUserScreenName='"
+				+ targetUserScreenName + '\'' + ", sourceFollowingTarget=" + sourceFollowingTarget
+				+ ", sourceFollowedByTarget=" + sourceFollowedByTarget + ", sourceNotificationsEnabled="
+				+ sourceNotificationsEnabled + '}';
+	}
 
-    /* package */
-    static ResponseList<Relationship> createRelationshipList(final HttpResponse res,
-            final Configuration conf)
-            throws TwitterException {
-        try {
-            final JSONArray list = res.asJSONArray();
-            final int size = list.length();
-            final ResponseList<Relationship> relationships = new ResponseListImpl<Relationship>(
-                    size, res);
-            for (int i = 0; i < size; i++) {
-                final JSONObject json = list.getJSONObject(i);
-                final Relationship relationship = new RelationshipJSONImpl(json);
-                relationships.add(relationship);
-            }
-            return relationships;
-        } catch (final JSONException jsone) {
-            throw new TwitterException(jsone);
-        } catch (final TwitterException te) {
-            throw te;
-        }
-    }
+	/* package */
+	static ResponseList<Relationship> createRelationshipList(final HttpResponse res, final Configuration conf)
+			throws TwitterException {
+		try {
+			final JSONArray list = res.asJSONArray();
+			final int size = list.length();
+			final ResponseList<Relationship> relationships = new ResponseListImpl<Relationship>(size, res);
+			for (int i = 0; i < size; i++) {
+				final JSONObject json = list.getJSONObject(i);
+				final Relationship relationship = new RelationshipJSONImpl(json);
+				relationships.add(relationship);
+			}
+			return relationships;
+		} catch (final JSONException jsone) {
+			throw new TwitterException(jsone);
+		} catch (final TwitterException te) {
+			throw te;
+		}
+	}
 }

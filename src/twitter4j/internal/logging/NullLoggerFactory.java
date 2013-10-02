@@ -21,23 +21,23 @@ package twitter4j.internal.logging;
  * @since Twitter4J 2.1.4
  */
 final class NullLoggerFactory extends LoggerFactory {
-    private static final Logger SINGLETON = new NullLogger();
+	private static final Logger SINGLETON = new NullLogger();
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Logger getLogger() {
-        return SINGLETON;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Logger getLogger() {
+		return SINGLETON;
+	}
 
-    @Override
-    public Logger getLogger(final Class<?> clz) {
-        return SINGLETON;
-    }
+	@Override
+	public Logger getLogger(final Class<?> clz) {
+		return SINGLETON;
+	}
 
-    @Override
-    public Logger getLogger(final String tag) {
-        return SINGLETON;
-    }
+	@Override
+	public Logger getLogger(final String tag) {
+		return SINGLETON;
+	}
 }

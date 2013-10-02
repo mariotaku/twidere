@@ -101,6 +101,7 @@
 	<string name="filter">Filter</string>
 	<string name="filters">Filters</string>
 	<string name="users">Users</string>
+	<string name="user">User</string>
 	<string name="keywords">Keywords</string>
 	<string name="sources">Sources</string>
 	<string name="content">Content</string>
@@ -142,7 +143,7 @@
 	<string name="blocked_users">Blocked users</string>
 	<string name="set_as_default">Set as default</string>
 	<string name="search_users">Search Users</string>
-	<string name="search_tweets">Search Tweets</string>
+	<string name="search_statuses">Search Tweets</string>
 	<string name="created_at">Created at</string>
 	<string name="search_hint">Search tweets or users</string>
 	<string name="remember_position">Remember position</string>
@@ -490,5 +491,8 @@
 	<string name="safety">Safety</string>
 	<string name="updating_status_notification">Sending tweet…</string>
 	<string name="name_with_nickname"><xliff:g id="name">%1$s</xliff:g> (<xliff:g id="nickname">%2$s</xliff:g>)</string>
+	<string name="query">Query</string>
+	<string name="nickname_only">Nickname only</string>
+	<string name="nickname_only_summary">Replace user name with nickname when available</string>
 
 </resources>

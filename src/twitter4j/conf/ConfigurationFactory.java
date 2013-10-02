@@ -20,15 +20,15 @@ package twitter4j.conf;
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
 public interface ConfigurationFactory {
-    /**
-     * clean up resources acquired by this factory.
-     */
-    void dispose();
+	/**
+	 * clean up resources acquired by this factory.
+	 */
+	void dispose();
 
-    /**
-     * returns the root configuration
-     * 
-     * @return root configuration
-     */
-    Configuration getInstance();
+	/**
+	 * returns the root configuration
+	 * 
+	 * @return root configuration
+	 */
+	Configuration getInstance();
 }
