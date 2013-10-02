@@ -19,12 +19,6 @@
 
 package org.mariotaku.twidere.provider;
 
-import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.provider.TwidereCommands.Refresh;
-import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import org.mariotaku.twidere.util.PermissionsManager;
-
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
@@ -33,134 +27,150 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
 
+import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.provider.TwidereCommands.Refresh;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.PermissionsManager;
+
 public class CommandProvider extends ContentProvider implements Constants {
 
-	private static final UriMatcher COMMAND_URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
+    private static final UriMatcher COMMAND_URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
-	private static final int CODE_REFRESH_ALL = 10;
-	private static final int CODE_REFRESH_HOME_TIMELINE = 11;
-	private static final int CODE_REFRESH_MENTIONS = 12;
-	private static final int CODE_REFRESH_INBOX = 13;
-	private static final int CODE_REFRESH_OUTBOX = 14;
+    private static final int CODE_REFRESH_ALL = 10;
+    private static final int CODE_REFRESH_HOME_TIMELINE = 11;
+    private static final int CODE_REFRESH_MENTIONS = 12;
+    private static final int CODE_REFRESH_INBOX = 13;
+    private static final int CODE_REFRESH_OUTBOX = 14;
 
-	static {
-		COMMAND_URI_MATCHER.addURI(TwidereCommands.AUTHORITY, Refresh.ACTION_REFRESH_ALL, CODE_REFRESH_ALL);
-	}
+    static {
+        COMMAND_URI_MATCHER.addURI(TwidereCommands.AUTHORITY, Refresh.ACTION_REFRESH_ALL,
+                CODE_REFRESH_ALL);
+    }
 
-	private Context mContext;
-	private PermissionsManager mPermissionsManager;
-	private AsyncTwitterWrapper mTwitterWrapper;
+    private Context mContext;
+    private PermissionsManager mPermissionsManager;
+    private AsyncTwitterWrapper mTwitterWrapper;
 
-	@Override
-	public int delete(final Uri uri, final String where, final String[] whereArgs) {
-		return 0;
-	}
+    @Override
+    public int delete(final Uri uri, final String where, final String[] whereArgs) {
+        return 0;
+    }
 
-	@Override
-	public String getType(final Uri uri) {
-		return null;
-	}
+    @Override
+    public String getType(final Uri uri) {
+        return null;
+    }
 
-	@Override
-	public Uri insert(final Uri uri, final ContentValues values) {
-		if (handleInsertCommand(uri, values)) return uri;
-		return null;
-	}
+    @Override
+    public Uri insert(final Uri uri, final ContentValues values) {
+        if (handleInsertCommand(uri, values))
+            return uri;
+        return null;
+    }
 
-	@Override
-	public boolean onCreate() {
-		mContext = getContext();
-		final TwidereApplication app = TwidereApplication.getInstance(mContext);
-		mPermissionsManager = new PermissionsManager(mContext);
-		mTwitterWrapper = app.getTwitterWrapper();
-		return true;
-	}
+    @Override
+    public boolean onCreate() {
+        mContext = getContext();
+        final TwidereApplication app = TwidereApplication.getInstance(mContext);
+        mPermissionsManager = new PermissionsManager(mContext);
+        mTwitterWrapper = app.getTwitterWrapper();
+        return true;
+    }
 
-	@Override
-	public Cursor query(final Uri uri, final String[] projection, final String where, final String[] whereArgs,
-			final String sortOrder) {
-		return handleQueryCommand(uri);
-	}
+    @Override
+    public Cursor query(final Uri uri, final String[] projection, final String where,
+            final String[] whereArgs,
+            final String sortOrder) {
+        return handleQueryCommand(uri);
+    }
 
-	@Override
-	public int update(final Uri uri, final ContentValues values, final String where, final String[] whereArgs) {
-		return 0;
-	}
+    @Override
+    public int update(final Uri uri, final ContentValues values, final String where,
+            final String[] whereArgs) {
+        return 0;
+    }
 
-	private void checkInsertPermission(final int uri_code) {
-		switch (uri_code) {
-			case CODE_REFRESH_ALL:
-			case CODE_REFRESH_HOME_TIMELINE:
-			case CODE_REFRESH_MENTIONS:
-			case CODE_REFRESH_INBOX:
-			case CODE_REFRESH_OUTBOX: {
-				if (!mPermissionsManager.checkCallingPermission(PERMISSION_REFRESH))
-					throw new SecurityException("Executing this command requires level PERMISSION_REFRESH");
-			}
-		}
-	}
+    private void checkInsertPermission(final int uri_code) {
+        switch (uri_code) {
+            case CODE_REFRESH_ALL:
+            case CODE_REFRESH_HOME_TIMELINE:
+            case CODE_REFRESH_MENTIONS:
+            case CODE_REFRESH_INBOX:
+            case CODE_REFRESH_OUTBOX: {
+                if (!mPermissionsManager.checkCallingPermission(PERMISSION_REFRESH))
+                    throw new SecurityException(
+                            "Executing this command requires level PERMISSION_REFRESH");
+            }
+        }
+    }
 
-	private void checkQueryPermission(final int uri_code) {
-		switch (uri_code) {
-			case CODE_REFRESH_ALL:
-			case CODE_REFRESH_HOME_TIMELINE:
-			case CODE_REFRESH_MENTIONS:
-			case CODE_REFRESH_INBOX:
-			case CODE_REFRESH_OUTBOX: {
-				if (!mPermissionsManager.checkCallingPermission(PERMISSION_REFRESH))
-					throw new SecurityException("Executing this command requires level PERMISSION_REFRESH");
-			}
-		}
-	}
+    private void checkQueryPermission(final int uri_code) {
+        switch (uri_code) {
+            case CODE_REFRESH_ALL:
+            case CODE_REFRESH_HOME_TIMELINE:
+            case CODE_REFRESH_MENTIONS:
+            case CODE_REFRESH_INBOX:
+            case CODE_REFRESH_OUTBOX: {
+                if (!mPermissionsManager.checkCallingPermission(PERMISSION_REFRESH))
+                    throw new SecurityException(
+                            "Executing this command requires level PERMISSION_REFRESH");
+            }
+        }
+    }
 
-	private Cursor getEmptyCursor() {
-		return new MatrixCursor(new String[0]);
-	}
+    private Cursor getEmptyCursor() {
+        return new MatrixCursor(new String[0]);
+    }
 
-	private boolean handleInsertCommand(final Uri uri, final ContentValues values) {
-		final int uri_code = COMMAND_URI_MATCHER.match(uri);
-		checkInsertPermission(uri_code);
-		try {
-			switch (uri_code) {
-				case CODE_REFRESH_ALL: {
-					mTwitterWrapper.refreshAll();
-					break;
-				}
-				default:
-					return false;
-			}
-			// something blah blah blah
-		} catch (final RuntimeException e) {
-			e.printStackTrace();
-			if (Thread.currentThread().getId() != 1)
-				throw new IllegalStateException("This method cannot be called from non-UI thread");
-		}
-		return true;
-	}
+    private boolean handleInsertCommand(final Uri uri, final ContentValues values) {
+        final int uri_code = COMMAND_URI_MATCHER.match(uri);
+        checkInsertPermission(uri_code);
+        try {
+            switch (uri_code) {
+                case CODE_REFRESH_ALL: {
+                    mTwitterWrapper.refreshAll();
+                    break;
+                }
+                default:
+                    return false;
+            }
+            // something blah blah blah
+        } catch (final RuntimeException e) {
+            e.printStackTrace();
+            if (Thread.currentThread().getId() != 1)
+                throw new IllegalStateException("This method cannot be called from non-UI thread");
+        }
+        return true;
+    }
 
-	private Cursor handleQueryCommand(final Uri uri) {
-		final int uri_code = COMMAND_URI_MATCHER.match(uri);
-		checkQueryPermission(uri_code);
-		try {
-			switch (uri_code) {
-				case CODE_REFRESH_HOME_TIMELINE:
-					if (mTwitterWrapper.isHomeTimelineRefreshing()) return getEmptyCursor();
-				case CODE_REFRESH_MENTIONS:
-					if (mTwitterWrapper.isMentionsRefreshing()) return getEmptyCursor();
-				case CODE_REFRESH_INBOX:
-					if (mTwitterWrapper.isReceivedDirectMessagesRefreshing()) return getEmptyCursor();
-				case CODE_REFRESH_OUTBOX:
-					if (mTwitterWrapper.isSentDirectMessagesRefreshing()) return getEmptyCursor();
-				default:
-					return null;
-			}
-			// something blah blah blah
-		} catch (final RuntimeException e) {
-			e.printStackTrace();
-			if (Thread.currentThread().getId() != 1)
-				throw new IllegalStateException("This method cannot be called from non-UI thread");
-		}
-		return null;
-	}
+    private Cursor handleQueryCommand(final Uri uri) {
+        final int uri_code = COMMAND_URI_MATCHER.match(uri);
+        checkQueryPermission(uri_code);
+        try {
+            switch (uri_code) {
+                case CODE_REFRESH_HOME_TIMELINE:
+                    if (mTwitterWrapper.isHomeTimelineRefreshing())
+                        return getEmptyCursor();
+                case CODE_REFRESH_MENTIONS:
+                    if (mTwitterWrapper.isMentionsRefreshing())
+                        return getEmptyCursor();
+                case CODE_REFRESH_INBOX:
+                    if (mTwitterWrapper.isReceivedDirectMessagesRefreshing())
+                        return getEmptyCursor();
+                case CODE_REFRESH_OUTBOX:
+                    if (mTwitterWrapper.isSentDirectMessagesRefreshing())
+                        return getEmptyCursor();
+                default:
+                    return null;
+            }
+            // something blah blah blah
+        } catch (final RuntimeException e) {
+            e.printStackTrace();
+            if (Thread.currentThread().getId() != 1)
+                throw new IllegalStateException("This method cannot be called from non-UI thread");
+        }
+        return null;
+    }
 
 }

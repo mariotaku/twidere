@@ -58,7 +58,7 @@
   <string name="view_user_profile">ข้อมูลส่วนตัว</string>
   <string name="browser">เบราเซอร์</string>
   <string name="pick_from_gallery">เลือกจากคลังภาพ</string>
-  <string name="tweets">ทวีต</string>
+  <string name="statuses">ทวีต</string>
   <string name="followers">ผู้ติดตาม</string>
   <string name="friends">เพื่อน</string>
   <string name="about">เกี่ยวกับ</string>

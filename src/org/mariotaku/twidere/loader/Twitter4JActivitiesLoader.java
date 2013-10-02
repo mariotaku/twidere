@@ -21,10 +21,9 @@ package org.mariotaku.twidere.loader;
 
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.support.v4.content.AsyncTaskLoader;
 
 import org.mariotaku.jsonserializer.JSONSerializer;
 import org.mariotaku.twidere.Constants;
@@ -36,87 +35,96 @@ import twitter4j.Activity;
 import twitter4j.Paging;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.support.v4.content.AsyncTaskLoader;
 
-public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<ParcelableActivity>> implements Constants {
-	private final Context mContext;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
-	private final long mAccountId;
-	private final List<ParcelableActivity> mData = Collections
-			.synchronizedList(new NoDuplicatesArrayList<ParcelableActivity>());
-	private final boolean mIsFirstLoad;
-	private final int mTabPosition, mLoadItemLimit;
+public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<ParcelableActivity>>
+        implements Constants {
+    private final Context mContext;
 
-	private final boolean mHiResProfileImage;
+    private final long mAccountId;
+    private final List<ParcelableActivity> mData = Collections
+            .synchronizedList(new NoDuplicatesArrayList<ParcelableActivity>());
+    private final boolean mIsFirstLoad;
+    private final int mTabPosition, mLoadItemLimit;
 
-	private final Object[] mSavedActivitiesFileArgs;
+    private final boolean mHiResProfileImage;
 
-	public Twitter4JActivitiesLoader(final Context context, final long account_id, final List<ParcelableActivity> data,
-			final String[] save_file_args, final int tab_position) {
-		super(context);
-		mContext = context;
-		mAccountId = account_id;
-		mIsFirstLoad = data == null;
-		mTabPosition = tab_position;
-		mSavedActivitiesFileArgs = save_file_args;
-		mHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
-		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mLoadItemLimit = Math
-				.min(100, prefs.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT));
-	}
+    private final Object[] mSavedActivitiesFileArgs;
 
-	@Override
-	public List<ParcelableActivity> loadInBackground() {
-		if (mIsFirstLoad && mTabPosition >= 0 && mSavedActivitiesFileArgs != null) {
-			try {
-				final File file = JSONSerializer.getSerializationFile(mContext, mSavedActivitiesFileArgs);
-				final List<ParcelableActivity> cached = JSONSerializer.listFromFile(file);
-				if (cached != null) {
-					mData.addAll(cached);
-					Collections.sort(mData);
-					return mData;
-				}
-			} catch (final IOException e) {
-				e.printStackTrace();
-			}
-		}
-		final List<Activity> activities;
-		try {
-			final Paging paging = new Paging();
-			paging.setCount(mLoadItemLimit);
-			activities = getActivities(getTwitter(), paging);
-		} catch (final TwitterException e) {
-			e.printStackTrace();
-			return mData;
-		}
-		if (activities == null) return mData;
-		mData.clear();
-		for (final Activity activity : activities) {
-			mData.add(new ParcelableActivity(activity, mAccountId, mHiResProfileImage));
-		}
-		Collections.sort(mData);
-		return mData;
-	}
+    public Twitter4JActivitiesLoader(final Context context, final long account_id,
+            final List<ParcelableActivity> data,
+            final String[] save_file_args, final int tab_position) {
+        super(context);
+        mContext = context;
+        mAccountId = account_id;
+        mIsFirstLoad = data == null;
+        mTabPosition = tab_position;
+        mSavedActivitiesFileArgs = save_file_args;
+        mHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
+        final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
+                Context.MODE_PRIVATE);
+        mLoadItemLimit = Math
+                .min(100, prefs.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT,
+                        PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT));
+    }
 
-	protected final long getAccountId() {
-		return mAccountId;
-	}
+    @Override
+    public List<ParcelableActivity> loadInBackground() {
+        if (mIsFirstLoad && mTabPosition >= 0 && mSavedActivitiesFileArgs != null) {
+            try {
+                final File file = JSONSerializer.getSerializationFile(mContext,
+                        mSavedActivitiesFileArgs);
+                final List<ParcelableActivity> cached = JSONSerializer.listFromFile(file);
+                if (cached != null) {
+                    mData.addAll(cached);
+                    Collections.sort(mData);
+                    return mData;
+                }
+            } catch (final IOException e) {
+                e.printStackTrace();
+            }
+        }
+        final List<Activity> activities;
+        try {
+            final Paging paging = new Paging();
+            paging.setCount(mLoadItemLimit);
+            activities = getActivities(getTwitter(), paging);
+        } catch (final TwitterException e) {
+            e.printStackTrace();
+            return mData;
+        }
+        if (activities == null)
+            return mData;
+        mData.clear();
+        for (final Activity activity : activities) {
+            mData.add(new ParcelableActivity(activity, mAccountId, mHiResProfileImage));
+        }
+        Collections.sort(mData);
+        return mData;
+    }
 
-	protected abstract List<Activity> getActivities(Twitter twitter, Paging paging) throws TwitterException;
+    protected final long getAccountId() {
+        return mAccountId;
+    }
 
-	protected List<ParcelableActivity> getData() {
-		return mData;
-	}
+    protected abstract List<Activity> getActivities(Twitter twitter, Paging paging)
+            throws TwitterException;
 
-	protected Twitter getTwitter() {
-		return getTwitterInstance(mContext, mAccountId, true);
-	}
+    protected List<ParcelableActivity> getData() {
+        return mData;
+    }
 
-	@Override
-	protected void onStartLoading() {
-		forceLoad();
-	}
+    protected Twitter getTwitter() {
+        return getTwitterInstance(mContext, mAccountId, true);
+    }
+
+    @Override
+    protected void onStartLoading() {
+        forceLoad();
+    }
 
 }

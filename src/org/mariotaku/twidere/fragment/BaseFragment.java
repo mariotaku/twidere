@@ -19,12 +19,6 @@
 
 package org.mariotaku.twidere.fragment;
 
-import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.activity.BaseSupportActivity;
-import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import org.mariotaku.twidere.util.MultiSelectManager;
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
@@ -32,66 +26,79 @@ import android.content.ContentResolver;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 
+import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.activity.BaseSupportActivity;
+import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.MultiSelectManager;
+
 public class BaseFragment extends Fragment implements Constants {
 
-	public BaseFragment() {
+    public BaseFragment() {
 
-	}
+    }
 
-	public TwidereApplication getApplication() {
-		final Activity activity = getActivity();
-		if (activity != null) return (TwidereApplication) activity.getApplication();
-		return null;
-	}
+    public TwidereApplication getApplication() {
+        final Activity activity = getActivity();
+        if (activity != null)
+            return (TwidereApplication) activity.getApplication();
+        return null;
+    }
 
-	public ContentResolver getContentResolver() {
-		final Activity activity = getActivity();
-		if (activity != null) return activity.getContentResolver();
-		return null;
-	}
+    public ContentResolver getContentResolver() {
+        final Activity activity = getActivity();
+        if (activity != null)
+            return activity.getContentResolver();
+        return null;
+    }
 
-	public MultiSelectManager getMultiSelectManager() {
-		return getApplication() != null ? getApplication().getMultiSelectManager() : null;
-	}
+    public MultiSelectManager getMultiSelectManager() {
+        return getApplication() != null ? getApplication().getMultiSelectManager() : null;
+    }
 
-	public SharedPreferences getSharedPreferences(final String name, final int mode) {
-		final Activity activity = getActivity();
-		if (activity != null) return activity.getSharedPreferences(name, mode);
-		return null;
-	}
+    public SharedPreferences getSharedPreferences(final String name, final int mode) {
+        final Activity activity = getActivity();
+        if (activity != null)
+            return activity.getSharedPreferences(name, mode);
+        return null;
+    }
 
-	public Object getSystemService(final String name) {
-		final Activity activity = getActivity();
-		if (activity != null) return activity.getSystemService(name);
-		return null;
-	}
+    public Object getSystemService(final String name) {
+        final Activity activity = getActivity();
+        if (activity != null)
+            return activity.getSystemService(name);
+        return null;
+    }
 
-	public AsyncTwitterWrapper getTwitterWrapper() {
-		return getApplication() != null ? getApplication().getTwitterWrapper() : null;
-	}
+    public AsyncTwitterWrapper getTwitterWrapper() {
+        return getApplication() != null ? getApplication().getTwitterWrapper() : null;
+    }
 
-	public void invalidateOptionsMenu() {
-		final Activity activity = getActivity();
-		if (activity == null) return;
-		activity.invalidateOptionsMenu();
-	}
+    public void invalidateOptionsMenu() {
+        final Activity activity = getActivity();
+        if (activity == null)
+            return;
+        activity.invalidateOptionsMenu();
+    }
 
-	public void registerReceiver(final BroadcastReceiver receiver, final IntentFilter filter) {
-		final Activity activity = getActivity();
-		if (activity == null) return;
-		activity.registerReceiver(receiver, filter);
-	}
+    public void registerReceiver(final BroadcastReceiver receiver, final IntentFilter filter) {
+        final Activity activity = getActivity();
+        if (activity == null)
+            return;
+        activity.registerReceiver(receiver, filter);
+    }
 
-	public void setProgressBarIndeterminateVisibility(final boolean visible) {
-		final Activity activity = getActivity();
-		if (activity instanceof BaseSupportActivity) {
-			((BaseSupportActivity) activity).setProgressBarIndeterminateVisibility(visible);
-		}
-	}
+    public void setProgressBarIndeterminateVisibility(final boolean visible) {
+        final Activity activity = getActivity();
+        if (activity instanceof BaseSupportActivity) {
+            ((BaseSupportActivity) activity).setProgressBarIndeterminateVisibility(visible);
+        }
+    }
 
-	public void unregisterReceiver(final BroadcastReceiver receiver) {
-		final Activity activity = getActivity();
-		if (activity == null) return;
-		activity.unregisterReceiver(receiver);
-	}
+    public void unregisterReceiver(final BroadcastReceiver receiver) {
+        final Activity activity = getActivity();
+        if (activity == null)
+            return;
+        activity.unregisterReceiver(receiver);
+    }
 }

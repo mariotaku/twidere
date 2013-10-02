@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
+
 package com.nostra13.universalimageloader.cache.memory.impl;
+
+import com.nostra13.universalimageloader.cache.memory.MemoryCacheAware;
 
 import java.util.Collection;
 import java.util.Comparator;
-
-import com.nostra13.universalimageloader.cache.memory.MemoryCacheAware;
 
 /**
  * Decorator for {@link MemoryCacheAware}. Provides special feature for cache:
@@ -33,49 +34,49 @@ import com.nostra13.universalimageloader.cache.memory.MemoryCacheAware;
  */
 public class FuzzyKeyMemoryCache<K, V> implements MemoryCacheAware<K, V> {
 
-	private final MemoryCacheAware<K, V> cache;
-	private final Comparator<K> keyComparator;
+    private final MemoryCacheAware<K, V> cache;
+    private final Comparator<K> keyComparator;
 
-	public FuzzyKeyMemoryCache(final MemoryCacheAware<K, V> cache, final Comparator<K> keyComparator) {
-		this.cache = cache;
-		this.keyComparator = keyComparator;
-	}
+    public FuzzyKeyMemoryCache(final MemoryCacheAware<K, V> cache, final Comparator<K> keyComparator) {
+        this.cache = cache;
+        this.keyComparator = keyComparator;
+    }
 
-	@Override
-	public void clear() {
-		cache.clear();
-	}
+    @Override
+    public void clear() {
+        cache.clear();
+    }
 
-	@Override
-	public V get(final K key) {
-		return cache.get(key);
-	}
+    @Override
+    public V get(final K key) {
+        return cache.get(key);
+    }
 
-	@Override
-	public Collection<K> keys() {
-		return cache.keys();
-	}
+    @Override
+    public Collection<K> keys() {
+        return cache.keys();
+    }
 
-	@Override
-	public boolean put(final K key, final V value) {
-		// Search equal key and remove this entry
-		synchronized (cache) {
-			K keyToRemove = null;
-			for (final K cacheKey : cache.keys()) {
-				if (keyComparator.compare(key, cacheKey) == 0) {
-					keyToRemove = cacheKey;
-					break;
-				}
-			}
-			if (keyToRemove != null) {
-				cache.remove(keyToRemove);
-			}
-		}
-		return cache.put(key, value);
-	}
+    @Override
+    public boolean put(final K key, final V value) {
+        // Search equal key and remove this entry
+        synchronized (cache) {
+            K keyToRemove = null;
+            for (final K cacheKey : cache.keys()) {
+                if (keyComparator.compare(key, cacheKey) == 0) {
+                    keyToRemove = cacheKey;
+                    break;
+                }
+            }
+            if (keyToRemove != null) {
+                cache.remove(keyToRemove);
+            }
+        }
+        return cache.put(key, value);
+    }
 
-	@Override
-	public void remove(final K key) {
-		cache.remove(key);
-	}
+    @Override
+    public void remove(final K key) {
+        cache.remove(key);
+    }
 }

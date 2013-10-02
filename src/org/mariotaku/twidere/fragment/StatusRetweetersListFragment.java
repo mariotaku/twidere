@@ -19,20 +19,22 @@
 
 package org.mariotaku.twidere.fragment;
 
-import org.mariotaku.twidere.loader.IDsUsersLoader;
-import org.mariotaku.twidere.loader.StatusRetweetersLoader;
-
 import android.content.Context;
 import android.os.Bundle;
 
+import org.mariotaku.twidere.loader.IDsUsersLoader;
+import org.mariotaku.twidere.loader.StatusRetweetersLoader;
+
 public class StatusRetweetersListFragment extends CursorSupportUsersListFragment {
 
-	@Override
-	public IDsUsersLoader newLoaderInstance(final Context context, final Bundle args) {
-		if (args == null) return null;
-		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-		final long status_id = args.getLong(INTENT_KEY_STATUS_ID, -1);
-		return new StatusRetweetersLoader(context, account_id, status_id, getNextCursor(), getData());
-	}
+    @Override
+    public IDsUsersLoader newLoaderInstance(final Context context, final Bundle args) {
+        if (args == null)
+            return null;
+        final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+        final long status_id = args.getLong(INTENT_KEY_STATUS_ID, -1);
+        return new StatusRetweetersLoader(context, account_id, status_id, getNextCursor(),
+                getData());
+    }
 
 }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
+
 package com.nostra13.universalimageloader.core.download;
 
 import java.io.IOException;
@@ -28,20 +29,20 @@ import java.io.InputStream;
  */
 public class NetworkDeniedImageDownloader implements ImageDownloader {
 
-	private final ImageDownloader wrappedDownloader;
+    private final ImageDownloader wrappedDownloader;
 
-	public NetworkDeniedImageDownloader(final ImageDownloader wrappedDownloader) {
-		this.wrappedDownloader = wrappedDownloader;
-	}
+    public NetworkDeniedImageDownloader(final ImageDownloader wrappedDownloader) {
+        this.wrappedDownloader = wrappedDownloader;
+    }
 
-	@Override
-	public InputStream getStream(final String imageUri, final Object extra) throws IOException {
-		switch (Scheme.ofUri(imageUri)) {
-			case HTTP:
-			case HTTPS:
-				throw new IllegalStateException();
-			default:
-				return wrappedDownloader.getStream(imageUri, extra);
-		}
-	}
+    @Override
+    public InputStream getStream(final String imageUri, final Object extra) throws IOException {
+        switch (Scheme.ofUri(imageUri)) {
+            case HTTP:
+            case HTTPS:
+                throw new IllegalStateException();
+            default:
+                return wrappedDownloader.getStream(imageUri, extra);
+        }
+    }
 }

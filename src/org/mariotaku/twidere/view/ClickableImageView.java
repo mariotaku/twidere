@@ -19,9 +19,6 @@
 
 package org.mariotaku.twidere.view;
 
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.util.ThemeUtils;
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -32,84 +29,88 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.ThemeUtils;
+
 public class ClickableImageView extends ImageView {
 
-	private final Rect mRect;
-	private final Paint mHighlightPaint;
+    private final Rect mRect;
+    private final Paint mHighlightPaint;
 
-	private boolean mIsDown;
-	private boolean mIgnorePaddings;
+    private boolean mIsDown;
+    private boolean mIgnorePaddings;
 
-	public ClickableImageView(final Context context) {
-		this(context, null);
-	}
+    public ClickableImageView(final Context context) {
+        this(context, null);
+    }
 
-	public ClickableImageView(final Context context, final AttributeSet attrs) {
-		this(context, attrs, 0);
-	}
+    public ClickableImageView(final Context context, final AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
 
-	public ClickableImageView(final Context context, final AttributeSet attrs, final int defStyle) {
-		super(context, attrs, defStyle);
-		final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Twidere);
-		mIgnorePaddings = a.getBoolean(R.styleable.Twidere_ignorePaddings, false);
-		a.recycle();
-		final int color = ThemeUtils.getThemeColor(context);
-		final int mHighlightColor = Color.argb(0x80, Color.red(color), Color.green(color), Color.blue(color));
-		mHighlightPaint = new Paint();
-		mHighlightPaint.setColor(mHighlightColor);
-		mRect = new Rect();
-	}
+    public ClickableImageView(final Context context, final AttributeSet attrs, final int defStyle) {
+        super(context, attrs, defStyle);
+        final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Twidere);
+        mIgnorePaddings = a.getBoolean(R.styleable.Twidere_ignorePaddings, false);
+        a.recycle();
+        final int color = ThemeUtils.getThemeColor(context);
+        final int mHighlightColor = Color.argb(0x80, Color.red(color), Color.green(color),
+                Color.blue(color));
+        mHighlightPaint = new Paint();
+        mHighlightPaint.setColor(mHighlightColor);
+        mRect = new Rect();
+    }
 
-	public boolean isPaddingsIgnored() {
-		return mIgnorePaddings;
-	}
+    public boolean isPaddingsIgnored() {
+        return mIgnorePaddings;
+    }
 
-	@Override
-	public boolean onTouchEvent(final MotionEvent e) {
-		switch (e.getAction()) {
-			case MotionEvent.ACTION_DOWN:
-				mRect.set(getLeft(), getTop(), getRight(), getBottom());
-				mIsDown = true;
-				invalidate();
-				break;
-			case MotionEvent.ACTION_MOVE:
-				if (mRect.contains(getLeft() + (int) e.getX(), getTop() + (int) e.getY())) {
-					break;
-				}
-				if (mIsDown) {
-					mIsDown = false;
-					invalidate();
-				}
-				break;
-			default:
-				mIsDown = false;
-				invalidate();
-				break;
-		}
-		return super.onTouchEvent(e);
-	}
+    @Override
+    public boolean onTouchEvent(final MotionEvent e) {
+        switch (e.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                mRect.set(getLeft(), getTop(), getRight(), getBottom());
+                mIsDown = true;
+                invalidate();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (mRect.contains(getLeft() + (int) e.getX(), getTop() + (int) e.getY())) {
+                    break;
+                }
+                if (mIsDown) {
+                    mIsDown = false;
+                    invalidate();
+                }
+                break;
+            default:
+                mIsDown = false;
+                invalidate();
+                break;
+        }
+        return super.onTouchEvent(e);
+    }
 
-	public void setIgnorePaddings(final boolean ignorePaddings) {
-		mIgnorePaddings = ignorePaddings;
-		invalidate();
-	}
+    public void setIgnorePaddings(final boolean ignorePaddings) {
+        mIgnorePaddings = ignorePaddings;
+        invalidate();
+    }
 
-	@Override
-	protected void onDraw(final Canvas canvas) {
-		super.onDraw(canvas);
-		if (mIsDown && isClickable() && isEnabled()) {
-			final int pl, pt, pr, pb;
-			final int w = getWidth(), h = getHeight();
-			if (mIgnorePaddings) {
-				pl = pt = pr = pb = 0;
-			} else {
-				pl = getPaddingLeft();
-				pt = getPaddingTop();
-				pr = getPaddingRight();
-				pb = getPaddingBottom();
-			}
-			canvas.drawRect(pl, pt, w - pr, h - pb, mHighlightPaint);
-		}
-	}
+    @Override
+    protected void onDraw(final Canvas canvas) {
+        super.onDraw(canvas);
+        if (mIsDown && isClickable() && isEnabled()) {
+            final int pl, pt, pr, pb;
+            final int w = getWidth(), h = getHeight();
+            if (mIgnorePaddings) {
+                pl = pt = pr = pb = 0;
+            } else {
+                pl = getPaddingLeft();
+                pt = getPaddingTop();
+                pr = getPaddingRight();
+                pb = getPaddingBottom();
+            }
+            canvas.drawRect(pl, pt, w - pr, h - pb, mHighlightPaint);
+        }
+    }
 
 }

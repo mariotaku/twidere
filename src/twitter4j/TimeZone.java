@@ -22,9 +22,9 @@ import java.io.Serializable;
  * @author Alessandro Bahgat - ale.bahgat at gmail.com
  */
 public interface TimeZone extends Serializable {
-	String getName();
+    String getName();
 
-	String tzinfoName();
+    String tzinfoName();
 
-	int utcOffset();
+    int utcOffset();
 }

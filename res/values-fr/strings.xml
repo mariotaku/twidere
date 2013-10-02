@@ -58,7 +58,7 @@
   <string name="view_user_profile">Profil de l\'utilisateur</string>
   <string name="browser">Navigateur</string>
   <string name="pick_from_gallery">Choisir dans la galerie</string>
-  <string name="tweets">Tweets</string>
+  <string name="statuses">Tweets</string>
   <string name="followers">Abonnés</string>
   <string name="friends">Amis</string>
   <string name="about">À propos</string>
@@ -303,7 +303,7 @@
   <string name="follow_request_sent">Demande d\'abonnement envoyée</string>
   <string name="separate_retweet_action">Séparer l\'action retweeter</string>
   <string name="separate_retweet_action_summary">Montrer à la fois l\'action retweet et celle citation dans le menu tweet</string>
-  <string name="tweet">Tweet</string>
+  <string name="status">Tweet</string>
   <string name="preview">Prévisualiser</string>
   <string name="api_upgrade_notice_title">TRÈS IMPORTANT !</string>
   <string name="api_upgrade_notice_message">  Twitter a annoncer la nouvelle version (1.1) de leur API.\n\n Depuis cette version, Twidere utilise l\'API en version 1.1.\n\n Il est FORTEMENT RECOMMANDÉ de se reconnecter pour éviter des problèmes lors de son utilisation. \n\n Qu\'est ce qui change avec l\'API version 1.1?\n *Des limites de rafraichissement plus strictes, vous ne pouvez actualiser votre file d\'actualité seulement 15 fois par 15 minutes.\n *Vous ne pouvez pas voir qui vous a retweeté, ni vos tweets qu\'on a retweeté. \n *Si vous utilisez Twidere comme client pour StatusNet, plusieurs fonctionnalités ont été perdues à cause des changements de l\'API.\n\n Désolé pour le désagrément, mais vous savez - Twitter est en train de tuer des clients tiers, je ne peux rien faire à ce sujet.</string>

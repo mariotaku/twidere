@@ -35,59 +35,62 @@ import android.view.Window;
  */
 public abstract class ActivityHostFragment<A extends Activity> extends LocalActivityManagerFragment {
 
-	private final static String ACTIVITY_TAG = "hosted";
-	private A mAttachedActivity;
+    private final static String ACTIVITY_TAG = "hosted";
+    private A mAttachedActivity;
 
-	public A getAttachedActivity() {
-		return mAttachedActivity;
-	}
+    public A getAttachedActivity() {
+        return mAttachedActivity;
+    }
 
-	@SuppressWarnings({ "deprecation", "unchecked" })
-	@Override
-	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		final Intent intent = new Intent(getActivity(), getActivityClass());
-		final Bundle args = getArguments();
-		if (args != null) {
-			intent.putExtras(args);
-		}
+    @SuppressWarnings({
+            "deprecation", "unchecked"
+    })
+    @Override
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
+            final Bundle savedInstanceState) {
+        final Intent intent = new Intent(getActivity(), getActivityClass());
+        final Bundle args = getArguments();
+        if (args != null) {
+            intent.putExtras(args);
+        }
 
-		final Window w = getLocalActivityManager().startActivity(ACTIVITY_TAG, intent);
-		mAttachedActivity = null;
-		final Context context = w.getContext();
-		if (context instanceof Activity) {
-			try {
-				mAttachedActivity = (A) context;
-				if (context instanceof FragmentCallback) {
-					((FragmentCallback<A>) context).setCallbackFragment(this);
-				}
-			} catch (final ClassCastException e) {
-				// This should't happen.
-				e.printStackTrace();
-			}
-		}
-		final View wd = w != null ? w.getDecorView() : null;
+        final Window w = getLocalActivityManager().startActivity(ACTIVITY_TAG, intent);
+        mAttachedActivity = null;
+        final Context context = w.getContext();
+        if (context instanceof Activity) {
+            try {
+                mAttachedActivity = (A) context;
+                if (context instanceof FragmentCallback) {
+                    ((FragmentCallback<A>) context).setCallbackFragment(this);
+                }
+            } catch (final ClassCastException e) {
+                // This should't happen.
+                e.printStackTrace();
+            }
+        }
+        final View wd = w != null ? w.getDecorView() : null;
 
-		if (wd != null) {
-			final ViewParent parent = wd.getParent();
-			if (parent != null) {
-				final ViewGroup v = (ViewGroup) parent;
-				v.removeView(wd);
-			}
+        if (wd != null) {
+            final ViewParent parent = wd.getParent();
+            if (parent != null) {
+                final ViewGroup v = (ViewGroup) parent;
+                v.removeView(wd);
+            }
 
-			wd.setVisibility(View.VISIBLE);
-			wd.setFocusableInTouchMode(true);
-			if (wd instanceof ViewGroup) {
-				((ViewGroup) wd).setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
-			}
-		}
-		return wd;
-	}
+            wd.setVisibility(View.VISIBLE);
+            wd.setFocusableInTouchMode(true);
+            if (wd instanceof ViewGroup) {
+                ((ViewGroup) wd).setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+            }
+        }
+        return wd;
+    }
 
-	protected abstract Class<A> getActivityClass();
+    protected abstract Class<A> getActivityClass();
 
-	public static interface FragmentCallback<A extends Activity> {
+    public static interface FragmentCallback<A extends Activity> {
 
-		void setCallbackFragment(ActivityHostFragment<A> fragment);
+        void setCallbackFragment(ActivityHostFragment<A> fragment);
 
-	}
+    }
 }

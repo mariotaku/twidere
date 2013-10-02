@@ -24,6 +24,7 @@
  * 
  * For more information, please refer to <http://unlicense.org/>
  */
+
 package org.mariotaku.querybuilder;
 
 public interface Selectable extends SQLLang {

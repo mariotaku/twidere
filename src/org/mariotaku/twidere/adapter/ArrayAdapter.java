@@ -19,108 +19,114 @@
 
 package org.mariotaku.twidere.adapter;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+
 public class ArrayAdapter<T> extends BaseAdapter {
 
-	private final LayoutInflater mInflater;
-	private final int mLayoutRes;
-	private int mDropDownLayoutRes;
+    private final LayoutInflater mInflater;
+    private final int mLayoutRes;
+    private int mDropDownLayoutRes;
 
-	private final ArrayList<T> mData = new ArrayList<T>();
+    private final ArrayList<T> mData = new ArrayList<T>();
 
-	public ArrayAdapter(final Context context, final int layoutRes) {
-		this(context, layoutRes, null);
-	}
+    public ArrayAdapter(final Context context, final int layoutRes) {
+        this(context, layoutRes, null);
+    }
 
-	public ArrayAdapter(final Context context, final int layoutRes, final Collection<? extends T> collection) {
-		mInflater = LayoutInflater.from(context);
-		mLayoutRes = layoutRes;
-		if (collection != null) {
-			addAll(collection);
-		}
-	}
+    public ArrayAdapter(final Context context, final int layoutRes,
+            final Collection<? extends T> collection) {
+        mInflater = LayoutInflater.from(context);
+        mLayoutRes = layoutRes;
+        if (collection != null) {
+            addAll(collection);
+        }
+    }
 
-	public final void add(final T item) {
-		if (item == null) return;
-		mData.add(item);
-		notifyDataSetChanged();
-	}
+    public final void add(final T item) {
+        if (item == null)
+            return;
+        mData.add(item);
+        notifyDataSetChanged();
+    }
 
-	public final void addAll(final Collection<? extends T> collection) {
-		mData.addAll(collection);
-		notifyDataSetChanged();
-	}
+    public final void addAll(final Collection<? extends T> collection) {
+        mData.addAll(collection);
+        notifyDataSetChanged();
+    }
 
-	public final void clear() {
-		mData.clear();
-		notifyDataSetChanged();
-	}
+    public final void clear() {
+        mData.clear();
+        notifyDataSetChanged();
+    }
 
-	public final T findItem(final long id) {
-		final int count = getCount();
-		for (int i = 0; i < count; i++) {
-			if (getItemId(i) == id) return getItem(i);
-		}
-		return null;
-	}
+    public final T findItem(final long id) {
+        final int count = getCount();
+        for (int i = 0; i < count; i++) {
+            if (getItemId(i) == id)
+                return getItem(i);
+        }
+        return null;
+    }
 
-	public final int findItemPosition(final long id) {
-		final int count = getCount();
-		for (int i = 0; i < count; i++) {
-			if (getItemId(i) == id) return i;
-		}
-		return -1;
-	}
+    public final int findItemPosition(final long id) {
+        final int count = getCount();
+        for (int i = 0; i < count; i++) {
+            if (getItemId(i) == id)
+                return i;
+        }
+        return -1;
+    }
 
-	@Override
-	public int getCount() {
-		return mData.size();
-	}
+    @Override
+    public int getCount() {
+        return mData.size();
+    }
 
-	@Override
-	public View getDropDownView(final int position, final View convertView, final ViewGroup parent) {
-		if (mDropDownLayoutRes == 0) return null;
-		return convertView != null ? convertView : mInflater.inflate(mDropDownLayoutRes, parent, false);
-	}
+    @Override
+    public View getDropDownView(final int position, final View convertView, final ViewGroup parent) {
+        if (mDropDownLayoutRes == 0)
+            return null;
+        return convertView != null ? convertView : mInflater.inflate(mDropDownLayoutRes, parent,
+                false);
+    }
 
-	@Override
-	public final T getItem(final int position) {
-		return mData.get(position);
-	}
+    @Override
+    public final T getItem(final int position) {
+        return mData.get(position);
+    }
 
-	@Override
-	public long getItemId(final int position) {
-		return position;
-	}
+    @Override
+    public long getItemId(final int position) {
+        return position;
+    }
 
-	@Override
-	public View getView(final int position, final View convertView, final ViewGroup parent) {
-		return convertView != null ? convertView : mInflater.inflate(mLayoutRes, null);
-	}
+    @Override
+    public View getView(final int position, final View convertView, final ViewGroup parent) {
+        return convertView != null ? convertView : mInflater.inflate(mLayoutRes, null);
+    }
 
-	public final boolean remove(final int position) {
-		final boolean ret = mData.remove(position) != null;
-		notifyDataSetChanged();
-		return ret;
-	}
+    public final boolean remove(final int position) {
+        final boolean ret = mData.remove(position) != null;
+        notifyDataSetChanged();
+        return ret;
+    }
 
-	public void setDropDownViewResource(final int layoutRes) {
-		mDropDownLayoutRes = layoutRes;
-	}
+    public void setDropDownViewResource(final int layoutRes) {
+        mDropDownLayoutRes = layoutRes;
+    }
 
-	public final void sort(final Comparator<? super T> comparator) {
-		Collections.sort(mData, comparator);
-		notifyDataSetChanged();
-	}
+    public final void sort(final Comparator<? super T> comparator) {
+        Collections.sort(mData, comparator);
+        notifyDataSetChanged();
+    }
 
 }

@@ -32,34 +32,36 @@ import twitter4j.http.HttpResponse;
  */
 public class SimilarPlacesImpl extends ResponseListImpl<Place> implements SimilarPlaces {
 
-	private static final long serialVersionUID = -5530218831645947540L;
-	private final String token;
+    private static final long serialVersionUID = -5530218831645947540L;
+    private final String token;
 
-	SimilarPlacesImpl(final ResponseList<Place> places, final HttpResponse res, final String token) {
-		super(places.size(), res);
-		this.addAll(places);
-		this.token = token;
-	}
+    SimilarPlacesImpl(final ResponseList<Place> places, final HttpResponse res, final String token) {
+        super(places.size(), res);
+        this.addAll(places);
+        this.token = token;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getToken() {
-		return token;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getToken() {
+        return token;
+    }
 
-	/* package */
-	static SimilarPlaces createSimilarPlaces(final HttpResponse res, final Configuration conf) throws TwitterException {
-		JSONObject json = null;
-		try {
-			json = res.asJSONObject();
-			final JSONObject result = json.getJSONObject("result");
-			return new SimilarPlacesImpl(PlaceJSONImpl.createPlaceList(result.getJSONArray("places"), res, conf), res,
-					result.getString("token"));
-		} catch (final JSONException jsone) {
-			throw new TwitterException(jsone.getMessage() + ":" + json.toString(), jsone);
-		}
-	}
+    /* package */
+    static SimilarPlaces createSimilarPlaces(final HttpResponse res, final Configuration conf)
+            throws TwitterException {
+        JSONObject json = null;
+        try {
+            json = res.asJSONObject();
+            final JSONObject result = json.getJSONObject("result");
+            return new SimilarPlacesImpl(PlaceJSONImpl.createPlaceList(
+                    result.getJSONArray("places"), res, conf), res,
+                    result.getString("token"));
+        } catch (final JSONException jsone) {
+            throw new TwitterException(jsone.getMessage() + ":" + json.toString(), jsone);
+        }
+    }
 
 }

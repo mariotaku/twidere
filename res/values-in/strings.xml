@@ -58,7 +58,7 @@
   <string name="view_user_profile">Profil pengguna</string>
   <string name="browser">Browser</string>
   <string name="pick_from_gallery">Pilih dari Galeri</string>
-  <string name="tweets">Tweets</string>
+  <string name="statuses">Tweets</string>
   <string name="followers">Pengikut</string>
   <string name="friends">Teman</string>
   <string name="about">Tentang</string>
@@ -305,7 +305,7 @@
   <string name="follow_request_sent">Permintaan mengikuti terkirim</string>
   <string name="separate_retweet_action">Pisahkan aksi kicauan ulang</string>
   <string name="separate_retweet_action_summary">Tampilkan kedua aksi kicauan ulang dan kutip di menu kicauan</string>
-  <string name="tweet">Tweet</string>
+  <string name="status">Tweet</string>
   <string name="preview">Pratinjau</string>
   <string name="api_upgrade_notice_title">SANGAT PENTING!</string>
   <string name="api_upgrade_notice_message">  Twitter mengumumkan versi baru dari API (1.1) mereka.\n\n  Sejak versi ini, Twidere menggunakan API versi 1.1 mereka.\n\n  SANGAT DISARANKAN untuk masuk ulang, atau Anda akan mengalami masalah saat menggunakannnya.\n\n  Apa yang berubah di versi API 1.1?\n  *Keketatan mengingkat, misalnya, anda hanya dapat kembali ke home timeline 15 kali per 15 menit.\n  *Anda tidak dapat melihat orang yang me-retweet Anda, tidak dapat melihat tweet yang Anda retweet.\n  *Jika Anda menggukanan Twidere sebagai StatusNet client anda, banyak fitur yang menghilang karna perubahan API.\n\n  Maaf untuk ketidaknyamanannya, tapi Anda tahu - Twitter ingin menghilangkan klien aplikasi pihak ke-tiga, saya tidak dapat melakukan apa-apa.</string>

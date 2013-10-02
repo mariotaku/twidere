@@ -19,11 +19,6 @@
 
 package org.mariotaku.twidere.fragment;
 
-import java.util.List;
-
-import org.mariotaku.twidere.loader.UserSearchLoader;
-import org.mariotaku.twidere.model.ParcelableUser;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -31,55 +26,62 @@ import android.support.v4.content.Loader;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 
+import org.mariotaku.twidere.loader.UserSearchLoader;
+import org.mariotaku.twidere.model.ParcelableUser;
+
+import java.util.List;
+
 public class SearchUsersFragment extends BaseUsersListFragment {
 
-	private int mPage = 1;
+    private int mPage = 1;
 
-	@Override
-	public Loader<List<ParcelableUser>> newLoaderInstance(final Context context, final Bundle args) {
-		if (args == null) return null;
-		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
-		final String query = args.getString(INTENT_KEY_QUERY);
-		return new UserSearchLoader(context, account_id, query, mPage, getData());
-	}
+    @Override
+    public Loader<List<ParcelableUser>> newLoaderInstance(final Context context, final Bundle args) {
+        if (args == null)
+            return null;
+        final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
+        final String query = args.getString(INTENT_KEY_QUERY);
+        return new UserSearchLoader(context, account_id, query, mPage, getData());
+    }
 
-	@Override
-	public void onActivityCreated(final Bundle savedInstanceState) {
-		if (savedInstanceState != null) {
-			mPage = savedInstanceState.getInt(INTENT_KEY_PAGE, 1);
-		}
-		super.onActivityCreated(savedInstanceState);
-	}
+    @Override
+    public void onActivityCreated(final Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            mPage = savedInstanceState.getInt(INTENT_KEY_PAGE, 1);
+        }
+        super.onActivityCreated(savedInstanceState);
+    }
 
-	@Override
-	public void onDestroyView() {
-		mPage = 1;
-		super.onDestroyView();
-	}
+    @Override
+    public void onDestroyView() {
+        mPage = 1;
+        super.onDestroyView();
+    }
 
-	@Override
-	public void onLoadFinished(final Loader<List<ParcelableUser>> loader, final List<ParcelableUser> data) {
-		if (data != null) {
-			mPage++;
-		}
-		super.onLoadFinished(loader, data);
-	}
+    @Override
+    public void onLoadFinished(final Loader<List<ParcelableUser>> loader,
+            final List<ParcelableUser> data) {
+        if (data != null) {
+            mPage++;
+        }
+        super.onLoadFinished(loader, data);
+    }
 
-	@Override
-	public void onSaveInstanceState(final Bundle outState) {
-		outState.putInt(INTENT_KEY_PAGE, mPage);
-		super.onSaveInstanceState(outState);
-	}
+    @Override
+    public void onSaveInstanceState(final Bundle outState) {
+        outState.putInt(INTENT_KEY_PAGE, mPage);
+        super.onSaveInstanceState(outState);
+    }
 
-	@Override
-	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
-		super.onScrollStateChanged(view, scrollState);
-		if (scrollState == OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
-			final Fragment parent = getParentFragment();
-			if (parent instanceof SearchFragment) {
-				((SearchFragment) parent).hideIndicator();
-			}
-		}
-	}
+    @Override
+    public void onScrollStateChanged(final AbsListView view, final int scrollState) {
+        super.onScrollStateChanged(view, scrollState);
+        if (scrollState == OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+            final Fragment parent = getParentFragment();
+            if (parent instanceof SearchFragment) {
+                ((SearchFragment) parent).hideIndicator();
+            }
+        }
+    }
 
 }

@@ -23,12 +23,6 @@ import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.createFragmentForIntent;
 import static org.mariotaku.twidere.util.Utils.matchLinkId;
 
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.fragment.BasePullToRefreshListFragment;
-import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;
-import org.mariotaku.twidere.fragment.iface.SupportFragmentCallback;
-import org.mariotaku.twidere.util.MultiSelectEventHandler;
-
 import android.app.ActionBar;
 import android.content.Intent;
 import android.net.Uri;
@@ -44,221 +38,233 @@ import android.view.View.OnLongClickListener;
 import android.view.Window;
 import android.widget.TextView;
 
-public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnClickListener, OnLongClickListener {
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.fragment.BasePullToRefreshListFragment;
+import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;
+import org.mariotaku.twidere.fragment.iface.SupportFragmentCallback;
+import org.mariotaku.twidere.util.MultiSelectEventHandler;
 
-	private MultiSelectEventHandler mMultiSelectHandler;
+public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnClickListener,
+        OnLongClickListener {
 
-	private ActionBar mActionBar;
+    private MultiSelectEventHandler mMultiSelectHandler;
 
-	private boolean mFinishOnly;
+    private ActionBar mActionBar;
 
-	private View mGoTopView;
-	private TextView mTitleView, mSubtitleView;
+    private boolean mFinishOnly;
 
-	@Override
-	public void onClick(final View v) {
-		switch (v.getId()) {
-			case R.id.go_top: {
-				final Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
-				if (fragment instanceof RefreshScrollTopInterface) {
-					((RefreshScrollTopInterface) fragment).scrollToStart();
-				} else if (fragment instanceof ListFragment) {
-					((ListFragment) fragment).setSelection(0);
-				}
-				break;
-			}
-		}
-	}
+    private View mGoTopView;
+    private TextView mTitleView, mSubtitleView;
 
-	@Override
-	public boolean onLongClick(final View v) {
-		switch (v.getId()) {
-			case R.id.go_top: {
-				final Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
-				if (fragment instanceof RefreshScrollTopInterface) {
-					((RefreshScrollTopInterface) fragment).triggerRefresh();
-				}
-				return true;
-			}
-		}
-		return false;
-	}
+    @Override
+    public void onClick(final View v) {
+        switch (v.getId()) {
+            case R.id.go_top: {
+                final Fragment fragment = getSupportFragmentManager().findFragmentById(
+                        android.R.id.content);
+                if (fragment instanceof RefreshScrollTopInterface) {
+                    ((RefreshScrollTopInterface) fragment).scrollToStart();
+                } else if (fragment instanceof ListFragment) {
+                    ((ListFragment) fragment).setSelection(0);
+                }
+                break;
+            }
+        }
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
-		switch (item.getItemId()) {
-			case MENU_HOME: {
-				if (mFinishOnly) {
-					finish();
-				} else {
-					NavUtils.navigateUpFromSameTask(this);
-				}
-				break;
-			}
-		}
-		return super.onOptionsItemSelected(item);
-	}
+    @Override
+    public boolean onLongClick(final View v) {
+        switch (v.getId()) {
+            case R.id.go_top: {
+                final Fragment fragment = getSupportFragmentManager().findFragmentById(
+                        android.R.id.content);
+                if (fragment instanceof RefreshScrollTopInterface) {
+                    ((RefreshScrollTopInterface) fragment).triggerRefresh();
+                }
+                return true;
+            }
+        }
+        return false;
+    }
 
-	public void setSubtitle(final CharSequence subtitle) {
-		mSubtitleView.setVisibility(isEmpty(subtitle) ? View.GONE : View.VISIBLE);
-		mSubtitleView.setText(subtitle);
-	}
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        switch (item.getItemId()) {
+            case MENU_HOME: {
+                if (mFinishOnly) {
+                    finish();
+                } else {
+                    NavUtils.navigateUpFromSameTask(this);
+                }
+                break;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
-	@Override
-	protected BasePullToRefreshListFragment getCurrentPullToRefreshFragment() {
-		final Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
-		if (fragment instanceof BasePullToRefreshListFragment)
-			return (BasePullToRefreshListFragment) fragment;
-		else if (fragment instanceof SupportFragmentCallback) {
-			final Fragment curr = ((SupportFragmentCallback) fragment).getCurrentVisibleFragment();
-			if (curr instanceof BasePullToRefreshListFragment) return (BasePullToRefreshListFragment) curr;
-		}
-		return null;
-	}
+    public void setSubtitle(final CharSequence subtitle) {
+        mSubtitleView.setVisibility(isEmpty(subtitle) ? View.GONE : View.VISIBLE);
+        mSubtitleView.setText(subtitle);
+    }
 
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		mMultiSelectHandler = new MultiSelectEventHandler(this);
-		mMultiSelectHandler.dispatchOnCreate();
-		super.onCreate(savedInstanceState);
-		setOverrideExitAniamtion(false);
-		mActionBar = getActionBar();
-		mActionBar.setDisplayHomeAsUpEnabled(true);
-		mActionBar.setDisplayShowTitleEnabled(true);
-		mActionBar.setDisplayShowCustomEnabled(true);
-		mActionBar.setCustomView(R.layout.link_handler_actionbar);
-		final View view = mActionBar.getCustomView();
-		mGoTopView = view.findViewById(R.id.go_top);
-		mTitleView = (TextView) view.findViewById(R.id.actionbar_title);
-		mSubtitleView = (TextView) view.findViewById(R.id.actionbar_subtitle);
-		mGoTopView.setOnClickListener(this);
-		mGoTopView.setOnLongClickListener(this);
-		setProgressBarIndeterminateVisibility(false);
-		final Intent intent = getIntent();
-		final Uri data = intent.getData();
-		if (data == null || !showFragment(data)) {
-			finish();
-		}
-	}
+    @Override
+    protected BasePullToRefreshListFragment getCurrentPullToRefreshFragment() {
+        final Fragment fragment = getSupportFragmentManager()
+                .findFragmentById(android.R.id.content);
+        if (fragment instanceof BasePullToRefreshListFragment)
+            return (BasePullToRefreshListFragment) fragment;
+        else if (fragment instanceof SupportFragmentCallback) {
+            final Fragment curr = ((SupportFragmentCallback) fragment).getCurrentVisibleFragment();
+            if (curr instanceof BasePullToRefreshListFragment)
+                return (BasePullToRefreshListFragment) curr;
+        }
+        return null;
+    }
 
-	@Override
-	protected void onStart() {
-		super.onStart();
-		mMultiSelectHandler.dispatchOnStart();
-	}
+    @Override
+    protected void onCreate(final Bundle savedInstanceState) {
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        mMultiSelectHandler = new MultiSelectEventHandler(this);
+        mMultiSelectHandler.dispatchOnCreate();
+        super.onCreate(savedInstanceState);
+        setOverrideExitAniamtion(false);
+        mActionBar = getActionBar();
+        mActionBar.setDisplayHomeAsUpEnabled(true);
+        mActionBar.setDisplayShowTitleEnabled(true);
+        mActionBar.setDisplayShowCustomEnabled(true);
+        mActionBar.setCustomView(R.layout.link_handler_actionbar);
+        final View view = mActionBar.getCustomView();
+        mGoTopView = view.findViewById(R.id.go_top);
+        mTitleView = (TextView) view.findViewById(R.id.actionbar_title);
+        mSubtitleView = (TextView) view.findViewById(R.id.actionbar_subtitle);
+        mGoTopView.setOnClickListener(this);
+        mGoTopView.setOnLongClickListener(this);
+        setProgressBarIndeterminateVisibility(false);
+        final Intent intent = getIntent();
+        final Uri data = intent.getData();
+        if (data == null || !showFragment(data)) {
+            finish();
+        }
+    }
 
-	@Override
-	protected void onStop() {
-		mMultiSelectHandler.dispatchOnStop();
-		super.onStop();
-	}
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mMultiSelectHandler.dispatchOnStart();
+    }
 
-	@Override
-	protected void onTitleChanged(final CharSequence title, final int color) {
-		super.onTitleChanged(title, color);
-		mTitleView.setText(title);
-	}
+    @Override
+    protected void onStop() {
+        mMultiSelectHandler.dispatchOnStop();
+        super.onStop();
+    }
 
-	private boolean showFragment(final Uri uri) {
-		final Intent intent = getIntent();
-		final Fragment fragment = createFragmentForIntent(this, intent);
-		if (uri == null || fragment == null) return false;
-		switch (matchLinkId(uri)) {
-			case LINK_ID_STATUS: {
-				setTitle(R.string.view_status);
-				break;
-			}
-			case LINK_ID_USER: {
-				setTitle(R.string.view_user_profile);
-				break;
-			}
-			case LINK_ID_USER_TIMELINE: {
-				setTitle(R.string.tweets);
-				break;
-			}
-			case LINK_ID_USER_FAVORITES: {
-				setTitle(R.string.favorites);
-				break;
-			}
-			case LINK_ID_USER_FOLLOWERS: {
-				setTitle(R.string.followers);
-				break;
-			}
-			case LINK_ID_USER_FRIENDS: {
-				setTitle(R.string.following);
-				break;
-			}
-			case LINK_ID_USER_BLOCKS: {
-				setTitle(R.string.blocked_users);
-				break;
-			}
-			case LINK_ID_DIRECT_MESSAGES_CONVERSATION: {
-				setTitle(R.string.direct_messages);
-				break;
-			}
-			case LINK_ID_LIST_DETAILS: {
-				setTitle(R.string.user_list);
-				break;
-			}
-			case LINK_ID_LISTS: {
-				setTitle(R.string.user_list);
-				break;
-			}
-			case LINK_ID_LIST_TIMELINE: {
-				setTitle(R.string.list_timeline);
-				break;
-			}
-			case LINK_ID_LIST_MEMBERS: {
-				setTitle(R.string.list_members);
-				break;
-			}
-			case LINK_ID_LIST_SUBSCRIBERS: {
-				setTitle(R.string.list_subscribers);
-				break;
-			}
-			case LINK_ID_LIST_MEMBERSHIPS: {
-				setTitle(R.string.lists_following_user);
-				break;
-			}
-			case LINK_ID_SAVED_SEARCHES: {
-				setTitle(R.string.saved_searches);
-				break;
-			}
-			case LINK_ID_USER_MENTIONS: {
-				setTitle(R.string.user_mentions);
-				break;
-			}
-			case LINK_ID_INCOMING_FRIENDSHIPS: {
-				setTitle(R.string.incoming_friendships);
-				break;
-			}
-			case LINK_ID_USERS: {
-				setTitle(R.string.users);
-				break;
-			}
-			case LINK_ID_STATUSES: {
-				setTitle(R.string.tweets);
-				break;
-			}
-			case LINK_ID_STATUS_RETWEETERS: {
-				setTitle(R.string.users_retweeted_this);
-				break;
-			}
-			case LINK_ID_SEARCH: {
-				setTitle(android.R.string.search_go);
-				setSubtitle(uri.getQueryParameter(QUERY_PARAM_QUERY));
-				break;
-			}
-			default: {
-				return false;
-			}
-		}
-		mFinishOnly = Boolean.parseBoolean(uri.getQueryParameter(QUERY_PARAM_FINISH_ONLY));
-		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.replace(android.R.id.content, fragment);
-		ft.commit();
-		return true;
-	}
+    @Override
+    protected void onTitleChanged(final CharSequence title, final int color) {
+        super.onTitleChanged(title, color);
+        mTitleView.setText(title);
+    }
+
+    private boolean showFragment(final Uri uri) {
+        final Intent intent = getIntent();
+        final Fragment fragment = createFragmentForIntent(this, intent);
+        if (uri == null || fragment == null)
+            return false;
+        switch (matchLinkId(uri)) {
+            case LINK_ID_STATUS: {
+                setTitle(R.string.view_status);
+                break;
+            }
+            case LINK_ID_USER: {
+                setTitle(R.string.view_user_profile);
+                break;
+            }
+            case LINK_ID_USER_TIMELINE: {
+                setTitle(R.string.statuses);
+                break;
+            }
+            case LINK_ID_USER_FAVORITES: {
+                setTitle(R.string.favorites);
+                break;
+            }
+            case LINK_ID_USER_FOLLOWERS: {
+                setTitle(R.string.followers);
+                break;
+            }
+            case LINK_ID_USER_FRIENDS: {
+                setTitle(R.string.following);
+                break;
+            }
+            case LINK_ID_USER_BLOCKS: {
+                setTitle(R.string.blocked_users);
+                break;
+            }
+            case LINK_ID_DIRECT_MESSAGES_CONVERSATION: {
+                setTitle(R.string.direct_messages);
+                break;
+            }
+            case LINK_ID_LIST_DETAILS: {
+                setTitle(R.string.user_list);
+                break;
+            }
+            case LINK_ID_LISTS: {
+                setTitle(R.string.user_list);
+                break;
+            }
+            case LINK_ID_LIST_TIMELINE: {
+                setTitle(R.string.list_timeline);
+                break;
+            }
+            case LINK_ID_LIST_MEMBERS: {
+                setTitle(R.string.list_members);
+                break;
+            }
+            case LINK_ID_LIST_SUBSCRIBERS: {
+                setTitle(R.string.list_subscribers);
+                break;
+            }
+            case LINK_ID_LIST_MEMBERSHIPS: {
+                setTitle(R.string.lists_following_user);
+                break;
+            }
+            case LINK_ID_SAVED_SEARCHES: {
+                setTitle(R.string.saved_searches);
+                break;
+            }
+            case LINK_ID_USER_MENTIONS: {
+                setTitle(R.string.user_mentions);
+                break;
+            }
+            case LINK_ID_INCOMING_FRIENDSHIPS: {
+                setTitle(R.string.incoming_friendships);
+                break;
+            }
+            case LINK_ID_USERS: {
+                setTitle(R.string.users);
+                break;
+            }
+            case LINK_ID_STATUSES: {
+                setTitle(R.string.statuses);
+                break;
+            }
+            case LINK_ID_STATUS_RETWEETERS: {
+                setTitle(R.string.users_retweeted_this);
+                break;
+            }
+            case LINK_ID_SEARCH: {
+                setTitle(android.R.string.search_go);
+                setSubtitle(uri.getQueryParameter(QUERY_PARAM_QUERY));
+                break;
+            }
+            default: {
+                return false;
+            }
+        }
+        mFinishOnly = Boolean.parseBoolean(uri.getQueryParameter(QUERY_PARAM_FINISH_ONLY));
+        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(android.R.id.content, fragment);
+        ft.commit();
+        return true;
+    }
 
 }

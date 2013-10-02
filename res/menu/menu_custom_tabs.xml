@@ -2,9 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item
-		android:id="@id/add"
+		android:id="@+id/add_submenu"
 		android:icon="@android:drawable/ic_menu_add"
 		android:showAsAction="always"
-		android:title="@string/add_tab"/>
+		android:title="@string/add_tab">
+		<menu/>
+	</item>
 
 </menu>

@@ -21,32 +21,32 @@ package org.mariotaku.twidere.model;
 
 public abstract class ListAction {
 
-	private final int order;
+    private final int order;
 
-	public ListAction(final int order) {
-		this.order = order;
-	}
+    public ListAction(final int order) {
+        this.order = order;
+    }
 
-	public abstract String getName();
+    public abstract String getName();
 
-	public int getOrder() {
-		return order;
-	}
+    public int getOrder() {
+        return order;
+    }
 
-	public String getSummary() {
-		return null;
-	}
+    public String getSummary() {
+        return null;
+    }
 
-	public void onClick() {
+    public void onClick() {
 
-	}
+    }
 
-	public boolean onLongClick() {
-		return false;
-	}
+    public boolean onLongClick() {
+        return false;
+    }
 
-	@Override
-	public final String toString() {
-		return getName();
-	}
+    @Override
+    public final String toString() {
+        return getName();
+    }
 }

@@ -58,7 +58,7 @@
   <string name="view_user_profile">Профиль пользователя</string>
   <string name="browser">Браузер</string>
   <string name="pick_from_gallery">Выбрать из галереи</string>
-  <string name="tweets">Твиты</string>
+  <string name="statuses">Твиты</string>
   <string name="followers">Читатели</string>
   <string name="friends">Друзья</string>
   <string name="about">О программе</string>
@@ -315,7 +315,7 @@
   <string name="follow_request_sent">Запрос на подписку послан</string>
   <string name="separate_retweet_action">Различные виды ретвита</string>
   <string name="separate_retweet_action_summary">Показывает в меню оба действия: ретвит и цитировать</string>
-  <string name="tweet">Твит</string>
+  <string name="status">Твит</string>
   <string name="preview">Предпросмотр</string>
   <string name="api_upgrade_notice_title">Очень важно!</string>
   <string name="api_upgrade_notice_message">  Twitter анонсировал новую версию своего API (вер.1.1).\n\n  Начиная с этой версии Twidere, будет использоваться именно данный API версии 1.1.\n\n  НАСТОЯТЕЛЬНО РЕКОМЕНДУЕТСЯ перелогиниться, чтобы избежать возможных проблем, связанных с переходом на новый API.\n\n  Что изменилось в Twitter API версии 1.1?\n  *Ограничения по скорости обновления. Например, возможность обновления вашей Ленты ограничена 15-ю запросами в течении 15 минут.\n  *Вы не можете увидеть, кто ретвитнул ваше сообщение, Вы не можете видеть твиты, ретвитнутые вам другими.\n  *Если вы используете Twidere как ваш StatusNet-клиент, большинство возможностей будет потеряно в связи с изменениями в API.\n\n  Извините за неудобства, но я ничего не могу с этим поделать. Политика Twitter направлена против сторонних программ-клиентов.</string>

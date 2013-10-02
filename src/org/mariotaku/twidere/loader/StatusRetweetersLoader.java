@@ -19,7 +19,7 @@
 
 package org.mariotaku.twidere.loader;
 
-import java.util.List;
+import android.content.Context;
 
 import org.mariotaku.twidere.model.ParcelableUser;
 
@@ -27,23 +27,27 @@ import twitter4j.CursorPaging;
 import twitter4j.IDs;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import android.content.Context;
+
+import java.util.List;
 
 public class StatusRetweetersLoader extends IDsUsersLoader {
 
-	private final long mStatusId;
+    private final long mStatusId;
 
-	public StatusRetweetersLoader(final Context context, final long account_id, final long status_id,
-			final long cursor, final List<ParcelableUser> data) {
-		super(context, account_id, cursor, data);
-		mStatusId = status_id;
-	}
+    public StatusRetweetersLoader(final Context context, final long account_id,
+            final long status_id,
+            final long cursor, final List<ParcelableUser> data) {
+        super(context, account_id, cursor, data);
+        mStatusId = status_id;
+    }
 
-	@Override
-	protected IDs getIDs(final Twitter twitter, final CursorPaging paging) throws TwitterException {
-		if (twitter == null) return null;
-		if (mStatusId > 0) return twitter.getRetweetersIDs(mStatusId, paging);
-		return null;
-	}
+    @Override
+    protected IDs getIDs(final Twitter twitter, final CursorPaging paging) throws TwitterException {
+        if (twitter == null)
+            return null;
+        if (mStatusId > 0)
+            return twitter.getRetweetersIDs(mStatusId, paging);
+        return null;
+    }
 
 }

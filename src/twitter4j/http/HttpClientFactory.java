@@ -16,9 +16,9 @@
 
 package twitter4j.http;
 
-import java.lang.reflect.Constructor;
-
 import twitter4j.conf.Configuration;
+
+import java.lang.reflect.Constructor;
 
 /**
  * @author Yusuke Yamamoto - yusuke at mac.com
@@ -26,19 +26,20 @@ import twitter4j.conf.Configuration;
  */
 public final class HttpClientFactory {
 
-	public static HttpClient getInstance(final Configuration conf) {
-		final String httpClientImplementation = conf.getHttpClientImplementation();
-		if (httpClientImplementation != null) {
-			try {
-				final Class<?> clz = Class.forName(httpClientImplementation);
-				final Constructor<?> constructor = clz.getConstructor(HttpClientConfiguration.class);
-				return (HttpClient) constructor.newInstance(conf);
-			} catch (final Exception e) {
-				e.printStackTrace();
-				// Falling back to default implementation.
-				return new HttpClientImpl(conf);
-			}
-		}
-		return new HttpClientImpl(conf);
-	}
+    public static HttpClient getInstance(final Configuration conf) {
+        final String httpClientImplementation = conf.getHttpClientImplementation();
+        if (httpClientImplementation != null) {
+            try {
+                final Class<?> clz = Class.forName(httpClientImplementation);
+                final Constructor<?> constructor = clz
+                        .getConstructor(HttpClientConfiguration.class);
+                return (HttpClient) constructor.newInstance(conf);
+            } catch (final Exception e) {
+                e.printStackTrace();
+                // Falling back to default implementation.
+                return new HttpClientImpl(conf);
+            }
+        }
+        return new HttpClientImpl(conf);
+    }
 }

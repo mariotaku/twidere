@@ -13,21 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package twitter4j.management;
 
 /**
  * @author Nick Dellamaggiore (nick.dellamaggiore <at> gmail.com)
  */
 public interface InvocationStatistics {
-	public long getAverageTime();
+    public long getAverageTime();
 
-	public long getCallCount();
+    public long getCallCount();
 
-	public long getErrorCount();
+    public long getErrorCount();
 
-	public String getName();
+    public String getName();
 
-	public long getTotalTime();
+    public long getTotalTime();
 
-	public void reset();
+    public void reset();
 }

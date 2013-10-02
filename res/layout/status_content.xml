@@ -87,6 +87,10 @@
 			android:layout_height="0.2dp"
 			android:background="#40808080"/>
 
+		<include
+			layout="@layout/image_preview"
+			android:visibility="gone"/>
+
 		<TextView
 			android:id="@+id/text"
 			android:layout_width="match_parent"
@@ -96,7 +100,47 @@
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textIsSelectable="true"/>
 
-		<include layout="@layout/image_preview"/>
+		<FrameLayout
+			android:id="@+id/location_container"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:foreground="?android:selectableItemBackground">
+
+			<org.mariotaku.twidere.view.MapImageView
+				android:id="@+id/map_view"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:background="@drawable/bg_map"
+				android:contentDescription="@string/location"
+				android:scaleType="centerCrop"/>
+
+			<RelativeLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_gravity="bottom">
+
+				<View
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_alignBottom="@+id/location_view"
+					android:layout_alignTop="@+id/location_view"
+					android:alpha="0.5"
+					android:background="?cardItemBackgroundColor"/>
+
+				<TextView
+					android:id="@+id/location_view"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_gravity="bottom"
+					android:drawableLeft="@drawable/ic_indicator_has_location"
+					android:drawablePadding="4dp"
+					android:gravity="center_vertical"
+					android:padding="8dp"
+					android:singleLine="true"
+					android:text="@string/view_map"
+					android:textAppearance="?android:attr/textAppearanceSmall"/>
+			</RelativeLayout>
+		</FrameLayout>
 
 		<TextView
 			android:id="@+id/time_source"
@@ -117,20 +161,6 @@
 			android:singleLine="true"
 			android:text="@string/users_retweeted_this"
 			android:textAppearance="?android:attr/textAppearanceSmall"/>
-
-		<TextView
-			android:id="@+id/location_view"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="?android:selectableItemBackground"
-			android:drawableLeft="@drawable/ic_indicator_has_location"
-			android:drawablePadding="4dp"
-			android:gravity="center_vertical"
-			android:padding="8dp"
-			android:singleLine="true"
-			android:text="@string/view_map"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:visibility="gone"/>
 
 		<TextView
 			android:id="@+id/in_reply_to"

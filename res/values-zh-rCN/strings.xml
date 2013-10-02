@@ -58,7 +58,7 @@
   <string name="view_user_profile">资料</string>
   <string name="browser">浏览器</string>
   <string name="pick_from_gallery">从图库中选取</string>
-  <string name="tweets">推文</string>
+  <string name="statuses">推文</string>
   <string name="followers">关注者</string>
   <string name="friends">好友</string>
   <string name="about">关于</string>
@@ -317,7 +317,7 @@
   <string name="follow_request_sent">已发送关注请求</string>
   <string name="separate_retweet_action">分离的转推操作</string>
   <string name="separate_retweet_action_summary">在推文菜单中同时显示“转推”和“引用”</string>
-  <string name="tweet">推文</string>
+  <string name="status">推文</string>
   <string name="preview">预览</string>
   <string name="api_upgrade_notice_title">非常重要！</string>
   <string name="api_upgrade_notice_message">　　Twitter宣布了他们的新API及政策。自从这个版本起，Twidere开始使用Twitter的API版本1.1，以及在部分设计上遵守了Twitter设计规范。\n\n　　强烈建议你重新登录，否则可能会遇到很多问题，如无法查看收藏/搜索/趋势等。\n\n　　API的更改会带来什么影响？\n\n　　*由于twip使用旧的API版本，将不能与这个版本的Twidere正常工作\n　　*JTAPI和GTAP需要将之前的末尾的“/1/”修改成“/1.1/”\n　　*更多API限制，在15分钟内你只能更新15次左右时间线或发送15条推文\n　　*如果你使用Twidere作为其他微博客服务的客户端，更多功能可能不可用，例如查看收藏/阻止的用户等\n\n　　对于带来的不便，我深表歉意。但是你应该知道——Twitter正试图对三方客户端赶尽杀绝。我尽最大可能保证你使用Twidere正常，也尽可能“违反”一些荒谬的设计规范，但是对于Twitter在API上的更加严苛的政策，我无能为力。对于遇到的各种不属于应用本身的问题，请不要埋怨我，那不是我的错。</string>

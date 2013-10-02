@@ -28,62 +28,62 @@ import android.widget.FrameLayout;
  */
 public class PullToRefreshLayout extends FrameLayout {
 
-	private PullToRefreshAttacher mPullToRefreshAttacher;
+    private PullToRefreshAttacher mPullToRefreshAttacher;
 
-	public PullToRefreshLayout(final Context context) {
-		this(context, null);
-	}
+    public PullToRefreshLayout(final Context context) {
+        this(context, null);
+    }
 
-	public PullToRefreshLayout(final Context context, final AttributeSet attrs) {
-		this(context, attrs, 0);
-	}
+    public PullToRefreshLayout(final Context context, final AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
 
-	public PullToRefreshLayout(final Context context, final AttributeSet attrs, final int defStyle) {
-		super(context, attrs, defStyle);
-	}
+    public PullToRefreshLayout(final Context context, final AttributeSet attrs, final int defStyle) {
+        super(context, attrs, defStyle);
+    }
 
-	@Override
-	public boolean onInterceptTouchEvent(final MotionEvent event) {
-		if (isEnabled() && mPullToRefreshAttacher != null && getChildCount() > 0)
-			return mPullToRefreshAttacher.onInterceptTouchEvent(getChildAt(0), event);
-		return super.onInterceptTouchEvent(event);
-	}
+    @Override
+    public boolean onInterceptTouchEvent(final MotionEvent event) {
+        if (isEnabled() && mPullToRefreshAttacher != null && getChildCount() > 0)
+            return mPullToRefreshAttacher.onInterceptTouchEvent(getChildAt(0), event);
+        return super.onInterceptTouchEvent(event);
+    }
 
-	@Override
-	public boolean onTouchEvent(final MotionEvent event) {
-		if (isEnabled() && mPullToRefreshAttacher != null && getChildCount() > 0)
-			return mPullToRefreshAttacher.onTouchEvent(getChildAt(0), event);
-		return super.onTouchEvent(event);
-	}
+    @Override
+    public boolean onTouchEvent(final MotionEvent event) {
+        if (isEnabled() && mPullToRefreshAttacher != null && getChildCount() > 0)
+            return mPullToRefreshAttacher.onTouchEvent(getChildAt(0), event);
+        return super.onTouchEvent(event);
+    }
 
-	/**
-	 * Set the {@link PullToRefreshAttacher} to be used with this layout. The
-	 * view which is added to this layout will automatically be added as a
-	 * refreshable-view in the attacher.
-	 */
-	public void setPullToRefreshAttacher(final PullToRefreshAttacher attacher,
-			final PullToRefreshAttacher.OnRefreshListener refreshListener) {
-		View view;
-		for (int i = 0, z = getChildCount(); i < z; i++) {
-			view = getChildAt(i);
+    /**
+     * Set the {@link PullToRefreshAttacher} to be used with this layout. The
+     * view which is added to this layout will automatically be added as a
+     * refreshable-view in the attacher.
+     */
+    public void setPullToRefreshAttacher(final PullToRefreshAttacher attacher,
+            final PullToRefreshAttacher.OnRefreshListener refreshListener) {
+        View view;
+        for (int i = 0, z = getChildCount(); i < z; i++) {
+            view = getChildAt(i);
 
-			if (mPullToRefreshAttacher != null) {
-				mPullToRefreshAttacher.removeRefreshableView(view);
-			}
-			if (attacher != null) {
-				attacher.addRefreshableView(view, null, refreshListener, false);
-			}
-		}
+            if (mPullToRefreshAttacher != null) {
+                mPullToRefreshAttacher.removeRefreshableView(view);
+            }
+            if (attacher != null) {
+                attacher.addRefreshableView(view, null, refreshListener, false);
+            }
+        }
 
-		mPullToRefreshAttacher = attacher;
-	}
+        mPullToRefreshAttacher = attacher;
+    }
 
-	@Override
-	protected void onConfigurationChanged(final Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
+    @Override
+    protected void onConfigurationChanged(final Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
 
-		if (mPullToRefreshAttacher != null) {
-			mPullToRefreshAttacher.onConfigurationChanged(newConfig);
-		}
-	}
+        if (mPullToRefreshAttacher != null) {
+            mPullToRefreshAttacher.onConfigurationChanged(newConfig);
+        }
+    }
 }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
+
 package com.nostra13.universalimageloader.cache.disc;
 
 import java.io.File;
@@ -24,22 +25,22 @@ import java.io.File;
  * @since 1.0.0
  */
 public interface DiscCacheAware {
-	/** Clears cache directory */
-	void clear();
+    /** Clears cache directory */
+    void clear();
 
-	/**
-	 * Returns {@linkplain File file object} appropriate incoming key.<br />
-	 * <b>NOTE:</b> Must <b>not to return</b> a null. Method must return
-	 * specific {@linkplain File file object} for incoming key whether file
-	 * exists or not.
-	 */
-	File get(String key);
+    /**
+     * Returns {@linkplain File file object} appropriate incoming key.<br />
+     * <b>NOTE:</b> Must <b>not to return</b> a null. Method must return
+     * specific {@linkplain File file object} for incoming key whether file
+     * exists or not.
+     */
+    File get(String key);
 
-	/**
-	 * This method must not to save file on file system in fact. It is called
-	 * after image was cached in cache directory and it was decoded to bitmap in
-	 * memory. Such order is required to prevent possible deletion of file after
-	 * it was cached on disc and before it was tried to decode to bitmap.
-	 */
-	void put(String key, File file);
+    /**
+     * This method must not to save file on file system in fact. It is called
+     * after image was cached in cache directory and it was decoded to bitmap in
+     * memory. Such order is required to prevent possible deletion of file after
+     * it was cached on disc and before it was tried to decode to bitmap.
+     */
+    void put(String key, File file);
 }

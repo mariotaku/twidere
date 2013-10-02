@@ -23,38 +23,39 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 
 public interface IStatusesAdapter<Data> extends IBaseAdapter {
 
-	public long findItemIdByPosition(final int position);
+    public long findItemIdByPosition(final int position);
 
-	public int findItemPositionByStatusId(final long status_id);
+    public int findItemPositionByStatusId(final long status_id);
 
-	public ParcelableStatus getLastStatus();
+    public ParcelableStatus getLastStatus();
 
-	public ParcelableStatus getStatus(int position);
+    public ParcelableStatus getStatus(int position);
 
-	public boolean isLastItemFiltered();
+    public boolean isLastItemFiltered();
 
-	public void setData(Data data);
+    public void setData(Data data);
 
-	public void setDisplayImagePreview(boolean display);
+    public void setDisplayImagePreview(boolean display);
 
-	public void setDisplaySensitiveContents(boolean display);
+    public void setDisplaySensitiveContents(boolean display);
 
-	public void setFiltersEnabled(boolean enabled);
+    public void setFiltersEnabled(boolean enabled);
 
-	public void setGapDisallowed(boolean disallowed);
+    public void setGapDisallowed(boolean disallowed);
 
-	public void setIgnoredFilterFields(boolean text_plain, boolean text_html, boolean screen_name, boolean source);
+    public void setIgnoredFilterFields(boolean text_plain, boolean text_html, boolean screen_name,
+            boolean source);
 
-	public void setIndicateMyStatusDisabled(boolean disable);
+    public void setIndicateMyStatusDisabled(boolean disable);
 
-	public void setLinkHightlightingEnabled(boolean enable);
+    public void setLinkHightlightingEnabled(boolean enable);
 
-	public void setLinkUnderlineOnly(boolean underline_only);
+    public void setLinkUnderlineOnly(boolean underline_only);
 
-	public void setMaxAnimationPosition(int position);
+    public void setMaxAnimationPosition(int position);
 
-	public void setMentionsHightlightDisabled(boolean disable);
+    public void setMentionsHightlightDisabled(boolean disable);
 
-	public void setShowAccountColor(boolean show);
+    public void setShowAccountColor(boolean show);
 
 }

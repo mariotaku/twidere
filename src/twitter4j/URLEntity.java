@@ -27,42 +27,42 @@ import java.net.URL;
  */
 public interface URLEntity extends Serializable {
 
-	/**
-	 * Returns the display URL if mentioned URL is shorten.
-	 * 
-	 * @return the display URL if mentioned URL is shorten, or null if no
-	 *         shorten URL was mentioned.
-	 */
-	String getDisplayURL();
+    /**
+     * Returns the display URL if mentioned URL is shorten.
+     * 
+     * @return the display URL if mentioned URL is shorten, or null if no
+     *         shorten URL was mentioned.
+     */
+    String getDisplayURL();
 
-	/**
-	 * Returns the index of the end character of the URL mentioned in the tweet.
-	 * 
-	 * @return the index of the end character of the URL mentioned in the tweet
-	 */
-	int getEnd();
+    /**
+     * Returns the index of the end character of the URL mentioned in the tweet.
+     * 
+     * @return the index of the end character of the URL mentioned in the tweet
+     */
+    int getEnd();
 
-	/**
-	 * Returns the expanded URL if mentioned URL is shorten.
-	 * 
-	 * @return the expanded URL if mentioned URL is shorten, or null if no
-	 *         shorten URL was mentioned.
-	 */
-	URL getExpandedURL();
+    /**
+     * Returns the expanded URL if mentioned URL is shorten.
+     * 
+     * @return the expanded URL if mentioned URL is shorten, or null if no
+     *         shorten URL was mentioned.
+     */
+    URL getExpandedURL();
 
-	/**
-	 * Returns the index of the start character of the URL mentioned in the
-	 * tweet.
-	 * 
-	 * @return the index of the start character of the URL mentioned in the
-	 *         tweet
-	 */
-	int getStart();
+    /**
+     * Returns the index of the start character of the URL mentioned in the
+     * tweet.
+     * 
+     * @return the index of the start character of the URL mentioned in the
+     *         tweet
+     */
+    int getStart();
 
-	/**
-	 * Returns the URL mentioned in the tweet.
-	 * 
-	 * @return the mentioned URL
-	 */
-	URL getURL();
+    /**
+     * Returns the URL mentioned in the tweet.
+     * 
+     * @return the mentioned URL
+     */
+    URL getURL();
 }

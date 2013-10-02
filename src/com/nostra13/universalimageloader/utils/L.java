@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
+
 package com.nostra13.universalimageloader.utils;
 
 import android.util.Log;
@@ -27,63 +28,65 @@ import com.nostra13.universalimageloader.core.ImageLoader;
  */
 public final class L {
 
-	private static final String LOG_FORMAT = "%1$s\n%2$s";
-	private static volatile boolean DISABLED = false;
+    private static final String LOG_FORMAT = "%1$s\n%2$s";
+    private static volatile boolean DISABLED = false;
 
-	private L() {
-	}
+    private L() {
+    }
 
-	public static void d(final String message, final Object... args) {
-		log(Log.DEBUG, null, message, args);
-	}
+    public static void d(final String message, final Object... args) {
+        log(Log.DEBUG, null, message, args);
+    }
 
-	/**
-	 * Disables logger, no logs will be passed to LogCat, all log methods will
-	 * do nothing
-	 */
-	public static void disableLogging() {
-		DISABLED = true;
-	}
+    /**
+     * Disables logger, no logs will be passed to LogCat, all log methods will
+     * do nothing
+     */
+    public static void disableLogging() {
+        DISABLED = true;
+    }
 
-	public static void e(final String message, final Object... args) {
-		log(Log.ERROR, null, message, args);
-	}
+    public static void e(final String message, final Object... args) {
+        log(Log.ERROR, null, message, args);
+    }
 
-	public static void e(final Throwable ex) {
-		log(Log.ERROR, ex, null);
-	}
+    public static void e(final Throwable ex) {
+        log(Log.ERROR, ex, null);
+    }
 
-	public static void e(final Throwable ex, final String message, final Object... args) {
-		log(Log.ERROR, ex, message, args);
-	}
+    public static void e(final Throwable ex, final String message, final Object... args) {
+        log(Log.ERROR, ex, message, args);
+    }
 
-	/** Enables logger (if {@link #disableLogging()} was called before) */
-	public static void enableLogging() {
-		DISABLED = false;
-	}
+    /** Enables logger (if {@link #disableLogging()} was called before) */
+    public static void enableLogging() {
+        DISABLED = false;
+    }
 
-	public static void i(final String message, final Object... args) {
-		log(Log.INFO, null, message, args);
-	}
+    public static void i(final String message, final Object... args) {
+        log(Log.INFO, null, message, args);
+    }
 
-	public static void w(final String message, final Object... args) {
-		log(Log.WARN, null, message, args);
-	}
+    public static void w(final String message, final Object... args) {
+        log(Log.WARN, null, message, args);
+    }
 
-	private static void log(final int priority, final Throwable ex, String message, final Object... args) {
-		if (DISABLED) return;
-		if (args.length > 0) {
-			message = String.format(message, args);
-		}
+    private static void log(final int priority, final Throwable ex, String message,
+            final Object... args) {
+        if (DISABLED)
+            return;
+        if (args.length > 0) {
+            message = String.format(message, args);
+        }
 
-		String log;
-		if (ex == null) {
-			log = message;
-		} else {
-			final String logMessage = message == null ? ex.getMessage() : message;
-			final String logBody = Log.getStackTraceString(ex);
-			log = String.format(LOG_FORMAT, logMessage, logBody);
-		}
-		Log.println(priority, ImageLoader.TAG, log);
-	}
+        String log;
+        if (ex == null) {
+            log = message;
+        } else {
+            final String logMessage = message == null ? ex.getMessage() : message;
+            final String logBody = Log.getStackTraceString(ex);
+            log = String.format(LOG_FORMAT, logMessage, logBody);
+        }
+        Log.println(priority, ImageLoader.TAG, log);
+    }
 }

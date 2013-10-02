@@ -23,22 +23,6 @@ import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
 import static org.mariotaku.twidere.util.Utils.getImageLoaderHttpClient;
 import static org.mariotaku.twidere.util.Utils.getRedirectedHttpResponse;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import org.mariotaku.gallery3d.util.BitmapUtils;
-import org.mariotaku.gallery3d.util.GalleryUtils;
-import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.util.Exif;
-import org.mariotaku.twidere.util.ImageValidator;
-import org.mariotaku.twidere.util.ParseUtils;
-import org.mariotaku.twidere.util.URLFileNameGenerator;
-
-import twitter4j.http.HttpClientWrapper;
-import twitter4j.http.HttpResponse;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
@@ -53,268 +37,299 @@ import android.util.DisplayMetrics;
 
 import com.nostra13.universalimageloader.cache.disc.naming.FileNameGenerator;
 
+import org.mariotaku.gallery3d.util.BitmapUtils;
+import org.mariotaku.gallery3d.util.GalleryUtils;
+import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.util.Exif;
+import org.mariotaku.twidere.util.ImageValidator;
+import org.mariotaku.twidere.util.ParseUtils;
+import org.mariotaku.twidere.util.URLFileNameGenerator;
+
+import twitter4j.http.HttpClientWrapper;
+import twitter4j.http.HttpResponse;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 public class GLImageLoader extends AsyncTaskLoader<GLImageLoader.Result> implements Constants {
 
-	private static final String CACHE_DIR_NAME = DIR_NAME_IMAGE_CACHE;
+    private static final String CACHE_DIR_NAME = DIR_NAME_IMAGE_CACHE;
 
-	private final Uri mUri;
-	private final Context mContext;
-	private final HttpClientWrapper mClient;
-	private final Handler mHandler;
-	private final DownloadListener mListener;
-	private final FileNameGenerator mGenerator;
-	private final float mBackupSize;
+    private final Uri mUri;
+    private final Context mContext;
+    private final HttpClientWrapper mClient;
+    private final Handler mHandler;
+    private final DownloadListener mListener;
+    private final FileNameGenerator mGenerator;
+    private final float mBackupSize;
 
-	protected File mCacheDir, mImageFile;
+    protected File mCacheDir, mImageFile;
 
-	public GLImageLoader(final Context context, final DownloadListener listener, final Uri uri) {
-		super(context);
-		mContext = context;
-		mHandler = new Handler();
-		mUri = uri;
-		mClient = getImageLoaderHttpClient(context);
-		mListener = listener;
-		mGenerator = new URLFileNameGenerator();
-		final Resources res = context.getResources();
-		final DisplayMetrics dm = res.getDisplayMetrics();
-		mBackupSize = Math.max(dm.heightPixels, dm.widthPixels);
-		init();
-	}
+    public GLImageLoader(final Context context, final DownloadListener listener, final Uri uri) {
+        super(context);
+        mContext = context;
+        mHandler = new Handler();
+        mUri = uri;
+        mClient = getImageLoaderHttpClient(context);
+        mListener = listener;
+        mGenerator = new URLFileNameGenerator();
+        final Resources res = context.getResources();
+        final DisplayMetrics dm = res.getDisplayMetrics();
+        mBackupSize = Math.max(dm.heightPixels, dm.widthPixels);
+        init();
+    }
 
-	@Override
-	public GLImageLoader.Result loadInBackground() {
-		if (mUri == null) {
-			Result.nullInstance();
-		}
-		final String scheme = mUri.getScheme();
-		if ("http".equals(scheme) || "https".equals(scheme)) {
-			final String url = ParseUtils.parseString(mUri.toString());
-			if (url == null) return Result.nullInstance();
-			if (mCacheDir == null || !mCacheDir.exists()) {
-				init();
-			}
-			final File cache_file = mImageFile = new File(mCacheDir, mGenerator.generate(url));
-			try {
-				// from SD cache
-				if (ImageValidator.checkImageValidity(cache_file)) return decodeImageInternal(cache_file);
-				final HttpResponse resp = getRedirectedHttpResponse(mClient, url);
-				// from web
-				if (resp == null) return null;
-				final long length = resp.getContentLength();
-				mHandler.post(new DownloadStartRunnable(this, mListener, length));
-				final InputStream is = resp.asStream();
-				final OutputStream os = new FileOutputStream(cache_file);
-				try {
-					dump(is, os);
-					mHandler.post(new DownloadFinishRunnable(this, mListener));
-				} finally {
-					GalleryUtils.closeSilently(is);
-					GalleryUtils.closeSilently(os);
-				}
-				if (!ImageValidator.checkImageValidity(cache_file)) {
-					// The file is corrupted, so we remove it from
-					// cache.
-					final Result result = decodeBitmapOnly(cache_file);
-					if (cache_file.isFile()) {
-						cache_file.delete();
-					}
-					return result;
-				}
-				return decodeImageInternal(cache_file);
-			} catch (final Exception e) {
-				mHandler.post(new DownloadErrorRunnable(this, mListener, e));
-				return Result.getInstance(mImageFile, e);
-			}
-		} else if (ContentResolver.SCHEME_FILE.equals(scheme)) {
-			mImageFile = new File(mUri.getPath());
-			try {
-				return decodeImage(mImageFile);
-			} catch (final Exception e) {
-				return Result.getInstance(mImageFile, e);
-			}
-		}
-		return Result.nullInstance();
-	}
+    @Override
+    public GLImageLoader.Result loadInBackground() {
+        if (mUri == null) {
+            Result.nullInstance();
+        }
+        final String scheme = mUri.getScheme();
+        if ("http".equals(scheme) || "https".equals(scheme)) {
+            final String url = ParseUtils.parseString(mUri.toString());
+            if (url == null)
+                return Result.nullInstance();
+            if (mCacheDir == null || !mCacheDir.exists()) {
+                init();
+            }
+            final File cache_file = mImageFile = new File(mCacheDir, mGenerator.generate(url));
+            try {
+                // from SD cache
+                if (ImageValidator.checkImageValidity(cache_file))
+                    return decodeImageInternal(cache_file);
+                final HttpResponse resp = getRedirectedHttpResponse(mClient, url);
+                // from web
+                if (resp == null)
+                    return null;
+                final long length = resp.getContentLength();
+                mHandler.post(new DownloadStartRunnable(this, mListener, length));
+                final InputStream is = resp.asStream();
+                final OutputStream os = new FileOutputStream(cache_file);
+                try {
+                    dump(is, os);
+                    mHandler.post(new DownloadFinishRunnable(this, mListener));
+                } finally {
+                    GalleryUtils.closeSilently(is);
+                    GalleryUtils.closeSilently(os);
+                }
+                if (!ImageValidator.checkImageValidity(cache_file)) {
+                    // The file is corrupted, so we remove it from
+                    // cache.
+                    final Result result = decodeBitmapOnly(cache_file);
+                    if (cache_file.isFile()) {
+                        cache_file.delete();
+                    }
+                    return result;
+                }
+                return decodeImageInternal(cache_file);
+            } catch (final Exception e) {
+                mHandler.post(new DownloadErrorRunnable(this, mListener, e));
+                return Result.getInstance(mImageFile, e);
+            }
+        } else if (ContentResolver.SCHEME_FILE.equals(scheme)) {
+            mImageFile = new File(mUri.getPath());
+            try {
+                return decodeImage(mImageFile);
+            } catch (final Exception e) {
+                return Result.getInstance(mImageFile, e);
+            }
+        }
+        return Result.nullInstance();
+    }
 
-	protected Result decodeBitmapOnly(final File file) {
-		final String path = file.getAbsolutePath();
-		final BitmapFactory.Options o = new BitmapFactory.Options();
-		o.inJustDecodeBounds = true;
-		o.inPreferredConfig = Bitmap.Config.RGB_565;
-		BitmapFactory.decodeFile(path, o);
-		final int width = o.outWidth, height = o.outHeight;
-		if (width <= 0 || height <= 0) return Result.getInstance(mImageFile, null);
-		o.inJustDecodeBounds = false;
-		o.inSampleSize = BitmapUtils.computeSampleSize(mBackupSize / Math.max(width, height));
-		final Bitmap bitmap = BitmapFactory.decodeFile(path, o);
-		return Result.getInstance(bitmap, Exif.getOrientation(file), mImageFile);
-	}
+    protected Result decodeBitmapOnly(final File file) {
+        final String path = file.getAbsolutePath();
+        final BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        o.inPreferredConfig = Bitmap.Config.RGB_565;
+        BitmapFactory.decodeFile(path, o);
+        final int width = o.outWidth, height = o.outHeight;
+        if (width <= 0 || height <= 0)
+            return Result.getInstance(mImageFile, null);
+        o.inJustDecodeBounds = false;
+        o.inSampleSize = BitmapUtils.computeSampleSize(mBackupSize / Math.max(width, height));
+        final Bitmap bitmap = BitmapFactory.decodeFile(path, o);
+        return Result.getInstance(bitmap, Exif.getOrientation(file), mImageFile);
+    }
 
-	protected Result decodeImage(final File file) {
-		final String path = file.getAbsolutePath();
-		try {
-			final BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(path, false);
-			final int width = decoder.getWidth();
-			final int height = decoder.getHeight();
-			final BitmapFactory.Options options = new BitmapFactory.Options();
-			options.inSampleSize = BitmapUtils.computeSampleSize(mBackupSize / Math.max(width, height));
-			options.inPreferredConfig = Bitmap.Config.RGB_565;
-			final Bitmap bitmap = decoder.decodeRegion(new Rect(0, 0, width, height), options);
-			return Result.getInstance(decoder, bitmap, Exif.getOrientation(file), mImageFile);
-		} catch (final IOException e) {
-			return decodeBitmapOnly(file);
-		}
-	}
+    protected Result decodeImage(final File file) {
+        final String path = file.getAbsolutePath();
+        try {
+            final BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(path, false);
+            final int width = decoder.getWidth();
+            final int height = decoder.getHeight();
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = BitmapUtils.computeSampleSize(mBackupSize
+                    / Math.max(width, height));
+            options.inPreferredConfig = Bitmap.Config.RGB_565;
+            final Bitmap bitmap = decoder.decodeRegion(new Rect(0, 0, width, height), options);
+            return Result.getInstance(decoder, bitmap, Exif.getOrientation(file), mImageFile);
+        } catch (final IOException e) {
+            return decodeBitmapOnly(file);
+        }
+    }
 
-	@Override
-	protected void onStartLoading() {
-		forceLoad();
-	}
+    @Override
+    protected void onStartLoading() {
+        forceLoad();
+    }
 
-	private Result decodeImageInternal(final File file) throws IOException {
-		if (ImageValidator.checkImageValidity(file)) return decodeImage(file);
-		throw new InvalidImageException();
-	}
+    private Result decodeImageInternal(final File file) throws IOException {
+        if (ImageValidator.checkImageValidity(file))
+            return decodeImage(file);
+        throw new InvalidImageException();
+    }
 
-	private void dump(final InputStream is, final OutputStream os) throws IOException {
-		final byte buffer[] = new byte[1024];
-		int rc = is.read(buffer, 0, buffer.length);
-		long downloaded = 0;
-		while (rc > 0) {
-			downloaded += rc;
-			mHandler.post(new ProgressUpdateRunnable(mListener, downloaded));
-			os.write(buffer, 0, rc);
-			rc = is.read(buffer, 0, buffer.length);
-		}
-	}
+    private void dump(final InputStream is, final OutputStream os) throws IOException {
+        final byte buffer[] = new byte[1024];
+        int rc = is.read(buffer, 0, buffer.length);
+        long downloaded = 0;
+        while (rc > 0) {
+            downloaded += rc;
+            mHandler.post(new ProgressUpdateRunnable(mListener, downloaded));
+            os.write(buffer, 0, rc);
+            rc = is.read(buffer, 0, buffer.length);
+        }
+    }
 
-	private void init() {
-		/* Find the dir to save cached images. */
-		mCacheDir = getBestCacheDir(mContext, CACHE_DIR_NAME);
-		if (mCacheDir != null && !mCacheDir.exists()) {
-			mCacheDir.mkdirs();
-		}
-	}
+    private void init() {
+        /* Find the dir to save cached images. */
+        mCacheDir = getBestCacheDir(mContext, CACHE_DIR_NAME);
+        if (mCacheDir != null && !mCacheDir.exists()) {
+            mCacheDir.mkdirs();
+        }
+    }
 
-	public static interface DownloadListener {
-		void onDownloadError(Throwable t);
+    public static interface DownloadListener {
+        void onDownloadError(Throwable t);
 
-		void onDownloadFinished();
+        void onDownloadFinished();
 
-		void onDownloadStart(long total);
+        void onDownloadStart(long total);
 
-		void onProgressUpdate(long downloaded);
-	}
+        void onProgressUpdate(long downloaded);
+    }
 
-	public static class InvalidImageException extends IOException {
+    public static class InvalidImageException extends IOException {
 
-		private static final long serialVersionUID = 8996099908714452289L;
+        private static final long serialVersionUID = 8996099908714452289L;
 
-	}
+    }
 
-	public static class Result {
-		public final Bitmap bitmap;
-		public final File file;
-		public final Exception exception;
-		public final BitmapRegionDecoder decoder;
-		public final int orientation;
+    public static class Result {
+        public final Bitmap bitmap;
+        public final File file;
+        public final Exception exception;
+        public final BitmapRegionDecoder decoder;
+        public final int orientation;
 
-		public Result(final BitmapRegionDecoder decoder, final Bitmap bitmap, final int orientation, final File file,
-				final Exception exception) {
-			this.bitmap = bitmap;
-			this.file = file;
-			this.decoder = decoder;
-			this.orientation = orientation;
-			this.exception = exception;
-		}
+        public Result(final BitmapRegionDecoder decoder, final Bitmap bitmap,
+                final int orientation, final File file,
+                final Exception exception) {
+            this.bitmap = bitmap;
+            this.file = file;
+            this.decoder = decoder;
+            this.orientation = orientation;
+            this.exception = exception;
+        }
 
-		public static Result getInstance(final Bitmap bitmap, final int orientation, final File file) {
-			return new Result(null, bitmap, orientation, file, null);
-		}
+        public static Result getInstance(final Bitmap bitmap, final int orientation, final File file) {
+            return new Result(null, bitmap, orientation, file, null);
+        }
 
-		public static Result getInstance(final BitmapRegionDecoder decoder, final Bitmap bitmap, final int orientation,
-				final File file) {
-			return new Result(decoder, bitmap, orientation, file, null);
-		}
+        public static Result getInstance(final BitmapRegionDecoder decoder, final Bitmap bitmap,
+                final int orientation,
+                final File file) {
+            return new Result(decoder, bitmap, orientation, file, null);
+        }
 
-		public static Result getInstance(final File file, final Exception e) {
-			return new Result(null, null, 0, file, e);
-		}
+        public static Result getInstance(final File file, final Exception e) {
+            return new Result(null, null, 0, file, e);
+        }
 
-		public static Result nullInstance() {
-			return new Result(null, null, 0, null, null);
-		}
-	}
+        public static Result nullInstance() {
+            return new Result(null, null, 0, null, null);
+        }
+    }
 
-	private final static class DownloadErrorRunnable implements Runnable {
+    private final static class DownloadErrorRunnable implements Runnable {
 
-		private final GLImageLoader loader;
-		private final DownloadListener listener;
-		private final Throwable t;
+        private final GLImageLoader loader;
+        private final DownloadListener listener;
+        private final Throwable t;
 
-		DownloadErrorRunnable(final GLImageLoader loader, final DownloadListener listener, final Throwable t) {
-			this.loader = loader;
-			this.listener = listener;
-			this.t = t;
-		}
+        DownloadErrorRunnable(final GLImageLoader loader, final DownloadListener listener,
+                final Throwable t) {
+            this.loader = loader;
+            this.listener = listener;
+            this.t = t;
+        }
 
-		@Override
-		public void run() {
-			if (listener == null || loader.isAbandoned() || loader.isReset()) return;
-			listener.onDownloadError(t);
-		}
-	}
+        @Override
+        public void run() {
+            if (listener == null || loader.isAbandoned() || loader.isReset())
+                return;
+            listener.onDownloadError(t);
+        }
+    }
 
-	private final static class DownloadFinishRunnable implements Runnable {
+    private final static class DownloadFinishRunnable implements Runnable {
 
-		private final GLImageLoader loader;
-		private final DownloadListener listener;
+        private final GLImageLoader loader;
+        private final DownloadListener listener;
 
-		DownloadFinishRunnable(final GLImageLoader loader, final DownloadListener listener) {
-			this.loader = loader;
-			this.listener = listener;
-		}
+        DownloadFinishRunnable(final GLImageLoader loader, final DownloadListener listener) {
+            this.loader = loader;
+            this.listener = listener;
+        }
 
-		@Override
-		public void run() {
-			if (listener == null || loader.isAbandoned() || loader.isReset()) return;
-			listener.onDownloadFinished();
-		}
-	}
+        @Override
+        public void run() {
+            if (listener == null || loader.isAbandoned() || loader.isReset())
+                return;
+            listener.onDownloadFinished();
+        }
+    }
 
-	private final static class DownloadStartRunnable implements Runnable {
+    private final static class DownloadStartRunnable implements Runnable {
 
-		private final GLImageLoader loader;
-		private final DownloadListener listener;
-		private final long total;
+        private final GLImageLoader loader;
+        private final DownloadListener listener;
+        private final long total;
 
-		DownloadStartRunnable(final GLImageLoader loader, final DownloadListener listener, final long total) {
-			this.loader = loader;
-			this.listener = listener;
-			this.total = total;
-		}
+        DownloadStartRunnable(final GLImageLoader loader, final DownloadListener listener,
+                final long total) {
+            this.loader = loader;
+            this.listener = listener;
+            this.total = total;
+        }
 
-		@Override
-		public void run() {
-			if (listener == null || loader.isAbandoned() || loader.isReset()) return;
-			listener.onDownloadStart(total);
-		}
-	}
+        @Override
+        public void run() {
+            if (listener == null || loader.isAbandoned() || loader.isReset())
+                return;
+            listener.onDownloadStart(total);
+        }
+    }
 
-	private final static class ProgressUpdateRunnable implements Runnable {
+    private final static class ProgressUpdateRunnable implements Runnable {
 
-		private final DownloadListener listener;
-		private final long current;
+        private final DownloadListener listener;
+        private final long current;
 
-		ProgressUpdateRunnable(final DownloadListener listener, final long current) {
-			this.listener = listener;
-			this.current = current;
-		}
+        ProgressUpdateRunnable(final DownloadListener listener, final long current) {
+            this.listener = listener;
+            this.current = current;
+        }
 
-		@Override
-		public void run() {
-			if (listener == null) return;
-			listener.onProgressUpdate(current);
-		}
-	}
+        @Override
+        public void run() {
+            if (listener == null)
+                return;
+            listener.onProgressUpdate(current);
+        }
+    }
 }

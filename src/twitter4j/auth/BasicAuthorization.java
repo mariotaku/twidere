@@ -26,63 +26,66 @@ import twitter4j.http.HttpRequest;
  */
 public class BasicAuthorization implements Authorization {
 
-	private final String userId;
+    private final String userId;
 
-	private final String password;
-	private final String basic;
+    private final String password;
+    private final String basic;
 
-	public BasicAuthorization(final String userId, final String password) {
-		this.userId = userId;
-		this.password = password;
-		basic = encodeBasicAuthenticationString();
-	}
+    public BasicAuthorization(final String userId, final String password) {
+        this.userId = userId;
+        this.password = password;
+        basic = encodeBasicAuthenticationString();
+    }
 
-	@Override
-	public boolean equals(final Object o) {
-		if (this == o) return true;
-		if (!(o instanceof BasicAuthorization)) return false;
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof BasicAuthorization))
+            return false;
 
-		final BasicAuthorization that = (BasicAuthorization) o;
+        final BasicAuthorization that = (BasicAuthorization) o;
 
-		return basic.equals(that.basic);
+        return basic.equals(that.basic);
 
-	}
+    }
 
-	@Override
-	public String getAuthorizationHeader(final HttpRequest req) {
-		return basic;
-	}
+    @Override
+    public String getAuthorizationHeader(final HttpRequest req) {
+        return basic;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public String getUserId() {
-		return userId;
-	}
+    public String getUserId() {
+        return userId;
+    }
 
-	@Override
-	public int hashCode() {
-		return basic.hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return basic.hashCode();
+    }
 
-	/**
-	 * #{inheritDoc}
-	 */
-	@Override
-	public boolean isEnabled() {
-		return true;
-	}
+    /**
+     * #{inheritDoc}
+     */
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
-	@Override
-	public String toString() {
-		return "BasicAuthorization{" + "userId='" + userId + '\'' + ", password='**********'\'" + '}';
-	}
+    @Override
+    public String toString() {
+        return "BasicAuthorization{" + "userId='" + userId + '\'' + ", password='**********'\'"
+                + '}';
+    }
 
-	private String encodeBasicAuthenticationString() {
-		if (userId != null && password != null)
-			return "Basic " + BASE64Encoder.encode((userId + ":" + password).getBytes());
-		return null;
-	}
+    private String encodeBasicAuthenticationString() {
+        if (userId != null && password != null)
+            return "Basic " + BASE64Encoder.encode((userId + ":" + password).getBytes());
+        return null;
+    }
 
 }

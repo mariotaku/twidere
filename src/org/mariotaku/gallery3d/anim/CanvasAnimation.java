@@ -20,7 +20,7 @@ import org.mariotaku.gallery3d.ui.GLCanvas;
 
 public abstract class CanvasAnimation extends Animation {
 
-	public abstract void apply(GLCanvas canvas);
+    public abstract void apply(GLCanvas canvas);
 
-	public abstract int getCanvasSaveFlags();
+    public abstract int getCanvasSaveFlags();
 }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package twitter4j.internal.json;
 
 import org.json.JSONArray;
@@ -30,63 +31,66 @@ import twitter4j.http.HttpResponse;
  * @since Twitter4J 2.2.3
  */
 public class LanguageJSONImpl implements HelpResources.Language {
-	private String name;
-	private String code;
-	private String status;
+    private String name;
+    private String code;
+    private String status;
 
-	LanguageJSONImpl(final JSONObject json) throws TwitterException {
-		super();
-		init(json);
-	}
+    LanguageJSONImpl(final JSONObject json) throws TwitterException {
+        super();
+        init(json);
+    }
 
-	@Override
-	public String getCode() {
-		return code;
-	}
+    @Override
+    public String getCode() {
+        return code;
+    }
 
-	@Override
-	public String getName() {
-		return name;
-	}
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public String getStatus() {
-		return status;
-	}
+    @Override
+    public String getStatus() {
+        return status;
+    }
 
-	private void init(final JSONObject json) throws TwitterException {
-		try {
-			name = json.getString("name");
-			code = json.getString("code");
-			status = json.getString("status");
+    private void init(final JSONObject json) throws TwitterException {
+        try {
+            name = json.getString("name");
+            code = json.getString("code");
+            status = json.getString("status");
 
-		} catch (final JSONException jsone) {
-			throw new TwitterException(jsone.getMessage() + ":" + json.toString(), jsone);
-		}
-	}
+        } catch (final JSONException jsone) {
+            throw new TwitterException(jsone.getMessage() + ":" + json.toString(), jsone);
+        }
+    }
 
-	static ResponseList<HelpResources.Language> createLanguageList(final HttpResponse res, final Configuration conf)
-			throws TwitterException {
-		return createLanguageList(res.asJSONArray(), res, conf);
-	}
+    static ResponseList<HelpResources.Language> createLanguageList(final HttpResponse res,
+            final Configuration conf)
+            throws TwitterException {
+        return createLanguageList(res.asJSONArray(), res, conf);
+    }
 
-	/* package */
-	static ResponseList<HelpResources.Language> createLanguageList(final JSONArray list, final HttpResponse res,
-			final Configuration conf) throws TwitterException {
-		try {
-			final int size = list.length();
-			final ResponseList<HelpResources.Language> languages = new ResponseListImpl<HelpResources.Language>(size,
-					res);
-			for (int i = 0; i < size; i++) {
-				final JSONObject json = list.getJSONObject(i);
-				final HelpResources.Language language = new LanguageJSONImpl(json);
-				languages.add(language);
-			}
-			return languages;
-		} catch (final JSONException jsone) {
-			throw new TwitterException(jsone);
-		} catch (final TwitterException te) {
-			throw te;
-		}
-	}
+    /* package */
+    static ResponseList<HelpResources.Language> createLanguageList(final JSONArray list,
+            final HttpResponse res,
+            final Configuration conf) throws TwitterException {
+        try {
+            final int size = list.length();
+            final ResponseList<HelpResources.Language> languages = new ResponseListImpl<HelpResources.Language>(
+                    size,
+                    res);
+            for (int i = 0; i < size; i++) {
+                final JSONObject json = list.getJSONObject(i);
+                final HelpResources.Language language = new LanguageJSONImpl(json);
+                languages.add(language);
+            }
+            return languages;
+        } catch (final JSONException jsone) {
+            throw new TwitterException(jsone);
+        } catch (final TwitterException te) {
+            throw te;
+        }
+    }
 }

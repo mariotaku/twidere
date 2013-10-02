@@ -31,53 +31,55 @@ import android.widget.TextView;
 
 public class HandleSpanClickFlowTextView extends TextView {
 
-	public HandleSpanClickFlowTextView(final Context context) {
-		super(context);
-	}
+    public HandleSpanClickFlowTextView(final Context context) {
+        super(context);
+    }
 
-	public HandleSpanClickFlowTextView(final Context context, final AttributeSet attrs) {
-		super(context, attrs);
-	}
+    public HandleSpanClickFlowTextView(final Context context, final AttributeSet attrs) {
+        super(context, attrs);
+    }
 
-	public HandleSpanClickFlowTextView(final Context context, final AttributeSet attrs, final int defStyle) {
-		super(context, attrs, defStyle);
-	}
+    public HandleSpanClickFlowTextView(final Context context, final AttributeSet attrs,
+            final int defStyle) {
+        super(context, attrs, defStyle);
+    }
 
-	@Override
-	public boolean onTouchEvent(final MotionEvent event) {
-		final Spannable buffer = SpannableString.valueOf(getText());
-		final int action = event.getAction();
-		if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_DOWN) {
-			int x = (int) event.getX();
-			int y = (int) event.getY();
+    @Override
+    public boolean onTouchEvent(final MotionEvent event) {
+        final Spannable buffer = SpannableString.valueOf(getText());
+        final int action = event.getAction();
+        if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_DOWN) {
+            int x = (int) event.getX();
+            int y = (int) event.getY();
 
-			x -= getTotalPaddingLeft();
-			y -= getTotalPaddingTop();
+            x -= getTotalPaddingLeft();
+            y -= getTotalPaddingTop();
 
-			x += getScrollX();
-			y += getScrollY();
+            x += getScrollX();
+            y += getScrollY();
 
-			final Layout layout = getLayout();
-			final int line = layout.getLineForVertical(y);
-			final int off = layout.getOffsetForHorizontal(line, x);
+            final Layout layout = getLayout();
+            final int line = layout.getLineForVertical(y);
+            final int off = layout.getOffsetForHorizontal(line, x);
 
-			final ClickableSpan[] links = buffer.getSpans(off, off, ClickableSpan.class);
+            final ClickableSpan[] links = buffer.getSpans(off, off, ClickableSpan.class);
 
-			if (links.length != 0) {
-				final ClickableSpan link = links[0];
-				if (action == MotionEvent.ACTION_UP) {
-					link.onClick(this);
-					setClickable(false);
-					return true;
-				} else if (action == MotionEvent.ACTION_DOWN) {
-					Selection.setSelection(buffer, buffer.getSpanStart(link), buffer.getSpanEnd(link));
-					setClickable(true);
-				}
-			} else {
-				setClickable(false);
-				Selection.removeSelection(buffer);
-			}
-		}
-		return super.onTouchEvent(event);
-	}
+            if (links.length != 0) {
+                final ClickableSpan link = links[0];
+                if (action == MotionEvent.ACTION_UP) {
+                    link.onClick(this);
+                    setClickable(false);
+                    return true;
+                } else if (action == MotionEvent.ACTION_DOWN) {
+                    Selection.setSelection(buffer, buffer.getSpanStart(link),
+                            buffer.getSpanEnd(link));
+                    setClickable(true);
+                }
+            } else {
+                setClickable(false);
+                Selection.removeSelection(buffer);
+            }
+        }
+        return super.onTouchEvent(event);
+    }
 }

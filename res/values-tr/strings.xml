@@ -50,7 +50,7 @@
   <string name="view_user_profile">Kullanıcı profili</string>
   <string name="browser">Tarayıcı</string>
   <string name="pick_from_gallery">Galeriden seç</string>
-  <string name="tweets">Tweetler</string>
+  <string name="statuses">Tweetler</string>
   <string name="followers">Takipçilerin</string>
   <string name="friends">Arkadaşlar</string>
   <string name="about">Hakkında</string>
@@ -268,7 +268,7 @@
   <string name="follow_request_sent">Takip isteği gönderildi</string>
   <string name="separate_retweet_action">Retweet butonu ayrı</string>
   <string name="separate_retweet_action_summary">tweet menüsünde retweet ve alıntı butonlarının ikisini de göster</string>
-  <string name="tweet">Tweet</string>
+  <string name="status">Tweet</string>
   <string name="preview">Önizleme</string>
   <string name="api_upgrade_notice_title">ÇOK ÖNEMLİ!</string>
   <string name="api_upgrade_notice_message">  Twitter API\'nin yeni versiyonunu (1.1) çıkardı.\n\n  Bu versiyondan itibaren, Twidere onların API versiyonunu kullanıyor.\n\n  Tekrar giriş yapmanız ISRARLA TAVSİYE EDİLİR, yoksa kullanırken bir çok problemle karşılaşırsınız.\n\n  1.1 versiyonu ile API\'de ne değişti?\n  *Daha sıkı sorgu limitleri, mesela, zaman akışınızı 15 dakikada ancak 15 kez alabileceksiniz.\n  *Sizi kimlerini retweet ettiğini de, size retweet edilen tweetleri de göremeyeceksiniz.\n  *StatusNet istemcisi olarak Twidere kullanırsanız, API değişiklikleri nedeniyle pek çok özellik kaybedilecek.\n\n  Bu sıkıntıdan ötürü üzgünüz, fakat malum - Twitter diğer twit programlarını ortadan kaldırmaya niyetli, bu konuda yapabileceğim birşey yok.</string>

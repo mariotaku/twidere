@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.nostra13.universalimageloader.core;
 
-import java.lang.ref.Reference;
-import java.lang.ref.WeakReference;
-import java.util.concurrent.locks.ReentrantLock;
+package com.nostra13.universalimageloader.core;
 
 import android.widget.ImageView;
 
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.assist.ImageSize;
 import com.nostra13.universalimageloader.core.assist.MemoryCacheUtil;
+
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Information for load'n'display image task
@@ -36,23 +37,25 @@ import com.nostra13.universalimageloader.core.assist.MemoryCacheUtil;
  */
 final class ImageLoadingInfo {
 
-	final String uri;
-	final String memoryCacheKey;
-	final Reference<ImageView> imageViewRef;
-	final ImageSize targetSize;
-	final DisplayImageOptions options;
-	final ImageLoadingListener listener;
-	final ReentrantLock loadFromUriLock;
+    final String uri;
+    final String memoryCacheKey;
+    final Reference<ImageView> imageViewRef;
+    final ImageSize targetSize;
+    final DisplayImageOptions options;
+    final ImageLoadingListener listener;
+    final ReentrantLock loadFromUriLock;
 
-	public ImageLoadingInfo(final String uri, final ImageView imageView, final ImageSize targetSize,
-			final String memoryCacheKey, final DisplayImageOptions options, final ImageLoadingListener listener,
-			final ReentrantLock loadFromUriLock) {
-		this.uri = uri;
-		imageViewRef = new WeakReference<ImageView>(imageView);
-		this.targetSize = targetSize;
-		this.options = options;
-		this.listener = listener;
-		this.loadFromUriLock = loadFromUriLock;
-		this.memoryCacheKey = memoryCacheKey;
-	}
+    public ImageLoadingInfo(final String uri, final ImageView imageView,
+            final ImageSize targetSize,
+            final String memoryCacheKey, final DisplayImageOptions options,
+            final ImageLoadingListener listener,
+            final ReentrantLock loadFromUriLock) {
+        this.uri = uri;
+        imageViewRef = new WeakReference<ImageView>(imageView);
+        this.targetSize = targetSize;
+        this.options = options;
+        this.listener = listener;
+        this.loadFromUriLock = loadFromUriLock;
+        this.memoryCacheKey = memoryCacheKey;
+    }
 }

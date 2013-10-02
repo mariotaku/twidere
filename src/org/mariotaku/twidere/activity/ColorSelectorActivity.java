@@ -21,15 +21,6 @@ package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.Utils.getColorPreviewBitmap;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.ArrayAdapter;
-import org.mariotaku.twidere.fragment.ColorPickerDialogFragment;
-import org.mariotaku.twidere.fragment.ColorPickerDialogFragment.OnColorSelectedListener;
-import org.mariotaku.twidere.provider.TweetStore.Accounts;
-
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
@@ -43,112 +34,127 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-public class ColorSelectorActivity extends BaseSupportDialogActivity implements OnItemClickListener,
-		OnColorSelectedListener {
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.ArrayAdapter;
+import org.mariotaku.twidere.fragment.ColorPickerDialogFragment;
+import org.mariotaku.twidere.fragment.ColorPickerDialogFragment.OnColorSelectedListener;
+import org.mariotaku.twidere.provider.TweetStore.Accounts;
 
-	private GridView mColorsGrid;
+import java.util.ArrayList;
+import java.util.List;
 
-	private int mCustomizedColor = Color.WHITE;
+public class ColorSelectorActivity extends BaseSupportDialogActivity implements
+        OnItemClickListener,
+        OnColorSelectedListener {
 
-	List<Integer> mColors = new ArrayList<Integer>();
-	ColorPickerDialogFragment mFragment = new ColorPickerDialogFragment();
+    private GridView mColorsGrid;
 
-	@Override
-	public void onColorSelected(final int color) {
-		mCustomizedColor = color;
-		mColorsGrid.invalidateViews();
-		finishSelecting(color);
-	}
+    private int mCustomizedColor = Color.WHITE;
 
-	@Override
-	public void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
-		if (position == adapter.getCount() - 1) {
-			showDialog();
-		} else {
-			finishSelecting(mColors.get(position));
-		}
+    List<Integer> mColors = new ArrayList<Integer>();
+    ColorPickerDialogFragment mFragment = new ColorPickerDialogFragment();
 
-	}
+    @Override
+    public void onColorSelected(final int color) {
+        mCustomizedColor = color;
+        mColorsGrid.invalidateViews();
+        finishSelecting(color);
+    }
 
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.set_color);
-		mColorsGrid = (GridView) findViewById(R.id.colors_grid);
+    @Override
+    public void onItemClick(final AdapterView<?> adapter, final View view, final int position,
+            final long id) {
+        if (position == adapter.getCount() - 1) {
+            showDialog();
+        } else {
+            finishSelecting(mColors.get(position));
+        }
 
-		final Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent().getExtras();
+    }
 
-		mCustomizedColor = bundle != null ? bundle.getInt(Accounts.USER_COLOR, Color.WHITE) : Color.WHITE;
+    @Override
+    protected void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.set_color);
+        mColorsGrid = (GridView) findViewById(R.id.colors_grid);
 
-		final Resources res = getResources();
-		mColors.add(res.getColor(android.R.color.holo_red_dark));
-		mColors.add(res.getColor(android.R.color.holo_red_light));
-		mColors.add(res.getColor(android.R.color.holo_orange_dark));
-		mColors.add(res.getColor(android.R.color.holo_orange_light));
-		mColors.add(res.getColor(android.R.color.holo_green_light));
-		mColors.add(res.getColor(android.R.color.holo_green_dark));
-		mColors.add(res.getColor(android.R.color.holo_blue_bright));
-		mColors.add(res.getColor(android.R.color.holo_blue_light));
-		mColors.add(res.getColor(android.R.color.holo_blue_dark));
-		mColors.add(res.getColor(android.R.color.holo_purple));
-		mColors.add(res.getColor(android.R.color.white));
-		mColors.add(Color.TRANSPARENT);
-		if (mColors.contains(mCustomizedColor)) {
+        final Bundle bundle = savedInstanceState != null ? savedInstanceState : getIntent()
+                .getExtras();
 
-		}
-		final ColorsAdapter adapter = new ColorsAdapter(this, mColors);
-		adapter.setCustomizedColor(mCustomizedColor);
-		mColorsGrid.setAdapter(adapter);
-		mColorsGrid.setOnItemClickListener(this);
+        mCustomizedColor = bundle != null ? bundle.getInt(Accounts.USER_COLOR, Color.WHITE)
+                : Color.WHITE;
 
-	}
+        final Resources res = getResources();
+        mColors.add(res.getColor(android.R.color.holo_red_dark));
+        mColors.add(res.getColor(android.R.color.holo_red_light));
+        mColors.add(res.getColor(android.R.color.holo_orange_dark));
+        mColors.add(res.getColor(android.R.color.holo_orange_light));
+        mColors.add(res.getColor(android.R.color.holo_green_light));
+        mColors.add(res.getColor(android.R.color.holo_green_dark));
+        mColors.add(res.getColor(android.R.color.holo_blue_bright));
+        mColors.add(res.getColor(android.R.color.holo_blue_light));
+        mColors.add(res.getColor(android.R.color.holo_blue_dark));
+        mColors.add(res.getColor(android.R.color.holo_purple));
+        mColors.add(res.getColor(android.R.color.white));
+        mColors.add(Color.TRANSPARENT);
+        if (mColors.contains(mCustomizedColor)) {
 
-	@Override
-	protected void onSaveInstanceState(final Bundle outState) {
-		outState.putInt(Accounts.USER_COLOR, mCustomizedColor);
-		super.onSaveInstanceState(outState);
-	}
+        }
+        final ColorsAdapter adapter = new ColorsAdapter(this, mColors);
+        adapter.setCustomizedColor(mCustomizedColor);
+        mColorsGrid.setAdapter(adapter);
+        mColorsGrid.setOnItemClickListener(this);
 
-	private void finishSelecting(final int color) {
-		final Intent intent = new Intent();
-		final Bundle bundle = new Bundle();
-		bundle.putInt(Accounts.USER_COLOR, color);
-		intent.putExtras(bundle);
-		setResult(RESULT_OK, intent);
-		finish();
-	}
+    }
 
-	private void showDialog() {
-		final FragmentTransaction ft = getFragmentManager().beginTransaction();
-		mFragment.setInitialColor(mCustomizedColor);
-		mFragment.show(ft, "dialog");
-	}
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        outState.putInt(Accounts.USER_COLOR, mCustomizedColor);
+        super.onSaveInstanceState(outState);
+    }
 
-	static class ColorsAdapter extends ArrayAdapter<Integer> {
+    private void finishSelecting(final int color) {
+        final Intent intent = new Intent();
+        final Bundle bundle = new Bundle();
+        bundle.putInt(Accounts.USER_COLOR, color);
+        intent.putExtras(bundle);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
 
-		private final Context mContext;
-		private int mCustomizedColor;
+    private void showDialog() {
+        final FragmentTransaction ft = getFragmentManager().beginTransaction();
+        mFragment.setInitialColor(mCustomizedColor);
+        mFragment.show(ft, "dialog");
+    }
 
-		public ColorsAdapter(final Context context, final List<Integer> objects) {
-			super(context, R.layout.color_grid_item, objects);
-			mContext = context;
-		}
+    static class ColorsAdapter extends ArrayAdapter<Integer> {
 
-		@Override
-		public View getView(final int position, final View convertView, final ViewGroup parent) {
-			final View view = super.getView(position, convertView, parent);
-			final ImageView color = (ImageView) view.findViewById(R.id.color);
-			final boolean is_last = position == getCount() - 1;
-			view.findViewById(R.id.text).setVisibility(is_last ? View.VISIBLE : View.GONE);
-			color.setImageBitmap(getColorPreviewBitmap(mContext, is_last ? mCustomizedColor : getItem(position)));
-			return view;
-		}
+        private final Context mContext;
+        private int mCustomizedColor;
 
-		public void setCustomizedColor(final int color) {
-			if (mCustomizedColor == color) return;
-			mCustomizedColor = color;
-			notifyDataSetChanged();
-		}
-	}
+        public ColorsAdapter(final Context context, final List<Integer> objects) {
+            super(context, R.layout.color_grid_item, objects);
+            mContext = context;
+        }
+
+        @Override
+        public View getView(final int position, final View convertView, final ViewGroup parent) {
+            final View view = super.getView(position, convertView, parent);
+            final ImageView color = (ImageView) view.findViewById(R.id.color);
+            final boolean is_last = position == getCount() - 1;
+            view.findViewById(R.id.text).setVisibility(is_last ? View.VISIBLE : View.GONE);
+            color.setImageBitmap(getColorPreviewBitmap(mContext, is_last ? mCustomizedColor
+                    : getItem(position)));
+            return view;
+        }
+
+        public void setCustomizedColor(final int color) {
+            if (mCustomizedColor == color)
+                return;
+            mCustomizedColor = color;
+            notifyDataSetChanged();
+        }
+    }
 
 }

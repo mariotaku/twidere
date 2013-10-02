@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package twitter4j;
 
 import java.io.Serializable;
@@ -24,54 +25,54 @@ import java.util.Map;
  * @since Twitter4J 2.2.3
  */
 public interface MediaEntity extends URLEntity, Serializable {
-	/**
-	 * Returns the id of the media.
-	 * 
-	 * @return the id of the media
-	 */
-	long getId();
+    /**
+     * Returns the id of the media.
+     * 
+     * @return the id of the media
+     */
+    long getId();
 
-	/**
-	 * Returns the media URL.
-	 * 
-	 * @return the media URL
-	 */
-	URL getMediaURL();
+    /**
+     * Returns the media URL.
+     * 
+     * @return the media URL
+     */
+    URL getMediaURL();
 
-	/**
-	 * Returns the media secure URL.
-	 * 
-	 * @return the media secure URL
-	 */
-	URL getMediaURLHttps();
+    /**
+     * Returns the media secure URL.
+     * 
+     * @return the media secure URL
+     */
+    URL getMediaURLHttps();
 
-	/**
-	 * Returns size variations of the media.
-	 * 
-	 * @return size variations of the media
-	 */
-	Map<Integer, Size> getSizes();
+    /**
+     * Returns size variations of the media.
+     * 
+     * @return size variations of the media
+     */
+    Map<Integer, Size> getSizes();
 
-	/**
-	 * Returns the media type ("photo").
-	 * 
-	 * @return the media type ("photo").
-	 */
-	String getType();
+    /**
+     * Returns the media type ("photo").
+     * 
+     * @return the media type ("photo").
+     */
+    String getType();
 
-	interface Size extends Serializable {
-		Integer THUMB = 0;
-		Integer SMALL = 1;
-		Integer MEDIUM = 2;
-		Integer LARGE = 3;
-		int FIT = 100;
-		int CROP = 101;
+    interface Size extends Serializable {
+        Integer THUMB = 0;
+        Integer SMALL = 1;
+        Integer MEDIUM = 2;
+        Integer LARGE = 3;
+        int FIT = 100;
+        int CROP = 101;
 
-		int getHeight();
+        int getHeight();
 
-		int getResize();
+        int getResize();
 
-		int getWidth();
-	}
+        int getWidth();
+    }
 
 }

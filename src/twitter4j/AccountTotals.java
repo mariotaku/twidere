@@ -23,31 +23,31 @@ import java.io.Serializable;
  * @since Twitter4J 2.1.9
  */
 public interface AccountTotals extends TwitterResponse, Serializable {
-	/**
-	 * Returns the number of total favorites.
-	 * 
-	 * @return the number of total favorites
-	 */
-	int getFavorites();
+    /**
+     * Returns the number of total favorites.
+     * 
+     * @return the number of total favorites
+     */
+    int getFavorites();
 
-	/**
-	 * Returns the number of total followers.
-	 * 
-	 * @return the number of total followers
-	 */
-	int getFollowers();
+    /**
+     * Returns the number of total followers.
+     * 
+     * @return the number of total followers
+     */
+    int getFollowers();
 
-	/**
-	 * Returns the number of total friends.
-	 * 
-	 * @return the number of total friends
-	 */
-	int getFriends();
+    /**
+     * Returns the number of total friends.
+     * 
+     * @return the number of total friends
+     */
+    int getFriends();
 
-	/**
-	 * Returns the number of total updates.
-	 * 
-	 * @return the number of total updates
-	 */
-	int getUpdates();
+    /**
+     * Returns the number of total updates.
+     * 
+     * @return the number of total updates
+     */
+    int getUpdates();
 }

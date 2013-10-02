@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
+
 package com.nostra13.universalimageloader.core.assist;
 
 /**
@@ -23,47 +24,48 @@ package com.nostra13.universalimageloader.core.assist;
  */
 public class ImageSize {
 
-	private static final int TO_STRING_MAX_LENGHT = 9; // "9999x9999".length()
-	private static final String SEPARATOR = "x";
+    private static final int TO_STRING_MAX_LENGHT = 9; // "9999x9999".length()
+    private static final String SEPARATOR = "x";
 
-	private final int width;
-	private final int height;
+    private final int width;
+    private final int height;
 
-	public ImageSize(final int width, final int height) {
-		this.width = width;
-		this.height = height;
-	}
+    public ImageSize(final int width, final int height) {
+        this.width = width;
+        this.height = height;
+    }
 
-	public ImageSize(final int width, final int height, final int rotation) {
-		if (rotation % 180 == 0) {
-			this.width = width;
-			this.height = height;
-		} else {
-			this.width = height;
-			this.height = width;
-		}
-	}
+    public ImageSize(final int width, final int height, final int rotation) {
+        if (rotation % 180 == 0) {
+            this.width = width;
+            this.height = height;
+        } else {
+            this.width = height;
+            this.height = width;
+        }
+    }
 
-	public int getHeight() {
-		return height;
-	}
+    public int getHeight() {
+        return height;
+    }
 
-	public int getWidth() {
-		return width;
-	}
+    public int getWidth() {
+        return width;
+    }
 
-	/** Scales dimensions according to incoming scale. Returns new object. */
-	public ImageSize scale(final float scale) {
-		return new ImageSize((int) (width * scale), (int) (height * scale));
-	}
+    /** Scales dimensions according to incoming scale. Returns new object. */
+    public ImageSize scale(final float scale) {
+        return new ImageSize((int) (width * scale), (int) (height * scale));
+    }
 
-	/** Scales down dimensions in <b>sampleSize</b> times. Returns new object. */
-	public ImageSize scaleDown(final int sampleSize) {
-		return new ImageSize(width / sampleSize, height / sampleSize);
-	}
+    /** Scales down dimensions in <b>sampleSize</b> times. Returns new object. */
+    public ImageSize scaleDown(final int sampleSize) {
+        return new ImageSize(width / sampleSize, height / sampleSize);
+    }
 
-	@Override
-	public String toString() {
-		return new StringBuilder(TO_STRING_MAX_LENGHT).append(width).append(SEPARATOR).append(height).toString();
-	}
+    @Override
+    public String toString() {
+        return new StringBuilder(TO_STRING_MAX_LENGHT).append(width).append(SEPARATOR)
+                .append(height).toString();
+    }
 }

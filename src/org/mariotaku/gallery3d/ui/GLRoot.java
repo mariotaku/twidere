@@ -21,33 +21,33 @@ import android.graphics.Matrix;
 
 public interface GLRoot {
 
-	public void addOnGLIdleListener(OnGLIdleListener listener);
+    public void addOnGLIdleListener(OnGLIdleListener listener);
 
-	public void freeze();
+    public void freeze();
 
-	public int getCompensation();
+    public int getCompensation();
 
-	public Matrix getCompensationMatrix();
+    public Matrix getCompensationMatrix();
 
-	public Context getContext();
+    public Context getContext();
 
-	public int getDisplayRotation();
+    public int getDisplayRotation();
 
-	public void lockRenderThread();
+    public void lockRenderThread();
 
-	public void requestLayoutContentPane();
+    public void requestLayoutContentPane();
 
-	public void requestRender();
+    public void requestRender();
 
-	public void setContentPane(GLView content);
+    public void setContentPane(GLView content);
 
-	public void unfreeze();
+    public void unfreeze();
 
-	public void unlockRenderThread();
+    public void unlockRenderThread();
 
-	// Listener will be called when GL is idle AND before each frame.
-	// Mainly used for uploading textures.
-	public static interface OnGLIdleListener {
-		public boolean onGLIdle(GLCanvas canvas, boolean renderRequested);
-	}
+    // Listener will be called when GL is idle AND before each frame.
+    // Mainly used for uploading textures.
+    public static interface OnGLIdleListener {
+        public boolean onGLIdle(GLCanvas canvas, boolean renderRequested);
+    }
 }

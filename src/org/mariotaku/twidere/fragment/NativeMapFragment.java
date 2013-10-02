@@ -19,9 +19,6 @@
 
 package org.mariotaku.twidere.fragment;
 
-import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.util.MapInterface;
-
 import android.os.Bundle;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -31,31 +28,47 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.util.MapInterface;
+
 public class NativeMapFragment extends MapFragment implements Constants, MapInterface {
 
-	private GoogleMap mMapView;
+    private GoogleMap mMapView;
 
-	@Override
-	public void center() {
-		final Bundle args = getArguments();
-		if (mMapView == null || args == null || !args.containsKey(INTENT_KEY_LATITUDE)
-				|| !args.containsKey(INTENT_KEY_LONGITUDE)) return;
-		final double lat = args.getDouble(INTENT_KEY_LATITUDE, 0.0), lng = args.getDouble(INTENT_KEY_LONGITUDE, 0.0);
-		final CameraUpdate c = CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 12);
-		mMapView.animateCamera(c);
-	}
+    @Override
+    public void center() {
+        center(true);
+    }
 
-	@Override
-	public void onActivityCreated(final Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		final Bundle args = getArguments();
-		if (args == null || !args.containsKey(INTENT_KEY_LATITUDE) || !args.containsKey(INTENT_KEY_LONGITUDE)) return;
-		final double lat = args.getDouble(INTENT_KEY_LATITUDE, 0.0), lng = args.getDouble(INTENT_KEY_LONGITUDE, 0.0);
-		mMapView = getMap();
-		final MarkerOptions marker = new MarkerOptions();
-		marker.position(new LatLng(lat, lng));
-		mMapView.addMarker(marker);
-		center();
-	}
+    public void center(final boolean animate) {
+        final Bundle args = getArguments();
+        if (mMapView == null || args == null || !args.containsKey(INTENT_KEY_LATITUDE)
+                || !args.containsKey(INTENT_KEY_LONGITUDE))
+            return;
+        final double lat = args.getDouble(INTENT_KEY_LATITUDE, 0.0), lng = args.getDouble(
+                INTENT_KEY_LONGITUDE, 0.0);
+        final CameraUpdate c = CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 12);
+        if (animate) {
+            mMapView.animateCamera(c);
+        } else {
+            mMapView.moveCamera(c);
+        }
+    }
+
+    @Override
+    public void onActivityCreated(final Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        final Bundle args = getArguments();
+        if (args == null || !args.containsKey(INTENT_KEY_LATITUDE)
+                || !args.containsKey(INTENT_KEY_LONGITUDE))
+            return;
+        final double lat = args.getDouble(INTENT_KEY_LATITUDE, 0.0), lng = args.getDouble(
+                INTENT_KEY_LONGITUDE, 0.0);
+        mMapView = getMap();
+        final MarkerOptions marker = new MarkerOptions();
+        marker.position(new LatLng(lat, lng));
+        mMapView.addMarker(marker);
+        center(false);
+    }
 
 }

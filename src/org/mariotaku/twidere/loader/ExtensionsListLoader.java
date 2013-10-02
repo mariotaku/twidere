@@ -19,12 +19,6 @@
 
 package org.mariotaku.twidere.loader;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.util.ParseUtils;
-
 import android.content.AsyncTaskLoader;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -39,157 +33,166 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 
-public class ExtensionsListLoader extends AsyncTaskLoader<List<ExtensionsListLoader.ExtensionInfo>> implements
-		Constants {
+import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.util.ParseUtils;
 
-	private PackageIntentReceiver mPackageObserver;
-	private final InterestingConfigChanges mLastConfig = new InterestingConfigChanges();
-	private final PackageManager mPackageManager;
+import java.util.ArrayList;
+import java.util.List;
 
-	public ExtensionsListLoader(final Context context, final PackageManager pm) {
-		super(context);
-		mPackageManager = pm;
-	}
+public class ExtensionsListLoader extends AsyncTaskLoader<List<ExtensionsListLoader.ExtensionInfo>>
+        implements
+        Constants {
 
-	@Override
-	public List<ExtensionInfo> loadInBackground() {
-		final List<ApplicationInfo> apps = mPackageManager.getInstalledApplications(PackageManager.GET_META_DATA);
-		final List<ExtensionInfo> extensions = new ArrayList<ExtensionInfo>();
-		for (final ApplicationInfo info : apps) {
-			final Bundle meta = info.metaData;
-			if (meta != null && meta.getBoolean(METADATA_KEY_EXTENSION, false)) {
-				extensions.add(new ExtensionInfo(info, mPackageManager));
-			}
-		}
-		return extensions;
-	}
+    private PackageIntentReceiver mPackageObserver;
+    private final InterestingConfigChanges mLastConfig = new InterestingConfigChanges();
+    private final PackageManager mPackageManager;
 
-	/**
-	 * Handles a request to completely reset the Loader.
-	 */
-	@Override
-	protected void onReset() {
-		super.onReset();
+    public ExtensionsListLoader(final Context context, final PackageManager pm) {
+        super(context);
+        mPackageManager = pm;
+    }
 
-		// Ensure the loader is stopped
-		onStopLoading();
+    @Override
+    public List<ExtensionInfo> loadInBackground() {
+        final List<ApplicationInfo> apps = mPackageManager
+                .getInstalledApplications(PackageManager.GET_META_DATA);
+        final List<ExtensionInfo> extensions = new ArrayList<ExtensionInfo>();
+        for (final ApplicationInfo info : apps) {
+            final Bundle meta = info.metaData;
+            if (meta != null && meta.getBoolean(METADATA_KEY_EXTENSION, false)) {
+                extensions.add(new ExtensionInfo(info, mPackageManager));
+            }
+        }
+        return extensions;
+    }
 
-		// Stop monitoring for changes.
-		if (mPackageObserver != null) {
-			getContext().unregisterReceiver(mPackageObserver);
-			mPackageObserver = null;
-		}
-	}
+    /**
+     * Handles a request to completely reset the Loader.
+     */
+    @Override
+    protected void onReset() {
+        super.onReset();
 
-	/**
-	 * Handles a request to start the Loader.
-	 */
-	@Override
-	protected void onStartLoading() {
+        // Ensure the loader is stopped
+        onStopLoading();
 
-		// Start watching for changes in the app data.
-		if (mPackageObserver == null) {
-			mPackageObserver = new PackageIntentReceiver(this);
-		}
+        // Stop monitoring for changes.
+        if (mPackageObserver != null) {
+            getContext().unregisterReceiver(mPackageObserver);
+            mPackageObserver = null;
+        }
+    }
 
-		// Has something interesting in the configuration changed since we
-		// last built the app list?
-		final boolean configChange = mLastConfig.applyNewConfig(getContext().getResources());
+    /**
+     * Handles a request to start the Loader.
+     */
+    @Override
+    protected void onStartLoading() {
 
-		if (takeContentChanged() || configChange) {
-			// If the data has changed since the last time it was loaded
-			// or is not currently available, start a load.
-			forceLoad();
-		}
-	}
+        // Start watching for changes in the app data.
+        if (mPackageObserver == null) {
+            mPackageObserver = new PackageIntentReceiver(this);
+        }
 
-	/**
-	 * Handles a request to stop the Loader.
-	 */
-	@Override
-	protected void onStopLoading() {
-		// Attempt to cancel the current load task if possible.
-		cancelLoad();
-	}
+        // Has something interesting in the configuration changed since we
+        // last built the app list?
+        final boolean configChange = mLastConfig.applyNewConfig(getContext().getResources());
 
-	public static class ExtensionInfo implements Comparable<ExtensionInfo> {
-		public final int permissions;
-		public final String label, description;
-		public final String pname, settings;
-		public final Drawable icon;
+        if (takeContentChanged() || configChange) {
+            // If the data has changed since the last time it was loaded
+            // or is not currently available, start a load.
+            forceLoad();
+        }
+    }
 
-		ExtensionInfo(final ApplicationInfo info, final PackageManager pm) {
-			final Bundle meta = info.metaData;
-			permissions = meta.getInt(METADATA_KEY_PERMISSIONS, PERMISSION_INVALID);
-			settings = meta.getString(METADATA_KEY_SETTINGS);
-			icon = info.loadIcon(pm);
-			pname = info.packageName;
-			label = ParseUtils.parseString(info.loadLabel(pm), pname);
-			description = ParseUtils.parseString(info.loadDescription(pm));
-		}
+    /**
+     * Handles a request to stop the Loader.
+     */
+    @Override
+    protected void onStopLoading() {
+        // Attempt to cancel the current load task if possible.
+        cancelLoad();
+    }
 
-		@Override
-		public int compareTo(final ExtensionInfo another) {
-			return label.compareToIgnoreCase(another.label);
-		}
+    public static class ExtensionInfo implements Comparable<ExtensionInfo> {
+        public final int permissions;
+        public final String label, description;
+        public final String pname, settings;
+        public final Drawable icon;
 
-		@Override
-		public String toString() {
-			return "ExtensionInfo{permission=" + permissions + ", label=" + label + ", description=" + description
-					+ ", pname=" + pname + ", settings=" + settings + ", icon=" + icon + "}";
-		}
-	}
+        ExtensionInfo(final ApplicationInfo info, final PackageManager pm) {
+            final Bundle meta = info.metaData;
+            permissions = meta.getInt(METADATA_KEY_PERMISSIONS, PERMISSION_INVALID);
+            settings = meta.getString(METADATA_KEY_SETTINGS);
+            icon = info.loadIcon(pm);
+            pname = info.packageName;
+            label = ParseUtils.parseString(info.loadLabel(pm), pname);
+            description = ParseUtils.parseString(info.loadDescription(pm));
+        }
 
-	/**
-	 * Helper for determining if the configuration has changed in an interesting
-	 * way so we need to rebuild the app list.
-	 */
-	public static class InterestingConfigChanges {
+        @Override
+        public int compareTo(final ExtensionInfo another) {
+            return label.compareToIgnoreCase(another.label);
+        }
 
-		final Configuration mLastConfiguration = new Configuration();
-		int mLastDensity;
+        @Override
+        public String toString() {
+            return "ExtensionInfo{permission=" + permissions + ", label=" + label
+                    + ", description=" + description
+                    + ", pname=" + pname + ", settings=" + settings + ", icon=" + icon + "}";
+        }
+    }
 
-		boolean applyNewConfig(final Resources res) {
-			final int configChanges = mLastConfiguration.updateFrom(res.getConfiguration());
-			final boolean densityChanged = mLastDensity != res.getDisplayMetrics().densityDpi;
-			if (densityChanged
-					|| (configChanges & (ActivityInfo.CONFIG_LOCALE | ActivityInfo.CONFIG_UI_MODE | ActivityInfo.CONFIG_SCREEN_LAYOUT)) != 0) {
-				mLastDensity = res.getDisplayMetrics().densityDpi;
-				return true;
-			}
-			return false;
-		}
-	}
+    /**
+     * Helper for determining if the configuration has changed in an interesting
+     * way so we need to rebuild the app list.
+     */
+    public static class InterestingConfigChanges {
 
-	/**
-	 * Helper class to look for interesting changes to the installed apps so
-	 * that the loader can be updated.
-	 */
-	public static class PackageIntentReceiver extends BroadcastReceiver {
+        final Configuration mLastConfiguration = new Configuration();
+        int mLastDensity;
 
-		final ExtensionsListLoader mLoader;
+        boolean applyNewConfig(final Resources res) {
+            final int configChanges = mLastConfiguration.updateFrom(res.getConfiguration());
+            final boolean densityChanged = mLastDensity != res.getDisplayMetrics().densityDpi;
+            if (densityChanged
+                    || (configChanges & (ActivityInfo.CONFIG_LOCALE | ActivityInfo.CONFIG_UI_MODE | ActivityInfo.CONFIG_SCREEN_LAYOUT)) != 0) {
+                mLastDensity = res.getDisplayMetrics().densityDpi;
+                return true;
+            }
+            return false;
+        }
+    }
 
-		public PackageIntentReceiver(final ExtensionsListLoader loader) {
-			mLoader = loader;
-			final IntentFilter filter = new IntentFilter(Intent.ACTION_PACKAGE_ADDED);
-			filter.addAction(Intent.ACTION_PACKAGE_REMOVED);
-			filter.addAction(Intent.ACTION_PACKAGE_CHANGED);
-			filter.addDataScheme("package");
-			mLoader.getContext().registerReceiver(this, filter);
-			// Register for events related to sdcard installation.
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-				final IntentFilter sdFilter = new IntentFilter();
-				sdFilter.addAction(Intent.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE);
-				sdFilter.addAction(Intent.ACTION_EXTERNAL_APPLICATIONS_UNAVAILABLE);
-				mLoader.getContext().registerReceiver(this, sdFilter);
-			}
-		}
+    /**
+     * Helper class to look for interesting changes to the installed apps so
+     * that the loader can be updated.
+     */
+    public static class PackageIntentReceiver extends BroadcastReceiver {
 
-		@Override
-		public void onReceive(final Context context, final Intent intent) {
-			// Tell the loader about the change.
-			mLoader.onContentChanged();
-		}
-	}
+        final ExtensionsListLoader mLoader;
+
+        public PackageIntentReceiver(final ExtensionsListLoader loader) {
+            mLoader = loader;
+            final IntentFilter filter = new IntentFilter(Intent.ACTION_PACKAGE_ADDED);
+            filter.addAction(Intent.ACTION_PACKAGE_REMOVED);
+            filter.addAction(Intent.ACTION_PACKAGE_CHANGED);
+            filter.addDataScheme("package");
+            mLoader.getContext().registerReceiver(this, filter);
+            // Register for events related to sdcard installation.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+                final IntentFilter sdFilter = new IntentFilter();
+                sdFilter.addAction(Intent.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE);
+                sdFilter.addAction(Intent.ACTION_EXTERNAL_APPLICATIONS_UNAVAILABLE);
+                mLoader.getContext().registerReceiver(this, sdFilter);
+            }
+        }
+
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            // Tell the loader about the change.
+            mLoader.onContentChanged();
+        }
+    }
 
 }

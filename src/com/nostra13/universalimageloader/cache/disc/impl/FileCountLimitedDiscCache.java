@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.nostra13.universalimageloader.cache.disc.impl;
 
-import java.io.File;
+package com.nostra13.universalimageloader.cache.disc.impl;
 
 import com.nostra13.universalimageloader.cache.disc.LimitedDiscCache;
 import com.nostra13.universalimageloader.cache.disc.naming.FileNameGenerator;
 import com.nostra13.universalimageloader.core.DefaultConfigurationFactory;
+
+import java.io.File;
 
 /**
  * Disc cache limited by file count. If file count in cache directory exceeds
@@ -31,34 +32,35 @@ import com.nostra13.universalimageloader.core.DefaultConfigurationFactory;
  * @since 1.0.0
  */
 public class FileCountLimitedDiscCache extends LimitedDiscCache {
-	/**
-	 * @param cacheDir Directory for file caching. <b>Important:</b> Specify
-	 *            separate folder for cached files. It's needed for right cache
-	 *            limit work.
-	 * @param fileNameGenerator Name generator for cached files
-	 * @param maxFileCount Maximum file count for cache. If file count in cache
-	 *            directory exceeds this limit then file with the most oldest
-	 *            last usage date will be deleted.
-	 */
-	public FileCountLimitedDiscCache(final File cacheDir, final FileNameGenerator fileNameGenerator,
-			final int maxFileCount) {
-		super(cacheDir, fileNameGenerator, maxFileCount);
-	}
+    /**
+     * @param cacheDir Directory for file caching. <b>Important:</b> Specify
+     *            separate folder for cached files. It's needed for right cache
+     *            limit work.
+     * @param fileNameGenerator Name generator for cached files
+     * @param maxFileCount Maximum file count for cache. If file count in cache
+     *            directory exceeds this limit then file with the most oldest
+     *            last usage date will be deleted.
+     */
+    public FileCountLimitedDiscCache(final File cacheDir,
+            final FileNameGenerator fileNameGenerator,
+            final int maxFileCount) {
+        super(cacheDir, fileNameGenerator, maxFileCount);
+    }
 
-	/**
-	 * @param cacheDir Directory for file caching. <b>Important:</b> Specify
-	 *            separate folder for cached files. It's needed for right cache
-	 *            limit work.
-	 * @param maxFileCount Maximum file count for cache. If file count in cache
-	 *            directory exceeds this limit then file with the most oldest
-	 *            last usage date will be deleted.
-	 */
-	public FileCountLimitedDiscCache(final File cacheDir, final int maxFileCount) {
-		this(cacheDir, DefaultConfigurationFactory.createFileNameGenerator(), maxFileCount);
-	}
+    /**
+     * @param cacheDir Directory for file caching. <b>Important:</b> Specify
+     *            separate folder for cached files. It's needed for right cache
+     *            limit work.
+     * @param maxFileCount Maximum file count for cache. If file count in cache
+     *            directory exceeds this limit then file with the most oldest
+     *            last usage date will be deleted.
+     */
+    public FileCountLimitedDiscCache(final File cacheDir, final int maxFileCount) {
+        this(cacheDir, DefaultConfigurationFactory.createFileNameGenerator(), maxFileCount);
+    }
 
-	@Override
-	protected int getSize(final File file) {
-		return 1;
-	}
+    @Override
+    protected int getSize(final File file) {
+        return 1;
+    }
 }

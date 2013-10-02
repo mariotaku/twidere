@@ -27,49 +27,49 @@ import java.io.InputStream;
 
 public class ContentLengthInputStream extends InputStream {
 
-	private final InputStream stream;
-	private final int length;
-	private int available;
-	private ReadListener readListener;
+    private final InputStream stream;
+    private final int length;
+    private int available;
+    private ReadListener readListener;
 
-	public ContentLengthInputStream(final File file) throws FileNotFoundException {
-		this(new FileInputStream(file), file.length());
-	}
+    public ContentLengthInputStream(final File file) throws FileNotFoundException {
+        this(new FileInputStream(file), file.length());
+    }
 
-	public ContentLengthInputStream(final InputStream stream, final long length) {
-		this.stream = stream;
-		this.length = available = (int) length;
-	}
+    public ContentLengthInputStream(final InputStream stream, final long length) {
+        this.stream = stream;
+        this.length = available = (int) length;
+    }
 
-	@Override
-	public synchronized int available() {
-		return available;
-	}
+    @Override
+    public synchronized int available() {
+        return available;
+    }
 
-	@Override
-	public void close() throws IOException {
-		stream.close();
-	}
+    @Override
+    public void close() throws IOException {
+        stream.close();
+    }
 
-	public int length() {
-		return length;
-	}
+    public int length() {
+        return length;
+    }
 
-	@Override
-	public int read() throws IOException {
-		available--;
-		if (readListener != null) {
-			readListener.onRead(length, available);
-		}
-		return stream.read();
-	}
+    @Override
+    public int read() throws IOException {
+        available--;
+        if (readListener != null) {
+            readListener.onRead(length, available);
+        }
+        return stream.read();
+    }
 
-	public void setReadListener(final ReadListener readListener) {
-		this.readListener = readListener;
-	}
+    public void setReadListener(final ReadListener readListener) {
+        this.readListener = readListener;
+    }
 
-	public interface ReadListener {
-		void onRead(int length, int available);
-	}
+    public interface ReadListener {
+        void onRead(int length, int available);
+    }
 
 }

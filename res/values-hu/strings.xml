@@ -53,7 +53,7 @@
   <string name="view_user_profile">Felhasználói profil</string>
   <string name="browser">Böngésző</string>
   <string name="pick_from_gallery">Választás a Galériából</string>
-  <string name="tweets">Tweetek</string>
+  <string name="statuses">Tweetek</string>
   <string name="followers">Követők</string>
   <string name="about">Általános infó</string>
   <string name="about_summary">A Twidere-ről</string>
@@ -246,7 +246,7 @@
   <string name="click_to_open_menu_summary">Kattints a menü megnyitásához, hossz kattintással tud több elemet kijelölni.</string>
   <string name="send_follow_request">Követési kérelem küldése</string>
   <string name="follow_request_sent">Követési kérelem elküldve</string>
-  <string name="tweet">Tweet</string>
+  <string name="status">Tweet</string>
   <string name="preview">Előnézet</string>
   <string name="api_upgrade_notice_title">NAGYON FONTOS!</string>
   <string name="api_upgrade_notice_message">  Twitter bejelentette az API-jának új (1.1-es) verzióját.\n\n  E verzió óta a Twidere a Twitter API 1.1-es verzióját használja.\n\n  Ezért NAGYON JAVASOLT újra belépnie, ellenkező esetben problémák lehetnek a Twidere használata során.\n\n  Mi változott az 1.1-es API verzióban?\n  *Még szigorúbb kapcsolodási szabályok. Például: 15 percenkén maximum 15x tudja lekérdezni a saját oldalát.\n  *Nem fogja látni, hogy ki retwettelte önt\n  *Ha Status Net kliensként használja több funkció nem fog menni az API változások miatt.\n\n  Elnézést a kellemetlenségért, de ezekről csak a Twitter tehet.</string>

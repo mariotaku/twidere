@@ -19,9 +19,6 @@
 
 package org.mariotaku.twidere.preference;
 
-import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.R;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -30,71 +27,77 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.util.AttributeSet;
 
-public abstract class AsyncTaskPreference extends Preference implements Constants, OnPreferenceClickListener {
+import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.R;
 
-	private Task mTask;
+public abstract class AsyncTaskPreference extends Preference implements Constants,
+        OnPreferenceClickListener {
 
-	public AsyncTaskPreference(final Context context) {
-		this(context, null);
-	}
+    private Task mTask;
 
-	public AsyncTaskPreference(final Context context, final AttributeSet attrs) {
-		this(context, attrs, android.R.attr.preferenceStyle);
-	}
+    public AsyncTaskPreference(final Context context) {
+        this(context, null);
+    }
 
-	public AsyncTaskPreference(final Context context, final AttributeSet attrs, final int defStyle) {
-		super(context, attrs, defStyle);
-		setOnPreferenceClickListener(this);
-	}
+    public AsyncTaskPreference(final Context context, final AttributeSet attrs) {
+        this(context, attrs, android.R.attr.preferenceStyle);
+    }
 
-	@Override
-	public final boolean onPreferenceClick(final Preference preference) {
-		if (mTask == null || mTask.getStatus() != Status.RUNNING) {
-			mTask = new Task(this);
-			mTask.execute();
-		}
-		return true;
-	}
+    public AsyncTaskPreference(final Context context, final AttributeSet attrs, final int defStyle) {
+        super(context, attrs, defStyle);
+        setOnPreferenceClickListener(this);
+    }
 
-	protected abstract void doInBackground();
+    @Override
+    public final boolean onPreferenceClick(final Preference preference) {
+        if (mTask == null || mTask.getStatus() != Status.RUNNING) {
+            mTask = new Task(this);
+            mTask.execute();
+        }
+        return true;
+    }
 
-	private static class Task extends AsyncTask<Void, Void, Void> {
+    protected abstract void doInBackground();
 
-		private final AsyncTaskPreference mPreference;
-		private final Context mContext;
-		private final ProgressDialog mProgress;
+    private static class Task extends AsyncTask<Void, Void, Void> {
 
-		public Task(final AsyncTaskPreference preference) {
-			mPreference = preference;
-			mContext = preference.getContext();
-			mProgress = new ProgressDialog(mContext);
-		}
+        private final AsyncTaskPreference mPreference;
+        private final Context mContext;
+        private final ProgressDialog mProgress;
 
-		@Override
-		protected Void doInBackground(final Void... args) {
-			mPreference.doInBackground();
-			return null;
-		}
+        public Task(final AsyncTaskPreference preference) {
+            mPreference = preference;
+            mContext = preference.getContext();
+            mProgress = new ProgressDialog(mContext);
+        }
 
-		@Override
-		protected void onPostExecute(final Void result) {
-			if (mProgress == null) return;
-			if (mProgress.isShowing()) {
-				mProgress.dismiss();
-			}
-		}
+        @Override
+        protected Void doInBackground(final Void... args) {
+            mPreference.doInBackground();
+            return null;
+        }
 
-		@Override
-		protected void onPreExecute() {
-			if (mProgress == null) return;
-			if (mProgress.isShowing()) {
-				mProgress.dismiss();
-			}
-			mProgress.setMessage(mContext.getString(R.string.please_wait));
-			mProgress.setCancelable(false);
-			mProgress.show();
-		}
+        @Override
+        protected void onPostExecute(final Void result) {
+            if (mProgress == null)
+                return;
+            if (mProgress.isShowing()) {
+                mProgress.dismiss();
+            }
+        }
 
-	}
+        @Override
+        protected void onPreExecute() {
+            if (mProgress == null)
+                return;
+            if (mProgress.isShowing()) {
+                mProgress.dismiss();
+            }
+            mProgress.setMessage(mContext.getString(R.string.please_wait));
+            mProgress.setCancelable(false);
+            mProgress.show();
+        }
+
+    }
 
 }

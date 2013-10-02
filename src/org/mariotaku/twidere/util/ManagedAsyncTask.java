@@ -19,59 +19,60 @@
 
 package org.mariotaku.twidere.util;
 
-import org.mariotaku.twidere.Constants;
-
 import android.content.Context;
 import android.content.Intent;
 
-public abstract class ManagedAsyncTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> implements
-		Constants {
+import org.mariotaku.twidere.Constants;
 
-	private final AsyncTaskManager manager;
-	private final Context context;
-	private final String tag;
+public abstract class ManagedAsyncTask<Params, Progress, Result> extends
+        AsyncTask<Params, Progress, Result> implements
+        Constants {
 
-	public ManagedAsyncTask(final Context context, final AsyncTaskManager manager) {
-		this(context, manager, null);
-	}
+    private final AsyncTaskManager manager;
+    private final Context context;
+    private final String tag;
 
-	public ManagedAsyncTask(final Context context, final AsyncTaskManager manager, final String tag) {
-		super(manager.getHandler());
-		this.manager = manager;
-		this.context = context;
-		this.tag = tag;
-	}
+    public ManagedAsyncTask(final Context context, final AsyncTaskManager manager) {
+        this(context, manager, null);
+    }
 
-	public Context getContext() {
-		return context;
-	}
+    public ManagedAsyncTask(final Context context, final AsyncTaskManager manager, final String tag) {
+        super(manager.getHandler());
+        this.manager = manager;
+        this.context = context;
+        this.tag = tag;
+    }
 
-	public String getTag() {
-		return tag;
-	}
+    public Context getContext() {
+        return context;
+    }
 
-	@Override
-	protected void finalize() throws Throwable {
-		manager.remove(hashCode());
-		super.finalize();
-	}
+    public String getTag() {
+        return tag;
+    }
 
-	@Override
-	protected void onCancelled() {
-		super.onCancelled();
-		context.sendBroadcast(new Intent(BROADCAST_TASK_STATE_CHANGED));
-	}
+    @Override
+    protected void finalize() throws Throwable {
+        manager.remove(hashCode());
+        super.finalize();
+    }
 
-	@Override
-	protected void onPostExecute(final Result result) {
-		super.onPostExecute(result);
-		context.sendBroadcast(new Intent(BROADCAST_TASK_STATE_CHANGED));
-	}
+    @Override
+    protected void onCancelled() {
+        super.onCancelled();
+        context.sendBroadcast(new Intent(BROADCAST_TASK_STATE_CHANGED));
+    }
 
-	@Override
-	protected void onPreExecute() {
-		super.onPreExecute();
-		context.sendBroadcast(new Intent(BROADCAST_TASK_STATE_CHANGED));
-	}
+    @Override
+    protected void onPostExecute(final Result result) {
+        super.onPostExecute(result);
+        context.sendBroadcast(new Intent(BROADCAST_TASK_STATE_CHANGED));
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        context.sendBroadcast(new Intent(BROADCAST_TASK_STATE_CHANGED));
+    }
 
 }

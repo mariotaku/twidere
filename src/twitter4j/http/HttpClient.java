@@ -25,7 +25,7 @@ import twitter4j.TwitterException;
  */
 public interface HttpClient {
 
-	HttpResponse request(HttpRequest req) throws TwitterException;
+    HttpResponse request(HttpRequest req) throws TwitterException;
 
-	void shutdown();
+    void shutdown();
 }

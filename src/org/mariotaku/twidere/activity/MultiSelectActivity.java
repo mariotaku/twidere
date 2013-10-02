@@ -23,19 +23,6 @@ import static org.mariotaku.twidere.util.ContentResolverUtils.bulkDelete;
 import static org.mariotaku.twidere.util.ContentResolverUtils.bulkInsert;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenNames;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.model.ParcelableUser;
-import org.mariotaku.twidere.provider.TweetStore.Filters;
-import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import org.mariotaku.twidere.util.MultiSelectManager;
-import org.mariotaku.twidere.util.NoDuplicatesArrayList;
-
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -52,174 +39,192 @@ import com.twitter.Extractor;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.provider.TweetStore.Filters;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.MultiSelectManager;
+import org.mariotaku.twidere.util.NoDuplicatesArrayList;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 @SuppressLint("Registered")
-public class MultiSelectActivity extends DualPaneActivity implements ActionMode.Callback, MultiSelectManager.Callback {
+public class MultiSelectActivity extends DualPaneActivity implements ActionMode.Callback,
+        MultiSelectManager.Callback {
 
-	private TwidereApplication mApplication;
+    private TwidereApplication mApplication;
 
-	private AsyncTwitterWrapper mTwitterWrapper;
+    private AsyncTwitterWrapper mTwitterWrapper;
 
-	private MultiSelectManager mMultiSelectManager;
+    private MultiSelectManager mMultiSelectManager;
 
-	private ActionMode mActionMode;
+    private ActionMode mActionMode;
 
-	@Override
-	public boolean onActionItemClicked(final ActionMode mode, final MenuItem item) {
-		final List<Object> selected_items = mMultiSelectManager.getSelectedItems();
-		if (selected_items.isEmpty()) return false;
-		switch (item.getItemId()) {
-			case MENU_REPLY: {
-				final Extractor extractor = new Extractor();
-				final Intent intent = new Intent(INTENT_ACTION_REPLY_MULTIPLE);
-				final Bundle bundle = new Bundle();
-				final String[] account_names = getAccountScreenNames(this);
-				final NoDuplicatesArrayList<String> all_mentions = new NoDuplicatesArrayList<String>();
-				for (final Object object : selected_items) {
-					if (object instanceof ParcelableStatus) {
-						final ParcelableStatus status = (ParcelableStatus) object;
-						all_mentions.add(status.user_screen_name);
-						all_mentions.addAll(extractor.extractMentionedScreennames(status.text_plain));
-					} else if (object instanceof ParcelableUser) {
-						final ParcelableUser user = (ParcelableUser) object;
-						all_mentions.add(user.screen_name);
-					}
-				}
-				all_mentions.removeAll(Arrays.asList(account_names));
-				final Object first_obj = selected_items.get(0);
-				if (first_obj instanceof ParcelableStatus) {
-					final ParcelableStatus first_status = (ParcelableStatus) first_obj;
-					bundle.putLong(INTENT_KEY_ACCOUNT_ID, first_status.account_id);
-					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, first_status.id);
-				} else if (first_obj instanceof ParcelableUser) {
-					final ParcelableUser first_user = (ParcelableUser) first_obj;
-					bundle.putLong(INTENT_KEY_ACCOUNT_ID, first_user.account_id);
-				}
-				bundle.putStringArray(INTENT_KEY_SCREEN_NAMES, all_mentions.toArray(new String[all_mentions.size()]));
-				intent.putExtras(bundle);
-				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				startActivity(intent);
-				mode.finish();
-				break;
-			}
-			case MENU_MUTE_USER: {
-				final ContentResolver resolver = getContentResolver();
-				final Uri uri = Filters.Users.CONTENT_URI;
-				final ArrayList<ContentValues> values_list = new ArrayList<ContentValues>();
-				final List<String> names_list = new NoDuplicatesArrayList<String>();
-				for (final Object object : selected_items) {
-					if (object instanceof ParcelableStatus) {
-						final ParcelableStatus status = (ParcelableStatus) object;
-						names_list.add(status.user_screen_name);
-					} else if (object instanceof ParcelableUser) {
-						final ParcelableUser user = (ParcelableUser) object;
-						names_list.add(user.screen_name);
-					} else {
-						continue;
-					}
-				}
-				bulkDelete(resolver, uri, Filters.Users.VALUE, names_list, null, true);
-				for (final String screen_name : names_list) {
-					final ContentValues values = new ContentValues();
-					values.put(Filters.VALUE, screen_name);
-					values_list.add(values);
-				}
-				bulkInsert(resolver, uri, values_list);
-				Crouton.showText(this, R.string.users_muted, CroutonStyle.INFO);
-				mode.finish();
-				sendBroadcast(new Intent(BROADCAST_MULTI_MUTESTATE_CHANGED));
-				break;
-			}
-			case MENU_BLOCK: {
-				final long account_id = MultiSelectManager.getFirstSelectAccountId(selected_items);
-				final long[] user_ids = MultiSelectManager.getSelectedUserIds(selected_items);
-				if (account_id > 0 && user_ids != null) {
-					mTwitterWrapper.createMultiBlock(account_id, user_ids);
-				}
-				mode.finish();
-				break;
-			}
-			case MENU_REPORT_SPAM: {
-				final long account_id = MultiSelectManager.getFirstSelectAccountId(selected_items);
-				final long[] user_ids = MultiSelectManager.getSelectedUserIds(selected_items);
-				if (account_id > 0 && user_ids != null) {
-					mTwitterWrapper.reportMultiSpam(account_id, user_ids);
-				}
-				mode.finish();
-				break;
-			}
-		}
-		return true;
-	}
+    @Override
+    public boolean onActionItemClicked(final ActionMode mode, final MenuItem item) {
+        final List<Object> selected_items = mMultiSelectManager.getSelectedItems();
+        if (selected_items.isEmpty())
+            return false;
+        switch (item.getItemId()) {
+            case MENU_REPLY: {
+                final Extractor extractor = new Extractor();
+                final Intent intent = new Intent(INTENT_ACTION_REPLY_MULTIPLE);
+                final Bundle bundle = new Bundle();
+                final String[] account_names = getAccountScreenNames(this);
+                final NoDuplicatesArrayList<String> all_mentions = new NoDuplicatesArrayList<String>();
+                for (final Object object : selected_items) {
+                    if (object instanceof ParcelableStatus) {
+                        final ParcelableStatus status = (ParcelableStatus) object;
+                        all_mentions.add(status.user_screen_name);
+                        all_mentions.addAll(extractor
+                                .extractMentionedScreennames(status.text_plain));
+                    } else if (object instanceof ParcelableUser) {
+                        final ParcelableUser user = (ParcelableUser) object;
+                        all_mentions.add(user.screen_name);
+                    }
+                }
+                all_mentions.removeAll(Arrays.asList(account_names));
+                final Object first_obj = selected_items.get(0);
+                if (first_obj instanceof ParcelableStatus) {
+                    final ParcelableStatus first_status = (ParcelableStatus) first_obj;
+                    bundle.putLong(INTENT_KEY_ACCOUNT_ID, first_status.account_id);
+                    bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, first_status.id);
+                } else if (first_obj instanceof ParcelableUser) {
+                    final ParcelableUser first_user = (ParcelableUser) first_obj;
+                    bundle.putLong(INTENT_KEY_ACCOUNT_ID, first_user.account_id);
+                }
+                bundle.putStringArray(INTENT_KEY_SCREEN_NAMES,
+                        all_mentions.toArray(new String[all_mentions.size()]));
+                intent.putExtras(bundle);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                mode.finish();
+                break;
+            }
+            case MENU_MUTE_USER: {
+                final ContentResolver resolver = getContentResolver();
+                final Uri uri = Filters.Users.CONTENT_URI;
+                final ArrayList<ContentValues> values_list = new ArrayList<ContentValues>();
+                final List<String> names_list = new NoDuplicatesArrayList<String>();
+                for (final Object object : selected_items) {
+                    if (object instanceof ParcelableStatus) {
+                        final ParcelableStatus status = (ParcelableStatus) object;
+                        names_list.add(status.user_screen_name);
+                    } else if (object instanceof ParcelableUser) {
+                        final ParcelableUser user = (ParcelableUser) object;
+                        names_list.add(user.screen_name);
+                    } else {
+                        continue;
+                    }
+                }
+                bulkDelete(resolver, uri, Filters.Users.VALUE, names_list, null, true);
+                for (final String screen_name : names_list) {
+                    final ContentValues values = new ContentValues();
+                    values.put(Filters.VALUE, screen_name);
+                    values_list.add(values);
+                }
+                bulkInsert(resolver, uri, values_list);
+                Crouton.showText(this, R.string.users_muted, CroutonStyle.INFO);
+                mode.finish();
+                sendBroadcast(new Intent(BROADCAST_MULTI_MUTESTATE_CHANGED));
+                break;
+            }
+            case MENU_BLOCK: {
+                final long account_id = MultiSelectManager.getFirstSelectAccountId(selected_items);
+                final long[] user_ids = MultiSelectManager.getSelectedUserIds(selected_items);
+                if (account_id > 0 && user_ids != null) {
+                    mTwitterWrapper.createMultiBlock(account_id, user_ids);
+                }
+                mode.finish();
+                break;
+            }
+            case MENU_REPORT_SPAM: {
+                final long account_id = MultiSelectManager.getFirstSelectAccountId(selected_items);
+                final long[] user_ids = MultiSelectManager.getSelectedUserIds(selected_items);
+                if (account_id > 0 && user_ids != null) {
+                    mTwitterWrapper.reportMultiSpam(account_id, user_ids);
+                }
+                mode.finish();
+                break;
+            }
+        }
+        return true;
+    }
 
-	@Override
-	public boolean onCreateActionMode(final ActionMode mode, final Menu menu) {
-		new MenuInflater(this).inflate(R.menu.action_multi_select_contents, menu);
-		return true;
-	}
+    @Override
+    public boolean onCreateActionMode(final ActionMode mode, final Menu menu) {
+        new MenuInflater(this).inflate(R.menu.action_multi_select_contents, menu);
+        return true;
+    }
 
-	@Override
-	public void onDestroyActionMode(final ActionMode mode) {
-		if (mMultiSelectManager.getCount() != 0) {
-			mMultiSelectManager.clearSelectedItems();
-		}
-		mActionMode = null;
-	}
+    @Override
+    public void onDestroyActionMode(final ActionMode mode) {
+        if (mMultiSelectManager.getCount() != 0) {
+            mMultiSelectManager.clearSelectedItems();
+        }
+        mActionMode = null;
+    }
 
-	@Override
-	public void onItemsCleared() {
-		updateMultiSelectState();
-	}
+    @Override
+    public void onItemsCleared() {
+        updateMultiSelectState();
+    }
 
-	@Override
-	public void onItemSelected(final Object item) {
-		updateMultiSelectState();
-	}
+    @Override
+    public void onItemSelected(final Object item) {
+        updateMultiSelectState();
+    }
 
-	@Override
-	public void onItemUnselected(final Object item) {
-		updateMultiSelectState();
-	}
+    @Override
+    public void onItemUnselected(final Object item) {
+        updateMultiSelectState();
+    }
 
-	@Override
-	public boolean onPrepareActionMode(final ActionMode mode, final Menu menu) {
-		return true;
-	}
+    @Override
+    public boolean onPrepareActionMode(final ActionMode mode, final Menu menu) {
+        return true;
+    }
 
-	/** Called when the activity is first created. */
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		mApplication = getTwidereApplication();
-		mTwitterWrapper = mApplication.getTwitterWrapper();
-		mMultiSelectManager = mApplication.getMultiSelectManager();
-		super.onCreate(savedInstanceState);
-	}
+    /** Called when the activity is first created. */
+    @Override
+    protected void onCreate(final Bundle savedInstanceState) {
+        mApplication = getTwidereApplication();
+        mTwitterWrapper = mApplication.getTwitterWrapper();
+        mMultiSelectManager = mApplication.getMultiSelectManager();
+        super.onCreate(savedInstanceState);
+    }
 
-	@Override
-	protected void onStart() {
-		super.onStart();
-		mMultiSelectManager.registerCallback(this);
-		updateMultiSelectState();
-	}
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mMultiSelectManager.registerCallback(this);
+        updateMultiSelectState();
+    }
 
-	@Override
-	protected void onStop() {
-		mMultiSelectManager.unregisterCallback(this);
-		super.onStop();
-	}
+    @Override
+    protected void onStop() {
+        mMultiSelectManager.unregisterCallback(this);
+        super.onStop();
+    }
 
-	private void updateMultiSelectState() {
-		if (mMultiSelectManager.isActive()) {
-			if (mActionMode == null) {
-				mActionMode = startActionMode(this);
-			}
-			final int count = mMultiSelectManager.getCount();
-			mActionMode.setTitle(getResources().getQuantityString(R.plurals.Nitems_selected, count, count));
-		} else {
-			if (mActionMode != null) {
-				mActionMode.finish();
-				mActionMode = null;
-			}
-		}
-	}
+    private void updateMultiSelectState() {
+        if (mMultiSelectManager.isActive()) {
+            if (mActionMode == null) {
+                mActionMode = startActionMode(this);
+            }
+            final int count = mMultiSelectManager.getCount();
+            mActionMode.setTitle(getResources().getQuantityString(R.plurals.Nitems_selected, count,
+                    count));
+        } else {
+            if (mActionMode != null) {
+                mActionMode.finish();
+                mActionMode = null;
+            }
+        }
+    }
 
 }

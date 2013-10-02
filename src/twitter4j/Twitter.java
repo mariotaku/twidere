@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package twitter4j;
 
 import twitter4j.api.ActivityResources;
@@ -35,8 +36,11 @@ import twitter4j.auth.OAuthSupport;
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @since Twitter4J 2.2.0
  */
-public interface Twitter extends OAuthSupport, TwitterConstants, TwitterBase, SearchResource, TimelinesResources,
-		TweetResources, UsersResources, ListsResources, DirectMessagesResources, FriendsFollowersResources,
-		FavoritesResources, SpamReportingResources, SavedSearchesResources, TrendsResources, PlacesGeoResources,
-		HelpResources, ActivityResources {
+public interface Twitter extends OAuthSupport, TwitterConstants, TwitterBase, SearchResource,
+        TimelinesResources,
+        TweetResources, UsersResources, ListsResources, DirectMessagesResources,
+        FriendsFollowersResources,
+        FavoritesResources, SpamReportingResources, SavedSearchesResources, TrendsResources,
+        PlacesGeoResources,
+        HelpResources, ActivityResources {
 }

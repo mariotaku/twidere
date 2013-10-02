@@ -19,44 +19,52 @@
 
 package org.mariotaku.twidere.preference;
 
-import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.R;
-
 import android.content.Context;
 import android.util.AttributeSet;
 
+import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.R;
+
 public class NotificationContentPreference extends MultiSelectListPreference implements Constants {
 
-	public static final boolean DEFAULT_ENABLE_HOME_TTMELINE = false;
-	public static final boolean DEFAULT_ENABLE_MENTIONS = true;
-	public static final boolean DEFAULT_ENABLE_DIRECT_MESSAGES = true;
+    public static final boolean DEFAULT_ENABLE_HOME_TTMELINE = false;
+    public static final boolean DEFAULT_ENABLE_MENTIONS = true;
+    public static final boolean DEFAULT_ENABLE_DIRECT_MESSAGES = true;
 
-	public NotificationContentPreference(final Context context) {
-		this(context, null);
-	}
+    public NotificationContentPreference(final Context context) {
+        this(context, null);
+    }
 
-	public NotificationContentPreference(final Context context, final AttributeSet attrs) {
-		this(context, attrs, android.R.attr.preferenceStyle);
-	}
+    public NotificationContentPreference(final Context context, final AttributeSet attrs) {
+        this(context, attrs, android.R.attr.preferenceStyle);
+    }
 
-	public NotificationContentPreference(final Context context, final AttributeSet attrs, final int defStyle) {
-		super(context, attrs, defStyle);
-	}
+    public NotificationContentPreference(final Context context, final AttributeSet attrs,
+            final int defStyle) {
+        super(context, attrs, defStyle);
+    }
 
-	@Override
-	protected boolean[] getDefaults() {
-		return new boolean[] { DEFAULT_ENABLE_HOME_TTMELINE, DEFAULT_ENABLE_MENTIONS, DEFAULT_ENABLE_DIRECT_MESSAGES };
-	}
+    @Override
+    protected boolean[] getDefaults() {
+        return new boolean[] {
+                DEFAULT_ENABLE_HOME_TTMELINE, DEFAULT_ENABLE_MENTIONS,
+                DEFAULT_ENABLE_DIRECT_MESSAGES
+        };
+    }
 
-	@Override
-	protected String[] getKeys() {
-		return new String[] { PREFERENCE_KEY_NOTIFICATION_ENABLE_HOME_TIMELINE,
-				PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS, PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES };
-	}
+    @Override
+    protected String[] getKeys() {
+        return new String[] {
+                PREFERENCE_KEY_NOTIFICATION_ENABLE_HOME_TIMELINE,
+                PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS,
+                PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES
+        };
+    }
 
-	@Override
-	protected String[] getNames() {
-		return getContext().getResources().getStringArray(R.array.entries_refresh_notification_content);
-	}
+    @Override
+    protected String[] getNames() {
+        return getContext().getResources().getStringArray(
+                R.array.entries_refresh_notification_content);
+    }
 
 }

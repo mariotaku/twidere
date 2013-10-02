@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
+
 package com.nostra13.universalimageloader.core.assist;
 
-import java.io.File;
-
 import com.nostra13.universalimageloader.cache.disc.DiscCacheAware;
+
+import java.io.File;
 
 /**
  * Utility for convenient work with disc cache.<br />
@@ -29,27 +30,27 @@ import com.nostra13.universalimageloader.cache.disc.DiscCacheAware;
  */
 public final class DiscCacheUtil {
 
-	private DiscCacheUtil() {
-	}
+    private DiscCacheUtil() {
+    }
 
-	/**
-	 * Returns {@link File} of cached image or <b>null</b> if image was not
-	 * cached in disc cache
-	 */
-	public static File findInCache(final String imageUri, final DiscCacheAware discCache) {
-		final File image = discCache.get(imageUri);
-		return image.exists() ? image : null;
-	}
+    /**
+     * Returns {@link File} of cached image or <b>null</b> if image was not
+     * cached in disc cache
+     */
+    public static File findInCache(final String imageUri, final DiscCacheAware discCache) {
+        final File image = discCache.get(imageUri);
+        return image.exists() ? image : null;
+    }
 
-	/**
-	 * Removed cached image file from disc cache (if image was cached in disc
-	 * cache before)
-	 * 
-	 * @return <b>true</b> - if cached image file existed and was deleted;
-	 *         <b>false</b> - otherwise.
-	 */
-	public static boolean removeFromCache(final String imageUri, final DiscCacheAware discCache) {
-		final File image = discCache.get(imageUri);
-		return image.delete();
-	}
+    /**
+     * Removed cached image file from disc cache (if image was cached in disc
+     * cache before)
+     * 
+     * @return <b>true</b> - if cached image file existed and was deleted;
+     *         <b>false</b> - otherwise.
+     */
+    public static boolean removeFromCache(final String imageUri, final DiscCacheAware discCache) {
+        final File image = discCache.get(imageUri);
+        return image.delete();
+    }
 }

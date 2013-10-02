@@ -19,3 +19,6 @@ local.properties
 *.old
 *.*~
 *~
+
+# private files
+private/

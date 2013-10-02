@@ -19,7 +19,10 @@
 
 package org.mariotaku.twidere.adapter;
 
-import java.util.List;
+import android.content.Context;
+import android.text.TextUtils;
+import android.view.View;
+import android.view.ViewGroup;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
@@ -27,50 +30,50 @@ import org.mariotaku.twidere.loader.ExtensionsListLoader.ExtensionInfo;
 import org.mariotaku.twidere.util.PermissionsManager;
 import org.mariotaku.twidere.view.holder.TwoLineWithIconViewHolder;
 
-import android.content.Context;
-import android.text.TextUtils;
-import android.view.View;
-import android.view.ViewGroup;
+import java.util.List;
 
 public class ExtensionsAdapter extends ArrayAdapter<ExtensionInfo> implements Constants {
 
-	private final PermissionsManager mPermissionsManager;
+    private final PermissionsManager mPermissionsManager;
 
-	public ExtensionsAdapter(final Context context) {
-		super(context, R.layout.two_line_with_icon_list_item);
-		mPermissionsManager = new PermissionsManager(context);
-	}
+    public ExtensionsAdapter(final Context context) {
+        super(context, R.layout.two_line_with_icon_list_item);
+        mPermissionsManager = new PermissionsManager(context);
+    }
 
-	@Override
-	public long getItemId(final int position) {
-		return getItem(position).hashCode();
-	}
+    @Override
+    public long getItemId(final int position) {
+        return getItem(position).hashCode();
+    }
 
-	@Override
-	public View getView(final int position, final View convertView, final ViewGroup parent) {
-		final View view = super.getView(position, convertView, parent);
-		final TwoLineWithIconViewHolder viewholder = view.getTag() == null ? new TwoLineWithIconViewHolder(view)
-				: (TwoLineWithIconViewHolder) view.getTag();
+    @Override
+    public View getView(final int position, final View convertView, final ViewGroup parent) {
+        final View view = super.getView(position, convertView, parent);
+        final TwoLineWithIconViewHolder viewholder = view.getTag() == null ? new TwoLineWithIconViewHolder(
+                view)
+                : (TwoLineWithIconViewHolder) view.getTag();
 
-		final ExtensionInfo info = getItem(position);
-		viewholder.checkbox.setVisibility(info.permissions != PERMISSION_INVALID ? View.VISIBLE : View.GONE);
-		if (info.permissions != PERMISSION_INVALID) {
-			viewholder.checkbox.setChecked(info.permissions != PERMISSION_DENIED
-					&& mPermissionsManager.checkPermission(info.pname, info.permissions));
-		}
-		viewholder.text1.setText(info.label);
-		viewholder.text2.setVisibility(TextUtils.isEmpty(info.description) ? View.GONE : View.VISIBLE);
-		viewholder.text2.setText(info.description);
-		viewholder.icon.setImageDrawable(info.icon);
-		return view;
-	}
+        final ExtensionInfo info = getItem(position);
+        viewholder.checkbox.setVisibility(info.permissions != PERMISSION_INVALID ? View.VISIBLE
+                : View.GONE);
+        if (info.permissions != PERMISSION_INVALID) {
+            viewholder.checkbox.setChecked(info.permissions != PERMISSION_DENIED
+                    && mPermissionsManager.checkPermission(info.pname, info.permissions));
+        }
+        viewholder.text1.setText(info.label);
+        viewholder.text2.setVisibility(TextUtils.isEmpty(info.description) ? View.GONE
+                : View.VISIBLE);
+        viewholder.text2.setText(info.description);
+        viewholder.icon.setImageDrawable(info.icon);
+        return view;
+    }
 
-	public void setData(final List<ExtensionInfo> data) {
-		clear();
-		if (data != null) {
-			addAll(data);
-		}
-		notifyDataSetChanged();
-	}
+    public void setData(final List<ExtensionInfo> data) {
+        clear();
+        if (data != null) {
+            addAll(data);
+        }
+        notifyDataSetChanged();
+    }
 
 }

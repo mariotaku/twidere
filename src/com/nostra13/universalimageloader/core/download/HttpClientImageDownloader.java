@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
+
 package com.nostra13.universalimageloader.core.download;
 
-import java.io.IOException;
-import java.io.InputStream;
+import android.content.Context;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -24,7 +24,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.entity.BufferedHttpEntity;
 
-import android.content.Context;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Implementation of ImageDownloader which uses {@link HttpClient} for image
@@ -35,19 +36,20 @@ import android.content.Context;
  */
 public class HttpClientImageDownloader extends BaseImageDownloader {
 
-	private final HttpClient httpClient;
+    private final HttpClient httpClient;
 
-	public HttpClientImageDownloader(final Context context, final HttpClient httpClient) {
-		super(context);
-		this.httpClient = httpClient;
-	}
+    public HttpClientImageDownloader(final Context context, final HttpClient httpClient) {
+        super(context);
+        this.httpClient = httpClient;
+    }
 
-	@Override
-	protected InputStream getStreamFromNetwork(final String imageUri, final Object extra) throws IOException {
-		final HttpGet httpRequest = new HttpGet(imageUri);
-		final HttpResponse response = httpClient.execute(httpRequest);
-		final HttpEntity entity = response.getEntity();
-		final BufferedHttpEntity bufHttpEntity = new BufferedHttpEntity(entity);
-		return bufHttpEntity.getContent();
-	}
+    @Override
+    protected InputStream getStreamFromNetwork(final String imageUri, final Object extra)
+            throws IOException {
+        final HttpGet httpRequest = new HttpGet(imageUri);
+        final HttpResponse response = httpClient.execute(httpRequest);
+        final HttpEntity entity = response.getEntity();
+        final BufferedHttpEntity bufHttpEntity = new BufferedHttpEntity(entity);
+        return bufHttpEntity.getContent();
+    }
 }

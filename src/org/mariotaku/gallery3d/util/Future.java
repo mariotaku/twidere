@@ -27,12 +27,12 @@ package org.mariotaku.gallery3d.util;
 // - get() does not throw exceptions.
 //
 public interface Future<T> {
-	public void cancel();
+    public void cancel();
 
-	public T get();
+    public T get();
 
-	public boolean isCancelled();
+    public boolean isCancelled();
 
-	public boolean isDone();
+    public boolean isDone();
 
 }

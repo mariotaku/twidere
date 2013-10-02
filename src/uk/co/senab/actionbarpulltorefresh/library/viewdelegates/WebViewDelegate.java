@@ -16,19 +16,20 @@
 
 package uk.co.senab.actionbarpulltorefresh.library.viewdelegates;
 
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 import android.view.View;
 import android.webkit.WebView;
+
+import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 
 /**
  * FIXME
  */
 public class WebViewDelegate extends PullToRefreshAttacher.ViewDelegate {
 
-	public static final Class<WebView> SUPPORTED_VIEW_CLASS = WebView.class;
+    public static final Class<WebView> SUPPORTED_VIEW_CLASS = WebView.class;
 
-	@Override
-	public boolean isScrolledToTop(final View view) {
-		return view.getScrollY() <= 0;
-	}
+    @Override
+    public boolean isScrolledToTop(final View view) {
+        return view.getScrollY() <= 0;
+    }
 }

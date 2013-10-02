@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.nostra13.universalimageloader.cache.disc;
 
-import java.io.File;
+package com.nostra13.universalimageloader.cache.disc;
 
 import com.nostra13.universalimageloader.cache.disc.naming.FileNameGenerator;
 import com.nostra13.universalimageloader.core.DefaultConfigurationFactory;
+
+import java.io.File;
 
 /**
  * Base disc cache. Implements common functionality for disc cache.
@@ -30,38 +31,39 @@ import com.nostra13.universalimageloader.core.DefaultConfigurationFactory;
  */
 public abstract class BaseDiscCache implements DiscCacheAware {
 
-	private static final String ERROR_ARG_NULL = "\"%s\" argument must be not null";
+    private static final String ERROR_ARG_NULL = "\"%s\" argument must be not null";
 
-	protected File cacheDir;
+    protected File cacheDir;
 
-	private final FileNameGenerator fileNameGenerator;
+    private final FileNameGenerator fileNameGenerator;
 
-	public BaseDiscCache(final File cacheDir) {
-		this(cacheDir, DefaultConfigurationFactory.createFileNameGenerator());
-	}
+    public BaseDiscCache(final File cacheDir) {
+        this(cacheDir, DefaultConfigurationFactory.createFileNameGenerator());
+    }
 
-	public BaseDiscCache(final File cacheDir, final FileNameGenerator fileNameGenerator) {
-		if (cacheDir == null) throw new IllegalArgumentException(String.format(ERROR_ARG_NULL, "cacheDir"));
-		if (fileNameGenerator == null)
-			throw new IllegalArgumentException(String.format(ERROR_ARG_NULL, "fileNameGenerator"));
+    public BaseDiscCache(final File cacheDir, final FileNameGenerator fileNameGenerator) {
+        if (cacheDir == null)
+            throw new IllegalArgumentException(String.format(ERROR_ARG_NULL, "cacheDir"));
+        if (fileNameGenerator == null)
+            throw new IllegalArgumentException(String.format(ERROR_ARG_NULL, "fileNameGenerator"));
 
-		this.cacheDir = cacheDir;
-		this.fileNameGenerator = fileNameGenerator;
-	}
+        this.cacheDir = cacheDir;
+        this.fileNameGenerator = fileNameGenerator;
+    }
 
-	@Override
-	public void clear() {
-		final File[] files = cacheDir.listFiles();
-		if (files != null) {
-			for (final File f : files) {
-				f.delete();
-			}
-		}
-	}
+    @Override
+    public void clear() {
+        final File[] files = cacheDir.listFiles();
+        if (files != null) {
+            for (final File f : files) {
+                f.delete();
+            }
+        }
+    }
 
-	@Override
-	public File get(final String key) {
-		final String fileName = fileNameGenerator.generate(key);
-		return new File(cacheDir, fileName);
-	}
+    @Override
+    public File get(final String key) {
+        final String fileName = fileNameGenerator.generate(key);
+        return new File(cacheDir, fileName);
+    }
 }

@@ -19,72 +19,80 @@
 
 package org.mariotaku.twidere.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.mariotaku.twidere.provider.TweetStore.Accounts;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
 
+import org.mariotaku.twidere.provider.TweetStore.Accounts;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class Account {
 
-	public final String screen_name, name, profile_image_url, profile_banner_url;
-	public final long account_id;
-	public final int user_color;
-	public final boolean is_activated;
+    public final String screen_name, name, profile_image_url, profile_banner_url;
+    public final long account_id;
+    public final int user_color;
+    public final boolean is_activated;
 
-	public Account(final Cursor cursor, final Indices indices) {
-		screen_name = indices.screen_name != -1 ? cursor.getString(indices.screen_name) : null;
-		name = indices.name != -1 ? cursor.getString(indices.name) : null;
-		account_id = indices.account_id != -1 ? cursor.getLong(indices.account_id) : -1;
-		profile_image_url = indices.profile_image_url != -1 ? cursor.getString(indices.profile_image_url) : null;
-		profile_banner_url = indices.profile_banner_url != -1 ? cursor.getString(indices.profile_banner_url) : null;
-		user_color = indices.user_color != -1 ? cursor.getInt(indices.user_color) : Color.TRANSPARENT;
-		is_activated = indices.is_activated != -1 ? cursor.getInt(indices.is_activated) == 1 : false;
-	}
+    public Account(final Cursor cursor, final Indices indices) {
+        screen_name = indices.screen_name != -1 ? cursor.getString(indices.screen_name) : null;
+        name = indices.name != -1 ? cursor.getString(indices.name) : null;
+        account_id = indices.account_id != -1 ? cursor.getLong(indices.account_id) : -1;
+        profile_image_url = indices.profile_image_url != -1 ? cursor
+                .getString(indices.profile_image_url) : null;
+        profile_banner_url = indices.profile_banner_url != -1 ? cursor
+                .getString(indices.profile_banner_url) : null;
+        user_color = indices.user_color != -1 ? cursor.getInt(indices.user_color)
+                : Color.TRANSPARENT;
+        is_activated = indices.is_activated != -1 ? cursor.getInt(indices.is_activated) == 1
+                : false;
+    }
 
-	public static List<Account> getAccounts(final Context context, final boolean activated_only) {
-		if (context == null) {
-			Collections.emptyList();
-		}
-		final ArrayList<Account> accounts = new ArrayList<Account>();
-		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, Accounts.COLUMNS,
-				activated_only ? Accounts.IS_ACTIVATED + " = 1" : null, null, null);
-		if (cur != null) {
-			final Indices indices = new Indices(cur);
-			cur.moveToFirst();
-			while (!cur.isAfterLast()) {
-				accounts.add(new Account(cur, indices));
-				cur.moveToNext();
-			}
-			cur.close();
-		}
-		return accounts;
-	}
+    public static List<Account> getAccounts(final Context context, final boolean activated_only) {
+        if (context == null) {
+            Collections.emptyList();
+        }
+        final ArrayList<Account> accounts = new ArrayList<Account>();
+        final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
+                Accounts.COLUMNS,
+                activated_only ? Accounts.IS_ACTIVATED + " = 1" : null, null, null);
+        if (cur != null) {
+            final Indices indices = new Indices(cur);
+            cur.moveToFirst();
+            while (!cur.isAfterLast()) {
+                accounts.add(new Account(cur, indices));
+                cur.moveToNext();
+            }
+            cur.close();
+        }
+        return accounts;
+    }
 
-	public static class Indices {
+    public static class Indices {
 
-		public final int screen_name, name, account_id, profile_image_url, profile_banner_url, user_color,
-				is_activated;
+        public final int screen_name, name, account_id, profile_image_url, profile_banner_url,
+                user_color,
+                is_activated;
 
-		public Indices(final Cursor cursor) {
-			screen_name = cursor.getColumnIndex(Accounts.SCREEN_NAME);
-			name = cursor.getColumnIndex(Accounts.NAME);
-			account_id = cursor.getColumnIndex(Accounts.ACCOUNT_ID);
-			profile_image_url = cursor.getColumnIndex(Accounts.PROFILE_IMAGE_URL);
-			profile_banner_url = cursor.getColumnIndex(Accounts.PROFILE_BANNER_URL);
-			user_color = cursor.getColumnIndex(Accounts.USER_COLOR);
-			is_activated = cursor.getColumnIndex(Accounts.IS_ACTIVATED);
-		}
+        public Indices(final Cursor cursor) {
+            screen_name = cursor.getColumnIndex(Accounts.SCREEN_NAME);
+            name = cursor.getColumnIndex(Accounts.NAME);
+            account_id = cursor.getColumnIndex(Accounts.ACCOUNT_ID);
+            profile_image_url = cursor.getColumnIndex(Accounts.PROFILE_IMAGE_URL);
+            profile_banner_url = cursor.getColumnIndex(Accounts.PROFILE_BANNER_URL);
+            user_color = cursor.getColumnIndex(Accounts.USER_COLOR);
+            is_activated = cursor.getColumnIndex(Accounts.IS_ACTIVATED);
+        }
 
-		@Override
-		public String toString() {
-			return "Indices{screen_name=" + screen_name + ", name=" + name + ", account_id=" + account_id
-					+ ", profile_image_url=" + profile_image_url + ", profile_banner_url=" + profile_banner_url
-					+ ", user_color=" + user_color + ", is_activated=" + is_activated + "}";
-		}
-	}
+        @Override
+        public String toString() {
+            return "Indices{screen_name=" + screen_name + ", name=" + name + ", account_id="
+                    + account_id
+                    + ", profile_image_url=" + profile_image_url + ", profile_banner_url="
+                    + profile_banner_url
+                    + ", user_color=" + user_color + ", is_activated=" + is_activated + "}";
+        }
+    }
 }

@@ -22,24 +22,24 @@ package twitter4j.internal.logging;
  */
 public abstract class LoggerFactory {
 
-	/**
-	 * Returns a logger associated with the specified class.
-	 * 
-	 * @return a logger instance
-	 */
-	public abstract Logger getLogger();
+    /**
+     * Returns a logger associated with the specified class.
+     * 
+     * @return a logger instance
+     */
+    public abstract Logger getLogger();
 
-	/**
-	 * Returns a logger associated with the specified class.
-	 * 
-	 * @return a logger instance
-	 */
-	public abstract Logger getLogger(Class<?> clz);
+    /**
+     * Returns a logger associated with the specified class.
+     * 
+     * @return a logger instance
+     */
+    public abstract Logger getLogger(Class<?> clz);
 
-	/**
-	 * Returns a logger associated with the specified class.
-	 * 
-	 * @return a logger instance
-	 */
-	public abstract Logger getLogger(String tag);
+    /**
+     * Returns a logger associated with the specified class.
+     * 
+     * @return a logger instance
+     */
+    public abstract Logger getLogger(String tag);
 }

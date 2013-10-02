@@ -19,22 +19,22 @@
 
 package org.mariotaku.twidere.loader;
 
-import java.util.Collections;
-import java.util.List;
+import android.content.Context;
 
 import org.mariotaku.twidere.model.ParcelableUser;
 
-import android.content.Context;
+import java.util.Collections;
+import java.util.List;
 
 public final class DummyParcelableUsersLoader extends ParcelableUsersLoader {
 
-	public DummyParcelableUsersLoader(final Context context) {
-		super(context, null);
-	}
+    public DummyParcelableUsersLoader(final Context context) {
+        super(context, null);
+    }
 
-	@Override
-	public List<ParcelableUser> loadInBackground() {
-		return Collections.emptyList();
-	}
+    @Override
+    public List<ParcelableUser> loadInBackground() {
+        return Collections.emptyList();
+    }
 
 }

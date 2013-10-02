@@ -19,27 +19,28 @@
 
 package org.mariotaku.twidere.fragment;
 
-import org.mariotaku.twidere.R;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 
+import org.mariotaku.twidere.R;
+
 public class ProgressDialogFragment extends BaseDialogFragment {
 
-	@Override
-	public Dialog onCreateDialog(final Bundle savedInstanceState) {
-		final ProgressDialog dialog = new ProgressDialog(getActivity());
-		dialog.setMessage(getString(R.string.please_wait));
-		return dialog;
-	}
+    @Override
+    public Dialog onCreateDialog(final Bundle savedInstanceState) {
+        final ProgressDialog dialog = new ProgressDialog(getActivity());
+        dialog.setMessage(getString(R.string.please_wait));
+        return dialog;
+    }
 
-	public static ProgressDialogFragment show(final Activity activity, final String tag) {
-		if (activity == null) return null;
-		final ProgressDialogFragment f = new ProgressDialogFragment();
-		f.show(activity.getFragmentManager(), tag);
-		return f;
-	}
+    public static ProgressDialogFragment show(final Activity activity, final String tag) {
+        if (activity == null)
+            return null;
+        final ProgressDialogFragment f = new ProgressDialogFragment();
+        f.show(activity.getFragmentManager(), tag);
+        return f;
+    }
 
 }

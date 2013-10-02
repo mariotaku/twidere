@@ -19,89 +19,92 @@
 
 package org.mariotaku.twidere.activity;
 
-import me.imid.swipebacklayout.lib.SwipeBackLayout;
-
-import org.mariotaku.twidere.util.ThemeUtils;
-import org.mariotaku.twidere.util.ViewAccessor;
-
 import android.annotation.SuppressLint;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 
+import me.imid.swipebacklayout.lib.SwipeBackLayout;
+
+import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.util.ViewAccessor;
+
 @SuppressLint("Registered")
 public class BaseThemedSupportSwipeBackActivity extends BaseSupportActivity {
 
-	private SwipeBackLayout mSwipeBackLayout;
+    private SwipeBackLayout mSwipeBackLayout;
 
-	private boolean mOverrideExitAniamtion = true;
+    private boolean mOverrideExitAniamtion = true;
 
-	private boolean mIsFinishing;
+    private boolean mIsFinishing;
 
-	@Override
-	public View findViewById(final int id) {
-		final View v = super.findViewById(id);
-		if (v != null) return v;
-		return mSwipeBackLayout != null ? mSwipeBackLayout.findViewById(id) : null;
-	}
+    @Override
+    public View findViewById(final int id) {
+        final View v = super.findViewById(id);
+        if (v != null)
+            return v;
+        return mSwipeBackLayout != null ? mSwipeBackLayout.findViewById(id) : null;
+    }
 
-	@Override
-	public void finish() {
-		if (mOverrideExitAniamtion && !mIsFinishing) {
-			scrollToFinishActivity();
-			mIsFinishing = true;
-			return;
-		}
-		mIsFinishing = false;
-		super.finish();
-	}
+    @Override
+    public void finish() {
+        if (mOverrideExitAniamtion && !mIsFinishing) {
+            scrollToFinishActivity();
+            mIsFinishing = true;
+            return;
+        }
+        mIsFinishing = false;
+        super.finish();
+    }
 
-	public SwipeBackLayout getSwipeBackLayout() {
-		return mSwipeBackLayout;
-	}
+    public SwipeBackLayout getSwipeBackLayout() {
+        return mSwipeBackLayout;
+    }
 
-	/**
-	 * Scroll out contentView and finish the activity
-	 */
-	public void scrollToFinishActivity() {
-		if (mSwipeBackLayout == null) return;
-		mSwipeBackLayout.scrollToFinishActivity();
-	}
+    /**
+     * Scroll out contentView and finish the activity
+     */
+    public void scrollToFinishActivity() {
+        if (mSwipeBackLayout == null)
+            return;
+        mSwipeBackLayout.scrollToFinishActivity();
+    }
 
-	/**
-	 * Override Exit Animation
-	 * 
-	 * @param override
-	 */
-	public void setOverrideExitAniamtion(final boolean override) {
-		mOverrideExitAniamtion = override;
-	}
+    /**
+     * Override Exit Animation
+     * 
+     * @param override
+     */
+    public void setOverrideExitAniamtion(final boolean override) {
+        mOverrideExitAniamtion = override;
+    }
 
-	public void setSwipeBackEnable(final boolean enable) {
-		if (mSwipeBackLayout == null) return;
-		mSwipeBackLayout.setEnableGesture(enable);
-	}
+    public void setSwipeBackEnable(final boolean enable) {
+        if (mSwipeBackLayout == null)
+            return;
+        mSwipeBackLayout.setEnableGesture(enable);
+    }
 
-	@Override
-	protected int getThemeResource() {
-		return ThemeUtils.getSwipeBackThemeResource(this);
-	}
+    @Override
+    protected int getThemeResource() {
+        return ThemeUtils.getSwipeBackThemeResource(this);
+    }
 
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		final Window w = getWindow();
-		w.setBackgroundDrawable(new ColorDrawable(0));
-		ViewAccessor.setBackground(w.getDecorView(), null);
-		mSwipeBackLayout = new SwipeBackLayout(this);
-	}
+    @Override
+    protected void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        final Window w = getWindow();
+        w.setBackgroundDrawable(new ColorDrawable(0));
+        ViewAccessor.setBackground(w.getDecorView(), null);
+        mSwipeBackLayout = new SwipeBackLayout(this);
+    }
 
-	@Override
-	protected void onPostCreate(final Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
-		if (mSwipeBackLayout != null) {
-			mSwipeBackLayout.attachToActivity(this);
-		}
-	}
+    @Override
+    protected void onPostCreate(final Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if (mSwipeBackLayout != null) {
+            mSwipeBackLayout.attachToActivity(this);
+        }
+    }
 }

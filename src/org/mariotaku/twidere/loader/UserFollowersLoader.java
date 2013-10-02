@@ -19,7 +19,7 @@
 
 package org.mariotaku.twidere.loader;
 
-import java.util.List;
+import android.content.Context;
 
 import org.mariotaku.twidere.model.ParcelableUser;
 
@@ -28,28 +28,32 @@ import twitter4j.PagableResponseList;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
-import android.content.Context;
+
+import java.util.List;
 
 public class UserFollowersLoader extends CursorSupportUsersLoader {
 
-	private final long mUserId;
-	private final String mScreenName;
+    private final long mUserId;
+    private final String mScreenName;
 
-	public UserFollowersLoader(final Context context, final long account_id, final long user_id,
-			final String screen_name, final long cursor, final List<ParcelableUser> data) {
-		super(context, account_id, cursor, data);
-		mUserId = user_id;
-		mScreenName = screen_name;
-	}
+    public UserFollowersLoader(final Context context, final long account_id, final long user_id,
+            final String screen_name, final long cursor, final List<ParcelableUser> data) {
+        super(context, account_id, cursor, data);
+        mUserId = user_id;
+        mScreenName = screen_name;
+    }
 
-	@Override
-	protected PagableResponseList<User> getCursoredUsers(final Twitter twitter, final CursorPaging paging)
-			throws TwitterException {
-		if (twitter == null) return null;
-		if (mUserId > 0)
-			return twitter.getFollowersList(mUserId, paging);
-		else if (mScreenName != null) return twitter.getFollowersList(mScreenName, paging);
-		return null;
-	}
+    @Override
+    protected PagableResponseList<User> getCursoredUsers(final Twitter twitter,
+            final CursorPaging paging)
+            throws TwitterException {
+        if (twitter == null)
+            return null;
+        if (mUserId > 0)
+            return twitter.getFollowersList(mUserId, paging);
+        else if (mScreenName != null)
+            return twitter.getFollowersList(mScreenName, paging);
+        return null;
+    }
 
 }

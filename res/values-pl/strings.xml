@@ -58,7 +58,7 @@
   <string name="view_user_profile">Profil</string>
   <string name="browser">Przeglądarka</string>
   <string name="pick_from_gallery">Wybierz z galerii</string>
-  <string name="tweets">Ćwierki</string>
+  <string name="statuses">Ćwierki</string>
   <string name="followers">Obserwujący</string>
   <string name="friends">Obserwowani</string>
   <string name="about">O...</string>
@@ -292,7 +292,7 @@
   <string name="click_to_open_menu_summary">Dotknij, aby otworzyć menu, długie dotknięcie, aby wybrać kilka.</string>
   <string name="send_follow_request">Wyślij prośbę obserwowania</string>
   <string name="follow_request_sent">Prośba obserwowania wysłana</string>
-  <string name="tweet">Ćwierknij</string>
+  <string name="status">Ćwierknij</string>
   <string name="preview">Podgląd</string>
   <string name="api_upgrade_notice_title">BARDZO WAŻNE!</string>
   <string name="api_upgrade_notice_message">  Obowiązuje nowa wersja 1.1 API Twittera.\n\n Od tego momentu Twidere używa wersji 1.1 API.\n\n PROSIMY się ponownie zalogować, aby uniknąć wielu możliwych problemów.\n\n Jakie zmiany przynosi wersja 1.1 API? Między innymi:\n * Większe ograniczenia rate limit, na przykład, odtąd możesz aktualizować swój strumień główny wpisów jedynie 15 razy na 15 minut.\n * Nie możesz od razu zobaczyć kto przesłał dalej Twojego ćwierka.\n * Jeśli używasz Twidere jako StatusNet Client, wiele funkcji jest wyłączonych z powodu zmian API.\n\n Przepraszamy za te niedogodności, ale nie mamy wpływu na politykę Twittera.</string>

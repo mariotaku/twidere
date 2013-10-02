@@ -21,13 +21,14 @@ import android.graphics.Bitmap.Config;
 
 public class DecodeUtils {
 
-	// TODO: This function should not be called directly from
-	// DecodeUtils.requestDecode(...), since we don't have the knowledge
-	// if the bitmap will be uploaded to GL.
-	public static Bitmap ensureGLCompatibleBitmap(final Bitmap bitmap) {
-		if (bitmap == null || bitmap.getConfig() != null) return bitmap;
-		final Bitmap newBitmap = bitmap.copy(Config.RGB_565, false);
-		bitmap.recycle();
-		return newBitmap;
-	}
+    // TODO: This function should not be called directly from
+    // DecodeUtils.requestDecode(...), since we don't have the knowledge
+    // if the bitmap will be uploaded to GL.
+    public static Bitmap ensureGLCompatibleBitmap(final Bitmap bitmap) {
+        if (bitmap == null || bitmap.getConfig() != null)
+            return bitmap;
+        final Bitmap newBitmap = bitmap.copy(Config.RGB_565, false);
+        bitmap.recycle();
+        return newBitmap;
+    }
 }

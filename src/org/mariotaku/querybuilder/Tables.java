@@ -24,19 +24,20 @@
  * 
  * For more information, please refer to <http://unlicense.org/>
  */
+
 package org.mariotaku.querybuilder;
 
 public class Tables implements Selectable {
 
-	private final String[] tables;
+    private final String[] tables;
 
-	public Tables(final String... tables) {
-		this.tables = tables;
-	}
+    public Tables(final String... tables) {
+        this.tables = tables;
+    }
 
-	@Override
-	public String getSQL() {
-		return Utils.toString(tables, ',', false);
-	}
+    @Override
+    public String getSQL() {
+        return Utils.toString(tables, ',', false);
+    }
 
 }

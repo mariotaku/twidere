@@ -25,14 +25,17 @@ import android.text.ClipboardManager;
 @SuppressWarnings("deprecation")
 public final class ClipboardUtils {
 
-	public static CharSequence getText(final Context context) {
-		if (context == null) return null;
-		return ((ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE)).getText();
-	}
+    public static CharSequence getText(final Context context) {
+        if (context == null)
+            return null;
+        return ((ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE)).getText();
+    }
 
-	public static boolean setText(final Context context, final CharSequence text) {
-		if (context == null) return false;
-		((ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE)).setText(text != null ? text : "");
-		return true;
-	}
+    public static boolean setText(final Context context, final CharSequence text) {
+        if (context == null)
+            return false;
+        ((ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE))
+                .setText(text != null ? text : "");
+        return true;
+    }
 }

@@ -19,7 +19,7 @@
 
 package org.mariotaku.twidere.loader;
 
-import java.util.List;
+import android.content.Context;
 
 import org.mariotaku.twidere.model.ParcelableActivity;
 
@@ -27,19 +27,23 @@ import twitter4j.Activity;
 import twitter4j.Paging;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import android.content.Context;
+
+import java.util.List;
 
 public class ActivitiesByFriendsLoader extends Twitter4JActivitiesLoader {
 
-	public ActivitiesByFriendsLoader(final Context context, final long account_id, final List<ParcelableActivity> data,
-			final String[] save_file_args, final int tab_position) {
-		super(context, account_id, data, save_file_args, tab_position);
-	}
+    public ActivitiesByFriendsLoader(final Context context, final long account_id,
+            final List<ParcelableActivity> data,
+            final String[] save_file_args, final int tab_position) {
+        super(context, account_id, data, save_file_args, tab_position);
+    }
 
-	@Override
-	protected List<Activity> getActivities(final Twitter twitter, final Paging paging) throws TwitterException {
-		if (twitter == null) return null;
-		return twitter.getActivitiesByFriends(paging);
-	}
+    @Override
+    protected List<Activity> getActivities(final Twitter twitter, final Paging paging)
+            throws TwitterException {
+        if (twitter == null)
+            return null;
+        return twitter.getActivitiesByFriends(paging);
+    }
 
 }

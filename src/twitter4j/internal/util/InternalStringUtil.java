@@ -24,78 +24,81 @@ import java.util.List;
  * @since Twitter4J 2.1.4
  */
 public class InternalStringUtil {
-	private InternalStringUtil() {
-		throw new AssertionError();
-	}
+    private InternalStringUtil() {
+        throw new AssertionError();
+    }
 
-	public static String join(final int[] follows) {
-		final StringBuffer buf = new StringBuffer(11 * follows.length);
-		for (final int follow : follows) {
-			if (0 != buf.length()) {
-				buf.append(",");
-			}
-			buf.append(follow);
-		}
-		return buf.toString();
-	}
+    public static String join(final int[] follows) {
+        final StringBuffer buf = new StringBuffer(11 * follows.length);
+        for (final int follow : follows) {
+            if (0 != buf.length()) {
+                buf.append(",");
+            }
+            buf.append(follow);
+        }
+        return buf.toString();
+    }
 
-	// for JDK1.4 compatibility
+    // for JDK1.4 compatibility
 
-	public static String join(final long[] follows) {
-		final StringBuffer buf = new StringBuffer(11 * follows.length);
-		for (final long follow : follows) {
-			if (0 != buf.length()) {
-				buf.append(",");
-			}
-			buf.append(follow);
-		}
-		return buf.toString();
-	}
+    public static String join(final long[] follows) {
+        final StringBuffer buf = new StringBuffer(11 * follows.length);
+        for (final long follow : follows) {
+            if (0 != buf.length()) {
+                buf.append(",");
+            }
+            buf.append(follow);
+        }
+        return buf.toString();
+    }
 
-	public static String join(final String[] track) {
-		final StringBuffer buf = new StringBuffer(11 * track.length);
-		for (final String str : track) {
-			if (0 != buf.length()) {
-				buf.append(",");
-			}
-			buf.append(str);
-		}
-		return buf.toString();
-	}
+    public static String join(final String[] track) {
+        final StringBuffer buf = new StringBuffer(11 * track.length);
+        for (final String str : track) {
+            if (0 != buf.length()) {
+                buf.append(",");
+            }
+            buf.append(str);
+        }
+        return buf.toString();
+    }
 
-	public static String maskString(final String str) {
-		final StringBuffer buf = new StringBuffer(str.length());
-		for (int i = 0; i < str.length(); i++) {
-			buf.append("*");
-		}
-		return buf.toString();
-	}
+    public static String maskString(final String str) {
+        final StringBuffer buf = new StringBuffer(str.length());
+        for (int i = 0; i < str.length(); i++) {
+            buf.append("*");
+        }
+        return buf.toString();
+    }
 
-	public static String replaceLast(final String text, final String regex, final String replacement) {
-		if (text == null || regex == null || replacement == null) return text;
-		return text.replaceFirst("(?s)" + regex + "(?!.*?" + regex + ")", replacement);
-	}
+    public static String replaceLast(final String text, final String regex, final String replacement) {
+        if (text == null || regex == null || replacement == null)
+            return text;
+        return text.replaceFirst("(?s)" + regex + "(?!.*?" + regex + ")", replacement);
+    }
 
-	public static String[] split(final String str, final String separator) {
-		String[] returnValue;
-		int index = str.indexOf(separator);
-		if (index == -1) {
-			returnValue = new String[] { str };
-		} else {
-			final List<String> strList = new ArrayList<String>();
-			int oldIndex = 0;
-			while (index != -1) {
-				final String subStr = str.substring(oldIndex, index);
-				strList.add(subStr);
-				oldIndex = index + separator.length();
-				index = str.indexOf(separator, oldIndex);
-			}
-			if (oldIndex != str.length()) {
-				strList.add(str.substring(oldIndex));
-			}
-			returnValue = strList.toArray(new String[strList.size()]);
-		}
+    public static String[] split(final String str, final String separator) {
+        String[] returnValue;
+        int index = str.indexOf(separator);
+        if (index == -1) {
+            returnValue = new String[] {
+                str
+            };
+        } else {
+            final List<String> strList = new ArrayList<String>();
+            int oldIndex = 0;
+            while (index != -1) {
+                final String subStr = str.substring(oldIndex, index);
+                strList.add(subStr);
+                oldIndex = index + separator.length();
+                index = str.indexOf(separator, oldIndex);
+            }
+            if (oldIndex != str.length()) {
+                strList.add(str.substring(oldIndex));
+            }
+            returnValue = strList.toArray(new String[strList.size()]);
+        }
 
-		return returnValue;
-	}
+        return returnValue;
+    }
 }

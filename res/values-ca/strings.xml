@@ -58,7 +58,7 @@
   <string name="view_user_profile">Perfil d\'usuari</string>
   <string name="browser">Navegador</string>
   <string name="pick_from_gallery">Escull des de la galeria</string>
-  <string name="tweets">Piulades</string>
+  <string name="statuses">Piulades</string>
   <string name="followers">Seguidors</string>
   <string name="friends">Amics</string>
   <string name="about">Quant al</string>
@@ -300,7 +300,7 @@
   <string name="click_to_open_menu_summary">Toqueu per obrir el menú, i mantingueu el toc per fer una selecció múltiple.</string>
   <string name="send_follow_request">Envia una petició de seguiment</string>
   <string name="follow_request_sent">S\'ha enviat la petició de seguiment</string>
-  <string name="tweet">Piulada</string>
+  <string name="status">Piulada</string>
   <string name="preview">Previsualització</string>
   <string name="api_upgrade_notice_title">MOLT IMPORTANT!</string>
   <string name="api_upgrade_notice_message">Des de que Twitter va treure la seva nova versió d\'API (1.1)\n\n Twidere utilitza aquesta versió d\'API.\n\n És MOLT RECOMANABLE sortir de la compta i tornar a donar permisos a l\'aplicació o tindrà alguns problemes utilitzant aquesta versió.\n\m Canvis en aquesta versió de l\'API\n: Més restricció per les freqüències d\'actualització del TimeLine, per ejemple, solament es pot fer 15 cops cada 15 minuts\n. No es pot veure qui t\'ha fet retuit.\n Si utilitzes Twidere com un client d\'StatusNet, algunes característiques ja no estan presents pels canvis a l\'API\n\n. Disculpeu pels inconvenients però Twitter està intentant d\'eliminar les aplicacions de tercers i no puc fer res al respecte.</string>

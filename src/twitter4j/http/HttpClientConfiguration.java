@@ -21,31 +21,31 @@ package twitter4j.http;
  */
 public interface HttpClientConfiguration {
 
-	HostAddressResolver getHostAddressResolver();
+    HostAddressResolver getHostAddressResolver();
 
-	int getHttpConnectionTimeout();
+    int getHttpConnectionTimeout();
 
-	int getHttpDefaultMaxPerRoute();
+    int getHttpDefaultMaxPerRoute();
 
-	int getHttpMaxTotalConnections();
+    int getHttpMaxTotalConnections();
 
-	String getHttpProxyHost();
+    String getHttpProxyHost();
 
-	String getHttpProxyPassword();
+    String getHttpProxyPassword();
 
-	int getHttpProxyPort();
+    int getHttpProxyPort();
 
-	String getHttpProxyUser();
+    String getHttpProxyUser();
 
-	int getHttpReadTimeout();
+    int getHttpReadTimeout();
 
-	int getHttpRetryCount();
+    int getHttpRetryCount();
 
-	int getHttpRetryIntervalSeconds();
+    int getHttpRetryIntervalSeconds();
 
-	boolean isGZIPEnabled();
+    boolean isGZIPEnabled();
 
-	boolean isPrettyDebugEnabled();
+    boolean isPrettyDebugEnabled();
 
-	boolean isSSLErrorIgnored();
+    boolean isSSLErrorIgnored();
 }

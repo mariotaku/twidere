@@ -7,7 +7,8 @@
 	<FrameLayout
 		android:id="@+id/gallery_container"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent">
+		android:layout_height="match_parent"
+		android:visibility="gone">
 
 		<Gallery
 			android:id="@+id/preview_gallery"

@@ -58,7 +58,7 @@
   <string name="view_user_profile">Profilo utente</string>
   <string name="browser">Browser</string>
   <string name="pick_from_gallery">Scegli da galleria</string>
-  <string name="tweets">Tweets</string>
+  <string name="statuses">Tweets</string>
   <string name="followers">Followers</string>
   <string name="friends">Amici</string>
   <string name="about">Informazioni</string>
@@ -312,7 +312,7 @@
   <string name="follow_request_sent">Richiesta di follow inviata</string>
   <string name="separate_retweet_action">Azione di retweet separata</string>
   <string name="separate_retweet_action_summary">Mostra sia le azioni retweet che quota nel menu del tweet</string>
-  <string name="tweet">Tweet</string>
+  <string name="status">Tweet</string>
   <string name="preview">Anteprima</string>
   <string name="api_upgrade_notice_title">MOLTO IMPORTANTE!</string>
   <string name="api_upgrade_notice_message">  Twitter ha annunciato la nuova versione (1.1) delle sue API.\n\n Da questa versione, Twidere usa le API in versione 1.1.\n\n è FORTEMENTE RACCOMANDATO ri-loggare, o si avranno parecchi problemi nell\'uso quotidiano.\n\n Cosa è cambiato nelle API versione 1.1?\n *Limiti più ristretti, per esempio, si può aggiornare la timeline solo 15 volte ogni 15 minuti.\n *Non è piu possibile vedere chi ti ha retwittato, ne è possibile vedere i tuoi rewteet.\n *Se usi Twidere come client StatusNet, molte funzioni verranno perse a causa dei cambiamenti delle API.\n\n Spiacente per l\'inconveniente, ma purtroppo Twitter vuole uccidere tutti i client di terze parti, e non posso farci nulla.</string>

@@ -21,86 +21,92 @@ package twitter4j;
  * @since Twitter4J 2.1.3
  */
 final class ExceptionDiagnosis {
-	int stackLineHash;
-	int lineNumberHash;
-	String hexString = "";
-	Throwable th;
+    int stackLineHash;
+    int lineNumberHash;
+    String hexString = "";
+    Throwable th;
 
-	ExceptionDiagnosis(final Throwable th) {
-		this(th, new String[] {});
-	}
+    ExceptionDiagnosis(final Throwable th) {
+        this(th, new String[] {});
+    }
 
-	ExceptionDiagnosis(final Throwable th, final String[] inclusionFilter) {
-		this.th = th;
+    ExceptionDiagnosis(final Throwable th, final String[] inclusionFilter) {
+        this.th = th;
 
-		final StackTraceElement[] stackTrace = th.getStackTrace();
-		stackLineHash = 0;
-		lineNumberHash = 0;
-		for (int i = stackTrace.length - 1; i >= 0; i--) {
-			final StackTraceElement line = stackTrace[i];
-			for (final String filter : inclusionFilter) {
-				if (line.getClassName().startsWith(filter)) {
-					final int hash = line.getClassName().hashCode() + line.getMethodName().hashCode();
-					stackLineHash = 31 * stackLineHash + hash;
-					lineNumberHash = 31 * lineNumberHash + line.getLineNumber();
-					break;
-				}
-			}
-		}
-		hexString += toHexString(stackLineHash) + "-" + toHexString(lineNumberHash);
-		if (th.getCause() != null) {
-			hexString += " " + new ExceptionDiagnosis(th.getCause(), inclusionFilter).asHexString();
-		}
+        final StackTraceElement[] stackTrace = th.getStackTrace();
+        stackLineHash = 0;
+        lineNumberHash = 0;
+        for (int i = stackTrace.length - 1; i >= 0; i--) {
+            final StackTraceElement line = stackTrace[i];
+            for (final String filter : inclusionFilter) {
+                if (line.getClassName().startsWith(filter)) {
+                    final int hash = line.getClassName().hashCode()
+                            + line.getMethodName().hashCode();
+                    stackLineHash = 31 * stackLineHash + hash;
+                    lineNumberHash = 31 * lineNumberHash + line.getLineNumber();
+                    break;
+                }
+            }
+        }
+        hexString += toHexString(stackLineHash) + "-" + toHexString(lineNumberHash);
+        if (th.getCause() != null) {
+            hexString += " " + new ExceptionDiagnosis(th.getCause(), inclusionFilter).asHexString();
+        }
 
-	}
+    }
 
-	@Override
-	public boolean equals(final Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
-		final ExceptionDiagnosis that = (ExceptionDiagnosis) o;
+        final ExceptionDiagnosis that = (ExceptionDiagnosis) o;
 
-		if (lineNumberHash != that.lineNumberHash) return false;
-		if (stackLineHash != that.stackLineHash) return false;
+        if (lineNumberHash != that.lineNumberHash)
+            return false;
+        if (stackLineHash != that.stackLineHash)
+            return false;
 
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public int hashCode() {
-		int result = stackLineHash;
-		result = 31 * result + lineNumberHash;
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        int result = stackLineHash;
+        result = 31 * result + lineNumberHash;
+        return result;
+    }
 
-	@Override
-	public String toString() {
-		return "ExceptionDiagnosis{" + "stackLineHash=" + stackLineHash + ", lineNumberHash=" + lineNumberHash + '}';
-	}
+    @Override
+    public String toString() {
+        return "ExceptionDiagnosis{" + "stackLineHash=" + stackLineHash + ", lineNumberHash="
+                + lineNumberHash + '}';
+    }
 
-	private String toHexString(final int value) {
-		final String str = "0000000" + Integer.toHexString(value);
-		return str.substring(str.length() - 8, str.length());
-	}
+    private String toHexString(final int value) {
+        final String str = "0000000" + Integer.toHexString(value);
+        return str.substring(str.length() - 8, str.length());
+    }
 
-	String asHexString() {
-		return hexString;
-	}
+    String asHexString() {
+        return hexString;
+    }
 
-	int getLineNumberHash() {
-		return lineNumberHash;
-	}
+    int getLineNumberHash() {
+        return lineNumberHash;
+    }
 
-	String getLineNumberHashAsHex() {
-		return toHexString(lineNumberHash);
-	}
+    String getLineNumberHashAsHex() {
+        return toHexString(lineNumberHash);
+    }
 
-	int getStackLineHash() {
-		return stackLineHash;
-	}
+    int getStackLineHash() {
+        return stackLineHash;
+    }
 
-	String getStackLineHashAsHex() {
-		return toHexString(stackLineHash);
-	}
+    String getStackLineHashAsHex() {
+        return toHexString(stackLineHash);
+    }
 }

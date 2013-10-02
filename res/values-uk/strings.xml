@@ -58,7 +58,7 @@
   <string name="view_user_profile">Профіль користувача</string>
   <string name="browser">Браузер</string>
   <string name="pick_from_gallery">Вибрати з галереї</string>
-  <string name="tweets">Твіти</string>
+  <string name="statuses">Твіти</string>
   <string name="followers">Підписники</string>
   <string name="friends">Друзі</string>
   <string name="about">Про</string>
@@ -315,7 +315,7 @@
   <string name="follow_request_sent">Запит на підписку надіслано</string>
   <string name="separate_retweet_action">Різні дії ретвіту</string>
   <string name="separate_retweet_action_summary">Показувати у меню обидві дії Ретвітнути і Цитувати</string>
-  <string name="tweet">Твіт</string>
+  <string name="status">Твіт</string>
   <string name="preview">Перегляд</string>
   <string name="api_upgrade_notice_title">ДУЖЕ ВАЖЛИВО!</string>
   <string name="api_upgrade_notice_message">Твіттер анонсував нову версію свого API (вер.1.1). \n \n Починаючи з цієї версії Twidere буде використовуватися саме даний API версії 1.1. \n\n  Наполегливо рекомендуємо перелогінитися, щоб уникнути можливих проблем, пов\'язаних з переходом на новий API . \n \n Що змінилося в Twitter API версії 1.1? \n* Обмеження по швидкості оновлення. Наприклад, можливість оновлення вашої Стрічки обмежена 15-ма запитами на протязі 15 хвилин. \n* Ви не можете побачити, хто ретвітнув ваше повідомлення, Ви не можете бачити твіти, ретвітнуті вам іншими. \n* Якщо ви використовуєте Twidere як ваш StatusNet-клієнт, більшість можливостей буде втрачено в зв\'язку із змінами в API. \n \n Вибачте за незручності, але я нічого не можу з цим вдіяти. Політика Твіттера спрямована проти сторонніх програм-клієнтів.</string>

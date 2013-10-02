@@ -19,80 +19,83 @@
 
 package org.mariotaku.twidere.loader;
 
-import java.util.Collections;
-import java.util.ConcurrentModificationException;
-import java.util.List;
+import android.content.Context;
+import android.support.v4.content.AsyncTaskLoader;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 
-import android.content.Context;
-import android.support.v4.content.AsyncTaskLoader;
+import java.util.Collections;
+import java.util.ConcurrentModificationException;
+import java.util.List;
 
-public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<ParcelableStatus>> implements Constants {
+public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<ParcelableStatus>>
+        implements Constants {
 
-	private final List<ParcelableStatus> mData = Collections
-			.synchronizedList(new NoDuplicatesArrayList<ParcelableStatus>());
-	private final boolean mFirstLoad;
-	private final int mTabPosition;
+    private final List<ParcelableStatus> mData = Collections
+            .synchronizedList(new NoDuplicatesArrayList<ParcelableStatus>());
+    private final boolean mFirstLoad;
+    private final int mTabPosition;
 
-	private Long mLastViewedId;
+    private Long mLastViewedId;
 
-	public ParcelableStatusesLoader(final Context context, final List<ParcelableStatus> data, final int tab_position) {
-		super(context);
-		mFirstLoad = data == null;
-		if (data != null) {
-			mData.addAll(data);
-		}
-		mTabPosition = tab_position;
-	}
+    public ParcelableStatusesLoader(final Context context, final List<ParcelableStatus> data,
+            final int tab_position) {
+        super(context);
+        mFirstLoad = data == null;
+        if (data != null) {
+            mData.addAll(data);
+        }
+        mTabPosition = tab_position;
+    }
 
-	public Long getLastViewedId() {
-		return mLastViewedId;
-	}
+    public Long getLastViewedId() {
+        return mLastViewedId;
+    }
 
-	protected boolean containsStatus(final long status_id) {
-		for (final ParcelableStatus status : mData) {
-			if (status.id == status_id) return true;
-		}
-		return false;
-	}
+    protected boolean containsStatus(final long status_id) {
+        for (final ParcelableStatus status : mData) {
+            if (status.id == status_id)
+                return true;
+        }
+        return false;
+    }
 
-	protected boolean deleteStatus(final long status_id) {
-		try {
-			final NoDuplicatesArrayList<ParcelableStatus> data_to_remove = new NoDuplicatesArrayList<ParcelableStatus>();
-			for (final ParcelableStatus status : mData) {
-				if (status.id == status_id) {
-					data_to_remove.add(status);
-				}
-			}
-			return mData.removeAll(data_to_remove);
-		} catch (final ConcurrentModificationException e) {
-			// This shouldn't happen.
-		}
-		return false;
-	}
+    protected boolean deleteStatus(final long status_id) {
+        try {
+            final NoDuplicatesArrayList<ParcelableStatus> data_to_remove = new NoDuplicatesArrayList<ParcelableStatus>();
+            for (final ParcelableStatus status : mData) {
+                if (status.id == status_id) {
+                    data_to_remove.add(status);
+                }
+            }
+            return mData.removeAll(data_to_remove);
+        } catch (final ConcurrentModificationException e) {
+            // This shouldn't happen.
+        }
+        return false;
+    }
 
-	protected List<ParcelableStatus> getData() {
-		return mData;
-	}
+    protected List<ParcelableStatus> getData() {
+        return mData;
+    }
 
-	protected int getTabPosition() {
-		return mTabPosition;
-	}
+    protected int getTabPosition() {
+        return mTabPosition;
+    }
 
-	protected boolean isFirstLoad() {
-		return mFirstLoad;
-	}
+    protected boolean isFirstLoad() {
+        return mFirstLoad;
+    }
 
-	@Override
-	protected void onStartLoading() {
-		forceLoad();
-	}
+    @Override
+    protected void onStartLoading() {
+        forceLoad();
+    }
 
-	protected void setLastViewedId(final Long id) {
-		mLastViewedId = id;
-	}
+    protected void setLastViewedId(final Long id) {
+        mLastViewedId = id;
+    }
 
 }

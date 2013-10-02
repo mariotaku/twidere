@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
+
 package com.nostra13.universalimageloader.core.assist;
 
 import android.graphics.Bitmap;
@@ -27,29 +28,30 @@ import android.view.View;
  * @since 1.4.0
  */
 public class SimpleImageLoadingListener implements ImageLoadingListener {
-	@Override
-	public void onLoadingCancelled(final String imageUri, final View view) {
-		// Empty implementation
-	}
+    @Override
+    public void onLoadingCancelled(final String imageUri, final View view) {
+        // Empty implementation
+    }
 
-	@Override
-	public void onLoadingComplete(final String imageUri, final View view, final Bitmap loadedImage) {
-		// Empty implementation
-	}
+    @Override
+    public void onLoadingComplete(final String imageUri, final View view, final Bitmap loadedImage) {
+        // Empty implementation
+    }
 
-	@Override
-	public void onLoadingFailed(final String imageUri, final View view, final FailReason failReason) {
-		// Empty implementation
-	}
+    @Override
+    public void onLoadingFailed(final String imageUri, final View view, final FailReason failReason) {
+        // Empty implementation
+    }
 
-	@Override
-	public void onLoadingProgressChanged(final String imageUri, final View view, final int current, final int total) {
-		// Empty implementation
+    @Override
+    public void onLoadingProgressChanged(final String imageUri, final View view, final int current,
+            final int total) {
+        // Empty implementation
 
-	}
+    }
 
-	@Override
-	public void onLoadingStarted(final String imageUri, final View view) {
-		// Empty implementation
-	}
+    @Override
+    public void onLoadingStarted(final String imageUri, final View view) {
+        // Empty implementation
+    }
 }

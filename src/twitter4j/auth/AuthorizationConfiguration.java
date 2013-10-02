@@ -24,15 +24,15 @@ package twitter4j.auth;
  */
 public interface AuthorizationConfiguration {
 
-	String getOAuthAccessToken();
+    String getOAuthAccessToken();
 
-	String getOAuthAccessTokenSecret();
+    String getOAuthAccessTokenSecret();
 
-	String getOAuthConsumerKey();
+    String getOAuthConsumerKey();
 
-	String getOAuthConsumerSecret();
+    String getOAuthConsumerSecret();
 
-	String getPassword();
+    String getPassword();
 
-	String getUser();
+    String getUser();
 }

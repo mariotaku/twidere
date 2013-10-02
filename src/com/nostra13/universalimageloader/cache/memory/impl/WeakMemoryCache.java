@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.nostra13.universalimageloader.cache.memory.impl;
 
-import java.lang.ref.Reference;
-import java.lang.ref.WeakReference;
+package com.nostra13.universalimageloader.cache.memory.impl;
 
 import android.graphics.Bitmap;
 
 import com.nostra13.universalimageloader.cache.memory.BaseMemoryCache;
+
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
 
 /**
  * Memory cache with {@linkplain WeakReference weak references} to
@@ -32,8 +33,8 @@ import com.nostra13.universalimageloader.cache.memory.BaseMemoryCache;
  * @since 1.5.3
  */
 public class WeakMemoryCache extends BaseMemoryCache<String, Bitmap> {
-	@Override
-	protected Reference<Bitmap> createReference(final Bitmap value) {
-		return new WeakReference<Bitmap>(value);
-	}
+    @Override
+    protected Reference<Bitmap> createReference(final Bitmap value) {
+        return new WeakReference<Bitmap>(value);
+    }
 }

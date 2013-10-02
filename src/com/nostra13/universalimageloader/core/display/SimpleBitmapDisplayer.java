@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
+
 package com.nostra13.universalimageloader.core.display;
 
 import android.graphics.Bitmap;
@@ -27,9 +28,10 @@ import com.nostra13.universalimageloader.core.assist.LoadedFrom;
  * @since 1.5.6
  */
 public final class SimpleBitmapDisplayer implements BitmapDisplayer {
-	@Override
-	public Bitmap display(final Bitmap bitmap, final ImageView imageView, final LoadedFrom loadedFrom) {
-		imageView.setImageBitmap(bitmap);
-		return bitmap;
-	}
+    @Override
+    public Bitmap display(final Bitmap bitmap, final ImageView imageView,
+            final LoadedFrom loadedFrom) {
+        imageView.setImageBitmap(bitmap);
+        return bitmap;
+    }
 }

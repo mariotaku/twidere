@@ -31,93 +31,99 @@ import twitter4j.TwitterException;
  */
 /* package */class HashtagEntityJSONImpl implements HashtagEntity {
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = 2514471410110223225L;
-	private int start = -1;
-	private int end = -1;
-	private String text;
+    private static final long serialVersionUID = 2514471410110223225L;
+    private int start = -1;
+    private int end = -1;
+    private String text;
 
-	/* For serialization purposes only. */
-	/* package */HashtagEntityJSONImpl() {
+    /* For serialization purposes only. */
+    /* package */HashtagEntityJSONImpl() {
 
-	}
+    }
 
-	/* package */HashtagEntityJSONImpl(final int start, final int end, final String text) {
-		super();
-		this.start = start;
-		this.end = end;
-		this.text = text;
-	}
+    /* package */HashtagEntityJSONImpl(final int start, final int end, final String text) {
+        super();
+        this.start = start;
+        this.end = end;
+        this.text = text;
+    }
 
-	/* package */HashtagEntityJSONImpl(final JSONObject json) throws TwitterException {
-		super();
-		init(json);
-	}
+    /* package */HashtagEntityJSONImpl(final JSONObject json) throws TwitterException {
+        super();
+        init(json);
+    }
 
-	@Override
-	public boolean equals(final Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
-		final HashtagEntityJSONImpl that = (HashtagEntityJSONImpl) o;
+        final HashtagEntityJSONImpl that = (HashtagEntityJSONImpl) o;
 
-		if (end != that.end) return false;
-		if (start != that.start) return false;
-		if (text != null ? !text.equals(that.text) : that.text != null) return false;
+        if (end != that.end)
+            return false;
+        if (start != that.start)
+            return false;
+        if (text != null ? !text.equals(that.text) : that.text != null)
+            return false;
 
-		return true;
-	}
+        return true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int getEnd() {
-		return end;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getEnd() {
+        return end;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int getStart() {
-		return start;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getStart() {
+        return start;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getText() {
-		return text;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getText() {
+        return text;
+    }
 
-	@Override
-	public int hashCode() {
-		int result = start;
-		result = 31 * result + end;
-		result = 31 * result + (text != null ? text.hashCode() : 0);
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        int result = start;
+        result = 31 * result + end;
+        result = 31 * result + (text != null ? text.hashCode() : 0);
+        return result;
+    }
 
-	@Override
-	public String toString() {
-		return "HashtagEntityJSONImpl{" + "start=" + start + ", end=" + end + ", text='" + text + '\'' + '}';
-	}
+    @Override
+    public String toString() {
+        return "HashtagEntityJSONImpl{" + "start=" + start + ", end=" + end + ", text='" + text
+                + '\'' + '}';
+    }
 
-	private void init(final JSONObject json) throws TwitterException {
-		try {
-			final JSONArray indicesArray = json.getJSONArray("indices");
-			start = indicesArray.getInt(0);
-			end = indicesArray.getInt(1);
+    private void init(final JSONObject json) throws TwitterException {
+        try {
+            final JSONArray indicesArray = json.getJSONArray("indices");
+            start = indicesArray.getInt(0);
+            end = indicesArray.getInt(1);
 
-			if (!json.isNull("text")) {
-				text = json.getString("text");
-			}
-		} catch (final JSONException jsone) {
-			throw new TwitterException(jsone);
-		}
-	}
+            if (!json.isNull("text")) {
+                text = json.getString("text");
+            }
+        } catch (final JSONException jsone) {
+            throw new TwitterException(jsone);
+        }
+    }
 }

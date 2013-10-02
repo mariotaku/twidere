@@ -19,10 +19,6 @@
 
 package org.mariotaku.twidere.view;
 
-import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.util.ThemeUtils;
-import org.mariotaku.twidere.view.iface.IExtendedView;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -34,64 +30,77 @@ import android.graphics.Shader;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 
+import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.view.iface.IExtendedView;
+
 public class ProfileBannerImageView extends ClickableImageView implements IExtendedView, Constants {
 
-	private static final int[] COLORS = new int[] { 0xFFFFFFFF, 0x00FFFFFF };
-	private static final int[] COLORS_REVERSED = new int[] { 0x00FFFFFF, 0xFFFFFFFF };
-	private static final float[] POSITIONS = new float[] { 0.0f, 1.0f };
-	private static final PorterDuffXfermode DST_IN = new PorterDuffXfermode(PorterDuff.Mode.DST_IN);
-	private final Paint mPaint = new Paint();
+    private static final int[] COLORS = new int[] {
+            0xFFFFFFFF, 0x00FFFFFF
+    };
+    private static final int[] COLORS_REVERSED = new int[] {
+            0x00FFFFFF, 0xFFFFFFFF
+    };
+    private static final float[] POSITIONS = new float[] {
+            0.0f, 1.0f
+    };
+    private static final PorterDuffXfermode DST_IN = new PorterDuffXfermode(PorterDuff.Mode.DST_IN);
+    private final Paint mPaint = new Paint();
 
-	private LinearGradient mShader;
-	private OnSizeChangedListener mOnSizeChangedListener;
+    private LinearGradient mShader;
+    private OnSizeChangedListener mOnSizeChangedListener;
 
-	public ProfileBannerImageView(final Context context) {
-		this(context, null);
-	}
+    public ProfileBannerImageView(final Context context) {
+        this(context, null);
+    }
 
-	public ProfileBannerImageView(final Context context, final AttributeSet attrs) {
-		this(context, attrs, 0);
-	}
+    public ProfileBannerImageView(final Context context, final AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
 
-	public ProfileBannerImageView(final Context context, final AttributeSet attrs, final int defStyle) {
-		super(context, attrs, defStyle);
-		ViewCompat.setLayerType(this, LAYER_TYPE_SOFTWARE, null);
-		final boolean is_dark_theme = ThemeUtils.isDarkTheme(context);
-		COLORS_REVERSED[1] = is_dark_theme ? 0xFF000000 : 0xFFFFFFFF;
-	}
+    public ProfileBannerImageView(final Context context, final AttributeSet attrs,
+            final int defStyle) {
+        super(context, attrs, defStyle);
+        ViewCompat.setLayerType(this, LAYER_TYPE_SOFTWARE, null);
+        final boolean is_dark_theme = ThemeUtils.isDarkTheme(context);
+        COLORS_REVERSED[1] = is_dark_theme ? 0xFF000000 : 0xFFFFFFFF;
+    }
 
-	@Override
-	public final void setOnSizeChangedListener(final OnSizeChangedListener listener) {
-		mOnSizeChangedListener = listener;
-	}
+    @Override
+    public final void setOnSizeChangedListener(final OnSizeChangedListener listener) {
+        mOnSizeChangedListener = listener;
+    }
 
-	@Override
-	protected void onDraw(final Canvas canvas) {
-		final int width = getWidth(), height = getHeight();
-		if (mShader == null) return;
-		super.onDraw(canvas);
-		mPaint.setShader(mShader);
-		mPaint.setXfermode(DST_IN);
-		canvas.drawRect(0, 0, width, height, mPaint);
-	}
+    @Override
+    protected void onDraw(final Canvas canvas) {
+        final int width = getWidth(), height = getHeight();
+        if (mShader == null)
+            return;
+        super.onDraw(canvas);
+        mPaint.setShader(mShader);
+        mPaint.setXfermode(DST_IN);
+        canvas.drawRect(0, 0, width, height, mPaint);
+    }
 
-	@SuppressLint("DrawAllocation")
-	@Override
-	protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
-		final int width = MeasureSpec.getSize(widthMeasureSpec), height = width / 2;
-		setMeasuredDimension(width, height);
-		if (width > 0) {
-			mShader = new LinearGradient(width / 2, 0, width / 2, height, COLORS, POSITIONS, Shader.TileMode.CLAMP);
-		}
-		super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
-	}
+    @SuppressLint("DrawAllocation")
+    @Override
+    protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
+        final int width = MeasureSpec.getSize(widthMeasureSpec), height = width / 2;
+        setMeasuredDimension(width, height);
+        if (width > 0) {
+            mShader = new LinearGradient(width / 2, 0, width / 2, height, COLORS, POSITIONS,
+                    Shader.TileMode.CLAMP);
+        }
+        super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
+    }
 
-	@Override
-	protected final void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
-		super.onSizeChanged(w, h, oldw, oldh);
-		if (mOnSizeChangedListener != null) {
-			mOnSizeChangedListener.onSizeChanged(this, w, h, oldw, oldh);
-		}
-	}
+    @Override
+    protected final void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        if (mOnSizeChangedListener != null) {
+            mOnSizeChangedListener.onSizeChanged(this, w, h, oldw, oldh);
+        }
+    }
 
 }

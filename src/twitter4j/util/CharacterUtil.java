@@ -21,27 +21,27 @@ package twitter4j.util;
  * @since Twitter4J 2.1.2
  */
 public final class CharacterUtil {
-	private CharacterUtil() {
-		throw new AssertionError();
-	}
+    private CharacterUtil() {
+        throw new AssertionError();
+    }
 
-	/**
-	 * Counts the length of the tweet
-	 * 
-	 * @param text tweet to be counted
-	 * @return the length of the tweet
-	 */
-	public static int count(final String text) {
-		return text.length();
-	}
+    /**
+     * Counts the length of the tweet
+     * 
+     * @param text tweet to be counted
+     * @return the length of the tweet
+     */
+    public static int count(final String text) {
+        return text.length();
+    }
 
-	/**
-	 * Returns true if the length of the string is exceeding length limitation
-	 * 
-	 * @param text String to be examined
-	 * @return if the length of the string is exceeding length limitation
-	 */
-	public static boolean isExceedingLengthLimitation(final String text) {
-		return count(text) > 140;
-	}
+    /**
+     * Returns true if the length of the string is exceeding length limitation
+     * 
+     * @param text String to be examined
+     * @return if the length of the string is exceeding length limitation
+     */
+    public static boolean isExceedingLengthLimitation(final String text) {
+        return count(text) > 140;
+    }
 }

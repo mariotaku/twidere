@@ -19,19 +19,20 @@
 
 package org.mariotaku.twidere.fragment;
 
-import org.mariotaku.twidere.loader.CursorSupportUsersLoader;
-import org.mariotaku.twidere.loader.UserBlocksLoader;
-
 import android.content.Context;
 import android.os.Bundle;
 
+import org.mariotaku.twidere.loader.CursorSupportUsersLoader;
+import org.mariotaku.twidere.loader.UserBlocksLoader;
+
 public class UserBlocksListFragment extends CursorSupportUsersListFragment {
 
-	@Override
-	public CursorSupportUsersLoader newLoaderInstance(final Context context, final Bundle args) {
-		if (args == null) return null;
-		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-		return new UserBlocksLoader(context, account_id, getNextCursor(), getData());
-	}
+    @Override
+    public CursorSupportUsersLoader newLoaderInstance(final Context context, final Bundle args) {
+        if (args == null)
+            return null;
+        final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+        return new UserBlocksLoader(context, account_id, getNextCursor(), getData());
+    }
 
 }

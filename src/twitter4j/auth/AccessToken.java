@@ -28,77 +28,82 @@ import twitter4j.http.HttpResponse;
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
 public class AccessToken extends OAuthToken {
-	private String screenName;
-	private long userId;
+    private String screenName;
+    private long userId;
 
-	public AccessToken(final String token, final String tokenSecret) {
-		super(token, tokenSecret);
-		String sUserId;
-		try {
-			sUserId = token.substring(0, token.indexOf("-"));
-		} catch (final IndexOutOfBoundsException e) {
-			throw new IllegalArgumentException("Invalid access token format.");
-		}
-		if (sUserId != null) {
-			userId = Long.parseLong(sUserId);
-		}
-	}
+    public AccessToken(final String token, final String tokenSecret) {
+        super(token, tokenSecret);
+        String sUserId;
+        try {
+            sUserId = token.substring(0, token.indexOf("-"));
+        } catch (final IndexOutOfBoundsException e) {
+            throw new IllegalArgumentException("Invalid access token format.");
+        }
+        if (sUserId != null) {
+            userId = Long.parseLong(sUserId);
+        }
+    }
 
-	AccessToken(final HttpResponse res) throws TwitterException {
-		this(res.asString());
-	}
+    AccessToken(final HttpResponse res) throws TwitterException {
+        this(res.asString());
+    }
 
-	AccessToken(final String str) {
-		super(str);
-		screenName = getParameter("screen_name");
-		final String sUserId = getParameter("user_id");
-		if (sUserId != null) {
-			userId = Long.parseLong(sUserId);
-		}
-	}
+    AccessToken(final String str) {
+        super(str);
+        screenName = getParameter("screen_name");
+        final String sUserId = getParameter("user_id");
+        if (sUserId != null) {
+            userId = Long.parseLong(sUserId);
+        }
+    }
 
-	@Override
-	public boolean equals(final Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		if (!super.equals(o)) return false;
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        if (!super.equals(o))
+            return false;
 
-		final AccessToken that = (AccessToken) o;
+        final AccessToken that = (AccessToken) o;
 
-		if (userId != that.userId) return false;
-		if (screenName != null ? !screenName.equals(that.screenName) : that.screenName != null) return false;
+        if (userId != that.userId)
+            return false;
+        if (screenName != null ? !screenName.equals(that.screenName) : that.screenName != null)
+            return false;
 
-		return true;
-	}
+        return true;
+    }
 
-	/**
-	 * @return screen name
-	 * @since Twitter4J 2.0.4
-	 */
+    /**
+     * @return screen name
+     * @since Twitter4J 2.0.4
+     */
 
-	public String getScreenName() {
-		return screenName;
-	}
+    public String getScreenName() {
+        return screenName;
+    }
 
-	/**
-	 * @return user id
-	 * @since Twitter4J 2.0.4
-	 */
+    /**
+     * @return user id
+     * @since Twitter4J 2.0.4
+     */
 
-	public long getUserId() {
-		return userId;
-	}
+    public long getUserId() {
+        return userId;
+    }
 
-	@Override
-	public int hashCode() {
-		int result = super.hashCode();
-		result = 31 * result + (screenName != null ? screenName.hashCode() : 0);
-		result = 31 * result + (int) (userId ^ userId >>> 32);
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (screenName != null ? screenName.hashCode() : 0);
+        result = 31 * result + (int) (userId ^ userId >>> 32);
+        return result;
+    }
 
-	@Override
-	public String toString() {
-		return "AccessToken{" + "screenName='" + screenName + '\'' + ", userId=" + userId + '}';
-	}
+    @Override
+    public String toString() {
+        return "AccessToken{" + "screenName='" + screenName + '\'' + ", userId=" + userId + '}';
+    }
 }

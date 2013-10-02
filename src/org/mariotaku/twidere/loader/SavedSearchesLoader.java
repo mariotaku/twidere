@@ -20,37 +20,40 @@
 package org.mariotaku.twidere.loader;
 
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+
+import android.content.Context;
+import android.support.v4.content.AsyncTaskLoader;
+
 import twitter4j.ResponseList;
 import twitter4j.SavedSearch;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import android.content.Context;
-import android.support.v4.content.AsyncTaskLoader;
 
 public class SavedSearchesLoader extends AsyncTaskLoader<ResponseList<SavedSearch>> {
 
-	private final long mAccountId;
+    private final long mAccountId;
 
-	public SavedSearchesLoader(final Context context, final long account_id) {
-		super(context);
-		mAccountId = account_id;
-	}
+    public SavedSearchesLoader(final Context context, final long account_id) {
+        super(context);
+        mAccountId = account_id;
+    }
 
-	@Override
-	public ResponseList<SavedSearch> loadInBackground() {
-		final Twitter twitter = getTwitterInstance(getContext(), mAccountId, false);
-		if (twitter == null) return null;
-		try {
-			return twitter.getSavedSearches();
-		} catch (final TwitterException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+    @Override
+    public ResponseList<SavedSearch> loadInBackground() {
+        final Twitter twitter = getTwitterInstance(getContext(), mAccountId, false);
+        if (twitter == null)
+            return null;
+        try {
+            return twitter.getSavedSearches();
+        } catch (final TwitterException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
-	@Override
-	public void onStartLoading() {
-		forceLoad();
-	}
+    @Override
+    public void onStartLoading() {
+        forceLoad();
+    }
 
 }

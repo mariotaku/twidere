@@ -19,7 +19,7 @@
 
 package org.mariotaku.twidere.loader;
 
-import java.util.List;
+import android.content.Context;
 
 import org.mariotaku.twidere.model.ParcelableUser;
 
@@ -27,19 +27,22 @@ import twitter4j.CursorPaging;
 import twitter4j.IDs;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import android.content.Context;
+
+import java.util.List;
 
 public class IncomingFriendshipsLoader extends IDsUsersLoader {
 
-	public IncomingFriendshipsLoader(final Context context, final long account_id, final long max_id,
-			final List<ParcelableUser> users_list) {
-		super(context, account_id, max_id, users_list);
-	}
+    public IncomingFriendshipsLoader(final Context context, final long account_id,
+            final long max_id,
+            final List<ParcelableUser> users_list) {
+        super(context, account_id, max_id, users_list);
+    }
 
-	@Override
-	protected IDs getIDs(final Twitter twitter, final CursorPaging paging) throws TwitterException {
-		if (twitter == null) return null;
-		return twitter.getIncomingFriendships(paging);
-	}
+    @Override
+    protected IDs getIDs(final Twitter twitter, final CursorPaging paging) throws TwitterException {
+        if (twitter == null)
+            return null;
+        return twitter.getIncomingFriendships(paging);
+    }
 
 }

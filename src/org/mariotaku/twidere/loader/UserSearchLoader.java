@@ -19,34 +19,37 @@
 
 package org.mariotaku.twidere.loader;
 
-import java.util.List;
+import android.content.Context;
 
 import org.mariotaku.twidere.model.ParcelableUser;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
-import android.content.Context;
+
+import java.util.List;
 
 public class UserSearchLoader extends Twitter4JUsersLoader {
 
-	private final String mQuery;
-	private final int mPage;
+    private final String mQuery;
+    private final int mPage;
 
-	public UserSearchLoader(final Context context, final long account_id, final String query, final int page,
-			final List<ParcelableUser> data) {
-		super(context, account_id, data);
-		mQuery = query;
-		mPage = page;
-	}
+    public UserSearchLoader(final Context context, final long account_id, final String query,
+            final int page,
+            final List<ParcelableUser> data) {
+        super(context, account_id, data);
+        mQuery = query;
+        mPage = page;
+    }
 
-	@Override
-	public List<User> getUsers(final Twitter twitter) throws TwitterException {
-		if (twitter == null) return null;
-		return twitter.searchUsers(mQuery, mPage);
-	}
+    @Override
+    public List<User> getUsers(final Twitter twitter) throws TwitterException {
+        if (twitter == null)
+            return null;
+        return twitter.searchUsers(mQuery, mPage);
+    }
 
-	protected long getUserPosition(final User user, final int index) {
-		return (mPage + 1) * 20 + index;
-	}
+    protected long getUserPosition(final User user, final int index) {
+        return (mPage + 1) * 20 + index;
+    }
 }

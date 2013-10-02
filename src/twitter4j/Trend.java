@@ -25,10 +25,10 @@ import java.io.Serializable;
  * @since Twitter4J 2.0.2
  */
 public interface Trend extends Serializable {
-	String getName();
+    String getName();
 
-	String getQuery();
+    String getQuery();
 
-	String getUrl();
+    String getUrl();
 
 }

@@ -19,8 +19,9 @@
 
 package org.mariotaku.twidere.activity;
 
-import java.util.HashSet;
-import java.util.Set;
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.os.Bundle;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -31,182 +32,190 @@ import org.mariotaku.twidere.util.MessagesManager;
 import org.mariotaku.twidere.util.ThemeUtils;
 
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
-import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.os.Bundle;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @SuppressLint("Registered")
-public class BaseSupportActivity extends BaseSupportThemedActivity implements Constants, PullToRefreshAttacherActivity {
+public class BaseSupportActivity extends BaseSupportThemedActivity implements Constants,
+        PullToRefreshAttacherActivity {
 
-	private final Set<String> mEnabledStates = new HashSet<String>();
-	private final Set<String> mRefreshingStates = new HashSet<String>();
+    private final Set<String> mEnabledStates = new HashSet<String>();
+    private final Set<String> mRefreshingStates = new HashSet<String>();
 
-	private boolean mInstanceStateSaved, mIsVisible, mIsOnTop;
-	private PullToRefreshAttacher mPullToRefreshAttacher;
+    private boolean mInstanceStateSaved, mIsVisible, mIsOnTop;
+    private PullToRefreshAttacher mPullToRefreshAttacher;
 
-	@Override
-	public void addRefreshingState(final BasePullToRefreshListFragment fragment) {
-		final String tag = fragment.getPullToRefreshTag();
-		if (tag == null) return;
-		mEnabledStates.add(tag);
-	}
+    @Override
+    public void addRefreshingState(final BasePullToRefreshListFragment fragment) {
+        final String tag = fragment.getPullToRefreshTag();
+        if (tag == null)
+            return;
+        mEnabledStates.add(tag);
+    }
 
-	public MessagesManager getMessagesManager() {
-		return getTwidereApplication() != null ? getTwidereApplication().getMessagesManager() : null;
-	}
+    public MessagesManager getMessagesManager() {
+        return getTwidereApplication() != null ? getTwidereApplication().getMessagesManager()
+                : null;
+    }
 
-	@Override
-	public PullToRefreshAttacher getPullToRefreshAttacher() {
-		return mPullToRefreshAttacher;
-	}
+    @Override
+    public PullToRefreshAttacher getPullToRefreshAttacher() {
+        return mPullToRefreshAttacher;
+    }
 
-	public TwidereApplication getTwidereApplication() {
-		return (TwidereApplication) getApplication();
-	}
+    public TwidereApplication getTwidereApplication() {
+        return (TwidereApplication) getApplication();
+    }
 
-	public AsyncTwitterWrapper getTwitterWrapper() {
-		return getTwidereApplication() != null ? getTwidereApplication().getTwitterWrapper() : null;
-	}
+    public AsyncTwitterWrapper getTwitterWrapper() {
+        return getTwidereApplication() != null ? getTwidereApplication().getTwitterWrapper() : null;
+    }
 
-	public boolean isOnTop() {
-		return mIsOnTop;
-	}
+    public boolean isOnTop() {
+        return mIsOnTop;
+    }
 
-	@Override
-	public boolean isRefreshing(final BasePullToRefreshListFragment fragment) {
-		if (fragment == null) return false;
-		return mRefreshingStates.contains(fragment.getPullToRefreshTag());
-	}
+    @Override
+    public boolean isRefreshing(final BasePullToRefreshListFragment fragment) {
+        if (fragment == null)
+            return false;
+        return mRefreshingStates.contains(fragment.getPullToRefreshTag());
+    }
 
-	public boolean isVisible() {
-		return mIsVisible;
-	}
+    public boolean isVisible() {
+        return mIsVisible;
+    }
 
-	@Override
-	public void setPullToRefreshEnabled(final BasePullToRefreshListFragment fragment, final boolean enabled) {
-		final String tag = fragment.getPullToRefreshTag();
-		if (tag == null) return;
-		if (enabled) {
-			mEnabledStates.add(tag);
-		} else {
-			mEnabledStates.remove(tag);
-		}
-		final BasePullToRefreshListFragment curr = getCurrentPullToRefreshFragment();
-		if (curr != null && tag.equals(curr.getPullToRefreshTag())) {
-			mPullToRefreshAttacher.setEnabled(enabled);
-		}
-	}
+    @Override
+    public void setPullToRefreshEnabled(final BasePullToRefreshListFragment fragment,
+            final boolean enabled) {
+        final String tag = fragment.getPullToRefreshTag();
+        if (tag == null)
+            return;
+        if (enabled) {
+            mEnabledStates.add(tag);
+        } else {
+            mEnabledStates.remove(tag);
+        }
+        final BasePullToRefreshListFragment curr = getCurrentPullToRefreshFragment();
+        if (curr != null && tag.equals(curr.getPullToRefreshTag())) {
+            mPullToRefreshAttacher.setEnabled(enabled);
+        }
+    }
 
-	@Override
-	public void setRefreshComplete(final BasePullToRefreshListFragment fragment) {
-		final String tag = fragment.getPullToRefreshTag();
-		if (tag == null) return;
-		mRefreshingStates.remove(tag);
-		final BasePullToRefreshListFragment curr = getCurrentPullToRefreshFragment();
-		if (curr != null && tag.equals(curr.getPullToRefreshTag())) {
-			mPullToRefreshAttacher.setRefreshComplete();
-		}
-	}
+    @Override
+    public void setRefreshComplete(final BasePullToRefreshListFragment fragment) {
+        final String tag = fragment.getPullToRefreshTag();
+        if (tag == null)
+            return;
+        mRefreshingStates.remove(tag);
+        final BasePullToRefreshListFragment curr = getCurrentPullToRefreshFragment();
+        if (curr != null && tag.equals(curr.getPullToRefreshTag())) {
+            mPullToRefreshAttacher.setRefreshComplete();
+        }
+    }
 
-	@Override
-	public void setRefreshing(final BasePullToRefreshListFragment fragment, final boolean refreshing) {
-		final String tag = fragment.getPullToRefreshTag();
-		if (tag == null) return;
-		if (refreshing) {
-			mRefreshingStates.add(tag);
-		} else {
-			mRefreshingStates.remove(tag);
-		}
-		final BasePullToRefreshListFragment curr = getCurrentPullToRefreshFragment();
-		if (curr != null && tag.equals(curr.getPullToRefreshTag())) {
-			mPullToRefreshAttacher.setRefreshing(refreshing);
-		}
-	}
+    @Override
+    public void setRefreshing(final BasePullToRefreshListFragment fragment, final boolean refreshing) {
+        final String tag = fragment.getPullToRefreshTag();
+        if (tag == null)
+            return;
+        if (refreshing) {
+            mRefreshingStates.add(tag);
+        } else {
+            mRefreshingStates.remove(tag);
+        }
+        final BasePullToRefreshListFragment curr = getCurrentPullToRefreshFragment();
+        if (curr != null && tag.equals(curr.getPullToRefreshTag())) {
+            mPullToRefreshAttacher.setRefreshing(refreshing);
+        }
+    }
 
-	public void setRefreshing(final boolean refreshing) {
-		mPullToRefreshAttacher.setRefreshing(refreshing);
-	}
+    public void setRefreshing(final boolean refreshing) {
+        mPullToRefreshAttacher.setRefreshing(refreshing);
+    }
 
-	@Override
-	public void startActivity(final Intent intent) {
-		super.startActivity(intent);
-	}
+    @Override
+    public void startActivity(final Intent intent) {
+        super.startActivity(intent);
+    }
 
-	@Override
-	public void startActivityForResult(final Intent intent, final int requestCode) {
-		super.startActivityForResult(intent, requestCode);
-	}
+    @Override
+    public void startActivityForResult(final Intent intent, final int requestCode) {
+        super.startActivityForResult(intent, requestCode);
+    }
 
-	public void updateRefreshingState() {
-		setRefreshing(isRefreshing(getCurrentPullToRefreshFragment()));
-	}
+    public void updateRefreshingState() {
+        setRefreshing(isRefreshing(getCurrentPullToRefreshFragment()));
+    }
 
-	protected BasePullToRefreshListFragment getCurrentPullToRefreshFragment() {
-		return null;
-	}
+    protected BasePullToRefreshListFragment getCurrentPullToRefreshFragment() {
+        return null;
+    }
 
-	@Override
-	protected int getThemeResource() {
-		return ThemeUtils.getThemeResource(this);
-	}
+    @Override
+    protected int getThemeResource() {
+        return ThemeUtils.getThemeResource(this);
+    }
 
-	protected boolean isStateSaved() {
-		return mInstanceStateSaved;
-	}
+    protected boolean isStateSaved() {
+        return mInstanceStateSaved;
+    }
 
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setActionBarBackground();
-		/**
-		 * Here we create a PullToRefreshAttacher manually without an Options
-		 * instance. PullToRefreshAttacher will manually create one using
-		 * default values.
-		 */
-		mPullToRefreshAttacher = PullToRefreshAttacher.get(this);
-	}
+    @Override
+    protected void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setActionBarBackground();
+        /**
+         * Here we create a PullToRefreshAttacher manually without an Options
+         * instance. PullToRefreshAttacher will manually create one using
+         * default values.
+         */
+        mPullToRefreshAttacher = PullToRefreshAttacher.get(this);
+    }
 
-	@Override
-	protected void onPause() {
-		mIsOnTop = false;
-		super.onPause();
-	}
+    @Override
+    protected void onPause() {
+        mIsOnTop = false;
+        super.onPause();
+    }
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		mInstanceStateSaved = false;
-		mIsOnTop = true;
-	}
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mInstanceStateSaved = false;
+        mIsOnTop = true;
+    }
 
-	@Override
-	protected void onSaveInstanceState(final Bundle outState) {
-		mInstanceStateSaved = true;
-		super.onSaveInstanceState(outState);
-	}
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        mInstanceStateSaved = true;
+        super.onSaveInstanceState(outState);
+    }
 
-	@Override
-	protected void onStart() {
-		super.onStart();
-		mIsVisible = true;
-		final MessagesManager croutons = getMessagesManager();
-		if (croutons != null) {
-			croutons.addMessageCallback(this);
-		}
-	}
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mIsVisible = true;
+        final MessagesManager croutons = getMessagesManager();
+        if (croutons != null) {
+            croutons.addMessageCallback(this);
+        }
+    }
 
-	@Override
-	protected void onStop() {
-		mIsVisible = false;
-		final MessagesManager croutons = getMessagesManager();
-		if (croutons != null) {
-			croutons.removeMessageCallback(this);
-		}
-		super.onStop();
-	}
+    @Override
+    protected void onStop() {
+        mIsVisible = false;
+        final MessagesManager croutons = getMessagesManager();
+        if (croutons != null) {
+            croutons.removeMessageCallback(this);
+        }
+        super.onStop();
+    }
 
-	private final void setActionBarBackground() {
-		getActionBar().setBackgroundDrawable(ThemeUtils.getActionBarBackground(this));
-	}
+    private final void setActionBarBackground() {
+        getActionBar().setBackgroundDrawable(ThemeUtils.getActionBarBackground(this));
+    }
 
 }

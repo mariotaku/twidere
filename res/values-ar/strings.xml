@@ -58,7 +58,7 @@
   <string name="view_user_profile">عرض الملف الشخصي</string>
   <string name="browser">المستعرض</string>
   <string name="pick_from_gallery">أخذ من الألبوم</string>
-  <string name="tweets">التغريدات</string>
+  <string name="statuses">التغريدات</string>
   <string name="followers">المتابعون</string>
   <string name="friends">المتابَعون</string>
   <string name="about">حول</string>
@@ -283,7 +283,7 @@
   <string name="click_to_open_menu">إضغط لفتح القائمة</string>
   <string name="send_follow_request">إبعث طلب المتابعة</string>
   <string name="follow_request_sent">تم بعث طلب المتابعة</string>
-  <string name="tweet">تغريد</string>
+  <string name="status">تغريد</string>
   <string name="preview">معاينة</string>
   <string name="api_upgrade_notice_title">هام جداً!</string>
   <string name="connection_timeout">مهلة الاتصال</string>

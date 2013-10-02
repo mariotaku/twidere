@@ -59,7 +59,7 @@
 	<string name="view_user_profile">User profile</string>
 	<string name="browser">Browser</string>
 	<string name="pick_from_gallery">Pick from gallery</string>
-	<string name="tweets">Tweets</string>
+	<string name="statuses">Tweets</string>
 	<string name="followers">Followers</string>
 	<string name="friends">Friends</string>
 	<string name="about">About</string>
@@ -138,7 +138,7 @@
 	<string name="more">More</string>
 	<string name="quote_format">Quote format</string>
 	<string name="quote_format_summary">\"[TEXT]\" = Tweet text\n\"[NAME]\" = Twitter username</string>
-	<string name="direct_messages">Direct messages</string>
+	<string name="direct_messages">Messages</string>
 	<string name="blocked_users">Blocked users</string>
 	<string name="set_as_default">Set as default</string>
 	<string name="search_users">Search Users</string>
@@ -319,7 +319,7 @@
 	<string name="follow_request_sent">Follow request sent</string>
 	<string name="separate_retweet_action">Separate retweet action</string>
 	<string name="separate_retweet_action_summary">Show both retweet and quote action in tweet menu</string>
-	<string name="tweet">Tweet</string>
+	<string name="status">Tweet</string>
 	<string name="preview">Preview</string>
 	<string name="api_upgrade_notice_title">VERY IMPORTANT!</string>
 	<string name="api_upgrade_notice_message">  Twitter announced their new version (1.1) of API.\n\n  Since this version, Twidere uses their API version 1.1.\n\n  It\'s STRONGLY RECOMMAND to re-login, or you will have many problems using it.\n\n  What changed in API version 1.1?\n  *More strict rate limits, for instance, you\'re only able to get your home timeline 15 times per 15 minutes.\n  *You can\'t see who retweeted you, you can\'t see tweets retweeted to you either.\n  *If you use Twidere as your StatusNet client, many features will lost due to API changes.\n\n  Sorry for the inconvenience, but you know - Twitter is about to kill third-party clients, I can do nothing about this.</string>

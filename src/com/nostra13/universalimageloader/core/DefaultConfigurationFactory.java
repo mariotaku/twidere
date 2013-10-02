@@ -13,16 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.nostra13.universalimageloader.core;
 
-import java.io.File;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executor;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+package com.nostra13.universalimageloader.core;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -47,6 +39,15 @@ import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 import com.nostra13.universalimageloader.core.download.ImageDownloader;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 
+import java.io.File;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Factory for providing of default options for
  * {@linkplain ImageLoaderConfiguration configuration}
@@ -56,134 +57,138 @@ import com.nostra13.universalimageloader.utils.StorageUtils;
  */
 public class DefaultConfigurationFactory {
 
-	/**
-	 * Creates default implementation of {@link BitmapDisplayer} -
-	 * {@link SimpleBitmapDisplayer}
-	 */
-	public static BitmapDisplayer createBitmapDisplayer() {
-		return new SimpleBitmapDisplayer();
-	}
+    /**
+     * Creates default implementation of {@link BitmapDisplayer} -
+     * {@link SimpleBitmapDisplayer}
+     */
+    public static BitmapDisplayer createBitmapDisplayer() {
+        return new SimpleBitmapDisplayer();
+    }
 
-	/**
-	 * Creates default implementation of {@link DiscCacheAware} depends on
-	 * incoming parameters
-	 */
-	public static DiscCacheAware createDiscCache(final Context context,
-			final FileNameGenerator discCacheFileNameGenerator, final int discCacheSize, final int discCacheFileCount) {
-		if (discCacheSize > 0) {
-			final File individualCacheDir = StorageUtils.getIndividualCacheDirectory(context);
-			return new TotalSizeLimitedDiscCache(individualCacheDir, discCacheFileNameGenerator, discCacheSize);
-		} else if (discCacheFileCount > 0) {
-			final File individualCacheDir = StorageUtils.getIndividualCacheDirectory(context);
-			return new FileCountLimitedDiscCache(individualCacheDir, discCacheFileNameGenerator, discCacheFileCount);
-		} else {
-			final File cacheDir = StorageUtils.getCacheDirectory(context);
-			return new UnlimitedDiscCache(cacheDir, discCacheFileNameGenerator);
-		}
-	}
+    /**
+     * Creates default implementation of {@link DiscCacheAware} depends on
+     * incoming parameters
+     */
+    public static DiscCacheAware createDiscCache(final Context context,
+            final FileNameGenerator discCacheFileNameGenerator, final int discCacheSize,
+            final int discCacheFileCount) {
+        if (discCacheSize > 0) {
+            final File individualCacheDir = StorageUtils.getIndividualCacheDirectory(context);
+            return new TotalSizeLimitedDiscCache(individualCacheDir, discCacheFileNameGenerator,
+                    discCacheSize);
+        } else if (discCacheFileCount > 0) {
+            final File individualCacheDir = StorageUtils.getIndividualCacheDirectory(context);
+            return new FileCountLimitedDiscCache(individualCacheDir, discCacheFileNameGenerator,
+                    discCacheFileCount);
+        } else {
+            final File cacheDir = StorageUtils.getCacheDirectory(context);
+            return new UnlimitedDiscCache(cacheDir, discCacheFileNameGenerator);
+        }
+    }
 
-	/** Creates default implementation of task executor */
-	public static Executor createExecutor(final int threadPoolSize, final int threadPriority,
-			final QueueProcessingType tasksProcessingType) {
-		final boolean lifo = tasksProcessingType == QueueProcessingType.LIFO;
-		final BlockingQueue<Runnable> taskQueue = lifo ? new LIFOLinkedBlockingDeque<Runnable>()
-				: new LinkedBlockingQueue<Runnable>();
-		return new ThreadPoolExecutor(threadPoolSize, threadPoolSize, 0L, TimeUnit.MILLISECONDS, taskQueue,
-				createThreadFactory(threadPriority));
-	}
+    /** Creates default implementation of task executor */
+    public static Executor createExecutor(final int threadPoolSize, final int threadPriority,
+            final QueueProcessingType tasksProcessingType) {
+        final boolean lifo = tasksProcessingType == QueueProcessingType.LIFO;
+        final BlockingQueue<Runnable> taskQueue = lifo ? new LIFOLinkedBlockingDeque<Runnable>()
+                : new LinkedBlockingQueue<Runnable>();
+        return new ThreadPoolExecutor(threadPoolSize, threadPoolSize, 0L, TimeUnit.MILLISECONDS,
+                taskQueue,
+                createThreadFactory(threadPriority));
+    }
 
-	/**
-	 * Creates {@linkplain HashCodeFileNameGenerator default implementation} of
-	 * FileNameGenerator
-	 */
-	public static FileNameGenerator createFileNameGenerator() {
-		return new HashCodeFileNameGenerator();
-	}
+    /**
+     * Creates {@linkplain HashCodeFileNameGenerator default implementation} of
+     * FileNameGenerator
+     */
+    public static FileNameGenerator createFileNameGenerator() {
+        return new HashCodeFileNameGenerator();
+    }
 
-	/**
-	 * Creates default implementation of {@link ImageDecoder} -
-	 * {@link BaseImageDecoder}
-	 */
-	public static ImageDecoder createImageDecoder(final boolean loggingEnabled) {
-		return new BaseImageDecoder(loggingEnabled);
-	}
+    /**
+     * Creates default implementation of {@link ImageDecoder} -
+     * {@link BaseImageDecoder}
+     */
+    public static ImageDecoder createImageDecoder(final boolean loggingEnabled) {
+        return new BaseImageDecoder(loggingEnabled);
+    }
 
-	/**
-	 * Creates default implementation of {@link ImageDownloader} -
-	 * {@link BaseImageDownloader}
-	 */
-	public static ImageDownloader createImageDownloader(final Context context) {
-		return new BaseImageDownloader(context);
-	}
+    /**
+     * Creates default implementation of {@link ImageDownloader} -
+     * {@link BaseImageDownloader}
+     */
+    public static ImageDownloader createImageDownloader(final Context context) {
+        return new BaseImageDownloader(context);
+    }
 
-	/**
-	 * Creates default implementation of {@link MemoryCacheAware} depends on
-	 * incoming parameters: <br />
-	 * {@link LruMemoryCache} (for API >= 9) or {@link LRULimitedMemoryCache}
-	 * (for API < 9).<br />
-	 * Default cache size = 1/8 of available app memory.
-	 */
-	public static MemoryCacheAware<String, Bitmap> createMemoryCache(int memoryCacheSize) {
-		if (memoryCacheSize == 0) {
-			memoryCacheSize = (int) (Runtime.getRuntime().maxMemory() / 8);
-		}
-		MemoryCacheAware<String, Bitmap> memoryCache;
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-			memoryCache = new LruMemoryCache(memoryCacheSize);
-		} else {
-			memoryCache = new LRULimitedMemoryCache(memoryCacheSize);
-		}
-		return memoryCache;
-	}
+    /**
+     * Creates default implementation of {@link MemoryCacheAware} depends on
+     * incoming parameters: <br />
+     * {@link LruMemoryCache} (for API >= 9) or {@link LRULimitedMemoryCache}
+     * (for API < 9).<br />
+     * Default cache size = 1/8 of available app memory.
+     */
+    public static MemoryCacheAware<String, Bitmap> createMemoryCache(int memoryCacheSize) {
+        if (memoryCacheSize == 0) {
+            memoryCacheSize = (int) (Runtime.getRuntime().maxMemory() / 8);
+        }
+        MemoryCacheAware<String, Bitmap> memoryCache;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            memoryCache = new LruMemoryCache(memoryCacheSize);
+        } else {
+            memoryCache = new LRULimitedMemoryCache(memoryCacheSize);
+        }
+        return memoryCache;
+    }
 
-	/**
-	 * Creates reserve disc cache which will be used if primary disc cache
-	 * becomes unavailable
-	 */
-	public static DiscCacheAware createReserveDiscCache(final Context context) {
-		File cacheDir = context.getCacheDir();
-		final File individualDir = new File(cacheDir, "uil-images");
-		if (individualDir.exists() || individualDir.mkdir()) {
-			cacheDir = individualDir;
-		}
-		return new TotalSizeLimitedDiscCache(cacheDir, 2 * 1024 * 1024); // limit
-																			// -
-																			// 2
-																			// Mb
-	}
+    /**
+     * Creates reserve disc cache which will be used if primary disc cache
+     * becomes unavailable
+     */
+    public static DiscCacheAware createReserveDiscCache(final Context context) {
+        File cacheDir = context.getCacheDir();
+        final File individualDir = new File(cacheDir, "uil-images");
+        if (individualDir.exists() || individualDir.mkdir()) {
+            cacheDir = individualDir;
+        }
+        return new TotalSizeLimitedDiscCache(cacheDir, 2 * 1024 * 1024); // limit
+                                                                         // -
+                                                                         // 2
+                                                                         // Mb
+    }
 
-	/**
-	 * Creates default implementation of {@linkplain ThreadFactory thread
-	 * factory} for task executor
-	 */
-	private static ThreadFactory createThreadFactory(final int threadPriority) {
-		return new DefaultThreadFactory(threadPriority);
-	}
+    /**
+     * Creates default implementation of {@linkplain ThreadFactory thread
+     * factory} for task executor
+     */
+    private static ThreadFactory createThreadFactory(final int threadPriority) {
+        return new DefaultThreadFactory(threadPriority);
+    }
 
-	private static class DefaultThreadFactory implements ThreadFactory {
+    private static class DefaultThreadFactory implements ThreadFactory {
 
-		private static final AtomicInteger poolNumber = new AtomicInteger(1);
+        private static final AtomicInteger poolNumber = new AtomicInteger(1);
 
-		private final ThreadGroup group;
-		private final AtomicInteger threadNumber = new AtomicInteger(1);
-		private final String namePrefix;
-		private final int threadPriority;
+        private final ThreadGroup group;
+        private final AtomicInteger threadNumber = new AtomicInteger(1);
+        private final String namePrefix;
+        private final int threadPriority;
 
-		DefaultThreadFactory(final int threadPriority) {
-			this.threadPriority = threadPriority;
-			final SecurityManager s = System.getSecurityManager();
-			group = s != null ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
-			namePrefix = "pool-" + poolNumber.getAndIncrement() + "-thread-";
-		}
+        DefaultThreadFactory(final int threadPriority) {
+            this.threadPriority = threadPriority;
+            final SecurityManager s = System.getSecurityManager();
+            group = s != null ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+            namePrefix = "pool-" + poolNumber.getAndIncrement() + "-thread-";
+        }
 
-		@Override
-		public Thread newThread(final Runnable r) {
-			final Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
-			if (t.isDaemon()) {
-				t.setDaemon(false);
-			}
-			t.setPriority(threadPriority);
-			return t;
-		}
-	}
+        @Override
+        public Thread newThread(final Runnable r) {
+            final Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
+            if (t.isDaemon()) {
+                t.setDaemon(false);
+            }
+            t.setPriority(threadPriority);
+            return t;
+        }
+    }
 }

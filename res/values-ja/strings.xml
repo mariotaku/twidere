@@ -58,7 +58,7 @@
   <string name="view_user_profile">ユーザープロフィール</string>
   <string name="browser">ブラウザ</string>
   <string name="pick_from_gallery">ギャラリーから選択</string>
-  <string name="tweets">ツイート</string>
+  <string name="statuses">ツイート</string>
   <string name="followers">フォロワー</string>
   <string name="friends">フォロー中</string>
   <string name="about">バージョン情報</string>
@@ -315,7 +315,7 @@
   <string name="follow_request_sent">フォローリクエストを送信しました。</string>
   <string name="separate_retweet_action">リツイートと引用の分離</string>
   <string name="separate_retweet_action_summary">リツイートと引用の両方をメニューに同時表示します。</string>
-  <string name="tweet">ツイート</string>
+  <string name="status">ツイート</string>
   <string name="preview">プレビュー</string>
   <string name="api_upgrade_notice_title">十分ご注意ください！</string>
   <string name="api_upgrade_notice_message">  Twitter API Version 1.1 の提供が開始されます。\n\n  これからTwidereはAPI1.1を採用します。\n\n  問題が発生する可能性を防ぐため、あなたの既存アカウントを削除して再サインインすることを強くお勧めします。\n\n  利用ルール変更点：\n  *レート制限が厳しくなりました。例、１５分間でホームTLの更新回数は１５回のみ\n  *あなたのツイートをリツイートしたユーザーと あなたにリツイートしたツイートが見えなくなりました。\n  *TwidereをStatusNetのクライントとして利用している場合、APIルールの変更でいろんな機能を失うことになります。\n\n  ご不便をおかけして申し訳ございませんが、こちらも何もできません。Twitterはサードパーティクライアントを厳しく制限していますから。</string>

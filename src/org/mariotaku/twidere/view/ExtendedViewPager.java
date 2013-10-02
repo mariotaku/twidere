@@ -26,26 +26,28 @@ import android.view.MotionEvent;
 
 public class ExtendedViewPager extends ViewPager {
 
-	private boolean mPagingEnabled = true;
+    private boolean mPagingEnabled = true;
 
-	public ExtendedViewPager(final Context context, final AttributeSet attrs) {
-		super(context, attrs);
-		mPagingEnabled = true;
-	}
+    public ExtendedViewPager(final Context context, final AttributeSet attrs) {
+        super(context, attrs);
+        mPagingEnabled = true;
+    }
 
-	@Override
-	public boolean onInterceptTouchEvent(final MotionEvent event) {
-		if (!mPagingEnabled) return false;
-		return super.onInterceptTouchEvent(event);
-	}
+    @Override
+    public boolean onInterceptTouchEvent(final MotionEvent event) {
+        if (!mPagingEnabled)
+            return false;
+        return super.onInterceptTouchEvent(event);
+    }
 
-	@Override
-	public boolean onTouchEvent(final MotionEvent event) {
-		if (!mPagingEnabled) return false;
-		return super.onTouchEvent(event);
-	}
+    @Override
+    public boolean onTouchEvent(final MotionEvent event) {
+        if (!mPagingEnabled)
+            return false;
+        return super.onTouchEvent(event);
+    }
 
-	public void setPagingEnabled(final boolean enabled) {
-		mPagingEnabled = enabled;
-	}
+    public void setPagingEnabled(final boolean enabled) {
+        mPagingEnabled = enabled;
+    }
 }

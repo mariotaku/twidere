@@ -23,9 +23,9 @@ import java.io.Serializable;
  * @since Twitter4J 2.1.1
  */
 public interface Category extends Serializable {
-	String getName();
+    String getName();
 
-	int getSize();
+    int getSize();
 
-	String getSlug();
+    String getSlug();
 }

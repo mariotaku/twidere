@@ -20,23 +20,23 @@ package twitter4j;
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
 public final class Version {
-	private static final String VERSION = "3.0.3";
-	private static final String TITLE = "Twitter4J";
+    private static final String VERSION = "3.0.3";
+    private static final String TITLE = "Twitter4J";
 
-	private Version() {
-		throw new AssertionError();
-	}
+    private Version() {
+        throw new AssertionError();
+    }
 
-	public static String getVersion() {
-		return VERSION;
-	}
+    public static String getVersion() {
+        return VERSION;
+    }
 
-	/**
-	 * prints the version string
-	 * 
-	 * @param args will be just ignored.
-	 */
-	public static void main(final String[] args) {
-		System.out.println(TITLE + " " + VERSION);
-	}
+    /**
+     * prints the version string
+     * 
+     * @param args will be just ignored.
+     */
+    public static void main(final String[] args) {
+        System.out.println(TITLE + " " + VERSION);
+    }
 }

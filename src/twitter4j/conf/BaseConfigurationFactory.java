@@ -23,28 +23,28 @@ package twitter4j.conf;
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
 class BaseConfigurationFactory implements ConfigurationFactory {
-	private static final ConfigurationBase ROOT_CONFIGURATION;
+    private static final ConfigurationBase ROOT_CONFIGURATION;
 
-	static {
-		ROOT_CONFIGURATION = new ConfigurationBase();
-	}
+    static {
+        ROOT_CONFIGURATION = new ConfigurationBase();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void dispose() {
-		// nothing to do for property based configuration
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void dispose() {
+        // nothing to do for property based configuration
+    }
 
-	// It may be preferable to cache the config instance
+    // It may be preferable to cache the config instance
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Configuration getInstance() {
-		return ROOT_CONFIGURATION;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Configuration getInstance() {
+        return ROOT_CONFIGURATION;
+    }
 
 }

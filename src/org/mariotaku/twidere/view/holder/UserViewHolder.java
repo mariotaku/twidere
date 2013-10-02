@@ -19,68 +19,70 @@
 
 package org.mariotaku.twidere.view.holder;
 
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.view.iface.IColorLabelView;
-
 import android.graphics.Color;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.view.iface.IColorLabelView;
+
 public class UserViewHolder {
 
-	public final ImageView profile_image;
-	public final TextView name, screen_name, description, location, url, statuses_count, followers_count,
-			friends_count;
-	public final View item_menu;
-	private final IColorLabelView content;
-	private boolean account_color_enabled;
-	private float text_size;
+    public final ImageView profile_image;
+    public final TextView name, screen_name, description, location, url, statuses_count,
+            followers_count,
+            friends_count;
+    public final View item_menu;
+    private final IColorLabelView content;
+    private boolean account_color_enabled;
+    private float text_size;
 
-	public UserViewHolder(final View view) {
-		content = (IColorLabelView) view.findViewById(R.id.content);
-		profile_image = (ImageView) view.findViewById(R.id.profile_image);
-		name = (TextView) view.findViewById(R.id.name);
-		screen_name = (TextView) view.findViewById(R.id.screen_name);
-		description = (TextView) view.findViewById(R.id.description);
-		location = (TextView) view.findViewById(R.id.location);
-		url = (TextView) view.findViewById(R.id.url);
-		statuses_count = (TextView) view.findViewById(R.id.statuses_count);
-		followers_count = (TextView) view.findViewById(R.id.followers_count);
-		friends_count = (TextView) view.findViewById(R.id.friends_count);
-		item_menu = view.findViewById(R.id.item_menu);
-	}
+    public UserViewHolder(final View view) {
+        content = (IColorLabelView) view.findViewById(R.id.content);
+        profile_image = (ImageView) view.findViewById(R.id.profile_image);
+        name = (TextView) view.findViewById(R.id.name);
+        screen_name = (TextView) view.findViewById(R.id.screen_name);
+        description = (TextView) view.findViewById(R.id.description);
+        location = (TextView) view.findViewById(R.id.location);
+        url = (TextView) view.findViewById(R.id.url);
+        statuses_count = (TextView) view.findViewById(R.id.statuses_count);
+        followers_count = (TextView) view.findViewById(R.id.followers_count);
+        friends_count = (TextView) view.findViewById(R.id.friends_count);
+        item_menu = view.findViewById(R.id.item_menu);
+    }
 
-	public void setAccountColor(final int color) {
-		content.drawEnd(account_color_enabled ? color : Color.TRANSPARENT);
-	}
+    public void setAccountColor(final int color) {
+        content.drawEnd(account_color_enabled ? color : Color.TRANSPARENT);
+    }
 
-	public void setAccountColorEnabled(final boolean enabled) {
-		account_color_enabled = enabled;
-		if (!account_color_enabled) {
-			content.drawEnd(Color.TRANSPARENT);
-		}
-	}
+    public void setAccountColorEnabled(final boolean enabled) {
+        account_color_enabled = enabled;
+        if (!account_color_enabled) {
+            content.drawEnd(Color.TRANSPARENT);
+        }
+    }
 
-	public void setHighlightColor(final int color) {
-		content.drawBackground(color);
-	}
+    public void setHighlightColor(final int color) {
+        content.drawBackground(color);
+    }
 
-	public void setTextSize(final float text_size) {
-		if (this.text_size == text_size) return;
-		this.text_size = text_size;
-		description.setTextSize(text_size);
-		name.setTextSize(text_size);
-		screen_name.setTextSize(text_size * 0.75f);
-		location.setTextSize(text_size);
-		url.setTextSize(text_size);
-		statuses_count.setTextSize(text_size);
-		followers_count.setTextSize(text_size);
-		friends_count.setTextSize(text_size);
-	}
+    public void setTextSize(final float text_size) {
+        if (this.text_size == text_size)
+            return;
+        this.text_size = text_size;
+        description.setTextSize(text_size);
+        name.setTextSize(text_size);
+        screen_name.setTextSize(text_size * 0.75f);
+        location.setTextSize(text_size);
+        url.setTextSize(text_size);
+        statuses_count.setTextSize(text_size);
+        followers_count.setTextSize(text_size);
+        friends_count.setTextSize(text_size);
+    }
 
-	public void setUserColor(final int color) {
-		content.drawStart(color);
-	}
+    public void setUserColor(final int color) {
+        content.drawStart(color);
+    }
 
 }

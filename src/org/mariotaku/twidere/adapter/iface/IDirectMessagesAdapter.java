@@ -23,6 +23,6 @@ import org.mariotaku.twidere.model.ParcelableDirectMessage;
 
 public interface IDirectMessagesAdapter extends IBaseAdapter {
 
-	public ParcelableDirectMessage findItem(long id);
+    public ParcelableDirectMessage findItem(long id);
 
 }

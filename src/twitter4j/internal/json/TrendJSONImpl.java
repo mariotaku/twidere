@@ -29,68 +29,74 @@ import twitter4j.Trend;
  * @since Twitter4J 2.0.2
  */
 /* package */final class TrendJSONImpl implements Trend {
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = -2205410210175259078L;
-	private final String name;
-	private String url = null;
-	private String query = null;
+    private static final long serialVersionUID = -2205410210175259078L;
+    private final String name;
+    private String url = null;
+    private String query = null;
 
-	/* package */TrendJSONImpl(final JSONObject json) {
-		name = getRawString("name", json);
-		url = getRawString("url", json);
-		query = getRawString("query", json);
-	}
+    /* package */TrendJSONImpl(final JSONObject json) {
+        name = getRawString("name", json);
+        url = getRawString("url", json);
+        query = getRawString("query", json);
+    }
 
-	@Override
-	public boolean equals(final Object o) {
-		if (this == o) return true;
-		if (!(o instanceof Trend)) return false;
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof Trend))
+            return false;
 
-		final Trend trend = (Trend) o;
+        final Trend trend = (Trend) o;
 
-		if (!name.equals(trend.getName())) return false;
-		if (query != null ? !query.equals(trend.getQuery()) : trend.getQuery() != null) return false;
-		if (url != null ? !url.equals(trend.getUrl()) : trend.getUrl() != null) return false;
+        if (!name.equals(trend.getName()))
+            return false;
+        if (query != null ? !query.equals(trend.getQuery()) : trend.getQuery() != null)
+            return false;
+        if (url != null ? !url.equals(trend.getUrl()) : trend.getUrl() != null)
+            return false;
 
-		return true;
-	}
+        return true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getName() {
-		return name;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getQuery() {
-		return query;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getQuery() {
+        return query;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getUrl() {
-		return url;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getUrl() {
+        return url;
+    }
 
-	@Override
-	public int hashCode() {
-		int result = name.hashCode();
-		result = 31 * result + (url != null ? url.hashCode() : 0);
-		result = 31 * result + (query != null ? query.hashCode() : 0);
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + (url != null ? url.hashCode() : 0);
+        result = 31 * result + (query != null ? query.hashCode() : 0);
+        return result;
+    }
 
-	@Override
-	public String toString() {
-		return "TrendJSONImpl{" + "name='" + name + '\'' + ", url='" + url + '\'' + ", query='" + query + '\'' + '}';
-	}
+    @Override
+    public String toString() {
+        return "TrendJSONImpl{" + "name='" + name + '\'' + ", url='" + url + '\'' + ", query='"
+                + query + '\'' + '}';
+    }
 }

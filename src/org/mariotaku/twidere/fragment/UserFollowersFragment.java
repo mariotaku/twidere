@@ -21,57 +21,62 @@ package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 
-import org.mariotaku.twidere.loader.CursorSupportUsersLoader;
-import org.mariotaku.twidere.loader.UserFollowersLoader;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 
+import org.mariotaku.twidere.loader.CursorSupportUsersLoader;
+import org.mariotaku.twidere.loader.UserFollowersLoader;
+
 public class UserFollowersFragment extends CursorSupportUsersListFragment {
 
-	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
-		@Override
-		public void onReceive(final Context context, final Intent intent) {
-			if (getActivity() == null || !isAdded() || isDetached()) return;
-			final String action = intent.getAction();
-			if (BROADCAST_MULTI_BLOCKSTATE_CHANGED.equals(action)) {
-				final long account_id = intent.getLongExtra(INTENT_KEY_ACCOUNT_ID, -1);
-				final String screen_name = getAccountScreenName(getActivity(), account_id);
-				final Bundle args = getArguments();
-				if (args != null && account_id > 0 && args.getLong(INTENT_KEY_USER_ID, -1) == account_id
-						|| screen_name != null && screen_name.equalsIgnoreCase(args.getString(INTENT_KEY_SCREEN_NAME))) {
-					removeUsers(intent.getLongArrayExtra(INTENT_KEY_USER_IDS));
-				}
-			}
-		}
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            if (getActivity() == null || !isAdded() || isDetached())
+                return;
+            final String action = intent.getAction();
+            if (BROADCAST_MULTI_BLOCKSTATE_CHANGED.equals(action)) {
+                final long account_id = intent.getLongExtra(INTENT_KEY_ACCOUNT_ID, -1);
+                final String screen_name = getAccountScreenName(getActivity(), account_id);
+                final Bundle args = getArguments();
+                if (args != null && account_id > 0
+                        && args.getLong(INTENT_KEY_USER_ID, -1) == account_id
+                        || screen_name != null
+                        && screen_name.equalsIgnoreCase(args.getString(INTENT_KEY_SCREEN_NAME))) {
+                    removeUsers(intent.getLongArrayExtra(INTENT_KEY_USER_IDS));
+                }
+            }
+        }
 
-	};
+    };
 
-	@Override
-	public CursorSupportUsersLoader newLoaderInstance(final Context context, final Bundle args) {
-		if (args == null) return null;
-		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-		final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
-		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-		return new UserFollowersLoader(context, account_id, user_id, screen_name, getNextCursor(), getData());
-	}
+    @Override
+    public CursorSupportUsersLoader newLoaderInstance(final Context context, final Bundle args) {
+        if (args == null)
+            return null;
+        final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+        final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
+        final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
+        return new UserFollowersLoader(context, account_id, user_id, screen_name, getNextCursor(),
+                getData());
+    }
 
-	@Override
-	public void onStart() {
-		super.onStart();
-		final IntentFilter filter = new IntentFilter(BROADCAST_MULTI_BLOCKSTATE_CHANGED);
-		registerReceiver(mStateReceiver, filter);
+    @Override
+    public void onStart() {
+        super.onStart();
+        final IntentFilter filter = new IntentFilter(BROADCAST_MULTI_BLOCKSTATE_CHANGED);
+        registerReceiver(mStateReceiver, filter);
 
-	}
+    }
 
-	@Override
-	public void onStop() {
-		unregisterReceiver(mStateReceiver);
-		super.onStop();
-	}
+    @Override
+    public void onStop() {
+        unregisterReceiver(mStateReceiver);
+        super.onStop();
+    }
 
 }

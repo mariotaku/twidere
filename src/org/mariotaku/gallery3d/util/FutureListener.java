@@ -17,7 +17,7 @@
 package org.mariotaku.gallery3d.util;
 
 public interface FutureListener<T> {
-	public void onFutureDone(Future<T> future);
+    public void onFutureDone(Future<T> future);
 
-	public void onFutureStart(Future<T> future);
+    public void onFutureStart(Future<T> future);
 }

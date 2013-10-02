@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:title="@string/tweet">
+	android:title="@string/status">
 
 	<org.mariotaku.twidere.preference.StatusPreviewPreference
 		android:key="status_preview"

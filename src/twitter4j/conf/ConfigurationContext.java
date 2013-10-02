@@ -23,10 +23,10 @@ package twitter4j.conf;
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
 public final class ConfigurationContext {
-	private static final ConfigurationFactory factory = new BaseConfigurationFactory();
+    private static final ConfigurationFactory factory = new BaseConfigurationFactory();
 
-	public static Configuration getInstance() {
-		return factory.getInstance();
-	}
+    public static Configuration getInstance() {
+        return factory.getInstance();
+    }
 
 }

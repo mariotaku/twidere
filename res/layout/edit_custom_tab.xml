@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical"
+	tools:context=".activity.EditCustomTabActivity">
+
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:padding="16dp">
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:gravity="center_vertical"
+				android:orientation="horizontal">
+
+				<org.mariotaku.twidere.view.ClickableImageView
+					android:id="@+id/tab_icon"
+					android:layout_width="48dip"
+					android:layout_height="48dip"
+					android:src="@drawable/ic_tab_list"/>
+
+				<EditText
+					android:id="@+id/tab_name"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/name"
+					android:padding="8dp"
+					android:textAppearance="?android:attr/textAppearanceMedium"/>
+			</LinearLayout>
+
+			<Spinner
+				android:id="@+id/account_spinner"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				tools:listitem="@layout/user_autocomplete_list_item"/>
+
+			<FrameLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content">
+			</FrameLayout>
+		</LinearLayout>
+	</ScrollView>
+
+	<View
+		android:layout_width="match_parent"
+		android:layout_height="0.2dp"
+		android:background="#40808080"/>
+
+	<Button
+		android:id="@+id/save"
+		style="?android:borderlessButtonStyle"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/button_bar_height"
+		android:layout_gravity="center_horizontal"
+		android:gravity="center"
+		android:text="@android:string/ok"/>
+
+</LinearLayout>

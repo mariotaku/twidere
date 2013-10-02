@@ -21,19 +21,19 @@ package org.mariotaku.twidere.view.iface;
 
 public interface IColorLabelView {
 
-	public static final float LABEL_WIDTH = 3.5f;
+    public static final float LABEL_WIDTH = 3.5f;
 
-	public void drawBackground(final int color);
+    public void drawBackground(final int color);
 
-	public void drawEnd(final int color);
+    public void drawEnd(final int color);
 
-	public void drawLabel(final int left, final int right, final int background);
+    public void drawLabel(final int left, final int right, final int background);
 
-	public void drawStart(final int color);
+    public void drawStart(final int color);
 
-	public boolean isPaddingsIgnored();
+    public boolean isPaddingsIgnored();
 
-	public void setIgnorePaddings(final boolean ignorePaddings);
+    public void setIgnorePaddings(final boolean ignorePaddings);
 
-	public void setVisibility(int visibility);
+    public void setVisibility(int visibility);
 }

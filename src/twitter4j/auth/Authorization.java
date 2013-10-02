@@ -25,12 +25,12 @@ import twitter4j.http.HttpRequest;
  */
 public interface Authorization {
 
-	String getAuthorizationHeader(HttpRequest req);
+    String getAuthorizationHeader(HttpRequest req);
 
-	/**
-	 * Returns true if authorization credentials are set.
-	 * 
-	 * @return true if authorization credentials are set
-	 */
-	boolean isEnabled();
+    /**
+     * Returns true if authorization credentials are set.
+     * 
+     * @return true if authorization credentials are set
+     */
+    boolean isEnabled();
 }

@@ -27,22 +27,22 @@ import java.util.Date;
  */
 
 public interface Trends extends TwitterResponse, Comparable<Trends>, Serializable {
-	Date getAsOf();
+    Date getAsOf();
 
-	/**
-	 * Returns the location associated with the trends.<br>
-	 * This method is effective only with getLocalTrends() method.<br>
-	 * i.e. The return value of this method will be null with Search API Methods
-	 * (getTrends(), getCurrentTrends(), getDailyTrends(), and
-	 * getWeeklyTrends()).<br>
-	 * 
-	 * @return location
-	 * @since Twitter4J 2.1.1
-	 */
-	Location getLocation();
+    /**
+     * Returns the location associated with the trends.<br>
+     * This method is effective only with getLocalTrends() method.<br>
+     * i.e. The return value of this method will be null with Search API Methods
+     * (getTrends(), getCurrentTrends(), getDailyTrends(), and
+     * getWeeklyTrends()).<br>
+     * 
+     * @return location
+     * @since Twitter4J 2.1.1
+     */
+    Location getLocation();
 
-	Date getTrendAt();
+    Date getTrendAt();
 
-	Trend[] getTrends();
+    Trend[] getTrends();
 
 }

@@ -19,14 +19,6 @@
 
 package org.mariotaku.twidere.activity;
 
-import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
-
-import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.fragment.NativeMapFragment;
-import org.mariotaku.twidere.fragment.WebMapFragment;
-import org.mariotaku.twidere.util.MapInterface;
-
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.net.Uri;
@@ -37,63 +29,73 @@ import android.view.MenuItem;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
+import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
+
+import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.fragment.NativeMapFragment;
+import org.mariotaku.twidere.fragment.WebMapFragment;
+import org.mariotaku.twidere.util.MapInterface;
+
 public class MapViewerActivity extends SwipeBackActivity implements Constants {
 
-	@Override
-	public boolean onCreateOptionsMenu(final Menu menu) {
-		getMenuInflater().inflate(R.menu.menu_map_viewer, menu);
-		return true;
-	}
+    @Override
+    public boolean onCreateOptionsMenu(final Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_map_viewer, menu);
+        return true;
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
-		switch (item.getItemId()) {
-			case MENU_HOME: {
-				onBackPressed();
-				break;
-			}
-			case MENU_CENTER: {
-				final Fragment fragment = getFragmentManager().findFragmentById(android.R.id.content);
-				if (!(fragment instanceof MapInterface)) {
-					break;
-				}
-				((MapInterface) fragment).center();
-				break;
-			}
-		}
-		return true;
-	}
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        switch (item.getItemId()) {
+            case MENU_HOME: {
+                onBackPressed();
+                break;
+            }
+            case MENU_CENTER: {
+                final Fragment fragment = getFragmentManager().findFragmentById(
+                        android.R.id.content);
+                if (!(fragment instanceof MapInterface)) {
+                    break;
+                }
+                ((MapInterface) fragment).center();
+                break;
+            }
+        }
+        return true;
+    }
 
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-		final Uri uri = getIntent().getData();
-		if (uri == null || !AUTHORITY_MAP.equals(uri.getAuthority())) {
-			finish();
-			return;
-		}
-		final Bundle bundle = new Bundle();
-		final String param_lat = uri.getQueryParameter(QUERY_PARAM_LAT);
-		final String param_lng = uri.getQueryParameter(QUERY_PARAM_LNG);
-		if (param_lat == null || param_lng == null) {
-			finish();
-			return;
-		}
-		try {
-			bundle.putDouble(INTENT_KEY_LATITUDE, Double.valueOf(param_lat));
-			bundle.putDouble(INTENT_KEY_LONGITUDE, Double.valueOf(param_lng));
-		} catch (final NumberFormatException e) {
-			finish();
-			return;
-		}
-		final Fragment fragment = isNativeMapSupported() ? new NativeMapFragment() : new WebMapFragment();
-		fragment.setArguments(bundle);
-		final FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.replace(android.R.id.content, fragment).commit();
-	}
+    @Override
+    protected void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        final Uri uri = getIntent().getData();
+        if (uri == null || !AUTHORITY_MAP.equals(uri.getAuthority())) {
+            finish();
+            return;
+        }
+        final Bundle bundle = new Bundle();
+        final String param_lat = uri.getQueryParameter(QUERY_PARAM_LAT);
+        final String param_lng = uri.getQueryParameter(QUERY_PARAM_LNG);
+        if (param_lat == null || param_lng == null) {
+            finish();
+            return;
+        }
+        try {
+            bundle.putDouble(INTENT_KEY_LATITUDE, Double.valueOf(param_lat));
+            bundle.putDouble(INTENT_KEY_LONGITUDE, Double.valueOf(param_lng));
+        } catch (final NumberFormatException e) {
+            finish();
+            return;
+        }
+        final Fragment fragment = isNativeMapSupported() ? new NativeMapFragment()
+                : new WebMapFragment();
+        fragment.setArguments(bundle);
+        final FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.replace(android.R.id.content, fragment).commit();
+    }
 
-	private boolean isNativeMapSupported() {
-		return GooglePlayServicesUtil.isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS;
-	}
+    private boolean isNativeMapSupported() {
+        return GooglePlayServicesUtil.isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS;
+    }
 }

@@ -13,7 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
+
 package com.nostra13.universalimageloader.cache.memory.impl;
+
+import android.graphics.Bitmap;
+
+import com.nostra13.universalimageloader.cache.memory.LimitedMemoryCache;
 
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
@@ -22,10 +27,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import android.graphics.Bitmap;
-
-import com.nostra13.universalimageloader.cache.memory.LimitedMemoryCache;
 
 /**
  * Limited {@link Bitmap bitmap} cache. Provides {@link Bitmap bitmaps} storing.
@@ -41,72 +42,73 @@ import com.nostra13.universalimageloader.cache.memory.LimitedMemoryCache;
  * @since 1.0.0
  */
 public class LargestLimitedMemoryCache extends LimitedMemoryCache<String, Bitmap> {
-	/**
-	 * Contains strong references to stored objects (keys) and last object usage
-	 * date (in milliseconds). If hard cache size will exceed limit then object
-	 * with the least frequently usage is deleted (but it continue exist at
-	 * {@link #softMap} and can be collected by GC at any time)
-	 */
-	private final Map<Bitmap, Integer> valueSizes = Collections.synchronizedMap(new HashMap<Bitmap, Integer>());
+    /**
+     * Contains strong references to stored objects (keys) and last object usage
+     * date (in milliseconds). If hard cache size will exceed limit then object
+     * with the least frequently usage is deleted (but it continue exist at
+     * {@link #softMap} and can be collected by GC at any time)
+     */
+    private final Map<Bitmap, Integer> valueSizes = Collections
+            .synchronizedMap(new HashMap<Bitmap, Integer>());
 
-	public LargestLimitedMemoryCache(final int sizeLimit) {
-		super(sizeLimit);
-	}
+    public LargestLimitedMemoryCache(final int sizeLimit) {
+        super(sizeLimit);
+    }
 
-	@Override
-	public void clear() {
-		valueSizes.clear();
-		super.clear();
-	}
+    @Override
+    public void clear() {
+        valueSizes.clear();
+        super.clear();
+    }
 
-	@Override
-	public boolean put(final String key, final Bitmap value) {
-		if (super.put(key, value)) {
-			valueSizes.put(value, getSize(value));
-			return true;
-		} else
-			return false;
-	}
+    @Override
+    public boolean put(final String key, final Bitmap value) {
+        if (super.put(key, value)) {
+            valueSizes.put(value, getSize(value));
+            return true;
+        } else
+            return false;
+    }
 
-	@Override
-	public void remove(final String key) {
-		final Bitmap value = super.get(key);
-		if (value != null) {
-			valueSizes.remove(value);
-		}
-		super.remove(key);
-	}
+    @Override
+    public void remove(final String key) {
+        final Bitmap value = super.get(key);
+        if (value != null) {
+            valueSizes.remove(value);
+        }
+        super.remove(key);
+    }
 
-	@Override
-	protected Reference<Bitmap> createReference(final Bitmap value) {
-		return new WeakReference<Bitmap>(value);
-	}
+    @Override
+    protected Reference<Bitmap> createReference(final Bitmap value) {
+        return new WeakReference<Bitmap>(value);
+    }
 
-	@Override
-	protected int getSize(final Bitmap value) {
-		return value.getRowBytes() * value.getHeight();
-	}
+    @Override
+    protected int getSize(final Bitmap value) {
+        return value.getRowBytes() * value.getHeight();
+    }
 
-	@Override
-	protected Bitmap removeNext() {
-		Integer maxSize = null;
-		Bitmap largestValue = null;
-		final Set<Entry<Bitmap, Integer>> entries = valueSizes.entrySet();
-		synchronized (valueSizes) {
-			for (final Entry<Bitmap, Integer> entry : entries) {
-				if (largestValue == null) {
-					largestValue = entry.getKey();
-					maxSize = entry.getValue();
-				} else {
-					final Integer size = entry.getValue();
-					if (size > maxSize) {
-						maxSize = size;
-						largestValue = entry.getKey();
-					}
-				}
-			}
-		}
-		valueSizes.remove(largestValue);
-		return largestValue;
-	}
+    @Override
+    protected Bitmap removeNext() {
+        Integer maxSize = null;
+        Bitmap largestValue = null;
+        final Set<Entry<Bitmap, Integer>> entries = valueSizes.entrySet();
+        synchronized (valueSizes) {
+            for (final Entry<Bitmap, Integer> entry : entries) {
+                if (largestValue == null) {
+                    largestValue = entry.getKey();
+                    maxSize = entry.getValue();
+                } else {
+                    final Integer size = entry.getValue();
+                    if (size > maxSize) {
+                        maxSize = size;
+                        largestValue = entry.getKey();
+                    }
+                }
+            }
+        }
+        valueSizes.remove(largestValue);
+        return largestValue;
+    }
 }

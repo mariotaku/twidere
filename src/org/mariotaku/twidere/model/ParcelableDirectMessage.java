@@ -24,199 +24,224 @@ import static org.mariotaku.twidere.util.Utils.getAsBoolean;
 import static org.mariotaku.twidere.util.Utils.getAsLong;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 
-import java.io.Serializable;
-import java.util.Comparator;
-import java.util.Date;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.util.ParseUtils;
 
 import twitter4j.DirectMessage;
 import twitter4j.User;
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.os.Parcel;
-import android.os.Parcelable;
 
-public class ParcelableDirectMessage implements Parcelable, Serializable, Comparable<ParcelableDirectMessage> {
+import java.io.Serializable;
+import java.util.Comparator;
+import java.util.Date;
 
-	private static final long serialVersionUID = -3721836808981416526L;
+public class ParcelableDirectMessage implements Parcelable, Serializable,
+        Comparable<ParcelableDirectMessage> {
 
-	public static final Parcelable.Creator<ParcelableDirectMessage> CREATOR = new Parcelable.Creator<ParcelableDirectMessage>() {
-		@Override
-		public ParcelableDirectMessage createFromParcel(final Parcel in) {
-			return new ParcelableDirectMessage(in);
-		}
+    private static final long serialVersionUID = -3721836808981416526L;
 
-		@Override
-		public ParcelableDirectMessage[] newArray(final int size) {
-			return new ParcelableDirectMessage[size];
-		}
-	};
+    public static final Parcelable.Creator<ParcelableDirectMessage> CREATOR = new Parcelable.Creator<ParcelableDirectMessage>() {
+        @Override
+        public ParcelableDirectMessage createFromParcel(final Parcel in) {
+            return new ParcelableDirectMessage(in);
+        }
 
-	public static final Comparator<ParcelableDirectMessage> MESSAGE_ID_COMPARATOR = new Comparator<ParcelableDirectMessage>() {
+        @Override
+        public ParcelableDirectMessage[] newArray(final int size) {
+            return new ParcelableDirectMessage[size];
+        }
+    };
 
-		@Override
-		public int compare(final ParcelableDirectMessage object1, final ParcelableDirectMessage object2) {
-			final long diff = object2.id - object1.id;
-			if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
-			if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
-			return (int) diff;
-		}
-	};
+    public static final Comparator<ParcelableDirectMessage> MESSAGE_ID_COMPARATOR = new Comparator<ParcelableDirectMessage>() {
 
-	public final long account_id, id, timestamp;
+        @Override
+        public int compare(final ParcelableDirectMessage object1,
+                final ParcelableDirectMessage object2) {
+            final long diff = object2.id - object1.id;
+            if (diff > Integer.MAX_VALUE)
+                return Integer.MAX_VALUE;
+            if (diff < Integer.MIN_VALUE)
+                return Integer.MIN_VALUE;
+            return (int) diff;
+        }
+    };
 
-	public final long sender_id, recipient_id;
-	public final boolean is_out_going;
+    public final long account_id, id, timestamp;
 
-	public final String text_html, text_plain;
+    public final long sender_id, recipient_id;
+    public final boolean is_out_going;
 
-	public final String sender_name, recipient_name, sender_screen_name, recipient_screen_name;
-	public final String sender_profile_image_url, recipient_profile_image_url;
+    public final String text_html, text_plain;
 
-	public ParcelableDirectMessage(final ContentValues values) {
-		text_plain = values.getAsString(DirectMessages.TEXT_PLAIN);
-		text_html = values.getAsString(DirectMessages.TEXT_HTML);
-		sender_screen_name = values.getAsString(DirectMessages.SENDER_SCREEN_NAME);
-		sender_profile_image_url = values.getAsString(DirectMessages.SENDER_PROFILE_IMAGE_URL);
-		sender_name = values.getAsString(DirectMessages.SENDER_NAME);
-		sender_id = getAsLong(values, DirectMessages.SENDER_ID, -1);
-		recipient_screen_name = values.getAsString(DirectMessages.RECIPIENT_SCREEN_NAME);
-		recipient_profile_image_url = values.getAsString(DirectMessages.RECIPIENT_PROFILE_IMAGE_URL);
-		recipient_name = values.getAsString(DirectMessages.RECIPIENT_NAME);
-		recipient_id = getAsLong(values, DirectMessages.RECIPIENT_ID, -1);
-		timestamp = getAsLong(values, DirectMessages.MESSAGE_TIMESTAMP, -1);
-		id = getAsLong(values, DirectMessages.MESSAGE_ID, -1);
-		is_out_going = getAsBoolean(values, DirectMessages.IS_OUTGOING, false);
-		account_id = getAsLong(values, DirectMessages.ACCOUNT_ID, -1);
-	}
+    public final String sender_name, recipient_name, sender_screen_name, recipient_screen_name;
+    public final String sender_profile_image_url, recipient_profile_image_url;
 
-	public ParcelableDirectMessage(final Cursor cursor, final DirectMessageCursorIndices indices) {
-		account_id = indices.account_id != -1 ? cursor.getLong(indices.account_id) : -1;
-		is_out_going = indices.is_outgoing != -1 ? cursor.getShort(indices.is_outgoing) == 1 : null;
-		id = indices.message_id != -1 ? cursor.getLong(indices.message_id) : -1;
-		timestamp = indices.message_timestamp != -1 ? cursor.getLong(indices.message_timestamp) : -1;
-		sender_id = indices.sender_id != -1 ? cursor.getLong(indices.sender_id) : -1;
-		recipient_id = indices.recipient_id != -1 ? cursor.getLong(indices.recipient_id) : -1;
-		text_html = indices.text != -1 ? cursor.getString(indices.text) : null;
-		text_plain = indices.text_plain != -1 ? cursor.getString(indices.text_plain) : null;
-		sender_name = indices.sender_name != -1 ? cursor.getString(indices.sender_name) : null;
-		recipient_name = indices.recipient_name != -1 ? cursor.getString(indices.recipient_name) : null;
-		sender_screen_name = indices.sender_screen_name != -1 ? cursor.getString(indices.sender_screen_name) : null;
-		recipient_screen_name = indices.recipient_screen_name != -1 ? cursor.getString(indices.recipient_screen_name)
-				: null;
-		sender_profile_image_url = indices.sender_profile_image_url != -1 ? cursor
-				.getString(indices.sender_profile_image_url) : null;
-		recipient_profile_image_url = indices.recipient_profile_image_url != -1 ? cursor
-				.getString(indices.recipient_profile_image_url) : null;
-	}
+    public ParcelableDirectMessage(final ContentValues values) {
+        text_plain = values.getAsString(DirectMessages.TEXT_PLAIN);
+        text_html = values.getAsString(DirectMessages.TEXT_HTML);
+        sender_screen_name = values.getAsString(DirectMessages.SENDER_SCREEN_NAME);
+        sender_profile_image_url = values.getAsString(DirectMessages.SENDER_PROFILE_IMAGE_URL);
+        sender_name = values.getAsString(DirectMessages.SENDER_NAME);
+        sender_id = getAsLong(values, DirectMessages.SENDER_ID, -1);
+        recipient_screen_name = values.getAsString(DirectMessages.RECIPIENT_SCREEN_NAME);
+        recipient_profile_image_url = values
+                .getAsString(DirectMessages.RECIPIENT_PROFILE_IMAGE_URL);
+        recipient_name = values.getAsString(DirectMessages.RECIPIENT_NAME);
+        recipient_id = getAsLong(values, DirectMessages.RECIPIENT_ID, -1);
+        timestamp = getAsLong(values, DirectMessages.MESSAGE_TIMESTAMP, -1);
+        id = getAsLong(values, DirectMessages.MESSAGE_ID, -1);
+        is_out_going = getAsBoolean(values, DirectMessages.IS_OUTGOING, false);
+        account_id = getAsLong(values, DirectMessages.ACCOUNT_ID, -1);
+    }
 
-	public ParcelableDirectMessage(final DirectMessage message, final long account_id, final boolean is_outgoing,
-			final boolean large_profile_image) {
-		this.account_id = account_id;
-		is_out_going = is_outgoing;
-		final User sender = message.getSender(), recipient = message.getRecipient();
-		final String sender_profile_image_url_string = sender != null ? ParseUtils.parseString(sender
-				.getProfileImageUrlHttps()) : null;
-		final String recipient_profile_image_url_string = recipient != null ? ParseUtils.parseString(recipient
-				.getProfileImageUrlHttps()) : null;
-		id = message.getId();
-		timestamp = getTime(message.getCreatedAt());
-		sender_id = sender != null ? sender.getId() : -1;
-		recipient_id = recipient != null ? recipient.getId() : -1;
-		text_html = formatDirectMessageText(message);
-		text_plain = message.getText();
-		sender_name = sender != null ? sender.getName() : null;
-		recipient_name = recipient != null ? recipient.getName() : null;
-		sender_screen_name = sender != null ? sender.getScreenName() : null;
-		recipient_screen_name = recipient != null ? recipient.getScreenName() : null;
-		sender_profile_image_url = large_profile_image ? getBiggerTwitterProfileImage(sender_profile_image_url_string)
-				: sender_profile_image_url_string;
-		recipient_profile_image_url = large_profile_image ? getBiggerTwitterProfileImage(recipient_profile_image_url_string)
-				: recipient_profile_image_url_string;
-	}
+    public ParcelableDirectMessage(final Cursor cursor, final DirectMessageCursorIndices indices) {
+        account_id = indices.account_id != -1 ? cursor.getLong(indices.account_id) : -1;
+        is_out_going = indices.is_outgoing != -1 ? cursor.getShort(indices.is_outgoing) == 1 : null;
+        id = indices.message_id != -1 ? cursor.getLong(indices.message_id) : -1;
+        timestamp = indices.message_timestamp != -1 ? cursor.getLong(indices.message_timestamp)
+                : -1;
+        sender_id = indices.sender_id != -1 ? cursor.getLong(indices.sender_id) : -1;
+        recipient_id = indices.recipient_id != -1 ? cursor.getLong(indices.recipient_id) : -1;
+        text_html = indices.text != -1 ? cursor.getString(indices.text) : null;
+        text_plain = indices.text_plain != -1 ? cursor.getString(indices.text_plain) : null;
+        sender_name = indices.sender_name != -1 ? cursor.getString(indices.sender_name) : null;
+        recipient_name = indices.recipient_name != -1 ? cursor.getString(indices.recipient_name)
+                : null;
+        sender_screen_name = indices.sender_screen_name != -1 ? cursor
+                .getString(indices.sender_screen_name) : null;
+        recipient_screen_name = indices.recipient_screen_name != -1 ? cursor
+                .getString(indices.recipient_screen_name)
+                : null;
+        sender_profile_image_url = indices.sender_profile_image_url != -1 ? cursor
+                .getString(indices.sender_profile_image_url) : null;
+        recipient_profile_image_url = indices.recipient_profile_image_url != -1 ? cursor
+                .getString(indices.recipient_profile_image_url) : null;
+    }
 
-	public ParcelableDirectMessage(final Parcel in) {
-		account_id = in.readLong();
-		id = in.readLong();
-		timestamp = in.readLong();
-		sender_id = in.readLong();
-		recipient_id = in.readLong();
-		is_out_going = in.readInt() == 1;
-		text_html = in.readString();
-		text_plain = in.readString();
-		sender_name = in.readString();
-		recipient_name = in.readString();
-		sender_screen_name = in.readString();
-		recipient_screen_name = in.readString();
-		sender_profile_image_url = in.readString();
-		recipient_profile_image_url = in.readString();
-	}
+    public ParcelableDirectMessage(final DirectMessage message, final long account_id,
+            final boolean is_outgoing,
+            final boolean large_profile_image) {
+        this.account_id = account_id;
+        is_out_going = is_outgoing;
+        final User sender = message.getSender(), recipient = message.getRecipient();
+        final String sender_profile_image_url_string = sender != null ? ParseUtils
+                .parseString(sender
+                        .getProfileImageUrlHttps()) : null;
+        final String recipient_profile_image_url_string = recipient != null ? ParseUtils
+                .parseString(recipient
+                        .getProfileImageUrlHttps()) : null;
+        id = message.getId();
+        timestamp = getTime(message.getCreatedAt());
+        sender_id = sender != null ? sender.getId() : -1;
+        recipient_id = recipient != null ? recipient.getId() : -1;
+        text_html = formatDirectMessageText(message);
+        text_plain = message.getText();
+        sender_name = sender != null ? sender.getName() : null;
+        recipient_name = recipient != null ? recipient.getName() : null;
+        sender_screen_name = sender != null ? sender.getScreenName() : null;
+        recipient_screen_name = recipient != null ? recipient.getScreenName() : null;
+        sender_profile_image_url = large_profile_image ? getBiggerTwitterProfileImage(sender_profile_image_url_string)
+                : sender_profile_image_url_string;
+        recipient_profile_image_url = large_profile_image ? getBiggerTwitterProfileImage(recipient_profile_image_url_string)
+                : recipient_profile_image_url_string;
+    }
 
-	@Override
-	public int compareTo(final ParcelableDirectMessage another) {
-		if (another == null) return 0;
-		final long diff = another.id - id;
-		if (diff > Integer.MAX_VALUE) return Integer.MAX_VALUE;
-		if (diff < Integer.MIN_VALUE) return Integer.MIN_VALUE;
-		return (int) diff;
-	}
+    public ParcelableDirectMessage(final Parcel in) {
+        account_id = in.readLong();
+        id = in.readLong();
+        timestamp = in.readLong();
+        sender_id = in.readLong();
+        recipient_id = in.readLong();
+        is_out_going = in.readInt() == 1;
+        text_html = in.readString();
+        text_plain = in.readString();
+        sender_name = in.readString();
+        recipient_name = in.readString();
+        sender_screen_name = in.readString();
+        recipient_screen_name = in.readString();
+        sender_profile_image_url = in.readString();
+        recipient_profile_image_url = in.readString();
+    }
 
-	@Override
-	public int describeContents() {
-		return hashCode();
-	}
+    @Override
+    public int compareTo(final ParcelableDirectMessage another) {
+        if (another == null)
+            return 0;
+        final long diff = another.id - id;
+        if (diff > Integer.MAX_VALUE)
+            return Integer.MAX_VALUE;
+        if (diff < Integer.MIN_VALUE)
+            return Integer.MIN_VALUE;
+        return (int) diff;
+    }
 
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) return true;
-		if (obj == null) return false;
-		if (!(obj instanceof ParcelableDirectMessage)) return false;
-		final ParcelableDirectMessage other = (ParcelableDirectMessage) obj;
-		if (account_id != other.account_id) return false;
-		if (id != other.id) return false;
-		return true;
-	}
+    @Override
+    public int describeContents() {
+        return hashCode();
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (int) (account_id ^ account_id >>> 32);
-		result = prime * result + (int) (id ^ id >>> 32);
-		return result;
-	}
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof ParcelableDirectMessage))
+            return false;
+        final ParcelableDirectMessage other = (ParcelableDirectMessage) obj;
+        if (account_id != other.account_id)
+            return false;
+        if (id != other.id)
+            return false;
+        return true;
+    }
 
-	@Override
-	public String toString() {
-		return "ParcelableDirectMessage{account_id=" + account_id + ", message_id=" + id + ", message_timestamp="
-				+ timestamp + ", sender_id=" + sender_id + ", recipient_id=" + recipient_id + ", is_out_going="
-				+ is_out_going + ", text=" + text_html + ", sender_name=" + sender_name + ", recipient_name="
-				+ recipient_name + ", sender_screen_name=" + sender_screen_name + ", recipient_screen_name="
-				+ recipient_screen_name + ", sender_profile_image_url=" + sender_profile_image_url
-				+ ", recipient_profile_image_url=" + recipient_profile_image_url + "}";
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int) (account_id ^ account_id >>> 32);
+        result = prime * result + (int) (id ^ id >>> 32);
+        return result;
+    }
 
-	@Override
-	public void writeToParcel(final Parcel out, final int flags) {
-		out.writeLong(account_id);
-		out.writeLong(id);
-		out.writeLong(timestamp);
-		out.writeLong(sender_id);
-		out.writeLong(recipient_id);
-		out.writeInt(is_out_going ? 1 : 0);
-		out.writeString(text_html);
-		out.writeString(text_plain);
-		out.writeString(sender_name);
-		out.writeString(recipient_name);
-		out.writeString(sender_screen_name);
-		out.writeString(recipient_screen_name);
-		out.writeString(sender_profile_image_url);
-		out.writeString(recipient_profile_image_url);
-	}
+    @Override
+    public String toString() {
+        return "ParcelableDirectMessage{account_id=" + account_id + ", message_id=" + id
+                + ", message_timestamp="
+                + timestamp + ", sender_id=" + sender_id + ", recipient_id=" + recipient_id
+                + ", is_out_going="
+                + is_out_going + ", text=" + text_html + ", sender_name=" + sender_name
+                + ", recipient_name="
+                + recipient_name + ", sender_screen_name=" + sender_screen_name
+                + ", recipient_screen_name="
+                + recipient_screen_name + ", sender_profile_image_url=" + sender_profile_image_url
+                + ", recipient_profile_image_url=" + recipient_profile_image_url + "}";
+    }
 
-	private long getTime(final Date date) {
-		return date != null ? date.getTime() : 0;
-	}
+    @Override
+    public void writeToParcel(final Parcel out, final int flags) {
+        out.writeLong(account_id);
+        out.writeLong(id);
+        out.writeLong(timestamp);
+        out.writeLong(sender_id);
+        out.writeLong(recipient_id);
+        out.writeInt(is_out_going ? 1 : 0);
+        out.writeString(text_html);
+        out.writeString(text_plain);
+        out.writeString(sender_name);
+        out.writeString(recipient_name);
+        out.writeString(sender_screen_name);
+        out.writeString(recipient_screen_name);
+        out.writeString(sender_profile_image_url);
+        out.writeString(recipient_profile_image_url);
+    }
+
+    private long getTime(final Date date) {
+        return date != null ? date.getTime() : 0;
+    }
 }

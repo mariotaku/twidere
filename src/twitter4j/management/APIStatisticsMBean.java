@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package twitter4j.management;
 
 import java.util.Map;
@@ -26,9 +27,9 @@ import java.util.Map;
  *      representation
  */
 public interface APIStatisticsMBean extends InvocationStatistics {
-	public Iterable<? extends InvocationStatistics> getInvocationStatistics();
+    public Iterable<? extends InvocationStatistics> getInvocationStatistics();
 
-	public Map<String, String> getMethodLevelSummariesAsString();
+    public Map<String, String> getMethodLevelSummariesAsString();
 
-	public String getMethodLevelSummary(String methodName);
+    public String getMethodLevelSummary(String methodName);
 }

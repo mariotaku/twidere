@@ -21,7 +21,7 @@
 	<header
 		android:fragment="org.mariotaku.twidere.fragment.SettingsDetailsFragment"
 		android:icon="@drawable/ic_menu_tweet"
-		android:title="@string/tweet">
+		android:title="@string/status">
 		<extra
 			android:name="resid"
 			android:value="@xml/settings_tweet"/>

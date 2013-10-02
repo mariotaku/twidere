@@ -57,7 +57,7 @@
   <string name="view_user_profile">사용자 프로필</string>
   <string name="browser">브라우저</string>
   <string name="pick_from_gallery">갤러리에서 선택</string>
-  <string name="tweets">트윗</string>
+  <string name="statuses">트윗</string>
   <string name="followers">팔로워</string>
   <string name="friends">팔로잉
 </string>
@@ -289,7 +289,7 @@
   <string name="click_to_open_menu_summary">클릭하면 아이템 메뉴를 열며, 길게 누르면 다중선택이 가능합니다.</string>
   <string name="send_follow_request">팔로우 요청 보내기</string>
   <string name="follow_request_sent">팔로우 요청을 보냄</string>
-  <string name="tweet">트윗하기</string>
+  <string name="status">트윗하기</string>
   <string name="preview">미리보기</string>
   <string name="api_upgrade_notice_title">매우 중요합니다!</string>
   <string name="api_upgrade_notice_message">트위터가 API 1.1버젼을 공개하였습니다.\n\n Twidere는 이번 버젼부터 API 1.1버젼을 사용합니다.\n\n 지금 그대로 사용하시면 많은 오류가 발생할 수 있으므로, *반드시*다시 로그인하시길 바랍니다.\n\n&lt;API 1.1에서의 변경점&gt;\n*사용 제한 기준이 강화되었습니다. 대표적으로,이제는 15분동안 단 15번만 타임라인 새로고침이 가능합니다.\n누가 당신의 트윗을 리트윗했는지 볼 수 없으며,당신에게 리트윗된 트윗 역시 볼 수 없습니다.\n*Twidere를 StatusNet 클라이언트로 사용중이시라면, API 변경으로 많은 기능들이 없어질 것입니다. \m\n불편을 드려 죄송합니다. 하지만 트위터가 서드파티 앱을 죽이려 하고 있어서, 저는 아무것도 할 수 없습니다.</string>

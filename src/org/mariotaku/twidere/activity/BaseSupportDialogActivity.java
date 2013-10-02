@@ -19,42 +19,43 @@
 
 package org.mariotaku.twidere.activity;
 
+import android.annotation.SuppressLint;
+import android.os.Bundle;
+
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.activity.iface.IThemedActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.ThemeUtils;
 
-import android.annotation.SuppressLint;
-import android.os.Bundle;
-
 @SuppressLint("Registered")
-public class BaseSupportDialogActivity extends BaseSupportThemedActivity implements Constants, IThemedActivity {
+public class BaseSupportDialogActivity extends BaseSupportThemedActivity implements Constants,
+        IThemedActivity {
 
-	private boolean mInstanceStateSaved;
+    private boolean mInstanceStateSaved;
 
-	public TwidereApplication getTwidereApplication() {
-		return (TwidereApplication) getApplication();
-	}
+    public TwidereApplication getTwidereApplication() {
+        return (TwidereApplication) getApplication();
+    }
 
-	@Override
-	protected int getThemeResource() {
-		return ThemeUtils.getDialogThemeResource(this);
-	}
+    @Override
+    protected int getThemeResource() {
+        return ThemeUtils.getDialogThemeResource(this);
+    }
 
-	protected boolean isStateSaved() {
-		return mInstanceStateSaved;
-	}
+    protected boolean isStateSaved() {
+        return mInstanceStateSaved;
+    }
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		mInstanceStateSaved = false;
-	}
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mInstanceStateSaved = false;
+    }
 
-	@Override
-	protected void onSaveInstanceState(final Bundle outState) {
-		mInstanceStateSaved = true;
-		super.onSaveInstanceState(outState);
-	}
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        mInstanceStateSaved = true;
+        super.onSaveInstanceState(outState);
+    }
 
 }

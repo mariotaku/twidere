@@ -19,260 +19,109 @@
 
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
-import static org.mariotaku.twidere.util.Utils.getDefaultTextSize;
-import static org.mariotaku.twidere.util.Utils.openUserListDetails;
 
-import org.mariotaku.popupmenu.PopupMenu;
-import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
-import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.ParcelableUserListsAdapter;
-import org.mariotaku.twidere.adapter.SeparatedListAdapter;
-import org.mariotaku.twidere.loader.UserListsLoader;
-import org.mariotaku.twidere.loader.UserListsLoader.UserListsData;
-import org.mariotaku.twidere.model.Panes;
-import org.mariotaku.twidere.model.ParcelableUserList;
-import org.mariotaku.twidere.util.MultiSelectManager;
-
-import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 
-public class UserListsListFragment extends BasePullToRefreshListFragment implements Constants,
-		LoaderCallbacks<UserListsLoader.UserListsData>, OnItemClickListener, OnItemLongClickListener, Panes.Left,
-		OnMenuItemClickListener {
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.ParcelableUserListsAdapter;
+import org.mariotaku.twidere.loader.UserListMembershipsLoader;
+import org.mariotaku.twidere.model.ParcelableUserList;
 
-	private SeparatedListAdapter<ParcelableUserListsAdapter> mAdapter;
-	private ParcelableUserListsAdapter mUserListsAdapter, mUserListMembershipsAdapter;
+import java.util.List;
 
-	private SharedPreferences mPreferences;
-	private ListView mListView;
-	private long mAccountId, mUserId;
-	private String mScreenName;
+public class UserListsListFragment extends BaseUserListsListFragment {
 
-	private PopupMenu mPopupMenu;
-	private ParcelableUserList mSelectedUserList;
+    private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
-	private MultiSelectManager mMultiSelectManager;
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            if (getActivity() == null || !isAdded() || isDetached())
+                return;
+            final String action = intent.getAction();
+            if (BROADCAST_USER_LIST_DELETED.equals(action)) {
+                final ParcelableUserList list = intent.getParcelableExtra(INTENT_KEY_USER_LIST);
+                if (list != null && intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
+                    removeUserList(list.id);
+                }
+            }
+        }
+    };
 
-	private UserListsData mUserListsData;
+    @Override
+    public Loader<List<ParcelableUserList>> newLoaderInstance(final long account_id,
+            final long user_id,
+            final String screen_name) {
+        return new UserListMembershipsLoader(getActivity(), account_id, user_id, screen_name,
+                getCursor(), getData());
+    }
 
-	private long mCursor = -1;
-	private int mPage = 0;
+    @Override
+    public void onActivityCreated(final Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
-	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+    @Override
+    public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_user_list_created, menu);
+    }
 
-		@Override
-		public void onReceive(final Context context, final Intent intent) {
-			if (getActivity() == null || !isAdded() || isDetached()) return;
-			final String action = intent.getAction();
-			if (BROADCAST_USER_LIST_DELETED.equals(action)) {
-				final ParcelableUserList list = intent.getParcelableExtra(INTENT_KEY_USER_LIST);
-				if (list != null && intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
-					removeUserList(list.id);
-				}
-			}
-		}
-	};
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.new_user_list: {
+                final DialogFragment f = new CreateUserListDialogFragment();
+                final Bundle args = new Bundle();
+                args.putLong(INTENT_KEY_ACCOUNT_ID, getAccountId());
+                f.setArguments(args);
+                f.show(getFragmentManager(), null);
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
-	@Override
-	public void onActivityCreated(final Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		setHasOptionsMenu(true);
-		mMultiSelectManager = getMultiSelectManager();
-		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final Bundle args = getArguments() != null ? getArguments() : new Bundle();
-		if (args != null) {
-			mAccountId = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-			mUserId = args.getLong(INTENT_KEY_USER_ID, -1);
-			mScreenName = args.getString(INTENT_KEY_SCREEN_NAME);
-		}
-		mAdapter = new SeparatedListAdapter<ParcelableUserListsAdapter>(getActivity());
-		mUserListsAdapter = new ParcelableUserListsAdapter(getActivity());
-		mUserListMembershipsAdapter = new ParcelableUserListsAdapter(getActivity());
-		mAdapter.addSection(getString(R.string.users_lists), mUserListsAdapter);
-		mAdapter.addSection(getString(R.string.lists_following_user), mUserListMembershipsAdapter);
-		mListView = getListView();
-		mAccountId = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-		setListAdapter(mAdapter);
-		mListView.setOnItemClickListener(this);
-		mListView.setOnItemLongClickListener(this);
-		getLoaderManager().initLoader(0, getArguments(), this);
-		// setEnabled("from_end");
-		setListShown(false);
-	}
+    @Override
+    public void onPrepareOptionsMenu(final Menu menu) {
+        final MenuItem item = menu.findItem(R.id.new_user_list);
+        if (item == null)
+            return;
+        final long account_id = getAccountId(), user_id = getUserId();
+        final String screen_name = getAccountScreenName(getActivity(), account_id);
+        item.setVisible(user_id == account_id || screen_name != null
+                && screen_name.equalsIgnoreCase(getScreenName()));
+    }
 
-	@Override
-	public Loader<UserListsLoader.UserListsData> onCreateLoader(final int id, final Bundle args) {
-		setProgressBarIndeterminateVisibility(true);
-		return new UserListsLoader(getActivity(), mAccountId, mUserId, mScreenName, mUserListsData, mCursor, mPage);
-	}
+    public void onPullUpToRefresh() {
+    }
 
-	@Override
-	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
-		inflater.inflate(R.menu.menu_user_list_created, menu);
-	}
+    @Override
+    public void onStart() {
+        super.onStart();
+        registerReceiver(mStatusReceiver, new IntentFilter(BROADCAST_USER_LIST_DELETED));
+    }
 
-	@Override
-	public final void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
-		if (mMultiSelectManager.isActive()) return;
-		final Object selected = mAdapter.getItem(position - mListView.getHeaderViewsCount());
-		final ParcelableUserList user_list = selected instanceof ParcelableUserList ? (ParcelableUserList) selected
-				: null;
-		if (user_list == null) return;
-		openUserListDetails(getActivity(), mAccountId, user_list.id, user_list.user_id, user_list.user_screen_name,
-				user_list.name);
-	}
+    @Override
+    public void onStop() {
+        unregisterReceiver(mStatusReceiver);
+        super.onStop();
+    }
 
-	@Override
-	public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-		if (mMultiSelectManager.isActive()) return true;
-		mSelectedUserList = null;
-		final ListAdapter adapter = getListAdapter();
-		final Object selected = adapter.getItem(position - mListView.getHeaderViewsCount());
-		mSelectedUserList = selected instanceof ParcelableUserList ? (ParcelableUserList) selected : null;
-		if (mSelectedUserList == null) return false;
-		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
-		mPopupMenu.inflate(R.menu.action_user_list);
-		final Menu menu = mPopupMenu.getMenu();
-		final Intent extension_intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER_LIST);
-		final Bundle extension_extras = new Bundle();
-		extension_extras.putParcelable(INTENT_KEY_USER_LIST, mSelectedUserList);
-		extension_intent.putExtras(extension_extras);
-		addIntentToMenu(getActivity(), menu, extension_intent);
-		mPopupMenu.setOnMenuItemClickListener(this);
-		mPopupMenu.show();
-		return true;
-	}
-
-	@Override
-	public void onLoaderReset(final Loader<UserListsLoader.UserListsData> loader) {
-		setProgressBarIndeterminateVisibility(false);
-	}
-
-	@Override
-	public void onLoadFinished(final Loader<UserListsLoader.UserListsData> loader,
-			final UserListsLoader.UserListsData data) {
-		setProgressBarIndeterminateVisibility(false);
-		mUserListsData = data;
-		if (data != null) {
-			mCursor = data.getNextCursor();
-			mPage++;
-			mUserListsAdapter.setData(data.getLists(), true);
-			mUserListMembershipsAdapter.setData(data.getMemberships(), true);
-			mAdapter.notifyDataSetChanged();
-			invalidateOptionsMenu();
-		}
-		setRefreshComplete();
-		setListShown(true);
-	}
-
-	@Override
-	public boolean onMenuItemClick(final MenuItem item) {
-		if (mSelectedUserList == null) return false;
-		switch (item.getItemId()) {
-			case MENU_VIEW_USER_LIST: {
-				openUserListDetails(getActivity(), mAccountId, mSelectedUserList.id, mSelectedUserList.user_id,
-						mSelectedUserList.user_screen_name, mSelectedUserList.name);
-				break;
-			}
-			default: {
-				if (item.getIntent() != null) {
-					try {
-						startActivity(item.getIntent());
-					} catch (final ActivityNotFoundException e) {
-						Log.w(LOGTAG, e);
-						return false;
-					}
-				}
-				break;
-			}
-		}
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.new_user_list: {
-				final DialogFragment f = new CreateUserListDialogFragment();
-				final Bundle args = new Bundle();
-				args.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
-				f.setArguments(args);
-				f.show(getFragmentManager(), null);
-				return true;
-			}
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public void onPrepareOptionsMenu(final Menu menu) {
-		final MenuItem item = menu.findItem(R.id.new_user_list);
-		if (item == null) return;
-		final String screen_name = getAccountScreenName(getActivity(), mAccountId);
-		item.setVisible(mUserId == mAccountId || screen_name != null && screen_name.equalsIgnoreCase(mScreenName));
-	}
-
-	public void onPullUpToRefresh() {
-		getLoaderManager().restartLoader(0, null, this);
-	}
-
-	@Override
-	public void onRefreshStarted() {
-		super.onRefreshStarted();
-	}
-
-	@Override
-	public void onStart() {
-		super.onStart();
-		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(getActivity()));
-		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		for (final ParcelableUserListsAdapter item : mAdapter.getAdapters()) {
-			item.setDisplayProfileImage(display_profile_image);
-			item.setTextSize(text_size);
-		}
-		final IntentFilter filter = new IntentFilter(BROADCAST_USER_LIST_DELETED);
-		registerReceiver(mStatusReceiver, filter);
-	}
-
-	@Override
-	public void onStop() {
-		unregisterReceiver(mStatusReceiver);
-		if (mPopupMenu != null) {
-			mPopupMenu.dismiss();
-		}
-		super.onStop();
-	}
-
-	private void removeUserList(final int id) {
-		final int lists_idx = mUserListsAdapter.findItemPosition(id);
-		if (lists_idx >= 0) {
-			mUserListsAdapter.remove(lists_idx);
-		}
-		final int memberships_idx = mUserListMembershipsAdapter.findItemPosition(id);
-		if (memberships_idx >= 0) {
-			mUserListMembershipsAdapter.remove(memberships_idx);
-		}
-		mAdapter.notifyDataSetChanged();
-	}
+    private void removeUserList(final int id) {
+        final ParcelableUserListsAdapter adapter = getListAdapter();
+        final int lists_idx = adapter.findItemPosition(id);
+        if (lists_idx >= 0) {
+            adapter.remove(lists_idx);
+        }
+    }
 }

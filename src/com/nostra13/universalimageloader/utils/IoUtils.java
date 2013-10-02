@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
+
 package com.nostra13.universalimageloader.utils;
 
 import java.io.Closeable;
@@ -28,49 +29,50 @@ import java.io.OutputStream;
  */
 public final class IoUtils {
 
-	// public static final int BUFFER_SIZE = 32 * 1024; // 32 KB
-	public static final int BUFFER_SIZE = 1024; // 1 KB
+    // public static final int BUFFER_SIZE = 32 * 1024; // 32 KB
+    public static final int BUFFER_SIZE = 1024; // 1 KB
 
-	private IoUtils() {
-	}
+    private IoUtils() {
+    }
 
-	public static void closeSilently(final Closeable closeable) {
-		try {
-			closeable.close();
-		} catch (final Exception e) {
-			// Do nothing
-		}
-	}
+    public static void closeSilently(final Closeable closeable) {
+        try {
+            closeable.close();
+        } catch (final Exception e) {
+            // Do nothing
+        }
+    }
 
-	public static void copyStream(final InputStream is, final OutputStream os) throws IOException {
-		final byte[] bytes = new byte[BUFFER_SIZE];
-		int count = 0;
-		while ((count = is.read(bytes, 0, BUFFER_SIZE)) != -1) {
-			os.write(bytes, 0, count);
-		}
-	}
+    public static void copyStream(final InputStream is, final OutputStream os) throws IOException {
+        final byte[] bytes = new byte[BUFFER_SIZE];
+        int count = 0;
+        while ((count = is.read(bytes, 0, BUFFER_SIZE)) != -1) {
+            os.write(bytes, 0, count);
+        }
+    }
 
-	public static void copyStream(final InputStream is, final OutputStream os, final StreamCopyListener listener)
-			throws IOException {
-		final byte[] bytes = new byte[BUFFER_SIZE];
-		final int total = is.available();
-		int current = 0;
-		int count = 0;
-		if (listener != null) {
-			listener.onUpdate(current, total);
-		}
-		while ((count = is.read(bytes, 0, BUFFER_SIZE)) != -1) {
-			os.write(bytes, 0, count);
-			current += count;
-			if (listener != null) {
-				listener.onUpdate(current, total);
-			}
-		}
-	}
+    public static void copyStream(final InputStream is, final OutputStream os,
+            final StreamCopyListener listener)
+            throws IOException {
+        final byte[] bytes = new byte[BUFFER_SIZE];
+        final int total = is.available();
+        int current = 0;
+        int count = 0;
+        if (listener != null) {
+            listener.onUpdate(current, total);
+        }
+        while ((count = is.read(bytes, 0, BUFFER_SIZE)) != -1) {
+            os.write(bytes, 0, count);
+            current += count;
+            if (listener != null) {
+                listener.onUpdate(current, total);
+            }
+        }
+    }
 
-	public static interface StreamCopyListener {
+    public static interface StreamCopyListener {
 
-		void onUpdate(int current, int total);
+        void onUpdate(int current, int total);
 
-	}
+    }
 }

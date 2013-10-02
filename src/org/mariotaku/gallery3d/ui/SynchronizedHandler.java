@@ -21,24 +21,24 @@ import android.os.Message;
 
 public class SynchronizedHandler extends Handler {
 
-	protected final GLRoot mGLRoot;
+    protected final GLRoot mGLRoot;
 
-	public SynchronizedHandler(final GLRoot glRoot) {
-		mGLRoot = glRoot;
-	}
+    public SynchronizedHandler(final GLRoot glRoot) {
+        mGLRoot = glRoot;
+    }
 
-	@Override
-	public void dispatchMessage(final Message message) {
-		if (mGLRoot != null) {
-			mGLRoot.lockRenderThread();
-		}
-		try {
-			super.dispatchMessage(message);
-		} finally {
-			if (mGLRoot != null) {
-				mGLRoot.unlockRenderThread();
-			}
-		}
-	}
+    @Override
+    public void dispatchMessage(final Message message) {
+        if (mGLRoot != null) {
+            mGLRoot.lockRenderThread();
+        }
+        try {
+            super.dispatchMessage(message);
+        } finally {
+            if (mGLRoot != null) {
+                mGLRoot.unlockRenderThread();
+            }
+        }
+    }
 
 }

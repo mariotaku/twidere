@@ -19,9 +19,6 @@
 
 package org.mariotaku.twidere.fragment;
 
-import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.app.TwidereApplication;
-
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -29,51 +26,61 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.support.v4.app.DialogFragment;
 
+import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.app.TwidereApplication;
+
 public class BaseSupportDialogFragment extends DialogFragment implements Constants {
 
-	public BaseSupportDialogFragment() {
+    public BaseSupportDialogFragment() {
 
-	}
+    }
 
-	public TwidereApplication getApplication() {
-		final Activity activity = getActivity();
-		if (activity != null) return (TwidereApplication) activity.getApplication();
-		return null;
-	}
+    public TwidereApplication getApplication() {
+        final Activity activity = getActivity();
+        if (activity != null)
+            return (TwidereApplication) activity.getApplication();
+        return null;
+    }
 
-	public ContentResolver getContentResolver() {
-		final Activity activity = getActivity();
-		if (activity != null) return activity.getContentResolver();
-		return null;
-	}
+    public ContentResolver getContentResolver() {
+        final Activity activity = getActivity();
+        if (activity != null)
+            return activity.getContentResolver();
+        return null;
+    }
 
-	public SharedPreferences getSharedPreferences(final String name, final int mode) {
-		final Activity activity = getActivity();
-		if (activity != null) return activity.getSharedPreferences(name, mode);
-		return null;
-	}
+    public SharedPreferences getSharedPreferences(final String name, final int mode) {
+        final Activity activity = getActivity();
+        if (activity != null)
+            return activity.getSharedPreferences(name, mode);
+        return null;
+    }
 
-	public Object getSystemService(final String name) {
-		final Activity activity = getActivity();
-		if (activity != null) return activity.getSystemService(name);
-		return null;
-	}
+    public Object getSystemService(final String name) {
+        final Activity activity = getActivity();
+        if (activity != null)
+            return activity.getSystemService(name);
+        return null;
+    }
 
-	public void registerReceiver(final BroadcastReceiver receiver, final IntentFilter filter) {
-		final Activity activity = getActivity();
-		if (activity == null) return;
-		activity.registerReceiver(receiver, filter);
-	}
+    public void registerReceiver(final BroadcastReceiver receiver, final IntentFilter filter) {
+        final Activity activity = getActivity();
+        if (activity == null)
+            return;
+        activity.registerReceiver(receiver, filter);
+    }
 
-	public void setProgressBarIndeterminateVisibility(final boolean visible) {
-		final Activity activity = getActivity();
-		if (activity == null) return;
-		activity.setProgressBarIndeterminateVisibility(visible);
-	}
+    public void setProgressBarIndeterminateVisibility(final boolean visible) {
+        final Activity activity = getActivity();
+        if (activity == null)
+            return;
+        activity.setProgressBarIndeterminateVisibility(visible);
+    }
 
-	public void unregisterReceiver(final BroadcastReceiver receiver) {
-		final Activity activity = getActivity();
-		if (activity == null) return;
-		activity.unregisterReceiver(receiver);
-	}
+    public void unregisterReceiver(final BroadcastReceiver receiver) {
+        final Activity activity = getActivity();
+        if (activity == null)
+            return;
+        activity.unregisterReceiver(receiver);
+    }
 }

@@ -26,43 +26,45 @@ import java.util.Map;
  * @since Twitter4J 2.1.2
  */
 public class HttpResponseImpl extends HttpResponse {
-	private HttpURLConnection con;
+    private HttpURLConnection con;
 
-	HttpResponseImpl(final HttpURLConnection con, final HttpClientConfiguration conf) throws IOException {
-		super(conf);
-		this.con = con;
-		if (con == null) return;
-		statusCode = con.getResponseCode();
-		if (null == (is = con.getErrorStream())) {
-			is = con.getInputStream();
-		}
-		if (is != null && "gzip".equals(con.getContentEncoding())) {
-			// the response is gzipped
-			is = new StreamingGZIPInputStream(is);
-		}
-	}
+    HttpResponseImpl(final HttpURLConnection con, final HttpClientConfiguration conf)
+            throws IOException {
+        super(conf);
+        this.con = con;
+        if (con == null)
+            return;
+        statusCode = con.getResponseCode();
+        if (null == (is = con.getErrorStream())) {
+            is = con.getInputStream();
+        }
+        if (is != null && "gzip".equals(con.getContentEncoding())) {
+            // the response is gzipped
+            is = new StreamingGZIPInputStream(is);
+        }
+    }
 
-	// for test purpose
-	/* package */HttpResponseImpl(final String content) {
-		super();
-		responseAsString = content;
-	}
+    // for test purpose
+    /* package */HttpResponseImpl(final String content) {
+        super();
+        responseAsString = content;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void disconnect() {
-		con.disconnect();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void disconnect() {
+        con.disconnect();
+    }
 
-	@Override
-	public String getResponseHeader(final String name) {
-		return con.getHeaderField(name);
-	}
+    @Override
+    public String getResponseHeader(final String name) {
+        return con.getHeaderField(name);
+    }
 
-	@Override
-	public Map<String, List<String>> getResponseHeaderFields() {
-		return con.getHeaderFields();
-	}
+    @Override
+    public Map<String, List<String>> getResponseHeaderFields() {
+        return con.getHeaderFields();
+    }
 }

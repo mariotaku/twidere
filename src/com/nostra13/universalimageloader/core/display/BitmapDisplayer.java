@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
+
 package com.nostra13.universalimageloader.core.display;
 
 import android.graphics.Bitmap;
@@ -29,15 +30,15 @@ import com.nostra13.universalimageloader.core.assist.LoadedFrom;
  * @since 1.5.6
  */
 public interface BitmapDisplayer {
-	/**
-	 * Display bitmap in {@link ImageView}. Displayed bitmap should be returned.<br />
-	 * <b>NOTE:</b> This method is called on UI thread so it's strongly
-	 * recommended not to do any heavy work in it.
-	 * 
-	 * @param bitmap Source bitmap
-	 * @param imageView {@linkplain ImageView Image view} to display Bitmap
-	 * @param loadedFrom Source of loaded image
-	 * @return Bitmap which was displayed in {@link ImageView}
-	 */
-	Bitmap display(Bitmap bitmap, ImageView imageView, LoadedFrom loadedFrom);
+    /**
+     * Display bitmap in {@link ImageView}. Displayed bitmap should be returned.<br />
+     * <b>NOTE:</b> This method is called on UI thread so it's strongly
+     * recommended not to do any heavy work in it.
+     * 
+     * @param bitmap Source bitmap
+     * @param imageView {@linkplain ImageView Image view} to display Bitmap
+     * @param loadedFrom Source of loaded image
+     * @return Bitmap which was displayed in {@link ImageView}
+     */
+    Bitmap display(Bitmap bitmap, ImageView imageView, LoadedFrom loadedFrom);
 }

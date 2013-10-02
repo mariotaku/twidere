@@ -21,97 +21,97 @@ package twitter4j.internal.logging;
  * @since Twitter4J 2.1.0
  */
 public abstract class Logger {
-	private static final LoggerFactory LOGGER_FACTORY = new AndroidLoggerFactory();
+    private static final LoggerFactory LOGGER_FACTORY = new AndroidLoggerFactory();
 
-	/**
-	 * @param message message
-	 */
-	public abstract void debug(String message);
+    /**
+     * @param message message
+     */
+    public abstract void debug(String message);
 
-	/**
-	 * @param message message
-	 * @param message2 message2
-	 */
-	public abstract void debug(String message, String message2);
+    /**
+     * @param message message
+     * @param message2 message2
+     */
+    public abstract void debug(String message, String message2);
 
-	/**
-	 * @param message message
-	 */
-	public abstract void error(String message);
+    /**
+     * @param message message
+     */
+    public abstract void error(String message);
 
-	/**
-	 * @param message message
-	 * @param th throwable
-	 */
-	public abstract void error(String message, Throwable th);
+    /**
+     * @param message message
+     * @param th throwable
+     */
+    public abstract void error(String message, Throwable th);
 
-	/**
-	 * @param message message
-	 */
-	public abstract void info(String message);
+    /**
+     * @param message message
+     */
+    public abstract void info(String message);
 
-	/**
-	 * @param message message
-	 * @param message2 message2
-	 */
-	public abstract void info(String message, String message2);
+    /**
+     * @param message message
+     * @param message2 message2
+     */
+    public abstract void info(String message, String message2);
 
-	/**
-	 * tests if debug level logging is enabled
-	 * 
-	 * @return if debug level logging is enabled
-	 */
-	public abstract boolean isDebugEnabled();
+    /**
+     * tests if debug level logging is enabled
+     * 
+     * @return if debug level logging is enabled
+     */
+    public abstract boolean isDebugEnabled();
 
-	/**
-	 * tests if error level logging is enabled
-	 * 
-	 * @return if error level logging is enabled
-	 */
-	public abstract boolean isErrorEnabled();
+    /**
+     * tests if error level logging is enabled
+     * 
+     * @return if error level logging is enabled
+     */
+    public abstract boolean isErrorEnabled();
 
-	/**
-	 * tests if info level logging is enabled
-	 * 
-	 * @return if info level logging is enabled
-	 */
-	public abstract boolean isInfoEnabled();
+    /**
+     * tests if info level logging is enabled
+     * 
+     * @return if info level logging is enabled
+     */
+    public abstract boolean isInfoEnabled();
 
-	/**
-	 * tests if warn level logging is enabled
-	 * 
-	 * @return if warn level logging is enabled
-	 */
-	public abstract boolean isWarnEnabled();
+    /**
+     * tests if warn level logging is enabled
+     * 
+     * @return if warn level logging is enabled
+     */
+    public abstract boolean isWarnEnabled();
 
-	/**
-	 * @param message message
-	 */
-	public abstract void warn(String message);
+    /**
+     * @param message message
+     */
+    public abstract void warn(String message);
 
-	/**
-	 * @param message message
-	 * @param message2 message2
-	 */
-	public abstract void warn(String message, String message2);
+    /**
+     * @param message message
+     * @param message2 message2
+     */
+    public abstract void warn(String message, String message2);
 
-	/**
-	 * Returns a Logger instance associated with the specified class.
-	 * 
-	 * @param clazz class
-	 * @return logger instance
-	 */
-	@Deprecated
-	public static Logger getLogger() {
-		return LOGGER_FACTORY.getLogger();
-	}
+    /**
+     * Returns a Logger instance associated with the specified class.
+     * 
+     * @param clazz class
+     * @return logger instance
+     */
+    @Deprecated
+    public static Logger getLogger() {
+        return LOGGER_FACTORY.getLogger();
+    }
 
-	public static Logger getLogger(final Class<?> clz) {
-		return LOGGER_FACTORY.getLogger(clz);
-	}
+    public static Logger getLogger(final Class<?> clz) {
+        return LOGGER_FACTORY.getLogger(clz);
+    }
 
-	public static Logger getLogger(final String tag) {
-		return LOGGER_FACTORY.getLogger(tag);
-	}
+    public static Logger getLogger(final String tag) {
+        return LOGGER_FACTORY.getLogger(tag);
+    }
 
 }

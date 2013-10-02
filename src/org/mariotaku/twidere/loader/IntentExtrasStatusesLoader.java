@@ -19,34 +19,36 @@
 
 package org.mariotaku.twidere.loader;
 
-import java.util.Collections;
-import java.util.List;
-
-import org.mariotaku.twidere.model.ParcelableStatus;
-
 import android.content.Context;
 import android.os.Bundle;
 
+import org.mariotaku.twidere.model.ParcelableStatus;
+
+import java.util.Collections;
+import java.util.List;
+
 public class IntentExtrasStatusesLoader extends ParcelableStatusesLoader {
 
-	private final Bundle mExtras;
+    private final Bundle mExtras;
 
-	public IntentExtrasStatusesLoader(final Context context, final Bundle extras, final List<ParcelableStatus> data) {
-		super(context, data, -1);
-		mExtras = extras;
-	}
+    public IntentExtrasStatusesLoader(final Context context, final Bundle extras,
+            final List<ParcelableStatus> data) {
+        super(context, data, -1);
+        mExtras = extras;
+    }
 
-	@Override
-	public List<ParcelableStatus> loadInBackground() {
-		final List<ParcelableStatus> data = getData();
-		if (mExtras != null) {
-			final List<ParcelableStatus> users = mExtras.getParcelableArrayList(INTENT_KEY_STATUSES);
-			if (users != null) {
-				data.addAll(users);
-				Collections.sort(data);
-			}
-		}
-		return data;
-	}
+    @Override
+    public List<ParcelableStatus> loadInBackground() {
+        final List<ParcelableStatus> data = getData();
+        if (mExtras != null) {
+            final List<ParcelableStatus> users = mExtras
+                    .getParcelableArrayList(INTENT_KEY_STATUSES);
+            if (users != null) {
+                data.addAll(users);
+                Collections.sort(data);
+            }
+        }
+        return data;
+    }
 
 }

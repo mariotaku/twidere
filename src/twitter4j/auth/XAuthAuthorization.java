@@ -23,43 +23,43 @@ import twitter4j.http.HttpRequest;
  * @since Twitter4J 2.1.3
  */
 public class XAuthAuthorization implements Authorization {
-	private final BasicAuthorization basic;
+    private final BasicAuthorization basic;
 
-	private String consumerKey;
-	private String consumerSecret;
+    private String consumerKey;
+    private String consumerSecret;
 
-	public XAuthAuthorization(final BasicAuthorization basic) {
-		this.basic = basic;
-	}
+    public XAuthAuthorization(final BasicAuthorization basic) {
+        this.basic = basic;
+    }
 
-	@Override
-	public String getAuthorizationHeader(final HttpRequest req) {
-		return basic.getAuthorizationHeader(req);
-	}
+    @Override
+    public String getAuthorizationHeader(final HttpRequest req) {
+        return basic.getAuthorizationHeader(req);
+    }
 
-	public String getConsumerKey() {
-		return consumerKey;
-	}
+    public String getConsumerKey() {
+        return consumerKey;
+    }
 
-	public String getConsumerSecret() {
-		return consumerSecret;
-	}
+    public String getConsumerSecret() {
+        return consumerSecret;
+    }
 
-	public String getPassword() {
-		return basic.getPassword();
-	}
+    public String getPassword() {
+        return basic.getPassword();
+    }
 
-	public String getUserId() {
-		return basic.getUserId();
-	}
+    public String getUserId() {
+        return basic.getUserId();
+    }
 
-	@Override
-	public boolean isEnabled() {
-		return basic.isEnabled();
-	}
+    @Override
+    public boolean isEnabled() {
+        return basic.isEnabled();
+    }
 
-	public synchronized void setOAuthConsumer(final String consumerKey, final String consumerSecret) {
-		this.consumerKey = consumerKey;
-		this.consumerSecret = consumerSecret;
-	}
+    public synchronized void setOAuthConsumer(final String consumerKey, final String consumerSecret) {
+        this.consumerKey = consumerKey;
+        this.consumerSecret = consumerSecret;
+    }
 }

@@ -29,37 +29,37 @@ import twitter4j.TwitterException;
  */
 public class TimeZoneJSONImpl implements TimeZone {
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = 4715603575648656436L;
-	private final String NAME;
-	private final String TZINFO_NAME;
-	private final int UTC_OFFSET;
+    private static final long serialVersionUID = 4715603575648656436L;
+    private final String NAME;
+    private final String TZINFO_NAME;
+    private final int UTC_OFFSET;
 
-	TimeZoneJSONImpl(final JSONObject jSONObject) throws TwitterException {
-		try {
-			UTC_OFFSET = getInt("utc_offset", jSONObject);
-			NAME = jSONObject.getString("name");
-			TZINFO_NAME = jSONObject.getString("tzinfo_name");
-		} catch (final JSONException jsone) {
-			throw new TwitterException(jsone);
-		}
-	}
+    TimeZoneJSONImpl(final JSONObject jSONObject) throws TwitterException {
+        try {
+            UTC_OFFSET = getInt("utc_offset", jSONObject);
+            NAME = jSONObject.getString("name");
+            TZINFO_NAME = jSONObject.getString("tzinfo_name");
+        } catch (final JSONException jsone) {
+            throw new TwitterException(jsone);
+        }
+    }
 
-	@Override
-	public String getName() {
-		return NAME;
-	}
+    @Override
+    public String getName() {
+        return NAME;
+    }
 
-	@Override
-	public String tzinfoName() {
-		return TZINFO_NAME;
-	}
+    @Override
+    public String tzinfoName() {
+        return TZINFO_NAME;
+    }
 
-	@Override
-	public int utcOffset() {
-		return UTC_OFFSET;
-	}
+    @Override
+    public int utcOffset() {
+        return UTC_OFFSET;
+    }
 
 }

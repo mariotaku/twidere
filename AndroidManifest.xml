@@ -379,7 +379,8 @@
 		<activity
 			android:name=".activity.EditCustomTabActivity"
 			android:exported="false"
-			android:label="@string/add_tab">
+			android:label="@string/add_tab"
+			android:theme="@style/Theme.Blank.Dialog">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.NEW_CUSTOM_TAB"/>
 				<action android:name="org.mariotaku.twidere.EDIT_CUSTOM_TAB"/>

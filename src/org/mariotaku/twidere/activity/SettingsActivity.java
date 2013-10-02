@@ -21,11 +21,6 @@ package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.Utils.restartActivity;
 
-import java.util.List;
-
-import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.ArrayAdapter;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -40,152 +35,160 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-public class SettingsActivity extends BasePreferenceActivity implements OnSharedPreferenceChangeListener {
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.ArrayAdapter;
 
-	private SharedPreferences mPreferences;
-	private HeaderAdapter mAdapter;
+import java.util.List;
 
-	public HeaderAdapter getHeaderAdapter() {
-		if (mAdapter != null) return mAdapter;
-		return mAdapter = new HeaderAdapter(this);
-	}
+public class SettingsActivity extends BasePreferenceActivity implements
+        OnSharedPreferenceChangeListener {
 
-	@Override
-	public void onBuildHeaders(final List<Header> target) {
-		loadHeadersFromResource(R.xml.settings_headers, target);
-		final HeaderAdapter adapter = getHeaderAdapter();
-		adapter.clear();
-		adapter.addAll(target);
-	}
+    private SharedPreferences mPreferences;
+    private HeaderAdapter mAdapter;
 
-	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
-		switch (item.getItemId()) {
-			case MENU_HOME: {
-				onBackPressed();
-				return true;
-			}
-		}
-		return super.onOptionsItemSelected(item);
-	}
+    public HeaderAdapter getHeaderAdapter() {
+        if (mAdapter != null)
+            return mAdapter;
+        return mAdapter = new HeaderAdapter(this);
+    }
 
-	@Override
-	public void onSharedPreferenceChanged(final SharedPreferences preferences, final String key) {
-		if (PREFERENCE_KEY_THEME.equals(key) || PREFERENCE_KEY_SOLID_COLOR_BACKGROUND.equals(key)) {
-			restartActivity(this);
-		}
-	}
+    @Override
+    public void onBuildHeaders(final List<Header> target) {
+        loadHeadersFromResource(R.xml.settings_headers, target);
+        final HeaderAdapter adapter = getHeaderAdapter();
+        adapter.clear();
+        adapter.addAll(target);
+    }
 
-	@Override
-	public void setListAdapter(final ListAdapter adapter) {
-		if (adapter == null) {
-			super.setListAdapter(null);
-		} else {
-			super.setListAdapter(getHeaderAdapter());
-		}
-	}
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        switch (item.getItemId()) {
+            case MENU_HOME: {
+                onBackPressed();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-		super.onCreate(savedInstanceState);
-		setIntent(getIntent().addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-		mPreferences.registerOnSharedPreferenceChangeListener(this);
-	}
+    @Override
+    public void onSharedPreferenceChanged(final SharedPreferences preferences, final String key) {
+        if (PREFERENCE_KEY_THEME.equals(key) || PREFERENCE_KEY_SOLID_COLOR_BACKGROUND.equals(key)) {
+            restartActivity(this);
+        }
+    }
 
-	static class HeaderAdapter extends ArrayAdapter<Header> {
+    @Override
+    public void setListAdapter(final ListAdapter adapter) {
+        if (adapter == null) {
+            super.setListAdapter(null);
+        } else {
+            super.setListAdapter(getHeaderAdapter());
+        }
+    }
 
-		static final int HEADER_TYPE_CATEGORY = 0;
-		static final int HEADER_TYPE_NORMAL = 1;
+    @Override
+    protected void onCreate(final Bundle savedInstanceState) {
+        mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+        super.onCreate(savedInstanceState);
+        setIntent(getIntent().addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        mPreferences.registerOnSharedPreferenceChangeListener(this);
+    }
 
-		private final Context mContext;
-		private final Resources mResources;
+    static class HeaderAdapter extends ArrayAdapter<Header> {
 
-		public HeaderAdapter(final Context context) {
-			super(context, R.layout.settings_list_item);
-			mContext = context;
-			mResources = context.getResources();
-		}
+        static final int HEADER_TYPE_CATEGORY = 0;
+        static final int HEADER_TYPE_NORMAL = 1;
 
-		@Override
-		public boolean areAllItemsEnabled() {
-			return false;
-		}
+        private final Context mContext;
+        private final Resources mResources;
 
-		@Override
-		public int getItemViewType(final int position) {
-			final Header header = getItem(position);
-			return getHeaderType(header);
-		}
+        public HeaderAdapter(final Context context) {
+            super(context, R.layout.settings_list_item);
+            mContext = context;
+            mResources = context.getResources();
+        }
 
-		@Override
-		public View getView(final int position, final View convertView, final ViewGroup parent) {
-			final Header header = getItem(position);
-			final int viewType = getHeaderType(header);
-			final View view;
-			switch (viewType) {
-				case HEADER_TYPE_CATEGORY: {
-					view = new TextView(mContext, null, android.R.attr.listSeparatorTextViewStyle);
-					((TextView) view).setText(header.getTitle(mResources));
-					break;
-				}
-				default: {
-					final boolean is_switch_item = convertView != null
-							&& convertView.findViewById(android.R.id.toggle) != null;
-					final boolean should_create_new = convertView instanceof TextView || is_switch_item;
-					view = super.getView(position, should_create_new ? null : convertView, parent);
-					final ViewHolder holder;
-					final Object tag = view.getTag();
-					if (tag instanceof ViewHolder) {
-						holder = (ViewHolder) tag;
-					} else {
-						holder = new ViewHolder(view);
-						view.setTag(holder);
-					}
-					final CharSequence title = header.getTitle(mResources);
-					holder.title.setText(title);
-					final CharSequence summary = header.getSummary(mResources);
-					if (!TextUtils.isEmpty(summary)) {
-						holder.summary.setVisibility(View.VISIBLE);
-						holder.summary.setText(summary);
-					} else {
-						holder.summary.setVisibility(View.GONE);
-					}
-					if (header.iconRes != 0) {
-						holder.icon.setImageResource(header.iconRes);
-					} else {
-						holder.icon.setImageDrawable(null);
-					}
-					break;
-				}
-			}
-			return view;
-		}
+        @Override
+        public boolean areAllItemsEnabled() {
+            return false;
+        }
 
-		@Override
-		public boolean isEnabled(final int position) {
-			return getItemViewType(position) != HEADER_TYPE_CATEGORY;
-		}
+        @Override
+        public int getItemViewType(final int position) {
+            final Header header = getItem(position);
+            return getHeaderType(header);
+        }
 
-		static int getHeaderType(final Header header) {
-			if (header.fragment == null && header.intent == null)
-				return HEADER_TYPE_CATEGORY;
-			else
-				return HEADER_TYPE_NORMAL;
-		}
+        @Override
+        public View getView(final int position, final View convertView, final ViewGroup parent) {
+            final Header header = getItem(position);
+            final int viewType = getHeaderType(header);
+            final View view;
+            switch (viewType) {
+                case HEADER_TYPE_CATEGORY: {
+                    view = new TextView(mContext, null, android.R.attr.listSeparatorTextViewStyle);
+                    ((TextView) view).setText(header.getTitle(mResources));
+                    break;
+                }
+                default: {
+                    final boolean is_switch_item = convertView != null
+                            && convertView.findViewById(android.R.id.toggle) != null;
+                    final boolean should_create_new = convertView instanceof TextView
+                            || is_switch_item;
+                    view = super.getView(position, should_create_new ? null : convertView, parent);
+                    final ViewHolder holder;
+                    final Object tag = view.getTag();
+                    if (tag instanceof ViewHolder) {
+                        holder = (ViewHolder) tag;
+                    } else {
+                        holder = new ViewHolder(view);
+                        view.setTag(holder);
+                    }
+                    final CharSequence title = header.getTitle(mResources);
+                    holder.title.setText(title);
+                    final CharSequence summary = header.getSummary(mResources);
+                    if (!TextUtils.isEmpty(summary)) {
+                        holder.summary.setVisibility(View.VISIBLE);
+                        holder.summary.setText(summary);
+                    } else {
+                        holder.summary.setVisibility(View.GONE);
+                    }
+                    if (header.iconRes != 0) {
+                        holder.icon.setImageResource(header.iconRes);
+                    } else {
+                        holder.icon.setImageDrawable(null);
+                    }
+                    break;
+                }
+            }
+            return view;
+        }
 
-		private static class ViewHolder {
-			private final TextView title, summary;
-			private final ImageView icon;
+        @Override
+        public boolean isEnabled(final int position) {
+            return getItemViewType(position) != HEADER_TYPE_CATEGORY;
+        }
 
-			ViewHolder(final View view) {
-				title = (TextView) view.findViewById(android.R.id.title);
-				summary = (TextView) view.findViewById(android.R.id.summary);
-				icon = (ImageView) view.findViewById(android.R.id.icon);
-			}
-		}
+        static int getHeaderType(final Header header) {
+            if (header.fragment == null && header.intent == null)
+                return HEADER_TYPE_CATEGORY;
+            else
+                return HEADER_TYPE_NORMAL;
+        }
 
-	}
+        private static class ViewHolder {
+            private final TextView title, summary;
+            private final ImageView icon;
+
+            ViewHolder(final View view) {
+                title = (TextView) view.findViewById(android.R.id.title);
+                summary = (TextView) view.findViewById(android.R.id.summary);
+                icon = (ImageView) view.findViewById(android.R.id.icon);
+            }
+        }
+
+    }
 
 }
