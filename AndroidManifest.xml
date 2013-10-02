@@ -1,505 +1,506 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="org.mariotaku.twidere"
-	android:installLocation="auto"
-	android:versionCode="79"
-	android:versionName="0.2.9.2">
+    package="org.mariotaku.twidere"
+    android:installLocation="auto"
+    android:versionCode="79"
+    android:versionName="0.2.9.2" >
 
-	<uses-sdk
-		android:minSdkVersion="14"
-		android:targetSdkVersion="18"/>
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="18" />
 
-	<uses-feature
-		android:name="android.hardware.camera"
-		android:required="false"/>
-	<uses-feature
-		android:name="android.hardware.location"
-		android:required="false"/>
-	<uses-feature
-		android:name="android.hardware.location.gps"
-		android:required="false"/>
-	<uses-feature
-		android:name="android.hardware.location.network"
-		android:required="false"/>
-	<uses-feature
-		android:name="android.hardware.touchscreen"
-		android:required="false"/>
-	<uses-feature
-		android:glEsVersion="0x00020000"
-		android:required="true"/>
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.location"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.location.gps"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.location.network"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
 
-	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-	<uses-permission android:name="android.permission.INTERNET"/>
-	<uses-permission android:name="android.permission.VIBRATE"/>
-	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-	<uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
-	<application
-		android:name=".app.TwidereApplication"
-		android:allowBackup="true"
-		android:backupAgent="org.mariotaku.twidere.backup.TwidereBackupAgentHelper"
-		android:hardwareAccelerated="true"
-		android:icon="@drawable/ic_launcher"
-		android:label="@string/app_name"
-		android:theme="@style/Theme.Blank">
-		<uses-library
-			android:name="com.google.android.maps"
-			android:required="false"/>
-		<uses-library
-			android:name="com.sec.android.app.multiwindow"
-			android:required="false"/>
+    <application
+        android:name=".app.TwidereApplication"
+        android:allowBackup="true"
+        android:backupAgent="org.mariotaku.twidere.backup.TwidereBackupAgentHelper"
+        android:hardwareAccelerated="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.Blank" >
+        <uses-library
+            android:name="com.google.android.maps"
+            android:required="false" />
+        <uses-library
+            android:name="com.sec.android.app.multiwindow"
+            android:required="false" />
 
-		<meta-data
-			android:name="com.google.android.backup.api_key"
-			android:value="AEdPqrEAAAAIKbKATV1AGbLB4kem3w8QaPVJSPVVumbMHxkfwA"/>
-		<meta-data
-			android:name="com.google.android.maps.v2.API_KEY"
-			android:value="AIzaSyCVdCIMFFxdNqHnCPrJ9yKUzoTfs8jhYGc"/>
-		<meta-data
-			android:name="com.sec.android.support.multiwindow"
-			android:value="true"/>
-		<meta-data
-			android:name="com.sec.android.multiwindow.DEFAULT_SIZE_W"
-			android:value="480dp"/>
-		<meta-data
-			android:name="com.sec.android.multiwindow.DEFAULT_SIZE_H"
-			android:value="640dp"/>
-		<meta-data
-			android:name="com.sec.android.multiwindow.MINIMUM_SIZE_W"
-			android:value="240dp"/>
-		<meta-data
-			android:name="com.sec.android.multiwindow.MINIMUM_SIZE_H"
-			android:value="320dp"/>
+        <meta-data
+            android:name="com.google.android.backup.api_key"
+            android:value="AEdPqrEAAAAIKbKATV1AGbLB4kem3w8QaPVJSPVVumbMHxkfwA" />
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyCVdCIMFFxdNqHnCPrJ9yKUzoTfs8jhYGc" />
+        <meta-data
+            android:name="com.sec.android.support.multiwindow"
+            android:value="true" />
+        <meta-data
+            android:name="com.sec.android.multiwindow.DEFAULT_SIZE_W"
+            android:value="480dp" />
+        <meta-data
+            android:name="com.sec.android.multiwindow.DEFAULT_SIZE_H"
+            android:value="640dp" />
+        <meta-data
+            android:name="com.sec.android.multiwindow.MINIMUM_SIZE_W"
+            android:value="240dp" />
+        <meta-data
+            android:name="com.sec.android.multiwindow.MINIMUM_SIZE_H"
+            android:value="320dp" />
 
-		<activity
-			android:name=".activity.HomeActivity"
-			android:label="@string/app_name"
-			android:launchMode="singleTop"
-			android:windowSoftInputMode="adjustResize">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
+        <activity
+            android:name=".activity.HomeActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustResize" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-				<category android:name="android.intent.category.LAUNCHER"/>
-				<category android:name="android.intent.category.MULTIWINDOW_LAUNCHER"/>
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-			<intent-filter>
-				<action android:name="org.mariotaku.twidere.HOME"/>
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="org.mariotaku.twidere.HOME" />
 
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-			<intent-filter>
-				<action android:name="android.intent.action.SEARCH"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
 
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
 
-			<meta-data
-				android:name="android.app.searchable"
-				android:resource="@xml/searchable"/>
-			<meta-data
-				android:name="android.app.default_searchable"
-				android:value=".activity.HomeActivity"/>
-		</activity>
-		<activity
-			android:name=".activity.ComposeActivity"
-			android:label="@string/compose"
-			android:launchMode="singleTop"
-			android:theme="@style/Theme.Blank.Dialog"
-			android:windowSoftInputMode="adjustResize">
-			<intent-filter android:label="@string/compose">
-				<action android:name="android.intent.action.MAIN"/>
-				<action android:name="org.mariotaku.twidere.COMPOSE"/>
-				<action android:name="org.mariotaku.twidere.REPLY"/>
-				<action android:name="org.mariotaku.twidere.QUOTE"/>
-				<action android:name="org.mariotaku.twidere.EDIT_DRAFT"/>
-				<action android:name="org.mariotaku.twidere.MENTION"/>
-				<action android:name="org.mariotaku.twidere.REPLY_MULTIPLE"/>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".activity.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".activity.ComposeActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/compose"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.Blank.Dialog"
+            android:windowSoftInputMode="adjustResize" >
+            <intent-filter android:label="@string/compose" >
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="org.mariotaku.twidere.COMPOSE" />
+                <action android:name="org.mariotaku.twidere.REPLY" />
+                <action android:name="org.mariotaku.twidere.QUOTE" />
+                <action android:name="org.mariotaku.twidere.EDIT_DRAFT" />
+                <action android:name="org.mariotaku.twidere.MENTION" />
+                <action android:name="org.mariotaku.twidere.REPLY_MULTIPLE" />
 
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-			<intent-filter android:label="@string/share_via_twidere">
-				<action android:name="android.intent.action.SEND"/>
-				<action android:name="android.intent.action.SEND_MULTIPLE"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter android:label="@string/share_via_twidere" >
+                <action android:name="android.intent.action.SEND" />
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
 
-				<category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
 
-				<data android:mimeType="image/*"/>
-				<data android:mimeType="text/plain"/>
-			</intent-filter>
+                <data android:mimeType="image/*" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
 
-			<meta-data
-				android:name="android.support.PARENT_ACTIVITY"
-				android:value=".activity.HomeActivity"/>
-		</activity>
-		<activity
-			android:name=".activity.SignInActivity"
-			android:label="@string/login_to_twitter"
-			android:windowSoftInputMode="adjustResize">
-			<intent-filter>
-				<action android:name="org.mariotaku.twidere.TWITTER_LOGIN"/>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".activity.SignInActivity"
+            android:label="@string/login_to_twitter"
+            android:windowSoftInputMode="adjustResize" >
+            <intent-filter>
+                <action android:name="org.mariotaku.twidere.TWITTER_LOGIN" />
 
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
-		<activity
-			android:name=".activity.AuthorizeActivity"
-			android:label="@string/login_to_twitter"
-			android:windowSoftInputMode="adjustResize">
-			<intent-filter>
-				<action android:name="org.mariotaku.twidere.TWITTER_BROWSER_LOGIN"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.AuthorizeActivity"
+            android:label="@string/login_to_twitter"
+            android:windowSoftInputMode="adjustResize" >
+            <intent-filter>
+                <action android:name="org.mariotaku.twidere.TWITTER_BROWSER_LOGIN" />
 
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
-		<activity
-			android:name=".activity.SettingsActivity"
-			android:label="@string/settings">
-			<intent-filter>
-				<action android:name="android.intent.action.MANAGE_NETWORK_USAGE"/>
-				<action android:name="org.mariotaku.twidere.SETTINGS"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.SettingsActivity"
+            android:label="@string/settings" >
+            <intent-filter>
+                <action android:name="android.intent.action.MANAGE_NETWORK_USAGE" />
+                <action android:name="org.mariotaku.twidere.SETTINGS" />
 
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
 
-			<meta-data
-				android:name="android.support.PARENT_ACTIVITY"
-				android:value=".activity.HomeActivity"/>
-		</activity>
-		<activity
-			android:name=".activity.FiltersActivity"
-			android:label="@string/filters">
-			<intent-filter>
-				<action android:name="org.mariotaku.twidere.FILTERS"/>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".activity.FiltersActivity"
+            android:label="@string/filters" >
+            <intent-filter>
+                <action android:name="org.mariotaku.twidere.FILTERS" />
 
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
 
-			<meta-data
-				android:name="android.support.PARENT_ACTIVITY"
-				android:value=".activity.HomeActivity"/>
-		</activity>
-		<activity
-			android:name=".activity.EditAPIActivity"
-			android:label="@string/edit_api"
-			android:theme="@style/Theme.Twidere.Light.Dialog"
-			android:windowSoftInputMode="adjustResize"/>
-		<activity
-			android:name="org.mariotaku.twidere.activity.AccountSelectorActivity"
-			android:label="@string/select_account"
-			android:theme="@style/Theme.Twidere.Light.Dialog">
-			<intent-filter>
-				<action android:name="org.mariotaku.twidere.SELECT_ACCOUNT"/>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".activity.EditAPIActivity"
+            android:label="@string/edit_api"
+            android:theme="@style/Theme.Twidere.Light.Dialog"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="org.mariotaku.twidere.activity.AccountSelectorActivity"
+            android:label="@string/select_account"
+            android:theme="@style/Theme.Twidere.Light.Dialog" >
+            <intent-filter>
+                <action android:name="org.mariotaku.twidere.SELECT_ACCOUNT" />
 
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
-		<activity
-			android:name="org.mariotaku.twidere.activity.BrowserActivity"
-			android:exported="false"
-			android:label="@string/browser"
-			android:theme="@style/Theme.Blank.SwipeBack">
-			<intent-filter>
-				<action android:name="org.mariotaku.twidere.VIEW_WEBPAGE"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="org.mariotaku.twidere.activity.BrowserActivity"
+            android:exported="false"
+            android:label="@string/browser"
+            android:theme="@style/Theme.Blank.SwipeBack" >
+            <intent-filter>
+                <action android:name="org.mariotaku.twidere.VIEW_WEBPAGE" />
 
-				<category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
 
-				<data android:scheme="file"/>
-				<data android:scheme="http"/>
-				<data android:scheme="https"/>
-			</intent-filter>
-		</activity>
-		<activity
-			android:name=".activity.ColorSelectorActivity"
-			android:label="@string/set_color"
-			android:theme="@style/Theme.Twidere.Light.Dialog"/>
-		<activity
-			android:name=".activity.LinkHandlerActivity"
-			android:theme="@style/Theme.Blank.SwipeBack"
-			android:windowSoftInputMode="adjustResize">
-			<meta-data
-				android:name="android.support.PARENT_ACTIVITY"
-				android:value=".activity.HomeActivity"/>
+                <data android:scheme="file" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.ColorSelectorActivity"
+            android:label="@string/set_color"
+            android:theme="@style/Theme.Twidere.Light.Dialog" />
+        <activity
+            android:name=".activity.LinkHandlerActivity"
+            android:theme="@style/Theme.Blank.SwipeBack"
+            android:windowSoftInputMode="adjustResize" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.HomeActivity" />
 
-			<intent-filter>
-				<action android:name="android.intent.action.VIEW"/>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
 
-				<category android:name="android.intent.category.BROWSABLE"/>
-				<category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
 
-				<data
-					android:host="user"
-					android:scheme="twidere"/>
-				<data
-					android:host="users"
-					android:scheme="twidere"/>
-				<data
-					android:host="user_timeline"
-					android:scheme="twidere"/>
-				<data
-					android:host="user_favorites"
-					android:scheme="twidere"/>
-				<data
-					android:host="user_followers"
-					android:scheme="twidere"/>
-				<data
-					android:host="user_friends"
-					android:scheme="twidere"/>
-				<data
-					android:host="user_blocks"
-					android:scheme="twidere"/>
-				<data
-					android:host="status"
-					android:scheme="twidere"/>
-				<data
-					android:host="status_retweeters"
-					android:scheme="twidere"/>
-				<data
-					android:host="statuses"
-					android:scheme="twidere"/>
-				<data
-					android:host="direct_messages_conversation"
-					android:scheme="twidere"/>
-				<data
-					android:host="list_details"
-					android:scheme="twidere"/>
-				<data
-					android:host="lists"
-					android:scheme="twidere"/>
-				<data
-					android:host="list_timeline"
-					android:scheme="twidere"/>
-				<data
-					android:host="list_members"
-					android:scheme="twidere"/>
-				<data
-					android:host="list_subscribers"
-					android:scheme="twidere"/>
-				<data
-					android:host="list_memberships"
-					android:scheme="twidere"/>
-				<data
-					android:host="saved_searches"
-					android:scheme="twidere"/>
-				<data
-					android:host="user_mentions"
-					android:scheme="twidere"/>
-				<data
-					android:host="incoming_friendships"
-					android:scheme="twidere"/>
-				<data
-					android:host="search"
-					android:scheme="twidere"/>
-			</intent-filter>
-		</activity>
-		<activity
-			android:name=".activity.DraftsActivity"
-			android:exported="false"
-			android:label="@string/drafts"
-			android:launchMode="singleTop"
-			android:theme="@style/Theme.Blank.SwipeBack">
-			<intent-filter>
-				<action android:name="org.mariotaku.twidere.DRAFTS"/>
+                <data
+                    android:host="user"
+                    android:scheme="twidere" />
+                <data
+                    android:host="users"
+                    android:scheme="twidere" />
+                <data
+                    android:host="user_timeline"
+                    android:scheme="twidere" />
+                <data
+                    android:host="user_favorites"
+                    android:scheme="twidere" />
+                <data
+                    android:host="user_followers"
+                    android:scheme="twidere" />
+                <data
+                    android:host="user_friends"
+                    android:scheme="twidere" />
+                <data
+                    android:host="user_blocks"
+                    android:scheme="twidere" />
+                <data
+                    android:host="status"
+                    android:scheme="twidere" />
+                <data
+                    android:host="status_retweeters"
+                    android:scheme="twidere" />
+                <data
+                    android:host="statuses"
+                    android:scheme="twidere" />
+                <data
+                    android:host="direct_messages_conversation"
+                    android:scheme="twidere" />
+                <data
+                    android:host="list_details"
+                    android:scheme="twidere" />
+                <data
+                    android:host="lists"
+                    android:scheme="twidere" />
+                <data
+                    android:host="list_timeline"
+                    android:scheme="twidere" />
+                <data
+                    android:host="list_members"
+                    android:scheme="twidere" />
+                <data
+                    android:host="list_subscribers"
+                    android:scheme="twidere" />
+                <data
+                    android:host="list_memberships"
+                    android:scheme="twidere" />
+                <data
+                    android:host="saved_searches"
+                    android:scheme="twidere" />
+                <data
+                    android:host="user_mentions"
+                    android:scheme="twidere" />
+                <data
+                    android:host="incoming_friendships"
+                    android:scheme="twidere" />
+                <data
+                    android:host="search"
+                    android:scheme="twidere" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.DraftsActivity"
+            android:exported="false"
+            android:label="@string/drafts"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.Blank.SwipeBack" >
+            <intent-filter>
+                <action android:name="org.mariotaku.twidere.DRAFTS" />
 
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
 
-			<meta-data
-				android:name="android.support.PARENT_ACTIVITY"
-				android:value=".activity.HomeActivity"/>
-		</activity>
-		<activity
-			android:name="org.mariotaku.gallery3d.ImageViewerGLActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize"
-			android:hardwareAccelerated="true"
-			android:label="@string/view_image"
-			android:launchMode="singleTop"
-			android:process=":image_viewer"
-			android:theme="@style/Theme.Twidere.Viewer">
-			<intent-filter>
-				<action android:name="org.mariotaku.twidere.VIEW_IMAGE"/>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.HomeActivity" />
+        </activity>
+        <activity
+            android:name="org.mariotaku.gallery3d.ImageViewerGLActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:hardwareAccelerated="true"
+            android:label="@string/view_image"
+            android:launchMode="singleTop"
+            android:process=":image_viewer"
+            android:theme="@style/Theme.Twidere.Viewer" >
+            <intent-filter>
+                <action android:name="org.mariotaku.twidere.VIEW_IMAGE" />
 
-				<category android:name="android.intent.category.DEFAULT"/>
-				<category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
-				<data android:scheme="http"/>
-				<data android:scheme="https"/>
-				<data android:scheme="file"/>
-			</intent-filter>
-		</activity>
-		<activity
-			android:name=".activity.MapViewerActivity"
-			android:exported="false"
-			android:label="@string/view_map"
-			android:theme="@style/Theme.Twidere.Viewer">
-			<intent-filter>
-				<action android:name="android.intent.action.VIEW"/>
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:scheme="file" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.MapViewerActivity"
+            android:exported="false"
+            android:label="@string/view_map"
+            android:theme="@style/Theme.Twidere.Viewer" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
 
-				<category android:name="android.intent.category.BROWSABLE"/>
-				<category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
 
-				<data
-					android:host="map"
-					android:scheme="twidere"/>
-			</intent-filter>
-		</activity>
-		<activity
-			android:name=".activity.DonateActivity"
-			android:label="@string/donate"
-			android:theme="@style/Theme.Blank"
-			android:windowSoftInputMode="adjustResize"/>
-		<activity
-			android:name=".activity.FileSelectorActivity"
-			android:exported="false"
-			android:label="@string/pick_file"
-			android:theme="@style/Theme.Blank"
-			android:windowSoftInputMode="adjustResize">
-			<intent-filter>
-				<action android:name="org.mariotaku.twidere.PICK_FILE"/>
-				<action android:name="org.mariotaku.twidere.PICK_DIRECTORY"/>
+                <data
+                    android:host="map"
+                    android:scheme="twidere" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.DonateActivity"
+            android:label="@string/donate"
+            android:theme="@style/Theme.Blank"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".activity.FileSelectorActivity"
+            android:exported="false"
+            android:label="@string/pick_file"
+            android:theme="@style/Theme.Blank"
+            android:windowSoftInputMode="adjustResize" >
+            <intent-filter>
+                <action android:name="org.mariotaku.twidere.PICK_FILE" />
+                <action android:name="org.mariotaku.twidere.PICK_DIRECTORY" />
 
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
-		<activity
-			android:name=".activity.EditUserProfileActivity"
-			android:exported="false"
-			android:label="@string/edit_profile"
-			android:theme="@style/Theme.Blank.SwipeBack"
-			android:windowSoftInputMode="adjustResize">
-			<intent-filter>
-				<action android:name="org.mariotaku.twidere.EDIT_USER_PROFILE"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.EditUserProfileActivity"
+            android:exported="false"
+            android:label="@string/edit_profile"
+            android:theme="@style/Theme.Blank.SwipeBack"
+            android:windowSoftInputMode="adjustResize" >
+            <intent-filter>
+                <action android:name="org.mariotaku.twidere.EDIT_USER_PROFILE" />
 
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
-		<activity
-			android:name=".activity.EditCustomTabActivity"
-			android:exported="false"
-			android:label="@string/add_tab">
-			<intent-filter>
-				<action android:name="org.mariotaku.twidere.NEW_CUSTOM_TAB"/>
-				<action android:name="org.mariotaku.twidere.EDIT_CUSTOM_TAB"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.EditCustomTabActivity"
+            android:exported="false"
+            android:label="@string/add_tab" >
+            <intent-filter>
+                <action android:name="org.mariotaku.twidere.NEW_CUSTOM_TAB" />
+                <action android:name="org.mariotaku.twidere.EDIT_CUSTOM_TAB" />
 
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
-		<activity
-			android:name=".activity.HostMappingActivity"
-			android:exported="false"
-			android:label="@string/custom_host_mapping"
-			android:theme="@style/Theme.Blank">
-			<intent-filter>
-				<action android:name="org.mariotaku.twidere.EDIT_HOST_MAPPING"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.HostMappingActivity"
+            android:exported="false"
+            android:label="@string/custom_host_mapping"
+            android:theme="@style/Theme.Blank" >
+            <intent-filter>
+                <action android:name="org.mariotaku.twidere.EDIT_HOST_MAPPING" />
 
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
-		<activity
-			android:name=".activity.CreateComposeShortcutActivity"
-			android:label="@string/compose"
-			android:theme="@android:style/Theme.NoDisplay">
-			<intent-filter>
-				<action android:name="android.intent.action.CREATE_SHORTCUT"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.CreateComposeShortcutActivity"
+            android:label="@string/compose"
+            android:theme="@android:style/Theme.NoDisplay" >
+            <intent-filter>
+                <action android:name="android.intent.action.CREATE_SHORTCUT" />
 
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
-		<activity
-			android:name=".activity.DataProfilingSettingsActivity"
-			android:exported="false"
-			android:label="@string/data_profiling"
-			android:theme="@style/Theme.Blank"/>
-		<activity
-			android:name="org.mariotaku.twidere.activity.RequestPermissionsActivity"
-			android:label="@string/permissions_request"
-			android:theme="@style/Theme.Twidere.Light.Dialog">
-			<intent-filter>
-				<action android:name="org.mariotaku.twidere.REQUEST_PERMISSIONS"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.DataProfilingSettingsActivity"
+            android:exported="false"
+            android:label="@string/data_profiling"
+            android:theme="@style/Theme.Blank" />
+        <activity
+            android:name="org.mariotaku.twidere.activity.RequestPermissionsActivity"
+            android:label="@string/permissions_request"
+            android:theme="@style/Theme.Twidere.Light.Dialog" >
+            <intent-filter>
+                <action android:name="org.mariotaku.twidere.REQUEST_PERMISSIONS" />
 
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
-		<activity
-			android:name=".activity.CameraCropActivity"
-			android:exported="false">
-			<intent-filter>
-				<action android:name="org.mariotaku.twidere.CAMERA_CROP"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.CameraCropActivity"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="org.mariotaku.twidere.CAMERA_CROP" />
 
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
-		<activity
-			android:name="org.mariotaku.twidere.activity.UserListSelectorActivity"
-			android:label="@string/select_user_list"
-			android:theme="@style/Theme.Blank.Dialog">
-			<intent-filter>
-				<action android:name="org.mariotaku.twidere.SELECT_USER"/>
-				<action android:name="org.mariotaku.twidere.SELECT_USER_LIST"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="org.mariotaku.twidere.activity.UserListSelectorActivity"
+            android:label="@string/select_user_list"
+            android:theme="@style/Theme.Blank.Dialog" >
+            <intent-filter>
+                <action android:name="org.mariotaku.twidere.SELECT_USER" />
+                <action android:name="org.mariotaku.twidere.SELECT_USER_LIST" />
 
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
-		<activity
-			android:name=".activity.TestActivity"
-			android:launchMode="singleTop"
-			android:theme="@style/Theme.Test"
-			android:windowSoftInputMode="adjustResize"/>
-		<activity
-			android:name=".activity.NyanActivity"
-			android:launchMode="singleTop"
-			android:theme="@style/Theme.Nyan"
-			android:windowSoftInputMode="stateAlwaysHidden"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.TestActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.Test"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".activity.NyanActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.Nyan"
+            android:windowSoftInputMode="stateAlwaysHidden" />
 
-		<service
-			android:name=".service.RefreshService"
-			android:label="@string/label_refresh_service"
-			android:settingsActivity=".activity.SettingsActivity"/>
-		<service android:name=".service.UpdateStatusService"/>
-		<service
-			android:name="edu.ucdavis.earlybird.UCDService"
-			android:settingsActivity=".activity.DataProfilingSettingsActivity"/>
+        <service
+            android:name=".service.RefreshService"
+            android:label="@string/label_refresh_service"
+            android:settingsActivity=".activity.SettingsActivity" />
+        <service android:name=".service.UpdateStatusService" />
+        <service
+            android:name="edu.ucdavis.earlybird.UCDService"
+            android:settingsActivity=".activity.DataProfilingSettingsActivity" />
 
-		<provider
-			android:name="org.mariotaku.twidere.provider.TwidereDataProvider"
-			android:authorities="twidere"
-			android:exported="true"
-			android:label="@string/label_tweetstore_provider"/>
-		<provider
-			android:name="org.mariotaku.twidere.provider.CommandProvider"
-			android:authorities="twidere.command"
-			android:exported="true"/>
-		<provider
-			android:name=".provider.RecentSearchProvider"
-			android:authorities="org.mariotaku.twidere.provider.SearchRecentSuggestions"/>
+        <provider
+            android:name="org.mariotaku.twidere.provider.TwidereDataProvider"
+            android:authorities="twidere"
+            android:exported="true"
+            android:label="@string/label_tweetstore_provider" />
+        <provider
+            android:name="org.mariotaku.twidere.provider.CommandProvider"
+            android:authorities="twidere.command"
+            android:exported="true" />
+        <provider
+            android:name=".provider.RecentSearchProvider"
+            android:authorities="org.mariotaku.twidere.provider.SearchRecentSuggestions" />
 
-		<receiver android:name=".receiver.ConnectivityStateReceiver">
-			<intent-filter>
-				<action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
-			</intent-filter>
-		</receiver>
-		<receiver android:name=".receiver.TestBroadcastReceiver">
-			<intent-filter>
-				<action android:name="android.provider.Telephony.SECRET_CODE"/>
+        <receiver android:name=".receiver.ConnectivityStateReceiver" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".receiver.TestBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SECRET_CODE" />
 
-				<data
-					android:host="8943373"
-					android:scheme="android_secret_code"/>
-			</intent-filter>
-		</receiver>
-		<receiver
-			android:name="edu.ucdavis.earlybird.UploadReceiver"
-			android:exported="false">
-			<intent-filter>
-				<action android:name="android.net.wifi.supplicant.CONNECTION_CHANGE"/>
-				<action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
-				<action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
-				<action android:name="edu.ucdavis.earlybird.UPLOAD_PROFILE"/>
-			</intent-filter>
-		</receiver>
-	</application>
+                <data
+                    android:host="8943373"
+                    android:scheme="android_secret_code" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="edu.ucdavis.earlybird.UploadReceiver"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="android.net.wifi.supplicant.CONNECTION_CHANGE" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+                <action android:name="edu.ucdavis.earlybird.UPLOAD_PROFILE" />
+            </intent-filter>
+        </receiver>
+    </application>
 
 </manifest>
