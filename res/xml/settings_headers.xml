@@ -30,7 +30,7 @@
 	<header
 		android:fragment="org.mariotaku.twidere.fragment.CustomTabsFragment"
 		android:icon="@drawable/ic_menu_home"
-		android:title="@string/custom_tabs"/>
+		android:title="@string/tabs"/>
 	<header
 		android:fragment="org.mariotaku.twidere.fragment.ExtensionsListFragment"
 		android:icon="@drawable/ic_menu_extension"

@@ -69,13 +69,12 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	private MenuButtonClickListener mListener;
 
 	private boolean mDisplayProfileImage, mDisplayImagePreview, mShowAccountColor, mGapDisallowed,
-			mMentionsHighlightDisabled, mDisplaySensitiveContents, mIndicateMyStatusDisabled, mLinkHighlightingEnabled,
-			mIsLastItemFiltered, mFiltersEnabled = true;
+			mMentionsHighlightDisabled, mFavoritesHighlightDisabled, mDisplaySensitiveContents,
+			mIndicateMyStatusDisabled, mLinkHighlightingEnabled, mIsLastItemFiltered, mFiltersEnabled = true;
 	private float mTextSize;
 	private int mNameDisplayOption, mLinkHighlightStyle;
 	private boolean mFilterIgnoreSource, mFilterIgnoreScreenName, mFilterIgnoreTextHtml, mFilterIgnoreTextPlain,
 			mNicknameOnly;
-
 	private int mMaxAnimationPosition;
 
 	private StatusCursorIndices mIndices;
@@ -144,8 +143,8 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			final boolean is_my_status = account_id == user_id;
 
 			holder.setUserColor(getUserColor(mContext, user_id));
-			holder.setHighlightColor(getStatusBackground(mMentionsHighlightDisabled ? false : is_mention, is_favorite,
-					is_retweet));
+			holder.setHighlightColor(getStatusBackground(!mMentionsHighlightDisabled && is_mention,
+					!mFavoritesHighlightDisabled && is_favorite, is_retweet));
 
 			holder.setAccountColorEnabled(mShowAccountColor);
 
@@ -176,7 +175,8 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 				holder.screen_name.setMovementMethod(null);
 			}
 			holder.time.setTime(status_timestamp);
-			holder.setStatusType(is_favorite, has_location, has_media, is_possibly_sensitive);
+			holder.setStatusType(!mFavoritesHighlightDisabled && is_favorite, has_location, has_media,
+					is_possibly_sensitive);
 
 			holder.setIsReplyRetweet(is_reply, is_retweet);
 			if (is_retweet) {
@@ -345,6 +345,13 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	public void setDisplaySensitiveContents(final boolean display) {
 		if (display == mDisplaySensitiveContents) return;
 		mDisplaySensitiveContents = display;
+		notifyDataSetChanged();
+	}
+
+	@Override
+	public void setFavoritesHightlightDisabled(final boolean disable) {
+		if (disable == mFavoritesHighlightDisabled) return;
+		mFavoritesHighlightDisabled = disable;
 		notifyDataSetChanged();
 	}
 

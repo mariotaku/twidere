@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.getAccountId;
 import static org.mariotaku.twidere.util.Utils.isSameAccount;
 
 import android.content.BroadcastReceiver;
@@ -28,6 +29,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 
+import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.loader.UserFavoritesLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
 
@@ -74,7 +76,15 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		getListAdapter().setFiltersEnabled(false);
+		final Bundle args = getArguments();
+		final long account_id = args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
+		final long user_id = args != null ? args.getLong(EXTRA_USER_ID, -1) : -1;
+		final String screen_name = args != null ? args.getString(EXTRA_SCREEN_NAME) : null;
+		final boolean is_my_timeline = user_id > 0 ? account_id == user_id : account_id == getAccountId(getActivity(),
+				screen_name);
+		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();
+		adapter.setFavoritesHightlightDisabled(is_my_timeline);
+		adapter.setFiltersEnabled(false);
 	}
 
 	@Override

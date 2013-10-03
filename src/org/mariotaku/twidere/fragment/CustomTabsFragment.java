@@ -19,9 +19,10 @@
 
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.model.CustomTabConfiguration.getTabIconDrawable;
-import static org.mariotaku.twidere.model.CustomTabConfiguration.getTabIconObject;
-import static org.mariotaku.twidere.model.CustomTabConfiguration.getTabTypeName;
+import static org.mariotaku.twidere.util.CustomTabUtils.getConfiguraionMap;
+import static org.mariotaku.twidere.util.CustomTabUtils.getTabIconDrawable;
+import static org.mariotaku.twidere.util.CustomTabUtils.getTabIconObject;
+import static org.mariotaku.twidere.util.CustomTabUtils.getTabTypeName;
 
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
@@ -60,12 +61,15 @@ import org.mariotaku.querybuilder.Where;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.graphic.DropShadowDrawable;
 import org.mariotaku.twidere.model.CustomTabConfiguration;
+import org.mariotaku.twidere.model.CustomTabConfiguration.CustomTabConfigurationComparator;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.provider.TweetStore.Tabs;
 import org.mariotaku.twidere.view.holder.TwoLineWithIconViewHolder;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 public class CustomTabsFragment extends BaseListFragment implements LoaderCallbacks<Cursor>, Panes.Right,
@@ -205,8 +209,11 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 		if (itemAdd != null && itemAdd.hasSubMenu()) {
 			final SubMenu subMenu = itemAdd.getSubMenu();
 			subMenu.clear();
-			final HashMap<String, CustomTabConfiguration> map = CustomTabConfiguration.getConfiguraionMap();
-			for (final Entry<String, CustomTabConfiguration> entry : map.entrySet()) {
+			final HashMap<String, CustomTabConfiguration> map = getConfiguraionMap();
+			final List<Entry<String, CustomTabConfiguration>> tabs = new ArrayList<Entry<String, CustomTabConfiguration>>(
+					map.entrySet());
+			Collections.sort(tabs, CustomTabConfigurationComparator.SINGLETON);
+			for (final Entry<String, CustomTabConfiguration> entry : tabs) {
 				final String type = entry.getKey();
 				final CustomTabConfiguration conf = entry.getValue();
 				final Intent intent = new Intent(INTENT_ACTION_EDIT_CUSTOM_TAB);

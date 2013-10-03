@@ -59,7 +59,7 @@ public final class ParseUtils implements Constants {
 						bundle.putBoolean(key, json.optBoolean(key));
 					} else if (value instanceof Integer) {
 						// Simple workaround for account_id
-						if (EXTRA_ACCOUNT_ID.equals(key)) {
+						if (shouldPutLong(key)) {
 							bundle.putLong(key, json.optLong(key));
 						} else {
 							bundle.putInt(key, json.optInt(key));
@@ -132,6 +132,10 @@ public final class ParseUtils implements Constants {
 			// This should not happen.
 		}
 		return null;
+	}
+
+	private static boolean shouldPutLong(final String key) {
+		return EXTRA_ACCOUNT_ID.equals(key) || EXTRA_USER_ID.equals(key);
 	}
 
 }

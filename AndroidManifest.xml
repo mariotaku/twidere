@@ -138,7 +138,7 @@
 		</activity>
 		<activity
 			android:name=".activity.SignInActivity"
-			android:label="@string/login_to_twitter"
+			android:label="@string/sign_in"
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.TWITTER_LOGIN"/>
@@ -148,7 +148,7 @@
 		</activity>
 		<activity
 			android:name=".activity.AuthorizeActivity"
-			android:label="@string/login_to_twitter"
+			android:label="@string/browser_sign_in"
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.TWITTER_BROWSER_LOGIN"/>

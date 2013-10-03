@@ -39,6 +39,8 @@ public interface IStatusesAdapter<Data> extends IBaseCardAdapter {
 
 	public void setDisplaySensitiveContents(boolean display);
 
+	public void setFavoritesHightlightDisabled(boolean disable);
+
 	public void setFiltersEnabled(boolean enabled);
 
 	public void setGapDisallowed(boolean disallowed);

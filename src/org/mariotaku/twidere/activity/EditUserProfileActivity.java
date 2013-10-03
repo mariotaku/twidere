@@ -219,7 +219,9 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 				mPopupMenu.inflate(R.menu.action_profile_banner_image);
 				final Menu menu = mPopupMenu.getMenu();
 				final MenuItem delete_submenu = menu.findItem(MENU_DELETE_SUBMENU);
-				delete_submenu.setVisible(!isEmpty(mUser.profile_banner_url));
+				final boolean has_profile_banner = !isEmpty(mUser.profile_banner_url);
+				delete_submenu.setVisible(has_profile_banner);
+				delete_submenu.setEnabled(has_profile_banner);
 				mPopupMenu.setOnMenuItemClickListener(mProfileBannerImageMenuListener);
 				break;
 			}

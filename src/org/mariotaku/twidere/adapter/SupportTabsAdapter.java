@@ -19,7 +19,7 @@
 
 package org.mariotaku.twidere.adapter;
 
-import static org.mariotaku.twidere.model.CustomTabConfiguration.getTabIconDrawable;
+import static org.mariotaku.twidere.util.CustomTabUtils.getTabIconDrawable;
 import static org.mariotaku.twidere.util.Utils.announceForAccessibilityCompat;
 
 import android.content.Context;

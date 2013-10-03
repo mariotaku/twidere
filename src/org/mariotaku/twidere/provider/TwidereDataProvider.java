@@ -578,9 +578,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		content_intent.setAction(Intent.ACTION_MAIN);
 		content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
 		final Bundle content_extras = new Bundle();
-		// TODO
-		// content_extras.putInt(EXTRA_INITIAL_TAB,
-		// HomeActivity.TAB_POSITION_MENTIONS);
+		content_extras.putString(EXTRA_TAB_TYPE, TAB_TYPE_MENTIONS_TIMELINE);
 		if (mNewMentions.size() == 1) {
 			final Uri.Builder uri_builder = new Uri.Builder();
 			uri_builder.scheme(SCHEME_TWIDERE);
@@ -670,9 +668,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		content_intent.setAction(Intent.ACTION_MAIN);
 		content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
 		final Bundle content_extras = new Bundle();
-		// TODO
-		// content_extras.putInt(EXTRA_INITIAL_TAB,
-		// HomeActivity.TAB_POSITION_MESSAGES);
+		content_extras.putString(EXTRA_TAB_TYPE, TAB_TYPE_DIRECT_MESSAGES);
 		if (messages_size == 1) {
 			final Uri.Builder uri_builder = new Uri.Builder();
 			final long account_id = message.account_id;
@@ -847,9 +843,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				content_intent.setAction(Intent.ACTION_MAIN);
 				content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
 				final Bundle content_extras = new Bundle();
-				// TODO
-				// content_extras.putInt(EXTRA_INITIAL_TAB,
-				// HomeActivity.TAB_POSITION_HOME);
+				content_extras.putString(EXTRA_TAB_TYPE, TAB_TYPE_HOME_TIMELINE);
 				content_intent.putExtras(content_extras);
 				builder.setOnlyAlertOnce(true);
 				buildNotification(builder, mResources.getString(R.string.new_notifications), message, message,

@@ -691,20 +691,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	@Override
 	public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long id) {
-		final int count = mImagePreviewAdapter.getCount();
-		if (count <= 1) {
-			mPrevImage.setVisibility(View.GONE);
-			mNextImage.setVisibility(View.GONE);
-		} else if (position == 0) {
-			mPrevImage.setVisibility(View.GONE);
-			mNextImage.setVisibility(View.VISIBLE);
-		} else if (position == count - 1) {
-			mPrevImage.setVisibility(View.VISIBLE);
-			mNextImage.setVisibility(View.GONE);
-		} else {
-			mPrevImage.setVisibility(View.VISIBLE);
-			mNextImage.setVisibility(View.VISIBLE);
-		}
+		updateImageSelectButton(position);
 	}
 
 	@Override
@@ -767,6 +754,11 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		return null;
 	}
 
+	@Override
+	protected void onReachedBottom() {
+
+	}
+
 	// @Override
 	// protected void setItemSelected(final ParcelableStatus status, final int
 	// position, final boolean selected) {
@@ -785,11 +777,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	// }
 	// super.setItemSelected(status, position, selected);
 	// }
-
-	@Override
-	protected void onReachedBottom() {
-
-	}
 
 	@Override
 	protected void setItemSelected(final ParcelableStatus status, final int position, final boolean selected) {
@@ -841,6 +828,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mImagePreviewAdapter.clear();
 		final List<PreviewImage> images = getImagesInStatus(mStatus.text_html);
 		mImagePreviewAdapter.addAll(images, mStatus.is_possibly_sensitive);
+		updateImageSelectButton(mImagePreviewGallery.getSelectedItemPosition());
 	}
 
 	private void showConversation() {
@@ -891,6 +879,23 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		final boolean enable = has_converstion && load_not_finished;
 		mInReplyToView.setVisibility(enable ? View.VISIBLE : View.GONE);
 		mInReplyToView.setClickable(enable);
+	}
+
+	private void updateImageSelectButton(final int position) {
+		final int count = mImagePreviewAdapter.getCount();
+		if (count <= 1) {
+			mPrevImage.setVisibility(View.GONE);
+			mNextImage.setVisibility(View.GONE);
+		} else if (position == 0) {
+			mPrevImage.setVisibility(View.GONE);
+			mNextImage.setVisibility(View.VISIBLE);
+		} else if (position == count - 1) {
+			mPrevImage.setVisibility(View.VISIBLE);
+			mNextImage.setVisibility(View.GONE);
+		} else {
+			mPrevImage.setVisibility(View.VISIBLE);
+			mNextImage.setVisibility(View.VISIBLE);
+		}
 	}
 
 	private void updateUserColor() {

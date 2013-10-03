@@ -27,7 +27,6 @@
 	<string name="advanced">Advanced</string>
 	<string name="save">Save</string>
 	<string name="edit">Edit</string>
-	<string name="login_to_twitter">Login to Twitter</string>
 	<string name="edit_api">Edit API</string>
 	<string name="home">Home</string>
 	<string name="mentions">Mentions</string>
@@ -231,7 +230,7 @@
 	<string name="view_user_list">View user list</string>
 	<string name="uninstall">Uninstall</string>
 	<string name="saved_searches">Saved searches</string>
-	<string name="custom_tabs">Custom tabs</string>
+	<string name="tabs">Tabs</string>
 	<string name="default_tabs">Default tabs</string>
 	<string name="add_tab">Add tab</string>
 	<string name="tab_type">Tab type</string>

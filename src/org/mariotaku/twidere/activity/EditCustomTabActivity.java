@@ -19,9 +19,10 @@
 
 package org.mariotaku.twidere.activity;
 
-import static org.mariotaku.twidere.model.CustomTabConfiguration.findTabIconKey;
-import static org.mariotaku.twidere.model.CustomTabConfiguration.getIconMap;
-import static org.mariotaku.twidere.model.CustomTabConfiguration.getTabTypeName;
+import static org.mariotaku.twidere.util.CustomTabUtils.findTabIconKey;
+import static org.mariotaku.twidere.util.CustomTabUtils.getIconMap;
+import static org.mariotaku.twidere.util.CustomTabUtils.getTabConfiguration;
+import static org.mariotaku.twidere.util.CustomTabUtils.getTabTypeName;
 import static org.mariotaku.twidere.util.Utils.getNameDisplayOptionInt;
 import static org.mariotaku.twidere.util.Utils.getUserNickname;
 
@@ -226,7 +227,7 @@ public class EditCustomTabActivity extends BaseSupportDialogActivity implements 
 		final Intent intent = getIntent();
 		final Bundle extras = intent.getExtras();
 		final String type = mTabType = extras.getString(EXTRA_TYPE);
-		final CustomTabConfiguration conf = mTabConfiguration = CustomTabConfiguration.get(type);
+		final CustomTabConfiguration conf = mTabConfiguration = getTabConfiguration(type);
 		if (type == null || conf == null) {
 			finish();
 			return;

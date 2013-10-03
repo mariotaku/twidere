@@ -58,42 +58,6 @@ public abstract class DragSortCursorAdapter extends CursorAdapter implements Dra
 		resetMappings();
 	}
 
-	/**
-	 * Does nothing. Just completes DragSortListener interface.
-	 */
-	@Override
-	public void onDrag(final int from, final int to) {
-		// do nothing
-	}
-
-	/**
-	 * On drop, this updates the mapping between Cursor positions and ListView
-	 * positions. The Cursor is unchanged. Retrieve the current mapping with
-	 * {@link getCursorPositions()}.
-	 * 
-	 * @see DragSortListView.DropListener#onDrop(int, int)
-	 */
-	@Override
-	public void onDrop(final int from, final int to) {
-		if (from != to) {
-			final int cursorFrom = mListMapping.get(from, from);
-
-			if (from > to) {
-				for (int i = from; i > to; --i) {
-					mListMapping.put(i, mListMapping.get(i - 1, i - 1));
-				}
-			} else {
-				for (int i = from; i < to; ++i) {
-					mListMapping.put(i, mListMapping.get(i + 1, i + 1));
-				}
-			}
-			mListMapping.put(to, cursorFrom);
-
-			cleanMapping();
-			notifyDataSetChanged();
-		}
-	}
-
 	@Override
 	public int getCount() {
 		return super.getCount() - mRemovedCursorPositions.size();
@@ -160,6 +124,42 @@ public abstract class DragSortCursorAdapter extends CursorAdapter implements Dra
 	@Override
 	public View getView(final int position, final View convertView, final ViewGroup parent) {
 		return super.getView(mListMapping.get(position, position), convertView, parent);
+	}
+
+	/**
+	 * Does nothing. Just completes DragSortListener interface.
+	 */
+	@Override
+	public void onDrag(final int from, final int to) {
+		// do nothing
+	}
+
+	/**
+	 * On drop, this updates the mapping between Cursor positions and ListView
+	 * positions. The Cursor is unchanged. Retrieve the current mapping with
+	 * {@link getCursorPositions()}.
+	 * 
+	 * @see DragSortListView.DropListener#onDrop(int, int)
+	 */
+	@Override
+	public void onDrop(final int from, final int to) {
+		if (from != to) {
+			final int cursorFrom = mListMapping.get(from, from);
+
+			if (from > to) {
+				for (int i = from; i > to; --i) {
+					mListMapping.put(i, mListMapping.get(i - 1, i - 1));
+				}
+			} else {
+				for (int i = from; i < to; ++i) {
+					mListMapping.put(i, mListMapping.get(i + 1, i + 1));
+				}
+			}
+			mListMapping.put(to, cursorFrom);
+
+			cleanMapping();
+			notifyDataSetChanged();
+		}
 	}
 
 	/**

@@ -138,18 +138,6 @@ public class DragSortListView extends ListView {
 	private int mDragDeltaY;
 
 	/**
-	 * The difference (in x) between screen coordinates and coordinates in this
-	 * view.
-	 */
-	private int mOffsetX;
-
-	/**
-	 * The difference (in y) between screen coordinates and coordinates in this
-	 * view.
-	 */
-	private int mOffsetY;
-
-	/**
 	 * A listener that receives callbacks whenever the floating View hovers over
 	 * a new position.
 	 */
@@ -279,19 +267,9 @@ public class DragSortListView extends ListView {
 	private int mY;
 
 	/**
-	 * Last touch x.
-	 */
-	private int mLastX;
-
-	/**
 	 * Last touch y.
 	 */
 	private int mLastY;
-
-	/**
-	 * The touch y-coord at which drag started
-	 */
-	private int mDragStartY;
 
 	/**
 	 * Drag flag bit. Floating View can move in the positive x direction.
@@ -422,8 +400,6 @@ public class DragSortListView extends ListView {
 	private float mRemoveVelocityX = 0;
 
 	private boolean mListViewIntercepted = false;
-
-	private final boolean mFloatViewInvalidated = false;
 
 	public DragSortListView(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
@@ -1098,7 +1074,6 @@ public class DragSortListView extends ListView {
 
 		mDragDeltaX = deltaX;
 		mDragDeltaY = deltaY;
-		mDragStartY = mY;
 
 		// updateFloatView(mX - mDragDeltaX, mY - mDragDeltaY);
 		mFloatLoc.x = mX - mDragDeltaX;
@@ -1247,8 +1222,6 @@ public class DragSortListView extends ListView {
 
 	protected boolean onDragTouchEvent(final MotionEvent ev) {
 		// we are in a drag
-		final int action = ev.getAction() & MotionEvent.ACTION_MASK;
-
 		switch (ev.getAction() & MotionEvent.ACTION_MASK) {
 			case MotionEvent.ACTION_CANCEL:
 				if (mDragState == DRAGGING) {
@@ -1416,8 +1389,6 @@ public class DragSortListView extends ListView {
 	}
 
 	private int calcItemHeight(final int position, final int childHeight) {
-
-		final int divHeight = getDividerHeight();
 
 		final boolean isSliding = mAnimate && mFirstExpPos != mSecondExpPos;
 		final int maxNonSrcBlankHeight = mFloatViewHeight - mItemHeightCollapsed;
@@ -1844,17 +1815,13 @@ public class DragSortListView extends ListView {
 	private void saveTouchCoords(final MotionEvent ev) {
 		final int action = ev.getAction() & MotionEvent.ACTION_MASK;
 		if (action != MotionEvent.ACTION_DOWN) {
-			mLastX = mX;
 			mLastY = mY;
 		}
 		mX = (int) ev.getX();
 		mY = (int) ev.getY();
 		if (action == MotionEvent.ACTION_DOWN) {
-			mLastX = mX;
 			mLastY = mY;
 		}
-		mOffsetX = (int) ev.getRawX() - mX;
-		mOffsetY = (int) ev.getRawY() - mY;
 	}
 
 	/**
@@ -2402,9 +2369,6 @@ public class DragSortListView extends ListView {
 
 		private boolean mScrolling = false;
 
-		private int mLastHeader;
-		private int mFirstFooter;
-
 		public DragScroller() {
 		}
 
@@ -2798,7 +2762,6 @@ public class DragSortListView extends ListView {
 
 		private int mFirstPos;
 		private int mSecondPos;
-		private int srcPos;
 
 		public RemoveAnimator(final float smoothness, final int duration) {
 			super(smoothness, duration);
@@ -2810,7 +2773,6 @@ public class DragSortListView extends ListView {
 			mSecondChildHeight = -1;
 			mFirstPos = mFirstExpPos;
 			mSecondPos = mSecondExpPos;
-			srcPos = mSrcPos;
 			mDragState = REMOVING;
 
 			mFloatLocX = mFloatLoc.x;

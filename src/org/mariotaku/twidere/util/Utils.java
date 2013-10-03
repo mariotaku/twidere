@@ -132,7 +132,6 @@ import org.mariotaku.twidere.fragment.UserMentionsFragment;
 import org.mariotaku.twidere.fragment.UserProfileFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
 import org.mariotaku.twidere.fragment.UsersListFragment;
-import org.mariotaku.twidere.model.CustomTabConfiguration;
 import org.mariotaku.twidere.model.DirectMessageCursorIndices;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -140,7 +139,6 @@ import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.model.PreviewImage;
 import org.mariotaku.twidere.model.StatusCursorIndices;
-import org.mariotaku.twidere.model.SupportTabSpec;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedStatuses;
@@ -1232,6 +1230,24 @@ public final class Utils implements Constants {
 		return accounts;
 	}
 
+	public static int getAddedTabPosition(final Context context, final String type) {
+		if (context == null) return -1;
+		final ContentResolver resolver = context.getContentResolver();
+		final String where = Tabs.TYPE + " = ?";
+		final Cursor cur = resolver.query(Tabs.CONTENT_URI, new String[] { Tabs.POSITION }, where,
+				new String[] { type }, Tabs.DEFAULT_SORT_ORDER);
+		if (cur == null) return -1;
+		final int position;
+		if (cur.getCount() > 0) {
+			cur.moveToFirst();
+			position = cur.getInt(cur.getColumnIndex(Tabs.POSITION));
+		} else {
+			position = -1;
+		}
+		cur.close();
+		return position;
+	}
+
 	public static int getAllStatusesCount(final Context context, final Uri uri) {
 		if (context == null) return 0;
 		final ContentResolver resolver = context.getContentResolver();
@@ -1429,35 +1445,6 @@ public final class Utils implements Constants {
 	public static int getFirstChildOffset(final ListView list) {
 		if (list == null || list.getChildCount() == 0) return 0;
 		return list.getChildAt(0).getTop();
-	}
-
-	public static List<SupportTabSpec> getHomeTabs(final Context context) {
-		if (context == null) return Collections.emptyList();
-		final ArrayList<SupportTabSpec> tabs = new ArrayList<SupportTabSpec>();
-		final ContentResolver resolver = context.getContentResolver();
-		final Cursor cur = resolver.query(Tabs.CONTENT_URI, Tabs.COLUMNS, null, null, Tabs.DEFAULT_SORT_ORDER);
-		if (cur != null) {
-			cur.moveToFirst();
-			final int idx_name = cur.getColumnIndex(Tabs.NAME), idx_icon = cur.getColumnIndex(Tabs.ICON), idx_type = cur
-					.getColumnIndex(Tabs.TYPE), idx_arguments = cur.getColumnIndex(Tabs.ARGUMENTS), idx_position = cur
-					.getColumnIndex(Tabs.POSITION);
-			while (!cur.isAfterLast()) {
-				final int position = cur.getInt(idx_position);
-				final String icon_type = cur.getString(idx_icon);
-				final String type = cur.getString(idx_type);
-				final String name = cur.getString(idx_name);
-				final Bundle args = ParseUtils.jsonToBundle(cur.getString(idx_arguments));
-				args.putInt(EXTRA_TAB_POSITION, position);
-				final Class<? extends Fragment> fragment = CustomTabConfiguration.get(type).getFragmentClass();
-				if (name != null && fragment != null) {
-					tabs.add(new SupportTabSpec(name, CustomTabConfiguration.getTabIconObject(icon_type), fragment,
-							args, position));
-				}
-				cur.moveToNext();
-			}
-			cur.close();
-		}
-		return tabs;
 	}
 
 	public static HttpClientWrapper getHttpClient(final int timeout_millis, final boolean ignore_ssl_error,

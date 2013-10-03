@@ -66,8 +66,8 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 
 	private MenuButtonClickListener mListener;
 	private boolean mDisplayProfileImage, mDisplayImagePreview, mShowAccountColor, mGapDisallowed,
-			mMentionsHighlightDisabled, mDisplaySensitiveContents, mIndicateMyStatusDisabled, mLinkHighlightingEnabled,
-			mIsLastItemFiltered, mFiltersEnabled;
+			mMentionsHighlightDisabled, mFavoritesHighlightDisabled, mDisplaySensitiveContents,
+			mIndicateMyStatusDisabled, mLinkHighlightingEnabled, mIsLastItemFiltered, mFiltersEnabled;
 	private float mTextSize;
 	private int mNameDisplayOption, mLinkHighlightStyle;
 	private boolean mFilterIgnoreSource, mFilterIgnoreScreenName, mFilterIgnoreTextHtml, mFilterIgnoreTextPlain,
@@ -173,8 +173,8 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 					&& status.text_plain.toLowerCase().contains('@' + account_screen_name.toLowerCase());
 			final boolean is_my_status = status.account_id == status.user_id;
 			holder.setUserColor(getUserColor(mContext, status.user_id));
-			holder.setHighlightColor(getStatusBackground(mMentionsHighlightDisabled ? false : is_mention,
-					status.is_favorite, status.is_retweet));
+			holder.setHighlightColor(getStatusBackground(!mMentionsHighlightDisabled && is_mention,
+					!mFavoritesHighlightDisabled && status.is_favorite, status.is_retweet));
 			holder.setTextSize(mTextSize);
 
 			holder.setIsMyStatus(is_my_status && !mIndicateMyStatusDisabled);
@@ -193,8 +193,8 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 				holder.screen_name.setMovementMethod(null);
 			}
 			holder.time.setTime(status.timestamp);
-			holder.setStatusType(status.is_favorite, isValidLocation(status.location), status.has_media,
-					status.is_possibly_sensitive);
+			holder.setStatusType(!mFavoritesHighlightDisabled && status.is_favorite, isValidLocation(status.location),
+					status.has_media, status.is_possibly_sensitive);
 			holder.setIsReplyRetweet(status.in_reply_to_status_id > 0, status.is_retweet);
 			if (status.is_retweet) {
 				holder.setRetweetedBy(status.retweet_count, status.retweeted_by_name, status.retweeted_by_screen_name);
@@ -301,6 +301,13 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	public void setDisplaySensitiveContents(final boolean display) {
 		if (display == mDisplaySensitiveContents) return;
 		mDisplaySensitiveContents = display;
+		notifyDataSetChanged();
+	}
+
+	@Override
+	public void setFavoritesHightlightDisabled(final boolean disable) {
+		if (disable == mFavoritesHighlightDisabled) return;
+		mFavoritesHighlightDisabled = disable;
 		notifyDataSetChanged();
 	}
 

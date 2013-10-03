@@ -45,7 +45,7 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 		ACCOUNT_ACTIONS[1] = new AccountAction(R.string.statuses, R.drawable.ic_menu_quote, MENU_STATUSES);
 		ACCOUNT_ACTIONS[2] = new AccountAction(R.string.favorites, R.drawable.ic_menu_star, MENU_FAVORITES);
 		ACCOUNT_ACTIONS[3] = new AccountAction(R.string.user_list, R.drawable.ic_menu_list, MENU_LISTS);
-		DEFAULT_ACCOUNT_ACTIONS[4] = new AccountAction(R.string.lists_following_user, R.drawable.ic_menu_list,
+		ACCOUNT_ACTIONS[4] = new AccountAction(R.string.lists_following_user, R.drawable.ic_menu_list,
 				MENU_LIST_MEMBERSHIPS);
 		ACCOUNT_ACTIONS[5] = new AccountAction(R.string.edit_profile, android.R.drawable.ic_menu_edit, MENU_EDIT);
 		ACCOUNT_ACTIONS[6] = new AccountAction(R.string.set_color, R.drawable.ic_menu_color_palette, MENU_SET_COLOR);

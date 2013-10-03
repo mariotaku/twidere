@@ -119,9 +119,8 @@ public interface Constants {
 
 	public static final String DEFAULT_PROTOCOL = PROTOCOL_HTTPS;
 
-	public static final String DEFAULT_OAUTH_CALLBACK = PROTOCOL_TWIDERE + "com.twitter.oauth/";
-
 	public static final String OAUTH_CALLBACK_OOB = "oob";
+	public static final String OAUTH_CALLBACK_URL = PROTOCOL_TWIDERE + "com.twitter.oauth/";
 
 	public static final String FORMAT_PATTERN_TITLE = "[TITLE]";
 	public static final String FORMAT_PATTERN_TEXT = "[TEXT]";
@@ -417,6 +416,7 @@ public interface Constants {
 	public static final String EXTRA_PREV_CURSOR = "prev_cursor";
 	public static final String EXTRA_EXTRA_INTENT = "extra_intent";
 	public static final String EXTRA_IS_MY_ACCOUNT = "is_my_account";
+	public static final String EXTRA_TAB_TYPE = "tab_type";
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_SEARCH = R.id.search;
@@ -629,5 +629,6 @@ public interface Constants {
 	public static final String TAB_TYPE_USER_TIMELINE = "user_timeline";
 	public static final String TAB_TYPE_SEARCH_STATUSES = "search_statuses";
 	public static final String TAB_TYPE_LIST_TIMELINE = "list_timeline";
+	public static final String TAB_TYPE_TRENDS = "trends";
 
 }
