@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item
+		android:id="@id/open_in_browser"
+		android:icon="@drawable/ic_menu_browser"
+		android:showAsAction="always"
+		android:title="@string/browser_sign_in"/>
+	<item
 		android:id="@id/edit_api"
 		android:icon="@drawable/ic_menu_server"
 		android:showAsAction="always"

@@ -219,7 +219,7 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
-		getMenuInflater().inflate(R.menu.menu_login, menu);
+		getMenuInflater().inflate(R.menu.menu_sign_in, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
