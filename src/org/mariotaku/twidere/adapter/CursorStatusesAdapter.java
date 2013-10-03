@@ -220,8 +220,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 
 	@Override
 	public int findItemPositionByStatusId(final long status_id) {
-		final int count = getCount();
-		for (int i = 0; i < count; i++) {
+		for (int i = 0, count = getCount(); i < count; i++) {
 			if (getItem(i).getLong(mIndices.status_id) == status_id) return i;
 		}
 		return -1;

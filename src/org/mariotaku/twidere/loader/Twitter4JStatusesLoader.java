@@ -119,10 +119,9 @@ public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 		try {
 			Collections.sort(data);
 			final List<ParcelableStatus> statuses_to_remove = new ArrayList<ParcelableStatus>();
-			final int count = data.size();
-			for (int i = 0; i < count; i++) {
+			for (int i = 0, size = data.size(); i < size; i++) {
 				final ParcelableStatus status = data.get(i);
-				if (shouldFilterStatus(mDatabase, status) && !status.is_gap && i != count - 1) {
+				if (shouldFilterStatus(mDatabase, status) && !status.is_gap && i != size - 1) {
 					statuses_to_remove.add(status);
 				}
 			}

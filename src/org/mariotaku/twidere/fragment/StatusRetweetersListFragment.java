@@ -30,8 +30,8 @@ public class StatusRetweetersListFragment extends CursorSupportUsersListFragment
 	@Override
 	public IDsUsersLoader newLoaderInstance(final Context context, final Bundle args) {
 		if (args == null) return null;
-		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-		final long status_id = args.getLong(INTENT_KEY_STATUS_ID, -1);
+		final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
+		final long status_id = args.getLong(EXTRA_STATUS_ID, -1);
 		return new StatusRetweetersLoader(context, account_id, status_id, getNextCursor(), getData());
 	}
 

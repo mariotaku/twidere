@@ -57,8 +57,7 @@ public class SearchFragment extends BaseSupportFragment implements Panes.Left, O
 		mViewPager.setOnPageChangeListener(this);
 		mViewPager.setOffscreenPageLimit(2);
 		final int current = mViewPager.getCurrentItem();
-		final int count = mAdapter.getCount();
-		for (int i = 0; i < count; i++) {
+		for (int i = 0, count = mAdapter.getCount(); i < count; i++) {
 			final ImageView v = new SquareImageView(getActivity());
 			v.setScaleType(ScaleType.CENTER_INSIDE);
 			final LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);

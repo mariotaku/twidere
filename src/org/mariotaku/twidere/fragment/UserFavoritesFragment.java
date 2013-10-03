@@ -45,10 +45,10 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
 			if (BROADCAST_FAVORITE_CHANGED.equals(action)) {
-				final ParcelableStatus status = intent.getParcelableExtra(INTENT_KEY_STATUS);
+				final ParcelableStatus status = intent.getParcelableExtra(EXTRA_STATUS);
 				if (status == null) return;
 				if ((isSameAccount(context, status.account_id, mUserId) || isSameAccount(context, status.account_id,
-						mUserScreenName)) && status.id > 0 && !intent.getBooleanExtra(INTENT_KEY_FAVORITED, true)) {
+						mUserScreenName)) && status.id > 0 && !intent.getBooleanExtra(EXTRA_FAVORITED, true)) {
 					deleteStatus(status.id);
 				}
 			}
@@ -59,12 +59,12 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 	@Override
 	public Loader<List<ParcelableStatus>> newLoaderInstance(final Context context, final Bundle args) {
 		if (args == null) return null;
-		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
-		final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
-		final long max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
-		final long since_id = args.getLong(INTENT_KEY_SINCE_ID, -1);
-		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-		final int tab_position = args.getInt(INTENT_KEY_TAB_POSITION, -1);
+		final long account_id = args.getLong(EXTRA_ACCOUNT_ID);
+		final long user_id = args.getLong(EXTRA_USER_ID, -1);
+		final long max_id = args.getLong(EXTRA_MAX_ID, -1);
+		final long since_id = args.getLong(EXTRA_SINCE_ID, -1);
+		final String screen_name = args.getString(EXTRA_SCREEN_NAME);
+		final int tab_position = args.getInt(EXTRA_TAB_POSITION, -1);
 		mUserId = user_id;
 		mUserScreenName = screen_name;
 		return new UserFavoritesLoader(getActivity(), account_id, user_id, screen_name, max_id, since_id, getData(),
@@ -94,9 +94,9 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 	protected String[] getSavedStatusesFileArgs() {
 		final Bundle args = getArguments();
 		if (args == null) return null;
-		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-		final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
-		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
+		final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
+		final long user_id = args.getLong(EXTRA_USER_ID, -1);
+		final String screen_name = args.getString(EXTRA_SCREEN_NAME);
 		return new String[] { AUTHORITY_USER_FAVORITES, "account" + account_id, "user" + user_id, "name" + screen_name };
 	}
 

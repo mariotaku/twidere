@@ -40,7 +40,7 @@ import android.widget.ListView;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.adapter.ParcelableUserListsAdapter;
-import org.mariotaku.twidere.adapter.iface.IBaseAdapter.MenuButtonClickListener;
+import org.mariotaku.twidere.adapter.iface.IBaseCardAdapter.MenuButtonClickListener;
 import org.mariotaku.twidere.loader.BaseUserListsLoader;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUserList;
@@ -97,7 +97,7 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 		if (count - 1 > 0) {
 			final Bundle args = getArguments();
 			if (args != null) {
-				args.putLong(INTENT_KEY_MAX_ID, mAdapter.getItem(count - 1).user_id);
+				args.putLong(EXTRA_MAX_ID, mAdapter.getItem(count - 1).user_id);
 			}
 			if (!getLoaderManager().hasRunningLoaders()) {
 				getLoaderManager().restartLoader(0, args, this);
@@ -114,15 +114,15 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final Bundle args = getArguments() != null ? getArguments() : new Bundle();
 		if (args != null) {
-			mAccountId = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-			mUserId = args.getLong(INTENT_KEY_USER_ID, -1);
-			mScreenName = args.getString(INTENT_KEY_SCREEN_NAME);
+			mAccountId = args.getLong(EXTRA_ACCOUNT_ID, -1);
+			mUserId = args.getLong(EXTRA_USER_ID, -1);
+			mScreenName = args.getString(EXTRA_SCREEN_NAME);
 		}
 		mAdapter = new ParcelableUserListsAdapter(getActivity());
 		mListView = getListView();
 		mListView.setDivider(null);
 		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
-		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+		final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
 		if (mAccountId != account_id) {
 			mAdapter.clear();
 			mData.clear();
@@ -247,7 +247,7 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 		final Menu menu = mPopupMenu.getMenu();
 		final Intent extensions_intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER_LIST);
 		final Bundle extensions_extras = new Bundle();
-		extensions_extras.putParcelable(INTENT_KEY_USER_LIST, mSelectedUserList);
+		extensions_extras.putParcelable(EXTRA_USER_LIST, mSelectedUserList);
 		extensions_intent.putExtras(extensions_extras);
 		addIntentToMenu(getActivity(), menu, extensions_intent);
 		mPopupMenu.setOnMenuItemClickListener(this);

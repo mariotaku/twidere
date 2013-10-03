@@ -57,20 +57,20 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
 			if (BROADCAST_STATUS_DESTROYED.equals(action)) {
-				final long status_id = intent.getLongExtra(INTENT_KEY_STATUS_ID, -1);
-				final boolean succeed = intent.getBooleanExtra(INTENT_KEY_SUCCEED, false);
+				final long status_id = intent.getLongExtra(EXTRA_STATUS_ID, -1);
+				final boolean succeed = intent.getBooleanExtra(EXTRA_SUCCEED, false);
 				if (status_id > 0 && succeed) {
 					deleteStatus(status_id);
 				}
 			} else if (BROADCAST_RETWEET_CHANGED.equals(action)) {
-				final long status_id = intent.getLongExtra(INTENT_KEY_STATUS_ID, -1);
-				final boolean retweeted = intent.getBooleanExtra(INTENT_KEY_RETWEETED, false);
+				final long status_id = intent.getLongExtra(EXTRA_STATUS_ID, -1);
+				final boolean retweeted = intent.getBooleanExtra(EXTRA_RETWEETED, false);
 				if (status_id > 0 && !retweeted) {
 					deleteStatus(status_id);
 				}
 			} else if (BROADCAST_MULTI_MUTESTATE_CHANGED.equals(action)) {
 				final Bundle args = getArguments();
-				final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
+				final long account_id = args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
 				if (account_id <= 0) return;
 				getStatuses(new long[] { account_id }, null, null);
 			}
@@ -98,8 +98,8 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 		final long max_id = max_ids != null && max_ids.length == 1 ? max_ids[0] : -1;
 		final long since_id = since_ids != null && since_ids.length == 1 ? since_ids[0] : -1;
 		final Bundle args = new Bundle(getArguments());
-		args.putLong(INTENT_KEY_MAX_ID, max_id);
-		args.putLong(INTENT_KEY_SINCE_ID, since_id);
+		args.putLong(EXTRA_MAX_ID, max_id);
+		args.putLong(EXTRA_SINCE_ID, since_id);
 		getLoaderManager().restartLoader(0, args, this);
 		return -1;
 	}
@@ -112,7 +112,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		mStatusesRestored = false;
 		if (savedInstanceState != null) {
-			final List<ParcelableStatus> saved = savedInstanceState.getParcelableArrayList(INTENT_KEY_DATA);
+			final List<ParcelableStatus> saved = savedInstanceState.getParcelableArrayList(EXTRA_DATA);
 			if (saved != null) {
 				setData(saved);
 			}
@@ -167,7 +167,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	public void onSaveInstanceState(final Bundle outState) {
 		final List<ParcelableStatus> data = getData();
 		if (data != null) {
-			outState.putParcelableArrayList(INTENT_KEY_DATA, new ArrayList<ParcelableStatus>(data));
+			outState.putParcelableArrayList(EXTRA_DATA, new ArrayList<ParcelableStatus>(data));
 		}
 		super.onSaveInstanceState(outState);
 	}

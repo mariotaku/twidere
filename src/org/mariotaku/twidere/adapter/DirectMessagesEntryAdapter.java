@@ -42,14 +42,14 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
+import org.mariotaku.twidere.adapter.iface.IBaseCardAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.view.holder.DirectMessageEntryViewHolder;
 
-public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements IBaseAdapter, OnClickListener {
+public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements IBaseCardAdapter, OnClickListener {
 
 	private final ImageLoaderWrapper mLazyImageLoader;
 	private final MultiSelectManager mMultiSelectManager;

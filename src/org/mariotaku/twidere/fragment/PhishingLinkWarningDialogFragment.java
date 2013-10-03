@@ -38,7 +38,7 @@ public class PhishingLinkWarningDialogFragment extends BaseDialogFragment implem
 			case DialogInterface.BUTTON_POSITIVE: {
 				final Bundle args = getArguments();
 				if (args == null) return;
-				final Uri uri = args.getParcelable(INTENT_KEY_URI);
+				final Uri uri = args.getParcelable(EXTRA_URI);
 				if (uri == null) return;
 				final Intent intent = new Intent(Intent.ACTION_VIEW);
 				intent.setData(uri);

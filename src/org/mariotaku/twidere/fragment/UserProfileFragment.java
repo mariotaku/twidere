@@ -171,21 +171,18 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 			if (mUser == null) return;
 			final String action = intent.getAction();
 			if (BROADCAST_FRIENDSHIP_CHANGED.equals(action)) {
-				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mUser.id
-						&& intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
+				if (intent.getLongExtra(EXTRA_USER_ID, -1) == mUser.id && intent.getBooleanExtra(EXTRA_SUCCEED, false)) {
 					getFriendship();
 				}
 			}
 			if (BROADCAST_BLOCKSTATE_CHANGED.equals(action)) {
-				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mUser.id
-						&& intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
+				if (intent.getLongExtra(EXTRA_USER_ID, -1) == mUser.id && intent.getBooleanExtra(EXTRA_SUCCEED, false)) {
 					getFriendship();
 				}
 			}
 			if (BROADCAST_PROFILE_UPDATED.equals(action) || BROADCAST_PROFILE_IMAGE_UPDATED.equals(action)
 					|| BROADCAST_PROFILE_BANNER_UPDATED.equals(action)) {
-				if (intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mUser.id
-						&& intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
+				if (intent.getLongExtra(EXTRA_USER_ID, -1) == mUser.id && intent.getBooleanExtra(EXTRA_SUCCEED, false)) {
 					getUserInfo(true);
 				}
 			}
@@ -202,7 +199,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 			mErrorMessageView.setVisibility(View.GONE);
 			setListShown(mUser != null);
 			setProgressBarIndeterminateVisibility(true);
-			final boolean omit_intent_extra = args != null ? args.getBoolean(INTENT_KEY_OMIT_INTENT_EXTRA, true) : true;
+			final boolean omit_intent_extra = args != null ? args.getBoolean(EXTRA_OMIT_INTENT_EXTRA, true) : true;
 			return new ParcelableUserLoader(getActivity(), mAccountId, mUserId, mScreenName, getArguments(),
 					omit_intent_extra, mUser == null || !mUser.is_cache && mUserId != mUser.id);
 		}
@@ -396,7 +393,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 			return;
 		}
 		final Bundle args = new Bundle();
-		args.putBoolean(INTENT_KEY_OMIT_INTENT_EXTRA, omit_intent_extra);
+		args.putBoolean(EXTRA_OMIT_INTENT_EXTRA, omit_intent_extra);
 		if (!mGetUserInfoLoaderInitialized) {
 			lm.initLoader(LOADER_ID_USER, args, mUserInfoLoaderCallbacks);
 			mGetUserInfoLoaderInitialized = true;
@@ -427,9 +424,9 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 			if (savedInstanceState != null) {
 				args.putAll(savedInstanceState);
 			}
-			account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-			user_id = args.getLong(INTENT_KEY_USER_ID, -1);
-			screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
+			account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
+			user_id = args.getLong(EXTRA_USER_ID, -1);
+			screen_name = args.getString(EXTRA_SCREEN_NAME);
 		}
 		mProfileImageLoader = getApplication().getImageLoaderWrapper();
 		mAdapter = new ListActionAdapter(getActivity());
@@ -465,7 +462,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 			}
 			case REQUEST_ADD_TO_LIST: {
 				if (resultCode == Activity.RESULT_OK && intent != null) {
-					final ParcelableUserList list = intent.getParcelableExtra(INTENT_KEY_USER_LIST);
+					final ParcelableUserList list = intent.getParcelableExtra(EXTRA_USER_LIST);
 					if (list == null) return;
 					mTwitterWrapper.addUserListMembers(mAccountId, list.id, mUserId);
 				}
@@ -572,8 +569,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 						sendDirectMessageItem.setVisible(mFriendship.isTargetFollowingSource());
 					}
 				} else {
-					final int size = menu.size();
-					for (int i = 0; i < size; i++) {
+					for (int i = 0, size = menu.size(); i < size; i++) {
 						final MenuItem item = menu.getItem(i);
 						final int id = item.getItemId();
 						item.setVisible(id == R.id.set_color_submenu || id == 0);
@@ -581,7 +577,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				}
 				final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER);
 				final Bundle extras = new Bundle();
-				extras.putParcelable(INTENT_KEY_USER, mUser);
+				extras.putParcelable(EXTRA_USER, mUser);
 				intent.putExtras(extras);
 				addIntentToMenu(getActivity(), menu, intent);
 				mOptionsPopupMenu.setOnMenuItemClickListener(this);
@@ -733,7 +729,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 			case MENU_MENTION: {
 				final Intent intent = new Intent(INTENT_ACTION_MENTION);
 				final Bundle bundle = new Bundle();
-				bundle.putParcelable(INTENT_KEY_USER, mUser);
+				bundle.putParcelable(EXTRA_USER, mUser);
 				intent.putExtras(bundle);
 				startActivity(intent);
 				break;
@@ -769,8 +765,8 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 			case MENU_ADD_TO_LIST: {
 				final Intent intent = new Intent(INTENT_ACTION_SELECT_USER_LIST);
 				intent.setClass(getActivity(), UserListSelectorActivity.class);
-				intent.putExtra(INTENT_KEY_ACCOUNT_ID, mAccountId);
-				intent.putExtra(INTENT_KEY_SCREEN_NAME, getAccountScreenName(getActivity(), mAccountId));
+				intent.putExtra(EXTRA_ACCOUNT_ID, mAccountId);
+				intent.putExtra(EXTRA_SCREEN_NAME, getAccountScreenName(getActivity(), mAccountId));
 				startActivityForResult(intent, REQUEST_ADD_TO_LIST);
 				break;
 			}
@@ -791,10 +787,10 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
-		outState.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
-		outState.putLong(INTENT_KEY_USER_ID, mUserId);
-		outState.putString(INTENT_KEY_SCREEN_NAME, mScreenName);
-		outState.putParcelable(INTENT_KEY_USER, mUser);
+		outState.putLong(EXTRA_ACCOUNT_ID, mAccountId);
+		outState.putLong(EXTRA_USER_ID, mUserId);
+		outState.putString(EXTRA_SCREEN_NAME, mScreenName);
+		outState.putParcelable(EXTRA_USER, mUser);
 		super.onSaveInstanceState(outState);
 	}
 

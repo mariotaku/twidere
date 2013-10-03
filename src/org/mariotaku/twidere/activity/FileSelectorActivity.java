@@ -73,7 +73,7 @@ public class FileSelectorActivity extends BaseSupportActivity implements OnItemC
 
 	@Override
 	public Loader<List<File>> onCreateLoader(final int id, final Bundle args) {
-		final String[] extensions = args != null ? args.getStringArray(INTENT_KEY_FILE_EXTENSIONS) : null;
+		final String[] extensions = args != null ? args.getStringArray(EXTRA_FILE_EXTENSIONS) : null;
 		return new FilesLoader(this, mCurrentDirectory, extensions);
 	}
 

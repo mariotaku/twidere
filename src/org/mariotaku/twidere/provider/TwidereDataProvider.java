@@ -551,7 +551,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH));
 		final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
 		final Bundle delete_extras = new Bundle();
-		delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_MENTIONS);
+		delete_extras.putInt(EXTRA_NOTIFICATION_ID, NOTIFICATION_ID_MENTIONS);
 		delete_intent.putExtras(delete_extras);
 		final Intent content_intent;
 		int notified_count = 0;
@@ -579,7 +579,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
 		final Bundle content_extras = new Bundle();
 		// TODO
-		// content_extras.putInt(INTENT_KEY_INITIAL_TAB,
+		// content_extras.putInt(EXTRA_INITIAL_TAB,
 		// HomeActivity.TAB_POSITION_MENTIONS);
 		if (mNewMentions.size() == 1) {
 			final Uri.Builder uri_builder = new Uri.Builder();
@@ -587,7 +587,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			uri_builder.authority(AUTHORITY_STATUS);
 			uri_builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(status.account_id));
 			uri_builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status.id));
-			content_extras.putParcelable(INTENT_KEY_EXTRA_INTENT, new Intent(Intent.ACTION_VIEW, uri_builder.build()));
+			content_extras.putParcelable(EXTRA_EXTRA_INTENT, new Intent(Intent.ACTION_VIEW, uri_builder.build()));
 		}
 		content_intent.putExtras(content_extras);
 
@@ -626,8 +626,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		} else {
 			final Intent reply_intent = new Intent(INTENT_ACTION_REPLY);
 			final Bundle bundle = new Bundle();
-			bundle.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_MENTIONS);
-			bundle.putParcelable(INTENT_KEY_STATUS, status);
+			bundle.putInt(EXTRA_NOTIFICATION_ID, NOTIFICATION_ID_MENTIONS);
+			bundle.putParcelable(EXTRA_STATUS, status);
 			reply_intent.putExtras(bundle);
 			reply_intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			builder.addAction(R.drawable.ic_menu_reply, context.getString(R.string.reply),
@@ -644,7 +644,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH));
 		final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
 		final Bundle delete_extras = new Bundle();
-		delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_DIRECT_MESSAGES);
+		delete_extras.putInt(EXTRA_NOTIFICATION_ID, NOTIFICATION_ID_DIRECT_MESSAGES);
 		delete_intent.putExtras(delete_extras);
 		final Intent content_intent;
 		int notified_count = 0;
@@ -671,7 +671,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
 		final Bundle content_extras = new Bundle();
 		// TODO
-		// content_extras.putInt(INTENT_KEY_INITIAL_TAB,
+		// content_extras.putInt(EXTRA_INITIAL_TAB,
 		// HomeActivity.TAB_POSITION_MESSAGES);
 		if (messages_size == 1) {
 			final Uri.Builder uri_builder = new Uri.Builder();
@@ -681,7 +681,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			uri_builder.authority(AUTHORITY_DIRECT_MESSAGES_CONVERSATION);
 			uri_builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
 			uri_builder.appendQueryParameter(QUERY_PARAM_CONVERSATION_ID, String.valueOf(conversation_id));
-			content_extras.putParcelable(INTENT_KEY_EXTRA_INTENT, new Intent(Intent.ACTION_VIEW, uri_builder.build()));
+			content_extras.putParcelable(EXTRA_EXTRA_INTENT, new Intent(Intent.ACTION_VIEW, uri_builder.build()));
 		}
 		content_intent.putExtras(content_extras);
 
@@ -841,14 +841,14 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 						mNewStatusesCount);
 				final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_CLEARED);
 				final Bundle delete_extras = new Bundle();
-				delete_extras.putInt(INTENT_KEY_NOTIFICATION_ID, NOTIFICATION_ID_HOME_TIMELINE);
+				delete_extras.putInt(EXTRA_NOTIFICATION_ID, NOTIFICATION_ID_HOME_TIMELINE);
 				delete_intent.putExtras(delete_extras);
 				final Intent content_intent = new Intent(mContext, HomeActivity.class);
 				content_intent.setAction(Intent.ACTION_MAIN);
 				content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
 				final Bundle content_extras = new Bundle();
 				// TODO
-				// content_extras.putInt(INTENT_KEY_INITIAL_TAB,
+				// content_extras.putInt(EXTRA_INITIAL_TAB,
 				// HomeActivity.TAB_POSITION_HOME);
 				content_intent.putExtras(content_extras);
 				builder.setOnlyAlertOnce(true);

@@ -168,7 +168,7 @@ public class DefaultAPIPreference extends DialogPreference implements Constants,
 	@Override
 	protected void onRestoreInstanceState(final Parcelable state) {
 		final Bundle savedInstanceState = (Bundle) state;
-		super.onRestoreInstanceState(savedInstanceState.getParcelable(INTENT_KEY_DATA));
+		super.onRestoreInstanceState(savedInstanceState.getParcelable(EXTRA_DATA));
 		mRestBaseURL = savedInstanceState.getString(Accounts.REST_BASE_URL);
 		mSigningRestBaseURL = savedInstanceState.getString(Accounts.SIGNING_REST_BASE_URL);
 		mOAuthBaseURL = savedInstanceState.getString(Accounts.OAUTH_BASE_URL);
@@ -182,7 +182,7 @@ public class DefaultAPIPreference extends DialogPreference implements Constants,
 	protected Parcelable onSaveInstanceState() {
 		saveEditedText();
 		final Bundle outState = new Bundle();
-		outState.putParcelable(INTENT_KEY_DATA, super.onSaveInstanceState());
+		outState.putParcelable(EXTRA_DATA, super.onSaveInstanceState());
 		outState.putString(Accounts.REST_BASE_URL, mRestBaseURL);
 		outState.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRestBaseURL);
 		outState.putString(Accounts.OAUTH_BASE_URL, mOAuthBaseURL);

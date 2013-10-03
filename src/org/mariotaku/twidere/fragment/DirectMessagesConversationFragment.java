@@ -171,7 +171,7 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 		mListView.setStackFromBottom(true);
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
-		final Bundle args = savedInstanceState == null ? getArguments() : savedInstanceState.getBundle(INTENT_KEY_DATA);
+		final Bundle args = savedInstanceState == null ? getArguments() : savedInstanceState.getBundle(EXTRA_DATA);
 		if (args != null) {
 			mArguments.putAll(args);
 		}
@@ -182,7 +182,7 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 			mEditText.setOnEditorActionListener(this);
 		}
 		mEditText.addTextChangedListener(this);
-		final String text = savedInstanceState != null ? savedInstanceState.getString(INTENT_KEY_TEXT) : null;
+		final String text = savedInstanceState != null ? savedInstanceState.getString(EXTRA_TEXT) : null;
 		if (text != null) {
 			mEditText.setText(text);
 		}
@@ -215,8 +215,8 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 				final CharSequence text = mEditScreenName.getText();
 				if (text == null || mSelectedAccount == null) return;
 				final String screen_name = text.toString();
-				mArguments.putString(INTENT_KEY_SCREEN_NAME, screen_name);
-				mArguments.putLong(INTENT_KEY_ACCOUNT_ID, mSelectedAccount.account_id);
+				mArguments.putString(EXTRA_SCREEN_NAME, screen_name);
+				mArguments.putLong(EXTRA_ACCOUNT_ID, mSelectedAccount.account_id);
 				setListShownNoAnimation(false);
 				getLoaderManager().restartLoader(0, mArguments, this);
 				break;
@@ -227,7 +227,7 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 
 	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
-		// if (args == null || !args.containsKey(INTENT_KEY_ACCOUNT_ID))
+		// if (args == null || !args.containsKey(EXTRA_ACCOUNT_ID))
 		// return new CursorLoader(getActivity(), TweetStore.NULL_CONTENT_URI,
 		// null, null, null, null);
 		final String[] cols = new String[] { DirectMessages._ID, DirectMessages.ACCOUNT_ID, DirectMessages.MESSAGE_ID,
@@ -235,9 +235,9 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 				DirectMessages.IS_OUTGOING, DirectMessages.TEXT_HTML, DirectMessages.SENDER_NAME,
 				DirectMessages.RECIPIENT_NAME, DirectMessages.SENDER_SCREEN_NAME, DirectMessages.RECIPIENT_SCREEN_NAME,
 				DirectMessages.SENDER_PROFILE_IMAGE_URL, DirectMessages.RECIPIENT_PROFILE_IMAGE_URL };
-		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
-		final long conversation_id = args != null ? args.getLong(INTENT_KEY_CONVERSATION_ID, -1) : -1;
-		final String screen_name = args != null ? args.getString(INTENT_KEY_SCREEN_NAME) : null;
+		final long account_id = args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
+		final long conversation_id = args != null ? args.getLong(EXTRA_CONVERSATION_ID, -1) : -1;
+		final String screen_name = args != null ? args.getString(EXTRA_SCREEN_NAME) : null;
 		mConversationContainer
 				.setVisibility(account_id <= 0 || conversation_id <= 0 && isEmpty(screen_name) ? View.GONE
 						: View.VISIBLE);
@@ -363,9 +363,9 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
 		if (mEditText != null) {
-			outState.putString(INTENT_KEY_TEXT, ParseUtils.parseString(mEditText.getText()));
+			outState.putString(EXTRA_TEXT, ParseUtils.parseString(mEditText.getText()));
 		}
-		outState.putBundle(INTENT_KEY_DATA, mArguments);
+		outState.putBundle(EXTRA_DATA, mArguments);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -412,9 +412,9 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 	}
 
 	public void showConversation(final long account_id, final long conversation_id, final String screen_name) {
-		mArguments.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-		mArguments.putLong(INTENT_KEY_CONVERSATION_ID, conversation_id);
-		mArguments.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+		mArguments.putLong(EXTRA_ACCOUNT_ID, account_id);
+		mArguments.putLong(EXTRA_CONVERSATION_ID, conversation_id);
+		mArguments.putString(EXTRA_SCREEN_NAME, screen_name);
 		getLoaderManager().restartLoader(0, mArguments, this);
 	}
 
@@ -423,9 +423,9 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 		if (isEmpty(text)) return;
 		final String message = text.toString();
 		if (mValidator.isValidTweet(message)) {
-			final long account_id = mArguments.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-			final long conversation_id = mArguments.getLong(INTENT_KEY_CONVERSATION_ID, -1);
-			final String screen_name = mArguments.getString(INTENT_KEY_SCREEN_NAME);
+			final long account_id = mArguments.getLong(EXTRA_ACCOUNT_ID, -1);
+			final long conversation_id = mArguments.getLong(EXTRA_CONVERSATION_ID, -1);
+			final String screen_name = mArguments.getString(EXTRA_SCREEN_NAME);
 			mTwitterWrapper.sendDirectMessage(account_id, screen_name, conversation_id, message);
 			text.clear();
 		}

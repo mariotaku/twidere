@@ -63,7 +63,7 @@ public class UserHashtagAutoCompleteAdapter extends SimpleCursorAdapter implemen
 	}
 
 	public UserHashtagAutoCompleteAdapter(final Context context, final EditText view) {
-		super(context, R.layout.user_autocomplete_list_item, null, FROM, TO, 0);
+		super(context, R.layout.simple_two_line_with_icon_list_item, null, FROM, TO, 0);
 		mEditText = view;
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mResolver = context.getContentResolver();

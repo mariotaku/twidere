@@ -61,7 +61,7 @@ public class BrowserActivity extends BaseSupportActivity {
 		final FragmentTransaction ft = getFragmentManager().beginTransaction();
 		final Fragment fragment = Fragment.instantiate(this, BaseWebViewFragment.class.getName());
 		final Bundle bundle = new Bundle();
-		bundle.putString(INTENT_KEY_URI, mUri.toString());
+		bundle.putString(EXTRA_URI, mUri.toString());
 		fragment.setArguments(bundle);
 		ft.replace(R.id.main, fragment);
 		ft.commit();

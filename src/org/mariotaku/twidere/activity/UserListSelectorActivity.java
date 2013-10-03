@@ -20,8 +20,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.ParcelableUserListsAdapter;
-import org.mariotaku.twidere.adapter.ParcelableUsersAdapter;
+import org.mariotaku.twidere.adapter.SimpleParcelableUserListsAdapter;
+import org.mariotaku.twidere.adapter.SimpleParcelableUsersAdapter;
 import org.mariotaku.twidere.adapter.UserHashtagAutoCompleteAdapter;
 import org.mariotaku.twidere.fragment.CreateUserListDialogFragment;
 import org.mariotaku.twidere.fragment.SupportProgressDialogFragment;
@@ -44,8 +44,8 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 
 	private AutoCompleteTextView mEditScreenName;
 	private ListView mUserListsListView, mUsersListView;
-	private ParcelableUserListsAdapter mUserListsAdapter;
-	private ParcelableUsersAdapter mUsersAdapter;
+	private SimpleParcelableUserListsAdapter mUserListsAdapter;
+	private SimpleParcelableUsersAdapter mUsersAdapter;
 	private View mUsersListContainer, mUserListsContainer, mCreateUserListContainer;
 
 	private long mAccountId;
@@ -78,7 +78,7 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 			case R.id.create_list: {
 				final DialogFragment f = new CreateUserListDialogFragment();
 				final Bundle args = new Bundle();
-				args.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
+				args.putLong(EXTRA_ACCOUNT_ID, mAccountId);
 				f.setArguments(args);
 				f.show(getSupportFragmentManager(), null);
 				break;
@@ -106,7 +106,7 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 			if (user == null) return;
 			if (isSelectingUser()) {
 				final Intent data = new Intent();
-				data.putExtra(INTENT_KEY_USER, user);
+				data.putExtra(EXTRA_USER, user);
 				setResult(RESULT_OK, data);
 				finish();
 			} else {
@@ -114,7 +114,7 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 			}
 		} else if (view_id == R.id.user_lists_list) {
 			final Intent data = new Intent();
-			data.putExtra(INTENT_KEY_USER_LIST, mUserListsAdapter.getItem(position - list.getHeaderViewsCount()));
+			data.putExtra(EXTRA_USER_LIST, mUserListsAdapter.getItem(position - list.getHeaderViewsCount()));
 			setResult(RESULT_OK, data);
 			finish();
 		}
@@ -130,16 +130,16 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		final Intent intent = getIntent();
-		if (!intent.hasExtra(INTENT_KEY_ACCOUNT_ID)) {
+		if (!intent.hasExtra(EXTRA_ACCOUNT_ID)) {
 			finish();
 			return;
 		}
-		setContentView(R.layout.select_user_list);
-		mAccountId = intent.getLongExtra(INTENT_KEY_ACCOUNT_ID, -1);
+		setContentView(R.layout.user_list_selector);
+		mAccountId = intent.getLongExtra(EXTRA_ACCOUNT_ID, -1);
 		if (savedInstanceState == null) {
-			mScreenName = intent.getStringExtra(INTENT_KEY_SCREEN_NAME);
+			mScreenName = intent.getStringExtra(EXTRA_SCREEN_NAME);
 		} else {
-			mScreenName = savedInstanceState.getString(INTENT_KEY_SCREEN_NAME);
+			mScreenName = savedInstanceState.getString(EXTRA_SCREEN_NAME);
 		}
 
 		final boolean selecting_user = isSelectingUser();
@@ -153,10 +153,8 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 		}
 		mEditScreenName.setAdapter(new UserHashtagAutoCompleteAdapter(this));
 		mEditScreenName.setText(mScreenName);
-		mUserListsListView.setAdapter(mUserListsAdapter = new ParcelableUserListsAdapter(this));
-		mUserListsListView.setDivider(null);
-		mUsersListView.setAdapter(mUsersAdapter = new ParcelableUsersAdapter(this));
-		mUsersListView.setDivider(null);
+		mUserListsListView.setAdapter(mUserListsAdapter = new SimpleParcelableUserListsAdapter(this));
+		mUsersListView.setAdapter(mUsersAdapter = new SimpleParcelableUsersAdapter(this));
 		mUserListsListView.setOnItemClickListener(this);
 		mUsersListView.setOnItemClickListener(this);
 		if (selecting_user) {
@@ -171,7 +169,7 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 	@Override
 	protected void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putString(INTENT_KEY_SCREEN_NAME, mScreenName);
+		outState.putString(EXTRA_SCREEN_NAME, mScreenName);
 	}
 
 	@Override
@@ -242,7 +240,7 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 					}
 				}
 				final SingleResponse<List<ParcelableUserList>> result = SingleResponse.dataOnly(data);
-				result.extras.putBoolean(INTENT_KEY_IS_MY_ACCOUNT, is_my_account);
+				result.extras.putBoolean(EXTRA_IS_MY_ACCOUNT, is_my_account);
 				return result;
 			} catch (final TwitterException e) {
 				e.printStackTrace();
@@ -257,7 +255,7 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 				((DialogFragment) f).dismiss();
 			}
 			if (result.data != null) {
-				mActivity.setUserListsData(result.data, result.extras.getBoolean(INTENT_KEY_IS_MY_ACCOUNT));
+				mActivity.setUserListsData(result.data, result.extras.getBoolean(EXTRA_IS_MY_ACCOUNT));
 			} else if (result.exception instanceof TwitterException) {
 				final TwitterException te = (TwitterException) result.exception;
 				if (te.getStatusCode() == HttpResponseCode.NOT_FOUND) {

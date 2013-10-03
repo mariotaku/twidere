@@ -25,7 +25,7 @@ public class SetUserNicknameDialogFragment extends BaseSupportDialogFragment imp
 	public void onClick(final DialogInterface dialog, final int which) {
 		final Bundle args = getArguments();
 		final String text = ParseUtils.parseString(mEditText.getText());
-		final long user_id = args != null ? args.getLong(INTENT_KEY_USER_ID, -1) : -1;
+		final long user_id = args != null ? args.getLong(EXTRA_USER_ID, -1) : -1;
 		if (user_id == -1) return;
 		if (TextUtils.isEmpty(text)) {
 			clearUserNickname(getActivity(), user_id);
@@ -49,15 +49,15 @@ public class SetUserNicknameDialogFragment extends BaseSupportDialogFragment imp
 				R.dimen.default_element_spacing);
 		view.addView(mEditText, lp);
 		builder.setView(view);
-		mEditText.setText(args.getString(INTENT_KEY_NAME));
+		mEditText.setText(args.getString(EXTRA_NAME));
 		return builder.create();
 	}
 
 	public static SetUserNicknameDialogFragment show(final FragmentManager fm, final long user_id, final String nickname) {
 		final SetUserNicknameDialogFragment f = new SetUserNicknameDialogFragment();
 		final Bundle args = new Bundle();
-		args.putLong(INTENT_KEY_USER_ID, user_id);
-		args.putString(INTENT_KEY_NAME, nickname);
+		args.putLong(EXTRA_USER_ID, user_id);
+		args.putString(EXTRA_NAME, nickname);
 		f.setArguments(args);
 		f.show(fm, FRAGMENT_TAG_SET_USER_NICKNAME);
 		return f;

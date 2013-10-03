@@ -64,7 +64,7 @@ public final class ParcelableUserLoader extends AsyncTaskLoader<SingleResponse<P
 	@Override
 	public SingleResponse<ParcelableUser> loadInBackground() {
 		if (!omit_intent_extra && extras != null) {
-			final ParcelableUser user = extras.getParcelable(INTENT_KEY_USER);
+			final ParcelableUser user = extras.getParcelable(EXTRA_USER);
 			if (user != null) {
 				final ContentValues values = ParcelableUser.makeCachedUserContentValues(user);
 				resolver.delete(CachedUsers.CONTENT_URI, CachedUsers.USER_ID + " = " + user.id, null);

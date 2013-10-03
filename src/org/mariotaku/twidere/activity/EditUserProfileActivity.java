@@ -105,7 +105,7 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_PROFILE_UPDATED.equals(action)) {
-				if (mUser == null || intent.getLongExtra(INTENT_KEY_USER_ID, -1) == mUser.id) {
+				if (mUser == null || intent.getLongExtra(EXTRA_USER_ID, -1) == mUser.id) {
 					getUserInfo();
 				}
 			}
@@ -347,13 +347,13 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		final Bundle extras = getIntent().getExtras();
-		if (extras == null || !isMyAccount(this, extras.getLong(INTENT_KEY_ACCOUNT_ID))) {
+		if (extras == null || !isMyAccount(this, extras.getLong(EXTRA_ACCOUNT_ID))) {
 			finish();
 			return;
 		}
 		mAsyncTaskManager = TwidereApplication.getInstance(this).getAsyncTaskManager();
 		mLazyImageLoader = TwidereApplication.getInstance(this).getImageLoaderWrapper();
-		mAccountId = extras.getLong(INTENT_KEY_ACCOUNT_ID);
+		mAccountId = extras.getLong(EXTRA_ACCOUNT_ID);
 		setContentView(R.layout.edit_user_profile);
 		setOverrideExitAniamtion(false);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -364,13 +364,13 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 		mEditUrl.addTextChangedListener(this);
 		mProfileImageView.setOnClickListener(this);
 		mProfileBannerView.setOnClickListener(this);
-		if (savedInstanceState != null && savedInstanceState.getParcelable(INTENT_KEY_USER) != null) {
-			final ParcelableUser user = savedInstanceState.getParcelable(INTENT_KEY_USER);
+		if (savedInstanceState != null && savedInstanceState.getParcelable(EXTRA_USER) != null) {
+			final ParcelableUser user = savedInstanceState.getParcelable(EXTRA_USER);
 			displayUser(user);
-			mEditName.setText(savedInstanceState.getString(INTENT_KEY_NAME, user.name));
-			mEditLocation.setText(savedInstanceState.getString(INTENT_KEY_LOCATION, user.location));
-			mEditDescription.setText(savedInstanceState.getString(INTENT_KEY_DESCRIPTION, user.description_expanded));
-			mEditUrl.setText(savedInstanceState.getString(INTENT_KEY_URL, user.url_expanded));
+			mEditName.setText(savedInstanceState.getString(EXTRA_NAME, user.name));
+			mEditLocation.setText(savedInstanceState.getString(EXTRA_LOCATION, user.location));
+			mEditDescription.setText(savedInstanceState.getString(EXTRA_DESCRIPTION, user.description_expanded));
+			mEditUrl.setText(savedInstanceState.getString(EXTRA_URL, user.url_expanded));
 		} else {
 			getUserInfo();
 		}
@@ -379,11 +379,11 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 	@Override
 	protected void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putParcelable(INTENT_KEY_USER, mUser);
-		outState.putString(INTENT_KEY_NAME, ParseUtils.parseString(mEditName.getText()));
-		outState.putString(INTENT_KEY_DESCRIPTION, ParseUtils.parseString(mEditDescription.getText()));
-		outState.putString(INTENT_KEY_LOCATION, ParseUtils.parseString(mEditLocation.getText()));
-		outState.putString(INTENT_KEY_URL, ParseUtils.parseString(mEditUrl.getText()));
+		outState.putParcelable(EXTRA_USER, mUser);
+		outState.putString(EXTRA_NAME, ParseUtils.parseString(mEditName.getText()));
+		outState.putString(EXTRA_DESCRIPTION, ParseUtils.parseString(mEditDescription.getText()));
+		outState.putString(EXTRA_LOCATION, ParseUtils.parseString(mEditLocation.getText()));
+		outState.putString(EXTRA_URL, ParseUtils.parseString(mEditUrl.getText()));
 	}
 
 	@Override

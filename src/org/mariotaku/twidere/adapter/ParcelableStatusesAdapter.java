@@ -95,8 +95,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 
 	@Override
 	public int findItemPositionByStatusId(final long status_id) {
-		final int count = getCount();
-		for (int i = 0; i < count; i++) {
+		for (int i = 0, count = getCount(); i < count; i++) {
 			if (getItem(i).id == status_id) return i;
 		}
 		return -1;

@@ -297,7 +297,7 @@ public class UpdateStatusService extends IntentService implements Constants {
 	}
 
 	private void handleUpdateStatusIntent(final Intent intent) {
-		final ParcelableStatusUpdate status = intent.getParcelableExtra(INTENT_KEY_STATUS);
+		final ParcelableStatusUpdate status = intent.getParcelableExtra(EXTRA_STATUS);
 		if (status == null) return;
 		startForeground(NOTIFICATION_ID_UPDATE_STATUS, updateUpdateStatusNotificaion(0, status));
 		final List<SingleResponse<ParcelableStatus>> result = updateStatus(status);

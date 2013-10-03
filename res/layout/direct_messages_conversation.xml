@@ -99,7 +99,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:minHeight="42dp"
-				tools:listitem="@layout/user_autocomplete_list_item"/>
+				tools:listitem="@layout/simple_two_line_with_icon_list_item"/>
 
 			<AutoCompleteTextView
 				android:id="@+id/edit_screen_name"

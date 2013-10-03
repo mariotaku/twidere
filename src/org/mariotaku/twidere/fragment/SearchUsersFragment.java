@@ -38,15 +38,15 @@ public class SearchUsersFragment extends BaseUsersListFragment {
 	@Override
 	public Loader<List<ParcelableUser>> newLoaderInstance(final Context context, final Bundle args) {
 		if (args == null) return null;
-		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
-		final String query = args.getString(INTENT_KEY_QUERY);
+		final long account_id = args.getLong(EXTRA_ACCOUNT_ID);
+		final String query = args.getString(EXTRA_QUERY);
 		return new UserSearchLoader(context, account_id, query, mPage, getData());
 	}
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		if (savedInstanceState != null) {
-			mPage = savedInstanceState.getInt(INTENT_KEY_PAGE, 1);
+			mPage = savedInstanceState.getInt(EXTRA_PAGE, 1);
 		}
 		super.onActivityCreated(savedInstanceState);
 	}
@@ -67,7 +67,7 @@ public class SearchUsersFragment extends BaseUsersListFragment {
 
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
-		outState.putInt(INTENT_KEY_PAGE, mPage);
+		outState.putInt(EXTRA_PAGE, mPage);
 		super.onSaveInstanceState(outState);
 	}
 

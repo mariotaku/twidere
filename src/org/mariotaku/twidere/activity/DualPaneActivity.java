@@ -225,8 +225,7 @@ public class DualPaneActivity extends BaseSupportActivity implements OnBackStack
 	protected void onStart() {
 		final FragmentManager fm = getSupportFragmentManager();
 		if (!isDualPaneMode() && !FragmentManagerTrojan.isStateSaved(fm)) {
-			final int count = fm.getBackStackEntryCount();
-			for (int i = 0; i < count; i++) {
+			for (int i = 0, count = fm.getBackStackEntryCount(); i < count; i++) {
 				fm.popBackStackImmediate();
 			}
 		}

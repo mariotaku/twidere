@@ -67,7 +67,7 @@ public class SavedSearchesListFragment extends BasePullToRefreshListFragment imp
 		mListView = getListView();
 		mListView.setOnItemClickListener(this);
 		final Bundle args = getArguments();
-		mAccountId = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
+		mAccountId = args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
 		getLoaderManager().initLoader(0, null, this);
 		setListShown(false);
 	}
@@ -119,8 +119,7 @@ public class SavedSearchesListFragment extends BasePullToRefreshListFragment imp
 		}
 
 		public SavedSearch findItem(final long id) {
-			final int count = getCount();
-			for (int i = 0; i < count; i++) {
+			for (int i = 0, count = getCount(); i < count; i++) {
 				if (id != -1 && id == getItemId(i)) return getItem(i);
 			}
 			return null;

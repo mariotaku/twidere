@@ -358,9 +358,9 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 		final Configuration conf = getConfiguration();
 		if (is_browser_sign_in) {
 			if (extras == null) return;
-			final String token = args.getString(INTENT_KEY_REQUEST_TOKEN);
-			final String secret = args.getString(INTENT_KEY_REQUEST_TOKEN_SECRET);
-			final String verifier = args.getString(INTENT_KEY_OAUTH_VERIFIER);
+			final String token = args.getString(EXTRA_REQUEST_TOKEN);
+			final String secret = args.getString(EXTRA_REQUEST_TOKEN_SECRET);
+			final String verifier = args.getString(EXTRA_OAUTH_VERIFIER);
 			mTask = new BrowserSignInTask(this, conf, token, secret, verifier, mUserColor);
 		} else {
 			mTask = new SignInTask(this, conf, mUsername, mPassword, mAuthType, mUserColor);
@@ -475,7 +475,7 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 				mPreferences.edit().putBoolean(PREFERENCE_KEY_API_UPGRADE_CONFIRMED, true).commit();
 				final Intent intent = new Intent(this, HomeActivity.class);
 				final Bundle bundle = new Bundle();
-				bundle.putLongArray(INTENT_KEY_IDS, new long[] { mLoggedId });
+				bundle.putLongArray(EXTRA_IDS, new long[] { mLoggedId });
 				intent.putExtras(bundle);
 				intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 				startActivity(intent);

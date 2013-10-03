@@ -40,7 +40,7 @@ public class IntentExtrasStatusesLoader extends ParcelableStatusesLoader {
 	public List<ParcelableStatus> loadInBackground() {
 		final List<ParcelableStatus> data = getData();
 		if (mExtras != null) {
-			final List<ParcelableStatus> users = mExtras.getParcelableArrayList(INTENT_KEY_STATUSES);
+			final List<ParcelableStatus> users = mExtras.getParcelableArrayList(EXTRA_STATUSES);
 			if (users != null) {
 				data.addAll(users);
 				Collections.sort(data);

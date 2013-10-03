@@ -67,16 +67,14 @@ public class ArrayAdapter<T> extends BaseAdapter {
 	}
 
 	public final T findItem(final long id) {
-		final int count = getCount();
-		for (int i = 0; i < count; i++) {
+		for (int i = 0, count = getCount(); i < count; i++) {
 			if (getItemId(i) == id) return getItem(i);
 		}
 		return null;
 	}
 
 	public final int findItemPosition(final long id) {
-		final int count = getCount();
-		for (int i = 0; i < count; i++) {
+		for (int i = 0, count = getCount(); i < count; i++) {
 			if (getItemId(i) == id) return i;
 		}
 		return -1;
@@ -89,8 +87,8 @@ public class ArrayAdapter<T> extends BaseAdapter {
 
 	@Override
 	public View getDropDownView(final int position, final View convertView, final ViewGroup parent) {
-		if (mDropDownLayoutRes == 0) return null;
-		return convertView != null ? convertView : mInflater.inflate(mDropDownLayoutRes, parent, false);
+		final int layoutRes = mDropDownLayoutRes > 0 ? mDropDownLayoutRes : mLayoutRes;
+		return convertView != null ? convertView : mInflater.inflate(layoutRes, parent, false);
 	}
 
 	@Override

@@ -10,10 +10,39 @@ import org.mariotaku.twidere.Constants;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
+import java.util.Set;
 
 public final class ParseUtils implements Constants {
 
-	public static Bundle parseArguments(final String string) {
+	public static String bundleToJSON(final Bundle args) {
+		final Set<String> keys = args.keySet();
+		final JSONObject json = new JSONObject();
+		for (final String key : keys) {
+			final Object value = args.get(key);
+			if (value == null) {
+				continue;
+			}
+			try {
+				if (value instanceof Boolean) {
+					json.put(key, args.getBoolean(key));
+				} else if (value instanceof Integer) {
+					json.put(key, args.getInt(key));
+				} else if (value instanceof Long) {
+					json.put(key, args.getLong(key));
+				} else if (value instanceof String) {
+					json.put(key, args.getString(key));
+				} else {
+					Log.w(LOGTAG, "Unknown type " + (value != null ? value.getClass().getSimpleName() : null)
+							+ " in arguments key " + key);
+				}
+			} catch (final JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		return json.toString();
+	}
+
+	public static Bundle jsonToBundle(final String string) {
 		final Bundle bundle = new Bundle();
 		if (string != null) {
 			try {
@@ -30,7 +59,7 @@ public final class ParseUtils implements Constants {
 						bundle.putBoolean(key, json.optBoolean(key));
 					} else if (value instanceof Integer) {
 						// Simple workaround for account_id
-						if (INTENT_KEY_ACCOUNT_ID.equals(key)) {
+						if (EXTRA_ACCOUNT_ID.equals(key)) {
 							bundle.putLong(key, json.optLong(key));
 						} else {
 							bundle.putInt(key, json.optInt(key));

@@ -498,7 +498,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		}
 		final Bundle extras = intent.getExtras();
 		final boolean refresh_on_start = mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ON_START, false);
-		final long[] refreshed_ids = extras != null ? extras.getLongArray(INTENT_KEY_IDS) : null;
+		final long[] refreshed_ids = extras != null ? extras.getLongArray(EXTRA_IDS) : null;
 		if (refreshed_ids != null) {
 			mTwitterWrapper.refreshAll(refreshed_ids);
 		} else if (first_create && refresh_on_start) {
@@ -507,11 +507,11 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 
 		int initial_tab = -1;
 		if (extras != null) {
-			initial_tab = extras.getInt(INTENT_KEY_INITIAL_TAB, -1);
+			initial_tab = extras.getInt(EXTRA_INITIAL_TAB, -1);
 			if (initial_tab != -1 && mViewPager != null) {
 				clearNotification(initial_tab);
 			}
-			final Intent extra_intent = extras.getParcelable(INTENT_KEY_EXTRA_INTENT);
+			final Intent extra_intent = extras.getParcelable(EXTRA_EXTRA_INTENT);
 			if (extra_intent != null) {
 				if (isTwidereLink(extra_intent.getData()) && isDualPaneMode()) {
 					showFragment(createFragmentForIntent(this, extra_intent), true);
@@ -532,21 +532,13 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mCustomTabs.clear();
 		mCustomTabs.addAll(tabs);
 		mPagerAdapter.clear();
-		int i = 0;
-		mPagerAdapter.addTab(HomeTimelineFragment.class, null, getString(R.string.home), R.drawable.ic_tab_home, i++);
-		mPagerAdapter
-				.addTab(MentionsFragment.class, null, getString(R.string.mentions), R.drawable.ic_tab_mention, i++);
-		mPagerAdapter.addTab(DirectMessagesFragment.class, null, getString(R.string.direct_messages),
-				R.drawable.ic_tab_message, i++);
-		mPagerAdapter.addTab(TrendsFragment.class, null, getString(R.string.trends), R.drawable.ic_tab_trends, i++);
-		// mPagerAdapter.addTabs(tabs);
+		mPagerAdapter.addTabs(tabs);
 	}
 
 	private boolean isTabsChanged(final List<SupportTabSpec> tabs) {
 		if (mCustomTabs.size() == 0 && tabs == null) return false;
 		if (mCustomTabs.size() != tabs.size()) return true;
-		final int size = mCustomTabs.size();
-		for (int i = 0; i < size; i++) {
+		for (int i = 0, size = mCustomTabs.size(); i < size; i++) {
 			if (!mCustomTabs.get(i).equals(tabs.get(i))) return true;
 		}
 		return false;

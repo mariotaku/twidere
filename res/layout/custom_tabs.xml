@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.mobeta.android.dslv.DragSortListView xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@android:id/list"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	app:collapsedHeight="2dp"
+	app:dragEnabled="true"
+	app:dragHandleId="@+id/drag_handle"
+	app:dragScrollStart="0.33"
+	app:floatAlpha="0.6"
+	app:floatBackgroundColor="@android:color/transparent"
+	app:maxDragScrollSpeed="0.5"
+	app:removeEnabled="false"
+	app:slideShuffleSpeed="0.3"
+	app:sortEnabled="true"
+	app:trackDragSort="true"
+	app:useDefaultController="true"/>

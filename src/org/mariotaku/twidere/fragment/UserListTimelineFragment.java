@@ -34,14 +34,14 @@ public class UserListTimelineFragment extends ParcelableStatusesListFragment {
 	@Override
 	public Loader<List<ParcelableStatus>> newLoaderInstance(final Context context, final Bundle args) {
 		if (args == null) return null;
-		final int list_id = args.getInt(INTENT_KEY_LIST_ID, -1);
-		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-		final long max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
-		final long since_id = args.getLong(INTENT_KEY_SINCE_ID, -1);
-		final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
-		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-		final String list_name = args.getString(INTENT_KEY_LIST_NAME);
-		final int tab_position = args.getInt(INTENT_KEY_TAB_POSITION, -1);
+		final int list_id = args.getInt(EXTRA_LIST_ID, -1);
+		final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
+		final long max_id = args.getLong(EXTRA_MAX_ID, -1);
+		final long since_id = args.getLong(EXTRA_SINCE_ID, -1);
+		final long user_id = args.getLong(EXTRA_USER_ID, -1);
+		final String screen_name = args.getString(EXTRA_SCREEN_NAME);
+		final String list_name = args.getString(EXTRA_LIST_NAME);
+		final int tab_position = args.getInt(EXTRA_TAB_POSITION, -1);
 		return new UserListTimelineLoader(getActivity(), account_id, list_id, user_id, screen_name, list_name, max_id,
 				since_id, getData(), getSavedStatusesFileArgs(), tab_position);
 	}
@@ -58,11 +58,11 @@ public class UserListTimelineFragment extends ParcelableStatusesListFragment {
 	protected String[] getSavedStatusesFileArgs() {
 		final Bundle args = getArguments();
 		if (args == null) return null;
-		final int list_id = args.getInt(INTENT_KEY_LIST_ID, -1);
-		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-		final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
-		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-		final String list_name = args.getString(INTENT_KEY_LIST_NAME);
+		final int list_id = args.getInt(EXTRA_LIST_ID, -1);
+		final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
+		final long user_id = args.getLong(EXTRA_USER_ID, -1);
+		final String screen_name = args.getString(EXTRA_SCREEN_NAME);
+		final String list_name = args.getString(EXTRA_LIST_NAME);
 		return new String[] { AUTHORITY_LIST_TIMELINE, "account" + account_id, "list_id" + list_id,
 				"list_name" + list_name, "user" + user_id, "screen_name" + screen_name };
 	}

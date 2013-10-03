@@ -117,8 +117,8 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		public void onReceive(final Context context, final Intent intent) {
 			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
-			final ParcelableUserList user_list = intent.getParcelableExtra(INTENT_KEY_USER_LIST);
-			if (user_list == null || mUserList == null || !intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) return;
+			final ParcelableUserList user_list = intent.getParcelableExtra(EXTRA_USER_LIST);
+			if (user_list == null || mUserList == null || !intent.getBooleanExtra(EXTRA_SUCCEED, false)) return;
 			if (BROADCAST_USER_LIST_DETAILS_UPDATED.equals(action)) {
 				if (user_list.id == mUserList.id) {
 					reloadUserListInfo();
@@ -176,11 +176,11 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 			return;
 		}
 		final Bundle args = new Bundle();
-		args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-		args.putLong(INTENT_KEY_USER_ID, user_id);
-		args.putInt(INTENT_KEY_LIST_ID, list_id);
-		args.putString(INTENT_KEY_LIST_NAME, list_name);
-		args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+		args.putLong(EXTRA_ACCOUNT_ID, account_id);
+		args.putLong(EXTRA_USER_ID, user_id);
+		args.putInt(EXTRA_LIST_ID, list_id);
+		args.putString(EXTRA_LIST_NAME, list_name);
+		args.putString(EXTRA_SCREEN_NAME, screen_name);
 		if (init) {
 			getLoaderManager().initLoader(0, args, this);
 		} else {
@@ -211,11 +211,11 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		mListView.setOnItemLongClickListener(this);
 		setListAdapter(mAdapter);
 		final Bundle args = getArguments();
-		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
-		final long user_id = args != null ? args.getLong(INTENT_KEY_USER_ID, -1) : -1;
-		final int list_id = args != null ? args.getInt(INTENT_KEY_LIST_ID, -1) : -1;
-		final String list_name = args != null ? args.getString(INTENT_KEY_LIST_NAME) : null;
-		final String screen_name = args != null ? args.getString(INTENT_KEY_SCREEN_NAME) : null;
+		final long account_id = args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
+		final long user_id = args != null ? args.getLong(EXTRA_USER_ID, -1) : -1;
+		final int list_id = args != null ? args.getInt(EXTRA_LIST_ID, -1) : -1;
+		final String list_name = args != null ? args.getString(EXTRA_LIST_NAME) : null;
+		final String screen_name = args != null ? args.getString(EXTRA_SCREEN_NAME) : null;
 		getUserListInfo(true, account_id, list_id, list_name, user_id, screen_name);
 	}
 
@@ -237,7 +237,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 					final Menu menu = mPopupMenu.getMenu();
 					final Intent extensions_intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER_LIST);
 					final Bundle extensions_extras = new Bundle();
-					extensions_extras.putParcelable(INTENT_KEY_USER_LIST, mUserList);
+					extensions_extras.putParcelable(EXTRA_USER_LIST, mUserList);
 					extensions_intent.putExtras(extensions_extras);
 					addIntentToMenu(getActivity(), menu, extensions_intent);
 					mPopupMenu.setOnMenuItemClickListener(this);
@@ -266,11 +266,11 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		mErrorRetryContainer.setVisibility(View.GONE);
 		setListShown(false);
 		setProgressBarIndeterminateVisibility(true);
-		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
-		final long user_id = args != null ? args.getLong(INTENT_KEY_USER_ID, -1) : -1;
-		final int list_id = args != null ? args.getInt(INTENT_KEY_LIST_ID, -1) : -1;
-		final String list_name = args != null ? args.getString(INTENT_KEY_LIST_NAME) : null;
-		final String screen_name = args != null ? args.getString(INTENT_KEY_SCREEN_NAME) : null;
+		final long account_id = args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
+		final long user_id = args != null ? args.getLong(EXTRA_USER_ID, -1) : -1;
+		final int list_id = args != null ? args.getInt(EXTRA_LIST_ID, -1) : -1;
+		final String list_name = args != null ? args.getString(EXTRA_LIST_NAME) : null;
+		final String screen_name = args != null ? args.getString(EXTRA_SCREEN_NAME) : null;
 		return new ListInfoLoader(getActivity(), account_id, list_id, list_name, user_id, screen_name);
 	}
 
@@ -349,11 +349,11 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 			case R.id.name_container:
 			case R.id.description_container:
 				final Bundle args = new Bundle();
-				args.putLong(INTENT_KEY_ACCOUNT_ID, mUserList.account_id);
-				args.putString(INTENT_KEY_LIST_NAME, mUserList.name);
-				args.putString(INTENT_KEY_DESCRIPTION, mUserList.description);
-				args.putBoolean(INTENT_KEY_IS_PUBLIC, mUserList.is_public);
-				args.putInt(INTENT_KEY_LIST_ID, mUserList.id);
+				args.putLong(EXTRA_ACCOUNT_ID, mUserList.account_id);
+				args.putString(EXTRA_LIST_NAME, mUserList.name);
+				args.putString(EXTRA_DESCRIPTION, mUserList.description);
+				args.putBoolean(EXTRA_IS_PUBLIC, mUserList.is_public);
+				args.putInt(EXTRA_LIST_ID, mUserList.id);
 				final DialogFragment f = new EditUserListDialogFragment();
 				f.setArguments(args);
 				f.show(getFragmentManager(), "edit_user_list_details");
@@ -367,9 +367,9 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		switch (item.getItemId()) {
 			case MENU_ADD: {
 				final Bundle args = new Bundle();
-				args.putLong(INTENT_KEY_ACCOUNT_ID, mUserList.account_id);
-				args.putString(INTENT_KEY_TEXT, "");
-				args.putInt(INTENT_KEY_LIST_ID, mUserList.id);
+				args.putLong(EXTRA_ACCOUNT_ID, mUserList.account_id);
+				args.putString(EXTRA_TEXT, "");
+				args.putInt(EXTRA_LIST_ID, mUserList.id);
 				final DialogFragment f = new AddMemberDialogFragment();
 				f.setArguments(args);
 				f.show(getFragmentManager(), "add_member");
@@ -412,11 +412,11 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 
 	private void reloadUserListInfo() {
 		final Bundle args = getArguments();
-		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
-		final long user_id = args != null ? args.getLong(INTENT_KEY_USER_ID, -1) : -1;
-		final int list_id = args != null ? args.getInt(INTENT_KEY_LIST_ID, -1) : -1;
-		final String list_name = args != null ? args.getString(INTENT_KEY_LIST_NAME) : null;
-		final String screen_name = args != null ? args.getString(INTENT_KEY_SCREEN_NAME) : null;
+		final long account_id = args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
+		final long user_id = args != null ? args.getLong(EXTRA_USER_ID, -1) : -1;
+		final int list_id = args != null ? args.getInt(EXTRA_LIST_ID, -1) : -1;
+		final String list_name = args != null ? args.getString(EXTRA_LIST_NAME) : null;
+		final String screen_name = args != null ? args.getString(EXTRA_SCREEN_NAME) : null;
 		getUserListInfo(false, account_id, list_id, list_name, user_id, screen_name);
 	}
 
@@ -447,9 +447,9 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		public Dialog onCreateDialog(final Bundle savedInstanceState) {
 			mTwitterWrapper = getApplication().getTwitterWrapper();
 			final Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
-			mAccountId = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
-			mListId = bundle != null ? bundle.getInt(INTENT_KEY_LIST_ID, -1) : -1;
-			mText = bundle != null ? bundle.getString(INTENT_KEY_TEXT) : null;
+			mAccountId = bundle != null ? bundle.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
+			mListId = bundle != null ? bundle.getInt(EXTRA_LIST_ID, -1) : -1;
+			mText = bundle != null ? bundle.getString(EXTRA_TEXT) : null;
 			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			final View view = LayoutInflater.from(getActivity()).inflate(R.layout.auto_complete_textview, null);
 			builder.setView(view);
@@ -469,9 +469,9 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 
 		@Override
 		public void onSaveInstanceState(final Bundle outState) {
-			outState.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
-			outState.putInt(INTENT_KEY_LIST_ID, mListId);
-			outState.putString(INTENT_KEY_TEXT, mText);
+			outState.putLong(EXTRA_ACCOUNT_ID, mAccountId);
+			outState.putInt(EXTRA_LIST_ID, mListId);
+			outState.putString(EXTRA_TEXT, mText);
 			super.onSaveInstanceState(outState);
 		}
 
@@ -508,11 +508,11 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		public Dialog onCreateDialog(final Bundle savedInstanceState) {
 			mTwitterWrapper = getApplication().getTwitterWrapper();
 			final Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
-			mAccountId = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
-			mListId = bundle != null ? bundle.getInt(INTENT_KEY_LIST_ID, -1) : -1;
-			mName = bundle != null ? bundle.getString(INTENT_KEY_LIST_NAME) : null;
-			mDescription = bundle != null ? bundle.getString(INTENT_KEY_DESCRIPTION) : null;
-			mIsPublic = bundle != null ? bundle.getBoolean(INTENT_KEY_IS_PUBLIC, true) : true;
+			mAccountId = bundle != null ? bundle.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
+			mListId = bundle != null ? bundle.getInt(EXTRA_LIST_ID, -1) : -1;
+			mName = bundle != null ? bundle.getString(EXTRA_LIST_NAME) : null;
+			mDescription = bundle != null ? bundle.getString(EXTRA_DESCRIPTION) : null;
+			mIsPublic = bundle != null ? bundle.getBoolean(EXTRA_IS_PUBLIC, true) : true;
 			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			final View view = LayoutInflater.from(getActivity()).inflate(R.layout.edit_user_list_detail, null);
 			builder.setView(view);
@@ -534,11 +534,11 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 
 		@Override
 		public void onSaveInstanceState(final Bundle outState) {
-			outState.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
-			outState.putInt(INTENT_KEY_LIST_ID, mListId);
-			outState.putString(INTENT_KEY_LIST_NAME, mName);
-			outState.putString(INTENT_KEY_DESCRIPTION, mDescription);
-			outState.putBoolean(INTENT_KEY_IS_PUBLIC, mIsPublic);
+			outState.putLong(EXTRA_ACCOUNT_ID, mAccountId);
+			outState.putInt(EXTRA_LIST_ID, mListId);
+			outState.putString(EXTRA_LIST_NAME, mName);
+			outState.putString(EXTRA_DESCRIPTION, mDescription);
+			outState.putBoolean(EXTRA_IS_PUBLIC, mIsPublic);
 			super.onSaveInstanceState(outState);
 		}
 

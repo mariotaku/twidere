@@ -1,5 +1,10 @@
 package org.mariotaku.twidere.model;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
 
 import org.mariotaku.twidere.Constants;
@@ -8,10 +13,13 @@ import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.fragment.SearchStatusesFragment;
 import org.mariotaku.twidere.fragment.UserFavoritesFragment;
+import org.mariotaku.twidere.fragment.UserListTimelineFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
+import org.mariotaku.twidere.util.Utils;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 public class CustomTabConfiguration implements Constants {
 
@@ -37,7 +45,10 @@ public class CustomTabConfiguration implements Constants {
 				UserTimelineFragment.class, R.string.statuses, R.drawable.ic_tab_list, true, FIELD_TYPE_USER));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_SEARCH_STATUSES, new CustomTabConfiguration(
 				SearchStatusesFragment.class, R.string.search_statuses, R.drawable.ic_tab_search, true,
-				FIELD_TYPE_TEXT, R.string.query));
+				FIELD_TYPE_TEXT, R.string.query, EXTRA_QUERY));
+		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_LIST_TIMELINE, new CustomTabConfiguration(
+				UserListTimelineFragment.class, R.string.list_timeline, R.drawable.ic_tab_list, true,
+				FIELD_TYPE_USER_LIST));
 
 		CUSTOM_TABS_ICON_NAME_MAP.put("accounts", R.drawable.ic_tab_accounts);
 		CUSTOM_TABS_ICON_NAME_MAP.put("fire", R.drawable.ic_tab_fire);
@@ -55,50 +66,64 @@ public class CustomTabConfiguration implements Constants {
 		CUSTOM_TABS_ICON_NAME_MAP.put("star", R.drawable.ic_tab_star);
 		CUSTOM_TABS_ICON_NAME_MAP.put("trends", R.drawable.ic_tab_trends);
 		CUSTOM_TABS_ICON_NAME_MAP.put("twitter", R.drawable.ic_tab_twitter);
-		CUSTOM_TABS_ICON_NAME_MAP.put(ICON_SPECIAL_TYPE_CUSTOMIZE, -1);
+		// CUSTOM_TABS_ICON_NAME_MAP.put(ICON_SPECIAL_TYPE_CUSTOMIZE, -1);
 	}
 
-	private final int mDefaultTitle, mDefaultIcon, mSecondaryFieldType, mSecondaryFieldTitle;
-	private final boolean mAccountIdRequired;
-	private final Class<? extends Fragment> mFragmentClass;
+	private final int title, icon, secondaryFieldType, secondaryFieldTitle;
+	private final boolean accountIdRequired;
+	private final Class<? extends Fragment> cls;
+	private final String secondaryFieldTextKey;
 
 	public CustomTabConfiguration(final Class<? extends Fragment> cls, final int title, final int icon,
 			final boolean account_id_required, final int secondary_field_type) {
-		this(cls, title, icon, account_id_required, secondary_field_type, 0);
+		this(cls, title, icon, account_id_required, secondary_field_type, 0, EXTRA_TEXT);
 	}
 
 	public CustomTabConfiguration(final Class<? extends Fragment> cls, final int title, final int icon,
-			final boolean account_id_required, final int secondary_field_type, final int secondary_field_title) {
-		mFragmentClass = cls;
-		mDefaultTitle = title;
-		mDefaultIcon = icon;
-		mAccountIdRequired = account_id_required;
-		mSecondaryFieldType = secondary_field_type;
-		mSecondaryFieldTitle = secondary_field_title;
+			final boolean account_id_required, final int secondary_field_type, final int secondary_field_title,
+			final String secondary_field_text_key) {
+		this.cls = cls;
+		this.title = title;
+		this.icon = icon;
+		accountIdRequired = account_id_required;
+		secondaryFieldType = secondary_field_type;
+		secondaryFieldTitle = secondary_field_title;
+		secondaryFieldTextKey = secondary_field_text_key;
 	}
 
 	public int getDefaultIcon() {
-		return mDefaultIcon;
+		return icon;
 	}
 
 	public int getDefaultTitle() {
-		return mDefaultTitle;
+		return title;
 	}
 
 	public Class<? extends Fragment> getFragmentClass() {
-		return mFragmentClass;
+		return cls;
+	}
+
+	public String getSecondaryFieldTextKey() {
+		return secondaryFieldTextKey;
 	}
 
 	public int getSecondaryFieldTitle() {
-		return mSecondaryFieldTitle;
+		return secondaryFieldTitle;
 	}
 
 	public int getSecondaryFieldType() {
-		return mSecondaryFieldType;
+		return secondaryFieldType;
 	}
 
 	public boolean isAccountIdRequired() {
-		return mAccountIdRequired;
+		return accountIdRequired;
+	}
+
+	public static String findTabIconKey(final int iconRes) {
+		for (final Entry<String, Integer> entry : getIconMap().entrySet()) {
+			if (entry.getValue() == iconRes) return entry.getKey();
+		}
+		return null;
 	}
 
 	public static CustomTabConfiguration get(final String key) {
@@ -107,6 +132,30 @@ public class CustomTabConfiguration implements Constants {
 
 	public static HashMap<String, CustomTabConfiguration> getConfiguraionMap() {
 		return new HashMap<String, CustomTabConfiguration>(CUSTOM_TABS_CONFIGURATION_MAP);
+	}
+
+	public static HashMap<String, Integer> getIconMap() {
+		return new HashMap<String, Integer>(CUSTOM_TABS_ICON_NAME_MAP);
+	}
+
+	public static Drawable getTabIconDrawable(final Context context, final Object icon_obj) {
+		if (context == null) return null;
+		final Resources res = context.getResources();
+		if (icon_obj instanceof Integer) {
+			try {
+				return res.getDrawable((Integer) icon_obj);
+			} catch (final Resources.NotFoundException e) {
+				// Ignore.
+			}
+		} else if (icon_obj instanceof Bitmap)
+			return new BitmapDrawable(res, (Bitmap) icon_obj);
+		else if (icon_obj instanceof Drawable)
+			return (Drawable) icon_obj;
+		else if (icon_obj instanceof File) {
+			final Bitmap b = Utils.getTabIconFromFile((File) icon_obj, res);
+			if (b != null) return new BitmapDrawable(res, b);
+		}
+		return res.getDrawable(R.drawable.ic_tab_list);
 	}
 
 	public static Object getTabIconObject(final String type) {
@@ -123,5 +172,11 @@ public class CustomTabConfiguration implements Constants {
 			}
 		}
 		return R.drawable.ic_tab_list;
+	}
+
+	public static String getTabTypeName(final Context context, final String type) {
+		if (context == null) return null;
+		final Integer res_id = get(type).getDefaultTitle();
+		return res_id != null ? context.getString(res_id) : null;
 	}
 }

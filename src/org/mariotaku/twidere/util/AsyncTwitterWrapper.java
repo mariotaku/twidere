@@ -351,7 +351,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		// is_possibly_sensitive, delete_image);
 		// return mAsyncTaskManager.add(task, true);
 		final Intent intent = new Intent(mContext, UpdateStatusService.class);
-		intent.putExtra(INTENT_KEY_STATUS, new ParcelableStatusUpdate(account_ids, content, location, image_uri,
+		intent.putExtra(EXTRA_STATUS, new ParcelableStatusUpdate(account_ids, content, location, image_uri,
 				in_reply_to, is_possibly_sensitive, delete_image));
 		mContext.startService(intent);
 		return 0;
@@ -434,8 +434,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				Utils.showErrorMessage(mContext, R.string.updating_profile_banner_image, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_PROFILE_BANNER_UPDATED);
-			intent.putExtra(INTENT_KEY_USER_ID, account_id);
-			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
+			intent.putExtra(EXTRA_USER_ID, account_id);
+			intent.putExtra(EXTRA_SUCCEED, result != null && result.data != null);
 			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
@@ -471,8 +471,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				Utils.showErrorMessage(context, R.string.updating_profile_image, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_PROFILE_UPDATED);
-			intent.putExtra(INTENT_KEY_USER_ID, account_id);
-			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
+			intent.putExtra(EXTRA_USER_ID, account_id);
+			intent.putExtra(EXTRA_SUCCEED, result != null && result.data != null);
 			context.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
@@ -509,8 +509,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				Utils.showErrorMessage(context, context.getString(R.string.updating_profile), result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_PROFILE_IMAGE_UPDATED);
-			intent.putExtra(INTENT_KEY_USER_ID, account_id);
-			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
+			intent.putExtra(EXTRA_USER_ID, account_id);
+			intent.putExtra(EXTRA_SUCCEED, result != null && result.data != null);
 			context.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
@@ -564,10 +564,10 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				mMessagesManager.showErrorMessage(R.string.adding_member, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_USER_LIST_MEMBERS_ADDED);
-			intent.putExtra(INTENT_KEY_USER_LIST, result.data);
-			intent.putExtra(INTENT_KEY_USER_IDS, user_ids);
-			intent.putExtra(INTENT_KEY_SCREEN_NAMES, screen_names);
-			intent.putExtra(INTENT_KEY_SUCCEED, succeed);
+			intent.putExtra(EXTRA_USER_LIST, result.data);
+			intent.putExtra(EXTRA_USER_IDS, user_ids);
+			intent.putExtra(EXTRA_SCREEN_NAMES, screen_names);
+			intent.putExtra(EXTRA_SUCCEED, succeed);
 			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
@@ -619,8 +619,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				mMessagesManager.showErrorMessage(R.string.blocking, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_BLOCKSTATE_CHANGED);
-			intent.putExtra(INTENT_KEY_USER_ID, user_id);
-			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
+			intent.putExtra(EXTRA_USER_ID, user_id);
+			intent.putExtra(EXTRA_SUCCEED, result != null && result.data != null);
 			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
@@ -672,8 +672,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 			if (result.data != null) {
 				final Intent intent = new Intent(BROADCAST_FAVORITE_CHANGED);
-				intent.putExtra(INTENT_KEY_STATUS, result.data);
-				intent.putExtra(INTENT_KEY_FAVORITED, true);
+				intent.putExtra(EXTRA_STATUS, result.data);
+				intent.putExtra(EXTRA_FAVORITED, true);
 				mContext.sendBroadcast(intent);
 				mMessagesManager.showOkMessage(R.string.status_favorited, false);
 			} else {
@@ -719,8 +719,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				mMessagesManager.showErrorMessage(R.string.following, result.exception, false);
 			}
 			final Intent intent = new Intent(BROADCAST_FRIENDSHIP_CHANGED);
-			intent.putExtra(INTENT_KEY_USER_ID, user_id);
-			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
+			intent.putExtra(EXTRA_USER_ID, user_id);
+			intent.putExtra(EXTRA_SUCCEED, result != null && result.data != null);
 			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
@@ -768,8 +768,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				mMessagesManager.showErrorMessage(R.string.blocking, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_MULTI_BLOCKSTATE_CHANGED);
-			intent.putExtra(INTENT_KEY_USER_ID, user_ids);
-			intent.putExtra(INTENT_KEY_SUCCEED, result.list != null);
+			intent.putExtra(EXTRA_USER_ID, user_ids);
+			intent.putExtra(EXTRA_SUCCEED, result.list != null);
 			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
@@ -820,8 +820,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				mMessagesManager.showErrorMessage(R.string.subscribing_to_list, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_USER_LIST_SUBSCRIBED);
-			intent.putExtra(INTENT_KEY_USER_LIST, result.data);
-			intent.putExtra(INTENT_KEY_SUCCEED, succeed);
+			intent.putExtra(EXTRA_USER_LIST, result.data);
+			intent.putExtra(EXTRA_SUCCEED, succeed);
 			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
@@ -870,7 +870,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				mMessagesManager.showErrorMessage(R.string.creating_list, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_USER_LIST_CREATED);
-			intent.putExtra(INTENT_KEY_SUCCEED, succeed);
+			intent.putExtra(EXTRA_SUCCEED, succeed);
 			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
@@ -925,10 +925,10 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				mMessagesManager.showErrorMessage(R.string.deleting, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_USER_LIST_MEMBERS_DELETED);
-			intent.putExtra(INTENT_KEY_USER_LIST, result.data);
-			intent.putExtra(INTENT_KEY_USER_IDS, user_ids);
-			intent.putExtra(INTENT_KEY_SCREEN_NAMES, screen_names);
-			intent.putExtra(INTENT_KEY_SUCCEED, succeed);
+			intent.putExtra(EXTRA_USER_LIST, result.data);
+			intent.putExtra(EXTRA_USER_IDS, user_ids);
+			intent.putExtra(EXTRA_SCREEN_NAMES, screen_names);
+			intent.putExtra(EXTRA_SUCCEED, succeed);
 			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
@@ -970,8 +970,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				mMessagesManager.showErrorMessage(R.string.unblocking, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_BLOCKSTATE_CHANGED);
-			intent.putExtra(INTENT_KEY_USER_ID, user_id);
-			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
+			intent.putExtra(EXTRA_USER_ID, user_id);
+			intent.putExtra(EXTRA_SUCCEED, result != null && result.data != null);
 			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
@@ -1070,8 +1070,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		protected void onPostExecute(final SingleResponse<ParcelableStatus> result) {
 			if (result.data != null) {
 				final Intent intent = new Intent(BROADCAST_FAVORITE_CHANGED);
-				intent.putExtra(INTENT_KEY_STATUS, result.data);
-				intent.putExtra(INTENT_KEY_FAVORITED, false);
+				intent.putExtra(EXTRA_STATUS, result.data);
+				intent.putExtra(EXTRA_FAVORITED, false);
 				mContext.sendBroadcast(intent);
 				mMessagesManager.showInfoMessage(R.string.status_unfavorited, false);
 			} else {
@@ -1120,8 +1120,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				mMessagesManager.showErrorMessage(R.string.unfollowing, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_FRIENDSHIP_CHANGED);
-			intent.putExtra(INTENT_KEY_USER_ID, user_id);
-			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
+			intent.putExtra(EXTRA_USER_ID, user_id);
+			intent.putExtra(EXTRA_SUCCEED, result != null && result.data != null);
 			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
@@ -1165,8 +1165,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		protected void onPostExecute(final SingleResponse<twitter4j.Status> result) {
 			final Intent intent = new Intent(BROADCAST_STATUS_DESTROYED);
 			if (result != null && result.data != null && result.data.getId() > 0) {
-				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
-				intent.putExtra(INTENT_KEY_SUCCEED, true);
+				intent.putExtra(EXTRA_STATUS_ID, status_id);
+				intent.putExtra(EXTRA_SUCCEED, true);
 				if (result.data.getRetweetedStatus() != null) {
 					mMessagesManager.showInfoMessage(R.string.retweet_cancelled, false);
 				} else {
@@ -1218,8 +1218,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				mMessagesManager.showErrorMessage(R.string.unsubscribing_from_list, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_USER_LIST_UNSUBSCRIBED);
-			intent.putExtra(INTENT_KEY_USER_LIST, result.data);
-			intent.putExtra(INTENT_KEY_SUCCEED, succeed);
+			intent.putExtra(EXTRA_USER_LIST, result.data);
+			intent.putExtra(EXTRA_SUCCEED, succeed);
 			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
@@ -1265,8 +1265,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				mMessagesManager.showErrorMessage(R.string.deleting, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_USER_LIST_DELETED);
-			intent.putExtra(INTENT_KEY_SUCCEED, succeed);
-			intent.putExtra(INTENT_KEY_USER_LIST, result.data);
+			intent.putExtra(EXTRA_SUCCEED, succeed);
+			intent.putExtra(EXTRA_USER_LIST, result.data);
 			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
@@ -1588,7 +1588,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		protected ListResponse<Trends> doInBackground(final Void... params) {
 			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			final Bundle extras = new Bundle();
-			extras.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			extras.putLong(EXTRA_ACCOUNT_ID, account_id);
 			if (twitter != null) {
 				try {
 					return new ListResponse<Trends>(getTrends(twitter), null, extras);
@@ -1616,7 +1616,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		protected ListResponse<Long> doInBackground(final Void... params) {
 
 			final Bundle extras = new Bundle();
-			extras.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			extras.putLong(EXTRA_ACCOUNT_ID, account_id);
 			final List<Long> reported_users = new ArrayList<Long>();
 			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
 			if (twitter != null) {
@@ -1647,9 +1647,9 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				mMessagesManager.showInfoMessage(R.string.reported_users_for_spam, false);
 			}
 			final Intent intent = new Intent(BROADCAST_MULTI_BLOCKSTATE_CHANGED);
-			intent.putExtra(INTENT_KEY_USER_IDS, user_ids);
-			intent.putExtra(INTENT_KEY_ACCOUNT_ID, account_id);
-			intent.putExtra(INTENT_KEY_SUCCEED, result != null);
+			intent.putExtra(EXTRA_USER_IDS, user_ids);
+			intent.putExtra(EXTRA_ACCOUNT_ID, account_id);
+			intent.putExtra(EXTRA_SUCCEED, result != null);
 			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
@@ -1695,8 +1695,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				mMessagesManager.showErrorMessage(R.string.reporting_for_spam, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_BLOCKSTATE_CHANGED);
-			intent.putExtra(INTENT_KEY_USER_ID, user_id);
-			intent.putExtra(INTENT_KEY_SUCCEED, result != null && result.data != null);
+			intent.putExtra(EXTRA_USER_ID, user_id);
+			intent.putExtra(EXTRA_SUCCEED, result != null && result.data != null);
 			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
 		}
@@ -1744,8 +1744,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					mResolver.update(uri, values, where, null);
 				}
 				final Intent intent = new Intent(BROADCAST_RETWEET_CHANGED);
-				intent.putExtra(INTENT_KEY_STATUS_ID, status_id);
-				intent.putExtra(INTENT_KEY_RETWEETED, true);
+				intent.putExtra(EXTRA_STATUS_ID, status_id);
+				intent.putExtra(EXTRA_RETWEETED, true);
 				mContext.sendBroadcast(intent);
 				mMessagesManager.showOkMessage(R.string.status_retweeted, false);
 			} else {
@@ -1858,7 +1858,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				succeed = true;
 			}
 			final Bundle bundle = new Bundle();
-			bundle.putBoolean(INTENT_KEY_SUCCEED, succeed);
+			bundle.putBoolean(EXTRA_SUCCEED, succeed);
 			return SingleResponse.newInstance(bundle, null);
 		}
 
@@ -1876,13 +1876,13 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		@Override
 		protected void onPostExecute(final SingleResponse<Bundle> response) {
 			final boolean succeed = response != null && response.data != null
-					&& response.data.getBoolean(INTENT_KEY_SUCCEED);
+					&& response.data.getBoolean(EXTRA_SUCCEED);
 			final Bundle extras = new Bundle();
-			extras.putBoolean(INTENT_KEY_SUCCEED, succeed);
+			extras.putBoolean(EXTRA_SUCCEED, succeed);
 			if (shouldSetMinId()) {
-				final long min_id = response != null && response.data != null ? response.data.getLong(
-						INTENT_KEY_MIN_ID, -1) : -1;
-				extras.putLong(INTENT_KEY_MIN_ID, min_id);
+				final long min_id = response != null && response.data != null ? response.data.getLong(EXTRA_MIN_ID, -1)
+						: -1;
+				extras.putLong(EXTRA_MIN_ID, min_id);
 			}
 			mContext.sendBroadcast(new Intent(BROADCAST_HOME_TIMELINE_REFRESHED).putExtras(extras));
 			super.onPostExecute(response);
@@ -1908,13 +1908,13 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		@Override
 		protected void onPostExecute(final SingleResponse<Bundle> response) {
 			final boolean succeed = response != null && response.data != null
-					&& response.data.getBoolean(INTENT_KEY_SUCCEED);
+					&& response.data.getBoolean(EXTRA_SUCCEED);
 			final Bundle extras = new Bundle();
-			extras.putBoolean(INTENT_KEY_SUCCEED, succeed);
+			extras.putBoolean(EXTRA_SUCCEED, succeed);
 			if (shouldSetMinId()) {
-				final long min_id = response != null && response.data != null ? response.data.getLong(
-						INTENT_KEY_MIN_ID, -1) : -1;
-				extras.putLong(INTENT_KEY_MIN_ID, min_id);
+				final long min_id = response != null && response.data != null ? response.data.getLong(EXTRA_MIN_ID, -1)
+						: -1;
+				extras.putLong(EXTRA_MIN_ID, min_id);
 			}
 			mContext.sendBroadcast(new Intent(BROADCAST_MENTIONS_REFRESHED).putExtras(extras));
 			super.onPostExecute(response);
@@ -1932,9 +1932,9 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		@Override
 		protected void onPostExecute(final SingleResponse<Bundle> response) {
 			final boolean succeed = response != null && response.data != null
-					&& response.data.getBoolean(INTENT_KEY_SUCCEED);
-			mContext.sendBroadcast(new Intent(BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED).putExtra(
-					INTENT_KEY_SUCCEED, succeed));
+					&& response.data.getBoolean(EXTRA_SUCCEED);
+			mContext.sendBroadcast(new Intent(BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED).putExtra(EXTRA_SUCCEED,
+					succeed));
 			super.onPostExecute(response);
 		}
 
@@ -1954,9 +1954,9 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		@Override
 		protected void onPostExecute(final SingleResponse<Bundle> response) {
 			final boolean succeed = response != null && response.data != null
-					&& response.data.getBoolean(INTENT_KEY_SUCCEED);
-			mContext.sendBroadcast(new Intent(BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED).putExtra(INTENT_KEY_SUCCEED,
-					succeed));
+					&& response.data.getBoolean(EXTRA_SUCCEED);
+			mContext.sendBroadcast(new Intent(BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED)
+					.putExtra(EXTRA_SUCCEED, succeed));
 			super.onPostExecute(response);
 		}
 
@@ -2064,10 +2064,10 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				succeed = true;
 			}
 			final Bundle bundle = new Bundle();
-			bundle.putBoolean(INTENT_KEY_SUCCEED, succeed);
+			bundle.putBoolean(EXTRA_SUCCEED, succeed);
 			getAllStatusesIds(mContext, uri);
 			if (should_set_min_id && newly_inserted_ids.size() > 0) {
-				bundle.putLong(INTENT_KEY_MIN_ID, Collections.min(newly_inserted_ids));
+				bundle.putLong(EXTRA_MIN_ID, Collections.min(newly_inserted_ids));
 			}
 			return SingleResponse.newInstance(bundle, null);
 		}
@@ -2119,7 +2119,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 							hashtags.toArray(new String[hashtags.size()]));
 					mResolver.bulkInsert(CachedHashtags.CONTENT_URI,
 							hashtag_values.toArray(new ContentValues[hashtag_values.size()]));
-					bundle.putBoolean(INTENT_KEY_SUCCEED, true);
+					bundle.putBoolean(EXTRA_SUCCEED, true);
 				}
 			}
 			return new SingleResponse<Bundle>(bundle, null);
@@ -2127,9 +2127,9 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 		@Override
 		protected void onPostExecute(final SingleResponse<Bundle> response) {
-			if (response != null && response.data != null && response.data.getBoolean(INTENT_KEY_SUCCEED)) {
+			if (response != null && response.data != null && response.data.getBoolean(EXTRA_SUCCEED)) {
 				final Intent intent = new Intent(BROADCAST_TRENDS_UPDATED);
-				intent.putExtra(INTENT_KEY_SUCCEED, true);
+				intent.putExtra(EXTRA_SUCCEED, true);
 				mContext.sendBroadcast(intent);
 			}
 			super.onPostExecute(response);
@@ -2441,11 +2441,11 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		@Override
 		protected void onPostExecute(final SingleResponse<ParcelableUserList> result) {
 			final Intent intent = new Intent(BROADCAST_USER_LIST_DETAILS_UPDATED);
-			intent.putExtra(INTENT_KEY_LIST_ID, list_id);
+			intent.putExtra(EXTRA_LIST_ID, list_id);
 			if (result.data != null && result.data.id > 0) {
 				final String message = mContext.getString(R.string.updated_list_details, result.data.name);
 				mMessagesManager.showOkMessage(message, false);
-				intent.putExtra(INTENT_KEY_SUCCEED, true);
+				intent.putExtra(EXTRA_SUCCEED, true);
 			} else {
 				mMessagesManager.showErrorMessage(R.string.updating_details, result.exception, true);
 			}

@@ -36,12 +36,12 @@ public class UserMentionsFragment extends SearchStatusesFragment {
 	@Override
 	public Loader<List<ParcelableStatus>> newLoaderInstance(final Context context, final Bundle args) {
 		if (args == null) return null;
-		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
+		final String screen_name = args.getString(EXTRA_SCREEN_NAME);
 		if (screen_name == null) return null;
-		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
-		final long max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
-		final long since_id = args.getLong(INTENT_KEY_SINCE_ID, -1);
-		final int tab_position = args.getInt(INTENT_KEY_TAB_POSITION, -1);
+		final long account_id = args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
+		final long max_id = args.getLong(EXTRA_MAX_ID, -1);
+		final long since_id = args.getLong(EXTRA_SINCE_ID, -1);
+		final int tab_position = args.getInt(EXTRA_TAB_POSITION, -1);
 		getListAdapter().setMentionsHightlightDisabled(
 				objectEquals(getAccountScreenName(getActivity(), account_id), screen_name));
 		return new TweetSearchLoader(getActivity(), account_id, screen_name.startsWith("@") ? screen_name : "@"
@@ -52,8 +52,8 @@ public class UserMentionsFragment extends SearchStatusesFragment {
 	protected String[] getSavedStatusesFileArgs() {
 		final Bundle args = getArguments();
 		if (args == null) return null;
-		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
+		final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
+		final String screen_name = args.getString(EXTRA_SCREEN_NAME);
 		return new String[] { AUTHORITY_USER_MENTIONS, "account" + account_id, "screen_name" + screen_name };
 	}
 

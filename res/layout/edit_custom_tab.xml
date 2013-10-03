@@ -22,19 +22,33 @@
 				android:gravity="center_vertical"
 				android:orientation="horizontal">
 
-				<org.mariotaku.twidere.view.ClickableImageView
-					android:id="@+id/tab_icon"
-					android:layout_width="48dip"
-					android:layout_height="48dip"
-					android:clickable="true"/>
+				<Spinner
+					android:id="@+id/tab_icon_spinner"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:padding="8dp"
+					tools:listitem="@layout/custom_tab_icon_spinner_item"/>
 
-				<EditText
-					android:id="@+id/tab_name"
+				<LinearLayout
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:hint="@string/name"
-					android:padding="8dp"
-					android:textAppearance="?android:attr/textAppearanceMedium"/>
+					android:orientation="vertical"
+					android:padding="8dp">
+
+					<TextView
+						android:id="@+id/tab_type_name"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:paddingLeft="8dp"
+						android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+					<EditText
+						android:id="@+id/tab_name"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:hint="@string/name"
+						android:textAppearance="?android:attr/textAppearanceMedium"/>
+				</LinearLayout>
 			</LinearLayout>
 
 			<LinearLayout
@@ -54,7 +68,7 @@
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:padding="8dp"
-					tools:listitem="@layout/user_autocomplete_list_item"/>
+					tools:listitem="@layout/simple_two_line_with_icon_list_item"/>
 			</LinearLayout>
 
 			<LinearLayout
@@ -76,9 +90,10 @@
 					android:layout_height="wrap_content"
 					android:background="?android:selectableItemBackground"
 					android:clickable="true"
-					android:onClick="onClick">
+					android:onClick="onClick"
+					android:padding="8dp">
 
-					<include layout="@layout/two_line_with_icon_list_item"/>
+					<include layout="@layout/simple_two_line_with_icon_list_item"/>
 				</FrameLayout>
 			</LinearLayout>
 		</LinearLayout>
@@ -96,6 +111,7 @@
 		android:layout_height="@dimen/button_bar_height"
 		android:layout_gravity="center_horizontal"
 		android:gravity="center"
+		android:onClick="onClick"
 		android:text="@android:string/ok"/>
 
 </LinearLayout>

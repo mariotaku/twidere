@@ -41,7 +41,7 @@ public class ActivitiesAboutMeFragment extends BaseActivitiesListFragment {
 	@Override
 	public Loader<List<ParcelableActivity>> onCreateLoader(final int id, final Bundle args) {
 		setProgressBarIndeterminateVisibility(true);
-		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
+		final long account_id = args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
 		return new ActivitiesAboutMeLoader(getActivity(), account_id, getData(), getSavedActivitiesFileArgs(),
 				getTabPosition());
 	}
@@ -104,7 +104,7 @@ public class ActivitiesAboutMeFragment extends BaseActivitiesListFragment {
 	protected String[] getSavedActivitiesFileArgs() {
 		final Bundle args = getArguments();
 		if (args == null) return null;
-		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+		final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
 		return new String[] { AUTHORITY_ACTIVITIES_ABOUT_ME, "account" + account_id };
 	}
 

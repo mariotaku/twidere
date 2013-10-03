@@ -66,8 +66,8 @@ public class RefreshService extends Service implements Constants {
 			final String action = intent.getAction();
 			if (BROADCAST_NOTIFICATION_CLEARED.equals(action)) {
 				final Bundle extras = intent.getExtras();
-				if (extras != null && extras.containsKey(INTENT_KEY_NOTIFICATION_ID)) {
-					clearNotification(extras.getInt(INTENT_KEY_NOTIFICATION_ID));
+				if (extras != null && extras.containsKey(EXTRA_NOTIFICATION_ID)) {
+					clearNotification(extras.getInt(EXTRA_NOTIFICATION_ID));
 				}
 			} else if (BROADCAST_RESCHEDULE_HOME_TIMELINE_REFRESHING.equals(action)) {
 				rescheduleHomeTimelineRefreshing();

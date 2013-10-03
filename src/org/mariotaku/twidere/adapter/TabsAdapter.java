@@ -19,8 +19,8 @@
 
 package org.mariotaku.twidere.adapter;
 
+import static org.mariotaku.twidere.model.CustomTabConfiguration.getTabIconDrawable;
 import static org.mariotaku.twidere.util.Utils.announceForAccessibilityCompat;
-import static org.mariotaku.twidere.util.Utils.getTabIconDrawable;
 
 import android.app.Fragment;
 import android.app.FragmentManager;

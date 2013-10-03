@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<declare-styleable name="DragSortListView">
+		<attr name="collapsedHeight" format="dimension"/>
+		<attr name="dragScrollStart" format="float"/>
+		<attr name="maxDragScrollSpeed" format="float"/>
+		<attr name="floatBackgroundColor" format="color"/>
+		<attr name="removeMode">
+			<enum name="clickRemove" value="0"/>
+			<enum name="flingRemove" value="1"/>
+		</attr>
+		<attr name="trackDragSort" format="boolean"/>
+		<attr name="floatAlpha" format="float"/>
+		<attr name="slideShuffleSpeed" format="float"/>
+		<attr name="removeAnimationDuration" format="integer"/>
+		<attr name="dropAnimationDuration" format="integer"/>
+		<attr name="dragEnabled" format="boolean"/>
+		<attr name="sortEnabled" format="boolean"/>
+		<attr name="removeEnabled" format="boolean"/>
+		<attr name="dragStartMode">
+			<enum name="onDown" value="0"/>
+			<enum name="onMove" value="1"/>
+			<enum name="onLongPress" value="2"/>
+		</attr>
+		<attr name="dragHandleId" format="integer"/>
+		<attr name="flingHandleId" format="integer"/>
+		<attr name="clickRemoveId" format="integer"/>
+		<attr name="useDefaultController" format="boolean"/>
+	</declare-styleable>
+
+</resources>

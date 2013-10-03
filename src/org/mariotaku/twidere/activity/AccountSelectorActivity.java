@@ -85,7 +85,7 @@ public class AccountSelectorActivity extends BaseSupportDialogActivity implement
 					ids[i] = id_long;
 					i++;
 				}
-				bundle.putLongArray(INTENT_KEY_IDS, ids);
+				bundle.putLongArray(EXTRA_IDS, ids);
 				setResult(RESULT_OK, new Intent().putExtras(bundle));
 				finish();
 				break;
@@ -153,7 +153,7 @@ public class AccountSelectorActivity extends BaseSupportDialogActivity implement
 
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
-		outState.putLongArray(Constants.INTENT_KEY_IDS, ArrayUtils.fromList(mSelectedIds));
+		outState.putLongArray(Constants.EXTRA_IDS, ArrayUtils.fromList(mSelectedIds));
 		super.onSaveInstanceState(outState);
 	}
 
@@ -177,14 +177,14 @@ public class AccountSelectorActivity extends BaseSupportDialogActivity implement
 		mListView.setOnItemClickListener(this);
 		final long[] activated_ids;
 		if (savedInstanceState != null) {
-			activated_ids = savedInstanceState.getLongArray(INTENT_KEY_IDS);
+			activated_ids = savedInstanceState.getLongArray(EXTRA_IDS);
 		} else if (extras != null) {
-			activated_ids = extras.getLongArray(INTENT_KEY_IDS);
+			activated_ids = extras.getLongArray(EXTRA_IDS);
 		} else {
 			activated_ids = null;
 		}
-		mAllowSelectNone = extras != null ? extras.getBoolean(INTENT_KEY_ALLOW_SELECT_NONE, false) : false;
-		mOAuthOnly = extras != null ? extras.getBoolean(INTENT_KEY_OAUTH_ONLY, false) : false;
+		mAllowSelectNone = extras != null ? extras.getBoolean(EXTRA_ALLOW_SELECT_NONE, false) : false;
+		mOAuthOnly = extras != null ? extras.getBoolean(EXTRA_OAUTH_ONLY, false) : false;
 		mSelectedIds.clear();
 		if (activated_ids != null) {
 			for (final long id : activated_ids) {

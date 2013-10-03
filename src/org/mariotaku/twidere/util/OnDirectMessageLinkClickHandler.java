@@ -49,7 +49,7 @@ public class OnDirectMessageLinkClickHandler extends OnLinkClickHandler {
 			final FragmentManager fm = activity.getFragmentManager();
 			final DialogFragment fragment = new PhishingLinkWarningDialogFragment();
 			final Bundle args = new Bundle();
-			args.putParcelable(INTENT_KEY_URI, Uri.parse(link));
+			args.putParcelable(EXTRA_URI, Uri.parse(link));
 			fragment.setArguments(args);
 			fragment.show(fm, "phishing_link_warning");
 		} else {

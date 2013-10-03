@@ -75,7 +75,7 @@ public class BaseListFragment extends ListFragment implements Constants, OnScrol
 
 	public final int getTabPosition() {
 		final Bundle args = getArguments();
-		return args != null ? args.getInt(INTENT_KEY_TAB_POSITION, -1) : -1;
+		return args != null ? args.getInt(EXTRA_TAB_POSITION, -1) : -1;
 	}
 
 	public AsyncTwitterWrapper getTwitterWrapper() {

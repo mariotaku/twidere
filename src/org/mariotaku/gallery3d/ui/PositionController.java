@@ -581,9 +581,7 @@ class PositionController {
 	// Note we go from center-out because each box's X coordinate
 	// is relative to its anchor box (except the focused box).
 	private void layoutAndSetPosition() {
-		for (int i = 0; i < 2 * 0 + 1; i++) {
-			convertBoxToRect();
-		}
+		convertBoxToRect();
 	}
 
 	// //////////////////////////////////////////////////////////////////////////

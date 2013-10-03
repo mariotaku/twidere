@@ -184,12 +184,12 @@ public class AuthorizeActivity extends BaseActivity implements LoaderCallbacks<R
 			if (uri.getHost().equals(Uri.parse(mAuthUrl).getHost()))
 				return false;
 			else if (url.startsWith(DEFAULT_OAUTH_CALLBACK)) {
-				final String oauth_verifier = uri.getQueryParameter(INTENT_KEY_OAUTH_VERIFIER);
+				final String oauth_verifier = uri.getQueryParameter(EXTRA_OAUTH_VERIFIER);
 				if (oauth_verifier != null && mRequestToken != null) {
 					final Bundle bundle = new Bundle();
-					bundle.putString(INTENT_KEY_OAUTH_VERIFIER, oauth_verifier);
-					bundle.putString(INTENT_KEY_REQUEST_TOKEN, mRequestToken.getToken());
-					bundle.putString(INTENT_KEY_REQUEST_TOKEN_SECRET, mRequestToken.getTokenSecret());
+					bundle.putString(EXTRA_OAUTH_VERIFIER, oauth_verifier);
+					bundle.putString(EXTRA_REQUEST_TOKEN, mRequestToken.getToken());
+					bundle.putString(EXTRA_REQUEST_TOKEN_SECRET, mRequestToken.getTokenSecret());
 					setResult(RESULT_OK, new Intent().putExtras(bundle));
 					finish();
 				}

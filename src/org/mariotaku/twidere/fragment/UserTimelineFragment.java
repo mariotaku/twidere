@@ -36,12 +36,12 @@ public class UserTimelineFragment extends ParcelableStatusesListFragment {
 	@Override
 	public Loader<List<ParcelableStatus>> newLoaderInstance(final Context context, final Bundle args) {
 		if (args == null) return null;
-		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-		final long max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
-		final long since_id = args.getLong(INTENT_KEY_SINCE_ID, -1);
-		final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
-		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-		final int tab_position = args.getInt(INTENT_KEY_TAB_POSITION, -1);
+		final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
+		final long max_id = args.getLong(EXTRA_MAX_ID, -1);
+		final long since_id = args.getLong(EXTRA_SINCE_ID, -1);
+		final long user_id = args.getLong(EXTRA_USER_ID, -1);
+		final String screen_name = args.getString(EXTRA_SCREEN_NAME);
+		final int tab_position = args.getInt(EXTRA_TAB_POSITION, -1);
 		return new UserTimelineLoader(context, account_id, user_id, screen_name, max_id, since_id, getData(),
 				getSavedStatusesFileArgs(), tab_position);
 	}
@@ -50,9 +50,9 @@ public class UserTimelineFragment extends ParcelableStatusesListFragment {
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		final Bundle args = getArguments();
-		final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
-		final long user_id = args != null ? args.getLong(INTENT_KEY_USER_ID, -1) : -1;
-		final String screen_name = args != null ? args.getString(INTENT_KEY_SCREEN_NAME) : null;
+		final long account_id = args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
+		final long user_id = args != null ? args.getLong(EXTRA_USER_ID, -1) : -1;
+		final String screen_name = args != null ? args.getString(EXTRA_SCREEN_NAME) : null;
 		final boolean is_my_timeline = user_id > 0 ? account_id == user_id : account_id == getAccountId(getActivity(),
 				screen_name);
 		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();
@@ -65,9 +65,9 @@ public class UserTimelineFragment extends ParcelableStatusesListFragment {
 	protected String[] getSavedStatusesFileArgs() {
 		final Bundle args = getArguments();
 		if (args == null) return null;
-		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-		final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
-		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
+		final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
+		final long user_id = args.getLong(EXTRA_USER_ID, -1);
+		final String screen_name = args.getString(EXTRA_SCREEN_NAME);
 		return new String[] { AUTHORITY_USER_TIMELINE, "account" + account_id, "user" + user_id + "name" + screen_name };
 	}
 

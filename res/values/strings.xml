@@ -495,5 +495,6 @@
 	<string name="query">Query</string>
 	<string name="nickname_only">Nickname only</string>
 	<string name="nickname_only_summary">Replace user name with nickname when available</string>
+	<string name="input_text">Input text</string>
 
 </resources>

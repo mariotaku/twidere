@@ -435,19 +435,19 @@ public final class TweetStore {
 					final SQLQueryBuilder recent_outbox_msg_ids = new SQLQueryBuilder()
 							.select(new Column("MAX(" + MESSAGE_ID + ")")).from(new Tables(Outbox.TABLE_NAME))
 							.groupBy(new Column(RECIPIENT_ID));
-					final SQLQueryBuilder message_conversation_ids = new SQLQueryBuilder();
-					message_conversation_ids.select(new Columns(new Column(MESSAGE_ID), new Column(SENDER_ID,
+					final SQLQueryBuilder conversation_ids = new SQLQueryBuilder();
+					conversation_ids
+							.select(new Columns(new Column(MESSAGE_ID), new Column(SENDER_ID, CONVERSATION_ID)));
+					conversation_ids.from(new Tables(Inbox.TABLE_NAME));
+					conversation_ids.where(Where.in(new Column(MESSAGE_ID), recent_inbox_msg_ids.build()));
+					conversation_ids.union();
+					conversation_ids.select(new Columns(new Column(MESSAGE_ID), new Column(RECIPIENT_ID,
 							CONVERSATION_ID)));
-					message_conversation_ids.from(new Tables(Inbox.TABLE_NAME));
-					message_conversation_ids.where(Where.in(new Column(MESSAGE_ID), recent_inbox_msg_ids.build()));
-					message_conversation_ids.union();
-					message_conversation_ids.select(new Columns(new Column(MESSAGE_ID), new Column(RECIPIENT_ID,
-							CONVERSATION_ID)));
-					message_conversation_ids.from(new Tables(Outbox.TABLE_NAME));
-					message_conversation_ids.where(Where.in(new Column(MESSAGE_ID), recent_outbox_msg_ids.build()));
+					conversation_ids.from(new Tables(Outbox.TABLE_NAME));
+					conversation_ids.where(Where.in(new Column(MESSAGE_ID), recent_outbox_msg_ids.build()));
 					final SQLQueryBuilder grouped_message_conversation_ids = new SQLQueryBuilder();
 					grouped_message_conversation_ids.select(new Column(MESSAGE_ID));
-					grouped_message_conversation_ids.from(message_conversation_ids.build());
+					grouped_message_conversation_ids.from(conversation_ids.build());
 					grouped_message_conversation_ids.groupBy(new Column(CONVERSATION_ID));
 					final Where grouped_where = Where.in(new Column(MESSAGE_ID),
 							grouped_message_conversation_ids.build());

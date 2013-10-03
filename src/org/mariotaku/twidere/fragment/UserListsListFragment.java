@@ -48,8 +48,8 @@ public class UserListsListFragment extends BaseUserListsListFragment {
 			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
 			if (BROADCAST_USER_LIST_DELETED.equals(action)) {
-				final ParcelableUserList list = intent.getParcelableExtra(INTENT_KEY_USER_LIST);
-				if (list != null && intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
+				final ParcelableUserList list = intent.getParcelableExtra(EXTRA_USER_LIST);
+				if (list != null && intent.getBooleanExtra(EXTRA_SUCCEED, false)) {
 					removeUserList(list.id);
 				}
 			}
@@ -79,7 +79,7 @@ public class UserListsListFragment extends BaseUserListsListFragment {
 			case R.id.new_user_list: {
 				final DialogFragment f = new CreateUserListDialogFragment();
 				final Bundle args = new Bundle();
-				args.putLong(INTENT_KEY_ACCOUNT_ID, getAccountId());
+				args.putLong(EXTRA_ACCOUNT_ID, getAccountId());
 				f.setArguments(args);
 				f.show(getFragmentManager(), null);
 				return true;

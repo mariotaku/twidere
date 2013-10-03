@@ -11,7 +11,7 @@ public class BrowserFragment extends BaseWebViewFragment {
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		final Bundle args = getArguments();
-		final Object uri = args != null ? args.get(INTENT_KEY_URI) : null;
+		final Object uri = args != null ? args.get(EXTRA_URI) : null;
 		final WebView view = getWebView();
 		view.loadUrl(ParseUtils.parseString(uri, "about:blank"));
 	}

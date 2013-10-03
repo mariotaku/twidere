@@ -70,8 +70,7 @@ public class HostMappingActivity extends BaseSupportActivity implements MultiCho
 				final SharedPreferences.Editor editor = mPreferences.edit();
 				final SparseBooleanArray array = mListView.getCheckedItemPositions();
 				if (array == null) return false;
-				final int size = array.size();
-				for (int i = 0; i < size; i++) {
+				for (int i = 0, size = array.size(); i < size; i++) {
 					if (array.valueAt(i)) {
 						editor.remove(mAdapter.getItem(i));
 					}
@@ -206,8 +205,8 @@ public class HostMappingActivity extends BaseSupportActivity implements MultiCho
 		@Override
 		public Dialog onCreateDialog(final Bundle savedInstanceState) {
 			final Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
-			mHost = bundle != null ? bundle.getString(INTENT_KEY_TEXT1) : null;
-			mAddress = bundle != null ? bundle.getString(INTENT_KEY_TEXT2) : null;
+			mHost = bundle != null ? bundle.getString(EXTRA_TEXT1) : null;
+			mAddress = bundle != null ? bundle.getString(EXTRA_TEXT2) : null;
 			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			final View view = LayoutInflater.from(getActivity()).inflate(R.layout.host_mapping_dialog_view, null);
 			builder.setView(view);
@@ -227,8 +226,8 @@ public class HostMappingActivity extends BaseSupportActivity implements MultiCho
 
 		@Override
 		public void onSaveInstanceState(final Bundle outState) {
-			outState.putString(INTENT_KEY_TEXT1, mHost);
-			outState.putString(INTENT_KEY_TEXT2, mAddress);
+			outState.putString(EXTRA_TEXT1, mHost);
+			outState.putString(EXTRA_TEXT2, mAddress);
 			super.onSaveInstanceState(outState);
 		}
 

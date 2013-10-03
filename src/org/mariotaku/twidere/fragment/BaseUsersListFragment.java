@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
+import static org.mariotaku.twidere.util.Utils.clearListViewChoices;
 import static org.mariotaku.twidere.util.Utils.configBaseAdapter;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
@@ -43,13 +44,12 @@ import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.ParcelableUsersAdapter;
-import org.mariotaku.twidere.adapter.iface.IBaseAdapter.MenuButtonClickListener;
+import org.mariotaku.twidere.adapter.iface.IBaseCardAdapter.MenuButtonClickListener;
 import org.mariotaku.twidere.loader.DummyParcelableUsersLoader;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
-import org.mariotaku.twidere.util.Utils;
 
 import java.util.Collections;
 import java.util.List;
@@ -95,7 +95,7 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 		if (count - 1 > 0) {
 			final Bundle args = getArguments();
 			if (args != null) {
-				args.putLong(INTENT_KEY_MAX_ID, mAdapter.getItem(count - 1).id);
+				args.putLong(EXTRA_MAX_ID, mAdapter.getItem(count - 1).id);
 			}
 			if (!getLoaderManager().hasRunningLoaders()) {
 				getLoaderManager().restartLoader(0, args, this);
@@ -113,7 +113,7 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 		mListView = getListView();
 		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
 		final Bundle args = getArguments() != null ? getArguments() : new Bundle();
-		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+		final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
 		if (mAccountId != account_id) {
 			mAdapter.clear();
 			mData.clear();
@@ -144,13 +144,7 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 
 	@Override
 	public void onItemsCleared() {
-		mListView.clearChoices();
-		mListView.setChoiceMode(ListView.CHOICE_MODE_NONE);
-		// Workaround for Android bug
-		// http://stackoverflow.com/questions/9754170/listview-selection-remains-persistent-after-exiting-choice-mode
-		final int position = mListView.getFirstVisiblePosition(), offset = Utils.getFirstChildOffset(mListView);
-		mListView.setAdapter(mAdapter);
-		Utils.scrollListToPosition(mListView, position, offset);
+		clearListViewChoices(mListView);
 	}
 
 	@Override
@@ -288,7 +282,7 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 		final Menu menu = mPopupMenu.getMenu();
 		final Intent extensions_intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER);
 		final Bundle extensions_extras = new Bundle();
-		extensions_extras.putParcelable(INTENT_KEY_USER, user);
+		extensions_extras.putParcelable(EXTRA_USER, user);
 		extensions_intent.putExtras(extensions_extras);
 		addIntentToMenu(getActivity(), menu, extensions_intent);
 		mPopupMenu.setOnMenuItemClickListener(this);

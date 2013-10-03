@@ -43,7 +43,7 @@ public class CreateUserListDialogFragment extends BaseSupportDialogFragment impl
 	public Dialog onCreateDialog(final Bundle savedInstanceState) {
 		mTwitterWrapper = getApplication().getTwitterWrapper();
 		final Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
-		mAccountId = bundle != null ? bundle.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
+		mAccountId = bundle != null ? bundle.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
 		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		final View view = LayoutInflater.from(getActivity()).inflate(R.layout.edit_user_list_detail, null);
 		builder.setView(view);
@@ -65,11 +65,11 @@ public class CreateUserListDialogFragment extends BaseSupportDialogFragment impl
 
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
-		outState.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
-		outState.putInt(INTENT_KEY_LIST_ID, mListId);
-		outState.putString(INTENT_KEY_LIST_NAME, mName);
-		outState.putString(INTENT_KEY_DESCRIPTION, mDescription);
-		outState.putBoolean(INTENT_KEY_IS_PUBLIC, mIsPublic);
+		outState.putLong(EXTRA_ACCOUNT_ID, mAccountId);
+		outState.putInt(EXTRA_LIST_ID, mListId);
+		outState.putString(EXTRA_LIST_NAME, mName);
+		outState.putString(EXTRA_DESCRIPTION, mDescription);
+		outState.putBoolean(EXTRA_IS_PUBLIC, mIsPublic);
 		super.onSaveInstanceState(outState);
 	}
 

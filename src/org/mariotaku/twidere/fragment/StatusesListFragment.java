@@ -33,8 +33,7 @@ public class StatusesListFragment extends ParcelableStatusesListFragment {
 	@Override
 	public Loader<List<ParcelableStatus>> newLoaderInstance(final Context context, final Bundle args) {
 		if (args == null) return null;
-		if (args.containsKey(INTENT_KEY_STATUSES))
-			return new IntentExtrasStatusesLoader(getActivity(), args, getData());
+		if (args.containsKey(EXTRA_STATUSES)) return new IntentExtrasStatusesLoader(getActivity(), args, getData());
 		return null;
 	}
 

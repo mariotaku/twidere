@@ -33,7 +33,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
+import org.mariotaku.twidere.adapter.iface.IBaseCardAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
@@ -43,7 +43,7 @@ import org.mariotaku.twidere.view.holder.UserListViewHolder;
 import java.util.List;
 import java.util.Locale;
 
-public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList> implements IBaseAdapter,
+public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList> implements IBaseCardAdapter,
 		OnClickListener {
 
 	private final Context mContext;
@@ -80,7 +80,7 @@ public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList>
 	public View getView(final int position, final View convertView, final ViewGroup parent) {
 		final View view = super.getView(position, convertView, parent);
 		final Object tag = view.getTag();
-		UserListViewHolder holder = null;
+		final UserListViewHolder holder;
 		if (tag instanceof UserListViewHolder) {
 			holder = (UserListViewHolder) tag;
 		} else {

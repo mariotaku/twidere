@@ -81,8 +81,8 @@ public class MapViewerActivity extends SwipeBackActivity implements Constants {
 			return;
 		}
 		try {
-			bundle.putDouble(INTENT_KEY_LATITUDE, Double.valueOf(param_lat));
-			bundle.putDouble(INTENT_KEY_LONGITUDE, Double.valueOf(param_lng));
+			bundle.putDouble(EXTRA_LATITUDE, Double.valueOf(param_lat));
+			bundle.putDouble(EXTRA_LONGITUDE, Double.valueOf(param_lng));
 		} catch (final NumberFormatException e) {
 			finish();
 			return;

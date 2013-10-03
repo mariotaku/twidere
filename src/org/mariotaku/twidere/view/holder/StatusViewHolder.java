@@ -115,7 +115,7 @@ public class StatusViewHolder implements Constants {
 	}
 
 	public void setReplyTo(final String in_reply_to_screen_name) {
-		reply_retweet_status.setText(res.getString(R.string.in_reply_to, in_reply_to_screen_name));
+		reply_retweet_status.setText(res.getString(R.string.in_reply_to, "@" + in_reply_to_screen_name));
 		reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_reply, 0, 0, 0);
 	}
 

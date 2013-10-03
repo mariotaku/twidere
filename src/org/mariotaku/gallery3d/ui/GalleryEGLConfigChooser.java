@@ -103,7 +103,7 @@ class GalleryEGLConfigChooser implements EGLConfigChooser {
 	private void logConfig(final EGL10 egl, final EGLDisplay display, final EGLConfig config) {
 		final int value[] = new int[1];
 		final StringBuilder sb = new StringBuilder();
-		for (int j = 0; j < ATTR_ID.length; j++) {
+		for (int j = 0, k = ATTR_ID.length; j < k; j++) {
 			egl.eglGetConfigAttrib(display, config, ATTR_ID[j], value);
 			sb.append(ATTR_NAME[j] + value[0] + " ");
 		}

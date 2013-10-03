@@ -58,7 +58,7 @@
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:textColor="?android:attr/textColorSecondary"/>
 
-				<TextView
+				<org.mariotaku.twidere.view.ShortTimeView
 					android:id="@+id/time"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"

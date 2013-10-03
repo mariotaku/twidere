@@ -36,9 +36,9 @@ public class TwidereCommands {
 
 	public static final Uri BASE_CONTENT_URI = new Uri.Builder().scheme(ContentResolver.SCHEME_CONTENT)
 			.authority(AUTHORITY).build();
-	public static final String INTENT_KEY_IN_REPLY_TO_STATUS_ID = "in_reply_to_status_id";
-	public static final String INTENT_KEY_IS_POSSIBLY_SENSITIVE = "is_possibly_sensitive";
-	public static final String INTENT_KEY_DELETE_IMAGE = "delete_image";
+	public static final String EXTRA_IN_REPLY_TO_STATUS_ID = "in_reply_to_status_id";
+	public static final String EXTRA_IS_POSSIBLY_SENSITIVE = "is_possibly_sensitive";
+	public static final String EXTRA_DELETE_IMAGE = "delete_image";
 
 	public static class DirectMessage {
 
@@ -98,13 +98,13 @@ public class TwidereCommands {
 				final ParcelableLocation location, final Uri image_uri, final long in_reply_to_status_id,
 				final boolean is_possibly_sensitive, final boolean delete_image) {
 			final ContentValues values = new ContentValues();
-			values.put(Constants.INTENT_KEY_ACCOUNT_IDS, ArrayUtils.toString(account_ids, ',', false));
-			values.put(Constants.INTENT_KEY_TEXT, content);
-			values.put(Constants.INTENT_KEY_LOCATION, ParcelableLocation.toString(location));
-			values.put(Constants.INTENT_KEY_URI, ParseUtils.parseString(image_uri));
-			values.put(INTENT_KEY_IN_REPLY_TO_STATUS_ID, in_reply_to_status_id);
-			values.put(INTENT_KEY_IS_POSSIBLY_SENSITIVE, is_possibly_sensitive);
-			values.put(INTENT_KEY_DELETE_IMAGE, delete_image);
+			values.put(Constants.EXTRA_ACCOUNT_IDS, ArrayUtils.toString(account_ids, ',', false));
+			values.put(Constants.EXTRA_TEXT, content);
+			values.put(Constants.EXTRA_LOCATION, ParcelableLocation.toString(location));
+			values.put(Constants.EXTRA_URI, ParseUtils.parseString(image_uri));
+			values.put(EXTRA_IN_REPLY_TO_STATUS_ID, in_reply_to_status_id);
+			values.put(EXTRA_IS_POSSIBLY_SENSITIVE, is_possibly_sensitive);
+			values.put(EXTRA_DELETE_IMAGE, delete_image);
 			Utils.sendInsertCommand(context, ACTION_UPDATE_STATUS, values);
 		}
 	}

@@ -32,7 +32,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
+import org.mariotaku.twidere.adapter.iface.IBaseCardAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableActivity;
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -44,7 +44,7 @@ import org.mariotaku.twidere.view.holder.ActivityViewHolder;
 
 import java.util.List;
 
-public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity> implements IBaseAdapter {
+public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity> implements IBaseCardAdapter {
 
 	private final Context mContext;
 	private final MultiSelectManager mMultiSelectManager;

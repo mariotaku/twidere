@@ -35,6 +35,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import org.mariotaku.twidere.Constants;
@@ -196,7 +197,12 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 			selector_builder.setSingleChoiceItems(mAdapter, mAdapter.findItemPosition(mCheckedWoeId),
 					TrendsLocationPreference.this);
 			selector_builder.setNegativeButton(android.R.string.cancel, null);
-			mDialog = selector_builder.show();
+			mDialog = selector_builder.create();
+			final ListView lv = mDialog.getListView();
+			if (lv != null) {
+				lv.setFastScrollEnabled(true);
+			}
+			mDialog.show();
 		}
 
 		@Override

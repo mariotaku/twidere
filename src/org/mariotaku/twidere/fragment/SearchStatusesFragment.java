@@ -41,11 +41,11 @@ public class SearchStatusesFragment extends ParcelableStatusesListFragment {
 		String query = null;
 		int tab_position = -1;
 		if (args != null) {
-			account_id = args.getLong(INTENT_KEY_ACCOUNT_ID);
-			max_id = args.getLong(INTENT_KEY_MAX_ID, -1);
-			since_id = args.getLong(INTENT_KEY_SINCE_ID, -1);
-			query = args.getString(INTENT_KEY_QUERY);
-			tab_position = args.getInt(INTENT_KEY_TAB_POSITION, -1);
+			account_id = args.getLong(EXTRA_ACCOUNT_ID);
+			max_id = args.getLong(EXTRA_MAX_ID, -1);
+			since_id = args.getLong(EXTRA_SINCE_ID, -1);
+			query = args.getString(EXTRA_QUERY);
+			tab_position = args.getInt(EXTRA_TAB_POSITION, -1);
 		}
 		return new TweetSearchLoader(getActivity(), account_id, query, max_id, since_id, getData(),
 				getSavedStatusesFileArgs(), tab_position);
@@ -74,8 +74,8 @@ public class SearchStatusesFragment extends ParcelableStatusesListFragment {
 	protected String[] getSavedStatusesFileArgs() {
 		final Bundle args = getArguments();
 		if (args == null) return null;
-		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-		final String query = args.getString(INTENT_KEY_QUERY);
+		final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
+		final String query = args.getString(EXTRA_QUERY);
 		return new String[] { AUTHORITY_SEARCH_TWEETS, "account" + account_id, "query" + query };
 	}
 

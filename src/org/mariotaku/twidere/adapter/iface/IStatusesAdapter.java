@@ -21,7 +21,7 @@ package org.mariotaku.twidere.adapter.iface;
 
 import org.mariotaku.twidere.model.ParcelableStatus;
 
-public interface IStatusesAdapter<Data> extends IBaseAdapter {
+public interface IStatusesAdapter<Data> extends IBaseCardAdapter {
 
 	public long findItemIdByPosition(final int position);
 

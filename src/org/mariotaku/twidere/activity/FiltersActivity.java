@@ -57,7 +57,7 @@ import org.mariotaku.twidere.provider.TweetStore.Filters;
 
 public class FiltersActivity extends BaseActivity implements TabListener, OnPageChangeListener {
 
-	private static final String INTENT_KEY_AUTO_COMPLETE_TYPE = "auto_complete_type";
+	private static final String EXTRA_AUTO_COMPLETE_TYPE = "auto_complete_type";
 	private static final int AUTO_COMPLETE_TYPE_USERS = 1;
 	private static final int AUTO_COMPLETE_TYPE_SOURCES = 2;
 
@@ -107,11 +107,11 @@ public class FiltersActivity extends BaseActivity implements TabListener, OnPage
 				if (!(filter instanceof BaseFiltersFragment)) return true;
 				final Bundle args = new Bundle();
 				if (filter instanceof FilteredUsersFragment) {
-					args.putInt(INTENT_KEY_AUTO_COMPLETE_TYPE, AUTO_COMPLETE_TYPE_USERS);
+					args.putInt(EXTRA_AUTO_COMPLETE_TYPE, AUTO_COMPLETE_TYPE_USERS);
 				} else if (filter instanceof FilteredSourcesFragment) {
-					args.putInt(INTENT_KEY_AUTO_COMPLETE_TYPE, AUTO_COMPLETE_TYPE_SOURCES);
+					args.putInt(EXTRA_AUTO_COMPLETE_TYPE, AUTO_COMPLETE_TYPE_SOURCES);
 				}
-				args.putParcelable(INTENT_KEY_URI, ((BaseFiltersFragment) filter).getContentUri());
+				args.putParcelable(EXTRA_URI, ((BaseFiltersFragment) filter).getContentUri());
 				final AddItemFragment dialog = new AddItemFragment();
 				dialog.setArguments(args);
 				dialog.show(getFragmentManager(), "add_rule");
@@ -201,7 +201,7 @@ public class FiltersActivity extends BaseActivity implements TabListener, OnPage
 					final String text = mEditText.getText().toString();
 					values.put(Filters.VALUE, text);
 					final Bundle args = getArguments();
-					final Uri uri = args.getParcelable(INTENT_KEY_URI);
+					final Uri uri = args.getParcelable(EXTRA_URI);
 					getContentResolver().insert(uri, values);
 					break;
 			}
@@ -216,7 +216,7 @@ public class FiltersActivity extends BaseActivity implements TabListener, OnPage
 			builder.setView(view);
 			mEditText = (AutoCompleteTextView) view.findViewById(R.id.edit_text);
 			final Bundle args = getArguments();
-			final int auto_complete_type = args != null ? args.getInt(INTENT_KEY_AUTO_COMPLETE_TYPE, 0) : 0;
+			final int auto_complete_type = args != null ? args.getInt(EXTRA_AUTO_COMPLETE_TYPE, 0) : 0;
 			if (auto_complete_type != 0) {
 				if (auto_complete_type == AUTO_COMPLETE_TYPE_SOURCES) {
 					mUserAutoCompleteAdapter = new SourceAutoCompleteAdapter(getActivity());

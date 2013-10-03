@@ -30,7 +30,7 @@ public class UserBlocksListFragment extends CursorSupportUsersListFragment {
 	@Override
 	public CursorSupportUsersLoader newLoaderInstance(final Context context, final Bundle args) {
 		if (args == null) return null;
-		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
+		final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
 		return new UserBlocksLoader(context, account_id, getNextCursor(), getData());
 	}
 

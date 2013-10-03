@@ -173,18 +173,18 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
 			if (BROADCAST_FRIENDSHIP_CHANGED.equals(action)) {
-				if (mStatus != null && mStatus.user_id == intent.getLongExtra(INTENT_KEY_USER_ID, -1)
-						&& intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) {
+				if (mStatus != null && mStatus.user_id == intent.getLongExtra(EXTRA_USER_ID, -1)
+						&& intent.getBooleanExtra(EXTRA_SUCCEED, false)) {
 					showFollowInfo(true);
 				}
 			} else if (BROADCAST_FAVORITE_CHANGED.equals(action)) {
-				final ParcelableStatus status = intent.getParcelableExtra(INTENT_KEY_STATUS);
+				final ParcelableStatus status = intent.getParcelableExtra(EXTRA_STATUS);
 				if (mStatus != null && status != null && isSameAccount(context, status.account_id, mStatus.account_id)
 						&& status.id == mStatusId) {
 					getStatus(true);
 				}
 			} else if (BROADCAST_RETWEET_CHANGED.equals(action)) {
-				final long status_id = intent.getLongExtra(INTENT_KEY_STATUS_ID, -1);
+				final long status_id = intent.getLongExtra(EXTRA_STATUS_ID, -1);
 				if (status_id > 0 && status_id == mStatusId) {
 					getStatus(true);
 				}
@@ -200,7 +200,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			mMainContent.setVisibility(View.INVISIBLE);
 			mMainContent.setEnabled(false);
 			setProgressBarIndeterminateVisibility(true);
-			final boolean omit_intent_extra = args != null ? args.getBoolean(INTENT_KEY_OMIT_INTENT_EXTRA, true) : true;
+			final boolean omit_intent_extra = args != null ? args.getBoolean(EXTRA_OMIT_INTENT_EXTRA, true) : true;
 			return new StatusLoader(getActivity(), omit_intent_extra, getArguments(), mAccountId, mStatusId);
 		}
 
@@ -312,7 +312,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 				case MENU_QUOTE: {
 					final Intent intent = new Intent(INTENT_ACTION_QUOTE);
 					final Bundle bundle = new Bundle();
-					bundle.putParcelable(INTENT_KEY_STATUS, mStatus);
+					bundle.putParcelable(EXTRA_STATUS, mStatus);
 					intent.putExtras(bundle);
 					startActivity(intent);
 					break;
@@ -320,7 +320,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 				case MENU_REPLY: {
 					final Intent intent = new Intent(INTENT_ACTION_REPLY);
 					final Bundle bundle = new Bundle();
-					bundle.putParcelable(INTENT_KEY_STATUS, mStatus);
+					bundle.putParcelable(EXTRA_STATUS, mStatus);
 					intent.putExtras(bundle);
 					startActivity(intent);
 					break;
@@ -414,9 +414,9 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		}
 		if (status == null || getActivity() == null) return;
 		final Bundle args = getArguments();
-		args.putLong(INTENT_KEY_ACCOUNT_ID, mAccountId);
-		args.putLong(INTENT_KEY_STATUS_ID, mStatusId);
-		args.putParcelable(INTENT_KEY_STATUS, status);
+		args.putLong(EXTRA_ACCOUNT_ID, mAccountId);
+		args.putLong(EXTRA_STATUS_ID, mStatusId);
+		args.putParcelable(EXTRA_STATUS, status);
 		mMenuBar.inflate(R.menu.menu_status);
 		setMenuForStatus(getActivity(), mMenuBar.getMenu(), status);
 		mMenuBar.show();
@@ -537,8 +537,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		// getPullToRefreshAttacher().setEnabled(false);
 		final Bundle bundle = getArguments();
 		if (bundle != null) {
-			mAccountId = bundle.getLong(INTENT_KEY_ACCOUNT_ID);
-			mStatusId = bundle.getLong(INTENT_KEY_STATUS_ID);
+			mAccountId = bundle.getLong(EXTRA_ACCOUNT_ID);
+			mStatusId = bundle.getLong(EXTRA_STATUS_ID);
 		}
 		mLoadImagesIndicator.setOnClickListener(this);
 		mInReplyToView.setOnClickListener(this);
@@ -820,7 +820,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		final LoaderManager lm = getLoaderManager();
 		lm.destroyLoader(LOADER_ID_STATUS);
 		final Bundle args = new Bundle();
-		args.putBoolean(INTENT_KEY_OMIT_INTENT_EXTRA, omit_intent_extra);
+		args.putBoolean(EXTRA_OMIT_INTENT_EXTRA, omit_intent_extra);
 		if (!mStatusLoaderInitialized) {
 			lm.initLoader(LOADER_ID_STATUS, args, mStatusLoaderCallbacks);
 			mStatusLoaderInitialized = true;
@@ -985,8 +985,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 				if (addresses.size() == 1) {
 					final Address address = addresses.get(0);
 					final StringBuilder builder = new StringBuilder();
-					final int max_idx = address.getMaxAddressLineIndex();
-					for (int i = 0; i < max_idx; i++) {
+					for (int i = 0, max_idx = address.getMaxAddressLineIndex(); i < max_idx; i++) {
 						builder.append(address.getAddressLine(i));
 						if (i != max_idx - 1) {
 							builder.append(", ");
@@ -1038,7 +1037,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		@Override
 		public Response<ParcelableStatus> loadInBackground() {
 			if (!omit_intent_extra && extras != null) {
-				final ParcelableStatus status = extras.getParcelable(INTENT_KEY_STATUS);
+				final ParcelableStatus status = extras.getParcelable(EXTRA_STATUS);
 				if (status != null) return new Response<ParcelableStatus>(status, null);
 			}
 			try {

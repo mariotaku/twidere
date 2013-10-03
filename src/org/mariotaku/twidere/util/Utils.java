@@ -93,8 +93,6 @@ import de.keyboardsurfer.android.widget.crouton.CroutonConfiguration;
 import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 
 import org.apache.http.NameValuePair;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.mariotaku.gallery3d.ImageViewerGLActivity;
 import org.mariotaku.querybuilder.AllColumns;
 import org.mariotaku.querybuilder.Columns;
@@ -196,7 +194,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -366,34 +363,6 @@ public final class Utils implements Constants {
 		builder.append(" )");
 
 		return builder.toString();
-	}
-
-	public static String buildArguments(final Bundle args) {
-		final Set<String> keys = args.keySet();
-		final JSONObject json = new JSONObject();
-		for (final String key : keys) {
-			final Object value = args.get(key);
-			if (value == null) {
-				continue;
-			}
-			try {
-				if (value instanceof Boolean) {
-					json.put(key, args.getBoolean(key));
-				} else if (value instanceof Integer) {
-					json.put(key, args.getInt(key));
-				} else if (value instanceof Long) {
-					json.put(key, args.getLong(key));
-				} else if (value instanceof String) {
-					json.put(key, args.getString(key));
-				} else {
-					Log.w(LOGTAG, "Unknown type " + (value != null ? value.getClass().getSimpleName() : null)
-							+ " in arguments key " + key);
-				}
-			} catch (final JSONException e) {
-				e.printStackTrace();
-			}
-		}
-		return json.toString();
 	}
 
 	public static Uri buildDirectMessageConversationUri(final long account_id, final long conversation_id,
@@ -590,9 +559,9 @@ public final class Utils implements Constants {
 		switch (matchLinkId(uri)) {
 			case LINK_ID_STATUS: {
 				fragment = new StatusFragment();
-				if (!args.containsKey(INTENT_KEY_STATUS_ID)) {
+				if (!args.containsKey(EXTRA_STATUS_ID)) {
 					final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
-					args.putLong(INTENT_KEY_STATUS_ID, ParseUtils.parseLong(param_status_id));
+					args.putLong(EXTRA_STATUS_ID, ParseUtils.parseLong(param_status_id));
 				}
 				break;
 			}
@@ -600,11 +569,11 @@ public final class Utils implements Constants {
 				fragment = new UserProfileFragment();
 				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
-				if (!args.containsKey(INTENT_KEY_SCREEN_NAME)) {
-					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+				if (!args.containsKey(EXTRA_SCREEN_NAME)) {
+					args.putString(EXTRA_SCREEN_NAME, param_screen_name);
 				}
-				if (!args.containsKey(INTENT_KEY_USER_ID)) {
-					args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
+				if (!args.containsKey(EXTRA_USER_ID)) {
+					args.putLong(EXTRA_USER_ID, ParseUtils.parseLong(param_user_id));
 				}
 				break;
 			}
@@ -612,11 +581,11 @@ public final class Utils implements Constants {
 				fragment = new UserListMembershipsListFragment();
 				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
-				if (!args.containsKey(INTENT_KEY_SCREEN_NAME)) {
-					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+				if (!args.containsKey(EXTRA_SCREEN_NAME)) {
+					args.putString(EXTRA_SCREEN_NAME, param_screen_name);
 				}
-				if (!args.containsKey(INTENT_KEY_USER_ID)) {
-					args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
+				if (!args.containsKey(EXTRA_USER_ID)) {
+					args.putLong(EXTRA_USER_ID, ParseUtils.parseLong(param_user_id));
 				}
 				break;
 			}
@@ -624,11 +593,11 @@ public final class Utils implements Constants {
 				fragment = new UserTimelineFragment();
 				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
-				if (!args.containsKey(INTENT_KEY_SCREEN_NAME)) {
-					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+				if (!args.containsKey(EXTRA_SCREEN_NAME)) {
+					args.putString(EXTRA_SCREEN_NAME, param_screen_name);
 				}
-				if (!args.containsKey(INTENT_KEY_USER_ID)) {
-					args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
+				if (!args.containsKey(EXTRA_USER_ID)) {
+					args.putLong(EXTRA_USER_ID, ParseUtils.parseLong(param_user_id));
 				}
 				if (isEmpty(param_screen_name) && isEmpty(param_user_id)) return null;
 				break;
@@ -637,11 +606,11 @@ public final class Utils implements Constants {
 				fragment = new UserFavoritesFragment();
 				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
-				if (!args.containsKey(INTENT_KEY_SCREEN_NAME)) {
-					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+				if (!args.containsKey(EXTRA_SCREEN_NAME)) {
+					args.putString(EXTRA_SCREEN_NAME, param_screen_name);
 				}
-				if (!args.containsKey(INTENT_KEY_USER_ID)) {
-					args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
+				if (!args.containsKey(EXTRA_USER_ID)) {
+					args.putLong(EXTRA_USER_ID, ParseUtils.parseLong(param_user_id));
 				}
 				if (isEmpty(param_screen_name) && isEmpty(param_user_id)) return null;
 				break;
@@ -650,11 +619,11 @@ public final class Utils implements Constants {
 				fragment = new UserFollowersFragment();
 				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
-				if (!args.containsKey(INTENT_KEY_SCREEN_NAME)) {
-					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+				if (!args.containsKey(EXTRA_SCREEN_NAME)) {
+					args.putString(EXTRA_SCREEN_NAME, param_screen_name);
 				}
-				if (!args.containsKey(INTENT_KEY_USER_ID)) {
-					args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
+				if (!args.containsKey(EXTRA_USER_ID)) {
+					args.putLong(EXTRA_USER_ID, ParseUtils.parseLong(param_user_id));
 				}
 				if (isEmpty(param_screen_name) && isEmpty(param_user_id)) return null;
 				break;
@@ -663,11 +632,11 @@ public final class Utils implements Constants {
 				fragment = new UserFriendsFragment();
 				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
-				if (!args.containsKey(INTENT_KEY_SCREEN_NAME)) {
-					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+				if (!args.containsKey(EXTRA_SCREEN_NAME)) {
+					args.putString(EXTRA_SCREEN_NAME, param_screen_name);
 				}
-				if (!args.containsKey(INTENT_KEY_USER_ID)) {
-					args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
+				if (!args.containsKey(EXTRA_USER_ID)) {
+					args.putLong(EXTRA_USER_ID, ParseUtils.parseLong(param_user_id));
 				}
 				if (isEmpty(param_screen_name) && isEmpty(param_user_id)) return null;
 				break;
@@ -682,9 +651,9 @@ public final class Utils implements Constants {
 				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 				final long conversation_id = ParseUtils.parseLong(param_conversation_id);
 				if (conversation_id > 0) {
-					args.putLong(INTENT_KEY_CONVERSATION_ID, conversation_id);
+					args.putLong(EXTRA_CONVERSATION_ID, conversation_id);
 				} else if (param_screen_name != null) {
-					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+					args.putString(EXTRA_SCREEN_NAME, param_screen_name);
 				}
 				break;
 			}
@@ -697,21 +666,21 @@ public final class Utils implements Constants {
 				if (isEmpty(param_list_id)
 						&& (isEmpty(param_list_name) || isEmpty(param_screen_name) && isEmpty(param_user_id)))
 					return null;
-				args.putInt(INTENT_KEY_LIST_ID, ParseUtils.parseInt(param_list_id));
-				args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
-				args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
-				args.putString(INTENT_KEY_LIST_NAME, param_list_name);
+				args.putInt(EXTRA_LIST_ID, ParseUtils.parseInt(param_list_id));
+				args.putLong(EXTRA_USER_ID, ParseUtils.parseLong(param_user_id));
+				args.putString(EXTRA_SCREEN_NAME, param_screen_name);
+				args.putString(EXTRA_LIST_NAME, param_list_name);
 				break;
 			}
 			case LINK_ID_LISTS: {
 				fragment = new UserListsListFragment();
 				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
-				if (!args.containsKey(INTENT_KEY_SCREEN_NAME)) {
-					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+				if (!args.containsKey(EXTRA_SCREEN_NAME)) {
+					args.putString(EXTRA_SCREEN_NAME, param_screen_name);
 				}
-				if (!args.containsKey(INTENT_KEY_USER_ID)) {
-					args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
+				if (!args.containsKey(EXTRA_USER_ID)) {
+					args.putLong(EXTRA_USER_ID, ParseUtils.parseLong(param_user_id));
 				}
 				if (isEmpty(param_screen_name) && isEmpty(param_user_id)) return null;
 				break;
@@ -725,10 +694,10 @@ public final class Utils implements Constants {
 				if (isEmpty(param_list_id)
 						&& (isEmpty(param_list_name) || isEmpty(param_screen_name) && isEmpty(param_user_id)))
 					return null;
-				args.putInt(INTENT_KEY_LIST_ID, ParseUtils.parseInt(param_list_id));
-				args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
-				args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
-				args.putString(INTENT_KEY_LIST_NAME, param_list_name);
+				args.putInt(EXTRA_LIST_ID, ParseUtils.parseInt(param_list_id));
+				args.putLong(EXTRA_USER_ID, ParseUtils.parseLong(param_user_id));
+				args.putString(EXTRA_SCREEN_NAME, param_screen_name);
+				args.putString(EXTRA_LIST_NAME, param_list_name);
 				break;
 			}
 			case LINK_ID_LIST_MEMBERS: {
@@ -740,10 +709,10 @@ public final class Utils implements Constants {
 				if (isEmpty(param_list_id)
 						&& (isEmpty(param_list_name) || isEmpty(param_screen_name) && isEmpty(param_user_id)))
 					return null;
-				args.putInt(INTENT_KEY_LIST_ID, ParseUtils.parseInt(param_list_id));
-				args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
-				args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
-				args.putString(INTENT_KEY_LIST_NAME, param_list_name);
+				args.putInt(EXTRA_LIST_ID, ParseUtils.parseInt(param_list_id));
+				args.putLong(EXTRA_USER_ID, ParseUtils.parseLong(param_user_id));
+				args.putString(EXTRA_SCREEN_NAME, param_screen_name);
+				args.putString(EXTRA_LIST_NAME, param_list_name);
 				break;
 			}
 			case LINK_ID_LIST_SUBSCRIBERS: {
@@ -755,10 +724,10 @@ public final class Utils implements Constants {
 				if (isEmpty(param_list_id)
 						&& (isEmpty(param_list_name) || isEmpty(param_screen_name) && isEmpty(param_user_id)))
 					return null;
-				args.putInt(INTENT_KEY_LIST_ID, ParseUtils.parseInt(param_list_id));
-				args.putLong(INTENT_KEY_USER_ID, ParseUtils.parseLong(param_user_id));
-				args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
-				args.putString(INTENT_KEY_LIST_NAME, param_list_name);
+				args.putInt(EXTRA_LIST_ID, ParseUtils.parseInt(param_list_id));
+				args.putLong(EXTRA_USER_ID, ParseUtils.parseLong(param_user_id));
+				args.putString(EXTRA_SCREEN_NAME, param_screen_name);
+				args.putString(EXTRA_LIST_NAME, param_list_name);
 				break;
 			}
 			case LINK_ID_SAVED_SEARCHES: {
@@ -768,10 +737,10 @@ public final class Utils implements Constants {
 			case LINK_ID_USER_MENTIONS: {
 				fragment = new UserMentionsFragment();
 				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
-				if (!args.containsKey(INTENT_KEY_SCREEN_NAME) && !isEmpty(param_screen_name)) {
-					args.putString(INTENT_KEY_SCREEN_NAME, param_screen_name);
+				if (!args.containsKey(EXTRA_SCREEN_NAME) && !isEmpty(param_screen_name)) {
+					args.putString(EXTRA_SCREEN_NAME, param_screen_name);
 				}
-				if (isEmpty(args.getString(INTENT_KEY_SCREEN_NAME))) return null;
+				if (isEmpty(args.getString(EXTRA_SCREEN_NAME))) return null;
 				break;
 			}
 			case LINK_ID_INCOMING_FRIENDSHIPS: {
@@ -788,16 +757,16 @@ public final class Utils implements Constants {
 			}
 			case LINK_ID_STATUS_RETWEETERS: {
 				fragment = new StatusRetweetersListFragment();
-				if (!args.containsKey(INTENT_KEY_STATUS_ID)) {
+				if (!args.containsKey(EXTRA_STATUS_ID)) {
 					final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
-					args.putLong(INTENT_KEY_STATUS_ID, ParseUtils.parseLong(param_status_id));
+					args.putLong(EXTRA_STATUS_ID, ParseUtils.parseLong(param_status_id));
 				}
 				break;
 			}
 			case LINK_ID_SEARCH: {
 				final String param_query = uri.getQueryParameter(QUERY_PARAM_QUERY);
 				if (isEmpty(param_query)) return null;
-				args.putString(INTENT_KEY_QUERY, param_query);
+				args.putString(EXTRA_QUERY, param_query);
 				fragment = new SearchFragment();
 				break;
 			}
@@ -807,15 +776,15 @@ public final class Utils implements Constants {
 		}
 		final String param_account_id = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_ID);
 		if (param_account_id != null) {
-			args.putLong(INTENT_KEY_ACCOUNT_ID, ParseUtils.parseLong(param_account_id));
+			args.putLong(EXTRA_ACCOUNT_ID, ParseUtils.parseLong(param_account_id));
 		} else {
 			final String param_account_name = uri.getQueryParameter(QUERY_PARAM_ACCOUNT_NAME);
 			if (param_account_name != null) {
-				args.putLong(INTENT_KEY_ACCOUNT_ID, getAccountId(context, param_account_name));
+				args.putLong(EXTRA_ACCOUNT_ID, getAccountId(context, param_account_name));
 			} else {
 				final long account_id = getDefaultAccountId(context);
 				if (isMyAccount(context, account_id)) {
-					args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+					args.putLong(EXTRA_ACCOUNT_ID, account_id);
 				}
 			}
 		}
@@ -1477,8 +1446,8 @@ public final class Utils implements Constants {
 				final String icon_type = cur.getString(idx_icon);
 				final String type = cur.getString(idx_type);
 				final String name = cur.getString(idx_name);
-				final Bundle args = ParseUtils.parseArguments(cur.getString(idx_arguments));
-				args.putInt(INTENT_KEY_TAB_POSITION, position);
+				final Bundle args = ParseUtils.jsonToBundle(cur.getString(idx_arguments));
+				args.putInt(EXTRA_TAB_POSITION, position);
 				final Class<? extends Fragment> fragment = CustomTabConfiguration.get(type).getFragmentClass();
 				if (name != null && fragment != null) {
 					tabs.add(new SupportTabSpec(name, CustomTabConfiguration.getTabIconObject(icon_type), fragment,
@@ -1875,24 +1844,16 @@ public final class Utils implements Constants {
 		return 0;
 	}
 
-	public static Drawable getTabIconDrawable(final Context context, final Object icon_obj) {
-		if (context == null) return null;
-		final Resources res = context.getResources();
-		if (icon_obj instanceof Integer) {
-			try {
-				return res.getDrawable((Integer) icon_obj);
-			} catch (final Resources.NotFoundException e) {
-				// Ignore.
-			}
-		} else if (icon_obj instanceof Bitmap)
-			return new BitmapDrawable(res, (Bitmap) icon_obj);
-		else if (icon_obj instanceof Drawable)
-			return (Drawable) icon_obj;
-		else if (icon_obj instanceof File) {
-			final Bitmap b = getTabIconFromFile((File) icon_obj, res);
-			if (b != null) return new BitmapDrawable(res, b);
-		}
-		return res.getDrawable(R.drawable.ic_tab_list);
+	public static Bitmap getTabIconFromFile(final File file, final Resources res) {
+		if (file == null || !file.exists()) return null;
+		final String path = file.getPath();
+		final BitmapFactory.Options o = new BitmapFactory.Options();
+		o.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(path, o);
+		if (o.outHeight <= 0 || o.outWidth <= 0) return null;
+		o.inSampleSize = (int) (Math.max(o.outWidth, o.outHeight) / (48 * res.getDisplayMetrics().density));
+		o.inJustDecodeBounds = false;
+		return BitmapFactory.decodeFile(path, o);
 	}
 
 	public static int getTableId(final Uri uri) {
@@ -1940,12 +1901,6 @@ public final class Utils implements Constants {
 	public static String getTableNameByUri(final Uri uri) {
 		if (uri == null) return null;
 		return getTableNameById(getTableId(uri));
-	}
-
-	public static String getTabTypeName(final Context context, final String type) {
-		if (context == null) return null;
-		final Integer res_id = CustomTabConfiguration.get(type).getDefaultTitle();
-		return res_id != null ? context.getString(res_id) : null;
 	}
 
 	public static int getTextCount(final String string) {
@@ -2604,9 +2559,9 @@ public final class Utils implements Constants {
 				final Fragment fragment = new DirectMessagesConversationFragment();
 				final Bundle args = new Bundle();
 				if (account_id > 0 && conversation_id > 0) {
-					args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+					args.putLong(EXTRA_ACCOUNT_ID, account_id);
 					if (conversation_id > 0) {
-						args.putLong(INTENT_KEY_CONVERSATION_ID, conversation_id);
+						args.putLong(EXTRA_CONVERSATION_ID, conversation_id);
 					}
 				}
 				fragment.setArguments(args);
@@ -2636,9 +2591,9 @@ public final class Utils implements Constants {
 			final FragmentManager fm = activity.getSupportFragmentManager();
 			final DialogFragment fragment = new SensitiveContentWarningDialogFragment();
 			final Bundle args = new Bundle();
-			args.putParcelable(INTENT_KEY_URI, Uri.parse(uri));
+			args.putParcelable(EXTRA_URI, Uri.parse(uri));
 			if (orig != null) {
-				args.putParcelable(INTENT_KEY_URI_ORIG, Uri.parse(orig));
+				args.putParcelable(EXTRA_URI_ORIG, Uri.parse(orig));
 			}
 			fragment.setArguments(args);
 			fragment.show(fm, "sensitive_content_warning");
@@ -2652,7 +2607,7 @@ public final class Utils implements Constants {
 		final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE);
 		intent.setData(Uri.parse(uri));
 		if (orig != null) {
-			intent.putExtra(INTENT_KEY_URI_ORIG, Uri.parse(orig));
+			intent.putExtra(EXTRA_URI_ORIG, Uri.parse(orig));
 		}
 		intent.setClass(context, ImageViewerGLActivity.class);
 		context.startActivity(intent);
@@ -2664,7 +2619,7 @@ public final class Utils implements Constants {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new IncomingFriendshipsFragment();
 			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			args.putLong(EXTRA_ACCOUNT_ID, account_id);
 			fragment.setArguments(args);
 			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
 		} else {
@@ -2682,7 +2637,7 @@ public final class Utils implements Constants {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new SavedSearchesListFragment();
 			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			args.putLong(EXTRA_ACCOUNT_ID, account_id);
 			fragment.setArguments(args);
 			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
 		} else {
@@ -2700,8 +2655,8 @@ public final class Utils implements Constants {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new SearchFragment();
 			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			args.putString(INTENT_KEY_QUERY, query);
+			args.putLong(EXTRA_ACCOUNT_ID, account_id);
+			args.putString(EXTRA_QUERY, query);
 			fragment.setArguments(args);
 			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
 		} else {
@@ -2720,8 +2675,8 @@ public final class Utils implements Constants {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new StatusFragment();
 			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			args.putLong(INTENT_KEY_STATUS_ID, status_id);
+			args.putLong(EXTRA_ACCOUNT_ID, account_id);
+			args.putLong(EXTRA_STATUS_ID, status_id);
 			fragment.setArguments(args);
 			dual_pane_activity.showAtPane(DualPaneActivity.PANE_RIGHT, fragment, true);
 		} else {
@@ -2739,7 +2694,7 @@ public final class Utils implements Constants {
 		if (activity == null || status == null) return;
 		final long account_id = status.account_id, status_id = status.id;
 		final Bundle bundle = new Bundle();
-		bundle.putParcelable(INTENT_KEY_STATUS, status);
+		bundle.putParcelable(EXTRA_STATUS, status);
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment details_fragment = dual_pane_activity.getDetailsFragment();
@@ -2749,8 +2704,8 @@ public final class Utils implements Constants {
 			} else {
 				final Fragment fragment = new StatusFragment();
 				final Bundle args = new Bundle(bundle);
-				args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-				args.putLong(INTENT_KEY_STATUS_ID, status_id);
+				args.putLong(EXTRA_ACCOUNT_ID, account_id);
+				args.putLong(EXTRA_STATUS_ID, status_id);
 				fragment.setArguments(args);
 				dual_pane_activity.showAtPane(DualPaneActivity.PANE_RIGHT, fragment, true);
 			}
@@ -2770,7 +2725,7 @@ public final class Utils implements Constants {
 	public static void openStatuses(final Activity activity, final List<ParcelableStatus> statuses) {
 		if (activity == null || statuses == null) return;
 		final Bundle bundle = new Bundle();
-		bundle.putParcelableArrayList(INTENT_KEY_STATUSES, new ArrayList<ParcelableStatus>(statuses));
+		bundle.putParcelableArrayList(EXTRA_STATUSES, new ArrayList<ParcelableStatus>(statuses));
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new StatusesListFragment();
@@ -2792,8 +2747,8 @@ public final class Utils implements Constants {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new StatusRetweetersListFragment();
 			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			args.putLong(INTENT_KEY_STATUS_ID, status_id);
+			args.putLong(EXTRA_ACCOUNT_ID, account_id);
+			args.putLong(EXTRA_STATUS_ID, status_id);
 			fragment.setArguments(args);
 			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
 		} else {
@@ -2812,9 +2767,9 @@ public final class Utils implements Constants {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new SearchStatusesFragment();
 			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			args.putLong(EXTRA_ACCOUNT_ID, account_id);
 			if (query != null) {
-				args.putString(INTENT_KEY_QUERY, query);
+				args.putString(EXTRA_QUERY, query);
 			}
 			fragment.setArguments(args);
 			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
@@ -2837,7 +2792,7 @@ public final class Utils implements Constants {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserBlocksListFragment();
 			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			args.putLong(EXTRA_ACCOUNT_ID, account_id);
 			fragment.setArguments(args);
 			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
 		} else {
@@ -2856,12 +2811,12 @@ public final class Utils implements Constants {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserFavoritesFragment();
 			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			args.putLong(EXTRA_ACCOUNT_ID, account_id);
 			if (user_id > 0) {
-				args.putLong(INTENT_KEY_USER_ID, user_id);
+				args.putLong(EXTRA_USER_ID, user_id);
 			}
 			if (screen_name != null) {
-				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+				args.putString(EXTRA_SCREEN_NAME, screen_name);
 			}
 			fragment.setArguments(args);
 			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
@@ -2888,12 +2843,12 @@ public final class Utils implements Constants {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserFollowersFragment();
 			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			args.putLong(EXTRA_ACCOUNT_ID, account_id);
 			if (user_id > 0) {
-				args.putLong(INTENT_KEY_USER_ID, user_id);
+				args.putLong(EXTRA_USER_ID, user_id);
 			}
 			if (screen_name != null) {
-				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+				args.putString(EXTRA_SCREEN_NAME, screen_name);
 			}
 			fragment.setArguments(args);
 			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
@@ -2919,12 +2874,12 @@ public final class Utils implements Constants {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserFriendsFragment();
 			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			args.putLong(EXTRA_ACCOUNT_ID, account_id);
 			if (user_id > 0) {
-				args.putLong(INTENT_KEY_USER_ID, user_id);
+				args.putLong(EXTRA_USER_ID, user_id);
 			}
 			if (screen_name != null) {
-				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+				args.putString(EXTRA_SCREEN_NAME, screen_name);
 			}
 			fragment.setArguments(args);
 			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
@@ -2951,11 +2906,11 @@ public final class Utils implements Constants {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserListDetailsFragment();
 			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			args.putInt(INTENT_KEY_LIST_ID, list_id);
-			args.putLong(INTENT_KEY_USER_ID, user_id);
-			args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
-			args.putString(INTENT_KEY_LIST_NAME, list_name);
+			args.putLong(EXTRA_ACCOUNT_ID, account_id);
+			args.putInt(EXTRA_LIST_ID, list_id);
+			args.putLong(EXTRA_USER_ID, user_id);
+			args.putString(EXTRA_SCREEN_NAME, screen_name);
+			args.putString(EXTRA_LIST_NAME, list_name);
 			fragment.setArguments(args);
 			dual_pane_activity.showFragment(fragment, true);
 		} else {
@@ -2986,11 +2941,11 @@ public final class Utils implements Constants {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserListMembersFragment();
 			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			args.putInt(INTENT_KEY_LIST_ID, list_id);
-			args.putLong(INTENT_KEY_USER_ID, user_id);
-			args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
-			args.putString(INTENT_KEY_LIST_NAME, list_name);
+			args.putLong(EXTRA_ACCOUNT_ID, account_id);
+			args.putInt(EXTRA_LIST_ID, list_id);
+			args.putLong(EXTRA_USER_ID, user_id);
+			args.putString(EXTRA_SCREEN_NAME, screen_name);
+			args.putString(EXTRA_LIST_NAME, list_name);
 			fragment.setArguments(args);
 			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
 		} else {
@@ -3026,12 +2981,12 @@ public final class Utils implements Constants {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserListMembershipsListFragment();
 			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			args.putLong(EXTRA_ACCOUNT_ID, account_id);
 			if (user_id > 0) {
-				args.putLong(INTENT_KEY_USER_ID, user_id);
+				args.putLong(EXTRA_USER_ID, user_id);
 			}
 			if (screen_name != null) {
-				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+				args.putString(EXTRA_SCREEN_NAME, screen_name);
 			}
 			fragment.setArguments(args);
 			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
@@ -3058,9 +3013,9 @@ public final class Utils implements Constants {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserListsListFragment();
 			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			args.putLong(INTENT_KEY_USER_ID, user_id);
-			args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+			args.putLong(EXTRA_ACCOUNT_ID, account_id);
+			args.putLong(EXTRA_USER_ID, user_id);
+			args.putString(EXTRA_SCREEN_NAME, screen_name);
 			fragment.setArguments(args);
 			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
 		} else {
@@ -3085,11 +3040,11 @@ public final class Utils implements Constants {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserListSubscribersFragment();
 			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			args.putInt(INTENT_KEY_LIST_ID, list_id);
-			args.putLong(INTENT_KEY_USER_ID, user_id);
-			args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
-			args.putString(INTENT_KEY_LIST_NAME, list_name);
+			args.putLong(EXTRA_ACCOUNT_ID, account_id);
+			args.putInt(EXTRA_LIST_ID, list_id);
+			args.putLong(EXTRA_USER_ID, user_id);
+			args.putString(EXTRA_SCREEN_NAME, screen_name);
+			args.putString(EXTRA_LIST_NAME, list_name);
 			fragment.setArguments(args);
 			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
 		} else {
@@ -3125,11 +3080,11 @@ public final class Utils implements Constants {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserListTimelineFragment();
 			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
-			args.putInt(INTENT_KEY_LIST_ID, list_id);
-			args.putLong(INTENT_KEY_USER_ID, user_id);
-			args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
-			args.putString(INTENT_KEY_LIST_NAME, list_name);
+			args.putLong(EXTRA_ACCOUNT_ID, account_id);
+			args.putInt(EXTRA_LIST_ID, list_id);
+			args.putLong(EXTRA_USER_ID, user_id);
+			args.putString(EXTRA_SCREEN_NAME, screen_name);
+			args.putString(EXTRA_LIST_NAME, list_name);
 			fragment.setArguments(args);
 			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
 		} else {
@@ -3164,9 +3119,9 @@ public final class Utils implements Constants {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserMentionsFragment();
 			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			args.putLong(EXTRA_ACCOUNT_ID, account_id);
 			if (screen_name != null) {
-				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+				args.putString(EXTRA_SCREEN_NAME, screen_name);
 			}
 			fragment.setArguments(args);
 			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
@@ -3189,12 +3144,12 @@ public final class Utils implements Constants {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserProfileFragment();
 			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			args.putLong(EXTRA_ACCOUNT_ID, account_id);
 			if (user_id > 0) {
-				args.putLong(INTENT_KEY_USER_ID, user_id);
+				args.putLong(EXTRA_USER_ID, user_id);
 			}
 			if (screen_name != null) {
-				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+				args.putString(EXTRA_SCREEN_NAME, screen_name);
 			}
 			fragment.setArguments(args);
 			dual_pane_activity.showAtPane(DualPaneActivity.PANE_RIGHT, fragment, true);
@@ -3217,7 +3172,7 @@ public final class Utils implements Constants {
 	public static void openUserProfile(final Activity activity, final ParcelableUser user) {
 		if (activity == null || user == null) return;
 		final Bundle bundle = new Bundle();
-		bundle.putParcelable(INTENT_KEY_USER, user);
+		bundle.putParcelable(EXTRA_USER, user);
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment details_fragment = dual_pane_activity.getDetailsFragment();
@@ -3227,12 +3182,12 @@ public final class Utils implements Constants {
 			} else {
 				final Fragment fragment = new UserProfileFragment();
 				final Bundle args = new Bundle(bundle);
-				args.putLong(INTENT_KEY_ACCOUNT_ID, user.account_id);
+				args.putLong(EXTRA_ACCOUNT_ID, user.account_id);
 				if (user.id > 0) {
-					args.putLong(INTENT_KEY_USER_ID, user.id);
+					args.putLong(EXTRA_USER_ID, user.id);
 				}
 				if (user.screen_name != null) {
-					args.putString(INTENT_KEY_SCREEN_NAME, user.screen_name);
+					args.putString(EXTRA_SCREEN_NAME, user.screen_name);
 				}
 				fragment.setArguments(args);
 				dual_pane_activity.showAtPane(DualPaneActivity.PANE_RIGHT, fragment, true);
@@ -3257,7 +3212,7 @@ public final class Utils implements Constants {
 	public static void openUsers(final Activity activity, final List<ParcelableUser> users) {
 		if (activity == null || users == null) return;
 		final Bundle bundle = new Bundle();
-		bundle.putParcelableArrayList(INTENT_KEY_USERS, new ArrayList<ParcelableUser>(users));
+		bundle.putParcelableArrayList(EXTRA_USERS, new ArrayList<ParcelableUser>(users));
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UsersListFragment();
@@ -3280,12 +3235,12 @@ public final class Utils implements Constants {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment fragment = new UserTimelineFragment();
 			final Bundle args = new Bundle();
-			args.putLong(INTENT_KEY_ACCOUNT_ID, account_id);
+			args.putLong(EXTRA_ACCOUNT_ID, account_id);
 			if (user_id > 0) {
-				args.putLong(INTENT_KEY_USER_ID, user_id);
+				args.putLong(EXTRA_USER_ID, user_id);
 			}
 			if (screen_name != null) {
-				args.putString(INTENT_KEY_SCREEN_NAME, screen_name);
+				args.putString(EXTRA_SCREEN_NAME, screen_name);
 			}
 			fragment.setArguments(args);
 			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
@@ -3408,7 +3363,7 @@ public final class Utils implements Constants {
 		}
 		final Intent extension_intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_STATUS);
 		final Bundle extension_extras = new Bundle();
-		extension_extras.putParcelable(INTENT_KEY_STATUS, status);
+		extension_extras.putParcelable(EXTRA_STATUS, status);
 		extension_intent.putExtras(extension_extras);
 		final MenuItem more_submenu = menu.findItem(R.id.more_submenu);
 		addIntentToMenu(context, more_submenu != null ? more_submenu.getSubMenu() : menu, extension_intent);
@@ -3652,18 +3607,6 @@ public final class Utils implements Constants {
 	public static String trimLineBreak(final String orig) {
 		if (orig == null) return null;
 		return orig.replaceAll("\\n+", "\n");
-	}
-
-	private static Bitmap getTabIconFromFile(final File file, final Resources res) {
-		if (file == null || !file.exists()) return null;
-		final String path = file.getPath();
-		final BitmapFactory.Options o = new BitmapFactory.Options();
-		o.inJustDecodeBounds = true;
-		BitmapFactory.decodeFile(path, o);
-		if (o.outHeight <= 0 || o.outWidth <= 0) return null;
-		o.inSampleSize = (int) (Math.max(o.outWidth, o.outHeight) / (48 * res.getDisplayMetrics().density));
-		o.inJustDecodeBounds = false;
-		return BitmapFactory.decodeFile(path, o);
 	}
 
 	private static void parseEntities(final HtmlBuilder builder, final EntitySupport entities) {

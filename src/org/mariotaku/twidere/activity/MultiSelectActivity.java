@@ -88,13 +88,13 @@ public class MultiSelectActivity extends DualPaneActivity implements ActionMode.
 				final Object first_obj = selected_items.get(0);
 				if (first_obj instanceof ParcelableStatus) {
 					final ParcelableStatus first_status = (ParcelableStatus) first_obj;
-					bundle.putLong(INTENT_KEY_ACCOUNT_ID, first_status.account_id);
-					bundle.putLong(INTENT_KEY_IN_REPLY_TO_ID, first_status.id);
+					bundle.putLong(EXTRA_ACCOUNT_ID, first_status.account_id);
+					bundle.putLong(EXTRA_IN_REPLY_TO_ID, first_status.id);
 				} else if (first_obj instanceof ParcelableUser) {
 					final ParcelableUser first_user = (ParcelableUser) first_obj;
-					bundle.putLong(INTENT_KEY_ACCOUNT_ID, first_user.account_id);
+					bundle.putLong(EXTRA_ACCOUNT_ID, first_user.account_id);
 				}
-				bundle.putStringArray(INTENT_KEY_SCREEN_NAMES, all_mentions.toArray(new String[all_mentions.size()]));
+				bundle.putStringArray(EXTRA_SCREEN_NAMES, all_mentions.toArray(new String[all_mentions.size()]));
 				intent.putExtras(bundle);
 				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				startActivity(intent);

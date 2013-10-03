@@ -33,7 +33,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
+import org.mariotaku.twidere.adapter.iface.IBaseCardAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
@@ -43,7 +43,7 @@ import org.mariotaku.twidere.view.holder.UserViewHolder;
 import java.util.List;
 import java.util.Locale;
 
-public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseAdapter, OnClickListener {
+public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseCardAdapter, OnClickListener {
 
 	private final ImageLoaderWrapper mProfileImageLoader;
 	private final MultiSelectManager mMultiSelectManager;

@@ -134,7 +134,7 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 		mProgress.setVisibility(View.VISIBLE);
 		mProgress.setIndeterminate(true);
 		invalidateOptionsMenu();
-		final Uri uri = args != null ? (Uri) args.getParcelable(INTENT_KEY_URI) : null;
+		final Uri uri = args != null ? (Uri) args.getParcelable(EXTRA_URI) : null;
 		return new GLImageLoader(this, this, uri);
 	}
 
@@ -213,7 +213,7 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		final Intent intent = getIntent();
 		final Uri uri = intent.getData();
-		final Uri orig = intent.getParcelableExtra(INTENT_KEY_URI_ORIG);
+		final Uri orig = intent.getParcelableExtra(EXTRA_URI_ORIG);
 		switch (item.getItemId()) {
 			case MENU_HOME: {
 				onBackPressed();
@@ -410,7 +410,7 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 			return;
 		}
 		final Bundle args = new Bundle();
-		args.putParcelable(INTENT_KEY_URI, uri);
+		args.putParcelable(EXTRA_URI, uri);
 		if (!mLoaderInitialized) {
 			getSupportLoaderManager().initLoader(0, args, this);
 			mLoaderInitialized = true;

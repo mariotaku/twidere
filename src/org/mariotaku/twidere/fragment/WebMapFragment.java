@@ -57,8 +57,8 @@ public class WebMapFragment extends BaseWebViewFragment implements MapInterface 
 	private void getLocation() {
 		final Bundle bundle = getArguments();
 		if (bundle != null) {
-			latitude = bundle.getDouble(INTENT_KEY_LATITUDE, 0.0);
-			longitude = bundle.getDouble(INTENT_KEY_LONGITUDE, 0.0);
+			latitude = bundle.getDouble(EXTRA_LATITUDE, 0.0);
+			longitude = bundle.getDouble(EXTRA_LONGITUDE, 0.0);
 		}
 	}
 

@@ -221,7 +221,7 @@ public class DraftsActivity extends TwidereSwipeBackActivity implements LoaderCa
 	private void editDraft(final DraftItem draft) {
 		final Intent intent = new Intent(INTENT_ACTION_EDIT_DRAFT);
 		final Bundle bundle = new Bundle();
-		bundle.putParcelable(INTENT_KEY_DRAFT, draft);
+		bundle.putParcelable(EXTRA_DRAFT, draft);
 		intent.putExtras(bundle);
 		mResolver.delete(Drafts.CONTENT_URI, Drafts._ID + " = " + draft._id, null);
 		startActivityForResult(intent, REQUEST_COMPOSE);

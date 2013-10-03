@@ -41,9 +41,11 @@ import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
+import org.mariotaku.querybuilder.Columns.Column;
+import org.mariotaku.querybuilder.RawItemArray;
+import org.mariotaku.querybuilder.Where;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
-import org.mariotaku.twidere.util.ArrayUtils;
 
 public abstract class BaseFiltersFragment extends BaseListFragment implements LoaderCallbacks<Cursor>,
 		MultiChoiceModeListener {
@@ -75,12 +77,8 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 	public boolean onActionItemClicked(final ActionMode mode, final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_DELETE: {
-				final StringBuilder builder = new StringBuilder();
-				builder.append(Filters._ID + " IN(");
-				builder.append(ArrayUtils.toString(mListView.getCheckedItemIds(), ',', false));
-				builder.append(")");
-				mResolver.delete(getContentUri(), builder.toString(), null);
-				// getLoaderManager().restartLoader(0, null, this);
+				final Where where = Where.in(new Column(Filters._ID), new RawItemArray(mListView.getCheckedItemIds()));
+				mResolver.delete(getContentUri(), where.getSQL(), null);
 				break;
 			}
 			default: {

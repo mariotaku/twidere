@@ -21,7 +21,7 @@ package org.mariotaku.twidere.adapter.iface;
 
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 
-public interface IDirectMessagesAdapter extends IBaseAdapter {
+public interface IDirectMessagesAdapter extends IBaseCardAdapter {
 
 	public ParcelableDirectMessage findItem(long id);
 

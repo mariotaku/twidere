@@ -63,10 +63,10 @@ public class UserListMembersFragment extends CursorSupportUsersListFragment impl
 			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
 			if (BROADCAST_USER_LIST_MEMBERS_DELETED.equals(action)) {
-				if (!intent.getBooleanExtra(INTENT_KEY_SUCCEED, false)) return;
-				final ParcelableUserList list = intent.getParcelableExtra(INTENT_KEY_USER_LIST);
+				if (!intent.getBooleanExtra(EXTRA_SUCCEED, false)) return;
+				final ParcelableUserList list = intent.getParcelableExtra(EXTRA_USER_LIST);
 				if (mUserList != null && list != null && list.id == mUserList.id) {
-					removeUsers(intent.getLongArrayExtra(INTENT_KEY_USER_IDS));
+					removeUsers(intent.getLongArrayExtra(EXTRA_USER_IDS));
 				}
 			}
 		}
@@ -75,11 +75,11 @@ public class UserListMembersFragment extends CursorSupportUsersListFragment impl
 	@Override
 	public CursorSupportUsersLoader newLoaderInstance(final Context context, final Bundle args) {
 		if (args == null) return null;
-		final int list_id = args.getInt(INTENT_KEY_LIST_ID, -1);
-		final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-		final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
-		final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-		final String list_name = args.getString(INTENT_KEY_LIST_NAME);
+		final int list_id = args.getInt(EXTRA_LIST_ID, -1);
+		final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
+		final long user_id = args.getLong(EXTRA_USER_ID, -1);
+		final String screen_name = args.getString(EXTRA_SCREEN_NAME);
+		final String list_name = args.getString(EXTRA_LIST_NAME);
 		return new UserListMembersLoader(context, account_id, list_id, user_id, screen_name, list_name,
 				getNextCursor(), getData());
 	}
@@ -88,18 +88,18 @@ public class UserListMembersFragment extends CursorSupportUsersListFragment impl
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		final Bundle args = getArguments();
 		if (savedInstanceState != null) {
-			mUserList = savedInstanceState.getParcelable(INTENT_KEY_USER_LIST);
+			mUserList = savedInstanceState.getParcelable(EXTRA_USER_LIST);
 		} else if (args != null) {
-			mUserList = args.getParcelable(INTENT_KEY_USER_LIST);
+			mUserList = args.getParcelable(EXTRA_USER_LIST);
 		}
 		mTwitterWrapper = getApplication().getTwitterWrapper();
 		super.onActivityCreated(savedInstanceState);
 		if (mUserList == null && args != null) {
-			final int list_id = args.getInt(INTENT_KEY_LIST_ID, -1);
-			final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-			final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
-			final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
-			final String list_name = args.getString(INTENT_KEY_LIST_NAME);
+			final int list_id = args.getInt(EXTRA_LIST_ID, -1);
+			final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
+			final long user_id = args.getLong(EXTRA_USER_ID, -1);
+			final String screen_name = args.getString(EXTRA_SCREEN_NAME);
+			final String list_name = args.getString(EXTRA_LIST_NAME);
 			new GetUserListTask(account_id, list_id, list_name, user_id, screen_name).execute();
 		}
 	}
@@ -146,7 +146,7 @@ public class UserListMembersFragment extends CursorSupportUsersListFragment impl
 
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
-		outState.putParcelable(INTENT_KEY_USER_LIST, mUserList);
+		outState.putParcelable(EXTRA_USER_LIST, mUserList);
 		super.onSaveInstanceState(outState);
 	}
 

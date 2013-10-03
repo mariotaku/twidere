@@ -21,12 +21,10 @@ package org.mariotaku.twidere.activity;
 
 import static android.os.Environment.getExternalStorageState;
 import static android.text.TextUtils.isEmpty;
-import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static org.mariotaku.twidere.model.ParcelableLocation.isValidLocation;
 import static org.mariotaku.twidere.util.ParseUtils.parseString;
 import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
 import static org.mariotaku.twidere.util.Utils.copyStream;
-import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 import static org.mariotaku.twidere.util.Utils.getAccountColors;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getAccountName;
@@ -128,10 +126,10 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 
 	private static final String FAKE_IMAGE_LINK = "https://www.example.com/fake_image.jpg";
 
-	private static final String INTENT_KEY_IS_POSSIBLY_SENSITIVE = "is_possibly_sensitive";
+	private static final String EXTRA_IS_POSSIBLY_SENSITIVE = "is_possibly_sensitive";
 
-	private static final String INTENT_KEY_SHOULD_SAVE_ACCOUNTS = "should_save_accounts";
-	private static final String INTENT_KEY_ORIGINAL_TEXT = "original_text";
+	private static final String EXTRA_SHOULD_SAVE_ACCOUNTS = "should_save_accounts";
+	private static final String EXTRA_ORIGINAL_TEXT = "original_text";
 	private AsyncTwitterWrapper mTwitterWrapper;
 	private LocationManager mLocationManager;
 
@@ -239,7 +237,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 				if (mInReplyToStatus == null) return false;
 				final DialogFragment fragment = new ViewStatusDialogFragment();
 				final Bundle args = new Bundle();
-				args.putParcelable(INTENT_KEY_STATUS, mInReplyToStatus);
+				args.putParcelable(EXTRA_STATUS, mInReplyToStatus);
 				fragment.setArguments(args);
 				fragment.show(getFragmentManager(), "view_status");
 				break;
@@ -247,8 +245,8 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 			case MENU_SELECT_ACCOUNT: {
 				final Intent intent = new Intent(INTENT_ACTION_SELECT_ACCOUNT);
 				final Bundle bundle = new Bundle();
-				bundle.putBoolean(INTENT_KEY_ACTIVATED_ONLY, false);
-				bundle.putLongArray(INTENT_KEY_IDS, mAccountIds);
+				bundle.putBoolean(EXTRA_ACTIVATED_ONLY, false);
+				bundle.putLongArray(EXTRA_IDS, mAccountIds);
 				intent.putExtras(bundle);
 				startActivityForResult(intent, REQUEST_SELECT_ACCOUNT);
 				break;
@@ -259,19 +257,19 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 					try {
 						if (INTENT_ACTION_EXTENSION_COMPOSE.equals(intent.getAction())) {
 							final Bundle extras = new Bundle();
-							extras.putString(INTENT_KEY_TEXT, ParseUtils.parseString(mEditText.getText()));
-							extras.putLongArray(INTENT_KEY_ACCOUNT_IDS, mAccountIds);
+							extras.putString(EXTRA_TEXT, ParseUtils.parseString(mEditText.getText()));
+							extras.putLongArray(EXTRA_ACCOUNT_IDS, mAccountIds);
 							if (mAccountIds != null && mAccountIds.length > 0) {
 								final long account_id = mAccountIds[0];
-								extras.putString(INTENT_KEY_NAME, getAccountName(this, account_id));
-								extras.putString(INTENT_KEY_SCREEN_NAME, getAccountScreenName(this, account_id));
+								extras.putString(EXTRA_NAME, getAccountName(this, account_id));
+								extras.putString(EXTRA_SCREEN_NAME, getAccountScreenName(this, account_id));
 							}
 							if (mInReplyToStatusId > 0) {
-								extras.putLong(INTENT_KEY_IN_REPLY_TO_ID, mInReplyToStatusId);
+								extras.putLong(EXTRA_IN_REPLY_TO_ID, mInReplyToStatusId);
 							}
 							if (mInReplyToStatus != null) {
-								extras.putString(INTENT_KEY_IN_REPLY_TO_NAME, mInReplyToStatus.user_name);
-								extras.putString(INTENT_KEY_IN_REPLY_TO_SCREEN_NAME, mInReplyToStatus.user_screen_name);
+								extras.putString(EXTRA_IN_REPLY_TO_NAME, mInReplyToStatus.user_name);
+								extras.putString(EXTRA_IN_REPLY_TO_SCREEN_NAME, mInReplyToStatus.user_screen_name);
 							}
 							intent.putExtras(extras);
 							startActivityForResult(intent, REQUEST_EXTENSION_COMPOSE);
@@ -320,7 +318,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 					if (bundle == null) {
 						break;
 					}
-					final long[] account_ids = bundle.getLongArray(INTENT_KEY_IDS);
+					final long[] account_ids = bundle.getLongArray(EXTRA_IDS);
 					if (account_ids != null) {
 						mAccountIds = account_ids;
 						if (mShouldSaveAccounts) {
@@ -353,9 +351,9 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 					if (extras == null) {
 						break;
 					}
-					final String text = extras.getString(INTENT_KEY_TEXT);
-					final String append = extras.getString(INTENT_KEY_APPEND_TEXT);
-					final Uri image_uri = extras.getParcelable(INTENT_KEY_IMAGE_URI);
+					final String text = extras.getString(EXTRA_TEXT);
+					final String append = extras.getString(EXTRA_APPEND_TEXT);
+					final Uri image_uri = extras.getParcelable(EXTRA_IMAGE_URI);
 					if (text != null) {
 						mEditText.setText(text);
 					} else if (append != null) {
@@ -471,16 +469,16 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
-		outState.putLongArray(INTENT_KEY_ACCOUNT_IDS, mAccountIds);
-		outState.putInt(INTENT_KEY_ATTACHED_IMAGE_TYPE, mAttachedImageType);
-		outState.putParcelable(INTENT_KEY_IMAGE_URI, mImageUri);
-		outState.putBoolean(INTENT_KEY_IS_POSSIBLY_SENSITIVE, mIsPossiblySensitive);
-		outState.putParcelable(INTENT_KEY_STATUS, mInReplyToStatus);
-		outState.putLong(INTENT_KEY_STATUS_ID, mInReplyToStatusId);
-		outState.putParcelable(INTENT_KEY_USER, mMentionUser);
-		outState.putParcelable(INTENT_KEY_DRAFT, mDraftItem);
-		outState.putBoolean(INTENT_KEY_SHOULD_SAVE_ACCOUNTS, mShouldSaveAccounts);
-		outState.putString(INTENT_KEY_ORIGINAL_TEXT, mOriginalText);
+		outState.putLongArray(EXTRA_ACCOUNT_IDS, mAccountIds);
+		outState.putInt(EXTRA_ATTACHED_IMAGE_TYPE, mAttachedImageType);
+		outState.putParcelable(EXTRA_IMAGE_URI, mImageUri);
+		outState.putBoolean(EXTRA_IS_POSSIBLY_SENSITIVE, mIsPossiblySensitive);
+		outState.putParcelable(EXTRA_STATUS, mInReplyToStatus);
+		outState.putLong(EXTRA_STATUS_ID, mInReplyToStatusId);
+		outState.putParcelable(EXTRA_USER, mMentionUser);
+		outState.putParcelable(EXTRA_DRAFT, mDraftItem);
+		outState.putBoolean(EXTRA_SHOULD_SAVE_ACCOUNTS, mShouldSaveAccounts);
+		outState.putString(EXTRA_ORIGINAL_TEXT, mOriginalText);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -546,20 +544,20 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 
 		if (savedInstanceState != null) {
 			// Restore from previous saved state
-			mAccountIds = savedInstanceState.getLongArray(INTENT_KEY_ACCOUNT_IDS);
-			mAttachedImageType = savedInstanceState.getInt(INTENT_KEY_ATTACHED_IMAGE_TYPE, ATTACHED_IMAGE_TYPE_NONE);
-			mIsPossiblySensitive = savedInstanceState.getBoolean(INTENT_KEY_IS_POSSIBLY_SENSITIVE);
-			mImageUri = savedInstanceState.getParcelable(INTENT_KEY_IMAGE_URI);
-			mInReplyToStatus = savedInstanceState.getParcelable(INTENT_KEY_STATUS);
-			mInReplyToStatusId = savedInstanceState.getLong(INTENT_KEY_STATUS_ID);
-			mMentionUser = savedInstanceState.getParcelable(INTENT_KEY_USER);
-			mDraftItem = savedInstanceState.getParcelable(INTENT_KEY_DRAFT);
-			mShouldSaveAccounts = savedInstanceState.getBoolean(INTENT_KEY_SHOULD_SAVE_ACCOUNTS);
-			mOriginalText = savedInstanceState.getString(INTENT_KEY_ORIGINAL_TEXT);
+			mAccountIds = savedInstanceState.getLongArray(EXTRA_ACCOUNT_IDS);
+			mAttachedImageType = savedInstanceState.getInt(EXTRA_ATTACHED_IMAGE_TYPE, ATTACHED_IMAGE_TYPE_NONE);
+			mIsPossiblySensitive = savedInstanceState.getBoolean(EXTRA_IS_POSSIBLY_SENSITIVE);
+			mImageUri = savedInstanceState.getParcelable(EXTRA_IMAGE_URI);
+			mInReplyToStatus = savedInstanceState.getParcelable(EXTRA_STATUS);
+			mInReplyToStatusId = savedInstanceState.getLong(EXTRA_STATUS_ID);
+			mMentionUser = savedInstanceState.getParcelable(EXTRA_USER);
+			mDraftItem = savedInstanceState.getParcelable(EXTRA_DRAFT);
+			mShouldSaveAccounts = savedInstanceState.getBoolean(EXTRA_SHOULD_SAVE_ACCOUNTS);
+			mOriginalText = savedInstanceState.getString(EXTRA_ORIGINAL_TEXT);
 		} else {
 			// The activity was first created
 			final Bundle extras = intent.getExtras();
-			final int notification_id = extras != null ? extras.getInt(INTENT_KEY_NOTIFICATION_ID, -1) : -1;
+			final int notification_id = extras != null ? extras.getInt(EXTRA_NOTIFICATION_ID, -1) : -1;
 			if (notification_id != -1) {
 				mTwitterWrapper.clearNotification(notification_id);
 			}
@@ -711,22 +709,22 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 	private boolean handleIntent(final String action, final Bundle extras) {
 		mShouldSaveAccounts = false;
 		if (extras == null) return false;
-		mMentionUser = extras.getParcelable(INTENT_KEY_USER);
-		mInReplyToStatus = extras.getParcelable(INTENT_KEY_STATUS);
+		mMentionUser = extras.getParcelable(EXTRA_USER);
+		mInReplyToStatus = extras.getParcelable(EXTRA_STATUS);
 		mInReplyToStatusId = mInReplyToStatus != null ? mInReplyToStatus.id : -1;
 		if (INTENT_ACTION_REPLY.equals(action))
 			return handleReplyIntent(mInReplyToStatus);
 		else if (INTENT_ACTION_QUOTE.equals(action))
 			return handleQuoteIntent(mInReplyToStatus);
 		else if (INTENT_ACTION_EDIT_DRAFT.equals(action)) {
-			mDraftItem = extras.getParcelable(INTENT_KEY_DRAFT);
+			mDraftItem = extras.getParcelable(EXTRA_DRAFT);
 			return handleEditDraftIntent(mDraftItem);
 		} else if (INTENT_ACTION_MENTION.equals(action))
 			return handleMentionIntent(mMentionUser);
 		else if (INTENT_ACTION_REPLY_MULTIPLE.equals(action)) {
-			final String[] screen_names = extras.getStringArray(INTENT_KEY_SCREEN_NAMES);
-			final long account_id = extras.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-			final long in_reply_to_user_id = extras.getLong(INTENT_KEY_IN_REPLY_TO_ID, -1);
+			final String[] screen_names = extras.getStringArray(EXTRA_SCREEN_NAMES);
+			final long account_id = extras.getLong(EXTRA_ACCOUNT_ID, -1);
+			final long in_reply_to_user_id = extras.getLong(EXTRA_IN_REPLY_TO_ID, -1);
 			return handleReplyMultipleIntent(screen_names, account_id, in_reply_to_user_id);
 		}
 		// Unknown action or no intent extras
@@ -1083,14 +1081,14 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		public void onActivityCreated(final Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
 			final Bundle args = getArguments();
-			if (args == null || args.getParcelable(INTENT_KEY_STATUS) == null) {
+			if (args == null || args.getParcelable(EXTRA_STATUS) == null) {
 				dismiss();
 				return;
 			}
 			final TwidereApplication application = getApplication();
 			final ImageLoaderWrapper loader = application.getImageLoaderWrapper();
 			final SharedPreferences prefs = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-			final ParcelableStatus status = args.getParcelable(INTENT_KEY_STATUS);
+			final ParcelableStatus status = args.getParcelable(EXTRA_STATUS);
 			mHolder.setShowAsGap(false);
 			mHolder.setAccountColorEnabled(true);
 			mHolder.setTextSize(prefs.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(getActivity())));
@@ -1121,11 +1119,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 
 			mHolder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 					getUserTypeIconRes(status.user_is_verified, status.user_is_protected), 0);
-			if (prefs.getBoolean(PREFERENCE_KEY_SHOW_ABSOLUTE_TIME, false)) {
-				mHolder.time.setText(formatSameDayTime(getActivity(), status.timestamp));
-			} else {
-				mHolder.time.setText(getRelativeTimeSpanString(status.timestamp));
-			}
+			mHolder.time.setTime(status.timestamp);
 			final int type_icon = getStatusTypeIconRes(status.is_favorite, isValidLocation(status.location),
 					status.has_media, status.is_possibly_sensitive);
 			mHolder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, type_icon, 0);

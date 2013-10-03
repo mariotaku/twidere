@@ -35,8 +35,8 @@ public abstract class CursorSupportUsersListFragment extends BaseUsersListFragme
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		if (savedInstanceState != null) {
-			mNextCursor = savedInstanceState.getLong(INTENT_KEY_NEXT_CURSOR, -1);
-			mPrevCursor = savedInstanceState.getLong(INTENT_KEY_PREV_CURSOR, -1);
+			mNextCursor = savedInstanceState.getLong(EXTRA_NEXT_CURSOR, -1);
+			mPrevCursor = savedInstanceState.getLong(EXTRA_PREV_CURSOR, -1);
 		} else {
 			mNextCursor = -1;
 			mPrevCursor = -1;
@@ -71,8 +71,8 @@ public abstract class CursorSupportUsersListFragment extends BaseUsersListFragme
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putLong(INTENT_KEY_NEXT_CURSOR, mNextCursor);
-		outState.putLong(INTENT_KEY_PREV_CURSOR, mPrevCursor);
+		outState.putLong(EXTRA_NEXT_CURSOR, mNextCursor);
+		outState.putLong(EXTRA_PREV_CURSOR, mPrevCursor);
 	}
 
 	protected final long getNextCursor() {

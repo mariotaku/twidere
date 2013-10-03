@@ -102,8 +102,7 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 
 	@Override
 	public ParcelableDirectMessage findItem(final long id) {
-		final int count = getCount();
-		for (int i = 0; i < count; i++) {
+		for (int i = 0, count = getCount(); i < count; i++) {
 			if (getItemId(i) == id) return getDirectMessage(i);
 		}
 		return null;

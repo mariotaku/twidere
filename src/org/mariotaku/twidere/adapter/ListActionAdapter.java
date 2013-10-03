@@ -36,8 +36,7 @@ public class ListActionAdapter extends ArrayAdapter<ListAction> {
 	}
 
 	public ListAction findItem(final long id) {
-		final int count = getCount();
-		for (int i = 0; i < count; i++) {
+		for (int i = 0, count = getCount(); i < count; i++) {
 			if (id == getItemId(i)) return getItem(i);
 		}
 		return null;

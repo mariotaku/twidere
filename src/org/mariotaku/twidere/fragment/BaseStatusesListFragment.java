@@ -49,7 +49,7 @@ import android.widget.ListView;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.iface.IBaseAdapter.MenuButtonClickListener;
+import org.mariotaku.twidere.adapter.iface.IBaseCardAdapter.MenuButtonClickListener;
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -267,7 +267,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 			case MENU_QUOTE: {
 				final Intent intent = new Intent(INTENT_ACTION_QUOTE);
 				final Bundle bundle = new Bundle();
-				bundle.putParcelable(INTENT_KEY_STATUS, status);
+				bundle.putParcelable(EXTRA_STATUS, status);
 				intent.putExtras(bundle);
 				startActivity(intent);
 				break;
@@ -275,7 +275,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 			case MENU_REPLY: {
 				final Intent intent = new Intent(INTENT_ACTION_REPLY);
 				final Bundle bundle = new Bundle();
-				bundle.putParcelable(INTENT_KEY_STATUS, status);
+				bundle.putParcelable(EXTRA_STATUS, status);
 				intent.putExtras(bundle);
 				startActivity(intent);
 				break;
@@ -401,9 +401,9 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 	private boolean isMyTimeline() {
 		final Bundle args = getArguments();
 		if (args != null && this instanceof UserTimelineFragment) {
-			final long account_id = args.getLong(INTENT_KEY_ACCOUNT_ID, -1);
-			final long user_id = args.getLong(INTENT_KEY_USER_ID, -1);
-			final String screen_name = args.getString(INTENT_KEY_SCREEN_NAME);
+			final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
+			final long user_id = args.getLong(EXTRA_USER_ID, -1);
+			final String screen_name = args.getString(EXTRA_SCREEN_NAME);
 			if (account_id == user_id || screen_name != null
 					&& screen_name.equals(getAccountScreenName(getActivity(), account_id))) return true;
 		}

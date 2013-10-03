@@ -95,7 +95,7 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 		mAddAccountButton.setOnClickListener(this);
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
 		if (savedInstanceState != null) {
-			mSelectedAccountId = savedInstanceState.getLong(INTENT_KEY_ACCOUNT_ID);
+			mSelectedAccountId = savedInstanceState.getLong(EXTRA_ACCOUNT_ID);
 		}
 		getLoaderManager().initLoader(0, null, this);
 	}
@@ -153,7 +153,7 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 			}
 			case MENU_EDIT: {
 				final Bundle bundle = new Bundle();
-				bundle.putLong(INTENT_KEY_ACCOUNT_ID, account.account_id);
+				bundle.putLong(EXTRA_ACCOUNT_ID, account.account_id);
 				final Intent intent = new Intent(INTENT_ACTION_EDIT_USER_PROFILE);
 				intent.setClass(getActivity(), EditUserProfileActivity.class);
 				intent.putExtras(bundle);
@@ -175,7 +175,7 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 			case MENU_DELETE: {
 				final AccountDeletionDialogFragment f = new AccountDeletionDialogFragment();
 				final Bundle args = new Bundle();
-				args.putLong(INTENT_KEY_ACCOUNT_ID, account.account_id);
+				args.putLong(EXTRA_ACCOUNT_ID, account.account_id);
 				f.setArguments(args);
 				f.show(getChildFragmentManager(), FRAGMENT_TAG_ACCOUNT_DELETION);
 				break;
@@ -213,8 +213,7 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 
 	@Override
 	public void onGroupExpand(final int groupPosition) {
-		final int group_count = mAdapter.getGroupCount();
-		for (int i = 0; i < group_count; i++) {
+		for (int i = 0, count = mAdapter.getGroupCount(); i < count; i++) {
 			if (i != groupPosition) {
 				mListView.collapseGroup(i);
 			}
@@ -260,7 +259,7 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putLong(INTENT_KEY_ACCOUNT_ID, mSelectedAccountId);
+		outState.putLong(EXTRA_ACCOUNT_ID, mSelectedAccountId);
 	}
 
 	@Override
@@ -303,7 +302,7 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 		@Override
 		public void onClick(final DialogInterface dialog, final int which) {
 			final Bundle args = getArguments();
-			final long account_id = args != null ? args.getLong(INTENT_KEY_ACCOUNT_ID, -1) : -1;
+			final long account_id = args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
 			if (account_id < 0) return;
 			final ContentResolver resolver = getContentResolver();
 			switch (which) {
