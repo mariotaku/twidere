@@ -55,9 +55,5 @@
 				android:title="@android:string/cancel"/>
 		</menu>
 	</item>
-	<item
-		android:id="@id/load_from_position"
-		android:icon="@drawable/ic_menu_refresh"
-		android:title="@string/load_from_here"/>
 
 </menu>

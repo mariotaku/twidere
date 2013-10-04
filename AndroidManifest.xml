@@ -383,8 +383,8 @@
 			android:label="@string/add_tab"
 			android:theme="@style/Theme.Blank.Dialog">
 			<intent-filter>
-				<action android:name="org.mariotaku.twidere.NEW_CUSTOM_TAB"/>
-				<action android:name="org.mariotaku.twidere.EDIT_CUSTOM_TAB"/>
+				<action android:name="org.mariotaku.twidere.ADD_TAB"/>
+				<action android:name="org.mariotaku.twidere.EDIT_TAB"/>
 
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>

@@ -26,7 +26,6 @@
   <string name="advanced">高级</string>
   <string name="save">保存</string>
   <string name="edit">编辑</string>
-  <string name="login_to_twitter">登录到 Twitter</string>
   <string name="edit_api">编辑 API</string>
   <string name="home">主页</string>
   <string name="mentions">提及</string>
@@ -100,10 +99,12 @@
   <string name="filter">过滤</string>
   <string name="filters">过滤</string>
   <string name="users">用户</string>
+  <string name="user">用户</string>
   <string name="keywords">关键词</string>
   <string name="sources">来源</string>
   <string name="content">内容</string>
   <string name="customize">自定义</string>
+  <string name="set_nickname">设定昵称</string>
   <string name="set_color">设定颜色</string>
   <string name="clear">清除</string>
   <string name="pick_color">选取颜色</string>
@@ -228,7 +229,7 @@
   <string name="view_user_list">查看列表</string>
   <string name="uninstall">卸载</string>
   <string name="saved_searches">已保存的搜索</string>
-  <string name="custom_tabs">自定义标签页</string>
+  <string name="tabs">标签页</string>
   <string name="default_tabs">默认标签页</string>
   <string name="add_tab">添加标签页</string>
   <string name="tab_type">标签页类型</string>
@@ -471,6 +472,7 @@
   <string name="fast_image_loading">快速图像载入</string>
   <string name="fast_image_loading_summary">启用可以使图片载入更快，如果一些图片不能显示的话则可以把它禁用</string>
   <string name="select_user_list">选择列表</string>
+  <string name="select_user">选择用户</string>
   <string name="created_by">由<xliff:g id="created_by">%s</xliff:g>创建</string>
   <string name="add_to_list">添加到列表</string>
   <string name="account_delete_confirm_title">删除帐号</string>
@@ -487,4 +489,9 @@
   <string name="enable_for_rts">在转推启用</string>
   <string name="safety">安全</string>
   <string name="updating_status_notification">正在发送推文…</string>
+  <string name="name_with_nickname"><xliff:g id="name">%1$s</xliff:g>（<xliff:g id="nickname">%2$s</xliff:g>）</string>
+  <string name="query">查询</string>
+  <string name="nickname_only">仅显示昵称</string>
+  <string name="nickname_only_summary">当昵称可用时替代用户名</string>
+  <string name="input_text">输入文本</string>
 </resources>

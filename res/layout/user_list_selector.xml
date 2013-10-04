@@ -23,6 +23,7 @@
 			android:layout_height="wrap_content"
 			android:layout_weight="0"
 			android:orientation="vertical"
+			android:padding="16dp"
 			android:visibility="gone">
 
 			<View

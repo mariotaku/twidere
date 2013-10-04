@@ -1347,6 +1347,15 @@ public final class Utils implements Constants {
 		return null;
 	}
 
+	public static int getCharacterCount(final String string, final char c) {
+		if (string == null) return 0;
+		int count = 0;
+		while (string.indexOf(c, count) != -1) {
+			count++;
+		}
+		return count;
+	}
+
 	public static Bitmap getColorPreviewBitmap(final Context context, final int color) {
 		if (context == null) return null;
 		final float density = context.getResources().getDisplayMetrics().density;

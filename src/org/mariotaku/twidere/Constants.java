@@ -258,8 +258,8 @@ public interface Constants {
 	public static final String INTENT_ACTION_VIEW_WEBPAGE = INTENT_PACKAGE_PREFIX + "VIEW_WEBPAGE";
 	public static final String INTENT_ACTION_EXTENSIONS = INTENT_PACKAGE_PREFIX + "EXTENSIONS";
 	public static final String INTENT_ACTION_CUSTOM_TABS = INTENT_PACKAGE_PREFIX + "CUSTOM_TABS";
-	public static final String INTENT_ACTION_NEW_CUSTOM_TAB = INTENT_PACKAGE_PREFIX + "NEW_CUSTOM_TAB";
-	public static final String INTENT_ACTION_EDIT_CUSTOM_TAB = INTENT_PACKAGE_PREFIX + "EDIT_CUSTOM_TAB";
+	public static final String INTENT_ACTION_ADD_TAB = INTENT_PACKAGE_PREFIX + "ADD_TAB";
+	public static final String INTENT_ACTION_EDIT_TAB = INTENT_PACKAGE_PREFIX + "EDIT_TAB";
 	public static final String INTENT_ACTION_EDIT_HOST_MAPPING = INTENT_PACKAGE_PREFIX + "EDIT_HOST_MAPPING";
 	public static final String INTENT_ACTION_EDIT_USER_PROFILE = INTENT_PACKAGE_PREFIX + "EDIT_USER_PROFILE";
 	public static final String INTENT_ACTION_SERVICE_COMMAND = INTENT_PACKAGE_PREFIX + "SERVICE_COMMAND";
@@ -356,7 +356,6 @@ public interface Constants {
 	public static final String EXTRA_MAX_IDS = "max_ids";
 	public static final String EXTRA_SINCE_ID = "since_id";
 	public static final String EXTRA_SINCE_IDS = "since_ids";
-	public static final String EXTRA_MIN_ID = "min_id";
 	public static final String EXTRA_STATUS_ID = "status_id";
 	public static final String EXTRA_SCREEN_NAME = "screen_name";
 	public static final String EXTRA_SCREEN_NAMES = "screen_names";
@@ -466,7 +465,6 @@ public interface Constants {
 	public static final int MENU_MULTI_SELECT = R.id.multi_select;
 	public static final int MENU_CLEAR_COLOR = R.id.clear_color;
 	public static final int MENU_COPY = R.id.copy;
-	public static final int MENU_LOAD_FROM_POSITION = R.id.load_from_position;
 	public static final int MENU_TOGGLE_SENSITIVE = R.id.toggle_sensitive;
 	public static final int MENU_REVOKE = R.id.revoke;
 	public static final int MENU_IMPORT_FROM = R.id.import_from;

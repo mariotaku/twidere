@@ -292,10 +292,6 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 				mTwitterWrapper.destroyStatus(status.account_id, status.id);
 				break;
 			}
-			case MENU_LOAD_FROM_POSITION: {
-				getStatuses(new long[] { status.account_id }, new long[] { status.id }, null);
-				break;
-			}
 			default: {
 				if (item.getIntent() != null) {
 					try {

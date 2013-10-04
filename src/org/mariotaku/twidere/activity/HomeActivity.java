@@ -312,6 +312,16 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		updateRefreshingState();
 	}
 
+	public void setHomeProgressBarIndeterminateVisibility(final boolean visible) {
+		final View view = mBottomActionsButton ? mActionsButtonLayout : mActionsActionView;
+		if (view == null) return;
+		final boolean has_task = hasActivatedTask();
+		final ImageView actions_icon = (ImageView) view.findViewById(R.id.actions_icon);
+		final ProgressBar progress = (ProgressBar) view.findViewById(R.id.progress);
+		actions_icon.setVisibility(has_task ? View.GONE : View.VISIBLE);
+		progress.setVisibility(has_task ? View.VISIBLE : View.GONE);
+	}
+
 	@Override
 	public boolean triggerRefresh(final int position) {
 		final Fragment f = mAttachedFragments.get(position);

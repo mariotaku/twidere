@@ -56,7 +56,6 @@ import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.model.CustomTabConfiguration;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.ParcelableUserList;
-import org.mariotaku.twidere.provider.TweetStore.Tabs;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.ParseUtils;
 
@@ -80,6 +79,7 @@ public class EditCustomTabActivity extends BaseSupportDialogActivity implements 
 	private TextView mSecondaryFieldLabel;
 	private TextView mTabTypeName;
 
+	private long mTabId;
 	private String mTabType;
 	private CustomTabConfiguration mTabConfiguration;
 	private Object mSecondaryFieldValue;
@@ -88,9 +88,9 @@ public class EditCustomTabActivity extends BaseSupportDialogActivity implements 
 	public void onClick(final View v) {
 		final CustomTabConfiguration conf = mTabConfiguration;
 		final Object value = mSecondaryFieldValue;
-		if (conf == null) return;
 		switch (v.getId()) {
 			case R.id.secondary_field: {
+				if (conf == null) return;
 				switch (conf.getSecondaryFieldType()) {
 					case CustomTabConfiguration.FIELD_TYPE_USER: {
 						final Intent intent = new Intent(this, UserListSelectorActivity.class);
@@ -107,29 +107,43 @@ public class EditCustomTabActivity extends BaseSupportDialogActivity implements 
 						break;
 					}
 					case CustomTabConfiguration.FIELD_TYPE_TEXT: {
-						SecondaryFieldEditTextDialogFragment.show(this, ParseUtils.parseString(value));
+						final int title = conf.getSecondaryFieldTitle();
+						SecondaryFieldEditTextDialogFragment.show(this, ParseUtils.parseString(value),
+								getString(title > 0 ? title : R.string.content));
 						break;
 					}
 				}
 				break;
 			}
 			case R.id.save: {
-				if (conf.isAccountIdRequired() && getAccountId() <= 0
-						|| conf.getSecondaryFieldType() != CustomTabConfiguration.FIELD_TYPE_NONE
-						&& mSecondaryFieldValue == null) {
-					Toast.makeText(this, R.string.invalid_settings, Toast.LENGTH_SHORT).show();
-					return;
+				if (!isEditMode()) {
+					if (conf == null) return;
+					final boolean account_id_invalid = conf.isAccountIdRequired() && getAccountId() <= 0;
+					final boolean secondary_field_invalid = conf.getSecondaryFieldType() != CustomTabConfiguration.FIELD_TYPE_NONE
+							&& mSecondaryFieldValue == null;
+					if (account_id_invalid || secondary_field_invalid) {
+						Toast.makeText(this, R.string.invalid_settings, Toast.LENGTH_SHORT).show();
+						return;
+					}
+					final Intent data = new Intent();
+					final Bundle args = new Bundle();
+					args.putLong(EXTRA_ACCOUNT_ID, getAccountId());
+					addSecondaryFieldValueToArguments(args);
+					data.putExtra(EXTRA_TYPE, mTabType);
+					data.putExtra(EXTRA_NAME, ParseUtils.parseString(mEditTabName.getText()));
+					data.putExtra(EXTRA_ICON, getIconKey());
+					data.putExtra(EXTRA_ARGUMENTS, ParseUtils.bundleToJSON(args));
+					setResult(RESULT_OK, data);
+					finish();
+				} else {
+					if (mTabId < 0) return;
+					final Intent data = new Intent();
+					data.putExtra(EXTRA_NAME, ParseUtils.parseString(mEditTabName.getText()));
+					data.putExtra(EXTRA_ICON, getIconKey());
+					data.putExtra(EXTRA_ID, mTabId);
+					setResult(RESULT_OK, data);
+					finish();
 				}
-				final Intent data = new Intent();
-				final Bundle args = new Bundle();
-				args.putLong(EXTRA_ACCOUNT_ID, getAccountId());
-				addSecondaryFieldValueToArguments(args);
-				data.putExtra(Tabs.TYPE, mTabType);
-				data.putExtra(Tabs.NAME, ParseUtils.parseString(mEditTabName.getText()));
-				data.putExtra(Tabs.ICON, getIconKey());
-				data.putExtra(Tabs.ARGUMENTS, ParseUtils.bundleToJSON(args));
-				setResult(RESULT_OK, data);
-				finish();
 				break;
 			}
 		}
@@ -225,47 +239,65 @@ public class EditCustomTabActivity extends BaseSupportDialogActivity implements 
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		mImageLoader = TwidereApplication.getInstance(this).getImageLoaderWrapper();
 		final Intent intent = getIntent();
-		final Bundle extras = intent.getExtras();
-		final String type = mTabType = extras.getString(EXTRA_TYPE);
-		final CustomTabConfiguration conf = mTabConfiguration = getTabConfiguration(type);
-		if (type == null || conf == null) {
+		final String type = mTabType = intent.getStringExtra(EXTRA_TYPE);
+		if (type == null) {
 			finish();
 			return;
 		}
-		final boolean has_secondary_field = conf.getSecondaryFieldType() != CustomTabConfiguration.FIELD_TYPE_NONE;
+		mTabId = intent.getLongExtra(EXTRA_ID, -1);
+		setTitle(isEditMode() ? R.string.edit_tab : R.string.add_tab);
 		setContentView(R.layout.edit_custom_tab);
 		mTabTypeName.setText(getTabTypeName(this, type));
 		mTabIconsAdapter = new CustomTabIconsAdapter(this);
 		mTabIconsAdapter.setData(getIconMap());
 		mAccountsAdapter = new AccountsSpinnerAdapter(this);
 		mAccountsAdapter.addAll(Account.getAccounts(this, false));
-		mAccountContainer.setVisibility(conf.isAccountIdRequired() ? View.VISIBLE : View.GONE);
-		mSecondaryFieldContainer.setVisibility(has_secondary_field ? View.VISIBLE : View.GONE);
-		switch (conf.getSecondaryFieldType()) {
-			case CustomTabConfiguration.FIELD_TYPE_USER: {
-				mSecondaryFieldLabel.setText(R.string.user);
-				setExtraFieldSelectText(mSecondaryFieldContainer, R.string.select_user);
-				break;
-			}
-			case CustomTabConfiguration.FIELD_TYPE_USER_LIST: {
-				mSecondaryFieldLabel.setText(R.string.user_list);
-				setExtraFieldSelectText(mSecondaryFieldContainer, R.string.select_user_list);
-				break;
-			}
-			case CustomTabConfiguration.FIELD_TYPE_TEXT: {
-				mSecondaryFieldLabel.setText(R.string.content);
-				setExtraFieldSelectText(mSecondaryFieldContainer, R.string.input_text);
-				break;
-			}
-		}
-		if (conf.getSecondaryFieldTitle() != 0) {
-			mSecondaryFieldLabel.setText(conf.getSecondaryFieldTitle());
-		}
 		mAccountSpinner.setAdapter(mAccountsAdapter);
 		mTabIconSpinner.setAdapter(mTabIconsAdapter);
-		final int selection = mTabIconsAdapter.getIconPosition(findTabIconKey(conf.getDefaultIcon()));
+		final String icon_key;
+		if (!isEditMode()) {
+			final CustomTabConfiguration conf = mTabConfiguration = getTabConfiguration(type);
+			if (conf == null) {
+				finish();
+				return;
+			}
+			final boolean has_secondary_field = conf.getSecondaryFieldType() != CustomTabConfiguration.FIELD_TYPE_NONE;
+			mAccountContainer.setVisibility(conf.isAccountIdRequired() ? View.VISIBLE : View.GONE);
+			mSecondaryFieldContainer.setVisibility(has_secondary_field ? View.VISIBLE : View.GONE);
+			switch (conf.getSecondaryFieldType()) {
+				case CustomTabConfiguration.FIELD_TYPE_USER: {
+					mSecondaryFieldLabel.setText(R.string.user);
+					setExtraFieldSelectText(mSecondaryFieldContainer, R.string.select_user);
+					break;
+				}
+				case CustomTabConfiguration.FIELD_TYPE_USER_LIST: {
+					mSecondaryFieldLabel.setText(R.string.user_list);
+					setExtraFieldSelectText(mSecondaryFieldContainer, R.string.select_user_list);
+					break;
+				}
+				case CustomTabConfiguration.FIELD_TYPE_TEXT: {
+					mSecondaryFieldLabel.setText(R.string.content);
+					setExtraFieldSelectText(mSecondaryFieldContainer, R.string.input_text);
+					break;
+				}
+			}
+			if (conf.getSecondaryFieldTitle() != 0) {
+				mSecondaryFieldLabel.setText(conf.getSecondaryFieldTitle());
+			}
+			icon_key = findTabIconKey(conf.getDefaultIcon());
+			mEditTabName.setText(mTabConfiguration.getDefaultTitle());
+		} else {
+			if (mTabId < 0) {
+				finish();
+				return;
+			}
+			mAccountContainer.setVisibility(View.GONE);
+			mSecondaryFieldContainer.setVisibility(View.GONE);
+			icon_key = intent.getStringExtra(EXTRA_ICON);
+			mEditTabName.setText(intent.getStringExtra(EXTRA_NAME));
+		}
+		final int selection = mTabIconsAdapter.getIconPosition(icon_key);
 		mTabIconSpinner.setSelection(selection > 0 ? selection : 0);
-		mEditTabName.setText(mTabConfiguration.getDefaultTitle());
 	}
 
 	private void addFieldValueToArguments(final Object value, final Bundle args) {
@@ -303,6 +335,10 @@ public class EditCustomTabActivity extends BaseSupportDialogActivity implements 
 
 	private String getIconKey() {
 		return mTabIconsAdapter.getItem(mTabIconSpinner.getSelectedItemPosition()).getKey();
+	}
+
+	private boolean isEditMode() {
+		return INTENT_ACTION_EDIT_TAB.equals(getIntent().getAction());
 	}
 
 	static class CustomTabIconsAdapter extends ArrayAdapter<Entry<String, Integer>> {
@@ -399,7 +435,7 @@ public class EditCustomTabActivity extends BaseSupportDialogActivity implements 
 		public Dialog onCreateDialog(final Bundle savedInstanceState) {
 			final Bundle args = getArguments();
 			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			builder.setTitle(R.string.set_nickname);
+			builder.setTitle(args.getString(EXTRA_TITLE));
 			builder.setPositiveButton(android.R.string.ok, this);
 			builder.setNegativeButton(android.R.string.cancel, null);
 			final FrameLayout view = new FrameLayout(getActivity());
@@ -414,10 +450,12 @@ public class EditCustomTabActivity extends BaseSupportDialogActivity implements 
 			return builder.create();
 		}
 
-		public static SecondaryFieldEditTextDialogFragment show(final FragmentActivity activity, final String text) {
+		public static SecondaryFieldEditTextDialogFragment show(final FragmentActivity activity, final String text,
+				final String title) {
 			final SecondaryFieldEditTextDialogFragment f = new SecondaryFieldEditTextDialogFragment();
 			final Bundle args = new Bundle();
 			args.putString(EXTRA_TEXT, text);
+			args.putString(EXTRA_TITLE, title);
 			f.setArguments(args);
 			f.show(activity.getSupportFragmentManager(), FRAGMENT_TAG_EDIT_SECONDARY_FIELD);
 			return f;

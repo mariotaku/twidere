@@ -49,7 +49,6 @@
 	<item name="multi_select" type="id"/>
 	<item name="clear_color" type="id"/>
 	<item name="copy" type="id"/>
-	<item name="load_from_position" type="id"/>
 	<item name="right_pane" type="id"/>
 	<item name="right_pane_container" type="id"/>
 	<item name="toggle_sensitive" type="id"/>

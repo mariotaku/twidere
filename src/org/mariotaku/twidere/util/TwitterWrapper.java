@@ -113,13 +113,25 @@ public class TwitterWrapper implements Constants {
 
 	public static final class StatusListResponse extends TwitterListResponse<Status> {
 
+		public final boolean truncated;
+
+		public StatusListResponse(final long account_id, final Exception exception) {
+			this(account_id, -1, -1, null, false, exception);
+		}
+
 		public StatusListResponse(final long account_id, final List<Status> list) {
-			super(account_id, -1, -1, -1, list, null);
+			this(account_id, -1, -1, list, false, null);
 		}
 
 		public StatusListResponse(final long account_id, final long max_id, final long since_id,
-				final int load_item_limit, final List<Status> list, final Exception exception) {
-			super(account_id, max_id, since_id, load_item_limit, list, exception);
+				final int load_item_limit, final List<Status> list, final boolean truncated) {
+			this(account_id, max_id, since_id, list, truncated, null);
+		}
+
+		StatusListResponse(final long account_id, final long max_id, final long since_id, final List<Status> list,
+				final boolean truncated, final Exception exception) {
+			super(account_id, max_id, since_id, list, exception);
+			this.truncated = truncated;
 		}
 
 	}
@@ -127,15 +139,21 @@ public class TwitterWrapper implements Constants {
 	public static class TwitterListResponse<Data> extends ListResponse<Data> {
 
 		public final long account_id, max_id, since_id;
-		public final int load_item_limit;
 
-		public TwitterListResponse(final long account_id, final long max_id, final long since_id,
-				final int load_item_limit, final List<Data> list, final Exception exception) {
+		public TwitterListResponse(final long account_id, final Exception exception) {
+			this(account_id, -1, -1, null, exception);
+		}
+
+		public TwitterListResponse(final long account_id, final long max_id, final long since_id, final List<Data> list) {
+			this(account_id, max_id, since_id, list, null);
+		}
+
+		TwitterListResponse(final long account_id, final long max_id, final long since_id, final List<Data> list,
+				final Exception exception) {
 			super(list, exception);
 			this.account_id = account_id;
 			this.max_id = max_id;
 			this.since_id = since_id;
-			this.load_item_limit = load_item_limit;
 		}
 
 	}

@@ -35,6 +35,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListView;
 
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.iface.IBaseFragment;
 import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;
@@ -203,6 +204,9 @@ public class BaseSupportListFragment extends ListFragment implements IBaseFragme
 		final Activity activity = getActivity();
 		if (activity == null) return;
 		activity.setProgressBarIndeterminateVisibility(visible);
+		if (activity instanceof HomeActivity) {
+			((HomeActivity) activity).setHomeProgressBarIndeterminateVisibility(visible);
+		}
 	}
 
 	@Override

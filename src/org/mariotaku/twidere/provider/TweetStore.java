@@ -358,10 +358,10 @@ public final class TweetStore {
 					qb.select(select);
 					qb.from(new Tables(Inbox.TABLE_NAME));
 					final Where account_id_where = new Where(String.format("%s = %d", ACCOUNT_ID, account_id));
-					final Where sender_where = new Where(String.format("%s = '%s'", SENDER_ID, screen_name))
+					final Where sender_where = new Where(String.format("%s = '%s'", SENDER_SCREEN_NAME, screen_name))
 							.and(account_id_where);
-					final Where recipient_where = new Where(String.format("%s = '%s'", RECIPIENT_ID, screen_name))
-							.and(account_id_where);
+					final Where recipient_where = new Where(String.format("%s = '%s'", RECIPIENT_SCREEN_NAME,
+							screen_name)).and(account_id_where);
 					if (selection != null) {
 						qb.where(new Where(selection).and(sender_where));
 					} else {

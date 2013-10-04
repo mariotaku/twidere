@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.fragment.DirectMessagesFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.fragment.SearchStatusesFragment;
@@ -42,14 +43,14 @@ public class CustomTabUtils implements Constants {
 				MentionsFragment.class, R.string.mentions, R.drawable.ic_tab_mention, false,
 				CustomTabConfiguration.FIELD_TYPE_NONE, 1));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_DIRECT_MESSAGES, new CustomTabConfiguration(
-				HomeTimelineFragment.class, R.string.direct_messages, R.drawable.ic_tab_message, false,
+				DirectMessagesFragment.class, R.string.direct_messages, R.drawable.ic_tab_message, false,
 				CustomTabConfiguration.FIELD_TYPE_NONE, 2));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_TRENDS, new CustomTabConfiguration(TrendsFragment.class,
 				R.string.trends, R.drawable.ic_tab_trends, true, CustomTabConfiguration.FIELD_TYPE_NONE, 3));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_FAVORITES, new CustomTabConfiguration(UserFavoritesFragment.class,
 				R.string.favorites, R.drawable.ic_tab_star, true, CustomTabConfiguration.FIELD_TYPE_USER, 4));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_USER_TIMELINE, new CustomTabConfiguration(
-				UserTimelineFragment.class, R.string.statuses, R.drawable.ic_tab_list, true,
+				UserTimelineFragment.class, R.string.statuses, R.drawable.ic_tab_quote, true,
 				CustomTabConfiguration.FIELD_TYPE_USER, 5));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_SEARCH_STATUSES, new CustomTabConfiguration(
 				SearchStatusesFragment.class, R.string.search_statuses, R.drawable.ic_tab_search, true,
@@ -69,6 +70,7 @@ public class CustomTabUtils implements Constants {
 		CUSTOM_TABS_ICON_NAME_MAP.put("neko", R.drawable.ic_tab_neko);
 		CUSTOM_TABS_ICON_NAME_MAP.put("person", R.drawable.ic_tab_person);
 		CUSTOM_TABS_ICON_NAME_MAP.put("pin", R.drawable.ic_tab_pin);
+		CUSTOM_TABS_ICON_NAME_MAP.put("quote", R.drawable.ic_tab_quote);
 		CUSTOM_TABS_ICON_NAME_MAP.put("ribbon", R.drawable.ic_tab_ribbon);
 		CUSTOM_TABS_ICON_NAME_MAP.put("search", R.drawable.ic_tab_search);
 		CUSTOM_TABS_ICON_NAME_MAP.put("star", R.drawable.ic_tab_star);

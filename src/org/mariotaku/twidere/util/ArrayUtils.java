@@ -119,6 +119,20 @@ public final class ArrayUtils {
 		return fromList(list1);
 	}
 
+	public static void mergeArray(final Object[] dest, final Object[]... arrays) {
+		if (arrays == null || arrays.length == 0) return;
+		if (arrays.length == 1) {
+			final Object[] array = arrays[0];
+			System.arraycopy(array, 0, dest, 0, array.length);
+			return;
+		}
+		for (int i = 0, j = arrays.length - 1; i < j; i++) {
+			final Object[] array1 = arrays[i], array2 = arrays[i + 1];
+			System.arraycopy(array1, 0, dest, 0, array1.length);
+			System.arraycopy(array2, 0, dest, array1.length, array2.length);
+		}
+	}
+
 	public static String mergeArrayToString(final String[] array) {
 		if (array == null) return null;
 		final StringBuilder builder = new StringBuilder();
@@ -126,6 +140,17 @@ public final class ArrayUtils {
 			builder.append(c);
 		}
 		return builder.toString();
+	}
+
+	public static long min(final long[] array) {
+		if (array == null || array.length == 0) throw new IllegalArgumentException();
+		long min = array[0];
+		for (int i = 1, j = array.length; i < j; i++) {
+			if (min > array[i]) {
+				min = array[i];
+			}
+		}
+		return min;
 	}
 
 	public static long[] subArray(final long[] array, final int start, final int end) {
