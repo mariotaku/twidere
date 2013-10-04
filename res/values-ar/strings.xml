@@ -11,7 +11,7 @@
   <string name="remove_location">حذف الموقع</string>
   <string name="remove_image">إزالة الصورة</string>
   <string name="remove_photo">إزالة الصورة</string>
-  <string name="tweet_hint">ما الذي يحدث ؟</string>
+  <string name="status_hint">ما الذي يحدث ؟</string>
   <string name="sign_up">التسجيل</string>
   <string name="sign_in">تسجيل الدخول</string>
   <string name="rest_base_url">REST Base URL</string>
@@ -185,8 +185,8 @@
   <string name="type_to_compose">اكتب للإرسال</string>
   <string name="users_lists">قوائم المستخدم</string>
   <string name="lists_following_user">القوائم المتبعة لهذا المستخدم</string>
-  <string name="Ntweets_quantity_one">لديك تغريدة جديدة.</string>
-  <string name="Ntweets_quantity_other">لديك <xliff:g id="items">%d</xliff:g> تغريدة جديدة.</string>
+  <string name="Nstatuses_quantity_one">لديك تغريدة جديدة.</string>
+  <string name="Nstatuses_quantity_other">لديك <xliff:g id="items">%d</xliff:g> تغريدة جديدة.</string>
   <string name="item_1_minute">دقيقة واحدة</string>
   <string name="item_3_minutes">ثلاث دقائق</string>
   <string name="item_5_minutes">5 دقائق</string>
@@ -258,7 +258,7 @@
   <string name="portrait">الوضع المعتدل</string>
   <string name="quick_send">اضغط \"Enter\" للارسال</string>
   <string name="quick_send_summary">ارسل التغريدة عندما يُضغط على \"Enter\".</string>
-  <string name="unsaved_tweet">التغريدة لم ترسل او تحفظ بعد.</string>
+  <string name="unsaved_status">التغريدة لم ترسل او تحفظ بعد.</string>
   <string name="discard">تجاهل</string>
   <string name="multi_select">تحديد متعدد</string>
   <string name="Nitems_selected_quantity_one">تم تحديد عنصر ١</string>
@@ -277,8 +277,8 @@
   <string name="activity_about_me_list_member_added"><xliff:g id="user">%s</xliff:g> أضافك إلى قائمة.</string>
   <string name="activity_about_me_list_member_added_multi"><xliff:g id="user">%s</xliff:g> و <xliff:g id="count">%d</xliff:g> أخرون أضافوك إلى قوائمهم.</string>
   <string name="cannot_get_callback_url">لا يمكن الحصول على رد، يرجى التحقق من اسم المستخدم وكلمة المرور الخاصة بك.</string>
-  <string name="tweet_not_sent">لم يتم إرسال التغريدة.</string>
-  <string name="tweet_not_sent_summary">لم ترسل التغريدة, وحفظت كمسودة.</string>
+  <string name="status_not_updated">لم يتم إرسال التغريدة.</string>
+  <string name="status_not_updated_summary">لم ترسل التغريدة, وحفظت كمسودة.</string>
   <string name="incoming_friendships">في انتظار طلب المتابعة</string>
   <string name="click_to_open_menu">إضغط لفتح القائمة</string>
   <string name="send_follow_request">إبعث طلب المتابعة</string>
@@ -367,7 +367,7 @@
   <string name="preview_images">معاينة الصور</string>
   <string name="re_sign_in_needed">قد تحتاج إلى إعادة تسجيل الدخول إلى حسابك مرةً أخرى.</string>
   <string name="sign_in_method_introduction_title">كيف تعمل؟</string>
-  <string name="quote_protected_tweet_notice">لا يُنصح بإقتباس تغريدةٍ محمية.</string>
+  <string name="quote_protected_status_notice">لا يُنصح بإقتباس تغريدةٍ محمية.</string>
   <string name="profile_image">صورة الملف الشخصي</string>
   <string name="my_profile_image">صورة الملف الشخصي الخاص بي</string>
   <string name="theme_color">لون السِمَة</string>

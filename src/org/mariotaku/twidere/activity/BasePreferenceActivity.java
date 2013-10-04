@@ -55,7 +55,7 @@ class BasePreferenceActivity extends PreferenceActivity implements Constants, IT
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if (isThemeChanged()) {
+		if (shouldRestartWhenThemeChanged() && isThemeChanged()) {
 			restart();
 		}
 	}
@@ -66,6 +66,10 @@ class BasePreferenceActivity extends PreferenceActivity implements Constants, IT
 
 	private final boolean isThemeChanged() {
 		return getThemeResource() != mCurrentThemeResource;
+	}
+	
+	protected boolean shouldRestartWhenThemeChanged() {
+		return true;
 	}
 
 	private final void setActionBarBackground() {

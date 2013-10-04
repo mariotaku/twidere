@@ -38,15 +38,12 @@
 		android:key="display_image_preview"
 		android:summary="@string/image_load_summary"
 		android:title="@string/display_image_preview"/>
-	<CheckBoxPreference
-		android:defaultValue="false"
-		android:key="link_highlighting"
-		android:title="@string/link_highlighting"/>
-	<CheckBoxPreference
-		android:defaultValue="false"
-		android:dependency="link_highlighting"
-		android:key="link_underline_only"
-		android:title="@string/link_underline_only"/>
+
+	<org.mariotaku.twidere.preference.LinkHighlightPreference
+		android:defaultValue="none"
+		android:key="link_highlight_option"
+		android:title="@string/link_highlight_option"/>
+
 	<CheckBoxPreference
 		android:defaultValue="true"
 		android:key="indicate_my_status"

@@ -23,6 +23,7 @@ import static org.mariotaku.twidere.util.CustomTabUtils.getConfiguraionMap;
 import static org.mariotaku.twidere.util.CustomTabUtils.getTabIconDrawable;
 import static org.mariotaku.twidere.util.CustomTabUtils.getTabIconObject;
 import static org.mariotaku.twidere.util.CustomTabUtils.getTabTypeName;
+import static org.mariotaku.twidere.util.CustomTabUtils.isTabAdded;
 
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
@@ -59,7 +60,7 @@ import org.mariotaku.querybuilder.Columns.Column;
 import org.mariotaku.querybuilder.RawItemArray;
 import org.mariotaku.querybuilder.Where;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.EditCustomTabActivity;
+import org.mariotaku.twidere.activity.CustomTabEditorActivity;
 import org.mariotaku.twidere.graphic.DropShadowDrawable;
 import org.mariotaku.twidere.model.CustomTabConfiguration;
 import org.mariotaku.twidere.model.CustomTabConfiguration.CustomTabConfigurationComparator;
@@ -92,6 +93,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 			final String action = intent.getAction();
 			if (BROADCAST_TABS_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, CustomTabsFragment.this);
+				invalidateOptionsMenu();
 			}
 		}
 
@@ -191,7 +193,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 		final Cursor c = mAdapter.getCursor();
 		c.moveToPosition(position);
 		final Intent intent = new Intent(INTENT_ACTION_EDIT_TAB);
-		intent.setClass(getActivity(), EditCustomTabActivity.class);
+		intent.setClass(getActivity(), CustomTabEditorActivity.class);
 		intent.putExtra(EXTRA_ID, c.getLong(c.getColumnIndex(Tabs._ID)));
 		intent.putExtra(EXTRA_TYPE, c.getString(c.getColumnIndex(Tabs.TYPE)));
 		intent.putExtra(EXTRA_NAME, c.getString(c.getColumnIndex(Tabs.NAME)));
@@ -241,9 +243,12 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 				final String type = entry.getKey();
 				final CustomTabConfiguration conf = entry.getValue();
 				final Intent intent = new Intent(INTENT_ACTION_ADD_TAB);
-				intent.setClass(getActivity(), EditCustomTabActivity.class);
+				intent.setClass(getActivity(), CustomTabEditorActivity.class);
 				intent.putExtra(EXTRA_TYPE, type);
 				final MenuItem subItem = subMenu.add(conf.getDefaultTitle());
+				final boolean should_disable = conf.isSingleTab() && isTabAdded(getActivity(), type);
+				subItem.setVisible(!should_disable);
+				subItem.setEnabled(!should_disable);
 				subItem.setIcon(new DropShadowDrawable(res, res.getDrawable(conf.getDefaultIcon()), 2, 0x80000000));
 				subItem.setIntent(intent);
 			}

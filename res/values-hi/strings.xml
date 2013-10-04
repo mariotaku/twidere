@@ -11,7 +11,7 @@
   <string name="remove_location">स्थान हटाओ</string>
   <string name="remove_image">छवि हटाओ</string>
   <string name="remove_photo">छवि हटाओ</string>
-  <string name="tweet_hint">क्या हो रहा है?</string>
+  <string name="status_hint">क्या हो रहा है?</string>
   <string name="sign_up">साइन अप करें</string>
   <string name="sign_in">साइन इन करें</string>
   <string name="rest_base_url">REST आधार URL</string>
@@ -154,7 +154,7 @@
   <string name="list_members">सदस्यों सूचीबद्ध करें</string>
   <string name="list_subscribers">ग्राहकों सूचीबद्ध करें</string>
   <string name="type_to_compose">रचना करने के लिये टाइप करे</string>
-  <string name="Ntweets_quantity_one">आप के लिए एक नया ट्वीट है|.</string>
+  <string name="Nstatuses_quantity_one">आप के लिए एक नया ट्वीट है|.</string>
   <string name="item_1_minute">1 मिनट</string>
   <string name="item_5_minutes">5 मिनट</string>
   <string name="item_10_minutes">10 मिनट</string>

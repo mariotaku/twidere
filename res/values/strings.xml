@@ -12,7 +12,7 @@
 	<string name="remove_location">Remove location</string>
 	<string name="remove_image">Remove image</string>
 	<string name="remove_photo">Remove photo</string>
-	<string name="tweet_hint">What\'s happening ?</string>
+	<string name="status_hint">What\'s happening ?</string>
 	<string name="sign_up">Sign up</string>
 	<string name="sign_in">Sign in</string>
 	<string name="rest_base_url">REST Base URL</string>
@@ -189,16 +189,16 @@
 	<string name="sort_timeline_by_time_summary">This may cause retweets to appear in the wrong place, but may be helpful if you use other services like Identi.ca.</string>
 	<string name="refresh_on_start">Refresh on start</string>
 	<string name="refresh_on_start_summary">Refresh timeline and mentions on start.</string>
-	<string name="refresh_after_tweet">Refresh after tweet sent</string>
-	<string name="refresh_after_tweet_summary">Refresh timeline and mentions after sending a tweet.</string>
+	<string name="refresh_after_status_updated">Refresh after tweet sent</string>
+	<string name="refresh_after_status_updated_summary">Refresh timeline and mentions after sending a tweet.</string>
 	<string name="list_timeline">List timeline</string>
 	<string name="list_members">List members</string>
 	<string name="list_subscribers">List subscribers</string>
 	<string name="type_to_compose">Type to compose</string>
 	<string name="users_lists">User\'s lists</string>
 	<string name="lists_following_user">Lists following this user</string>
-	<string name="Ntweets_quantity_one">You have a new tweet.</string>
-	<string name="Ntweets_quantity_other">You have <xliff:g id="items">%d</xliff:g> new tweets.</string>
+	<string name="Nstatuses_quantity_one">You have a new tweet.</string>
+	<string name="Nstatuses_quantity_other">You have <xliff:g id="items">%d</xliff:g> new tweets.</string>
 	<string name="item_1_minute">1 minute</string>
 	<string name="item_3_minutes">3 minutes</string>
 	<string name="item_5_minutes">5 minutes</string>
@@ -274,7 +274,7 @@
 	<string name="portrait">Portrait</string>
 	<string name="quick_send">Hit \"Enter\" to Send</string>
 	<string name="quick_send_summary">Send tweet when hit \"Enter\".</string>
-	<string name="unsaved_tweet">Tweet not sent or saved yet.</string>
+	<string name="unsaved_status">Tweet not sent or saved yet.</string>
 	<string name="discard">Discard</string>
 	<string name="multi_select">Multi select</string>
 	<string name="Nitems_selected_quantity_one">1 item selected</string>
@@ -310,8 +310,8 @@
 	<string name="activity_by_friends_list_created"><xliff:g id="user">%1$s</xliff:g> created list <xliff:g id="target">%2$s</xliff:g>.</string>
 	<string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g> created list <xliff:g id="target">%2$s</xliff:g> and <xliff:g id="count">%3$d</xliff:g> more.</string>
 	<string name="cannot_get_callback_url">Cannot get callback, please check your username and password.</string>
-	<string name="tweet_not_sent">Tweet not sent.</string>
-	<string name="tweet_not_sent_summary">Tweet not sent, and saved to drafts.</string>
+	<string name="status_not_updated">Tweet not sent.</string>
+	<string name="status_not_updated_summary">Tweet not sent, and saved to drafts.</string>
 	<string name="incoming_friendships">Pending follow requests</string>
 	<string name="click_to_open_menu">Click to open item menu</string>
 	<string name="click_to_open_menu_summary">Click to open item menu, long-click to multi select.</string>
@@ -421,13 +421,12 @@
 	<string name="disable_tab_swipe">Disable tab swipe</string>
 	<string name="sign_in_method_introduction_title">How does it work?</string>
 	<string name="sign_in_method_introduction">Most clients like twicca opens a browser asking you to type username and password, and then takes you back to heir clients. Sometimes this can become very inconvenient.\nTwidere uses more simple steps to sign in, without opening the browser. Don\'t worry about your password, Twidere will never store it, it\'s totally safe!</string>
-	<string name="quote_protected_tweet_notice">It\'s not recommand to quote protected tweet.</string>
+	<string name="quote_protected_status_notice">It\'s not recommand to quote protected tweet.</string>
 	<string name="edit_draft">Edit draft</string>
 	<string name="profile_image">Profile image</string>
 	<string name="my_profile_image">My profile image</string>
 	<string name="mention_user">Mention <xliff:g id="user">%s</xliff:g></string>
 	<string name="theme_color">Theme color</string>
-	<string name="link_underline_only">Show underline only for links</string>
 	<string name="wrong_url_format">Wrong URL format.</string>
 	<string name="wrong_username_password">Wrong username/password.</string>
 	<string name="network_error">Network error.</string>
@@ -442,7 +441,7 @@
 	<string name="direct_message_sent">Direct message sent.</string>
 	<string name="direct_message_deleted">Direct message deleted.</string>
 	<string name="import_from">Import from…</string>
-	<string name="link_to_quoted_tweet">Link to quoted tweet</string>
+	<string name="link_to_quoted_status">Link to quoted tweet</string>
 	<string name="followed_user">Followed <xliff:g id="user">%s</xliff:g>.</string>
 	<string name="unfollowed_user">Unfollowed <xliff:g id="user">%s</xliff:g>.</string>
 	<string name="blocked_user">Blocked <xliff:g id="user">%s</xliff:g>.</string>
@@ -464,9 +463,9 @@
 	<string name="original_status">Original tweet</string>
 	<string name="compose_quit_action">On aborting \"compose\"</string>
 	<string name="ask">Ask</string>
-	<string name="no_close_after_tweet_sent">Keep \"Compose\" opening after tweet sent</string>
-	<string name="no_close_after_tweet_sent_summary">A little gift for chatterbox</string>
-	<string name="tweet_saved_to_draft">Tweet saved to draft.</string>
+	<string name="no_close_after_status_updated">Keep \"Compose\" opening after tweet sent</string>
+	<string name="no_close_after_status_updated_summary">A little gift for chatterbox</string>
+	<string name="status_saved_to_draft">Tweet saved to draft.</string>
 	<string name="default_account">Default</string>
 	<string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g> (<xliff:g id="daily_tweet">%2$d</xliff:g> tweet(s) per day)</string>
 	<string name="empty_content">Empty content</string>
@@ -495,5 +494,19 @@
 	<string name="nickname_only">Nickname only</string>
 	<string name="nickname_only_summary">Replace user name with nickname when available</string>
 	<string name="input_text">Input text</string>
+	<string name="users_lists_with_name"><xliff:g id="name">%s</xliff:g>\'s lists</string>
+	<string name="lists_following_user_with_name">Lists following <xliff:g id="name">%s</xliff:g></string>
+	<string name="highlight">Highlight</string>
+	<string name="underline">Underline</string>
+	<string name="link_highlight_option">Link highlight option</string>
+	<string name="users_statuses">User\'s tweets</string>
+	<string name="settings_wizard">Settings wizard</string>
+	<string name="wizard_page_1_title">Welcome</string>
+	<string name="wizard_page_1_text">Thanks for choosing Twidere.\nWould you like to config it now?</string>
+	<string name="wizard_page_1_yes">Yes</string>
+	<string name="wizard_page_1_use_default_settings">Use default settings</string>
+	<string name="wizard_page_1_import_settings">Import settings</string>
+	<string name="wizard_page_2_title">Theme</string>
+	<string name="wizard_page_2_text">Pick a theme you like.</string>
 
 </resources>

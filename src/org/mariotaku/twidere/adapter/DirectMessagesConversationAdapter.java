@@ -22,6 +22,7 @@ package org.mariotaku.twidere.adapter;
 import static org.mariotaku.twidere.util.Utils.configBaseAdapter;
 import static org.mariotaku.twidere.util.Utils.findDirectMessageInDatabases;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
+import static org.mariotaku.twidere.util.Utils.getLinkHighlightOptionInt;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
 import android.app.Activity;
@@ -52,11 +53,13 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 	private final TwidereLinkify mLinkify;
 	private final MultiSelectManager mMultiSelectManager;
 
-	private DirectMessageCursorIndices mIndices;
+	private MenuButtonClickListener mListener;
+
+	private int mLinkHighlightOption;
 	private boolean mDisplayProfileImage;
 	private float mTextSize;
 
-	private MenuButtonClickListener mListener;
+	private DirectMessageCursorIndices mIndices;
 
 	public DirectMessagesConversationAdapter(final Context context) {
 		super(context, R.layout.direct_messages_conversation_list_item, null, new String[0], new int[0], 0);
@@ -164,6 +167,22 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
 		}
+	}
+
+	@Override
+	public void setLinkHighlightOption(final String option) {
+		final int option_int = getLinkHighlightOptionInt(option);
+		if (option_int == mLinkHighlightOption) return;
+		mLinkHighlightOption = option_int;
+		switch (option_int) {
+			case LINK_HIGHLIGHT_OPTION_CODE_HIGHLIGHT:
+			case LINK_HIGHLIGHT_OPTION_CODE_UNDERLINE:
+				mLinkify.setHighlightOption(option_int);
+				break;
+			default:
+				mLinkify.setHighlightOption(LINK_HIGHLIGHT_OPTION_CODE_BOTH);
+		}
+		notifyDataSetChanged();
 	}
 
 	@Override

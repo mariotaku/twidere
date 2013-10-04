@@ -11,7 +11,7 @@
   <string name="remove_location">位置情報を削除</string>
   <string name="remove_image">画像を削除</string>
   <string name="remove_photo">写真を削除</string>
-  <string name="tweet_hint">何をしていますか？</string>
+  <string name="status_hint">何をしていますか？</string>
   <string name="sign_up">新規登録</string>
   <string name="sign_in">サインイン</string>
   <string name="rest_base_url">REST Base URL</string>
@@ -185,16 +185,16 @@
   <string name="sort_timeline_by_time_summary">タイムラインでリツイートしたアイテムの位置ずれが起こるかもしれませんが, 他のサービス(例: Identi.ca)を利用している場合はこの機能を有効にすることをお勧めします。</string>
   <string name="refresh_on_start">起動時に更新</string>
   <string name="refresh_on_start_summary">起動時にホーム / @ツイートを更新する。</string>
-  <string name="refresh_after_tweet">ツイート送信後に更新</string>
-  <string name="refresh_after_tweet_summary">ツイート送信後にTLとつながりを更新します。</string>
+  <string name="refresh_after_status_updated">ツイート送信後に更新</string>
+  <string name="refresh_after_status_updated_summary">ツイート送信後にTLとつながりを更新します。</string>
   <string name="list_timeline">リストタイムライン</string>
   <string name="list_members">リスト内アカウント</string>
   <string name="list_subscribers">リストフォロー数</string>
   <string name="type_to_compose">メッセージを入力</string>
   <string name="users_lists">ユーザーリスト</string>
   <string name="lists_following_user">このユーザーをフォローしている人のリスト</string>
-  <string name="Ntweets_quantity_one">新しいツイートが一件あります。</string>
-  <string name="Ntweets_quantity_other">新しいツイートが <xliff:g id="items">%d</xliff:g>+ 件あります。</string>
+  <string name="Nstatuses_quantity_one">新しいツイートが一件あります。</string>
+  <string name="Nstatuses_quantity_other">新しいツイートが <xliff:g id="items">%d</xliff:g>+ 件あります。</string>
   <string name="item_1_minute">1分</string>
   <string name="item_3_minutes">3分</string>
   <string name="item_5_minutes">5分</string>
@@ -270,7 +270,7 @@
   <string name="portrait">ポートレイト</string>
   <string name="quick_send">エンターキーを押すと送信</string>
   <string name="quick_send_summary">エンターキーを押すと送信する</string>
-  <string name="unsaved_tweet">ツイートを送信しません。また、ツイートが保存されていません。</string>
+  <string name="unsaved_status">ツイートを送信しません。また、ツイートが保存されていません。</string>
   <string name="discard">破棄</string>
   <string name="multi_select">複数選択</string>
   <string name="Nitems_selected_quantity_one">1 アイテムが選択</string>
@@ -306,8 +306,8 @@
   <string name="activity_by_friends_list_created"><xliff:g id="user">%1$s</xliff:g>さんはリスト<xliff:g id="target">%2$s</xliff:g>を作成しました。</string>
   <string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g>さんはリスト<xliff:g id="target">%2$s</xliff:g>と他<xliff:g id="count">%3$d</xliff:g>個を作成しました。</string>
   <string name="cannot_get_callback_url">コールバックが取得できません。ユーザー名とパスワードを確認して再試行してください。</string>
-  <string name="tweet_not_sent">ツイートは送信されませんでした。</string>
-  <string name="tweet_not_sent_summary">ツイートは送信されませんでした。下書きに保存されています。</string>
+  <string name="status_not_updated">ツイートは送信されませんでした。</string>
+  <string name="status_not_updated_summary">ツイートは送信されませんでした。下書きに保存されています。</string>
   <string name="incoming_friendships">保留中のフォローリクエスト</string>
   <string name="click_to_open_menu">タップでメニューを表示</string>
   <string name="click_to_open_menu_summary">タップでコンテキストメニューを開く、ロングタップで複数選択モード</string>
@@ -416,7 +416,7 @@
   <string name="disable_tab_swipe">タブのスワイプ操作を無効化</string>
   <string name="sign_in_method_introduction_title">どんなふうに動作するの?</string>
   <string name="sign_in_method_introduction">"twiccaのようなほとんどのクライアントではブラウザを開いてユーザー名とパスワードを入力させた後クライアントに戻ります。\nTwidereではそんな面倒なことをせずにログインできます。パスワードの保管などはしていないのでご安心ください。"</string>
-  <string name="quote_protected_tweet_notice">"非公開ツイートを引用するのはおすすめできません。"</string>
+  <string name="quote_protected_status_notice">"非公開ツイートを引用するのはおすすめできません。"</string>
   <string name="edit_draft">下書きを編集</string>
   <string name="profile_image">プロフィール画像</string>
   <string name="my_profile_image">プロフィール画像</string>
@@ -437,7 +437,7 @@
   <string name="direct_message_sent">DMを送信しました。</string>
   <string name="direct_message_deleted">DMを削除しました。</string>
   <string name="import_from">インポート</string>
-  <string name="link_to_quoted_tweet">引用ツイートへのリンク</string>
+  <string name="link_to_quoted_status">引用ツイートへのリンク</string>
   <string name="followed_user"><xliff:g id="user">%s</xliff:g>さんをフォローしました。</string>
   <string name="unfollowed_user"><xliff:g id="user">%s</xliff:g>さんのフォローを解除しました。</string>
   <string name="blocked_user"><xliff:g id="user">%s</xliff:g>さんをブロックしました。</string>
@@ -459,9 +459,9 @@
   <string name="original_status">元のツイート</string>
   <string name="compose_quit_action">ツイート破棄時の動作</string>
   <string name="ask">尋ねる</string>
-  <string name="no_close_after_tweet_sent">編集画面をツイート送信後に開いたままにする</string>
-  <string name="no_close_after_tweet_sent_summary">ツイート編集画面の動作を変更します。</string>
-  <string name="tweet_saved_to_draft">ツイートは下書きに保存されました。</string>
+  <string name="no_close_after_status_updated">編集画面をツイート送信後に開いたままにする</string>
+  <string name="no_close_after_status_updated_summary">ツイート編集画面の動作を変更します。</string>
+  <string name="status_saved_to_draft">ツイートは下書きに保存されました。</string>
   <string name="default_account">デフォルト</string>
   <string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g> (一日に平均<xliff:g id="daily_tweet">%2$d</xliff:g>回ツイート)</string>
   <string name="empty_content">コンテンツなし</string>

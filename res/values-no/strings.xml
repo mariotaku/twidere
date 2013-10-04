@@ -11,7 +11,7 @@
   <string name="remove_location">Fjern sted</string>
   <string name="remove_image">Fjern bilde</string>
   <string name="remove_photo">Fjern foto</string>
-  <string name="tweet_hint">Hva skjer?</string>
+  <string name="status_hint">Hva skjer?</string>
   <string name="sign_up">Registrer deg</string>
   <string name="sign_in">Logg inn</string>
   <string name="rest_base_url">REST Bare URL</string>

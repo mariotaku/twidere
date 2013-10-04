@@ -21,7 +21,7 @@ package org.mariotaku.twidere.fragment;
 
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.buildDirectMessageConversationUri;
-import static org.mariotaku.twidere.util.Utils.getDefaultTextSize;
+import static org.mariotaku.twidere.util.Utils.configBaseAdapter;
 import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.showOkMessage;
@@ -361,6 +361,12 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+		configBaseAdapter(getActivity(), mAdapter);
+	}
+
+	@Override
 	public void onSaveInstanceState(final Bundle outState) {
 		if (mEditText != null) {
 			outState.putString(EXTRA_TEXT, ParseUtils.parseString(mEditText.getText()));
@@ -378,14 +384,6 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 		filter.addAction(BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED);
 		filter.addAction(BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED);
 		registerReceiver(mStatusReceiver, filter);
-
-		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(getActivity()));
-		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		final String name_display_option = mPreferences.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION,
-				NAME_DISPLAY_OPTION_BOTH);
-		mAdapter.setDisplayProfileImage(display_profile_image);
-		mAdapter.setTextSize(text_size);
-		mAdapter.setNameDisplayOption(name_display_option);
 	}
 
 	@Override

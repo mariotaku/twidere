@@ -11,7 +11,7 @@
   <string name="remove_location">Hapus lokasi</string>
   <string name="remove_image">Hapus gambar</string>
   <string name="remove_photo">Hapus gambar</string>
-  <string name="tweet_hint">Apa yang terjadi ?</string>
+  <string name="status_hint">Apa yang terjadi ?</string>
   <string name="sign_up">Daftar</string>
   <string name="sign_in">Masuk</string>
   <string name="rest_base_url">Pusat REST URL</string>
@@ -185,8 +185,8 @@
   <string name="type_to_compose">Ketik untuk membuat baru</string>
   <string name="users_lists">Daftar pengguna ini</string>
   <string name="lists_following_user">Daftar mengikuti pengguna ini</string>
-  <string name="Ntweets_quantity_one">Anda mempunyai sebuah tweet baru.</string>
-  <string name="Ntweets_quantity_other">Anda memiliki <xliff:g id="items">%d</xliff:g> tweet baru.</string>
+  <string name="Nstatuses_quantity_one">Anda mempunyai sebuah tweet baru.</string>
+  <string name="Nstatuses_quantity_other">Anda memiliki <xliff:g id="items">%d</xliff:g> tweet baru.</string>
   <string name="item_1_minute">1 menit</string>
   <string name="item_3_minutes">3 menit</string>
   <string name="item_5_minutes">5 menit</string>
@@ -261,7 +261,7 @@
   <string name="portrait">Potret</string>
   <string name="quick_send">Tekan \"Enter\" untuk Mengirim</string>
   <string name="quick_send_summary">Kirim tweet saat menekan \"Enter\".</string>
-  <string name="unsaved_tweet">Tweet tidak terkirim atau belum tersimpan.</string>
+  <string name="unsaved_status">Tweet tidak terkirim atau belum tersimpan.</string>
   <string name="discard">Buang</string>
   <string name="multi_select">Pilih banyak</string>
   <string name="Nitems_selected_quantity_one">1 item terpilih</string>
@@ -296,8 +296,8 @@
   <string name="activity_by_friends_list_created"><xliff:g id="user">%1$s</xliff:g> membuat daftar <xliff:g id="target">%2$s</xliff:g>.</string>
   <string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g> membuat daftar <xliff:g id="target">%2$s</xliff:g> dan <xliff:g id="count">%3$d</xliff:g> lagi.</string>
   <string name="cannot_get_callback_url">Tidak dapat panggilan balik, harap periksa nama dan kata sandi anda.</string>
-  <string name="tweet_not_sent">Tweet tidak terkirim.</string>
-  <string name="tweet_not_sent_summary">Tweet tidak terkirim, dan disimpan di konsep.</string>
+  <string name="status_not_updated">Tweet tidak terkirim.</string>
+  <string name="status_not_updated_summary">Tweet tidak terkirim, dan disimpan di konsep.</string>
   <string name="incoming_friendships">Permintaan mengikuti ditahan</string>
   <string name="click_to_open_menu">Klik untuk membuka menu item</string>
   <string name="click_to_open_menu_summary">Klik untuk membuka menu item, Tahan untuk memilih lebih.</string>
@@ -406,7 +406,7 @@
   <string name="disable_tab_swipe">Nonaktifkan tab menggesek</string>
   <string name="sign_in_method_introduction_title">Bagaimana cara kerjanya?</string>
   <string name="sign_in_method_introduction">Kebanyakan klien seperti twicca membuka browser meminta Anda untuk mengetik nama user dan sandi, dan kemudian membawa Anda kembali ke klien mereka. Kadang-kadang ini bisa menjadi sangat nyaman.\nTwidere menggunakan langkah-langkah yang lebih sederhana untuk masuk, tanpa membuka browser. Jangan khawatir tentang sandi Anda, Twidere tidak akan pernah menyimpannya, itu benar-benar aman!</string>
-  <string name="quote_protected_tweet_notice">Tidak direkomendasikan untuk mengutip tweet terproteksi.</string>
+  <string name="quote_protected_status_notice">Tidak direkomendasikan untuk mengutip tweet terproteksi.</string>
   <string name="edit_draft">Ubah draf</string>
   <string name="profile_image">Gambar Profil</string>
   <string name="my_profile_image">Gambar profile saya</string>
@@ -427,7 +427,7 @@
   <string name="direct_message_sent">Direct meesage terkirim.</string>
   <string name="direct_message_deleted">Direct message dihapus.</string>
   <string name="import_from">Impor dari…</string>
-  <string name="link_to_quoted_tweet">Tautan ke kutipan twit</string>
+  <string name="link_to_quoted_status">Tautan ke kutipan twit</string>
   <string name="followed_user"><xliff:g id="user">%s</xliff:g> diikuti.</string>
   <string name="unfollowed_user">Batal mengikuti <xliff:g id="user">%s</xliff:g>.</string>
   <string name="blocked_user">Mengeblok <xliff:g id="user">%s</xliff:g>.</string>
@@ -446,9 +446,9 @@
   <string name="background_toast_notification_summary">Tampilkan notifikasi Toast saat diset ke latar belakang</string>
   <string name="original_status">Tweet asli</string>
   <string name="ask">Bertanya</string>
-  <string name="no_close_after_tweet_sent">Tetap buka \"Membuat\" setelah tweet terkirim</string>
-  <string name="no_close_after_tweet_sent_summary">Sebuah hadiah kecil untuk chatterbox</string>
-  <string name="tweet_saved_to_draft">Tweet tersimpan di draft.</string>
+  <string name="no_close_after_status_updated">Tetap buka \"Membuat\" setelah tweet terkirim</string>
+  <string name="no_close_after_status_updated_summary">Sebuah hadiah kecil untuk chatterbox</string>
+  <string name="status_saved_to_draft">Tweet tersimpan di draft.</string>
   <string name="default_account">Dasar</string>
   <string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g> (<xliff:g id="daily_tweet">%2$d</xliff:g> tweet per hari)</string>
 </resources>

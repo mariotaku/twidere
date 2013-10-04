@@ -11,7 +11,7 @@
   <string name="remove_location">Удалить местоположение</string>
   <string name="remove_image">Удалить изображение</string>
   <string name="remove_photo">Удалить фото</string>
-  <string name="tweet_hint">Что происходит?</string>
+  <string name="status_hint">Что происходит?</string>
   <string name="sign_up">Регистрация</string>
   <string name="sign_in">Войти</string>
   <string name="rest_base_url">REST Base URL</string>
@@ -185,16 +185,16 @@
   <string name="sort_timeline_by_time_summary">Это может вызвать появление ретвитов в неправильном месте, но может быть полезным, если вы используете другие сервисы, такие как Identi.ca.</string>
   <string name="refresh_on_start">Обновлять при запуске</string>
   <string name="refresh_on_start_summary">Обновить ленту и упоминания при запуске.</string>
-  <string name="refresh_after_tweet">Обновить после отправки</string>
-  <string name="refresh_after_tweet_summary">Обновить ленту и упоминания после отправки твита.</string>
+  <string name="refresh_after_status_updated">Обновить после отправки</string>
+  <string name="refresh_after_status_updated_summary">Обновить ленту и упоминания после отправки твита.</string>
   <string name="list_timeline">Список</string>
   <string name="list_members">Список пользователей</string>
   <string name="list_subscribers">Список подписчиков</string>
   <string name="type_to_compose">Напишите сообщение</string>
   <string name="users_lists">Листы пользователей</string>
   <string name="lists_following_user">Списки читающих</string>
-  <string name="Ntweets_quantity_one">У вас есть новый твит.</string>
-  <string name="Ntweets_quantity_other">У вас <xliff:g id="items">%d</xliff:g> новых твитов</string>
+  <string name="Nstatuses_quantity_one">У вас есть новый твит.</string>
+  <string name="Nstatuses_quantity_other">У вас <xliff:g id="items">%d</xliff:g> новых твитов</string>
   <string name="item_1_minute">1 минута</string>
   <string name="item_3_minutes">3 минуты</string>
   <string name="item_5_minutes">5 минут</string>
@@ -270,7 +270,7 @@
   <string name="portrait">Портретный</string>
   <string name="quick_send">Нажмите «Enter» для отправки</string>
   <string name="quick_send_summary">Отправлять твит по нажатию «Enter».</string>
-  <string name="unsaved_tweet">Твит еще не отправлен или не сохранен.</string>
+  <string name="unsaved_status">Твит еще не отправлен или не сохранен.</string>
   <string name="discard">Выйти</string>
   <string name="multi_select">Выбрать несколько</string>
   <string name="Nitems_selected_quantity_one">Выбран 1 элемент</string>
@@ -306,8 +306,8 @@
   <string name="activity_by_friends_list_created"><xliff:g id="user">%1$s</xliff:g> созданный список <xliff:g id="target">%2$s</xliff:g>.</string>
   <string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g> созданный список <xliff:g id="target">%2$s</xliff:g> и <xliff:g id="count">%3$d</xliff:g> более.</string>
   <string name="cannot_get_callback_url">Нет отклика, проверьте ваши логин и пароль.</string>
-  <string name="tweet_not_sent">Твит не отправлен.</string>
-  <string name="tweet_not_sent_summary">Твит не отправлен, сохранен в черновиках.</string>
+  <string name="status_not_updated">Твит не отправлен.</string>
+  <string name="status_not_updated_summary">Твит не отправлен, сохранен в черновиках.</string>
   <string name="incoming_friendships">Ожидание запросов на подписку</string>
   <string name="click_to_open_menu">Нажмите, чтобы открыть пункт меню</string>
   <string name="click_to_open_menu_summary">Нажмите, чтобы открыть пункт меню; долгое нажатие для выбора нескольких пунктов.</string>
@@ -416,7 +416,7 @@
   <string name="disable_tab_swipe">Отключить свайп между табами</string>
   <string name="sign_in_method_introduction_title">Как это работает?</string>
   <string name="sign_in_method_introduction">Большинство программ-клиентов, таких как twicca, открывает запрос логина и пароля через браузер, а затем возвращает вас обратно в программу-клиент. Иногда это очень неудобно.\nTwidere использует другой, более простой механизм входа без перехода в браузер. Не переживайте за ваши пароли, Twidere нигде их не хранит, это абсолютно безопасно!</string>
-  <string name="quote_protected_tweet_notice">Не рекомендуется цитировать защищенный твит.</string>
+  <string name="quote_protected_status_notice">Не рекомендуется цитировать защищенный твит.</string>
   <string name="edit_draft">Редактировать черновик</string>
   <string name="profile_image">Изображение в профиле</string>
   <string name="my_profile_image">Мое изображение в профиле</string>
@@ -437,7 +437,7 @@
   <string name="direct_message_sent">Личное сообщение отправлено.</string>
   <string name="direct_message_deleted">Личное сообщение удалено.</string>
   <string name="import_from">Импортировать из…</string>
-  <string name="link_to_quoted_tweet">Ссылка на цитату</string>
+  <string name="link_to_quoted_status">Ссылка на цитату</string>
   <string name="followed_user">Подписан на <xliff:g id="user">%s</xliff:g>.</string>
   <string name="unfollowed_user">Отписан от <xliff:g id="user">%s</xliff:g>.</string>
   <string name="blocked_user">Заблокирован <xliff:g id="user">%s</xliff:g>.</string>
@@ -459,9 +459,9 @@
   <string name="original_status">Исходный твит</string>
   <string name="compose_quit_action">При выходе из диалога написания</string>
   <string name="ask">Спросить</string>
-  <string name="no_close_after_tweet_sent">Оставлять диалог открытым после отправки твита</string>
-  <string name="no_close_after_tweet_sent_summary">Маленький подарок для болтунов</string>
-  <string name="tweet_saved_to_draft">Твит сохранен в черновик.</string>
+  <string name="no_close_after_status_updated">Оставлять диалог открытым после отправки твита</string>
+  <string name="no_close_after_status_updated_summary">Маленький подарок для болтунов</string>
+  <string name="status_saved_to_draft">Твит сохранен в черновик.</string>
   <string name="default_account">По умолчанию</string>
   <string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g>(<xliff:g id="daily_tweet">%2$d</xliff:g>твитов за день)</string>
   <string name="empty_content">Пустое содержимое</string>

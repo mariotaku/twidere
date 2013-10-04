@@ -398,7 +398,7 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 	private void hideBars() {
 		if (!mShowBars) return;
 		mShowBars = false;
-		mActionBar.hide();
+//		mActionBar.hide();
 		mHandler.removeMessages(MSG_HIDE_BARS);
 	}
 
@@ -429,7 +429,7 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 	private void showBars() {
 		if (mShowBars) return;
 		mShowBars = true;
-		mActionBar.show();
+//		mActionBar.show();
 		refreshHidingMessage();
 	}
 

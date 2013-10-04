@@ -46,7 +46,7 @@ public class SetUserNicknameDialogFragment extends BaseSupportDialogFragment imp
 		final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
 				FrameLayout.LayoutParams.WRAP_CONTENT);
 		lp.leftMargin = lp.topMargin = lp.bottomMargin = lp.rightMargin = getResources().getDimensionPixelSize(
-				R.dimen.default_element_spacing);
+				R.dimen.element_spacing_default);
 		view.addView(mEditText, lp);
 		builder.setView(view);
 		mEditText.setText(args.getString(EXTRA_NAME));

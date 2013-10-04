@@ -147,7 +147,6 @@ import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.provider.TweetStore.Tabs;
 import org.mariotaku.twidere.util.HtmlLinkExtractor.HtmlLink;
 import org.mariotaku.twidere.util.httpclient.HttpClientImpl;
 
@@ -531,6 +530,7 @@ public final class Utils implements Constants {
 		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		adapter.setDisplayProfileImage(pref.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true));
 		adapter.setNameDisplayOption(pref.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH));
+		adapter.setLinkHighlightOption(pref.getString(PREFERENCE_KEY_LINK_HIGHLIGHT_OPTION, LINK_HIGHLIGHT_OPTION_NONE));
 		adapter.setNicknameOnly(pref.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false));
 		adapter.setTextSize(pref.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(context)));
 	}
@@ -1230,24 +1230,6 @@ public final class Utils implements Constants {
 		return accounts;
 	}
 
-	public static int getAddedTabPosition(final Context context, final String type) {
-		if (context == null) return -1;
-		final ContentResolver resolver = context.getContentResolver();
-		final String where = Tabs.TYPE + " = ?";
-		final Cursor cur = resolver.query(Tabs.CONTENT_URI, new String[] { Tabs.POSITION }, where,
-				new String[] { type }, Tabs.DEFAULT_SORT_ORDER);
-		if (cur == null) return -1;
-		final int position;
-		if (cur.getCount() > 0) {
-			cur.moveToFirst();
-			position = cur.getInt(cur.getColumnIndex(Tabs.POSITION));
-		} else {
-			position = -1;
-		}
-		cur.close();
-		return position;
-	}
-
 	public static int getAllStatusesCount(final Context context, final Uri uri) {
 		if (context == null) return 0;
 		final ContentResolver resolver = context.getContentResolver();
@@ -1444,6 +1426,24 @@ public final class Utils implements Constants {
 				use_httpclient);
 	}
 
+	public static String getDisplayName(final Context context, final long user_id, final String name,
+			final String screen_name) {
+		return getDisplayName(context, user_id, name, screen_name, false);
+	}
+
+	public static String getDisplayName(final Context context, final long user_id, final String name,
+			final String screen_name, final boolean ignore_cache) {
+		if (context == null) return null;
+		final boolean display_name = getNameDisplayOptionInt(context) != NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
+		final boolean nick_only = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+				.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false);
+		final String nick = getUserNickname(context, user_id, ignore_cache);
+		final boolean nick_available = !isEmpty(nick);
+		if (nick_only && nick_available) return nick;
+		if (!nick_available) return display_name ? name : "@" + screen_name;
+		return context.getString(R.string.name_with_nickname, display_name ? name : "@" + screen_name);
+	}
+
 	public static String getErrorMessage(final Context context, final Throwable t) {
 		if (t == null) return null;
 		if (context != null && t instanceof TwitterException)
@@ -1556,6 +1556,25 @@ public final class Utils implements Constants {
 		}
 		if (link == null) return ParseUtils.parseString(text);
 		return image_upload_format.replace(FORMAT_PATTERN_LINK, link).replace(FORMAT_PATTERN_TEXT, text);
+	}
+
+	public static String getLinkHighlightOption(final Context context) {
+		if (context == null) return null;
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		return prefs.getString(PREFERENCE_KEY_LINK_HIGHLIGHT_OPTION, LINK_HIGHLIGHT_OPTION_NONE);
+	}
+
+	public static int getLinkHighlightOptionInt(final Context context) {
+		return getLinkHighlightOptionInt(getLinkHighlightOption(context));
+	}
+
+	public static int getLinkHighlightOptionInt(final String option) {
+		if (LINK_HIGHLIGHT_OPTION_BOTH.equals(option))
+			return LINK_HIGHLIGHT_OPTION_CODE_BOTH;
+		else if (LINK_HIGHLIGHT_OPTION_HIGHLIGHT.equals(option))
+			return LINK_HIGHLIGHT_OPTION_CODE_HIGHLIGHT;
+		else if (LINK_HIGHLIGHT_OPTION_UNDERLINE.equals(option)) return LINK_HIGHLIGHT_OPTION_CODE_UNDERLINE;
+		return LINK_HIGHLIGHT_OPTION_CODE_NONE;
 	}
 
 	public static String getLocalizedNumber(final Locale locale, final Number number) {

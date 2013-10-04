@@ -11,7 +11,7 @@
   <string name="remove_location">Hely eltávolítása</string>
   <string name="remove_image">Kép eltávolítása</string>
   <string name="remove_photo">Fotó eltávolítása</string>
-  <string name="tweet_hint">Mi újság?</string>
+  <string name="status_hint">Mi újság?</string>
   <string name="sign_up">Feliratkozás</string>
   <string name="sign_in">Bejelentkezés</string>
   <string name="rest_base_url">REST alap URL-je</string>
@@ -159,7 +159,7 @@
   <string name="list_members">Tagok listázása</string>
   <string name="list_subscribers">Feliratkozók listázása</string>
   <string name="type_to_compose">Gépeljen új létrehozásához</string>
-  <string name="Ntweets_quantity_one">Önnek egy új tweetje érkezett.</string>
+  <string name="Nstatuses_quantity_one">Önnek egy új tweetje érkezett.</string>
   <string name="item_1_minute">1 perc</string>
   <string name="item_5_minutes">5 perc</string>
   <string name="item_10_minutes">10 perc</string>
@@ -216,7 +216,7 @@
   <string name="error_message_tweet_shortener_not_found">Tweet rövidítő nem található, talán el lett távolítva.</string>
   <string name="landscape">Fekvő</string>
   <string name="portrait">Álló</string>
-  <string name="unsaved_tweet">A tweet nincs sem elküldve sem elmentve.</string>
+  <string name="unsaved_status">A tweet nincs sem elküldve sem elmentve.</string>
   <string name="discard">Elvetés</string>
   <string name="Nitems_selected_quantity_one">1 elem kiválasztva</string>
   <string name="Nitems_selected_quantity_other"><xliff:g id="items">%d</xliff:g> elem kiválasztva</string>
@@ -239,8 +239,8 @@
   <string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> és még <xliff:g id="count">%d</xliff:g> személy retweetelt.</string>
   <string name="activity_about_me_list_member_added"><xliff:g id="user">%s</xliff:g> hozzáadott egy listájához.</string>
   <string name="activity_about_me_list_member_added_multi"><xliff:g id="user">%s</xliff:g> és még <xliff:g id="count">%d</xliff:g> személy hozzáadott egy listájához.</string>
-  <string name="tweet_not_sent">Tweet nincs elküldve.</string>
-  <string name="tweet_not_sent_summary">Tweet nincs elküldve, de mentve a tervek közé.</string>
+  <string name="status_not_updated">Tweet nincs elküldve.</string>
+  <string name="status_not_updated_summary">Tweet nincs elküldve, de mentve a tervek közé.</string>
   <string name="incoming_friendships">Függőben lévő követési kérelem</string>
   <string name="click_to_open_menu">Kattints a menü megnyitásához</string>
   <string name="click_to_open_menu_summary">Kattints a menü megnyitásához, hossz kattintással tud több elemet kijelölni.</string>

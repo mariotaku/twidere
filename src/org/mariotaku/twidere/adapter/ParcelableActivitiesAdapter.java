@@ -119,6 +119,11 @@ public class ParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity
 	}
 
 	@Override
+	public void setLinkHighlightOption(final String option) {
+
+	}
+
+	@Override
 	public void setMenuButtonClickListener(final MenuButtonClickListener listener) {
 		mListener = listener;
 	}

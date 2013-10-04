@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<dimen name="default_element_spacing">8dp</dimen>
+	<dimen name="element_spacing_default">8dp</dimen>
+	<dimen name="element_spacing_large">16dp</dimen>
 	<dimen name="profile_image_size_cards_ui">48dp</dimen>
 	<dimen name="profile_image_size">56dp</dimen>
 	<dimen name="activity_profile_image_size">32dp</dimen>
@@ -35,5 +36,9 @@
 
 	<!-- Size of icons in the top-level of settings -->
 	<dimen name="header_icon_width">28dp</dimen>
+	<dimen name="text_size_wizard_title">48sp</dimen>
+	<dimen name="text_size_wizard_text">18sp</dimen>
+	<dimen name="line_indicator_line_width_wizard">24dp</dimen>
+	<dimen name="line_indicator_stroke_width_wizard">3dp</dimen>
 
 </resources>

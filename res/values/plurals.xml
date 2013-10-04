@@ -3,8 +3,8 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
 	<plurals name="Ntweets">
-		<item quantity="one">@string/Ntweets_quantity_one</item>
-		<item quantity="other">@string/Ntweets_quantity_other</item>
+		<item quantity="one">@string/Nstatuses_quantity_one</item>
+		<item quantity="other">@string/Nstatuses_quantity_other</item>
 	</plurals>
 	<plurals name="Nitems_selected">
 		<item quantity="one">@string/Nitems_selected_quantity_one</item>

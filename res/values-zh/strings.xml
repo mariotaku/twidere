@@ -11,7 +11,7 @@
   <string name="remove_location">移除位置</string>
   <string name="remove_image">移除圖片</string>
   <string name="remove_photo">移除相片</string>
-  <string name="tweet_hint">你在做什麼？</string>
+  <string name="status_hint">你在做什麼？</string>
   <string name="sign_up">註冊</string>
   <string name="sign_in">登錄</string>
   <string name="rest_base_url">REST Base URL</string>
@@ -185,16 +185,16 @@
   <string name="sort_timeline_by_time_summary">這可能使得被轉推的推文顯示在錯誤的位置，不過如果你使用其他服務（比如Identi.ca），這個選項會有不少幫助</string>
   <string name="refresh_on_start">啟動時刷新</string>
   <string name="refresh_on_start_summary">啟動時刷新時間綫和提及</string>
-  <string name="refresh_after_tweet">發送推文後刷新</string>
-  <string name="refresh_after_tweet_summary">在發送推文後刷新時間綫</string>
+  <string name="refresh_after_status_updated">發送推文後刷新</string>
+  <string name="refresh_after_status_updated_summary">在發送推文後刷新時間綫</string>
   <string name="list_timeline">列表時間綫</string>
   <string name="list_members">列表成員</string>
   <string name="list_subscribers">訂閲列表的用戶</string>
   <string name="type_to_compose">鍵入信息</string>
   <string name="users_lists">列表</string>
   <string name="lists_following_user">關注這個用戶的列表</string>
-  <string name="Ntweets_quantity_one">你有一條新推文</string>
-  <string name="Ntweets_quantity_other">你有 <xliff:g id="items">%d</xliff:g> 條新推文</string>
+  <string name="Nstatuses_quantity_one">你有一條新推文</string>
+  <string name="Nstatuses_quantity_other">你有 <xliff:g id="items">%d</xliff:g> 條新推文</string>
   <string name="item_1_minute">1分鐘</string>
   <string name="item_3_minutes">3分鐘</string>
   <string name="item_5_minutes">5分鐘</string>
@@ -270,7 +270,7 @@
   <string name="portrait">縱向模式</string>
   <string name="quick_send">按“回車”發送</string>
   <string name="quick_send_summary">按“回車”發送推文</string>
-  <string name="unsaved_tweet">推文還沒有發送或保存</string>
+  <string name="unsaved_status">推文還沒有發送或保存</string>
   <string name="discard">捨棄</string>
   <string name="multi_select">多選</string>
   <string name="Nitems_selected_quantity_one">已選擇 1 項</string>
@@ -306,8 +306,8 @@
   <string name="activity_by_friends_list_created"><xliff:g id="user">%1$s</xliff:g> 創建了列表 <xliff:g id="target">%2$s</xliff:g></string>
   <string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g> 創建了 <xliff:g id="target">%2$s</xliff:g> 和其他<xliff:g id="count">%3$d</xliff:g>個列表</string>
   <string name="cannot_get_callback_url">請檢查你的用戶名和密碼是否正確</string>
-  <string name="tweet_not_sent">推文未發送</string>
-  <string name="tweet_not_sent_summary">推文未發送，並被保存到草稿箱</string>
+  <string name="status_not_updated">推文未發送</string>
+  <string name="status_not_updated_summary">推文未發送，並被保存到草稿箱</string>
   <string name="incoming_friendships">待定的關注請求</string>
   <string name="click_to_open_menu">點擊打開推文菜單</string>
   <string name="click_to_open_menu_summary">點擊打開推文菜單，長按以多選，如果你習慣twicca式的操作方式，這個選項會有所幫助</string>
@@ -416,7 +416,7 @@
   <string name="disable_tab_swipe">禁用滑動切換標籤頁</string>
   <string name="sign_in_method_introduction_title">輸入密碼登錄是怎樣工作的？</string>
   <string name="sign_in_method_introduction">大多數客戶端（例如twicca）通過打開瀏覽器驗證登錄Twitter，然後瀏覽器再將你引導回客戶端。有時這會導致許多不便，因為一些第三方瀏覽器不會引導你回客戶端。\nTwidere使用更加簡便的步驟代替瀏覽器登錄到Twitter，不必擔心你會泄露你的密碼，這個方式非常安全！\nTwidere不會保存密碼，僅在登錄時發送給Twitter，只要網絡足夠安全，你的密碼永遠不會被第三方獲取！</string>
-  <string name="quote_protected_tweet_notice">不建議引用受保護的推文</string>
+  <string name="quote_protected_status_notice">不建議引用受保護的推文</string>
   <string name="edit_draft">編輯草稿</string>
   <string name="profile_image">個人資料圖片</string>
   <string name="my_profile_image">我的個人資料圖片</string>
@@ -437,7 +437,7 @@
   <string name="direct_message_sent">私信已發送</string>
   <string name="direct_message_deleted">私信已刪除</string>
   <string name="import_from">導入自…</string>
-  <string name="link_to_quoted_tweet">連結到引用的推文</string>
+  <string name="link_to_quoted_status">連結到引用的推文</string>
   <string name="followed_user">關注了<xliff:g id="user">%s</xliff:g></string>
   <string name="unfollowed_user">取消關注了<xliff:g id="user">%s</xliff:g></string>
   <string name="blocked_user">阻止了<xliff:g id="user">%s</xliff:g></string>
@@ -459,9 +459,9 @@
   <string name="original_status">原推文</string>
   <string name="compose_quit_action">退出“撰寫”界面的操作</string>
   <string name="ask">詢問</string>
-  <string name="no_close_after_tweet_sent">發送推文之後仍然保持“撰寫”開啟</string>
-  <string name="no_close_after_tweet_sent_summary">給不二的小禮物</string>
-  <string name="tweet_saved_to_draft">推文已經保存到草稿箱</string>
+  <string name="no_close_after_status_updated">發送推文之後仍然保持“撰寫”開啟</string>
+  <string name="no_close_after_status_updated_summary">給不二的小禮物</string>
+  <string name="status_saved_to_draft">推文已經保存到草稿箱</string>
   <string name="default_account">預設</string>
   <string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g> （每天<xliff:g id="daily_tweet">%2$d</xliff:g>推）</string>
   <string name="empty_content">空內容</string>

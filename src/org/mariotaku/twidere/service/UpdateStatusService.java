@@ -354,8 +354,8 @@ public class UpdateStatusService extends IntentService implements Constants {
 			values.put(Drafts.IMAGE_URI, ParseUtils.parseString(status.image_uri));
 		}
 		mResolver.insert(Drafts.CONTENT_URI, values);
-		final String title = getString(R.string.tweet_not_sent);
-		final String message = getString(R.string.tweet_not_sent_summary);
+		final String title = getString(R.string.status_not_updated);
+		final String message = getString(R.string.status_not_updated_summary);
 		final Intent intent = new Intent(INTENT_ACTION_DRAFTS);
 		final Notification notification = buildNotification(title, message, R.drawable.ic_stat_twitter, intent, null);
 		mNotificationManager.notify(NOTIFICATION_ID_DRAFTS, notification);

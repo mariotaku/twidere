@@ -27,6 +27,7 @@ import static org.mariotaku.twidere.util.Utils.clearUserNickname;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
+import static org.mariotaku.twidere.util.Utils.getDisplayName;
 import static org.mariotaku.twidere.util.Utils.getErrorMessage;
 import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
 import static org.mariotaku.twidere.util.Utils.getOriginalTwitterProfileImage;
@@ -94,8 +95,8 @@ import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.ColorSelectorActivity;
-import org.mariotaku.twidere.activity.EditUserProfileActivity;
 import org.mariotaku.twidere.activity.UserListSelectorActivity;
+import org.mariotaku.twidere.activity.UserProfileEditorActivity;
 import org.mariotaku.twidere.adapter.ListActionAdapter;
 import org.mariotaku.twidere.loader.ParcelableUserLoader;
 import org.mariotaku.twidere.model.ListAction;
@@ -481,7 +482,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				if (mAccountId == mUserId) {
 					final Bundle bundle = getArguments();
 					final Intent intent = new Intent(INTENT_ACTION_EDIT_USER_PROFILE);
-					intent.setClass(getActivity(), EditUserProfileActivity.class);
+					intent.setClass(getActivity(), UserProfileEditorActivity.class);
 					if (bundle != null) {
 						intent.putExtras(bundle);
 					}
@@ -586,7 +587,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 			}
 			case R.id.name_container: {
 				if (mUser == null || mAccountId != mUserId) return;
-				startActivity(new Intent(getActivity(), EditUserProfileActivity.class));
+				startActivity(new Intent(getActivity(), UserProfileEditorActivity.class));
 				break;
 			}
 		}
@@ -957,7 +958,9 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 
 		@Override
 		public String getName() {
-			return getString(R.string.lists_following_user);
+			if (mUser == null) return getString(R.string.lists_following_user);
+			final String display_name = getDisplayName(getActivity(), mUser.id, mUser.name, mUser.screen_name);
+			return getString(R.string.lists_following_user_with_name, display_name);
 		}
 
 		@Override
@@ -975,7 +978,9 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 
 		@Override
 		public String getName() {
-			return getString(R.string.user_list);
+			if (mUser == null) return getString(R.string.users_lists);
+			final String display_name = getDisplayName(getActivity(), mUser.id, mUser.name, mUser.screen_name);
+			return getString(R.string.users_lists_with_name, display_name);
 		}
 
 		@Override

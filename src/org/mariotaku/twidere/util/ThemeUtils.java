@@ -1,6 +1,9 @@
 package org.mariotaku.twidere.util;
 
-import android.annotation.SuppressLint;
+import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
+import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
+import static org.mariotaku.twidere.util.Utils.getDefaultTextSize;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
@@ -8,8 +11,10 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
-import android.os.Build;
+import android.view.ContextThemeWrapper;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
@@ -83,8 +88,9 @@ public class ThemeUtils implements Constants {
 	public static Drawable getActionBarBackground(final Context context) {
 		final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.background },
 				android.R.attr.actionBarStyle, 0);
-		final int color = ThemeUtils.getThemeColor(context);
+		final int color = getThemeColor(context);
 		final Drawable d = a.getDrawable(0);
+		a.recycle();
 		if (!(d instanceof LayerDrawable)) return d;
 		final LayerDrawable ld = (LayerDrawable) d.mutate();
 		final Drawable color_layer = ld.findDrawableByLayerId(R.id.color_layer);
@@ -92,6 +98,21 @@ public class ThemeUtils implements Constants {
 			color_layer.setColorFilter(color, PorterDuff.Mode.MULTIPLY);
 		}
 		return ld;
+	}
+
+	public static Drawable getActionBarSplitBackground(final Context context) {
+		final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.backgroundSplit },
+				android.R.attr.actionBarStyle, 0);
+		final Drawable d = a.getDrawable(0);
+		a.recycle();
+		return d;
+	}
+
+	public static Drawable getCardItemBackground(final Context context) {
+		final TypedArray a = context.obtainStyledAttributes(new int[] { R.attr.cardItemBackground });
+		final Drawable d = a.getDrawable(0);
+		a.recycle();
+		return d;
 	}
 
 	public static int getCardListBackgroundColor(final Context context) {
@@ -153,11 +174,23 @@ public class ThemeUtils implements Constants {
 		return Color.WHITE;
 	}
 
-	@SuppressLint("InlinedApi")
+	public static int getTextColorPrimary(final Context context) {
+		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.textColorPrimary });
+		final int color = a.getColor(0, Color.TRANSPARENT);
+		a.recycle();
+		return color;
+	}
+
+	public static int getTextColorSecondary(final Context context) {
+		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.textColorSecondary });
+		final int color = a.getColor(0, Color.TRANSPARENT);
+		a.recycle();
+		return color;
+	}
+
 	public static int getThemeColor(final Context context) {
 		if (context == null) return Color.TRANSPARENT;
 		final int def = context.getResources().getColor(android.R.color.holo_blue_light);
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) return def;
 		try {
 			final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.colorActivatedHighlight });
 			final int color = a.getColor(0, def);
@@ -181,6 +214,21 @@ public class ThemeUtils implements Constants {
 	public static int getThemeResource(final String name, final boolean solid_background) {
 		final Integer res = (solid_background ? THEMES_SOLIDBG : THEMES).get(name);
 		return res != null ? res : R.style.Theme_Twidere;
+	}
+
+	public static int getTitleTextAppearance(final Context context) {
+		final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.titleTextStyle },
+				android.R.attr.actionBarStyle, android.R.style.Widget_Holo_ActionBar);
+		final int textAppearance = a.getResourceId(0, android.R.style.Widget_Holo_TextView);
+		a.recycle();
+		return textAppearance;
+	}
+
+	public static Drawable getWindowBackground(final Context context) {
+		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.windowBackground });
+		final Drawable d = a.getDrawable(0);
+		a.recycle();
+		return d;
 	}
 
 	public static boolean isDarkTheme(final Context context) {
@@ -220,6 +268,56 @@ public class ThemeUtils implements Constants {
 		if (context == null) return false;
 		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		return pref != null ? pref.getBoolean(PREFERENCE_KEY_SOLID_COLOR_BACKGROUND, false) : false;
+	}
+
+	public static void setPreviewView(final Context context, final View view, final int themeRes) {
+		final ContextThemeWrapper theme = new ContextThemeWrapper(context, themeRes);
+		final View windowBackgroundView = view.findViewById(R.id.theme_preview_window_background);
+		final View actionBarView = view.findViewById(R.id.actionbar);
+		final View actionBarSplitView = view.findViewById(R.id.actionbar_split);
+		final View statusCardView = view.findViewById(R.id.status_card);
+		final View profileView = view.findViewById(R.id.profile);
+		final TextView actionBarTitleView = (TextView) view.findViewById(R.id.actionbar_title);
+		final ImageView profileImageView = (ImageView) view.findViewById(R.id.profile_image);
+		final TextView nameView = (TextView) view.findViewById(R.id.name);
+		final TextView screenNameView = (TextView) view.findViewById(R.id.screen_name);
+		final TextView textView = (TextView) view.findViewById(R.id.text);
+		final TextView timeSourceView = (TextView) view.findViewById(R.id.time_source);
+		final TextView retweetView = (TextView) view.findViewById(R.id.retweet_view);
+
+		final int defaultTextSize = getDefaultTextSize(context);
+		final int textColorPrimary = getTextColorPrimary(theme);
+		final int textColorSecondary = getTextColorSecondary(theme);
+		final int titleTextAppearance = getTitleTextAppearance(theme);
+
+		ViewAccessor.setBackground(windowBackgroundView, getWindowBackground(theme));
+		ViewAccessor.setBackground(actionBarView, getActionBarBackground(theme));
+		ViewAccessor.setBackground(actionBarSplitView, getActionBarSplitBackground(theme));
+		ViewAccessor.setBackground(statusCardView, getCardItemBackground(theme));
+
+		actionBarTitleView.setTextAppearance(theme, titleTextAppearance);
+		nameView.setTextColor(textColorPrimary);
+		screenNameView.setTextColor(textColorSecondary);
+		textView.setTextColor(textColorPrimary);
+		timeSourceView.setTextColor(textColorSecondary);
+		retweetView.setTextColor(textColorSecondary);
+
+		nameView.setTextSize(defaultTextSize * 1.25f);
+		textView.setTextSize(defaultTextSize * 1.25f);
+		screenNameView.setTextSize(defaultTextSize * 0.85f);
+		timeSourceView.setTextSize(defaultTextSize * 0.85f);
+		retweetView.setTextSize(defaultTextSize * 0.85f);
+
+		profileView.setBackgroundResource(0);
+		retweetView.setBackgroundResource(0);
+		textView.setTextIsSelectable(false);
+
+		profileImageView.setImageResource(R.drawable.ic_launcher);
+		nameView.setText(TWIDERE_PREVIEW_NAME);
+		screenNameView.setText(TWIDERE_PREVIEW_SCREEN_NAME);
+		textView.setText(toPlainText(TWIDERE_PREVIEW_TEXT_HTML));
+		final String time = formatToLongTimeString(context, System.currentTimeMillis());
+		timeSourceView.setText(toPlainText(context.getString(R.string.time_source, time, TWIDERE_PREVIEW_SOURCE)));
 	}
 
 	public static boolean shouldApplyColorFilter(final Context context) {

@@ -16,9 +16,8 @@
 	<style name="Theme.Twidere" parent="android:Theme.Holo.Light.DarkActionBar">
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar</item>
 		<!-- Custom view styles -->
-		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
+		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
-		<item name="tabBackground">@null</item>
 		<item name="contentBackground">#20808080</item>
 		<item name="cardListBackgroundColor">@color/bg_color_light</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
@@ -30,14 +29,15 @@
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_light</item>
 		<!-- Widget styles -->
 		<item name="android:textViewStyle">@style/Widget.Twidere.Light.TextView</item>
+		<item name="android:radioButtonStyle">@style/Widget.Twidere.Light.CompoundButton.RadioButton</item>
+		<item name="android:checkboxStyle">@style/Widget.Twidere.Light.CompoundButton.CheckBox</item>
 	</style>
 
 	<style name="Theme.Twidere.Dark" parent="android:Theme.Holo">
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Dark</item>
 		<!-- Custom view styles -->
-		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
+		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView.Dark</item>
-		<item name="tabBackground">@null</item>
 		<item name="contentBackground">#20000000</item>
 		<item name="cardListBackgroundColor">@color/bg_color_dark</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_dark</item>
@@ -49,14 +49,15 @@
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_dark</item>
 		<!-- Widget styles -->
 		<item name="android:textViewStyle">@style/Widget.Twidere.TextView</item>
+		<item name="android:radioButtonStyle">@style/Widget.Twidere.CompoundButton.RadioButton</item>
+		<item name="android:checkboxStyle">@style/Widget.Twidere.CompoundButton.CheckBox</item>
 	</style>
 
 	<style name="Theme.Twidere.Light" parent="android:Theme.Holo.Light">
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Light</item>
 		<!-- Custom view styles -->
-		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
+		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView.Light</item>
-		<item name="tabBackground">@drawable/tab_background_dark</item>
 		<item name="contentBackground">#20808080</item>
 		<item name="cardListBackgroundColor">@color/bg_color_light</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
@@ -68,14 +69,15 @@
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_light</item>
 		<!-- Widget styles -->
 		<item name="android:textViewStyle">@style/Widget.Twidere.Light.TextView</item>
+		<item name="android:radioButtonStyle">@style/Widget.Twidere.Light.CompoundButton.RadioButton</item>
+		<item name="android:checkboxStyle">@style/Widget.Twidere.Light.CompoundButton.CheckBox</item>
 	</style>
 
 	<style name="Theme.Twidere.Light.DarkActionBar" parent="android:Theme.Holo.Light.DarkActionBar">
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Light.DarkActionBar</item>
 		<!-- Custom view styles -->
-		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
+		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView.Light.DarkActionBar</item>
-		<item name="tabBackground">@drawable/tab_background_dark</item>
 		<item name="contentBackground">#20808080</item>
 		<item name="cardListBackgroundColor">@color/bg_color_light</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
@@ -87,6 +89,8 @@
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_light</item>
 		<!-- Widget styles -->
 		<item name="android:textViewStyle">@style/Widget.Twidere.Light.TextView</item>
+		<item name="android:radioButtonStyle">@style/Widget.Twidere.Light.CompoundButton.RadioButton</item>
+		<item name="android:checkboxStyle">@style/Widget.Twidere.Light.CompoundButton.CheckBox</item>
 	</style>
 
 	<style name="Theme.Twidere.SolidBackground">
@@ -144,9 +148,8 @@
 	<style name="Theme.Twidere.Dark.Dialog" parent="android:Theme.Holo.Dialog">
 
 		<!-- Custom view styles -->
-		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
+		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
-		<item name="tabBackground">@null</item>
 		<item name="contentBackground">#20000000</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_dark</item>
 		<item name="cardItemBackgroundColor">#1a1a1a</item>
@@ -157,14 +160,15 @@
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_dark</item>
 		<!-- Widget styles -->
 		<item name="android:textViewStyle">@style/Widget.Twidere.TextView</item>
+		<item name="android:radioButtonStyle">@style/Widget.Twidere.CompoundButton.RadioButton</item>
+		<item name="android:checkboxStyle">@style/Widget.Twidere.CompoundButton.CheckBox</item>
 	</style>
 
 	<style name="Theme.Twidere.Light.Dialog" parent="android:Theme.Holo.Light.Dialog">
 
 		<!-- Custom view styles -->
-		<item name="tabStyle">@style/Widget.TabPageIndicator</item>
+		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
 		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
-		<item name="tabBackground">@drawable/tab_background_dark</item>
 		<item name="contentBackground">#20808080</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
 		<item name="cardItemBackgroundColor">#f8f8f8</item>
@@ -175,6 +179,8 @@
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_light</item>
 		<!-- Widget styles -->
 		<item name="android:textViewStyle">@style/Widget.Twidere.Light.TextView</item>
+		<item name="android:radioButtonStyle">@style/Widget.Twidere.Light.CompoundButton.RadioButton</item>
+		<item name="android:checkboxStyle">@style/Widget.Twidere.Light.CompoundButton.CheckBox</item>
 	</style>
 
 	<style name="Theme.Twidere.Compose">
@@ -239,6 +245,8 @@
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_dark</item>
 		<!-- Widget styles -->
 		<item name="android:textViewStyle">@style/Widget.Twidere.TextView</item>
+		<item name="android:radioButtonStyle">@style/Widget.Twidere.CompoundButton.RadioButton</item>
+		<item name="android:checkboxStyle">@style/Widget.Twidere.CompoundButton.CheckBox</item>
 	</style>
 
 	<style name="Theme.Test" parent="android:Theme.Holo"/>

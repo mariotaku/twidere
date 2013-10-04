@@ -11,7 +11,7 @@
   <string name="remove_location">Usuń lokalizację</string>
   <string name="remove_image">Usuń obraz</string>
   <string name="remove_photo">Usuń zdjęcie</string>
-  <string name="tweet_hint">Co się dzieje?</string>
+  <string name="status_hint">Co się dzieje?</string>
   <string name="sign_up">Zarejestruj się</string>
   <string name="sign_in">Zaloguj się</string>
   <string name="rest_base_url">REST Base URL</string>
@@ -185,8 +185,8 @@
   <string name="type_to_compose">Wpisuj</string>
   <string name="users_lists">Listy użytkownika</string>
   <string name="lists_following_user">Listy obserwujące tego użytkownika</string>
-  <string name="Ntweets_quantity_one">Masz nowego ćwierka.</string>
-  <string name="Ntweets_quantity_other">Masz <xliff:g id="items">%d</xliff:g> nowych ćwierków.</string>
+  <string name="Nstatuses_quantity_one">Masz nowego ćwierka.</string>
+  <string name="Nstatuses_quantity_other">Masz <xliff:g id="items">%d</xliff:g> nowych ćwierków.</string>
   <string name="item_1_minute">1 minuta</string>
   <string name="item_3_minutes">3 minuty</string>
   <string name="item_5_minutes">5 minut</string>
@@ -259,7 +259,7 @@
   <string name="portrait">Układ pionowy</string>
   <string name="quick_send">Wciśnij Enter by wysłać</string>
   <string name="quick_send_summary">Wysyła ćwierka po wciśnięciu Enter.</string>
-  <string name="unsaved_tweet">Ćwierk nie wysłany ani nie zachowany.</string>
+  <string name="unsaved_status">Ćwierk nie wysłany ani nie zachowany.</string>
   <string name="discard">Porzuć</string>
   <string name="multi_select">Zaznaczanie wielokrotne</string>
   <string name="Nitems_selected_quantity_one">1 element zaznaczony</string>
@@ -285,8 +285,8 @@
   <string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> i <xliff:g id="count">%d</xliff:g> innych przesłało dalej Twojego ćwierka.</string>
   <string name="activity_about_me_list_member_added"><xliff:g id="user">%s</xliff:g> dodał/a Cię do listy.</string>
   <string name="activity_about_me_list_member_added_multi"><xliff:g id="user">%s</xliff:g> i <xliff:g id="count">%d</xliff:g> innych dodało Cię do ich list.</string>
-  <string name="tweet_not_sent">Ćwierk nie został wysłany.</string>
-  <string name="tweet_not_sent_summary">Ćwierk nie został wysłany, zapisano w szkicach.</string>
+  <string name="status_not_updated">Ćwierk nie został wysłany.</string>
+  <string name="status_not_updated_summary">Ćwierk nie został wysłany, zapisano w szkicach.</string>
   <string name="incoming_friendships">Oczekujące prośby obserwowania</string>
   <string name="click_to_open_menu">Kliknij, aby otworzyć menu</string>
   <string name="click_to_open_menu_summary">Dotknij, aby otworzyć menu, długie dotknięcie, aby wybrać kilka.</string>
@@ -381,10 +381,10 @@
   <string name="status_favorited">Ćwierk polubiony.</string>
   <string name="status_unfavorited">Ćwierk niepolubiony.</string>
   <string name="import_from">Importuj z…</string>
-  <string name="link_to_quoted_tweet">Odnośnik do cytowanego ćwierka</string>
+  <string name="link_to_quoted_status">Odnośnik do cytowanego ćwierka</string>
   <string name="profile_updated">Profil uaktualniony.</string>
   <string name="original_status">Ćwierk oryginalny</string>
   <string name="ask">Zapytaj</string>
-  <string name="tweet_saved_to_draft">Ćwierk zapisany jako szkic.</string>
+  <string name="status_saved_to_draft">Ćwierk zapisany jako szkic.</string>
   <string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g> (<xliff:g id="daily_tweet">%2$d</xliff:g> ćwierknięć na dzień)</string>
 </resources>

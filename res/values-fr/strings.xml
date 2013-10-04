@@ -11,7 +11,7 @@
   <string name="remove_location">Supprimer l\'emplacement</string>
   <string name="remove_image">Supprimer l\'image</string>
   <string name="remove_photo">Supprimer la photo</string>
-  <string name="tweet_hint">Quoi de neuf ?</string>
+  <string name="status_hint">Quoi de neuf ?</string>
   <string name="sign_up">S\'inscrire</string>
   <string name="sign_in">Se connecter</string>
   <string name="rest_base_url">URL REST</string>
@@ -183,8 +183,8 @@
   <string name="type_to_compose">Tapez pour composer</string>
   <string name="users_lists">Listes de l\'utilisateur</string>
   <string name="lists_following_user">Liste dont cet utilisateur est membre</string>
-  <string name="Ntweets_quantity_one">Vous avez un nouveau tweet.</string>
-  <string name="Ntweets_quantity_other">Vous avez <xliff:g id="items">%d</xliff:g> nouveaux tweets.</string>
+  <string name="Nstatuses_quantity_one">Vous avez un nouveau tweet.</string>
+  <string name="Nstatuses_quantity_other">Vous avez <xliff:g id="items">%d</xliff:g> nouveaux tweets.</string>
   <string name="item_1_minute">1 minute</string>
   <string name="item_3_minutes">3 minutes</string>
   <string name="item_5_minutes">5 minutes</string>
@@ -259,7 +259,7 @@
   <string name="portrait">Potrait</string>
   <string name="quick_send">Appuyez \"Enter\" pour envoyer</string>
   <string name="quick_send_summary">Envoyer le tweet lorsqu\'on appuye sur \"Entrée\".</string>
-  <string name="unsaved_tweet">Tweet non envoyé ou non encore sauvegardé.</string>
+  <string name="unsaved_status">Tweet non envoyé ou non encore sauvegardé.</string>
   <string name="discard">Supprimer</string>
   <string name="multi_select">Sélection multiple</string>
   <string name="Nitems_selected_quantity_one">1 élément sélectionné</string>
@@ -294,8 +294,8 @@
   <string name="activity_by_friends_list_created"><xliff:g id="user">%1$s</xliff:g> a créé la liste <xliff:g id="target">%2$s</xliff:g>.</string>
   <string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g> a crée la liste <xliff:g id="target">%2$s</xliff:g> et <xliff:g id="count">%3$d</xliff:g> de plus.</string>
   <string name="cannot_get_callback_url">Impossible d\'obtenir le rappel, merci de vérifier votre nom d\'utilisateur et votre mot de passe.</string>
-  <string name="tweet_not_sent">Tweet impossible à envoyer.</string>
-  <string name="tweet_not_sent_summary">Tweet non envoyé et sauvegardé dans les brouillons.</string>
+  <string name="status_not_updated">Tweet impossible à envoyer.</string>
+  <string name="status_not_updated_summary">Tweet non envoyé et sauvegardé dans les brouillons.</string>
   <string name="incoming_friendships">Demandes en attente de suivi</string>
   <string name="click_to_open_menu">Cliquez pour ouvrir le menu de l\'article</string>
   <string name="click_to_open_menu_summary">Cliquez pour ouvrir le menu de l\'article, un clic long pour en sélectionner plusieurs.</string>
@@ -403,7 +403,7 @@
   <string name="disable_tab_swipe">Désactiver l\'option glisser de l\'onglet</string>
   <string name="sign_in_method_introduction_title">Comment ça marche ?</string>
   <string name="sign_in_method_introduction">La plupart des clients comme twicca ouvrent un naviguateur vous demandant nom d\'utilisateur et mot de passe et vous reviennent ensuite revenir à leurs clients. Quelque fois cela peut devenir très gênant.\nTwidere utilise des étapes plus simples pour se connecter, sans ouvrir un naviguateur. Ne vous inquiétez pas pour votre mot de passe, Twidere ne le sauvegarde jamais, c\'est totalement sûr!</string>
-  <string name="quote_protected_tweet_notice">Il n\'est pas recommandé de citer un tweet protégé.</string>
+  <string name="quote_protected_status_notice">Il n\'est pas recommandé de citer un tweet protégé.</string>
   <string name="edit_draft">Modifier brouillons</string>
   <string name="profile_image">Photo de profile</string>
   <string name="my_profile_image">Ma photo de profile</string>
@@ -424,7 +424,7 @@
   <string name="direct_message_sent">Message envoyé.</string>
   <string name="direct_message_deleted">Message supprimé.</string>
   <string name="import_from">Importer depuis…</string>
-  <string name="link_to_quoted_tweet">Lien vers le tweet cité</string>
+  <string name="link_to_quoted_status">Lien vers le tweet cité</string>
   <string name="followed_user">S\'abonner à <xliff:g id="user">%s</xliff:g>.</string>
   <string name="unfollowed_user">Se désabonner de <xliff:g id="user">%s</xliff:g>.</string>
   <string name="blocked_user">Bloquer <xliff:g id="user">%s</xliff:g>.</string>

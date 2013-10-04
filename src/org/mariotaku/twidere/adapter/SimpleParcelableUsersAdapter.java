@@ -108,7 +108,13 @@ public class SimpleParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> i
 	}
 
 	@Override
+	public void setLinkHighlightOption(final String option) {
+
+	}
+
+	@Override
 	public void setNameDisplayOption(final String option) {
+
 	}
 
 	@Override

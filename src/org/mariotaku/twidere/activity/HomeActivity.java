@@ -20,11 +20,12 @@
 package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.CompareUtils.classEquals;
+import static org.mariotaku.twidere.util.CustomTabUtils.getAddedTabPosition;
+import static org.mariotaku.twidere.util.CustomTabUtils.getHomeTabs;
 import static org.mariotaku.twidere.util.Utils.cleanDatabasesByItemLimit;
 import static org.mariotaku.twidere.util.Utils.createFragmentForIntent;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
-import static org.mariotaku.twidere.util.Utils.getAddedTabPosition;
 import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
 import static org.mariotaku.twidere.util.Utils.openDirectMessagesConversation;
 import static org.mariotaku.twidere.util.Utils.openSearch;
@@ -64,7 +65,6 @@ import edu.ucdavis.earlybird.ProfilingUtil;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.SupportTabsAdapter;
-import org.mariotaku.twidere.fragment.APIUpgradeConfirmDialog;
 import org.mariotaku.twidere.fragment.BasePullToRefreshListFragment;
 import org.mariotaku.twidere.fragment.DirectMessagesFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
@@ -77,7 +77,6 @@ import org.mariotaku.twidere.model.SupportTabSpec;
 import org.mariotaku.twidere.provider.RecentSearchProvider;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import org.mariotaku.twidere.util.CustomTabUtils;
 import org.mariotaku.twidere.util.MathUtils;
 import org.mariotaku.twidere.util.MultiSelectEventHandler;
 import org.mariotaku.twidere.util.ThemeUtils;
@@ -358,10 +357,9 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		mMultiSelectHandler = new MultiSelectEventHandler(this);
 		mMultiSelectHandler.dispatchOnCreate();
-		super.onCreate(savedInstanceState);
-		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONCREATE));
 		final Resources res = getResources();
 		mDisplayAppIcon = res.getBoolean(R.bool.home_display_icon);
+		super.onCreate(savedInstanceState);
 		final long[] account_ids = getAccountIds(this);
 		if (account_ids.length == 0) {
 			final Intent intent = new Intent(INTENT_ACTION_TWITTER_LOGIN);
@@ -372,6 +370,11 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		} else {
 			notifyAccountsChanged();
 		}
+//		if (openSettingsWizard()) {
+//			finish();
+//			return;
+//		}
+		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONCREATE));
 		final boolean refresh_on_start = mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ON_START, false);
 		final int initial_tab = handleIntent(getIntent(), savedInstanceState == null);
 		mActionBar = getActionBar();
@@ -386,34 +389,21 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		ThemeUtils.applyBackground(mIndicator);
-		final boolean tab_display_label = res.getBoolean(R.bool.tab_display_label);
 		mPagerAdapter = new SupportTabsAdapter(this, getSupportFragmentManager(), mIndicator);
-		initTabs();
 		mViewPager.setAdapter(mPagerAdapter);
 		mViewPager.setOffscreenPageLimit(3);
 		mIndicator.setViewPager(mViewPager);
 		mIndicator.setOnPageChangeListener(this);
-		mIndicator.setDisplayLabel(tab_display_label);
+		mIndicator.setDisplayLabel(res.getBoolean(R.bool.tab_display_label));
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.LEFT);
 		mLeftDrawerContainer.setBackgroundResource(getPaneBackground());
 		mActionsButtonLayout.setOnClickListener(this);
+		initTabs();
 		// getSupportFragmentManager().addOnBackStackChangedListener(this);
-
-		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true);
-		final long[] activated_ids = getActivatedAccountIds(this);
-		if (activated_ids.length <= 0) {
-			// TODO set activated account automatically
-			startActivityForResult(new Intent(INTENT_ACTION_SELECT_ACCOUNT), REQUEST_SELECT_ACCOUNT);
-		} else if (initial_tab >= 0) {
-			mViewPager.setCurrentItem(MathUtils.clamp(initial_tab, mPagerAdapter.getCount(), 0));
-		} else if (remember_position) {
-			final int position = mPreferences.getInt(PREFERENCE_KEY_SAVED_TAB_POSITION, 0);
-			mViewPager.setCurrentItem(MathUtils.clamp(position, mPagerAdapter.getCount(), 0));
-		}
+		setTabPosition(initial_tab);
 		if (refresh_on_start && savedInstanceState == null) {
 			mTwitterWrapper.refreshAll();
 		}
-		showAPIUpgradeNotice();
 		showDataProfilingRequest();
 	}
 
@@ -436,7 +426,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mViewPager.setPagingEnabled(!mPreferences.getBoolean(PREFERENCE_KEY_DISABLE_TAB_SWIPE, false));
+		mViewPager.setEnabled(!mPreferences.getBoolean(PREFERENCE_KEY_DISABLE_TAB_SWIPE, false));
 		mBottomActionsButton = mPreferences.getBoolean(PREFERENCE_KEY_BOTTOM_COMPOSE_BUTTON, false);
 		invalidateOptionsMenu();
 		updateActionsButton();
@@ -449,7 +439,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONSTART));
 		final IntentFilter filter = new IntentFilter(BROADCAST_TASK_STATE_CHANGED);
 		registerReceiver(mStateReceiver, filter);
-		final List<SupportTabSpec> tabs = CustomTabUtils.getHomeTabs(this);
+		final List<SupportTabSpec> tabs = getHomeTabs(this);
 		if (isTabsChanged(tabs)) {
 			restart();
 		}
@@ -471,7 +461,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 
 	protected void setPagingEnabled(final boolean enabled) {
 		if (mIndicator != null && mViewPager != null) {
-			mViewPager.setPagingEnabled(!mPreferences.getBoolean(PREFERENCE_KEY_DISABLE_TAB_SWIPE, false));
+			mViewPager.setEnabled(!mPreferences.getBoolean(PREFERENCE_KEY_DISABLE_TAB_SWIPE, false));
 			mIndicator.setSwitchingEnabled(enabled);
 			mIndicator.setEnabled(enabled);
 		}
@@ -541,7 +531,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	private void initTabs() {
-		final List<SupportTabSpec> tabs = CustomTabUtils.getHomeTabs(this);
+		final List<SupportTabSpec> tabs = getHomeTabs(this);
 		mCustomTabs.clear();
 		mCustomTabs.addAll(tabs);
 		mPagerAdapter.clear();
@@ -561,13 +551,25 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		return data != null && SCHEME_TWIDERE.equals(data.getScheme());
 	}
 
-	private void showAPIUpgradeNotice() {
-		if (!mPreferences.getBoolean(PREFERENCE_KEY_API_UPGRADE_CONFIRMED, false)) {
-			final FragmentManager fm = getSupportFragmentManager();
-			if (fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE) == null
-					|| !fm.findFragmentByTag(FRAGMENT_TAG_API_UPGRADE_NOTICE).isAdded()) {
-				new APIUpgradeConfirmDialog().show(getSupportFragmentManager(), "api_upgrade_notice");
-			}
+	private boolean openSettingsWizard() {
+		if (mPreferences == null || mPreferences.getBoolean(PREFERENCE_KEY_SETTINGS_WIZARD_COMPLETED, false))
+			return false;
+		startActivity(new Intent(this, SettingsWizardActivity.class));
+		return true;
+	}
+
+	private void setTabPosition(final int initial_tab) {
+
+		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true);
+		final long[] activated_ids = getActivatedAccountIds(this);
+		if (activated_ids.length <= 0) {
+			// TODO set activated account automatically
+			startActivityForResult(new Intent(INTENT_ACTION_SELECT_ACCOUNT), REQUEST_SELECT_ACCOUNT);
+		} else if (initial_tab >= 0) {
+			mViewPager.setCurrentItem(MathUtils.clamp(initial_tab, mPagerAdapter.getCount(), 0));
+		} else if (remember_position) {
+			final int position = mPreferences.getInt(PREFERENCE_KEY_SAVED_TAB_POSITION, 0);
+			mViewPager.setCurrentItem(MathUtils.clamp(position, mPagerAdapter.getCount(), 0));
 		}
 	}
 

@@ -18,15 +18,29 @@ public final class CustomTabConfiguration implements Constants {
 	private final boolean accountIdRequired;
 	private final Class<? extends Fragment> cls;
 	private final String secondaryFieldTextKey;
+	private final boolean singleTab;
 
 	public CustomTabConfiguration(final Class<? extends Fragment> cls, final int title, final int icon,
-			final boolean account_id_required, final int secondary_field_type, final int sort_position) {
-		this(cls, title, icon, account_id_required, secondary_field_type, 0, EXTRA_TEXT, sort_position);
+			final boolean accountIdRequired, final int secondaryFieldType, final int sortPosition) {
+		this(cls, title, icon, accountIdRequired, secondaryFieldType, 0, EXTRA_TEXT, sortPosition, false);
+	}
+
+	public CustomTabConfiguration(final Class<? extends Fragment> cls, final int title, final int icon,
+			final boolean accountIdRequired, final int secondaryFieldType, final int sortPosition,
+			final boolean singleTab) {
+		this(cls, title, icon, accountIdRequired, secondaryFieldType, 0, EXTRA_TEXT, sortPosition, singleTab);
 	}
 
 	public CustomTabConfiguration(final Class<? extends Fragment> cls, final int title, final int icon,
 			final boolean accountIdRequired, final int secondaryFieldType, final int secondaryFieldTitle,
 			final String secondaryFieldTextKey, final int sortPosition) {
+
+		this(cls, title, icon, accountIdRequired, secondaryFieldType, 0, EXTRA_TEXT, sortPosition, false);
+	}
+
+	public CustomTabConfiguration(final Class<? extends Fragment> cls, final int title, final int icon,
+			final boolean accountIdRequired, final int secondaryFieldType, final int secondaryFieldTitle,
+			final String secondaryFieldTextKey, final int sortPosition, final boolean singleTab) {
 		this.cls = cls;
 		this.title = title;
 		this.icon = icon;
@@ -35,6 +49,7 @@ public final class CustomTabConfiguration implements Constants {
 		this.secondaryFieldType = secondaryFieldType;
 		this.secondaryFieldTitle = secondaryFieldTitle;
 		this.secondaryFieldTextKey = secondaryFieldTextKey;
+		this.singleTab = singleTab;
 	}
 
 	public int getDefaultIcon() {
@@ -67,6 +82,10 @@ public final class CustomTabConfiguration implements Constants {
 
 	public boolean isAccountIdRequired() {
 		return accountIdRequired;
+	}
+
+	public boolean isSingleTab() {
+		return singleTab;
 	}
 
 	public static class CustomTabConfigurationComparator implements Comparator<Entry<String, CustomTabConfiguration>> {

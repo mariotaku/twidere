@@ -65,7 +65,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class EditCustomTabActivity extends BaseSupportDialogActivity implements OnClickListener {
+public class CustomTabEditorActivity extends BaseSupportDialogActivity implements OnClickListener {
 
 	private ImageLoaderWrapper mImageLoader;
 	private SharedPreferences mPreferences;
@@ -426,8 +426,9 @@ public class EditCustomTabActivity extends BaseSupportDialogActivity implements 
 		@Override
 		public void onClick(final DialogInterface dialog, final int which) {
 			final FragmentActivity activity = getActivity();
-			if (activity instanceof EditCustomTabActivity) {
-				((EditCustomTabActivity) activity).setSecondaryFieldValue(ParseUtils.parseString(mEditText.getText()));
+			if (activity instanceof CustomTabEditorActivity) {
+				((CustomTabEditorActivity) activity)
+						.setSecondaryFieldValue(ParseUtils.parseString(mEditText.getText()));
 			}
 		}
 
@@ -443,7 +444,7 @@ public class EditCustomTabActivity extends BaseSupportDialogActivity implements 
 			final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
 					FrameLayout.LayoutParams.WRAP_CONTENT);
 			lp.leftMargin = lp.topMargin = lp.bottomMargin = lp.rightMargin = getResources().getDimensionPixelSize(
-					R.dimen.default_element_spacing);
+					R.dimen.element_spacing_default);
 			view.addView(mEditText, lp);
 			builder.setView(view);
 			mEditText.setText(args.getString(EXTRA_TEXT));

@@ -26,8 +26,8 @@
 	<CheckBoxPreference
 		android:defaultValue="false"
 		android:key="no_close_after_tweet_sent"
-		android:summary="@string/no_close_after_tweet_sent_summary"
-		android:title="@string/no_close_after_tweet_sent"/>
+		android:summary="@string/no_close_after_status_updated_summary"
+		android:title="@string/no_close_after_status_updated"/>
 
 	<Preference
 		android:key="data_profiling_settings"

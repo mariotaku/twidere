@@ -41,9 +41,9 @@ import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.ColorSelectorActivity;
-import org.mariotaku.twidere.activity.EditUserProfileActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.activity.SignInActivity;
+import org.mariotaku.twidere.activity.UserProfileEditorActivity;
 import org.mariotaku.twidere.adapter.AccountsDrawerAdapter;
 import org.mariotaku.twidere.adapter.AccountsDrawerAdapter.AccountAction;
 import org.mariotaku.twidere.model.Account;
@@ -155,7 +155,7 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 				final Bundle bundle = new Bundle();
 				bundle.putLong(EXTRA_ACCOUNT_ID, account.account_id);
 				final Intent intent = new Intent(INTENT_ACTION_EDIT_USER_PROFILE);
-				intent.setClass(getActivity(), EditUserProfileActivity.class);
+				intent.setClass(getActivity(), UserProfileEditorActivity.class);
 				intent.putExtras(bundle);
 				startActivity(intent);
 				break;

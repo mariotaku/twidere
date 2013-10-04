@@ -38,7 +38,7 @@
 	<CheckBoxPreference
 		android:defaultValue="false"
 		android:key="refresh_after_tweet"
-		android:summary="@string/refresh_after_tweet_summary"
-		android:title="@string/refresh_after_tweet"/>
+		android:summary="@string/refresh_after_status_updated_summary"
+		android:title="@string/refresh_after_status_updated"/>
 
 </PreferenceScreen>

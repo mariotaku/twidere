@@ -11,7 +11,7 @@
   <string name="remove_location">Konum sil</string>
   <string name="remove_image">Resmi sil</string>
   <string name="remove_photo">Fotoğrafı sil</string>
-  <string name="tweet_hint">Neler oluyor?</string>
+  <string name="status_hint">Neler oluyor?</string>
   <string name="sign_up">Kaydol</string>
   <string name="sign_in">Giriş yap</string>
   <string name="basic">Temel</string>
@@ -165,8 +165,8 @@
   <string name="type_to_compose">Tweet yazınız</string>
   <string name="users_lists">Kullanıcının listeleri</string>
   <string name="lists_following_user">Bu kullanıcıyı takip eden listeler</string>
-  <string name="Ntweets_quantity_one">Yeni bir tweetin var.</string>
-  <string name="Ntweets_quantity_other"><xliff:g id="items">%d</xliff:g> yeni tweet var.</string>
+  <string name="Nstatuses_quantity_one">Yeni bir tweetin var.</string>
+  <string name="Nstatuses_quantity_other"><xliff:g id="items">%d</xliff:g> yeni tweet var.</string>
   <string name="item_1_minute">1 dakika</string>
   <string name="item_3_minutes">3 dakika</string>
   <string name="item_5_minutes">5 dakika</string>
@@ -240,7 +240,7 @@
   <string name="portrait">Dikey</string>
   <string name="quick_send">Göndermek İçin \"Enter\"a Basın</string>
   <string name="quick_send_summary">\"Enter\"a basıldığında tweet\'i gönder.</string>
-  <string name="unsaved_tweet">Tweet henüz gönderilmedi ve kaydedilmedi.</string>
+  <string name="unsaved_status">Tweet henüz gönderilmedi ve kaydedilmedi.</string>
   <string name="discard">Yoksay</string>
   <string name="multi_select">Çoklu seçim</string>
   <string name="Nitems_selected_quantity_one">1 nesne seçildi</string>
@@ -259,8 +259,8 @@
   <string name="activity_about_me_list_member_added"><xliff:g id="user">%s</xliff:g> seni listesine ekledi.</string>
   <string name="activity_about_me_list_member_added_multi"><xliff:g id="user">%s</xliff:g> ve <xliff:g id="count">%d</xliff:g> kişi daha seni listesine ekledi.</string>
   <string name="cannot_get_callback_url">Geridönüş alınamıyor, lütfen kullanıcı adınızı ve şifrenizi kontrol ediniz.</string>
-  <string name="tweet_not_sent">Tweet gönderilmedi.</string>
-  <string name="tweet_not_sent_summary">Tweet gönderilmedi, ve taslaklara kaydedildi.</string>
+  <string name="status_not_updated">Tweet gönderilmedi.</string>
+  <string name="status_not_updated_summary">Tweet gönderilmedi, ve taslaklara kaydedildi.</string>
   <string name="incoming_friendships">Beklemedeki takip istekleri</string>
   <string name="click_to_open_menu">Nesne menüsünü açmak için bas</string>
   <string name="click_to_open_menu_summary">Nesne menüsünü açmak için bas, çoklu seçim için basılı tut.</string>
@@ -362,7 +362,7 @@
   <string name="re_sign_in_needed">Hesaplarınıza tekrar giriş yapmanız gerekebilir.</string>
   <string name="disable_tab_swipe">Sekme kaydırmayı iptal et</string>
   <string name="sign_in_method_introduction_title">Nasıl çalışıyor?</string>
-  <string name="quote_protected_tweet_notice">Korunmuş tweeti alıntılamak tavsiye edilmez.</string>
+  <string name="quote_protected_status_notice">Korunmuş tweeti alıntılamak tavsiye edilmez.</string>
   <string name="edit_draft">Taslağı düzenle</string>
   <string name="profile_image">Profil resmi</string>
   <string name="my_profile_image">Profil resmim</string>

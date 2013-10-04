@@ -46,7 +46,7 @@
 		<CheckBoxPreference
 			android:defaultValue="true"
 			android:key="link_to_quoted_tweet"
-			android:title="@string/link_to_quoted_tweet"/>
+			android:title="@string/link_to_quoted_status"/>
 
 		<EditTextPreference
 			android:defaultValue="[TITLE] - [TEXT]"

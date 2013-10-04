@@ -156,6 +156,11 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 	}
 
 	@Override
+	public void setLinkHighlightOption(final String option) {
+
+	}
+
+	@Override
 	public void setMenuButtonClickListener(final MenuButtonClickListener listener) {
 		mListener = listener;
 	}

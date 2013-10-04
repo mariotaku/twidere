@@ -11,7 +11,7 @@
   <string name="remove_location">Вилучити місце розташування</string>
   <string name="remove_image">Вилучити зображення</string>
   <string name="remove_photo">Вилучити світлину</string>
-  <string name="tweet_hint">Що трапилося?</string>
+  <string name="status_hint">Що трапилося?</string>
   <string name="sign_up">Зареєструватися</string>
   <string name="sign_in">Увійти</string>
   <string name="rest_base_url">REST Base URL</string>
@@ -185,16 +185,16 @@
   <string name="sort_timeline_by_time_summary">Це може призвести до того, що ретвіти будуть показані в недозволеному місці, але може бути корисно, якщо ви використовуєте інші сервіси, такі як Identi.ca.</string>
   <string name="refresh_on_start">Оновлювати при запуску</string>
   <string name="refresh_on_start_summary">Оновити стрічку та згадки при запуску.</string>
-  <string name="refresh_after_tweet">Оновити після надсилання твіту</string>
-  <string name="refresh_after_tweet_summary">Оновлює стрічку та згадки після надсилання твіту.</string>
+  <string name="refresh_after_status_updated">Оновити після надсилання твіту</string>
+  <string name="refresh_after_status_updated_summary">Оновлює стрічку та згадки після надсилання твіту.</string>
   <string name="list_timeline">Список стрічки</string>
   <string name="list_members">Список учасників</string>
   <string name="list_subscribers">Список підписувачів</string>
   <string name="type_to_compose">Напишіть повідомлення</string>
   <string name="users_lists">Списки користувачів</string>
   <string name="lists_following_user">Списки підписаних на цього користувача</string>
-  <string name="Ntweets_quantity_one">Ви маєте новий твіт.</string>
-  <string name="Ntweets_quantity_other">Ви маєте <xliff:g id="items">%d</xliff:g> нових твітів.</string>
+  <string name="Nstatuses_quantity_one">Ви маєте новий твіт.</string>
+  <string name="Nstatuses_quantity_other">Ви маєте <xliff:g id="items">%d</xliff:g> нових твітів.</string>
   <string name="item_1_minute">1 хвилина</string>
   <string name="item_3_minutes">3 хвилини</string>
   <string name="item_5_minutes">5 хвилин</string>
@@ -270,7 +270,7 @@
   <string name="portrait">Портретний</string>
   <string name="quick_send">Натисніть Enter для надсилання</string>
   <string name="quick_send_summary">Надсилати твіт натисканням Enter.</string>
-  <string name="unsaved_tweet">Твіт ще не надіслано і не збережено.</string>
+  <string name="unsaved_status">Твіт ще не надіслано і не збережено.</string>
   <string name="discard">Вийти</string>
   <string name="multi_select">Множинний вибір</string>
   <string name="Nitems_selected_quantity_one">1 елемент вибрано</string>
@@ -306,8 +306,8 @@
   <string name="activity_by_friends_list_created"><xliff:g id="user">%1$s</xliff:g> створив список <xliff:g id="target">%2$s</xliff:g>.</string>
   <string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g> створив список <xliff:g id="target">%2$s</xliff:g> та ще <xliff:g id="count">%3$d</xliff:g>.</string>
   <string name="cannot_get_callback_url">Не вдається отримати відповідь, перевірте ім\'я користувача і пароль.</string>
-  <string name="tweet_not_sent">Твіт не надіслано.</string>
-  <string name="tweet_not_sent_summary">Твіт не надіслано і збережено до чернеток.</string>
+  <string name="status_not_updated">Твіт не надіслано.</string>
+  <string name="status_not_updated_summary">Твіт не надіслано і збережено до чернеток.</string>
   <string name="incoming_friendships">Очікування запитів на підписку</string>
   <string name="click_to_open_menu">Натисніть, щоб відкрити пункт меню</string>
   <string name="click_to_open_menu_summary">Натисніть, щоб відкрити пункт меню; довге натискання для вибору декількох пунктів.</string>
@@ -416,7 +416,7 @@
   <string name="disable_tab_swipe">Вимкнути ковзання по вкладках</string>
   <string name="sign_in_method_introduction_title">Як це працює?</string>
   <string name="sign_in_method_introduction">Більшість клієнтів на кшталт twicca відкривають браузер і просять вас ввести ім\'я користувача та пароль і тоді повертаються назад до своїх оболонок. Інколи це може стати дуже незручно.\n Twidere використовує простіші кроки для входу, не відкриваючи браузер. Не турбуйтеся про пароль, Twidere ніколи не зберігатиме його, це повністю безпечно!</string>
-  <string name="quote_protected_tweet_notice">Не рекомендується цитувати захищений твіт. </string>
+  <string name="quote_protected_status_notice">Не рекомендується цитувати захищений твіт. </string>
   <string name="edit_draft">Редагувати чернетку</string>
   <string name="profile_image">Зображення профілю</string>
   <string name="my_profile_image">Моє зображення профілю</string>
@@ -437,7 +437,7 @@
   <string name="direct_message_sent">Надіслано пряме повідомлення.</string>
   <string name="direct_message_deleted">Видалено пряме повідомлення.</string>
   <string name="import_from">Імпортувати з…</string>
-  <string name="link_to_quoted_tweet">Посилання на цитований твіт</string>
+  <string name="link_to_quoted_status">Посилання на цитований твіт</string>
   <string name="followed_user">Підписаний на <xliff:g id="user">%s</xliff:g>.</string>
   <string name="unfollowed_user">Відписаний з <xliff:g id="user">%s</xliff:g>.</string>
   <string name="blocked_user">Заблокований <xliff:g id="user">%s</xliff:g>.</string>
@@ -459,9 +459,9 @@
   <string name="original_status">Первісний твіт</string>
   <string name="compose_quit_action">На завершення „створити“</string>
   <string name="ask">Прохання</string>
-  <string name="no_close_after_tweet_sent">Зберігати \"Створити\" відкритою після надсилання твіту</string>
-  <string name="no_close_after_tweet_sent_summary">Маленький подарунок для базіки</string>
-  <string name="tweet_saved_to_draft">Твіт збережено у чернетці.</string>
+  <string name="no_close_after_status_updated">Зберігати \"Створити\" відкритою після надсилання твіту</string>
+  <string name="no_close_after_status_updated_summary">Маленький подарунок для базіки</string>
+  <string name="status_saved_to_draft">Твіт збережено у чернетці.</string>
   <string name="default_account">Типово</string>
   <string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g> (<xliff:g id="daily_tweet">%2$d</xliff:g> твіт(ів) на день)</string>
   <string name="empty_content">Порожній вміст</string>

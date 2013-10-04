@@ -23,6 +23,7 @@ import static org.mariotaku.twidere.util.Utils.configBaseAdapter;
 import static org.mariotaku.twidere.util.Utils.findStatusInDatabases;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
+import static org.mariotaku.twidere.util.Utils.getLinkHighlightOptionInt;
 import static org.mariotaku.twidere.util.Utils.getNameDisplayOptionInt;
 import static org.mariotaku.twidere.util.Utils.getStatusBackground;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
@@ -70,9 +71,9 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 
 	private boolean mDisplayProfileImage, mDisplayImagePreview, mShowAccountColor, mGapDisallowed,
 			mMentionsHighlightDisabled, mFavoritesHighlightDisabled, mDisplaySensitiveContents,
-			mIndicateMyStatusDisabled, mLinkHighlightingEnabled, mIsLastItemFiltered, mFiltersEnabled = true;
+			mIndicateMyStatusDisabled, mIsLastItemFiltered, mFiltersEnabled = true;
 	private float mTextSize;
-	private int mNameDisplayOption, mLinkHighlightStyle;
+	private int mNameDisplayOption, mLinkHighlightOption;
 	private boolean mFilterIgnoreSource, mFilterIgnoreScreenName, mFilterIgnoreTextHtml, mFilterIgnoreTextPlain,
 			mNicknameOnly;
 	private int mMaxAnimationPosition;
@@ -116,8 +117,8 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 
 			final String retweeted_by_name = cursor.getString(mIndices.retweeted_by_name);
 			final String retweeted_by_screen_name = cursor.getString(mIndices.retweeted_by_screen_name);
-			final String text = mLinkHighlightingEnabled ? cursor.getString(mIndices.text_html) : cursor
-					.getString(mIndices.text_unescaped);
+			final String text = mLinkHighlightOption != LINK_HIGHLIGHT_OPTION_CODE_NONE ? cursor
+					.getString(mIndices.text_html) : cursor.getString(mIndices.text_unescaped);
 			final String screen_name = cursor.getString(mIndices.user_screen_name);
 			final String name = cursor.getString(mIndices.user_name);
 			final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
@@ -155,7 +156,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			holder.setTextSize(mTextSize);
 
 			holder.setIsMyStatus(is_my_status && !mIndicateMyStatusDisabled);
-			if (mLinkHighlightingEnabled) {
+			if (mLinkHighlightOption != LINK_HIGHLIGHT_OPTION_CODE_NONE) {
 				holder.text.setText(Html.fromHtml(text));
 				mLinkify.applyAllLinks(holder.text, account_id, is_possibly_sensitive);
 				holder.text.setMovementMethod(null);
@@ -168,7 +169,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			holder.name.setText(TextUtils.isEmpty(nick) ? name : mNicknameOnly ? nick : context.getString(
 					R.string.name_with_nickname, name, nick));
 			holder.screen_name.setText("@" + screen_name);
-			if (mLinkHighlightingEnabled) {
+			if (mLinkHighlightOption != LINK_HIGHLIGHT_OPTION_CODE_NONE) {
 				mLinkify.applyUserProfileLink(holder.name, account_id, user_id, screen_name);
 				mLinkify.applyUserProfileLink(holder.screen_name, account_id, user_id, screen_name);
 				holder.name.setMovementMethod(null);
@@ -389,19 +390,11 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	}
 
 	@Override
-	public void setLinkHightlightingEnabled(final boolean enable) {
-		if (mLinkHighlightingEnabled == enable) return;
-		mLinkHighlightingEnabled = enable;
-		notifyDataSetChanged();
-	}
-
-	@Override
-	public void setLinkUnderlineOnly(final boolean underline_only) {
-		final int style = underline_only ? TwidereLinkify.HIGHLIGHT_STYLE_UNDERLINE
-				: TwidereLinkify.HIGHLIGHT_STYLE_COLOR;
-		if (mLinkHighlightStyle == style) return;
-		mLinkify.setHighlightStyle(style);
-		mLinkHighlightStyle = style;
+	public void setLinkHighlightOption(final String option) {
+		final int option_int = getLinkHighlightOptionInt(option);
+		if (option_int == mLinkHighlightOption) return;
+		mLinkHighlightOption = option_int;
+		mLinkify.setHighlightOption(option_int);
 		notifyDataSetChanged();
 	}
 

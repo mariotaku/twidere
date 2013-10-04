@@ -11,7 +11,7 @@
   <string name="remove_location">Elimina la ubicació</string>
   <string name="remove_image">Elimina l\'imatge</string>
   <string name="remove_photo">Elimina la foto</string>
-  <string name="tweet_hint">Què està passant?</string>
+  <string name="status_hint">Què està passant?</string>
   <string name="sign_up">Registrar-se</string>
   <string name="sign_in">Inicia la sessió</string>
   <string name="rest_base_url">Base URL de REST</string>
@@ -183,8 +183,8 @@
   <string name="type_to_compose">Escriu per redactar</string>
   <string name="users_lists">Llistes de l\'usuari</string>
   <string name="lists_following_user">Llistes que segueixen a aquest usuari</string>
-  <string name="Ntweets_quantity_one">Tens un nou tweet.</string>
-  <string name="Ntweets_quantity_other">Tens <xliff:g id="items">%d</xliff:g> nous tuits.</string>
+  <string name="Nstatuses_quantity_one">Tens un nou tweet.</string>
+  <string name="Nstatuses_quantity_other">Tens <xliff:g id="items">%d</xliff:g> nous tuits.</string>
   <string name="item_1_minute">1 minut</string>
   <string name="item_3_minutes">3 minuts</string>
   <string name="item_5_minutes">5 minuts</string>
@@ -258,7 +258,7 @@
   <string name="portrait">Vertical</string>
   <string name="quick_send">Premeu \"Retorn\" per enviar</string>
   <string name="quick_send_summary">Envia la piulada quan es premi \"Retorn\".</string>
-  <string name="unsaved_tweet">No s\'ha desat o enviat la piulada.</string>
+  <string name="unsaved_status">No s\'ha desat o enviat la piulada.</string>
   <string name="discard">Descarta</string>
   <string name="multi_select">Selecció multiple</string>
   <string name="Nitems_selected_quantity_one">1 element seleccionat</string>
@@ -293,8 +293,8 @@
   <string name="activity_by_friends_list_created"><xliff:g id="user">%1$s</xliff:g> ha creat la llista <xliff:g id="target">%2$s</xliff:g>.</string>
   <string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g> ha creat la llista <xliff:g id="target">%2$s</xliff:g> i <xliff:g id="count">%3$d</xliff:g> més.</string>
   <string name="cannot_get_callback_url">No s\'ha rebut cap resposta. Comproveu el vostre nom d\'usuari i contrasenya.</string>
-  <string name="tweet_not_sent">Piulada no enviada.</string>
-  <string name="tweet_not_sent_summary">No s\'ha enviat la piulada, però s\'ha guardat a Esborranys.</string>
+  <string name="status_not_updated">Piulada no enviada.</string>
+  <string name="status_not_updated_summary">No s\'ha enviat la piulada, però s\'ha guardat a Esborranys.</string>
   <string name="incoming_friendships">Peticions de seguiment pendents</string>
   <string name="click_to_open_menu">Toqueu per obrir el menú</string>
   <string name="click_to_open_menu_summary">Toqueu per obrir el menú, i mantingueu el toc per fer una selecció múltiple.</string>

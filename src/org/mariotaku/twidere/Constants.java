@@ -184,7 +184,6 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_TCP_DNS_QUERY = "tcp_dns_query";
 	public static final String PREFERENCE_KEY_DNS_SERVER = "dns_server";
 	public static final String PREFERENCE_KEY_SEPARATE_RETWEET_ACTION = "separate_retweet_action";
-	public static final String PREFERENCE_KEY_API_UPGRADE_CONFIRMED = "api_upgrade_confirmed";
 	public static final String PREFERENCE_KEY_CONNECTION_TIMEOUT = "connection_timeout";
 	public static final String PREFERENCE_KEY_NAME_DISPLAY_OPTION = "name_display_option";
 	public static final String PREFERENCE_KEY_STOP_AUTO_REFRESH_WHEN_BATTERY_LOW = "stop_auto_refresh_when_battery_low";
@@ -193,8 +192,7 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS = "display_sensitive_contents";
 	public static final String PREFERENCE_KEY_PHISHING_LINK_WARNING = "phishing_link_warning";
 	public static final String PREFERENCE_KEY_FAST_SCROLL_THUMB = "fast_scroll_thumb";
-	public static final String PREFERENCE_KEY_LINK_HIGHLIGHTING = "link_highlighting";
-	public static final String PREFERENCE_KEY_LINK_UNDERLINE_ONLY = "link_underline_only";
+	public static final String PREFERENCE_KEY_LINK_HIGHLIGHT_OPTION = "link_highlight_option";
 	public static final String PREFERENCE_KEY_INDICATE_MY_STATUS = "indicate_my_status";
 	public static final String PREFERENCE_KEY_PRELOAD_PROFILE_IMAGES = "preload_profile_images";
 	public static final String PREFERENCE_KEY_PRELOAD_PREVIEW_IMAGES = "preload_preview_images";
@@ -217,6 +215,7 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_FILTERS_IN_MENTIONS = "filters_in_mentions";
 	public static final String PREFERENCE_KEY_FILTERS_FOR_RTS = "filters_for_rts";
 	public static final String PREFERENCE_KEY_NICKNAME_ONLY = "nickname_only";
+	public static final String PREFERENCE_KEY_SETTINGS_WIZARD_COMPLETED = "settings_wizard_completed";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;
@@ -233,6 +232,15 @@ public interface Constants {
 	public static final int NAME_DISPLAY_OPTION_CODE_BOTH = 0;
 	public static final int NAME_DISPLAY_OPTION_CODE_NAME = 1;
 	public static final int NAME_DISPLAY_OPTION_CODE_SCREEN_NAME = 2;
+
+	public static final String LINK_HIGHLIGHT_OPTION_NONE = "none";
+	public static final String LINK_HIGHLIGHT_OPTION_HIGHLIGHT = "highlight";
+	public static final String LINK_HIGHLIGHT_OPTION_UNDERLINE = "underline";
+	public static final String LINK_HIGHLIGHT_OPTION_BOTH = "both";
+	public static final int LINK_HIGHLIGHT_OPTION_CODE_NONE = 0;
+	public static final int LINK_HIGHLIGHT_OPTION_CODE_HIGHLIGHT = 1;
+	public static final int LINK_HIGHLIGHT_OPTION_CODE_UNDERLINE = 2;
+	public static final int LINK_HIGHLIGHT_OPTION_CODE_BOTH = 3;
 
 	public static final String COMPOSE_QUIT_ACTION_ASK = "ask";
 	public static final String COMPOSE_QUIT_ACTION_SAVE = "save";
@@ -628,5 +636,11 @@ public interface Constants {
 	public static final String TAB_TYPE_SEARCH_STATUSES = "search_statuses";
 	public static final String TAB_TYPE_LIST_TIMELINE = "list_timeline";
 	public static final String TAB_TYPE_TRENDS = "trends";
+
+	public static final String TWIDERE_PREVIEW_NICKNAME = "Twidere";
+	public static final String TWIDERE_PREVIEW_NAME = "Twidere Project";
+	public static final String TWIDERE_PREVIEW_SCREEN_NAME = "@TwidereProject";
+	public static final String TWIDERE_PREVIEW_TEXT_HTML = "Twidere is an open source twitter client for Android, see <a href='https://github.com/mariotaku/twidere'>github.com/mariotak&#8230;<a/>";
+	public static final String TWIDERE_PREVIEW_SOURCE = "Twidere for Android";
 
 }

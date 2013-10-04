@@ -34,7 +34,7 @@ import android.view.MenuItem;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.ParcelableUserListsAdapter;
-import org.mariotaku.twidere.loader.UserListMembershipsLoader;
+import org.mariotaku.twidere.loader.UserListsLoader;
 import org.mariotaku.twidere.model.ParcelableUserList;
 
 import java.util.List;
@@ -59,12 +59,13 @@ public class UserListsListFragment extends BaseUserListsListFragment {
 	@Override
 	public Loader<List<ParcelableUserList>> newLoaderInstance(final long account_id, final long user_id,
 			final String screen_name) {
-		return new UserListMembershipsLoader(getActivity(), account_id, user_id, screen_name, getCursor(), getData());
+		return new UserListsLoader(getActivity(), account_id, user_id, screen_name, getData());
 	}
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		setPullToRefreshEnabled(false);
 		setHasOptionsMenu(true);
 	}
 
@@ -101,6 +102,10 @@ public class UserListsListFragment extends BaseUserListsListFragment {
 	}
 
 	@Override
+	public void onRefreshStarted() {
+	}
+
+	@Override
 	public void onStart() {
 		super.onStart();
 		registerReceiver(mStatusReceiver, new IntentFilter(BROADCAST_USER_LIST_DELETED));
@@ -110,6 +115,10 @@ public class UserListsListFragment extends BaseUserListsListFragment {
 	public void onStop() {
 		unregisterReceiver(mStatusReceiver);
 		super.onStop();
+	}
+
+	@Override
+	protected void onPullUp() {
 	}
 
 	private void removeUserList(final int id) {

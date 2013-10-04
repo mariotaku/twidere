@@ -11,7 +11,7 @@
   <string name="remove_location">הסר מיקום</string>
   <string name="remove_image">הסר תמונה</string>
   <string name="remove_photo">הסר צילום</string>
-  <string name="tweet_hint">מה קורה עכשיו?</string>
+  <string name="status_hint">מה קורה עכשיו?</string>
   <string name="sign_up">הרשם</string>
   <string name="sign_in">היכנס</string>
   <string name="twip_o">בסיסי</string>

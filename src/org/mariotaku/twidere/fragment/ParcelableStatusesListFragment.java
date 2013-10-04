@@ -109,10 +109,6 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 		return -1;
 	}
 
-	public boolean isLoaderUsed() {
-		return true;
-	}
-
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		mStatusesRestored = false;
@@ -128,9 +124,7 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 
 	@Override
 	public final Loader<List<ParcelableStatus>> onCreateLoader(final int id, final Bundle args) {
-		if (isLoaderUsed()) {
-			setProgressBarIndeterminateVisibility(true);
-		}
+		setProgressBarIndeterminateVisibility(true);
 		final List<ParcelableStatus> data = getData();
 		if (isInstanceStateSaved() && data != null && !mStatusesRestored)
 			return new DummyParcelableStatusesLoader(getActivity(), data);
@@ -261,6 +255,12 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public void setProgressBarIndeterminateVisibility(boolean visible) {
+		super.setProgressBarIndeterminateVisibility(visible);
+		setRefreshing(visible);
 	}
 
 }

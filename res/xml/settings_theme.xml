@@ -2,6 +2,8 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
 	android:title="@string/theme">
 
+	<org.mariotaku.twidere.preference.ThemePreviewPreference android:key="theme_preview"/>
+
 	<ListPreference
 		android:defaultValue="twidere"
 		android:entries="@array/entries_theme"

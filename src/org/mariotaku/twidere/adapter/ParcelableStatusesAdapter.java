@@ -23,6 +23,7 @@ import static org.mariotaku.twidere.model.ParcelableLocation.isValidLocation;
 import static org.mariotaku.twidere.util.Utils.configBaseAdapter;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
+import static org.mariotaku.twidere.util.Utils.getLinkHighlightOptionInt;
 import static org.mariotaku.twidere.util.Utils.getNameDisplayOptionInt;
 import static org.mariotaku.twidere.util.Utils.getStatusBackground;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
@@ -67,9 +68,9 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	private MenuButtonClickListener mListener;
 	private boolean mDisplayProfileImage, mDisplayImagePreview, mShowAccountColor, mGapDisallowed,
 			mMentionsHighlightDisabled, mFavoritesHighlightDisabled, mDisplaySensitiveContents,
-			mIndicateMyStatusDisabled, mLinkHighlightingEnabled, mIsLastItemFiltered, mFiltersEnabled;
+			mIndicateMyStatusDisabled, mIsLastItemFiltered, mFiltersEnabled;
 	private float mTextSize;
-	private int mNameDisplayOption, mLinkHighlightStyle;
+	private int mNameDisplayOption, mLinkHighlightOption;
 	private boolean mFilterIgnoreSource, mFilterIgnoreScreenName, mFilterIgnoreTextHtml, mFilterIgnoreTextPlain,
 			mNicknameOnly;
 	private int mMaxAnimationPosition;
@@ -156,7 +157,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 
 			holder.setAccountColorEnabled(mShowAccountColor);
 
-			if (mLinkHighlightingEnabled) {
+			if (mLinkHighlightOption != LINK_HIGHLIGHT_OPTION_CODE_NONE) {
 				holder.text.setText(Html.fromHtml(status.text_html));
 				mLinkify.applyAllLinks(holder.text, status.account_id, status.is_possibly_sensitive);
 				holder.text.setMovementMethod(null);
@@ -185,7 +186,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			holder.name.setText(TextUtils.isEmpty(nick) ? status.user_name : mNicknameOnly ? nick : mContext.getString(
 					R.string.name_with_nickname, status.user_name, nick));
 			holder.screen_name.setText("@" + status.user_screen_name);
-			if (mLinkHighlightingEnabled) {
+			if (mLinkHighlightOption != LINK_HIGHLIGHT_OPTION_CODE_NONE) {
 				mLinkify.applyUserProfileLink(holder.name, status.account_id, status.user_id, status.user_screen_name);
 				mLinkify.applyUserProfileLink(holder.screen_name, status.account_id, status.user_id,
 						status.user_screen_name);
@@ -345,19 +346,11 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	}
 
 	@Override
-	public void setLinkHightlightingEnabled(final boolean enable) {
-		if (mLinkHighlightingEnabled == enable) return;
-		mLinkHighlightingEnabled = enable;
-		notifyDataSetChanged();
-	}
-
-	@Override
-	public void setLinkUnderlineOnly(final boolean underline_only) {
-		final int style = underline_only ? TwidereLinkify.HIGHLIGHT_STYLE_UNDERLINE
-				: TwidereLinkify.HIGHLIGHT_STYLE_COLOR;
-		if (mLinkHighlightStyle == style) return;
-		mLinkify.setHighlightStyle(style);
-		mLinkHighlightStyle = style;
+	public void setLinkHighlightOption(final String option) {
+		final int option_int = getLinkHighlightOptionInt(option);
+		if (option_int == mLinkHighlightOption) return;
+		mLinkHighlightOption = option_int;
+		mLinkify.setHighlightOption(option_int);
 		notifyDataSetChanged();
 	}
 

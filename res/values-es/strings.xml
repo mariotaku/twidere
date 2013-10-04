@@ -11,7 +11,7 @@
   <string name="remove_location">Eliminar ubicación</string>
   <string name="remove_image">Quitar imagen</string>
   <string name="remove_photo">Eliminar foto</string>
-  <string name="tweet_hint">¿Qué esta pasando?</string>
+  <string name="status_hint">¿Qué esta pasando?</string>
   <string name="sign_up">Únete</string>
   <string name="sign_in">Inicia sesión</string>
   <string name="rest_base_url">REST Base URL</string>
@@ -185,16 +185,16 @@
   <string name="sort_timeline_by_time_summary">Esto puede provocar que los retweets se muestren en el lugar equivocado, pero puede ser útil si utilizar otros servicios como Identi.ca.</string>
   <string name="refresh_on_start">Actualizar el inicio</string>
   <string name="refresh_on_start_summary">Actualizar timeline y menciones al iniciar.</string>
-  <string name="refresh_after_tweet">Actualizar tras enviar un tuit</string>
-  <string name="refresh_after_tweet_summary">Actualizar timeline y menciones tras enviar un tuit.</string>
+  <string name="refresh_after_status_updated">Actualizar tras enviar un tuit</string>
+  <string name="refresh_after_status_updated_summary">Actualizar timeline y menciones tras enviar un tuit.</string>
   <string name="list_timeline">Lista de inicio</string>
   <string name="list_members">Lista de miembros</string>
   <string name="list_subscribers">Lista de subscriptores</string>
   <string name="type_to_compose">Escriba para componer</string>
   <string name="users_lists">Listas del usuario</string>
   <string name="lists_following_user">Listas que siguen a este usuario</string>
-  <string name="Ntweets_quantity_one">Tienes un nuevo tweet.</string>
-  <string name="Ntweets_quantity_other">Tienes <xliff:g id="items">%d</xliff:g> nuevos tweets.</string>
+  <string name="Nstatuses_quantity_one">Tienes un nuevo tweet.</string>
+  <string name="Nstatuses_quantity_other">Tienes <xliff:g id="items">%d</xliff:g> nuevos tweets.</string>
   <string name="item_1_minute">1 minuto</string>
   <string name="item_3_minutes">3 minutos</string>
   <string name="item_5_minutes">5 minutos</string>
@@ -270,7 +270,7 @@
   <string name="portrait">Vertical</string>
   <string name="quick_send">Pulsar \"Intro\" para enviar</string>
   <string name="quick_send_summary">Enviar el tweet al pulsar \"Intro\".</string>
-  <string name="unsaved_tweet">El tweet no se ha enviado o guardado aún.</string>
+  <string name="unsaved_status">El tweet no se ha enviado o guardado aún.</string>
   <string name="discard">Descartar</string>
   <string name="multi_select">Selección múltiple</string>
   <string name="Nitems_selected_quantity_one">1 elemento seleccionado</string>
@@ -306,8 +306,8 @@
   <string name="activity_by_friends_list_created"><xliff:g id="user">%1$s</xliff:g> ha creado la lista <xliff:g id="target">%2$s</xliff:g>.</string>
   <string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g> ha creado la lista <xliff:g id="target">%2$s</xliff:g> y <xliff:g id="count">%3$d</xliff:g> más.</string>
   <string name="cannot_get_callback_url">No se ha obtenido respuesta, por favor comprueba tu usuario y contraseña.</string>
-  <string name="tweet_not_sent">Tweet no enviado.</string>
-  <string name="tweet_not_sent_summary">Tweet no enviado. Guardado en borradores.</string>
+  <string name="status_not_updated">Tweet no enviado.</string>
+  <string name="status_not_updated_summary">Tweet no enviado. Guardado en borradores.</string>
   <string name="incoming_friendships">Solicitud de seguimiento pendiente.</string>
   <string name="click_to_open_menu">Presiona para abrir el menú</string>
   <string name="click_to_open_menu_summary">Presiona para abrir el menú, una pulsación larga mostrará más opciones.</string>
@@ -416,7 +416,7 @@
   <string name="disable_tab_swipe">Desactivar el cambio de pestañas deslizando el dedo por la pantalla</string>
   <string name="sign_in_method_introduction_title">¿Cómo funciona?</string>
   <string name="sign_in_method_introduction">La mayoría de los clientes como twicca abren un navegador solicitando que escribas el nombre de usuario y la contraseña y luego el navegador te devuelve al cliente. A veces esto puede llegar a ser muy inconveniente. \n Twidere usa unos pasos más simples para iniciar sesión, sin abrir el navegador. No te preocupes por tu contraseña, Twidere nunca la almacenará, ¡es totalmente seguro!</string>
-  <string name="quote_protected_tweet_notice">No se recomienda citar un tuit protegido.</string>
+  <string name="quote_protected_status_notice">No se recomienda citar un tuit protegido.</string>
   <string name="edit_draft">Editar borrador</string>
   <string name="profile_image">Imagen de perfil</string>
   <string name="my_profile_image">Mi imagen de perfil</string>
@@ -437,7 +437,7 @@
   <string name="direct_message_sent">Mensaje directo enviado.</string>
   <string name="direct_message_deleted">Mensaje directo eliminado.</string>
   <string name="import_from">Importar desde...</string>
-  <string name="link_to_quoted_tweet">Enlace al tuit mencionado</string>
+  <string name="link_to_quoted_status">Enlace al tuit mencionado</string>
   <string name="followed_user">Siguiendo a <xliff:g id="user">%s</xliff:g>.</string>
   <string name="unfollowed_user">Ya no sigues a <xliff:g id="user">%s</xliff:g>.</string>
   <string name="blocked_user"><xliff:g id="user">%s</xliff:g> bloqueado.</string>
@@ -459,9 +459,9 @@
   <string name="original_status">Tweet original</string>
   <string name="compose_quit_action">Al cancelar «redactar»</string>
   <string name="ask">Preguntar</string>
-  <string name="no_close_after_tweet_sent">Mantener \"redactar\" abierto después de enviar el tweet</string>
-  <string name="no_close_after_tweet_sent_summary">Un pequeño regalo para chatterbox</string>
-  <string name="tweet_saved_to_draft">Tweet salvado como borrador.</string>
+  <string name="no_close_after_status_updated">Mantener \"redactar\" abierto después de enviar el tweet</string>
+  <string name="no_close_after_status_updated_summary">Un pequeño regalo para chatterbox</string>
+  <string name="status_saved_to_draft">Tweet salvado como borrador.</string>
   <string name="default_account">Default</string>
   <string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g> (<xliff:g id="daily_tweet">%2$d</xliff:g> tweet(s) por dia)</string>
   <string name="empty_content">Contenido vacío</string>

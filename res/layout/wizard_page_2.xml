@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".activity.SettingsWizardActivity$WizardPage2Fragment">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:padding="@dimen/element_spacing_large">
+
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:padding="@dimen/element_spacing_default"
+			android:singleLine="true"
+			android:text="@string/theme"
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:textColor="?android:colorActivatedHighlight"
+			android:textSize="@dimen/text_size_wizard_title"
+			android:textStyle="italic"/>
+
+		<View
+			android:layout_width="match_parent"
+			android:layout_height="2dp"
+			android:background="#40808080"
+			android:padding="@dimen/element_spacing_default"/>
+
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:lineSpacingMultiplier="1.25"
+			android:padding="@dimen/element_spacing_default"
+			android:text="@string/wizard_page_2_text"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textSize="@dimen/text_size_wizard_text"
+			android:textStyle="normal"/>
+
+		<Spinner
+			android:id="@+id/theme_selector"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_weight="0"
+			android:entries="@array/entries_theme"
+			android:minHeight="@dimen/minimum_element_size"
+			android:textSize="@dimen/text_size_wizard_text"
+			tools:listitem="@layout/wizard_spinner_item"/>
+
+		<CheckBox
+			android:id="@+id/solid_color_background"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_weight="0"
+			android:minHeight="@dimen/minimum_element_size"
+			android:text="@string/solid_color_background"
+			android:textSize="@dimen/text_size_wizard_text"/>
+
+		<FrameLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_weight="1"
+		android:background="?cardItemBackground">
+
+			<include layout="@layout/theme_preview_content"/>
+		</FrameLayout>
+	</LinearLayout>
+
+</ScrollView>

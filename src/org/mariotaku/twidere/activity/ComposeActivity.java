@@ -383,7 +383,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		} else if (text_changed || mImageUri != null || is_editing_draft) {
 			if (COMPOSE_QUIT_ACTION_SAVE.equals(option)) {
 				saveToDrafts();
-				Toast.makeText(this, R.string.tweet_saved_to_draft, Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, R.string.status_saved_to_draft, Toast.LENGTH_SHORT).show();
 				finish();
 			} else {
 				new UnsavedTweetDialogFragment().show(getFragmentManager(), "unsaved_tweet");
@@ -1062,7 +1062,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		@Override
 		public Dialog onCreateDialog(final Bundle savedInstanceState) {
 			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			builder.setMessage(R.string.unsaved_tweet);
+			builder.setMessage(R.string.unsaved_status);
 			builder.setPositiveButton(R.string.save, this);
 			builder.setNegativeButton(R.string.discard, this);
 			return builder.create();

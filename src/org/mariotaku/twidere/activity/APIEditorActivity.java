@@ -43,7 +43,7 @@ import org.mariotaku.twidere.provider.TweetStore.Accounts;
 
 import twitter4j.TwitterConstants;
 
-public class EditAPIActivity extends BaseSupportDialogActivity implements TwitterConstants, OnCheckedChangeListener,
+public class APIEditorActivity extends BaseSupportDialogActivity implements TwitterConstants, OnCheckedChangeListener,
 		OnClickListener {
 
 	private EditText mEditRestBaseURL, mEditSigningRESTBaseURL, mEditOAuthBaseURL, mEditSigningOAuthBaseURL;

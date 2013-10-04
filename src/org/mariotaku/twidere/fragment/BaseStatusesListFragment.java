@@ -314,16 +314,11 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		final boolean display_image_preview = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_IMAGE_PREVIEW, false);
 		final boolean display_sensitive_contents = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS,
 				false);
-		final boolean link_highlighting = mPreferences.getBoolean(PREFERENCE_KEY_LINK_HIGHLIGHTING, false);
 		final boolean indicate_my_status = mPreferences.getBoolean(PREFERENCE_KEY_INDICATE_MY_STATUS, true);
-		final boolean link_underline_only = mPreferences.getBoolean(PREFERENCE_KEY_LINK_UNDERLINE_ONLY, false);
 		configBaseAdapter(getActivity(), mAdapter);
 		mAdapter.setDisplayImagePreview(display_image_preview);
 		mAdapter.setDisplaySensitiveContents(display_sensitive_contents);
-		mAdapter.setLinkHightlightingEnabled(link_highlighting);
 		mAdapter.setIndicateMyStatusDisabled(isMyTimeline() || !indicate_my_status);
-		mAdapter.setLinkUnderlineOnly(link_underline_only);
-
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 	}
 

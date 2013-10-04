@@ -108,5 +108,11 @@
 		<item>light</item>
 		<item>light_darkactionbar</item>
 	</string-array>
+	<string-array name="entries_link_highlight_option">
+		<item>@string/none</item>
+		<item>@string/highlight</item>
+		<item>@string/underline</item>
+		<item>@string/both</item>
+	</string-array>
 
 </resources>

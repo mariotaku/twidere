@@ -19,7 +19,7 @@ public class ActionBarTitleView extends TextView {
 		super(context, attrs, defStyle);
 		final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.titleTextStyle },
 				android.R.attr.actionBarStyle, android.R.style.Widget_Holo_ActionBar);
-		final int textAppearance = a.getResourceId(0, android.R.style.Widget_Holo_ActionBar);
+		final int textAppearance = a.getResourceId(0, android.R.style.Widget_Holo_TextView);
 		a.recycle();
 		setTextAppearance(context, textAppearance);
 	}

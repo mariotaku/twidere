@@ -45,12 +45,28 @@
 		<item name="android:fontFamily">sans-serif-light</item>
 	</style>
 
+	<style name="Widget.Twidere.CompoundButton.RadioButton" parent="android:Widget.Holo.CompoundButton.RadioButton">
+		<item name="android:fontFamily">sans-serif-light</item>
+	</style>
+
+	<style name="Widget.Twidere.Light.CompoundButton.RadioButton" parent="android:Widget.Holo.Light.CompoundButton.RadioButton">
+		<item name="android:fontFamily">sans-serif-light</item>
+	</style>
+
+	<style name="Widget.Twidere.CompoundButton.CheckBox" parent="android:Widget.Holo.CompoundButton.CheckBox">
+		<item name="android:fontFamily">sans-serif-light</item>
+	</style>
+
+	<style name="Widget.Twidere.Light.CompoundButton.CheckBox" parent="android:Widget.Holo.Light.CompoundButton.CheckBox">
+		<item name="android:fontFamily">sans-serif-light</item>
+	</style>
+
 	<style name="Animation.SwipeBack" parent="android:Animation.Activity">
 		<item name="android:activityOpenEnterAnimation">@anim/swipeback_open_enter</item>
 		<item name="android:activityCloseExitAnimation">@anim/swipeback_close_exit</item>
 	</style>
 
-	<style name="Widget.TabPageIndicator" parent="@android:style/Widget">
+	<style name="Widget.TabPageIndicator.TabItem" parent="@android:style/Widget">
 		<item name="android:gravity">center_horizontal</item>
 		<item name="android:background">@drawable/vpi__tab_indicator</item>
 		<item name="android:paddingLeft">8dp</item>

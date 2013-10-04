@@ -19,13 +19,12 @@
 
 package org.mariotaku.twidere.activity;
 
-import static org.mariotaku.twidere.util.Utils.getColorPreviewBitmap;
-
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -140,7 +139,7 @@ public class ColorSelectorActivity extends BaseSupportDialogActivity implements 
 			final ImageView color = (ImageView) view.findViewById(R.id.color);
 			final boolean is_last = position == getCount() - 1;
 			view.findViewById(R.id.text).setVisibility(is_last ? View.VISIBLE : View.GONE);
-			color.setImageBitmap(getColorPreviewBitmap(mContext, is_last ? mCustomizedColor : getItem(position)));
+			color.setImageDrawable(new ColorDrawable(is_last ? mCustomizedColor : getItem(position)));
 			return view;
 		}
 

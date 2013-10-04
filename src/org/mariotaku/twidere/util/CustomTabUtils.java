@@ -38,19 +38,19 @@ public class CustomTabUtils implements Constants {
 	static {
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_HOME_TIMELINE, new CustomTabConfiguration(
 				HomeTimelineFragment.class, R.string.home, R.drawable.ic_tab_home, false,
-				CustomTabConfiguration.FIELD_TYPE_NONE, 0));
+				CustomTabConfiguration.FIELD_TYPE_NONE, 0, true));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_MENTIONS_TIMELINE, new CustomTabConfiguration(
 				MentionsFragment.class, R.string.mentions, R.drawable.ic_tab_mention, false,
-				CustomTabConfiguration.FIELD_TYPE_NONE, 1));
+				CustomTabConfiguration.FIELD_TYPE_NONE, 1, true));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_DIRECT_MESSAGES, new CustomTabConfiguration(
 				DirectMessagesFragment.class, R.string.direct_messages, R.drawable.ic_tab_message, false,
-				CustomTabConfiguration.FIELD_TYPE_NONE, 2));
+				CustomTabConfiguration.FIELD_TYPE_NONE, 2, true));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_TRENDS, new CustomTabConfiguration(TrendsFragment.class,
 				R.string.trends, R.drawable.ic_tab_trends, true, CustomTabConfiguration.FIELD_TYPE_NONE, 3));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_FAVORITES, new CustomTabConfiguration(UserFavoritesFragment.class,
 				R.string.favorites, R.drawable.ic_tab_star, true, CustomTabConfiguration.FIELD_TYPE_USER, 4));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_USER_TIMELINE, new CustomTabConfiguration(
-				UserTimelineFragment.class, R.string.statuses, R.drawable.ic_tab_quote, true,
+				UserTimelineFragment.class, R.string.users_statuses, R.drawable.ic_tab_quote, true,
 				CustomTabConfiguration.FIELD_TYPE_USER, 5));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_SEARCH_STATUSES, new CustomTabConfiguration(
 				SearchStatusesFragment.class, R.string.search_statuses, R.drawable.ic_tab_search, true,
@@ -84,6 +84,43 @@ public class CustomTabUtils implements Constants {
 			if (entry.getValue() == iconRes) return entry.getKey();
 		}
 		return null;
+	}
+	
+
+	public static boolean isSingleTab(final String type) {
+		if (type == null) return false;
+		final CustomTabConfiguration conf = getTabConfiguration(type);
+		return conf != null && conf.isSingleTab();
+	}
+	
+	public static boolean isTabAdded(final Context context, final String type) {
+		if (context == null || type == null) return false;
+		final ContentResolver resolver = context.getContentResolver();
+		final String where = Tabs.TYPE + " = ?";
+		final Cursor cur = resolver.query(Tabs.CONTENT_URI, new String[0] , where,
+				new String[] { type }, Tabs.DEFAULT_SORT_ORDER);
+		if (cur == null) return false;
+		final boolean added = cur.getCount() > 0;
+		cur.close();
+		return added;
+	}
+
+	public static int getAddedTabPosition(final Context context, final String type) {
+		if (context == null || type == null) return -1;
+		final ContentResolver resolver = context.getContentResolver();
+		final String where = Tabs.TYPE + " = ?";
+		final Cursor cur = resolver.query(Tabs.CONTENT_URI, new String[] { Tabs.POSITION }, where,
+				new String[] { type }, Tabs.DEFAULT_SORT_ORDER);
+		if (cur == null) return -1;
+		final int position;
+		if (cur.getCount() > 0) {
+			cur.moveToFirst();
+			position = cur.getInt(cur.getColumnIndex(Tabs.POSITION));
+		} else {
+			position = -1;
+		}
+		cur.close();
+		return position;
 	}
 
 	public static HashMap<String, CustomTabConfiguration> getConfiguraionMap() {

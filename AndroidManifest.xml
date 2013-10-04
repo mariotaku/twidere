@@ -184,12 +184,12 @@
 				android:value=".activity.HomeActivity"/>
 		</activity>
 		<activity
-			android:name=".activity.EditAPIActivity"
+			android:name=".activity.APIEditorActivity"
 			android:label="@string/edit_api"
 			android:theme="@style/Theme.Twidere.Light.Dialog"
 			android:windowSoftInputMode="adjustResize"/>
 		<activity
-			android:name="org.mariotaku.twidere.activity.AccountSelectorActivity"
+			android:name=".activity.AccountSelectorActivity"
 			android:label="@string/select_account"
 			android:theme="@style/Theme.Twidere.Light.Dialog">
 			<intent-filter>
@@ -199,7 +199,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="org.mariotaku.twidere.activity.BrowserActivity"
+			android:name=".activity.BrowserActivity"
 			android:exported="false"
 			android:label="@string/browser"
 			android:theme="@style/Theme.Blank.SwipeBack">
@@ -366,7 +366,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".activity.EditUserProfileActivity"
+			android:name=".activity.UserProfileEditorActivity"
 			android:exported="false"
 			android:label="@string/edit_profile"
 			android:theme="@style/Theme.Blank.SwipeBack"
@@ -378,7 +378,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".activity.EditCustomTabActivity"
+			android:name=".activity.CustomTabEditorActivity"
 			android:exported="false"
 			android:label="@string/add_tab"
 			android:theme="@style/Theme.Blank.Dialog">
@@ -416,7 +416,7 @@
 			android:label="@string/data_profiling"
 			android:theme="@style/Theme.Blank"/>
 		<activity
-			android:name="org.mariotaku.twidere.activity.RequestPermissionsActivity"
+			android:name=".activity.RequestPermissionsActivity"
 			android:label="@string/permissions_request"
 			android:theme="@style/Theme.Twidere.Light.Dialog">
 			<intent-filter>
@@ -435,7 +435,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="org.mariotaku.twidere.activity.UserListSelectorActivity"
+			android:name=".activity.UserListSelectorActivity"
 			android:label="@string/select_user_list"
 			android:theme="@style/Theme.Blank.Dialog">
 			<intent-filter>
@@ -445,6 +445,10 @@
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</activity>
+		<activity
+			android:name=".activity.SettingsWizardActivity"
+			android:label="@string/settings_wizard"
+			android:theme="@style/Theme.Twidere"/>
 		<activity
 			android:name=".activity.TestActivity"
 			android:launchMode="singleTop"
@@ -466,12 +470,12 @@
 			android:settingsActivity=".activity.DataProfilingSettingsActivity"/>
 
 		<provider
-			android:name="org.mariotaku.twidere.provider.TwidereDataProvider"
+			android:name=".provider.TwidereDataProvider"
 			android:authorities="twidere"
 			android:exported="true"
 			android:label="@string/label_tweetstore_provider"/>
 		<provider
-			android:name="org.mariotaku.twidere.provider.CommandProvider"
+			android:name=".provider.CommandProvider"
 			android:authorities="twidere.command"
 			android:exported="true"/>
 		<provider

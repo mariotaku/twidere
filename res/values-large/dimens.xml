@@ -10,5 +10,9 @@
 	<dimen name="accounts_drawer_screen_name_size">14sp</dimen>
 	<dimen name="accounts_drawer_default_indicator_size">12sp</dimen>
 	<dimen name="accounts_drawer_child_size">18sp</dimen>
+	<dimen name="text_size_wizard_title">96sp</dimen>
+	<dimen name="text_size_wizard_text">32sp</dimen>
+	<dimen name="line_indicator_line_width_wizard">32dp</dimen>
+	<dimen name="line_indicator_stroke_width_wizard">4dp</dimen>
 
 </resources>

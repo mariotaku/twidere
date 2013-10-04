@@ -29,17 +29,17 @@ import static org.mariotaku.twidere.util.Utils.matcherStart;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
-import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.method.MovementMethod;
 import android.text.style.URLSpan;
-import android.view.View;
 import android.widget.TextView;
 
 import com.twitter.Extractor;
 import com.twitter.Regex;
 
+import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.model.PreviewImage;
+import org.mariotaku.twidere.text.TwidereURLSpan;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -58,11 +58,7 @@ import java.util.regex.Pattern;
  * created.
  */
 
-public class TwidereLinkify {
-
-	public static final int HIGHLIGHT_STYLE_DEFAULT = 0;
-	public static final int HIGHLIGHT_STYLE_UNDERLINE = 1;
-	public static final int HIGHLIGHT_STYLE_COLOR = 2;
+public class TwidereLinkify implements Constants {
 
 	public static final int LINK_TYPE_MENTION = 1;
 	public static final int LINK_TYPE_HASHTAG = 2;
@@ -107,15 +103,15 @@ public class TwidereLinkify {
 
 	private final OnLinkClickListener mOnLinkClickListener;
 	private final Extractor mExtractor = new Extractor();
-	private int mHighlightStyle;
+	private int mHighlightOption;
 
 	public TwidereLinkify(final OnLinkClickListener listener) {
-		this(listener, HIGHLIGHT_STYLE_DEFAULT);
+		this(listener, LINK_HIGHLIGHT_OPTION_CODE_BOTH);
 	}
 
-	public TwidereLinkify(final OnLinkClickListener listener, final int highlight_style) {
+	public TwidereLinkify(final OnLinkClickListener listener, final int highlight_option) {
 		mOnLinkClickListener = listener;
-		mHighlightStyle = highlight_style;
+		mHighlightOption = highlight_option;
 	}
 
 	public final void applyAllLinks(final TextView view, final long account_id, final boolean sensitive) {
@@ -145,8 +141,8 @@ public class TwidereLinkify {
 		addLinkMovementMethod(view);
 	}
 
-	public void setHighlightStyle(final int style) {
-		mHighlightStyle = style;
+	public void setHighlightOption(final int style) {
+		mHighlightOption = style;
 	}
 
 	private final boolean addCashtagLinks(final Spannable spannable, final long account_id) {
@@ -320,8 +316,8 @@ public class TwidereLinkify {
 
 	private final void applyLink(final String url, final String orig, final int start, final int end,
 			final Spannable text, final long account_id, final int type, final boolean sensitive) {
-		final LinkSpan span = new LinkSpan(url, orig, account_id, type, sensitive, mOnLinkClickListener,
-				mHighlightStyle);
+		final TwidereURLSpan span = new TwidereURLSpan(url, orig, account_id, type, sensitive, mOnLinkClickListener,
+				mHighlightOption);
 		text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 	}
 
@@ -336,54 +332,5 @@ public class TwidereLinkify {
 
 	public interface OnLinkClickListener {
 		public void onLinkClick(String link, String orig, long account_id, int type, boolean sensitive);
-	}
-
-	static class LinkSpan extends URLSpan {
-
-		private final int type, highlight_style;
-		private final long account_id;
-		private final String url, orig;
-		private final boolean sensitive;
-		private final OnLinkClickListener listener;
-
-		public LinkSpan(final String url, final long account_id, final int type, final boolean sensitive,
-				final OnLinkClickListener listener, final int highlight_style) {
-			this(url, null, account_id, type, sensitive, listener, highlight_style);
-		}
-
-		public LinkSpan(final String url, final String orig, final long account_id, final int type,
-				final boolean sensitive, final OnLinkClickListener listener, final int highlight_style) {
-			super(url);
-			this.url = url;
-			this.orig = orig;
-			this.account_id = account_id;
-			this.type = type;
-			this.sensitive = sensitive;
-			this.listener = listener;
-			this.highlight_style = highlight_style;
-		}
-
-		@Override
-		public void onClick(final View widget) {
-			if (listener != null) {
-				listener.onLinkClick(url, orig, account_id, type, sensitive);
-			}
-		}
-
-		@Override
-		public void updateDrawState(final TextPaint ds) {
-			switch (highlight_style) {
-				case HIGHLIGHT_STYLE_UNDERLINE:
-					ds.setUnderlineText(true);
-					break;
-				case HIGHLIGHT_STYLE_COLOR:
-					super.updateDrawState(ds);
-					ds.setUnderlineText(false);
-					break;
-				default:
-					super.updateDrawState(ds);
-					break;
-			}
-		}
 	}
 }

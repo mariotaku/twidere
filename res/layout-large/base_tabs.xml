@@ -5,11 +5,12 @@
 	android:layout_height="match_parent"
 	android:orientation="horizontal">
 
-	<org.mariotaku.twidere.view.TabPageIndicator
+	<view
 		android:id="@android:id/tabs"
 		android:layout_width="wrap_content"
 		android:layout_height="match_parent"
 		android:layout_gravity="left"
+		class="org.mariotaku.twidere.view.TabPageIndicator"
 		android:dividerPadding="4dp"
 		android:dividerVertical="?android:dividerVertical"/>
 

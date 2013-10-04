@@ -11,7 +11,7 @@
   <string name="remove_location">Verwijder locatie</string>
   <string name="remove_image">Verwijder afbeelding</string>
   <string name="remove_photo">Verwijder foto</string>
-  <string name="tweet_hint">Wat gebeurt er?</string>
+  <string name="status_hint">Wat gebeurt er?</string>
   <string name="sign_up">Aanmelden</string>
   <string name="sign_in">Inloggen</string>
   <string name="rest_base_url">REST basis-URL</string>
@@ -185,16 +185,16 @@
   <string name="sort_timeline_by_time_summary">Dit kan er voor zorgen dat retweets op de verkeerde plaats verschijnen, maar kan helpen als je andere services gebruikt zoals Indenti.ca.</string>
   <string name="refresh_on_start">Vernieuw bij starten</string>
   <string name="refresh_on_start_summary">Vernieuw timeline en vermeldingingen bij opstarten.</string>
-  <string name="refresh_after_tweet">Ververs na tweet versturen</string>
-  <string name="refresh_after_tweet_summary">Ververs tijdlijn en berichten na tweet versturen.</string>
+  <string name="refresh_after_status_updated">Ververs na tweet versturen</string>
+  <string name="refresh_after_status_updated_summary">Ververs tijdlijn en berichten na tweet versturen.</string>
   <string name="list_timeline">Lijst tijdlijn</string>
   <string name="list_members">Lijst-leden</string>
   <string name="list_subscribers">Lijst-abonnees</string>
   <string name="type_to_compose">Typ om op te stellen</string>
   <string name="users_lists">Gebruiker\'s lijst</string>
   <string name="lists_following_user">Lijsten die deze gebruiker volgt</string>
-  <string name="Ntweets_quantity_one">U hebt een nieuwe tweet.</string>
-  <string name="Ntweets_quantity_other">Je hebt <xliff:g id="items">%d</xliff:g> nieuwe tweets.</string>
+  <string name="Nstatuses_quantity_one">U hebt een nieuwe tweet.</string>
+  <string name="Nstatuses_quantity_other">Je hebt <xliff:g id="items">%d</xliff:g> nieuwe tweets.</string>
   <string name="item_1_minute">1 minuut</string>
   <string name="item_3_minutes">3 minuten</string>
   <string name="item_5_minutes">5 minuten</string>
@@ -270,7 +270,7 @@
   <string name="portrait">Portret</string>
   <string name="quick_send">Druk op \"Enter\" om te versturen</string>
   <string name="quick_send_summary">Verstuur tweet met \"Enter\".</string>
-  <string name="unsaved_tweet">Tweet nog niet verstuurd of opgeslagen.</string>
+  <string name="unsaved_status">Tweet nog niet verstuurd of opgeslagen.</string>
   <string name="discard">Verwerp</string>
   <string name="multi_select">Select meerdere</string>
   <string name="Nitems_selected_quantity_one">1 item geselecteerd</string>
@@ -306,8 +306,8 @@
   <string name="activity_by_friends_list_created"><xliff:g id="user">%1$s</xliff:g> aangemaakte lijst <xliff:g id="target">%2$s</xliff:g>.</string>
   <string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g> aangemaakte lijst <xliff:g id="target">%2$s</xliff:g> en <xliff:g id="count">%3$d</xliff:g> meer.</string>
   <string name="cannot_get_callback_url">Krijg geen reactie, controleer gebruikersnaam en wachtwoord.</string>
-  <string name="tweet_not_sent">Tweet niet verzonden.</string>
-  <string name="tweet_not_sent_summary">Tweet niet verzonden, bevindt zich in concepten.</string>
+  <string name="status_not_updated">Tweet niet verzonden.</string>
+  <string name="status_not_updated_summary">Tweet niet verzonden, bevindt zich in concepten.</string>
   <string name="incoming_friendships">De volgende aanvragen zijn nog niet afgehandeld</string>
   <string name="click_to_open_menu">Klik om item menu te openen</string>
   <string name="preview">Voorbeeld</string>
@@ -365,9 +365,9 @@
   <string name="background_toast_notification_summary">Laat Toast melding zien wanneer er naar de achtergrond geschakeld wordt</string>
   <string name="original_status">Originele tweet</string>
   <string name="ask">Vraag</string>
-  <string name="no_close_after_tweet_sent">Hou \"Componeren\" open na versturen tweet</string>
-  <string name="no_close_after_tweet_sent_summary">Een klein cadeau voor chatterbox</string>
-  <string name="tweet_saved_to_draft">Tweet opgeslagen als ontwerp.</string>
+  <string name="no_close_after_status_updated">Hou \"Componeren\" open na versturen tweet</string>
+  <string name="no_close_after_status_updated_summary">Een klein cadeau voor chatterbox</string>
+  <string name="status_saved_to_draft">Tweet opgeslagen als ontwerp.</string>
   <string name="default_account">Standaard</string>
   <string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g>(<xliff:g id="daily_tweet">%2$d</xliff:g> tweet(s) per dag)</string>
 </resources>

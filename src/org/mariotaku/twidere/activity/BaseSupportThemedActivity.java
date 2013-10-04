@@ -2,8 +2,11 @@ package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.Utils.restartActivity;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+
+import org.mariotaku.twidere.util.ThemeUtils;
 
 public abstract class BaseSupportThemedActivity extends FragmentActivity {
 
@@ -19,6 +22,7 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity {
 	protected void onCreate(final Bundle savedInstanceState) {
 		setTheme();
 		super.onCreate(savedInstanceState);
+		setActionBarBackground();
 	}
 
 	@Override
@@ -35,6 +39,12 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity {
 
 	private final boolean isThemeChanged() {
 		return getThemeResource() != mCurrentThemeResource;
+	}
+
+	private final void setActionBarBackground() {
+		final ActionBar ab = getActionBar();
+		if (ab == null) return;
+		ab.setBackgroundDrawable(ThemeUtils.getActionBarBackground(this));
 	}
 
 	private final void setTheme() {

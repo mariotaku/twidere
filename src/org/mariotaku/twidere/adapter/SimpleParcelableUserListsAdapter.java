@@ -112,6 +112,11 @@ public class SimpleParcelableUserListsAdapter extends ArrayAdapter<ParcelableUse
 	}
 
 	@Override
+	public void setLinkHighlightOption(final String option) {
+
+	}
+
+	@Override
 	public void setNameDisplayOption(final String option) {
 		final int option_int = getNameDisplayOptionInt(option);
 		final boolean display_name = NAME_DISPLAY_OPTION_CODE_SCREEN_NAME != option_int;

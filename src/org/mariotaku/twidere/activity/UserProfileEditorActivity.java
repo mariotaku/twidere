@@ -71,7 +71,7 @@ import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
 
 import java.io.File;
 
-public class EditUserProfileActivity extends TwidereSwipeBackActivity implements OnSizeChangedListener, TextWatcher,
+public class UserProfileEditorActivity extends TwidereSwipeBackActivity implements OnSizeChangedListener, TextWatcher,
 		OnClickListener, CroutonLifecycleCallback, LoaderCallbacks<SingleResponse<ParcelableUser>> {
 
 	private static final int LOADER_ID_USER = 1;
@@ -122,7 +122,7 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 					final Uri uri = createTempFileUri();
 					final Intent intent = createTakePhotoIntent(uri, null, null, 2, 1, true);
 					startActivityForResult(intent, REQUEST_UPLOAD_PROFILE_BANNER_IMAGE);
-					mTask = new UpdateProfileBannerImageTaskInternal(EditUserProfileActivity.this, mAsyncTaskManager,
+					mTask = new UpdateProfileBannerImageTaskInternal(UserProfileEditorActivity.this, mAsyncTaskManager,
 							mAccountId, uri, true);
 					break;
 				}
@@ -131,7 +131,7 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 					final Intent intent = createPickImageIntent(uri, null, null, 2, 1, true);
 					try {
 						startActivityForResult(intent, REQUEST_UPLOAD_PROFILE_BANNER_IMAGE);
-						mTask = new UpdateProfileBannerImageTaskInternal(EditUserProfileActivity.this,
+						mTask = new UpdateProfileBannerImageTaskInternal(UserProfileEditorActivity.this,
 								mAsyncTaskManager, mAccountId, uri, true);
 					} catch (final Exception e) {
 						Log.w(LOGTAG, e);
@@ -159,7 +159,7 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 					final Uri uri = createTempFileUri();
 					final Intent intent = createTakePhotoIntent(uri, null, null, 1, 1, true);
 					startActivityForResult(intent, REQUEST_UPLOAD_PROFILE_IMAGE);
-					mTask = new UpdateProfileImageTaskInternal(EditUserProfileActivity.this, mAsyncTaskManager,
+					mTask = new UpdateProfileImageTaskInternal(UserProfileEditorActivity.this, mAsyncTaskManager,
 							mAccountId, uri, true);
 					break;
 				}
@@ -168,7 +168,7 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 					final Intent intent = createPickImageIntent(uri, null, null, 1, 1, true);
 					try {
 						startActivityForResult(intent, REQUEST_UPLOAD_PROFILE_IMAGE);
-						mTask = new UpdateProfileImageTaskInternal(EditUserProfileActivity.this, mAsyncTaskManager,
+						mTask = new UpdateProfileImageTaskInternal(UserProfileEditorActivity.this, mAsyncTaskManager,
 								mAccountId, uri, true);
 					} catch (final Exception e) {
 						Log.w(LOGTAG, e);
@@ -252,7 +252,7 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 		mProgress.setVisibility(View.VISIBLE);
 		mContent.setVisibility(View.GONE);
 		setProgressBarIndeterminateVisibility(true);
-		return new ParcelableUserLoader(EditUserProfileActivity.this, mAccountId, mAccountId, null, getIntent()
+		return new ParcelableUserLoader(UserProfileEditorActivity.this, mAccountId, mAccountId, null, getIntent()
 				.getExtras(), false, false);
 	}
 
@@ -522,7 +522,7 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 
 		@Override
 		protected SingleResponse<Boolean> doInBackground(final Void... params) {
-			return TwitterWrapper.deleteProfileBannerImage(EditUserProfileActivity.this, account_id);
+			return TwitterWrapper.deleteProfileBannerImage(UserProfileEditorActivity.this, account_id);
 		}
 
 		@Override
@@ -530,10 +530,10 @@ public class EditUserProfileActivity extends TwidereSwipeBackActivity implements
 			super.onPostExecute(result);
 			if (result != null && result.data != null && result.data) {
 				getUserInfo();
-				Toast.makeText(EditUserProfileActivity.this, R.string.profile_banner_image_updated, Toast.LENGTH_SHORT)
-						.show();
+				Toast.makeText(UserProfileEditorActivity.this, R.string.profile_banner_image_updated,
+						Toast.LENGTH_SHORT).show();
 			} else {
-				showErrorMessage(EditUserProfileActivity.this, R.string.removing_profile_banner_image,
+				showErrorMessage(UserProfileEditorActivity.this, R.string.removing_profile_banner_image,
 						result.exception, true);
 			}
 			setUpdateState(false);

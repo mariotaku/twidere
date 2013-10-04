@@ -37,12 +37,13 @@ import android.widget.TextView;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.view.iface.PagerIndicator;
 
 /**
  * This widget implements the dynamic action bar tab behavior that can change
  * across different configurations or circumstances.
  */
-public class TabPageIndicator extends HorizontalScrollView implements ViewPager.OnPageChangeListener {
+public class TabPageIndicator extends HorizontalScrollView implements PagerIndicator {
 
 	private Runnable mTabSelector;
 	private int mCurrentItem;
@@ -106,6 +107,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 				ViewGroup.LayoutParams.MATCH_PARENT));
 	}
 
+	@Override
 	public void notifyDataSetChanged() {
 		if (mTabLayout == null || mViewPager == null) return;
 		mTabLayout.removeAllViews();
@@ -225,6 +227,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 		}
 	}
 
+	@Override
 	public void setCurrentItem(final int item) {
 		if (mViewPager == null) return;
 		// throw new IllegalStateException("ViewPager has not been bound.");
@@ -258,6 +261,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 		setAlpha(enabled ? 1 : 0.5f);
 	}
 
+	@Override
 	public void setOnPageChangeListener(final ViewPager.OnPageChangeListener listener) {
 		mPageListener = listener;
 	}
@@ -269,6 +273,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 		mSwitchingEnabled = enabled;
 	}
 
+	@Override
 	public void setViewPager(final ViewPager pager) {
 		final PagerAdapter adapter = pager.getAdapter();
 		if (adapter == null) return;
@@ -281,6 +286,7 @@ public class TabPageIndicator extends HorizontalScrollView implements ViewPager.
 		notifyDataSetChanged();
 	}
 
+	@Override
 	public void setViewPager(final ViewPager pager, final int initialPosition) {
 		setViewPager(pager);
 		setCurrentItem(initialPosition);

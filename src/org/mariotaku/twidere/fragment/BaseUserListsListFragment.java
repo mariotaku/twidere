@@ -202,7 +202,6 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 
 	@Override
 	public void onRefreshStarted() {
-		super.onRefreshStarted();
 		getLoaderManager().restartLoader(0, getArguments(), this);
 	}
 

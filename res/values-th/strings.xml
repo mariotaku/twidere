@@ -11,7 +11,7 @@
   <string name="remove_location">เอาที่อยู่ออก</string>
   <string name="remove_image">เอารูปภาพออก</string>
   <string name="remove_photo">เอาภาพถ่ายออก</string>
-  <string name="tweet_hint">เกิดอะไรขึ้น?</string>
+  <string name="status_hint">เกิดอะไรขึ้น?</string>
   <string name="sign_up">สมัครสมาชิก</string>
   <string name="sign_in">เข้าสู่ระบบ</string>
   <string name="rest_base_url">REST Base URL</string>
@@ -183,8 +183,8 @@
   <string name="type_to_compose">พิมพ์เพื่อเริ่มทวีต</string>
   <string name="users_lists">รายการของผู้ใช้</string>
   <string name="lists_following_user">รายการที่ติดตามผู้ใช้นี้</string>
-  <string name="Ntweets_quantity_one">คุณมีทวีตใหม่</string>
-  <string name="Ntweets_quantity_other">คุณมี <xliff:g id="items">%d</xliff:g> ทวีตใหม่</string>
+  <string name="Nstatuses_quantity_one">คุณมีทวีตใหม่</string>
+  <string name="Nstatuses_quantity_other">คุณมี <xliff:g id="items">%d</xliff:g> ทวีตใหม่</string>
   <string name="item_1_minute">1 นาที</string>
   <string name="item_3_minutes">3 นาที</string>
   <string name="item_5_minutes">5 นาที</string>

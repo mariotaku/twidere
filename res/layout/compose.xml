@@ -64,7 +64,7 @@
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:singleLine="true"
-						android:text="@string/quote_protected_tweet_notice"
+						android:text="@string/quote_protected_status_notice"
 						android:visibility="gone"/>
 				</LinearLayout>
 			</LinearLayout>
@@ -92,7 +92,6 @@
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:background="@drawable/actionbar_shadow"
 		android:orientation="vertical">
 
 		<org.mariotaku.twidere.view.AccountsColorFrameLayout
@@ -108,7 +107,7 @@
 				android:layout_margin="8dp"
 				android:completionThreshold="1"
 				android:gravity="top"
-				android:hint="@string/tweet_hint"
+				android:hint="@string/status_hint"
 				android:imeOptions="actionDone"
 				android:minLines="10">
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <view xmlns:android="http://schemas.android.com/apk/res/android"
-	style="?attr/tabStyle"
+	style="?tabItemStyle"
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content"
 	class="org.mariotaku.twidere.view.TabPageIndicator$TabView">
@@ -13,7 +13,7 @@
 		android:gravity="center"
 		android:scaleType="fitCenter"/>
 
-	<TextView 
+	<TextView
 		android:id="@android:id/text1"
 		style="?attr/tabTextStyle"
 		android:layout_width="wrap_content"

@@ -2298,8 +2298,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				values.put(Drafts.IMAGE_URI, ParseUtils.parseString(image_uri));
 			}
 			mResolver.insert(Drafts.CONTENT_URI, values);
-			final String title = mContext.getString(R.string.tweet_not_sent);
-			final String message = mContext.getString(R.string.tweet_not_sent_summary);
+			final String title = mContext.getString(R.string.status_not_updated);
+			final String message = mContext.getString(R.string.status_not_updated_summary);
 			final Intent intent = new Intent(INTENT_ACTION_DRAFTS);
 			final Notification notification = buildNotification(title, message, R.drawable.ic_stat_twitter, intent,
 					null);
