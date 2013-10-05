@@ -184,7 +184,7 @@
 	<string name="lights">Lights</string>
 	<string name="notifications">Notifications</string>
 	<string name="new_notifications">New notifications</string>
-	<string name="screen_name">Screen name</string>
+	<string name="screen_name">Username</string>
 	<string name="sort_timeline_by_time">Sort timeline by time</string>
 	<string name="sort_timeline_by_time_summary">This may cause retweets to appear in the wrong place, but may be helpful if you use other services like Identi.ca.</string>
 	<string name="refresh_on_start">Refresh on start</string>
@@ -212,7 +212,7 @@
 	<string name="solid_color_background">Solid color background</string>
 	<string name="solid_color_background_summary">This may be useful if screen of your device is AMOLED.</string>
 	<string name="following_you">Following you</string>
-	<string name="user_list">User list</string>
+	<string name="user_list">List</string>
 	<string name="trends_location">Trends location</string>
 	<string name="trends_location_summary">Set location for local trends.</string>
 	<string name="trends">Trends</string>
@@ -222,12 +222,12 @@
 	<string name="signing_in_please_wait">Signing in, please wait or press BACK to quit.</string>
 	<string name="connectivity">Connectivity</string>
 	<string name="add_member">Add member</string>
-	<string name="new_user_list">New user list</string>
+	<string name="new_user_list">New list</string>
 	<string name="is_public">Public</string>
 	<string name="send_direct_message">Send DM</string>
 	<string name="extensions">Extensions</string>
 	<string name="open_with_extensions">Open with extensions</string>
-	<string name="view_user_list">View user list</string>
+	<string name="view_user_list">View list</string>
 	<string name="uninstall">Uninstall</string>
 	<string name="saved_searches">Saved searches</string>
 	<string name="tabs">Tabs</string>
@@ -510,7 +510,7 @@
 	<string name="wizard_page_welcome_use_default_settings">Use default settings</string>
 	<string name="wizard_page_welcome_import_settings">Import settings</string>
 	<string name="wizard_page_theme_text">Pick a theme you like.</string>
-	<string name="wizard_page_tabs_text">Add some tabs to Twidere.\nKeep track on people or things you care about.</string>
+	<string name="wizard_page_tabs_text">Add some tabs to Twidere.\nKeep track of people or things you care about.</string>
 	<string name="wizard_page_tabs_unchanged_message">You can add tabs in &quot;Settings&quot; - &quot;Tabs&quot;</string>
 	<string name="wizard_page_status_text">Config tweet list item.</string>
 	<string name="wizard_page_finished_title">Finished</string>
