@@ -327,7 +327,7 @@
 	<string name="name_display_option">Name display option</string>
 	<string name="both">Both</string>
 	<string name="browser_sign_in">Browser sign in</string>
-	<string name="stop_auto_refresh_when_battery_low">Stop auto refresh when battery low</string>
+	<string name="stop_auto_refresh_when_battery_low">Stop auto refresh when battery is low</string>
 	<string name="notification_mention"><xliff:g id="user">%s</xliff:g> mentioned you.</string>
 	<string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> sent you a direct message.</string>
 	<string name="notification_direct_message_multiple_messages"><xliff:g id="user">%1$s</xliff:g> sent you <xliff:g id="messages_count">%2$d</xliff:g> direct messages.</string>
@@ -421,7 +421,7 @@
 	<string name="disable_tab_swipe">Disable tab swipe</string>
 	<string name="sign_in_method_introduction_title">How does it work?</string>
 	<string name="sign_in_method_introduction">Most clients like twicca opens a browser asking you to type username and password, and then takes you back to heir clients. Sometimes this can become very inconvenient.\nTwidere uses more simple steps to sign in, without opening the browser. Don\'t worry about your password, Twidere will never store it, it\'s totally safe!</string>
-	<string name="quote_protected_status_notice">It\'s not recommand to quote protected tweet.</string>
+	<string name="quote_protected_status_notice">It\'s not recommended to quote protected tweet.</string>
 	<string name="edit_draft">Edit draft</string>
 	<string name="profile_image">Profile image</string>
 	<string name="my_profile_image">My profile image</string>
@@ -431,7 +431,7 @@
 	<string name="wrong_username_password">Wrong username/password.</string>
 	<string name="network_error">Network error.</string>
 	<string name="ssl_error">SSL error, you may need to enable \"Ignore SSL error\" option.</string>
-	<string name="wrong_api_key">Wrong API url or consumer key/secret, please check them again.</string>
+	<string name="wrong_api_key">Incorrect API url or consumer key/secret, please check them again.</string>
 	<string name="status_updated">Tweet sent.</string>
 	<string name="status_deleted">Tweet deleted.</string>
 	<string name="status_favorited">Tweet favorited.</string>
@@ -463,7 +463,7 @@
 	<string name="original_status">Original tweet</string>
 	<string name="compose_quit_action">On aborting \"compose\"</string>
 	<string name="ask">Ask</string>
-	<string name="no_close_after_status_updated">Keep \"Compose\" opening after tweet sent</string>
+	<string name="no_close_after_status_updated">Keep \"Compose\" open after tweet sent</string>
 	<string name="no_close_after_status_updated_summary">A little gift for chatterbox</string>
 	<string name="status_saved_to_draft">Tweet saved to draft.</string>
 	<string name="default_account">Default</string>
