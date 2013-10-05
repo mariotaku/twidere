@@ -1,5 +1,7 @@
 package org.mariotaku.twidere.util;
 
+import static org.mariotaku.twidere.util.CompareUtils.classEquals;
+
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
@@ -18,7 +20,7 @@ import org.mariotaku.twidere.fragment.DirectMessagesFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.fragment.SearchStatusesFragment;
-import org.mariotaku.twidere.fragment.TrendsFragment;
+import org.mariotaku.twidere.fragment.TrendsSuggectionsFragment;
 import org.mariotaku.twidere.fragment.UserFavoritesFragment;
 import org.mariotaku.twidere.fragment.UserListTimelineFragment;
 import org.mariotaku.twidere.fragment.UserTimelineFragment;
@@ -47,8 +49,9 @@ public class CustomTabUtils implements Constants {
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_DIRECT_MESSAGES, new CustomTabConfiguration(
 				DirectMessagesFragment.class, R.string.direct_messages, R.drawable.ic_tab_message, false,
 				CustomTabConfiguration.FIELD_TYPE_NONE, 2, true));
-		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_TRENDS, new CustomTabConfiguration(TrendsFragment.class,
-				R.string.trends, R.drawable.ic_tab_trends, true, CustomTabConfiguration.FIELD_TYPE_NONE, 3));
+		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_TRENDS_SUGGESTIONS, new CustomTabConfiguration(
+				TrendsSuggectionsFragment.class, R.string.trends, R.drawable.ic_tab_trends, false,
+				CustomTabConfiguration.FIELD_TYPE_NONE, 3));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_FAVORITES, new CustomTabConfiguration(UserFavoritesFragment.class,
 				R.string.favorites, R.drawable.ic_tab_star, true, CustomTabConfiguration.FIELD_TYPE_USER, 4));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_USER_TIMELINE, new CustomTabConfiguration(
@@ -95,6 +98,13 @@ public class CustomTabUtils implements Constants {
 		return null;
 	}
 
+	public static String findTabType(final Class<? extends Fragment> cls) {
+		for (final Entry<String, CustomTabConfiguration> entry : getConfiguraionMap().entrySet()) {
+			if (classEquals(cls, entry.getValue().getFragmentClass())) return entry.getKey();
+		}
+		return null;
+	}
+
 	public static int getAddedTabPosition(final Context context, final String type) {
 		if (context == null || type == null) return -1;
 		final ContentResolver resolver = context.getContentResolver();
@@ -128,15 +138,17 @@ public class CustomTabUtils implements Constants {
 				.getColumnIndex(Tabs.TYPE), idx_arguments = cur.getColumnIndex(Tabs.ARGUMENTS), idx_position = cur
 				.getColumnIndex(Tabs.POSITION);
 		while (!cur.isAfterLast()) {
-			final int position = cur.getInt(idx_position);
-			final String icon_type = cur.getString(idx_icon);
 			final String type = cur.getString(idx_type);
-			final String name = cur.getString(idx_name);
-			final Bundle args = ParseUtils.jsonToBundle(cur.getString(idx_arguments));
-			args.putInt(EXTRA_TAB_POSITION, position);
-			final Class<? extends Fragment> fragment = getTabConfiguration(type).getFragmentClass();
-			if (name != null && fragment != null) {
-				tabs.add(new SupportTabSpec(name, getTabIconObject(icon_type), fragment, args, position));
+			final CustomTabConfiguration conf = getTabConfiguration(type);
+			if (conf != null) {
+				final int position = cur.getInt(idx_position);
+				final String icon_type = cur.getString(idx_icon);
+				final String name = cur.getString(idx_name);
+				final Bundle args = ParseUtils.jsonToBundle(cur.getString(idx_arguments));
+				args.putInt(EXTRA_TAB_POSITION, position);
+				final Class<? extends Fragment> fragment = conf.getFragmentClass();
+				tabs.add(new SupportTabSpec(name != null ? name : getTabTypeName(context, type),
+						getTabIconObject(icon_type), fragment, args, position));
 			}
 			cur.moveToNext();
 		}
@@ -187,10 +199,16 @@ public class CustomTabUtils implements Constants {
 		}
 		return R.drawable.ic_tab_list;
 	}
+	
+
+	public static boolean isTabTypeValid(final String type) {
+		return type != null && CUSTOM_TABS_CONFIGURATION_MAP.containsKey(type);
+	}
 
 	public static String getTabTypeName(final Context context, final String type) {
 		if (context == null) return null;
-		final Integer res_id = getTabConfiguration(type).getDefaultTitle();
+		final CustomTabConfiguration conf = getTabConfiguration(type);
+		final Integer res_id = conf != null ? conf.getDefaultTitle() : null;
 		return res_id != null ? context.getString(res_id) : null;
 	}
 

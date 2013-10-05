@@ -24,6 +24,8 @@ import static org.mariotaku.twidere.util.CustomTabUtils.getTabIconDrawable;
 import static org.mariotaku.twidere.util.CustomTabUtils.getTabIconObject;
 import static org.mariotaku.twidere.util.CustomTabUtils.getTabTypeName;
 import static org.mariotaku.twidere.util.CustomTabUtils.isTabAdded;
+import static org.mariotaku.twidere.util.CustomTabUtils.isTabTypeValid;
+import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.isOfficialConsumerKeySecret;
 
 import android.app.Activity;
@@ -233,6 +235,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 	public void onPrepareOptionsMenu(final Menu menu) {
 		final Resources res = getResources();
 		final boolean is_official_key_secret = isOfficialConsumerKeySecret(getActivity());
+		final long[] account_ids = getAccountIds(getActivity());
 		final MenuItem itemAdd = menu.findItem(R.id.add_submenu);
 		if (itemAdd != null && itemAdd.hasSubMenu()) {
 			final SubMenu subMenu = itemAdd.getSubMenu();
@@ -251,7 +254,8 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 				final boolean is_activities_tab = TAB_TYPE_ACTIVITIES_ABOUT_ME.equals(type)
 						|| TAB_TYPE_ACTIVITIES_BY_FRIENDS.equals(type);
 				final boolean should_disable = conf.isSingleTab() && isTabAdded(getActivity(), type)
-						|| is_activities_tab && !is_official_key_secret;
+						|| is_activities_tab && !is_official_key_secret || conf.isAccountIdRequired()
+						&& account_ids.length == 0;
 				subItem.setVisible(!should_disable);
 				subItem.setEnabled(!should_disable);
 				subItem.setIcon(new DropShadowDrawable(res, res.getDrawable(conf.getDefaultIcon()), 2, 0x80000000));
@@ -308,15 +312,26 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 			// R.drawable.ic_menu_refresh, 0);
 			// holder.checkbox.setOnClickListener(this);
 			final String type = cursor.getString(mIndices.type);
-			final String name = cursor.getString(mIndices.name), type_name = getTabTypeName(context, type);
-			final String icon = cursor.getString(mIndices.icon);
-			holder.text1.setText(TextUtils.isEmpty(name) ? type_name : name);
-			holder.text2.setText(type_name);
-			final Drawable d = getTabIconDrawable(mContext, getTabIconObject(icon));
-			if (d != null) {
-				holder.icon.setImageDrawable(new DropShadowDrawable(context.getResources(), d, 2, 0x80000000));
+			final String name = cursor.getString(mIndices.name);
+			if (isTabTypeValid(type)) {
+				final String type_name = getTabTypeName(context, type);
+				final String icon = cursor.getString(mIndices.icon);
+				holder.text1.setText(TextUtils.isEmpty(name) ? type_name : name);
+				holder.text2.setVisibility(View.VISIBLE);
+				holder.text2.setText(type_name);
+				final Drawable d = getTabIconDrawable(mContext, getTabIconObject(icon));
+				holder.icon.setVisibility(View.VISIBLE);
+				if (d != null) {
+					holder.icon.setImageDrawable(new DropShadowDrawable(context.getResources(), d, 2, 0x80000000));
+				} else {
+					holder.icon.setImageDrawable(new DropShadowDrawable(context.getResources(), R.drawable.ic_tab_list,
+							2, 0x80000000));
+				}
 			} else {
-				holder.icon.setImageResource(R.drawable.ic_tab_list);
+				holder.icon.setImageDrawable(new DropShadowDrawable(context.getResources(), R.drawable.ic_tab_invalid,
+						2, 0x80000000));
+				holder.text1.setText(name);
+				holder.text2.setText(R.string.invalid_tab);
 			}
 		}
 

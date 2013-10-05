@@ -1,50 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:orientation="vertical"
 	tools:context=".activity.SettingsWizardActivity">
 
-	<FrameLayout
+	<org.mariotaku.twidere.view.ExtendedViewPager
+		android:id="@+id/pager"
 		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		android:layout_weight="1">
+		android:layout_height="match_parent"/>
 
-		<org.mariotaku.twidere.view.ExtendedViewPager
-			android:id="@+id/pager"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"/>
-
-		<org.mariotaku.twidere.view.LinePageIndicator
-			android:id="@+id/indicator"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_gravity="top"
-			android:padding="@dimen/element_spacing_default"
-			app:lineWidth="@dimen/line_indicator_line_width_wizard"
-			app:selectedColor="?android:colorActivatedHighlight"
-			app:strokeWidth="@dimen/line_indicator_stroke_width_wizard"/>
-	</FrameLayout>
-
-	<View
+	<org.mariotaku.twidere.view.LinePageIndicator
+		android:id="@+id/indicator"
 		android:layout_width="match_parent"
-		android:layout_height="0.2dp"
-		android:layout_weight="0"
-		android:background="#40808080"/>
+		android:layout_height="wrap_content"
+		android:layout_gravity="top"
+		android:padding="@dimen/element_spacing_default"
+		app:lineWidth="@dimen/line_indicator_line_width_wizard"
+		app:selectedColor="?android:colorActivatedHighlight"
+		app:strokeWidth="@dimen/line_indicator_stroke_width_wizard"/>
 
-	<TableRow
-		android:layout_width="match_parent"
-		android:layout_height="@dimen/button_bar_height"
-		android:layout_weight="0"
-		android:orientation="horizontal">
-
-		<Button
-			android:id="@+id/next"
-			style="?android:borderlessButtonStyle"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"/>
-	</TableRow>
-
-</LinearLayout>
+</FrameLayout>

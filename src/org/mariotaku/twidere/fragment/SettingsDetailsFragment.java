@@ -20,17 +20,14 @@
 package org.mariotaku.twidere.fragment;
 
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
 
-import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.util.Utils;
 
-public class SettingsDetailsFragment extends PreferenceFragment implements Constants {
+public class SettingsDetailsFragment extends BasePreferenceFragment {
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		getPreferenceManager().setSharedPreferencesName(SHARED_PREFERENCES_NAME);
 		final Bundle args = getArguments();
 		final String rawResId = args != null ? args.getString(EXTRA_RESID) : null;
 		final int resId = Utils.getResId(getActivity(), rawResId);

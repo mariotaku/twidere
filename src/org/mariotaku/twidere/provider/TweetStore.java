@@ -679,143 +679,143 @@ public final class TweetStore {
 	}
 
 	public static interface Statuses extends BaseColumns {
-
+	
 		public static final String TABLE_NAME = "statuses";
 		public static final String CONTENT_PATH = TABLE_NAME;
-
+	
 		public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
 		/**
 		 * Account ID of the status.<br>
 		 * Type: TEXT
 		 */
 		public static final String ACCOUNT_ID = "account_id";
-
+	
 		/**
 		 * Status content, in HTML. Please note, this is not actually original
 		 * text.<br>
 		 * Type: TEXT
 		 */
 		public static final String TEXT_HTML = "text_html";
-
+	
 		/**
 		 *
 		 */
 		public static final String TEXT_PLAIN = "text_plain";
-
+	
 		public static final String TEXT_UNESCAPED = "text_unescaped";
-
+	
 		/**
 		 * User name of the status.<br>
 		 * Type: TEXT
 		 */
 		public static final String NAME = "name";
-
+	
 		/**
 		 * User's screen name of the status.<br>
 		 * Type: TEXT
 		 */
 		public static final String SCREEN_NAME = "screen_name";
-
+	
 		/**
 		 * User's profile image URL of the status.<br>
 		 * Type: TEXT NOT NULL
 		 */
 		public static final String PROFILE_IMAGE_URL = "profile_image_url";
-
+	
 		/**
 		 * Unique id of the status.<br>
 		 * Type: INTEGER UNIQUE(long)
 		 */
 		public static final String STATUS_ID = "status_id";
-
+	
 		/**
 		 * Retweet count of the status.<br>
 		 * Type: INTEGER (long)
 		 */
 		public static final String RETWEET_COUNT = "retweet_count";
-
+	
 		/**
 		 * Set to an non-zero integer if the status is a retweet, set to
 		 * negative value if the status is retweeted by user.<br>
 		 * Type: INTEGER
 		 */
 		public static final String IS_RETWEET = "is_retweet";
-
+	
 		/**
 		 * Set to 1 if the status is a favorite.<br>
 		 * Type: INTEGER (boolean)
 		 */
 		public static final String IS_FAVORITE = "is_favorite";
-
+	
 		public static final String IS_POSSIBLY_SENSITIVE = "is_possibly_sensitive";
-
+	
 		/**
 		 * Set to 1 if the status is a gap.<br>
 		 * Type: INTEGER (boolean)
 		 */
 		public static final String IS_GAP = "is_gap";
-
+	
 		public static final String LOCATION = "location";
-
+	
 		/**
 		 * User's ID of the status.<br>
 		 * Type: INTEGER (long)
 		 */
 		public static final String USER_ID = "user_id";
-
+	
 		public static final String IN_REPLY_TO_STATUS_ID = "in_reply_to_status_id";
-
+	
 		public static final String IN_REPLY_TO_USER_ID = "in_reply_to_user_id";
-
+	
 		public static final String IN_REPLY_TO_NAME = "in_reply_to_name";
-
+	
 		public static final String IN_REPLY_TO_SCREEN_NAME = "in_reply_to_screen_name";
-
+	
 		public static final String SOURCE = "source";
-
+	
 		public static final String IS_PROTECTED = "is_protected";
-
+	
 		public static final String IS_VERIFIED = "is_verified";
-
+	
 		public static final String IS_FOLLOWING = "is_following";
-
+	
 		public static final String RETWEET_ID = "retweet_id";
-
+	
 		public static final String RETWEETED_BY_USER_ID = "retweeted_by_user_id";
-
+	
 		public static final String RETWEETED_BY_NAME = "retweeted_by_name";
-
+	
 		public static final String RETWEETED_BY_SCREEN_NAME = "retweeted_by_screen_name";
-
+	
 		/**
 		 * Timestamp of the status.<br>
 		 * Type: INTEGER (long)
 		 */
 		public static final String STATUS_TIMESTAMP = "status_timestamp";
-
+	
 		public static final String MY_RETWEET_ID = "my_retweet_id";
-
+	
 		public static final String IMAGE_PREVIEW_URL = "image_preview_url";
-
+	
 		public static final String SORT_ORDER_TIMESTAMP_DESC = STATUS_TIMESTAMP + " DESC";
-
+	
 		public static final String SORT_ORDER_STATUS_ID_DESC = STATUS_ID + " DESC";
-
+	
 		public static final String DEFAULT_SORT_ORDER = SORT_ORDER_STATUS_ID_DESC;
-
+	
 		public static final String[] COLUMNS = new String[] { _ID, ACCOUNT_ID, STATUS_ID, USER_ID, STATUS_TIMESTAMP,
 				TEXT_HTML, TEXT_PLAIN, TEXT_UNESCAPED, NAME, SCREEN_NAME, PROFILE_IMAGE_URL, IN_REPLY_TO_STATUS_ID,
 				IN_REPLY_TO_USER_ID, IN_REPLY_TO_NAME, IN_REPLY_TO_SCREEN_NAME, SOURCE, LOCATION, RETWEET_COUNT,
 				RETWEET_ID, RETWEETED_BY_USER_ID, RETWEETED_BY_NAME, RETWEETED_BY_SCREEN_NAME, MY_RETWEET_ID,
 				IS_RETWEET, IS_FAVORITE, IS_PROTECTED, IS_VERIFIED, IS_FOLLOWING, IS_GAP, IS_POSSIBLY_SENSITIVE,
 				IMAGE_PREVIEW_URL };
-
+	
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_INT,
 				TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_TEXT,
 				TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_INT,
 				TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN,
 				TYPE_TEXT };
-
+	
 	}
 
 	public static interface Tabs extends BaseColumns {

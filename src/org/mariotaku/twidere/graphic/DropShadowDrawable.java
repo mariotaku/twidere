@@ -45,6 +45,11 @@ public final class DropShadowDrawable extends BitmapDrawable {
 		this(resources, Utils.getBitmap(drawable), shadowRadius, shadowColor);
 	}
 
+	public DropShadowDrawable(final Resources resources, final int res, final float shadowRadius,
+			final int shadowColor) {
+		this(resources, Utils.getBitmap(resources.getDrawable(res)), shadowRadius, shadowColor);
+	}
+	
 	@Override
 	public void draw(final Canvas canvas) {
 		canvas.drawBitmap(mShadow, 0, 0, null);

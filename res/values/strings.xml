@@ -503,12 +503,18 @@
 	<string name="card_animation">Card animation</string>
 	<string name="name_first">Display name first</string>
 	<string name="settings_wizard">Settings wizard</string>
-	<string name="wizard_page_1_title">Welcome</string>
-	<string name="wizard_page_1_text">Thanks for choosing Twidere.\nWould you like to config it now?</string>
-	<string name="wizard_page_1_yes">Yes</string>
-	<string name="wizard_page_1_use_default_settings">Use default settings</string>
-	<string name="wizard_page_1_import_settings">Import settings</string>
-	<string name="wizard_page_2_title">Theme</string>
-	<string name="wizard_page_2_text">Pick a theme you like.</string>
+	<string name="wizard_page_welcome_title">Welcome</string>
+	<string name="wizard_page_welcome_text">Thanks for choosing Twidere.\nWould you like to config it now?</string>
+	<string name="wizard_page_welcome_yes">Yes</string>
+	<string name="next">Next</string>
+	<string name="wizard_page_welcome_use_default_settings">Use default settings</string>
+	<string name="wizard_page_welcome_import_settings">Import settings</string>
+	<string name="wizard_page_theme_text">Pick a theme you like.</string>
+	<string name="wizard_page_tabs_text">Add some tabs to Twidere.\nKeep track on people or things you care about.</string>
+	<string name="wizard_page_tabs_unchanged_message">You can add tabs in &quot;Settings&quot; - &quot;Tabs&quot;</string>
+	<string name="wizard_page_status_text">Config tweet list item.</string>
+	<string name="wizard_page_finished_title">Finished</string>
+	<string name="wizard_page_finished_text">Now Twidere is ready for use.</string>
+	<string name="invalid_tab">Invalid tab</string>
 
 </resources>

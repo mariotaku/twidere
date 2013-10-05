@@ -852,18 +852,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 				Utils.setMenuItemAvailability(subMenu, MENU_DELETE_SUBMENU, has_media);
 			}
 		}
-		final MenuItem sendItem = menu.findItem(MENU_SEND);
-		final View sendItemView = sendItem != null ? sendItem.getActionView() : null;
-		if (sendItemView != null && mEditText != null) {
-			final ComposeTextCountView sendTextCountView = (ComposeTextCountView) sendItemView
-					.findViewById(R.id.send_text_count);
-			sendItemView.setOnClickListener(this);
-			final String text_orig = mEditText != null ? parseString(mEditText.getText()) : null;
-			final String text = hasMedia() && text_orig != null ? mImageUploaderUsed ? getImageUploadStatus(this,
-					FAKE_IMAGE_LINK, text_orig) : text_orig + " " + FAKE_IMAGE_LINK : text_orig;
-			final int validated_count = text != null ? mValidator.getTweetLength(text) : 0;
-			sendTextCountView.setTextCount(validated_count);
-		}
+		updateTextCount(menu);
 	}
 
 	private boolean setComposeTitle(final String action) {
@@ -1018,6 +1007,21 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		} else {
 			setResult(Activity.RESULT_OK);
 			finish();
+		}
+	}
+
+	private void updateTextCount(final Menu menu) {
+		final MenuItem sendItem = menu.findItem(MENU_SEND);
+		final View sendItemView = sendItem != null ? sendItem.getActionView() : null;
+		if (sendItemView != null && mEditText != null) {
+			final ComposeTextCountView sendTextCountView = (ComposeTextCountView) sendItemView
+					.findViewById(R.id.send_text_count);
+			sendItemView.setOnClickListener(this);
+			final String text_orig = mEditText != null ? parseString(mEditText.getText()) : null;
+			final String text = hasMedia() && text_orig != null ? mImageUploaderUsed ? getImageUploadStatus(this,
+					FAKE_IMAGE_LINK, text_orig) : text_orig + " " + FAKE_IMAGE_LINK : text_orig;
+			final int validated_count = text != null ? mValidator.getTweetLength(text) : 0;
+			sendTextCountView.setTextCount(validated_count);
 		}
 	}
 

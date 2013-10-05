@@ -262,7 +262,7 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 
 		@Override
 		protected void onPreExecute() {
-			SupportProgressDialogFragment.show(mActivity, FRAGMENT_TAG_GET_USER_LISTS);
+			SupportProgressDialogFragment.show(mActivity, FRAGMENT_TAG_GET_USER_LISTS).setCancelable(false);
 		}
 
 	}
@@ -311,7 +311,7 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 
 		@Override
 		protected void onPreExecute() {
-			SupportProgressDialogFragment.show(mActivity, FRAGMENT_TAG_SEARCH_USERS);
+			SupportProgressDialogFragment.show(mActivity, FRAGMENT_TAG_SEARCH_USERS).setCancelable(false);
 		}
 
 	}

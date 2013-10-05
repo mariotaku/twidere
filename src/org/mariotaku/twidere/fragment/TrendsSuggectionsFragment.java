@@ -43,7 +43,7 @@ import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
 
-public class TrendsFragment extends BasePullToRefreshListFragment implements LoaderCallbacks<Cursor>, Panes.Left {
+public class TrendsSuggectionsFragment extends BasePullToRefreshListFragment implements LoaderCallbacks<Cursor>, Panes.Left {
 
 	private MultiSelectManager mMultiSelectManager;
 	private SharedPreferences mPreferences;
@@ -60,7 +60,7 @@ public class TrendsFragment extends BasePullToRefreshListFragment implements Loa
 			final String action = intent.getAction();
 			if (BROADCAST_TRENDS_UPDATED.equals(action)) {
 				setRefreshComplete();
-				getLoaderManager().restartLoader(0, null, TrendsFragment.this);
+				getLoaderManager().restartLoader(0, null, TrendsSuggectionsFragment.this);
 			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
 				final AsyncTwitterWrapper twitter = getTwitterWrapper();
 				setRefreshing(twitter != null && twitter.isLocalTrendsRefreshing());

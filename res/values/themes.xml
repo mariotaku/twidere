@@ -263,4 +263,9 @@
 		<item name="android:windowBackground">@color/nyan_background</item>
 	</style>
 
+	<style name="Theme.Twidere.Wizard">
+		<item name="android:windowNoTitle">true</item>
+		<item name="android:windowActionBar">false</item>
+	</style>
+
 </resources>

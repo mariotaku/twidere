@@ -3,9 +3,11 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:title="@string/status">
 
-	<org.mariotaku.twidere.preference.StatusPreviewPreference
-		android:key="status_preview"
-		android:title="@string/preview"/>
+	<PreferenceCategory
+		android:key="cat_status_preview"
+		android:title="@string/preview">
+		<org.mariotaku.twidere.preference.StatusPreviewPreference android:key="status_preview"/>
+	</PreferenceCategory>
 
 	<org.mariotaku.twidere.preference.SeekBarDialogPreference
 		android:defaultValue="@integer/default_text_size"
@@ -39,6 +41,7 @@
 	<org.mariotaku.twidere.preference.LinkHighlightPreference
 		android:defaultValue="none"
 		android:key="link_highlight_option"
+		android:summary="%s"
 		android:title="@string/link_highlight_option"/>
 
 	<CheckBoxPreference

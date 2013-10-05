@@ -378,6 +378,10 @@
 			</intent-filter>
 		</activity>
 		<activity
+			android:name=".activity.CustomTabsActivity"
+			android:label="@string/tabs"
+			android:theme="@style/Theme.Blank"/>
+		<activity
 			android:name=".activity.CustomTabEditorActivity"
 			android:exported="false"
 			android:label="@string/add_tab"
@@ -448,7 +452,7 @@
 		<activity
 			android:name=".activity.SettingsWizardActivity"
 			android:label="@string/settings_wizard"
-			android:theme="@style/Theme.Twidere"/>
+			android:theme="@style/Theme.Twidere.Wizard"/>
 		<activity
 			android:name=".activity.TestActivity"
 			android:launchMode="singleTop"

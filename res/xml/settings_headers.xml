@@ -24,7 +24,7 @@
 		android:title="@string/status">
 		<extra
 			android:name="resid"
-			android:value="@xml/settings_tweet"/>
+			android:value="@xml/settings_status"/>
 	</header>
 	<header android:title="@string/settings"/>
 	<header

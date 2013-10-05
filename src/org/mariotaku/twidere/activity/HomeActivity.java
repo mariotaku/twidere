@@ -69,7 +69,7 @@ import org.mariotaku.twidere.fragment.BasePullToRefreshListFragment;
 import org.mariotaku.twidere.fragment.DirectMessagesFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
-import org.mariotaku.twidere.fragment.TrendsFragment;
+import org.mariotaku.twidere.fragment.TrendsSuggectionsFragment;
 import org.mariotaku.twidere.fragment.iface.IBaseFragment;
 import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;
 import org.mariotaku.twidere.fragment.iface.SupportFragmentCallback;
@@ -181,7 +181,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 				} else {
 					if (classEquals(DirectMessagesFragment.class, tab.cls)) {
 						openDirectMessagesConversation(this, -1, -1, null);
-					} else if (classEquals(TrendsFragment.class, tab.cls)) {
+					} else if (classEquals(TrendsSuggectionsFragment.class, tab.cls)) {
 						onSearchRequested();
 					} else {
 						startActivity(new Intent(INTENT_ACTION_COMPOSE));
@@ -362,21 +362,22 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		super.onCreate(savedInstanceState);
 		final long[] account_ids = getAccountIds(this);
 		if (account_ids.length == 0) {
-			final Intent intent = new Intent(INTENT_ACTION_TWITTER_LOGIN);
-			intent.setClass(this, SignInActivity.class);
-			startActivity(intent);
+			final Intent sign_in_intent = new Intent(INTENT_ACTION_TWITTER_LOGIN);
+			sign_in_intent.setClass(this, SignInActivity.class);
+			startActivity(sign_in_intent);
 			finish();
 			return;
 		} else {
 			notifyAccountsChanged();
 		}
-		// if (openSettingsWizard()) {
-		// finish();
-		// return;
-		// }
+		final Intent intent = getIntent();
+		if (openSettingsWizard()) {
+			finish();
+			return;
+		}
 		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONCREATE));
 		final boolean refresh_on_start = mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ON_START, false);
-		final int initial_tab = handleIntent(getIntent(), savedInstanceState == null);
+		final int initial_tab = handleIntent(intent, savedInstanceState == null);
 		mActionBar = getActionBar();
 		mActionBar.setCustomView(R.layout.base_tabs);
 		mActionBar.setDisplayShowTitleEnabled(false);
@@ -559,12 +560,13 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	private void setTabPosition(final int initial_tab) {
-
 		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true);
 		final long[] activated_ids = getActivatedAccountIds(this);
 		if (activated_ids.length <= 0) {
 			// TODO set activated account automatically
-			startActivityForResult(new Intent(INTENT_ACTION_SELECT_ACCOUNT), REQUEST_SELECT_ACCOUNT);
+			if (!mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+				mDrawerLayout.openDrawer(Gravity.LEFT);
+			}
 		} else if (initial_tab >= 0) {
 			mViewPager.setCurrentItem(MathUtils.clamp(initial_tab, mPagerAdapter.getCount(), 0));
 		} else if (remember_position) {
@@ -604,7 +606,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 				action_icon = light_action_bar ? R.drawable.ic_action_compose_light : R.drawable.ic_action_compose_dark;
 				button_icon = R.drawable.ic_menu_compose;
 				title = R.string.compose;
-			} else if (classEquals(TrendsFragment.class, tab.cls)) {
+			} else if (classEquals(TrendsSuggectionsFragment.class, tab.cls)) {
 				action_icon = light_action_bar ? R.drawable.ic_action_search_light : R.drawable.ic_action_search_dark;
 				button_icon = android.R.drawable.ic_menu_search;
 				title = android.R.string.search_go;

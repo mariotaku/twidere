@@ -425,6 +425,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		updateUserColor();
 		mProfileView.drawEnd(getAccountColor(getActivity(), status.account_id));
 		final boolean nickname_only = mPreferences.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false);
+		final boolean name_first = mPreferences.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
+		final boolean display_image_preview = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_IMAGE_PREVIEW, false);
 		final String nick = getUserNickname(getActivity(), status.user_id, true);
 		mNameView.setText(TextUtils.isEmpty(nick) ? status.user_name : nickname_only ? nick : getString(
 				R.string.name_with_nickname, status.user_name, nick));
@@ -444,8 +446,10 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			mTimeSourceView.setText(time);
 		}
 		mTimeSourceView.setMovementMethod(LinkMovementMethod.getInstance());
-		final boolean name_first = mPreferences.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
-		mInReplyToView.setText(getString(R.string.in_reply_to, "@" + status.in_reply_to_screen_name));
+
+		final String in_reply_to = getDisplayName(getActivity(), status.in_reply_to_user_id, status.in_reply_to_name,
+				status.in_reply_to_screen_name, name_first, nickname_only, true);
+		mInReplyToView.setText(getString(R.string.in_reply_to, in_reply_to));
 
 		if (mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true)) {
 			final boolean hires_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
@@ -457,19 +461,18 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		}
 		final List<PreviewImage> images = getImagesInStatus(status.text_html);
 		mImagePreviewContainer.setVisibility(images.isEmpty() ? View.GONE : View.VISIBLE);
-		final boolean display_image_preview = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_IMAGE_PREVIEW, false);
 		if (display_image_preview) {
 			loadPreviewImages();
 		}
 		mRetweetView.setVisibility(!status.user_is_protected ? View.VISIBLE : View.GONE);
 		if (status.is_retweet && status.retweet_id > 0) {
-			final String display_name = getDisplayName(getActivity(), status.retweeted_by_id, status.retweeted_by_name,
+			final String retweeted_by = getDisplayName(getActivity(), status.retweeted_by_id, status.retweeted_by_name,
 					status.retweeted_by_screen_name, name_first, nickname_only, true);
 			if (status.retweet_count > 1) {
 				mRetweetView
-						.setText(getString(R.string.retweeted_by_with_count, display_name, status.retweet_count - 1));
+						.setText(getString(R.string.retweeted_by_with_count, retweeted_by, status.retweet_count - 1));
 			} else {
-				mRetweetView.setText(getString(R.string.retweeted_by, display_name));
+				mRetweetView.setText(getString(R.string.retweeted_by, retweeted_by));
 			}
 		} else {
 			if (status.retweet_count > 0) {

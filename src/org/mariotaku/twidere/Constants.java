@@ -631,12 +631,12 @@ public interface Constants {
 
 	public static final String TAB_TYPE_HOME_TIMELINE = "home_timeline";
 	public static final String TAB_TYPE_MENTIONS_TIMELINE = "mentions_timeline";
+	public static final String TAB_TYPE_TRENDS_SUGGESTIONS = "trends_suggestions";
 	public static final String TAB_TYPE_DIRECT_MESSAGES = "direct_messages";
 	public static final String TAB_TYPE_FAVORITES = "favorites";
 	public static final String TAB_TYPE_USER_TIMELINE = "user_timeline";
 	public static final String TAB_TYPE_SEARCH_STATUSES = "search_statuses";
 	public static final String TAB_TYPE_LIST_TIMELINE = "list_timeline";
-	public static final String TAB_TYPE_TRENDS = "trends";
 	public static final String TAB_TYPE_ACTIVITIES_ABOUT_ME = "activities_about_me";
 	public static final String TAB_TYPE_ACTIVITIES_BY_FRIENDS = "activities_by_friends";
 
