@@ -406,7 +406,6 @@ public class LinePageIndicator extends View implements PagerIndicator {
 	static class SavedState extends BaseSavedState {
 		int currentPage;
 
-		@SuppressWarnings("UnusedDeclaration")
 		public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
 			@Override
 			public SavedState createFromParcel(final Parcel in) {

@@ -27,22 +27,23 @@ import android.widget.TextView;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.Utils;
-import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 import org.mariotaku.twidere.view.ShortTimeView;
+import org.mariotaku.twidere.view.iface.IColorLabelView;
 
-public class DirectMessageEntryViewHolder {
+public class DirectMessageEntryViewHolder extends CardViewHolder {
 
 	public final ImageView profile_image;
 	public final TextView name, screen_name, text;
 	public final ShortTimeView time;
-	private final ColorLabelRelativeLayout content;
+	private final IColorLabelView content;
 	private float text_size;
 	private boolean account_color_enabled;
 	private final boolean is_rtl;
 
 	public DirectMessageEntryViewHolder(final View view) {
+		super(view);
 		final Context context = view.getContext();
-		content = (ColorLabelRelativeLayout) view.findViewById(R.id.content);
+		content = (IColorLabelView) view.findViewById(R.id.content);
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		name = (TextView) view.findViewById(R.id.name);
 		screen_name = (TextView) view.findViewById(R.id.screen_name);
@@ -75,8 +76,8 @@ public class DirectMessageEntryViewHolder {
 		if (this.text_size == text_size) return;
 		this.text_size = text_size;
 		text.setTextSize(text_size);
-		name.setTextSize(text_size * 1.2f);
-		screen_name.setTextSize(text_size * 0.85f);
+		name.setTextSize(text_size);
+		screen_name.setTextSize(text_size * 0.75f);
 		time.setTextSize(text_size * 0.65f);
 	}
 

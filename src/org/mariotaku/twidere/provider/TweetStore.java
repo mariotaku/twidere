@@ -271,6 +271,21 @@ public final class TweetStore {
 		public static final String NAME = "name";
 	}
 
+	public static interface CacheFiles extends BaseColumns {
+		public static final String TABLE_NAME = "cache_files";
+		public static final String CONTENT_PATH = TABLE_NAME;
+
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
+
+		public static final String NAME = "name";
+
+		public static final String PATH = "path";
+
+		public static final String[] MATRIX_COLUMNS = new String[] { NAME, PATH };
+
+		public static final String[] COLUMNS = new String[] { _ID, NAME, PATH };
+	}
+
 	public static interface DirectMessages extends BaseColumns {
 
 		public static final String TABLE_NAME = "messages";
@@ -750,6 +765,10 @@ public final class TweetStore {
 
 		public static final String IN_REPLY_TO_STATUS_ID = "in_reply_to_status_id";
 
+		public static final String IN_REPLY_TO_USER_ID = "in_reply_to_user_id";
+
+		public static final String IN_REPLY_TO_NAME = "in_reply_to_name";
+
 		public static final String IN_REPLY_TO_SCREEN_NAME = "in_reply_to_screen_name";
 
 		public static final String SOURCE = "source";
@@ -762,7 +781,7 @@ public final class TweetStore {
 
 		public static final String RETWEET_ID = "retweet_id";
 
-		public static final String RETWEETED_BY_ID = "retweeted_by_id";
+		public static final String RETWEETED_BY_USER_ID = "retweeted_by_user_id";
 
 		public static final String RETWEETED_BY_NAME = "retweeted_by_name";
 
@@ -786,14 +805,16 @@ public final class TweetStore {
 
 		public static final String[] COLUMNS = new String[] { _ID, ACCOUNT_ID, STATUS_ID, USER_ID, STATUS_TIMESTAMP,
 				TEXT_HTML, TEXT_PLAIN, TEXT_UNESCAPED, NAME, SCREEN_NAME, PROFILE_IMAGE_URL, IN_REPLY_TO_STATUS_ID,
-				IN_REPLY_TO_SCREEN_NAME, SOURCE, LOCATION, RETWEET_COUNT, RETWEET_ID, RETWEETED_BY_ID,
-				RETWEETED_BY_NAME, RETWEETED_BY_SCREEN_NAME, MY_RETWEET_ID, IS_RETWEET, IS_FAVORITE, IS_PROTECTED,
-				IS_VERIFIED, IS_FOLLOWING, IS_GAP, IS_POSSIBLY_SENSITIVE, IMAGE_PREVIEW_URL };
+				IN_REPLY_TO_USER_ID, IN_REPLY_TO_NAME, IN_REPLY_TO_SCREEN_NAME, SOURCE, LOCATION, RETWEET_COUNT,
+				RETWEET_ID, RETWEETED_BY_USER_ID, RETWEETED_BY_NAME, RETWEETED_BY_SCREEN_NAME, MY_RETWEET_ID,
+				IS_RETWEET, IS_FAVORITE, IS_PROTECTED, IS_VERIFIED, IS_FOLLOWING, IS_GAP, IS_POSSIBLY_SENSITIVE,
+				IMAGE_PREVIEW_URL };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_INT,
-				TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_TEXT, TYPE_TEXT,
-				TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_BOOLEAN, TYPE_BOOLEAN,
-				TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_TEXT };
+				TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_TEXT,
+				TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_INT,
+				TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN, TYPE_BOOLEAN,
+				TYPE_TEXT };
 
 	}
 

@@ -23,7 +23,6 @@ import static org.mariotaku.twidere.util.CustomTabUtils.findTabIconKey;
 import static org.mariotaku.twidere.util.CustomTabUtils.getIconMap;
 import static org.mariotaku.twidere.util.CustomTabUtils.getTabConfiguration;
 import static org.mariotaku.twidere.util.CustomTabUtils.getTabTypeName;
-import static org.mariotaku.twidere.util.Utils.getNameDisplayOptionInt;
 import static org.mariotaku.twidere.util.Utils.getUserNickname;
 
 import android.app.AlertDialog;
@@ -177,8 +176,7 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 		final ImageView icon = (ImageView) view.findViewById(android.R.id.icon);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		final boolean nickname_only = mPreferences.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false);
-		final int option_int = getNameDisplayOptionInt(this);
-		final boolean display_name = NAME_DISPLAY_OPTION_CODE_SCREEN_NAME != option_int;
+		final boolean display_name = mPreferences.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
 		text1.setVisibility(View.VISIBLE);
 		text2.setVisibility(View.VISIBLE);
 		icon.setVisibility(display_profile_image ? View.VISIBLE : View.GONE);
@@ -246,7 +244,7 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 		}
 		mTabId = intent.getLongExtra(EXTRA_ID, -1);
 		setTitle(isEditMode() ? R.string.edit_tab : R.string.add_tab);
-		setContentView(R.layout.edit_custom_tab);
+		setContentView(R.layout.custom_tab_editor);
 		mTabTypeName.setText(getTabTypeName(this, type));
 		mTabIconsAdapter = new CustomTabIconsAdapter(this);
 		mTabIconsAdapter.setData(getIconMap());

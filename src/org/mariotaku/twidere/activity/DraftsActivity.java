@@ -38,6 +38,7 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -47,7 +48,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.mariotaku.popupmenu.PopupMenu;
-import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.DraftItem;
@@ -175,7 +175,7 @@ public class DraftsActivity extends TwidereSwipeBackActivity implements LoaderCa
 	public void onStart() {
 		final IntentFilter filter = new IntentFilter(BROADCAST_DRAFTS_DATABASE_UPDATED);
 		registerReceiver(mStatusReceiver, filter);
-		mTwitterWrapper.clearNotification(NOTIFICATION_ID_DRAFTS);
+		mTwitterWrapper.clearNotificationAsync(NOTIFICATION_ID_DRAFTS);
 		super.onStart();
 	}
 

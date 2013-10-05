@@ -177,7 +177,7 @@ public class APIEditorActivity extends BaseSupportDialogActivity implements Twit
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.edit_api);
+		setContentView(R.layout.api_editor);
 		final Bundle extras = getIntent().getExtras();
 		if (savedInstanceState != null) {
 			mRestBaseURL = savedInstanceState.getString(Accounts.REST_BASE_URL);

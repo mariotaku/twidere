@@ -12,6 +12,8 @@ import android.support.v4.app.Fragment;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.fragment.ActivitiesAboutMeFragment;
+import org.mariotaku.twidere.fragment.ActivitiesByFriendsFragment;
 import org.mariotaku.twidere.fragment.DirectMessagesFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
@@ -58,6 +60,12 @@ public class CustomTabUtils implements Constants {
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_LIST_TIMELINE, new CustomTabConfiguration(
 				UserListTimelineFragment.class, R.string.list_timeline, R.drawable.ic_tab_list, true,
 				CustomTabConfiguration.FIELD_TYPE_USER_LIST, 7));
+		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_ACTIVITIES_ABOUT_ME, new CustomTabConfiguration(
+				ActivitiesAboutMeFragment.class, R.string.activities_about_me, R.drawable.ic_tab_person, true,
+				CustomTabConfiguration.FIELD_TYPE_NONE, 8));
+		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_ACTIVITIES_BY_FRIENDS, new CustomTabConfiguration(
+				ActivitiesByFriendsFragment.class, R.string.activities_by_friends, R.drawable.ic_tab_accounts, true,
+				CustomTabConfiguration.FIELD_TYPE_NONE, 9));
 
 		CUSTOM_TABS_ICON_NAME_MAP.put("accounts", R.drawable.ic_tab_accounts);
 		CUSTOM_TABS_ICON_NAME_MAP.put("fire", R.drawable.ic_tab_fire);
@@ -75,6 +83,7 @@ public class CustomTabUtils implements Constants {
 		CUSTOM_TABS_ICON_NAME_MAP.put("search", R.drawable.ic_tab_search);
 		CUSTOM_TABS_ICON_NAME_MAP.put("star", R.drawable.ic_tab_star);
 		CUSTOM_TABS_ICON_NAME_MAP.put("trends", R.drawable.ic_tab_trends);
+		CUSTOM_TABS_ICON_NAME_MAP.put("twidere", R.drawable.ic_tab_twidere);
 		CUSTOM_TABS_ICON_NAME_MAP.put("twitter", R.drawable.ic_tab_twitter);
 		// CUSTOM_TABS_ICON_NAME_MAP.put(ICON_SPECIAL_TYPE_CUSTOMIZE, -1);
 	}
@@ -84,25 +93,6 @@ public class CustomTabUtils implements Constants {
 			if (entry.getValue() == iconRes) return entry.getKey();
 		}
 		return null;
-	}
-	
-
-	public static boolean isSingleTab(final String type) {
-		if (type == null) return false;
-		final CustomTabConfiguration conf = getTabConfiguration(type);
-		return conf != null && conf.isSingleTab();
-	}
-	
-	public static boolean isTabAdded(final Context context, final String type) {
-		if (context == null || type == null) return false;
-		final ContentResolver resolver = context.getContentResolver();
-		final String where = Tabs.TYPE + " = ?";
-		final Cursor cur = resolver.query(Tabs.CONTENT_URI, new String[0] , where,
-				new String[] { type }, Tabs.DEFAULT_SORT_ORDER);
-		if (cur == null) return false;
-		final boolean added = cur.getCount() > 0;
-		cur.close();
-		return added;
 	}
 
 	public static int getAddedTabPosition(final Context context, final String type) {
@@ -202,5 +192,23 @@ public class CustomTabUtils implements Constants {
 		if (context == null) return null;
 		final Integer res_id = getTabConfiguration(type).getDefaultTitle();
 		return res_id != null ? context.getString(res_id) : null;
+	}
+
+	public static boolean isSingleTab(final String type) {
+		if (type == null) return false;
+		final CustomTabConfiguration conf = getTabConfiguration(type);
+		return conf != null && conf.isSingleTab();
+	}
+
+	public static boolean isTabAdded(final Context context, final String type) {
+		if (context == null || type == null) return false;
+		final ContentResolver resolver = context.getContentResolver();
+		final String where = Tabs.TYPE + " = ?";
+		final Cursor cur = resolver.query(Tabs.CONTENT_URI, new String[0], where, new String[] { type },
+				Tabs.DEFAULT_SORT_ORDER);
+		if (cur == null) return false;
+		final boolean added = cur.getCount() > 0;
+		cur.close();
+		return added;
 	}
 }

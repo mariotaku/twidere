@@ -23,11 +23,14 @@ import static org.mariotaku.twidere.util.Utils.openStatus;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.openUsers;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.view.View;
 import android.widget.ListView;
 
+import org.mariotaku.twidere.adapter.BaseParcelableActivitiesAdapter;
+import org.mariotaku.twidere.adapter.ParcelableActivitiesAboutMeAdapter;
 import org.mariotaku.twidere.loader.ActivitiesAboutMeLoader;
 import org.mariotaku.twidere.model.ParcelableActivity;
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -37,6 +40,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ActivitiesAboutMeFragment extends BaseActivitiesListFragment {
+
+	@Override
+	public BaseParcelableActivitiesAdapter createListAdapter(final Context context) {
+		return new ParcelableActivitiesAboutMeAdapter(context);
+	}
 
 	@Override
 	public Loader<List<ParcelableActivity>> onCreateLoader(final int id, final Bundle args) {

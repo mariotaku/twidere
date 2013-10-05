@@ -22,8 +22,8 @@ package org.mariotaku.twidere.fragment;
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
+import static org.mariotaku.twidere.util.Utils.getDisplayName;
 import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
-import static org.mariotaku.twidere.util.Utils.getNameDisplayOptionInt;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.openUserListMembers;
@@ -50,6 +50,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
@@ -67,7 +68,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.mariotaku.popupmenu.PopupMenu;
-import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.ListActionAdapter;
 import org.mariotaku.twidere.adapter.UserHashtagAutoCompleteAdapter;
@@ -131,30 +131,30 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		}
 	};
 
-	public void changeUserList(final ParcelableUserList list) {
-		if (list == null || getActivity() == null) return;
+	public void changeUserList(final ParcelableUserList user_list) {
+		if (user_list == null || getActivity() == null) return;
 		getLoaderManager().destroyLoader(0);
-		final boolean is_myself = list.account_id == list.user_id;
+		final boolean is_myself = user_list.account_id == user_list.user_id;
 		mErrorRetryContainer.setVisibility(View.GONE);
-		mUserList = list;
-		mProfileContainer.drawEnd(getAccountColor(getActivity(), list.account_id));
-		mListNameView.setText(list.name);
-		final boolean display_screen_name = getNameDisplayOptionInt(getActivity()) == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
-		final String name = display_screen_name ? "@" + list.user_screen_name : list.user_name;
-		mCreatedByView.setText(getString(R.string.created_by, name));
-		final String description = list.description;
+		mUserList = user_list;
+		mProfileContainer.drawEnd(getAccountColor(getActivity(), user_list.account_id));
+		mListNameView.setText(user_list.name);
+		final String display_name = getDisplayName(getActivity(), user_list.user_id, user_list.user_name,
+				user_list.user_screen_name, false);
+		mCreatedByView.setText(getString(R.string.created_by, display_name));
+		final String description = user_list.description;
 		mDescriptionContainer.setVisibility(is_myself || !isEmpty(description) ? View.VISIBLE : View.GONE);
 		mDescriptionContainer.setOnLongClickListener(this);
 		mDescriptionView.setText(description);
 		final TwidereLinkify linkify = new TwidereLinkify(new OnLinkClickHandler(getActivity()));
-		linkify.applyAllLinks(mDescriptionView, list.account_id, false);
+		linkify.applyAllLinks(mDescriptionView, user_list.account_id, false);
 		mDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
-		mProfileImageLoader.displayProfileImage(mProfileImageView, list.user_profile_image_url);
-		if (list.user_id == list.account_id) {
+		mProfileImageLoader.displayProfileImage(mProfileImageView, user_list.user_profile_image_url);
+		if (user_list.user_id == user_list.account_id) {
 			mSubscribeMoreButton.setText(R.string.more);
 			mSubscribeMoreButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.expander_open_holo, 0);
 		} else {
-			mSubscribeMoreButton.setText(list.is_following ? R.string.unsubscribe : R.string.subscribe);
+			mSubscribeMoreButton.setText(user_list.is_following ? R.string.unsubscribe : R.string.subscribe);
 			mSubscribeMoreButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 		}
 		mAdapter.notifyDataSetChanged();
@@ -227,9 +227,9 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 				if (mUserList.account_id != mUserList.user_id) {
 					mSubscribeMoreButton.setVisibility(View.GONE);
 					if (mUserList.is_following) {
-						mTwitterWrapper.destroyUserListSubscription(mUserList.account_id, mUserList.id);
+						mTwitterWrapper.destroyUserListSubscriptionAsync(mUserList.account_id, mUserList.id);
 					} else {
-						mTwitterWrapper.createUserListSubscription(mUserList.account_id, mUserList.id);
+						mTwitterWrapper.createUserListSubscriptionAsync(mUserList.account_id, mUserList.id);
 					}
 				} else {
 					mPopupMenu = PopupMenu.getInstance(getActivity(), view);
@@ -377,7 +377,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 			}
 			case MENU_DELETE: {
 				if (mUserList.user_id != mUserList.account_id) return false;
-				mTwitterWrapper.destroyUserList(mUserList.account_id, mUserList.id);
+				mTwitterWrapper.destroyUserListAsync(mUserList.account_id, mUserList.id);
 				break;
 			}
 			default: {
@@ -437,7 +437,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 				case DialogInterface.BUTTON_POSITIVE: {
 					mText = ParseUtils.parseString(mEditText.getText());
 					if (mText == null || mText.length() <= 0) return;
-					mTwitterWrapper.addUserListMembers(mAccountId, mListId, mText);
+					mTwitterWrapper.addUserListMembersAsync(mAccountId, mListId, mText);
 					break;
 				}
 			}

@@ -19,10 +19,9 @@
 
 package org.mariotaku.twidere.adapter;
 
-import static org.mariotaku.twidere.util.Utils.configBaseAdapter;
+import static org.mariotaku.twidere.util.Utils.configBaseCardAdapter;
+import static org.mariotaku.twidere.util.Utils.getDisplayName;
 import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
-import static org.mariotaku.twidere.util.Utils.getNameDisplayOptionInt;
-import static org.mariotaku.twidere.util.Utils.getUserNickname;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
 import android.app.Activity;
@@ -51,9 +50,9 @@ public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList>
 	private final MultiSelectManager mMultiSelectManager;
 	private final Locale mLocale;
 
-	private boolean mDisplayProfileImage, mNicknameOnly;
+	private boolean mDisplayProfileImage, mDisplayNameFirst, mNicknameOnly, mAnimationEnabled;
 	private float mTextSize;
-	private boolean mDisplayName;
+	private int mMaxAnimationPosition;
 
 	private MenuButtonClickListener mListener;
 
@@ -64,7 +63,7 @@ public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList>
 		final TwidereApplication app = TwidereApplication.getInstance(context);
 		mProfileImageLoader = app.getImageLoaderWrapper();
 		mMultiSelectManager = app.getMultiSelectManager();
-		configBaseAdapter(context, this);
+		configBaseCardAdapter(context, this);
 	}
 
 	public void appendData(final List<ParcelableUserList> data) {
@@ -90,17 +89,11 @@ public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList>
 			view.setTag(holder);
 		}
 		final ParcelableUserList user_list = getItem(position);
-		final String created_by;
-		if (mDisplayName) {
-			created_by = "@" + user_list.user_screen_name;
-		} else {
-			final String nick = getUserNickname(mContext, user_list.user_id);
-			created_by = TextUtils.isEmpty(nick) ? user_list.user_name : mNicknameOnly ? nick : mContext.getString(
-					R.string.name_with_nickname, user_list.user_name, nick);
-		}
+		final String display_name = getDisplayName(mContext, user_list.user_id, user_list.user_name,
+				user_list.user_screen_name, mDisplayNameFirst, mNicknameOnly, false);
 		holder.setTextSize(mTextSize);
 		holder.name.setText(user_list.name);
-		holder.created_by.setText(mContext.getString(R.string.created_by, created_by));
+		holder.created_by.setText(mContext.getString(R.string.created_by, display_name));
 		holder.description.setVisibility(TextUtils.isEmpty(user_list.description) ? View.GONE : View.VISIBLE);
 		holder.description.setText(user_list.description);
 		holder.members_count.setText(getLocalizedNumber(mLocale, user_list.members_count));
@@ -111,6 +104,12 @@ public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList>
 		}
 		holder.profile_image.setTag(position);
 		holder.item_menu.setTag(position);
+		if (position > mMaxAnimationPosition) {
+			if (mAnimationEnabled) {
+				view.startAnimation(holder.item_animation);
+			}
+			mMaxAnimationPosition = position;
+		}
 		return view;
 	}
 
@@ -136,6 +135,12 @@ public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList>
 		}
 	}
 
+	@Override
+	public void setAnimationEnabled(final boolean anim) {
+		if (mAnimationEnabled == anim) return;
+		mAnimationEnabled = anim;
+	}
+
 	public void setData(final List<ParcelableUserList> data, final boolean clear_old) {
 		if (clear_old) {
 			clear();
@@ -146,6 +151,13 @@ public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList>
 				add(user);
 			}
 		}
+	}
+
+	@Override
+	public void setDisplayNameFirst(final boolean name_first) {
+		if (mDisplayNameFirst == name_first) return;
+		mDisplayNameFirst = name_first;
+		notifyDataSetChanged();
 	}
 
 	@Override
@@ -162,17 +174,13 @@ public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList>
 	}
 
 	@Override
-	public void setMenuButtonClickListener(final MenuButtonClickListener listener) {
-		mListener = listener;
+	public void setMaxAnimationPosition(final int position) {
+		mMaxAnimationPosition = position;
 	}
 
 	@Override
-	public void setNameDisplayOption(final String option) {
-		final int option_int = getNameDisplayOptionInt(option);
-		final boolean display_name = NAME_DISPLAY_OPTION_CODE_SCREEN_NAME != option_int;
-		if (display_name == mDisplayName) return;
-		mDisplayName = display_name;
-		notifyDataSetChanged();
+	public void setMenuButtonClickListener(final MenuButtonClickListener listener) {
+		mListener = listener;
 	}
 
 	@Override

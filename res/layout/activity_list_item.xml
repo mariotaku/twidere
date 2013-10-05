@@ -1,108 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.mariotaku.twidere.view.ColorLabelRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:padding="8dp">
+	android:layout_height="wrap_content">
 
-	<ImageView
-		android:id="@+id/profile_image"
-		android:layout_width="@dimen/profile_image_size"
-		android:layout_height="@dimen/profile_image_size"
-		android:scaleType="fitCenter"/>
-
-	<TextView
-		android:id="@+id/title"
-		android:layout_width="wrap_content"
+	<org.mariotaku.twidere.view.ColorLabelRelativeLayout
+		android:id="@+id/content"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_alignParentTop="true"
-		android:layout_alignWithParentIfMissing="true"
-		android:layout_marginLeft="4dp"
-		android:layout_toLeftOf="@+id/time"
-		android:layout_toRightOf="@+id/profile_image"
-		android:singleLine="false"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:textColor="?android:attr/textColorPrimary"
-		android:textStyle="bold"/>
-
-	<TextView
-		android:id="@+id/text"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignLeft="@+id/title"
-		android:layout_alignParentRight="true"
-		android:layout_alignWithParentIfMissing="true"
-		android:layout_below="@+id/title"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:textColor="?android:attr/textColorSecondary"/>
-
-	<TextView
-		android:id="@+id/time"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignBaseline="@+id/title"
-		android:layout_alignParentRight="true"
-		android:layout_alignWithParentIfMissing="true"
-		android:drawablePadding="4dp"
-		android:gravity="center_vertical|right"
-		android:textColor="?android:attr/textColorSecondary"/>
-
-	<LinearLayout
-		android:id="@+id/activity_profile_image_container"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignWithParentIfMissing="true"
-		android:layout_below="@+id/text"
-		android:layout_marginLeft="18dp"
+		android:layout_marginBottom="4dp"
+		android:layout_marginLeft="8dp"
+		android:layout_marginRight="8dp"
 		android:layout_marginTop="4dp"
-		android:layout_toRightOf="@+id/profile_image"
-		android:orientation="horizontal">
+		android:background="?cardItemBackground">
 
 		<ImageView
-			android:id="@+id/activity_profile_image_1"
-			android:layout_width="@dimen/activity_profile_image_size"
-			android:layout_height="@dimen/activity_profile_image_size"
-			android:layout_margin="2dp"
+			android:id="@+id/profile_image"
+			android:layout_width="@dimen/profile_image_size_cards_ui"
+			android:layout_height="@dimen/profile_image_size_cards_ui"
+			android:contentDescription="@string/profile_image"
 			android:scaleType="fitCenter"/>
 
-		<ImageView
-			android:id="@+id/activity_profile_image_2"
-			android:layout_width="@dimen/activity_profile_image_size"
-			android:layout_height="@dimen/activity_profile_image_size"
-			android:layout_margin="2dp"
-			android:scaleType="fitCenter"/>
+		<TextView
+			android:id="@+id/title"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentTop="true"
+			android:layout_alignWithParentIfMissing="true"
+			android:layout_marginLeft="4dp"
+			android:layout_toLeftOf="@+id/time"
+			android:layout_toRightOf="@+id/profile_image"
+			android:singleLine="false"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="?android:attr/textColorPrimary"
+			android:textStyle="bold"/>
 
-		<ImageView
-			android:id="@+id/activity_profile_image_3"
-			android:layout_width="@dimen/activity_profile_image_size"
-			android:layout_height="@dimen/activity_profile_image_size"
-			android:layout_margin="2dp"
-			android:scaleType="fitCenter"/>
+		<TextView
+			android:id="@+id/text"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignLeft="@+id/title"
+			android:layout_alignParentRight="true"
+			android:layout_alignWithParentIfMissing="true"
+			android:layout_below="@+id/title"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="?android:attr/textColorSecondary"/>
 
-		<ImageView
-			android:id="@+id/activity_profile_image_4"
-			android:layout_width="@dimen/activity_profile_image_size"
-			android:layout_height="@dimen/activity_profile_image_size"
-			android:layout_margin="2dp"
-			android:scaleType="fitCenter"/>
+		<TextView
+			android:id="@+id/time"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignBaseline="@+id/title"
+			android:layout_alignParentRight="true"
+			android:layout_alignWithParentIfMissing="true"
+			android:drawablePadding="4dp"
+			android:gravity="center_vertical|right"
+			android:textColor="?android:attr/textColorSecondary"/>
 
-		<ImageView
-			android:id="@+id/activity_profile_image_5"
-			android:layout_width="@dimen/activity_profile_image_size"
-			android:layout_height="@dimen/activity_profile_image_size"
-			android:layout_margin="2dp"
-			android:scaleType="fitCenter"/>
-	</LinearLayout>
+		<LinearLayout
+			android:id="@+id/activity_profile_image_container"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignWithParentIfMissing="true"
+			android:layout_below="@+id/text"
+			android:layout_marginLeft="18dp"
+			android:layout_marginTop="4dp"
+			android:layout_toRightOf="@+id/profile_image"
+			android:orientation="horizontal">
 
-	<TextView
-		android:id="@+id/reply_status"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignWithParentIfMissing="true"
-		android:layout_below="@+id/activity_profile_image_container"
-		android:layout_toRightOf="@+id/profile_image"
-		android:drawablePadding="4dp"
-		android:paddingLeft="8dp"
-		android:paddingTop="4dp"
-		android:textColor="?android:attr/textColorSecondary"/>
+			<ImageView
+				android:id="@+id/activity_profile_image_1"
+				android:layout_width="@dimen/profile_image_size_activity_small"
+				android:layout_height="@dimen/profile_image_size_activity_small"
+				android:layout_margin="2dp"
+				android:contentDescription="@string/profile_image"
+				android:scaleType="fitCenter"/>
 
-</org.mariotaku.twidere.view.ColorLabelRelativeLayout>
+			<ImageView
+				android:id="@+id/activity_profile_image_2"
+				android:layout_width="@dimen/profile_image_size_activity_small"
+				android:layout_height="@dimen/profile_image_size_activity_small"
+				android:layout_margin="2dp"
+				android:contentDescription="@string/profile_image"
+				android:scaleType="fitCenter"/>
+
+			<ImageView
+				android:id="@+id/activity_profile_image_3"
+				android:layout_width="@dimen/profile_image_size_activity_small"
+				android:layout_height="@dimen/profile_image_size_activity_small"
+				android:layout_margin="2dp"
+				android:contentDescription="@string/profile_image"
+				android:scaleType="fitCenter"/>
+
+			<ImageView
+				android:id="@+id/activity_profile_image_4"
+				android:layout_width="@dimen/profile_image_size_activity_small"
+				android:layout_height="@dimen/profile_image_size_activity_small"
+				android:layout_margin="2dp"
+				android:contentDescription="@string/profile_image"
+				android:scaleType="fitCenter"/>
+
+			<ImageView
+				android:id="@+id/activity_profile_image_5"
+				android:layout_width="@dimen/profile_image_size_activity_small"
+				android:layout_height="@dimen/profile_image_size_activity_small"
+				android:layout_margin="2dp"
+				android:contentDescription="@string/profile_image"
+				android:scaleType="fitCenter"/>
+		</LinearLayout>
+
+		<TextView
+			android:id="@+id/reply_status"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignWithParentIfMissing="true"
+			android:layout_below="@+id/activity_profile_image_container"
+			android:layout_toRightOf="@+id/profile_image"
+			android:drawablePadding="4dp"
+			android:paddingLeft="8dp"
+			android:paddingTop="4dp"
+			android:textColor="?android:attr/textColorSecondary"/>
+	</org.mariotaku.twidere.view.ColorLabelRelativeLayout>
+
+</FrameLayout>

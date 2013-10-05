@@ -116,7 +116,7 @@ public class TrendsFragment extends BasePullToRefreshListFragment implements Loa
 		super.onRefreshStarted();
 		final AsyncTwitterWrapper twitter = getTwitterWrapper();
 		if (twitter == null) return;
-		twitter.getLocalTrends(mAccountId, mPreferences.getInt(PREFERENCE_KEY_LOCAL_TRENDS_WOEID, 1));
+		twitter.getLocalTrendsAsync(mAccountId, mPreferences.getInt(PREFERENCE_KEY_LOCAL_TRENDS_WOEID, 1));
 	}
 
 	@Override

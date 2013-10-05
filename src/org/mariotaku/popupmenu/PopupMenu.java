@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -157,13 +158,6 @@ public class PopupMenu implements OnDismissListener, OnItemClickListener, OnTouc
 	 */
 	public static interface OnDismissListener {
 		public void onDismiss(PopupMenu PopupMenu);
-	}
-
-	/**
-	 * Listener for item click
-	 */
-	public static interface OnMenuItemClickListener {
-		public boolean onMenuItemClick(MenuItem item);
 	}
 
 }

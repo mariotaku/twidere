@@ -47,7 +47,6 @@ public class StatusComposeEditText extends MultiAutoCompleteTextView implements 
 		mAdapter = new UserHashtagAutoCompleteAdapter(this);
 		setTokenizer(new ScreenNameTokenizer());
 		setMovementMethod(ArrowKeyMovementMethod.getInstance());
-		// Workaround to force auto complete and IME suggestions work.
 		setRawInputType(TYPE_CLASS_TEXT | TYPE_TEXT_FLAG_CAP_SENTENCES | TYPE_TEXT_FLAG_MULTI_LINE);
 	}
 

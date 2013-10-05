@@ -130,17 +130,17 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		mLargeProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
-	public int addUserListMembers(final long account_id, final int list_id, final long... user_ids) {
+	public int addUserListMembersAsync(final long account_id, final int list_id, final long... user_ids) {
 		final AddUserListMembersTask task = new AddUserListMembersTask(account_id, list_id, user_ids, null);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int addUserListMembers(final long account_id, final int list_id, final String... screen_names) {
+	public int addUserListMembersAsync(final long account_id, final int list_id, final String... screen_names) {
 		final AddUserListMembersTask task = new AddUserListMembersTask(account_id, list_id, null, screen_names);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public void clearNotification(final int id) {
+	public void clearNotificationAsync(final int id) {
 		final Uri uri = Notifications.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
 		mResolver.delete(uri, null, null);
 	}
@@ -155,97 +155,97 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int createFriendship(final long account_id, final long user_id) {
+	public int createFriendshipAsync(final long account_id, final long user_id) {
 		final CreateFriendshipTask task = new CreateFriendshipTask(account_id, user_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int createMultiBlock(final long account_id, final long[] user_ids) {
+	public int createMultiBlockAsync(final long account_id, final long[] user_ids) {
 		final CreateMultiBlockTask task = new CreateMultiBlockTask(account_id, user_ids);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int createUserList(final long account_id, final String list_name, final boolean is_public,
+	public int createUserListAsync(final long account_id, final String list_name, final boolean is_public,
 			final String description) {
 		final CreateUserListTask task = new CreateUserListTask(account_id, list_name, is_public, description);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int createUserListSubscription(final long account_id, final int list_id) {
+	public int createUserListSubscriptionAsync(final long account_id, final int list_id) {
 		final CreateUserListSubscriptionTask task = new CreateUserListSubscriptionTask(account_id, list_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int deleteUserListMembers(final long account_id, final int list_id, final long... user_ids) {
+	public int deleteUserListMembersAsync(final long account_id, final int list_id, final long... user_ids) {
 		final DeleteUserListMembersTask task = new DeleteUserListMembersTask(account_id, list_id, user_ids, null);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int deleteUserListMembers(final long account_id, final int list_id, final String... screen_names) {
+	public int deleteUserListMembersAsync(final long account_id, final int list_id, final String... screen_names) {
 		final DeleteUserListMembersTask task = new DeleteUserListMembersTask(account_id, list_id, null, screen_names);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int destroyBlock(final long account_id, final long user_id) {
+	public int destroyBlockAsync(final long account_id, final long user_id) {
 		final DestroyBlockTask task = new DestroyBlockTask(account_id, user_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int destroyDirectMessage(final long account_id, final long message_id) {
+	public int destroyDirectMessageAsync(final long account_id, final long message_id) {
 		final DestroyDirectMessageTask task = new DestroyDirectMessageTask(account_id, message_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int destroyFavorite(final long account_id, final long status_id) {
+	public int destroyFavoriteAsync(final long account_id, final long status_id) {
 		final DestroyFavoriteTask task = new DestroyFavoriteTask(account_id, status_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int destroyFriendship(final long account_id, final long user_id) {
+	public int destroyFriendshipAsync(final long account_id, final long user_id) {
 		final DestroyFriendshipTask task = new DestroyFriendshipTask(account_id, user_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int destroyStatus(final long account_id, final long status_id) {
+	public int destroyStatusAsync(final long account_id, final long status_id) {
 		final DestroyStatusTask task = new DestroyStatusTask(account_id, status_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int destroyUserList(final long account_id, final int list_id) {
+	public int destroyUserListAsync(final long account_id, final int list_id) {
 		final DestroyUserListTask task = new DestroyUserListTask(account_id, list_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int destroyUserListSubscription(final long account_id, final int list_id) {
+	public int destroyUserListSubscriptionAsync(final long account_id, final int list_id) {
 		final DestroyUserListSubscriptionTask task = new DestroyUserListSubscriptionTask(account_id, list_id);
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int getHomeTimeline(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
+	public int getHomeTimelineAsync(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
 		mAsyncTaskManager.cancel(mGetHomeTimelineTaskId);
 		final GetHomeTimelineTask task = new GetHomeTimelineTask(account_ids, max_ids, since_ids);
 		return mGetHomeTimelineTaskId = mAsyncTaskManager.add(task, true);
 	}
 
-	public int getLocalTrends(final long account_id, final int woeid) {
+	public int getLocalTrendsAsync(final long account_id, final int woeid) {
 		mAsyncTaskManager.cancel(mGetLocalTrendsTaskId);
 		final GetLocalTrendsTask task = new GetLocalTrendsTask(account_id, woeid);
 		return mGetLocalTrendsTaskId = mAsyncTaskManager.add(task, true);
 	}
 
-	public int getMentions(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
+	public int getMentionsAsync(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
 		mAsyncTaskManager.cancel(mGetMentionsTaskId);
 		final GetMentionsTask task = new GetMentionsTask(account_ids, max_ids, since_ids);
 		return mGetMentionsTaskId = mAsyncTaskManager.add(task, true);
 	}
 
-	public int getReceivedDirectMessages(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
+	public int getReceivedDirectMessagesAsync(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
 		mAsyncTaskManager.cancel(mGetReceivedDirectMessagesTaskId);
 		final GetReceivedDirectMessagesTask task = new GetReceivedDirectMessagesTask(account_ids, max_ids, since_ids);
 		return mGetReceivedDirectMessagesTaskId = mAsyncTaskManager.add(task, true);
 	}
 
-	public int getSentDirectMessages(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
+	public int getSentDirectMessagesAsync(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
 		mAsyncTaskManager.cancel(mGetSentDirectMessagesTaskId);
 		final GetSentDirectMessagesTask task = new GetSentDirectMessagesTask(account_ids, max_ids, since_ids);
 		return mGetSentDirectMessagesTaskId = mAsyncTaskManager.add(task, true);
@@ -289,23 +289,23 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_MENTIONS,
 				HomeRefreshContentPreference.DEFAULT_ENABLE_MENTIONS)) {
 			final long[] since_ids = getNewestStatusIdsFromDatabase(mContext, Mentions.CONTENT_URI, account_ids);
-			getMentions(account_ids, null, since_ids);
+			getMentionsAsync(account_ids, null, since_ids);
 		}
 		if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES,
 				HomeRefreshContentPreference.DEFAULT_ENABLE_DIRECT_MESSAGES)) {
 			final long[] since_ids = getNewestMessageIdsFromDatabase(mContext, DirectMessages.Inbox.CONTENT_URI,
 					account_ids);
-			getReceivedDirectMessages(account_ids, null, since_ids);
-			getSentDirectMessages(account_ids, null, null);
+			getReceivedDirectMessagesAsync(account_ids, null, since_ids);
+			getSentDirectMessagesAsync(account_ids, null, null);
 		}
 		if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_TRENDS,
 				HomeRefreshContentPreference.DEFAULT_ENABLE_TRENDS)) {
 			final long account_id = getDefaultAccountId(mContext);
 			final int woeid = mPreferences.getInt(PREFERENCE_KEY_LOCAL_TRENDS_WOEID, 1);
-			getLocalTrends(account_id, woeid);
+			getLocalTrendsAsync(account_id, woeid);
 		}
 		final long[] since_ids = getNewestStatusIdsFromDatabase(mContext, Statuses.CONTENT_URI, account_ids);
-		return getHomeTimeline(account_ids, null, since_ids);
+		return getHomeTimelineAsync(account_ids, null, since_ids);
 	}
 
 	public int reportMultiSpam(final long account_id, final long[] user_ids) {

@@ -24,6 +24,7 @@ import static org.mariotaku.twidere.util.CustomTabUtils.getTabIconDrawable;
 import static org.mariotaku.twidere.util.CustomTabUtils.getTabIconObject;
 import static org.mariotaku.twidere.util.CustomTabUtils.getTabTypeName;
 import static org.mariotaku.twidere.util.CustomTabUtils.isTabAdded;
+import static org.mariotaku.twidere.util.Utils.isOfficialConsumerKeySecret;
 
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
@@ -231,6 +232,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 	@Override
 	public void onPrepareOptionsMenu(final Menu menu) {
 		final Resources res = getResources();
+		final boolean is_official_key_secret = isOfficialConsumerKeySecret(getActivity());
 		final MenuItem itemAdd = menu.findItem(R.id.add_submenu);
 		if (itemAdd != null && itemAdd.hasSubMenu()) {
 			final SubMenu subMenu = itemAdd.getSubMenu();
@@ -246,7 +248,10 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 				intent.setClass(getActivity(), CustomTabEditorActivity.class);
 				intent.putExtra(EXTRA_TYPE, type);
 				final MenuItem subItem = subMenu.add(conf.getDefaultTitle());
-				final boolean should_disable = conf.isSingleTab() && isTabAdded(getActivity(), type);
+				final boolean is_activities_tab = TAB_TYPE_ACTIVITIES_ABOUT_ME.equals(type)
+						|| TAB_TYPE_ACTIVITIES_BY_FRIENDS.equals(type);
+				final boolean should_disable = conf.isSingleTab() && isTabAdded(getActivity(), type)
+						|| is_activities_tab && !is_official_key_secret;
 				subItem.setVisible(!should_disable);
 				subItem.setEnabled(!should_disable);
 				subItem.setIcon(new DropShadowDrawable(res, res.getDrawable(conf.getDefaultIcon()), 2, 0x80000000));

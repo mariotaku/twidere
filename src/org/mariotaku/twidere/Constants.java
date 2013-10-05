@@ -49,7 +49,7 @@ public interface Constants {
 	public static final String TIMELINE_POSITIONS_PREFERENCES_NAME = "timeline_positions";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 46;
+	public static final int DATABASES_VERSION = 47;
 
 	public static final String TWITTER_CONSUMER_KEY = "uAFVpMhBntJutfVj6abfA";
 	public static final String TWITTER_CONSUMER_SECRET = "JARXkJTfxo0F8MyctYy9bUmrLISjo8vXAHsZHYuk2E";
@@ -114,6 +114,7 @@ public interface Constants {
 	public static final String QUERY_PARAM_LNG = "lng";
 	public static final String QUERY_PARAM_CONVERSATION_ID = "conversation_id";
 	public static final String QUERY_PARAM_URL = "url";
+	public static final String QUERY_PARAM_NAME = "name";
 	public static final String QUERY_PARAM_FINISH_ONLY = "finish_only";
 	public static final String QUERY_PARAM_NEW_ITEMS_COUNT = "new_items_count";
 
@@ -185,7 +186,7 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_DNS_SERVER = "dns_server";
 	public static final String PREFERENCE_KEY_SEPARATE_RETWEET_ACTION = "separate_retweet_action";
 	public static final String PREFERENCE_KEY_CONNECTION_TIMEOUT = "connection_timeout";
-	public static final String PREFERENCE_KEY_NAME_DISPLAY_OPTION = "name_display_option";
+	public static final String PREFERENCE_KEY_NAME_FIRST = "name_first";
 	public static final String PREFERENCE_KEY_STOP_AUTO_REFRESH_WHEN_BATTERY_LOW = "stop_auto_refresh_when_battery_low";
 	public static final String PREFERENCE_KEY_UCD_DATA_PROFILING = "ucd_data_profiling";
 	public static final String PREFERENCE_KEY_SHOW_UCD_DATA_PROFILING_REQUEST = "show_ucd_data_profiling_request";
@@ -216,6 +217,7 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_FILTERS_FOR_RTS = "filters_for_rts";
 	public static final String PREFERENCE_KEY_NICKNAME_ONLY = "nickname_only";
 	public static final String PREFERENCE_KEY_SETTINGS_WIZARD_COMPLETED = "settings_wizard_completed";
+	public static final String PREFERENCE_KEY_CARD_ANIMATION = "card_animation";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;
@@ -225,13 +227,6 @@ public interface Constants {
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
 	public static final int PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT = 20;
 	public static final boolean PREFERENCE_DEFAULT_HARDWARE_ACCELERATION = true;
-
-	public static final String NAME_DISPLAY_OPTION_BOTH = "both";
-	public static final String NAME_DISPLAY_OPTION_NAME = "name";
-	public static final String NAME_DISPLAY_OPTION_SCREEN_NAME = "screen_name";
-	public static final int NAME_DISPLAY_OPTION_CODE_BOTH = 0;
-	public static final int NAME_DISPLAY_OPTION_CODE_NAME = 1;
-	public static final int NAME_DISPLAY_OPTION_CODE_SCREEN_NAME = 2;
 
 	public static final String LINK_HIGHLIGHT_OPTION_NONE = "none";
 	public static final String LINK_HIGHLIGHT_OPTION_HIGHLIGHT = "highlight";
@@ -486,6 +481,10 @@ public interface Constants {
 	public static final int MENU_SET_NICKNAME = R.id.set_nickname;
 	public static final int MENU_CLEAR_NICKNAME = R.id.clear_nickname;
 
+	public static final int MENU_GROUP_STATUS_EXTENSION = 10;
+	public static final int MENU_GROUP_COMPOSE_EXTENSION = 11;
+	public static final int MENU_GROUP_IMAGE_EXTENSION = 12;
+
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_PICK_IMAGE = 2;
 	public static final int REQUEST_SELECT_ACCOUNT = 3;
@@ -528,6 +527,7 @@ public interface Constants {
 	public static final String TABLE_PERMISSIONS = TweetStore.Permissions.TABLE_NAME;
 	public static final String TABLE_DNS = TweetStore.DNS.TABLE_NAME;
 	public static final String TABLE_CACHED_IMAGES = TweetStore.CachedImages.TABLE_NAME;
+	public static final String TABLE_CACHE_FILES = TweetStore.CacheFiles.TABLE_NAME;
 
 	public static final int TABLE_ID_ACCOUNTS = 1;
 	public static final int TABLE_ID_STATUSES = 2;
@@ -554,6 +554,7 @@ public interface Constants {
 	public static final int VIRTUAL_TABLE_ID_PERMISSIONS = 104;
 	public static final int VIRTUAL_TABLE_ID_DNS = 105;
 	public static final int VIRTUAL_TABLE_ID_CACHED_IMAGES = 106;
+	public static final int VIRTUAL_TABLE_ID_CACHE_FILES = 107;
 
 	public static final int LINK_ID_STATUS = 1;
 	public static final int LINK_ID_USER = 2;
@@ -636,10 +637,12 @@ public interface Constants {
 	public static final String TAB_TYPE_SEARCH_STATUSES = "search_statuses";
 	public static final String TAB_TYPE_LIST_TIMELINE = "list_timeline";
 	public static final String TAB_TYPE_TRENDS = "trends";
+	public static final String TAB_TYPE_ACTIVITIES_ABOUT_ME = "activities_about_me";
+	public static final String TAB_TYPE_ACTIVITIES_BY_FRIENDS = "activities_by_friends";
 
 	public static final String TWIDERE_PREVIEW_NICKNAME = "Twidere";
 	public static final String TWIDERE_PREVIEW_NAME = "Twidere Project";
-	public static final String TWIDERE_PREVIEW_SCREEN_NAME = "@TwidereProject";
+	public static final String TWIDERE_PREVIEW_SCREEN_NAME = "TwidereProject";
 	public static final String TWIDERE_PREVIEW_TEXT_HTML = "Twidere is an open source twitter client for Android, see <a href='https://github.com/mariotaku/twidere'>github.com/mariotak&#8230;<a/>";
 	public static final String TWIDERE_PREVIEW_SOURCE = "Twidere for Android";
 

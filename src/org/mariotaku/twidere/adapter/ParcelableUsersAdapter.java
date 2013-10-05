@@ -19,7 +19,7 @@
 
 package org.mariotaku.twidere.adapter;
 
-import static org.mariotaku.twidere.util.Utils.configBaseAdapter;
+import static org.mariotaku.twidere.util.Utils.configBaseCardAdapter;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
@@ -50,8 +50,9 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 	private final Context mContext;
 	private final Locale mLocale;
 
-	private boolean mDisplayProfileImage, mShowAccountColor, mNicknameOnly;
+	private boolean mDisplayProfileImage, mShowAccountColor, mNicknameOnly, mAnimationEnabled;
 	private float mTextSize;
+	private int mMaxAnimationPosition;
 
 	private MenuButtonClickListener mListener;
 
@@ -62,7 +63,7 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 		final TwidereApplication app = TwidereApplication.getInstance(context);
 		mProfileImageLoader = app.getImageLoaderWrapper();
 		mMultiSelectManager = app.getMultiSelectManager();
-		configBaseAdapter(context, this);
+		configBaseCardAdapter(context, this);
 	}
 
 	@Override
@@ -113,6 +114,12 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 			mProfileImageLoader.displayProfileImage(holder.profile_image, user.profile_image_url);
 		}
 		holder.item_menu.setTag(position);
+		if (position > mMaxAnimationPosition) {
+			if (mAnimationEnabled) {
+				view.startAnimation(holder.item_animation);
+			}
+			mMaxAnimationPosition = position;
+		}
 		return view;
 	}
 
@@ -129,6 +136,12 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 				break;
 			}
 		}
+	}
+
+	@Override
+	public void setAnimationEnabled(final boolean anim) {
+		if (mAnimationEnabled == anim) return;
+		mAnimationEnabled = anim;
 	}
 
 	public void setData(final List<ParcelableUser> data) {
@@ -148,6 +161,11 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 	}
 
 	@Override
+	public void setDisplayNameFirst(final boolean name_first) {
+
+	}
+
+	@Override
 	public void setDisplayProfileImage(final boolean display) {
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
@@ -161,12 +179,13 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 	}
 
 	@Override
-	public void setMenuButtonClickListener(final MenuButtonClickListener listener) {
-		mListener = listener;
+	public void setMaxAnimationPosition(final int position) {
+		mMaxAnimationPosition = position;
 	}
 
 	@Override
-	public void setNameDisplayOption(final String option) {
+	public void setMenuButtonClickListener(final MenuButtonClickListener listener) {
+		mListener = listener;
 	}
 
 	@Override

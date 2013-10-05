@@ -20,11 +20,10 @@
 package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.model.ParcelableLocation.isValidLocation;
-import static org.mariotaku.twidere.util.Utils.configBaseAdapter;
+import static org.mariotaku.twidere.util.Utils.configBaseCardAdapter;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getLinkHighlightOptionInt;
-import static org.mariotaku.twidere.util.Utils.getNameDisplayOptionInt;
 import static org.mariotaku.twidere.util.Utils.getStatusBackground;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserNickname;
@@ -68,11 +67,11 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	private MenuButtonClickListener mListener;
 	private boolean mDisplayProfileImage, mDisplayImagePreview, mShowAccountColor, mGapDisallowed,
 			mMentionsHighlightDisabled, mFavoritesHighlightDisabled, mDisplaySensitiveContents,
-			mIndicateMyStatusDisabled, mIsLastItemFiltered, mFiltersEnabled;
+			mIndicateMyStatusDisabled, mIsLastItemFiltered, mFiltersEnabled, mAnimationEnabled;
 	private float mTextSize;
-	private int mNameDisplayOption, mLinkHighlightOption;
+	private int mLinkHighlightOption;
 	private boolean mFilterIgnoreSource, mFilterIgnoreScreenName, mFilterIgnoreTextHtml, mFilterIgnoreTextPlain,
-			mNicknameOnly;
+			mNicknameOnly, mDisplayNameFirst;
 	private int mMaxAnimationPosition;
 
 	public ParcelableStatusesAdapter(final Context context) {
@@ -84,7 +83,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		mDatabase = app.getSQLiteDatabase();
 		mLinkify = new TwidereLinkify(new OnLinkClickHandler(mContext));
 		mImageLoadingHandler = new ImageLoadingHandler();
-		configBaseAdapter(context, this);
+		configBaseCardAdapter(context, this);
 		setMaxAnimationPosition(-1);
 	}
 
@@ -181,7 +180,8 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			holder.setIsMyStatus(is_my_status && !mIndicateMyStatusDisabled);
 
 			holder.setUserType(status.user_is_verified, status.user_is_protected);
-			holder.setNameDisplayOption(mNameDisplayOption);
+			holder.setDisplayNameFirst(mDisplayNameFirst);
+			holder.setNicknameOnly(mNicknameOnly);
 			final String nick = getUserNickname(mContext, status.user_id);
 			holder.name.setText(TextUtils.isEmpty(nick) ? status.user_name : mNicknameOnly ? nick : mContext.getString(
 					R.string.name_with_nickname, status.user_name, nick));
@@ -198,9 +198,10 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 					status.has_media, status.is_possibly_sensitive);
 			holder.setIsReplyRetweet(status.in_reply_to_status_id > 0, status.is_retweet);
 			if (status.is_retweet) {
-				holder.setRetweetedBy(status.retweet_count, status.retweeted_by_name, status.retweeted_by_screen_name);
+				holder.setRetweetedBy(status.retweet_count, status.retweeted_by_id, status.retweeted_by_name,
+						status.retweeted_by_screen_name);
 			} else if (status.in_reply_to_status_id > 0) {
-				holder.setReplyTo(status.in_reply_to_screen_name);
+				holder.setReplyTo(status.in_reply_to_user_id, status.in_reply_to_name, status.in_reply_to_screen_name);
 			}
 			if (mDisplayProfileImage) {
 				mImageLoader.displayProfileImage(holder.my_profile_image, status.user_profile_image_url);
@@ -228,7 +229,9 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			holder.item_menu.setTag(position);
 		}
 		if (position > mMaxAnimationPosition) {
-			view.startAnimation(holder.item_animation);
+			if (mAnimationEnabled) {
+				view.startAnimation(holder.item_animation);
+			}
 			mMaxAnimationPosition = position;
 		}
 		return view;
@@ -275,6 +278,12 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	}
 
 	@Override
+	public void setAnimationEnabled(final boolean anim) {
+		if (mAnimationEnabled == anim) return;
+		mAnimationEnabled = anim;
+	}
+
+	@Override
 	public void setData(final List<ParcelableStatus> data) {
 		clear();
 		if (data != null && !data.isEmpty()) {
@@ -288,6 +297,13 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	public void setDisplayImagePreview(final boolean display) {
 		if (display == mDisplayImagePreview) return;
 		mDisplayImagePreview = display;
+		notifyDataSetChanged();
+	}
+
+	@Override
+	public void setDisplayNameFirst(final boolean name_first) {
+		if (mDisplayNameFirst == name_first) return;
+		mDisplayNameFirst = name_first;
 		notifyDataSetChanged();
 	}
 
@@ -369,14 +385,6 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	@Override
 	public void setMenuButtonClickListener(final MenuButtonClickListener listener) {
 		mListener = listener;
-	}
-
-	@Override
-	public void setNameDisplayOption(final String option) {
-		final int option_int = getNameDisplayOptionInt(option);
-		if (option_int == mNameDisplayOption) return;
-		mNameDisplayOption = option_int;
-		notifyDataSetChanged();
 	}
 
 	@Override

@@ -205,5 +205,4 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 		super.onStop();
 	}
 
-
 }

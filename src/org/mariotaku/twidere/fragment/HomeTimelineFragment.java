@@ -54,7 +54,7 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 		final AsyncTwitterWrapper twitter = getTwitterWrapper();
 		if (twitter == null) return 0;
 		if (max_ids == null) return twitter.refreshAll();
-		return twitter.getHomeTimeline(account_ids, max_ids, since_ids);
+		return twitter.getHomeTimelineAsync(account_ids, max_ids, since_ids);
 	}
 
 	@Override

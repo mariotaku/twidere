@@ -15,7 +15,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"/>
 
-		<ImageButton
+		<org.mariotaku.twidere.view.NavigationArrowButton
 			android:id="@+id/prev_image"
 			android:layout_width="64dp"
 			android:layout_height="match_parent"
@@ -24,7 +24,7 @@
 			android:src="@drawable/arrow_left_holo"
 			android:visibility="gone"/>
 
-		<ImageButton
+		<org.mariotaku.twidere.view.NavigationArrowButton
 			android:id="@+id/next_image"
 			android:layout_width="64dp"
 			android:layout_height="match_parent"

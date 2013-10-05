@@ -19,7 +19,7 @@
 
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.configBaseAdapter;
+import static org.mariotaku.twidere.util.Utils.configBaseCardAdapter;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getNewestMessageIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.getOldestMessageIdsFromDatabase;
@@ -168,8 +168,8 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 			protected void onPostExecute(final long[][] result) {
 				final AsyncTwitterWrapper twitter = getTwitterWrapper();
 				if (twitter == null) return;
-				twitter.getReceivedDirectMessages(result[0], null, result[1]);
-				twitter.getSentDirectMessages(result[0], null, null);
+				twitter.getReceivedDirectMessagesAsync(result[0], null, result[1]);
+				twitter.getSentDirectMessagesAsync(result[0], null, null);
 			}
 
 		}.execute();
@@ -179,7 +179,7 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 	public void onResume() {
 		super.onResume();
 		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
-		configBaseAdapter(getActivity(), mAdapter);
+		configBaseCardAdapter(getActivity(), mAdapter);
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 	}
 
@@ -190,7 +190,7 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 			case SCROLL_STATE_TOUCH_SCROLL: {
 				final AsyncTwitterWrapper twitter = getTwitterWrapper();
 				if (twitter != null) {
-					twitter.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
+					twitter.clearNotificationAsync(NOTIFICATION_ID_DIRECT_MESSAGES);
 				}
 				break;
 			}
@@ -262,8 +262,8 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 			protected void onPostExecute(final long[][] result) {
 				final AsyncTwitterWrapper twitter = getTwitterWrapper();
 				if (twitter == null) return;
-				twitter.getReceivedDirectMessages(result[0], result[1], null);
-				twitter.getSentDirectMessages(result[0], result[2], null);
+				twitter.getReceivedDirectMessagesAsync(result[0], result[1], null);
+				twitter.getSentDirectMessagesAsync(result[0], result[2], null);
 			}
 
 		}.execute();

@@ -1,12 +1,11 @@
 package org.mariotaku.internal.menu;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.view.ActionProvider;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
@@ -20,6 +19,8 @@ public class MenuItemImpl implements MenuItem {
 	private SubMenu subMenu;
 	private final Context context;
 	private boolean visible = true, enabled = true, checkable, checked;
+	private View actionView;
+	private ActionProvider actionProvider;
 
 	public MenuItemImpl(final Context context) {
 		this.context = context;
@@ -35,15 +36,14 @@ public class MenuItemImpl implements MenuItem {
 		return false;
 	}
 
-	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	@Override
 	public ActionProvider getActionProvider() {
-		return null;
+		return actionProvider;
 	}
 
 	@Override
 	public View getActionView() {
-		return null;
+		return actionView;
 	}
 
 	@Override
@@ -126,25 +126,26 @@ public class MenuItemImpl implements MenuItem {
 		return enabled;
 	}
 
-	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	@Override
 	public boolean isVisible() {
 		return visible;
 	}
 
-	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	@Override
 	public MenuItem setActionProvider(final ActionProvider actionProvider) {
+		this.actionProvider = actionProvider;
 		return this;
 	}
 
 	@Override
 	public MenuItem setActionView(final int resId) {
+		actionView = LayoutInflater.from(context).inflate(resId, null);
 		return this;
 	}
 
 	@Override
 	public MenuItem setActionView(final View view) {
+		actionView = view;
 		return this;
 	}
 
@@ -194,7 +195,6 @@ public class MenuItemImpl implements MenuItem {
 		return this;
 	}
 
-	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	@Override
 	public MenuItem setOnActionExpandListener(final OnActionExpandListener listener) {
 		return this;

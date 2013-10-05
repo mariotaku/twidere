@@ -30,11 +30,11 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.widget.AdapterView;
 
 import org.mariotaku.popupmenu.PopupMenu;
-import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.ParcelableUsersAdapter;
 import org.mariotaku.twidere.loader.CursorSupportUsersLoader;
@@ -122,7 +122,7 @@ public class UserListMembersFragment extends CursorSupportUsersListFragment impl
 		if (mSelectedUser == null || mUserList == null) return false;
 		switch (item.getItemId()) {
 			case MENU_DELETE: {
-				mTwitterWrapper.deleteUserListMembers(getAccountId(), mUserList.id, mSelectedUser.id);
+				mTwitterWrapper.deleteUserListMembersAsync(getAccountId(), mUserList.id, mSelectedUser.id);
 				break;
 			}
 			case MENU_VIEW_PROFILE: {

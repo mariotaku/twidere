@@ -45,7 +45,7 @@ public class DefaultAPIPreference extends DialogPreference implements Constants,
 
 	public DefaultAPIPreference(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		setDialogLayoutResource(R.layout.edit_api_content);
+		setDialogLayoutResource(R.layout.api_editor_content);
 		setPositiveButtonText(android.R.string.ok);
 	}
 

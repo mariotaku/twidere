@@ -90,6 +90,7 @@
 	</LinearLayout>
 
 	<LinearLayout
+		android:id="@+id/compose_content"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:orientation="vertical">
@@ -100,48 +101,35 @@
 			android:layout_height="0dp"
 			android:layout_weight="1">
 
-			<org.mariotaku.twidere.view.StatusComposeEditText
-				android:id="@+id/edit_text"
+			<ImageView
+				android:id="@+id/image_thumbnail_preview"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
-				android:layout_margin="8dp"
-				android:completionThreshold="1"
-				android:gravity="top"
-				android:hint="@string/status_hint"
-				android:imeOptions="actionDone"
-				android:minLines="10">
-
-				<requestFocus/>
-			</org.mariotaku.twidere.view.StatusComposeEditText>
+				android:layout_alignBottom="@+id/edit_text_container"
+				android:layout_alignTop="@+id/edit_text_container"
+				android:alpha="0.2"
+				android:contentDescription="@string/preview"
+				android:scaleType="centerCrop"
+				android:visibility="gone"/>
 
 			<FrameLayout
+				android:id="@+id/edit_text_container"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_gravity="bottom"
-				android:layout_margin="16dp">
+				android:padding="@dimen/element_spacing_default">
 
-				<ImageView
-					android:id="@+id/image_thumbnail_preview"
-					style="?android:borderlessButtonStyle"
-					android:layout_width="42dp"
-					android:layout_height="42dp"
-					android:layout_gravity="center_vertical|left"
-					android:alpha="0.5"
-					android:radius="3dp"
-					android:scaleType="fitCenter"
-					android:visibility="gone"/>
-
-				<TextView
-					android:id="@+id/text_count"
-					android:layout_width="wrap_content"
+				<org.mariotaku.twidere.view.StatusComposeEditText
+					android:id="@+id/edit_text"
+					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:layout_gravity="bottom|right"
-					android:gravity="center"
-					android:paddingLeft="8dp"
-					android:paddingRight="8dp"
-					android:singleLine="true"
-					android:textAppearance="?android:attr/textAppearanceMedium"
-					android:textColor="#80808080"/>
+					android:completionThreshold="1"
+					android:gravity="top"
+					android:hint="@string/status_hint"
+					android:imeOptions="actionDone"
+					android:minLines="10">
+
+					<requestFocus/>
+				</org.mariotaku.twidere.view.StatusComposeEditText>
 			</FrameLayout>
 		</org.mariotaku.twidere.view.AccountsColorFrameLayout>
 

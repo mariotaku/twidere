@@ -19,7 +19,7 @@
 
 package org.mariotaku.twidere.adapter;
 
-import static org.mariotaku.twidere.util.Utils.configBaseAdapter;
+import static org.mariotaku.twidere.util.Utils.configBaseCardAdapter;
 import static org.mariotaku.twidere.util.Utils.findDirectMessageInDatabases;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getLinkHighlightOptionInt;
@@ -56,8 +56,9 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 	private MenuButtonClickListener mListener;
 
 	private int mLinkHighlightOption;
-	private boolean mDisplayProfileImage;
+	private boolean mDisplayProfileImage, mAnimationEnabled = true;
 	private float mTextSize;
+	private int mMaxAnimationPosition;
 
 	private DirectMessageCursorIndices mIndices;
 
@@ -68,7 +69,7 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		mMultiSelectManager = app.getMultiSelectManager();
 		mImageLoader = app.getImageLoaderWrapper();
 		mLinkify = new TwidereLinkify(new OnDirectMessageLinkClickHandler(context));
-		configBaseAdapter(context, this);
+		configBaseCardAdapter(context, this);
 	}
 
 	@Override
@@ -99,7 +100,12 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 			holder.incoming_profile_image.setTag(position);
 			holder.outgoing_profile_image.setTag(position);
 		}
-
+		if (position > mMaxAnimationPosition) {
+			if (mAnimationEnabled) {
+				view.startAnimation(holder.item_animation);
+			}
+			mMaxAnimationPosition = position;
+		}
 		super.bindView(view, context, cursor);
 	}
 
@@ -162,6 +168,17 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 	}
 
 	@Override
+	public void setAnimationEnabled(final boolean anim) {
+		if (mAnimationEnabled == anim) return;
+		mAnimationEnabled = anim;
+	}
+
+	@Override
+	public void setDisplayNameFirst(final boolean name_first) {
+
+	}
+
+	@Override
 	public void setDisplayProfileImage(final boolean display) {
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
@@ -186,12 +203,13 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 	}
 
 	@Override
-	public void setMenuButtonClickListener(final MenuButtonClickListener listener) {
-		mListener = listener;
+	public void setMaxAnimationPosition(final int position) {
+		mMaxAnimationPosition = position;
 	}
 
 	@Override
-	public void setNameDisplayOption(final String option) {
+	public void setMenuButtonClickListener(final MenuButtonClickListener listener) {
+		mListener = listener;
 	}
 
 	@Override

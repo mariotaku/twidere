@@ -68,11 +68,7 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 			case R.id.screen_name_confirm: {
 				final String screen_name = parseString(mEditScreenName.getText());
 				if (isEmpty(screen_name)) return;
-				if (isSelectingUser()) {
-					searchUser(screen_name);
-				} else {
-					getUserLists(screen_name);
-				}
+				searchUser(screen_name);
 				break;
 			}
 			case R.id.create_list: {

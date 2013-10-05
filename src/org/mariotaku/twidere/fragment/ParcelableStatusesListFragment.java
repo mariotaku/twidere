@@ -186,6 +186,12 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	}
 
 	@Override
+	public void setProgressBarIndeterminateVisibility(final boolean visible) {
+		super.setProgressBarIndeterminateVisibility(visible);
+		setRefreshing(visible);
+	}
+
+	@Override
 	protected final long[] getNewestStatusIds() {
 		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();
 		final long last_id = adapter.getCount() > 0 ? adapter.getStatus(0).id : -1;
@@ -255,12 +261,6 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 			return false;
 		}
 		return true;
-	}
-
-	@Override
-	public void setProgressBarIndeterminateVisibility(boolean visible) {
-		super.setProgressBarIndeterminateVisibility(visible);
-		setRefreshing(visible);
 	}
 
 }

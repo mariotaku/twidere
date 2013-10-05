@@ -4,6 +4,7 @@
 	<item
 		android:id="@id/delete"
 		android:icon="@android:drawable/ic_menu_delete"
+		android:showAsAction="ifRoom|withText"
 		android:title="@string/delete"/>
 
 </menu>

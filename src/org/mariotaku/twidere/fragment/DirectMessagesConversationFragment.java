@@ -21,9 +21,8 @@ package org.mariotaku.twidere.fragment;
 
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.buildDirectMessageConversationUri;
-import static org.mariotaku.twidere.util.Utils.configBaseAdapter;
+import static org.mariotaku.twidere.util.Utils.configBaseCardAdapter;
 import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
-import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.showOkMessage;
 
 import android.content.BroadcastReceiver;
@@ -44,11 +43,11 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.AutoCompleteTextView;
@@ -64,7 +63,6 @@ import android.widget.TextView.OnEditorActionListener;
 import com.twitter.Validator;
 
 import org.mariotaku.popupmenu.PopupMenu;
-import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.AccountsSpinnerAdapter;
 import org.mariotaku.twidere.adapter.DirectMessagesConversationAdapter;
@@ -81,8 +79,8 @@ import org.mariotaku.twidere.view.holder.DirectMessageConversationViewHolder;
 import java.util.Locale;
 
 public class DirectMessagesConversationFragment extends BaseSupportListFragment implements LoaderCallbacks<Cursor>,
-		OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener, TextWatcher, OnClickListener,
-		Panes.Right, OnItemSelectedListener, OnEditorActionListener {
+		OnItemLongClickListener, OnMenuItemClickListener, TextWatcher, OnClickListener, Panes.Right,
+		OnItemSelectedListener, OnEditorActionListener {
 
 	private final Validator mValidator = new Validator();
 	private AsyncTwitterWrapper mTwitterWrapper;
@@ -169,7 +167,6 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
 		mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
 		mListView.setStackFromBottom(true);
-		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
 		final Bundle args = savedInstanceState == null ? getArguments() : savedInstanceState.getBundle(EXTRA_DATA);
 		if (args != null) {
@@ -283,13 +280,6 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 	}
 
 	@Override
-	public void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
-		final Object tag = view.getTag();
-		if (tag instanceof DirectMessageConversationViewHolder) {
-		}
-	}
-
-	@Override
 	public boolean onItemLongClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
 		final Object tag = view.getTag();
 		if (tag instanceof DirectMessageConversationViewHolder) {
@@ -333,19 +323,13 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 			final long account_id = mSelectedDirectMessage.account_id;
 			switch (item.getItemId()) {
 				case MENU_DELETE: {
-					mTwitterWrapper.destroyDirectMessage(account_id, message_id);
+					mTwitterWrapper.destroyDirectMessageAsync(account_id, message_id);
 					break;
 				}
 				case MENU_COPY: {
 					if (ClipboardUtils.setText(getActivity(), mSelectedDirectMessage.text_plain)) {
 						showOkMessage(getActivity(), R.string.text_copied, false);
 					}
-					break;
-				}
-				case MENU_VIEW_PROFILE: {
-					if (mSelectedDirectMessage == null) return false;
-					openUserProfile(getActivity(), account_id, mSelectedDirectMessage.sender_id,
-							mSelectedDirectMessage.sender_screen_name);
 					break;
 				}
 				default:
@@ -363,7 +347,7 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 	@Override
 	public void onResume() {
 		super.onResume();
-		configBaseAdapter(getActivity(), mAdapter);
+		configBaseCardAdapter(getActivity(), mAdapter);
 	}
 
 	@Override

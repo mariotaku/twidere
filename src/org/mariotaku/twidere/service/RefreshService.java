@@ -160,21 +160,21 @@ public class RefreshService extends Service implements Constants {
 	}
 
 	private int getHomeTimeline(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
-		return mTwitterWrapper.getHomeTimeline(account_ids, max_ids, since_ids);
+		return mTwitterWrapper.getHomeTimelineAsync(account_ids, max_ids, since_ids);
 	}
 
 	private int getLocalTrends() {
 		final long account_id = getDefaultAccountId(this);
 		final int woeid = mPreferences.getInt(PREFERENCE_KEY_LOCAL_TRENDS_WOEID, 1);
-		return mTwitterWrapper.getLocalTrends(account_id, woeid);
+		return mTwitterWrapper.getLocalTrendsAsync(account_id, woeid);
 	}
 
 	private int getMentions(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
-		return mTwitterWrapper.getMentions(account_ids, max_ids, since_ids);
+		return mTwitterWrapper.getMentionsAsync(account_ids, max_ids, since_ids);
 	}
 
 	private int getReceivedDirectMessages(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
-		return mTwitterWrapper.getReceivedDirectMessages(account_ids, max_ids, since_ids);
+		return mTwitterWrapper.getReceivedDirectMessagesAsync(account_ids, max_ids, since_ids);
 	}
 
 	private boolean isHomeTimelineRefreshing() {

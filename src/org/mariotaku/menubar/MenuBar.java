@@ -7,6 +7,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -18,7 +19,7 @@ import org.mariotaku.internal.menu.MenuImpl;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.twidere.util.ViewAccessor;
 
-public class MenuBar extends LinearLayout implements PopupMenu.OnMenuItemClickListener {
+public class MenuBar extends LinearLayout implements MenuItem.OnMenuItemClickListener {
 
 	private final Menu mMenu;
 	private final Context mContext;
@@ -101,55 +102,55 @@ public class MenuBar extends LinearLayout implements PopupMenu.OnMenuItemClickLi
 	}
 
 	private View addMenuButton(final MenuItem item) {
-
-		final ImageButton actionButton = new ImageButton(mContext, null, android.R.attr.actionButtonStyle);
 		final LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.MATCH_PARENT);
-		// params.weight = mStretchButtonsEnabled ? 1 : 0;
 		params.weight = 1;
-		actionButton.setLayoutParams(params);
 
-		actionButton.setImageDrawable(item.getIcon());
-		actionButton.setScaleType(ScaleType.CENTER);
-		actionButton.setContentDescription(item.getTitle());
-		actionButton.setEnabled(item.isEnabled());
-		actionButton.setOnClickListener(new View.OnClickListener() {
+		final View actionView = item.getActionView(), view;
+		if (actionView != null) {
+			view = actionView;
+		} else {
+			final ImageButton actionButton = new ImageButton(mContext, null, android.R.attr.actionButtonStyle);
+			actionButton.setImageDrawable(item.getIcon());
+			actionButton.setScaleType(ScaleType.CENTER);
+			actionButton.setContentDescription(item.getTitle());
+			actionButton.setEnabled(item.isEnabled());
+			actionButton.setOnClickListener(new View.OnClickListener() {
 
-			@Override
-			public void onClick(final View view) {
-				if (!item.isEnabled()) return;
-				if (item.hasSubMenu()) {
-					mPopupMenu = PopupMenu.getInstance(mContext, view);
-					mPopupMenu.setOnMenuItemClickListener(MenuBar.this);
-					mPopupMenu.setMenu(item.getSubMenu());
-					mPopupMenu.show();
-				} else {
-					if (mItemClickListener != null) {
-						mItemClickListener.onMenuItemClick(item);
+				@Override
+				public void onClick(final View view) {
+					if (!item.isEnabled()) return;
+					if (item.hasSubMenu()) {
+						mPopupMenu = PopupMenu.getInstance(mContext, view);
+						mPopupMenu.setOnMenuItemClickListener(MenuBar.this);
+						mPopupMenu.setMenu(item.getSubMenu());
+						mPopupMenu.show();
+					} else {
+						if (mItemClickListener != null) {
+							mItemClickListener.onMenuItemClick(item);
+						}
 					}
 				}
-			}
-		});
-		actionButton.setOnLongClickListener(new View.OnLongClickListener() {
+			});
+			actionButton.setOnLongClickListener(new View.OnLongClickListener() {
 
-			@Override
-			public boolean onLongClick(final View v) {
-				if (item.getItemId() == android.R.id.home) return false;
+				@Override
+				public boolean onLongClick(final View v) {
+					final Toast t = Toast.makeText(mContext, item.getTitle(), Toast.LENGTH_SHORT);
+					final int[] screenPos = new int[2];
+					v.getLocationOnScreen(screenPos);
 
-				final Toast t = Toast.makeText(mContext, item.getTitle(), Toast.LENGTH_SHORT);
-				final int[] screenPos = new int[2];
-				v.getLocationOnScreen(screenPos);
+					final int height = v.getHeight();
 
-				final int height = v.getHeight();
-
-				t.setGravity(Gravity.TOP | Gravity.LEFT, screenPos[0], (int) (screenPos[1] - height * 1.5));
-				t.show();
-				return true;
-			}
-		});
-
-		addView(actionButton);
-		return actionButton;
+					t.setGravity(Gravity.TOP | Gravity.LEFT, screenPos[0], (int) (screenPos[1] - height * 1.5));
+					t.show();
+					return true;
+				}
+			});
+			view = actionButton;
+		}
+		addView(view, params);
+		return view;
 	}
 
 	private static boolean hasBackground(final AttributeSet attrs) {
@@ -158,13 +159,6 @@ public class MenuBar extends LinearLayout implements PopupMenu.OnMenuItemClickLi
 			if (attrs.getAttributeNameResource(i) == android.R.attr.background) return true;
 		}
 		return false;
-	}
-
-	/**
-	 * Listener for item click
-	 */
-	public interface OnMenuItemClickListener {
-		public boolean onMenuItemClick(MenuItem item);
 	}
 
 }

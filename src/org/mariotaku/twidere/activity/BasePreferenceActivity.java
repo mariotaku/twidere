@@ -64,12 +64,12 @@ class BasePreferenceActivity extends PreferenceActivity implements Constants, IT
 		restartActivity(this);
 	}
 
-	private final boolean isThemeChanged() {
-		return getThemeResource() != mCurrentThemeResource;
-	}
-	
 	protected boolean shouldRestartWhenThemeChanged() {
 		return true;
+	}
+
+	private final boolean isThemeChanged() {
+		return getThemeResource() != mCurrentThemeResource;
 	}
 
 	private final void setActionBarBackground() {

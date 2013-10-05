@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/send"
+	style="?android:actionButtonStyle"
+	android:layout_width="wrap_content"
+	android:layout_height="match_parent"
+	android:clickable="true"
+	android:orientation="horizontal">
+
+	<org.mariotaku.twidere.view.ComposeTextCountView
+		android:id="@+id/send_text_count"
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
+		android:gravity="center"
+		android:text="test"
+		android:textAppearance="?android:textAppearanceSmall"
+		android:textStyle="bold"/>
+
+	<ImageView
+		android:id="@+id/send_icon"
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
+		android:contentDescription="@string/send"
+		android:paddingLeft="@dimen/element_spacing_default"
+		android:scaleType="centerInside"
+		android:src="@android:drawable/ic_menu_send"/>
+
+</LinearLayout>

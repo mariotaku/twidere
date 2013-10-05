@@ -41,7 +41,7 @@ public class ActivityViewHolder {
 	private float text_size;
 
 	public ActivityViewHolder(final View view) {
-		content = (ColorLabelRelativeLayout) view;
+		content = (ColorLabelRelativeLayout) view.findViewById(R.id.content);
 		profile_image = (ImageView) view.findViewById(R.id.profile_image);
 		title = (TextView) view.findViewById(R.id.title);
 		text = (TextView) view.findViewById(R.id.text);

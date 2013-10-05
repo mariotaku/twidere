@@ -38,7 +38,7 @@
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:layout_alignParentLeft="true"
-					android:layout_toLeftOf="@+id/edit_follow_container"
+					android:layout_toLeftOf="@+id/edit_follow"
 					android:background="?android:selectableItemBackground"
 					android:clickable="true"
 					android:gravity="center_vertical"
@@ -50,55 +50,61 @@
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:singleLine="true"
-						android:textAppearance="?android:attr/textAppearanceMedium"/>
+						android:textAppearance="?android:textAppearanceMedium"/>
 
 					<TextView
 						android:id="@+id/screen_name"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:singleLine="true"
-						android:textAppearance="?android:attr/textAppearanceSmall"
-						android:textColor="?android:attr/textColorSecondary"/>
-
-					<TextView
-						android:id="@+id/following_you_indicator"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:singleLine="true"
-						android:text="@string/following_you"
-						android:textAppearance="?android:attr/textAppearanceMedium"
-						android:textColor="?android:attr/textColorSecondary"
-						android:textSize="10sp"
-						android:textStyle="italic"
-						android:visibility="gone"/>
+						android:textAppearance="?android:textAppearanceSmall"/>
 				</LinearLayout>
 
 				<FrameLayout
-					android:id="@+id/edit_follow_container"
+					android:id="@+id/edit_follow"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_alignBottom="@+id/name_container"
 					android:layout_alignParentRight="true"
 					android:layout_alignTop="@+id/name_container"
-					android:layout_margin="4dp"
+					android:background="?android:selectableItemBackground"
+					android:minWidth="64dp"
+					android:padding="8dp"
 					android:visibility="gone">
 
-					<Button
-						android:id="@+id/edit_follow"
-						style="?android:attr/buttonStyleSmall"
+					<LinearLayout
+						android:id="@+id/edit_follow_label_container"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_gravity="center"
-						android:text="@string/follow"/>
+						android:gravity="center_vertical|left"
+						android:orientation="vertical">
+
+						<TextView
+							android:id="@+id/following_you_indicator"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:singleLine="true"
+							android:text="@string/following_you"
+							android:textAppearance="?android:textAppearanceSmall"
+							android:visibility="gone"/>
+
+						<TextView
+							android:id="@+id/edit_follow_label"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_gravity="center"
+							android:singleLine="true"
+							android:text="@string/follow"
+							android:textAppearance="?android:textAppearanceSmall"/>
+					</LinearLayout>
 
 					<ProgressBar
 						android:id="@+id/follow_progress"
-						style="?android:attr/progressBarStyleSmall"
+						style="?android:progressBarStyleSmall"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:layout_gravity="center"
-						android:layout_marginLeft="8dp"
-						android:layout_marginRight="8dp"/>
+						android:layout_gravity="center"/>
 				</FrameLayout>
 			</org.mariotaku.twidere.view.ColorLabelRelativeLayout>
 		</FrameLayout>
@@ -116,14 +122,14 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:text="@string/description"
-				android:textAppearance="?android:attr/textAppearanceMedium"/>
+				android:textAppearance="?android:textAppearanceMedium"/>
 
 			<org.mariotaku.twidere.view.HandleSpanClickTextView
 				android:id="@+id/description"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:textColor="?android:attr/textColorSecondary"/>
+				android:textAppearance="?android:textAppearanceSmall"
+				android:textColor="?android:textColorSecondary"/>
 		</LinearLayout>
 
 		<LinearLayout
@@ -140,15 +146,15 @@
 				android:layout_height="wrap_content"
 				android:singleLine="true"
 				android:text="@string/location"
-				android:textAppearance="?android:attr/textAppearanceMedium"/>
+				android:textAppearance="?android:textAppearanceMedium"/>
 
 			<TextView
 				android:id="@+id/location"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:singleLine="true"
-				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:textColor="?android:attr/textColorSecondary"/>
+				android:textAppearance="?android:textAppearanceSmall"
+				android:textColor="?android:textColorSecondary"/>
 		</LinearLayout>
 
 		<LinearLayout
@@ -165,7 +171,7 @@
 				android:layout_height="wrap_content"
 				android:singleLine="true"
 				android:text="@string/url"
-				android:textAppearance="?android:attr/textAppearanceMedium"/>
+				android:textAppearance="?android:textAppearanceMedium"/>
 
 			<org.mariotaku.twidere.view.HandleSpanClickTextView
 				android:id="@+id/url"
@@ -173,71 +179,33 @@
 				android:layout_height="wrap_content"
 				android:autoLink="web"
 				android:singleLine="true"
-				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:textColor="?android:attr/textColorSecondary"/>
+				android:textAppearance="?android:textAppearanceSmall"
+				android:textColor="?android:textColorSecondary"/>
 		</LinearLayout>
 
 		<LinearLayout
+			android:id="@+id/created_at_container"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:baselineAligned="false"
-			android:orientation="horizontal">
+			android:background="?android:selectableItemBackground"
+			android:clickable="true"
+			android:orientation="vertical"
+			android:padding="4dp">
 
-			<LinearLayout
-				android:id="@+id/created_at_container"
-				android:layout_width="0dp"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center"
-				android:layout_weight="1"
-				android:background="?android:selectableItemBackground"
-				android:clickable="true"
-				android:orientation="vertical"
-				android:padding="4dp">
-
-				<TextView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:singleLine="true"
-					android:text="@string/created_at"
-					android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-				<TextView
-					android:id="@+id/created_at"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:singleLine="true"
-					android:textAppearance="?android:attr/textAppearanceSmall"
-					android:textColor="?android:attr/textColorSecondary"/>
-			</LinearLayout>
-
-			<FrameLayout
-				android:id="@+id/more_options_container"
+			<TextView
 				android:layout_width="wrap_content"
-				android:layout_height="48dp"
-				android:layout_marginLeft="4dp"
-				android:layout_marginRight="4dp"
-				android:layout_weight="0"
-				android:minWidth="72dp"
-				android:visibility="gone">
+				android:layout_height="wrap_content"
+				android:singleLine="true"
+				android:text="@string/created_at"
+				android:textAppearance="?android:textAppearanceMedium"/>
 
-				<Button
-					android:id="@+id/more_options"
-					style="?android:attr/buttonStyleSmall"
-					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
-					android:layout_gravity="center"
-					android:drawableRight="@drawable/expander_open_holo"
-					android:gravity="center"
-					android:text="@string/more"/>
-
-				<ProgressBar
-					android:id="@+id/more_options_progress"
-					style="?android:attr/progressBarStyleSmall"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_gravity="center"
-					android:visibility="gone"/>
-			</FrameLayout>
+			<TextView
+				android:id="@+id/created_at"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:singleLine="true"
+				android:textAppearance="?android:textAppearanceSmall"
+				android:textColor="?android:textColorSecondary"/>
 		</LinearLayout>
 
 		<View
@@ -266,16 +234,16 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:singleLine="true"
-					android:textAppearance="?android:attr/textAppearanceMedium"
-					android:textColor="?android:attr/textColorPrimary"/>
+					android:textAppearance="?android:textAppearanceMedium"
+					android:textColor="?android:textColorPrimary"/>
 
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:singleLine="true"
 					android:text="@string/statuses"
-					android:textAppearance="?android:attr/textAppearanceSmall"
-					android:textColor="?android:attr/textColorSecondary"/>
+					android:textAppearance="?android:textAppearanceSmall"
+					android:textColor="?android:textColorSecondary"/>
 			</LinearLayout>
 
 			<View
@@ -300,16 +268,16 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:singleLine="true"
-					android:textAppearance="?android:attr/textAppearanceMedium"
-					android:textColor="?android:attr/textColorPrimary"/>
+					android:textAppearance="?android:textAppearanceMedium"
+					android:textColor="?android:textColorPrimary"/>
 
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:singleLine="true"
 					android:text="@string/followers"
-					android:textAppearance="?android:attr/textAppearanceSmall"
-					android:textColor="?android:attr/textColorSecondary"/>
+					android:textAppearance="?android:textAppearanceSmall"
+					android:textColor="?android:textColorSecondary"/>
 			</LinearLayout>
 
 			<View
@@ -334,26 +302,27 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:singleLine="true"
-					android:textAppearance="?android:attr/textAppearanceMedium"
-					android:textColor="?android:attr/textColorPrimary"/>
+					android:textAppearance="?android:textAppearanceMedium"
+					android:textColor="?android:textColorPrimary"/>
 
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:singleLine="true"
 					android:text="@string/friends"
-					android:textAppearance="?android:attr/textAppearanceSmall"
-					android:textColor="?android:attr/textColorSecondary"/>
+					android:textAppearance="?android:textAppearanceSmall"
+					android:textColor="?android:textColorSecondary"/>
 			</LinearLayout>
 		</TableRow>
 	</LinearLayout>
 
 	<org.mariotaku.twidere.view.ListMenuOverflowButton
-		android:id="@+id/item_menu"
-		android:layout_width="36dp"
-		android:layout_height="48dp"
+		android:id="@+id/more_options"
+		android:layout_width="48dp"
+		android:layout_height="56dp"
 		android:layout_gravity="right|top"
 		android:clickable="true"
-		android:padding="10dp"/>
+		android:padding="14dp"
+		android:src="@drawable/ic_list_menu_moreoverflow_normal_holo"/>
 
 </FrameLayout>

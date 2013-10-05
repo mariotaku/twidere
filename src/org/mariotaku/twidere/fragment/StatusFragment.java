@@ -28,6 +28,7 @@ import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getDefaultTextSize;
+import static org.mariotaku.twidere.util.Utils.getDisplayName;
 import static org.mariotaku.twidere.util.Utils.getImagesInStatus;
 import static org.mariotaku.twidere.util.Utils.getMapStaticImageUri;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
@@ -71,6 +72,7 @@ import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -92,7 +94,6 @@ import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 import edu.ucdavis.earlybird.ProfilingUtil;
 
 import org.mariotaku.menubar.MenuBar;
-import org.mariotaku.menubar.MenuBar.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.ColorSelectorActivity;
 import org.mariotaku.twidere.adapter.ImagePreviewAdapter;
@@ -327,14 +328,14 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 				}
 				case MENU_FAVORITE: {
 					if (mStatus.is_favorite) {
-						mTwitterWrapper.destroyFavorite(mAccountId, mStatusId);
+						mTwitterWrapper.destroyFavoriteAsync(mAccountId, mStatusId);
 					} else {
 						mTwitterWrapper.createFavoriteAsync(mAccountId, mStatusId);
 					}
 					break;
 				}
 				case MENU_DELETE: {
-					mTwitterWrapper.destroyStatus(mAccountId, mStatusId);
+					mTwitterWrapper.destroyStatusAsync(mAccountId, mStatusId);
 					break;
 				}
 				case MENU_MUTE_SOURCE: {
@@ -443,8 +444,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			mTimeSourceView.setText(time);
 		}
 		mTimeSourceView.setMovementMethod(LinkMovementMethod.getInstance());
-		final boolean display_screen_name = NAME_DISPLAY_OPTION_SCREEN_NAME.equals(mPreferences.getString(
-				PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH));
+		final boolean name_first = mPreferences.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
 		mInReplyToView.setText(getString(R.string.in_reply_to, "@" + status.in_reply_to_screen_name));
 
 		if (mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true)) {
@@ -463,12 +463,13 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		}
 		mRetweetView.setVisibility(!status.user_is_protected ? View.VISIBLE : View.GONE);
 		if (status.is_retweet && status.retweet_id > 0) {
-			final String name = display_screen_name ? status.retweeted_by_screen_name : status.retweeted_by_name;
+			final String display_name = getDisplayName(getActivity(), status.retweeted_by_id, status.retweeted_by_name,
+					status.retweeted_by_screen_name, name_first, nickname_only, true);
 			if (status.retweet_count > 1) {
 				mRetweetView
-						.setText(getString(R.string.retweeted_by_with_count, name, status.retweet_count - 1));
+						.setText(getString(R.string.retweeted_by_with_count, display_name, status.retweet_count - 1));
 			} else {
-				mRetweetView.setText(getString(R.string.retweeted_by, name));
+				mRetweetView.setText(getString(R.string.retweeted_by, display_name));
 			}
 		} else {
 			if (status.retweet_count > 0) {
@@ -579,7 +580,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 				break;
 			}
 			case R.id.follow: {
-				mTwitterWrapper.createFriendship(mAccountId, mStatus.user_id);
+				mTwitterWrapper.createFriendshipAsync(mAccountId, mStatus.user_id);
 				break;
 			}
 			case R.id.in_reply_to: {

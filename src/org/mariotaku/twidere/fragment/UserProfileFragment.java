@@ -78,6 +78,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -92,7 +93,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.mariotaku.popupmenu.PopupMenu;
-import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.ColorSelectorActivity;
 import org.mariotaku.twidere.activity.UserListSelectorActivity;
@@ -113,6 +113,7 @@ import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
+import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 import org.mariotaku.twidere.view.ProfileImageBannerLayout;
 import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
@@ -137,9 +138,10 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 	private TextView mNameView, mScreenNameView, mDescriptionView, mLocationView, mURLView, mCreatedAtView,
 			mTweetCount, mFollowersCount, mFriendsCount, mFollowingYouIndicator, mErrorMessageView;
 	private View mNameContainer, mDescriptionContainer, mLocationContainer, mURLContainer, mTweetsContainer,
-			mFollowersContainer, mFriendsContainer, mEditFollowContainer, mMoreOptionsContainer;
-	private ProgressBar mFollowProgress, mMoreOptionsProgress;
-	private Button mEditFollowButton, mMoreOptionsButton, mRetryButton;
+			mFollowersContainer, mFriendsContainer, mEditFollowView, mEditFollowLabelContainer, mMoreOptionsButton;
+	private ProgressBar mFollowProgress;
+	private TextView mEditFollowLabel;
+	private Button mRetryButton;
 	private ColorLabelRelativeLayout mProfileNameContainer;
 	private ProfileImageBannerLayout mProfileImageBannerLayout;
 	private ListView mListView;
@@ -243,14 +245,12 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		@Override
 		public Loader<SingleResponse<Relationship>> onCreateLoader(final int id, final Bundle args) {
 			final boolean user_is_me = mUserId == mAccountId;
+			mEditFollowView.setVisibility(View.VISIBLE);
+			mEditFollowLabelContainer.setVisibility(user_is_me ? View.VISIBLE : View.GONE);
 			mFollowingYouIndicator.setVisibility(View.GONE);
-			mEditFollowContainer.setVisibility(View.VISIBLE);
-			mMoreOptionsContainer.setVisibility(user_is_me ? View.VISIBLE : View.GONE);
-			mEditFollowButton.setVisibility(user_is_me ? View.VISIBLE : View.GONE);
+			mEditFollowLabel.setVisibility(user_is_me ? View.VISIBLE : View.GONE);
 			mFollowProgress.setVisibility(user_is_me ? View.GONE : View.VISIBLE);
-			mMoreOptionsButton.setVisibility(View.GONE);
-			mMoreOptionsProgress.setVisibility(user_is_me ? View.GONE : View.VISIBLE);
-			mEditFollowButton.setText(user_is_me ? R.string.edit : R.string.loading);
+			mEditFollowLabel.setText(user_is_me ? R.string.edit : R.string.loading);
 			return new FriendshipLoader(getActivity(), mAccountId, mUserId);
 		}
 
@@ -268,15 +268,16 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 			if (data.data != null) {
 				mFriendship = data.data;
 				final boolean followed_by_user = data.data.isTargetFollowingSource();
-				mEditFollowButton.setVisibility(View.VISIBLE);
+				mEditFollowLabelContainer.setVisibility(View.VISIBLE);
+				mEditFollowLabel.setVisibility(View.VISIBLE);
 				if (data.data.isSourceFollowingTarget()) {
-					mEditFollowButton.setText(R.string.unfollow);
+					mEditFollowLabel.setText(R.string.unfollow);
 				} else {
 					if (mUser.is_protected) {
-						mEditFollowButton.setText(mUser.is_follow_request_sent ? R.string.follow_request_sent
+						mEditFollowLabel.setText(mUser.is_follow_request_sent ? R.string.follow_request_sent
 								: R.string.send_follow_request);
 					} else {
-						mEditFollowButton.setText(R.string.follow);
+						mEditFollowLabel.setText(R.string.follow);
 					}
 				}
 				mFollowingYouIndicator.setVisibility(followed_by_user && !user_is_me ? View.VISIBLE : View.GONE);
@@ -292,11 +293,8 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 					}
 				}
 			}
-			mEditFollowContainer.setVisibility(data.data == null && !user_is_me ? View.GONE : View.VISIBLE);
-			mMoreOptionsContainer.setVisibility(data.data == null && !user_is_me ? View.GONE : View.VISIBLE);
-			mMoreOptionsButton.setVisibility(data.data != null || user_is_me ? View.VISIBLE : View.GONE);
 			mFollowProgress.setVisibility(View.GONE);
-			mMoreOptionsProgress.setVisibility(View.GONE);
+			mEditFollowView.setVisibility(data.data == null && !user_is_me ? View.GONE : View.VISIBLE);
 		}
 
 	};
@@ -434,7 +432,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		mProfileImageView.setOnClickListener(this);
 		mProfileBannerView.setOnClickListener(this);
 		mNameContainer.setOnClickListener(this);
-		mEditFollowButton.setOnClickListener(this);
+		mEditFollowView.setOnClickListener(this);
 		mTweetsContainer.setOnClickListener(this);
 		mFollowersContainer.setOnClickListener(this);
 		mFriendsContainer.setOnClickListener(this);
@@ -465,7 +463,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				if (resultCode == Activity.RESULT_OK && intent != null) {
 					final ParcelableUserList list = intent.getParcelableExtra(EXTRA_USER_LIST);
 					if (list == null) return;
-					mTwitterWrapper.addUserListMembers(mAccountId, list.id, mUserId);
+					mTwitterWrapper.addUserListMembersAsync(mAccountId, list.id, mUserId);
 				}
 				break;
 			}
@@ -499,8 +497,8 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 								switch (item.getItemId()) {
 									case R.id.unfollow: {
 										mFollowProgress.setVisibility(View.VISIBLE);
-										mEditFollowButton.setVisibility(View.GONE);
-										mTwitterWrapper.destroyFriendship(mAccountId, mUser.id);
+										mEditFollowLabelContainer.setVisibility(View.GONE);
+										mTwitterWrapper.destroyFriendshipAsync(mAccountId, mUser.id);
 										return true;
 									}
 								}
@@ -510,8 +508,8 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 						mFollowPopupMenu.show();
 					} else {
 						mFollowProgress.setVisibility(View.VISIBLE);
-						mEditFollowButton.setVisibility(View.GONE);
-						mTwitterWrapper.createFriendship(mAccountId, mUser.id);
+						mEditFollowLabelContainer.setVisibility(View.GONE);
+						mTwitterWrapper.createFriendshipAsync(mAccountId, mUser.id);
 					}
 				}
 				break;
@@ -548,13 +546,16 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 			}
 			case R.id.more_options: {
 				if (mUser == null) return;
+				if (mOptionsPopupMenu != null && mOptionsPopupMenu.isShowing()) {
+					mOptionsPopupMenu.dismiss();
+				}
 				mOptionsPopupMenu = PopupMenu.getInstance(getActivity(), view);
 				mOptionsPopupMenu.inflate(R.menu.action_user_profile);
 				final Menu menu = mOptionsPopupMenu.getMenu();
 				if (mUser.id != mAccountId) {
-					if (mFriendship == null) return;
+					Utils.setMenuItemAvailability(menu, MENU_BLOCK, mFriendship != null);
 					final MenuItem blockItem = menu.findItem(MENU_BLOCK);
-					if (blockItem != null) {
+					if (mFriendship != null && blockItem != null) {
 						final Drawable blockIcon = blockItem.getIcon();
 						if (mFriendship.isSourceBlockingTarget()) {
 							blockItem.setTitle(R.string.unblock);
@@ -565,16 +566,13 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 							blockIcon.clearColorFilter();
 						}
 					}
-					final MenuItem sendDirectMessageItem = menu.findItem(MENU_SEND_DIRECT_MESSAGE);
-					if (sendDirectMessageItem != null) {
-						sendDirectMessageItem.setVisible(mFriendship.isTargetFollowingSource());
-					}
+					final boolean is_following_me = mFriendship != null && mFriendship.isTargetFollowingSource();
+					Utils.setMenuItemAvailability(menu, MENU_SEND_DIRECT_MESSAGE, is_following_me);
 				} else {
-					for (int i = 0, size = menu.size(); i < size; i++) {
-						final MenuItem item = menu.getItem(i);
-						final int id = item.getItemId();
-						item.setVisible(id == R.id.set_color_submenu || id == 0);
-					}
+					Utils.setMenuItemAvailability(menu, MENU_MENTION, false);
+					Utils.setMenuItemAvailability(menu, MENU_SEND_DIRECT_MESSAGE, false);
+					Utils.setMenuItemAvailability(menu, MENU_BLOCK, false);
+					Utils.setMenuItemAvailability(menu, MENU_REPORT_SPAM, false);
 				}
 				final Intent intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER);
 				final Bundle extras = new Bundle();
@@ -617,12 +615,11 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		mDescriptionContainer = mHeaderView.findViewById(R.id.description_container);
 		mLocationContainer = mHeaderView.findViewById(R.id.location_container);
 		mURLContainer = mHeaderView.findViewById(R.id.url_container);
-		mEditFollowContainer = mHeaderView.findViewById(R.id.edit_follow_container);
-		mEditFollowButton = (Button) mHeaderView.findViewById(R.id.edit_follow);
+		mEditFollowView = mHeaderView.findViewById(R.id.edit_follow);
+		mEditFollowLabelContainer = mHeaderView.findViewById(R.id.edit_follow_label_container);
+		mEditFollowLabel = (TextView) mHeaderView.findViewById(R.id.edit_follow_label);
 		mFollowProgress = (ProgressBar) mHeaderView.findViewById(R.id.follow_progress);
-		mMoreOptionsContainer = mHeaderView.findViewById(R.id.more_options_container);
-		mMoreOptionsButton = (Button) mHeaderView.findViewById(R.id.more_options);
-		mMoreOptionsProgress = (ProgressBar) mHeaderView.findViewById(R.id.more_options_progress);
+		mMoreOptionsButton = mHeaderView.findViewById(R.id.more_options);
 		mFollowingYouIndicator = (TextView) mHeaderView.findViewById(R.id.following_you_indicator);
 		mListContainer = super.onCreateView(inflater, container, savedInstanceState);
 		final View container_view = inflater.inflate(R.layout.list_with_error_message, null);
@@ -706,7 +703,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 					break;
 				}
 				if (mFriendship.isSourceBlockingTarget()) {
-					mTwitterWrapper.destroyBlock(mAccountId, mUser.id);
+					mTwitterWrapper.destroyBlockAsync(mAccountId, mUser.id);
 				} else {
 					mTwitterWrapper.createBlockAsync(mAccountId, mUser.id);
 				}

@@ -108,6 +108,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.CameraCropActivity;
 import org.mariotaku.twidere.activity.DualPaneActivity;
 import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
+import org.mariotaku.twidere.adapter.iface.IBaseCardAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.DirectMessagesConversationFragment;
 import org.mariotaku.twidere.fragment.IncomingFriendshipsFragment;
@@ -163,6 +164,7 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.URLEntity;
 import twitter4j.User;
+import twitter4j.UserMentionEntity;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.BasicAuthorization;
 import twitter4j.auth.TwipOModeAuthorization;
@@ -237,6 +239,8 @@ public final class Utils implements Constants {
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_PERMISSIONS, VIRTUAL_TABLE_ID_PERMISSIONS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_DNS + "/*", VIRTUAL_TABLE_ID_DNS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHED_IMAGES, VIRTUAL_TABLE_ID_CACHED_IMAGES);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_CACHE_FILES + "/*",
+				VIRTUAL_TABLE_ID_CACHE_FILES);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_PREFERENCES, VIRTUAL_TABLE_ID_ALL_PREFERENCES);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_PREFERENCES + "/*",
 				VIRTUAL_TABLE_ID_PREFERENCES);
@@ -282,6 +286,11 @@ public final class Utils implements Constants {
 	}
 
 	public static void addIntentToMenu(final Context context, final Menu menu, final Intent query_intent) {
+		addIntentToMenu(context, menu, query_intent, Menu.NONE);
+	}
+
+	public static void addIntentToMenu(final Context context, final Menu menu, final Intent query_intent,
+			final int groupId) {
 		if (context == null || menu == null || query_intent == null) return;
 		final PackageManager pm = context.getPackageManager();
 		final Resources res = context.getResources();
@@ -291,7 +300,7 @@ public final class Utils implements Constants {
 			final Intent intent = new Intent(query_intent);
 			final Drawable icon = info.loadIcon(pm);
 			intent.setClassName(info.activityInfo.packageName, info.activityInfo.name);
-			final MenuItem item = menu.add(info.loadLabel(pm));
+			final MenuItem item = menu.add(groupId, Menu.NONE, Menu.NONE, info.loadLabel(pm));
 			item.setIntent(intent);
 			if (icon instanceof BitmapDrawable) {
 				final int paddings = Math.round(density * 4);
@@ -420,9 +429,9 @@ public final class Utils implements Constants {
 	public static int cancelRetweet(final AsyncTwitterWrapper wrapper, final ParcelableStatus status) {
 		if (wrapper == null || status == null) return -1;
 		if (status.my_retweet_id > 0)
-			return wrapper.destroyStatus(status.account_id, status.my_retweet_id);
+			return wrapper.destroyStatusAsync(status.account_id, status.my_retweet_id);
 		else if (status.retweeted_by_id == status.account_id)
-			return wrapper.destroyStatus(status.account_id, status.retweet_id);
+			return wrapper.destroyStatusAsync(status.account_id, status.retweet_id);
 		return -1;
 	}
 
@@ -529,10 +538,17 @@ public final class Utils implements Constants {
 		if (context == null) return;
 		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		adapter.setDisplayProfileImage(pref.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true));
-		adapter.setNameDisplayOption(pref.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH));
+		adapter.setDisplayNameFirst(pref.getBoolean(PREFERENCE_KEY_NAME_FIRST, true));
 		adapter.setLinkHighlightOption(pref.getString(PREFERENCE_KEY_LINK_HIGHLIGHT_OPTION, LINK_HIGHLIGHT_OPTION_NONE));
 		adapter.setNicknameOnly(pref.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false));
 		adapter.setTextSize(pref.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(context)));
+	}
+
+	public static void configBaseCardAdapter(final Context context, final IBaseCardAdapter adapter) {
+		if (context == null) return;
+		configBaseAdapter(context, adapter);
+		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		adapter.setAnimationEnabled(pref.getBoolean(PREFERENCE_KEY_CARD_ANIMATION, true));
 	}
 
 	public static void copyStream(final InputStream is, final OutputStream os) throws IOException {
@@ -1434,14 +1450,22 @@ public final class Utils implements Constants {
 	public static String getDisplayName(final Context context, final long user_id, final String name,
 			final String screen_name, final boolean ignore_cache) {
 		if (context == null) return null;
-		final boolean display_name = getNameDisplayOptionInt(context) != NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
-		final boolean nick_only = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final boolean name_first = prefs.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
+		final boolean nickname_only = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
 				.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false);
+		return getDisplayName(context, user_id, name, screen_name, name_first, nickname_only, ignore_cache);
+	}
+
+	public static String getDisplayName(final Context context, final long user_id, final String name,
+			final String screen_name, final boolean name_first, final boolean nickname_only, final boolean ignore_cache) {
+		if (context == null) return null;
 		final String nick = getUserNickname(context, user_id, ignore_cache);
 		final boolean nick_available = !isEmpty(nick);
-		if (nick_only && nick_available) return nick;
-		if (!nick_available) return display_name ? name : "@" + screen_name;
-		return context.getString(R.string.name_with_nickname, display_name ? name : "@" + screen_name);
+		if (nickname_only && nick_available) return nick;
+		if (!nick_available) return name_first && !isEmpty(name) ? name : "@" + screen_name;
+		return context.getString(R.string.name_with_nickname, name_first && !isEmpty(name) ? name : "@" + screen_name,
+				nick);
 	}
 
 	public static String getErrorMessage(final Context context, final Throwable t) {
@@ -1558,6 +1582,18 @@ public final class Utils implements Constants {
 		return image_upload_format.replace(FORMAT_PATTERN_LINK, link).replace(FORMAT_PATTERN_TEXT, text);
 	}
 
+	public static String getInReplyToName(final Status status) {
+		if (status == null) return null;
+		final Status orig = status.isRetweet() ? status.getRetweetedStatus() : status;
+		final long in_reply_to_user_id = status.getInReplyToUserId();
+		final UserMentionEntity[] entities = status.getUserMentionEntities();
+		if (entities == null) return orig.getInReplyToScreenName();
+		for (final UserMentionEntity entity : entities) {
+			if (in_reply_to_user_id == entity.getId()) return entity.getName();
+		}
+		return orig.getInReplyToScreenName();
+	}
+
 	public static String getLinkHighlightOption(final Context context) {
 		if (context == null) return null;
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -1594,23 +1630,6 @@ public final class Utils implements Constants {
 		v.measure(wSpec, hSpec);
 		return getMapStaticImageUri(lat, lng, 12, v.getMeasuredWidth(), v.getMeasuredHeight(), v.getResources()
 				.getConfiguration().locale);
-	}
-
-	public static String getNameDisplayOption(final Context context) {
-		if (context == null) return null;
-		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		return prefs.getString(PREFERENCE_KEY_NAME_DISPLAY_OPTION, NAME_DISPLAY_OPTION_BOTH);
-	}
-
-	public static int getNameDisplayOptionInt(final Context context) {
-		return getNameDisplayOptionInt(getNameDisplayOption(context));
-	}
-
-	public static int getNameDisplayOptionInt(final String option) {
-		if (NAME_DISPLAY_OPTION_NAME.equals(option))
-			return NAME_DISPLAY_OPTION_CODE_NAME;
-		else if (NAME_DISPLAY_OPTION_SCREEN_NAME.equals(option)) return NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
-		return NAME_DISPLAY_OPTION_CODE_BOTH;
 	}
 
 	public static long[] getNewestMessageIdsFromDatabase(final Context context, final Uri uri) {
@@ -1802,10 +1821,19 @@ public final class Utils implements Constants {
 		return 0;
 	}
 
+	public static String getSampleDisplayName(final Context context, final boolean name_first,
+			final boolean nickname_only) {
+		if (context == null) return null;
+		if (nickname_only) return TWIDERE_PREVIEW_NICKNAME;
+		return context.getString(R.string.name_with_nickname, name_first ? TWIDERE_PREVIEW_NAME : "@"
+				+ TWIDERE_PREVIEW_SCREEN_NAME, TWIDERE_PREVIEW_NICKNAME);
+	}
+
 	public static String getSenderUserName(final Context context, final ParcelableDirectMessage user) {
 		if (context == null || user == null) return null;
-		final boolean display_screen_name = getNameDisplayOptionInt(context) == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
-		return display_screen_name ? user.sender_screen_name : user.sender_name;
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final boolean display_name = prefs.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
+		return display_name ? user.sender_name : "@" + user.sender_screen_name;
 	}
 
 	public static String getShareStatus(final Context context, final CharSequence title, final CharSequence text) {
@@ -2067,22 +2095,25 @@ public final class Utils implements Constants {
 		return color;
 	}
 
-	public static String getUserName(final Context context, final ParcelableStatus user) {
-		if (context == null || user == null) return null;
-		final boolean display_screen_name = getNameDisplayOptionInt(context) == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
-		return display_screen_name ? user.user_screen_name : user.user_name;
+	public static String getUserName(final Context context, final ParcelableStatus status) {
+		if (context == null || status == null) return null;
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final boolean display_name = prefs.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
+		return display_name ? status.user_name : "@" + status.user_screen_name;
 	}
 
 	public static String getUserName(final Context context, final ParcelableUser user) {
 		if (context == null || user == null) return null;
-		final boolean display_screen_name = getNameDisplayOptionInt(context) == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
-		return display_screen_name ? user.screen_name : user.name;
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final boolean display_name = prefs.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
+		return display_name ? user.name : "@" + user.screen_name;
 	}
 
 	public static String getUserName(final Context context, final User user) {
 		if (context == null || user == null) return null;
-		final boolean display_screen_name = getNameDisplayOptionInt(context) == NAME_DISPLAY_OPTION_CODE_SCREEN_NAME;
-		return display_screen_name ? user.getScreenName() : user.getName();
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final boolean display_name = prefs.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
+		return display_name ? user.getName() : "@" + user.getScreenName();
 	}
 
 	public static String getUserNickname(final Context context, final long user_id) {
@@ -2265,6 +2296,19 @@ public final class Utils implements Constants {
 		return prefs.getBoolean("silent_notifications_at_" + now.get(Calendar.HOUR_OF_DAY), false);
 	}
 
+	public static boolean isOfficialConsumerKeySecret(final Context context) {
+		if (context == null) return false;
+		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final String[] key_secrets = context.getResources().getStringArray(R.array.values_consumer_key_secret);
+		final String consumer_key = getNonEmptyString(pref, PREFERENCE_KEY_CONSUMER_KEY, null);
+		final String consumer_secret = getNonEmptyString(pref, PREFERENCE_KEY_CONSUMER_SECRET, null);
+		for (final String key_secret : key_secrets) {
+			final String[] pair = key_secret.split(";");
+			if (pair[0].equals(consumer_key) && pair[1].equals(consumer_secret)) return true;
+		}
+		return false;
+	}
+
 	public static boolean isOnWifi(final Context context) {
 		if (context == null) return false;
 		final ConnectivityManager conn = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -2430,26 +2474,27 @@ public final class Utils implements Constants {
 		return values;
 	}
 
-	public static ContentValues makeStatusContentValues(Status status, final long account_id,
+	public static ContentValues makeStatusContentValues(final Status orig, final long account_id,
 			final boolean large_profile_image) {
-		if (status == null || status.getId() <= 0) return null;
+		if (orig == null || orig.getId() <= 0) return null;
 		final ContentValues values = new ContentValues();
 		values.put(Statuses.ACCOUNT_ID, account_id);
-		values.put(Statuses.STATUS_ID, status.getId());
-		values.put(Statuses.MY_RETWEET_ID, status.getCurrentUserRetweet());
-		final boolean is_retweet = status.isRetweet();
-		User user = status.getUser();
-		values.put(CachedUsers.IS_FOLLOWING, user != null ? user.isFollowing() : false);
-		final Status retweeted_status = is_retweet ? status.getRetweetedStatus() : null;
+		values.put(Statuses.STATUS_ID, orig.getId());
+		values.put(Statuses.MY_RETWEET_ID, orig.getCurrentUserRetweet());
+		final boolean is_retweet = orig.isRetweet();
+		final Status status;
+		final Status retweeted_status = is_retweet ? orig.getRetweetedStatus() : null;
 		if (retweeted_status != null) {
-			final User retweet_user = status.getUser();
+			final User retweet_user = orig.getUser();
 			values.put(Statuses.RETWEET_ID, retweeted_status.getId());
-			values.put(Statuses.RETWEETED_BY_ID, retweet_user.getId());
+			values.put(Statuses.RETWEETED_BY_USER_ID, retweet_user.getId());
 			values.put(Statuses.RETWEETED_BY_NAME, retweet_user.getName());
 			values.put(Statuses.RETWEETED_BY_SCREEN_NAME, retweet_user.getScreenName());
-			user = retweeted_status.getUser();
 			status = retweeted_status;
+		} else {
+			status = orig;
 		}
+		final User user = status.getUser();
 		if (user != null) {
 			final long user_id = user.getId();
 			final String profile_image_url = ParseUtils.parseString(user.getProfileImageUrlHttps());
@@ -2461,6 +2506,7 @@ public final class Utils implements Constants {
 			values.put(Statuses.IS_VERIFIED, user.isVerified());
 			values.put(Statuses.PROFILE_IMAGE_URL,
 					large_profile_image ? getBiggerTwitterProfileImage(profile_image_url) : profile_image_url);
+			values.put(CachedUsers.IS_FOLLOWING, user != null ? user.isFollowing() : false);
 		}
 		if (status.getCreatedAt() != null) {
 			values.put(Statuses.STATUS_TIMESTAMP, status.getCreatedAt().getTime());
@@ -2470,8 +2516,10 @@ public final class Utils implements Constants {
 		values.put(Statuses.TEXT_PLAIN, status.getText());
 		values.put(Statuses.TEXT_UNESCAPED, toPlainText(text_html));
 		values.put(Statuses.RETWEET_COUNT, status.getRetweetCount());
-		values.put(Statuses.IN_REPLY_TO_SCREEN_NAME, status.getInReplyToScreenName());
 		values.put(Statuses.IN_REPLY_TO_STATUS_ID, status.getInReplyToStatusId());
+		values.put(Statuses.IN_REPLY_TO_USER_ID, status.getInReplyToUserId());
+		values.put(Statuses.IN_REPLY_TO_NAME, getInReplyToName(status));
+		values.put(Statuses.IN_REPLY_TO_SCREEN_NAME, status.getInReplyToScreenName());
 		values.put(Statuses.SOURCE, status.getSource());
 		values.put(Statuses.IS_POSSIBLY_SENSITIVE, status.isPossiblySensitive());
 		final GeoLocation location = status.getGeoLocation();
@@ -3382,6 +3430,14 @@ public final class Utils implements Constants {
 		extension_intent.putExtras(extension_extras);
 		final MenuItem more_submenu = menu.findItem(R.id.more_submenu);
 		addIntentToMenu(context, more_submenu != null ? more_submenu.getSubMenu() : menu, extension_intent);
+	}
+
+	public static void setMenuItemAvailability(final Menu menu, final int id, final boolean available) {
+		if (menu == null) return;
+		final MenuItem item = menu.findItem(id);
+		if (item == null) return;
+		item.setVisible(available);
+		item.setEnabled(available);
 	}
 
 	public static void setUserAgent(final Context context, final ConfigurationBuilder cb) {

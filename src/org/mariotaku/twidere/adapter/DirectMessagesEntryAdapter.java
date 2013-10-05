@@ -26,7 +26,7 @@ import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.Conversat
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_SCREEN_NAME;
 import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_TEXT;
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
-import static org.mariotaku.twidere.util.Utils.configBaseAdapter;
+import static org.mariotaku.twidere.util.Utils.configBaseCardAdapter;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserNickname;
@@ -54,8 +54,9 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 	private final ImageLoaderWrapper mLazyImageLoader;
 	private final MultiSelectManager mMultiSelectManager;
 
-	private boolean mDisplayProfileImage, mShowAccountColor, mNicknameOnly;
+	private boolean mDisplayProfileImage, mShowAccountColor, mNicknameOnly, mAnimationEnabled;
 	private float mTextSize;
+	private int mMaxAnimationPosition;
 
 	private MenuButtonClickListener mListener;
 
@@ -64,7 +65,7 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 		final TwidereApplication app = TwidereApplication.getInstance(context);
 		mMultiSelectManager = app.getMultiSelectManager();
 		mLazyImageLoader = app.getImageLoaderWrapper();
-		configBaseAdapter(context, this);
+		configBaseCardAdapter(context, this);
 	}
 
 	@Override
@@ -101,6 +102,12 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 			holder.profile_image.setTag(position);
 			final String profile_image_url_string = cursor.getString(IDX_PROFILE_IMAGE_URL);
 			mLazyImageLoader.displayProfileImage(holder.profile_image, profile_image_url_string);
+		}
+		if (position > mMaxAnimationPosition) {
+			if (mAnimationEnabled) {
+				view.startAnimation(holder.item_animation);
+			}
+			mMaxAnimationPosition = position;
 		}
 		super.bindView(view, context, cursor);
 	}
@@ -154,6 +161,17 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 	}
 
 	@Override
+	public void setAnimationEnabled(final boolean anim) {
+		if (mAnimationEnabled == anim) return;
+		mAnimationEnabled = anim;
+	}
+
+	@Override
+	public void setDisplayNameFirst(final boolean name_first) {
+
+	}
+
+	@Override
 	public void setDisplayProfileImage(final boolean display) {
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
@@ -167,12 +185,13 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 	}
 
 	@Override
-	public void setMenuButtonClickListener(final MenuButtonClickListener listener) {
-		mListener = listener;
+	public void setMaxAnimationPosition(final int position) {
+		mMaxAnimationPosition = position;
 	}
 
 	@Override
-	public void setNameDisplayOption(final String option) {
+	public void setMenuButtonClickListener(final MenuButtonClickListener listener) {
+		mListener = listener;
 	}
 
 	@Override

@@ -48,11 +48,12 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 
 	private static final String[] CURSOR_COLS = new String[] { Statuses._ID, Statuses.ACCOUNT_ID, Statuses.STATUS_ID,
 			Statuses.USER_ID, Statuses.STATUS_TIMESTAMP, Statuses.TEXT_HTML, Statuses.TEXT_PLAIN, Statuses.NAME,
-			Statuses.SCREEN_NAME, Statuses.PROFILE_IMAGE_URL, Statuses.IN_REPLY_TO_SCREEN_NAME,
-			Statuses.IN_REPLY_TO_STATUS_ID, Statuses.LOCATION, Statuses.IS_RETWEET, Statuses.RETWEET_COUNT,
-			Statuses.RETWEET_ID, Statuses.RETWEETED_BY_NAME, Statuses.RETWEETED_BY_SCREEN_NAME, Statuses.IS_FAVORITE,
-			Statuses.IS_PROTECTED, Statuses.IS_VERIFIED, Statuses.IS_GAP, Statuses.IS_POSSIBLY_SENSITIVE,
-			Statuses.SOURCE, Statuses.TEXT_UNESCAPED, Statuses.IMAGE_PREVIEW_URL };
+			Statuses.SCREEN_NAME, Statuses.PROFILE_IMAGE_URL, Statuses.IN_REPLY_TO_STATUS_ID,
+			Statuses.IN_REPLY_TO_USER_ID, Statuses.IN_REPLY_TO_NAME, Statuses.IN_REPLY_TO_SCREEN_NAME,
+			Statuses.LOCATION, Statuses.IS_RETWEET, Statuses.RETWEET_COUNT, Statuses.RETWEET_ID,
+			Statuses.RETWEETED_BY_USER_ID, Statuses.RETWEETED_BY_NAME, Statuses.RETWEETED_BY_SCREEN_NAME,
+			Statuses.IS_FAVORITE, Statuses.IS_PROTECTED, Statuses.IS_VERIFIED, Statuses.IS_GAP,
+			Statuses.IS_POSSIBLY_SENSITIVE, Statuses.SOURCE, Statuses.TEXT_UNESCAPED, Statuses.IMAGE_PREVIEW_URL };
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -124,7 +125,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 		switch (scrollState) {
 			case SCROLL_STATE_FLING:
 			case SCROLL_STATE_TOUCH_SCROLL: {
-				getTwitterWrapper().clearNotification(getNotificationIdToClear());
+				getTwitterWrapper().clearNotificationAsync(getNotificationIdToClear());
 				break;
 			}
 			case SCROLL_STATE_IDLE:

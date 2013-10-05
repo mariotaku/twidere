@@ -25,7 +25,7 @@ import android.widget.TextView;
 
 import org.mariotaku.twidere.R;
 
-public class DirectMessageConversationViewHolder {
+public class DirectMessageConversationViewHolder extends CardViewHolder {
 
 	public final ImageView incoming_profile_image, outgoing_profile_image;
 	public final View incoming_message_container, outgoing_message_container, incoming_profile_image_container,
@@ -34,6 +34,7 @@ public class DirectMessageConversationViewHolder {
 	private float text_size;
 
 	public DirectMessageConversationViewHolder(final View view) {
+		super(view);
 		incoming_message_container = view.findViewById(R.id.incoming_message_container);
 		outgoing_message_container = view.findViewById(R.id.outgoing_message_container);
 		incoming_profile_image_container = view.findViewById(R.id.incoming_profile_image_container);

@@ -27,11 +27,11 @@ public interface IBaseAdapter extends Constants, ListAdapter {
 
 	public void notifyDataSetChanged();
 
+	public void setDisplayNameFirst(boolean name_first);
+
 	public void setDisplayProfileImage(boolean display);
 
 	public void setLinkHighlightOption(String option);
-
-	public void setNameDisplayOption(String option);
 
 	public void setNicknameOnly(boolean nickname_only);
 

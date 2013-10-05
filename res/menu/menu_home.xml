@@ -3,7 +3,7 @@
 
 	<item
 		android:id="@id/actions"
-		android:actionLayout="@layout/home_actions_action_item"
+		android:actionLayout="@layout/action_item_home_actions"
 		android:showAsAction="always"
 		android:title="@string/app_name"/>
 	<item

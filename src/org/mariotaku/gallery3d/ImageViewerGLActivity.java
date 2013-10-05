@@ -34,6 +34,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ShareActionProvider;
 
+import me.imid.swipebacklayout.lib.SwipeBackLayout.SwipeListener;
+
 import org.mariotaku.gallery3d.ui.GLRoot;
 import org.mariotaku.gallery3d.ui.GLRootView;
 import org.mariotaku.gallery3d.ui.GLView;
@@ -50,7 +52,8 @@ import org.mariotaku.twidere.util.Utils;
 import java.io.File;
 
 public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implements Constants, PhotoView.Listener,
-		GLImageLoader.DownloadListener, LoaderManager.LoaderCallbacks<GLImageLoader.Result>, OnMenuVisibilityListener {
+		GLImageLoader.DownloadListener, LoaderManager.LoaderCallbacks<GLImageLoader.Result>, OnMenuVisibilityListener,
+		SwipeListener {
 
 	private final GLView mRootPane = new GLView() {
 		@Override
@@ -67,7 +70,6 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 	private static final int MSG_UNFREEZE_GLROOT = 6;
 	private static final int MSG_WANT_BARS = 7;
 	private static final int MSG_REFRESH_BOTTOM_CONTROLS = 8;
-	private static final int HIDE_BARS_TIMEOUT = 3500;
 	private static final int UNFREEZE_GLROOT_TIMEOUT = 250;
 
 	private ShareActionProvider mShareActionProvider;
@@ -87,7 +89,6 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 
 	private boolean mShowBars = true;
 	private boolean mActionBarAllowed = true;
-	private boolean mIsMenuVisible;
 	private boolean mImageLoaded;
 	private boolean mLoaderInitialized;
 
@@ -171,6 +172,11 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 	}
 
 	@Override
+	public void onEdgeTouch(final int edgeFlag) {
+		showBars();
+	}
+
+	@Override
 	public void onLoaderReset(final Loader<GLImageLoader.Result> loader) {
 
 	}
@@ -206,7 +212,6 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 
 	@Override
 	public void onMenuVisibilityChanged(final boolean isVisible) {
-		mIsMenuVisible = isVisible;
 	}
 
 	@Override
@@ -277,6 +282,16 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 	}
 
 	@Override
+	public void onScrollOverThreshold() {
+
+	}
+
+	@Override
+	public void onScrollStateChange(final int state, final float scrollPercent) {
+
+	}
+
+	@Override
 	public void onSingleTapUp(final int x, final int y) {
 		toggleBars();
 	}
@@ -308,6 +323,7 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 		if (savedInstanceState == null) {
 			loadImage();
 		}
+		setSwipeListener(this);
 	}
 
 	@Override
@@ -396,9 +412,9 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 	}
 
 	private void hideBars() {
-		if (!mShowBars) return;
+		if (!mShowBars || isSwiping()) return;
 		mShowBars = false;
-//		mActionBar.hide();
+		mActionBar.hide();
 		mHandler.removeMessages(MSG_HIDE_BARS);
 	}
 
@@ -419,18 +435,10 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 		}
 	}
 
-	private void refreshHidingMessage() {
-		mHandler.removeMessages(MSG_HIDE_BARS);
-		if (!mIsMenuVisible) {
-			mHandler.sendEmptyMessageDelayed(MSG_HIDE_BARS, HIDE_BARS_TIMEOUT);
-		}
-	}
-
 	private void showBars() {
 		if (mShowBars) return;
 		mShowBars = true;
-//		mActionBar.show();
-		refreshHidingMessage();
+		mActionBar.show();
 	}
 
 	private void toggleBars() {

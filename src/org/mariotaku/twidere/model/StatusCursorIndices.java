@@ -27,9 +27,9 @@ public class StatusCursorIndices {
 
 	public final int _id, account_id, status_id, status_timestamp, user_name, user_screen_name, text_html, text_plain,
 			text_unescaped, user_profile_image_url, is_retweet, is_favorite, is_gap, location, is_protected,
-			is_verified, in_reply_to_status_id, in_reply_to_screen_name, my_retweet_id, retweeted_by_name,
-			retweeted_by_screen_name, retweet_id, retweeted_by_id, user_id, source, retweet_count,
-			is_possibly_sensitive, is_following, image_preview_url;
+			is_verified, in_reply_to_status_id, in_reply_to_user_id, in_reply_to_name, in_reply_to_screen_name,
+			my_retweet_id, retweeted_by_name, retweeted_by_screen_name, retweet_id, retweeted_by_user_id, user_id,
+			source, retweet_count, is_possibly_sensitive, is_following, image_preview_url;
 
 	public StatusCursorIndices(final Cursor cursor) {
 		_id = cursor.getColumnIndex(Statuses._ID);
@@ -49,12 +49,14 @@ public class StatusCursorIndices {
 		is_protected = cursor.getColumnIndex(Statuses.IS_PROTECTED);
 		is_verified = cursor.getColumnIndex(Statuses.IS_VERIFIED);
 		in_reply_to_status_id = cursor.getColumnIndex(Statuses.IN_REPLY_TO_STATUS_ID);
+		in_reply_to_user_id = cursor.getColumnIndex(Statuses.IN_REPLY_TO_USER_ID);
+		in_reply_to_name = cursor.getColumnIndex(Statuses.IN_REPLY_TO_NAME);
 		in_reply_to_screen_name = cursor.getColumnIndex(Statuses.IN_REPLY_TO_SCREEN_NAME);
 		my_retweet_id = cursor.getColumnIndex(Statuses.MY_RETWEET_ID);
 		retweeted_by_name = cursor.getColumnIndex(Statuses.RETWEETED_BY_NAME);
 		retweeted_by_screen_name = cursor.getColumnIndex(Statuses.RETWEETED_BY_SCREEN_NAME);
 		retweet_id = cursor.getColumnIndex(Statuses.RETWEET_ID);
-		retweeted_by_id = cursor.getColumnIndex(Statuses.RETWEETED_BY_ID);
+		retweeted_by_user_id = cursor.getColumnIndex(Statuses.RETWEETED_BY_USER_ID);
 		user_id = cursor.getColumnIndex(Statuses.USER_ID);
 		source = cursor.getColumnIndex(Statuses.SOURCE);
 		retweet_count = cursor.getColumnIndex(Statuses.RETWEET_COUNT);
@@ -65,15 +67,18 @@ public class StatusCursorIndices {
 
 	@Override
 	public String toString() {
-		return "StatusCursorIndices{account_id=" + account_id + ", status_id=" + status_id + ", status_timestamp="
-				+ status_timestamp + ", name=" + user_name + ", screen_name=" + user_screen_name + ", text="
-				+ text_html + ", text_plain=" + text_plain + ", profile_image_url=" + user_profile_image_url
-				+ ", is_retweet=" + is_retweet + ", is_favorite=" + is_favorite + ", is_gap=" + is_gap + ", location="
-				+ location + ", is_protected=" + is_protected + ", is_verified=" + is_verified
-				+ ", in_reply_to_status_id=" + in_reply_to_status_id + ", in_reply_to_screen_name="
-				+ in_reply_to_screen_name + ", my_retweet_id=" + my_retweet_id + ", retweeted_by_name="
-				+ retweeted_by_name + ", retweeted_by_screen_name=" + retweeted_by_screen_name + ", retweet_id="
-				+ retweet_id + ", retweeted_by_id=" + retweeted_by_id + ", user_id=" + user_id + ", source=" + source
-				+ ", retweet_count=" + retweet_count + ", is_possibly_sensitive=" + is_possibly_sensitive + "}";
+		return "StatusCursorIndices{_id=" + _id + ", account_id=" + account_id + ", status_id=" + status_id
+				+ ", status_timestamp=" + status_timestamp + ", user_name=" + user_name + ", user_screen_name="
+				+ user_screen_name + ", text_html=" + text_html + ", text_plain=" + text_plain + ", text_unescaped="
+				+ text_unescaped + ", user_profile_image_url=" + user_profile_image_url + ", is_retweet=" + is_retweet
+				+ ", is_favorite=" + is_favorite + ", is_gap=" + is_gap + ", location=" + location + ", is_protected="
+				+ is_protected + ", is_verified=" + is_verified + ", in_reply_to_status_id=" + in_reply_to_status_id
+				+ ", in_reply_to_user_id=" + in_reply_to_user_id + ", in_reply_to_name=" + in_reply_to_name
+				+ ", in_reply_to_screen_name=" + in_reply_to_screen_name + ", my_retweet_id=" + my_retweet_id
+				+ ", retweeted_by_name=" + retweeted_by_name + ", retweeted_by_screen_name=" + retweeted_by_screen_name
+				+ ", retweet_id=" + retweet_id + ", retweeted_by_user_id=" + retweeted_by_user_id + ", user_id="
+				+ user_id + ", source=" + source + ", retweet_count=" + retweet_count + ", is_possibly_sensitive="
+				+ is_possibly_sensitive + ", is_following=" + is_following + ", image_preview_url=" + image_preview_url
+				+ "}";
 	}
 }

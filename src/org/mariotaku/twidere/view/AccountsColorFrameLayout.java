@@ -25,9 +25,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
-public class AccountsColorFrameLayout extends FrameLayout {
+public class AccountsColorFrameLayout extends RelativeLayout {
 
 	private int[] mColors;
 	private final Paint mPaint = new Paint();

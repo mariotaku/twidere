@@ -54,7 +54,7 @@ public class MentionsFragment extends CursorStatusesListFragment {
 	public int getStatuses(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
 		final AsyncTwitterWrapper twitter = getTwitterWrapper();
 		if (twitter == null) return -1;
-		return twitter.getMentions(account_ids, max_ids, since_ids);
+		return twitter.getMentionsAsync(account_ids, max_ids, since_ids);
 	}
 
 	@Override

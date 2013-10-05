@@ -370,10 +370,10 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		} else {
 			notifyAccountsChanged();
 		}
-//		if (openSettingsWizard()) {
-//			finish();
-//			return;
-//		}
+		// if (openSettingsWizard()) {
+		// finish();
+		// return;
+		// }
 		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONCREATE));
 		final boolean refresh_on_start = mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ON_START, false);
 		final int initial_tab = handleIntent(getIntent(), savedInstanceState == null);
@@ -471,11 +471,11 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		if (mPagerAdapter == null || mTwitterWrapper == null) return;
 		final SupportTabSpec tab = mPagerAdapter.getTab(position);
 		if (classEquals(HomeTimelineFragment.class, tab.cls)) {
-			mTwitterWrapper.clearNotification(NOTIFICATION_ID_HOME_TIMELINE);
+			mTwitterWrapper.clearNotificationAsync(NOTIFICATION_ID_HOME_TIMELINE);
 		} else if (classEquals(MentionsFragment.class, tab.cls)) {
-			mTwitterWrapper.clearNotification(NOTIFICATION_ID_MENTIONS);
+			mTwitterWrapper.clearNotificationAsync(NOTIFICATION_ID_MENTIONS);
 		} else if (classEquals(DirectMessagesFragment.class, tab.cls)) {
-			mTwitterWrapper.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
+			mTwitterWrapper.clearNotificationAsync(NOTIFICATION_ID_DIRECT_MESSAGES);
 		}
 	}
 

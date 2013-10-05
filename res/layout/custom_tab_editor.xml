@@ -26,20 +26,20 @@
 					android:id="@+id/tab_icon_spinner"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:padding="8dp"
+					android:padding="@dimen/element_spacing_default"
 					tools:listitem="@layout/custom_tab_icon_spinner_item"/>
 
 				<LinearLayout
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:orientation="vertical"
-					android:padding="8dp">
+					android:padding="@dimen/element_spacing_default">
 
 					<TextView
 						android:id="@+id/tab_type_name"
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
-						android:paddingLeft="8dp"
+						android:paddingLeft="@dimen/element_spacing_default"
 						android:textAppearance="?android:attr/textAppearanceSmall"/>
 
 					<EditText
@@ -67,7 +67,7 @@
 					android:id="@+id/account_spinner"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:padding="8dp"
+					android:padding="@dimen/element_spacing_default"
 					tools:listitem="@layout/simple_two_line_with_icon_list_item"/>
 			</LinearLayout>
 
@@ -91,7 +91,7 @@
 					android:background="?android:selectableItemBackground"
 					android:clickable="true"
 					android:onClick="onClick"
-					android:padding="8dp">
+					android:padding="@dimen/element_spacing_default">
 
 					<include layout="@layout/simple_two_line_with_icon_list_item"/>
 				</FrameLayout>

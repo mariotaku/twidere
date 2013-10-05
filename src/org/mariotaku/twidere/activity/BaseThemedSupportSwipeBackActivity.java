@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.Window;
 
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
+import me.imid.swipebacklayout.lib.SwipeBackLayout.SwipeListener;
 
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.ViewAccessor;
@@ -61,6 +62,10 @@ public class BaseThemedSupportSwipeBackActivity extends BaseSupportActivity {
 		return mSwipeBackLayout;
 	}
 
+	public boolean isSwiping() {
+		return mSwipeBackLayout != null && mSwipeBackLayout.isSwiping();
+	}
+
 	/**
 	 * Scroll out contentView and finish the activity
 	 */
@@ -81,6 +86,11 @@ public class BaseThemedSupportSwipeBackActivity extends BaseSupportActivity {
 	public void setSwipeBackEnable(final boolean enable) {
 		if (mSwipeBackLayout == null) return;
 		mSwipeBackLayout.setEnableGesture(enable);
+	}
+
+	public void setSwipeListener(final SwipeListener listener) {
+		if (mSwipeBackLayout == null) return;
+		mSwipeBackLayout.setSwipeListener(listener);
 	}
 
 	@Override

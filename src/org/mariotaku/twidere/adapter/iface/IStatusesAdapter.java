@@ -49,8 +49,6 @@ public interface IStatusesAdapter<Data> extends IBaseCardAdapter {
 
 	public void setIndicateMyStatusDisabled(boolean disable);
 
-	public void setMaxAnimationPosition(int position);
-
 	public void setMentionsHightlightDisabled(boolean disable);
 
 	public void setShowAccountColor(boolean show);

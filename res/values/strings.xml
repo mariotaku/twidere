@@ -500,6 +500,8 @@
 	<string name="underline">Underline</string>
 	<string name="link_highlight_option">Link highlight option</string>
 	<string name="users_statuses">User\'s tweets</string>
+	<string name="card_animation">Card animation</string>
+	<string name="name_first">Display name first</string>
 	<string name="settings_wizard">Settings wizard</string>
 	<string name="wizard_page_1_title">Welcome</string>
 	<string name="wizard_page_1_text">Thanks for choosing Twidere.\nWould you like to config it now?</string>

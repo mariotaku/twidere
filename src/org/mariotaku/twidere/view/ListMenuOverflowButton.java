@@ -1,6 +1,7 @@
 package org.mariotaku.twidere.view;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -28,7 +29,11 @@ public class ListMenuOverflowButton extends ImageView {
 		setScaleType(ScaleType.CENTER_INSIDE);
 		mHighlightColor = ThemeUtils.getThemeColor(context);
 		mRect = new Rect();
-		setImageDrawable(ThemeUtils.getListMenuOverflowButtonDrawable(context));
+		final TypedArray a = context.obtainStyledAttributes(attrs, new int[] { android.R.attr.src });
+		if (a.getDrawable(0) == null) {
+			setImageDrawable(ThemeUtils.getListMenuOverflowButtonDrawable(context));
+		}
+		a.recycle();
 	}
 
 	@Override

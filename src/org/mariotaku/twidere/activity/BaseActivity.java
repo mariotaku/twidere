@@ -199,6 +199,4 @@ public class BaseActivity extends BaseThemedActivity implements Constants, PullT
 		super.onStop();
 	}
 
-	
-
 }

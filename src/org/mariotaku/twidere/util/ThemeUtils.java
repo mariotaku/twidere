@@ -231,6 +231,18 @@ public class ThemeUtils implements Constants {
 		return d;
 	}
 
+	public static Drawable getWindowContentOverlay(final Context context) {
+		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.windowContentOverlay });
+		final Drawable d = a.getDrawable(0);
+		a.recycle();
+		return d;
+	}
+
+	public static Drawable getWindowContentOverlayForCompose(final Context context) {
+		final int themeRes = getThemeResource(context);
+		return getWindowContentOverlay(new ContextThemeWrapper(context, themeRes));
+	}
+
 	public static boolean isDarkTheme(final Context context) {
 		return isDarkTheme(getThemeResource(context));
 	}
@@ -273,6 +285,7 @@ public class ThemeUtils implements Constants {
 	public static void setPreviewView(final Context context, final View view, final int themeRes) {
 		final ContextThemeWrapper theme = new ContextThemeWrapper(context, themeRes);
 		final View windowBackgroundView = view.findViewById(R.id.theme_preview_window_background);
+		final View windowContentOverlayView = view.findViewById(R.id.theme_preview_window_content_overlay);
 		final View actionBarView = view.findViewById(R.id.actionbar);
 		final View actionBarSplitView = view.findViewById(R.id.actionbar_split);
 		final View statusCardView = view.findViewById(R.id.status_card);
@@ -291,6 +304,7 @@ public class ThemeUtils implements Constants {
 		final int titleTextAppearance = getTitleTextAppearance(theme);
 
 		ViewAccessor.setBackground(windowBackgroundView, getWindowBackground(theme));
+		ViewAccessor.setBackground(windowContentOverlayView, getWindowContentOverlay(theme));
 		ViewAccessor.setBackground(actionBarView, getActionBarBackground(theme));
 		ViewAccessor.setBackground(actionBarSplitView, getActionBarSplitBackground(theme));
 		ViewAccessor.setBackground(statusCardView, getCardItemBackground(theme));
@@ -314,7 +328,7 @@ public class ThemeUtils implements Constants {
 
 		profileImageView.setImageResource(R.drawable.ic_launcher);
 		nameView.setText(TWIDERE_PREVIEW_NAME);
-		screenNameView.setText(TWIDERE_PREVIEW_SCREEN_NAME);
+		screenNameView.setText("@" + TWIDERE_PREVIEW_SCREEN_NAME);
 		textView.setText(toPlainText(TWIDERE_PREVIEW_TEXT_HTML));
 		final String time = formatToLongTimeString(context, System.currentTimeMillis());
 		timeSourceView.setText(toPlainText(context.getString(R.string.time_source, time, TWIDERE_PREVIEW_SOURCE)));

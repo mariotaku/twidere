@@ -19,7 +19,12 @@
 
 package org.mariotaku.twidere.util;
 
+import static org.mariotaku.twidere.util.Utils.isOnWifi;
+
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
+import android.text.TextUtils;
 
 import com.nostra13.universalimageloader.cache.disc.DiscCacheAware;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -33,15 +38,20 @@ import java.io.File;
  */
 public class ImagePreloader implements Constants {
 
+	public static final String LOGTAG = "ImagePreloader";
+
+	private final Context mContext;
+	private final SharedPreferences mPreferences;
 	private final Handler mHandler;
 	private final DiscCacheAware mDiscCache;
 	private final ImageLoader mImageLoader;
 
-	public ImagePreloader(final ImageLoader loader) {
+	public ImagePreloader(final Context context, final ImageLoader loader) {
+		mContext = context;
+		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mImageLoader = loader;
 		mDiscCache = loader.getDiscCache();
 		mHandler = new Handler();
-		reloadConnectivitySettings();
 	}
 
 	/**
@@ -64,6 +74,8 @@ public class ImagePreloader implements Constants {
 	}
 
 	public void preloadImage(final String url) {
+		if (TextUtils.isEmpty(url)) return;
+		if (!isOnWifi(mContext) && mPreferences.getBoolean(PREFERENCE_KEY_PRELOAD_WIFI_ONLY, true)) return;
 		mHandler.post(new Runnable() {
 
 			@Override
@@ -72,9 +84,6 @@ public class ImagePreloader implements Constants {
 			}
 
 		});
-	}
-
-	public void reloadConnectivitySettings() {
 	}
 
 }

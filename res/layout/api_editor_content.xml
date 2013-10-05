@@ -99,7 +99,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:inflatedId="@+id/advanced_api_config"
-				android:layout="@layout/edit_api_advanced_fields"
+				android:layout="@layout/api_editor_advanced_fields"
 				android:visibility="gone"/>
 		</LinearLayout>
 	</LinearLayout>

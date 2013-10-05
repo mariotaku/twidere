@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.encodeQueryParams;
 import static org.mariotaku.twidere.util.Utils.getDefaultTextSize;
 
 import android.content.Context;
@@ -26,10 +27,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.widget.ListView;
 
 import org.mariotaku.jsonserializer.JSONSerializer;
-import org.mariotaku.twidere.adapter.ParcelableActivitiesAdapter;
+import org.mariotaku.twidere.adapter.BaseParcelableActivitiesAdapter;
 import org.mariotaku.twidere.model.ParcelableActivity;
+import org.mariotaku.twidere.util.ArrayUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,24 +42,33 @@ import java.util.List;
 public abstract class BaseActivitiesListFragment extends BasePullToRefreshListFragment implements
 		LoaderCallbacks<List<ParcelableActivity>> {
 
-	private ParcelableActivitiesAdapter mAdapter;
+	private BaseParcelableActivitiesAdapter mAdapter;
 	private SharedPreferences mPreferences;
 
 	private boolean mIsActivitiesSaved;
 
 	private List<ParcelableActivity> mData;
 
+	public abstract BaseParcelableActivitiesAdapter createListAdapter(Context context);
+
 	@Override
-	public ParcelableActivitiesAdapter getListAdapter() {
+	public BaseParcelableActivitiesAdapter getListAdapter() {
 		return mAdapter;
+	}
+
+	@Override
+	public String getPullToRefreshTag() {
+		return getPositionKey();
 	}
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mAdapter = new ParcelableActivitiesAdapter(getActivity());
+		mAdapter = createListAdapter(getActivity());
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		setListAdapter(mAdapter);
+		final ListView lv = getListView();
+		lv.setDivider(null);
 		getLoaderManager().initLoader(0, getArguments(), this);
 		setListShown(false);
 	}
@@ -105,8 +117,25 @@ public abstract class BaseActivitiesListFragment extends BasePullToRefreshListFr
 		mAdapter.setShowAbsoluteTime(show_absolute_time);
 	}
 
+	@Override
+	public void setProgressBarIndeterminateVisibility(final boolean visible) {
+		super.setProgressBarIndeterminateVisibility(visible);
+		setRefreshing(visible);
+	}
+
 	protected final List<ParcelableActivity> getData() {
 		return mData;
+	}
+
+	protected final String getPositionKey() {
+		final Object[] args = getSavedActivitiesFileArgs();
+		if (args == null || args.length <= 0) return null;
+		try {
+			return encodeQueryParams(ArrayUtils.toString(args, '.', false) + "." + getTabPosition());
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	protected abstract Object[] getSavedActivitiesFileArgs();

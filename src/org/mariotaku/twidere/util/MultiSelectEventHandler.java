@@ -162,7 +162,7 @@ public class MultiSelectEventHandler implements Constants, ActionMode.Callback, 
 				final long account_id = MultiSelectManager.getFirstSelectAccountId(selected_items);
 				final long[] user_ids = MultiSelectManager.getSelectedUserIds(selected_items);
 				if (account_id > 0 && user_ids != null) {
-					mTwitterWrapper.createMultiBlock(account_id, user_ids);
+					mTwitterWrapper.createMultiBlockAsync(account_id, user_ids);
 				}
 				mode.finish();
 				break;

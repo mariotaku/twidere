@@ -210,4 +210,9 @@ public class MenuImpl implements Menu {
 		return mMenuItems.size();
 	}
 
+	@Override
+	public String toString() {
+		return mMenuItems.toString();
+	}
+
 }

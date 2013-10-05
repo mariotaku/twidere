@@ -16,13 +16,10 @@
 		app:min="12"
 		app:progressTextSuffix="sp"/>
 
-	<ListPreference
-		android:defaultValue="both"
-		android:entries="@array/entries_name_display_option"
-		android:entryValues="@array/values_name_display_option"
-		android:key="name_display_option"
-		android:title="@string/name_display_option"/>
-
+	<CheckBoxPreference
+		android:defaultValue="true"
+		android:key="name_first"
+		android:title="@string/name_first"/>
 	<CheckBoxPreference
 		android:defaultValue="false"
 		android:key="nickname_only"
@@ -53,5 +50,9 @@
 		android:key="show_absolute_time"
 		android:summary="@string/show_absolute_time_summary"
 		android:title="@string/show_absolute_time"/>
+	<CheckBoxPreference
+		android:defaultValue="true"
+		android:key="card_animation"
+		android:title="@string/card_animation"/>
 
 </PreferenceScreen>

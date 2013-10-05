@@ -21,7 +21,7 @@ package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.cancelRetweet;
 import static org.mariotaku.twidere.util.Utils.clearListViewChoices;
-import static org.mariotaku.twidere.util.Utils.configBaseAdapter;
+import static org.mariotaku.twidere.util.Utils.configBaseCardAdapter;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
@@ -41,13 +41,13 @@ import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 import org.mariotaku.popupmenu.PopupMenu;
-import org.mariotaku.popupmenu.PopupMenu.OnMenuItemClickListener;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.iface.IBaseCardAdapter.MenuButtonClickListener;
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
@@ -282,14 +282,14 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 			}
 			case MENU_FAVORITE: {
 				if (status.is_favorite) {
-					mTwitterWrapper.destroyFavorite(status.account_id, status.id);
+					mTwitterWrapper.destroyFavoriteAsync(status.account_id, status.id);
 				} else {
 					mTwitterWrapper.createFavoriteAsync(status.account_id, status.id);
 				}
 				break;
 			}
 			case MENU_DELETE: {
-				mTwitterWrapper.destroyStatus(status.account_id, status.id);
+				mTwitterWrapper.destroyStatusAsync(status.account_id, status.id);
 				break;
 			}
 			default: {
@@ -311,11 +311,11 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 	public void onResume() {
 		super.onResume();
 		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
+		configBaseCardAdapter(getActivity(), mAdapter);
 		final boolean display_image_preview = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_IMAGE_PREVIEW, false);
 		final boolean display_sensitive_contents = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS,
 				false);
 		final boolean indicate_my_status = mPreferences.getBoolean(PREFERENCE_KEY_INDICATE_MY_STATUS, true);
-		configBaseAdapter(getActivity(), mAdapter);
 		mAdapter.setDisplayImagePreview(display_image_preview);
 		mAdapter.setDisplaySensitiveContents(display_sensitive_contents);
 		mAdapter.setIndicateMyStatusDisabled(isMyTimeline() || !indicate_my_status);

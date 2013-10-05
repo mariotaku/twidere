@@ -158,6 +158,10 @@ public class SwipeBackLayout extends FrameLayout {
 		}
 	}
 
+	public boolean isSwiping() {
+		return mDragHelper.getViewDragState() != ViewDragHelper.STATE_IDLE;
+	}
+
 	@Override
 	public boolean onInterceptTouchEvent(final MotionEvent event) {
 		if (!mEnable) return false;

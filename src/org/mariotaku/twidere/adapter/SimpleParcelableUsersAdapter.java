@@ -100,6 +100,11 @@ public class SimpleParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> i
 	}
 
 	@Override
+	public void setDisplayNameFirst(final boolean name_first) {
+
+	}
+
+	@Override
 	public void setDisplayProfileImage(final boolean display) {
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
@@ -109,11 +114,6 @@ public class SimpleParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> i
 
 	@Override
 	public void setLinkHighlightOption(final String option) {
-
-	}
-
-	@Override
-	public void setNameDisplayOption(final String option) {
 
 	}
 

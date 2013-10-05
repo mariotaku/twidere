@@ -32,7 +32,7 @@ public class CreateUserListDialogFragment extends BaseSupportDialogFragment impl
 				mDescription = ParseUtils.parseString(mEditDescription.getText());
 				mIsPublic = mPublicCheckBox.isChecked();
 				if (mName == null || mName.length() <= 0) return;
-				mTwitterWrapper.createUserList(mAccountId, mName, mIsPublic, mDescription);
+				mTwitterWrapper.createUserListAsync(mAccountId, mName, mIsPublic, mDescription);
 				break;
 			}
 		}

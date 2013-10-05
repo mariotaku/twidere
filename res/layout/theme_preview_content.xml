@@ -44,7 +44,21 @@
 				android:textAppearance="?android:textAppearanceMedium"/>
 		</LinearLayout>
 
-		<include layout="@layout/status_content"/>
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<include
+				android:id="@+id/status_content"
+				layout="@layout/status_content"/>
+
+			<View
+				android:id="@+id/theme_preview_window_content_overlay"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_alignBottom="@+id/status_content"
+				android:layout_alignTop="@+id/status_content"/>
+		</RelativeLayout>
 
 		<TableRow
 			android:id="@+id/actionbar_split"

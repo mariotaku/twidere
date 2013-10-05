@@ -22,7 +22,7 @@ package org.mariotaku.twidere.preference;
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
 import static org.mariotaku.twidere.util.Utils.getDefaultTextSize;
 import static org.mariotaku.twidere.util.Utils.getLinkHighlightOptionInt;
-import static org.mariotaku.twidere.util.Utils.getNameDisplayOptionInt;
+import static org.mariotaku.twidere.util.Utils.getSampleDisplayName;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -72,14 +72,15 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 	protected void onBindView(final View view) {
 		if (mPreferences == null) return;
 		final Context context = getContext();
-		final int name_option = getNameDisplayOptionInt(context);
 		final int highlight_option = getLinkHighlightOptionInt(context);
+		final boolean name_first = mPreferences.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
 		final boolean display_image_preview = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_IMAGE_PREVIEW, false);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		final boolean nickname_only = mPreferences.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false);
 		mHolder = new StatusViewHolder(view);
 		mLinkify.setHighlightOption(highlight_option);
-		mHolder.setNameDisplayOption(name_option);
+		mHolder.setDisplayNameFirst(name_first);
+		mHolder.setNicknameOnly(nickname_only);
 		mHolder.setShowAsGap(false);
 		mHolder.setIsMyStatus(false);
 		mHolder.setTextSize(mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(context)));
@@ -89,8 +90,9 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 
 		mHolder.profile_image.setImageResource(R.drawable.ic_launcher);
 		mHolder.image_preview.setImageResource(R.drawable.twidere_feature_graphic);
-		mHolder.name.setText(nickname_only ? TWIDERE_PREVIEW_NICKNAME : context.getString(R.string.name_with_nickname, TWIDERE_PREVIEW_NAME, TWIDERE_PREVIEW_NICKNAME));
-		mHolder.screen_name.setText(TWIDERE_PREVIEW_SCREEN_NAME);
+		mHolder.name.setText(nickname_only ? TWIDERE_PREVIEW_NICKNAME : context.getString(R.string.name_with_nickname,
+				TWIDERE_PREVIEW_NAME, TWIDERE_PREVIEW_NICKNAME));
+		mHolder.screen_name.setText("@" + TWIDERE_PREVIEW_SCREEN_NAME);
 		if (highlight_option != LINK_HIGHLIGHT_OPTION_CODE_NONE) {
 			mHolder.text.setText(Html.fromHtml(TWIDERE_PREVIEW_TEXT_HTML));
 			mLinkify.applyAllLinks(mHolder.text, 0, false);
@@ -99,7 +101,9 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 		} else {
 			mHolder.text.setText(toPlainText(TWIDERE_PREVIEW_TEXT_HTML));
 		}
-		mHolder.setRetweetedBy(1, TWIDERE_PREVIEW_NAME, TWIDERE_PREVIEW_SCREEN_NAME);
+		final String display_name = getSampleDisplayName(context, name_first, nickname_only);
+		mHolder.reply_retweet_status.setText(context.getString(R.string.retweeted_by, display_name));
+		mHolder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_retweet, 0, 0, 0);
 		mHolder.time.setTime(System.currentTimeMillis() - 360000);
 		mHolder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_indicator_has_media, 0);
 		super.onBindView(view);

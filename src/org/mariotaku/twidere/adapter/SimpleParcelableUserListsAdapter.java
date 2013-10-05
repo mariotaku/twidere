@@ -20,11 +20,9 @@
 package org.mariotaku.twidere.adapter;
 
 import static org.mariotaku.twidere.util.Utils.configBaseAdapter;
-import static org.mariotaku.twidere.util.Utils.getNameDisplayOptionInt;
-import static org.mariotaku.twidere.util.Utils.getUserNickname;
+import static org.mariotaku.twidere.util.Utils.getDisplayName;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -43,7 +41,7 @@ public class SimpleParcelableUserListsAdapter extends ArrayAdapter<ParcelableUse
 	private final ImageLoaderWrapper mProfileImageLoader;
 
 	private boolean mDisplayProfileImage, mNicknameOnly;
-	private boolean mDisplayName;
+	private boolean mDisplayNameFirst;
 
 	public SimpleParcelableUserListsAdapter(final Context context) {
 		super(context, R.layout.two_line_with_icon_list_item);
@@ -74,16 +72,10 @@ public class SimpleParcelableUserListsAdapter extends ArrayAdapter<ParcelableUse
 			view.setTag(holder);
 		}
 		final ParcelableUserList user_list = getItem(position);
-		final String created_by;
-		if (mDisplayName) {
-			created_by = "@" + user_list.user_screen_name;
-		} else {
-			final String nick = getUserNickname(mContext, user_list.user_id);
-			created_by = TextUtils.isEmpty(nick) ? user_list.user_name : mNicknameOnly ? nick : mContext.getString(
-					R.string.name_with_nickname, user_list.user_name, nick);
-		}
+		final String display_name = getDisplayName(mContext, user_list.user_id, user_list.user_name,
+				user_list.user_screen_name, mDisplayNameFirst, mNicknameOnly, false);
 		holder.text1.setText(user_list.name);
-		holder.text2.setText(mContext.getString(R.string.created_by, created_by));
+		holder.text2.setText(mContext.getString(R.string.created_by, display_name));
 		holder.icon.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
 		if (mDisplayProfileImage) {
 			mProfileImageLoader.displayProfileImage(holder.icon, user_list.user_profile_image_url);
@@ -104,6 +96,13 @@ public class SimpleParcelableUserListsAdapter extends ArrayAdapter<ParcelableUse
 	}
 
 	@Override
+	public void setDisplayNameFirst(final boolean name_first) {
+		if (mDisplayNameFirst == name_first) return;
+		mDisplayNameFirst = name_first;
+		notifyDataSetChanged();
+	}
+
+	@Override
 	public void setDisplayProfileImage(final boolean display) {
 		if (display != mDisplayProfileImage) {
 			mDisplayProfileImage = display;
@@ -114,15 +113,6 @@ public class SimpleParcelableUserListsAdapter extends ArrayAdapter<ParcelableUse
 	@Override
 	public void setLinkHighlightOption(final String option) {
 
-	}
-
-	@Override
-	public void setNameDisplayOption(final String option) {
-		final int option_int = getNameDisplayOptionInt(option);
-		final boolean display_name = NAME_DISPLAY_OPTION_CODE_SCREEN_NAME != option_int;
-		if (display_name == mDisplayName) return;
-		mDisplayName = display_name;
-		notifyDataSetChanged();
 	}
 
 	@Override

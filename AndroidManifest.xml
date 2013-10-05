@@ -473,6 +473,7 @@
 			android:name=".provider.TwidereDataProvider"
 			android:authorities="twidere"
 			android:exported="true"
+			android:grantUriPermissions="true"
 			android:label="@string/label_tweetstore_provider"/>
 		<provider
 			android:name=".provider.CommandProvider"

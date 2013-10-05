@@ -7,7 +7,7 @@
 	android:background="?android:activatedBackgroundIndicator"
 	tools:context=".adapter.DirectMessagesEntryAdapter">
 
-	<org.mariotaku.twidere.view.ColorLabelRelativeLayout
+	<org.mariotaku.twidere.view.ColorLabelLinearLayout
 		android:id="@+id/content"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
@@ -15,60 +15,54 @@
 		android:layout_marginLeft="8dp"
 		android:layout_marginRight="8dp"
 		android:layout_marginTop="4dp"
-		android:background="?cardItemBackground">
-
-		<org.mariotaku.twidere.view.ClickableImageView
-			android:id="@+id/profile_image"
-			android:layout_width="@dimen/profile_image_size"
-			android:layout_height="@dimen/profile_image_size"
-			android:scaleType="fitCenter"/>
+		android:background="?cardItemBackground"
+		android:orientation="vertical">
 
 		<LinearLayout
+			android:id="@+id/profile_container"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_alignParentRight="true"
-			android:layout_alignWithParentIfMissing="true"
-			android:layout_centerVertical="true"
-			android:layout_marginLeft="6dp"
-			android:layout_toRightOf="@+id/profile_image"
-			android:orientation="vertical">
+			android:baselineAligned="false"
+			android:gravity="center_vertical"
+			android:orientation="horizontal"
+			android:padding="8dp">
 
-			<LinearLayout
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_gravity="left"
-				android:orientation="horizontal">
+			<org.mariotaku.twidere.view.ClickableImageView
+				android:id="@+id/profile_image"
+				android:layout_width="@dimen/profile_image_size_cards_ui"
+				android:layout_height="@dimen/profile_image_size_cards_ui"
+				android:layout_marginRight="8dp"
+				android:layout_weight="0"
+				android:contentDescription="@string/profile_image"
+				android:scaleType="fitCenter"/>
 
-				<TextView
-					android:id="@+id/name"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:singleLine="true"
-					android:textAppearance="?android:attr/textAppearanceMedium"
-					android:textColor="?android:attr/textColorPrimary"/>
-
-				<TextView
-					android:id="@+id/screen_name"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:paddingLeft="4dp"
-					android:paddingRight="4dp"
-					android:singleLine="true"
-					android:textAppearance="?android:attr/textAppearanceSmall"
-					android:textColor="?android:attr/textColorSecondary"/>
-			</LinearLayout>
-
-			<LinearLayout
+			<RelativeLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_gravity="left"
-				android:orientation="horizontal">
+				android:layout_weight="1">
 
-				<TextView
-					android:id="@+id/text"
+				<FrameLayout
+					android:id="@+id/name_frame"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_weight="1"
+					android:layout_alignParentLeft="true"
+					android:layout_toLeftOf="@+id/time">
+
+					<org.mariotaku.twidere.view.HandleSpanClickTextView
+						android:id="@+id/name"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:singleLine="true"
+						android:textAppearance="?android:attr/textAppearanceSmall"
+						android:textColor="?android:attr/textColorPrimary"
+						android:textStyle="bold"/>
+				</FrameLayout>
+
+				<org.mariotaku.twidere.view.HandleSpanClickTextView
+					android:id="@+id/screen_name"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_below="@+id/name_frame"
 					android:singleLine="true"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:textColor="?android:attr/textColorSecondary"/>
@@ -77,14 +71,28 @@
 					android:id="@+id/time"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_weight="0"
-					android:paddingLeft="4dp"
-					android:paddingRight="4dp"
-					android:singleLine="true"
-					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:layout_alignParentRight="true"
+					android:layout_alignParentTop="true"
+					android:layout_alignWithParentIfMissing="true"
+					android:drawablePadding="4dp"
+					android:gravity="center_vertical|right"
 					android:textColor="?android:attr/textColorSecondary"/>
-			</LinearLayout>
+			</RelativeLayout>
 		</LinearLayout>
-	</org.mariotaku.twidere.view.ColorLabelRelativeLayout>
+
+		<View
+			android:layout_width="match_parent"
+			android:layout_height="0.2dp"
+			android:background="#40808080"/>
+
+		<TextView
+			android:id="@+id/text"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:padding="8dp"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="?android:attr/textColorSecondary"/>
+	</org.mariotaku.twidere.view.ColorLabelLinearLayout>
 
 </FrameLayout>
