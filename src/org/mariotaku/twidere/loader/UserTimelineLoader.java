@@ -77,6 +77,6 @@ public class UserTimelineLoader extends Twitter4JStatusesLoader {
 
 	@Override
 	protected boolean shouldFilterStatus(final SQLiteDatabase database, final ParcelableStatus status) {
-		return !mIsMyTimeline && isFiltered(database, status.text_plain, status.text_html, null, status.source);
+		return !mIsMyTimeline && isFiltered(database, -1, status.text_plain, status.text_html, status.source);
 	}
 }

@@ -93,7 +93,9 @@ import de.keyboardsurfer.android.widget.crouton.CroutonConfiguration;
 import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 
 import org.apache.http.NameValuePair;
+import org.json.JSONArray;
 import org.mariotaku.gallery3d.ImageViewerGLActivity;
+import org.mariotaku.jsonserializer.JSONSerializer;
 import org.mariotaku.querybuilder.AllColumns;
 import org.mariotaku.querybuilder.Columns;
 import org.mariotaku.querybuilder.Columns.Column;
@@ -136,6 +138,7 @@ import org.mariotaku.twidere.fragment.UsersListFragment;
 import org.mariotaku.twidere.model.DirectMessageCursorIndices;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.model.ParcelableStatus.ParcelableUserMention;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.model.PreviewImage;
@@ -391,12 +394,12 @@ public final class Utils implements Constants {
 		}
 		builder.append(Statuses._ID + " NOT IN ( ");
 		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table);
-		builder.append(" WHERE " + table + "." + Statuses.SCREEN_NAME + " IN ( SELECT " + TABLE_FILTERED_USERS + "."
-				+ Filters.Users.VALUE + " FROM " + TABLE_FILTERED_USERS + " )");
+		builder.append(" WHERE " + table + "." + Statuses.USER_ID + " IN ( SELECT " + TABLE_FILTERED_USERS + "."
+				+ Filters.Users.USER_ID + " FROM " + TABLE_FILTERED_USERS + " )");
 		// TODO
 		if (enable_in_rts) {
-			builder.append(" OR " + table + "." + Statuses.RETWEETED_BY_SCREEN_NAME + " IN ( SELECT "
-					+ TABLE_FILTERED_USERS + "." + Filters.Users.VALUE + " FROM " + TABLE_FILTERED_USERS + " )");
+			builder.append(" OR " + table + "." + Statuses.RETWEETED_BY_USER_ID + " IN ( SELECT "
+					+ TABLE_FILTERED_USERS + "." + Filters.Users.USER_ID + " FROM " + TABLE_FILTERED_USERS + " )");
 		}
 		builder.append(" AND " + table + "." + Statuses.IS_GAP + " IS NULL");
 		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
@@ -1458,6 +1461,11 @@ public final class Utils implements Constants {
 	}
 
 	public static String getDisplayName(final Context context, final long user_id, final String name,
+			final String screen_name, final boolean name_first, final boolean nickname_only) {
+		return getDisplayName(context, user_id, name, screen_name, name_first, nickname_only, false);
+	}
+
+	public static String getDisplayName(final Context context, final long user_id, final String name,
 			final String screen_name, final boolean name_first, final boolean nickname_only, final boolean ignore_cache) {
 		if (context == null) return null;
 		final String nick = getUserNickname(context, user_id, ignore_cache);
@@ -2250,15 +2258,10 @@ public final class Utils implements Constants {
 		return (info.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
 	}
 
-	public static boolean isFiltered(final SQLiteDatabase database, final ParcelableStatus status) {
-		if (status == null) return false;
-		return isFiltered(database, status.text_plain, status.text_html, status.user_screen_name, status.source);
-	}
-
-	public static boolean isFiltered(final SQLiteDatabase database, final String text_plain, final String text_html,
-			final String screen_name, final String source) {
+	public static boolean isFiltered(final SQLiteDatabase database, final long user_id, final String text_plain,
+			final String text_html, final String source) {
 		if (database == null) return false;
-		if (text_plain == null && text_html == null && screen_name == null && source == null) return false;
+		if (text_plain == null && text_html == null && user_id <= 0 && source == null) return false;
 		final StringBuilder builder = new StringBuilder();
 		final List<String> selection_args = new ArrayList<String>();
 		builder.append("SELECT NULL WHERE");
@@ -2275,12 +2278,12 @@ public final class Utils implements Constants {
 			builder.append("(SELECT 1 IN (SELECT ? LIKE '%<a href=\"%'||" + TABLE_FILTERED_LINKS + "." + Filters.VALUE
 					+ "||'%\">%' FROM " + TABLE_FILTERED_LINKS + "))");
 		}
-		if (screen_name != null) {
+		if (user_id > 0) {
 			if (!selection_args.isEmpty()) {
 				builder.append(" OR ");
 			}
-			selection_args.add(screen_name);
-			builder.append("(SELECT ? IN (SELECT " + Filters.VALUE + " FROM " + TABLE_FILTERED_USERS + "))");
+			builder.append("(SELECT " + user_id + " IN (SELECT " + Filters.Users.USER_ID + " FROM "
+					+ TABLE_FILTERED_USERS + "))");
 		}
 		if (source != null) {
 			if (!selection_args.isEmpty()) {
@@ -2298,6 +2301,11 @@ public final class Utils implements Constants {
 		} finally {
 			cur.close();
 		}
+	}
+
+	public static boolean isFiltered(final SQLiteDatabase database, final ParcelableStatus status) {
+		if (status == null) return false;
+		return isFiltered(database, status.user_id, status.text_plain, status.text_html, status.source);
 	}
 
 	public static boolean isMyAccount(final Context context, final long account_id) {
@@ -2528,6 +2536,33 @@ public final class Utils implements Constants {
 		return values;
 	}
 
+	public static ContentValues makeFilterdUserContentValues(final ParcelableStatus status) {
+		if (status == null) return null;
+		final ContentValues values = new ContentValues();
+		values.put(Filters.Users.USER_ID, status.user_id);
+		values.put(Filters.Users.NAME, status.user_name);
+		values.put(Filters.Users.SCREEN_NAME, status.user_screen_name);
+		return values;
+	}
+
+	public static ContentValues makeFilterdUserContentValues(final ParcelableUser user) {
+		if (user == null) return null;
+		final ContentValues values = new ContentValues();
+		values.put(Filters.Users.USER_ID, user.id);
+		values.put(Filters.Users.NAME, user.name);
+		values.put(Filters.Users.SCREEN_NAME, user.screen_name);
+		return values;
+	}
+
+	public static ContentValues makeFilterdUserContentValues(final ParcelableUserMention user) {
+		if (user == null) return null;
+		final ContentValues values = new ContentValues();
+		values.put(Filters.Users.USER_ID, user.id);
+		values.put(Filters.Users.NAME, user.name);
+		values.put(Filters.Users.SCREEN_NAME, user.screen_name);
+		return values;
+	}
+
 	public static ContentValues makeStatusContentValues(final Status orig, final long account_id,
 			final boolean large_profile_image) {
 		if (orig == null || orig.getId() <= 0) return null;
@@ -2584,6 +2619,9 @@ public final class Utils implements Constants {
 		values.put(Statuses.IS_FAVORITE, status.isFavorited());
 		final PreviewImage preview = PreviewImage.getPreviewImage(text_html, true);
 		values.put(Statuses.IMAGE_PREVIEW_URL, preview != null ? preview.image_preview_url : null);
+		final JSONArray json = JSONSerializer.toJSONArray(ParcelableUserMention.fromUserMentionEntities(status
+				.getUserMentionEntities()));
+		values.put(Statuses.MENTIONS, json.toString());
 		return values;
 	}
 

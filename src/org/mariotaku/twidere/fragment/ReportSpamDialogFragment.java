@@ -11,10 +11,9 @@ import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.Utils;
 
-public class DestroyFriendshipDialogFragment extends BaseSupportDialogFragment implements
-		DialogInterface.OnClickListener {
+public class ReportSpamDialogFragment extends BaseSupportDialogFragment implements DialogInterface.OnClickListener {
 
-	public static final String FRAGMENT_TAG = "destroy_friendship";
+	public static final String FRAGMENT_TAG = "create_user_block";
 
 	@Override
 	public void onClick(final DialogInterface dialog, final int which) {
@@ -23,7 +22,7 @@ public class DestroyFriendshipDialogFragment extends BaseSupportDialogFragment i
 				final ParcelableUser user = getUser();
 				final AsyncTwitterWrapper twitter = getTwitterWrapper();
 				if (user == null || twitter == null) return;
-				twitter.destroyFriendshipAsync(user.account_id, user.id);
+				twitter.reportSpamAsync(user.account_id, user.id);
 				break;
 			default:
 				break;
@@ -36,8 +35,8 @@ public class DestroyFriendshipDialogFragment extends BaseSupportDialogFragment i
 		final ParcelableUser user = getUser();
 		if (user != null) {
 			final String display_name = Utils.getDisplayName(getActivity(), user.id, user.name, user.screen_name);
-			builder.setTitle(getString(R.string.unfollow_user, display_name));
-			builder.setMessage(getString(R.string.unfollow_user_confirm_message, display_name));
+			builder.setTitle(getString(R.string.report_user, display_name));
+			builder.setMessage(getString(R.string.report_user_confirm_message, display_name));
 		}
 		builder.setPositiveButton(android.R.string.ok, this);
 		builder.setNegativeButton(android.R.string.cancel, null);
@@ -50,10 +49,10 @@ public class DestroyFriendshipDialogFragment extends BaseSupportDialogFragment i
 		return args.getParcelable(EXTRA_USER);
 	}
 
-	public static DestroyFriendshipDialogFragment show(final FragmentManager fm, final ParcelableUser user) {
+	public static ReportSpamDialogFragment show(final FragmentManager fm, final ParcelableUser user) {
 		final Bundle args = new Bundle();
 		args.putParcelable(EXTRA_USER, user);
-		final DestroyFriendshipDialogFragment f = new DestroyFriendshipDialogFragment();
+		final ReportSpamDialogFragment f = new ReportSpamDialogFragment();
 		f.setArguments(args);
 		f.show(fm, FRAGMENT_TAG);
 		return f;

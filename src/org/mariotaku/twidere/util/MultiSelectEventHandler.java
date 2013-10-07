@@ -22,12 +22,12 @@ package org.mariotaku.twidere.util;
 import static org.mariotaku.twidere.util.ContentResolverUtils.bulkDelete;
 import static org.mariotaku.twidere.util.ContentResolverUtils.bulkInsert;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenNames;
+import static org.mariotaku.twidere.util.Utils.makeFilterdUserContentValues;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -49,7 +49,9 @@ import org.mariotaku.twidere.provider.TweetStore.Filters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @SuppressLint("Registered")
 public class MultiSelectEventHandler implements Constants, ActionMode.Callback, MultiSelectManager.Callback {
@@ -132,27 +134,23 @@ public class MultiSelectEventHandler implements Constants, ActionMode.Callback, 
 			}
 			case MENU_MUTE_USER: {
 				final ContentResolver resolver = mActivity.getContentResolver();
-				final Uri uri = Filters.Users.CONTENT_URI;
 				final ArrayList<ContentValues> values_list = new ArrayList<ContentValues>();
-				final List<String> names_list = new NoDuplicatesArrayList<String>();
+				final Set<Long> user_ids = new HashSet<Long>();
 				for (final Object object : selected_items) {
 					if (object instanceof ParcelableStatus) {
 						final ParcelableStatus status = (ParcelableStatus) object;
-						names_list.add(status.user_screen_name);
+						user_ids.add(status.user_id);
+						values_list.add(makeFilterdUserContentValues(status));
 					} else if (object instanceof ParcelableUser) {
 						final ParcelableUser user = (ParcelableUser) object;
-						names_list.add(user.screen_name);
+						user_ids.add(user.id);
+						values_list.add(makeFilterdUserContentValues(user));
 					} else {
 						continue;
 					}
 				}
-				bulkDelete(resolver, uri, Filters.Users.VALUE, names_list, null, true);
-				for (final String screen_name : names_list) {
-					final ContentValues values = new ContentValues();
-					values.put(Filters.VALUE, screen_name);
-					values_list.add(values);
-				}
-				bulkInsert(resolver, uri, values_list);
+				bulkDelete(resolver, Filters.Users.CONTENT_URI, Filters.Users.USER_ID, user_ids, null, true);
+				bulkInsert(resolver, Filters.Users.CONTENT_URI, values_list);
 				Crouton.showText(mActivity, R.string.users_muted, CroutonStyle.INFO);
 				mode.finish();
 				mActivity.sendBroadcast(new Intent(BROADCAST_MULTI_MUTESTATE_CHANGED));

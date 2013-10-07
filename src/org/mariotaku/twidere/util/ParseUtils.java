@@ -108,7 +108,8 @@ public final class ParseUtils implements Constants {
 	public static long parseLong(final String source) {
 		return parseLong(source, -1);
 	}
-	public static long parseLong(final String source, long def) {
+
+	public static long parseLong(final String source, final long def) {
 		if (source == null) return def;
 		try {
 			return Long.parseLong(source);
@@ -138,7 +139,7 @@ public final class ParseUtils implements Constants {
 	}
 
 	private static boolean shouldPutLong(final String key) {
-		return EXTRA_ACCOUNT_ID.equals(key) || EXTRA_USER_ID.equals(key);
+		return EXTRA_ACCOUNT_ID.equals(key) || EXTRA_USER_ID.equals(key) || EXTRA_STATUS_ID.equals(key);
 	}
 
 }

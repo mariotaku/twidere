@@ -41,6 +41,10 @@
 		android:icon="@drawable/ic_menu_copy"
 		android:title="@android:string/copy"/>
 	<item
+		android:id="@id/add_to_filter"
+		android:icon="@drawable/ic_menu_mute"
+		android:title="@string/add_to_filter"/>
+	<item
 		android:id="@+id/delete_submenu"
 		android:icon="@android:drawable/ic_menu_delete"
 		android:title="@string/delete"

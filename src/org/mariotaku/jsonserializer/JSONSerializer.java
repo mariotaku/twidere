@@ -26,6 +26,17 @@ public class JSONSerializer {
 	private static final String KEY_OBJECT = "object";
 	private static final String KEY_CLASS = "class";
 
+	public static <T extends JSONParcelable> T[] arrayFromJSON(final JSONParcelable.Creator<T> creator,
+			final JSONArray json) {
+		if (json == null) return null;
+		final int size = json.length();
+		final T[] list = creator.newArray(size);
+		for (int i = 0; i < size; i++) {
+			list[i] = creator.createFromParcel(new JSONParcel(json.optJSONObject(i)));
+		}
+		return list;
+	}
+
 	public static <T extends JSONParcelable> T fromFile(final File file) throws IOException {
 		if (file == null) throw new FileNotFoundException();
 		final BufferedReader reader = new BufferedReader(new FileReader(file));

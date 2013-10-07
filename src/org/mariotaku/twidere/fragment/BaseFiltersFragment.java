@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.getDisplayName;
+
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -27,6 +29,7 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
@@ -40,6 +43,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 import org.mariotaku.querybuilder.Columns.Column;
 import org.mariotaku.querybuilder.RawItemArray;
@@ -52,7 +56,7 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 
 	private ListView mListView;
 
-	private FilterListAdapter mAdapter;
+	private SimpleCursorAdapter mAdapter;
 
 	private ContentResolver mResolver;
 
@@ -93,7 +97,7 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		mResolver = getContentResolver();
 		super.onActivityCreated(savedInstanceState);
-		mAdapter = new FilterListAdapter(getActivity());
+		mAdapter = createListAdapter();
 		setListAdapter(mAdapter);
 		mListView = getListView();
 		mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
@@ -111,9 +115,7 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 
 	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
-		final String[] cols = getContentColumns();
-		final Uri uri = getContentUri();
-		return new CursorLoader(getActivity(), uri, cols, null, null, null);
+		return new CursorLoader(getActivity(), getContentUri(), getContentColumns(), null, null, null);
 	}
 
 	@Override
@@ -173,6 +175,10 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 		if (!isVisibleToUser && mActionMode != null) {
 			mActionMode.finish();
 		}
+	}
+
+	protected SimpleCursorAdapter createListAdapter() {
+		return new FilterListAdapter(getActivity());
 	}
 
 	protected abstract String[] getContentColumns();
@@ -237,9 +243,52 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 			return Filters.Users.CONTENT_URI;
 		}
 
+		@Override
+		protected SimpleCursorAdapter createListAdapter() {
+			return new FilterUsersListAdapter(getActivity());
+		}
+
+		private static final class FilterUsersListAdapter extends SimpleCursorAdapter {
+
+			private int mUserIdIdx, mNameIdx, mScreenNameIdx;
+
+			private final boolean mNameFirst, mNicknameOnly;
+
+			public FilterUsersListAdapter(final Context context) {
+				super(context, android.R.layout.simple_list_item_activated_1, null, new String[0], new int[0], 0);
+				final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
+						Context.MODE_PRIVATE);
+				mNameFirst = prefs.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
+				mNicknameOnly = prefs.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false);
+			}
+
+			@Override
+			public void bindView(final View view, final Context context, final Cursor cursor) {
+				super.bindView(view, context, cursor);
+				final TextView text1 = (TextView) view.findViewById(android.R.id.text1);
+				final long user_id = cursor.getLong(mUserIdIdx);
+				final String name = cursor.getString(mNameIdx);
+				final String screen_name = cursor.getString(mScreenNameIdx);
+				final String display_name = getDisplayName(context, user_id, name, screen_name, mNameFirst,
+						mNicknameOnly);
+				text1.setText(display_name);
+			}
+
+			@Override
+			public Cursor swapCursor(final Cursor c) {
+				final Cursor old = super.swapCursor(c);
+				if (c != null) {
+					mUserIdIdx = c.getColumnIndex(Filters.Users.USER_ID);
+					mNameIdx = c.getColumnIndex(Filters.Users.NAME);
+					mScreenNameIdx = c.getColumnIndex(Filters.Users.SCREEN_NAME);
+				}
+				return old;
+			}
+
+		}
 	}
 
-	public static final class FilterListAdapter extends SimpleCursorAdapter {
+	private static final class FilterListAdapter extends SimpleCursorAdapter {
 
 		private static final String[] from = new String[] { Filters.VALUE };
 

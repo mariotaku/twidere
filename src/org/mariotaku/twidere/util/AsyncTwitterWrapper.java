@@ -231,6 +231,30 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		return mAsyncTaskManager.hasRunningTask();
 	}
 
+	public boolean isCreatingFriendship(final long account_id, final long user_id) {
+		for (final ManagedAsyncTask<?, ?, ?> task : mAsyncTaskManager.getTaskSpecList()) {
+			if (task instanceof CreateFriendshipTask) {
+				final CreateFriendshipTask create_friendship = (CreateFriendshipTask) task;
+				if (create_friendship.getStatus() == AsyncTask.Status.RUNNING
+						&& create_friendship.getAccountId() == account_id && create_friendship.getUserId() == user_id)
+					return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isDestroyingFriendship(final long account_id, final long user_id) {
+		for (final ManagedAsyncTask<?, ?, ?> task : mAsyncTaskManager.getTaskSpecList()) {
+			if (task instanceof DestroyFriendshipTask) {
+				final DestroyFriendshipTask create_friendship = (DestroyFriendshipTask) task;
+				if (create_friendship.getStatus() == AsyncTask.Status.RUNNING
+						&& create_friendship.getAccountId() == account_id && create_friendship.getUserId() == user_id)
+					return true;
+			}
+		}
+		return false;
+	}
+
 	public boolean isHomeTimelineRefreshing() {
 		return mAsyncTaskManager.hasRunningTasksForTag(TASK_TAG_GET_HOME_TIMELINE)
 				|| mAsyncTaskManager.hasRunningTasksForTag(TASK_TAG_STORE_HOME_TIMELINE);
@@ -289,7 +313,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int reportSpam(final long account_id, final long user_id) {
+	public int reportSpamAsync(final long account_id, final long user_id) {
 		final ReportSpamTask task = new ReportSpamTask(account_id, user_id);
 		return mAsyncTaskManager.add(task, true);
 	}
@@ -633,6 +657,14 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			super(mContext, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.user_id = user_id;
+		}
+
+		public long getAccountId() {
+			return account_id;
+		}
+
+		public long getUserId() {
+			return user_id;
 		}
 
 		@Override
@@ -1031,6 +1063,14 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			super(mContext, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.user_id = user_id;
+		}
+
+		public long getAccountId() {
+			return account_id;
+		}
+
+		public long getUserId() {
+			return user_id;
 		}
 
 		@Override

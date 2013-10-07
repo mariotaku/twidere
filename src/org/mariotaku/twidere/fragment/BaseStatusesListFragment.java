@@ -292,6 +292,10 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 				mTwitterWrapper.destroyStatusAsync(status.account_id, status.id);
 				break;
 			}
+			case MENU_ADD_TO_FILTER: {
+				AddStatusFilterDialogFragment.show(getFragmentManager(), status);
+				break;
+			}
 			default: {
 				if (item.getIntent() != null) {
 					try {

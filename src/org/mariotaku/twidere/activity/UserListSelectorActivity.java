@@ -48,7 +48,6 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 	private SimpleParcelableUsersAdapter mUsersAdapter;
 	private View mUsersListContainer, mUserListsContainer, mCreateUserListContainer;
 
-	private long mAccountId;
 	private String mScreenName;
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
@@ -74,7 +73,7 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 			case R.id.create_list: {
 				final DialogFragment f = new CreateUserListDialogFragment();
 				final Bundle args = new Bundle();
-				args.putLong(EXTRA_ACCOUNT_ID, mAccountId);
+				args.putLong(EXTRA_ACCOUNT_ID, getAccountId());
 				f.setArguments(args);
 				f.show(getSupportFragmentManager(), null);
 				break;
@@ -131,7 +130,6 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 			return;
 		}
 		setContentView(R.layout.user_list_selector);
-		mAccountId = intent.getLongExtra(EXTRA_ACCOUNT_ID, -1);
 		if (savedInstanceState == null) {
 			mScreenName = intent.getStringExtra(EXTRA_SCREEN_NAME);
 		} else {
@@ -181,10 +179,14 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 		super.onStop();
 	}
 
+	private long getAccountId() {
+		return getIntent().getLongExtra(EXTRA_ACCOUNT_ID, -1);
+	}
+
 	private void getUserLists(final String screen_name) {
 		if (screen_name == null) return;
 		mScreenName = screen_name;
-		final GetUserListsTask task = new GetUserListsTask(this, mAccountId, screen_name);
+		final GetUserListsTask task = new GetUserListsTask(this, getAccountId(), screen_name);
 		task.execute();
 	}
 
@@ -193,7 +195,7 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 	}
 
 	private void searchUser(final String name) {
-		final SearchUsersTask task = new SearchUsersTask(this, mAccountId, name);
+		final SearchUsersTask task = new SearchUsersTask(this, getAccountId(), name);
 		task.execute();
 	}
 
@@ -222,6 +224,9 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 		@Override
 		protected SingleResponse<List<ParcelableUserList>> doInBackground(final Void... params) {
 			final Twitter twitter = getTwitterInstance(mActivity, mAccountId, false);
+			if (twitter == null) {
+				SingleResponse.nullInstance();
+			}
 			try {
 				final ResponseList<UserList> lists = twitter.getUserLists(mScreenName);
 				final List<ParcelableUserList> data = new ArrayList<ParcelableUserList>();
@@ -285,6 +290,9 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 		@Override
 		protected SingleResponse<List<ParcelableUser>> doInBackground(final Void... params) {
 			final Twitter twitter = getTwitterInstance(mActivity, mAccountId, false);
+			if (twitter == null) {
+				SingleResponse.nullInstance();
+			}
 			try {
 				final ResponseList<User> lists = twitter.searchUsers(mName, 1);
 				final List<ParcelableUser> data = new ArrayList<ParcelableUser>();

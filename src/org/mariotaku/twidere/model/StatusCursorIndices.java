@@ -29,7 +29,7 @@ public class StatusCursorIndices {
 			text_unescaped, user_profile_image_url, is_favorite, is_retweet, is_gap, location, is_protected,
 			is_verified, in_reply_to_status_id, in_reply_to_user_id, in_reply_to_name, in_reply_to_screen_name,
 			my_retweet_id, retweeted_by_name, retweeted_by_screen_name, retweet_id, retweeted_by_user_id, user_id,
-			source, retweet_count, is_possibly_sensitive, is_following, image_preview_url;
+			source, retweet_count, is_possibly_sensitive, is_following, image_preview_url, mentions;
 
 	public StatusCursorIndices(final Cursor cursor) {
 		_id = cursor.getColumnIndex(Statuses._ID);
@@ -63,6 +63,7 @@ public class StatusCursorIndices {
 		is_possibly_sensitive = cursor.getColumnIndex(Statuses.IS_POSSIBLY_SENSITIVE);
 		is_following = cursor.getColumnIndex(Statuses.IS_FOLLOWING);
 		image_preview_url = cursor.getColumnIndex(Statuses.IMAGE_PREVIEW_URL);
+		mentions = cursor.getColumnIndex(Statuses.MENTIONS);
 	}
 
 	@Override
@@ -71,14 +72,14 @@ public class StatusCursorIndices {
 				+ ", status_timestamp=" + status_timestamp + ", user_name=" + user_name + ", user_screen_name="
 				+ user_screen_name + ", text_html=" + text_html + ", text_plain=" + text_plain + ", text_unescaped="
 				+ text_unescaped + ", user_profile_image_url=" + user_profile_image_url + ", is_favorite="
-				+ is_favorite + ", is_gap=" + is_gap + ", location=" + location + ", is_protected=" + is_protected
-				+ ", is_verified=" + is_verified + ", in_reply_to_status_id=" + in_reply_to_status_id
-				+ ", in_reply_to_user_id=" + in_reply_to_user_id + ", in_reply_to_name=" + in_reply_to_name
-				+ ", in_reply_to_screen_name=" + in_reply_to_screen_name + ", my_retweet_id=" + my_retweet_id
-				+ ", retweeted_by_name=" + retweeted_by_name + ", retweeted_by_screen_name=" + retweeted_by_screen_name
-				+ ", retweet_id=" + retweet_id + ", retweeted_by_user_id=" + retweeted_by_user_id + ", user_id="
-				+ user_id + ", source=" + source + ", retweet_count=" + retweet_count + ", is_possibly_sensitive="
-				+ is_possibly_sensitive + ", is_following=" + is_following + ", image_preview_url=" + image_preview_url
-				+ "}";
+				+ is_favorite + ", is_retweet=" + is_retweet + ", is_gap=" + is_gap + ", location=" + location
+				+ ", is_protected=" + is_protected + ", is_verified=" + is_verified + ", in_reply_to_status_id="
+				+ in_reply_to_status_id + ", in_reply_to_user_id=" + in_reply_to_user_id + ", in_reply_to_name="
+				+ in_reply_to_name + ", in_reply_to_screen_name=" + in_reply_to_screen_name + ", my_retweet_id="
+				+ my_retweet_id + ", retweeted_by_name=" + retweeted_by_name + ", retweeted_by_screen_name="
+				+ retweeted_by_screen_name + ", retweet_id=" + retweet_id + ", retweeted_by_user_id="
+				+ retweeted_by_user_id + ", user_id=" + user_id + ", source=" + source + ", retweet_count="
+				+ retweet_count + ", is_possibly_sensitive=" + is_possibly_sensitive + ", is_following=" + is_following
+				+ ", image_preview_url=" + image_preview_url + ", mentions=" + mentions + "}";
 	}
 }

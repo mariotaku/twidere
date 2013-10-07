@@ -1,5 +1,8 @@
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.getDisplayName;
+import static org.mariotaku.twidere.util.Utils.makeFilterdUserContentValues;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentResolver;
@@ -14,8 +17,10 @@ import com.twitter.Extractor;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.model.ParcelableStatus.ParcelableUserMention;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.util.HtmlEscapeHelper;
+import org.mariotaku.twidere.util.ParseUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -36,20 +41,25 @@ public class AddStatusFilterDialogFragment extends BaseSupportDialogFragment imp
 		final ArrayList<ContentValues> keywords = new ArrayList<ContentValues>();
 		final ArrayList<ContentValues> sources = new ArrayList<ContentValues>();
 		for (final FilterItemInfo info : mCheckedFilterItems) {
-			final ContentValues values = new ContentValues();
-			values.put(Filters.VALUE, info.value);
-			switch (info.type) {
-				case FilterItemInfo.FILTER_TYPE_USER:
-					users.add(values);
-					break;
-				case FilterItemInfo.FILTER_TYPE_KEYWORD:
+			final Object value = info.value;
+			if (value instanceof ParcelableUserMention) {
+				final ContentValues values = makeFilterdUserContentValues((ParcelableUserMention) value);
+				users.add(values);
+			} else if (value instanceof ParcelableStatus) {
+				final ContentValues values = makeFilterdUserContentValues((ParcelableStatus) value);
+				users.add(values);
+			} else if (info.type == FilterItemInfo.FILTER_TYPE_KEYWORD) {
+				if (value != null) {
+					final ContentValues values = new ContentValues();
+					values.put(Filters.Keywords.VALUE, "#" + ParseUtils.parseString(value));
 					keywords.add(values);
-					break;
-				case FilterItemInfo.FILTER_TYPE_SOURCE:
+				}
+			} else if (info.type == FilterItemInfo.FILTER_TYPE_SOURCE) {
+				if (value != null) {
+					final ContentValues values = new ContentValues();
+					values.put(Filters.Sources.VALUE, ParseUtils.parseString(value));
 					sources.add(values);
-					break;
-				default:
-					break;
+				}
 			}
 		}
 		final ContentResolver resolver = getContentResolver();
@@ -76,16 +86,14 @@ public class AddStatusFilterDialogFragment extends BaseSupportDialogFragment imp
 			final FilterItemInfo info = mFilterItems[i];
 			switch (info.type) {
 				case FilterItemInfo.FILTER_TYPE_USER:
-					entries[i] = getString(R.string.user_filter_name, info.value);
+					entries[i] = getString(R.string.user_filter_name, getName(info.value));
 					break;
 				case FilterItemInfo.FILTER_TYPE_KEYWORD:
-					entries[i] = getString(R.string.keyword_filter_name, info.value);
+					entries[i] = getString(R.string.keyword_filter_name, getName(info.value));
 					break;
 				case FilterItemInfo.FILTER_TYPE_SOURCE:
-					entries[i] = getString(R.string.source_filter_name, info.value);
+					entries[i] = getString(R.string.source_filter_name, getName(info.value));
 					break;
-				default:
-					entries[i] = info.value;
 			}
 		}
 		builder.setTitle(R.string.add_to_filter);
@@ -100,19 +108,35 @@ public class AddStatusFilterDialogFragment extends BaseSupportDialogFragment imp
 		if (args == null || !args.containsKey(EXTRA_STATUS)) return new FilterItemInfo[0];
 		final ParcelableStatus status = args.getParcelable(EXTRA_STATUS);
 		final ArrayList<FilterItemInfo> list = new ArrayList<FilterItemInfo>();
-		final Set<String> mentions = mExtractor.extractMentionedScreennames(status.text_plain);
-		mentions.remove(status.user_screen_name);
-		list.add(new FilterItemInfo(FilterItemInfo.FILTER_TYPE_USER, status.user_screen_name));
-		for (final String user : mentions) {
-			list.add(new FilterItemInfo(FilterItemInfo.FILTER_TYPE_USER, user));
+		list.add(new FilterItemInfo(FilterItemInfo.FILTER_TYPE_USER, status));
+		final ParcelableUserMention[] mentions = status.mentions;
+		if (mentions != null) {
+			for (final ParcelableUserMention mention : mentions) {
+				if (mention.id != status.user_id) {
+					list.add(new FilterItemInfo(FilterItemInfo.FILTER_TYPE_USER, mention));
+				}
+			}
 		}
 		final Set<String> hashtags = mExtractor.extractHashtags(status.text_plain);
-		for (final String hashtag : hashtags) {
-			list.add(new FilterItemInfo(FilterItemInfo.FILTER_TYPE_KEYWORD, hashtag));
+		if (hashtags != null) {
+			for (final String hashtag : hashtags) {
+				list.add(new FilterItemInfo(FilterItemInfo.FILTER_TYPE_KEYWORD, hashtag));
+			}
 		}
 		final String source = HtmlEscapeHelper.toPlainText(status.source);
 		list.add(new FilterItemInfo(FilterItemInfo.FILTER_TYPE_SOURCE, source));
 		return list.toArray(new FilterItemInfo[list.size()]);
+	}
+
+	private String getName(final Object value) {
+		if (value instanceof ParcelableUserMention) {
+			final ParcelableUserMention mention = (ParcelableUserMention) value;
+			return getDisplayName(getActivity(), mention.id, mention.name, mention.screen_name);
+		} else if (value instanceof ParcelableStatus) {
+			final ParcelableStatus status = (ParcelableStatus) value;
+			return getDisplayName(getActivity(), status.user_id, status.user_name, status.user_screen_name);
+		} else
+			return ParseUtils.parseString(value);
 	}
 
 	public static AddStatusFilterDialogFragment show(final FragmentManager fm, final ParcelableStatus status) {
@@ -131,9 +155,9 @@ public class AddStatusFilterDialogFragment extends BaseSupportDialogFragment imp
 		static final int FILTER_TYPE_SOURCE = 3;
 
 		final int type;
-		final String value;
+		final Object value;
 
-		FilterItemInfo(final int type, final String value) {
+		FilterItemInfo(final int type, final Object value) {
 			this.type = type;
 			this.value = value;
 		}
@@ -147,7 +171,7 @@ public class AddStatusFilterDialogFragment extends BaseSupportDialogFragment imp
 			if (type != other.type) return false;
 			if (value == null) {
 				if (other.value != null) return false;
-			} else if (!value.equalsIgnoreCase(other.value)) return false;
+			} else if (!value.equals(other.value)) return false;
 			return true;
 		}
 
@@ -158,6 +182,11 @@ public class AddStatusFilterDialogFragment extends BaseSupportDialogFragment imp
 			result = prime * result + type;
 			result = prime * result + (value == null ? 0 : value.hashCode());
 			return result;
+		}
+
+		@Override
+		public String toString() {
+			return "FilterItemInfo{type=" + type + ", value=" + value + "}";
 		}
 
 	}

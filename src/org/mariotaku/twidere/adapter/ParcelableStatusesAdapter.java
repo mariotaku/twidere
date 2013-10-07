@@ -70,7 +70,7 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			mIndicateMyStatusDisabled, mIsLastItemFiltered, mFiltersEnabled, mAnimationEnabled;
 	private float mTextSize;
 	private int mLinkHighlightOption;
-	private boolean mFilterIgnoreSource, mFilterIgnoreScreenName, mFilterIgnoreTextHtml, mFilterIgnoreTextPlain,
+	private boolean mFilterIgnoreSource, mFilterIgnoreUser, mFilterIgnoreTextHtml, mFilterIgnoreTextPlain,
 			mNicknameOnly, mDisplayNameFirst;
 	private int mMaxAnimationPosition;
 
@@ -344,11 +344,11 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	}
 
 	@Override
-	public void setIgnoredFilterFields(final boolean text_plain, final boolean text_html, final boolean screen_name,
+	public void setIgnoredFilterFields(final boolean text_plain, final boolean text_html, final boolean user,
 			final boolean source) {
 		mFilterIgnoreTextPlain = text_plain;
 		mFilterIgnoreTextHtml = text_html;
-		mFilterIgnoreScreenName = screen_name;
+		mFilterIgnoreUser = user;
 		mFilterIgnoreSource = source;
 		rebuildFilterInfo();
 		notifyDataSetChanged();
@@ -411,11 +411,11 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	private void rebuildFilterInfo() {
 		if (!isEmpty()) {
 			final ParcelableStatus last = getItem(super.getCount() - 1);
+			final long user_id = mFilterIgnoreUser ? -1 : last.user_id;
 			final String text_plain = mFilterIgnoreTextPlain ? null : last.text_plain;
 			final String text_html = mFilterIgnoreTextHtml ? null : last.text_html;
-			final String screen_name = mFilterIgnoreScreenName ? null : last.user_screen_name;
 			final String source = mFilterIgnoreSource ? null : last.source;
-			mIsLastItemFiltered = isFiltered(mDatabase, text_plain, text_html, screen_name, source);
+			mIsLastItemFiltered = isFiltered(mDatabase, user_id, text_plain, text_html, source);
 		} else {
 			mIsLastItemFiltered = false;
 		}

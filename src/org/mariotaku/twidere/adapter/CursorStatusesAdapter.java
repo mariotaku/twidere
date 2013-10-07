@@ -73,7 +73,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			mIndicateMyStatusDisabled, mIsLastItemFiltered, mFiltersEnabled, mAnimationEnabled;
 	private float mTextSize;
 	private int mLinkHighlightOption;
-	private boolean mFilterIgnoreSource, mFilterIgnoreScreenName, mFilterIgnoreTextHtml, mFilterIgnoreTextPlain,
+	private boolean mFilterIgnoreSource, mFilterIgnoreUser, mFilterIgnoreTextHtml, mFilterIgnoreTextPlain,
 			mNicknameOnly, mDisplayNameFirst;
 	private int mMaxAnimationPosition;
 
@@ -388,11 +388,11 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	}
 
 	@Override
-	public void setIgnoredFilterFields(final boolean text_plain, final boolean text_html, final boolean screen_name,
+	public void setIgnoredFilterFields(final boolean text_plain, final boolean text_html, final boolean user,
 			final boolean source) {
 		mFilterIgnoreTextPlain = text_plain;
 		mFilterIgnoreTextHtml = text_html;
-		mFilterIgnoreScreenName = screen_name;
+		mFilterIgnoreUser = user;
 		mFilterIgnoreSource = source;
 		rebuildFilterInfo();
 		notifyDataSetChanged();
@@ -464,11 +464,11 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 		if (c != null && !c.isClosed() && mIndices != null && c.getCount() > 0) {
 			if (c.getCount() > 0) {
 				c.moveToLast();
+				final long user_id = mFilterIgnoreUser ? -1 : c.getLong(mIndices.user_id);
 				final String text_plain = mFilterIgnoreTextPlain ? null : c.getString(mIndices.text_plain);
 				final String text_html = mFilterIgnoreTextHtml ? null : c.getString(mIndices.text_html);
-				final String screen_name = mFilterIgnoreScreenName ? null : c.getString(mIndices.user_screen_name);
 				final String source = mFilterIgnoreSource ? null : c.getString(mIndices.source);
-				mIsLastItemFiltered = isFiltered(mDatabase, text_plain, text_html, screen_name, source);
+				mIsLastItemFiltered = isFiltered(mDatabase, user_id, text_plain, text_html, source);
 			} else {
 				mIsLastItemFiltered = false;
 			}

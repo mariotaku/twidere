@@ -19,17 +19,23 @@
 
 package org.mariotaku.twidere.activity;
 
+import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
+import static org.mariotaku.twidere.util.Utils.makeFilterdUserContentValues;
+
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -53,12 +59,13 @@ import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredKeywordsFragme
 import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredLinksFragment;
 import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredSourcesFragment;
 import org.mariotaku.twidere.fragment.BaseFiltersFragment.FilteredUsersFragment;
+import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
+import org.mariotaku.twidere.util.ParseUtils;
 
 public class FiltersActivity extends BaseActivity implements TabListener, OnPageChangeListener {
 
 	private static final String EXTRA_AUTO_COMPLETE_TYPE = "auto_complete_type";
-	private static final int AUTO_COMPLETE_TYPE_USERS = 1;
 	private static final int AUTO_COMPLETE_TYPE_SOURCES = 2;
 
 	private ViewPager mViewPager;
@@ -103,15 +110,20 @@ public class FiltersActivity extends BaseActivity implements TabListener, OnPage
 				return true;
 			}
 			case MENU_ADD: {
-				final Fragment filter = mAdapter.getItem(mViewPager.getCurrentItem());
-				if (!(filter instanceof BaseFiltersFragment)) return true;
+				final Fragment f = mAdapter.getItem(mViewPager.getCurrentItem());
+				if (!(f instanceof BaseFiltersFragment)) return true;
 				final Bundle args = new Bundle();
-				if (filter instanceof FilteredUsersFragment) {
-					args.putInt(EXTRA_AUTO_COMPLETE_TYPE, AUTO_COMPLETE_TYPE_USERS);
-				} else if (filter instanceof FilteredSourcesFragment) {
+				if (f instanceof FilteredUsersFragment) {
+					final Intent intent = new Intent(INTENT_ACTION_SELECT_USER);
+					intent.setClass(this, UserListSelectorActivity.class);
+					intent.putExtra(EXTRA_ACCOUNT_ID, getDefaultAccountId(this));
+					startActivityForResult(intent, REQUEST_SELECT_USER);
+					return true;
+				}
+				if (f instanceof FilteredSourcesFragment) {
 					args.putInt(EXTRA_AUTO_COMPLETE_TYPE, AUTO_COMPLETE_TYPE_SOURCES);
 				}
-				args.putParcelable(EXTRA_URI, ((BaseFiltersFragment) filter).getContentUri());
+				args.putParcelable(EXTRA_URI, ((BaseFiltersFragment) f).getContentUri());
 				final AddItemFragment dialog = new AddItemFragment();
 				dialog.setArguments(args);
 				dialog.show(getFragmentManager(), "add_rule");
@@ -180,6 +192,24 @@ public class FiltersActivity extends BaseActivity implements TabListener, OnPage
 
 	}
 
+	@Override
+	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		switch (requestCode) {
+			case REQUEST_SELECT_USER: {
+				final Fragment filter = mAdapter.getItem(mViewPager.getCurrentItem());
+				if (resultCode != RESULT_OK || !(filter instanceof FilteredUsersFragment) || !data.hasExtra(EXTRA_USER))
+					return;
+				final ParcelableUser user = data.getParcelableExtra(EXTRA_USER);
+				final ContentValues values = makeFilterdUserContentValues(user);
+				final ContentResolver resolver = getContentResolver();
+				resolver.delete(Filters.Users.CONTENT_URI, String.format("%s  = %d", Filters.Users.USER_ID, user.id),
+						null);
+				resolver.insert(Filters.Users.CONTENT_URI, values);
+				break;
+			}
+		}
+	}
+
 	private void addTab(final Class<? extends Fragment> cls, final String name, final int position) {
 		if (mActionBar == null || mAdapter == null) return;
 		mActionBar.addTab(mActionBar.newTab().setText(name).setTabListener(this));
@@ -198,8 +228,7 @@ public class FiltersActivity extends BaseActivity implements TabListener, OnPage
 				case DialogInterface.BUTTON_POSITIVE:
 					if (mEditText.length() <= 0) return;
 					final ContentValues values = new ContentValues();
-					final String text = mEditText.getText().toString();
-					values.put(Filters.VALUE, text);
+					values.put(Filters.VALUE, getText());
 					final Bundle args = getArguments();
 					final Uri uri = args.getParcelable(EXTRA_URI);
 					getContentResolver().insert(uri, values);
@@ -212,6 +241,7 @@ public class FiltersActivity extends BaseActivity implements TabListener, OnPage
 		public Dialog onCreateDialog(final Bundle savedInstanceState) {
 			final Context context = getActivity();
 			final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+			buildDialog(builder);
 			final View view = LayoutInflater.from(context).inflate(R.layout.auto_complete_textview, null);
 			builder.setView(view);
 			mEditText = (AutoCompleteTextView) view.findViewById(R.id.edit_text);
@@ -232,6 +262,14 @@ public class FiltersActivity extends BaseActivity implements TabListener, OnPage
 			return builder.create();
 		}
 
+		protected String getText() {
+			return ParseUtils.parseString(mEditText.getText());
+		}
+
+		private void buildDialog(final Builder builder) {
+			// TODO Auto-generated method stub
+
+		}
 	}
 
 }

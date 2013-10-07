@@ -36,6 +36,7 @@ import static org.mariotaku.twidere.util.Utils.getUserColor;
 import static org.mariotaku.twidere.util.Utils.getUserNickname;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
+import static org.mariotaku.twidere.util.Utils.makeFilterdUserContentValues;
 import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.openIncomingFriendships;
 import static org.mariotaku.twidere.util.Utils.openSavedSearches;
@@ -162,8 +163,6 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 	private String mScreenName;
 	private int mBannerWidth;
 
-	private AsyncTwitterWrapper mTwitterWrapper;
-
 	private PopupMenu mOptionsPopupMenu;
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
@@ -177,17 +176,23 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				if (intent.getLongExtra(EXTRA_USER_ID, -1) == mUser.id && intent.getBooleanExtra(EXTRA_SUCCEED, false)) {
 					getFriendship();
 				}
-			}
-			if (BROADCAST_BLOCKSTATE_CHANGED.equals(action)) {
+			} else if (BROADCAST_BLOCKSTATE_CHANGED.equals(action)) {
 				if (intent.getLongExtra(EXTRA_USER_ID, -1) == mUser.id && intent.getBooleanExtra(EXTRA_SUCCEED, false)) {
 					getFriendship();
 				}
-			}
-			if (BROADCAST_PROFILE_UPDATED.equals(action) || BROADCAST_PROFILE_IMAGE_UPDATED.equals(action)
+			} else if (BROADCAST_PROFILE_UPDATED.equals(action) || BROADCAST_PROFILE_IMAGE_UPDATED.equals(action)
 					|| BROADCAST_PROFILE_BANNER_UPDATED.equals(action)) {
 				if (intent.getLongExtra(EXTRA_USER_ID, -1) == mUser.id && intent.getBooleanExtra(EXTRA_SUCCEED, false)) {
 					getUserInfo(true);
 				}
+			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
+				final AsyncTwitterWrapper twitter = getTwitterWrapper();
+				final boolean is_creating_friendship = twitter != null
+						&& twitter.isCreatingFriendship(mUser.account_id, mUser.id);
+				final boolean is_destroying_friendship = twitter != null
+						&& twitter.isDestroyingFriendship(mUser.account_id, mUser.id);
+				setProgressBarIndeterminateVisibility(is_creating_friendship || is_destroying_friendship);
+				invalidateOptionsMenu();
 			}
 		}
 	};
@@ -388,7 +393,6 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
-		mTwitterWrapper = getApplication().getTwitterWrapper();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		getSharedPreferences(USER_COLOR_PREFERENCES_NAME, Context.MODE_PRIVATE)
 				.registerOnSharedPreferenceChangeListener(this);
@@ -438,9 +442,10 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 			}
 			case REQUEST_ADD_TO_LIST: {
 				if (resultCode == Activity.RESULT_OK && intent != null) {
+					final AsyncTwitterWrapper twitter = getTwitterWrapper();
 					final ParcelableUserList list = intent.getParcelableExtra(EXTRA_USER_LIST);
-					if (list == null) return;
-					mTwitterWrapper.addUserListMembersAsync(mAccountId, list.id, mUserId);
+					if (list == null || twitter == null) return;
+					twitter.addUserListMembersAsync(mAccountId, list.id, mUserId);
 				}
 				break;
 			}
@@ -633,12 +638,13 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 
 	@Override
 	public boolean onMenuItemClick(final MenuItem item) {
-		if (mUser == null || mTwitterWrapper == null) return false;
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		if (mUser == null || twitter == null) return false;
 		switch (item.getItemId()) {
 			case MENU_BLOCK: {
 				if (mFriendship != null) {
 					if (mFriendship.isSourceBlockingTarget()) {
-						mTwitterWrapper.destroyBlockAsync(mAccountId, mUser.id);
+						twitter.destroyBlockAsync(mAccountId, mUser.id);
 					} else {
 						CreateUserBlockDialogFragment.show(getFragmentManager(), mUser);
 					}
@@ -646,17 +652,14 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				break;
 			}
 			case MENU_REPORT_SPAM: {
-				mTwitterWrapper.reportSpam(mAccountId, mUser.id);
+				ReportSpamDialogFragment.show(getFragmentManager(), mUser);
 				break;
 			}
 			case MENU_MUTE_USER: {
-				final String screen_name = mUser.screen_name;
-				final Uri uri = Filters.Users.CONTENT_URI;
-				final ContentValues values = new ContentValues();
 				final ContentResolver resolver = getContentResolver();
-				values.put(Filters.Users.VALUE, screen_name);
-				resolver.delete(uri, Filters.Users.VALUE + " = ?", new String[] { screen_name });
-				resolver.insert(uri, values);
+				resolver.delete(Filters.Users.CONTENT_URI, String.format("%s = %d", Filters.Users.USER_ID, mUser.id),
+						null);
+				resolver.insert(Filters.Users.CONTENT_URI, makeFilterdUserContentValues(mUser));
 				showInfoMessage(getActivity(), R.string.user_muted, false);
 				break;
 			}
@@ -732,13 +735,27 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 					return true;
 				}
 				case MENU_FOLLOW: {
-					if (mTwitterWrapper != null && mUser != null) {
-						mTwitterWrapper.createFriendshipAsync(mUser.account_id, mUser.id);
+					final AsyncTwitterWrapper twitter = getTwitterWrapper();
+					if (twitter != null && mUser != null) {
+						final boolean is_creating_friendship = twitter.isCreatingFriendship(mUser.account_id, mUser.id);
+						final boolean is_destroying_friendship = twitter.isDestroyingFriendship(mUser.account_id,
+								mUser.id);
+						if (!is_creating_friendship && !is_destroying_friendship) {
+							twitter.createFriendshipAsync(mUser.account_id, mUser.id);
+						}
 					}
 					return true;
 				}
 				case MENU_UNFOLLOW: {
-					DestroyFriendshipDialogFragment.show(getFragmentManager(), mUser);
+					final AsyncTwitterWrapper twitter = getTwitterWrapper();
+					if (twitter != null && mUser != null) {
+						final boolean is_creating_friendship = twitter.isCreatingFriendship(mUser.account_id, mUser.id);
+						final boolean is_destroying_friendship = twitter.isDestroyingFriendship(mUser.account_id,
+								mUser.id);
+						if (!is_creating_friendship && !is_destroying_friendship) {
+							DestroyFriendshipDialogFragment.show(getFragmentManager(), mUser);
+						}
+					}
 					return true;
 				}
 			}
@@ -749,13 +766,20 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 	@Override
 	public void onPrepareOptionsMenu(final Menu menu) {
 		super.onPrepareOptionsMenu(menu);
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
 		final boolean is_myself = mUser != null && mUser.account_id == mUser.id || mAccountId == mUserId;
 		final boolean is_following_me = mFriendship != null && mFriendship.isTargetFollowingSource();
 		final boolean is_following = mFriendship != null && mFriendship.isSourceFollowingTarget();
 		final boolean is_protected = mUser != null && mUser.is_protected;
+		final boolean is_creating_friendship = twitter != null && mUser != null
+				&& twitter.isCreatingFriendship(mUser.account_id, mUser.id);
+		final boolean is_destroying_friendship = twitter != null && mUser != null
+				&& twitter.isDestroyingFriendship(mUser.account_id, mUser.id);
 		setMenuItemAvailability(menu, MENU_EDIT, is_myself);
-		setMenuItemAvailability(menu, MENU_FOLLOW, mUser != null && mFriendship != null && !is_myself && !is_following);
-		setMenuItemAvailability(menu, MENU_UNFOLLOW, mUser != null && mFriendship != null && !is_myself && is_following);
+		setMenuItemAvailability(menu, MENU_FOLLOW, mUser != null && mFriendship != null && !is_creating_friendship
+				&& !is_destroying_friendship && !is_myself && !is_following);
+		setMenuItemAvailability(menu, MENU_UNFOLLOW, mUser != null && mFriendship != null && !is_creating_friendship
+				&& !is_destroying_friendship && !is_myself && is_following);
 		setMenuItemIcon(menu, MENU_FOLLOW, is_following_me ? R.drawable.ic_menu_follow_following_you
 				: R.drawable.ic_menu_follow);
 		setMenuItemIcon(menu, MENU_UNFOLLOW, is_following_me ? R.drawable.ic_menu_unfollow_following_you
@@ -786,7 +810,8 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 	@Override
 	public void onStart() {
 		super.onStart();
-		final IntentFilter filter = new IntentFilter(BROADCAST_FRIENDSHIP_CHANGED);
+		final IntentFilter filter = new IntentFilter(BROADCAST_TASK_STATE_CHANGED);
+		filter.addAction(BROADCAST_FRIENDSHIP_CHANGED);
 		filter.addAction(BROADCAST_BLOCKSTATE_CHANGED);
 		filter.addAction(BROADCAST_PROFILE_UPDATED);
 		filter.addAction(BROADCAST_PROFILE_IMAGE_UPDATED);
