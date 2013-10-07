@@ -11,12 +11,13 @@
 		<attr name="cardItemMessageProfileImageOutgoingBackground" format="reference"/>
 		<attr name="listMenuOverflowButton" format="reference"/>
 		<attr name="contentBackground" format="reference|color"/>
-		<attr name="ignorePaddings" format="boolean"/>
+		<attr name="ignorePadding" format="boolean"/>
 		<attr name="linePageIndicatorStyle" format="reference"/>
 	</declare-styleable>
 	<declare-styleable name="TabPagerIndicator">
 		<attr name="tabItemStyle" format="reference"/>
-		<attr name="tabTextStyle" format="reference"/>
+		<attr name="tabItemContentStyle" format="reference"/>
+		<attr name="tabItemTextStyle" format="reference"/>
 	</declare-styleable>
 	<declare-styleable name="LinePageIndicator">
 

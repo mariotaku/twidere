@@ -36,7 +36,7 @@
   <string name="error_unknown_error">Помилка: невідома помилка, це можливо - баг.</string>
   <string name="error_message">Помилка: <xliff:g id="message">%s</xliff:g></string>
   <string name="error_message_with_action">Помилка <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
-  <string name="error_message_rate_limit">Кількість допустимих запитів на Твіттері вичерпана <xliff:g id="action">%1$s</xliff:g>, будь ласка, спробуйте після <xliff:g id="time">%2$s</xliff:g></string>
+  <string name="error_message_rate_limit_with_action">Кількість допустимих запитів на Твіттері вичерпана <xliff:g id="action">%1$s</xliff:g>, будь ласка, спробуйте після <xliff:g id="time">%2$s</xliff:g></string>
   <string name="select_account">Виберіть обліковий запис</string>
   <string name="username">Ім\'я користувача</string>
   <string name="password">Пароль</string>

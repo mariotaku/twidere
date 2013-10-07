@@ -33,12 +33,12 @@ public class UserListViewHolder extends CardViewHolder {
 
 	public UserListViewHolder(final View view) {
 		super(view);
-		profile_image = (ImageView) view.findViewById(R.id.profile_image);
-		name = (TextView) view.findViewById(R.id.name);
-		description = (TextView) view.findViewById(R.id.description);
-		created_by = (TextView) view.findViewById(R.id.created_by);
-		members_count = (TextView) view.findViewById(R.id.members_count);
-		subscribers_count = (TextView) view.findViewById(R.id.subscribers_count);
+		profile_image = (ImageView) findViewById(R.id.profile_image);
+		name = (TextView) findViewById(R.id.name);
+		description = (TextView) findViewById(R.id.description);
+		created_by = (TextView) findViewById(R.id.created_by);
+		members_count = (TextView) findViewById(R.id.members_count);
+		subscribers_count = (TextView) findViewById(R.id.subscribers_count);
 	}
 
 	public void setTextSize(final float text_size) {

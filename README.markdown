@@ -43,19 +43,22 @@ Thanks to their excellent design!
 
 ### Open source projects ###
 
-* [ActionBar-PullToRefresh](https://github.com/chrisbanes/ActionBar-PullToRefresh), Copyright 2013 Chris Banes.
-* [Android-PullToRefresh](https://github.com/chrisbanes/Android-PullToRefresh), Copyright 2013 Chris Banes.
+* [ActionBar-PullToRefresh](https://github.com/chrisbanes/ActionBar-PullToRefresh), Copyright 2013 Chris Banes
+* [Android-PullToRefresh](https://github.com/chrisbanes/Android-PullToRefresh), Copyright 2013 Chris Banes
+* [Android-ViewPagerIndicator](https://github.com/JakeWharton/Android-ViewPagerIndicator/), Copyright 2012 Jake Wharton
+* [Android ViewBadger](https://github.com/jgilfelt/android-viewbadger), Copyright (c) 2012 readyState Software Ltd.
 * [Universal Image Loader for Android](https://github.com/nostra13/Android-Universal-Image-Loader), Copyright 2011-2013 Sergey Tarasevich
 * [ImageViewZoom](https://github.com/sephiroth74/ImageViewZoom), Copyright 2012 Alessandro Crugnola
-* [Gallery2](https://android.googlesource.com/platform/packages/apps/Gallery2), Copyright 2008-2013 Android Open Source Project.
+* [Gallery2](https://android.googlesource.com/platform/packages/apps/Gallery2), Copyright 2008-2013 Android Open Source Project
 * [Commons Lang](http://commons.apache.org/proper/commons-lang/), Copyright 2001-2013 The Apache Software Foundation
 * [SwipeBackLayout](https://github.com/Issacw0ng/SwipeBackLayout), Copyright 2013 Issac Wong
 * [Crouton](https://github.com/keyboardsurfer/Crouton), Copyright 2013 Benjamin Weiss at Neofonie Mobile GmbH.
 * [twitter-text-java](https://github.com/twitter/twitter-text-java), Copyright 2011 Twitter, Inc.
-* [Twitter4J](https://github.com/yusuke/twitter4j), Copyright 2007-2013 Yusuke Yamamoto.
+* [Twitter4J](https://github.com/yusuke/twitter4j), Copyright 2007-2013 Yusuke Yamamoto
 * [dnsjava](http://www.xbill.org/dnsjava/), Copyright 1999-2005, Brian Wellington
 * [TagSoup](http://ccil.org/~cowan/XML/tagsoup/), Copyright 2004 John Cowan
 * [HttpMime](http://hc.apache.org/httpcomponents-client-ga/httpmime/), Copyright 1999-2013 The Apache Software Foundation
+* [ACRA](http://github.com/ACRA/acra), Copyright 2013 Kevin Gaudin
 
 ---
 

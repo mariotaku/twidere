@@ -35,8 +35,8 @@ import org.mariotaku.twidere.provider.TweetStore.Tabs;
 public interface Constants {
 
 	public static final String APP_NAME = "Twidere";
-
 	public static final String APP_PROJECT_URL = "https://github.com/mariotaku/twidere";
+	public static final String APP_PROJECT_EMAIL = "twidere.project@gmail.com";
 
 	public static final String LOGTAG = APP_NAME;
 
@@ -480,6 +480,9 @@ public interface Constants {
 	public static final int MENU_FILTERS = R.id.filters;
 	public static final int MENU_SET_NICKNAME = R.id.set_nickname;
 	public static final int MENU_CLEAR_NICKNAME = R.id.clear_nickname;
+	public static final int MENU_ADD_TO_FILTER = R.id.add_to_filter;
+	public static final int MENU_FOLLOW = R.id.follow;
+	public static final int MENU_UNFOLLOW = R.id.unfollow;
 
 	public static final int MENU_GROUP_STATUS_EXTENSION = 10;
 	public static final int MENU_GROUP_COMPOSE_EXTENSION = 11;

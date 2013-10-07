@@ -36,7 +36,7 @@
   <string name="error_unknown_error">Error: Error desconegut, probablement siga un bug.</string>
   <string name="error_message">Error: <xliff:g id="message">%s</xliff:g></string>
   <string name="error_message_with_action">Error en <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
-  <string name="error_message_rate_limit">S\'a accedit el límit de peticions de Twitter en: <xliff:g id="action">%1$s</xliff:g>, please retry <xliff:g id="time">%2$s</xliff:g></string>
+  <string name="error_message_rate_limit_with_action">S\'a accedit el límit de peticions de Twitter en: <xliff:g id="action">%1$s</xliff:g>, please retry <xliff:g id="time">%2$s</xliff:g></string>
   <string name="select_account">Tria un compte</string>
   <string name="username">Nom d\'usuari</string>
   <string name="password">Contrasenya</string>

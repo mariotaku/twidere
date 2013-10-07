@@ -22,8 +22,8 @@
 
 			<org.mariotaku.twidere.view.ClickableImageView
 				android:id="@+id/incoming_profile_image"
-				android:layout_width="@dimen/profile_image_size_cards_ui"
-				android:layout_height="@dimen/profile_image_size_cards_ui"
+				android:layout_width="@dimen/icon_size_card_list_item"
+				android:layout_height="@dimen/icon_size_card_list_item"
 				android:scaleType="fitCenter"
 				android:src="@drawable/ic_profile_image_default"/>
 		</FrameLayout>
@@ -39,7 +39,7 @@
 				android:id="@+id/incoming_message_content"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:minHeight="@dimen/profile_image_size_cards_ui"
+				android:minHeight="@dimen/icon_size_card_list_item"
 				android:orientation="vertical"
 				android:padding="8dp">
 
@@ -75,8 +75,8 @@
 
 			<org.mariotaku.twidere.view.ClickableImageView
 				android:id="@+id/outgoing_profile_image"
-				android:layout_width="@dimen/profile_image_size_cards_ui"
-				android:layout_height="@dimen/profile_image_size_cards_ui"
+				android:layout_width="@dimen/icon_size_card_list_item"
+				android:layout_height="@dimen/icon_size_card_list_item"
 				android:scaleType="fitCenter"
 				android:src="@drawable/ic_profile_image_default"/>
 		</FrameLayout>
@@ -92,7 +92,7 @@
 				android:id="@+id/outgoing_message_content"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:minHeight="@dimen/profile_image_size_cards_ui"
+				android:minHeight="@dimen/icon_size_card_list_item"
 				android:orientation="vertical"
 				android:padding="8dp">
 

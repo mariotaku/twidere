@@ -21,8 +21,8 @@ public class AccountsSpinnerAdapter extends ArrayAdapter<Account> {
 	private final boolean mDisplayHiResProfileImage;
 
 	public AccountsSpinnerAdapter(final Context context) {
-		super(context, R.layout.simple_two_line_with_icon_list_item);
-		setDropDownViewResource(R.layout.simple_two_line_with_icon_list_item);
+		super(context, R.layout.two_line_list_item_small);
+		setDropDownViewResource(R.layout.two_line_list_item_small);
 		mImageLoader = TwidereApplication.getInstance(context).getImageLoaderWrapper();
 		mDisplayProfileImage = context.getSharedPreferences(DirectMessagesConversationFragment.SHARED_PREFERENCES_NAME,
 				Context.MODE_PRIVATE).getBoolean(

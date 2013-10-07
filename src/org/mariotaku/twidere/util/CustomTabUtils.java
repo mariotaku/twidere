@@ -51,7 +51,7 @@ public class CustomTabUtils implements Constants {
 				CustomTabConfiguration.FIELD_TYPE_NONE, 2, true));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_TRENDS_SUGGESTIONS, new CustomTabConfiguration(
 				TrendsSuggectionsFragment.class, R.string.trends, R.drawable.ic_tab_trends, false,
-				CustomTabConfiguration.FIELD_TYPE_NONE, 3));
+				CustomTabConfiguration.FIELD_TYPE_NONE, 3, true));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_FAVORITES, new CustomTabConfiguration(UserFavoritesFragment.class,
 				R.string.favorites, R.drawable.ic_tab_star, true, CustomTabConfiguration.FIELD_TYPE_USER, 4));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_USER_TIMELINE, new CustomTabConfiguration(
@@ -199,11 +199,6 @@ public class CustomTabUtils implements Constants {
 		}
 		return R.drawable.ic_tab_list;
 	}
-	
-
-	public static boolean isTabTypeValid(final String type) {
-		return type != null && CUSTOM_TABS_CONFIGURATION_MAP.containsKey(type);
-	}
 
 	public static String getTabTypeName(final Context context, final String type) {
 		if (context == null) return null;
@@ -228,5 +223,9 @@ public class CustomTabUtils implements Constants {
 		final boolean added = cur.getCount() > 0;
 		cur.close();
 		return added;
+	}
+
+	public static boolean isTabTypeValid(final String type) {
+		return type != null && CUSTOM_TABS_CONFIGURATION_MAP.containsKey(type);
 	}
 }

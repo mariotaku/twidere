@@ -19,43 +19,55 @@
 
 package org.mariotaku.twidere.adapter;
 
+import static org.mariotaku.twidere.util.Utils.getUserNickname;
+
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FilterQueryProvider;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.mariotaku.querybuilder.Columns.Column;
+import org.mariotaku.querybuilder.RawItemArray;
+import org.mariotaku.querybuilder.Where;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.CachedValues;
+import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
+import org.mariotaku.twidere.util.ParseUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
 
 public class UserHashtagAutoCompleteAdapter extends SimpleCursorAdapter implements Constants {
 
 	private static final String[] FROM = new String[0];
 	private static final int[] TO = new int[0];
-	private static final String[] CACHED_USERS_COLUMNS = new String[] { CachedUsers._ID, CachedUsers.NAME,
-			CachedUsers.SCREEN_NAME, CachedUsers.PROFILE_IMAGE_URL };
+	private static final String[] CACHED_USERS_COLUMNS = new String[] { CachedUsers._ID, CachedUsers.USER_ID,
+			CachedUsers.NAME, CachedUsers.SCREEN_NAME, CachedUsers.PROFILE_IMAGE_URL };
 
 	private final ContentResolver mResolver;
 	private final SQLiteDatabase mDatabase;
 	private final ImageLoaderWrapper mProfileImageLoader;
-	private final SharedPreferences mPreferences;
+	private final SharedPreferences mPreferences, mUserNicknamePreferences;
 
 	private final EditText mEditText;
 
-	private final boolean mDisplayProfileImage;
+	private final boolean mDisplayProfileImage, mNicknameOnly;
 
-	private int mProfileImageUrlIdx, mNameIdx, mScreenNameIdx;
+	private int mProfileImageUrlIdx, mNameIdx, mScreenNameIdx, mUserIdIdx;
 	private char mToken = '@';
 
 	public UserHashtagAutoCompleteAdapter(final Context context) {
@@ -63,15 +75,17 @@ public class UserHashtagAutoCompleteAdapter extends SimpleCursorAdapter implemen
 	}
 
 	public UserHashtagAutoCompleteAdapter(final Context context, final EditText view) {
-		super(context, R.layout.simple_two_line_with_icon_list_item, null, FROM, TO, 0);
+		super(context, R.layout.two_line_list_item_small, null, FROM, TO, 0);
 		mEditText = view;
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mUserNicknamePreferences = context.getSharedPreferences(USER_NICKNAME_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mResolver = context.getContentResolver();
 		final TwidereApplication app = TwidereApplication.getInstance(context);
 		mProfileImageLoader = app != null ? app.getImageLoaderWrapper() : null;
 		mDatabase = app != null ? app.getSQLiteDatabase() : null;
-		mDisplayProfileImage = mPreferences != null ? mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE,
-				true) : true;
+		mDisplayProfileImage = mPreferences != null
+				&& mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
+		mNicknameOnly = mPreferences != null && mPreferences.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false);
 	}
 
 	public UserHashtagAutoCompleteAdapter(final EditText view) {
@@ -84,8 +98,14 @@ public class UserHashtagAutoCompleteAdapter extends SimpleCursorAdapter implemen
 		final TextView text1 = (TextView) view.findViewById(android.R.id.text1);
 		final TextView text2 = (TextView) view.findViewById(android.R.id.text2);
 		final ImageView icon = (ImageView) view.findViewById(android.R.id.icon);
-		if (mScreenNameIdx != -1) {
-			text1.setText(cursor.getString(mNameIdx));
+		if (mScreenNameIdx != -1 && mNameIdx != -1 && mUserIdIdx != -1) {
+			final String nick = getUserNickname(context, cursor.getLong(mUserIdIdx));
+			final String name = cursor.getString(mNameIdx);
+			if (TextUtils.isEmpty(nick)) {
+				text1.setText(name);
+			} else {
+				text1.setText(mNicknameOnly ? nick : context.getString(R.string.name_with_nickname, name, nick));
+			}
 			text2.setText("@" + cursor.getString(mScreenNameIdx));
 		} else {
 			text1.setText("#" + cursor.getString(mNameIdx));
@@ -142,6 +162,9 @@ public class UserHashtagAutoCompleteAdapter extends SimpleCursorAdapter implemen
 			builder.append(CachedUsers.SCREEN_NAME + " LIKE ?||'%' ESCAPE '^'");
 			builder.append(" OR ");
 			builder.append(CachedUsers.NAME + " LIKE ?||'%' ESCAPE '^'");
+			builder.append(" OR ");
+			builder.append(Where.in(new Column(CachedUsers.USER_ID),
+					new RawItemArray(getMatchedNicknameIds(ParseUtils.parseString(constraint)))).getSQL());
 			final String selection = constraint_escaped != null ? builder.toString() : null;
 			final String[] selectionArgs = constraint_escaped != null ? new String[] { constraint_escaped,
 					constraint_escaped } : null;
@@ -161,9 +184,26 @@ public class UserHashtagAutoCompleteAdapter extends SimpleCursorAdapter implemen
 		if (cursor != null) {
 			mNameIdx = cursor.getColumnIndex(CachedValues.NAME);
 			mScreenNameIdx = cursor.getColumnIndex(CachedUsers.SCREEN_NAME);
+			mUserIdIdx = cursor.getColumnIndex(CachedUsers.USER_ID);
 			mProfileImageUrlIdx = cursor.getColumnIndex(CachedUsers.PROFILE_IMAGE_URL);
 		}
 		return super.swapCursor(cursor);
+	}
+
+	private long[] getMatchedNicknameIds(final String str) {
+		if (TextUtils.isEmpty(str)) return new long[0];
+		final List<Long> list = new ArrayList<Long>();
+		for (final Entry<String, ?> entry : mUserNicknamePreferences.getAll().entrySet()) {
+			final String value = ParseUtils.parseString(entry.getValue());
+			final long key = ParseUtils.parseLong(entry.getKey(), -1);
+			if (key == -1 || TextUtils.isEmpty(value)) {
+				continue;
+			}
+			if (value.toLowerCase().startsWith(str.toLowerCase())) {
+				list.add(key);
+			}
+		}
+		return ArrayUtils.fromList(list);
 	}
 
 	private static boolean isAtSymbol(final char character) {

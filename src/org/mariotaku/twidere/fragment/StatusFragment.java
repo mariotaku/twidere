@@ -49,8 +49,6 @@ import static org.mariotaku.twidere.util.Utils.showOkMessage;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -89,8 +87,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 import edu.ucdavis.earlybird.ProfilingUtil;
 
 import org.mariotaku.menubar.MenuBar;
@@ -106,11 +102,9 @@ import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.PreviewImage;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
-import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.util.AsyncTask;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ClipboardUtils;
-import org.mariotaku.twidere.util.HtmlEscapeHelper;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.ParseUtils;
@@ -338,16 +332,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 					mTwitterWrapper.destroyStatusAsync(mAccountId, mStatusId);
 					break;
 				}
-				case MENU_MUTE_SOURCE: {
-					final String source = HtmlEscapeHelper.toPlainText(mStatus.source);
-					if (source == null) return false;
-					final Uri uri = Filters.Sources.CONTENT_URI;
-					final ContentValues values = new ContentValues();
-					final ContentResolver resolver = getContentResolver();
-					values.put(Filters.VALUE, source);
-					resolver.delete(uri, Filters.VALUE + " = ?", new String[] { source });
-					resolver.insert(uri, values);
-					Crouton.showText(getActivity(), getString(R.string.source_muted, source), CroutonStyle.INFO);
+				case MENU_ADD_TO_FILTER: {
+					AddStatusFilterDialogFragment.show(getFragmentManager(), mStatus);
 					break;
 				}
 				case MENU_SET_COLOR: {

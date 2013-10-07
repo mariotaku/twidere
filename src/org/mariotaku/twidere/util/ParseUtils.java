@@ -106,13 +106,16 @@ public final class ParseUtils implements Constants {
 	}
 
 	public static long parseLong(final String source) {
-		if (source == null) return -1;
+		return parseLong(source, -1);
+	}
+	public static long parseLong(final String source, long def) {
+		if (source == null) return def;
 		try {
 			return Long.parseLong(source);
 		} catch (final NumberFormatException e) {
 			// Wrong number format? Ignore them.
 		}
-		return -1;
+		return def;
 	}
 
 	public static String parseString(final Object object) {

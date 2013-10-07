@@ -62,5 +62,9 @@
 	<item name="set_nickname" type="id"/>
 	<item name="clear_nickname" type="id"/>
 	<item name="list_memberships" type="id"/>
+	<item name="unread_count" type="id"/>
+	<item name="add_to_filter" type="id"/>
+	<item name="follow" type="id"/>
+	<item name="unfollow" type="id"/>
 
 </resources>

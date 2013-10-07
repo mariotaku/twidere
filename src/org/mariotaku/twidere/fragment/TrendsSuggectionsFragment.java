@@ -43,7 +43,8 @@ import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
 
-public class TrendsSuggectionsFragment extends BasePullToRefreshListFragment implements LoaderCallbacks<Cursor>, Panes.Left {
+public class TrendsSuggectionsFragment extends BasePullToRefreshListFragment implements LoaderCallbacks<Cursor>,
+		Panes.Left {
 
 	private MultiSelectManager mMultiSelectManager;
 	private SharedPreferences mPreferences;

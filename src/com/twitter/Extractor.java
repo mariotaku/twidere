@@ -1,5 +1,7 @@
 package com.twitter;
 
+import android.text.TextUtils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,16 +37,14 @@ public class Extractor {
 	 * Extract $cashtag references from Tweet text.
 	 * 
 	 * @param text of the tweet from which to extract cashtags
-	 * @return List of cashtags referenced (without the leading $ sign)
+	 * @return Set of cashtags referenced (without the leading $ sign)
 	 */
-	public List<String> extractCashtags(final String text) {
-		if (text == null || text.length() == 0) return Collections.emptyList();
-
-		final ArrayList<String> extracted = new ArrayList<String>();
+	public Set<String> extractCashtags(final String text) {
+		if (TextUtils.isEmpty(text)) return Collections.emptySet();
+		final HashSet<String> extracted = new HashSet<String>();
 		for (final Entity entity : extractCashtagsWithIndices(text)) {
 			extracted.add(entity.value);
 		}
-
 		return extracted;
 	}
 
@@ -84,7 +84,6 @@ public class Extractor {
 		entities.addAll(extractHashtagsWithIndices(text, false));
 		entities.addAll(extractMentionsOrListsWithIndices(text));
 		entities.addAll(extractCashtagsWithIndices(text));
-
 		removeOverlappingEntities(entities);
 		return entities;
 	}
@@ -93,22 +92,14 @@ public class Extractor {
 	 * Extract #hashtag references from Tweet text.
 	 * 
 	 * @param text of the tweet from which to extract hashtags
-	 * @return List of hashtags referenced (without the leading # sign)
+	 * @return Set of hashtags referenced (without the leading # sign)
 	 */
-	public List<String> extractHashtags(final String text) {
-		return extractHashtags(text, true);
-	}
-
-	public List<String> extractHashtags(final String text, final boolean exclude_duplicate) {
-		if (text == null || text.length() == 0) return Collections.emptyList();
-
-		final ArrayList<String> extracted = new ArrayList<String>();
+	public Set<String> extractHashtags(final String text) {
+		if (TextUtils.isEmpty(text)) return Collections.emptySet();
+		final HashSet<String> extracted = new HashSet<String>();
 		for (final Entity entity : extractHashtagsWithIndices(text)) {
-			if (!exclude_duplicate || !extracted.contains(entity.value)) {
-				extracted.add(entity.value);
-			}
+			extracted.add(entity.value);
 		}
-
 		return extracted;
 	}
 
@@ -127,20 +118,13 @@ public class Extractor {
 	 * of @username anywhere in a Tweet.
 	 * 
 	 * @param text of the tweet from which to extract usernames
-	 * @return List of usernames referenced (without the leading @ sign)
+	 * @return Set of usernames referenced (without the leading @ sign)
 	 */
 	public Set<String> extractMentionedScreennames(final String text) {
-		return extractMentionedScreennames(text, true);
-	}
-
-	public Set<String> extractMentionedScreennames(final String text, final boolean exclude_duplicate) {
-		if (text == null || text.length() == 0) return Collections.emptySet();
-
+		if (TextUtils.isEmpty(text)) return Collections.emptySet();
 		final Set<String> extracted = new HashSet<String>();
 		for (final Entity entity : extractMentionedScreennamesWithIndices(text)) {
-			if (!exclude_duplicate || !extracted.contains(entity.value)) {
-				extracted.add(entity.value);
-			}
+			extracted.add(entity.value);
 		}
 		return extracted;
 	}
@@ -163,7 +147,7 @@ public class Extractor {
 	}
 
 	public List<Entity> extractMentionsOrListsWithIndices(final String text) {
-		if (text == null || text.length() == 0) return Collections.emptyList();
+		if (TextUtils.isEmpty(text)) return Collections.emptyList();
 
 		// Performance optimization.
 		// If text doesn't contain @ at all, the text doesn't
@@ -205,7 +189,7 @@ public class Extractor {
 	 *         null if this is not a reply.
 	 */
 	public String extractReplyScreenname(final String text) {
-		if (text == null) return null;
+		if (TextUtils.isEmpty(text)) return null;
 
 		final Matcher matcher = Regex.VALID_REPLY.matcher(text);
 		if (matcher.find()) {
@@ -225,7 +209,7 @@ public class Extractor {
 	 * @return List of URLs referenced.
 	 */
 	public List<String> extractURLs(final String text) {
-		if (text == null || text.length() == 0) return Collections.emptyList();
+		if (TextUtils.isEmpty(text)) return Collections.emptyList();
 
 		final ArrayList<String> urls = new ArrayList<String>();
 		for (final Entity entity : extractURLsWithIndices(text)) {
@@ -241,9 +225,8 @@ public class Extractor {
 	 * @return List of URLs referenced.
 	 */
 	public List<Entity> extractURLsWithIndices(final String text) {
-		if (text == null || text.length() == 0
-				|| (extractURLWithoutProtocol ? text.indexOf('.') : text.indexOf(':')) == -1) // Performance
-																								// optimization.
+		if (TextUtils.isEmpty(text) || (extractURLWithoutProtocol ? text.indexOf('.') : text.indexOf(':')) == -1) // Performance
+																													// optimization.
 			// If text doesn't contain '.' or ':' at all, text doesn't contain
 			// URL,
 			// so we can simply return an empty list.
@@ -335,7 +318,7 @@ public class Extractor {
 	 * @return List of hashtags referenced (without the leading # sign)
 	 */
 	private List<Entity> extractHashtagsWithIndices(final String text, final boolean checkUrlOverlap) {
-		if (text == null || text.length() == 0) return Collections.emptyList();
+		if (TextUtils.isEmpty(text)) return Collections.emptyList();
 
 		// Performance optimization.
 		// If text doesn't contain # at all, text doesn't contain

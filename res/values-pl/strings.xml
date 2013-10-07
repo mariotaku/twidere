@@ -36,7 +36,7 @@
   <string name="error_unknown_error">Nieznany błąd, prawdopodobnie błąd w aplikacji.</string>
   <string name="error_message">Błąd: <xliff:g id="message">%s</xliff:g></string>
   <string name="error_message_with_action">Błąd podczas <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
-  <string name="error_message_rate_limit">Limit zapytań Twittera przekroczony podczas <xliff:g id="action">%1$s</xliff:g>, spróbuj ponownie za <xliff:g id="time">%2$s</xliff:g></string>
+  <string name="error_message_rate_limit_with_action">Limit zapytań Twittera przekroczony podczas <xliff:g id="action">%1$s</xliff:g>, spróbuj ponownie za <xliff:g id="time">%2$s</xliff:g></string>
   <string name="select_account">Wybierz konto</string>
   <string name="username">Nazwa użytkownika</string>
   <string name="password">Hasło</string>

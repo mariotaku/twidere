@@ -16,7 +16,7 @@
 		android:layout_gravity="bottom"
 		android:gravity="center_vertical"
 		android:padding="8dp"
-		app:ignorePaddings="true">
+		app:ignorePadding="true">
 
 		<ImageView
 			android:id="@+id/expand_indicator"

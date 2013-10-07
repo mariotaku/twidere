@@ -29,33 +29,18 @@ import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.AccountsAdapter;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ArrayUtils;
-import org.mariotaku.twidere.util.NoDuplicatesArrayList;
-
-import java.util.List;
 
 public class AccountSelectorActivity extends BaseSupportDialogActivity implements LoaderCallbacks<Cursor>,
-		OnItemClickListener, OnClickListener {
-
-	private ListView mListView;
-	private AccountsAdapter mAdapter;
-	private final List<Long> mSelectedIds = new NoDuplicatesArrayList<Long>();
-
-	private SharedPreferences mPreferences;
-
-	private boolean mAllowSelectNone, mOAuthOnly;
+		OnClickListener {
 
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -70,30 +55,25 @@ public class AccountSelectorActivity extends BaseSupportDialogActivity implement
 		}
 	};
 
+	private SharedPreferences mPreferences;
+
+	private ListView mListView;
+	private AccountsAdapter mAdapter;
+
+	private boolean mFirstCreated;
+
 	@Override
 	public void onClick(final View view) {
 		switch (view.getId()) {
 			case R.id.save: {
-				if (mSelectedIds.size() <= 0 && !mAllowSelectNone) {
+				final long[] checked_ids = mListView.getCheckedItemIds();
+				if (checked_ids == null || checked_ids.length == 0 && !isSelectNoneAllowed()) {
 					Toast.makeText(this, R.string.no_account_selected, Toast.LENGTH_SHORT).show();
 					return;
 				}
-				final Bundle bundle = new Bundle();
-				final long[] ids = new long[mSelectedIds.size()];
-				int i = 0;
-				for (final Long id_long : mSelectedIds) {
-					ids[i] = id_long;
-					i++;
-				}
-				bundle.putLongArray(EXTRA_IDS, ids);
-				setResult(RESULT_OK, new Intent().putExtras(bundle));
-				finish();
-				break;
-			}
-			case R.id.add_account: {
-				final Intent intent = new Intent(INTENT_ACTION_TWITTER_LOGIN);
-				intent.setClass(this, SignInActivity.class);
-				startActivity(intent);
+				final Bundle extras = new Bundle();
+				extras.putLongArray(EXTRA_IDS, checked_ids);
+				setResult(RESULT_OK, new Intent().putExtras(extras));
 				finish();
 				break;
 			}
@@ -102,20 +82,8 @@ public class AccountSelectorActivity extends BaseSupportDialogActivity implement
 
 	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
-		final String where = mOAuthOnly ? Accounts.AUTH_TYPE + " = " + Accounts.AUTH_TYPE_OAUTH : null;
+		final String where = isOAuthOnly() ? Accounts.AUTH_TYPE + " = " + Accounts.AUTH_TYPE_OAUTH : null;
 		return new CursorLoader(this, Accounts.CONTENT_URI, Accounts.COLUMNS, where, null, null);
-	}
-
-	@Override
-	public void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
-		final boolean checked = mAdapter.isChecked(position);
-		mAdapter.setItemChecked(position, !checked);
-		final long user_id = mAdapter.getAccountIdAt(position);
-		if (checked) {
-			mSelectedIds.remove(user_id);
-		} else {
-			mSelectedIds.add(user_id);
-		}
 	}
 
 	@Override
@@ -126,71 +94,27 @@ public class AccountSelectorActivity extends BaseSupportDialogActivity implement
 	@Override
 	public void onLoadFinished(final Loader<Cursor> loader, final Cursor cursor) {
 		mAdapter.swapCursor(cursor);
-		final SparseBooleanArray checked = new SparseBooleanArray();
-		cursor.moveToFirst();
-		if (mSelectedIds.size() == 0) {
-			if (mAllowSelectNone) return;
-			while (!cursor.isAfterLast()) {
-				final boolean is_activated = cursor.getInt(cursor.getColumnIndexOrThrow(Accounts.IS_ACTIVATED)) == 1;
-				final long user_id = cursor.getLong(cursor.getColumnIndexOrThrow(Accounts.ACCOUNT_ID));
-				if (is_activated) {
-					mSelectedIds.add(user_id);
-				}
-				mAdapter.setItemChecked(cursor.getPosition(), is_activated);
-				cursor.moveToNext();
-			}
-		} else {
-			while (!cursor.isAfterLast()) {
-				final long user_id = cursor.getLong(cursor.getColumnIndexOrThrow(Accounts.ACCOUNT_ID));
-				if (mSelectedIds.contains(user_id)) {
-					checked.put(cursor.getPosition(), true);
-					mAdapter.setItemChecked(cursor.getPosition(), true);
-				}
-				cursor.moveToNext();
+		if (cursor != null && mFirstCreated) {
+			final Bundle extras = getIntent().getExtras();
+			final long[] activated_ids = extras != null ? extras.getLongArray(EXTRA_IDS) : null;
+			for (int i = 0, j = mAdapter.getCount(); i < j; i++) {
+				mListView.setItemChecked(i, ArrayUtils.contains(activated_ids, mAdapter.getItemId(i)));
 			}
 		}
-	}
-
-	@Override
-	public void onSaveInstanceState(final Bundle outState) {
-		outState.putLongArray(Constants.EXTRA_IDS, ArrayUtils.fromList(mSelectedIds));
-		super.onSaveInstanceState(outState);
-	}
-
-	@Override
-	public void onStart() {
-		super.onStart();
-		final IntentFilter filter = new IntentFilter(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
-		registerReceiver(mStateReceiver, filter);
-
 	}
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mFirstCreated = savedInstanceState == null;
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-		final Bundle extras = getIntent().getExtras();
 		setContentView(R.layout.select_account);
 		mListView = (ListView) findViewById(android.R.id.list);
-		mAdapter = new AccountsAdapter(this, true);
+		mAdapter = new AccountsAdapter(this);
+		mAdapter.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+		mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		mListView.setAdapter(mAdapter);
-		mListView.setOnItemClickListener(this);
-		final long[] activated_ids;
-		if (savedInstanceState != null) {
-			activated_ids = savedInstanceState.getLongArray(EXTRA_IDS);
-		} else if (extras != null) {
-			activated_ids = extras.getLongArray(EXTRA_IDS);
-		} else {
-			activated_ids = null;
-		}
-		mAllowSelectNone = extras != null ? extras.getBoolean(EXTRA_ALLOW_SELECT_NONE, false) : false;
-		mOAuthOnly = extras != null ? extras.getBoolean(EXTRA_OAUTH_ONLY, false) : false;
-		mSelectedIds.clear();
-		if (activated_ids != null) {
-			for (final long id : activated_ids) {
-				mSelectedIds.add(id);
-			}
-		}
+
 		getLoaderManager().initLoader(0, null, this);
 
 	}
@@ -203,9 +127,27 @@ public class AccountSelectorActivity extends BaseSupportDialogActivity implement
 	}
 
 	@Override
+	protected void onStart() {
+		super.onStart();
+		final IntentFilter filter = new IntentFilter(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
+		registerReceiver(mStateReceiver, filter);
+
+	}
+
+	@Override
 	protected void onStop() {
 		unregisterReceiver(mStateReceiver);
 		super.onStop();
+	}
+
+	private boolean isOAuthOnly() {
+		final Bundle extras = getIntent().getExtras();
+		return extras != null && extras.getBoolean(EXTRA_OAUTH_ONLY, false);
+	}
+
+	private boolean isSelectNoneAllowed() {
+		final Bundle extras = getIntent().getExtras();
+		return extras != null && extras.getBoolean(EXTRA_ALLOW_SELECT_NONE, false);
 	}
 
 }

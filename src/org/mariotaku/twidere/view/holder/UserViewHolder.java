@@ -38,16 +38,16 @@ public class UserViewHolder extends CardViewHolder {
 
 	public UserViewHolder(final View view) {
 		super(view);
-		content = (IColorLabelView) view.findViewById(R.id.content);
-		profile_image = (ImageView) view.findViewById(R.id.profile_image);
-		name = (TextView) view.findViewById(R.id.name);
-		screen_name = (TextView) view.findViewById(R.id.screen_name);
-		description = (TextView) view.findViewById(R.id.description);
-		location = (TextView) view.findViewById(R.id.location);
-		url = (TextView) view.findViewById(R.id.url);
-		statuses_count = (TextView) view.findViewById(R.id.statuses_count);
-		followers_count = (TextView) view.findViewById(R.id.followers_count);
-		friends_count = (TextView) view.findViewById(R.id.friends_count);
+		content = (IColorLabelView) findViewById(R.id.content);
+		profile_image = (ImageView) findViewById(R.id.profile_image);
+		name = (TextView) findViewById(R.id.name);
+		screen_name = (TextView) findViewById(R.id.screen_name);
+		description = (TextView) findViewById(R.id.description);
+		location = (TextView) findViewById(R.id.location);
+		url = (TextView) findViewById(R.id.url);
+		statuses_count = (TextView) findViewById(R.id.statuses_count);
+		followers_count = (TextView) findViewById(R.id.followers_count);
+		friends_count = (TextView) findViewById(R.id.friends_count);
 	}
 
 	public void setAccountColor(final int color) {

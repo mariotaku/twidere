@@ -36,7 +36,7 @@
   <string name="error_unknown_error">錯誤：未知錯誤，這很可能是個bug</string>
   <string name="error_message">發生問題：<xliff:g id="message">%s</xliff:g></string>
   <string name="error_message_with_action">在<xliff:g id="action">%1$s</xliff:g>時發生問題：<xliff:g id="message">%2$s</xliff:g></string>
-  <string name="error_message_rate_limit">在<xliff:g id="action">%1$s</xliff:g>時超過了Twitter的調用次數限制，請在<xliff:g id="time">%2$s</xliff:g>重試</string>
+  <string name="error_message_rate_limit_with_action">在<xliff:g id="action">%1$s</xliff:g>時超過了Twitter的調用次數限制，請在<xliff:g id="time">%2$s</xliff:g>重試</string>
   <string name="select_account">選擇帳號</string>
   <string name="username">用戶名</string>
   <string name="password">密碼</string>

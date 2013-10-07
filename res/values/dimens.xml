@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+	<dimen name="element_spacing_small">4dp</dimen>
 	<dimen name="element_spacing_default">8dp</dimen>
 	<dimen name="element_spacing_large">16dp</dimen>
-	<dimen name="profile_image_size_cards_ui">48dp</dimen>
-	<dimen name="profile_image_size">56dp</dimen>
+	<dimen name="icon_size_list_item">48dp</dimen>
+	<dimen name="icon_size_list_item_small">42dp</dimen>
+	<dimen name="icon_size_card_list_item">48dp</dimen>
+	<dimen name="icon_size_card_details">56dp</dimen>
 	<dimen name="profile_image_size_activity_small">32dp</dimen>
 	<dimen name="image_preview_height">140dp</dimen>
 	<dimen name="image_preview_width">140dp</dimen>

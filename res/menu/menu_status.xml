@@ -38,9 +38,9 @@
 				android:icon="@drawable/ic_menu_copy"
 				android:title="@android:string/copy"/>
 			<item
-				android:id="@id/mute_source"
+				android:id="@id/add_to_filter"
 				android:icon="@drawable/ic_menu_mute"
-				android:title="@string/mute_source"/>
+				android:title="@string/add_to_filter"/>
 			<item
 				android:id="@+id/set_color_submenu"
 				android:icon="@drawable/ic_menu_color_palette"

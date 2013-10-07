@@ -28,7 +28,7 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.loader.ExtensionsListLoader.ExtensionInfo;
 import org.mariotaku.twidere.util.PermissionsManager;
-import org.mariotaku.twidere.view.holder.TwoLineWithIconViewHolder;
+import org.mariotaku.twidere.view.holder.CheckableTwoLineWithIconViewHolder;
 
 import java.util.List;
 
@@ -37,7 +37,7 @@ public class ExtensionsAdapter extends ArrayAdapter<ExtensionInfo> implements Co
 	private final PermissionsManager mPermissionsManager;
 
 	public ExtensionsAdapter(final Context context) {
-		super(context, R.layout.two_line_with_icon_list_item);
+		super(context, R.layout.two_line_list_item_checked);
 		mPermissionsManager = new PermissionsManager(context);
 	}
 
@@ -49,19 +49,26 @@ public class ExtensionsAdapter extends ArrayAdapter<ExtensionInfo> implements Co
 	@Override
 	public View getView(final int position, final View convertView, final ViewGroup parent) {
 		final View view = super.getView(position, convertView, parent);
-		final TwoLineWithIconViewHolder viewholder = view.getTag() == null ? new TwoLineWithIconViewHolder(view)
-				: (TwoLineWithIconViewHolder) view.getTag();
+
+		final CheckableTwoLineWithIconViewHolder holder;
+		final Object tag = view.getTag();
+		if (tag instanceof CheckableTwoLineWithIconViewHolder) {
+			holder = (CheckableTwoLineWithIconViewHolder) tag;
+		} else {
+			holder = new CheckableTwoLineWithIconViewHolder(view);
+			view.setTag(holder);
+		}
 
 		final ExtensionInfo info = getItem(position);
-		viewholder.checkbox.setVisibility(info.permissions != PERMISSION_INVALID ? View.VISIBLE : View.GONE);
+		holder.checkbox.setVisibility(info.permissions != PERMISSION_INVALID ? View.VISIBLE : View.GONE);
 		if (info.permissions != PERMISSION_INVALID) {
-			viewholder.checkbox.setChecked(info.permissions != PERMISSION_DENIED
+			holder.checkbox.setChecked(info.permissions != PERMISSION_DENIED
 					&& mPermissionsManager.checkPermission(info.pname, info.permissions));
 		}
-		viewholder.text1.setText(info.label);
-		viewholder.text2.setVisibility(TextUtils.isEmpty(info.description) ? View.GONE : View.VISIBLE);
-		viewholder.text2.setText(info.description);
-		viewholder.icon.setImageDrawable(info.icon);
+		holder.text1.setText(info.label);
+		holder.text2.setVisibility(TextUtils.isEmpty(info.description) ? View.GONE : View.VISIBLE);
+		holder.text2.setText(info.description);
+		holder.icon.setImageDrawable(info.icon);
 		return view;
 	}
 

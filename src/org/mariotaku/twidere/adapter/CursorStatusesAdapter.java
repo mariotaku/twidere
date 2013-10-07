@@ -241,11 +241,11 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 
 	@Override
 	public ParcelableStatus getLastStatus() {
-		final Cursor cur = getCursor();
-		if (cur == null || cur.getCount() == 0) return null;
-		cur.moveToLast();
-		final long account_id = cur.getLong(mIndices.account_id);
-		final long status_id = cur.getLong(mIndices.status_id);
+		final Cursor c = getCursor();
+		if (c == null || c.isClosed() || c.getCount() == 0) return null;
+		c.moveToLast();
+		final long account_id = c.getLong(mIndices.account_id);
+		final long status_id = c.getLong(mIndices.status_id);
 		return findStatusInDatabases(mContext, account_id, status_id);
 	}
 
@@ -460,14 +460,14 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	}
 
 	private void rebuildFilterInfo() {
-		final Cursor cursor = getCursor();
-		if (cursor != null && mIndices != null && cursor.getCount() > 0) {
-			if (cursor.getCount() > 0) {
-				cursor.moveToLast();
-				final String text_plain = mFilterIgnoreTextPlain ? null : cursor.getString(mIndices.text_plain);
-				final String text_html = mFilterIgnoreTextHtml ? null : cursor.getString(mIndices.text_html);
-				final String screen_name = mFilterIgnoreScreenName ? null : cursor.getString(mIndices.user_screen_name);
-				final String source = mFilterIgnoreSource ? null : cursor.getString(mIndices.source);
+		final Cursor c = getCursor();
+		if (c != null && !c.isClosed() && mIndices != null && c.getCount() > 0) {
+			if (c.getCount() > 0) {
+				c.moveToLast();
+				final String text_plain = mFilterIgnoreTextPlain ? null : c.getString(mIndices.text_plain);
+				final String text_html = mFilterIgnoreTextHtml ? null : c.getString(mIndices.text_html);
+				final String screen_name = mFilterIgnoreScreenName ? null : c.getString(mIndices.user_screen_name);
+				final String source = mFilterIgnoreSource ? null : c.getString(mIndices.source);
 				mIsLastItemFiltered = isFiltered(mDatabase, text_plain, text_html, screen_name, source);
 			} else {
 				mIsLastItemFiltered = false;

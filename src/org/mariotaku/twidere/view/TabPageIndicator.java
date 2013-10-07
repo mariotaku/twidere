@@ -24,12 +24,14 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.InputDevice;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -105,6 +107,18 @@ public class TabPageIndicator extends HorizontalScrollView implements PagerIndic
 		mTabIconColor = ThemeUtils.getTabIconColor(context);
 		addView(mTabLayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
 				ViewGroup.LayoutParams.MATCH_PARENT));
+	}
+
+	public int getTabCount() {
+		return mTabLayout.getChildCount();
+	}
+
+	public View getTabItem(final int position) {
+		return mTabLayout.getChildAt(position);
+	}
+
+	public ViewGroup getTabLayout() {
+		return mTabLayout;
 	}
 
 	@Override
@@ -366,7 +380,7 @@ public class TabPageIndicator extends HorizontalScrollView implements PagerIndic
 		public float getPageWidth(int position);
 	}
 
-	public static class TabView extends LinearLayout {
+	public static class TabView extends FrameLayout {
 
 		private TabPageIndicator mParent;
 		private int mIndex;
@@ -380,18 +394,18 @@ public class TabPageIndicator extends HorizontalScrollView implements PagerIndic
 		}
 
 		public void init(final TabPageIndicator parent, final CharSequence label, final Drawable icon, final int index) {
+			if (isInEditMode()) return;
 			mParent = parent;
 			mIndex = index;
 
-			final ImageView imageView = (ImageView) findViewById(android.R.id.icon);
+			final ImageView imageView = (ImageView) findViewById(R.id.tab_item_icon);
 			imageView.setVisibility(icon != null ? View.VISIBLE : View.GONE);
 			imageView.setImageDrawable(icon);
 			if (parent.shouldApplyColorFilterToTabIcons()) {
 				imageView.setColorFilter(parent.getTabIconColor(), Mode.SRC_ATOP);
 			}
-
-			final TextView textView = (TextView) findViewById(android.R.id.text1);
-			textView.setVisibility(label != null ? View.VISIBLE : View.GONE);
+			final TextView textView = (TextView) findViewById(R.id.tab_item_title);
+			textView.setVisibility(TextUtils.isEmpty(label) ? View.GONE : View.VISIBLE);
 			textView.setText(label);
 		}
 
@@ -406,9 +420,8 @@ public class TabPageIndicator extends HorizontalScrollView implements PagerIndic
 		@Override
 		public void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
 			super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
 			// Re-measure if we went beyond our maximum size.
-			if (mParent.mMaxTabWidth > 0 && getMeasuredWidth() > mParent.mMaxTabWidth) {
+			if (!isInEditMode() && mParent.mMaxTabWidth > 0 && getMeasuredWidth() > mParent.mMaxTabWidth) {
 				super.onMeasure(MeasureSpec.makeMeasureSpec(mParent.mMaxTabWidth, MeasureSpec.EXACTLY),
 						heightMeasureSpec);
 			}

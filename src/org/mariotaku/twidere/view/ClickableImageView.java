@@ -38,7 +38,7 @@ public class ClickableImageView extends ImageView {
 	private final Paint mHighlightPaint;
 
 	private boolean mIsDown;
-	private boolean mIgnorePaddings;
+	private boolean mIgnorePadding;
 
 	public ClickableImageView(final Context context) {
 		this(context, null);
@@ -51,7 +51,7 @@ public class ClickableImageView extends ImageView {
 	public ClickableImageView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Twidere);
-		mIgnorePaddings = a.getBoolean(R.styleable.Twidere_ignorePaddings, false);
+		mIgnorePadding = a.getBoolean(R.styleable.Twidere_ignorePadding, false);
 		a.recycle();
 		final int color = ThemeUtils.getThemeColor(context);
 		final int mHighlightColor = Color.argb(0x80, Color.red(color), Color.green(color), Color.blue(color));
@@ -61,7 +61,7 @@ public class ClickableImageView extends ImageView {
 	}
 
 	public boolean isPaddingsIgnored() {
-		return mIgnorePaddings;
+		return mIgnorePadding;
 	}
 
 	@Override
@@ -90,7 +90,7 @@ public class ClickableImageView extends ImageView {
 	}
 
 	public void setIgnorePaddings(final boolean ignorePaddings) {
-		mIgnorePaddings = ignorePaddings;
+		mIgnorePadding = ignorePaddings;
 		invalidate();
 	}
 
@@ -100,7 +100,7 @@ public class ClickableImageView extends ImageView {
 		if (mIsDown && isClickable() && isEnabled()) {
 			final int pl, pt, pr, pb;
 			final int w = getWidth(), h = getHeight();
-			if (mIgnorePaddings) {
+			if (mIgnorePadding) {
 				pl = pt = pr = pb = 0;
 			} else {
 				pl = getPaddingLeft();

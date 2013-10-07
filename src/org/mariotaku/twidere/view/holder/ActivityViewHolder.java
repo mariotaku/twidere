@@ -28,7 +28,7 @@ import android.widget.TextView;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
-public class ActivityViewHolder {
+public class ActivityViewHolder extends CardViewHolder {
 
 	public final ImageView profile_image;
 	public final ImageView activity_profile_image_1, activity_profile_image_2, activity_profile_image_3,
@@ -37,22 +37,24 @@ public class ActivityViewHolder {
 	public final TextView title, text, time, reply_status;
 	public final ViewGroup activity_profile_image_container;
 	private final ColorLabelRelativeLayout content;
+
 	private boolean account_color_enabled;
 	private float text_size;
 
 	public ActivityViewHolder(final View view) {
-		content = (ColorLabelRelativeLayout) view.findViewById(R.id.content);
-		profile_image = (ImageView) view.findViewById(R.id.profile_image);
-		title = (TextView) view.findViewById(R.id.title);
-		text = (TextView) view.findViewById(R.id.text);
-		time = (TextView) view.findViewById(R.id.time);
-		reply_status = (TextView) view.findViewById(R.id.reply_status);
-		activity_profile_image_container = (ViewGroup) view.findViewById(R.id.activity_profile_image_container);
-		activity_profile_image_1 = (ImageView) view.findViewById(R.id.activity_profile_image_1);
-		activity_profile_image_2 = (ImageView) view.findViewById(R.id.activity_profile_image_2);
-		activity_profile_image_3 = (ImageView) view.findViewById(R.id.activity_profile_image_3);
-		activity_profile_image_4 = (ImageView) view.findViewById(R.id.activity_profile_image_4);
-		activity_profile_image_5 = (ImageView) view.findViewById(R.id.activity_profile_image_5);
+		super(view);
+		content = (ColorLabelRelativeLayout) findViewById(R.id.content);
+		profile_image = (ImageView) findViewById(R.id.profile_image);
+		title = (TextView) findViewById(R.id.title);
+		text = (TextView) findViewById(R.id.text);
+		time = (TextView) findViewById(R.id.time);
+		reply_status = (TextView) findViewById(R.id.reply_status);
+		activity_profile_image_container = (ViewGroup) findViewById(R.id.activity_profile_image_container);
+		activity_profile_image_1 = (ImageView) findViewById(R.id.activity_profile_image_1);
+		activity_profile_image_2 = (ImageView) findViewById(R.id.activity_profile_image_2);
+		activity_profile_image_3 = (ImageView) findViewById(R.id.activity_profile_image_3);
+		activity_profile_image_4 = (ImageView) findViewById(R.id.activity_profile_image_4);
+		activity_profile_image_5 = (ImageView) findViewById(R.id.activity_profile_image_5);
 		activity_profile_images = new ImageView[] { activity_profile_image_1, activity_profile_image_2,
 				activity_profile_image_3, activity_profile_image_4, activity_profile_image_5 };
 	}

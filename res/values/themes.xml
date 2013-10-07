@@ -17,7 +17,8 @@
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar</item>
 		<!-- Custom view styles -->
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
-		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
+		<item name="tabItemContentStyle">@style/Widget.TabPageIndicator.TabItem.Content</item>
+		<item name="tabItemTextStyle">@style/Widget.TabPageIndicator.TabItem.TextView</item>
 		<item name="contentBackground">#20808080</item>
 		<item name="cardListBackgroundColor">@color/bg_color_light</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
@@ -37,7 +38,8 @@
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Dark</item>
 		<!-- Custom view styles -->
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
-		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView.Dark</item>
+		<item name="tabItemContentStyle">@style/Widget.TabPageIndicator.TabItem.Content</item>
+		<item name="tabItemTextStyle">@style/Widget.TabPageIndicator.TabItem.TextView.Dark</item>
 		<item name="contentBackground">#20000000</item>
 		<item name="cardListBackgroundColor">@color/bg_color_dark</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_dark</item>
@@ -57,7 +59,8 @@
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Light</item>
 		<!-- Custom view styles -->
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
-		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView.Light</item>
+		<item name="tabItemContentStyle">@style/Widget.TabPageIndicator.TabItem.Content</item>
+		<item name="tabItemTextStyle">@style/Widget.TabPageIndicator.TabItem.TextView.Light</item>
 		<item name="contentBackground">#20808080</item>
 		<item name="cardListBackgroundColor">@color/bg_color_light</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
@@ -77,7 +80,8 @@
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Light.DarkActionBar</item>
 		<!-- Custom view styles -->
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
-		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView.Light.DarkActionBar</item>
+		<item name="tabItemContentStyle">@style/Widget.TabPageIndicator.TabItem.Content</item>
+		<item name="tabItemTextStyle">@style/Widget.TabPageIndicator.TabItem.TextView.Light.DarkActionBar</item>
 		<item name="contentBackground">#20808080</item>
 		<item name="cardListBackgroundColor">@color/bg_color_light</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
@@ -149,7 +153,8 @@
 
 		<!-- Custom view styles -->
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
-		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
+		<item name="tabItemContentStyle">@style/Widget.TabPageIndicator.TabItem.Content</item>
+		<item name="tabItemTextStyle">@style/Widget.TabPageIndicator.TabItem.TextView</item>
 		<item name="contentBackground">#20000000</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_dark</item>
 		<item name="cardItemBackgroundColor">#1a1a1a</item>
@@ -168,7 +173,8 @@
 
 		<!-- Custom view styles -->
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
-		<item name="tabTextStyle">@style/Widget.TabPageIndicator.TextView</item>
+		<item name="tabItemContentStyle">@style/Widget.TabPageIndicator.TabItem.Content</item>
+		<item name="tabItemTextStyle">@style/Widget.TabPageIndicator.TabItem.TextView</item>
 		<item name="contentBackground">#20808080</item>
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
 		<item name="cardItemBackgroundColor">#f8f8f8</item>

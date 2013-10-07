@@ -24,7 +24,6 @@ import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup.MarginLayoutParams;
@@ -47,8 +46,7 @@ public class StatusViewHolder extends CardViewHolder {
 	public final ProgressBar image_preview_progress;
 	private final View gap_indicator;
 	private final IColorLabelView content;
-	private final Context context;
-	private final Resources res;
+
 	private final float density;
 	private final boolean is_rtl;
 	public boolean show_as_gap;
@@ -58,23 +56,22 @@ public class StatusViewHolder extends CardViewHolder {
 
 	public StatusViewHolder(final View view) {
 		super(view);
-		context = view.getContext();
-		content = (IColorLabelView) view.findViewById(R.id.content);
-		res = context.getResources();
-		gap_indicator = view.findViewById(R.id.list_gap_text);
-		image_preview_container = view.findViewById(R.id.image_preview_container);
-		profile_image = (ImageView) view.findViewById(R.id.profile_image);
-		my_profile_image = (ImageView) view.findViewById(R.id.my_profile_image);
-		image_preview = (ImageView) view.findViewById(R.id.image_preview);
-		image_preview_progress = (ProgressBar) view.findViewById(R.id.image_preview_progress);
-		name = (TextView) view.findViewById(R.id.name);
-		screen_name = (TextView) view.findViewById(R.id.screen_name);
-		text = (TextView) view.findViewById(R.id.text);
-		time = (ShortTimeView) view.findViewById(R.id.time);
-		reply_retweet_status = (TextView) view.findViewById(R.id.reply_retweet_status);
+		final Context context = getContext();
+		content = (IColorLabelView) findViewById(R.id.content);
+		gap_indicator = findViewById(R.id.list_gap_text);
+		image_preview_container = findViewById(R.id.image_preview_container);
+		profile_image = (ImageView) findViewById(R.id.profile_image);
+		my_profile_image = (ImageView) findViewById(R.id.my_profile_image);
+		image_preview = (ImageView) findViewById(R.id.image_preview);
+		image_preview_progress = (ProgressBar) findViewById(R.id.image_preview_progress);
+		name = (TextView) findViewById(R.id.name);
+		screen_name = (TextView) findViewById(R.id.screen_name);
+		text = (TextView) findViewById(R.id.text);
+		time = (ShortTimeView) findViewById(R.id.time);
+		reply_retweet_status = (TextView) findViewById(R.id.reply_retweet_status);
 		show_as_gap = gap_indicator != null ? gap_indicator.isShown() : false;
 		is_rtl = Utils.isRTL(context);
-		density = res.getDisplayMetrics().density;
+		density = context.getResources().getDisplayMetrics().density;
 	}
 
 	public void setAccountColor(final int color) {
@@ -116,17 +113,17 @@ public class StatusViewHolder extends CardViewHolder {
 	}
 
 	public void setReplyTo(final long user_id, final String name, final String screen_name) {
-		final String display_name = getDisplayName(context, user_id, name, screen_name, name_first, nickname_only,
+		final String display_name = getDisplayName(getContext(), user_id, name, screen_name, name_first, nickname_only,
 				false);
-		reply_retweet_status.setText(res.getString(R.string.in_reply_to, display_name));
+		reply_retweet_status.setText(getString(R.string.in_reply_to, display_name));
 		reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_reply, 0, 0, 0);
 	}
 
 	public void setRetweetedBy(final long count, final long user_id, final String name, final String screen_name) {
-		final String display_name = getDisplayName(context, user_id, name, screen_name, name_first, nickname_only,
+		final String display_name = getDisplayName(getContext(), user_id, name, screen_name, name_first, nickname_only,
 				false);
-		reply_retweet_status.setText(count > 1 ? res.getString(R.string.retweeted_by_with_count, display_name,
-				count - 1) : res.getString(R.string.retweeted_by, display_name));
+		reply_retweet_status.setText(count > 1 ? getString(R.string.retweeted_by_with_count, display_name, count - 1)
+				: getString(R.string.retweeted_by, display_name));
 		reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_retweet, 0, 0, 0);
 	}
 

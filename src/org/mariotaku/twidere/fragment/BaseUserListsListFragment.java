@@ -22,6 +22,7 @@ package org.mariotaku.twidere.fragment;
 import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
 import static org.mariotaku.twidere.util.Utils.configBaseCardAdapter;
 import static org.mariotaku.twidere.util.Utils.openUserListDetails;
+import static org.mariotaku.twidere.util.Utils.setMenuItemAvailability;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -39,11 +40,13 @@ import android.widget.AbsListView;
 import android.widget.ListView;
 
 import org.mariotaku.popupmenu.PopupMenu;
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.ParcelableUserListsAdapter;
 import org.mariotaku.twidere.adapter.iface.IBaseCardAdapter.MenuButtonClickListener;
 import org.mariotaku.twidere.loader.BaseUserListsLoader;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUserList;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
 
 import java.util.ArrayList;
@@ -65,6 +68,7 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 	private long mCursor = -1;
 	private boolean mLoadMoreAutomatically;
 
+	private AsyncTwitterWrapper mTwitterWrapper;
 	private MultiSelectManager mMultiSelectManager;
 
 	public long getAccountId() {
@@ -110,6 +114,7 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		mTwitterWrapper = getTwitterWrapper();
 		mMultiSelectManager = getMultiSelectManager();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final Bundle args = getArguments() != null ? getArguments() : new Bundle();
@@ -180,9 +185,13 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 	public boolean onMenuItemClick(final MenuItem item) {
 		if (mSelectedUserList == null) return false;
 		switch (item.getItemId()) {
-			case MENU_VIEW_USER_LIST: {
-				openUserListDetails(getActivity(), mAccountId, mSelectedUserList.id, mSelectedUserList.user_id,
-						mSelectedUserList.user_screen_name, mSelectedUserList.name);
+			case MENU_ADD: {
+				AddUserListMemberDialogFragment.show(getFragmentManager(), mSelectedUserList.account_id,
+						mSelectedUserList.id);
+				break;
+			}
+			case MENU_DELETE: {
+				mTwitterWrapper.destroyUserListAsync(mSelectedUserList.account_id, mSelectedUserList.id);
 				break;
 			}
 			default: {
@@ -243,7 +252,11 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 			mPopupMenu.dismiss();
 		}
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
+		mPopupMenu.inflate(R.menu.action_user_list);
 		final Menu menu = mPopupMenu.getMenu();
+		final boolean is_my_list = user_list.user_id == user_list.account_id;
+		setMenuItemAvailability(menu, MENU_ADD, is_my_list);
+		setMenuItemAvailability(menu, MENU_DELETE_SUBMENU, is_my_list);
 		final Intent extensions_intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER_LIST);
 		final Bundle extensions_extras = new Bundle();
 		extensions_extras.putParcelable(EXTRA_USER_LIST, mSelectedUserList);

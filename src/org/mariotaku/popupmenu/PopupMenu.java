@@ -73,6 +73,10 @@ public class PopupMenu implements OnDismissListener, OnItemClickListener, OnTouc
 		new MenuInflater(mContext).inflate(menuRes, mMenu);
 	}
 
+	public void invalidateMenu() {
+		mAdapter.notifyDataSetChanged();
+	}
+
 	public boolean isShowing() {
 		return mWindow != null && mWindow.isShowing();
 	}
@@ -103,7 +107,6 @@ public class PopupMenu implements OnDismissListener, OnItemClickListener, OnTouc
 	public boolean onTouch(final View v, final MotionEvent event) {
 		if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
 			mWindow.dismiss();
-
 			return true;
 		}
 

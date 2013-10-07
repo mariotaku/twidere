@@ -13,7 +13,7 @@ public class CardViewHolder extends ViewHolder {
 	public CardViewHolder(final View view) {
 		super(view);
 		item_animation = new CardItemAnimation();
-		item_menu = view.findViewById(R.id.item_menu);
+		item_menu = findViewById(R.id.item_menu);
 	}
 
 }

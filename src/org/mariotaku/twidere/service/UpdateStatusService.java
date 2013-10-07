@@ -52,6 +52,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public class UpdateStatusService extends IntentService implements Constants {
 
@@ -153,7 +154,7 @@ public class UpdateStatusService extends IntentService implements Constants {
 
 	protected List<SingleResponse<ParcelableStatus>> updateStatus(final ParcelableStatusUpdate pstatus) {
 		final ArrayList<ContentValues> hashtag_values = new ArrayList<ContentValues>();
-		final List<String> hashtags = extractor.extractHashtags(pstatus.content);
+		final Set<String> hashtags = extractor.extractHashtags(pstatus.content);
 		for (final String hashtag : hashtags) {
 			final ContentValues values = new ContentValues();
 			values.put(CachedHashtags.NAME, hashtag);
@@ -330,7 +331,7 @@ public class UpdateStatusService extends IntentService implements Constants {
 			}
 		} else {
 			showOkMessage(R.string.status_updated, false);
-			if (status.image_uri != null && status.delete_image) {
+			if (status.image_uri != null) {
 				final String path = getImagePathFromUri(this, status.image_uri);
 				if (path != null) {
 					new File(path).delete();
@@ -349,8 +350,7 @@ public class UpdateStatusService extends IntentService implements Constants {
 		values.put(Drafts.IN_REPLY_TO_STATUS_ID, status.in_reply_to_status_id);
 		values.put(Drafts.TEXT, status.content);
 		if (status.image_uri != null) {
-			final int image_type = status.delete_image ? ATTACHED_IMAGE_TYPE_PHOTO : ATTACHED_IMAGE_TYPE_IMAGE;
-			values.put(Drafts.ATTACHED_IMAGE_TYPE, image_type);
+			values.put(Drafts.ATTACHED_IMAGE_TYPE, status.image_type);
 			values.put(Drafts.IMAGE_URI, ParseUtils.parseString(status.image_uri));
 		}
 		mResolver.insert(Drafts.CONTENT_URI, values);

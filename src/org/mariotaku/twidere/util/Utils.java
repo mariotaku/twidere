@@ -1468,6 +1468,26 @@ public final class Utils implements Constants {
 				nick);
 	}
 
+	public static String getErrorMessage(final Context context, final CharSequence message) {
+		if (context == null) return ParseUtils.parseString(message);
+		if (isEmpty(message)) return context.getString(R.string.error_unknown_error);
+		return context.getString(R.string.error_message, message);
+	}
+
+	public static String getErrorMessage(final Context context, final CharSequence action, final CharSequence message) {
+		if (context == null || isEmpty(action)) return ParseUtils.parseString(message);
+		if (isEmpty(message)) return context.getString(R.string.error_unknown_error);
+		return context.getString(R.string.error_message_with_action, action, message);
+	}
+
+	public static String getErrorMessage(final Context context, final CharSequence action, final Throwable t) {
+		if (context == null) return null;
+		if (t instanceof TwitterException)
+			return getTwitterErrorMessage(context, action, (TwitterException) t);
+		else if (t != null) return getErrorMessage(context, trimLineBreak(t.getMessage()));
+		return context.getString(R.string.error_unknown_error);
+	}
+
 	public static String getErrorMessage(final Context context, final Throwable t) {
 		if (t == null) return null;
 		if (context != null && t instanceof TwitterException)
@@ -1962,6 +1982,32 @@ public final class Utils implements Constants {
 		return date.getTime();
 	}
 
+	public static String getTwitterErrorMessage(final Context context, final CharSequence action,
+			final TwitterException te) {
+		if (context == null) return null;
+		if (te == null) return context.getString(R.string.error_unknown_error);
+		if (te.exceededRateLimitation()) {
+			final RateLimitStatus status = te.getRateLimitStatus();
+			final long sec_until_reset = status.getSecondsUntilReset() * 1000;
+			final String next_reset_time = ParseUtils.parseString(getRelativeTimeSpanString(System.currentTimeMillis()
+					+ sec_until_reset));
+			if (isEmpty(action)) return context.getString(R.string.error_message_rate_limit, next_reset_time.trim());
+			return context.getString(R.string.error_message_rate_limit_with_action, action, next_reset_time.trim());
+		} else if (te.getErrorCode() > 0) {
+			final String msg = TwitterErrorCodes.getErrorMessage(context, te.getErrorCode());
+			return getErrorMessage(context, action, msg != null ? msg : trimLineBreak(te.getMessage()));
+		} else if (te.getCause() instanceof SSLException) {
+			final String msg = te.getCause().getMessage();
+			if (msg != null && msg.contains("!="))
+				return getErrorMessage(context, action, context.getString(R.string.ssl_error));
+			else
+				return getErrorMessage(context, action, context.getString(R.string.network_error));
+		} else if (te.getCause() instanceof IOException)
+			return getErrorMessage(context, action, context.getString(R.string.network_error));
+		else
+			return getErrorMessage(context, action, trimLineBreak(te.getMessage()));
+	}
+
 	public static String getTwitterErrorMessage(final Context context, final TwitterException te) {
 		if (te == null) return null;
 		final String msg = TwitterErrorCodes.getErrorMessage(context, te.getErrorCode());
@@ -2128,6 +2174,14 @@ public final class Utils implements Constants {
 		final String nickname = prefs.getString(Long.toString(user_id), null);
 		sUserNicknames.put(user_id, nickname);
 		return nickname;
+	}
+
+	public static String getUserNickname(final Context context, final long user_id, final String name) {
+		final String nick = getUserNickname(context, user_id);
+		if (isEmpty(nick)) return name;
+		final boolean nickname_only = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+				.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false);
+		return nickname_only ? nick : context.getString(R.string.name_with_nickname, name, nick);
 	}
 
 	public static int getUserTypeIconRes(final boolean is_verified, final boolean is_protected) {
@@ -3440,6 +3494,20 @@ public final class Utils implements Constants {
 		item.setEnabled(available);
 	}
 
+	public static void setMenuItemIcon(final Menu menu, final int id, final int icon) {
+		if (menu == null) return;
+		final MenuItem item = menu.findItem(id);
+		if (item == null) return;
+		item.setIcon(icon);
+	}
+
+	public static void setMenuItemTitle(final Menu menu, final int id, final int icon) {
+		if (menu == null) return;
+		final MenuItem item = menu.findItem(id);
+		if (item == null) return;
+		item.setTitle(icon);
+	}
+
 	public static void setUserAgent(final Context context, final ConfigurationBuilder cb) {
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final boolean gzip_compressing = prefs.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, true);
@@ -3484,33 +3552,6 @@ public final class Utils implements Constants {
 
 	public static void showErrorMessage(final Context context, final CharSequence message, final boolean long_message) {
 		if (context == null) return;
-		final String text;
-		if (message != null) {
-			text = context.getString(R.string.error_message, message);
-		} else {
-			text = context.getString(R.string.error_unknown_error);
-		}
-		if (context instanceof Activity) {
-			final Crouton crouton = Crouton.makeText((Activity) context, message, CroutonStyle.ALERT);
-			final CroutonConfiguration.Builder cb = new CroutonConfiguration.Builder();
-			cb.setDuration(long_message ? CroutonConfiguration.DURATION_LONG : CroutonConfiguration.DURATION_SHORT);
-			crouton.setConfiguration(cb.build());
-			crouton.show();
-		} else {
-			final Toast toast = Toast.makeText(context, text, long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
-			toast.show();
-		}
-	}
-
-	public static void showErrorMessage(final Context context, final CharSequence action, final CharSequence msg,
-			final boolean long_message) {
-		if (context == null) return;
-		final String message;
-		if (msg != null) {
-			message = context.getString(R.string.error_message, msg);
-		} else {
-			message = context.getString(R.string.error_unknown_error);
-		}
 		if (context instanceof Activity) {
 			final Crouton crouton = Crouton.makeText((Activity) context, message, CroutonStyle.ALERT);
 			final CroutonConfiguration.Builder cb = new CroutonConfiguration.Builder();
@@ -3521,35 +3562,22 @@ public final class Utils implements Constants {
 			final Toast toast = Toast.makeText(context, message, long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
 			toast.show();
 		}
+	}
+
+	public static void showErrorMessage(final Context context, final CharSequence action, final CharSequence message,
+			final boolean long_message) {
+		if (context == null) return;
+		showErrorMessage(context, getErrorMessage(context, message), long_message);
 	}
 
 	public static void showErrorMessage(final Context context, final CharSequence action, final Throwable t,
 			final boolean long_message) {
 		if (context == null) return;
-		final String message;
 		if (t instanceof TwitterException) {
 			showTwitterErrorMessage(context, action, (TwitterException) t, long_message);
 			return;
-		} else if (t != null) {
-			final String t_message = trimLineBreak(t.getMessage());
-			if (action != null) {
-				message = context.getString(R.string.error_message_with_action, action, t_message);
-			} else {
-				message = context.getString(R.string.error_message, t_message);
-			}
-		} else {
-			message = context.getString(R.string.error_unknown_error);
 		}
-		if (context instanceof Activity) {
-			final Crouton crouton = Crouton.makeText((Activity) context, message, CroutonStyle.ALERT);
-			final CroutonConfiguration.Builder cb = new CroutonConfiguration.Builder();
-			cb.setDuration(long_message ? CroutonConfiguration.DURATION_LONG : CroutonConfiguration.DURATION_SHORT);
-			crouton.setConfiguration(cb.build());
-			crouton.show();
-		} else {
-			final Toast toast = Toast.makeText(context, message, long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
-			toast.show();
-		}
+		showErrorMessage(context, getErrorMessage(context, action, t), long_message);
 	}
 
 	public static void showErrorMessage(final Context context, final int action, final String desc,
@@ -3613,7 +3641,8 @@ public final class Utils implements Constants {
 					final long sec_until_reset = status.getSecondsUntilReset() * 1000;
 					final String next_reset_time = ParseUtils.parseString(getRelativeTimeSpanString(System
 							.currentTimeMillis() + sec_until_reset));
-					message = context.getString(R.string.error_message_rate_limit, action, next_reset_time.trim());
+					message = context.getString(R.string.error_message_rate_limit_with_action, action,
+							next_reset_time.trim());
 				} else if (te.getErrorCode() > 0) {
 					final String msg = TwitterErrorCodes.getErrorMessage(context, te.getErrorCode());
 					message = context.getString(R.string.error_message_with_action, action, msg != null ? msg
@@ -3640,16 +3669,7 @@ public final class Utils implements Constants {
 		} else {
 			message = context.getString(R.string.error_unknown_error);
 		}
-		if (context instanceof Activity) {
-			final Crouton crouton = Crouton.makeText((Activity) context, message, CroutonStyle.ALERT);
-			final CroutonConfiguration.Builder cb = new CroutonConfiguration.Builder();
-			cb.setDuration(long_message ? CroutonConfiguration.DURATION_LONG : CroutonConfiguration.DURATION_SHORT);
-			crouton.setConfiguration(cb.build());
-			crouton.show();
-		} else {
-			final Toast toast = Toast.makeText(context, message, long_message ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
-			toast.show();
-		}
+		showErrorMessage(context, message, long_message);
 	}
 
 	public static void showWarnMessage(final Context context, final CharSequence message, final boolean long_message) {

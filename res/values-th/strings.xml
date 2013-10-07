@@ -36,7 +36,7 @@
   <string name="error_unknown_error">ผิดพลาด: ไม่ทราบสาเหตุ อาจจะเป็นบั๊ก</string>
   <string name="error_message">ผิดพลาด: <xliff:g id="message">%s</xliff:g></string>
   <string name="error_message_with_action">ข้อผิดพลาดเมื่อ <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
-  <string name="error_message_rate_limit">คุณติดจำกัดจำนวนทวีตของทวิตเตอร์เมื่อ <xliff:g id="action">%1$s</xliff:g> กรุณาลองอีกครั้งหลังจาก <xliff:g id="time">%2$s</xliff:g></string>
+  <string name="error_message_rate_limit_with_action">คุณติดจำกัดจำนวนทวีตของทวิตเตอร์เมื่อ <xliff:g id="action">%1$s</xliff:g> กรุณาลองอีกครั้งหลังจาก <xliff:g id="time">%2$s</xliff:g></string>
   <string name="select_account">เลือกบัญชี</string>
   <string name="username">ชื่อผู้ใช้</string>
   <string name="password">รหัสผ่าน</string>

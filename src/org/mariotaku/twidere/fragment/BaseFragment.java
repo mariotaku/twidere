@@ -51,7 +51,8 @@ public class BaseFragment extends Fragment implements Constants {
 	}
 
 	public MultiSelectManager getMultiSelectManager() {
-		return getApplication() != null ? getApplication().getMultiSelectManager() : null;
+		final TwidereApplication app = getApplication();
+		return app != null ? app.getMultiSelectManager() : null;
 	}
 
 	public SharedPreferences getSharedPreferences(final String name, final int mode) {
@@ -67,7 +68,8 @@ public class BaseFragment extends Fragment implements Constants {
 	}
 
 	public AsyncTwitterWrapper getTwitterWrapper() {
-		return getApplication() != null ? getApplication().getTwitterWrapper() : null;
+		final TwidereApplication app = getApplication();
+		return app != null ? app.getTwitterWrapper() : null;
 	}
 
 	public void invalidateOptionsMenu() {

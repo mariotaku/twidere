@@ -45,7 +45,7 @@ public class SimpleParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> i
 	private boolean mDisplayProfileImage, mNicknameOnly;
 
 	public SimpleParcelableUsersAdapter(final Context context) {
-		super(context, R.layout.two_line_with_icon_list_item);
+		super(context, R.layout.two_line_list_item);
 		mContext = context;
 		final TwidereApplication app = TwidereApplication.getInstance(context);
 		mProfileImageLoader = app.getImageLoaderWrapper();

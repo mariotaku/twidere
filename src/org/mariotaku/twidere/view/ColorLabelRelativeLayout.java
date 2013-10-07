@@ -41,7 +41,7 @@ public class ColorLabelRelativeLayout extends RelativeLayout implements IColorLa
 	private final float mDensity;
 	private final boolean mIsRTL;
 
-	private boolean mIgnorePaddings;
+	private boolean mIgnorePadding;
 
 	public ColorLabelRelativeLayout(final Context context) {
 		this(context, null);
@@ -54,7 +54,7 @@ public class ColorLabelRelativeLayout extends RelativeLayout implements IColorLa
 	public ColorLabelRelativeLayout(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Twidere);
-		mIgnorePaddings = a.getBoolean(R.styleable.Twidere_ignorePaddings, false);
+		mIgnorePadding = a.getBoolean(R.styleable.Twidere_ignorePadding, false);
 		a.recycle();
 		final Resources res = context.getResources();
 		mDensity = res.getDisplayMetrics().density;
@@ -89,12 +89,12 @@ public class ColorLabelRelativeLayout extends RelativeLayout implements IColorLa
 
 	@Override
 	public boolean isPaddingsIgnored() {
-		return mIgnorePaddings;
+		return mIgnorePadding;
 	}
 
 	@Override
 	public void setIgnorePaddings(final boolean ignorePaddings) {
-		mIgnorePaddings = ignorePaddings;
+		mIgnorePadding = ignorePaddings;
 		invalidate();
 	}
 
@@ -109,7 +109,7 @@ public class ColorLabelRelativeLayout extends RelativeLayout implements IColorLa
 	@Override
 	protected void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
 		final int pl, pt, pr, pb;
-		if (mIgnorePaddings) {
+		if (mIgnorePadding) {
 			pl = pt = pr = pb = 0;
 		} else {
 			pl = getPaddingLeft();

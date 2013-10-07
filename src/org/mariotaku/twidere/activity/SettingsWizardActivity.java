@@ -194,7 +194,8 @@ public class SettingsWizardActivity extends Activity implements Constants {
 			switch (requestCode) {
 				case REQUEST_CUSTOM_TABS:
 					if (resultCode != RESULT_OK) {
-						Toast.makeText(getActivity(), R.string.wizard_page_tabs_unchanged_message, Toast.LENGTH_SHORT).show();
+						Toast.makeText(getActivity(), R.string.wizard_page_tabs_unchanged_message, Toast.LENGTH_SHORT)
+								.show();
 					}
 					gotoNextPage();
 					break;

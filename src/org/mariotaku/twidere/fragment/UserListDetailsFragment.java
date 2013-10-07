@@ -44,7 +44,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
-import android.text.InputFilter;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -58,7 +57,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -70,7 +68,6 @@ import android.widget.TextView;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.ListActionAdapter;
-import org.mariotaku.twidere.adapter.UserHashtagAutoCompleteAdapter;
 import org.mariotaku.twidere.model.ListAction;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUserList;
@@ -233,7 +230,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 					}
 				} else {
 					mPopupMenu = PopupMenu.getInstance(getActivity(), view);
-					mPopupMenu.inflate(R.menu.action_user_list_details);
+					mPopupMenu.inflate(R.menu.action_user_list);
 					final Menu menu = mPopupMenu.getMenu();
 					final Intent extensions_intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER_LIST);
 					final Bundle extensions_extras = new Bundle();
@@ -366,18 +363,12 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 	public boolean onMenuItemClick(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_ADD: {
-				final Bundle args = new Bundle();
-				args.putLong(EXTRA_ACCOUNT_ID, mUserList.account_id);
-				args.putString(EXTRA_TEXT, "");
-				args.putInt(EXTRA_LIST_ID, mUserList.id);
-				final DialogFragment f = new AddMemberDialogFragment();
-				f.setArguments(args);
-				f.show(getFragmentManager(), "add_member");
+				AddUserListMemberDialogFragment.show(getFragmentManager(), mUserList.account_id, mUserList.id);
 				break;
 			}
 			case MENU_DELETE: {
 				if (mUserList.user_id != mUserList.account_id) return false;
-				mTwitterWrapper.destroyUserListAsync(mUserList.account_id, mUserList.id);
+				DestroyUserListDialogFragment.show(getFragmentManager(), mUserList);
 				break;
 			}
 			default: {
@@ -418,63 +409,6 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		final String list_name = args != null ? args.getString(EXTRA_LIST_NAME) : null;
 		final String screen_name = args != null ? args.getString(EXTRA_SCREEN_NAME) : null;
 		getUserListInfo(false, account_id, list_id, list_name, user_id, screen_name);
-	}
-
-	public static class AddMemberDialogFragment extends BaseSupportDialogFragment implements
-			DialogInterface.OnClickListener {
-
-		private AutoCompleteTextView mEditText;
-		private String mText;
-		private long mAccountId;
-		private AsyncTwitterWrapper mTwitterWrapper;
-		private int mListId;
-		private UserHashtagAutoCompleteAdapter mUserAutoCompleteAdapter;
-
-		@Override
-		public void onClick(final DialogInterface dialog, final int which) {
-			if (mListId <= 0 || mAccountId <= 0) return;
-			switch (which) {
-				case DialogInterface.BUTTON_POSITIVE: {
-					mText = ParseUtils.parseString(mEditText.getText());
-					if (mText == null || mText.length() <= 0) return;
-					mTwitterWrapper.addUserListMembersAsync(mAccountId, mListId, mText);
-					break;
-				}
-			}
-		}
-
-		@Override
-		public Dialog onCreateDialog(final Bundle savedInstanceState) {
-			mTwitterWrapper = getApplication().getTwitterWrapper();
-			final Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
-			mAccountId = bundle != null ? bundle.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
-			mListId = bundle != null ? bundle.getInt(EXTRA_LIST_ID, -1) : -1;
-			mText = bundle != null ? bundle.getString(EXTRA_TEXT) : null;
-			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			final View view = LayoutInflater.from(getActivity()).inflate(R.layout.auto_complete_textview, null);
-			builder.setView(view);
-			mEditText = (AutoCompleteTextView) view.findViewById(R.id.edit_text);
-			if (mText != null) {
-				mEditText.setText(mText);
-			}
-			mUserAutoCompleteAdapter = new UserHashtagAutoCompleteAdapter(getActivity());
-			mEditText.setAdapter(mUserAutoCompleteAdapter);
-			mEditText.setThreshold(1);
-			mEditText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(20) });
-			builder.setTitle(R.string.screen_name);
-			builder.setPositiveButton(android.R.string.ok, this);
-			builder.setNegativeButton(android.R.string.cancel, this);
-			return builder.create();
-		}
-
-		@Override
-		public void onSaveInstanceState(final Bundle outState) {
-			outState.putLong(EXTRA_ACCOUNT_ID, mAccountId);
-			outState.putInt(EXTRA_LIST_ID, mListId);
-			outState.putString(EXTRA_TEXT, mText);
-			super.onSaveInstanceState(outState);
-		}
-
 	}
 
 	public static class EditUserListDialogFragment extends BaseSupportDialogFragment implements

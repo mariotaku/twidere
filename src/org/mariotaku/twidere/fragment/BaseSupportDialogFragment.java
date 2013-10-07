@@ -28,6 +28,7 @@ import android.support.v4.app.DialogFragment;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
 public class BaseSupportDialogFragment extends DialogFragment implements Constants {
 
@@ -57,6 +58,11 @@ public class BaseSupportDialogFragment extends DialogFragment implements Constan
 		final Activity activity = getActivity();
 		if (activity != null) return activity.getSystemService(name);
 		return null;
+	}
+
+	public AsyncTwitterWrapper getTwitterWrapper() {
+		final TwidereApplication app = getApplication();
+		return app != null ? app.getTwitterWrapper() : null;
 	}
 
 	public void registerReceiver(final BroadcastReceiver receiver, final IntentFilter filter) {

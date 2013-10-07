@@ -118,15 +118,12 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 	}
 
 	public ParcelableDirectMessage getDirectMessage(final int position) {
-		final Cursor item = getItem(position);
-		final long account_id = item.getLong(mIndices.account_id);
-		final long message_id = item.getLong(mIndices.message_id);
+		final Cursor c = getCursor();
+		if (c == null || c.isClosed()) return null;
+		c.moveToPosition(position);
+		final long account_id = c.getLong(mIndices.account_id);
+		final long message_id = c.getLong(mIndices.message_id);
 		return findDirectMessageInDatabases(mContext, account_id, message_id);
-	}
-
-	@Override
-	public Cursor getItem(final int position) {
-		return (Cursor) super.getItem(position);
 	}
 
 	@Override

@@ -3,27 +3,27 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:layout_gravity="center_vertical"
-	android:background="?android:activatedBackgroundIndicator"
 	android:descendantFocusability="blocksDescendants"
 	android:gravity="center_vertical"
 	android:minHeight="?android:attr/listPreferredItemHeight"
 	android:orientation="horizontal"
-	android:padding="8dp">
+	android:padding="@dimen/element_spacing_default">
 
 	<ImageView
 		android:id="@android:id/icon"
-		android:layout_width="48dip"
-		android:layout_height="48dip"
-		android:layout_margin="4dip"
+		android:layout_width="@dimen/icon_size_list_item"
+		android:layout_height="@dimen/icon_size_list_item"
 		android:layout_weight="0"
+		android:contentDescription="@string/icon"
 		android:scaleType="fitCenter"/>
 
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_marginLeft="8dp"
 		android:layout_weight="1"
-		android:orientation="vertical">
+		android:gravity="center_vertical"
+		android:orientation="vertical"
+		android:paddingLeft="@dimen/element_spacing_default">
 
 		<TextView
 			android:id="@android:id/text1"
@@ -41,7 +41,7 @@
 			android:textAppearance="?android:attr/textAppearanceSmall"/>
 	</LinearLayout>
 
-	<CheckBox
+	<org.mariotaku.twidere.view.ActivatedCheckBox
 		android:id="@android:id/checkbox"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"

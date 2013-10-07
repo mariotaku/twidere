@@ -36,7 +36,7 @@
   <string name="error_unknown_error">Erro: Erro desconhecido, isto é provavelmente um bug.</string>
   <string name="error_message">Erro: <xliff:g id="message">%s</xliff:g></string>
   <string name="error_message_with_action">Erro <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
-  <string name="error_message_rate_limit">Limite de acessos ao Twitter atingido <xliff:g id="action">%1$s</xliff:g>, tente após <xliff:g id="time">%2$s</xliff:g></string>
+  <string name="error_message_rate_limit_with_action">Limite de acessos ao Twitter atingido <xliff:g id="action">%1$s</xliff:g>, tente após <xliff:g id="time">%2$s</xliff:g></string>
   <string name="select_account">Selecione a conta</string>
   <string name="username">Nome de Usuário</string>
   <string name="password">Senha</string>

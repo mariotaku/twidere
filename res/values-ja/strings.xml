@@ -36,7 +36,7 @@
   <string name="error_unknown_error">エラー：未知のエラー、これはバッグかもしれませんが…</string>
   <string name="error_message">エラー：<xliff:g id="message">%s</xliff:g></string>
   <string name="error_message_with_action"><xliff:g id="action">%1$s</xliff:g>にエラー: <xliff:g id="message">%2$s</xliff:g></string>
-  <string name="error_message_rate_limit"><xliff:g id="action">%1$s</xliff:g>中にツイッターのAPI制限を超過しました。<xliff:g id="time">%2$s</xliff:g>後でもう一度試してください。</string>
+  <string name="error_message_rate_limit_with_action"><xliff:g id="action">%1$s</xliff:g>中にツイッターのAPI制限を超過しました。<xliff:g id="time">%2$s</xliff:g>後でもう一度試してください。</string>
   <string name="select_account">アカウントを選択</string>
   <string name="username">ユーザー名かメイルアドレス</string>
   <string name="password">パスワード</string>

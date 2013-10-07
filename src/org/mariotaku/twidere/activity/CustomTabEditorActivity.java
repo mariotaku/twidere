@@ -314,11 +314,7 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 			args.putString(EXTRA_SCREEN_NAME, user_list.user_screen_name);
 		} else if (value instanceof CharSequence) {
 			final String key = conf.getSecondaryFieldTextKey();
-			if (key != null) {
-				args.putString(key, value.toString());
-			} else {
-				args.putString(EXTRA_TEXT, value.toString());
-			}
+			args.putString(TextUtils.isEmpty(key) ? EXTRA_TEXT : key, value.toString());
 		}
 	}
 
@@ -345,7 +341,7 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 
 		public CustomTabIconsAdapter(final Context context) {
 			super(context, R.layout.custom_tab_icon_spinner_item);
-			setDropDownViewResource(R.layout.simple_two_line_with_icon_list_item);
+			setDropDownViewResource(R.layout.two_line_list_item_small);
 			mResources = context.getResources();
 		}
 

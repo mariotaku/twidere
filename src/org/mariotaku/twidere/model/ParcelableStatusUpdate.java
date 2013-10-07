@@ -26,18 +26,18 @@ public class ParcelableStatusUpdate implements Parcelable {
 	public final Uri image_uri;
 	public final long in_reply_to_status_id;
 	public final boolean is_possibly_sensitive;
-	public final boolean delete_image;
+	public final int image_type;
 
 	public ParcelableStatusUpdate(final long[] account_ids, final String content, final ParcelableLocation location,
-			final Uri image_uri, final long in_reply_to_status_id, final boolean is_possibly_sensitive,
-			final boolean delete_image) {
+			final Uri image_uri, final int image_type, final long in_reply_to_status_id,
+			final boolean is_possibly_sensitive) {
 		this.account_ids = account_ids;
 		this.content = content;
 		this.location = location;
 		this.image_uri = image_uri;
+		this.image_type = image_type;
 		this.in_reply_to_status_id = in_reply_to_status_id;
 		this.is_possibly_sensitive = is_possibly_sensitive;
-		this.delete_image = delete_image;
 	}
 
 	public ParcelableStatusUpdate(final Parcel in) {
@@ -45,9 +45,9 @@ public class ParcelableStatusUpdate implements Parcelable {
 		content = in.readString();
 		location = in.readParcelable(ParcelableLocation.class.getClassLoader());
 		image_uri = in.readParcelable(Uri.class.getClassLoader());
+		image_type = in.readInt();
 		in_reply_to_status_id = in.readLong();
 		is_possibly_sensitive = in.readInt() == 1;
-		delete_image = in.readInt() == 1;
 	}
 
 	@Override
@@ -59,8 +59,8 @@ public class ParcelableStatusUpdate implements Parcelable {
 	public String toString() {
 		return "ParcelableStatusUpdate{account_ids=" + Arrays.toString(account_ids) + ", content=" + content
 				+ ", location=" + location + ", image_uri=" + image_uri + ", in_reply_to_status_id="
-				+ in_reply_to_status_id + ", is_possibly_sensitive=" + is_possibly_sensitive + ", delete_image="
-				+ delete_image + "}";
+				+ in_reply_to_status_id + ", is_possibly_sensitive=" + is_possibly_sensitive + ", image_type="
+				+ image_type + "}";
 	}
 
 	@Override
@@ -69,9 +69,9 @@ public class ParcelableStatusUpdate implements Parcelable {
 		dest.writeString(content);
 		dest.writeParcelable(location, flags);
 		dest.writeParcelable(image_uri, flags);
+		dest.writeInt(image_type);
 		dest.writeLong(in_reply_to_status_id);
 		dest.writeInt(is_possibly_sensitive ? 1 : 0);
-		dest.writeInt(delete_image ? 1 : 0);
 	}
 
 }

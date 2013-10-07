@@ -20,20 +20,18 @@
 package org.mariotaku.twidere.view.holder;
 
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public final class TwoLineWithIconViewHolder {
+public class TwoLineWithIconViewHolder extends ViewHolder {
 
 	public final ImageView icon;
 	public final TextView text1, text2;
-	public final CheckBox checkbox;
 
 	public TwoLineWithIconViewHolder(final View view) {
-		icon = (ImageView) view.findViewById(android.R.id.icon);
-		text1 = (TextView) view.findViewById(android.R.id.text1);
-		text2 = (TextView) view.findViewById(android.R.id.text2);
-		checkbox = (CheckBox) view.findViewById(android.R.id.checkbox);
+		super(view);
+		icon = (ImageView) findViewById(android.R.id.icon);
+		text1 = (TextView) findViewById(android.R.id.text1);
+		text2 = (TextView) findViewById(android.R.id.text2);
 	}
 }

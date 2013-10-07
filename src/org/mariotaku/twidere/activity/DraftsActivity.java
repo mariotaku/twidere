@@ -231,8 +231,8 @@ public class DraftsActivity extends TwidereSwipeBackActivity implements LoaderCa
 		if (draft == null) return;
 		final Uri uri = draft.media_uri == null ? null : Uri.parse(draft.media_uri);
 		mResolver.delete(Drafts.CONTENT_URI, Drafts._ID + " = " + draft._id, null);
-		mTwitterWrapper.updateStatus(draft.account_ids, draft.text, draft.location, uri, draft.in_reply_to_status_id,
-				draft.is_possibly_sensitive, draft.attached_image_type == ATTACHED_IMAGE_TYPE_PHOTO);
+		mTwitterWrapper.updateStatus(draft.account_ids, draft.text, draft.location, uri, draft.attached_image_type,
+				draft.in_reply_to_status_id, draft.is_possibly_sensitive);
 	}
 
 	static class DraftsAdapter extends SimpleCursorAdapter {

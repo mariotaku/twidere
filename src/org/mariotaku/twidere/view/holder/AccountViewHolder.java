@@ -41,7 +41,7 @@ public class AccountViewHolder {
 		screen_name = (TextView) view.findViewById(android.R.id.text2);
 		profile_image = (ImageView) view.findViewById(android.R.id.icon);
 		default_indicator = view.findViewById(R.id.default_indicator);
-		checkbox = (CheckBox) view.findViewById(R.id.checkbox);
+		checkbox = (CheckBox) view.findViewById(android.R.id.checkbox);
 	}
 
 	public void setAccountColor(final int color) {

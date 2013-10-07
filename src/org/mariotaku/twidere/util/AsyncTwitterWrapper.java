@@ -19,16 +19,12 @@
 
 package org.mariotaku.twidere.util;
 
-import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.provider.TweetStore.STATUSES_URIS;
 import static org.mariotaku.twidere.util.ContentResolverUtils.bulkDelete;
 import static org.mariotaku.twidere.util.Utils.appendQueryParameters;
-import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getAllStatusesIds;
 import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
-import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
-import static org.mariotaku.twidere.util.Utils.getImageUploadStatus;
 import static org.mariotaku.twidere.util.Utils.getNewestMessageIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.getNewestStatusIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.getStatusIdsInDatabase;
@@ -38,23 +34,13 @@ import static org.mariotaku.twidere.util.Utils.makeDirectMessageContentValues;
 import static org.mariotaku.twidere.util.Utils.makeStatusContentValues;
 import static org.mariotaku.twidere.util.Utils.makeTrendsContentValues;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
-import android.util.Log;
-
-import com.twitter.Extractor;
-import com.twitter.Validator;
 
 import edu.ucdavis.earlybird.ProfilingUtil;
 
@@ -76,28 +62,22 @@ import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
 import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
-import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Notifications;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.service.UpdateStatusService;
-import org.mariotaku.twidere.util.ContentLengthInputStream.ReadListener;
 
 import twitter4j.DirectMessage;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
-import twitter4j.StatusUpdate;
 import twitter4j.Trends;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
 import twitter4j.UserList;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class AsyncTwitterWrapper extends TwitterWrapper {
@@ -107,10 +87,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 	private final Context mContext;
 	private final AsyncTaskManager mAsyncTaskManager;
 	private final SharedPreferences mPreferences;
-	private final NotificationManager mNotificationManager;
 	private final MessagesManager mMessagesManager;
 	private final ContentResolver mResolver;
-	private final Resources mResources;
 
 	private final boolean mLargeProfileImage;
 
@@ -120,13 +98,11 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	public AsyncTwitterWrapper(final Context context) {
 		mContext = context;
-		mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 		final TwidereApplication app = TwidereApplication.getInstance(context);
 		mAsyncTaskManager = app.getAsyncTaskManager();
 		mMessagesManager = app.getMessagesManager();
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mResolver = context.getContentResolver();
-		mResources = context.getResources();
 		mLargeProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
@@ -349,14 +325,10 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 	}
 
 	public int updateStatus(final long[] account_ids, final String content, final ParcelableLocation location,
-			final Uri image_uri, final long in_reply_to, final boolean is_possibly_sensitive, final boolean delete_image) {
-		// final UpdateStatusTask task = new UpdateStatusTask(account_ids,
-		// content, location, image_uri, in_reply_to,
-		// is_possibly_sensitive, delete_image);
-		// return mAsyncTaskManager.add(task, true);
+			final Uri image_uri, final int image_type, final long in_reply_to, final boolean is_possibly_sensitive) {
 		final Intent intent = new Intent(mContext, UpdateStatusService.class);
-		intent.putExtra(EXTRA_STATUS, new ParcelableStatusUpdate(account_ids, content, location, image_uri,
-				in_reply_to, is_possibly_sensitive, delete_image));
+		intent.putExtra(EXTRA_STATUS, new ParcelableStatusUpdate(account_ids, content, location, image_uri, image_type,
+				in_reply_to, is_possibly_sensitive));
 		mContext.startService(intent);
 		return 0;
 	}
@@ -366,42 +338,6 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		final UpdateUserListDetailsTask task = new UpdateUserListDetailsTask(account_id, list_id, is_public, name,
 				description);
 		return mAsyncTaskManager.add(task, true);
-	}
-
-	private Notification buildNotification(final String title, final String message, final int icon,
-			final Intent content_intent, final Intent delete_intent) {
-		final NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
-		builder.setTicker(message);
-		builder.setContentTitle(title);
-		builder.setContentText(message);
-		builder.setAutoCancel(true);
-		builder.setWhen(System.currentTimeMillis());
-		builder.setSmallIcon(icon);
-		if (delete_intent != null) {
-			builder.setDeleteIntent(PendingIntent.getBroadcast(mContext, 0, delete_intent,
-					PendingIntent.FLAG_UPDATE_CURRENT));
-		}
-		if (content_intent != null) {
-			content_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-			builder.setContentIntent(PendingIntent.getActivity(mContext, 0, content_intent,
-					PendingIntent.FLAG_UPDATE_CURRENT));
-		}
-		int defaults = 0;
-		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND, false)) {
-			final Uri def_ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-			final String path = mPreferences.getString(PREFERENCE_KEY_NOTIFICATION_RINGTONE, "");
-			builder.setSound(isEmpty(path) ? def_ringtone : Uri.parse(path), Notification.STREAM_DEFAULT);
-		}
-		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_VIBRATION, false)) {
-			defaults |= Notification.DEFAULT_VIBRATE;
-		}
-		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_LIGHTS, false)) {
-			final int color_def = mResources.getColor(android.R.color.holo_blue_dark);
-			final int color = mPreferences.getInt(PREFERENCE_KEY_NOTIFICATION_LIGHT_COLOR, color_def);
-			builder.setLights(color, 1000, 2000);
-		}
-		builder.setDefaults(defaults);
-		return builder.build();
 	}
 
 	public static AsyncTwitterWrapper getInstance(final Context context) {
@@ -2087,272 +2023,6 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 		}
 
-	}
-
-	class UpdateStatusTask extends ManagedAsyncTask<Void, Void, List<SingleResponse<ParcelableStatus>>> {
-
-		private final ImageUploaderInterface uploader;
-		private final TweetShortenerInterface shortener;
-
-		private final Validator validator = new Validator();
-		private final long[] account_ids;
-		private final String content;
-
-		private final ParcelableLocation location;
-		private final Uri image_uri;
-		private final long in_reply_to;
-		private final boolean use_uploader, use_shortener, is_possibly_sensitive, delete_image;
-
-		public UpdateStatusTask(final long[] account_ids, final String content, final ParcelableLocation location,
-				final Uri image_uri, final long in_reply_to, final boolean is_possibly_sensitive,
-				final boolean delete_image) {
-			super(mContext, mAsyncTaskManager);
-			final String uploader_component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
-			final String shortener_component = mPreferences.getString(PREFERENCE_KEY_TWEET_SHORTENER, null);
-			use_uploader = !isEmpty(uploader_component);
-			final TwidereApplication app = TwidereApplication.getInstance(mContext);
-			uploader = use_uploader ? ImageUploaderInterface.getInstance(app, uploader_component) : null;
-			use_shortener = !isEmpty(shortener_component);
-			shortener = use_shortener ? TweetShortenerInterface.getInstance(app, shortener_component) : null;
-			this.account_ids = account_ids != null ? account_ids : new long[0];
-			this.content = content;
-			this.location = location;
-			this.image_uri = image_uri;
-			this.in_reply_to = in_reply_to;
-			this.is_possibly_sensitive = is_possibly_sensitive;
-			this.delete_image = delete_image;
-		}
-
-		@Override
-		protected List<SingleResponse<ParcelableStatus>> doInBackground(final Void... params) {
-
-			final Extractor extractor = new Extractor();
-			final ArrayList<ContentValues> hashtag_values = new ArrayList<ContentValues>();
-			final List<String> hashtags = extractor.extractHashtags(content);
-			for (final String hashtag : hashtags) {
-				final ContentValues values = new ContentValues();
-				values.put(CachedHashtags.NAME, hashtag);
-				hashtag_values.add(values);
-			}
-			mResolver.bulkInsert(CachedHashtags.CONTENT_URI,
-					hashtag_values.toArray(new ContentValues[hashtag_values.size()]));
-
-			final List<SingleResponse<ParcelableStatus>> results = new ArrayList<SingleResponse<ParcelableStatus>>();
-
-			if (account_ids.length == 0) return Collections.emptyList();
-
-			try {
-				if (use_uploader && uploader == null) throw new ImageUploaderNotFoundException();
-				if (use_shortener && shortener == null) throw new TweetShortenerNotFoundException();
-
-				final String image_path = getImagePathFromUri(mContext, image_uri);
-				final File image_file = image_path != null ? new File(image_path) : null;
-
-				final Uri upload_result_uri;
-				try {
-					if (uploader != null) {
-						uploader.waitForService();
-					}
-					upload_result_uri = image_file != null && image_file.exists() && uploader != null ? uploader
-							.upload(Uri.fromFile(image_file), content) : null;
-				} catch (final Exception e) {
-					throw new ImageUploadException();
-				}
-				if (use_uploader && image_file != null && image_file.exists() && upload_result_uri == null)
-					throw new ImageUploadException();
-
-				final String unshortened_content = use_uploader && upload_result_uri != null ? getImageUploadStatus(
-						mContext, upload_result_uri.toString(), content) : content;
-
-				final boolean should_shorten = validator.getTweetLength(unshortened_content) > Validator.MAX_TWEET_LENGTH;
-				final String screen_name = getAccountScreenName(mContext, account_ids[0]);
-				final String shortened_content;
-				try {
-					if (shortener != null) {
-						shortener.waitForService();
-					}
-					shortened_content = should_shorten && use_shortener ? shortener.shorten(unshortened_content,
-							screen_name, in_reply_to) : null;
-				} catch (final Exception e) {
-					throw new TweetShortenException();
-				}
-
-				if (should_shorten) {
-					if (!use_shortener)
-						throw new StatusTooLongException();
-					else if (unshortened_content == null) throw new TweetShortenException();
-				}
-
-				final StatusUpdate status = new StatusUpdate(should_shorten && use_shortener ? shortened_content
-						: unshortened_content);
-				status.setInReplyToStatusId(in_reply_to);
-				if (location != null) {
-					status.setLocation(ParcelableLocation.toGeoLocation(location));
-				}
-				if (!use_uploader && image_file != null && image_file.exists()) {
-					try {
-						final ContentLengthInputStream is = new ContentLengthInputStream(image_file);
-						is.setReadListener(new ReadListener() {
-
-							int percent;
-
-							@Override
-							public void onRead(final int length, final int available) {
-								final int percent = length > 0 ? (length - available) * 100 / length : 0;
-								if (this.percent != percent) {
-									Log.d(LOGTAG, "onRead, " + percent + "%");
-								}
-								this.percent = percent;
-							}
-						});
-						status.setMedia(image_file.getAbsolutePath(), is);
-					} catch (final FileNotFoundException e) {
-						status.setMedia(image_file);
-					}
-				}
-				status.setPossiblySensitive(is_possibly_sensitive);
-
-				for (final long account_id : account_ids) {
-					final Twitter twitter = getTwitterInstance(mContext, account_id, false, true);
-					if (twitter == null) {
-						results.add(new SingleResponse<ParcelableStatus>(null, new NullPointerException()));
-						continue;
-					}
-					try {
-						final ParcelableStatus result = new ParcelableStatus(twitter.updateStatus(status), account_id,
-								false, false);
-						results.add(new SingleResponse<ParcelableStatus>(result, null));
-					} catch (final TwitterException e) {
-						e.printStackTrace();
-						final SingleResponse<ParcelableStatus> response = SingleResponse.exceptionOnly(e);
-						results.add(response);
-					}
-				}
-			} catch (final UpdateStatusException e) {
-				final SingleResponse<ParcelableStatus> response = SingleResponse.exceptionOnly(e);
-				results.add(response);
-			}
-			return results;
-		}
-
-		@Override
-		protected void onCancelled() {
-			saveDrafts(ListUtils.fromArray(account_ids));
-			super.onCancelled();
-		}
-
-		@Override
-		protected void onPostExecute(final List<SingleResponse<ParcelableStatus>> result) {
-
-			boolean failed = false;
-			Exception exception = null;
-			final List<Long> failed_account_ids = ListUtils.fromArray(account_ids);
-
-			for (final SingleResponse<ParcelableStatus> response : result) {
-				if (response.data == null) {
-					failed = true;
-					if (exception == null) {
-						exception = response.exception;
-					}
-				} else if (response.data.account_id > 0) {
-					failed_account_ids.remove(response.data.account_id);
-				}
-			}
-			if (result.isEmpty()) {
-				saveDrafts(failed_account_ids);
-				mMessagesManager.showErrorMessage(R.string.updating_status,
-						mContext.getString(R.string.no_account_selected), false);
-			} else if (failed) {
-				// If the status is a duplicate, there's no need to save it to
-				// drafts.
-				if (exception instanceof TwitterException
-						&& ((TwitterException) exception).getErrorCode() == TwitterErrorCodes.STATUS_IS_DUPLICATE) {
-					mMessagesManager.showErrorMessage(mContext.getString(R.string.status_is_duplicate), false);
-				} else {
-					saveDrafts(failed_account_ids);
-					mMessagesManager.showErrorMessage(R.string.updating_status, exception, true);
-				}
-			} else {
-				mMessagesManager.showOkMessage(R.string.status_updated, false);
-				if (image_uri != null && delete_image) {
-					final String path = getImagePathFromUri(mContext, image_uri);
-					if (path != null) {
-						new File(path).delete();
-					}
-				}
-			}
-			super.onPostExecute(result);
-			if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_AFTER_TWEET, false)) {
-				refreshAll();
-			}
-		}
-
-		private void saveDrafts(final List<Long> account_ids) {
-			final ContentValues values = new ContentValues();
-			values.put(Drafts.ACCOUNT_IDS, ListUtils.toString(account_ids, ';', false));
-			values.put(Drafts.IN_REPLY_TO_STATUS_ID, in_reply_to);
-			values.put(Drafts.TEXT, content);
-			if (image_uri != null) {
-				final int image_type = delete_image ? ATTACHED_IMAGE_TYPE_PHOTO : ATTACHED_IMAGE_TYPE_IMAGE;
-				values.put(Drafts.ATTACHED_IMAGE_TYPE, image_type);
-				values.put(Drafts.IMAGE_URI, ParseUtils.parseString(image_uri));
-			}
-			mResolver.insert(Drafts.CONTENT_URI, values);
-			final String title = mContext.getString(R.string.status_not_updated);
-			final String message = mContext.getString(R.string.status_not_updated_summary);
-			final Intent intent = new Intent(INTENT_ACTION_DRAFTS);
-			final Notification notification = buildNotification(title, message, R.drawable.ic_stat_twitter, intent,
-					null);
-			mNotificationManager.notify(NOTIFICATION_ID_DRAFTS, notification);
-		}
-
-		class ImageUploaderNotFoundException extends UpdateStatusException {
-			private static final long serialVersionUID = 1041685850011544106L;
-
-			public ImageUploaderNotFoundException() {
-				super(R.string.error_message_image_uploader_not_found);
-			}
-		}
-
-		class ImageUploadException extends UpdateStatusException {
-			private static final long serialVersionUID = 8596614696393917525L;
-
-			public ImageUploadException() {
-				super(R.string.error_message_image_upload_failed);
-			}
-		}
-
-		class StatusTooLongException extends UpdateStatusException {
-			private static final long serialVersionUID = -6469920130856384219L;
-
-			public StatusTooLongException() {
-				super(R.string.error_message_status_too_long);
-			}
-		}
-
-		class TweetShortenerNotFoundException extends UpdateStatusException {
-			private static final long serialVersionUID = -7262474256595304566L;
-
-			public TweetShortenerNotFoundException() {
-				super(R.string.error_message_tweet_shortener_not_found);
-			}
-		}
-
-		class TweetShortenException extends UpdateStatusException {
-			private static final long serialVersionUID = 3075877185536740034L;
-
-			public TweetShortenException() {
-				super(R.string.error_message_tweet_shorten_failed);
-			}
-		}
-
-		class UpdateStatusException extends Exception {
-			private static final long serialVersionUID = -1267218921727097910L;
-
-			public UpdateStatusException(final int message) {
-				super(mContext.getString(message));
-			}
-		}
 	}
 
 	class UpdateUserListDetailsTask extends ManagedAsyncTask<Void, Void, SingleResponse<ParcelableUserList>> {

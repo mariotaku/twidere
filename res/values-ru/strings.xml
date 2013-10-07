@@ -36,7 +36,7 @@
   <string name="error_unknown_error">Ошибка: Это неизвестная ошибка, скорее всего - баг.</string>
   <string name="error_message">Ошибка: <xliff:g id="message">%s</xliff:g></string>
   <string name="error_message_with_action">Ошибка <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
-  <string name="error_message_rate_limit">Количество допустимых запросов к Twitter исчерпано <xliff:g id="action">%1$s</xliff:g>, попробуйте через <xliff:g id="time">%2$s</xliff:g></string>
+  <string name="error_message_rate_limit_with_action">Количество допустимых запросов к Twitter исчерпано <xliff:g id="action">%1$s</xliff:g>, попробуйте через <xliff:g id="time">%2$s</xliff:g></string>
   <string name="select_account">Выберите учетную запись</string>
   <string name="username">Имя пользователя</string>
   <string name="password">Пароль</string>

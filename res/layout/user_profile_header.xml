@@ -3,8 +3,7 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:background="?android:activatedBackgroundIndicator"
-	android:splitMotionEvents="false">
+	android:background="?android:activatedBackgroundIndicator">
 
 	<LinearLayout
 		android:id="@+id/profile"
@@ -12,7 +11,8 @@
 		android:layout_height="wrap_content"
 		android:layout_margin="8dp"
 		android:background="?cardItemBackground"
-		android:orientation="vertical">
+		android:orientation="vertical"
+		android:splitMotionEvents="false">
 
 		<FrameLayout
 			android:id="@+id/profile_name_banner_container"
@@ -25,88 +25,32 @@
 				android:layout_height="wrap_content"
 				android:layout_gravity="center"/>
 
-			<org.mariotaku.twidere.view.ColorLabelRelativeLayout
+			<org.mariotaku.twidere.view.ColorLabelLinearLayout
 				android:id="@+id/profile_name_container"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_gravity="bottom"
+				android:background="?android:selectableItemBackground"
+				android:clickable="true"
 				android:gravity="center_vertical"
-				android:orientation="horizontal">
+				android:orientation="vertical"
+				android:padding="8dp"
+				app:ignorePadding="true">
 
-				<LinearLayout
-					android:id="@+id/name_container"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:layout_alignParentLeft="true"
-					android:layout_toLeftOf="@+id/edit_follow"
-					android:background="?android:selectableItemBackground"
-					android:clickable="true"
-					android:gravity="center_vertical"
-					android:orientation="vertical"
-					android:padding="8dp">
-
-					<TextView
-						android:id="@+id/name"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:singleLine="true"
-						android:textAppearance="?android:textAppearanceMedium"/>
-
-					<TextView
-						android:id="@+id/screen_name"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:singleLine="true"
-						android:textAppearance="?android:textAppearanceSmall"/>
-				</LinearLayout>
-
-				<FrameLayout
-					android:id="@+id/edit_follow"
+				<TextView
+					android:id="@+id/name"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_alignBottom="@+id/name_container"
-					android:layout_alignParentRight="true"
-					android:layout_alignTop="@+id/name_container"
-					android:background="?android:selectableItemBackground"
-					android:minWidth="64dp"
-					android:padding="8dp"
-					android:visibility="gone">
+					android:singleLine="true"
+					android:textAppearance="?android:textAppearanceMedium"/>
 
-					<LinearLayout
-						android:id="@+id/edit_follow_label_container"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_gravity="center"
-						android:gravity="center_vertical|left"
-						android:orientation="vertical">
-
-						<TextView
-							android:id="@+id/following_you_indicator"
-							android:layout_width="wrap_content"
-							android:layout_height="wrap_content"
-							android:singleLine="true"
-							android:text="@string/following_you"
-							android:textAppearance="?android:textAppearanceSmall"
-							android:visibility="gone"/>
-
-						<TextView
-							android:id="@+id/edit_follow_label"
-							android:layout_width="wrap_content"
-							android:layout_height="wrap_content"
-							android:layout_gravity="center"
-							android:singleLine="true"
-							android:text="@string/follow"
-							android:textAppearance="?android:textAppearanceSmall"/>
-					</LinearLayout>
-
-					<ProgressBar
-						android:id="@+id/follow_progress"
-						style="?android:progressBarStyleSmall"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_gravity="center"/>
-				</FrameLayout>
-			</org.mariotaku.twidere.view.ColorLabelRelativeLayout>
+				<TextView
+					android:id="@+id/screen_name"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:singleLine="true"
+					android:textAppearance="?android:textAppearanceSmall"/>
+			</org.mariotaku.twidere.view.ColorLabelLinearLayout>
 		</FrameLayout>
 
 		<LinearLayout
@@ -116,7 +60,7 @@
 			android:background="?android:selectableItemBackground"
 			android:clickable="true"
 			android:orientation="vertical"
-			android:padding="4dp">
+			android:padding="@dimen/element_spacing_small">
 
 			<TextView
 				android:layout_width="match_parent"
@@ -139,7 +83,7 @@
 			android:background="?android:selectableItemBackground"
 			android:clickable="true"
 			android:orientation="vertical"
-			android:padding="4dp">
+			android:padding="@dimen/element_spacing_small">
 
 			<TextView
 				android:layout_width="match_parent"
@@ -164,7 +108,7 @@
 			android:background="?android:selectableItemBackground"
 			android:clickable="true"
 			android:orientation="vertical"
-			android:padding="4dp">
+			android:padding="@dimen/element_spacing_small">
 
 			<TextView
 				android:layout_width="match_parent"
@@ -190,7 +134,7 @@
 			android:background="?android:selectableItemBackground"
 			android:clickable="true"
 			android:orientation="vertical"
-			android:padding="4dp">
+			android:padding="@dimen/element_spacing_small">
 
 			<TextView
 				android:layout_width="wrap_content"
@@ -216,7 +160,8 @@
 		<TableRow
 			android:layout_width="match_parent"
 			android:layout_height="56dp"
-			android:orientation="horizontal">
+			android:orientation="horizontal"
+			android:splitMotionEvents="false">
 
 			<LinearLayout
 				android:id="@+id/tweets_container"
@@ -227,7 +172,7 @@
 				android:clickable="true"
 				android:gravity="center"
 				android:orientation="vertical"
-				android:padding="4dp">
+				android:padding="@dimen/element_spacing_small">
 
 				<TextView
 					android:id="@+id/statuses_count"
@@ -261,7 +206,7 @@
 				android:clickable="true"
 				android:gravity="center"
 				android:orientation="vertical"
-				android:padding="4dp">
+				android:padding="@dimen/element_spacing_small">
 
 				<TextView
 					android:id="@+id/followers_count"
@@ -295,7 +240,7 @@
 				android:clickable="true"
 				android:gravity="center"
 				android:orientation="vertical"
-				android:padding="4dp">
+				android:padding="@dimen/element_spacing_small">
 
 				<TextView
 					android:id="@+id/friends_count"

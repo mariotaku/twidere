@@ -67,8 +67,11 @@
 	</style>
 
 	<style name="Widget.TabPageIndicator.TabItem" parent="@android:style/Widget">
-		<item name="android:gravity">center_horizontal</item>
 		<item name="android:background">@drawable/vpi__tab_indicator</item>
+	</style>
+
+	<style name="Widget.TabPageIndicator.TabItem.Content" parent="@android:style/Widget">
+		<item name="android:gravity">center</item>
 		<item name="android:paddingLeft">8dp</item>
 		<item name="android:paddingRight">8dp</item>
 		<item name="android:paddingTop">6dp</item>
@@ -76,7 +79,7 @@
 		<item name="android:orientation">horizontal</item>
 	</style>
 
-	<style name="Widget.TabPageIndicator.TextView" parent="@android:style/Widget.Holo.TextView">
+	<style name="Widget.TabPageIndicator.TabItem.TextView" parent="@android:style/Widget.Holo.TextView">
 		<item name="android:textAppearance">@style/TextAppearance.TabPageIndicator</item>
 		<item name="android:textColor">#fff3f3f3</item>
 		<item name="android:textStyle">bold</item>
@@ -84,18 +87,18 @@
 		<item name="android:gravity">center</item>
 		<item name="android:paddingTop">4dp</item>
 		<item name="android:paddingBottom">4dp</item>
-		<item name="android:maxLines">1</item>
+		<item name="android:singleLine">true</item>
 	</style>
 
-	<style name="Widget.TabPageIndicator.TextView.Dark">
+	<style name="Widget.TabPageIndicator.TabItem.TextView.Dark">
 		<item name="android:textColor">#fff3f3f3</item>
 	</style>
 
-	<style name="Widget.TabPageIndicator.TextView.Light">
+	<style name="Widget.TabPageIndicator.TabItem.TextView.Light">
 		<item name="android:textColor">#ff000000</item>
 	</style>
 
-	<style name="Widget.TabPageIndicator.TextView.Light.DarkActionBar">
+	<style name="Widget.TabPageIndicator.TabItem.TextView.Light.DarkActionBar">
 		<item name="android:textColor">#fff3f3f3</item>
 	</style>
 

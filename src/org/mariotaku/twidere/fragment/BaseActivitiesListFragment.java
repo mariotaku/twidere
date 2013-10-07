@@ -94,6 +94,7 @@ public abstract class BaseActivitiesListFragment extends BasePullToRefreshListFr
 	@Override
 	public void onLoadFinished(final Loader<List<ParcelableActivity>> loader, final List<ParcelableActivity> data) {
 		setProgressBarIndeterminateVisibility(false);
+		setRefreshComplete();
 		mData = data;
 		mAdapter.setData(data);
 		setRefreshComplete();
@@ -115,12 +116,6 @@ public abstract class BaseActivitiesListFragment extends BasePullToRefreshListFr
 		mAdapter.setDisplayProfileImage(display_profile_image);
 		mAdapter.setTextSize(text_size);
 		mAdapter.setShowAbsoluteTime(show_absolute_time);
-	}
-
-	@Override
-	public void setProgressBarIndeterminateVisibility(final boolean visible) {
-		super.setProgressBarIndeterminateVisibility(visible);
-		setRefreshing(visible);
 	}
 
 	protected final List<ParcelableActivity> getData() {

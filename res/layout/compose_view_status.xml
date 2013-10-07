@@ -20,8 +20,8 @@
 
 			<org.mariotaku.twidere.view.ClickableImageView
 				android:id="@+id/profile_image"
-				android:layout_width="@dimen/profile_image_size_cards_ui"
-				android:layout_height="@dimen/profile_image_size_cards_ui"
+				android:layout_width="@dimen/icon_size_card_list_item"
+				android:layout_height="@dimen/icon_size_card_list_item"
 				android:layout_weight="0"
 				android:contentDescription="@string/profile_image"
 				android:scaleType="fitCenter"/>
@@ -72,8 +72,8 @@
 
 			<org.mariotaku.twidere.view.ClickableImageView
 				android:id="@+id/my_profile_image"
-				android:layout_width="@dimen/profile_image_size_cards_ui"
-				android:layout_height="@dimen/profile_image_size_cards_ui"
+				android:layout_width="@dimen/icon_size_card_list_item"
+				android:layout_height="@dimen/icon_size_card_list_item"
 				android:layout_weight="0"
 				android:contentDescription="@string/my_profile_image"
 				android:scaleType="fitCenter"/>

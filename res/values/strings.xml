@@ -36,7 +36,8 @@
 	<string name="error_unknown_error">Error: Unknown error, this is probably a bug.</string>
 	<string name="error_message">Error: <xliff:g id="message">%s</xliff:g></string>
 	<string name="error_message_with_action">Error while <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
-	<string name="error_message_rate_limit">Twitter\'s rate limit exceeded while <xliff:g id="action">%1$s</xliff:g>, please retry <xliff:g id="time">%2$s</xliff:g></string>
+	<string name="error_message_rate_limit">Twitter\'s rate limit exceeded, please retry <xliff:g id="time">%s</xliff:g></string>
+	<string name="error_message_rate_limit_with_action">Twitter\'s rate limit exceeded while <xliff:g id="action">%1$s</xliff:g>, please retry <xliff:g id="time">%2$s</xliff:g></string>
 	<string name="select_account">Select account</string>
 	<string name="username">Username</string>
 	<string name="password">Password</string>
@@ -516,5 +517,17 @@
 	<string name="wizard_page_finished_title">Finished</string>
 	<string name="wizard_page_finished_text">Now Twidere is ready for use.</string>
 	<string name="invalid_tab">Invalid tab</string>
+	<string name="send_crash_report">Send error report of Twidere</string>
+	<string name="add_to_filter">Add to filter</string>
+	<string name="user_filter_name">User: <xliff:g id="name">%s</xliff:g></string>
+	<string name="keyword_filter_name">Keyword: <xliff:g id="name">%s</xliff:g></string>
+	<string name="source_filter_name">Source: <xliff:g id="name">%s</xliff:g></string>
+	<string name="block_user">Block <xliff:g id="name">%s</xliff:g></string>
+	<string name="block_user_confirm_message">Are you sure to block <xliff:g id="name">%s</xliff:g>?</string>
+	<string name="unfollow_user">Unfollow <xliff:g id="name">%s</xliff:g></string>
+	<string name="unfollow_user_confirm_message">Are you sure to unfollow <xliff:g id="name">%s</xliff:g>?</string>
+	<string name="delete_user_list">Delete list <xliff:g id="name">%s</xliff:g></string>
+	<string name="delete_user_list_confirm_message">Are you sure to delete list <xliff:g id="name">%s</xliff:g>?</string>
+	<string name="signing_in_error_browser_sign_in_hint">Error while signing in, you may need to use browser sign in method. (This will ignore custom API settings during sign in)</string>
 
 </resources>

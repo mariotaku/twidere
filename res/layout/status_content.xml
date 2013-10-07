@@ -19,12 +19,12 @@
 			android:layout_height="wrap_content"
 			android:background="?android:selectableItemBackground"
 			android:padding="8dp"
-			app:ignorePaddings="true">
+			app:ignorePadding="true">
 
 			<ImageView
 				android:id="@+id/profile_image"
-				android:layout_width="@dimen/profile_image_size"
-				android:layout_height="@dimen/profile_image_size"
+				android:layout_width="@dimen/icon_size_card_details"
+				android:layout_height="@dimen/icon_size_card_details"
 				android:layout_alignParentLeft="true"
 				android:layout_centerVertical="true"
 				android:contentDescription="@string/profile_image"

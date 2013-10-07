@@ -36,7 +36,7 @@
   <string name="error_unknown_error">Fout: onbekend, waarschijnlijk een bug.</string>
   <string name="error_message">Fout: <xliff:g id="message">%s</xliff:g></string>
   <string name="error_message_with_action">Fout bij actie <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
-  <string name="error_message_rate_limit">Twitter\'s vernieuw limiet bereikt met <xliff:g id="action">%1$s</xliff:g>, probeer het opnieuw <xliff:g id="time">%2$s</xliff:g></string>
+  <string name="error_message_rate_limit_with_action">Twitter\'s vernieuw limiet bereikt met <xliff:g id="action">%1$s</xliff:g>, probeer het opnieuw <xliff:g id="time">%2$s</xliff:g></string>
   <string name="select_account">Selecteer account</string>
   <string name="username">Gebruikersnaam</string>
   <string name="password">Wachtwoord</string>

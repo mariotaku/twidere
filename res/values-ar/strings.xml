@@ -36,7 +36,7 @@
   <string name="error_unknown_error">خطأ: خطأ غير معروف, ربما أنه خلل.</string>
   <string name="error_message">خطأ: <xliff:g id="message">%s</xliff:g></string>
   <string name="error_message_with_action">خطأ عند <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
-  <string name="error_message_rate_limit">تم تجاوز الحد المخصص من طرف تويتر لتغريد عند <xliff:g id="action">%1$s</xliff:g>المرجو إعادة المحاولة. <xliff:g id="time">%2$s</xliff:g></string>
+  <string name="error_message_rate_limit_with_action">تم تجاوز الحد المخصص من طرف تويتر لتغريد عند <xliff:g id="action">%1$s</xliff:g>المرجو إعادة المحاولة. <xliff:g id="time">%2$s</xliff:g></string>
   <string name="select_account">اختيار حساب</string>
   <string name="username">اسم المستخدم</string>
   <string name="password">كلمة المرور</string>

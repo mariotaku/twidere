@@ -29,10 +29,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
 
+import com.nostra13.universalimageloader.cache.disc.DiscCacheAware;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -40,8 +44,15 @@ import com.nostra13.universalimageloader.core.download.ImageDownloader;
 
 import edu.ucdavis.earlybird.UCDService;
 
+import org.acra.ACRA;
+import org.acra.ReportField;
+import org.acra.annotation.ReportsCrashes;
+import org.acra.collector.CrashReportData;
+import org.acra.sender.ReportSender;
+import org.acra.sender.ReportSenderException;
 import org.mariotaku.gallery3d.util.GalleryUtils;
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.service.RefreshService;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
@@ -57,8 +68,12 @@ import org.mariotaku.twidere.util.URLFileNameGenerator;
 import twitter4j.http.HostAddressResolver;
 
 import java.io.File;
+import java.util.Date;
 
+@ReportsCrashes(formKey = "")
 public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener {
+
+	private Handler mHandler;
 
 	private ImageLoaderWrapper mImageLoaderWrapper;
 	private ImageLoader mImageLoader;
@@ -67,16 +82,21 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	private AsyncTwitterWrapper mTwitterWrapper;
 	private MultiSelectManager mMultiSelectManager;
 	private TwidereImageDownloader mImageDownloader;
+	private UnlimitedDiscCache mDiscCache;
 	private MessagesManager mCroutonsManager;
 
 	private HostAddressResolver mResolver;
 	private SQLiteDatabase mDatabase;
 
-	private Handler mHandler;
-
 	public AsyncTaskManager getAsyncTaskManager() {
 		if (mAsyncTaskManager != null) return mAsyncTaskManager;
 		return mAsyncTaskManager = AsyncTaskManager.getInstance();
+	}
+
+	public DiscCacheAware getDiscCache() {
+		if (mDiscCache != null) return mDiscCache;
+		final File cache_dir = getBestCacheDir(this, DIR_NAME_IMAGE_CACHE);
+		return mDiscCache = new UnlimitedDiscCache(cache_dir, new URLFileNameGenerator());
 	}
 
 	public Handler getHandler() {
@@ -95,12 +115,11 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	public ImageLoader getImageLoader() {
 		if (mImageLoader != null) return mImageLoader;
-		final File cache_dir = getBestCacheDir(this, DIR_NAME_IMAGE_CACHE);
 		final ImageLoader loader = ImageLoader.getInstance();
 		final ImageLoaderConfiguration.Builder cb = new ImageLoaderConfiguration.Builder(this);
 		cb.threadPoolSize(8);
 		cb.memoryCache(new ImageMemoryCache(40));
-		cb.discCache(new UnlimitedDiscCache(cache_dir, new URLFileNameGenerator()));
+		cb.discCache(getDiscCache());
 		cb.imageDownloader(getImageDownloader());
 		loader.init(cb.build());
 		return mImageLoader = loader;
@@ -133,10 +152,11 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	@Override
 	public void onCreate() {
+		super.onCreate();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		mHandler = new Handler();
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
-		super.onCreate();
+		configACRA();
 		initializeAsyncTask();
 		GalleryUtils.initialize(this);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_UCD_DATA_PROFILING, false)) {
@@ -185,6 +205,11 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		}
 	}
 
+	private void configACRA() {
+		ACRA.init(this);
+		ACRA.getErrorReporter().setReportSender(new EmailIntentSender(this));
+	}
+
 	private void initializeAsyncTask() {
 		// AsyncTask class needs to be loaded in UI thread.
 		// So we load it here to comply the rule.
@@ -198,6 +223,67 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		if (context == null) return null;
 		final Context app = context.getApplicationContext();
 		return app instanceof TwidereApplication ? (TwidereApplication) app : null;
+	}
+
+	static class EmailIntentSender implements ReportSender {
+
+		private final Context mContext;
+
+		EmailIntentSender(final Context ctx) {
+			mContext = ctx;
+		}
+
+		@Override
+		public void send(final CrashReportData errorContent) throws ReportSenderException {
+			final Intent email = new Intent(Intent.ACTION_SEND);
+			email.setType("text/plain");
+			email.putExtra(Intent.EXTRA_SUBJECT, String.format("%s Crash Report", getAppName()));
+			email.putExtra(Intent.EXTRA_TEXT, buildBody(errorContent));
+			email.putExtra(Intent.EXTRA_EMAIL, new String[] { APP_PROJECT_EMAIL });
+			final Intent chooser = Intent.createChooser(email, mContext.getString(R.string.send_crash_report));
+			chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			mContext.startActivity(chooser);
+		}
+
+		private String buildBody(final CrashReportData errorContent) {
+			final String stack_trace = errorContent.getProperty(ReportField.STACK_TRACE);
+			final StringBuilder builder = new StringBuilder();
+			builder.append(String.format("Report date: %s\n", new Date(System.currentTimeMillis())));
+			builder.append(String.format("Android version: %s\n", Build.VERSION.RELEASE));
+			builder.append(String.format("API version: %d\n", Build.VERSION.SDK_INT));
+			builder.append(String.format("App version name: %s\n", getAppVersionName()));
+			builder.append(String.format("App version code: %d\n", getAppVersionCode()));
+			builder.append(String.format("Configuration: %s\n", mContext.getResources().getConfiguration()));
+			builder.append(String.format("Stack trace:\n%s\n", stack_trace));
+			return builder.toString();
+		}
+
+		private CharSequence getAppName() {
+			final PackageManager pm = mContext.getPackageManager();
+			try {
+				return pm.getApplicationLabel(pm.getApplicationInfo(mContext.getPackageName(), 0));
+			} catch (final NameNotFoundException e) {
+				return APP_NAME;
+			}
+		}
+
+		private int getAppVersionCode() {
+			final PackageManager pm = mContext.getPackageManager();
+			try {
+				return pm.getPackageInfo(mContext.getPackageName(), 0).versionCode;
+			} catch (final NameNotFoundException e) {
+				return 0;
+			}
+		}
+
+		private String getAppVersionName() {
+			final PackageManager pm = mContext.getPackageManager();
+			try {
+				return pm.getPackageInfo(mContext.getPackageName(), 0).versionName;
+			} catch (final NameNotFoundException e) {
+				return "unknown";
+			}
+		}
 	}
 
 }

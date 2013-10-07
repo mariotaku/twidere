@@ -36,7 +36,7 @@
   <string name="error_unknown_error">Erreur inconnue. Il y a probablement un bug.</string>
   <string name="error_message">Erreur : <xliff:g id="message">%s</xliff:g></string>
   <string name="error_message_with_action">Erreur lors de <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
-  <string name="error_message_rate_limit">Limite de rafraichissement de Twitter dépassé lors de <xliff:g id="action">%1$s</xliff:g>, essayer de nouveau <xliff:g id="time">%2$s</xliff:g></string>
+  <string name="error_message_rate_limit_with_action">Limite de rafraichissement de Twitter dépassé lors de <xliff:g id="action">%1$s</xliff:g>, essayer de nouveau <xliff:g id="time">%2$s</xliff:g></string>
   <string name="select_account">Sélectionner un compte</string>
   <string name="username">Login</string>
   <string name="password">Mot de passe</string>

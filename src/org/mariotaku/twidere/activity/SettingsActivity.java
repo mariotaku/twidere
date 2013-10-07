@@ -21,8 +21,6 @@ package org.mariotaku.twidere.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -35,12 +33,12 @@ import android.widget.TextView;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.ArrayAdapter;
+import org.mariotaku.twidere.view.holder.ViewHolder;
 
 import java.util.List;
 
-public class SettingsActivity extends BasePreferenceActivity implements OnSharedPreferenceChangeListener {
+public class SettingsActivity extends BasePreferenceActivity {
 
-	private SharedPreferences mPreferences;
 	private HeaderAdapter mAdapter;
 
 	public HeaderAdapter getHeaderAdapter() {
@@ -68,10 +66,6 @@ public class SettingsActivity extends BasePreferenceActivity implements OnShared
 	}
 
 	@Override
-	public void onSharedPreferenceChanged(final SharedPreferences preferences, final String key) {
-	}
-
-	@Override
 	public void setListAdapter(final ListAdapter adapter) {
 		if (adapter == null) {
 			super.setListAdapter(null);
@@ -81,12 +75,22 @@ public class SettingsActivity extends BasePreferenceActivity implements OnShared
 	}
 
 	@Override
+	public void switchToHeader(final Header header) {
+		if (header == null || header.fragment == null && header.intent == null) return;
+		super.switchToHeader(header);
+	}
+
+	@Override
+	public void switchToHeader(final String fragmentName, final Bundle args) {
+		if (fragmentName == null) return;
+		super.switchToHeader(fragmentName, args);
+	}
+
+	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		super.onCreate(savedInstanceState);
 		setIntent(getIntent().addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-		mPreferences.registerOnSharedPreferenceChangeListener(this);
 	}
 
 	@Override
@@ -135,12 +139,12 @@ public class SettingsActivity extends BasePreferenceActivity implements OnShared
 							&& convertView.findViewById(android.R.id.toggle) != null;
 					final boolean should_create_new = convertView instanceof TextView || is_switch_item;
 					view = super.getView(position, should_create_new ? null : convertView, parent);
-					final ViewHolder holder;
+					final HeaderViewHolder holder;
 					final Object tag = view.getTag();
-					if (tag instanceof ViewHolder) {
-						holder = (ViewHolder) tag;
+					if (tag instanceof HeaderViewHolder) {
+						holder = (HeaderViewHolder) tag;
 					} else {
-						holder = new ViewHolder(view);
+						holder = new HeaderViewHolder(view);
 						view.setTag(holder);
 					}
 					final CharSequence title = header.getTitle(mResources);
@@ -175,14 +179,15 @@ public class SettingsActivity extends BasePreferenceActivity implements OnShared
 				return HEADER_TYPE_NORMAL;
 		}
 
-		private static class ViewHolder {
+		private static class HeaderViewHolder extends ViewHolder {
 			private final TextView title, summary;
 			private final ImageView icon;
 
-			ViewHolder(final View view) {
-				title = (TextView) view.findViewById(android.R.id.title);
-				summary = (TextView) view.findViewById(android.R.id.summary);
-				icon = (ImageView) view.findViewById(android.R.id.icon);
+			HeaderViewHolder(final View view) {
+				super(view);
+				title = (TextView) findViewById(android.R.id.title);
+				summary = (TextView) findViewById(android.R.id.summary);
+				icon = (ImageView) findViewById(android.R.id.icon);
 			}
 		}
 

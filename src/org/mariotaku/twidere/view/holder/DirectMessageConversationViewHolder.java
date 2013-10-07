@@ -35,16 +35,16 @@ public class DirectMessageConversationViewHolder extends CardViewHolder {
 
 	public DirectMessageConversationViewHolder(final View view) {
 		super(view);
-		incoming_message_container = view.findViewById(R.id.incoming_message_container);
-		outgoing_message_container = view.findViewById(R.id.outgoing_message_container);
-		incoming_profile_image_container = view.findViewById(R.id.incoming_profile_image_container);
-		outgoing_profile_image_container = view.findViewById(R.id.outgoing_profile_image_container);
-		incoming_profile_image = (ImageView) view.findViewById(R.id.incoming_profile_image);
-		outgoing_profile_image = (ImageView) view.findViewById(R.id.outgoing_profile_image);
-		incoming_text = (TextView) view.findViewById(R.id.incoming_text);
-		incoming_time = (TextView) view.findViewById(R.id.incoming_time);
-		outgoing_text = (TextView) view.findViewById(R.id.outgoing_text);
-		outgoing_time = (TextView) view.findViewById(R.id.outgoing_time);
+		incoming_message_container = findViewById(R.id.incoming_message_container);
+		outgoing_message_container = findViewById(R.id.outgoing_message_container);
+		incoming_profile_image_container = findViewById(R.id.incoming_profile_image_container);
+		outgoing_profile_image_container = findViewById(R.id.outgoing_profile_image_container);
+		incoming_profile_image = (ImageView) findViewById(R.id.incoming_profile_image);
+		outgoing_profile_image = (ImageView) findViewById(R.id.outgoing_profile_image);
+		incoming_text = (TextView) findViewById(R.id.incoming_text);
+		incoming_time = (TextView) findViewById(R.id.incoming_time);
+		outgoing_text = (TextView) findViewById(R.id.outgoing_text);
+		outgoing_time = (TextView) findViewById(R.id.outgoing_time);
 	}
 
 	public void setTextSize(final float text_size) {

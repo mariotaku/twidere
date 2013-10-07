@@ -20,8 +20,6 @@
 package org.mariotaku.gallery3d;
 
 import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
-import static org.mariotaku.twidere.util.Utils.getImageLoaderHttpClient;
-import static org.mariotaku.twidere.util.Utils.getRedirectedHttpResponse;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -35,18 +33,16 @@ import android.os.Handler;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.DisplayMetrics;
 
-import com.nostra13.universalimageloader.cache.disc.naming.FileNameGenerator;
+import com.nostra13.universalimageloader.cache.disc.DiscCacheAware;
+import com.nostra13.universalimageloader.core.download.ImageDownloader;
 
 import org.mariotaku.gallery3d.util.BitmapUtils;
 import org.mariotaku.gallery3d.util.GalleryUtils;
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.Exif;
 import org.mariotaku.twidere.util.ImageValidator;
 import org.mariotaku.twidere.util.ParseUtils;
-import org.mariotaku.twidere.util.URLFileNameGenerator;
-
-import twitter4j.http.HttpClientWrapper;
-import twitter4j.http.HttpResponse;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -60,22 +56,24 @@ public class GLImageLoader extends AsyncTaskLoader<GLImageLoader.Result> impleme
 
 	private final Uri mUri;
 	private final Context mContext;
-	private final HttpClientWrapper mClient;
 	private final Handler mHandler;
 	private final DownloadListener mListener;
-	private final FileNameGenerator mGenerator;
+	private final ImageDownloader mDownloader;
+	private final DiscCacheAware mDiscCache;
+
 	private final float mBackupSize;
 
 	protected File mCacheDir, mImageFile;
 
 	public GLImageLoader(final Context context, final DownloadListener listener, final Uri uri) {
 		super(context);
-		mContext = context;
 		mHandler = new Handler();
+		mContext = context;
 		mUri = uri;
-		mClient = getImageLoaderHttpClient(context);
 		mListener = listener;
-		mGenerator = new URLFileNameGenerator();
+		final TwidereApplication app = TwidereApplication.getInstance(context);
+		mDownloader = app.getImageDownloader();
+		mDiscCache = app.getDiscCache();
 		final Resources res = context.getResources();
 		final DisplayMetrics dm = res.getDisplayMetrics();
 		mBackupSize = Math.max(dm.heightPixels, dm.widthPixels);
@@ -94,16 +92,15 @@ public class GLImageLoader extends AsyncTaskLoader<GLImageLoader.Result> impleme
 			if (mCacheDir == null || !mCacheDir.exists()) {
 				init();
 			}
-			final File cache_file = mImageFile = new File(mCacheDir, mGenerator.generate(url));
+			final File cache_file = mDiscCache.get(url);
 			try {
 				// from SD cache
 				if (ImageValidator.checkImageValidity(cache_file)) return decodeImageInternal(cache_file);
-				final HttpResponse resp = getRedirectedHttpResponse(mClient, url);
-				// from web
-				if (resp == null) return null;
-				final long length = resp.getContentLength();
+
+				final InputStream is = mDownloader.getStream(url, null);
+				if (is == null) return Result.nullInstance();
+				final long length = is.available();
 				mHandler.post(new DownloadStartRunnable(this, mListener, length));
-				final InputStream is = resp.asStream();
 				final OutputStream os = new FileOutputStream(cache_file);
 				try {
 					dump(is, os);

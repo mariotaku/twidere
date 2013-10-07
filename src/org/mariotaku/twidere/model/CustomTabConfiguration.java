@@ -34,8 +34,7 @@ public final class CustomTabConfiguration implements Constants {
 	public CustomTabConfiguration(final Class<? extends Fragment> cls, final int title, final int icon,
 			final boolean accountIdRequired, final int secondaryFieldType, final int secondaryFieldTitle,
 			final String secondaryFieldTextKey, final int sortPosition) {
-
-		this(cls, title, icon, accountIdRequired, secondaryFieldType, 0, EXTRA_TEXT, sortPosition, false);
+		this(cls, title, icon, accountIdRequired, secondaryFieldType, 0, secondaryFieldTextKey, sortPosition, false);
 	}
 
 	public CustomTabConfiguration(final Class<? extends Fragment> cls, final int title, final int icon,
@@ -86,6 +85,14 @@ public final class CustomTabConfiguration implements Constants {
 
 	public boolean isSingleTab() {
 		return singleTab;
+	}
+
+	@Override
+	public String toString() {
+		return "CustomTabConfiguration{title=" + title + ", icon=" + icon + ", secondaryFieldType="
+				+ secondaryFieldType + ", secondaryFieldTitle=" + secondaryFieldTitle + ", sortPosition="
+				+ sortPosition + ", accountIdRequired=" + accountIdRequired + ", cls=" + cls
+				+ ", secondaryFieldTextKey=" + secondaryFieldTextKey + ", singleTab=" + singleTab + "}";
 	}
 
 	public static class CustomTabConfigurationComparator implements Comparator<Entry<String, CustomTabConfiguration>> {

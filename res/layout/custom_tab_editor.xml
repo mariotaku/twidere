@@ -68,7 +68,7 @@
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:padding="@dimen/element_spacing_default"
-					tools:listitem="@layout/simple_two_line_with_icon_list_item"/>
+					tools:listitem="@layout/two_line_list_item_small"/>
 			</LinearLayout>
 
 			<LinearLayout
@@ -93,7 +93,7 @@
 					android:onClick="onClick"
 					android:padding="@dimen/element_spacing_default">
 
-					<include layout="@layout/simple_two_line_with_icon_list_item"/>
+					<include layout="@layout/two_line_list_item_small"/>
 				</FrameLayout>
 			</LinearLayout>
 		</LinearLayout>
