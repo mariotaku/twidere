@@ -8,7 +8,7 @@
 		android:selectable="false"/>
 
 	<org.mariotaku.twidere.preference.WizardPageNavPreference
-
+		android:key="edit_custom_tabs"
 		android:title="@string/edit"/>
 	<org.mariotaku.twidere.preference.WizardPageNavPreference
 		android:key="use_defaults"
