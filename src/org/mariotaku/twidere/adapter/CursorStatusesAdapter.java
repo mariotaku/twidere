@@ -46,7 +46,6 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.model.PreviewImage;
 import org.mariotaku.twidere.model.StatusCursorIndices;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.ImageLoadingHandler;
@@ -125,13 +124,13 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			final String in_reply_to_name = cursor.getString(mIndices.in_reply_to_name);
 			final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
 			final String account_screen_name = getAccountScreenName(mContext, account_id);
-			final String image_preview_url = cursor.getString(mIndices.image_preview_url);
+			final String media_link = cursor.getString(mIndices.media_link);
 
 			// Tweet type (favorite/location/media)
 			final boolean is_favorite = cursor.getShort(mIndices.is_favorite) == 1;
 			final boolean has_location = !TextUtils.isEmpty(cursor.getString(mIndices.location));
 			final boolean is_possibly_sensitive = cursor.getInt(mIndices.is_possibly_sensitive) == 1;
-			final boolean has_media = image_preview_url != null;
+			final boolean has_media = media_link != null;
 
 			// User type (protected/verified)
 			final boolean is_verified = cursor.getShort(mIndices.is_verified) == 1;
@@ -204,9 +203,9 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 					holder.image_preview.setImageDrawable(null);
 					holder.image_preview.setBackgroundResource(R.drawable.image_preview_nsfw);
 					holder.image_preview_progress.setVisibility(View.GONE);
-				} else if (!image_preview_url.equals(mImageLoadingHandler.getLoadingUri(holder.image_preview))) {
+				} else if (!media_link.equals(mImageLoadingHandler.getLoadingUri(holder.image_preview))) {
 					holder.image_preview.setBackgroundResource(0);
-					mImageLoader.displayPreviewImage(holder.image_preview, image_preview_url, mImageLoadingHandler);
+					mImageLoader.displayPreviewImage(holder.image_preview, media_link, mImageLoadingHandler);
 				}
 				holder.image_preview.setTag(position);
 			}
@@ -300,13 +299,8 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 		switch (view.getId()) {
 			case R.id.image_preview: {
 				final ParcelableStatus status = getStatus(position);
-				if (status == null) return;
-				final PreviewImage spec = PreviewImage.getAllAvailableImage(status.image_original_url);
-				if (spec != null) {
-					openImage(mContext, spec.image_full_url, spec.image_original_url, status.is_possibly_sensitive);
-				} else {
-					openImage(mContext, status.image_original_url, null, status.is_possibly_sensitive);
-				}
+				if (status == null || status.media_link == null) return;
+				openImage(mContext, status.media_link, status.is_possibly_sensitive);
 				break;
 			}
 			case R.id.my_profile_image:

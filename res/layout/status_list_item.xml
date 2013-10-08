@@ -76,6 +76,7 @@
 					android:layout_alignWithParentIfMissing="true"
 					android:drawablePadding="4dp"
 					android:gravity="center_vertical|right"
+					android:singleLine="true"
 					android:textColor="?android:attr/textColorSecondary"/>
 			</RelativeLayout>
 
@@ -135,6 +136,7 @@
 			android:paddingLeft="8dp"
 			android:paddingRight="8dp"
 			android:paddingTop="4dp"
+			android:singleLine="true"
 			android:textColor="?android:attr/textColorSecondary"/>
 	</org.mariotaku.twidere.view.ColorLabelLinearLayout>
 
@@ -154,6 +156,7 @@
 		android:layout_height="48dp"
 		android:layout_gravity="center"
 		android:gravity="center"
+		android:singleLine="true"
 		android:text="@string/tap_to_load_more"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:textStyle="bold"

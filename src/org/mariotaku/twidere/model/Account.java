@@ -46,6 +46,13 @@ public class Account {
 		is_activated = indices.is_activated != -1 ? cursor.getInt(indices.is_activated) == 1 : false;
 	}
 
+	@Override
+	public String toString() {
+		return "Account{screen_name=" + screen_name + ", name=" + name + ", profile_image_url=" + profile_image_url
+				+ ", profile_banner_url=" + profile_banner_url + ", account_id=" + account_id + ", user_color="
+				+ user_color + ", is_activated=" + is_activated + "}";
+	}
+
 	public static List<Account> getAccounts(final Context context, final boolean activated_only) {
 		if (context == null) {
 			Collections.emptyList();

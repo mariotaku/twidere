@@ -14,16 +14,23 @@
 		android:background="?cardItemBackground"
 		android:orientation="vertical">
 
-		<TextView
-			android:id="@+id/text"
+		<org.mariotaku.twidere.view.AccountsColorFrameLayout
+			android:id="@+id/accounts_color"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:paddingBottom="8dp"
-			android:paddingLeft="8dp"
-			android:paddingRight="8dp"
-			android:paddingTop="8dp"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:textColor="?android:attr/textColorPrimary"/>
+			android:minHeight="?android:listPreferredItemHeightSmall">
+
+			<TextView
+				android:id="@+id/text"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:paddingBottom="8dp"
+				android:paddingLeft="8dp"
+				android:paddingRight="8dp"
+				android:paddingTop="8dp"
+				android:textAppearance="?android:textAppearanceSmall"
+				android:textColor="?android:textColorPrimary"/>
+		</org.mariotaku.twidere.view.AccountsColorFrameLayout>
 
 		<org.mariotaku.twidere.view.ImagePreviewContainer
 			android:id="@+id/image_preview_container"
@@ -39,7 +46,7 @@
 
 			<ProgressBar
 				android:id="@+id/image_preview_progress"
-				style="?android:attr/progressBarStyleHorizontal"
+				style="?android:progressBarStyleHorizontal"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_gravity="center"

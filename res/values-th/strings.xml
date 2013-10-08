@@ -26,7 +26,7 @@
   <string name="advanced">ขั้นสูง</string>
   <string name="save">บันทึก</string>
   <string name="edit">แก้ไข</string>
-  <string name="login_to_twitter">เข้าสู่ระบบทวิตเตอร์</string>
+
   <string name="edit_api">แก้ไข API</string>
   <string name="home">หน้าหลัก</string>
   <string name="mentions">การกล่าวถึง</string>
@@ -215,7 +215,7 @@
   <string name="view_user_list">ดูรายการผู้ใช้</string>
   <string name="uninstall">ถอนการติดตั้ง</string>
   <string name="saved_searches">คำค้นที่บันทึกไว้</string>
-  <string name="custom_tabs">แท็บที่กำหนดเอง</string>
+
   <string name="default_tabs">แท็บเริ่มต้น</string>
   <string name="add_tab">เพิ่มแท็บ</string>
   <string name="tab_type">ประเภทแท็บ</string>

@@ -26,7 +26,7 @@
   <string name="advanced">Geavanceerd</string>
   <string name="save">Bewaar</string>
   <string name="edit">Bewerk</string>
-  <string name="login_to_twitter">Log in bij Twitter</string>
+
   <string name="edit_api">Bewerk API</string>
   <string name="home">Thuis</string>
   <string name="mentions">Vermeldingen</string>
@@ -204,7 +204,7 @@
   <string name="item_1_hour">1 uur</string>
   <string name="item_2_hours">2 uur</string>
   <string name="item_4_hours">4 uur</string>
-  <string name="image_preview_display_option">Weegave afbeelding inline</string>
+
   <string name="solid_color_background">Effen kleur achtergrond</string>
   <string name="solid_color_background_summary">Dit kan handig zijn als het scherm van uw apparaat AMOLED is.</string>
   <string name="following_you">Volgt jou</string>
@@ -226,7 +226,7 @@
   <string name="view_user_list">Bekijk gebruikerslijst</string>
   <string name="uninstall">Verwijder</string>
   <string name="saved_searches">Opgeslagen zoekopdrachten</string>
-  <string name="custom_tabs">Aangepaste tabbladen</string>
+
   <string name="default_tabs">Standaard tabbladen</string>
   <string name="add_tab">Voeg een tabblad toe</string>
   <string name="tab_type">Tabblad type</string>

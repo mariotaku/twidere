@@ -26,7 +26,7 @@
   <string name="advanced">Avancé</string>
   <string name="save">Enregistrer</string>
   <string name="edit">Modifier</string>
-  <string name="login_to_twitter">Se connecter à Twitter</string>
+
   <string name="edit_api">Modifier l\'API</string>
   <string name="home">Accueil</string>
   <string name="mentions">Mentions</string>
@@ -194,7 +194,7 @@
   <string name="item_1_hour">1 heure</string>
   <string name="item_2_hours">2 heures</string>
   <string name="item_4_hours">4 heures</string>
-  <string name="image_preview_display_option">Option d\'affichage de la prévisualisation d\'image en ligne</string>
+
   <string name="solid_color_background">Couleur du fond solide</string>
   <string name="solid_color_background_summary">Ceci peut être utile si l\'écran de votre appareil est AMOLED.</string>
   <string name="following_you">Vous suit</string>
@@ -216,7 +216,7 @@
   <string name="view_user_list">Voir la liste utilisateur</string>
   <string name="uninstall">Désinstaller</string>
   <string name="saved_searches">Recherches sauvegardées</string>
-  <string name="custom_tabs">Onglets personnalisés</string>
+
   <string name="default_tabs">Onglets par défaut</string>
   <string name="add_tab">Ajouter un onglet</string>
   <string name="tab_type">Type d\'onglet</string>
@@ -409,7 +409,7 @@
   <string name="my_profile_image">Ma photo de profile</string>
   <string name="mention_user">Mention <xliff:g id="user">%s</xliff:g></string>
   <string name="theme_color">Couleur du thème</string>
-  <string name="link_underline_only">Montrer le soulignement seulement pour les liens</string>
+
   <string name="wrong_url_format">Format d\'URL érroné.</string>
   <string name="wrong_username_password">Mauvais nom d\'utilisateur/mot de passe.</string>
   <string name="network_error">Erreur réseau.</string>

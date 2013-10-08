@@ -26,7 +26,7 @@
   <string name="advanced">Складніша</string>
   <string name="save">Зберегти</string>
   <string name="edit">Редагувати</string>
-  <string name="login_to_twitter">Вхід у Твіттер</string>
+
   <string name="edit_api">Редагувати АРІ</string>
   <string name="home">Головна</string>
   <string name="mentions">Згадки</string>
@@ -204,7 +204,7 @@
   <string name="item_1_hour">1 година</string>
   <string name="item_2_hours">2 години</string>
   <string name="item_4_hours">4 години</string>
-  <string name="image_preview_display_option">Налаштування показу зображень у стрічці</string>
+
   <string name="solid_color_background">Суцільний колір тла</string>
   <string name="solid_color_background_summary">Це може бути корисним, якщо екран вашого пристрою AMOLED.</string>
   <string name="following_you">Ваші підписники</string>
@@ -226,7 +226,7 @@
   <string name="view_user_list">Переглянути список користувачів</string>
   <string name="uninstall">Видалити</string>
   <string name="saved_searches">Збережені пошуки</string>
-  <string name="custom_tabs">Користувацькі вкладки</string>
+
   <string name="default_tabs">Типові вкладки</string>
   <string name="add_tab">Додати вкладку</string>
   <string name="tab_type">Тип вкладки</string>
@@ -422,7 +422,7 @@
   <string name="my_profile_image">Моє зображення профілю</string>
   <string name="mention_user">Згадка <xliff:g id="user">%s</xliff:g></string>
   <string name="theme_color">Колір теми</string>
-  <string name="link_underline_only">Показувати підкреслення лише для посилань</string>
+
   <string name="wrong_url_format">Невірний формат URL.</string>
   <string name="wrong_username_password">Невірне ім\'я користувача/пароль.</string>
   <string name="network_error">Помилка мережі.</string>

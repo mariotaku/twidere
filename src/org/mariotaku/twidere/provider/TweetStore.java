@@ -799,7 +799,7 @@ public final class TweetStore {
 
 		public static final String MY_RETWEET_ID = "my_retweet_id";
 
-		public static final String IMAGE_PREVIEW_URL = "image_preview_url";
+		public static final String MEDIA_LINK = "media_link";
 
 		public static final String MENTIONS = "mentions";
 
@@ -814,7 +814,7 @@ public final class TweetStore {
 				IN_REPLY_TO_USER_ID, IN_REPLY_TO_NAME, IN_REPLY_TO_SCREEN_NAME, SOURCE, LOCATION, RETWEET_COUNT,
 				RETWEET_ID, RETWEETED_BY_USER_ID, RETWEETED_BY_NAME, RETWEETED_BY_SCREEN_NAME, MY_RETWEET_ID,
 				IS_RETWEET, IS_FAVORITE, IS_PROTECTED, IS_VERIFIED, IS_FOLLOWING, IS_GAP, IS_POSSIBLY_SENSITIVE,
-				IMAGE_PREVIEW_URL, MENTIONS };
+				MEDIA_LINK, MENTIONS };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_INT,
 				TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_TEXT,

@@ -141,7 +141,7 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableStatus.ParcelableUserMention;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.ParcelableUserList;
-import org.mariotaku.twidere.model.PreviewImage;
+import org.mariotaku.twidere.model.PreviewMedia;
 import org.mariotaku.twidere.model.StatusCursorIndices;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
@@ -1585,13 +1585,13 @@ public final class Utils implements Constants {
 		return null;
 	}
 
-	public static List<PreviewImage> getImagesInStatus(final String status_string) {
+	public static List<PreviewMedia> getImagesInStatus(final String status_string) {
 		if (status_string == null) return Collections.emptyList();
-		final List<PreviewImage> images = new ArrayList<PreviewImage>();
+		final List<PreviewMedia> images = new ArrayList<PreviewMedia>();
 		final HtmlLinkExtractor extractor = new HtmlLinkExtractor();
 		extractor.grabLinks(status_string);
 		for (final HtmlLink link : extractor.grabLinks(status_string)) {
-			final PreviewImage spec = PreviewImage.getAllAvailableImage(link.getLink());
+			final PreviewMedia spec = MediaPreviewUtils.getAllAvailableImage(link.getLink());
 			if (spec != null) {
 				images.add(spec);
 			}
@@ -2617,8 +2617,7 @@ public final class Utils implements Constants {
 		}
 		values.put(Statuses.IS_RETWEET, is_retweet);
 		values.put(Statuses.IS_FAVORITE, status.isFavorited());
-		final PreviewImage preview = PreviewImage.getPreviewImage(text_html, true);
-		values.put(Statuses.IMAGE_PREVIEW_URL, preview != null ? preview.image_preview_url : null);
+		values.put(Statuses.MEDIA_LINK, MediaPreviewUtils.getSupportedFirstLink(status));
 		final JSONArray json = JSONSerializer.toJSONArray(ParcelableUserMention.fromUserMentionEntities(status
 				.getUserMentionEntities()));
 		values.put(Statuses.MENTIONS, json.toString());
@@ -2736,8 +2735,7 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void openImage(final Context context, final String uri, final String orig,
-			final boolean is_possibly_sensitive) {
+	public static void openImage(final Context context, final String uri, final boolean is_possibly_sensitive) {
 		if (context == null || uri == null) return;
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		if (context instanceof FragmentActivity && is_possibly_sensitive
@@ -2747,23 +2745,17 @@ public final class Utils implements Constants {
 			final DialogFragment fragment = new SensitiveContentWarningDialogFragment();
 			final Bundle args = new Bundle();
 			args.putParcelable(EXTRA_URI, Uri.parse(uri));
-			if (orig != null) {
-				args.putParcelable(EXTRA_URI_ORIG, Uri.parse(orig));
-			}
 			fragment.setArguments(args);
 			fragment.show(fm, "sensitive_content_warning");
 		} else {
-			openImageDirectly(context, uri, orig);
+			openImageDirectly(context, uri);
 		}
 	}
 
-	public static void openImageDirectly(final Context context, final String uri, final String orig) {
+	public static void openImageDirectly(final Context context, final String uri) {
 		if (context == null || uri == null) return;
 		final Intent intent = new Intent(INTENT_ACTION_VIEW_IMAGE);
 		intent.setData(Uri.parse(uri));
-		if (orig != null) {
-			intent.putExtra(EXTRA_URI_ORIG, Uri.parse(orig));
-		}
 		intent.setClass(context, ImageViewerGLActivity.class);
 		context.startActivity(intent);
 	}

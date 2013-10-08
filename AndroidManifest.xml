@@ -492,7 +492,9 @@
 				<action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
 			</intent-filter>
 		</receiver>
-		<receiver android:name=".receiver.TestBroadcastReceiver">
+		<receiver
+			android:name=".receiver.TestBroadcastReceiver"
+			android:label="@string/twidere_test">
 			<intent-filter>
 				<action android:name="android.provider.Telephony.SECRET_CODE"/>
 

@@ -26,7 +26,7 @@
   <string name="advanced">Avançado</string>
   <string name="save">Salvar</string>
   <string name="edit">Editar</string>
-  <string name="login_to_twitter">Login no Twitter</string>
+
   <string name="edit_api">Editar API</string>
   <string name="home">Início</string>
   <string name="mentions">Menções</string>
@@ -196,7 +196,7 @@
   <string name="item_1_hour">1 hora</string>
   <string name="item_2_hours">2 horas</string>
   <string name="item_4_hours">4 horas</string>
-  <string name="image_preview_display_option">Opções de visualização integrada</string>
+
   <string name="solid_color_background">Fundo de cor sólida</string>
   <string name="solid_color_background_summary">Isso pode ser útil se a tela do dispositivo é de AMOLED.</string>
   <string name="following_you">Seguindo você</string>
@@ -218,7 +218,7 @@
   <string name="view_user_list">Ver lista</string>
   <string name="uninstall">Desinstalar</string>
   <string name="saved_searches">Pesquisas salvas</string>
-  <string name="custom_tabs">Abas personalizadas</string>
+
   <string name="default_tabs">Abas padrão</string>
   <string name="add_tab">Adicionar aba</string>
   <string name="tab_type">Tipo de aba</string>
@@ -412,7 +412,7 @@
   <string name="my_profile_image">Minha imagem de perfil</string>
   <string name="mention_user">Citar <xliff:g id="user">%s</xliff:g></string>
   <string name="theme_color">Cor do tema</string>
-  <string name="link_underline_only">Sublinhar apenas links</string>
+
   <string name="wrong_url_format">Formato de URL incorreto.</string>
   <string name="wrong_username_password">Usuário/senha incorretos.</string>
   <string name="network_error">Erro de rede.</string>

@@ -26,7 +26,7 @@
   <string name="advanced">Zaawansowane</string>
   <string name="save">Zapisz</string>
   <string name="edit">Edytuj</string>
-  <string name="login_to_twitter">Zaloguj się do Twitter</string>
+
   <string name="edit_api">Edytuj API</string>
   <string name="home">Strona główna</string>
   <string name="mentions">Wzmianki</string>
@@ -216,7 +216,7 @@
   <string name="view_user_list">Zobacz listę użytkownika</string>
   <string name="uninstall">Odinstaluj</string>
   <string name="saved_searches">Zapisane wyniki wyszukiwania</string>
-  <string name="custom_tabs">Własne zakładki</string>
+
   <string name="default_tabs">Domyślne zakładki</string>
   <string name="add_tab">Dodaj zakładkę</string>
   <string name="tab_type">Typ zakładki</string>

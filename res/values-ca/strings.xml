@@ -26,7 +26,7 @@
   <string name="advanced">Avançades</string>
   <string name="save">Desa</string>
   <string name="edit">Edita</string>
-  <string name="login_to_twitter">Conectat a Twitter</string>
+
   <string name="edit_api">Edita l\'API</string>
   <string name="home">Inici</string>
   <string name="mentions">Mencions</string>
@@ -215,7 +215,7 @@
   <string name="view_user_list">Visualitzar llista usuari</string>
   <string name="uninstall">Desinstal·la</string>
   <string name="saved_searches">Cerques desades</string>
-  <string name="custom_tabs">Pestanyes personalitzades</string>
+
   <string name="default_tabs">Pestanyes per defecte</string>
   <string name="add_tab">Afegeix una pestanya</string>
   <string name="tab_type">Tipus de pestanya</string>

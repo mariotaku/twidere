@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere;
 
+import android.content.ContentResolver;
+
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
@@ -49,7 +51,7 @@ public interface Constants {
 	public static final String TIMELINE_POSITIONS_PREFERENCES_NAME = "timeline_positions";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 49;
+	public static final int DATABASES_VERSION = 50;
 
 	public static final String TWITTER_CONSUMER_KEY = "uAFVpMhBntJutfVj6abfA";
 	public static final String TWITTER_CONSUMER_SECRET = "JARXkJTfxo0F8MyctYy9bUmrLISjo8vXAHsZHYuk2E";
@@ -61,7 +63,7 @@ public interface Constants {
 
 	public static final String SCHEME_HTTP = "http";
 	public static final String SCHEME_HTTPS = "https";
-	public static final String SCHEME_CONTENT = "content";
+	public static final String SCHEME_CONTENT = ContentResolver.SCHEME_CONTENT;
 	public static final String SCHEME_TWIDERE = "twidere";
 
 	public static final String PROTOCOL_HTTP = SCHEME_HTTP + "://";

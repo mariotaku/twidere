@@ -463,13 +463,13 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 			}
 			case ProfileImageBannerLayout.VIEW_ID_PROFILE_IMAGE: {
 				final String profile_image_url_string = getOriginalTwitterProfileImage(mUser.profile_image_url);
-				openImage(getActivity(), profile_image_url_string, null, false);
+				openImage(getActivity(), profile_image_url_string, false);
 				break;
 			}
 			case ProfileImageBannerLayout.VIEW_ID_PROFILE_BANNER: {
 				final String profile_banner_url = mUser.profile_banner_url;
 				if (profile_banner_url == null) return;
-				openImage(getActivity(), profile_banner_url + "/ipad_retina", null, false);
+				openImage(getActivity(), profile_banner_url + "/ipad_retina", false);
 				break;
 			}
 			case R.id.tweets_container: {
@@ -614,7 +614,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				break;
 			}
 			case TwidereLinkify.LINK_TYPE_LINK_WITH_IMAGE_EXTENSION: {
-				openImage(getActivity(), link, orig, false);
+				openImage(getActivity(), link, false);
 				break;
 			}
 			case TwidereLinkify.LINK_TYPE_LINK: {

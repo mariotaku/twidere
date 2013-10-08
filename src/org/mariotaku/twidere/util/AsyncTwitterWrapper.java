@@ -21,6 +21,7 @@ package org.mariotaku.twidere.util;
 
 import static org.mariotaku.twidere.provider.TweetStore.STATUSES_URIS;
 import static org.mariotaku.twidere.util.ContentResolverUtils.bulkDelete;
+import static org.mariotaku.twidere.util.ContentResolverUtils.bulkInsert;
 import static org.mariotaku.twidere.util.Utils.appendQueryParameters;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getAllStatusesIds;
@@ -348,11 +349,18 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int updateStatus(final long[] account_ids, final String content, final ParcelableLocation location,
+	public int updateStatusAsync(final long[] account_ids, final String content, final ParcelableLocation location,
 			final Uri image_uri, final int image_type, final long in_reply_to, final boolean is_possibly_sensitive) {
 		final Intent intent = new Intent(mContext, UpdateStatusService.class);
 		intent.putExtra(EXTRA_STATUS, new ParcelableStatusUpdate(account_ids, content, location, image_uri, image_type,
 				in_reply_to, is_possibly_sensitive));
+		mContext.startService(intent);
+		return 0;
+	}
+	
+	public int updateStatusesAsync(ParcelableStatusUpdate... statuses) {
+		final Intent intent = new Intent(mContext, UpdateStatusService.class);
+		intent.putExtra(EXTRA_STATUSES, statuses);
 		mContext.startService(intent);
 		return 0;
 	}
@@ -1800,33 +1808,31 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				final long account_id = response.account_id;
 				final List<DirectMessage> messages = response.list;
 				if (messages != null) {
-					final List<ContentValues> values_list = new ArrayList<ContentValues>();
-					final List<Long> message_ids = new ArrayList<Long>();
+					final ContentValues[] values_array = new ContentValues[messages.size()];
+					final long[] message_ids = new long[messages.size()];
 
-					for (final DirectMessage message : messages) {
-						if (message == null || message.getId() <= 0) {
-							continue;
-						}
-						message_ids.add(message.getId());
-						values_list.add(makeDirectMessageContentValues(message, account_id, isOutgoing(),
-								mLargeProfileImage));
+					for (int i = 0, j = messages.size(); i < j; i++) {
+						final DirectMessage message = messages.get(i);
+						message_ids[i] = message.getId();
+						values_array[i] = makeDirectMessageContentValues(message, account_id, isOutgoing(),
+								mLargeProfileImage);
 					}
 
 					// Delete all rows conflicting before new data inserted.
 					{
-						final StringBuilder where = new StringBuilder();
-						where.append(DirectMessages.ACCOUNT_ID + " = " + account_id);
-						where.append(" AND ");
-						where.append(DirectMessages.MESSAGE_ID + " IN ( " + ListUtils.toString(message_ids, ',', true)
-								+ " ) ");
+						final StringBuilder delete_where = new StringBuilder();
+						delete_where.append(DirectMessages.ACCOUNT_ID + " = " + account_id);
+						delete_where.append(" AND ");
+						delete_where.append(Where.in(new Column(DirectMessages.MESSAGE_ID),
+								new RawItemArray(message_ids)).getSQL());
 						final Uri delete_uri = appendQueryParameters(uri, new NameValuePairImpl(QUERY_PARAM_NOTIFY,
 								false));
-						mResolver.delete(delete_uri, where.toString(), null);
+						mResolver.delete(delete_uri, delete_where.toString(), null);
 					}
 
 					// Insert previously fetched items.
 					final Uri insert_uri = appendQueryParameters(uri, new NameValuePairImpl(QUERY_PARAM_NOTIFY, false));
-					mResolver.bulkInsert(insert_uri, values_list.toArray(new ContentValues[values_list.size()]));
+					bulkInsert(mResolver, insert_uri, values_array);
 
 				}
 				succeed = true;
@@ -1974,7 +1980,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				all_statuses.addAll(Arrays.asList(values));
 				// Insert previously fetched items.
 				final Uri insert_query = appendQueryParameters(uri, new NameValuePairImpl(QUERY_PARAM_NOTIFY, false));
-				mResolver.bulkInsert(insert_query, values);
+				bulkInsert(mResolver, insert_query, values);
 
 				// Insert a gap.
 				final long min_id = status_ids.length != 0 ? ArrayUtils.min(status_ids) : -1;
@@ -2040,11 +2046,9 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 						hashtag_values.add(hashtag_value);
 					}
 					mResolver.delete(uri, null, null);
-					mResolver.bulkInsert(uri, values_array);
-					mResolver.delete(CachedHashtags.CONTENT_URI,
-							CachedHashtags.NAME + " IN (" + ListUtils.toStringForSQL(hashtags) + ")",
-							hashtags.toArray(new String[hashtags.size()]));
-					mResolver.bulkInsert(CachedHashtags.CONTENT_URI,
+					bulkInsert(mResolver, uri, values_array);
+					bulkDelete(mResolver, CachedHashtags.CONTENT_URI, CachedHashtags.NAME, hashtags, null, true);
+					bulkInsert(mResolver, CachedHashtags.CONTENT_URI,
 							hashtag_values.toArray(new ContentValues[hashtag_values.size()]));
 					bundle.putBoolean(EXTRA_SUCCEED, true);
 				}

@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.activity;
 
+import static org.mariotaku.twidere.util.Utils.getAccountColors;
 import static org.mariotaku.twidere.util.Utils.getDefaultTextSize;
 
 import android.app.LoaderManager.LoaderCallbacks;
@@ -36,31 +37,40 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.TextUtils;
+import android.util.SparseBooleanArray;
+import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
+import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import org.mariotaku.popupmenu.PopupMenu;
+import org.mariotaku.querybuilder.Columns.Column;
+import org.mariotaku.querybuilder.RawItemArray;
+import org.mariotaku.querybuilder.Where;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.DraftItem;
+import org.mariotaku.twidere.model.ParcelableStatusUpdate;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
+import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.ImageLoadingHandler;
+import org.mariotaku.twidere.view.AccountsColorFrameLayout;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DraftsActivity extends TwidereSwipeBackActivity implements LoaderCallbacks<Cursor>, OnItemClickListener,
-		OnItemLongClickListener, OnMenuItemClickListener {
+		MultiChoiceModeListener {
 
 	private ContentResolver mResolver;
-	private AsyncTwitterWrapper mTwitterWrapper;
 	private SharedPreferences mPreferences;
 
 	private DraftsAdapter mAdapter;
@@ -68,10 +78,7 @@ public class DraftsActivity extends TwidereSwipeBackActivity implements LoaderCa
 
 	private PopupMenu mPopupMenu;
 
-	private Cursor mCursor;
 	private float mTextSize;
-	private DraftItem mDraftItem;
-	private long mSelectedId;
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -85,6 +92,46 @@ public class DraftsActivity extends TwidereSwipeBackActivity implements LoaderCa
 	};
 
 	@Override
+	public boolean onActionItemClicked(final ActionMode mode, final MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_DELETE: {
+				// TODO confim dialog and image removal
+				final Where where = Where.in(new Column(Drafts._ID), new RawItemArray(mListView.getCheckedItemIds()));
+				mResolver.delete(Drafts.CONTENT_URI, where.getSQL(), null);
+				break;
+			}
+			case MENU_SEND: {
+				final AsyncTwitterWrapper twitter = getTwitterWrapper();
+				if (twitter == null) return false;
+				final Cursor c = mAdapter.getCursor();
+				if (c == null || c.isClosed()) return false;
+				final SparseBooleanArray checked = mListView.getCheckedItemPositions();
+				final List<ParcelableStatusUpdate> list = new ArrayList<ParcelableStatusUpdate>();
+				for (int i = 0, j = checked.size(); i < j; i++) {
+					if (checked.valueAt(i)) {
+						list.add(new ParcelableStatusUpdate(new DraftItem(c, checked.keyAt(i))));
+					}
+				}
+				twitter.updateStatusesAsync(list.toArray(new ParcelableStatusUpdate[list.size()]));
+				final Where where = Where.in(new Column(Drafts._ID), new RawItemArray(mListView.getCheckedItemIds()));
+				mResolver.delete(Drafts.CONTENT_URI, where.getSQL(), null);
+				break;
+			}
+			default: {
+				return false;
+			}
+		}
+		mode.finish();
+		return true;
+	}
+
+	@Override
+	public boolean onCreateActionMode(final ActionMode mode, final Menu menu) {
+		getMenuInflater().inflate(R.menu.action_multi_select_drafts, menu);
+		return true;
+	}
+
+	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
 		final Uri uri = Drafts.CONTENT_URI;
 		final String[] cols = Drafts.COLUMNS;
@@ -92,67 +139,31 @@ public class DraftsActivity extends TwidereSwipeBackActivity implements LoaderCa
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(final Menu menu) {
-		getMenuInflater().inflate(R.menu.menu_drafts, menu);
-		return super.onCreateOptionsMenu(menu);
+	public void onDestroyActionMode(final ActionMode mode) {
+
 	}
 
 	@Override
-	public void onItemClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
-		if (mCursor != null) {
-			mSelectedId = id;
-			final DraftItem draft = new DraftItem(mCursor, position);
-			editDraft(draft);
-		}
+	public void onItemCheckedStateChanged(final ActionMode mode, final int position, final long id,
+			final boolean checked) {
+		updateTitle(mode);
 	}
 
 	@Override
-	public boolean onItemLongClick(final AdapterView<?> adapter, final View view, final int position, final long id) {
-		if (mCursor != null && position >= 0 && position < mCursor.getCount()) {
-			mDraftItem = new DraftItem(mCursor, position);
-			mCursor.moveToPosition(position);
-			mSelectedId = mCursor.getLong(mCursor.getColumnIndex(Drafts._ID));
-			mPopupMenu = PopupMenu.getInstance(this, view);
-			mPopupMenu.inflate(R.menu.action_draft);
-			mPopupMenu.setOnMenuItemClickListener(this);
-			mPopupMenu.show();
-			return true;
-		}
-
-		return false;
+	public void onItemClick(final AdapterView<?> view, final View child, final int position, final long id) {
+		final Cursor c = mAdapter.getCursor();
+		if (c == null || c.isClosed()) return;
+		editDraft(new DraftItem(c, position));
 	}
 
 	@Override
 	public void onLoaderReset(final Loader<Cursor> loader) {
 		mAdapter.swapCursor(null);
-		mCursor = null;
 	}
 
 	@Override
 	public void onLoadFinished(final Loader<Cursor> loader, final Cursor cursor) {
 		mAdapter.swapCursor(cursor);
-		mCursor = cursor;
-	}
-
-	@Override
-	public boolean onMenuItemClick(final MenuItem item) {
-		switch (item.getItemId()) {
-			case MENU_SEND: {
-				sendDraft(mDraftItem);
-				getLoaderManager().restartLoader(0, null, this);
-				break;
-			}
-			case MENU_EDIT: {
-				editDraft(mDraftItem);
-				break;
-			}
-			case MENU_DELETE: {
-				mResolver.delete(Drafts.CONTENT_URI, Drafts._ID + " = " + mSelectedId, null);
-				getLoaderManager().restartLoader(0, null, this);
-				break;
-			}
-		}
-		return true;
 	}
 
 	@Override
@@ -162,20 +173,23 @@ public class DraftsActivity extends TwidereSwipeBackActivity implements LoaderCa
 				onBackPressed();
 				break;
 			}
-			case MENU_DELETE_ALL: {
-				mResolver.delete(Drafts.CONTENT_URI, null, null);
-				getLoaderManager().restartLoader(0, null, this);
-				break;
-			}
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public boolean onPrepareActionMode(final ActionMode mode, final Menu menu) {
+		return true;
 	}
 
 	@Override
 	public void onStart() {
 		final IntentFilter filter = new IntentFilter(BROADCAST_DRAFTS_DATABASE_UPDATED);
 		registerReceiver(mStatusReceiver, filter);
-		mTwitterWrapper.clearNotificationAsync(NOTIFICATION_ID_DRAFTS);
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		if (twitter != null) {
+			twitter.clearNotificationAsync(NOTIFICATION_ID_DRAFTS);
+		}
 		super.onStart();
 	}
 
@@ -183,7 +197,6 @@ public class DraftsActivity extends TwidereSwipeBackActivity implements LoaderCa
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mResolver = getContentResolver();
-		mTwitterWrapper = getTwidereApplication().getTwitterWrapper();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mTextSize = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(this));
 		setContentView(android.R.layout.list_content);
@@ -194,7 +207,8 @@ public class DraftsActivity extends TwidereSwipeBackActivity implements LoaderCa
 		mListView.setDivider(null);
 		mListView.setAdapter(mAdapter);
 		mListView.setOnItemClickListener(this);
-		mListView.setOnItemLongClickListener(this);
+		mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+		mListView.setMultiChoiceModeListener(this);
 		getLoaderManager().initLoader(0, null, this);
 	}
 
@@ -227,47 +241,48 @@ public class DraftsActivity extends TwidereSwipeBackActivity implements LoaderCa
 		startActivityForResult(intent, REQUEST_COMPOSE);
 	}
 
-	private void sendDraft(final DraftItem draft) {
-		if (draft == null) return;
-		final Uri uri = draft.media_uri == null ? null : Uri.parse(draft.media_uri);
-		mResolver.delete(Drafts.CONTENT_URI, Drafts._ID + " = " + draft._id, null);
-		mTwitterWrapper.updateStatus(draft.account_ids, draft.text, draft.location, uri, draft.attached_image_type,
-				draft.in_reply_to_status_id, draft.is_possibly_sensitive);
+	private void updateTitle(final ActionMode mode) {
+		if (mListView == null) return;
+		final int count = mListView.getCheckedItemCount();
+		mode.setTitle(getResources().getQuantityString(R.plurals.Nitems_selected, count, count));
 	}
 
 	static class DraftsAdapter extends SimpleCursorAdapter {
-
-		private static final String[] FROM = new String[] { Drafts.TEXT };
-		private static final int[] TO = new int[] { R.id.text };
 
 		private final ImageLoaderWrapper mImageLoader;
 		private final ImageLoadingHandler mImageLoadingHandler;
 
 		private float mTextSize;
-		private int mImageUriIdx;
+		private int mAccountIdsIdx, mTextIdx, mImageUriIdx;
 
 		public DraftsAdapter(final Context context) {
-			super(context, R.layout.draft_list_item, null, FROM, TO, 0);
+			super(context, R.layout.draft_list_item, null, new String[0], new int[0], 0);
 			mImageLoader = TwidereApplication.getInstance(context).getImageLoaderWrapper();
 			mImageLoadingHandler = new ImageLoadingHandler();
 		}
 
 		@Override
 		public void bindView(final View view, final Context context, final Cursor cursor) {
-			super.bindView(view, context, cursor);
+			final long[] account_ids = ArrayUtils.fromString(cursor.getString(mAccountIdsIdx), ',');
+			final String content = cursor.getString(mTextIdx);
+			final String image_uri = cursor.getString(mImageUriIdx);
 			final TextView text = (TextView) view.findViewById(R.id.text);
-			final ImageView image = (ImageView) view.findViewById(R.id.image_preview);
+			final ImageView image_preview = (ImageView) view.findViewById(R.id.image_preview);
+			final AccountsColorFrameLayout account_colors = (AccountsColorFrameLayout) view
+					.findViewById(R.id.accounts_color);
+			account_colors.setColors(getAccountColors(context, account_ids));
 			text.setTextSize(mTextSize);
-			final boolean empty_content = text.length() == 0;
+			final boolean empty_content = TextUtils.isEmpty(content);
 			if (empty_content) {
 				text.setText(R.string.empty_content);
+			} else {
+				text.setText(content);
 			}
 			text.setTypeface(Typeface.DEFAULT, empty_content ? Typeface.ITALIC : Typeface.NORMAL);
-			final String image_uri = cursor.getString(mImageUriIdx);
 			final View image_preview_container = view.findViewById(R.id.image_preview_container);
 			image_preview_container.setVisibility(TextUtils.isEmpty(image_uri) ? View.GONE : View.VISIBLE);
-			if (!TextUtils.isEmpty(image_uri) && !image_uri.equals(mImageLoadingHandler.getLoadingUri(image))) {
-				mImageLoader.displayPreviewImage(image, image_uri, mImageLoadingHandler);
+			if (!TextUtils.isEmpty(image_uri) && !image_uri.equals(mImageLoadingHandler.getLoadingUri(image_preview))) {
+				mImageLoader.displayPreviewImage(image_preview, image_uri, mImageLoadingHandler);
 			}
 		}
 
@@ -277,10 +292,13 @@ public class DraftsActivity extends TwidereSwipeBackActivity implements LoaderCa
 
 		@Override
 		public Cursor swapCursor(final Cursor c) {
+			final Cursor old = super.swapCursor(c);
 			if (c != null) {
+				mAccountIdsIdx = c.getColumnIndex(Drafts.ACCOUNT_IDS);
+				mTextIdx = c.getColumnIndex(Drafts.TEXT);
 				mImageUriIdx = c.getColumnIndex(Drafts.IMAGE_URI);
 			}
-			return super.swapCursor(c);
+			return old;
 		}
 	}
 }

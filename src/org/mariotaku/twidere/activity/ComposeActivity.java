@@ -222,7 +222,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 				break;
 			}
 			case MENU_IMAGE: {
-				openImageDirectly(this, ParseUtils.parseString(mImageUri), null);
+				openImageDirectly(this, ParseUtils.parseString(mImageUri));
 				break;
 			}
 			case MENU_TOGGLE_SENSITIVE: {
@@ -409,7 +409,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 	@Override
 	public void onContentChanged() {
 		super.onContentChanged();
-		mColorIndicator = (AccountsColorFrameLayout) findViewById(R.id.account_colors);
+		mColorIndicator = (AccountsColorFrameLayout) findViewById(R.id.accounts_color);
 		mEditText = (EditText) findViewById(R.id.edit_text);
 		mTitleView = (TextView) findViewById(R.id.actionbar_title);
 		mSubtitleView = (TextView) findViewById(R.id.actionbar_subtitle);
@@ -684,7 +684,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		mEditText.setSelection(selection_end);
 		mAccountIds = draft.account_ids;
 		mImageUri = draft.media_uri != null ? Uri.parse(draft.media_uri) : null;
-		mAttachedImageType = draft.attached_image_type;
+		mAttachedImageType = draft.media_type;
 		mIsPossiblySensitive = draft.is_possibly_sensitive;
 		mInReplyToStatusId = draft.in_reply_to_status_id;
 		return true;
@@ -985,7 +985,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		final boolean link_to_quoted_tweet = mPreferences.getBoolean(PREFERENCE_KEY_LINK_TO_QUOTED_TWEET, true);
 		final long in_reply_to = !is_quote || link_to_quoted_tweet ? mInReplyToStatusId : -1;
 		final boolean possibly_sensitive = has_media && mIsPossiblySensitive;
-		mTwitterWrapper.updateStatus(mAccountIds, text, status_loc, mImageUri, mAttachedImageType, in_reply_to,
+		mTwitterWrapper.updateStatusAsync(mAccountIds, text, status_loc, mImageUri, mAttachedImageType, in_reply_to,
 				possibly_sensitive);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_NO_CLOSE_AFTER_TWEET_SENT, false)
 				&& (mInReplyToStatus == null || mInReplyToStatusId <= 0)) {

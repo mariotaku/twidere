@@ -26,7 +26,7 @@
   <string name="advanced">Erweitert</string>
   <string name="save">Speichern</string>
   <string name="edit">Bearbeiten</string>
-  <string name="login_to_twitter">In Twitter einloggen</string>
+
   <string name="edit_api">API bearbeiten</string>
   <string name="home">Startseite</string>
   <string name="mentions">Erwähnungen</string>
@@ -204,7 +204,7 @@
   <string name="item_1_hour">1 Stunde</string>
   <string name="item_2_hours">2 Stunden</string>
   <string name="item_4_hours">4 Stunden</string>
-  <string name="image_preview_display_option">Bilder in der Timeline anzeigen</string>
+
   <string name="solid_color_background">Einfarbiger Hintergrund</string>
   <string name="solid_color_background_summary">Eventuell sinnvoll für Geräte mit AMOLED-Display.</string>
   <string name="following_you">Folgt dir</string>
@@ -226,7 +226,7 @@
   <string name="view_user_list">Benutzerliste zeigen</string>
   <string name="uninstall">Deinstallieren</string>
   <string name="saved_searches">Gespeicherte Suchen</string>
-  <string name="custom_tabs">Benutzerdefinierte Tabs</string>
+
   <string name="default_tabs">Standard-Tabs</string>
   <string name="add_tab">Tab hinzufügen</string>
   <string name="tab_type">Tab Typ</string>
@@ -422,7 +422,7 @@
   <string name="my_profile_image">Mein Profilbild</string>
   <string name="mention_user">Erwähnung <xliff:g id="user">%s</xliff:g></string>
   <string name="theme_color">Theme Farbe</string>
-  <string name="link_underline_only">Nur Links unterstreichen</string>
+
   <string name="wrong_url_format">Falsches URL-Format.</string>
   <string name="wrong_username_password">Falscher Benutzername/Passwort.</string>
   <string name="network_error">Netzwerkfehler</string>

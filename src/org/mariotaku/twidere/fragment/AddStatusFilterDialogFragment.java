@@ -1,5 +1,7 @@
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.ContentResolverUtils.bulkDelete;
+import static org.mariotaku.twidere.util.ContentResolverUtils.bulkInsert;
 import static org.mariotaku.twidere.util.Utils.getDisplayName;
 import static org.mariotaku.twidere.util.Utils.makeFilterdUserContentValues;
 
@@ -37,35 +39,47 @@ public class AddStatusFilterDialogFragment extends BaseSupportDialogFragment imp
 
 	@Override
 	public void onClick(final DialogInterface dialog, final int which) {
-		final ArrayList<ContentValues> users = new ArrayList<ContentValues>();
-		final ArrayList<ContentValues> keywords = new ArrayList<ContentValues>();
-		final ArrayList<ContentValues> sources = new ArrayList<ContentValues>();
+		final Set<Long> user_ids = new HashSet<Long>();
+		final Set<String> keywords = new HashSet<String>();
+		final Set<String> sources = new HashSet<String>();
+		final ArrayList<ContentValues> user_values = new ArrayList<ContentValues>();
+		final ArrayList<ContentValues> keyword_values = new ArrayList<ContentValues>();
+		final ArrayList<ContentValues> source_values = new ArrayList<ContentValues>();
 		for (final FilterItemInfo info : mCheckedFilterItems) {
 			final Object value = info.value;
 			if (value instanceof ParcelableUserMention) {
-				final ContentValues values = makeFilterdUserContentValues((ParcelableUserMention) value);
-				users.add(values);
+				final ParcelableUserMention mention = (ParcelableUserMention) value;
+				user_ids.add(mention.id);
+				user_values.add(makeFilterdUserContentValues(mention));
 			} else if (value instanceof ParcelableStatus) {
-				final ContentValues values = makeFilterdUserContentValues((ParcelableStatus) value);
-				users.add(values);
+				final ParcelableStatus status = (ParcelableStatus) value;
+				user_ids.add(status.user_id);
+				user_values.add(makeFilterdUserContentValues(status));
 			} else if (info.type == FilterItemInfo.FILTER_TYPE_KEYWORD) {
 				if (value != null) {
+					final String keyword = ParseUtils.parseString(value);
+					keywords.add(keyword);
 					final ContentValues values = new ContentValues();
-					values.put(Filters.Keywords.VALUE, "#" + ParseUtils.parseString(value));
-					keywords.add(values);
+					values.put(Filters.Keywords.VALUE, "#" + keyword);
+					keyword_values.add(values);
 				}
 			} else if (info.type == FilterItemInfo.FILTER_TYPE_SOURCE) {
 				if (value != null) {
+					final String source = ParseUtils.parseString(value);
+					sources.add(source);
 					final ContentValues values = new ContentValues();
-					values.put(Filters.Sources.VALUE, ParseUtils.parseString(value));
-					sources.add(values);
+					values.put(Filters.Sources.VALUE, source);
+					source_values.add(values);
 				}
 			}
 		}
 		final ContentResolver resolver = getContentResolver();
-		resolver.bulkInsert(Filters.Users.CONTENT_URI, users.toArray(new ContentValues[users.size()]));
-		resolver.bulkInsert(Filters.Keywords.CONTENT_URI, keywords.toArray(new ContentValues[keywords.size()]));
-		resolver.bulkInsert(Filters.Sources.CONTENT_URI, sources.toArray(new ContentValues[sources.size()]));
+		bulkDelete(resolver, Filters.Users.CONTENT_URI, Filters.Users.USER_ID, user_ids, null, false);
+		bulkDelete(resolver, Filters.Keywords.CONTENT_URI, Filters.Keywords.VALUE, keywords, null, true);
+		bulkDelete(resolver, Filters.Sources.CONTENT_URI, Filters.Sources.VALUE, sources, null, true);
+		bulkInsert(resolver, Filters.Users.CONTENT_URI, user_values);
+		bulkInsert(resolver, Filters.Keywords.CONTENT_URI, keyword_values);
+		bulkInsert(resolver, Filters.Sources.CONTENT_URI, source_values);
 	}
 
 	@Override

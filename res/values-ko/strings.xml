@@ -26,7 +26,7 @@
   <string name="advanced">고급</string>
   <string name="save">저장</string>
   <string name="edit">수정</string>
-  <string name="login_to_twitter">트위터 로그인</string>
+
   <string name="edit_api">API 수정</string>
   <string name="home">홈</string>
   <string name="mentions">멘션</string>
@@ -211,7 +211,7 @@
   <string name="view_user_list">사용자 목록 보기</string>
   <string name="uninstall">제거</string>
   <string name="saved_searches">저장된 검색어</string>
-  <string name="custom_tabs">커스텀 탭 </string>
+
   <string name="default_tabs">기본 탭</string>
   <string name="add_tab">탭 추가</string>
   <string name="tab_type">탭 유형</string>

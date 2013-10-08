@@ -26,7 +26,7 @@
   <string name="advanced">詳細設定</string>
   <string name="save">保存</string>
   <string name="edit">編集</string>
-  <string name="login_to_twitter">ツイッターにサインイン</string>
+
   <string name="edit_api">APIを編集</string>
   <string name="home">ホーム</string>
   <string name="mentions">つながり</string>
@@ -204,7 +204,7 @@
   <string name="item_1_hour">1時間</string>
   <string name="item_2_hours">2時間</string>
   <string name="item_4_hours">4時間</string>
-  <string name="image_preview_display_option">インラインプレビュー表示オプション</string>
+
   <string name="solid_color_background">単色の背景</string>
   <string name="solid_color_background_summary">アモレッド搭載した機種ならこの機能を有効にすることをお勧めします。</string>
   <string name="following_you">あなたをフォロー中</string>
@@ -226,7 +226,7 @@
   <string name="view_user_list">ユーザーリストを表示</string>
   <string name="uninstall">アンインストール</string>
   <string name="saved_searches">保存した検索</string>
-  <string name="custom_tabs">カスタムタブ</string>
+
   <string name="default_tabs">デフォルトタブ</string>
   <string name="add_tab">タブを追加</string>
   <string name="tab_type">タブ類型</string>
@@ -422,7 +422,7 @@
   <string name="my_profile_image">プロフィール画像</string>
   <string name="mention_user"><xliff:g id="user">%s</xliff:g>宛にツイート</string>
   <string name="theme_color">テーマ色</string>
-  <string name="link_underline_only">リンクにのみ下線を表示</string>
+
   <string name="wrong_url_format">不正なURL形式です。</string>
   <string name="wrong_username_password">間違ったユーザー名/パスワードです。</string>
   <string name="network_error">ネットワークエラー</string>

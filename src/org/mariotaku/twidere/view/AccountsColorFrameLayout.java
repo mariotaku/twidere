@@ -22,7 +22,6 @@ package org.mariotaku.twidere.view;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.widget.RelativeLayout;
@@ -56,10 +55,7 @@ public class AccountsColorFrameLayout extends RelativeLayout {
 	@Override
 	protected void onDraw(final Canvas canvas) {
 		super.onDraw(canvas);
-		if (mColors == null || mColors.length == 0) {
-			canvas.drawColor(Color.TRANSPARENT);
-			return;
-		}
+		if (mColors == null || mColors.length == 0) return;
 		final int width = getWidth(), height = getHeight();
 		final int length = mColors.length;
 		for (int i = 0; i < length; i++) {

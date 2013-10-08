@@ -149,7 +149,7 @@ public class MultiSelectEventHandler implements Constants, ActionMode.Callback, 
 						continue;
 					}
 				}
-				bulkDelete(resolver, Filters.Users.CONTENT_URI, Filters.Users.USER_ID, user_ids, null, true);
+				bulkDelete(resolver, Filters.Users.CONTENT_URI, Filters.Users.USER_ID, user_ids, null, false);
 				bulkInsert(resolver, Filters.Users.CONTENT_URI, values_list);
 				Crouton.showText(mActivity, R.string.users_muted, CroutonStyle.INFO);
 				mode.finish();

@@ -26,7 +26,7 @@
   <string name="advanced">متقدم</string>
   <string name="save">حفظ</string>
   <string name="edit">تعديل</string>
-  <string name="login_to_twitter">Twitterتسجيل الدخول لـ</string>
+
   <string name="edit_api">API تعديل الـ</string>
   <string name="home">الرئيسية</string>
   <string name="mentions">الإشارات</string>
@@ -217,7 +217,7 @@
   <string name="view_user_list">عرض قائمة المستخدمين</string>
   <string name="uninstall">إلغاء التنصيب</string>
   <string name="saved_searches">عمليات البحث المحفوظة</string>
-  <string name="custom_tabs">علامات تبويب مخصصة</string>
+
   <string name="default_tabs">التبويبات الافتراضية</string>
   <string name="add_tab">إضافة تبويب</string>
   <string name="tab_type">نوع التبويب</string>

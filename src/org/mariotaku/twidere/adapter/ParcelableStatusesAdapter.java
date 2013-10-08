@@ -44,7 +44,6 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.model.PreviewImage;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.ImageLoadingHandler;
 import org.mariotaku.twidere.util.MultiSelectManager;
@@ -212,17 +211,16 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 				holder.profile_image.setVisibility(View.GONE);
 				holder.my_profile_image.setVisibility(View.GONE);
 			}
-			final boolean has_preview = mDisplayImagePreview && status.has_media && status.image_preview_url != null;
+			final boolean has_preview = mDisplayImagePreview && status.has_media && status.media_link != null;
 			holder.image_preview_container.setVisibility(has_preview ? View.VISIBLE : View.GONE);
 			if (has_preview) {
 				if (status.is_possibly_sensitive && !mDisplaySensitiveContents) {
 					holder.image_preview.setImageDrawable(null);
 					holder.image_preview.setBackgroundResource(R.drawable.image_preview_nsfw);
 					holder.image_preview_progress.setVisibility(View.GONE);
-				} else if (!status.image_preview_url.equals(mImageLoadingHandler.getLoadingUri(holder.image_preview))) {
+				} else if (!status.media_link.equals(mImageLoadingHandler.getLoadingUri(holder.image_preview))) {
 					holder.image_preview.setBackgroundResource(0);
-					mImageLoader.displayPreviewImage(holder.image_preview, status.image_preview_url,
-							mImageLoadingHandler);
+					mImageLoader.displayPreviewImage(holder.image_preview, status.media_link, mImageLoadingHandler);
 				}
 				holder.image_preview.setTag(position);
 			}
@@ -251,13 +249,8 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		switch (view.getId()) {
 			case R.id.image_preview: {
 				final ParcelableStatus status = getStatus(position);
-				if (status == null) return;
-				final PreviewImage spec = PreviewImage.getAllAvailableImage(status.image_original_url);
-				if (spec != null) {
-					openImage(mContext, spec.image_full_url, spec.image_original_url, status.is_possibly_sensitive);
-				} else {
-					openImage(mContext, status.image_original_url, null, status.is_possibly_sensitive);
-				}
+				if (status == null || status.media_link == null) return;
+				openImage(mContext, status.media_link, status.is_possibly_sensitive);
 				break;
 			}
 			case R.id.my_profile_image:

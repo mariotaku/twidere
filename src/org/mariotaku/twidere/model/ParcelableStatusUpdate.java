@@ -23,10 +23,20 @@ public class ParcelableStatusUpdate implements Parcelable {
 	public final long[] account_ids;
 	public final String content;
 	public final ParcelableLocation location;
-	public final Uri image_uri;
+	public final Uri media_uri;
 	public final long in_reply_to_status_id;
 	public final boolean is_possibly_sensitive;
-	public final int image_type;
+	public final int media_type;
+
+	public ParcelableStatusUpdate(final DraftItem draft) {
+		account_ids = draft.account_ids;
+		content = draft.text;
+		location = draft.location;
+		media_uri = draft.media_uri != null ? Uri.parse(draft.media_uri) : null;
+		media_type = draft.media_type;
+		in_reply_to_status_id = draft.in_reply_to_status_id;
+		is_possibly_sensitive = draft.is_possibly_sensitive;
+	}
 
 	public ParcelableStatusUpdate(final long[] account_ids, final String content, final ParcelableLocation location,
 			final Uri image_uri, final int image_type, final long in_reply_to_status_id,
@@ -34,8 +44,8 @@ public class ParcelableStatusUpdate implements Parcelable {
 		this.account_ids = account_ids;
 		this.content = content;
 		this.location = location;
-		this.image_uri = image_uri;
-		this.image_type = image_type;
+		media_uri = image_uri;
+		media_type = image_type;
 		this.in_reply_to_status_id = in_reply_to_status_id;
 		this.is_possibly_sensitive = is_possibly_sensitive;
 	}
@@ -44,8 +54,8 @@ public class ParcelableStatusUpdate implements Parcelable {
 		account_ids = in.createLongArray();
 		content = in.readString();
 		location = in.readParcelable(ParcelableLocation.class.getClassLoader());
-		image_uri = in.readParcelable(Uri.class.getClassLoader());
-		image_type = in.readInt();
+		media_uri = in.readParcelable(Uri.class.getClassLoader());
+		media_type = in.readInt();
 		in_reply_to_status_id = in.readLong();
 		is_possibly_sensitive = in.readInt() == 1;
 	}
@@ -58,9 +68,9 @@ public class ParcelableStatusUpdate implements Parcelable {
 	@Override
 	public String toString() {
 		return "ParcelableStatusUpdate{account_ids=" + Arrays.toString(account_ids) + ", content=" + content
-				+ ", location=" + location + ", image_uri=" + image_uri + ", in_reply_to_status_id="
-				+ in_reply_to_status_id + ", is_possibly_sensitive=" + is_possibly_sensitive + ", image_type="
-				+ image_type + "}";
+				+ ", location=" + location + ", media_uri=" + media_uri + ", in_reply_to_status_id="
+				+ in_reply_to_status_id + ", is_possibly_sensitive=" + is_possibly_sensitive + ", media_type="
+				+ media_type + "}";
 	}
 
 	@Override
@@ -68,8 +78,8 @@ public class ParcelableStatusUpdate implements Parcelable {
 		dest.writeLongArray(account_ids);
 		dest.writeString(content);
 		dest.writeParcelable(location, flags);
-		dest.writeParcelable(image_uri, flags);
-		dest.writeInt(image_type);
+		dest.writeParcelable(media_uri, flags);
+		dest.writeInt(media_type);
 		dest.writeLong(in_reply_to_status_id);
 		dest.writeInt(is_possibly_sensitive ? 1 : 0);
 	}

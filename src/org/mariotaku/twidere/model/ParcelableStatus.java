@@ -39,6 +39,7 @@ import org.mariotaku.jsonserializer.JSONParcel;
 import org.mariotaku.jsonserializer.JSONParcelable;
 import org.mariotaku.jsonserializer.JSONSerializer;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.util.MediaPreviewUtils;
 import org.mariotaku.twidere.util.ParseUtils;
 
 import twitter4j.Status;
@@ -82,8 +83,8 @@ public class ParcelableStatus implements Parcelable, JSONParcelable, Comparable<
 			user_is_protected, user_is_verified;
 
 	public final String retweeted_by_name, retweeted_by_screen_name, text_html, text_plain, user_name,
-			user_screen_name, in_reply_to_name, in_reply_to_screen_name, source, user_profile_image_url,
-			image_preview_url, image_original_url, text_unescaped;
+			user_screen_name, in_reply_to_name, in_reply_to_screen_name, source, user_profile_image_url, media_link,
+			text_unescaped;
 
 	public final ParcelableLocation location;
 
@@ -139,10 +140,8 @@ public class ParcelableStatus implements Parcelable, JSONParcelable, Comparable<
 		source = values.getAsString(Statuses.SOURCE);
 		retweet_count = getAsInteger(values, Statuses.RETWEET_COUNT, 0);
 		text_unescaped = values.getAsString(Statuses.TEXT_UNESCAPED);
-		final PreviewImage preview = PreviewImage.getPreviewImage(text_html, true);
-		has_media = preview != null;
-		image_preview_url = preview != null ? preview.image_preview_url : null;
-		image_original_url = preview != null ? preview.image_original_url : null;
+		media_link = values.getAsString(Statuses.MEDIA_LINK);
+		has_media = media_link != null;
 		is_possibly_sensitive = getAsBoolean(values, Statuses.IS_POSSIBLY_SENSITIVE, false);
 		user_is_following = getAsBoolean(values, Statuses.IS_FOLLOWING, false);
 		mentions = ParcelableUserMention.fromJSONString(values.getAsString(Statuses.MENTIONS));
@@ -168,10 +167,8 @@ public class ParcelableStatus implements Parcelable, JSONParcelable, Comparable<
 		retweeted_by_screen_name = indices.retweeted_by_screen_name != -1 ? cursor
 				.getString(indices.retweeted_by_screen_name) : null;
 		text_html = indices.text_html != -1 ? cursor.getString(indices.text_html) : null;
-		final PreviewImage preview = PreviewImage.getPreviewImage(text_html, true);
-		has_media = preview != null;
-		image_preview_url = preview != null ? preview.image_preview_url : null;
-		image_original_url = preview != null ? preview.image_original_url : null;
+		media_link = MediaPreviewUtils.getSupportedFirstLink(text_html);
+		has_media = media_link != null;
 		text_plain = indices.text_plain != -1 ? cursor.getString(indices.text_plain) : null;
 		user_name = indices.user_name != -1 ? cursor.getString(indices.user_name) : null;
 		user_screen_name = indices.user_screen_name != -1 ? cursor.getString(indices.user_screen_name) : null;
@@ -217,8 +214,7 @@ public class ParcelableStatus implements Parcelable, JSONParcelable, Comparable<
 		in_reply_to_screen_name = in.readString("in_reply_to_screen_name");
 		source = in.readString("source");
 		user_profile_image_url = in.readString("profile_image_url");
-		image_preview_url = in.readString("image_preview_url");
-		image_original_url = in.readString("image_orig_url");
+		media_link = in.readString("media_link");
 		location = in.readParcelable("location", ParcelableLocation.JSON_CREATOR);
 		my_retweet_id = in.readLong("my_retweet_id");
 		is_possibly_sensitive = in.readBoolean("is_possibly_sensitive");
@@ -251,8 +247,7 @@ public class ParcelableStatus implements Parcelable, JSONParcelable, Comparable<
 		in_reply_to_screen_name = in.readString();
 		source = in.readString();
 		user_profile_image_url = in.readString();
-		image_preview_url = in.readString();
-		image_original_url = in.readString();
+		media_link = in.readString();
 		location = in.readParcelable(ParcelableLocation.class.getClassLoader());
 		my_retweet_id = in.readLong();
 		is_possibly_sensitive = in.readInt() == 1;
@@ -296,10 +291,8 @@ public class ParcelableStatus implements Parcelable, JSONParcelable, Comparable<
 		user_is_following = user != null ? user.isFollowing() : false;
 		timestamp = getTime(status.getCreatedAt());
 		text_html = formatStatusText(status);
-		final PreviewImage preview = PreviewImage.getPreviewImage(text_html, true);
-		has_media = preview != null;
-		image_preview_url = preview != null ? preview.image_preview_url : null;
-		image_original_url = preview != null ? preview.image_original_url : null;
+		media_link = MediaPreviewUtils.getSupportedFirstLink(status);
+		has_media = media_link != null;
 		text_plain = status.getText();
 		retweet_count = status.getRetweetCount();
 		in_reply_to_name = getInReplyToName(status);
@@ -362,9 +355,9 @@ public class ParcelableStatus implements Parcelable, JSONParcelable, Comparable<
 				+ ", text_html=" + text_html + ", text_plain=" + text_plain + ", user_name=" + user_name
 				+ ", user_screen_name=" + user_screen_name + ", in_reply_to_name=" + in_reply_to_name
 				+ ", in_reply_to_screen_name=" + in_reply_to_screen_name + ", source=" + source
-				+ ", user_profile_image_url=" + user_profile_image_url + ", image_preview_url=" + image_preview_url
-				+ ", image_original_url=" + image_original_url + ", text_unescaped=" + text_unescaped + ", location="
-				+ location + ", mentions=" + Arrays.toString(mentions) + "}";
+				+ ", user_profile_image_url=" + user_profile_image_url + ", media_link=" + media_link
+				+ ", text_unescaped=" + text_unescaped + ", location=" + location + ", mentions="
+				+ Arrays.toString(mentions) + "}";
 	}
 
 	@Override
@@ -395,8 +388,7 @@ public class ParcelableStatus implements Parcelable, JSONParcelable, Comparable<
 		out.writeString("in_reply_to_screen_name", in_reply_to_screen_name);
 		out.writeString("source", source);
 		out.writeString("profile_image_url", user_profile_image_url);
-		out.writeString("image_preview_url", image_preview_url);
-		out.writeString("image_orig_url", image_original_url);
+		out.writeString("media_link", media_link);
 		out.writeParcelable("location", location);
 		out.writeLong("my_retweet_id", my_retweet_id);
 		out.writeBoolean("is_possibly_sensitive", is_possibly_sensitive);
@@ -429,8 +421,7 @@ public class ParcelableStatus implements Parcelable, JSONParcelable, Comparable<
 		out.writeString(in_reply_to_screen_name);
 		out.writeString(source);
 		out.writeString(user_profile_image_url);
-		out.writeString(image_preview_url);
-		out.writeString(image_original_url);
+		out.writeString(media_link);
 		out.writeParcelable(location, flags);
 		out.writeLong(my_retweet_id);
 		out.writeInt(is_possibly_sensitive ? 1 : 0);

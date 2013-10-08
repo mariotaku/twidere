@@ -19,9 +19,9 @@
 
 package org.mariotaku.twidere.util;
 
-import static org.mariotaku.twidere.model.PreviewImage.AVAILABLE_IMAGE_SHUFFIX;
-import static org.mariotaku.twidere.model.PreviewImage.PATTERN_ALL_AVAILABLE_IMAGES;
-import static org.mariotaku.twidere.model.PreviewImage.PATTERN_IMAGES;
+import static org.mariotaku.twidere.util.MediaPreviewUtils.AVAILABLE_IMAGE_SHUFFIX;
+import static org.mariotaku.twidere.util.MediaPreviewUtils.PATTERN_ALL_AVAILABLE_IMAGES;
+import static org.mariotaku.twidere.util.MediaPreviewUtils.PATTERN_IMAGES;
 import static org.mariotaku.twidere.util.Utils.matcherEnd;
 import static org.mariotaku.twidere.util.Utils.matcherGroup;
 import static org.mariotaku.twidere.util.Utils.matcherStart;
@@ -38,7 +38,7 @@ import com.twitter.Extractor;
 import com.twitter.Regex;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.model.PreviewImage;
+import org.mariotaku.twidere.model.PreviewMedia;
 import org.mariotaku.twidere.text.TwidereURLSpan;
 
 import java.util.regex.Matcher;
@@ -239,14 +239,14 @@ public class TwidereLinkify implements Constants {
 				for (final URLSpan span : spans) {
 					final Matcher matcher = PATTERN_ALL_AVAILABLE_IMAGES.matcher(span.getURL());
 					if (matcher.matches()) {
-						final PreviewImage spec = PreviewImage.getAllAvailableImage(matcher.group());
+						final PreviewMedia spec = MediaPreviewUtils.getAllAvailableImage(matcher.group());
 						final int start = string.getSpanStart(span);
 						final int end = string.getSpanEnd(span);
 						if (spec == null || start < 0 || end > string.length() || start > end) {
 							continue;
 						}
 						string.removeSpan(span);
-						applyLink(spec.image_full_url, spec.image_original_url, start, end, string, account_id,
+						applyLink(spec.url, spec.original, start, end, string, account_id,
 								LINK_TYPE_LINK_WITH_IMAGE_EXTENSION, sensitive);
 					}
 				}

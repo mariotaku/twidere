@@ -96,7 +96,7 @@
 		android:orientation="vertical">
 
 		<org.mariotaku.twidere.view.AccountsColorFrameLayout
-			android:id="@+id/account_colors"
+			android:id="@+id/accounts_color"
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
 			android:layout_weight="1">

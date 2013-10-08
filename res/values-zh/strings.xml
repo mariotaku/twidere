@@ -26,7 +26,7 @@
   <string name="advanced">高級</string>
   <string name="save">保存</string>
   <string name="edit">編輯</string>
-  <string name="login_to_twitter">登錄到 Twitter</string>
+
   <string name="edit_api">編輯 API</string>
   <string name="home">主頁</string>
   <string name="mentions">提及</string>
@@ -204,7 +204,7 @@
   <string name="item_1_hour">1小時</string>
   <string name="item_2_hours">2小時</string>
   <string name="item_4_hours">4小時</string>
-  <string name="image_preview_display_option">圖片預覽顯示選項</string>
+
   <string name="solid_color_background">純色背景</string>
   <string name="solid_color_background_summary">如果你的設備是AMOLED屏幕的話，啟用這個會有所幫助</string>
   <string name="following_you">正在關注你</string>
@@ -226,7 +226,7 @@
   <string name="view_user_list">查看列表</string>
   <string name="uninstall">卸載</string>
   <string name="saved_searches">已保存的搜索</string>
-  <string name="custom_tabs">自定義標籤頁</string>
+
   <string name="default_tabs">預設標籤頁</string>
   <string name="add_tab">添加標籤頁</string>
   <string name="tab_type">標籤頁類型</string>
@@ -422,7 +422,7 @@
   <string name="my_profile_image">我的個人資料圖片</string>
   <string name="mention_user">提及<xliff:g id="user">%s</xliff:g></string>
   <string name="theme_color">主題顏色</string>
-  <string name="link_underline_only">僅為連結顯示下劃線</string>
+
   <string name="wrong_url_format">URL格式錯誤</string>
   <string name="wrong_username_password">用戶名/密碼錯誤</string>
   <string name="network_error">網絡錯誤</string>

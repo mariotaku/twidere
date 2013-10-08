@@ -26,7 +26,7 @@
   <string name="advanced">Lanjutan</string>
   <string name="save">Simpan</string>
   <string name="edit">Sunting</string>
-  <string name="login_to_twitter">Login ke Twitter</string>
+
   <string name="edit_api">Sunting API</string>
   <string name="home">Beranda</string>
   <string name="mentions">Menyebutkan</string>
@@ -196,7 +196,7 @@
   <string name="item_1_hour">1 jam</string>
   <string name="item_2_hours">2 jam</string>
   <string name="item_4_hours">4 jam</string>
-  <string name="image_preview_display_option">Opsi tampilan gambar inline</string>
+
   <string name="solid_color_background">Warna latar penuh</string>
   <string name="solid_color_background_summary">Ini mungkin hanya akan berguna pada layar AMOLED.</string>
   <string name="following_you">Following anda</string>
@@ -218,7 +218,7 @@
   <string name="view_user_list">Lihat daftar pengguna</string>
   <string name="uninstall">Hapus</string>
   <string name="saved_searches">Pencarian yang tersimpan</string>
-  <string name="custom_tabs">Tab custom</string>
+
   <string name="default_tabs">Tab default</string>
   <string name="add_tab">Tambah tab</string>
   <string name="tab_type">Jenis tab</string>
@@ -412,7 +412,7 @@
   <string name="my_profile_image">Gambar profile saya</string>
   <string name="mention_user">Menyebut <xliff:g id="user">%s</xliff:g></string>
   <string name="theme_color">Warna tema</string>
-  <string name="link_underline_only">Perlihatkan garis bawah hanya untuk tautan</string>
+
   <string name="wrong_url_format">Format URL salah.</string>
   <string name="wrong_username_password">Nama/kata sandi salah.</string>
   <string name="network_error">Masalah Jaringan.</string>

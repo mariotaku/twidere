@@ -61,7 +61,7 @@ public class OnLinkClickHandler implements OnLinkClickListener, Constants {
 				break;
 			}
 			case TwidereLinkify.LINK_TYPE_LINK_WITH_IMAGE_EXTENSION: {
-				openImage(activity, link, orig, sensitive);
+				openImage(activity, link, sensitive);
 				break;
 			}
 			case TwidereLinkify.LINK_TYPE_LINK: {

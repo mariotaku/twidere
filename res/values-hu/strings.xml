@@ -26,7 +26,7 @@
   <string name="advanced">Fejlett</string>
   <string name="save">Ment</string>
   <string name="edit">Szerkesztés</string>
-  <string name="login_to_twitter">Bejelentkezés Twitterre</string>
+
   <string name="edit_api">API szerkesztése</string>
   <string name="home">Haza</string>
   <string name="mentions">Említések</string>
@@ -187,7 +187,7 @@
   <string name="view_user_list">Felhasználólista megtekintése</string>
   <string name="uninstall">Eltávolít</string>
   <string name="saved_searches">Elmentett keresések</string>
-  <string name="custom_tabs">Egyéni fülek</string>
+
   <string name="add_tab">Fül hozzáadása</string>
   <string name="tab_type">Fül típusa</string>
   <string name="unused">Kihasználatlan</string>

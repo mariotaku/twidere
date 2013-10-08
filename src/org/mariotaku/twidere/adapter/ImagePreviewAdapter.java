@@ -9,13 +9,13 @@ import android.widget.ImageView;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.model.PreviewImage;
+import org.mariotaku.twidere.model.PreviewMedia;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.ImageLoadingHandler;
 
 import java.util.Collection;
 
-public class ImagePreviewAdapter extends ArrayAdapter<PreviewImage> implements Constants {
+public class ImagePreviewAdapter extends ArrayAdapter<PreviewMedia> implements Constants {
 
 	private final ImageLoaderWrapper mImageLoader;
 	private final SharedPreferences mPreferences;
@@ -30,7 +30,7 @@ public class ImagePreviewAdapter extends ArrayAdapter<PreviewImage> implements C
 		mImageLoadingHandler = new ImageLoadingHandler();
 	}
 
-	public void addAll(final Collection<PreviewImage> data, final boolean is_possibly_sensitive) {
+	public void addAll(final Collection<PreviewMedia> data, final boolean is_possibly_sensitive) {
 		mIsPossiblySensitive = is_possibly_sensitive;
 		addAll(data);
 	}
@@ -38,15 +38,15 @@ public class ImagePreviewAdapter extends ArrayAdapter<PreviewImage> implements C
 	@Override
 	public View getView(final int position, final View convertView, final ViewGroup parent) {
 		final View view = super.getView(position, convertView, parent);
-		final PreviewImage spec = getItem(position);
+		final PreviewMedia spec = getItem(position);
 		final ImageView image_view = (ImageView) view.findViewById(R.id.image_preview_item);
 		image_view.setTag(spec);
 		if (mIsPossiblySensitive && !mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_SENSITIVE_CONTENTS, false)) {
 			view.findViewById(R.id.image_preview_progress).setVisibility(View.GONE);
 			image_view.setBackgroundResource(R.drawable.image_preview_nsfw);
-		} else if (!spec.image_preview_url.equals(mImageLoadingHandler.getLoadingUri(image_view))) {
+		} else if (!spec.url.equals(mImageLoadingHandler.getLoadingUri(image_view))) {
 			image_view.setBackgroundResource(0);
-			mImageLoader.displayPreviewImage(image_view, spec.image_preview_url, mImageLoadingHandler);
+			mImageLoader.displayPreviewImage(image_view, spec.url, mImageLoadingHandler);
 		}
 		return view;
 	}

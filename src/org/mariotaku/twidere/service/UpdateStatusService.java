@@ -18,6 +18,7 @@ import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
 
@@ -171,7 +172,7 @@ public class UpdateStatusService extends IntentService implements Constants {
 			if (mUseUploader && mUploader == null) throw new ImageUploaderNotFoundException(this);
 			if (mUseShortener && mShortener == null) throw new TweetShortenerNotFoundException(this);
 
-			final String image_path = getImagePathFromUri(this, pstatus.image_uri);
+			final String image_path = getImagePathFromUri(this, pstatus.media_uri);
 			final File image_file = image_path != null ? new File(image_path) : null;
 
 			final Uri upload_result_uri;
@@ -299,47 +300,61 @@ public class UpdateStatusService extends IntentService implements Constants {
 
 	private void handleUpdateStatusIntent(final Intent intent) {
 		final ParcelableStatusUpdate status = intent.getParcelableExtra(EXTRA_STATUS);
-		if (status == null) return;
-		startForeground(NOTIFICATION_ID_UPDATE_STATUS, updateUpdateStatusNotificaion(0, status));
-		final List<SingleResponse<ParcelableStatus>> result = updateStatus(status);
-		boolean failed = false;
-		Exception exception = null;
-		final List<Long> failed_account_ids = ListUtils.fromArray(status.account_ids);
+		final Parcelable[] status_parcelables = intent.getParcelableArrayExtra(EXTRA_STATUSES);
+		final ParcelableStatusUpdate[] statuses;
+		if (status_parcelables != null) {
+			statuses = new ParcelableStatusUpdate[status_parcelables.length];
+			for (int i = 0, j = status_parcelables.length; i < j; i++) {
+				statuses[i] = (ParcelableStatusUpdate) status_parcelables[i];
+			}
+		} else if (status != null) {
+			statuses = new ParcelableStatusUpdate[1];
+			statuses[0] = status;
+		} else
+			return;
+		startForeground(NOTIFICATION_ID_UPDATE_STATUS, updateUpdateStatusNotificaion(0, null));
+		for (final ParcelableStatusUpdate item : statuses) {
+			updateUpdateStatusNotificaion(0, item);
+			final List<SingleResponse<ParcelableStatus>> result = updateStatus(item);
+			boolean failed = false;
+			Exception exception = null;
+			final List<Long> failed_account_ids = ListUtils.fromArray(item.account_ids);
 
-		for (final SingleResponse<ParcelableStatus> response : result) {
-			if (response.data == null) {
-				failed = true;
-				if (exception == null) {
-					exception = response.exception;
+			for (final SingleResponse<ParcelableStatus> response : result) {
+				if (response.data == null) {
+					failed = true;
+					if (exception == null) {
+						exception = response.exception;
+					}
+				} else if (response.data.account_id > 0) {
+					failed_account_ids.remove(response.data.account_id);
 				}
-			} else if (response.data.account_id > 0) {
-				failed_account_ids.remove(response.data.account_id);
 			}
-		}
-		if (result.isEmpty()) {
-			saveDrafts(status, failed_account_ids);
-			showErrorMessage(R.string.updating_status, getString(R.string.no_account_selected), false);
-		} else if (failed) {
-			// If the status is a duplicate, there's no need to save it to
-			// drafts.
-			if (exception instanceof TwitterException
-					&& ((TwitterException) exception).getErrorCode() == TwitterErrorCodes.STATUS_IS_DUPLICATE) {
-				showErrorMessage(getString(R.string.status_is_duplicate), false);
+			if (result.isEmpty()) {
+				saveDrafts(item, failed_account_ids);
+				showErrorMessage(R.string.updating_status, getString(R.string.no_account_selected), false);
+			} else if (failed) {
+				// If the status is a duplicate, there's no need to save it to
+				// drafts.
+				if (exception instanceof TwitterException
+						&& ((TwitterException) exception).getErrorCode() == TwitterErrorCodes.STATUS_IS_DUPLICATE) {
+					showErrorMessage(getString(R.string.status_is_duplicate), false);
+				} else {
+					saveDrafts(item, failed_account_ids);
+					showErrorMessage(R.string.updating_status, exception, true);
+				}
 			} else {
-				saveDrafts(status, failed_account_ids);
-				showErrorMessage(R.string.updating_status, exception, true);
-			}
-		} else {
-			showOkMessage(R.string.status_updated, false);
-			if (status.image_uri != null) {
-				final String path = getImagePathFromUri(this, status.image_uri);
-				if (path != null) {
-					new File(path).delete();
+				showOkMessage(R.string.status_updated, false);
+				if (item.media_uri != null) {
+					final String path = getImagePathFromUri(this, item.media_uri);
+					if (path != null) {
+						new File(path).delete();
+					}
 				}
 			}
-		}
-		if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_AFTER_TWEET, false)) {
-			mTwitter.refreshAll();
+			if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_AFTER_TWEET, false)) {
+				mTwitter.refreshAll();
+			}
 		}
 		stopForeground(true);
 	}
@@ -349,9 +364,9 @@ public class UpdateStatusService extends IntentService implements Constants {
 		values.put(Drafts.ACCOUNT_IDS, ListUtils.toString(account_ids, ';', false));
 		values.put(Drafts.IN_REPLY_TO_STATUS_ID, status.in_reply_to_status_id);
 		values.put(Drafts.TEXT, status.content);
-		if (status.image_uri != null) {
-			values.put(Drafts.ATTACHED_IMAGE_TYPE, status.image_type);
-			values.put(Drafts.IMAGE_URI, ParseUtils.parseString(status.image_uri));
+		if (status.media_uri != null) {
+			values.put(Drafts.ATTACHED_IMAGE_TYPE, status.media_type);
+			values.put(Drafts.IMAGE_URI, ParseUtils.parseString(status.media_uri));
 		}
 		mResolver.insert(Drafts.CONTENT_URI, values);
 		final String title = getString(R.string.status_not_updated);
@@ -363,7 +378,9 @@ public class UpdateStatusService extends IntentService implements Constants {
 
 	private Notification updateUpdateStatusNotificaion(final int progress, final ParcelableStatusUpdate status) {
 		mBuilder.setContentTitle(getString(R.string.updating_status_notification));
-		mBuilder.setContentText(status.content);
+		if (status != null) {
+			mBuilder.setContentText(status.content);
+		}
 		mBuilder.setSmallIcon(R.drawable.ic_stat_send);
 		mBuilder.setProgress(100, progress, progress >= 100 || progress <= 0);
 		final Notification notification = mBuilder.build();

@@ -64,7 +64,7 @@ import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.model.PreviewImage;
+import org.mariotaku.twidere.model.PreviewMedia;
 import org.mariotaku.twidere.preference.NotificationContentPreference;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
@@ -886,8 +886,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			}
 			if (mPreferences.getBoolean(PREFERENCE_KEY_PRELOAD_PREVIEW_IMAGES, false)) {
 				final String text_html = v.getAsString(Statuses.TEXT_HTML);
-				for (final PreviewImage spec : Utils.getImagesInStatus(text_html)) {
-					mImagePreloader.preloadImage(spec.image_preview_url);
+				for (final PreviewMedia spec : Utils.getImagesInStatus(text_html)) {
+					mImagePreloader.preloadImage(spec.url);
 				}
 			}
 		}
