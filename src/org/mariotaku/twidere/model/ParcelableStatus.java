@@ -19,11 +19,11 @@
 
 package org.mariotaku.twidere.model;
 
+import static org.mariotaku.twidere.util.ContentValuesUtils.getAsBoolean;
+import static org.mariotaku.twidere.util.ContentValuesUtils.getAsInteger;
+import static org.mariotaku.twidere.util.ContentValuesUtils.getAsLong;
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
 import static org.mariotaku.twidere.util.Utils.formatStatusText;
-import static org.mariotaku.twidere.util.Utils.getAsBoolean;
-import static org.mariotaku.twidere.util.Utils.getAsInteger;
-import static org.mariotaku.twidere.util.Utils.getAsLong;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getInReplyToName;
 
@@ -116,11 +116,11 @@ public class ParcelableStatus implements Parcelable, JSONParcelable, Comparable<
 		account_id = getAsLong(values, Statuses.ACCOUNT_ID, -1);
 		id = getAsLong(values, Statuses.STATUS_ID, -1);
 		timestamp = getAsLong(values, Statuses.STATUS_TIMESTAMP, -1);
-		user_name = values.getAsString(Statuses.NAME);
-		user_screen_name = values.getAsString(Statuses.SCREEN_NAME);
+		user_name = values.getAsString(Statuses.USER_NAME);
+		user_screen_name = values.getAsString(Statuses.USER_SCREEN_NAME);
 		text_html = values.getAsString(Statuses.TEXT_HTML);
 		text_plain = values.getAsString(Statuses.TEXT_PLAIN);
-		user_profile_image_url = values.getAsString(Statuses.PROFILE_IMAGE_URL);
+		user_profile_image_url = values.getAsString(Statuses.USER_PROFILE_IMAGE_URL);
 		is_favorite = getAsBoolean(values, Statuses.IS_FAVORITE, false);
 		is_retweet = getAsBoolean(values, Statuses.IS_RETWEET, false);
 		is_gap = getAsBoolean(values, Statuses.IS_GAP, false);
@@ -129,11 +129,11 @@ public class ParcelableStatus implements Parcelable, JSONParcelable, Comparable<
 		user_is_verified = getAsBoolean(values, Statuses.IS_VERIFIED, false);
 		in_reply_to_status_id = getAsLong(values, Statuses.IN_REPLY_TO_STATUS_ID, -1);
 		in_reply_to_user_id = getAsLong(values, Statuses.IN_REPLY_TO_USER_ID, -1);
-		in_reply_to_name = values.getAsString(Statuses.IN_REPLY_TO_NAME);
-		in_reply_to_screen_name = values.getAsString(Statuses.IN_REPLY_TO_SCREEN_NAME);
+		in_reply_to_name = values.getAsString(Statuses.IN_REPLY_TO_USER_NAME);
+		in_reply_to_screen_name = values.getAsString(Statuses.IN_REPLY_TO_USER_SCREEN_NAME);
 		my_retweet_id = getAsLong(values, Statuses.MY_RETWEET_ID, -1);
-		retweeted_by_name = values.getAsString(Statuses.RETWEETED_BY_NAME);
-		retweeted_by_screen_name = values.getAsString(Statuses.RETWEETED_BY_SCREEN_NAME);
+		retweeted_by_name = values.getAsString(Statuses.RETWEETED_BY_USER_NAME);
+		retweeted_by_screen_name = values.getAsString(Statuses.RETWEETED_BY_USER_SCREEN_NAME);
 		retweet_id = getAsLong(values, Statuses.RETWEET_ID, -1);
 		retweeted_by_id = getAsLong(values, Statuses.RETWEETED_BY_USER_ID, -1);
 		user_id = getAsLong(values, Statuses.USER_ID, -1);
@@ -163,18 +163,19 @@ public class ParcelableStatus implements Parcelable, JSONParcelable, Comparable<
 		is_favorite = indices.is_favorite != -1 ? cursor.getInt(indices.is_favorite) == 1 : false;
 		user_is_protected = indices.is_protected != -1 ? cursor.getInt(indices.is_protected) == 1 : false;
 		user_is_verified = indices.is_verified != -1 ? cursor.getInt(indices.is_verified) == 1 : false;
-		retweeted_by_name = indices.retweeted_by_name != -1 ? cursor.getString(indices.retweeted_by_name) : null;
-		retweeted_by_screen_name = indices.retweeted_by_screen_name != -1 ? cursor
-				.getString(indices.retweeted_by_screen_name) : null;
+		retweeted_by_name = indices.retweeted_by_user_name != -1 ? cursor.getString(indices.retweeted_by_user_name)
+				: null;
+		retweeted_by_screen_name = indices.retweeted_by_user_screen_name != -1 ? cursor
+				.getString(indices.retweeted_by_user_screen_name) : null;
 		text_html = indices.text_html != -1 ? cursor.getString(indices.text_html) : null;
 		media_link = MediaPreviewUtils.getSupportedFirstLink(text_html);
 		has_media = media_link != null;
 		text_plain = indices.text_plain != -1 ? cursor.getString(indices.text_plain) : null;
 		user_name = indices.user_name != -1 ? cursor.getString(indices.user_name) : null;
 		user_screen_name = indices.user_screen_name != -1 ? cursor.getString(indices.user_screen_name) : null;
-		in_reply_to_name = indices.in_reply_to_name != -1 ? cursor.getString(indices.in_reply_to_name) : null;
-		in_reply_to_screen_name = indices.in_reply_to_screen_name != -1 ? cursor
-				.getString(indices.in_reply_to_screen_name) : null;
+		in_reply_to_name = indices.in_reply_to_user_name != -1 ? cursor.getString(indices.in_reply_to_user_name) : null;
+		in_reply_to_screen_name = indices.in_reply_to_user_screen_name != -1 ? cursor
+				.getString(indices.in_reply_to_user_screen_name) : null;
 		source = indices.source != -1 ? cursor.getString(indices.source) : null;
 		location = indices.location != -1 ? new ParcelableLocation(cursor.getString(indices.location)) : null;
 		user_profile_image_url = indices.user_profile_image_url != -1 ? cursor

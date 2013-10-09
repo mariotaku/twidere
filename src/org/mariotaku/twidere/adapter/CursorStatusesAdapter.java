@@ -72,8 +72,8 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			mIndicateMyStatusDisabled, mIsLastItemFiltered, mFiltersEnabled, mAnimationEnabled;
 	private float mTextSize;
 	private int mLinkHighlightOption;
-	private boolean mFilterIgnoreSource, mFilterIgnoreUser, mFilterIgnoreTextHtml, mFilterIgnoreTextPlain,
-			mNicknameOnly, mDisplayNameFirst;
+	private boolean mFilterIgnoreUser, mFilterIgnoreSource, mFilterIgnoreTextHtml, mFilterIgnoreTextPlain,
+			mFilterRetweetedById, mNicknameOnly, mDisplayNameFirst;
 	private int mMaxAnimationPosition;
 
 	private StatusCursorIndices mIndices;
@@ -115,14 +115,14 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			final long retweeted_by_user_id = cursor.getLong(mIndices.retweeted_by_user_id);
 			final long in_reply_to_user_id = cursor.getLong(mIndices.in_reply_to_user_id);
 
-			final String retweeted_by_name = cursor.getString(mIndices.retweeted_by_name);
-			final String retweeted_by_screen_name = cursor.getString(mIndices.retweeted_by_screen_name);
+			final String retweeted_by_name = cursor.getString(mIndices.retweeted_by_user_name);
+			final String retweeted_by_screen_name = cursor.getString(mIndices.retweeted_by_user_screen_name);
 			final String text = mLinkHighlightOption != LINK_HIGHLIGHT_OPTION_CODE_NONE ? cursor
 					.getString(mIndices.text_html) : cursor.getString(mIndices.text_unescaped);
 			final String screen_name = cursor.getString(mIndices.user_screen_name);
 			final String name = cursor.getString(mIndices.user_name);
-			final String in_reply_to_name = cursor.getString(mIndices.in_reply_to_name);
-			final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_screen_name);
+			final String in_reply_to_name = cursor.getString(mIndices.in_reply_to_user_name);
+			final String in_reply_to_screen_name = cursor.getString(mIndices.in_reply_to_user_screen_name);
 			final String account_screen_name = getAccountScreenName(mContext, account_id);
 			final String media_link = cursor.getString(mIndices.media_link);
 
@@ -382,8 +382,8 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	}
 
 	@Override
-	public void setIgnoredFilterFields(final boolean text_plain, final boolean text_html, final boolean user,
-			final boolean source) {
+	public void setIgnoredFilterFields(final boolean user, final boolean text_plain, final boolean text_html,
+			final boolean source, final boolean retweeted_by_id) {
 		mFilterIgnoreTextPlain = text_plain;
 		mFilterIgnoreTextHtml = text_html;
 		mFilterIgnoreUser = user;
@@ -462,7 +462,9 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 				final String text_plain = mFilterIgnoreTextPlain ? null : c.getString(mIndices.text_plain);
 				final String text_html = mFilterIgnoreTextHtml ? null : c.getString(mIndices.text_html);
 				final String source = mFilterIgnoreSource ? null : c.getString(mIndices.source);
-				mIsLastItemFiltered = isFiltered(mDatabase, user_id, text_plain, text_html, source);
+				final long retweeted_by_id = mFilterRetweetedById ? -1 : c.getLong(mIndices.retweeted_by_user_id);
+				;
+				mIsLastItemFiltered = isFiltered(mDatabase, user_id, text_plain, text_html, source, retweeted_by_id);
 			} else {
 				mIsLastItemFiltered = false;
 			}

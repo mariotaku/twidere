@@ -247,6 +247,9 @@ public final class Utils implements Constants {
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_PREFERENCES, VIRTUAL_TABLE_ID_ALL_PREFERENCES);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_PREFERENCES + "/*",
 				VIRTUAL_TABLE_ID_PREFERENCES);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_UNREAD_COUNTS + "/#",
+				VIRTUAL_TABLE_ID_UNREAD_COUNTS);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TABLE_UNREAD_COUNTS, VIRTUAL_TABLE_ID_UNREAD_COUNTS);
 
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_STATUS, null, LINK_ID_STATUS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USER, null, LINK_ID_USER);
@@ -1282,27 +1285,6 @@ public final class Utils implements Constants {
 		return ids;
 	}
 
-	public static boolean getAsBoolean(final ContentValues values, final String key, final boolean def) {
-		if (values == null || key == null) return def;
-		final Object value = values.get(key);
-		if (value == null) return def;
-		return Boolean.valueOf(value.toString());
-	}
-
-	public static long getAsInteger(final ContentValues values, final String key, final int def) {
-		if (values == null || key == null) return def;
-		final Object value = values.get(key);
-		if (value == null) return def;
-		return Integer.valueOf(value.toString());
-	}
-
-	public static long getAsLong(final ContentValues values, final String key, final long def) {
-		if (values == null || key == null) return def;
-		final Object value = values.get(key);
-		if (value == null) return def;
-		return Long.valueOf(value.toString());
-	}
-
 	public static String getBestBannerType(final int width) {
 		if (width <= 320)
 			return "mobile";
@@ -2259,7 +2241,12 @@ public final class Utils implements Constants {
 	}
 
 	public static boolean isFiltered(final SQLiteDatabase database, final long user_id, final String text_plain,
-			final String text_html, final String source) {
+			final String text_html, final String source, final long retweeted_by_id) {
+		return isFiltered(database, user_id, text_plain, text_html, source, retweeted_by_id, true);
+	}
+
+	public static boolean isFiltered(final SQLiteDatabase database, final long user_id, final String text_plain,
+			final String text_html, final String source, final long retweeted_by_id, final boolean filter_rts) {
 		if (database == null) return false;
 		if (text_plain == null && text_html == null && user_id <= 0 && source == null) return false;
 		final StringBuilder builder = new StringBuilder();
@@ -2285,6 +2272,13 @@ public final class Utils implements Constants {
 			builder.append("(SELECT " + user_id + " IN (SELECT " + Filters.Users.USER_ID + " FROM "
 					+ TABLE_FILTERED_USERS + "))");
 		}
+		if (retweeted_by_id > 0) {
+			if (!selection_args.isEmpty()) {
+				builder.append(" OR ");
+			}
+			builder.append("(SELECT " + retweeted_by_id + " IN (SELECT " + Filters.Users.USER_ID + " FROM "
+					+ TABLE_FILTERED_USERS + "))");
+		}
 		if (source != null) {
 			if (!selection_args.isEmpty()) {
 				builder.append(" OR ");
@@ -2303,9 +2297,11 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static boolean isFiltered(final SQLiteDatabase database, final ParcelableStatus status) {
+	public static boolean isFiltered(final SQLiteDatabase database, final ParcelableStatus status,
+			final boolean filter_rts) {
 		if (status == null) return false;
-		return isFiltered(database, status.user_id, status.text_plain, status.text_html, status.source);
+		return isFiltered(database, status.user_id, status.text_plain, status.text_html, status.source,
+				status.retweeted_by_id, filter_rts);
 	}
 
 	public static boolean isMyAccount(final Context context, final long account_id) {
@@ -2577,8 +2573,8 @@ public final class Utils implements Constants {
 			final User retweet_user = orig.getUser();
 			values.put(Statuses.RETWEET_ID, retweeted_status.getId());
 			values.put(Statuses.RETWEETED_BY_USER_ID, retweet_user.getId());
-			values.put(Statuses.RETWEETED_BY_NAME, retweet_user.getName());
-			values.put(Statuses.RETWEETED_BY_SCREEN_NAME, retweet_user.getScreenName());
+			values.put(Statuses.RETWEETED_BY_USER_NAME, retweet_user.getName());
+			values.put(Statuses.RETWEETED_BY_USER_SCREEN_NAME, retweet_user.getScreenName());
 			status = retweeted_status;
 		} else {
 			status = orig;
@@ -2589,11 +2585,11 @@ public final class Utils implements Constants {
 			final String profile_image_url = ParseUtils.parseString(user.getProfileImageUrlHttps());
 			final String name = user.getName(), screen_name = user.getScreenName();
 			values.put(Statuses.USER_ID, user_id);
-			values.put(Statuses.NAME, name);
-			values.put(Statuses.SCREEN_NAME, screen_name);
+			values.put(Statuses.USER_NAME, name);
+			values.put(Statuses.USER_SCREEN_NAME, screen_name);
 			values.put(Statuses.IS_PROTECTED, user.isProtected());
 			values.put(Statuses.IS_VERIFIED, user.isVerified());
-			values.put(Statuses.PROFILE_IMAGE_URL,
+			values.put(Statuses.USER_PROFILE_IMAGE_URL,
 					large_profile_image ? getBiggerTwitterProfileImage(profile_image_url) : profile_image_url);
 			values.put(CachedUsers.IS_FOLLOWING, user != null ? user.isFollowing() : false);
 		}
@@ -2607,8 +2603,8 @@ public final class Utils implements Constants {
 		values.put(Statuses.RETWEET_COUNT, status.getRetweetCount());
 		values.put(Statuses.IN_REPLY_TO_STATUS_ID, status.getInReplyToStatusId());
 		values.put(Statuses.IN_REPLY_TO_USER_ID, status.getInReplyToUserId());
-		values.put(Statuses.IN_REPLY_TO_NAME, getInReplyToName(status));
-		values.put(Statuses.IN_REPLY_TO_SCREEN_NAME, status.getInReplyToScreenName());
+		values.put(Statuses.IN_REPLY_TO_USER_NAME, getInReplyToName(status));
+		values.put(Statuses.IN_REPLY_TO_USER_SCREEN_NAME, status.getInReplyToScreenName());
 		values.put(Statuses.SOURCE, status.getSource());
 		values.put(Statuses.IS_POSSIBLY_SENSITIVE, status.isPossiblySensitive());
 		final GeoLocation location = status.getGeoLocation();

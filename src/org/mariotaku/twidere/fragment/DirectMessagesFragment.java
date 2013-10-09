@@ -190,7 +190,14 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 			case SCROLL_STATE_TOUCH_SCROLL: {
 				final AsyncTwitterWrapper twitter = getTwitterWrapper();
 				if (twitter != null) {
-					twitter.clearNotificationAsync(NOTIFICATION_ID_DIRECT_MESSAGES);
+					twitter.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
+				}
+				break;
+			}
+			case SCROLL_STATE_IDLE: {
+				final AsyncTwitterWrapper twitter = getTwitterWrapper();
+				if (twitter != null) {
+					twitter.clearUnreadCount(getTabPosition());
 				}
 				break;
 			}

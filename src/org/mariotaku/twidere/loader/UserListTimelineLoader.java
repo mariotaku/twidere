@@ -39,6 +39,7 @@ public class UserListTimelineLoader extends Twitter4JStatusesLoader {
 	private final long mUserId;
 	private final String mScreenName, mListName;
 	private final int mListId;
+	private final boolean mFiltersForRts;
 
 	public UserListTimelineLoader(final Context context, final long account_id, final int list_id, final long user_id,
 			final String screen_name, final String list_name, final long max_id, final long since_id,
@@ -48,6 +49,8 @@ public class UserListTimelineLoader extends Twitter4JStatusesLoader {
 		mUserId = user_id;
 		mScreenName = screen_name;
 		mListName = list_name;
+		mFiltersForRts = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getBoolean(
+				PREFERENCE_KEY_FILTERS_FOR_RTS, true);
 	}
 
 	@Override
@@ -64,7 +67,7 @@ public class UserListTimelineLoader extends Twitter4JStatusesLoader {
 
 	@Override
 	protected boolean shouldFilterStatus(final SQLiteDatabase database, final ParcelableStatus status) {
-		return isFiltered(database, status);
+		return isFiltered(database, status, mFiltersForRts);
 	}
 
 }

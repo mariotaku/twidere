@@ -105,6 +105,47 @@ public class CustomTabUtils implements Constants {
 		return null;
 	}
 
+	public static SupportTabSpec getAddedHomeTabAt(final Context context, final int position) {
+		if (context == null || position < 0) return null;
+		final ContentResolver resolver = context.getContentResolver();
+		final Cursor cur = resolver.query(Tabs.CONTENT_URI, Tabs.COLUMNS, Tabs.POSITION + " = " + position, null,
+				Tabs.DEFAULT_SORT_ORDER);
+		final int idx_name = cur.getColumnIndex(Tabs.NAME), idx_icon = cur.getColumnIndex(Tabs.ICON), idx_type = cur
+				.getColumnIndex(Tabs.TYPE), idx_arguments = cur.getColumnIndex(Tabs.ARGUMENTS);
+		try {
+			if (cur.getCount() == 0) return null;
+			cur.moveToFirst();
+			final String type = cur.getString(idx_type);
+			final CustomTabConfiguration conf = getTabConfiguration(type);
+			if (conf == null) return null;
+			final String icon_type = cur.getString(idx_icon);
+			final String name = cur.getString(idx_name);
+			final Bundle args = ParseUtils.jsonToBundle(cur.getString(idx_arguments));
+			args.putInt(EXTRA_TAB_POSITION, position);
+			final Class<? extends Fragment> fragment = conf.getFragmentClass();
+			return new SupportTabSpec(name != null ? name : getTabTypeName(context, type), getTabIconObject(icon_type),
+					fragment, args, position);
+		} finally {
+			cur.close();
+		}
+	}
+
+	public static CustomTabConfiguration getAddedTabConfigurationAt(final Context context, final int position) {
+		if (context == null || position < 0) return null;
+		final ContentResolver resolver = context.getContentResolver();
+		final Cursor cur = resolver.query(Tabs.CONTENT_URI, Tabs.COLUMNS, Tabs.POSITION + " = " + position, null,
+				Tabs.DEFAULT_SORT_ORDER);
+		final int idx_type = cur.getColumnIndex(Tabs.TYPE);
+		try {
+			if (cur.getCount() == 0) return null;
+			cur.moveToFirst();
+			final String type = cur.getString(idx_type);
+			return getTabConfiguration(type);
+		} finally {
+			cur.close();
+		}
+	}
+
 	public static int getAddedTabPosition(final Context context, final String type) {
 		if (context == null || type == null) return -1;
 		final ContentResolver resolver = context.getContentResolver();
@@ -121,6 +162,21 @@ public class CustomTabUtils implements Constants {
 		}
 		cur.close();
 		return position;
+	}
+
+	public static String getAddedTabTypeAt(final Context context, final int position) {
+		if (context == null || position < 0) return null;
+		final ContentResolver resolver = context.getContentResolver();
+		final Cursor cur = resolver.query(Tabs.CONTENT_URI, Tabs.COLUMNS, Tabs.POSITION + " = " + position, null,
+				Tabs.DEFAULT_SORT_ORDER);
+		final int idx_type = cur.getColumnIndex(Tabs.TYPE);
+		try {
+			if (cur.getCount() == 0) return null;
+			cur.moveToFirst();
+			return cur.getString(idx_type);
+		} finally {
+			cur.close();
+		}
 	}
 
 	public static HashMap<String, CustomTabConfiguration> getConfiguraionMap() {

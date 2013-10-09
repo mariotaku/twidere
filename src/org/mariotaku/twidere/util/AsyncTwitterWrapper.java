@@ -66,6 +66,7 @@ import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Notifications;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.provider.TweetStore.UnreadCounts;
 import org.mariotaku.twidere.service.UpdateStatusService;
 
 import twitter4j.DirectMessage;
@@ -117,9 +118,14 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public void clearNotificationAsync(final int id) {
+	public int clearNotification(final int id) {
 		final Uri uri = Notifications.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
-		mResolver.delete(uri, null, null);
+		return mResolver.delete(uri, null, null);
+	}
+
+	public int clearUnreadCount(final int position) {
+		final Uri uri = UnreadCounts.CONTENT_URI.buildUpon().appendPath(String.valueOf(position)).build();
+		return mResolver.delete(uri, null, null);
 	}
 
 	public int createBlockAsync(final long account_id, final long user_id) {
@@ -357,8 +363,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		mContext.startService(intent);
 		return 0;
 	}
-	
-	public int updateStatusesAsync(ParcelableStatusUpdate... statuses) {
+
+	public int updateStatusesAsync(final ParcelableStatusUpdate... statuses) {
 		final Intent intent = new Intent(mContext, UpdateStatusService.class);
 		intent.putExtra(EXTRA_STATUSES, statuses);
 		mContext.startService(intent);

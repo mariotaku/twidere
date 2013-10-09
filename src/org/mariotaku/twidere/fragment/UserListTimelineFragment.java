@@ -51,7 +51,7 @@ public class UserListTimelineFragment extends ParcelableStatusesListFragment {
 		super.onActivityCreated(savedInstanceState);
 		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();
 		adapter.setFiltersEnabled(true);
-		adapter.setIgnoredFilterFields(false, false, false, false);
+		adapter.setIgnoredFilterFields(false, false, false, false, false);
 	}
 
 	@Override

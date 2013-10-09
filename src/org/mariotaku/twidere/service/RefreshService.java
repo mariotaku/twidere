@@ -37,7 +37,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.IBinder;
 
 import org.mariotaku.twidere.Constants;
@@ -64,10 +63,9 @@ public class RefreshService extends Service implements Constants {
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
-			if (BROADCAST_NOTIFICATION_CLEARED.equals(action)) {
-				final Bundle extras = intent.getExtras();
-				if (extras != null && extras.containsKey(EXTRA_NOTIFICATION_ID)) {
-					clearNotification(extras.getInt(EXTRA_NOTIFICATION_ID));
+			if (BROADCAST_NOTIFICATION_DELETED.equals(action)) {
+				if (intent.hasExtra(EXTRA_NOTIFICATION_ID)) {
+					clearNotification(intent.getIntExtra(EXTRA_NOTIFICATION_ID, -1));
 				}
 			} else if (BROADCAST_RESCHEDULE_HOME_TIMELINE_REFRESHING.equals(action)) {
 				rescheduleHomeTimelineRefreshing();
@@ -132,7 +130,7 @@ public class RefreshService extends Service implements Constants {
 		mPendingRefreshDirectMessagesIntent = PendingIntent.getBroadcast(this, 0, new Intent(
 				BROADCAST_REFRESH_DIRECT_MESSAGES), 0);
 		mPendingRefreshTrendsIntent = PendingIntent.getBroadcast(this, 0, new Intent(BROADCAST_REFRESH_TRENDS), 0);
-		final IntentFilter filter = new IntentFilter(BROADCAST_NOTIFICATION_CLEARED);
+		final IntentFilter filter = new IntentFilter(BROADCAST_NOTIFICATION_DELETED);
 		filter.addAction(BROADCAST_REFRESH_HOME_TIMELINE);
 		filter.addAction(BROADCAST_REFRESH_MENTIONS);
 		filter.addAction(BROADCAST_REFRESH_DIRECT_MESSAGES);

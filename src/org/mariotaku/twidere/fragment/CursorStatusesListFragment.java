@@ -43,15 +43,16 @@ import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.CursorStatusesAdapter;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTask;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
 public abstract class CursorStatusesListFragment extends BaseStatusesListFragment<Cursor> {
 
 	private static final String[] CURSOR_COLS = new String[] { Statuses._ID, Statuses.ACCOUNT_ID, Statuses.STATUS_ID,
-			Statuses.USER_ID, Statuses.STATUS_TIMESTAMP, Statuses.TEXT_HTML, Statuses.TEXT_PLAIN, Statuses.NAME,
-			Statuses.SCREEN_NAME, Statuses.PROFILE_IMAGE_URL, Statuses.IN_REPLY_TO_STATUS_ID,
-			Statuses.IN_REPLY_TO_USER_ID, Statuses.IN_REPLY_TO_NAME, Statuses.IN_REPLY_TO_SCREEN_NAME,
+			Statuses.USER_ID, Statuses.STATUS_TIMESTAMP, Statuses.TEXT_HTML, Statuses.TEXT_PLAIN, Statuses.USER_NAME,
+			Statuses.USER_SCREEN_NAME, Statuses.USER_PROFILE_IMAGE_URL, Statuses.IN_REPLY_TO_STATUS_ID,
+			Statuses.IN_REPLY_TO_USER_ID, Statuses.IN_REPLY_TO_USER_NAME, Statuses.IN_REPLY_TO_USER_SCREEN_NAME,
 			Statuses.LOCATION, Statuses.IS_RETWEET, Statuses.RETWEET_COUNT, Statuses.RETWEET_ID,
-			Statuses.RETWEETED_BY_USER_ID, Statuses.RETWEETED_BY_NAME, Statuses.RETWEETED_BY_SCREEN_NAME,
+			Statuses.RETWEETED_BY_USER_ID, Statuses.RETWEETED_BY_USER_NAME, Statuses.RETWEETED_BY_USER_SCREEN_NAME,
 			Statuses.IS_FAVORITE, Statuses.IS_PROTECTED, Statuses.IS_VERIFIED, Statuses.IS_GAP,
 			Statuses.IS_POSSIBLY_SENSITIVE, Statuses.SOURCE, Statuses.TEXT_UNESCAPED, Statuses.MEDIA_LINK };
 
@@ -125,10 +126,17 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 		switch (scrollState) {
 			case SCROLL_STATE_FLING:
 			case SCROLL_STATE_TOUCH_SCROLL: {
-				getTwitterWrapper().clearNotificationAsync(getNotificationIdToClear());
+				final AsyncTwitterWrapper twitter = getTwitterWrapper();
+				if (twitter != null) {
+					twitter.clearNotification(getNotificationIdToClear());
+				}
 				break;
 			}
 			case SCROLL_STATE_IDLE:
+				final AsyncTwitterWrapper twitter = getTwitterWrapper();
+				if (twitter != null) {
+					twitter.clearUnreadCount(getTabPosition());
+				}
 				savePosition();
 				break;
 		}

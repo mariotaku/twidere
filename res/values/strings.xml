@@ -517,7 +517,7 @@
 	<string name="wizard_page_finished_title">Finished</string>
 	<string name="wizard_page_finished_text">Now Twidere is ready for use.</string>
 	<string name="invalid_tab">Invalid tab</string>
-	<string name="send_crash_report">Send error report of Twidere</string>
+	<string name="send_crash_report">Send crash report of Twidere</string>
 	<string name="add_to_filter">Add to filter</string>
 	<string name="user_filter_name">User: <xliff:g id="name">%s</xliff:g></string>
 	<string name="keyword_filter_name">Keyword: <xliff:g id="name">%s</xliff:g></string>

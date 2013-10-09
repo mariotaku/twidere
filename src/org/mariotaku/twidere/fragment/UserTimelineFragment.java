@@ -58,7 +58,7 @@ public class UserTimelineFragment extends ParcelableStatusesListFragment {
 		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();
 		adapter.setIndicateMyStatusDisabled(is_my_timeline);
 		adapter.setFiltersEnabled(!is_my_timeline);
-		adapter.setIgnoredFilterFields(false, false, true, false);
+		adapter.setIgnoredFilterFields(true, false, false, false, false);
 	}
 
 	@Override

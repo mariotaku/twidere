@@ -38,12 +38,15 @@ import java.util.List;
 public class TweetSearchLoader extends Twitter4JStatusesLoader {
 
 	private final String mQuery;
+	private final boolean mFiltersForRts;
 
 	public TweetSearchLoader(final Context context, final long account_id, final String query, final long max_id,
 			final long since_id, final List<ParcelableStatus> data, final String[] saved_statuses_args,
 			final int tab_position) {
 		super(context, account_id, max_id, since_id, data, saved_statuses_args, tab_position);
 		mQuery = query;
+		mFiltersForRts = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getBoolean(
+				PREFERENCE_KEY_FILTERS_FOR_RTS, true);
 	}
 
 	@Override
@@ -59,7 +62,7 @@ public class TweetSearchLoader extends Twitter4JStatusesLoader {
 
 	@Override
 	protected boolean shouldFilterStatus(final SQLiteDatabase database, final ParcelableStatus status) {
-		return isFiltered(database, status);
+		return isFiltered(database, status, mFiltersForRts);
 	}
 
 	@Override

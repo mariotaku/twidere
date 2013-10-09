@@ -70,7 +70,8 @@ import twitter4j.http.HostAddressResolver;
 import java.io.File;
 import java.util.Date;
 
-@ReportsCrashes(formKey = "")
+@ReportsCrashes(formKey = "", sharedPreferencesMode = Context.MODE_PRIVATE,
+	sharedPreferencesName = Constants.SHARED_PREFERENCES_NAME)
 public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener {
 
 	private Handler mHandler;

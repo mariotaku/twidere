@@ -395,8 +395,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			mAccountId = mStatus.account_id;
 			mStatusId = mStatus.id;
 		}
-		clearPreviewImages();
 		if (!status_unchanged) {
+			clearPreviewImages();
 			hidePreviewImages();
 		}
 		if (status == null || getActivity() == null) return;

@@ -188,7 +188,7 @@ public class DraftsActivity extends TwidereSwipeBackActivity implements LoaderCa
 		registerReceiver(mStatusReceiver, filter);
 		final AsyncTwitterWrapper twitter = getTwitterWrapper();
 		if (twitter != null) {
-			twitter.clearNotificationAsync(NOTIFICATION_ID_DRAFTS);
+			twitter.clearNotification(NOTIFICATION_ID_DRAFTS);
 		}
 		super.onStart();
 	}

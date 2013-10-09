@@ -545,7 +545,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 			final Bundle extras = intent.getExtras();
 			final int notification_id = extras != null ? extras.getInt(EXTRA_NOTIFICATION_ID, -1) : -1;
 			if (notification_id != -1) {
-				mTwitterWrapper.clearNotificationAsync(notification_id);
+				mTwitterWrapper.clearNotification(notification_id);
 			}
 			if (!handleIntent(action, extras)) {
 				handleDefaultIntent(intent);

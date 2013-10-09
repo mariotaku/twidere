@@ -69,8 +69,8 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			mIndicateMyStatusDisabled, mIsLastItemFiltered, mFiltersEnabled, mAnimationEnabled;
 	private float mTextSize;
 	private int mLinkHighlightOption;
-	private boolean mFilterIgnoreSource, mFilterIgnoreUser, mFilterIgnoreTextHtml, mFilterIgnoreTextPlain,
-			mNicknameOnly, mDisplayNameFirst;
+	private boolean mFilterIgnoreUser, mFilterIgnoreSource, mFilterIgnoreTextHtml, mFilterIgnoreTextPlain,
+			mFilterRetweetedById, mNicknameOnly, mDisplayNameFirst;
 	private int mMaxAnimationPosition;
 
 	public ParcelableStatusesAdapter(final Context context) {
@@ -337,12 +337,13 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	}
 
 	@Override
-	public void setIgnoredFilterFields(final boolean text_plain, final boolean text_html, final boolean user,
-			final boolean source) {
+	public void setIgnoredFilterFields(final boolean user, final boolean text_plain, final boolean text_html,
+			final boolean source, final boolean retweeted_by_id) {
 		mFilterIgnoreTextPlain = text_plain;
 		mFilterIgnoreTextHtml = text_html;
 		mFilterIgnoreUser = user;
 		mFilterIgnoreSource = source;
+		mFilterRetweetedById = retweeted_by_id;
 		rebuildFilterInfo();
 		notifyDataSetChanged();
 	}
@@ -408,7 +409,8 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			final String text_plain = mFilterIgnoreTextPlain ? null : last.text_plain;
 			final String text_html = mFilterIgnoreTextHtml ? null : last.text_html;
 			final String source = mFilterIgnoreSource ? null : last.source;
-			mIsLastItemFiltered = isFiltered(mDatabase, user_id, text_plain, text_html, source);
+			final long retweeted_by_id = mFilterRetweetedById ? -1 : last.retweeted_by_id;
+			mIsLastItemFiltered = isFiltered(mDatabase, user_id, text_plain, text_html, source, retweeted_by_id);
 		} else {
 			mIsLastItemFiltered = false;
 		}

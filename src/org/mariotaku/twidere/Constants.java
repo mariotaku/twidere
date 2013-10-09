@@ -51,7 +51,7 @@ public interface Constants {
 	public static final String TIMELINE_POSITIONS_PREFERENCES_NAME = "timeline_positions";
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 50;
+	public static final int DATABASES_VERSION = 51;
 
 	public static final String TWITTER_CONSUMER_KEY = "uAFVpMhBntJutfVj6abfA";
 	public static final String TWITTER_CONSUMER_SECRET = "JARXkJTfxo0F8MyctYy9bUmrLISjo8vXAHsZHYuk2E";
@@ -294,7 +294,7 @@ public interface Constants {
 	public static final String BROADCAST_HOME_TIMELINE_REFRESHED = INTENT_PACKAGE_PREFIX + "HOME_TIMELINE_REFRESHED";
 	public static final String BROADCAST_MENTIONS_REFRESHED = INTENT_PACKAGE_PREFIX + "MENTIONS_REFRESHED";
 	public static final String BROADCAST_TASK_STATE_CHANGED = INTENT_PACKAGE_PREFIX + "TASK_STATE_CHANGED";
-	public static final String BROADCAST_NOTIFICATION_CLEARED = INTENT_PACKAGE_PREFIX + "NOTIFICATION_CLEARED";
+	public static final String BROADCAST_NOTIFICATION_DELETED = INTENT_PACKAGE_PREFIX + "NOTIFICATION_DELETED";
 	public static final String BROADCAST_FRIENDSHIP_CHANGED = INTENT_PACKAGE_PREFIX + "FRIENDSHIP_CHANGED";
 	public static final String BROADCAST_BLOCKSTATE_CHANGED = INTENT_PACKAGE_PREFIX + "BLOCKSTATE_CHANGED";
 	public static final String BROADCAST_PROFILE_UPDATED = INTENT_PACKAGE_PREFIX + "PROFILE_UPDATED";
@@ -341,6 +341,7 @@ public interface Constants {
 	public static final String BROADCAST_HOME_ACTIVITY_ONSTART = INTENT_PACKAGE_PREFIX + "HOME_ACTIVITY_ONSTART";
 	public static final String BROADCAST_HOME_ACTIVITY_ONSTOP = INTENT_PACKAGE_PREFIX + "HOME_ACTIVITY_ONSTOP";
 	public static final String BROADCAST_HOME_ACTIVITY_ONDESTROY = INTENT_PACKAGE_PREFIX + "HOME_ACTIVITY_ONDESTROY";
+	public static final String BROADCAST_UNREAD_COUNT_UPDATED = INTENT_PACKAGE_PREFIX + "UNREAD_COUNT_UPDATED";
 
 	public static final String EXTRA_LATITUDE = "latitude";
 	public static final String EXTRA_LONGITUDE = "longitude";
@@ -533,6 +534,7 @@ public interface Constants {
 	public static final String TABLE_DNS = TweetStore.DNS.TABLE_NAME;
 	public static final String TABLE_CACHED_IMAGES = TweetStore.CachedImages.TABLE_NAME;
 	public static final String TABLE_CACHE_FILES = TweetStore.CacheFiles.TABLE_NAME;
+	public static final String TABLE_UNREAD_COUNTS = TweetStore.UnreadCounts.TABLE_NAME;
 
 	public static final int TABLE_ID_ACCOUNTS = 1;
 	public static final int TABLE_ID_STATUSES = 2;
@@ -560,6 +562,7 @@ public interface Constants {
 	public static final int VIRTUAL_TABLE_ID_DNS = 105;
 	public static final int VIRTUAL_TABLE_ID_CACHED_IMAGES = 106;
 	public static final int VIRTUAL_TABLE_ID_CACHE_FILES = 107;
+	public static final int VIRTUAL_TABLE_ID_UNREAD_COUNTS = 108;
 
 	public static final int LINK_ID_STATUS = 1;
 	public static final int LINK_ID_USER = 2;

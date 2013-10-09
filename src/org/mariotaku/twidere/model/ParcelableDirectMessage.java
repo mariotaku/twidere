@@ -19,9 +19,10 @@
 
 package org.mariotaku.twidere.model;
 
+import static org.mariotaku.twidere.util.ContentValuesUtils.getAsBoolean;
+import static org.mariotaku.twidere.util.ContentValuesUtils.getAsLong;
+import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
 import static org.mariotaku.twidere.util.Utils.formatDirectMessageText;
-import static org.mariotaku.twidere.util.Utils.getAsBoolean;
-import static org.mariotaku.twidere.util.Utils.getAsLong;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 
 import android.content.ContentValues;
@@ -71,7 +72,7 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 	public final long sender_id, recipient_id;
 	public final boolean is_out_going;
 
-	public final String text_html, text_plain;
+	public final String text_html, text_plain, text_unescaped;
 
 	public final String sender_name, recipient_name, sender_screen_name, recipient_screen_name;
 	public final String sender_profile_image_url, recipient_profile_image_url;
@@ -79,6 +80,7 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 	public ParcelableDirectMessage(final ContentValues values) {
 		text_plain = values.getAsString(DirectMessages.TEXT_PLAIN);
 		text_html = values.getAsString(DirectMessages.TEXT_HTML);
+		text_unescaped = toPlainText(text_html);
 		sender_screen_name = values.getAsString(DirectMessages.SENDER_SCREEN_NAME);
 		sender_profile_image_url = values.getAsString(DirectMessages.SENDER_PROFILE_IMAGE_URL);
 		sender_name = values.getAsString(DirectMessages.SENDER_NAME);
@@ -102,6 +104,7 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 		recipient_id = indices.recipient_id != -1 ? cursor.getLong(indices.recipient_id) : -1;
 		text_html = indices.text != -1 ? cursor.getString(indices.text) : null;
 		text_plain = indices.text_plain != -1 ? cursor.getString(indices.text_plain) : null;
+		text_unescaped = toPlainText(text_html);
 		sender_name = indices.sender_name != -1 ? cursor.getString(indices.sender_name) : null;
 		recipient_name = indices.recipient_name != -1 ? cursor.getString(indices.recipient_name) : null;
 		sender_screen_name = indices.sender_screen_name != -1 ? cursor.getString(indices.sender_screen_name) : null;
@@ -136,6 +139,7 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 				: sender_profile_image_url_string;
 		recipient_profile_image_url = large_profile_image ? getBiggerTwitterProfileImage(recipient_profile_image_url_string)
 				: recipient_profile_image_url_string;
+		text_unescaped = toPlainText(text_html);
 	}
 
 	public ParcelableDirectMessage(final Parcel in) {
@@ -153,6 +157,7 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 		recipient_screen_name = in.readString();
 		sender_profile_image_url = in.readString();
 		recipient_profile_image_url = in.readString();
+		text_unescaped = toPlainText(text_html);
 	}
 
 	@Override
@@ -191,12 +196,13 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 
 	@Override
 	public String toString() {
-		return "ParcelableDirectMessage{account_id=" + account_id + ", message_id=" + id + ", message_timestamp="
-				+ timestamp + ", sender_id=" + sender_id + ", recipient_id=" + recipient_id + ", is_out_going="
-				+ is_out_going + ", text=" + text_html + ", sender_name=" + sender_name + ", recipient_name="
-				+ recipient_name + ", sender_screen_name=" + sender_screen_name + ", recipient_screen_name="
-				+ recipient_screen_name + ", sender_profile_image_url=" + sender_profile_image_url
-				+ ", recipient_profile_image_url=" + recipient_profile_image_url + "}";
+		return "ParcelableDirectMessage{account_id=" + account_id + ", id=" + id + ", timestamp=" + timestamp
+				+ ", sender_id=" + sender_id + ", recipient_id=" + recipient_id + ", is_out_going=" + is_out_going
+				+ ", text_html=" + text_html + ", text_plain=" + text_plain + ", text_unescaped=" + text_unescaped
+				+ ", sender_name=" + sender_name + ", recipient_name=" + recipient_name + ", sender_screen_name="
+				+ sender_screen_name + ", recipient_screen_name=" + recipient_screen_name
+				+ ", sender_profile_image_url=" + sender_profile_image_url + ", recipient_profile_image_url="
+				+ recipient_profile_image_url + "}";
 	}
 
 	@Override

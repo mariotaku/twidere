@@ -712,19 +712,19 @@ public final class TweetStore {
 		 * User name of the status.<br>
 		 * Type: TEXT
 		 */
-		public static final String NAME = "name";
+		public static final String USER_NAME = "name";
 
 		/**
 		 * User's screen name of the status.<br>
 		 * Type: TEXT
 		 */
-		public static final String SCREEN_NAME = "screen_name";
+		public static final String USER_SCREEN_NAME = "screen_name";
 
 		/**
 		 * User's profile image URL of the status.<br>
 		 * Type: TEXT NOT NULL
 		 */
-		public static final String PROFILE_IMAGE_URL = "profile_image_url";
+		public static final String USER_PROFILE_IMAGE_URL = "profile_image_url";
 
 		/**
 		 * Unique id of the status.<br>
@@ -771,9 +771,9 @@ public final class TweetStore {
 
 		public static final String IN_REPLY_TO_USER_ID = "in_reply_to_user_id";
 
-		public static final String IN_REPLY_TO_NAME = "in_reply_to_name";
+		public static final String IN_REPLY_TO_USER_NAME = "in_reply_to_user_name";
 
-		public static final String IN_REPLY_TO_SCREEN_NAME = "in_reply_to_screen_name";
+		public static final String IN_REPLY_TO_USER_SCREEN_NAME = "in_reply_to_user_screen_name";
 
 		public static final String SOURCE = "source";
 
@@ -787,9 +787,9 @@ public final class TweetStore {
 
 		public static final String RETWEETED_BY_USER_ID = "retweeted_by_user_id";
 
-		public static final String RETWEETED_BY_NAME = "retweeted_by_name";
+		public static final String RETWEETED_BY_USER_NAME = "retweeted_by_user_name";
 
-		public static final String RETWEETED_BY_SCREEN_NAME = "retweeted_by_screen_name";
+		public static final String RETWEETED_BY_USER_SCREEN_NAME = "retweeted_by_user_screen_name";
 
 		/**
 		 * Timestamp of the status.<br>
@@ -810,11 +810,11 @@ public final class TweetStore {
 		public static final String DEFAULT_SORT_ORDER = SORT_ORDER_STATUS_ID_DESC;
 
 		public static final String[] COLUMNS = new String[] { _ID, ACCOUNT_ID, STATUS_ID, USER_ID, STATUS_TIMESTAMP,
-				TEXT_HTML, TEXT_PLAIN, TEXT_UNESCAPED, NAME, SCREEN_NAME, PROFILE_IMAGE_URL, IN_REPLY_TO_STATUS_ID,
-				IN_REPLY_TO_USER_ID, IN_REPLY_TO_NAME, IN_REPLY_TO_SCREEN_NAME, SOURCE, LOCATION, RETWEET_COUNT,
-				RETWEET_ID, RETWEETED_BY_USER_ID, RETWEETED_BY_NAME, RETWEETED_BY_SCREEN_NAME, MY_RETWEET_ID,
-				IS_RETWEET, IS_FAVORITE, IS_PROTECTED, IS_VERIFIED, IS_FOLLOWING, IS_GAP, IS_POSSIBLY_SENSITIVE,
-				MEDIA_LINK, MENTIONS };
+				TEXT_HTML, TEXT_PLAIN, TEXT_UNESCAPED, USER_NAME, USER_SCREEN_NAME, USER_PROFILE_IMAGE_URL,
+				IN_REPLY_TO_STATUS_ID, IN_REPLY_TO_USER_ID, IN_REPLY_TO_USER_NAME, IN_REPLY_TO_USER_SCREEN_NAME,
+				SOURCE, LOCATION, RETWEET_COUNT, RETWEET_ID, RETWEETED_BY_USER_ID, RETWEETED_BY_USER_NAME,
+				RETWEETED_BY_USER_SCREEN_NAME, MY_RETWEET_ID, IS_RETWEET, IS_FAVORITE, IS_PROTECTED, IS_VERIFIED,
+				IS_FOLLOWING, IS_GAP, IS_POSSIBLY_SENSITIVE, MEDIA_LINK, MENTIONS };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT, TYPE_INT, TYPE_INT, TYPE_INT,
 				TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_TEXT,
@@ -846,5 +846,24 @@ public final class TweetStore {
 				TYPE_TEXT, TYPE_INT };
 
 		public static final String DEFAULT_SORT_ORDER = POSITION + " ASC";
+	}
+
+	public static interface UnreadCounts extends BaseColumns {
+
+		public static final String TABLE_NAME = "unread_counts";
+
+		public static final String CONTENT_PATH = TABLE_NAME;
+
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
+
+		public static final String TAB_POSITION = "tab_position";
+
+		public static final String TAB_TYPE = "tab_type";
+
+		public static final String COUNT = "count";
+
+		public static final String[] MATRIX_COLUMNS = new String[] { TAB_POSITION, TAB_TYPE, COUNT };
+
+		public static final String[] COLUMNS = new String[] { _ID, TAB_POSITION, TAB_TYPE, COUNT };
 	}
 }
