@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-	android:title="@string/about">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-	<PreferenceCategory android:title="ABOUT TWIDERE">
+	<PreferenceCategory android:title="@string/about">
 		<org.mariotaku.twidere.preference.AppVersionPreference/>
 
 		<Preference
@@ -12,12 +11,18 @@
 				android:action="android.intent.action.VIEW"
 				android:data="twidere://user?user_id=57610574&amp;finish_only=true"/>
 		</Preference>
+	</PreferenceCategory>
+	<PreferenceCategory android:title="@string/donate">
+		<Preference
+			android:fragment="org.mariotaku.twidere.fragment.DonateFragment"
+			android:summary="Donate to Twidere to support my development"
+			android:title="@string/donate_via_paypal"/>
 		<Preference
 			android:summary="Donate to Twidere to support my development"
-			android:title="Donate via PayPal">
+			android:title="@string/donate_via_alipay">
 			<intent
-				android:targetClass="org.mariotaku.twidere.activity.DonateActivity"
-				android:targetPackage="org.mariotaku.twidere"/>
+				android:action="android.intent.action.VIEW"
+				android:data="https://me.alipay.com/mariotaku"/>
 		</Preference>
 	</PreferenceCategory>
 	<PreferenceCategory android:title="TRANSLATORS">

@@ -187,6 +187,11 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 	@Override
 	public void onItemCheckedStateChanged(final ActionMode mode, final int position, final long id,
 			final boolean checked) {
+		updateTitle(mode);
+	}
+
+	private void updateTitle(ActionMode mode) {
+		if (mListView == null || mode == null || getActivity() == null) return;
 		final int count = mListView.getCheckedItemCount();
 		mode.setTitle(getResources().getQuantityString(R.plurals.Nitems_selected, count, count));
 	}
@@ -228,6 +233,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 
 	@Override
 	public boolean onPrepareActionMode(final ActionMode mode, final Menu menu) {
+		updateTitle(mode);
 		return true;
 	}
 

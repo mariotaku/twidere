@@ -6,10 +6,6 @@ import org.mariotaku.twidere.util.AsyncTask;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class ImportSettingsTask extends AsyncTask<Void, Void, Boolean> {

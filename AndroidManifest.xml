@@ -158,7 +158,8 @@
 		</activity>
 		<activity
 			android:name=".activity.SettingsActivity"
-			android:label="@string/settings">
+			android:label="@string/settings"
+			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
 				<action android:name="android.intent.action.MANAGE_NETWORK_USAGE"/>
 				<action android:name="org.mariotaku.twidere.SETTINGS"/>
@@ -348,11 +349,6 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".activity.DonateActivity"
-			android:label="@string/donate"
-			android:theme="@style/Theme.Blank"
-			android:windowSoftInputMode="adjustResize"/>
-		<activity
 			android:name=".activity.FileSelectorActivity"
 			android:exported="false"
 			android:label="@string/pick_file"
@@ -389,17 +385,6 @@
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.ADD_TAB"/>
 				<action android:name="org.mariotaku.twidere.EDIT_TAB"/>
-
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
-		<activity
-			android:name=".activity.HostMappingActivity"
-			android:exported="false"
-			android:label="@string/custom_host_mapping"
-			android:theme="@style/Theme.Blank">
-			<intent-filter>
-				<action android:name="org.mariotaku.twidere.EDIT_HOST_MAPPING"/>
 
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>

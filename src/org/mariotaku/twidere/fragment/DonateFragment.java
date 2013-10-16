@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.activity;
+package org.mariotaku.twidere.fragment;
 
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.getDefaultAccountScreenName;
@@ -27,8 +27,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -38,7 +40,7 @@ import org.mariotaku.twidere.util.ParseUtils;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
-public class DonateActivity extends BaseSupportActivity implements OnClickListener, TextWatcher {
+public class DonateFragment extends BaseFragment implements OnClickListener, TextWatcher {
 
 	private EditText mEditName, mEditAmount;
 	private Button mDonateButton;
@@ -64,10 +66,13 @@ public class DonateActivity extends BaseSupportActivity implements OnClickListen
 				builder.appendQueryParameter("cmd", "_xclick");
 				builder.appendQueryParameter("business", "mariotaku.lee@gmail.com");
 				builder.appendQueryParameter("amount", amount);
-				builder.appendQueryParameter("item_name", isEmpty(name) ? "Twidere donation" : "Twidere donation by "
-						+ name);
+				if (isEmpty(name)) {
+					builder.appendQueryParameter("item_name", "Twidere donation");
+				} else {
+					builder.appendQueryParameter("item_name", String.format("Twidere donation by %s", name));
+				}
 				startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
-				finish();
+				getActivity().onBackPressed();
 				break;
 			}
 		}
@@ -75,31 +80,35 @@ public class DonateActivity extends BaseSupportActivity implements OnClickListen
 	}
 
 	@Override
-	public void onContentChanged() {
-		super.onContentChanged();
-		mEditName = (EditText) findViewById(R.id.name);
-		mEditAmount = (EditText) findViewById(R.id.amount);
-		mDonateButton = (Button) findViewById(R.id.donate);
-	}
-
-	@Override
 	public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
+		if (isEmpty(s)) {
+			mDonateButton.setEnabled(false);
+			return;
+		}
 		final NumberFormat format = NumberFormat.getInstance(getResources().getConfiguration().locale);
 		try {
 			final Number number = format.parse(ParseUtils.parseString(s));
-			mDonateButton.setEnabled(s.length() > 0 && number.intValue() > 0);
+			mDonateButton.setEnabled(number.doubleValue() > 0);
 		} catch (final ParseException e) {
 			mDonateButton.setEnabled(false);
 		}
 	}
 
 	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.donate);
-		mEditAmount.setText("5.00");
-		mEditName.setText(getDefaultAccountScreenName(this));
+	public void onActivityCreated(final Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		mEditName.setText(getDefaultAccountScreenName(getActivity()));
 		mEditAmount.addTextChangedListener(this);
 		mDonateButton.setOnClickListener(this);
+		mDonateButton.setEnabled(false);
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.donate, container, false);
+		mEditName = (EditText) view.findViewById(R.id.name);
+		mEditAmount = (EditText) view.findViewById(R.id.amount);
+		mDonateButton = (Button) view.findViewById(R.id.donate);
+		return view;
 	}
 }

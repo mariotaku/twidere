@@ -43,13 +43,10 @@
 
 		<Preference
 			android:dependency="ignore_ssl_error"
+			android:fragment="org.mariotaku.twidere.fragment.HostMappingsListFragment"
 			android:key="custom_host_mapping"
 			android:summary="@string/custom_host_mapping_summary"
-			android:title="@string/custom_host_mapping">
-			<intent
-				android:action="org.mariotaku.twidere.EDIT_HOST_MAPPING"
-				android:targetPackage="org.mariotaku.twidere"/>
-		</Preference>
+			android:title="@string/custom_host_mapping"/>
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="category_proxy"

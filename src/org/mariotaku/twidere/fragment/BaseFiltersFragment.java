@@ -153,6 +153,7 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 
 	@Override
 	public boolean onPrepareActionMode(final ActionMode mode, final Menu menu) {
+		updateTitle(mode);
 		return true;
 	}
 
@@ -184,7 +185,7 @@ public abstract class BaseFiltersFragment extends BaseListFragment implements Lo
 	protected abstract String[] getContentColumns();
 
 	private void updateTitle(final ActionMode mode) {
-		if (mListView == null) return;
+		if (mListView == null || mode == null || getActivity() == null) return;
 		final int count = mListView.getCheckedItemCount();
 		mode.setTitle(getResources().getQuantityString(R.plurals.Nitems_selected, count, count));
 	}

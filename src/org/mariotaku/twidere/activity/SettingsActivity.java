@@ -91,6 +91,9 @@ public class SettingsActivity extends BasePreferenceActivity {
 		super.onCreate(savedInstanceState);
 		setIntent(getIntent().addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
 		getActionBar().setDisplayHomeAsUpEnabled(true);
+		if (savedInstanceState != null) {
+			invalidateHeaders();
+		}
 	}
 
 	@Override

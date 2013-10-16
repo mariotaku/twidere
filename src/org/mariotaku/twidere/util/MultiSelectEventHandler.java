@@ -209,6 +209,7 @@ public class MultiSelectEventHandler implements Constants, ActionMode.Callback, 
 
 	@Override
 	public boolean onPrepareActionMode(final ActionMode mode, final Menu menu) {
+		updateMultiSelectState();
 		return true;
 	}
 

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.activity;
+package org.mariotaku.twidere.fragment;
 
 import static android.text.TextUtils.isEmpty;
 
@@ -29,14 +29,19 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnShowListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,16 +51,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.FileSelectorActivity;
 import org.mariotaku.twidere.adapter.ArrayAdapter;
-import org.mariotaku.twidere.fragment.BaseDialogFragment;
-import org.mariotaku.twidere.fragment.ProgressDialogFragment;
 import org.mariotaku.twidere.util.AsyncTask;
 import org.mariotaku.twidere.util.HostsFileParser;
 import org.mariotaku.twidere.util.ParseUtils;
 
 import java.util.Map;
 
-public class HostMappingActivity extends BaseSupportActivity implements MultiChoiceModeListener {
+public class HostMappingsListFragment extends BaseListFragment implements MultiChoiceModeListener,
+		OnSharedPreferenceChangeListener {
 
 	private ListView mListView;
 	private HostMappingAdapter mAdapter;
@@ -76,7 +81,7 @@ public class HostMappingActivity extends BaseSupportActivity implements MultiCho
 					}
 				}
 				editor.apply();
-				reload();
+				reloadHostMappings();
 				break;
 			}
 			default: {
@@ -88,15 +93,44 @@ public class HostMappingActivity extends BaseSupportActivity implements MultiCho
 	}
 
 	@Override
+	public void onActivityCreated(final Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		setHasOptionsMenu(true);
+		mPreferences = getSharedPreferences(HOST_MAPPING_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mPreferences.registerOnSharedPreferenceChangeListener(this);
+		mAdapter = new HostMappingAdapter(getActivity());
+		setListAdapter(mAdapter);
+		mListView = getListView();
+		mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+		mListView.setMultiChoiceModeListener(this);
+		reloadHostMappings();
+	}
+
+	@Override
+	public void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
+		switch (requestCode) {
+			case REQUEST_PICK_FILE: {
+				if (resultCode == Activity.RESULT_OK) {
+					final Uri uri = intent != null ? intent.getData() : null;
+					if (uri != null) {
+						new ImportHostsTask(this, uri.getPath()).execute();
+					}
+				}
+				break;
+			}
+		}
+		super.onActivityResult(requestCode, resultCode, intent);
+	}
+
+	@Override
 	public boolean onCreateActionMode(final ActionMode mode, final Menu menu) {
-		getMenuInflater().inflate(R.menu.action_multi_select_items, menu);
+		new MenuInflater(getActivity()).inflate(R.menu.action_multi_select_items, menu);
 		return true;
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(final Menu menu) {
-		getMenuInflater().inflate(R.menu.menu_host_mapping, menu);
-		return super.onCreateOptionsMenu(menu);
+	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
+		inflater.inflate(R.menu.menu_host_mapping, menu);
 	}
 
 	@Override
@@ -113,16 +147,14 @@ public class HostMappingActivity extends BaseSupportActivity implements MultiCho
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
-			case MENU_HOME:
-				onBackPressed();
-				break;
 			case MENU_ADD:
-				mDialogFragment = (DialogFragment) Fragment.instantiate(this, AddMappingDialogFragment.class.getName());
+				mDialogFragment = (DialogFragment) Fragment.instantiate(getActivity(),
+						AddMappingDialogFragment.class.getName());
 				mDialogFragment.show(getFragmentManager(), "add_mapping");
 				break;
 			case MENU_IMPORT_FROM:
 				final Intent intent = new Intent(INTENT_ACTION_PICK_FILE);
-				intent.setClass(this, FileSelectorActivity.class);
+				intent.setClass(getActivity(), FileSelectorActivity.class);
 				startActivityForResult(intent, REQUEST_PICK_FILE);
 				break;
 		}
@@ -131,71 +163,53 @@ public class HostMappingActivity extends BaseSupportActivity implements MultiCho
 
 	@Override
 	public boolean onPrepareActionMode(final ActionMode mode, final Menu menu) {
+		updateTitle(mode);
 		return true;
 	}
 
-	public void reload() {
+	@Override
+	public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
+		reloadHostMappings();
+	}
+
+	public void reloadHostMappings() {
 		if (mAdapter == null) return;
 		mAdapter.reload();
 	}
 
-	@Override
-	protected void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
-		switch (requestCode) {
-			case REQUEST_PICK_FILE: {
-				if (resultCode == RESULT_OK) {
-					final Uri uri = intent != null ? intent.getData() : null;
-					if (uri != null) {
-						new ImportHostsTask(this, uri.getPath()).execute();
-					}
-				}
-				break;
-			}
-		}
-		super.onActivityResult(requestCode, resultCode, intent);
-	}
-
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		mPreferences = getSharedPreferences(HOST_MAPPING_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		setContentView(android.R.layout.list_content);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-		mAdapter = new HostMappingAdapter(this);
-		mListView = (ListView) findViewById(android.R.id.list);
-		mListView.setAdapter(mAdapter);
-		mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-		mListView.setMultiChoiceModeListener(this);
-		reload();
-	}
-
 	private void updateTitle(final ActionMode mode) {
-		if (mListView == null) return;
+		if (mListView == null || mode == null || getActivity() == null) return;
 		final int count = mListView.getCheckedItemCount();
 		mode.setTitle(getResources().getQuantityString(R.plurals.Nitems_selected, count, count));
 	}
 
-	public static class AddMappingDialogFragment extends BaseDialogFragment implements DialogInterface.OnClickListener {
+	public static class AddMappingDialogFragment extends BaseDialogFragment implements DialogInterface.OnClickListener,
+			OnShowListener, TextWatcher {
 
 		private EditText mEditHost, mEditAddress;
-		private String mHost, mAddress;
+
+		@Override
+		public void afterTextChanged(final Editable s) {
+
+		}
+
+		@Override
+		public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {
+
+		}
 
 		@Override
 		public void onClick(final DialogInterface dialog, final int which) {
 			switch (which) {
 				case DialogInterface.BUTTON_POSITIVE: {
-					mHost = ParseUtils.parseString(mEditHost.getText());
-					mAddress = ParseUtils.parseString(mEditAddress.getText());
+					final String mHost = ParseUtils.parseString(mEditHost.getText());
+					final String mAddress = ParseUtils.parseString(mEditAddress.getText());
 					if (isEmpty(mHost) || isEmpty(mAddress)) return;
 					final SharedPreferences prefs = getSharedPreferences(HOST_MAPPING_PREFERENCES_NAME,
 							Context.MODE_PRIVATE);
 					final SharedPreferences.Editor editor = prefs.edit();
 					editor.putString(mHost, mAddress);
-					editor.commit();
-					final Activity activity = getActivity();
-					if (activity instanceof HostMappingActivity) {
-						((HostMappingActivity) activity).reload();
-					}
+					editor.apply();
 					break;
 				}
 			}
@@ -204,31 +218,45 @@ public class HostMappingActivity extends BaseSupportActivity implements MultiCho
 
 		@Override
 		public Dialog onCreateDialog(final Bundle savedInstanceState) {
-			final Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
-			mHost = bundle != null ? bundle.getString(EXTRA_TEXT1) : null;
-			mAddress = bundle != null ? bundle.getString(EXTRA_TEXT2) : null;
 			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			final View view = LayoutInflater.from(getActivity()).inflate(R.layout.host_mapping_dialog_view, null);
 			builder.setView(view);
 			mEditHost = (EditText) view.findViewById(R.id.host);
 			mEditAddress = (EditText) view.findViewById(R.id.address);
-			if (mHost != null) {
-				mEditHost.setText(mHost);
-			}
-			if (mAddress != null) {
-				mEditAddress.setText(mAddress);
+			mEditHost.addTextChangedListener(this);
+			mEditAddress.addTextChangedListener(this);
+			final Bundle args = getArguments();
+			if (savedInstanceState == null && args != null) {
+				mEditHost.setText(args.getCharSequence(EXTRA_TEXT1));
+				mEditAddress.setText(args.getCharSequence(EXTRA_TEXT2));
 			}
 			builder.setTitle(R.string.add_host_mapping);
 			builder.setPositiveButton(android.R.string.ok, this);
 			builder.setNegativeButton(android.R.string.cancel, null);
-			return builder.create();
+			final AlertDialog dialog = builder.create();
+			dialog.setOnShowListener(this);
+			return dialog;
 		}
 
 		@Override
 		public void onSaveInstanceState(final Bundle outState) {
-			outState.putString(EXTRA_TEXT1, mHost);
-			outState.putString(EXTRA_TEXT2, mAddress);
+			outState.putCharSequence(EXTRA_TEXT1, mEditHost.getText());
+			outState.putCharSequence(EXTRA_TEXT2, mEditAddress.getText());
 			super.onSaveInstanceState(outState);
+		}
+
+		@Override
+		public void onShow(final DialogInterface dialog) {
+			final boolean text_valid = !isEmpty(mEditHost.getText()) && !isEmpty(mEditAddress.getText());
+			((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(text_valid);
+		}
+
+		@Override
+		public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
+			final AlertDialog dialog = (AlertDialog) getDialog();
+			if (dialog == null) return;
+			final boolean text_valid = !isEmpty(mEditHost.getText()) && !isEmpty(mEditAddress.getText());
+			dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(text_valid);
 		}
 
 	}
@@ -264,10 +292,10 @@ public class HostMappingActivity extends BaseSupportActivity implements MultiCho
 	static class ImportHostsTask extends AsyncTask<Void, Void, Boolean> {
 
 		private final SharedPreferences mPreferences;
-		private final HostMappingActivity mActivity;
+		private final HostMappingsListFragment mActivity;
 		private final String mPath;
 
-		ImportHostsTask(final HostMappingActivity activity, final String path) {
+		ImportHostsTask(final HostMappingsListFragment activity, final String path) {
 			mActivity = activity;
 			mPath = path;
 			mPreferences = activity.getSharedPreferences(HOST_MAPPING_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -291,7 +319,7 @@ public class HostMappingActivity extends BaseSupportActivity implements MultiCho
 			if (f instanceof DialogFragment) {
 				((DialogFragment) f).dismiss();
 			}
-			mActivity.reload();
+			mActivity.reloadHostMappings();
 		}
 
 		@Override
