@@ -19,8 +19,6 @@
 
 package org.mariotaku.twidere;
 
-import android.content.ContentResolver;
-
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
@@ -63,7 +61,7 @@ public interface Constants {
 
 	public static final String SCHEME_HTTP = "http";
 	public static final String SCHEME_HTTPS = "https";
-	public static final String SCHEME_CONTENT = ContentResolver.SCHEME_CONTENT;
+	public static final String SCHEME_CONTENT = "content";
 	public static final String SCHEME_TWIDERE = "twidere";
 
 	public static final String PROTOCOL_HTTP = SCHEME_HTTP + "://";

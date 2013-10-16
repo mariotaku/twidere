@@ -445,7 +445,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 					final AsyncTwitterWrapper twitter = getTwitterWrapper();
 					final ParcelableUserList list = intent.getParcelableExtra(EXTRA_USER_LIST);
 					if (list == null || twitter == null) return;
-					twitter.addUserListMembersAsync(mAccountId, list.id, mUserId);
+					twitter.addUserListMembersAsync(mAccountId, list.id, mUser);
 				}
 				break;
 			}

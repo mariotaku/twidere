@@ -33,7 +33,7 @@ import org.mariotaku.twidere.provider.TwidereCommands.Refresh;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.PermissionsManager;
 
-public class CommandProvider extends ContentProvider implements Constants {
+public class TwidereCommandProvider extends ContentProvider implements Constants {
 
 	private static final UriMatcher COMMAND_URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 

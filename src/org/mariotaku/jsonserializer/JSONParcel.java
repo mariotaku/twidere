@@ -43,6 +43,14 @@ public final class JSONParcel {
 		return jsonObject.optInt(key, def);
 	}
 
+	public JSONObject readJSONObject(final String key) {
+		return jsonObject.optJSONObject(key);
+	}
+
+	public JSONArray readJSONObjectArray(final String key) {
+		return jsonObject.optJSONArray(key);
+	}
+
 	public long readLong(final String key) {
 		return jsonObject.optLong(key);
 	}
@@ -72,8 +80,12 @@ public final class JSONParcel {
 	}
 
 	public void writeBooleanArray(final String key, final boolean[] value) {
-		if (value == null) return;
+		if (key == null) return;
 		try {
+			if (value == null) {
+				jsonObject.put(key, JSONObject.NULL);
+				return;
+			}
 			final JSONArray array = new JSONArray();
 			for (final boolean item : value) {
 				array.put(item);
@@ -93,8 +105,12 @@ public final class JSONParcel {
 	}
 
 	public void writeDoubleArray(final String key, final double[] value) {
-		if (value == null) return;
+		if (key == null) return;
 		try {
+			if (value == null) {
+				jsonObject.put(key, JSONObject.NULL);
+				return;
+			}
 			final JSONArray array = new JSONArray();
 			for (final double item : value) {
 				array.put(item);
@@ -114,13 +130,33 @@ public final class JSONParcel {
 	}
 
 	public void writeIntArray(final String key, final int[] value) {
-		if (value == null) return;
+		if (key == null) return;
 		try {
+			if (value == null) {
+				jsonObject.put(key, JSONObject.NULL);
+				return;
+			}
 			final JSONArray array = new JSONArray();
 			for (final int item : value) {
 				array.put(item);
 			}
 			jsonObject.put(key, array);
+		} catch (final JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void writeJSONArray(final String key, final JSONArray value) {
+		try {
+			jsonObject.put(key, value);
+		} catch (final JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void writeJSONObject(final String key, final JSONObject value) {
+		try {
+			jsonObject.put(key, value);
 		} catch (final JSONException e) {
 			e.printStackTrace();
 		}
@@ -135,8 +171,12 @@ public final class JSONParcel {
 	}
 
 	public void writeLongArray(final String key, final long[] value) {
-		if (value == null) return;
+		if (key == null) return;
 		try {
+			if (value == null) {
+				jsonObject.put(key, JSONObject.NULL);
+				return;
+			}
 			final JSONArray array = new JSONArray();
 			for (final long item : value) {
 				array.put(item);
@@ -160,8 +200,12 @@ public final class JSONParcel {
 	}
 
 	public void writeObjectArray(final String key, final Object[] value) {
-		if (value == null) return;
+		if (key == null) return;
 		try {
+			if (value == null) {
+				jsonObject.put(key, JSONObject.NULL);
+				return;
+			}
 			final JSONArray array = new JSONArray();
 			for (final Object item : value) {
 				if (item instanceof JSONParcelable) {
@@ -178,13 +222,17 @@ public final class JSONParcel {
 	}
 
 	public void writeObjectList(final String key, final List<Object> value) {
-		if (value == null) return;
+		if (key == null) return;
 		writeObjectArray(key, value.toArray());
 	}
 
 	public <T extends JSONParcelable> void writeParcelable(final String key, final T value) {
 		if (key == null) return;
 		try {
+			if (value == null) {
+				jsonObject.put(key, JSONObject.NULL);
+				return;
+			}
 			final JSONObject json = JSONSerializer.toJSON(value);
 			jsonObject.put(key, json);
 		} catch (final JSONException e) {
@@ -211,6 +259,7 @@ public final class JSONParcel {
 	}
 
 	public void writeString(final String key, final String value) {
+		if (key == null) return;
 		try {
 			jsonObject.put(key, value);
 		} catch (final JSONException e) {
@@ -219,8 +268,12 @@ public final class JSONParcel {
 	}
 
 	public void writeStringArray(final String key, final String[] value) {
-		if (value == null) return;
+		if (key == null) return;
 		try {
+			if (value == null) {
+				jsonObject.put(key, JSONObject.NULL);
+				return;
+			}
 			final JSONArray array = new JSONArray();
 			for (final String item : value) {
 				array.put(item);

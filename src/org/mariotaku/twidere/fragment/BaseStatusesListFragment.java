@@ -43,6 +43,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
@@ -53,6 +54,7 @@ import org.mariotaku.twidere.adapter.iface.IBaseCardAdapter.MenuButtonClickListe
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.util.AsyncTask;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ClipboardUtils;
@@ -60,6 +62,12 @@ import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.PositionManager;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragment implements LoaderCallbacks<Data>,
 		OnItemLongClickListener, OnMenuItemClickListener, Panes.Left, MultiSelectManager.Callback,
@@ -81,6 +89,15 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 
 	private MultiSelectManager mMultiSelectManager;
 	private PositionManager mPositionManager;
+
+	private final Map<Long, Set<Long>> mUnreadCountsToRemove = Collections
+			.synchronizedMap(new HashMap<Long, Set<Long>>());
+
+	private int mFirstVisibleItem;
+
+	private final Set<Integer> mReadPositions = Collections.synchronizedSet(new HashSet<Integer>());
+
+	private RemoveUnreadCountsTask<Data> mRemoveUnreadCountsTask;
 
 	public AsyncTaskManager getAsyncTaskManager() {
 		return mAsyncTaskManager;
@@ -109,6 +126,10 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 	}
 
 	public abstract int getStatuses(long[] account_ids, long[] max_ids, long[] since_ids);
+
+	public final Map<Long, Set<Long>> getUnreadCountsToRemove() {
+		return mUnreadCountsToRemove;
+	}
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
@@ -166,6 +187,10 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		if (tag instanceof StatusViewHolder) {
 			final ParcelableStatus status = mAdapter.getStatus(position - l.getHeaderViewsCount());
 			if (status == null) return;
+			final AsyncTwitterWrapper twitter = getTwitterWrapper();
+			if (twitter != null) {
+				twitter.removeUnreadCounts(getActivity(), getTabPosition(), status.account_id, status.id);
+			}
 			final StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) {
 				getStatuses(new long[] { status.account_id }, new long[] { status.id }, null);
@@ -189,12 +214,14 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 	public final void onLoadFinished(final Loader<Data> loader, final Data data) {
 		if (getActivity() == null || getView() == null) return;
 		setData(data);
+		mFirstVisibleItem = -1;
+		mReadPositions.clear();
 		final int first_visible_position = mListView.getFirstVisiblePosition();
 		if (mListView.getChildCount() > 0) {
 			final View first_child = mListView.getChildAt(0);
 			mListScrollOffset = first_child != null ? first_child.getTop() : 0;
 		}
-		final long last_viewed_id = mAdapter.findItemIdByPosition(first_visible_position);
+		final long last_viewed_id = mAdapter.getStatusId(first_visible_position);
 		mAdapter.setData(data);
 		setListShown(true);
 		setRefreshComplete();
@@ -202,7 +229,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		mAdapter.setShowAccountColor(getActivatedAccountIds(getActivity()).length > 1);
 		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true);
 		final int curr_first_visible_position = mListView.getFirstVisiblePosition();
-		final long curr_viewed_id = mAdapter.findItemIdByPosition(curr_first_visible_position);
+		final long curr_viewed_id = mAdapter.getStatusId(curr_first_visible_position);
 		final long status_id;
 		if (last_viewed_id <= 0) {
 			if (!remember_position) return;
@@ -211,12 +238,12 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 				&& last_viewed_id != curr_viewed_id) {
 			status_id = last_viewed_id;
 		} else {
-			if (first_visible_position == 0 && mAdapter.findItemIdByPosition(0) != last_viewed_id) {
+			if (first_visible_position == 0 && mAdapter.getStatusId(0) != last_viewed_id) {
 				mAdapter.setMaxAnimationPosition(mListView.getLastVisiblePosition());
 			}
 			return;
 		}
-		final int position = mAdapter.findItemPositionByStatusId(status_id);
+		final int position = mAdapter.findPositionByStatusId(status_id);
 		if (position > -1 && position < mListView.getCount()) {
 			mAdapter.setMaxAnimationPosition(mListView.getLastVisiblePosition());
 			mListView.setSelectionFromTop(position, mListScrollOffset);
@@ -327,6 +354,25 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 	}
 
 	@Override
+	public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
+			final int totalItemCount) {
+		super.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+		addReadPosition(firstVisibleItem);
+	}
+
+	@Override
+	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
+		super.onScrollStateChanged(view, scrollState);
+		switch (scrollState) {
+			case SCROLL_STATE_IDLE:
+				removeUnreadCounts();
+				break;
+			default:
+				break;
+		}
+	}
+
+	@Override
 	public void onStart() {
 		super.onStart();
 		mMultiSelectManager.registerCallback(this);
@@ -340,6 +386,16 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 			mPopupMenu.dismiss();
 		}
 		super.onStop();
+	}
+
+	@Override
+	public boolean scrollToStart() {
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		final int tab_position = getTabPosition();
+		if (twitter != null && tab_position >= 0) {
+			twitter.clearUnreadCountAsync(tab_position);
+		}
+		return super.scrollToStart();
 	}
 
 	protected abstract long[] getNewestStatusIds();
@@ -370,7 +426,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 			final View first_child = mListView.getChildAt(0);
 			mListScrollOffset = first_child != null ? first_child.getTop() : 0;
 		}
-		final long status_id = mAdapter.findItemIdByPosition(first_visible_position);
+		final long status_id = mAdapter.getStatusId(first_visible_position);
 		mPositionManager.setPosition(getPositionKey(), status_id);
 	}
 
@@ -391,6 +447,24 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 
 	protected void setListHeaderFooters(final ListView list) {
 
+	}
+
+	private void addReadPosition(final int firstVisibleItem) {
+		if (mFirstVisibleItem != firstVisibleItem) {
+			mReadPositions.add(firstVisibleItem);
+		}
+		mFirstVisibleItem = firstVisibleItem;
+	}
+
+	private void addUnreadCountsToRemove(final long account_id, final long id) {
+		if (mUnreadCountsToRemove.containsKey(account_id)) {
+			final Set<Long> counts = mUnreadCountsToRemove.get(account_id);
+			counts.add(id);
+		} else {
+			final Set<Long> counts = new HashSet<Long>();
+			counts.add(id);
+			mUnreadCountsToRemove.put(account_id, counts);
+		}
 	}
 
 	private boolean isMyTimeline() {
@@ -441,4 +515,39 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		mPopupMenu.show();
 	}
 
+	private void removeUnreadCounts() {
+		if (mRemoveUnreadCountsTask != null && mRemoveUnreadCountsTask.getStatus() == AsyncTask.Status.RUNNING) return;
+		mRemoveUnreadCountsTask = new RemoveUnreadCountsTask<Data>(mReadPositions, this);
+		mRemoveUnreadCountsTask.execute();
+	}
+
+	static class RemoveUnreadCountsTask<T> extends AsyncTask<Void, Void, Void> {
+		private final Set<Integer> read_positions;
+		private final IStatusesAdapter<T> adapter;
+		private final BaseStatusesListFragment<T> fragment;
+
+		RemoveUnreadCountsTask(final Set<Integer> read_positions, final BaseStatusesListFragment<T> fragment) {
+			this.read_positions = read_positions;
+			this.fragment = fragment;
+			this.adapter = fragment.getListAdapter();
+		}
+
+		@Override
+		protected Void doInBackground(final Void... params) {
+			for (final int pos : read_positions) {
+				final long id = adapter.getStatusId(pos), account_id = adapter.getAccountId(pos);
+				fragment.addUnreadCountsToRemove(account_id, id);
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(final Void result) {
+			final AsyncTwitterWrapper twitter = fragment.getTwitterWrapper();
+			if (twitter != null) {
+				twitter.removeUnreadCountsAsync(fragment.getTabPosition(), fragment.getUnreadCountsToRemove());
+			}
+		}
+
+	}
 }

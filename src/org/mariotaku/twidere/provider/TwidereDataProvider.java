@@ -58,6 +58,7 @@ import android.os.ParcelFileDescriptor;
 import android.support.v4.app.NotificationCompat;
 import android.text.Html;
 
+import org.mariotaku.jsonserializer.JSONSerializer;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
@@ -65,6 +66,7 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.PreviewMedia;
+import org.mariotaku.twidere.model.UnreadItem;
 import org.mariotaku.twidere.preference.NotificationContentPreference;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
@@ -86,6 +88,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -95,8 +99,9 @@ import java.util.Set;
 
 public final class TwidereDataProvider extends ContentProvider implements Constants {
 
-	private Context mContext;
-	private Resources mResources;
+	private static final String UNREAD_STATUSES_FILE_NAME = "unread_statuses";
+	private static final String UNREAD_MENTIONS_FILE_NAME = "unread_mentions";
+	private static final String UNREAD_MESSAGES_FILE_NAME = "unread_messages";
 
 	private SQLiteDatabase mDatabase;
 	private PermissionsManager mPermissionsManager;
@@ -170,7 +175,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		} catch (final SQLException e) {
 			throw new IllegalStateException(e);
 		}
-	};
+	}
 
 	@Override
 	public int delete(final Uri uri, final String selection, final String[] selectionArgs) {
@@ -191,8 +196,14 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				}
 				case VIRTUAL_TABLE_ID_UNREAD_COUNTS: {
 					final List<String> segments = uri.getPathSegments();
-					if (segments.size() != 2) return 0;
-					return clearUnreadCount(ParseUtils.parseInt(segments.get(1)));
+					if (segments.size() < 2) return 0;
+					final int tab_position = ParseUtils.parseInt(segments.get(1));
+					if (segments.size() == 2)
+						return clearUnreadCount(tab_position);
+					else if (segments.size() == 4)
+						return removeUnreadItems(tab_position, ParseUtils.parseLong(segments.get(2)),
+								ArrayUtils.parseLongArray(segments.get(3), ','));
+					return 0;
 				}
 			}
 			if (table == null) return 0;
@@ -250,8 +261,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 
 	@Override
 	public boolean onCreate() {
-		mContext = getContext();
-		mResources = mContext.getResources();
+		final Context mContext = getContext();
 		final TwidereApplication app = TwidereApplication.getInstance(mContext);
 		mDatabase = app.getSQLiteDatabase();
 		mHostAddressResolver = app.getHostAddressResolver();
@@ -263,6 +273,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		filter.addAction(BROADCAST_HOME_ACTIVITY_ONSTART);
 		filter.addAction(BROADCAST_HOME_ACTIVITY_ONSTOP);
 		mContext.registerReceiver(mHomeActivityStateReceiver, filter);
+		restoreUnreadItems();
 		return mDatabase != null;
 	}
 
@@ -395,6 +406,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	private void buildNotification(final NotificationCompat.Builder builder, final String ticker, final String title,
 			final String message, final int icon, final Bitmap large_icon, final Intent content_intent,
 			final Intent delete_intent) {
+		final Context context = getContext();
+		final Resources res = context.getResources();
 		builder.setTicker(ticker);
 		builder.setContentTitle(title);
 		builder.setContentText(message);
@@ -405,15 +418,15 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			builder.setLargeIcon(large_icon);
 		}
 		if (delete_intent != null) {
-			builder.setDeleteIntent(PendingIntent.getBroadcast(mContext, 0, delete_intent,
+			builder.setDeleteIntent(PendingIntent.getBroadcast(context, 0, delete_intent,
 					PendingIntent.FLAG_UPDATE_CURRENT));
 		}
 		if (content_intent != null) {
-			builder.setContentIntent(PendingIntent.getActivity(mContext, 0, content_intent,
+			builder.setContentIntent(PendingIntent.getActivity(context, 0, content_intent,
 					PendingIntent.FLAG_UPDATE_CURRENT));
 		}
 		int defaults = 0;
-		if (mNotificationIsAudible && !isNotificationsSilent(mContext)) {
+		if (mNotificationIsAudible && !isNotificationsSilent(context)) {
 			if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND, false)) {
 				final Uri def_ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 				final String path = mPreferences.getString(PREFERENCE_KEY_NOTIFICATION_RINGTONE, "");
@@ -424,7 +437,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			}
 		}
 		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_LIGHTS, false)) {
-			final int color_def = mResources.getColor(android.R.color.holo_blue_dark);
+			final int color_def = res.getColor(android.R.color.holo_blue_dark);
 			final int color = mPreferences.getInt(PREFERENCE_KEY_NOTIFICATION_LIGHT_COLOR, color_def);
 			builder.setLights(color, 1000, 2000);
 		}
@@ -550,16 +563,19 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 
 	private int clearUnreadCount(final int tab_position) {
 		final int result;
-		final String type = CustomTabUtils.getAddedTabTypeAt(mContext, tab_position);
+		final String type = CustomTabUtils.getAddedTabTypeAt(getContext(), tab_position);
 		if (TAB_TYPE_HOME_TIMELINE.equals(type)) {
 			result = mUnreadStatuses.size();
 			mUnreadStatuses.clear();
+			saveUnreadItemsFile(mUnreadStatuses, UNREAD_STATUSES_FILE_NAME);
 		} else if (TAB_TYPE_MENTIONS_TIMELINE.equals(type)) {
 			result = mUnreadMentions.size();
 			mUnreadMentions.clear();
+			saveUnreadItemsFile(mUnreadMentions, UNREAD_MENTIONS_FILE_NAME);
 		} else if (TAB_TYPE_DIRECT_MESSAGES.equals(type)) {
 			result = mUnreadMessages.size();
 			mUnreadMessages.clear();
+			saveUnreadItemsFile(mUnreadMessages, UNREAD_MESSAGES_FILE_NAME);
 		} else
 			return 0;
 		if (result > 0) {
@@ -570,6 +586,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 
 	private void displayMentionsNotification(final int notified_count) {
 		if (notified_count == 0 || mNewMentions.isEmpty() || mNewMentionUserIds.isEmpty()) return;
+		final Context mContext = getContext();
+		final Resources mResources = mContext.getResources();
 		final NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
 		final boolean display_screen_name = !mPreferences.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
 		final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_DELETED);
@@ -646,6 +664,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 
 	private void displayMessagesNotification(final int notified_count) {
 		if (notified_count == 0 || mNewMessages.isEmpty() || mNewMessageUserIds.isEmpty()) return;
+		final Context mContext = getContext();
+		final Resources mResources = mContext.getResources();
 		final NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
 		final boolean display_screen_name = !mPreferences.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
 		final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_DELETED);
@@ -728,6 +748,9 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	}
 
 	private void displayStatusesNotification(final int notified_count) {
+		if (notified_count == 0 || mUnreadStatuses.isEmpty() || mNewStatusesCount == 0) return;
+		final Context mContext = getContext();
+		final Resources mResources = mContext.getResources();
 		final NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
 		final String message = mResources.getQuantityString(R.plurals.Ntweets, notified_count, notified_count);
 		final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_DELETED);
@@ -761,6 +784,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 
 	private ParcelFileDescriptor getCacheFileFd(final String name) throws FileNotFoundException {
 		if (name == null) return null;
+		final Context mContext = getContext();
 		final File cacheDir = mContext.getCacheDir();
 		final File file = new File(cacheDir, name);
 		if (!file.exists()) return null;
@@ -801,17 +825,19 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	}
 
 	private Bitmap getProfileImageForNotification(final String profile_image_url) {
-		final boolean hires_profile_image = mResources.getBoolean(R.bool.hires_profile_image);
-		final int w = mResources.getDimensionPixelSize(android.R.dimen.notification_large_icon_width);
-		final int h = mResources.getDimensionPixelSize(android.R.dimen.notification_large_icon_height);
+		final Context context = getContext();
+		final Resources res = context.getResources();
+		final boolean hires_profile_image = res.getBoolean(R.bool.hires_profile_image);
+		final int w = res.getDimensionPixelSize(android.R.dimen.notification_large_icon_width);
+		final int h = res.getDimensionPixelSize(android.R.dimen.notification_large_icon_height);
 		final File profile_image_file = mImagePreloader
 				.getCachedImageFile(hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url)
 						: profile_image_url);
 		final Bitmap profile_image = profile_image_file != null && profile_image_file.isFile() ? BitmapFactory
 				.decodeFile(profile_image_file.getPath()) : null;
 		if (profile_image != null) return Bitmap.createScaledBitmap(profile_image, w, h, true);
-		return Bitmap.createScaledBitmap(BitmapFactory.decodeResource(mResources, R.drawable.ic_profile_image_default),
-				w, h, true);
+		return Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.ic_profile_image_default), w, h,
+				true);
 	}
 
 	private Cursor getUnreadCountsCursor() {
@@ -821,7 +847,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 
 	private Cursor getUnreadCountsCursor(final int position) {
 		final MatrixCursor c = new MatrixCursor(TweetStore.UnreadCounts.MATRIX_COLUMNS);
-		final String type = CustomTabUtils.getAddedTabTypeAt(mContext, position);
+		final Context context = getContext();
+		final String type = CustomTabUtils.getAddedTabTypeAt(context, position);
 		final int count;
 		if (TAB_TYPE_HOME_TIMELINE.equals(type)) {
 			count = mUnreadStatuses.size();
@@ -855,6 +882,9 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			}
 		}
 		Collections.sort(mNewMentions);
+		if (result > 0) {
+			saveUnreadItemsFile(mUnreadMentions, UNREAD_MENTIONS_FILE_NAME);
+		}
 		return result;
 	}
 
@@ -871,6 +901,9 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			result++;
 		}
 		Collections.sort(mNewMessages);
+		if (result > 0) {
+			saveUnreadItemsFile(mUnreadMessages, UNREAD_MESSAGES_FILE_NAME);
+		}
 		return result;
 	}
 
@@ -888,13 +921,17 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				result++;
 			}
 		}
+		if (result > 0) {
+			saveUnreadItemsFile(mUnreadStatuses, UNREAD_STATUSES_FILE_NAME);
+		}
 		return result;
 	}
 
-	private void notifyUnreadCountChanged(final int id) {
+	private void notifyUnreadCountChanged(final int position) {
 		final Intent intent = new Intent(BROADCAST_UNREAD_COUNT_UPDATED);
-		intent.putExtra(EXTRA_NOTIFICATION_ID, id);
-		mContext.sendBroadcast(intent);
+		intent.putExtra(EXTRA_TAB_POSITION, position);
+		final Context context = getContext();
+		context.sendBroadcast(intent);
 	}
 
 	private void onDatabaseUpdated(final Uri uri) {
@@ -992,6 +1029,77 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		}
 	}
 
+	private int removeUnreadItems(final int tab_position, final long account_id, final long... ids) {
+		if (tab_position < 0 || account_id == 0 || ids == null || ids.length == 0) return 0;
+		final UnreadItem[] items = new UnreadItem[ids.length];
+		for (int i = 0, j = ids.length; i < j; i++) {
+			items[i] = new UnreadItem(ids[i], account_id);
+		}
+		return removeUnreadItems(tab_position, items);
+	}
+
+	private int removeUnreadItems(final int tab_position, final UnreadItem... items) {
+		if (tab_position < 0 || items == null || items.length == 0) return 0;
+		final int result;
+		final String type = CustomTabUtils.getAddedTabTypeAt(getContext(), tab_position);
+		if (TAB_TYPE_HOME_TIMELINE.equals(type)) {
+			final int size = mUnreadStatuses.size();
+			mUnreadStatuses.removeAll(Arrays.asList(items));
+			result = size - mUnreadStatuses.size();
+			if (result != 0) {
+				saveUnreadItemsFile(mUnreadStatuses, UNREAD_STATUSES_FILE_NAME);
+			}
+		} else if (TAB_TYPE_MENTIONS_TIMELINE.equals(type)) {
+			final int size = mUnreadMentions.size();
+			mUnreadMentions.removeAll(Arrays.asList(items));
+			result = size - mUnreadMentions.size();
+			if (result != 0) {
+				saveUnreadItemsFile(mUnreadMentions, UNREAD_MENTIONS_FILE_NAME);
+			}
+		} else if (TAB_TYPE_DIRECT_MESSAGES.equals(type)) {
+			final int size = mUnreadMessages.size();
+			mUnreadMessages.removeAll(Arrays.asList(items));
+			result = size - mUnreadMessages.size();
+			if (result != 0) {
+				saveUnreadItemsFile(mUnreadMessages, UNREAD_MESSAGES_FILE_NAME);
+			}
+		} else
+			return 0;
+		if (result != 0) {
+			notifyUnreadCountChanged(tab_position);
+		}
+		return result;
+	}
+
+	private void restoreUnreadItems() {
+		restoreUnreadItemsFile(mUnreadStatuses, UNREAD_STATUSES_FILE_NAME);
+		restoreUnreadItemsFile(mUnreadMentions, UNREAD_MENTIONS_FILE_NAME);
+		restoreUnreadItemsFile(mUnreadMessages, UNREAD_MESSAGES_FILE_NAME);
+	}
+
+	private void restoreUnreadItemsFile(final Collection<UnreadItem> items, final String name) {
+		if (items == null || name == null) return;
+		try {
+			final File file = JSONSerializer.getSerializationFile(getContext(), name);
+			final List<UnreadItem> restored = JSONSerializer.listFromFile(file);
+			if (restored != null) {
+				items.addAll(restored);
+			}
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void saveUnreadItemsFile(final Collection<UnreadItem> items, final String name) {
+		if (items == null || name == null) return;
+		try {
+			final File file = JSONSerializer.getSerializationFile(getContext(), name);
+			JSONSerializer.toFile(file, items.toArray(new UnreadItem[items.size()]));
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	private static Cursor getPreferencesCursor(final SharedPreferences mPreferences, final String key) {
 		final MatrixCursor c = new MatrixCursor(TweetStore.Preferences.MATRIX_COLUMNS);
 		final Map<String, Object> map = new HashMap<String, Object>();
@@ -1047,40 +1155,6 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		final String temp = "@" + my_screen_name + " ";
 		if (text.startsWith(temp)) return text.substring(temp.length());
 		return text;
-	}
-
-	private static class UnreadItem {
-		private final long id, account_id;
-
-		private UnreadItem(final long id, final long account_id) {
-			this.id = id;
-			this.account_id = account_id;
-		}
-
-		@Override
-		public boolean equals(final Object obj) {
-			if (this == obj) return true;
-			if (obj == null) return false;
-			if (!(obj instanceof UnreadItem)) return false;
-			final UnreadItem other = (UnreadItem) obj;
-			if (account_id != other.account_id) return false;
-			if (id != other.id) return false;
-			return true;
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + (int) (account_id ^ account_id >>> 32);
-			result = prime * result + (int) (id ^ id >>> 32);
-			return result;
-		}
-
-		@Override
-		public String toString() {
-			return "UnreadItem{id=" + id + ", account_id=" + account_id + "}";
-		}
 	}
 
 }

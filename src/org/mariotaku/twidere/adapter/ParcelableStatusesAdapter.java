@@ -87,16 +87,16 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	}
 
 	@Override
-	public long findItemIdByPosition(final int position) {
-		if (position >= 0 && position < getCount()) return getItem(position).id;
+	public int findPositionByStatusId(final long status_id) {
+		for (int i = 0, count = getCount(); i < count; i++) {
+			if (getItem(i).id == status_id) return i;
+		}
 		return -1;
 	}
 
 	@Override
-	public int findItemPositionByStatusId(final long status_id) {
-		for (int i = 0, count = getCount(); i < count; i++) {
-			if (getItem(i).id == status_id) return i;
-		}
+	public long getAccountId(final int position) {
+		if (position >= 0 && position < getCount()) return getItem(position).account_id;
 		return -1;
 	}
 
@@ -121,6 +121,12 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	@Override
 	public ParcelableStatus getStatus(final int position) {
 		return getItem(position);
+	}
+
+	@Override
+	public long getStatusId(final int position) {
+		if (position >= 0 && position < getCount()) return getItem(position).id;
+		return -1;
 	}
 
 	@Override

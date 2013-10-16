@@ -263,7 +263,7 @@ public class DraftsActivity extends TwidereSwipeBackActivity implements LoaderCa
 
 		@Override
 		public void bindView(final View view, final Context context, final Cursor cursor) {
-			final long[] account_ids = ArrayUtils.fromString(cursor.getString(mAccountIdsIdx), ',');
+			final long[] account_ids = ArrayUtils.parseLongArray(cursor.getString(mAccountIdsIdx), ',');
 			final String content = cursor.getString(mTextIdx);
 			final String image_uri = cursor.getString(mImageUriIdx);
 			final TextView text = (TextView) view.findViewById(R.id.text);

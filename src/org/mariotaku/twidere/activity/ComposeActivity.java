@@ -551,7 +551,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 				handleDefaultIntent(intent);
 			}
 			if (mAccountIds == null || mAccountIds.length == 0) {
-				final long[] ids_in_prefs = ArrayUtils.fromString(
+				final long[] ids_in_prefs = ArrayUtils.parseLongArray(
 						mPreferences.getString(PREFERENCE_KEY_COMPOSE_ACCOUNTS, null), ',');
 				final long[] intersection = ArrayUtils.intersection(ids_in_prefs, account_ids);
 				mAccountIds = intersection.length > 0 ? intersection : account_ids;

@@ -94,11 +94,6 @@ public class AuthorizeActivity extends BaseActivity implements TwitterConstants 
 	protected void onCreate(final Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
-		final Bundle extras = getIntent().getExtras();
-		if (extras == null) {
-			finish();
-			return;
-		}
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		setContentView(mWebView = new WebView(this));
 		getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -121,7 +116,7 @@ public class AuthorizeActivity extends BaseActivity implements TwitterConstants 
 			finish();
 			return;
 		}
-		mTask = new GetRequestTokenTask(this, extras);
+		mTask = new GetRequestTokenTask(this);
 		mTask.execute();
 	}
 
@@ -189,11 +184,11 @@ public class AuthorizeActivity extends BaseActivity implements TwitterConstants 
 				final String oauth_verifier = uri.getQueryParameter(EXTRA_OAUTH_VERIFIER);
 				final RequestToken request_token = mActivity.mRequestToken;
 				if (oauth_verifier != null && request_token != null) {
-					final Bundle bundle = new Bundle();
-					bundle.putString(EXTRA_OAUTH_VERIFIER, oauth_verifier);
-					bundle.putString(EXTRA_REQUEST_TOKEN, request_token.getToken());
-					bundle.putString(EXTRA_REQUEST_TOKEN_SECRET, request_token.getTokenSecret());
-					mActivity.setResult(RESULT_OK, new Intent().putExtras(bundle));
+					final Intent intent = new Intent();
+					intent.putExtra(EXTRA_OAUTH_VERIFIER, oauth_verifier);
+					intent.putExtra(EXTRA_REQUEST_TOKEN, request_token.getToken());
+					intent.putExtra(EXTRA_REQUEST_TOKEN_SECRET, request_token.getTokenSecret());
+					mActivity.setResult(RESULT_OK, intent);
 					mActivity.finish();
 				}
 				return true;
@@ -210,12 +205,13 @@ public class AuthorizeActivity extends BaseActivity implements TwitterConstants 
 		private final SharedPreferences mPreferences;
 		private final AuthorizeActivity mActivity;
 
-		public GetRequestTokenTask(final AuthorizeActivity activity, final Bundle args) {
+		public GetRequestTokenTask(final AuthorizeActivity activity) {
 			mActivity = activity;
 			mApplication = TwidereApplication.getInstance(activity);
 			mPreferences = activity.getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-			mConsumerKey = args.getString(Accounts.CONSUMER_KEY);
-			mConsumerSecret = args.getString(Accounts.CONSUMER_SECRET);
+			final Intent intent = activity.getIntent();
+			mConsumerKey = intent.getStringExtra(Accounts.CONSUMER_KEY);
+			mConsumerSecret = intent.getStringExtra(Accounts.CONSUMER_SECRET);
 		}
 
 		@Override
@@ -293,11 +289,11 @@ public class AuthorizeActivity extends BaseActivity implements TwitterConstants 
 			final String oauth_verifier = mActivity.readOAuthPin(html);
 			final RequestToken request_token = mActivity.mRequestToken;
 			if (oauth_verifier != null && request_token != null) {
-				final Bundle bundle = new Bundle();
-				bundle.putString(EXTRA_OAUTH_VERIFIER, oauth_verifier);
-				bundle.putString(EXTRA_REQUEST_TOKEN, request_token.getToken());
-				bundle.putString(EXTRA_REQUEST_TOKEN_SECRET, request_token.getTokenSecret());
-				mActivity.setResult(RESULT_OK, new Intent().putExtras(bundle));
+				final Intent intent = new Intent();
+				intent.putExtra(EXTRA_OAUTH_VERIFIER, oauth_verifier);
+				intent.putExtra(EXTRA_REQUEST_TOKEN, request_token.getToken());
+				intent.putExtra(EXTRA_REQUEST_TOKEN_SECRET, request_token.getTokenSecret());
+				mActivity.setResult(RESULT_OK, intent);
 				mActivity.finish();
 			}
 		}

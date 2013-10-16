@@ -214,17 +214,20 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	}
 
 	@Override
-	public long findItemIdByPosition(final int position) {
-		if (position >= 0 && position < getCount()) return getItem(position).getLong(mIndices.status_id);
+	public int findPositionByStatusId(final long status_id) {
+		final Cursor c = getCursor();
+		if (c == null || c.isClosed()) return -1;
+		for (int i = 0, count = c.getCount(); i < count; i++) {
+			if (c.moveToPosition(i) && c.getLong(mIndices.status_id) == status_id) return i;
+		}
 		return -1;
 	}
 
 	@Override
-	public int findItemPositionByStatusId(final long status_id) {
-		for (int i = 0, count = getCount(); i < count; i++) {
-			if (getItem(i).getLong(mIndices.status_id) == status_id) return i;
-		}
-		return -1;
+	public long getAccountId(final int position) {
+		final Cursor c = getCursor();
+		if (c == null || c.isClosed() || !c.moveToPosition(position)) return -1;
+		return c.getLong(mIndices.account_id);
 	}
 
 	@Override
@@ -234,15 +237,9 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	}
 
 	@Override
-	public Cursor getItem(final int position) {
-		return (Cursor) super.getItem(position);
-	}
-
-	@Override
 	public ParcelableStatus getLastStatus() {
 		final Cursor c = getCursor();
-		if (c == null || c.isClosed() || c.getCount() == 0) return null;
-		c.moveToLast();
+		if (c == null || c.isClosed() || !c.moveToLast()) return null;
 		final long account_id = c.getLong(mIndices.account_id);
 		final long status_id = c.getLong(mIndices.status_id);
 		return findStatusInDatabases(mContext, account_id, status_id);
@@ -250,10 +247,18 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 
 	@Override
 	public ParcelableStatus getStatus(final int position) {
-		final Cursor cur = getItem(position);
-		final long account_id = cur.getLong(mIndices.account_id);
-		final long status_id = cur.getLong(mIndices.status_id);
+		final Cursor c = getCursor();
+		if (c == null || c.isClosed() || !c.moveToPosition(position)) return null;
+		final long account_id = c.getLong(mIndices.account_id);
+		final long status_id = c.getLong(mIndices.status_id);
 		return findStatusInDatabases(mContext, account_id, status_id);
+	}
+
+	@Override
+	public long getStatusId(final int position) {
+		final Cursor c = getCursor();
+		if (c == null || c.isClosed() || !c.moveToPosition(position)) return -1;
+		return c.getLong(mIndices.status_id);
 	}
 
 	@Override

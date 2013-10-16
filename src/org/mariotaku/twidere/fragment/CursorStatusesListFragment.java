@@ -133,10 +133,6 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 				break;
 			}
 			case SCROLL_STATE_IDLE:
-				final AsyncTwitterWrapper twitter = getTwitterWrapper();
-				if (twitter != null) {
-					twitter.clearUnreadCount(getTabPosition());
-				}
 				savePosition();
 				break;
 		}

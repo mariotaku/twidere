@@ -178,7 +178,6 @@ public class APIEditorActivity extends BaseSupportDialogActivity implements Twit
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.api_editor);
-		final Bundle extras = getIntent().getExtras();
 		if (savedInstanceState != null) {
 			mRestBaseURL = savedInstanceState.getString(Accounts.REST_BASE_URL);
 			mSigningRestBaseURL = savedInstanceState.getString(Accounts.SIGNING_REST_BASE_URL);
@@ -187,14 +186,15 @@ public class APIEditorActivity extends BaseSupportDialogActivity implements Twit
 			mConsumerKey = trim(savedInstanceState.getString(Accounts.CONSUMER_KEY));
 			mConsumerSecret = trim(savedInstanceState.getString(Accounts.CONSUMER_SECRET));
 			mAuthType = savedInstanceState.getInt(Accounts.AUTH_TYPE);
-		} else if (extras != null) {
-			mRestBaseURL = extras.getString(Accounts.REST_BASE_URL);
-			mSigningRestBaseURL = extras.getString(Accounts.SIGNING_REST_BASE_URL);
-			mOAuthBaseURL = extras.getString(Accounts.OAUTH_BASE_URL);
-			mSigningOAuthBaseURL = extras.getString(Accounts.SIGNING_OAUTH_BASE_URL);
-			mConsumerKey = trim(extras.getString(Accounts.CONSUMER_KEY));
-			mConsumerSecret = trim(extras.getString(Accounts.CONSUMER_SECRET));
-			mAuthType = extras.getInt(Accounts.AUTH_TYPE);
+		} else {
+			final Intent intent = getIntent();
+			mRestBaseURL = intent.getStringExtra(Accounts.REST_BASE_URL);
+			mSigningRestBaseURL = intent.getStringExtra(Accounts.SIGNING_REST_BASE_URL);
+			mOAuthBaseURL = intent.getStringExtra(Accounts.OAUTH_BASE_URL);
+			mSigningOAuthBaseURL = intent.getStringExtra(Accounts.SIGNING_OAUTH_BASE_URL);
+			mConsumerKey = trim(intent.getStringExtra(Accounts.CONSUMER_KEY));
+			mConsumerSecret = trim(intent.getStringExtra(Accounts.CONSUMER_SECRET));
+			mAuthType = intent.getIntExtra(Accounts.AUTH_TYPE, Accounts.AUTH_TYPE_OAUTH);
 		}
 
 		mEditAuthType.setOnCheckedChangeListener(this);

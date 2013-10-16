@@ -146,8 +146,8 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 		final int position = tag instanceof Integer ? (Integer) tag : -1;
 		if (position == -1) return;
 		switch (view.getId()) {
-			case R.id.profile_image:
-			case R.id.my_profile_image: {
+			case R.id.incoming_profile_image:
+			case R.id.outgoing_profile_image: {
 				final ParcelableDirectMessage message = getDirectMessage(position);
 				if (message == null) return;
 				if (mContext instanceof Activity) {

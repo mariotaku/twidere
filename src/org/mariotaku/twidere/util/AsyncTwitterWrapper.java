@@ -66,8 +66,8 @@ import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Notifications;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.provider.TweetStore.UnreadCounts;
 import org.mariotaku.twidere.service.UpdateStatusService;
+import org.mariotaku.twidere.task.CacheUsersStatusesTask;
 
 import twitter4j.DirectMessage;
 import twitter4j.Paging;
@@ -81,6 +81,8 @@ import twitter4j.UserList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class AsyncTwitterWrapper extends TwitterWrapper {
 
@@ -108,13 +110,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		mLargeProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
-	public int addUserListMembersAsync(final long account_id, final int list_id, final long... user_ids) {
-		final AddUserListMembersTask task = new AddUserListMembersTask(account_id, list_id, user_ids, null);
-		return mAsyncTaskManager.add(task, true);
-	}
-
-	public int addUserListMembersAsync(final long account_id, final int list_id, final String... screen_names) {
-		final AddUserListMembersTask task = new AddUserListMembersTask(account_id, list_id, null, screen_names);
+	public int addUserListMembersAsync(final long account_id, final int list_id, final ParcelableUser... users) {
+		final AddUserListMembersTask task = new AddUserListMembersTask(account_id, list_id, users);
 		return mAsyncTaskManager.add(task, true);
 	}
 
@@ -123,9 +120,9 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		return mResolver.delete(uri, null, null);
 	}
 
-	public int clearUnreadCount(final int position) {
-		final Uri uri = UnreadCounts.CONTENT_URI.buildUpon().appendPath(String.valueOf(position)).build();
-		return mResolver.delete(uri, null, null);
+	public void clearUnreadCountAsync(final int position) {
+		final ClearUnreadCountTask task = new ClearUnreadCountTask(position);
+		task.execute();
 	}
 
 	public int createBlockAsync(final long account_id, final long user_id) {
@@ -315,6 +312,11 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		return getHomeTimelineAsync(account_ids, null, since_ids);
 	}
 
+	public void removeUnreadCountsAsync(final int position, final Map<Long, Set<Long>> counts) {
+		final RemoveUnreadCountsTask task = new RemoveUnreadCountsTask(position, counts);
+		task.execute();
+	}
+
 	public int reportMultiSpam(final long account_id, final long[] user_ids) {
 		final ReportMultiSpamTask task = new ReportMultiSpamTask(account_id, user_ids);
 		return mAsyncTaskManager.add(task, true);
@@ -499,31 +501,26 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 		private final long account_id;
 		private final int list_id;
-		private final long[] user_ids;
-		private final String[] screen_names;
+		private final ParcelableUser[] users;
 
-		public AddUserListMembersTask(final long account_id, final int list_id, final long[] user_ids,
-				final String[] screen_names) {
+		public AddUserListMembersTask(final long account_id, final int list_id, final ParcelableUser[] users) {
 			super(mContext, mAsyncTaskManager);
 			this.account_id = account_id;
 			this.list_id = list_id;
-			this.user_ids = user_ids;
-			this.screen_names = screen_names;
+			this.users = users;
 		}
 
 		@Override
 		protected SingleResponse<ParcelableUserList> doInBackground(final Void... params) {
 			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
-			if (twitter != null) {
+			if (twitter != null && users != null) {
 				try {
-					final ParcelableUserList list;
-					if (user_ids != null) {
-						list = new ParcelableUserList(twitter.addUserListMembers(list_id, user_ids), account_id, false);
-					} else if (screen_names != null) {
-						list = new ParcelableUserList(twitter.addUserListMembers(list_id, screen_names), account_id,
-								false);
-					} else
-						return SingleResponse.nullInstance();
+					final long[] user_ids = new long[users.length];
+					for (int i = 0, j = users.length; i < j; i++) {
+						user_ids[i] = users[i].id;
+					}
+					final ParcelableUserList list = new ParcelableUserList(
+							twitter.addUserListMembers(list_id, user_ids), account_id, false);
 					return SingleResponse.newInstance(list, null);
 				} catch (final TwitterException e) {
 					return SingleResponse.newInstance(null, e);
@@ -543,11 +540,24 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			}
 			final Intent intent = new Intent(BROADCAST_USER_LIST_MEMBERS_ADDED);
 			intent.putExtra(EXTRA_USER_LIST, result.data);
-			intent.putExtra(EXTRA_USER_IDS, user_ids);
-			intent.putExtra(EXTRA_SCREEN_NAMES, screen_names);
+			intent.putExtra(EXTRA_USERS, users);
 			intent.putExtra(EXTRA_SUCCEED, succeed);
 			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
+		}
+
+	}
+
+	final class ClearUnreadCountTask extends AsyncTask<Void, Void, Integer> {
+		private final int position;
+
+		ClearUnreadCountTask(final int position) {
+			this.position = position;
+		}
+
+		@Override
+		protected Integer doInBackground(final Void... params) {
+			return clearUnreadCount(mContext, position);
 		}
 
 	}
@@ -1585,6 +1595,22 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				}
 			}
 			return new ListResponse<Trends>(null, null, extras);
+		}
+
+	}
+
+	final class RemoveUnreadCountsTask extends AsyncTask<Void, Void, Integer> {
+		private final int position;
+		private final Map<Long, Set<Long>> counts;
+
+		RemoveUnreadCountsTask(final int position, final Map<Long, Set<Long>> counts) {
+			this.position = position;
+			this.counts = counts;
+		}
+
+		@Override
+		protected Integer doInBackground(final Void... params) {
+			return removeUnreadCounts(mContext, position, counts);
 		}
 
 	}

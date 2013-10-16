@@ -70,25 +70,6 @@ public final class ArrayUtils {
 		return array;
 	}
 
-	public static long[] fromString(final String string, final char token) {
-		if (string == null) return new long[0];
-		final String[] items_string_array = string.split(String.valueOf(token));
-		final ArrayList<Long> items_list = new ArrayList<Long>();
-		for (final String id_string : items_string_array) {
-			try {
-				items_list.add(Long.parseLong(id_string));
-			} catch (final NumberFormatException e) {
-				// Ignore.
-			}
-		}
-		final int list_size = items_list.size();
-		final long[] array = new long[list_size];
-		for (int i = 0; i < list_size; i++) {
-			array[i] = items_list.get(i);
-		}
-		return array;
-	}
-
 	public static int indexOf(final long[] array, final long value) {
 		final int length = array.length;
 		for (int i = 0; i < length; i++) {
@@ -151,6 +132,25 @@ public final class ArrayUtils {
 			}
 		}
 		return min;
+	}
+
+	public static long[] parseLongArray(final String string, final char token) {
+		if (string == null) return new long[0];
+		final String[] items_string_array = string.split(String.valueOf(token));
+		final ArrayList<Long> items_list = new ArrayList<Long>();
+		for (final String id_string : items_string_array) {
+			try {
+				items_list.add(Long.parseLong(id_string));
+			} catch (final NumberFormatException e) {
+				// Ignore.
+			}
+		}
+		final int list_size = items_list.size();
+		final long[] array = new long[list_size];
+		for (int i = 0; i < list_size; i++) {
+			array[i] = items_list.get(i);
+		}
+		return array;
 	}
 
 	public static long[] subArray(final long[] array, final int start, final int end) {

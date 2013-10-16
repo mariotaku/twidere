@@ -52,7 +52,7 @@ public class DraftItem implements Parcelable {
 		_id = cursor.getLong(cursor.getColumnIndex(Drafts._ID));
 		text = cursor.getString(cursor.getColumnIndex(Drafts.TEXT));
 		media_uri = cursor.getString(cursor.getColumnIndex(Drafts.IMAGE_URI));
-		account_ids = ArrayUtils.fromString(cursor.getString(cursor.getColumnIndex(Drafts.ACCOUNT_IDS)), ',');
+		account_ids = ArrayUtils.parseLongArray(cursor.getString(cursor.getColumnIndex(Drafts.ACCOUNT_IDS)), ',');
 		in_reply_to_status_id = cursor.getLong(cursor.getColumnIndex(Drafts.IN_REPLY_TO_STATUS_ID));
 		media_type = cursor.getShort(cursor.getColumnIndex(Drafts.ATTACHED_IMAGE_TYPE));
 		is_possibly_sensitive = cursor.getShort(cursor.getColumnIndex(Drafts.IS_POSSIBLY_SENSITIVE)) == 1;

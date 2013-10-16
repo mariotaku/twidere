@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.util;
+package org.mariotaku.twidere.task;
 
 import static org.mariotaku.twidere.util.ContentResolverUtils.bulkDelete;
 import static org.mariotaku.twidere.util.ContentResolverUtils.bulkInsert;
@@ -35,6 +35,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
 import org.mariotaku.twidere.provider.TweetStore.CachedStatuses;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
+import org.mariotaku.twidere.util.AsyncTask;
 import org.mariotaku.twidere.util.TwitterWrapper.TwitterListResponse;
 
 import twitter4j.User;

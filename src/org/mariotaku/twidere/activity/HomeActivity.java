@@ -77,6 +77,7 @@ import org.mariotaku.twidere.fragment.iface.SupportFragmentCallback;
 import org.mariotaku.twidere.model.SupportTabSpec;
 import org.mariotaku.twidere.provider.RecentSearchProvider;
 import org.mariotaku.twidere.util.ArrayUtils;
+import org.mariotaku.twidere.util.AsyncTask;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MathUtils;
 import org.mariotaku.twidere.util.MultiSelectEventHandler;
@@ -109,6 +110,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private boolean mBottomActionsButton;
 
 	private Fragment mCurrentVisibleFragment;
+
+	private UpdateUnreadCountTask mUpdateUnreadCountTask;
 
 	private final ArrayList<SupportTabSpec> mCustomTabs = new ArrayList<SupportTabSpec>();
 	private final SparseArray<Fragment> mAttachedFragments = new SparseArray<Fragment>();
@@ -333,18 +336,10 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	public void updateUnreadCount() {
-		if (mIndicator == null) return;
-		for (int i = 0, j = mIndicator.getTabCount(); i < j; i++) {
-			final BadgeView badge = (BadgeView) mIndicator.getTabItem(i).findViewById(R.id.unread_count);
-			final int count = UnreadCountUtils.getUnreadCount(this, i);
-			if (count > 0) {
-				badge.setCount(count);
-				badge.show();
-			} else {
-				badge.setCount(0);
-				badge.hide();
-			}
-		}
+		if (mIndicator == null || mUpdateUnreadCountTask != null
+				&& mUpdateUnreadCountTask.getStatus() == AsyncTask.Status.RUNNING) return;
+		mUpdateUnreadCountTask = new UpdateUnreadCountTask(mIndicator);
+		mUpdateUnreadCountTask.execute();
 	}
 
 	@Override
@@ -426,7 +421,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		}
 		showDataProfilingRequest();
 		initUnreadCount();
-		updateUnreadCount();
 	}
 
 	@Override
@@ -469,6 +463,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		}
 		// UCD
 		ProfilingUtil.profile(this, ProfilingUtil.FILE_NAME_APP, "App onStart");
+		updateUnreadCount();
 	}
 
 	@Override
@@ -566,6 +561,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			final BadgeView badge = new BadgeView(this, mIndicator.getTabItem(i).findViewById(R.id.tab_item_content));
 			badge.setId(R.id.unread_count);
 			badge.setBadgePosition(BadgeView.POSITION_TOP_RIGHT);
+			badge.setTextSize(badge.getTextSize() * 0.5f);
 			badge.hide();
 		}
 	}
@@ -650,5 +646,43 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		actions_icon.setContentDescription(getString(title));
 		actions_icon.setVisibility(has_task ? View.GONE : View.VISIBLE);
 		progress.setVisibility(has_task ? View.VISIBLE : View.GONE);
+	}
+
+	private static class UpdateUnreadCountTask extends AsyncTask<Void, Void, int[]> {
+		private final Context mContext;
+		private final TabPageIndicator mIndicator;
+
+		UpdateUnreadCountTask(final TabPageIndicator indicator) {
+			mIndicator = indicator;
+			mContext = indicator.getContext();
+		}
+
+		@Override
+		protected int[] doInBackground(final Void... params) {
+			final int tab_count = mIndicator.getTabCount();
+			final int[] result = new int[tab_count];
+			for (int i = 0, j = tab_count; i < j; i++) {
+				result[i] = UnreadCountUtils.getUnreadCount(mContext, i);
+			}
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(final int[] result) {
+			final int tab_count = mIndicator.getTabCount();
+			if (result == null || result.length != tab_count) return;
+			for (int i = 0, j = tab_count; i < j; i++) {
+				final BadgeView badge = (BadgeView) mIndicator.getTabItem(i).findViewById(R.id.unread_count);
+				final int count = result[i];
+				if (count > 0) {
+					badge.setCount(count);
+					badge.show();
+				} else {
+					badge.setCount(0);
+					badge.hide();
+				}
+			}
+		}
+
 	}
 }

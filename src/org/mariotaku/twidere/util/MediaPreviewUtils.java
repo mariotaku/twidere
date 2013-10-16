@@ -269,7 +269,7 @@ public class MediaPreviewUtils {
 		final MediaEntity[] medias = status.getMediaEntities();
 		if (medias != null) {
 			for (final MediaEntity entity : medias) {
-				final String expanded = ParseUtils.parseString(entity.getExpandedURL());
+				final String expanded = ParseUtils.parseString(entity.getMediaURLHttps());
 				if (getSupportedLink(expanded) != null) return expanded;
 			}
 		}

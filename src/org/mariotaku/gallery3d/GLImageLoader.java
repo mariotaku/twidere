@@ -19,8 +19,6 @@
 
 package org.mariotaku.gallery3d;
 
-import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
-
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
@@ -52,23 +50,17 @@ import java.io.OutputStream;
 
 public class GLImageLoader extends AsyncTaskLoader<GLImageLoader.Result> implements Constants {
 
-	private static final String CACHE_DIR_NAME = DIR_NAME_IMAGE_CACHE;
-
 	private final Uri mUri;
-	private final Context mContext;
 	private final Handler mHandler;
 	private final DownloadListener mListener;
 	private final ImageDownloader mDownloader;
 	private final DiscCacheAware mDiscCache;
 
-	private final float mBackupSize;
-
-	protected File mCacheDir, mImageFile;
+	private final float mFallbackSize;
 
 	public GLImageLoader(final Context context, final DownloadListener listener, final Uri uri) {
 		super(context);
 		mHandler = new Handler();
-		mContext = context;
 		mUri = uri;
 		mListener = listener;
 		final TwidereApplication app = TwidereApplication.getInstance(context);
@@ -76,8 +68,7 @@ public class GLImageLoader extends AsyncTaskLoader<GLImageLoader.Result> impleme
 		mDiscCache = app.getDiscCache();
 		final Resources res = context.getResources();
 		final DisplayMetrics dm = res.getDisplayMetrics();
-		mBackupSize = Math.max(dm.heightPixels, dm.widthPixels);
-		init();
+		mFallbackSize = Math.max(dm.heightPixels, dm.widthPixels);
 	}
 
 	@Override
@@ -89,9 +80,6 @@ public class GLImageLoader extends AsyncTaskLoader<GLImageLoader.Result> impleme
 		if ("http".equals(scheme) || "https".equals(scheme)) {
 			final String url = ParseUtils.parseString(mUri.toString());
 			if (url == null) return Result.nullInstance();
-			if (mCacheDir == null || !mCacheDir.exists()) {
-				init();
-			}
 			final File cache_file = mDiscCache.get(url);
 			try {
 				// from SD cache
@@ -121,14 +109,14 @@ public class GLImageLoader extends AsyncTaskLoader<GLImageLoader.Result> impleme
 				return decodeImageInternal(cache_file);
 			} catch (final Exception e) {
 				mHandler.post(new DownloadErrorRunnable(this, mListener, e));
-				return Result.getInstance(mImageFile, e);
+				return Result.getInstance(cache_file, e);
 			}
 		} else if (ContentResolver.SCHEME_FILE.equals(scheme)) {
-			mImageFile = new File(mUri.getPath());
+			final File file = new File(mUri.getPath());
 			try {
-				return decodeImage(mImageFile);
+				return decodeImage(file);
 			} catch (final Exception e) {
-				return Result.getInstance(mImageFile, e);
+				return Result.getInstance(file, e);
 			}
 		}
 		return Result.nullInstance();
@@ -141,11 +129,11 @@ public class GLImageLoader extends AsyncTaskLoader<GLImageLoader.Result> impleme
 		o.inPreferredConfig = Bitmap.Config.RGB_565;
 		BitmapFactory.decodeFile(path, o);
 		final int width = o.outWidth, height = o.outHeight;
-		if (width <= 0 || height <= 0) return Result.getInstance(mImageFile, null);
+		if (width <= 0 || height <= 0) return Result.getInstance(file, null);
 		o.inJustDecodeBounds = false;
-		o.inSampleSize = BitmapUtils.computeSampleSize(mBackupSize / Math.max(width, height));
+		o.inSampleSize = BitmapUtils.computeSampleSize(mFallbackSize / Math.max(width, height));
 		final Bitmap bitmap = BitmapFactory.decodeFile(path, o);
-		return Result.getInstance(bitmap, Exif.getOrientation(file), mImageFile);
+		return Result.getInstance(bitmap, Exif.getOrientation(file), file);
 	}
 
 	protected Result decodeImage(final File file) {
@@ -155,10 +143,10 @@ public class GLImageLoader extends AsyncTaskLoader<GLImageLoader.Result> impleme
 			final int width = decoder.getWidth();
 			final int height = decoder.getHeight();
 			final BitmapFactory.Options options = new BitmapFactory.Options();
-			options.inSampleSize = BitmapUtils.computeSampleSize(mBackupSize / Math.max(width, height));
+			options.inSampleSize = BitmapUtils.computeSampleSize(mFallbackSize / Math.max(width, height));
 			options.inPreferredConfig = Bitmap.Config.RGB_565;
 			final Bitmap bitmap = decoder.decodeRegion(new Rect(0, 0, width, height), options);
-			return Result.getInstance(decoder, bitmap, Exif.getOrientation(file), mImageFile);
+			return Result.getInstance(decoder, bitmap, Exif.getOrientation(file), file);
 		} catch (final IOException e) {
 			return decodeBitmapOnly(file);
 		}
@@ -183,14 +171,6 @@ public class GLImageLoader extends AsyncTaskLoader<GLImageLoader.Result> impleme
 			mHandler.post(new ProgressUpdateRunnable(mListener, downloaded));
 			os.write(buffer, 0, rc);
 			rc = is.read(buffer, 0, buffer.length);
-		}
-	}
-
-	private void init() {
-		/* Find the dir to save cached images. */
-		mCacheDir = getBestCacheDir(mContext, CACHE_DIR_NAME);
-		if (mCacheDir != null && !mCacheDir.exists()) {
-			mCacheDir.mkdirs();
 		}
 	}
 

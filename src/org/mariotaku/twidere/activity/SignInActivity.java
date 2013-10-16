@@ -88,6 +88,7 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 		CroutonLifecycleCallback {
 
 	private static final String TWITTER_SIGNUP_URL = "https://twitter.com/signup";
+	private static final String EXTRA_API_LAST_CHANGE = "api_last_change";
 
 	private String mRestBaseURL, mSigningRestBaseURL;
 	private String mOAuthBaseURL, mSigningOAuthBaseURL;
@@ -97,6 +98,7 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 	private Integer mUserColor;
 	private long mLoggedId;
 	private boolean mBackPressed;
+	private long mAPIChangeTimestamp;
 
 	private EditText mEditUsername, mEditPassword;
 	private Button mSignInButton, mSignUpButton;
@@ -125,13 +127,13 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 				if (resultCode == RESULT_OK) {
 					final Bundle extras = data != null ? data.getExtras() : null;
 					if (extras != null) {
-						mRestBaseURL = extras.getString(Accounts.REST_BASE_URL);
-						mSigningRestBaseURL = extras.getString(Accounts.SIGNING_REST_BASE_URL);
-						mOAuthBaseURL = extras.getString(Accounts.OAUTH_BASE_URL);
-						mSigningOAuthBaseURL = extras.getString(Accounts.SIGNING_OAUTH_BASE_URL);
-						mAuthType = extras.getInt(Accounts.AUTH_TYPE);
-						mConsumerKey = extras.getString(Accounts.CONSUMER_KEY);
-						mConsumerSecret = extras.getString(Accounts.CONSUMER_SECRET);
+						mRestBaseURL = data.getStringExtra(Accounts.REST_BASE_URL);
+						mSigningRestBaseURL = data.getStringExtra(Accounts.SIGNING_REST_BASE_URL);
+						mOAuthBaseURL = data.getStringExtra(Accounts.OAUTH_BASE_URL);
+						mSigningOAuthBaseURL = data.getStringExtra(Accounts.SIGNING_OAUTH_BASE_URL);
+						mAuthType = data.getIntExtra(Accounts.AUTH_TYPE, Accounts.AUTH_TYPE_OAUTH);
+						mConsumerKey = data.getStringExtra(Accounts.CONSUMER_KEY);
+						mConsumerSecret = data.getStringExtra(Accounts.CONSUMER_SECRET);
 						final boolean is_twip_o_mode = mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE;
 						mUsernamePasswordContainer.setVisibility(is_twip_o_mode ? View.GONE : View.VISIBLE);
 						mSigninSignupContainer.setOrientation(is_twip_o_mode ? LinearLayout.VERTICAL
@@ -151,7 +153,7 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 			}
 			case REQUEST_BROWSER_SIGN_IN: {
 				if (resultCode == BaseSupportActivity.RESULT_OK) if (data != null && data.getExtras() != null) {
-					doLogin(true, data.getExtras());
+					doLogin(data);
 				}
 				break;
 			}
@@ -183,7 +185,7 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 				break;
 			}
 			case R.id.sign_in: {
-				doLogin(false, null);
+				doLogin();
 				break;
 			}
 			case R.id.set_color: {
@@ -251,15 +253,13 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 				if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) return false;
 				setDefaultAPI();
 				final Intent intent = new Intent(this, APIEditorActivity.class);
-				final Bundle bundle = new Bundle();
-				bundle.putString(Accounts.REST_BASE_URL, mRestBaseURL);
-				bundle.putString(Accounts.SIGNING_REST_BASE_URL, mSigningRestBaseURL);
-				bundle.putString(Accounts.OAUTH_BASE_URL, mOAuthBaseURL);
-				bundle.putString(Accounts.SIGNING_OAUTH_BASE_URL, mSigningOAuthBaseURL);
-				bundle.putString(Accounts.CONSUMER_KEY, mConsumerKey);
-				bundle.putString(Accounts.CONSUMER_SECRET, mConsumerSecret);
-				bundle.putInt(Accounts.AUTH_TYPE, mAuthType);
-				intent.putExtras(bundle);
+				intent.putExtra(Accounts.REST_BASE_URL, mRestBaseURL);
+				intent.putExtra(Accounts.SIGNING_REST_BASE_URL, mSigningRestBaseURL);
+				intent.putExtra(Accounts.OAUTH_BASE_URL, mOAuthBaseURL);
+				intent.putExtra(Accounts.SIGNING_OAUTH_BASE_URL, mSigningOAuthBaseURL);
+				intent.putExtra(Accounts.CONSUMER_KEY, mConsumerKey);
+				intent.putExtra(Accounts.CONSUMER_SECRET, mConsumerSecret);
+				intent.putExtra(Accounts.AUTH_TYPE, mAuthType);
 				startActivityForResult(intent, REQUEST_EDIT_API);
 				break;
 			}
@@ -268,10 +268,8 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 						&& mTask.getStatus() == AsyncTask.Status.RUNNING) return false;
 				saveEditedText();
 				final Intent intent = new Intent(this, AuthorizeActivity.class);
-				final Bundle bundle = new Bundle();
-				bundle.putString(Accounts.CONSUMER_KEY, mConsumerKey);
-				bundle.putString(Accounts.CONSUMER_SECRET, mConsumerSecret);
-				intent.putExtras(bundle);
+				intent.putExtra(Accounts.CONSUMER_KEY, mConsumerKey);
+				intent.putExtra(Accounts.CONSUMER_SECRET, mConsumerSecret);
 				startActivityForResult(intent, REQUEST_BROWSER_SIGN_IN);
 				break;
 			}
@@ -308,6 +306,7 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 		outState.putString(Accounts.SCREEN_NAME, mUsername);
 		outState.putString(Accounts.PASSWORD, mPassword);
 		outState.putInt(Accounts.AUTH_TYPE, mAuthType);
+		outState.putLong(EXTRA_API_LAST_CHANGE, mAPIChangeTimestamp);
 		if (mUserColor != null) {
 			outState.putInt(Accounts.USER_COLOR, mUserColor);
 		}
@@ -344,6 +343,7 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 			if (savedInstanceState.containsKey(Accounts.USER_COLOR)) {
 				mUserColor = savedInstanceState.getInt(Accounts.USER_COLOR, Color.TRANSPARENT);
 			}
+			mAPIChangeTimestamp = savedInstanceState.getLong(EXTRA_API_LAST_CHANGE);
 		}
 
 		mUsernamePasswordContainer
@@ -359,26 +359,29 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 		setUserColorButton();
 	}
 
-	private void doLogin(final boolean is_browser_sign_in, final Bundle extras) {
-		final Bundle args = new Bundle();
-		if (extras != null) {
-			args.putAll(extras);
-		}
+	private void doLogin() {
 		if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) {
 			mTask.cancel(true);
 		}
 		saveEditedText();
 		setDefaultAPI();
 		final Configuration conf = getConfiguration();
-		if (is_browser_sign_in) {
-			if (extras == null) return;
-			final String token = args.getString(EXTRA_REQUEST_TOKEN);
-			final String secret = args.getString(EXTRA_REQUEST_TOKEN_SECRET);
-			final String verifier = args.getString(EXTRA_OAUTH_VERIFIER);
-			mTask = new BrowserSignInTask(this, conf, token, secret, verifier, mUserColor);
-		} else {
-			mTask = new SignInTask(this, conf, mUsername, mPassword, mAuthType, mUserColor);
+		mTask = new SignInTask(this, conf, mUsername, mPassword, mAuthType, mUserColor);
+		mTask.execute();
+	}
+
+	private void doLogin(final Intent intent) {
+		if (intent == null) return;
+		if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) {
+			mTask.cancel(true);
 		}
+		saveEditedText();
+		setDefaultAPI();
+		final Configuration conf = getConfiguration();
+		final String token = intent.getStringExtra(EXTRA_REQUEST_TOKEN);
+		final String secret = intent.getStringExtra(EXTRA_REQUEST_TOKEN_SECRET);
+		final String verifier = intent.getStringExtra(EXTRA_OAUTH_VERIFIER);
+		mTask = new BrowserSignInTask(this, conf, token, secret, verifier, mUserColor);
 		mTask.execute();
 	}
 
@@ -428,8 +431,8 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 	}
 
 	private void setDefaultAPI() {
-		final long current = System.currentTimeMillis();
-		final boolean default_api_changed = mPreferences.getLong(PREFERENCE_KEY_API_LAST_CHANGE, current) != current;
+		final long api_last_change = mPreferences.getLong(PREFERENCE_KEY_API_LAST_CHANGE, mAPIChangeTimestamp);
+		final boolean default_api_changed = api_last_change != mAPIChangeTimestamp;
 		final String consumer_key = getNonEmptyString(mPreferences, PREFERENCE_KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY_2);
 		final String consumer_secret = getNonEmptyString(mPreferences, PREFERENCE_KEY_CONSUMER_SECRET,
 				TWITTER_CONSUMER_SECRET_2);
@@ -463,6 +466,9 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 		if (mAuthType == 0 || default_api_changed) {
 			mAuthType = auth_type;
 		}
+		if (default_api_changed) {
+			mAPIChangeTimestamp = api_last_change;
+		}
 	}
 
 	private void setSignInButton() {
@@ -486,6 +492,7 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 				if (values != null) {
 					mResolver.insert(Accounts.CONTENT_URI, values);
 				}
+				mLoggedId = result.user.getId();
 				final Intent intent = new Intent(this, HomeActivity.class);
 				final Bundle bundle = new Bundle();
 				bundle.putLongArray(EXTRA_IDS, new long[] { mLoggedId });

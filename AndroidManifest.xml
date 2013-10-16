@@ -480,7 +480,7 @@
 			android:grantUriPermissions="true"
 			android:label="@string/label_tweetstore_provider"/>
 		<provider
-			android:name=".provider.CommandProvider"
+			android:name=".provider.TwidereCommandProvider"
 			android:authorities="twidere.command"
 			android:exported="true"/>
 		<provider

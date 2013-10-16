@@ -87,11 +87,10 @@ public class JSONSerializer {
 		if (file == null) throw new FileNotFoundException();
 		final BufferedReader reader = new BufferedReader(new FileReader(file));
 		final StringBuffer buf = new StringBuffer();
-		String line = reader.readLine();
-		while (line != null) {
+		String line = null;
+		while ((line = reader.readLine()) != null) {
 			buf.append(line);
 			buf.append('\n');
-			line = reader.readLine();
 		}
 		reader.close();
 		try {

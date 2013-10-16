@@ -23,13 +23,15 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 
 public interface IStatusesAdapter<Data> extends IBaseCardAdapter {
 
-	public long findItemIdByPosition(final int position);
+	public int findPositionByStatusId(final long status_id);
 
-	public int findItemPositionByStatusId(final long status_id);
+	public long getAccountId(final int position);
 
 	public ParcelableStatus getLastStatus();
 
 	public ParcelableStatus getStatus(int position);
+
+	public long getStatusId(final int position);
 
 	public boolean isLastItemFiltered();
 

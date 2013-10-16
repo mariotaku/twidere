@@ -31,7 +31,7 @@ import org.mariotaku.jsonserializer.JSONSerializer;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.util.CacheUsersStatusesTask;
+import org.mariotaku.twidere.task.CacheUsersStatusesTask;
 import org.mariotaku.twidere.util.TwitterWrapper.StatusListResponse;
 
 import twitter4j.Paging;
