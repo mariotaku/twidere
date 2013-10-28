@@ -50,15 +50,16 @@ public class TwitterWrapper implements Constants {
 		final Uri uri = UnreadCounts.CONTENT_URI.buildUpon().appendPath(String.valueOf(position)).build();
 		return context.getContentResolver().delete(uri, null, null);
 	}
-	
-	public int removeUnreadCounts(final Context context, final int position, final long account_id, final long... status_ids) {
+
+	public int removeUnreadCounts(final Context context, final int position, final long account_id,
+			final long... status_ids) {
 		if (context == null || position < 0 || status_ids == null || status_ids.length == 0) return 0;
 		int result = 0;
-			final Uri.Builder builder = UnreadCounts.CONTENT_URI.buildUpon();
-			builder.appendPath(String.valueOf(position));
-			builder.appendPath(String.valueOf(account_id));
-			builder.appendPath(ArrayUtils.toString(status_ids, ',', false));
-			result += context.getContentResolver().delete(builder.build(), null, null);
+		final Uri.Builder builder = UnreadCounts.CONTENT_URI.buildUpon();
+		builder.appendPath(String.valueOf(position));
+		builder.appendPath(String.valueOf(account_id));
+		builder.appendPath(ArrayUtils.toString(status_ids, ',', false));
+		result += context.getContentResolver().delete(builder.build(), null, null);
 		return result;
 	}
 

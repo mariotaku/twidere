@@ -3,7 +3,7 @@ package org.mariotaku.twidere.fragment.iface;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 
 public interface PullToRefreshAttacherActivity {
-	
+
 	public void addRefreshingState(IBasePullToRefreshFragment fragment);
 
 	public PullToRefreshAttacher getPullToRefreshAttacher();

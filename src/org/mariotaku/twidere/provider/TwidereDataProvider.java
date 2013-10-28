@@ -1025,7 +1025,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			}
 			if (mPreferences.getBoolean(PREFERENCE_KEY_PRELOAD_PREVIEW_IMAGES, false)) {
 				final String text_html = v.getAsString(Statuses.TEXT_HTML);
-				for (final PreviewMedia spec : Utils.getImagesInStatus(text_html)) {
+				for (final PreviewMedia spec : Utils.getImagesInStatus(text_html, false)) {
 					mImagePreloader.preloadImage(spec.url);
 				}
 			}

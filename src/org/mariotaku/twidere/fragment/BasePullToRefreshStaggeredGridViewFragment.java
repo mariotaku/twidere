@@ -36,7 +36,6 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -60,6 +59,7 @@ public abstract class BasePullToRefreshStaggeredGridViewFragment extends BaseSup
 	private boolean mPulledUp;
 	private PullToRefreshLayout mPullToRefreshLayout;
 
+	@Override
 	public String getPullToRefreshTag() {
 		return getTag();
 	}

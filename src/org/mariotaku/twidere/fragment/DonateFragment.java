@@ -56,6 +56,15 @@ public class DonateFragment extends BaseFragment implements OnClickListener, Tex
 	}
 
 	@Override
+	public void onActivityCreated(final Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		mEditName.setText(getDefaultAccountScreenName(getActivity()));
+		mEditAmount.addTextChangedListener(this);
+		mDonateButton.setOnClickListener(this);
+		mDonateButton.setEnabled(false);
+	}
+
+	@Override
 	public void onClick(final View view) {
 		switch (view.getId()) {
 			case R.id.donate: {
@@ -80,6 +89,15 @@ public class DonateFragment extends BaseFragment implements OnClickListener, Tex
 	}
 
 	@Override
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+		final View view = inflater.inflate(R.layout.donate, container, false);
+		mEditName = (EditText) view.findViewById(R.id.name);
+		mEditAmount = (EditText) view.findViewById(R.id.amount);
+		mDonateButton = (Button) view.findViewById(R.id.donate);
+		return view;
+	}
+
+	@Override
 	public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
 		if (isEmpty(s)) {
 			mDonateButton.setEnabled(false);
@@ -92,23 +110,5 @@ public class DonateFragment extends BaseFragment implements OnClickListener, Tex
 		} catch (final ParseException e) {
 			mDonateButton.setEnabled(false);
 		}
-	}
-
-	@Override
-	public void onActivityCreated(final Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		mEditName.setText(getDefaultAccountScreenName(getActivity()));
-		mEditAmount.addTextChangedListener(this);
-		mDonateButton.setOnClickListener(this);
-		mDonateButton.setEnabled(false);
-	}
-
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.donate, container, false);
-		mEditName = (EditText) view.findViewById(R.id.name);
-		mEditAmount = (EditText) view.findViewById(R.id.amount);
-		mDonateButton = (Button) view.findViewById(R.id.donate);
-		return view;
 	}
 }

@@ -47,6 +47,7 @@ import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.StatusCursorIndices;
+import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.ImageLoadingHandler;
 import org.mariotaku.twidere.util.MultiSelectManager;
@@ -57,6 +58,15 @@ import org.mariotaku.twidere.view.holder.StatusViewHolder;
 import java.util.Locale;
 
 public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatusesAdapter<Cursor>, OnClickListener {
+
+	public static final String[] CURSOR_COLS = new String[] { Statuses._ID, Statuses.ACCOUNT_ID, Statuses.STATUS_ID,
+			Statuses.USER_ID, Statuses.STATUS_TIMESTAMP, Statuses.TEXT_HTML, Statuses.TEXT_PLAIN, Statuses.USER_NAME,
+			Statuses.USER_SCREEN_NAME, Statuses.USER_PROFILE_IMAGE_URL, Statuses.IN_REPLY_TO_STATUS_ID,
+			Statuses.IN_REPLY_TO_USER_ID, Statuses.IN_REPLY_TO_USER_NAME, Statuses.IN_REPLY_TO_USER_SCREEN_NAME,
+			Statuses.LOCATION, Statuses.IS_RETWEET, Statuses.RETWEET_COUNT, Statuses.RETWEET_ID,
+			Statuses.RETWEETED_BY_USER_ID, Statuses.RETWEETED_BY_USER_NAME, Statuses.RETWEETED_BY_USER_SCREEN_NAME,
+			Statuses.IS_FAVORITE, Statuses.IS_PROTECTED, Statuses.IS_VERIFIED, Statuses.IS_GAP,
+			Statuses.IS_POSSIBLY_SENSITIVE, Statuses.SOURCE, Statuses.TEXT_UNESCAPED, Statuses.MEDIA_LINK };
 
 	private final Context mContext;
 	private final ImageLoaderWrapper mImageLoader;

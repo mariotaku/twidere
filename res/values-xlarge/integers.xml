@@ -4,6 +4,6 @@
 	<integer name="nyan_star_rows">15</integer>
 	<integer name="nyan_star_cols">19</integer>
 	<integer name="default_text_size">17</integer>
-	<integer name="default_staggered_gridview_columns">3</integer>
+	<integer name="default_staggered_gridview_columns">2</integer>
 
 </resources>

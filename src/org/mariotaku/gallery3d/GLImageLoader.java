@@ -64,8 +64,8 @@ public class GLImageLoader extends AsyncTaskLoader<GLImageLoader.Result> impleme
 		mUri = uri;
 		mListener = listener;
 		final TwidereApplication app = TwidereApplication.getInstance(context);
-		mDownloader = app.getImageDownloader();
-		mDiscCache = app.getDiscCache();
+		mDownloader = app.getFullImageDownloader();
+		mDiscCache = app.getFullDiscCache();
 		final Resources res = context.getResources();
 		final DisplayMetrics dm = res.getDisplayMetrics();
 		mFallbackSize = Math.max(dm.heightPixels, dm.widthPixels);

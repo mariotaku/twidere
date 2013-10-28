@@ -239,7 +239,7 @@ public class TwidereLinkify implements Constants {
 				for (final URLSpan span : spans) {
 					final Matcher matcher = PATTERN_ALL_AVAILABLE_IMAGES.matcher(span.getURL());
 					if (matcher.matches()) {
-						final PreviewMedia spec = MediaPreviewUtils.getAllAvailableImage(matcher.group());
+						final PreviewMedia spec = MediaPreviewUtils.getAllAvailableImage(matcher.group(), true);
 						final int start = string.getSpanStart(span);
 						final int end = string.getSpanEnd(span);
 						if (spec == null || start < 0 || end > string.length() || start > end) {

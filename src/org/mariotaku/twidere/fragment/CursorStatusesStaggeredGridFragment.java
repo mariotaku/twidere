@@ -45,7 +45,7 @@ import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTask;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
-public abstract class CursorStatusesListFragment extends BaseStatusesListFragment<Cursor> {
+public abstract class CursorStatusesStaggeredGridFragment extends BaseStatusesStaggeredGridFragment<Cursor> {
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -54,7 +54,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
 			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action) || BROADCAST_FILTERS_UPDATED.equals(action)) {
-				getLoaderManager().restartLoader(0, null, CursorStatusesListFragment.this);
+				getLoaderManager().restartLoader(0, null, CursorStatusesStaggeredGridFragment.this);
 			}
 		}
 	};
@@ -92,7 +92,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	@Override
 	public void onRefreshStarted() {
 		super.onRefreshStarted();
-		savePosition();
+		// savePosition();
 		new AsyncTask<Void, Void, long[][]>() {
 
 			@Override
@@ -124,7 +124,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 				break;
 			}
 			case SCROLL_STATE_IDLE:
-				savePosition();
+				// savePosition();
 				break;
 		}
 	}
@@ -139,7 +139,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 
 	@Override
 	public void onStop() {
-		savePosition();
+		// savePosition();
 		unregisterReceiver(mStatusReceiver);
 		super.onStop();
 	}
@@ -163,7 +163,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	@Override
 	protected void loadMoreStatuses() {
 		if (isRefreshing()) return;
-		savePosition();
+		// savePosition();
 		new AsyncTask<Void, Void, long[][]>() {
 
 			@Override

@@ -25,8 +25,8 @@ public class PreviewMedia {
 
 	public final String url, original;
 
-	public PreviewMedia(final String full, final String original) {
-		url = full;
+	public PreviewMedia(final String url, final String original) {
+		this.url = url;
 		this.original = original;
 	}
 

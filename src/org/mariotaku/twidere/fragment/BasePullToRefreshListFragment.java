@@ -58,6 +58,7 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 	private boolean mPulledUp;
 	private PullToRefreshLayout mPullToRefreshLayout;
 
+	@Override
 	public String getPullToRefreshTag() {
 		return getTag();
 	}

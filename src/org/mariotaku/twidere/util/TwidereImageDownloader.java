@@ -83,10 +83,12 @@ public class TwidereImageDownloader implements ImageDownloader, Constants {
 	private Proxy mProxy;
 	private boolean mFastImageLoading;
 	private String mUserAgent;
+	private final boolean mFullImage;
 
-	public TwidereImageDownloader(final Context context) {
+	public TwidereImageDownloader(final Context context, final boolean full_image) {
 		mContext = context;
 		mResolver = context.getContentResolver();
+		mFullImage = full_image;
 		reloadConnectivitySettings();
 	}
 
@@ -97,7 +99,7 @@ public class TwidereImageDownloader implements ImageDownloader, Constants {
 		final String scheme = uri.getScheme();
 		if (ContentResolver.SCHEME_ANDROID_RESOURCE.equals(scheme) || ContentResolver.SCHEME_CONTENT.equals(scheme)
 				|| ContentResolver.SCHEME_FILE.equals(scheme)) return mResolver.openInputStream(uri);
-		final PreviewMedia media = MediaPreviewUtils.getAllAvailableImage(uri_string);
+		final PreviewMedia media = MediaPreviewUtils.getAllAvailableImage(uri_string, mFullImage);
 		try {
 			return getStream(media != null ? media.url : uri_string);
 		} catch (final TwitterException e) {

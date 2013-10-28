@@ -218,6 +218,7 @@ public interface Constants {
 	public static final String PREFERENCE_KEY_NICKNAME_ONLY = "nickname_only";
 	public static final String PREFERENCE_KEY_SETTINGS_WIZARD_COMPLETED = "settings_wizard_completed";
 	public static final String PREFERENCE_KEY_CARD_ANIMATION = "card_animation";
+	public static final String PREFERENCE_KEY_UNREAD_COUNT = "unread_count";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;
@@ -584,6 +585,7 @@ public interface Constants {
 	public static final int LINK_ID_SEARCH = 26;
 
 	public static final String DIR_NAME_IMAGE_CACHE = "image_cache";
+	public static final String DIR_NAME_FULL_IMAGE_CACHE = "full_image_cache";
 
 	public static final int PANE_LEFT = R.id.fragment_container_left;
 	public static final int PANE_RIGHT = R.id.fragment_container_right;
@@ -644,6 +646,7 @@ public interface Constants {
 	public static final String TAB_TYPE_LIST_TIMELINE = "list_timeline";
 	public static final String TAB_TYPE_ACTIVITIES_ABOUT_ME = "activities_about_me";
 	public static final String TAB_TYPE_ACTIVITIES_BY_FRIENDS = "activities_by_friends";
+	public static final String TAB_TYPE_STAGGERED_HOME_TIMELINE = "staggered_home_timeline";
 
 	public static final String TWIDERE_PREVIEW_NICKNAME = "Twidere";
 	public static final String TWIDERE_PREVIEW_NAME = "Twidere Project";

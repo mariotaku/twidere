@@ -23,8 +23,8 @@ public class ImportSettingsTask extends AsyncTask<Void, Void, Boolean> {
 		if (mFile == null || !mFile.exists()) return false;
 		try {
 			final ZipFile zip = new ZipFile(mFile);
-			
-		} catch (IOException e) {
+
+		} catch (final IOException e) {
 			return false;
 		}
 		return true;

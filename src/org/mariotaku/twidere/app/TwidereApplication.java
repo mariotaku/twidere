@@ -82,8 +82,8 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	private SharedPreferences mPreferences;
 	private AsyncTwitterWrapper mTwitterWrapper;
 	private MultiSelectManager mMultiSelectManager;
-	private TwidereImageDownloader mImageDownloader;
-	private UnlimitedDiscCache mDiscCache;
+	private TwidereImageDownloader mImageDownloader, mFullImageDownloader;
+	private DiscCacheAware mDiscCache, mFullDiscCache;
 	private MessagesManager mCroutonsManager;
 
 	private HostAddressResolver mResolver;
@@ -96,8 +96,17 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	public DiscCacheAware getDiscCache() {
 		if (mDiscCache != null) return mDiscCache;
-		final File cache_dir = getBestCacheDir(this, DIR_NAME_IMAGE_CACHE);
-		return mDiscCache = new UnlimitedDiscCache(cache_dir, new URLFileNameGenerator());
+		return mDiscCache = getDiscCache(DIR_NAME_IMAGE_CACHE);
+	}
+
+	public DiscCacheAware getFullDiscCache() {
+		if (mFullDiscCache != null) return mFullDiscCache;
+		return mFullDiscCache = getDiscCache(DIR_NAME_FULL_IMAGE_CACHE);
+	}
+
+	public ImageDownloader getFullImageDownloader() {
+		if (mFullImageDownloader != null) return mFullImageDownloader;
+		return mFullImageDownloader = new TwidereImageDownloader(this, true);
 	}
 
 	public Handler getHandler() {
@@ -111,7 +120,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	public ImageDownloader getImageDownloader() {
 		if (mImageDownloader != null) return mImageDownloader;
-		return mImageDownloader = new TwidereImageDownloader(this);
+		return mImageDownloader = new TwidereImageDownloader(this, false);
 	}
 
 	public ImageLoader getImageLoader() {
@@ -209,6 +218,11 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	private void configACRA() {
 		ACRA.init(this);
 		ACRA.getErrorReporter().setReportSender(new EmailIntentSender(this));
+	}
+
+	private DiscCacheAware getDiscCache(final String dir_name) {
+		final File cache_dir = getBestCacheDir(this, dir_name);
+		return new UnlimitedDiscCache(cache_dir, new URLFileNameGenerator());
 	}
 
 	private void initializeAsyncTask() {

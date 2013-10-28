@@ -3,5 +3,6 @@
 
 	<integer name="nyan_star_rows">8</integer>
 	<integer name="nyan_star_cols">23</integer>
+	<integer name="default_staggered_gridview_columns">2</integer>
 
 </resources>

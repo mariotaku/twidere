@@ -25,7 +25,6 @@ import android.os.Bundle;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.fragment.BasePullToRefreshListFragment;
 import org.mariotaku.twidere.fragment.iface.IBasePullToRefreshFragment;
 import org.mariotaku.twidere.fragment.iface.PullToRefreshAttacherActivity;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
@@ -93,7 +92,7 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 		} else {
 			mEnabledStates.remove(tag);
 		}
-		final BasePullToRefreshListFragment curr = getCurrentPullToRefreshFragment();
+		final IBasePullToRefreshFragment curr = getCurrentPullToRefreshFragment();
 		if (curr != null && tag.equals(curr.getPullToRefreshTag())) {
 			mPullToRefreshAttacher.setEnabled(enabled);
 		}
@@ -104,7 +103,7 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 		final String tag = fragment.getPullToRefreshTag();
 		if (tag == null) return;
 		mRefreshingStates.remove(tag);
-		final BasePullToRefreshListFragment curr = getCurrentPullToRefreshFragment();
+		final IBasePullToRefreshFragment curr = getCurrentPullToRefreshFragment();
 		if (curr != null && tag.equals(curr.getPullToRefreshTag())) {
 			mPullToRefreshAttacher.setRefreshComplete();
 		}
@@ -123,7 +122,7 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 		} else {
 			mRefreshingStates.remove(tag);
 		}
-		final BasePullToRefreshListFragment curr = getCurrentPullToRefreshFragment();
+		final IBasePullToRefreshFragment curr = getCurrentPullToRefreshFragment();
 		if (curr != null && tag.equals(curr.getPullToRefreshTag())) {
 			mPullToRefreshAttacher.setRefreshing(refreshing);
 		}
@@ -143,7 +142,7 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 		setRefreshing(isRefreshing(getCurrentPullToRefreshFragment()));
 	}
 
-	protected BasePullToRefreshListFragment getCurrentPullToRefreshFragment() {
+	protected IBasePullToRefreshFragment getCurrentPullToRefreshFragment() {
 		return null;
 	}
 

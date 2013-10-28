@@ -4,6 +4,10 @@
 	android:title="@string/settings_interface">
 
 	<CheckBoxPreference
+		android:defaultValue="true"
+		android:key="unread_count"
+		android:title="@string/unread_count"/>
+	<CheckBoxPreference
 		android:defaultValue="false"
 		android:key="separate_retweet_action"
 		android:summary="@string/separate_retweet_action_summary"

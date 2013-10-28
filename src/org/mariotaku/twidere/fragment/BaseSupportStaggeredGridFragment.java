@@ -43,8 +43,8 @@ import org.mariotaku.twidere.fragment.iface.SupportFragmentCallback;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
 
-public class BaseSupportStaggeredGridFragment extends StaggeredGridFragment implements IBaseFragment, Constants, OnScrollListener,
-		RefreshScrollTopInterface {
+public class BaseSupportStaggeredGridFragment extends StaggeredGridFragment implements IBaseFragment, Constants,
+		OnScrollListener, RefreshScrollTopInterface {
 
 	private boolean mActivityFirstCreated;
 	private boolean mIsInstanceStateSaved;
@@ -109,8 +109,8 @@ public class BaseSupportStaggeredGridFragment extends StaggeredGridFragment impl
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mIsInstanceStateSaved = savedInstanceState != null;
-//		final StaggeredGridView lv = getStaggeredGridView();
-//		lv.setOnScrollListener(this);
+		// final StaggeredGridView lv = getStaggeredGridView();
+		// lv.setOnScrollListener(this);
 	}
 
 	@Override
@@ -196,7 +196,7 @@ public class BaseSupportStaggeredGridFragment extends StaggeredGridFragment impl
 	@Override
 	public boolean scrollToStart() {
 		if (!isAdded() || getActivity() == null) return false;
-//		Utils.scrollListToTop(getListView());
+		// Utils.scrollListToTop(getListView());
 		setSelectionToTop();
 		return true;
 	}
@@ -212,7 +212,7 @@ public class BaseSupportStaggeredGridFragment extends StaggeredGridFragment impl
 
 	@Override
 	public void setSelection(final int position) {
-//		Utils.scrollListToPosition(getListView(), position);
+		// Utils.scrollListToPosition(getListView(), position);
 	}
 
 	@Override

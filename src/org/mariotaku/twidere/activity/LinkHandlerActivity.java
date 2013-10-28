@@ -39,7 +39,7 @@ import android.view.Window;
 import android.widget.TextView;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.fragment.BasePullToRefreshListFragment;
+import org.mariotaku.twidere.fragment.iface.IBasePullToRefreshFragment;
 import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;
 import org.mariotaku.twidere.fragment.iface.SupportFragmentCallback;
 import org.mariotaku.twidere.util.MultiSelectEventHandler;
@@ -105,13 +105,13 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnC
 	}
 
 	@Override
-	protected BasePullToRefreshListFragment getCurrentPullToRefreshFragment() {
+	protected IBasePullToRefreshFragment getCurrentPullToRefreshFragment() {
 		final Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
-		if (fragment instanceof BasePullToRefreshListFragment)
-			return (BasePullToRefreshListFragment) fragment;
+		if (fragment instanceof IBasePullToRefreshFragment)
+			return (IBasePullToRefreshFragment) fragment;
 		else if (fragment instanceof SupportFragmentCallback) {
 			final Fragment curr = ((SupportFragmentCallback) fragment).getCurrentVisibleFragment();
-			if (curr instanceof BasePullToRefreshListFragment) return (BasePullToRefreshListFragment) curr;
+			if (curr instanceof IBasePullToRefreshFragment) return (IBasePullToRefreshFragment) curr;
 		}
 		return null;
 	}

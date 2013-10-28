@@ -534,5 +534,7 @@
 	<string name="twidere_test">Twidere test</string>
 	<string name="donate_via_paypal">Donate via PayPal</string>
 	<string name="donate_via_alipay">Donate via Alipay</string>
+	<string name="staggered_home_timeline">Staggered Home Timeline</string>
+	<string name="unread_count">Unread count</string>
 
 </resources>

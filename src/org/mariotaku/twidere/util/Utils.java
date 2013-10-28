@@ -88,6 +88,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.origamilabs.library.views.StaggeredGridView;
+
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.CroutonConfiguration;
 import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
@@ -1569,13 +1571,13 @@ public final class Utils implements Constants {
 		return null;
 	}
 
-	public static List<PreviewMedia> getImagesInStatus(final String status_string) {
+	public static List<PreviewMedia> getImagesInStatus(final String status_string, final boolean use_full) {
 		if (status_string == null) return Collections.emptyList();
 		final List<PreviewMedia> images = new ArrayList<PreviewMedia>();
 		final HtmlLinkExtractor extractor = new HtmlLinkExtractor();
 		extractor.grabLinks(status_string);
 		for (final HtmlLink link : extractor.grabLinks(status_string)) {
-			final PreviewMedia spec = MediaPreviewUtils.getAllAvailableImage(link.getLink());
+			final PreviewMedia spec = MediaPreviewUtils.getAllAvailableImage(link.getLink(), use_full);
 			if (spec != null) {
 				images.add(spec);
 			}
@@ -3474,6 +3476,21 @@ public final class Utils implements Constants {
 	public static void scrollListToTop(final ListView list) {
 		if (list == null) return;
 		scrollListToPosition(list, 0);
+	}
+
+	public static void scrollListToTop(final StaggeredGridView grid) {
+		if (grid == null) return;
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+			grid.setSelectionToTop();
+			grid.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(),
+					MotionEvent.ACTION_CANCEL, 0, 0, 0));
+		} else {
+			grid.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(),
+					MotionEvent.ACTION_DOWN, 0, 0, 0));
+			grid.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(),
+					MotionEvent.ACTION_UP, 0, 0, 0));
+			grid.setSelectionToTop();
+		}
 	}
 
 	public static void setMenuForStatus(final Context context, final Menu menu, final ParcelableStatus status) {

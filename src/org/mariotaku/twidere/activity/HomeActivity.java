@@ -66,12 +66,12 @@ import edu.ucdavis.earlybird.ProfilingUtil;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.SupportTabsAdapter;
-import org.mariotaku.twidere.fragment.BasePullToRefreshListFragment;
 import org.mariotaku.twidere.fragment.DirectMessagesFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
 import org.mariotaku.twidere.fragment.TrendsSuggectionsFragment;
 import org.mariotaku.twidere.fragment.iface.IBaseFragment;
+import org.mariotaku.twidere.fragment.iface.IBasePullToRefreshFragment;
 import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;
 import org.mariotaku.twidere.fragment.iface.SupportFragmentCallback;
 import org.mariotaku.twidere.model.SupportTabSpec;
@@ -332,23 +332,24 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	public boolean triggerRefresh(final int position) {
 		final Fragment f = mAttachedFragments.get(position);
 		return f instanceof RefreshScrollTopInterface && !f.isDetached()
-				&& ((BasePullToRefreshListFragment) f).triggerRefresh();
+				&& ((RefreshScrollTopInterface) f).triggerRefresh();
 	}
 
 	public void updateUnreadCount() {
 		if (mIndicator == null || mUpdateUnreadCountTask != null
 				&& mUpdateUnreadCountTask.getStatus() == AsyncTask.Status.RUNNING) return;
-		mUpdateUnreadCountTask = new UpdateUnreadCountTask(mIndicator);
+		mUpdateUnreadCountTask = new UpdateUnreadCountTask(mIndicator, mPreferences.getBoolean(
+				PREFERENCE_KEY_UNREAD_COUNT, true));
 		mUpdateUnreadCountTask.execute();
 	}
 
 	@Override
-	protected BasePullToRefreshListFragment getCurrentPullToRefreshFragment() {
-		if (mCurrentVisibleFragment instanceof BasePullToRefreshListFragment)
-			return (BasePullToRefreshListFragment) mCurrentVisibleFragment;
+	protected IBasePullToRefreshFragment getCurrentPullToRefreshFragment() {
+		if (mCurrentVisibleFragment instanceof IBasePullToRefreshFragment)
+			return (IBasePullToRefreshFragment) mCurrentVisibleFragment;
 		else if (mCurrentVisibleFragment instanceof SupportFragmentCallback) {
 			final Fragment curr = ((SupportFragmentCallback) mCurrentVisibleFragment).getCurrentVisibleFragment();
-			if (curr instanceof BasePullToRefreshListFragment) return (BasePullToRefreshListFragment) curr;
+			if (curr instanceof IBasePullToRefreshFragment) return (IBasePullToRefreshFragment) curr;
 		}
 		return null;
 	}
@@ -651,10 +652,12 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private static class UpdateUnreadCountTask extends AsyncTask<Void, Void, int[]> {
 		private final Context mContext;
 		private final TabPageIndicator mIndicator;
+		private final boolean mEnabled;
 
-		UpdateUnreadCountTask(final TabPageIndicator indicator) {
+		UpdateUnreadCountTask(final TabPageIndicator indicator, final boolean enabled) {
 			mIndicator = indicator;
 			mContext = indicator.getContext();
+			mEnabled = enabled;
 		}
 
 		@Override
@@ -674,7 +677,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			for (int i = 0, j = tab_count; i < j; i++) {
 				final BadgeView badge = (BadgeView) mIndicator.getTabItem(i).findViewById(R.id.unread_count);
 				final int count = result[i];
-				if (count > 0) {
+				if (count > 0 && mEnabled) {
 					badge.setCount(count);
 					badge.show();
 				} else {

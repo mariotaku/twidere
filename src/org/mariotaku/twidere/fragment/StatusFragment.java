@@ -445,7 +445,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		} else {
 			mProfileImageView.setImageResource(R.drawable.ic_profile_image_default);
 		}
-		final List<PreviewMedia> images = getImagesInStatus(status.text_html);
+		final List<PreviewMedia> images = getImagesInStatus(status.text_html, true);
 		mImagePreviewContainer.setVisibility(images.isEmpty() ? View.GONE : View.VISIBLE);
 		if (display_image_preview) {
 			loadPreviewImages();
@@ -816,7 +816,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mLoadImagesIndicator.setVisibility(View.GONE);
 		mGalleryContainer.setVisibility(View.VISIBLE);
 		mImagePreviewAdapter.clear();
-		final List<PreviewMedia> images = getImagesInStatus(mStatus.text_html);
+		final List<PreviewMedia> images = getImagesInStatus(mStatus.text_html, true);
 		mImagePreviewAdapter.addAll(images, mStatus.is_possibly_sensitive);
 		updateImageSelectButton(mImagePreviewGallery.getSelectedItemPosition());
 	}

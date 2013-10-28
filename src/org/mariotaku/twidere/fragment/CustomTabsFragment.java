@@ -190,16 +190,10 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 		updateTitle(mode);
 	}
 
-	private void updateTitle(ActionMode mode) {
-		if (mListView == null || mode == null || getActivity() == null) return;
-		final int count = mListView.getCheckedItemCount();
-		mode.setTitle(getResources().getQuantityString(R.plurals.Nitems_selected, count, count));
-	}
-
 	@Override
 	public void onListItemClick(final ListView l, final View v, final int position, final long id) {
 		final Cursor c = mAdapter.getCursor();
-		c.moveToPosition(position);
+		c.moveToPosition(mAdapter.getCursorPosition(position));
 		final Intent intent = new Intent(INTENT_ACTION_EDIT_TAB);
 		intent.setClass(getActivity(), CustomTabEditorActivity.class);
 		intent.putExtra(EXTRA_ID, c.getLong(c.getColumnIndex(Tabs._ID)));
@@ -296,6 +290,12 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 			}
 		}
 		super.onStop();
+	}
+
+	private void updateTitle(final ActionMode mode) {
+		if (mListView == null || mode == null || getActivity() == null) return;
+		final int count = mListView.getCheckedItemCount();
+		mode.setTitle(getResources().getQuantityString(R.plurals.Nitems_selected, count, count));
 	}
 
 	public static class CustomTabsAdapter extends SimpleDragSortCursorAdapter implements OnClickListener {
