@@ -209,7 +209,7 @@ public class MultiSelectEventHandler implements Constants, ActionMode.Callback, 
 
 	@Override
 	public boolean onPrepareActionMode(final ActionMode mode, final Menu menu) {
-		updateMultiSelectState();
+		updateSelectedCount(mode);
 		return true;
 	}
 
@@ -218,14 +218,19 @@ public class MultiSelectEventHandler implements Constants, ActionMode.Callback, 
 			if (mActionMode == null) {
 				mActionMode = mActivity.startActionMode(this);
 			}
-			final int count = mMultiSelectManager.getCount();
-			mActionMode.setTitle(mActivity.getResources().getQuantityString(R.plurals.Nitems_selected, count, count));
+			updateSelectedCount(mActionMode);
 		} else {
 			if (mActionMode != null) {
 				mActionMode.finish();
 				mActionMode = null;
 			}
 		}
+	}
+
+	private void updateSelectedCount(final ActionMode mode) {
+		if (mode == null || mActivity == null || mMultiSelectManager == null) return;
+		final int count = mMultiSelectManager.getCount();
+		mode.setTitle(mActivity.getResources().getQuantityString(R.plurals.Nitems_selected, count, count));
 	}
 
 }

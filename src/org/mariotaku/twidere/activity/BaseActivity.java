@@ -25,7 +25,8 @@ import android.os.Bundle;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.BasePullToRefreshListFragment;
-import org.mariotaku.twidere.fragment.BasePullToRefreshListFragment.PullToRefreshAttacherActivity;
+import org.mariotaku.twidere.fragment.iface.IBasePullToRefreshFragment;
+import org.mariotaku.twidere.fragment.iface.PullToRefreshAttacherActivity;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MessagesManager;
 import org.mariotaku.twidere.util.ThemeUtils;
@@ -45,7 +46,7 @@ public class BaseActivity extends BaseThemedActivity implements Constants, PullT
 	private PullToRefreshAttacher mPullToRefreshAttacher;
 
 	@Override
-	public void addRefreshingState(final BasePullToRefreshListFragment fragment) {
+	public void addRefreshingState(final IBasePullToRefreshFragment fragment) {
 		final String tag = fragment.getPullToRefreshTag();
 		if (tag == null) return;
 		mEnabledStates.add(tag);
@@ -78,7 +79,7 @@ public class BaseActivity extends BaseThemedActivity implements Constants, PullT
 	}
 
 	@Override
-	public boolean isRefreshing(final BasePullToRefreshListFragment fragment) {
+	public boolean isRefreshing(final IBasePullToRefreshFragment fragment) {
 		if (fragment == null) return false;
 		return mRefreshingStates.contains(fragment.getPullToRefreshTag());
 	}
@@ -88,7 +89,7 @@ public class BaseActivity extends BaseThemedActivity implements Constants, PullT
 	}
 
 	@Override
-	public void setPullToRefreshEnabled(final BasePullToRefreshListFragment fragment, final boolean enabled) {
+	public void setPullToRefreshEnabled(final IBasePullToRefreshFragment fragment, final boolean enabled) {
 		final String tag = fragment.getPullToRefreshTag();
 		if (tag == null) return;
 		if (enabled) {
@@ -103,7 +104,7 @@ public class BaseActivity extends BaseThemedActivity implements Constants, PullT
 	}
 
 	@Override
-	public void setRefreshComplete(final BasePullToRefreshListFragment fragment) {
+	public void setRefreshComplete(final IBasePullToRefreshFragment fragment) {
 		final String tag = fragment.getPullToRefreshTag();
 		if (tag == null) return;
 		mRefreshingStates.remove(tag);
@@ -113,8 +114,12 @@ public class BaseActivity extends BaseThemedActivity implements Constants, PullT
 		}
 	}
 
+	public void setRefreshing(final boolean refreshing) {
+		mPullToRefreshAttacher.setRefreshing(refreshing);
+	}
+
 	@Override
-	public void setRefreshing(final BasePullToRefreshListFragment fragment, final boolean refreshing) {
+	public void setRefreshing(final IBasePullToRefreshFragment fragment, final boolean refreshing) {
 		final String tag = fragment.getPullToRefreshTag();
 		if (tag == null) return;
 		if (refreshing) {
@@ -126,10 +131,6 @@ public class BaseActivity extends BaseThemedActivity implements Constants, PullT
 		if (curr != null && tag.equals(curr.getPullToRefreshTag())) {
 			mPullToRefreshAttacher.setRefreshing(refreshing);
 		}
-	}
-
-	public void setRefreshing(final boolean refreshing) {
-		mPullToRefreshAttacher.setRefreshing(refreshing);
 	}
 
 	public void updateRefreshingState() {

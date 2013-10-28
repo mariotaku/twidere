@@ -287,7 +287,6 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		clear();
 		if (data != null && !data.isEmpty()) {
 			addAll(data);
-			notifyDataSetChanged();
 		}
 		rebuildFilterInfo();
 	}
@@ -332,7 +331,6 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		if (mFiltersEnabled == enabled) return;
 		mFiltersEnabled = enabled;
 		rebuildFilterInfo();
-		notifyDataSetChanged();
 	}
 
 	@Override
@@ -351,7 +349,6 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		mFilterIgnoreSource = source;
 		mFilterRetweetedById = retweeted_by_id;
 		rebuildFilterInfo();
-		notifyDataSetChanged();
 	}
 
 	@Override
@@ -420,5 +417,6 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 		} else {
 			mIsLastItemFiltered = false;
 		}
+		notifyDataSetChanged();
 	}
 }

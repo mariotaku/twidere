@@ -126,7 +126,7 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnC
 		mActionBar = getActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 		mActionBar.setDisplayShowTitleEnabled(true);
-		mActionBar.setDisplayShowCustomEnabled(true);
+		mActionBar.setDisplayShowCustomEnabled(false);
 		mActionBar.setCustomView(R.layout.link_handler_actionbar);
 		final View view = mActionBar.getCustomView();
 		mGoTopView = view.findViewById(R.id.go_top);

@@ -589,7 +589,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		final Context mContext = getContext();
 		final Resources mResources = mContext.getResources();
 		final NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
-		final boolean display_screen_name = !mPreferences.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
+		final boolean name_first = mPreferences.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
+		final boolean nick_only = mPreferences.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false);
 		final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_DELETED);
 		delete_intent.putExtra(EXTRA_NOTIFICATION_ID, NOTIFICATION_ID_MENTIONS);
 		final Intent content_intent;
@@ -615,12 +616,12 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		}
 		content_intent.putExtras(content_extras);
 
+		final String display_name = getDisplayName(mContext, status.user_id, status.user_name, status.user_screen_name,
+				name_first, nick_only);
 		if (screen_names_size > 1) {
-			title = mResources.getString(R.string.notification_mention_multiple, display_screen_name ? "@"
-					+ status.user_screen_name : status.user_name, screen_names_size - 1);
+			title = mResources.getString(R.string.notification_mention_multiple, display_name, screen_names_size - 1);
 		} else {
-			title = mResources.getString(R.string.notification_mention, display_screen_name ? "@"
-					+ status.user_screen_name : status.user_name);
+			title = mResources.getString(R.string.notification_mention, display_name);
 		}
 		builder.setLargeIcon(getProfileImageForNotification(status.user_profile_image_url));
 		buildNotification(builder, title, title, status.text_plain, R.drawable.ic_stat_mention, null, content_intent,
@@ -632,7 +633,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			for (int i = 0; i < max; i++) {
 				final ParcelableStatus s = safeGet(mNewMentions, i);
 				if (s == null) return;
-				final String name = display_screen_name ? "@" + s.user_screen_name : s.user_name;
+				final String name = getDisplayName(mContext, s.user_id, s.user_name, s.user_screen_name, name_first,
+						nick_only);
 				style.addLine(Html.fromHtml("<b>" + name + "</b>: "
 						+ stripMentionText(s.text_unescaped, getAccountScreenName(mContext, s.account_id))));
 			}
@@ -642,8 +644,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			final int accounts_count = mNewMentionAccounts.size();
 			if (accounts_count > 0) {
 				final long[] ids = ArrayUtils.fromList(mNewMentionAccounts);
-				final String[] names = display_screen_name ? getAccountScreenNames(mContext, ids, true)
-						: getAccountNames(mContext, ids);
+				final String[] names = name_first ? getAccountNames(mContext, ids) : getAccountScreenNames(mContext,
+						ids, true);
 				style.setSummaryText(ArrayUtils.toString(names, ',', true));
 			}
 			mNotificationManager.notify(NOTIFICATION_ID_MENTIONS, style.build());
@@ -667,7 +669,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		final Context mContext = getContext();
 		final Resources mResources = mContext.getResources();
 		final NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
-		final boolean display_screen_name = !mPreferences.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
+		final boolean name_first = mPreferences.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
+		final boolean nick_only = mPreferences.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false);
 		final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_DELETED);
 		delete_intent.putExtra(EXTRA_NOTIFICATION_ID, NOTIFICATION_ID_DIRECT_MESSAGES);
 		final Intent content_intent;
@@ -696,7 +699,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		}
 		content_intent.putExtras(content_extras);
 		final String display_name = getDisplayName(mContext, message.sender_id, message.sender_name,
-				message.sender_screen_name);
+				message.sender_screen_name, name_first, nick_only);
 		if (screen_names_size > 1) {
 			title = mResources.getString(R.string.notification_direct_message_multiple_users, display_name,
 					screen_names_size - 1, messages_size);
@@ -714,8 +717,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		final int accounts_count = mNewMessageAccounts.size();
 		if (accounts_count > 0) {
 			final long[] ids = ArrayUtils.fromList(mNewMessageAccounts);
-			final String[] names = display_screen_name ? getAccountScreenNames(mContext, ids, true) : getAccountNames(
-					mContext, ids);
+			final String[] names = name_first ? getAccountNames(mContext, ids) : getAccountScreenNames(mContext, ids,
+					true);
 			summary = ArrayUtils.toString(names, ',', true);
 		} else {
 			summary = null;
@@ -727,7 +730,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				final ParcelableDirectMessage s = safeGet(mNewMessages, i);
 				if (s == null) return;
 				final String name = getDisplayName(mContext, message.sender_id, message.sender_name,
-						message.sender_screen_name);
+						message.sender_screen_name, name_first, nick_only);
 				style.addLine(Html.fromHtml("<b>" + name + "</b>: " + s.text_unescaped));
 			}
 			if (max == 4 && messages_size - max > 0) {

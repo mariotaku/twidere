@@ -822,7 +822,10 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	}
 
 	private void showConversation() {
-		if (mConversationTask != null && mConversationTask.getStatus() == AsyncTask.Status.RUNNING) return;
+		if (mConversationTask != null && mConversationTask.getStatus() == AsyncTask.Status.RUNNING) {
+			mConversationTask.cancel(true);
+			return;
+		}
 		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();
 		final int count = adapter.getCount();
 		final ParcelableStatus status;

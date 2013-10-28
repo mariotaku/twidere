@@ -40,6 +40,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.origamilabs.library.views.StaggeredGridView;
+
 import org.mariotaku.twidere.fragment.iface.IBasePullToRefreshFragment;
 import org.mariotaku.twidere.fragment.iface.PullToRefreshAttacherActivity;
 import org.mariotaku.twidere.util.ThemeUtils;
@@ -49,7 +51,7 @@ import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher.HeaderTransformer;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 
-public abstract class BasePullToRefreshListFragment extends BaseSupportListFragment implements
+public abstract class BasePullToRefreshStaggeredGridViewFragment extends BaseSupportStaggeredGridFragment implements
 		IBasePullToRefreshFragment, PullToRefreshAttacher.OnRefreshListener, OnTouchListener, OnGestureListener {
 
 	private PullToRefreshAttacherActivity mPullToRefreshAttacherActivity;
@@ -75,7 +77,7 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 			mPullToRefreshAttacherActivity = (PullToRefreshAttacherActivity) activity;
 		} else
 			throw new IllegalStateException("Activity class must implement PullToRefreshAttacherActivity");
-		getListView().setOnTouchListener(this);
+		getStaggeredGridView().setOnTouchListener(this);
 		final HeaderTransformer transformer = mPullToRefreshAttacher.getHeaderTransformer();
 		if (transformer instanceof DefaultHeaderTransformer) {
 			final DefaultHeaderTransformer t = (DefaultHeaderTransformer) transformer;
@@ -136,7 +138,7 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 		final PullToRefreshLayout plv = new PullToRefreshLayout(context);
 		mPullToRefreshLayout = plv;
 
-		final ListView lv = new ListView(context);
+		final StaggeredGridView lv = new StaggeredGridView(context);
 		lv.setId(android.R.id.list);
 		lv.setDrawSelectorOnTop(false);
 		plv.addView(lv, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -235,7 +237,7 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 
 	@Override
 	public boolean triggerRefresh() {
-		onRefreshStarted(getListView());
+		onRefreshStarted(getStaggeredGridView());
 		return true;
 	}
 
