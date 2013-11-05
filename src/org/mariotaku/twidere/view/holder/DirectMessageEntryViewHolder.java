@@ -66,9 +66,9 @@ public class DirectMessageEntryViewHolder extends CardViewHolder {
 
 	public void setIsOutgoing(final boolean is_outgoing) {
 		if (is_rtl) {
-			text.setCompoundDrawablesWithIntrinsicBounds(0, 0, is_outgoing ? R.drawable.ic_indicator_outgoing : 0, 0);
+			text.setCompoundDrawablesWithIntrinsicBounds(0, 0, is_outgoing ? R.drawable.ic_indicator_sent : 0, 0);
 		} else {
-			text.setCompoundDrawablesWithIntrinsicBounds(is_outgoing ? R.drawable.ic_indicator_outgoing : 0, 0, 0, 0);
+			text.setCompoundDrawablesWithIntrinsicBounds(is_outgoing ? R.drawable.ic_indicator_received : 0, 0, 0, 0);
 		}
 	}
 

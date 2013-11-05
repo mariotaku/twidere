@@ -80,7 +80,7 @@
 			android:id="@+id/location"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:drawableLeft="@drawable/ic_indicator_has_location"
+			android:drawableLeft="@drawable/ic_indicator_location"
 			android:drawablePadding="4dp"
 			android:padding="8dp"
 			android:singleLine="true"
@@ -117,7 +117,7 @@
 				android:layout_width="0dp"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
-				android:drawableLeft="@drawable/ic_indicator_incoming"
+				android:drawableLeft="@drawable/ic_indicator_followers"
 				android:drawablePadding="4dp"
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceSmall"/>
@@ -127,7 +127,7 @@
 				android:layout_width="0dp"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
-				android:drawableLeft="@drawable/ic_indicator_outgoing"
+				android:drawableLeft="@drawable/ic_indicator_friends"
 				android:drawablePadding="4dp"
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceSmall"/>

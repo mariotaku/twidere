@@ -105,7 +105,7 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 		mHolder.reply_retweet_status.setText(context.getString(R.string.retweeted_by, display_name));
 		mHolder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_retweet, 0, 0, 0);
 		mHolder.time.setTime(System.currentTimeMillis() - 360000);
-		mHolder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_indicator_has_media, 0);
+		mHolder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_indicator_media, 0);
 		super.onBindView(view);
 	}
 

@@ -89,8 +89,8 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".activity.KumaKichiActivity"
-			android:icon="@drawable/ic_launcher_kumakichi"
+			android:name=".activity.Main2Activity"
+			android:icon="@drawable/ic_launcher_hondajojo"
 			android:label="@string/app_name"
 			android:launchMode="singleTop"
 			android:theme="@style/Theme.Launcher">

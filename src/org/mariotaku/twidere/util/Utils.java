@@ -1891,8 +1891,8 @@ public final class Utils implements Constants {
 		else if (is_possibly_sensitive && has_media)
 			return R.drawable.ic_indicator_reported_media;
 		else if (has_media)
-			return R.drawable.ic_indicator_has_media;
-		else if (has_location) return R.drawable.ic_indicator_has_location;
+			return R.drawable.ic_indicator_media;
+		else if (has_location) return R.drawable.ic_indicator_location;
 		return 0;
 	}
 
@@ -2176,7 +2176,7 @@ public final class Utils implements Constants {
 	public static int getUserTypeIconRes(final boolean is_verified, final boolean is_protected) {
 		if (is_verified)
 			return R.drawable.ic_indicator_verified;
-		else if (is_protected) return R.drawable.ic_indicator_is_protected;
+		else if (is_protected) return R.drawable.ic_indicator_protected;
 		return 0;
 	}
 

@@ -4,5 +4,6 @@
 	<string name="app_name">Twidere</string>
 	<string name="theme_twidere">@string/app_name</string>
 	<string name="nyan_sakamoto">Nyan Sakamoto!</string>
+	<string name="kuma_union">熊孩子联盟</string>
 
 </resources>

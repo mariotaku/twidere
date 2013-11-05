@@ -1,94 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-	<PreferenceCategory android:title="@string/about">
+	<PreferenceCategory
+		android:key="cat_about"
+		android:title="@string/about">
 		<org.mariotaku.twidere.preference.AppVersionPreference/>
 
 		<Preference
-			android:summary="Mariotaku Lee"
-			android:title="Developer">
+			android:summary="@string/project_name"
+			android:title="@string/project_account">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="twidere://user?user_id=583328497&amp;finish_only=true"/>
+		</Preference>
+		<Preference
+			android:summary="@string/developer_name"
+			android:title="@string/developed_by">
 			<intent
 				android:action="android.intent.action.VIEW"
 				android:data="twidere://user?user_id=57610574&amp;finish_only=true"/>
 		</Preference>
 	</PreferenceCategory>
-	<PreferenceCategory android:title="@string/donate">
+	<PreferenceCategory
+		android:key="cat_donate"
+		android:title="@string/donate">
 		<Preference
 			android:fragment="org.mariotaku.twidere.fragment.DonateFragment"
-			android:summary="Donate to Twidere to support my development"
 			android:title="@string/donate_via_paypal"/>
-		<Preference
-			android:summary="Donate to Twidere to support my development"
-			android:title="@string/donate_via_alipay">
+		<Preference android:title="@string/donate_via_alipay">
 			<intent
 				android:action="android.intent.action.VIEW"
 				android:data="https://me.alipay.com/mariotaku"/>
 		</Preference>
+		<Preference
+			android:summary="@string/contributors_list_summary"
+			android:title="@string/donators">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="twidere://list_members?list_id=86301024&amp;user_id=583328497&amp;finish_only=true"/>
+		</Preference>
 	</PreferenceCategory>
-	<PreferenceCategory android:title="TRANSLATORS">
-		<Preference
-			android:summary="Japanese"
-			android:title="Luigi Van">
-			<intent
-				android:action="android.intent.action.VIEW"
-				android:data="http://about.me/fdb713"/>
-		</Preference>
-		<Preference
-			android:summary="Deutsch"
-			android:title="Cem Uluer">
-			<intent
-				android:action="android.intent.action.VIEW"
-				android:data="twidere://user?user_id=289472337&amp;finish_only=true"/>
-		</Preference>
-		<Preference
-			android:summary="Türkçe"
-			android:title="Ahmet Okur">
-			<intent
-				android:action="android.intent.action.VIEW"
-				android:data="twidere://user?user_id=930853520&amp;finish_only=true"/>
-		</Preference>
-		<Preference
-			android:summary="Français"
-			android:title="Marc Plano-Lesay">
-			<intent
-				android:action="android.intent.action.VIEW"
-				android:data="twidere://user?user_id=250570612&amp;finish_only=true"/>
-		</Preference>
-		<Preference
-			android:summary="Español"
-			android:title="Edward G">
-			<intent
-				android:action="android.intent.action.VIEW"
-				android:data="twidere://user?user_id=17852917&amp;finish_only=true"/>
-		</Preference>
-		<Preference
-			android:summary="Hindi"
-			android:title="Debarun Sarkar">
-			<intent
-				android:action="android.intent.action.VIEW"
-				android:data="twidere://user?user_id=55809644&amp;finish_only=true"/>
-		</Preference>
-		<Preference
-			android:summary="Hungarian"
-			android:title="lipilee">
-			<intent
-				android:action="android.intent.action.VIEW"
-				android:data="twidere://user?user_id=14698389&amp;finish_only=true"/>
-		</Preference>
-		<Preference
-			android:summary="Deutsch"
-			android:title="MaZe">
-			<intent
-				android:action="android.intent.action.VIEW"
-				android:data="http://identi.ca/mightypirate"/>
-		</Preference>
-		<Preference android:title="Other Languages">
+	<PreferenceCategory
+		android:key="cat_translators"
+		android:title="@string/translators">
+		<Preference android:title="@string/translate">
 			<intent
 				android:action="android.intent.action.VIEW"
 				android:data="http://crowdin.net/project/twidere"/>
 		</Preference>
+		<Preference
+			android:summary="@string/contributors_list_summary"
+			android:title="@string/translators">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="twidere://list_members?list_id=99024901&amp;user_id=583328497&amp;finish_only=true"/>
+		</Preference>
 	</PreferenceCategory>
-	<PreferenceCategory android:title="SPECIAL THANKS TO">
+	<PreferenceCategory android:title="@string/special_thanks_to">
 		<Preference
 			android:summary="Icon designer for 0.0.6 version"
 			android:title="Rieya">
@@ -104,7 +72,7 @@
 				android:data="twidere://user?user_id=144878723&amp;finish_only=true"/>
 		</Preference>
 		<Preference
-			android:summary="Adjusted icon for 0.0.13 version and above"
+			android:summary="Adjusted icon for 0.0.13 version and later"
 			android:title="lordfriend">
 			<intent
 				android:action="android.intent.action.VIEW"
@@ -123,6 +91,15 @@
 			<intent
 				android:action="android.intent.action.VIEW"
 				android:data="twidere://user?user_id=218536728&amp;finish_only=true"/>
+		</Preference>
+	</PreferenceCategory>
+	<PreferenceCategory android:title="@string/sponsored_by">
+		<Preference
+			android:icon="@drawable/ic_launcher_hondajojo"
+			android:title="@string/kuma_union">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="twidere://user?user_id=514378421&amp;finish_only=true"/>
 		</Preference>
 	</PreferenceCategory>
 

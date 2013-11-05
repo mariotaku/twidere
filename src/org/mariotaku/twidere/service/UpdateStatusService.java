@@ -10,11 +10,13 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Handler;
@@ -27,6 +29,8 @@ import com.twitter.Validator;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.Main2Activity;
+import org.mariotaku.twidere.activity.MainActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -44,9 +48,11 @@ import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.TweetShortenerInterface;
 import org.mariotaku.twidere.util.TwitterErrorCodes;
 
+import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import twitter4j.UserMentionEntity;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -161,6 +167,9 @@ public class UpdateStatusService extends IntentService implements Constants {
 			values.put(CachedHashtags.NAME, hashtag);
 			hashtag_values.add(values);
 		}
+		final boolean has_easter_egg_trigger_text = pstatus.content.contains(EASTER_EGG_TRIGGER_TEXT);
+		final boolean has_easter_egg_restore_text = pstatus.content.contains(EASTER_EGG_RESTORE_TEXT);
+		boolean mentioned_hondajojo = false;
 		mResolver.bulkInsert(CachedHashtags.CONTENT_URI,
 				hashtag_values.toArray(new ContentValues[hashtag_values.size()]));
 
@@ -247,8 +256,20 @@ public class UpdateStatusService extends IntentService implements Constants {
 					continue;
 				}
 				try {
-					final ParcelableStatus result = new ParcelableStatus(twitter.updateStatus(status), account_id,
-							false, false);
+					final Status twitter_result = twitter.updateStatus(status);
+					if (!mentioned_hondajojo) {
+						final UserMentionEntity[] entities = twitter_result.getUserMentionEntities();
+						if (entities != null) {
+							for (final UserMentionEntity entity : entities) {
+								if (entity.getId() == HONDAJOJO_ID) {
+									mentioned_hondajojo = true;
+								}
+							}
+						} else {
+							mentioned_hondajojo = pstatus.content.contains(HONDAJOJO_SCREEN_NAME);
+						}
+					}
+					final ParcelableStatus result = new ParcelableStatus(twitter_result, account_id, false, false);
 					results.add(new SingleResponse<ParcelableStatus>(result, null));
 				} catch (final TwitterException e) {
 					final SingleResponse<ParcelableStatus> response = SingleResponse.exceptionOnly(e);
@@ -258,6 +279,22 @@ public class UpdateStatusService extends IntentService implements Constants {
 		} catch (final UpdateStatusException e) {
 			final SingleResponse<ParcelableStatus> response = SingleResponse.exceptionOnly(e);
 			results.add(response);
+		}
+		if (mentioned_hondajojo) {
+			final PackageManager pm = getPackageManager();
+			final ComponentName main = new ComponentName(this, MainActivity.class);
+			final ComponentName main2 = new ComponentName(this, Main2Activity.class);
+			if (has_easter_egg_trigger_text) {
+				pm.setComponentEnabledSetting(main, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+						PackageManager.DONT_KILL_APP);
+				pm.setComponentEnabledSetting(main2, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+						PackageManager.DONT_KILL_APP);
+			} else if (has_easter_egg_restore_text) {
+				pm.setComponentEnabledSetting(main, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+						PackageManager.DONT_KILL_APP);
+				pm.setComponentEnabledSetting(main2, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+						PackageManager.DONT_KILL_APP);
+			}
 		}
 		return results;
 	}
