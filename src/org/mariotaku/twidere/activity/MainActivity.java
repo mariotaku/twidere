@@ -9,7 +9,7 @@ import org.mariotaku.twidere.Constants;
 public class MainActivity extends Activity implements Constants {
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		final Intent intent = new Intent(this, HomeActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
