@@ -71,6 +71,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.util.LongSparseArray;
 import android.support.v4.view.accessibility.AccessibilityEventCompat;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
@@ -88,6 +89,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.huewu.pla.lib.MultiColumnListView;
+import com.huewu.pla.lib.internal.PLAListView;
 import com.origamilabs.library.views.StaggeredGridView;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -143,7 +146,6 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableStatus.ParcelableUserMention;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.ParcelableUserList;
-import org.mariotaku.twidere.model.PreviewMedia;
 import org.mariotaku.twidere.model.StatusCursorIndices;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
@@ -153,7 +155,6 @@ import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.util.HtmlLinkExtractor.HtmlLink;
 import org.mariotaku.twidere.util.httpclient.HttpClientImpl;
 
 import twitter4j.DirectMessage;
@@ -192,9 +193,7 @@ import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -279,15 +278,12 @@ public final class Utils implements Constants {
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_SEARCH, null, LINK_ID_SEARCH);
 
 	}
-	private static Map<Long, Integer> sAccountColors = new LinkedHashMap<Long, Integer>();
+	private static LongSparseArray<Integer> sAccountColors = new LongSparseArray<Integer>();
+	private static LongSparseArray<Integer> sUserColors = new LongSparseArray<Integer>();
 
-	private static Map<Long, Integer> sUserColors = new LinkedHashMap<Long, Integer>(512, 0.75f, true);
-
-	private static Map<Long, String> sUserNicknames = new LinkedHashMap<Long, String>(512, 0.75f, true);
-
-	private static Map<Long, String> sAccountScreenNames = new LinkedHashMap<Long, String>();
-
-	private static Map<Long, String> sAccountNames = new LinkedHashMap<Long, String>();
+	private static LongSparseArray<String> sUserNicknames = new LongSparseArray<String>();
+	private static LongSparseArray<String> sAccountScreenNames = new LongSparseArray<String>();
+	private static LongSparseArray<String> sAccountNames = new LongSparseArray<String>();
 
 	static final String MAPS_STATIC_IMAGE_URI_TEMPLATE = "https://maps.googleapis.com/maps/api/staticmap?zoom=%d&size=%dx%d&sensor=false&language=%s&center=%f,%f&markers=%f,%f";
 
@@ -513,6 +509,19 @@ public final class Utils implements Constants {
 		final int position = view.getFirstVisiblePosition(), offset = Utils.getFirstChildOffset(view);
 		view.setAdapter(adapter);
 		Utils.scrollListToPosition(view, position, offset);
+	}
+
+	public static void clearListViewChoices(final MultiColumnListView view) {
+		if (view == null) return;
+		final ListAdapter adapter = view.getAdapter();
+		if (adapter == null) return;
+		view.clearChoices();
+		// view.setChoiceMode(ListView.CHOICE_MODE_NONE);
+		// Workaround for Android bug
+		// http://stackoverflow.com/questions/9754170/listview-selection-remains-persistent-after-exiting-choice-mode
+		final int position = view.getFirstVisiblePosition();
+		view.setAdapter(adapter);
+		Utils.scrollListToPosition(view, position);
 	}
 
 	public static void clearUserColor(final Context context, final long user_id) {
@@ -1571,20 +1580,6 @@ public final class Utils implements Constants {
 		return null;
 	}
 
-	public static List<PreviewMedia> getImagesInStatus(final String status_string, final boolean use_full) {
-		if (status_string == null) return Collections.emptyList();
-		final List<PreviewMedia> images = new ArrayList<PreviewMedia>();
-		final HtmlLinkExtractor extractor = new HtmlLinkExtractor();
-		extractor.grabLinks(status_string);
-		for (final HtmlLink link : extractor.grabLinks(status_string)) {
-			final PreviewMedia spec = MediaPreviewUtils.getAllAvailableImage(link.getLink(), use_full);
-			if (spec != null) {
-				images.add(spec);
-			}
-		}
-		return images;
-	}
-
 	public static String getImageUploadStatus(final Context context, final CharSequence link, final CharSequence text) {
 		if (context == null) return null;
 		String image_upload_format = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
@@ -2128,7 +2123,7 @@ public final class Utils implements Constants {
 
 	public static int getUserColor(final Context context, final long user_id, final boolean ignore_cache) {
 		if (context == null || user_id == -1) return Color.TRANSPARENT;
-		if (!ignore_cache && sUserColors.containsKey(user_id)) return sUserColors.get(user_id);
+		if (!ignore_cache && sUserColors.indexOfKey(user_id) >= 0) return sUserColors.get(user_id);
 		final SharedPreferences prefs = context.getSharedPreferences(USER_COLOR_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final int color = prefs.getInt(Long.toString(user_id), Color.TRANSPARENT);
 		sUserColors.put(user_id, color);
@@ -2162,7 +2157,7 @@ public final class Utils implements Constants {
 
 	public static String getUserNickname(final Context context, final long user_id, final boolean ignore_cache) {
 		if (context == null || user_id == -1) return null;
-		if (!ignore_cache && sUserNicknames.containsKey(user_id)) return sUserNicknames.get(user_id);
+		if (!ignore_cache && LongSparseArrayUtils.hasKey(sUserNicknames, user_id)) return sUserNicknames.get(user_id);
 		final SharedPreferences prefs = context.getSharedPreferences(USER_NICKNAME_PREFERENCES_NAME,
 				Context.MODE_PRIVATE);
 		final String nickname = prefs.getString(Long.toString(user_id), null);
@@ -3473,7 +3468,29 @@ public final class Utils implements Constants {
 		}
 	}
 
+	public static void scrollListToPosition(final PLAListView list, final int position) {
+		if (list == null) return;
+		// if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+		list.setSelection(position);
+		list.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(),
+				MotionEvent.ACTION_CANCEL, 0, 0, 0));
+		// } else {
+		// list.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(),
+		// SystemClock.uptimeMillis(),
+		// MotionEvent.ACTION_DOWN, 0, 0, 0));
+		// list.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(),
+		// SystemClock.uptimeMillis(),
+		// MotionEvent.ACTION_UP, 0, 0, 0));
+		// list.setSelection(position);
+		// }
+	}
+
 	public static void scrollListToTop(final ListView list) {
+		if (list == null) return;
+		scrollListToPosition(list, 0);
+	}
+
+	public static void scrollListToTop(final PLAListView list) {
 		if (list == null) return;
 		scrollListToPosition(list, 0);
 	}

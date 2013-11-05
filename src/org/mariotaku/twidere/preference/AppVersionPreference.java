@@ -69,6 +69,7 @@ public class AppVersionPreference extends Preference {
 		if (mClickCount >= 7) {
 			final Context context = getContext();
 			if (context != null) {
+				mClickCount = 0;
 				context.startActivity(new Intent(context, NyanActivity.class));
 			}
 		}

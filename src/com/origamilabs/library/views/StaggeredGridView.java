@@ -75,6 +75,8 @@ import java.util.Arrays;
 public class StaggeredGridView extends ViewGroup {
 	private static final String TAG = "StaggeredGridView";
 
+	private ListAdapter mAdapter;
+
 	/*
 	 * There are a few things you should know if you're going to make
 	 * modifications to StaggeredGridView.
@@ -106,34 +108,33 @@ public class StaggeredGridView extends ViewGroup {
 	 * longer applies.
 	 */
 
-	private ListAdapter mAdapter;
-
 	public static final int COLUMN_COUNT_AUTO = -1;
 
 	private int mColCountSetting = 2;
+
 	private int mColCount = 2;
 	private int mMinColWidth = 0;
 	private int mItemMargin;
-
 	private int[] mItemTops;
-	private int[] mItemBottoms;
 
+	private int[] mItemBottoms;
 	private boolean mFastChildLayout;
+
 	private boolean mPopulating;
 	private boolean mInLayout;
 	private int[] mRestoreOffsets;
-
 	private final RecycleBin mRecycler = new RecycleBin();
 
 	private final AdapterDataSetObserver mObserver = new AdapterDataSetObserver();
 
 	private boolean mDataChanged;
+
 	private int mItemCount;
 	private boolean mHasStableIds;
-
 	private int mFirstPosition;
 
 	private final int mTouchSlop;
+
 	private final int mMaximumVelocity;
 	private final int mFlingVelocity;
 	private float mLastTouchY;
@@ -145,24 +146,23 @@ public class StaggeredGridView extends ViewGroup {
 	private int mNumCols;
 	private long mFirstAdapterId;
 	private boolean mBeginClick;
-
 	private static final int TOUCH_MODE_IDLE = 0;
+
 	private static final int TOUCH_MODE_DRAGGING = 1;
 	private static final int TOUCH_MODE_FLINGING = 2;
 	private static final int TOUCH_MODE_DOWN = 3;
 	private static final int TOUCH_MODE_TAP = 4;
 	private static final int TOUCH_MODE_DONE_WAITING = 5;
 	private static final int TOUCH_MODE_REST = 6;
-
 	private static final int INVALID_POSITION = -1;
 
 	private int mTouchMode;
+
 	private final VelocityTracker mVelocityTracker = VelocityTracker.obtain();
 	private final ScrollerCompat mScroller;
-
 	private final EdgeEffectCompat mTopEdge;
-	private final EdgeEffectCompat mBottomEdge;
 
+	private final EdgeEffectCompat mBottomEdge;
 	private final ArrayList<ArrayList<Integer>> mColMappings = new ArrayList<ArrayList<Integer>>();
 
 	private Runnable mPendingCheckForTap;
@@ -255,10 +255,10 @@ public class StaggeredGridView extends ViewGroup {
 		super(context, attrs, defStyle);
 
 		if (attrs != null) {
-			final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.StaggeredGridView);
-			mColCount = a.getInteger(R.styleable.StaggeredGridView_numColumns, 2);
-			mDrawSelectorOnTop = a.getBoolean(R.styleable.StaggeredGridView_drawSelectorOnTop, false);
-			mItemMargin = (int) a.getDimension(R.styleable.StaggeredGridView_itemMargin, 0);
+			final TypedArray a = getContext().obtainStyledAttributes(attrs, styleable.StaggeredGridView);
+			mColCount = a.getInteger(styleable.StaggeredGridView_numColumns, 2);
+			mDrawSelectorOnTop = a.getBoolean(styleable.StaggeredGridView_drawSelectorOnTop, false);
+			mItemMargin = (int) a.getDimension(styleable.StaggeredGridView_itemMargin, 0);
 		} else {
 			mColCount = 2;
 			mDrawSelectorOnTop = false;
@@ -803,6 +803,10 @@ public class StaggeredGridView extends ViewGroup {
 
 	public void setDrawSelectorOnTop(final boolean mDrawSelectorOnTop) {
 		this.mDrawSelectorOnTop = mDrawSelectorOnTop;
+	}
+
+	public void setItemChecked(final int position, final boolean checked) {
+
 	}
 
 	/**
@@ -2483,6 +2487,16 @@ public class StaggeredGridView extends ViewGroup {
 		}
 	}
 
+	private static final class styleable {
+
+		public static final int[] StaggeredGridView = { android.R.attr.numColumns, android.R.attr.drawSelectorOnTop,
+				R.attr.itemMargin };
+		public static final int StaggeredGridView_numColumns = 0;
+		public static final int StaggeredGridView_drawSelectorOnTop = 1;
+		public static final int StaggeredGridView_itemMargin = 2;
+
+	}
+
 	/**
 	 * A base class for Runnables that will check that their view is still
 	 * attached to the original window as when the Runnable was created.
@@ -2642,12 +2656,5 @@ public class StaggeredGridView extends ViewGroup {
 			out.writeIntArray(topOffsets);
 			out.writeTypedList(mapping);
 		}
-	}
-
-	static class styleable {
-
-		static final int[] StaggeredGridView = { android.R.attr.numColumns, android.R.attr.drawSelectorOnTop,
-				android.R.attr.itemPadding };
-
 	}
 }

@@ -77,10 +77,10 @@ import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.CustomTabUtils;
 import org.mariotaku.twidere.util.ImagePreloader;
+import org.mariotaku.twidere.util.MediaPreviewUtils;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.PermissionsManager;
-import org.mariotaku.twidere.util.Utils;
 
 import twitter4j.http.HostAddressResolver;
 
@@ -1025,7 +1025,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			}
 			if (mPreferences.getBoolean(PREFERENCE_KEY_PRELOAD_PREVIEW_IMAGES, false)) {
 				final String text_html = v.getAsString(Statuses.TEXT_HTML);
-				for (final PreviewMedia spec : Utils.getImagesInStatus(text_html, false)) {
+				for (final PreviewMedia spec : MediaPreviewUtils.getImagesInStatus(text_html, false)) {
 					mImagePreloader.preloadImage(spec.url);
 				}
 			}

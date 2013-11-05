@@ -87,7 +87,7 @@ public class StaggeredHomeTimelineFragment extends CursorStatusesStaggeredGridFr
 
 	@Override
 	protected String getPositionKey() {
-		return "home_timeline";
+		return "staggered_home_timeline";
 	}
 
 	@Override

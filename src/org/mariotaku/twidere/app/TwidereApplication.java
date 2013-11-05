@@ -25,6 +25,7 @@ import static org.mariotaku.twidere.util.Utils.initAccountColor;
 import static org.mariotaku.twidere.util.Utils.initUserColor;
 
 import android.app.Application;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -53,6 +54,8 @@ import org.acra.sender.ReportSenderException;
 import org.mariotaku.gallery3d.util.GalleryUtils;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.KumaKichiActivity;
+import org.mariotaku.twidere.activity.MainActivity;
 import org.mariotaku.twidere.service.RefreshService;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
@@ -177,6 +180,15 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		}
 		initAccountColor(this);
 		initUserColor(this);
+
+		final PackageManager pm = getPackageManager();
+		final ComponentName main = new ComponentName(this, MainActivity.class);
+		final ComponentName kumakichi = new ComponentName(this, KumaKichiActivity.class);
+		final boolean main_disabled = pm.getComponentEnabledSetting(main) == PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+		if (!main_disabled) {
+			pm.setComponentEnabledSetting(kumakichi, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+					PackageManager.DONT_KILL_APP);
+		}
 	}
 
 	@Override

@@ -29,6 +29,9 @@ import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.URLEntity;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -209,65 +212,17 @@ public class MediaPreviewUtils {
 		return null;
 	}
 
-	public static PreviewMedia getGoogleImage(final String server, final String id, final boolean use_full) {
-		if (isEmpty(server) || isEmpty(id)) return null;
-		final String full = "https://" + server + id + "/s0/full";
-		final String preview = use_full ? full : "https://" + server + id + "/s480/full";
-		return new PreviewMedia(preview, full);
-	}
-
-	public static PreviewMedia getGoogleProxyImage(final String server, final String id, final boolean use_full) {
-		if (isEmpty(server) || isEmpty(id)) return null;
-		final String full = "https://" + server + "/proxy/" + id + "=s0";
-		final String preview = use_full ? full : "https://" + server + "/proxy/" + id + "=s480";
-		return new PreviewMedia(preview, full);
-	}
-
-	public static PreviewMedia getImglyImage(final String id, final String orig, final boolean use_full) {
-		if (isEmpty(id)) return null;
-		final String preview = String.format("https://img.ly/show/%s/%s", use_full ? "full" : "medium", id);
-		return new PreviewMedia(preview, orig);
-	}
-
-	public static PreviewMedia getImgurImage(final String id, final String orig, final boolean use_full) {
-		if (isEmpty(id)) return null;
-		final String preview = use_full ? String.format("http://i.imgur.com/%s.jpg", id) : String.format(
-				"http://i.imgur.com/%sl.jpg", id);
-		return new PreviewMedia(preview, orig);
-	}
-
-	public static PreviewMedia getInstagramImage(final String id, final String orig, final boolean use_full) {
-		if (isEmpty(id)) return null;
-		final String preview = String.format("https://instagr.am/p/%s/media/?size=%s", id, use_full ? "l" : "t");
-		return new PreviewMedia(preview, orig);
-	}
-
-	public static PreviewMedia getLockerzAndPlixiImage(final String url, final boolean use_full) {
-		if (isEmpty(url)) return null;
-		final String preview = String.format("https://api.plixi.com/api/tpapi.svc/imagefromurl?url=%s&size=%s", url,
-				use_full ? "big" : "small");
-		return new PreviewMedia(preview, url);
-
-	}
-
-	public static PreviewMedia getMobyPictureImage(final String id, final String orig, final boolean use_full) {
-		if (isEmpty(id)) return null;
-		final String preview = String.format("https://moby.to/%s:%s", id, use_full ? "full" : "thumb");
-		return new PreviewMedia(preview, orig);
-	}
-
-	public static PreviewMedia getPhotozouImage(final String id, final String orig, final boolean use_full) {
-		if (isEmpty(id)) return null;
-		final String preview = String.format("http://photozou.jp/p/%s/%s", use_full ? "img" : "thumb", id);
-		return new PreviewMedia(preview, orig);
-	}
-
-	public static PreviewMedia getSinaWeiboImage(final String url, final boolean use_full) {
-		if (isEmpty(url)) return null;
-		final String full = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVAILABLE_SIZES + "\\/", "/large/");
-		final String preview = use_full ? full : url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVAILABLE_SIZES + "\\/",
-				"/medium/");
-		return new PreviewMedia(preview, full);
+	public static List<PreviewMedia> getImagesInStatus(final String status_string, final boolean use_full) {
+		if (status_string == null) return Collections.emptyList();
+		final List<PreviewMedia> images = new ArrayList<PreviewMedia>();
+		final HtmlLinkExtractor extractor = new HtmlLinkExtractor();
+		for (final HtmlLink link : extractor.grabLinks(status_string)) {
+			final PreviewMedia spec = getAllAvailableImage(link.getLink(), use_full);
+			if (spec != null) {
+				images.add(spec);
+			}
+		}
+		return images;
 	}
 
 	public static String getSupportedFirstLink(final Status status) {
@@ -306,28 +261,102 @@ public class MediaPreviewUtils {
 		return null;
 	}
 
-	public static PreviewMedia getTwitgooImage(final String id, final String orig, final boolean use_full) {
+	public static List<String> getSupportedLinksInStatus(final String status_string) {
+		if (status_string == null) return Collections.emptyList();
+		final List<String> links = new ArrayList<String>();
+		final HtmlLinkExtractor extractor = new HtmlLinkExtractor();
+		for (final HtmlLink link : extractor.grabLinks(status_string)) {
+			final String spec = getSupportedLink(link.getLink());
+			if (spec != null) {
+				links.add(spec);
+			}
+		}
+		return links;
+	}
+
+	private static PreviewMedia getGoogleImage(final String server, final String id, final boolean use_full) {
+		if (isEmpty(server) || isEmpty(id)) return null;
+		final String full = "https://" + server + id + "/s0/full";
+		final String preview = use_full ? full : "https://" + server + id + "/s480/full";
+		return new PreviewMedia(preview, full);
+	}
+
+	private static PreviewMedia getGoogleProxyImage(final String server, final String id, final boolean use_full) {
+		if (isEmpty(server) || isEmpty(id)) return null;
+		final String full = "https://" + server + "/proxy/" + id + "=s0";
+		final String preview = use_full ? full : "https://" + server + "/proxy/" + id + "=s480";
+		return new PreviewMedia(preview, full);
+	}
+
+	private static PreviewMedia getImglyImage(final String id, final String orig, final boolean use_full) {
+		if (isEmpty(id)) return null;
+		final String preview = String.format("http://img.ly/show/%s/%s", use_full ? "full" : "medium", id);
+		return new PreviewMedia(preview, orig);
+	}
+
+	private static PreviewMedia getImgurImage(final String id, final String orig, final boolean use_full) {
+		if (isEmpty(id)) return null;
+		final String preview = use_full ? String.format("http://i.imgur.com/%s.jpg", id) : String.format(
+				"http://i.imgur.com/%sl.jpg", id);
+		return new PreviewMedia(preview, orig);
+	}
+
+	private static PreviewMedia getInstagramImage(final String id, final String orig, final boolean use_full) {
+		if (isEmpty(id)) return null;
+		final String preview = String.format("https://instagr.am/p/%s/media/?size=%s", id, use_full ? "l" : "t");
+		return new PreviewMedia(preview, orig);
+	}
+
+	private static PreviewMedia getLockerzAndPlixiImage(final String url, final boolean use_full) {
+		if (isEmpty(url)) return null;
+		final String preview = String.format("https://api.plixi.com/api/tpapi.svc/imagefromurl?url=%s&size=%s", url,
+				use_full ? "big" : "small");
+		return new PreviewMedia(preview, url);
+
+	}
+
+	private static PreviewMedia getMobyPictureImage(final String id, final String orig, final boolean use_full) {
+		if (isEmpty(id)) return null;
+		final String preview = String.format("http://moby.to/%s:%s", id, use_full ? "full" : "thumb");
+		return new PreviewMedia(preview, orig);
+	}
+
+	private static PreviewMedia getPhotozouImage(final String id, final String orig, final boolean use_full) {
+		if (isEmpty(id)) return null;
+		final String preview = String.format("http://photozou.jp/p/%s/%s", use_full ? "img" : "thumb", id);
+		return new PreviewMedia(preview, orig);
+	}
+
+	private static PreviewMedia getSinaWeiboImage(final String url, final boolean use_full) {
+		if (isEmpty(url)) return null;
+		final String full = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVAILABLE_SIZES + "\\/", "/woriginal/");
+		final String preview = use_full ? full : url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVAILABLE_SIZES + "\\/",
+				"/bmiddle/");
+		return new PreviewMedia(preview, full);
+	}
+
+	private static PreviewMedia getTwitgooImage(final String id, final String orig, final boolean use_full) {
 		if (isEmpty(id)) return null;
 		final String preview = String.format("http://twitgoo.com/show/%s/%s", use_full ? "img" : "thumb", id);
 		return new PreviewMedia(preview, orig);
 	}
 
-	public static PreviewMedia getTwitpicImage(final String id, final String orig, final boolean use_full) {
+	private static PreviewMedia getTwitpicImage(final String id, final String orig, final boolean use_full) {
 		if (isEmpty(id)) return null;
-		final String preview = String.format("https://twitpic.com/show/%s/%s", use_full ? "large" : "thumb", id);
+		final String preview = String.format("http://twitpic.com/show/%s/%s", use_full ? "large" : "thumb", id);
 		return new PreviewMedia(preview, orig);
 	}
 
-	public static PreviewMedia getTwitterImage(final String url, final boolean use_full) {
+	private static PreviewMedia getTwitterImage(final String url, final boolean use_full) {
 		if (isEmpty(url)) return null;
 		final String full = (url + ":large").replaceFirst("https?://", "https://");
 		final String preview = use_full ? full : (url + ":small").replaceFirst("https?://", "https://");
 		return new PreviewMedia(preview, full);
 	}
 
-	public static PreviewMedia getYfrogImage(final String id, final String orig, final boolean use_full) {
+	private static PreviewMedia getYfrogImage(final String id, final String orig, final boolean use_full) {
 		if (isEmpty(id)) return null;
-		final String preview = String.format("https://yfrog.com/%s:%s", id, use_full ? "medium" : "iphone");
+		final String preview = String.format("http://yfrog.com/%s:%s", id, use_full ? "medium" : "iphone");
 		return new PreviewMedia(preview, orig);
 
 	}

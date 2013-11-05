@@ -214,6 +214,7 @@ public class CustomTabUtils implements Constants {
 			cur.moveToNext();
 		}
 		cur.close();
+		Collections.sort(tabs);
 		return tabs;
 	}
 

@@ -458,8 +458,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		filter.addAction(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_UNREAD_COUNT_UPDATED);
 		registerReceiver(mStateReceiver, filter);
-		final List<SupportTabSpec> tabs = getHomeTabs(this);
-		if (isTabsChanged(tabs)) {
+		if (isTabsChanged(getHomeTabs(this))) {
 			restart();
 		}
 		// UCD

@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.getAccountId;
+import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -69,6 +70,19 @@ public class UserTimelineFragment extends ParcelableStatusesListFragment {
 		final long user_id = args.getLong(EXTRA_USER_ID, -1);
 		final String screen_name = args.getString(EXTRA_SCREEN_NAME);
 		return new String[] { AUTHORITY_USER_TIMELINE, "account" + account_id, "user" + user_id + "name" + screen_name };
+	}
+
+	@Override
+	protected boolean isMyTimeline() {
+		final Bundle args = getArguments();
+		if (args != null) {
+			final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
+			final long user_id = args.getLong(EXTRA_USER_ID, -1);
+			final String screen_name = args.getString(EXTRA_SCREEN_NAME);
+			if (account_id == user_id || screen_name != null
+					&& screen_name.equals(getAccountScreenName(getActivity(), account_id))) return true;
+		}
+		return false;
 	}
 
 }

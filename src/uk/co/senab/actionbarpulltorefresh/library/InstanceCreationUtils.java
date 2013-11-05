@@ -22,6 +22,7 @@ import android.view.View;
 
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher.ViewDelegate;
 import uk.co.senab.actionbarpulltorefresh.library.viewdelegates.AbsListViewDelegate;
+import uk.co.senab.actionbarpulltorefresh.library.viewdelegates.PLAAbsListViewDelegate;
 import uk.co.senab.actionbarpulltorefresh.library.viewdelegates.ScrollYDelegate;
 import uk.co.senab.actionbarpulltorefresh.library.viewdelegates.StaggeredGridViewDelegate;
 import uk.co.senab.actionbarpulltorefresh.library.viewdelegates.WebViewDelegate;
@@ -44,6 +45,7 @@ class InstanceCreationUtils {
 		BUILT_IN_DELEGATES.put(AbsListViewDelegate.SUPPORTED_VIEW_CLASS, AbsListViewDelegate.class);
 		BUILT_IN_DELEGATES.put(WebViewDelegate.SUPPORTED_VIEW_CLASS, WebViewDelegate.class);
 		BUILT_IN_DELEGATES.put(StaggeredGridViewDelegate.SUPPORTED_VIEW_CLASS, StaggeredGridViewDelegate.class);
+		BUILT_IN_DELEGATES.put(PLAAbsListViewDelegate.SUPPORTED_VIEW_CLASS, PLAAbsListViewDelegate.class);
 	}
 
 	@SuppressWarnings("unchecked")

@@ -37,7 +37,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.widget.AbsListView;
+
+import com.huewu.pla.lib.internal.PLAAbsListView;
 
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.CursorStatusesAdapter;
@@ -45,7 +46,7 @@ import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTask;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
-public abstract class CursorStatusesStaggeredGridFragment extends BaseStatusesStaggeredGridFragment<Cursor> {
+public abstract class CursorStatusesStaggeredGridFragment extends BaseStatusesMultiColumnListFragment<Cursor> {
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -92,7 +93,7 @@ public abstract class CursorStatusesStaggeredGridFragment extends BaseStatusesSt
 	@Override
 	public void onRefreshStarted() {
 		super.onRefreshStarted();
-		// savePosition();
+		savePosition();
 		new AsyncTask<Void, Void, long[][]>() {
 
 			@Override
@@ -112,7 +113,7 @@ public abstract class CursorStatusesStaggeredGridFragment extends BaseStatusesSt
 	}
 
 	@Override
-	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
+	public void onScrollStateChanged(final PLAAbsListView view, final int scrollState) {
 		super.onScrollStateChanged(view, scrollState);
 		switch (scrollState) {
 			case SCROLL_STATE_FLING:
@@ -124,7 +125,7 @@ public abstract class CursorStatusesStaggeredGridFragment extends BaseStatusesSt
 				break;
 			}
 			case SCROLL_STATE_IDLE:
-				// savePosition();
+				savePosition();
 				break;
 		}
 	}
@@ -139,7 +140,7 @@ public abstract class CursorStatusesStaggeredGridFragment extends BaseStatusesSt
 
 	@Override
 	public void onStop() {
-		// savePosition();
+		savePosition();
 		unregisterReceiver(mStatusReceiver);
 		super.onStop();
 	}
@@ -163,7 +164,7 @@ public abstract class CursorStatusesStaggeredGridFragment extends BaseStatusesSt
 	@Override
 	protected void loadMoreStatuses() {
 		if (isRefreshing()) return;
-		// savePosition();
+		savePosition();
 		new AsyncTask<Void, Void, long[][]>() {
 
 			@Override

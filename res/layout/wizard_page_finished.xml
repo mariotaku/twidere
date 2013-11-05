@@ -12,16 +12,17 @@
 		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
+			android:gravity="center_horizontal"
 			android:orientation="vertical"
 			android:paddingLeft="@dimen/element_spacing_large"
 			android:paddingRight="@dimen/element_spacing_large">
 
 			<ImageView
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
+				android:layout_width="@dimen/icon_size_wizard_large"
+				android:layout_height="@dimen/icon_size_wizard_large"
 				android:contentDescription="@string/app_name"
 				android:padding="@dimen/element_spacing_large"
-				android:scaleType="centerInside"
+				android:scaleType="fitCenter"
 				android:src="@drawable/twidere_icon_512"/>
 
 			<TextView

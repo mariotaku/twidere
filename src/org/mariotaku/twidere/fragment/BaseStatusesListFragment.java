@@ -22,7 +22,6 @@ package org.mariotaku.twidere.fragment;
 import static org.mariotaku.twidere.util.Utils.cancelRetweet;
 import static org.mariotaku.twidere.util.Utils.clearListViewChoices;
 import static org.mariotaku.twidere.util.Utils.configBaseCardAdapter;
-import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.openStatus;
@@ -404,6 +403,10 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 
 	protected abstract String getPositionKey();
 
+	protected boolean isMyTimeline() {
+		return false;
+	}
+
 	protected abstract void loadMoreStatuses();
 
 	protected abstract IStatusesAdapter<Data> newAdapterInstance();
@@ -467,18 +470,6 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		}
 	}
 
-	private boolean isMyTimeline() {
-		final Bundle args = getArguments();
-		if (args != null && this instanceof UserTimelineFragment) {
-			final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
-			final long user_id = args.getLong(EXTRA_USER_ID, -1);
-			final String screen_name = args.getString(EXTRA_SCREEN_NAME);
-			if (account_id == user_id || screen_name != null
-					&& screen_name.equals(getAccountScreenName(getActivity(), account_id))) return true;
-		}
-		return false;
-	}
-
 	private void openMenu(final View view, final ParcelableStatus status) {
 		mSelectedStatus = status;
 		if (view == null || status == null) return;
@@ -527,7 +518,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		private final BaseStatusesListFragment<T> fragment;
 
 		RemoveUnreadCountsTask(final Set<Integer> read_positions, final BaseStatusesListFragment<T> fragment) {
-			this.read_positions = read_positions;
+			this.read_positions = Collections.synchronizedSet(new HashSet<Integer>(read_positions));
 			this.fragment = fragment;
 			this.adapter = fragment.getListAdapter();
 		}

@@ -29,7 +29,6 @@ import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getDefaultTextSize;
 import static org.mariotaku.twidere.util.Utils.getDisplayName;
-import static org.mariotaku.twidere.util.Utils.getImagesInStatus;
 import static org.mariotaku.twidere.util.Utils.getMapStaticImageUri;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.getUserColor;
@@ -92,7 +91,7 @@ import edu.ucdavis.earlybird.ProfilingUtil;
 import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.ColorSelectorActivity;
-import org.mariotaku.twidere.adapter.ImagePreviewAdapter;
+import org.mariotaku.twidere.adapter.MediaPreviewAdapter;
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -106,6 +105,7 @@ import org.mariotaku.twidere.util.AsyncTask;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
+import org.mariotaku.twidere.util.MediaPreviewUtils;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.TwidereLinkify;
@@ -157,7 +157,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private ExtendedFrameLayout mStatusContainer;
 	private ListView mListView;
 
-	private ImagePreviewAdapter mImagePreviewAdapter;
+	private MediaPreviewAdapter mImagePreviewAdapter;
 
 	private LoadConversationTask mConversationTask;
 
@@ -445,7 +445,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		} else {
 			mProfileImageView.setImageResource(R.drawable.ic_profile_image_default);
 		}
-		final List<PreviewMedia> images = getImagesInStatus(status.text_html, true);
+		final List<String> images = MediaPreviewUtils.getSupportedLinksInStatus(status.text_html);
 		mImagePreviewContainer.setVisibility(images.isEmpty() ? View.GONE : View.VISIBLE);
 		if (display_image_preview) {
 			loadPreviewImages();
@@ -522,7 +522,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mImageLoader = application.getImageLoaderWrapper();
 		mTwitterWrapper = getTwitterWrapper();
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
-		mImagePreviewAdapter = new ImagePreviewAdapter(getActivity());
+		mImagePreviewAdapter = new MediaPreviewAdapter(getActivity());
 		setPullToRefreshEnabled(false);
 		// getPullToRefreshAttacher().setEnabled(false);
 		final Bundle bundle = getArguments();
@@ -667,11 +667,11 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	@Override
 	public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-		final PreviewMedia image = mImagePreviewAdapter.getItem(position);
+		final String image = mImagePreviewAdapter.getItem(position);
 		if (mStatus == null || image == null) return;
 		// UCD
 		ProfilingUtil.profile(getActivity(), mAccountId, "Large image click, " + mStatusId + ", " + image);
-		openImage(getActivity(), image.original, mStatus.is_possibly_sensitive);
+		openImage(getActivity(), image, mStatus.is_possibly_sensitive);
 	}
 
 	@Override
@@ -816,7 +816,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mLoadImagesIndicator.setVisibility(View.GONE);
 		mGalleryContainer.setVisibility(View.VISIBLE);
 		mImagePreviewAdapter.clear();
-		final List<PreviewMedia> images = getImagesInStatus(mStatus.text_html, true);
+		final List<String> images = MediaPreviewUtils.getSupportedLinksInStatus(mStatus.text_html);
 		mImagePreviewAdapter.addAll(images, mStatus.is_possibly_sensitive);
 		updateImageSelectButton(mImagePreviewGallery.getSelectedItemPosition());
 	}

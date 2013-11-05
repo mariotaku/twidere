@@ -196,4 +196,9 @@ public class SettingsActivity extends BasePreferenceActivity {
 
 	}
 
+	@Override
+	protected boolean isValidFragment(String fragmentName) {
+		return true;
+	}
+
 }
