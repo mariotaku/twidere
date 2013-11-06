@@ -2,7 +2,6 @@ package org.mariotaku.twidere.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,6 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
-import org.mariotaku.twidere.util.ViewAccessor;
 import org.mariotaku.twidere.view.iface.IColorLabelView;
 
 import java.util.Arrays;
@@ -29,33 +27,37 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 	public static final int GROUP_ID_MENU = 2;
 
 	private static final GroupItem[] GROUPS = new GroupItem[3];
-	private static final AccountOption[] DEFAULT_ACCOUNT_OPTIONS = new AccountOption[8];
-	private static final AccountOption[] ACCOUNT_OPTIONS = new AccountOption[9];
+	private static final OptionItem[] DEFAULT_ACCOUNT_OPTIONS = new OptionItem[8];
+	private static final OptionItem[] ACCOUNT_OPTIONS = new OptionItem[9];
+	private static final OptionItem[] MORE_OPTION_ITEMS = new OptionItem[4];
 
 	static {
-		DEFAULT_ACCOUNT_OPTIONS[0] = new AccountOption(R.string.view_user_profile, R.drawable.ic_menu_profile,
+		DEFAULT_ACCOUNT_OPTIONS[0] = new OptionItem(R.string.view_user_profile, R.drawable.ic_menu_profile,
 				MENU_VIEW_PROFILE);
-		DEFAULT_ACCOUNT_OPTIONS[1] = new AccountOption(R.string.statuses, R.drawable.ic_menu_quote, MENU_STATUSES);
-		DEFAULT_ACCOUNT_OPTIONS[2] = new AccountOption(R.string.favorites, R.drawable.ic_menu_star, MENU_FAVORITES);
-		DEFAULT_ACCOUNT_OPTIONS[3] = new AccountOption(R.string.users_lists, R.drawable.ic_menu_list, MENU_LISTS);
-		DEFAULT_ACCOUNT_OPTIONS[4] = new AccountOption(R.string.lists_following_user, R.drawable.ic_menu_list,
+		DEFAULT_ACCOUNT_OPTIONS[1] = new OptionItem(R.string.statuses, R.drawable.ic_menu_quote, MENU_STATUSES);
+		DEFAULT_ACCOUNT_OPTIONS[2] = new OptionItem(R.string.favorites, R.drawable.ic_menu_star, MENU_FAVORITES);
+		DEFAULT_ACCOUNT_OPTIONS[3] = new OptionItem(R.string.users_lists, R.drawable.ic_menu_list, MENU_LISTS);
+		DEFAULT_ACCOUNT_OPTIONS[4] = new OptionItem(R.string.lists_following_user, R.drawable.ic_menu_list,
 				MENU_LIST_MEMBERSHIPS);
-		DEFAULT_ACCOUNT_OPTIONS[5] = new AccountOption(R.string.edit_profile, android.R.drawable.ic_menu_edit,
-				MENU_EDIT);
-		DEFAULT_ACCOUNT_OPTIONS[6] = new AccountOption(R.string.set_color, R.drawable.ic_menu_color_palette,
+		DEFAULT_ACCOUNT_OPTIONS[5] = new OptionItem(R.string.edit_profile, android.R.drawable.ic_menu_edit, MENU_EDIT);
+		DEFAULT_ACCOUNT_OPTIONS[6] = new OptionItem(R.string.set_color, R.drawable.ic_menu_color_palette,
 				MENU_SET_COLOR);
-		DEFAULT_ACCOUNT_OPTIONS[7] = new AccountOption(R.string.delete, android.R.drawable.ic_menu_delete, MENU_DELETE);
-		ACCOUNT_OPTIONS[0] = new AccountOption(R.string.view_user_profile, R.drawable.ic_menu_profile,
-				MENU_VIEW_PROFILE);
-		ACCOUNT_OPTIONS[1] = new AccountOption(R.string.statuses, R.drawable.ic_menu_quote, MENU_STATUSES);
-		ACCOUNT_OPTIONS[2] = new AccountOption(R.string.favorites, R.drawable.ic_menu_star, MENU_FAVORITES);
-		ACCOUNT_OPTIONS[3] = new AccountOption(R.string.users_lists, R.drawable.ic_menu_list, MENU_LISTS);
-		ACCOUNT_OPTIONS[4] = new AccountOption(R.string.lists_following_user, R.drawable.ic_menu_list,
+		DEFAULT_ACCOUNT_OPTIONS[7] = new OptionItem(R.string.delete, android.R.drawable.ic_menu_delete, MENU_DELETE);
+		ACCOUNT_OPTIONS[0] = new OptionItem(R.string.view_user_profile, R.drawable.ic_menu_profile, MENU_VIEW_PROFILE);
+		ACCOUNT_OPTIONS[1] = new OptionItem(R.string.statuses, R.drawable.ic_menu_quote, MENU_STATUSES);
+		ACCOUNT_OPTIONS[2] = new OptionItem(R.string.favorites, R.drawable.ic_menu_star, MENU_FAVORITES);
+		ACCOUNT_OPTIONS[3] = new OptionItem(R.string.users_lists, R.drawable.ic_menu_list, MENU_LISTS);
+		ACCOUNT_OPTIONS[4] = new OptionItem(R.string.lists_following_user, R.drawable.ic_menu_list,
 				MENU_LIST_MEMBERSHIPS);
-		ACCOUNT_OPTIONS[5] = new AccountOption(R.string.edit_profile, android.R.drawable.ic_menu_edit, MENU_EDIT);
-		ACCOUNT_OPTIONS[6] = new AccountOption(R.string.set_color, R.drawable.ic_menu_color_palette, MENU_SET_COLOR);
-		ACCOUNT_OPTIONS[7] = new AccountOption(R.string.set_as_default, R.drawable.ic_menu_mark, MENU_SET_AS_DEFAULT);
-		ACCOUNT_OPTIONS[8] = new AccountOption(R.string.delete, android.R.drawable.ic_menu_delete, MENU_DELETE);
+		ACCOUNT_OPTIONS[5] = new OptionItem(R.string.edit_profile, android.R.drawable.ic_menu_edit, MENU_EDIT);
+		ACCOUNT_OPTIONS[6] = new OptionItem(R.string.set_color, R.drawable.ic_menu_color_palette, MENU_SET_COLOR);
+		ACCOUNT_OPTIONS[7] = new OptionItem(R.string.set_as_default, R.drawable.ic_menu_mark, MENU_SET_AS_DEFAULT);
+		ACCOUNT_OPTIONS[8] = new OptionItem(R.string.delete, android.R.drawable.ic_menu_delete, MENU_DELETE);
+		MORE_OPTION_ITEMS[0] = new OptionItem(android.R.string.search_go, android.R.drawable.ic_menu_search,
+				MENU_SEARCH);
+		MORE_OPTION_ITEMS[1] = new OptionItem(R.string.add_account, android.R.drawable.ic_menu_add, MENU_ADD_ACCOUNT);
+		MORE_OPTION_ITEMS[2] = new OptionItem(R.string.filters, R.drawable.ic_menu_mute, MENU_FILTERS);
+		MORE_OPTION_ITEMS[3] = new OptionItem(R.string.settings, android.R.drawable.ic_menu_preferences, MENU_SETTINGS);
 		GROUPS[0] = new GroupItem(R.string.accounts, R.layout.accounts_drawer_item_child_accounts, GROUP_ID_ACCOUNTS);
 		GROUPS[1] = new GroupItem(R.string.account_options, R.layout.menu_list_item, GROUP_ID_ACCOUNT_OPTIONS);
 		GROUPS[2] = new GroupItem(R.string.more, R.layout.menu_list_item, GROUP_ID_MENU);
@@ -91,6 +93,9 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 			case GROUP_ID_ACCOUNT_OPTIONS: {
 				return getOptionsForAccount()[childPosition];
 			}
+			case GROUP_ID_MENU: {
+				return MORE_OPTION_ITEMS[childPosition];
+			}
 		}
 		return null;
 	}
@@ -110,6 +115,9 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 			case GROUP_ID_ACCOUNT_OPTIONS: {
 				if (mSelectedAccountId > 0) return getOptionsForAccount().length;
 				return 0;
+			}
+			case GROUP_ID_MENU: {
+				return MORE_OPTION_ITEMS.length;
 			}
 		}
 		return 0;
@@ -145,8 +153,9 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 				((IColorLabelView) view).drawEnd(account.user_color);
 				break;
 			}
-			case GROUP_ID_ACCOUNT_OPTIONS: {
-				final AccountOption option = (AccountOption) getChild(groupPosition, childPosition);
+			case GROUP_ID_ACCOUNT_OPTIONS:
+			case GROUP_ID_MENU: {
+				final OptionItem option = (OptionItem) getChild(groupPosition, childPosition);
 				final TextView text1 = (TextView) view.findViewById(android.R.id.text1);
 				final ImageView icon = (ImageView) view.findViewById(android.R.id.icon);
 				text1.setText(option.getName());
@@ -232,59 +241,9 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 		notifyDataSetChanged();
 	}
 
-	private AccountOption[] getOptionsForAccount() {
+	private OptionItem[] getOptionsForAccount() {
 		final boolean is_default = mSelectedAccountId == mDefaultAccountId;
 		return is_default ? DEFAULT_ACCOUNT_OPTIONS : ACCOUNT_OPTIONS;
-	}
-
-	public static class AccountOption {
-
-		private final int name, icon, id;
-
-		AccountOption(final int name, final int icon, final int id) {
-			this.name = name;
-			this.icon = icon;
-			this.id = id;
-		}
-
-		@Override
-		public boolean equals(final Object obj) {
-			if (this == obj) return true;
-			if (obj == null) return false;
-			if (!(obj instanceof AccountOption)) return false;
-			final AccountOption other = (AccountOption) obj;
-			if (icon != other.icon) return false;
-			if (id != other.id) return false;
-			if (name != other.name) return false;
-			return true;
-		}
-
-		public int getIcon() {
-			return icon;
-		}
-
-		public int getId() {
-			return id;
-		}
-
-		public int getName() {
-			return name;
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + icon;
-			result = prime * result + id;
-			result = prime * result + name;
-			return result;
-		}
-
-		@Override
-		public String toString() {
-			return "AccountOption{name=" + name + ", icon=" + icon + ", id=" + id + "}";
-		}
 	}
 
 	public static class GroupItem {
@@ -340,6 +299,56 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 
 	public static interface OnAccountActivateStateChangeListener {
 		void onAccountActivateStateChanged(Account account, boolean activated);
+	}
+
+	public static class OptionItem {
+
+		private final int name, icon, id;
+
+		OptionItem(final int name, final int icon, final int id) {
+			this.name = name;
+			this.icon = icon;
+			this.id = id;
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (this == obj) return true;
+			if (obj == null) return false;
+			if (!(obj instanceof OptionItem)) return false;
+			final OptionItem other = (OptionItem) obj;
+			if (icon != other.icon) return false;
+			if (id != other.id) return false;
+			if (name != other.name) return false;
+			return true;
+		}
+
+		public int getIcon() {
+			return icon;
+		}
+
+		public int getId() {
+			return id;
+		}
+
+		public int getName() {
+			return name;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + icon;
+			result = prime * result + id;
+			result = prime * result + name;
+			return result;
+		}
+
+		@Override
+		public String toString() {
+			return "AccountOption{name=" + name + ", icon=" + icon + ", id=" + id + "}";
+		}
 	}
 
 }

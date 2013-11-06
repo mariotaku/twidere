@@ -7,23 +7,7 @@
 	<ExpandableListView
 		android:id="@android:id/list"
 		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		android:layout_weight="1"
+		android:layout_height="match_parent"
 		android:groupIndicator="@null"/>
-
-	<View
-		android:layout_width="match_parent"
-		android:layout_height="1dp"
-		android:background="#40808080"/>
-
-	<Button
-		android:id="@+id/add_account"
-		style="?android:borderlessButtonStyle"
-		android:layout_width="match_parent"
-		android:layout_height="@dimen/button_bar_height"
-		android:layout_weight="0"
-		android:gravity="center"
-		android:text="@string/add_account"
-		android:textAppearance="?android:textAppearanceSmall"/>
 
 </org.mariotaku.twidere.view.ExtendedLinearLayout>

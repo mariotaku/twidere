@@ -21,7 +21,7 @@
 	<dimen name="compose_min_height">320dp</dimen>
 	<dimen name="button_bar_height">52dp</dimen>
 	<dimen name="minimum_element_size">48dp</dimen>
-	<dimen name="left_drawer_width">260dp</dimen>
+	<dimen name="left_drawer_width">240dp</dimen>
 	<dimen name="accounts_drawer_name_size">16sp</dimen>
 	<dimen name="accounts_drawer_screen_name_size">14sp</dimen>
 	<dimen name="accounts_drawer_default_indicator_size">12sp</dimen>

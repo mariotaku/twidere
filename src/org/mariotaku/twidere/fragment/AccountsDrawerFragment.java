@@ -26,21 +26,21 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.ColorSelectorActivity;
+import org.mariotaku.twidere.activity.FiltersActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
+import org.mariotaku.twidere.activity.SettingsActivity;
 import org.mariotaku.twidere.activity.SignInActivity;
 import org.mariotaku.twidere.activity.UserProfileEditorActivity;
 import org.mariotaku.twidere.adapter.AccountsDrawerAdapter;
-import org.mariotaku.twidere.adapter.AccountsDrawerAdapter.AccountOption;
 import org.mariotaku.twidere.adapter.AccountsDrawerAdapter.GroupItem;
 import org.mariotaku.twidere.adapter.AccountsDrawerAdapter.OnAccountActivateStateChangeListener;
+import org.mariotaku.twidere.adapter.AccountsDrawerAdapter.OptionItem;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
@@ -50,7 +50,7 @@ import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 
 public class AccountsDrawerFragment extends BaseSupportFragment implements LoaderCallbacks<Cursor>,
-		OnChildClickListener, OnClickListener, OnSharedPreferenceChangeListener, OnAccountActivateStateChangeListener {
+		OnChildClickListener, OnSharedPreferenceChangeListener, OnAccountActivateStateChangeListener {
 
 	private static final String FRAGMENT_TAG_ACCOUNT_DELETION = "account_deletion";
 	private ContentResolver mResolver;
@@ -58,7 +58,6 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 
 	private ExpandableListView mListView;
 	private AccountsDrawerAdapter mAdapter;
-	private Button mAddAccountButton;
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -89,7 +88,6 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 		mAdapter.setOnAccountActivateStateChangeListener(this);
 		mListView.setAdapter(mAdapter);
 		mListView.setOnChildClickListener(this);
-		mAddAccountButton.setOnClickListener(this);
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
 		getLoaderManager().initLoader(0, null, this);
 	}
@@ -126,9 +124,8 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 			}
 			case AccountsDrawerAdapter.GROUP_ID_ACCOUNT_OPTIONS: {
 				final Account account = Account.getAccount(getActivity(), mAdapter.getSelectedAccountId());
-				final Object child = mAdapter.getChild(groupPosition, childPosition);
-				if (account == null || !(child instanceof AccountOption)) return false;
-				final AccountOption option = (AccountOption) child;
+				if (account == null) return false;
+				final OptionItem option = (OptionItem) mAdapter.getChild(groupPosition, childPosition);
 				switch (option.getId()) {
 					case MENU_VIEW_PROFILE: {
 						openUserProfile(getActivity(), account.account_id, account.account_id, account.screen_name);
@@ -188,21 +185,37 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 				}
 				break;
 			}
-		}
-		return true;
-	}
-
-	@Override
-	public void onClick(final View v) {
-		switch (v.getId()) {
-			case R.id.add_account: {
-				final Intent intent = new Intent(INTENT_ACTION_TWITTER_LOGIN);
-				intent.setClass(getActivity(), SignInActivity.class);
-				startActivity(intent);
+			case AccountsDrawerAdapter.GROUP_ID_MENU: {
+				final OptionItem option = (OptionItem) mAdapter.getChild(groupPosition, childPosition);
+				switch (option.getId()) {
+					case MENU_SEARCH: {
+						getActivity().onSearchRequested();
+						break;
+					}
+					case MENU_ADD_ACCOUNT: {
+						final Intent intent = new Intent(INTENT_ACTION_TWITTER_LOGIN);
+						intent.setClass(getActivity(), SignInActivity.class);
+						startActivity(intent);
+						break;
+					}
+					case MENU_FILTERS: {
+						final Intent intent = new Intent(getActivity(), FiltersActivity.class);
+						intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+						startActivity(intent);
+						break;
+					}
+					case MENU_SETTINGS: {
+						final Intent intent = new Intent(getActivity(), SettingsActivity.class);
+						intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+						startActivity(intent);
+						break;
+					}
+				}
 				closeAccountsDrawer();
 				break;
 			}
 		}
+		return true;
 	}
 
 	@Override
@@ -214,7 +227,6 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.accounts_drawer, container, false);
 		mListView = (ExpandableListView) view.findViewById(android.R.id.list);
-		mAddAccountButton = (Button) view.findViewById(R.id.add_account);
 		return view;
 	}
 
