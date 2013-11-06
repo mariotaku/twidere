@@ -124,30 +124,31 @@ public class SlidingPaneView extends ViewGroup {
 
 		// reading attributes
 		final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SlidingPaneView);
-		final int spacingLeftDefault = res.getDimensionPixelSize(R.dimen.default_slidepane_spacing_left);
-		mLeftSpacing = a.getDimensionPixelSize(R.styleable.SlidingPaneView_spacingLeft, spacingLeftDefault);
-		final int spacingRightDefault = res.getDimensionPixelSize(R.dimen.default_slidepane_spacing_right);
-		mRightSpacing = a.getDimensionPixelSize(R.styleable.SlidingPaneView_spacingRight, spacingRightDefault);
+		final int spacingLeftDefault = res.getDimensionPixelSize(R.dimen.default_dualpane_spacing_left);
+		mLeftSpacing = a.getDimensionPixelSize(R.styleable.SlidingPaneView_paneSpacingLeft, spacingLeftDefault);
+		final int spacingRightDefault = res.getDimensionPixelSize(R.dimen.default_dualpane_spacing_right);
+		mRightSpacing = a.getDimensionPixelSize(R.styleable.SlidingPaneView_paneSpacingRight, spacingRightDefault);
 
-		final int leftPaneLayout = a.getResourceId(R.styleable.SlidingPaneView_layoutLeft, 0);
+		final int leftPaneLayout = a.getResourceId(R.styleable.SlidingPaneView_paneLayoutLeft, 0);
 		if (leftPaneLayout == 0) throw new IllegalArgumentException("The layoutLeft attribute is required");
 
-		final int rightPaneLayout = a.getResourceId(R.styleable.SlidingPaneView_layoutRight, 0);
+		final int rightPaneLayout = a.getResourceId(R.styleable.SlidingPaneView_paneLayoutRight, 0);
 		if (rightPaneLayout == leftPaneLayout || rightPaneLayout == 0)
 			throw new IllegalArgumentException("The layoutRight attribute is required");
 
 		final boolean shadowSlidableDefault = res.getBoolean(R.bool.default_shadow_slidable);
-		final boolean shadowSlidable = a.getBoolean(R.styleable.SlidingPaneView_shadowSlidable, shadowSlidableDefault);
+		final boolean shadowSlidable = a.getBoolean(R.styleable.SlidingPaneView_paneShadowSlidable,
+				shadowSlidableDefault);
 
-		mShadowWidth = a.getDimensionPixelSize(R.styleable.SlidingPaneView_shadowWidth, 0);
-		final int shadowDrawableRes = a.getResourceId(R.styleable.SlidingPaneView_shadowDrawable, 0);
+		mShadowWidth = a.getDimensionPixelSize(R.styleable.SlidingPaneView_paneShadowWidth, 0);
+		final int shadowDrawableRes = a.getResourceId(R.styleable.SlidingPaneView_paneShadowDrawable, 0);
 
-		mFadeType = a.getInteger(R.styleable.SlidingPaneView_fadeType, FADE_NONE);
+		mFadeType = a.getInteger(R.styleable.SlidingPaneView_paneFadeType, FADE_NONE);
 		final int fadeValueDefault = res.getInteger(R.integer.default_sliding_pane_fade_max);
-		mFadeMax = a.getDimensionPixelSize(R.styleable.SlidingPaneView_fadeMax, fadeValueDefault);
+		mFadeMax = a.getDimensionPixelSize(R.styleable.SlidingPaneView_paneFadeMax, fadeValueDefault);
 
 		final int flingDurationDefault = res.getInteger(R.integer.default_sliding_pane_fling_duration);
-		mFlingDuration = a.getInteger(R.styleable.SlidingPaneView_flingDuration, flingDurationDefault);
+		mFlingDuration = a.getInteger(R.styleable.SlidingPaneView_paneFlingDuration, flingDurationDefault);
 
 		a.recycle();
 

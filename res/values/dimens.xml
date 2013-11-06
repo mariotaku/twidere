@@ -12,17 +12,20 @@
 	<dimen name="profile_image_size_activity_small">32dp</dimen>
 	<dimen name="pane_spacing_left">0dp</dimen>
 	<dimen name="pane_spacing_right">0dp</dimen>
-	<dimen name="default_slidepane_spacing_left">@dimen/pane_spacing_left</dimen>
-	<dimen name="default_slidepane_spacing_right">@dimen/pane_spacing_right</dimen>
-	<dimen name="default_slidingpane_shadow_width">4dp</dimen>
+	<dimen name="default_dualpane_spacing_left">@dimen/pane_spacing_left</dimen>
+	<dimen name="default_dualpane_spacing_right">@dimen/pane_spacing_right</dimen>
+	<dimen name="default_dualpane_shadow_width">4dp</dimen>
+	<dimen name="default_sliding_menu_shadow_width">8dp</dimen>
+	<dimen name="default_sliding_menu_margin_threshold">16dp</dimen>
 	<dimen name="compose_min_width">400dp</dimen>
 	<dimen name="compose_min_height">320dp</dimen>
 	<dimen name="button_bar_height">52dp</dimen>
 	<dimen name="minimum_element_size">48dp</dimen>
 	<dimen name="left_drawer_width">260dp</dimen>
-	<dimen name="accounts_drawer_name_size">14sp</dimen>
-	<dimen name="accounts_drawer_screen_name_size">12sp</dimen>
-	<dimen name="accounts_drawer_default_indicator_size">10sp</dimen>
+	<dimen name="accounts_drawer_name_size">16sp</dimen>
+	<dimen name="accounts_drawer_screen_name_size">14sp</dimen>
+	<dimen name="accounts_drawer_default_indicator_size">12sp</dimen>
+	<dimen name="accounts_drawer_switch_label_size">16sp</dimen>
 	<dimen name="accounts_drawer_child_size">16sp</dimen>
 	<dimen name="nyan_star_dot_size">4dp</dimen>
 	<dimen name="actionbar_item_width">52dp</dimen>
@@ -34,5 +37,12 @@
 	<dimen name="text_size_wizard_text">20sp</dimen>
 	<dimen name="line_indicator_line_width_wizard">24dp</dimen>
 	<dimen name="line_indicator_stroke_width_wizard">3dp</dimen>
+
+	<!-- Size of the fastscroll hint letter -->
+	<dimen name="fastscroll_overlay_size">104dp</dimen>
+	<!-- Width of the fastscroll thumb -->
+	<dimen name="fastscroll_thumb_width">64dp</dimen>
+	<!-- Height of the fastscroll thumb -->
+	<dimen name="fastscroll_thumb_height">52dp</dimen>
 
 </resources>

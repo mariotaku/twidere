@@ -1,34 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:twidere="http://schemas.android.com/apk/res/org.mariotaku.twidere"
-	android:id="@+id/drawer_layout"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 
-	<FrameLayout
+	<org.mariotaku.twidere.view.SlidingPaneView
+		android:id="@+id/sliding_pane"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent">
-
-		<org.mariotaku.twidere.view.SlidingPaneView
-			android:id="@+id/sliding_pane"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			twidere:fadeType="both"
-			twidere:layoutLeft="@layout/home_pane_left_content"
-			twidere:layoutRight="@layout/base_pane_right_content"
-			twidere:shadowDrawable="@drawable/shadow_holo"
-			twidere:shadowSlidable="@bool/shadow_slidable"
-			twidere:shadowWidth="@dimen/default_slidingpane_shadow_width"
-			twidere:spacingLeft="@dimen/pane_spacing_left"
-			twidere:spacingRight="@dimen/pane_spacing_right"/>
-
-		<include layout="@layout/home_actions_button_layout"/>
-	</FrameLayout>
-
-	<include
-		android:layout_width="@dimen/left_drawer_width"
 		android:layout_height="match_parent"
-		android:layout_gravity="left"
-		layout="@layout/home_left_drawer_container"/>
+		twidere:paneFadeType="both"
+		twidere:paneLayoutLeft="@layout/home_pane_left_content"
+		twidere:paneLayoutRight="@layout/base_pane_right_content"
+		twidere:paneShadowDrawable="@drawable/shadow_holo"
+		twidere:paneShadowSlidable="@bool/shadow_slidable"
+		twidere:paneShadowWidth="@dimen/default_dualpane_shadow_width"
+		twidere:paneSpacingLeft="@dimen/pane_spacing_left"
+		twidere:paneSpacingRight="@dimen/pane_spacing_right"/>
 
-</android.support.v4.widget.DrawerLayout>
+	<include layout="@layout/home_actions_button_layout"/>
+
+</FrameLayout>

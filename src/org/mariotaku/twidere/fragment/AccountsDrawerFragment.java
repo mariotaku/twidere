@@ -1,6 +1,5 @@
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.openUserFavorites;
 import static org.mariotaku.twidere.util.Utils.openUserListMemberships;
 import static org.mariotaku.twidere.util.Utils.openUserLists;
@@ -29,15 +28,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
-import android.widget.ExpandableListView.OnGroupExpandListener;
-
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.ColorSelectorActivity;
@@ -45,7 +38,9 @@ import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.activity.SignInActivity;
 import org.mariotaku.twidere.activity.UserProfileEditorActivity;
 import org.mariotaku.twidere.adapter.AccountsDrawerAdapter;
-import org.mariotaku.twidere.adapter.AccountsDrawerAdapter.AccountAction;
+import org.mariotaku.twidere.adapter.AccountsDrawerAdapter.AccountOption;
+import org.mariotaku.twidere.adapter.AccountsDrawerAdapter.GroupItem;
+import org.mariotaku.twidere.adapter.AccountsDrawerAdapter.OnAccountActivateStateChangeListener;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
@@ -53,12 +48,9 @@ import org.mariotaku.twidere.provider.TweetStore.DirectMessages.Inbox;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages.Outbox;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.view.iface.IExtendedView;
-import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
 
 public class AccountsDrawerFragment extends BaseSupportFragment implements LoaderCallbacks<Cursor>,
-		OnSizeChangedListener, OnGroupExpandListener, OnChildClickListener, OnClickListener,
-		OnSharedPreferenceChangeListener, OnItemLongClickListener {
+		OnChildClickListener, OnClickListener, OnSharedPreferenceChangeListener, OnAccountActivateStateChangeListener {
 
 	private static final String FRAGMENT_TAG_ACCOUNT_DELETION = "account_deletion";
 	private ContentResolver mResolver;
@@ -67,8 +59,6 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 	private ExpandableListView mListView;
 	private AccountsDrawerAdapter mAdapter;
 	private Button mAddAccountButton;
-
-	private long mSelectedAccountId;
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -83,20 +73,24 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 	};
 
 	@Override
+	public void onAccountActivateStateChanged(final Account account, final boolean activated) {
+		final ContentValues values = new ContentValues();
+		values.put(Accounts.IS_ACTIVATED, activated);
+		final String where = Accounts.ACCOUNT_ID + " = " + account.account_id;
+		mResolver.update(Accounts.CONTENT_URI, values, where, null);
+	}
+
+	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mResolver = getContentResolver();
 		mAdapter = new AccountsDrawerAdapter(getActivity());
+		mAdapter.setOnAccountActivateStateChangeListener(this);
 		mListView.setAdapter(mAdapter);
-		mListView.setOnItemLongClickListener(this);
-		mListView.setOnGroupExpandListener(this);
 		mListView.setOnChildClickListener(this);
 		mAddAccountButton.setOnClickListener(this);
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
-		if (savedInstanceState != null) {
-			mSelectedAccountId = savedInstanceState.getLong(EXTRA_ACCOUNT_ID);
-		}
 		getLoaderManager().initLoader(0, null, this);
 	}
 
@@ -108,7 +102,7 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 					final int color = data.getIntExtra(Accounts.USER_COLOR, Color.WHITE);
 					final ContentValues values = new ContentValues();
 					values.put(Accounts.USER_COLOR, color);
-					final String where = Accounts.ACCOUNT_ID + " = " + mSelectedAccountId;
+					final String where = Accounts.ACCOUNT_ID + " = " + mAdapter.getSelectedAccountId();
 					mResolver.update(Accounts.CONTENT_URI, values, where, null);
 					getLoaderManager().restartLoader(0, null, this);
 				}
@@ -121,63 +115,77 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 	@Override
 	public boolean onChildClick(final ExpandableListView parent, final View v, final int groupPosition,
 			final int childPosition, final long id) {
-		final Account account = mAdapter.getGroup(groupPosition);
-		if (account == null) return false;
-		mSelectedAccountId = account.account_id;
-		final AccountAction action = mAdapter.getChild(groupPosition, childPosition);
-		switch (action.id) {
-			case MENU_VIEW_PROFILE: {
-				openUserProfile(getActivity(), account.account_id, account.account_id, account.screen_name);
-				closeAccountsDrawer();
+		final GroupItem groupItem = mAdapter.getGroup(groupPosition);
+		switch (groupItem.getId()) {
+			case AccountsDrawerAdapter.GROUP_ID_ACCOUNTS: {
+				final Object child = mAdapter.getChild(groupPosition, childPosition);
+				if (!(child instanceof Account)) return false;
+				final Account account = (Account) child;
+				mAdapter.setSelectedAccountId(account.account_id);
 				break;
 			}
-			case MENU_STATUSES: {
-				openUserTimeline(getActivity(), account.account_id, account.account_id, account.screen_name);
-				closeAccountsDrawer();
-				break;
-			}
-			case MENU_FAVORITES: {
-				openUserFavorites(getActivity(), account.account_id, account.account_id, account.screen_name);
-				closeAccountsDrawer();
-				break;
-			}
-			case MENU_LISTS: {
-				openUserLists(getActivity(), account.account_id, account.account_id, account.screen_name);
-				closeAccountsDrawer();
-				break;
-			}
-			case MENU_LIST_MEMBERSHIPS: {
-				openUserListMemberships(getActivity(), account.account_id, account.account_id, account.screen_name);
-				closeAccountsDrawer();
-				break;
-			}
-			case MENU_EDIT: {
-				final Bundle bundle = new Bundle();
-				bundle.putLong(EXTRA_ACCOUNT_ID, account.account_id);
-				final Intent intent = new Intent(INTENT_ACTION_EDIT_USER_PROFILE);
-				intent.setClass(getActivity(), UserProfileEditorActivity.class);
-				intent.putExtras(bundle);
-				startActivity(intent);
-				break;
-			}
-			case MENU_SET_COLOR: {
-				final Intent intent = new Intent(getActivity(), ColorSelectorActivity.class);
-				final Bundle bundle = new Bundle();
-				bundle.putInt(Accounts.USER_COLOR, account.user_color);
-				intent.putExtras(bundle);
-				startActivityForResult(intent, REQUEST_SET_COLOR);
-				break;
-			}
-			case MENU_SET_AS_DEFAULT: {
-				mPreferences.edit().putLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, account.account_id).commit();
-				break;
-			}
-			case MENU_DELETE: {
-				final AccountDeletionDialogFragment f = new AccountDeletionDialogFragment();
-				final Bundle args = new Bundle();
-				args.putLong(EXTRA_ACCOUNT_ID, account.account_id);
-				f.setArguments(args);
-				f.show(getChildFragmentManager(), FRAGMENT_TAG_ACCOUNT_DELETION);
+			case AccountsDrawerAdapter.GROUP_ID_ACCOUNT_OPTIONS: {
+				final Account account = Account.getAccount(getActivity(), mAdapter.getSelectedAccountId());
+				final Object child = mAdapter.getChild(groupPosition, childPosition);
+				if (account == null || !(child instanceof AccountOption)) return false;
+				final AccountOption option = (AccountOption) child;
+				switch (option.getId()) {
+					case MENU_VIEW_PROFILE: {
+						openUserProfile(getActivity(), account.account_id, account.account_id, account.screen_name);
+						closeAccountsDrawer();
+						break;
+					}
+					case MENU_STATUSES: {
+						openUserTimeline(getActivity(), account.account_id, account.account_id, account.screen_name);
+						closeAccountsDrawer();
+						break;
+					}
+					case MENU_FAVORITES: {
+						openUserFavorites(getActivity(), account.account_id, account.account_id, account.screen_name);
+						closeAccountsDrawer();
+						break;
+					}
+					case MENU_LISTS: {
+						openUserLists(getActivity(), account.account_id, account.account_id, account.screen_name);
+						closeAccountsDrawer();
+						break;
+					}
+					case MENU_LIST_MEMBERSHIPS: {
+						openUserListMemberships(getActivity(), account.account_id, account.account_id,
+								account.screen_name);
+						closeAccountsDrawer();
+						break;
+					}
+					case MENU_EDIT: {
+						final Bundle bundle = new Bundle();
+						bundle.putLong(EXTRA_ACCOUNT_ID, account.account_id);
+						final Intent intent = new Intent(INTENT_ACTION_EDIT_USER_PROFILE);
+						intent.setClass(getActivity(), UserProfileEditorActivity.class);
+						intent.putExtras(bundle);
+						startActivity(intent);
+						break;
+					}
+					case MENU_SET_COLOR: {
+						final Intent intent = new Intent(getActivity(), ColorSelectorActivity.class);
+						final Bundle bundle = new Bundle();
+						bundle.putInt(Accounts.USER_COLOR, account.user_color);
+						intent.putExtras(bundle);
+						startActivityForResult(intent, REQUEST_SET_COLOR);
+						break;
+					}
+					case MENU_SET_AS_DEFAULT: {
+						mPreferences.edit().putLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, account.account_id).commit();
+						break;
+					}
+					case MENU_DELETE: {
+						final AccountDeletionDialogFragment f = new AccountDeletionDialogFragment();
+						final Bundle args = new Bundle();
+						args.putLong(EXTRA_ACCOUNT_ID, account.account_id);
+						f.setArguments(args);
+						f.show(getChildFragmentManager(), FRAGMENT_TAG_ACCOUNT_DELETION);
+						break;
+					}
+				}
 				break;
 			}
 		}
@@ -205,39 +213,9 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.accounts_drawer, container, false);
-		((IExtendedView) view).setOnSizeChangedListener(this);
 		mListView = (ExpandableListView) view.findViewById(android.R.id.list);
 		mAddAccountButton = (Button) view.findViewById(R.id.add_account);
 		return view;
-	}
-
-	@Override
-	public void onGroupExpand(final int groupPosition) {
-		for (int i = 0, count = mAdapter.getGroupCount(); i < count; i++) {
-			if (i != groupPosition) {
-				mListView.collapseGroup(i);
-			}
-		}
-	}
-
-	@Override
-	public boolean onItemLongClick(final AdapterView<?> view, final View child, final int position, final long id) {
-		final long packedPos = mListView.getExpandableListPosition(position);
-		if (ExpandableListView.getPackedPositionType(packedPos) != ExpandableListView.PACKED_POSITION_TYPE_GROUP)
-			return false;
-		final int groupPosition = ExpandableListView.getPackedPositionGroup(packedPos);
-		if (groupPosition == -1) return false;
-		final Account account = mAdapter.getGroup(groupPosition);
-		if (account == null) return false;
-		if (account.is_activated && getActivatedAccountIds(getActivity()).length == 1) {
-			Crouton.showText(getActivity(), R.string.no_account_selected, CroutonStyle.WARN);
-			return true;
-		}
-		final ContentValues values = new ContentValues();
-		values.put(Accounts.IS_ACTIVATED, account.is_activated ? 0 : 1);
-		final String where = Accounts.ACCOUNT_ID + " = " + account.account_id;
-		mResolver.update(Accounts.CONTENT_URI, values, where, null);
-		return true;
 	}
 
 	@Override
@@ -247,7 +225,14 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 
 	@Override
 	public void onLoadFinished(final Loader<Cursor> loader, final Cursor data) {
+		if (data != null && data.getCount() > 0 && mAdapter.getSelectedAccountId() <= 0) {
+			data.moveToFirst();
+			mAdapter.setSelectedAccountId(data.getLong(data.getColumnIndex(Accounts.ACCOUNT_ID)));
+		}
 		mAdapter.setAccountsCursor(data);
+		for (int i = 0, count = mAdapter.getGroupCount(); i < count; i++) {
+			mListView.expandGroup(i);
+		}
 	}
 
 	@Override
@@ -257,22 +242,10 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 	}
 
 	@Override
-	public void onSaveInstanceState(final Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putLong(EXTRA_ACCOUNT_ID, mSelectedAccountId);
-	}
-
-	@Override
 	public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
 		if (PREFERENCE_KEY_DEFAULT_ACCOUNT_ID.equals(key)) {
 			mAdapter.setDefaultAccountId(mPreferences.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1));
 		}
-	}
-
-	@Override
-	public void onSizeChanged(final View view, final int w, final int h, final int oldw, final int oldh) {
-		if (mAdapter == null) return;
-		mAdapter.setBannerWidth(w);
 	}
 
 	@Override

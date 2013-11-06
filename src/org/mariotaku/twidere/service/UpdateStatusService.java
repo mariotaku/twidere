@@ -250,7 +250,7 @@ public class UpdateStatusService extends IntentService implements Constants {
 				}
 				status.setPossiblySensitive(pstatus.is_possibly_sensitive);
 
-				final Twitter twitter = getTwitterInstance(this, account_id, false, true);
+				final Twitter twitter = getTwitterInstance(this, account_id, true, true);
 				if (twitter == null) {
 					results.add(new SingleResponse<ParcelableStatus>(null, new NullPointerException()));
 					continue;

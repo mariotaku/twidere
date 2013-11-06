@@ -38,7 +38,7 @@
 	</declare-styleable>
 
 	<!-- Default fade types. -->
-	<attr name="fadeType">
+	<attr name="paneFadeType">
 
 		<!-- Fade is disabled. -->
 		<enum name="none" value="0"/>
@@ -53,24 +53,24 @@
 	<declare-styleable name="SlidingPaneView">
 
 		<!-- Spacing value. -->
-		<attr name="spacingRight" format="dimension"/>
+		<attr name="paneSpacingRight" format="dimension"/>
 		<!-- Spacing value for actions container. -->
-		<attr name="spacingLeft" format="dimension"/>
+		<attr name="paneSpacingLeft" format="dimension"/>
 		<!-- Actions layout ID to link at view creation time. -->
-		<attr name="layoutLeft" format="reference"/>
+		<attr name="paneLayoutLeft" format="reference"/>
 		<!-- Content layout ID to link at view creation time. -->
-		<attr name="layoutRight" format="reference"/>
+		<attr name="paneLayoutRight" format="reference"/>
 		<!-- Drawable to be used to draw shadow dropped by content view to actions one. -->
-		<attr name="shadowDrawable" format="reference"/>
+		<attr name="paneShadowDrawable" format="reference"/>
 		<!-- Shadow width. -->
-		<attr name="shadowWidth" format="dimension"/>
-		<attr name="shadowSlidable" format="boolean"/>
+		<attr name="paneShadowWidth" format="dimension"/>
+		<attr name="paneShadowSlidable" format="boolean"/>
 		<!-- Fade type. -->
-		<attr name="fadeType"/>
+		<attr name="paneFadeType"/>
 		<!-- Max fade value. -->
-		<attr name="fadeMax" format="integer"/>
+		<attr name="paneFadeMax" format="integer"/>
 		<!-- Indicates how long flinging will take time in milliseconds. -->
-		<attr name="flingDuration" format="integer"/>
+		<attr name="paneFlingDuration" format="integer"/>
 	</declare-styleable>
 	<declare-styleable name="SwipeBackLayout">
 		<attr name="edgeSize" format="dimension"/>

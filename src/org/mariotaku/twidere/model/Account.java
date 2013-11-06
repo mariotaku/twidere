@@ -53,6 +53,22 @@ public class Account {
 				+ user_color + ", is_activated=" + is_activated + "}";
 	}
 
+	public static Account getAccount(final Context context, final long account_id) {
+		if (context == null) return null;
+		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, Accounts.COLUMNS,
+				Accounts.ACCOUNT_ID + " = " + account_id, null, null);
+		if (cur != null) {
+			try {
+				final Indices indices = new Indices(cur);
+				cur.moveToFirst();
+				return new Account(cur, indices);
+			} finally {
+				cur.close();
+			}
+		}
+		return null;
+	}
+
 	public static List<Account> getAccounts(final Context context, final boolean activated_only) {
 		if (context == null) {
 			Collections.emptyList();

@@ -1057,28 +1057,6 @@ public class StaggeredGridView extends ViewGroup {
 		return topmost >= getPaddingTop() && bottommost <= getHeight() - getPaddingBottom();
 	}
 
-	/**
-	 * for debug purposes
-	 */
-	private void displayMapping() {
-		Log.w("DISPLAY", "MAP ****************");
-		StringBuilder sb = new StringBuilder();
-		int col = 0;
-
-		for (final ArrayList<Integer> map : mColMappings) {
-			sb.append("COL" + col + ":");
-			sb.append(' ');
-			for (final Integer i : map) {
-				sb.append(i);
-				sb.append(" , ");
-			}
-			Log.w("DISPLAY", sb.toString());
-			sb = new StringBuilder();
-			col++;
-		}
-		Log.w("DISPLAY", "MAP END ****************");
-	}
-
 	private void drawSelector(final Canvas canvas) {
 		if (!mSelectorRect.isEmpty() && mSelector != null && mBeginClick) {
 			final Drawable selector = mSelector;
