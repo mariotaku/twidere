@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.fragment;
 
+import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -77,6 +79,11 @@ public class SearchStatusesFragment extends ParcelableStatusesListFragment {
 		final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
 		final String query = args.getString(EXTRA_QUERY);
 		return new String[] { AUTHORITY_SEARCH_TWEETS, "account" + account_id, "query" + query };
+	}
+
+	@Override
+	protected boolean shouldShowAccountColor() {
+		return getActivatedAccountIds(getActivity()).length > 1;
 	}
 
 }

@@ -105,6 +105,7 @@ import org.mariotaku.querybuilder.AllColumns;
 import org.mariotaku.querybuilder.Columns;
 import org.mariotaku.querybuilder.Columns.Column;
 import org.mariotaku.querybuilder.OrderBy;
+import org.mariotaku.querybuilder.RawItemArray;
 import org.mariotaku.querybuilder.SQLQueryBuilder;
 import org.mariotaku.querybuilder.Selectable;
 import org.mariotaku.querybuilder.Tables;
@@ -364,17 +365,11 @@ public final class Utils implements Constants {
 	public static String buildActivatedStatsWhereClause(final Context context, final String selection) {
 		if (context == null) return null;
 		final long[] account_ids = getActivatedAccountIds(context);
-		final StringBuilder builder = new StringBuilder();
+		final Where account_where = Where.in(new Column(Statuses.ACCOUNT_ID), new RawItemArray(account_ids));
 		if (selection != null) {
-			builder.append(selection);
-			builder.append(" AND ");
+			account_where.and(new Where(selection));
 		}
-
-		builder.append(Statuses.ACCOUNT_ID + " IN ( ");
-		builder.append(ArrayUtils.toString(account_ids, ',', true));
-		builder.append(" )");
-
-		return builder.toString();
+		return account_where.getSQL();
 	}
 
 	public static Uri buildDirectMessageConversationUri(final long account_id, final long conversation_id,
@@ -1711,8 +1706,12 @@ public final class Utils implements Constants {
 	}
 
 	public static long[] getOldestMessageIdsFromDatabase(final Context context, final Uri uri) {
-		if (context == null || uri == null) return null;
 		final long[] account_ids = getActivatedAccountIds(context);
+		return getOldestMessageIdsFromDatabase(context, uri, account_ids);
+	}
+
+	public static long[] getOldestMessageIdsFromDatabase(final Context context, final Uri uri, final long[] account_ids) {
+		if (context == null || uri == null) return null;
 		final String[] cols = new String[] { DirectMessages.MESSAGE_ID };
 		final ContentResolver resolver = context.getContentResolver();
 		final long[] status_ids = new long[account_ids.length];
@@ -1735,8 +1734,12 @@ public final class Utils implements Constants {
 	}
 
 	public static long[] getOldestStatusIdsFromDatabase(final Context context, final Uri uri) {
-		if (context == null || uri == null) return null;
 		final long[] account_ids = getActivatedAccountIds(context);
+		return getOldestStatusIdsFromDatabase(context, uri, account_ids);
+	}
+
+	public static long[] getOldestStatusIdsFromDatabase(final Context context, final Uri uri, final long[] account_ids) {
+		if (context == null || uri == null || account_ids == null) return null;
 		final String[] cols = new String[] { Statuses.STATUS_ID };
 		final ContentResolver resolver = context.getContentResolver();
 		final long[] status_ids = new long[account_ids.length];

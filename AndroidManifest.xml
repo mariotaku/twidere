@@ -3,7 +3,7 @@
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
 	android:versionCode="79"
-	android:versionName="0.2.9.2">
+	android:versionName="0.2.9.3">
 
 	<uses-sdk
 		android:minSdkVersion="14"

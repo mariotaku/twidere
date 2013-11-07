@@ -30,6 +30,7 @@ import org.mariotaku.twidere.fragment.iface.PullToRefreshAttacherActivity;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MessagesManager;
 import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.util.pulltorefresh.TwidereHeaderTransformer;
 
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 
@@ -163,7 +164,11 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 		 * instance. PullToRefreshAttacher will manually create one using
 		 * default values.
 		 */
-		mPullToRefreshAttacher = PullToRefreshAttacher.get(this);
+		final PullToRefreshAttacher.Options options = new PullToRefreshAttacher.Options();
+		options.refreshScrollDistance = DEFAULT_PULL_TO_REFRESH_SCROLL_DISTANCE;
+		options.headerLayout = DEFAULT_PULL_TO_REFRESH_HEADER_LAYOUT;
+		options.headerTransformer = new TwidereHeaderTransformer();
+		mPullToRefreshAttacher = PullToRefreshAttacher.get(this, options);
 	}
 
 	@Override

@@ -44,6 +44,7 @@ import com.origamilabs.library.views.StaggeredGridView;
 import org.mariotaku.twidere.fragment.iface.IBasePullToRefreshFragment;
 import org.mariotaku.twidere.fragment.iface.PullToRefreshAttacherActivity;
 import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.util.pulltorefresh.viewdelegates.StaggeredGridViewDelegate;
 
 import uk.co.senab.actionbarpulltorefresh.library.DefaultHeaderTransformer;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
@@ -143,6 +144,7 @@ public abstract class BasePullToRefreshStaggeredGridViewFragment extends BaseSup
 		lv.setDrawSelectorOnTop(false);
 		plv.addView(lv, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 		plv.setPullToRefreshAttacher(mPullToRefreshAttacher, this);
+		mPullToRefreshAttacher.addRefreshableView(lv, new StaggeredGridViewDelegate(), this);
 		// ViewCompat.setOverScrollMode(lv, ViewCompat.OVER_SCROLL_NEVER);
 		lframe.addView(plv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.MATCH_PARENT));

@@ -35,8 +35,10 @@ public class Account {
 	public final long account_id;
 	public final int user_color;
 	public final boolean is_activated;
+	public final boolean is_dummy;
 
 	public Account(final Cursor cursor, final Indices indices) {
+		is_dummy = false;
 		screen_name = indices.screen_name != -1 ? cursor.getString(indices.screen_name) : null;
 		name = indices.name != -1 ? cursor.getString(indices.name) : null;
 		account_id = indices.account_id != -1 ? cursor.getLong(indices.account_id) : -1;
@@ -46,11 +48,26 @@ public class Account {
 		is_activated = indices.is_activated != -1 ? cursor.getInt(indices.is_activated) == 1 : false;
 	}
 
+	private Account() {
+		is_dummy = true;
+		screen_name = null;
+		name = null;
+		account_id = -1;
+		profile_image_url = null;
+		profile_banner_url = null;
+		user_color = 0;
+		is_activated = false;
+	}
+
 	@Override
 	public String toString() {
 		return "Account{screen_name=" + screen_name + ", name=" + name + ", profile_image_url=" + profile_image_url
 				+ ", profile_banner_url=" + profile_banner_url + ", account_id=" + account_id + ", user_color="
 				+ user_color + ", is_activated=" + is_activated + "}";
+	}
+
+	public static Account dummyInstance() {
+		return new Account();
 	}
 
 	public static Account getAccount(final Context context, final long account_id) {

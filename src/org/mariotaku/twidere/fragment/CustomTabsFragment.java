@@ -253,8 +253,9 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 				final MenuItem subItem = subMenu.add(conf.getDefaultTitle());
 				final boolean is_activities_tab = TAB_TYPE_ACTIVITIES_ABOUT_ME.equals(type)
 						|| TAB_TYPE_ACTIVITIES_BY_FRIENDS.equals(type);
+				final boolean account_id_required = conf.getAccountRequirement() == CustomTabConfiguration.ACCOUNT_REQUIRED;
 				final boolean should_disable = conf.isSingleTab() && isTabAdded(getActivity(), type)
-						|| is_activities_tab && !is_official_key_secret || conf.isAccountIdRequired()
+						|| is_activities_tab && !is_official_key_secret || account_id_required
 						&& account_ids.length == 0;
 				subItem.setVisible(!should_disable);
 				subItem.setEnabled(!should_disable);

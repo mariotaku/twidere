@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package uk.co.senab.actionbarpulltorefresh.library.viewdelegates;
+package org.mariotaku.twidere.util.pulltorefresh.viewdelegates;
 
 import android.view.View;
-import android.widget.AbsListView;
+
+import com.huewu.pla.lib.internal.PLAAbsListView;
 
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 
 /**
  * FIXME
  */
-public class AbsListViewDelegate extends PullToRefreshAttacher.ViewDelegate {
+public class PLAAbsListViewDelegate extends PullToRefreshAttacher.ViewDelegate {
 
-	public static final Class<AbsListView> SUPPORTED_VIEW_CLASS = AbsListView.class;
+	public static final Class<PLAAbsListView> SUPPORTED_VIEW_CLASS = PLAAbsListView.class;
 
 	@Override
 	public boolean isScrolledToTop(final View view) {
-		final AbsListView absListView = (AbsListView) view;
+		final PLAAbsListView absListView = (PLAAbsListView) view;
 		if (absListView.getCount() == 0)
 			return true;
 		else if (absListView.getFirstVisiblePosition() == 0) {

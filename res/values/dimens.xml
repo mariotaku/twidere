@@ -29,6 +29,8 @@
 	<dimen name="accounts_drawer_child_size">16sp</dimen>
 	<dimen name="nyan_star_dot_size">4dp</dimen>
 	<dimen name="actionbar_item_width">52dp</dimen>
+	<dimen name="home_actions_item_width">60dp</dimen>
+	<dimen name="home_actions_button_size">56dp</dimen>
 
 	<!-- Size of icons in the top-level of settings -->
 	<dimen name="header_icon_width">28dp</dimen>

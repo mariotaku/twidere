@@ -42,37 +42,39 @@ public class CustomTabUtils implements Constants {
 
 	static {
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_HOME_TIMELINE, new CustomTabConfiguration(
-				HomeTimelineFragment.class, R.string.home, R.drawable.ic_tab_home, false,
-				CustomTabConfiguration.FIELD_TYPE_NONE, 0, true));
+				HomeTimelineFragment.class, R.string.home, R.drawable.ic_tab_home,
+				CustomTabConfiguration.ACCOUNT_OPTIONAL, CustomTabConfiguration.FIELD_TYPE_NONE, 0, false));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_MENTIONS_TIMELINE, new CustomTabConfiguration(
-				MentionsFragment.class, R.string.mentions, R.drawable.ic_tab_mention, false,
-				CustomTabConfiguration.FIELD_TYPE_NONE, 1, true));
+				MentionsFragment.class, R.string.mentions, R.drawable.ic_tab_mention,
+				CustomTabConfiguration.ACCOUNT_OPTIONAL, CustomTabConfiguration.FIELD_TYPE_NONE, 1, false));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_DIRECT_MESSAGES, new CustomTabConfiguration(
-				DirectMessagesFragment.class, R.string.direct_messages, R.drawable.ic_tab_message, false,
-				CustomTabConfiguration.FIELD_TYPE_NONE, 2, true));
+				DirectMessagesFragment.class, R.string.direct_messages, R.drawable.ic_tab_message,
+				CustomTabConfiguration.ACCOUNT_OPTIONAL, CustomTabConfiguration.FIELD_TYPE_NONE, 2, false));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_TRENDS_SUGGESTIONS, new CustomTabConfiguration(
-				TrendsSuggectionsFragment.class, R.string.trends, R.drawable.ic_tab_trends, false,
-				CustomTabConfiguration.FIELD_TYPE_NONE, 3, true));
+				TrendsSuggectionsFragment.class, R.string.trends, R.drawable.ic_tab_trends,
+				CustomTabConfiguration.ACCOUNT_NONE, CustomTabConfiguration.FIELD_TYPE_NONE, 3, true));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_FAVORITES, new CustomTabConfiguration(UserFavoritesFragment.class,
-				R.string.favorites, R.drawable.ic_tab_star, true, CustomTabConfiguration.FIELD_TYPE_USER, 4));
+				R.string.favorites, R.drawable.ic_tab_star, CustomTabConfiguration.ACCOUNT_REQUIRED,
+				CustomTabConfiguration.FIELD_TYPE_USER, 4));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_USER_TIMELINE, new CustomTabConfiguration(
-				UserTimelineFragment.class, R.string.users_statuses, R.drawable.ic_tab_quote, true,
-				CustomTabConfiguration.FIELD_TYPE_USER, 5));
+				UserTimelineFragment.class, R.string.users_statuses, R.drawable.ic_tab_quote,
+				CustomTabConfiguration.ACCOUNT_REQUIRED, CustomTabConfiguration.FIELD_TYPE_USER, 5));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_SEARCH_STATUSES, new CustomTabConfiguration(
-				SearchStatusesFragment.class, R.string.search_statuses, R.drawable.ic_tab_search, true,
-				CustomTabConfiguration.FIELD_TYPE_TEXT, R.string.query, EXTRA_QUERY, 6));
+				SearchStatusesFragment.class, R.string.search_statuses, R.drawable.ic_tab_search,
+				CustomTabConfiguration.ACCOUNT_REQUIRED, CustomTabConfiguration.FIELD_TYPE_TEXT, R.string.query,
+				EXTRA_QUERY, 6));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_LIST_TIMELINE, new CustomTabConfiguration(
-				UserListTimelineFragment.class, R.string.list_timeline, R.drawable.ic_tab_list, true,
-				CustomTabConfiguration.FIELD_TYPE_USER_LIST, 7));
+				UserListTimelineFragment.class, R.string.list_timeline, R.drawable.ic_tab_list,
+				CustomTabConfiguration.ACCOUNT_REQUIRED, CustomTabConfiguration.FIELD_TYPE_USER_LIST, 7));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_ACTIVITIES_ABOUT_ME, new CustomTabConfiguration(
-				ActivitiesAboutMeFragment.class, R.string.activities_about_me, R.drawable.ic_tab_person, true,
-				CustomTabConfiguration.FIELD_TYPE_NONE, 8));
+				ActivitiesAboutMeFragment.class, R.string.activities_about_me, R.drawable.ic_tab_person,
+				CustomTabConfiguration.ACCOUNT_REQUIRED, CustomTabConfiguration.FIELD_TYPE_NONE, 8));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_ACTIVITIES_BY_FRIENDS, new CustomTabConfiguration(
-				ActivitiesByFriendsFragment.class, R.string.activities_by_friends, R.drawable.ic_tab_accounts, true,
-				CustomTabConfiguration.FIELD_TYPE_NONE, 9));
+				ActivitiesByFriendsFragment.class, R.string.activities_by_friends, R.drawable.ic_tab_accounts,
+				CustomTabConfiguration.ACCOUNT_REQUIRED, CustomTabConfiguration.FIELD_TYPE_NONE, 9));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_STAGGERED_HOME_TIMELINE, new CustomTabConfiguration(
 				StaggeredHomeTimelineFragment.class, R.string.staggered_home_timeline, R.drawable.ic_tab_staggered,
-				false, CustomTabConfiguration.FIELD_TYPE_NONE, 10, true));
+				CustomTabConfiguration.ACCOUNT_OPTIONAL, CustomTabConfiguration.FIELD_TYPE_NONE, 10, false));
 
 		CUSTOM_TABS_ICON_NAME_MAP.put("accounts", R.drawable.ic_tab_accounts);
 		CUSTOM_TABS_ICON_NAME_MAP.put("fire", R.drawable.ic_tab_fire);

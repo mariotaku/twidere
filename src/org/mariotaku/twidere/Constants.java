@@ -659,4 +659,7 @@ public interface Constants {
 	public static final String EASTER_EGG_TRIGGER_TEXT = "\u718A\u5B69\u5B50";
 	public static final String EASTER_EGG_RESTORE_TEXT = "\u5927\u738B\u5C0F\u7684\u77E5\u9519\u4E86";
 
+	public static final float DEFAULT_PULL_TO_REFRESH_SCROLL_DISTANCE = 0.3f;
+	public static final int DEFAULT_PULL_TO_REFRESH_HEADER_LAYOUT = R.layout.pull_refresh_header_nocolor;
+
 }

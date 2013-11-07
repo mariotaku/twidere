@@ -48,16 +48,22 @@ public class AccountsSpinnerAdapter extends ArrayAdapter<Account> {
 		final TextView text1 = (TextView) view.findViewById(android.R.id.text1);
 		final TextView text2 = (TextView) view.findViewById(android.R.id.text2);
 		final ImageView icon = (ImageView) view.findViewById(android.R.id.icon);
-		text1.setText(item.name);
-		text2.setText("@" + item.screen_name);
-		if (mDisplayProfileImage) {
-			if (mDisplayHiResProfileImage) {
-				mImageLoader.displayProfileImage(icon, getBiggerTwitterProfileImage(item.profile_image_url));
+		text2.setVisibility(item.is_dummy ? View.GONE : View.VISIBLE);
+		icon.setVisibility(item.is_dummy ? View.GONE : View.VISIBLE);
+		if (!item.is_dummy) {
+			text1.setText(item.name);
+			text2.setText(String.format("@%s", item.screen_name));
+			if (mDisplayProfileImage) {
+				if (mDisplayHiResProfileImage) {
+					mImageLoader.displayProfileImage(icon, getBiggerTwitterProfileImage(item.profile_image_url));
+				} else {
+					mImageLoader.displayProfileImage(icon, item.profile_image_url);
+				}
 			} else {
-				mImageLoader.displayProfileImage(icon, item.profile_image_url);
+				icon.setImageResource(R.drawable.ic_profile_image_default);
 			}
 		} else {
-			icon.setImageResource(R.drawable.ic_profile_image_default);
+			text1.setText(R.string.none);
 		}
 	}
 

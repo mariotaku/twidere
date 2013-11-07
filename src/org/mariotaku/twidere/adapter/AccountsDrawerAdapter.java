@@ -237,6 +237,7 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 	}
 
 	public void setSelectedAccountId(final long account_id) {
+		if (mSelectedAccountId == account_id) return;
 		mSelectedAccountId = account_id;
 		notifyDataSetChanged();
 	}

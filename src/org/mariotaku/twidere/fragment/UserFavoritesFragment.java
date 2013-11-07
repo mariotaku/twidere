@@ -110,4 +110,9 @@ public class UserFavoritesFragment extends ParcelableStatusesListFragment {
 		return new String[] { AUTHORITY_USER_FAVORITES, "account" + account_id, "user" + user_id, "name" + screen_name };
 	}
 
+	@Override
+	protected boolean shouldShowAccountColor() {
+		return false;
+	}
+
 }

@@ -1,8 +1,11 @@
 package org.mariotaku.twidere.fragment;
 
+import android.app.ActionBar;
 import android.graphics.PorterDuff.Mode;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.LayoutInflater;
@@ -15,10 +18,12 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.LinkHandlerActivity;
 import org.mariotaku.twidere.adapter.SupportTabsAdapter;
 import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;
 import org.mariotaku.twidere.fragment.iface.SupportFragmentCallback;
 import org.mariotaku.twidere.model.Panes;
+import org.mariotaku.twidere.provider.RecentSearchProvider;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.view.ExtendedViewPager;
 import org.mariotaku.twidere.view.SquareImageView;
@@ -68,6 +73,19 @@ public class SearchFragment extends BaseSupportFragment implements Panes.Left, O
 				v.setColorFilter(mThemeColor, Mode.MULTIPLY);
 			} else {
 				v.clearColorFilter();
+			}
+		}
+		if (savedInstanceState == null && args != null && args.containsKey(EXTRA_QUERY)) {
+			final String query = args.getString(EXTRA_QUERY);
+			final SearchRecentSuggestions suggestions = new SearchRecentSuggestions(getActivity(),
+					RecentSearchProvider.AUTHORITY, RecentSearchProvider.MODE);
+			suggestions.saveRecentQuery(query, null);
+			final FragmentActivity activity = getActivity();
+			if (activity instanceof LinkHandlerActivity) {
+				final ActionBar ab = activity.getActionBar();
+				if (ab != null) {
+					ab.setSubtitle(query);
+				}
 			}
 		}
 	}
@@ -139,7 +157,6 @@ public class SearchFragment extends BaseSupportFragment implements Panes.Left, O
 
 	@Override
 	public boolean triggerRefresh(final int position) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

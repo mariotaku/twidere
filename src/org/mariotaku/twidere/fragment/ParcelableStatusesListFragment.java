@@ -160,6 +160,8 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 		final ParcelableStatus status = count > 0 ? adapter.getStatus(0) : null;
 		if (status != null) {
 			getStatuses(new long[] { status.account_id }, null, new long[] { status.id });
+		} else {
+			getStatuses(null, null, null);
 		}
 	}
 

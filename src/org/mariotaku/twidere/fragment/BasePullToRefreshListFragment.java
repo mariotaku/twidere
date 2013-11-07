@@ -142,6 +142,7 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 		lv.setDrawSelectorOnTop(false);
 		plv.addView(lv, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 		plv.setPullToRefreshAttacher(mPullToRefreshAttacher, this);
+		mPullToRefreshAttacher.addRefreshableView(lv, null, this);
 		// ViewCompat.setOverScrollMode(lv, ViewCompat.OVER_SCROLL_NEVER);
 		lframe.addView(plv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.MATCH_PARENT));

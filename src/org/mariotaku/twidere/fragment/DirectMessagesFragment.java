@@ -43,10 +43,13 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
 
+import org.mariotaku.querybuilder.Columns.Column;
+import org.mariotaku.querybuilder.RawItemArray;
+import org.mariotaku.querybuilder.Where;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.DirectMessagesEntryAdapter;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
-import org.mariotaku.twidere.util.ArrayUtils;
+import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTask;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
@@ -103,9 +106,10 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
 		final Uri uri = DirectMessages.ConversationsEntry.CONTENT_URI;
-		final String where = DirectMessages.ACCOUNT_ID + " IN ("
-				+ ArrayUtils.toString(getActivatedAccountIds(getActivity()), ',', false) + ")";
-		return new CursorLoader(getActivity(), uri, null, where, null, null);
+		final long account_id = getAccountId();
+		final long[] account_ids = account_id > 0 ? new long[] { account_id } : getActivatedAccountIds(getActivity());
+		final Where account_where = Where.in(new Column(Statuses.ACCOUNT_ID), new RawItemArray(account_ids));
+		return new CursorLoader(getActivity(), uri, null, account_where.getSQL(), null, null);
 	}
 
 	@Override
@@ -238,6 +242,11 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 			}
 		}
 		return super.scrollToStart();
+	}
+
+	protected long getAccountId() {
+		final Bundle args = getArguments();
+		return args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
 	}
 
 	@Override

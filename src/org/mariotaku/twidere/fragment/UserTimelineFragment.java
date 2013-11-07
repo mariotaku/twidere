@@ -85,4 +85,9 @@ public class UserTimelineFragment extends ParcelableStatusesListFragment {
 		return false;
 	}
 
+	@Override
+	protected boolean shouldShowAccountColor() {
+		return false;
+	}
+
 }

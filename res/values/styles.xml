@@ -111,4 +111,11 @@
 		<item name="shadowBottom">@drawable/swipeback_shadow_bottom</item>
 	</style>
 
+	<style name="Widget.PullToRefresh.ProgressBar.Horizontal.Center.NoColor" parent="android:Widget.Holo.ProgressBar.Horizontal">
+		<item name="android:progressDrawable">@drawable/ptr_progress_horizontal_holo_center_nocolor</item>
+		<item name="android:indeterminateDrawable">@drawable/ptr_progress_indeterminate_horizontal_holo_nocolor</item>
+		<item name="android:minHeight">4dip</item>
+		<item name="android:maxHeight">4dip</item>
+	</style>
+
 </resources>

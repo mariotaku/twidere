@@ -42,4 +42,18 @@ public class StatusesListFragment extends ParcelableStatusesListFragment {
 		return null;
 	}
 
+	@Override
+	protected boolean shouldShowAccountColor() {
+		final List<ParcelableStatus> data = getData();
+		if (data != null) {
+			long account_id = -1;
+			for (final ParcelableStatus status : data) {
+				final long prev = account_id;
+				account_id = status.account_id;
+				if (prev > 0 && account_id != prev) return true;
+			}
+		}
+		return false;
+	}
+
 }

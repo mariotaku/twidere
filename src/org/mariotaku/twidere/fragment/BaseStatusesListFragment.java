@@ -22,7 +22,6 @@ package org.mariotaku.twidere.fragment;
 import static org.mariotaku.twidere.util.Utils.cancelRetweet;
 import static org.mariotaku.twidere.util.Utils.clearListViewChoices;
 import static org.mariotaku.twidere.util.Utils.configBaseCardAdapter;
-import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.openStatus;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
@@ -223,7 +222,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		setListShown(true);
 		setRefreshComplete();
 		setProgressBarIndeterminateVisibility(false);
-		mAdapter.setShowAccountColor(getActivatedAccountIds(getActivity()).length > 1);
+		mAdapter.setShowAccountColor(shouldShowAccountColor());
 		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true);
 		final int curr_first_visible_position = mListView.getFirstVisiblePosition();
 		final long curr_viewed_id = mAdapter.getStatusId(curr_first_visible_position);
@@ -364,6 +363,9 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		super.onScrollStateChanged(view, scrollState);
 		switch (scrollState) {
 			case SCROLL_STATE_IDLE:
+				for (int i = mListView.getFirstVisiblePosition(), j = mListView.getLastVisiblePosition(); i < j; i++) {
+					mReadPositions.add(i);
+				}
 				removeUnreadCounts();
 				break;
 			default:
@@ -451,6 +453,8 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 	protected void setListHeaderFooters(final ListView list) {
 
 	}
+
+	protected abstract boolean shouldShowAccountColor();
 
 	private void addReadPosition(final int firstVisibleItem) {
 		if (mFirstVisibleItem != firstVisibleItem) {

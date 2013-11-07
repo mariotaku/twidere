@@ -14,41 +14,47 @@ public final class CustomTabConfiguration implements Constants {
 	public static final int FIELD_TYPE_USER_LIST = 2;
 	public static final int FIELD_TYPE_TEXT = 3;
 
-	private final int title, icon, secondaryFieldType, secondaryFieldTitle, sortPosition;
-	private final boolean accountIdRequired;
+	public static final int ACCOUNT_NONE = 0;
+	public static final int ACCOUNT_REQUIRED = 1;
+	public static final int ACCOUNT_OPTIONAL = 2;
+
+	private final int title, icon, secondaryFieldType, secondaryFieldTitle, sortPosition, accountRequirement;
 	private final Class<? extends Fragment> cls;
 	private final String secondaryFieldTextKey;
 	private final boolean singleTab;
 
 	public CustomTabConfiguration(final Class<? extends Fragment> cls, final int title, final int icon,
-			final boolean accountIdRequired, final int secondaryFieldType, final int sortPosition) {
-		this(cls, title, icon, accountIdRequired, secondaryFieldType, 0, EXTRA_TEXT, sortPosition, false);
+			final int accountRequirement, final int secondaryFieldType, final int sortPosition) {
+		this(cls, title, icon, accountRequirement, secondaryFieldType, 0, EXTRA_TEXT, sortPosition, false);
 	}
 
 	public CustomTabConfiguration(final Class<? extends Fragment> cls, final int title, final int icon,
-			final boolean accountIdRequired, final int secondaryFieldType, final int sortPosition,
-			final boolean singleTab) {
-		this(cls, title, icon, accountIdRequired, secondaryFieldType, 0, EXTRA_TEXT, sortPosition, singleTab);
+			final int accountRequirement, final int secondaryFieldType, final int sortPosition, final boolean singleTab) {
+		this(cls, title, icon, accountRequirement, secondaryFieldType, 0, EXTRA_TEXT, sortPosition, singleTab);
 	}
 
 	public CustomTabConfiguration(final Class<? extends Fragment> cls, final int title, final int icon,
-			final boolean accountIdRequired, final int secondaryFieldType, final int secondaryFieldTitle,
+			final int accountRequirement, final int secondaryFieldType, final int secondaryFieldTitle,
 			final String secondaryFieldTextKey, final int sortPosition) {
-		this(cls, title, icon, accountIdRequired, secondaryFieldType, 0, secondaryFieldTextKey, sortPosition, false);
+		this(cls, title, icon, accountRequirement, secondaryFieldType, 0, secondaryFieldTextKey, sortPosition, false);
 	}
 
 	public CustomTabConfiguration(final Class<? extends Fragment> cls, final int title, final int icon,
-			final boolean accountIdRequired, final int secondaryFieldType, final int secondaryFieldTitle,
+			final int accountRequirement, final int secondaryFieldType, final int secondaryFieldTitle,
 			final String secondaryFieldTextKey, final int sortPosition, final boolean singleTab) {
 		this.cls = cls;
 		this.title = title;
 		this.icon = icon;
 		this.sortPosition = sortPosition;
-		this.accountIdRequired = accountIdRequired;
+		this.accountRequirement = accountRequirement;
 		this.secondaryFieldType = secondaryFieldType;
 		this.secondaryFieldTitle = secondaryFieldTitle;
 		this.secondaryFieldTextKey = secondaryFieldTextKey;
 		this.singleTab = singleTab;
+	}
+
+	public int getAccountRequirement() {
+		return accountRequirement;
 	}
 
 	public int getDefaultIcon() {
@@ -79,10 +85,6 @@ public final class CustomTabConfiguration implements Constants {
 		return sortPosition;
 	}
 
-	public boolean isAccountIdRequired() {
-		return accountIdRequired;
-	}
-
 	public boolean isSingleTab() {
 		return singleTab;
 	}
@@ -91,7 +93,7 @@ public final class CustomTabConfiguration implements Constants {
 	public String toString() {
 		return "CustomTabConfiguration{title=" + title + ", icon=" + icon + ", secondaryFieldType="
 				+ secondaryFieldType + ", secondaryFieldTitle=" + secondaryFieldTitle + ", sortPosition="
-				+ sortPosition + ", accountIdRequired=" + accountIdRequired + ", cls=" + cls
+				+ sortPosition + ", accountRequirement=" + accountRequirement + ", cls=" + cls
 				+ ", secondaryFieldTextKey=" + secondaryFieldTextKey + ", singleTab=" + singleTab + "}";
 	}
 

@@ -136,14 +136,13 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private boolean mStatusLoaderInitialized, mLocationLoaderInitialized;
 	private boolean mFollowInfoLoaderInitialized;;
 	private boolean mShouldScroll;
-
 	private SharedPreferences mPreferences;
 	private AsyncTwitterWrapper mTwitterWrapper;
 	private ImageLoaderWrapper mImageLoader;
 	private Handler mHandler;
-
 	private TextView mNameView, mScreenNameView, mTextView, mTimeSourceView, mInReplyToView, mLocationView,
 			mRetweetView;
+
 	private ImageView mProfileImageView, mMapView;
 	private Button mFollowButton;
 	private View mMainContent, mFollowIndicator, mImagePreviewContainer, mGalleryContainer, mLocationContainer;
@@ -156,7 +155,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private View mLoadImagesIndicator;
 	private ExtendedFrameLayout mStatusContainer;
 	private ListView mListView;
-
 	private MediaPreviewAdapter mImagePreviewAdapter;
 
 	private LoadConversationTask mConversationTask;
@@ -749,6 +747,10 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	}
 
+	@Override
+	protected void setItemSelected(final ParcelableStatus status, final int position, final boolean selected) {
+	}
+
 	// @Override
 	// protected void setItemSelected(final ParcelableStatus status, final int
 	// position, final boolean selected) {
@@ -769,12 +771,13 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	// }
 
 	@Override
-	protected void setItemSelected(final ParcelableStatus status, final int position, final boolean selected) {
+	protected void setListHeaderFooters(final ListView list) {
+		list.addHeaderView(mStatusView, null, true);
 	}
 
 	@Override
-	protected void setListHeaderFooters(final ListView list) {
-		list.addHeaderView(mStatusView, null, true);
+	protected boolean shouldShowAccountColor() {
+		return false;
 	}
 
 	private void addConversationStatus(final ParcelableStatus status) {

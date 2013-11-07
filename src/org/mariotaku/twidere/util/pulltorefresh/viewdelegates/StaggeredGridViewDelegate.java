@@ -1,4 +1,4 @@
-package uk.co.senab.actionbarpulltorefresh.library.viewdelegates;
+package org.mariotaku.twidere.util.pulltorefresh.viewdelegates;
 
 import android.view.View;
 

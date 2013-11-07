@@ -117,10 +117,12 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 			case R.id.save: {
 				if (!isEditMode()) {
 					if (conf == null) return;
-					final boolean account_id_invalid = conf.isAccountIdRequired() && getAccountId() <= 0;
-					final boolean secondary_field_invalid = conf.getSecondaryFieldType() != CustomTabConfiguration.FIELD_TYPE_NONE
-							&& mSecondaryFieldValue == null;
-					if (account_id_invalid || secondary_field_invalid) {
+					final boolean account_id_required = conf.getAccountRequirement() == CustomTabConfiguration.ACCOUNT_REQUIRED;
+					final boolean secondary_field_required = conf.getSecondaryFieldType() != CustomTabConfiguration.FIELD_TYPE_NONE;
+					final boolean account_id_invalid = getAccountId() <= 0;
+					final boolean secondary_field_invalid = mSecondaryFieldValue == null;
+					if (account_id_required && account_id_invalid || secondary_field_required
+							&& secondary_field_invalid) {
 						Toast.makeText(this, R.string.invalid_settings, Toast.LENGTH_SHORT).show();
 						return;
 					}
@@ -249,7 +251,6 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 		mTabIconsAdapter = new CustomTabIconsAdapter(this);
 		mTabIconsAdapter.setData(getIconMap());
 		mAccountsAdapter = new AccountsSpinnerAdapter(this);
-		mAccountsAdapter.addAll(Account.getAccounts(this, false));
 		mAccountSpinner.setAdapter(mAccountsAdapter);
 		mTabIconSpinner.setAdapter(mTabIconsAdapter);
 		final String icon_key;
@@ -260,8 +261,14 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 				return;
 			}
 			final boolean has_secondary_field = conf.getSecondaryFieldType() != CustomTabConfiguration.FIELD_TYPE_NONE;
-			mAccountContainer.setVisibility(conf.isAccountIdRequired() ? View.VISIBLE : View.GONE);
+			final boolean account_id_none = conf.getAccountRequirement() == CustomTabConfiguration.ACCOUNT_NONE;
+			mAccountContainer.setVisibility(account_id_none ? View.GONE : View.VISIBLE);
 			mSecondaryFieldContainer.setVisibility(has_secondary_field ? View.VISIBLE : View.GONE);
+			final boolean account_id_required = conf.getAccountRequirement() == CustomTabConfiguration.ACCOUNT_REQUIRED;
+			if (!account_id_required) {
+				mAccountsAdapter.add(Account.dummyInstance());
+			}
+			mAccountsAdapter.addAll(Account.getAccounts(this, false));
 			switch (conf.getSecondaryFieldType()) {
 				case CustomTabConfiguration.FIELD_TYPE_USER: {
 					mSecondaryFieldLabel.setText(R.string.user);
@@ -324,11 +331,15 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 	}
 
 	private long getAccountId() {
-		return mAccountsAdapter.getItem(mAccountSpinner.getSelectedItemPosition()).account_id;
+		final int pos = mAccountSpinner.getSelectedItemPosition();
+		if (mAccountSpinner.getCount() > pos && pos >= 0) return mAccountsAdapter.getItem(pos).account_id;
+		return -1;
 	}
 
 	private String getIconKey() {
-		return mTabIconsAdapter.getItem(mTabIconSpinner.getSelectedItemPosition()).getKey();
+		final int pos = mTabIconSpinner.getSelectedItemPosition();
+		if (mTabIconsAdapter.getCount() > pos && pos >= 0) return mTabIconsAdapter.getItem(pos).getKey();
+		return null;
 	}
 
 	private boolean isEditMode() {

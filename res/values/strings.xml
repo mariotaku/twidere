@@ -32,7 +32,7 @@
 	<string name="mentions">Mentions</string>
 	<string name="error_occurred">An error occurred, please try again.</string>
 	<string name="error_already_logged_in">You are already logged in.</string>
-	<string name="no_account_selected">You must select at least one account.</string>
+	<string name="no_account_selected">No account selected.</string>
 	<string name="error_unknown_error">Error: Unknown error, this is probably a bug.</string>
 	<string name="error_message">Error: <xliff:g id="message">%s</xliff:g></string>
 	<string name="error_message_with_action">Error while <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>

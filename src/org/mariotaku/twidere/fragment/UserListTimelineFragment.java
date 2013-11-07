@@ -67,4 +67,9 @@ public class UserListTimelineFragment extends ParcelableStatusesListFragment {
 				"list_name" + list_name, "user" + user_id, "screen_name" + screen_name };
 	}
 
+	@Override
+	protected boolean shouldShowAccountColor() {
+		return false;
+	}
+
 }
