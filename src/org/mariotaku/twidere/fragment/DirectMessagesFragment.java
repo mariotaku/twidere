@@ -46,6 +46,7 @@ import android.widget.ListView;
 import org.mariotaku.querybuilder.Columns.Column;
 import org.mariotaku.querybuilder.RawItemArray;
 import org.mariotaku.querybuilder.Where;
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.DirectMessagesEntryAdapter;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
@@ -108,6 +109,7 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 		final Uri uri = DirectMessages.ConversationsEntry.CONTENT_URI;
 		final long account_id = getAccountId();
 		final long[] account_ids = account_id > 0 ? new long[] { account_id } : getActivatedAccountIds(getActivity());
+		setEmptyText(account_ids.length == 0 ? getString(R.string.no_account_selected) : null);
 		final Where account_where = Where.in(new Column(Statuses.ACCOUNT_ID), new RawItemArray(account_ids));
 		return new CursorLoader(getActivity(), uri, null, account_where.getSQL(), null, null);
 	}

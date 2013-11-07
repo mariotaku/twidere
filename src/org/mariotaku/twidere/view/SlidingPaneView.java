@@ -781,6 +781,13 @@ public class SlidingPaneView extends ViewGroup {
 			setOrientation(LinearLayout.HORIZONTAL);
 		}
 
+		@Override
+		public void getHitRect(final Rect r) {
+			final int scrollX = getScrollX(), scrollY = getScrollY();
+			super.getHitRect(r);
+			r.set(r.left - scrollX, r.top - scrollY, r.right - scrollX, r.bottom - scrollY);
+		}
+
 		public void setOnSwipeListener(final OnSwipeListener listener) {
 			mOnSwipeListener = listener;
 		}

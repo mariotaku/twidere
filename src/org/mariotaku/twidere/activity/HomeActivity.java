@@ -527,7 +527,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			final BadgeView badge = new BadgeView(this, mIndicator.getTabItem(i).findViewById(R.id.tab_item_content));
 			badge.setId(R.id.unread_count);
 			badge.setBadgePosition(BadgeView.POSITION_TOP_RIGHT);
-			badge.setTextSize(badge.getTextSize() * 0.5f);
+			badge.setTextSize(getResources().getInteger(R.integer.unread_count_text_size));
 			badge.hide();
 		}
 	}
@@ -572,10 +572,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mSlidingMenu.attachToActivity(this, SlidingMenu.SLIDING_WINDOW);
 		mSlidingMenu.setMenu(R.layout.home_left_drawer_container);
 		if (isDualPaneMode()) {
-			final View right = findViewById(PANE_RIGHT);
-			if (right != null) {
-				mSlidingMenu.addIgnoredView(right);
-			}
+			mSlidingMenu.addIgnoredView(getSlidingPane().getRightPaneContainer());
 		}
 	}
 
@@ -638,8 +635,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private void updateSlidingMenuTouchMode() {
 		if (mViewPager == null || mSlidingMenu == null) return;
 		final int position = mViewPager.getCurrentItem();
-		final int mode = position == 0 && !isDualPaneMode() ? SlidingMenu.TOUCHMODE_FULLSCREEN
-				: SlidingMenu.TOUCHMODE_MARGIN;
+		final int mode = position == 0 ? SlidingMenu.TOUCHMODE_FULLSCREEN : SlidingMenu.TOUCHMODE_MARGIN;
 		mSlidingMenu.setTouchModeAbove(mode);
 	}
 
@@ -670,13 +666,21 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			if (result == null || result.length != tab_count) return;
 			for (int i = 0, j = tab_count; i < j; i++) {
 				final BadgeView badge = (BadgeView) mIndicator.getTabItem(i).findViewById(R.id.unread_count);
-				final int count = result[i];
-				if (count > 0 && mEnabled) {
-					badge.setCount(count);
-					badge.show();
-				} else {
+				if (!mEnabled) {
 					badge.setCount(0);
 					badge.hide();
+					continue;
+				}
+				final int count = result[i];
+				if (count > 0) {
+					badge.setCount(count);
+					badge.show();
+				} else if (count == 0) {
+					badge.setCount(0);
+					badge.hide();
+				} else {
+					badge.setText(null);
+					badge.show();
 				}
 			}
 		}

@@ -29,7 +29,7 @@ import android.net.Uri;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
-public class StaggeredHomeTimelineFragment extends CursorStatusesStaggeredGridFragment {
+public class MultiColumnHomeTimelineFragment extends CursorStatusesMultiColumnListFragment {
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -39,9 +39,9 @@ public class StaggeredHomeTimelineFragment extends CursorStatusesStaggeredGridFr
 			final String action = intent.getAction();
 			if (BROADCAST_HOME_TIMELINE_REFRESHED.equals(action)) {
 				setRefreshComplete();
-				getLoaderManager().restartLoader(0, null, StaggeredHomeTimelineFragment.this);
+				getLoaderManager().restartLoader(0, null, MultiColumnHomeTimelineFragment.this);
 			} else if (BROADCAST_HOME_TIMELINE_DATABASE_UPDATED.equals(action)) {
-				getLoaderManager().restartLoader(0, null, StaggeredHomeTimelineFragment.this);
+				getLoaderManager().restartLoader(0, null, MultiColumnHomeTimelineFragment.this);
 			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
 				final AsyncTwitterWrapper twitter = getTwitterWrapper();
 				setRefreshing(twitter != null && twitter.isHomeTimelineRefreshing());

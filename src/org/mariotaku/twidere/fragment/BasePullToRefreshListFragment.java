@@ -214,11 +214,8 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 	}
 
 	public void setPullToRefreshEnabled(final boolean enabled) {
-		// if (mPullToRefreshAttacherActivity == null) return;
-		// mPullToRefreshAttacherActivity.setPullToRefreshEnabled(this,
-		// enabled);
-		if (mPullToRefreshLayout == null) return;
-		mPullToRefreshLayout.setEnabled(enabled);
+		if (mPullToRefreshAttacherActivity == null) return;
+		mPullToRefreshAttacherActivity.setPullToRefreshEnabled(this, enabled);
 	}
 
 	public void setRefreshComplete() {

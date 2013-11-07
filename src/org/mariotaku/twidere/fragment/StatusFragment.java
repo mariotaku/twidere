@@ -68,6 +68,8 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
@@ -91,6 +93,7 @@ import edu.ucdavis.earlybird.ProfilingUtil;
 import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.ColorSelectorActivity;
+import org.mariotaku.twidere.activity.LinkHandlerActivity;
 import org.mariotaku.twidere.adapter.MediaPreviewAdapter;
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
@@ -108,6 +111,7 @@ import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.MediaPreviewUtils;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.ParseUtils;
+import org.mariotaku.twidere.util.SmartBarUtils;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 import org.mariotaku.twidere.view.ExtendedFrameLayout;
@@ -276,97 +280,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 		@Override
 		public boolean onMenuItemClick(final MenuItem item) {
-			if (mStatus == null) return false;
-			final String text_plain = mStatus.text_plain;
-			switch (item.getItemId()) {
-				case MENU_SHARE: {
-					final Intent intent = new Intent(Intent.ACTION_SEND);
-					intent.setType("text/plain");
-					intent.putExtra(Intent.EXTRA_TEXT, "@" + mStatus.user_screen_name + ": " + text_plain);
-					startActivity(Intent.createChooser(intent, getString(R.string.share)));
-					break;
-				}
-				case MENU_COPY: {
-					if (ClipboardUtils.setText(getActivity(), mStatus.text_plain)) {
-						showOkMessage(getActivity(), R.string.text_copied, false);
-					}
-					break;
-				}
-				case MENU_RETWEET: {
-					if (isMyRetweet(mStatus)) {
-						cancelRetweet(mTwitterWrapper, mStatus);
-					} else {
-						final long id_to_retweet = mStatus.is_retweet && mStatus.retweet_id > 0 ? mStatus.retweet_id
-								: mStatus.id;
-						mTwitterWrapper.retweetStatus(mStatus.account_id, id_to_retweet);
-					}
-					break;
-				}
-				case MENU_QUOTE: {
-					final Intent intent = new Intent(INTENT_ACTION_QUOTE);
-					final Bundle bundle = new Bundle();
-					bundle.putParcelable(EXTRA_STATUS, mStatus);
-					intent.putExtras(bundle);
-					startActivity(intent);
-					break;
-				}
-				case MENU_REPLY: {
-					final Intent intent = new Intent(INTENT_ACTION_REPLY);
-					final Bundle bundle = new Bundle();
-					bundle.putParcelable(EXTRA_STATUS, mStatus);
-					intent.putExtras(bundle);
-					startActivity(intent);
-					break;
-				}
-				case MENU_FAVORITE: {
-					if (mStatus.is_favorite) {
-						mTwitterWrapper.destroyFavoriteAsync(mAccountId, mStatusId);
-					} else {
-						mTwitterWrapper.createFavoriteAsync(mAccountId, mStatusId);
-					}
-					break;
-				}
-				case MENU_DELETE: {
-					mTwitterWrapper.destroyStatusAsync(mAccountId, mStatusId);
-					break;
-				}
-				case MENU_ADD_TO_FILTER: {
-					AddStatusFilterDialogFragment.show(getFragmentManager(), mStatus);
-					break;
-				}
-				case MENU_SET_COLOR: {
-					final Intent intent = new Intent(getActivity(), ColorSelectorActivity.class);
-					startActivityForResult(intent, REQUEST_SET_COLOR);
-					break;
-				}
-				case MENU_CLEAR_COLOR: {
-					clearUserColor(getActivity(), mStatus.user_id);
-					displayStatus(mStatus);
-					break;
-				}
-				case MENU_CLEAR_NICKNAME: {
-					clearUserNickname(getActivity(), mStatus.user_id);
-					displayStatus(mStatus);
-					break;
-				}
-				case MENU_SET_NICKNAME: {
-					final String nick = getUserNickname(getActivity(), mStatus.user_id, true);
-					SetUserNicknameDialogFragment.show(getFragmentManager(), mStatus.user_id, nick);
-					break;
-				}
-				default: {
-					if (item.getIntent() != null) {
-						try {
-							startActivity(item.getIntent());
-						} catch (final ActivityNotFoundException e) {
-							Log.w(LOGTAG, e);
-							return false;
-						}
-					}
-					break;
-				}
-			}
-			return true;
+			return handleMenuItemClick(item);
 		}
 	};
 
@@ -402,9 +316,13 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		args.putLong(EXTRA_ACCOUNT_ID, mAccountId);
 		args.putLong(EXTRA_STATUS_ID, mStatusId);
 		args.putParcelable(EXTRA_STATUS, status);
-		mMenuBar.inflate(R.menu.menu_status);
-		setMenuForStatus(getActivity(), mMenuBar.getMenu(), status);
-		mMenuBar.show();
+		if (shouldUseSmartBar()) {
+			getActivity().supportInvalidateOptionsMenu();
+		} else {
+			mMenuBar.inflate(R.menu.menu_status);
+			setMenuForStatus(getActivity(), mMenuBar.getMenu(), status);
+			mMenuBar.show();
+		}
 
 		updateUserColor();
 		mProfileView.drawEnd(getAccountColor(getActivity(), status.account_id));
@@ -507,6 +425,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		setHasOptionsMenu(shouldUseSmartBar());
 		setListShownNoAnimation(true);
 		mHandler = new Handler();
 		mListView = getListView();
@@ -521,8 +440,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mTwitterWrapper = getTwitterWrapper();
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 		mImagePreviewAdapter = new MediaPreviewAdapter(getActivity());
-		setPullToRefreshEnabled(false);
-		// getPullToRefreshAttacher().setEnabled(false);
+		getPullToRefreshAttacher().removeRefreshableView(getListView());
 		final Bundle bundle = getArguments();
 		if (bundle != null) {
 			mAccountId = bundle.getLong(EXTRA_ACCOUNT_ID);
@@ -534,6 +452,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mProfileView.setOnClickListener(this);
 		mLocationContainer.setOnClickListener(this);
 		mRetweetView.setOnClickListener(this);
+		mMenuBar.setVisibility(shouldUseSmartBar() ? View.GONE : View.VISIBLE);
 		mMenuBar.setOnMenuItemClickListener(mMenuItemClickListener);
 		getStatus(false);
 		mImagePreviewGallery.setAdapter(mImagePreviewAdapter);
@@ -613,6 +532,12 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	}
 
 	@Override
+	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
+		if (!shouldUseSmartBar()) return;
+		inflater.inflate(R.menu.menu_status_smartbar, menu);
+	}
+
+	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.status, null, false);
 		mMainContent = view.findViewById(R.id.content);
@@ -688,6 +613,18 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	}
 
 	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		if (!shouldUseSmartBar() || mStatus == null) return false;
+		return handleMenuItemClick(item);
+	}
+
+	@Override
+	public void onPrepareOptionsMenu(final Menu menu) {
+		if (!shouldUseSmartBar() || mStatus == null) return;
+		setMenuForStatus(getActivity(), menu, mStatus);
+	}
+
+	@Override
 	public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
 			final int totalItemCount) {
 	}
@@ -742,13 +679,98 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		return null;
 	}
 
-	@Override
-	protected void onReachedBottom() {
-
-	}
-
-	@Override
-	protected void setItemSelected(final ParcelableStatus status, final int position, final boolean selected) {
+	protected boolean handleMenuItemClick(final MenuItem item) {
+		if (mStatus == null) return false;
+		final String text_plain = mStatus.text_plain;
+		switch (item.getItemId()) {
+			case MENU_SHARE: {
+				final Intent intent = new Intent(Intent.ACTION_SEND);
+				intent.setType("text/plain");
+				intent.putExtra(Intent.EXTRA_TEXT, "@" + mStatus.user_screen_name + ": " + text_plain);
+				startActivity(Intent.createChooser(intent, getString(R.string.share)));
+				break;
+			}
+			case MENU_COPY: {
+				if (ClipboardUtils.setText(getActivity(), mStatus.text_plain)) {
+					showOkMessage(getActivity(), R.string.text_copied, false);
+				}
+				break;
+			}
+			case MENU_RETWEET: {
+				if (isMyRetweet(mStatus)) {
+					cancelRetweet(mTwitterWrapper, mStatus);
+				} else {
+					final long id_to_retweet = mStatus.is_retweet && mStatus.retweet_id > 0 ? mStatus.retweet_id
+							: mStatus.id;
+					mTwitterWrapper.retweetStatus(mStatus.account_id, id_to_retweet);
+				}
+				break;
+			}
+			case MENU_QUOTE: {
+				final Intent intent = new Intent(INTENT_ACTION_QUOTE);
+				final Bundle bundle = new Bundle();
+				bundle.putParcelable(EXTRA_STATUS, mStatus);
+				intent.putExtras(bundle);
+				startActivity(intent);
+				break;
+			}
+			case MENU_REPLY: {
+				final Intent intent = new Intent(INTENT_ACTION_REPLY);
+				final Bundle bundle = new Bundle();
+				bundle.putParcelable(EXTRA_STATUS, mStatus);
+				intent.putExtras(bundle);
+				startActivity(intent);
+				break;
+			}
+			case MENU_FAVORITE: {
+				if (mStatus.is_favorite) {
+					mTwitterWrapper.destroyFavoriteAsync(mAccountId, mStatusId);
+				} else {
+					mTwitterWrapper.createFavoriteAsync(mAccountId, mStatusId);
+				}
+				break;
+			}
+			case MENU_DELETE: {
+				mTwitterWrapper.destroyStatusAsync(mAccountId, mStatusId);
+				break;
+			}
+			case MENU_ADD_TO_FILTER: {
+				AddStatusFilterDialogFragment.show(getFragmentManager(), mStatus);
+				break;
+			}
+			case MENU_SET_COLOR: {
+				final Intent intent = new Intent(getActivity(), ColorSelectorActivity.class);
+				startActivityForResult(intent, REQUEST_SET_COLOR);
+				break;
+			}
+			case MENU_CLEAR_COLOR: {
+				clearUserColor(getActivity(), mStatus.user_id);
+				displayStatus(mStatus);
+				break;
+			}
+			case MENU_CLEAR_NICKNAME: {
+				clearUserNickname(getActivity(), mStatus.user_id);
+				displayStatus(mStatus);
+				break;
+			}
+			case MENU_SET_NICKNAME: {
+				final String nick = getUserNickname(getActivity(), mStatus.user_id, true);
+				SetUserNicknameDialogFragment.show(getFragmentManager(), mStatus.user_id, nick);
+				break;
+			}
+			default: {
+				if (item.getIntent() != null) {
+					try {
+						startActivity(item.getIntent());
+					} catch (final ActivityNotFoundException e) {
+						Log.w(LOGTAG, e);
+						return false;
+					}
+				}
+				break;
+			}
+		}
+		return true;
 	}
 
 	// @Override
@@ -769,6 +791,15 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	// }
 	// super.setItemSelected(status, position, selected);
 	// }
+
+	@Override
+	protected void onReachedBottom() {
+
+	}
+
+	@Override
+	protected void setItemSelected(final ParcelableStatus status, final int position, final boolean selected) {
+	}
 
 	@Override
 	protected void setListHeaderFooters(final ListView list) {
@@ -822,6 +853,10 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		final List<String> images = MediaPreviewUtils.getSupportedLinksInStatus(mStatus.text_html);
 		mImagePreviewAdapter.addAll(images, mStatus.is_possibly_sensitive);
 		updateImageSelectButton(mImagePreviewGallery.getSelectedItemPosition());
+	}
+
+	private boolean shouldUseSmartBar() {
+		return getActivity() instanceof LinkHandlerActivity && SmartBarUtils.hasSmartBar();
 	}
 
 	private void showConversation() {

@@ -139,7 +139,7 @@ public abstract class BasePullToRefreshMultiColumnListFragment extends BaseSuppo
 		final PullToRefreshLayout plv = new PullToRefreshLayout(context);
 		mPullToRefreshLayout = plv;
 
-		final MultiColumnListView lv = new MultiColumnListView(context);
+		final MultiColumnListView lv = createMultiColumnListView(context, inflater);
 		lv.setId(android.R.id.list);
 		lv.setDrawSelectorOnTop(false);
 		plv.addView(lv, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);

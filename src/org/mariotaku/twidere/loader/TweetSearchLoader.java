@@ -52,7 +52,7 @@ public class TweetSearchLoader extends Twitter4JStatusesLoader {
 	@Override
 	public List<Status> getStatuses(final Twitter twitter, final Paging paging) throws TwitterException {
 		if (twitter == null) return null;
-		final Query query = new Query(mQuery);
+		final Query query = new Query(String.format("%s exclude:retweets", mQuery));
 		query.setRpp(paging.getCount());
 		if (paging.getMaxId() > 0) {
 			query.setMaxId(paging.getMaxId());
@@ -63,11 +63,6 @@ public class TweetSearchLoader extends Twitter4JStatusesLoader {
 	@Override
 	protected boolean shouldFilterStatus(final SQLiteDatabase database, final ParcelableStatus status) {
 		return isFiltered(database, status, mFiltersForRts);
-	}
-
-	@Override
-	protected boolean shouldIncludeRetweets() {
-		return false;
 	}
 
 }

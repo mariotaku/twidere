@@ -59,6 +59,7 @@ Thanks to their excellent design!
 * [TagSoup](http://ccil.org/~cowan/XML/tagsoup/), Copyright 2004 John Cowan
 * [HttpMime](http://hc.apache.org/httpcomponents-client-ga/httpmime/), Copyright 1999-2013 The Apache Software Foundation
 * [ACRA](http://github.com/ACRA/acra), Copyright 2013 Kevin Gaudin
+* [drag-sort-listview](https://github.com/bauerca/drag-sort-listview), Copyright 2012 Carl Bauer
 
 ---
 
@@ -106,6 +107,6 @@ AliPay: http://me.alipay.com/mariotaku
 
 ## Notes ##
 
-<a name="note1" id="md-anchor"><sup>1</sup></a> : There's two version, one for Android 4.0+, another for Android 1.6 to Android 3.2, there will be less feature for legacy devices, but both of them has Holo style.
+<a name="note1" id="md-anchor"><sup>1</sup></a> : There're two versions, one for Android 4.0+, another for Android 1.6 to Android 3.2, there will be less feature for legacy devices, but both of them has Holo style.
 
 <a name="note2" id="md-anchor"><sup>2</sup></a> : Legacy device only support Dark and Light with dark ActionBar theme.

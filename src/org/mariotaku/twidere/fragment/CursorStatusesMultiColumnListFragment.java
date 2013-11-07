@@ -19,7 +19,6 @@
 
 package org.mariotaku.twidere.fragment;
 
-import static org.mariotaku.twidere.util.Utils.buildActivatedStatsWhereClause;
 import static org.mariotaku.twidere.util.Utils.buildStatusFilterWhereClause;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getNewestStatusIdsFromDatabase;
@@ -40,13 +39,17 @@ import android.support.v4.content.Loader;
 
 import com.huewu.pla.lib.internal.PLAAbsListView;
 
+import org.mariotaku.querybuilder.Columns.Column;
+import org.mariotaku.querybuilder.RawItemArray;
+import org.mariotaku.querybuilder.Where;
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.CursorStatusesAdapter;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTask;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
-public abstract class CursorStatusesStaggeredGridFragment extends BaseStatusesMultiColumnListFragment<Cursor> {
+public abstract class CursorStatusesMultiColumnListFragment extends BaseStatusesMultiColumnListFragment<Cursor> {
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -55,7 +58,7 @@ public abstract class CursorStatusesStaggeredGridFragment extends BaseStatusesMu
 			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
 			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action) || BROADCAST_FILTERS_UPDATED.equals(action)) {
-				getLoaderManager().restartLoader(0, null, CursorStatusesStaggeredGridFragment.this);
+				getLoaderManager().restartLoader(0, null, CursorStatusesMultiColumnListFragment.this);
 			}
 		}
 	};
@@ -77,10 +80,16 @@ public abstract class CursorStatusesStaggeredGridFragment extends BaseStatusesMu
 		final Uri uri = getContentUri();
 		final String table = getTableNameByUri(uri);
 		final String sort_by = Statuses.SORT_ORDER_STATUS_ID_DESC;
-		final String activated_where = buildActivatedStatsWhereClause(getActivity(), null);
-		final String where = isFiltersEnabled() ? buildStatusFilterWhereClause(table, activated_where,
-				shouldEnableFiltersForRTs(getActivity())) : activated_where;
-		return new CursorLoader(getActivity(), uri, CursorStatusesAdapter.CURSOR_COLS, where, null, sort_by);
+		final long account_id = getAccountId();
+		final long[] account_ids = account_id > 0 ? new long[] { account_id } : getActivatedAccountIds(getActivity());
+		setEmptyText(account_ids.length == 0 ? getString(R.string.no_account_selected) : null);
+		final Where account_where = Where.in(new Column(Statuses.ACCOUNT_ID), new RawItemArray(account_ids));
+		if (isFiltersEnabled()) {
+			account_where.and(new Where(buildStatusFilterWhereClause(table, null,
+					shouldEnableFiltersForRTs(getActivity()))));
+		}
+		return new CursorLoader(getActivity(), uri, CursorStatusesAdapter.CURSOR_COLS, account_where.getSQL(), null,
+				sort_by);
 	}
 
 	@Override
@@ -99,7 +108,8 @@ public abstract class CursorStatusesStaggeredGridFragment extends BaseStatusesMu
 			@Override
 			protected long[][] doInBackground(final Void... params) {
 				final long[][] result = new long[3][];
-				result[0] = getActivatedAccountIds(getActivity());
+				final long account_id = getAccountId();
+				result[0] = account_id > 0 ? new long[] { account_id } : getActivatedAccountIds(getActivity());
 				result[2] = getNewestStatusIds();
 				return result;
 			}
@@ -145,6 +155,11 @@ public abstract class CursorStatusesStaggeredGridFragment extends BaseStatusesMu
 		super.onStop();
 	}
 
+	protected long getAccountId() {
+		final Bundle args = getArguments();
+		return args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
+	}
+
 	protected abstract Uri getContentUri();
 
 	@Override
@@ -170,7 +185,8 @@ public abstract class CursorStatusesStaggeredGridFragment extends BaseStatusesMu
 			@Override
 			protected long[][] doInBackground(final Void... params) {
 				final long[][] result = new long[3][];
-				result[0] = getActivatedAccountIds(getActivity());
+				final long account_id = getAccountId();
+				result[0] = account_id > 0 ? new long[] { account_id } : getActivatedAccountIds(getActivity());
 				result[1] = getOldestStatusIds();
 				return result;
 			}
@@ -186,6 +202,11 @@ public abstract class CursorStatusesStaggeredGridFragment extends BaseStatusesMu
 	@Override
 	protected CursorStatusesAdapter newAdapterInstance() {
 		return new CursorStatusesAdapter(getActivity());
+	}
+
+	@Override
+	protected boolean shouldShowAccountColor() {
+		return getAccountId() <= 0 && getActivatedAccountIds(getActivity()).length > 1;
 	}
 
 }

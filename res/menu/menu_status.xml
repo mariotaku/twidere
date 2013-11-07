@@ -4,10 +4,12 @@
 	<item
 		android:id="@id/reply"
 		android:icon="@drawable/ic_menu_reply"
+		android:showAsAction="always"
 		android:title="@string/reply"/>
 	<item
 		android:id="@+id/retweet_submenu"
 		android:icon="@drawable/ic_menu_retweet"
+		android:showAsAction="always"
 		android:title="@string/retweet">
 		<menu>
 			<item
@@ -23,10 +25,12 @@
 	<item
 		android:id="@id/favorite"
 		android:icon="@drawable/ic_menu_star"
+		android:showAsAction="always"
 		android:title="@string/favorite"/>
 	<item
 		android:id="@+id/more_submenu"
 		android:icon="@drawable/ic_menu_more"
+		android:showAsAction="always"
 		android:title="@string/more">
 		<menu>
 			<item

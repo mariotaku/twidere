@@ -25,6 +25,7 @@ import static org.mariotaku.twidere.util.Utils.matchLinkId;
 
 import android.app.ActionBar;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -118,9 +119,12 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnC
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		mMultiSelectHandler = new MultiSelectEventHandler(this);
 		mMultiSelectHandler.dispatchOnCreate();
+		final Intent intent = getIntent();
+		final Uri data = intent.getData();
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		setUiOptions(data);
 		super.onCreate(savedInstanceState);
 		setOverrideExitAniamtion(false);
 		mActionBar = getActionBar();
@@ -135,8 +139,6 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnC
 		mGoTopView.setOnClickListener(this);
 		mGoTopView.setOnLongClickListener(this);
 		setProgressBarIndeterminateVisibility(false);
-		final Intent intent = getIntent();
-		final Uri data = intent.getData();
 		if (data == null || !showFragment(data)) {
 			finish();
 		}
@@ -158,6 +160,15 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnC
 	protected void onTitleChanged(final CharSequence title, final int color) {
 		super.onTitleChanged(title, color);
 		mTitleView.setText(title);
+	}
+
+	private void setUiOptions(final Uri data) {
+		switch (matchLinkId(data)) {
+			case LINK_ID_STATUS: {
+				getWindow().setUiOptions(ActivityInfo.UIOPTION_SPLIT_ACTION_BAR_WHEN_NARROW);
+				break;
+			}
+		}
 	}
 
 	private boolean showFragment(final Uri uri) {

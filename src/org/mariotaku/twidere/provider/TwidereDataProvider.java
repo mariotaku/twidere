@@ -858,11 +858,11 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		} else if (TAB_TYPE_MENTIONS_TIMELINE.equals(type)) {
 			count = mUnreadMentions.size();
 		} else if (TAB_TYPE_DIRECT_MESSAGES.equals(type)) {
-			count = mUnreadMessages.size();
+			count = -mUnreadMessages.size();
 		} else {
-			count = -1;
+			count = 0;
 		}
-		if (type != null && count != -1) {
+		if (type != null && count != 0) {
 			c.addRow(new Object[] { position, type, count });
 		}
 		return c;

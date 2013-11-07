@@ -22,7 +22,6 @@ package org.mariotaku.twidere.fragment;
 import static org.mariotaku.twidere.util.Utils.cancelRetweet;
 import static org.mariotaku.twidere.util.Utils.clearListViewChoices;
 import static org.mariotaku.twidere.util.Utils.configBaseCardAdapter;
-import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.openStatus;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
@@ -38,6 +37,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
@@ -226,7 +226,7 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 		setListShown(true);
 		setRefreshComplete();
 		setProgressBarIndeterminateVisibility(false);
-		mAdapter.setShowAccountColor(getActivatedAccountIds(getActivity()).length > 1);
+		mAdapter.setShowAccountColor(shouldShowAccountColor());
 		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true);
 		final int curr_first_visible_position = mListView.getFirstVisiblePosition();
 		final long curr_viewed_id = mAdapter.getStatusId(curr_first_visible_position);
@@ -402,6 +402,11 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 		return super.scrollToStart();
 	}
 
+	@Override
+	protected MultiColumnListView createMultiColumnListView(final Context context, final LayoutInflater inflater) {
+		return (MultiColumnListView) inflater.inflate(R.layout.base_multi_column_list, null, false);
+	}
+
 	protected abstract long[] getNewestStatusIds();
 
 	protected abstract long[] getOldestStatusIds();
@@ -456,6 +461,8 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 	protected void setListHeaderFooters(final MultiColumnListView list) {
 
 	}
+
+	protected abstract boolean shouldShowAccountColor();
 
 	private void addReadPosition(final int firstVisibleItem) {
 		if (mFirstVisibleItem != firstVisibleItem) {
@@ -523,7 +530,7 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 		private final BaseStatusesMultiColumnListFragment<T> fragment;
 
 		RemoveUnreadCountsTask(final Set<Integer> read_positions, final BaseStatusesMultiColumnListFragment<T> fragment) {
-			this.read_positions = read_positions;
+			this.read_positions = Collections.synchronizedSet(new HashSet<Integer>(read_positions));
 			this.fragment = fragment;
 			this.adapter = fragment.getListAdapter();
 		}

@@ -322,6 +322,14 @@ public class BadgeView extends TextView {
 		toggle(animate, fadeIn, fadeOut);
 	}
 
+	@Override
+	protected void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
+		if (w != oldw && h != oldh) {
+			setMinWidth(h);
+		}
+		super.onSizeChanged(w, h, oldw, oldh);
+	}
+
 	private void applyLayoutParams() {
 
 		final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
@@ -426,6 +434,8 @@ public class BadgeView extends TextView {
 		this.context = context;
 		this.target = target;
 		targetTabIndex = tabIndex;
+
+		setGravity(Gravity.CENTER);
 
 		// apply defaults
 		badgePosition = DEFAULT_POSITION;

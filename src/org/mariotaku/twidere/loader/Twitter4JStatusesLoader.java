@@ -135,12 +135,9 @@ public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 	protected abstract List<Status> getStatuses(Twitter twitter, Paging paging) throws TwitterException;
 
 	protected final Twitter getTwitter() {
-		return getTwitterInstance(mContext, mAccountId, true, shouldIncludeRetweets());
+		return getTwitterInstance(mContext, mAccountId, true, true);
 	}
 
 	protected abstract boolean shouldFilterStatus(final SQLiteDatabase database, final ParcelableStatus status);
 
-	protected boolean shouldIncludeRetweets() {
-		return true;
-	}
 }

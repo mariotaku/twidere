@@ -63,6 +63,10 @@ public class DualPaneActivity extends BaseSupportActivity implements OnBackStack
 		return right_pane_fragment;
 	}
 
+	public SlidingPaneView getSlidingPane() {
+		return mSlidingPane;
+	}
+
 	public final boolean isDualPaneMode() {
 		return findViewById(PANE_LEFT) instanceof ViewGroup && findViewById(PANE_RIGHT) instanceof ViewGroup;
 	}

@@ -19,8 +19,8 @@ import org.mariotaku.twidere.fragment.ActivitiesByFriendsFragment;
 import org.mariotaku.twidere.fragment.DirectMessagesFragment;
 import org.mariotaku.twidere.fragment.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.MentionsFragment;
+import org.mariotaku.twidere.fragment.MultiColumnHomeTimelineFragment;
 import org.mariotaku.twidere.fragment.SearchStatusesFragment;
-import org.mariotaku.twidere.fragment.StaggeredHomeTimelineFragment;
 import org.mariotaku.twidere.fragment.TrendsSuggectionsFragment;
 import org.mariotaku.twidere.fragment.UserFavoritesFragment;
 import org.mariotaku.twidere.fragment.UserListTimelineFragment;
@@ -73,7 +73,7 @@ public class CustomTabUtils implements Constants {
 				ActivitiesByFriendsFragment.class, R.string.activities_by_friends, R.drawable.ic_tab_accounts,
 				CustomTabConfiguration.ACCOUNT_REQUIRED, CustomTabConfiguration.FIELD_TYPE_NONE, 9));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_STAGGERED_HOME_TIMELINE, new CustomTabConfiguration(
-				StaggeredHomeTimelineFragment.class, R.string.staggered_home_timeline, R.drawable.ic_tab_staggered,
+				MultiColumnHomeTimelineFragment.class, R.string.staggered_home_timeline, R.drawable.ic_tab_staggered,
 				CustomTabConfiguration.ACCOUNT_OPTIONAL, CustomTabConfiguration.FIELD_TYPE_NONE, 10, false));
 
 		CUSTOM_TABS_ICON_NAME_MAP.put("accounts", R.drawable.ic_tab_accounts);

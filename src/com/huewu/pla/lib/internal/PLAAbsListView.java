@@ -777,6 +777,7 @@ public abstract class PLAAbsListView extends PLAAdapterView<ListAdapter> impleme
 
 			case MotionEvent.ACTION_MOVE: {
 				final int pointerIndex = ev.findPointerIndex(mActivePointerId);
+				if (pointerIndex >= ev.getPointerCount()) return true;
 				final int y = (int) ev.getY(pointerIndex);
 				deltaY = y - mMotionY;
 				switch (mTouchMode) {

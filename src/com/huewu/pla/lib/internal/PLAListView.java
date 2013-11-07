@@ -2167,8 +2167,16 @@ public class PLAListView extends PLAAbsListView {
 			child.setPressed(isPressed);
 		}
 
+		final boolean useActivated = getContext().getApplicationInfo().targetSdkVersion >= android.os.Build.VERSION_CODES.HONEYCOMB;
+
+		if (mChoiceMode == CHOICE_MODE_NONE) {
+			if (child instanceof Checkable) {
+				((Checkable) child).setChecked(false);
+			} else if (useActivated) {
+				child.setActivated(false);
+			}
+		}
 		if (mChoiceMode != CHOICE_MODE_NONE && mCheckStates != null) {
-			final boolean useActivated = getContext().getApplicationInfo().targetSdkVersion >= android.os.Build.VERSION_CODES.HONEYCOMB;
 			if (child instanceof Checkable) {
 				((Checkable) child).setChecked(mCheckStates.get(position));
 			} else if (useActivated) {

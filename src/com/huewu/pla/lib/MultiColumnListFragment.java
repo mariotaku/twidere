@@ -150,7 +150,7 @@ public class MultiColumnListFragment extends Fragment {
 		lframe.addView(tv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.MATCH_PARENT));
 
-		final MultiColumnListView lv = new MultiColumnListView(getActivity());
+		final MultiColumnListView lv = createMultiColumnListView(context, inflater);
 		lv.setId(android.R.id.list);
 		lv.setDrawSelectorOnTop(false);
 		lframe.addView(lv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -271,6 +271,10 @@ public class MultiColumnListFragment extends Fragment {
 	public void setSelection(final int position) {
 		ensureList();
 		mList.setSelection(position);
+	}
+
+	protected MultiColumnListView createMultiColumnListView(final Context context, final LayoutInflater inflater) {
+		return new MultiColumnListView(context);
 	}
 
 	private void ensureList() {
