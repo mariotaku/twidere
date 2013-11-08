@@ -324,9 +324,7 @@ public class BadgeView extends TextView {
 
 	@Override
 	protected void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
-		if (w != oldw && h != oldh) {
-			setMinWidth(h);
-		}
+		setMinWidth(h);
 		super.onSizeChanged(w, h, oldw, oldh);
 	}
 

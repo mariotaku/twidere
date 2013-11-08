@@ -25,6 +25,7 @@ import static org.mariotaku.twidere.util.Utils.clearAccountName;
 import static org.mariotaku.twidere.util.Utils.getAccountNames;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenNames;
+import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getDisplayName;
 import static org.mariotaku.twidere.util.Utils.getTableId;
@@ -66,12 +67,11 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.PreviewMedia;
+import org.mariotaku.twidere.model.SupportTabSpec;
 import org.mariotaku.twidere.model.UnreadItem;
 import org.mariotaku.twidere.preference.NotificationContentPreference;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
-import org.mariotaku.twidere.provider.TweetStore.DirectMessages.Conversation;
-import org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry;
 import org.mariotaku.twidere.provider.TweetStore.Preferences;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.ArrayUtils;
@@ -81,6 +81,7 @@ import org.mariotaku.twidere.util.MediaPreviewUtils;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
 import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.PermissionsManager;
+import org.mariotaku.twidere.util.TwidereQueryBuilder;
 
 import twitter4j.http.HostAddressResolver;
 
@@ -353,23 +354,25 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				case TABLE_ID_DIRECT_MESSAGES_CONVERSATION: {
 					final List<String> segments = uri.getPathSegments();
 					if (segments.size() != 3) return null;
-					final String query = Conversation.QueryBuilder.buildByConversationId(projection,
+					final String query = TwidereQueryBuilder.ConversationQueryBuilder.buildByConversationId(projection,
 							Long.parseLong(segments.get(1)), Long.parseLong(segments.get(2)), selection, sortOrder);
 					return mDatabase.rawQuery(query, selectionArgs);
 				}
 				case TABLE_ID_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME: {
 					final List<String> segments = uri.getPathSegments();
 					if (segments.size() != 3) return null;
-					final String query = Conversation.QueryBuilder.buildByScreenName(projection,
+					final String query = TwidereQueryBuilder.ConversationQueryBuilder.buildByScreenName(projection,
 							Long.parseLong(segments.get(1)), segments.get(2), selection, sortOrder);
 					return mDatabase.rawQuery(query, selectionArgs);
 				}
 				case TABLE_ID_DIRECT_MESSAGES: {
-					final String query = DirectMessages.QueryBuilder.build(projection, selection, sortOrder);
+					final String query = TwidereQueryBuilder.DirectMessagesQueryBuilder.build(projection, selection,
+							sortOrder);
 					return mDatabase.rawQuery(query, selectionArgs);
 				}
 				case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY: {
-					return mDatabase.rawQuery(ConversationsEntry.QueryBuilder.build(selection), null);
+					return mDatabase
+							.rawQuery(TwidereQueryBuilder.ConversationsEntryQueryBuilder.build(selection), null);
 				}
 			}
 			if (table == null) return null;
@@ -462,7 +465,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				// permission level.
 				if (projection == null
 						|| ArrayUtils.contains(projection, Accounts.BASIC_AUTH_PASSWORD, Accounts.OAUTH_TOKEN,
-								Accounts.TOKEN_SECRET) && !checkPermission(PERMISSION_ACCOUNTS))
+								Accounts.TOKEN_SECRET, Accounts.CONSUMER_KEY, Accounts.CONSUMER_SECRET)
+						&& !checkPermission(PERMISSION_ACCOUNTS))
 					throw new SecurityException("Access column " + ArrayUtils.toString(projection, ',', true)
 							+ " in database accounts requires level PERMISSION_LEVEL_ACCOUNTS");
 				if (!checkPermission(PERMISSION_READ))
@@ -561,25 +565,32 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		mNotificationManager.cancel(id);
 	}
 
-	private int clearUnreadCount(final int tab_position) {
+	private int clearUnreadCount(final int position) {
+		final Context context = getContext();
 		final int result;
-		final String type = CustomTabUtils.getAddedTabTypeAt(getContext(), tab_position);
-		if (TAB_TYPE_HOME_TIMELINE.equals(type)) {
-			result = mUnreadStatuses.size();
-			mUnreadStatuses.clear();
+		final SupportTabSpec tab = CustomTabUtils.getAddedTabAt(context, position);
+		final String type = tab.type;
+		if (TAB_TYPE_HOME_TIMELINE.equals(type) || TAB_TYPE_STAGGERED_HOME_TIMELINE.equals(type)) {
+			final long account_id = tab.args != null ? tab.args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
+			final long[] account_ids = account_id > 0 ? new long[] { account_id } : getActivatedAccountIds(context);
+			result = clearUnreadCount(mUnreadStatuses, account_ids);
 			saveUnreadItemsFile(mUnreadStatuses, UNREAD_STATUSES_FILE_NAME);
 		} else if (TAB_TYPE_MENTIONS_TIMELINE.equals(type)) {
-			result = mUnreadMentions.size();
+			final long account_id = tab.args != null ? tab.args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
+			final long[] account_ids = account_id > 0 ? new long[] { account_id } : getActivatedAccountIds(context);
+			result = clearUnreadCount(mUnreadMentions, account_ids);
 			mUnreadMentions.clear();
 			saveUnreadItemsFile(mUnreadMentions, UNREAD_MENTIONS_FILE_NAME);
 		} else if (TAB_TYPE_DIRECT_MESSAGES.equals(type)) {
-			result = mUnreadMessages.size();
+			final long account_id = tab.args != null ? tab.args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
+			final long[] account_ids = account_id > 0 ? new long[] { account_id } : getActivatedAccountIds(context);
+			result = clearUnreadCount(mUnreadMessages, account_ids);
 			mUnreadMessages.clear();
 			saveUnreadItemsFile(mUnreadMessages, UNREAD_MESSAGES_FILE_NAME);
 		} else
 			return 0;
 		if (result > 0) {
-			notifyUnreadCountChanged(tab_position);
+			notifyUnreadCountChanged(position);
 		}
 		return result;
 	}
@@ -851,14 +862,21 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	private Cursor getUnreadCountsCursor(final int position) {
 		final MatrixCursor c = new MatrixCursor(TweetStore.UnreadCounts.MATRIX_COLUMNS);
 		final Context context = getContext();
-		final String type = CustomTabUtils.getAddedTabTypeAt(context, position);
+		final SupportTabSpec tab = CustomTabUtils.getAddedTabAt(context, position);
+		final String type = tab.type;
 		final int count;
-		if (TAB_TYPE_HOME_TIMELINE.equals(type)) {
-			count = mUnreadStatuses.size();
+		if (TAB_TYPE_HOME_TIMELINE.equals(type) || TAB_TYPE_STAGGERED_HOME_TIMELINE.equals(type)) {
+			final long account_id = tab.args != null ? tab.args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
+			final long[] account_ids = account_id > 0 ? new long[] { account_id } : getActivatedAccountIds(context);
+			count = getUnreadCount(mUnreadStatuses, account_ids);
 		} else if (TAB_TYPE_MENTIONS_TIMELINE.equals(type)) {
-			count = mUnreadMentions.size();
+			final long account_id = tab.args != null ? tab.args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
+			final long[] account_ids = account_id > 0 ? new long[] { account_id } : getActivatedAccountIds(context);
+			count = getUnreadCount(mUnreadMentions, account_ids);
 		} else if (TAB_TYPE_DIRECT_MESSAGES.equals(type)) {
-			count = -mUnreadMessages.size();
+			final long account_id = tab.args != null ? tab.args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
+			final long[] account_ids = account_id > 0 ? new long[] { account_id } : getActivatedAccountIds(context);
+			count = -getUnreadCount(mUnreadMessages, account_ids);
 		} else {
 			count = 0;
 		}
@@ -1103,6 +1121,17 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		}
 	}
 
+	private static int clearUnreadCount(final Set<UnreadItem> set, final long[] account_ids) {
+		final Set<UnreadItem> items_to_remove = new HashSet<UnreadItem>();
+		for (final UnreadItem item : set) {
+			if (ArrayUtils.contains(account_ids, item.account_id)) {
+				items_to_remove.add(item);
+			}
+		}
+		set.removeAll(items_to_remove);
+		return items_to_remove.size();
+	}
+
 	private static Cursor getPreferencesCursor(final SharedPreferences mPreferences, final String key) {
 		final MatrixCursor c = new MatrixCursor(TweetStore.Preferences.MATRIX_COLUMNS);
 		final Map<String, Object> map = new HashMap<String, Object>();
@@ -1133,6 +1162,16 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			return Preferences.TYPE_FLOAT;
 		else if (object instanceof String) return Preferences.TYPE_STRING;
 		return Preferences.TYPE_INVALID;
+	}
+
+	private static int getUnreadCount(final Set<UnreadItem> set, final long[] account_ids) {
+		int count = 0;
+		for (final UnreadItem item : set) {
+			if (ArrayUtils.contains(account_ids, item.account_id)) {
+				count++;
+			}
+		}
+		return count;
 	}
 
 	private static <T> T safeGet(final List<T> list, final int index) {

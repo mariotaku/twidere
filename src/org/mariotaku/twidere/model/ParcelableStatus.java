@@ -31,20 +31,15 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.TextUtils;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.mariotaku.jsonserializer.JSONParcel;
 import org.mariotaku.jsonserializer.JSONParcelable;
-import org.mariotaku.jsonserializer.JSONSerializer;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.MediaPreviewUtils;
 import org.mariotaku.twidere.util.ParseUtils;
 
 import twitter4j.Status;
 import twitter4j.User;
-import twitter4j.UserMentionEntity;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -76,20 +71,6 @@ public class ParcelableStatus implements Parcelable, JSONParcelable, Comparable<
 		}
 	};
 
-	public final long retweet_id, retweeted_by_id, id, account_id, user_id, timestamp, retweet_count,
-			in_reply_to_status_id, in_reply_to_user_id, my_retweet_id;
-
-	public final boolean is_gap, is_retweet, is_favorite, has_media, is_possibly_sensitive, user_is_following,
-			user_is_protected, user_is_verified;
-
-	public final String retweeted_by_name, retweeted_by_screen_name, text_html, text_plain, user_name,
-			user_screen_name, in_reply_to_name, in_reply_to_screen_name, source, user_profile_image_url, media_link,
-			text_unescaped;
-
-	public final ParcelableLocation location;
-
-	public final ParcelableUserMention[] mentions;
-
 	public static final Comparator<ParcelableStatus> TIMESTAMP_COMPARATOR = new Comparator<ParcelableStatus>() {
 
 		@Override
@@ -111,6 +92,20 @@ public class ParcelableStatus implements Parcelable, JSONParcelable, Comparable<
 			return (int) diff;
 		}
 	};
+
+	public final long retweet_id, retweeted_by_id, id, account_id, user_id, timestamp, retweet_count,
+			in_reply_to_status_id, in_reply_to_user_id, my_retweet_id;
+
+	public final boolean is_gap, is_retweet, is_favorite, has_media, is_possibly_sensitive, user_is_following,
+			user_is_protected, user_is_verified;
+
+	public final String retweeted_by_name, retweeted_by_screen_name, text_html, text_plain, user_name,
+			user_screen_name, in_reply_to_name, in_reply_to_screen_name, source, user_profile_image_url, media_link,
+			text_unescaped;
+
+	public final ParcelableLocation location;
+
+	public final ParcelableUserMention[] mentions;
 
 	public ParcelableStatus(final ContentValues values) {
 		account_id = getAsLong(values, Statuses.ACCOUNT_ID, -1);
@@ -435,111 +430,5 @@ public class ParcelableStatus implements Parcelable, JSONParcelable, Comparable<
 
 	private static long getTime(final Date date) {
 		return date != null ? date.getTime() : 0;
-	}
-
-	public static class ParcelableUserMention implements Parcelable, JSONParcelable {
-
-		public static final Parcelable.Creator<ParcelableUserMention> CREATOR = new Parcelable.Creator<ParcelableUserMention>() {
-			@Override
-			public ParcelableUserMention createFromParcel(final Parcel in) {
-				return new ParcelableUserMention(in);
-			}
-
-			@Override
-			public ParcelableUserMention[] newArray(final int size) {
-				return new ParcelableUserMention[size];
-			}
-		};
-		public static final JSONParcelable.Creator<ParcelableUserMention> JSON_CREATOR = new JSONParcelable.Creator<ParcelableUserMention>() {
-			@Override
-			public ParcelableUserMention createFromParcel(final JSONParcel in) {
-				return new ParcelableUserMention(in);
-			}
-
-			@Override
-			public ParcelableUserMention[] newArray(final int size) {
-				return new ParcelableUserMention[size];
-			}
-		};
-		public long id;
-		public String name, screen_name;
-
-		public ParcelableUserMention(final JSONParcel in) {
-			id = in.readLong("id");
-			name = in.readString("name");
-			screen_name = in.readString("screen_name");
-		}
-
-		public ParcelableUserMention(final Parcel in) {
-			id = in.readLong();
-			name = in.readString();
-			screen_name = in.readString();
-		}
-
-		public ParcelableUserMention(final UserMentionEntity entity) {
-			id = entity.getId();
-			name = entity.getName();
-			screen_name = entity.getScreenName();
-		}
-
-		@Override
-		public int describeContents() {
-			return 0;
-		}
-
-		@Override
-		public boolean equals(final Object obj) {
-			if (this == obj) return true;
-			if (obj == null) return false;
-			if (!(obj instanceof ParcelableUserMention)) return false;
-			final ParcelableUserMention other = (ParcelableUserMention) obj;
-			if (id != other.id) return false;
-			return true;
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + (int) (id ^ id >>> 32);
-			return result;
-		}
-
-		@Override
-		public String toString() {
-			return "ParcelableUserMention{id=" + id + ", name=" + name + ", screen_name=" + screen_name + "}";
-		}
-
-		@Override
-		public void writeToParcel(final JSONParcel out) {
-			out.writeLong("id", id);
-			out.writeString("name", name);
-			out.writeString("screen_name", screen_name);
-		}
-
-		@Override
-		public void writeToParcel(final Parcel dest, final int flags) {
-			dest.writeLong(id);
-			dest.writeString(name);
-			dest.writeString(screen_name);
-		}
-
-		public static ParcelableUserMention[] fromJSONString(final String json) {
-			if (TextUtils.isEmpty(json)) return null;
-			try {
-				return JSONSerializer.arrayFromJSON(JSON_CREATOR, new JSONArray(json));
-			} catch (final JSONException e) {
-				return null;
-			}
-		}
-
-		public static ParcelableUserMention[] fromUserMentionEntities(final UserMentionEntity[] entities) {
-			if (entities == null) return null;
-			final ParcelableUserMention[] mentions = new ParcelableUserMention[entities.length];
-			for (int i = 0, j = entities.length; i < j; i++) {
-				mentions[i] = new ParcelableUserMention(entities[i]);
-			}
-			return mentions;
-		}
 	}
 }

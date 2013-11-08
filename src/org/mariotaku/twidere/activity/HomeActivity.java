@@ -121,6 +121,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 				updateActionsButton();
 			} else if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
 				notifyAccountsChanged();
+				updateUnreadCount();
 			} else if (BROADCAST_UNREAD_COUNT_UPDATED.equals(action)) {
 				updateUnreadCount();
 			}
@@ -170,14 +171,13 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		super.onBackStackChanged();
 		if (!isDualPaneMode()) return;
 		final FragmentManager fm = getSupportFragmentManager();
-		final Fragment left_pane_fragment = fm.findFragmentById(PANE_LEFT);
-		final boolean left_pane_used = left_pane_fragment != null && left_pane_fragment.isAdded();
-		setPagingEnabled(!left_pane_used);
+		setPagingEnabled(!isLeftPaneUsed());
 		final int count = fm.getBackStackEntryCount();
 		if (count == 0) {
 			showLeftPane();
 		}
 		updateActionsButton();
+		updateSlidingMenuTouchMode();
 	}
 
 	@Override
@@ -635,7 +635,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private void updateSlidingMenuTouchMode() {
 		if (mViewPager == null || mSlidingMenu == null) return;
 		final int position = mViewPager.getCurrentItem();
-		final int mode = position == 0 ? SlidingMenu.TOUCHMODE_FULLSCREEN : SlidingMenu.TOUCHMODE_MARGIN;
+		final int mode = position == 0 && !isLeftPaneUsed() ? SlidingMenu.TOUCHMODE_FULLSCREEN
+				: SlidingMenu.TOUCHMODE_MARGIN;
 		mSlidingMenu.setTouchModeAbove(mode);
 	}
 
@@ -679,7 +680,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 					badge.setCount(0);
 					badge.hide();
 				} else {
-					badge.setText(null);
+					badge.setText("\u0387");
 					badge.show();
 				}
 			}

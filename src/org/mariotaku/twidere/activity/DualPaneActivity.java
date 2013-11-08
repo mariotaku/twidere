@@ -71,14 +71,20 @@ public class DualPaneActivity extends BaseSupportActivity implements OnBackStack
 		return findViewById(PANE_LEFT) instanceof ViewGroup && findViewById(PANE_RIGHT) instanceof ViewGroup;
 	}
 
+	public final boolean isLeftPaneUsed() {
+		final FragmentManager fm = getSupportFragmentManager();
+		final Fragment f = fm.findFragmentById(PANE_LEFT);
+		return f != null && f.isAdded();
+	}
+
 	public final boolean isRightPaneOpened() {
 		return mSlidingPane != null && mSlidingPane.isRightPaneOpened();
 	}
 
 	public final boolean isRightPaneUsed() {
 		final FragmentManager fm = getSupportFragmentManager();
-		final Fragment right_pane_fragment = fm.findFragmentById(PANE_RIGHT);
-		return right_pane_fragment != null && right_pane_fragment.isAdded();
+		final Fragment f = fm.findFragmentById(PANE_RIGHT);
+		return f != null && f.isAdded();
 	}
 
 	@Override

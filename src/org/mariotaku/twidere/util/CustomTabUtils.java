@@ -112,7 +112,7 @@ public class CustomTabUtils implements Constants {
 		return null;
 	}
 
-	public static SupportTabSpec getAddedHomeTabAt(final Context context, final int position) {
+	public static SupportTabSpec getAddedTabAt(final Context context, final int position) {
 		if (context == null || position < 0) return null;
 		final ContentResolver resolver = context.getContentResolver();
 		final Cursor cur = resolver.query(Tabs.CONTENT_URI, Tabs.COLUMNS, Tabs.POSITION + " = " + position, null,
@@ -131,7 +131,7 @@ public class CustomTabUtils implements Constants {
 			args.putInt(EXTRA_TAB_POSITION, position);
 			final Class<? extends Fragment> fragment = conf.getFragmentClass();
 			return new SupportTabSpec(name != null ? name : getTabTypeName(context, type), getTabIconObject(icon_type),
-					fragment, args, position);
+					type, fragment, args, position);
 		} finally {
 			cur.close();
 		}
@@ -211,7 +211,7 @@ public class CustomTabUtils implements Constants {
 				args.putInt(EXTRA_TAB_POSITION, position);
 				final Class<? extends Fragment> fragment = conf.getFragmentClass();
 				tabs.add(new SupportTabSpec(name != null ? name : getTabTypeName(context, type),
-						getTabIconObject(icon_type), fragment, args, position));
+						getTabIconObject(icon_type), type, fragment, args, position));
 			}
 			cur.moveToNext();
 		}
