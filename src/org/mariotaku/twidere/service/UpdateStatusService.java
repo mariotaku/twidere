@@ -39,14 +39,14 @@ import org.mariotaku.twidere.model.SingleResponse;
 import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import org.mariotaku.twidere.util.ContentLengthInputStream;
-import org.mariotaku.twidere.util.ContentLengthInputStream.ReadListener;
 import org.mariotaku.twidere.util.ImageUploaderInterface;
 import org.mariotaku.twidere.util.ListUtils;
 import org.mariotaku.twidere.util.MessagesManager;
 import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.TweetShortenerInterface;
 import org.mariotaku.twidere.util.TwitterErrorCodes;
+import org.mariotaku.twidere.util.io.ContentLengthInputStream;
+import org.mariotaku.twidere.util.io.ContentLengthInputStream.ReadListener;
 
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
@@ -369,7 +369,7 @@ public class UpdateStatusService extends IntentService implements Constants {
 			}
 			if (result.isEmpty()) {
 				saveDrafts(item, failed_account_ids);
-				showErrorMessage(R.string.updating_status, getString(R.string.no_account_selected), false);
+				showErrorMessage(R.string.action_updating_status, getString(R.string.no_account_selected), false);
 			} else if (failed) {
 				// If the status is a duplicate, there's no need to save it to
 				// drafts.
@@ -378,7 +378,7 @@ public class UpdateStatusService extends IntentService implements Constants {
 					showErrorMessage(getString(R.string.status_is_duplicate), false);
 				} else {
 					saveDrafts(item, failed_account_ids);
-					showErrorMessage(R.string.updating_status, exception, true);
+					showErrorMessage(R.string.action_updating_status, exception, true);
 				}
 			} else {
 				showOkMessage(R.string.status_updated, false);

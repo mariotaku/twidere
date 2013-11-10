@@ -6,13 +6,15 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
 
+import org.mariotaku.twidere.activity.iface.IThemedActivity;
 import org.mariotaku.twidere.util.ThemeUtils;
 
-public abstract class BaseThemedActivity extends Activity {
+public abstract class BaseThemedActivity extends Activity implements IThemedActivity {
 
 	private int mCurrentThemeResource;
 
-	protected final int getCurrentThemeResource() {
+	@Override
+	public final int getCurrentThemeResource() {
 		return mCurrentThemeResource;
 	}
 

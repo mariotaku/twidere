@@ -51,9 +51,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.FileSelectorActivity;
+import org.mariotaku.twidere.activity.support.FileSelectorActivity;
 import org.mariotaku.twidere.adapter.ArrayAdapter;
-import org.mariotaku.twidere.util.AsyncTask;
+import org.mariotaku.twidere.task.AsyncTask;
 import org.mariotaku.twidere.util.HostsFileParser;
 import org.mariotaku.twidere.util.ParseUtils;
 

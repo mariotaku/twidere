@@ -10,9 +10,11 @@ import android.widget.TextView;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.fragment.DirectMessagesConversationFragment;
+import org.mariotaku.twidere.fragment.support.DirectMessagesConversationFragment;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
+
+import java.util.Collection;
 
 public class AccountsSpinnerAdapter extends ArrayAdapter<Account> {
 
@@ -28,6 +30,11 @@ public class AccountsSpinnerAdapter extends ArrayAdapter<Account> {
 				Context.MODE_PRIVATE).getBoolean(
 				DirectMessagesConversationFragment.PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		mDisplayHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
+	}
+
+	public AccountsSpinnerAdapter(final Context context, final Collection<Account> accounts) {
+		this(context);
+		addAll(accounts);
 	}
 
 	@Override

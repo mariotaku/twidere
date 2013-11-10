@@ -35,7 +35,7 @@ import org.mariotaku.gallery3d.util.ApiHelper;
 import org.mariotaku.gallery3d.util.GalleryUtils;
 import org.mariotaku.gallery3d.util.MotionEventHelper;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.util.ViewAccessor;
+import org.mariotaku.twidere.util.accessor.ViewAccessor;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;

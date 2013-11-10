@@ -36,7 +36,7 @@ import android.widget.LinearLayout;
 import android.widget.Scroller;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.DualPaneActivity;
+import org.mariotaku.twidere.activity.support.DualPaneActivity;
 import org.mariotaku.twidere.view.iface.IExtendedViewGroup.TouchInterceptor;
 
 public class SlidingPaneView extends ViewGroup {

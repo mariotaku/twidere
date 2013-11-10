@@ -10,7 +10,7 @@
 		android:id="@+id/left_drawer"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		class="org.mariotaku.twidere.fragment.AccountsDrawerFragment"
+		class="org.mariotaku.twidere.fragment.support.AccountsDrawerFragment"
 		tools:layout="@layout/accounts_drawer"/>
 
 </LinearLayout>

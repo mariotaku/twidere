@@ -119,6 +119,12 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	}
 
 	@Override
+	public long getLastStatusId() {
+		if (super.getCount() == 0) return -1;
+		return getItem(super.getCount() - 1).id;
+	}
+
+	@Override
 	public ParcelableStatus getStatus(final int position) {
 		return getItem(position);
 	}

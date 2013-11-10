@@ -33,8 +33,8 @@ import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.fragment.NativeMapFragment;
-import org.mariotaku.twidere.fragment.WebMapFragment;
+import org.mariotaku.twidere.fragment.support.NativeMapFragment;
+import org.mariotaku.twidere.fragment.support.WebMapFragment;
 import org.mariotaku.twidere.util.MapInterface;
 
 public class MapViewerActivity extends SwipeBackActivity implements Constants {

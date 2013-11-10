@@ -22,7 +22,7 @@ package org.mariotaku.twidere.activity;
 import android.app.FragmentManager;
 import android.os.Bundle;
 
-import org.mariotaku.twidere.fragment.DataProfilingSettingsFragment;
+import org.mariotaku.twidere.fragment.support.DataProfilingSettingsFragment;
 
 public class DataProfilingSettingsActivity extends BaseActivity {
 

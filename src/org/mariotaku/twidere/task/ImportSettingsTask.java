@@ -2,8 +2,6 @@ package org.mariotaku.twidere.task;
 
 import android.content.Context;
 
-import org.mariotaku.twidere.util.AsyncTask;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.zip.ZipFile;

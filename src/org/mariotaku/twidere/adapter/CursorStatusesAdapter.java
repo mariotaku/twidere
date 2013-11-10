@@ -256,6 +256,13 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	}
 
 	@Override
+	public long getLastStatusId() {
+		final Cursor c = getCursor();
+		if (c == null || c.isClosed() || !c.moveToLast()) return -1;
+		return c.getLong(mIndices.status_id);
+	}
+
+	@Override
 	public ParcelableStatus getStatus(final int position) {
 		final Cursor c = getCursor();
 		if (c == null || c.isClosed() || !c.moveToPosition(position)) return null;
@@ -471,18 +478,13 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	private void rebuildFilterInfo() {
 		final Cursor c = getCursor();
 		if (c != null && !c.isClosed() && mIndices != null && c.getCount() > 0) {
-			if (c.getCount() > 0) {
-				c.moveToLast();
-				final long user_id = mFilterIgnoreUser ? -1 : c.getLong(mIndices.user_id);
-				final String text_plain = mFilterIgnoreTextPlain ? null : c.getString(mIndices.text_plain);
-				final String text_html = mFilterIgnoreTextHtml ? null : c.getString(mIndices.text_html);
-				final String source = mFilterIgnoreSource ? null : c.getString(mIndices.source);
-				final long retweeted_by_id = mFilterRetweetedById ? -1 : c.getLong(mIndices.retweeted_by_user_id);
-				;
-				mIsLastItemFiltered = isFiltered(mDatabase, user_id, text_plain, text_html, source, retweeted_by_id);
-			} else {
-				mIsLastItemFiltered = false;
-			}
+			c.moveToLast();
+			final long user_id = mFilterIgnoreUser ? -1 : c.getLong(mIndices.user_id);
+			final String text_plain = mFilterIgnoreTextPlain ? null : c.getString(mIndices.text_plain);
+			final String text_html = mFilterIgnoreTextHtml ? null : c.getString(mIndices.text_html);
+			final String source = mFilterIgnoreSource ? null : c.getString(mIndices.source);
+			final long retweeted_by_id = mFilterRetweetedById ? -1 : c.getLong(mIndices.retweeted_by_user_id);
+			mIsLastItemFiltered = isFiltered(mDatabase, user_id, text_plain, text_html, source, retweeted_by_id);
 		} else {
 			mIsLastItemFiltered = false;
 		}

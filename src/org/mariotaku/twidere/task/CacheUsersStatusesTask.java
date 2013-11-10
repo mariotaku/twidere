@@ -35,7 +35,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
 import org.mariotaku.twidere.provider.TweetStore.CachedStatuses;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
-import org.mariotaku.twidere.util.AsyncTask;
+import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.util.TwitterWrapper.TwitterListResponse;
 
 import twitter4j.User;
@@ -83,6 +83,11 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> implemen
 				final User user = status.getUser();
 				if (user != null && user.getId() > 0) {
 					users.add(user);
+					final ContentValues filtered_users_values = new ContentValues();
+					filtered_users_values.put(Filters.Users.NAME, user.getName());
+					filtered_users_values.put(Filters.Users.SCREEN_NAME, user.getScreenName());
+					final String filtered_users_where = String.format("%s = %d", Filters.Users.USER_ID, user.getId());
+					resolver.update(Filters.Users.CONTENT_URI, filtered_users_values, filtered_users_where, null);
 				}
 			}
 		}
@@ -110,7 +115,6 @@ public class CacheUsersStatusesTask extends AsyncTask<Void, Void, Void> implemen
 	public static Runnable getRunnable(final Context context,
 			final TwitterListResponse<twitter4j.Status>... all_statuses) {
 		return new ExecuteCacheUserStatusesTaskRunnable(context, all_statuses);
-
 	}
 
 	static class ExecuteCacheUserStatusesTaskRunnable implements Runnable {

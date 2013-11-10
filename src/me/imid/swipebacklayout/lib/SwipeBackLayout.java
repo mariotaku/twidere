@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.util.ViewDragHelperAccessor;
+import org.mariotaku.twidere.util.accessor.ViewDragHelperAccessor;
 
 public class SwipeBackLayout extends FrameLayout {
 	/**
@@ -220,9 +220,9 @@ public class SwipeBackLayout extends FrameLayout {
 	/**
 	 * Enable edge tracking for the selected edges of the parent view. The
 	 * callback's
-	 * {@link me.imid.swipebacklayout.lib.ViewDragHelperAccessor.Callback#onEdgeTouched(int, int)}
+	 * {@link org.mariotaku.twidere.util.accessor.ViewDragHelperAccessor.Callback#onEdgeTouched(int, int)}
 	 * and
-	 * {@link me.imid.swipebacklayout.lib.ViewDragHelperAccessor.Callback#onEdgeDragStarted(int, int)}
+	 * {@link org.mariotaku.twidere.util.accessor.ViewDragHelperAccessor.Callback#onEdgeDragStarted(int, int)}
 	 * methods will only be invoked for edges for which edge tracking has been
 	 * enabled.
 	 * 

@@ -24,7 +24,7 @@ import android.os.Bundle;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.fragment.BasePullToRefreshListFragment;
+import org.mariotaku.twidere.fragment.support.BasePullToRefreshListFragment;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MessagesManager;
 import org.mariotaku.twidere.util.ThemeUtils;

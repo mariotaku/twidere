@@ -24,8 +24,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.activity.BaseSupportActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
+import org.mariotaku.twidere.activity.support.BaseSupportActivity;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -162,7 +162,7 @@ public final class MessagesManager implements Constants {
 			}
 		}
 		for (final Activity activity : mMessageCallbacks)
-			return activity;
+			if (ThemeUtils.isFloatingWindow(activity)) return activity;
 		return null;
 	}
 

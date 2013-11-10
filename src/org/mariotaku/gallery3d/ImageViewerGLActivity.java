@@ -45,7 +45,7 @@ import org.mariotaku.gallery3d.util.GalleryUtils;
 import org.mariotaku.gallery3d.util.ThreadPool;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.TwidereSwipeBackActivity;
+import org.mariotaku.twidere.activity.support.TwidereSwipeBackActivity;
 import org.mariotaku.twidere.util.SaveImageTask;
 import org.mariotaku.twidere.util.Utils;
 

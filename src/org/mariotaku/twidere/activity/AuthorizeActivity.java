@@ -43,10 +43,10 @@ import android.widget.Toast;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
-import org.mariotaku.twidere.util.AsyncTask;
+import org.mariotaku.twidere.task.AsyncTask;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator;
 import org.mariotaku.twidere.util.ParseUtils;
-import org.mariotaku.twidere.util.httpclient.HttpClientImpl;
+import org.mariotaku.twidere.util.net.HttpClientImpl;
 import org.xmlpull.v1.XmlPullParserException;
 
 import twitter4j.Twitter;

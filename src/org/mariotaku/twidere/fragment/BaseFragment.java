@@ -27,7 +27,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.activity.BaseSupportActivity;
+import org.mariotaku.twidere.activity.support.BaseSupportActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;

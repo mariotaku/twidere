@@ -63,7 +63,7 @@ import org.mariotaku.querybuilder.Columns.Column;
 import org.mariotaku.querybuilder.RawItemArray;
 import org.mariotaku.querybuilder.Where;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.CustomTabEditorActivity;
+import org.mariotaku.twidere.activity.support.CustomTabEditorActivity;
 import org.mariotaku.twidere.graphic.DropShadowDrawable;
 import org.mariotaku.twidere.model.CustomTabConfiguration;
 import org.mariotaku.twidere.model.CustomTabConfiguration.CustomTabConfigurationComparator;

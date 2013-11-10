@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import org.mariotaku.internal.menu.MenuImpl;
 import org.mariotaku.popupmenu.PopupMenu;
-import org.mariotaku.twidere.util.ViewAccessor;
+import org.mariotaku.twidere.util.accessor.ViewAccessor;
 
 public class MenuBar extends LinearLayout implements MenuItem.OnMenuItemClickListener {
 

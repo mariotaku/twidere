@@ -41,12 +41,13 @@
 				android:layout_height="wrap_content"
 				android:minHeight="@dimen/icon_size_card_list_item"
 				android:orientation="vertical"
-				android:padding="8dp">
+				android:padding="@dimen/element_spacing_default">
 
 				<org.mariotaku.twidere.view.HandleSpanClickTextView
 					android:id="@+id/incoming_text"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:paddingRight="16dp"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:textColor="?android:attr/textColorSecondary"/>
 
@@ -57,6 +58,18 @@
 					android:textColor="?android:attr/textColorSecondary"/>
 			</LinearLayout>
 		</FrameLayout>
+
+		<org.mariotaku.twidere.view.ListMenuOverflowButton
+			android:id="@+id/incoming_item_menu"
+			android:layout_width="@dimen/item_menu_width_default"
+			android:layout_height="@dimen/item_menu_height_default"
+			android:layout_alignRight="@+id/incoming_message_content_frame"
+			android:layout_alignTop="@+id/incoming_message_content_frame"
+			android:clickable="true"
+			android:paddingBottom="@dimen/item_menu_padding_bottom_default"
+			android:paddingLeft="@dimen/item_menu_padding_end_default"
+			android:paddingRight="@dimen/item_menu_padding_start_default"
+			android:paddingTop="@dimen/item_menu_padding_top_default"/>
 	</RelativeLayout>
 
 	<RelativeLayout
@@ -94,12 +107,13 @@
 				android:layout_height="wrap_content"
 				android:minHeight="@dimen/icon_size_card_list_item"
 				android:orientation="vertical"
-				android:padding="8dp">
+				android:padding="@dimen/element_spacing_default">
 
 				<org.mariotaku.twidere.view.HandleSpanClickTextView
 					android:id="@+id/outgoing_text"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:paddingLeft="16dp"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:textColor="?android:attr/textColorSecondary"/>
 
@@ -110,6 +124,18 @@
 					android:textColor="?android:attr/textColorSecondary"/>
 			</LinearLayout>
 		</FrameLayout>
+
+		<org.mariotaku.twidere.view.ListMenuOverflowButton
+			android:id="@+id/outgoing_item_menu"
+			android:layout_width="@dimen/item_menu_width_default"
+			android:layout_height="@dimen/item_menu_height_default"
+			android:layout_alignLeft="@+id/outgoing_message_content_container"
+			android:layout_alignTop="@+id/outgoing_message_content_container"
+			android:clickable="true"
+			android:paddingBottom="@dimen/item_menu_padding_bottom_default"
+			android:paddingLeft="@dimen/item_menu_padding_start_default"
+			android:paddingRight="@dimen/item_menu_padding_end_default"
+			android:paddingTop="@dimen/item_menu_padding_top_default"/>
 	</RelativeLayout>
 
 </FrameLayout>

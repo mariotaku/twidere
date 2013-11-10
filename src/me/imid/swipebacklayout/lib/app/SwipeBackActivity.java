@@ -9,7 +9,7 @@ import android.view.Window;
 
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
 
-import org.mariotaku.twidere.util.ViewAccessor;
+import org.mariotaku.twidere.util.accessor.ViewAccessor;
 
 @SuppressLint("Registered")
 public class SwipeBackActivity extends Activity {

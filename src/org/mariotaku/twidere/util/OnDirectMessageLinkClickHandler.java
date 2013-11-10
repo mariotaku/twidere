@@ -19,14 +19,15 @@
 
 package org.mariotaku.twidere.util;
 
-import android.app.DialogFragment;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 
-import org.mariotaku.twidere.fragment.PhishingLinkWarningDialogFragment;
+import org.mariotaku.twidere.fragment.support.PhishingLinkWarningDialogFragment;
 
 public class OnDirectMessageLinkClickHandler extends OnLinkClickHandler {
 
@@ -45,8 +46,8 @@ public class OnDirectMessageLinkClickHandler extends OnLinkClickHandler {
 			return;
 		}
 		final SharedPreferences prefs = activity.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		if (prefs.getBoolean(PREFERENCE_KEY_PHISHING_LINK_WARNING, true)) {
-			final FragmentManager fm = activity.getFragmentManager();
+		if (activity instanceof FragmentActivity && prefs.getBoolean(PREFERENCE_KEY_PHISHING_LINK_WARNING, true)) {
+			final FragmentManager fm = ((FragmentActivity) activity).getSupportFragmentManager();
 			final DialogFragment fragment = new PhishingLinkWarningDialogFragment();
 			final Bundle args = new Bundle();
 			args.putParcelable(EXTRA_URI, Uri.parse(link));

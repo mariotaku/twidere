@@ -44,7 +44,7 @@ public final class TweetStore {
 	public static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI,
 			CachedStatuses.CONTENT_URI };
 	public static final Uri[] CACHE_URIS = new Uri[] { CachedUsers.CONTENT_URI, CachedStatuses.CONTENT_URI,
-			CachedHashtags.CONTENT_URI };
+			CachedHashtags.CONTENT_URI, CachedTrends.Local.CONTENT_URI };
 	public static final Uri[] DIRECT_MESSAGES_URIS = new Uri[] { DirectMessages.Inbox.CONTENT_URI,
 			DirectMessages.Outbox.CONTENT_URI };
 

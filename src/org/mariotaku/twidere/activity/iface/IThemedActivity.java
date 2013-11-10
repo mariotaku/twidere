@@ -21,4 +21,6 @@ package org.mariotaku.twidere.activity.iface;
 
 public interface IThemedActivity {
 
+	public int getCurrentThemeResource();
+
 }

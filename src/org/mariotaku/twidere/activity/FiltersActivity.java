@@ -50,6 +50,7 @@ import android.view.View;
 import android.widget.AutoCompleteTextView;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.support.UserListSelectorActivity;
 import org.mariotaku.twidere.adapter.SourceAutoCompleteAdapter;
 import org.mariotaku.twidere.adapter.TabsAdapter;
 import org.mariotaku.twidere.adapter.UserHashtagAutoCompleteAdapter;

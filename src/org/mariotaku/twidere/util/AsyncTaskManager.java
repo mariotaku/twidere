@@ -21,6 +21,9 @@ package org.mariotaku.twidere.util;
 
 import android.os.Handler;
 
+import org.mariotaku.twidere.task.AsyncTask;
+import org.mariotaku.twidere.task.ManagedAsyncTask;
+
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 

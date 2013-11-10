@@ -31,6 +31,7 @@ public class DirectMessageConversationViewHolder extends CardViewHolder {
 	public final View incoming_message_container, outgoing_message_container, incoming_profile_image_container,
 			outgoing_profile_image_container;
 	public final TextView incoming_text, incoming_time, outgoing_text, outgoing_time;
+	public final View incoming_item_menu, outgoing_item_menu;
 	private float text_size;
 
 	public DirectMessageConversationViewHolder(final View view) {
@@ -45,6 +46,8 @@ public class DirectMessageConversationViewHolder extends CardViewHolder {
 		incoming_time = (TextView) findViewById(R.id.incoming_time);
 		outgoing_text = (TextView) findViewById(R.id.outgoing_text);
 		outgoing_time = (TextView) findViewById(R.id.outgoing_time);
+		incoming_item_menu = findViewById(R.id.incoming_item_menu);
+		outgoing_item_menu = findViewById(R.id.outgoing_item_menu);
 	}
 
 	public void setTextSize(final float text_size) {

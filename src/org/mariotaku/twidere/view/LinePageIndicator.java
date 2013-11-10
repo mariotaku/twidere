@@ -33,7 +33,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.util.ViewAccessor;
+import org.mariotaku.twidere.util.accessor.ViewAccessor;
 import org.mariotaku.twidere.view.iface.PagerIndicator;
 
 /**

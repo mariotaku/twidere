@@ -106,6 +106,8 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 			}
 			mMaxAnimationPosition = position;
 		}
+		holder.incoming_item_menu.setTag(position);
+		holder.outgoing_item_menu.setTag(position);
 		super.bindView(view, context, cursor);
 	}
 
@@ -135,6 +137,8 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 			view.setTag(holder);
 			holder.incoming_profile_image.setOnClickListener(this);
 			holder.outgoing_profile_image.setOnClickListener(this);
+			holder.incoming_item_menu.setOnClickListener(this);
+			holder.outgoing_item_menu.setOnClickListener(this);
 		}
 		return view;
 	}
@@ -156,7 +160,8 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 				}
 				break;
 			}
-			case R.id.item_menu: {
+			case R.id.incoming_item_menu:
+			case R.id.outgoing_item_menu: {
 				if (position == -1 || mListener == null) return;
 				mListener.onMenuButtonClick(view, position, getItemId(position));
 				break;

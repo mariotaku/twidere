@@ -863,7 +863,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		final MatrixCursor c = new MatrixCursor(TweetStore.UnreadCounts.MATRIX_COLUMNS);
 		final Context context = getContext();
 		final SupportTabSpec tab = CustomTabUtils.getAddedTabAt(context, position);
-		final String type = tab.type;
+		final String type = tab != null ? tab.type : null;
 		final int count;
 		if (TAB_TYPE_HOME_TIMELINE.equals(type) || TAB_TYPE_STAGGERED_HOME_TIMELINE.equals(type)) {
 			final long account_id = tab.args != null ? tab.args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
@@ -876,7 +876,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		} else if (TAB_TYPE_DIRECT_MESSAGES.equals(type)) {
 			final long account_id = tab.args != null ? tab.args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
 			final long[] account_ids = account_id > 0 ? new long[] { account_id } : getActivatedAccountIds(context);
-			count = -getUnreadCount(mUnreadMessages, account_ids);
+			count = getUnreadCount(mUnreadMessages, account_ids);
 		} else {
 			count = 0;
 		}
@@ -884,6 +884,26 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			c.addRow(new Object[] { position, type, count });
 		}
 		return c;
+	}
+
+	private int notifyIncomingMessagesInserted(final ContentValues... values) {
+		if (values == null || values.length == 0) return 0;
+		// Add statuses that not filtered to list for future use.
+		int result = 0;
+		for (final ContentValues value : values) {
+			final ParcelableDirectMessage message = new ParcelableDirectMessage(value);
+			mNewMessages.add(message);
+			mNewMessageUserIds.add(message.sender_id);
+			mNewMessageAccounts.add(message.account_id);
+			if (mUnreadMessages.add(new UnreadItem(message.sender_id, message.account_id))) {
+				result++;
+			}
+		}
+		Collections.sort(mNewMessages);
+		if (result > 0) {
+			saveUnreadItemsFile(mUnreadMessages, UNREAD_MESSAGES_FILE_NAME);
+		}
+		return result;
 	}
 
 	private int notifyMentionsInserted(final ContentValues... values) {
@@ -898,32 +918,14 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				mNewMentions.add(status);
 				mNewMentionUserIds.add(status.user_id);
 				mNewMentionAccounts.add(status.account_id);
-				mUnreadMentions.add(new UnreadItem(status.id, status.account_id));
-				result++;
+				if (mUnreadMentions.add(new UnreadItem(status.id, status.account_id))) {
+					result++;
+				}
 			}
 		}
 		Collections.sort(mNewMentions);
 		if (result > 0) {
 			saveUnreadItemsFile(mUnreadMentions, UNREAD_MENTIONS_FILE_NAME);
-		}
-		return result;
-	}
-
-	private int notifyMessagesInserted(final ContentValues... values) {
-		if (values == null || values.length == 0) return 0;
-		// Add statuses that not filtered to list for future use.
-		int result = 0;
-		for (final ContentValues value : values) {
-			final ParcelableDirectMessage message = new ParcelableDirectMessage(value);
-			mNewMessages.add(message);
-			mNewMessageUserIds.add(message.sender_id);
-			mNewMessageAccounts.add(message.account_id);
-			mUnreadMessages.add(new UnreadItem(message.id, message.account_id));
-			result++;
-		}
-		Collections.sort(mNewMessages);
-		if (result > 0) {
-			saveUnreadItemsFile(mUnreadMessages, UNREAD_MESSAGES_FILE_NAME);
 		}
 		return result;
 	}
@@ -938,8 +940,9 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			final ParcelableStatus status = new ParcelableStatus(value);
 			if (!enabled || !isFiltered(mDatabase, status, filters_for_rts)) {
 				mNewStatusesCount++;
-				mUnreadStatuses.add(new UnreadItem(status.id, status.account_id));
-				result++;
+				if (mUnreadStatuses.add(new UnreadItem(status.id, status.account_id))) {
+					result++;
+				}
 			}
 		}
 		if (result > 0) {
@@ -1022,7 +1025,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				break;
 			}
 			case TABLE_ID_DIRECT_MESSAGES_INBOX: {
-				final int notified_count = notifyMessagesInserted(values);
+				final int notified_count = notifyIncomingMessagesInserted(values);
 				if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES,
 						NotificationContentPreference.DEFAULT_ENABLE_DIRECT_MESSAGES)) {
 					displayMessagesNotification(notified_count);

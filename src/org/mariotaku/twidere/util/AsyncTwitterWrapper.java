@@ -67,7 +67,9 @@ import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Notifications;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.service.UpdateStatusService;
+import org.mariotaku.twidere.task.AsyncTask;
 import org.mariotaku.twidere.task.CacheUsersStatusesTask;
+import org.mariotaku.twidere.task.ManagedAsyncTask;
 
 import twitter4j.DirectMessage;
 import twitter4j.Paging;
@@ -411,7 +413,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			if (result != null && result.data != null && result.data) {
 				Utils.showOkMessage(mContext, R.string.profile_banner_image_updated, false);
 			} else {
-				Utils.showErrorMessage(mContext, R.string.updating_profile_banner_image, result.exception, true);
+				Utils.showErrorMessage(mContext, R.string.action_updating_profile_banner_image, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_PROFILE_BANNER_UPDATED);
 			intent.putExtra(EXTRA_USER_ID, account_id);
@@ -448,7 +450,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			if (result != null && result.data != null) {
 				Utils.showOkMessage(context, R.string.profile_image_updated, false);
 			} else {
-				Utils.showErrorMessage(context, R.string.updating_profile_image, result.exception, true);
+				Utils.showErrorMessage(context, R.string.action_updating_profile_image, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_PROFILE_UPDATED);
 			intent.putExtra(EXTRA_USER_ID, account_id);
@@ -486,7 +488,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			if (result != null && result.data != null) {
 				Utils.showOkMessage(context, R.string.profile_updated, false);
 			} else {
-				Utils.showErrorMessage(context, context.getString(R.string.updating_profile), result.exception, true);
+				Utils.showErrorMessage(context, context.getString(R.string.action_updating_profile), result.exception,
+						true);
 			}
 			final Intent intent = new Intent(BROADCAST_PROFILE_IMAGE_UPDATED);
 			intent.putExtra(EXTRA_USER_ID, account_id);
@@ -536,7 +539,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				final String message = mContext.getString(R.string.added_users_to_list, result.data.name);
 				mMessagesManager.showOkMessage(message, false);
 			} else {
-				mMessagesManager.showErrorMessage(R.string.adding_member, result.exception, true);
+				mMessagesManager.showErrorMessage(R.string.action_adding_member, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_USER_LIST_MEMBERS_ADDED);
 			intent.putExtra(EXTRA_USER_LIST, result.data);
@@ -604,7 +607,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				final String message = mContext.getString(R.string.blocked_user, getUserName(mContext, result.data));
 				mMessagesManager.showInfoMessage(message, false);
 			} else {
-				mMessagesManager.showErrorMessage(R.string.blocking, result.exception, true);
+				mMessagesManager.showErrorMessage(R.string.action_blocking, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_BLOCKSTATE_CHANGED);
 			intent.putExtra(EXTRA_USER_ID, user_id);
@@ -665,7 +668,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				mContext.sendBroadcast(intent);
 				mMessagesManager.showOkMessage(R.string.status_favorited, false);
 			} else {
-				mMessagesManager.showErrorMessage(R.string.favoriting, result.exception, true);
+				mMessagesManager.showErrorMessage(R.string.action_favoriting, result.exception, true);
 			}
 			super.onPostExecute(result);
 		}
@@ -712,7 +715,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				final String message = mContext.getString(R.string.followed_user, getUserName(mContext, result.data));
 				mMessagesManager.showOkMessage(message, false);
 			} else {
-				mMessagesManager.showErrorMessage(R.string.following, result.exception, false);
+				mMessagesManager.showErrorMessage(R.string.action_following, result.exception, false);
 			}
 			final Intent intent = new Intent(BROADCAST_FRIENDSHIP_CHANGED);
 			intent.putExtra(EXTRA_USER_ID, user_id);
@@ -761,7 +764,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			if (result.list != null) {
 				mMessagesManager.showInfoMessage(R.string.users_blocked, false);
 			} else {
-				mMessagesManager.showErrorMessage(R.string.blocking, result.exception, true);
+				mMessagesManager.showErrorMessage(R.string.action_blocking, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_MULTI_BLOCKSTATE_CHANGED);
 			intent.putExtra(EXTRA_USER_ID, user_ids);
@@ -813,7 +816,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				final String message = mContext.getString(R.string.subscribed_to_list, result.data.name);
 				mMessagesManager.showOkMessage(message, false);
 			} else {
-				mMessagesManager.showErrorMessage(R.string.subscribing_to_list, result.exception, true);
+				mMessagesManager.showErrorMessage(R.string.action_subscribing_to_list, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_USER_LIST_SUBSCRIBED);
 			intent.putExtra(EXTRA_USER_LIST, result.data);
@@ -863,7 +866,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				final String message = mContext.getString(R.string.created_list, result.data.getName());
 				mMessagesManager.showOkMessage(message, false);
 			} else {
-				mMessagesManager.showErrorMessage(R.string.creating_list, result.exception, true);
+				mMessagesManager.showErrorMessage(R.string.action_creating_list, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_USER_LIST_CREATED);
 			intent.putExtra(EXTRA_SUCCEED, succeed);
@@ -918,7 +921,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				final String message = mContext.getString(R.string.deleted_users_from_list, result.data.name);
 				mMessagesManager.showInfoMessage(message, false);
 			} else {
-				mMessagesManager.showErrorMessage(R.string.deleting, result.exception, true);
+				mMessagesManager.showErrorMessage(R.string.action_deleting, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_USER_LIST_MEMBERS_DELETED);
 			intent.putExtra(EXTRA_USER_LIST, result.data);
@@ -963,7 +966,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				final String message = mContext.getString(R.string.unblocked_user, getUserName(mContext, result.data));
 				mMessagesManager.showInfoMessage(message, false);
 			} else {
-				mMessagesManager.showErrorMessage(R.string.unblocking, result.exception, true);
+				mMessagesManager.showErrorMessage(R.string.action_unblocking, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_BLOCKSTATE_CHANGED);
 			intent.putExtra(EXTRA_USER_ID, user_id);
@@ -1010,7 +1013,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					&& ((TwitterException) result.exception).getErrorCode() == 34) {
 				mMessagesManager.showInfoMessage(R.string.direct_message_deleted, false);
 			} else {
-				mMessagesManager.showErrorMessage(R.string.deleting, result.exception, true);
+				mMessagesManager.showErrorMessage(R.string.action_deleting, result.exception, true);
 			}
 		}
 
@@ -1071,7 +1074,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				mContext.sendBroadcast(intent);
 				mMessagesManager.showInfoMessage(R.string.status_unfavorited, false);
 			} else {
-				mMessagesManager.showErrorMessage(R.string.unfavoriting, result.exception, true);
+				mMessagesManager.showErrorMessage(R.string.action_unfavoriting, result.exception, true);
 			}
 			super.onPostExecute(result);
 		}
@@ -1121,7 +1124,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				final String message = mContext.getString(R.string.unfollowed_user, getUserName(mContext, result.data));
 				mMessagesManager.showInfoMessage(message, false);
 			} else {
-				mMessagesManager.showErrorMessage(R.string.unfollowing, result.exception, true);
+				mMessagesManager.showErrorMessage(R.string.action_unfollowing, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_FRIENDSHIP_CHANGED);
 			intent.putExtra(EXTRA_USER_ID, user_id);
@@ -1177,7 +1180,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					mMessagesManager.showInfoMessage(R.string.status_deleted, false);
 				}
 			} else {
-				mMessagesManager.showErrorMessage(R.string.deleting, result.exception, true);
+				mMessagesManager.showErrorMessage(R.string.action_deleting, result.exception, true);
 			}
 			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);
@@ -1219,7 +1222,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				final String message = mContext.getString(R.string.unsubscribed_from_list, result.data.name);
 				mMessagesManager.showOkMessage(message, false);
 			} else {
-				mMessagesManager.showErrorMessage(R.string.unsubscribing_from_list, result.exception, true);
+				mMessagesManager.showErrorMessage(R.string.action_unsubscribing_from_list, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_USER_LIST_UNSUBSCRIBED);
 			intent.putExtra(EXTRA_USER_LIST, result.data);
@@ -1266,7 +1269,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				final String message = mContext.getString(R.string.deleted_list, result.data.name);
 				mMessagesManager.showInfoMessage(message, false);
 			} else {
-				mMessagesManager.showErrorMessage(R.string.deleting, result.exception, true);
+				mMessagesManager.showErrorMessage(R.string.action_deleting, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_USER_LIST_DELETED);
 			intent.putExtra(EXTRA_SUCCEED, succeed);
@@ -1338,7 +1341,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			super.onPostExecute(result);
 			for (final TwitterListResponse<DirectMessage> response : result) {
 				if (response.list == null) {
-					mMessagesManager.showErrorMessage(R.string.refreshing_direct_messages, response.exception, true);
+					mMessagesManager.showErrorMessage(R.string.action_refreshing_direct_messages, response.exception,
+							true);
 				}
 			}
 		}
@@ -1372,7 +1376,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			mGetHomeTimelineTaskId = -1;
 			for (final StatusListResponse response : responses) {
 				if (response.list == null) {
-					mMessagesManager.showErrorMessage(R.string.refreshing_home_timeline, response.exception, true);
+					mMessagesManager.showErrorMessage(R.string.action_refreshing_home_timeline, response.exception,
+							true);
 					break;
 				}
 			}
@@ -1433,7 +1438,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			mGetMentionsTaskId = -1;
 			for (final StatusListResponse response : responses) {
 				if (response.list == null) {
-					mMessagesManager.showErrorMessage(R.string.refreshing_mentions, response.exception, true);
+					mMessagesManager.showErrorMessage(R.string.action_refreshing_mentions, response.exception, true);
 					break;
 				}
 			}
@@ -1706,7 +1711,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				}
 				mMessagesManager.showInfoMessage(R.string.reported_user_for_spam, false);
 			} else {
-				mMessagesManager.showErrorMessage(R.string.reporting_for_spam, result.exception, true);
+				mMessagesManager.showErrorMessage(R.string.action_reporting_for_spam, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_BLOCKSTATE_CHANGED);
 			intent.putExtra(EXTRA_USER_ID, user_id);
@@ -1763,7 +1768,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				mContext.sendBroadcast(intent);
 				mMessagesManager.showOkMessage(R.string.status_retweeted, false);
 			} else {
-				mMessagesManager.showErrorMessage(R.string.retweeting, result.exception, true);
+				mMessagesManager.showErrorMessage(R.string.action_retweeting, result.exception, true);
 			}
 
 			super.onPostExecute(result);
@@ -1814,7 +1819,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				mResolver.insert(DirectMessages.Outbox.CONTENT_URI, values);
 				mMessagesManager.showOkMessage(R.string.direct_message_sent, false);
 			} else {
-				mMessagesManager.showErrorMessage(R.string.sending_direct_message, result.exception, true);
+				mMessagesManager.showErrorMessage(R.string.action_sending_direct_message, result.exception, true);
 			}
 		}
 
@@ -2144,7 +2149,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				mMessagesManager.showOkMessage(message, false);
 				intent.putExtra(EXTRA_SUCCEED, true);
 			} else {
-				mMessagesManager.showErrorMessage(R.string.updating_details, result.exception, true);
+				mMessagesManager.showErrorMessage(R.string.action_updating_details, result.exception, true);
 			}
 			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);

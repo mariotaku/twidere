@@ -38,7 +38,7 @@ import android.webkit.WebViewClient;
 import android.webkit.WebViewFragment;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.activity.BaseSupportActivity;
+import org.mariotaku.twidere.activity.support.BaseSupportActivity;
 import org.mariotaku.twidere.view.WebSettingsAccessor;
 
 @SuppressLint("SetJavaScriptEnabled")

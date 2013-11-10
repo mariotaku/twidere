@@ -64,9 +64,9 @@ import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.ImageMemoryCache;
 import org.mariotaku.twidere.util.MessagesManager;
 import org.mariotaku.twidere.util.MultiSelectManager;
-import org.mariotaku.twidere.util.TwidereHostAddressResolver;
-import org.mariotaku.twidere.util.TwidereImageDownloader;
-import org.mariotaku.twidere.util.URLFileNameGenerator;
+import org.mariotaku.twidere.util.imageloader.TwidereImageDownloader;
+import org.mariotaku.twidere.util.imageloader.URLFileNameGenerator;
+import org.mariotaku.twidere.util.net.TwidereHostAddressResolver;
 
 import twitter4j.http.HostAddressResolver;
 

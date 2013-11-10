@@ -41,7 +41,7 @@ import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.BaseSupportActivity;
+import org.mariotaku.twidere.activity.support.BaseSupportActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;

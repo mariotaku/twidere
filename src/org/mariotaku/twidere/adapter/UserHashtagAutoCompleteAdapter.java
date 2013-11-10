@@ -106,6 +106,7 @@ public class UserHashtagAutoCompleteAdapter extends SimpleCursorAdapter implemen
 			} else {
 				text1.setText(mNicknameOnly ? nick : context.getString(R.string.name_with_nickname, name, nick));
 			}
+			text1.setText(nick);
 			text2.setText("@" + cursor.getString(mScreenNameIdx));
 		} else {
 			text1.setText("#" + cursor.getString(mNameIdx));

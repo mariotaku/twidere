@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.accessor.ViewAccessor;
 
 import java.util.HashMap;
 
@@ -258,6 +259,13 @@ public class ThemeUtils implements Constants {
 				return true;
 		}
 		return false;
+	}
+
+	public static boolean isFloatingWindow(final Context context) {
+		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.windowIsFloating });
+		final boolean b = a.getBoolean(0, false);
+		a.recycle();
+		return b;
 	}
 
 	public static boolean isLightActionBar(final Context context) {

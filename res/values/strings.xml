@@ -61,7 +61,7 @@
 	<string name="pick_from_gallery">Pick from gallery</string>
 	<string name="statuses">Tweets</string>
 	<string name="followers">Followers</string>
-	<string name="friends">Friends</string>
+	<string name="following">Following</string>
 	<string name="about">About</string>
 	<string name="about_summary">About Twidere</string>
 	<string name="open_source_license">Open source license</string>
@@ -334,34 +334,34 @@
 	<string name="notification_direct_message_multiple_messages"><xliff:g id="user">%1$s</xliff:g> sent you <xliff:g id="messages_count">%2$d</xliff:g> direct messages.</string>
 	<string name="notification_mention_multiple"><xliff:g id="user">%1$s</xliff:g> and <xliff:g id="count">%2$d</xliff:g> others mentioned you.</string>
 	<string name="notification_direct_message_multiple_users"><xliff:g id="user">%1$s</xliff:g> and <xliff:g id="users_count">%2$d</xliff:g> others sent you <xliff:g id="messages_count">%3$d</xliff:g> direct messages.</string>
-	<string name="getting_status">getting tweet</string>
-	<string name="getting_statuses">getting tweets</string>
-	<string name="updating_status">sending tweet</string>
-	<string name="sending_direct_message">sending direct message</string>
-	<string name="refreshing_timelines">refreshing timelines</string>
-	<string name="refreshing_home_timeline">refreshing home timeline</string>
-	<string name="refreshing_mentions">refreshing mentions</string>
-	<string name="refreshing_direct_messages">refreshing direct messages</string>
-	<string name="favoriting">favoriting</string>
-	<string name="unfavoriting">unfavoriting</string>
-	<string name="deleting">deleting</string>
-	<string name="updating_profile">updating profile</string>
-	<string name="updating_profile_image">updating profile image</string>
-	<string name="updating_profile_banner_image">updating profile header image</string>
-	<string name="removing_profile_banner_image">removing profile header image</string>
-	<string name="updating_details">updating details</string>
-	<string name="blocking">blocking</string>
-	<string name="unblocking">unblocking</string>
-	<string name="following">following</string>
-	<string name="unfollowing">unfollowing</string>
+	<string name="action_getting_status">getting tweet</string>
+	<string name="action_getting_statuses">getting tweets</string>
+	<string name="action_updating_status">sending tweet</string>
+	<string name="action_sending_direct_message">sending direct message</string>
+	<string name="action_refreshing_timelines">refreshing timelines</string>
+	<string name="action_refreshing_home_timeline">refreshing home timeline</string>
+	<string name="action_refreshing_mentions">refreshing mentions</string>
+	<string name="action_refreshing_direct_messages">refreshing direct messages</string>
+	<string name="action_favoriting">favoriting</string>
+	<string name="action_unfavoriting">unfavoriting</string>
+	<string name="action_deleting">deleting</string>
+	<string name="action_updating_profile">updating profile</string>
+	<string name="action_updating_profile_image">updating profile image</string>
+	<string name="action_updating_profile_banner_image">updating profile header image</string>
+	<string name="action_removing_profile_banner_image">removing profile header image</string>
+	<string name="action_updating_details">updating details</string>
+	<string name="action_blocking">blocking</string>
+	<string name="action_unblocking">unblocking</string>
+	<string name="action_following">following</string>
+	<string name="action_unfollowing">unfollowing</string>
+	<string name="action_creating_list">creating list</string>
+	<string name="action_adding_member">adding member</string>
+	<string name="action_signing_in">signing in</string>
+	<string name="action_retweeting">retweeting</string>
+	<string name="action_reporting_for_spam">reporting for spam</string>
+	<string name="action_subscribing_to_list">subscribing to list</string>
+	<string name="action_unsubscribing_from_list">unsubscribing from list</string>
 	<string name="status_is_duplicate">Your tweet is a duplicate.</string>
-	<string name="creating_list">creating list</string>
-	<string name="adding_member">adding member</string>
-	<string name="signing_in">signing in</string>
-	<string name="retweeting">retweeting</string>
-	<string name="reporting_for_spam">reporting for spam</string>
-	<string name="subscribing_to_list">subscribing to list</string>
-	<string name="unsubscribing_from_list">unsubscribing from list</string>
 	<string name="data_profiling_summary">Twidere took part in a research on predicting user\'s social behavior to pre-caching content started by students in UC Davis.\n\nHere are the data we wanted to collect and why:\nCollected data:\n1. User\'s twitter ID\n2. User\'s home timeline (prediction based on user\'s interest and social interaction)\n3. User\'s click on a tweet (prediction based on user\'s interest and social interaction)\n4. Coarse location (which is good predictor when user will access twitter)\n\nTwidere will upload collected data only when Wifi available and your device connected to charger, so It will not cost you extra bandwidth fee or drain your battery power.</string>
 	<string name="data_profiling">Usage Statistics</string>
 	<string name="enable_data_profiling">Enable Reporting</string>
@@ -548,5 +548,6 @@
 	<string name="contributors_list_summary">If you haven\'t find your name, please tell project account.</string>
 	<string name="account_options">Account options</string>
 	<string name="show_in_timeline">Show in timeline</string>
+	<string name="cards">Cards</string>
 
 </resources>

@@ -33,12 +33,13 @@ class BasePreferenceActivity extends PreferenceActivity implements Constants, IT
 
 	private int mCurrentThemeResource;
 
-	public TwidereApplication getTwidereApplication() {
-		return (TwidereApplication) getApplication();
+	@Override
+	public final int getCurrentThemeResource() {
+		return mCurrentThemeResource;
 	}
 
-	protected final int getCurrentThemeResource() {
-		return mCurrentThemeResource;
+	public TwidereApplication getTwidereApplication() {
+		return (TwidereApplication) getApplication();
 	}
 
 	protected int getThemeResource() {

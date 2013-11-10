@@ -36,7 +36,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import org.mariotaku.twidere.util.ViewAccessor;
+import org.mariotaku.twidere.util.accessor.ViewAccessor;
 
 /*
  * Based on an article by Cyril Mottier (http://android.cyrilmottier.com/?p=773) <br>
