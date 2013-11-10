@@ -1,7 +1,9 @@
 package org.mariotaku.twidere.fragment.support;
 
 import android.app.ActionBar;
+import android.graphics.Color;
 import android.graphics.PorterDuff.Mode;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.support.v4.app.Fragment;
@@ -22,6 +24,7 @@ import org.mariotaku.twidere.activity.support.LinkHandlerActivity;
 import org.mariotaku.twidere.adapter.SupportTabsAdapter;
 import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;
 import org.mariotaku.twidere.fragment.iface.SupportFragmentCallback;
+import org.mariotaku.twidere.graphic.DropShadowDrawable;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.provider.RecentSearchProvider;
 import org.mariotaku.twidere.util.ThemeUtils;
@@ -68,7 +71,8 @@ public class SearchFragment extends BaseSupportFragment implements Panes.Left, O
 			final LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
 			lp.weight = 0;
 			mIndicator.addView(v, lp);
-			v.setImageDrawable(mAdapter.getPageIcon(i));
+			final Drawable icon = mAdapter.getPageIcon(i);
+			v.setImageDrawable(new DropShadowDrawable(getResources(), icon, 3, Color.BLACK, Color.WHITE));
 			if (i == current) {
 				v.setColorFilter(mThemeColor, Mode.MULTIPLY);
 			} else {

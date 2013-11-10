@@ -14,16 +14,16 @@ import java.util.List;
 
 final class SubMenuImpl extends MenuImpl implements SubMenu {
 
-	private final List<MenuItem> mMenuItems;
+	private final List<MenuItem> menusList;
 	private final MenuAdapter mAdapter;
 	private final MenuItem menuItem;
-	private final Context mContext;
+	private final Context context;
 
 	SubMenuImpl(final Context context, final MenuItem menuItem) {
 		super(context);
-		mContext = context;
+		this.context = context;
 		mAdapter = new MenuAdapter(context);
-		mMenuItems = new Menus(mAdapter);
+		menusList = new MenusList(mAdapter);
 		this.menuItem = menuItem;
 	}
 
@@ -39,19 +39,19 @@ final class SubMenuImpl extends MenuImpl implements SubMenu {
 
 	@Override
 	public MenuItem add(final int groupId, final int itemId, final int order, final CharSequence title) {
-		final MenuItem item = new MenuItemImpl(mContext).setGroupId(groupId).setItemId(itemId).setOrder(order)
+		final MenuItem item = new MenuItemImpl(context).setGroupId(groupId).setItemId(itemId).setOrder(order)
 				.setTitle(title);
 		if (order != 0) {
-			mMenuItems.add(order, item);
+			menusList.add(order, item);
 		} else {
-			mMenuItems.add(item);
+			menusList.add(item);
 		}
 		return item;
 	}
 
 	@Override
 	public MenuItem add(final int groupId, final int itemId, final int order, final int titleRes) {
-		return add(0, 0, 0, mContext.getString(titleRes));
+		return add(0, 0, 0, context.getString(titleRes));
 	}
 
 	@Override
@@ -72,26 +72,26 @@ final class SubMenuImpl extends MenuImpl implements SubMenu {
 
 	@Override
 	public SubMenu addSubMenu(final int groupId, final int itemId, final int order, final CharSequence title) {
-		final MenuItem item = new MenuItemImpl(mContext).setGroupId(groupId).setItemId(itemId).setOrder(order)
+		final MenuItem item = new MenuItemImpl(context).setGroupId(groupId).setItemId(itemId).setOrder(order)
 				.setTitle(title);
-		final SubMenu subMenu = new SubMenuImpl(mContext, item);
+		final SubMenu subMenu = new SubMenuImpl(context, item);
 		((MenuItemImpl) item).setSubMenu(subMenu);
 		if (order != 0) {
-			mMenuItems.add(order, item);
+			menusList.add(order, item);
 		} else {
-			mMenuItems.add(item);
+			menusList.add(item);
 		}
 		return subMenu;
 	}
 
 	@Override
 	public SubMenu addSubMenu(final int groupId, final int itemId, final int order, final int titleRes) {
-		return addSubMenu(groupId, itemId, order, mContext.getString(titleRes));
+		return addSubMenu(groupId, itemId, order, context.getString(titleRes));
 	}
 
 	@Override
 	public void clear() {
-		mMenuItems.clear();
+		menusList.clear();
 	}
 
 	@Override
@@ -104,7 +104,7 @@ final class SubMenuImpl extends MenuImpl implements SubMenu {
 
 	@Override
 	public MenuItem findItem(final int id) {
-		for (final MenuItem item : mMenuItems) {
+		for (final MenuItem item : menusList) {
 			if (item.getItemId() == id) return item;
 		}
 		return null;
@@ -117,17 +117,17 @@ final class SubMenuImpl extends MenuImpl implements SubMenu {
 
 	@Override
 	public MenuItem getItem(final int index) {
-		return mMenuItems.get(index);
+		return menusList.get(index);
 	}
 
 	@Override
 	public List<MenuItem> getMenuItems() {
-		return mMenuItems;
+		return menusList;
 	}
 
 	@Override
 	public boolean hasVisibleItems() {
-		for (final MenuItem item : mMenuItems) {
+		for (final MenuItem item : menusList) {
 			if (item.isVisible()) return true;
 		}
 		return false;
@@ -151,32 +151,32 @@ final class SubMenuImpl extends MenuImpl implements SubMenu {
 	@Override
 	public void removeGroup(final int groupId) {
 		final List<MenuItem> items_to_remove = new ArrayList<MenuItem>();
-		for (final MenuItem item : mMenuItems) {
+		for (final MenuItem item : menusList) {
 			if (item.hasSubMenu()) {
 				item.getSubMenu().removeGroup(groupId);
 			} else if (item.getGroupId() == groupId) {
 				items_to_remove.add(item);
 			}
 		}
-		mMenuItems.removeAll(items_to_remove);
+		menusList.removeAll(items_to_remove);
 	}
 
 	@Override
 	public void removeItem(final int id) {
 		final List<MenuItem> items_to_remove = new ArrayList<MenuItem>();
-		for (final MenuItem item : mMenuItems) {
+		for (final MenuItem item : menusList) {
 			if (item.hasSubMenu()) {
 				item.getSubMenu().removeItem(id);
 			} else if (item.getItemId() == id) {
 				items_to_remove.add(item);
 			}
 		}
-		mMenuItems.removeAll(items_to_remove);
+		menusList.removeAll(items_to_remove);
 	}
 
 	@Override
 	public void setGroupCheckable(final int group, final boolean checkable, final boolean exclusive) {
-		for (final MenuItem item : mMenuItems) {
+		for (final MenuItem item : menusList) {
 			if (item.hasSubMenu()) {
 				item.getSubMenu().setGroupCheckable(group, checkable, exclusive);
 			} else if (item.getGroupId() == group) {
@@ -187,7 +187,7 @@ final class SubMenuImpl extends MenuImpl implements SubMenu {
 
 	@Override
 	public void setGroupEnabled(final int group, final boolean enabled) {
-		for (final MenuItem item : mMenuItems) {
+		for (final MenuItem item : menusList) {
 			if (item.hasSubMenu()) {
 				item.getSubMenu().setGroupEnabled(group, enabled);
 			} else if (item.getGroupId() == group) {
@@ -198,7 +198,7 @@ final class SubMenuImpl extends MenuImpl implements SubMenu {
 
 	@Override
 	public void setGroupVisible(final int group, final boolean visible) {
-		for (final MenuItem item : mMenuItems) {
+		for (final MenuItem item : menusList) {
 			if (item.hasSubMenu()) {
 				item.getSubMenu().setGroupVisible(group, visible);
 			} else if (item.getGroupId() == group) {
@@ -219,42 +219,38 @@ final class SubMenuImpl extends MenuImpl implements SubMenu {
 
 	@Override
 	public SubMenu setHeaderTitle(final CharSequence title) {
-
 		return this;
 	}
 
 	@Override
 	public SubMenu setHeaderTitle(final int titleRes) {
-
 		return this;
 	}
 
 	@Override
 	public SubMenu setHeaderView(final View view) {
-
 		return this;
 	}
 
 	@Override
 	public SubMenu setIcon(final Drawable icon) {
-
+		menuItem.setIcon(icon);
 		return this;
 	}
 
 	@Override
 	public SubMenu setIcon(final int iconRes) {
-
+		menuItem.setIcon(iconRes);
 		return this;
 	}
 
 	@Override
 	public void setQwertyMode(final boolean isQwerty) {
-
 	}
 
 	@Override
 	public int size() {
-		return mMenuItems.size();
+		return menusList.size();
 	}
 
 }

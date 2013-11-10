@@ -18,12 +18,19 @@ public class MenuItemImpl implements MenuItem {
 	private Intent intent;
 	private SubMenu subMenu;
 	private final Context context;
-	private boolean visible = true, enabled = true, checkable, checked;
+	private boolean visible, enabled, checkable, checked;
 	private View actionView;
 	private ActionProvider actionProvider;
+	private int showAsActionFlags;
+	private char alphabeticShortcut;
+	private OnMenuItemClickListener onMenuItemClickListener;
+	private OnActionExpandListener onActionExpandListener;
+	private char numericShortcut;
 
-	public MenuItemImpl(final Context context) {
+	MenuItemImpl(final Context context) {
 		this.context = context;
+		setVisible(true);
+		setEnabled(true);
 	}
 
 	@Override
@@ -48,7 +55,7 @@ public class MenuItemImpl implements MenuItem {
 
 	@Override
 	public char getAlphabeticShortcut() {
-		return 0;
+		return alphabeticShortcut;
 	}
 
 	@Override
@@ -78,7 +85,7 @@ public class MenuItemImpl implements MenuItem {
 
 	@Override
 	public char getNumericShortcut() {
-		return 0;
+		return numericShortcut;
 	}
 
 	@Override
@@ -151,6 +158,7 @@ public class MenuItemImpl implements MenuItem {
 
 	@Override
 	public MenuItem setAlphabeticShortcut(final char alphaChar) {
+		alphabeticShortcut = alphaChar;
 		return this;
 	}
 
@@ -192,31 +200,37 @@ public class MenuItemImpl implements MenuItem {
 
 	@Override
 	public MenuItem setNumericShortcut(final char numericChar) {
+		numericShortcut = numericChar;
 		return this;
 	}
 
 	@Override
 	public MenuItem setOnActionExpandListener(final OnActionExpandListener listener) {
+		onActionExpandListener = listener;
 		return this;
 	}
 
 	@Override
 	public MenuItem setOnMenuItemClickListener(final OnMenuItemClickListener menuItemClickListener) {
+		onMenuItemClickListener = menuItemClickListener;
 		return this;
 	}
 
 	@Override
 	public MenuItem setShortcut(final char numericChar, final char alphaChar) {
+		setNumericShortcut(numericChar);
+		setAlphabeticShortcut(alphaChar);
 		return this;
 	}
 
 	@Override
 	public void setShowAsAction(final int actionEnum) {
-
+		showAsActionFlags = actionEnum;
 	}
 
 	@Override
 	public MenuItem setShowAsActionFlags(final int actionEnum) {
+		setShowAsAction(actionEnum);
 		return this;
 	}
 
@@ -246,7 +260,19 @@ public class MenuItemImpl implements MenuItem {
 
 	@Override
 	public String toString() {
-		return getTitle() == null ? null : getTitle().toString();
+		return getTitle() != null ? getTitle().toString() : "";
+	}
+
+	OnMenuItemClickListener getMenuItemClickListener() {
+		return onMenuItemClickListener;
+	}
+
+	OnActionExpandListener getOnActionExpandListener() {
+		return onActionExpandListener;
+	}
+
+	int getShowAsActionFlags() {
+		return showAsActionFlags;
 	}
 
 	MenuItemImpl setGroupId(final int groupId) {

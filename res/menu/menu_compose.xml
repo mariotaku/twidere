@@ -4,23 +4,28 @@
 	<item
 		android:id="@id/add_location"
 		android:icon="@android:drawable/ic_menu_mylocation"
+		android:showAsAction="always"
 		android:title="@string/add_location"/>
 	<item
 		android:id="@id/take_photo"
 		android:icon="@android:drawable/ic_menu_camera"
+		android:showAsAction="always"
 		android:title="@string/take_photo"/>
 	<item
 		android:id="@id/add_image"
 		android:icon="@android:drawable/ic_menu_gallery"
+		android:showAsAction="always"
 		android:title="@string/add_image"/>
 	<item
 		android:id="@id/view"
 		android:icon="@drawable/ic_menu_reply"
+		android:showAsAction="ifRoom"
 		android:title="@string/original_status"
 		android:visible="false"/>
 	<item
 		android:id="@+id/more_submenu"
 		android:icon="@drawable/ic_menu_more"
+		android:showAsAction="always"
 		android:title="@string/more">
 		<menu>
 			<item
@@ -50,6 +55,7 @@
 	<item
 		android:id="@id/send"
 		android:actionLayout="@layout/action_item_compose"
+		android:showAsAction="always"
 		android:title="@string/send"
 		android:visible="false"/>
 

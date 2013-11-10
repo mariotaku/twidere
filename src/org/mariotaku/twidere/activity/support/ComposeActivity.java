@@ -520,6 +520,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 			finish();
 			return;
 		}
+		mMenuBar.setIsBottomBar(true);
 		mMenuBar.setOnMenuItemClickListener(this);
 		mActionMenuBar.setOnMenuItemClickListener(this);
 		mEditText.setOnEditorActionListener(mPreferences.getBoolean(PREFERENCE_KEY_QUICK_SEND, false) ? this : null);

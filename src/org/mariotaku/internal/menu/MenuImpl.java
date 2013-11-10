@@ -21,7 +21,7 @@ public class MenuImpl implements Menu {
 	}
 
 	public MenuImpl(final Context context, final MenuAdapter adapter) {
-		mMenuItems = new Menus(adapter);
+		mMenuItems = new MenusList(adapter);
 		mContext = context;
 	}
 

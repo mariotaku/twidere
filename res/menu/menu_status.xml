@@ -28,15 +28,18 @@
 		android:showAsAction="always"
 		android:title="@string/favorite"/>
 	<item
+		android:id="@+id/share_submenu"
+		android:icon="@android:drawable/ic_menu_share"
+		android:showAsAction="always"
+		android:title="@string/share">
+		<menu/>
+	</item>
+	<item
 		android:id="@+id/more_submenu"
 		android:icon="@drawable/ic_menu_more"
 		android:showAsAction="always"
 		android:title="@string/more">
 		<menu>
-			<item
-				android:id="@id/share"
-				android:icon="@android:drawable/ic_menu_share"
-				android:title="@string/share"/>
 			<item
 				android:id="@id/copy"
 				android:icon="@drawable/ic_menu_copy"

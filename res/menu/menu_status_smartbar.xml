@@ -4,12 +4,12 @@
 	<item
 		android:id="@id/reply"
 		android:icon="@drawable/ic_menu_reply"
-		android:showAsAction="always"
+		android:showAsAction="ifRoom"
 		android:title="@string/reply"/>
 	<item
 		android:id="@+id/retweet_submenu"
 		android:icon="@drawable/ic_menu_retweet"
-		android:showAsAction="always"
+		android:showAsAction="ifRoom"
 		android:title="@string/retweet">
 		<menu>
 			<item
@@ -25,23 +25,27 @@
 	<item
 		android:id="@id/favorite"
 		android:icon="@drawable/ic_menu_star"
-		android:showAsAction="always"
+		android:showAsAction="ifRoom"
 		android:title="@string/favorite"/>
 	<item
 		android:id="@id/share"
 		android:icon="@android:drawable/ic_menu_share"
+		android:showAsAction="ifRoom"
 		android:title="@string/share"/>
 	<item
 		android:id="@id/copy"
 		android:icon="@drawable/ic_menu_copy"
+		android:showAsAction="ifRoom"
 		android:title="@android:string/copy"/>
 	<item
 		android:id="@id/add_to_filter"
 		android:icon="@drawable/ic_menu_mute"
+		android:showAsAction="ifRoom"
 		android:title="@string/add_to_filter"/>
 	<item
 		android:id="@+id/set_color_submenu"
 		android:icon="@drawable/ic_menu_color_palette"
+		android:showAsAction="ifRoom"
 		android:title="@string/set_color">
 		<menu>
 			<item
@@ -57,6 +61,7 @@
 	<item
 		android:id="@+id/set_nickname_submenu"
 		android:icon="@android:drawable/ic_menu_edit"
+		android:showAsAction="ifRoom"
 		android:title="@string/set_nickname">
 		<menu>
 			<item
@@ -72,6 +77,7 @@
 	<item
 		android:id="@+id/delete_submenu"
 		android:icon="@android:drawable/ic_menu_delete"
+		android:showAsAction="ifRoom"
 		android:title="@string/delete"
 		android:visible="false">
 		<menu>

@@ -177,7 +177,7 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 	public void onLoadFinished(final Loader<List<ParcelableUser>> loader, final List<ParcelableUser> data) {
 		setProgressBarIndeterminateVisibility(false);
 		mAdapter.setData(data);
-		mAdapter.setShowAccountColor(getActivatedAccountIds(getActivity()).length > 1);
+		mAdapter.setShowAccountColor(shouldShowAccountColor());
 		setRefreshComplete();
 		setListShown(true);
 	}
@@ -270,6 +270,10 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 			mMultiSelectManager.unselectItem(user);
 		}
 		mListView.setItemChecked(position, selected);
+	}
+
+	protected boolean shouldShowAccountColor() {
+		return getActivatedAccountIds(getActivity()).length > 1;
 	}
 
 	private void showMenu(final View view, final ParcelableUser user) {

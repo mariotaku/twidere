@@ -425,6 +425,7 @@ public interface TwidereConstants {
 	public static final int MENU_GROUP_STATUS_EXTENSION = 10;
 	public static final int MENU_GROUP_COMPOSE_EXTENSION = 11;
 	public static final int MENU_GROUP_IMAGE_EXTENSION = 12;
+	public static final int MENU_GROUP_STATUS_SHARE = 20;
 
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public static final int REQUEST_PICK_IMAGE = 2;

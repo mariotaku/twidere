@@ -6,15 +6,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @SuppressWarnings("serial")
-final class Menus extends ArrayList<MenuItem> {
+final class MenusList extends ArrayList<MenuItem> {
 
 	private final MenuAdapter mAdapter;
 
-	public Menus() {
+	public MenusList() {
 		this(null);
 	}
 
-	public Menus(final MenuAdapter adapter) {
+	public MenusList(final MenuAdapter adapter) {
 		mAdapter = adapter;
 	}
 

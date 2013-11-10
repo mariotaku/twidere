@@ -5,5 +5,6 @@
 	<integer name="nyan_star_cols">13</integer>
 	<integer name="default_text_size">16</integer>
 	<integer name="unread_count_text_size">11</integer>
+	<integer name="max_action_buttons">4</integer>
 
 </resources>

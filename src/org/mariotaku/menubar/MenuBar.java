@@ -2,6 +2,7 @@ package org.mariotaku.menubar;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.Menu;
@@ -16,18 +17,20 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import org.mariotaku.internal.menu.MenuImpl;
+import org.mariotaku.internal.menu.MenuItemUtils;
 import org.mariotaku.popupmenu.PopupMenu;
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.accessor.ViewAccessor;
 
 public class MenuBar extends LinearLayout implements MenuItem.OnMenuItemClickListener {
 
 	private final Menu mMenu;
 	private final Context mContext;
+
 	private OnMenuItemClickListener mItemClickListener;
-
 	private PopupMenu mPopupMenu;
-
-	private boolean mStretchButtonsEnabled = true;
+	private boolean mIsBottomBar;
+	private int mMaxItemsShown;
 
 	public MenuBar(final Context context) {
 		this(context, null);
@@ -43,6 +46,7 @@ public class MenuBar extends LinearLayout implements MenuItem.OnMenuItemClickLis
 		}
 		mContext = context;
 		mMenu = new MenuImpl(context);
+		mMaxItemsShown = getResources().getInteger(R.integer.max_action_buttons);
 		setOrientation(HORIZONTAL);
 	}
 
@@ -52,6 +56,14 @@ public class MenuBar extends LinearLayout implements MenuItem.OnMenuItemClickLis
 
 	public MenuInflater getMenuInflater() {
 		return new MenuInflater(mContext);
+	}
+
+	/**
+	 * Get listener for action item clicked.
+	 * 
+	 */
+	public OnMenuItemClickListener getOnMenuItemClickListener() {
+		return mItemClickListener;
 	}
 
 	public void inflate(final int menuRes) {
@@ -65,6 +77,14 @@ public class MenuBar extends LinearLayout implements MenuItem.OnMenuItemClickLis
 		return false;
 	}
 
+	public void setIsBottomBar(final boolean isBottomBar) {
+		mIsBottomBar = isBottomBar;
+	}
+
+	public void setMaxItemsShown(final int maxItemsShown) {
+		mMaxItemsShown = maxItemsShown;
+	}
+
 	/**
 	 * Set listener for action item clicked.
 	 * 
@@ -74,21 +94,31 @@ public class MenuBar extends LinearLayout implements MenuItem.OnMenuItemClickLis
 		mItemClickListener = listener;
 	}
 
-	public void setStretchButtonsEnabled(final boolean enabled) {
-		if (mStretchButtonsEnabled == enabled) return;
-		mStretchButtonsEnabled = enabled;
-		show();
-	}
-
 	public void show() {
 		if (mPopupMenu != null) {
 			mPopupMenu.dismiss();
 		}
 		removeAllViews();
 		for (final MenuItem item : ((MenuImpl) mMenu).getMenuItems()) {
-			if (item.isVisible()) {
-				addMenuButton(item);
+			final LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+					ViewGroup.LayoutParams.MATCH_PARENT);
+			params.weight = 1;
+
+			final View actionView = item.getActionView(), view;
+			if (actionView != null) {
+				view = actionView;
+			} else {
+				final ImageButton actionButton = new ImageButton(mContext, null, android.R.attr.actionButtonStyle);
+				actionButton.setImageDrawable(item.getIcon());
+				actionButton.setScaleType(ScaleType.CENTER);
+				actionButton.setContentDescription(item.getTitle());
+				actionButton.setEnabled(item.isEnabled());
+				actionButton.setOnClickListener(new ActionViewOnClickListener(item, this));
+				actionButton.setOnLongClickListener(new OnActionItemLongClickListener(item, this));
+				view = actionButton;
 			}
+			view.setVisibility(item.isVisible() ? View.VISIBLE : View.GONE);
+			addView(view, params);
 		}
 		invalidate();
 	}
@@ -101,56 +131,19 @@ public class MenuBar extends LinearLayout implements MenuItem.OnMenuItemClickLis
 		super.onDetachedFromWindow();
 	}
 
-	private View addMenuButton(final MenuItem item) {
-		final LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-				ViewGroup.LayoutParams.MATCH_PARENT);
-		params.weight = 1;
+	private boolean isBottomBar() {
+		return mIsBottomBar;
+	}
 
-		final View actionView = item.getActionView(), view;
-		if (actionView != null) {
-			view = actionView;
-		} else {
-			final ImageButton actionButton = new ImageButton(mContext, null, android.R.attr.actionButtonStyle);
-			actionButton.setImageDrawable(item.getIcon());
-			actionButton.setScaleType(ScaleType.CENTER);
-			actionButton.setContentDescription(item.getTitle());
-			actionButton.setEnabled(item.isEnabled());
-			actionButton.setOnClickListener(new View.OnClickListener() {
-
-				@Override
-				public void onClick(final View view) {
-					if (!item.isEnabled()) return;
-					if (item.hasSubMenu()) {
-						mPopupMenu = PopupMenu.getInstance(mContext, view);
-						mPopupMenu.setOnMenuItemClickListener(MenuBar.this);
-						mPopupMenu.setMenu(item.getSubMenu());
-						mPopupMenu.show();
-					} else {
-						if (mItemClickListener != null) {
-							mItemClickListener.onMenuItemClick(item);
-						}
-					}
-				}
-			});
-			actionButton.setOnLongClickListener(new View.OnLongClickListener() {
-
-				@Override
-				public boolean onLongClick(final View v) {
-					final Toast t = Toast.makeText(mContext, item.getTitle(), Toast.LENGTH_SHORT);
-					final int[] screenPos = new int[2];
-					v.getLocationOnScreen(screenPos);
-
-					final int height = v.getHeight();
-
-					t.setGravity(Gravity.TOP | Gravity.LEFT, screenPos[0], (int) (screenPos[1] - height * 1.5));
-					t.show();
-					return true;
-				}
-			});
-			view = actionButton;
+	private void showPopupMenu(final PopupMenu popupMenu) {
+		if (popupMenu == null) return;
+		if (mPopupMenu != null && mPopupMenu.isShowing()) {
+			mPopupMenu.dismiss();
 		}
-		addView(view, params);
-		return view;
+		mPopupMenu = popupMenu;
+		if (!popupMenu.isShowing()) {
+			mPopupMenu.show();
+		}
 	}
 
 	private static boolean hasBackground(final AttributeSet attrs) {
@@ -159,6 +152,67 @@ public class MenuBar extends LinearLayout implements MenuItem.OnMenuItemClickLis
 			if (attrs.getAttributeNameResource(i) == android.R.attr.background) return true;
 		}
 		return false;
+	}
+
+	private static class ActionViewOnClickListener implements OnClickListener {
+		private final MenuItem menuItem;
+		private final MenuBar menuBar;
+
+		private ActionViewOnClickListener(final MenuItem menuItem, final MenuBar menuBar) {
+			this.menuItem = menuItem;
+			this.menuBar = menuBar;
+		}
+
+		@Override
+		public void onClick(final View actionView) {
+			if (!menuItem.isEnabled()) return;
+			if (menuItem.hasSubMenu()) {
+				final PopupMenu popupMenu = PopupMenu.getInstance(actionView.getContext(), actionView);
+				popupMenu.setOnMenuItemClickListener(menuBar);
+				popupMenu.setMenu(menuItem.getSubMenu());
+				menuBar.showPopupMenu(popupMenu);
+			} else {
+				final OnMenuItemClickListener listener = menuBar.getOnMenuItemClickListener();
+				if (listener != null) {
+					listener.onMenuItemClick(menuItem);
+				}
+			}
+		}
+	}
+
+	private static class OnActionItemLongClickListener implements OnLongClickListener {
+
+		private final MenuItem item;
+		private final MenuBar menuBar;
+
+		private OnActionItemLongClickListener(final MenuItem item, final MenuBar menuBar) {
+			this.item = item;
+			this.menuBar = menuBar;
+		}
+
+		@Override
+		public boolean onLongClick(final View v) {
+			// Don't show the cheat sheet for items that already show text.
+			if ((MenuItemUtils.getShowAsActionFlags(item) & MenuItem.SHOW_AS_ACTION_WITH_TEXT) != 0) return false;
+			final int[] screenPos = new int[2];
+			final Rect displayFrame = new Rect();
+			v.getLocationOnScreen(screenPos);
+			v.getWindowVisibleDisplayFrame(displayFrame);
+			final int width = v.getWidth();
+			final int height = v.getHeight();
+			final int midy = screenPos[1] + height / 2;
+			final int screenWidth = menuBar.getResources().getDisplayMetrics().widthPixels;
+			final Toast cheatSheet = Toast.makeText(menuBar.getContext(), item.getTitle(), Toast.LENGTH_SHORT);
+			if (midy >= displayFrame.height() || menuBar.isBottomBar()) {
+				// Show along the bottom center
+				cheatSheet.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, height);
+			} else {
+				// Show along the top; follow action buttons
+				cheatSheet.setGravity(Gravity.TOP | Gravity.RIGHT, screenWidth - screenPos[0] - width / 2, height);
+			}
+			cheatSheet.show();
+			return true;
+		}
 	}
 
 }

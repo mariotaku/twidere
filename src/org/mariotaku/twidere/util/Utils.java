@@ -71,12 +71,12 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.ShareCompat;
 import android.support.v4.util.LongSparseArray;
 import android.support.v4.view.accessibility.AccessibilityEventCompat;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.text.format.Time;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -899,7 +899,7 @@ public final class Utils implements Constants {
 		final String where = DirectMessages.ACCOUNT_ID + " = " + account_id + " AND " + DirectMessages.MESSAGE_ID
 				+ " = " + message_id;
 		for (final Uri uri : DIRECT_MESSAGES_URIS) {
-			final Cursor cur = resolver.query(uri, DirectMessages.COLUMNS, where, null, null);
+			final Cursor cur = ContentResolverUtils.query(resolver, uri, DirectMessages.COLUMNS, where, null, null);
 			if (cur == null) {
 				continue;
 			}
@@ -938,7 +938,7 @@ public final class Utils implements Constants {
 		final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.STATUS_ID + " = "
 				+ status_id;
 		for (final Uri uri : STATUSES_URIS) {
-			final Cursor cur = resolver.query(uri, Statuses.COLUMNS, where, null, null);
+			final Cursor cur = ContentResolverUtils.query(resolver, uri, Statuses.COLUMNS, where, null, null);
 			if (cur == null) {
 				continue;
 			}
@@ -1064,7 +1064,7 @@ public final class Utils implements Constants {
 		if (context == null) return Color.TRANSPARENT;
 		Integer color = sAccountColors.get(account_id);
 		if (color == null) {
-			final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
+			final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI,
 					new String[] { Accounts.USER_COLOR }, Accounts.ACCOUNT_ID + " = " + account_id, null, null);
 			if (cur == null) return Color.TRANSPARENT;
 			if (cur.getCount() <= 0) {
@@ -1108,7 +1108,7 @@ public final class Utils implements Constants {
 	public static long[] getAccountIds(final Context context) {
 		long[] accounts = new long[0];
 		if (context == null) return accounts;
-		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
+		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI,
 				new String[] { Accounts.ACCOUNT_ID }, null, null, null);
 		if (cur != null) {
 			final int idx = cur.getColumnIndexOrThrow(Accounts.ACCOUNT_ID);
@@ -1129,8 +1129,8 @@ public final class Utils implements Constants {
 		if (context == null) return null;
 		String name = sAccountNames.get(account_id);
 		if (name == null) {
-			final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, new String[] { Accounts.NAME },
-					Accounts.ACCOUNT_ID + " = " + account_id, null, null);
+			final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI,
+					new String[] { Accounts.NAME }, Accounts.ACCOUNT_ID + " = " + account_id, null, null);
 			if (cur == null) return name;
 
 			if (cur.getCount() > 0) {
@@ -1152,7 +1152,8 @@ public final class Utils implements Constants {
 		final String[] cols = new String[] { Accounts.NAME };
 		final String where = account_ids != null ? Accounts.ACCOUNT_ID + " IN("
 				+ ArrayUtils.toString(account_ids, ',', false) + ")" : null;
-		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, cols, where, null, null);
+		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI, cols, where,
+				null, null);
 		if (cur == null) return new String[0];
 		final int idx = cur.getColumnIndexOrThrow(Accounts.NAME);
 		cur.moveToFirst();
@@ -1171,7 +1172,7 @@ public final class Utils implements Constants {
 		if (context == null) return null;
 		String screen_name = sAccountScreenNames.get(account_id);
 		if (screen_name == null) {
-			final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
+			final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI,
 					new String[] { Accounts.SCREEN_NAME }, Accounts.ACCOUNT_ID + " = " + account_id, null, null);
 			if (cur == null) return screen_name;
 
@@ -1203,7 +1204,8 @@ public final class Utils implements Constants {
 		final String[] cols = new String[] { Accounts.SCREEN_NAME };
 		final String where = account_ids != null ? Accounts.ACCOUNT_ID + " IN("
 				+ ArrayUtils.toString(account_ids, ',', false) + ")" : null;
-		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, cols, where, null, null);
+		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI, cols, where,
+				null, null);
 		if (cur == null) return new String[0];
 		final int idx = cur.getColumnIndexOrThrow(Accounts.SCREEN_NAME);
 		cur.moveToFirst();
@@ -1222,8 +1224,8 @@ public final class Utils implements Constants {
 		long[] accounts = new long[0];
 		if (context == null) return accounts;
 		final String[] cols = new String[] { Accounts.ACCOUNT_ID };
-		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, cols, Accounts.IS_ACTIVATED + "=1",
-				null, Accounts.ACCOUNT_ID);
+		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI, cols,
+				Accounts.IS_ACTIVATED + "=1", null, Accounts.ACCOUNT_ID);
 		if (cur != null) {
 			final int idx = cur.getColumnIndexOrThrow(Accounts.ACCOUNT_ID);
 			cur.moveToFirst();
@@ -1243,8 +1245,8 @@ public final class Utils implements Constants {
 		String[] accounts = new String[0];
 		if (context == null) return accounts;
 		final String[] cols = new String[] { Accounts.SCREEN_NAME };
-		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, cols, Accounts.IS_ACTIVATED + "=1",
-				null, null);
+		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI, cols,
+				Accounts.IS_ACTIVATED + "=1", null, null);
 		if (cur != null) {
 			final int idx = cur.getColumnIndexOrThrow(Accounts.SCREEN_NAME);
 			cur.moveToFirst();
@@ -1263,7 +1265,7 @@ public final class Utils implements Constants {
 	public static int getAllStatusesCount(final Context context, final Uri uri) {
 		if (context == null) return 0;
 		final ContentResolver resolver = context.getContentResolver();
-		final Cursor cur = resolver.query(uri, new String[] { Statuses.STATUS_ID },
+		final Cursor cur = ContentResolverUtils.query(resolver, uri, new String[] { Statuses.STATUS_ID },
 				buildStatusFilterWhereClause(getTableNameByUri(uri), null, shouldEnableFiltersForRTs(context)), null,
 				null);
 		if (cur == null) return 0;
@@ -1277,7 +1279,7 @@ public final class Utils implements Constants {
 	public static long[] getAllStatusesIds(final Context context, final Uri uri) {
 		if (context == null) return new long[0];
 		final ContentResolver resolver = context.getContentResolver();
-		final Cursor cur = resolver.query(uri, new String[] { Statuses.STATUS_ID },
+		final Cursor cur = ContentResolverUtils.query(resolver, uri, new String[] { Statuses.STATUS_ID },
 				buildStatusFilterWhereClause(getTableNameByUri(uri), null, shouldEnableFiltersForRTs(context)), null,
 				null);
 		if (cur == null) return new long[0];
@@ -1554,7 +1556,7 @@ public final class Utils implements Constants {
 		if (ParseUtils.parseString(uri).startsWith(media_uri_start)) {
 
 			final String[] proj = { MediaStore.Images.Media.DATA };
-			final Cursor cur = context.getContentResolver().query(uri, proj, null, null, null);
+			final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), uri, proj, null, null, null);
 
 			if (cur == null) return null;
 
@@ -1649,7 +1651,8 @@ public final class Utils implements Constants {
 		int idx = 0;
 		for (final long account_id : account_ids) {
 			final String where = Statuses.ACCOUNT_ID + " = " + account_id;
-			final Cursor cur = resolver.query(uri, cols, where, null, DirectMessages.DEFAULT_SORT_ORDER);
+			final Cursor cur = ContentResolverUtils.query(resolver, uri, cols, where, null,
+					DirectMessages.DEFAULT_SORT_ORDER);
 			if (cur == null) {
 				continue;
 			}
@@ -1677,7 +1680,8 @@ public final class Utils implements Constants {
 		int idx = 0;
 		for (final long account_id : account_ids) {
 			final String where = Statuses.ACCOUNT_ID + " = " + account_id;
-			final Cursor cur = resolver.query(uri, cols, where, null, Statuses.DEFAULT_SORT_ORDER);
+			final Cursor cur = ContentResolverUtils
+					.query(resolver, uri, cols, where, null, Statuses.DEFAULT_SORT_ORDER);
 			if (cur == null) {
 				continue;
 			}
@@ -1718,7 +1722,7 @@ public final class Utils implements Constants {
 		int idx = 0;
 		for (final long account_id : account_ids) {
 			final String where = Statuses.ACCOUNT_ID + " = " + account_id;
-			final Cursor cur = resolver.query(uri, cols, where, null, DirectMessages.MESSAGE_ID);
+			final Cursor cur = ContentResolverUtils.query(resolver, uri, cols, where, null, DirectMessages.MESSAGE_ID);
 			if (cur == null) {
 				continue;
 			}
@@ -1746,7 +1750,7 @@ public final class Utils implements Constants {
 		int idx = 0;
 		for (final long account_id : account_ids) {
 			final String where = Statuses.ACCOUNT_ID + " = " + account_id;
-			final Cursor cur = resolver.query(uri, cols, where, null, Statuses.STATUS_ID);
+			final Cursor cur = ContentResolverUtils.query(resolver, uri, cols, where, null, Statuses.STATUS_ID);
 			if (cur == null) {
 				continue;
 			}
@@ -1874,7 +1878,7 @@ public final class Utils implements Constants {
 		final ContentResolver resolver = context.getContentResolver();
 		final String where = Statuses.ACCOUNT_ID + " = " + account_id;
 		final String[] projection = new String[] { Statuses.STATUS_ID };
-		final Cursor cur = resolver.query(uri, projection, where, null, null);
+		final Cursor cur = ContentResolverUtils.query(resolver, uri, projection, where, null, null);
 		if (cur != null) {
 			final int idx = cur.getColumnIndexOrThrow(Statuses.STATUS_ID);
 			cur.moveToFirst();
@@ -2019,9 +2023,6 @@ public final class Utils implements Constants {
 
 	public static Twitter getTwitterInstance(final Context context, final long account_id,
 			final boolean include_entities, final boolean include_retweets, final boolean use_apache_httpclient) {
-		if (Thread.currentThread().getId() == 1) {
-			Log.w(LOGTAG, "getTwitterInstance called from UI thread", new IllegalStateException());
-		}
 		if (context == null) return null;
 		final TwidereApplication app = TwidereApplication.getInstance(context);
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -2035,8 +2036,8 @@ public final class Utils implements Constants {
 		final String pref_consumer_secret = prefs.getString(PREFERENCE_KEY_CONSUMER_SECRET, TWITTER_CONSUMER_SECRET);
 		final StringBuilder where = new StringBuilder();
 		where.append(Accounts.ACCOUNT_ID + " = " + account_id);
-		final Cursor c = context.getContentResolver().query(Accounts.CONTENT_URI, Accounts.COLUMNS, where.toString(),
-				null, null);
+		final Cursor c = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI,
+				Accounts.COLUMNS, where.toString(), null, null);
 		if (c == null) return null;
 		try {
 			if (c.getCount() > 0) {
@@ -2193,8 +2194,8 @@ public final class Utils implements Constants {
 
 	public static void initAccountColor(final Context context) {
 		if (context == null) return;
-		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI,
-				new String[] { Accounts.ACCOUNT_ID, Accounts.USER_COLOR }, null, null, null);
+		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI, new String[] {
+				Accounts.ACCOUNT_ID, Accounts.USER_COLOR }, null, null, null);
 		if (cur == null) return;
 		final int id_idx = cur.getColumnIndex(Accounts.ACCOUNT_ID), color_idx = cur.getColumnIndex(Accounts.USER_COLOR);
 		cur.moveToFirst();
@@ -2310,7 +2311,7 @@ public final class Utils implements Constants {
 		if (context == null) return false;
 		final ContentResolver resolver = context.getContentResolver();
 		final String where = Accounts.ACCOUNT_ID + " = " + account_id;
-		final Cursor cur = resolver.query(Accounts.CONTENT_URI, new String[0], where, null, null);
+		final Cursor cur = ContentResolverUtils.query(resolver, Accounts.CONTENT_URI, new String[0], where, null, null);
 		try {
 			return cur != null && cur.getCount() > 0;
 		} finally {
@@ -2324,8 +2325,8 @@ public final class Utils implements Constants {
 		if (context == null) return false;
 		final ContentResolver resolver = context.getContentResolver();
 		final String where = Accounts.SCREEN_NAME + " = ?";
-		final Cursor cur = resolver.query(Accounts.CONTENT_URI, new String[0], where, new String[] { screen_name },
-				null);
+		final Cursor cur = ContentResolverUtils.query(resolver, Accounts.CONTENT_URI, new String[0], where,
+				new String[] { screen_name }, null);
 		try {
 			return cur != null && cur.getCount() > 0;
 		} finally {
@@ -3528,14 +3529,23 @@ public final class Utils implements Constants {
 				favorite.setTitle(R.string.favorite);
 			}
 		}
+		final MenuItem more_item = menu.findItem(R.id.more_submenu);
+		final Menu more_submenu = more_item != null && more_item.hasSubMenu() ? more_item.getSubMenu() : menu;
+		more_submenu.removeGroup(MENU_GROUP_STATUS_EXTENSION);
 		final Intent extension_intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_STATUS);
 		final Bundle extension_extras = new Bundle();
 		extension_extras.putParcelable(EXTRA_STATUS, status);
 		extension_intent.putExtras(extension_extras);
-		final MenuItem more_submenu = menu.findItem(R.id.more_submenu);
-		final Menu menu_to_add = more_submenu != null ? more_submenu.getSubMenu() : menu;
-		menu_to_add.removeGroup(MENU_GROUP_STATUS_EXTENSION);
-		addIntentToMenu(context, menu_to_add, extension_intent, MENU_GROUP_STATUS_EXTENSION);
+		addIntentToMenu(context, more_submenu, extension_intent, MENU_GROUP_STATUS_EXTENSION);
+		final MenuItem share_item = menu.findItem(R.id.share_submenu);
+		final Menu share_submenu = share_item != null && share_item.hasSubMenu() ? share_item.getSubMenu() : null;
+		if (share_submenu != null) {
+			final Intent share_intent = new Intent(Intent.ACTION_SEND);
+			share_intent.setType("text/plain");
+			share_intent.putExtra(Intent.EXTRA_TEXT, "@" + status.user_screen_name + ": " + status.text_plain);
+			share_submenu.removeGroup(MENU_GROUP_STATUS_SHARE);
+			addIntentToMenu(context, share_submenu, share_intent, MENU_GROUP_STATUS_SHARE);
+		}
 	}
 
 	public static void setMenuItemAvailability(final Menu menu, final int id, final boolean available) {
