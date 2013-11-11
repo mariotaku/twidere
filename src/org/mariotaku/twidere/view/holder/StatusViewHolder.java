@@ -131,7 +131,9 @@ public class StatusViewHolder extends CardViewHolder {
 
 	public void setShowAsGap(final boolean show_gap) {
 		show_as_gap = show_gap;
-		card.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		if (card != null) {
+			card.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		}
 		if (gap_indicator != null) {
 			gap_indicator.setVisibility(!show_gap ? View.GONE : View.VISIBLE);
 		}

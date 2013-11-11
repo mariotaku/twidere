@@ -116,6 +116,7 @@ public class SlidingPaneView extends ViewGroup {
 
 	public SlidingPaneView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
+		setLayerType(LAYER_TYPE_HARDWARE, null);
 
 		final Resources res = getResources();
 
@@ -476,6 +477,7 @@ public class SlidingPaneView extends ViewGroup {
 		public LeftPaneLayout(final SlidingPaneView parent) {
 			super(parent.getContext());
 			this.parent = parent;
+			setLayerType(LAYER_TYPE_HARDWARE, null);
 		}
 
 		@Override
@@ -779,6 +781,7 @@ public class SlidingPaneView extends ViewGroup {
 		public RightPaneLayout(final SlidingPaneView parent) {
 			super(parent.getContext());
 			setOrientation(LinearLayout.HORIZONTAL);
+			setLayerType(LAYER_TYPE_HARDWARE, null);
 		}
 
 		@Override

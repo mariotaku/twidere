@@ -168,9 +168,11 @@
 
 	<TextView
 		android:id="@+id/list_gap_text"
-		android:layout_width="wrap_content"
+		android:layout_width="match_parent"
 		android:layout_height="48dp"
 		android:layout_gravity="center"
+		android:background="?android:selectableItemBackground"
+		android:duplicateParentState="true"
 		android:gravity="center"
 		android:singleLine="true"
 		android:text="@string/tap_to_load_more"

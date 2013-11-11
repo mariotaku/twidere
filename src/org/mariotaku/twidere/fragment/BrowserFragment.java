@@ -1,9 +1,8 @@
-package org.mariotaku.twidere.fragment.support;
+package org.mariotaku.twidere.fragment;
 
 import android.os.Bundle;
 import android.webkit.WebView;
 
-import org.mariotaku.twidere.fragment.BaseWebViewFragment;
 import org.mariotaku.twidere.util.ParseUtils;
 
 public class BrowserFragment extends BaseWebViewFragment {

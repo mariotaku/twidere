@@ -319,7 +319,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		if (shouldUseSmartBar()) {
 			getActivity().supportInvalidateOptionsMenu();
 		} else {
-			mMenuBar.inflate(R.menu.menu_status);
 			setMenuForStatus(getActivity(), mMenuBar.getMenu(), status);
 			mMenuBar.show();
 		}
@@ -453,6 +452,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mLocationContainer.setOnClickListener(this);
 		mRetweetView.setOnClickListener(this);
 		mMenuBar.setVisibility(shouldUseSmartBar() ? View.GONE : View.VISIBLE);
+		mMenuBar.inflate(R.menu.menu_status);
 		mMenuBar.setIsBottomBar(true);
 		mMenuBar.setOnMenuItemClickListener(mMenuItemClickListener);
 		getStatus(false);

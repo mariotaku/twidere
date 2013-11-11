@@ -565,6 +565,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	private void setupSlidingMenu() {
+		if (mSlidingMenu == null) return;
 		mSlidingMenu.setMode(SlidingMenu.LEFT);
 		mSlidingMenu.setShadowWidthRes(R.dimen.default_sliding_menu_shadow_width);
 		mSlidingMenu.setShadowDrawable(R.drawable.shadow_holo);

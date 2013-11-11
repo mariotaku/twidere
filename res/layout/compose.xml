@@ -41,6 +41,7 @@
 					android:layout_height="match_parent"
 					android:layout_marginLeft="-8dp"
 					android:layout_marginRight="-8dp"
+					android:contentDescription="@string/app_name"
 					android:paddingBottom="6dp"
 					android:paddingTop="6dp"
 					android:scaleType="centerInside"
@@ -136,7 +137,8 @@
 		<org.mariotaku.menubar.MenuBar
 			android:id="@+id/menu_bar"
 			android:layout_width="match_parent"
-			android:layout_height="?android:actionBarSize"/>
+			android:layout_height="?android:actionBarSize"
+			android:max="@integer/max_action_buttons_bottom"/>
 	</LinearLayout>
 
 </LinearLayout>
