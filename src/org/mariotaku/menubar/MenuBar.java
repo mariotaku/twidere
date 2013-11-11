@@ -3,8 +3,11 @@ package org.mariotaku.menubar;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -12,20 +15,23 @@ import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView.ScaleType;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import org.mariotaku.internal.menu.MenuImpl;
-import org.mariotaku.internal.menu.MenuItemUtils;
+import org.mariotaku.internal.menu.MenuUtils;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.accessor.ViewAccessor;
+
+import java.util.ArrayList;
 
 public class MenuBar extends LinearLayout implements MenuItem.OnMenuItemClickListener {
 
 	private final Menu mMenu;
 	private final Context mContext;
+	private final LayoutInflater mLayoutInflater;
 
 	private OnMenuItemClickListener mItemClickListener;
 	private PopupMenu mPopupMenu;
@@ -44,9 +50,12 @@ public class MenuBar extends LinearLayout implements MenuItem.OnMenuItemClickLis
 			ViewAccessor.setBackground(this, a.getDrawable(0));
 			a.recycle();
 		}
+		final TypedArray a = context.obtainStyledAttributes(attrs, new int[] { android.R.attr.max });
+		mMaxItemsShown = a.getInt(0, getResources().getInteger(R.integer.max_action_buttons));
+		a.recycle();
 		mContext = context;
-		mMenu = new MenuImpl(context);
-		mMaxItemsShown = getResources().getInteger(R.integer.max_action_buttons);
+		mLayoutInflater = LayoutInflater.from(context);
+		mMenu = MenuUtils.createMenu(context);
 		setOrientation(HORIZONTAL);
 	}
 
@@ -99,26 +108,30 @@ public class MenuBar extends LinearLayout implements MenuItem.OnMenuItemClickLis
 			mPopupMenu.dismiss();
 		}
 		removeAllViews();
-		for (final MenuItem item : ((MenuImpl) mMenu).getMenuItems()) {
+		int actionButtonCount = 0;
+		final ArrayList<MenuItem> itemsNotShowing = new ArrayList<MenuItem>();
+		for (int i = 0, j = mMenu.size(); i < j; i++) {
+			final MenuItem item = mMenu.getItem(i);
 			final LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 					ViewGroup.LayoutParams.MATCH_PARENT);
 			params.weight = 1;
-
-			final View actionView = item.getActionView(), view;
-			if (actionView != null) {
-				view = actionView;
+			final int showAsActionFlags = MenuUtils.getShowAsActionFlags(item);
+			final boolean showIfRoom = (showAsActionFlags & MenuItem.SHOW_AS_ACTION_IF_ROOM) != 0;
+			final boolean showAlways = (showAsActionFlags & MenuItem.SHOW_AS_ACTION_ALWAYS) != 0;
+			if (showIfRoom && actionButtonCount < mMaxItemsShown || showAlways) {
+				if (item.isVisible()) {
+					addView(createViewForMenuItem(item), params);
+				}
+				actionButtonCount++;
 			} else {
-				final ImageButton actionButton = new ImageButton(mContext, null, android.R.attr.actionButtonStyle);
-				actionButton.setImageDrawable(item.getIcon());
-				actionButton.setScaleType(ScaleType.CENTER);
-				actionButton.setContentDescription(item.getTitle());
-				actionButton.setEnabled(item.isEnabled());
-				actionButton.setOnClickListener(new ActionViewOnClickListener(item, this));
-				actionButton.setOnLongClickListener(new OnActionItemLongClickListener(item, this));
-				view = actionButton;
+				itemsNotShowing.add(item);
 			}
-			view.setVisibility(item.isVisible() ? View.VISIBLE : View.GONE);
-			addView(view, params);
+		}
+		if (!itemsNotShowing.isEmpty()) {
+			final LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+					ViewGroup.LayoutParams.MATCH_PARENT);
+			params.weight = 1;
+			addView(createMoreOverflowButton(itemsNotShowing), params);
 		}
 		invalidate();
 	}
@@ -129,6 +142,37 @@ public class MenuBar extends LinearLayout implements MenuItem.OnMenuItemClickLis
 			mPopupMenu.dismiss();
 		}
 		super.onDetachedFromWindow();
+	}
+
+	private View createMoreOverflowButton(final ArrayList<MenuItem> itemsNotShowing) {
+		final ImageButton view = new ImageButton(mContext, null, android.R.attr.actionOverflowButtonStyle);
+		view.setOnClickListener(new MoreOverflowOnClickListener(itemsNotShowing, this));
+		return view;
+	}
+
+	private View createViewForMenuItem(final MenuItem item) {
+		final View actionView = item.getActionView(), view;
+		if (actionView != null) {
+			view = actionView;
+		} else {
+			final int showAsActionFlags = MenuUtils.getShowAsActionFlags(item);
+			final Drawable icon = item.getIcon();
+			final CharSequence title = item.getTitle();
+			final boolean isEnabled = item.isEnabled();
+			final boolean showText = (showAsActionFlags & MenuItem.SHOW_AS_ACTION_WITH_TEXT) != 0;
+			final boolean hasIcon = icon != null, hasTitle = !TextUtils.isEmpty(title);
+			view = mLayoutInflater.inflate(R.layout.menubar_item, this, false);
+			view.setOnClickListener(isEnabled ? new ActionViewOnClickListener(item, this) : null);
+			view.setOnLongClickListener(isEnabled && !showText ? new OnActionItemLongClickListener(item, this) : null);
+			final ImageView iconView = (ImageView) view.findViewById(android.R.id.icon);
+			final TextView titleView = (TextView) view.findViewById(android.R.id.title);
+			iconView.setVisibility(hasIcon ? View.VISIBLE : View.GONE);
+			iconView.setImageDrawable(icon);
+			iconView.setContentDescription(item.getTitle());
+			titleView.setText(title);
+			titleView.setVisibility(hasTitle && (showText || !hasIcon) ? View.VISIBLE : View.GONE);
+		}
+		return view;
 	}
 
 	private boolean isBottomBar() {
@@ -180,6 +224,25 @@ public class MenuBar extends LinearLayout implements MenuItem.OnMenuItemClickLis
 		}
 	}
 
+	private static class MoreOverflowOnClickListener implements OnClickListener {
+		private final ArrayList<MenuItem> menuItems;
+		private final MenuBar menuBar;
+
+		private MoreOverflowOnClickListener(final ArrayList<MenuItem> menuItems, final MenuBar menuBar) {
+			this.menuItems = menuItems;
+			this.menuBar = menuBar;
+		}
+
+		@Override
+		public void onClick(final View actionView) {
+			if (menuItems.isEmpty()) return;
+			final PopupMenu popupMenu = PopupMenu.getInstance(actionView.getContext(), actionView);
+			popupMenu.setOnMenuItemClickListener(menuBar);
+			popupMenu.setMenu(MenuUtils.createMenu(menuBar.getContext(), menuItems));
+			menuBar.showPopupMenu(popupMenu);
+		}
+	}
+
 	private static class OnActionItemLongClickListener implements OnLongClickListener {
 
 		private final MenuItem item;
@@ -193,7 +256,7 @@ public class MenuBar extends LinearLayout implements MenuItem.OnMenuItemClickLis
 		@Override
 		public boolean onLongClick(final View v) {
 			// Don't show the cheat sheet for items that already show text.
-			if ((MenuItemUtils.getShowAsActionFlags(item) & MenuItem.SHOW_AS_ACTION_WITH_TEXT) != 0) return false;
+			if ((MenuUtils.getShowAsActionFlags(item) & MenuItem.SHOW_AS_ACTION_WITH_TEXT) != 0) return false;
 			final int[] screenPos = new int[2];
 			final Rect displayFrame = new Rect();
 			v.getLocationOnScreen(screenPos);

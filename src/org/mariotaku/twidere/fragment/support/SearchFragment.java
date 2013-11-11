@@ -21,7 +21,7 @@ import android.widget.LinearLayout.LayoutParams;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.support.LinkHandlerActivity;
-import org.mariotaku.twidere.adapter.SupportTabsAdapter;
+import org.mariotaku.twidere.adapter.support.SupportTabsAdapter;
 import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;
 import org.mariotaku.twidere.fragment.iface.SupportFragmentCallback;
 import org.mariotaku.twidere.graphic.DropShadowDrawable;

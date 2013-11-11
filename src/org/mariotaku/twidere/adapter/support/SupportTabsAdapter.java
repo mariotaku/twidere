@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.adapter;
+package org.mariotaku.twidere.adapter.support;
 
 import static org.mariotaku.twidere.util.CustomTabUtils.getTabIconDrawable;
 import static org.mariotaku.twidere.util.Utils.announceForAccessibilityCompat;
@@ -27,7 +27,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;
@@ -40,7 +39,8 @@ import org.mariotaku.twidere.view.TabPageIndicator.TabProvider;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class SupportTabsAdapter extends FragmentStatePagerAdapter implements TabProvider, TabListener, Constants {
+public class SupportTabsAdapter extends SupportFixedFragmentStatePagerAdapter implements TabProvider, TabListener,
+		Constants {
 
 	private final ArrayList<SupportTabSpec> mTabs = new ArrayList<SupportTabSpec>();
 

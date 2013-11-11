@@ -19,7 +19,7 @@
 	<item
 		android:id="@id/view"
 		android:icon="@drawable/ic_menu_reply"
-		android:showAsAction="ifRoom"
+		android:showAsAction="always"
 		android:title="@string/original_status"
 		android:visible="false"/>
 	<item

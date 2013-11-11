@@ -15,7 +15,7 @@ import android.widget.ListPopupWindow;
 import android.widget.PopupWindow.OnDismissListener;
 
 import org.mariotaku.internal.menu.MenuAdapter;
-import org.mariotaku.internal.menu.MenuImpl;
+import org.mariotaku.internal.menu.MenuUtils;
 import org.mariotaku.twidere.R;
 
 public class PopupMenu implements OnDismissListener, OnItemClickListener, OnTouchListener {
@@ -41,7 +41,7 @@ public class PopupMenu implements OnDismissListener, OnItemClickListener, OnTouc
 		mContext = context;
 		mView = view;
 		mAdapter = new MenuAdapter(context);
-		mMenu = new MenuImpl(mContext, mAdapter);
+		mMenu = MenuUtils.createMenu(mContext, mAdapter);
 		mWindow = new ListPopupWindow(context);
 		mWindow.setInputMethodMode(ListPopupWindow.INPUT_METHOD_NOT_NEEDED);
 		mWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);

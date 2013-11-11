@@ -71,7 +71,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.ShareCompat;
 import android.support.v4.util.LongSparseArray;
 import android.support.v4.view.accessibility.AccessibilityEventCompat;
 import android.text.format.DateFormat;

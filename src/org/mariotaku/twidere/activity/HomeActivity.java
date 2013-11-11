@@ -65,7 +65,7 @@ import edu.ucdavis.earlybird.ProfilingUtil;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.support.DualPaneActivity;
 import org.mariotaku.twidere.activity.support.SignInActivity;
-import org.mariotaku.twidere.adapter.SupportTabsAdapter;
+import org.mariotaku.twidere.adapter.support.SupportTabsAdapter;
 import org.mariotaku.twidere.fragment.iface.IBaseFragment;
 import org.mariotaku.twidere.fragment.iface.IBasePullToRefreshFragment;
 import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;

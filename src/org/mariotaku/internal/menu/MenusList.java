@@ -11,11 +11,22 @@ final class MenusList extends ArrayList<MenuItem> {
 	private final MenuAdapter mAdapter;
 
 	public MenusList() {
-		this(null);
+		this(null, null);
+	}
+
+	public MenusList(final Collection<MenuItem> items) {
+		this(null, items);
 	}
 
 	public MenusList(final MenuAdapter adapter) {
+		this(adapter, null);
+	}
+
+	public MenusList(final MenuAdapter adapter, final Collection<MenuItem> items) {
 		mAdapter = adapter;
+		if (items != null) {
+			addAll(items);
+		}
 	}
 
 	@Override

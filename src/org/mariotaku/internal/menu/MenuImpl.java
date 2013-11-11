@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class MenuImpl implements Menu {
@@ -16,12 +17,20 @@ public class MenuImpl implements Menu {
 	private final List<MenuItem> mMenuItems;
 	private final Context mContext;
 
-	public MenuImpl(final Context context) {
-		this(context, null);
+	MenuImpl(final Context context) {
+		this(context, null, null);
 	}
 
-	public MenuImpl(final Context context, final MenuAdapter adapter) {
-		mMenuItems = new MenusList(adapter);
+	MenuImpl(final Context context, final Collection<MenuItem> items) {
+		this(context, null, items);
+	}
+
+	MenuImpl(final Context context, final MenuAdapter adapter) {
+		this(context, adapter, null);
+	}
+
+	MenuImpl(final Context context, final MenuAdapter adapter, final Collection<MenuItem> items) {
+		mMenuItems = new MenusList(adapter, items);
 		mContext = context;
 	}
 
