@@ -85,11 +85,13 @@
 						android:id="@+id/time"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
+						android:layout_alignBottom="@+id/name_frame"
 						android:layout_alignParentRight="true"
-						android:layout_alignParentTop="true"
+						android:layout_alignTop="@+id/name_frame"
 						android:layout_alignWithParentIfMissing="true"
 						android:drawablePadding="4dp"
 						android:gravity="center_vertical|right"
+						android:singleLine="true"
 						android:textColor="?android:attr/textColorSecondary"/>
 				</RelativeLayout>
 			</LinearLayout>
