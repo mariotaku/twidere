@@ -1269,13 +1269,19 @@ public final class Utils implements Constants {
 		final View view = w.getDecorView();
 		final boolean prevState = view.isDrawingCacheEnabled();
 		final int prevQuality = view.getDrawingCacheQuality();
-		// this is the important code :)
-		// Without it the view will have a dimension of 0,0 and the bitmap will
-		// be null
 		view.setDrawingCacheEnabled(true);
 		view.setDrawingCacheQuality(cacheQuality);
 		view.buildDrawingCache();
 		final Bitmap b = Bitmap.createBitmap(view.getDrawingCache());
+		final Rect frame = new Rect();
+		view.getWindowVisibleDisplayFrame(frame);
+		// Why draw a black rectangle here?
+		// If the activity uses light theme, the screenshot will have a white
+		// bar on the top, this workaround can solve that issue.
+		final Canvas c = new Canvas(b);
+		final Paint paint = new Paint();
+		paint.setColor(Color.BLACK);
+		c.drawRect(frame.left, 0, frame.right, frame.top, paint);
 		view.setDrawingCacheEnabled(prevState);
 		view.setDrawingCacheQuality(prevQuality);
 		return b;
