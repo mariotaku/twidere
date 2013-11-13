@@ -118,6 +118,7 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 				if (!isEditMode()) {
 					if (conf == null) return;
 					final boolean account_id_required = conf.getAccountRequirement() == CustomTabConfiguration.ACCOUNT_REQUIRED;
+					final boolean no_account_id = conf.getAccountRequirement() == CustomTabConfiguration.ACCOUNT_NONE;
 					final boolean secondary_field_required = conf.getSecondaryFieldType() != CustomTabConfiguration.FIELD_TYPE_NONE;
 					final boolean account_id_invalid = getAccountId() <= 0;
 					final boolean secondary_field_invalid = mSecondaryFieldValue == null;
@@ -128,8 +129,12 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 					}
 					final Intent data = new Intent();
 					final Bundle args = new Bundle();
-					args.putLong(EXTRA_ACCOUNT_ID, getAccountId());
-					addSecondaryFieldValueToArguments(args);
+					if (!no_account_id) {
+						args.putLong(EXTRA_ACCOUNT_ID, getAccountId());
+					}
+					if (secondary_field_required) {
+						addSecondaryFieldValueToArguments(args);
+					}
 					data.putExtra(EXTRA_TYPE, mTabType);
 					data.putExtra(EXTRA_NAME, ParseUtils.parseString(mEditTabName.getText()));
 					data.putExtra(EXTRA_ICON, getIconKey());

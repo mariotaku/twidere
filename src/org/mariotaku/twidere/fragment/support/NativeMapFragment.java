@@ -24,14 +24,14 @@ import android.os.Bundle;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.util.MapInterface;
 
-public class NativeMapFragment extends MapFragment implements Constants, MapInterface {
+public class NativeMapFragment extends SupportMapFragment implements Constants, MapInterface {
 
 	private GoogleMap mMapView;
 

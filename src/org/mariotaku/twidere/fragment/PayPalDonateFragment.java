@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.fragment.support;
+package org.mariotaku.twidere.fragment;
 
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.getDefaultAccountScreenName;
@@ -35,13 +35,12 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.fragment.BaseFragment;
 import org.mariotaku.twidere.util.ParseUtils;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
 
-public class DonateFragment extends BaseFragment implements OnClickListener, TextWatcher {
+public class PayPalDonateFragment extends BaseFragment implements OnClickListener, TextWatcher {
 
 	private EditText mEditName, mEditAmount;
 	private Button mDonateButton;

@@ -180,7 +180,7 @@ public class SettingsActivity extends BasePreferenceActivity {
 			return getItemViewType(position) != HEADER_TYPE_CATEGORY;
 		}
 
-		static int getHeaderType(final Header header) {
+		private static int getHeaderType(final Header header) {
 			if (header.fragment == null && header.intent == null)
 				return HEADER_TYPE_CATEGORY;
 			else

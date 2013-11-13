@@ -214,6 +214,7 @@
 	<string name="solid_color_background_summary">This may be useful if screen of your device is AMOLED.</string>
 	<string name="following_you">Following you</string>
 	<string name="user_list">List</string>
+	<string name="user_lists">Lists</string>
 	<string name="trends_location">Trends location</string>
 	<string name="trends_location_summary">Set location for local trends.</string>
 	<string name="trends">Trends</string>
@@ -549,5 +550,6 @@
 	<string name="account_options">Account options</string>
 	<string name="show_in_timeline">Show in timeline</string>
 	<string name="cards">Cards</string>
+	<string name="no_tab_hint">No tab</string>
 
 </resources>

@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.fragment;
 
 import android.os.Bundle;
+import android.preference.PreferenceScreen;
 
 import org.mariotaku.twidere.util.Utils;
 
@@ -28,6 +29,10 @@ public class SettingsDetailsFragment extends BasePreferenceFragment {
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		final PreferenceScreen screen = getPreferenceScreen();
+		if (screen != null) {
+			screen.removeAll();
+		}
 		final Bundle args = getArguments();
 		final String rawResId = args != null ? args.getString(EXTRA_RESID) : null;
 		final int resId = Utils.getResId(getActivity(), rawResId);

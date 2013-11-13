@@ -19,25 +19,24 @@
 
 package org.mariotaku.twidere.activity;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
-import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
-
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.support.TwidereSwipeBackActivity;
 import org.mariotaku.twidere.fragment.support.NativeMapFragment;
 import org.mariotaku.twidere.fragment.support.WebMapFragment;
 import org.mariotaku.twidere.util.MapInterface;
 
-public class MapViewerActivity extends SwipeBackActivity implements Constants {
+public class MapViewerActivity extends TwidereSwipeBackActivity implements Constants {
 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
@@ -53,7 +52,7 @@ public class MapViewerActivity extends SwipeBackActivity implements Constants {
 				break;
 			}
 			case MENU_CENTER: {
-				final Fragment fragment = getFragmentManager().findFragmentById(android.R.id.content);
+				final Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
 				if (!(fragment instanceof MapInterface)) {
 					break;
 				}
@@ -89,7 +88,7 @@ public class MapViewerActivity extends SwipeBackActivity implements Constants {
 		}
 		final Fragment fragment = isNativeMapSupported() ? new NativeMapFragment() : new WebMapFragment();
 		fragment.setArguments(bundle);
-		final FragmentTransaction ft = getFragmentManager().beginTransaction();
+		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		ft.replace(android.R.id.content, fragment).commit();
 	}
 

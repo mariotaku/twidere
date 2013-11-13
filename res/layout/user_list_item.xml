@@ -13,20 +13,11 @@
 		android:layout_marginTop="4dp"
 		android:background="?cardItemBackground">
 
-		<View
-			android:id="@+id/activated_indicator"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_alignBottom="@+id/content"
-			android:layout_alignTop="@+id/content"
-			android:background="?android:activatedBackgroundIndicator"
-			android:duplicateParentState="true"/>
-
 		<org.mariotaku.twidere.view.ColorLabelLinearLayout
 			android:id="@+id/content"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:background="?android:selectableItemBackground"
+			android:background="?cardItemSelector"
 			android:duplicateParentState="true"
 			android:orientation="vertical">
 

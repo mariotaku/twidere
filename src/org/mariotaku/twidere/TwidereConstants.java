@@ -1,7 +1,7 @@
 /*
  *				Twidere - Twitter client for Android
- * 
- * Copyright (C) 2012 Mariotaku Lee <mariotaku.lee@gmail.com>
+ *
+ * Copyright (C) 2012-2013 Mariotaku Lee <mariotaku.lee@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.mariotaku.twidere;
 
 import org.mariotaku.twidere.provider.TweetStore;
@@ -421,6 +420,9 @@ public interface TwidereConstants {
 	public static final String EXTRA_EXTRA_INTENT = "extra_intent";
 	public static final String EXTRA_IS_MY_ACCOUNT = "is_my_account";
 	public static final String EXTRA_TAB_TYPE = "tab_type";
+	public static final String EXTRA_ACCOUNT = "account";
+	public static final String EXTRA_ACTIVITY_SCREENSHOT = "activity_screenshot";
+	public static final String EXTRA_ACTIVITY_SCREENSHOT_ENCODED = "activity_screenshot_encoded";
 
 	public static final int MENU_GROUP_STATUS_EXTENSION = 10;
 	public static final int MENU_GROUP_COMPOSE_EXTENSION = 11;

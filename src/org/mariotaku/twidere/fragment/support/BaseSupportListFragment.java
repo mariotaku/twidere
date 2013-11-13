@@ -50,7 +50,7 @@ public class BaseSupportListFragment extends ListFragment implements IBaseFragme
 	private boolean mActivityFirstCreated;
 	private boolean mIsInstanceStateSaved;
 
-	private boolean mReachedBottom, mNotReachedBottomBefore = true;
+	private boolean mReachedBottom, mNotReachedBottomBefore;
 
 	public final TwidereApplication getApplication() {
 		return TwidereApplication.getInstance(getActivity());
@@ -109,6 +109,7 @@ public class BaseSupportListFragment extends ListFragment implements IBaseFragme
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		mNotReachedBottomBefore = true;
 		mIsInstanceStateSaved = savedInstanceState != null;
 		final ListView lv = getListView();
 		lv.setOnScrollListener(this);

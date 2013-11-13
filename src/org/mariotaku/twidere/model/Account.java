@@ -22,6 +22,8 @@ package org.mariotaku.twidere.model;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 
@@ -29,7 +31,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Account {
+public class Account implements Parcelable {
+
+	public static final Parcelable.Creator<Account> CREATOR = new Parcelable.Creator<Account>() {
+
+		@Override
+		public Account createFromParcel(final Parcel in) {
+			return new Account(in);
+		}
+
+		@Override
+		public Account[] newArray(final int size) {
+			return new Account[size];
+		}
+	};
 
 	public final String screen_name, name, profile_image_url, profile_banner_url;
 	public final long account_id;
@@ -48,6 +63,17 @@ public class Account {
 		is_activated = indices.is_activated != -1 ? cursor.getInt(indices.is_activated) == 1 : false;
 	}
 
+	public Account(final Parcel source) {
+		is_dummy = source.readInt() == 1;
+		is_activated = source.readInt() == 1;
+		account_id = source.readLong();
+		name = source.readString();
+		screen_name = source.readString();
+		profile_image_url = source.readString();
+		profile_banner_url = source.readString();
+		user_color = source.readInt();
+	}
+
 	private Account() {
 		is_dummy = true;
 		screen_name = null;
@@ -60,10 +86,27 @@ public class Account {
 	}
 
 	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
 	public String toString() {
 		return "Account{screen_name=" + screen_name + ", name=" + name + ", profile_image_url=" + profile_image_url
 				+ ", profile_banner_url=" + profile_banner_url + ", account_id=" + account_id + ", user_color="
 				+ user_color + ", is_activated=" + is_activated + "}";
+	}
+
+	@Override
+	public void writeToParcel(final Parcel out, final int flags) {
+		out.writeInt(is_dummy ? 1 : 0);
+		out.writeInt(is_activated ? 1 : 0);
+		out.writeLong(account_id);
+		out.writeString(name);
+		out.writeString(screen_name);
+		out.writeString(profile_image_url);
+		out.writeString(profile_banner_url);
+		out.writeInt(user_color);
 	}
 
 	public static Account dummyInstance() {

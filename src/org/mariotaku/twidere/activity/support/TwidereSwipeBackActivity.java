@@ -26,8 +26,8 @@ import android.os.Bundle;
 @SuppressLint("Registered")
 public class TwidereSwipeBackActivity extends BaseSupportThemedSwipeBackActivity {
 
-	protected int activityCloseEnterAnimation;
-	protected int activityCloseExitAnimation;
+	private int activityCloseEnterAnimation;
+	private int activityCloseExitAnimation;
 
 	@Override
 	public void finish() {
@@ -50,6 +50,5 @@ public class TwidereSwipeBackActivity extends BaseSupportThemedSwipeBackActivity
 		activityCloseExitAnimation = activityStyle.getResourceId(1, 0);
 		activityStyle.recycle();
 		super.onCreate(savedInstanceState);
-		setOverrideExitAniamtion(false);
 	}
 }

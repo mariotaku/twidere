@@ -88,4 +88,7 @@ public class ImageLoaderWrapper implements Constants {
 		mImageLoader.displayImage(url, view, mProfileImageDisplayOptions);
 	}
 
+	public void loadProfileImage(final String url, final ImageLoadingListener listener) {
+		mImageLoader.loadImage(url, mProfileImageDisplayOptions, listener);
+	}
 }

@@ -36,6 +36,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.view.MotionEvent;
 import android.widget.AbsListView;
 
 import org.mariotaku.querybuilder.Columns.Column;
@@ -92,6 +93,15 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	}
 
 	@Override
+	public boolean onDown(final MotionEvent e) {
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		if (twitter != null) {
+			twitter.clearNotification(getNotificationIdToClear());
+		}
+		return super.onDown(e);
+	}
+
+	@Override
 	public void onPostStart() {
 		if (!isActivityFirstCreated()) {
 			getLoaderManager().restartLoader(0, null, this);
@@ -127,10 +137,6 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 		switch (scrollState) {
 			case SCROLL_STATE_FLING:
 			case SCROLL_STATE_TOUCH_SCROLL: {
-				final AsyncTwitterWrapper twitter = getTwitterWrapper();
-				if (twitter != null) {
-					twitter.clearNotification(getNotificationIdToClear());
-				}
 				break;
 			}
 			case SCROLL_STATE_IDLE:

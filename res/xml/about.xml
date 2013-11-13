@@ -25,7 +25,7 @@
 		android:key="cat_donate"
 		android:title="@string/donate">
 		<Preference
-			android:fragment="org.mariotaku.twidere.fragment.DonateFragment"
+			android:fragment="org.mariotaku.twidere.fragment.PayPalDonateFragment"
 			android:title="@string/donate_via_paypal"/>
 		<Preference android:title="@string/donate_via_alipay">
 			<intent

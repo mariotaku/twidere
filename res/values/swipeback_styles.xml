@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<style name="SwipeBackLayout">
+		<item name="edgeSize">50dip</item>
+		<item name="shadowLeft">@drawable/swipeback_shadow_left</item>
+		<item name="shadowRight">@drawable/swipeback_shadow_right</item>
+		<item name="shadowBottom">@drawable/swipeback_shadow_bottom</item>
+	</style>
+
+</resources>

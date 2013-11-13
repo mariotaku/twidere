@@ -20,98 +20,69 @@
 package org.mariotaku.twidere.activity.support;
 
 import android.annotation.SuppressLint;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
+
+import org.mariotaku.twidere.util.ThemeUtils;
 
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
 import me.imid.swipebacklayout.lib.SwipeBackLayout.SwipeListener;
-
-import org.mariotaku.twidere.util.ThemeUtils;
-import org.mariotaku.twidere.util.accessor.ViewAccessor;
+import me.imid.swipebacklayout.lib.app.SwipeBackActivityBase;
+import me.imid.swipebacklayout.lib.app.SwipeBackActivityHelper;
 
 @SuppressLint("Registered")
-public class BaseSupportThemedSwipeBackActivity extends BaseSupportActivity {
+public class BaseSupportThemedSwipeBackActivity extends BaseSupportActivity implements SwipeBackActivityBase {
 
-	private SwipeBackLayout mSwipeBackLayout;
-
-	private boolean mOverrideExitAniamtion = true;
-
-	private boolean mIsFinishing;
+	private SwipeBackActivityHelper mHelper;
 
 	@Override
 	public View findViewById(final int id) {
 		final View v = super.findViewById(id);
-		if (v != null) return v;
-		return mSwipeBackLayout != null ? mSwipeBackLayout.findViewById(id) : null;
+		if (v == null && mHelper != null) return mHelper.findViewById(id);
+		return v;
 	}
 
 	@Override
-	public void finish() {
-		if (mOverrideExitAniamtion && !mIsFinishing) {
-			scrollToFinishActivity();
-			mIsFinishing = true;
-			return;
-		}
-		mIsFinishing = false;
-		super.finish();
-	}
-
 	public SwipeBackLayout getSwipeBackLayout() {
-		return mSwipeBackLayout;
+		return mHelper.getSwipeBackLayout();
 	}
 
 	public boolean isSwiping() {
-		return mSwipeBackLayout != null && mSwipeBackLayout.isSwiping();
-	}
-
-	/**
-	 * Scroll out contentView and finish the activity
-	 */
-	public void scrollToFinishActivity() {
-		if (mSwipeBackLayout == null) return;
-		mSwipeBackLayout.scrollToFinishActivity();
-	}
-
-	/**
-	 * Override Exit Animation
-	 * 
-	 * @param override
-	 */
-	public void setOverrideExitAniamtion(final boolean override) {
-		mOverrideExitAniamtion = override;
-	}
-
-	public void setSwipeBackEnable(final boolean enable) {
-		if (mSwipeBackLayout == null) return;
-		mSwipeBackLayout.setEnableGesture(enable);
-	}
-
-	public void setSwipeListener(final SwipeListener listener) {
-		if (mSwipeBackLayout == null) return;
-		mSwipeBackLayout.setSwipeListener(listener);
+		final SwipeBackLayout swipeBackLayout = getSwipeBackLayout();
+		return swipeBackLayout != null && swipeBackLayout.isSwiping();
 	}
 
 	@Override
-	protected int getThemeResource() {
-		return ThemeUtils.getSwipeBackThemeResource(this);
+	public void scrollToFinishActivity() {
+		getSwipeBackLayout().scrollToFinishActivity();
+	}
+
+	@Override
+	public void setSwipeBackEnable(final boolean enable) {
+		getSwipeBackLayout().setEnableGesture(enable);
+	}
+
+	public void setSwipeListener(final SwipeListener listener) {
+		final SwipeBackLayout swipeBackLayout = getSwipeBackLayout();
+		if (swipeBackLayout == null) return;
+		swipeBackLayout.setSwipeListener(listener);
 	}
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		final Window w = getWindow();
-		w.setBackgroundDrawable(new ColorDrawable(0));
-		ViewAccessor.setBackground(w.getDecorView(), null);
-		mSwipeBackLayout = new SwipeBackLayout(this);
+		mHelper = new SwipeBackActivityHelper(this);
+		mHelper.onActivtyCreate();
 	}
 
 	@Override
 	protected void onPostCreate(final Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-		if (mSwipeBackLayout != null) {
-			mSwipeBackLayout.attachToActivity(this);
-		}
+		mHelper.onPostCreate();
+	}
+
+	@Override
+	protected int getThemeResource() {
+		return ThemeUtils.getSwipeBackThemeResource(this);
 	}
 }

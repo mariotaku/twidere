@@ -5,8 +5,8 @@
 		<item name="android:background">@drawable/ab_twidere_solid_color_holo</item>
 	</style>
 
-	<style name="Widget.Twidere.ActionBar.Dark" parent="android:Widget.Holo.ActionBar">
-		<item name="android:background">@drawable/ab_twidere_transparent_dark_holo</item>
+	<style name="Widget.Twidere.ActionBar.Dark" parent="android:Widget.Holo.ActionBar.Solid">
+		<item name="android:background">@drawable/ab_twidere_solid_dark_holo</item>
 	</style>
 
 	<style name="Widget.Twidere.ActionBar.Light" parent="android:Widget.Holo.Light.ActionBar.Solid">
@@ -63,6 +63,8 @@
 
 	<style name="Animation.SwipeBack" parent="android:Animation.Activity">
 		<item name="android:activityOpenEnterAnimation">@anim/swipeback_open_enter</item>
+		<item name="android:activityOpenExitAnimation">@anim/swipeback_open_exit</item>
+		<item name="android:activityCloseEnterAnimation">@anim/swipeback_close_enter</item>
 		<item name="android:activityCloseExitAnimation">@anim/swipeback_close_exit</item>
 	</style>
 
@@ -106,9 +108,11 @@
 
 	<style name="SwipeBackLayout">
 		<item name="edgeSize">16dip</item>
-		<item name="shadowLeft">@drawable/swipeback_shadow_left</item>
-		<item name="shadowRight">@drawable/swipeback_shadow_right</item>
-		<item name="shadowBottom">@drawable/swipeback_shadow_bottom</item>
+		<item name="shadowLeft">@drawable/shadow_left</item>
+		<item name="shadowRight">@drawable/shadow_right</item>
+		<item name="shadowBottom">@drawable/shadow_bottom</item>
+		<item name="scalePercent">@fraction/swipeback_scale_exit</item>
+		<item name="scrimAlpha">0.75</item>
 	</style>
 
 	<style name="Widget.PullToRefresh.ProgressBar.Horizontal.Center.NoColor" parent="android:Widget.Holo.ProgressBar.Horizontal">

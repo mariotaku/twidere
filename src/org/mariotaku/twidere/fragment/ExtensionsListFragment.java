@@ -23,16 +23,13 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -77,18 +74,6 @@ public class ExtensionsListFragment extends BaseListFragment implements Constant
 	@Override
 	public Loader<List<ExtensionInfo>> onCreateLoader(final int id, final Bundle args) {
 		return new ExtensionsListLoader(getActivity(), mPackageManager);
-	}
-
-	@Override
-	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		final View view = super.onCreateView(inflater, container, savedInstanceState);
-		final View lv = view.findViewById(android.R.id.list);
-		final Resources res = getResources();
-		final float density = res.getDisplayMetrics().density;
-		final int padding = (int) density * 16;
-		lv.setId(android.R.id.list);
-		lv.setPadding(padding, 0, padding, 0);
-		return view;
 	}
 
 	@Override

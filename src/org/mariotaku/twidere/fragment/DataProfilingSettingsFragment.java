@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.fragment.support;
+package org.mariotaku.twidere.fragment;
 
 import static org.mariotaku.twidere.util.Utils.closeSilently;
 
@@ -35,7 +35,6 @@ import android.widget.TextView;
 import edu.ucdavis.earlybird.CSVFileFilter;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.fragment.BaseFragment;
 
 import java.io.BufferedReader;
 import java.io.File;

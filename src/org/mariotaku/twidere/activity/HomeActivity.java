@@ -102,9 +102,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private ExtendedViewPager mViewPager;
 	private TabPageIndicator mIndicator;
 	private SlidingMenu mSlidingMenu;
-	private View mActionsActionView, mActionsButtonLayout;
+	private View mActionsActionView, mActionsButtonLayout, mEmptyTabHint;
 
-	private boolean mDisplayAppIcon;
 	private boolean mBottomActionsButton;
 
 	private Fragment mCurrentVisibleFragment;
@@ -210,6 +209,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		super.onContentChanged();
 		mViewPager = (ExtendedViewPager) findViewById(R.id.main);
 		mActionsButtonLayout = findViewById(R.id.actions_button);
+		mEmptyTabHint = findViewById(R.id.empty_tab_hint);
 		if (mSlidingMenu == null) {
 			mSlidingMenu = new SlidingMenu(this);
 		}
@@ -344,7 +344,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mMultiSelectHandler = new MultiSelectEventHandler(this);
 		mMultiSelectHandler.dispatchOnCreate();
 		final Resources res = getResources();
-		mDisplayAppIcon = res.getBoolean(R.bool.home_display_icon);
+		final boolean home_display_icon = res.getBoolean(R.bool.home_display_icon);
 		super.onCreate(savedInstanceState);
 		final long[] account_ids = getAccountIds(this);
 		if (account_ids.length == 0) {
@@ -366,12 +366,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		final int initial_tab = handleIntent(intent, savedInstanceState == null);
 		mActionBar = getActionBar();
 		mActionBar.setCustomView(R.layout.home_tabs);
-		mActionBar.setDisplayShowTitleEnabled(false);
-		mActionBar.setDisplayShowCustomEnabled(true);
-		mActionBar.setDisplayShowHomeEnabled(mDisplayAppIcon);
-		if (mDisplayAppIcon) {
-			mActionBar.setHomeButtonEnabled(true);
-		}
+
 		final View view = mActionBar.getCustomView();
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		mActionsActionView = view.findViewById(R.id.actions_item);
@@ -385,6 +380,12 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mActionsActionView.setOnClickListener(this);
 		mActionsButtonLayout.setOnClickListener(this);
 		initTabs();
+		final boolean tabs_not_empty = mPagerAdapter.getCount() != 0;
+		mEmptyTabHint.setVisibility(tabs_not_empty ? View.GONE : View.VISIBLE);
+		mActionBar.setDisplayShowHomeEnabled(home_display_icon || !tabs_not_empty);
+		mActionBar.setHomeButtonEnabled(home_display_icon || !tabs_not_empty);
+		mActionBar.setDisplayShowTitleEnabled(!tabs_not_empty);
+		mActionBar.setDisplayShowCustomEnabled(tabs_not_empty);
 		setTabPosition(initial_tab);
 		if (refresh_on_start && savedInstanceState == null) {
 			mTwitterWrapper.refreshAll();

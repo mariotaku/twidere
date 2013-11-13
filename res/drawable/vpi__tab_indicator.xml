@@ -34,8 +34,4 @@
 	<item android:drawable="@drawable/vpi__tab_unselected_pressed_holo" android:state_focused="true" android:state_pressed="true" android:state_selected="false"/>
 	<item android:drawable="@drawable/vpi__tab_selected_pressed_holo" android:state_focused="true" android:state_pressed="true" android:state_selected="true"/>
 
-	<!-- Workaround for Android 1.6 -->
-	<item android:drawable="@android:color/transparent" android:state_enabled="false" android:state_pressed="false" android:state_selected="false"/>
-	<item android:drawable="@android:color/transparent" android:state_checked="false" android:state_pressed="false" android:state_selected="false"/>
-
 </selector>

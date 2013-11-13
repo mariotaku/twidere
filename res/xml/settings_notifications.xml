@@ -32,4 +32,8 @@
 		android:summary="@string/background_toast_notification_summary"
 		android:title="@string/background_toast_notification"/>
 
+	<org.mariotaku.twidere.preference.NotificationAccountsListPreference
+		android:key="cat_accounts"
+		android:title="@string/accounts"/>
+
 </PreferenceScreen>

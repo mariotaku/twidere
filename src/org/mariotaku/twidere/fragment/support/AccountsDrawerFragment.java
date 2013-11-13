@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,7 +85,7 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 		super.onActivityCreated(savedInstanceState);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mResolver = getContentResolver();
-		mAdapter = new AccountsDrawerAdapter(getActivity());
+		mAdapter = new AccountsDrawerAdapter(getView().getContext());
 		mAdapter.setOnAccountActivateStateChangeListener(this);
 		mListView.setAdapter(mAdapter);
 		mListView.setOnChildClickListener(this);
@@ -225,7 +226,8 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		final View view = inflater.inflate(R.layout.accounts_drawer, container, false);
+		final Context theme = new ContextThemeWrapper(getActivity(), R.style.Theme_Twidere_Drawer_Dark);
+		final View view = LayoutInflater.from(theme).inflate(R.layout.accounts_drawer, container, false);
 		mListView = (ExpandableListView) view.findViewById(android.R.id.list);
 		return view;
 	}

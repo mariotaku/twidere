@@ -126,7 +126,6 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnC
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setUiOptions(data);
 		super.onCreate(savedInstanceState);
-		setOverrideExitAniamtion(false);
 		mActionBar = getActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 		mActionBar.setDisplayShowTitleEnabled(true);
@@ -213,7 +212,7 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnC
 				break;
 			}
 			case LINK_ID_LISTS: {
-				setTitle(R.string.user_list);
+				setTitle(R.string.user_lists);
 				break;
 			}
 			case LINK_ID_LIST_TIMELINE: {

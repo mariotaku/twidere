@@ -2,8 +2,8 @@
 <resources>
 
 	<declare-styleable name="Twidere">
-		<attr name="cardListBackgroundColor" format="color"/>
 		<attr name="cardItemBackground" format="reference"/>
+		<attr name="cardItemSelector" format="reference"/>
 		<attr name="cardItemBackgroundColor" format="color"/>
 		<attr name="cardItemMessageIncomingBackground" format="reference"/>
 		<attr name="cardItemMessageOutgoingBackground" format="reference"/>
@@ -72,16 +72,6 @@
 		<!-- Indicates how long flinging will take time in milliseconds. -->
 		<attr name="paneFlingDuration" format="integer"/>
 	</declare-styleable>
-	<declare-styleable name="SwipeBackLayout">
-		<attr name="edgeSize" format="dimension"/>
-		<attr name="edgeFlag" format="enum"/>
-		<attr name="shadowLeft" format="reference"/>
-		<attr name="shadowRight" format="reference"/>
-		<attr name="shadowBottom" format="reference"/>
-	</declare-styleable>
-
-	<attr name="swipeBackLayoutStyle" format="reference"/>
-
 	<declare-styleable name="SeekBarDialogPreference">
 		<attr name="max" format="integer"/>
 		<attr name="min" format="integer"/>
