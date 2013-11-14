@@ -288,22 +288,22 @@
 					android:host="direct_messages_conversation"
 					android:scheme="twidere"/>
 				<data
-					android:host="list_details"
+					android:host="user_list"
 					android:scheme="twidere"/>
 				<data
-					android:host="lists"
+					android:host="user_lists"
 					android:scheme="twidere"/>
 				<data
-					android:host="list_timeline"
+					android:host="user_list_timeline"
 					android:scheme="twidere"/>
 				<data
-					android:host="list_members"
+					android:host="user_list_members"
 					android:scheme="twidere"/>
 				<data
-					android:host="list_subscribers"
+					android:host="user_list_subscribers"
 					android:scheme="twidere"/>
 				<data
-					android:host="list_memberships"
+					android:host="user_list_memberships"
 					android:scheme="twidere"/>
 				<data
 					android:host="saved_searches"
@@ -475,7 +475,9 @@
 			android:name=".service.RefreshService"
 			android:label="@string/label_refresh_service"
 			android:settingsActivity=".activity.SettingsActivity"/>
-		<service android:name=".service.UpdateStatusService"/>
+		<service
+			android:name=".service.BackgroundOperationService"
+			android:label="@string/label_refresh_service"/>
 		<service
 			android:name="edu.ucdavis.earlybird.UCDService"
 			android:settingsActivity=".activity.DataProfilingSettingsActivity"/>

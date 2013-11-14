@@ -80,12 +80,11 @@ public interface TwidereConstants {
 	public static final String AUTHORITY_DIRECT_MESSAGES_CONVERSATION = "direct_messages_conversation";
 	public static final String AUTHORITY_SEARCH = "search";
 	public static final String AUTHORITY_MAP = "map";
-	public static final String AUTHORITY_LIST_DETAILS = "list_details";
-	public static final String AUTHORITY_LIST_TYPES = "list_types";
-	public static final String AUTHORITY_LIST_TIMELINE = "list_timeline";
-	public static final String AUTHORITY_LIST_MEMBERS = "list_members";
-	public static final String AUTHORITY_LIST_MEMBERSHIPS = "list_memberships";
-	public static final String AUTHORITY_LISTS = "lists";
+	public static final String AUTHORITY_USER_LIST = "user_list";
+	public static final String AUTHORITY_USER_LIST_TIMELINE = "user_list_timeline";
+	public static final String AUTHORITY_USER_LIST_MEMBERS = "user_list_members";
+	public static final String AUTHORITY_USER_LIST_MEMBERSHIPS = "user_list_memberships";
+	public static final String AUTHORITY_USER_LISTS = "user_lists";
 	public static final String AUTHORITY_USERS_RETWEETED_STATUS = "users_retweeted_status";
 	public static final String AUTHORITY_SAVED_SEARCHES = "saved_searches";
 	public static final String AUTHORITY_SEARCH_USERS = "search_users";
@@ -281,6 +280,8 @@ public interface TwidereConstants {
 	public static final String INTENT_ACTION_EXTENSION_SHORTEN_TWEET = INTENT_PACKAGE_PREFIX
 			+ "EXTENSION_SHORTEN_TWEET";
 	public static final String INTENT_ACTION_EXTENSION_SETTINGS = INTENT_PACKAGE_PREFIX + "EXTENSION_SETTINGS";
+	
+	public static final String INTENT_ACTION_UPDATE_STATUS = INTENT_PACKAGE_PREFIX + "UPDATE_STATUS";
 
 	public static final String BROADCAST_HOME_TIMELINE_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX
 			+ "HOME_TIMELINE_DATABASE_UPDATED";
@@ -557,5 +558,9 @@ public interface TwidereConstants {
 	public static final String TAB_TYPE_ACTIVITIES_ABOUT_ME = "activities_about_me";
 	public static final String TAB_TYPE_ACTIVITIES_BY_FRIENDS = "activities_by_friends";
 	public static final String TAB_TYPE_STAGGERED_HOME_TIMELINE = "staggered_home_timeline";
+	
+	public static final int TWITTER_MAX_IMAGE_SIZE = 3145728;
+	public static final int TWITTER_MAX_IMAGE_WIDTH = 1024;
+	public static final int TWITTER_MAX_IMAGE_HEIGHT = 2048; 
 
 }

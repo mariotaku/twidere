@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:background="?android:activatedBackgroundIndicator">
+	android:layout_height="wrap_content">
 
-	<LinearLayout
+	<org.mariotaku.twidere.view.CardItemLinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginBottom="4dp"
@@ -12,13 +11,16 @@
 		android:layout_marginRight="8dp"
 		android:layout_marginTop="4dp"
 		android:background="?cardItemBackground"
+		android:duplicateParentState="true"
 		android:orientation="vertical">
 
 		<org.mariotaku.twidere.view.AccountsColorFrameLayout
 			android:id="@+id/accounts_color"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:minHeight="?android:listPreferredItemHeightSmall">
+			android:minHeight="?android:listPreferredItemHeightSmall"
+			android:paddingBottom="4dp"
+			android:paddingTop="4dp">
 
 			<TextView
 				android:id="@+id/text"
@@ -32,11 +34,16 @@
 				android:textColor="?android:textColorPrimary"/>
 		</org.mariotaku.twidere.view.AccountsColorFrameLayout>
 
+		<View
+			android:id="@+id/divider"
+			android:layout_width="match_parent"
+			android:layout_height="0.2dp"
+			android:background="#40808080"/>
+
 		<org.mariotaku.twidere.view.ImagePreviewContainer
 			android:id="@+id/image_preview_container"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:paddingTop="4dp">
+			android:layout_height="wrap_content">
 
 			<org.mariotaku.twidere.view.ClickableImageView
 				android:id="@+id/image_preview"
@@ -52,6 +59,6 @@
 				android:layout_gravity="center"
 				android:layout_margin="16dp"/>
 		</org.mariotaku.twidere.view.ImagePreviewContainer>
-	</LinearLayout>
+	</org.mariotaku.twidere.view.CardItemLinearLayout>
 
 </FrameLayout>

@@ -192,12 +192,7 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 	@Override
 	public boolean onMenuItemClick(final MenuItem item) {
 		if (mSelectedUser == null) return false;
-		final ParcelableUser user = mSelectedUser;
 		switch (item.getItemId()) {
-			case MENU_VIEW_PROFILE: {
-				openUserProfile(getActivity(), user);
-				break;
-			}
 			default: {
 				if (item.getIntent() != null) {
 					try {
@@ -275,6 +270,10 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 	protected boolean shouldShowAccountColor() {
 		return getActivatedAccountIds(getActivity()).length > 1;
 	}
+	
+	protected ParcelableUser getSelectedUser() {
+		return mSelectedUser;
+	}
 
 	private void showMenu(final View view, final ParcelableUser user) {
 		mSelectedUser = user;
@@ -283,7 +282,7 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 			mPopupMenu.dismiss();
 		}
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
-		mPopupMenu.inflate(R.menu.action_user);
+		mPopupMenu.inflate(getUserMenuResource());
 		final Menu menu = mPopupMenu.getMenu();
 		final Intent extensions_intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER);
 		final Bundle extensions_extras = new Bundle();
@@ -292,5 +291,9 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 		addIntentToMenu(getActivity(), menu, extensions_intent);
 		mPopupMenu.setOnMenuItemClickListener(this);
 		mPopupMenu.show();
+	}
+
+	protected int getUserMenuResource() {
+		return R.menu.action_user_list;
 	}
 }

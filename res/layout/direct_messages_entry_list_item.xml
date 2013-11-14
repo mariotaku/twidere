@@ -5,112 +5,97 @@
 	android:layout_height="wrap_content"
 	tools:context=".adapter.DirectMessagesEntryAdapter">
 
-	<RelativeLayout
-		android:id="@+id/card"
+	<org.mariotaku.twidere.view.CardItemLinearLayout
+		android:id="@+id/content"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginBottom="4dp"
 		android:layout_marginLeft="8dp"
 		android:layout_marginRight="8dp"
 		android:layout_marginTop="4dp"
-		android:background="?cardItemBackground">
+		android:background="?cardItemBackground"
+		android:duplicateParentState="true"
+		android:orientation="vertical">
 
-		<View
-			android:id="@+id/activated_indicator"
+		<LinearLayout
+			android:id="@+id/profile_container"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_alignBottom="@+id/content"
-			android:layout_alignTop="@+id/content"
-			android:background="?android:activatedBackgroundIndicator"
-			android:duplicateParentState="true"/>
+			android:baselineAligned="false"
+			android:gravity="center_vertical"
+			android:orientation="horizontal"
+			android:padding="8dp">
 
-		<org.mariotaku.twidere.view.ColorLabelLinearLayout
-			android:id="@+id/content"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="?android:selectableItemBackground"
-			android:duplicateParentState="true"
-			android:orientation="vertical">
+			<org.mariotaku.twidere.view.ClickableImageView
+				android:id="@+id/profile_image"
+				android:layout_width="@dimen/icon_size_card_list_item"
+				android:layout_height="@dimen/icon_size_card_list_item"
+				android:layout_marginRight="8dp"
+				android:layout_weight="0"
+				android:contentDescription="@string/profile_image"
+				android:scaleType="fitCenter"/>
 
-			<LinearLayout
-				android:id="@+id/profile_container"
+			<RelativeLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:baselineAligned="false"
-				android:gravity="center_vertical"
-				android:orientation="horizontal"
-				android:padding="8dp">
+				android:layout_weight="1">
 
-				<org.mariotaku.twidere.view.ClickableImageView
-					android:id="@+id/profile_image"
-					android:layout_width="@dimen/icon_size_card_list_item"
-					android:layout_height="@dimen/icon_size_card_list_item"
-					android:layout_marginRight="8dp"
-					android:layout_weight="0"
-					android:contentDescription="@string/profile_image"
-					android:scaleType="fitCenter"/>
-
-				<RelativeLayout
-					android:layout_width="match_parent"
+				<FrameLayout
+					android:id="@+id/name_frame"
+					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_weight="1">
-
-					<FrameLayout
-						android:id="@+id/name_frame"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_alignParentLeft="true"
-						android:layout_toLeftOf="@+id/time">
-
-						<org.mariotaku.twidere.view.HandleSpanClickTextView
-							android:id="@+id/name"
-							android:layout_width="wrap_content"
-							android:layout_height="wrap_content"
-							android:singleLine="true"
-							android:textAppearance="?android:attr/textAppearanceSmall"
-							android:textColor="?android:attr/textColorPrimary"
-							android:textStyle="bold"/>
-					</FrameLayout>
+					android:layout_alignParentLeft="true"
+					android:layout_toLeftOf="@+id/time">
 
 					<org.mariotaku.twidere.view.HandleSpanClickTextView
-						android:id="@+id/screen_name"
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:layout_below="@+id/name_frame"
-						android:singleLine="true"
-						android:textAppearance="?android:attr/textAppearanceSmall"
-						android:textColor="?android:attr/textColorSecondary"/>
-
-					<org.mariotaku.twidere.view.ShortTimeView
-						android:id="@+id/time"
+						android:id="@+id/name"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:layout_alignBottom="@+id/name_frame"
-						android:layout_alignParentRight="true"
-						android:layout_alignTop="@+id/name_frame"
-						android:layout_alignWithParentIfMissing="true"
-						android:drawablePadding="4dp"
-						android:gravity="center_vertical|right"
 						android:singleLine="true"
-						android:textColor="?android:attr/textColorSecondary"/>
-				</RelativeLayout>
-			</LinearLayout>
+						android:textAppearance="?android:attr/textAppearanceSmall"
+						android:textColor="?android:attr/textColorPrimary"
+						android:textStyle="bold"/>
+				</FrameLayout>
 
-			<View
-				android:layout_width="match_parent"
-				android:layout_height="0.2dp"
-				android:background="#40808080"/>
+				<org.mariotaku.twidere.view.HandleSpanClickTextView
+					android:id="@+id/screen_name"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_below="@+id/name_frame"
+					android:singleLine="true"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:textColor="?android:attr/textColorSecondary"/>
 
-			<TextView
-				android:id="@+id/text"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:padding="8dp"
-				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:textColor="?android:attr/textColorSecondary"/>
-		</org.mariotaku.twidere.view.ColorLabelLinearLayout>
-	</RelativeLayout>
+				<org.mariotaku.twidere.view.ShortTimeView
+					android:id="@+id/time"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignBottom="@+id/name_frame"
+					android:layout_alignParentRight="true"
+					android:layout_alignTop="@+id/name_frame"
+					android:layout_alignWithParentIfMissing="true"
+					android:drawablePadding="4dp"
+					android:gravity="center_vertical|right"
+					android:singleLine="true"
+					android:textColor="?android:attr/textColorSecondary"/>
+			</RelativeLayout>
+		</LinearLayout>
+
+		<View
+			android:id="@+id/divider"
+			android:layout_width="match_parent"
+			android:layout_height="0.2dp"
+			android:background="#40808080"/>
+
+		<TextView
+			android:id="@+id/text"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:padding="8dp"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="?android:attr/textColorSecondary"/>
+	</org.mariotaku.twidere.view.CardItemLinearLayout>
 
 	<org.mariotaku.twidere.view.ListMenuOverflowButton
 		android:id="@+id/item_menu"

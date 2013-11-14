@@ -207,19 +207,19 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnC
 				setTitle(R.string.direct_messages);
 				break;
 			}
-			case LINK_ID_LIST_DETAILS: {
+			case LINK_ID_USER_LIST: {
 				setTitle(R.string.user_list);
 				break;
 			}
-			case LINK_ID_LISTS: {
+			case LINK_ID_USER_LISTS: {
 				setTitle(R.string.user_lists);
 				break;
 			}
-			case LINK_ID_LIST_TIMELINE: {
+			case LINK_ID_USER_LIST_TIMELINE: {
 				setTitle(R.string.list_timeline);
 				break;
 			}
-			case LINK_ID_LIST_MEMBERS: {
+			case LINK_ID_USER_LIST_MEMBERS: {
 				setTitle(R.string.list_members);
 				break;
 			}
@@ -227,7 +227,7 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnC
 				setTitle(R.string.list_subscribers);
 				break;
 			}
-			case LINK_ID_LIST_MEMBERSHIPS: {
+			case LINK_ID_USER_LIST_MEMBERSHIPS: {
 				setTitle(R.string.lists_following_user);
 				break;
 			}

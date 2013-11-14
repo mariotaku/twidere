@@ -45,6 +45,7 @@ import org.mariotaku.twidere.util.MessagesManager;
 import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.TweetShortenerInterface;
 import org.mariotaku.twidere.util.TwitterErrorCodes;
+import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.util.io.ContentLengthInputStream;
 import org.mariotaku.twidere.util.io.ContentLengthInputStream.ReadListener;
 
@@ -61,7 +62,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class UpdateStatusService extends IntentService implements Constants {
+public class BackgroundOperationService extends IntentService implements Constants {
 
 	private final Validator mValidator = new Validator();
 	private final Extractor extractor = new Extractor();
@@ -79,8 +80,8 @@ public class UpdateStatusService extends IntentService implements Constants {
 
 	private boolean mUseUploader, mUseShortener;
 
-	public UpdateStatusService() {
-		super("update_status");
+	public BackgroundOperationService() {
+		super("background_operation");
 	}
 
 	@Override
@@ -156,7 +157,10 @@ public class UpdateStatusService extends IntentService implements Constants {
 	@Override
 	protected void onHandleIntent(final Intent intent) {
 		if (intent == null) return;
-		handleUpdateStatusIntent(intent);
+		final String action = intent.getAction();
+		if (INTENT_ACTION_UPDATE_STATUS.equals(action)) {
+			handleUpdateStatusIntent(intent);
+		}
 	}
 
 	protected List<SingleResponse<ParcelableStatus>> updateStatus(final ParcelableStatusUpdate pstatus) {
@@ -218,7 +222,9 @@ public class UpdateStatusService extends IntentService implements Constants {
 					throw new StatusTooLongException(this);
 				else if (unshortened_content == null) throw new TweetShortenException(this);
 			}
-
+			if (!mUseUploader && image_file != null && image_file.exists()) {
+				Utils.downscaleImageIfNeeded(image_file, 95);
+			}
 			for (final long account_id : pstatus.account_ids) {
 				final StatusUpdate status = new StatusUpdate(should_shorten && mUseShortener ? shortened_content
 						: unshortened_content);

@@ -25,7 +25,6 @@ import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getDisplayName;
 import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
-import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.openUserListMembers;
 import static org.mariotaku.twidere.util.Utils.openUserListSubscribers;
 import static org.mariotaku.twidere.util.Utils.openUserListTimeline;
@@ -41,6 +40,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -108,6 +108,8 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 	private ParcelableUserList mUserList;
 	private Locale mLocale;
 
+	private boolean mUserListLoaderInitialized;
+
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -118,17 +120,17 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 			if (user_list == null || mUserList == null || !intent.getBooleanExtra(EXTRA_SUCCEED, false)) return;
 			if (BROADCAST_USER_LIST_DETAILS_UPDATED.equals(action)) {
 				if (user_list.id == mUserList.id) {
-					reloadUserListInfo();
+					getUserListInfo(true);
 				}
 			} else if (BROADCAST_USER_LIST_SUBSCRIBED.equals(action) || BROADCAST_USER_LIST_UNSUBSCRIBED.equals(action)) {
 				if (user_list.id == mUserList.id) {
-					reloadUserListInfo();
+					getUserListInfo(true);
 				}
 			}
 		}
 	};
 
-	public void changeUserList(final ParcelableUserList user_list) {
+	public void displayUserList(final ParcelableUserList user_list) {
 		if (user_list == null || getActivity() == null) return;
 		getLoaderManager().destroyLoader(0);
 		final boolean is_myself = user_list.account_id == user_list.user_id;
@@ -157,31 +159,16 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		mAdapter.notifyDataSetChanged();
 	}
 
-	public void getUserListInfo(final boolean init, final long account_id, final int list_id, final String list_name,
-			final long user_id, final String screen_name) {
-		getLoaderManager().destroyLoader(0);
-		if (!isMyAccount(getActivity(), account_id)) {
-			mListContainer.setVisibility(View.GONE);
-			mErrorRetryContainer.setVisibility(View.GONE);
-			return;
-		}
-
-		if (list_id > 0 || list_name != null && (user_id > 0 || screen_name != null)) {
+	public void getUserListInfo(final boolean omit_intent_extra) {
+		final LoaderManager lm = getLoaderManager();
+		lm.destroyLoader(0);
+		final Bundle args = new Bundle(getArguments());
+		args.putBoolean(EXTRA_OMIT_INTENT_EXTRA, omit_intent_extra);
+		if (!mUserListLoaderInitialized) {
+			lm.initLoader(0, args, this);
+			mUserListLoaderInitialized = true;
 		} else {
-			mListContainer.setVisibility(View.GONE);
-			mErrorRetryContainer.setVisibility(View.GONE);
-			return;
-		}
-		final Bundle args = new Bundle();
-		args.putLong(EXTRA_ACCOUNT_ID, account_id);
-		args.putLong(EXTRA_USER_ID, user_id);
-		args.putInt(EXTRA_LIST_ID, list_id);
-		args.putString(EXTRA_LIST_NAME, list_name);
-		args.putString(EXTRA_SCREEN_NAME, screen_name);
-		if (init) {
-			getLoaderManager().initLoader(0, args, this);
-		} else {
-			getLoaderManager().restartLoader(0, args, this);
+			lm.restartLoader(0, args, this);
 		}
 	}
 
@@ -207,13 +194,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
 		setListAdapter(mAdapter);
-		final Bundle args = getArguments();
-		final long account_id = args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
-		final long user_id = args != null ? args.getLong(EXTRA_USER_ID, -1) : -1;
-		final int list_id = args != null ? args.getInt(EXTRA_LIST_ID, -1) : -1;
-		final String list_name = args != null ? args.getString(EXTRA_LIST_NAME) : null;
-		final String screen_name = args != null ? args.getString(EXTRA_SCREEN_NAME) : null;
-		getUserListInfo(true, account_id, list_id, list_name, user_id, screen_name);
+		getUserListInfo(false);
 	}
 
 	@Override
@@ -243,7 +224,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 				break;
 			}
 			case R.id.retry: {
-				reloadUserListInfo();
+				getUserListInfo(true);
 				break;
 			}
 			case R.id.profile_image: {
@@ -263,12 +244,14 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		mErrorRetryContainer.setVisibility(View.GONE);
 		setListShown(false);
 		setProgressBarIndeterminateVisibility(true);
-		final long account_id = args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
-		final long user_id = args != null ? args.getLong(EXTRA_USER_ID, -1) : -1;
-		final int list_id = args != null ? args.getInt(EXTRA_LIST_ID, -1) : -1;
-		final String list_name = args != null ? args.getString(EXTRA_LIST_NAME) : null;
-		final String screen_name = args != null ? args.getString(EXTRA_SCREEN_NAME) : null;
-		return new ListInfoLoader(getActivity(), account_id, list_id, list_name, user_id, screen_name);
+		final long accountId = args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
+		final long userId = args != null ? args.getLong(EXTRA_USER_ID, -1) : -1;
+		final int listId = args != null ? args.getInt(EXTRA_LIST_ID, -1) : -1;
+		final String listName = args != null ? args.getString(EXTRA_LIST_NAME) : null;
+		final String screenName = args != null ? args.getString(EXTRA_SCREEN_NAME) : null;
+		final boolean omitIntentExtra = args != null ? args.getBoolean(EXTRA_OMIT_INTENT_EXTRA, true) : true;
+		return new ParcelableUserListLoader(getActivity(), omitIntentExtra, getArguments(), accountId, listId,
+				listName, userId, screenName);
 	}
 
 	@Override
@@ -326,7 +309,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		if (data.data != null) {
 			final ParcelableUserList list = data.data;
 			setListShown(true);
-			changeUserList(list);
+			displayUserList(list);
 			mErrorRetryContainer.setVisibility(View.GONE);
 		} else {
 			if (data.exception != null) {
@@ -401,16 +384,6 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		super.onStop();
 	}
 
-	private void reloadUserListInfo() {
-		final Bundle args = getArguments();
-		final long account_id = args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
-		final long user_id = args != null ? args.getLong(EXTRA_USER_ID, -1) : -1;
-		final int list_id = args != null ? args.getInt(EXTRA_LIST_ID, -1) : -1;
-		final String list_name = args != null ? args.getString(EXTRA_LIST_NAME) : null;
-		final String screen_name = args != null ? args.getString(EXTRA_SCREEN_NAME) : null;
-		getUserListInfo(false, account_id, list_id, list_name, user_id, screen_name);
-	}
-
 	public static class EditUserListDialogFragment extends BaseSupportDialogFragment implements
 			DialogInterface.OnClickListener {
 
@@ -478,52 +451,6 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 
 	}
 
-	public static class ListInfoLoader extends AsyncTaskLoader<SingleResponse<ParcelableUserList>> {
-
-		private final long account_id, user_id;
-		private final int list_id;
-		private final String screen_name, list_name;
-		private final boolean hires_profile_image;
-
-		private ListInfoLoader(final Context context, final long account_id, final int list_id, final String list_name,
-				final long user_id, final String screen_name) {
-			super(context);
-			this.account_id = account_id;
-			this.user_id = user_id;
-			this.list_id = list_id;
-			this.screen_name = screen_name;
-			this.list_name = list_name;
-			hires_profile_image = context.getResources().getBoolean(R.bool.hires_profile_image);
-		}
-
-		@Override
-		public SingleResponse<ParcelableUserList> loadInBackground() {
-			final Twitter twitter = getTwitterInstance(getContext(), account_id, true);
-			if (twitter == null) return SingleResponse.nullInstance();
-			try {
-				final UserList list;
-				if (list_id > 0) {
-					list = twitter.showUserList(list_id);
-				} else if (user_id > 0) {
-					list = twitter.showUserList(list_name, user_id);
-				} else if (screen_name != null) {
-					list = twitter.showUserList(list_name, screen_name);
-				} else
-					return SingleResponse.nullInstance();
-				return new SingleResponse<ParcelableUserList>(new ParcelableUserList(list, account_id,
-						hires_profile_image), null);
-			} catch (final TwitterException e) {
-				return new SingleResponse<ParcelableUserList>(null, e);
-			}
-		}
-
-		@Override
-		public void onStartLoading() {
-			forceLoad();
-		}
-
-	}
-
 	class ListMembersAction extends ListAction {
 
 		public ListMembersAction(final int order) {
@@ -587,6 +514,61 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		public void onClick() {
 			if (mUserList == null) return;
 			openUserListTimeline(getActivity(), mUserList);
+		}
+
+	}
+
+	static class ParcelableUserListLoader extends AsyncTaskLoader<SingleResponse<ParcelableUserList>> {
+
+		private final boolean mOmitIntentExtra;
+		private final Bundle mExtras;
+		private final long mAccountId, mUserId;
+		private final int mListId;
+		private final String mScreenName, mListName;
+		private final boolean mHiresProfileImage;
+
+		private ParcelableUserListLoader(final Context context, final boolean omitIntentExtra, final Bundle extras,
+				final long accountId, final int listId, final String listName, final long userId,
+				final String screenName) {
+			super(context);
+			mOmitIntentExtra = omitIntentExtra;
+			mExtras = extras;
+			mAccountId = accountId;
+			mUserId = userId;
+			mListId = listId;
+			mScreenName = screenName;
+			mListName = listName;
+			mHiresProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
+		}
+
+		@Override
+		public SingleResponse<ParcelableUserList> loadInBackground() {
+			if (!mOmitIntentExtra && mExtras != null) {
+				final ParcelableUserList cache = mExtras.getParcelable(EXTRA_USER_LIST);
+				if (cache != null) return SingleResponse.dataOnly(cache);
+			}
+			final Twitter twitter = getTwitterInstance(getContext(), mAccountId, true);
+			if (twitter == null) return SingleResponse.nullInstance();
+			try {
+				final UserList list;
+				if (mListId > 0) {
+					list = twitter.showUserList(mListId);
+				} else if (mUserId > 0) {
+					list = twitter.showUserList(mListName, mUserId);
+				} else if (mScreenName != null) {
+					list = twitter.showUserList(mListName, mScreenName);
+				} else
+					return SingleResponse.nullInstance();
+				return new SingleResponse<ParcelableUserList>(new ParcelableUserList(list, mAccountId,
+						mHiresProfileImage), null);
+			} catch (final TwitterException e) {
+				return new SingleResponse<ParcelableUserList>(null, e);
+			}
+		}
+
+		@Override
+		public void onStartLoading() {
+			forceLoad();
 		}
 
 	}

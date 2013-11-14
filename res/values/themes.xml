@@ -252,13 +252,6 @@
 		<item name="cardItemMessageProfileImageOutgoingBackground">@drawable/bg_card_item_message_profile_image_outgoing_dark</item>
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_dark</item>
 
-		<!-- Button styles -->
-		<item name="android:selectableItemBackground">@drawable/item_background_holo_dark</item>
-
-		<!-- List attributes -->
-		<item name="android:listChoiceBackgroundIndicator">@drawable/list_selector_holo_dark</item>
-		<item name="android:activatedBackgroundIndicator">@drawable/activated_background_holo_dark</item>
-
 		<!-- Widget styles -->
 		<item name="android:textViewStyle">@style/Widget.Twidere.TextView</item>
 		<item name="android:radioButtonStyle">@style/Widget.Twidere.CompoundButton.RadioButton</item>
@@ -282,13 +275,6 @@
 		<item name="cardItemMessageProfileImageIncomingBackground">@drawable/bg_card_item_message_profile_image_incoming_light</item>
 		<item name="cardItemMessageProfileImageOutgoingBackground">@drawable/bg_card_item_message_profile_image_outgoing_light</item>
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_light</item>
-
-		<!-- Button styles -->
-		<item name="android:selectableItemBackground">@drawable/item_background_holo_light</item>
-
-		<!-- List attributes -->
-		<item name="android:listChoiceBackgroundIndicator">@drawable/list_selector_holo_light</item>
-		<item name="android:activatedBackgroundIndicator">@drawable/activated_background_holo_light</item>
 
 		<!-- Widget styles -->
 		<item name="android:textViewStyle">@style/Widget.Twidere.Light.TextView</item>
@@ -351,10 +337,8 @@
 	<style name="Theme.Twidere.Viewer" parent="android:Theme.Holo">
 
 		<!-- Window attributes -->
-		<item name="android:windowIsTranslucent">true</item>
 		<item name="android:windowActionBarOverlay">true</item>
 		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
-		<item name="android:windowContentOverlay">@null</item>
 		<item name="android:windowBackground">@android:color/black</item>
 
 		<!-- ActionBar styles -->

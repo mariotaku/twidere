@@ -82,7 +82,12 @@ public abstract class CursorStatusesMultiColumnListFragment extends BaseStatuses
 		final String sort_by = Statuses.SORT_ORDER_STATUS_ID_DESC;
 		final long account_id = getAccountId();
 		final long[] account_ids = account_id > 0 ? new long[] { account_id } : getActivatedAccountIds(getActivity());
-		setEmptyText(account_ids.length == 0 ? getString(R.string.no_account_selected) : null);
+		final boolean no_account_selected = account_ids.length == 0;
+		if (no_account_selected) {
+			setEmptyText(getString(R.string.no_account_selected));
+		} else {
+			getListView().setEmptyView(null);
+		}
 		final Where account_where = Where.in(new Column(Statuses.ACCOUNT_ID), new RawItemArray(account_ids));
 		if (isFiltersEnabled()) {
 			account_where.and(new Where(buildStatusFilterWhereClause(table, null,

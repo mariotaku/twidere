@@ -26,6 +26,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.util.ContentResolverUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -115,7 +116,7 @@ public class Account implements Parcelable {
 
 	public static Account getAccount(final Context context, final long account_id) {
 		if (context == null) return null;
-		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, Accounts.COLUMNS,
+		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(),Accounts.CONTENT_URI, Accounts.COLUMNS,
 				Accounts.ACCOUNT_ID + " = " + account_id, null, null);
 		if (cur != null) {
 			try {
@@ -134,7 +135,7 @@ public class Account implements Parcelable {
 			Collections.emptyList();
 		}
 		final ArrayList<Account> accounts = new ArrayList<Account>();
-		final Cursor cur = context.getContentResolver().query(Accounts.CONTENT_URI, Accounts.COLUMNS,
+		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(),Accounts.CONTENT_URI, Accounts.COLUMNS,
 				activated_only ? Accounts.IS_ACTIVATED + " = 1" : null, null, null);
 		if (cur != null) {
 			final Indices indices = new Indices(cur);

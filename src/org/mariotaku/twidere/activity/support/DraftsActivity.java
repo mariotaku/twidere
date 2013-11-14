@@ -206,6 +206,7 @@ public class DraftsActivity extends BaseSupportActivity implements LoaderCallbac
 		mAdapter = new DraftsAdapter(this);
 		mListView = (ListView) findViewById(android.R.id.list);
 		mListView.setDivider(null);
+		mListView.setSelector(android.R.color.transparent);
 		mListView.setAdapter(mAdapter);
 		mListView.setOnItemClickListener(this);
 		mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);

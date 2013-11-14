@@ -52,4 +52,9 @@ public class UserListsLoader extends BaseUserListsLoader {
 		else if (mScreenName != null) return twitter.getUserLists(mScreenName);
 		return null;
 	}
+
+	@Override
+	protected boolean isFollowing(final UserList list) {
+		return true;
+	}
 }

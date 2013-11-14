@@ -10,5 +10,17 @@
 		<item quantity="one">@string/Nitems_selected_quantity_one</item>
 		<item quantity="other">@string/Nitems_selected_quantity_other</item>
 	</plurals>
+	<plurals name="added_N_users_to_list">
+		<item quantity="one">@string/added_N_users_to_list_quantity_one</item>
+		<item quantity="other">@string/added_N_users_to_list_quantity_other</item>
+	</plurals>
+	<plurals name="deleted_N_users_from_list">
+		<item quantity="one">@string/deleted_N_users_from_list_quantity_one</item>
+		<item quantity="other">@string/deleted_N_users_from_list_quantity_other</item>
+	</plurals>
+	<plurals name="delete_N_users_from_list_confirm">
+		<item quantity="one">@string/delete_N_users_from_list_confirm_quantity_one</item>
+		<item quantity="other">@string/delete_N_users_from_list_confirm_quantity_other</item>
+	</plurals>
 
 </resources>

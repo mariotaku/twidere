@@ -140,6 +140,10 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		return mCurrentVisibleFragment;
 	}
 
+	public SlidingMenu getSlidingMenu() {
+		return mSlidingMenu;
+	}
+
 	public void notifyAccountsChanged() {
 		if (mPreferences == null) return;
 		final long[] account_ids = getAccountIds(this);

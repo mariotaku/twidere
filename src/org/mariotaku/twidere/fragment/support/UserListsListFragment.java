@@ -65,7 +65,6 @@ public class UserListsListFragment extends BaseUserListsListFragment {
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		setPullToRefreshEnabled(false);
 		setHasOptionsMenu(true);
 	}
 
@@ -99,10 +98,6 @@ public class UserListsListFragment extends BaseUserListsListFragment {
 	}
 
 	public void onPullUpToRefresh() {
-	}
-
-	@Override
-	public void onRefreshStarted() {
 	}
 
 	@Override

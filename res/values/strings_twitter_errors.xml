@@ -2,7 +2,7 @@
 <resources>
 
 	<string name="error_32">Could not authenticate you, you may need to sign in again.</string>
-	<string name="error_34">That page does not exist.</string>
+	<string name="error_34">This tweet, user or page does not exist.</string>
 	<string name="error_88">Rate limit exceeded, please try later.</string>
 	<string name="error_89">Invalid or expired token, you may need to sign in again.</string>
 	<string name="error_64">Your account is suspended and is not permitted to access this feature.</string>
@@ -10,6 +10,7 @@
 	<string name="error_131">Twitter\'s server may temporarily down, please try later.</string>
 	<string name="error_135">Could not authenticate you, you may need to sign in again.</string>
 	<string name="error_179">You are not authorized to see this status.</string>
+	<string name="error_193">The photo you upload is too large.</string>
 	<string name="error_215">Could not authenticate you, you may need to sign in again.</string>
 
 </resources>

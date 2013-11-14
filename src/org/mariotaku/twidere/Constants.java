@@ -85,6 +85,7 @@ public interface Constants extends TwidereConstants {
 	public static final int MENU_REVOKE = R.id.revoke;
 	public static final int MENU_IMPORT_FROM = R.id.import_from;
 	public static final int MENU_ADD_TO_LIST = R.id.add_to_list;
+	public static final int MENU_DELETE_FROM_LIST = R.id.delete_from_list;
 	public static final int MENU_STATUSES = R.id.statuses;
 	public static final int MENU_FAVORITES = R.id.favorites;
 	public static final int MENU_LISTS = R.id.lists;
@@ -105,12 +106,12 @@ public interface Constants extends TwidereConstants {
 	public static final int LINK_ID_USER_FRIENDS = 6;
 	public static final int LINK_ID_USER_BLOCKS = 7;
 	public static final int LINK_ID_DIRECT_MESSAGES_CONVERSATION = 9;
-	public static final int LINK_ID_LIST_DETAILS = 10;
-	public static final int LINK_ID_LISTS = 11;
-	public static final int LINK_ID_LIST_TIMELINE = 12;
-	public static final int LINK_ID_LIST_MEMBERS = 13;
+	public static final int LINK_ID_USER_LIST = 10;
+	public static final int LINK_ID_USER_LISTS = 11;
+	public static final int LINK_ID_USER_LIST_TIMELINE = 12;
+	public static final int LINK_ID_USER_LIST_MEMBERS = 13;
 	public static final int LINK_ID_LIST_SUBSCRIBERS = 14;
-	public static final int LINK_ID_LIST_MEMBERSHIPS = 15;
+	public static final int LINK_ID_USER_LIST_MEMBERSHIPS = 15;
 	public static final int LINK_ID_SAVED_SEARCHES = 19;
 	public static final int LINK_ID_USER_MENTIONS = 21;
 	public static final int LINK_ID_INCOMING_FRIENDSHIPS = 22;

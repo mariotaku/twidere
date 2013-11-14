@@ -40,6 +40,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -66,7 +67,7 @@ import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Notifications;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.service.UpdateStatusService;
+import org.mariotaku.twidere.service.BackgroundOperationService;
 import org.mariotaku.twidere.task.AsyncTask;
 import org.mariotaku.twidere.task.CacheUsersStatusesTask;
 import org.mariotaku.twidere.task.ManagedAsyncTask;
@@ -158,13 +159,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int deleteUserListMembersAsync(final long account_id, final int list_id, final long... user_ids) {
-		final DeleteUserListMembersTask task = new DeleteUserListMembersTask(account_id, list_id, user_ids, null);
-		return mAsyncTaskManager.add(task, true);
-	}
-
-	public int deleteUserListMembersAsync(final long account_id, final int list_id, final String... screen_names) {
-		final DeleteUserListMembersTask task = new DeleteUserListMembersTask(account_id, list_id, null, screen_names);
+	public int deleteUserListMembersAsync(final long account_id, final int list_id, final ParcelableUser... users) {
+		final DeleteUserListMembersTask task = new DeleteUserListMembersTask(account_id, list_id, users);
 		return mAsyncTaskManager.add(task, true);
 	}
 
@@ -361,15 +357,13 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	public int updateStatusAsync(final long[] account_ids, final String content, final ParcelableLocation location,
 			final Uri image_uri, final int image_type, final long in_reply_to, final boolean is_possibly_sensitive) {
-		final Intent intent = new Intent(mContext, UpdateStatusService.class);
-		intent.putExtra(EXTRA_STATUS, new ParcelableStatusUpdate(account_ids, content, location, image_uri, image_type,
+		return updateStatusesAsync(new ParcelableStatusUpdate(account_ids, content, location, image_uri, image_type,
 				in_reply_to, is_possibly_sensitive));
-		mContext.startService(intent);
-		return 0;
 	}
 
 	public int updateStatusesAsync(final ParcelableStatusUpdate... statuses) {
-		final Intent intent = new Intent(mContext, UpdateStatusService.class);
+		final Intent intent = new Intent(mContext, BackgroundOperationService.class);
+		intent.setAction(INTENT_ACTION_UPDATE_STATUS);
 		intent.putExtra(EXTRA_STATUSES, statuses);
 		mContext.startService(intent);
 		return 0;
@@ -536,7 +530,9 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		protected void onPostExecute(final SingleResponse<ParcelableUserList> result) {
 			final boolean succeed = result != null && result.data != null && result.data.id > 0;
 			if (succeed) {
-				final String message = mContext.getString(R.string.added_users_to_list, result.data.name);
+				final Resources res = mContext.getResources();
+				final String message = res.getQuantityString(R.plurals.added_N_users_to_list, users.length,
+						users.length, result.data.name);
 				mMessagesManager.showOkMessage(message, false);
 			} else {
 				mMessagesManager.showErrorMessage(R.string.action_adding_member, result.exception, true);
@@ -878,37 +874,31 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	class DeleteUserListMembersTask extends ManagedAsyncTask<Void, Void, SingleResponse<ParcelableUserList>> {
 
-		private final long account_id;
-		private final int list_id;
-		private final long[] user_ids;
-		private final String[] screen_names;
+		private final long mAccountId;
+		private final int mUserListId;
+		private final ParcelableUser[] users;
 
-		public DeleteUserListMembersTask(final long account_id, final int list_id, final long[] user_ids,
-				final String[] screen_names) {
+		public DeleteUserListMembersTask(final long account_id, final int userListId, final ParcelableUser[] users) {
 			super(mContext, mAsyncTaskManager);
-			this.account_id = account_id;
-			this.list_id = list_id;
-			this.user_ids = user_ids;
-			this.screen_names = screen_names;
+			this.mAccountId = account_id;
+			this.mUserListId = userListId;
+			this.users = users;
 		}
 
 		@Override
 		protected SingleResponse<ParcelableUserList> doInBackground(final Void... params) {
-			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
+			final Twitter twitter = getTwitterInstance(mContext, mAccountId, false);
 			if (twitter != null) {
 				try {
-					final ParcelableUserList list;
-					if (user_ids != null) {
-						list = new ParcelableUserList(twitter.deleteUserListMembers(list_id, user_ids), account_id,
-								false);
-					} else if (screen_names != null) {
-						list = new ParcelableUserList(twitter.deleteUserListMembers(list_id, screen_names), account_id,
-								false);
-					} else
-						return SingleResponse.nullInstance();
-					return new SingleResponse<ParcelableUserList>(list, null);
+					final long[] userIds = new long[users.length];
+					for (int i = 0, j = users.length; i < j; i++) {
+						userIds[i] = users[i].id;
+					}
+					final ParcelableUserList list = new ParcelableUserList(twitter.deleteUserListMembers(mUserListId,
+							userIds), mAccountId, false);
+					return SingleResponse.newInstance(list, null);
 				} catch (final TwitterException e) {
-					return SingleResponse.exceptionOnly(e);
+					return SingleResponse.newInstance(null, e);
 				}
 			}
 			return SingleResponse.nullInstance();
@@ -917,16 +907,24 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		@Override
 		protected void onPostExecute(final SingleResponse<ParcelableUserList> result) {
 			final boolean succeed = result != null && result.data != null && result.data.id > 0;
+			final String message;
 			if (succeed) {
-				final String message = mContext.getString(R.string.deleted_users_from_list, result.data.name);
+				if (users.length == 1) {
+					final ParcelableUser user = users[0];
+					final String displayName = Utils.getDisplayName(mContext, user.id, user.name, user.screen_name);
+					message = mContext.getString(R.string.deleted_user_from_list, displayName, result.data.name);
+				} else {
+				final Resources res = mContext.getResources();
+				message = res.getQuantityString(R.plurals.deleted_N_users_from_list, users.length,
+						users.length, result.data.name);
+				}
 				mMessagesManager.showInfoMessage(message, false);
 			} else {
 				mMessagesManager.showErrorMessage(R.string.action_deleting, result.exception, true);
 			}
 			final Intent intent = new Intent(BROADCAST_USER_LIST_MEMBERS_DELETED);
 			intent.putExtra(EXTRA_USER_LIST, result.data);
-			intent.putExtra(EXTRA_USER_IDS, user_ids);
-			intent.putExtra(EXTRA_SCREEN_NAMES, screen_names);
+			intent.putExtra(EXTRA_USERS, users);
 			intent.putExtra(EXTRA_SUCCEED, succeed);
 			mContext.sendBroadcast(intent);
 			super.onPostExecute(result);

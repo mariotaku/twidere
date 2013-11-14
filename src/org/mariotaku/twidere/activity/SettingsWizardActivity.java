@@ -3,10 +3,13 @@ package org.mariotaku.twidere.activity;
 import static org.mariotaku.twidere.util.CompareUtils.classEquals;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -17,11 +20,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.TabsAdapter;
+import org.mariotaku.twidere.fragment.BaseDialogFragment;
 import org.mariotaku.twidere.fragment.BaseFragment;
 import org.mariotaku.twidere.fragment.BasePreferenceFragment;
 import org.mariotaku.twidere.fragment.ProgressDialogFragment;
@@ -194,10 +197,10 @@ public class SettingsWizardActivity extends Activity implements Constants {
 			switch (requestCode) {
 				case REQUEST_CUSTOM_TABS:
 					if (resultCode != RESULT_OK) {
-						Toast.makeText(getActivity(), R.string.wizard_page_tabs_unchanged_message, Toast.LENGTH_SHORT)
-								.show();
+						new TabsUnchangedDialogFragment().show(getFragmentManager(), "tabs_unchanged");
+					} else {
+						gotoNextPage();
 					}
-					gotoNextPage();
 					break;
 			}
 			super.onActivityResult(requestCode, resultCode, data);
@@ -212,6 +215,36 @@ public class SettingsWizardActivity extends Activity implements Constants {
 				applyInitialTabSettings();
 			}
 			return true;
+		}
+
+		public static class TabsUnchangedDialogFragment extends BaseDialogFragment implements
+				DialogInterface.OnClickListener {
+
+			@Override
+			public void onCancel(final DialogInterface dialog) {
+				gotoNextPage();
+			}
+
+			@Override
+			public void onClick(final DialogInterface dialog, final int which) {
+				gotoNextPage();
+			}
+
+			@Override
+			public Dialog onCreateDialog(final Bundle savedInstanceState) {
+				final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+				builder.setMessage(R.string.wizard_page_tabs_unchanged_message);
+				builder.setPositiveButton(android.R.string.ok, this);
+				return builder.create();
+			}
+
+			private void gotoNextPage() {
+				final Activity a = getActivity();
+				if (a instanceof SettingsWizardActivity) {
+					((SettingsWizardActivity) a).gotoNextPage();
+				}
+			}
+
 		}
 	}
 

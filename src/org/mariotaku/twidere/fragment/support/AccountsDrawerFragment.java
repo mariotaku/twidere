@@ -277,10 +277,10 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 	}
 
 	private void closeAccountsDrawer() {
-		final Activity activity = getActivity();
-		if (activity instanceof HomeActivity) {
-			((HomeActivity) activity).closeAccountsDrawer();
-		}
+//		final Activity activity = getActivity();
+//		if (activity instanceof HomeActivity) {
+//			((HomeActivity) activity).closeAccountsDrawer();
+//		}
 	}
 
 	public static final class AccountDeletionDialogFragment extends BaseSupportDialogFragment implements

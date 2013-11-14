@@ -45,7 +45,6 @@ public class StatusViewHolder extends CardViewHolder {
 	public final View image_preview_container;
 	public final ProgressBar image_preview_progress;
 	private final View gap_indicator;
-	private final View card;
 	private final IColorLabelView content;
 
 	private final float density;
@@ -58,7 +57,6 @@ public class StatusViewHolder extends CardViewHolder {
 	public StatusViewHolder(final View view) {
 		super(view);
 		final Context context = getContext();
-		card = findViewById(R.id.card);
 		content = (IColorLabelView) findViewById(R.id.content);
 		gap_indicator = findViewById(R.id.list_gap_text);
 		image_preview_container = findViewById(R.id.image_preview_container);
@@ -131,8 +129,8 @@ public class StatusViewHolder extends CardViewHolder {
 
 	public void setShowAsGap(final boolean show_gap) {
 		show_as_gap = show_gap;
-		if (card != null) {
-			card.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		if (content != null) {
+			content.setVisibility(show_gap ? View.GONE : View.VISIBLE);
 		}
 		if (gap_indicator != null) {
 			gap_indicator.setVisibility(!show_gap ? View.GONE : View.VISIBLE);

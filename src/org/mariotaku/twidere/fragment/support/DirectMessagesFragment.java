@@ -134,7 +134,12 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 		final Uri uri = DirectMessages.ConversationsEntry.CONTENT_URI;
 		final long account_id = getAccountId();
 		final long[] account_ids = account_id > 0 ? new long[] { account_id } : getActivatedAccountIds(getActivity());
-		setEmptyText(account_ids.length == 0 ? getString(R.string.no_account_selected) : null);
+		final boolean no_account_selected = account_ids.length == 0;
+		if (no_account_selected) {
+			setEmptyText(getString(R.string.no_account_selected));
+		} else {
+			getListView().setEmptyView(null);
+		}
 		final Where account_where = Where.in(new Column(Statuses.ACCOUNT_ID), new RawItemArray(account_ids));
 		return new CursorLoader(getActivity(), uri, null, account_where.getSQL(), null, null);
 	}

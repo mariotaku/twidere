@@ -63,7 +63,7 @@ public class UserListTimelineFragment extends ParcelableStatusesListFragment {
 		final long user_id = args.getLong(EXTRA_USER_ID, -1);
 		final String screen_name = args.getString(EXTRA_SCREEN_NAME);
 		final String list_name = args.getString(EXTRA_LIST_NAME);
-		return new String[] { AUTHORITY_LIST_TIMELINE, "account" + account_id, "list_id" + list_id,
+		return new String[] { AUTHORITY_USER_LIST_TIMELINE, "account" + account_id, "list_id" + list_id,
 				"list_name" + list_name, "user" + user_id, "screen_name" + screen_name };
 	}
 

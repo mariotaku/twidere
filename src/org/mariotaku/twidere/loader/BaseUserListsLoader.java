@@ -86,12 +86,15 @@ public abstract class BaseUserListsLoader extends AsyncTaskLoader<List<Parcelabl
 				mNextCursor = ((CursorSupport) list_loaded).getNextCursor();
 				mPrevCursor = ((CursorSupport) list_loaded).getPreviousCursor();
 				for (int i = 0; i < list_size; i++) {
-					mData.add(new ParcelableUserList(list_loaded.get(i), mAccountId, (mCursor + 1) * 20 + i,
-							mHiResProfileImage));
+					final UserList list = list_loaded.get(i);
+					mData.add(new ParcelableUserList(list, mAccountId, (mCursor + 1) * 20 + i, mHiResProfileImage,
+							isFollowing(list)));
 				}
 			} else {
 				for (int i = 0; i < list_size; i++) {
-					mData.add(new ParcelableUserList(list_loaded.get(i), mAccountId, i, mHiResProfileImage));
+					final UserList list = list_loaded.get(i);
+					mData.add(new ParcelableUserList(list_loaded.get(i), mAccountId, i, mHiResProfileImage,
+							isFollowing(list)));
 				}
 			}
 		}
@@ -102,5 +105,9 @@ public abstract class BaseUserListsLoader extends AsyncTaskLoader<List<Parcelabl
 	@Override
 	public void onStartLoading() {
 		forceLoad();
+	}
+
+	protected boolean isFollowing(final UserList list) {
+		return list.isFollowing();
 	}
 }

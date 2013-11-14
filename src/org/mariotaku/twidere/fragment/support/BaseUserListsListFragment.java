@@ -150,10 +150,9 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 	@Override
 	public final void onListItemClick(final ListView view, final View child, final int position, final long id) {
 		if (mMultiSelectManager.isActive()) return;
-		final ParcelableUserList user_list = mAdapter.findItem(id);
-		if (user_list == null) return;
-		openUserListDetails(getActivity(), mAccountId, user_list.id, user_list.user_id, user_list.user_screen_name,
-				user_list.name);
+		final ParcelableUserList userList = mAdapter.findItem(id);
+		if (userList == null) return;
+		openUserListDetails(getActivity(), userList);
 	}
 
 	@Override
@@ -177,9 +176,9 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 
 	@Override
 	public void onMenuButtonClick(final View button, final int position, final long id) {
-		final ParcelableUserList user_list = mAdapter.getItem(position - mListView.getHeaderViewsCount());
-		if (user_list == null) return;
-		showMenu(button, user_list);
+		final ParcelableUserList userList = mAdapter.getItem(position - mListView.getHeaderViewsCount());
+		if (userList == null) return;
+		showMenu(button, userList);
 	}
 
 	@Override

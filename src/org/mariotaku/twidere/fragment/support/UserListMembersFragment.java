@@ -20,29 +20,21 @@
 package org.mariotaku.twidere.fragment.support;
 
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
-import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
-import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
-import android.view.View;
-import android.widget.AdapterView;
 
-import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.adapter.ParcelableUsersAdapter;
 import org.mariotaku.twidere.loader.CursorSupportUsersLoader;
 import org.mariotaku.twidere.loader.UserListMembersLoader;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.task.AsyncTask;
-import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -50,11 +42,7 @@ import twitter4j.UserList;
 
 public class UserListMembersFragment extends CursorSupportUsersListFragment implements OnMenuItemClickListener {
 
-	private ParcelableUser mSelectedUser;
 	private ParcelableUserList mUserList;
-
-	private PopupMenu mPopupMenu;
-	private AsyncTwitterWrapper mTwitterWrapper;
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -92,7 +80,6 @@ public class UserListMembersFragment extends CursorSupportUsersListFragment impl
 		} else if (args != null) {
 			mUserList = args.getParcelable(EXTRA_USER_LIST);
 		}
-		mTwitterWrapper = getApplication().getTwitterWrapper();
 		super.onActivityCreated(savedInstanceState);
 		if (mUserList == null && args != null) {
 			final int list_id = args.getInt(EXTRA_LIST_ID, -1);
@@ -105,43 +92,19 @@ public class UserListMembersFragment extends CursorSupportUsersListFragment impl
 	}
 
 	@Override
-	public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-		mSelectedUser = null;
-		if (mUserList == null || mUserList.account_id != mUserList.user_id) return false;
-		final ParcelableUsersAdapter adapter = getListAdapter();
-		mSelectedUser = adapter.getItem(position - getListView().getHeaderViewsCount());
-		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
-		mPopupMenu.inflate(R.menu.action_user_list_member);
-		mPopupMenu.setOnMenuItemClickListener(this);
-		mPopupMenu.show();
-		return true;
-	}
-
-	@Override
 	public boolean onMenuItemClick(final MenuItem item) {
-		if (mSelectedUser == null || mUserList == null) return false;
+		final ParcelableUser user = getSelectedUser();
+		if (user == null || mUserList == null) return false;
 		switch (item.getItemId()) {
-			case MENU_DELETE: {
-				mTwitterWrapper.deleteUserListMembersAsync(getAccountId(), mUserList.id, mSelectedUser.id);
-				break;
-			}
-			case MENU_VIEW_PROFILE: {
-				openUserProfile(getActivity(), mSelectedUser);
+			case MENU_DELETE_FROM_LIST: {
+				DeleteUserListMembersDialogFragment.show(getFragmentManager(), mUserList, user);
 				break;
 			}
 			default: {
-				if (item.getIntent() != null) {
-					try {
-						startActivity(item.getIntent());
-					} catch (final ActivityNotFoundException e) {
-						Log.w(LOGTAG, e);
-						return false;
-					}
-				}
-				break;
+				return super.onMenuItemClick(item);
 			}
 		}
-		return false;
+		return true;
 	}
 
 	@Override
@@ -160,10 +123,12 @@ public class UserListMembersFragment extends CursorSupportUsersListFragment impl
 	@Override
 	public void onStop() {
 		unregisterReceiver(mStatusReceiver);
-		if (mPopupMenu != null) {
-			mPopupMenu.dismiss();
-		}
 		super.onStop();
+	}
+
+	@Override
+	protected int getUserMenuResource() {
+		return R.menu.action_user_list_member;
 	}
 
 	private class GetUserListTask extends AsyncTask<Void, Void, ParcelableUserList> {

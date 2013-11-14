@@ -43,6 +43,7 @@
 	<string name="password">Password</string>
 	<string name="label_tweetstore_provider">Twidere database provider</string>
 	<string name="label_refresh_service">Refresh service</string>
+	<string name="label_background_operation_service">Background operation service</string>
 	<string name="open_in_browser">Open in browser</string>
 	<string name="tap_to_load_more">Tap to load more</string>
 	<string name="delete">Delete</string>
@@ -456,8 +457,14 @@
 	<string name="updated_list_details">Updated list \"<xliff:g id="list">%s</xliff:g>\"\'s details.</string>
 	<string name="subscribed_to_list">Subscribed to list \"<xliff:g id="list">%s</xliff:g>\".</string>
 	<string name="unsubscribed_from_list">Unsubscribed from list \"<xliff:g id="list">%s</xliff:g>\".</string>
-	<string name="added_users_to_list">Added user(s) to list \"<xliff:g id="list">%s</xliff:g>\".</string>
-	<string name="deleted_users_from_list">Deleted user(s) from list \"<xliff:g id="list">%s</xliff:g>\".</string>
+	<string name="added_N_users_to_list_quantity_one">Added <xliff:g id="items">%1$d</xliff:g> user to list \"<xliff:g id="list">%2$s</xliff:g>\".</string>
+	<string name="added_N_users_to_list_quantity_other">Added <xliff:g id="items">%1$d</xliff:g> user to list \"<xliff:g id="list">%2$s</xliff:g>\".</string>
+	<string name="deleted_user_from_list">Deleted <xliff:g id="user">%1$s</xliff:g> from list \"<xliff:g id="list">%2$s</xliff:g>\".</string>
+	<string name="deleted_N_users_from_list_quantity_one">Deleted <xliff:g id="items">%1$d</xliff:g> users from list \"<xliff:g id="list">%2$s</xliff:g>\".</string>
+	<string name="deleted_N_users_from_list_quantity_other">Deleted <xliff:g id="items">%1$d</xliff:g> users from list \"<xliff:g id="list">%2$s</xliff:g>\".</string>
+	<string name="delete_user_from_list_confirm">Delete <xliff:g id="user">%1$s</xliff:g> from list \"<xliff:g id="list">%2$s</xliff:g>\"?</string>
+	<string name="delete_N_users_from_list_confirm_quantity_one">Delete <xliff:g id="items">%1$d</xliff:g> users from list \"<xliff:g id="list">%2$s</xliff:g>\"?</string>
+	<string name="delete_N_users_from_list_confirm_quantity_other">Delete <xliff:g id="items">%1$d</xliff:g> users from list \"<xliff:g id="list">%2$s</xliff:g>\"?</string>
 	<string name="subscribe">Subscribe</string>
 	<string name="unsubscribe">Unsubscribe</string>
 	<string name="background_toast_notification">Background Toast notification</string>
@@ -551,5 +558,8 @@
 	<string name="show_in_timeline">Show in timeline</string>
 	<string name="cards">Cards</string>
 	<string name="no_tab_hint">No tab</string>
+	<string name="delete_user">Delete user <xliff:g id="name">%s</xliff:g></string>
+	<string name="delete_users">Delete users</string>
+	<string name="delete_user_confirm_message">Are you sure to delete <xliff:g id="name">%s</xliff:g>?</string>
 
 </resources>
