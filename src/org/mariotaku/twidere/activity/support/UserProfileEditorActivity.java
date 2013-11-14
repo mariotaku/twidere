@@ -357,7 +357,7 @@ public class UserProfileEditorActivity extends TwidereSwipeBackActivity implemen
 		mLazyImageLoader = TwidereApplication.getInstance(this).getImageLoaderWrapper();
 		mAccountId = extras.getLong(EXTRA_ACCOUNT_ID);
 		setContentView(R.layout.edit_user_profile);
-//		setOverrideExitAniamtion(false);
+		// setOverrideExitAniamtion(false);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		mProfileImageBannerLayout.setOnSizeChangedListener(this);
 		mEditName.addTextChangedListener(this);

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	android:title="@string/notifications">
+
+	<PreferenceCategory
+		android:key="cat_notifications_type"
+		android:title="@string/notifications_type">
+		<CheckBoxPreference
+			android:key="notification_have_sound"
+			android:title="@string/sound"/>
+		<CheckBoxPreference
+			android:key="notification_have_vibration"
+			android:title="@string/vibration"/>
+		<CheckBoxPreference
+			android:key="notification_have_lights"
+			android:title="@string/lights"/>
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:key="cat_notifications"
+		android:title="@string/notifications">
+		<org.mariotaku.twidere.preference.RingtonePreference
+			android:defaultValue=""
+			android:key="notification_ringtone"
+			android:title="@string/notification_ringtone"/>
+
+		<org.mariotaku.twidere.preference.ColorPickerPreference
+			android:defaultValue="@android:color/holo_blue_dark"
+			android:key="notification_light_color"
+			android:title="@string/notification_light_color"/>
+	</PreferenceCategory>
+
+</PreferenceScreen>

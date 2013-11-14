@@ -880,8 +880,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 		public DeleteUserListMembersTask(final long account_id, final int userListId, final ParcelableUser[] users) {
 			super(mContext, mAsyncTaskManager);
-			this.mAccountId = account_id;
-			this.mUserListId = userListId;
+			mAccountId = account_id;
+			mUserListId = userListId;
 			this.users = users;
 		}
 
@@ -914,9 +914,9 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					final String displayName = Utils.getDisplayName(mContext, user.id, user.name, user.screen_name);
 					message = mContext.getString(R.string.deleted_user_from_list, displayName, result.data.name);
 				} else {
-				final Resources res = mContext.getResources();
-				message = res.getQuantityString(R.plurals.deleted_N_users_from_list, users.length,
-						users.length, result.data.name);
+					final Resources res = mContext.getResources();
+					message = res.getQuantityString(R.plurals.deleted_N_users_from_list, users.length, users.length,
+							result.data.name);
 				}
 				mMessagesManager.showInfoMessage(message, false);
 			} else {

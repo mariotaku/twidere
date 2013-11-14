@@ -81,4 +81,5 @@ class BasePreferenceActivity extends PreferenceActivity implements Constants, IT
 		mCurrentThemeResource = getThemeResource();
 		setTheme(mCurrentThemeResource);
 	}
+
 }

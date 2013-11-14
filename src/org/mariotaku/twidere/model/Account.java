@@ -116,8 +116,8 @@ public class Account implements Parcelable {
 
 	public static Account getAccount(final Context context, final long account_id) {
 		if (context == null) return null;
-		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(),Accounts.CONTENT_URI, Accounts.COLUMNS,
-				Accounts.ACCOUNT_ID + " = " + account_id, null, null);
+		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI,
+				Accounts.COLUMNS, Accounts.ACCOUNT_ID + " = " + account_id, null, null);
 		if (cur != null) {
 			try {
 				final Indices indices = new Indices(cur);
@@ -135,8 +135,8 @@ public class Account implements Parcelable {
 			Collections.emptyList();
 		}
 		final ArrayList<Account> accounts = new ArrayList<Account>();
-		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(),Accounts.CONTENT_URI, Accounts.COLUMNS,
-				activated_only ? Accounts.IS_ACTIVATED + " = 1" : null, null, null);
+		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI,
+				Accounts.COLUMNS, activated_only ? Accounts.IS_ACTIVATED + " = 1" : null, null, null);
 		if (cur != null) {
 			final Indices indices = new Indices(cur);
 			cur.moveToFirst();

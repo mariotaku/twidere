@@ -19,7 +19,6 @@
 
 package org.mariotaku.twidere.fragment.support;
 
-
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.webkit.WebSettings;

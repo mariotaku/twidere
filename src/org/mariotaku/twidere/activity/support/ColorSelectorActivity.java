@@ -117,7 +117,9 @@ public class ColorSelectorActivity extends BaseSupportDialogActivity implements 
 
 	private void showDialog() {
 		final ColorPickerDialogFragment f = new ColorPickerDialogFragment();
-		f.setInitialColor(mCustomizedColor);
+		final Bundle args = new Bundle();
+		args.putInt(EXTRA_COLOR, mCustomizedColor);
+		f.setArguments(args);
 		f.show(getSupportFragmentManager(), "color_picker_dialog");
 	}
 

@@ -21,21 +21,20 @@ package org.mariotaku.twidere.fragment;
 
 import org.mariotaku.twidere.R;
 
-public class AccountNotificationSettingsFragment extends BaseAccountPreferenceFragment {
+public class AccountRefreshSettingsFragment extends BaseAccountPreferenceFragment {
 
 	@Override
 	protected int getPreferencesResource() {
-		return R.xml.settings_account_notifications;
+		return R.xml.settings_account_refresh;
 	}
 
 	@Override
 	protected boolean getSwitchPreferenceDefault() {
-		return PREFERENCE_DEFAULT_NOTIFICATION;
+		return PREFERENCE_DEFAULT_AUTO_REFRESH;
 	}
 
 	@Override
 	protected String getSwitchPreferenceKey() {
-		return PREFERENCE_KEY_NOTIFICATION;
+		return PREFERENCE_KEY_AUTO_REFRESH;
 	}
-
 }

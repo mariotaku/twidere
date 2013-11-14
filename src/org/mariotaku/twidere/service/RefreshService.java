@@ -194,8 +194,8 @@ public class RefreshService extends Service implements Constants {
 	private void rescheduleDirectMessagesRefreshing() {
 		mAlarmManager.cancel(mPendingRefreshDirectMessagesIntent);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
-			final long update_interval_mins = Math.max(
-					parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")), 3);
+			final long update_interval_mins = Math.max(parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL,
+					PREFERENCE_DEFAULT_REFRESH_INTERVAL)), 3);
 			final long update_interval = update_interval_mins * 60 * 1000;
 			if (update_interval > 0) {
 				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
@@ -207,8 +207,8 @@ public class RefreshService extends Service implements Constants {
 	private void rescheduleHomeTimelineRefreshing() {
 		mAlarmManager.cancel(mPendingRefreshHomeTimelineIntent);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
-			final long update_interval_mins = Math.max(
-					parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")), 3);
+			final long update_interval_mins = Math.max(parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL,
+					PREFERENCE_DEFAULT_REFRESH_INTERVAL)), 3);
 			final long update_interval = update_interval_mins * 60 * 1000;
 			if (update_interval > 0) {
 				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
@@ -220,8 +220,8 @@ public class RefreshService extends Service implements Constants {
 	private void rescheduleMentionsRefreshing() {
 		mAlarmManager.cancel(mPendingRefreshMentionsIntent);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
-			final long update_interval_mins = Math.max(
-					parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")), 3);
+			final long update_interval_mins = Math.max(parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL,
+					PREFERENCE_DEFAULT_REFRESH_INTERVAL)), 3);
 			final long update_interval = update_interval_mins * 60 * 1000;
 			if (update_interval > 0) {
 				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
@@ -233,8 +233,8 @@ public class RefreshService extends Service implements Constants {
 	private void rescheduleTrendsRefreshing() {
 		mAlarmManager.cancel(mPendingRefreshTrendsIntent);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
-			final long update_interval_mins = Math.max(
-					parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")), 3);
+			final long update_interval_mins = Math.max(parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL,
+					PREFERENCE_DEFAULT_REFRESH_INTERVAL)), 3);
 			final long update_interval = update_interval_mins * 60 * 1000;
 			if (update_interval > 0) {
 				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,
@@ -246,8 +246,8 @@ public class RefreshService extends Service implements Constants {
 	private boolean startAutoRefresh() {
 		stopAutoRefresh();
 		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
-			final long update_interval_mins = Math.max(
-					parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL, "30")), 3);
+			final long update_interval_mins = Math.max(parseInt(mPreferences.getString(PREFERENCE_KEY_REFRESH_INTERVAL,
+					PREFERENCE_DEFAULT_REFRESH_INTERVAL)), 3);
 			final long update_interval = update_interval_mins * 60 * 1000;
 			if (update_interval <= 0) return false;
 			mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + update_interval,

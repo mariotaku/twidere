@@ -43,10 +43,7 @@ public class MapViewerActivity extends TwidereSwipeBackActivity implements Const
 		getMenuInflater().inflate(R.menu.menu_map_viewer, menu);
 		return true;
 	}
-	@Override
-	protected int getThemeResource() {
-		return R.style.Theme_Twidere_Viewer;
-	}
+
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
@@ -64,6 +61,11 @@ public class MapViewerActivity extends TwidereSwipeBackActivity implements Const
 			}
 		}
 		return true;
+	}
+
+	@Override
+	protected int getThemeResource() {
+		return R.style.Theme_Twidere_Viewer;
 	}
 
 	@Override

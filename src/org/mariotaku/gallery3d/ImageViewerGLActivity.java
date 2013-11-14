@@ -310,7 +310,7 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.image_viewer_gl);
-//		setOverrideExitAniamtion(false);
+		// setOverrideExitAniamtion(false);
 		mActionBar = getActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 		mActionBar.addOnMenuVisibilityListener(this);

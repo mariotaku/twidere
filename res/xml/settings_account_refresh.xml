@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	android:title="@string/auto_refresh">
+
+	<PreferenceCategory
+		android:key="cat_auto_refresh"
+		android:title="@string/auto_refresh"/>
+
+	<ListPreference
+		android:defaultValue="15"
+		android:entries="@array/entries_refresh_interval"
+		android:entryValues="@array/values_refresh_interval"
+		android:key="refresh_interval"
+		android:summary="%s"
+		android:title="@string/refresh_interval"/>
+
+	<PreferenceCategory
+		android:key="cat_refresh_content"
+		android:title="@string/content_to_refresh">
+		<CheckBoxPreference
+			android:key="refresh_enable_home_timeline"
+			android:title="@string/home"/>
+		<CheckBoxPreference
+			android:key="refresh_enable_mentions"
+			android:title="@string/mentions"/>
+		<CheckBoxPreference
+			android:key="refresh_enable_direct_messages"
+			android:title="@string/direct_messages"/>
+		<CheckBoxPreference
+			android:key="refresh_enable_trends"
+			android:title="@string/trends"/>
+	</PreferenceCategory>
+
+</PreferenceScreen>

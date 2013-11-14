@@ -52,6 +52,7 @@ public interface TwidereConstants {
 	public static final String PERMISSION_PREFERENCES_NAME = "permissions";
 	public static final String SILENT_NOTIFICATIONS_PREFERENCE_NAME = "silent_notifications";
 	public static final String TIMELINE_POSITIONS_PREFERENCES_NAME = "timeline_positions";
+	public static final String ACCOUNT_PREFERENCES_NAME_PREFIX = "account_preferences_";
 
 	public static final String TWITTER_CONSUMER_KEY = "uAFVpMhBntJutfVj6abfA";
 	public static final String TWITTER_CONSUMER_SECRET = "JARXkJTfxo0F8MyctYy9bUmrLISjo8vXAHsZHYuk2E";
@@ -218,11 +219,16 @@ public interface TwidereConstants {
 	public static final String PREFERENCE_KEY_SETTINGS_WIZARD_COMPLETED = "settings_wizard_completed";
 	public static final String PREFERENCE_KEY_CARD_ANIMATION = "card_animation";
 	public static final String PREFERENCE_KEY_UNREAD_COUNT = "unread_count";
+	public static final String PREFERENCE_KEY_NOTIFICATION = "notification";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;
 	public static final String PREFERENCE_DEFAULT_SHARE_FORMAT = FORMAT_PATTERN_TITLE + " - " + FORMAT_PATTERN_TEXT;
 	public static final String PREFERENCE_DEFAULT_IMAGE_UPLOAD_FORMAT = FORMAT_PATTERN_TEXT + " " + FORMAT_PATTERN_LINK;
+
+	public static final String PREFERENCE_DEFAULT_REFRESH_INTERVAL = "15";
+	public static final boolean PREFERENCE_DEFAULT_AUTO_REFRESH = false;
+	public static final boolean PREFERENCE_DEFAULT_NOTIFICATION = true;
 
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
 	public static final int PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT = 20;
@@ -280,7 +286,7 @@ public interface TwidereConstants {
 	public static final String INTENT_ACTION_EXTENSION_SHORTEN_TWEET = INTENT_PACKAGE_PREFIX
 			+ "EXTENSION_SHORTEN_TWEET";
 	public static final String INTENT_ACTION_EXTENSION_SETTINGS = INTENT_PACKAGE_PREFIX + "EXTENSION_SETTINGS";
-	
+
 	public static final String INTENT_ACTION_UPDATE_STATUS = INTENT_PACKAGE_PREFIX + "UPDATE_STATUS";
 
 	public static final String BROADCAST_HOME_TIMELINE_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX
@@ -424,6 +430,7 @@ public interface TwidereConstants {
 	public static final String EXTRA_ACCOUNT = "account";
 	public static final String EXTRA_ACTIVITY_SCREENSHOT = "activity_screenshot";
 	public static final String EXTRA_ACTIVITY_SCREENSHOT_ENCODED = "activity_screenshot_encoded";
+	public static final String EXTRA_COLOR = "color";
 
 	public static final int MENU_GROUP_STATUS_EXTENSION = 10;
 	public static final int MENU_GROUP_COMPOSE_EXTENSION = 11;
@@ -447,6 +454,7 @@ public interface TwidereConstants {
 	public static final int REQUEST_ADD_TO_LIST = 15;
 	public static final int REQUEST_SELECT_USER = 16;
 	public static final int REQUEST_SELECT_USER_LIST = 17;
+	public static final int REQUEST_SWIPEBACK_ACTIVITY = 101;
 
 	public static final String TABLE_ACCOUNTS = Accounts.TABLE_NAME;
 	public static final String TABLE_STATUSES = Statuses.TABLE_NAME;
@@ -558,9 +566,9 @@ public interface TwidereConstants {
 	public static final String TAB_TYPE_ACTIVITIES_ABOUT_ME = "activities_about_me";
 	public static final String TAB_TYPE_ACTIVITIES_BY_FRIENDS = "activities_by_friends";
 	public static final String TAB_TYPE_STAGGERED_HOME_TIMELINE = "staggered_home_timeline";
-	
+
 	public static final int TWITTER_MAX_IMAGE_SIZE = 3145728;
 	public static final int TWITTER_MAX_IMAGE_WIDTH = 1024;
-	public static final int TWITTER_MAX_IMAGE_HEIGHT = 2048; 
+	public static final int TWITTER_MAX_IMAGE_HEIGHT = 2048;
 
 }

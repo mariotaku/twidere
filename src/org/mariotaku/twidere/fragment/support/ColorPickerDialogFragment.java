@@ -53,7 +53,9 @@ public class ColorPickerDialogFragment extends BaseSupportDialogFragment {
 	@Override
 	public Dialog onCreateDialog(final Bundle savedInstanceState) {
 		if (savedInstanceState != null) {
-			mInitialColor = savedInstanceState.getInt(Accounts.USER_COLOR, Color.WHITE);
+			mInitialColor = savedInstanceState.getInt(EXTRA_COLOR, Color.WHITE);
+		} else {
+			mInitialColor = getArguments().getInt(EXTRA_COLOR, Color.WHITE);
 		}
 		if (getActivity() instanceof OnColorSelectedListener) {
 			mListener = (OnColorSelectedListener) getActivity();
@@ -66,10 +68,6 @@ public class ColorPickerDialogFragment extends BaseSupportDialogFragment {
 	public void onSaveInstanceState(final Bundle outState) {
 		outState.putInt(Accounts.USER_COLOR, mInitialColor);
 		super.onSaveInstanceState(outState);
-	}
-
-	public void setInitialColor(final int color) {
-		mInitialColor = color;
 	}
 
 	public class ColorPickerDialog extends AlertDialog implements OnColorChangedListener, OnClickListener {

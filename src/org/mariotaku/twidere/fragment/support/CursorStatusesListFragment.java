@@ -83,9 +83,8 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 		final long account_id = getAccountId();
 		final long[] account_ids = account_id > 0 ? new long[] { account_id } : getActivatedAccountIds(getActivity());
 		final boolean no_account_selected = account_ids.length == 0;
-		if (no_account_selected) {
-			setEmptyText(getString(R.string.no_account_selected));
-		} else {
+		setEmptyText(no_account_selected ? getString(R.string.no_account_selected) : null);
+		if (!no_account_selected) {
 			getListView().setEmptyView(null);
 		}
 		final Where account_where = Where.in(new Column(Statuses.ACCOUNT_ID), new RawItemArray(account_ids));

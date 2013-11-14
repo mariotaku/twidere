@@ -6,43 +6,47 @@
 		android:key="cat_auto_refresh"
 		android:title="@string/auto_refresh"/>
 
-	<CheckBoxPreference
-		android:defaultValue="false"
-		android:key="auto_refresh"
-		android:title="@string/auto_refresh"/>
+	<PreferenceCategory
+		android:key="cat_general"
+		android:title="@string/general">
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="auto_refresh"
+			android:title="@string/auto_refresh"/>
 
-	<ListPreference
-		android:dependency="auto_refresh"
-		android:entries="@array/entries_refresh_interval"
-		android:entryValues="@array/values_refresh_interval"
-		android:key="refresh_interval"
-		android:summary="@string/refresh_interval_summary"
-		android:title="@string/refresh_interval"/>
+		<ListPreference
+			android:dependency="auto_refresh"
+			android:entries="@array/entries_refresh_interval"
+			android:entryValues="@array/values_refresh_interval"
+			android:key="refresh_interval"
+			android:summary="@string/refresh_interval_summary"
+			android:title="@string/refresh_interval"/>
 
-	<org.mariotaku.twidere.preference.AutoRefreshContentPreference
-		android:dependency="auto_refresh"
-		android:key="refresh_content"
-		android:title="@string/content_to_refresh"/>
+		<org.mariotaku.twidere.preference.AutoRefreshContentPreference
+			android:dependency="auto_refresh"
+			android:key="refresh_content"
+			android:title="@string/content_to_refresh"/>
 
-	<CheckBoxPreference
-		android:defaultValue="true"
-		android:dependency="auto_refresh"
-		android:key="stop_auto_refresh_when_battery_low"
-		android:title="@string/stop_auto_refresh_when_battery_low"/>
+		<CheckBoxPreference
+			android:defaultValue="true"
+			android:dependency="auto_refresh"
+			android:key="stop_auto_refresh_when_battery_low"
+			android:title="@string/stop_auto_refresh_when_battery_low"/>
 
-	<org.mariotaku.twidere.preference.HomeRefreshContentPreference
-		android:key="home_refresh"
-		android:title="@string/home_refresh"/>
+		<org.mariotaku.twidere.preference.HomeRefreshContentPreference
+			android:key="home_refresh"
+			android:title="@string/home_refresh"/>
 
-	<CheckBoxPreference
-		android:defaultValue="false"
-		android:key="refresh_on_start"
-		android:summary="@string/refresh_on_start_summary"
-		android:title="@string/refresh_on_start"/>
-	<CheckBoxPreference
-		android:defaultValue="false"
-		android:key="refresh_after_tweet"
-		android:summary="@string/refresh_after_status_updated_summary"
-		android:title="@string/refresh_after_status_updated"/>
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="refresh_on_start"
+			android:summary="@string/refresh_on_start_summary"
+			android:title="@string/refresh_on_start"/>
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="refresh_after_tweet"
+			android:summary="@string/refresh_after_status_updated_summary"
+			android:title="@string/refresh_after_status_updated"/>
+	</PreferenceCategory>
 
 </PreferenceScreen>

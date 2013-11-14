@@ -242,6 +242,14 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 		super.onStop();
 	}
 
+	protected ParcelableUser getSelectedUser() {
+		return mSelectedUser;
+	}
+
+	protected int getUserMenuResource() {
+		return R.menu.action_user_list;
+	}
+
 	protected abstract Loader<List<ParcelableUser>> newLoaderInstance(Context context, Bundle args);
 
 	@Override
@@ -270,10 +278,6 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 	protected boolean shouldShowAccountColor() {
 		return getActivatedAccountIds(getActivity()).length > 1;
 	}
-	
-	protected ParcelableUser getSelectedUser() {
-		return mSelectedUser;
-	}
 
 	private void showMenu(final View view, final ParcelableUser user) {
 		mSelectedUser = user;
@@ -291,9 +295,5 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 		addIntentToMenu(getActivity(), menu, extensions_intent);
 		mPopupMenu.setOnMenuItemClickListener(this);
 		mPopupMenu.show();
-	}
-
-	protected int getUserMenuResource() {
-		return R.menu.action_user_list;
 	}
 }

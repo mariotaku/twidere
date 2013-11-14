@@ -81,7 +81,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.MeasureSpec;
-import android.view.Window;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.webkit.MimeTypeMap;
@@ -183,7 +182,6 @@ import twitter4j.http.HostAddressResolver;
 import twitter4j.http.HttpClientWrapper;
 import twitter4j.http.HttpResponse;
 
-import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -366,62 +364,6 @@ public final class Utils implements Constants {
 		return builder.build();
 	}
 
-	public static boolean downscaleImageIfNeeded(File imageFile, int quality) {
-		if (imageFile == null || !imageFile.isFile()) return false;
-		final String path = imageFile.getAbsolutePath();
-		final BitmapFactory.Options o = new BitmapFactory.Options();
-		o.inJustDecodeBounds = true;
-		BitmapFactory.decodeFile(path, o);
-		// Corrupted image, so return now.
-		if (o.outWidth <= 0 || o.outHeight <= 0) return false;
-		o.inJustDecodeBounds = false;
-		if (o.outWidth > TWITTER_MAX_IMAGE_WIDTH || o.outHeight > TWITTER_MAX_IMAGE_HEIGHT) {
-			// The image dimension is larger than Twitter's limit.
-			o.inSampleSize = calculateInSampleSize(o.outWidth, o.outHeight, TWITTER_MAX_IMAGE_WIDTH,
-					TWITTER_MAX_IMAGE_HEIGHT);
-			try {
-				final Bitmap b = BitmapDecodeHelper.decode(path, o);
-				final Bitmap.CompressFormat format = getBitmapCompressFormatByMimetype(o.outMimeType,
-						Bitmap.CompressFormat.PNG);
-				final FileOutputStream fos = new FileOutputStream(imageFile);
-				return b.compress(format, quality, fos); 
-			} catch (OutOfMemoryError e) {
-				return false;
-			} catch (FileNotFoundException e) {
-				// This shouldn't happen.
-			}
-		} else if (imageFile.length() > TWITTER_MAX_IMAGE_SIZE) {
-			// The file size is larger than Twitter's limit.
-			try {
-				final Bitmap b = BitmapDecodeHelper.decode(path, o);
-				final FileOutputStream fos = new FileOutputStream(imageFile);
-				return b.compress(Bitmap.CompressFormat.JPEG, 80, fos); 
-			} catch (OutOfMemoryError e) {
-				return false;
-			} catch (FileNotFoundException e) {
-				// This shouldn't happen.
-			}
-		}
-		return true;
-	}
-
-	public static Bitmap.CompressFormat getBitmapCompressFormatByMimetype(String mimeType, Bitmap.CompressFormat def) {
-		final String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
-		if ("jpeg".equalsIgnoreCase(extension) || "jpg".equalsIgnoreCase(extension)) {
-			return Bitmap.CompressFormat.JPEG;
-		} else if ("png".equalsIgnoreCase(extension)) {
-			return Bitmap.CompressFormat.PNG;
-		} else if ("webp".equalsIgnoreCase(extension)) {
-			return Bitmap.CompressFormat.WEBP;
-		}
-		return def;
-	}
-
-	public static int calculateInSampleSize(int width, int height, int preferredWidth, int preferredHeight) {
-		if (preferredHeight > height && preferredWidth > width) return 1;
-		return Math.round(Math.max(width, height) / (float) Math.max(preferredWidth, preferredHeight));
-	}
-
 	public static String buildActivatedStatsWhereClause(final Context context, final String selection) {
 		if (context == null) return null;
 		final long[] account_ids = getActivatedAccountIds(context);
@@ -484,6 +426,12 @@ public final class Utils implements Constants {
 		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
 		builder.append(" )");
 		return builder.toString();
+	}
+
+	public static int calculateInSampleSize(final int width, final int height, final int preferredWidth,
+			final int preferredHeight) {
+		if (preferredHeight > height && preferredWidth > width) return 1;
+		return Math.round(Math.max(width, height) / (float) Math.max(preferredWidth, preferredHeight));
 	}
 
 	public static int cancelRetweet(final AsyncTwitterWrapper wrapper, final ParcelableStatus status) {
@@ -929,6 +877,45 @@ public final class Utils implements Constants {
 		return intent;
 	}
 
+	public static boolean downscaleImageIfNeeded(final File imageFile, final int quality) {
+		if (imageFile == null || !imageFile.isFile()) return false;
+		final String path = imageFile.getAbsolutePath();
+		final BitmapFactory.Options o = new BitmapFactory.Options();
+		o.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(path, o);
+		// Corrupted image, so return now.
+		if (o.outWidth <= 0 || o.outHeight <= 0) return false;
+		o.inJustDecodeBounds = false;
+		if (o.outWidth > TWITTER_MAX_IMAGE_WIDTH || o.outHeight > TWITTER_MAX_IMAGE_HEIGHT) {
+			// The image dimension is larger than Twitter's limit.
+			o.inSampleSize = calculateInSampleSize(o.outWidth, o.outHeight, TWITTER_MAX_IMAGE_WIDTH,
+					TWITTER_MAX_IMAGE_HEIGHT);
+			try {
+				final Bitmap b = BitmapDecodeHelper.decode(path, o);
+				final Bitmap.CompressFormat format = getBitmapCompressFormatByMimetype(o.outMimeType,
+						Bitmap.CompressFormat.PNG);
+				final FileOutputStream fos = new FileOutputStream(imageFile);
+				return b.compress(format, quality, fos);
+			} catch (final OutOfMemoryError e) {
+				return false;
+			} catch (final FileNotFoundException e) {
+				// This shouldn't happen.
+			}
+		} else if (imageFile.length() > TWITTER_MAX_IMAGE_SIZE) {
+			// The file size is larger than Twitter's limit.
+			try {
+				final Bitmap b = BitmapDecodeHelper.decode(path, o);
+				final FileOutputStream fos = new FileOutputStream(imageFile);
+				return b.compress(Bitmap.CompressFormat.JPEG, 80, fos);
+			} catch (final OutOfMemoryError e) {
+				return false;
+			} catch (final FileNotFoundException e) {
+				// This shouldn't happen.
+			}
+		}
+		return true;
+	}
+
 	public static String encodeQueryParams(final String value) throws IOException {
 		final String encoded = URLEncoder.encode(value, "UTF-8");
 		final StringBuilder buf = new StringBuilder();
@@ -1311,30 +1298,6 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static Bitmap getActivityScreenshot(final Activity activity, final int cacheQuality) {
-		if (activity == null) return null;
-		final Window w = activity.getWindow();
-		final View view = w.getDecorView();
-		final boolean prevState = view.isDrawingCacheEnabled();
-		final int prevQuality = view.getDrawingCacheQuality();
-		view.setDrawingCacheEnabled(true);
-		view.setDrawingCacheQuality(cacheQuality);
-		view.buildDrawingCache();
-		final Bitmap b = Bitmap.createBitmap(view.getDrawingCache());
-		final Rect frame = new Rect();
-		view.getWindowVisibleDisplayFrame(frame);
-		// Why draw a black rectangle here?
-		// If the activity uses light theme, the screenshot will have a white
-		// bar on the top, this workaround can solve that issue.
-		final Canvas c = new Canvas(b);
-		final Paint paint = new Paint();
-		paint.setColor(Color.BLACK);
-		c.drawRect(frame.left, 0, frame.right, frame.top, paint);
-		view.setDrawingCacheEnabled(prevState);
-		view.setDrawingCacheQuality(prevQuality);
-		return b;
-	}
-
 	public static int getAllStatusesCount(final Context context, final Uri uri) {
 		if (context == null) return 0;
 		final ContentResolver resolver = context.getContentResolver();
@@ -1411,6 +1374,17 @@ public final class Utils implements Constants {
 			}
 		}
 		return null;
+	}
+
+	public static Bitmap.CompressFormat getBitmapCompressFormatByMimetype(final String mimeType,
+			final Bitmap.CompressFormat def) {
+		final String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
+		if ("jpeg".equalsIgnoreCase(extension) || "jpg".equalsIgnoreCase(extension))
+			return Bitmap.CompressFormat.JPEG;
+		else if ("png".equalsIgnoreCase(extension))
+			return Bitmap.CompressFormat.PNG;
+		else if ("webp".equalsIgnoreCase(extension)) return Bitmap.CompressFormat.WEBP;
+		return def;
 	}
 
 	public static int getCharacterCount(final String string, final char c) {
@@ -1539,16 +1513,6 @@ public final class Utils implements Constants {
 		if (!nick_available) return name_first && !isEmpty(name) ? name : "@" + screen_name;
 		return context.getString(R.string.name_with_nickname, name_first && !isEmpty(name) ? name : "@" + screen_name,
 				nick);
-	}
-
-	public static byte[] getEncodedActivityScreenshot(final Activity activity, final int cacheQuality,
-			final Bitmap.CompressFormat encodeFormat, final int encodeQuality) {
-		final Bitmap b = getActivityScreenshot(activity, cacheQuality);
-		if (b == null) return null;
-		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		b.compress(encodeFormat, encodeQuality, baos);
-		b.recycle();
-		return baos.toByteArray();
 	}
 
 	public static String getErrorMessage(final Context context, final CharSequence message) {
@@ -2814,8 +2778,7 @@ public final class Utils implements Constants {
 				}
 			}
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-			setActivityScreenshot(activity, intent);
-			activity.startActivity(intent);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 	}
 
@@ -2842,9 +2805,10 @@ public final class Utils implements Constants {
 		intent.setData(Uri.parse(uri));
 		intent.setClass(context, ImageViewerGLActivity.class);
 		if (context instanceof Activity) {
-			setActivityScreenshot((Activity) context, intent);
+			SwipebackActivityUtils.startSwipebackActivity((Activity) context, intent);
+		} else {
+			context.startActivity(intent);
 		}
-		context.startActivity(intent);
 	}
 
 	public static void openIncomingFriendships(final Activity activity, final long account_id) {
@@ -2862,8 +2826,7 @@ public final class Utils implements Constants {
 			builder.authority(AUTHORITY_INCOMING_FRIENDSHIPS);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-			setActivityScreenshot(activity, intent);
-			activity.startActivity(intent);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 	}
 
@@ -2877,9 +2840,10 @@ public final class Utils implements Constants {
 		final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
 		intent.setClass(context, MapViewerActivity.class);
 		if (context instanceof Activity) {
-			setActivityScreenshot((Activity) context, intent);
+			SwipebackActivityUtils.startSwipebackActivity((Activity) context, intent);
+		} else {
+			context.startActivity(intent);
 		}
-		context.startActivity(intent);
 	}
 
 	public static void openSavedSearches(final Activity activity, final long account_id) {
@@ -2897,8 +2861,7 @@ public final class Utils implements Constants {
 			builder.authority(AUTHORITY_SAVED_SEARCHES);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-			setActivityScreenshot(activity, intent);
-			activity.startActivity(intent);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 	}
 
@@ -2919,8 +2882,7 @@ public final class Utils implements Constants {
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
 			builder.appendQueryParameter(QUERY_PARAM_QUERY, query);
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-			setActivityScreenshot(activity, intent);
-			activity.startActivity(intent);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 	}
 
@@ -2941,8 +2903,7 @@ public final class Utils implements Constants {
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
 			builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status_id));
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-			setActivityScreenshot(activity, intent);
-			activity.startActivity(intent);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 	}
 
@@ -2972,9 +2933,7 @@ public final class Utils implements Constants {
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
 			builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status_id));
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-			setActivityScreenshot(activity, intent);
-			intent.putExtras(extras);
-			activity.startActivity(intent);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 	}
 
@@ -2993,8 +2952,7 @@ public final class Utils implements Constants {
 			builder.authority(AUTHORITY_STATUSES);
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
 			intent.putExtras(extras);
-			setActivityScreenshot(activity, intent);
-			activity.startActivity(intent);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 	}
 
@@ -3015,8 +2973,7 @@ public final class Utils implements Constants {
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
 			builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status_id));
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-			setActivityScreenshot(activity, intent);
-			activity.startActivity(intent);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 	}
 
@@ -3042,8 +2999,7 @@ public final class Utils implements Constants {
 				builder.appendQueryParameter(QUERY_PARAM_QUERY, query);
 			}
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-			setActivityScreenshot(activity, intent);
-			activity.startActivity(intent);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 	}
 
@@ -3062,8 +3018,7 @@ public final class Utils implements Constants {
 			builder.authority(AUTHORITY_USER_BLOCKS);
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-			setActivityScreenshot(activity, intent);
-			activity.startActivity(intent);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 	}
 
@@ -3095,8 +3050,7 @@ public final class Utils implements Constants {
 				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
 			}
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-			setActivityScreenshot(activity, intent);
-			activity.startActivity(intent);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 
 	}
@@ -3129,8 +3083,7 @@ public final class Utils implements Constants {
 				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
 			}
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-			setActivityScreenshot(activity, intent);
-			activity.startActivity(intent);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 	}
 
@@ -3162,46 +3115,9 @@ public final class Utils implements Constants {
 				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
 			}
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-			setActivityScreenshot(activity, intent);
-			activity.startActivity(intent);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 
-	}
-	
-
-	public static void openUserListDetails(final Activity activity, final ParcelableUserList userList) {
-		if (activity == null || userList == null) return;
-		final long accountId = userList.account_id, userId = userList.user_id;
-		final int listId = userList.id;
-		final Bundle extras = new Bundle();
-		extras.putParcelable(EXTRA_USER_LIST, userList);
-		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
-			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
-			final Fragment details_fragment = dual_pane_activity.getDetailsFragment();
-			if (details_fragment instanceof UserListDetailsFragment && details_fragment.isAdded()) {
-				((UserListDetailsFragment) details_fragment).displayUserList(userList);
-				dual_pane_activity.showRightPane();
-			} else {
-				final Fragment fragment = new UserListDetailsFragment();
-				final Bundle args = new Bundle(extras);
-				args.putLong(EXTRA_ACCOUNT_ID, accountId);
-				args.putLong(EXTRA_USER_ID, userId);
-				args.putInt(EXTRA_LIST_ID, listId);
-				fragment.setArguments(args);
-				dual_pane_activity.showAtPane(DualPaneActivity.PANE_RIGHT, fragment, true);
-			}
-		} else {
-			final Uri.Builder builder = new Uri.Builder();
-			builder.scheme(SCHEME_TWIDERE);
-			builder.authority(AUTHORITY_USER_LIST);
-			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(accountId));
-			builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(userId));
-			builder.appendQueryParameter(QUERY_PARAM_LIST_ID, String.valueOf(listId));
-			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-			setActivityScreenshot(activity, intent);
-			intent.putExtras(extras);
-			activity.startActivity(intent);
-		}
 	}
 
 	public static void openUserListDetails(final Activity activity, final long accountId, final int listId,
@@ -3236,8 +3152,41 @@ public final class Utils implements Constants {
 				builder.appendQueryParameter(QUERY_PARAM_LIST_NAME, listName);
 			}
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-			setActivityScreenshot(activity, intent);
-			activity.startActivity(intent);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
+		}
+	}
+
+	public static void openUserListDetails(final Activity activity, final ParcelableUserList userList) {
+		if (activity == null || userList == null) return;
+		final long accountId = userList.account_id, userId = userList.user_id;
+		final int listId = userList.id;
+		final Bundle extras = new Bundle();
+		extras.putParcelable(EXTRA_USER_LIST, userList);
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
+			final Fragment details_fragment = dual_pane_activity.getDetailsFragment();
+			if (details_fragment instanceof UserListDetailsFragment && details_fragment.isAdded()) {
+				((UserListDetailsFragment) details_fragment).displayUserList(userList);
+				dual_pane_activity.showRightPane();
+			} else {
+				final Fragment fragment = new UserListDetailsFragment();
+				final Bundle args = new Bundle(extras);
+				args.putLong(EXTRA_ACCOUNT_ID, accountId);
+				args.putLong(EXTRA_USER_ID, userId);
+				args.putInt(EXTRA_LIST_ID, listId);
+				fragment.setArguments(args);
+				dual_pane_activity.showAtPane(DualPaneActivity.PANE_RIGHT, fragment, true);
+			}
+		} else {
+			final Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_USER_LIST);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(accountId));
+			builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(userId));
+			builder.appendQueryParameter(QUERY_PARAM_LIST_ID, String.valueOf(listId));
+			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
+			intent.putExtras(extras);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 	}
 
@@ -3273,8 +3222,7 @@ public final class Utils implements Constants {
 				builder.appendQueryParameter(QUERY_PARAM_LIST_NAME, list_name);
 			}
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-			setActivityScreenshot(activity, intent);
-			activity.startActivity(intent);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 	}
 
@@ -3311,8 +3259,7 @@ public final class Utils implements Constants {
 				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
 			}
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-			setActivityScreenshot(activity, intent);
-			activity.startActivity(intent);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 	}
 
@@ -3340,8 +3287,7 @@ public final class Utils implements Constants {
 				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
 			}
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-			setActivityScreenshot(activity, intent);
-			activity.startActivity(intent);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 	}
 
@@ -3377,8 +3323,7 @@ public final class Utils implements Constants {
 				builder.appendQueryParameter(QUERY_PARAM_LIST_NAME, list_name);
 			}
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-			setActivityScreenshot(activity, intent);
-			activity.startActivity(intent);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 	}
 
@@ -3419,8 +3364,7 @@ public final class Utils implements Constants {
 				builder.appendQueryParameter(QUERY_PARAM_LIST_NAME, list_name);
 			}
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-			setActivityScreenshot(activity, intent);
-			activity.startActivity(intent);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 	}
 
@@ -3450,8 +3394,7 @@ public final class Utils implements Constants {
 				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
 			}
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-			setActivityScreenshot(activity, intent);
-			activity.startActivity(intent);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 	}
 
@@ -3483,8 +3426,7 @@ public final class Utils implements Constants {
 				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
 			}
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-			setActivityScreenshot(activity, intent);
-			activity.startActivity(intent);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 	}
 
@@ -3524,8 +3466,7 @@ public final class Utils implements Constants {
 			}
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
 			intent.putExtras(extras);
-			setActivityScreenshot(activity, intent);
-			activity.startActivity(intent);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 	}
 
@@ -3544,8 +3485,7 @@ public final class Utils implements Constants {
 			builder.authority(AUTHORITY_USERS);
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
 			intent.putExtras(extras);
-			setActivityScreenshot(activity, intent);
-			activity.startActivity(intent);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 	}
 
@@ -3577,8 +3517,7 @@ public final class Utils implements Constants {
 				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
 			}
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-			setActivityScreenshot(activity, intent);
-			activity.startActivity(intent);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 
 	}
@@ -3670,12 +3609,6 @@ public final class Utils implements Constants {
 	public static void scrollListToTop(final PLAListView list) {
 		if (list == null) return;
 		scrollListToPosition(list, 0);
-	}
-
-	public static void setActivityScreenshot(final Activity activity, final Intent target) {
-		final byte[] encoded_screenshot = getEncodedActivityScreenshot(activity, View.DRAWING_CACHE_QUALITY_LOW,
-				Bitmap.CompressFormat.JPEG, 60);
-		target.putExtra(EXTRA_ACTIVITY_SCREENSHOT_ENCODED, encoded_screenshot);
 	}
 
 	public static void setMenuForStatus(final Context context, final Menu menu, final ParcelableStatus status) {

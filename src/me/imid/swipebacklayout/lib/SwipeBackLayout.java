@@ -108,7 +108,7 @@ public class SwipeBackLayout extends FrameLayout {
 	private float mScrimOpacity;
 
 	private int mScrimColor;
-	
+
 	private float mScrimAlpha;
 
 	private boolean mInLayout;
@@ -164,11 +164,6 @@ public class SwipeBackLayout extends FrameLayout {
 		final float minVel = MIN_FLING_VELOCITY * density;
 		mDragHelper.setMinVelocity(minVel);
 
-	}
-
-	private void setScrimAlpha(float scrimAlpha) {
-		mScrimAlpha = scrimAlpha;
-		invalidate();
 	}
 
 	public void attachToActivity(final Activity activity) {
@@ -433,6 +428,11 @@ public class SwipeBackLayout extends FrameLayout {
 
 	private void setScalePercent(final float scalePercent) {
 		mScalePercent = scalePercent;
+	}
+
+	private void setScrimAlpha(final float scrimAlpha) {
+		mScrimAlpha = scrimAlpha;
+		invalidate();
 	}
 
 	private void updateWindowBackground() {

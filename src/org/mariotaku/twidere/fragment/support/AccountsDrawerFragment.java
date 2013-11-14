@@ -130,28 +130,23 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 				switch (option.getId()) {
 					case MENU_VIEW_PROFILE: {
 						openUserProfile(getActivity(), account.account_id, account.account_id, account.screen_name);
-						closeAccountsDrawer();
 						break;
 					}
 					case MENU_STATUSES: {
 						openUserTimeline(getActivity(), account.account_id, account.account_id, account.screen_name);
-						closeAccountsDrawer();
 						break;
 					}
 					case MENU_FAVORITES: {
 						openUserFavorites(getActivity(), account.account_id, account.account_id, account.screen_name);
-						closeAccountsDrawer();
 						break;
 					}
 					case MENU_LISTS: {
 						openUserLists(getActivity(), account.account_id, account.account_id, account.screen_name);
-						closeAccountsDrawer();
 						break;
 					}
 					case MENU_LIST_MEMBERSHIPS: {
 						openUserListMemberships(getActivity(), account.account_id, account.account_id,
 								account.screen_name);
-						closeAccountsDrawer();
 						break;
 					}
 					case MENU_EDIT: {
@@ -277,10 +272,10 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 	}
 
 	private void closeAccountsDrawer() {
-//		final Activity activity = getActivity();
-//		if (activity instanceof HomeActivity) {
-//			((HomeActivity) activity).closeAccountsDrawer();
-//		}
+		final Activity activity = getActivity();
+		if (activity instanceof HomeActivity) {
+			((HomeActivity) activity).closeAccountsDrawer();
+		}
 	}
 
 	public static final class AccountDeletionDialogFragment extends BaseSupportDialogFragment implements

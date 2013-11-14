@@ -188,10 +188,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			}
 		}
 	};
-	
-	private long getStatusId() {
-		return mStatus != null ? mStatus.id : -1;
-	}
 
 	private final LoaderCallbacks<SingleResponse<ParcelableStatus>> mStatusLoaderCallbacks = new LoaderCallbacks<SingleResponse<ParcelableStatus>>() {
 
@@ -764,6 +760,11 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		return true;
 	}
 
+	@Override
+	protected void onReachedBottom() {
+
+	}
+
 	// @Override
 	// protected void setItemSelected(final ParcelableStatus status, final int
 	// position, final boolean selected) {
@@ -782,11 +783,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	// }
 	// super.setItemSelected(status, position, selected);
 	// }
-
-	@Override
-	protected void onReachedBottom() {
-
-	}
 
 	@Override
 	protected void setItemSelected(final ParcelableStatus status, final int position, final boolean selected) {
@@ -829,6 +825,10 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		} else {
 			lm.restartLoader(LOADER_ID_STATUS, args, mStatusLoaderCallbacks);
 		}
+	}
+
+	private long getStatusId() {
+		return mStatus != null ? mStatus.id : -1;
 	}
 
 	private void hidePreviewImages() {
@@ -1148,10 +1148,10 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		public ParcelableStatusLoader(final Context context, final boolean omitIntentExtra, final Bundle extras,
 				final long accountId, final long statusId) {
 			super(context);
-			this.mOmitIntentExtra = omitIntentExtra;
-			this.mExtras = extras;
-			this.mAccountId = accountId;
-			this.mStatusId = statusId;
+			mOmitIntentExtra = omitIntentExtra;
+			mExtras = extras;
+			mAccountId = accountId;
+			mStatusId = statusId;
 		}
 
 		@Override

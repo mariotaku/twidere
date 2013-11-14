@@ -339,6 +339,17 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		return R.layout.home;
 	}
 
+	@Override
+	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		switch (requestCode) {
+			case REQUEST_SWIPEBACK_ACTIVITY: {
+				closeAccountsDrawer();
+				return;
+			}
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
 	/** Called when the activity is first created. */
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {

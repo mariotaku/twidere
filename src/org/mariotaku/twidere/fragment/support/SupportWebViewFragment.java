@@ -8,8 +8,13 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 
 public class SupportWebViewFragment extends Fragment {
-	
+
 	static final int INTERNAL_WEBVIEW_ID = 0x00ff1001;
+
+	public final WebView getWebView() {
+		final View view = getView();
+		return (WebView) view.findViewById(INTERNAL_WEBVIEW_ID);
+	}
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
@@ -22,9 +27,4 @@ public class SupportWebViewFragment extends Fragment {
 		return view;
 	}
 
-	public final WebView getWebView() {
-		final View view = getView();
-		return (WebView) view.findViewById(INTERNAL_WEBVIEW_ID);
-	}
-	
 }
