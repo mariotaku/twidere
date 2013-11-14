@@ -2933,6 +2933,7 @@ public final class Utils implements Constants {
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
 			builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status_id));
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
+			intent.putExtras(extras);
 			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 	}
