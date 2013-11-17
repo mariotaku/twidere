@@ -182,7 +182,7 @@ public class SwipeBackLayout extends FrameLayout {
 		setContentView(decorChild);
 		addView(decorChild, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		final FrameLayout frame = new FrameLayout(activity);
-		frame.addView(backgroundChild);
+		frame.addView(backgroundChild, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		frame.addView(this);
 		decor.addView(frame);
 	}

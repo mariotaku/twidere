@@ -114,5 +114,15 @@
 		<item>@string/underline</item>
 		<item>@string/both</item>
 	</string-array>
+	<string-array name="values_theme_background">
+		<item>default</item>
+		<item>solid</item>
+		<item>transparent</item>
+	</string-array>
+	<string-array name="entries_theme_background">
+		<item>@string/theme_background_default</item>
+		<item>@string/theme_background_solid</item>
+		<item>@string/theme_background_transparent</item>
+	</string-array>
 
 </resources>

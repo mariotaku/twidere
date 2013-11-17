@@ -4,20 +4,33 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Toast;
+
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.CroutonLifecycleCallback;
+import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 
 import org.mariotaku.twidere.R;
 
-public class NyanActivity extends Activity implements OnClickListener {
+public class NyanActivity extends Activity implements OnClickListener, CroutonLifecycleCallback {
+
+	private boolean mCroutonShowing;
 
 	@Override
 	public void onClick(final View v) {
-		Toast.makeText(this, R.string.nyan_sakamoto, Toast.LENGTH_SHORT).show();
+		if (mCroutonShowing) return;
+		final Crouton c = Crouton.makeText(this, R.string.nyan_sakamoto, CroutonStyle.INFO);
+		c.setLifecycleCallback(this);
+		c.show();
 	}
 
 	@Override
-	public void onContentChanged() {
-		super.onContentChanged();
+	public void onDisplayed() {
+		mCroutonShowing = true;
+	}
+
+	@Override
+	public void onRemoved() {
+		mCroutonShowing = false;
 	}
 
 	@Override

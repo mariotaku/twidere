@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/theme_preview_status_content"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical">
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_weight="1">
+
+		<include
+			android:id="@+id/status_content"
+			layout="@layout/status_content"/>
+
+		<View
+			android:id="@+id/theme_preview_window_content_overlay"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignBottom="@+id/status_content"
+			android:layout_alignTop="@+id/status_content"/>
+	</RelativeLayout>
+
+	<TableRow
+		android:id="@+id/actionbar_split"
+		android:layout_width="match_parent"
+		android:layout_height="?android:actionBarSize"
+		android:layout_weight="0">
+
+		<ImageView
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:layout_weight="1"
+			android:contentDescription="@string/reply"
+			android:scaleType="centerInside"
+			android:src="@drawable/ic_menu_reply"/>
+
+		<ImageView
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:layout_weight="1"
+			android:contentDescription="@string/retweet"
+			android:scaleType="centerInside"
+			android:src="@drawable/ic_menu_retweet"/>
+
+		<ImageView
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:layout_weight="1"
+			android:contentDescription="@string/favorite"
+			android:scaleType="centerInside"
+			android:src="@drawable/ic_menu_star"/>
+
+		<ImageView
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:layout_weight="1"
+			android:contentDescription="@string/more"
+			android:scaleType="centerInside"
+			android:src="@drawable/ic_menu_more"/>
+	</TableRow>
+
+</LinearLayout>

@@ -16,6 +16,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
+import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.view.iface.IColorLabelView;
 
 import java.util.Arrays;
@@ -188,8 +189,32 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 				android.R.attr.listSeparatorTextViewStyle);
 		view.setClickable(true);
 		final GroupItem groupItem = getGroup(groupPosition);
-		view.setText(groupItem.getTitle());
+		switch (groupItem.getId()) {
+			case GROUP_ID_ACCOUNT_OPTIONS: {
+				final Account account = getSelectedAccount();
+				if (account != null) {
+					final String name = Utils.getDisplayName(mContext, account.account_id, account.name,
+							account.screen_name);
+					view.setText(name);
+				} else {
+					view.setText(groupItem.getTitle());
+				}
+				break;
+			}
+			default: {
+				view.setText(groupItem.getTitle());
+			}
+		}
 		return view;
+	}
+
+	public Account getSelectedAccount() {
+		if (mCursor == null || mCursor.isClosed() || !mCursor.moveToFirst() || mIndices == null) return null;
+		while (!mCursor.isAfterLast()) {
+			if (mSelectedAccountId == mCursor.getLong(mIndices.account_id)) return new Account(mCursor, mIndices);
+			mCursor.moveToNext();
+		}
+		return null;
 	}
 
 	public long getSelectedAccountId() {

@@ -37,7 +37,7 @@
 			android:title="@string/donators">
 			<intent
 				android:action="android.intent.action.VIEW"
-				android:data="twidere://list_members?list_id=86301024&amp;user_id=583328497&amp;finish_only=true"/>
+				android:data="twidere://user_list_members?list_id=86301024&amp;user_id=583328497&amp;finish_only=true"/>
 		</Preference>
 	</PreferenceCategory>
 	<PreferenceCategory
@@ -53,7 +53,7 @@
 			android:title="@string/translators">
 			<intent
 				android:action="android.intent.action.VIEW"
-				android:data="twidere://list_members?list_id=99024901&amp;user_id=583328497&amp;finish_only=true"/>
+				android:data="twidere://user_list_members?list_id=99024901&amp;user_id=583328497&amp;finish_only=true"/>
 		</Preference>
 	</PreferenceCategory>
 	<PreferenceCategory android:title="@string/special_thanks_to">

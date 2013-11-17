@@ -113,6 +113,7 @@ import org.mariotaku.twidere.util.MediaPreviewUtils;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.SmartBarUtils;
+import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 import org.mariotaku.twidere.view.ExtendedFrameLayout;
@@ -555,6 +556,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mPrevImage = (ImageButton) mStatusView.findViewById(R.id.prev_image);
 		mNextImage = (ImageButton) mStatusView.findViewById(R.id.next_image);
 		mLoadImagesIndicator = mStatusView.findViewById(R.id.load_images);
+		final View statusCard = mStatusView.findViewById(R.id.status_card);
+		ThemeUtils.applyThemeAlphaToDrawable(statusCard.getContext(), statusCard.getBackground());
 		return view;
 	}
 

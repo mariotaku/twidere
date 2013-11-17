@@ -44,25 +44,30 @@ public class BaseSupportThemedSwipeBackActivity extends BaseSupportActivity impl
 
 	@Override
 	public SwipeBackLayout getSwipeBackLayout() {
+		if (mHelper == null) return null;
 		return mHelper.getSwipeBackLayout();
 	}
 
 	public boolean isSwiping() {
+		if (mHelper == null) return false;
 		final SwipeBackLayout swipeBackLayout = getSwipeBackLayout();
 		return swipeBackLayout != null && swipeBackLayout.isSwiping();
 	}
 
 	@Override
 	public void scrollToFinishActivity() {
+		if (mHelper == null) return;
 		getSwipeBackLayout().scrollToFinishActivity();
 	}
 
 	@Override
 	public void setSwipeBackEnable(final boolean enable) {
+		if (mHelper == null) return;
 		getSwipeBackLayout().setEnableGesture(enable);
 	}
 
 	public void setSwipeListener(final SwipeListener listener) {
+		if (mHelper == null) return;
 		final SwipeBackLayout swipeBackLayout = getSwipeBackLayout();
 		if (swipeBackLayout == null) return;
 		swipeBackLayout.setSwipeListener(listener);
@@ -76,13 +81,17 @@ public class BaseSupportThemedSwipeBackActivity extends BaseSupportActivity impl
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mHelper = new SwipeBackActivityHelper(this);
-		mHelper.onActivtyCreate();
+		if (!ThemeUtils.isTransparentBackground(this)) {
+			mHelper = new SwipeBackActivityHelper(this);
+			mHelper.onActivtyCreate();
+		}
 	}
 
 	@Override
 	protected void onPostCreate(final Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-		mHelper.onPostCreate();
+		if (!ThemeUtils.isTransparentBackground(this)) {
+			mHelper.onPostCreate();
+		}
 	}
 }

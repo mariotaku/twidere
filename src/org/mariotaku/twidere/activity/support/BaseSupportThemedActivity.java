@@ -2,7 +2,6 @@ package org.mariotaku.twidere.activity.support;
 
 import static org.mariotaku.twidere.util.Utils.restartActivity;
 
-import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
@@ -44,9 +43,7 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 	}
 
 	private final void setActionBarBackground() {
-		final ActionBar ab = getActionBar();
-		if (ab == null) return;
-		ab.setBackgroundDrawable(ThemeUtils.getActionBarBackground(this));
+		ThemeUtils.applyBackgroundActionBarBackground(getActionBar(), this);
 	}
 
 	private final void setTheme() {

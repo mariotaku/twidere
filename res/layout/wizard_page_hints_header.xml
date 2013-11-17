@@ -9,7 +9,7 @@
 		android:layout_height="wrap_content"
 		android:padding="@dimen/element_spacing_default"
 		android:singleLine="true"
-		android:text="@string/status"
+		android:text="@string/hints"
 		android:textAppearance="?android:attr/textAppearanceLarge"
 		android:textColor="?android:colorActivatedHighlight"
 		android:textSize="@dimen/text_size_wizard_title"
@@ -26,7 +26,7 @@
 		android:layout_height="wrap_content"
 		android:lineSpacingMultiplier="1.25"
 		android:padding="@dimen/element_spacing_default"
-		android:text="@string/wizard_page_status_text"
+		android:text="@string/wizard_page_hints_text"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:textSize="@dimen/text_size_wizard_text"
 		android:textStyle="normal"/>

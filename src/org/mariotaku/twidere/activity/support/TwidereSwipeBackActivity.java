@@ -26,13 +26,18 @@ import android.os.Bundle;
 @SuppressLint("Registered")
 public class TwidereSwipeBackActivity extends BaseSupportThemedSwipeBackActivity {
 
-	private int activityCloseEnterAnimation;
-	private int activityCloseExitAnimation;
+	private static final int[] ANIM_STYLE_ATTRS = { android.R.attr.activityOpenEnterAnimation,
+			android.R.attr.activityOpenExitAnimation, android.R.attr.activityCloseEnterAnimation,
+			android.R.attr.activityCloseExitAnimation };
+	private int mActivityOpenEnterAnimation;
+	private int mActivityOpenExitAnimation;
+	private int mActivityCloseEnterAnimation;
+	private int mActivityCloseExitAnimation;
 
 	@Override
 	public void finish() {
 		super.finish();
-		overridePendingTransition(activityCloseEnterAnimation, activityCloseExitAnimation);
+		overridePendingTransition(mActivityCloseEnterAnimation, mActivityCloseExitAnimation);
 	}
 
 	@Override
@@ -44,11 +49,13 @@ public class TwidereSwipeBackActivity extends BaseSupportThemedSwipeBackActivity
 		// Now retrieve the resource ids of the actual animations used in the
 		// animation style pointed to by
 		// the window animation resource id.
-		activityStyle = getTheme().obtainStyledAttributes(windowAnimationStyleResId,
-				new int[] { android.R.attr.activityCloseEnterAnimation, android.R.attr.activityCloseExitAnimation });
-		activityCloseEnterAnimation = activityStyle.getResourceId(0, 0);
-		activityCloseExitAnimation = activityStyle.getResourceId(1, 0);
+		activityStyle = getTheme().obtainStyledAttributes(windowAnimationStyleResId, ANIM_STYLE_ATTRS);
+		mActivityOpenEnterAnimation = activityStyle.getResourceId(0, 0);
+		mActivityOpenExitAnimation = activityStyle.getResourceId(1, 0);
+		mActivityCloseEnterAnimation = activityStyle.getResourceId(2, 0);
+		mActivityCloseExitAnimation = activityStyle.getResourceId(3, 0);
 		activityStyle.recycle();
+		overridePendingTransition(mActivityOpenEnterAnimation, mActivityOpenExitAnimation);
 		super.onCreate(savedInstanceState);
 	}
 }

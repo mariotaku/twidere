@@ -60,7 +60,7 @@ public class ImageLoadingHandler implements ImageLoadingListener {
 
 	@Override
 	public void onLoadingProgressChanged(final String imageUri, final View view, final int current, final int total) {
-		if (total == 0) return;
+		if (total == 0 || view == null) return;
 		final View parent = (View) view.getParent();
 		final ProgressBar progress = (ProgressBar) parent.findViewById(R.id.image_preview_progress);
 		if (progress != null) {

@@ -5,7 +5,7 @@
 
 	<Preference
 		android:key="header"
-		android:layout="@layout/wizard_page_status_header"
+		android:layout="@layout/wizard_page_cards_header"
 		android:selectable="false"/>
 
 	<PreferenceCategory

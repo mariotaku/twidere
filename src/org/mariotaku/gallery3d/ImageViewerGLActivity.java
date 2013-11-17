@@ -30,6 +30,8 @@ import android.support.v4.content.Loader;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ShareActionProvider;
@@ -96,6 +98,7 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 	private ThreadPool mThreadPool;
 
 	private File mImageFile;
+	private View mContentView;
 
 	public GLRoot getGLRoot() {
 		return mGLRootView;
@@ -125,6 +128,7 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 	@Override
 	public void onContentChanged() {
 		super.onContentChanged();
+		mContentView = findViewById(android.R.id.content);
 		mGLRootView = (GLRootView) findViewById(R.id.gl_root_view);
 		mImageViewer = (ImageView) findViewById(R.id.image_viewer);
 		mProgress = (ProgressBar) findViewById(R.id.progress);
@@ -208,6 +212,7 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 		updateShareIntent();
 		mProgress.setVisibility(View.GONE);
 		mProgress.setProgress(0);
+		showBars();
 	}
 
 	@Override
@@ -310,7 +315,6 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.image_viewer_gl);
-		// setOverrideExitAniamtion(false);
 		mActionBar = getActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 		mActionBar.addOnMenuVisibilityListener(this);
@@ -324,6 +328,7 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 			loadImage();
 		}
 		setSwipeListener(this);
+		hideBars();
 	}
 
 	@Override

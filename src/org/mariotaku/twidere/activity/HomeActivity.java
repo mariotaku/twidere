@@ -39,6 +39,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -52,12 +53,16 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu.CanvasTransformer;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu.OnClosedListener;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu.OnOpenedListener;
 import com.readystatesoftware.viewbadger.BadgeView;
 
 import edu.ucdavis.earlybird.ProfilingUtil;
@@ -82,28 +87,30 @@ import org.mariotaku.twidere.util.MathUtils;
 import org.mariotaku.twidere.util.MultiSelectEventHandler;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.UnreadCountUtils;
+import org.mariotaku.twidere.util.accessor.ViewAccessor;
 import org.mariotaku.twidere.view.ExtendedViewPager;
+import org.mariotaku.twidere.view.LeftDrawerFrameLayout;
 import org.mariotaku.twidere.view.TabPageIndicator;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class HomeActivity extends DualPaneActivity implements OnClickListener, OnPageChangeListener,
-		SupportFragmentCallback {
+		SupportFragmentCallback, OnOpenedListener, OnClosedListener {
 
 	private SharedPreferences mPreferences;
+
 	private AsyncTwitterWrapper mTwitterWrapper;
 	private NotificationManager mNotificationManager;
 	private MultiSelectEventHandler mMultiSelectHandler;
-
 	private ActionBar mActionBar;
-	private SupportTabsAdapter mPagerAdapter;
 
+	private SupportTabsAdapter mPagerAdapter;
 	private ExtendedViewPager mViewPager;
+
 	private TabPageIndicator mIndicator;
 	private SlidingMenu mSlidingMenu;
 	private View mActionsActionView, mActionsButtonLayout, mEmptyTabHint;
-
 	private boolean mBottomActionsButton;
 
 	private Fragment mCurrentVisibleFragment;
@@ -111,8 +118,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private UpdateUnreadCountTask mUpdateUnreadCountTask;
 
 	private final ArrayList<SupportTabSpec> mCustomTabs = new ArrayList<SupportTabSpec>();
-	private final SparseArray<Fragment> mAttachedFragments = new SparseArray<Fragment>();
 
+	private final SparseArray<Fragment> mAttachedFragments = new SparseArray<Fragment>();
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -209,6 +216,10 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	@Override
+	public void onClosed() {
+	}
+
+	@Override
 	public void onContentChanged() {
 		super.onContentChanged();
 		mViewPager = (ExtendedViewPager) findViewById(R.id.main);
@@ -238,6 +249,10 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			}
 		}
 		return super.onKeyUp(keyCode, event);
+	}
+
+	@Override
+	public void onOpened() {
 	}
 
 	@Override
@@ -582,16 +597,28 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 
 	private void setupSlidingMenu() {
 		if (mSlidingMenu == null) return;
+		final int marginThreshold = getResources().getDimensionPixelSize(R.dimen.default_sliding_menu_margin_threshold);
 		mSlidingMenu.setMode(SlidingMenu.LEFT);
 		mSlidingMenu.setShadowWidthRes(R.dimen.default_sliding_menu_shadow_width);
 		mSlidingMenu.setShadowDrawable(R.drawable.shadow_holo);
 		mSlidingMenu.setBehindWidthRes(R.dimen.left_drawer_width);
-		mSlidingMenu.setTouchmodeMarginThresholdRes(R.dimen.default_sliding_menu_margin_threshold);
+		mSlidingMenu.setTouchmodeMarginThreshold(marginThreshold);
 		mSlidingMenu.setFadeDegree(0.5f);
 		mSlidingMenu.attachToActivity(this, SlidingMenu.SLIDING_WINDOW);
 		mSlidingMenu.setMenu(R.layout.home_left_drawer_container);
+		mSlidingMenu.setOnOpenedListener(this);
+		mSlidingMenu.setOnClosedListener(this);
 		if (isDualPaneMode()) {
 			mSlidingMenu.addIgnoredView(getSlidingPane().getRightPaneContainer());
+		}
+		final LeftDrawerFrameLayout leftDrawerContainer = (LeftDrawerFrameLayout) mSlidingMenu.getMenu().findViewById(
+				R.id.left_drawer_container);
+		final boolean isTransparentBackground = ThemeUtils.isTransparentBackground(this);
+		leftDrawerContainer.setClipEnabled(isTransparentBackground);
+		leftDrawerContainer.setScrollScale(mSlidingMenu.getBehindScrollScale());
+		mSlidingMenu.setBehindCanvasTransformer(new ListenerCanvasTransformer(leftDrawerContainer));
+		if (isTransparentBackground) {
+			ViewAccessor.setBackground(mSlidingMenu.getContent(), null);
 		}
 	}
 
@@ -657,6 +684,21 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		final int mode = position == 0 && !isLeftPaneUsed() ? SlidingMenu.TOUCHMODE_FULLSCREEN
 				: SlidingMenu.TOUCHMODE_MARGIN;
 		mSlidingMenu.setTouchModeAbove(mode);
+	}
+
+
+	private static class ListenerCanvasTransformer implements CanvasTransformer {
+		private final LeftDrawerFrameLayout mLeftDrawerContainer;
+
+		public ListenerCanvasTransformer(final LeftDrawerFrameLayout leftDrawerContainer) {
+			mLeftDrawerContainer = leftDrawerContainer;
+		}
+
+		@Override
+		public void transformCanvas(final Canvas canvas, final float percentOpen) {
+			mLeftDrawerContainer.setPercentOpen(percentOpen);
+		}
+
 	}
 
 	private static class UpdateUnreadCountTask extends AsyncTask<Void, Void, int[]> {

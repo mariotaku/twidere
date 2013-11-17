@@ -132,7 +132,7 @@ public interface TwidereConstants {
 	public static final String PREFERENCE_KEY_LOAD_ITEM_LIMIT = "load_item_limit";
 	public static final String PREFERENCE_KEY_TEXT_SIZE = "text_size_int";
 	public static final String PREFERENCE_KEY_THEME = "theme";
-	public static final String PREFERENCE_KEY_SOLID_COLOR_BACKGROUND = "solid_color_background";
+	public static final String PREFERENCE_KEY_THEME_BACKGROUND = "theme_background";
 	public static final String PREFERENCE_KEY_CLEAR_DATABASES = "clear_databases";
 	public static final String PREFERENCE_KEY_CLEAR_CACHE = "clear_cache";
 	public static final String PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE = "display_profile_image";

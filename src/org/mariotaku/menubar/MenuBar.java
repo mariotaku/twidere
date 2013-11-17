@@ -23,6 +23,7 @@ import android.widget.Toast;
 import org.mariotaku.internal.menu.MenuUtils;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.accessor.ViewAccessor;
 
 import java.util.ArrayList;
@@ -45,10 +46,7 @@ public class MenuBar extends LinearLayout implements MenuItem.OnMenuItemClickLis
 	public MenuBar(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
 		if (!hasBackground(attrs)) {
-			final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.backgroundSplit },
-					android.R.attr.actionBarStyle, android.R.style.Widget_Holo_ActionBar);
-			ViewAccessor.setBackground(this, a.getDrawable(0));
-			a.recycle();
+			ViewAccessor.setBackground(this, ThemeUtils.getActionBarSplitBackground(context));
 		}
 		final TypedArray a = context.obtainStyledAttributes(attrs, new int[] { android.R.attr.max });
 		mMaxItemsShown = a.getInt(0, getResources().getInteger(R.integer.max_action_buttons));

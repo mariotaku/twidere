@@ -2,7 +2,6 @@ package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.Utils.restartActivity;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
 
@@ -44,9 +43,7 @@ public abstract class BaseThemedActivity extends Activity implements IThemedActi
 	}
 
 	private final void setActionBarBackground() {
-		final ActionBar ab = getActionBar();
-		if (ab == null) return;
-		ab.setBackgroundDrawable(ThemeUtils.getActionBarBackground(this));
+		ThemeUtils.applyBackgroundActionBarBackground(getActionBar(), this);
 	}
 
 	private final void setTheme() {

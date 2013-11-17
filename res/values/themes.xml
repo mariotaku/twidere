@@ -16,6 +16,9 @@
 
 	<style name="Theme.Twidere" parent="android:Theme.Holo.Light.DarkActionBar">
 
+		<!-- Colors -->
+		<item name="android:colorBackgroundCacheHint">@color/bg_color_light</item>
+
 		<!-- Window attributes -->
 		<item name="android:windowBackground">@color/bg_color_light</item>
 
@@ -52,6 +55,9 @@
 	</style>
 
 	<style name="Theme.Twidere.Dark" parent="android:Theme.Holo">
+
+		<!-- Colors -->
+		<item name="android:colorBackgroundCacheHint">@color/bg_color_dark</item>
 
 		<!-- Window attributes -->
 		<item name="android:windowBackground">@color/bg_color_dark</item>
@@ -90,6 +96,9 @@
 
 	<style name="Theme.Twidere.Light" parent="android:Theme.Holo.Light">
 
+		<!-- Colors -->
+		<item name="android:colorBackgroundCacheHint">@color/bg_color_light</item>
+
 		<!-- Window attributes -->
 		<item name="android:windowBackground">@color/bg_color_light</item>
 
@@ -127,6 +136,9 @@
 
 	<style name="Theme.Twidere.Light.DarkActionBar" parent="android:Theme.Holo.Light.DarkActionBar">
 
+		<!-- Colors -->
+		<item name="android:colorBackgroundCacheHint">@color/bg_color_light</item>
+
 		<!-- Window attributes -->
 		<item name="android:windowBackground">@color/bg_color_light</item>
 
@@ -160,6 +172,46 @@
 		<item name="android:textViewStyle">@style/Widget.Twidere.Light.TextView</item>
 		<item name="android:radioButtonStyle">@style/Widget.Twidere.Light.CompoundButton.RadioButton</item>
 		<item name="android:checkboxStyle">@style/Widget.Twidere.Light.CompoundButton.CheckBox</item>
+	</style>
+
+	<style name="Theme.Twidere.Transparent" parent="Theme.Twidere">
+
+		<!-- Colors -->
+		<item name="android:colorBackgroundCacheHint">@null</item>
+
+		<!-- Window attributes -->
+		<item name="android:windowBackground">@color/bg_color_transparent_light</item>
+		<item name="android:windowShowWallpaper">true</item>
+	</style>
+
+	<style name="Theme.Twidere.Transparent.Dark" parent="Theme.Twidere.Dark">
+
+		<!-- Colors -->
+		<item name="android:colorBackgroundCacheHint">@null</item>
+
+		<!-- Window attributes -->
+		<item name="android:windowBackground">@color/bg_color_transparent_dark</item>
+		<item name="android:windowShowWallpaper">true</item>
+	</style>
+
+	<style name="Theme.Twidere.Transparent.Light" parent="Theme.Twidere.Light">
+
+		<!-- Colors -->
+		<item name="android:colorBackgroundCacheHint">@null</item>
+
+		<!-- Window attributes -->
+		<item name="android:windowBackground">@color/bg_color_transparent_light</item>
+		<item name="android:windowShowWallpaper">true</item>
+	</style>
+
+	<style name="Theme.Twidere.Transparent.Light.DarkActionBar" parent="Theme.Twidere.Light.DarkActionBar">
+
+		<!-- Colors -->
+		<item name="android:colorBackgroundCacheHint">@null</item>
+
+		<!-- Window attributes -->
+		<item name="android:windowBackground">@color/bg_color_transparent_light</item>
+		<item name="android:windowShowWallpaper">true</item>
 	</style>
 
 	<style name="Theme.Twidere.SolidBackground">
@@ -205,6 +257,30 @@
 	</style>
 
 	<style name="Theme.Twidere.Light.DarkActionBar.SwipeBack">
+
+		<!-- Window attributes -->
+		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
+	</style>
+
+	<style name="Theme.Twidere.Transparent.SwipeBack">
+
+		<!-- Window attributes -->
+		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
+	</style>
+
+	<style name="Theme.Twidere.Transparent.Dark.SwipeBack">
+
+		<!-- Window attributes -->
+		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
+	</style>
+
+	<style name="Theme.Twidere.Transparent.Light.SwipeBack">
+
+		<!-- Window attributes -->
+		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
+	</style>
+
+	<style name="Theme.Twidere.Transparent.Light.DarkActionBar.SwipeBack">
 
 		<!-- Window attributes -->
 		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>

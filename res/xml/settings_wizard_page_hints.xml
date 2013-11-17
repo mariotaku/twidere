@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	android:title="@string/theme">
+
+	<Preference
+		android:key="header"
+		android:layout="@layout/wizard_page_hints_header"
+		android:selectable="false"/>
+
+	<org.mariotaku.twidere.preference.WizardPageNavPreference
+		android:key="next_page"
+		android:title="@string/finish"/>
+
+</PreferenceScreen>

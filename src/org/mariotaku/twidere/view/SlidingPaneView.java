@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -37,6 +38,8 @@ import android.widget.Scroller;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.support.DualPaneActivity;
+import org.mariotaku.twidere.util.MathUtils;
+import org.mariotaku.twidere.util.accessor.ViewAccessor;
 import org.mariotaku.twidere.view.iface.IExtendedViewGroup.TouchInterceptor;
 
 public class SlidingPaneView extends ViewGroup {
@@ -116,8 +119,6 @@ public class SlidingPaneView extends ViewGroup {
 
 	public SlidingPaneView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		setLayerType(LAYER_TYPE_HARDWARE, null);
-
 		final Resources res = getResources();
 
 		setClipChildren(false);
@@ -476,8 +477,8 @@ public class SlidingPaneView extends ViewGroup {
 
 		public LeftPaneLayout(final SlidingPaneView parent) {
 			super(parent.getContext());
+			ViewAccessor.enableHwAccelIfNecessary(this);
 			this.parent = parent;
-			setLayerType(LAYER_TYPE_HARDWARE, null);
 		}
 
 		@Override
@@ -490,7 +491,12 @@ public class SlidingPaneView extends ViewGroup {
 
 		public void setFadeFactor(final int fadeFactor) {
 			mFadeFactor = fadeFactor;
-			setAlpha((float) mFadeFactor / 0xFF);
+			final float alpha = (float) mFadeFactor / 0xFF;
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+				setAlpha(alpha);
+			} else {
+				setAlpha(MathUtils.clamp(alpha, 0.99999f, 0));
+			}
 		}
 
 	}
@@ -757,8 +763,12 @@ public class SlidingPaneView extends ViewGroup {
 
 		public void setFadeFactor(final int fadeFactor) {
 			mFadeFactor = fadeFactor;
-			invalidate();
-			setAlpha((float) mFadeFactor / 0xFF);
+			final float alpha = (float) mFadeFactor / 0xFF;
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+				setAlpha(alpha);
+			} else {
+				setAlpha(MathUtils.clamp(alpha, 0.99999f, 0));
+			}
 		}
 	}
 
@@ -780,8 +790,8 @@ public class SlidingPaneView extends ViewGroup {
 
 		public RightPaneLayout(final SlidingPaneView parent) {
 			super(parent.getContext());
+			ViewAccessor.enableHwAccelIfNecessary(this);
 			setOrientation(LinearLayout.HORIZONTAL);
-			setLayerType(LAYER_TYPE_HARDWARE, null);
 		}
 
 		@Override

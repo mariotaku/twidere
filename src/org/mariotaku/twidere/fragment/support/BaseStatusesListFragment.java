@@ -155,9 +155,12 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 	public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 		final Object tag = view.getTag();
 		if (tag instanceof StatusViewHolder) {
-			final StatusViewHolder holder = (StatusViewHolder) tag;
-			if (holder.show_as_gap) return false;
 			final ParcelableStatus status = mAdapter.getStatus(position - mListView.getHeaderViewsCount());
+			final AsyncTwitterWrapper twitter = getTwitterWrapper();
+			if (twitter != null) {
+				twitter.removeUnreadCounts(getActivity(), getTabPosition(), status.account_id, status.id);
+			}
+			if (((StatusViewHolder) tag).show_as_gap) return false;
 			setItemSelected(status, position, !mMultiSelectManager.isSelected(status));
 			return true;
 		}
@@ -188,8 +191,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 			if (twitter != null) {
 				twitter.removeUnreadCounts(getActivity(), getTabPosition(), status.account_id, status.id);
 			}
-			final StatusViewHolder holder = (StatusViewHolder) tag;
-			if (holder.show_as_gap) {
+			if (((StatusViewHolder) tag).show_as_gap) {
 				getStatuses(new long[] { status.account_id }, new long[] { status.id }, null);
 				mListView.setItemChecked(position, false);
 			} else {
@@ -478,6 +480,10 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 	private void openMenu(final View view, final ParcelableStatus status) {
 		mSelectedStatus = status;
 		if (view == null || status == null) return;
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		if (twitter != null) {
+			twitter.removeUnreadCounts(getActivity(), getTabPosition(), status.account_id, status.id);
+		}
 		if (mPopupMenu != null && mPopupMenu.isShowing()) {
 			mPopupMenu.dismiss();
 		}

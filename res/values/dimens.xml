@@ -55,4 +55,8 @@
 	<dimen name="item_menu_padding_bottom_default">2dp</dimen>
 	<dimen name="item_menu_padding_end_default">10dp</dimen>
 
+	<!-- Size of activity preview -->
+	<dimen name="theme_preview_width">260dp</dimen>
+	<dimen name="theme_preview_height">400dp</dimen>
+
 </resources>

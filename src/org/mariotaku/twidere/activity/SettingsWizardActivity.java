@@ -75,9 +75,15 @@ public class SettingsWizardActivity extends Activity implements Constants {
 		finish();
 	}
 
-	public void gotoLastPage() {
+	public void gotoFinishPage() {
 		if (mViewPager == null || mAdapter == null) return;
 		final int last = mAdapter.getCount() - 1;
+		mViewPager.setCurrentItem(Math.max(last, 0));
+	}
+
+	public void gotoLastPage() {
+		if (mViewPager == null || mAdapter == null) return;
+		final int last = mAdapter.getCount() - 2;
 		mViewPager.setCurrentItem(Math.max(last, 0));
 	}
 
@@ -114,11 +120,19 @@ public class SettingsWizardActivity extends Activity implements Constants {
 		mAdapter.addTab(WizardPageWelcomeFragment.class, null, getString(R.string.wizard_page_welcome_title), null, 0);
 		mAdapter.addTab(WizardPageThemeFragment.class, null, getString(R.string.theme), null, 0);
 		mAdapter.addTab(WizardPageTabsFragment.class, null, getString(R.string.tabs), null, 0);
-		mAdapter.addTab(WizardPageStatusFragment.class, null, getString(R.string.status), null, 0);
+		mAdapter.addTab(WizardPageCardsFragment.class, null, getString(R.string.cards), null, 0);
+		mAdapter.addTab(WizardPageHintsFragment.class, null, getString(R.string.hints), null, 0);
 		mAdapter.addTab(WizardPageFinishedFragment.class, null, getString(R.string.wizard_page_finished_title), null, 0);
 	}
 
 	public static class BaseWizardPageFragment extends BasePreferenceFragment {
+
+		public void gotoFinishPage() {
+			final Activity a = getActivity();
+			if (a instanceof SettingsWizardActivity) {
+				((SettingsWizardActivity) a).gotoFinishPage();
+			}
+		}
 
 		public void gotoLastPage() {
 			final Activity a = getActivity();
@@ -132,6 +146,42 @@ public class SettingsWizardActivity extends Activity implements Constants {
 			if (a instanceof SettingsWizardActivity) {
 				((SettingsWizardActivity) a).gotoNextPage();
 			}
+		}
+	}
+
+	public static class WizardPageCardsFragment extends BaseWizardPageFragment implements OnPreferenceClickListener {
+
+		@Override
+		public void onActivityCreated(final Bundle savedInstanceState) {
+			super.onActivityCreated(savedInstanceState);
+			addPreferencesFromResource(R.xml.settings_wizard_page_cards);
+			findPreference(WIZARD_PREFERENCE_KEY_NEXT_PAGE).setOnPreferenceClickListener(this);
+		}
+
+		@Override
+		public boolean onPreferenceClick(final Preference preference) {
+			if (WIZARD_PREFERENCE_KEY_NEXT_PAGE.equals(preference.getKey())) {
+				gotoNextPage();
+			}
+			return true;
+		}
+	}
+	
+	public static class WizardPageHintsFragment extends BaseWizardPageFragment implements OnPreferenceClickListener {
+
+		@Override
+		public void onActivityCreated(final Bundle savedInstanceState) {
+			super.onActivityCreated(savedInstanceState);
+			addPreferencesFromResource(R.xml.settings_wizard_page_hints);
+			findPreference(WIZARD_PREFERENCE_KEY_NEXT_PAGE).setOnPreferenceClickListener(this);
+		}
+
+		@Override
+		public boolean onPreferenceClick(final Preference preference) {
+			if (WIZARD_PREFERENCE_KEY_NEXT_PAGE.equals(preference.getKey())) {
+				gotoNextPage();
+			}
+			return true;
 		}
 	}
 
@@ -153,24 +203,6 @@ public class SettingsWizardActivity extends Activity implements Constants {
 			return view;
 		}
 
-	}
-
-	public static class WizardPageStatusFragment extends BaseWizardPageFragment implements OnPreferenceClickListener {
-
-		@Override
-		public void onActivityCreated(final Bundle savedInstanceState) {
-			super.onActivityCreated(savedInstanceState);
-			addPreferencesFromResource(R.xml.settings_wizard_page_status);
-			findPreference(WIZARD_PREFERENCE_KEY_NEXT_PAGE).setOnPreferenceClickListener(this);
-		}
-
-		@Override
-		public boolean onPreferenceClick(final Preference preference) {
-			if (WIZARD_PREFERENCE_KEY_NEXT_PAGE.equals(preference.getKey())) {
-				gotoNextPage();
-			}
-			return true;
-		}
 	}
 
 	public static class WizardPageTabsFragment extends BaseWizardPageFragment implements OnPreferenceClickListener {

@@ -15,11 +15,12 @@
 		android:key="theme"
 		android:summary="%s"
 		android:title="@string/theme"/>
-
-	<CheckBoxPreference
-		android:defaultValue="false"
-		android:key="solid_color_background"
-		android:summary="@string/solid_color_background_summary"
-		android:title="@string/solid_color_background"/>
+	<ListPreference
+		android:defaultValue="default"
+		android:entries="@array/entries_theme_background"
+		android:entryValues="@array/values_theme_background"
+		android:key="theme_background"
+		android:summary="%s"
+		android:title="@string/theme_background"/>
 
 </PreferenceScreen>

@@ -521,7 +521,8 @@
 	<string name="wizard_page_theme_text">Pick a theme you like.</string>
 	<string name="wizard_page_tabs_text">Add some tabs to Twidere.\nKeep track of people or things you care about.</string>
 	<string name="wizard_page_tabs_unchanged_message">You can add tabs in &quot;Settings&quot; - &quot;Tabs&quot;</string>
-	<string name="wizard_page_status_text">Config tweet list item.</string>
+	<string name="wizard_page_cards_text">Config card items.</string>
+	<string name="wizard_page_hints_text">Here\'re some useful hints.</string>
 	<string name="wizard_page_finished_title">Finished</string>
 	<string name="wizard_page_finished_text">Now Twidere is ready for use.</string>
 	<string name="invalid_tab">Invalid tab</string>
@@ -561,5 +562,11 @@
 	<string name="delete_user_confirm_message">Are you sure to delete <xliff:g id="name">%s</xliff:g>?</string>
 	<string name="toggle">Toggle</string>
 	<string name="general">General</string>
+	<string name="hints">Hints</string>
+	<string name="finish">Finish</string>
+	<string name="theme_background">Theme background</string>
+	<string name="theme_background_default">Default</string>
+	<string name="theme_background_solid">Pure white/black</string>
+	<string name="theme_background_transparent">Transparent</string>
 
 </resources>

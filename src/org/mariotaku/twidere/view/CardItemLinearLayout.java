@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.ThemeUtils;
 
 public class CardItemLinearLayout extends ColorLabelLinearLayout {
 
@@ -24,6 +25,7 @@ public class CardItemLinearLayout extends ColorLabelLinearLayout {
 		super(context, attrs, defStyle);
 		final TypedArray a = context.obtainStyledAttributes(attrs, new int[] { R.attr.cardItemSelector });
 		setItemSelector(a.getDrawable(0));
+		ThemeUtils.applyThemeAlphaToDrawable(context, getBackground());
 		a.recycle();
 	}
 

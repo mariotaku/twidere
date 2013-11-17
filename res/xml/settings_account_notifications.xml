@@ -3,21 +3,46 @@
 	android:title="@string/notifications">
 
 	<PreferenceCategory
-		android:key="cat_notifications_type"
-		android:title="@string/notifications_type">
-		<CheckBoxPreference
-			android:key="notification_have_sound"
-			android:title="@string/sound"/>
-		<CheckBoxPreference
-			android:key="notification_have_vibration"
-			android:title="@string/vibration"/>
-		<CheckBoxPreference
-			android:key="notification_have_lights"
-			android:title="@string/lights"/>
+		android:key="cat_home"
+		android:title="@string/home">
+		<org.mariotaku.twidere.preference.NotificationTypePreference
+			android:key="notifications_type"
+			android:title="@string/notifications_type"/>
+
+		<org.mariotaku.twidere.preference.RingtonePreference
+			android:defaultValue=""
+			android:key="notification_ringtone"
+			android:title="@string/notification_ringtone"/>
+
+		<org.mariotaku.twidere.preference.ColorPickerPreference
+			android:defaultValue="@android:color/holo_blue_dark"
+			android:key="notification_light_color"
+			android:title="@string/notification_light_color"/>
 	</PreferenceCategory>
 	<PreferenceCategory
-		android:key="cat_notifications"
-		android:title="@string/notifications">
+		android:key="cat_mentions"
+		android:title="@string/mentions">
+		<org.mariotaku.twidere.preference.NotificationTypePreference
+			android:key="notifications_type"
+			android:title="@string/notifications_type"/>
+
+		<org.mariotaku.twidere.preference.RingtonePreference
+			android:defaultValue=""
+			android:key="notification_ringtone"
+			android:title="@string/notification_ringtone"/>
+
+		<org.mariotaku.twidere.preference.ColorPickerPreference
+			android:defaultValue="@android:color/holo_blue_dark"
+			android:key="notification_light_color"
+			android:title="@string/notification_light_color"/>
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:key="cat_direct_messages"
+		android:title="@string/direct_messages">
+		<org.mariotaku.twidere.preference.NotificationTypePreference
+			android:key="notifications_type"
+			android:title="@string/notifications_type"/>
+
 		<org.mariotaku.twidere.preference.RingtonePreference
 			android:defaultValue=""
 			android:key="notification_ringtone"
