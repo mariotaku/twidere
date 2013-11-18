@@ -188,6 +188,8 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 		final TextView view = convertView != null ? (TextView) convertView : new TextView(mContext, null,
 				android.R.attr.listSeparatorTextViewStyle);
 		view.setClickable(true);
+		view.setFocusable(false);
+		view.setFocusableInTouchMode(false);
 		final GroupItem groupItem = getGroup(groupPosition);
 		switch (groupItem.getId()) {
 			case GROUP_ID_ACCOUNT_OPTIONS: {

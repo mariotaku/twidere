@@ -4,12 +4,10 @@
 	<style name="Theme.Launcher" parent="android:Theme.NoDisplay"/>
 
 	<style name="Theme.Blank" parent="android:Theme.Holo.NoActionBar">
-		<item name="android:windowBackground">@android:color/black</item>
-	</style>
 
-	<style name="Theme.Blank.SwipeBack" parent="Theme.Blank">
+		<!-- Window attributes -->
+		<item name="android:windowAnimationStyle">@style/Animation.Twidere.Activity</item>
 		<item name="android:windowBackground">@android:color/black</item>
-		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
 	</style>
 
 	<style name="Theme.Blank.Dialog" parent="Theme.Twidere.Dark.Dialog"/>
@@ -20,6 +18,7 @@
 		<item name="android:colorBackgroundCacheHint">@color/bg_color_light</item>
 
 		<!-- Window attributes -->
+		<item name="android:windowAnimationStyle">@style/Animation.Twidere.Activity</item>
 		<item name="android:windowBackground">@color/bg_color_light</item>
 
 		<!-- ActionBar styles -->
@@ -34,7 +33,7 @@
 		<!-- Card UI styles -->
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
 		<item name="cardItemBackgroundColor">#f8f8f8</item>
-		<item name="cardItemSelector">@drawable/card_item_selector_holo_light</item>
+		<item name="cardItemSelector">@drawable/card_item_selector_activated_holo_light</item>
 		<item name="cardItemMessageIncomingBackground">@drawable/bg_card_item_message_incoming_light</item>
 		<item name="cardItemMessageOutgoingBackground">@drawable/bg_card_item_message_outgoing_light</item>
 		<item name="cardItemMessageProfileImageIncomingBackground">@drawable/bg_card_item_message_profile_image_incoming_light</item>
@@ -60,6 +59,7 @@
 		<item name="android:colorBackgroundCacheHint">@color/bg_color_dark</item>
 
 		<!-- Window attributes -->
+		<item name="android:windowAnimationStyle">@style/Animation.Twidere.Activity</item>
 		<item name="android:windowBackground">@color/bg_color_dark</item>
 
 		<!-- ActionBar styles -->
@@ -74,7 +74,7 @@
 		<!-- Card UI styles -->
 		<item name="cardItemBackground">@drawable/bg_card_item_dark</item>
 		<item name="cardItemBackgroundColor">#1a1a1a</item>
-		<item name="cardItemSelector">@drawable/card_item_selector_holo_dark</item>
+		<item name="cardItemSelector">@drawable/card_item_selector_activated_holo_dark</item>
 		<item name="cardItemMessageIncomingBackground">@drawable/bg_card_item_message_incoming_dark</item>
 		<item name="cardItemMessageOutgoingBackground">@drawable/bg_card_item_message_outgoing_dark</item>
 		<item name="cardItemMessageProfileImageIncomingBackground">@drawable/bg_card_item_message_profile_image_incoming_dark</item>
@@ -100,6 +100,7 @@
 		<item name="android:colorBackgroundCacheHint">@color/bg_color_light</item>
 
 		<!-- Window attributes -->
+		<item name="android:windowAnimationStyle">@style/Animation.Twidere.Activity</item>
 		<item name="android:windowBackground">@color/bg_color_light</item>
 
 		<!-- ActionBar styles -->
@@ -114,7 +115,7 @@
 		<!-- Card UI styles -->
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
 		<item name="cardItemBackgroundColor">#f8f8f8</item>
-		<item name="cardItemSelector">@drawable/card_item_selector_holo_light</item>
+		<item name="cardItemSelector">@drawable/card_item_selector_activated_holo_light</item>
 		<item name="cardItemMessageIncomingBackground">@drawable/bg_card_item_message_incoming_light</item>
 		<item name="cardItemMessageOutgoingBackground">@drawable/bg_card_item_message_outgoing_light</item>
 		<item name="cardItemMessageProfileImageIncomingBackground">@drawable/bg_card_item_message_profile_image_incoming_light</item>
@@ -140,6 +141,7 @@
 		<item name="android:colorBackgroundCacheHint">@color/bg_color_light</item>
 
 		<!-- Window attributes -->
+		<item name="android:windowAnimationStyle">@style/Animation.Twidere.Activity</item>
 		<item name="android:windowBackground">@color/bg_color_light</item>
 
 		<!-- ActionBar styles -->
@@ -154,7 +156,7 @@
 		<!-- Card UI styles -->
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
 		<item name="cardItemBackgroundColor">#f8f8f8</item>
-		<item name="cardItemSelector">@drawable/card_item_selector_holo_light</item>
+		<item name="cardItemSelector">@drawable/card_item_selector_activated_holo_light</item>
 		<item name="cardItemMessageIncomingBackground">@drawable/bg_card_item_message_incoming_light</item>
 		<item name="cardItemMessageOutgoingBackground">@drawable/bg_card_item_message_outgoing_light</item>
 		<item name="cardItemMessageProfileImageIncomingBackground">@drawable/bg_card_item_message_profile_image_incoming_light</item>
@@ -174,17 +176,18 @@
 		<item name="android:checkboxStyle">@style/Widget.Twidere.Light.CompoundButton.CheckBox</item>
 	</style>
 
-	<style name="Theme.Twidere.Transparent" parent="Theme.Twidere">
+	<style name="Theme.Twidere.Transparent">
 
 		<!-- Colors -->
 		<item name="android:colorBackgroundCacheHint">@null</item>
 
 		<!-- Window attributes -->
+		<item name="android:windowAnimationStyle">@style/Animation.Twidere.Activity</item>
 		<item name="android:windowBackground">@color/bg_color_transparent_light</item>
 		<item name="android:windowShowWallpaper">true</item>
 	</style>
 
-	<style name="Theme.Twidere.Transparent.Dark" parent="Theme.Twidere.Dark">
+	<style name="Theme.Twidere.Dark.Transparent">
 
 		<!-- Colors -->
 		<item name="android:colorBackgroundCacheHint">@null</item>
@@ -194,7 +197,7 @@
 		<item name="android:windowShowWallpaper">true</item>
 	</style>
 
-	<style name="Theme.Twidere.Transparent.Light" parent="Theme.Twidere.Light">
+	<style name="Theme.Twidere.Light.Transparent">
 
 		<!-- Colors -->
 		<item name="android:colorBackgroundCacheHint">@null</item>
@@ -204,7 +207,7 @@
 		<item name="android:windowShowWallpaper">true</item>
 	</style>
 
-	<style name="Theme.Twidere.Transparent.Light.DarkActionBar" parent="Theme.Twidere.Light.DarkActionBar">
+	<style name="Theme.Twidere.Light.DarkActionBar.Transparent">
 
 		<!-- Colors -->
 		<item name="android:colorBackgroundCacheHint">@null</item>
@@ -238,78 +241,6 @@
 		<item name="android:windowBackground">@android:color/white</item>
 	</style>
 
-	<style name="Theme.Twidere.SwipeBack">
-
-		<!-- Window attributes -->
-		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
-	</style>
-
-	<style name="Theme.Twidere.Dark.SwipeBack">
-
-		<!-- Window attributes -->
-		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
-	</style>
-
-	<style name="Theme.Twidere.Light.SwipeBack">
-
-		<!-- Window attributes -->
-		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
-	</style>
-
-	<style name="Theme.Twidere.Light.DarkActionBar.SwipeBack">
-
-		<!-- Window attributes -->
-		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
-	</style>
-
-	<style name="Theme.Twidere.Transparent.SwipeBack">
-
-		<!-- Window attributes -->
-		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
-	</style>
-
-	<style name="Theme.Twidere.Transparent.Dark.SwipeBack">
-
-		<!-- Window attributes -->
-		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
-	</style>
-
-	<style name="Theme.Twidere.Transparent.Light.SwipeBack">
-
-		<!-- Window attributes -->
-		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
-	</style>
-
-	<style name="Theme.Twidere.Transparent.Light.DarkActionBar.SwipeBack">
-
-		<!-- Window attributes -->
-		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
-	</style>
-
-	<style name="Theme.Twidere.SwipeBack.SolidBackground">
-
-		<!-- Window attributes -->
-		<item name="android:windowBackground">@android:color/white</item>
-	</style>
-
-	<style name="Theme.Twidere.Dark.SwipeBack.SolidBackground">
-
-		<!-- Window attributes -->
-		<item name="android:windowBackground">@android:color/black</item>
-	</style>
-
-	<style name="Theme.Twidere.Light.SwipeBack.SolidBackground">
-
-		<!-- Window attributes -->
-		<item name="android:windowBackground">@android:color/white</item>
-	</style>
-
-	<style name="Theme.Twidere.Light.DarkActionBar.SwipeBack.SolidBackground">
-
-		<!-- Window attributes -->
-		<item name="android:windowBackground">@android:color/white</item>
-	</style>
-
 	<style name="Theme.Twidere.Dark.Dialog" parent="android:Theme.Holo.Dialog">
 
 		<!-- Custom view styles -->
@@ -321,7 +252,7 @@
 		<!-- Card UI styles -->
 		<item name="cardItemBackground">@drawable/bg_card_item_dark</item>
 		<item name="cardItemBackgroundColor">#1a1a1a</item>
-		<item name="cardItemSelector">@drawable/card_item_selector_holo_dark</item>
+		<item name="cardItemSelector">@drawable/card_item_selector_activated_holo_dark</item>
 		<item name="cardItemMessageIncomingBackground">@drawable/bg_card_item_message_incoming_dark</item>
 		<item name="cardItemMessageOutgoingBackground">@drawable/bg_card_item_message_outgoing_dark</item>
 		<item name="cardItemMessageProfileImageIncomingBackground">@drawable/bg_card_item_message_profile_image_incoming_dark</item>
@@ -345,7 +276,7 @@
 		<!-- Card UI styles -->
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
 		<item name="cardItemBackgroundColor">#f8f8f8</item>
-		<item name="cardItemSelector">@drawable/card_item_selector_holo_light</item>
+		<item name="cardItemSelector">@drawable/card_item_selector_activated_holo_light</item>
 		<item name="cardItemMessageIncomingBackground">@drawable/bg_card_item_message_incoming_light</item>
 		<item name="cardItemMessageOutgoingBackground">@drawable/bg_card_item_message_outgoing_light</item>
 		<item name="cardItemMessageProfileImageIncomingBackground">@drawable/bg_card_item_message_profile_image_incoming_light</item>
@@ -414,7 +345,7 @@
 
 		<!-- Window attributes -->
 		<item name="android:windowActionBarOverlay">true</item>
-		<item name="android:windowAnimationStyle">@style/Animation.SwipeBack</item>
+		<item name="android:windowAnimationStyle">@style/Animation.Twidere.Activity</item>
 		<item name="android:windowBackground">@android:color/black</item>
 
 		<!-- ActionBar styles -->
@@ -426,7 +357,7 @@
 		<!-- Card UI styles -->
 		<item name="cardItemBackground">@drawable/bg_card_item_dark</item>
 		<item name="cardItemBackgroundColor">#1a1a1a</item>
-		<item name="cardItemSelector">@drawable/card_item_selector_holo_dark</item>
+		<item name="cardItemSelector">@drawable/card_item_selector_activated_holo_dark</item>
 		<item name="cardItemMessageIncomingBackground">@drawable/bg_card_item_message_incoming_dark</item>
 		<item name="cardItemMessageOutgoingBackground">@drawable/bg_card_item_message_outgoing_dark</item>
 		<item name="cardItemMessageProfileImageIncomingBackground">@drawable/bg_card_item_message_profile_image_incoming_dark</item>
@@ -451,32 +382,16 @@
 		<item name="android:windowActionBar">false</item>
 	</style>
 
-	<style name="Theme.Twidere.Drawer.Dark" parent="android:Theme.Holo">
+	<style name="Theme.Twidere.Drawer.Dark" parent="Theme.Twidere.Dark">
 
 		<!-- Window attributes -->
 		<item name="android:windowBackground">@color/bg_color_drawer_dark</item>
+	</style>
 
-		<!-- Card UI styles -->
-		<item name="cardItemBackground">@drawable/bg_card_item_dark</item>
-		<item name="cardItemBackgroundColor">#1a1a1a</item>
-		<item name="cardItemSelector">@drawable/card_item_selector_holo_dark</item>
-		<item name="cardItemMessageIncomingBackground">@drawable/bg_card_item_message_incoming_dark</item>
-		<item name="cardItemMessageOutgoingBackground">@drawable/bg_card_item_message_outgoing_dark</item>
-		<item name="cardItemMessageProfileImageIncomingBackground">@drawable/bg_card_item_message_profile_image_incoming_dark</item>
-		<item name="cardItemMessageProfileImageOutgoingBackground">@drawable/bg_card_item_message_profile_image_outgoing_dark</item>
-		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_dark</item>
+	<style name="Theme.Twidere.Drawer.Dark.Transparent" parent="Theme.Twidere.Dark.Transparent">
 
-		<!-- Button styles -->
-		<item name="android:selectableItemBackground">@drawable/item_background_holo_dark</item>
-
-		<!-- List attributes -->
-		<item name="android:listChoiceBackgroundIndicator">@drawable/list_selector_holo_dark</item>
-		<item name="android:activatedBackgroundIndicator">@drawable/activated_background_holo_dark</item>
-
-		<!-- Widget styles -->
-		<item name="android:textViewStyle">@style/Widget.Twidere.TextView</item>
-		<item name="android:radioButtonStyle">@style/Widget.Twidere.CompoundButton.RadioButton</item>
-		<item name="android:checkboxStyle">@style/Widget.Twidere.CompoundButton.CheckBox</item>
+		<!-- Window attributes -->
+		<item name="android:windowBackground">@color/bg_color_drawer_transparent_dark</item>
 	</style>
 
 	<style name="Theme.Test" parent="android:Theme.Holo"/>

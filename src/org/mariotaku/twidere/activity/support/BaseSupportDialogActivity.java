@@ -57,4 +57,10 @@ public class BaseSupportDialogActivity extends BaseSupportThemedActivity impleme
 		super.onSaveInstanceState(outState);
 	}
 
+	@Override
+	public final boolean shouldOverrideActivityAnimation() {
+		// Dialog theme should never use custom animations
+		return false;
+	}
+
 }

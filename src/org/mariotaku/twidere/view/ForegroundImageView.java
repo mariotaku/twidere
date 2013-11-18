@@ -121,7 +121,6 @@ public class ForegroundImageView extends ImageView {
 			mForeground = drawable;
 
 			if (drawable != null) {
-				setWillNotDraw(false);
 				drawable.setCallback(this);
 				if (drawable.isStateful()) {
 					drawable.setState(getDrawableState());
@@ -131,8 +130,6 @@ public class ForegroundImageView extends ImageView {
 					if (drawable.getPadding(padding)) {
 					}
 				}
-			} else {
-				setWillNotDraw(true);
 			}
 			requestLayout();
 			invalidate();

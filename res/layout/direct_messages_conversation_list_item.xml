@@ -20,15 +20,16 @@
 			android:layout_marginRight="-12.5dp"
 			android:background="?cardItemMessageProfileImageIncomingBackground">
 
-			<org.mariotaku.twidere.view.ClickableImageView
+			<org.mariotaku.twidere.view.ForegroundImageView
 				android:id="@+id/incoming_profile_image"
 				android:layout_width="@dimen/icon_size_card_list_item"
 				android:layout_height="@dimen/icon_size_card_list_item"
+				android:foreground="?android:selectableItemBackground"
 				android:scaleType="fitCenter"
 				android:src="@drawable/ic_profile_image_default"/>
 		</FrameLayout>
 
-		<FrameLayout
+		<org.mariotaku.twidere.view.MessageCardItemFrameLayout
 			android:id="@+id/incoming_message_content_frame"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -57,7 +58,7 @@
 					android:layout_height="wrap_content"
 					android:textColor="?android:attr/textColorSecondary"/>
 			</LinearLayout>
-		</FrameLayout>
+		</org.mariotaku.twidere.view.MessageCardItemFrameLayout>
 
 		<org.mariotaku.twidere.view.ListMenuOverflowButton
 			android:id="@+id/incoming_item_menu"
@@ -86,15 +87,16 @@
 			android:layout_marginLeft="-12.5dp"
 			android:background="?cardItemMessageProfileImageOutgoingBackground">
 
-			<org.mariotaku.twidere.view.ClickableImageView
+			<org.mariotaku.twidere.view.ForegroundImageView
 				android:id="@+id/outgoing_profile_image"
 				android:layout_width="@dimen/icon_size_card_list_item"
 				android:layout_height="@dimen/icon_size_card_list_item"
+				android:foreground="?android:selectableItemBackground"
 				android:scaleType="fitCenter"
 				android:src="@drawable/ic_profile_image_default"/>
 		</FrameLayout>
 
-		<FrameLayout
+		<org.mariotaku.twidere.view.MessageCardItemFrameLayout
 			android:id="@+id/outgoing_message_content_container"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -123,7 +125,7 @@
 					android:layout_height="wrap_content"
 					android:textColor="?android:attr/textColorSecondary"/>
 			</LinearLayout>
-		</FrameLayout>
+		</org.mariotaku.twidere.view.MessageCardItemFrameLayout>
 
 		<org.mariotaku.twidere.view.ListMenuOverflowButton
 			android:id="@+id/outgoing_item_menu"

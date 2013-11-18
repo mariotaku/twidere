@@ -2,15 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/theme_preview_content"
 	android:layout_width="match_parent"
-	android:layout_height="wrap_content">
-
-	<ImageView
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_alignBottom="@+id/theme_preview_window_content"
-		android:layout_alignTop="@+id/theme_preview_window_content"
-		android:scaleType="centerCrop"
-		android:src="@drawable/kitkat_default_wallpaper1"/>
+	android:layout_height="wrap_content"
+	android:background="@drawable/nyan_stars_background">
 
 	<View
 		android:id="@+id/theme_preview_window_background"

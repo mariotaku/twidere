@@ -26,13 +26,14 @@
 			android:orientation="horizontal"
 			android:padding="8dp">
 
-			<org.mariotaku.twidere.view.ClickableImageView
+			<org.mariotaku.twidere.view.ForegroundImageView
 				android:id="@+id/profile_image"
 				android:layout_width="@dimen/icon_size_card_list_item"
 				android:layout_height="@dimen/icon_size_card_list_item"
 				android:layout_marginRight="8dp"
 				android:layout_weight="0"
 				android:contentDescription="@string/profile_image"
+				android:foreground="?android:selectableItemBackground"
 				android:scaleType="fitCenter"/>
 
 			<RelativeLayout

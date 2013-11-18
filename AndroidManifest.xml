@@ -224,8 +224,7 @@
 		<activity
 			android:name=".activity.support.BrowserActivity"
 			android:exported="false"
-			android:label="@string/browser"
-			android:theme="@style/Theme.Blank.SwipeBack">
+			android:label="@string/browser">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.VIEW_WEBPAGE"/>
 
@@ -242,7 +241,6 @@
 			android:theme="@style/Theme.Twidere.Light.Dialog"/>
 		<activity
 			android:name=".activity.support.LinkHandlerActivity"
-			android:theme="@style/Theme.Blank.SwipeBack"
 			android:windowSoftInputMode="adjustResize">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
@@ -323,8 +321,7 @@
 			android:name=".activity.support.DraftsActivity"
 			android:exported="false"
 			android:label="@string/drafts"
-			android:launchMode="singleTop"
-			android:theme="@style/Theme.Blank.SwipeBack">
+			android:launchMode="singleTop">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.DRAFTS"/>
 
@@ -387,7 +384,6 @@
 			android:name=".activity.support.UserProfileEditorActivity"
 			android:exported="false"
 			android:label="@string/edit_profile"
-			android:theme="@style/Theme.Blank.SwipeBack"
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.EDIT_USER_PROFILE"/>

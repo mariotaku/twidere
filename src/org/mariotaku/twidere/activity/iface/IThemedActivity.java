@@ -23,4 +23,5 @@ public interface IThemedActivity {
 
 	public int getCurrentThemeResource();
 
+	public boolean shouldOverrideActivityAnimation();
 }

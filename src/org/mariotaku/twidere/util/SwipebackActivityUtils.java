@@ -1,11 +1,16 @@
 package org.mariotaku.twidere.util;
 
+import static org.mariotaku.twidere.util.ThemeUtils.isTransparentBackground;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.view.View;
 import android.view.Window;
@@ -35,7 +40,8 @@ public class SwipebackActivityUtils implements TwidereConstants {
 		// bar on the top, this workaround can solve that issue.
 		final Canvas c = new Canvas(b);
 		final Paint paint = new Paint();
-		paint.setColor(Color.BLACK);
+		paint.setColor(Color.TRANSPARENT);
+		paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
 		c.drawRect(frame.left, 0, frame.right, frame.top, paint);
 		view.setDrawingCacheEnabled(prevState);
 		view.setDrawingCacheQuality(prevQuality);
@@ -53,8 +59,9 @@ public class SwipebackActivityUtils implements TwidereConstants {
 	}
 
 	public static void setActivityScreenshot(final Activity activity, final Intent target) {
+		final CompressFormat format = isTransparentBackground(activity) ? CompressFormat.PNG : CompressFormat.JPEG;
 		final byte[] encoded_screenshot = getEncodedActivityScreenshot(activity, View.DRAWING_CACHE_QUALITY_LOW,
-				Bitmap.CompressFormat.JPEG, 60);
+				format, 80);
 		target.putExtra(EXTRA_ACTIVITY_SCREENSHOT_ENCODED, encoded_screenshot);
 	}
 

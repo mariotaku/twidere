@@ -74,6 +74,8 @@ import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.ParseUtils;
+import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.util.accessor.ViewAccessor;
 
 import java.util.List;
 import java.util.Locale;
@@ -163,6 +165,7 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 		mAdapter.setMenuButtonClickListener(this);
 		mListView = getListView();
 		mListView.setDivider(null);
+		mListView.setSelector(android.R.color.transparent);
 		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
 		mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
 		mListView.setStackFromBottom(true);
@@ -243,18 +246,22 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.direct_messages_conversation, null);
-		final FrameLayout list_container = (FrameLayout) view.findViewById(R.id.list_container);
+		final FrameLayout listContainer = (FrameLayout) view.findViewById(R.id.list_container);
 		final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
 				FrameLayout.LayoutParams.MATCH_PARENT);
-		list_container.addView(super.onCreateView(inflater, container, savedInstanceState), lp);
-		mEditText = (EditText) view.findViewById(R.id.edit_text);
-		mTextCountView = (TextView) view.findViewById(R.id.text_count);
-		mSendButton = (ImageButton) view.findViewById(R.id.send);
+		listContainer.addView(super.onCreateView(inflater, container, savedInstanceState), lp);
+		final ViewGroup inputSendContainer = (ViewGroup) view.findViewById(R.id.input_send_container);
+		ViewAccessor.setBackground(inputSendContainer, ThemeUtils.getActionBarSplitBackground(getActivity(), true));
+		final Context actionBarContext = ThemeUtils.getActionBarContext(getActivity());
+		View.inflate(actionBarContext, R.layout.direct_messages_conversation_input_send, inputSendContainer);
 		mConversationContainer = view.findViewById(R.id.conversation_container);
 		mScreenNameContainer = view.findViewById(R.id.screen_name_container);
 		mEditScreenName = (AutoCompleteTextView) view.findViewById(R.id.edit_screen_name);
 		mAccountSpinner = (Spinner) view.findViewById(R.id.account_selector);
 		mScreenNameConfirmButton = (Button) view.findViewById(R.id.screen_name_confirm);
+		mEditText = (EditText) inputSendContainer.findViewById(R.id.edit_text);
+		mTextCountView = (TextView) inputSendContainer.findViewById(R.id.text_count);
+		mSendButton = (ImageButton) inputSendContainer.findViewById(R.id.send);
 		return view;
 	}
 
@@ -394,6 +401,9 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 	}
 
 	private void showMenu(final View view, final ParcelableDirectMessage dm) {
+		if (mPopupMenu != null && mPopupMenu.isShowing()) {
+			mPopupMenu.dismiss();
+		}
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_direct_message);
 		final Menu menu = mPopupMenu.getMenu();

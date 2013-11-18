@@ -6,7 +6,7 @@
 	android:background="?android:activatedBackgroundIndicator">
 
 	<LinearLayout
-		android:id="@+id/status_card"
+		android:id="@+id/card"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_margin="8dp"
@@ -101,11 +101,10 @@
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textIsSelectable="true"/>
 
-		<FrameLayout
+		<RelativeLayout
 			android:id="@+id/location_container"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:foreground="?android:selectableItemBackground"
 			android:visibility="gone">
 
 			<org.mariotaku.twidere.view.MapImageView
@@ -114,35 +113,35 @@
 				android:layout_height="wrap_content"
 				android:background="@drawable/bg_map"
 				android:contentDescription="@string/location"
+				android:duplicateParentState="true"
+				android:foreground="?android:selectableItemBackground"
 				android:scaleType="centerCrop"/>
 
-			<RelativeLayout
+			<View
+				android:id="@+id/location_background_view"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_gravity="bottom">
+				android:layout_alignBottom="@+id/location_view"
+				android:layout_alignParentBottom="true"
+				android:layout_alignTop="@+id/location_view"
+				android:alpha="0.5"
+				android:background="?cardItemBackgroundColor"/>
 
-				<View
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:layout_alignBottom="@+id/location_view"
-					android:layout_alignTop="@+id/location_view"
-					android:alpha="0.5"
-					android:background="?cardItemBackgroundColor"/>
-
-				<TextView
-					android:id="@+id/location_view"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:layout_gravity="bottom"
-					android:drawableLeft="@drawable/ic_indicator_location"
-					android:drawablePadding="4dp"
-					android:gravity="center_vertical"
-					android:padding="8dp"
-					android:singleLine="true"
-					android:text="@string/view_map"
-					android:textAppearance="?android:attr/textAppearanceSmall"/>
-			</RelativeLayout>
-		</FrameLayout>
+			<TextView
+				android:id="@+id/location_view"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_alignParentBottom="true"
+				android:background="?android:selectableItemBackground"
+				android:drawableLeft="@drawable/ic_indicator_location"
+				android:drawablePadding="4dp"
+				android:duplicateParentState="true"
+				android:gravity="center_vertical"
+				android:padding="8dp"
+				android:singleLine="true"
+				android:text="@string/view_map"
+				android:textAppearance="?android:attr/textAppearanceSmall"/>
+		</RelativeLayout>
 
 		<TextView
 			android:id="@+id/time_source"

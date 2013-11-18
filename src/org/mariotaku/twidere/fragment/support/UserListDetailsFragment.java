@@ -76,6 +76,7 @@ import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.ParseUtils;
+import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 
@@ -271,6 +272,8 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		mErrorRetryContainer = container_view.findViewById(R.id.error_retry_container);
 		mRetryButton = (Button) container_view.findViewById(R.id.retry);
 		mErrorMessageView = (TextView) container_view.findViewById(R.id.error_message);
+		final View cardView = mHeaderView.findViewById(R.id.card);
+		ThemeUtils.applyThemeAlphaToDrawable(cardView.getContext(), cardView.getBackground());
 		return container_view;
 	}
 

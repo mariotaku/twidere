@@ -53,7 +53,6 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
@@ -316,6 +315,11 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		final ProgressBar progress = (ProgressBar) view.findViewById(R.id.progress);
 		actions_icon.setVisibility(has_task ? View.GONE : View.VISIBLE);
 		progress.setVisibility(has_task ? View.VISIBLE : View.GONE);
+	}
+
+	@Override
+	public boolean shouldOverrideActivityAnimation() {
+		return false;
 	}
 
 	@Override
@@ -685,7 +689,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 				: SlidingMenu.TOUCHMODE_MARGIN;
 		mSlidingMenu.setTouchModeAbove(mode);
 	}
-
 
 	private static class ListenerCanvasTransformer implements CanvasTransformer {
 		private final LeftDrawerFrameLayout mLeftDrawerContainer;

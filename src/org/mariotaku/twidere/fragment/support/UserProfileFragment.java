@@ -569,6 +569,8 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		mErrorRetryContainer = container_view.findViewById(R.id.error_retry_container);
 		mRetryButton = (Button) container_view.findViewById(R.id.retry);
 		mErrorMessageView = (TextView) container_view.findViewById(R.id.error_message);
+		final View cardView = mHeaderView.findViewById(R.id.card);
+		ThemeUtils.applyThemeAlphaToDrawable(cardView.getContext(), cardView.getBackground());
 		return container_view;
 	}
 

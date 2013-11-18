@@ -61,11 +61,11 @@
 		<item name="android:fontFamily">sans-serif-light</item>
 	</style>
 
-	<style name="Animation.SwipeBack" parent="android:Animation.Activity">
-		<item name="android:activityOpenEnterAnimation">@anim/swipeback_open_enter</item>
-		<item name="android:activityOpenExitAnimation">@anim/swipeback_open_exit</item>
-		<item name="android:activityCloseEnterAnimation">@anim/swipeback_close_enter</item>
-		<item name="android:activityCloseExitAnimation">@anim/swipeback_close_exit</item>
+	<style name="Animation.Twidere.Activity" parent="android:Animation.Activity">
+		<item name="android:activityOpenEnterAnimation">@anim/activity_open_enter</item>
+		<item name="android:activityOpenExitAnimation">@anim/activity_open_exit</item>
+		<item name="android:activityCloseEnterAnimation">@anim/activity_close_enter</item>
+		<item name="android:activityCloseExitAnimation">@anim/activity_close_exit</item>
 	</style>
 
 	<style name="Widget.TabPageIndicator.TabItem" parent="@android:style/Widget">

@@ -34,6 +34,14 @@ class BasePreferenceActivity extends PreferenceActivity implements Constants, IT
 	private int mCurrentThemeResource;
 
 	@Override
+	public void finish() {
+		super.finish();
+		if (shouldOverrideActivityAnimation()) {
+			ThemeUtils.overrideActivityCloseAnimation(this);
+		}
+	}
+
+	@Override
 	public final int getCurrentThemeResource() {
 		return mCurrentThemeResource;
 	}
@@ -42,12 +50,24 @@ class BasePreferenceActivity extends PreferenceActivity implements Constants, IT
 		return (TwidereApplication) getApplication();
 	}
 
+	@Override
+	public boolean shouldOverrideActivityAnimation() {
+		return true;
+	}
+
 	protected int getThemeResource() {
 		return ThemeUtils.getThemeResource(this);
 	}
 
+	protected final boolean isThemeChanged() {
+		return getThemeResource() != mCurrentThemeResource;
+	}
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
+		if (shouldOverrideActivityAnimation()) {
+			ThemeUtils.overrideActivityOpenAnimation(this);
+		}
 		setTheme();
 		super.onCreate(savedInstanceState);
 		setActionBarBackground();
@@ -69,12 +89,8 @@ class BasePreferenceActivity extends PreferenceActivity implements Constants, IT
 		return true;
 	}
 
-	private final boolean isThemeChanged() {
-		return getThemeResource() != mCurrentThemeResource;
-	}
-
 	private final void setActionBarBackground() {
-		getActionBar().setBackgroundDrawable(ThemeUtils.getActionBarBackground(this));
+		ThemeUtils.applyActionBarBackground(getActionBar(), this);
 	}
 
 	private final void setTheme() {

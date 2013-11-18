@@ -18,12 +18,13 @@
 			android:orientation="horizontal"
 			android:padding="8dp">
 
-			<org.mariotaku.twidere.view.ClickableImageView
+			<org.mariotaku.twidere.view.ForegroundImageView
 				android:id="@+id/profile_image"
 				android:layout_width="@dimen/icon_size_card_list_item"
 				android:layout_height="@dimen/icon_size_card_list_item"
 				android:layout_weight="0"
 				android:contentDescription="@string/profile_image"
+				android:foreground="?android:selectableItemBackground"
 				android:scaleType="fitCenter"/>
 
 			<RelativeLayout
@@ -70,12 +71,13 @@
 					android:textColor="?android:attr/textColorSecondary"/>
 			</RelativeLayout>
 
-			<org.mariotaku.twidere.view.ClickableImageView
+			<org.mariotaku.twidere.view.ForegroundImageView
 				android:id="@+id/my_profile_image"
 				android:layout_width="@dimen/icon_size_card_list_item"
 				android:layout_height="@dimen/icon_size_card_list_item"
 				android:layout_weight="0"
 				android:contentDescription="@string/my_profile_image"
+				android:foreground="?android:selectableItemBackground"
 				android:scaleType="fitCenter"/>
 		</LinearLayout>
 
@@ -98,10 +100,11 @@
 			android:layout_height="wrap_content"
 			android:visibility="gone">
 
-			<org.mariotaku.twidere.view.ClickableImageView
+			<org.mariotaku.twidere.view.ForegroundImageView
 				android:id="@+id/image_preview"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
+				android:foreground="?android:selectableItemBackground"
 				android:scaleType="centerCrop"/>
 
 			<ProgressBar

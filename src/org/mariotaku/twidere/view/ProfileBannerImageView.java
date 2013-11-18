@@ -34,7 +34,7 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.view.iface.IExtendedView;
 
-public class ProfileBannerImageView extends ClickableImageView implements IExtendedView, Constants {
+public class ProfileBannerImageView extends ForegroundImageView implements IExtendedView, Constants {
 
 	private static final int[] COLORS = new int[] { 0xFFFFFFFF, 0x00FFFFFF };
 	private static final int[] COLORS_REVERSED = new int[] { 0x00FFFFFF, 0xFFFFFFFF };
@@ -55,9 +55,11 @@ public class ProfileBannerImageView extends ClickableImageView implements IExten
 
 	public ProfileBannerImageView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
+		if (isInEditMode()) return;
 		ViewCompat.setLayerType(this, LAYER_TYPE_SOFTWARE, null);
 		final boolean is_dark_theme = ThemeUtils.isDarkTheme(context);
 		COLORS_REVERSED[1] = is_dark_theme ? 0xFF000000 : 0xFFFFFFFF;
+		setForeground(ThemeUtils.getSelectableItemBackgroundDrawable(context));
 	}
 
 	@Override
@@ -67,6 +69,7 @@ public class ProfileBannerImageView extends ClickableImageView implements IExten
 
 	@Override
 	protected void onDraw(final Canvas canvas) {
+		if (isInEditMode()) return;
 		final int width = getWidth(), height = getHeight();
 		if (mShader == null) return;
 		super.onDraw(canvas);

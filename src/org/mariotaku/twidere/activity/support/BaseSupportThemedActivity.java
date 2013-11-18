@@ -13,14 +13,30 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 	private int mCurrentThemeResource;
 
 	@Override
+	public void finish() {
+		super.finish();
+		if (shouldOverrideActivityAnimation()) {
+			ThemeUtils.overrideActivityCloseAnimation(this);
+		}
+	}
+
+	@Override
 	public final int getCurrentThemeResource() {
 		return mCurrentThemeResource;
+	}
+
+	@Override
+	public boolean shouldOverrideActivityAnimation() {
+		return true;
 	}
 
 	protected abstract int getThemeResource();
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
+		if (shouldOverrideActivityAnimation()) {
+			ThemeUtils.overrideActivityOpenAnimation(this);
+		}
 		setTheme();
 		super.onCreate(savedInstanceState);
 		setActionBarBackground();
@@ -43,7 +59,7 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 	}
 
 	private final void setActionBarBackground() {
-		ThemeUtils.applyBackgroundActionBarBackground(getActionBar(), this);
+		ThemeUtils.applyActionBarBackground(getActionBar(), this);
 	}
 
 	private final void setTheme() {

@@ -3564,10 +3564,10 @@ public final class Utils implements Constants {
 		if (activity == null) return;
 		final int enter_anim = android.R.anim.fade_in;
 		final int exit_anim = android.R.anim.fade_out;
-		activity.overridePendingTransition(enter_anim, exit_anim);
 		activity.finish();
 		activity.overridePendingTransition(enter_anim, exit_anim);
 		activity.startActivity(activity.getIntent());
+		activity.overridePendingTransition(enter_anim, exit_anim);
 	}
 
 	public static void scrollListToPosition(final ListView list, final int position) {

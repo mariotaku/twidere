@@ -29,6 +29,8 @@ import android.view.Gravity;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import org.mariotaku.twidere.util.ThemeUtils;
+
 public class ProfileImageBannerLayout extends ExtendedFrameLayout {
 
 	public static final int VIEW_ID_PROFILE_IMAGE = 0x10000001;
@@ -84,7 +86,7 @@ public class ProfileImageBannerLayout extends ExtendedFrameLayout {
 		}
 	}
 
-	private static class ProfileImageView extends ClickableImageView {
+	private static class ProfileImageView extends ForegroundImageView {
 
 		private final Paint mWhitePaint, mBlackPaint;
 		private final int mPaddings;
@@ -97,7 +99,9 @@ public class ProfileImageBannerLayout extends ExtendedFrameLayout {
 			mBlackPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 			mBlackPaint.setColor(Color.BLACK);
 			mPaddings = padding;
+			if (isInEditMode()) return;
 			setPadding(padding, padding, padding, padding);
+			setForeground(ThemeUtils.getSelectableItemBackgroundDrawable(context));
 		}
 
 		@Override

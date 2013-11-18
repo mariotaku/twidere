@@ -40,6 +40,13 @@ import java.util.List;
 public class SettingsActivity extends BasePreferenceActivity {
 
 	private HeaderAdapter mAdapter;
+	private boolean mIsCallingFinish;
+
+	@Override
+	public void finish() {
+		mIsCallingFinish = true;
+		super.finish();
+	}
 
 	public HeaderAdapter getHeaderAdapter() {
 		if (mAdapter != null) return mAdapter;
@@ -75,6 +82,11 @@ public class SettingsActivity extends BasePreferenceActivity {
 	}
 
 	@Override
+	public boolean shouldOverrideActivityAnimation() {
+		return getCurrentThemeResource() == 0 || mIsCallingFinish && !isThemeChanged();
+	}
+
+	@Override
 	public void switchToHeader(final Header header) {
 		if (header == null || header.fragment == null && header.intent == null) return;
 		super.switchToHeader(header);
@@ -93,6 +105,7 @@ public class SettingsActivity extends BasePreferenceActivity {
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
+		mIsCallingFinish = false;
 		super.onCreate(savedInstanceState);
 		setIntent(getIntent().addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
 		getActionBar().setDisplayHomeAsUpEnabled(true);

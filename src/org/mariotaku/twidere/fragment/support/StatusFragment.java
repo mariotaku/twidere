@@ -150,13 +150,14 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	private ImageView mProfileImageView, mMapView;
 	private Button mFollowButton;
-	private View mMainContent, mFollowIndicator, mImagePreviewContainer, mGalleryContainer, mLocationContainer;
+	private View mMainContent, mFollowIndicator, mImagePreviewContainer, mGalleryContainer, mLocationContainer,
+			mLocationBackgroundView;
 	private ColorLabelRelativeLayout mProfileView;
 	private MenuBar mMenuBar;
 	private ProgressBar mStatusLoadProgress, mFollowInfoProgress;
 	private AbsSpinner mImagePreviewGallery;
 	private ImageButton mPrevImage, mNextImage;
-	private View mStatusView;
+	private View mHeaderView;
 	private View mLoadImagesIndicator;
 	private ExtendedFrameLayout mStatusContainer;
 	private ListView mListView;
@@ -384,10 +385,11 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		final ParcelableLocation location = status.location;
 		final boolean is_valid_location = ParcelableLocation.isValidLocation(location);
 		mLocationContainer.setVisibility(is_valid_location ? View.VISIBLE : View.GONE);
-		mMapView.setVisibility(View.VISIBLE);
-		mLocationView.setVisibility(View.VISIBLE);
+//		mMapView.setVisibility(View.VISIBLE);
+//		mLocationView.setVisibility(View.VISIBLE);
 		if (display_image_preview) {
 			mMapView.setVisibility(is_valid_location ? View.VISIBLE : View.GONE);
+			mLocationBackgroundView.setVisibility(is_valid_location ? View.VISIBLE : View.GONE);
 			mLocationView.setVisibility(View.VISIBLE);
 			if (is_valid_location) {
 				mHandler.post(new DisplayMapRunnable(location, mImageLoader, mMapView));
@@ -396,6 +398,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			}
 		} else {
 			mMapView.setVisibility(View.GONE);
+			mLocationBackgroundView.setVisibility(View.GONE);
 			mMapView.setImageDrawable(null);
 			mLocationView.setVisibility(View.VISIBLE);
 		}
@@ -535,29 +538,30 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mMenuBar = (MenuBar) view.findViewById(R.id.menu_bar);
 		mStatusContainer = (ExtendedFrameLayout) view.findViewById(R.id.status_container);
 		mStatusContainer.addView(super.onCreateView(inflater, container, savedInstanceState));
-		mStatusView = inflater.inflate(R.layout.status_content, null, false);
-		mImagePreviewContainer = mStatusView.findViewById(R.id.image_preview);
-		mLocationContainer = mStatusView.findViewById(R.id.location_container);
-		mLocationView = (TextView) mStatusView.findViewById(R.id.location_view);
-		mMapView = (ImageView) mStatusView.findViewById(R.id.map_view);
-		mRetweetView = (TextView) mStatusView.findViewById(R.id.retweet_view);
-		mNameView = (TextView) mStatusView.findViewById(R.id.name);
-		mScreenNameView = (TextView) mStatusView.findViewById(R.id.screen_name);
-		mTextView = (TextView) mStatusView.findViewById(R.id.text);
-		mProfileImageView = (ImageView) mStatusView.findViewById(R.id.profile_image);
-		mTimeSourceView = (TextView) mStatusView.findViewById(R.id.time_source);
-		mInReplyToView = (TextView) mStatusView.findViewById(R.id.in_reply_to);
-		mFollowButton = (Button) mStatusView.findViewById(R.id.follow);
-		mFollowIndicator = mStatusView.findViewById(R.id.follow_indicator);
-		mFollowInfoProgress = (ProgressBar) mStatusView.findViewById(R.id.follow_info_progress);
-		mProfileView = (ColorLabelRelativeLayout) mStatusView.findViewById(R.id.profile);
-		mImagePreviewGallery = (AbsSpinner) mStatusView.findViewById(R.id.preview_gallery);
-		mGalleryContainer = mStatusView.findViewById(R.id.gallery_container);
-		mPrevImage = (ImageButton) mStatusView.findViewById(R.id.prev_image);
-		mNextImage = (ImageButton) mStatusView.findViewById(R.id.next_image);
-		mLoadImagesIndicator = mStatusView.findViewById(R.id.load_images);
-		final View statusCard = mStatusView.findViewById(R.id.status_card);
-		ThemeUtils.applyThemeAlphaToDrawable(statusCard.getContext(), statusCard.getBackground());
+		mHeaderView = inflater.inflate(R.layout.status_header, null, false);
+		mImagePreviewContainer = mHeaderView.findViewById(R.id.image_preview);
+		mLocationContainer = mHeaderView.findViewById(R.id.location_container);
+		mLocationView = (TextView) mHeaderView.findViewById(R.id.location_view);
+		mLocationBackgroundView = mHeaderView.findViewById(R.id.location_background_view);
+		mMapView = (ImageView) mHeaderView.findViewById(R.id.map_view);
+		mRetweetView = (TextView) mHeaderView.findViewById(R.id.retweet_view);
+		mNameView = (TextView) mHeaderView.findViewById(R.id.name);
+		mScreenNameView = (TextView) mHeaderView.findViewById(R.id.screen_name);
+		mTextView = (TextView) mHeaderView.findViewById(R.id.text);
+		mProfileImageView = (ImageView) mHeaderView.findViewById(R.id.profile_image);
+		mTimeSourceView = (TextView) mHeaderView.findViewById(R.id.time_source);
+		mInReplyToView = (TextView) mHeaderView.findViewById(R.id.in_reply_to);
+		mFollowButton = (Button) mHeaderView.findViewById(R.id.follow);
+		mFollowIndicator = mHeaderView.findViewById(R.id.follow_indicator);
+		mFollowInfoProgress = (ProgressBar) mHeaderView.findViewById(R.id.follow_info_progress);
+		mProfileView = (ColorLabelRelativeLayout) mHeaderView.findViewById(R.id.profile);
+		mImagePreviewGallery = (AbsSpinner) mHeaderView.findViewById(R.id.preview_gallery);
+		mGalleryContainer = mHeaderView.findViewById(R.id.gallery_container);
+		mPrevImage = (ImageButton) mHeaderView.findViewById(R.id.prev_image);
+		mNextImage = (ImageButton) mHeaderView.findViewById(R.id.next_image);
+		mLoadImagesIndicator = mHeaderView.findViewById(R.id.load_images);
+		final View cardView = mHeaderView.findViewById(R.id.card);
+		ThemeUtils.applyThemeAlphaToDrawable(cardView.getContext(), cardView.getBackground());
 		return view;
 	}
 
@@ -793,7 +797,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	@Override
 	protected void setListHeaderFooters(final ListView list) {
-		list.addHeaderView(mStatusView, null, true);
+		list.addHeaderView(mHeaderView, null, true);
 	}
 
 	@Override

@@ -21,9 +21,8 @@ package org.mariotaku.twidere.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.ImageView;
 
-public class MapImageView extends ImageView {
+public class MapImageView extends ForegroundImageView {
 
 	public MapImageView(final Context context) {
 		this(context, null);

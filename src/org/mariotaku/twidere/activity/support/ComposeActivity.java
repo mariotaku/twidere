@@ -24,6 +24,7 @@ import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.model.ParcelableLocation.isValidLocation;
 import static org.mariotaku.twidere.util.ParseUtils.parseString;
 import static org.mariotaku.twidere.util.ThemeUtils.getActionBarBackground;
+import static org.mariotaku.twidere.util.ThemeUtils.getActionBarSplitBackground;
 import static org.mariotaku.twidere.util.ThemeUtils.getComposeThemeResource;
 import static org.mariotaku.twidere.util.ThemeUtils.getThemeColor;
 import static org.mariotaku.twidere.util.ThemeUtils.getWindowContentOverlayForCompose;
@@ -418,7 +419,8 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		mActionMenuBar = (MenuBar) findViewById(R.id.action_menu);
 		mProgress = (ProgressBar) findViewById(R.id.actionbar_progress_indeterminate);
 		ViewAccessor.setBackground(findViewById(R.id.compose_content), getWindowContentOverlayForCompose(this));
-		ViewAccessor.setBackground(findViewById(R.id.compose_actionbar), getActionBarBackground(this));
+		ViewAccessor.setBackground(findViewById(R.id.compose_actionbar), getActionBarBackground(this, false));
+		ViewAccessor.setBackground(mMenuBar, getActionBarSplitBackground(this, false));
 	}
 
 	@Override

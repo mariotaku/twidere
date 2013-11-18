@@ -46,7 +46,7 @@ public class MenuBar extends LinearLayout implements MenuItem.OnMenuItemClickLis
 	public MenuBar(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
 		if (!hasBackground(attrs)) {
-			ViewAccessor.setBackground(this, ThemeUtils.getActionBarSplitBackground(context));
+			ViewAccessor.setBackground(this, ThemeUtils.getActionBarSplitBackground(context, true));
 		}
 		final TypedArray a = context.obtainStyledAttributes(attrs, new int[] { android.R.attr.max });
 		mMaxItemsShown = a.getInt(0, getResources().getInteger(R.integer.max_action_buttons));

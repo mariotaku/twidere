@@ -87,8 +87,8 @@ public class SwipeBackLayout extends FrameLayout {
 	private boolean mEnable = true;
 
 	private View mContentView;
-	private ImageView mBackgroundView;
 
+	private ImageView mBackgroundView;
 	private final ViewDragHelper mDragHelper;
 
 	private float mScrollPercent;
@@ -440,6 +440,9 @@ public class SwipeBackLayout extends FrameLayout {
 		final float percent = MathUtils.clamp(1 - (1 - mScrollPercent) * (1 - mScalePercent), 1, 0);
 		mBackgroundView.setScaleX(percent);
 		mBackgroundView.setScaleY(percent);
+		mBackgroundView.setVisibility(mScrollPercent <= 0 ? View.INVISIBLE : View.VISIBLE);
+		mBackgroundView.setAlpha(mScrollPercent);
+//		mBackgroundView.setScrollPercent(mScrollPercent / mScalePercent);
 	}
 
 	public static interface SwipeListener {
@@ -583,4 +586,41 @@ public class SwipeBackLayout extends FrameLayout {
 			return ret;
 		}
 	}
+
+//	static class BackgroundView extends ImageView {
+//
+//		private static final int[] COLORS = new int[] { 0, 0 };
+//		private static final PorterDuffXfermode DST_IN = new PorterDuffXfermode(PorterDuff.Mode.DST_IN);
+//		private final Shader mShader;
+//		private final Paint mPaint = new Paint();
+//		private float mScrollPercent;
+//		private boolean mClipEnabled;
+//
+//		public BackgroundView(final Context context) {
+//			super(context);
+//			mShader = new LinearGradient(0, 0, 0, 0, COLORS, null, Shader.TileMode.CLAMP);
+//		}
+//
+//		public void setClipEnabled(final boolean clipEnabled) {
+//			mClipEnabled = clipEnabled;
+//			invalidate();
+//		}
+//
+//		public void setScrollPercent(final float percentOpen) {
+//			if (mScrollPercent == percentOpen) return;
+//			mScrollPercent = percentOpen;
+//			invalidate();
+//		}
+//
+//		@Override
+//		protected void dispatchDraw(final Canvas canvas) {
+//			super.dispatchDraw(canvas);
+//			if (mClipEnabled && mScrollPercent > 0 && mScrollPercent < 1) {
+//				final int left = (int) Math.floor(getWidth() * mScrollPercent);
+//				mPaint.setShader(mShader);
+//				mPaint.setXfermode(DST_IN);
+//				canvas.drawRect(left, 0, getWidth(), getHeight(), mPaint);
+//			}
+//		}
+//	}
 }

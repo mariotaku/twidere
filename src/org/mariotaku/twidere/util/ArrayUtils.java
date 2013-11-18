@@ -28,6 +28,14 @@ public final class ArrayUtils {
 		throw new AssertionError("You are trying to create an instance for this utility class!");
 	}
 
+	public static boolean contains(final int[] array, final int value) {
+		if (array == null) return false;
+		for (final int item : array) {
+			if (item == value) return true;
+		}
+		return false;
+	}
+
 	public static boolean contains(final long[] array, final long value) {
 		if (array == null) return false;
 		for (final long item : array) {

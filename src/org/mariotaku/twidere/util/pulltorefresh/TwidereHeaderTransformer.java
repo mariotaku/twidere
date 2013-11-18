@@ -11,6 +11,6 @@ public class TwidereHeaderTransformer extends DefaultHeaderTransformer {
 
 	@Override
 	protected Drawable getActionBarBackground(final Context context) {
-		return ThemeUtils.getActionBarBackground(context);
+		return ThemeUtils.getActionBarBackground(context, false);
 	}
 }

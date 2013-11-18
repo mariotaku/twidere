@@ -45,10 +45,11 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content">
 
-			<org.mariotaku.twidere.view.ClickableImageView
+			<org.mariotaku.twidere.view.ForegroundImageView
 				android:id="@+id/image_preview"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
+				android:foreground="?android:selectableItemBackground"
 				android:scaleType="centerCrop"/>
 
 			<ProgressBar

@@ -74,24 +74,19 @@ public class BaseSupportThemedSwipeBackActivity extends BaseSupportActivity impl
 	}
 
 	@Override
-	protected int getThemeResource() {
-		return ThemeUtils.getSwipeBackThemeResource(this);
-	}
-
-	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if (!ThemeUtils.isTransparentBackground(this)) {
+//		if (!ThemeUtils.isTransparentBackground(this)) {
 			mHelper = new SwipeBackActivityHelper(this);
 			mHelper.onActivtyCreate();
-		}
+//		}
 	}
 
 	@Override
 	protected void onPostCreate(final Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-		if (!ThemeUtils.isTransparentBackground(this)) {
+//		if (!ThemeUtils.isTransparentBackground(this)) {
 			mHelper.onPostCreate();
-		}
+//		}
 	}
 }
