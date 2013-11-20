@@ -12,4 +12,4 @@
 		class="org.mariotaku.twidere.fragment.support.AccountsDrawerFragment"
 		tools:layout="@layout/accounts_drawer"/>
 
-</org.mariotaku.twidere.view.LeftDrawerClipFrameLayout>
+</org.mariotaku.twidere.view.LeftDrawerFrameLayout>

@@ -257,14 +257,6 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 		final Context actionBarContext = ThemeUtils.getActionBarContext(getActivity());
 		View.inflate(actionBarContext, R.layout.messages_conversation_input_send, inputSendContainer);
 		View.inflate(actionBarContext, R.layout.messages_conversation_confirm_buttons, recipientContainer);
-		mConversationContainer = view.findViewById(R.id.conversation_container);
-		mScreenNameContainer = view.findViewById(R.id.screen_name_container);
-		mEditScreenName = (AutoCompleteTextView) view.findViewById(R.id.edit_recipient);
-		mAccountSpinner = (Spinner) view.findViewById(R.id.account_selector);
-		mScreenNameConfirmButton = (Button) view.findViewById(R.id.screen_name_confirm);
-		mEditText = (EditText) inputSendContainer.findViewById(R.id.edit_text);
-		mTextCountView = (TextView) inputSendContainer.findViewById(R.id.text_count);
-		mSendButton = (ImageButton) inputSendContainer.findViewById(R.id.send);
 		return view;
 	}
 
@@ -374,6 +366,20 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 		updateTextCount();
 		if (mSendButton == null || s == null) return;
 		mSendButton.setEnabled(mValidator.isValidTweet(s.toString()));
+	}
+
+	@Override
+	public void onViewCreated(final View view, final Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		final View inputSendContainer = view.findViewById(R.id.input_send_container);
+		mConversationContainer = view.findViewById(R.id.conversation_container);
+		mScreenNameContainer = view.findViewById(R.id.screen_name_container);
+		mEditScreenName = (AutoCompleteTextView) view.findViewById(R.id.edit_recipient);
+		mAccountSpinner = (Spinner) view.findViewById(R.id.account_selector);
+		mScreenNameConfirmButton = (Button) view.findViewById(R.id.screen_name_confirm);
+		mEditText = (EditText) inputSendContainer.findViewById(R.id.edit_text);
+		mTextCountView = (TextView) inputSendContainer.findViewById(R.id.text_count);
+		mSendButton = (ImageButton) inputSendContainer.findViewById(R.id.send);
 	}
 
 	@Override
