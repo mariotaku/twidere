@@ -58,7 +58,7 @@ import java.util.regex.Pattern;
  * created.
  */
 
-public class TwidereLinkify implements Constants {
+public final class TwidereLinkify implements Constants {
 
 	public static final int LINK_TYPE_MENTION = 1;
 	public static final int LINK_TYPE_HASHTAG = 2;
@@ -103,7 +103,7 @@ public class TwidereLinkify implements Constants {
 
 	private final OnLinkClickListener mOnLinkClickListener;
 	private final Extractor mExtractor = new Extractor();
-	private int mHighlightOption;
+	private int mHighlightOption, mHighlightColor;
 
 	public TwidereLinkify(final OnLinkClickListener listener) {
 		this(listener, LINK_HIGHLIGHT_OPTION_CODE_BOTH);
@@ -139,6 +139,10 @@ public class TwidereLinkify implements Constants {
 		}
 		view.setText(string);
 		addLinkMovementMethod(view);
+	}
+
+	public void setHighlightColor(final int color) {
+		mHighlightColor = color;
 	}
 
 	public void setHighlightOption(final int style) {
@@ -310,14 +314,14 @@ public class TwidereLinkify implements Constants {
 	}
 
 	private final void applyLink(final String url, final int start, final int end, final Spannable text,
-			final long account_id, final int type, final boolean sensitive) {
-		applyLink(url, null, start, end, text, account_id, type, sensitive);
+			final long accountId, final int type, final boolean sensitive) {
+		applyLink(url, null, start, end, text, accountId, type, sensitive);
 	}
 
 	private final void applyLink(final String url, final String orig, final int start, final int end,
-			final Spannable text, final long account_id, final int type, final boolean sensitive) {
-		final TwidereURLSpan span = new TwidereURLSpan(url, orig, account_id, type, sensitive, mOnLinkClickListener,
-				mHighlightOption);
+			final Spannable text, final long accountId, final int type, final boolean sensitive) {
+		final TwidereURLSpan span = new TwidereURLSpan(url, orig, accountId, type, sensitive, mOnLinkClickListener,
+				mHighlightOption, mHighlightColor);
 		text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 	}
 

@@ -4,6 +4,6 @@
 	android:layout_height="match_parent"
 	android:orientation="vertical">
 
-	<include layout="@layout/status_list_item"/>
+	<include layout="@layout/card_item_status"/>
 
 </LinearLayout>

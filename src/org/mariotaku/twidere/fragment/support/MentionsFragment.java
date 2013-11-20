@@ -44,8 +44,7 @@ public class MentionsFragment extends CursorStatusesListFragment {
 			} else if (BROADCAST_MENTIONS_DATABASE_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, MentionsFragment.this);
 			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
-				final AsyncTwitterWrapper twitter = getTwitterWrapper();
-				setRefreshing(twitter != null && twitter.isMentionsRefreshing());
+				updateRefreshState();
 			}
 		}
 	};
@@ -105,6 +104,13 @@ public class MentionsFragment extends CursorStatusesListFragment {
 	protected boolean isFiltersEnabled() {
 		final SharedPreferences pref = getSharedPreferences();
 		return pref != null && pref.getBoolean(PREFERENCE_KEY_FILTERS_IN_MENTIONS, true);
+	}
+
+	@Override
+	protected void updateRefreshState() {
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		if (twitter == null || !getUserVisibleHint()) return;
+		setRefreshing(twitter.isMentionsRefreshing());
 	}
 
 }

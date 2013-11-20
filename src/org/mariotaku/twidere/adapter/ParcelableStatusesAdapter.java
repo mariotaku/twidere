@@ -68,13 +68,13 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			mMentionsHighlightDisabled, mFavoritesHighlightDisabled, mDisplaySensitiveContents,
 			mIndicateMyStatusDisabled, mIsLastItemFiltered, mFiltersEnabled, mAnimationEnabled;
 	private float mTextSize;
-	private int mLinkHighlightOption;
+	private int mLinkHighlightOption, mLinkHighlightColor;
 	private boolean mFilterIgnoreUser, mFilterIgnoreSource, mFilterIgnoreTextHtml, mFilterIgnoreTextPlain,
 			mFilterRetweetedById, mNicknameOnly, mDisplayNameFirst;
 	private int mMaxAnimationPosition;
 
 	public ParcelableStatusesAdapter(final Context context) {
-		super(context, R.layout.status_list_item);
+		super(context, R.layout.card_item_status);
 		mContext = context;
 		final TwidereApplication app = TwidereApplication.getInstance(context);
 		mMultiSelectManager = app.getMultiSelectManager();
@@ -361,6 +361,14 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	public void setIndicateMyStatusDisabled(final boolean disable) {
 		if (mIndicateMyStatusDisabled == disable) return;
 		mIndicateMyStatusDisabled = disable;
+		notifyDataSetChanged();
+	}
+
+	@Override
+	public void setLinkHighlightColor(final int color) {
+		if (color == mLinkHighlightColor) return;
+		mLinkHighlightColor = color;
+		mLinkify.setHighlightColor(color);
 		notifyDataSetChanged();
 	}
 

@@ -54,7 +54,7 @@ public abstract class BaseParcelableActivitiesAdapter extends ArrayAdapter<Parce
 	private MenuButtonClickListener mListener;
 
 	public BaseParcelableActivitiesAdapter(final Context context) {
-		super(context, R.layout.activity_list_item);
+		super(context, R.layout.card_item_activity);
 		mContext = context;
 		final TwidereApplication app = TwidereApplication.getInstance(context);
 		mMultiSelectManager = app.getMultiSelectManager();
@@ -127,8 +127,14 @@ public abstract class BaseParcelableActivitiesAdapter extends ArrayAdapter<Parce
 	}
 
 	@Override
-	public void setLinkHighlightOption(final String option) {
+	public void setLinkHighlightColor(final int color) {
+		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void setLinkHighlightOption(final String option) {
+		// TODO Auto-generated method stub
 	}
 
 	@Override

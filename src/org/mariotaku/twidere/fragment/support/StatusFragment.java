@@ -64,6 +64,7 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.text.Html;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -336,6 +337,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mScreenNameView.setText("@" + status.user_screen_name);
 		mTextView.setText(Html.fromHtml(status.text_html));
 		final TwidereLinkify linkify = new TwidereLinkify(new OnLinkClickHandler(getActivity()));
+		linkify.setHighlightColor(mPreferences.getInt(PREFERENCE_KEY_THEME_COLOR, new TextPaint().linkColor));
 		linkify.applyAllLinks(mTextView, status.account_id, status.is_possibly_sensitive);
 		final String time = formatToLongTimeString(getActivity(), status.timestamp);
 		final String source_html = status.source;
@@ -441,7 +443,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mTwitterWrapper = getTwitterWrapper();
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 		mImagePreviewAdapter = new MediaPreviewAdapter(getActivity());
-		getPullToRefreshAttacher().removeRefreshableView(getListView());
+		getPullToRefreshLayout().setEnabled(false);
 		mLoadImagesIndicator.setOnClickListener(this);
 		mInReplyToView.setOnClickListener(this);
 		mFollowButton.setOnClickListener(this);

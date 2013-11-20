@@ -221,7 +221,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	@Override
 	public void onContentChanged() {
 		super.onContentChanged();
-		mViewPager = (ExtendedViewPager) findViewById(R.id.main);
+		mViewPager = (ExtendedViewPager) findViewById(R.id.main_pager);
 		mActionsButtonLayout = findViewById(R.id.actions_button);
 		mEmptyTabHint = findViewById(R.id.empty_tab_hint);
 		if (mSlidingMenu == null) {

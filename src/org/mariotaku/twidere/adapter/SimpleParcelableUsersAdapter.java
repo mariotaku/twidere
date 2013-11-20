@@ -113,6 +113,10 @@ public class SimpleParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> i
 	}
 
 	@Override
+	public void setLinkHighlightColor(final int color) {
+	}
+
+	@Override
 	public void setLinkHighlightOption(final String option) {
 
 	}

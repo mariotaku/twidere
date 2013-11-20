@@ -119,7 +119,7 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 
 	@Override
 	protected View onCreateView(final ViewGroup parent) {
-		return mInflater.inflate(R.layout.status_list_item, null);
+		return mInflater.inflate(R.layout.card_item_status, null);
 	}
 
 }

@@ -33,11 +33,12 @@ import android.widget.TextView;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.ArrayAdapter;
+import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.view.holder.ViewHolder;
 
 import java.util.List;
 
-public class SettingsActivity extends BasePreferenceActivity {
+public class SettingsActivity extends BaseThemedPreferenceActivity {
 
 	private HeaderAdapter mAdapter;
 	private boolean mIsCallingFinish;
@@ -96,6 +97,16 @@ public class SettingsActivity extends BasePreferenceActivity {
 	public void switchToHeader(final String fragmentName, final Bundle args) {
 		if (fragmentName == null) return;
 		super.switchToHeader(fragmentName, args);
+	}
+
+	@Override
+	protected int getThemeColor() {
+		return ThemeUtils.getUserThemeColor(this);
+	}
+
+	@Override
+	protected int getThemeResource() {
+		return ThemeUtils.getThemeResource(this);
 	}
 
 	@Override

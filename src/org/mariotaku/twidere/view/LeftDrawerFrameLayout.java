@@ -5,8 +5,12 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
+
+import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.util.accessor.ViewAccessor;
 
 public class LeftDrawerFrameLayout extends FrameLayout {
 
@@ -24,6 +28,8 @@ public class LeftDrawerFrameLayout extends FrameLayout {
 
 	public LeftDrawerFrameLayout(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
+		final Drawable bg = ThemeUtils.getWindowBackground(context, ThemeUtils.getDrawerThemeResource(context));
+		ViewAccessor.setBackground(this, bg);
 		setWillNotDraw(false);
 		mClipPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
 	}
@@ -40,8 +46,10 @@ public class LeftDrawerFrameLayout extends FrameLayout {
 	public void setPercentOpen(final float percentOpen) {
 		if (mPercentOpen == percentOpen) return;
 		mPercentOpen = percentOpen;
-		setAlpha(mPercentOpen);
-		invalidate();
+		if (mClipEnabled) {
+			setAlpha(1 - (1 - mPercentOpen) * (1.0f / 0xff));
+			invalidate();
+		}
 	}
 
 	public void setScrollScale(final float scrollScale) {

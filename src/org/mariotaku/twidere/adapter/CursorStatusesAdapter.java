@@ -74,7 +74,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 			mMentionsHighlightDisabled, mFavoritesHighlightDisabled, mDisplaySensitiveContents,
 			mIndicateMyStatusDisabled, mIsLastItemFiltered, mFiltersEnabled, mAnimationEnabled;
 	private float mTextSize;
-	private int mLinkHighlightOption;
+	private int mLinkHighlightOption, mLinkHighlightColor;
 	private boolean mFilterIgnoreUser, mFilterIgnoreSource, mFilterIgnoreTextHtml, mFilterIgnoreTextPlain,
 			mFilterRetweetedById, mNicknameOnly, mDisplayNameFirst;
 	private int mMaxAnimationPosition;
@@ -82,7 +82,7 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	private StatusCursorIndices mIndices;
 
 	public CursorStatusesAdapter(final Context context) {
-		super(context, R.layout.status_list_item, null, new String[0], new int[0], 0);
+		super(context, R.layout.card_item_status, null, new String[0], new int[0], 0);
 		mContext = context;
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mMultiSelectManager = application.getMultiSelectManager();
@@ -409,6 +409,14 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	public void setIndicateMyStatusDisabled(final boolean disable) {
 		if (mIndicateMyStatusDisabled == disable) return;
 		mIndicateMyStatusDisabled = disable;
+		notifyDataSetChanged();
+	}
+
+	@Override
+	public void setLinkHighlightColor(final int color) {
+		if (color == mLinkHighlightColor) return;
+		mLinkHighlightColor = color;
+		mLinkify.setHighlightColor(color);
 		notifyDataSetChanged();
 	}
 

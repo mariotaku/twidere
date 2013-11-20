@@ -30,7 +30,6 @@ import org.mariotaku.twidere.fragment.iface.PullToRefreshAttacherActivity;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MessagesManager;
 import org.mariotaku.twidere.util.ThemeUtils;
-import org.mariotaku.twidere.util.pulltorefresh.TwidereHeaderTransformer;
 
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 
@@ -44,7 +43,6 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 	private final Set<String> mRefreshingStates = new HashSet<String>();
 
 	private boolean mInstanceStateSaved, mIsVisible, mIsOnTop;
-	private PullToRefreshAttacher mPullToRefreshAttacher;
 
 	@Override
 	public void addRefreshingState(final IBasePullToRefreshFragment fragment) {
@@ -59,7 +57,7 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 
 	@Override
 	public PullToRefreshAttacher getPullToRefreshAttacher() {
-		return mPullToRefreshAttacher;
+		return null;
 	}
 
 	public TwidereApplication getTwidereApplication() {
@@ -95,7 +93,6 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 		}
 		final IBasePullToRefreshFragment curr = getCurrentPullToRefreshFragment();
 		if (curr != null && tag.equals(curr.getPullToRefreshTag())) {
-			mPullToRefreshAttacher.setEnabled(enabled);
 		}
 	}
 
@@ -106,12 +103,10 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 		mRefreshingStates.remove(tag);
 		final IBasePullToRefreshFragment curr = getCurrentPullToRefreshFragment();
 		if (curr != null && tag.equals(curr.getPullToRefreshTag())) {
-			mPullToRefreshAttacher.setRefreshComplete();
 		}
 	}
 
 	public void setRefreshing(final boolean refreshing) {
-		mPullToRefreshAttacher.setRefreshing(refreshing);
 	}
 
 	@Override
@@ -125,7 +120,6 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 		}
 		final IBasePullToRefreshFragment curr = getCurrentPullToRefreshFragment();
 		if (curr != null && tag.equals(curr.getPullToRefreshTag())) {
-			mPullToRefreshAttacher.setRefreshing(refreshing);
 		}
 	}
 
@@ -148,6 +142,11 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 	}
 
 	@Override
+	protected int getThemeColor() {
+		return ThemeUtils.getUserThemeColor(this);
+	}
+
+	@Override
 	protected int getThemeResource() {
 		return ThemeUtils.getThemeResource(this);
 	}
@@ -159,16 +158,6 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		/**
-		 * Here we create a PullToRefreshAttacher manually without an Options
-		 * instance. PullToRefreshAttacher will manually create one using
-		 * default values.
-		 */
-		final PullToRefreshAttacher.Options options = new PullToRefreshAttacher.Options();
-		options.refreshScrollDistance = DEFAULT_PULL_TO_REFRESH_SCROLL_DISTANCE;
-		options.headerLayout = DEFAULT_PULL_TO_REFRESH_HEADER_LAYOUT;
-		options.headerTransformer = new TwidereHeaderTransformer();
-		mPullToRefreshAttacher = PullToRefreshAttacher.get(this, options);
 	}
 
 	@Override

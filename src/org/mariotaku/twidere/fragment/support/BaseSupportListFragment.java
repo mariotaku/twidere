@@ -32,7 +32,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
-import android.support.v4.app.ListFragmentTrojan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,7 +56,7 @@ import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.Utils;
 
 public class BaseSupportListFragment extends ListFragment implements IBaseFragment, Constants, OnScrollListener,
-		RefreshScrollTopInterface, ListFragmentTrojan {
+		RefreshScrollTopInterface {
 
 	private boolean mActivityFirstCreated;
 	private boolean mIsInstanceStateSaved;

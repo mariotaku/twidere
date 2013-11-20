@@ -31,6 +31,8 @@ public interface IBaseAdapter extends Constants, ListAdapter {
 
 	public void setDisplayProfileImage(boolean display);
 
+	public void setLinkHighlightColor(int color);
+
 	public void setLinkHighlightOption(String option);
 
 	public void setNicknameOnly(boolean nickname_only);

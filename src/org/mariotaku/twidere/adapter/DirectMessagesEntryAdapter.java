@@ -61,7 +61,7 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 	private MenuButtonClickListener mListener;
 
 	public DirectMessagesEntryAdapter(final Context context) {
-		super(context, R.layout.direct_messages_entry_list_item, null, new String[0], new int[0], 0);
+		super(context, R.layout.card_item_message_entry, null, new String[0], new int[0], 0);
 		final TwidereApplication app = TwidereApplication.getInstance(context);
 		mMultiSelectManager = app.getMultiSelectManager();
 		mLazyImageLoader = app.getImageLoaderWrapper();
@@ -177,6 +177,11 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
 		}
+	}
+
+	@Override
+	public void setLinkHighlightColor(final int color) {
+
 	}
 
 	@Override

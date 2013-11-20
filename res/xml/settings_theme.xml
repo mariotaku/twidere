@@ -23,4 +23,9 @@
 		android:summary="%s"
 		android:title="@string/theme_background"/>
 
+	<org.mariotaku.twidere.preference.ColorPickerPreference
+		android:defaultValue="@android:color/holo_blue_dark"
+		android:key="theme_color"
+		android:title="@string/theme_color"/>
+
 </PreferenceScreen>

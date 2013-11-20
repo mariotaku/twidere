@@ -73,6 +73,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.util.LongSparseArray;
 import android.support.v4.view.accessibility.AccessibilityEventCompat;
+import android.text.TextPaint;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.text.format.Time;
@@ -562,6 +563,7 @@ public final class Utils implements Constants {
 		adapter.setDisplayProfileImage(pref.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true));
 		adapter.setDisplayNameFirst(pref.getBoolean(PREFERENCE_KEY_NAME_FIRST, true));
 		adapter.setLinkHighlightOption(pref.getString(PREFERENCE_KEY_LINK_HIGHLIGHT_OPTION, LINK_HIGHLIGHT_OPTION_NONE));
+		adapter.setLinkHighlightColor(pref.getInt(PREFERENCE_KEY_THEME_COLOR, new TextPaint().linkColor));
 		adapter.setNicknameOnly(pref.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false));
 		adapter.setTextSize(pref.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(context)));
 	}
@@ -3614,7 +3616,7 @@ public final class Utils implements Constants {
 
 	public static void setMenuForStatus(final Context context, final Menu menu, final ParcelableStatus status) {
 		if (context == null || menu == null || status == null) return;
-		final int activated_color = ThemeUtils.getThemeColor(context);
+		final int activated_color = ThemeUtils.getUserThemeColor(context);
 		final MenuItem delete = menu.findItem(R.id.delete_submenu);
 		if (delete != null) {
 			delete.setVisible(status.account_id == status.user_id && !isMyRetweet(status));

@@ -31,7 +31,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
-import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -92,7 +91,7 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnC
 				if (mFinishOnly) {
 					finish();
 				} else {
-					NavUtils.navigateUpFromSameTask(this);
+					navigateUpFromSameTask();
 				}
 				break;
 			}

@@ -57,7 +57,7 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 	private MenuButtonClickListener mListener;
 
 	public ParcelableUsersAdapter(final Context context) {
-		super(context, R.layout.user_list_item);
+		super(context, R.layout.card_item_user);
 		mContext = context;
 		mLocale = context.getResources().getConfiguration().locale;
 		final TwidereApplication app = TwidereApplication.getInstance(context);
@@ -171,6 +171,10 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
 		}
+	}
+
+	@Override
+	public void setLinkHighlightColor(final int color) {
 	}
 
 	@Override

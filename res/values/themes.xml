@@ -23,6 +23,9 @@
 
 		<!-- ActionBar styles -->
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar</item>
+		<item name="android:actionButtonStyle">@style/Widget.Twidere.ActionButton</item>
+		<item name="android:actionBarItemBackground">@drawable/item_background_holo_dark</item>
+		<item name="android:actionBarWidgetTheme">@style/Theme.Twidere.ActionBar</item>
 
 		<!-- Custom view styles -->
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
@@ -40,6 +43,12 @@
 		<item name="cardItemMessageProfileImageOutgoingBackground">@drawable/bg_card_item_message_profile_image_outgoing_light</item>
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_light</item>
 
+		<!-- Text styles -->
+		<item name="android:textColorHighlight">@color/highlighted_text_holo_light</item>
+		<item name="android:textColorHighlightInverse">@color/highlighted_text_holo_dark</item>
+		<item name="android:textColorLink">@color/text_link_holo_light</item>
+		<item name="android:textColorLinkInverse">@color/text_link_holo_dark</item>
+
 		<!-- Button styles -->
 		<item name="android:selectableItemBackground">@drawable/item_background_holo_light</item>
 
@@ -51,6 +60,8 @@
 		<item name="android:textViewStyle">@style/Widget.Twidere.Light.TextView</item>
 		<item name="android:radioButtonStyle">@style/Widget.Twidere.Light.CompoundButton.RadioButton</item>
 		<item name="android:checkboxStyle">@style/Widget.Twidere.Light.CompoundButton.CheckBox</item>
+		<item name="android:spinnerStyle">?android:dropDownSpinnerStyle</item>
+		<item name="android:dropDownSpinnerStyle">@style/Widget.Twidere.Light.Spinner.DropDown</item>
 	</style>
 
 	<style name="Theme.Twidere.Dark" parent="android:Theme.Holo">
@@ -64,6 +75,8 @@
 
 		<!-- ActionBar styles -->
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Dark</item>
+		<item name="android:actionButtonStyle">@style/Widget.Twidere.ActionButton</item>
+		<item name="android:actionBarItemBackground">@drawable/item_background_holo_dark</item>
 
 		<!-- Custom view styles -->
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
@@ -81,6 +94,12 @@
 		<item name="cardItemMessageProfileImageOutgoingBackground">@drawable/bg_card_item_message_profile_image_outgoing_dark</item>
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_dark</item>
 
+		<!-- Text styles -->
+		<item name="android:textColorHighlight">@color/highlighted_text_holo_dark</item>
+		<item name="android:textColorHighlightInverse">@color/highlighted_text_holo_light</item>
+		<item name="android:textColorLink">@color/text_link_holo_dark</item>
+		<item name="android:textColorLinkInverse">@color/text_link_holo_light</item>
+
 		<!-- Button styles -->
 		<item name="android:selectableItemBackground">@drawable/item_background_holo_dark</item>
 
@@ -92,6 +111,8 @@
 		<item name="android:textViewStyle">@style/Widget.Twidere.TextView</item>
 		<item name="android:radioButtonStyle">@style/Widget.Twidere.CompoundButton.RadioButton</item>
 		<item name="android:checkboxStyle">@style/Widget.Twidere.CompoundButton.CheckBox</item>
+		<item name="android:spinnerStyle">?android:dropDownSpinnerStyle</item>
+		<item name="android:dropDownSpinnerStyle">@style/Widget.Twidere.Spinner.DropDown</item>
 	</style>
 
 	<style name="Theme.Twidere.Light" parent="android:Theme.Holo.Light">
@@ -105,6 +126,8 @@
 
 		<!-- ActionBar styles -->
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Light</item>
+		<item name="android:actionButtonStyle">@style/Widget.Twidere.Light.ActionButton</item>
+		<item name="android:actionBarItemBackground">@drawable/item_background_holo_light</item>
 
 		<!-- Custom view styles -->
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
@@ -122,6 +145,12 @@
 		<item name="cardItemMessageProfileImageOutgoingBackground">@drawable/bg_card_item_message_profile_image_outgoing_light</item>
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_light</item>
 
+		<!-- Text styles -->
+		<item name="android:textColorHighlight">@color/highlighted_text_holo_light</item>
+		<item name="android:textColorHighlightInverse">@color/highlighted_text_holo_dark</item>
+		<item name="android:textColorLink">@color/text_link_holo_light</item>
+		<item name="android:textColorLinkInverse">@color/text_link_holo_dark</item>
+
 		<!-- Button styles -->
 		<item name="android:selectableItemBackground">@drawable/item_background_holo_light</item>
 
@@ -133,6 +162,8 @@
 		<item name="android:textViewStyle">@style/Widget.Twidere.Light.TextView</item>
 		<item name="android:radioButtonStyle">@style/Widget.Twidere.Light.CompoundButton.RadioButton</item>
 		<item name="android:checkboxStyle">@style/Widget.Twidere.Light.CompoundButton.CheckBox</item>
+		<item name="android:spinnerStyle">?android:dropDownSpinnerStyle</item>
+		<item name="android:dropDownSpinnerStyle">@style/Widget.Twidere.Light.Spinner.DropDown</item>
 	</style>
 
 	<style name="Theme.Twidere.Light.DarkActionBar" parent="android:Theme.Holo.Light.DarkActionBar">
@@ -146,6 +177,8 @@
 
 		<!-- ActionBar styles -->
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Light.DarkActionBar</item>
+		<item name="android:actionButtonStyle">@style/Widget.Twidere.ActionButton</item>
+		<item name="android:actionBarItemBackground">@drawable/item_background_holo_dark</item>
 
 		<!-- Custom view styles -->
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
@@ -163,6 +196,12 @@
 		<item name="cardItemMessageProfileImageOutgoingBackground">@drawable/bg_card_item_message_profile_image_outgoing_light</item>
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_light</item>
 
+		<!-- Text styles -->
+		<item name="android:textColorHighlight">@color/highlighted_text_holo_light</item>
+		<item name="android:textColorHighlightInverse">@color/highlighted_text_holo_dark</item>
+		<item name="android:textColorLink">@color/text_link_holo_light</item>
+		<item name="android:textColorLinkInverse">@color/text_link_holo_dark</item>
+
 		<!-- Button styles -->
 		<item name="android:selectableItemBackground">@drawable/item_background_holo_light</item>
 
@@ -174,6 +213,31 @@
 		<item name="android:textViewStyle">@style/Widget.Twidere.Light.TextView</item>
 		<item name="android:radioButtonStyle">@style/Widget.Twidere.Light.CompoundButton.RadioButton</item>
 		<item name="android:checkboxStyle">@style/Widget.Twidere.Light.CompoundButton.CheckBox</item>
+		<item name="android:spinnerStyle">?android:dropDownSpinnerStyle</item>
+		<item name="android:dropDownSpinnerStyle">@style/Widget.Twidere.Light.Spinner.DropDown</item>
+	</style>
+
+	<style name="Theme.Twidere.ActionBar" parent="android:Theme.Holo">
+
+		<!-- Text styles -->
+		<item name="android:textColorHighlight">@color/highlighted_text_holo_dark</item>
+		<item name="android:textColorHighlightInverse">@color/highlighted_text_holo_light</item>
+		<item name="android:textColorLink">@color/text_link_holo_dark</item>
+		<item name="android:textColorLinkInverse">@color/text_link_holo_light</item>
+
+		<!-- Button styles -->
+		<item name="android:selectableItemBackground">@drawable/item_background_holo_dark</item>
+
+		<!-- List attributes -->
+		<item name="android:listChoiceBackgroundIndicator">@drawable/list_selector_holo_dark</item>
+		<item name="android:activatedBackgroundIndicator">@drawable/activated_background_holo_dark</item>
+
+		<!-- Widget styles -->
+		<item name="android:textViewStyle">@style/Widget.Twidere.TextView</item>
+		<item name="android:radioButtonStyle">@style/Widget.Twidere.CompoundButton.RadioButton</item>
+		<item name="android:checkboxStyle">@style/Widget.Twidere.CompoundButton.CheckBox</item>
+		<item name="android:spinnerStyle">?android:dropDownSpinnerStyle</item>
+		<item name="android:dropDownSpinnerStyle">@style/Widget.Twidere.Spinner.DropDown</item>
 	</style>
 
 	<style name="Theme.Twidere.Transparent">

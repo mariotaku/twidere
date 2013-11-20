@@ -502,7 +502,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 						final Drawable blockIcon = blockItem.getIcon();
 						if (mFriendship.isSourceBlockingTarget()) {
 							blockItem.setTitle(R.string.unblock);
-							blockIcon.mutate().setColorFilter(ThemeUtils.getThemeColor(getActivity()),
+							blockIcon.mutate().setColorFilter(ThemeUtils.getUserThemeColor(getActivity()),
 									PorterDuff.Mode.MULTIPLY);
 						} else {
 							blockItem.setTitle(R.string.block);

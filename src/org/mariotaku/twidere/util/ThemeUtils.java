@@ -94,7 +94,7 @@ public class ThemeUtils implements Constants {
 
 	public static void applyBackground(final View view) {
 		if (view == null) return;
-		applyBackground(view, getThemeColor(view.getContext()));
+		applyBackground(view, getUserThemeColor(view.getContext()));
 	}
 
 	public static void applyBackground(final View view, final int color) {
@@ -126,7 +126,7 @@ public class ThemeUtils implements Constants {
 		if (mutated instanceof LayerDrawable) {
 			final Drawable colorLayer = ((LayerDrawable) mutated).findDrawableByLayerId(R.id.color_layer);
 			if (colorLayer != null) {
-				final int color = getThemeColor(context);
+				final int color = getUserThemeColor(context);
 				colorLayer.setColorFilter(color, PorterDuff.Mode.MULTIPLY);
 			}
 		}
@@ -155,7 +155,7 @@ public class ThemeUtils implements Constants {
 		if (mutated instanceof LayerDrawable) {
 			final Drawable colorLayer = ((LayerDrawable) mutated).findDrawableByLayerId(R.id.color_layer);
 			if (colorLayer != null) {
-				final int color = getThemeColor(context);
+				final int color = getUserThemeColor(context);
 				colorLayer.setColorFilter(color, PorterDuff.Mode.MULTIPLY);
 			}
 		}
@@ -281,16 +281,11 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static int getThemeColor(final Context context) {
-		if (context == null) return Color.TRANSPARENT;
+		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.colorActivatedHighlight });
 		final int def = context.getResources().getColor(android.R.color.holo_blue_light);
-		try {
-			final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.colorActivatedHighlight });
-			final int color = a.getColor(0, def);
-			a.recycle();
-			return color;
-		} catch (final Exception e) {
-			return def;
-		}
+		final int color = a.getColor(0, def);
+		a.recycle();
+		return color;
 	}
 
 	public static String getThemeName(final Context context) {
@@ -316,8 +311,23 @@ public class ThemeUtils implements Constants {
 		return textAppearance;
 	}
 
+	public static int getUserThemeColor(final Context context) {
+		if (context == null) return Color.TRANSPARENT;
+		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final int def = context.getResources().getColor(android.R.color.holo_blue_light);
+		return pref.getInt(PREFERENCE_KEY_THEME_COLOR, def);
+	}
+
 	public static Drawable getWindowBackground(final Context context) {
 		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.windowBackground });
+		final Drawable d = a.getDrawable(0);
+		a.recycle();
+		return d;
+	}
+
+	public static Drawable getWindowBackground(final Context context, final int themeRes) {
+		final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.windowBackground }, 0,
+				themeRes);
 		final Drawable d = a.getDrawable(0);
 		a.recycle();
 		return d;
@@ -333,6 +343,21 @@ public class ThemeUtils implements Constants {
 	public static Drawable getWindowContentOverlayForCompose(final Context context) {
 		final int themeRes = getThemeResource(context);
 		return getWindowContentOverlay(new ContextThemeWrapper(context, themeRes));
+	}
+
+	public static boolean isColoredActionBar(final Context context) {
+		return isColoredActionBar(getThemeResource(context));
+	}
+
+	public static boolean isColoredActionBar(final int themeRes) {
+		switch (themeRes) {
+			case R.style.Theme_Twidere:
+			case R.style.Theme_Twidere_SolidBackground:
+			case R.style.Theme_Twidere_Transparent:
+			case R.style.Theme_Twidere_Compose:
+				return true;
+		}
+		return false;
 	}
 
 	public static boolean isDarkTheme(final Context context) {
@@ -366,8 +391,8 @@ public class ThemeUtils implements Constants {
 		switch (themeRes) {
 			case R.style.Theme_Twidere_Light:
 			case R.style.Theme_Twidere_Light_SolidBackground:
-			case R.style.Theme_Twidere_Light_Compose:
 			case R.style.Theme_Twidere_Light_Transparent:
+			case R.style.Theme_Twidere_Light_Compose:
 				return true;
 		}
 		return false;

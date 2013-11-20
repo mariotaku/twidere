@@ -489,7 +489,7 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 		if (mPopupMenu != null && mPopupMenu.isShowing()) {
 			mPopupMenu.dismiss();
 		}
-		final int activated_color = ThemeUtils.getThemeColor(getActivity());
+		final int activated_color = ThemeUtils.getUserThemeColor(getActivity());
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_status);
 		final boolean separate_retweet_action = mPreferences.getBoolean(PREFERENCE_KEY_SEPARATE_RETWEET_ACTION, false);

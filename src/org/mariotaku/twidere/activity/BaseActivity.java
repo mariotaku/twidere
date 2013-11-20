@@ -59,6 +59,11 @@ public class BaseActivity extends BaseThemedActivity implements Constants {
 	}
 
 	@Override
+	protected int getThemeColor() {
+		return ThemeUtils.getUserThemeColor(this);
+	}
+
+	@Override
 	protected int getThemeResource() {
 		return ThemeUtils.getThemeResource(this);
 	}

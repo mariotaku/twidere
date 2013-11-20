@@ -27,6 +27,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
 import org.mariotaku.jsonserializer.JSONSerializer;
@@ -49,7 +50,6 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	private boolean mIsStatusesSaved;
 
 	private boolean mStatusesRestored;
-
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -258,6 +258,13 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	protected void updateRefreshState() {
+		if (!getUserVisibleHint()) return;
+		final LoaderManager lm = getLoaderManager();
+		setRefreshing(lm.hasRunningLoaders());
 	}
 
 }

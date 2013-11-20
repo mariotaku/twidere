@@ -3,18 +3,22 @@
 
 	<style name="Widget.Twidere.ActionBar" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse">
 		<item name="android:background">@drawable/ab_twidere_solid_color_holo</item>
+		<item name="android:actionButtonStyle">@style/Widget.Twidere.ActionButton</item>
 	</style>
 
 	<style name="Widget.Twidere.ActionBar.Dark" parent="android:Widget.Holo.ActionBar.Solid">
 		<item name="android:background">@drawable/ab_twidere_solid_dark_holo</item>
+		<item name="android:actionButtonStyle">@style/Widget.Twidere.ActionButton</item>
 	</style>
 
 	<style name="Widget.Twidere.ActionBar.Light" parent="android:Widget.Holo.Light.ActionBar.Solid">
 		<item name="android:background">@drawable/ab_twidere_solid_light_holo</item>
+		<item name="android:actionButtonStyle">@style/Widget.Twidere.Light.ActionButton</item>
 	</style>
 
 	<style name="Widget.Twidere.ActionBar.Light.DarkActionBar" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse">
 		<item name="android:background">@drawable/ab_twidere_solid_dark_holo</item>
+		<item name="android:actionButtonStyle">@style/Widget.Twidere.ActionButton</item>
 	</style>
 
 	<style name="Widget.Twidere.Viewer.ActionBar" parent="android:Widget.Holo.ActionBar">
@@ -59,6 +63,36 @@
 
 	<style name="Widget.Twidere.Light.CompoundButton.CheckBox" parent="android:Widget.Holo.Light.CompoundButton.CheckBox">
 		<item name="android:fontFamily">sans-serif-light</item>
+	</style>
+
+	<style name="Widget.Twidere.ActionButton" parent="android:Widget.Holo.ActionButton">
+		<item name="android:background">?android:attr/selectableItemBackground</item>
+	</style>
+
+	<style name="Widget.Twidere.Light.ActionButton" parent="android:Widget.Holo.Light.ActionButton">
+		<item name="android:background">?android:attr/selectableItemBackground</item>
+	</style>
+
+	<style name="Widget.Twidere.Spinner" parent="android:Widget.Holo.Spinner">
+		<item name="android:background">@drawable/spinner_background_holo_dark</item>
+		<item name="android:dropDownSelector">@drawable/list_selector_holo_dark</item>
+	</style>
+
+	<style name="Widget.Twidere.Spinner.DropDown"></style>
+
+	<style name="Widget.Twidere.Spinner.DropDown.ActionBar">
+		<item name="android:background">@drawable/spinner_ab_holo_dark</item>
+	</style>
+
+	<style name="Widget.Twidere.Light.Spinner" parent="android:Widget.Holo.Light.Spinner">
+		<item name="android:background">@drawable/spinner_background_holo_light</item>
+		<item name="android:dropDownSelector">@drawable/list_selector_holo_light</item>
+	</style>
+
+	<style name="Widget.Twidere.Light.Spinner.DropDown"></style>
+
+	<style name="Widget.Twidere.Light.Spinner.DropDown.ActionBar">
+		<item name="android:background">@drawable/spinner_ab_holo_light</item>
 	</style>
 
 	<style name="Animation.Twidere.Activity" parent="android:Animation.Activity">
@@ -113,13 +147,6 @@
 		<item name="shadowBottom">@drawable/shadow_bottom</item>
 		<item name="scalePercent">@fraction/swipeback_scale_exit</item>
 		<item name="scrimAlpha">0.75</item>
-	</style>
-
-	<style name="Widget.PullToRefresh.ProgressBar.Horizontal.Center.NoColor" parent="android:Widget.Holo.ProgressBar.Horizontal">
-		<item name="android:progressDrawable">@drawable/ptr_progress_horizontal_holo_center_nocolor</item>
-		<item name="android:indeterminateDrawable">@drawable/ptr_progress_indeterminate_horizontal_holo_nocolor</item>
-		<item name="android:minHeight">4dip</item>
-		<item name="android:maxHeight">4dip</item>
 	</style>
 
 </resources>

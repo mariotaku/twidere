@@ -21,10 +21,22 @@ package org.mariotaku.twidere.activity;
 
 import android.app.FragmentManager;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import org.mariotaku.twidere.fragment.DataProfilingSettingsFragment;
 
 public class DataProfilingSettingsActivity extends BaseActivity {
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_HOME: {
+				navigateUpFromSameTask();
+				return true;
+			}
+		}
+		return super.onOptionsItemSelected(item);
+	}
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -32,5 +44,4 @@ public class DataProfilingSettingsActivity extends BaseActivity {
 		final FragmentManager fm = getFragmentManager();
 		fm.beginTransaction().replace(android.R.id.content, new DataProfilingSettingsFragment()).commit();
 	}
-
 }

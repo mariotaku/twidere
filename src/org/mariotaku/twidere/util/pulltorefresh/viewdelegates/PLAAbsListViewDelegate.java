@@ -20,24 +20,29 @@ import android.view.View;
 
 import com.huewu.pla.lib.internal.PLAAbsListView;
 
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
+import uk.co.senab.actionbarpulltorefresh.library.viewdelegates.ViewDelegate;
 
 /**
  * FIXME
  */
-public class PLAAbsListViewDelegate extends PullToRefreshAttacher.ViewDelegate {
+public class PLAAbsListViewDelegate implements ViewDelegate {
 
-	public static final Class<PLAAbsListView> SUPPORTED_VIEW_CLASS = PLAAbsListView.class;
+	public static final Class<?>[] SUPPORTED_VIEW_CLASSES = { PLAAbsListView.class };
 
 	@Override
-	public boolean isScrolledToTop(final View view) {
+	public boolean isReadyForPull(final View view, final float x, final float y) {
+		boolean ready = false;
+
+		// First we check whether we're scrolled to the top
 		final PLAAbsListView absListView = (PLAAbsListView) view;
-		if (absListView.getCount() == 0)
-			return true;
-		else if (absListView.getFirstVisiblePosition() == 0) {
+		if (absListView.getCount() == 0) {
+			ready = true;
+		} else if (absListView.getFirstVisiblePosition() == 0) {
 			final View firstVisibleChild = absListView.getChildAt(0);
-			return firstVisibleChild != null && firstVisibleChild.getTop() >= 0;
+			ready = firstVisibleChild != null && firstVisibleChild.getTop() >= 0;
 		}
-		return false;
+
+		return ready;
 	}
+
 }

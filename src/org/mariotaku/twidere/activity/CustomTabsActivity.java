@@ -4,6 +4,7 @@ import static org.mariotaku.twidere.util.CustomTabUtils.getHomeTabs;
 
 import android.app.FragmentManager;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import org.mariotaku.twidere.fragment.CustomTabsFragment;
 import org.mariotaku.twidere.model.SupportTabSpec;
@@ -20,6 +21,17 @@ public class CustomTabsActivity extends BaseActivity {
 		final List<SupportTabSpec> tabs = getHomeTabs(this);
 		setResult(isTabsChanged(tabs) && !tabs.isEmpty() ? RESULT_OK : RESULT_CANCELED);
 		finish();
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_HOME: {
+				onBackPressed();
+				return true;
+			}
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override

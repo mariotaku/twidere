@@ -55,7 +55,7 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 
 	private MenuButtonClickListener mListener;
 
-	private int mLinkHighlightOption;
+	private int mLinkHighlightOption, mLinkHighlightColor;
 	private boolean mDisplayProfileImage, mAnimationEnabled = true;
 	private float mTextSize;
 	private int mMaxAnimationPosition;
@@ -63,7 +63,7 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 	private DirectMessageCursorIndices mIndices;
 
 	public DirectMessagesConversationAdapter(final Context context) {
-		super(context, R.layout.direct_messages_conversation_list_item, null, new String[0], new int[0], 0);
+		super(context, R.layout.card_item_message_conversation, null, new String[0], new int[0], 0);
 		mContext = context;
 		final TwidereApplication app = TwidereApplication.getInstance(context);
 		mMultiSelectManager = app.getMultiSelectManager();
@@ -186,6 +186,14 @@ public class DirectMessagesConversationAdapter extends SimpleCursorAdapter imple
 			mDisplayProfileImage = display;
 			notifyDataSetChanged();
 		}
+	}
+
+	@Override
+	public void setLinkHighlightColor(final int color) {
+		if (color == mLinkHighlightColor) return;
+		mLinkHighlightColor = color;
+		mLinkify.setHighlightColor(color);
+		notifyDataSetChanged();
 	}
 
 	@Override

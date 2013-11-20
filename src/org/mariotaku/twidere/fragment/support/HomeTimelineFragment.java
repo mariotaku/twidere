@@ -43,8 +43,7 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 			} else if (BROADCAST_HOME_TIMELINE_DATABASE_UPDATED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, HomeTimelineFragment.this);
 			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
-				final AsyncTwitterWrapper twitter = getTwitterWrapper();
-				setRefreshing(twitter != null && twitter.isHomeTimelineRefreshing());
+				updateRefreshState();
 			}
 		}
 	};
@@ -99,6 +98,13 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 	protected boolean isFiltersEnabled() {
 		final SharedPreferences pref = getSharedPreferences();
 		return pref != null && pref.getBoolean(PREFERENCE_KEY_FILTERS_IN_HOME_TIMELINE, true);
+	}
+
+	@Override
+	protected void updateRefreshState() {
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		if (twitter == null || !getUserVisibleHint()) return;
+		setRefreshing(twitter.isHomeTimelineRefreshing());
 	}
 
 }

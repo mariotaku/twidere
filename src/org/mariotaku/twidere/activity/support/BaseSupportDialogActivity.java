@@ -43,6 +43,11 @@ public class BaseSupportDialogActivity extends BaseSupportThemedActivity impleme
 	}
 
 	@Override
+	protected int getThemeColor() {
+		return ThemeUtils.getThemeColor(this);
+	}
+
+	@Override
 	protected int getThemeResource() {
 		return ThemeUtils.getDialogThemeResource(this);
 	}

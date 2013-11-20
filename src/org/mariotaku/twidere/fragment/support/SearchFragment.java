@@ -57,7 +57,7 @@ public class SearchFragment extends BaseSupportFragment implements Panes.Left, O
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		final Bundle args = getArguments();
-		mThemeColor = ThemeUtils.getThemeColor(getActivity());
+		mThemeColor = ThemeUtils.getUserThemeColor(getActivity());
 		mAdapter = new SupportTabsAdapter(getActivity(), getChildFragmentManager(), null);
 		mAdapter.addTab(SearchStatusesFragment.class, args, getString(R.string.statuses), R.drawable.ic_tab_twitter, 0);
 		mAdapter.addTab(SearchUsersFragment.class, args, getString(R.string.users), R.drawable.ic_tab_person, 1);

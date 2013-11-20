@@ -23,7 +23,6 @@ import static android.support.v4.app.ListFragmentTrojan.INTERNAL_EMPTY_ID;
 import static android.support.v4.app.ListFragmentTrojan.INTERNAL_LIST_CONTAINER_ID;
 import static android.support.v4.app.ListFragmentTrojan.INTERNAL_PROGRESS_CONTAINER_ID;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.GestureDetector;
@@ -34,7 +33,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -44,17 +42,17 @@ import android.widget.TextView;
 import org.mariotaku.twidere.fragment.iface.IBasePullToRefreshFragment;
 import org.mariotaku.twidere.fragment.iface.PullToRefreshAttacherActivity;
 import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.util.pulltorefresh.TwidereHeaderTransformer;
 
-import uk.co.senab.actionbarpulltorefresh.library.DefaultHeaderTransformer;
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher.HeaderTransformer;
+import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
+import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh.SetupWizard;
+import uk.co.senab.actionbarpulltorefresh.library.Options;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
+import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
 public abstract class BasePullToRefreshListFragment extends BaseSupportListFragment implements
-		IBasePullToRefreshFragment, PullToRefreshAttacher.OnRefreshListener, OnTouchListener, OnGestureListener {
+		IBasePullToRefreshFragment, OnRefreshListener, OnTouchListener, OnGestureListener {
 
-	private PullToRefreshAttacherActivity mPullToRefreshAttacherActivity;
-	private PullToRefreshAttacher mPullToRefreshAttacher;
 	private GestureDetector mGestureDector;
 	private boolean mPulledUp;
 	private PullToRefreshLayout mPullToRefreshLayout;
@@ -65,25 +63,13 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 	}
 
 	public boolean isRefreshing() {
-		if (mPullToRefreshAttacherActivity == null) return false;
-		return mPullToRefreshAttacherActivity.isRefreshing(this);
+		return mPullToRefreshLayout != null && mPullToRefreshLayout.isRefreshing();
 	}
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		final Activity activity = getActivity();
-		if (activity instanceof PullToRefreshAttacherActivity) {
-			mPullToRefreshAttacherActivity = (PullToRefreshAttacherActivity) activity;
-		} else
-			throw new IllegalStateException("Activity class must implement PullToRefreshAttacherActivity");
 		getListView().setOnTouchListener(this);
-		final HeaderTransformer transformer = mPullToRefreshAttacher.getHeaderTransformer();
-		if (transformer instanceof DefaultHeaderTransformer) {
-			final DefaultHeaderTransformer t = (DefaultHeaderTransformer) transformer;
-			t.setProgressBarColor(ThemeUtils.getThemeColor(activity));
-			t.setProgressBarColorEnabled(ThemeUtils.shouldApplyColorFilter(activity));
-		}
 		mGestureDector = new GestureDetector(getActivity(), this);
 	}
 
@@ -106,7 +92,6 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 		final Context context = getActivity();
 		if (!(context instanceof PullToRefreshAttacherActivity))
 			throw new IllegalStateException("Activity class must implement PullToRefreshAttacherActivity");
-		mPullToRefreshAttacher = ((PullToRefreshAttacherActivity) context).getPullToRefreshAttacher();
 		final FrameLayout root = new FrameLayout(context);
 
 		// ------------------------------------------------------------------
@@ -143,9 +128,15 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 		lv.setId(android.R.id.list);
 		lv.setDrawSelectorOnTop(false);
 		plv.addView(lv, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-		plv.setPullToRefreshAttacher(mPullToRefreshAttacher, this);
-		mPullToRefreshAttacher.addRefreshableView(lv, new AbsListViewDelegate(), this);
-		// ViewCompat.setOverScrollMode(lv, ViewCompat.OVER_SCROLL_NEVER);
+		final Options.Builder builder = new Options.Builder();
+		builder.refreshOnUp(true);
+		builder.scrollDistance(DEFAULT_PULL_TO_REFRESH_SCROLL_DISTANCE);
+		builder.headerTransformer(new TwidereHeaderTransformer());
+		final SetupWizard wizard = ActionBarPullToRefresh.from(getActivity());
+		wizard.allChildrenArePullable();
+		wizard.listener(this);
+		wizard.options(builder.build());
+		wizard.setup(mPullToRefreshLayout);
 		lframe.addView(plv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.MATCH_PARENT));
 
@@ -180,9 +171,6 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 
 	@Override
 	public final void onRefreshStarted(final View view) {
-		if (mPullToRefreshAttacherActivity != null) {
-			mPullToRefreshAttacherActivity.addRefreshingState(this);
-		}
 		onRefreshStarted();
 	}
 
@@ -216,22 +204,21 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 	}
 
 	public void setPullToRefreshEnabled(final boolean enabled) {
-		if (mPullToRefreshAttacherActivity == null) return;
-		mPullToRefreshAttacherActivity.setPullToRefreshEnabled(this, enabled);
+		if (mPullToRefreshLayout == null) return;
+		mPullToRefreshLayout.setEnabled(enabled);
 	}
 
 	public void setRefreshComplete() {
-		if (mPullToRefreshAttacherActivity == null) return;
 		mPulledUp = false;
-		mPullToRefreshAttacherActivity.setRefreshComplete(this);
 	}
 
 	public void setRefreshing(final boolean refreshing) {
-		if (mPullToRefreshAttacherActivity == null) return;
 		if (!refreshing) {
 			mPulledUp = false;
 		}
-		mPullToRefreshAttacherActivity.setRefreshing(this, refreshing);
+		if (mPullToRefreshLayout != null) {
+			mPullToRefreshLayout.setRefreshing(refreshing);
+		}
 	}
 
 	@Override
@@ -240,31 +227,11 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 		return true;
 	}
 
-	protected PullToRefreshAttacher getPullToRefreshAttacher() {
-		return mPullToRefreshAttacher;
-	}
-
 	protected PullToRefreshLayout getPullToRefreshLayout() {
 		return mPullToRefreshLayout;
 	}
 
 	protected void onPullUp() {
-	}
-
-	public class AbsListViewDelegate extends PullToRefreshAttacher.ViewDelegate {
-
-		@Override
-		public boolean isScrolledToTop(final View view) {
-			final AbsListView absListView = (AbsListView) view;
-			final int count = absListView.getCount();
-			if (count == 0)
-				return true;
-			else if (absListView.getFirstVisiblePosition() == 0) {
-				final View firstVisibleChild = absListView.getChildAt(0);
-				return firstVisibleChild != null && firstVisibleChild.getTop() >= 0;
-			}
-			return false;
-		}
 	}
 
 }

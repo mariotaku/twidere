@@ -43,16 +43,18 @@ import com.huewu.pla.lib.MultiColumnListView;
 
 import org.mariotaku.twidere.fragment.iface.IBasePullToRefreshFragment;
 import org.mariotaku.twidere.fragment.iface.PullToRefreshAttacherActivity;
-import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.util.pulltorefresh.TwidereHeaderTransformer;
 import org.mariotaku.twidere.util.pulltorefresh.viewdelegates.PLAAbsListViewDelegate;
 
-import uk.co.senab.actionbarpulltorefresh.library.DefaultHeaderTransformer;
+import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
+import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh.SetupWizard;
+import uk.co.senab.actionbarpulltorefresh.library.Options;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher.HeaderTransformer;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
+import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
 public abstract class BasePullToRefreshMultiColumnListFragment extends BaseSupportMultiColumnListFragment implements
-		IBasePullToRefreshFragment, PullToRefreshAttacher.OnRefreshListener, OnTouchListener, OnGestureListener {
+		IBasePullToRefreshFragment, OnRefreshListener, OnTouchListener, OnGestureListener {
 
 	private PullToRefreshAttacherActivity mPullToRefreshAttacherActivity;
 	private PullToRefreshAttacher mPullToRefreshAttacher;
@@ -79,12 +81,6 @@ public abstract class BasePullToRefreshMultiColumnListFragment extends BaseSuppo
 		} else
 			throw new IllegalStateException("Activity class must implement PullToRefreshAttacherActivity");
 		getListView().setOnTouchListener(this);
-		final HeaderTransformer transformer = mPullToRefreshAttacher.getHeaderTransformer();
-		if (transformer instanceof DefaultHeaderTransformer) {
-			final DefaultHeaderTransformer t = (DefaultHeaderTransformer) transformer;
-			t.setProgressBarColor(ThemeUtils.getThemeColor(activity));
-			t.setProgressBarColorEnabled(ThemeUtils.shouldApplyColorFilter(activity));
-		}
 		mGestureDector = new GestureDetector(getActivity(), this);
 	}
 
@@ -143,8 +139,15 @@ public abstract class BasePullToRefreshMultiColumnListFragment extends BaseSuppo
 		lv.setId(android.R.id.list);
 		lv.setDrawSelectorOnTop(false);
 		plv.addView(lv, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-		plv.setPullToRefreshAttacher(mPullToRefreshAttacher, this);
-		mPullToRefreshAttacher.addRefreshableView(lv, new PLAAbsListViewDelegate(), this);
+		final Options.Builder builder = new Options.Builder();
+		builder.scrollDistance(DEFAULT_PULL_TO_REFRESH_SCROLL_DISTANCE);
+		builder.headerTransformer(new TwidereHeaderTransformer());
+		final SetupWizard wizard = ActionBarPullToRefresh.from(getActivity());
+		wizard.allChildrenArePullable();
+		wizard.useViewDelegate(MultiColumnListView.class, new PLAAbsListViewDelegate());
+		wizard.listener(this);
+		wizard.options(builder.build());
+		wizard.setup(mPullToRefreshLayout);
 		// ViewCompat.setOverScrollMode(lv, ViewCompat.OVER_SCROLL_NEVER);
 		lframe.addView(plv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.MATCH_PARENT));

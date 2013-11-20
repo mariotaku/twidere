@@ -33,8 +33,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import org.mariotaku.twidere.graphic.AlphaPatternDrawable;
-import org.mariotaku.twidere.util.accessor.ViewAccessor;
 import org.mariotaku.twidere.view.ColorPickerView;
 import org.mariotaku.twidere.view.ColorPickerView.OnColorChangedListener;
 
@@ -160,17 +158,17 @@ public class ColorPickerPreference extends DialogPreference implements DialogInt
 
 	private void setPreviewColor() {
 		if (mView == null) return;
-		final ImageView image_view = new ImageView(getContext());
 		final View widget_frame_view = mView.findViewById(android.R.id.widget_frame);
 		if (!(widget_frame_view instanceof ViewGroup)) return;
 		final ViewGroup widget_frame = (ViewGroup) widget_frame_view;
-		// widget_frame.setPadding(widget_frame.getPaddingLeft(),
-		// widget_frame.getPaddingTop(), (int) (mDensity * 8),
-		// widget_frame.getPaddingBottom());
-		// remove already create preview image
+		widget_frame.setVisibility(View.VISIBLE);
+		widget_frame.setPadding(widget_frame.getPaddingLeft(), widget_frame.getPaddingTop(), (int) (mDensity * 8),
+				widget_frame.getPaddingBottom());
+		// remove preview image that is already created
 		widget_frame.removeAllViews();
-		widget_frame.addView(image_view);
-		ViewAccessor.setBackground(image_view, new AlphaPatternDrawable((int) (5 * mDensity)));
-		image_view.setImageBitmap(getColorPreviewBitmap(getContext(), getValue()));
+		final ImageView imageView = new ImageView(getContext());
+		widget_frame.addView(imageView);
+		imageView.setImageBitmap(getColorPreviewBitmap(getContext(), getValue()));
 	}
+
 }

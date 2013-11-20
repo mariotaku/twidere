@@ -39,7 +39,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -107,7 +106,7 @@ public class FiltersActivity extends BaseActivity implements TabListener, OnPage
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME: {
-				NavUtils.navigateUpFromSameTask(this);
+				navigateUpFromSameTask();
 				return true;
 			}
 			case MENU_ADD: {

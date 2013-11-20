@@ -26,7 +26,7 @@ import static org.mariotaku.twidere.util.ParseUtils.parseString;
 import static org.mariotaku.twidere.util.ThemeUtils.getActionBarBackground;
 import static org.mariotaku.twidere.util.ThemeUtils.getActionBarSplitBackground;
 import static org.mariotaku.twidere.util.ThemeUtils.getComposeThemeResource;
-import static org.mariotaku.twidere.util.ThemeUtils.getThemeColor;
+import static org.mariotaku.twidere.util.ThemeUtils.getUserThemeColor;
 import static org.mariotaku.twidere.util.ThemeUtils.getWindowContentOverlayForCompose;
 import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
 import static org.mariotaku.twidere.util.Utils.copyStream;
@@ -824,7 +824,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 			}
 		}
 		if (itemMore != null) {
-			final int activated_color = getThemeColor(this);
+			final int activated_color = getUserThemeColor(this);
 			final MenuItem itemDrafts = menu.findItem(MENU_DRAFTS);
 			final MenuItem itemToggleSensitive = menu.findItem(MENU_TOGGLE_SENSITIVE);
 			if (itemDrafts != null) {
@@ -893,7 +893,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 	private void setMenu() {
 		if (mMenuBar == null || mActionMenuBar == null) return;
 		final Menu bottomMenu = mMenuBar.getMenu(), actionMenu = mActionMenuBar.getMenu();
-		final int activated_color = getThemeColor(this);
+		final int activated_color = getUserThemeColor(this);
 		final MenuItem itemAddImage = bottomMenu.findItem(MENU_ADD_IMAGE);
 		if (itemAddImage != null) {
 			final Drawable iconAddImage = itemAddImage.getIcon().mutate();

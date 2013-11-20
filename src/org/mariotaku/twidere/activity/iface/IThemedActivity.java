@@ -23,5 +23,9 @@ public interface IThemedActivity {
 
 	public int getCurrentThemeResource();
 
+	public void navigateUpFromSameTask();
+
+	public void overrideCloseAnimationIfNeeded();
+
 	public boolean shouldOverrideActivityAnimation();
 }

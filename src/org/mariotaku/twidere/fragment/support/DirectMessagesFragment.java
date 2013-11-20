@@ -78,20 +78,19 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 					|| BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED.equals(action)) {
 				getLoaderManager().restartLoader(0, null, DirectMessagesFragment.this);
 			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
-				final AsyncTwitterWrapper twitter = getTwitterWrapper();
-				setRefreshing(twitter != null
-						&& (twitter.isReceivedDirectMessagesRefreshing() || twitter.isSentDirectMessagesRefreshing()));
+				updateRefreshState();
 			}
 		}
 	};
-	private MultiSelectManager mMultiSelectManager;
-	private SharedPreferences mPreferences;
 
+	private MultiSelectManager mMultiSelectManager;
+
+	private SharedPreferences mPreferences;
 	private ListView mListView;
 
 	private boolean mLoadMoreAutomatically;
-	private DirectMessagesEntryAdapter mAdapter;
 
+	private DirectMessagesEntryAdapter mAdapter;
 	private int mFirstVisibleItem;
 
 	private final Map<Long, Set<Long>> mUnreadCountsToRemove = Collections
@@ -290,6 +289,14 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 		return super.scrollToStart();
 	}
 
+	@Override
+	public void setUserVisibleHint(final boolean isVisibleToUser) {
+		super.setUserVisibleHint(isVisibleToUser);
+		if (isVisibleToUser) {
+			updateRefreshState();
+		}
+	}
+
 	protected long getAccountId() {
 		final Bundle args = getArguments();
 		return args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
@@ -305,6 +312,12 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 	protected void onReachedBottom() {
 		if (!mLoadMoreAutomatically) return;
 		loadMoreMessages();
+	}
+
+	protected void updateRefreshState() {
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		if (twitter == null || !getUserVisibleHint()) return;
+		setRefreshing(twitter.isReceivedDirectMessagesRefreshing() || twitter.isSentDirectMessagesRefreshing());
 	}
 
 	private void addReadPosition(final int firstVisibleItem) {

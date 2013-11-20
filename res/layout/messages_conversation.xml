@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".fragment.DirectMessagesConversationFragment">
+
+	<RelativeLayout
+		android:id="@+id/conversation_container"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:visibility="gone">
+
+		<FrameLayout
+			android:id="@+id/list_container"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_above="@+id/input_send_container"/>
+
+		<FrameLayout
+			android:id="@+id/input_send_container"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignParentBottom="true"/>
+	</RelativeLayout>
+
+	<LinearLayout
+		android:id="@+id/screen_name_container"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical"
+		android:visibility="visible">
+
+		<LinearLayout
+			android:layout_width="300dp"
+			android:layout_height="0dp"
+			android:layout_gravity="center"
+			android:layout_weight="1"
+			android:gravity="center"
+			android:orientation="vertical"
+			android:padding="16dp">
+
+			<Spinner
+				android:id="@+id/account_selector"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:minHeight="42dp"
+				tools:listitem="@layout/two_line_list_item_small"/>
+
+			<AutoCompleteTextView
+				android:id="@+id/edit_recipient"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="@string/screen_name"
+				android:singleLine="true"/>
+		</LinearLayout>
+
+		<FrameLayout
+			android:id="@+id/recipient_confirm_container"
+			android:layout_width="match_parent"
+			android:layout_height="?android:actionBarSize"/>
+	</LinearLayout>
+
+</FrameLayout>

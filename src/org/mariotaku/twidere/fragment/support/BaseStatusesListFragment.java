@@ -86,12 +86,9 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 
 	private MultiSelectManager mMultiSelectManager;
 	private PositionManager mPositionManager;
-
 	private int mFirstVisibleItem;
-
 	private final Map<Long, Set<Long>> mUnreadCountsToRemove = Collections
 			.synchronizedMap(new HashMap<Long, Set<Long>>());
-
 	private final Set<Integer> mReadPositions = Collections.synchronizedSet(new HashSet<Integer>());
 
 	private RemoveUnreadCountsTask<Data> mRemoveUnreadCountsTask;
@@ -402,6 +399,12 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		return super.scrollToStart();
 	}
 
+	@Override
+	public void setUserVisibleHint(final boolean isVisibleToUser) {
+		super.setUserVisibleHint(isVisibleToUser);
+		updateRefreshState();
+	}
+
 	protected abstract long[] getNewestStatusIds();
 
 	protected abstract long[] getOldestStatusIds();
@@ -459,6 +462,8 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 
 	protected abstract boolean shouldShowAccountColor();
 
+	protected abstract void updateRefreshState();
+
 	private void addReadPosition(final int firstVisibleItem) {
 		if (mFirstVisibleItem != firstVisibleItem) {
 			mReadPositions.add(firstVisibleItem);
@@ -487,7 +492,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		if (mPopupMenu != null && mPopupMenu.isShowing()) {
 			mPopupMenu.dismiss();
 		}
-		final int activated_color = ThemeUtils.getThemeColor(getActivity());
+		final int activated_color = ThemeUtils.getUserThemeColor(getActivity());
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_status);
 		final boolean separate_retweet_action = mPreferences.getBoolean(PREFERENCE_KEY_SEPARATE_RETWEET_ACTION, false);

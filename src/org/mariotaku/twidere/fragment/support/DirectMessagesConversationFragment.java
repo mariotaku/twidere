@@ -245,18 +245,21 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		final View view = inflater.inflate(R.layout.direct_messages_conversation, null);
+		final View view = inflater.inflate(R.layout.messages_conversation, null);
 		final FrameLayout listContainer = (FrameLayout) view.findViewById(R.id.list_container);
 		final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
 				FrameLayout.LayoutParams.MATCH_PARENT);
 		listContainer.addView(super.onCreateView(inflater, container, savedInstanceState), lp);
 		final ViewGroup inputSendContainer = (ViewGroup) view.findViewById(R.id.input_send_container);
+		final ViewGroup recipientContainer = (ViewGroup) view.findViewById(R.id.recipient_confirm_container);
 		ViewAccessor.setBackground(inputSendContainer, ThemeUtils.getActionBarSplitBackground(getActivity(), true));
+		ViewAccessor.setBackground(recipientContainer, ThemeUtils.getActionBarSplitBackground(getActivity(), true));
 		final Context actionBarContext = ThemeUtils.getActionBarContext(getActivity());
-		View.inflate(actionBarContext, R.layout.direct_messages_conversation_input_send, inputSendContainer);
+		View.inflate(actionBarContext, R.layout.messages_conversation_input_send, inputSendContainer);
+		View.inflate(actionBarContext, R.layout.messages_conversation_confirm_buttons, recipientContainer);
 		mConversationContainer = view.findViewById(R.id.conversation_container);
 		mScreenNameContainer = view.findViewById(R.id.screen_name_container);
-		mEditScreenName = (AutoCompleteTextView) view.findViewById(R.id.edit_screen_name);
+		mEditScreenName = (AutoCompleteTextView) view.findViewById(R.id.edit_recipient);
 		mAccountSpinner = (Spinner) view.findViewById(R.id.account_selector);
 		mScreenNameConfirmButton = (Button) view.findViewById(R.id.screen_name_confirm);
 		mEditText = (EditText) inputSendContainer.findViewById(R.id.edit_text);
