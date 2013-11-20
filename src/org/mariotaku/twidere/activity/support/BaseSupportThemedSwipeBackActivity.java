@@ -28,8 +28,6 @@ import me.imid.swipebacklayout.lib.SwipeBackLayout.SwipeListener;
 import me.imid.swipebacklayout.lib.app.SwipeBackActivityBase;
 import me.imid.swipebacklayout.lib.app.SwipeBackActivityHelper;
 
-import org.mariotaku.twidere.util.ThemeUtils;
-
 @SuppressLint("Registered")
 public class BaseSupportThemedSwipeBackActivity extends BaseSupportActivity implements SwipeBackActivityBase {
 
@@ -76,17 +74,17 @@ public class BaseSupportThemedSwipeBackActivity extends BaseSupportActivity impl
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-//		if (!ThemeUtils.isTransparentBackground(this)) {
-			mHelper = new SwipeBackActivityHelper(this);
-			mHelper.onActivtyCreate();
-//		}
+		// if (!ThemeUtils.isTransparentBackground(this)) {
+		mHelper = new SwipeBackActivityHelper(this);
+		mHelper.onActivtyCreate();
+		// }
 	}
 
 	@Override
 	protected void onPostCreate(final Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-//		if (!ThemeUtils.isTransparentBackground(this)) {
-			mHelper.onPostCreate();
-//		}
+		// if (!ThemeUtils.isTransparentBackground(this)) {
+		mHelper.onPostCreate();
+		// }
 	}
 }

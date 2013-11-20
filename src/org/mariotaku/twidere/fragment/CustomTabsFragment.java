@@ -123,6 +123,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 		final Context context = getActivity();
 		mAdapter = new CustomTabsAdapter(context);
 		setListAdapter(mAdapter);
+		setEmptyText(getString(R.string.no_tab_hint));
 		mListView = (DragSortListView) getListView();
 		mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 		mListView.setMultiChoiceModeListener(this);

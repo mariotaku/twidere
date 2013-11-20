@@ -155,7 +155,7 @@
 		android:paddingRight="@dimen/item_menu_padding_end_default"
 		android:paddingTop="@dimen/item_menu_padding_top_default"/>
 
-	<TextView
+	<org.mariotaku.twidere.view.CardItemGapView
 		android:id="@+id/list_gap_text"
 		android:layout_width="match_parent"
 		android:layout_height="48dp"

@@ -37,6 +37,8 @@ import android.view.ViewGroup;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.TwidereLinkify;
+import org.mariotaku.twidere.view.CardItemLinearLayout;
+import org.mariotaku.twidere.view.ForegroundImageView;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
 public class StatusPreviewPreference extends Preference implements Constants, OnSharedPreferenceChangeListener {
@@ -88,6 +90,12 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 		mHolder.profile_image.setVisibility(display_profile_image ? View.VISIBLE : View.GONE);
 		mHolder.image_preview_progress.setVisibility(View.GONE);
 
+		if (mHolder.profile_image instanceof ForegroundImageView) {
+			((ForegroundImageView) mHolder.profile_image).setForeground(null);
+		}
+		if (mHolder.content instanceof CardItemLinearLayout) {
+			((CardItemLinearLayout) mHolder.content).setItemSelector(null);
+		}
 		mHolder.profile_image.setImageResource(R.drawable.ic_launcher);
 		mHolder.image_preview.setImageResource(R.drawable.twidere_feature_graphic);
 		mHolder.name.setText(nickname_only ? TWIDERE_PREVIEW_NICKNAME : context.getString(R.string.name_with_nickname,

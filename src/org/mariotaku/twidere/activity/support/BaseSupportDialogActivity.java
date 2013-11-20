@@ -37,6 +37,12 @@ public class BaseSupportDialogActivity extends BaseSupportThemedActivity impleme
 	}
 
 	@Override
+	public final boolean shouldOverrideActivityAnimation() {
+		// Dialog theme should never use custom animations
+		return false;
+	}
+
+	@Override
 	protected int getThemeResource() {
 		return ThemeUtils.getDialogThemeResource(this);
 	}
@@ -55,12 +61,6 @@ public class BaseSupportDialogActivity extends BaseSupportThemedActivity impleme
 	protected void onSaveInstanceState(final Bundle outState) {
 		mInstanceStateSaved = true;
 		super.onSaveInstanceState(outState);
-	}
-
-	@Override
-	public final boolean shouldOverrideActivityAnimation() {
-		// Dialog theme should never use custom animations
-		return false;
 	}
 
 }

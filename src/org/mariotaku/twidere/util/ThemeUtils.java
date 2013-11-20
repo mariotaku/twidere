@@ -238,6 +238,13 @@ public class ThemeUtils implements Constants {
 		return Color.WHITE;
 	}
 
+	public static int getTextAppearanceLarge(final Context context) {
+		final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.textAppearanceLarge });
+		final int textAppearance = a.getResourceId(0, android.R.style.TextAppearance_Holo_Large);
+		a.recycle();
+		return textAppearance;
+	}
+
 	public static int getTextColorPrimary(final Context context) {
 		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.textColorPrimary });
 		final int color = a.getColor(0, Color.TRANSPARENT);
@@ -304,7 +311,7 @@ public class ThemeUtils implements Constants {
 	public static int getTitleTextAppearance(final Context context) {
 		final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.titleTextStyle },
 				android.R.attr.actionBarStyle, android.R.style.Widget_Holo_ActionBar);
-		final int textAppearance = a.getResourceId(0, android.R.style.Widget_Holo_TextView);
+		final int textAppearance = a.getResourceId(0, android.R.style.TextAppearance_Holo);
 		a.recycle();
 		return textAppearance;
 	}
@@ -411,6 +418,15 @@ public class ThemeUtils implements Constants {
 		final int activityOpenExitAnimation = activityStyle.getResourceId(1, 0);
 		activityStyle.recycle();
 		activity.overridePendingTransition(activityOpenEnterAnimation, activityOpenExitAnimation);
+	}
+
+	public static void overrideNormalActivityCloseAnimation(final Activity activity) {
+		TypedArray a = activity.obtainStyledAttributes(new int[] { android.R.attr.windowAnimationStyle });
+		a = activity.obtainStyledAttributes(android.R.style.Animation_Activity, ANIM_CLOSE_STYLE_ATTRS);
+		final int activityCloseEnterAnimation = a.getResourceId(0, 0);
+		final int activityCloseExitAnimation = a.getResourceId(1, 0);
+		a.recycle();
+		activity.overridePendingTransition(activityCloseEnterAnimation, activityCloseExitAnimation);
 	}
 
 	public static void setPreviewView(final Context context, final View view, final int themeRes) {

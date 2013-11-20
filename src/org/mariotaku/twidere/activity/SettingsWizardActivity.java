@@ -166,24 +166,6 @@ public class SettingsWizardActivity extends Activity implements Constants {
 			return true;
 		}
 	}
-	
-	public static class WizardPageHintsFragment extends BaseWizardPageFragment implements OnPreferenceClickListener {
-
-		@Override
-		public void onActivityCreated(final Bundle savedInstanceState) {
-			super.onActivityCreated(savedInstanceState);
-			addPreferencesFromResource(R.xml.settings_wizard_page_hints);
-			findPreference(WIZARD_PREFERENCE_KEY_NEXT_PAGE).setOnPreferenceClickListener(this);
-		}
-
-		@Override
-		public boolean onPreferenceClick(final Preference preference) {
-			if (WIZARD_PREFERENCE_KEY_NEXT_PAGE.equals(preference.getKey())) {
-				gotoNextPage();
-			}
-			return true;
-		}
-	}
 
 	public static class WizardPageFinishedFragment extends BaseFragment implements OnClickListener {
 
@@ -203,6 +185,24 @@ public class SettingsWizardActivity extends Activity implements Constants {
 			return view;
 		}
 
+	}
+
+	public static class WizardPageHintsFragment extends BaseWizardPageFragment implements OnPreferenceClickListener {
+
+		@Override
+		public void onActivityCreated(final Bundle savedInstanceState) {
+			super.onActivityCreated(savedInstanceState);
+			addPreferencesFromResource(R.xml.settings_wizard_page_hints);
+			findPreference(WIZARD_PREFERENCE_KEY_NEXT_PAGE).setOnPreferenceClickListener(this);
+		}
+
+		@Override
+		public boolean onPreferenceClick(final Preference preference) {
+			if (WIZARD_PREFERENCE_KEY_NEXT_PAGE.equals(preference.getKey())) {
+				gotoNextPage();
+			}
+			return true;
+		}
 	}
 
 	public static class WizardPageTabsFragment extends BaseWizardPageFragment implements OnPreferenceClickListener {

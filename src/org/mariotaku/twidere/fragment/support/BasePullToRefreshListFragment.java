@@ -130,6 +130,7 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 		lframe.setId(INTERNAL_LIST_CONTAINER_ID);
 
 		final TextView tv = new TextView(getActivity());
+		tv.setTextAppearance(context, ThemeUtils.getTextAppearanceLarge(context));
 		tv.setId(INTERNAL_EMPTY_ID);
 		tv.setGravity(Gravity.CENTER);
 		lframe.addView(tv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,

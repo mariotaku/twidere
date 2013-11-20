@@ -44,8 +44,8 @@ public class StatusViewHolder extends CardViewHolder {
 	public final TextView text;
 	public final View image_preview_container;
 	public final ProgressBar image_preview_progress;
+	public final IColorLabelView content;
 	private final View gap_indicator;
-	private final IColorLabelView content;
 
 	private final float density;
 	private final boolean is_rtl;

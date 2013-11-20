@@ -5,39 +5,42 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.ViewConfiguration;
-import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.ArrayUtils;
-import org.mariotaku.twidere.util.ThemeUtils;
 
-public class MessageCardItemFrameLayout extends FrameLayout {
+public class CardItemGapView extends TextView {
 
-	public MessageCardItemFrameLayout(final Context context) {
+	public CardItemGapView(final Context context) {
 		this(context, null);
 	}
 
-	public MessageCardItemFrameLayout(final Context context, final AttributeSet attrs) {
+	public CardItemGapView(final Context context, final AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
 
-	public MessageCardItemFrameLayout(final Context context, final AttributeSet attrs, final int defStyle) {
+	public CardItemGapView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		if (isInEditMode()) return;
-		ThemeUtils.applyThemeAlphaToDrawable(context, getBackground());
+	}
+
+	@Override
+	public boolean onTouchEvent(final MotionEvent event) {
+		return false;
 	}
 
 	@Override
 	protected void drawableStateChanged() {
 		super.drawableStateChanged();
-		final Drawable d = getBackground();
-		if (d != null && d.isStateful()) {
+		final Drawable bg = getBackground();
+		if (bg != null && bg.isStateful()) {
 			final int[] state = getDrawableState();
-			d.setState(state);
-			final Drawable layer = d instanceof LayerDrawable ? ((LayerDrawable) d)
+			// bg.setState(state);
+			final Drawable layer = bg instanceof LayerDrawable ? ((LayerDrawable) bg)
 					.findDrawableByLayerId(R.id.card_item_selector) : null;
-			final Drawable current = layer != null ? layer.getCurrent() : d.getCurrent();
+			final Drawable current = layer != null ? layer.getCurrent() : bg.getCurrent();
 			if (current instanceof TransitionDrawable) {
 				final TransitionDrawable td = (TransitionDrawable) current;
 				if (ArrayUtils.contains(state, android.R.attr.state_pressed)) {
@@ -48,4 +51,5 @@ public class MessageCardItemFrameLayout extends FrameLayout {
 			}
 		}
 	}
+
 }

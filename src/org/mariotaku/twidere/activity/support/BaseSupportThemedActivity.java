@@ -17,6 +17,8 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 		super.finish();
 		if (shouldOverrideActivityAnimation()) {
 			ThemeUtils.overrideActivityCloseAnimation(this);
+		} else {
+			ThemeUtils.overrideNormalActivityCloseAnimation(this);
 		}
 	}
 

@@ -37,6 +37,7 @@ import org.mariotaku.twidere.activity.FiltersActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.activity.SettingsActivity;
 import org.mariotaku.twidere.activity.support.ColorSelectorActivity;
+import org.mariotaku.twidere.activity.support.DraftsActivity;
 import org.mariotaku.twidere.activity.support.SignInActivity;
 import org.mariotaku.twidere.activity.support.UserProfileEditorActivity;
 import org.mariotaku.twidere.adapter.AccountsDrawerAdapter;
@@ -195,6 +196,12 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 					case MENU_ADD_ACCOUNT: {
 						final Intent intent = new Intent(INTENT_ACTION_TWITTER_LOGIN);
 						intent.setClass(getActivity(), SignInActivity.class);
+						startActivity(intent);
+						break;
+					}
+					case MENU_DRAFTS: {
+						final Intent intent = new Intent(INTENT_ACTION_DRAFTS);
+						intent.setClass(getActivity(), DraftsActivity.class);
 						startActivity(intent);
 						break;
 					}

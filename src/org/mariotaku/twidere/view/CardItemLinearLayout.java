@@ -66,8 +66,13 @@ public class CardItemLinearLayout extends ColorLabelLinearLayout {
 			final Drawable layer = mItemSelector instanceof LayerDrawable ? ((LayerDrawable) mItemSelector)
 					.findDrawableByLayerId(R.id.card_item_selector) : null;
 			final Drawable current = layer != null ? layer.getCurrent() : mItemSelector.getCurrent();
-			if (current instanceof TransitionDrawable && ArrayUtils.contains(state, android.R.attr.state_pressed)) {
-				((TransitionDrawable) current).startTransition(ViewConfiguration.getLongPressTimeout());
+			if (current instanceof TransitionDrawable) {
+				final TransitionDrawable td = (TransitionDrawable) current;
+				if (ArrayUtils.contains(state, android.R.attr.state_pressed)) {
+					td.startTransition(ViewConfiguration.getLongPressTimeout());
+				} else {
+					td.resetTransition();
+				}
 			}
 		}
 	}

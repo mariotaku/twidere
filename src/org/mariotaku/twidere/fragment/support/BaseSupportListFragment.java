@@ -19,20 +19,31 @@
 
 package org.mariotaku.twidere.fragment.support;
 
+import static android.support.v4.app.ListFragmentTrojan.INTERNAL_EMPTY_ID;
+import static android.support.v4.app.ListFragmentTrojan.INTERNAL_LIST_CONTAINER_ID;
+import static android.support.v4.app.ListFragmentTrojan.INTERNAL_PROGRESS_CONTAINER_ID;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.support.v4.app.ListFragmentTrojan;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.activity.HomeActivity;
@@ -42,10 +53,11 @@ import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;
 import org.mariotaku.twidere.fragment.iface.SupportFragmentCallback;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
+import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.Utils;
 
 public class BaseSupportListFragment extends ListFragment implements IBaseFragment, Constants, OnScrollListener,
-		RefreshScrollTopInterface {
+		RefreshScrollTopInterface, ListFragmentTrojan {
 
 	private boolean mActivityFirstCreated;
 	private boolean mIsInstanceStateSaved;
@@ -126,9 +138,69 @@ public class BaseSupportListFragment extends ListFragment implements IBaseFragme
 		mActivityFirstCreated = true;
 	}
 
+	/**
+	 * Provide default implementation to return a simple list view. Subclasses
+	 * can override to replace with their own layout. If doing so, the returned
+	 * view hierarchy <em>must</em> have a ListView whose id is
+	 * {@link android.R.id#list android.R.id.list} and can optionally have a
+	 * sibling view id {@link android.R.id#empty android.R.id.empty} that is to
+	 * be shown when the list is empty.
+	 * 
+	 * <p>
+	 * If you are overriding this method with your own custom content, consider
+	 * including the standard layout {@link android.R.layout#list_content} in
+	 * your layout file, so that you continue to retain all of the standard
+	 * behavior of ListFragment. In particular, this is currently the only way
+	 * to have the built-in indeterminant progress state be shown.
+	 */
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		return super.onCreateView(inflater, container, savedInstanceState);
+		final Context context = getActivity();
+
+		final FrameLayout root = new FrameLayout(context);
+
+		// ------------------------------------------------------------------
+
+		final LinearLayout pframe = new LinearLayout(context);
+		pframe.setId(INTERNAL_PROGRESS_CONTAINER_ID);
+		pframe.setOrientation(LinearLayout.VERTICAL);
+		pframe.setVisibility(View.GONE);
+		pframe.setGravity(Gravity.CENTER);
+
+		final ProgressBar progress = new ProgressBar(context, null, android.R.attr.progressBarStyleLarge);
+		pframe.addView(progress, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+				ViewGroup.LayoutParams.WRAP_CONTENT));
+
+		root.addView(pframe, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+				ViewGroup.LayoutParams.MATCH_PARENT));
+
+		// ------------------------------------------------------------------
+
+		final FrameLayout lframe = new FrameLayout(context);
+		lframe.setId(INTERNAL_LIST_CONTAINER_ID);
+
+		final TextView tv = new TextView(getActivity());
+		tv.setTextAppearance(context, ThemeUtils.getTextAppearanceLarge(context));
+		tv.setId(INTERNAL_EMPTY_ID);
+		tv.setGravity(Gravity.CENTER);
+		lframe.addView(tv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+				ViewGroup.LayoutParams.MATCH_PARENT));
+
+		final ListView lv = new ListView(getActivity());
+		lv.setId(android.R.id.list);
+		lv.setDrawSelectorOnTop(false);
+		lframe.addView(lv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+				ViewGroup.LayoutParams.MATCH_PARENT));
+
+		root.addView(lframe, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+				ViewGroup.LayoutParams.MATCH_PARENT));
+
+		// ------------------------------------------------------------------
+
+		root.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+				ViewGroup.LayoutParams.MATCH_PARENT));
+
+		return root;
 	}
 
 	@Override

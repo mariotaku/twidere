@@ -385,8 +385,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		final ParcelableLocation location = status.location;
 		final boolean is_valid_location = ParcelableLocation.isValidLocation(location);
 		mLocationContainer.setVisibility(is_valid_location ? View.VISIBLE : View.GONE);
-//		mMapView.setVisibility(View.VISIBLE);
-//		mLocationView.setVisibility(View.VISIBLE);
+		// mMapView.setVisibility(View.VISIBLE);
+		// mLocationView.setVisibility(View.VISIBLE);
 		if (display_image_preview) {
 			mMapView.setVisibility(is_valid_location ? View.VISIBLE : View.GONE);
 			mLocationBackgroundView.setVisibility(is_valid_location ? View.VISIBLE : View.GONE);

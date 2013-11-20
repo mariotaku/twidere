@@ -30,7 +30,7 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 	private static final GroupItem[] GROUPS = new GroupItem[3];
 	private static final OptionItem[] DEFAULT_ACCOUNT_OPTIONS = new OptionItem[8];
 	private static final OptionItem[] ACCOUNT_OPTIONS = new OptionItem[9];
-	private static final OptionItem[] MORE_OPTION_ITEMS = new OptionItem[4];
+	private static final OptionItem[] MORE_OPTION_ITEMS = new OptionItem[5];
 
 	static {
 		DEFAULT_ACCOUNT_OPTIONS[0] = new OptionItem(R.string.view_user_profile, R.drawable.ic_menu_profile,
@@ -57,8 +57,9 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 		MORE_OPTION_ITEMS[0] = new OptionItem(android.R.string.search_go, android.R.drawable.ic_menu_search,
 				MENU_SEARCH);
 		MORE_OPTION_ITEMS[1] = new OptionItem(R.string.add_account, android.R.drawable.ic_menu_add, MENU_ADD_ACCOUNT);
-		MORE_OPTION_ITEMS[2] = new OptionItem(R.string.filters, R.drawable.ic_menu_mute, MENU_FILTERS);
-		MORE_OPTION_ITEMS[3] = new OptionItem(R.string.settings, android.R.drawable.ic_menu_preferences, MENU_SETTINGS);
+		MORE_OPTION_ITEMS[2] = new OptionItem(R.string.drafts, android.R.drawable.ic_menu_save, MENU_DRAFTS);
+		MORE_OPTION_ITEMS[3] = new OptionItem(R.string.filters, R.drawable.ic_menu_mute, MENU_FILTERS);
+		MORE_OPTION_ITEMS[4] = new OptionItem(R.string.settings, android.R.drawable.ic_menu_preferences, MENU_SETTINGS);
 		GROUPS[0] = new GroupItem(R.string.accounts, R.layout.accounts_drawer_item_child_accounts, GROUP_ID_ACCOUNTS);
 		GROUPS[1] = new GroupItem(R.string.account_options, R.layout.menu_list_item, GROUP_ID_ACCOUNT_OPTIONS);
 		GROUPS[2] = new GroupItem(R.string.more, R.layout.menu_list_item, GROUP_ID_MENU);
