@@ -50,11 +50,6 @@ public class MentionsFragment extends CursorStatusesListFragment {
 	};
 
 	@Override
-	public String getPullToRefreshTag() {
-		return "mentions_timeline";
-	}
-
-	@Override
 	public int getStatuses(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
 		final AsyncTwitterWrapper twitter = getTwitterWrapper();
 		if (twitter == null) return -1;

@@ -91,6 +91,8 @@ import org.mariotaku.twidere.view.ExtendedViewPager;
 import org.mariotaku.twidere.view.LeftDrawerFrameLayout;
 import org.mariotaku.twidere.view.TabPageIndicator;
 
+import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,6 +112,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private TabPageIndicator mIndicator;
 	private SlidingMenu mSlidingMenu;
 	private View mActionsActionView, mActionsButtonLayout, mEmptyTabHint;
+	private LeftDrawerFrameLayout mLeftDrawerContainer;
+
 	private boolean mBottomActionsButton;
 
 	private Fragment mCurrentVisibleFragment;
@@ -304,7 +308,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		if (isVisibleToUser) {
 			mCurrentVisibleFragment = fragment;
 		}
-		updateRefreshingState();
 	}
 
 	public void setHomeProgressBarIndeterminateVisibility(final boolean visible) {
@@ -506,6 +509,20 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		}
 	}
 
+	private View getCurrentPullToRefreshHeaderView() {
+		final Fragment currentFragment = getCurrentVisibleFragment();
+		if (currentFragment == null) return null;
+		if (!(currentFragment instanceof IBasePullToRefreshFragment)) return null;
+		final IBasePullToRefreshFragment ptrf = (IBasePullToRefreshFragment) currentFragment;
+		final PullToRefreshLayout l = ptrf.getPullToRefreshLayout();
+		if (l == null) return null;
+		return l.getHeaderView();
+	}
+
+	private LeftDrawerFrameLayout getLeftDrawerContainer() {
+		return mLeftDrawerContainer;
+	}
+
 	private int handleIntent(final Intent intent, final boolean first_create) {
 		// Reset intent
 		setIntent(new Intent(this, HomeActivity.class));
@@ -612,17 +629,16 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mSlidingMenu.setMenu(R.layout.home_left_drawer_container);
 		mSlidingMenu.setOnOpenedListener(this);
 		mSlidingMenu.setOnClosedListener(this);
-		if (isDualPaneMode()) {
-			mSlidingMenu.addIgnoredView(getSlidingPane().getRightPaneContainer());
-		}
-		final LeftDrawerFrameLayout leftDrawerContainer = (LeftDrawerFrameLayout) mSlidingMenu.getMenu().findViewById(
-				R.id.left_drawer_container);
+		mLeftDrawerContainer = (LeftDrawerFrameLayout) mSlidingMenu.getMenu().findViewById(R.id.left_drawer_container);
 		final boolean isTransparentBackground = ThemeUtils.isTransparentBackground(this);
-		leftDrawerContainer.setClipEnabled(isTransparentBackground);
-		leftDrawerContainer.setScrollScale(mSlidingMenu.getBehindScrollScale());
-		mSlidingMenu.setBehindCanvasTransformer(new ListenerCanvasTransformer(leftDrawerContainer));
+		mLeftDrawerContainer.setClipEnabled(isTransparentBackground);
+		mLeftDrawerContainer.setScrollScale(mSlidingMenu.getBehindScrollScale());
+		mSlidingMenu.setBehindCanvasTransformer(new ListenerCanvasTransformer(this));
 		if (isTransparentBackground) {
 			ViewAccessor.setBackground(mSlidingMenu.getContent(), null);
+		}
+		if (isDualPaneMode()) {
+			mSlidingMenu.addIgnoredView(getSlidingPane().getRightPaneContainer());
 		}
 	}
 
@@ -691,15 +707,21 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	private static class ListenerCanvasTransformer implements CanvasTransformer {
-		private final LeftDrawerFrameLayout mLeftDrawerContainer;
+		private final HomeActivity mHomeActivity;
 
-		public ListenerCanvasTransformer(final LeftDrawerFrameLayout leftDrawerContainer) {
-			mLeftDrawerContainer = leftDrawerContainer;
+		public ListenerCanvasTransformer(final HomeActivity homeActivity) {
+			mHomeActivity = homeActivity;
 		}
 
 		@Override
 		public void transformCanvas(final Canvas canvas, final float percentOpen) {
-			mLeftDrawerContainer.setPercentOpen(percentOpen);
+			final LeftDrawerFrameLayout ld = mHomeActivity.getLeftDrawerContainer();
+			if (ld == null) return;
+			ld.setPercentOpen(percentOpen);
+			final View headerView = mHomeActivity.getCurrentPullToRefreshHeaderView();
+			if (headerView != null) {
+				headerView.scrollTo(-Math.round(percentOpen * ld.getMeasuredWidth()), 0);
+			}
 		}
 
 	}

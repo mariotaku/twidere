@@ -106,11 +106,6 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		return mAdapter;
 	}
 
-	@Override
-	public String getPullToRefreshTag() {
-		return getPositionKey();
-	}
-
 	public ParcelableStatus getSelectedStatus() {
 		return mSelectedStatus;
 	}

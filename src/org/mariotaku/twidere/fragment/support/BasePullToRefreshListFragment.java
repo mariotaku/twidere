@@ -25,8 +25,6 @@ import static android.support.v4.app.ListFragmentTrojan.INTERNAL_PROGRESS_CONTAI
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.Gravity;
@@ -35,17 +33,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.ViewParent;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.fragment.iface.IBasePullToRefreshFragment;
-import org.mariotaku.twidere.fragment.iface.PullToRefreshAttacherActivity;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.pulltorefresh.TwidereHeaderTransformer;
 
@@ -63,10 +57,11 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 	private PullToRefreshLayout mPullToRefreshLayout;
 
 	@Override
-	public String getPullToRefreshTag() {
-		return getTag();
+	public PullToRefreshLayout getPullToRefreshLayout() {
+		return mPullToRefreshLayout;
 	}
 
+	@Override
 	public boolean isRefreshing() {
 		return mPullToRefreshLayout != null && mPullToRefreshLayout.isRefreshing();
 	}
@@ -95,8 +90,6 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		final Context context = getActivity();
-		if (!(context instanceof PullToRefreshAttacherActivity))
-			throw new IllegalStateException("Activity class must implement PullToRefreshAttacherActivity");
 		final FrameLayout root = new FrameLayout(context);
 
 		// ------------------------------------------------------------------
@@ -171,6 +164,7 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 
 	}
 
+	@Override
 	public void onRefreshStarted() {
 	}
 
@@ -209,22 +203,18 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 	}
 
 	@Override
-	public void onViewCreated(final View view, final Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
-//		if (mPullToRefreshLayout != null) {
-//			new WorkaroundRunnable(getActivity(), mPullToRefreshLayout).run();
-//		}
-	}
-
 	public void setPullToRefreshEnabled(final boolean enabled) {
 		if (mPullToRefreshLayout == null) return;
 		mPullToRefreshLayout.setEnabled(enabled);
 	}
 
+	@Override
 	public void setRefreshComplete() {
 		mPulledUp = false;
+		mPullToRefreshLayout.setRefreshComplete();
 	}
 
+	@Override
 	public void setRefreshing(final boolean refreshing) {
 		if (!refreshing) {
 			mPulledUp = false;
@@ -240,44 +230,7 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 		return true;
 	}
 
-	protected PullToRefreshLayout getPullToRefreshLayout() {
-		return mPullToRefreshLayout;
-	}
-
 	protected void onPullUp() {
-	}
-
-	static class WorkaroundRunnable implements Runnable {
-		private final PullToRefreshLayout mPullToRefreshLayout;
-		private final FragmentActivity mActivity;
-		private final Handler mHandler;
-
-		WorkaroundRunnable(final FragmentActivity activity, final PullToRefreshLayout pullToRefreshLayout) {
-			mActivity = activity;
-			mPullToRefreshLayout = pullToRefreshLayout;
-			mHandler = new Handler();
-		}
-
-		@Override
-		public void run() {
-			final View headerView = mPullToRefreshLayout.getHeaderView();
-			final ViewParent headerViewParent = headerView.getParent();
-			if (headerViewParent == null) {
-				mHandler.post(this);
-				return;
-			}
-			if (mActivity instanceof HomeActivity) {
-				final ViewGroup content = (ViewGroup) ((HomeActivity) mActivity).getSlidingMenu().getContent();
-				if (headerViewParent instanceof ViewGroup) {
-					((ViewGroup) headerViewParent).removeView(headerView);	
-				} else {
-					final WindowManager wm = mActivity.getWindowManager();
-					wm.removeView(headerView);
-				}
-				content.addView(headerView);
-			}
-		}
-
 	}
 
 }

@@ -105,11 +105,6 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 		return (DirectMessagesEntryAdapter) super.getListAdapter();
 	}
 
-	@Override
-	public String getPullToRefreshTag() {
-		return "direct_messages";
-	}
-
 	public final Map<Long, Set<Long>> getUnreadCountsToRemove() {
 		return mUnreadCountsToRemove;
 	}

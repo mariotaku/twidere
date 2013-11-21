@@ -49,11 +49,6 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 	};
 
 	@Override
-	public String getPullToRefreshTag() {
-		return "home_timeline";
-	}
-
-	@Override
 	public int getStatuses(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
 		final AsyncTwitterWrapper twitter = getTwitterWrapper();
 		if (twitter == null) return 0;

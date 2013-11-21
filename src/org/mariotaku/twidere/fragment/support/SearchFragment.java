@@ -96,10 +96,7 @@ public class SearchFragment extends BaseSupportFragment implements Panes.Left, O
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		final View view = inflater.inflate(R.layout.search, container, false);
-		mViewPager = (ExtendedViewPager) view.findViewById(R.id.search_pager);
-		mIndicator = (LinearLayout) view.findViewById(R.id.search_pager_indicator);
-		return view;
+		return inflater.inflate(R.layout.search, container, false);
 	}
 
 	@Override
@@ -137,6 +134,13 @@ public class SearchFragment extends BaseSupportFragment implements Panes.Left, O
 		if (isVisibleToUser) {
 			mCurrentVisibleFragment = fragment;
 		}
+	}
+
+	@Override
+	public void onViewCreated(final View view, final Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		mViewPager = (ExtendedViewPager) view.findViewById(R.id.search_pager);
+		mIndicator = (LinearLayout) view.findViewById(R.id.search_pager_indicator);
 	}
 
 	@Override

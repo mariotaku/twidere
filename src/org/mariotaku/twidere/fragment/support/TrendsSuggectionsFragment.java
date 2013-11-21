@@ -70,11 +70,6 @@ public class TrendsSuggectionsFragment extends BasePullToRefreshListFragment imp
 	};
 
 	@Override
-	public String getPullToRefreshTag() {
-		return "trends";
-	}
-
-	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onActivityCreated(savedInstanceState);

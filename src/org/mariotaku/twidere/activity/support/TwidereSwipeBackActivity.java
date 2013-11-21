@@ -20,12 +20,29 @@
 package org.mariotaku.twidere.activity.support;
 
 import android.annotation.SuppressLint;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.View;
 
+import me.imid.swipebacklayout.lib.SwipeBackLayout;
+import me.imid.swipebacklayout.lib.SwipeBackLayout.OnSwipeBackScrollListener;
+
+import org.mariotaku.twidere.fragment.iface.IBasePullToRefreshFragment;
+import org.mariotaku.twidere.fragment.iface.SupportFragmentCallback;
 import org.mariotaku.twidere.util.ThemeUtils;
 
+import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
+
+import java.util.ArrayList;
+import java.util.List;
+
 @SuppressLint("Registered")
-public class TwidereSwipeBackActivity extends BaseSupportThemedSwipeBackActivity {
+public class TwidereSwipeBackActivity extends BaseSupportThemedSwipeBackActivity implements SupportFragmentCallback,
+		OnSwipeBackScrollListener {
+
+	private final List<Fragment> mAttachedFragments = new ArrayList<Fragment>();
+	private Fragment mCurrentVisibleFragment;
 
 	@Override
 	public void finish() {
@@ -34,8 +51,75 @@ public class TwidereSwipeBackActivity extends BaseSupportThemedSwipeBackActivity
 	}
 
 	@Override
+	public Fragment getCurrentVisibleFragment() {
+		if (mCurrentVisibleFragment != null) return mCurrentVisibleFragment;
+		for (final Fragment f : mAttachedFragments) {
+			if (f.isVisible()) return f;
+		}
+		return null;
+	}
+
+	@Override
+	public void onAttachFragment(final Fragment fragment) {
+		super.onAttachFragment(fragment);
+		mAttachedFragments.add(fragment);
+	}
+
+	@Override
+	public void onDetachFragment(final Fragment fragment) {
+		mAttachedFragments.remove(fragment);
+	}
+
+	@Override
+	public void onSetUserVisibleHint(final Fragment fragment, final boolean isVisibleToUser) {
+		if (isVisibleToUser) {
+			mCurrentVisibleFragment = fragment;
+		}
+	}
+
+	@Override
+	public void onSwipeBackScroll(final float percent) {
+		final Fragment f = getCurrentVisibleFragment();
+		if (!(f instanceof IBasePullToRefreshFragment)) return;
+		final SwipeBackLayout swipeBack = getSwipeBackLayout();
+		final PullToRefreshLayout pullRefreshLayout = ((IBasePullToRefreshFragment) f).getPullToRefreshLayout();
+		final View headerView = pullRefreshLayout.getHeaderView();
+		final int trackingEdge = swipeBack.getTrackingEdge();
+		final Drawable shadow = swipeBack.getShadow(trackingEdge);
+		if (trackingEdge == SwipeBackLayout.EDGE_BOTTOM) {
+			final int h = shadow != null ? shadow.getIntrinsicHeight() : 0;
+			headerView.setX(0);
+			headerView.setY(-percent * (swipeBack.getHeight() + h));
+		} else if (trackingEdge == SwipeBackLayout.EDGE_RIGHT) {
+			final int w = shadow != null ? shadow.getIntrinsicWidth() : 0;
+			headerView.setX(-percent * (swipeBack.getWidth() + w));
+			headerView.setY(0);
+		} else {
+			final int w = shadow != null ? shadow.getIntrinsicWidth() : 0;
+			headerView.setX(percent * (swipeBack.getWidth() + w));
+			headerView.setY(0);
+		}
+	}
+
+	@Override
+	public boolean triggerRefresh(final int position) {
+		return false;
+	}
+
+	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		ThemeUtils.overrideActivityOpenAnimation(this);
 		super.onCreate(savedInstanceState);
 	}
+
+	@Override
+	protected void onPostCreate(final Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		final SwipeBackLayout swipeBack = getSwipeBackLayout();
+		if (swipeBack != null) {
+			swipeBack.setOnSwipeBackScrollListener(this);
+			swipeBack.setEdgeTrackingEnabled(SwipeBackLayout.EDGE_ALL);
+		}
+	}
+
 }

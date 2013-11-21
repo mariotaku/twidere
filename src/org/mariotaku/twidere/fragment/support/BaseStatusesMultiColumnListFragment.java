@@ -113,11 +113,6 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 		return mAdapter;
 	}
 
-	@Override
-	public String getPullToRefreshTag() {
-		return getPositionKey();
-	}
-
 	public ParcelableStatus getSelectedStatus() {
 		return mSelectedStatus;
 	}

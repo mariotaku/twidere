@@ -57,11 +57,6 @@ public abstract class BaseActivitiesListFragment extends BasePullToRefreshListFr
 	}
 
 	@Override
-	public String getPullToRefreshTag() {
-		return getPositionKey();
-	}
-
-	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mAdapter = createListAdapter(getActivity());

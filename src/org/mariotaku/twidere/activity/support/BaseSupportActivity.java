@@ -26,38 +26,17 @@ import android.os.Bundle;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.iface.IBasePullToRefreshFragment;
-import org.mariotaku.twidere.fragment.iface.PullToRefreshAttacherActivity;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MessagesManager;
 import org.mariotaku.twidere.util.ThemeUtils;
 
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
-
-import java.util.HashSet;
-import java.util.Set;
-
 @SuppressLint("Registered")
-public class BaseSupportActivity extends BaseSupportThemedActivity implements Constants, PullToRefreshAttacherActivity {
-
-	private final Set<String> mEnabledStates = new HashSet<String>();
-	private final Set<String> mRefreshingStates = new HashSet<String>();
+public class BaseSupportActivity extends BaseSupportThemedActivity implements Constants {
 
 	private boolean mInstanceStateSaved, mIsVisible, mIsOnTop;
 
-	@Override
-	public void addRefreshingState(final IBasePullToRefreshFragment fragment) {
-		final String tag = fragment.getPullToRefreshTag();
-		if (tag == null) return;
-		mEnabledStates.add(tag);
-	}
-
 	public MessagesManager getMessagesManager() {
 		return getTwidereApplication() != null ? getTwidereApplication().getMessagesManager() : null;
-	}
-
-	@Override
-	public PullToRefreshAttacher getPullToRefreshAttacher() {
-		return null;
 	}
 
 	public TwidereApplication getTwidereApplication() {
@@ -72,55 +51,8 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 		return mIsOnTop;
 	}
 
-	@Override
-	public boolean isRefreshing(final IBasePullToRefreshFragment fragment) {
-		if (fragment == null) return false;
-		return mRefreshingStates.contains(fragment.getPullToRefreshTag());
-	}
-
 	public boolean isVisible() {
 		return mIsVisible;
-	}
-
-	@Override
-	public void setPullToRefreshEnabled(final IBasePullToRefreshFragment fragment, final boolean enabled) {
-		final String tag = fragment.getPullToRefreshTag();
-		if (tag == null) return;
-		if (enabled) {
-			mEnabledStates.add(tag);
-		} else {
-			mEnabledStates.remove(tag);
-		}
-		final IBasePullToRefreshFragment curr = getCurrentPullToRefreshFragment();
-		if (curr != null && tag.equals(curr.getPullToRefreshTag())) {
-		}
-	}
-
-	@Override
-	public void setRefreshComplete(final IBasePullToRefreshFragment fragment) {
-		final String tag = fragment.getPullToRefreshTag();
-		if (tag == null) return;
-		mRefreshingStates.remove(tag);
-		final IBasePullToRefreshFragment curr = getCurrentPullToRefreshFragment();
-		if (curr != null && tag.equals(curr.getPullToRefreshTag())) {
-		}
-	}
-
-	public void setRefreshing(final boolean refreshing) {
-	}
-
-	@Override
-	public void setRefreshing(final IBasePullToRefreshFragment fragment, final boolean refreshing) {
-		final String tag = fragment.getPullToRefreshTag();
-		if (tag == null) return;
-		if (refreshing) {
-			mRefreshingStates.add(tag);
-		} else {
-			mRefreshingStates.remove(tag);
-		}
-		final IBasePullToRefreshFragment curr = getCurrentPullToRefreshFragment();
-		if (curr != null && tag.equals(curr.getPullToRefreshTag())) {
-		}
 	}
 
 	@Override
@@ -131,10 +63,6 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 	@Override
 	public void startActivityForResult(final Intent intent, final int requestCode) {
 		super.startActivityForResult(intent, requestCode);
-	}
-
-	public void updateRefreshingState() {
-		setRefreshing(isRefreshing(getCurrentPullToRefreshFragment()));
 	}
 
 	protected IBasePullToRefreshFragment getCurrentPullToRefreshFragment() {

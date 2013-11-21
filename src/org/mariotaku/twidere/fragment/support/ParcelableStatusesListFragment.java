@@ -93,11 +93,6 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	}
 
 	@Override
-	public String getPullToRefreshTag() {
-		return getPositionKey();
-	}
-
-	@Override
 	public final int getStatuses(final long[] account_ids, final long[] max_ids, final long[] since_ids) {
 		mStatusesRestored = true;
 		final long max_id = max_ids != null && max_ids.length == 1 ? max_ids[0] : -1;

@@ -416,11 +416,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	}
 
 	@Override
-	public String getPullToRefreshTag() {
-		return "view_status";
-	}
-
-	@Override
 	public Loader<List<ParcelableStatus>> newLoaderInstance(final Context context, final Bundle args) {
 		return new DummyParcelableStatusesLoader(getActivity(), getData());
 	}
