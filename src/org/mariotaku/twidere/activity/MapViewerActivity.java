@@ -35,6 +35,7 @@ import org.mariotaku.twidere.activity.support.TwidereSwipeBackActivity;
 import org.mariotaku.twidere.fragment.support.NativeMapFragment;
 import org.mariotaku.twidere.fragment.support.WebMapFragment;
 import org.mariotaku.twidere.util.MapInterface;
+import org.mariotaku.twidere.util.ThemeUtils;
 
 public class MapViewerActivity extends TwidereSwipeBackActivity implements Constants {
 
@@ -65,7 +66,7 @@ public class MapViewerActivity extends TwidereSwipeBackActivity implements Const
 
 	@Override
 	protected int getThemeResource() {
-		return R.style.Theme_Twidere_Viewer;
+		return ThemeUtils.getViewerThemeResource(this);
 	}
 
 	@Override

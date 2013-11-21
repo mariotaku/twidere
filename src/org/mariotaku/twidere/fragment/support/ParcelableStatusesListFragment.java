@@ -121,7 +121,9 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	public final Loader<List<ParcelableStatus>> onCreateLoader(final int id, final Bundle args) {
 		setProgressBarIndeterminateVisibility(true);
 		final List<ParcelableStatus> data = getData();
-		setRefreshing(data != null);
+		if (shouldEnablePullToRefresh()) {
+			setRefreshing(data != null);
+		}
 		if (isInstanceStateSaved() && data != null && !mStatusesRestored)
 			return new DummyParcelableStatusesLoader(getActivity(), data);
 		final Loader<List<ParcelableStatus>> loader = newLoaderInstance(getActivity(), args);
@@ -257,9 +259,13 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 
 	@Override
 	protected void updateRefreshState() {
-		if (!getUserVisibleHint()) return;
+		if (getActivity() == null || !getUserVisibleHint() || !isVisible()) return;
 		final LoaderManager lm = getLoaderManager();
-		setRefreshing(lm.hasRunningLoaders());
+		final boolean hasRunningLoaders = lm.hasRunningLoaders();
+		if (!hasRunningLoaders) {
+			setRefreshing(true);
+		}
+		setRefreshing(hasRunningLoaders);
 	}
 
 }

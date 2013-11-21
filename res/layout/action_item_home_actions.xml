@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/actions_item"
+	android:id="@+id/home_actions_item"
 	style="?android:actionButtonStyle"
 	android:layout_width="wrap_content"
 	android:layout_height="match_parent"

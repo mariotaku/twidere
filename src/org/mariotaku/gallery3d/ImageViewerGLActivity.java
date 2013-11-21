@@ -47,6 +47,7 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.support.TwidereSwipeBackActivity;
 import org.mariotaku.twidere.util.SaveImageTask;
+import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.Utils;
 
 import java.io.File;
@@ -303,7 +304,7 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 
 	@Override
 	protected int getThemeResource() {
-		return R.style.Theme_Twidere_Viewer;
+		return ThemeUtils.getViewerThemeResource(this);
 	}
 
 	@Override

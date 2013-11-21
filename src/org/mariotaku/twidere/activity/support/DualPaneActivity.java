@@ -94,7 +94,7 @@ public class DualPaneActivity extends BaseSupportActivity implements OnBackStack
 			final int count = fm.getBackStackEntryCount();
 			final Fragment left_pane_fragment = fm.findFragmentById(PANE_LEFT);
 			final Fragment right_pane_fragment = fm.findFragmentById(PANE_RIGHT);
-			final View main_view = findViewById(R.id.main);
+			final View main_view = findViewById(getMainViewId());
 			final boolean left_pane_used = left_pane_fragment != null && left_pane_fragment.isAdded();
 			final boolean right_pane_used = right_pane_fragment != null && right_pane_fragment.isAdded();
 			if (count > 0) {
@@ -107,7 +107,7 @@ public class DualPaneActivity extends BaseSupportActivity implements OnBackStack
 					showLeftPane();
 				}
 			} else {
-				if (fm.findFragmentById(R.id.main) != null || left_pane_used) {
+				if (fm.findFragmentById(getMainViewId()) != null || left_pane_used) {
 					showLeftPane();
 				} else if (right_pane_used) {
 					showRightPane();
@@ -178,6 +178,10 @@ public class DualPaneActivity extends BaseSupportActivity implements OnBackStack
 
 	protected int getDualPaneLayoutRes() {
 		return R.layout.base_dual_pane;
+	}
+
+	protected int getMainViewId() {
+		return R.id.main;
 	}
 
 	protected int getNormalLayoutRes() {

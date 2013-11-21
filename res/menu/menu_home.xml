@@ -2,30 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item
-		android:id="@id/actions"
-		android:actionLayout="@layout/action_item_home_actions"
-		android:showAsAction="always"
-		android:title="@string/app_name"/>
-	<item
 		android:id="@id/search"
-		android:actionViewClass="android.widget.SearchView"
+		android:actionLayout="@layout/action_item_home_search"
 		android:icon="@android:drawable/ic_menu_search"
-		android:showAsAction="never"
-		android:title="@android:string/search_go"/>
-	<item
-		android:id="@id/select_account"
-		android:icon="@drawable/ic_menu_accounts"
-		android:showAsAction="never"
-		android:title="@string/accounts"/>
-	<item
-		android:id="@id/filters"
-		android:icon="@drawable/ic_menu_mute"
-		android:showAsAction="never"
-		android:title="@string/filters"/>
-	<item
-		android:id="@id/settings"
-		android:icon="@android:drawable/ic_menu_preferences"
-		android:showAsAction="never"
-		android:title="@string/settings"/>
+		android:showAsAction="never|collapseActionView"
+		android:title="@android:string/search_go"
+		android:visible="false"/>
 
 </menu>

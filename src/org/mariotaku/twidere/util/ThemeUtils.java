@@ -318,6 +318,11 @@ public class ThemeUtils implements Constants {
 		return pref.getInt(PREFERENCE_KEY_THEME_COLOR, def);
 	}
 
+	public static int getViewerThemeResource(final Context context) {
+		final boolean isTransparent = THEME_BACKGROUND_TRANSPARENT.equals(getThemeBackgroundOption(context));
+		return isTransparent ? R.style.Theme_Twidere_Viewer_Transparent : R.style.Theme_Twidere_Viewer;
+	}
+
 	public static Drawable getWindowBackground(final Context context) {
 		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.windowBackground });
 		final Drawable d = a.getDrawable(0);

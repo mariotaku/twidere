@@ -21,6 +21,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -137,6 +138,16 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 						openUserProfile(getActivity(), account.account_id, account.account_id, account.screen_name);
 						break;
 					}
+					case MENU_SEARCH: {
+						final FragmentActivity a = getActivity();
+						if (a instanceof HomeActivity) {
+							((HomeActivity) a).openSearchView(account);
+						} else {
+							getActivity().onSearchRequested();
+						}
+						closeAccountsDrawer();
+						break;
+					}
 					case MENU_STATUSES: {
 						openUserTimeline(getActivity(), account.account_id, account.account_id, account.screen_name);
 						break;
@@ -189,10 +200,6 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 			case AccountsDrawerAdapter.GROUP_ID_MENU: {
 				final OptionItem option = (OptionItem) mAdapter.getChild(groupPosition, childPosition);
 				switch (option.getId()) {
-					case MENU_SEARCH: {
-						getActivity().onSearchRequested();
-						break;
-					}
 					case MENU_ADD_ACCOUNT: {
 						final Intent intent = new Intent(INTENT_ACTION_TWITTER_LOGIN);
 						intent.setClass(getActivity(), SignInActivity.class);

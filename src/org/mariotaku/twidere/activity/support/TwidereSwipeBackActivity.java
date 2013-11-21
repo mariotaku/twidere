@@ -54,7 +54,7 @@ public class TwidereSwipeBackActivity extends BaseSupportThemedSwipeBackActivity
 	public Fragment getCurrentVisibleFragment() {
 		if (mCurrentVisibleFragment != null) return mCurrentVisibleFragment;
 		for (final Fragment f : mAttachedFragments) {
-			if (f.isVisible()) return f;
+			if (f.getUserVisibleHint()) return f;
 		}
 		return null;
 	}
@@ -110,16 +110,13 @@ public class TwidereSwipeBackActivity extends BaseSupportThemedSwipeBackActivity
 	protected void onCreate(final Bundle savedInstanceState) {
 		ThemeUtils.overrideActivityOpenAnimation(this);
 		super.onCreate(savedInstanceState);
+		final SwipeBackLayout swipeBack = getSwipeBackLayout();
+		swipeBack.setOnSwipeBackScrollListener(this);
 	}
 
 	@Override
 	protected void onPostCreate(final Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-		final SwipeBackLayout swipeBack = getSwipeBackLayout();
-		if (swipeBack != null) {
-			swipeBack.setOnSwipeBackScrollListener(this);
-			swipeBack.setEdgeTrackingEnabled(SwipeBackLayout.EDGE_ALL);
-		}
 	}
 
 }

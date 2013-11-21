@@ -62,6 +62,11 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 	}
 
 	@Override
+	public boolean isPullToRefreshEnabled() {
+		return mPullToRefreshLayout != null && mPullToRefreshLayout.isEnabled();
+	}
+
+	@Override
 	public boolean isRefreshing() {
 		return mPullToRefreshLayout != null && mPullToRefreshLayout.isRefreshing();
 	}

@@ -25,7 +25,7 @@ public class NavigationArrowButton extends ImageButton {
 
 	public NavigationArrowButton(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		mHighlightColor = ThemeUtils.getUserThemeColor(context);
+		mHighlightColor = isInEditMode() ? 0 : ThemeUtils.getUserThemeColor(context);
 		mRect = new Rect();
 	}
 

@@ -69,7 +69,7 @@ public class StatusViewHolder extends CardViewHolder {
 		text = (TextView) findViewById(R.id.text);
 		time = (ShortTimeView) findViewById(R.id.time);
 		reply_retweet_status = (TextView) findViewById(R.id.reply_retweet_status);
-		show_as_gap = gap_indicator != null ? gap_indicator.isShown() : false;
+		show_as_gap = gap_indicator != null && gap_indicator.isShown();
 		is_rtl = Utils.isRTL(context);
 		density = context.getResources().getDisplayMetrics().density;
 	}

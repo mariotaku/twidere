@@ -441,6 +441,16 @@
 		<item name="android:checkboxStyle">@style/Widget.Twidere.CompoundButton.CheckBox</item>
 	</style>
 
+	<style name="Theme.Twidere.Viewer.Transparent">
+
+		<!-- Colors -->
+		<item name="android:colorBackgroundCacheHint">@null</item>
+
+		<!-- Window attributes -->
+		<item name="android:windowBackground">@color/bg_color_transparent_light</item>
+		<item name="android:windowShowWallpaper">true</item>
+	</style>
+
 	<style name="Theme.Twidere.Wizard">
 		<item name="android:windowNoTitle">true</item>
 		<item name="android:windowActionBar">false</item>

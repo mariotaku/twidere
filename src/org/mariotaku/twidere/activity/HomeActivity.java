@@ -39,6 +39,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Bundle;
@@ -48,15 +49,23 @@ import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.SparseArray;
+import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MenuItem.OnActionExpandListener;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
+import android.widget.CursorAdapter;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
+import android.widget.SearchView.OnSuggestionListener;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu.CanvasTransformer;
@@ -78,6 +87,7 @@ import org.mariotaku.twidere.fragment.support.DirectMessagesFragment;
 import org.mariotaku.twidere.fragment.support.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.support.MentionsFragment;
 import org.mariotaku.twidere.fragment.support.TrendsSuggectionsFragment;
+import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.model.SupportTabSpec;
 import org.mariotaku.twidere.task.AsyncTask;
 import org.mariotaku.twidere.util.ArrayUtils;
@@ -86,6 +96,7 @@ import org.mariotaku.twidere.util.MathUtils;
 import org.mariotaku.twidere.util.MultiSelectEventHandler;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.UnreadCountUtils;
+import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.util.accessor.ViewAccessor;
 import org.mariotaku.twidere.view.ExtendedViewPager;
 import org.mariotaku.twidere.view.LeftDrawerFrameLayout;
@@ -97,32 +108,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeActivity extends DualPaneActivity implements OnClickListener, OnPageChangeListener,
-		SupportFragmentCallback, OnOpenedListener, OnClosedListener {
+		SupportFragmentCallback, OnOpenedListener, OnClosedListener, OnQueryTextListener, OnSuggestionListener,
+		OnLongClickListener, OnActionExpandListener {
 
-	private SharedPreferences mPreferences;
-
-	private AsyncTwitterWrapper mTwitterWrapper;
-	private NotificationManager mNotificationManager;
-	private MultiSelectEventHandler mMultiSelectHandler;
-	private ActionBar mActionBar;
-
-	private SupportTabsAdapter mPagerAdapter;
-	private ExtendedViewPager mViewPager;
-
-	private TabPageIndicator mIndicator;
-	private SlidingMenu mSlidingMenu;
-	private View mActionsActionView, mActionsButtonLayout, mEmptyTabHint;
-	private LeftDrawerFrameLayout mLeftDrawerContainer;
-
-	private boolean mBottomActionsButton;
-
-	private Fragment mCurrentVisibleFragment;
-
-	private UpdateUnreadCountTask mUpdateUnreadCountTask;
-
-	private final ArrayList<SupportTabSpec> mCustomTabs = new ArrayList<SupportTabSpec>();
-
-	private final SparseArray<Fragment> mAttachedFragments = new SparseArray<Fragment>();
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -139,6 +127,37 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		}
 
 	};
+	private final ArrayList<SupportTabSpec> mCustomTabs = new ArrayList<SupportTabSpec>();
+
+	private final SparseArray<Fragment> mAttachedFragments = new SparseArray<Fragment>();
+	private final SparseBooleanArray mPullRefreshStates = new SparseBooleanArray();
+
+	private boolean mBottomActionsButton;
+
+	private Account mSelectedAccountToSearch;
+
+	private SharedPreferences mPreferences;
+
+	private AsyncTwitterWrapper mTwitterWrapper;
+
+	private NotificationManager mNotificationManager;
+	private MultiSelectEventHandler mMultiSelectHandler;
+	private ActionBar mActionBar;
+	private SupportTabsAdapter mPagerAdapter;
+
+	private ExtendedViewPager mViewPager;
+	private TabPageIndicator mIndicator;
+
+	private SlidingMenu mSlidingMenu;
+	private View mHomeActionsActionView, mActionsButtonLayout, mEmptyTabHint;
+	private LeftDrawerFrameLayout mLeftDrawerContainer;
+	private SearchView mSearchView;
+
+	private Fragment mCurrentVisibleFragment;
+
+	private UpdateUnreadCountTask mUpdateUnreadCountTask;
+
+	private MenuItem mSearchItem;
 
 	public void closeAccountsDrawer() {
 		if (mSlidingMenu == null) return;
@@ -198,8 +217,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	@Override
 	public void onClick(final View v) {
 		switch (v.getId()) {
-			case R.id.actions_item:
-			case R.id.actions_button:
+			case R.id.home_actions_item:
+			case R.id.home_actions_button: {
 				if (mViewPager == null || mPagerAdapter == null) return;
 				final int position = mViewPager.getCurrentItem();
 				final SupportTabSpec tab = mPagerAdapter.getTab(position);
@@ -209,28 +228,51 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 					if (classEquals(DirectMessagesFragment.class, tab.cls)) {
 						openDirectMessagesConversation(this, -1, -1, null);
 					} else if (classEquals(TrendsSuggectionsFragment.class, tab.cls)) {
-						onSearchRequested();
+						openSearchView(null);
 					} else {
 						startActivity(new Intent(INTENT_ACTION_COMPOSE));
 					}
 				}
 				break;
+			}
+			case R.id.save_search: {
+
+				break;
+			}
 		}
 	}
 
 	@Override
 	public void onClosed() {
+		updatePullToRefreshLayoutScroll(0);
 	}
 
 	@Override
 	public void onContentChanged() {
 		super.onContentChanged();
 		mViewPager = (ExtendedViewPager) findViewById(R.id.main_pager);
-		mActionsButtonLayout = findViewById(R.id.actions_button);
+		mActionsButtonLayout = findViewById(R.id.home_actions_button);
 		mEmptyTabHint = findViewById(R.id.empty_tab_hint);
 		if (mSlidingMenu == null) {
 			mSlidingMenu = new SlidingMenu(this);
 		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(final Menu menu) {
+		getMenuInflater().inflate(R.menu.menu_home, menu);
+		mSearchItem = menu.findItem(MENU_SEARCH);
+		mSearchItem.setOnActionExpandListener(this);
+		final View actionView = mSearchItem.getActionView();
+		final View saveSearch = actionView.findViewById(R.id.save_search);
+		saveSearch.setOnClickListener(this);
+		saveSearch.setOnLongClickListener(this);
+		mSearchView = (SearchView) actionView.findViewById(R.id.search_view);
+		mSearchView.setOnQueryTextListener(this);
+		mSearchView.setOnSuggestionListener(this);
+		final SearchManager sm = (SearchManager) getSystemService(SEARCH_SERVICE);
+		mSearchView.setSearchableInfo(sm.getSearchableInfo(getComponentName()));
+		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
@@ -255,7 +297,45 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	@Override
+	public boolean onLongClick(final View v) {
+		switch (v.getId()) {
+			case R.id.home_actions_item:
+			case R.id.save_search: {
+				Utils.showMenuItemToast(v, v.getContentDescription(), false);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean onMenuItemActionCollapse(final MenuItem item) {
+		for (int i = 0, j = mAttachedFragments.size(); i < j; i++) {
+			final Fragment f = mAttachedFragments.valueAt(i);
+			final View headerView = getPullToRefreshHeaderView(f);
+			if (headerView != null) {
+				headerView.setEnabled(mPullRefreshStates.get(mAttachedFragments.keyAt(i)));
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public boolean onMenuItemActionExpand(final MenuItem item) {
+		for (int i = 0, j = mAttachedFragments.size(); i < j; i++) {
+			final Fragment f = mAttachedFragments.valueAt(i);
+			final View headerView = getPullToRefreshHeaderView(f);
+			if (headerView != null) {
+				mPullRefreshStates.put(mAttachedFragments.keyAt(i), headerView.isEnabled());
+				headerView.setEnabled(false);
+			}
+		}
+		return true;
+	}
+
+	@Override
 	public void onOpened() {
+		updatePullToRefreshLayoutScroll(1);
 	}
 
 	@Override
@@ -304,14 +384,70 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	@Override
+	public boolean onPrepareOptionsMenu(final Menu menu) {
+		return super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onQueryTextChange(final String newText) {
+		return false;
+	}
+
+	@Override
+	public boolean onQueryTextSubmit(final String query) {
+		if (mSelectedAccountToSearch != null) {
+			openSearch(this, mSelectedAccountToSearch.account_id, query);
+		} else {
+			openSearch(this, Utils.getDefaultAccountId(this), query);
+		}
+		if (mSearchItem != null) {
+			mSearchItem.collapseActionView();
+		}
+		mSearchView.setQuery(null, false);
+		return true;
+	}
+
+	@Override
 	public void onSetUserVisibleHint(final Fragment fragment, final boolean isVisibleToUser) {
 		if (isVisibleToUser) {
 			mCurrentVisibleFragment = fragment;
 		}
 	}
 
+	@Override
+	public boolean onSuggestionClick(final int position) {
+		final CursorAdapter a = mSearchView.getSuggestionsAdapter();
+		final Cursor c = a.getCursor();
+		c.moveToPosition(position);
+		mSearchView.setQuery(a.convertToString(c), true);
+		return true;
+	}
+
+	@Override
+	public boolean onSuggestionSelect(final int position) {
+		final CursorAdapter a = mSearchView.getSuggestionsAdapter();
+		final Cursor c = a.getCursor();
+		c.moveToPosition(position);
+		mSearchView.setQuery(a.convertToString(c), false);
+		return true;
+	}
+
+	public void openSearchView(final Account account) {
+		if (mSearchItem == null) {
+			onSearchRequested();
+			return;
+		}
+		mSelectedAccountToSearch = account;
+		if (account != null) {
+			mSearchView.setQueryHint(Utils.getDisplayName(this, account.account_id, account.name, account.screen_name));
+		} else {
+			mSearchView.setQueryHint(getString(R.string.search_hint));
+		}
+		mSearchItem.expandActionView();
+	}
+
 	public void setHomeProgressBarIndeterminateVisibility(final boolean visible) {
-		final View view = mBottomActionsButton ? mActionsButtonLayout : mActionsActionView;
+		final View view = mBottomActionsButton ? mActionsButtonLayout : mHomeActionsActionView;
 		if (view == null) return;
 		final boolean has_task = hasActivatedTask();
 		final ImageView actions_icon = (ImageView) view.findViewById(R.id.actions_icon);
@@ -354,6 +490,11 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	@Override
 	protected int getDualPaneLayoutRes() {
 		return R.layout.home_dual_pane;
+	}
+
+	@Override
+	protected int getMainViewId() {
+		return R.id.main_pager;
 	}
 
 	@Override
@@ -406,7 +547,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 
 		final View view = mActionBar.getCustomView();
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
-		mActionsActionView = view.findViewById(R.id.actions_item);
+		mHomeActionsActionView = view.findViewById(R.id.home_actions_item);
 		ThemeUtils.applyBackground(mIndicator);
 		mPagerAdapter = new SupportTabsAdapter(this, getSupportFragmentManager(), mIndicator);
 		mViewPager.setAdapter(mPagerAdapter);
@@ -414,7 +555,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mIndicator.setViewPager(mViewPager);
 		mIndicator.setOnPageChangeListener(this);
 		mIndicator.setDisplayLabel(res.getBoolean(R.bool.tab_display_label));
-		mActionsActionView.setOnClickListener(this);
+		mHomeActionsActionView.setOnClickListener(this);
+		mHomeActionsActionView.setOnLongClickListener(this);
 		mActionsButtonLayout.setOnClickListener(this);
 		initTabs();
 		final boolean tabs_not_empty = mPagerAdapter.getCount() != 0;
@@ -458,6 +600,11 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		invalidateOptionsMenu();
 		updateActionsButtonStyle();
 		updateActionsButton();
+		if (mSlidingMenu.isMenuShowing()) {
+			updatePullToRefreshLayoutScroll(1);
+		} else {
+			updatePullToRefreshLayoutScroll(0);
+		}
 	}
 
 	@Override
@@ -509,18 +656,16 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		}
 	}
 
-	private View getCurrentPullToRefreshHeaderView() {
-		final Fragment currentFragment = getCurrentVisibleFragment();
-		if (currentFragment == null) return null;
-		if (!(currentFragment instanceof IBasePullToRefreshFragment)) return null;
-		final IBasePullToRefreshFragment ptrf = (IBasePullToRefreshFragment) currentFragment;
+	private LeftDrawerFrameLayout getLeftDrawerContainer() {
+		return mLeftDrawerContainer;
+	}
+
+	private View getPullToRefreshHeaderView(final Fragment f) {
+		if (!(f instanceof IBasePullToRefreshFragment)) return null;
+		final IBasePullToRefreshFragment ptrf = (IBasePullToRefreshFragment) f;
 		final PullToRefreshLayout l = ptrf.getPullToRefreshLayout();
 		if (l == null) return null;
 		return l.getHeaderView();
-	}
-
-	private LeftDrawerFrameLayout getLeftDrawerContainer() {
-		return mLeftDrawerContainer;
 	}
 
 	private int handleIntent(final Intent intent, final boolean first_create) {
@@ -677,25 +822,38 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 				title = R.string.compose;
 			}
 		}
-		final View view = mBottomActionsButton ? mActionsButtonLayout : mActionsActionView;
+		final View view = mBottomActionsButton ? mActionsButtonLayout : mHomeActionsActionView;
 		if (view == null) return;
 		final boolean has_task = hasActivatedTask();
 		final ImageView actions_icon = (ImageView) view.findViewById(R.id.actions_icon);
 		final ProgressBar progress = (ProgressBar) view.findViewById(R.id.progress);
+		view.setContentDescription(getString(title));
 		actions_icon.setImageResource(mBottomActionsButton ? button_icon : button_icon);
-		actions_icon.setContentDescription(getString(title));
 		actions_icon.setVisibility(has_task ? View.GONE : View.VISIBLE);
 		progress.setVisibility(has_task ? View.VISIBLE : View.GONE);
 	}
 
 	private void updateActionsButtonStyle() {
-		if (mActionsButtonLayout == null || mActionsActionView == null) return;
+		if (mActionsButtonLayout == null || mHomeActionsActionView == null) return;
 		final boolean leftside_compose_button = mPreferences.getBoolean(PREFERENCE_KEY_LEFTSIDE_COMPOSE_BUTTON, false);
-		mActionsActionView.setVisibility(mBottomActionsButton ? View.GONE : View.VISIBLE);
+		mHomeActionsActionView.setVisibility(mBottomActionsButton ? View.GONE : View.VISIBLE);
 		mActionsButtonLayout.setVisibility(mBottomActionsButton ? View.VISIBLE : View.GONE);
 		final FrameLayout.LayoutParams compose_lp = (LayoutParams) mActionsButtonLayout.getLayoutParams();
 		compose_lp.gravity = Gravity.BOTTOM | (leftside_compose_button ? Gravity.LEFT : Gravity.RIGHT);
 		mActionsButtonLayout.setLayoutParams(compose_lp);
+	}
+
+	private void updatePullToRefreshLayoutScroll(final float percentOpen) {
+		final LeftDrawerFrameLayout ld = getLeftDrawerContainer();
+		if (ld == null) return;
+		ld.setPercentOpen(percentOpen);
+		for (int i = 0, j = mAttachedFragments.size(); i < j; i++) {
+			final Fragment f = mAttachedFragments.valueAt(i);
+			final View headerView = getPullToRefreshHeaderView(f);
+			if (headerView != null) {
+				headerView.scrollTo(-Math.round(percentOpen * ld.getMeasuredWidth()), 0);
+			}
+		}
 	}
 
 	private void updateSlidingMenuTouchMode() {
@@ -715,13 +873,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 
 		@Override
 		public void transformCanvas(final Canvas canvas, final float percentOpen) {
-			final LeftDrawerFrameLayout ld = mHomeActivity.getLeftDrawerContainer();
-			if (ld == null) return;
-			ld.setPercentOpen(percentOpen);
-			final View headerView = mHomeActivity.getCurrentPullToRefreshHeaderView();
-			if (headerView != null) {
-				headerView.scrollTo(-Math.round(percentOpen * ld.getMeasuredWidth()), 0);
-			}
+			mHomeActivity.updatePullToRefreshLayoutScroll(percentOpen);
 		}
 
 	}
@@ -773,4 +925,5 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		}
 
 	}
+
 }

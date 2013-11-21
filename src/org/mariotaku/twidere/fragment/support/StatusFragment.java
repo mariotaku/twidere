@@ -99,7 +99,6 @@ import org.mariotaku.twidere.adapter.MediaPreviewAdapter;
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.loader.DummyParcelableStatusesLoader;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -417,12 +416,13 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	@Override
 	public Loader<List<ParcelableStatus>> newLoaderInstance(final Context context, final Bundle args) {
-		return new DummyParcelableStatusesLoader(getActivity(), getData());
+		return null;
 	}
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		setPullToRefreshEnabled(shouldEnablePullToRefresh());
 		setHasOptionsMenu(shouldUseSmartBar());
 		setListShownNoAnimation(true);
 		mHandler = new Handler();
@@ -438,7 +438,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mTwitterWrapper = getTwitterWrapper();
 		mLoadMoreAutomatically = mPreferences.getBoolean(PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY, false);
 		mImagePreviewAdapter = new MediaPreviewAdapter(getActivity());
-		getPullToRefreshLayout().setEnabled(false);
 		mLoadImagesIndicator.setOnClickListener(this);
 		mInReplyToView.setOnClickListener(this);
 		mFollowButton.setOnClickListener(this);
@@ -795,6 +794,11 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	@Override
 	protected void setListHeaderFooters(final ListView list) {
 		list.addHeaderView(mHeaderView, null, true);
+	}
+
+	@Override
+	protected boolean shouldEnablePullToRefresh() {
+		return false;
 	}
 
 	@Override

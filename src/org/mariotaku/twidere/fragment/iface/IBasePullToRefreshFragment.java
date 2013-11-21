@@ -15,4 +15,6 @@ public interface IBasePullToRefreshFragment {
 	public void setRefreshComplete();
 
 	public void setRefreshing(boolean refreshing);
+
+	boolean isPullToRefreshEnabled();
 }

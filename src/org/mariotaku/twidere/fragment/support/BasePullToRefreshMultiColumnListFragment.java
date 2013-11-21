@@ -63,6 +63,11 @@ public abstract class BasePullToRefreshMultiColumnListFragment extends BaseSuppo
 	}
 
 	@Override
+	public boolean isPullToRefreshEnabled() {
+		return mPullToRefreshLayout != null && mPullToRefreshLayout.isEnabled();
+	}
+
+	@Override
 	public boolean isRefreshing() {
 		return mPullToRefreshLayout != null && mPullToRefreshLayout.isRefreshing();
 	}

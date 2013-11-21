@@ -204,6 +204,9 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 	@Override
 	public final void onLoadFinished(final Loader<Data> loader, final Data data) {
 		if (getActivity() == null || getView() == null) return;
+		setListShown(true);
+		setRefreshComplete();
+		setProgressBarIndeterminateVisibility(false);
 		setData(data);
 		mFirstVisibleItem = -1;
 		mReadPositions.clear();
@@ -214,9 +217,6 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		}
 		final long last_viewed_id = mAdapter.getStatusId(first_visible_position);
 		mAdapter.setData(data);
-		setListShown(true);
-		setRefreshComplete();
-		setProgressBarIndeterminateVisibility(false);
 		mAdapter.setShowAccountColor(shouldShowAccountColor());
 		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true);
 		final int curr_first_visible_position = mListView.getFirstVisiblePosition();
@@ -453,6 +453,10 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 
 	protected void setListHeaderFooters(final ListView list) {
 
+	}
+
+	protected boolean shouldEnablePullToRefresh() {
+		return true;
 	}
 
 	protected abstract boolean shouldShowAccountColor();

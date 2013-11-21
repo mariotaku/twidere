@@ -2,11 +2,9 @@ package org.mariotaku.menubar;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,12 +16,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.mariotaku.internal.menu.MenuUtils;
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.util.accessor.ViewAccessor;
 
 import java.util.ArrayList;
@@ -255,23 +253,7 @@ public class MenuBar extends LinearLayout implements MenuItem.OnMenuItemClickLis
 		public boolean onLongClick(final View v) {
 			// Don't show the cheat sheet for items that already show text.
 			if ((MenuUtils.getShowAsActionFlags(item) & MenuItem.SHOW_AS_ACTION_WITH_TEXT) != 0) return false;
-			final int[] screenPos = new int[2];
-			final Rect displayFrame = new Rect();
-			v.getLocationOnScreen(screenPos);
-			v.getWindowVisibleDisplayFrame(displayFrame);
-			final int width = v.getWidth();
-			final int height = v.getHeight();
-			final int midy = screenPos[1] + height / 2;
-			final int screenWidth = menuBar.getResources().getDisplayMetrics().widthPixels;
-			final Toast cheatSheet = Toast.makeText(menuBar.getContext(), item.getTitle(), Toast.LENGTH_SHORT);
-			if (midy >= displayFrame.height() || menuBar.isBottomBar()) {
-				// Show along the bottom center
-				cheatSheet.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, height);
-			} else {
-				// Show along the top; follow action buttons
-				cheatSheet.setGravity(Gravity.TOP | Gravity.RIGHT, screenWidth - screenPos[0] - width / 2, height);
-			}
-			cheatSheet.show();
+			Utils.showMenuItemToast(v, item.getTitle(), menuBar.isBottomBar());
 			return true;
 		}
 	}

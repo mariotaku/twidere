@@ -3,6 +3,19 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content">
 
+	<org.mariotaku.twidere.view.CardItemGapView
+		android:id="@+id/list_gap_text"
+		android:layout_width="match_parent"
+		android:layout_height="48dp"
+		android:layout_gravity="center"
+		android:background="?android:selectableItemBackground"
+		android:gravity="center"
+		android:singleLine="true"
+		android:text="@string/tap_to_load_more"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textStyle="bold"
+		android:visibility="gone"/>
+
 	<org.mariotaku.twidere.view.CardItemLinearLayout
 		android:id="@+id/content"
 		android:layout_width="match_parent"
@@ -12,7 +25,6 @@
 		android:layout_marginRight="8dp"
 		android:layout_marginTop="4dp"
 		android:background="?cardItemBackground"
-		android:duplicateParentState="true"
 		android:orientation="vertical">
 
 		<LinearLayout
@@ -154,19 +166,5 @@
 		android:paddingLeft="@dimen/item_menu_padding_start_default"
 		android:paddingRight="@dimen/item_menu_padding_end_default"
 		android:paddingTop="@dimen/item_menu_padding_top_default"/>
-
-	<org.mariotaku.twidere.view.CardItemGapView
-		android:id="@+id/list_gap_text"
-		android:layout_width="match_parent"
-		android:layout_height="48dp"
-		android:layout_gravity="center"
-		android:background="?android:selectableItemBackground"
-		android:duplicateParentState="true"
-		android:gravity="center"
-		android:singleLine="true"
-		android:text="@string/tap_to_load_more"
-		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:textStyle="bold"
-		android:visibility="gone"/>
 
 </FrameLayout>

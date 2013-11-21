@@ -31,41 +31,41 @@ import me.imid.swipebacklayout.lib.app.SwipeBackActivityHelper;
 @SuppressLint("Registered")
 public class BaseSupportThemedSwipeBackActivity extends BaseSupportActivity implements SwipeBackActivityBase {
 
-	private SwipeBackActivityHelper mHelper;
+	private SwipeBackActivityHelper mSwipebackHelper;
 
 	@Override
 	public View findViewById(final int id) {
 		final View v = super.findViewById(id);
-		if (v == null && mHelper != null) return mHelper.findViewById(id);
+		if (v == null && mSwipebackHelper != null) return mSwipebackHelper.findViewById(id);
 		return v;
 	}
 
 	@Override
 	public SwipeBackLayout getSwipeBackLayout() {
-		if (mHelper == null) return null;
-		return mHelper.getSwipeBackLayout();
+		if (mSwipebackHelper == null) return null;
+		return mSwipebackHelper.getSwipeBackLayout();
 	}
 
 	public boolean isSwiping() {
-		if (mHelper == null) return false;
 		final SwipeBackLayout swipeBackLayout = getSwipeBackLayout();
 		return swipeBackLayout != null && swipeBackLayout.isSwiping();
 	}
 
 	@Override
 	public void scrollToFinishActivity() {
-		if (mHelper == null) return;
-		getSwipeBackLayout().scrollToFinishActivity();
+		final SwipeBackLayout swipeBackLayout = getSwipeBackLayout();
+		if (swipeBackLayout == null) return;
+		swipeBackLayout.scrollToFinishActivity();
 	}
 
 	@Override
 	public void setSwipeBackEnable(final boolean enable) {
-		if (mHelper == null) return;
-		getSwipeBackLayout().setEnableGesture(enable);
+		final SwipeBackLayout swipeBackLayout = getSwipeBackLayout();
+		if (swipeBackLayout == null) return;
+		swipeBackLayout.setEnableGesture(enable);
 	}
 
 	public void setSwipeListener(final SwipeListener listener) {
-		if (mHelper == null) return;
 		final SwipeBackLayout swipeBackLayout = getSwipeBackLayout();
 		if (swipeBackLayout == null) return;
 		swipeBackLayout.setSwipeListener(listener);
@@ -74,17 +74,13 @@ public class BaseSupportThemedSwipeBackActivity extends BaseSupportActivity impl
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// if (!ThemeUtils.isTransparentBackground(this)) {
-		mHelper = new SwipeBackActivityHelper(this);
-		mHelper.onActivtyCreate();
-		// }
+		mSwipebackHelper = new SwipeBackActivityHelper(this);
+		mSwipebackHelper.onActivtyCreate();
 	}
 
 	@Override
 	protected void onPostCreate(final Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-		// if (!ThemeUtils.isTransparentBackground(this)) {
-		mHelper.onPostCreate();
-		// }
+		mSwipebackHelper.onPostCreate();
 	}
 }

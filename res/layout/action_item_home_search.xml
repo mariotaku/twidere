@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/home_search_item"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="horizontal">
+
+	<SearchView
+		android:id="@+id/search_view"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_centerVertical="true"
+		android:layout_toLeftOf="@+id/save_search"
+		android:iconifiedByDefault="false"
+		android:inputType="text"
+		android:queryHint="@string/search_hint"/>
+
+	<ImageButton
+		android:id="@+id/save_search"
+		style="?android:actionButtonStyle"
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
+		android:layout_alignParentRight="true"
+		android:layout_centerVertical="true"
+		android:contentDescription="@string/save"
+		android:src="@android:drawable/ic_menu_save"/>
+
+</RelativeLayout>
