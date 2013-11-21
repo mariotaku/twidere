@@ -79,25 +79,28 @@ public class TwidereSwipeBackActivity extends BaseSupportThemedSwipeBackActivity
 
 	@Override
 	public void onSwipeBackScroll(final float percent) {
-		final Fragment f = getCurrentVisibleFragment();
-		if (!(f instanceof IBasePullToRefreshFragment)) return;
 		final SwipeBackLayout swipeBack = getSwipeBackLayout();
-		final PullToRefreshLayout pullRefreshLayout = ((IBasePullToRefreshFragment) f).getPullToRefreshLayout();
-		final View headerView = pullRefreshLayout.getHeaderView();
-		final int trackingEdge = swipeBack.getTrackingEdge();
-		final Drawable shadow = swipeBack.getShadow(trackingEdge);
-		if (trackingEdge == SwipeBackLayout.EDGE_BOTTOM) {
-			final int h = shadow != null ? shadow.getIntrinsicHeight() : 0;
-			headerView.setX(0);
-			headerView.setY(-percent * (swipeBack.getHeight() + h));
-		} else if (trackingEdge == SwipeBackLayout.EDGE_RIGHT) {
-			final int w = shadow != null ? shadow.getIntrinsicWidth() : 0;
-			headerView.setX(-percent * (swipeBack.getWidth() + w));
-			headerView.setY(0);
-		} else {
-			final int w = shadow != null ? shadow.getIntrinsicWidth() : 0;
-			headerView.setX(percent * (swipeBack.getWidth() + w));
-			headerView.setY(0);
+		for (final Fragment f : mAttachedFragments) {
+			if (f.getActivity() == null || !(f instanceof IBasePullToRefreshFragment)) {
+				continue;
+			}
+			final PullToRefreshLayout pullRefreshLayout = ((IBasePullToRefreshFragment) f).getPullToRefreshLayout();
+			final View headerView = pullRefreshLayout.getHeaderView();
+			final int trackingEdge = swipeBack.getTrackingEdge();
+			final Drawable shadow = swipeBack.getShadow(trackingEdge);
+			if (trackingEdge == SwipeBackLayout.EDGE_BOTTOM) {
+				final int h = shadow != null ? shadow.getIntrinsicHeight() : 0;
+				headerView.setX(0);
+				headerView.setY(-percent * (swipeBack.getHeight() + h));
+			} else if (trackingEdge == SwipeBackLayout.EDGE_RIGHT) {
+				final int w = shadow != null ? shadow.getIntrinsicWidth() : 0;
+				headerView.setX(-percent * (swipeBack.getWidth() + w));
+				headerView.setY(0);
+			} else {
+				final int w = shadow != null ? shadow.getIntrinsicWidth() : 0;
+				headerView.setX(percent * (swipeBack.getWidth() + w));
+				headerView.setY(0);
+			}
 		}
 	}
 

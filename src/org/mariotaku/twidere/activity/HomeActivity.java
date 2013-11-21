@@ -661,7 +661,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	private View getPullToRefreshHeaderView(final Fragment f) {
-		if (!(f instanceof IBasePullToRefreshFragment)) return null;
+		if (f.getActivity() == null || !(f instanceof IBasePullToRefreshFragment)) return null;
 		final IBasePullToRefreshFragment ptrf = (IBasePullToRefreshFragment) f;
 		final PullToRefreshLayout l = ptrf.getPullToRefreshLayout();
 		if (l == null) return null;
