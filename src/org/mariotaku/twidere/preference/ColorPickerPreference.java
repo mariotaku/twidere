@@ -16,8 +16,6 @@
 
 package org.mariotaku.twidere.preference;
 
-import static org.mariotaku.twidere.util.Utils.getColorPreviewBitmap;
-
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -27,17 +25,19 @@ import android.graphics.drawable.BitmapDrawable;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.view.ColorPickerPresetsView;
+import org.mariotaku.twidere.view.ColorPickerPresetsView.OnColorClickListener;
 import org.mariotaku.twidere.view.ColorPickerView;
 import org.mariotaku.twidere.view.ColorPickerView.OnColorChangedListener;
 
 public class ColorPickerPreference extends DialogPreference implements DialogInterface.OnClickListener,
-		OnColorChangedListener {
+		OnColorChangedListener, OnColorClickListener {
 
 	private View mView;
 	protected int mDefaultValue = Color.WHITE;
@@ -49,6 +49,7 @@ public class ColorPickerPreference extends DialogPreference implements DialogInt
 	private static final String ATTR_ALPHASLIDER = "alphaSlider";
 
 	private ColorPickerView mColorPicker;
+	private ColorPickerPresetsView mColorPresets;
 
 	public ColorPickerPreference(final Context context, final AttributeSet attrs) {
 		this(context, attrs, android.R.attr.preferenceStyle);
@@ -82,7 +83,13 @@ public class ColorPickerPreference extends DialogPreference implements DialogInt
 		final AlertDialog dialog = (AlertDialog) getDialog();
 		if (dialog == null) return;
 		final Context context = getContext();
-		dialog.setIcon(new BitmapDrawable(context.getResources(), getColorPreviewBitmap(context, color)));
+		dialog.setIcon(new BitmapDrawable(context.getResources(), ColorPickerView.getColorPreviewBitmap(context, color)));
+	}
+
+	@Override
+	public void onColorClick(final int color) {
+		if (mColorPicker == null) return;
+		mColorPicker.setColor(color, true);
 	}
 
 	@Override
@@ -122,20 +129,20 @@ public class ColorPickerPreference extends DialogPreference implements DialogInt
 	protected void onPrepareDialogBuilder(final Builder builder) {
 		super.onPrepareDialogBuilder(builder);
 		final Context context = getContext();
-		final LinearLayout view = new LinearLayout(context);
-		view.setOrientation(LinearLayout.VERTICAL);
-
-		mColorPicker = new ColorPickerView(context);
-		mColorPicker.setOnColorChangedListener(this);
-
-		view.addView(mColorPicker, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-		view.setPadding(Math.round(mColorPicker.getDrawingOffset()), 0, Math.round(mColorPicker.getDrawingOffset()), 0);
+		final LayoutInflater inflater = LayoutInflater.from(getContext());
+		final View view = inflater.inflate(R.layout.color_picker, null);
 
 		final int val = getValue();
+
+		mColorPicker = (ColorPickerView) view.findViewById(R.id.color_picker);
+		mColorPresets = (ColorPickerPresetsView) view.findViewById(R.id.color_presets);
+		mColorPicker.setOnColorChangedListener(this);
+		mColorPresets.setOnColorClickListener(this);
+
 		mColorPicker.setColor(val, true);
 		mColorPicker.setAlphaSliderVisible(mAlphaSliderEnabled);
 		builder.setView(view);
-		builder.setIcon(new BitmapDrawable(context.getResources(), getColorPreviewBitmap(context, val)));
+		builder.setIcon(new BitmapDrawable(context.getResources(), ColorPickerView.getColorPreviewBitmap(context, val)));
 		builder.setPositiveButton(android.R.string.ok, this);
 		builder.setNegativeButton(android.R.string.cancel, null);
 	}
@@ -168,7 +175,7 @@ public class ColorPickerPreference extends DialogPreference implements DialogInt
 		widget_frame.removeAllViews();
 		final ImageView imageView = new ImageView(getContext());
 		widget_frame.addView(imageView);
-		imageView.setImageBitmap(getColorPreviewBitmap(getContext(), getValue()));
+		imageView.setImageBitmap(ColorPickerView.getColorPreviewBitmap(getContext(), getValue()));
 	}
 
 }

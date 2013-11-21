@@ -432,6 +432,7 @@ public interface TwidereConstants {
 	public static final String EXTRA_ACTIVITY_SCREENSHOT = "activity_screenshot";
 	public static final String EXTRA_ACTIVITY_SCREENSHOT_ENCODED = "activity_screenshot_encoded";
 	public static final String EXTRA_COLOR = "color";
+	public static final String EXTRA_ALPHA_SLIDER = "alpha_slider";
 
 	public static final int MENU_GROUP_STATUS_EXTENSION = 10;
 	public static final int MENU_GROUP_COMPOSE_EXTENSION = 11;

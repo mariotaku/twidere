@@ -128,6 +128,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 		mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 		mListView.setMultiChoiceModeListener(this);
 		getLoaderManager().initLoader(0, null, this);
+		setListShown(false);
 	}
 
 	@Override
@@ -177,7 +178,12 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.custom_tabs, container, false);
+		final View view = inflater.inflate(android.R.layout.list_content, null, false);
+		final ListView originalList = (ListView) view.findViewById(android.R.id.list);
+		final ViewGroup listContainer = (ViewGroup) originalList.getParent();
+		listContainer.removeView(originalList);
+		inflater.inflate(R.layout.custom_tabs, listContainer, true);
+		return view;
 	}
 
 	@Override
@@ -212,6 +218,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 	@Override
 	public void onLoadFinished(final Loader<Cursor> loader, final Cursor cursor) {
 		mAdapter.changeCursor(cursor);
+		setListShown(true);
 	}
 
 	@Override

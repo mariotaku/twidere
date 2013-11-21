@@ -58,5 +58,8 @@
 	<!-- Size of activity preview -->
 	<dimen name="theme_preview_width">260dp</dimen>
 	<dimen name="theme_preview_height">400dp</dimen>
+	
+	<!-- Dimensions for color picker -->
+	<dimen name="color_button_width">36dp</dimen>
 
 </resources>

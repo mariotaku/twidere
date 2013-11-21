@@ -21,7 +21,6 @@ package org.mariotaku.twidere.activity.support;
 
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
-import static org.mariotaku.twidere.util.Utils.getColorPreviewBitmap;
 import static org.mariotaku.twidere.util.Utils.getNonEmptyString;
 import static org.mariotaku.twidere.util.Utils.isUserLoggedIn;
 import static org.mariotaku.twidere.util.Utils.makeAccountContentValues;
@@ -72,6 +71,7 @@ import org.mariotaku.twidere.util.OAuthPasswordAuthenticator.AuthenticityTokenEx
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator.WrongUserPassException;
 import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.net.HttpClientImpl;
+import org.mariotaku.twidere.view.ColorPickerView;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterConstants;
@@ -482,7 +482,7 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 
 	private void setUserColorButton() {
 		if (mUserColor != null) {
-			mSetColorButton.setImageBitmap(getColorPreviewBitmap(this, mUserColor));
+			mSetColorButton.setImageBitmap(ColorPickerView.getColorPreviewBitmap(this, mUserColor));
 		} else {
 			mSetColorButton.setImageResource(R.drawable.ic_menu_color_palette);
 		}

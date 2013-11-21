@@ -23,163 +23,118 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.PixelFormat;
-import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.LinearLayout;
+import android.support.v4.app.FragmentActivity;
+import android.view.LayoutInflater;
+import android.view.View;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.view.ColorPickerPresetsView;
+import org.mariotaku.twidere.view.ColorPickerPresetsView.OnColorClickListener;
 import org.mariotaku.twidere.view.ColorPickerView;
 import org.mariotaku.twidere.view.ColorPickerView.OnColorChangedListener;
 
-public class ColorPickerDialogFragment extends BaseSupportDialogFragment {
+public class ColorPickerDialogFragment extends BaseSupportDialogFragment implements DialogInterface.OnClickListener {
 
-	private ColorPickerDialog mDialog;
-
-	private OnColorSelectedListener mListener;
-
-	private int mInitialColor;
+	@Override
+	public void onClick(final DialogInterface dialog, final int which) {
+		final FragmentActivity a = getActivity();
+		final Dialog d = getDialog();
+		if (!(a instanceof OnColorSelectedListener) || !(d instanceof ColorPickerDialog)) return;
+		switch (which) {
+			case DialogInterface.BUTTON_POSITIVE:
+				final int color = ((ColorPickerDialog) d).getColor();
+				((OnColorSelectedListener) a).onColorSelected(color);
+				break;
+		}
+	}
 
 	@Override
 	public Dialog onCreateDialog(final Bundle savedInstanceState) {
+		final int color;
+		final Bundle args = getArguments();
 		if (savedInstanceState != null) {
-			mInitialColor = savedInstanceState.getInt(EXTRA_COLOR, Color.WHITE);
+			color = savedInstanceState.getInt(EXTRA_COLOR, Color.WHITE);
 		} else {
-			mInitialColor = getArguments().getInt(EXTRA_COLOR, Color.WHITE);
+			color = args.getInt(EXTRA_COLOR, Color.WHITE);
 		}
-		if (getActivity() instanceof OnColorSelectedListener) {
-			mListener = (OnColorSelectedListener) getActivity();
-		}
-		mDialog = new ColorPickerDialog(getActivity(), mInitialColor);
-		return mDialog;
+		final boolean showAlphaSlider = args.getBoolean(EXTRA_ALPHA_SLIDER, true);
+		final ColorPickerDialog d = new ColorPickerDialog(getActivity(), color, showAlphaSlider);
+		d.setButton(DialogInterface.BUTTON_POSITIVE, getString(android.R.string.ok), this);
+		d.setButton(DialogInterface.BUTTON_NEGATIVE, getString(android.R.string.cancel), this);
+		return d;
 	}
 
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
-		outState.putInt(Accounts.USER_COLOR, mInitialColor);
+		final Dialog d = getDialog();
+		if (d instanceof ColorPickerDialog) {
+			outState.putInt(EXTRA_COLOR, ((ColorPickerDialog) d).getColor());
+		}
 		super.onSaveInstanceState(outState);
 	}
 
-	public class ColorPickerDialog extends AlertDialog implements OnColorChangedListener, OnClickListener {
+	public static final class ColorPickerDialog extends AlertDialog implements OnColorChangedListener,
+			OnColorClickListener {
 
 		private ColorPickerView mColorPicker;
+		private ColorPickerPresetsView mColorPresets;
 
-		public ColorPickerDialog(final Context context, final int initialColor) {
-
+		public ColorPickerDialog(final Context context, final int initialColor, final boolean showAlphaSlider) {
 			super(context);
-
-			init(context, initialColor);
+			init(context, initialColor, showAlphaSlider);
 		}
 
 		public int getColor() {
-
 			return mColorPicker.getColor();
 		}
 
 		@Override
-		public void onClick(final DialogInterface dialog, final int which) {
-			switch (which) {
-				case BUTTON_POSITIVE:
-					if (mListener != null) {
-						mListener.onColorSelected(mColorPicker.getColor());
-					}
-					break;
-			}
-			dismiss();
-
+		public final void onColorChanged(final int color) {
+			final Context context = getContext();
+			setIcon(new BitmapDrawable(context.getResources(), ColorPickerView.getColorPreviewBitmap(context, color)));
 		}
 
 		@Override
-		public void onColorChanged(final int color) {
-			mInitialColor = color;
-			setIcon(new BitmapDrawable(getContext().getResources(), getPreviewBitmap(color)));
-
+		public final void onColorClick(final int color) {
+			if (mColorPicker == null) return;
+			mColorPicker.setColor(color, true);
 		}
 
-		public void setAlphaSliderVisible(final boolean visible) {
-
+		public final void setAlphaSliderVisible(final boolean visible) {
 			mColorPicker.setAlphaSliderVisible(visible);
 		}
 
-		private Bitmap getPreviewBitmap(final int color) {
-
-			final float density = getContext().getResources().getDisplayMetrics().density;
-			final int width = (int) (32 * density), height = (int) (32 * density);
-
-			final Bitmap bm = Bitmap.createBitmap(width, height, Config.ARGB_8888);
-			final Canvas canvas = new Canvas(bm);
-
-			final int rectrangle_size = (int) (density * 5);
-			final int numRectanglesHorizontal = (int) Math.ceil(width / rectrangle_size);
-			final int numRectanglesVertical = (int) Math.ceil(height / rectrangle_size);
-			final Rect r = new Rect();
-			boolean verticalStartWhite = true;
-			for (int i = 0; i <= numRectanglesVertical; i++) {
-
-				boolean isWhite = verticalStartWhite;
-				for (int j = 0; j <= numRectanglesHorizontal; j++) {
-
-					r.top = i * rectrangle_size;
-					r.left = j * rectrangle_size;
-					r.bottom = r.top + rectrangle_size;
-					r.right = r.left + rectrangle_size;
-					final Paint paint = new Paint();
-					paint.setColor(isWhite ? Color.WHITE : Color.GRAY);
-
-					canvas.drawRect(r, paint);
-
-					isWhite = !isWhite;
-				}
-
-				verticalStartWhite = !verticalStartWhite;
-
-			}
-			canvas.drawColor(color);
-			final Paint paint = new Paint();
-			paint.setColor(Color.WHITE);
-			paint.setStrokeWidth(2.0f);
-			final float[] points = new float[] { 0, 0, width, 0, 0, 0, 0, height, width, 0, width, height, 0, height,
-					width, height };
-			canvas.drawLines(points, paint);
-
-			return bm;
+		public final void setColor(final int color) {
+			mColorPicker.setColor(color);
 		}
 
-		private void init(final Context context, final int color) {
+		public final void setColor(final int color, final boolean callback) {
+			mColorPicker.setColor(color, callback);
+		}
+
+		private void init(final Context context, final int color, final boolean showAlphaSlider) {
 
 			// To fight color branding.
 			getWindow().setFormat(PixelFormat.RGBA_8888);
 
-			final LinearLayout mContentView = new LinearLayout(context);
-			mContentView.setGravity(Gravity.CENTER);
+			final LayoutInflater inflater = LayoutInflater.from(getContext());
+			final View view = inflater.inflate(R.layout.color_picker, null);
 
-			mColorPicker = new ColorPickerView(context);
-
-			mContentView.addView(mColorPicker, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-
-			mContentView.setPadding(Math.round(mColorPicker.getDrawingOffset()), 0,
-					Math.round(mColorPicker.getDrawingOffset()), 0);
+			mColorPicker = (ColorPickerView) view.findViewById(R.id.color_picker);
+			mColorPresets = (ColorPickerPresetsView) view.findViewById(R.id.color_presets);
 
 			mColorPicker.setOnColorChangedListener(this);
-			mColorPicker.setColor(color, true);
-			mColorPicker.setAlphaSliderVisible(true);
+			mColorPresets.setOnColorClickListener(this);
+
+			setColor(color, true);
+			setAlphaSliderVisible(showAlphaSlider);
 
 			setTitle(R.string.pick_color);
-			setView(mContentView);
-
-			setButton(BUTTON_POSITIVE, context.getString(android.R.string.ok), this);
-			setButton(BUTTON_NEGATIVE, context.getString(android.R.string.cancel), this);
-
+			setView(view);
 		}
 
 	}

@@ -46,12 +46,10 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
@@ -1396,50 +1394,6 @@ public final class Utils implements Constants {
 			count++;
 		}
 		return count;
-	}
-
-	public static Bitmap getColorPreviewBitmap(final Context context, final int color) {
-		if (context == null) return null;
-		final float density = context.getResources().getDisplayMetrics().density;
-		final int width = (int) (32 * density), height = (int) (32 * density);
-
-		final Bitmap bm = Bitmap.createBitmap(width, height, Config.ARGB_8888);
-		final Canvas canvas = new Canvas(bm);
-
-		final int rectrangle_size = (int) (density * 5);
-		final int numRectanglesHorizontal = (int) Math.ceil(width / rectrangle_size);
-		final int numRectanglesVertical = (int) Math.ceil(height / rectrangle_size);
-		final Rect r = new Rect();
-		boolean verticalStartWhite = true;
-		for (int i = 0; i <= numRectanglesVertical; i++) {
-
-			boolean isWhite = verticalStartWhite;
-			for (int j = 0; j <= numRectanglesHorizontal; j++) {
-
-				r.top = i * rectrangle_size;
-				r.left = j * rectrangle_size;
-				r.bottom = r.top + rectrangle_size;
-				r.right = r.left + rectrangle_size;
-				final Paint paint = new Paint();
-				paint.setColor(isWhite ? Color.WHITE : Color.GRAY);
-
-				canvas.drawRect(r, paint);
-
-				isWhite = !isWhite;
-			}
-
-			verticalStartWhite = !verticalStartWhite;
-
-		}
-		canvas.drawColor(color);
-		final Paint paint = new Paint();
-		paint.setColor(Color.WHITE);
-		paint.setStrokeWidth(2.0f);
-		final float[] points = new float[] { 0, 0, width, 0, 0, 0, 0, height, width, 0, width, height, 0, height,
-				width, height };
-		canvas.drawLines(points, paint);
-
-		return bm;
 	}
 
 	public static Selectable getColumnsFromProjection(final String... projection) {
