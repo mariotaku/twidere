@@ -308,8 +308,9 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		mScreenNameView.setText("@" + user.screen_name);
 		mDescriptionContainer.setVisibility(user_is_me || !isEmpty(user.description_html) ? View.VISIBLE : View.GONE);
 		mDescriptionView.setText(user.description_html != null ? Html.fromHtml(user.description_html) : null);
-		final TwidereLinkify mLinkify = new TwidereLinkify(this);
-		mLinkify.applyAllLinks(mDescriptionView, user.account_id, false);
+		final TwidereLinkify linkify = new TwidereLinkify(this);
+		linkify.setHighlightColor(ThemeUtils.getUserThemeColor(getActivity()));
+		linkify.applyAllLinks(mDescriptionView, user.account_id, false);
 		mDescriptionView.setMovementMethod(null);
 		mLocationContainer.setVisibility(user_is_me || !isEmpty(user.location) ? View.VISIBLE : View.GONE);
 		mLocationView.setText(user.location);

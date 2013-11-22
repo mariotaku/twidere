@@ -166,7 +166,7 @@
   <string name="notifications_type_summary">Questa scelta NON sovrascrive le impostazioni di sistema.</string>
   <string name="sound">Suono</string>
   <string name="vibration">Vibrazione</string>
-  <string name="lights">Illumina Led</string>
+  <string name="light">Illumina Led</string>
   <string name="notifications">Notifiche</string>
   <string name="new_notifications">Nuove notifiche</string>
   <string name="screen_name">Username</string>

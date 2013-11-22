@@ -182,7 +182,7 @@
   <string name="notifications_type_summary">To NIE nadpisze ustawień systemowych.</string>
   <string name="sound">Dźwięk</string>
   <string name="vibration">Wibracja</string>
-  <string name="lights">Światełko</string>
+  <string name="light">Światełko</string>
   <string name="notifications">Powiadomienia</string>
   <string name="new_notifications">Nowe powiadomienia</string>
   <string name="screen_name">Nazwa użytkownika</string>

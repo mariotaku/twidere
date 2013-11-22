@@ -168,7 +168,7 @@
   <string name="notifications_type_summary">이 옵션은 시스템 설정을 무시하지 않습니다.</string>
   <string name="sound">소리</string>
   <string name="vibration">진동</string>
-  <string name="lights">조명</string>
+  <string name="light">조명</string>
   <string name="notifications">알림</string>
   <string name="new_notifications">새로운 알림</string>
   <string name="screen_name">사용자명</string>

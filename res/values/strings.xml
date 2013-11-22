@@ -182,8 +182,9 @@
 	<string name="notifications_type">Notifications type</string>
 	<string name="notifications_type_summary">This option will NOT override system settings.</string>
 	<string name="sound">Sound</string>
+	<string name="ringtone">Ringtone</string>
 	<string name="vibration">Vibration</string>
-	<string name="lights">Lights</string>
+	<string name="light">Light</string>
 	<string name="notifications">Notifications</string>
 	<string name="new_notifications">New notifications</string>
 	<string name="screen_name">Username</string>

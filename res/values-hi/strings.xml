@@ -137,7 +137,7 @@
   <string name="notifications_type_summary">यह विकल्प सिस्टम सेटिंग की अवहेलना नहीं करेगा।</string>
   <string name="sound">आवाज़</string>
   <string name="vibration">कंपन</string>
-  <string name="lights">बत्ती</string>
+  <string name="light">बत्ती</string>
   <string name="notifications">सूचनाएँ</string>
   <string name="new_notifications">नई सूचनाएँ</string>
   <string name="screen_name">यूज़रनेम</string>

@@ -181,7 +181,7 @@
   <string name="notifications_type_summary">Цей параметр не буде переписувати налаштування системи.</string>
   <string name="sound">Звук</string>
   <string name="vibration">Вібрація</string>
-  <string name="lights">Підсвітка</string>
+  <string name="light">Підсвітка</string>
   <string name="notifications">Сповіщення</string>
   <string name="new_notifications">Нові сповіщення</string>
   <string name="screen_name">Ім\'я користувача</string>

@@ -73,9 +73,10 @@ public abstract class BaseAccountPreferenceFragment extends PreferenceFragment i
 		}
 	}
 
-	protected long getAccountId() {
-		final Account account = getArguments().getParcelable(EXTRA_ACCOUNT);
-		return account != null ? account.account_id : -1;
+	protected Account getAccount() {
+		final Bundle args = getArguments();
+		if (args == null) return null;
+		return args.getParcelable(EXTRA_ACCOUNT);
 	}
 
 	protected abstract int getPreferencesResource();

@@ -181,8 +181,9 @@
   <string name="notifications_type">通知类型</string>
   <string name="notifications_type_summary">这个选项将不会覆盖系统的声音/震动设置</string>
   <string name="sound">声音</string>
+  <string name="ringtone">铃声</string>
   <string name="vibration">震动</string>
-  <string name="lights">LED闪烁</string>
+  <string name="light">亮色</string>
   <string name="notifications">通知</string>
   <string name="new_notifications">新通知</string>
   <string name="screen_name">用户名</string>
@@ -563,4 +564,8 @@
   <string name="general">通用</string>
   <string name="hints">提示</string>
   <string name="finish">完成</string>
+  <string name="theme_background">主题背景</string>
+  <string name="theme_background_default">默认</string>
+  <string name="theme_background_solid">纯白/纯黑</string>
+  <string name="theme_background_transparent">透明</string>
 </resources>

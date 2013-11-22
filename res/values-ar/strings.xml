@@ -162,7 +162,7 @@
   <string name="notifications_type_summary">هذا الخيار لن يتجاهل إعدادات النظام.</string>
   <string name="sound">بالصوت</string>
   <string name="vibration">بالإهتزاز</string>
-  <string name="lights">﻿أضواء</string>
+  <string name="light">﻿أضواء</string>
   <string name="notifications">الإخطارات</string>
   <string name="new_notifications">إخطارات جديدة</string>
   <string name="screen_name">اسم المستخدم</string>

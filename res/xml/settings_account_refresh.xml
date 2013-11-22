@@ -3,31 +3,23 @@
 	android:title="@string/auto_refresh">
 
 	<PreferenceCategory
-		android:key="cat_auto_refresh"
-		android:title="@string/auto_refresh"/>
-
-	<ListPreference
-		android:defaultValue="15"
-		android:entries="@array/entries_refresh_interval"
-		android:entryValues="@array/values_refresh_interval"
-		android:key="refresh_interval"
-		android:summary="%s"
-		android:title="@string/refresh_interval"/>
-
-	<PreferenceCategory
 		android:key="cat_refresh_content"
 		android:title="@string/content_to_refresh">
 		<CheckBoxPreference
-			android:key="refresh_enable_home_timeline"
+			android:defaultValue="false"
+			android:key="auto_refresh_home_timeline"
 			android:title="@string/home"/>
 		<CheckBoxPreference
-			android:key="refresh_enable_mentions"
+			android:defaultValue="true"
+			android:key="auto_refresh_mentions"
 			android:title="@string/mentions"/>
 		<CheckBoxPreference
-			android:key="refresh_enable_direct_messages"
+			android:defaultValue="true"
+			android:key="auto_refresh_direct_messages"
 			android:title="@string/direct_messages"/>
 		<CheckBoxPreference
-			android:key="refresh_enable_trends"
+			android:defaultValue="false"
+			android:key="auto_refresh_trends"
 			android:title="@string/trends"/>
 	</PreferenceCategory>
 

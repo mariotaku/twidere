@@ -179,7 +179,7 @@
   <string name="notifications_type_summary">Этот параметр НЕ будет переопределять настройки системы.</string>
   <string name="sound">Звук</string>
   <string name="vibration">Вибрация</string>
-  <string name="lights">Светодиод</string>
+  <string name="light">Светодиод</string>
   <string name="notifications">Уведомления</string>
   <string name="new_notifications">Новые уведомления</string>
   <string name="screen_name">Имя пользователя</string>

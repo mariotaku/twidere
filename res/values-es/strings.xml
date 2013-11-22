@@ -179,7 +179,7 @@
   <string name="notifications_type_summary">Esta opción no anulará la configuración del sistema.</string>
   <string name="sound">Sonido</string>
   <string name="vibration">Vibración</string>
-  <string name="lights">Luces</string>
+  <string name="light">Luces</string>
   <string name="notifications">Notificaciones</string>
   <string name="new_notifications">Nuevas notificaciones</string>
   <string name="screen_name">Nombre de usuario</string>

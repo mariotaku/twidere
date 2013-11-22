@@ -36,30 +36,32 @@ import android.view.ViewGroup;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.view.CardItemLinearLayout;
 import org.mariotaku.twidere.view.ForegroundImageView;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
-public class StatusPreviewPreference extends Preference implements Constants, OnSharedPreferenceChangeListener {
+public class CardPreviewPreference extends Preference implements Constants, OnSharedPreferenceChangeListener {
 
 	private final LayoutInflater mInflater;
 	private final SharedPreferences mPreferences;
 	private final TwidereLinkify mLinkify;
 	private StatusViewHolder mHolder;
 
-	public StatusPreviewPreference(final Context context) {
+	public CardPreviewPreference(final Context context) {
 		this(context, null);
 	}
 
-	public StatusPreviewPreference(final Context context, final AttributeSet attrs) {
+	public CardPreviewPreference(final Context context, final AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
 
-	public StatusPreviewPreference(final Context context, final AttributeSet attrs, final int defStyle) {
+	public CardPreviewPreference(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		mInflater = LayoutInflater.from(context);
 		mLinkify = new TwidereLinkify(null);
+		mLinkify.setHighlightColor(ThemeUtils.getUserThemeColor(context));
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
 	}
@@ -92,6 +94,9 @@ public class StatusPreviewPreference extends Preference implements Constants, On
 
 		if (mHolder.profile_image instanceof ForegroundImageView) {
 			((ForegroundImageView) mHolder.profile_image).setForeground(null);
+		}
+		if (mHolder.image_preview instanceof ForegroundImageView) {
+			((ForegroundImageView) mHolder.image_preview).setForeground(null);
 		}
 		if (mHolder.content instanceof CardItemLinearLayout) {
 			((CardItemLinearLayout) mHolder.content).setItemSelector(null);

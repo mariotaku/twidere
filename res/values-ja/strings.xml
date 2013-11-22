@@ -182,7 +182,7 @@
   <string name="notifications_type_summary">このオプションはシステム設定を上書きしません。</string>
   <string name="sound">音</string>
   <string name="vibration">バイブ</string>
-  <string name="lights">LED通知</string>
+  <string name="light">LED通知</string>
   <string name="notifications">通知</string>
   <string name="new_notifications">新しい通知</string>
   <string name="screen_name">ユーザー名</string>

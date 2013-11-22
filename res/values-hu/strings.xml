@@ -142,7 +142,7 @@
   <string name="notifications_type_summary">Ez az opció NEM írja felül a rendszer beállításait.</string>
   <string name="sound">Hang</string>
   <string name="vibration">Rezgés</string>
-  <string name="lights">Fények</string>
+  <string name="light">Fények</string>
   <string name="notifications">Értesítések</string>
   <string name="new_notifications">Új értesítések</string>
   <string name="screen_name">Felhasználónév</string>

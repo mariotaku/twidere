@@ -36,20 +36,9 @@
 		<!-- View background -->
 		<attr name="android:background"/>
 	</declare-styleable>
-
-	<!-- Default fade types. -->
-	<attr name="paneFadeType">
-
-		<!-- Fade is disabled. -->
-		<enum name="none" value="0"/>
-		<!-- Fade applies to actions container. -->
-		<enum name="left" value="1"/>
-		<!-- Fade applies to content container. -->
-		<enum name="right" value="2"/>
-		<!-- Fade applies to every container. -->
-		<enum name="both" value="3"/>
-	</attr>
-
+	<declare-styleable name="NotificationTypePreference">
+		<attr name="notificationType"/>
+	</declare-styleable>
 	<declare-styleable name="SlidingPaneView">
 
 		<!-- Spacing value. -->
@@ -77,5 +66,23 @@
 		<attr name="min" format="integer"/>
 		<attr name="progressTextSuffix" format="string"/>
 	</declare-styleable>
+	<!-- Default fade types. -->
+	<attr name="paneFadeType">
+
+		<!-- Fade is disabled. -->
+		<enum name="none" value="0"/>
+		<!-- Fade applies to actions container. -->
+		<enum name="left" value="1"/>
+		<!-- Fade applies to content container. -->
+		<enum name="right" value="2"/>
+		<!-- Fade applies to every container. -->
+		<enum name="both" value="3"/>
+	</attr>
+	<attr name="notificationType">
+		<flag name="none" value="0"/>
+		<flag name="ringtone" value="1"/>
+		<flag name="vibration" value="2"/>
+		<flag name="light" value="4"/>
+	</attr>
 
 </resources>

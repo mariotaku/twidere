@@ -1,20 +1,20 @@
 package org.mariotaku.twidere.view;
 
 import android.content.Context;
-import android.content.res.Resources;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 
-public class ColorPickerPresetsView extends LinearLayout implements View.OnClickListener {
+public class ColorPickerPresetsView extends LinearLayout implements View.OnClickListener, Constants {
 
-	private final static int[] COLORS_RES = { android.R.color.holo_red_dark, android.R.color.holo_red_light,
-			android.R.color.holo_orange_dark, android.R.color.holo_orange_light, android.R.color.holo_green_light,
-			android.R.color.holo_green_dark, android.R.color.holo_blue_bright, android.R.color.holo_blue_light,
-			android.R.color.holo_blue_dark, android.R.color.holo_purple, android.R.color.white };
+	private final static int[] COLORS = { HOLO_RED_DARK, HOLO_RED_LIGHT, HOLO_ORANGE_DARK, HOLO_ORANGE_LIGHT,
+			HOLO_GREEN_LIGHT, HOLO_GREEN_DARK, HOLO_BLUE_LIGHT, HOLO_BLUE_DARK, HOLO_PURPLE_DARK, HOLO_PURPLE_LIGHT,
+			Color.WHITE };
 
 	private OnColorClickListener mOnColorClickListener;
 
@@ -29,10 +29,8 @@ public class ColorPickerPresetsView extends LinearLayout implements View.OnClick
 	public ColorPickerPresetsView(final Context context, final AttributeSet attrs, final int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
 		setOrientation(HORIZONTAL);
-		final Resources res = getResources();
 		final LayoutInflater inflater = LayoutInflater.from(context);
-		for (final int resId : COLORS_RES) {
-			final int color = res.getColor(resId);
+		for (final int color : COLORS) {
 			final ColorView v = (ColorView) inflater.inflate(R.layout.color_picker_preset_item, this, false);
 			v.setColor(color);
 			v.setOnClickListener(this);

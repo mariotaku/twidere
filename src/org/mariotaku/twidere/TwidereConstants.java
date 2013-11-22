@@ -18,6 +18,7 @@
  */
 package org.mariotaku.twidere;
 
+import org.mariotaku.twidere.annotation.PreferenceType;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
@@ -128,45 +129,101 @@ public interface TwidereConstants {
 	public static final String FORMAT_PATTERN_NAME = "[NAME]";
 	public static final String FORMAT_PATTERN_LINK = "[LINK]";
 
+	public static final String LINK_HIGHLIGHT_OPTION_NONE = "none";
+	public static final String LINK_HIGHLIGHT_OPTION_HIGHLIGHT = "highlight";
+	public static final String LINK_HIGHLIGHT_OPTION_UNDERLINE = "underline";
+	public static final String LINK_HIGHLIGHT_OPTION_BOTH = "both";
+	public static final int LINK_HIGHLIGHT_OPTION_CODE_NONE = 0;
+	public static final int LINK_HIGHLIGHT_OPTION_CODE_HIGHLIGHT = 1;
+	public static final int LINK_HIGHLIGHT_OPTION_CODE_UNDERLINE = 2;
+	public static final int LINK_HIGHLIGHT_OPTION_CODE_BOTH = 3;
+	public static final int NOTIFICATION_FLAG_RINGTONE = 0x1;
+	public static final int NOTIFICATION_FLAG_VIBRATION = 0x2;
+	public static final int NOTIFICATION_FLAG_LIGHT = 0x4;
+
+	public static final String COMPOSE_QUIT_ACTION_ASK = "ask";
+	public static final String COMPOSE_QUIT_ACTION_SAVE = "save";
+	public static final String COMPOSE_QUIT_ACTION_DISCARD = "discard";
+
+	@PreferenceType(PreferenceType.INT)
 	public static final String PREFERENCE_KEY_DATABASE_ITEM_LIMIT = "database_item_limit";
+	@PreferenceType(PreferenceType.INT)
 	public static final String PREFERENCE_KEY_LOAD_ITEM_LIMIT = "load_item_limit";
+	@PreferenceType(PreferenceType.INT)
 	public static final String PREFERENCE_KEY_TEXT_SIZE = "text_size_int";
+	@PreferenceType(PreferenceType.STRING)
 	public static final String PREFERENCE_KEY_THEME = "theme";
+	@PreferenceType(PreferenceType.STRING)
 	public static final String PREFERENCE_KEY_THEME_BACKGROUND = "theme_background";
+	@PreferenceType(PreferenceType.INT)
 	public static final String PREFERENCE_KEY_THEME_COLOR = "theme_color";
+	@PreferenceType(PreferenceType.NULL)
 	public static final String PREFERENCE_KEY_CLEAR_DATABASES = "clear_databases";
+	@PreferenceType(PreferenceType.NULL)
 	public static final String PREFERENCE_KEY_CLEAR_CACHE = "clear_cache";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE = "display_profile_image";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_DISPLAY_IMAGE_PREVIEW = "display_image_preview";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_BOTTOM_COMPOSE_BUTTON = "bottom_compose_button";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_LEFTSIDE_COMPOSE_BUTTON = "leftside_compose_button";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_BOTTOM_SEND_BUTTON = "bottom_send_button";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_ATTACH_LOCATION = "attach_location";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_GZIP_COMPRESSING = "gzip_compressing";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_IGNORE_SSL_ERROR = "ignore_ssl_error";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_LOAD_MORE_AUTOMATICALLY = "load_more_automatically";
+	@PreferenceType(PreferenceType.STRING)
 	public static final String PREFERENCE_KEY_CONSUMER_KEY = "consumer_key";
+	@PreferenceType(PreferenceType.STRING)
 	public static final String PREFERENCE_KEY_CONSUMER_SECRET = "consumer_secret";
+	@PreferenceType(PreferenceType.STRING)
 	public static final String PREFERENCE_KEY_QUOTE_FORMAT = "quote_format";
+	@PreferenceType(PreferenceType.LONG)
 	public static final String PREFERENCE_KEY_DEFAULT_ACCOUNT_ID = "default_account_id";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_REMEMBER_POSITION = "remember_position";
+	@PreferenceType(PreferenceType.INT)
 	public static final String PREFERENCE_KEY_SAVED_TAB_POSITION = "saved_tab_position";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_ENABLE_PROXY = "enable_proxy";
+	@PreferenceType(PreferenceType.STRING)
 	public static final String PREFERENCE_KEY_PROXY_HOST = "proxy_host";
+	@PreferenceType(PreferenceType.STRING)
 	public static final String PREFERENCE_KEY_PROXY_PORT = "proxy_port";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_REFRESH_ON_START = "refresh_on_start";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_REFRESH_AFTER_TWEET = "refresh_after_tweet";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_AUTO_REFRESH = "auto_refresh";
+	@PreferenceType(PreferenceType.INT)
 	public static final String PREFERENCE_KEY_REFRESH_INTERVAL = "refresh_interval";
-	public static final String PREFERENCE_KEY_REFRESH_ENABLE_HOME_TIMELINE = "refresh_enable_home_timeline";
-	public static final String PREFERENCE_KEY_REFRESH_ENABLE_MENTIONS = "refresh_enable_mentions";
-	public static final String PREFERENCE_KEY_REFRESH_ENABLE_DIRECT_MESSAGES = "refresh_enable_direct_messages";
-	public static final String PREFERENCE_KEY_REFRESH_ENABLE_TRENDS = "refresh_enable_trends";
+	@PreferenceType(PreferenceType.BOOLEAN)
+	public static final String PREFERENCE_KEY_AUTO_REFRESH_HOME_TIMELINE = "auto_refresh_home_timeline";
+	@PreferenceType(PreferenceType.BOOLEAN)
+	public static final String PREFERENCE_KEY_AUTO_REFRESH_MENTIONS = "auto_refresh_mentions";
+	@PreferenceType(PreferenceType.BOOLEAN)
+	public static final String PREFERENCE_KEY_AUTO_REFRESH_DIRECT_MESSAGES = "auto_refresh_direct_messages";
+	@PreferenceType(PreferenceType.BOOLEAN)
+	public static final String PREFERENCE_KEY_AUTO_REFRESH_TRENDS = "auto_refresh_trends";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_NOTIFICATION_ENABLE_HOME_TIMELINE = "notification_enable_home_timeline";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS = "notification_enable_mentions";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES = "notification_enable_direct_messages";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND = "notification_have_sound";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_NOTIFICATION_HAVE_VIBRATION = "notification_have_vibration";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_NOTIFICATION_HAVE_LIGHTS = "notification_have_lights";
 	public static final String PREFERENCE_KEY_LOCAL_TRENDS_WOEID = "local_trends_woeid";
 	public static final String PREFERENCE_KEY_NOTIFICATION_RINGTONE = "notification_ringtone";
@@ -228,25 +285,18 @@ public interface TwidereConstants {
 	public static final String PREFERENCE_DEFAULT_IMAGE_UPLOAD_FORMAT = FORMAT_PATTERN_TEXT + " " + FORMAT_PATTERN_LINK;
 
 	public static final String PREFERENCE_DEFAULT_REFRESH_INTERVAL = "15";
-	public static final boolean PREFERENCE_DEFAULT_AUTO_REFRESH = false;
+	public static final boolean PREFERENCE_DEFAULT_AUTO_REFRESH = true;
+	public static final boolean PREFERENCE_DEFAULT_AUTO_REFRESH_HOME_TIMELINE = false;
+	public static final boolean PREFERENCE_DEFAULT_AUTO_REFRESH_MENTIONS = true;
+	public static final boolean PREFERENCE_DEFAULT_AUTO_REFRESH_DIRECT_MESSAGES = true;
+	public static final boolean PREFERENCE_DEFAULT_AUTO_REFRESH_TRENDS = false;
 	public static final boolean PREFERENCE_DEFAULT_NOTIFICATION = true;
+	public static final int PREFERENCE_DEFAULT_NOTIFICATION_TYPE = NOTIFICATION_FLAG_LIGHT
+			| NOTIFICATION_FLAG_VIBRATION;
 
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
 	public static final int PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT = 20;
 	public static final boolean PREFERENCE_DEFAULT_HARDWARE_ACCELERATION = true;
-
-	public static final String LINK_HIGHLIGHT_OPTION_NONE = "none";
-	public static final String LINK_HIGHLIGHT_OPTION_HIGHLIGHT = "highlight";
-	public static final String LINK_HIGHLIGHT_OPTION_UNDERLINE = "underline";
-	public static final String LINK_HIGHLIGHT_OPTION_BOTH = "both";
-	public static final int LINK_HIGHLIGHT_OPTION_CODE_NONE = 0;
-	public static final int LINK_HIGHLIGHT_OPTION_CODE_HIGHLIGHT = 1;
-	public static final int LINK_HIGHLIGHT_OPTION_CODE_UNDERLINE = 2;
-	public static final int LINK_HIGHLIGHT_OPTION_CODE_BOTH = 3;
-
-	public static final String COMPOSE_QUIT_ACTION_ASK = "ask";
-	public static final String COMPOSE_QUIT_ACTION_SAVE = "save";
-	public static final String COMPOSE_QUIT_ACTION_DISCARD = "discard";
 
 	public static final String INTENT_PACKAGE_PREFIX = "org.mariotaku.twidere.";
 

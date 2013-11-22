@@ -181,7 +181,7 @@
   <string name="notifications_type_summary">Diese Option ändert KEINE Systemeinstellungen.</string>
   <string name="sound">Ton</string>
   <string name="vibration">Vibration</string>
-  <string name="lights">Licht</string>
+  <string name="light">Licht</string>
   <string name="notifications">Benachrichtigungen</string>
   <string name="new_notifications">Neue Benachrichtigungen</string>
   <string name="screen_name">Benutzername</string>

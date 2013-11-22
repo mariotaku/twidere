@@ -181,7 +181,7 @@
   <string name="notifications_type_summary">Essa opção NÃO vai substituir as configurações de sistema.</string>
   <string name="sound">Som</string>
   <string name="vibration">Vibração</string>
-  <string name="lights">Luzes</string>
+  <string name="light">Luzes</string>
   <string name="notifications">Notificações</string>
   <string name="new_notifications">Novas notificações</string>
   <string name="screen_name">Nome de Usuário</string>

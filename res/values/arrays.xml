@@ -40,7 +40,7 @@
 	<string-array name="entries_notification_type">
 		<item>@string/sound</item>
 		<item>@string/vibration</item>
-		<item>@string/lights</item>
+		<item>@string/light</item>
 	</string-array>
 	<string-array name="entries_name_display_option">
 		<item>@string/both</item>

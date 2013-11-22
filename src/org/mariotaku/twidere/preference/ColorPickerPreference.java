@@ -173,7 +173,7 @@ public class ColorPickerPreference extends DialogPreference implements DialogInt
 				widget_frame.getPaddingBottom());
 		// remove preview image that is already created
 		widget_frame.removeAllViews();
-		widget_frame.setAlpha(isEnabled() ? 1 : 0.5f);
+		widget_frame.setAlpha(isEnabled() ? 1 : 0.25f);
 		final ImageView imageView = new ImageView(getContext());
 		widget_frame.addView(imageView);
 		imageView.setImageBitmap(ColorPickerView.getColorPreviewBitmap(getContext(), getValue()));

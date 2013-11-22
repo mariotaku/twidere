@@ -9,25 +9,6 @@
 	<PreferenceCategory
 		android:key="cat_general"
 		android:title="@string/general">
-		<org.mariotaku.twidere.preference.NotificationContentPreference
-			android:key="notification_content"
-			android:title="@string/content_to_nofity"/>
-
-		<org.mariotaku.twidere.preference.NotificationTypePreference
-			android:key="notifications_type"
-			android:summary="@string/notifications_type_summary"
-			android:title="@string/notifications_type"/>
-
-		<org.mariotaku.twidere.preference.RingtonePreference
-			android:defaultValue=""
-			android:key="notification_ringtone"
-			android:title="@string/notification_ringtone"/>
-
-		<org.mariotaku.twidere.preference.ColorPickerPreference
-			android:defaultValue="@android:color/holo_blue_dark"
-			android:key="notification_light_color"
-			android:title="@string/notification_light_color"/>
-
 		<org.mariotaku.twidere.preference.SilentNotificationsPreference
 			android:key="silent_notifications"
 			android:summary="@string/silent_notifications_summary"

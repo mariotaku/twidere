@@ -19,9 +19,23 @@
 
 package org.mariotaku.twidere.fragment;
 
+import android.os.Bundle;
+import android.preference.Preference;
+
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.model.Account;
 
 public class AccountNotificationSettingsFragment extends BaseAccountPreferenceFragment {
+
+	@Override
+	public void onActivityCreated(final Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		final Preference preference = findPreference(PREFERENCE_KEY_NOTIFICATION_LIGHT_COLOR);
+		final Account account = getAccount();
+		if (preference != null && account != null) {
+			preference.setDefaultValue(account.user_color);
+		}
+	}
 
 	@Override
 	protected int getPreferencesResource() {

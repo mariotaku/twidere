@@ -160,7 +160,7 @@
   <string name="notifications_type_summary">ตัวเลือกนี้จะไม่ทับค่าของระบบ</string>
   <string name="sound">เสียง</string>
   <string name="vibration">การสั่น</string>
-  <string name="lights">สว่าง</string>
+  <string name="light">สว่าง</string>
   <string name="notifications">การแจ้งเตือน</string>
   <string name="new_notifications">การแจ้งเตือนใหม่</string>
   <string name="screen_name">ชื่อผู้ใช้</string>

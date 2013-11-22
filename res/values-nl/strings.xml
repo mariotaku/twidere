@@ -174,7 +174,7 @@
   <string name="notifications_type_summary">Deze optie zal GEEN systeeminstellingen overschrijven.</string>
   <string name="sound">Geluid</string>
   <string name="vibration">Trilling</string>
-  <string name="lights">Lichten</string>
+  <string name="light">Lichten</string>
   <string name="notifications">Notificaties</string>
   <string name="new_notifications">Nieuwe notificaties</string>
   <string name="screen_name">Gebruikersnaam</string>

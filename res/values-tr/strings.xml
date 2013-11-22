@@ -142,7 +142,7 @@
   <string name="notifications_type_summary">Bu seçenek sistem ayarlarının yerine geçMEyecek.</string>
   <string name="sound">Ses</string>
   <string name="vibration">Titreşim</string>
-  <string name="lights">Işıklar</string>
+  <string name="light">Işıklar</string>
   <string name="notifications">Bildirimler</string>
   <string name="new_notifications">Yeni bildirimler</string>
   <string name="screen_name">Kullanıcı adı</string>

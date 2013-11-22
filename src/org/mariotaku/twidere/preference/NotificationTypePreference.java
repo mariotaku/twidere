@@ -19,40 +19,83 @@
 
 package org.mariotaku.twidere.preference;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.res.TypedArray;
+import android.preference.DialogPreference;
 import android.util.AttributeSet;
+import android.widget.ListView;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 
-public class NotificationTypePreference extends MultiSelectListPreference implements Constants {
+public class NotificationTypePreference extends DialogPreference implements Constants {
+
+	private final int mDefaultValue;
 
 	public NotificationTypePreference(final Context context) {
 		this(context, null);
 	}
 
 	public NotificationTypePreference(final Context context, final AttributeSet attrs) {
-		this(context, attrs, android.R.attr.preferenceStyle);
+		this(context, attrs, android.R.attr.dialogPreferenceStyle);
 	}
 
 	public NotificationTypePreference(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
+		final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.NotificationTypePreference);
+		mDefaultValue = a.getInteger(R.styleable.NotificationTypePreference_notificationType, 0);
+		a.recycle();
 	}
 
 	@Override
-	protected boolean[] getDefaults() {
-		return new boolean[] { false, false, false };
+	public void onClick(final DialogInterface dialog, final int which) {
+		final Dialog showingDialog = getDialog();
+		if (!(showingDialog instanceof AlertDialog)) return;
+		final AlertDialog alertDialog = (AlertDialog) showingDialog;
+		final ListView listView = alertDialog.getListView();
+		if (listView == null) return;
+		int value = 0;
+		final int[] flags = getFlags();
+		for (int i = 0, j = flags.length; i < j; i++) {
+			if (listView.isItemChecked(i)) {
+				value |= flags[i];
+			}
+		}
+		persistInt(value);
 	}
 
 	@Override
-	protected String[] getKeys() {
-		return new String[] { PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND, PREFERENCE_KEY_NOTIFICATION_HAVE_VIBRATION,
-				PREFERENCE_KEY_NOTIFICATION_HAVE_LIGHTS };
+	public void onPrepareDialogBuilder(final AlertDialog.Builder builder) {
+		super.onPrepareDialogBuilder(builder);
+		builder.setPositiveButton(android.R.string.ok, this);
+		builder.setNegativeButton(android.R.string.cancel, null);
+		final int value = getPersistedInt(mDefaultValue);
+		builder.setMultiChoiceItems(getEntries(), getCheckedItems(value), null);
 	}
 
-	@Override
-	protected String[] getNames() {
-		return getContext().getResources().getStringArray(R.array.entries_notification_type);
+	private boolean[] getCheckedItems(final int value) {
+		final int[] flags = getFlags();
+		final boolean[] checkedItems = new boolean[flags.length];
+		for (int i = 0, j = flags.length; i < j; i++) {
+			checkedItems[i] = (value & flags[i]) != 0;
+		}
+		return checkedItems;
+	}
+
+	private String[] getEntries() {
+		final Context context = getContext();
+		final String[] entries = new String[3];
+		entries[0] = context.getString(R.string.ringtone);
+		entries[1] = context.getString(R.string.vibration);
+		entries[2] = context.getString(R.string.light);
+		return entries;
+	}
+
+	private int[] getFlags() {
+		return new int[] { NOTIFICATION_FLAG_RINGTONE, NOTIFICATION_FLAG_VIBRATION, NOTIFICATION_FLAG_LIGHT };
 	}
 
 }
