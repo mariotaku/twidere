@@ -354,9 +354,10 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 					return true;
 				}
 				if (isDualPaneMode() && !FragmentManagerTrojan.isStateSaved(fm)) {
-					for (int i = 0; i < count; i++) {
-						fm.popBackStackImmediate();
-					}
+//					for (int i = 0; i < count; i++) {
+//						fm.popBackStackImmediate();
+//					}
+					fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE); 
 					updateActionsButton();
 				}
 				return true;

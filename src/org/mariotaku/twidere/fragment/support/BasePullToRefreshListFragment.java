@@ -135,11 +135,13 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 		builder.refreshOnUp(true);
 		builder.scrollDistance(DEFAULT_PULL_TO_REFRESH_SCROLL_DISTANCE);
 		builder.headerTransformer(new TwidereHeaderTransformer());
-		final SetupWizard wizard = ActionBarPullToRefresh.from(getActivity());
-		wizard.allChildrenArePullable();
-		wizard.listener(this);
-		wizard.options(builder.build());
-		wizard.setup(mPullToRefreshLayout);
+		if (!isDetached()) {
+			final SetupWizard wizard = ActionBarPullToRefresh.from(getActivity());
+			wizard.allChildrenArePullable();
+			wizard.listener(this);
+			wizard.options(builder.build());
+			wizard.setup(mPullToRefreshLayout);
+		}
 		lframe.addView(plv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.MATCH_PARENT));
 
