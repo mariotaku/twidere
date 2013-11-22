@@ -48,6 +48,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.FloatMath;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.view.Gravity;
@@ -851,7 +852,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			final Fragment f = mAttachedFragments.valueAt(i);
 			final View headerView = getPullToRefreshHeaderView(f);
 			if (headerView != null) {
-				headerView.scrollTo(-Math.round(percentOpen * ld.getMeasuredWidth()), 0);
+				headerView.scrollTo((int) -FloatMath.ceil(percentOpen * ld.getMeasuredWidth()), 0);
 			}
 		}
 	}

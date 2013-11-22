@@ -49,7 +49,6 @@ public class ActivitiesAboutMeFragment extends BaseActivitiesListFragment {
 	@Override
 	public Loader<List<ParcelableActivity>> onCreateLoader(final int id, final Bundle args) {
 		setProgressBarIndeterminateVisibility(true);
-		setRefreshing(true);
 		final long account_id = args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
 		return new ActivitiesAboutMeLoader(getActivity(), account_id, getData(), getSavedActivitiesFileArgs(),
 				getTabPosition());

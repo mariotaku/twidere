@@ -2,17 +2,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
+	android:gravity="center_horizontal"
 	android:orientation="vertical"
 	android:padding="@dimen/element_spacing_default">
 
 	<org.mariotaku.twidere.view.ColorPickerView
 		android:id="@+id/color_picker"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"/>
+		android:layout_height="wrap_content"
+		android:layout_weight="1"/>
 
 	<HorizontalScrollView
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
+		android:layout_height="wrap_content"
+		android:layout_weight="0">
 
 		<org.mariotaku.twidere.view.ColorPickerPresetsView
 			android:id="@+id/color_presets"

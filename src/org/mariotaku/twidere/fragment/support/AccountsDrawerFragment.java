@@ -37,7 +37,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.FiltersActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.activity.SettingsActivity;
-import org.mariotaku.twidere.activity.support.ColorSelectorActivity;
+import org.mariotaku.twidere.activity.support.ColorPickerDialogActivity;
 import org.mariotaku.twidere.activity.support.DraftsActivity;
 import org.mariotaku.twidere.activity.support.SignInActivity;
 import org.mariotaku.twidere.activity.support.UserProfileEditorActivity;
@@ -103,10 +103,9 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 	public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		switch (requestCode) {
 			case REQUEST_SET_COLOR: {
-				if (resultCode == Activity.RESULT_OK) if (data != null && data.getExtras() != null) {
-					final int color = data.getIntExtra(Accounts.USER_COLOR, Color.WHITE);
+				if (resultCode == Activity.RESULT_OK && data != null) {
 					final ContentValues values = new ContentValues();
-					values.put(Accounts.USER_COLOR, color);
+					values.put(Accounts.USER_COLOR, data.getIntExtra(EXTRA_COLOR, Color.WHITE));
 					final String where = Accounts.ACCOUNT_ID + " = " + mAdapter.getSelectedAccountId();
 					mResolver.update(Accounts.CONTENT_URI, values, where, null);
 					getLoaderManager().restartLoader(0, null, this);
@@ -175,10 +174,9 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 						break;
 					}
 					case MENU_SET_COLOR: {
-						final Intent intent = new Intent(getActivity(), ColorSelectorActivity.class);
-						final Bundle bundle = new Bundle();
-						bundle.putInt(Accounts.USER_COLOR, account.user_color);
-						intent.putExtras(bundle);
+						final Intent intent = new Intent(getActivity(), ColorPickerDialogActivity.class);
+						intent.putExtra(EXTRA_COLOR, account.user_color);
+						intent.putExtra(EXTRA_ALPHA_SLIDER, false);
 						startActivityForResult(intent, REQUEST_SET_COLOR);
 						break;
 					}

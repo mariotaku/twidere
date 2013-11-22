@@ -63,8 +63,7 @@ public class TrendsSuggectionsFragment extends BasePullToRefreshListFragment imp
 				setRefreshComplete();
 				getLoaderManager().restartLoader(0, null, TrendsSuggectionsFragment.this);
 			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
-				final AsyncTwitterWrapper twitter = getTwitterWrapper();
-				setRefreshing(twitter != null && twitter.isLocalTrendsRefreshing());
+				updateRefreshState();
 			}
 		}
 	};
@@ -121,14 +120,18 @@ public class TrendsSuggectionsFragment extends BasePullToRefreshListFragment imp
 		final IntentFilter filter = new IntentFilter(BROADCAST_TRENDS_UPDATED);
 		filter.addAction(BROADCAST_TASK_STATE_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
-		final AsyncTwitterWrapper twitter = getTwitterWrapper();
-		setRefreshing(twitter != null && twitter.isLocalTrendsRefreshing());
 	}
 
 	@Override
 	public void onStop() {
 		unregisterReceiver(mStatusReceiver);
 		super.onStop();
+	}
+
+	protected void updateRefreshState() {
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		if (twitter == null || !getUserVisibleHint()) return;
+		setRefreshing(twitter.isLocalTrendsRefreshing());
 	}
 
 	static class TrendsAdapter extends SimpleCursorAdapter {

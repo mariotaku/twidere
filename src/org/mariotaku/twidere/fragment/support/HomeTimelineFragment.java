@@ -64,8 +64,6 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 		filter.addAction(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_TASK_STATE_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
-		final AsyncTwitterWrapper twitter = getTwitterWrapper();
-		setRefreshing(twitter != null && twitter.isHomeTimelineRefreshing());
 	}
 
 	@Override

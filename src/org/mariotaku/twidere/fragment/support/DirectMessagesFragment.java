@@ -254,9 +254,6 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 		filter.addAction(BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED);
 		filter.addAction(BROADCAST_TASK_STATE_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
-		final AsyncTwitterWrapper twitter = getTwitterWrapper();
-		setRefreshing(twitter != null
-				&& (twitter.isReceivedDirectMessagesRefreshing() || twitter.isSentDirectMessagesRefreshing()));
 	}
 
 	@Override

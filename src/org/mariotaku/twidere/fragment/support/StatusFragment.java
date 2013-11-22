@@ -93,7 +93,7 @@ import edu.ucdavis.earlybird.ProfilingUtil;
 
 import org.mariotaku.menubar.MenuBar;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.support.ColorSelectorActivity;
+import org.mariotaku.twidere.activity.support.ColorPickerDialogActivity;
 import org.mariotaku.twidere.activity.support.LinkHandlerActivity;
 import org.mariotaku.twidere.adapter.MediaPreviewAdapter;
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
@@ -729,7 +729,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 				break;
 			}
 			case MENU_SET_COLOR: {
-				final Intent intent = new Intent(getActivity(), ColorSelectorActivity.class);
+				final Intent intent = new Intent(getActivity(), ColorPickerDialogActivity.class);
 				startActivityForResult(intent, REQUEST_SET_COLOR);
 				break;
 			}

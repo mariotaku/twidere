@@ -215,6 +215,14 @@ public class ThemeUtils implements Constants {
 		return d;
 	}
 
+	public static int getNoDisplayThemeResource(final Context context) {
+		if (context == null) return R.style.Theme_Twidere_Dark_NoDisplay;
+		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final String theme = pref.getString(PREFERENCE_KEY_THEME, THEME_NAME_TWIDERE);
+		if (THEME_NAME_DARK.equals(theme)) return R.style.Theme_Twidere_Dark_NoDisplay;
+		return R.style.Theme_Twidere_Light_NoDisplay;
+	}
+
 	public static Drawable getSelectableItemBackgroundDrawable(final Context context) {
 		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.selectableItemBackground });
 		final Drawable d = a.getDrawable(0);

@@ -148,8 +148,8 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 				break;
 			}
 			case REQUEST_SET_COLOR: {
-				if (resultCode == BaseSupportActivity.RESULT_OK) if (data != null) {
-					mUserColor = data.getIntExtra(Accounts.USER_COLOR, Color.TRANSPARENT);
+				if (resultCode == BaseSupportActivity.RESULT_OK && data != null) {
+					mUserColor = data.getIntExtra(EXTRA_COLOR, Color.TRANSPARENT);
 				}
 				setUserColorButton();
 				break;
@@ -192,12 +192,10 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 				break;
 			}
 			case R.id.set_color: {
-				final Intent intent = new Intent(this, ColorSelectorActivity.class);
-				final Bundle bundle = new Bundle();
+				final Intent intent = new Intent(this, ColorPickerDialogActivity.class);
 				if (mUserColor != null) {
-					bundle.putInt(Accounts.USER_COLOR, mUserColor);
+					intent.putExtra(EXTRA_COLOR, mUserColor);
 				}
-				intent.putExtras(bundle);
 				startActivityForResult(intent, REQUEST_SET_COLOR);
 				break;
 			}

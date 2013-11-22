@@ -468,6 +468,24 @@
 		<item name="android:windowBackground">@color/bg_color_drawer_transparent_dark</item>
 	</style>
 
+	<style name="Theme.Twidere.Dark.NoDisplay" parent="android:Theme.Holo">
+		<item name="android:windowBackground">@null</item>
+		<item name="android:windowContentOverlay">@null</item>
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowAnimationStyle">@null</item>
+		<item name="android:windowDisablePreview">true</item>
+		<item name="android:windowNoDisplay">true</item>
+	</style>
+
+	<style name="Theme.Twidere.Light.NoDisplay" parent="android:Theme.Holo.Light">
+		<item name="android:windowBackground">@null</item>
+		<item name="android:windowContentOverlay">@null</item>
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowAnimationStyle">@null</item>
+		<item name="android:windowDisablePreview">true</item>
+		<item name="android:windowNoDisplay">true</item>
+	</style>
+
 	<style name="Theme.Test" parent="android:Theme.Holo"/>
 
 	<style name="Theme.Nyan" parent="android:Theme.Holo.NoActionBar">

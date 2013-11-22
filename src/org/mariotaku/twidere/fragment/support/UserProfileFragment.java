@@ -98,7 +98,7 @@ import android.widget.TextView;
 
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.support.ColorSelectorActivity;
+import org.mariotaku.twidere.activity.support.ColorPickerDialogActivity;
 import org.mariotaku.twidere.activity.support.UserListSelectorActivity;
 import org.mariotaku.twidere.activity.support.UserProfileEditorActivity;
 import org.mariotaku.twidere.adapter.ListActionAdapter;
@@ -683,7 +683,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				break;
 			}
 			case MENU_SET_COLOR: {
-				final Intent intent = new Intent(getActivity(), ColorSelectorActivity.class);
+				final Intent intent = new Intent(getActivity(), ColorPickerDialogActivity.class);
 				startActivityForResult(intent, REQUEST_SET_COLOR);
 				break;
 			}

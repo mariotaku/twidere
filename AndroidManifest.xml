@@ -236,9 +236,9 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".activity.support.ColorSelectorActivity"
+			android:name=".activity.support.ColorPickerDialogActivity"
 			android:label="@string/set_color"
-			android:theme="@style/Theme.Twidere.Light.Dialog"/>
+			android:theme="@style/Theme.Twidere.Light.NoDisplay"/>
 		<activity
 			android:name=".activity.support.LinkHandlerActivity"
 			android:windowSoftInputMode="adjustResize">

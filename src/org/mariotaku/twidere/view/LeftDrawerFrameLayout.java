@@ -7,6 +7,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.FloatMath;
 import android.widget.FrameLayout;
 
 import org.mariotaku.twidere.util.ThemeUtils;
@@ -60,7 +61,7 @@ public class LeftDrawerFrameLayout extends FrameLayout {
 	protected void dispatchDraw(final Canvas canvas) {
 		super.dispatchDraw(canvas);
 		if (mClipEnabled && mPercentOpen > 0 && mPercentOpen < 1) {
-			final int left = Math.round(getWidth() * (1 - (1 - mPercentOpen) * (1 - mScrollScale)));
+			final int left = (int) FloatMath.ceil(getWidth() * (1 - (1 - mPercentOpen) * (1 - mScrollScale)));
 			canvas.drawRect(left, getTop(), getRight(), getBottom(), mClipPaint);
 		}
 	}

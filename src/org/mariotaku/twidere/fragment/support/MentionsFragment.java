@@ -70,8 +70,6 @@ public class MentionsFragment extends CursorStatusesListFragment {
 		filter.addAction(BROADCAST_MENTIONS_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_TASK_STATE_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
-		final AsyncTwitterWrapper twitter = getTwitterWrapper();
-		setRefreshing(twitter != null && twitter.isMentionsRefreshing());
 	}
 
 	@Override
