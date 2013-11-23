@@ -137,6 +137,8 @@ public interface TwidereConstants {
 	public static final int LINK_HIGHLIGHT_OPTION_CODE_HIGHLIGHT = 1;
 	public static final int LINK_HIGHLIGHT_OPTION_CODE_UNDERLINE = 2;
 	public static final int LINK_HIGHLIGHT_OPTION_CODE_BOTH = 3;
+
+	public static final int NOTIFICATION_FLAG_NONE = 0x0;
 	public static final int NOTIFICATION_FLAG_RINGTONE = 0x1;
 	public static final int NOTIFICATION_FLAG_VIBRATION = 0x2;
 	public static final int NOTIFICATION_FLAG_LIGHT = 0x4;
@@ -278,6 +280,9 @@ public interface TwidereConstants {
 	public static final String PREFERENCE_KEY_CARD_ANIMATION = "card_animation";
 	public static final String PREFERENCE_KEY_UNREAD_COUNT = "unread_count";
 	public static final String PREFERENCE_KEY_NOTIFICATION = "notification";
+	public static final String PREFERENCE_KEY_NOTIFICATION_TYPE_HOME = "notification_type_home";
+	public static final String PREFERENCE_KEY_NOTIFICATION_TYPE_MENTIONS = "notification_type_mentions";
+	public static final String PREFERENCE_KEY_NOTIFICATION_TYPE_DIRECT_MESSAGES = "notification_type_direct_messages";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;
@@ -291,8 +296,11 @@ public interface TwidereConstants {
 	public static final boolean PREFERENCE_DEFAULT_AUTO_REFRESH_DIRECT_MESSAGES = true;
 	public static final boolean PREFERENCE_DEFAULT_AUTO_REFRESH_TRENDS = false;
 	public static final boolean PREFERENCE_DEFAULT_NOTIFICATION = true;
-	public static final int PREFERENCE_DEFAULT_NOTIFICATION_TYPE = NOTIFICATION_FLAG_LIGHT
-			| NOTIFICATION_FLAG_VIBRATION;
+	public static final int PREFERENCE_DEFAULT_NOTIFICATION_TYPE_HOME = NOTIFICATION_FLAG_NONE;
+	public static final int PREFERENCE_DEFAULT_NOTIFICATION_TYPE_MENTIONS = NOTIFICATION_FLAG_VIBRATION
+			| NOTIFICATION_FLAG_LIGHT;
+	public static final int PREFERENCE_DEFAULT_NOTIFICATION_TYPE_DIRECT_MESSAGES = NOTIFICATION_FLAG_RINGTONE
+			| NOTIFICATION_FLAG_VIBRATION | NOTIFICATION_FLAG_LIGHT;
 
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
 	public static final int PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT = 20;

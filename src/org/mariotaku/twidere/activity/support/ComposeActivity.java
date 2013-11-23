@@ -243,10 +243,8 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 			}
 			case MENU_SELECT_ACCOUNT: {
 				final Intent intent = new Intent(INTENT_ACTION_SELECT_ACCOUNT);
-				final Bundle bundle = new Bundle();
-				bundle.putBoolean(EXTRA_ACTIVATED_ONLY, false);
-				bundle.putLongArray(EXTRA_IDS, mAccountIds);
-				intent.putExtras(bundle);
+				intent.putExtra(EXTRA_ACTIVATED_ONLY, false);
+				intent.putExtra(EXTRA_IDS, mAccountIds);
 				startActivityForResult(intent, REQUEST_SELECT_ACCOUNT);
 				break;
 			}
@@ -254,25 +252,24 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 				final Intent intent = item.getIntent();
 				if (intent != null) {
 					try {
-						if (INTENT_ACTION_EXTENSION_COMPOSE.equals(intent.getAction())) {
-							final Bundle extras = new Bundle();
-							extras.putString(EXTRA_TEXT, ParseUtils.parseString(mEditText.getText()));
-							extras.putLongArray(EXTRA_ACCOUNT_IDS, mAccountIds);
+						final String action = intent.getAction();
+						if (INTENT_ACTION_EXTENSION_COMPOSE.equals(action)) {
+							intent.putExtra(EXTRA_TEXT, ParseUtils.parseString(mEditText.getText()));
+							intent.putExtra(EXTRA_ACCOUNT_IDS, mAccountIds);
 							if (mAccountIds != null && mAccountIds.length > 0) {
 								final long account_id = mAccountIds[0];
-								extras.putString(EXTRA_NAME, getAccountName(this, account_id));
-								extras.putString(EXTRA_SCREEN_NAME, getAccountScreenName(this, account_id));
+								intent.putExtra(EXTRA_NAME, getAccountName(this, account_id));
+								intent.putExtra(EXTRA_SCREEN_NAME, getAccountScreenName(this, account_id));
 							}
 							if (mInReplyToStatusId > 0) {
-								extras.putLong(EXTRA_IN_REPLY_TO_ID, mInReplyToStatusId);
+								intent.putExtra(EXTRA_IN_REPLY_TO_ID, mInReplyToStatusId);
 							}
 							if (mInReplyToStatus != null) {
-								extras.putString(EXTRA_IN_REPLY_TO_NAME, mInReplyToStatus.user_name);
-								extras.putString(EXTRA_IN_REPLY_TO_SCREEN_NAME, mInReplyToStatus.user_screen_name);
+								intent.putExtra(EXTRA_IN_REPLY_TO_NAME, mInReplyToStatus.user_name);
+								intent.putExtra(EXTRA_IN_REPLY_TO_SCREEN_NAME, mInReplyToStatus.user_screen_name);
 							}
-							intent.putExtras(extras);
 							startActivityForResult(intent, REQUEST_EXTENSION_COMPOSE);
-						} else if (INTENT_ACTION_EXTENSION_EDIT_IMAGE.equals(intent.getAction())) {
+						} else if (INTENT_ACTION_EXTENSION_EDIT_IMAGE.equals(action)) {
 							final ComponentName cmp = intent.getComponent();
 							if (cmp == null || !hasMedia()) return false;
 							final String name = new File(mImageUri.getPath()).getName();
@@ -545,12 +542,11 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 			mOriginalText = savedInstanceState.getString(EXTRA_ORIGINAL_TEXT);
 		} else {
 			// The activity was first created
-			final Bundle extras = intent.getExtras();
-			final int notification_id = extras != null ? extras.getInt(EXTRA_NOTIFICATION_ID, -1) : -1;
-			if (notification_id != -1) {
-				mTwitterWrapper.clearNotification(notification_id);
+			final int notificationId = intent.getIntExtra(EXTRA_NOTIFICATION_ID, -1);
+			if (notificationId != -1) {
+				mTwitterWrapper.clearNotification(notificationId);
 			}
-			if (!handleIntent(action, extras)) {
+			if (!handleIntent(intent)) {
 				handleDefaultIntent(intent);
 			}
 			if (mAccountIds == null || mAccountIds.length == 0) {
@@ -561,7 +557,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 			}
 			mOriginalText = ParseUtils.parseString(mEditText.getText());
 		}
-		if (!setComposeTitle(action)) {
+		if (!setComposeTitle(intent)) {
 			setTitle(R.string.compose);
 		}
 
@@ -693,26 +689,26 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		return true;
 	}
 
-	private boolean handleIntent(final String action, final Bundle extras) {
+	private boolean handleIntent(final Intent intent) {
+		final String action = intent.getAction();
 		mShouldSaveAccounts = false;
-		if (extras == null) return false;
-		mMentionUser = extras.getParcelable(EXTRA_USER);
-		mInReplyToStatus = extras.getParcelable(EXTRA_STATUS);
+		mMentionUser = intent.getParcelableExtra(EXTRA_USER);
+		mInReplyToStatus = intent.getParcelableExtra(EXTRA_STATUS);
 		mInReplyToStatusId = mInReplyToStatus != null ? mInReplyToStatus.id : -1;
 		if (INTENT_ACTION_REPLY.equals(action))
 			return handleReplyIntent(mInReplyToStatus);
 		else if (INTENT_ACTION_QUOTE.equals(action))
 			return handleQuoteIntent(mInReplyToStatus);
 		else if (INTENT_ACTION_EDIT_DRAFT.equals(action)) {
-			mDraftItem = extras.getParcelable(EXTRA_DRAFT);
+			mDraftItem = intent.getParcelableExtra(EXTRA_DRAFT);
 			return handleEditDraftIntent(mDraftItem);
 		} else if (INTENT_ACTION_MENTION.equals(action))
 			return handleMentionIntent(mMentionUser);
 		else if (INTENT_ACTION_REPLY_MULTIPLE.equals(action)) {
-			final String[] screen_names = extras.getStringArray(EXTRA_SCREEN_NAMES);
-			final long account_id = extras.getLong(EXTRA_ACCOUNT_ID, -1);
-			final long in_reply_to_user_id = extras.getLong(EXTRA_IN_REPLY_TO_ID, -1);
-			return handleReplyMultipleIntent(screen_names, account_id, in_reply_to_user_id);
+			final String[] screenNames = intent.getStringArrayExtra(EXTRA_SCREEN_NAMES);
+			final long accountId = intent.getLongExtra(EXTRA_ACCOUNT_ID, -1);
+			final long inReplyToUserId = intent.getLongExtra(EXTRA_IN_REPLY_TO_ID, -1);
+			return handleReplyMultipleIntent(screenNames, accountId, inReplyToUserId);
 		}
 		// Unknown action or no intent extras
 		return false;
@@ -859,7 +855,8 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		updateTextCount(menu);
 	}
 
-	private boolean setComposeTitle(final String action) {
+	private boolean setComposeTitle(final Intent intent) {
+		final String action = intent.getAction();
 		if (INTENT_ACTION_REPLY.equals(action)) {
 			if (mInReplyToStatus == null) return false;
 			final String display_name = getDisplayName(this, mInReplyToStatus.user_id, mInReplyToStatus.user_name,
@@ -1004,8 +1001,8 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 			mOriginalText = null;
 			final Intent intent = new Intent(INTENT_ACTION_COMPOSE);
 			setIntent(intent);
-			setComposeTitle(intent.getAction());
-			handleIntent(intent.getAction(), intent.getExtras());
+			setComposeTitle(intent);
+			handleIntent(intent);
 			reloadAttachedImageThumbnail();
 			mEditText.setText(null);
 			setMenu();

@@ -22,6 +22,8 @@ package org.mariotaku.twidere.provider;
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.clearAccountColor;
 import static org.mariotaku.twidere.util.Utils.clearAccountName;
+import static org.mariotaku.twidere.util.Utils.getAccountDisplayName;
+import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getAccountNames;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenNames;
@@ -44,6 +46,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -64,6 +67,7 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.model.AccountPreferences;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.PreviewMedia;
@@ -76,6 +80,7 @@ import org.mariotaku.twidere.provider.TweetStore.Preferences;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.CustomTabUtils;
+import org.mariotaku.twidere.util.HtmlEscapeHelper;
 import org.mariotaku.twidere.util.ImagePreloader;
 import org.mariotaku.twidere.util.MediaPreviewUtils;
 import org.mariotaku.twidere.util.NoDuplicatesArrayList;
@@ -98,7 +103,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public final class TwidereDataProvider extends ContentProvider implements Constants {
+public final class TwidereDataProvider extends ContentProvider implements Constants, OnSharedPreferenceChangeListener {
 
 	private static final String UNREAD_STATUSES_FILE_NAME = "unread_statuses";
 	private static final String UNREAD_MENTIONS_FILE_NAME = "unread_mentions";
@@ -126,16 +131,18 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	private final List<Long> mNewMentionAccounts = Collections.synchronizedList(new NoDuplicatesArrayList<Long>());
 	private final List<Long> mNewMessageAccounts = Collections.synchronizedList(new NoDuplicatesArrayList<Long>());
 
-	private boolean mNotificationIsAudible;
+	private boolean mHomeActivityInBackground;
+
+	private boolean mNameFirst, mNickOnly;
 
 	private final BroadcastReceiver mHomeActivityStateReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_HOME_ACTIVITY_ONSTART.equals(action)) {
-				mNotificationIsAudible = false;
+				mHomeActivityInBackground = false;
 			} else if (BROADCAST_HOME_ACTIVITY_ONSTOP.equals(action)) {
-				mNotificationIsAudible = true;
+				mHomeActivityInBackground = true;
 			}
 		}
 
@@ -268,6 +275,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		mHostAddressResolver = app.getHostAddressResolver();
 		mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 		mPreferences = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mPreferences.registerOnSharedPreferenceChangeListener(this);
+		updatePreferences();
 		mPermissionsManager = new PermissionsManager(mContext);
 		mImagePreloader = new ImagePreloader(mContext, app.getImageLoader());
 		final IntentFilter filter = new IntentFilter();
@@ -276,6 +285,11 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		mContext.registerReceiver(mHomeActivityStateReceiver, filter);
 		restoreUnreadItems();
 		return mDatabase != null;
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
+		updatePreferences();
 	}
 
 	@Override
@@ -406,30 +420,29 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		}
 	}
 
-	private void buildNotification(final NotificationCompat.Builder builder, final String ticker, final String title,
-			final String message, final int icon, final Bitmap large_icon, final Intent content_intent,
-			final Intent delete_intent) {
+	private void buildNotification(final NotificationCompat.Builder builder, final AccountPreferences preference,
+			final String ticker, final String title, final String message, final long when, final int icon,
+			final Bitmap largeIcon, final Intent contentIntent, final Intent deleteIntent) {
 		final Context context = getContext();
-		final Resources res = context.getResources();
 		builder.setTicker(ticker);
 		builder.setContentTitle(title);
 		builder.setContentText(message);
 		builder.setAutoCancel(true);
 		builder.setWhen(System.currentTimeMillis());
 		builder.setSmallIcon(icon);
-		if (large_icon != null) {
-			builder.setLargeIcon(large_icon);
+		if (largeIcon != null) {
+			builder.setLargeIcon(largeIcon);
 		}
-		if (delete_intent != null) {
-			builder.setDeleteIntent(PendingIntent.getBroadcast(context, 0, delete_intent,
+		if (deleteIntent != null) {
+			builder.setDeleteIntent(PendingIntent.getBroadcast(context, 0, deleteIntent,
 					PendingIntent.FLAG_UPDATE_CURRENT));
 		}
-		if (content_intent != null) {
-			builder.setContentIntent(PendingIntent.getActivity(context, 0, content_intent,
+		if (contentIntent != null) {
+			builder.setContentIntent(PendingIntent.getActivity(context, 0, contentIntent,
 					PendingIntent.FLAG_UPDATE_CURRENT));
 		}
 		int defaults = 0;
-		if (mNotificationIsAudible && !isNotificationsSilent(context)) {
+		if (isNotificationAudible()) {
 			if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND, false)) {
 				final Uri def_ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 				final String path = mPreferences.getString(PREFERENCE_KEY_NOTIFICATION_RINGTONE, "");
@@ -440,8 +453,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			}
 		}
 		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_LIGHTS, false)) {
-			final int color_def = res.getColor(android.R.color.holo_blue_dark);
-			final int color = mPreferences.getInt(PREFERENCE_KEY_NOTIFICATION_LIGHT_COLOR, color_def);
+			final int color = preference != null ? preference.getNotificationLightColor() : HOLO_BLUE_LIGHT;
 			builder.setLights(color, 1000, 2000);
 		}
 		builder.setDefaults(defaults);
@@ -595,29 +607,27 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		return result;
 	}
 
-	private void displayMentionsNotification(final int notified_count) {
-		if (notified_count == 0 || mNewMentions.isEmpty() || mNewMentionUserIds.isEmpty()) return;
+	private void displayMentionsNotification(final int notified_count, final List<ParcelableStatus> mentions) {
+		if (notified_count == 0 || mentions.isEmpty() || mNewMentionUserIds.isEmpty()) return;
 		final Context mContext = getContext();
 		final Resources mResources = mContext.getResources();
 		final NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
-		final boolean name_first = mPreferences.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
-		final boolean nick_only = mPreferences.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false);
 		final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_DELETED);
 		delete_intent.putExtra(EXTRA_NOTIFICATION_ID, NOTIFICATION_ID_MENTIONS);
 		final Intent content_intent;
-		final int mentions_size = mNewMentions.size();
+		final int mentions_size = mentions.size();
 		final String title;
-		if (mNewMentions.size() > 1) {
+		if (mentions.size() > 1) {
 			builder.setNumber(mentions_size);
 		}
 		final int screen_names_size = mNewMentionUserIds.size();
-		final ParcelableStatus status = mNewMentions.get(0);
+		final ParcelableStatus status = mentions.get(0);
 		content_intent = new Intent(mContext, HomeActivity.class);
 		content_intent.setAction(Intent.ACTION_MAIN);
 		content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
 		final Bundle content_extras = new Bundle();
 		content_extras.putString(EXTRA_TAB_TYPE, TAB_TYPE_MENTIONS_TIMELINE);
-		if (mNewMentions.size() == 1) {
+		if (mentions.size() == 1) {
 			final Uri.Builder uri_builder = new Uri.Builder();
 			uri_builder.scheme(SCHEME_TWIDERE);
 			uri_builder.authority(AUTHORITY_STATUS);
@@ -628,24 +638,24 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		content_intent.putExtras(content_extras);
 
 		final String display_name = getDisplayName(mContext, status.user_id, status.user_name, status.user_screen_name,
-				name_first, nick_only);
+				mNameFirst, mNickOnly);
 		if (screen_names_size > 1) {
 			title = mResources.getString(R.string.notification_mention_multiple, display_name, screen_names_size - 1);
 		} else {
 			title = mResources.getString(R.string.notification_mention, display_name);
 		}
 		builder.setLargeIcon(getProfileImageForNotification(status.user_profile_image_url));
-		buildNotification(builder, title, title, status.text_plain, R.drawable.ic_stat_mention, null, content_intent,
-				delete_intent);
-		if (mNewMentions.isEmpty()) return;
-		if (mNewMentions.size() > 1) {
+		buildNotification(builder, null, title, title, status.text_plain, status.timestamp, R.drawable.ic_stat_mention,
+				null, content_intent, delete_intent);
+		if (mentions.isEmpty()) return;
+		if (mentions.size() > 1) {
 			final NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle(builder);
-			final int max = Math.min(4, mNewMentions.size());
+			final int max = Math.min(4, mentions.size());
 			for (int i = 0; i < max; i++) {
-				final ParcelableStatus s = safeGet(mNewMentions, i);
+				final ParcelableStatus s = safeGet(mentions, i);
 				if (s == null) return;
-				final String name = getDisplayName(mContext, s.user_id, s.user_name, s.user_screen_name, name_first,
-						nick_only);
+				final String name = getDisplayName(mContext, s.user_id, s.user_name, s.user_screen_name, mNameFirst,
+						mNickOnly);
 				style.addLine(Html.fromHtml("<b>" + name + "</b>: "
 						+ stripMentionText(s.text_unescaped, getAccountScreenName(mContext, s.account_id))));
 			}
@@ -655,7 +665,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			final int accounts_count = mNewMentionAccounts.size();
 			if (accounts_count > 0) {
 				final long[] ids = ArrayUtils.fromList(mNewMentionAccounts);
-				final String[] names = name_first ? getAccountNames(mContext, ids) : getAccountScreenNames(mContext,
+				final String[] names = mNameFirst ? getAccountNames(mContext, ids) : getAccountScreenNames(mContext,
 						ids, true);
 				style.setSummaryText(ArrayUtils.toString(names, ',', true));
 			}
@@ -675,16 +685,90 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		}
 	}
 
+	private void displayMentionsNotification(final int notifiedCount, final long accountId,
+			final List<ParcelableStatus> mentions) {
+		if (notifiedCount == 0 || accountId <= 0 || mentions.isEmpty()) return;
+		final Context context = getContext();
+		final Resources resources = context.getResources();
+		final AccountPreferences preference = new AccountPreferences(context, accountId);
+		final NotificationCompat.Builder notifBuilder = new NotificationCompat.Builder(context);
+		final ParcelableStatus firstStatus = mentions.get(0);
+		final int mentionsSize = mentions.size();
+		final Intent deleteIntent = new Intent(BROADCAST_NOTIFICATION_DELETED);
+		deleteIntent.putExtra(EXTRA_NOTIFICATION_ID, NOTIFICATION_ID_MENTIONS);
+		final Intent contentIntent;
+		final String title;
+		if (mentionsSize > 1) {
+			notifBuilder.setNumber(mentionsSize);
+		}
+		final int usersCount = getUsersCount(mentions);
+		contentIntent = new Intent(context, HomeActivity.class);
+		contentIntent.setAction(Intent.ACTION_MAIN);
+		contentIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+		contentIntent.putExtra(EXTRA_TAB_TYPE, TAB_TYPE_MENTIONS_TIMELINE);
+		if (mentionsSize == 1) {
+			final Uri.Builder uriBuilder = new Uri.Builder();
+			uriBuilder.scheme(SCHEME_TWIDERE);
+			uriBuilder.authority(AUTHORITY_STATUS);
+			uriBuilder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(firstStatus.account_id));
+			uriBuilder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(firstStatus.id));
+			final Intent statusIntent = new Intent(Intent.ACTION_VIEW, uriBuilder.build());
+			statusIntent.putExtra(EXTRA_STATUS, firstStatus);
+			contentIntent.putExtra(EXTRA_EXTRA_INTENT, statusIntent);
+		}
+
+		final String displayName = getDisplayName(context, firstStatus.user_id, firstStatus.user_name,
+				firstStatus.user_screen_name, mNameFirst, mNickOnly);
+		if (usersCount > 1) {
+			title = resources.getString(R.string.notification_mention_multiple, displayName, usersCount - 1);
+		} else {
+			title = resources.getString(R.string.notification_mention, displayName);
+		}
+		notifBuilder.setLargeIcon(getProfileImageForNotification(firstStatus.user_profile_image_url));
+		buildNotification(notifBuilder, preference, title, title, firstStatus.text_plain, firstStatus.timestamp,
+				R.drawable.ic_stat_mention, null, contentIntent, deleteIntent);
+		final NotificationCompat.Style notifStyle;
+		if (mentionsSize > 1) {
+			final NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle(notifBuilder);
+			final int max = Math.min(4, mentionsSize);
+			for (int i = 0; i < max; i++) {
+				final ParcelableStatus s = safeGet(mentions, i);
+				if (s == null) return;
+				final String nameEscaped = HtmlEscapeHelper.escape(getDisplayName(context, s.user_id, s.user_name,
+						s.user_screen_name, mNameFirst, mNickOnly));
+				final String textEscaped = HtmlEscapeHelper.escape(stripMentionText(s.text_unescaped,
+						getAccountScreenName(context, s.account_id)));
+				inboxStyle.addLine(Html.fromHtml(String.format("<b>%s</b>: %s", nameEscaped, textEscaped)));
+			}
+			if (max == 4 && mentionsSize - max > 0) {
+				inboxStyle.addLine(context.getString(R.string.and_more, mentionsSize - max));
+			}
+			inboxStyle.setSummaryText(getAccountDisplayName(context, accountId, mNameFirst));
+			notifStyle = inboxStyle;
+		} else {
+			final Intent replyIntent = new Intent(INTENT_ACTION_REPLY);
+			replyIntent.putExtra(EXTRA_NOTIFICATION_ID, NOTIFICATION_ID_MENTIONS);
+			replyIntent.putExtra(EXTRA_STATUS, firstStatus);
+			replyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			notifBuilder.addAction(R.drawable.ic_menu_reply, context.getString(R.string.reply),
+					PendingIntent.getActivity(context, 0, replyIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+			final NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle(notifBuilder);
+			bigTextStyle.bigText(stripMentionText(firstStatus.text_unescaped,
+					getAccountScreenName(context, firstStatus.account_id)));
+			bigTextStyle.setSummaryText(getAccountDisplayName(context, accountId, mNameFirst));
+			notifStyle = bigTextStyle;
+		}
+		mNotificationManager.notify(getNotificationId(accountId, NOTIFICATION_ID_MENTIONS), notifStyle.build());
+	}
+
 	private void displayMessagesNotification(final int notified_count) {
 		if (notified_count == 0 || mNewMessages.isEmpty() || mNewMessageUserIds.isEmpty()) return;
 		final Context mContext = getContext();
 		final Resources mResources = mContext.getResources();
 		final NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
-		final boolean name_first = mPreferences.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
-		final boolean nick_only = mPreferences.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false);
-		final Intent delete_intent = new Intent(BROADCAST_NOTIFICATION_DELETED);
-		delete_intent.putExtra(EXTRA_NOTIFICATION_ID, NOTIFICATION_ID_DIRECT_MESSAGES);
-		final Intent content_intent;
+		final Intent deleteIntent = new Intent(BROADCAST_NOTIFICATION_DELETED);
+		deleteIntent.putExtra(EXTRA_NOTIFICATION_ID, NOTIFICATION_ID_DIRECT_MESSAGES);
+		final Intent contentIntent;
 		final int messages_size = mNewMessages.size();
 		final String title;
 		if (messages_size > 1) {
@@ -693,9 +777,9 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		final int screen_names_size = mNewMessageUserIds.size();
 		final ParcelableDirectMessage message = mNewMessages.get(0);
 
-		content_intent = new Intent(mContext, HomeActivity.class);
-		content_intent.setAction(Intent.ACTION_MAIN);
-		content_intent.addCategory(Intent.CATEGORY_LAUNCHER);
+		contentIntent = new Intent(mContext, HomeActivity.class);
+		contentIntent.setAction(Intent.ACTION_MAIN);
+		contentIntent.addCategory(Intent.CATEGORY_LAUNCHER);
 		final Bundle content_extras = new Bundle();
 		content_extras.putString(EXTRA_TAB_TYPE, TAB_TYPE_DIRECT_MESSAGES);
 		if (messages_size == 1) {
@@ -708,9 +792,9 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			uri_builder.appendQueryParameter(QUERY_PARAM_CONVERSATION_ID, String.valueOf(conversation_id));
 			content_extras.putParcelable(EXTRA_EXTRA_INTENT, new Intent(Intent.ACTION_VIEW, uri_builder.build()));
 		}
-		content_intent.putExtras(content_extras);
+		contentIntent.putExtras(content_extras);
 		final String display_name = getDisplayName(mContext, message.sender_id, message.sender_name,
-				message.sender_screen_name, name_first, nick_only);
+				message.sender_screen_name, mNameFirst, mNickOnly);
 		if (screen_names_size > 1) {
 			title = mResources.getString(R.string.notification_direct_message_multiple_users, display_name,
 					screen_names_size - 1, messages_size);
@@ -722,13 +806,13 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		}
 		final String text_plain = message.text_plain;
 		builder.setLargeIcon(getProfileImageForNotification(message.sender_profile_image_url));
-		buildNotification(builder, title, title, text_plain, R.drawable.ic_stat_direct_message, null, content_intent,
-				delete_intent);
+		buildNotification(builder, null, title, title, text_plain, message.timestamp,
+				R.drawable.ic_stat_direct_message, null, contentIntent, deleteIntent);
 		final String summary;
 		final int accounts_count = mNewMessageAccounts.size();
 		if (accounts_count > 0) {
 			final long[] ids = ArrayUtils.fromList(mNewMessageAccounts);
-			final String[] names = name_first ? getAccountNames(mContext, ids) : getAccountScreenNames(mContext, ids,
+			final String[] names = mNameFirst ? getAccountNames(mContext, ids) : getAccountScreenNames(mContext, ids,
 					true);
 			summary = ArrayUtils.toString(names, ',', true);
 		} else {
@@ -741,7 +825,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				final ParcelableDirectMessage s = safeGet(mNewMessages, i);
 				if (s == null) return;
 				final String name = getDisplayName(mContext, message.sender_id, message.sender_name,
-						message.sender_screen_name, name_first, nick_only);
+						message.sender_screen_name, mNameFirst, mNickOnly);
 				style.addLine(Html.fromHtml("<b>" + name + "</b>: " + s.text_unescaped));
 			}
 			if (max == 4 && messages_size - max > 0) {
@@ -753,7 +837,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			mNotificationManager.notify(NOTIFICATION_ID_DIRECT_MESSAGES, style.build());
 		} else {
 			final NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle(builder);
-			style.bigText(message.text_plain);
+			style.bigText(message.text_unescaped);
 			if (summary != null) {
 				style.setSummaryText(summary);
 			}
@@ -776,8 +860,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		content_extras.putString(EXTRA_TAB_TYPE, TAB_TYPE_HOME_TIMELINE);
 		content_intent.putExtras(content_extras);
 		builder.setOnlyAlertOnce(true);
-		buildNotification(builder, mResources.getString(R.string.new_notifications), message, message,
-				R.drawable.ic_stat_twitter, null, content_intent, delete_intent);
+		buildNotification(builder, null, mResources.getString(R.string.new_notifications), message, message,
+				System.currentTimeMillis(), R.drawable.ic_stat_twitter, null, content_intent, delete_intent);
 		mNotificationManager.notify(NOTIFICATION_ID_HOME_TIMELINE, builder.build());
 	}
 
@@ -884,6 +968,19 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			c.addRow(new Object[] { position, type, count });
 		}
 		return c;
+	}
+
+	private int getUsersCount(final List<ParcelableStatus> statuses) {
+		if (statuses == null || statuses.isEmpty()) return 0;
+		final Set<Long> ids = new HashSet<Long>();
+		for (final ParcelableStatus status : statuses) {
+			ids.add(status.user_id);
+		}
+		return ids.size();
+	}
+
+	private boolean isNotificationAudible() {
+		return mHomeActivityInBackground && !isNotificationsSilent(getContext());
 	}
 
 	private int notifyIncomingMessagesInserted(final ContentValues... values) {
@@ -1017,9 +1114,12 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			}
 			case TABLE_ID_MENTIONS: {
 				final int notified_count = notifyMentionsInserted(values);
-				if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS,
-						NotificationContentPreference.DEFAULT_ENABLE_MENTIONS)) {
-					displayMentionsNotification(notified_count);
+				final List<ParcelableStatus> mentions = new ArrayList<ParcelableStatus>(mNewMentions);
+				final AccountPreferences[] prefs = AccountPreferences.getNotificationEnabledPreferences(getContext(),
+						getAccountIds(getContext()));
+				for (final AccountPreferences pref : prefs) {
+					final long accountId = pref.getAccountId();
+					displayMentionsNotification(notified_count, accountId, getStatusesForAccounts(mentions, accountId));
 				}
 				notifyUnreadCountChanged(NOTIFICATION_ID_MENTIONS);
 				break;
@@ -1124,6 +1224,11 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		}
 	}
 
+	private void updatePreferences() {
+		mNameFirst = mPreferences.getBoolean(PREFERENCE_KEY_NAME_FIRST, false);
+		mNickOnly = mPreferences.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false);
+	}
+
 	private static int clearUnreadCount(final Set<UnreadItem> set, final long[] account_ids) {
 		final Set<UnreadItem> items_to_remove = new HashSet<UnreadItem>();
 		for (final UnreadItem item : set) {
@@ -1135,10 +1240,14 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		return items_to_remove.size();
 	}
 
-	private static Cursor getPreferencesCursor(final SharedPreferences mPreferences, final String key) {
+	private static int getNotificationId(final long accountId, final int notificationType) {
+		return Arrays.hashCode(new long[] { accountId, notificationType });
+	}
+
+	private static Cursor getPreferencesCursor(final SharedPreferences preferences, final String key) {
 		final MatrixCursor c = new MatrixCursor(TweetStore.Preferences.MATRIX_COLUMNS);
 		final Map<String, Object> map = new HashMap<String, Object>();
-		final Map<String, ?> all = mPreferences.getAll();
+		final Map<String, ?> all = preferences.getAll();
 		if (key == null) {
 			map.putAll(all);
 		} else {
@@ -1165,6 +1274,18 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			return Preferences.TYPE_FLOAT;
 		else if (object instanceof String) return Preferences.TYPE_STRING;
 		return Preferences.TYPE_INVALID;
+	}
+
+	private static List<ParcelableStatus> getStatusesForAccounts(final List<ParcelableStatus> statuses,
+			final long accountId) {
+		if (statuses == null) return Collections.emptyList();
+		final List<ParcelableStatus> result = new ArrayList<ParcelableStatus>();
+		for (final ParcelableStatus status : statuses) {
+			if (status.account_id == accountId) {
+				result.add(status);
+			}
+		}
+		return result;
 	}
 
 	private static int getUnreadCount(final Set<UnreadItem> set, final long[] account_ids) {

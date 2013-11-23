@@ -4,15 +4,14 @@
 	android:layout_height="wrap_content">
 
 	<org.mariotaku.twidere.view.CardItemGapView
-		android:id="@+id/list_gap_text"
+		android:id="@+id/gap_indicator"
 		android:layout_width="match_parent"
 		android:layout_height="48dp"
-		android:layout_gravity="center"
 		android:background="?android:selectableItemBackground"
 		android:gravity="center"
-		android:singleLine="true"
 		android:text="@string/tap_to_load_more"
-		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textAppearance="?android:textAppearanceMedium"
+		android:textColor="?android:colorForeground"
 		android:textStyle="bold"
 		android:visibility="gone"/>
 

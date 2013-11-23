@@ -37,7 +37,6 @@ public class CardItemGapView extends TextView {
 		final Drawable bg = getBackground();
 		if (bg != null && bg.isStateful()) {
 			final int[] state = getDrawableState();
-			// bg.setState(state);
 			final Drawable layer = bg instanceof LayerDrawable ? ((LayerDrawable) bg)
 					.findDrawableByLayerId(R.id.card_item_selector) : null;
 			final Drawable current = layer != null ? layer.getCurrent() : bg.getCurrent();

@@ -5,7 +5,7 @@
 	android:padding="@dimen/element_spacing_large">
 
 	<TextView
-		android:id="@android:id/text1"
+		android:id="@android:id/title"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="right"

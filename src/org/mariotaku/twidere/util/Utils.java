@@ -1147,6 +1147,16 @@ public final class Utils implements Constants {
 		}
 	}
 
+	public static String getAccountDisplayName(final Context context, final long accountId, final boolean nameFirst) {
+		final String name;
+		if (nameFirst) {
+			name = getAccountName(context, accountId);
+		} else {
+			name = String.format("@%s", getAccountScreenName(context, accountId));
+		}
+		return name;
+	}
+
 	public static long getAccountId(final Context context, final String screen_name) {
 		if (context == null || isEmpty(screen_name)) return -1;
 		final Cursor cur = ContentResolverUtils
@@ -1180,17 +1190,17 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static String getAccountName(final Context context, final long account_id) {
+	public static String getAccountName(final Context context, final long accountId) {
 		if (context == null) return null;
-		final String cached = sAccountNames.get(account_id);
+		final String cached = sAccountNames.get(accountId);
 		if (!isEmpty(cached)) return cached;
 		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI,
-				new String[] { Accounts.NAME }, Accounts.ACCOUNT_ID + " = " + account_id, null, null);
+				new String[] { Accounts.NAME }, Accounts.ACCOUNT_ID + " = " + accountId, null, null);
 		if (cur == null) return null;
 		try {
 			if (cur.getCount() > 0 && cur.moveToFirst()) {
 				final String name = cur.getString(0);
-				sAccountNames.put(account_id, name);
+				sAccountNames.put(accountId, name);
 				return name;
 			}
 			return null;
@@ -1203,11 +1213,11 @@ public final class Utils implements Constants {
 		return getAccountScreenNames(context, null);
 	}
 
-	public static String[] getAccountNames(final Context context, final long[] account_ids) {
+	public static String[] getAccountNames(final Context context, final long[] accountIds) {
 		if (context == null) return new String[0];
 		final String[] cols = new String[] { Accounts.NAME };
-		final String where = account_ids != null ? Where.in(new Column(Accounts.ACCOUNT_ID),
-				new RawItemArray(account_ids)).getSQL() : null;
+		final String where = accountIds != null ? Where.in(new Column(Accounts.ACCOUNT_ID),
+				new RawItemArray(accountIds)).getSQL() : null;
 		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI, cols, where,
 				null, null);
 		if (cur == null) return new String[0];
@@ -1225,17 +1235,17 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static String getAccountScreenName(final Context context, final long account_id) {
+	public static String getAccountScreenName(final Context context, final long accountId) {
 		if (context == null) return null;
-		final String cached = sAccountScreenNames.get(account_id);
+		final String cached = sAccountScreenNames.get(accountId);
 		if (!isEmpty(cached)) return cached;
 		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI,
-				new String[] { Accounts.SCREEN_NAME }, Accounts.ACCOUNT_ID + " = " + account_id, null, null);
+				new String[] { Accounts.SCREEN_NAME }, Accounts.ACCOUNT_ID + " = " + accountId, null, null);
 		if (cur == null) return null;
 		try {
 			if (cur.getCount() > 0 && cur.moveToFirst()) {
 				final String name = cur.getString(0);
-				sAccountScreenNames.put(account_id, name);
+				sAccountScreenNames.put(accountId, name);
 				return name;
 			}
 			return null;
@@ -1248,20 +1258,20 @@ public final class Utils implements Constants {
 		return getAccountScreenNames(context, false);
 	}
 
-	public static String[] getAccountScreenNames(final Context context, final boolean include_at_char) {
-		return getAccountScreenNames(context, null, include_at_char);
+	public static String[] getAccountScreenNames(final Context context, final boolean includeAtChar) {
+		return getAccountScreenNames(context, null, includeAtChar);
 	}
 
-	public static String[] getAccountScreenNames(final Context context, final long[] account_ids) {
-		return getAccountScreenNames(context, account_ids, false);
+	public static String[] getAccountScreenNames(final Context context, final long[] accountIds) {
+		return getAccountScreenNames(context, accountIds, false);
 	}
 
-	public static String[] getAccountScreenNames(final Context context, final long[] account_ids,
-			final boolean include_at_char) {
+	public static String[] getAccountScreenNames(final Context context, final long[] accountIds,
+			final boolean includeAtChar) {
 		if (context == null) return new String[0];
 		final String[] cols = new String[] { Accounts.SCREEN_NAME };
-		final String where = account_ids != null ? Where.in(new Column(Accounts.ACCOUNT_ID),
-				new RawItemArray(account_ids)).getSQL() : null;
+		final String where = accountIds != null ? Where.in(new Column(Accounts.ACCOUNT_ID),
+				new RawItemArray(accountIds)).getSQL() : null;
 		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI, cols, where,
 				null, null);
 		if (cur == null) return new String[0];

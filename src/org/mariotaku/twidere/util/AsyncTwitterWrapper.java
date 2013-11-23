@@ -80,6 +80,7 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
 import twitter4j.UserList;
+import twitter4j.http.HttpResponseCode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -996,7 +997,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				deleteMessages(message_id);
 				return SingleResponse.newInstance(message, null);
 			} catch (final TwitterException e) {
-				if (e.getErrorCode() == 34) {
+				if (isMessageNotFound(e)) {
 					deleteMessages(message_id);
 				}
 				return SingleResponse.newInstance(null, e);
@@ -1007,8 +1008,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		protected void onPostExecute(final SingleResponse<DirectMessage> result) {
 			super.onPostExecute(result);
 			if (result == null) return;
-			if (result.data != null && result.data.getId() > 0 || result.exception instanceof TwitterException
-					&& ((TwitterException) result.exception).getErrorCode() == 34) {
+			if (result.data != null || isMessageNotFound(result.exception)) {
 				mMessagesManager.showInfoMessage(R.string.direct_message_deleted, false);
 			} else {
 				mMessagesManager.showErrorMessage(R.string.action_deleting, result.exception, true);
@@ -1019,6 +1019,13 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 			final String where = DirectMessages.MESSAGE_ID + " = " + message_id;
 			mResolver.delete(DirectMessages.Inbox.CONTENT_URI, where, null);
 			mResolver.delete(DirectMessages.Outbox.CONTENT_URI, where, null);
+		}
+
+		private boolean isMessageNotFound(final Exception e) {
+			if (!(e instanceof TwitterException)) return false;
+			final TwitterException te = (TwitterException) e;
+			return te.getErrorCode() == TwitterErrorCodes.PAGE_NOT_FOUND
+					|| te.getStatusCode() == HttpResponseCode.NOT_FOUND;
 		}
 	}
 

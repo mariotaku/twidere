@@ -9,12 +9,14 @@ import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
+import android.preference.PreferenceScreen;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +35,8 @@ import org.mariotaku.twidere.fragment.support.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.support.MentionsFragment;
 import org.mariotaku.twidere.model.CustomTabConfiguration;
 import org.mariotaku.twidere.model.SupportTabSpec;
+import org.mariotaku.twidere.preference.WizardPageHeaderPreference;
+import org.mariotaku.twidere.preference.WizardPageNavPreference;
 import org.mariotaku.twidere.provider.TweetStore.Tabs;
 import org.mariotaku.twidere.task.AsyncTask;
 import org.mariotaku.twidere.util.CustomTabUtils;
@@ -47,9 +51,9 @@ import java.util.List;
 
 public class SettingsWizardActivity extends Activity implements Constants {
 
-	public static final CharSequence WIZARD_PREFERENCE_KEY_NEXT_PAGE = "next_page";
-	public static final CharSequence WIZARD_PREFERENCE_KEY_USE_DEFAULTS = "use_defaults";
-	public static final CharSequence WIZARD_PREFERENCE_KEY_EDIT_CUSTOM_TABS = "edit_custom_tabs";
+	public static final String WIZARD_PREFERENCE_KEY_NEXT_PAGE = "next_page";
+	public static final String WIZARD_PREFERENCE_KEY_USE_DEFAULTS = "use_defaults";
+	public static final String WIZARD_PREFERENCE_KEY_EDIT_CUSTOM_TABS = "edit_custom_tabs";
 	private ViewPager mViewPager;
 	private LinePageIndicator mIndicator;
 
@@ -125,7 +129,8 @@ public class SettingsWizardActivity extends Activity implements Constants {
 		mAdapter.addTab(WizardPageFinishedFragment.class, null, getString(R.string.wizard_page_finished_title), null, 0);
 	}
 
-	public static class BaseWizardPageFragment extends BasePreferenceFragment {
+	public static abstract class BaseWizardPageFragment extends BasePreferenceFragment implements
+			OnPreferenceClickListener {
 
 		public void gotoFinishPage() {
 			final Activity a = getActivity();
@@ -147,15 +152,27 @@ public class SettingsWizardActivity extends Activity implements Constants {
 				((SettingsWizardActivity) a).gotoNextPage();
 			}
 		}
-	}
-
-	public static class WizardPageCardsFragment extends BaseWizardPageFragment implements OnPreferenceClickListener {
 
 		@Override
 		public void onActivityCreated(final Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
-			addPreferencesFromResource(R.xml.settings_wizard_page_cards);
-			findPreference(WIZARD_PREFERENCE_KEY_NEXT_PAGE).setOnPreferenceClickListener(this);
+			addPreferencesFromResource(getPreferenceResource());
+			final Context context = getActivity();
+			final Preference wizardHeader = new WizardPageHeaderPreference(context);
+			wizardHeader.setTitle(getHeaderTitle());
+			wizardHeader.setSummary(getHeaderSummary());
+			wizardHeader.setOrder(0);
+			final PreferenceScreen screen = getPreferenceScreen();
+			screen.addPreference(wizardHeader);
+			final int nextPageTitle = getNextPageTitle();
+			if (nextPageTitle != 0) {
+				final Preference nextPage = new WizardPageNavPreference(context);
+				nextPage.setKey(WIZARD_PREFERENCE_KEY_NEXT_PAGE);
+				nextPage.setOrder(screen.getPreferenceCount());
+				nextPage.setTitle(nextPageTitle);
+				nextPage.setOnPreferenceClickListener(this);
+				screen.addPreference(nextPage);
+			}
 		}
 
 		@Override
@@ -164,6 +181,35 @@ public class SettingsWizardActivity extends Activity implements Constants {
 				gotoNextPage();
 			}
 			return true;
+		}
+
+		protected abstract int getHeaderSummary();
+
+		protected abstract int getHeaderTitle();
+
+		protected int getNextPageTitle() {
+			return R.string.next;
+		}
+
+		protected abstract int getPreferenceResource();
+
+	}
+
+	public static class WizardPageCardsFragment extends BaseWizardPageFragment {
+
+		@Override
+		protected int getHeaderSummary() {
+			return R.string.wizard_page_cards_text;
+		}
+
+		@Override
+		protected int getHeaderTitle() {
+			return R.string.cards;
+		}
+
+		@Override
+		protected int getPreferenceResource() {
+			return R.xml.settings_cards;
 		}
 	}
 
@@ -187,25 +233,31 @@ public class SettingsWizardActivity extends Activity implements Constants {
 
 	}
 
-	public static class WizardPageHintsFragment extends BaseWizardPageFragment implements OnPreferenceClickListener {
+	public static class WizardPageHintsFragment extends BaseWizardPageFragment {
 
 		@Override
-		public void onActivityCreated(final Bundle savedInstanceState) {
-			super.onActivityCreated(savedInstanceState);
-			addPreferencesFromResource(R.xml.settings_wizard_page_hints);
-			findPreference(WIZARD_PREFERENCE_KEY_NEXT_PAGE).setOnPreferenceClickListener(this);
+		protected int getHeaderSummary() {
+			return R.string.wizard_page_hints_text;
 		}
 
 		@Override
-		public boolean onPreferenceClick(final Preference preference) {
-			if (WIZARD_PREFERENCE_KEY_NEXT_PAGE.equals(preference.getKey())) {
-				gotoNextPage();
-			}
-			return true;
+		protected int getHeaderTitle() {
+			return R.string.hints;
 		}
+
+		@Override
+		protected int getNextPageTitle() {
+			return R.string.finish;
+		}
+
+		@Override
+		protected int getPreferenceResource() {
+			return R.xml.settings_wizard_page_hints;
+		}
+
 	}
 
-	public static class WizardPageTabsFragment extends BaseWizardPageFragment implements OnPreferenceClickListener {
+	public static class WizardPageTabsFragment extends BaseWizardPageFragment {
 
 		private static final int REQUEST_CUSTOM_TABS = 1;
 
@@ -219,7 +271,6 @@ public class SettingsWizardActivity extends Activity implements Constants {
 		@Override
 		public void onActivityCreated(final Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
-			addPreferencesFromResource(R.xml.settings_wizard_page_tab);
 			findPreference(WIZARD_PREFERENCE_KEY_EDIT_CUSTOM_TABS).setOnPreferenceClickListener(this);
 			findPreference(WIZARD_PREFERENCE_KEY_USE_DEFAULTS).setOnPreferenceClickListener(this);
 		}
@@ -247,6 +298,26 @@ public class SettingsWizardActivity extends Activity implements Constants {
 				applyInitialTabSettings();
 			}
 			return true;
+		}
+
+		@Override
+		protected int getHeaderSummary() {
+			return R.string.wizard_page_tabs_text;
+		}
+
+		@Override
+		protected int getHeaderTitle() {
+			return R.string.tabs;
+		}
+
+		@Override
+		protected int getNextPageTitle() {
+			return 0;
+		}
+
+		@Override
+		protected int getPreferenceResource() {
+			return R.xml.settings_wizard_page_tab;
 		}
 
 		public static class TabsUnchangedDialogFragment extends BaseDialogFragment implements
@@ -283,18 +354,18 @@ public class SettingsWizardActivity extends Activity implements Constants {
 	public static class WizardPageThemeFragment extends BaseWizardPageFragment implements OnPreferenceClickListener {
 
 		@Override
-		public void onActivityCreated(final Bundle savedInstanceState) {
-			super.onActivityCreated(savedInstanceState);
-			addPreferencesFromResource(R.xml.settings_wizard_page_theme);
-			findPreference(WIZARD_PREFERENCE_KEY_NEXT_PAGE).setOnPreferenceClickListener(this);
+		protected int getHeaderSummary() {
+			return R.string.wizard_page_theme_text;
 		}
 
 		@Override
-		public boolean onPreferenceClick(final Preference preference) {
-			if (WIZARD_PREFERENCE_KEY_NEXT_PAGE.equals(preference.getKey())) {
-				gotoNextPage();
-			}
-			return true;
+		protected int getHeaderTitle() {
+			return R.string.theme;
+		}
+
+		@Override
+		protected int getPreferenceResource() {
+			return R.xml.settings_theme;
 		}
 	}
 
@@ -310,7 +381,6 @@ public class SettingsWizardActivity extends Activity implements Constants {
 		@Override
 		public void onActivityCreated(final Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
-			addPreferencesFromResource(R.xml.settings_wizard_page_welcome);
 			findPreference(WIZARD_PREFERENCE_KEY_NEXT_PAGE).setOnPreferenceClickListener(this);
 			findPreference(WIZARD_PREFERENCE_KEY_USE_DEFAULTS).setOnPreferenceClickListener(this);
 		}
@@ -323,6 +393,26 @@ public class SettingsWizardActivity extends Activity implements Constants {
 				applyInitialSettings();
 			}
 			return true;
+		}
+
+		@Override
+		protected int getHeaderSummary() {
+			return R.string.wizard_page_welcome_text;
+		}
+
+		@Override
+		protected int getHeaderTitle() {
+			return R.string.wizard_page_welcome_title;
+		}
+
+		@Override
+		protected int getNextPageTitle() {
+			return 0;
+		}
+
+		@Override
+		protected int getPreferenceResource() {
+			return R.xml.settings_wizard_page_welcome;
 		}
 	}
 

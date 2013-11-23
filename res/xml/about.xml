@@ -24,9 +24,16 @@
 	<PreferenceCategory
 		android:key="cat_donate"
 		android:title="@string/donate">
+		<Preference android:title="@string/donate_via_paypal">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=mariotaku.lee%40gmail%2ecom&amp;item_name=Donate%20to%20Twidere"/>
+		</Preference>
 		<Preference
 			android:fragment="org.mariotaku.twidere.fragment.PayPalDonateFragment"
-			android:title="@string/donate_via_paypal"/>
+			android:summary="@string/pay_via_paypal_summary"
+			android:title="@string/pay_via_paypal">
+		</Preference>
 		<Preference android:title="@string/donate_via_alipay">
 			<intent
 				android:action="android.intent.action.VIEW"
@@ -41,8 +48,8 @@
 		</Preference>
 	</PreferenceCategory>
 	<PreferenceCategory
-		android:key="cat_translators"
-		android:title="@string/translators">
+		android:key="cat_translate"
+		android:title="@string/translate">
 		<Preference android:title="@string/translate">
 			<intent
 				android:action="android.intent.action.VIEW"

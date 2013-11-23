@@ -58,7 +58,7 @@ public class StatusViewHolder extends CardViewHolder {
 		super(view);
 		final Context context = getContext();
 		content = (IColorLabelView) findViewById(R.id.content);
-		gap_indicator = findViewById(R.id.list_gap_text);
+		gap_indicator = findViewById(R.id.gap_indicator);
 		image_preview_container = findViewById(R.id.image_preview_container);
 		profile_image = (ImageView) findViewById(R.id.profile_image);
 		my_profile_image = (ImageView) findViewById(R.id.my_profile_image);

@@ -10,6 +10,7 @@
 	<string name="error_131">Twitter\'s server may temporarily down, please try later.</string>
 	<string name="error_135">Could not authenticate you, you may need to sign in again.</string>
 	<string name="error_179">You are not authorized to see this status.</string>
+	<string name="error_187">Your tweet is a duplicate.</string>
 	<string name="error_193">The photo you upload is too large.</string>
 	<string name="error_215">Could not authenticate you, you may need to sign in again.</string>
 

@@ -354,10 +354,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 					return true;
 				}
 				if (isDualPaneMode() && !FragmentManagerTrojan.isStateSaved(fm)) {
-//					for (int i = 0; i < count; i++) {
-//						fm.popBackStackImmediate();
-//					}
-					fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE); 
+					fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 					updateActionsButton();
 				}
 				return true;
@@ -508,7 +505,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		switch (requestCode) {
 			case REQUEST_SWIPEBACK_ACTIVITY: {
-				closeAccountsDrawer();
+				// closeAccountsDrawer();
 				return;
 			}
 		}
