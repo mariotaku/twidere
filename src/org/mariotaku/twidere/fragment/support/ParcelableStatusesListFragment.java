@@ -140,13 +140,6 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	}
 
 	@Override
-	public final void onPostStart() {
-		if (isActivityFirstCreated()) {
-			getLoaderManager().restartLoader(0, getArguments(), this);
-		}
-	}
-
-	@Override
 	public void onRefreshStarted() {
 		super.onRefreshStarted();
 		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();

@@ -216,11 +216,11 @@ public interface TwidereConstants {
 	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_AUTO_REFRESH_TRENDS = "auto_refresh_trends";
 	@PreferenceType(PreferenceType.BOOLEAN)
-	public static final String PREFERENCE_KEY_NOTIFICATION_ENABLE_HOME_TIMELINE = "notification_enable_home_timeline";
+	public static final String PREFERENCE_KEY_HOME_TIMELINE_NOTIFICATION = "home_timeline_notification";
 	@PreferenceType(PreferenceType.BOOLEAN)
-	public static final String PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS = "notification_enable_mentions";
+	public static final String PREFERENCE_KEY_MENTIONS_NOTIFICATION = "mentions_notification";
 	@PreferenceType(PreferenceType.BOOLEAN)
-	public static final String PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES = "notification_enable_direct_messages";
+	public static final String PREFERENCE_KEY_DIRECT_MESSAGES_NOTIFICATION = "direct_messages_notification";
 	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND = "notification_have_sound";
 	@PreferenceType(PreferenceType.BOOLEAN)
@@ -301,6 +301,10 @@ public interface TwidereConstants {
 			| NOTIFICATION_FLAG_LIGHT;
 	public static final int PREFERENCE_DEFAULT_NOTIFICATION_TYPE_DIRECT_MESSAGES = NOTIFICATION_FLAG_RINGTONE
 			| NOTIFICATION_FLAG_VIBRATION | NOTIFICATION_FLAG_LIGHT;
+
+	public static final boolean PREFERENCE_DEFAULT_HOME_TIMELINE_NOTIFICATION = false;
+	public static final boolean PREFERENCE_DEFAULT_MENTIONS_NOTIFICATION = true;
+	public static final boolean PREFERENCE_DEFAULT_DIRECT_MESSAGES_NOTIFICATION = true;
 
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
 	public static final int PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT = 20;
@@ -491,6 +495,7 @@ public interface TwidereConstants {
 	public static final String EXTRA_ACTIVITY_SCREENSHOT_ENCODED = "activity_screenshot_encoded";
 	public static final String EXTRA_COLOR = "color";
 	public static final String EXTRA_ALPHA_SLIDER = "alpha_slider";
+	public static final String EXTRA_OPEN_ACCOUNTS_DRAWER = "open_accounts_drawer";
 
 	public static final int MENU_GROUP_STATUS_EXTENSION = 10;
 	public static final int MENU_GROUP_COMPOSE_EXTENSION = 11;

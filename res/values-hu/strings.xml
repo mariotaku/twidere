@@ -137,7 +137,7 @@
   <string name="auto_refresh">Automatikus frissítés</string>
   <string name="refresh_interval">Frissítési időköz</string>
   <string name="content_to_refresh">Frissítendő tartalom</string>
-  <string name="content_to_nofity">Értesítés a következő tartalmakról</string>
+  <string name="content_to_notify">Értesítés a következő tartalmakról</string>
   <string name="notifications_type">Értesítések típusa</string>
   <string name="notifications_type_summary">Ez az opció NEM írja felül a rendszer beállításait.</string>
   <string name="sound">Hang</string>

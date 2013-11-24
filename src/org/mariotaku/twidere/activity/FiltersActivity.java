@@ -88,10 +88,10 @@ public class FiltersActivity extends BaseActivity implements TabListener, OnPage
 		mAdapter = new TabsAdapter(this, getFragmentManager(), null);
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 		mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		addTab(FilteredUsersFragment.class, getString(R.string.users), 0);
-		addTab(FilteredKeywordsFragment.class, getString(R.string.keywords), 1);
-		addTab(FilteredSourcesFragment.class, getString(R.string.sources), 2);
-		addTab(FilteredLinksFragment.class, getString(R.string.links), 3);
+		addTab(FilteredUsersFragment.class, R.string.users, 0);
+		addTab(FilteredKeywordsFragment.class, R.string.keywords, 1);
+		addTab(FilteredSourcesFragment.class, R.string.sources, 2);
+		addTab(FilteredLinksFragment.class, R.string.links, 3);
 		mViewPager.setAdapter(mAdapter);
 		mViewPager.setOnPageChangeListener(this);
 	}
@@ -210,10 +210,10 @@ public class FiltersActivity extends BaseActivity implements TabListener, OnPage
 		}
 	}
 
-	private void addTab(final Class<? extends Fragment> cls, final String name, final int position) {
+	private void addTab(final Class<? extends Fragment> cls, final int name, final int position) {
 		if (mActionBar == null || mAdapter == null) return;
 		mActionBar.addTab(mActionBar.newTab().setText(name).setTabListener(this));
-		mAdapter.addTab(cls, null, name, null, position);
+		mAdapter.addTab(cls, null, getString(name), null, position);
 	}
 
 	public static final class AddItemFragment extends BaseDialogFragment implements OnClickListener {

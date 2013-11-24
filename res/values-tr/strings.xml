@@ -137,7 +137,7 @@
   <string name="refresh_interval">Yenileme aralığı</string>
   <string name="refresh_interval_summary">Dar yenileme aralıkları daha çok pil ve ağ verisi kullanır!</string>
   <string name="content_to_refresh">Yenilenecek içerik</string>
-  <string name="content_to_nofity">Bildirimi yapılacak içerik</string>
+  <string name="content_to_notify">Bildirimi yapılacak içerik</string>
   <string name="notifications_type">Bildirim şekli</string>
   <string name="notifications_type_summary">Bu seçenek sistem ayarlarının yerine geçMEyecek.</string>
   <string name="sound">Ses</string>

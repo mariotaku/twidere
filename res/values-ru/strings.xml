@@ -174,7 +174,7 @@
   <string name="refresh_interval">Интервал обновления</string>
   <string name="refresh_interval_summary">Уменьшение интервала обновления увеличивает расход заряда батареи и трафика!</string>
   <string name="content_to_refresh">Контент для обновления</string>
-  <string name="content_to_nofity">Контент для уведомлений</string>
+  <string name="content_to_notify">Контент для уведомлений</string>
   <string name="notifications_type">Тип уведомления</string>
   <string name="notifications_type_summary">Этот параметр НЕ будет переопределять настройки системы.</string>
   <string name="sound">Звук</string>

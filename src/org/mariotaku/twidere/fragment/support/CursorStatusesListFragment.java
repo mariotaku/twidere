@@ -106,13 +106,6 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	}
 
 	@Override
-	public void onPostStart() {
-		if (!isActivityFirstCreated()) {
-			getLoaderManager().restartLoader(0, null, this);
-		}
-	}
-
-	@Override
 	public void onRefreshStarted() {
 		super.onRefreshStarted();
 		savePosition();

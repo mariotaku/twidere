@@ -67,6 +67,20 @@ public class AccountPreferences implements Constants {
 		return mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH_TRENDS, PREFERENCE_DEFAULT_AUTO_REFRESH_TRENDS);
 	}
 
+	public boolean isDirectMessagesNotificationEnabled() {
+		return mPreferences.getBoolean(PREFERENCE_KEY_DIRECT_MESSAGES_NOTIFICATION,
+				PREFERENCE_DEFAULT_DIRECT_MESSAGES_NOTIFICATION);
+	}
+
+	public boolean isHomeTimelineNotificationEnabled() {
+		return mPreferences.getBoolean(PREFERENCE_KEY_HOME_TIMELINE_NOTIFICATION,
+				PREFERENCE_DEFAULT_HOME_TIMELINE_NOTIFICATION);
+	}
+
+	public boolean isMentionsNotificationEnabled() {
+		return mPreferences.getBoolean(PREFERENCE_KEY_MENTIONS_NOTIFICATION, PREFERENCE_DEFAULT_MENTIONS_NOTIFICATION);
+	}
+
 	public boolean isNotificationEnabled() {
 		return mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION, PREFERENCE_DEFAULT_NOTIFICATION);
 	}

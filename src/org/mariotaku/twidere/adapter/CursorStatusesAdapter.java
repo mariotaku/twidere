@@ -173,10 +173,12 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 					R.string.name_with_nickname, name, nick));
 			holder.screen_name.setText("@" + screen_name);
 			if (mLinkHighlightOption != LINK_HIGHLIGHT_OPTION_CODE_NONE) {
-				mLinkify.applyUserProfileLink(holder.name, account_id, user_id, screen_name);
-				mLinkify.applyUserProfileLink(holder.screen_name, account_id, user_id, screen_name);
-				holder.name.setMovementMethod(null);
-				holder.screen_name.setMovementMethod(null);
+				// mLinkify.applyUserProfileLink(holder.name, account_id,
+				// user_id, screen_name);
+				// mLinkify.applyUserProfileLink(holder.screen_name, account_id,
+				// user_id, screen_name);
+				// holder.name.setMovementMethod(null);
+				// holder.screen_name.setMovementMethod(null);
 			}
 			holder.time.setTime(status_timestamp);
 			holder.setStatusType(!mFavoritesHighlightDisabled && is_favorite, has_location, has_media,

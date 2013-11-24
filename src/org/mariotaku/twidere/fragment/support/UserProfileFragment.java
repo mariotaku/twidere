@@ -538,7 +538,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 
 	@Override
 	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
-		inflater.inflate(R.menu.menu_user_profile, menu);
+		inflater.inflate(R.menu.menu_user_user_list, menu);
 	}
 
 	@Override
@@ -770,24 +770,24 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 	public void onPrepareOptionsMenu(final Menu menu) {
 		super.onPrepareOptionsMenu(menu);
 		final AsyncTwitterWrapper twitter = getTwitterWrapper();
-		final boolean is_myself = mUser != null && mUser.account_id == mUser.id || mAccountId == mUserId;
-		final boolean is_following_me = mFriendship != null && mFriendship.isTargetFollowingSource();
-		final boolean is_following = mFriendship != null && mFriendship.isSourceFollowingTarget();
-		final boolean is_protected = mUser != null && mUser.is_protected;
-		final boolean is_creating_friendship = twitter != null && mUser != null
+		final boolean isMyself = mUser != null && mUser.account_id == mUser.id || mAccountId == mUserId;
+		final boolean isFollowingMe = mFriendship != null && mFriendship.isTargetFollowingSource();
+		final boolean isFollowing = mFriendship != null && mFriendship.isSourceFollowingTarget();
+		final boolean isProtected = mUser != null && mUser.is_protected;
+		final boolean isCreatingFriendship = twitter != null && mUser != null
 				&& twitter.isCreatingFriendship(mUser.account_id, mUser.id);
-		final boolean is_destroying_friendship = twitter != null && mUser != null
+		final boolean isDestroyingFriendship = twitter != null && mUser != null
 				&& twitter.isDestroyingFriendship(mUser.account_id, mUser.id);
-		setMenuItemAvailability(menu, MENU_EDIT, is_myself);
-		setMenuItemAvailability(menu, MENU_FOLLOW, mUser != null && mFriendship != null && !is_creating_friendship
-				&& !is_destroying_friendship && !is_myself && !is_following);
-		setMenuItemAvailability(menu, MENU_UNFOLLOW, mUser != null && mFriendship != null && !is_creating_friendship
-				&& !is_destroying_friendship && !is_myself && is_following);
-		setMenuItemIcon(menu, MENU_FOLLOW, is_following_me ? R.drawable.ic_menu_follow_following_you
+		setMenuItemAvailability(menu, MENU_EDIT, isMyself);
+		setMenuItemAvailability(menu, MENU_FOLLOW, mUser != null && mFriendship != null && !isCreatingFriendship
+				&& !isDestroyingFriendship && !isMyself && !isFollowing);
+		setMenuItemAvailability(menu, MENU_UNFOLLOW, mUser != null && mFriendship != null && !isCreatingFriendship
+				&& !isDestroyingFriendship && !isMyself && isFollowing);
+		setMenuItemIcon(menu, MENU_FOLLOW, isFollowingMe ? R.drawable.ic_menu_follow_following_you
 				: R.drawable.ic_menu_follow);
-		setMenuItemIcon(menu, MENU_UNFOLLOW, is_following_me ? R.drawable.ic_menu_unfollow_following_you
+		setMenuItemIcon(menu, MENU_UNFOLLOW, isFollowingMe ? R.drawable.ic_menu_unfollow_following_you
 				: R.drawable.ic_menu_unfollow);
-		setMenuItemTitle(menu, MENU_FOLLOW, is_protected ? R.string.send_follow_request : R.string.follow);
+		setMenuItemTitle(menu, MENU_FOLLOW, isProtected ? R.string.send_follow_request : R.string.follow);
 	}
 
 	@Override

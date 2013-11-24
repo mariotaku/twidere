@@ -75,6 +75,7 @@ import org.mariotaku.twidere.task.ManagedAsyncTask;
 import twitter4j.DirectMessage;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
+import twitter4j.SavedSearch;
 import twitter4j.Trends;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -114,8 +115,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		mLargeProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
-	public int addUserListMembersAsync(final long account_id, final int list_id, final ParcelableUser... users) {
-		final AddUserListMembersTask task = new AddUserListMembersTask(account_id, list_id, users);
+	public int addUserListMembersAsync(final long accountId, final int listId, final ParcelableUser... users) {
+		final AddUserListMembersTask task = new AddUserListMembersTask(accountId, listId, users);
 		return mAsyncTaskManager.add(task, true);
 	}
 
@@ -146,6 +147,11 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	public int createMultiBlockAsync(final long account_id, final long[] user_ids) {
 		final CreateMultiBlockTask task = new CreateMultiBlockTask(account_id, user_ids);
+		return mAsyncTaskManager.add(task, true);
+	}
+
+	public int createSavedSearchAsync(final long accountId, final String query) {
+		final CreateSavedSearchTask task = new CreateSavedSearchTask(accountId, query);
 		return mAsyncTaskManager.add(task, true);
 	}
 
@@ -497,28 +503,28 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	class AddUserListMembersTask extends ManagedAsyncTask<Void, Void, SingleResponse<ParcelableUserList>> {
 
-		private final long account_id;
-		private final int list_id;
+		private final long accountId;
+		private final int listId;
 		private final ParcelableUser[] users;
 
-		public AddUserListMembersTask(final long account_id, final int list_id, final ParcelableUser[] users) {
+		public AddUserListMembersTask(final long accountId, final int listId, final ParcelableUser[] users) {
 			super(mContext, mAsyncTaskManager);
-			this.account_id = account_id;
-			this.list_id = list_id;
+			this.accountId = accountId;
+			this.listId = listId;
 			this.users = users;
 		}
 
 		@Override
 		protected SingleResponse<ParcelableUserList> doInBackground(final Void... params) {
-			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
+			final Twitter twitter = getTwitterInstance(mContext, accountId, false);
 			if (twitter != null && users != null) {
 				try {
-					final long[] user_ids = new long[users.length];
+					final long[] userIds = new long[users.length];
 					for (int i = 0, j = users.length; i < j; i++) {
-						user_ids[i] = users[i].id;
+						userIds[i] = users[i].id;
 					}
-					final ParcelableUserList list = new ParcelableUserList(
-							twitter.addUserListMembers(list_id, user_ids), account_id, false);
+					final ParcelableUserList list = new ParcelableUserList(twitter.addUserListMembers(listId, userIds),
+							accountId, false);
 					return SingleResponse.newInstance(list, null);
 				} catch (final TwitterException e) {
 					return SingleResponse.newInstance(null, e);
@@ -647,9 +653,9 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					for (final Uri uri : TweetStore.STATUSES_URIS) {
 						mResolver.update(uri, values, where.toString(), null);
 					}
-					return SingleResponse.dataOnly(new ParcelableStatus(status, account_id, false, mLargeProfileImage));
+					return SingleResponse.withData(new ParcelableStatus(status, account_id, false, mLargeProfileImage));
 				} catch (final TwitterException e) {
-					return SingleResponse.exceptionOnly(e);
+					return SingleResponse.withException(e);
 				}
 			}
 			return SingleResponse.nullInstance();
@@ -780,6 +786,40 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 	}
 
+	class CreateSavedSearchTask extends ManagedAsyncTask<Void, Void, SingleResponse<SavedSearch>> {
+
+		private final long mAccountId;
+		private final String mQuery;
+
+		CreateSavedSearchTask(final long accountId, final String query) {
+			super(mContext, mAsyncTaskManager);
+			mAccountId = accountId;
+			mQuery = query;
+		}
+
+		@Override
+		protected SingleResponse<SavedSearch> doInBackground(final Void... params) {
+			final Twitter twitter = getTwitterInstance(mContext, mAccountId, false);
+			if (twitter == null) return null;
+			try {
+				return SingleResponse.withData(twitter.createSavedSearch(mQuery));
+			} catch (final TwitterException e) {
+				return SingleResponse.withException(e);
+			}
+		}
+
+		@Override
+		protected void onPostExecute(final SingleResponse<SavedSearch> result) {
+			if (result != null && result.data != null) {
+				mMessagesManager.showOkMessage(R.string.search_saved, false);
+			} else {
+				mMessagesManager.showErrorMessage(R.string.action_saving_search, result.exception, false);
+			}
+			super.onPostExecute(result);
+		}
+
+	}
+
 	class CreateUserListSubscriptionTask extends ManagedAsyncTask<Void, Void, SingleResponse<ParcelableUserList>> {
 
 		private final long account_id;
@@ -800,7 +840,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 							account_id, false);
 					return new SingleResponse<ParcelableUserList>(list, null);
 				} catch (final TwitterException e) {
-					return SingleResponse.exceptionOnly(e);
+					return SingleResponse.withException(e);
 				}
 			}
 			return SingleResponse.nullInstance();
@@ -1064,7 +1104,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					return new SingleResponse<ParcelableStatus>(new ParcelableStatus(status, account_id, false,
 							mLargeProfileImage), null);
 				} catch (final TwitterException e) {
-					return SingleResponse.exceptionOnly(e);
+					return SingleResponse.withException(e);
 				}
 			}
 			return SingleResponse.nullInstance();
@@ -1261,7 +1301,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 						return new SingleResponse<ParcelableUserList>(list, null);
 					}
 				} catch (final TwitterException e) {
-					return SingleResponse.exceptionOnly(e);
+					return SingleResponse.withException(e);
 				}
 			}
 			return SingleResponse.nullInstance();
@@ -2139,7 +2179,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					final UserList list = twitter.updateUserList(list_id, name, is_public, description);
 					return new SingleResponse<ParcelableUserList>(new ParcelableUserList(list, account_id, false), null);
 				} catch (final TwitterException e) {
-					return SingleResponse.exceptionOnly(e);
+					return SingleResponse.withException(e);
 				}
 			}
 			return SingleResponse.nullInstance();

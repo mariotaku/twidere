@@ -155,7 +155,7 @@
   <string name="refresh_interval">ความถี่การโหลด</string>
   <string name="refresh_interval_summary">ยิ่งโหลดข้อมูลถี่ จะยิ่งกินแบตเตอรี่และปริมาณข้อมูล</string>
   <string name="content_to_refresh">เนื้อหาที่จะโหลดใหม่</string>
-  <string name="content_to_nofity">เนื้อหาที่จะแจ้งเตือน</string>
+  <string name="content_to_notify">เนื้อหาที่จะแจ้งเตือน</string>
   <string name="notifications_type">รูปแบบการแจ้งเตือน</string>
   <string name="notifications_type_summary">ตัวเลือกนี้จะไม่ทับค่าของระบบ</string>
   <string name="sound">เสียง</string>

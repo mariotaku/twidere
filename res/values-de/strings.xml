@@ -176,7 +176,7 @@
   <string name="refresh_interval">Aktualisierungsintervall</string>
   <string name="refresh_interval_summary">Kürzere Aktualisierungsintervalle verbrauchen mehr Batterie und Datenvolumen!</string>
   <string name="content_to_refresh">Zu aktualisierende Inhalte</string>
-  <string name="content_to_nofity">Inhalte für die Benachrichtigung</string>
+  <string name="content_to_notify">Inhalte für die Benachrichtigung</string>
   <string name="notifications_type">Benachrichtigungstyp</string>
   <string name="notifications_type_summary">Diese Option ändert KEINE Systemeinstellungen.</string>
   <string name="sound">Ton</string>

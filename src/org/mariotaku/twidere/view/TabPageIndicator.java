@@ -99,7 +99,7 @@ public class TabPageIndicator extends HorizontalScrollView implements PagerIndic
 	public TabPageIndicator(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
 		setHorizontalScrollBarEnabled(false);
-		mTabColor = ThemeUtils.getUserThemeColor(context);
+		mTabColor = isInEditMode() ? 0 : ThemeUtils.getUserThemeColor(context);
 		mInflater = LayoutInflater.from(context);
 		mTabLayout = new LinearLayout(context);
 		mTabLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
@@ -308,7 +308,7 @@ public class TabPageIndicator extends HorizontalScrollView implements PagerIndic
 
 	private void addTab(final CharSequence label, final Drawable icon, final int index) {
 		// Workaround for not being able to pass a defStyle on pre-3.0
-		final TabView tabView = (TabView) mInflater.inflate(R.layout.vpi__tab, null);
+		final TabView tabView = (TabView) mInflater.inflate(R.layout.tab_item_vpi, null);
 		tabView.init(this, mDisplayLabel ? label : null, mDisplayIcon ? icon : null, index);
 		tabView.setFocusable(true);
 		tabView.setOnClickListener(mTabClickListener);

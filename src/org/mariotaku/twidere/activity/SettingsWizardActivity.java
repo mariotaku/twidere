@@ -75,7 +75,9 @@ public class SettingsWizardActivity extends Activity implements Constants {
 	public void exitWizard() {
 		final SharedPreferences prefs = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		prefs.edit().putBoolean(PREFERENCE_KEY_SETTINGS_WIZARD_COMPLETED, true).apply();
-		startActivity(new Intent(this, HomeActivity.class));
+		final Intent intent = new Intent(this, HomeActivity.class);
+		intent.putExtra(EXTRA_OPEN_ACCOUNTS_DRAWER, true);
+		startActivity(intent);
 		finish();
 	}
 

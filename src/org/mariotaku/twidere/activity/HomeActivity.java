@@ -48,6 +48,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.TextUtils;
 import android.util.FloatMath;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
@@ -95,6 +96,7 @@ import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MathUtils;
 import org.mariotaku.twidere.util.MultiSelectEventHandler;
+import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.UnreadCountUtils;
 import org.mariotaku.twidere.util.Utils;
@@ -237,7 +239,10 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 				break;
 			}
 			case R.id.save_search: {
-
+				if (mTwitterWrapper == null || mSearchView == null || mSelectedAccountToSearch == null) return;
+				final String query = ParseUtils.parseString(mSearchView.getQuery());
+				if (TextUtils.isEmpty(query)) return;
+				mTwitterWrapper.createSavedSearchAsync(mSelectedAccountToSearch.account_id, query);
 				break;
 			}
 		}
@@ -539,7 +544,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			return;
 		}
 		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONCREATE));
-		final boolean refresh_on_start = mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ON_START, false);
+		final boolean refreshOnStart = mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ON_START, false);
 		final int initial_tab = handleIntent(intent, savedInstanceState == null);
 		mActionBar = getActionBar();
 		mActionBar.setCustomView(R.layout.home_tabs);
@@ -565,14 +570,20 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mActionBar.setDisplayShowTitleEnabled(!tabs_not_empty);
 		mActionBar.setDisplayShowCustomEnabled(tabs_not_empty);
 		setTabPosition(initial_tab);
-		if (refresh_on_start && savedInstanceState == null) {
-			mTwitterWrapper.refreshAll();
-		}
 		setupSlidingMenu();
 		showDataProfilingRequest();
 		initUnreadCount();
 		updateActionsButton();
 		updateSlidingMenuTouchMode();
+
+		if (savedInstanceState == null) {
+			if (refreshOnStart) {
+				mTwitterWrapper.refreshAll();
+			}
+			if (intent.getBooleanExtra(EXTRA_OPEN_ACCOUNTS_DRAWER, false)) {
+				openAccountsDrawer();
+			}
+		}
 	}
 
 	@Override
@@ -677,32 +688,26 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			openSearch(this, account_id, query);
 			return -1;
 		}
-		final Bundle extras = intent.getExtras();
 		final boolean refresh_on_start = mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ON_START, false);
-		final long[] refreshed_ids = extras != null ? extras.getLongArray(EXTRA_IDS) : null;
+		final long[] refreshed_ids = intent.getLongArrayExtra(EXTRA_IDS);
 		if (refreshed_ids != null) {
 			mTwitterWrapper.refreshAll(refreshed_ids);
 		} else if (first_create && refresh_on_start) {
 			mTwitterWrapper.refreshAll();
 		}
 
-		final int initial_tab;
-		if (extras != null) {
-			final int tab = extras.getInt(EXTRA_INITIAL_TAB, -1);
-			initial_tab = tab != -1 ? tab : getAddedTabPosition(this, extras.getString(EXTRA_TAB_TYPE));
-			if (initial_tab != -1 && mViewPager != null) {
-				clearNotification(initial_tab);
+		final int tab = intent.getIntExtra(EXTRA_INITIAL_TAB, -1);
+		final int initial_tab = tab != -1 ? tab : getAddedTabPosition(this, intent.getStringExtra(EXTRA_TAB_TYPE));
+		if (initial_tab != -1 && mViewPager != null) {
+			clearNotification(initial_tab);
+		}
+		final Intent extraIntent = intent.getParcelableExtra(EXTRA_EXTRA_INTENT);
+		if (extraIntent != null) {
+			if (isTwidereLink(extraIntent.getData()) && isDualPaneMode()) {
+				showFragment(createFragmentForIntent(this, extraIntent), true);
+			} else {
+				startActivity(extraIntent);
 			}
-			final Intent extra_intent = extras.getParcelable(EXTRA_EXTRA_INTENT);
-			if (extra_intent != null) {
-				if (isTwidereLink(extra_intent.getData()) && isDualPaneMode()) {
-					showFragment(createFragmentForIntent(this, extra_intent), true);
-				} else {
-					startActivity(extra_intent);
-				}
-			}
-		} else {
-			initial_tab = -1;
 		}
 		return initial_tab;
 	}
@@ -741,6 +746,11 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 
 	private boolean isTwidereLink(final Uri data) {
 		return data != null && SCHEME_TWIDERE.equals(data.getScheme());
+	}
+
+	private void openAccountsDrawer() {
+		if (mSlidingMenu == null) return;
+		mSlidingMenu.showMenu();
 	}
 
 	private boolean openSettingsWizard() {

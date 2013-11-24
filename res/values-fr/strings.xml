@@ -174,7 +174,7 @@
   <string name="refresh_interval">Intervalle d\'actualisation</string>
   <string name="refresh_interval_summary">Des fréquences de rafraîchissement plus élevées consomment plus de batterie et plus de trafic réseau!</string>
   <string name="content_to_refresh">Contenu à actualiser</string>
-  <string name="content_to_nofity">Contenu à notifier</string>
+  <string name="content_to_notify">Contenu à notifier</string>
   <string name="notifications_type">Type de notifications</string>
   <string name="notifications_type_summary">Cette option ne remplacera PAS les paramètres système.</string>
   <string name="sound">Son</string>

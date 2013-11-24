@@ -198,11 +198,13 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 					R.string.name_with_nickname, status.user_name, nick));
 			holder.screen_name.setText("@" + status.user_screen_name);
 			if (mLinkHighlightOption != LINK_HIGHLIGHT_OPTION_CODE_NONE) {
-				mLinkify.applyUserProfileLink(holder.name, status.account_id, status.user_id, status.user_screen_name);
-				mLinkify.applyUserProfileLink(holder.screen_name, status.account_id, status.user_id,
-						status.user_screen_name);
-				holder.name.setMovementMethod(null);
-				holder.screen_name.setMovementMethod(null);
+				// mLinkify.applyUserProfileLink(holder.name, status.account_id,
+				// status.user_id, status.user_screen_name);
+				// mLinkify.applyUserProfileLink(holder.screen_name,
+				// status.account_id, status.user_id,
+				// status.user_screen_name);
+				// holder.name.setMovementMethod(null);
+				// holder.screen_name.setMovementMethod(null);
 			}
 			holder.time.setTime(status.timestamp);
 			holder.setStatusType(!mFavoritesHighlightDisabled && status.is_favorite, isValidLocation(status.location),

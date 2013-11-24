@@ -157,7 +157,7 @@
   <string name="refresh_interval">الفاصل الزمني للتحديث</string>
   <string name="refresh_interval_summary">مهلات التحديث القصيرة تستهلك بكثير البطارية وبيانات الشبكة!</string>
   <string name="content_to_refresh">المحتوى للتحديث</string>
-  <string name="content_to_nofity">إخطاري عن :</string>
+  <string name="content_to_notify">إخطاري عن :</string>
   <string name="notifications_type">نوع الإخطارات</string>
   <string name="notifications_type_summary">هذا الخيار لن يتجاهل إعدادات النظام.</string>
   <string name="sound">بالصوت</string>

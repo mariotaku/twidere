@@ -177,7 +177,7 @@
   <string name="refresh_interval">刷新间隔</string>
   <string name="refresh_interval_summary">更小的刷新间隔将消耗更多的电量及数据流量！</string>
   <string name="content_to_refresh">刷新的内容</string>
-  <string name="content_to_nofity">通知的内容</string>
+  <string name="content_to_notify">通知的内容</string>
   <string name="notifications_type">通知类型</string>
   <string name="notifications_type_summary">这个选项将不会覆盖系统的声音/震动设置</string>
   <string name="sound">声音</string>

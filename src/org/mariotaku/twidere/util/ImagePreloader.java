@@ -54,14 +54,6 @@ public class ImagePreloader implements Constants {
 		mHandler = new Handler();
 	}
 
-	/**
-	 * Cancels any downloads, shuts down the executor pool, and then purges the
-	 * caches.
-	 */
-	public void cancel() {
-		mImageLoader.destroy();
-	}
-
 	public File getCachedImageFile(final String url) {
 		if (url == null) return null;
 		final File cache = mDiscCache.get(url);

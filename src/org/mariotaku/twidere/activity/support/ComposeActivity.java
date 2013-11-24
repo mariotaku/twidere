@@ -311,21 +311,17 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 			}
 			case REQUEST_SELECT_ACCOUNT: {
 				if (resultCode == Activity.RESULT_OK) {
-					final Bundle bundle = intent.getExtras();
-					if (bundle == null) {
+					final long[] accountIds = intent.getLongArrayExtra(EXTRA_IDS);
+					if (accountIds == null) {
 						break;
 					}
-					final long[] account_ids = bundle.getLongArray(EXTRA_IDS);
-					if (account_ids != null) {
-						mAccountIds = account_ids;
-						if (mShouldSaveAccounts) {
-							final SharedPreferences.Editor editor = mPreferences.edit();
-							editor.putString(PREFERENCE_KEY_COMPOSE_ACCOUNTS,
-									ArrayUtils.toString(account_ids, ',', false));
-							editor.commit();
-						}
-						mColorIndicator.setColors(getAccountColors(this, account_ids));
+					mAccountIds = accountIds;
+					if (mShouldSaveAccounts) {
+						final SharedPreferences.Editor editor = mPreferences.edit();
+						editor.putString(PREFERENCE_KEY_COMPOSE_ACCOUNTS, ArrayUtils.toString(accountIds, ',', false));
+						editor.commit();
 					}
+					mColorIndicator.setColors(getAccountColors(this, accountIds));
 				}
 				break;
 			}
@@ -344,20 +340,16 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 			}
 			case REQUEST_EXTENSION_COMPOSE: {
 				if (resultCode == Activity.RESULT_OK) {
-					final Bundle extras = intent.getExtras();
-					if (extras == null) {
-						break;
-					}
-					final String text = extras.getString(EXTRA_TEXT);
-					final String append = extras.getString(EXTRA_APPEND_TEXT);
-					final Uri image_uri = extras.getParcelable(EXTRA_IMAGE_URI);
+					final String text = intent.getStringExtra(EXTRA_TEXT);
+					final String append = intent.getStringExtra(EXTRA_APPEND_TEXT);
+					final Uri imageUri = intent.getParcelableExtra(EXTRA_IMAGE_URI);
 					if (text != null) {
 						mEditText.setText(text);
 					} else if (append != null) {
 						mEditText.append(append);
 					}
-					if (image_uri != null) {
-						mImageUri = image_uri;
+					if (imageUri != null) {
+						mImageUri = imageUri;
 						reloadAttachedImageThumbnail();
 					}
 					setMenu();
@@ -526,7 +518,6 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		mEditText.addTextChangedListener(this);
 
 		final Intent intent = getIntent();
-		final String action = intent.getAction();
 
 		if (savedInstanceState != null) {
 			// Restore from previous saved state
@@ -656,21 +647,17 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		if (intent == null) return false;
 		final String action = intent.getAction();
 		mShouldSaveAccounts = !Intent.ACTION_SEND.equals(action) && !Intent.ACTION_SEND_MULTIPLE.equals(action);
-		final Bundle extras = intent.getExtras();
 		final Uri data = intent.getData();
 		if (data != null) {
 			mImageUri = data;
 		}
-		if (extras != null) {
-			final CharSequence extra_subject = extras.getCharSequence(Intent.EXTRA_SUBJECT);
-			final CharSequence extra_text = extras.getCharSequence(Intent.EXTRA_TEXT);
-			final Uri extra_stream = extras.getParcelable(Intent.EXTRA_STREAM);
-			if (extra_stream != null) {
-				new CopyImageTask(this, mImageUri, extra_stream, createTempImageUri(), ATTACHED_IMAGE_TYPE_IMAGE)
-						.execute();
-			}
-			mEditText.setText(getShareStatus(this, extra_subject, extra_text));
+		final CharSequence extra_subject = intent.getCharSequenceExtra(Intent.EXTRA_SUBJECT);
+		final CharSequence extra_text = intent.getCharSequenceExtra(Intent.EXTRA_TEXT);
+		final Uri extra_stream = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+		if (extra_stream != null) {
+			new CopyImageTask(this, mImageUri, extra_stream, createTempImageUri(), ATTACHED_IMAGE_TYPE_IMAGE).execute();
 		}
+		mEditText.setText(getShareStatus(this, extra_subject, extra_text));
 		final int selection_end = mEditText.length();
 		mEditText.setSelection(selection_end);
 		return true;
@@ -958,15 +945,15 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 
 	private void updateStatus() {
 		if (isFinishing()) return;
-		final boolean has_media = hasMedia();
+		final boolean hasMedia = hasMedia();
 		final String text = mEditText != null ? ParseUtils.parseString(mEditText.getText()) : null;
-		final int tweet_length = mValidator.getTweetLength(text);
-		if (!mTweetShortenerUsed && tweet_length > Validator.MAX_TWEET_LENGTH) {
+		final int tweetLength = mValidator.getTweetLength(text);
+		if (!mTweetShortenerUsed && tweetLength > Validator.MAX_TWEET_LENGTH) {
 			mEditText.setError(getString(R.string.error_message_status_too_long));
 			final int text_length = mEditText.length();
-			mEditText.setSelection(text_length - (tweet_length - Validator.MAX_TWEET_LENGTH), text_length);
+			mEditText.setSelection(text_length - (tweetLength - Validator.MAX_TWEET_LENGTH), text_length);
 			return;
-		} else if ((has_media && !mImageUploaderUsed || mImageUri == null) && (isEmpty(text) || noReplyContent(text))) {
+		} else if (!hasMedia && (isEmpty(text) || noReplyContent(text))) {
 			mEditText.setError(getString(R.string.error_message_no_content));
 			return;
 		}
@@ -980,13 +967,13 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 			}
 			mRecentLocation = location != null ? new ParcelableLocation(location) : null;
 		}
-		final boolean is_quote = INTENT_ACTION_QUOTE.equals(getIntent().getAction());
-		final ParcelableLocation status_loc = attach_location ? mRecentLocation : null;
-		final boolean link_to_quoted_tweet = mPreferences.getBoolean(PREFERENCE_KEY_LINK_TO_QUOTED_TWEET, true);
-		final long in_reply_to = !is_quote || link_to_quoted_tweet ? mInReplyToStatusId : -1;
-		final boolean possibly_sensitive = has_media && mIsPossiblySensitive;
-		mTwitterWrapper.updateStatusAsync(mAccountIds, text, status_loc, mImageUri, mAttachedImageType, in_reply_to,
-				possibly_sensitive);
+		final boolean isQuote = INTENT_ACTION_QUOTE.equals(getIntent().getAction());
+		final ParcelableLocation statusLocation = attach_location ? mRecentLocation : null;
+		final boolean linkToQuotedTweet = mPreferences.getBoolean(PREFERENCE_KEY_LINK_TO_QUOTED_TWEET, true);
+		final long inReplyToStatusId = !isQuote || linkToQuotedTweet ? mInReplyToStatusId : -1;
+		final boolean isPossiblySensitive = hasMedia && mIsPossiblySensitive;
+		mTwitterWrapper.updateStatusAsync(mAccountIds, text, statusLocation, mImageUri, mAttachedImageType,
+				inReplyToStatusId, isPossiblySensitive);
 		if (mPreferences.getBoolean(PREFERENCE_KEY_NO_CLOSE_AFTER_TWEET_SENT, false)
 				&& (mInReplyToStatus == null || mInReplyToStatusId <= 0)) {
 			mAttachedImageType = ATTACHED_IMAGE_TYPE_NONE;

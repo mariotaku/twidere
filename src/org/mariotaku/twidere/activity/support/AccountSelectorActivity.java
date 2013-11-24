@@ -95,8 +95,8 @@ public class AccountSelectorActivity extends BaseSupportDialogActivity implement
 	public void onLoadFinished(final Loader<Cursor> loader, final Cursor cursor) {
 		mAdapter.swapCursor(cursor);
 		if (cursor != null && mFirstCreated) {
-			final Bundle extras = getIntent().getExtras();
-			final long[] activated_ids = extras != null ? extras.getLongArray(EXTRA_IDS) : null;
+			final Intent intent = getIntent();
+			final long[] activated_ids = intent.getLongArrayExtra(EXTRA_IDS);
 			for (int i = 0, j = mAdapter.getCount(); i < j; i++) {
 				mListView.setItemChecked(i, ArrayUtils.contains(activated_ids, mAdapter.getItemId(i)));
 			}

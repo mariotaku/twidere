@@ -64,19 +64,19 @@ public class SingleResponse<Data> {
 		return result;
 	}
 
-	public static <T> SingleResponse<T> dataOnly(final T data) {
-		return new SingleResponse<T>(data, null);
-	}
-
-	public static <T> SingleResponse<T> exceptionOnly(final Exception exception) {
-		return new SingleResponse<T>(null, exception);
-	}
-
 	public static <T> SingleResponse<T> newInstance(final T data, final Exception exception) {
 		return new SingleResponse<T>(data, exception);
 	}
 
 	public static <T> SingleResponse<T> nullInstance() {
 		return new SingleResponse<T>(null, null);
+	}
+
+	public static <T> SingleResponse<T> withData(final T data) {
+		return new SingleResponse<T>(data, null);
+	}
+
+	public static <T> SingleResponse<T> withException(final Exception exception) {
+		return new SingleResponse<T>(null, exception);
 	}
 }

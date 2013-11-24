@@ -27,10 +27,6 @@ import org.mariotaku.twidere.R;
 
 public class NotificationContentPreference extends MultiSelectListPreference implements Constants {
 
-	public static final boolean DEFAULT_ENABLE_HOME_TTMELINE = false;
-	public static final boolean DEFAULT_ENABLE_MENTIONS = true;
-	public static final boolean DEFAULT_ENABLE_DIRECT_MESSAGES = true;
-
 	public NotificationContentPreference(final Context context) {
 		this(context, null);
 	}
@@ -45,18 +41,19 @@ public class NotificationContentPreference extends MultiSelectListPreference imp
 
 	@Override
 	protected boolean[] getDefaults() {
-		return new boolean[] { DEFAULT_ENABLE_HOME_TTMELINE, DEFAULT_ENABLE_MENTIONS, DEFAULT_ENABLE_DIRECT_MESSAGES };
+		return new boolean[] { PREFERENCE_DEFAULT_HOME_TIMELINE_NOTIFICATION, PREFERENCE_DEFAULT_MENTIONS_NOTIFICATION,
+				PREFERENCE_DEFAULT_DIRECT_MESSAGES_NOTIFICATION };
 	}
 
 	@Override
 	protected String[] getKeys() {
-		return new String[] { PREFERENCE_KEY_NOTIFICATION_ENABLE_HOME_TIMELINE,
-				PREFERENCE_KEY_NOTIFICATION_ENABLE_MENTIONS, PREFERENCE_KEY_NOTIFICATION_ENABLE_DIRECT_MESSAGES };
+		return new String[] { PREFERENCE_KEY_HOME_TIMELINE_NOTIFICATION, PREFERENCE_KEY_MENTIONS_NOTIFICATION,
+				PREFERENCE_KEY_DIRECT_MESSAGES_NOTIFICATION };
 	}
 
 	@Override
 	protected String[] getNames() {
-		return getContext().getResources().getStringArray(R.array.entries_refresh_notification_content);
+		return getContext().getResources().getStringArray(R.array.entries_notification_content);
 	}
 
 }

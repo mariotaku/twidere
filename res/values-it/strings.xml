@@ -161,7 +161,7 @@
   <string name="refresh_interval">Intervallo di aggiornamento</string>
   <string name="refresh_interval_summary">Un intervallo di aggiornamento breve consuma più batteria e traffico dati!</string>
   <string name="content_to_refresh">Contenuti da aggiornare</string>
-  <string name="content_to_nofity">Contenuti da notificare</string>
+  <string name="content_to_notify">Contenuti da notificare</string>
   <string name="notifications_type">Tipo di notifiche</string>
   <string name="notifications_type_summary">Questa scelta NON sovrascrive le impostazioni di sistema.</string>
   <string name="sound">Suono</string>

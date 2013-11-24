@@ -461,7 +461,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		if (intent == null || mStatus == null) return;
 		switch (requestCode) {
 			case REQUEST_SET_COLOR: {
-				if (resultCode == Activity.RESULT_OK) if (intent != null && intent.getExtras() != null) {
+				if (resultCode == Activity.RESULT_OK && intent != null) {
 					final int color = intent.getIntExtra(Accounts.USER_COLOR, Color.TRANSPARENT);
 					setUserColor(getActivity(), mStatus.user_id, color);
 				}
@@ -974,16 +974,16 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 		private SingleResponse<Boolean> isAllFollowing() {
 			if (status == null) return SingleResponse.nullInstance();
-			if (status.user_id == status.account_id) return SingleResponse.dataOnly(true);
+			if (status.user_id == status.account_id) return SingleResponse.withData(true);
 			final Twitter twitter = getTwitterInstance(context, status.account_id, false);
 			if (twitter == null) return SingleResponse.nullInstance();
 			try {
 				final Relationship result = twitter.showFriendship(status.account_id, status.user_id);
 				if (!result.isSourceFollowingTarget()) {
-					SingleResponse.dataOnly(false);
+					SingleResponse.withData(false);
 				}
 			} catch (final TwitterException e) {
-				return SingleResponse.exceptionOnly(e);
+				return SingleResponse.withException(e);
 			}
 			return SingleResponse.nullInstance();
 		}
@@ -1166,12 +1166,12 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		public SingleResponse<ParcelableStatus> loadInBackground() {
 			if (!mOmitIntentExtra && mExtras != null) {
 				final ParcelableStatus cache = mExtras.getParcelable(EXTRA_STATUS);
-				if (cache != null) return SingleResponse.dataOnly(cache);
+				if (cache != null) return SingleResponse.withData(cache);
 			}
 			try {
-				return SingleResponse.dataOnly(findStatus(getContext(), mAccountId, mStatusId));
+				return SingleResponse.withData(findStatus(getContext(), mAccountId, mStatusId));
 			} catch (final TwitterException e) {
-				return SingleResponse.exceptionOnly(e);
+				return SingleResponse.withException(e);
 			}
 		}
 

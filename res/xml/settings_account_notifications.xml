@@ -3,6 +3,10 @@
 	xmlns:twidere="http://schemas.android.com/apk/res/org.mariotaku.twidere"
 	android:title="@string/notifications">
 
+	<org.mariotaku.twidere.preference.NotificationContentPreference
+		android:key="notification_type_home"
+		android:title="@string/content_to_notify"/>
+
 	<org.mariotaku.twidere.preference.RingtonePreference
 		android:key="notification_ringtone"
 		android:title="@string/notification_ringtone"/>

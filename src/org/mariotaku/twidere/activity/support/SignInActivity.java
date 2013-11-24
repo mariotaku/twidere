@@ -128,20 +128,17 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 		switch (requestCode) {
 			case REQUEST_EDIT_API: {
 				if (resultCode == RESULT_OK) {
-					final Bundle extras = data != null ? data.getExtras() : null;
-					if (extras != null) {
-						mRestBaseURL = data.getStringExtra(Accounts.REST_BASE_URL);
-						mSigningRestBaseURL = data.getStringExtra(Accounts.SIGNING_REST_BASE_URL);
-						mOAuthBaseURL = data.getStringExtra(Accounts.OAUTH_BASE_URL);
-						mSigningOAuthBaseURL = data.getStringExtra(Accounts.SIGNING_OAUTH_BASE_URL);
-						mAuthType = data.getIntExtra(Accounts.AUTH_TYPE, Accounts.AUTH_TYPE_OAUTH);
-						mConsumerKey = data.getStringExtra(Accounts.CONSUMER_KEY);
-						mConsumerSecret = data.getStringExtra(Accounts.CONSUMER_SECRET);
-						final boolean is_twip_o_mode = mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE;
-						mUsernamePasswordContainer.setVisibility(is_twip_o_mode ? View.GONE : View.VISIBLE);
-						mSigninSignupContainer.setOrientation(is_twip_o_mode ? LinearLayout.VERTICAL
-								: LinearLayout.HORIZONTAL);
-					}
+					mRestBaseURL = data.getStringExtra(Accounts.REST_BASE_URL);
+					mSigningRestBaseURL = data.getStringExtra(Accounts.SIGNING_REST_BASE_URL);
+					mOAuthBaseURL = data.getStringExtra(Accounts.OAUTH_BASE_URL);
+					mSigningOAuthBaseURL = data.getStringExtra(Accounts.SIGNING_OAUTH_BASE_URL);
+					mAuthType = data.getIntExtra(Accounts.AUTH_TYPE, Accounts.AUTH_TYPE_OAUTH);
+					mConsumerKey = data.getStringExtra(Accounts.CONSUMER_KEY);
+					mConsumerSecret = data.getStringExtra(Accounts.CONSUMER_SECRET);
+					final boolean is_twip_o_mode = mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE;
+					mUsernamePasswordContainer.setVisibility(is_twip_o_mode ? View.GONE : View.VISIBLE);
+					mSigninSignupContainer.setOrientation(is_twip_o_mode ? LinearLayout.VERTICAL
+							: LinearLayout.HORIZONTAL);
 				}
 				setSignInButton();
 				invalidateOptionsMenu();
@@ -155,7 +152,7 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 				break;
 			}
 			case REQUEST_BROWSER_SIGN_IN: {
-				if (resultCode == BaseSupportActivity.RESULT_OK) if (data != null && data.getExtras() != null) {
+				if (resultCode == BaseSupportActivity.RESULT_OK && data != null) {
 					doLogin(data);
 				}
 				break;

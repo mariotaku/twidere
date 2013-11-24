@@ -176,7 +176,7 @@
   <string name="refresh_interval">Intervalo de atualização</string>
   <string name="refresh_interval_summary">Intervalos de atualização menores consomem mais bateria e dados da rede!</string>
   <string name="content_to_refresh">Conteúdo para atualizar</string>
-  <string name="content_to_nofity">Conteúdo para notificar</string>
+  <string name="content_to_notify">Conteúdo para notificar</string>
   <string name="notifications_type">Tipo de notificações</string>
   <string name="notifications_type_summary">Essa opção NÃO vai substituir as configurações de sistema.</string>
   <string name="sound">Som</string>

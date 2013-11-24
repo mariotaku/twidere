@@ -177,7 +177,7 @@
   <string name="refresh_interval">更新間隔</string>
   <string name="refresh_interval_summary">更新間隔を短くすると消費電力や通信量が増えます。慎重に設定してください。</string>
   <string name="content_to_refresh">更新するコンテンツ</string>
-  <string name="content_to_nofity">通知するコンテンツ</string>
+  <string name="content_to_notify">通知するコンテンツ</string>
   <string name="notifications_type">通知のタイプ</string>
   <string name="notifications_type_summary">このオプションはシステム設定を上書きしません。</string>
   <string name="sound">音</string>

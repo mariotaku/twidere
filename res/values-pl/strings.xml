@@ -177,7 +177,7 @@
   <string name="refresh_interval">Przedział odświeżania</string>
   <string name="refresh_interval_summary">Częstsze odświeżanie zużywa więcej baterii i zwiększa przesył danych!</string>
   <string name="content_to_refresh">Zawartość do odświeżania</string>
-  <string name="content_to_nofity">Zawartość do powiadamiania</string>
+  <string name="content_to_notify">Zawartość do powiadamiania</string>
   <string name="notifications_type">Rodzaj powiadomień</string>
   <string name="notifications_type_summary">To NIE nadpisze ustawień systemowych.</string>
   <string name="sound">Dźwięk</string>

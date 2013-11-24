@@ -176,7 +176,7 @@
   <string name="refresh_interval">Interval d\'actualizació</string>
   <string name="refresh_interval_summary">Els intervals de refresc curts utilitzen més bateria i ús de dades.</string>
   <string name="content_to_refresh">Contingut per actualitzar</string>
-  <string name="content_to_nofity">Contingut per notificar</string>
+  <string name="content_to_notify">Contingut per notificar</string>
   <string name="notifications_type">Tipus de notificacions</string>
   <string name="notifications_type_summary">Aquesta opció NO modificarà configuracions del sistema.</string>
   <string name="sound">So</string>

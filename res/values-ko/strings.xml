@@ -163,7 +163,7 @@
   <string name="refresh_interval">새로고침 간격</string>
   <string name="refresh_interval_summary">새로고침 간격이 작을수록 배터리와 데이터를 더 많이 소모합니다!</string>
   <string name="content_to_refresh">새로고침할 콘텐츠</string>
-  <string name="content_to_nofity">콘텐츠 알림</string>
+  <string name="content_to_notify">콘텐츠 알림</string>
   <string name="notifications_type">알림 유형</string>
   <string name="notifications_type_summary">이 옵션은 시스템 설정을 무시하지 않습니다.</string>
   <string name="sound">소리</string>

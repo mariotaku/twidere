@@ -58,7 +58,6 @@ import org.mariotaku.twidere.util.Utils;
 public class BaseSupportListFragment extends ListFragment implements IBaseFragment, Constants, OnScrollListener,
 		RefreshScrollTopInterface {
 
-	private boolean mActivityFirstCreated;
 	private boolean mIsInstanceStateSaved;
 
 	private boolean mReachedBottom, mNotReachedBottomBefore;
@@ -105,10 +104,6 @@ public class BaseSupportListFragment extends ListFragment implements IBaseFragme
 		activity.invalidateOptionsMenu();
 	}
 
-	public boolean isActivityFirstCreated() {
-		return mActivityFirstCreated;
-	}
-
 	public boolean isInstanceStateSaved() {
 		return mIsInstanceStateSaved;
 	}
@@ -129,12 +124,6 @@ public class BaseSupportListFragment extends ListFragment implements IBaseFragme
 	@Override
 	public void onAttach(final Activity activity) {
 		super.onAttach(activity);
-	}
-
-	@Override
-	public void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		mActivityFirstCreated = true;
 	}
 
 	/**
@@ -203,12 +192,6 @@ public class BaseSupportListFragment extends ListFragment implements IBaseFragme
 	}
 
 	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		mActivityFirstCreated = true;
-	}
-
-	@Override
 	public void onDetach() {
 		super.onDetach();
 		final Activity activity = getActivity();
@@ -252,12 +235,6 @@ public class BaseSupportListFragment extends ListFragment implements IBaseFragme
 	public void onStart() {
 		super.onStart();
 		onPostStart();
-	}
-
-	@Override
-	public void onStop() {
-		mActivityFirstCreated = false;
-		super.onStop();
 	}
 
 	public void registerReceiver(final BroadcastReceiver receiver, final IntentFilter filter) {

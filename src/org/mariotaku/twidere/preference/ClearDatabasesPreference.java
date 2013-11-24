@@ -31,6 +31,7 @@ import android.util.AttributeSet;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.provider.TweetStore.CachedStatuses;
+import org.mariotaku.twidere.provider.TweetStore.UnreadCounts;
 
 public class ClearDatabasesPreference extends AsyncTaskPreference implements Constants, OnPreferenceClickListener {
 
@@ -63,6 +64,7 @@ public class ClearDatabasesPreference extends AsyncTaskPreference implements Con
 		for (final Uri uri : CACHE_URIS) {
 			resolver.delete(uri, null, null);
 		}
+		resolver.delete(UnreadCounts.CONTENT_URI, null, null);
 	}
 
 }

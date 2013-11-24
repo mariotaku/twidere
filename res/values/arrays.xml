@@ -27,7 +27,7 @@
 		<item>@string/inbox</item>
 		<item>@string/trends</item>
 	</string-array>
-	<string-array name="entries_refresh_notification_content">
+	<string-array name="entries_notification_content">
 		<item>@string/home</item>
 		<item>@string/mentions</item>
 		<item>@string/inbox</item>

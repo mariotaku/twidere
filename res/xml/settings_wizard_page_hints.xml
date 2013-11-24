@@ -2,4 +2,13 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
 	android:title="@string/hints">
 
+	<Preference
+		android:icon="@drawable/ic_menu_accounts"
+		android:summary="@string/wizard_hint_compose_select_account"
+		android:title="@string/select_account"/>
+	<Preference
+		android:icon="@drawable/ic_menu_quote"
+		android:summary="@string/wizard_hint_quote_format"
+		android:title="@string/quote_format"/>
+
 </PreferenceScreen>

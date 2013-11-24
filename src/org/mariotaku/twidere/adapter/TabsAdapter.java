@@ -52,9 +52,9 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements TabProvide
 		clear();
 	}
 
-	public void addTab(final Class<? extends Fragment> cls, final Bundle args, final String name, final Integer icon,
-			final int position) {
-		addTab(new TabSpec(name, icon, cls, args, position));
+	public void addTab(final Class<? extends Fragment> cls, final Bundle args, final CharSequence title,
+			final Integer icon, final int position) {
+		addTab(new TabSpec(title, icon, cls, args, position));
 	}
 
 	public void addTab(final TabSpec spec) {

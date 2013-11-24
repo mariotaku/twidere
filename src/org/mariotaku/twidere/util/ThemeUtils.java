@@ -90,6 +90,7 @@ public class ThemeUtils implements Constants {
 		if (actionBar == null || context == null) return;
 		actionBar.setBackgroundDrawable(getActionBarBackground(context, applyAlpha));
 		actionBar.setSplitBackgroundDrawable(getActionBarSplitBackground(context, applyAlpha));
+		actionBar.setStackedBackgroundDrawable(getActionBarStackedBackground(context, applyAlpha));
 	}
 
 	public static void applyBackground(final View view) {
@@ -121,20 +122,7 @@ public class ThemeUtils implements Constants {
 				android.R.attr.actionBarStyle, 0);
 		final Drawable d = a.getDrawable(0);
 		a.recycle();
-		if (d == null) return null;
-		final Drawable mutated = d.mutate();
-		if (mutated instanceof LayerDrawable) {
-			final Drawable colorLayer = ((LayerDrawable) mutated).findDrawableByLayerId(R.id.color_layer);
-			if (colorLayer != null) {
-				final int color = getUserThemeColor(context);
-				colorLayer.setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-			}
-		}
-		if (applyAlpha) {
-			final boolean isTransparentBackground = isTransparentBackground(context);
-			mutated.setAlpha(isTransparentBackground ? 0xa0 : 0xff);
-		}
-		return mutated;
+		return applyActionBarDrawable(context, d, applyAlpha);
 	}
 
 	public static Context getActionBarContext(final Context context) {
@@ -150,20 +138,16 @@ public class ThemeUtils implements Constants {
 				android.R.attr.actionBarStyle, 0);
 		final Drawable d = a.getDrawable(0);
 		a.recycle();
-		if (d == null) return null;
-		final Drawable mutated = d.mutate();
-		if (mutated instanceof LayerDrawable) {
-			final Drawable colorLayer = ((LayerDrawable) mutated).findDrawableByLayerId(R.id.color_layer);
-			if (colorLayer != null) {
-				final int color = getUserThemeColor(context);
-				colorLayer.setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-			}
-		}
-		if (applyAlpha) {
-			final boolean isTransparentBackground = isTransparentBackground(context);
-			mutated.setAlpha(isTransparentBackground ? 0xa0 : 0xff);
-		}
-		return mutated;
+		return applyActionBarDrawable(context, d, applyAlpha);
+	}
+
+	public static Drawable getActionBarStackedBackground(final Context context, final boolean applyAlpha) {
+		final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.backgroundStacked },
+				android.R.attr.actionBarStyle, 0);
+		final Drawable d = a.getDrawable(0);
+		a.recycle();
+		return applyActionBarDrawable(context, d, applyAlpha);
+
 	}
 
 	public static Drawable getCardItemBackground(final Context context) {
@@ -587,6 +571,23 @@ public class ThemeUtils implements Constants {
 
 	public static boolean shouldApplyColorFilterToTabIcons(final int res) {
 		return isLightActionBar(res);
+	}
+
+	private static Drawable applyActionBarDrawable(final Context context, final Drawable d, final boolean applyAlpha) {
+		if (d == null) return null;
+		final Drawable mutated = d.mutate();
+		if (mutated instanceof LayerDrawable) {
+			final Drawable colorLayer = ((LayerDrawable) mutated).findDrawableByLayerId(R.id.color_layer);
+			if (colorLayer != null) {
+				final int color = getUserThemeColor(context);
+				colorLayer.setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+			}
+		}
+		if (applyAlpha) {
+			final boolean isTransparentBackground = isTransparentBackground(context);
+			mutated.setAlpha(isTransparentBackground ? 0xa0 : 0xff);
+		}
+		return mutated;
 	}
 
 	private static final class ThemeMap extends HashMap<String, Integer> {

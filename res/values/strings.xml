@@ -178,7 +178,7 @@
 	<string name="refresh_interval">Refresh interval</string>
 	<string name="refresh_interval_summary">Smaller refresh interval consumes more battery and network data!</string>
 	<string name="content_to_refresh">Content to refresh</string>
-	<string name="content_to_nofity">Content to notify</string>
+	<string name="content_to_notify">Content to notify</string>
 	<string name="notifications_type">Notifications type</string>
 	<string name="notifications_type_summary">This option will NOT override system settings.</string>
 	<string name="sound">Sound</string>
@@ -332,10 +332,12 @@
 	<string name="both">Both</string>
 	<string name="browser_sign_in">Browser sign in</string>
 	<string name="stop_auto_refresh_when_battery_low">Stop auto refresh when battery is low</string>
+	<string name="notification_status">New tweet by <xliff:g id="user">%s</xliff:g></string>
+	<string name="notification_status_multiple">New Tweet by <xliff:g id="user">%1$s</xliff:g> and <xliff:g id="count">%2$d</xliff:g> others</string>
 	<string name="notification_mention"><xliff:g id="user">%s</xliff:g> mentioned you.</string>
+	<string name="notification_mention_multiple"><xliff:g id="user">%1$s</xliff:g> and <xliff:g id="count">%2$d</xliff:g> others mentioned you.</string>
 	<string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> sent you a direct message.</string>
 	<string name="notification_direct_message_multiple_messages"><xliff:g id="user">%1$s</xliff:g> sent you <xliff:g id="messages_count">%2$d</xliff:g> direct messages.</string>
-	<string name="notification_mention_multiple"><xliff:g id="user">%1$s</xliff:g> and <xliff:g id="count">%2$d</xliff:g> others mentioned you.</string>
 	<string name="notification_direct_message_multiple_users"><xliff:g id="user">%1$s</xliff:g> and <xliff:g id="users_count">%2$d</xliff:g> others sent you <xliff:g id="messages_count">%3$d</xliff:g> direct messages.</string>
 	<string name="action_getting_status">getting tweet</string>
 	<string name="action_getting_statuses">getting tweets</string>
@@ -364,6 +366,7 @@
 	<string name="action_reporting_for_spam">reporting for spam</string>
 	<string name="action_subscribing_to_list">subscribing to list</string>
 	<string name="action_unsubscribing_from_list">unsubscribing from list</string>
+	<string name="action_saving_search">saving search</string>
 	<string name="status_is_duplicate">Your tweet is a duplicate.</string>
 	<string name="data_profiling_summary">Twidere took part in a research on predicting user\'s social behavior to pre-caching content started by students in UC Davis.\n\nHere are the data we wanted to collect and why:\nCollected data:\n1. User\'s twitter ID\n2. User\'s home timeline (prediction based on user\'s interest and social interaction)\n3. User\'s click on a tweet (prediction based on user\'s interest and social interaction)\n4. Coarse location (which is good predictor when user will access twitter)\n\nTwidere will upload collected data only when Wifi available and your device connected to charger, so It will not cost you extra bandwidth fee or drain your battery power.</string>
 	<string name="data_profiling">Usage Statistics</string>
@@ -444,6 +447,7 @@
 	<string name="retweet_cancelled">Retweet cancelled.</string>
 	<string name="direct_message_sent">Direct message sent.</string>
 	<string name="direct_message_deleted">Direct message deleted.</string>
+	<string name="search_saved">Search saved.</string>
 	<string name="import_from">Import from…</string>
 	<string name="link_to_quoted_status">Link to quoted tweet</string>
 	<string name="followed_user">Followed <xliff:g id="user">%s</xliff:g>.</string>
@@ -538,6 +542,8 @@
 	<string name="unfollow_user_confirm_message">Are you sure to unfollow <xliff:g id="name">%s</xliff:g>?</string>
 	<string name="delete_user_list">Delete list <xliff:g id="name">%s</xliff:g></string>
 	<string name="delete_user_list_confirm_message">Are you sure to delete list <xliff:g id="name">%s</xliff:g>?</string>
+	<string name="unsubscribe_from_user_list">Unsubscribe from list <xliff:g id="name">%s</xliff:g></string>
+	<string name="unsubscribe_from_user_list_confirm_message">Are you sure to unsubscribe from list <xliff:g id="name">%s</xliff:g>?</string>
 	<string name="signing_in_error_browser_sign_in_hint">Error while signing in, you may need to use browser sign in method. (This will ignore custom API settings during sign in)</string>
 	<string name="report_user">Report <xliff:g id="name">%s</xliff:g></string>
 	<string name="report_user_confirm_message">Are you sure to report <xliff:g id="name">%s</xliff:g> for spam?</string>
@@ -571,5 +577,7 @@
 	<string name="theme_background_default">Default</string>
 	<string name="theme_background_solid">Pure white/black</string>
 	<string name="theme_background_transparent">Transparent</string>
+	<string name="wizard_hint_compose_select_account">Click this icon to select account when writing a tweet.</string>
+	<string name="wizard_hint_quote_format">Set your favorite quote format in &quot;Settings&quot; - &quot;Content &amp; Storage&quot;</string>
 
 </resources>

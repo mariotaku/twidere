@@ -169,7 +169,7 @@
   <string name="refresh_interval">Vernieuw interval</string>
   <string name="refresh_interval_summary">Korte vernieuwingsintervallen verbruiken meer batterij en netwerk data!</string>
   <string name="content_to_refresh">Inhoud vernieuwen</string>
-  <string name="content_to_nofity">Inhoud melden</string>
+  <string name="content_to_notify">Inhoud melden</string>
   <string name="notifications_type">Notificatie type</string>
   <string name="notifications_type_summary">Deze optie zal GEEN systeeminstellingen overschrijven.</string>
   <string name="sound">Geluid</string>

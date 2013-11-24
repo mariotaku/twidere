@@ -176,7 +176,7 @@
   <string name="refresh_interval">Інтервал оновлення</string>
   <string name="refresh_interval_summary">Частіший інтервал оновлення витрачає більше трафіку та заряду батареї!</string>
   <string name="content_to_refresh">Матеріал для оновлення</string>
-  <string name="content_to_nofity">Матеріал для сповіщення</string>
+  <string name="content_to_notify">Матеріал для сповіщення</string>
   <string name="notifications_type">Тип сповіщення</string>
   <string name="notifications_type_summary">Цей параметр не буде переписувати налаштування системи.</string>
   <string name="sound">Звук</string>

@@ -278,12 +278,12 @@ public class BackgroundOperationService extends IntentService implements Constan
 					final ParcelableStatus result = new ParcelableStatus(twitter_result, account_id, false, false);
 					results.add(new SingleResponse<ParcelableStatus>(result, null));
 				} catch (final TwitterException e) {
-					final SingleResponse<ParcelableStatus> response = SingleResponse.exceptionOnly(e);
+					final SingleResponse<ParcelableStatus> response = SingleResponse.withException(e);
 					results.add(response);
 				}
 			}
 		} catch (final UpdateStatusException e) {
-			final SingleResponse<ParcelableStatus> response = SingleResponse.exceptionOnly(e);
+			final SingleResponse<ParcelableStatus> response = SingleResponse.withException(e);
 			results.add(response);
 		}
 		if (mentioned_hondajojo) {

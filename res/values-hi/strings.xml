@@ -132,7 +132,7 @@
   <string name="auto_refresh">ऑटो ताज़ा करें</string>
   <string name="refresh_interval">रीफ़्रेश अंतराल</string>
   <string name="content_to_refresh">ताज़ा सामग्री</string>
-  <string name="content_to_nofity">सूचित करने के लिए सामग्री</string>
+  <string name="content_to_notify">सूचित करने के लिए सामग्री</string>
   <string name="notifications_type">सूचना प्रकार</string>
   <string name="notifications_type_summary">यह विकल्प सिस्टम सेटिंग की अवहेलना नहीं करेगा।</string>
   <string name="sound">आवाज़</string>

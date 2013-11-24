@@ -171,7 +171,7 @@
   <string name="refresh_interval">Interval refresh</string>
   <string name="refresh_interval_summary">Rentang waktu muat ulang yang kecil memerlukan banyak daya dan data!</string>
   <string name="content_to_refresh">Konten yang di-refresh</string>
-  <string name="content_to_nofity">Konten untuk diberitahukan</string>
+  <string name="content_to_notify">Konten untuk diberitahukan</string>
   <string name="notifications_type">Jenis pemberitahuan</string>
   <string name="notifications_type_summary">Pilihan ini TIDAK akan menimpa pengaturan sistem.</string>
   <string name="sound">Suara</string>

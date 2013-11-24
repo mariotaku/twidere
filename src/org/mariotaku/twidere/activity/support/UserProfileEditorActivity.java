@@ -348,14 +348,15 @@ public class UserProfileEditorActivity extends TwidereSwipeBackActivity implemen
 	protected void onCreate(final Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
-		final Bundle extras = getIntent().getExtras();
-		if (extras == null || !isMyAccount(this, extras.getLong(EXTRA_ACCOUNT_ID))) {
+		final Intent intent = getIntent();
+		final long accountId = intent.getLongExtra(EXTRA_ACCOUNT_ID, -1);
+		if (!isMyAccount(this, accountId)) {
 			finish();
 			return;
 		}
 		mAsyncTaskManager = TwidereApplication.getInstance(this).getAsyncTaskManager();
 		mLazyImageLoader = TwidereApplication.getInstance(this).getImageLoaderWrapper();
-		mAccountId = extras.getLong(EXTRA_ACCOUNT_ID);
+		mAccountId = accountId;
 		setContentView(R.layout.edit_user_profile);
 		// setOverrideExitAniamtion(false);
 		getActionBar().setDisplayHomeAsUpEnabled(true);

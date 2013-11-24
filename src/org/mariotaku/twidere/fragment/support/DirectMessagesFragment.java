@@ -177,13 +177,6 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 	}
 
 	@Override
-	public void onPostStart() {
-		if (!isActivityFirstCreated()) {
-			getLoaderManager().restartLoader(0, null, this);
-		}
-	}
-
-	@Override
 	public void onRefreshStarted() {
 		super.onRefreshStarted();
 		new AsyncTask<Void, Void, long[][]>() {

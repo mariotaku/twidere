@@ -25,6 +25,7 @@
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar</item>
 		<item name="android:actionButtonStyle">@style/Widget.Twidere.ActionButton</item>
 		<item name="android:actionBarItemBackground">@drawable/item_background_holo_dark</item>
+		<item name="android:actionBarTabStyle">@style/Widget.Twidere.Light.ActionBar.TabView.Inverse</item>
 		<item name="android:actionBarWidgetTheme">@style/Theme.Twidere.ActionBar</item>
 
 		<!-- Custom view styles -->
@@ -77,8 +78,7 @@
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Dark</item>
 		<item name="android:actionButtonStyle">@style/Widget.Twidere.ActionButton</item>
 		<item name="android:actionBarItemBackground">@drawable/item_background_holo_dark</item>
-		<!-- <item name="android:actionBarTabStyle">@style/Widget.Twidere.Dark.ActionBar.TabView</item> -->
-
+		<item name="android:actionBarTabStyle">@style/Widget.Twidere.Dark.ActionBar.TabView</item>
 
 		<!-- Custom view styles -->
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
@@ -130,8 +130,7 @@
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Light</item>
 		<item name="android:actionButtonStyle">@style/Widget.Twidere.Light.ActionButton</item>
 		<item name="android:actionBarItemBackground">@drawable/item_background_holo_light</item>
-		<!-- <item name="android:actionBarTabStyle">@style/Widget.Twidere.Light.ActionBar.TabView</item> -->
-
+		<item name="android:actionBarTabStyle">@style/Widget.Twidere.Light.ActionBar.TabView</item>
 
 		<!-- Custom view styles -->
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
@@ -183,6 +182,7 @@
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Light.DarkActionBar</item>
 		<item name="android:actionButtonStyle">@style/Widget.Twidere.ActionButton</item>
 		<item name="android:actionBarItemBackground">@drawable/item_background_holo_dark</item>
+		<item name="android:actionBarTabStyle">@style/Widget.Twidere.Light.ActionBar.TabView.Inverse</item>
 
 		<!-- Custom view styles -->
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>

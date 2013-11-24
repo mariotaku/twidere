@@ -240,12 +240,12 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 						data.add(new ParcelableUserList(item, mAccountId, mLargeProfileImage));
 					}
 				}
-				final SingleResponse<List<ParcelableUserList>> result = SingleResponse.dataOnly(data);
+				final SingleResponse<List<ParcelableUserList>> result = SingleResponse.withData(data);
 				result.extras.putBoolean(EXTRA_IS_MY_ACCOUNT, is_my_account);
 				return result;
 			} catch (final TwitterException e) {
 				e.printStackTrace();
-				return SingleResponse.exceptionOnly(e);
+				return SingleResponse.withException(e);
 			}
 		}
 
@@ -299,10 +299,10 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 				for (final User item : lists) {
 					data.add(new ParcelableUser(item, mAccountId, mLargeProfileImage));
 				}
-				return SingleResponse.dataOnly(data);
+				return SingleResponse.withData(data);
 			} catch (final TwitterException e) {
 				e.printStackTrace();
-				return SingleResponse.exceptionOnly(e);
+				return SingleResponse.withException(e);
 			}
 		}
 

@@ -95,12 +95,16 @@
 		<item name="android:background">@drawable/spinner_ab_holo_light</item>
 	</style>
 
-	<style name="Widget.Twidere.Dark.ActionBar.TabView" parent="@android:style/Widget.Holo.ActionBar.TabView">
+	<style name="Widget.Twidere.Dark.ActionBar.TabView" parent="android:Widget.Holo.ActionBar.TabView">
 		<item name="android:background">@drawable/tab_indicator_ab_twidere_dark</item>
 	</style>
 
-	<style name="Widget.Twidere.Light.ActionBar.TabView" parent="@android:style/Widget.Holo.Light.ActionBar.TabView">
+	<style name="Widget.Twidere.Light.ActionBar.TabView" parent="android:Widget.Holo.Light.ActionBar.TabView">
 		<item name="android:background">@drawable/tab_indicator_ab_twidere_light</item>
+	</style>
+
+	<style name="Widget.Twidere.Light.ActionBar.TabView.Inverse" parent="android:Widget.Holo.Light.ActionBar.TabView.Inverse">
+		<item name="android:background">@drawable/tab_indicator_ab_twidere_dark</item>
 	</style>
 
 	<style name="Animation.Twidere.Activity" parent="android:Animation.Activity">

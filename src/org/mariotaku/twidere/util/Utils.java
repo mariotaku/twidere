@@ -293,8 +293,8 @@ public final class Utils implements Constants {
 		throw new AssertionError("You are trying to create an instance for this utility class!");
 	}
 
-	public static void addIntentToMenu(final Context context, final Menu menu, final Intent query_intent) {
-		addIntentToMenu(context, menu, query_intent, Menu.NONE);
+	public static void addIntentToMenu(final Context context, final Menu menu, final Intent queryIntent) {
+		addIntentToMenu(context, menu, queryIntent, Menu.NONE);
 	}
 
 	public static void addIntentToMenu(final Context context, final Menu menu, final Intent queryIntent,
@@ -1356,13 +1356,20 @@ public final class Utils implements Constants {
 			return "ipad_retina";
 	}
 
-	public static File getBestCacheDir(final Context context, final String cache_dir_name) {
-		final File ext_cache_dir = context.getExternalCacheDir();
-		if (ext_cache_dir != null && ext_cache_dir.isDirectory()) {
-			final File cache_dir = new File(ext_cache_dir, cache_dir_name);
-			if (cache_dir.isDirectory() || cache_dir.mkdirs()) return cache_dir;
+	public static File getBestCacheDir(final Context context, final String cacheDirName) {
+		if (context == null) throw new NullPointerException();
+		final File extCacheDir;
+		try {
+			// Workaround for https://github.com/mariotaku/twidere/issues/138
+			extCacheDir = context.getExternalCacheDir();
+		} catch (final Exception e) {
+			return new File(context.getCacheDir(), cacheDirName);
 		}
-		return new File(context.getCacheDir(), cache_dir_name);
+		if (extCacheDir != null && extCacheDir.isDirectory()) {
+			final File cacheDir = new File(extCacheDir, cacheDirName);
+			if (cacheDir.isDirectory() || cacheDir.mkdirs()) return cacheDir;
+		}
+		return new File(context.getCacheDir(), cacheDirName);
 	}
 
 	public static String getBiggerTwitterProfileImage(final String url) {
@@ -2631,7 +2638,9 @@ public final class Utils implements Constants {
 		values.put(Statuses.MEDIA_LINK, MediaPreviewUtils.getSupportedFirstLink(status));
 		final JSONArray json = JSONSerializer.toJSONArray(ParcelableUserMention.fromUserMentionEntities(status
 				.getUserMentionEntities()));
-		values.put(Statuses.MENTIONS, json.toString());
+		if (json != null) {
+			values.put(Statuses.MENTIONS, json.toString());
+		}
 		return values;
 	}
 
