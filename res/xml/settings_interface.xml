@@ -8,7 +8,7 @@
 		android:key="unread_count"
 		android:title="@string/unread_count"/>
 	<CheckBoxPreference
-		android:defaultValue="false"
+		android:defaultValue="true"
 		android:key="separate_retweet_action"
 		android:summary="@string/separate_retweet_action_summary"
 		android:title="@string/separate_retweet_action"/>

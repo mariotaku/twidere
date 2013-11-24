@@ -615,6 +615,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		} else {
 			updatePullToRefreshLayoutScroll(0);
 		}
+		updateSlidingMenuTouchMode();
 	}
 
 	@Override
@@ -868,7 +869,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private void updateSlidingMenuTouchMode() {
 		if (mViewPager == null || mSlidingMenu == null) return;
 		final int position = mViewPager.getCurrentItem();
-		final int mode = position == 0 && !isLeftPaneUsed() ? SlidingMenu.TOUCHMODE_FULLSCREEN
+		final int mode = !mViewPager.isEnabled() || position == 0 && !isLeftPaneUsed() ? SlidingMenu.TOUCHMODE_FULLSCREEN
 				: SlidingMenu.TOUCHMODE_MARGIN;
 		mSlidingMenu.setTouchModeAbove(mode);
 	}

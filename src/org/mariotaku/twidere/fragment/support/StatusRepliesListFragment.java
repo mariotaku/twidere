@@ -26,25 +26,26 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 
-import org.mariotaku.twidere.loader.UserMentionsLoader;
+import org.mariotaku.twidere.loader.StatusRepliesLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
 
 import java.util.List;
 
-public class UserMentionsFragment extends SearchStatusesFragment {
+public class StatusRepliesListFragment extends SearchStatusesFragment {
 
 	@Override
 	public Loader<List<ParcelableStatus>> newLoaderInstance(final Context context, final Bundle args) {
 		if (args == null) return null;
+		final long accountId = args.getLong(EXTRA_ACCOUNT_ID, -1);
 		final String screenName = args.getString(EXTRA_SCREEN_NAME);
-		if (screenName == null) return null;
-		final long accountId = args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
+		final long statusId = args.getLong(EXTRA_STATUS_ID, -1);
+		if (accountId <= 0 || statusId <= 0 || screenName == null) return null;
 		final long maxId = args.getLong(EXTRA_MAX_ID, -1);
 		final long sinceId = args.getLong(EXTRA_SINCE_ID, -1);
 		final int tabPosition = args.getInt(EXTRA_TAB_POSITION, -1);
 		getListAdapter().setMentionsHightlightDisabled(
 				objectEquals(getAccountScreenName(getActivity(), accountId), screenName));
-		return new UserMentionsLoader(getActivity(), accountId, screenName, maxId, sinceId, getData(),
+		return new StatusRepliesLoader(getActivity(), accountId, screenName, statusId, maxId, sinceId, getData(),
 				getSavedStatusesFileArgs(), tabPosition);
 	}
 
@@ -52,9 +53,11 @@ public class UserMentionsFragment extends SearchStatusesFragment {
 	protected String[] getSavedStatusesFileArgs() {
 		final Bundle args = getArguments();
 		if (args == null) return null;
-		final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
-		final String screen_name = args.getString(EXTRA_SCREEN_NAME);
-		return new String[] { AUTHORITY_USER_MENTIONS, "account" + account_id, "screen_name" + screen_name };
+		final long accountId = args.getLong(EXTRA_ACCOUNT_ID, -1);
+		final String screenName = args.getString(EXTRA_SCREEN_NAME);
+		final long statusId = args.getLong(EXTRA_STATUS_ID);
+		return new String[] { AUTHORITY_STATUS_REPLIES, "account" + accountId, "screen_name" + screenName,
+				"status_id" + statusId };
 	}
 
 }

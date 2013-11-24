@@ -277,6 +277,9 @@
 					android:host="status_retweeters"
 					android:scheme="twidere"/>
 				<data
+					android:host="status_replies"
+					android:scheme="twidere"/>
+				<data
 					android:host="statuses"
 					android:scheme="twidere"/>
 				<data

@@ -137,7 +137,7 @@
 				android:drawablePadding="4dp"
 				android:duplicateParentState="true"
 				android:gravity="center_vertical"
-				android:padding="8dp"
+				android:padding="@dimen/element_spacing_default"
 				android:singleLine="true"
 				android:text="@string/view_map"
 				android:textAppearance="?android:attr/textAppearanceSmall"/>
@@ -150,7 +150,7 @@
 			android:drawableLeft="@drawable/ic_indicator_twitter"
 			android:drawablePadding="4dp"
 			android:gravity="center_vertical"
-			android:padding="8dp"
+			android:padding="@dimen/element_spacing_default"
 			android:textAppearance="?android:attr/textAppearanceSmall"/>
 
 		<TextView
@@ -161,11 +161,25 @@
 			android:drawableLeft="@drawable/ic_indicator_retweet"
 			android:drawablePadding="4dp"
 			android:gravity="center_vertical"
-			android:padding="8dp"
+			android:padding="@dimen/element_spacing_default"
 			android:singleLine="true"
 			android:text="@string/users_retweeted_this"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:visibility="visible"/>
+
+		<TextView
+			android:id="@+id/replies"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="?android:selectableItemBackground"
+			android:clickable="true"
+			android:drawableLeft="@drawable/ic_indicator_reply"
+			android:drawablePadding="4dp"
+			android:gravity="center_vertical"
+			android:padding="@dimen/element_spacing_default"
+			android:singleLine="true"
+			android:text="@string/replies"
+			android:textAppearance="?android:attr/textAppearanceSmall"/>
 
 		<TextView
 			android:id="@+id/in_reply_to"
@@ -176,7 +190,7 @@
 			android:drawableLeft="@drawable/ic_indicator_reply"
 			android:drawablePadding="4dp"
 			android:gravity="center_vertical"
-			android:padding="8dp"
+			android:padding="@dimen/element_spacing_default"
 			android:singleLine="true"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:visibility="gone"/>

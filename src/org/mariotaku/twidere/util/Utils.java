@@ -124,6 +124,7 @@ import org.mariotaku.twidere.fragment.support.SearchFragment;
 import org.mariotaku.twidere.fragment.support.SearchStatusesFragment;
 import org.mariotaku.twidere.fragment.support.SensitiveContentWarningDialogFragment;
 import org.mariotaku.twidere.fragment.support.StatusFragment;
+import org.mariotaku.twidere.fragment.support.StatusRepliesListFragment;
 import org.mariotaku.twidere.fragment.support.StatusRetweetersListFragment;
 import org.mariotaku.twidere.fragment.support.StatusesListFragment;
 import org.mariotaku.twidere.fragment.support.UserBlocksListFragment;
@@ -277,6 +278,7 @@ public final class Utils implements Constants {
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USERS, null, LINK_ID_USERS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_STATUSES, null, LINK_ID_STATUSES);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_STATUS_RETWEETERS, null, LINK_ID_STATUS_RETWEETERS);
+		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_STATUS_REPLIES, null, LINK_ID_STATUS_REPLIES);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_SEARCH, null, LINK_ID_SEARCH);
 
 	}
@@ -796,6 +798,18 @@ public final class Utils implements Constants {
 				if (!args.containsKey(EXTRA_STATUS_ID)) {
 					final String param_status_id = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
 					args.putLong(EXTRA_STATUS_ID, ParseUtils.parseLong(param_status_id));
+				}
+				break;
+			}
+			case LINK_ID_STATUS_REPLIES: {
+				fragment = new StatusRepliesListFragment();
+				if (!args.containsKey(EXTRA_STATUS_ID)) {
+					final String paramStatusId = uri.getQueryParameter(QUERY_PARAM_STATUS_ID);
+					args.putLong(EXTRA_STATUS_ID, ParseUtils.parseLong(paramStatusId));
+				}
+				if (!args.containsKey(EXTRA_SCREEN_NAME)) {
+					final String paramScreenName = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+					args.putString(EXTRA_SCREEN_NAME, paramScreenName);
 				}
 				break;
 			}
@@ -2927,6 +2941,30 @@ public final class Utils implements Constants {
 			builder.authority(AUTHORITY_STATUSES);
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
 			intent.putExtras(extras);
+			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
+		}
+	}
+
+	public static void openStatusReplies(final Activity activity, final long accountId, final long statusId,
+			final String screenName) {
+		if (activity == null) return;
+		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
+			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
+			final Fragment fragment = new StatusRepliesListFragment();
+			final Bundle args = new Bundle();
+			args.putLong(EXTRA_ACCOUNT_ID, accountId);
+			args.putLong(EXTRA_STATUS_ID, statusId);
+			args.putString(EXTRA_SCREEN_NAME, screenName);
+			fragment.setArguments(args);
+			dual_pane_activity.showAtPane(DualPaneActivity.PANE_LEFT, fragment, true);
+		} else {
+			final Uri.Builder builder = new Uri.Builder();
+			builder.scheme(SCHEME_TWIDERE);
+			builder.authority(AUTHORITY_STATUS_REPLIES);
+			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(accountId));
+			builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(statusId));
+			builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screenName);
+			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
 			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
 	}

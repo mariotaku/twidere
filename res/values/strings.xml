@@ -579,5 +579,7 @@
 	<string name="theme_background_transparent">Transparent</string>
 	<string name="wizard_hint_compose_select_account">Click this icon to select account when writing a tweet.</string>
 	<string name="wizard_hint_quote_format">Set your favorite quote format in &quot;Settings&quot; - &quot;Content &amp; Storage&quot;</string>
+	<string name="wizard_hint_filters">You can hide unwanted tweet from timeline and notifications by using &quot;Filters&quot;.</string>
+	<string name="replies">Replies</string>
 
 </resources>

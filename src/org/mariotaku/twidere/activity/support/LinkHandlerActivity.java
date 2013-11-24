@@ -254,6 +254,10 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnC
 				setTitle(R.string.users_retweeted_this);
 				break;
 			}
+			case LINK_ID_STATUS_REPLIES: {
+				setTitle(R.string.replies);
+				break;
+			}
 			case LINK_ID_SEARCH: {
 				setTitle(android.R.string.search_go);
 				setSubtitle(uri.getQueryParameter(QUERY_PARAM_QUERY));

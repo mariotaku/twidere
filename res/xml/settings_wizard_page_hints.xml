@@ -10,5 +10,9 @@
 		android:icon="@drawable/ic_menu_quote"
 		android:summary="@string/wizard_hint_quote_format"
 		android:title="@string/quote_format"/>
+	<Preference
+		android:icon="@drawable/ic_menu_mute"
+		android:summary="@string/wizard_hint_filters"
+		android:title="@string/filters"/>
 
 </PreferenceScreen>

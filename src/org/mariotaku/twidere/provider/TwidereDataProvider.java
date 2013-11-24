@@ -19,7 +19,6 @@
 
 package org.mariotaku.twidere.provider;
 
-import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.clearAccountColor;
 import static org.mariotaku.twidere.util.Utils.clearAccountName;
 import static org.mariotaku.twidere.util.Utils.getAccountDisplayName;
@@ -52,7 +51,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.ParcelFileDescriptor;
@@ -404,10 +402,9 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		}
 	}
 
-	private void buildNotification(final NotificationCompat.Builder builder,
-			final AccountPreferences accountPreferences, final String ticker, final String title, final String message,
-			final long when, final int icon, final Bitmap largeIcon, final Intent contentIntent,
-			final Intent deleteIntent) {
+	private void buildNotification(final NotificationCompat.Builder builder, final AccountPreferences accountPrefs,
+			final int notificationType, final String ticker, final String title, final String message, final long when,
+			final int icon, final Bitmap largeIcon, final Intent contentIntent, final Intent deleteIntent) {
 		final Context context = getContext();
 		builder.setTicker(ticker);
 		builder.setContentTitle(title);
@@ -428,17 +425,16 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		}
 		int defaults = 0;
 		if (isNotificationAudible()) {
-			if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND, false)) {
-				final Uri def_ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-				final String path = mPreferences.getString(PREFERENCE_KEY_NOTIFICATION_RINGTONE, "");
-				builder.setSound(isEmpty(path) ? def_ringtone : Uri.parse(path), Notification.STREAM_DEFAULT);
+			if (AccountPreferences.isNotificationHasRingtone(notificationType)) {
+				final Uri ringtone = accountPrefs.getNotificationRingtone();
+				builder.setSound(ringtone, Notification.STREAM_DEFAULT);
 			}
-			if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_VIBRATION, false)) {
+			if (AccountPreferences.isNotificationHasVibration(notificationType)) {
 				defaults |= Notification.DEFAULT_VIBRATE;
 			}
 		}
-		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_LIGHTS, false)) {
-			final int color = accountPreferences.getNotificationLightColor();
+		if (AccountPreferences.isNotificationHasLight(notificationType)) {
+			final int color = accountPrefs.getNotificationLightColor();
 			builder.setLights(color, 1000, 2000);
 		}
 		builder.setDefaults(defaults);
@@ -602,10 +598,10 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		return result;
 	}
 
-	private void displayMessagesNotification(final int notifiedCount, final AccountPreferences preference,
-			final List<ParcelableDirectMessage> messages) {
-		if (notifiedCount == 0 || preference == null || messages.isEmpty()) return;
-		final long accountId = preference.getAccountId();
+	private void displayMessagesNotification(final int notifiedCount, final AccountPreferences accountPrefs,
+			final int notificationType, final List<ParcelableDirectMessage> messages) {
+		if (notifiedCount == 0 || accountPrefs == null || messages.isEmpty()) return;
+		final long accountId = accountPrefs.getAccountId();
 		final int notificationId = generateNotificationId(accountId, NOTIFICATION_ID_DIRECT_MESSAGES);
 		final Context context = getContext();
 		final Resources resources = context.getResources();
@@ -646,8 +642,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			title = resources.getString(R.string.notification_direct_message, displayName);
 		}
 		notifBuilder.setLargeIcon(getProfileImageForNotification(firstItem.sender_profile_image_url));
-		buildNotification(notifBuilder, preference, title, title, firstItem.text_plain, firstItem.timestamp,
-				R.drawable.ic_stat_direct_message, null, contentIntent, deleteIntent);
+		buildNotification(notifBuilder, accountPrefs, notificationType, title, title, firstItem.text_plain,
+				firstItem.timestamp, R.drawable.ic_stat_direct_message, null, contentIntent, deleteIntent);
 		final NotificationCompat.Style notifStyle;
 		if (messagesCount > 1) {
 			final NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle(notifBuilder);
@@ -676,7 +672,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	}
 
 	private void displayStatusesNotification(final int notifiedCount, final AccountPreferences accountPreferences,
-			final List<ParcelableStatus> statuses, final int titleSingle, final int titleMutiple) {
+			final int notificationType, final List<ParcelableStatus> statuses, final int titleSingle,
+			final int titleMutiple) {
 		if (notifiedCount == 0 || accountPreferences == null || statuses.isEmpty()) return;
 		final long accountId = accountPreferences.getAccountId();
 		final int notificationId = generateNotificationId(accountId, NOTIFICATION_ID_MENTIONS);
@@ -716,8 +713,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			title = resources.getString(titleSingle, displayName);
 		}
 		notifBuilder.setLargeIcon(getProfileImageForNotification(firstItem.user_profile_image_url));
-		buildNotification(notifBuilder, accountPreferences, title, title, firstItem.text_plain, firstItem.timestamp,
-				R.drawable.ic_stat_mention, null, contentIntent, deleteIntent);
+		buildNotification(notifBuilder, accountPreferences, notificationType, title, title, firstItem.text_plain,
+				firstItem.timestamp, R.drawable.ic_stat_mention, null, contentIntent, deleteIntent);
 		final NotificationCompat.Style notifStyle;
 		if (statusesSize > 1) {
 			final NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle(notifBuilder);
@@ -1010,8 +1007,9 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				for (final AccountPreferences pref : prefs) {
 					if (pref.isHomeTimelineNotificationEnabled()) {
 						final long accountId = pref.getAccountId();
-						displayStatusesNotification(notifiedCount, pref, getStatusesForAccounts(items, accountId),
-								R.string.notification_status, R.string.notification_status_multiple);
+						displayStatusesNotification(notifiedCount, pref, pref.getHomeTimelineNotificationType(),
+								getStatusesForAccounts(items, accountId), R.string.notification_status,
+								R.string.notification_status_multiple);
 					}
 				}
 				notifyUnreadCountChanged(NOTIFICATION_ID_HOME_TIMELINE);
@@ -1025,8 +1023,9 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				for (final AccountPreferences pref : prefs) {
 					if (pref.isMentionsNotificationEnabled()) {
 						final long accountId = pref.getAccountId();
-						displayStatusesNotification(notifiedCount, pref, getStatusesForAccounts(items, accountId),
-								R.string.notification_mention, R.string.notification_mention_multiple);
+						displayStatusesNotification(notifiedCount, pref, pref.getMentionsNotificationType(),
+								getStatusesForAccounts(items, accountId), R.string.notification_mention,
+								R.string.notification_mention_multiple);
 					}
 				}
 				notifyUnreadCountChanged(NOTIFICATION_ID_MENTIONS);
@@ -1040,7 +1039,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				for (final AccountPreferences pref : prefs) {
 					if (pref.isDirectMessagesNotificationEnabled()) {
 						final long accountId = pref.getAccountId();
-						displayMessagesNotification(notifiedCount, pref, getMessagesForAccounts(items, accountId));
+						displayMessagesNotification(notifiedCount, pref, pref.getDirectMessagesNotificationType(),
+								getMessagesForAccounts(items, accountId));
 					}
 				}
 				notifyUnreadCountChanged(NOTIFICATION_ID_DIRECT_MESSAGES);

@@ -97,6 +97,7 @@ public interface TwidereConstants {
 	public static final String AUTHORITY_ACTIVITIES_BY_FRIENDS = "activities_by_friends";
 	public static final String AUTHORITY_INCOMING_FRIENDSHIPS = "incoming_friendships";
 	public static final String AUTHORITY_STATUS_RETWEETERS = "status_retweeters";
+	public static final String AUTHORITY_STATUS_REPLIES = "status_replies";
 
 	public static final String QUERY_PARAM_ACCOUNT_ID = "account_id";
 	public static final String QUERY_PARAM_ACCOUNT_IDS = "account_ids";
@@ -221,12 +222,6 @@ public interface TwidereConstants {
 	public static final String PREFERENCE_KEY_MENTIONS_NOTIFICATION = "mentions_notification";
 	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_DIRECT_MESSAGES_NOTIFICATION = "direct_messages_notification";
-	@PreferenceType(PreferenceType.BOOLEAN)
-	public static final String PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND = "notification_have_sound";
-	@PreferenceType(PreferenceType.BOOLEAN)
-	public static final String PREFERENCE_KEY_NOTIFICATION_HAVE_VIBRATION = "notification_have_vibration";
-	@PreferenceType(PreferenceType.BOOLEAN)
-	public static final String PREFERENCE_KEY_NOTIFICATION_HAVE_LIGHTS = "notification_have_lights";
 	public static final String PREFERENCE_KEY_LOCAL_TRENDS_WOEID = "local_trends_woeid";
 	public static final String PREFERENCE_KEY_NOTIFICATION_RINGTONE = "notification_ringtone";
 	public static final String PREFERENCE_KEY_NOTIFICATION_LIGHT_COLOR = "notification_light_color";
@@ -309,6 +304,7 @@ public interface TwidereConstants {
 	public static final int PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT = 100;
 	public static final int PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT = 20;
 	public static final boolean PREFERENCE_DEFAULT_HARDWARE_ACCELERATION = true;
+	public static final boolean PREFERENCE_DEFAULT_SEPARATE_RETWEET_ACTION = true;
 
 	public static final String INTENT_PACKAGE_PREFIX = "org.mariotaku.twidere.";
 

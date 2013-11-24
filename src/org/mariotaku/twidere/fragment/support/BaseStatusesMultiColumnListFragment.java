@@ -487,7 +487,8 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 		final int activated_color = ThemeUtils.getUserThemeColor(getActivity());
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_status);
-		final boolean separate_retweet_action = mPreferences.getBoolean(PREFERENCE_KEY_SEPARATE_RETWEET_ACTION, false);
+		final boolean separate_retweet_action = mPreferences.getBoolean(PREFERENCE_KEY_SEPARATE_RETWEET_ACTION,
+				PREFERENCE_DEFAULT_SEPARATE_RETWEET_ACTION);
 		final Menu menu = mPopupMenu.getMenu();
 		setMenuForStatus(getActivity(), menu, status);
 		final MenuItem retweet_submenu = menu.findItem(R.id.retweet_submenu);

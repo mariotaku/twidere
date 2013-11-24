@@ -2,6 +2,9 @@ package org.mariotaku.twidere.model;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.text.TextUtils;
 
 import org.mariotaku.twidere.Constants;
 
@@ -32,7 +35,7 @@ public class AccountPreferences implements Constants {
 				PREFERENCE_DEFAULT_NOTIFICATION_TYPE_DIRECT_MESSAGES);
 	}
 
-	public int getHomeNotificationType() {
+	public int getHomeTimelineNotificationType() {
 		return mPreferences.getInt(PREFERENCE_KEY_NOTIFICATION_TYPE_HOME, PREFERENCE_DEFAULT_NOTIFICATION_TYPE_HOME);
 	}
 
@@ -43,6 +46,12 @@ public class AccountPreferences implements Constants {
 
 	public int getNotificationLightColor() {
 		return mPreferences.getInt(PREFERENCE_KEY_NOTIFICATION_LIGHT_COLOR, getDefaultNotificationLightColor());
+	}
+
+	public Uri getNotificationRingtone() {
+		final Uri def = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+		final String path = mPreferences.getString(PREFERENCE_KEY_NOTIFICATION_RINGTONE, null);
+		return TextUtils.isEmpty(path) ? def : Uri.parse(path);
 	}
 
 	public boolean isAutoRefreshDirectMessagesEnabled() {

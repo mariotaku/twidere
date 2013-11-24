@@ -38,6 +38,7 @@ import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.isSameAccount;
 import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.openMap;
+import static org.mariotaku.twidere.util.Utils.openStatusReplies;
 import static org.mariotaku.twidere.util.Utils.openStatusRetweeters;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.scrollListToPosition;
@@ -146,7 +147,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private ImageLoaderWrapper mImageLoader;
 	private Handler mHandler;
 	private TextView mNameView, mScreenNameView, mTextView, mTimeSourceView, mInReplyToView, mLocationView,
-			mRetweetView;
+			mRetweetView, mRepliesView;
 
 	private ImageView mProfileImageView, mMapView;
 	private Button mFollowButton;
@@ -440,6 +441,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mImagePreviewAdapter = new MediaPreviewAdapter(getActivity());
 		mLoadImagesIndicator.setOnClickListener(this);
 		mInReplyToView.setOnClickListener(this);
+		mRepliesView.setOnClickListener(this);
 		mFollowButton.setOnClickListener(this);
 		mProfileView.setOnClickListener(this);
 		mLocationContainer.setOnClickListener(this);
@@ -485,6 +487,10 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			}
 			case R.id.in_reply_to: {
 				showConversation();
+				break;
+			}
+			case R.id.replies: {
+				openStatusReplies(getActivity(), mStatus.account_id, mStatus.id, mStatus.user_screen_name);
 				break;
 			}
 			case R.id.location_container: {
@@ -547,6 +553,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mProfileImageView = (ImageView) mHeaderView.findViewById(R.id.profile_image);
 		mTimeSourceView = (TextView) mHeaderView.findViewById(R.id.time_source);
 		mInReplyToView = (TextView) mHeaderView.findViewById(R.id.in_reply_to);
+		mRepliesView = (TextView) mHeaderView.findViewById(R.id.replies);
 		mFollowButton = (Button) mHeaderView.findViewById(R.id.follow);
 		mFollowIndicator = mHeaderView.findViewById(R.id.follow_indicator);
 		mFollowInfoProgress = (ProgressBar) mHeaderView.findViewById(R.id.follow_info_progress);

@@ -40,10 +40,10 @@ public class TweetSearchLoader extends Twitter4JStatusesLoader {
 	private final String mQuery;
 	private final boolean mFiltersForRts;
 
-	public TweetSearchLoader(final Context context, final long account_id, final String query, final long max_id,
-			final long since_id, final List<ParcelableStatus> data, final String[] saved_statuses_args,
-			final int tab_position) {
-		super(context, account_id, max_id, since_id, data, saved_statuses_args, tab_position);
+	public TweetSearchLoader(final Context context, final long accountId, final String query, final long maxId,
+			final long sinceId, final List<ParcelableStatus> data, final String[] savedStatusesArgs,
+			final int tabPosition) {
+		super(context, accountId, maxId, sinceId, data, savedStatusesArgs, tabPosition);
 		mQuery = query;
 		mFiltersForRts = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getBoolean(
 				PREFERENCE_KEY_FILTERS_FOR_RTS, true);
@@ -52,12 +52,16 @@ public class TweetSearchLoader extends Twitter4JStatusesLoader {
 	@Override
 	public List<Status> getStatuses(final Twitter twitter, final Paging paging) throws TwitterException {
 		if (twitter == null) return null;
-		final Query query = new Query(String.format("%s exclude:retweets", mQuery));
+		final Query query = new Query(processQuery(mQuery));
 		query.setRpp(paging.getCount());
 		if (paging.getMaxId() > 0) {
 			query.setMaxId(paging.getMaxId());
 		}
 		return Arrays.asList(twitter.search(query).getStatuses());
+	}
+
+	protected String processQuery(final String query) {
+		return String.format("%s exclude:retweets", query);
 	}
 
 	@Override

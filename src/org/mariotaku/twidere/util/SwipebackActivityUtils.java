@@ -142,6 +142,11 @@ public class SwipebackActivityUtils implements TwidereConstants {
 
 		@Override
 		protected void onPostExecute(final byte[] result) {
+			try {
+				mDecorView.destroyDrawingCache();
+			} catch (final Exception e) {
+				e.printStackTrace();
+			}
 			mDecorView.setDrawingCacheEnabled(mPrevState);
 			mDecorView.setDrawingCacheQuality(mPrevQuality);
 			if (mCache != null && !mCache.isRecycled()) {
@@ -176,8 +181,13 @@ public class SwipebackActivityUtils implements TwidereConstants {
 			mPrevQuality = mDecorView.getDrawingCacheQuality();
 			mDecorView.setDrawingCacheEnabled(true);
 			mDecorView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_LOW);
-			mDecorView.buildDrawingCache();
-			mCache = mDecorView.getDrawingCache();
+			try {
+				mDecorView.buildDrawingCache();
+				mCache = mDecorView.getDrawingCache();
+			} catch (final Exception e) {
+				e.printStackTrace();
+				mCache = null;
+			}
 			mDecorView.getWindowVisibleDisplayFrame(mRect);
 		}
 

@@ -323,21 +323,11 @@ public class BackgroundOperationService extends IntentService implements Constan
 			builder.setContentIntent(PendingIntent.getActivity(this, 0, content_intent,
 					PendingIntent.FLAG_UPDATE_CURRENT));
 		}
-		int defaults = 0;
-		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_SOUND, false)) {
-			final Uri def_ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-			final String path = mPreferences.getString(PREFERENCE_KEY_NOTIFICATION_RINGTONE, "");
-			builder.setSound(isEmpty(path) ? def_ringtone : Uri.parse(path), Notification.STREAM_DEFAULT);
-		}
-		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_VIBRATION, false)) {
-			defaults |= Notification.DEFAULT_VIBRATE;
-		}
-		if (mPreferences.getBoolean(PREFERENCE_KEY_NOTIFICATION_HAVE_LIGHTS, false)) {
-			final int color_def = getResources().getColor(android.R.color.holo_blue_dark);
-			final int color = mPreferences.getInt(PREFERENCE_KEY_NOTIFICATION_LIGHT_COLOR, color_def);
-			builder.setLights(color, 1000, 2000);
-		}
-		builder.setDefaults(defaults);
+		final Uri defRingtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+		final String path = mPreferences.getString(PREFERENCE_KEY_NOTIFICATION_RINGTONE, "");
+		builder.setSound(isEmpty(path) ? defRingtone : Uri.parse(path), Notification.STREAM_DEFAULT);
+		builder.setLights(HOLO_BLUE_LIGHT, 1000, 2000);
+		builder.setDefaults(Notification.DEFAULT_VIBRATE);
 		return builder.build();
 	}
 
