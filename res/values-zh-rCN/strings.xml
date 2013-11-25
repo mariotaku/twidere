@@ -331,10 +331,12 @@
   <string name="both">两者兼有</string>
   <string name="browser_sign_in">浏览器登录</string>
   <string name="stop_auto_refresh_when_battery_low">电量低时停止自动刷新</string>
+  <string name="notification_status"><xliff:g id="user">%s</xliff:g>发送了新推文</string>
+  <string name="notification_status_multiple"><xliff:g id="user">%1$s</xliff:g>和其他<xliff:g id="count">%2$d</xliff:g>人发送了新推文</string>
   <string name="notification_mention"><xliff:g id="user">%s</xliff:g> 提到了你</string>
+  <string name="notification_mention_multiple"><xliff:g id="user">%1$s</xliff:g>和其他<xliff:g id="count">%2$d</xliff:g>人提到了你</string>
   <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> 给你发送了一条私信</string>
   <string name="notification_direct_message_multiple_messages"><xliff:g id="user">%1$s</xliff:g>给你发了<xliff:g id="messages_count">%2$d</xliff:g>条私信</string>
-  <string name="notification_mention_multiple"><xliff:g id="user">%1$s</xliff:g>和其他<xliff:g id="count">%2$d</xliff:g>人提到了你</string>
   <string name="notification_direct_message_multiple_users"><xliff:g id="user">%1$s</xliff:g>和其他<xliff:g id="users_count">%2$d</xliff:g>人给你发了<xliff:g id="messages_count">%3$d</xliff:g>条私信</string>
   <string name="action_getting_status">获取推文</string>
   <string name="action_getting_statuses">获取推文</string>
@@ -363,6 +365,7 @@
   <string name="action_reporting_for_spam">报告垃圾信息</string>
   <string name="action_subscribing_to_list">订阅到列表</string>
   <string name="action_unsubscribing_from_list">退订列表</string>
+  <string name="action_saving_search">保存搜索</string>
   <string name="status_is_duplicate">你发送了重复的推文</string>
   <string name="data_profiling_summary">Twidere 参与了一个由UC Davis大学的学生发起的，为了通过预测使用者在社交网络中的行为来为一些应用预先载入内容（便于在地铁等没有信号的地方阅读）的非盈利性质的研究。\n\n以下是我们想要收集到的你的信息，以及收集它们的原因：\n收集到的信息\n1. 你的ID（人类不可读）\n2. 你更新主页时间线的推文ID（预测你的兴趣以及行为）\n3. 你点击了哪些推文，以及它们所含有的链接\n4. 粗略位置（统计使用者的来源）\n\nTwidere 只会在Wifi可用，并且充电时上传这些信息，所以它并不会花费额外的数据费用和电量。</string>
   <string name="data_profiling">使用信息统计</string>
@@ -443,6 +446,7 @@
   <string name="retweet_cancelled">转推已取消</string>
   <string name="direct_message_sent">私信已发送</string>
   <string name="direct_message_deleted">私信已删除</string>
+  <string name="search_saved">搜索已保存</string>
   <string name="import_from">导入自…</string>
   <string name="link_to_quoted_status">链接到引用的推文</string>
   <string name="followed_user">关注了<xliff:g id="user">%s</xliff:g></string>
@@ -537,11 +541,15 @@
   <string name="unfollow_user_confirm_message">你确定取消关注<xliff:g id="name">%s</xliff:g>吗？</string>
   <string name="delete_user_list">删除列表<xliff:g id="name">%s</xliff:g></string>
   <string name="delete_user_list_confirm_message">你确定删除列表<xliff:g id="name">%s</xliff:g>吗？</string>
+  <string name="unsubscribe_from_user_list">从列表<xliff:g id="name">%s</xliff:g>退订</string>
+  <string name="unsubscribe_from_user_list_confirm_message">你确定要退订列表<xliff:g id="name">%s</xliff:g>吗？</string>
   <string name="signing_in_error_browser_sign_in_hint">登录时发生问题，你可能需要使用“浏览器登录”。（这将在登录时暂时忽略自定义API设定）</string>
   <string name="report_user">报告<xliff:g id="name">%s</xliff:g></string>
   <string name="report_user_confirm_message">你确定报告<xliff:g id="name">%s</xliff:g>发送垃圾信息吗？</string>
   <string name="twidere_test">Twidere 测试</string>
   <string name="donate_via_paypal">通过PayPal捐助</string>
+  <string name="pay_via_paypal">直接通过PayPal付款</string>
+  <string name="pay_via_paypal_summary">当你看到“This recipient is not eligible to receive funds”时可使用这个方式</string>
   <string name="donate_via_alipay">通过支付宝捐助</string>
   <string name="staggered_home_timeline">主页信息流</string>
   <string name="unread_count">未读条目</string>
@@ -568,4 +576,8 @@
   <string name="theme_background_default">默认</string>
   <string name="theme_background_solid">纯白/纯黑</string>
   <string name="theme_background_transparent">透明</string>
+  <string name="wizard_hint_compose_select_account">在写推文时点击这个图标选择帐号</string>
+  <string name="wizard_hint_quote_format">在“设定”-“内容与存储”设定你喜欢的引用格式</string>
+  <string name="wizard_hint_filters">你可以通过使用“过滤”功能隐藏不想看到的推文和通知</string>
+  <string name="replies">回复</string>
 </resources>

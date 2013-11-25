@@ -1,9 +1,9 @@
 package org.mariotaku.twidere.fragment.support;
 
-import static org.mariotaku.twidere.util.ContentResolverUtils.bulkDelete;
-import static org.mariotaku.twidere.util.ContentResolverUtils.bulkInsert;
 import static org.mariotaku.twidere.util.Utils.getDisplayName;
 import static org.mariotaku.twidere.util.Utils.makeFilterdUserContentValues;
+import static org.mariotaku.twidere.util.content.ContentResolverUtils.bulkDelete;
+import static org.mariotaku.twidere.util.content.ContentResolverUtils.bulkInsert;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

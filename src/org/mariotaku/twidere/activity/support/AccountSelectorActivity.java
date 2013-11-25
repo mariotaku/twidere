@@ -20,14 +20,13 @@
 package org.mariotaku.twidere.activity.support;
 
 import android.app.LoaderManager.LoaderCallbacks;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.Loader;
 import android.content.SharedPreferences;
+import android.database.ContentObserver;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -42,15 +41,18 @@ import org.mariotaku.twidere.util.ArrayUtils;
 public class AccountSelectorActivity extends BaseSupportDialogActivity implements LoaderCallbacks<Cursor>,
 		OnClickListener {
 
-	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+	private final ContentObserver mContentObserver = new ContentObserver(null) {
 
 		@Override
-		public void onReceive(final Context context, final Intent intent) {
-			final String action = intent.getAction();
-			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
-				if (!isFinishing()) {
-					getLoaderManager().restartLoader(0, null, AccountSelectorActivity.this);
-				}
+		public void onChange(final boolean selfChange) {
+			onChange(selfChange, null);
+		}
+
+		@Override
+		public void onChange(final boolean selfChange, final Uri uri) {
+			// Handle change.
+			if (!isFinishing()) {
+				getLoaderManager().restartLoader(0, null, AccountSelectorActivity.this);
 			}
 		}
 	};
@@ -114,7 +116,6 @@ public class AccountSelectorActivity extends BaseSupportDialogActivity implement
 		mAdapter.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		mListView.setAdapter(mAdapter);
-
 		getLoaderManager().initLoader(0, null, this);
 
 	}
@@ -129,14 +130,12 @@ public class AccountSelectorActivity extends BaseSupportDialogActivity implement
 	@Override
 	protected void onStart() {
 		super.onStart();
-		final IntentFilter filter = new IntentFilter(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
-		registerReceiver(mStateReceiver, filter);
-
+		getContentResolver().registerContentObserver(Accounts.CONTENT_URI, true, mContentObserver);
 	}
 
 	@Override
 	protected void onStop() {
-		unregisterReceiver(mStateReceiver);
+		getContentResolver().unregisterContentObserver(mContentObserver);
 		super.onStop();
 	}
 

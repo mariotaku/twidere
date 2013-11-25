@@ -9,13 +9,11 @@ import static org.mariotaku.twidere.util.Utils.openUserTimeline;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
@@ -53,10 +51,14 @@ import org.mariotaku.twidere.provider.TweetStore.DirectMessages.Outbox;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.util.content.SupportFragmentReloadCursorObserver;
 
 public class AccountsDrawerFragment extends BaseSupportFragment implements LoaderCallbacks<Cursor>,
 		OnChildClickListener, OnSharedPreferenceChangeListener, OnAccountActivateStateChangeListener,
 		OnGroupCollapseListener {
+
+	private final SupportFragmentReloadCursorObserver mReloadContentObserver = new SupportFragmentReloadCursorObserver(
+			this, 0, this);
 
 	private static final String FRAGMENT_TAG_ACCOUNT_DELETION = "account_deletion";
 	private ContentResolver mResolver;
@@ -64,18 +66,6 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 
 	private ExpandableListView mListView;
 	private AccountsDrawerAdapter mAdapter;
-
-	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(final Context context, final Intent intent) {
-			if (getActivity() == null || !isAdded() || isDetached()) return;
-			final String action = intent.getAction();
-			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
-				getLoaderManager().restartLoader(0, null, AccountsDrawerFragment.this);
-			}
-		}
-	};
 
 	@Override
 	public void onAccountActivateStateChanged(final Account account, final boolean activated) {
@@ -108,7 +98,6 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 					values.put(Accounts.USER_COLOR, data.getIntExtra(EXTRA_COLOR, Color.WHITE));
 					final String where = Accounts.ACCOUNT_ID + " = " + mAdapter.getSelectedAccountId();
 					mResolver.update(Accounts.CONTENT_URI, values, where, null);
-					getLoaderManager().restartLoader(0, null, this);
 				}
 				break;
 			}
@@ -287,14 +276,15 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 	@Override
 	public void onStart() {
 		super.onStart();
-		final IntentFilter filter = new IntentFilter(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
-		registerReceiver(mStatusReceiver, filter);
+		final ContentResolver resolver = getContentResolver();
+		resolver.registerContentObserver(Accounts.CONTENT_URI, true, mReloadContentObserver);
 		getLoaderManager().restartLoader(0, null, this);
 	}
 
 	@Override
 	public void onStop() {
-		unregisterReceiver(mStatusReceiver);
+		final ContentResolver resolver = getContentResolver();
+		resolver.unregisterContentObserver(mReloadContentObserver);
 		super.onStop();
 	}
 

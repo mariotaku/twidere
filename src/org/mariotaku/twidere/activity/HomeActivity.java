@@ -34,15 +34,18 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManagerTrojan;
@@ -86,11 +89,10 @@ import org.mariotaku.twidere.fragment.iface.IBasePullToRefreshFragment;
 import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;
 import org.mariotaku.twidere.fragment.iface.SupportFragmentCallback;
 import org.mariotaku.twidere.fragment.support.DirectMessagesFragment;
-import org.mariotaku.twidere.fragment.support.HomeTimelineFragment;
-import org.mariotaku.twidere.fragment.support.MentionsFragment;
 import org.mariotaku.twidere.fragment.support.TrendsSuggectionsFragment;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.model.SupportTabSpec;
+import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.task.AsyncTask;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
@@ -114,6 +116,21 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		SupportFragmentCallback, OnOpenedListener, OnClosedListener, OnQueryTextListener, OnSuggestionListener,
 		OnLongClickListener, OnActionExpandListener {
 
+	private final Handler mHandler = new Handler();
+
+	private final ContentObserver mAccountChangeObserver = new ContentObserver(mHandler) {
+
+		@Override
+		public void onChange(final boolean selfChange) {
+			onChange(selfChange, null);
+		}
+
+		@Override
+		public void onChange(final boolean selfChange, final Uri uri) {
+			notifyAccountsChanged();
+			updateUnreadCount();
+		}
+	};
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -121,9 +138,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			final String action = intent.getAction();
 			if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
 				updateActionsButton();
-			} else if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
-				notifyAccountsChanged();
-				updateUnreadCount();
 			} else if (BROADCAST_UNREAD_COUNT_UPDATED.equals(action)) {
 				updateUnreadCount();
 			}
@@ -379,7 +393,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 
 	@Override
 	public void onPageSelected(final int position) {
-		clearNotification(position);
 		if (mSlidingMenu.isMenuShowing()) {
 			mSlidingMenu.showContent();
 		}
@@ -623,8 +636,9 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		super.onStart();
 		mMultiSelectHandler.dispatchOnStart();
 		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONSTART));
+		final ContentResolver resolver = getContentResolver();
+		resolver.registerContentObserver(Accounts.CONTENT_URI, true, mAccountChangeObserver);
 		final IntentFilter filter = new IntentFilter(BROADCAST_TASK_STATE_CHANGED);
-		filter.addAction(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_UNREAD_COUNT_UPDATED);
 		registerReceiver(mStateReceiver, filter);
 		if (isTabsChanged(getHomeTabs(this))) {
@@ -639,6 +653,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	protected void onStop() {
 		mMultiSelectHandler.dispatchOnStop();
 		unregisterReceiver(mStateReceiver);
+		final ContentResolver resolver = getContentResolver();
+		resolver.unregisterContentObserver(mAccountChangeObserver);
 		mPreferences.edit().putInt(PREFERENCE_KEY_SAVED_TAB_POSITION, mViewPager.getCurrentItem()).commit();
 		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONSTOP));
 
@@ -652,18 +668,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			mViewPager.setEnabled(!mPreferences.getBoolean(PREFERENCE_KEY_DISABLE_TAB_SWIPE, false));
 			mIndicator.setSwitchingEnabled(enabled);
 			mIndicator.setEnabled(enabled);
-		}
-	}
-
-	private void clearNotification(final int position) {
-		if (mPagerAdapter == null || mTwitterWrapper == null) return;
-		final SupportTabSpec tab = mPagerAdapter.getTab(position);
-		if (classEquals(HomeTimelineFragment.class, tab.cls)) {
-			mTwitterWrapper.clearNotification(NOTIFICATION_ID_HOME_TIMELINE);
-		} else if (classEquals(MentionsFragment.class, tab.cls)) {
-			mTwitterWrapper.clearNotification(NOTIFICATION_ID_MENTIONS);
-		} else if (classEquals(DirectMessagesFragment.class, tab.cls)) {
-			mTwitterWrapper.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
 		}
 	}
 
@@ -700,7 +704,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		final int tab = intent.getIntExtra(EXTRA_INITIAL_TAB, -1);
 		final int initial_tab = tab != -1 ? tab : getAddedTabPosition(this, intent.getStringExtra(EXTRA_TAB_TYPE));
 		if (initial_tab != -1 && mViewPager != null) {
-			clearNotification(initial_tab);
+			// clearNotification(initial_tab);
 		}
 		final Intent extraIntent = intent.getParcelableExtra(EXTRA_EXTRA_INTENT);
 		if (extraIntent != null) {

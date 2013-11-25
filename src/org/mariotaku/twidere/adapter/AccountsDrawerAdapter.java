@@ -90,6 +90,7 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 		final GroupItem groupItem = getGroup(groupPosition);
 		switch (groupItem.getId()) {
 			case GROUP_ID_ACCOUNTS: {
+				if (mCursor == null || mCursor.isClosed()) return null;
 				mCursor.moveToPosition(childPosition);
 				return new Account(mCursor, mIndices);
 			}
@@ -140,6 +141,9 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 		switch (groupItem.getId()) {
 			case GROUP_ID_ACCOUNTS: {
 				final Account account = (Account) getChild(groupPosition, childPosition);
+				if (account == null) {
+					break;
+				}
 				final CompoundButton toggle = (CompoundButton) view.findViewById(R.id.toggle);
 				final TextView name = (TextView) view.findViewById(R.id.name);
 				final TextView screen_name = (TextView) view.findViewById(R.id.screen_name);

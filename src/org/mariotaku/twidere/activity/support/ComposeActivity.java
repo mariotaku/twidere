@@ -534,8 +534,9 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		} else {
 			// The activity was first created
 			final int notificationId = intent.getIntExtra(EXTRA_NOTIFICATION_ID, -1);
+			final long notificationAccount = intent.getLongExtra(EXTRA_NOTIFICATION_ACCOUNT, -1);
 			if (notificationId != -1) {
-				mTwitterWrapper.clearNotification(notificationId);
+				mTwitterWrapper.clearNotificationAsync(notificationId, notificationAccount);
 			}
 			if (!handleIntent(intent)) {
 				handleDefaultIntent(intent);
@@ -1113,7 +1114,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 						0, 0, 0);
 			} else if (status.in_reply_to_status_id > 0 && !TextUtils.isEmpty(status.in_reply_to_screen_name)) {
 				mHolder.reply_retweet_status.setText(getString(R.string.in_reply_to, status.in_reply_to_screen_name));
-				mHolder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_reply, 0,
+				mHolder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_conversation, 0,
 						0, 0);
 			}
 			if (prefs.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true)) {

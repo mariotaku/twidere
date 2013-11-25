@@ -69,7 +69,7 @@ public class ParcelableActivitiesAboutMeAdapter extends BaseParcelableActivities
 							holder.reply_status.setVisibility(View.VISIBLE);
 							holder.reply_status.setText(mContext.getString(R.string.in_reply_to,
 									status.in_reply_to_screen_name));
-							holder.reply_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_reply,
+							holder.reply_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_conversation,
 									0, 0, 0);
 						}
 					}
@@ -85,7 +85,7 @@ public class ParcelableActivitiesAboutMeAdapter extends BaseParcelableActivities
 							holder.reply_status.setVisibility(View.VISIBLE);
 							holder.reply_status.setText(mContext.getString(R.string.in_reply_to,
 									status.in_reply_to_screen_name));
-							holder.reply_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_reply,
+							holder.reply_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_conversation,
 									0, 0, 0);
 						}
 					}

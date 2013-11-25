@@ -19,13 +19,13 @@
 
 package org.mariotaku.twidere.model;
 
-import static org.mariotaku.twidere.util.ContentValuesUtils.getAsBoolean;
-import static org.mariotaku.twidere.util.ContentValuesUtils.getAsInteger;
-import static org.mariotaku.twidere.util.ContentValuesUtils.getAsLong;
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
 import static org.mariotaku.twidere.util.Utils.formatStatusText;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getInReplyToName;
+import static org.mariotaku.twidere.util.content.ContentValuesUtils.getAsBoolean;
+import static org.mariotaku.twidere.util.content.ContentValuesUtils.getAsInteger;
+import static org.mariotaku.twidere.util.content.ContentValuesUtils.getAsLong;
 
 import android.content.ContentValues;
 import android.database.Cursor;

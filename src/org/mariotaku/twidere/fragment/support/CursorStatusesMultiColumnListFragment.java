@@ -27,10 +27,7 @@ import static org.mariotaku.twidere.util.Utils.getTableNameByUri;
 import static org.mariotaku.twidere.util.Utils.shouldEnableFiltersForRTs;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -45,23 +42,17 @@ import org.mariotaku.querybuilder.Where;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.CursorStatusesAdapter;
+import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.task.AsyncTask;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.content.SupportFragmentReloadCursorObserver;
 
 public abstract class CursorStatusesMultiColumnListFragment extends BaseStatusesMultiColumnListFragment<Cursor> {
 
-	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(final Context context, final Intent intent) {
-			if (getActivity() == null || !isAdded() || isDetached()) return;
-			final String action = intent.getAction();
-			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action) || BROADCAST_FILTERS_UPDATED.equals(action)) {
-				getLoaderManager().restartLoader(0, null, CursorStatusesMultiColumnListFragment.this);
-			}
-		}
-	};
+	private final SupportFragmentReloadCursorObserver mReloadContentObserver = new SupportFragmentReloadCursorObserver(
+			this, 0, this);
 
 	public HomeActivity getHomeActivity() {
 		final Activity activity = getActivity();
@@ -135,7 +126,7 @@ public abstract class CursorStatusesMultiColumnListFragment extends BaseStatuses
 			case SCROLL_STATE_TOUCH_SCROLL: {
 				final AsyncTwitterWrapper twitter = getTwitterWrapper();
 				if (twitter != null) {
-					twitter.clearNotification(getNotificationIdToClear());
+					twitter.clearNotificationAsync(getNotificationType(), getAccountId());
 				}
 				break;
 			}
@@ -148,15 +139,18 @@ public abstract class CursorStatusesMultiColumnListFragment extends BaseStatuses
 	@Override
 	public void onStart() {
 		super.onStart();
-		final IntentFilter filter = new IntentFilter(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
-		filter.addAction(BROADCAST_FILTERS_UPDATED);
-		registerReceiver(mStatusReceiver, filter);
+		final ContentResolver resolver = getContentResolver();
+		resolver.registerContentObserver(Filters.CONTENT_URI, true, mReloadContentObserver);
+		if (getAccountId() <= 0) {
+			resolver.registerContentObserver(Accounts.CONTENT_URI, true, mReloadContentObserver);
+		}
 	}
 
 	@Override
 	public void onStop() {
 		savePosition();
-		unregisterReceiver(mStatusReceiver);
+		final ContentResolver resolver = getContentResolver();
+		resolver.unregisterContentObserver(mReloadContentObserver);
 		super.onStop();
 	}
 
@@ -172,7 +166,7 @@ public abstract class CursorStatusesMultiColumnListFragment extends BaseStatuses
 		return getNewestStatusIdsFromDatabase(getActivity(), getContentUri());
 	}
 
-	protected abstract int getNotificationIdToClear();
+	protected abstract int getNotificationType();
 
 	@Override
 	protected long[] getOldestStatusIds() {

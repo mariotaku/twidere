@@ -22,19 +22,17 @@ package org.mariotaku.twidere.activity.support;
 import static org.mariotaku.twidere.util.Utils.getAccountColors;
 import static org.mariotaku.twidere.util.Utils.getDefaultTextSize;
 
-import android.app.LoaderManager.LoaderCallbacks;
-import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.TextUtils;
 import android.util.SparseBooleanArray;
@@ -79,17 +77,6 @@ public class DraftsActivity extends BaseSupportActivity implements LoaderCallbac
 	private PopupMenu mPopupMenu;
 
 	private float mTextSize;
-
-	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(final Context context, final Intent intent) {
-			final String action = intent.getAction();
-			if (BROADCAST_DRAFTS_DATABASE_UPDATED.equals(action)) {
-				getLoaderManager().restartLoader(0, null, DraftsActivity.this);
-			}
-		}
-	};
 
 	@Override
 	public boolean onActionItemClicked(final ActionMode mode, final MenuItem item) {
@@ -184,17 +171,6 @@ public class DraftsActivity extends BaseSupportActivity implements LoaderCallbac
 	}
 
 	@Override
-	public void onStart() {
-		final IntentFilter filter = new IntentFilter(BROADCAST_DRAFTS_DATABASE_UPDATED);
-		registerReceiver(mStatusReceiver, filter);
-		final AsyncTwitterWrapper twitter = getTwitterWrapper();
-		if (twitter != null) {
-			twitter.clearNotification(NOTIFICATION_ID_DRAFTS);
-		}
-		super.onStart();
-	}
-
-	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mResolver = getContentResolver();
@@ -211,7 +187,7 @@ public class DraftsActivity extends BaseSupportActivity implements LoaderCallbac
 		mListView.setOnItemClickListener(this);
 		mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 		mListView.setMultiChoiceModeListener(this);
-		getLoaderManager().initLoader(0, null, this);
+		getSupportLoaderManager().initLoader(0, null, this);
 	}
 
 	@Override
@@ -226,8 +202,16 @@ public class DraftsActivity extends BaseSupportActivity implements LoaderCallbac
 	}
 
 	@Override
+	protected void onStart() {
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		if (twitter != null) {
+			twitter.clearNotificationAsync(NOTIFICATION_ID_DRAFTS);
+		}
+		super.onStart();
+	}
+
+	@Override
 	protected void onStop() {
-		unregisterReceiver(mStatusReceiver);
 		if (mPopupMenu != null) {
 			mPopupMenu.dismiss();
 		}

@@ -40,9 +40,6 @@ public class MentionsFragment extends CursorStatusesListFragment {
 			final String action = intent.getAction();
 			if (BROADCAST_MENTIONS_REFRESHED.equals(action)) {
 				setRefreshComplete();
-				getLoaderManager().restartLoader(0, null, MentionsFragment.this);
-			} else if (BROADCAST_MENTIONS_DATABASE_UPDATED.equals(action)) {
-				getLoaderManager().restartLoader(0, null, MentionsFragment.this);
 			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
 				updateRefreshState();
 			}
@@ -66,8 +63,6 @@ public class MentionsFragment extends CursorStatusesListFragment {
 	public void onStart() {
 		super.onStart();
 		final IntentFilter filter = new IntentFilter(BROADCAST_MENTIONS_REFRESHED);
-		filter.addAction(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
-		filter.addAction(BROADCAST_MENTIONS_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_TASK_STATE_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
 	}
@@ -84,7 +79,7 @@ public class MentionsFragment extends CursorStatusesListFragment {
 	}
 
 	@Override
-	protected int getNotificationIdToClear() {
+	protected int getNotificationType() {
 		return NOTIFICATION_ID_MENTIONS;
 	}
 

@@ -19,12 +19,12 @@
 
 package org.mariotaku.twidere.adapter;
 
-import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_ACCOUNT_ID;
-import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_CONVERSATION_ID;
-import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_NAME;
-import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_PROFILE_IMAGE_URL;
-import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_SCREEN_NAME;
-import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry.IDX_TEXT;
+import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationEntries.IDX_ACCOUNT_ID;
+import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationEntries.IDX_CONVERSATION_ID;
+import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationEntries.IDX_NAME;
+import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationEntries.IDX_PROFILE_IMAGE_URL;
+import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationEntries.IDX_SCREEN_NAME;
+import static org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationEntries.IDX_TEXT;
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
 import static org.mariotaku.twidere.util.Utils.configBaseCardAdapter;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
@@ -44,7 +44,7 @@ import android.view.ViewGroup;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.iface.IBaseCardAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry;
+import org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationEntries;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.view.holder.DirectMessageEntryViewHolder;
@@ -72,10 +72,10 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 	public void bindView(final View view, final Context context, final Cursor cursor) {
 		final DirectMessageEntryViewHolder holder = (DirectMessageEntryViewHolder) view.getTag();
 		final int position = cursor.getPosition();
-		final long account_id = cursor.getLong(ConversationsEntry.IDX_ACCOUNT_ID);
-		final long conversation_id = cursor.getLong(ConversationsEntry.IDX_CONVERSATION_ID);
-		final long message_timestamp = cursor.getLong(ConversationsEntry.IDX_MESSAGE_TIMESTAMP);
-		final boolean is_outgoing = cursor.getInt(ConversationsEntry.IDX_IS_OUTGOING) == 1;
+		final long account_id = cursor.getLong(ConversationEntries.IDX_ACCOUNT_ID);
+		final long conversation_id = cursor.getLong(ConversationEntries.IDX_CONVERSATION_ID);
+		final long message_timestamp = cursor.getLong(ConversationEntries.IDX_MESSAGE_TIMESTAMP);
+		final boolean is_outgoing = cursor.getInt(ConversationEntries.IDX_IS_OUTGOING) == 1;
 
 		final String name = cursor.getString(IDX_NAME);
 		final String screen_name = cursor.getString(IDX_SCREEN_NAME);

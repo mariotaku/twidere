@@ -26,6 +26,7 @@ import static org.mariotaku.twidere.util.Utils.getOldestMessageIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.openDirectMessagesConversation;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -39,6 +40,7 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
@@ -49,11 +51,13 @@ import org.mariotaku.querybuilder.Where;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.adapter.DirectMessagesEntryAdapter;
+import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.task.AsyncTask;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
+import org.mariotaku.twidere.util.content.SupportFragmentReloadCursorObserver;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -63,21 +67,16 @@ import java.util.Set;
 
 public class DirectMessagesFragment extends BasePullToRefreshListFragment implements LoaderCallbacks<Cursor> {
 
+	private final SupportFragmentReloadCursorObserver mReloadContentObserver = new SupportFragmentReloadCursorObserver(
+			this, 0, this);
+
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
 			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
-			if (BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED.equals(action)) {
-				getLoaderManager().restartLoader(0, null, DirectMessagesFragment.this);
-			} else if (BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED.equals(action)
-					|| BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED.equals(action)) {
-				getLoaderManager().restartLoader(0, null, DirectMessagesFragment.this);
-			} else if (BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED.equals(action)
-					|| BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED.equals(action)) {
-				getLoaderManager().restartLoader(0, null, DirectMessagesFragment.this);
-			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
+			if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
 				updateRefreshState();
 			}
 		}
@@ -125,7 +124,7 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 
 	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
-		final Uri uri = DirectMessages.ConversationsEntry.CONTENT_URI;
+		final Uri uri = DirectMessages.ConversationEntries.CONTENT_URI;
 		final long account_id = getAccountId();
 		final long[] account_ids = account_id > 0 ? new long[] { account_id } : getActivatedAccountIds(getActivity());
 		final boolean no_account_selected = account_ids.length == 0;
@@ -135,6 +134,15 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 		}
 		final Where account_where = Where.in(new Column(Statuses.ACCOUNT_ID), new RawItemArray(account_ids));
 		return new CursorLoader(getActivity(), uri, null, account_where.getSQL(), null, null);
+	}
+
+	@Override
+	public boolean onDown(final MotionEvent e) {
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		if (twitter != null) {
+			twitter.clearNotificationAsync(NOTIFICATION_ID_DIRECT_MESSAGES, getAccountId());
+		}
+		return super.onDown(e);
 	}
 
 	@Override
@@ -220,10 +228,6 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 		switch (scrollState) {
 			case SCROLL_STATE_FLING:
 			case SCROLL_STATE_TOUCH_SCROLL: {
-				final AsyncTwitterWrapper twitter = getTwitterWrapper();
-				if (twitter != null) {
-					twitter.clearNotification(NOTIFICATION_ID_DIRECT_MESSAGES);
-				}
 				break;
 			}
 			case SCROLL_STATE_IDLE: {
@@ -239,10 +243,9 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 	@Override
 	public void onStart() {
 		super.onStart();
+		final ContentResolver resolver = getContentResolver();
+		resolver.registerContentObserver(Accounts.CONTENT_URI, true, mReloadContentObserver);
 		final IntentFilter filter = new IntentFilter();
-		filter.addAction(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
-		filter.addAction(BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED);
-		filter.addAction(BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED);
 		filter.addAction(BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED);
 		filter.addAction(BROADCAST_TASK_STATE_CHANGED);
@@ -252,6 +255,8 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 	@Override
 	public void onStop() {
 		unregisterReceiver(mStatusReceiver);
+		final ContentResolver resolver = getContentResolver();
+		resolver.unregisterContentObserver(mReloadContentObserver);
 		super.onStop();
 	}
 

@@ -116,7 +116,7 @@ public class StatusViewHolder extends CardViewHolder {
 		final String display_name = getDisplayName(getContext(), user_id, name, screen_name, name_first, nickname_only,
 				false);
 		reply_retweet_status.setText(getString(R.string.in_reply_to, display_name));
-		reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_reply, 0, 0, 0);
+		reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_conversation, 0, 0, 0);
 	}
 
 	public void setRetweetedBy(final long count, final long user_id, final String name, final String screen_name) {

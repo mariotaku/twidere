@@ -29,6 +29,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ListResponse;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.SingleResponse;
+import org.mariotaku.twidere.provider.TweetStore.Notifications;
 import org.mariotaku.twidere.provider.TweetStore.UnreadCounts;
 
 import twitter4j.Status;
@@ -45,35 +46,19 @@ import java.util.Set;
 
 public class TwitterWrapper implements Constants {
 
-	public int clearUnreadCount(final Context context, final int position) {
+	public static int clearNotification(final Context context, final int notificationType, final long accountId) {
+		final Uri.Builder builder = Notifications.CONTENT_URI.buildUpon();
+		builder.appendPath(String.valueOf(notificationType));
+		if (accountId > 0) {
+			builder.appendPath(String.valueOf(accountId));
+		}
+		return context.getContentResolver().delete(builder.build(), null, null);
+	}
+
+	public static int clearUnreadCount(final Context context, final int position) {
 		if (context == null || position < 0) return 0;
 		final Uri uri = UnreadCounts.CONTENT_URI.buildUpon().appendPath(String.valueOf(position)).build();
 		return context.getContentResolver().delete(uri, null, null);
-	}
-
-	public int removeUnreadCounts(final Context context, final int position, final long account_id,
-			final long... status_ids) {
-		if (context == null || position < 0 || status_ids == null || status_ids.length == 0) return 0;
-		int result = 0;
-		final Uri.Builder builder = UnreadCounts.CONTENT_URI.buildUpon();
-		builder.appendPath(String.valueOf(position));
-		builder.appendPath(String.valueOf(account_id));
-		builder.appendPath(ArrayUtils.toString(status_ids, ',', false));
-		result += context.getContentResolver().delete(builder.build(), null, null);
-		return result;
-	}
-
-	public int removeUnreadCounts(final Context context, final int position, final Map<Long, Set<Long>> counts) {
-		if (context == null || position < 0 || counts == null) return 0;
-		int result = 0;
-		for (final Entry<Long, Set<Long>> entry : counts.entrySet()) {
-			final Uri.Builder builder = UnreadCounts.CONTENT_URI.buildUpon();
-			builder.appendPath(String.valueOf(position));
-			builder.appendPath(String.valueOf(entry.getKey()));
-			builder.appendPath(ListUtils.toString(new ArrayList<Long>(entry.getValue()), ',', false));
-			result += context.getContentResolver().delete(builder.build(), null, null);
-		}
-		return result;
 	}
 
 	public static SingleResponse<Boolean> deleteProfileBannerImage(final Context context, final long account_id) {
@@ -85,6 +70,31 @@ public class TwitterWrapper implements Constants {
 		} catch (final TwitterException e) {
 			return new SingleResponse<Boolean>(false, e);
 		}
+	}
+
+	public static int removeUnreadCounts(final Context context, final int position, final long account_id,
+			final long... status_ids) {
+		if (context == null || position < 0 || status_ids == null || status_ids.length == 0) return 0;
+		int result = 0;
+		final Uri.Builder builder = UnreadCounts.CONTENT_URI.buildUpon();
+		builder.appendPath(String.valueOf(position));
+		builder.appendPath(String.valueOf(account_id));
+		builder.appendPath(ArrayUtils.toString(status_ids, ',', false));
+		result += context.getContentResolver().delete(builder.build(), null, null);
+		return result;
+	}
+
+	public static int removeUnreadCounts(final Context context, final int position, final Map<Long, Set<Long>> counts) {
+		if (context == null || position < 0 || counts == null) return 0;
+		int result = 0;
+		for (final Entry<Long, Set<Long>> entry : counts.entrySet()) {
+			final Uri.Builder builder = UnreadCounts.CONTENT_URI.buildUpon();
+			builder.appendPath(String.valueOf(position));
+			builder.appendPath(String.valueOf(entry.getKey()));
+			builder.appendPath(ListUtils.toString(new ArrayList<Long>(entry.getValue()), ',', false));
+			result += context.getContentResolver().delete(builder.build(), null, null);
+		}
+		return result;
 	}
 
 	public static SingleResponse<ParcelableUser> updateProfile(final Context context, final long account_id,

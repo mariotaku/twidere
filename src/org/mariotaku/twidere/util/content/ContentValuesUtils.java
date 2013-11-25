@@ -1,4 +1,4 @@
-package org.mariotaku.twidere.util;
+package org.mariotaku.twidere.util.content;
 
 import android.content.ContentValues;
 

@@ -112,19 +112,11 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 		public void onReceive(final Context context, final Intent intent) {
 			if (getActivity() == null || !isAdded() || isDetached()) return;
 			final String action = intent.getAction();
-			if (BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED.equals(action)
-					|| BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED.equals(action)) {
-				getLoaderManager().restartLoader(0, mArguments, DirectMessagesConversationFragment.this);
-			} else if (BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED.equals(action)
-					|| BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED.equals(action)) {
-				getLoaderManager().restartLoader(0, mArguments, DirectMessagesConversationFragment.this);
-			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
-				setProgressBarIndeterminateVisibility(mTwitterWrapper.isReceivedDirectMessagesRefreshing()
-						|| mTwitterWrapper.isSentDirectMessagesRefreshing());
+			if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
+				updateRefreshState();
 			}
 		}
 	};
-
 	private final TextWatcher mScreenNameTextWatcher = new TextWatcher() {
 
 		@Override
@@ -345,8 +337,6 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 	public void onStart() {
 		super.onStart();
 		final IntentFilter filter = new IntentFilter(BROADCAST_TASK_STATE_CHANGED);
-		filter.addAction(BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED);
-		filter.addAction(BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED);
 		filter.addAction(BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED);
 		registerReceiver(mStatusReceiver, filter);
@@ -394,6 +384,13 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 		mArguments.putLong(EXTRA_CONVERSATION_ID, conversation_id);
 		mArguments.putString(EXTRA_SCREEN_NAME, screen_name);
 		getLoaderManager().restartLoader(0, mArguments, this);
+	}
+
+	protected void updateRefreshState() {
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		if (twitter == null || !getUserVisibleHint()) return;
+		setProgressBarIndeterminateVisibility(twitter.isReceivedDirectMessagesRefreshing()
+				|| twitter.isSentDirectMessagesRefreshing());
 	}
 
 	private void send() {

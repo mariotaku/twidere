@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.util;
+package org.mariotaku.twidere.util.content;
 
 import static android.text.TextUtils.isEmpty;
 
@@ -26,6 +26,9 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.CancellationSignal;
+
+import org.mariotaku.twidere.util.ArrayUtils;
+import org.mariotaku.twidere.util.StrictModeUtils;
 
 import java.util.Collection;
 

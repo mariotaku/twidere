@@ -412,28 +412,29 @@ public abstract class PLAAbsListView extends PLAAdapterView<ListAdapter> impleme
 		super(context, attrs, defStyle);
 		initAbsListView();
 
-		final TypedArray a = context.obtainStyledAttributes(attrs, styleable.AbsListView, defStyle, 0);
+		final TypedArray a = context.obtainStyledAttributes(attrs, PLAAbsListView_styleable.AbsListView, defStyle, 0);
 
-		final Drawable d = a.getDrawable(styleable.AbsListView_listSelector);
+		final Drawable d = a.getDrawable(PLAAbsListView_styleable.AbsListView_listSelector);
 		if (d != null) {
 			setSelector(d);
 		}
 
-		mDrawSelectorOnTop = a.getBoolean(styleable.AbsListView_drawSelectorOnTop, false);
+		mDrawSelectorOnTop = a.getBoolean(PLAAbsListView_styleable.AbsListView_drawSelectorOnTop, false);
 
-		final boolean stackFromBottom = a.getBoolean(styleable.AbsListView_stackFromBottom, false);
+		final boolean stackFromBottom = a.getBoolean(PLAAbsListView_styleable.AbsListView_stackFromBottom, false);
 		setStackFromBottom(stackFromBottom);
 
-		final boolean scrollingCacheEnabled = a.getBoolean(styleable.AbsListView_scrollingCache, true);
+		final boolean scrollingCacheEnabled = a.getBoolean(PLAAbsListView_styleable.AbsListView_scrollingCache, true);
 		setScrollingCacheEnabled(scrollingCacheEnabled);
 
-		final int transcriptMode = a.getInt(styleable.AbsListView_transcriptMode, TRANSCRIPT_MODE_DISABLED);
+		final int transcriptMode = a.getInt(PLAAbsListView_styleable.AbsListView_transcriptMode,
+				TRANSCRIPT_MODE_DISABLED);
 		setTranscriptMode(transcriptMode);
 
-		final int color = a.getColor(styleable.AbsListView_cacheColorHint, 0);
+		final int color = a.getColor(PLAAbsListView_styleable.AbsListView_cacheColorHint, 0);
 		setCacheColorHint(color);
 
-		final boolean smoothScrollbar = a.getBoolean(styleable.AbsListView_smoothScrollbar, true);
+		final boolean smoothScrollbar = a.getBoolean(PLAAbsListView_styleable.AbsListView_smoothScrollbar, true);
 		setSmoothScrollbarEnabled(smoothScrollbar);
 
 		a.recycle();
@@ -2520,6 +2521,24 @@ public abstract class PLAAbsListView extends PLAAdapterView<ListAdapter> impleme
 		public void onScrollStateChanged(PLAAbsListView view, int scrollState);
 	}
 
+	public static final class PLAAbsListView_styleable {
+		public static final int[] AbsListView = { android.R.attr.cacheColorHint, android.R.attr.drawSelectorOnTop,
+				android.R.attr.fastScrollAlwaysVisible, android.R.attr.fastScrollEnabled, android.R.attr.listSelector,
+				android.R.attr.scrollingCache, android.R.attr.smoothScrollbar, android.R.attr.stackFromBottom,
+				android.R.attr.textFilterEnabled, android.R.attr.transcriptMode };
+
+		public static final int AbsListView_cacheColorHint = 0;
+		public static final int AbsListView_drawSelectorOnTop = 1;
+		public static final int AbsListView_fastScrollAlwaysVisible = 2;
+		public static final int AbsListView_fastScrollEnabled = 3;
+		public static final int AbsListView_listSelector = 4;
+		public static final int AbsListView_scrollingCache = 5;
+		public static final int AbsListView_smoothScrollbar = 6;
+		public static final int AbsListView_stackFromBottom = 7;
+		public static final int AbsListView_textFilterEnabled = 8;
+		public static final int AbsListView_transcriptMode = 9;
+	}
+
 	/**
 	 * A RecyclerListener is used to receive a notification whenever a View is
 	 * placed inside the RecycleBin's scrap heap. This listener is used to free
@@ -2567,6 +2586,10 @@ public abstract class PLAAbsListView extends PLAAdapterView<ListAdapter> impleme
 		}
 	}
 
+	// ///////////////////////////////////////////////////
+	// Newly Added Methods.
+	// ///////////////////////////////////////////////////
+
 	private class CheckForLongPress extends WindowRunnnable implements Runnable {
 		@Override
 		public void run() {
@@ -2593,7 +2616,7 @@ public abstract class PLAAbsListView extends PLAAdapterView<ListAdapter> impleme
 	}
 
 	// ///////////////////////////////////////////////////
-	// Newly Added Methods.
+	// Check available space of list view.
 	// ///////////////////////////////////////////////////
 
 	/**
@@ -2737,10 +2760,6 @@ public abstract class PLAAbsListView extends PLAAdapterView<ListAdapter> impleme
 		}
 	}
 
-	// ///////////////////////////////////////////////////
-	// Check available space of list view.
-	// ///////////////////////////////////////////////////
-
 	private class PerformClick extends WindowRunnnable implements Runnable {
 		View mChild;
 		int mClickMotionPosition;
@@ -2759,24 +2778,6 @@ public abstract class PLAAbsListView extends PLAAdapterView<ListAdapter> impleme
 				performItemClick(mChild, motionPosition, adapter.getItemId(motionPosition));
 			}
 		}
-	}
-
-	private static final class styleable {
-		public static final int[] AbsListView = { android.R.attr.cacheColorHint, android.R.attr.drawSelectorOnTop,
-				android.R.attr.fastScrollAlwaysVisible, android.R.attr.fastScrollEnabled, android.R.attr.listSelector,
-				android.R.attr.scrollingCache, android.R.attr.smoothScrollbar, android.R.attr.stackFromBottom,
-				android.R.attr.textFilterEnabled, android.R.attr.transcriptMode };
-
-		public static final int AbsListView_cacheColorHint = 0;
-		public static final int AbsListView_drawSelectorOnTop = 1;
-		public static final int AbsListView_fastScrollAlwaysVisible = 2;
-		public static final int AbsListView_fastScrollEnabled = 3;
-		public static final int AbsListView_listSelector = 4;
-		public static final int AbsListView_scrollingCache = 5;
-		public static final int AbsListView_smoothScrollbar = 6;
-		public static final int AbsListView_stackFromBottom = 7;
-		public static final int AbsListView_textFilterEnabled = 8;
-		public static final int AbsListView_transcriptMode = 9;
 	}
 
 	/**

@@ -31,12 +31,10 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -46,7 +44,6 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.AccountPreferences;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
-import org.mariotaku.twidere.provider.TweetStore.Notifications;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
@@ -57,7 +54,6 @@ public class RefreshService extends Service implements Constants {
 	private SharedPreferences mPreferences;
 
 	private AlarmManager mAlarmManager;
-	private ContentResolver mResolver;
 	private AsyncTwitterWrapper mTwitterWrapper;
 	private PendingIntent mPendingRefreshHomeTimelineIntent, mPendingRefreshMentionsIntent,
 			mPendingRefreshDirectMessagesIntent, mPendingRefreshTrendsIntent;
@@ -68,9 +64,9 @@ public class RefreshService extends Service implements Constants {
 		public void onReceive(final Context context, final Intent intent) {
 			final String action = intent.getAction();
 			if (BROADCAST_NOTIFICATION_DELETED.equals(action)) {
-				if (intent.hasExtra(EXTRA_NOTIFICATION_ID)) {
-					clearNotification(intent.getIntExtra(EXTRA_NOTIFICATION_ID, -1));
-				}
+				final int notificationId = intent.getIntExtra(EXTRA_NOTIFICATION_ID, -1);
+				final long accountId = intent.getLongExtra(EXTRA_NOTIFICATION_ACCOUNT, -1);
+				clearNotification(notificationId, accountId);
 			} else if (BROADCAST_RESCHEDULE_HOME_TIMELINE_REFRESHING.equals(action)) {
 				rescheduleHomeTimelineRefreshing();
 			} else if (BROADCAST_RESCHEDULE_MENTIONS_REFRESHING.equals(action)) {
@@ -136,7 +132,6 @@ public class RefreshService extends Service implements Constants {
 		final TwidereApplication app = TwidereApplication.getInstance(this);
 		mTwitterWrapper = app.getTwitterWrapper();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-		mResolver = getContentResolver();
 		mPendingRefreshHomeTimelineIntent = PendingIntent.getBroadcast(this, 0, new Intent(
 				BROADCAST_REFRESH_HOME_TIMELINE), 0);
 		mPendingRefreshMentionsIntent = PendingIntent.getBroadcast(this, 0, new Intent(BROADCAST_REFRESH_MENTIONS), 0);
@@ -171,9 +166,8 @@ public class RefreshService extends Service implements Constants {
 						true));
 	}
 
-	private void clearNotification(final int id) {
-		final Uri uri = Notifications.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
-		mResolver.delete(uri, null, null);
+	private void clearNotification(final int notificationId, final long notificationAccount) {
+		mTwitterWrapper.clearNotificationAsync(notificationId, notificationAccount);
 	}
 
 	private int getHomeTimeline(final long[] accountIds, final long[] maxIds, final long[] sinceIds) {

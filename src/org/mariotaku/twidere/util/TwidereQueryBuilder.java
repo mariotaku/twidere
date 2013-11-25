@@ -9,7 +9,7 @@ import org.mariotaku.querybuilder.Tables;
 import org.mariotaku.querybuilder.Where;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages.Conversation;
-import org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationsEntry;
+import org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationEntries;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages.Inbox;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages.Outbox;
 
@@ -78,29 +78,30 @@ public class TwidereQueryBuilder {
 	public static class ConversationsEntryQueryBuilder {
 		public static String build(final String where) {
 			final SQLQueryBuilder qb = new SQLQueryBuilder();
-			qb.select(new Columns(new Column(DirectMessages._ID), new Column(ConversationsEntry.MESSAGE_TIMESTAMP),
+			qb.select(new Columns(new Column(DirectMessages._ID), new Column(ConversationEntries.MESSAGE_TIMESTAMP),
 					new Column(DirectMessages.MESSAGE_ID), new Column(DirectMessages.ACCOUNT_ID), new Column(
-							DirectMessages.IS_OUTGOING), new Column(ConversationsEntry.NAME), new Column(
-							ConversationsEntry.SCREEN_NAME), new Column(ConversationsEntry.PROFILE_IMAGE_URL),
-					new Column(ConversationsEntry.TEXT_HTML), new Column(ConversationsEntry.CONVERSATION_ID)));
+							DirectMessages.IS_OUTGOING), new Column(ConversationEntries.NAME), new Column(
+							ConversationEntries.SCREEN_NAME), new Column(ConversationEntries.PROFILE_IMAGE_URL),
+					new Column(ConversationEntries.TEXT_HTML), new Column(ConversationEntries.CONVERSATION_ID)));
 			final SQLQueryBuilder entry_ids = new SQLQueryBuilder();
 			entry_ids.select(new Columns(new Column(DirectMessages._ID), new Column(
-					ConversationsEntry.MESSAGE_TIMESTAMP), new Column(DirectMessages.MESSAGE_ID), new Column(
+					ConversationEntries.MESSAGE_TIMESTAMP), new Column(DirectMessages.MESSAGE_ID), new Column(
 					DirectMessages.ACCOUNT_ID), new Column("0", DirectMessages.IS_OUTGOING), new Column(
-					DirectMessages.SENDER_NAME, ConversationsEntry.NAME), new Column(DirectMessages.SENDER_SCREEN_NAME,
-					ConversationsEntry.SCREEN_NAME), new Column(DirectMessages.SENDER_PROFILE_IMAGE_URL,
-					ConversationsEntry.PROFILE_IMAGE_URL), new Column(ConversationsEntry.TEXT_HTML), new Column(
-					DirectMessages.SENDER_ID, ConversationsEntry.CONVERSATION_ID)));
+					DirectMessages.SENDER_NAME, ConversationEntries.NAME), new Column(
+					DirectMessages.SENDER_SCREEN_NAME, ConversationEntries.SCREEN_NAME), new Column(
+					DirectMessages.SENDER_PROFILE_IMAGE_URL, ConversationEntries.PROFILE_IMAGE_URL), new Column(
+					ConversationEntries.TEXT_HTML), new Column(DirectMessages.SENDER_ID,
+					ConversationEntries.CONVERSATION_ID)));
 			entry_ids.from(new Tables(Inbox.TABLE_NAME));
 			entry_ids.union();
 			entry_ids.select(new Columns(new Column(DirectMessages._ID), new Column(
-					ConversationsEntry.MESSAGE_TIMESTAMP), new Column(DirectMessages.MESSAGE_ID), new Column(
+					ConversationEntries.MESSAGE_TIMESTAMP), new Column(DirectMessages.MESSAGE_ID), new Column(
 					DirectMessages.ACCOUNT_ID), new Column("1", DirectMessages.IS_OUTGOING), new Column(
-					DirectMessages.RECIPIENT_NAME, ConversationsEntry.NAME), new Column(
-					DirectMessages.RECIPIENT_SCREEN_NAME, ConversationsEntry.SCREEN_NAME), new Column(
-					DirectMessages.RECIPIENT_PROFILE_IMAGE_URL, ConversationsEntry.PROFILE_IMAGE_URL), new Column(
-					ConversationsEntry.TEXT_HTML), new Column(DirectMessages.RECIPIENT_ID,
-					ConversationsEntry.CONVERSATION_ID)));
+					DirectMessages.RECIPIENT_NAME, ConversationEntries.NAME), new Column(
+					DirectMessages.RECIPIENT_SCREEN_NAME, ConversationEntries.SCREEN_NAME), new Column(
+					DirectMessages.RECIPIENT_PROFILE_IMAGE_URL, ConversationEntries.PROFILE_IMAGE_URL), new Column(
+					ConversationEntries.TEXT_HTML), new Column(DirectMessages.RECIPIENT_ID,
+					ConversationEntries.CONVERSATION_ID)));
 			entry_ids.from(new Tables(Outbox.TABLE_NAME));
 			qb.from(entry_ids.build());
 			final SQLQueryBuilder recent_inbox_msg_ids = new SQLQueryBuilder()
@@ -111,26 +112,26 @@ public class TwidereQueryBuilder {
 					.groupBy(new Column(DirectMessages.RECIPIENT_ID));
 			final SQLQueryBuilder conversation_ids = new SQLQueryBuilder();
 			conversation_ids.select(new Columns(new Column(DirectMessages.MESSAGE_ID), new Column(
-					DirectMessages.SENDER_ID, ConversationsEntry.CONVERSATION_ID)));
+					DirectMessages.SENDER_ID, ConversationEntries.CONVERSATION_ID)));
 			conversation_ids.from(new Tables(Inbox.TABLE_NAME));
 			conversation_ids.where(Where.in(new Column(DirectMessages.MESSAGE_ID), recent_inbox_msg_ids.build()));
 			conversation_ids.union();
 			conversation_ids.select(new Columns(new Column(DirectMessages.MESSAGE_ID), new Column(
-					DirectMessages.RECIPIENT_ID, ConversationsEntry.CONVERSATION_ID)));
+					DirectMessages.RECIPIENT_ID, ConversationEntries.CONVERSATION_ID)));
 			conversation_ids.from(new Tables(Outbox.TABLE_NAME));
 			conversation_ids.where(Where.in(new Column(DirectMessages.MESSAGE_ID), recent_outbox_msg_ids.build()));
 			final SQLQueryBuilder grouped_message_conversation_ids = new SQLQueryBuilder();
 			grouped_message_conversation_ids.select(new Column(DirectMessages.MESSAGE_ID));
 			grouped_message_conversation_ids.from(conversation_ids.build());
-			grouped_message_conversation_ids.groupBy(new Column(ConversationsEntry.CONVERSATION_ID));
+			grouped_message_conversation_ids.groupBy(new Column(ConversationEntries.CONVERSATION_ID));
 			final Where grouped_where = Where.in(new Column(DirectMessages.MESSAGE_ID),
 					grouped_message_conversation_ids.build());
 			qb.where(grouped_where);
 			if (where != null) {
 				grouped_where.and(new Where(where));
 			}
-			qb.groupBy(Utils.getColumnsFromProjection(ConversationsEntry.CONVERSATION_ID, DirectMessages.ACCOUNT_ID));
-			qb.orderBy(new OrderBy(ConversationsEntry.MESSAGE_TIMESTAMP + " DESC"));
+			qb.groupBy(Utils.getColumnsFromProjection(ConversationEntries.CONVERSATION_ID, DirectMessages.ACCOUNT_ID));
+			qb.orderBy(new OrderBy(ConversationEntries.MESSAGE_TIMESTAMP + " DESC"));
 			return qb.build().getSQL();
 		}
 	}

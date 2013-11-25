@@ -59,6 +59,7 @@ import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.PositionManager;
 import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
 import java.util.Collections;
@@ -150,7 +151,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 			final ParcelableStatus status = mAdapter.getStatus(position - mListView.getHeaderViewsCount());
 			final AsyncTwitterWrapper twitter = getTwitterWrapper();
 			if (twitter != null) {
-				twitter.removeUnreadCounts(getActivity(), getTabPosition(), status.account_id, status.id);
+				TwitterWrapper.removeUnreadCounts(getActivity(), getTabPosition(), status.account_id, status.id);
 			}
 			if (((StatusViewHolder) tag).show_as_gap) return false;
 			setItemSelected(status, position, !mMultiSelectManager.isSelected(status));
@@ -181,7 +182,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 			if (status == null) return;
 			final AsyncTwitterWrapper twitter = getTwitterWrapper();
 			if (twitter != null) {
-				twitter.removeUnreadCounts(getActivity(), getTabPosition(), status.account_id, status.id);
+				TwitterWrapper.removeUnreadCounts(getActivity(), getTabPosition(), status.account_id, status.id);
 			}
 			if (((StatusViewHolder) tag).show_as_gap) {
 				getStatuses(new long[] { status.account_id }, new long[] { status.id }, null);
@@ -400,6 +401,10 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		updateRefreshState();
 	}
 
+	protected final int getListScrollOffset() {
+		return mListScrollOffset;
+	}
+
 	protected abstract long[] getNewestStatusIds();
 
 	protected abstract long[] getOldestStatusIds();
@@ -486,7 +491,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		if (view == null || status == null) return;
 		final AsyncTwitterWrapper twitter = getTwitterWrapper();
 		if (twitter != null) {
-			twitter.removeUnreadCounts(getActivity(), getTabPosition(), status.account_id, status.id);
+			TwitterWrapper.removeUnreadCounts(getActivity(), getTabPosition(), status.account_id, status.id);
 		}
 		if (mPopupMenu != null && mPopupMenu.isShowing()) {
 			mPopupMenu.dismiss();

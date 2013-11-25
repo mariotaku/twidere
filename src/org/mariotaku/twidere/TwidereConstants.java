@@ -348,12 +348,16 @@ public interface TwidereConstants {
 
 	public static final String INTENT_ACTION_UPDATE_STATUS = INTENT_PACKAGE_PREFIX + "UPDATE_STATUS";
 
+	@Deprecated
 	public static final String BROADCAST_HOME_TIMELINE_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX
 			+ "HOME_TIMELINE_DATABASE_UPDATED";
+	@Deprecated
 	public static final String BROADCAST_MENTIONS_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX
 			+ "MENTIONS_DATABASE_UPDATED";
+	@Deprecated
 	public static final String BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX
 			+ "ACCOUNT_LIST_DATABASE_UPDATED";
+	@Deprecated
 	public static final String BROADCAST_DRAFTS_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX + "DRAFTS_DATABASE_UPDATED";
 	public static final String BROADCAST_HOME_TIMELINE_REFRESHED = INTENT_PACKAGE_PREFIX + "HOME_TIMELINE_REFRESHED";
 	public static final String BROADCAST_MENTIONS_REFRESHED = INTENT_PACKAGE_PREFIX + "MENTIONS_REFRESHED";
@@ -366,18 +370,21 @@ public interface TwidereConstants {
 	public static final String BROADCAST_PROFILE_BANNER_UPDATED = INTENT_PACKAGE_PREFIX + "PROFILE_BANNER_UPDATED";
 	public static final String BROADCAST_USER_LIST_DETAILS_UPDATED = INTENT_PACKAGE_PREFIX
 			+ "USER_LIST_DETAILS_UPDATED";
-	public static final String BROADCAST_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX + "DATABASE_UPDATED";
+
 	public static final String BROADCAST_FAVORITE_CHANGED = INTENT_PACKAGE_PREFIX + "FAVORITE_CHANGED";
 	public static final String BROADCAST_RETWEET_CHANGED = INTENT_PACKAGE_PREFIX + "RETWEET_CHANGED";
 	public static final String BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED = INTENT_PACKAGE_PREFIX
 			+ "RECEIVED_DIRECT_MESSAGES_REFRESHED";
 	public static final String BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED = INTENT_PACKAGE_PREFIX
 			+ "SENT_DIRECT_MESSAGES_REFRESHED";
+	@Deprecated
 	public static final String BROADCAST_RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX
 			+ "RECEIVED_DIRECT_MESSAGES_DATABASE_UPDATED";
+	@Deprecated
 	public static final String BROADCAST_SENT_DIRECT_MESSAGES_DATABASE_UPDATED = INTENT_PACKAGE_PREFIX
 			+ "SENT_DIRECT_MESSAGES_DATABASE_UPDATED";
 	public static final String BROADCAST_STATUS_DESTROYED = INTENT_PACKAGE_PREFIX + "STATUS_DESTROYED";
+	@Deprecated
 	public static final String BROADCAST_TRENDS_UPDATED = INTENT_PACKAGE_PREFIX + "TRENDS_UPDATED";
 	public static final String BROADCAST_USER_LIST_MEMBERS_DELETED = INTENT_PACKAGE_PREFIX + "USER_LIST_MEMBER_DELETED";
 	public static final String BROADCAST_USER_LIST_MEMBERS_ADDED = INTENT_PACKAGE_PREFIX + "USER_LIST_MEMBER_ADDED";
@@ -451,6 +458,7 @@ public interface TwidereConstants {
 	public static final String EXTRA_ITEMS_INSERTED = "items_inserted";
 	public static final String EXTRA_INITIAL_TAB = "initial_tab";
 	public static final String EXTRA_NOTIFICATION_ID = "notification_id";
+	public static final String EXTRA_NOTIFICATION_ACCOUNT = "notification_account";
 	public static final String EXTRA_FROM_NOTIFICATION = "from_notification";
 	public static final String EXTRA_IS_PUBLIC = "is_public";
 	public static final String EXTRA_USER = "user";
@@ -528,12 +536,8 @@ public interface TwidereConstants {
 	public static final String TABLE_FILTERED_KEYWORDS = Filters.Keywords.TABLE_NAME;
 	public static final String TABLE_FILTERED_SOURCES = Filters.Sources.TABLE_NAME;
 	public static final String TABLE_FILTERED_LINKS = Filters.Links.TABLE_NAME;
-	public static final String TABLE_DIRECT_MESSAGES = DirectMessages.TABLE_NAME;
 	public static final String TABLE_DIRECT_MESSAGES_INBOX = DirectMessages.Inbox.TABLE_NAME;
 	public static final String TABLE_DIRECT_MESSAGES_OUTBOX = DirectMessages.Outbox.TABLE_NAME;
-	public static final String TABLE_DIRECT_MESSAGES_CONVERSATION = DirectMessages.Conversation.TABLE_NAME;
-	public static final String TABLE_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME = DirectMessages.Conversation.TABLE_NAME_SCREEN_NAME;
-	public static final String TABLE_DIRECT_MESSAGES_CONVERSATIONS_ENTRY = DirectMessages.ConversationsEntry.TABLE_NAME;
 	public static final String TABLE_TRENDS_LOCAL = CachedTrends.Local.TABLE_NAME;
 	public static final String TABLE_TABS = Tabs.TABLE_NAME;
 	public static final String TABLE_NOTIFICATIONS = TweetStore.Notifications.TABLE_NAME;
@@ -545,24 +549,24 @@ public interface TwidereConstants {
 	public static final String TABLE_UNREAD_COUNTS = TweetStore.UnreadCounts.TABLE_NAME;
 
 	public static final int TABLE_ID_ACCOUNTS = 1;
-	public static final int TABLE_ID_STATUSES = 2;
-	public static final int TABLE_ID_MENTIONS = 3;
-	public static final int TABLE_ID_DIRECT_MESSAGES = 11;
-	public static final int TABLE_ID_DIRECT_MESSAGES_INBOX = 12;
-	public static final int TABLE_ID_DIRECT_MESSAGES_OUTBOX = 13;
-	public static final int TABLE_ID_DIRECT_MESSAGES_CONVERSATION = 14;
-	public static final int TABLE_ID_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME = 15;
-	public static final int TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY = 16;
-	public static final int TABLE_ID_FILTERED_USERS = 21;
-	public static final int TABLE_ID_FILTERED_KEYWORDS = 22;
-	public static final int TABLE_ID_FILTERED_SOURCES = 23;
-	public static final int TABLE_ID_FILTERED_LINKS = 24;
-	public static final int TABLE_ID_TRENDS_LOCAL = 31;
-	public static final int TABLE_ID_DRAFTS = 41;
-	public static final int TABLE_ID_TABS = 42;
-	public static final int TABLE_ID_CACHED_USERS = 51;
-	public static final int TABLE_ID_CACHED_STATUSES = 52;
-	public static final int TABLE_ID_CACHED_HASHTAGS = 53;
+	public static final int TABLE_ID_STATUSES = 12;
+	public static final int TABLE_ID_MENTIONS = 13;
+	public static final int TABLE_ID_DIRECT_MESSAGES = 21;
+	public static final int TABLE_ID_DIRECT_MESSAGES_INBOX = 22;
+	public static final int TABLE_ID_DIRECT_MESSAGES_OUTBOX = 23;
+	public static final int TABLE_ID_DIRECT_MESSAGES_CONVERSATION = 24;
+	public static final int TABLE_ID_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME = 25;
+	public static final int TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY = 26;
+	public static final int TABLE_ID_FILTERED_USERS = 31;
+	public static final int TABLE_ID_FILTERED_KEYWORDS = 32;
+	public static final int TABLE_ID_FILTERED_SOURCES = 33;
+	public static final int TABLE_ID_FILTERED_LINKS = 34;
+	public static final int TABLE_ID_TRENDS_LOCAL = 41;
+	public static final int TABLE_ID_DRAFTS = 51;
+	public static final int TABLE_ID_TABS = 52;
+	public static final int TABLE_ID_CACHED_USERS = 61;
+	public static final int TABLE_ID_CACHED_STATUSES = 62;
+	public static final int TABLE_ID_CACHED_HASHTAGS = 63;
 	public static final int VIRTUAL_TABLE_ID_NOTIFICATIONS = 101;
 	public static final int VIRTUAL_TABLE_ID_PREFERENCES = 102;
 	public static final int VIRTUAL_TABLE_ID_ALL_PREFERENCES = 103;

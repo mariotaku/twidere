@@ -19,10 +19,10 @@
 
 package org.mariotaku.twidere.util;
 
-import static org.mariotaku.twidere.util.ContentResolverUtils.bulkDelete;
-import static org.mariotaku.twidere.util.ContentResolverUtils.bulkInsert;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenNames;
 import static org.mariotaku.twidere.util.Utils.makeFilterdUserContentValues;
+import static org.mariotaku.twidere.util.content.ContentResolverUtils.bulkDelete;
+import static org.mariotaku.twidere.util.content.ContentResolverUtils.bulkInsert;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;

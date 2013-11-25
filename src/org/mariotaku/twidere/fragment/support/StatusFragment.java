@@ -655,6 +655,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mInReplyToView.setTextSize(text_size * 0.85f);
 		mLocationView.setTextSize(text_size * 0.85f);
 		mRetweetView.setTextSize(text_size * 0.85f);
+		mRepliesView.setTextSize(text_size * 0.85f);
 	}
 
 	@Override

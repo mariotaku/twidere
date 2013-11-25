@@ -17,10 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.util;
+package org.mariotaku.twidere.util.content;
 
-import static org.mariotaku.twidere.util.DatabaseUpgradeHelper.safeUpgrade;
 import static org.mariotaku.twidere.util.Utils.trim;
+import static org.mariotaku.twidere.util.content.DatabaseUpgradeHelper.safeUpgrade;
 
 import android.content.ContentValues;
 import android.content.Context;

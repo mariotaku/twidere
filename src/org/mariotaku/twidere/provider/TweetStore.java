@@ -310,25 +310,27 @@ public final class TweetStore {
 
 			public static final String DEFAULT_SORT_ORDER = MESSAGE_TIMESTAMP + " ASC";
 
-			public static final String TABLE_NAME = "messages_conversation";
-			public static final String CONTENT_PATH = TABLE_NAME;
+			public static final String CONTENT_PATH_SEGMENT = "conversation";
+			public static final String CONTENT_PATH_SEGMENT_SCREEN_NAME = "conversation_screen_name";
 
-			public static final String TABLE_NAME_SCREEN_NAME = "messages_conversation_screen_name";
+			public static final String CONTENT_PATH = DirectMessages.CONTENT_PATH + "/" + CONTENT_PATH_SEGMENT;
+			public static final String CONTENT_PATH_SCREEN_NAME = DirectMessages.CONTENT_PATH + "/"
+					+ CONTENT_PATH_SEGMENT_SCREEN_NAME;
 
-			public static final String CONTENT_PATH_SCREEN_NAME = TABLE_NAME_SCREEN_NAME;
+			public static final Uri CONTENT_URI = Uri
+					.withAppendedPath(DirectMessages.CONTENT_URI, CONTENT_PATH_SEGMENT);
 
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
-
-			public static final Uri CONTENT_URI_SCREEN_NAME = Uri.withAppendedPath(BASE_CONTENT_URI,
-					CONTENT_PATH_SCREEN_NAME);
+			public static final Uri CONTENT_URI_SCREEN_NAME = Uri.withAppendedPath(DirectMessages.CONTENT_URI,
+					CONTENT_PATH_SEGMENT_SCREEN_NAME);
 		}
 
-		public static interface ConversationsEntry extends BaseColumns {
+		public static interface ConversationEntries extends BaseColumns {
 
-			public static final String TABLE_NAME = "messages_conversations_entry";
-			public static final String CONTENT_PATH = TABLE_NAME;
+			public static final String CONTENT_PATH_SEGMENT = "conversation_entries";
+			public static final String CONTENT_PATH = DirectMessages.CONTENT_PATH + "/" + CONTENT_PATH_SEGMENT;
 
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
+			public static final Uri CONTENT_URI = Uri
+					.withAppendedPath(DirectMessages.CONTENT_URI, CONTENT_PATH_SEGMENT);
 
 			public static final String MESSAGE_TIMESTAMP = "message_timestamp";
 			public static final String NAME = "name";
@@ -353,9 +355,11 @@ public final class TweetStore {
 
 			public static final String TABLE_NAME = "messages_inbox";
 
-			public static final String CONTENT_PATH = TABLE_NAME;
+			public static final String CONTENT_PATH_SEGMENT = "inbox";
+			public static final String CONTENT_PATH = DirectMessages.CONTENT_PATH + "/" + CONTENT_PATH_SEGMENT;
 
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
+			public static final Uri CONTENT_URI = Uri
+					.withAppendedPath(DirectMessages.CONTENT_URI, CONTENT_PATH_SEGMENT);
 
 		}
 
@@ -363,9 +367,11 @@ public final class TweetStore {
 
 			public static final String TABLE_NAME = "messages_outbox";
 
-			public static final String CONTENT_PATH = TABLE_NAME;
+			public static final String CONTENT_PATH_SEGMENT = "outbox";
+			public static final String CONTENT_PATH = DirectMessages.CONTENT_PATH + "/" + CONTENT_PATH_SEGMENT;
 
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
+			public static final Uri CONTENT_URI = Uri
+					.withAppendedPath(DirectMessages.CONTENT_URI, CONTENT_PATH_SEGMENT);
 
 		}
 
@@ -425,6 +431,10 @@ public final class TweetStore {
 
 	public static interface Filters extends BaseColumns {
 
+		public static final String CONTENT_PATH = "filters";
+
+		public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
+
 		public static final String VALUE = "value";
 
 		public static final String[] COLUMNS = new String[] { _ID, VALUE };
@@ -434,25 +444,33 @@ public final class TweetStore {
 		public static interface Keywords extends Filters {
 
 			public static final String TABLE_NAME = "filtered_keywords";
-			public static final String CONTENT_PATH = TABLE_NAME;
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
+			public static final String CONTENT_PATH_SEGMENT = "keywords";
+			public static final String CONTENT_PATH = Filters.CONTENT_PATH + "/" + CONTENT_PATH_SEGMENT;
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(Filters.CONTENT_URI, CONTENT_PATH_SEGMENT);
 		}
 
 		public static interface Links extends Filters {
 
 			public static final String TABLE_NAME = "filtered_links";
-			public static final String CONTENT_PATH = TABLE_NAME;
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
+			public static final String CONTENT_PATH_SEGMENT = "links";
+			public static final String CONTENT_PATH = Filters.CONTENT_PATH + "/" + CONTENT_PATH_SEGMENT;
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(Filters.CONTENT_URI, CONTENT_PATH_SEGMENT);
 		}
 
 		public static interface Sources extends Filters {
 
 			public static final String TABLE_NAME = "filtered_sources";
-			public static final String CONTENT_PATH = TABLE_NAME;
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
+			public static final String CONTENT_PATH_SEGMENT = "sources";
+			public static final String CONTENT_PATH = Filters.CONTENT_PATH + "/" + CONTENT_PATH_SEGMENT;
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(Filters.CONTENT_URI, CONTENT_PATH_SEGMENT);
 		}
 
 		public static interface Users extends BaseColumns {
+
+			public static final String TABLE_NAME = "filtered_users";
+			public static final String CONTENT_PATH_SEGMENT = "users";
+			public static final String CONTENT_PATH = Filters.CONTENT_PATH + "/" + CONTENT_PATH_SEGMENT;
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(Filters.CONTENT_URI, CONTENT_PATH_SEGMENT);
 
 			public static final String USER_ID = "user_id";
 			public static final String NAME = "name";
@@ -462,9 +480,6 @@ public final class TweetStore {
 
 			public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_INT_UNIQUE, TYPE_TEXT_NOT_NULL,
 					TYPE_TEXT_NOT_NULL };
-			public static final String TABLE_NAME = "filtered_users";
-			public static final String CONTENT_PATH = TABLE_NAME;
-			public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
 		}
 	}
 

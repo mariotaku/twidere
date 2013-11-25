@@ -464,6 +464,7 @@
 	<string name="unsubscribed_from_list">Unsubscribed from list \"<xliff:g id="list">%s</xliff:g>\".</string>
 	<string name="added_N_users_to_list_quantity_one">Added <xliff:g id="items">%1$d</xliff:g> user to list \"<xliff:g id="list">%2$s</xliff:g>\".</string>
 	<string name="added_N_users_to_list_quantity_other">Added <xliff:g id="items">%1$d</xliff:g> users to list \"<xliff:g id="list">%2$s</xliff:g>\".</string>
+	<string name="added_user_to_list">Added <xliff:g id="user">%1$s</xliff:g> to list \"<xliff:g id="list">%2$s</xliff:g>\".</string>
 	<string name="deleted_user_from_list">Deleted <xliff:g id="user">%1$s</xliff:g> from list \"<xliff:g id="list">%2$s</xliff:g>\".</string>
 	<string name="deleted_N_users_from_list_quantity_one">Deleted <xliff:g id="items">%1$d</xliff:g> user from list \"<xliff:g id="list">%2$s</xliff:g>\".</string>
 	<string name="deleted_N_users_from_list_quantity_other">Deleted <xliff:g id="items">%1$d</xliff:g> users from list \"<xliff:g id="list">%2$s</xliff:g>\".</string>

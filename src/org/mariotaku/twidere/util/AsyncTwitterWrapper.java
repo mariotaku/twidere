@@ -20,8 +20,6 @@
 package org.mariotaku.twidere.util;
 
 import static org.mariotaku.twidere.provider.TweetStore.STATUSES_URIS;
-import static org.mariotaku.twidere.util.ContentResolverUtils.bulkDelete;
-import static org.mariotaku.twidere.util.ContentResolverUtils.bulkInsert;
 import static org.mariotaku.twidere.util.Utils.appendQueryParameters;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getAllStatusesIds;
@@ -34,6 +32,8 @@ import static org.mariotaku.twidere.util.Utils.getUserName;
 import static org.mariotaku.twidere.util.Utils.makeDirectMessageContentValues;
 import static org.mariotaku.twidere.util.Utils.makeStatusContentValues;
 import static org.mariotaku.twidere.util.Utils.makeTrendsContentValues;
+import static org.mariotaku.twidere.util.content.ContentResolverUtils.bulkDelete;
+import static org.mariotaku.twidere.util.content.ContentResolverUtils.bulkInsert;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -65,7 +65,6 @@ import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
-import org.mariotaku.twidere.provider.TweetStore.Notifications;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.service.BackgroundOperationService;
 import org.mariotaku.twidere.task.AsyncTask;
@@ -120,14 +119,18 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int clearNotification(final int id) {
-		final Uri uri = Notifications.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
-		return mResolver.delete(uri, null, null);
+	public int clearNotificationAsync(final int notificationType) {
+		return clearNotificationAsync(notificationType, 0);
 	}
 
-	public void clearUnreadCountAsync(final int position) {
+	public int clearNotificationAsync(final int notificationId, final long notificationAccount) {
+		final ClearNotificationTask task = new ClearNotificationTask(notificationId, notificationAccount);
+		return mAsyncTaskManager.add(task, true);
+	}
+
+	public int clearUnreadCountAsync(final int position) {
 		final ClearUnreadCountTask task = new ClearUnreadCountTask(position);
-		task.execute();
+		return mAsyncTaskManager.add(task, true);
 	}
 
 	public int createBlockAsync(final long account_id, final long user_id) {
@@ -536,10 +539,18 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		@Override
 		protected void onPostExecute(final SingleResponse<ParcelableUserList> result) {
 			final boolean succeed = result != null && result.data != null && result.data.id > 0;
+
 			if (succeed) {
-				final Resources res = mContext.getResources();
-				final String message = res.getQuantityString(R.plurals.added_N_users_to_list, users.length,
-						users.length, result.data.name);
+				final String message;
+				if (users.length == 1) {
+					final ParcelableUser user = users[0];
+					final String displayName = Utils.getDisplayName(mContext, user.id, user.name, user.screen_name);
+					message = mContext.getString(R.string.added_user_to_list, displayName, result.data.name);
+				} else {
+					final Resources res = mContext.getResources();
+					message = res.getQuantityString(R.plurals.added_N_users_to_list, users.length, users.length,
+							result.data.name);
+				}
 				mMessagesManager.showOkMessage(message, false);
 			} else {
 				mMessagesManager.showErrorMessage(R.string.action_adding_member, result.exception, true);
@@ -554,10 +565,28 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	}
 
-	final class ClearUnreadCountTask extends AsyncTask<Void, Void, Integer> {
+	final class ClearNotificationTask extends ManagedAsyncTask<Void, Void, Integer> {
+		private final int notificationType;
+		private final long accountId;
+
+		ClearNotificationTask(final int notificationType, final long accountId) {
+			super(mContext, mAsyncTaskManager);
+			this.notificationType = notificationType;
+			this.accountId = accountId;
+		}
+
+		@Override
+		protected Integer doInBackground(final Void... params) {
+			return clearNotification(mContext, notificationType, accountId);
+		}
+
+	}
+
+	final class ClearUnreadCountTask extends ManagedAsyncTask<Void, Void, Integer> {
 		private final int position;
 
 		ClearUnreadCountTask(final int position) {
+			super(mContext, mAsyncTaskManager);
 			this.position = position;
 		}
 
@@ -1874,12 +1903,14 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 		private final List<TwitterListResponse<DirectMessage>> responses;
 		private final Uri uri;
+		private final boolean notify;
 
 		public StoreDirectMessagesTask(final List<TwitterListResponse<DirectMessage>> result, final Uri uri,
 				final boolean notify, final String tag) {
 			super(mContext, mAsyncTaskManager, tag);
 			responses = result;
-			this.uri = uri.buildUpon().appendQueryParameter(QUERY_PARAM_NOTIFY, String.valueOf(notify)).build();
+			this.uri = uri;
+			this.notify = notify;
 		}
 
 		@Override
@@ -1913,7 +1944,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					}
 
 					// Insert previously fetched items.
-					final Uri insert_uri = appendQueryParameters(uri, new NameValuePairImpl(QUERY_PARAM_NOTIFY, false));
+					final Uri insert_uri = appendQueryParameters(uri, new NameValuePairImpl(QUERY_PARAM_NOTIFY, notify));
 					bulkInsert(mResolver, insert_uri, values_array);
 
 				}
@@ -2022,12 +2053,14 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		private final List<StatusListResponse> responses;
 		private final Uri uri;
 		private final ArrayList<ContentValues> all_statuses = new ArrayList<ContentValues>();
+		private final boolean notify;
 
 		public StoreStatusesTask(final List<StatusListResponse> result, final Uri uri, final boolean notify,
 				final String tag) {
 			super(mContext, mAsyncTaskManager, tag);
 			responses = result;
-			this.uri = uri.buildUpon().appendQueryParameter(QUERY_PARAM_NOTIFY, String.valueOf(notify)).build();
+			this.uri = uri;
+			this.notify = notify;
 		}
 
 		@Override
@@ -2042,32 +2075,32 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				final ArrayList<Long> ids_in_db = getStatusIdsInDatabase(mContext, uri, account_id);
 				final boolean no_items_before = ids_in_db.isEmpty();
 				final ContentValues[] values = new ContentValues[statuses.size()];
-				final long[] status_ids = new long[statuses.size()];
+				final long[] statusIds = new long[statuses.size()];
 				for (int i = 0, j = statuses.size(); i < j; i++) {
 					final twitter4j.Status status = statuses.get(i);
 					values[i] = makeStatusContentValues(status, account_id, mLargeProfileImage);
-					status_ids[i] = status.getId();
+					statusIds[i] = status.getId();
 				}
 
 				// Delete all rows conflicting before new data inserted.
-				final StringBuilder delete_where = new StringBuilder();
-				delete_where.append(String.format("%s = %d", Statuses.ACCOUNT_ID, account_id));
-				delete_where.append(" AND ");
-				delete_where.append(Where.in(new Column(Statuses.STATUS_ID), new RawItemArray(status_ids)).getSQL());
-				final Uri delete_uri = appendQueryParameters(uri, new NameValuePairImpl(QUERY_PARAM_NOTIFY, false));
-				final int rows_deleted = mResolver.delete(delete_uri, delete_where.toString(), null);
+				final StringBuilder deleteWhere = new StringBuilder();
+				deleteWhere.append(String.format("%s = %d", Statuses.ACCOUNT_ID, account_id));
+				deleteWhere.append(" AND ");
+				deleteWhere.append(Where.in(new Column(Statuses.STATUS_ID), new RawItemArray(statusIds)).getSQL());
+				final Uri deleteUri = appendQueryParameters(uri, new NameValuePairImpl(QUERY_PARAM_NOTIFY, false));
+				final int rowsDeleted = mResolver.delete(deleteUri, deleteWhere.toString(), null);
 				// UCD
 				ProfilingUtil.profile(mContext, account_id,
-						"Download tweets, " + ArrayUtils.toString(status_ids, ',', true));
+						"Download tweets, " + ArrayUtils.toString(statusIds, ',', true));
 				all_statuses.addAll(Arrays.asList(values));
 				// Insert previously fetched items.
-				final Uri insert_query = appendQueryParameters(uri, new NameValuePairImpl(QUERY_PARAM_NOTIFY, false));
+				final Uri insert_query = appendQueryParameters(uri, new NameValuePairImpl(QUERY_PARAM_NOTIFY, notify));
 				bulkInsert(mResolver, insert_query, values);
 
 				// Insert a gap.
-				final long min_id = status_ids.length != 0 ? ArrayUtils.min(status_ids) : -1;
-				final boolean deleted_old_gap = rows_deleted > 0 && ArrayUtils.contains(status_ids, response.max_id);
-				final boolean no_rows_deleted = rows_deleted == 0;
+				final long min_id = statusIds.length != 0 ? ArrayUtils.min(statusIds) : -1;
+				final boolean deleted_old_gap = rowsDeleted > 0 && ArrayUtils.contains(statusIds, response.max_id);
+				final boolean no_rows_deleted = rowsDeleted == 0;
 				final boolean insert_gap = min_id > 0 && (no_rows_deleted || deleted_old_gap) && !response.truncated
 						&& !no_items_before;
 				if (insert_gap) {
@@ -2076,7 +2109,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					final StringBuilder where = new StringBuilder();
 					where.append(Statuses.ACCOUNT_ID + " = " + account_id);
 					where.append(" AND " + Statuses.STATUS_ID + " = " + min_id);
-					final Uri update_uri = appendQueryParameters(uri, new NameValuePairImpl(QUERY_PARAM_NOTIFY, false));
+					final Uri update_uri = appendQueryParameters(uri, new NameValuePairImpl(QUERY_PARAM_NOTIFY, true));
 					mResolver.update(update_uri, gap_value, where.toString(), null);
 				}
 				succeed = true;
@@ -2140,13 +2173,13 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 		@Override
 		protected void onPostExecute(final SingleResponse<Bundle> response) {
-			if (response != null && response.data != null && response.data.getBoolean(EXTRA_SUCCEED)) {
-				final Intent intent = new Intent(BROADCAST_TRENDS_UPDATED);
-				intent.putExtra(EXTRA_SUCCEED, true);
-				mContext.sendBroadcast(intent);
-			}
+			// if (response != null && response.data != null &&
+			// response.data.getBoolean(EXTRA_SUCCEED)) {
+			// final Intent intent = new Intent(BROADCAST_TRENDS_UPDATED);
+			// intent.putExtra(EXTRA_SUCCEED, true);
+			// mContext.sendBroadcast(intent);
+			// }
 			super.onPostExecute(response);
-
 		}
 
 	}

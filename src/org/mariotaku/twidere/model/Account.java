@@ -26,7 +26,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
-import org.mariotaku.twidere.util.ContentResolverUtils;
+import org.mariotaku.twidere.util.content.ContentResolverUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;

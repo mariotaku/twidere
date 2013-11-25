@@ -39,12 +39,8 @@ public class MultiColumnHomeTimelineFragment extends CursorStatusesMultiColumnLi
 			final String action = intent.getAction();
 			if (BROADCAST_HOME_TIMELINE_REFRESHED.equals(action)) {
 				setRefreshComplete();
-				getLoaderManager().restartLoader(0, null, MultiColumnHomeTimelineFragment.this);
-			} else if (BROADCAST_HOME_TIMELINE_DATABASE_UPDATED.equals(action)) {
-				getLoaderManager().restartLoader(0, null, MultiColumnHomeTimelineFragment.this);
 			} else if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
-				final AsyncTwitterWrapper twitter = getTwitterWrapper();
-				setRefreshing(twitter != null && twitter.isHomeTimelineRefreshing());
+				updateRefreshState();
 			}
 		}
 	};
@@ -61,8 +57,6 @@ public class MultiColumnHomeTimelineFragment extends CursorStatusesMultiColumnLi
 	public void onStart() {
 		super.onStart();
 		final IntentFilter filter = new IntentFilter(BROADCAST_HOME_TIMELINE_REFRESHED);
-		filter.addAction(BROADCAST_ACCOUNT_LIST_DATABASE_UPDATED);
-		filter.addAction(BROADCAST_HOME_TIMELINE_DATABASE_UPDATED);
 		filter.addAction(BROADCAST_TASK_STATE_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
 		final AsyncTwitterWrapper twitter = getTwitterWrapper();
@@ -81,7 +75,7 @@ public class MultiColumnHomeTimelineFragment extends CursorStatusesMultiColumnLi
 	}
 
 	@Override
-	protected int getNotificationIdToClear() {
+	protected int getNotificationType() {
 		return NOTIFICATION_ID_HOME_TIMELINE;
 	}
 
@@ -94,6 +88,13 @@ public class MultiColumnHomeTimelineFragment extends CursorStatusesMultiColumnLi
 	protected boolean isFiltersEnabled() {
 		final SharedPreferences pref = getSharedPreferences();
 		return pref != null && pref.getBoolean(PREFERENCE_KEY_FILTERS_IN_HOME_TIMELINE, true);
+	}
+
+	@Override
+	protected void updateRefreshState() {
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		if (twitter == null || !getUserVisibleHint()) return;
+		setRefreshing(twitter.isHomeTimelineRefreshing());
 	}
 
 }

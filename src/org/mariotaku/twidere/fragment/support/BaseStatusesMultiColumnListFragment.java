@@ -62,6 +62,7 @@ import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.PositionManager;
 import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
@@ -89,8 +90,8 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 	private int mListScrollOffset;
 
 	private MultiSelectManager mMultiSelectManager;
-	private PositionManager mPositionManager;
 
+	private PositionManager mPositionManager;
 	private final Map<Long, Set<Long>> mUnreadCountsToRemove = Collections
 			.synchronizedMap(new HashMap<Long, Set<Long>>());
 
@@ -185,7 +186,7 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 			if (status == null) return;
 			final AsyncTwitterWrapper twitter = getTwitterWrapper();
 			if (twitter != null) {
-				twitter.removeUnreadCounts(getActivity(), getTabPosition(), status.account_id, status.id);
+				TwitterWrapper.removeUnreadCounts(getActivity(), getTabPosition(), status.account_id, status.id);
 			}
 			final StatusViewHolder holder = (StatusViewHolder) tag;
 			if (holder.show_as_gap) {
@@ -403,6 +404,10 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 		return (MultiColumnListView) inflater.inflate(R.layout.base_multi_column_list, null, false);
 	}
 
+	protected final int getListScrollOffset() {
+		return mListScrollOffset;
+	}
+
 	protected abstract long[] getNewestStatusIds();
 
 	protected abstract long[] getOldestStatusIds();
@@ -459,6 +464,8 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 	}
 
 	protected abstract boolean shouldShowAccountColor();
+
+	protected abstract void updateRefreshState();
 
 	private void addReadPosition(final int firstVisibleItem) {
 		if (mFirstVisibleItem != firstVisibleItem) {
