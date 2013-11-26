@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.activity;
+package org.mariotaku.twidere.activity.support;
 
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.getNonEmptyString;
@@ -32,6 +32,7 @@ import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.webkit.JavascriptInterface;
 import android.webkit.SslErrorHandler;
@@ -60,18 +61,27 @@ import java.io.IOException;
 import java.io.StringReader;
 
 @SuppressLint("SetJavaScriptEnabled")
-public class AuthorizeActivity extends BaseActivity implements TwitterConstants {
+public class BrowserSignInActivity extends BaseSupportDialogActivity implements TwitterConstants {
 
 	private static final String INJECT_CONTENT = "javascript:window.injector.processHTML('<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');";
 
 	private SharedPreferences mPreferences;
 
 	private WebView mWebView;
+	private View mProgressContainer;
+
 	private WebSettings mWebSettings;
+
+	private RequestToken mRequestToken;
 
 	private GetRequestTokenTask mTask;
 
-	private RequestToken mRequestToken;
+	@Override
+	public void onContentChanged() {
+		super.onContentChanged();
+		mWebView = (WebView) findViewById(R.id.webview);
+		mProgressContainer = findViewById(R.id.progress_container);
+	}
 
 	@Override
 	public void onDestroy() {
@@ -92,11 +102,10 @@ public class AuthorizeActivity extends BaseActivity implements TwitterConstants 
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		setContentView(mWebView = new WebView(this));
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		setContentView(R.layout.browser_sign_in);
 		mWebView.setWebViewClient(new AuthorizationWebViewClient(this));
 		mWebView.setVerticalScrollBarEnabled(false);
 		mWebView.addJavascriptInterface(new InjectorJavaScriptInterface(this), "injector");
@@ -136,14 +145,18 @@ public class AuthorizeActivity extends BaseActivity implements TwitterConstants 
 		return null;
 	}
 
+	private void setLoadProgressShown(final boolean shown) {
+		mProgressContainer.setVisibility(shown ? View.VISIBLE : View.GONE);
+	}
+
 	private void setRequestToken(final RequestToken token) {
 		mRequestToken = token;
 	}
 
 	static class AuthorizationWebViewClient extends WebViewClient {
-		private final AuthorizeActivity mActivity;
+		private final BrowserSignInActivity mActivity;
 
-		AuthorizationWebViewClient(final AuthorizeActivity activity) {
+		AuthorizationWebViewClient(final BrowserSignInActivity activity) {
 			mActivity = activity;
 		}
 
@@ -151,13 +164,13 @@ public class AuthorizeActivity extends BaseActivity implements TwitterConstants 
 		public void onPageFinished(final WebView view, final String url) {
 			super.onPageFinished(view, url);
 			view.loadUrl(INJECT_CONTENT);
-			mActivity.setProgressBarIndeterminateVisibility(false);
+			mActivity.setLoadProgressShown(false);
 		}
 
 		@Override
 		public void onPageStarted(final WebView view, final String url, final Bitmap favicon) {
 			super.onPageStarted(view, url, favicon);
-			mActivity.setProgressBarIndeterminateVisibility(true);
+			mActivity.setLoadProgressShown(true);
 		}
 
 		@Override
@@ -203,9 +216,9 @@ public class AuthorizeActivity extends BaseActivity implements TwitterConstants 
 		private final String mConsumerKey, mConsumerSecret;
 		private final TwidereApplication mApplication;
 		private final SharedPreferences mPreferences;
-		private final AuthorizeActivity mActivity;
+		private final BrowserSignInActivity mActivity;
 
-		public GetRequestTokenTask(final AuthorizeActivity activity) {
+		public GetRequestTokenTask(final BrowserSignInActivity activity) {
 			mActivity = activity;
 			mApplication = TwidereApplication.getInstance(activity);
 			mPreferences = activity.getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
@@ -259,7 +272,7 @@ public class AuthorizeActivity extends BaseActivity implements TwitterConstants 
 
 		@Override
 		protected void onPostExecute(final RequestToken data) {
-			mActivity.setProgressBarIndeterminateVisibility(false);
+			mActivity.setLoadProgressShown(false);
 			mActivity.setRequestToken(data);
 			if (data == null) {
 				Toast.makeText(mActivity, R.string.error_occurred, Toast.LENGTH_SHORT).show();
@@ -271,16 +284,16 @@ public class AuthorizeActivity extends BaseActivity implements TwitterConstants 
 
 		@Override
 		protected void onPreExecute() {
-			mActivity.setProgressBarIndeterminateVisibility(true);
+			mActivity.setLoadProgressShown(true);
 		}
 
 	}
 
 	static class InjectorJavaScriptInterface {
 
-		private final AuthorizeActivity mActivity;
+		private final BrowserSignInActivity mActivity;
 
-		InjectorJavaScriptInterface(final AuthorizeActivity activity) {
+		InjectorJavaScriptInterface(final BrowserSignInActivity activity) {
 			mActivity = activity;
 		}
 

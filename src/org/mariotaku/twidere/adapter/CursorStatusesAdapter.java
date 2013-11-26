@@ -53,6 +53,7 @@ import org.mariotaku.twidere.util.ImageLoadingHandler;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.TwidereLinkify;
+import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
 import java.util.Locale;
@@ -82,7 +83,11 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 	private StatusCursorIndices mIndices;
 
 	public CursorStatusesAdapter(final Context context) {
-		super(context, R.layout.card_item_status, null, new String[0], new int[0], 0);
+		this(context, Utils.isCompactCards(context));
+	}
+
+	public CursorStatusesAdapter(final Context context, final boolean compactCards) {
+		super(context, getItemResource(compactCards), null, new String[0], new int[0], 0);
 		mContext = context;
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mMultiSelectManager = application.getMultiSelectManager();
@@ -489,5 +494,9 @@ public class CursorStatusesAdapter extends SimpleCursorAdapter implements IStatu
 		} else {
 			mIsLastItemFiltered = false;
 		}
+	}
+
+	private static int getItemResource(final boolean compactCards) {
+		return compactCards ? R.layout.card_item_status_compact : R.layout.card_item_status;
 	}
 }

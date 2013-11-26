@@ -166,8 +166,9 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".activity.AuthorizeActivity"
+			android:name=".activity.support.BrowserSignInActivity"
 			android:label="@string/browser_sign_in"
+			android:theme="@style/Theme.Blank.Dialog"
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.TWITTER_BROWSER_LOGIN"/>
@@ -206,12 +207,12 @@
 		<activity
 			android:name=".activity.support.APIEditorActivity"
 			android:label="@string/edit_api"
-			android:theme="@style/Theme.Twidere.Light.Dialog"
+			android:theme="@style/Theme.Blank.Dialog"
 			android:windowSoftInputMode="adjustResize"/>
 		<activity
 			android:name=".activity.support.AccountSelectorActivity"
 			android:label="@string/select_account"
-			android:theme="@style/Theme.Twidere.Light.Dialog">
+			android:theme="@style/Theme.Blank.Dialog">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.SELECT_ACCOUNT"/>
 
@@ -424,7 +425,7 @@
 		<activity
 			android:name=".activity.support.RequestPermissionsActivity"
 			android:label="@string/permissions_request"
-			android:theme="@style/Theme.Twidere.Light.Dialog">
+			android:theme="@style/Theme.Blank.Dialog">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.REQUEST_PERMISSIONS"/>
 

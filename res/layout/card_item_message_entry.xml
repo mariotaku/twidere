@@ -5,6 +5,18 @@
 	android:layout_height="wrap_content"
 	tools:context=".adapter.DirectMessagesEntryAdapter">
 
+	<org.mariotaku.twidere.view.CardItemGapView
+		android:id="@+id/gap_indicator"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/element_size_default"
+		android:background="?android:selectableItemBackground"
+		android:gravity="center"
+		android:text="@string/tap_to_load_more"
+		android:textAppearance="?android:textAppearanceMedium"
+		android:textColor="?android:colorForeground"
+		android:textStyle="bold"
+		android:visibility="gone"/>
+
 	<org.mariotaku.twidere.view.CardItemLinearLayout
 		android:id="@+id/content"
 		android:layout_width="match_parent"
@@ -18,7 +30,6 @@
 		android:orientation="vertical">
 
 		<LinearLayout
-			android:id="@+id/profile_container"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:baselineAligned="false"
@@ -49,7 +60,6 @@
 					android:orientation="horizontal">
 
 					<FrameLayout
-						android:id="@+id/name_frame"
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
 						android:layout_weight="1">

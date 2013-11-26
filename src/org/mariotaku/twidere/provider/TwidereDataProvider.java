@@ -676,6 +676,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			uriBuilder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(firstItem.account_id));
 			uriBuilder.appendQueryParameter(QUERY_PARAM_CONVERSATION_ID, String.valueOf(firstItem.sender_id));
 			final Intent statusIntent = new Intent(Intent.ACTION_VIEW, uriBuilder.build());
+			statusIntent.setExtrasClassLoader(context.getClassLoader());
 			contentIntent.putExtra(EXTRA_EXTRA_INTENT, statusIntent);
 		}
 
@@ -751,6 +752,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			uriBuilder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(firstItem.account_id));
 			uriBuilder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(firstItem.id));
 			final Intent statusIntent = new Intent(Intent.ACTION_VIEW, uriBuilder.build());
+			statusIntent.setExtrasClassLoader(context.getClassLoader());
 			statusIntent.putExtra(EXTRA_STATUS, firstItem);
 			contentIntent.putExtra(EXTRA_EXTRA_INTENT, statusIntent);
 		}
@@ -785,6 +787,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			notifStyle = inboxStyle;
 		} else {
 			final Intent replyIntent = new Intent(INTENT_ACTION_REPLY);
+			replyIntent.setExtrasClassLoader(context.getClassLoader());
 			replyIntent.putExtra(EXTRA_NOTIFICATION_ID, notificationType);
 			replyIntent.putExtra(EXTRA_NOTIFICATION_ACCOUNT, accountId);
 			replyIntent.putExtra(EXTRA_STATUS, firstItem);

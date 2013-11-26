@@ -50,6 +50,7 @@ public class SwipeBackActivityHelper {
 		final Bitmap b = shot != null ? BitmapFactory.decodeByteArray(shot, 0, shot.length) : null;
 		final Drawable d = b != null ? new BitmapDrawable(mActivity.getResources(), b) : new ColorDrawable(0);
 		mSwipeBackLayout.setWindowBackgroundDrawable(d);
+		mSwipeBackLayout.setEnableGesture(d != null);
 	}
 
 }

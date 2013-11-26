@@ -278,6 +278,7 @@ public interface TwidereConstants {
 	public static final String PREFERENCE_KEY_NOTIFICATION_TYPE_HOME = "notification_type_home";
 	public static final String PREFERENCE_KEY_NOTIFICATION_TYPE_MENTIONS = "notification_type_mentions";
 	public static final String PREFERENCE_KEY_NOTIFICATION_TYPE_DIRECT_MESSAGES = "notification_type_direct_messages";
+	public static final String PREFERENCE_KEY_COMPACT_CARDS = "compact_cards";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;

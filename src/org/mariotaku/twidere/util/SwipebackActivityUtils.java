@@ -121,6 +121,7 @@ public class SwipebackActivityUtils implements TwidereConstants {
 		public StartSwipebackActivityTask(final Activity activity, final Intent target) {
 			mActivity = activity;
 			mTarget = target;
+			mTarget.setExtrasClassLoader(activity.getClassLoader());
 			mRect = new Rect();
 			mDecorView = mActivity.getWindow().getDecorView();
 		}

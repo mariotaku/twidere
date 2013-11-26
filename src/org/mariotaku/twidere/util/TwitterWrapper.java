@@ -32,6 +32,7 @@ import org.mariotaku.twidere.model.SingleResponse;
 import org.mariotaku.twidere.provider.TweetStore.Notifications;
 import org.mariotaku.twidere.provider.TweetStore.UnreadCounts;
 
+import twitter4j.DirectMessage;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -155,6 +156,31 @@ public class TwitterWrapper implements Constants {
 			}
 		}
 		return SingleResponse.nullInstance();
+	}
+
+	public static final class MessageListResponse extends TwitterListResponse<DirectMessage> {
+
+		public final boolean truncated;
+
+		public MessageListResponse(final long account_id, final Exception exception) {
+			this(account_id, -1, -1, null, false, exception);
+		}
+
+		public MessageListResponse(final long account_id, final List<DirectMessage> list) {
+			this(account_id, -1, -1, list, false, null);
+		}
+
+		public MessageListResponse(final long account_id, final long max_id, final long since_id,
+				final int load_item_limit, final List<DirectMessage> list, final boolean truncated) {
+			this(account_id, max_id, since_id, list, truncated, null);
+		}
+
+		MessageListResponse(final long account_id, final long max_id, final long since_id,
+				final List<DirectMessage> list, final boolean truncated, final Exception exception) {
+			super(account_id, max_id, since_id, list, exception);
+			this.truncated = truncated;
+		}
+
 	}
 
 	public static final class StatusListResponse extends TwitterListResponse<Status> {

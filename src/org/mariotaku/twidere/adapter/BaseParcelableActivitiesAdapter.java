@@ -79,7 +79,6 @@ public abstract class BaseParcelableActivitiesAdapter extends ArrayAdapter<Parce
 		if (!(tag instanceof ActivityViewHolder)) {
 			view.setTag(holder);
 		}
-		holder.reset();
 		holder.setTextSize(mTextSize);
 		final ParcelableActivity item = getItem(position);
 		if (mShowAbsoluteTime) {

@@ -46,12 +46,12 @@ public class ParcelableActivitiesByFriendsAdapter extends BaseParcelableActiviti
 					if (target_statuses_length == 1) {
 						holder.text.setSingleLine(true);
 						holder.text.setEllipsize(TruncateAt.END);
-						holder.text.setText(first_status.text_plain);
-						holder.title.setText(mContext.getString(R.string.activity_by_friends_favorite,
+						holder.text.setText(first_status.text_unescaped);
+						holder.name.setText(mContext.getString(R.string.activity_by_friends_favorite,
 								first_source_name, getName(first_status)));
 					} else {
 						holder.text.setVisibility(View.GONE);
-						holder.title.setText(mContext.getString(R.string.activity_by_friends_favorite_multi,
+						holder.name.setText(mContext.getString(R.string.activity_by_friends_favorite_multi,
 								first_source_name, getName(first_status), target_statuses_length - 1));
 					}
 					setProfileImage(holder, first_source);
@@ -62,10 +62,10 @@ public class ParcelableActivitiesByFriendsAdapter extends BaseParcelableActiviti
 					holder.text.setVisibility(View.GONE);
 					if (target_users_length == 0) return;
 					if (target_users_length == 1) {
-						holder.title.setText(mContext.getString(R.string.activity_by_friends_follow, first_source_name,
+						holder.name.setText(mContext.getString(R.string.activity_by_friends_follow, first_source_name,
 								getName(target_users[0])));
 					} else {
-						holder.title.setText(mContext.getString(R.string.activity_by_friends_follow_multi,
+						holder.name.setText(mContext.getString(R.string.activity_by_friends_follow_multi,
 								first_source_name, getName(target_users[0]), target_users_length - 1));
 					}
 					setProfileImage(holder, first_source);
@@ -77,13 +77,13 @@ public class ParcelableActivitiesByFriendsAdapter extends BaseParcelableActiviti
 						final ParcelableStatus status = target_object_statuses[0];
 						holder.text.setSingleLine(true);
 						holder.text.setEllipsize(TruncateAt.END);
-						holder.text.setText(status.text_plain);
+						holder.text.setText(status.text_unescaped);
 					}
 					if (sources_length == 1) {
-						holder.title.setText(mContext.getString(R.string.activity_by_friends_retweet,
-								first_source_name, getName(target_statuses[0])));
+						holder.name.setText(mContext.getString(R.string.activity_by_friends_retweet, first_source_name,
+								getName(target_statuses[0])));
 					} else {
-						holder.title.setText(mContext.getString(R.string.activity_about_me_retweet_multi,
+						holder.name.setText(mContext.getString(R.string.activity_about_me_retweet_multi,
 								first_source_name, sources_length - 1));
 					}
 					setUserProfileImages(holder, sources);
@@ -92,10 +92,10 @@ public class ParcelableActivitiesByFriendsAdapter extends BaseParcelableActiviti
 				case ParcelableActivity.ACTION_LIST_MEMBER_ADDED: {
 					holder.text.setVisibility(View.GONE);
 					if (target_object_user_lists_length == 1) {
-						holder.title.setText(mContext.getString(R.string.activity_by_friends_list_member_added,
+						holder.name.setText(mContext.getString(R.string.activity_by_friends_list_member_added,
 								first_source_name, getName(target_users[0])));
 					} else {
-						holder.title.setText(mContext.getString(R.string.activity_about_me_list_member_added_multi,
+						holder.name.setText(mContext.getString(R.string.activity_about_me_list_member_added_multi,
 								first_source_name, sources_length - 1));
 					}
 					setProfileImage(holder, first_source);
@@ -107,12 +107,12 @@ public class ParcelableActivitiesByFriendsAdapter extends BaseParcelableActiviti
 					final ParcelableUserList user_list = target_user_lists[0];
 					if (target_user_lists_length == 1) {
 						holder.text.setVisibility(View.VISIBLE);
-						holder.title.setText(mContext.getString(R.string.activity_by_friends_list_created,
+						holder.name.setText(mContext.getString(R.string.activity_by_friends_list_created,
 								first_source_name, user_list.name));
 						holder.text.setText(user_list.description);
 					} else {
 						holder.text.setVisibility(View.GONE);
-						holder.title.setText(mContext.getString(R.string.activity_by_friends_list_created_multi,
+						holder.name.setText(mContext.getString(R.string.activity_by_friends_list_created_multi,
 								first_source_name, user_list.name, target_user_lists_length - 1));
 					}
 					setProfileImage(holder, first_source);

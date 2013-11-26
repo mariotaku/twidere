@@ -2290,6 +2290,11 @@ public final class Utils implements Constants {
 		return plugged || level / scale > 0.15f;
 	}
 
+	public static boolean isCompactCards(final Context context) {
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		return prefs != null && prefs.getBoolean(PREFERENCE_KEY_COMPACT_CARDS, false);
+	}
+
 	public static boolean isDebugBuild() {
 		return BuildConfig.DEBUG;
 	}
@@ -2924,6 +2929,7 @@ public final class Utils implements Constants {
 			builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
 			builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status_id));
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
+			intent.setExtrasClassLoader(activity.getClassLoader());
 			intent.putExtras(extras);
 			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
@@ -3201,6 +3207,7 @@ public final class Utils implements Constants {
 			builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(userId));
 			builder.appendQueryParameter(QUERY_PARAM_LIST_ID, String.valueOf(listId));
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
+			intent.setExtrasClassLoader(activity.getClassLoader());
 			intent.putExtras(extras);
 			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
@@ -3481,6 +3488,7 @@ public final class Utils implements Constants {
 				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, user.screen_name);
 			}
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
+			intent.setExtrasClassLoader(activity.getClassLoader());
 			intent.putExtras(extras);
 			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 		}
@@ -3657,22 +3665,21 @@ public final class Utils implements Constants {
 				favorite.setTitle(R.string.favorite);
 			}
 		}
-		final MenuItem more_item = menu.findItem(R.id.more_submenu);
-		final Menu more_submenu = more_item != null && more_item.hasSubMenu() ? more_item.getSubMenu() : menu;
-		more_submenu.removeGroup(MENU_GROUP_STATUS_EXTENSION);
-		final Intent extension_intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_STATUS);
-		final Bundle extension_extras = new Bundle();
-		extension_extras.putParcelable(EXTRA_STATUS, status);
-		extension_intent.putExtras(extension_extras);
-		addIntentToMenu(context, more_submenu, extension_intent, MENU_GROUP_STATUS_EXTENSION);
+		final MenuItem moreItem = menu.findItem(R.id.more_submenu);
+		final Menu moreSubmenu = moreItem != null && moreItem.hasSubMenu() ? moreItem.getSubMenu() : menu;
+		moreSubmenu.removeGroup(MENU_GROUP_STATUS_EXTENSION);
+		final Intent extensionIntent = new Intent(INTENT_ACTION_EXTENSION_OPEN_STATUS);
+		extensionIntent.setExtrasClassLoader(context.getClassLoader());
+		extensionIntent.putExtra(EXTRA_STATUS, status);
+		addIntentToMenu(context, moreSubmenu, extensionIntent, MENU_GROUP_STATUS_EXTENSION);
 		final MenuItem share_item = menu.findItem(R.id.share_submenu);
-		final Menu share_submenu = share_item != null && share_item.hasSubMenu() ? share_item.getSubMenu() : null;
-		if (share_submenu != null) {
-			final Intent share_intent = new Intent(Intent.ACTION_SEND);
-			share_intent.setType("text/plain");
-			share_intent.putExtra(Intent.EXTRA_TEXT, "@" + status.user_screen_name + ": " + status.text_plain);
-			share_submenu.removeGroup(MENU_GROUP_STATUS_SHARE);
-			addIntentToMenu(context, share_submenu, share_intent, MENU_GROUP_STATUS_SHARE);
+		final Menu shareSubmenu = share_item != null && share_item.hasSubMenu() ? share_item.getSubMenu() : null;
+		if (shareSubmenu != null) {
+			final Intent shareIntent = new Intent(Intent.ACTION_SEND);
+			shareIntent.setType("text/plain");
+			shareIntent.putExtra(Intent.EXTRA_TEXT, "@" + status.user_screen_name + ": " + status.text_plain);
+			shareSubmenu.removeGroup(MENU_GROUP_STATUS_SHARE);
+			addIntentToMenu(context, shareSubmenu, shareIntent, MENU_GROUP_STATUS_SHARE);
 		}
 	}
 

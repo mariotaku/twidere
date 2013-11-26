@@ -99,6 +99,7 @@ import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MathUtils;
 import org.mariotaku.twidere.util.MultiSelectEventHandler;
 import org.mariotaku.twidere.util.ParseUtils;
+import org.mariotaku.twidere.util.SwipebackActivityUtils;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.UnreadCountUtils;
 import org.mariotaku.twidere.util.Utils;
@@ -693,17 +694,17 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			openSearch(this, account_id, query);
 			return -1;
 		}
-		final boolean refresh_on_start = mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ON_START, false);
-		final long[] refreshed_ids = intent.getLongArrayExtra(EXTRA_IDS);
-		if (refreshed_ids != null) {
-			mTwitterWrapper.refreshAll(refreshed_ids);
-		} else if (first_create && refresh_on_start) {
+		final boolean refreshOnStart = mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ON_START, false);
+		final long[] refreshedIds = intent.getLongArrayExtra(EXTRA_IDS);
+		if (refreshedIds != null) {
+			mTwitterWrapper.refreshAll(refreshedIds);
+		} else if (first_create && refreshOnStart) {
 			mTwitterWrapper.refreshAll();
 		}
 
 		final int tab = intent.getIntExtra(EXTRA_INITIAL_TAB, -1);
-		final int initial_tab = tab != -1 ? tab : getAddedTabPosition(this, intent.getStringExtra(EXTRA_TAB_TYPE));
-		if (initial_tab != -1 && mViewPager != null) {
+		final int initialTab = tab != -1 ? tab : getAddedTabPosition(this, intent.getStringExtra(EXTRA_TAB_TYPE));
+		if (initialTab != -1 && mViewPager != null) {
 			// clearNotification(initial_tab);
 		}
 		final Intent extraIntent = intent.getParcelableExtra(EXTRA_EXTRA_INTENT);
@@ -711,10 +712,10 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			if (isTwidereLink(extraIntent.getData()) && isDualPaneMode()) {
 				showFragment(createFragmentForIntent(this, extraIntent), true);
 			} else {
-				startActivity(extraIntent);
+				SwipebackActivityUtils.startSwipebackActivity(this, extraIntent);
 			}
 		}
-		return initial_tab;
+		return initialTab;
 	}
 
 	private boolean hasActivatedTask() {
@@ -865,7 +866,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			final Fragment f = mAttachedFragments.valueAt(i);
 			final View headerView = getPullToRefreshHeaderView(f);
 			if (headerView != null) {
-				headerView.scrollTo((int) -FloatMath.ceil(percentOpen * ld.getMeasuredWidth()), 0);
+				headerView.scrollTo((int) -FloatMath.ceil(percentOpen * ld.getMeasuredWidth()), headerView.getScrollY());
 			}
 		}
 	}

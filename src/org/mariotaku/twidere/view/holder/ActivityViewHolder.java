@@ -19,35 +19,53 @@
 
 package org.mariotaku.twidere.view.holder;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
+import org.mariotaku.twidere.util.Utils;
+import org.mariotaku.twidere.view.ShortTimeView;
+import org.mariotaku.twidere.view.iface.IColorLabelView;
 
 public class ActivityViewHolder extends CardViewHolder {
 
-	public final ImageView profile_image;
+	public final ImageView my_profile_image, profile_image, image_preview;
 	public final ImageView activity_profile_image_1, activity_profile_image_2, activity_profile_image_3,
 			activity_profile_image_4, activity_profile_image_5;
 	public final ImageView[] activity_profile_images;
-	public final TextView title, text, time, reply_status;
+	public final TextView name, screen_name, text, reply_status;
+	public final ShortTimeView time;
+	public final ViewGroup image_preview_container;
 	public final ViewGroup activity_profile_image_container;
-	private final ColorLabelRelativeLayout content;
+	public final ProgressBar image_preview_progress;
+	public final IColorLabelView content;
+	private final View gap_indicator;
 
+	private final float density;
+	private final boolean is_rtl;
+	public boolean show_as_gap;
 	private boolean account_color_enabled;
 	private float text_size;
 
 	public ActivityViewHolder(final View view) {
 		super(view);
-		content = (ColorLabelRelativeLayout) findViewById(R.id.content);
+		final Context context = getContext();
+		content = (IColorLabelView) findViewById(R.id.content);
+		gap_indicator = findViewById(R.id.gap_indicator);
+		image_preview_container = (ViewGroup) findViewById(R.id.image_preview_container);
 		profile_image = (ImageView) findViewById(R.id.profile_image);
-		title = (TextView) findViewById(R.id.title);
+		my_profile_image = (ImageView) findViewById(R.id.my_profile_image);
+		image_preview = (ImageView) findViewById(R.id.image_preview);
+		image_preview_progress = (ProgressBar) findViewById(R.id.image_preview_progress);
+		name = (TextView) findViewById(R.id.name);
+		screen_name = (TextView) findViewById(R.id.screen_name);
 		text = (TextView) findViewById(R.id.text);
-		time = (TextView) findViewById(R.id.time);
+		time = (ShortTimeView) findViewById(R.id.time);
 		reply_status = (TextView) findViewById(R.id.reply_status);
 		activity_profile_image_container = (ViewGroup) findViewById(R.id.activity_profile_image_container);
 		activity_profile_image_1 = (ImageView) findViewById(R.id.activity_profile_image_1);
@@ -57,26 +75,9 @@ public class ActivityViewHolder extends CardViewHolder {
 		activity_profile_image_5 = (ImageView) findViewById(R.id.activity_profile_image_5);
 		activity_profile_images = new ImageView[] { activity_profile_image_1, activity_profile_image_2,
 				activity_profile_image_3, activity_profile_image_4, activity_profile_image_5 };
-	}
-
-	public void reset() {
-		content.drawLabel(Color.TRANSPARENT, Color.TRANSPARENT, Color.TRANSPARENT);
-		profile_image.setImageDrawable(null);
-		title.setText(null);
-		text.setVisibility(View.VISIBLE);
-		text.setText(null);
-		text.setSingleLine(false);
-		text.setEllipsize(null);
-		time.setText(null);
-		time.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-		reply_status.setVisibility(View.GONE);
-		reply_status.setText(null);
-		reply_status.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-		activity_profile_image_container.setVisibility(View.GONE);
-		final int activity_profile_image_count = activity_profile_image_container.getChildCount();
-		for (int i = 0; i < activity_profile_image_count; i++) {
-			((ImageView) activity_profile_image_container.getChildAt(i)).setImageDrawable(null);
-		}
+		show_as_gap = gap_indicator != null && gap_indicator.isShown();
+		is_rtl = Utils.isRTL(context);
+		density = context.getResources().getDisplayMetrics().density;
 	}
 
 	public void setAccountColor(final int color) {
@@ -94,7 +95,8 @@ public class ActivityViewHolder extends CardViewHolder {
 		if (this.text_size != text_size) {
 			this.text_size = text_size;
 			text.setTextSize(text_size);
-			title.setTextSize(text_size * 1.05f);
+			name.setTextSize(text_size);
+			screen_name.setTextSize(text_size * 0.75f);
 			time.setTextSize(text_size * 0.65f);
 			reply_status.setTextSize(text_size * 0.65f);
 		}

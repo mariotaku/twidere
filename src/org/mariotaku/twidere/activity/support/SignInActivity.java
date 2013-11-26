@@ -57,7 +57,6 @@ import de.keyboardsurfer.android.widget.crouton.CroutonLifecycleCallback;
 import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.AuthorizeActivity;
 import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.activity.SettingsActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -266,7 +265,7 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 				if (mAuthType != Accounts.AUTH_TYPE_OAUTH || mTask != null
 						&& mTask.getStatus() == AsyncTask.Status.RUNNING) return false;
 				saveEditedText();
-				final Intent intent = new Intent(this, AuthorizeActivity.class);
+				final Intent intent = new Intent(this, BrowserSignInActivity.class);
 				intent.putExtra(Accounts.CONSUMER_KEY, mConsumerKey);
 				intent.putExtra(Accounts.CONSUMER_SECRET, mConsumerSecret);
 				startActivityForResult(intent, REQUEST_BROWSER_SIGN_IN);

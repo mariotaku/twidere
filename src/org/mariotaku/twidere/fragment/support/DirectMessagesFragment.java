@@ -50,7 +50,7 @@ import org.mariotaku.querybuilder.RawItemArray;
 import org.mariotaku.querybuilder.Where;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
-import org.mariotaku.twidere.adapter.DirectMessagesEntryAdapter;
+import org.mariotaku.twidere.adapter.DirectMessageConversationEntriesAdapter;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
@@ -89,7 +89,7 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 
 	private boolean mLoadMoreAutomatically;
 
-	private DirectMessagesEntryAdapter mAdapter;
+	private DirectMessageConversationEntriesAdapter mAdapter;
 	private int mFirstVisibleItem;
 
 	private final Map<Long, Set<Long>> mUnreadCountsToRemove = Collections
@@ -100,8 +100,8 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 	private RemoveUnreadCountsTask mRemoveUnreadCountsTask;
 
 	@Override
-	public DirectMessagesEntryAdapter getListAdapter() {
-		return (DirectMessagesEntryAdapter) super.getListAdapter();
+	public DirectMessageConversationEntriesAdapter getListAdapter() {
+		return (DirectMessageConversationEntriesAdapter) super.getListAdapter();
 	}
 
 	public final Map<Long, Set<Long>> getUnreadCountsToRemove() {
@@ -113,7 +113,7 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		super.onActivityCreated(savedInstanceState);
 		mMultiSelectManager = getMultiSelectManager();
-		mAdapter = new DirectMessagesEntryAdapter(getActivity());
+		mAdapter = new DirectMessageConversationEntriesAdapter(getActivity());
 		setListAdapter(mAdapter);
 		mListView = getListView();
 		mListView.setDivider(null);
@@ -360,7 +360,7 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 
 	static class RemoveUnreadCountsTask extends AsyncTask<Void, Void, Void> {
 		private final Set<Integer> read_positions;
-		private final DirectMessagesEntryAdapter adapter;
+		private final DirectMessageConversationEntriesAdapter adapter;
 		private final DirectMessagesFragment fragment;
 
 		RemoveUnreadCountsTask(final Set<Integer> read_positions, final DirectMessagesFragment fragment) {

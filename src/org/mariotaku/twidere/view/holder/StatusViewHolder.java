@@ -26,6 +26,7 @@ import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -42,7 +43,7 @@ public class StatusViewHolder extends CardViewHolder {
 	public final TextView name, screen_name, reply_retweet_status;
 	public final ShortTimeView time;
 	public final TextView text;
-	public final View image_preview_container;
+	public final ViewGroup image_preview_container;
 	public final ProgressBar image_preview_progress;
 	public final IColorLabelView content;
 	private final View gap_indicator;
@@ -59,7 +60,7 @@ public class StatusViewHolder extends CardViewHolder {
 		final Context context = getContext();
 		content = (IColorLabelView) findViewById(R.id.content);
 		gap_indicator = findViewById(R.id.gap_indicator);
-		image_preview_container = findViewById(R.id.image_preview_container);
+		image_preview_container = (ViewGroup) findViewById(R.id.image_preview_container);
 		profile_image = (ImageView) findViewById(R.id.profile_image);
 		my_profile_image = (ImageView) findViewById(R.id.my_profile_image);
 		image_preview = (ImageView) findViewById(R.id.image_preview);

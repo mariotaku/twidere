@@ -269,6 +269,7 @@ public class ThemeUtils implements Constants {
 	public static String getThemeBackgroundOption(final Context context) {
 		if (context == null) return THEME_BACKGROUND_DEFAULT;
 		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		if (pref == null) return THEME_BACKGROUND_DEFAULT;
 		return pref.getString(PREFERENCE_KEY_THEME_BACKGROUND, THEME_BACKGROUND_DEFAULT);
 	}
 
@@ -520,6 +521,7 @@ public class ThemeUtils implements Constants {
 			final TextView textView = (TextView) statusContentView.findViewById(R.id.text);
 			final TextView timeSourceView = (TextView) statusContentView.findViewById(R.id.time_source);
 			final TextView retweetView = (TextView) statusContentView.findViewById(R.id.retweet_view);
+			final TextView repliesView = (TextView) statusContentView.findViewById(R.id.replies_view);
 			final Drawable cardItemBackground = getCardItemBackground(theme);
 			applyThemeAlphaToDrawable(theme, cardItemBackground);
 			ViewAccessor.setBackground(cardView, cardItemBackground);
@@ -529,15 +531,18 @@ public class ThemeUtils implements Constants {
 			textView.setTextColor(textColorPrimary);
 			timeSourceView.setTextColor(textColorSecondary);
 			retweetView.setTextColor(textColorSecondary);
+			repliesView.setTextColor(textColorSecondary);
 
 			nameView.setTextSize(defaultTextSize * 1.25f);
 			textView.setTextSize(defaultTextSize * 1.25f);
 			screenNameView.setTextSize(defaultTextSize * 0.85f);
 			timeSourceView.setTextSize(defaultTextSize * 0.85f);
 			retweetView.setTextSize(defaultTextSize * 0.85f);
+			repliesView.setTextSize(defaultTextSize * 0.85f);
 
 			profileView.setBackgroundResource(0);
 			retweetView.setBackgroundResource(0);
+			repliesView.setBackgroundResource(0);
 			textView.setTextIsSelectable(false);
 
 			profileImageView.setImageResource(R.drawable.ic_launcher);

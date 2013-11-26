@@ -47,9 +47,10 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages.ConversationEntries;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
+import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.view.holder.DirectMessageEntryViewHolder;
 
-public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements IBaseCardAdapter, OnClickListener {
+public class DirectMessageConversationEntriesAdapter extends SimpleCursorAdapter implements IBaseCardAdapter, OnClickListener {
 
 	private final ImageLoaderWrapper mLazyImageLoader;
 	private final MultiSelectManager mMultiSelectManager;
@@ -60,8 +61,12 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 
 	private MenuButtonClickListener mListener;
 
-	public DirectMessagesEntryAdapter(final Context context) {
-		super(context, R.layout.card_item_message_entry, null, new String[0], new int[0], 0);
+	public DirectMessageConversationEntriesAdapter(final Context context) {
+		this(context, Utils.isCompactCards(context));
+	}
+
+	public DirectMessageConversationEntriesAdapter(final Context context, final boolean compactCards) {
+		super(context, getItemResource(compactCards), null, new String[0], new int[0], 0);
 		final TwidereApplication app = TwidereApplication.getInstance(context);
 		mMultiSelectManager = app.getMultiSelectManager();
 		mLazyImageLoader = app.getImageLoaderWrapper();
@@ -219,5 +224,9 @@ public class DirectMessagesEntryAdapter extends SimpleCursorAdapter implements I
 			mTextSize = text_size;
 			notifyDataSetChanged();
 		}
+	}
+
+	private static int getItemResource(final boolean compactCards) {
+		return compactCards ? R.layout.card_item_message_entry_compact : R.layout.card_item_message_entry;
 	}
 }

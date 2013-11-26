@@ -49,6 +49,7 @@ import org.mariotaku.twidere.util.ImageLoadingHandler;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.TwidereLinkify;
+import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
 import java.util.List;
@@ -74,7 +75,10 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 	private int mMaxAnimationPosition;
 
 	public ParcelableStatusesAdapter(final Context context) {
-		super(context, R.layout.card_item_status);
+		this(context, Utils.isCompactCards(context));
+	}
+	public ParcelableStatusesAdapter(final Context context, final boolean compactCards) {
+		super(context, getItemResource(compactCards));
 		mContext = context;
 		final TwidereApplication app = TwidereApplication.getInstance(context);
 		mMultiSelectManager = app.getMultiSelectManager();
@@ -434,5 +438,9 @@ public class ParcelableStatusesAdapter extends ArrayAdapter<ParcelableStatus> im
 			mIsLastItemFiltered = false;
 		}
 		notifyDataSetChanged();
+	}
+
+	private static int getItemResource(final boolean compactCards) {
+		return compactCards ? R.layout.card_item_status_compact : R.layout.card_item_status;
 	}
 }

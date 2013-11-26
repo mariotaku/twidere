@@ -37,6 +37,7 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
+import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.view.holder.UserListViewHolder;
 
 import java.util.List;
@@ -57,7 +58,11 @@ public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList>
 	private MenuButtonClickListener mListener;
 
 	public ParcelableUserListsAdapter(final Context context) {
-		super(context, R.layout.card_item_user_list);
+		this(context, Utils.isCompactCards(context));
+	}
+
+	public ParcelableUserListsAdapter(final Context context, final boolean compactCards) {
+		super(context, getItemResource(compactCards));
 		mContext = context;
 		mLocale = context.getResources().getConfiguration().locale;
 		final TwidereApplication app = TwidereApplication.getInstance(context);
@@ -200,5 +205,9 @@ public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList>
 			mTextSize = text_size;
 			notifyDataSetChanged();
 		}
+	}
+
+	private static int getItemResource(final boolean compactCards) {
+		return compactCards ? R.layout.card_item_user_list_compact : R.layout.card_item_user_list;
 	}
 }

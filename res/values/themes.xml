@@ -10,7 +10,7 @@
 		<item name="android:windowBackground">@android:color/black</item>
 	</style>
 
-	<style name="Theme.Blank.Dialog" parent="Theme.Twidere.Dark.Dialog"/>
+	<style name="Theme.Blank.Dialog" parent="android:Theme.Holo.Dialog"/>
 
 	<style name="Theme.Twidere" parent="android:Theme.Holo.Light.DarkActionBar">
 

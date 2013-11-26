@@ -107,6 +107,7 @@ import org.mariotaku.twidere.model.PreviewMedia;
 import org.mariotaku.twidere.model.SingleResponse;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.task.AsyncTask;
+import org.mariotaku.twidere.text.method.StatusContentMovementMethod;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
@@ -317,7 +318,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		args.putLong(EXTRA_ACCOUNT_ID, status.account_id);
 		args.putLong(EXTRA_STATUS_ID, status.id);
 		args.putParcelable(EXTRA_STATUS, status);
-		if (shouldUseSmartBar()) {
+		if (shouldUseNativeMenu()) {
 			getActivity().supportInvalidateOptionsMenu();
 		} else {
 			setMenuForStatus(getActivity(), mMenuBar.getMenu(), status);
@@ -339,6 +340,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		final TwidereLinkify linkify = new TwidereLinkify(new OnLinkClickHandler(getActivity()));
 		linkify.setHighlightColor(mPreferences.getInt(PREFERENCE_KEY_THEME_COLOR, new TextPaint().linkColor));
 		linkify.applyAllLinks(mTextView, status.account_id, status.is_possibly_sensitive);
+		mTextView.setMovementMethod(StatusContentMovementMethod.getInstance());
 		final String time = formatToLongTimeString(getActivity(), status.timestamp);
 		final String source_html = status.source;
 		if (!isEmpty(time) && !isEmpty(source_html)) {
@@ -424,7 +426,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		setPullToRefreshEnabled(shouldEnablePullToRefresh());
-		setHasOptionsMenu(shouldUseSmartBar());
+		setHasOptionsMenu(shouldUseNativeMenu());
 		setListShownNoAnimation(true);
 		mHandler = new Handler();
 		mListView = getListView();
@@ -446,7 +448,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mProfileView.setOnClickListener(this);
 		mLocationContainer.setOnClickListener(this);
 		mRetweetView.setOnClickListener(this);
-		mMenuBar.setVisibility(shouldUseSmartBar() ? View.GONE : View.VISIBLE);
+		mMenuBar.setVisibility(shouldUseNativeMenu() ? View.GONE : View.VISIBLE);
 		mMenuBar.inflate(R.menu.menu_status);
 		mMenuBar.setIsBottomBar(true);
 		mMenuBar.setOnMenuItemClickListener(mMenuItemClickListener);
@@ -489,7 +491,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 				showConversation();
 				break;
 			}
-			case R.id.replies: {
+			case R.id.replies_view: {
 				openStatusReplies(getActivity(), mStatus.account_id, mStatus.id, mStatus.user_screen_name);
 				break;
 			}
@@ -528,7 +530,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	@Override
 	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
-		if (!shouldUseSmartBar()) return;
+		if (!shouldUseNativeMenu()) return;
 		inflater.inflate(R.menu.menu_status, menu);
 	}
 
@@ -553,7 +555,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mProfileImageView = (ImageView) mHeaderView.findViewById(R.id.profile_image);
 		mTimeSourceView = (TextView) mHeaderView.findViewById(R.id.time_source);
 		mInReplyToView = (TextView) mHeaderView.findViewById(R.id.in_reply_to);
-		mRepliesView = (TextView) mHeaderView.findViewById(R.id.replies);
+		mRepliesView = (TextView) mHeaderView.findViewById(R.id.replies_view);
 		mFollowButton = (Button) mHeaderView.findViewById(R.id.follow);
 		mFollowIndicator = mHeaderView.findViewById(R.id.follow_indicator);
 		mFollowInfoProgress = (ProgressBar) mHeaderView.findViewById(R.id.follow_info_progress);
@@ -611,13 +613,13 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
-		if (!shouldUseSmartBar() || mStatus == null) return false;
+		if (!shouldUseNativeMenu() || mStatus == null) return false;
 		return handleMenuItemClick(item);
 	}
 
 	@Override
 	public void onPrepareOptionsMenu(final Menu menu) {
-		if (!shouldUseSmartBar() || mStatus == null) return;
+		if (!shouldUseNativeMenu() || mStatus == null) return;
 		setMenuForStatus(getActivity(), menu, mStatus);
 	}
 
@@ -862,8 +864,13 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		updateImageSelectButton(mImagePreviewGallery.getSelectedItemPosition());
 	}
 
-	private boolean shouldUseSmartBar() {
-		return getActivity() instanceof LinkHandlerActivity && SmartBarUtils.hasSmartBar();
+	private boolean shouldUseNativeMenu() {
+		final boolean isInLinkHandler = getActivity() instanceof LinkHandlerActivity;
+		// final boolean isLargeScreen =
+		// getResources().getBoolean(R.bool.is_large_screen);
+		// return isInLinkHandler && (SmartBarUtils.hasSmartBar() ||
+		// !isLargeScreen);
+		return isInLinkHandler && SmartBarUtils.hasSmartBar();
 	}
 
 	private void showConversation() {

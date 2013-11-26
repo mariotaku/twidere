@@ -21,21 +21,36 @@ package org.mariotaku.twidere.model;
 
 public class PreviewMedia {
 
-	private static final PreviewMedia EMPTY_INSTANCE = new PreviewMedia(null, null);
+	public static final int TYPE_UNKNOWN = 0;
+	public static final int TYPE_IMAGE = 1;
+	public static final int TYPE_VIDEO = 2;
+	public static final int TYPE_AUDIO = 3;
+
+	private static final PreviewMedia EMPTY_INSTANCE = new PreviewMedia(null, null, TYPE_UNKNOWN);
 
 	public final String url, original;
+	public final int type;
 
-	public PreviewMedia(final String url, final String original) {
+	public PreviewMedia(final String url, final String original, final int type) {
 		this.url = url;
 		this.original = original;
+		this.type = type;
 	}
 
 	@Override
 	public String toString() {
-		return "PreviewMedia{url=" + url + ", original=" + original + "}";
+		return "PreviewMedia{url=" + url + ", original=" + original + ", type=" + type + "}";
 	}
 
 	public static PreviewMedia getEmpty() {
 		return EMPTY_INSTANCE;
+	}
+
+	public static PreviewMedia newImage(final String url, final String original) {
+		return new PreviewMedia(url, original, TYPE_IMAGE);
+	}
+
+	public static PreviewMedia newVideo(final String url, final String original) {
+		return new PreviewMedia(url, original, TYPE_VIDEO);
 	}
 }

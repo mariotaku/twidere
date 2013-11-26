@@ -43,6 +43,7 @@ import org.mariotaku.twidere.fragment.iface.IBasePullToRefreshFragment;
 import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;
 import org.mariotaku.twidere.fragment.iface.SupportFragmentCallback;
 import org.mariotaku.twidere.util.MultiSelectEventHandler;
+import org.mariotaku.twidere.util.SmartBarUtils;
 
 public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnClickListener, OnLongClickListener {
 
@@ -163,7 +164,9 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnC
 	private void setUiOptions(final Uri data) {
 		switch (matchLinkId(data)) {
 			case LINK_ID_STATUS: {
-				getWindow().setUiOptions(ActivityInfo.UIOPTION_SPLIT_ACTION_BAR_WHEN_NARROW);
+				if (SmartBarUtils.hasSmartBar()) {
+					getWindow().setUiOptions(ActivityInfo.UIOPTION_SPLIT_ACTION_BAR_WHEN_NARROW);
+				}
 				break;
 			}
 		}

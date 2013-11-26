@@ -79,7 +79,7 @@
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:textColor="?android:attr/textColorSecondary"/>
 
-		<TableRow
+		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:orientation="horizontal"
@@ -104,7 +104,7 @@
 				android:drawablePadding="4dp"
 				android:singleLine="true"
 				android:textAppearance="?android:attr/textAppearanceSmall"/>
-		</TableRow>
+		</LinearLayout>
 	</org.mariotaku.twidere.view.CardItemLinearLayout>
 
 	<org.mariotaku.twidere.view.ListMenuOverflowButton

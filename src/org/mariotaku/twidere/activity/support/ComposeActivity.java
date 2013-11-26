@@ -399,6 +399,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 	@Override
 	public void onContentChanged() {
 		super.onContentChanged();
+		findViewById(R.id.close).setOnClickListener(this);
 		mColorIndicator = (AccountsColorFrameLayout) findViewById(R.id.accounts_color);
 		mEditText = (EditText) findViewById(R.id.edit_text);
 		mTitleView = (TextView) findViewById(R.id.actionbar_title);
@@ -1114,8 +1115,8 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 						0, 0, 0);
 			} else if (status.in_reply_to_status_id > 0 && !TextUtils.isEmpty(status.in_reply_to_screen_name)) {
 				mHolder.reply_retweet_status.setText(getString(R.string.in_reply_to, status.in_reply_to_screen_name));
-				mHolder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_conversation, 0,
-						0, 0);
+				mHolder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(
+						R.drawable.ic_indicator_conversation, 0, 0, 0);
 			}
 			if (prefs.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true)) {
 				loader.displayProfileImage(mHolder.my_profile_image, status.user_profile_image_url);

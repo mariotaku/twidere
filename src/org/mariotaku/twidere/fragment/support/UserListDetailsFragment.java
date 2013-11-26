@@ -216,6 +216,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 				mPopupMenu.inflate(R.menu.action_user_list);
 				final Menu menu = mPopupMenu.getMenu();
 				final Intent extensionsIntent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER_LIST);
+				extensionsIntent.setExtrasClassLoader(getActivity().getClassLoader());
 				extensionsIntent.putExtra(EXTRA_USER_LIST, mUserList);
 				addIntentToMenu(getActivity(), menu, extensionsIntent);
 				mPopupMenu.setOnMenuItemClickListener(this);

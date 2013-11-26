@@ -101,6 +101,7 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 			if (user == null) return;
 			if (isSelectingUser()) {
 				final Intent data = new Intent();
+				data.setExtrasClassLoader(getClassLoader());
 				data.putExtra(EXTRA_USER, user);
 				setResult(RESULT_OK, data);
 				finish();

@@ -119,18 +119,18 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int clearNotificationAsync(final int notificationType) {
-		return clearNotificationAsync(notificationType, 0);
+	public void clearNotificationAsync(final int notificationType) {
+		clearNotificationAsync(notificationType, 0);
 	}
 
-	public int clearNotificationAsync(final int notificationId, final long notificationAccount) {
+	public void clearNotificationAsync(final int notificationId, final long notificationAccount) {
 		final ClearNotificationTask task = new ClearNotificationTask(notificationId, notificationAccount);
-		return mAsyncTaskManager.add(task, true);
+		task.execute();
 	}
 
-	public int clearUnreadCountAsync(final int position) {
+	public void clearUnreadCountAsync(final int position) {
 		final ClearUnreadCountTask task = new ClearUnreadCountTask(position);
-		return mAsyncTaskManager.add(task, true);
+		task.execute();
 	}
 
 	public int createBlockAsync(final long account_id, final long user_id) {
@@ -565,12 +565,11 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	}
 
-	final class ClearNotificationTask extends ManagedAsyncTask<Void, Void, Integer> {
+	final class ClearNotificationTask extends AsyncTask<Void, Void, Integer> {
 		private final int notificationType;
 		private final long accountId;
 
 		ClearNotificationTask(final int notificationType, final long accountId) {
-			super(mContext, mAsyncTaskManager);
 			this.notificationType = notificationType;
 			this.accountId = accountId;
 		}
@@ -582,11 +581,10 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	}
 
-	final class ClearUnreadCountTask extends ManagedAsyncTask<Void, Void, Integer> {
+	final class ClearUnreadCountTask extends AsyncTask<Void, Void, Integer> {
 		private final int position;
 
 		ClearUnreadCountTask(final int position) {
-			super(mContext, mAsyncTaskManager);
 			this.position = position;
 		}
 
@@ -1354,7 +1352,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	}
 
-	abstract class GetDirectMessagesTask extends ManagedAsyncTask<Void, Void, List<TwitterListResponse<DirectMessage>>> {
+	abstract class GetDirectMessagesTask extends ManagedAsyncTask<Void, Void, List<MessageListResponse>> {
 
 		private final long[] account_ids, max_ids, since_ids;
 
@@ -1370,9 +1368,9 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				throws TwitterException;
 
 		@Override
-		protected List<TwitterListResponse<DirectMessage>> doInBackground(final Void... params) {
+		protected List<MessageListResponse> doInBackground(final Void... params) {
 
-			final List<TwitterListResponse<DirectMessage>> result = new ArrayList<TwitterListResponse<DirectMessage>>();
+			final List<MessageListResponse> result = new ArrayList<MessageListResponse>();
 
 			if (account_ids == null) return result;
 
@@ -1392,16 +1390,15 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 						}
 						if (isSinceIdsValid() && since_ids[idx] > 0) {
 							since_id = since_ids[idx];
-							paging.setSinceId(since_id);
+							// paging.setSinceId(since_id - 1);
 						}
-						final ResponseList<DirectMessage> statuses = getDirectMessages(twitter, paging);
-
-						if (statuses != null) {
-							result.add(new TwitterListResponse<DirectMessage>(account_id, max_id, since_id, statuses,
-									null));
-						}
+						final List<DirectMessage> messages = new ArrayList<DirectMessage>();
+						final boolean truncated = truncateMessages(getDirectMessages(twitter, paging), messages,
+								since_id);
+						result.add(new MessageListResponse(account_id, max_id, since_id, load_item_limit, messages,
+								truncated));
 					} catch (final TwitterException e) {
-						result.add(new TwitterListResponse<DirectMessage>(account_id, e));
+						result.add(new MessageListResponse(account_id, e));
 					}
 				}
 				idx++;
@@ -1411,7 +1408,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		@Override
-		protected void onPostExecute(final List<TwitterListResponse<DirectMessage>> result) {
+		protected void onPostExecute(final List<MessageListResponse> result) {
 			super.onPostExecute(result);
 			for (final TwitterListResponse<DirectMessage> response : result) {
 				if (response.list == null) {
@@ -1419,6 +1416,17 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 							true);
 				}
 			}
+		}
+
+		private boolean truncateMessages(final List<DirectMessage> in, final List<DirectMessage> out,
+				final long since_id) {
+			for (final DirectMessage message : in) {
+				if (since_id > 0 && message.getId() <= since_id) {
+					continue;
+				}
+				out.add(message);
+			}
+			return in.size() != out.size();
 		}
 
 		final boolean isMaxIdsValid() {
@@ -1541,7 +1549,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		@Override
-		protected void onPostExecute(final List<TwitterListResponse<DirectMessage>> responses) {
+		protected void onPostExecute(final List<MessageListResponse> responses) {
 			super.onPostExecute(responses);
 			mAsyncTaskManager.add(new StoreReceivedDirectMessagesTask(responses, !isMaxIdsValid()), true);
 			mGetReceivedDirectMessagesTaskId = -1;
@@ -1569,7 +1577,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		@Override
-		protected void onPostExecute(final List<TwitterListResponse<DirectMessage>> responses) {
+		protected void onPostExecute(final List<MessageListResponse> responses) {
 			super.onPostExecute(responses);
 			mAsyncTaskManager.add(new StoreSentDirectMessagesTask(responses, !isMaxIdsValid()), true);
 			mGetSentDirectMessagesTaskId = -1;
@@ -1614,10 +1622,17 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 						}
 						if (isSinceIdsValid() && since_ids[idx] > 0) {
 							since_id = since_ids[idx];
-							// paging.setSinceId(since_id);
+							// paging.setSinceId(since_id - 1);
 						}
 						final List<twitter4j.Status> statuses = new ArrayList<twitter4j.Status>();
 						final boolean truncated = truncateStatuses(getStatuses(twitter, paging), statuses, since_id);
+						// final List<twitter4j.Status> statuses =
+						// getStatuses(twitter, paging);
+						// Log.d(getClass().getSimpleName(),
+						// String.format("getStatuses got %d statuses",
+						// statuses.size()));
+						// final boolean truncated = paging.getCount() ==
+						// statuses.size();
 						result.add(new StatusListResponse(account_id, max_id, since_id, load_item_limit, statuses,
 								truncated));
 					} catch (final TwitterException e) {
@@ -1901,12 +1916,12 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	abstract class StoreDirectMessagesTask extends ManagedAsyncTask<Void, Void, SingleResponse<Bundle>> {
 
-		private final List<TwitterListResponse<DirectMessage>> responses;
+		private final List<MessageListResponse> responses;
 		private final Uri uri;
 		private final boolean notify;
 
-		public StoreDirectMessagesTask(final List<TwitterListResponse<DirectMessage>> result, final Uri uri,
-				final boolean notify, final String tag) {
+		public StoreDirectMessagesTask(final List<MessageListResponse> result, final Uri uri, final boolean notify,
+				final String tag) {
 			super(mContext, mAsyncTaskManager, tag);
 			responses = result;
 			this.uri = uri;
@@ -2005,8 +2020,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	class StoreReceivedDirectMessagesTask extends StoreDirectMessagesTask {
 
-		public StoreReceivedDirectMessagesTask(final List<TwitterListResponse<DirectMessage>> result,
-				final boolean notify) {
+		public StoreReceivedDirectMessagesTask(final List<MessageListResponse> result, final boolean notify) {
 			super(result, DirectMessages.Inbox.CONTENT_URI, notify, TASK_TAG_STORE_RECEIVED_DIRECT_MESSAGES);
 		}
 
@@ -2028,7 +2042,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	class StoreSentDirectMessagesTask extends StoreDirectMessagesTask {
 
-		public StoreSentDirectMessagesTask(final List<TwitterListResponse<DirectMessage>> result, final boolean notify) {
+		public StoreSentDirectMessagesTask(final List<MessageListResponse> result, final boolean notify) {
 			super(result, DirectMessages.Outbox.CONTENT_URI, notify, TASK_TAG_STORE_SENT_DIRECT_MESSAGES);
 		}
 
