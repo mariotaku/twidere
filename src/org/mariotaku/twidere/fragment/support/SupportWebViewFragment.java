@@ -19,11 +19,7 @@ public class SupportWebViewFragment extends Fragment {
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		final View view = new WebView(getActivity());
-		final ViewGroup.LayoutParams lp = container.generateLayoutParams(null);
-		lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
-		lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
 		view.setId(INTERNAL_WEBVIEW_ID);
-		view.setLayoutParams(lp);
 		return view;
 	}
 

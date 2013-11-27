@@ -19,9 +19,7 @@
 
 package org.mariotaku.twidere.adapter;
 
-import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static org.mariotaku.twidere.util.Utils.configBaseCardAdapter;
-import static org.mariotaku.twidere.util.Utils.formatSameDayTime;
 
 import android.content.Context;
 import android.view.View;
@@ -36,25 +34,29 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
+import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.view.holder.ActivityViewHolder;
 
 import java.util.List;
 
-public abstract class BaseParcelableActivitiesAdapter extends ArrayAdapter<ParcelableActivity> implements
+public abstract class BaseParcelableActivitiesAdapter extends BaseArrayAdapter<ParcelableActivity> implements
 		IBaseCardAdapter {
 
 	private final Context mContext;
 	private final MultiSelectManager mMultiSelectManager;
 	private final ImageLoaderWrapper mProfileImageLoader;
 
-	private boolean mDisplayProfileImage, mDisplayNameFirst, mShowAbsoluteTime, mAnimationEnabled;
-	private float mTextSize;
+	private boolean mShowAbsoluteTime, mAnimationEnabled;
 	private int mMaxAnimationPosition;
 
 	private MenuButtonClickListener mListener;
 
 	public BaseParcelableActivitiesAdapter(final Context context) {
-		super(context, R.layout.card_item_activity);
+		this(context, Utils.isCompactCards(context));
+	}
+
+	public BaseParcelableActivitiesAdapter(final Context context, final boolean compactCards) {
+		super(context, getItemResource(compactCards));
 		mContext = context;
 		final TwidereApplication app = TwidereApplication.getInstance(context);
 		mMultiSelectManager = app.getMultiSelectManager();
@@ -79,12 +81,13 @@ public abstract class BaseParcelableActivitiesAdapter extends ArrayAdapter<Parce
 		if (!(tag instanceof ActivityViewHolder)) {
 			view.setTag(holder);
 		}
-		holder.setTextSize(mTextSize);
+		holder.setTextSize(getTextSize());
+		holder.my_profile_image.setVisibility(View.GONE);
 		final ParcelableActivity item = getItem(position);
 		if (mShowAbsoluteTime) {
-			holder.time.setText(formatSameDayTime(mContext, item.activity_timestamp));
+			holder.time.setTime(item.activity_timestamp);
 		} else {
-			holder.time.setText(getRelativeTimeSpanString(item.activity_timestamp));
+			holder.time.setTime(item.activity_timestamp);
 		}
 		bindView(position, holder, item);
 		return view;
@@ -111,32 +114,6 @@ public abstract class BaseParcelableActivitiesAdapter extends ArrayAdapter<Parce
 	}
 
 	@Override
-	public void setDisplayNameFirst(final boolean name_first) {
-		if (mDisplayNameFirst == name_first) return;
-		mDisplayNameFirst = name_first;
-		notifyDataSetChanged();
-	}
-
-	@Override
-	public void setDisplayProfileImage(final boolean display) {
-		if (display != mDisplayProfileImage) {
-			mDisplayProfileImage = display;
-			notifyDataSetChanged();
-		}
-	}
-
-	@Override
-	public void setLinkHighlightColor(final int color) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setLinkHighlightOption(final String option) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
 	public void setMaxAnimationPosition(final int position) {
 		mMaxAnimationPosition = position;
 	}
@@ -146,22 +123,9 @@ public abstract class BaseParcelableActivitiesAdapter extends ArrayAdapter<Parce
 		mListener = listener;
 	}
 
-	@Override
-	public void setNicknameOnly(final boolean nickname_only) {
-
-	}
-
 	public void setShowAbsoluteTime(final boolean show) {
 		if (show != mShowAbsoluteTime) {
 			mShowAbsoluteTime = show;
-			notifyDataSetChanged();
-		}
-	}
-
-	@Override
-	public void setTextSize(final float text_size) {
-		if (text_size != mTextSize) {
-			mTextSize = text_size;
 			notifyDataSetChanged();
 		}
 	}
@@ -172,16 +136,24 @@ public abstract class BaseParcelableActivitiesAdapter extends ArrayAdapter<Parce
 
 	protected String getName(final ParcelableStatus status) {
 		if (status == null) return null;
-		return mDisplayNameFirst ? status.user_name : "@" + status.user_screen_name;
+		return isDisplayNameFirst() ? status.user_name : "@" + status.user_screen_name;
 	}
 
 	protected String getName(final ParcelableUser user) {
 		if (user == null) return null;
-		return mDisplayNameFirst ? user.name : "@" + user.screen_name;
+		return isDisplayNameFirst() ? user.name : "@" + user.screen_name;
+	}
+
+	protected void setProfileImage(final ActivityViewHolder holder, final ParcelableStatus status) {
+		if (isDisplayProfileImage()) {
+			mProfileImageLoader.displayProfileImage(holder.profile_image, status.user_profile_image_url);
+		} else {
+			holder.profile_image.setImageDrawable(null);
+		}
 	}
 
 	protected void setProfileImage(final ActivityViewHolder holder, final ParcelableUser user) {
-		if (mDisplayProfileImage) {
+		if (isDisplayProfileImage()) {
 			mProfileImageLoader.displayProfileImage(holder.profile_image, user.profile_image_url);
 		} else {
 			holder.profile_image.setImageDrawable(null);
@@ -190,19 +162,24 @@ public abstract class BaseParcelableActivitiesAdapter extends ArrayAdapter<Parce
 
 	protected void setUserProfileImages(final ActivityViewHolder holder, final ParcelableStatus[] statuses) {
 		final int length = statuses != null ? Math.min(holder.activity_profile_images.length, statuses.length) : 0;
-		final boolean should_display_images = mDisplayProfileImage && length > 0;
+		final boolean should_display_images = isDisplayProfileImage() && length > 0;
 		holder.activity_profile_image_container.setVisibility(should_display_images ? View.VISIBLE : View.GONE);
 		if (!should_display_images) return;
-		for (int i = 0; i < length; i++) {
+		for (int i = 0, j = holder.activity_profile_images.length; i < j; i++) {
 			final ImageView activity_profile_image = holder.activity_profile_images[i];
-			final String profile_image_url = statuses[i].user_profile_image_url;
-			mProfileImageLoader.displayProfileImage(activity_profile_image, profile_image_url);
+			if (j < length) {
+				final String profile_image_url = statuses[i].user_profile_image_url;
+				activity_profile_image.setVisibility(View.VISIBLE);
+				mProfileImageLoader.displayProfileImage(activity_profile_image, profile_image_url);
+			} else {
+				activity_profile_image.setVisibility(View.GONE);
+			}
 		}
 	}
 
 	protected void setUserProfileImages(final ActivityViewHolder holder, final ParcelableUser[] users) {
 		final int length = users != null ? Math.min(holder.activity_profile_images.length, users.length) : 0;
-		final boolean should_display_images = mDisplayProfileImage && length > 0;
+		final boolean should_display_images = isDisplayProfileImage() && length > 0;
 		holder.activity_profile_image_container.setVisibility(should_display_images ? View.VISIBLE : View.GONE);
 		if (!should_display_images) return;
 		for (int i = 0; i < length; i++) {
@@ -213,7 +190,11 @@ public abstract class BaseParcelableActivitiesAdapter extends ArrayAdapter<Parce
 	}
 
 	protected boolean shouldDisplayProfileImage() {
-		return mDisplayProfileImage;
+		return isDisplayProfileImage();
+	}
+
+	private static int getItemResource(final boolean compactCards) {
+		return compactCards ? R.layout.card_item_activity_compact : R.layout.card_item_activity;
 	}
 
 }

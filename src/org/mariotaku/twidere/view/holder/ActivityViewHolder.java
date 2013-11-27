@@ -38,7 +38,7 @@ public class ActivityViewHolder extends CardViewHolder {
 	public final ImageView activity_profile_image_1, activity_profile_image_2, activity_profile_image_3,
 			activity_profile_image_4, activity_profile_image_5;
 	public final ImageView[] activity_profile_images;
-	public final TextView name, screen_name, text, reply_status;
+	public final TextView name, screen_name, text, reply_retweet_status;
 	public final ShortTimeView time;
 	public final ViewGroup image_preview_container;
 	public final ViewGroup activity_profile_image_container;
@@ -66,7 +66,7 @@ public class ActivityViewHolder extends CardViewHolder {
 		screen_name = (TextView) findViewById(R.id.screen_name);
 		text = (TextView) findViewById(R.id.text);
 		time = (ShortTimeView) findViewById(R.id.time);
-		reply_status = (TextView) findViewById(R.id.reply_status);
+		reply_retweet_status = (TextView) findViewById(R.id.reply_retweet_status);
 		activity_profile_image_container = (ViewGroup) findViewById(R.id.activity_profile_image_container);
 		activity_profile_image_1 = (ImageView) findViewById(R.id.activity_profile_image_1);
 		activity_profile_image_2 = (ImageView) findViewById(R.id.activity_profile_image_2);
@@ -91,6 +91,19 @@ public class ActivityViewHolder extends CardViewHolder {
 		}
 	}
 
+	public void setShowAsGap(final boolean show_gap) {
+		show_as_gap = show_gap;
+		if (content != null) {
+			content.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		}
+		if (gap_indicator != null) {
+			gap_indicator.setVisibility(!show_gap ? View.GONE : View.VISIBLE);
+		}
+		if (item_menu != null) {
+			item_menu.setVisibility(show_gap ? View.GONE : View.VISIBLE);
+		}
+	}
+
 	public void setTextSize(final float text_size) {
 		if (this.text_size != text_size) {
 			this.text_size = text_size;
@@ -98,7 +111,7 @@ public class ActivityViewHolder extends CardViewHolder {
 			name.setTextSize(text_size);
 			screen_name.setTextSize(text_size * 0.75f);
 			time.setTextSize(text_size * 0.65f);
-			reply_status.setTextSize(text_size * 0.65f);
+			reply_retweet_status.setTextSize(text_size * 0.65f);
 		}
 	}
 

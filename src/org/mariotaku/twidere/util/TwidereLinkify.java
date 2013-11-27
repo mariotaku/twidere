@@ -106,19 +106,25 @@ public final class TwidereLinkify implements Constants {
 	private int mHighlightOption, mHighlightColor;
 
 	public TwidereLinkify(final OnLinkClickListener listener) {
-		this(listener, LINK_HIGHLIGHT_OPTION_CODE_BOTH);
+		this(listener, LINK_HIGHLIGHT_OPTION_CODE_BOTH, 0);
 	}
 
-	public TwidereLinkify(final OnLinkClickListener listener, final int highlight_option) {
+	public TwidereLinkify(final OnLinkClickListener listener, final int highlightOption, final int highlightColor) {
 		mOnLinkClickListener = listener;
-		mHighlightOption = highlight_option;
+		setHighlightOption(highlightOption);
+		setHighlightColor(highlightColor);
 	}
 
 	public final void applyAllLinks(final TextView view, final long account_id, final boolean sensitive) {
+		applyAllLinks(view, account_id, sensitive, mOnLinkClickListener, mHighlightOption, mHighlightColor);
+	}
+
+	public final void applyAllLinks(final TextView view, final long account_id, final boolean sensitive,
+			final OnLinkClickListener listener, final int highlightOption, final int highlightColor) {
 		view.setMovementMethod(LinkMovementMethod.getInstance());
 		final SpannableString string = SpannableString.valueOf(view.getText());
 		for (final int type : ALL_LINK_TYPES) {
-			addLinks(string, account_id, type, sensitive);
+			addLinks(string, account_id, type, sensitive, listener, highlightOption, highlightColor);
 		}
 		view.setText(string);
 		addLinkMovementMethod(view);
@@ -126,6 +132,13 @@ public final class TwidereLinkify implements Constants {
 
 	public final void applyUserProfileLink(final TextView view, final long account_id, final long user_id,
 			final String screen_name) {
+		applyUserProfileLink(view, account_id, user_id, screen_name, mOnLinkClickListener, mHighlightOption,
+				mHighlightColor);
+	}
+
+	public final void applyUserProfileLink(final TextView view, final long account_id, final long user_id,
+			final String screen_name, final OnLinkClickListener listener, final int highlightOption,
+			final int highlightColor) {
 		view.setMovementMethod(LinkMovementMethod.getInstance());
 		final SpannableString string = SpannableString.valueOf(view.getText());
 		final URLSpan[] spans = string.getSpans(0, string.length(), URLSpan.class);
@@ -133,12 +146,20 @@ public final class TwidereLinkify implements Constants {
 			string.removeSpan(span);
 		}
 		if (user_id > 0) {
-			applyLink(String.valueOf(user_id), 0, string.length(), string, account_id, LINK_TYPE_USER_ID, false);
+			applyLink(String.valueOf(user_id), 0, string.length(), string, account_id, LINK_TYPE_USER_ID, false,
+					listener, highlightOption, highlightColor);
 		} else if (screen_name != null) {
-			applyLink(screen_name, 0, string.length(), string, account_id, LINK_TYPE_MENTION, false);
+			applyLink(screen_name, 0, string.length(), string, account_id, LINK_TYPE_MENTION, false, listener,
+					highlightOption, highlightColor);
 		}
 		view.setText(string);
 		addLinkMovementMethod(view);
+	}
+
+	public final void applyUserProfileLinkNoHighlight(final TextView view, final long account_id, final long user_id,
+			final String screen_name) {
+		applyUserProfileLink(view, account_id, user_id, screen_name, mOnLinkClickListener,
+				LINK_HIGHLIGHT_OPTION_CODE_NONE, mHighlightColor);
 	}
 
 	public void setHighlightColor(final int color) {
@@ -149,7 +170,8 @@ public final class TwidereLinkify implements Constants {
 		mHighlightOption = style;
 	}
 
-	private final boolean addCashtagLinks(final Spannable spannable, final long account_id) {
+	private final boolean addCashtagLinks(final Spannable spannable, final long account_id,
+			final OnLinkClickListener listener, final int highlightOption, final int highlightColor) {
 		boolean hasMatches = false;
 		final Matcher matcher = Regex.VALID_CASHTAG.matcher(spannable);
 
@@ -158,14 +180,16 @@ public final class TwidereLinkify implements Constants {
 			final int end = matcherEnd(matcher, Regex.VALID_CASHTAG_GROUP_CASHTAG_FULL);
 			final String url = matcherGroup(matcher, Regex.VALID_CASHTAG_GROUP_TAG);
 
-			applyLink(url, start, end, spannable, account_id, LINK_TYPE_HASHTAG, false);
+			applyLink(url, start, end, spannable, account_id, LINK_TYPE_HASHTAG, false, listener, highlightOption,
+					highlightColor);
 			hasMatches = true;
 		}
 
 		return hasMatches;
 	}
 
-	private final boolean addHashtagLinks(final Spannable spannable, final long account_id) {
+	private final boolean addHashtagLinks(final Spannable spannable, final long account_id,
+			final OnLinkClickListener listener, final int highlightOption, final int highlightColor) {
 		boolean hasMatches = false;
 		final Matcher matcher = Regex.VALID_HASHTAG.matcher(spannable);
 
@@ -174,7 +198,8 @@ public final class TwidereLinkify implements Constants {
 			final int end = matcherEnd(matcher, Regex.VALID_HASHTAG_GROUP_HASHTAG_FULL);
 			final String url = matcherGroup(matcher, Regex.VALID_HASHTAG_GROUP_HASHTAG_FULL);
 
-			applyLink(url, start, end, spannable, account_id, LINK_TYPE_HASHTAG, false);
+			applyLink(url, start, end, spannable, account_id, LINK_TYPE_HASHTAG, false, listener, highlightOption,
+					highlightColor);
 			hasMatches = true;
 		}
 
@@ -187,6 +212,10 @@ public final class TwidereLinkify implements Constants {
 	 * areas, and the movement method for the text is changed to
 	 * LinkMovementMethod.
 	 * 
+	 * @param highlightColor
+	 * @param highlightOption
+	 * @param listener
+	 * 
 	 * @param description TextView whose text is to be marked-up with links
 	 * @param pattern Regex pattern to be used for finding links
 	 * @param scheme Url scheme string (eg <code>http://</code> to be prepended
@@ -194,14 +223,15 @@ public final class TwidereLinkify implements Constants {
 	 *            link text
 	 */
 	private final void addLinks(final SpannableString string, final long account_id, final int type,
-			final boolean sensitive) {
+			final boolean sensitive, final OnLinkClickListener listener, final int highlightOption,
+			final int highlightColor) {
 		switch (type) {
 			case LINK_TYPE_MENTION: {
-				addMentionOrListLinks(string, account_id);
+				addMentionOrListLinks(string, account_id, listener, highlightOption, highlightColor);
 				break;
 			}
 			case LINK_TYPE_HASHTAG: {
-				addHashtagLinks(string, account_id);
+				addHashtagLinks(string, account_id, listener, highlightOption, highlightColor);
 				break;
 			}
 			case LINK_TYPE_LINK_WITH_IMAGE_EXTENSION: {
@@ -212,7 +242,8 @@ public final class TwidereLinkify implements Constants {
 					final String url = span.getURL();
 					if (PATTERN_IMAGES.matcher(url).matches()) {
 						string.removeSpan(span);
-						applyLink(url, start, end, string, account_id, LINK_TYPE_LINK_WITH_IMAGE_EXTENSION, sensitive);
+						applyLink(url, start, end, string, account_id, LINK_TYPE_LINK_WITH_IMAGE_EXTENSION, sensitive,
+								listener, highlightOption, highlightColor);
 					}
 				}
 				break;
@@ -226,7 +257,8 @@ public final class TwidereLinkify implements Constants {
 						continue;
 					}
 					string.removeSpan(span);
-					applyLink(span.getURL(), start, end, string, account_id, LINK_TYPE_LINK, sensitive);
+					applyLink(span.getURL(), start, end, string, account_id, LINK_TYPE_LINK, sensitive, listener,
+							highlightOption, highlightColor);
 				}
 				for (final Extractor.Entity entity : mExtractor.extractURLsWithIndices(ParseUtils.parseString(string))) {
 					final int start = entity.getStart(), end = entity.getEnd();
@@ -234,7 +266,8 @@ public final class TwidereLinkify implements Constants {
 							|| string.getSpans(start, end, URLSpan.class).length > 0) {
 						continue;
 					}
-					applyLink(entity.getValue(), start, end, string, account_id, LINK_TYPE_LINK, sensitive);
+					applyLink(entity.getValue(), start, end, string, account_id, LINK_TYPE_LINK, sensitive, listener,
+							highlightOption, highlightColor);
 				}
 				break;
 			}
@@ -251,7 +284,8 @@ public final class TwidereLinkify implements Constants {
 						}
 						string.removeSpan(span);
 						applyLink(spec.url, spec.original, start, end, string, account_id,
-								LINK_TYPE_LINK_WITH_IMAGE_EXTENSION, sensitive);
+								LINK_TYPE_LINK_WITH_IMAGE_EXTENSION, sensitive, listener, highlightOption,
+								highlightColor);
 					}
 				}
 				break;
@@ -265,13 +299,14 @@ public final class TwidereLinkify implements Constants {
 						final int end = string.getSpanEnd(span);
 						final String url = matcherGroup(matcher, GROUP_ID_TWITTER_STATUS_STATUS_ID);
 						string.removeSpan(span);
-						applyLink(url, start, end, string, account_id, LINK_TYPE_STATUS, sensitive);
+						applyLink(url, start, end, string, account_id, LINK_TYPE_STATUS, sensitive, listener,
+								highlightOption, highlightColor);
 					}
 				}
 				break;
 			}
 			case LINK_TYPE_CASHTAG: {
-				addCashtagLinks(string, account_id);
+				addCashtagLinks(string, account_id, listener, highlightOption, highlightColor);
 				break;
 			}
 			default: {
@@ -281,7 +316,8 @@ public final class TwidereLinkify implements Constants {
 		}
 	}
 
-	private final boolean addMentionOrListLinks(final Spannable spannable, final long account_id) {
+	private final boolean addMentionOrListLinks(final Spannable spannable, final long account_id,
+			final OnLinkClickListener listener, final int highlightOption, final int highlightColor) {
 		boolean hasMatches = false;
 		final Matcher matcher = Regex.VALID_MENTION_OR_LIST.matcher(spannable);
 
@@ -292,9 +328,11 @@ public final class TwidereLinkify implements Constants {
 			final int list_end = matcherEnd(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_LIST);
 			final String mention = matcherGroup(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_USERNAME);
 			final String list = matcherGroup(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_LIST);
-			applyLink(mention, start, username_end, spannable, account_id, LINK_TYPE_MENTION, false);
+			applyLink(mention, start, username_end, spannable, account_id, LINK_TYPE_MENTION, false, listener,
+					highlightOption, highlightColor);
 			if (list_start >= 0 && list_end >= 0) {
-				applyLink(mention + "/" + list, list_start, list_end, spannable, account_id, LINK_TYPE_LIST, false);
+				applyLink(mention + "/" + list, list_start, list_end, spannable, account_id, LINK_TYPE_LIST, false,
+						listener, highlightOption, highlightColor);
 			}
 			hasMatches = true;
 		}
@@ -307,21 +345,24 @@ public final class TwidereLinkify implements Constants {
 				final String screen_name = matcherGroup(m, GROUP_ID_TWITTER_LIST_SCREEN_NAME);
 				final String list_name = matcherGroup(m, GROUP_ID_TWITTER_LIST_LIST_NAME);
 				spannable.removeSpan(span);
-				applyLink(screen_name + "/" + list_name, start, end, spannable, account_id, LINK_TYPE_LIST, false);
+				applyLink(screen_name + "/" + list_name, start, end, spannable, account_id, LINK_TYPE_LIST, false,
+						listener, highlightOption, highlightColor);
 			}
 		}
 		return hasMatches;
 	}
 
 	private final void applyLink(final String url, final int start, final int end, final Spannable text,
-			final long accountId, final int type, final boolean sensitive) {
-		applyLink(url, null, start, end, text, accountId, type, sensitive);
+			final long accountId, final int type, final boolean sensitive, final OnLinkClickListener listener,
+			final int highlightOption, final int highlightColor) {
+		applyLink(url, null, start, end, text, accountId, type, sensitive, listener, highlightOption, highlightColor);
 	}
 
 	private final void applyLink(final String url, final String orig, final int start, final int end,
-			final Spannable text, final long accountId, final int type, final boolean sensitive) {
-		final TwidereURLSpan span = new TwidereURLSpan(url, orig, accountId, type, sensitive, mOnLinkClickListener,
-				mHighlightOption, mHighlightColor);
+			final Spannable text, final long accountId, final int type, final boolean sensitive,
+			final OnLinkClickListener listener, final int highlightOption, final int highlightColor) {
+		final TwidereURLSpan span = new TwidereURLSpan(url, orig, accountId, type, sensitive, listener,
+				highlightOption, highlightColor);
 		text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 	}
 

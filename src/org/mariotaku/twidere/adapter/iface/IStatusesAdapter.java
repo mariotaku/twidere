@@ -56,6 +56,4 @@ public interface IStatusesAdapter<Data> extends IBaseCardAdapter {
 
 	public void setMentionsHightlightDisabled(boolean disable);
 
-	public void setShowAccountColor(boolean show);
-
 }

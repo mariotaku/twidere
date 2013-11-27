@@ -6,9 +6,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.util.Log;
 
-import org.mariotaku.twidere.BuildConfig;
 import org.mariotaku.twidere.TwidereConstants;
 
 public final class SupportFragmentReloadCursorObserver extends ContentObserver implements TwidereConstants {
@@ -34,10 +32,6 @@ public final class SupportFragmentReloadCursorObserver extends ContentObserver i
 	public void onChange(final boolean selfChange, final Uri uri) {
 		if (mFragment == null || mFragment.getActivity() == null || mFragment.isDetached()) return;
 		// Handle change.
-		if (BuildConfig.DEBUG) {
-			final String msg = String.format("Database changed, selfChange: %s, uri: %s", selfChange, uri);
-			Log.d(LOGTAG, msg);
-		}
 		mFragment.getLoaderManager().restartLoader(mLoaderId, null, mCallback);
 	}
 

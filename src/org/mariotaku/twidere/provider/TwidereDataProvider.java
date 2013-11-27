@@ -60,7 +60,6 @@ import android.text.Html;
 import android.util.Log;
 
 import org.mariotaku.jsonserializer.JSONSerializer;
-import org.mariotaku.twidere.BuildConfig;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.HomeActivity;
@@ -83,6 +82,7 @@ import org.mariotaku.twidere.util.MediaPreviewUtils;
 import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.PermissionsManager;
 import org.mariotaku.twidere.util.TwidereQueryBuilder;
+import org.mariotaku.twidere.util.Utils;
 
 import twitter4j.http.HostAddressResolver;
 
@@ -805,7 +805,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	}
 
 	private Cursor getCachedImageCursor(final String url) {
-		if (BuildConfig.DEBUG) {
+		if (Utils.isDebugBuild()) {
 			Log.d(LOGTAG, String.format("getCachedImageCursor(%s)", url));
 		}
 		final MatrixCursor c = new MatrixCursor(TweetStore.CachedImages.MATRIX_COLUMNS);
@@ -817,7 +817,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	}
 
 	private ParcelFileDescriptor getCachedImageFd(final String url) throws FileNotFoundException {
-		if (BuildConfig.DEBUG) {
+		if (Utils.isDebugBuild()) {
 			Log.d(LOGTAG, String.format("getCachedImageFd(%s)", url));
 		}
 		final File file = mImagePreloader.getCachedImageFile(url);

@@ -25,9 +25,23 @@ import org.mariotaku.twidere.Constants;
 
 public interface IBaseAdapter extends Constants, ListAdapter {
 
+	public int getLinkHighlightColor();
+
+	public int getLinkHighlightOption();
+
+	public float getTextSize();
+
+	public boolean isDisplayNameFirst();
+
+	public boolean isDisplayProfileImage();
+
+	public boolean isNicknameOnly();
+
+	public boolean isShowAccountColor();
+
 	public void notifyDataSetChanged();
 
-	public void setDisplayNameFirst(boolean name_first);
+	public void setDisplayNameFirst(boolean nameFirst);
 
 	public void setDisplayProfileImage(boolean display);
 
@@ -36,6 +50,8 @@ public interface IBaseAdapter extends Constants, ListAdapter {
 	public void setLinkHighlightOption(String option);
 
 	public void setNicknameOnly(boolean nickname_only);
+
+	public void setShowAccountColor(boolean show);
 
 	public void setTextSize(float text_size);
 }

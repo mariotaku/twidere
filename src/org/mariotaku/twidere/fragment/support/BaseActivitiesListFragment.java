@@ -64,6 +64,7 @@ public abstract class BaseActivitiesListFragment extends BasePullToRefreshListFr
 		setListAdapter(mAdapter);
 		final ListView lv = getListView();
 		lv.setDivider(null);
+		lv.setSelector(android.R.color.transparent);
 		getLoaderManager().initLoader(0, getArguments(), this);
 		setListShown(false);
 	}

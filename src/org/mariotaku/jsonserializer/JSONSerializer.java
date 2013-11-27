@@ -5,7 +5,6 @@ import android.content.Context;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mariotaku.twidere.BuildConfig;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.Utils;
 
@@ -135,7 +134,7 @@ public class JSONSerializer {
 		try {
 			json.put(KEY_CLASS, array.getClass().getComponentType().getName());
 			json.put(KEY_OBJECT, toJSONArray(array));
-			if (BuildConfig.DEBUG) {
+			if (Utils.isDebugBuild()) {
 				writer.write(json.toString(4));
 			} else {
 				writer.write(json.toString());

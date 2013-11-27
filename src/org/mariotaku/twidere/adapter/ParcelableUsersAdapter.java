@@ -44,15 +44,15 @@ import org.mariotaku.twidere.view.holder.UserViewHolder;
 import java.util.List;
 import java.util.Locale;
 
-public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> implements IBaseCardAdapter, OnClickListener {
+public class ParcelableUsersAdapter extends BaseArrayAdapter<ParcelableUser> implements IBaseCardAdapter,
+		OnClickListener {
 
 	private final ImageLoaderWrapper mProfileImageLoader;
 	private final MultiSelectManager mMultiSelectManager;
 	private final Context mContext;
 	private final Locale mLocale;
 
-	private boolean mDisplayProfileImage, mShowAccountColor, mNicknameOnly, mAnimationEnabled;
-	private float mTextSize;
+	private boolean mAnimationEnabled;
 	private int mMaxAnimationPosition;
 
 	private MenuButtonClickListener mListener;
@@ -90,19 +90,21 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 		}
 		final ParcelableUser user = getItem(position);
 
-		holder.setAccountColorEnabled(mShowAccountColor);
+		final boolean showAccountColor = isShowAccountColor();
 
-		if (mShowAccountColor) {
+		holder.setAccountColorEnabled(showAccountColor);
+
+		if (showAccountColor) {
 			holder.setAccountColor(getAccountColor(mContext, user.account_id));
 		}
 
 		holder.setUserColor(getUserColor(mContext, user.id));
 
-		holder.setTextSize(mTextSize);
+		holder.setTextSize(getTextSize());
 		holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 				getUserTypeIconRes(user.is_verified, user.is_protected), 0);
 		final String nick = getUserNickname(mContext, user.id);
-		holder.name.setText(TextUtils.isEmpty(nick) ? user.name : mNicknameOnly ? nick : mContext.getString(
+		holder.name.setText(TextUtils.isEmpty(nick) ? user.name : isNicknameOnly() ? nick : mContext.getString(
 				R.string.name_with_nickname, user.name, nick));
 		holder.screen_name.setText("@" + user.screen_name);
 		holder.description.setVisibility(TextUtils.isEmpty(user.description_unescaped) ? View.GONE : View.VISIBLE);
@@ -114,8 +116,8 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 		holder.statuses_count.setText(getLocalizedNumber(mLocale, user.statuses_count));
 		holder.followers_count.setText(getLocalizedNumber(mLocale, user.followers_count));
 		holder.friends_count.setText(getLocalizedNumber(mLocale, user.friends_count));
-		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
-		if (mDisplayProfileImage) {
+		holder.profile_image.setVisibility(isDisplayProfileImage() ? View.VISIBLE : View.GONE);
+		if (isDisplayProfileImage()) {
 			mProfileImageLoader.displayProfileImage(holder.profile_image, user.profile_image_url);
 		}
 		holder.item_menu.setTag(position);
@@ -166,28 +168,6 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 	}
 
 	@Override
-	public void setDisplayNameFirst(final boolean name_first) {
-
-	}
-
-	@Override
-	public void setDisplayProfileImage(final boolean display) {
-		if (display != mDisplayProfileImage) {
-			mDisplayProfileImage = display;
-			notifyDataSetChanged();
-		}
-	}
-
-	@Override
-	public void setLinkHighlightColor(final int color) {
-	}
-
-	@Override
-	public void setLinkHighlightOption(final String option) {
-
-	}
-
-	@Override
 	public void setMaxAnimationPosition(final int position) {
 		mMaxAnimationPosition = position;
 	}
@@ -195,28 +175,6 @@ public class ParcelableUsersAdapter extends ArrayAdapter<ParcelableUser> impleme
 	@Override
 	public void setMenuButtonClickListener(final MenuButtonClickListener listener) {
 		mListener = listener;
-	}
-
-	@Override
-	public void setNicknameOnly(final boolean nickname_only) {
-		if (mNicknameOnly == nickname_only) return;
-		mNicknameOnly = nickname_only;
-		notifyDataSetChanged();
-	}
-
-	public void setShowAccountColor(final boolean show) {
-		if (show != mShowAccountColor) {
-			mShowAccountColor = show;
-			notifyDataSetChanged();
-		}
-	}
-
-	@Override
-	public void setTextSize(final float text_size) {
-		if (text_size != mTextSize) {
-			mTextSize = text_size;
-			notifyDataSetChanged();
-		}
 	}
 
 	private static int getItemResource(final boolean compactCards) {

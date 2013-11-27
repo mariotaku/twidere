@@ -25,7 +25,6 @@ public class ParcelableUserMention implements Parcelable, JSONParcelable {
 			return new ParcelableUserMention[size];
 		}
 	};
-
 	public static final JSONParcelable.Creator<ParcelableUserMention> JSON_CREATOR = new JSONParcelable.Creator<ParcelableUserMention>() {
 		@Override
 		public ParcelableUserMention createFromParcel(final JSONParcel in) {
@@ -37,8 +36,8 @@ public class ParcelableUserMention implements Parcelable, JSONParcelable {
 			return new ParcelableUserMention[size];
 		}
 	};
-
 	public long id;
+
 	public String name, screen_name;
 
 	public ParcelableUserMention(final JSONParcel in) {
@@ -117,5 +116,22 @@ public class ParcelableUserMention implements Parcelable, JSONParcelable {
 			mentions[i] = new ParcelableUserMention(entities[i]);
 		}
 		return mentions;
+	}
+
+	public static boolean hasMention(final ParcelableUserMention[] mentions, final long id) {
+		if (mentions == null) return false;
+		for (final ParcelableUserMention mention : mentions) {
+			if (mention.id == id) return true;
+		}
+		return false;
+	}
+
+	public static boolean hasMention(final String json, final long id) {
+		final ParcelableUserMention[] mentions = fromJSONString(json);
+		if (mentions == null) return false;
+		for (final ParcelableUserMention mention : mentions) {
+			if (mention.id == id) return true;
+		}
+		return false;
 	}
 }

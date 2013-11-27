@@ -43,7 +43,7 @@ import org.mariotaku.twidere.view.holder.UserListViewHolder;
 import java.util.List;
 import java.util.Locale;
 
-public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList> implements IBaseCardAdapter,
+public class ParcelableUserListsAdapter extends BaseArrayAdapter<ParcelableUserList> implements IBaseCardAdapter,
 		OnClickListener {
 
 	private final Context mContext;
@@ -51,8 +51,7 @@ public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList>
 	private final MultiSelectManager mMultiSelectManager;
 	private final Locale mLocale;
 
-	private boolean mDisplayProfileImage, mDisplayNameFirst, mNicknameOnly, mAnimationEnabled;
-	private float mTextSize;
+	private boolean mAnimationEnabled;
 	private int mMaxAnimationPosition;
 
 	private MenuButtonClickListener mListener;
@@ -95,16 +94,16 @@ public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList>
 		}
 		final ParcelableUserList user_list = getItem(position);
 		final String display_name = getDisplayName(mContext, user_list.user_id, user_list.user_name,
-				user_list.user_screen_name, mDisplayNameFirst, mNicknameOnly, false);
-		holder.setTextSize(mTextSize);
+				user_list.user_screen_name, isDisplayNameFirst(), isNicknameOnly(), false);
+		holder.setTextSize(getTextSize());
 		holder.name.setText(user_list.name);
 		holder.created_by.setText(mContext.getString(R.string.created_by, display_name));
 		holder.description.setVisibility(TextUtils.isEmpty(user_list.description) ? View.GONE : View.VISIBLE);
 		holder.description.setText(user_list.description);
 		holder.members_count.setText(getLocalizedNumber(mLocale, user_list.members_count));
 		holder.subscribers_count.setText(getLocalizedNumber(mLocale, user_list.subscribers_count));
-		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
-		if (mDisplayProfileImage) {
+		holder.profile_image.setVisibility(isDisplayProfileImage() ? View.VISIBLE : View.GONE);
+		if (isDisplayProfileImage()) {
 			mProfileImageLoader.displayProfileImage(holder.profile_image, user_list.user_profile_image_url);
 		}
 		holder.profile_image.setTag(position);
@@ -159,30 +158,6 @@ public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList>
 	}
 
 	@Override
-	public void setDisplayNameFirst(final boolean name_first) {
-		if (mDisplayNameFirst == name_first) return;
-		mDisplayNameFirst = name_first;
-		notifyDataSetChanged();
-	}
-
-	@Override
-	public void setDisplayProfileImage(final boolean display) {
-		if (display != mDisplayProfileImage) {
-			mDisplayProfileImage = display;
-			notifyDataSetChanged();
-		}
-	}
-
-	@Override
-	public void setLinkHighlightColor(final int color) {
-	}
-
-	@Override
-	public void setLinkHighlightOption(final String option) {
-
-	}
-
-	@Override
 	public void setMaxAnimationPosition(final int position) {
 		mMaxAnimationPosition = position;
 	}
@@ -190,21 +165,6 @@ public class ParcelableUserListsAdapter extends ArrayAdapter<ParcelableUserList>
 	@Override
 	public void setMenuButtonClickListener(final MenuButtonClickListener listener) {
 		mListener = listener;
-	}
-
-	@Override
-	public void setNicknameOnly(final boolean nickname_only) {
-		if (mNicknameOnly == nickname_only) return;
-		mNicknameOnly = nickname_only;
-		notifyDataSetChanged();
-	}
-
-	@Override
-	public void setTextSize(final float text_size) {
-		if (text_size != mTextSize) {
-			mTextSize = text_size;
-			notifyDataSetChanged();
-		}
 	}
 
 	private static int getItemResource(final boolean compactCards) {

@@ -109,8 +109,8 @@ public class CardPreviewPreference extends Preference implements Constants, OnSh
 		if (highlight_option != LINK_HIGHLIGHT_OPTION_CODE_NONE) {
 			mHolder.text.setText(Html.fromHtml(TWIDERE_PREVIEW_TEXT_HTML));
 			mLinkify.applyAllLinks(mHolder.text, 0, false);
-			mLinkify.applyUserProfileLink(mHolder.name, 0, 0, TWIDERE_PREVIEW_SCREEN_NAME);
-			mLinkify.applyUserProfileLink(mHolder.screen_name, 0, 0, TWIDERE_PREVIEW_SCREEN_NAME);
+			mLinkify.applyUserProfileLinkNoHighlight(mHolder.name, 0, 0, TWIDERE_PREVIEW_SCREEN_NAME);
+			mLinkify.applyUserProfileLinkNoHighlight(mHolder.screen_name, 0, 0, TWIDERE_PREVIEW_SCREEN_NAME);
 		} else {
 			mHolder.text.setText(toPlainText(TWIDERE_PREVIEW_TEXT_HTML));
 		}

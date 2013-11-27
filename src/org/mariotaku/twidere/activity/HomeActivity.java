@@ -866,7 +866,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			final Fragment f = mAttachedFragments.valueAt(i);
 			final View headerView = getPullToRefreshHeaderView(f);
 			if (headerView != null) {
-				headerView.scrollTo((int) -FloatMath.ceil(percentOpen * ld.getMeasuredWidth()), headerView.getScrollY());
+				headerView
+						.scrollTo((int) -FloatMath.ceil(percentOpen * ld.getMeasuredWidth()), headerView.getScrollY());
 			}
 		}
 	}

@@ -35,7 +35,6 @@ import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -50,13 +49,13 @@ import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.view.holder.DirectMessageEntryViewHolder;
 
-public class DirectMessageConversationEntriesAdapter extends SimpleCursorAdapter implements IBaseCardAdapter, OnClickListener {
+public class DirectMessageConversationEntriesAdapter extends BaseCursorAdapter implements IBaseCardAdapter,
+		OnClickListener {
 
 	private final ImageLoaderWrapper mLazyImageLoader;
 	private final MultiSelectManager mMultiSelectManager;
 
-	private boolean mDisplayProfileImage, mShowAccountColor, mNicknameOnly, mAnimationEnabled;
-	private float mTextSize;
+	private boolean mAnimationEnabled;
 	private int mMaxAnimationPosition;
 
 	private MenuButtonClickListener mListener;
@@ -77,33 +76,36 @@ public class DirectMessageConversationEntriesAdapter extends SimpleCursorAdapter
 	public void bindView(final View view, final Context context, final Cursor cursor) {
 		final DirectMessageEntryViewHolder holder = (DirectMessageEntryViewHolder) view.getTag();
 		final int position = cursor.getPosition();
-		final long account_id = cursor.getLong(ConversationEntries.IDX_ACCOUNT_ID);
-		final long conversation_id = cursor.getLong(ConversationEntries.IDX_CONVERSATION_ID);
-		final long message_timestamp = cursor.getLong(ConversationEntries.IDX_MESSAGE_TIMESTAMP);
-		final boolean is_outgoing = cursor.getInt(ConversationEntries.IDX_IS_OUTGOING) == 1;
+		final long accountId = cursor.getLong(ConversationEntries.IDX_ACCOUNT_ID);
+		final long conversationId = cursor.getLong(ConversationEntries.IDX_CONVERSATION_ID);
+		final long timestamp = cursor.getLong(ConversationEntries.IDX_MESSAGE_TIMESTAMP);
+		final boolean isOutgoing = cursor.getInt(ConversationEntries.IDX_IS_OUTGOING) == 1;
 
 		final String name = cursor.getString(IDX_NAME);
-		final String screen_name = cursor.getString(IDX_SCREEN_NAME);
+		final String screenName = cursor.getString(IDX_SCREEN_NAME);
 
-		holder.setAccountColorEnabled(mShowAccountColor);
+		final boolean showAccountColor = isShowAccountColor();
 
-		if (mShowAccountColor) {
-			holder.setAccountColor(getAccountColor(mContext, account_id));
+		holder.setAccountColorEnabled(showAccountColor);
+
+		if (showAccountColor) {
+			holder.setAccountColor(getAccountColor(mContext, accountId));
 		}
 
-		holder.setUserColor(getUserColor(mContext, conversation_id));
+		holder.setUserColor(getUserColor(mContext, conversationId));
 
-		holder.setTextSize(mTextSize);
-		final String nick = getUserNickname(context, conversation_id);
-		holder.name.setText(TextUtils.isEmpty(nick) ? name : mNicknameOnly ? nick : context.getString(
+		holder.setTextSize(getTextSize());
+		final String nick = getUserNickname(context, conversationId);
+		holder.name.setText(TextUtils.isEmpty(nick) ? name : isNicknameOnly() ? nick : context.getString(
 				R.string.name_with_nickname, name, nick));
-		holder.screen_name.setText("@" + screen_name);
+		holder.screen_name.setText("@" + screenName);
 		holder.screen_name.setVisibility(View.VISIBLE);
 		holder.text.setText(toPlainText(cursor.getString(IDX_TEXT)));
-		holder.time.setTime(message_timestamp);
-		holder.setIsOutgoing(is_outgoing);
-		holder.profile_image.setVisibility(mDisplayProfileImage ? View.VISIBLE : View.GONE);
-		if (mDisplayProfileImage) {
+		holder.time.setTime(timestamp);
+		holder.setIsOutgoing(isOutgoing);
+		final boolean displayProfileImage = isDisplayProfileImage();
+		holder.profile_image.setVisibility(displayProfileImage ? View.VISIBLE : View.GONE);
+		if (displayProfileImage) {
 			holder.profile_image.setTag(position);
 			final String profile_image_url_string = cursor.getString(IDX_PROFILE_IMAGE_URL);
 			mLazyImageLoader.displayProfileImage(holder.profile_image, profile_image_url_string);
@@ -172,29 +174,6 @@ public class DirectMessageConversationEntriesAdapter extends SimpleCursorAdapter
 	}
 
 	@Override
-	public void setDisplayNameFirst(final boolean name_first) {
-
-	}
-
-	@Override
-	public void setDisplayProfileImage(final boolean display) {
-		if (display != mDisplayProfileImage) {
-			mDisplayProfileImage = display;
-			notifyDataSetChanged();
-		}
-	}
-
-	@Override
-	public void setLinkHighlightColor(final int color) {
-
-	}
-
-	@Override
-	public void setLinkHighlightOption(final String option) {
-
-	}
-
-	@Override
 	public void setMaxAnimationPosition(final int position) {
 		mMaxAnimationPosition = position;
 	}
@@ -202,28 +181,6 @@ public class DirectMessageConversationEntriesAdapter extends SimpleCursorAdapter
 	@Override
 	public void setMenuButtonClickListener(final MenuButtonClickListener listener) {
 		mListener = listener;
-	}
-
-	@Override
-	public void setNicknameOnly(final boolean nickname_only) {
-		if (mNicknameOnly == nickname_only) return;
-		mNicknameOnly = nickname_only;
-		notifyDataSetChanged();
-	}
-
-	public void setShowAccountColor(final boolean show) {
-		if (show != mShowAccountColor) {
-			mShowAccountColor = show;
-			notifyDataSetChanged();
-		}
-	}
-
-	@Override
-	public void setTextSize(final float text_size) {
-		if (text_size != mTextSize) {
-			mTextSize = text_size;
-			notifyDataSetChanged();
-		}
 	}
 
 	private static int getItemResource(final boolean compactCards) {
