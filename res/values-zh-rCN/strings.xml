@@ -199,8 +199,8 @@
   <string name="type_to_compose">键入信息</string>
   <string name="users_lists">列表</string>
   <string name="lists_following_user">关注这个用户的列表</string>
-  <string name="Nstatuses_quantity_one">你有一条新推文</string>
-  <string name="Nstatuses_quantity_other">你有 <xliff:g id="items">%d</xliff:g> 条新推文</string>
+  <string name="you_have_N_new_statuses_quantity_one">你有一条新推文</string>
+  <string name="you_have_N_new_statuses_quantity_other">你有 <xliff:g id="items">%d</xliff:g> 条新推文</string>
   <string name="item_1_minute">1分钟</string>
   <string name="item_3_minutes">3分钟</string>
   <string name="item_5_minutes">5分钟</string>

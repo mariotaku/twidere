@@ -477,6 +477,63 @@
 		<service
 			android:name="edu.ucdavis.earlybird.UCDService"
 			android:settingsActivity=".activity.DataProfilingSettingsActivity"/>
+		<service
+			android:name=".service.DashclockHomeUnreadCountService"
+			android:icon="@drawable/ic_extension_twidere"
+			android:label="@string/dashclock_home_unread_count_name"
+			android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA">
+			<intent-filter>
+				<action android:name="com.google.android.apps.dashclock.Extension"/>
+			</intent-filter>
+
+			<meta-data
+				android:name="protocolVersion"
+				android:value="2"/>
+			<meta-data
+				android:name="worldReadable"
+				android:value="true"/>
+			<meta-data
+				android:name="description"
+				android:value="@string/dashclock_home_unread_count_description"/>
+		</service>
+		<service
+			android:name=".service.DashclockMentionsUnreadCountService"
+			android:icon="@drawable/ic_extension_mentions"
+			android:label="@string/dashclock_mentions_unread_count_name"
+			android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA">
+			<intent-filter>
+				<action android:name="com.google.android.apps.dashclock.Extension"/>
+			</intent-filter>
+
+			<meta-data
+				android:name="protocolVersion"
+				android:value="2"/>
+			<meta-data
+				android:name="worldReadable"
+				android:value="true"/>
+			<meta-data
+				android:name="description"
+				android:value="@string/dashclock_mentions_unread_count_description"/>
+		</service>
+		<service
+			android:name=".service.DashclockMessagesUnreadCountService"
+			android:icon="@drawable/ic_extension_messages"
+			android:label="@string/dashclock_messages_unread_count_name"
+			android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA">
+			<intent-filter>
+				<action android:name="com.google.android.apps.dashclock.Extension"/>
+			</intent-filter>
+
+			<meta-data
+				android:name="protocolVersion"
+				android:value="2"/>
+			<meta-data
+				android:name="worldReadable"
+				android:value="true"/>
+			<meta-data
+				android:name="description"
+				android:value="@string/dashclock_messages_unread_count_description"/>
+		</service>
 
 		<provider
 			android:name=".provider.TwidereDataProvider"

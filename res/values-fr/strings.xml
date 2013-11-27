@@ -195,8 +195,8 @@
   <string name="type_to_compose">Tapez pour composer</string>
   <string name="users_lists">Listes de l\'utilisateur</string>
   <string name="lists_following_user">Liste dont cet utilisateur est membre</string>
-  <string name="Nstatuses_quantity_one">Vous avez un nouveau tweet.</string>
-  <string name="Nstatuses_quantity_other">Vous avez <xliff:g id="items">%d</xliff:g> nouveaux tweets.</string>
+  <string name="you_have_N_new_statuses_quantity_one">Vous avez un nouveau tweet.</string>
+  <string name="you_have_N_new_statuses_quantity_other">Vous avez <xliff:g id="items">%d</xliff:g> nouveaux tweets.</string>
   <string name="item_1_minute">1 minute</string>
   <string name="item_3_minutes">3 minutes</string>
   <string name="item_5_minutes">5 minutes</string>

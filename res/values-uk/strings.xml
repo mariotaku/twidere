@@ -197,8 +197,8 @@
   <string name="type_to_compose">Напишіть повідомлення</string>
   <string name="users_lists">Списки користувачів</string>
   <string name="lists_following_user">Списки підписаних на цього користувача</string>
-  <string name="Nstatuses_quantity_one">Ви маєте новий твіт.</string>
-  <string name="Nstatuses_quantity_other">Ви маєте <xliff:g id="items">%d</xliff:g> нових твітів.</string>
+  <string name="you_have_N_new_statuses_quantity_one">Ви маєте новий твіт.</string>
+  <string name="you_have_N_new_statuses_quantity_other">Ви маєте <xliff:g id="items">%d</xliff:g> нових твітів.</string>
   <string name="item_1_minute">1 хвилина</string>
   <string name="item_3_minutes">3 хвилини</string>
   <string name="item_5_minutes">5 хвилин</string>

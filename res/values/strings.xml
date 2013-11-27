@@ -200,8 +200,8 @@
 	<string name="type_to_compose">Type to compose</string>
 	<string name="users_lists">User\'s lists</string>
 	<string name="lists_following_user">Lists following this user</string>
-	<string name="Nstatuses_quantity_one">You have a new tweet.</string>
-	<string name="Nstatuses_quantity_other">You have <xliff:g id="items">%d</xliff:g> new tweets.</string>
+	<string name="you_have_N_new_statuses_quantity_one">You have a new tweet.</string>
+	<string name="you_have_N_new_statuses_quantity_other">You have <xliff:g id="items">%d</xliff:g> new tweets.</string>
 	<string name="item_1_minute">1 minute</string>
 	<string name="item_3_minutes">3 minutes</string>
 	<string name="item_5_minutes">5 minutes</string>
@@ -584,5 +584,17 @@
 	<string name="replies">Replies</string>
 	<string name="compact_cards">Compact cards</string>
 	<string name="compact_cards_summary">Display more cards on screen</string>
+	<string name="dashclock_home_unread_count_name">Twidere home unread count</string>
+	<string name="dashclock_home_unread_count_description">Home unread count</string>
+	<string name="dashclock_mentions_unread_count_name">Twidere mentions unread count</string>
+	<string name="dashclock_mentions_unread_count_description">Mentions unread count</string>
+	<string name="dashclock_messages_unread_count_name">Twidere messages unread count</string>
+	<string name="dashclock_messages_unread_count_description">Messages unread count</string>
+	<string name="N_new_statuses_quantity_one"><xliff:g id="items">%d</xliff:g> new tweet</string>
+	<string name="N_new_statuses_quantity_other"><xliff:g id="items">%d</xliff:g> new tweets</string>
+	<string name="N_new_mentions_quantity_one"><xliff:g id="items">%d</xliff:g> new mention</string>
+	<string name="N_new_mentions_quantity_other"><xliff:g id="items">%d</xliff:g> new mentions</string>
+	<string name="N_new_messages_quantity_one"><xliff:g id="items">%d</xliff:g> new message conversation</string>
+	<string name="N_new_messages_quantity_other"><xliff:g id="items">%d</xliff:g> new message conversations</string>
 
 </resources>

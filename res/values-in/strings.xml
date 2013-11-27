@@ -192,8 +192,8 @@
   <string name="type_to_compose">Ketik untuk membuat baru</string>
   <string name="users_lists">Daftar pengguna ini</string>
   <string name="lists_following_user">Daftar mengikuti pengguna ini</string>
-  <string name="Nstatuses_quantity_one">Anda mempunyai twit baru.</string>
-  <string name="Nstatuses_quantity_other">Anda memiliki <xliff:g id="items">%d</xliff:g> twit baru.</string>
+  <string name="you_have_N_new_statuses_quantity_one">Anda mempunyai twit baru.</string>
+  <string name="you_have_N_new_statuses_quantity_other">Anda memiliki <xliff:g id="items">%d</xliff:g> twit baru.</string>
   <string name="item_1_minute">1 menit</string>
   <string name="item_3_minutes">3 menit</string>
   <string name="item_5_minutes">5 menit</string>

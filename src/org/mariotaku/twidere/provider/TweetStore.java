@@ -723,9 +723,7 @@ public final class TweetStore {
 
 	public static interface UnreadCounts extends BaseColumns {
 
-		public static final String TABLE_NAME = "unread_counts";
-
-		public static final String CONTENT_PATH = TABLE_NAME;
+		public static final String CONTENT_PATH = "unread_counts";
 
 		public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH);
 
@@ -738,5 +736,14 @@ public final class TweetStore {
 		public static final String[] MATRIX_COLUMNS = new String[] { TAB_POSITION, TAB_TYPE, COUNT };
 
 		public static final String[] COLUMNS = new String[] { _ID, TAB_POSITION, TAB_TYPE, COUNT };
+
+		public static interface ByType extends UnreadCounts {
+
+			public static final String CONTENT_PATH_SEGMENT = "by_type";
+
+			public static final String CONTENT_PATH = UnreadCounts.CONTENT_PATH + "/" + CONTENT_PATH_SEGMENT;
+
+			public static final Uri CONTENT_URI = Uri.withAppendedPath(UnreadCounts.CONTENT_URI, CONTENT_PATH_SEGMENT);
+		}
 	}
 }

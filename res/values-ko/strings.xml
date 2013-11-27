@@ -183,7 +183,7 @@
   <string name="type_to_compose">작성 유형</string>
   <string name="users_lists">사용자 리스트</string>
   <string name="lists_following_user">이 리스트를 팔로잉 하는 사용자</string>
-  <string name="Nstatuses_quantity_one">새로운 트윗이 있습니다.</string>
+  <string name="you_have_N_new_statuses_quantity_one">새로운 트윗이 있습니다.</string>
   <string name="item_1_minute">1분</string>
   <string name="item_3_minutes">3분</string>
   <string name="item_5_minutes">5분</string>

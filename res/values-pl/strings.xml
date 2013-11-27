@@ -198,8 +198,8 @@
   <string name="type_to_compose">Wpisuj</string>
   <string name="users_lists">Listy użytkownika</string>
   <string name="lists_following_user">Listy obserwujące tego użytkownika</string>
-  <string name="Nstatuses_quantity_one">Masz nowego ćwierka.</string>
-  <string name="Nstatuses_quantity_other">Masz <xliff:g id="items">%d</xliff:g> nowych ćwierków.</string>
+  <string name="you_have_N_new_statuses_quantity_one">Masz nowego ćwierka.</string>
+  <string name="you_have_N_new_statuses_quantity_other">Masz <xliff:g id="items">%d</xliff:g> nowych ćwierków.</string>
   <string name="item_1_minute">1 minuta</string>
   <string name="item_3_minutes">3 minuty</string>
   <string name="item_5_minutes">5 minut</string>

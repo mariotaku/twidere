@@ -74,6 +74,7 @@ import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Preferences;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
+import org.mariotaku.twidere.provider.TweetStore.UnreadCounts;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.CustomTabUtils;
 import org.mariotaku.twidere.util.HtmlEscapeHelper;
@@ -358,6 +359,11 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 					else
 						return getUnreadCountsCursor();
 				}
+				case VIRTUAL_TABLE_ID_UNREAD_COUNTS_BY_TYPE: {
+					final List<String> segments = uri.getPathSegments();
+					if (segments.size() != 3) return null;
+					return getUnreadCountsCursorByType(segments.get(2));
+				}
 				case TABLE_ID_DIRECT_MESSAGES_CONVERSATION: {
 					final List<String> segments = uri.getPathSegments();
 					if (segments.size() != 4) return null;
@@ -614,6 +620,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		saveUnreadItemsFile(mUnreadStatuses, UNREAD_STATUSES_FILE_NAME);
 		saveUnreadItemsFile(mUnreadMentions, UNREAD_MENTIONS_FILE_NAME);
 		saveUnreadItemsFile(mUnreadMessages, UNREAD_MESSAGES_FILE_NAME);
+		notifyContentObserver(UnreadCounts.CONTENT_URI);
 		return result;
 	}
 
@@ -918,8 +925,26 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		} else {
 			count = 0;
 		}
-		if (type != null && count != 0) {
+		if (type != null) {
 			c.addRow(new Object[] { position, type, count });
+		}
+		return c;
+	}
+
+	private Cursor getUnreadCountsCursorByType(final String type) {
+		final MatrixCursor c = new MatrixCursor(TweetStore.UnreadCounts.MATRIX_COLUMNS);
+		final int count;
+		if (TAB_TYPE_HOME_TIMELINE.equals(type) || TAB_TYPE_STAGGERED_HOME_TIMELINE.equals(type)) {
+			count = mUnreadStatuses.size();
+		} else if (TAB_TYPE_MENTIONS_TIMELINE.equals(type)) {
+			count = mUnreadMentions.size();
+		} else if (TAB_TYPE_DIRECT_MESSAGES.equals(type)) {
+			count = mUnreadMessages.size();
+		} else {
+			count = 0;
+		}
+		if (type != null) {
+			c.addRow(new Object[] { -1, type, count });
 		}
 		return c;
 	}
@@ -1013,6 +1038,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		intent.putExtra(EXTRA_TAB_POSITION, position);
 		final Context context = getContext();
 		context.sendBroadcast(intent);
+		notifyContentObserver(UnreadCounts.CONTENT_URI);
 	}
 
 	private void onDatabaseUpdated(final Uri uri) {
@@ -1244,11 +1270,11 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		return result;
 	}
 
-	private static int getUnreadCount(final Set<UnreadItem> set, final long[] account_ids) {
+	private static int getUnreadCount(final Set<UnreadItem> set, final long... accountIds) {
 		int count = 0;
 		final Iterator<UnreadItem> it = set.iterator();
 		while (it.hasNext()) {
-			if (ArrayUtils.contains(account_ids, it.next().account_id)) {
+			if (ArrayUtils.contains(accountIds, it.next().account_id)) {
 				count++;
 			}
 		}

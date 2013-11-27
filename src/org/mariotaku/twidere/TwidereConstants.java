@@ -547,7 +547,6 @@ public interface TwidereConstants {
 	public static final String TABLE_DNS = TweetStore.DNS.TABLE_NAME;
 	public static final String TABLE_CACHED_IMAGES = TweetStore.CachedImages.TABLE_NAME;
 	public static final String TABLE_CACHE_FILES = TweetStore.CacheFiles.TABLE_NAME;
-	public static final String TABLE_UNREAD_COUNTS = TweetStore.UnreadCounts.TABLE_NAME;
 
 	public static final int TABLE_ID_ACCOUNTS = 1;
 	public static final int TABLE_ID_STATUSES = 12;
@@ -576,6 +575,7 @@ public interface TwidereConstants {
 	public static final int VIRTUAL_TABLE_ID_CACHED_IMAGES = 106;
 	public static final int VIRTUAL_TABLE_ID_CACHE_FILES = 107;
 	public static final int VIRTUAL_TABLE_ID_UNREAD_COUNTS = 108;
+	public static final int VIRTUAL_TABLE_ID_UNREAD_COUNTS_BY_TYPE = 109;
 
 	public static final int NOTIFICATION_ID_HOME_TIMELINE = 1;
 	public static final int NOTIFICATION_ID_MENTIONS = 2;
