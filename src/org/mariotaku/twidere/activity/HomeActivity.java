@@ -631,7 +631,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		invalidateOptionsMenu();
 		updateActionsButtonStyle();
 		updateActionsButton();
-		mHandler.postDelayed(new FixPullToRefreshScrollRunnable(this), 50);
+		mHandler.postDelayed(new FixPullToRefreshScrollRunnable(this), 100);
 		updateSlidingMenuTouchMode();
 	}
 
