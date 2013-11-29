@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.DialogPreference;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.SeekBar;
@@ -100,8 +101,10 @@ public class SeekBarDialogPreference extends DialogPreference {
 	protected void onBindDialogView(final View view) {
 		super.onBindDialogView(view);
 
+		final CharSequence message = getDialogMessage();
 		final TextView dialogMessageText = (TextView) view.findViewById(R.id.text_dialog_message);
-		dialogMessageText.setText(getDialogMessage());
+		dialogMessageText.setText(message);
+		dialogMessageText.setVisibility(TextUtils.isEmpty(message) ? View.GONE : View.VISIBLE);
 
 		mProgressText = (TextView) view.findViewById(R.id.text_progress);
 

@@ -20,9 +20,12 @@
 package org.mariotaku.twidere.fragment.support;
 
 import static android.text.TextUtils.isEmpty;
+import static org.mariotaku.twidere.util.UserColorNicknameUtils.clearUserColor;
+import static org.mariotaku.twidere.util.UserColorNicknameUtils.clearUserNickname;
+import static org.mariotaku.twidere.util.UserColorNicknameUtils.getUserColor;
+import static org.mariotaku.twidere.util.UserColorNicknameUtils.getUserNickname;
+import static org.mariotaku.twidere.util.UserColorNicknameUtils.setUserColor;
 import static org.mariotaku.twidere.util.Utils.cancelRetweet;
-import static org.mariotaku.twidere.util.Utils.clearUserColor;
-import static org.mariotaku.twidere.util.Utils.clearUserNickname;
 import static org.mariotaku.twidere.util.Utils.findStatus;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
@@ -31,8 +34,6 @@ import static org.mariotaku.twidere.util.Utils.getDefaultTextSize;
 import static org.mariotaku.twidere.util.Utils.getDisplayName;
 import static org.mariotaku.twidere.util.Utils.getMapStaticImageUri;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
-import static org.mariotaku.twidere.util.Utils.getUserColor;
-import static org.mariotaku.twidere.util.Utils.getUserNickname;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.isSameAccount;
@@ -43,9 +44,9 @@ import static org.mariotaku.twidere.util.Utils.openStatusRetweeters;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
 import static org.mariotaku.twidere.util.Utils.scrollListToPosition;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
-import static org.mariotaku.twidere.util.Utils.setUserColor;
 import static org.mariotaku.twidere.util.Utils.showErrorMessage;
 import static org.mariotaku.twidere.util.Utils.showOkMessage;
+import static org.mariotaku.twidere.util.Utils.startStatusShareChooser;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -105,7 +106,6 @@ import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.PreviewMedia;
 import org.mariotaku.twidere.model.SingleResponse;
-import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.task.AsyncTask;
 import org.mariotaku.twidere.text.method.StatusContentMovementMethod;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
@@ -341,14 +341,14 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		linkify.setHighlightColor(mPreferences.getInt(PREFERENCE_KEY_THEME_COLOR, new TextPaint().linkColor));
 		linkify.applyAllLinks(mTextView, status.account_id, status.is_possibly_sensitive);
 		mTextView.setMovementMethod(StatusContentMovementMethod.getInstance());
-		final String time = formatToLongTimeString(getActivity(), status.timestamp);
+		final String timeString = formatToLongTimeString(getActivity(), status.timestamp);
 		final String source_html = status.source;
-		if (!isEmpty(time) && !isEmpty(source_html)) {
-			mTimeSourceView.setText(Html.fromHtml(getString(R.string.time_source, time, source_html)));
-		} else if (isEmpty(time) && !isEmpty(source_html)) {
+		if (!isEmpty(timeString) && !isEmpty(source_html)) {
+			mTimeSourceView.setText(Html.fromHtml(getString(R.string.time_source, timeString, source_html)));
+		} else if (isEmpty(timeString) && !isEmpty(source_html)) {
 			mTimeSourceView.setText(Html.fromHtml(getString(R.string.source, source_html)));
-		} else if (!isEmpty(time) && isEmpty(source_html)) {
-			mTimeSourceView.setText(time);
+		} else if (!isEmpty(timeString) && isEmpty(source_html)) {
+			mTimeSourceView.setText(timeString);
 		}
 		mTimeSourceView.setMovementMethod(LinkMovementMethod.getInstance());
 
@@ -466,7 +466,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		switch (requestCode) {
 			case REQUEST_SET_COLOR: {
 				if (resultCode == Activity.RESULT_OK && intent != null) {
-					final int color = intent.getIntExtra(Accounts.USER_COLOR, Color.TRANSPARENT);
+					final int color = intent.getIntExtra(EXTRA_COLOR, Color.TRANSPARENT);
 					setUserColor(getActivity(), mStatus.user_id, color);
 				}
 				break;
@@ -681,13 +681,9 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	protected boolean handleMenuItemClick(final MenuItem item) {
 		if (mStatus == null) return false;
-		final String text_plain = mStatus.text_plain;
 		switch (item.getItemId()) {
 			case MENU_SHARE: {
-				final Intent intent = new Intent(Intent.ACTION_SEND);
-				intent.setType("text/plain");
-				intent.putExtra(Intent.EXTRA_TEXT, "@" + mStatus.user_screen_name + ": " + text_plain);
-				startActivity(Intent.createChooser(intent, getString(R.string.share)));
+				startStatusShareChooser(getActivity(), mStatus);
 				break;
 			}
 			case MENU_COPY: {
@@ -740,6 +736,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			}
 			case MENU_SET_COLOR: {
 				final Intent intent = new Intent(getActivity(), ColorPickerDialogActivity.class);
+				intent.putExtra(EXTRA_COLOR, getUserColor(getActivity(), mStatus.user_id, true));
+				intent.putExtra(EXTRA_ALPHA_SLIDER, false);
 				startActivityForResult(intent, REQUEST_SET_COLOR);
 				break;
 			}

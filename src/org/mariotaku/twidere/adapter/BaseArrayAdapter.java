@@ -22,6 +22,8 @@ package org.mariotaku.twidere.adapter;
 import static org.mariotaku.twidere.util.Utils.getLinkHighlightOptionInt;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 
 import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
@@ -29,7 +31,7 @@ import org.mariotaku.twidere.util.TwidereLinkify;
 
 import java.util.Collection;
 
-public class BaseArrayAdapter<T> extends ArrayAdapter<T> implements IBaseAdapter {
+public class BaseArrayAdapter<T> extends ArrayAdapter<T> implements IBaseAdapter, OnSharedPreferenceChangeListener {
 
 	private final TwidereLinkify mLinkify;
 
@@ -38,6 +40,8 @@ public class BaseArrayAdapter<T> extends ArrayAdapter<T> implements IBaseAdapter
 
 	private boolean mDisplayProfileImage, mNicknameOnly, mDisplayNameFirst, mShowAccountColor;
 
+	private final SharedPreferences mNicknamePrefs, mColorPrefs;
+
 	public BaseArrayAdapter(final Context context, final int layoutRes) {
 		this(context, layoutRes, null);
 	}
@@ -45,7 +49,10 @@ public class BaseArrayAdapter<T> extends ArrayAdapter<T> implements IBaseAdapter
 	public BaseArrayAdapter(final Context context, final int layoutRes, final Collection<? extends T> collection) {
 		super(context, layoutRes, collection);
 		mLinkify = new TwidereLinkify(new OnLinkClickHandler(context));
-		// mLinkify.setHighlightColor(ThemeUtils.getUserThemeColor(context));
+		mNicknamePrefs = context.getSharedPreferences(USER_NICKNAME_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mColorPrefs = context.getSharedPreferences(USER_COLOR_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mNicknamePrefs.registerOnSharedPreferenceChangeListener(this);
+		mColorPrefs.registerOnSharedPreferenceChangeListener(this);
 	}
 
 	@Override
@@ -85,6 +92,11 @@ public class BaseArrayAdapter<T> extends ArrayAdapter<T> implements IBaseAdapter
 	@Override
 	public final boolean isShowAccountColor() {
 		return mShowAccountColor;
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
+		notifyDataSetChanged();
 	}
 
 	@Override

@@ -21,9 +21,12 @@ package org.mariotaku.twidere.fragment.support;
 
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.ParseUtils.parseLong;
+import static org.mariotaku.twidere.util.UserColorNicknameUtils.clearUserColor;
+import static org.mariotaku.twidere.util.UserColorNicknameUtils.clearUserNickname;
+import static org.mariotaku.twidere.util.UserColorNicknameUtils.getUserColor;
+import static org.mariotaku.twidere.util.UserColorNicknameUtils.getUserNickname;
+import static org.mariotaku.twidere.util.UserColorNicknameUtils.setUserColor;
 import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
-import static org.mariotaku.twidere.util.Utils.clearUserColor;
-import static org.mariotaku.twidere.util.Utils.clearUserNickname;
 import static org.mariotaku.twidere.util.Utils.formatToLongTimeString;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
@@ -32,8 +35,6 @@ import static org.mariotaku.twidere.util.Utils.getErrorMessage;
 import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
 import static org.mariotaku.twidere.util.Utils.getOriginalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
-import static org.mariotaku.twidere.util.Utils.getUserColor;
-import static org.mariotaku.twidere.util.Utils.getUserNickname;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.makeFilterdUserContentValues;
@@ -54,7 +55,6 @@ import static org.mariotaku.twidere.util.Utils.openUserTimeline;
 import static org.mariotaku.twidere.util.Utils.setMenuItemAvailability;
 import static org.mariotaku.twidere.util.Utils.setMenuItemIcon;
 import static org.mariotaku.twidere.util.Utils.setMenuItemTitle;
-import static org.mariotaku.twidere.util.Utils.setUserColor;
 import static org.mariotaku.twidere.util.Utils.showInfoMessage;
 
 import android.app.Activity;
@@ -436,7 +436,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		switch (requestCode) {
 			case REQUEST_SET_COLOR: {
 				if (resultCode == Activity.RESULT_OK && intent != null) {
-					final int color = intent.getIntExtra(Accounts.USER_COLOR, Color.TRANSPARENT);
+					final int color = intent.getIntExtra(EXTRA_COLOR, Color.TRANSPARENT);
 					setUserColor(getActivity(), mUserId, color);
 				}
 				break;
@@ -685,6 +685,8 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 			}
 			case MENU_SET_COLOR: {
 				final Intent intent = new Intent(getActivity(), ColorPickerDialogActivity.class);
+				intent.putExtra(EXTRA_COLOR, getUserColor(getActivity(), mUser.id, true));
+				intent.putExtra(EXTRA_ALPHA_SLIDER, false);
 				startActivityForResult(intent, REQUEST_SET_COLOR);
 				break;
 			}

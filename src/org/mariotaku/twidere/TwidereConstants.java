@@ -158,6 +158,8 @@ public interface TwidereConstants {
 	public static final String PREFERENCE_KEY_THEME = "theme";
 	@PreferenceType(PreferenceType.STRING)
 	public static final String PREFERENCE_KEY_THEME_BACKGROUND = "theme_background";
+	@PreferenceType(PreferenceType.BOOLEAN)
+	public static final String PREFERENCE_KEY_THEME_DARK_ACTIONBAR = "theme_dark_actionbar";
 	@PreferenceType(PreferenceType.INT)
 	public static final String PREFERENCE_KEY_THEME_COLOR = "theme_color";
 	@PreferenceType(PreferenceType.NULL)

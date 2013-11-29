@@ -174,6 +174,7 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnC
 
 	private boolean showFragment(final Uri uri) {
 		final Intent intent = getIntent();
+		intent.setExtrasClassLoader(getClassLoader());
 		final Fragment fragment = createFragmentForIntent(this, intent);
 		if (uri == null || fragment == null) return false;
 		switch (matchLinkId(uri)) {

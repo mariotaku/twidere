@@ -12,7 +12,7 @@ import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.provider.TweetStore.UnreadCounts;
 import org.mariotaku.twidere.util.UnreadCountUtils;
 
-public class DashclockMessagesUnreadCountService extends DashClockExtension implements TwidereConstants {
+public class DashClockMentionsUnreadCountService extends DashClockExtension implements TwidereConstants {
 
 	private static final String[] URIS = { UnreadCounts.CONTENT_URI.toString() };
 
@@ -25,12 +25,12 @@ public class DashclockMessagesUnreadCountService extends DashClockExtension impl
 	@Override
 	protected void onUpdateData(final int reason) {
 		final ExtensionData data = new ExtensionData();
-		final int count = UnreadCountUtils.getUnreadCount(this, TAB_TYPE_DIRECT_MESSAGES);
+		final int count = UnreadCountUtils.getUnreadCount(this, TAB_TYPE_MENTIONS_TIMELINE);
 		final Resources res = getResources();
-		data.visible(true);
-		data.icon(R.drawable.ic_extension_messages);
+		data.visible(count > 0);
+		data.icon(R.drawable.ic_extension_mentions);
 		data.status(Integer.toString(count));
-		data.expandedTitle(res.getQuantityString(R.plurals.N_new_messages, count, count));
+		data.expandedTitle(res.getQuantityString(R.plurals.N_new_mentions, count, count));
 		data.clickIntent(new Intent(this, HomeActivity.class));
 		publishUpdate(data);
 	}

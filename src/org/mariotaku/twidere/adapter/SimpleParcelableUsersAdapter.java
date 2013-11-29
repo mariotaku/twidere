@@ -19,8 +19,8 @@
 
 package org.mariotaku.twidere.adapter;
 
+import static org.mariotaku.twidere.util.UserColorNicknameUtils.getUserNickname;
 import static org.mariotaku.twidere.util.Utils.configBaseAdapter;
-import static org.mariotaku.twidere.util.Utils.getUserNickname;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 
 import android.content.Context;

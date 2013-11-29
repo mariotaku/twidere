@@ -22,6 +22,8 @@ package org.mariotaku.twidere.adapter;
 import static org.mariotaku.twidere.util.Utils.getLinkHighlightOptionInt;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.support.v4.widget.SimpleCursorAdapter;
 
@@ -29,7 +31,7 @@ import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.TwidereLinkify;
 
-public class BaseCursorAdapter extends SimpleCursorAdapter implements IBaseAdapter {
+public class BaseCursorAdapter extends SimpleCursorAdapter implements IBaseAdapter, OnSharedPreferenceChangeListener {
 
 	private final TwidereLinkify mLinkify;
 
@@ -38,6 +40,8 @@ public class BaseCursorAdapter extends SimpleCursorAdapter implements IBaseAdapt
 	private int mLinkHighlightOption, mLinkHighlightColor;
 
 	private boolean mDisplayProfileImage, mNicknameOnly, mDisplayNameFirst, mShowAccountColor;
+
+	private final SharedPreferences mNicknamePrefs, mColorPrefs;
 
 	public BaseCursorAdapter(final Context context, final int layout, final Cursor c, final String[] from,
 			final int[] to) {
@@ -48,7 +52,10 @@ public class BaseCursorAdapter extends SimpleCursorAdapter implements IBaseAdapt
 			final int[] to, final int flags) {
 		super(context, layout, c, from, to, flags);
 		mLinkify = new TwidereLinkify(new OnLinkClickHandler(context));
-		// mLinkify.setHighlightColor(ThemeUtils.getUserThemeColor(context));
+		mNicknamePrefs = context.getSharedPreferences(USER_NICKNAME_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mColorPrefs = context.getSharedPreferences(USER_COLOR_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mNicknamePrefs.registerOnSharedPreferenceChangeListener(this);
+		mColorPrefs.registerOnSharedPreferenceChangeListener(this);
 	}
 
 	@Override
@@ -88,6 +95,11 @@ public class BaseCursorAdapter extends SimpleCursorAdapter implements IBaseAdapt
 	@Override
 	public final boolean isShowAccountColor() {
 		return mShowAccountColor;
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
+		notifyDataSetChanged();
 	}
 
 	@Override

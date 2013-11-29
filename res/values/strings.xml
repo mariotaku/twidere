@@ -578,6 +578,7 @@
 	<string name="theme_background_default">Default</string>
 	<string name="theme_background_solid">Pure white/black</string>
 	<string name="theme_background_transparent">Transparent</string>
+	<string name="theme_dark_actionbar">Dark ActionBar</string>
 	<string name="wizard_hint_compose_select_account">Click this icon to select account when writing a tweet.</string>
 	<string name="wizard_hint_quote_format">Set your favorite quote format in &quot;Settings&quot; - &quot;Content &amp; Storage&quot;</string>
 	<string name="wizard_hint_filters">You can hide unwanted tweet from timeline and notifications by using &quot;Filters&quot;.</string>
@@ -594,7 +595,8 @@
 	<string name="N_new_statuses_quantity_other"><xliff:g id="items">%d</xliff:g> new tweets</string>
 	<string name="N_new_mentions_quantity_one"><xliff:g id="items">%d</xliff:g> new mention</string>
 	<string name="N_new_mentions_quantity_other"><xliff:g id="items">%d</xliff:g> new mentions</string>
-	<string name="N_new_messages_quantity_one"><xliff:g id="items">%d</xliff:g> new message conversation</string>
-	<string name="N_new_messages_quantity_other"><xliff:g id="items">%d</xliff:g> new message conversations</string>
+	<string name="N_new_messages_quantity_one"><xliff:g id="items">%d</xliff:g> new conversation</string>
+	<string name="N_new_messages_quantity_other"><xliff:g id="items">%d</xliff:g> new conversations</string>
+	<string name="share_subject_format"><xliff:g id="name">%1$s</xliff:g> (@<xliff:g id="screen_name">%2$s</xliff:g>), at <xliff:g id="time">%3$s</xliff:g></string>
 
 </resources>

@@ -1390,7 +1390,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 						}
 						if (isSinceIdsValid() && since_ids[idx] > 0) {
 							since_id = since_ids[idx];
-							// paging.setSinceId(since_id - 1);
+							paging.setSinceId(since_id - 1);
 						}
 						final List<DirectMessage> messages = new ArrayList<DirectMessage>();
 						final boolean truncated = truncateMessages(getDirectMessages(twitter, paging), messages,
@@ -1622,17 +1622,10 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 						}
 						if (isSinceIdsValid() && since_ids[idx] > 0) {
 							since_id = since_ids[idx];
-							// paging.setSinceId(since_id - 1);
+							paging.setSinceId(since_id - 1);
 						}
 						final List<twitter4j.Status> statuses = new ArrayList<twitter4j.Status>();
 						final boolean truncated = truncateStatuses(getStatuses(twitter, paging), statuses, since_id);
-						// final List<twitter4j.Status> statuses =
-						// getStatuses(twitter, paging);
-						// Log.d(getClass().getSimpleName(),
-						// String.format("getStatuses got %d statuses",
-						// statuses.size()));
-						// final boolean truncated = paging.getCount() ==
-						// statuses.size();
 						result.add(new StatusListResponse(account_id, max_id, since_id, load_item_limit, statuses,
 								truncated));
 					} catch (final TwitterException e) {

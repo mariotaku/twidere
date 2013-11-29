@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:title="@string/theme">
 
 	<PreferenceCategory
@@ -22,6 +23,14 @@
 		android:key="theme_background"
 		android:summary="%s"
 		android:title="@string/theme_background"/>
+
+	<org.mariotaku.twidere.provider.ValueDependencyCheckBoxPreference
+		android:defaultValue="true"
+		android:key="theme_dark_actionbar"
+		android:title="@string/theme_dark_actionbar"
+		app:dependencyKey="theme"
+		app:dependencyValueDefault="twidere"
+		app:dependencyValues="@array/actionbar_theme_dependency"/>
 
 	<org.mariotaku.twidere.preference.ColorPickerPreference
 		android:defaultValue="@android:color/holo_blue_dark"

@@ -19,7 +19,7 @@
 
 package org.mariotaku.twidere.adapter;
 
-import static org.mariotaku.twidere.util.Utils.getUserNickname;
+import static org.mariotaku.twidere.util.UserColorNicknameUtils.getUserNickname;
 
 import android.content.ContentResolver;
 import android.content.Context;

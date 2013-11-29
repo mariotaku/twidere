@@ -57,10 +57,16 @@ public class DualPaneActivity extends BaseSupportActivity implements OnBackStack
 		return mDetailsFragment;
 	}
 
+	public final Fragment getLeftPaneFragment() {
+		final FragmentManager fm = getSupportFragmentManager();
+		final Fragment leftPaneFragment = fm.findFragmentById(PANE_LEFT);
+		return leftPaneFragment;
+	}
+
 	public final Fragment getRightPaneFragment() {
 		final FragmentManager fm = getSupportFragmentManager();
-		final Fragment right_pane_fragment = fm.findFragmentById(PANE_RIGHT);
-		return right_pane_fragment;
+		final Fragment rightPaneFragment = fm.findFragmentById(PANE_RIGHT);
+		return rightPaneFragment;
 	}
 
 	public SlidingPaneView getSlidingPane() {

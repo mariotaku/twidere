@@ -1,7 +1,7 @@
 package org.mariotaku.twidere.fragment.support;
 
-import static org.mariotaku.twidere.util.Utils.clearUserNickname;
-import static org.mariotaku.twidere.util.Utils.setUserNickname;
+import static org.mariotaku.twidere.util.UserColorNicknameUtils.clearUserNickname;
+import static org.mariotaku.twidere.util.UserColorNicknameUtils.setUserNickname;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

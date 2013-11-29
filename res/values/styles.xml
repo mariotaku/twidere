@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<style name="Widget.Twidere.ActionBar" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse">
+	<style name="Widget.Twidere.ActionBar.Colored" parent="android:Widget.Holo.Light.ActionBar.Solid">
+		<item name="android:background">@drawable/ab_twidere_solid_color_holo</item>
+		<item name="android:actionButtonStyle">@style/Widget.Twidere.ActionButton</item>
+	</style>
+
+	<style name="Widget.Twidere.ActionBar.Colored.Inverse" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse">
 		<item name="android:background">@drawable/ab_twidere_solid_color_holo</item>
 		<item name="android:actionButtonStyle">@style/Widget.Twidere.ActionButton</item>
 	</style>

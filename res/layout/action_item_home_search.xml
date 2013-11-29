@@ -12,7 +12,6 @@
 		android:layout_alignParentLeft="true"
 		android:layout_centerVertical="true"
 		android:layout_toLeftOf="@+id/save_search"
-		android:iconifiedByDefault="false"
 		android:inputType="text"
 		android:queryHint="@string/search_hint"/>
 

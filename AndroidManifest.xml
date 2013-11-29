@@ -478,7 +478,7 @@
 			android:name="edu.ucdavis.earlybird.UCDService"
 			android:settingsActivity=".activity.DataProfilingSettingsActivity"/>
 		<service
-			android:name=".service.DashclockHomeUnreadCountService"
+			android:name=".service.DashClockHomeUnreadCountService"
 			android:icon="@drawable/ic_extension_twidere"
 			android:label="@string/dashclock_home_unread_count_name"
 			android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA">
@@ -497,7 +497,7 @@
 				android:value="@string/dashclock_home_unread_count_description"/>
 		</service>
 		<service
-			android:name=".service.DashclockMentionsUnreadCountService"
+			android:name=".service.DashClockMentionsUnreadCountService"
 			android:icon="@drawable/ic_extension_mentions"
 			android:label="@string/dashclock_mentions_unread_count_name"
 			android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA">
@@ -516,7 +516,7 @@
 				android:value="@string/dashclock_mentions_unread_count_description"/>
 		</service>
 		<service
-			android:name=".service.DashclockMessagesUnreadCountService"
+			android:name=".service.DashClockMessagesUnreadCountService"
 			android:icon="@drawable/ic_extension_messages"
 			android:label="@string/dashclock_messages_unread_count_name"
 			android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA">

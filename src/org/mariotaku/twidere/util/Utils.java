@@ -309,10 +309,8 @@ public final class Utils implements Constants {
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_SEARCH, null, LINK_ID_SEARCH);
 
 	}
-	private static LongSparseArray<Integer> sAccountColors = new LongSparseArray<Integer>();
-	private static LongSparseArray<Integer> sUserColors = new LongSparseArray<Integer>();
 
-	private static LongSparseArray<String> sUserNicknames = new LongSparseArray<String>();
+	private static LongSparseArray<Integer> sAccountColors = new LongSparseArray<Integer>();
 	private static LongSparseArray<String> sAccountScreenNames = new LongSparseArray<String>();
 	private static LongSparseArray<String> sAccountNames = new LongSparseArray<String>();
 
@@ -553,25 +551,6 @@ public final class Utils implements Constants {
 		// final int position = view.getFirstVisiblePosition();
 		// view.setAdapter(adapter);
 		// Utils.scrollListToPosition(view, position);
-	}
-
-	public static void clearUserColor(final Context context, final long user_id) {
-		if (context == null) return;
-		final SharedPreferences prefs = context.getSharedPreferences(USER_COLOR_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final SharedPreferences.Editor editor = prefs.edit();
-		editor.remove(Long.toString(user_id));
-		editor.commit();
-		sUserColors.remove(user_id);
-	}
-
-	public static void clearUserNickname(final Context context, final long user_id) {
-		if (context == null) return;
-		final SharedPreferences prefs = context.getSharedPreferences(USER_NICKNAME_PREFERENCES_NAME,
-				Context.MODE_PRIVATE);
-		final SharedPreferences.Editor editor = prefs.edit();
-		editor.remove(Long.toString(user_id));
-		editor.commit();
-		sUserNicknames.remove(user_id);
 	}
 
 	public static boolean closeSilently(final Closeable c) {
@@ -1525,7 +1504,7 @@ public final class Utils implements Constants {
 	public static String getDisplayName(final Context context, final long user_id, final String name,
 			final String screen_name, final boolean name_first, final boolean nickname_only, final boolean ignore_cache) {
 		if (context == null) return null;
-		final String nick = getUserNickname(context, user_id, ignore_cache);
+		final String nick = UserColorNicknameUtils.getUserNickname(context, user_id, ignore_cache);
 		final boolean nick_available = !isEmpty(nick);
 		if (nickname_only && nick_available) return nick;
 		if (!nick_available) return name_first && !isEmpty(name) ? name : "@" + screen_name;
@@ -2186,19 +2165,6 @@ public final class Utils implements Constants {
 		return string.replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">");
 	}
 
-	public static int getUserColor(final Context context, final long user_id) {
-		return getUserColor(context, user_id, false);
-	}
-
-	public static int getUserColor(final Context context, final long user_id, final boolean ignore_cache) {
-		if (context == null || user_id == -1) return Color.TRANSPARENT;
-		if (!ignore_cache && sUserColors.indexOfKey(user_id) >= 0) return sUserColors.get(user_id);
-		final SharedPreferences prefs = context.getSharedPreferences(USER_COLOR_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final int color = prefs.getInt(Long.toString(user_id), Color.TRANSPARENT);
-		sUserColors.put(user_id, color);
-		return color;
-	}
-
 	public static String getUserName(final Context context, final ParcelableStatus status) {
 		if (context == null || status == null) return null;
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -2218,28 +2184,6 @@ public final class Utils implements Constants {
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final boolean display_name = prefs.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
 		return display_name ? user.getName() : "@" + user.getScreenName();
-	}
-
-	public static String getUserNickname(final Context context, final long user_id) {
-		return getUserNickname(context, user_id, false);
-	}
-
-	public static String getUserNickname(final Context context, final long user_id, final boolean ignore_cache) {
-		if (context == null || user_id == -1) return null;
-		if (!ignore_cache && LongSparseArrayUtils.hasKey(sUserNicknames, user_id)) return sUserNicknames.get(user_id);
-		final SharedPreferences prefs = context.getSharedPreferences(USER_NICKNAME_PREFERENCES_NAME,
-				Context.MODE_PRIVATE);
-		final String nickname = prefs.getString(Long.toString(user_id), null);
-		sUserNicknames.put(user_id, nickname);
-		return nickname;
-	}
-
-	public static String getUserNickname(final Context context, final long user_id, final String name) {
-		final String nick = getUserNickname(context, user_id);
-		if (isEmpty(nick)) return name;
-		final boolean nickname_only = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
-				.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false);
-		return nickname_only ? nick : context.getString(R.string.name_with_nickname, name, nick);
 	}
 
 	public static int getUserTypeIconRes(final boolean is_verified, final boolean is_protected) {
@@ -3724,25 +3668,6 @@ public final class Utils implements Constants {
 		}
 	}
 
-	public static void setUserColor(final Context context, final long user_id, final int color) {
-		if (context == null || user_id == -1) return;
-		final SharedPreferences prefs = context.getSharedPreferences(USER_COLOR_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final SharedPreferences.Editor editor = prefs.edit();
-		editor.putInt(String.valueOf(user_id), color);
-		editor.commit();
-		sUserColors.put(user_id, color);
-	}
-
-	public static void setUserNickname(final Context context, final long user_id, final String nickname) {
-		if (context == null || user_id == -1) return;
-		final SharedPreferences prefs = context.getSharedPreferences(USER_NICKNAME_PREFERENCES_NAME,
-				Context.MODE_PRIVATE);
-		final SharedPreferences.Editor editor = prefs.edit();
-		editor.putString(String.valueOf(user_id), nickname);
-		editor.commit();
-		sUserNicknames.put(user_id, nickname);
-	}
-
 	public static boolean shouldEnableFiltersForRTs(final Context context) {
 		if (context == null) return false;
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -3908,6 +3833,18 @@ public final class Utils implements Constants {
 	public static void showWarnMessage(final Context context, final int resId, final boolean long_message) {
 		if (context == null) return;
 		showWarnMessage(context, context.getText(resId), long_message);
+	}
+
+	public static void startStatusShareChooser(final Context context, final ParcelableStatus status) {
+		final Intent intent = new Intent(Intent.ACTION_SEND);
+		intent.setType("text/plain");
+		final String name = status.user_name, screenName = status.user_screen_name;
+		final String timeString = formatToLongTimeString(context, status.timestamp);
+		final String subject = context.getString(R.string.share_subject_format, name, screenName, timeString);
+		intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+		intent.putExtra(Intent.EXTRA_TEXT, status.text_plain);
+		intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)));
 	}
 
 	public static void stopListView(final ListView list) {

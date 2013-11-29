@@ -43,6 +43,7 @@ import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -52,7 +53,6 @@ import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.TextUtils;
-import android.util.FloatMath;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.view.Gravity;
@@ -63,6 +63,10 @@ import android.view.MenuItem.OnActionExpandListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.view.View.OnSystemUiVisibilityChangeListener;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.CursorAdapter;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
@@ -115,23 +119,8 @@ import java.util.List;
 
 public class HomeActivity extends DualPaneActivity implements OnClickListener, OnPageChangeListener,
 		SupportFragmentCallback, OnOpenedListener, OnClosedListener, OnQueryTextListener, OnSuggestionListener,
-		OnLongClickListener, OnActionExpandListener {
+		OnLongClickListener, OnActionExpandListener, OnSystemUiVisibilityChangeListener {
 
-	private final Handler mHandler = new Handler();
-
-	private final ContentObserver mAccountChangeObserver = new ContentObserver(mHandler) {
-
-		@Override
-		public void onChange(final boolean selfChange) {
-			onChange(selfChange, null);
-		}
-
-		@Override
-		public void onChange(final boolean selfChange, final Uri uri) {
-			notifyAccountsChanged();
-			updateUnreadCount();
-		}
-	};
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -145,11 +134,15 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		}
 
 	};
+
+	private final Handler mHandler = new Handler();
+
+	private final ContentObserver mAccountChangeObserver = new AccountChangeObserver(this, mHandler);
+
 	private final ArrayList<SupportTabSpec> mCustomTabs = new ArrayList<SupportTabSpec>();
-
 	private final SparseArray<Fragment> mAttachedFragments = new SparseArray<Fragment>();
-	private final SparseBooleanArray mPullRefreshStates = new SparseBooleanArray();
 
+	private final SparseBooleanArray mPullRefreshStates = new SparseBooleanArray();
 	private boolean mBottomActionsButton;
 
 	private Account mSelectedAccountToSearch;
@@ -159,23 +152,25 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private AsyncTwitterWrapper mTwitterWrapper;
 
 	private NotificationManager mNotificationManager;
+
 	private MultiSelectEventHandler mMultiSelectHandler;
 	private ActionBar mActionBar;
 	private SupportTabsAdapter mPagerAdapter;
-
 	private ExtendedViewPager mViewPager;
-	private TabPageIndicator mIndicator;
 
+	private TabPageIndicator mIndicator;
 	private SlidingMenu mSlidingMenu;
+
 	private View mHomeActionsActionView, mActionsButtonLayout, mEmptyTabHint;
 	private LeftDrawerFrameLayout mLeftDrawerContainer;
 	private SearchView mSearchView;
-
 	private Fragment mCurrentVisibleFragment;
 
 	private UpdateUnreadCountTask mUpdateUnreadCountTask;
 
 	private MenuItem mSearchItem;
+
+	private final Rect mRect = new Rect();
 
 	public void closeAccountsDrawer() {
 		if (mSlidingMenu == null) return;
@@ -338,6 +333,10 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 				headerView.setEnabled(mPullRefreshStates.get(mAttachedFragments.keyAt(i)));
 			}
 		}
+		if (mSearchView != null) {
+			mSearchView.setIconified(true);
+			mSearchView.setQuery(null, false);
+		}
 		return true;
 	}
 
@@ -350,6 +349,9 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 				mPullRefreshStates.put(mAttachedFragments.keyAt(i), headerView.isEnabled());
 				headerView.setEnabled(false);
 			}
+		}
+		if (mSearchView != null) {
+			mSearchView.setIconified(false);
 		}
 		return true;
 	}
@@ -448,6 +450,11 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		c.moveToPosition(position);
 		mSearchView.setQuery(a.convertToString(c), false);
 		return true;
+	}
+
+	@Override
+	public void onSystemUiVisibilityChange(final int visibility) {
+		mHandler.postDelayed(new UpdatePullToRefreshLayoutScrollRunnable(this), 50);
 	}
 
 	public void openSearchView(final Account account) {
@@ -624,11 +631,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		invalidateOptionsMenu();
 		updateActionsButtonStyle();
 		updateActionsButton();
-		if (mSlidingMenu.isMenuShowing()) {
-			updatePullToRefreshLayoutScroll(1);
-		} else {
-			updatePullToRefreshLayoutScroll(0);
-		}
+		mHandler.postDelayed(new UpdatePullToRefreshLayoutScrollRunnable(this), 50);
 		updateSlidingMenuTouchMode();
 	}
 
@@ -766,6 +769,16 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		return true;
 	}
 
+	private void setPullToRefreshLayoutScroll(final WindowManager wm, final Fragment f, final int scrollX,
+			final int statusBarHeight) {
+		if (f == null) return;
+		final View headerView = getPullToRefreshHeaderView(f);
+		if (headerView != null) {
+			headerView.setScrollX(scrollX);
+			headerView.post(new UpdateWindowLayoutRunnable(wm, headerView, statusBarHeight));
+		}
+	}
+
 	private void setTabPosition(final int initial_tab) {
 		final boolean remember_position = mPreferences.getBoolean(PREFERENCE_KEY_REMEMBER_POSITION, true);
 		if (initial_tab >= 0) {
@@ -859,17 +872,22 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	private void updatePullToRefreshLayoutScroll(final float percentOpen) {
+		final Window w = getWindow();
+		final WindowManager wm = getWindowManager();
+		final View decorView = w.getDecorView();
+		decorView.setOnSystemUiVisibilityChangeListener(this);
+		decorView.getWindowVisibleDisplayFrame(mRect);
+		final int statusBarHeight = mRect.top;
 		final LeftDrawerFrameLayout ld = getLeftDrawerContainer();
 		if (ld == null) return;
+		final int scrollX = -Math.round(percentOpen * ld.getMeasuredWidth());
 		ld.setPercentOpen(percentOpen);
 		for (int i = 0, j = mAttachedFragments.size(); i < j; i++) {
 			final Fragment f = mAttachedFragments.valueAt(i);
-			final View headerView = getPullToRefreshHeaderView(f);
-			if (headerView != null) {
-				headerView
-						.scrollTo((int) -FloatMath.ceil(percentOpen * ld.getMeasuredWidth()), headerView.getScrollY());
-			}
+			setPullToRefreshLayoutScroll(wm, f, scrollX, statusBarHeight);
 		}
+		setPullToRefreshLayoutScroll(wm, getLeftPaneFragment(), scrollX, statusBarHeight);
+		setPullToRefreshLayoutScroll(wm, getRightPaneFragment(), scrollX, statusBarHeight);
 	}
 
 	private void updateSlidingMenuTouchMode() {
@@ -878,6 +896,26 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		final int mode = !mViewPager.isEnabled() || position == 0 && !isLeftPaneUsed() ? SlidingMenu.TOUCHMODE_FULLSCREEN
 				: SlidingMenu.TOUCHMODE_MARGIN;
 		mSlidingMenu.setTouchModeAbove(mode);
+	}
+
+	private static final class AccountChangeObserver extends ContentObserver {
+		private final HomeActivity mActivity;
+
+		public AccountChangeObserver(final HomeActivity activity, final Handler handler) {
+			super(handler);
+			mActivity = activity;
+		}
+
+		@Override
+		public void onChange(final boolean selfChange) {
+			onChange(selfChange, null);
+		}
+
+		@Override
+		public void onChange(final boolean selfChange, final Uri uri) {
+			mActivity.notifyAccountsChanged();
+			mActivity.updateUnreadCount();
+		}
 	}
 
 	private static class ListenerCanvasTransformer implements CanvasTransformer {
@@ -890,6 +928,25 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		@Override
 		public void transformCanvas(final Canvas canvas, final float percentOpen) {
 			mHomeActivity.updatePullToRefreshLayoutScroll(percentOpen);
+		}
+
+	}
+
+	private static class UpdatePullToRefreshLayoutScrollRunnable implements Runnable {
+		private final HomeActivity mActivity;
+
+		UpdatePullToRefreshLayoutScrollRunnable(final HomeActivity activity) {
+			mActivity = activity;
+		}
+
+		@Override
+		public void run() {
+			final SlidingMenu slidingMenu = mActivity.getSlidingMenu();
+			if (slidingMenu != null && slidingMenu.isMenuShowing()) {
+				mActivity.updatePullToRefreshLayoutScroll(1);
+			} else {
+				mActivity.updatePullToRefreshLayoutScroll(0);
+			}
 		}
 
 	}
@@ -938,6 +995,31 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 					badge.show();
 				}
 			}
+		}
+
+	}
+
+	private class UpdateWindowLayoutRunnable implements Runnable {
+		private final WindowManager mWindowManager;
+		private final View mView;
+		private final int mY;
+
+		UpdateWindowLayoutRunnable(final WindowManager wm, final View view, final int y) {
+			mWindowManager = wm;
+			mView = view;
+			mY = y;
+		}
+
+		@Override
+		public void run() {
+			if (mView == null || mWindowManager == null) return;
+			final ViewGroup.LayoutParams lp = mView.getLayoutParams();
+			if (lp instanceof WindowManager.LayoutParams) {
+				final WindowManager.LayoutParams wlp = (WindowManager.LayoutParams) lp;
+				wlp.y = mY;
+				mWindowManager.updateViewLayout(mView, wlp);
+			}
+
 		}
 
 	}

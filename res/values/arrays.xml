@@ -98,15 +98,13 @@
 	</string-array>
 	<string-array name="entries_theme">
 		<item>@string/theme_twidere</item>
-		<item>@string/theme_dark</item>
 		<item>@string/theme_light</item>
-		<item>@string/theme_light_darkactionbar</item>
+		<item>@string/theme_dark</item>
 	</string-array>
 	<string-array name="values_theme">
 		<item>twidere</item>
-		<item>dark</item>
 		<item>light</item>
-		<item>light_darkactionbar</item>
+		<item>dark</item>
 	</string-array>
 	<string-array name="entries_link_highlight_option">
 		<item>@string/none</item>
@@ -123,6 +121,10 @@
 		<item>@string/theme_background_default</item>
 		<item>@string/theme_background_solid</item>
 		<item>@string/theme_background_transparent</item>
+	</string-array>
+	<string-array name="actionbar_theme_dependency">
+		<item>twidere</item>
+		<item>light</item>
 	</string-array>
 
 </resources>

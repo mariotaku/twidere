@@ -218,6 +218,7 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		final Intent intent = getIntent();
+		intent.setExtrasClassLoader(getClassLoader());
 		final Uri uri = intent.getData();
 		final Uri orig = intent.getParcelableExtra(EXTRA_URI_ORIG);
 		switch (item.getItemId()) {

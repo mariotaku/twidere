@@ -119,12 +119,6 @@ public class BrowserSignInActivity extends BaseSupportDialogActivity implements 
 
 	private void getRequestToken() {
 		if (mRequestToken != null || mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) return;
-		final Bundle extras = getIntent().getExtras();
-		if (extras == null) {
-			Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
-			finish();
-			return;
-		}
 		mTask = new GetRequestTokenTask(this);
 		mTask.execute();
 	}

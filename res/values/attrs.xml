@@ -10,7 +10,6 @@
 		<attr name="cardItemMessageProfileImageIncomingBackground" format="reference"/>
 		<attr name="cardItemMessageProfileImageOutgoingBackground" format="reference"/>
 		<attr name="listMenuOverflowButton" format="reference"/>
-		<attr name="contentBackground" format="reference|color"/>
 		<attr name="ignorePadding" format="boolean"/>
 		<attr name="linePageIndicatorStyle" format="reference"/>
 	</declare-styleable>
@@ -18,6 +17,11 @@
 		<attr name="tabItemStyle" format="reference"/>
 		<attr name="tabItemContentStyle" format="reference"/>
 		<attr name="tabItemTextStyle" format="reference"/>
+	</declare-styleable>
+	<declare-styleable name="ValueDependencyPreference">
+		<attr name="dependencyKey" format="string"/>
+		<attr name="dependencyValues" format="reference"/>
+		<attr name="dependencyValueDefault" format="string"/>
 	</declare-styleable>
 	<declare-styleable name="LinePageIndicator">
 

@@ -26,6 +26,7 @@ import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.openStatus;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 import static org.mariotaku.twidere.util.Utils.showOkMessage;
+import static org.mariotaku.twidere.util.Utils.startStatusShareChooser;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -262,10 +263,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 				break;
 			}
 			case MENU_SHARE: {
-				final Intent intent = new Intent(Intent.ACTION_SEND);
-				intent.setType("text/plain");
-				intent.putExtra(Intent.EXTRA_TEXT, "@" + status.user_screen_name + ": " + status.text_plain);
-				startActivity(Intent.createChooser(intent, getString(R.string.share)));
+				startStatusShareChooser(getActivity(), status);
 				break;
 			}
 			case MENU_COPY: {

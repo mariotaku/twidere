@@ -89,6 +89,7 @@
 			android:key="database_item_limit"
 			android:summary="@string/database_item_limit_summary"
 			android:title="@string/database_item_limit"
+			app:min="50"
 			app:max="500"/>
 
 		<org.mariotaku.twidere.preference.ClearSearchHistoryPreference
