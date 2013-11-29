@@ -964,7 +964,6 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 
 	private void notifyContentObserver(final Uri uri) {
 		if (uri == null) return;
-		if (!uri.getBooleanQueryParameter(QUERY_PARAM_NOTIFY, true)) return;
 		final Context context = getContext();
 		if (context == null) return;
 		final ContentResolver resolver = context.getContentResolver();
@@ -1050,9 +1049,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				break;
 			}
 		}
-		if (uri.getBooleanQueryParameter(QUERY_PARAM_NOTIFY, true)) {
-			notifyContentObserver(uri);
-		}
+		notifyContentObserver(uri);
 	}
 
 	private void onNewItemsInserted(final Uri uri, final ContentValues... values) {

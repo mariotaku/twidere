@@ -126,7 +126,7 @@ public class MenuBar extends LinearLayout implements MenuItem.OnMenuItemClickLis
 		if (!itemsNotShowing.isEmpty()) {
 			final LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 					ViewGroup.LayoutParams.MATCH_PARENT);
-			params.weight = 1;
+			params.weight = 1.05f;
 			addView(createMoreOverflowButton(itemsNotShowing), params);
 		}
 		invalidate();

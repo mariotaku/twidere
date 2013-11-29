@@ -386,4 +386,9 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 	private static int getItemResource(final boolean compactCards) {
 		return compactCards ? R.layout.card_item_status_compact : R.layout.card_item_status;
 	}
+
+	@Override
+	public int getActualCount() {
+		return super.getCount();
+	}
 }

@@ -26,6 +26,8 @@ public interface IStatusesAdapter<Data> extends IBaseCardAdapter {
 	public int findPositionByStatusId(final long status_id);
 
 	public long getAccountId(final int position);
+	
+	public int getActualCount();
 
 	public ParcelableStatus getLastStatus();
 

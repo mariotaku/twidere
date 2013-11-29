@@ -179,14 +179,16 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 	public void onListItemClick(final ListView l, final View v, final int position, final long id) {
 		final Object tag = v.getTag();
 		if (tag instanceof StatusViewHolder) {
-			final ParcelableStatus status = mAdapter.getStatus(position - l.getHeaderViewsCount());
+			final int pos = position - l.getHeaderViewsCount();
+			final ParcelableStatus status = mAdapter.getStatus(pos);
 			if (status == null) return;
 			final AsyncTwitterWrapper twitter = getTwitterWrapper();
 			if (twitter != null) {
 				TwitterWrapper.removeUnreadCounts(getActivity(), getTabPosition(), status.account_id, status.id);
 			}
 			if (((StatusViewHolder) tag).show_as_gap) {
-				getStatuses(new long[] { status.account_id }, new long[] { status.id }, null);
+				final long since_id = position + 1 < mAdapter.getActualCount() ? mAdapter.getStatus(pos + 1).id : -1;
+				getStatuses(new long[] { status.account_id }, new long[] { status.id }, new long[] { since_id });
 				mListView.setItemChecked(position, false);
 			} else {
 				if (mMultiSelectManager.isActive()) {
