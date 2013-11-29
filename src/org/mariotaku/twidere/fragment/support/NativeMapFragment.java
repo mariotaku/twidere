@@ -19,51 +19,103 @@
 
 package org.mariotaku.twidere.fragment.support;
 
+import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.MapInterface;
+import org.osmdroid.ResourceProxy;
+import org.osmdroid.api.IMapController;
+import org.osmdroid.api.IMapView;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.util.ResourceProxyImpl;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.ItemizedOverlay;
+import org.osmdroid.views.overlay.Overlay;
+import org.osmdroid.views.overlay.OverlayItem;
 
-public class NativeMapFragment extends SupportMapFragment implements Constants, MapInterface {
+import java.util.ArrayList;
+import java.util.List;
 
-	private GoogleMap mMapView;
+public class NativeMapFragment extends BaseSupportFragment implements MapInterface, Constants {
+
+	private static final int MAPVIEW_ID = 0x70000001;
 
 	@Override
 	public void center() {
-		center(true);
-	}
-
-	public void center(final boolean animate) {
-		final Bundle args = getArguments();
-		if (mMapView == null || args == null || !args.containsKey(EXTRA_LATITUDE) || !args.containsKey(EXTRA_LONGITUDE))
-			return;
-		final double lat = args.getDouble(EXTRA_LATITUDE, 0.0), lng = args.getDouble(EXTRA_LONGITUDE, 0.0);
-		final CameraUpdate c = CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 12);
-		if (animate) {
-			mMapView.animateCamera(c);
-		} else {
-			mMapView.moveCamera(c);
-		}
+		final Bundle extras = getArguments();
+		if (extras == null || !extras.containsKey(EXTRA_LATITUDE) || !extras.containsKey(EXTRA_LONGITUDE)) return;
+		final double lat = extras.getDouble(EXTRA_LATITUDE, 0.0), lng = extras.getDouble(EXTRA_LONGITUDE, 0.0);
+		final GeoPoint gp = new GeoPoint((int) (lat * 1E6), (int) (lng * 1E6));
+		final MapView mapView = (MapView) getView().findViewById(MAPVIEW_ID);
+		final IMapController mc = mapView.getController();
+		mc.animateTo(gp);
 	}
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
+		super.onCreate(savedInstanceState);
 		final Bundle args = getArguments();
-		if (args == null || !args.containsKey(EXTRA_LATITUDE) || !args.containsKey(EXTRA_LONGITUDE)) return;
+		final MapView mapView = (MapView) getView().findViewById(MAPVIEW_ID);
+		mapView.setMultiTouchControls(true);
+		mapView.setBuiltInZoomControls(true);
+		final List<Overlay> overlays = mapView.getOverlays();
 		final double lat = args.getDouble(EXTRA_LATITUDE, 0.0), lng = args.getDouble(EXTRA_LONGITUDE, 0.0);
-		mMapView = getMap();
-		final MarkerOptions marker = new MarkerOptions();
-		marker.position(new LatLng(lat, lng));
-		mMapView.addMarker(marker);
-		center(false);
+		final GeoPoint gp = new GeoPoint((int) (lat * 1E6), (int) (lng * 1E6));
+		final Drawable d = getResources().getDrawable(R.drawable.ic_map_marker);
+		final Itemization markers = new Itemization(d, mapView.getResourceProxy());
+		final OverlayItem overlayitem = new OverlayItem("", "", gp);
+		markers.addOverlay(overlayitem);
+		overlays.add(markers);
+		final IMapController mc = mapView.getController();
+		mc.setZoom(12);
+		mc.animateTo(gp);
 	}
 
+	@Override
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+		final View view = new MapView(getActivity(), 256, new ResourceProxyImpl(getActivity()));
+		view.setId(MAPVIEW_ID);
+		return view;
+	}
+
+	static class Itemization extends ItemizedOverlay<OverlayItem> {
+
+		private final ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
+
+		public Itemization(final Drawable defaultMarker, final ResourceProxy proxy) {
+			super(boundCenterBottom(defaultMarker), proxy);
+		}
+
+		public void addOverlay(final OverlayItem overlay) {
+			mOverlays.add(overlay);
+			populate();
+		}
+
+		@Override
+		public boolean onSnapToItem(final int x, final int y, final Point snapPoint, final IMapView mapView) {
+			return false;
+		}
+
+		@Override
+		public int size() {
+			return mOverlays.size();
+		}
+
+		@Override
+		protected OverlayItem createItem(final int i) {
+			return mOverlays.get(i);
+		}
+
+		protected static Drawable boundCenterBottom(final Drawable d) {
+			d.setBounds(-d.getIntrinsicWidth() / 2, -d.getIntrinsicHeight(), d.getIntrinsicWidth() / 2, 0);
+			return d;
+		}
+
+	}
 }

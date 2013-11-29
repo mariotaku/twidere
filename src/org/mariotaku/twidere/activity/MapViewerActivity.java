@@ -26,14 +26,10 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.support.TwidereSwipeBackActivity;
 import org.mariotaku.twidere.fragment.support.NativeMapFragment;
-import org.mariotaku.twidere.fragment.support.WebMapFragment;
 import org.mariotaku.twidere.util.MapInterface;
 import org.mariotaku.twidere.util.ThemeUtils;
 
@@ -92,13 +88,9 @@ public class MapViewerActivity extends TwidereSwipeBackActivity implements Const
 			finish();
 			return;
 		}
-		final Fragment fragment = isNativeMapSupported() ? new NativeMapFragment() : new WebMapFragment();
+		final Fragment fragment = new NativeMapFragment();
 		fragment.setArguments(bundle);
 		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		ft.replace(android.R.id.content, fragment).commit();
-	}
-
-	private boolean isNativeMapSupported() {
-		return GooglePlayServicesUtil.isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS;
 	}
 }
