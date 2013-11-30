@@ -284,6 +284,8 @@ public final class Utils implements Constants {
 				VIRTUAL_TABLE_ID_UNREAD_COUNTS);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, UnreadCounts.ByType.CONTENT_PATH + "/*",
 				VIRTUAL_TABLE_ID_UNREAD_COUNTS_BY_TYPE);
+		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, TweetStore.CONTENT_PATH_DATABASE_READY,
+				VIRTUAL_TABLE_ID_DATABASE_READY);
 
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_STATUS, null, LINK_ID_STATUS);
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_USER, null, LINK_ID_USER);
@@ -2241,6 +2243,18 @@ public final class Utils implements Constants {
 		return prefs != null && prefs.getBoolean(PREFERENCE_KEY_COMPACT_CARDS, false);
 	}
 
+	public static boolean isDatabaseReady(final Context context) {
+		final Cursor c = context.getContentResolver().query(TweetStore.CONTENT_URI_DATABASE_READY, null, null, null,
+				null);
+		try {
+			return c != null;
+		} finally {
+			if (c != null) {
+				c.close();
+			}
+		}
+	}
+
 	public static boolean isDebugBuild() {
 		return BuildConfig.DEBUG;
 	}
@@ -2315,7 +2329,7 @@ public final class Utils implements Constants {
 
 	public static boolean isFiltered(final SQLiteDatabase database, final ParcelableStatus status,
 			final boolean filter_rts) {
-		if (status == null) return false;
+		if (database == null || status == null) return false;
 		return isFiltered(database, status.user_id, status.text_plain, status.text_html, status.source,
 				status.retweeted_by_id, filter_rts);
 	}

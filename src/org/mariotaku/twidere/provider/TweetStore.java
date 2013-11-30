@@ -36,10 +36,15 @@ public final class TweetStore {
 
 	public static final String CONTENT_PATH_NULL = "null_content";
 
+	public static final String CONTENT_PATH_DATABASE_READY = "database_ready";
+
 	public static final Uri BASE_CONTENT_URI = new Uri.Builder().scheme(ContentResolver.SCHEME_CONTENT)
 			.authority(AUTHORITY).build();
 
 	public static final Uri CONTENT_URI_NULL = Uri.withAppendedPath(BASE_CONTENT_URI, CONTENT_PATH_NULL);
+
+	public static final Uri CONTENT_URI_DATABASE_READY = Uri.withAppendedPath(BASE_CONTENT_URI,
+			CONTENT_PATH_DATABASE_READY);
 
 	public static final Uri[] STATUSES_URIS = new Uri[] { Statuses.CONTENT_URI, Mentions.CONTENT_URI,
 			CachedStatuses.CONTENT_URI };

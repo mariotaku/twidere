@@ -50,9 +50,11 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.ParcelFileDescriptor;
 import android.support.v4.app.NotificationCompat;
@@ -108,7 +110,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	private static final String UNREAD_MESSAGES_FILE_NAME = "unread_messages";
 
 	private ContentResolver mContentResolver;
-	private SQLiteDatabase mDatabase;
+	private SQLiteDatabaseWrapper mDatabaseWrapper;
 	private PermissionsManager mPermissionsManager;
 	private NotificationManager mNotificationManager;
 	private SharedPreferences mPreferences;
@@ -155,18 +157,19 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			}
 			int result = 0;
 			if (table != null && values != null) {
-				mDatabase.beginTransaction();
+				mDatabaseWrapper.beginTransaction();
 				final boolean replace_on_conflict = shouldReplaceOnConflict(table_id);
 				for (final ContentValues contentValues : values) {
 					if (replace_on_conflict) {
-						mDatabase.insertWithOnConflict(table, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+						mDatabaseWrapper.insertWithOnConflict(table, null, contentValues,
+								SQLiteDatabase.CONFLICT_REPLACE);
 					} else {
-						mDatabase.insert(table, null, contentValues);
+						mDatabaseWrapper.insert(table, null, contentValues);
 					}
 					result++;
 				}
-				mDatabase.setTransactionSuccessful();
-				mDatabase.endTransaction();
+				mDatabaseWrapper.setTransactionSuccessful();
+				mDatabaseWrapper.endTransaction();
 			}
 			if (result > 0) {
 				onDatabaseUpdated(uri);
@@ -217,7 +220,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				}
 			}
 			if (table == null) return 0;
-			final int result = mDatabase.delete(table, selection, selectionArgs);
+			final int result = mDatabaseWrapper.delete(table, selection, selectionArgs);
 			if (result > 0) {
 				onDatabaseUpdated(uri);
 			}
@@ -245,16 +248,16 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 					return null;
 			}
 			if (table == null) return null;
-			final boolean replace_on_conflict = shouldReplaceOnConflict(table_id);
-			final long row_id;
-			if (replace_on_conflict) {
-				row_id = mDatabase.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+			final boolean replaceOnConflict = shouldReplaceOnConflict(table_id);
+			final long rowId;
+			if (replaceOnConflict) {
+				rowId = mDatabaseWrapper.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_REPLACE);
 			} else {
-				row_id = mDatabase.insert(table, null, values);
+				rowId = mDatabaseWrapper.insert(table, null, values);
 			}
 			onDatabaseUpdated(uri);
 			onNewItemsInserted(uri, values);
-			return Uri.withAppendedPath(uri, String.valueOf(row_id));
+			return Uri.withAppendedPath(uri, String.valueOf(rowId));
 		} catch (final SQLException e) {
 			throw new IllegalStateException(e);
 		}
@@ -264,8 +267,9 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	public boolean onCreate() {
 		final Context context = getContext();
 		final TwidereApplication app = TwidereApplication.getInstance(context);
+		final SQLiteOpenHelper helper = app.getSQLiteOpenHelper();
 		mContentResolver = context.getContentResolver();
-		mDatabase = app.getSQLiteDatabase();
+		mDatabaseWrapper = new SQLiteDatabaseWrapper();
 		mHostAddressResolver = app.getHostAddressResolver();
 		mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -278,7 +282,9 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		filter.addAction(BROADCAST_HOME_ACTIVITY_ONSTOP);
 		context.registerReceiver(mHomeActivityStateReceiver, filter);
 		restoreUnreadItems();
-		return mDatabase != null;
+		final GetWritableDatabaseTask task = new GetWritableDatabaseTask(context, helper, mDatabaseWrapper);
+		task.execute();
+		return true;
 	}
 
 	@Override
@@ -325,6 +331,11 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			final String table = getTableNameById(tableId);
 			checkReadPermission(tableId, table, projection);
 			switch (tableId) {
+				case VIRTUAL_TABLE_ID_DATABASE_READY: {
+					if (mDatabaseWrapper.isReady())
+						return new MatrixCursor(projection != null ? projection : new String[0]);
+					return null;
+				}
 				case VIRTUAL_TABLE_ID_PERMISSIONS: {
 					final MatrixCursor c = new MatrixCursor(TweetStore.Permissions.MATRIX_COLUMNS);
 					final Map<String, Integer> map = mPermissionsManager.getAll();
@@ -371,8 +382,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 					final long conversationId = ParseUtils.parseLong(segments.get(3));
 					final String query = TwidereQueryBuilder.ConversationQueryBuilder.buildByConversationId(projection,
 							accountId, conversationId, selection, sortOrder);
-					final Cursor c = mDatabase.rawQuery(query, selectionArgs);
-					c.setNotificationUri(mContentResolver, DirectMessages.CONTENT_URI);
+					final Cursor c = mDatabaseWrapper.rawQuery(query, selectionArgs);
+					setNotificationUri(c, DirectMessages.CONTENT_URI);
 					return c;
 				}
 				case TABLE_ID_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME: {
@@ -382,27 +393,27 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 					final String screenName = segments.get(3);
 					final String query = TwidereQueryBuilder.ConversationQueryBuilder.buildByScreenName(projection,
 							accountId, screenName, selection, sortOrder);
-					final Cursor c = mDatabase.rawQuery(query, selectionArgs);
-					c.setNotificationUri(mContentResolver, DirectMessages.CONTENT_URI);
+					final Cursor c = mDatabaseWrapper.rawQuery(query, selectionArgs);
+					setNotificationUri(c, DirectMessages.CONTENT_URI);
 					return c;
 				}
 				case TABLE_ID_DIRECT_MESSAGES: {
 					final String query = TwidereQueryBuilder.DirectMessagesQueryBuilder.build(projection, selection,
 							sortOrder);
-					final Cursor c = mDatabase.rawQuery(query, selectionArgs);
-					c.setNotificationUri(mContentResolver, DirectMessages.CONTENT_URI);
+					final Cursor c = mDatabaseWrapper.rawQuery(query, selectionArgs);
+					setNotificationUri(c, DirectMessages.CONTENT_URI);
 					return c;
 				}
 				case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY: {
 					final String query = TwidereQueryBuilder.ConversationsEntryQueryBuilder.build(selection);
-					final Cursor c = mDatabase.rawQuery(query, null);
-					c.setNotificationUri(mContentResolver, DirectMessages.CONTENT_URI);
+					final Cursor c = mDatabaseWrapper.rawQuery(query, null);
+					setNotificationUri(c, DirectMessages.CONTENT_URI);
 					return c;
 				}
 			}
 			if (table == null) return null;
-			final Cursor c = mDatabase.query(table, projection, selection, selectionArgs, null, null, sortOrder);
-			c.setNotificationUri(mContentResolver, uri);
+			final Cursor c = mDatabaseWrapper.query(table, projection, selection, selectionArgs, null, null, sortOrder);
+			setNotificationUri(c, uri);
 			return c;
 		} catch (final SQLException e) {
 			throw new IllegalStateException(e);
@@ -422,7 +433,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 					case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
 						return 0;
 				}
-				result = mDatabase.update(table, values, selection, selectionArgs);
+				result = mDatabaseWrapper.update(table, values, selection, selectionArgs);
 			}
 			if (result > 0) {
 				onDatabaseUpdated(uri);
@@ -996,7 +1007,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		final boolean filtersForRts = mPreferences.getBoolean(PREFERENCE_KEY_FILTERS_FOR_RTS, true);
 		for (final ContentValues value : values) {
 			final ParcelableStatus status = new ParcelableStatus(value);
-			if (!enabled || !isFiltered(mDatabase, status, filtersForRts)) {
+			if (!enabled || !isFiltered(mDatabaseWrapper.getSQLiteDatabase(), status, filtersForRts)) {
 				mNewMentions.add(status);
 				if (mUnreadMentions.add(new UnreadItem(status.id, status.account_id))) {
 					result++;
@@ -1018,7 +1029,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		final boolean filtersForRts = mPreferences.getBoolean(PREFERENCE_KEY_FILTERS_FOR_RTS, true);
 		for (final ContentValues value : values) {
 			final ParcelableStatus status = new ParcelableStatus(value);
-			if (!enabled || !isFiltered(mDatabase, status, filtersForRts)) {
+			if (!enabled || !isFiltered(mDatabaseWrapper.getSQLiteDatabase(), status, filtersForRts)) {
 				mNewStatuses.add(status);
 				if (mUnreadStatuses.add(new UnreadItem(status.id, status.account_id))) {
 					result++;
@@ -1195,6 +1206,11 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		}
 	}
 
+	private void setNotificationUri(final Cursor c, final Uri uri) {
+		if (mContentResolver == null || c == null || uri == null) return;
+		c.setNotificationUri(mContentResolver, uri);
+	}
+
 	private void updatePreferences() {
 		mNameFirst = mPreferences.getBoolean(PREFERENCE_KEY_NAME_FIRST, false);
 		mNickOnly = mPreferences.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false);
@@ -1301,6 +1317,98 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		final String temp = "@" + my_screen_name + " ";
 		if (text.startsWith(temp)) return text.substring(temp.length());
 		return text;
+	}
+
+	private static class GetWritableDatabaseTask extends AsyncTask<Void, Void, SQLiteDatabase> {
+		private final Context mContext;
+		private final SQLiteOpenHelper mHelper;
+		private final SQLiteDatabaseWrapper mWrapper;
+
+		GetWritableDatabaseTask(final Context context, final SQLiteOpenHelper helper,
+				final SQLiteDatabaseWrapper wrapper) {
+			mContext = context;
+			mHelper = helper;
+			mWrapper = wrapper;
+		}
+
+		@Override
+		protected SQLiteDatabase doInBackground(final Void... params) {
+			return mHelper.getWritableDatabase();
+		}
+
+		@Override
+		protected void onPostExecute(final SQLiteDatabase result) {
+			mWrapper.setSQLiteDatabase(result);
+			if (result != null) {
+				mContext.sendBroadcast(new Intent(BROADCAST_DATABASE_READY));
+			}
+		}
+	}
+
+	private static class SQLiteDatabaseWrapper {
+		private SQLiteDatabase mDatabase;
+
+		public void beginTransaction() {
+			if (mDatabase == null) return;
+			mDatabase.beginTransaction();
+		}
+
+		public int delete(final String table, final String whereClause, final String[] whereArgs) {
+			if (mDatabase == null) return 0;
+			return mDatabase.delete(table, whereClause, whereArgs);
+		}
+
+		public void endTransaction() {
+			if (mDatabase == null) return;
+			mDatabase.endTransaction();
+		}
+
+		public SQLiteDatabase getSQLiteDatabase() {
+			return mDatabase;
+		}
+
+		public long insert(final String table, final String nullColumnHack, final ContentValues values) {
+			if (mDatabase == null) return -1;
+			return mDatabase.insert(table, nullColumnHack, values);
+		}
+
+		public long insertWithOnConflict(final String table, final String nullColumnHack,
+				final ContentValues initialValues, final int conflictAlgorithm) {
+			if (mDatabase == null) return -1;
+			return mDatabase.insertWithOnConflict(table, nullColumnHack, initialValues, conflictAlgorithm);
+		}
+
+		public boolean isReady() {
+			return mDatabase != null;
+		}
+
+		public Cursor query(final String table, final String[] columns, final String selection,
+				final String[] selectionArgs, final String groupBy, final String having, final String orderBy) {
+			if (mDatabase == null) return null;
+			return mDatabase.query(table, columns, selection, selectionArgs, groupBy, having, orderBy);
+		}
+
+		public Cursor rawQuery(final String sql, final String[] selectionArgs) {
+
+			if (mDatabase == null) return null;
+			return mDatabase.rawQuery(sql, selectionArgs);
+		}
+
+		public void setSQLiteDatabase(final SQLiteDatabase database) {
+			mDatabase = database;
+		}
+
+		public void setTransactionSuccessful() {
+			if (mDatabase == null) return;
+			mDatabase.setTransactionSuccessful();
+		}
+
+		public int update(final String table, final ContentValues values, final String whereClause,
+				final String[] whereArgs) {
+			if (mDatabase == null) return 0;
+			return mDatabase.update(table, values, whereClause, whereArgs);
+		}
+
 	}
 
 }

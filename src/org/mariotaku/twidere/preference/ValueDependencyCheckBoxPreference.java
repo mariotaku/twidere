@@ -1,4 +1,4 @@
-package org.mariotaku.twidere.provider;
+package org.mariotaku.twidere.preference;
 
 import android.content.Context;
 import android.content.SharedPreferences;

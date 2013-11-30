@@ -75,6 +75,7 @@ import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.SearchView.OnSuggestionListener;
+import android.widget.Toast;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu.CanvasTransformer;
@@ -541,16 +542,21 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	/** Called when the activity is first created. */
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		if (!Utils.isDatabaseReady(this)) {
+			Toast.makeText(this, R.string.preparing_database_toast, Toast.LENGTH_SHORT).show();
+			finish();
+			return;
+		}
 		mTwitterWrapper = getTwitterWrapper();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		mMultiSelectHandler = new MultiSelectEventHandler(this);
 		mMultiSelectHandler.dispatchOnCreate();
 		final Resources res = getResources();
-		final boolean home_display_icon = res.getBoolean(R.bool.home_display_icon);
-		super.onCreate(savedInstanceState);
-		final long[] account_ids = getAccountIds(this);
-		if (account_ids.length == 0) {
+		final boolean displayIcon = res.getBoolean(R.bool.home_display_icon);
+		final long[] accountIds = getAccountIds(this);
+		if (accountIds.length == 0) {
 			final Intent sign_in_intent = new Intent(INTENT_ACTION_TWITTER_LOGIN);
 			sign_in_intent.setClass(this, SignInActivity.class);
 			startActivity(sign_in_intent);
@@ -586,8 +592,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		initTabs();
 		final boolean tabs_not_empty = mPagerAdapter.getCount() != 0;
 		mEmptyTabHint.setVisibility(tabs_not_empty ? View.GONE : View.VISIBLE);
-		mActionBar.setDisplayShowHomeEnabled(home_display_icon || !tabs_not_empty);
-		mActionBar.setHomeButtonEnabled(home_display_icon || !tabs_not_empty);
+		mActionBar.setDisplayShowHomeEnabled(displayIcon || !tabs_not_empty);
+		mActionBar.setHomeButtonEnabled(displayIcon || !tabs_not_empty);
 		mActionBar.setDisplayShowTitleEnabled(!tabs_not_empty);
 		mActionBar.setDisplayShowCustomEnabled(tabs_not_empty);
 		setTabPosition(initial_tab);

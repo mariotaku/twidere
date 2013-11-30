@@ -7,7 +7,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 
 import org.mariotaku.twidere.activity.iface.IThemedActivity;
+import org.mariotaku.twidere.util.StrictModeUtils;
 import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.util.Utils;
 
 public abstract class BaseSupportThemedActivity extends FragmentActivity implements IThemedActivity {
 
@@ -54,6 +56,11 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
+		if (Utils.isDebugBuild()) {
+			StrictModeUtils.detectAllVmPolicy();
+			StrictModeUtils.detectAllThreadPolicy();
+		}
+
 		if (shouldOverrideActivityAnimation()) {
 			ThemeUtils.overrideActivityOpenAnimation(this);
 		}

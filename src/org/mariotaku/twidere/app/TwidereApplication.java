@@ -33,6 +33,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
@@ -63,7 +64,9 @@ import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.ImageMemoryCache;
 import org.mariotaku.twidere.util.MessagesManager;
 import org.mariotaku.twidere.util.MultiSelectManager;
-import org.mariotaku.twidere.util.content.DatabaseHelper;
+import org.mariotaku.twidere.util.StrictModeUtils;
+import org.mariotaku.twidere.util.Utils;
+import org.mariotaku.twidere.util.content.TwidereSQLiteOpenHelper;
 import org.mariotaku.twidere.util.imageloader.TwidereImageDownloader;
 import org.mariotaku.twidere.util.imageloader.URLFileNameGenerator;
 import org.mariotaku.twidere.util.net.TwidereHostAddressResolver;
@@ -88,6 +91,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	private TwidereImageDownloader mImageDownloader, mFullImageDownloader;
 	private DiscCacheAware mDiscCache, mFullDiscCache;
 	private MessagesManager mCroutonsManager;
+	private SQLiteOpenHelper mSQLiteOpenHelper;
 
 	private HostAddressResolver mResolver;
 	private SQLiteDatabase mDatabase;
@@ -155,7 +159,14 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	public SQLiteDatabase getSQLiteDatabase() {
 		if (mDatabase != null) return mDatabase;
-		return mDatabase = new DatabaseHelper(this, DATABASES_NAME, DATABASES_VERSION).getWritableDatabase();
+
+		StrictModeUtils.checkDiskIO();
+		return mDatabase = getSQLiteOpenHelper().getWritableDatabase();
+	}
+
+	public SQLiteOpenHelper getSQLiteOpenHelper() {
+		if (mSQLiteOpenHelper != null) return mSQLiteOpenHelper;
+		return mSQLiteOpenHelper = new TwidereSQLiteOpenHelper(this, DATABASES_NAME, DATABASES_VERSION);
 	}
 
 	public AsyncTwitterWrapper getTwitterWrapper() {
@@ -165,6 +176,9 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	@Override
 	public void onCreate() {
+		if (Utils.isDebugBuild()) {
+			StrictModeUtils.detectAllVmPolicy();
+		}
 		super.onCreate();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		mHandler = new Handler();

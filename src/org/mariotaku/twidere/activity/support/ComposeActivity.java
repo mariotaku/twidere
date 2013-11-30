@@ -50,16 +50,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
 import android.location.Criteria;
@@ -163,17 +160,6 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 	private DraftItem mDraftItem;
 	private long mInReplyToStatusId;
 	private String mOriginalText;
-
-	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(final Context context, final Intent intent) {
-			final String action = intent.getAction();
-			if (BROADCAST_DRAFTS_DATABASE_UPDATED.equals(action)) {
-				setMenu();
-			}
-		}
-	};
 
 	@Override
 	public void afterTextChanged(final Editable s) {
@@ -592,13 +578,10 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		setMenu();
 		final int text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(this));
 		mEditText.setTextSize(text_size * 1.25f);
-		final IntentFilter filter = new IntentFilter(BROADCAST_DRAFTS_DATABASE_UPDATED);
-		registerReceiver(mStatusReceiver, filter);
 	}
 
 	@Override
 	protected void onStop() {
-		unregisterReceiver(mStatusReceiver);
 		if (mPopupMenu != null) {
 			mPopupMenu.dismiss();
 		}
@@ -760,16 +743,6 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		return true;
 	}
 
-	private boolean hasDraftItem() {
-		final Cursor drafts_cur = getContentResolver().query(Drafts.CONTENT_URI, new String[0], null, null, null);
-		try {
-			return drafts_cur.getCount() > 0;
-		} finally {
-
-			drafts_cur.close();
-		}
-	}
-
 	private boolean hasMedia() {
 		final String path = mImageUri != null ? mImageUri.getPath() : null;
 		return path != null && new File(path).exists();
@@ -810,19 +783,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		}
 		if (itemMore != null) {
 			final int activated_color = getUserThemeColor(this);
-			final MenuItem itemDrafts = menu.findItem(MENU_DRAFTS);
 			final MenuItem itemToggleSensitive = menu.findItem(MENU_TOGGLE_SENSITIVE);
-			if (itemDrafts != null) {
-				final Drawable iconMore = itemMore.getIcon().mutate();
-				final Drawable iconDrafts = itemDrafts.getIcon().mutate();
-				if (hasDraftItem()) {
-					iconMore.setColorFilter(activated_color, Mode.MULTIPLY);
-					iconDrafts.setColorFilter(activated_color, Mode.MULTIPLY);
-				} else {
-					iconMore.clearColorFilter();
-					iconDrafts.clearColorFilter();
-				}
-			}
 			if (itemToggleSensitive != null) {
 				itemToggleSensitive.setVisible(has_media);
 				if (has_media) {
