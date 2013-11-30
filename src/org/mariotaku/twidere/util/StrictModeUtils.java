@@ -1,5 +1,8 @@
 package org.mariotaku.twidere.util;
 
+import android.os.StrictMode;
+import android.os.StrictMode.ThreadPolicy;
+import android.os.StrictMode.VmPolicy;
 import android.util.Log;
 
 public class StrictModeUtils {
@@ -28,6 +31,19 @@ public class StrictModeUtils {
 				log_counter = 0;
 			}
 		}
+	}
+
+	public static void detectAllThreadPolicy() {
+		final ThreadPolicy.Builder threadPolicyBuilder = new ThreadPolicy.Builder();
+		threadPolicyBuilder.detectAll();
+		threadPolicyBuilder.penaltyFlashScreen();
+		StrictMode.setThreadPolicy(threadPolicyBuilder.build());
+	}
+
+	public static void detectAllVmPolicy() {
+		final VmPolicy.Builder vmPolicyBuilder = new VmPolicy.Builder();
+		vmPolicyBuilder.detectAll();
+		vmPolicyBuilder.penaltyLog();
 	}
 
 }

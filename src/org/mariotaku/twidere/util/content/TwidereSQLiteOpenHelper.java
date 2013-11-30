@@ -43,11 +43,11 @@ import org.mariotaku.twidere.provider.TweetStore.Tabs;
 
 import java.util.HashMap;
 
-public final class DatabaseHelper extends SQLiteOpenHelper implements Constants {
+public final class TwidereSQLiteOpenHelper extends SQLiteOpenHelper implements Constants {
 
 	private final Context mContext;
 
-	public DatabaseHelper(final Context context, final String name, final int version) {
+	public TwidereSQLiteOpenHelper(final Context context, final String name, final int version) {
 		super(context, name, null, version);
 		mContext = context;
 	}

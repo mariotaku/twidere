@@ -24,7 +24,7 @@
 		android:summary="%s"
 		android:title="@string/theme_background"/>
 
-	<org.mariotaku.twidere.provider.ValueDependencyCheckBoxPreference
+	<org.mariotaku.twidere.preference.ValueDependencyCheckBoxPreference
 		android:defaultValue="true"
 		android:key="theme_dark_actionbar"
 		android:title="@string/theme_dark_actionbar"

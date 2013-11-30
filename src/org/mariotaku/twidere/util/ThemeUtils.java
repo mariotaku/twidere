@@ -240,8 +240,8 @@ public class ThemeUtils implements Constants {
 			case R.style.Theme_Twidere_Dark_Transparent:
 			case R.style.Theme_Twidere_Light_Transparent:
 			case R.style.Theme_Twidere_Light_DarkActionBar_Transparent:
-			case R.style.Theme_Twidere_Colored_DarkActionBar_Transparent:
 			case R.style.Theme_Twidere_Colored_Transparent:
+			case R.style.Theme_Twidere_Colored_DarkActionBar_Transparent:
 				return 0xa0;
 		}
 		return 0xff;
@@ -418,6 +418,7 @@ public class ThemeUtils implements Constants {
 
 	public static boolean isTransparentBackground(final int themeRes) {
 		switch (themeRes) {
+			case R.style.Theme_Twidere_Colored_Transparent:
 			case R.style.Theme_Twidere_Colored_DarkActionBar_Transparent:
 			case R.style.Theme_Twidere_Dark_Transparent:
 			case R.style.Theme_Twidere_Light_Transparent:

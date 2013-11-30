@@ -230,6 +230,11 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 	}
 
 	@Override
+	public int getActualCount() {
+		return super.getCount();
+	}
+
+	@Override
 	public int getCount() {
 		final int count = super.getCount();
 		return mFiltersEnabled && mIsLastItemFiltered && count > 0 ? count - 1 : count;
@@ -435,10 +440,5 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 
 	private static int getItemResource(final boolean compactCards) {
 		return compactCards ? R.layout.card_item_status_compact : R.layout.card_item_status;
-	}
-
-	@Override
-	public int getActualCount() {
-		return super.getCount();
 	}
 }
