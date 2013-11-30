@@ -480,8 +480,7 @@ public interface TwidereConstants {
 	public static final String EXTRA_IS_MY_ACCOUNT = "is_my_account";
 	public static final String EXTRA_TAB_TYPE = "tab_type";
 	public static final String EXTRA_ACCOUNT = "account";
-	public static final String EXTRA_ACTIVITY_SCREENSHOT = "activity_screenshot";
-	public static final String EXTRA_ACTIVITY_SCREENSHOT_ENCODED = "activity_screenshot_encoded";
+	public static final String EXTRA_ACTIVITY_SCREENSHOT_ID = "activity_screenshot_id";
 	public static final String EXTRA_COLOR = "color";
 	public static final String EXTRA_ALPHA_SLIDER = "alpha_slider";
 	public static final String EXTRA_OPEN_ACCOUNTS_DRAWER = "open_accounts_drawer";

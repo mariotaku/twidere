@@ -34,12 +34,6 @@
 				android:textColor="?android:textColorPrimary"/>
 		</org.mariotaku.twidere.view.AccountsColorFrameLayout>
 
-		<View
-			android:id="@+id/divider"
-			android:layout_width="match_parent"
-			android:layout_height="0.2dp"
-			android:background="#40808080"/>
-
 		<org.mariotaku.twidere.view.ImagePreviewContainer
 			android:id="@+id/image_preview_container"
 			android:layout_width="match_parent"
@@ -59,6 +53,11 @@
 				android:layout_height="wrap_content"
 				android:layout_gravity="center"
 				android:layout_margin="16dp"/>
+
+			<View
+				android:layout_width="match_parent"
+				android:layout_height="0.2dp"
+				android:background="#40808080"/>
 		</org.mariotaku.twidere.view.ImagePreviewContainer>
 	</org.mariotaku.twidere.view.CardItemLinearLayout>
 

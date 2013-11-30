@@ -693,21 +693,21 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		return l.getHeaderView();
 	}
 
-	private int handleIntent(final Intent intent, final boolean first_create) {
+	private int handleIntent(final Intent intent, final boolean firstCreate) {
 		// Reset intent
 		setIntent(new Intent(this, HomeActivity.class));
 		final String action = intent.getAction();
 		if (Intent.ACTION_SEARCH.equals(action)) {
 			final String query = intent.getStringExtra(SearchManager.QUERY);
-			final long account_id = getDefaultAccountId(this);
-			openSearch(this, account_id, query);
+			final long accountId = getDefaultAccountId(this);
+			openSearch(this, accountId, query);
 			return -1;
 		}
 		final boolean refreshOnStart = mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ON_START, false);
 		final long[] refreshedIds = intent.getLongArrayExtra(EXTRA_IDS);
 		if (refreshedIds != null) {
 			mTwitterWrapper.refreshAll(refreshedIds);
-		} else if (first_create && refreshOnStart) {
+		} else if (firstCreate && refreshOnStart) {
 			mTwitterWrapper.refreshAll();
 		}
 
@@ -717,7 +717,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			// clearNotification(initial_tab);
 		}
 		final Intent extraIntent = intent.getParcelableExtra(EXTRA_EXTRA_INTENT);
-		if (extraIntent != null) {
+		if (extraIntent != null && firstCreate) {
 			if (isTwidereLink(extraIntent.getData()) && isDualPaneMode()) {
 				showFragment(createFragmentForIntent(this, extraIntent), true);
 			} else {

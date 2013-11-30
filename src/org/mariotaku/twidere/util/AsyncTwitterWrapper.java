@@ -297,27 +297,27 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		return refreshAll(account_ids);
 	}
 
-	public int refreshAll(final long[] account_ids) {
+	public int refreshAll(final long[] accountIds) {
 		if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_MENTIONS,
 				HomeRefreshContentPreference.DEFAULT_ENABLE_MENTIONS)) {
-			final long[] since_ids = getNewestStatusIdsFromDatabase(mContext, Mentions.CONTENT_URI, account_ids);
-			getMentionsAsync(account_ids, null, since_ids);
+			final long[] sinceIds = getNewestStatusIdsFromDatabase(mContext, Mentions.CONTENT_URI, accountIds);
+			getMentionsAsync(accountIds, null, sinceIds);
 		}
 		if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES,
 				HomeRefreshContentPreference.DEFAULT_ENABLE_DIRECT_MESSAGES)) {
-			final long[] since_ids = getNewestMessageIdsFromDatabase(mContext, DirectMessages.Inbox.CONTENT_URI,
-					account_ids);
-			getReceivedDirectMessagesAsync(account_ids, null, since_ids);
-			getSentDirectMessagesAsync(account_ids, null, null);
+			final long[] sinceIds = getNewestMessageIdsFromDatabase(mContext, DirectMessages.Inbox.CONTENT_URI,
+					accountIds);
+			getReceivedDirectMessagesAsync(accountIds, null, sinceIds);
+			getSentDirectMessagesAsync(accountIds, null, null);
 		}
 		if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_TRENDS,
 				HomeRefreshContentPreference.DEFAULT_ENABLE_TRENDS)) {
-			final long account_id = getDefaultAccountId(mContext);
-			final int woeid = mPreferences.getInt(PREFERENCE_KEY_LOCAL_TRENDS_WOEID, 1);
-			getLocalTrendsAsync(account_id, woeid);
+			final long accountId = getDefaultAccountId(mContext);
+			final int woeId = mPreferences.getInt(PREFERENCE_KEY_LOCAL_TRENDS_WOEID, 1);
+			getLocalTrendsAsync(accountId, woeId);
 		}
-		final long[] since_ids = getNewestStatusIdsFromDatabase(mContext, Statuses.CONTENT_URI, account_ids);
-		return getHomeTimelineAsync(account_ids, null, since_ids);
+		final long[] statusSinceIds = getNewestStatusIdsFromDatabase(mContext, Statuses.CONTENT_URI, accountIds);
+		return getHomeTimelineAsync(accountIds, null, statusSinceIds);
 	}
 
 	public void removeUnreadCountsAsync(final int position, final Map<Long, Set<Long>> counts) {

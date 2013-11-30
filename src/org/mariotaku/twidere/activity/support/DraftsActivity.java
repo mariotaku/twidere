@@ -242,7 +242,7 @@ public class DraftsActivity extends BaseSupportActivity implements LoaderCallbac
 		private int mAccountIdsIdx, mTextIdx, mImageUriIdx;
 
 		public DraftsAdapter(final Context context) {
-			super(context, R.layout.draft_list_item, null, new String[0], new int[0], 0);
+			super(context, R.layout.card_item_draft, null, new String[0], new int[0], 0);
 			mImageLoader = TwidereApplication.getInstance(context).getImageLoaderWrapper();
 			mImageLoadingHandler = new ImageLoadingHandler();
 		}

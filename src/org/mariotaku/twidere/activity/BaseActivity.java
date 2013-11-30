@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.activity;
 
 import android.annotation.SuppressLint;
+import android.content.res.Resources;
 import android.os.Bundle;
 
 import org.mariotaku.twidere.Constants;
@@ -33,6 +34,11 @@ import org.mariotaku.twidere.util.ThemeUtils;
 public class BaseActivity extends BaseThemedActivity implements Constants {
 
 	private boolean mInstanceStateSaved, mIsVisible, mIsOnTop;
+
+	@Override
+	public Resources getDefaultResources() {
+		return super.getResources();
+	}
 
 	public MessagesManager getMessagesManager() {
 		return getTwidereApplication() != null ? getTwidereApplication().getMessagesManager() : null;

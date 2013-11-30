@@ -19,9 +19,13 @@
 
 package org.mariotaku.twidere.activity.iface;
 
+import android.content.res.Resources;
+
 public interface IThemedActivity {
 
 	public int getCurrentThemeResource();
+
+	public Resources getDefaultResources();
 
 	public void navigateUpFromSameTask();
 
