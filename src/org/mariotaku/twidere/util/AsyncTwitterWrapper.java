@@ -2102,7 +2102,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				final boolean deleted_old_gap = rowsDeleted > 0 && ArrayUtils.contains(statusIds, response.max_id);
 				final boolean no_rows_deleted = rowsDeleted == 0;
 				final boolean insert_gap = min_id > 0 && (no_rows_deleted || deleted_old_gap) && !response.truncated
-						&& !no_items_before;
+						&& !no_items_before && statuses.size() > 1;
 				if (insert_gap) {
 					final ContentValues gap_value = new ContentValues();
 					gap_value.put(Statuses.IS_GAP, 1);
