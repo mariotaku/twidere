@@ -282,8 +282,10 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		filter.addAction(BROADCAST_HOME_ACTIVITY_ONSTOP);
 		context.registerReceiver(mHomeActivityStateReceiver, filter);
 		restoreUnreadItems();
-		final GetWritableDatabaseTask task = new GetWritableDatabaseTask(context, helper, mDatabaseWrapper);
-		task.execute();
+		mDatabaseWrapper.setSQLiteDatabase(helper.getWritableDatabase());
+		// final GetWritableDatabaseTask task = new
+		// GetWritableDatabaseTask(context, helper, mDatabaseWrapper);
+		// task.execute();
 		return true;
 	}
 
@@ -692,7 +694,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			uriBuilder.scheme(SCHEME_TWIDERE);
 			uriBuilder.authority(AUTHORITY_DIRECT_MESSAGES_CONVERSATION);
 			uriBuilder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(firstItem.account_id));
-			uriBuilder.appendQueryParameter(QUERY_PARAM_CONVERSATION_ID, String.valueOf(firstItem.sender_id));
+			uriBuilder.appendQueryParameter(QUERY_PARAM_RECIPIENT_ID, String.valueOf(firstItem.sender_id));
 			final Intent statusIntent = new Intent(Intent.ACTION_VIEW, uriBuilder.build());
 			statusIntent.setExtrasClassLoader(context.getClassLoader());
 			contentIntent.putExtra(EXTRA_EXTRA_INTENT, statusIntent);
@@ -1319,6 +1321,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		return text;
 	}
 
+	@SuppressWarnings("unused")
 	private static class GetWritableDatabaseTask extends AsyncTask<Void, Void, SQLiteDatabase> {
 		private final Context mContext;
 		private final SQLiteOpenHelper mHelper;

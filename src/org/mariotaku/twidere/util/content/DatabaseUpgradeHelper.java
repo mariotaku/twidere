@@ -46,28 +46,28 @@ public final class DatabaseUpgradeHelper {
 	private static final int FIELD_TYPE_STRING = 3;
 	private static final int FIELD_TYPE_BLOB = 4;
 
-	public static void safeUpgrade(final SQLiteDatabase db, final String table, final String[] new_cols,
-			final String[] new_types, final boolean fast_upgrade, final boolean drop_directly,
-			final HashMap<String, String> column_alias) {
+	public static void safeUpgrade(final SQLiteDatabase db, final String table, final String[] newCols,
+			final String[] newTypes, final boolean fastUpgrade, final boolean dropDirectly,
+			final HashMap<String, String> colAliases) {
 
-		if (new_cols == null || new_types == null || new_cols.length != new_types.length)
+		if (newCols == null || newTypes == null || newCols.length != newTypes.length)
 			throw new IllegalArgumentException("Invalid parameters for upgrading table " + table
 					+ ", length of columns and types not match.");
 
-		final List<ContentValues> values_list = new ArrayList<ContentValues>();
+		final List<ContentValues> valuesList = new ArrayList<ContentValues>();
 
 		// First, create the table if not exists.
-		db.execSQL(createTable(table, new_cols, new_types, true));
+		db.execSQL(createTable(table, newCols, newTypes, true));
 
 		// We need to get all data from old table.
 		final Cursor cur = db.query(table, null, null, null, null, null, null);
 		cur.moveToFirst();
-		final String[] old_cols = cur.getColumnNames();
+		final String[] oldCols = cur.getColumnNames();
 
-		if (fast_upgrade) {
-			final String[] old_types = getBatchTypeString(db, table, old_cols);
+		if (fastUpgrade) {
+			final String[] oldTypes = getBatchTypeString(db, table, oldCols);
 
-			if (!shouldUpgrade(old_cols, old_types, new_cols, new_types)) {
+			if (!shouldUpgrade(oldCols, oldTypes, newCols, newTypes)) {
 				if (cur != null) {
 					cur.close();
 				}
@@ -76,39 +76,38 @@ public final class DatabaseUpgradeHelper {
 		}
 
 		// If drop_directly set to true, we will not backup any data actually.
-		if (!drop_directly) {
+		if (!dropDirectly) {
 
 			while (!cur.isAfterLast()) {
 				final ContentValues values = new ContentValues();
-				final int length = new_cols.length;
+				final int length = newCols.length;
 				for (int i = 0; i < length; i++) {
-					final String new_col = new_cols[i];
-					final String col_alias = column_alias != null && column_alias.containsKey(new_col)
-							&& ArrayUtils.contains(old_cols, column_alias.get(new_col)) ? column_alias.get(new_col)
-							: new_col;
-					final String new_type = new_types[i];
-					if (BaseColumns._ID.equals(new_col)) {
+					final String newCol = newCols[i];
+					final String colAlias = colAliases != null && colAliases.containsKey(newCol)
+							&& ArrayUtils.contains(oldCols, colAliases.get(newCol)) ? colAliases.get(newCol) : newCol;
+					final String newType = newTypes[i];
+					if (BaseColumns._ID.equals(newCol)) {
 						continue;
 					}
 
-					final int idx = cur.getColumnIndex(col_alias);
+					final int idx = cur.getColumnIndex(colAlias);
 
-					if (ArrayUtils.contains(old_cols, col_alias)) {
-						final String old_type = getTypeString(db, table, col_alias);
-						final boolean compatible = isTypeCompatible(old_type, new_type, false);
+					if (ArrayUtils.contains(oldCols, colAlias)) {
+						final String old_type = getTypeString(db, table, colAlias);
+						final boolean compatible = isTypeCompatible(old_type, newType, false);
 						if (compatible && idx > -1) {
-							switch (getTypeInt(new_type)) {
+							switch (getTypeInt(newType)) {
 								case FIELD_TYPE_INTEGER:
-									values.put(new_col, cur.getLong(idx));
+									values.put(newCol, cur.getLong(idx));
 									break;
 								case FIELD_TYPE_FLOAT:
-									values.put(new_col, cur.getFloat(idx));
+									values.put(newCol, cur.getFloat(idx));
 									break;
 								case FIELD_TYPE_STRING:
-									values.put(new_col, cur.getString(idx));
+									values.put(newCol, cur.getString(idx));
 									break;
 								case FIELD_TYPE_BLOB:
-									values.put(new_col, cur.getBlob(idx));
+									values.put(newCol, cur.getBlob(idx));
 									break;
 								case FIELD_TYPE_NULL:
 								default:
@@ -117,7 +116,7 @@ public final class DatabaseUpgradeHelper {
 						}
 					}
 				}
-				values_list.add(values);
+				valuesList.add(values);
 				cur.moveToNext();
 			}
 		}
@@ -126,11 +125,11 @@ public final class DatabaseUpgradeHelper {
 		// OK, now we got all data can be moved from old table, so we will
 		// delete the old table and create a new one.
 		db.execSQL("DROP TABLE IF EXISTS " + table);
-		db.execSQL(createTable(table, new_cols, new_types, false));
+		db.execSQL(createTable(table, newCols, newTypes, false));
 
 		// Now, insert all data backuped into new table.
 		db.beginTransaction();
-		for (final ContentValues values : values_list) {
+		for (final ContentValues values : valuesList) {
 			db.insert(table, null, values);
 		}
 		db.setTransactionSuccessful();
@@ -138,11 +137,11 @@ public final class DatabaseUpgradeHelper {
 	}
 
 	private static String createTable(final String tableName, final String[] columns, final String[] types,
-			final boolean create_if_not_exists) {
+			final boolean createIfNotExists) {
 		if (tableName == null || columns == null || types == null || types.length != columns.length
 				|| types.length == 0)
 			throw new IllegalArgumentException("Invalid parameters for creating table " + tableName);
-		final StringBuilder stringBuilder = new StringBuilder(create_if_not_exists ? "CREATE TABLE IF NOT EXISTS "
+		final StringBuilder stringBuilder = new StringBuilder(createIfNotExists ? "CREATE TABLE IF NOT EXISTS "
 				: "CREATE TABLE ");
 
 		stringBuilder.append(tableName);
@@ -216,14 +215,14 @@ public final class DatabaseUpgradeHelper {
 		}
 	}
 
-	private static boolean isTypeCompatible(final String old_type, final String new_type,
-			final boolean treat_null_as_compatible) {
-		if (old_type != null && new_type != null) {
-			final int old_idx = old_type.contains("(") ? old_type.indexOf("(") : old_type.indexOf(" ");
-			final int new_idx = new_type.contains("(") ? new_type.indexOf("(") : new_type.indexOf(" ");
-			final String old_type_main = old_idx > -1 ? old_type.substring(0, old_idx) : old_type;
-			final String new_type_main = new_idx > -1 ? new_type.substring(0, new_idx) : new_type;
-			if (treat_null_as_compatible)
+	private static boolean isTypeCompatible(final String oldType, final String newType,
+			final boolean treatNullAsCompatible) {
+		if (oldType != null && newType != null) {
+			final int old_idx = oldType.contains("(") ? oldType.indexOf("(") : oldType.indexOf(" ");
+			final int new_idx = newType.contains("(") ? newType.indexOf("(") : newType.indexOf(" ");
+			final String old_type_main = old_idx > -1 ? oldType.substring(0, old_idx) : oldType;
+			final String new_type_main = new_idx > -1 ? newType.substring(0, new_idx) : newType;
+			if (treatNullAsCompatible)
 				return "NULL".equalsIgnoreCase(old_type_main) || "NULL".equalsIgnoreCase(new_type_main)
 						|| old_type_main.equalsIgnoreCase(new_type_main);
 			return old_type_main.equalsIgnoreCase(new_type_main);
@@ -231,24 +230,24 @@ public final class DatabaseUpgradeHelper {
 		return false;
 	}
 
-	private static boolean shouldUpgrade(final String[] old_cols, final String[] old_types, final String[] new_cols,
-			final String[] new_types) {
-		if (old_cols == null || old_types == null || new_cols == null || new_types == null)
+	private static boolean shouldUpgrade(final String[] oldCols, final String[] oldTypes, final String[] newCols,
+			final String[] newTypes) {
+		if (oldCols == null || oldTypes == null || newCols == null || newTypes == null)
 			throw new IllegalArgumentException("All arguments cannot be null!");
-		if (old_cols.length != old_types.length || new_cols.length != new_types.length)
+		if (oldCols.length != oldTypes.length || newCols.length != newTypes.length)
 			throw new IllegalArgumentException("Length of columns and types not match!");
-		if (old_cols.length != new_cols.length) return true;
-		if (!ArrayUtils.contentMatch(old_cols, new_cols)) return true;
-		final HashMap<String, String> old_map = new HashMap<String, String>(), new_map = new HashMap<String, String>();
+		if (oldCols.length != newCols.length) return true;
+		if (!ArrayUtils.contentMatch(oldCols, newCols)) return true;
+		final HashMap<String, String> oldMap = new HashMap<String, String>(), newMap = new HashMap<String, String>();
 		// I'm sure the length of four arrays are equal.
-		final int length = old_cols.length;
+		final int length = oldCols.length;
 		for (int i = 0; i < length; i++) {
-			old_map.put(old_cols[i], old_types[i]);
-			new_map.put(new_cols[i], new_types[i]);
+			oldMap.put(oldCols[i], oldTypes[i]);
+			newMap.put(newCols[i], newTypes[i]);
 		}
-		final Set<String> old_keyset = old_map.keySet();
-		for (final String col_name : old_keyset) {
-			if (!isTypeCompatible(old_map.get(col_name), new_map.get(col_name), true)) return true;
+		final Set<String> oldKeySet = oldMap.keySet();
+		for (final String colName : oldKeySet) {
+			if (!isTypeCompatible(oldMap.get(colName), newMap.get(colName), true)) return true;
 		}
 		return false;
 	}

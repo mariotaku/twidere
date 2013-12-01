@@ -1,7 +1,7 @@
 package org.mariotaku.twidere.fragment.support;
 
+import static org.mariotaku.twidere.util.ContentValuesCreator.makeFilterdUserContentValues;
 import static org.mariotaku.twidere.util.Utils.getDisplayName;
-import static org.mariotaku.twidere.util.Utils.makeFilterdUserContentValues;
 import static org.mariotaku.twidere.util.content.ContentResolverUtils.bulkDelete;
 import static org.mariotaku.twidere.util.content.ContentResolverUtils.bulkInsert;
 

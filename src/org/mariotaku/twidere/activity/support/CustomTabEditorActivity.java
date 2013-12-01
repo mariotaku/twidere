@@ -351,6 +351,51 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 		return INTENT_ACTION_EDIT_TAB.equals(getIntent().getAction());
 	}
 
+	public static class SecondaryFieldEditTextDialogFragment extends BaseSupportDialogFragment implements
+			DialogInterface.OnClickListener {
+		private static final String FRAGMENT_TAG_EDIT_SECONDARY_FIELD = "edit_secondary_field";
+		private EditText mEditText;
+
+		@Override
+		public void onClick(final DialogInterface dialog, final int which) {
+			final FragmentActivity activity = getActivity();
+			if (activity instanceof CustomTabEditorActivity) {
+				((CustomTabEditorActivity) activity)
+						.setSecondaryFieldValue(ParseUtils.parseString(mEditText.getText()));
+			}
+		}
+
+		@Override
+		public Dialog onCreateDialog(final Bundle savedInstanceState) {
+			final Bundle args = getArguments();
+			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			builder.setTitle(args.getString(EXTRA_TITLE));
+			builder.setPositiveButton(android.R.string.ok, this);
+			builder.setNegativeButton(android.R.string.cancel, null);
+			final FrameLayout view = new FrameLayout(getActivity());
+			mEditText = new EditText(getActivity());
+			final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
+					FrameLayout.LayoutParams.WRAP_CONTENT);
+			lp.leftMargin = lp.topMargin = lp.bottomMargin = lp.rightMargin = getResources().getDimensionPixelSize(
+					R.dimen.element_spacing_default);
+			view.addView(mEditText, lp);
+			builder.setView(view);
+			mEditText.setText(args.getString(EXTRA_TEXT));
+			return builder.create();
+		}
+
+		public static SecondaryFieldEditTextDialogFragment show(final FragmentActivity activity, final String text,
+				final String title) {
+			final SecondaryFieldEditTextDialogFragment f = new SecondaryFieldEditTextDialogFragment();
+			final Bundle args = new Bundle();
+			args.putString(EXTRA_TEXT, text);
+			args.putString(EXTRA_TITLE, title);
+			f.setArguments(args);
+			f.show(activity.getSupportFragmentManager(), FRAGMENT_TAG_EDIT_SECONDARY_FIELD);
+			return f;
+		}
+	}
+
 	static class CustomTabIconsAdapter extends ArrayAdapter<Entry<String, Integer>> {
 
 		private final Resources mResources;
@@ -426,51 +471,6 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 
 		}
 
-	}
-
-	static class SecondaryFieldEditTextDialogFragment extends BaseSupportDialogFragment implements
-			DialogInterface.OnClickListener {
-		private static final String FRAGMENT_TAG_EDIT_SECONDARY_FIELD = "edit_secondary_field";
-		private EditText mEditText;
-
-		@Override
-		public void onClick(final DialogInterface dialog, final int which) {
-			final FragmentActivity activity = getActivity();
-			if (activity instanceof CustomTabEditorActivity) {
-				((CustomTabEditorActivity) activity)
-						.setSecondaryFieldValue(ParseUtils.parseString(mEditText.getText()));
-			}
-		}
-
-		@Override
-		public Dialog onCreateDialog(final Bundle savedInstanceState) {
-			final Bundle args = getArguments();
-			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			builder.setTitle(args.getString(EXTRA_TITLE));
-			builder.setPositiveButton(android.R.string.ok, this);
-			builder.setNegativeButton(android.R.string.cancel, null);
-			final FrameLayout view = new FrameLayout(getActivity());
-			mEditText = new EditText(getActivity());
-			final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
-					FrameLayout.LayoutParams.WRAP_CONTENT);
-			lp.leftMargin = lp.topMargin = lp.bottomMargin = lp.rightMargin = getResources().getDimensionPixelSize(
-					R.dimen.element_spacing_default);
-			view.addView(mEditText, lp);
-			builder.setView(view);
-			mEditText.setText(args.getString(EXTRA_TEXT));
-			return builder.create();
-		}
-
-		public static SecondaryFieldEditTextDialogFragment show(final FragmentActivity activity, final String text,
-				final String title) {
-			final SecondaryFieldEditTextDialogFragment f = new SecondaryFieldEditTextDialogFragment();
-			final Bundle args = new Bundle();
-			args.putString(EXTRA_TEXT, text);
-			args.putString(EXTRA_TITLE, title);
-			f.setArguments(args);
-			f.show(activity.getSupportFragmentManager(), FRAGMENT_TAG_EDIT_SECONDARY_FIELD);
-			return f;
-		}
 	}
 
 }

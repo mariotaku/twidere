@@ -20,6 +20,9 @@
 package org.mariotaku.twidere.util;
 
 import static org.mariotaku.twidere.provider.TweetStore.STATUSES_URIS;
+import static org.mariotaku.twidere.util.ContentValuesCreator.makeDirectMessageContentValues;
+import static org.mariotaku.twidere.util.ContentValuesCreator.makeStatusContentValues;
+import static org.mariotaku.twidere.util.ContentValuesCreator.makeTrendsContentValues;
 import static org.mariotaku.twidere.util.Utils.appendQueryParameters;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getAllStatusesIds;
@@ -29,9 +32,6 @@ import static org.mariotaku.twidere.util.Utils.getNewestStatusIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.getStatusIdsInDatabase;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.getUserName;
-import static org.mariotaku.twidere.util.Utils.makeDirectMessageContentValues;
-import static org.mariotaku.twidere.util.Utils.makeStatusContentValues;
-import static org.mariotaku.twidere.util.Utils.makeTrendsContentValues;
 import static org.mariotaku.twidere.util.content.ContentResolverUtils.bulkDelete;
 import static org.mariotaku.twidere.util.content.ContentResolverUtils.bulkInsert;
 
@@ -340,10 +340,14 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int sendDirectMessage(final long account_id, final String screen_name, final long user_id,
-			final String message) {
-		final SendDirectMessageTask task = new SendDirectMessageTask(account_id, screen_name, user_id, message);
-		return mAsyncTaskManager.add(task, true);
+	public int sendDirectMessageAsync(final long accountId, final long recipientId, final String text) {
+		final Intent intent = new Intent(mContext, BackgroundOperationService.class);
+		intent.setAction(INTENT_ACTION_SEND_DIRECT_MESSAGE);
+		intent.putExtra(EXTRA_ACCOUNT_ID, accountId);
+		intent.putExtra(EXTRA_RECIPIENT_ID, recipientId);
+		intent.putExtra(EXTRA_TEXT, text);
+		mContext.startService(intent);
+		return 0;
 	}
 
 	public int updateProfile(final long account_id, final String name, final String url, final String location,
@@ -365,10 +369,17 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int updateStatusAsync(final long[] account_ids, final String content, final ParcelableLocation location,
-			final Uri image_uri, final int image_type, final long in_reply_to, final boolean is_possibly_sensitive) {
-		return updateStatusesAsync(new ParcelableStatusUpdate(account_ids, content, location, image_uri, image_type,
-				in_reply_to, is_possibly_sensitive));
+	public int updateStatusAsync(final long[] account_ids, final String text, final ParcelableLocation location,
+			final Uri media_uri, final int media_type, final long in_reply_to_status_id,
+			final boolean is_possibly_sensitive) {
+		final ParcelableStatusUpdate.Builder builder = new ParcelableStatusUpdate.Builder();
+		builder.accountIds(account_ids);
+		builder.text(text);
+		builder.location(location);
+		builder.media(media_uri, media_type);
+		builder.inReplyToStatusId(in_reply_to_status_id);
+		builder.isPossiblySensitive(is_possibly_sensitive);
+		return updateStatusesAsync(builder.build());
 	}
 
 	public int updateStatusesAsync(final ParcelableStatusUpdate... statuses) {
@@ -2018,15 +2029,6 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		@Override
-		protected void onPostExecute(final SingleResponse<Bundle> response) {
-			final boolean succeed = response != null && response.data != null
-					&& response.data.getBoolean(EXTRA_SUCCEED);
-			mContext.sendBroadcast(new Intent(BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED).putExtra(EXTRA_SUCCEED,
-					succeed));
-			super.onPostExecute(response);
-		}
-
-		@Override
 		boolean isOutgoing() {
 			return false;
 		}
@@ -2037,15 +2039,6 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 		public StoreSentDirectMessagesTask(final List<MessageListResponse> result, final boolean notify) {
 			super(result, DirectMessages.Outbox.CONTENT_URI, notify, TASK_TAG_STORE_SENT_DIRECT_MESSAGES);
-		}
-
-		@Override
-		protected void onPostExecute(final SingleResponse<Bundle> response) {
-			final boolean succeed = response != null && response.data != null
-					&& response.data.getBoolean(EXTRA_SUCCEED);
-			mContext.sendBroadcast(new Intent(BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED)
-					.putExtra(EXTRA_SUCCEED, succeed));
-			super.onPostExecute(response);
 		}
 
 		@Override

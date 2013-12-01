@@ -9,14 +9,14 @@
 		<org.mariotaku.twidere.preference.ThemePreviewPreference android:key="theme_preview"/>
 	</PreferenceCategory>
 
-	<ListPreference
+	<org.mariotaku.twidere.preference.AutoInvalidateListPreference
 		android:defaultValue="twidere"
 		android:entries="@array/entries_theme"
 		android:entryValues="@array/values_theme"
 		android:key="theme"
 		android:summary="%s"
 		android:title="@string/theme"/>
-	<ListPreference
+	<org.mariotaku.twidere.preference.AutoInvalidateListPreference
 		android:defaultValue="default"
 		android:entries="@array/entries_theme_background"
 		android:entryValues="@array/values_theme_background"

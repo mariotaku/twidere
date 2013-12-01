@@ -399,6 +399,9 @@ public final class TweetStore {
 
 	public static interface Drafts extends BaseColumns {
 
+		public static final int ACTION_UPDATE_STATUS = 1;
+		public static final int ACTION_SEND_DIRECT_MESSAGE = 2;
+
 		public static final String TABLE_NAME = "drafts";
 		public static final String CONTENT_PATH = TABLE_NAME;
 
@@ -416,21 +419,27 @@ public final class TweetStore {
 		 */
 		public static final String ACCOUNT_IDS = "account_ids";
 
-		public static final String IMAGE_URI = "image_uri";
+		public static final String MEDIA_URI = "media_uri";
 
 		public static final String LOCATION = "location";
 
 		public static final String IN_REPLY_TO_STATUS_ID = "in_reply_to_status_id";
 
-		public static final String ATTACHED_IMAGE_TYPE = "attached_image_type";
+		public static final String MEDIA_TYPE = "media_type";
 
 		public static final String IS_POSSIBLY_SENSITIVE = "is_possibly_sensitive";
 
-		public static final String[] COLUMNS = new String[] { _ID, TEXT, ACCOUNT_IDS, LOCATION, IMAGE_URI,
-				IN_REPLY_TO_STATUS_ID, ATTACHED_IMAGE_TYPE, IS_POSSIBLY_SENSITIVE };
+		public static final String TIMESTAMP = "timestamp";
+
+		public static final String ACTION_TYPE = "action_type";
+
+		public static final String ACTION_EXTRAS = "action_extras";
+
+		public static final String[] COLUMNS = new String[] { _ID, TEXT, ACCOUNT_IDS, LOCATION, MEDIA_URI,
+				IN_REPLY_TO_STATUS_ID, MEDIA_TYPE, IS_POSSIBLY_SENSITIVE, TIMESTAMP, ACTION_TYPE, ACTION_EXTRAS };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,
-				TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_BOOLEAN };
+				TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_BOOLEAN, TYPE_INT, TYPE_INT, TYPE_TEXT };
 
 	}
 

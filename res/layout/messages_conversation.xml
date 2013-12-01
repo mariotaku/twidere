@@ -25,7 +25,7 @@
 	</RelativeLayout>
 
 	<LinearLayout
-		android:id="@+id/screen_name_container"
+		android:id="@+id/recipient_selector_container"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:orientation="vertical"
@@ -44,21 +44,22 @@
 				android:id="@+id/account_selector"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:minHeight="42dp"
+				android:minHeight="?android:listPreferredItemHeightSmall"
+				android:padding="@dimen/element_spacing_default"
 				tools:listitem="@layout/two_line_list_item_small"/>
 
-			<AutoCompleteTextView
-				android:id="@+id/edit_recipient"
+			<TextView
+				android:id="@+id/recipient_selector"
+				style="?android:dropDownSpinnerStyle"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:hint="@string/screen_name"
-				android:singleLine="true"/>
+				android:clickable="true"
+				android:gravity="center_vertical"
+				android:minHeight="?android:listPreferredItemHeightSmall"
+				android:padding="@dimen/element_spacing_default"
+				android:text="@string/select_user"
+				android:textAppearance="?android:textAppearanceMedium"/>
 		</LinearLayout>
-
-		<FrameLayout
-			android:id="@+id/recipient_confirm_container"
-			android:layout_width="match_parent"
-			android:layout_height="?android:actionBarSize"/>
 	</LinearLayout>
 
 </FrameLayout>

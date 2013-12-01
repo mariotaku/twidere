@@ -20,10 +20,10 @@
 package org.mariotaku.twidere.activity.support;
 
 import static android.text.TextUtils.isEmpty;
+import static org.mariotaku.twidere.util.ContentValuesCreator.makeAccountContentValues;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getNonEmptyString;
 import static org.mariotaku.twidere.util.Utils.isUserLoggedIn;
-import static org.mariotaku.twidere.util.Utils.makeAccountContentValues;
 import static org.mariotaku.twidere.util.Utils.setUserAgent;
 import static org.mariotaku.twidere.util.Utils.showErrorMessage;
 import static org.mariotaku.twidere.util.Utils.trim;

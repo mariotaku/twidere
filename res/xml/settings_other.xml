@@ -7,11 +7,12 @@
 		android:summary="@string/quick_send_summary"
 		android:title="@string/quick_send"/>
 
-	<ListPreference
+	<org.mariotaku.twidere.preference.AutoInvalidateListPreference
 		android:defaultValue="ask"
 		android:entries="@array/entries_compose_quit_action"
 		android:entryValues="@array/values_compose_quit_action"
 		android:key="compose_quit_action"
+		android:summary="%s"
 		android:title="@string/compose_quit_action"/>
 
 	<CheckBoxPreference

@@ -114,11 +114,11 @@ public interface TwidereConstants {
 	public static final String QUERY_PARAM_NOTIFY = "notify";
 	public static final String QUERY_PARAM_LAT = "lat";
 	public static final String QUERY_PARAM_LNG = "lng";
-	public static final String QUERY_PARAM_CONVERSATION_ID = "conversation_id";
 	public static final String QUERY_PARAM_URL = "url";
 	public static final String QUERY_PARAM_NAME = "name";
 	public static final String QUERY_PARAM_FINISH_ONLY = "finish_only";
 	public static final String QUERY_PARAM_NEW_ITEMS_COUNT = "new_items_count";
+	public static final String QUERY_PARAM_RECIPIENT_ID = "recipient_id";
 
 	public static final String DEFAULT_PROTOCOL = PROTOCOL_HTTPS;
 
@@ -350,6 +350,7 @@ public interface TwidereConstants {
 	public static final String INTENT_ACTION_EXTENSION_SETTINGS = INTENT_PACKAGE_PREFIX + "EXTENSION_SETTINGS";
 
 	public static final String INTENT_ACTION_UPDATE_STATUS = INTENT_PACKAGE_PREFIX + "UPDATE_STATUS";
+	public static final String INTENT_ACTION_SEND_DIRECT_MESSAGE = INTENT_PACKAGE_PREFIX + "SEND_DIRECT_MESSAGE";
 
 	public static final String BROADCAST_HOME_TIMELINE_REFRESHED = INTENT_PACKAGE_PREFIX + "HOME_TIMELINE_REFRESHED";
 	public static final String BROADCAST_MENTIONS_REFRESHED = INTENT_PACKAGE_PREFIX + "MENTIONS_REFRESHED";
@@ -365,10 +366,6 @@ public interface TwidereConstants {
 
 	public static final String BROADCAST_FAVORITE_CHANGED = INTENT_PACKAGE_PREFIX + "FAVORITE_CHANGED";
 	public static final String BROADCAST_RETWEET_CHANGED = INTENT_PACKAGE_PREFIX + "RETWEET_CHANGED";
-	public static final String BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED = INTENT_PACKAGE_PREFIX
-			+ "RECEIVED_DIRECT_MESSAGES_REFRESHED";
-	public static final String BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED = INTENT_PACKAGE_PREFIX
-			+ "SENT_DIRECT_MESSAGES_REFRESHED";
 	public static final String BROADCAST_STATUS_DESTROYED = INTENT_PACKAGE_PREFIX + "STATUS_DESTROYED";
 	public static final String BROADCAST_USER_LIST_MEMBERS_DELETED = INTENT_PACKAGE_PREFIX + "USER_LIST_MEMBER_DELETED";
 	public static final String BROADCAST_USER_LIST_MEMBERS_ADDED = INTENT_PACKAGE_PREFIX + "USER_LIST_MEMBER_ADDED";
@@ -406,7 +403,6 @@ public interface TwidereConstants {
 	public static final String EXTRA_MENTIONS = "mentions";
 	public static final String EXTRA_ACCOUNT_ID = "account_id";
 	public static final String EXTRA_ACCOUNT_IDS = "account_ids";
-	public static final String EXTRA_CONVERSATION_ID = "conversation_id";
 	public static final String EXTRA_PAGE = "page";
 	public static final String EXTRA_DATA = "data";
 	public static final String EXTRA_QUERY = "query";
@@ -484,6 +480,7 @@ public interface TwidereConstants {
 	public static final String EXTRA_COLOR = "color";
 	public static final String EXTRA_ALPHA_SLIDER = "alpha_slider";
 	public static final String EXTRA_OPEN_ACCOUNTS_DRAWER = "open_accounts_drawer";
+	public static final String EXTRA_RECIPIENT_ID = "recipient_id";
 
 	public static final int MENU_GROUP_STATUS_EXTENSION = 10;
 	public static final int MENU_GROUP_COMPOSE_EXTENSION = 11;
@@ -566,7 +563,8 @@ public interface TwidereConstants {
 	public static final int NOTIFICATION_ID_DIRECT_MESSAGES = 3;
 	public static final int NOTIFICATION_ID_DRAFTS = 4;
 	public static final int NOTIFICATION_ID_DATA_PROFILING = 5;
-	public static final int NOTIFICATION_ID_UPDATE_STATUS = 6;
+	public static final int NOTIFICATION_ID_UPDATE_STATUS = 101;
+	public static final int NOTIFICATION_ID_SEND_DIRECT_MESSAGE = 102;
 
 	public static final String ICON_SPECIAL_TYPE_CUSTOMIZE = "_customize";
 

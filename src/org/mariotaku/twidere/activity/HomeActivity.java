@@ -240,7 +240,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 					startActivity(new Intent(INTENT_ACTION_COMPOSE));
 				} else {
 					if (classEquals(DirectMessagesFragment.class, tab.cls)) {
-						openDirectMessagesConversation(this, -1, -1, null);
+						openDirectMessagesConversation(this, -1, -1);
 					} else if (classEquals(TrendsSuggectionsFragment.class, tab.cls)) {
 						openSearchView(null);
 					} else {

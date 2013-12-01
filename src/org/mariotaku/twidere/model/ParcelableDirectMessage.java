@@ -70,7 +70,7 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 	public final long account_id, id, timestamp;
 
 	public final long sender_id, recipient_id;
-	public final boolean is_out_going;
+	public final boolean is_outgoing;
 
 	public final String text_html, text_plain, text_unescaped;
 
@@ -91,13 +91,13 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 		recipient_id = getAsLong(values, DirectMessages.RECIPIENT_ID, -1);
 		timestamp = getAsLong(values, DirectMessages.MESSAGE_TIMESTAMP, -1);
 		id = getAsLong(values, DirectMessages.MESSAGE_ID, -1);
-		is_out_going = getAsBoolean(values, DirectMessages.IS_OUTGOING, false);
+		is_outgoing = getAsBoolean(values, DirectMessages.IS_OUTGOING, false);
 		account_id = getAsLong(values, DirectMessages.ACCOUNT_ID, -1);
 	}
 
 	public ParcelableDirectMessage(final Cursor cursor, final DirectMessageCursorIndices indices) {
 		account_id = indices.account_id != -1 ? cursor.getLong(indices.account_id) : -1;
-		is_out_going = indices.is_outgoing != -1 ? cursor.getShort(indices.is_outgoing) == 1 : null;
+		is_outgoing = indices.is_outgoing != -1 ? cursor.getShort(indices.is_outgoing) == 1 : null;
 		id = indices.message_id != -1 ? cursor.getLong(indices.message_id) : -1;
 		timestamp = indices.message_timestamp != -1 ? cursor.getLong(indices.message_timestamp) : -1;
 		sender_id = indices.sender_id != -1 ? cursor.getLong(indices.sender_id) : -1;
@@ -119,7 +119,7 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 	public ParcelableDirectMessage(final DirectMessage message, final long account_id, final boolean is_outgoing,
 			final boolean large_profile_image) {
 		this.account_id = account_id;
-		is_out_going = is_outgoing;
+		this.is_outgoing = is_outgoing;
 		final User sender = message.getSender(), recipient = message.getRecipient();
 		final String sender_profile_image_url_string = sender != null ? ParseUtils.parseString(sender
 				.getProfileImageUrlHttps()) : null;
@@ -148,7 +148,7 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 		timestamp = in.readLong();
 		sender_id = in.readLong();
 		recipient_id = in.readLong();
-		is_out_going = in.readInt() == 1;
+		is_outgoing = in.readInt() == 1;
 		text_html = in.readString();
 		text_plain = in.readString();
 		sender_name = in.readString();
@@ -197,7 +197,7 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 	@Override
 	public String toString() {
 		return "ParcelableDirectMessage{account_id=" + account_id + ", id=" + id + ", timestamp=" + timestamp
-				+ ", sender_id=" + sender_id + ", recipient_id=" + recipient_id + ", is_out_going=" + is_out_going
+				+ ", sender_id=" + sender_id + ", recipient_id=" + recipient_id + ", is_outgoing=" + is_outgoing
 				+ ", text_html=" + text_html + ", text_plain=" + text_plain + ", text_unescaped=" + text_unescaped
 				+ ", sender_name=" + sender_name + ", recipient_name=" + recipient_name + ", sender_screen_name="
 				+ sender_screen_name + ", recipient_screen_name=" + recipient_screen_name
@@ -212,7 +212,7 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 		out.writeLong(timestamp);
 		out.writeLong(sender_id);
 		out.writeLong(recipient_id);
-		out.writeInt(is_out_going ? 1 : 0);
+		out.writeInt(is_outgoing ? 1 : 0);
 		out.writeString(text_html);
 		out.writeString(text_plain);
 		out.writeString(sender_name);

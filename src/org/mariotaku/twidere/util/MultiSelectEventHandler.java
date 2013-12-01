@@ -19,8 +19,8 @@
 
 package org.mariotaku.twidere.util;
 
+import static org.mariotaku.twidere.util.ContentValuesCreator.makeFilterdUserContentValues;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenNames;
-import static org.mariotaku.twidere.util.Utils.makeFilterdUserContentValues;
 import static org.mariotaku.twidere.util.content.ContentResolverUtils.bulkDelete;
 import static org.mariotaku.twidere.util.content.ContentResolverUtils.bulkInsert;
 

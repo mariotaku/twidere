@@ -19,13 +19,12 @@
 
 package org.mariotaku.twidere.receiver;
 
+import static org.mariotaku.twidere.util.Utils.startBackgroundServices;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
-
-import edu.ucdavis.earlybird.UCDService;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.service.RefreshService;
@@ -34,18 +33,11 @@ public class ConnectivityStateReceiver extends BroadcastReceiver implements Cons
 
 	@Override
 	public void onReceive(final Context context, final Intent intent) {
-		final SharedPreferences preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
-				Context.MODE_PRIVATE);
 		if (!ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) return;
 		if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, true)) {
 			context.stopService(new Intent(context, RefreshService.class));
 			return;
 		}
-		if (preferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
-			context.startService(new Intent(context, RefreshService.class));
-		}
-		if (preferences.getBoolean(PREFERENCE_KEY_UCD_DATA_PROFILING, false)) {
-			context.startService(new Intent(context, UCDService.class));
-		}
+		startBackgroundServices(context);
 	}
 }
