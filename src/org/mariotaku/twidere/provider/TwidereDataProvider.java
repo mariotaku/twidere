@@ -98,7 +98,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -117,14 +116,13 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	private ImagePreloader mImagePreloader;
 	private HostAddressResolver mHostAddressResolver;
 
-	private final List<ParcelableStatus> mNewStatuses = Collections.synchronizedList(new ArrayList<ParcelableStatus>());
-	private final List<ParcelableStatus> mNewMentions = Collections.synchronizedList(new ArrayList<ParcelableStatus>());
-	private final List<ParcelableDirectMessage> mNewMessages = Collections
-			.synchronizedList(new ArrayList<ParcelableDirectMessage>());
+	private final List<ParcelableStatus> mNewStatuses = new ArrayList<ParcelableStatus>();
+	private final List<ParcelableStatus> mNewMentions = new ArrayList<ParcelableStatus>();
+	private final List<ParcelableDirectMessage> mNewMessages = new ArrayList<ParcelableDirectMessage>();
 
-	private final Set<UnreadItem> mUnreadStatuses = Collections.synchronizedSet(new HashSet<UnreadItem>());
-	private final Set<UnreadItem> mUnreadMentions = Collections.synchronizedSet(new HashSet<UnreadItem>());
-	private final Set<UnreadItem> mUnreadMessages = Collections.synchronizedSet(new HashSet<UnreadItem>());
+	private final Set<UnreadItem> mUnreadStatuses = new HashSet<UnreadItem>();
+	private final Set<UnreadItem> mUnreadMentions = new HashSet<UnreadItem>();
+	private final Set<UnreadItem> mUnreadMessages = new HashSet<UnreadItem>();
 
 	private boolean mHomeActivityInBackground;
 
@@ -282,8 +280,10 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		filter.addAction(BROADCAST_HOME_ACTIVITY_ONSTOP);
 		context.registerReceiver(mHomeActivityStateReceiver, filter);
 		restoreUnreadItems();
-		final GetWritableDatabaseTask task = new GetWritableDatabaseTask(context, helper, mDatabaseWrapper);
-		task.execute();
+		mDatabaseWrapper.setSQLiteDatabase(helper.getWritableDatabase());
+		// final GetWritableDatabaseTask task = new
+		// GetWritableDatabaseTask(context, helper, mDatabaseWrapper);
+		// task.execute();
 		return true;
 	}
 
@@ -692,7 +692,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			uriBuilder.scheme(SCHEME_TWIDERE);
 			uriBuilder.authority(AUTHORITY_DIRECT_MESSAGES_CONVERSATION);
 			uriBuilder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(firstItem.account_id));
-			uriBuilder.appendQueryParameter(QUERY_PARAM_CONVERSATION_ID, String.valueOf(firstItem.sender_id));
+			uriBuilder.appendQueryParameter(QUERY_PARAM_RECIPIENT_ID, String.valueOf(firstItem.sender_id));
 			final Intent statusIntent = new Intent(Intent.ACTION_VIEW, uriBuilder.build());
 			statusIntent.setExtrasClassLoader(context.getClassLoader());
 			contentIntent.putExtra(EXTRA_EXTRA_INTENT, statusIntent);
@@ -901,11 +901,11 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				true);
 	}
 
-	private int getSendersCount(final List<ParcelableDirectMessage> messages) {
-		if (messages == null || messages.isEmpty()) return 0;
+	private int getSendersCount(final List<ParcelableDirectMessage> items) {
+		if (items == null || items.isEmpty()) return 0;
 		final Set<Long> ids = new HashSet<Long>();
-		for (final ParcelableDirectMessage message : messages) {
-			ids.add(message.sender_id);
+		for (final ParcelableDirectMessage item : items.toArray(new ParcelableDirectMessage[items.size()])) {
+			ids.add(item.sender_id);
 		}
 		return ids.size();
 	}
@@ -960,11 +960,11 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		return c;
 	}
 
-	private int getUsersCount(final List<ParcelableStatus> statuses) {
-		if (statuses == null || statuses.isEmpty()) return 0;
+	private int getUsersCount(final List<ParcelableStatus> items) {
+		if (items == null || items.isEmpty()) return 0;
 		final Set<Long> ids = new HashSet<Long>();
-		for (final ParcelableStatus status : statuses) {
-			ids.add(status.user_id);
+		for (final ParcelableStatus item : items.toArray(new ParcelableStatus[items.size()])) {
+			ids.add(item.user_id);
 		}
 		return ids.size();
 	}
@@ -992,7 +992,6 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				result++;
 			}
 		}
-		Collections.sort(mNewMessages);
 		if (result > 0) {
 			saveUnreadItemsFile(mUnreadMessages, UNREAD_MESSAGES_FILE_NAME);
 		}
@@ -1014,7 +1013,6 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				}
 			}
 		}
-		Collections.sort(mNewMentions);
 		if (result > 0) {
 			saveUnreadItemsFile(mUnreadMentions, UNREAD_MENTIONS_FILE_NAME);
 		}
@@ -1036,7 +1034,6 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				}
 			}
 		}
-		Collections.sort(mNewStatuses);
 		if (result > 0) {
 			saveUnreadItemsFile(mUnreadStatuses, UNREAD_STATUSES_FILE_NAME);
 		}
@@ -1071,6 +1068,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			case TABLE_ID_STATUSES: {
 				final int notifiedCount = notifyStatusesInserted(values);
 				final List<ParcelableStatus> items = new ArrayList<ParcelableStatus>(mNewStatuses);
+				Collections.sort(items);
 				final AccountPreferences[] prefs = AccountPreferences.getNotificationEnabledPreferences(getContext(),
 						getAccountIds(getContext()));
 				for (final AccountPreferences pref : prefs) {
@@ -1087,6 +1085,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			case TABLE_ID_MENTIONS: {
 				final int notifiedCount = notifyMentionsInserted(values);
 				final List<ParcelableStatus> items = new ArrayList<ParcelableStatus>(mNewMentions);
+				Collections.sort(items);
 				final AccountPreferences[] prefs = AccountPreferences.getNotificationEnabledPreferences(getContext(),
 						getAccountIds(getContext()));
 				for (final AccountPreferences pref : prefs) {
@@ -1103,6 +1102,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			case TABLE_ID_DIRECT_MESSAGES_INBOX: {
 				final int notifiedCount = notifyIncomingMessagesInserted(values);
 				final List<ParcelableDirectMessage> items = new ArrayList<ParcelableDirectMessage>(mNewMessages);
+				Collections.sort(items);
 				final AccountPreferences[] prefs = AccountPreferences.getNotificationEnabledPreferences(getContext(),
 						getAccountIds(getContext()));
 				for (final AccountPreferences pref : prefs) {
@@ -1216,22 +1216,21 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		mNickOnly = mPreferences.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false);
 	}
 
-	private static int clearUnreadCount(final Set<UnreadItem> set, final long[] account_ids) {
-		final Set<UnreadItem> items_to_remove = new HashSet<UnreadItem>();
-		for (final UnreadItem item : set) {
-			if (ArrayUtils.contains(account_ids, item.account_id)) {
-				items_to_remove.add(item);
+	private static int clearUnreadCount(final Set<UnreadItem> set, final long[] accountIds) {
+		int count = 0;
+		for (final UnreadItem item : set.toArray(new UnreadItem[set.size()])) {
+			if (ArrayUtils.contains(accountIds, item.account_id) && set.remove(item)) {
+				count++;
 			}
 		}
-		set.removeAll(items_to_remove);
-		return items_to_remove.size();
+		return count;
 	}
 
 	private static List<ParcelableDirectMessage> getMessagesForAccounts(final List<ParcelableDirectMessage> items,
 			final long accountId) {
 		if (items == null) return Collections.emptyList();
 		final List<ParcelableDirectMessage> result = new ArrayList<ParcelableDirectMessage>();
-		for (final ParcelableDirectMessage item : items) {
+		for (final ParcelableDirectMessage item : items.toArray(new ParcelableDirectMessage[items.size()])) {
 			if (item.account_id == accountId) {
 				result.add(item);
 			}
@@ -1275,7 +1274,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			final long accountId) {
 		if (items == null) return Collections.emptyList();
 		final List<ParcelableStatus> result = new ArrayList<ParcelableStatus>();
-		for (final ParcelableStatus item : items) {
+		for (final ParcelableStatus item : items.toArray(new ParcelableStatus[items.size()])) {
 			if (item.account_id == accountId) {
 				result.add(item);
 			}
@@ -1285,9 +1284,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 
 	private static int getUnreadCount(final Set<UnreadItem> set, final long... accountIds) {
 		int count = 0;
-		final Iterator<UnreadItem> it = set.iterator();
-		while (it.hasNext()) {
-			if (ArrayUtils.contains(accountIds, it.next().account_id)) {
+		for (final UnreadItem item : set.toArray(new UnreadItem[set.size()])) {
+			if (ArrayUtils.contains(accountIds, item.account_id)) {
 				count++;
 			}
 		}
@@ -1319,6 +1317,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		return text;
 	}
 
+	@SuppressWarnings("unused")
 	private static class GetWritableDatabaseTask extends AsyncTask<Void, Void, SQLiteDatabase> {
 		private final Context mContext;
 		private final SQLiteOpenHelper mHelper;

@@ -73,14 +73,10 @@ import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
-import android.widget.SearchView.OnQueryTextListener;
-import android.widget.SearchView.OnSuggestionListener;
 import android.widget.Toast;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu.CanvasTransformer;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu.OnClosedListener;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu.OnOpenedListener;
 import com.readystatesoftware.viewbadger.BadgeView;
 
 import edu.ucdavis.earlybird.ProfilingUtil;
@@ -119,8 +115,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeActivity extends DualPaneActivity implements OnClickListener, OnPageChangeListener,
-		SupportFragmentCallback, OnOpenedListener, OnClosedListener, OnQueryTextListener, OnSuggestionListener,
-		OnLongClickListener, OnActionExpandListener, OnSystemUiVisibilityChangeListener {
+		SupportFragmentCallback, SlidingMenu.OnOpenedListener, SlidingMenu.OnClosedListener,
+		SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, OnLongClickListener, OnActionExpandListener,
+		OnSystemUiVisibilityChangeListener, SearchView.OnCloseListener {
 
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -240,7 +237,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 					startActivity(new Intent(INTENT_ACTION_COMPOSE));
 				} else {
 					if (classEquals(DirectMessagesFragment.class, tab.cls)) {
-						openDirectMessagesConversation(this, -1, -1, null);
+						openDirectMessagesConversation(this, -1, -1);
 					} else if (classEquals(TrendsSuggectionsFragment.class, tab.cls)) {
 						openSearchView(null);
 					} else {
@@ -257,6 +254,13 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 				break;
 			}
 		}
+	}
+
+	@Override
+	public boolean onClose() {
+		if (mSearchView == null) return false;
+		mSearchView.setQuery(null, false);
+		return true;
 	}
 
 	@Override
@@ -285,6 +289,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		saveSearch.setOnClickListener(this);
 		saveSearch.setOnLongClickListener(this);
 		mSearchView = (SearchView) actionView.findViewById(R.id.search_view);
+		mSearchView.setOnCloseListener(this);
 		mSearchView.setOnQueryTextListener(this);
 		mSearchView.setOnSuggestionListener(this);
 		final SearchManager sm = (SearchManager) getSystemService(SEARCH_SERVICE);
@@ -693,21 +698,21 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		return l.getHeaderView();
 	}
 
-	private int handleIntent(final Intent intent, final boolean first_create) {
+	private int handleIntent(final Intent intent, final boolean firstCreate) {
 		// Reset intent
 		setIntent(new Intent(this, HomeActivity.class));
 		final String action = intent.getAction();
 		if (Intent.ACTION_SEARCH.equals(action)) {
 			final String query = intent.getStringExtra(SearchManager.QUERY);
-			final long account_id = getDefaultAccountId(this);
-			openSearch(this, account_id, query);
+			final long accountId = getDefaultAccountId(this);
+			openSearch(this, accountId, query);
 			return -1;
 		}
 		final boolean refreshOnStart = mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ON_START, false);
 		final long[] refreshedIds = intent.getLongArrayExtra(EXTRA_IDS);
 		if (refreshedIds != null) {
 			mTwitterWrapper.refreshAll(refreshedIds);
-		} else if (first_create && refreshOnStart) {
+		} else if (firstCreate && refreshOnStart) {
 			mTwitterWrapper.refreshAll();
 		}
 
@@ -717,7 +722,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			// clearNotification(initial_tab);
 		}
 		final Intent extraIntent = intent.getParcelableExtra(EXTRA_EXTRA_INTENT);
-		if (extraIntent != null) {
+		if (extraIntent != null && firstCreate) {
 			if (isTwidereLink(extraIntent.getData()) && isDualPaneMode()) {
 				showFragment(createFragmentForIntent(this, extraIntent), true);
 			} else {

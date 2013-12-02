@@ -19,8 +19,8 @@
 
 package org.mariotaku.twidere.activity;
 
+import static org.mariotaku.twidere.util.ContentValuesCreator.makeFilterdUserContentValues;
 import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
-import static org.mariotaku.twidere.util.Utils.makeFilterdUserContentValues;
 
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;

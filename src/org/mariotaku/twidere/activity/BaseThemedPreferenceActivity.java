@@ -21,6 +21,7 @@ package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.Utils.restartActivity;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.support.v4.app.NavUtils;
@@ -42,6 +43,11 @@ public abstract class BaseThemedPreferenceActivity extends PreferenceActivity im
 	@Override
 	public final int getCurrentThemeResource() {
 		return mCurrentThemeResource;
+	}
+
+	@Override
+	public Resources getDefaultResources() {
+		return super.getResources();
 	}
 
 	@Override

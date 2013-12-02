@@ -20,6 +20,9 @@
 package org.mariotaku.twidere.util;
 
 import static org.mariotaku.twidere.provider.TweetStore.STATUSES_URIS;
+import static org.mariotaku.twidere.util.ContentValuesCreator.makeDirectMessageContentValues;
+import static org.mariotaku.twidere.util.ContentValuesCreator.makeStatusContentValues;
+import static org.mariotaku.twidere.util.ContentValuesCreator.makeTrendsContentValues;
 import static org.mariotaku.twidere.util.Utils.appendQueryParameters;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getAllStatusesIds;
@@ -29,9 +32,6 @@ import static org.mariotaku.twidere.util.Utils.getNewestStatusIdsFromDatabase;
 import static org.mariotaku.twidere.util.Utils.getStatusIdsInDatabase;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.getUserName;
-import static org.mariotaku.twidere.util.Utils.makeDirectMessageContentValues;
-import static org.mariotaku.twidere.util.Utils.makeStatusContentValues;
-import static org.mariotaku.twidere.util.Utils.makeTrendsContentValues;
 import static org.mariotaku.twidere.util.content.ContentResolverUtils.bulkDelete;
 import static org.mariotaku.twidere.util.content.ContentResolverUtils.bulkInsert;
 
@@ -297,27 +297,27 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		return refreshAll(account_ids);
 	}
 
-	public int refreshAll(final long[] account_ids) {
+	public int refreshAll(final long[] accountIds) {
 		if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_MENTIONS,
 				HomeRefreshContentPreference.DEFAULT_ENABLE_MENTIONS)) {
-			final long[] since_ids = getNewestStatusIdsFromDatabase(mContext, Mentions.CONTENT_URI, account_ids);
-			getMentionsAsync(account_ids, null, since_ids);
+			final long[] sinceIds = getNewestStatusIdsFromDatabase(mContext, Mentions.CONTENT_URI, accountIds);
+			getMentionsAsync(accountIds, null, sinceIds);
 		}
 		if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_DIRECT_MESSAGES,
 				HomeRefreshContentPreference.DEFAULT_ENABLE_DIRECT_MESSAGES)) {
-			final long[] since_ids = getNewestMessageIdsFromDatabase(mContext, DirectMessages.Inbox.CONTENT_URI,
-					account_ids);
-			getReceivedDirectMessagesAsync(account_ids, null, since_ids);
-			getSentDirectMessagesAsync(account_ids, null, null);
+			final long[] sinceIds = getNewestMessageIdsFromDatabase(mContext, DirectMessages.Inbox.CONTENT_URI,
+					accountIds);
+			getReceivedDirectMessagesAsync(accountIds, null, sinceIds);
+			getSentDirectMessagesAsync(accountIds, null, null);
 		}
 		if (mPreferences.getBoolean(PREFERENCE_KEY_HOME_REFRESH_TRENDS,
 				HomeRefreshContentPreference.DEFAULT_ENABLE_TRENDS)) {
-			final long account_id = getDefaultAccountId(mContext);
-			final int woeid = mPreferences.getInt(PREFERENCE_KEY_LOCAL_TRENDS_WOEID, 1);
-			getLocalTrendsAsync(account_id, woeid);
+			final long accountId = getDefaultAccountId(mContext);
+			final int woeId = mPreferences.getInt(PREFERENCE_KEY_LOCAL_TRENDS_WOEID, 1);
+			getLocalTrendsAsync(accountId, woeId);
 		}
-		final long[] since_ids = getNewestStatusIdsFromDatabase(mContext, Statuses.CONTENT_URI, account_ids);
-		return getHomeTimelineAsync(account_ids, null, since_ids);
+		final long[] statusSinceIds = getNewestStatusIdsFromDatabase(mContext, Statuses.CONTENT_URI, accountIds);
+		return getHomeTimelineAsync(accountIds, null, statusSinceIds);
 	}
 
 	public void removeUnreadCountsAsync(final int position, final Map<Long, Set<Long>> counts) {
@@ -340,10 +340,14 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int sendDirectMessage(final long account_id, final String screen_name, final long user_id,
-			final String message) {
-		final SendDirectMessageTask task = new SendDirectMessageTask(account_id, screen_name, user_id, message);
-		return mAsyncTaskManager.add(task, true);
+	public int sendDirectMessageAsync(final long accountId, final long recipientId, final String text) {
+		final Intent intent = new Intent(mContext, BackgroundOperationService.class);
+		intent.setAction(INTENT_ACTION_SEND_DIRECT_MESSAGE);
+		intent.putExtra(EXTRA_ACCOUNT_ID, accountId);
+		intent.putExtra(EXTRA_RECIPIENT_ID, recipientId);
+		intent.putExtra(EXTRA_TEXT, text);
+		mContext.startService(intent);
+		return 0;
 	}
 
 	public int updateProfile(final long account_id, final String name, final String url, final String location,
@@ -365,10 +369,17 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		return mAsyncTaskManager.add(task, true);
 	}
 
-	public int updateStatusAsync(final long[] account_ids, final String content, final ParcelableLocation location,
-			final Uri image_uri, final int image_type, final long in_reply_to, final boolean is_possibly_sensitive) {
-		return updateStatusesAsync(new ParcelableStatusUpdate(account_ids, content, location, image_uri, image_type,
-				in_reply_to, is_possibly_sensitive));
+	public int updateStatusAsync(final long[] account_ids, final String text, final ParcelableLocation location,
+			final Uri media_uri, final int media_type, final long in_reply_to_status_id,
+			final boolean is_possibly_sensitive) {
+		final ParcelableStatusUpdate.Builder builder = new ParcelableStatusUpdate.Builder();
+		builder.accountIds(account_ids);
+		builder.text(text);
+		builder.location(location);
+		builder.media(media_uri, media_type);
+		builder.inReplyToStatusId(in_reply_to_status_id);
+		builder.isPossiblySensitive(is_possibly_sensitive);
+		return updateStatusesAsync(builder.build());
 	}
 
 	public int updateStatusesAsync(final ParcelableStatusUpdate... statuses) {
@@ -2018,15 +2029,6 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		@Override
-		protected void onPostExecute(final SingleResponse<Bundle> response) {
-			final boolean succeed = response != null && response.data != null
-					&& response.data.getBoolean(EXTRA_SUCCEED);
-			mContext.sendBroadcast(new Intent(BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED).putExtra(EXTRA_SUCCEED,
-					succeed));
-			super.onPostExecute(response);
-		}
-
-		@Override
 		boolean isOutgoing() {
 			return false;
 		}
@@ -2037,15 +2039,6 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 		public StoreSentDirectMessagesTask(final List<MessageListResponse> result, final boolean notify) {
 			super(result, DirectMessages.Outbox.CONTENT_URI, notify, TASK_TAG_STORE_SENT_DIRECT_MESSAGES);
-		}
-
-		@Override
-		protected void onPostExecute(final SingleResponse<Bundle> response) {
-			final boolean succeed = response != null && response.data != null
-					&& response.data.getBoolean(EXTRA_SUCCEED);
-			mContext.sendBroadcast(new Intent(BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED)
-					.putExtra(EXTRA_SUCCEED, succeed));
-			super.onPostExecute(response);
 		}
 
 		@Override
@@ -2080,7 +2073,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					continue;
 				}
 				final ArrayList<Long> ids_in_db = getStatusIdsInDatabase(mContext, uri, account_id);
-				final boolean no_items_before = ids_in_db.isEmpty();
+				final boolean noItemsBefore = ids_in_db.isEmpty();
 				final ContentValues[] values = new ContentValues[statuses.size()];
 				final long[] statusIds = new long[statuses.size()];
 				for (int i = 0, j = statuses.size(); i < j; i++) {
@@ -2101,16 +2094,16 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 						"Download tweets, " + ArrayUtils.toString(statusIds, ',', true));
 				all_statuses.addAll(Arrays.asList(values));
 				// Insert previously fetched items.
-				final Uri insert_query = appendQueryParameters(uri, new NameValuePairImpl(QUERY_PARAM_NOTIFY, notify));
-				bulkInsert(mResolver, insert_query, values);
+				final Uri insertUri = appendQueryParameters(uri, new NameValuePairImpl(QUERY_PARAM_NOTIFY, notify));
+				bulkInsert(mResolver, insertUri, values);
 
 				// Insert a gap.
 				final long min_id = statusIds.length != 0 ? ArrayUtils.min(statusIds) : -1;
-				final boolean deleted_old_gap = rowsDeleted > 0 && ArrayUtils.contains(statusIds, response.max_id);
-				final boolean no_rows_deleted = rowsDeleted == 0;
-				final boolean insert_gap = min_id > 0 && (no_rows_deleted || deleted_old_gap) && !response.truncated
-						&& !no_items_before;
-				if (insert_gap) {
+				final boolean deletedOldGap = rowsDeleted > 0 && ArrayUtils.contains(statusIds, response.max_id);
+				final boolean noRowsDeleted = rowsDeleted == 0;
+				final boolean insertGap = min_id > 0 && (noRowsDeleted || deletedOldGap) && !response.truncated
+						&& !noItemsBefore && statuses.size() > 1;
+				if (insertGap) {
 					final ContentValues gap_value = new ContentValues();
 					gap_value.put(Statuses.IS_GAP, 1);
 					final StringBuilder where = new StringBuilder();

@@ -92,6 +92,9 @@ public class DirectMessageConversationEntriesAdapter extends BaseCursorAdapter i
 			holder.setAccountColor(getAccountColor(mContext, accountId));
 		}
 
+		// Clear images in prder to prevent images in recycled view shown.
+		holder.profile_image.setImageDrawable(null);
+
 		holder.setUserColor(getUserColor(mContext, conversationId));
 
 		holder.setTextSize(getTextSize());

@@ -19,8 +19,8 @@
 
 package org.mariotaku.twidere.task;
 
-import static org.mariotaku.twidere.util.Utils.makeCachedUserContentValues;
-import static org.mariotaku.twidere.util.Utils.makeStatusContentValues;
+import static org.mariotaku.twidere.util.ContentValuesCreator.makeCachedUserContentValues;
+import static org.mariotaku.twidere.util.ContentValuesCreator.makeStatusContentValues;
 import static org.mariotaku.twidere.util.content.ContentResolverUtils.bulkDelete;
 import static org.mariotaku.twidere.util.content.ContentResolverUtils.bulkInsert;
 

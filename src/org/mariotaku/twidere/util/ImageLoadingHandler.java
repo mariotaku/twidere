@@ -22,8 +22,8 @@ public class ImageLoadingHandler implements ImageLoadingListener {
 	}
 
 	@Override
-	public void onLoadingCancelled(final String url, final View view) {
-		if (view == null || url == null || url.equals(mLoadingUris.get(view))) return;
+	public void onLoadingCancelled(final String imageUri, final View view) {
+		if (view == null || imageUri == null || imageUri.equals(mLoadingUris.get(view))) return;
 		mLoadingUris.remove(view);
 		final View parent = (View) view.getParent();
 		final View progress = parent.findViewById(R.id.image_preview_progress);
@@ -33,7 +33,7 @@ public class ImageLoadingHandler implements ImageLoadingListener {
 	}
 
 	@Override
-	public void onLoadingComplete(final String url, final View view, final Bitmap bitmap) {
+	public void onLoadingComplete(final String imageUri, final View view, final Bitmap bitmap) {
 		if (view == null) return;
 		mLoadingUris.remove(view);
 		final View parent = (View) view.getParent();
@@ -44,7 +44,7 @@ public class ImageLoadingHandler implements ImageLoadingListener {
 	}
 
 	@Override
-	public void onLoadingFailed(final String url, final View view, final FailReason reason) {
+	public void onLoadingFailed(final String imageUri, final View view, final FailReason reason) {
 		if (view == null) return;
 		if (view instanceof ImageView) {
 			((ImageView) view).setImageDrawable(null);
@@ -70,9 +70,9 @@ public class ImageLoadingHandler implements ImageLoadingListener {
 	}
 
 	@Override
-	public void onLoadingStarted(final String url, final View view) {
-		if (view == null || url == null || url.equals(mLoadingUris.get(view))) return;
-		mLoadingUris.put(view, url);
+	public void onLoadingStarted(final String imageUri, final View view) {
+		if (view == null || imageUri == null || imageUri.equals(mLoadingUris.get(view))) return;
+		mLoadingUris.put(view, imageUri);
 		final View parent = (View) view.getParent();
 		final ProgressBar progress = (ProgressBar) parent.findViewById(R.id.image_preview_progress);
 		if (progress != null) {

@@ -23,7 +23,7 @@ import android.database.Cursor;
 
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 
-public class StatusCursorIndices {
+public class CursorStatusIndices {
 
 	public final int _id, account_id, status_id, status_timestamp, user_name, user_screen_name, text_html, text_plain,
 			text_unescaped, user_profile_image_url, is_favorite, is_retweet, is_gap, location, is_protected,
@@ -32,7 +32,7 @@ public class StatusCursorIndices {
 			retweet_id, retweeted_by_user_id, user_id, source, retweet_count, is_possibly_sensitive, is_following,
 			media_link, mentions;
 
-	public StatusCursorIndices(final Cursor cursor) {
+	public CursorStatusIndices(final Cursor cursor) {
 		_id = cursor.getColumnIndex(Statuses._ID);
 		account_id = cursor.getColumnIndex(Statuses.ACCOUNT_ID);
 		status_id = cursor.getColumnIndex(Statuses.STATUS_ID);

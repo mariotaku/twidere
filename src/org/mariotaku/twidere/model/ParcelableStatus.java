@@ -142,7 +142,7 @@ public class ParcelableStatus implements Parcelable, JSONParcelable, Comparable<
 		mentions = ParcelableUserMention.fromJSONString(values.getAsString(Statuses.MENTIONS));
 	}
 
-	public ParcelableStatus(final Cursor cursor, final StatusCursorIndices indices) {
+	public ParcelableStatus(final Cursor cursor, final CursorStatusIndices indices) {
 		retweet_id = indices.retweet_id != -1 ? cursor.getLong(indices.retweet_id) : -1;
 		retweeted_by_id = indices.retweeted_by_user_id != -1 ? cursor.getLong(indices.retweeted_by_user_id) : -1;
 		id = indices.status_id != -1 ? cursor.getLong(indices.status_id) : -1;

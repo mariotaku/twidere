@@ -68,6 +68,10 @@ public class SimpleParcelableUserListsAdapter extends BaseArrayAdapter<Parcelabl
 			holder = new TwoLineWithIconViewHolder(view);
 			view.setTag(holder);
 		}
+
+		// Clear images in prder to prevent images in recycled view shown.
+		holder.icon.setImageDrawable(null);
+
 		final ParcelableUserList user_list = getItem(position);
 		final String display_name = getDisplayName(mContext, user_list.user_id, user_list.user_name,
 				user_list.user_screen_name, isDisplayNameFirst(), isNicknameOnly(), false);

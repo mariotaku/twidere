@@ -25,6 +25,7 @@ import static org.mariotaku.twidere.util.Utils.configBaseCardAdapter;
 import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
 import static org.mariotaku.twidere.util.Utils.showOkMessage;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -34,6 +35,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -49,8 +51,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -63,14 +63,17 @@ import com.twitter.Validator;
 
 import org.mariotaku.popupmenu.PopupMenu;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.support.UserListSelectorActivity;
 import org.mariotaku.twidere.adapter.AccountsSpinnerAdapter;
 import org.mariotaku.twidere.adapter.DirectMessagesConversationAdapter;
-import org.mariotaku.twidere.adapter.UserHashtagAutoCompleteAdapter;
 import org.mariotaku.twidere.adapter.iface.IBaseCardAdapter.MenuButtonClickListener;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
+import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
+import org.mariotaku.twidere.provider.TweetStore.DirectMessages.Conversation;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.ParseUtils;
@@ -91,17 +94,15 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 	private ListView mListView;
 	private EditText mEditText;
 	private TextView mTextCountView;
-	private AutoCompleteTextView mEditScreenName;
 	private ImageButton mSendButton;
-	private Button mScreenNameConfirmButton;
-	private View mConversationContainer, mScreenNameContainer;
+	private View mConversationContainer, mRecipientSelectorContainer, mRecipientSelector;
 	private Spinner mAccountSpinner;
 
 	private PopupMenu mPopupMenu;
 
 	private ParcelableDirectMessage mSelectedDirectMessage;
-	private final Bundle mArguments = new Bundle();
-	private Account mSelectedAccount;
+	private long mAccountId, mRecipientId;
+	private boolean mLoaderInitialized;
 	private Locale mLocale;
 
 	private DirectMessagesConversationAdapter mAdapter;
@@ -115,24 +116,6 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 			if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
 				updateRefreshState();
 			}
-		}
-	};
-	private final TextWatcher mScreenNameTextWatcher = new TextWatcher() {
-
-		@Override
-		public void afterTextChanged(final Editable s) {
-
-		}
-
-		@Override
-		public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {
-
-		}
-
-		@Override
-		public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
-			if (mScreenNameConfirmButton == null) return;
-			mScreenNameConfirmButton.setEnabled(s.length() > 0 && s.length() < 20);
 		}
 	};
 
@@ -161,51 +144,67 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
 		mListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
 		mListView.setStackFromBottom(true);
-		final Bundle args = savedInstanceState == null ? getArguments() : savedInstanceState.getBundle(EXTRA_DATA);
-		if (args != null) {
-			mArguments.putAll(args);
-		}
 		setListShownNoAnimation(false);
-		getLoaderManager().initLoader(0, mArguments, this);
 
 		if (mPreferences.getBoolean(PREFERENCE_KEY_QUICK_SEND, false)) {
 			mEditText.setOnEditorActionListener(this);
 		}
 		mEditText.addTextChangedListener(this);
-		final String text = savedInstanceState != null ? savedInstanceState.getString(EXTRA_TEXT) : null;
-		if (text != null) {
-			mEditText.setText(text);
-		}
 
 		final List<Account> accounts = Account.getAccounts(getActivity(), false);
 		mAccountSpinner.setAdapter(new AccountsSpinnerAdapter(getActivity(), accounts));
 		mAccountSpinner.setOnItemSelectedListener(this);
 
-		mEditScreenName.addTextChangedListener(mScreenNameTextWatcher);
-		mEditScreenName.setAdapter(new UserHashtagAutoCompleteAdapter(getActivity()));
-
 		mSendButton.setOnClickListener(this);
 		mSendButton.setEnabled(false);
-		mScreenNameConfirmButton.setOnClickListener(this);
-		mScreenNameConfirmButton.setEnabled(false);
-		updateTextCount();
+		mRecipientSelector.setOnClickListener(this);
+		if (savedInstanceState != null) {
+			final long accountId = savedInstanceState.getLong(EXTRA_ACCOUNT_ID, -1);
+			final long recipientId = savedInstanceState.getLong(EXTRA_RECIPIENT_ID, -1);
+			showConversation(accountId, recipientId);
+			mEditText.setText(savedInstanceState.getString(EXTRA_TEXT));
+		} else {
+			final Bundle args = getArguments();
+			final long accountId = args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
+			final long recipientId = args != null ? args.getLong(EXTRA_RECIPIENT_ID, -1) : -1;
+			showConversation(accountId, recipientId);
+		}
+		final boolean isValid = mAccountId > 0 && mRecipientId > 0;
+		mConversationContainer.setVisibility(isValid ? View.VISIBLE : View.GONE);
+		mRecipientSelectorContainer.setVisibility(isValid ? View.GONE : View.VISIBLE);
+	}
+
+	@Override
+	public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		switch (requestCode) {
+			case REQUEST_SELECT_USER: {
+				if (resultCode != Activity.RESULT_OK || !data.hasExtra(EXTRA_USER)) {
+					break;
+				}
+				final ParcelableUser user = data.getParcelableExtra(EXTRA_USER);
+				if (user != null && mAccountId > 0) {
+					mRecipientId = user.id;
+					showConversation(mAccountId, mRecipientId);
+				}
+				break;
+			}
+		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	@Override
 	public void onClick(final View view) {
 		switch (view.getId()) {
 			case R.id.send: {
-				send();
+				sendDirectMessage();
 				break;
 			}
-			case R.id.screen_name_confirm: {
-				final CharSequence text = mEditScreenName.getText();
-				if (text == null || mSelectedAccount == null) return;
-				final String screen_name = text.toString();
-				mArguments.putString(EXTRA_SCREEN_NAME, screen_name);
-				mArguments.putLong(EXTRA_ACCOUNT_ID, mSelectedAccount.account_id);
-				setListShownNoAnimation(false);
-				getLoaderManager().restartLoader(0, mArguments, this);
+			case R.id.recipient_selector: {
+				if (mAccountId <= 0) return;
+				final Intent intent = new Intent(INTENT_ACTION_SELECT_USER);
+				intent.setClass(getActivity(), UserListSelectorActivity.class);
+				intent.putExtra(EXTRA_ACCOUNT_ID, mAccountId);
+				startActivityForResult(intent, REQUEST_SELECT_USER);
 				break;
 			}
 		}
@@ -214,25 +213,15 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 
 	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
-		// if (args == null || !args.containsKey(EXTRA_ACCOUNT_ID))
-		// return new CursorLoader(getActivity(), TweetStore.NULL_CONTENT_URI,
-		// null, null, null, null);
-		final String[] cols = new String[] { DirectMessages._ID, DirectMessages.ACCOUNT_ID, DirectMessages.MESSAGE_ID,
-				DirectMessages.MESSAGE_TIMESTAMP, DirectMessages.SENDER_ID, DirectMessages.RECIPIENT_ID,
-				DirectMessages.IS_OUTGOING, DirectMessages.TEXT_HTML, DirectMessages.SENDER_NAME,
-				DirectMessages.RECIPIENT_NAME, DirectMessages.SENDER_SCREEN_NAME, DirectMessages.RECIPIENT_SCREEN_NAME,
-				DirectMessages.SENDER_PROFILE_IMAGE_URL, DirectMessages.RECIPIENT_PROFILE_IMAGE_URL };
-		final long account_id = args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
-		final long conversation_id = args != null ? args.getLong(EXTRA_CONVERSATION_ID, -1) : -1;
-		final String screen_name = args != null ? args.getString(EXTRA_SCREEN_NAME) : null;
-		mConversationContainer
-				.setVisibility(account_id <= 0 || conversation_id <= 0 && isEmpty(screen_name) ? View.GONE
-						: View.VISIBLE);
-		mScreenNameContainer
-				.setVisibility(account_id <= 0 || conversation_id <= 0 && isEmpty(screen_name) ? View.VISIBLE
-						: View.GONE);
-		final Uri uri = buildDirectMessageConversationUri(account_id, conversation_id, screen_name);
-		return new CursorLoader(getActivity(), uri, cols, null, null, DirectMessages.Conversation.DEFAULT_SORT_ORDER);
+		final long accountId = args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
+		final long recipientId = args != null ? args.getLong(EXTRA_RECIPIENT_ID, -1) : -1;
+		final String[] cols = DirectMessages.COLUMNS;
+		final boolean isValid = accountId > 0 && recipientId > 0;
+		mConversationContainer.setVisibility(isValid ? View.VISIBLE : View.GONE);
+		mRecipientSelectorContainer.setVisibility(isValid ? View.GONE : View.VISIBLE);
+		if (!isValid) return new CursorLoader(getActivity(), TweetStore.CONTENT_URI_NULL, cols, null, null, null);
+		final Uri uri = buildDirectMessageConversationUri(accountId, recipientId, null);
+		return new CursorLoader(getActivity(), uri, cols, null, null, Conversation.DEFAULT_SORT_ORDER);
 	}
 
 	@Override
@@ -243,25 +232,17 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 				FrameLayout.LayoutParams.MATCH_PARENT);
 		listContainer.addView(super.onCreateView(inflater, container, savedInstanceState), lp);
 		final ViewGroup inputSendContainer = (ViewGroup) view.findViewById(R.id.input_send_container);
-		final ViewGroup recipientContainer = (ViewGroup) view.findViewById(R.id.recipient_confirm_container);
 		ViewAccessor.setBackground(inputSendContainer, ThemeUtils.getActionBarSplitBackground(getActivity(), true));
-		ViewAccessor.setBackground(recipientContainer, ThemeUtils.getActionBarSplitBackground(getActivity(), true));
 		final Context actionBarContext = ThemeUtils.getActionBarContext(getActivity());
 		View.inflate(actionBarContext, R.layout.messages_conversation_input_send, inputSendContainer);
-		View.inflate(actionBarContext, R.layout.messages_conversation_confirm_buttons, recipientContainer);
 		return view;
-	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
 	}
 
 	@Override
 	public boolean onEditorAction(final TextView view, final int actionId, final KeyEvent event) {
 		switch (event.getKeyCode()) {
 			case KeyEvent.KEYCODE_ENTER: {
-				send();
+				sendDirectMessage();
 				return true;
 			}
 		}
@@ -270,7 +251,10 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 
 	@Override
 	public void onItemSelected(final AdapterView<?> parent, final View view, final int pos, final long id) {
-		mSelectedAccount = (Account) mAccountSpinner.getSelectedItem();
+		final Account account = (Account) mAccountSpinner.getSelectedItem();
+		if (account != null) {
+			mAccountId = account.account_id;
+		}
 	}
 
 	@Override
@@ -326,20 +310,18 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
-		if (mEditText != null) {
-			outState.putString(EXTRA_TEXT, ParseUtils.parseString(mEditText.getText()));
-		}
-		outState.putBundle(EXTRA_DATA, mArguments);
 		super.onSaveInstanceState(outState);
+		outState.putCharSequence(EXTRA_TEXT, mEditText != null ? mEditText.getText() : null);
+		outState.putLong(EXTRA_ACCOUNT_ID, mAccountId);
+		outState.putLong(EXTRA_RECIPIENT_ID, mRecipientId);
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
 		final IntentFilter filter = new IntentFilter(BROADCAST_TASK_STATE_CHANGED);
-		filter.addAction(BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED);
-		filter.addAction(BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED);
 		registerReceiver(mStatusReceiver, filter);
+		updateTextCount();
 	}
 
 	@Override
@@ -363,13 +345,13 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 		super.onViewCreated(view, savedInstanceState);
 		final View inputSendContainer = view.findViewById(R.id.input_send_container);
 		mConversationContainer = view.findViewById(R.id.conversation_container);
-		mScreenNameContainer = view.findViewById(R.id.screen_name_container);
-		mEditScreenName = (AutoCompleteTextView) view.findViewById(R.id.edit_recipient);
+		mRecipientSelectorContainer = view.findViewById(R.id.recipient_selector_container);
+		mRecipientSelector = view.findViewById(R.id.recipient_selector);
 		mAccountSpinner = (Spinner) view.findViewById(R.id.account_selector);
-		mScreenNameConfirmButton = (Button) view.findViewById(R.id.screen_name_confirm);
 		mEditText = (EditText) inputSendContainer.findViewById(R.id.edit_text);
 		mTextCountView = (TextView) inputSendContainer.findViewById(R.id.text_count);
 		mSendButton = (ImageButton) inputSendContainer.findViewById(R.id.send);
+		mRecipientSelector = view.findViewById(R.id.recipient_selector);
 	}
 
 	@Override
@@ -379,11 +361,19 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 		return true;
 	}
 
-	public void showConversation(final long account_id, final long conversation_id, final String screen_name) {
-		mArguments.putLong(EXTRA_ACCOUNT_ID, account_id);
-		mArguments.putLong(EXTRA_CONVERSATION_ID, conversation_id);
-		mArguments.putString(EXTRA_SCREEN_NAME, screen_name);
-		getLoaderManager().restartLoader(0, mArguments, this);
+	public void showConversation(final long accountId, final long recipientId) {
+		mAccountId = accountId;
+		mRecipientId = recipientId;
+		final LoaderManager lm = getLoaderManager();
+		final Bundle args = new Bundle();
+		args.putLong(EXTRA_ACCOUNT_ID, accountId);
+		args.putLong(EXTRA_RECIPIENT_ID, recipientId);
+		if (mLoaderInitialized) {
+			lm.restartLoader(0, args, this);
+		} else {
+			mLoaderInitialized = true;
+			lm.initLoader(0, args, this);
+		}
 	}
 
 	protected void updateRefreshState() {
@@ -393,15 +383,12 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 				|| twitter.isSentDirectMessagesRefreshing());
 	}
 
-	private void send() {
+	private void sendDirectMessage() {
 		final Editable text = mEditText.getText();
-		if (isEmpty(text)) return;
+		if (isEmpty(text) || mAccountId <= 0 || mRecipientId <= 0) return;
 		final String message = text.toString();
 		if (mValidator.isValidTweet(message)) {
-			final long account_id = mArguments.getLong(EXTRA_ACCOUNT_ID, -1);
-			final long conversation_id = mArguments.getLong(EXTRA_CONVERSATION_ID, -1);
-			final String screen_name = mArguments.getString(EXTRA_SCREEN_NAME);
-			mTwitterWrapper.sendDirectMessage(account_id, screen_name, conversation_id, message);
+			mTwitterWrapper.sendDirectMessageAsync(mAccountId, mRecipientId, message);
 			text.clear();
 		}
 	}

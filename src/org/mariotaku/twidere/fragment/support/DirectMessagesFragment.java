@@ -149,13 +149,12 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 	public void onListItemClick(final ListView l, final View v, final int position, final long id) {
 		if (mMultiSelectManager.isActive()) return;
 		final int pos = position - l.getHeaderViewsCount();
-		final long conversation_id = mAdapter.getConversationId(pos);
-		final long account_id = mAdapter.getAccountId(pos);
-		final String screen_name = mAdapter.getScreenName(pos);
+		final long conversationId = mAdapter.getConversationId(pos);
+		final long accountId = mAdapter.getAccountId(pos);
 		mReadPositions.add(pos);
 		removeUnreadCounts();
-		if (conversation_id > 0 && account_id > 0) {
-			openDirectMessagesConversation(getActivity(), account_id, conversation_id, screen_name);
+		if (conversationId > 0 && accountId > 0) {
+			openDirectMessagesConversation(getActivity(), accountId, conversationId);
 		}
 	}
 
@@ -177,7 +176,7 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_COMPOSE: {
-				openDirectMessagesConversation(getActivity(), -1, -1, null);
+				openDirectMessagesConversation(getActivity(), -1, -1);
 				break;
 			}
 		}
@@ -246,8 +245,6 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 		final ContentResolver resolver = getContentResolver();
 		resolver.registerContentObserver(Accounts.CONTENT_URI, true, mReloadContentObserver);
 		final IntentFilter filter = new IntentFilter();
-		filter.addAction(BROADCAST_RECEIVED_DIRECT_MESSAGES_REFRESHED);
-		filter.addAction(BROADCAST_SENT_DIRECT_MESSAGES_REFRESHED);
 		filter.addAction(BROADCAST_TASK_STATE_CHANGED);
 		registerReceiver(mStatusReceiver, filter);
 	}

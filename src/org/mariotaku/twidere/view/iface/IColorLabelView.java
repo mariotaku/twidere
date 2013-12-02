@@ -19,21 +19,117 @@
 
 package org.mariotaku.twidere.view.iface;
 
+import static org.mariotaku.twidere.util.Utils.isRTL;
+
+import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.util.AttributeSet;
+import android.view.View;
+
+import org.mariotaku.twidere.R;
+
 public interface IColorLabelView {
 
 	public static final float LABEL_WIDTH = 3.5f;
 
 	public void drawBackground(final int color);
 
-	public void drawEnd(final int color);
+	public void drawEnd(final int... colors);
 
-	public void drawLabel(final int left, final int right, final int background);
+	public void drawLabel(final int[] start, final int[] end, final int background);
 
-	public void drawStart(final int color);
+	public void drawStart(final int... colors);
 
 	public boolean isPaddingsIgnored();
 
 	public void setIgnorePaddings(final boolean ignorePaddings);
 
 	public void setVisibility(int visibility);
+
+	public static final class Helper {
+
+		private final View mView;
+
+		private final Paint mPaint = new Paint();
+		private final float mDensity;
+		private final boolean mIsRTL;
+
+		private int mBackgroundColor;
+		private int[] mStartColors, mEndColors;
+
+		private boolean mIgnorePadding;
+
+		public Helper(final View view, final Context context, final AttributeSet attrs, final int defStyle) {
+			mView = view;
+			final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Twidere);
+			mIgnorePadding = a.getBoolean(R.styleable.Twidere_ignorePadding, false);
+			a.recycle();
+			final Resources res = context.getResources();
+			mDensity = res.getDisplayMetrics().density;
+			mIsRTL = isRTL(context);
+		}
+
+		public void dispatchDrawBackground(final Canvas canvas) {
+			final int left = mIgnorePadding ? 0 : mView.getPaddingLeft();
+			final int top = mIgnorePadding ? 0 : mView.getPaddingTop();
+			final int right = mIgnorePadding ? mView.getWidth() : mView.getWidth() - mView.getPaddingRight();
+			final int bottom = mIgnorePadding ? mView.getHeight() : mView.getHeight() - mView.getPaddingBottom();
+			mPaint.setColor(mBackgroundColor);
+			canvas.drawRect(left, top, right, bottom, mPaint);
+		}
+
+		public void dispatchDrawLabels(final Canvas canvas) {
+			final int left = mIgnorePadding ? 0 : mView.getPaddingLeft();
+			final int top = mIgnorePadding ? 0 : mView.getPaddingTop();
+			final int right = mIgnorePadding ? mView.getWidth() : mView.getWidth() - mView.getPaddingRight();
+			final int bottom = mIgnorePadding ? mView.getHeight() : mView.getHeight() - mView.getPaddingBottom();
+			final int labelWidth = Math.round(mDensity * LABEL_WIDTH);
+			final int[] leftColors = mIsRTL ? mEndColors : mStartColors;
+			final int[] rightColors = mIsRTL ? mStartColors : mEndColors;
+			drawColors(canvas, leftColors, left, top, labelWidth, bottom - top);
+			drawColors(canvas, rightColors, right - labelWidth, top, labelWidth, bottom - top);
+		}
+
+		public void drawBackground(final int color) {
+			drawLabel(mStartColors, mEndColors, color);
+		}
+
+		public void drawEnd(final int[] colors) {
+			drawLabel(mStartColors, colors, mBackgroundColor);
+		}
+
+		public void drawLabel(final int[] start, final int[] end, final int background) {
+			mStartColors = start;
+			mEndColors = end;
+			mBackgroundColor = background;
+			mView.invalidate();
+		}
+
+		public void drawStart(final int[] colors) {
+			drawLabel(colors, mEndColors, mBackgroundColor);
+		}
+
+		public boolean isPaddingsIgnored() {
+			return mIgnorePadding;
+		}
+
+		public void setIgnorePaddings(final boolean ignorePaddings) {
+			mIgnorePadding = ignorePaddings;
+			mView.invalidate();
+		}
+
+		private void drawColors(final Canvas canvas, final int[] colors, final int left, final int top,
+				final int width, final int height) {
+			if (colors == null || colors.length == 0) return;
+			for (int i = 0, len = colors.length; i < len; i++) {
+				mPaint.setColor(colors[i]);
+				final float colorTop = top + i * (height / len);
+				final float colorBottom = top + (i + 1) * (height / len);
+				canvas.drawRect(left, colorTop, left + width, colorBottom, mPaint);
+			}
+		}
+	}
 }

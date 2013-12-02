@@ -19,8 +19,8 @@
 
 package org.mariotaku.twidere.loader;
 
+import static org.mariotaku.twidere.util.ContentValuesCreator.makeCachedUserContentValues;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
-import static org.mariotaku.twidere.util.Utils.makeCachedUserContentValues;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;

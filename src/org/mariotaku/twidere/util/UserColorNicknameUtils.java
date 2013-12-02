@@ -11,6 +11,8 @@ import android.support.v4.util.LongSparseArray;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.TwidereConstants;
 
+import java.util.Map;
+
 public class UserColorNicknameUtils implements TwidereConstants {
 
 	private static LongSparseArray<Integer> sUserColors = new LongSparseArray<Integer>();
@@ -72,6 +74,15 @@ public class UserColorNicknameUtils implements TwidereConstants {
 		final boolean nickname_only = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
 				.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false);
 		return nickname_only ? nick : context.getString(R.string.name_with_nickname, name, nick);
+	}
+
+	public static void initUserColor(final Context context) {
+		if (context == null) return;
+		final SharedPreferences prefs = context.getSharedPreferences(USER_COLOR_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		for (final Map.Entry<String, ?> entry : prefs.getAll().entrySet()) {
+			sUserColors.put(ParseUtils.parseLong(entry.getKey()),
+					ParseUtils.parseInt(ParseUtils.parseString(entry.getValue())));
+		}
 	}
 
 	public static void registerOnUserColorChangedListener(final Context context,

@@ -30,7 +30,6 @@ import static org.mariotaku.twidere.util.TwidereLinkify.TWITTER_PROFILE_IMAGES_A
 
 import android.app.Activity;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -74,6 +73,7 @@ import android.text.TextPaint;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.text.format.Time;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -94,11 +94,10 @@ import com.huewu.pla.lib.internal.PLAListView;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.CroutonConfiguration;
 import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
+import edu.ucdavis.earlybird.UCDService;
 
 import org.apache.http.NameValuePair;
-import org.json.JSONArray;
 import org.mariotaku.gallery3d.ImageViewerGLActivity;
-import org.mariotaku.jsonserializer.JSONSerializer;
 import org.mariotaku.querybuilder.AllColumns;
 import org.mariotaku.querybuilder.Columns;
 import org.mariotaku.querybuilder.Columns.Column;
@@ -141,14 +140,14 @@ import org.mariotaku.twidere.fragment.support.UserMentionsFragment;
 import org.mariotaku.twidere.fragment.support.UserProfileFragment;
 import org.mariotaku.twidere.fragment.support.UserTimelineFragment;
 import org.mariotaku.twidere.fragment.support.UsersListFragment;
+import org.mariotaku.twidere.model.AccountPreferences;
+import org.mariotaku.twidere.model.CursorStatusIndices;
 import org.mariotaku.twidere.model.DirectMessageCursorIndices;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.ParcelableUserList;
-import org.mariotaku.twidere.model.ParcelableUserMention;
-import org.mariotaku.twidere.model.StatusCursorIndices;
 import org.mariotaku.twidere.provider.TweetStore;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CacheFiles;
@@ -168,17 +167,15 @@ import org.mariotaku.twidere.provider.TweetStore.Preferences;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.provider.TweetStore.Tabs;
 import org.mariotaku.twidere.provider.TweetStore.UnreadCounts;
+import org.mariotaku.twidere.service.RefreshService;
 import org.mariotaku.twidere.util.content.ContentResolverUtils;
 import org.mariotaku.twidere.util.net.HttpClientImpl;
 
 import twitter4j.DirectMessage;
 import twitter4j.EntitySupport;
-import twitter4j.GeoLocation;
 import twitter4j.MediaEntity;
 import twitter4j.RateLimitStatus;
 import twitter4j.Status;
-import twitter4j.Trend;
-import twitter4j.Trends;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -188,7 +185,6 @@ import twitter4j.UserMentionEntity;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.BasicAuthorization;
 import twitter4j.auth.TwipOModeAuthorization;
-import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 import twitter4j.http.HostAddressResolver;
 import twitter4j.http.HttpClientWrapper;
@@ -213,7 +209,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -594,6 +589,7 @@ public final class Utils implements Constants {
 	}
 
 	public static Fragment createFragmentForIntent(final Context context, final Intent intent) {
+		intent.setExtrasClassLoader(context.getClassLoader());
 		final Bundle extras = intent.getExtras();
 		final Uri uri = intent.getData();
 		final Fragment fragment;
@@ -693,13 +689,13 @@ public final class Utils implements Constants {
 			}
 			case LINK_ID_DIRECT_MESSAGES_CONVERSATION: {
 				fragment = new DirectMessagesConversationFragment();
-				final String param_conversation_id = uri.getQueryParameter(QUERY_PARAM_CONVERSATION_ID);
-				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
-				final long conversation_id = ParseUtils.parseLong(param_conversation_id);
-				if (conversation_id > 0) {
-					args.putLong(EXTRA_CONVERSATION_ID, conversation_id);
-				} else if (param_screen_name != null) {
-					args.putString(EXTRA_SCREEN_NAME, param_screen_name);
+				final String paramRecipientId = uri.getQueryParameter(QUERY_PARAM_RECIPIENT_ID);
+				final String paramScreenName = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				final long conversationId = ParseUtils.parseLong(paramRecipientId);
+				if (conversationId > 0) {
+					args.putLong(EXTRA_RECIPIENT_ID, conversationId);
+				} else if (paramScreenName != null) {
+					args.putString(EXTRA_SCREEN_NAME, paramScreenName);
 				}
 				break;
 			}
@@ -995,7 +991,8 @@ public final class Utils implements Constants {
 		final ContentResolver resolver = context.getContentResolver();
 		final boolean large_profile_image = context.getResources().getBoolean(R.bool.hires_profile_image);
 		resolver.delete(CachedStatuses.CONTENT_URI, where, null);
-		resolver.insert(CachedStatuses.CONTENT_URI, makeStatusContentValues(status, account_id, large_profile_image));
+		resolver.insert(CachedStatuses.CONTENT_URI,
+				ContentValuesCreator.makeStatusContentValues(status, account_id, large_profile_image));
 		return new ParcelableStatus(status, account_id, false, large_profile_image);
 	}
 
@@ -1013,7 +1010,7 @@ public final class Utils implements Constants {
 			}
 			if (cur.getCount() > 0) {
 				cur.moveToFirst();
-				status = new ParcelableStatus(cur, new StatusCursorIndices(cur));
+				status = new ParcelableStatus(cur, new CursorStatusIndices(cur));
 			}
 			cur.close();
 		}
@@ -2195,12 +2192,10 @@ public final class Utils implements Constants {
 		return 0;
 	}
 
-	public static boolean hasActiveConnection(final Context context) {
-		if (context == null) return false;
-		final ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		final NetworkInfo netInfo = cm.getActiveNetworkInfo();
-		if (netInfo != null && netInfo.isConnected()) return true;
-		return false;
+	public static boolean hasAutoRefreshAccounts(final Context context) {
+		final long[] accountIds = getAccountIds(context);
+		final long[] refreshIds = AccountPreferences.getAutoRefreshEnabledAccountIds(context, accountIds);
+		return refreshIds != null && refreshIds.length > 0;
 	}
 
 	public static void initAccountColor(final Context context) {
@@ -2215,15 +2210,6 @@ public final class Utils implements Constants {
 			cur.moveToNext();
 		}
 		cur.close();
-	}
-
-	public static void initUserColor(final Context context) {
-		if (context == null) return;
-		final SharedPreferences prefs = context.getSharedPreferences(USER_COLOR_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		for (final Map.Entry<String, ?> entry : prefs.getAll().entrySet()) {
-			sAccountColors.put(ParseUtils.parseLong(entry.getKey()),
-					ParseUtils.parseInt(ParseUtils.parseString(entry.getValue())));
-		}
 	}
 
 	public static boolean isBatteryOkay(final Context context) {
@@ -2376,6 +2362,12 @@ public final class Utils implements Constants {
 		return false;
 	}
 
+	public static boolean isNetworkAvailable(final Context context) {
+		final ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		final NetworkInfo info = cm.getActiveNetworkInfo();
+		return info != null && info.isConnected();
+	}
+
 	public static boolean isNotificationsSilent(final Context context) {
 		if (context == null) return false;
 		final SharedPreferences prefs = context.getSharedPreferences(SILENT_NOTIFICATIONS_PREFERENCE_NAME,
@@ -2464,212 +2456,6 @@ public final class Utils implements Constants {
 		return true;
 	}
 
-	public static ContentValues makeAccountContentValues(final Configuration conf, final String basic_password,
-			final AccessToken access_token, final User user, final int auth_type, final int color) {
-		if (user == null || user.getId() <= 0) return null;
-		final ContentValues values = new ContentValues();
-		switch (auth_type) {
-			case Accounts.AUTH_TYPE_TWIP_O_MODE: {
-				break;
-			}
-			case Accounts.AUTH_TYPE_BASIC: {
-				if (basic_password == null) return null;
-				values.put(Accounts.BASIC_AUTH_PASSWORD, basic_password);
-				break;
-			}
-			case Accounts.AUTH_TYPE_OAUTH:
-			case Accounts.AUTH_TYPE_XAUTH: {
-				if (access_token == null) return null;
-				if (user.getId() != access_token.getUserId()) return null;
-				values.put(Accounts.OAUTH_TOKEN, access_token.getToken());
-				values.put(Accounts.TOKEN_SECRET, access_token.getTokenSecret());
-				values.put(Accounts.CONSUMER_KEY, conf.getOAuthConsumerKey());
-				values.put(Accounts.CONSUMER_SECRET, conf.getOAuthConsumerSecret());
-				break;
-			}
-		}
-		values.put(Accounts.AUTH_TYPE, auth_type);
-		values.put(Accounts.ACCOUNT_ID, user.getId());
-		values.put(Accounts.SCREEN_NAME, user.getScreenName());
-		values.put(Accounts.NAME, user.getName());
-		values.put(Accounts.PROFILE_IMAGE_URL, ParseUtils.parseString(user.getProfileImageUrlHttps()));
-		values.put(Accounts.PROFILE_BANNER_URL, ParseUtils.parseString(user.getProfileBannerImageUrl()));
-		values.put(Accounts.USER_COLOR, color);
-		values.put(Accounts.IS_ACTIVATED, 1);
-		values.put(Accounts.REST_BASE_URL, conf.getRestBaseURL());
-		values.put(Accounts.SIGNING_REST_BASE_URL, conf.getSigningRestBaseURL());
-		values.put(Accounts.OAUTH_BASE_URL, conf.getOAuthBaseURL());
-		values.put(Accounts.SIGNING_OAUTH_BASE_URL, conf.getSigningOAuthBaseURL());
-		return values;
-	}
-
-	public static ContentValues makeCachedUserContentValues(final User user, final boolean large_profile_image) {
-		if (user == null || user.getId() <= 0) return null;
-		final String profile_image_url = ParseUtils.parseString(user.getProfileImageUrlHttps());
-		final String url = ParseUtils.parseString(user.getURL());
-		final URLEntity[] urls = user.getURLEntities();
-		final ContentValues values = new ContentValues();
-		values.put(CachedUsers.USER_ID, user.getId());
-		values.put(CachedUsers.NAME, user.getName());
-		values.put(CachedUsers.SCREEN_NAME, user.getScreenName());
-		values.put(CachedUsers.PROFILE_IMAGE_URL, large_profile_image ? getBiggerTwitterProfileImage(profile_image_url)
-				: profile_image_url);
-		values.put(CachedUsers.CREATED_AT, user.getCreatedAt().getTime());
-		values.put(CachedUsers.IS_PROTECTED, user.isProtected());
-		values.put(CachedUsers.IS_VERIFIED, user.isVerified());
-		values.put(CachedUsers.IS_FOLLOWING, user.isFollowing());
-		values.put(CachedUsers.FAVORITES_COUNT, user.getFavouritesCount());
-		values.put(CachedUsers.FOLLOWERS_COUNT, user.getFollowersCount());
-		values.put(CachedUsers.FRIENDS_COUNT, user.getFriendsCount());
-		values.put(CachedUsers.STATUSES_COUNT, user.getStatusesCount());
-		values.put(CachedUsers.LOCATION, user.getLocation());
-		values.put(CachedUsers.DESCRIPTION_PLAIN, user.getDescription());
-		values.put(CachedUsers.DESCRIPTION_HTML, formatUserDescription(user));
-		values.put(CachedUsers.DESCRIPTION_EXPANDED, formatExpandedUserDescription(user));
-		values.put(CachedUsers.URL, url);
-		values.put(CachedUsers.URL_EXPANDED,
-				url != null && urls != null && urls.length > 0 ? ParseUtils.parseString(urls[0].getExpandedURL())
-						: null);
-		values.put(CachedUsers.PROFILE_BANNER_URL, user.getProfileBannerImageUrl());
-		return values;
-	}
-
-	public static ContentValues makeDirectMessageContentValues(final DirectMessage message, final long account_id,
-			final boolean is_outgoing, final boolean large_profile_image) {
-		if (message == null || message.getId() <= 0) return null;
-		final ContentValues values = new ContentValues();
-		final User sender = message.getSender(), recipient = message.getRecipient();
-		if (sender == null || recipient == null) return null;
-		final String sender_profile_image_url = ParseUtils.parseString(sender.getProfileImageUrlHttps());
-		final String recipient_profile_image_url = ParseUtils.parseString(recipient.getProfileImageUrlHttps());
-		values.put(DirectMessages.ACCOUNT_ID, account_id);
-		values.put(DirectMessages.MESSAGE_ID, message.getId());
-		values.put(DirectMessages.MESSAGE_TIMESTAMP, message.getCreatedAt().getTime());
-		values.put(DirectMessages.SENDER_ID, sender.getId());
-		values.put(DirectMessages.RECIPIENT_ID, recipient.getId());
-		values.put(DirectMessages.TEXT_HTML, formatDirectMessageText(message));
-		values.put(DirectMessages.TEXT_PLAIN, message.getText());
-		values.put(DirectMessages.IS_OUTGOING, is_outgoing);
-		values.put(DirectMessages.SENDER_NAME, sender.getName());
-		values.put(DirectMessages.SENDER_SCREEN_NAME, sender.getScreenName());
-		values.put(DirectMessages.RECIPIENT_NAME, recipient.getName());
-		values.put(DirectMessages.RECIPIENT_SCREEN_NAME, recipient.getScreenName());
-		values.put(DirectMessages.SENDER_PROFILE_IMAGE_URL,
-				large_profile_image ? getBiggerTwitterProfileImage(sender_profile_image_url) : sender_profile_image_url);
-		values.put(DirectMessages.RECIPIENT_PROFILE_IMAGE_URL,
-				large_profile_image ? getBiggerTwitterProfileImage(recipient_profile_image_url)
-						: recipient_profile_image_url);
-		return values;
-	}
-
-	public static ContentValues makeFilterdUserContentValues(final ParcelableStatus status) {
-		if (status == null) return null;
-		final ContentValues values = new ContentValues();
-		values.put(Filters.Users.USER_ID, status.user_id);
-		values.put(Filters.Users.NAME, status.user_name);
-		values.put(Filters.Users.SCREEN_NAME, status.user_screen_name);
-		return values;
-	}
-
-	public static ContentValues makeFilterdUserContentValues(final ParcelableUser user) {
-		if (user == null) return null;
-		final ContentValues values = new ContentValues();
-		values.put(Filters.Users.USER_ID, user.id);
-		values.put(Filters.Users.NAME, user.name);
-		values.put(Filters.Users.SCREEN_NAME, user.screen_name);
-		return values;
-	}
-
-	public static ContentValues makeFilterdUserContentValues(final ParcelableUserMention user) {
-		if (user == null) return null;
-		final ContentValues values = new ContentValues();
-		values.put(Filters.Users.USER_ID, user.id);
-		values.put(Filters.Users.NAME, user.name);
-		values.put(Filters.Users.SCREEN_NAME, user.screen_name);
-		return values;
-	}
-
-	public static ContentValues makeStatusContentValues(final Status orig, final long account_id,
-			final boolean large_profile_image) {
-		if (orig == null || orig.getId() <= 0) return null;
-		final ContentValues values = new ContentValues();
-		values.put(Statuses.ACCOUNT_ID, account_id);
-		values.put(Statuses.STATUS_ID, orig.getId());
-		values.put(Statuses.MY_RETWEET_ID, orig.getCurrentUserRetweet());
-		final boolean is_retweet = orig.isRetweet();
-		final Status status;
-		final Status retweeted_status = is_retweet ? orig.getRetweetedStatus() : null;
-		if (retweeted_status != null) {
-			final User retweet_user = orig.getUser();
-			values.put(Statuses.RETWEET_ID, retweeted_status.getId());
-			values.put(Statuses.RETWEETED_BY_USER_ID, retweet_user.getId());
-			values.put(Statuses.RETWEETED_BY_USER_NAME, retweet_user.getName());
-			values.put(Statuses.RETWEETED_BY_USER_SCREEN_NAME, retweet_user.getScreenName());
-			status = retweeted_status;
-		} else {
-			status = orig;
-		}
-		final User user = status.getUser();
-		if (user != null) {
-			final long user_id = user.getId();
-			final String profile_image_url = ParseUtils.parseString(user.getProfileImageUrlHttps());
-			final String name = user.getName(), screen_name = user.getScreenName();
-			values.put(Statuses.USER_ID, user_id);
-			values.put(Statuses.USER_NAME, name);
-			values.put(Statuses.USER_SCREEN_NAME, screen_name);
-			values.put(Statuses.IS_PROTECTED, user.isProtected());
-			values.put(Statuses.IS_VERIFIED, user.isVerified());
-			values.put(Statuses.USER_PROFILE_IMAGE_URL,
-					large_profile_image ? getBiggerTwitterProfileImage(profile_image_url) : profile_image_url);
-			values.put(CachedUsers.IS_FOLLOWING, user != null ? user.isFollowing() : false);
-		}
-		if (status.getCreatedAt() != null) {
-			values.put(Statuses.STATUS_TIMESTAMP, status.getCreatedAt().getTime());
-		}
-		final String text_html = formatStatusText(status);
-		values.put(Statuses.TEXT_HTML, text_html);
-		values.put(Statuses.TEXT_PLAIN, status.getText());
-		values.put(Statuses.TEXT_UNESCAPED, toPlainText(text_html));
-		values.put(Statuses.RETWEET_COUNT, status.getRetweetCount());
-		values.put(Statuses.IN_REPLY_TO_STATUS_ID, status.getInReplyToStatusId());
-		values.put(Statuses.IN_REPLY_TO_USER_ID, status.getInReplyToUserId());
-		values.put(Statuses.IN_REPLY_TO_USER_NAME, getInReplyToName(status));
-		values.put(Statuses.IN_REPLY_TO_USER_SCREEN_NAME, status.getInReplyToScreenName());
-		values.put(Statuses.SOURCE, status.getSource());
-		values.put(Statuses.IS_POSSIBLY_SENSITIVE, status.isPossiblySensitive());
-		final GeoLocation location = status.getGeoLocation();
-		if (location != null) {
-			values.put(Statuses.LOCATION, location.getLatitude() + "," + location.getLongitude());
-		}
-		values.put(Statuses.IS_RETWEET, is_retweet);
-		values.put(Statuses.IS_FAVORITE, status.isFavorited());
-		values.put(Statuses.MEDIA_LINK, MediaPreviewUtils.getSupportedFirstLink(status));
-		final JSONArray json = JSONSerializer.toJSONArray(ParcelableUserMention.fromUserMentionEntities(status
-				.getUserMentionEntities()));
-		if (json != null) {
-			values.put(Statuses.MENTIONS, json.toString());
-		}
-		return values;
-	}
-
-	public static ContentValues[] makeTrendsContentValues(final List<Trends> trends_list) {
-		if (trends_list == null) return new ContentValues[0];
-		final List<ContentValues> result_list = new ArrayList<ContentValues>();
-		for (final Trends trends : trends_list) {
-			if (trends == null) {
-				continue;
-			}
-			final long timestamp = trends.getTrendAt().getTime();
-			for (final Trend trend : trends.getTrends()) {
-				final ContentValues values = new ContentValues();
-				values.put(CachedTrends.NAME, trend.getName());
-				values.put(CachedTrends.TIMESTAMP, timestamp);
-				result_list.add(values);
-			}
-		}
-		return result_list.toArray(new ContentValues[result_list.size()]);
-	}
-
 	public static final int matcherEnd(final Matcher matcher, final int group) {
 		try {
 			return matcher.end(group);
@@ -2701,25 +2487,20 @@ public final class Utils implements Constants {
 		return LINK_HANDLER_URI_MATCHER.match(uri);
 	}
 
-	public static void openDirectMessagesConversation(final FragmentActivity activity, final long account_id,
-			final long conversation_id, final String screen_name) {
+	public static void openDirectMessagesConversation(final FragmentActivity activity, final long accountId,
+			final long recipientId) {
 		if (activity == null) return;
 		if (activity instanceof DualPaneActivity && ((DualPaneActivity) activity).isDualPaneMode()) {
 			final DualPaneActivity dual_pane_activity = (DualPaneActivity) activity;
 			final Fragment details_fragment = dual_pane_activity.getDetailsFragment();
 			if (details_fragment instanceof DirectMessagesConversationFragment && details_fragment.isAdded()) {
-				((DirectMessagesConversationFragment) details_fragment).showConversation(account_id, conversation_id,
-						screen_name);
+				((DirectMessagesConversationFragment) details_fragment).showConversation(accountId, recipientId);
 				dual_pane_activity.showRightPane();
 			} else {
 				final Fragment fragment = new DirectMessagesConversationFragment();
 				final Bundle args = new Bundle();
-				if (account_id > 0 && conversation_id > 0) {
-					args.putLong(EXTRA_ACCOUNT_ID, account_id);
-					if (conversation_id > 0) {
-						args.putLong(EXTRA_CONVERSATION_ID, conversation_id);
-					}
-				}
+				args.putLong(EXTRA_ACCOUNT_ID, accountId);
+				args.putLong(EXTRA_RECIPIENT_ID, recipientId);
 				fragment.setArguments(args);
 				dual_pane_activity.showAtPane(PANE_RIGHT, fragment, true);
 			}
@@ -2727,11 +2508,9 @@ public final class Utils implements Constants {
 			final Uri.Builder builder = new Uri.Builder();
 			builder.scheme(SCHEME_TWIDERE);
 			builder.authority(AUTHORITY_DIRECT_MESSAGES_CONVERSATION);
-			if (account_id > 0 && conversation_id > 0) {
-				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-				if (conversation_id > 0) {
-					builder.appendQueryParameter(QUERY_PARAM_CONVERSATION_ID, String.valueOf(conversation_id));
-				}
+			if (accountId > 0 && recipientId > 0) {
+				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(accountId));
+				builder.appendQueryParameter(QUERY_PARAM_RECIPIENT_ID, String.valueOf(recipientId));
 			}
 			final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
 			SwipebackActivityUtils.startSwipebackActivity(activity, intent);
@@ -3688,6 +3467,12 @@ public final class Utils implements Constants {
 		return prefs.getBoolean(PREFERENCE_KEY_FILTERS_FOR_RTS, true);
 	}
 
+	public static boolean shouldStopAutoRefreshOnBatteryLow(final Context context) {
+		final SharedPreferences mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
+				Context.MODE_PRIVATE);
+		return mPreferences.getBoolean(PREFERENCE_KEY_STOP_AUTO_REFRESH_WHEN_BATTERY_LOW, true);
+	}
+
 	public static void showErrorMessage(final Context context, final CharSequence message, final boolean long_message) {
 		if (context == null) return;
 		if (context instanceof Activity) {
@@ -3847,6 +3632,28 @@ public final class Utils implements Constants {
 	public static void showWarnMessage(final Context context, final int resId, final boolean long_message) {
 		if (context == null) return;
 		showWarnMessage(context, context.getText(resId), long_message);
+	}
+
+	public static void startProfilingServiceIfNeeded(final Context context) {
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final Intent profilingServiceIntent = new Intent(context, UCDService.class);
+		if (prefs.getBoolean(PREFERENCE_KEY_UCD_DATA_PROFILING, false)) {
+			context.startService(profilingServiceIntent);
+		} else {
+			context.stopService(profilingServiceIntent);
+		}
+	}
+
+	public static void startRefreshServiceIfNeeded(final Context context) {
+		final Intent refreshServiceIntent = new Intent(context, RefreshService.class);
+		if (isNetworkAvailable(context) && hasAutoRefreshAccounts(context)) {
+			if (isDebugBuild()) {
+				Log.d(LOGTAG, "Start background refresh service");
+			}
+			context.startService(refreshServiceIntent);
+		} else {
+			context.stopService(refreshServiceIntent);
+		}
 	}
 
 	public static void startStatusShareChooser(final Context context, final ParcelableStatus status) {

@@ -98,6 +98,10 @@ public class UserHashtagAutoCompleteAdapter extends SimpleCursorAdapter implemen
 		final TextView text1 = (TextView) view.findViewById(android.R.id.text1);
 		final TextView text2 = (TextView) view.findViewById(android.R.id.text2);
 		final ImageView icon = (ImageView) view.findViewById(android.R.id.icon);
+
+		// Clear images in prder to prevent images in recycled view shown.
+		icon.setImageDrawable(null);
+
 		if (mScreenNameIdx != -1 && mNameIdx != -1 && mUserIdIdx != -1) {
 			final String nick = getUserNickname(context, cursor.getLong(mUserIdIdx));
 			final String name = cursor.getString(mNameIdx);

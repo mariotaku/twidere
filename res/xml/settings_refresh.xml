@@ -9,7 +9,7 @@
 	<PreferenceCategory
 		android:key="cat_general"
 		android:title="@string/general">
-		<ListPreference
+		<org.mariotaku.twidere.preference.AutoInvalidateListPreference
 			android:defaultValue="15"
 			android:entries="@array/entries_refresh_interval"
 			android:entryValues="@array/values_refresh_interval"

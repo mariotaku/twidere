@@ -72,6 +72,11 @@ public class DirectMessagesConversationAdapter extends BaseCursorAdapter impleme
 		final long accountId = cursor.getLong(mIndices.account_id);
 		final long timestamp = cursor.getLong(mIndices.message_timestamp);
 		final boolean is_outgoing = cursor.getInt(mIndices.is_outgoing) == 1;
+
+		// Clear images in prder to prevent images in recycled view shown.
+		holder.incoming_profile_image.setImageDrawable(null);
+		holder.outgoing_profile_image.setImageDrawable(null);
+
 		holder.incoming_message_container.setVisibility(is_outgoing ? View.GONE : View.VISIBLE);
 		holder.outgoing_message_container.setVisibility(is_outgoing ? View.VISIBLE : View.GONE);
 		holder.setTextSize(getTextSize());

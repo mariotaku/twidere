@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.fragment.support;
 
 import static android.text.TextUtils.isEmpty;
+import static org.mariotaku.twidere.util.ContentValuesCreator.makeFilterdUserContentValues;
 import static org.mariotaku.twidere.util.ParseUtils.parseLong;
 import static org.mariotaku.twidere.util.UserColorNicknameUtils.clearUserColor;
 import static org.mariotaku.twidere.util.UserColorNicknameUtils.clearUserNickname;
@@ -37,7 +38,6 @@ import static org.mariotaku.twidere.util.Utils.getOriginalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
-import static org.mariotaku.twidere.util.Utils.makeFilterdUserContentValues;
 import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.openIncomingFriendships;
 import static org.mariotaku.twidere.util.Utils.openSavedSearches;
@@ -679,7 +679,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				builder.scheme(SCHEME_TWIDERE);
 				builder.authority(AUTHORITY_DIRECT_MESSAGES_CONVERSATION);
 				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(mAccountId));
-				builder.appendQueryParameter(QUERY_PARAM_CONVERSATION_ID, String.valueOf(mUser.id));
+				builder.appendQueryParameter(QUERY_PARAM_RECIPIENT_ID, String.valueOf(mUser.id));
 				startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 				break;
 			}

@@ -2,6 +2,7 @@ package org.mariotaku.twidere.activity.support;
 
 import static org.mariotaku.twidere.util.Utils.restartActivity;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
@@ -24,6 +25,11 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 	@Override
 	public final int getCurrentThemeResource() {
 		return mCurrentThemeResource;
+	}
+
+	@Override
+	public final Resources getDefaultResources() {
+		return super.getResources();
 	}
 
 	@Override

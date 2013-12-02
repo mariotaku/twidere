@@ -19,10 +19,11 @@
 
 package org.mariotaku.twidere.app;
 
+import static org.mariotaku.twidere.util.UserColorNicknameUtils.initUserColor;
 import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
-import static org.mariotaku.twidere.util.Utils.hasActiveConnection;
 import static org.mariotaku.twidere.util.Utils.initAccountColor;
-import static org.mariotaku.twidere.util.Utils.initUserColor;
+import static org.mariotaku.twidere.util.Utils.startProfilingServiceIfNeeded;
+import static org.mariotaku.twidere.util.Utils.startRefreshServiceIfNeeded;
 
 import android.app.Application;
 import android.content.ComponentName;
@@ -43,6 +44,7 @@ import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.download.ImageDownloader;
+import com.nostra13.universalimageloader.utils.L;
 
 import edu.ucdavis.earlybird.UCDService;
 
@@ -65,6 +67,7 @@ import org.mariotaku.twidere.util.ImageMemoryCache;
 import org.mariotaku.twidere.util.MessagesManager;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.StrictModeUtils;
+import org.mariotaku.twidere.util.SwipebackActivityUtils.SwipebackScreenshotManager;
 import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.util.content.TwidereSQLiteOpenHelper;
 import org.mariotaku.twidere.util.imageloader.TwidereImageDownloader;
@@ -92,7 +95,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 	private DiscCacheAware mDiscCache, mFullDiscCache;
 	private MessagesManager mCroutonsManager;
 	private SQLiteOpenHelper mSQLiteOpenHelper;
-
+	private SwipebackScreenshotManager mSwipebackScreenshotManager;
 	private HostAddressResolver mResolver;
 	private SQLiteDatabase mDatabase;
 
@@ -132,6 +135,11 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	public ImageLoader getImageLoader() {
 		if (mImageLoader != null) return mImageLoader;
+		if (Utils.isDebugBuild()) {
+			L.enableLogging();
+		} else {
+			L.disableLogging();
+		}
 		final ImageLoader loader = ImageLoader.getInstance();
 		final ImageLoaderConfiguration.Builder cb = new ImageLoaderConfiguration.Builder(this);
 		cb.threadPoolSize(8);
@@ -169,6 +177,11 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		return mSQLiteOpenHelper = new TwidereSQLiteOpenHelper(this, DATABASES_NAME, DATABASES_VERSION);
 	}
 
+	public SwipebackScreenshotManager getSwipebackScreenshotManager() {
+		if (mSwipebackScreenshotManager != null) return mSwipebackScreenshotManager;
+		return mSwipebackScreenshotManager = new SwipebackScreenshotManager();
+	}
+
 	public AsyncTwitterWrapper getTwitterWrapper() {
 		if (mTwitterWrapper != null) return mTwitterWrapper;
 		return mTwitterWrapper = AsyncTwitterWrapper.getInstance(this);
@@ -186,28 +199,25 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		configACRA();
 		initializeAsyncTask();
 		GalleryUtils.initialize(this);
-		if (mPreferences.getBoolean(PREFERENCE_KEY_UCD_DATA_PROFILING, false)) {
-			startService(new Intent(this, UCDService.class));
-		}
-		if (mPreferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false)) {
-			startService(new Intent(this, RefreshService.class));
-		}
 		initAccountColor(this);
 		initUserColor(this);
 
 		final PackageManager pm = getPackageManager();
 		final ComponentName main = new ComponentName(this, MainActivity.class);
 		final ComponentName main2 = new ComponentName(this, Main2Activity.class);
-		final boolean main_disabled = pm.getComponentEnabledSetting(main) != PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
-		final boolean main2_disabled = pm.getComponentEnabledSetting(main2) != PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
-		final boolean no_entry = main_disabled && main2_disabled;
+		final boolean mainDisabled = pm.getComponentEnabledSetting(main) != PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
+		final boolean main2Disabled = pm.getComponentEnabledSetting(main2) != PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
+		final boolean no_entry = mainDisabled && main2Disabled;
 		if (no_entry) {
 			pm.setComponentEnabledSetting(main, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
 					PackageManager.DONT_KILL_APP);
-		} else if (!main_disabled) {
+		} else if (!mainDisabled) {
 			pm.setComponentEnabledSetting(main2, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
 					PackageManager.DONT_KILL_APP);
 		}
+
+		startProfilingServiceIfNeeded(this);
+		startRefreshServiceIfNeeded(this);
 	}
 
 	@Override
@@ -220,23 +230,16 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	@Override
 	public void onSharedPreferenceChanged(final SharedPreferences preferences, final String key) {
-		if (PREFERENCE_KEY_AUTO_REFRESH.equals(key) || PREFERENCE_KEY_REFRESH_INTERVAL.equals(key)) {
-			final Intent intent = new Intent(this, RefreshService.class);
-			stopService(intent);
-			if (preferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false) && hasActiveConnection(this)) {
-				startService(intent);
-			}
+		if (PREFERENCE_KEY_REFRESH_INTERVAL.equals(key)) {
+			stopService(new Intent(this, RefreshService.class));
+			startRefreshServiceIfNeeded(this);
 		} else if (PREFERENCE_KEY_ENABLE_PROXY.equals(key) || PREFERENCE_KEY_CONNECTION_TIMEOUT.equals(key)
 				|| PREFERENCE_KEY_PROXY_HOST.equals(key) || PREFERENCE_KEY_PROXY_PORT.equals(key)
 				|| PREFERENCE_KEY_FAST_IMAGE_LOADING.equals(key)) {
 			reloadConnectivitySettings();
 		} else if (PREFERENCE_KEY_UCD_DATA_PROFILING.equals(key)) {
-			final Intent intent = new Intent(this, UCDService.class);
-			if (preferences.getBoolean(PREFERENCE_KEY_UCD_DATA_PROFILING, false)) {
-				startService(intent);
-			} else {
-				stopService(intent);
-			}
+			stopService(new Intent(this, UCDService.class));
+			startProfilingServiceIfNeeded(this);
 		}
 	}
 

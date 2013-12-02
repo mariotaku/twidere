@@ -4,41 +4,16 @@
 	android:layout_height="wrap_content">
 
 	<org.mariotaku.twidere.view.CardItemLinearLayout
+		android:id="@+id/content"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginBottom="4dp"
-		android:layout_marginLeft="8dp"
-		android:layout_marginRight="8dp"
+		android:layout_marginLeft="@dimen/element_spacing_default"
+		android:layout_marginRight="@dimen/element_spacing_default"
 		android:layout_marginTop="4dp"
 		android:background="?cardItemBackground"
 		android:duplicateParentState="true"
 		android:orientation="vertical">
-
-		<org.mariotaku.twidere.view.AccountsColorFrameLayout
-			android:id="@+id/accounts_color"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:minHeight="?android:listPreferredItemHeightSmall"
-			android:paddingBottom="4dp"
-			android:paddingTop="4dp">
-
-			<TextView
-				android:id="@+id/text"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:paddingBottom="8dp"
-				android:paddingLeft="8dp"
-				android:paddingRight="8dp"
-				android:paddingTop="8dp"
-				android:textAppearance="?android:textAppearanceSmall"
-				android:textColor="?android:textColorPrimary"/>
-		</org.mariotaku.twidere.view.AccountsColorFrameLayout>
-
-		<View
-			android:id="@+id/divider"
-			android:layout_width="match_parent"
-			android:layout_height="0.2dp"
-			android:background="#40808080"/>
 
 		<org.mariotaku.twidere.view.ImagePreviewContainer
 			android:id="@+id/image_preview_container"
@@ -59,7 +34,35 @@
 				android:layout_height="wrap_content"
 				android:layout_gravity="center"
 				android:layout_margin="16dp"/>
+
+			<View
+				android:layout_width="match_parent"
+				android:layout_height="0.2dp"
+				android:layout_gravity="bottom"
+				android:background="#40808080"/>
 		</org.mariotaku.twidere.view.ImagePreviewContainer>
+
+		<TextView
+			android:id="@+id/text"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:minHeight="?android:listPreferredItemHeightSmall"
+			android:paddingBottom="@dimen/element_spacing_default"
+			android:paddingLeft="@dimen/element_spacing_default"
+			android:paddingRight="@dimen/element_spacing_default"
+			android:paddingTop="@dimen/element_spacing_default"
+			android:textAppearance="?android:textAppearanceSmall"
+			android:textColor="?android:textColorPrimary"/>
+
+		<TextView
+			android:id="@+id/time"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:paddingBottom="@dimen/element_spacing_default"
+			android:paddingLeft="@dimen/element_spacing_default"
+			android:paddingRight="@dimen/element_spacing_default"
+			android:textAppearance="?android:textAppearanceSmall"
+			android:textColor="?android:textColorPrimary"/>
 	</org.mariotaku.twidere.view.CardItemLinearLayout>
 
 </FrameLayout>
