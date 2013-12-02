@@ -73,6 +73,7 @@ import android.text.TextPaint;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.text.format.Time;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -588,6 +589,7 @@ public final class Utils implements Constants {
 	}
 
 	public static Fragment createFragmentForIntent(final Context context, final Intent intent) {
+		intent.setExtrasClassLoader(context.getClassLoader());
 		final Bundle extras = intent.getExtras();
 		final Uri uri = intent.getData();
 		final Fragment fragment;
@@ -2190,12 +2192,10 @@ public final class Utils implements Constants {
 		return 0;
 	}
 
-	public static boolean hasActiveConnection(final Context context) {
-		if (context == null) return false;
-		final ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		final NetworkInfo netInfo = cm.getActiveNetworkInfo();
-		if (netInfo != null && netInfo.isConnected()) return true;
-		return false;
+	public static boolean hasAutoRefreshAccounts(final Context context) {
+		final long[] accountIds = getAccountIds(context);
+		final long[] refreshIds = AccountPreferences.getAutoRefreshEnabledAccountIds(context, accountIds);
+		return refreshIds != null && refreshIds.length > 0;
 	}
 
 	public static void initAccountColor(final Context context) {
@@ -2360,6 +2360,12 @@ public final class Utils implements Constants {
 			if (account_screen_name.equalsIgnoreCase(screen_name)) return true;
 		}
 		return false;
+	}
+
+	public static boolean isNetworkAvailable(final Context context) {
+		final ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		final NetworkInfo info = cm.getActiveNetworkInfo();
+		return info != null && info.isConnected();
 	}
 
 	public static boolean isNotificationsSilent(final Context context) {
@@ -3461,6 +3467,12 @@ public final class Utils implements Constants {
 		return prefs.getBoolean(PREFERENCE_KEY_FILTERS_FOR_RTS, true);
 	}
 
+	public static boolean shouldStopAutoRefreshOnBatteryLow(final Context context) {
+		final SharedPreferences mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME,
+				Context.MODE_PRIVATE);
+		return mPreferences.getBoolean(PREFERENCE_KEY_STOP_AUTO_REFRESH_WHEN_BATTERY_LOW, true);
+	}
+
 	public static void showErrorMessage(final Context context, final CharSequence message, final boolean long_message) {
 		if (context == null) return;
 		if (context instanceof Activity) {
@@ -3622,15 +3634,25 @@ public final class Utils implements Constants {
 		showWarnMessage(context, context.getText(resId), long_message);
 	}
 
-	public static void startBackgroundServices(final Context context) {
+	public static void startProfilingServiceIfNeeded(final Context context) {
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final long[] accountIds = getAccountIds(context);
-		final long[] refreshIds = AccountPreferences.getAutoRefreshEnabledAccountIds(context, accountIds);
-		if (refreshIds != null && refreshIds.length > 0) {
-			context.startService(new Intent(context, RefreshService.class));
-		}
+		final Intent profilingServiceIntent = new Intent(context, UCDService.class);
 		if (prefs.getBoolean(PREFERENCE_KEY_UCD_DATA_PROFILING, false)) {
-			context.startService(new Intent(context, UCDService.class));
+			context.startService(profilingServiceIntent);
+		} else {
+			context.stopService(profilingServiceIntent);
+		}
+	}
+
+	public static void startRefreshServiceIfNeeded(final Context context) {
+		final Intent refreshServiceIntent = new Intent(context, RefreshService.class);
+		if (isNetworkAvailable(context) && hasAutoRefreshAccounts(context)) {
+			if (isDebugBuild()) {
+				Log.d(LOGTAG, "Start background refresh service");
+			}
+			context.startService(refreshServiceIntent);
+		} else {
+			context.stopService(refreshServiceIntent);
 		}
 	}
 

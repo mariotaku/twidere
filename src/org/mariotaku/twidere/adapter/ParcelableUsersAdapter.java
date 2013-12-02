@@ -88,6 +88,10 @@ public class ParcelableUsersAdapter extends BaseArrayAdapter<ParcelableUser> imp
 			holder.item_menu.setOnClickListener(this);
 			view.setTag(holder);
 		}
+
+		// Clear images in prder to prevent images in recycled view shown.
+		holder.profile_image.setImageDrawable(null);
+
 		final ParcelableUser user = getItem(position);
 
 		final boolean showAccountColor = isShowAccountColor();

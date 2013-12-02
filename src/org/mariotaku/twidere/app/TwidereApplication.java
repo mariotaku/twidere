@@ -21,9 +21,9 @@ package org.mariotaku.twidere.app;
 
 import static org.mariotaku.twidere.util.UserColorNicknameUtils.initUserColor;
 import static org.mariotaku.twidere.util.Utils.getBestCacheDir;
-import static org.mariotaku.twidere.util.Utils.hasActiveConnection;
 import static org.mariotaku.twidere.util.Utils.initAccountColor;
-import static org.mariotaku.twidere.util.Utils.startBackgroundServices;
+import static org.mariotaku.twidere.util.Utils.startProfilingServiceIfNeeded;
+import static org.mariotaku.twidere.util.Utils.startRefreshServiceIfNeeded;
 
 import android.app.Application;
 import android.content.ComponentName;
@@ -199,7 +199,6 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		configACRA();
 		initializeAsyncTask();
 		GalleryUtils.initialize(this);
-		startBackgroundServices(this);
 		initAccountColor(this);
 		initUserColor(this);
 
@@ -216,6 +215,9 @@ public class TwidereApplication extends Application implements Constants, OnShar
 			pm.setComponentEnabledSetting(main2, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
 					PackageManager.DONT_KILL_APP);
 		}
+
+		startProfilingServiceIfNeeded(this);
+		startRefreshServiceIfNeeded(this);
 	}
 
 	@Override
@@ -228,23 +230,16 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	@Override
 	public void onSharedPreferenceChanged(final SharedPreferences preferences, final String key) {
-		if (PREFERENCE_KEY_AUTO_REFRESH.equals(key) || PREFERENCE_KEY_REFRESH_INTERVAL.equals(key)) {
-			final Intent intent = new Intent(this, RefreshService.class);
-			stopService(intent);
-			if (preferences.getBoolean(PREFERENCE_KEY_AUTO_REFRESH, false) && hasActiveConnection(this)) {
-				startService(intent);
-			}
+		if (PREFERENCE_KEY_REFRESH_INTERVAL.equals(key)) {
+			stopService(new Intent(this, RefreshService.class));
+			startRefreshServiceIfNeeded(this);
 		} else if (PREFERENCE_KEY_ENABLE_PROXY.equals(key) || PREFERENCE_KEY_CONNECTION_TIMEOUT.equals(key)
 				|| PREFERENCE_KEY_PROXY_HOST.equals(key) || PREFERENCE_KEY_PROXY_PORT.equals(key)
 				|| PREFERENCE_KEY_FAST_IMAGE_LOADING.equals(key)) {
 			reloadConnectivitySettings();
 		} else if (PREFERENCE_KEY_UCD_DATA_PROFILING.equals(key)) {
-			final Intent intent = new Intent(this, UCDService.class);
-			if (preferences.getBoolean(PREFERENCE_KEY_UCD_DATA_PROFILING, false)) {
-				startService(intent);
-			} else {
-				stopService(intent);
-			}
+			stopService(new Intent(this, UCDService.class));
+			startProfilingServiceIfNeeded(this);
 		}
 	}
 

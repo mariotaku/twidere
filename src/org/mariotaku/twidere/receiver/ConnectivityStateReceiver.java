@@ -19,25 +19,29 @@
 
 package org.mariotaku.twidere.receiver;
 
-import static org.mariotaku.twidere.util.Utils.startBackgroundServices;
+import static org.mariotaku.twidere.util.Utils.startProfilingServiceIfNeeded;
+import static org.mariotaku.twidere.util.Utils.startRefreshServiceIfNeeded;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.util.Log;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.service.RefreshService;
+import org.mariotaku.twidere.util.Utils;
 
 public class ConnectivityStateReceiver extends BroadcastReceiver implements Constants {
 
+	private static final String RECEIVER_LOGTAG = LOGTAG + "." + "ConnectivityStateReceiver";
+
 	@Override
 	public void onReceive(final Context context, final Intent intent) {
-		if (!ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) return;
-		if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, true)) {
-			context.stopService(new Intent(context, RefreshService.class));
-			return;
+		if (Utils.isDebugBuild()) {
+			Log.d(RECEIVER_LOGTAG, String.format("Received Broadcast %s", intent));
 		}
-		startBackgroundServices(context);
+		if (!ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) return;
+		startProfilingServiceIfNeeded(context);
+		startRefreshServiceIfNeeded(context);
 	}
 }

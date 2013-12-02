@@ -2073,7 +2073,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 					continue;
 				}
 				final ArrayList<Long> ids_in_db = getStatusIdsInDatabase(mContext, uri, account_id);
-				final boolean no_items_before = ids_in_db.isEmpty();
+				final boolean noItemsBefore = ids_in_db.isEmpty();
 				final ContentValues[] values = new ContentValues[statuses.size()];
 				final long[] statusIds = new long[statuses.size()];
 				for (int i = 0, j = statuses.size(); i < j; i++) {
@@ -2094,16 +2094,16 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 						"Download tweets, " + ArrayUtils.toString(statusIds, ',', true));
 				all_statuses.addAll(Arrays.asList(values));
 				// Insert previously fetched items.
-				final Uri insert_query = appendQueryParameters(uri, new NameValuePairImpl(QUERY_PARAM_NOTIFY, notify));
-				bulkInsert(mResolver, insert_query, values);
+				final Uri insertUri = appendQueryParameters(uri, new NameValuePairImpl(QUERY_PARAM_NOTIFY, notify));
+				bulkInsert(mResolver, insertUri, values);
 
 				// Insert a gap.
 				final long min_id = statusIds.length != 0 ? ArrayUtils.min(statusIds) : -1;
-				final boolean deleted_old_gap = rowsDeleted > 0 && ArrayUtils.contains(statusIds, response.max_id);
-				final boolean no_rows_deleted = rowsDeleted == 0;
-				final boolean insert_gap = min_id > 0 && (no_rows_deleted || deleted_old_gap) && !response.truncated
-						&& !no_items_before && statuses.size() > 1;
-				if (insert_gap) {
+				final boolean deletedOldGap = rowsDeleted > 0 && ArrayUtils.contains(statusIds, response.max_id);
+				final boolean noRowsDeleted = rowsDeleted == 0;
+				final boolean insertGap = min_id > 0 && (noRowsDeleted || deletedOldGap) && !response.truncated
+						&& !noItemsBefore && statuses.size() > 1;
+				if (insertGap) {
 					final ContentValues gap_value = new ContentValues();
 					gap_value.put(Statuses.IS_GAP, 1);
 					final StringBuilder where = new StringBuilder();

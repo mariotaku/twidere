@@ -212,8 +212,8 @@ public class MediaPreviewUtils {
 		return null;
 	}
 
-	public static List<PreviewMedia> getImagesInStatus(final String status_string, final boolean use_full) {
-		if (status_string == null) return Collections.emptyList();
+	public static PreviewMedia[] getImagesInStatus(final String status_string, final boolean use_full) {
+		if (status_string == null) return new PreviewMedia[0];
 		final List<PreviewMedia> images = new ArrayList<PreviewMedia>();
 		final HtmlLinkExtractor extractor = new HtmlLinkExtractor();
 		for (final HtmlLink link : extractor.grabLinks(status_string)) {
@@ -222,7 +222,7 @@ public class MediaPreviewUtils {
 				images.add(spec);
 			}
 		}
-		return images;
+		return images.toArray(new PreviewMedia[images.size()]);
 	}
 
 	public static String getSupportedFirstLink(final Status status) {

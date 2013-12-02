@@ -66,6 +66,10 @@ public class SimpleParcelableUsersAdapter extends BaseArrayAdapter<ParcelableUse
 			holder = new TwoLineWithIconViewHolder(view);
 			view.setTag(holder);
 		}
+
+		// Clear images in prder to prevent images in recycled view shown.
+		holder.icon.setImageDrawable(null);
+
 		final ParcelableUser user = getItem(position);
 
 		holder.text1.setCompoundDrawablesWithIntrinsicBounds(0, 0,
