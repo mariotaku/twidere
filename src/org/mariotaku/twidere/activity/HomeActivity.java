@@ -73,14 +73,10 @@ import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
-import android.widget.SearchView.OnQueryTextListener;
-import android.widget.SearchView.OnSuggestionListener;
 import android.widget.Toast;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu.CanvasTransformer;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu.OnClosedListener;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu.OnOpenedListener;
 import com.readystatesoftware.viewbadger.BadgeView;
 
 import edu.ucdavis.earlybird.ProfilingUtil;
@@ -119,8 +115,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeActivity extends DualPaneActivity implements OnClickListener, OnPageChangeListener,
-		SupportFragmentCallback, OnOpenedListener, OnClosedListener, OnQueryTextListener, OnSuggestionListener,
-		OnLongClickListener, OnActionExpandListener, OnSystemUiVisibilityChangeListener {
+		SupportFragmentCallback, SlidingMenu.OnOpenedListener, SlidingMenu.OnClosedListener,
+		SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, OnLongClickListener, OnActionExpandListener,
+		OnSystemUiVisibilityChangeListener, SearchView.OnCloseListener {
 
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -260,6 +257,13 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	@Override
+	public boolean onClose() {
+		if (mSearchView == null) return false;
+		mSearchView.setQuery(null, false);
+		return true;
+	}
+
+	@Override
 	public void onClosed() {
 		updatePullToRefreshLayoutScroll(0, true);
 	}
@@ -285,6 +289,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		saveSearch.setOnClickListener(this);
 		saveSearch.setOnLongClickListener(this);
 		mSearchView = (SearchView) actionView.findViewById(R.id.search_view);
+		mSearchView.setOnCloseListener(this);
 		mSearchView.setOnQueryTextListener(this);
 		mSearchView.setOnSuggestionListener(this);
 		final SearchManager sm = (SearchManager) getSystemService(SEARCH_SERVICE);
