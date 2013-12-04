@@ -48,6 +48,7 @@ public class CardPreviewPreference extends Preference implements Constants, OnSh
 	private final SharedPreferences mPreferences;
 	private final TwidereLinkify mLinkify;
 	private StatusViewHolder mHolder;
+	private boolean mCompactModeChanged;
 
 	public CardPreviewPreference(final Context context) {
 		this(context, null);
@@ -67,23 +68,33 @@ public class CardPreviewPreference extends Preference implements Constants, OnSh
 	}
 
 	@Override
+	public View getView(final View convertView, final ViewGroup parent) {
+		if (mCompactModeChanged) return super.getView(null, parent);
+		return super.getView(convertView, parent);
+	}
+
+	@Override
 	public void onSharedPreferenceChanged(final SharedPreferences preferences, final String key) {
 		if (mHolder == null) return;
+		if (PREFERENCE_KEY_COMPACT_CARDS.equals(key)) {
+			mCompactModeChanged = true;
+		}
 		notifyChanged();
 	}
 
 	@Override
 	protected void onBindView(final View view) {
 		if (mPreferences == null) return;
+		mCompactModeChanged = false;
 		final Context context = getContext();
-		final int highlight_option = getLinkHighlightOptionInt(context);
-		final boolean name_first = mPreferences.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
+		final int highlightOption = getLinkHighlightOptionInt(context);
+		final boolean nameFirst = mPreferences.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
 		final boolean display_image_preview = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_IMAGE_PREVIEW, false);
 		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		final boolean nickname_only = mPreferences.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false);
 		mHolder = new StatusViewHolder(view);
-		mLinkify.setHighlightOption(highlight_option);
-		mHolder.setDisplayNameFirst(name_first);
+		mLinkify.setHighlightOption(highlightOption);
+		mHolder.setDisplayNameFirst(nameFirst);
 		mHolder.setNicknameOnly(nickname_only);
 		mHolder.setShowAsGap(false);
 		mHolder.setIsMyStatus(false);
@@ -106,7 +117,7 @@ public class CardPreviewPreference extends Preference implements Constants, OnSh
 		mHolder.name.setText(nickname_only ? TWIDERE_PREVIEW_NICKNAME : context.getString(R.string.name_with_nickname,
 				TWIDERE_PREVIEW_NAME, TWIDERE_PREVIEW_NICKNAME));
 		mHolder.screen_name.setText("@" + TWIDERE_PREVIEW_SCREEN_NAME);
-		if (highlight_option != LINK_HIGHLIGHT_OPTION_CODE_NONE) {
+		if (highlightOption != LINK_HIGHLIGHT_OPTION_CODE_NONE) {
 			mHolder.text.setText(Html.fromHtml(TWIDERE_PREVIEW_TEXT_HTML));
 			mLinkify.applyAllLinks(mHolder.text, 0, false);
 			mLinkify.applyUserProfileLinkNoHighlight(mHolder.name, 0, 0, TWIDERE_PREVIEW_SCREEN_NAME);
@@ -114,7 +125,7 @@ public class CardPreviewPreference extends Preference implements Constants, OnSh
 		} else {
 			mHolder.text.setText(toPlainText(TWIDERE_PREVIEW_TEXT_HTML));
 		}
-		final String display_name = getSampleDisplayName(context, name_first, nickname_only);
+		final String display_name = getSampleDisplayName(context, nameFirst, nickname_only);
 		mHolder.reply_retweet_status.setText(context.getString(R.string.retweeted_by, display_name));
 		mHolder.reply_retweet_status.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_indicator_retweet, 0, 0, 0);
 		mHolder.time.setTime(System.currentTimeMillis() - 360000);
@@ -124,7 +135,10 @@ public class CardPreviewPreference extends Preference implements Constants, OnSh
 
 	@Override
 	protected View onCreateView(final ViewGroup parent) {
-		return mInflater.inflate(R.layout.card_item_status, null);
+		if (mPreferences != null && mPreferences.getBoolean(PREFERENCE_KEY_COMPACT_CARDS, false)) {
+			return mInflater.inflate(R.layout.card_item_status_compact, parent, false);
+		}
+		return mInflater.inflate(R.layout.card_item_status, parent, false);
 	}
 
 }

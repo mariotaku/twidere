@@ -78,13 +78,16 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 		if (!no_account_selected) {
 			getListView().setEmptyView(null);
 		}
-		final Where account_where = Where.in(new Column(Statuses.ACCOUNT_ID), new RawItemArray(account_ids));
+		final Where accountWhere = Where.in(new Column(Statuses.ACCOUNT_ID), new RawItemArray(account_ids));
+		final Where where;
 		if (isFiltersEnabled()) {
-			account_where.and(new Where(buildStatusFilterWhereClause(table, null,
-					shouldEnableFiltersForRTs(getActivity()))));
+			final Where filterWhere = new Where(buildStatusFilterWhereClause(table, null,
+					shouldEnableFiltersForRTs(getActivity())));
+			where = Where.and(accountWhere, filterWhere );
+		} else {
+			where = accountWhere;
 		}
-		return new CursorLoader(getActivity(), uri, CursorStatusesAdapter.CURSOR_COLS, account_where.getSQL(), null,
-				sort_by);
+		return new CursorLoader(getActivity(), uri, CursorStatusesAdapter.CURSOR_COLS, where.getSQL(), null, sort_by);
 	}
 
 	@Override

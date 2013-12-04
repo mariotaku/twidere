@@ -20,6 +20,7 @@ import java.util.WeakHashMap;
 public class SwipebackActivityUtils implements TwidereConstants {
 
 	public static void setActivityScreenshot(final Activity activity, final Intent target) {
+		if (activity == null || target == null) return;
 		final TwidereApplication app = TwidereApplication.getInstance(activity);
 		final SwipebackScreenshotManager sm = app.getSwipebackScreenshotManager();
 		final long key = System.currentTimeMillis();

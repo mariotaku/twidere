@@ -36,7 +36,8 @@ public class NyanActivity extends Activity implements OnClickListener, CroutonLi
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.nyan);
+		// setContentView(R.layout.nyan);
+		setContentView(R.layout.nyan_surface);
 	}
 
 }

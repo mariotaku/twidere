@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-	<bool name="tab_display_label">false</bool>
+	<bool name="default_display_tab_label">false</bool>
 	<bool name="home_display_icon">false</bool>
 	<bool name="hires_profile_image">false</bool>
 	<bool name="is_large_screen">false</bool>

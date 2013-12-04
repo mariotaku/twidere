@@ -25,12 +25,18 @@
  * For more information, please refer to <http://unlicense.org/>
  */
 
-package org.mariotaku.querybuilder;
+package org.mariotaku.querybuilder.query;
+
+import org.mariotaku.querybuilder.OrderBy;
+import org.mariotaku.querybuilder.SQLLang;
+import org.mariotaku.querybuilder.SQLQueryException;
+import org.mariotaku.querybuilder.Selectable;
+import org.mariotaku.querybuilder.Where;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SQLQuery implements Selectable {
+public class SQLSelectQuery implements Selectable {
 
 	private final List<InternalQuery> internalQueries = new ArrayList<InternalQuery>();
 
@@ -38,7 +44,7 @@ public class SQLQuery implements Selectable {
 	private OrderBy orderBy;
 	private Integer limit = null, offset = null;
 
-	SQLQuery() {
+	SQLSelectQuery() {
 		initCurrentQuery();
 	}
 
@@ -111,6 +117,82 @@ public class SQLQuery implements Selectable {
 		initCurrentQuery();
 	}
 
+	public static final class Builder {
+
+		private boolean buildCalled;
+		private final SQLSelectQuery query = new SQLSelectQuery();
+
+		public SQLSelectQuery build() {
+			buildCalled = true;
+			return query;
+		}
+
+		public Builder from(final Selectable from) {
+			checkNotBuilt();
+			query.setFrom(from);
+			return this;
+		}
+
+		public Builder groupBy(final Selectable groupBy) {
+			checkNotBuilt();
+			query.setGroupBy(groupBy);
+			return this;
+		}
+
+		public Builder having(final Where having) {
+			checkNotBuilt();
+			query.setHaving(having);
+			return this;
+		}
+
+		public Builder limit(final int limit) {
+			checkNotBuilt();
+			query.setLimit(limit);
+			return this;
+		}
+
+		public Builder offset(final int offset) {
+			query.setOffset(offset);
+			return this;
+		}
+
+		public Builder orderBy(final OrderBy orderBy) {
+			checkNotBuilt();
+			query.setOrderBy(orderBy);
+			return this;
+		}
+
+		public Builder select(final boolean distinct, final Selectable select) {
+			checkNotBuilt();
+			query.setSelect(select);
+			query.setDistinct(distinct);
+			return this;
+		}
+
+		public Builder select(final Selectable select) {
+			checkNotBuilt();
+			select(false, select);
+			return this;
+		}
+
+		public Builder union() {
+			checkNotBuilt();
+			query.union();
+			return this;
+		}
+
+		public Builder where(final Where where) {
+			checkNotBuilt();
+			query.setWhere(where);
+			return this;
+		}
+
+		private void checkNotBuilt() {
+			if (buildCalled) throw new IllegalStateException();
+		}
+
+	}
+
 	private static class InternalQuery implements SQLLang {
 
 		private boolean distinct;
@@ -125,10 +207,10 @@ public class SQLQuery implements Selectable {
 				sb.append("DISTINCT ");
 			}
 			sb.append(String.format("%s ", select.getSQL()));
-			if (!(select instanceof SQLQuery) && from == null)
+			if (!(select instanceof SQLSelectQuery) && from == null)
 				throw new SQLQueryException("FROM not specified");
 			else if (from != null) {
-				if (from instanceof SQLQuery) {
+				if (from instanceof SQLSelectQuery) {
 					sb.append(String.format("FROM (%s) ", from.getSQL()));
 				} else {
 					sb.append(String.format("FROM %s ", from.getSQL()));

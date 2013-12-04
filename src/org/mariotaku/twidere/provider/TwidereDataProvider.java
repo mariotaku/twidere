@@ -150,15 +150,15 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			switch (table_id) {
 				case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
 				case TABLE_ID_DIRECT_MESSAGES:
-				case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
+				case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRIES:
 					return 0;
 			}
 			int result = 0;
 			if (table != null && values != null) {
 				mDatabaseWrapper.beginTransaction();
-				final boolean replace_on_conflict = shouldReplaceOnConflict(table_id);
+				final boolean replaceOnConflict = shouldReplaceOnConflict(table_id);
 				for (final ContentValues contentValues : values) {
-					if (replace_on_conflict) {
+					if (replaceOnConflict) {
 						mDatabaseWrapper.insertWithOnConflict(table, null, contentValues,
 								SQLiteDatabase.CONFLICT_REPLACE);
 					} else {
@@ -188,7 +188,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			switch (table_id) {
 				case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
 				case TABLE_ID_DIRECT_MESSAGES:
-				case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
+				case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRIES:
 					return 0;
 				case VIRTUAL_TABLE_ID_NOTIFICATIONS: {
 					final List<String> segments = uri.getPathSegments();
@@ -236,17 +236,17 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	@Override
 	public Uri insert(final Uri uri, final ContentValues values) {
 		try {
-			final int table_id = getTableId(uri);
-			final String table = getTableNameById(table_id);
-			checkWritePermission(table_id, table);
-			switch (table_id) {
+			final int tableId = getTableId(uri);
+			final String table = getTableNameById(tableId);
+			checkWritePermission(tableId, table);
+			switch (tableId) {
 				case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
 				case TABLE_ID_DIRECT_MESSAGES:
-				case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
+				case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRIES:
 					return null;
 			}
 			if (table == null) return null;
-			final boolean replaceOnConflict = shouldReplaceOnConflict(table_id);
+			final boolean replaceOnConflict = shouldReplaceOnConflict(tableId);
 			final long rowId;
 			if (replaceOnConflict) {
 				rowId = mDatabaseWrapper.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_REPLACE);
@@ -397,19 +397,6 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 					setNotificationUri(c, DirectMessages.CONTENT_URI);
 					return c;
 				}
-				case TABLE_ID_DIRECT_MESSAGES: {
-					final String query = TwidereQueryBuilder.DirectMessagesQueryBuilder.build(projection, selection,
-							sortOrder);
-					final Cursor c = mDatabaseWrapper.rawQuery(query, selectionArgs);
-					setNotificationUri(c, DirectMessages.CONTENT_URI);
-					return c;
-				}
-				case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY: {
-					final String query = TwidereQueryBuilder.ConversationsEntryQueryBuilder.build(selection);
-					final Cursor c = mDatabaseWrapper.rawQuery(query, null);
-					setNotificationUri(c, DirectMessages.CONTENT_URI);
-					return c;
-				}
 			}
 			if (table == null) return null;
 			final Cursor c = mDatabaseWrapper.query(table, projection, selection, selectionArgs, null, null, sortOrder);
@@ -430,7 +417,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				switch (table_id) {
 					case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
 					case TABLE_ID_DIRECT_MESSAGES:
-					case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
+					case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRIES:
 						return 0;
 				}
 				result = mDatabaseWrapper.update(table, values, selection, selectionArgs);
@@ -513,7 +500,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			case TABLE_ID_DIRECT_MESSAGES_OUTBOX:
 			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
 			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME:
-			case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY: {
+			case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRIES: {
 				if (!checkPermission(PERMISSION_DIRECT_MESSAGES))
 					throw new SecurityException("Access database " + table
 							+ " requires level PERMISSION_LEVEL_DIRECT_MESSAGES");
@@ -553,7 +540,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			case TABLE_ID_DIRECT_MESSAGES_OUTBOX:
 			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
 			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME:
-			case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY: {
+			case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRIES: {
 				if (!checkPermission(PERMISSION_DIRECT_MESSAGES))
 					throw new SecurityException("Access database " + table
 							+ " requires level PERMISSION_LEVEL_DIRECT_MESSAGES");
@@ -974,11 +961,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	}
 
 	private void notifyContentObserver(final Uri uri) {
-		if (uri == null) return;
-		final Context context = getContext();
-		if (context == null) return;
-		final ContentResolver resolver = context.getContentResolver();
-		resolver.notifyChange(uri, null);
+		if (uri == null || mContentResolver == null) return;
+		mContentResolver.notifyChange(uri, null);
 	}
 
 	private int notifyIncomingMessagesInserted(final ContentValues... values) {

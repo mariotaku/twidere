@@ -31,41 +31,59 @@ import org.mariotaku.querybuilder.Columns.Column;
 
 public class Where implements SQLLang {
 	private final String expr;
-	private Where and, or;
 
 	public Where(final String expr) {
 		this.expr = expr;
 	}
 
-	public Where and(final Where another) {
-		checkNotSetAndOr();
-		and = another;
-		return this;
-	}
-
 	@Override
 	public String getSQL() {
-		if (and != null) return "(" + expr + " AND " + and.getSQL() + ")";
-		if (or != null) return "(" + expr + " OR " + or.getSQL() + ")";
 		return expr;
 	}
 
-	public Where or(final Where another) {
-		checkNotSetAndOr();
-		or = another;
-		return this;
+	public static Where and(final Where... expressions) {
+		return new Where(toExpr(expressions, "AND"));
 	}
 
-	private void checkNotSetAndOr() {
-		if (and != null) throw new SQLQueryException("AND expr is set!");
-		if (or != null) throw new SQLQueryException("OR expr is set!");
+	public static Where equals(final String l, final long r) {
+		return new Where(String.format("%s = %d", l, r));
+	}
+
+	public static Where equals(final String l, final String r) {
+		return new Where(String.format("%s = %s", l, r));
 	}
 
 	public static Where in(final Column column, final Selectable in) {
 		return new Where(String.format("%s IN(%s)", column.getSQL(), in.getSQL()));
 	}
 
+	public static Where notEquals(final String l, final long r) {
+		return new Where(String.format("%s != %d", l, r));
+	}
+
+	public static Where notEquals(final String l, final String r) {
+		return new Where(String.format("%s != %s", l, r));
+	}
+
 	public static Where notIn(final Column column, final Selectable in) {
 		return new Where(String.format("%s NOT IN(%s)", column.getSQL(), in.getSQL()));
+	}
+
+	public static Where or(final Where... expressions) {
+		return new Where(toExpr(expressions, "OR"));
+	}
+
+	private static String toExpr(final Where[] array, final String token) {
+		final StringBuilder builder = new StringBuilder();
+		builder.append('(');
+		final int length = array.length;
+		for (int i = 0; i < length; i++) {
+			if (i > 0) {
+				builder.append(String.format(" %s ", token));
+			}
+			builder.append(array[i].getSQL());
+		}
+		builder.append(')');
+		return builder.toString();
 	}
 }

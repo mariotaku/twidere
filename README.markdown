@@ -71,15 +71,19 @@ I started a crowdin project, so anyone can do something for Twidere. Visit this 
 
 ### Donation ###
 
-Thanks to @huxim 's memory stick!!!
-
-Buy me a bread or anything you want :)
-
-**Donate Via Paypal or Alipay(支付宝)**
+**Donation methods**
 
 PayPal: "mariotaku.lee#gmail.com".replace("#", "@");
 
 AliPay: http://me.alipay.com/mariotaku
+
+Bitcoin: 1BaBZ5fueY7SgRVsPqYANuYiB4EVg72oBG
+
+**Donators**
+
+[@TwidereProject/donators](https://twitter.com/TwidereProject/lists/donators), if you haven't find your name, please contact @TwidereProject :)
+
+Buy me a bread or anything you want :)
 
 ---
 

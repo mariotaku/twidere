@@ -121,6 +121,7 @@
 
 	<style name="Widget.TabPageIndicator.TabItem" parent="@android:style/Widget">
 		<item name="android:background">@drawable/tab_indicator_vpi_nocolor</item>
+		<item name="android:minWidth">@dimen/tab_item_minwidth_vpi</item>
 	</style>
 
 	<style name="Widget.TabPageIndicator.TabItem.Content" parent="@android:style/Widget">

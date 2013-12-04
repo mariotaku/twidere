@@ -605,5 +605,6 @@
 	<string name="action_name_saved_at_time"><xliff:g id="action">%1$s</xliff:g>, saved at <xliff:g id="time">%2$s</xliff:g></string>
 	<string name="update_status">Send tweet</string>
 	<string name="sending_direct_message">Sending direct message</string>
+	<string name="display_tab_label">Display tab label</string>
 
 </resources>

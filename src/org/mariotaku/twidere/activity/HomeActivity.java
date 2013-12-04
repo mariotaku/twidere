@@ -63,7 +63,6 @@ import android.view.MenuItem.OnActionExpandListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
-import android.view.View.OnSystemUiVisibilityChangeListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
@@ -117,7 +116,7 @@ import java.util.List;
 public class HomeActivity extends DualPaneActivity implements OnClickListener, OnPageChangeListener,
 		SupportFragmentCallback, SlidingMenu.OnOpenedListener, SlidingMenu.OnClosedListener,
 		SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, OnLongClickListener, OnActionExpandListener,
-		OnSystemUiVisibilityChangeListener, SearchView.OnCloseListener {
+		SearchView.OnCloseListener {
 
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
 
@@ -169,6 +168,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private MenuItem mSearchItem;
 
 	private final Rect mRect = new Rect();
+
+	private boolean mTabDisplayLabel;
 
 	public void closeAccountsDrawer() {
 		if (mSlidingMenu == null) return;
@@ -459,7 +460,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	@Override
-	public void onSystemUiVisibilityChange(final int visibility) {
+	public void onWindowFocusChanged(final boolean hasFocus) {
+		super.onWindowFocusChanged(hasFocus);
 		mHandler.postDelayed(new FixPullToRefreshScrollRunnable(this), 100);
 	}
 
@@ -577,7 +579,9 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		}
 		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONCREATE));
 		final boolean refreshOnStart = mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ON_START, false);
-		final int initial_tab = handleIntent(intent, savedInstanceState == null);
+		final boolean defDisplayLabel = res.getBoolean(R.bool.default_display_tab_label);
+		mTabDisplayLabel = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_TAB_LABEL, defDisplayLabel);
+		final int initialTabPosition = handleIntent(intent, savedInstanceState == null);
 		mActionBar = getActionBar();
 		mActionBar.setCustomView(R.layout.home_tabs);
 
@@ -590,7 +594,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mViewPager.setOffscreenPageLimit(3);
 		mIndicator.setViewPager(mViewPager);
 		mIndicator.setOnPageChangeListener(this);
-		mIndicator.setDisplayLabel(res.getBoolean(R.bool.tab_display_label));
+		mIndicator.setDisplayLabel(mTabDisplayLabel);
 		mHomeActionsActionView.setOnClickListener(this);
 		mHomeActionsActionView.setOnLongClickListener(this);
 		mActionsButtonLayout.setOnClickListener(this);
@@ -601,7 +605,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mActionBar.setHomeButtonEnabled(displayIcon || !tabs_not_empty);
 		mActionBar.setDisplayShowTitleEnabled(!tabs_not_empty);
 		mActionBar.setDisplayShowCustomEnabled(tabs_not_empty);
-		setTabPosition(initial_tab);
+		setTabPosition(initialTabPosition);
 		setupSlidingMenu();
 		showDataProfilingRequest();
 		initUnreadCount();
@@ -642,7 +646,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		invalidateOptionsMenu();
 		updateActionsButtonStyle();
 		updateActionsButton();
-		mHandler.postDelayed(new FixPullToRefreshScrollRunnable(this), 100);
 		updateSlidingMenuTouchMode();
 	}
 
@@ -656,7 +659,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		final IntentFilter filter = new IntentFilter(BROADCAST_TASK_STATE_CHANGED);
 		filter.addAction(BROADCAST_UNREAD_COUNT_UPDATED);
 		registerReceiver(mStateReceiver, filter);
-		if (isTabsChanged(getHomeTabs(this))) {
+		if (isTabsChanged(getHomeTabs(this))
+				|| mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_TAB_LABEL, mTabDisplayLabel) != mTabDisplayLabel) {
 			restart();
 		}
 		// UCD
@@ -699,7 +703,9 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	private int handleIntent(final Intent intent, final boolean firstCreate) {
-		// Reset intent
+		// use packge's class loader to prevent BadParcelException
+		intent.setExtrasClassLoader(getClassLoader());
+		// reset intent
 		setIntent(new Intent(this, HomeActivity.class));
 		final String action = intent.getAction();
 		if (Intent.ACTION_SEARCH.equals(action)) {
@@ -723,6 +729,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		}
 		final Intent extraIntent = intent.getParcelableExtra(EXTRA_EXTRA_INTENT);
 		if (extraIntent != null && firstCreate) {
+			extraIntent.setExtrasClassLoader(getClassLoader());
 			if (isTwidereLink(extraIntent.getData()) && isDualPaneMode()) {
 				showFragment(createFragmentForIntent(this, extraIntent), true);
 			} else {
@@ -888,7 +895,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		final Window w = getWindow();
 		final WindowManager wm = getWindowManager();
 		final View decorView = w.getDecorView();
-		decorView.setOnSystemUiVisibilityChangeListener(this);
 		decorView.getWindowVisibleDisplayFrame(mRect);
 		final int statusBarHeight = mRect.top;
 		final LeftDrawerFrameLayout ld = getLeftDrawerContainer();

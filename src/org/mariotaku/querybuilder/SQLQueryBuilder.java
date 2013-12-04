@@ -27,78 +27,34 @@
 
 package org.mariotaku.querybuilder;
 
+import org.mariotaku.querybuilder.query.SQLCreateViewQuery;
+import org.mariotaku.querybuilder.query.SQLDropQuery;
+import org.mariotaku.querybuilder.query.SQLSelectQuery;
+
 public class SQLQueryBuilder {
 
-	private boolean buildCalled;
-	private final SQLQuery query = new SQLQuery();
-
-	public SQLQuery build() {
-		buildCalled = true;
-		return query;
+	private SQLQueryBuilder() {
+		throw new AssertionError("You can't create instance for this class");
 	}
 
-	public SQLQueryBuilder from(final Selectable from) {
-		checkNotBuilt();
-		query.setFrom(from);
-		return this;
+	public static SQLCreateViewQuery.Builder createView(final boolean temporary, final boolean createIfNotExists,
+			final String name) {
+		return new SQLCreateViewQuery.Builder().createView(temporary, createIfNotExists, name);
 	}
 
-	public SQLQueryBuilder groupBy(final Selectable groupBy) {
-		checkNotBuilt();
-		query.setGroupBy(groupBy);
-		return this;
+	public static SQLCreateViewQuery.Builder createView(final boolean createIfNotExists, final String name) {
+		return createView(false, createIfNotExists, name);
 	}
 
-	public SQLQueryBuilder having(final Where having) {
-		checkNotBuilt();
-		query.setHaving(having);
-		return this;
+	public static SQLDropQuery drop(final String table) {
+		return new SQLDropQuery(table);
 	}
 
-	public SQLQueryBuilder limit(final int limit) {
-		checkNotBuilt();
-		query.setLimit(limit);
-		return this;
+	public static SQLSelectQuery.Builder select(final boolean distinct, final Selectable select) {
+		return new SQLSelectQuery.Builder().select(distinct, select);
 	}
 
-	public SQLQueryBuilder offset(final int offset) {
-		query.setOffset(offset);
-		return this;
+	public static SQLSelectQuery.Builder select(final Selectable select) {
+		return select(false, select);
 	}
-
-	public SQLQueryBuilder orderBy(final OrderBy orderBy) {
-		checkNotBuilt();
-		query.setOrderBy(orderBy);
-		return this;
-	}
-
-	public SQLQueryBuilder select(final boolean distinct, final Selectable select) {
-		checkNotBuilt();
-		query.setSelect(select);
-		query.setDistinct(distinct);
-		return this;
-	}
-
-	public SQLQueryBuilder select(final Selectable select) {
-		checkNotBuilt();
-		select(false, select);
-		return this;
-	}
-
-	public SQLQueryBuilder union() {
-		checkNotBuilt();
-		query.union();
-		return this;
-	}
-
-	public SQLQueryBuilder where(final Where where) {
-		checkNotBuilt();
-		query.setWhere(where);
-		return this;
-	}
-
-	private void checkNotBuilt() {
-		if (buildCalled) throw new IllegalStateException();
-	}
-
 }

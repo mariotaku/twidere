@@ -101,9 +101,9 @@ import org.mariotaku.gallery3d.ImageViewerGLActivity;
 import org.mariotaku.querybuilder.AllColumns;
 import org.mariotaku.querybuilder.Columns;
 import org.mariotaku.querybuilder.Columns.Column;
+import org.mariotaku.querybuilder.query.SQLSelectQuery;
 import org.mariotaku.querybuilder.OrderBy;
 import org.mariotaku.querybuilder.RawItemArray;
-import org.mariotaku.querybuilder.SQLQueryBuilder;
 import org.mariotaku.querybuilder.Selectable;
 import org.mariotaku.querybuilder.Tables;
 import org.mariotaku.querybuilder.Where;
@@ -246,7 +246,7 @@ public final class Utils implements Constants {
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, DirectMessages.Conversation.CONTENT_PATH_SCREEN_NAME
 				+ "/#/*", TABLE_ID_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, DirectMessages.ConversationEntries.CONTENT_PATH,
-				TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY);
+				TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRIES);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, CachedTrends.Local.CONTENT_PATH,
 				TABLE_ID_TRENDS_LOCAL);
 		CONTENT_PROVIDER_URI_MATCHER.addURI(TweetStore.AUTHORITY, Tabs.CONTENT_PATH, TABLE_ID_TABS);
@@ -390,11 +390,14 @@ public final class Utils implements Constants {
 	public static String buildActivatedStatsWhereClause(final Context context, final String selection) {
 		if (context == null) return null;
 		final long[] account_ids = getActivatedAccountIds(context);
-		final Where account_where = Where.in(new Column(Statuses.ACCOUNT_ID), new RawItemArray(account_ids));
+		final Where accountWhere = Where.in(new Column(Statuses.ACCOUNT_ID), new RawItemArray(account_ids));
+		final Where where;
 		if (selection != null) {
-			account_where.and(new Where(selection));
+			where = Where.and(accountWhere, new Where(selection));
+		} else {
+			where = accountWhere;
 		}
-		return account_where.getSQL();
+		return where.getSQL();
 	}
 
 	public static Uri buildDirectMessageConversationUri(final long account_id, final long conversation_id,
@@ -485,30 +488,30 @@ public final class Utils implements Constants {
 				}
 				final String table = getTableNameByUri(uri);
 				final Where account_where = new Where(Statuses.ACCOUNT_ID + " = " + account_id);
-				final SQLQueryBuilder qb = new SQLQueryBuilder();
+				final SQLSelectQuery.Builder qb = new SQLSelectQuery.Builder();
 				qb.select(new Column(Statuses._ID)).from(new Tables(table));
 				qb.where(new Where(Statuses.ACCOUNT_ID + " = " + account_id));
 				qb.orderBy(new OrderBy(Statuses.STATUS_ID + " DESC"));
 				qb.limit(item_limit);
-				final Where where = Where.notIn(new Column(Statuses._ID), qb.build()).and(account_where);
+				final Where where = Where.and(Where.notIn(new Column(Statuses._ID), qb.build()), account_where);
 				resolver.delete(uri, where.getSQL(), null);
 			}
 			for (final Uri uri : DIRECT_MESSAGES_URIS) {
 				final String table = getTableNameByUri(uri);
 				final Where account_where = new Where(DirectMessages.ACCOUNT_ID + " = " + account_id);
-				final SQLQueryBuilder qb = new SQLQueryBuilder();
+				final SQLSelectQuery.Builder qb = new SQLSelectQuery.Builder();
 				qb.select(new Column(DirectMessages._ID)).from(new Tables(table));
 				qb.where(new Where(DirectMessages.ACCOUNT_ID + " = " + account_id));
 				qb.orderBy(new OrderBy(DirectMessages.MESSAGE_ID + " DESC"));
 				qb.limit(item_limit);
-				final Where where = Where.notIn(new Column(DirectMessages._ID), qb.build()).and(account_where);
+				final Where where = Where.and(Where.notIn(new Column(DirectMessages._ID), qb.build()), account_where);
 				resolver.delete(uri, where.getSQL(), null);
 			}
 		}
 		// Clean cached values.
 		for (final Uri uri : CACHE_URIS) {
 			final String table = getTableNameByUri(uri);
-			final SQLQueryBuilder qb = new SQLQueryBuilder();
+			final SQLSelectQuery.Builder qb = new SQLSelectQuery.Builder();
 			qb.select(new Column(BaseColumns._ID)).from(new Tables(table));
 			final Where where = Where.notIn(new Column(Statuses._ID), qb.build());
 			resolver.delete(uri, where.getSQL(), null);
@@ -1973,8 +1976,6 @@ public final class Utils implements Constants {
 				return TABLE_MENTIONS;
 			case TABLE_ID_DRAFTS:
 				return TABLE_DRAFTS;
-			case TABLE_ID_CACHED_USERS:
-				return TABLE_CACHED_USERS;
 			case TABLE_ID_FILTERED_USERS:
 				return TABLE_FILTERED_USERS;
 			case TABLE_ID_FILTERED_KEYWORDS:
@@ -1984,17 +1985,23 @@ public final class Utils implements Constants {
 			case TABLE_ID_FILTERED_LINKS:
 				return TABLE_FILTERED_LINKS;
 			case TABLE_ID_DIRECT_MESSAGES_INBOX:
-				return TABLE_DIRECT_MESSAGES_INBOX;
+				return DirectMessages.Inbox.TABLE_NAME;
 			case TABLE_ID_DIRECT_MESSAGES_OUTBOX:
-				return TABLE_DIRECT_MESSAGES_OUTBOX;
+				return DirectMessages.Outbox.TABLE_NAME;
+			case TABLE_ID_DIRECT_MESSAGES:
+				return DirectMessages.TABLE_NAME;
+			case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRIES:
+				return DirectMessages.ConversationEntries.TABLE_NAME;
 			case TABLE_ID_TRENDS_LOCAL:
-				return TABLE_TRENDS_LOCAL;
+				return CachedTrends.Local.TABLE_NAME;
 			case TABLE_ID_TABS:
-				return TABLE_TABS;
+				return Tabs.TABLE_NAME;
 			case TABLE_ID_CACHED_STATUSES:
-				return TABLE_CACHED_STATUSES;
+				return CachedStatuses.TABLE_NAME;
+			case TABLE_ID_CACHED_USERS:
+				return CachedUsers.TABLE_NAME;
 			case TABLE_ID_CACHED_HASHTAGS:
-				return TABLE_CACHED_HASHTAGS;
+				return CachedHashtags.TABLE_NAME;
 			default:
 				return null;
 		}
