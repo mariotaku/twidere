@@ -330,7 +330,7 @@ public final class TweetStore {
 		}
 
 		public static interface ConversationEntries extends BaseColumns {
-			
+
 			public static final String TABLE_NAME = "messages_conversation_entries";
 
 			public static final String CONTENT_PATH_SEGMENT = "conversation_entries";

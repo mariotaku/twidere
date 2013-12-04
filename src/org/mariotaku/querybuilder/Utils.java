@@ -43,8 +43,6 @@ public class Utils {
 		}
 		return builder.toString();
 	}
-	
-	
 
 	public static String toString(final SQLLang[] array) {
 		final StringBuilder builder = new StringBuilder();

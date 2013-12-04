@@ -9,5 +9,4 @@ public class SQLCreateTableQuery implements SQLLang {
 		return null;
 	}
 
-
 }

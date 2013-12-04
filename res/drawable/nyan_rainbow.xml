@@ -4,71 +4,67 @@
 
 	<item android:duration="70">
 		<bitmap
-			xmlns:android="http://schemas.android.com/apk/res/android"
 			android:antialias="false"
-			android:gravity="fill_horizontal"
+			android:filter="false"
 			android:src="@drawable/nyan_rainbow_frame00_tile"
 			android:tileMode="repeat"/>
 	</item>
 	<item android:duration="70">
 		<bitmap
-			xmlns:android="http://schemas.android.com/apk/res/android"
 			android:antialias="false"
-			android:gravity="fill_horizontal"
+			android:filter="false"
 			android:src="@drawable/nyan_rainbow_frame01_tile"
 			android:tileMode="repeat"/>
 	</item>
 	<item android:duration="70">
 		<bitmap
-			xmlns:android="http://schemas.android.com/apk/res/android"
 			android:antialias="false"
-			android:gravity="fill_horizontal"
+			android:filter="false"
 			android:src="@drawable/nyan_rainbow_frame02_tile"
 			android:tileMode="repeat"/>
 	</item>
 	<item android:duration="70">
 		<bitmap
-			xmlns:android="http://schemas.android.com/apk/res/android"
 			android:antialias="false"
+			android:filter="false"
 			android:gravity="fill_horizontal"
 			android:src="@drawable/nyan_rainbow_frame03_tile"
 			android:tileMode="repeat"/>
 	</item>
 	<item android:duration="70">
 		<bitmap
-			xmlns:android="http://schemas.android.com/apk/res/android"
 			android:antialias="false"
+			android:filter="false"
 			android:gravity="fill_horizontal"
 			android:src="@drawable/nyan_rainbow_frame04_tile"
 			android:tileMode="repeat"/>
 	</item>
 	<item android:duration="70">
 		<bitmap
-			xmlns:android="http://schemas.android.com/apk/res/android"
 			android:antialias="false"
+			android:filter="false"
 			android:gravity="fill_horizontal"
 			android:src="@drawable/nyan_rainbow_frame05_tile"
 			android:tileMode="repeat"/>
 	</item>
 	<item android:duration="70">
 		<bitmap
-			xmlns:android="http://schemas.android.com/apk/res/android"
 			android:antialias="false"
+			android:filter="false"
 			android:gravity="fill_horizontal"
 			android:src="@drawable/nyan_rainbow_frame06_tile"
 			android:tileMode="repeat"/>
 	</item>
 	<item android:duration="70">
 		<bitmap
-			xmlns:android="http://schemas.android.com/apk/res/android"
 			android:antialias="false"
+			android:filter="false"
 			android:gravity="fill_horizontal"
 			android:src="@drawable/nyan_rainbow_frame07_tile"
 			android:tileMode="repeat"/>
 	</item>
 	<item android:duration="70">
 		<bitmap
-			xmlns:android="http://schemas.android.com/apk/res/android"
 			android:antialias="false"
 			android:gravity="fill_horizontal"
 			android:src="@drawable/nyan_rainbow_frame08_tile"
@@ -76,24 +72,24 @@
 	</item>
 	<item android:duration="70">
 		<bitmap
-			xmlns:android="http://schemas.android.com/apk/res/android"
 			android:antialias="false"
+			android:filter="false"
 			android:gravity="fill_horizontal"
 			android:src="@drawable/nyan_rainbow_frame09_tile"
 			android:tileMode="repeat"/>
 	</item>
 	<item android:duration="70">
 		<bitmap
-			xmlns:android="http://schemas.android.com/apk/res/android"
 			android:antialias="false"
+			android:filter="false"
 			android:gravity="fill_horizontal"
 			android:src="@drawable/nyan_rainbow_frame10_tile"
 			android:tileMode="repeat"/>
 	</item>
 	<item android:duration="70">
 		<bitmap
-			xmlns:android="http://schemas.android.com/apk/res/android"
 			android:antialias="false"
+			android:filter="false"
 			android:gravity="fill_horizontal"
 			android:src="@drawable/nyan_rainbow_frame11_tile"
 			android:tileMode="repeat"/>

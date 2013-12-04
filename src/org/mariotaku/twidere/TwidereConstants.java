@@ -282,6 +282,7 @@ public interface TwidereConstants {
 	public static final String PREFERENCE_KEY_NOTIFICATION_TYPE_DIRECT_MESSAGES = "notification_type_direct_messages";
 	public static final String PREFERENCE_KEY_COMPACT_CARDS = "compact_cards";
 	public static final String PREFERENCE_KEY_DISPLAY_TAB_LABEL = "display_tab_label";
+	public static final String PREFERENCE_KEY_LIVE_WALLPAPER_SCALE = "live_wallpaper_scale";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;

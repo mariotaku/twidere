@@ -83,7 +83,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 		if (isFiltersEnabled()) {
 			final Where filterWhere = new Where(buildStatusFilterWhereClause(table, null,
 					shouldEnableFiltersForRTs(getActivity())));
-			where = Where.and(accountWhere, filterWhere );
+			where = Where.and(accountWhere, filterWhere);
 		} else {
 			where = accountWhere;
 		}

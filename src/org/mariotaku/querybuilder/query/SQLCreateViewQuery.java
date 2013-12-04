@@ -57,6 +57,10 @@ public class SQLCreateViewQuery implements SQLLang {
 			return this;
 		}
 
+		public SQLCreateViewQuery build() {
+			return query;
+		}
+
 		public Builder createTemporaryView(final boolean createIfNotExists, final String name) {
 			return createView(true, createIfNotExists, name);
 		}
@@ -71,10 +75,6 @@ public class SQLCreateViewQuery implements SQLLang {
 
 		public Builder createView(final boolean createIfNotExists, final String name) {
 			return createView(false, createIfNotExists, name);
-		}
-		
-		public SQLCreateViewQuery build() {
-			return query;
 		}
 
 		private void checkNotBuilt() {
