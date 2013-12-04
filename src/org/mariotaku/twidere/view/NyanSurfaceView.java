@@ -2,9 +2,15 @@ package org.mariotaku.twidere.view;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Shader.TileMode;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -26,6 +32,14 @@ public class NyanSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 	private Timer mTimer;
 	private final int mBackgroundColor;
 
+	private static final int[] RAINBOW_FRAMES = { R.drawable.nyan_rainbow_frame00_tile,
+			R.drawable.nyan_rainbow_frame01_tile, R.drawable.nyan_rainbow_frame02_tile,
+			R.drawable.nyan_rainbow_frame03_tile, R.drawable.nyan_rainbow_frame04_tile,
+			R.drawable.nyan_rainbow_frame05_tile, R.drawable.nyan_rainbow_frame06_tile,
+			R.drawable.nyan_rainbow_frame07_tile, R.drawable.nyan_rainbow_frame08_tile,
+			R.drawable.nyan_rainbow_frame09_tile, R.drawable.nyan_rainbow_frame10_tile,
+			R.drawable.nyan_rainbow_frame11_tile };
+
 	public NyanSurfaceView(final Context context) {
 		this(context, null);
 	}
@@ -41,7 +55,7 @@ public class NyanSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 		final int starCols = res.getInteger(R.integer.nyan_star_cols);
 		final int starDotSize = res.getDimensionPixelSize(R.dimen.nyan_star_dot_size);
 		mStarsHelper = new StarsDrawingHelper(starRows, starCols, starDotSize, Color.WHITE);
-		mRainbowHelper = new DrawableDrawingHelper(res.getDrawable(R.drawable.nyan_rainbow));
+		mRainbowHelper = new DrawableDrawingHelper(createRainbowDrawable());
 		mSakamotoHelper = new DrawableDrawingHelper(res.getDrawable(R.drawable.nyan_sakamoto));
 		mBackgroundColor = res.getColor(R.color.nyan_background);
 		getHolder().addCallback(this);
@@ -56,16 +70,8 @@ public class NyanSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 		final int sakamotoLeft = centerX - sakamotoW / 2, sakamotoBottom = centerY + sakamotoH / 2;
 		mSakamotoHelper.setBounds(sakamotoLeft, sakamotoBottom - sakamotoH, sakamotoLeft + sakamotoW, sakamotoBottom);
 		final int rainbowH = mRainbowHelper.getIntrinsicHeight();
-		final int rainbowTop = centerY / rainbowH * rainbowH;
+		final int rainbowTop = centerY + rainbowH / 5;
 		mRainbowHelper.setBounds(0, rainbowTop, centerX - sakamotoW / 4, rainbowTop + rainbowH);
-		setupRainbow(mRainbowHelper);
-	}
-
-	private void setupRainbow(DrawableDrawingHelper rainbowHelper) {
-		final Drawable d = rainbowHelper.getDrawable();
-		if (d instanceof BitmapDrawable) {
-			final BitmapDrawable bd = (BitmapDrawable) d;
-		}
 	}
 
 	@Override
@@ -81,6 +87,20 @@ public class NyanSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 			mTimer.cancel();
 		}
 		mTimer = null;
+	}
+
+	private Drawable createRainbowDrawable() {
+		final AnimationDrawable ad = new AnimationDrawable();
+		ad.setOneShot(false);
+		final Resources res = getResources();
+		for (final int frameRes : RAINBOW_FRAMES) {
+			final Bitmap b = BitmapFactory.decodeResource(res, frameRes);
+			final MyBitmapDrawable bd = new MyBitmapDrawable(res, b);
+			bd.setTileModeX(TileMode.REPEAT);
+			bd.setTileModeY(TileMode.REPEAT);
+			ad.addFrame(bd, 70);
+		}
+		return ad;
 	}
 
 	public static interface IDrawingHelper {
@@ -180,6 +200,41 @@ public class NyanSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 			mHolder.unlockCanvasAndPost(c);
 		}
 
+	}
+
+	static class MyBitmapDrawable extends BitmapDrawable {
+		private final Paint mPaint = new Paint(Paint.FILTER_BITMAP_FLAG | Paint.DITHER_FLAG);
+		private final Matrix mMatrix = new Matrix();
+
+		private boolean mRebuildShader = true;
+
+		public MyBitmapDrawable(final Resources res, final Bitmap bitmap) {
+			super(res, bitmap);
+		}
+
+		@Override
+		public void draw(final Canvas canvas) {
+			final Bitmap bitmap = getBitmap();
+			if (bitmap == null) return;
+
+			if (mRebuildShader) {
+				mPaint.setShader(new BitmapShader(bitmap, getTileMode(getTileModeX()), getTileMode(getTileModeY())));
+				mRebuildShader = false;
+			}
+
+			final Rect bounds = getBounds();
+			final int height = bounds.bottom - bounds.top;
+			// Translate down by the remainder
+			mMatrix.setTranslate(0, bounds.top);
+			canvas.save();
+			canvas.setMatrix(mMatrix);
+			canvas.drawRect(bounds.left, 0, bounds.right, height, mPaint);
+			canvas.restore();
+		}
+
+		private static TileMode getTileMode(final TileMode mode) {
+			return mode != null ? mode : TileMode.CLAMP;
+		}
 	}
 
 	static final class StarsDrawingHelper implements IDrawingHelper {
