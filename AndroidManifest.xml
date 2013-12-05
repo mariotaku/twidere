@@ -540,7 +540,8 @@
 			android:exported="true"
 			android:icon="@drawable/ic_launcher"
 			android:label="@string/nyan_sakamoto"
-			android:permission="android.permission.BIND_WALLPAPER">
+			android:permission="android.permission.BIND_WALLPAPER"
+			android:process=":wallpaper">
 			<intent-filter android:priority="1">
 				<action android:name="android.service.wallpaper.WallpaperService"/>
 			</intent-filter>
@@ -554,7 +555,8 @@
 			android:enabled="false"
 			android:exported="true"
 			android:icon="@drawable/ic_launcher"
-			android:label="@string/nyan_sakamoto">
+			android:label="@string/nyan_sakamoto"
+			android:process=":daydream">
 			<intent-filter android:priority="1">
 				<action android:name="android.service.dreams.DreamService"/>
 			</intent-filter>

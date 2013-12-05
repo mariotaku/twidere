@@ -22,7 +22,8 @@ public class NyanDaydreamService extends DreamService implements Constants, OnSh
 		super.onAttachedToWindow();
 		setContentView(R.layout.surface_view);
 		final SurfaceHolder holder = mSurfaceView.getHolder();
-		mHelper = new NyanSurfaceHelper(this, holder);
+		mHelper = new NyanSurfaceHelper(this);
+		holder.addCallback(mHelper);
 		updateSurface();
 	}
 

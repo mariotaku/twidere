@@ -197,7 +197,12 @@ public class BackgroundOperationService extends IntentService implements Constan
 
 	private void handleSendDirectMessageIntent(final Intent intent) {
 		final String title = getString(R.string.sending_direct_message);
-		final Notification notification = buildNotification(title, title, R.drawable.ic_stat_send, null, null);
+		final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+		builder.setSmallIcon(R.drawable.ic_stat_send);
+		builder.setProgress(100, 0, true);
+		builder.setTicker(title);
+		builder.setContentTitle(title);
+		final Notification notification = builder.build();
 		startForeground(NOTIFICATION_ID_SEND_DIRECT_MESSAGE, notification);
 		final long accountId = intent.getLongExtra(EXTRA_ACCOUNT_ID, -1);
 		final long recipientId = intent.getLongExtra(EXTRA_RECIPIENT_ID, -1);

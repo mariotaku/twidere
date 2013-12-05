@@ -3384,20 +3384,30 @@ public final class Utils implements Constants {
 	public static void setMenuForStatus(final Context context, final Menu menu, final ParcelableStatus status) {
 		if (context == null || menu == null || status == null) return;
 		final int activated_color = ThemeUtils.getUserThemeColor(context);
+		final boolean isMyRetweet = isMyRetweet(status);
 		final MenuItem delete = menu.findItem(R.id.delete_submenu);
 		if (delete != null) {
-			delete.setVisible(status.account_id == status.user_id && !isMyRetweet(status));
+			delete.setVisible(status.account_id == status.user_id && !isMyRetweet);
 		}
 		final MenuItem retweet = menu.findItem(MENU_RETWEET);
 		if (retweet != null) {
 			final Drawable icon = retweet.getIcon().mutate();
-			retweet.setVisible(!status.user_is_protected || isMyRetweet(status));
-			if (isMyRetweet(status)) {
+			retweet.setVisible(!status.user_is_protected || isMyRetweet);
+			if (isMyRetweet) {
 				icon.setColorFilter(activated_color, Mode.MULTIPLY);
 				retweet.setTitle(R.string.cancel_retweet);
 			} else {
 				icon.clearColorFilter();
 				retweet.setTitle(R.string.retweet);
+			}
+		}
+		final MenuItem itemRetweetSubmenu = menu.findItem(R.id.retweet_submenu);
+		if (itemRetweetSubmenu != null) {
+			final Drawable icon = retweet.getIcon().mutate();
+			if (isMyRetweet) {
+				icon.setColorFilter(activated_color, Mode.MULTIPLY);
+			} else {
+				icon.clearColorFilter();
 			}
 		}
 		final MenuItem favorite = menu.findItem(MENU_FAVORITE);
@@ -3421,9 +3431,7 @@ public final class Utils implements Constants {
 		final MenuItem share_item = menu.findItem(R.id.share_submenu);
 		final Menu shareSubmenu = share_item != null && share_item.hasSubMenu() ? share_item.getSubMenu() : null;
 		if (shareSubmenu != null) {
-			final Intent shareIntent = new Intent(Intent.ACTION_SEND);
-			shareIntent.setType("text/plain");
-			shareIntent.putExtra(Intent.EXTRA_TEXT, "@" + status.user_screen_name + ": " + status.text_plain);
+			final Intent shareIntent = createStatusShareIntent(context, status);
 			shareSubmenu.removeGroup(MENU_GROUP_STATUS_SHARE);
 			addIntentToMenu(context, shareSubmenu, shareIntent, MENU_GROUP_STATUS_SHARE);
 		}
@@ -3673,6 +3681,18 @@ public final class Utils implements Constants {
 		intent.putExtra(Intent.EXTRA_TEXT, status.text_plain);
 		intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 		context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)));
+	}
+	
+	public static Intent createStatusShareIntent(final Context context, final ParcelableStatus status) {
+		final Intent intent = new Intent(Intent.ACTION_SEND);
+		intent.setType("text/plain");
+		final String name = status.user_name, screenName = status.user_screen_name;
+		final String timeString = formatToLongTimeString(context, status.timestamp);
+		final String subject = context.getString(R.string.share_subject_format, name, screenName, timeString);
+		intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+		intent.putExtra(Intent.EXTRA_TEXT, status.text_plain);
+		intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		return intent;
 	}
 
 	public static void stopListView(final ListView list) {

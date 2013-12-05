@@ -23,18 +23,23 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class NyanSurfaceHelper implements SurfaceHolder.Callback {
+public final class NyanSurfaceHelper implements SurfaceHolder.Callback {
 
 	private static final float SAKAMOTO_DOT_SIZE = 6;
 	private static final float RAINBOW_DOT_SIZE = 3;
+	private static final float STARS_DOT_SIZE = 4;
 
 	private final StarsDrawingHelper mStarsHelper;
 	private final DrawableDrawingHelper mRainbowHelper, mSakamotoHelper;
-	private Timer mTimer;
+	private final IDrawingHelper[] mDrawingHelpers;
 	private final int mBackgroundColor;
 	private final Resources mResources;
+	private final float mDensity;
+
 	private float mScale;
-	private final SurfaceHolder mHolder;
+
+	private SurfaceHolder mHolder;
+	private Timer mTimer;
 
 	private static final int[] RAINBOW_FRAMES = { R.drawable.nyan_rainbow_frame00_tile,
 			R.drawable.nyan_rainbow_frame01_tile, R.drawable.nyan_rainbow_frame02_tile,
@@ -44,29 +49,43 @@ public class NyanSurfaceHelper implements SurfaceHolder.Callback {
 			R.drawable.nyan_rainbow_frame09_tile, R.drawable.nyan_rainbow_frame10_tile,
 			R.drawable.nyan_rainbow_frame11_tile };
 
-	public NyanSurfaceHelper(final Context context, final SurfaceHolder holder) {
+	public NyanSurfaceHelper(final Context context) {
 		mResources = context.getResources();
-		mHolder = holder;
+		mDensity = mResources.getDisplayMetrics().density;
 		final int starRows = mResources.getInteger(R.integer.nyan_star_rows);
 		final int starCols = mResources.getInteger(R.integer.nyan_star_cols);
-		final int starDotSize = mResources.getDimensionPixelSize(R.dimen.nyan_star_dot_size);
+		final int starDotSize = Math.round(STARS_DOT_SIZE * mDensity);
 		mStarsHelper = new StarsDrawingHelper(starRows, starCols, starDotSize, Color.WHITE);
 		mRainbowHelper = new DrawableDrawingHelper();
 		mSakamotoHelper = new DrawableDrawingHelper(mResources.getDrawable(R.drawable.nyan_sakamoto));
+		mDrawingHelpers = new IDrawingHelper[] { mStarsHelper, mRainbowHelper, mSakamotoHelper };
 		mBackgroundColor = mResources.getColor(R.color.nyan_background);
-		mHolder.addCallback(this);
-		setScale(1.0f);
 	}
 
 	public void setScale(final float scale) {
 		mScale = scale;
 		mRainbowHelper.setDrawable(createRainbowDrawable(scale));
 		mStarsHelper.setDotScale(scale);
-		final Rect frame = mHolder.getSurfaceFrame();
-		final int width = frame.right - frame.left, height = frame.bottom - frame.top;
-		if (width > 0 && height > 0) {
-			setupSpirtes(width, height);
+		if (mHolder != null) {
+			final Rect frame = mHolder.getSurfaceFrame();
+			final int width = frame.right - frame.left, height = frame.bottom - frame.top;
+			if (width > 0 && height > 0) {
+				setupSpirtes(width, height);
+			}
 		}
+	}
+
+	public void start() {
+		if (mTimer != null || mHolder == null) return;
+		mTimer = new Timer();
+		mTimer.scheduleAtFixedRate(new DrawingTask(mHolder, mBackgroundColor, mDrawingHelpers), 0, 66);
+	}
+
+	public void stop() {
+		if (mTimer != null) {
+			mTimer.cancel();
+		}
+		mTimer = null;
 	}
 
 	@Override
@@ -79,23 +98,20 @@ public class NyanSurfaceHelper implements SurfaceHolder.Callback {
 
 	@Override
 	public void surfaceCreated(final SurfaceHolder holder) {
-		final IDrawingHelper[] helpers = { mStarsHelper, mRainbowHelper, mSakamotoHelper };
-		mTimer = new Timer();
-		mTimer.scheduleAtFixedRate(new DrawingTask(holder, mBackgroundColor, helpers), 0, 66);
+		mHolder = holder;
+		start();
 	}
 
 	@Override
 	public void surfaceDestroyed(final SurfaceHolder holder) {
-		if (mTimer != null) {
-			mTimer.cancel();
-		}
-		mTimer = null;
+		stop();
+		mHolder = null;
 	}
 
 	private Drawable createRainbowDrawable(final float scale) {
 		final AnimationDrawable ad = new AnimationDrawable();
 		ad.setOneShot(false);
-		final int rainbowDotScale = Math.round(scale * RAINBOW_DOT_SIZE);
+		final int rainbowDotScale = Math.round(RAINBOW_DOT_SIZE * mDensity * scale);
 		for (final int frameRes : RAINBOW_FRAMES) {
 			final Bitmap b = BitmapFactory.decodeResource(mResources, frameRes);
 			if (b == null) {
@@ -120,13 +136,13 @@ public class NyanSurfaceHelper implements SurfaceHolder.Callback {
 
 	private void setupSpirtes(final int width, final int height) {
 		final int centerX = width / 2, centerY = height / 2;
-		final int sakamotoDotScale = Math.round(mScale * SAKAMOTO_DOT_SIZE);
+		final int sakamotoDotScale = Math.round(SAKAMOTO_DOT_SIZE * mDensity * mScale);
 		final int sakamotoW = mSakamotoHelper.getIntrinsicWidth() * sakamotoDotScale;
 		final int sakamotoH = mSakamotoHelper.getIntrinsicHeight() * sakamotoDotScale;
 		final int sakamotoLeft = centerX - sakamotoW / 2, sakamotoBottom = centerY + sakamotoH / 2;
 		mSakamotoHelper.setBounds(sakamotoLeft, sakamotoBottom - sakamotoH, sakamotoLeft + sakamotoW, sakamotoBottom);
 		final int rainbowH = mRainbowHelper.getIntrinsicHeight();
-		final int rainbowTop = centerY + rainbowH / 6;
+		final int rainbowTop = centerY + rainbowH / 8;
 		mRainbowHelper.setBounds(0, rainbowTop, centerX - sakamotoW / 4, rainbowTop + rainbowH);
 	}
 

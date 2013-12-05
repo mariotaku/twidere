@@ -53,9 +53,26 @@ public class NyanActivity extends Activity implements Constants, OnLongClickList
 		setContentView(R.layout.surface_view);
 		mSurfaceView.setOnLongClickListener(this);
 		final SurfaceHolder holder = mSurfaceView.getHolder();
-		mHelper = new NyanSurfaceHelper(this, holder);
+		mHelper = new NyanSurfaceHelper(this);
+		holder.addCallback(mHelper);
 		updateSurface();
 		enableWallpaperDaydream();
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		if (mHelper != null) {
+			mHelper.start();
+		}
+	}
+
+	@Override
+	protected void onStop() {
+		if (mHelper != null) {
+			mHelper.stop();
+		}
+		super.onStop();
 	}
 
 	private void enableWallpaperDaydream() {
@@ -68,7 +85,7 @@ public class NyanActivity extends Activity implements Constants, OnLongClickList
 					PackageManager.DONT_KILL_APP);
 			showToast = true;
 		}
-		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR1) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
 			final ComponentName daydreamComponent = new ComponentName(this, NyanDaydreamService.class);
 			final int daydreamState = pm.getComponentEnabledSetting(daydreamComponent);
 			if (daydreamState != PackageManager.COMPONENT_ENABLED_STATE_ENABLED) {

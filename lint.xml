@@ -7,6 +7,9 @@
     <issue id="ExportedContentProvider">
         <ignore path="AndroidManifest.xml" />
     </issue>
+    <issue id="ExportedService">
+        <ignore path="AndroidManifest.xml" />
+    </issue>
     <issue id="NewApi" severity="ignore">
         <ignore path="res/values/holo__styles.xml" />
         <ignore path="res/values/popup__styles.xml" />
