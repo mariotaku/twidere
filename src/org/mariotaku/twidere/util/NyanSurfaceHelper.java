@@ -4,13 +4,10 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.view.SurfaceHolder;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 public final class NyanSurfaceHelper implements SurfaceHolder.Callback {
 
 	private SurfaceHolder mHolder;
-	private Timer mTimer;
+	private DrawingThread mThread;
 	private final NyanDrawingHelper mNyanDrawingHelper;
 
 	public NyanSurfaceHelper(final Context context) {
@@ -22,16 +19,16 @@ public final class NyanSurfaceHelper implements SurfaceHolder.Callback {
 	}
 
 	public void start() {
-		if (mTimer != null || mHolder == null) return;
-		mTimer = new Timer();
-		mTimer.scheduleAtFixedRate(new DrawingTask(mHolder, mNyanDrawingHelper), 0, 66);
+		if (mThread != null || mHolder == null) return;
+		mThread = new DrawingThread(mHolder, mNyanDrawingHelper);
+		mThread.start();
 	}
 
 	public void stop() {
-		if (mTimer != null) {
-			mTimer.cancel();
+		if (mThread != null) {
+			mThread.cancel();
 		}
-		mTimer = null;
+		mThread = null;
 	}
 
 	@Override
@@ -51,18 +48,36 @@ public final class NyanSurfaceHelper implements SurfaceHolder.Callback {
 		mHolder = null;
 	}
 
-	private static class DrawingTask extends TimerTask {
+	private static class DrawingThread extends Thread {
 
 		private final SurfaceHolder mHolder;
 		private final NyanDrawingHelper mHelper;
+		private boolean mCancelled;
 
-		DrawingTask(final SurfaceHolder holder, final NyanDrawingHelper helper) {
+		DrawingThread(final SurfaceHolder holder, final NyanDrawingHelper helper) {
 			mHolder = holder;
 			mHelper = helper;
 		}
 
+		public void cancel() {
+			mCancelled = true;
+		}
+
 		@Override
 		public void run() {
+			while (!mCancelled) {
+				final long startTime = System.currentTimeMillis();
+				drawFrame();
+				final long endTime = System.currentTimeMillis();
+				try {
+					Thread.sleep(Math.max(0, 66 - (endTime - startTime)));
+				} catch (final InterruptedException e) {
+
+				}
+			}
+		}
+
+		private void drawFrame() {
 			final Canvas c = mHolder.lockCanvas();
 			if (c == null) return;
 			if (mHelper != null) {

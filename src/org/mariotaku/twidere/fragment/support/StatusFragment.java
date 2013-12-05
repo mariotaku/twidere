@@ -46,7 +46,7 @@ import static org.mariotaku.twidere.util.Utils.scrollListToPosition;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 import static org.mariotaku.twidere.util.Utils.showErrorMessage;
 import static org.mariotaku.twidere.util.Utils.showOkMessage;
-import static org.mariotaku.twidere.util.Utils.*;
+import static org.mariotaku.twidere.util.Utils.startStatusShareChooser;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;

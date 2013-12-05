@@ -876,6 +876,18 @@ public final class Utils implements Constants {
 		return intent;
 	}
 
+	public static Intent createStatusShareIntent(final Context context, final ParcelableStatus status) {
+		final Intent intent = new Intent(Intent.ACTION_SEND);
+		intent.setType("text/plain");
+		final String name = status.user_name, screenName = status.user_screen_name;
+		final String timeString = formatToLongTimeString(context, status.timestamp);
+		final String subject = context.getString(R.string.share_subject_format, name, screenName, timeString);
+		intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+		intent.putExtra(Intent.EXTRA_TEXT, status.text_plain);
+		intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		return intent;
+	}
+
 	public static Intent createTakePhotoIntent(final Uri uri) {
 		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
@@ -3681,18 +3693,6 @@ public final class Utils implements Constants {
 		intent.putExtra(Intent.EXTRA_TEXT, status.text_plain);
 		intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 		context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)));
-	}
-	
-	public static Intent createStatusShareIntent(final Context context, final ParcelableStatus status) {
-		final Intent intent = new Intent(Intent.ACTION_SEND);
-		intent.setType("text/plain");
-		final String name = status.user_name, screenName = status.user_screen_name;
-		final String timeString = formatToLongTimeString(context, status.timestamp);
-		final String subject = context.getString(R.string.share_subject_format, name, screenName, timeString);
-		intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-		intent.putExtra(Intent.EXTRA_TEXT, status.text_plain);
-		intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-		return intent;
 	}
 
 	public static void stopListView(final ListView list) {
