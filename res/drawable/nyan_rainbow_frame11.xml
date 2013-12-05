@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
-	android:antialias="false"
-	android:gravity="fill_horizontal"
-	android:src="@drawable/nyan_rainbow_frame11_tile"
-	android:tileMode="repeat"/>

@@ -70,4 +70,7 @@
 	<dimen name="browser_sign_in_min_width">320dp</dimen>
 	<dimen name="browser_sign_in_min_height">480dp</dimen>
 
+	<!-- Dimensions for Tab indicator -->
+	<dimen name="tab_item_minwidth_vpi">64dp</dimen>
+
 </resources>

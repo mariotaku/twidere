@@ -28,6 +28,7 @@ import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getDisplayName;
+import static org.mariotaku.twidere.util.Utils.getNotificationUri;
 import static org.mariotaku.twidere.util.Utils.getTableId;
 import static org.mariotaku.twidere.util.Utils.getTableNameById;
 import static org.mariotaku.twidere.util.Utils.isFiltered;
@@ -144,21 +145,21 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	@Override
 	public int bulkInsert(final Uri uri, final ContentValues[] values) {
 		try {
-			final int table_id = getTableId(uri);
-			final String table = getTableNameById(table_id);
-			checkWritePermission(table_id, table);
-			switch (table_id) {
+			final int tableId = getTableId(uri);
+			final String table = getTableNameById(tableId);
+			checkWritePermission(tableId, table);
+			switch (tableId) {
 				case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
 				case TABLE_ID_DIRECT_MESSAGES:
-				case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
+				case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRIES:
 					return 0;
 			}
 			int result = 0;
 			if (table != null && values != null) {
 				mDatabaseWrapper.beginTransaction();
-				final boolean replace_on_conflict = shouldReplaceOnConflict(table_id);
+				final boolean replaceOnConflict = shouldReplaceOnConflict(tableId);
 				for (final ContentValues contentValues : values) {
-					if (replace_on_conflict) {
+					if (replaceOnConflict) {
 						mDatabaseWrapper.insertWithOnConflict(table, null, contentValues,
 								SQLiteDatabase.CONFLICT_REPLACE);
 					} else {
@@ -170,7 +171,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				mDatabaseWrapper.endTransaction();
 			}
 			if (result > 0) {
-				onDatabaseUpdated(uri);
+				onDatabaseUpdated(tableId, uri);
 			}
 			onNewItemsInserted(uri, values);
 			return result;
@@ -182,13 +183,13 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	@Override
 	public int delete(final Uri uri, final String selection, final String[] selectionArgs) {
 		try {
-			final int table_id = getTableId(uri);
-			final String table = getTableNameById(table_id);
-			checkWritePermission(table_id, table);
-			switch (table_id) {
+			final int tableId = getTableId(uri);
+			final String table = getTableNameById(tableId);
+			checkWritePermission(tableId, table);
+			switch (tableId) {
 				case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
 				case TABLE_ID_DIRECT_MESSAGES:
-				case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
+				case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRIES:
 					return 0;
 				case VIRTUAL_TABLE_ID_NOTIFICATIONS: {
 					final List<String> segments = uri.getPathSegments();
@@ -220,7 +221,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			if (table == null) return 0;
 			final int result = mDatabaseWrapper.delete(table, selection, selectionArgs);
 			if (result > 0) {
-				onDatabaseUpdated(uri);
+				onDatabaseUpdated(tableId, uri);
 			}
 			return result;
 		} catch (final SQLException e) {
@@ -236,24 +237,24 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	@Override
 	public Uri insert(final Uri uri, final ContentValues values) {
 		try {
-			final int table_id = getTableId(uri);
-			final String table = getTableNameById(table_id);
-			checkWritePermission(table_id, table);
-			switch (table_id) {
+			final int tableId = getTableId(uri);
+			final String table = getTableNameById(tableId);
+			checkWritePermission(tableId, table);
+			switch (tableId) {
 				case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
 				case TABLE_ID_DIRECT_MESSAGES:
-				case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
+				case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRIES:
 					return null;
 			}
 			if (table == null) return null;
-			final boolean replaceOnConflict = shouldReplaceOnConflict(table_id);
+			final boolean replaceOnConflict = shouldReplaceOnConflict(tableId);
 			final long rowId;
 			if (replaceOnConflict) {
 				rowId = mDatabaseWrapper.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_REPLACE);
 			} else {
 				rowId = mDatabaseWrapper.insert(table, null, values);
 			}
-			onDatabaseUpdated(uri);
+			onDatabaseUpdated(tableId, uri);
 			onNewItemsInserted(uri, values);
 			return Uri.withAppendedPath(uri, String.valueOf(rowId));
 		} catch (final SQLException e) {
@@ -397,23 +398,10 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 					setNotificationUri(c, DirectMessages.CONTENT_URI);
 					return c;
 				}
-				case TABLE_ID_DIRECT_MESSAGES: {
-					final String query = TwidereQueryBuilder.DirectMessagesQueryBuilder.build(projection, selection,
-							sortOrder);
-					final Cursor c = mDatabaseWrapper.rawQuery(query, selectionArgs);
-					setNotificationUri(c, DirectMessages.CONTENT_URI);
-					return c;
-				}
-				case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY: {
-					final String query = TwidereQueryBuilder.ConversationsEntryQueryBuilder.build(selection);
-					final Cursor c = mDatabaseWrapper.rawQuery(query, null);
-					setNotificationUri(c, DirectMessages.CONTENT_URI);
-					return c;
-				}
 			}
 			if (table == null) return null;
 			final Cursor c = mDatabaseWrapper.query(table, projection, selection, selectionArgs, null, null, sortOrder);
-			setNotificationUri(c, uri);
+			setNotificationUri(c, getNotificationUri(tableId, uri));
 			return c;
 		} catch (final SQLException e) {
 			throw new IllegalStateException(e);
@@ -423,20 +411,20 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	@Override
 	public int update(final Uri uri, final ContentValues values, final String selection, final String[] selectionArgs) {
 		try {
-			final int table_id = getTableId(uri);
-			final String table = getTableNameById(table_id);
+			final int tableId = getTableId(uri);
+			final String table = getTableNameById(tableId);
 			int result = 0;
 			if (table != null) {
-				switch (table_id) {
+				switch (tableId) {
 					case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
 					case TABLE_ID_DIRECT_MESSAGES:
-					case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY:
+					case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRIES:
 						return 0;
 				}
 				result = mDatabaseWrapper.update(table, values, selection, selectionArgs);
 			}
 			if (result > 0) {
-				onDatabaseUpdated(uri);
+				onDatabaseUpdated(tableId, uri);
 			}
 			return result;
 		} catch (final SQLException e) {
@@ -513,7 +501,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			case TABLE_ID_DIRECT_MESSAGES_OUTBOX:
 			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
 			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME:
-			case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY: {
+			case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRIES: {
 				if (!checkPermission(PERMISSION_DIRECT_MESSAGES))
 					throw new SecurityException("Access database " + table
 							+ " requires level PERMISSION_LEVEL_DIRECT_MESSAGES");
@@ -553,7 +541,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			case TABLE_ID_DIRECT_MESSAGES_OUTBOX:
 			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
 			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME:
-			case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY: {
+			case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRIES: {
 				if (!checkPermission(PERMISSION_DIRECT_MESSAGES))
 					throw new SecurityException("Access database " + table
 							+ " requires level PERMISSION_LEVEL_DIRECT_MESSAGES");
@@ -974,11 +962,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	}
 
 	private void notifyContentObserver(final Uri uri) {
-		if (uri == null) return;
-		final Context context = getContext();
-		if (context == null) return;
-		final ContentResolver resolver = context.getContentResolver();
-		resolver.notifyChange(uri, null);
+		if (uri == null || mContentResolver == null) return;
+		mContentResolver.notifyChange(uri, null);
 	}
 
 	private int notifyIncomingMessagesInserted(final ContentValues... values) {
@@ -1048,16 +1033,16 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		notifyContentObserver(UnreadCounts.CONTENT_URI);
 	}
 
-	private void onDatabaseUpdated(final Uri uri) {
+	private void onDatabaseUpdated(final int tableId, final Uri uri) {
 		if (uri == null) return;
-		switch (getTableId(uri)) {
+		switch (tableId) {
 			case TABLE_ID_ACCOUNTS: {
 				clearAccountColor();
 				clearAccountName();
 				break;
 			}
 		}
-		notifyContentObserver(uri);
+		notifyContentObserver(getNotificationUri(tableId, uri));
 	}
 
 	private void onNewItemsInserted(final Uri uri, final ContentValues... values) {

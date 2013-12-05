@@ -24,14 +24,13 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
-import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.widget.ListView;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 
-public class NotificationTypePreference extends DialogPreference implements Constants {
+public class NotificationTypePreference extends ValueDependencyDialogPreference implements Constants {
 
 	private final int mDefaultValue;
 

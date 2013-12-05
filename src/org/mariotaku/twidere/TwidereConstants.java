@@ -281,6 +281,8 @@ public interface TwidereConstants {
 	public static final String PREFERENCE_KEY_NOTIFICATION_TYPE_MENTIONS = "notification_type_mentions";
 	public static final String PREFERENCE_KEY_NOTIFICATION_TYPE_DIRECT_MESSAGES = "notification_type_direct_messages";
 	public static final String PREFERENCE_KEY_COMPACT_CARDS = "compact_cards";
+	public static final String PREFERENCE_KEY_DISPLAY_TAB_LABEL = "display_tab_label";
+	public static final String PREFERENCE_KEY_LIVE_WALLPAPER_SCALE = "live_wallpaper_scale";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;
@@ -519,6 +521,7 @@ public interface TwidereConstants {
 	public static final String TABLE_FILTERED_LINKS = Filters.Links.TABLE_NAME;
 	public static final String TABLE_DIRECT_MESSAGES_INBOX = DirectMessages.Inbox.TABLE_NAME;
 	public static final String TABLE_DIRECT_MESSAGES_OUTBOX = DirectMessages.Outbox.TABLE_NAME;
+	public static final String TABLE_DIRECT_MESSAGE = DirectMessages.TABLE_NAME;
 	public static final String TABLE_TRENDS_LOCAL = CachedTrends.Local.TABLE_NAME;
 	public static final String TABLE_TABS = Tabs.TABLE_NAME;
 	public static final String TABLE_NOTIFICATIONS = TweetStore.Notifications.TABLE_NAME;
@@ -536,7 +539,7 @@ public interface TwidereConstants {
 	public static final int TABLE_ID_DIRECT_MESSAGES_OUTBOX = 23;
 	public static final int TABLE_ID_DIRECT_MESSAGES_CONVERSATION = 24;
 	public static final int TABLE_ID_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME = 25;
-	public static final int TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRY = 26;
+	public static final int TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRIES = 26;
 	public static final int TABLE_ID_FILTERED_USERS = 31;
 	public static final int TABLE_ID_FILTERED_KEYWORDS = 32;
 	public static final int TABLE_ID_FILTERED_SOURCES = 33;

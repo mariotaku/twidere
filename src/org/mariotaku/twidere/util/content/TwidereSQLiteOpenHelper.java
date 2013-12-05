@@ -28,6 +28,8 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import org.mariotaku.querybuilder.SQLQueryBuilder;
+import org.mariotaku.querybuilder.query.SQLCreateViewQuery;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
@@ -40,6 +42,8 @@ import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.provider.TweetStore.Tabs;
+import org.mariotaku.twidere.util.TwidereQueryBuilder.ConversationsEntryQueryBuilder;
+import org.mariotaku.twidere.util.TwidereQueryBuilder.DirectMessagesQueryBuilder;
 
 import java.util.HashMap;
 
@@ -72,6 +76,8 @@ public final class TwidereSQLiteOpenHelper extends SQLiteOpenHelper implements C
 				DirectMessages.Outbox.TYPES, true));
 		db.execSQL(createTable(TABLE_TRENDS_LOCAL, CachedTrends.Local.COLUMNS, CachedTrends.Local.TYPES, true));
 		db.execSQL(createTable(TABLE_TABS, Tabs.COLUMNS, Tabs.TYPES, true));
+		db.execSQL(createDirectMessagesView().getSQL());
+		db.execSQL(createDirectMessageConversationEntriesView().getSQL());
 		db.setTransactionSuccessful();
 		db.endTransaction();
 	}
@@ -99,24 +105,17 @@ public final class TwidereSQLiteOpenHelper extends SQLiteOpenHelper implements C
 		}
 	}
 
-	private String createTable(final String tableName, final String[] columns, final String[] types,
-			final boolean create_if_not_exists) {
-		if (tableName == null || columns == null || types == null || types.length != columns.length
-				|| types.length == 0)
-			throw new IllegalArgumentException("Invalid parameters for creating table " + tableName);
-		final StringBuilder stringBuilder = new StringBuilder(create_if_not_exists ? "CREATE TABLE IF NOT EXISTS "
-				: "CREATE TABLE ");
+	private SQLCreateViewQuery createDirectMessageConversationEntriesView() {
+		final SQLCreateViewQuery.Builder qb = SQLQueryBuilder.createView(true,
+				DirectMessages.ConversationEntries.TABLE_NAME);
+		qb.as(ConversationsEntryQueryBuilder.build());
+		return qb.build();
+	}
 
-		stringBuilder.append(tableName);
-		stringBuilder.append(" (");
-		final int length = columns.length;
-		for (int n = 0, i = length; n < i; n++) {
-			if (n > 0) {
-				stringBuilder.append(", ");
-			}
-			stringBuilder.append(columns[n]).append(' ').append(types[n]);
-		}
-		return stringBuilder.append(");").toString();
+	private SQLCreateViewQuery createDirectMessagesView() {
+		final SQLCreateViewQuery.Builder qb = SQLQueryBuilder.createView(true, DirectMessages.TABLE_NAME);
+		qb.as(DirectMessagesQueryBuilder.build());
+		return qb.build();
 	}
 
 	private void handleVersionChange(final SQLiteDatabase db) {
@@ -130,8 +129,8 @@ public final class TwidereSQLiteOpenHelper extends SQLiteOpenHelper implements C
 		filtersAlias.put(Filters.VALUE, "text");
 		draftsAlias.put(Drafts.MEDIA_URI, "image_uri");
 		draftsAlias.put(Drafts.MEDIA_TYPE, "attached_image_type");
-		safeUpgrade(db, TABLE_ACCOUNTS, Accounts.COLUMNS, Accounts.TYPES, true, false, accountsAlias);
-		safeUpgrade(db, TABLE_STATUSES, Statuses.COLUMNS, Statuses.TYPES, true, true, null);
+		safeUpgrade(db, Accounts.TABLE_NAME, Accounts.COLUMNS, Accounts.TYPES, true, false, accountsAlias);
+		safeUpgrade(db, Statuses.TABLE_NAME, Statuses.COLUMNS, Statuses.TYPES, true, true, null);
 		safeUpgrade(db, TABLE_MENTIONS, Mentions.COLUMNS, Mentions.TYPES, true, true, null);
 		safeUpgrade(db, TABLE_DRAFTS, Drafts.COLUMNS, Drafts.TYPES, true, false, draftsAlias);
 		safeUpgrade(db, TABLE_CACHED_USERS, CachedUsers.COLUMNS, CachedUsers.TYPES, true, true, null);
@@ -149,6 +148,28 @@ public final class TwidereSQLiteOpenHelper extends SQLiteOpenHelper implements C
 				true, null);
 		safeUpgrade(db, TABLE_TRENDS_LOCAL, CachedTrends.Local.COLUMNS, CachedTrends.Local.TYPES, true, true, null);
 		safeUpgrade(db, TABLE_TABS, Tabs.COLUMNS, Tabs.TYPES, true, false, null);
+		db.execSQL(createDirectMessagesView().getSQL());
+		db.execSQL(createDirectMessageConversationEntriesView().getSQL());
+	}
+
+	private static String createTable(final String tableName, final String[] columns, final String[] types,
+			final boolean create_if_not_exists) {
+		if (tableName == null || columns == null || types == null || types.length != columns.length
+				|| types.length == 0)
+			throw new IllegalArgumentException("Invalid parameters for creating table " + tableName);
+		final StringBuilder stringBuilder = new StringBuilder(create_if_not_exists ? "CREATE TABLE IF NOT EXISTS "
+				: "CREATE TABLE ");
+
+		stringBuilder.append(tableName);
+		stringBuilder.append(" (");
+		final int length = columns.length;
+		for (int n = 0, i = length; n < i; n++) {
+			if (n > 0) {
+				stringBuilder.append(", ");
+			}
+			stringBuilder.append(columns[n]).append(' ').append(types[n]);
+		}
+		return stringBuilder.append(");").toString();
 	}
 
 }

@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
-	android:versionCode="80"
-	android:versionName="0.2.9.4">
+	android:versionCode="81"
+	android:versionName="0.2.9.5">
 
 	<uses-sdk
 		android:minSdkVersion="14"
@@ -533,6 +533,33 @@
 			<meta-data
 				android:name="description"
 				android:value="@string/dashclock_messages_unread_count_description"/>
+		</service>
+		<service
+			android:name=".service.NyanWallpaperService"
+			android:enabled="false"
+			android:exported="true"
+			android:icon="@drawable/ic_launcher"
+			android:label="@string/nyan_sakamoto"
+			android:permission="android.permission.BIND_WALLPAPER"
+			android:process=":wallpaper">
+			<intent-filter android:priority="1">
+				<action android:name="android.service.wallpaper.WallpaperService"/>
+			</intent-filter>
+
+			<meta-data
+				android:name="android.service.wallpaper"
+				android:resource="@xml/nyan_wallpaper"/>
+		</service>
+		<service
+			android:name=".service.NyanDaydreamService"
+			android:enabled="false"
+			android:exported="true"
+			android:icon="@drawable/ic_launcher"
+			android:label="@string/nyan_sakamoto"
+			android:process=":daydream">
+			<intent-filter android:priority="1">
+				<action android:name="android.service.dreams.DreamService"/>
+			</intent-filter>
 		</service>
 
 		<provider
