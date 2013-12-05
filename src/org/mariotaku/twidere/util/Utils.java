@@ -1767,6 +1767,17 @@ public final class Utils implements Constants {
 		return url;
 	}
 
+	public static Uri getNotificationUri(final int tableId, final Uri def) {
+		switch (tableId) {
+			case TABLE_ID_DIRECT_MESSAGES:
+			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION:
+			case TABLE_ID_DIRECT_MESSAGES_CONVERSATION_SCREEN_NAME:
+			case TABLE_ID_DIRECT_MESSAGES_CONVERSATIONS_ENTRIES:
+				return DirectMessages.CONTENT_URI;
+		}
+		return def;
+	}
+
 	public static long[] getOldestMessageIdsFromDatabase(final Context context, final Uri uri) {
 		final long[] account_ids = getActivatedAccountIds(context);
 		return getOldestMessageIdsFromDatabase(context, uri, account_ids);

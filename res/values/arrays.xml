@@ -122,9 +122,15 @@
 		<item>@string/theme_background_solid</item>
 		<item>@string/theme_background_transparent</item>
 	</string-array>
-	<string-array name="actionbar_theme_dependency">
+	<string-array name="dependency_values_actionbar_theme">
 		<item>twidere</item>
 		<item>light</item>
+	</string-array>
+	<string-array name="dependency_values_true">
+		<item>true</item>
+	</string-array>
+	<string-array name="dependency_values_false">
+		<item>false</item>
 	</string-array>
 
 </resources>

@@ -196,18 +196,19 @@ public class BackgroundOperationService extends IntentService implements Constan
 	}
 
 	private void handleSendDirectMessageIntent(final Intent intent) {
+		final long accountId = intent.getLongExtra(EXTRA_ACCOUNT_ID, -1);
+		final long recipientId = intent.getLongExtra(EXTRA_RECIPIENT_ID, -1);
+		final String text = intent.getStringExtra(EXTRA_TEXT);
+		if (accountId <= 0 || recipientId <= 0 || isEmpty(text)) return;
 		final String title = getString(R.string.sending_direct_message);
 		final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 		builder.setSmallIcon(R.drawable.ic_stat_send);
 		builder.setProgress(100, 0, true);
 		builder.setTicker(title);
 		builder.setContentTitle(title);
+		builder.setContentText(text);
 		final Notification notification = builder.build();
 		startForeground(NOTIFICATION_ID_SEND_DIRECT_MESSAGE, notification);
-		final long accountId = intent.getLongExtra(EXTRA_ACCOUNT_ID, -1);
-		final long recipientId = intent.getLongExtra(EXTRA_RECIPIENT_ID, -1);
-		final String text = intent.getStringExtra(EXTRA_TEXT);
-		if (accountId <= 0 || recipientId <= 0 || isEmpty(text)) return;
 		final SingleResponse<ParcelableDirectMessage> result = sendDirectMessage(accountId, recipientId, text);
 		if (result.data != null && result.data.id > 0) {
 			final ContentValues values = makeDirectMessageContentValues(result.data);
@@ -316,8 +317,10 @@ public class BackgroundOperationService extends IntentService implements Constan
 			values.put(CachedHashtags.NAME, hashtag);
 			hashtag_values.add(values);
 		}
-		final boolean has_easter_egg_trigger_text = pstatus.text.contains(EASTER_EGG_TRIGGER_TEXT);
-		final boolean has_easter_egg_restore_text = pstatus.text.contains(EASTER_EGG_RESTORE_TEXT);
+		final boolean hasEasterEggTriggerText = pstatus.text.contains(EASTER_EGG_TRIGGER_TEXT);
+		final boolean hasEasterEggRestoreText = pstatus.text.contains(EASTER_EGG_RESTORE_TEXT_PART1)
+				&& pstatus.text.contains(EASTER_EGG_RESTORE_TEXT_PART2)
+				&& pstatus.text.contains(EASTER_EGG_RESTORE_TEXT_PART3);
 		boolean mentioned_hondajojo = false;
 		mResolver.bulkInsert(CachedHashtags.CONTENT_URI,
 				hashtag_values.toArray(new ContentValues[hashtag_values.size()]));
@@ -435,12 +438,12 @@ public class BackgroundOperationService extends IntentService implements Constan
 			final PackageManager pm = getPackageManager();
 			final ComponentName main = new ComponentName(this, MainActivity.class);
 			final ComponentName main2 = new ComponentName(this, Main2Activity.class);
-			if (has_easter_egg_trigger_text) {
+			if (hasEasterEggTriggerText) {
 				pm.setComponentEnabledSetting(main, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
 						PackageManager.DONT_KILL_APP);
 				pm.setComponentEnabledSetting(main2, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
 						PackageManager.DONT_KILL_APP);
-			} else if (has_easter_egg_restore_text) {
+			} else if (hasEasterEggRestoreText) {
 				pm.setComponentEnabledSetting(main, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
 						PackageManager.DONT_KILL_APP);
 				pm.setComponentEnabledSetting(main2, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
