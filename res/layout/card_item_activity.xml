@@ -159,9 +159,12 @@
 			android:id="@+id/activity_profile_image_container"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginLeft="@dimen/element_spacing_large"
-			android:layout_marginTop="@dimen/element_spacing_small"
-			android:orientation="horizontal">
+			android:gravity="center_vertical"
+			android:orientation="horizontal"
+			android:paddingBottom="@dimen/element_spacing_default"
+			android:paddingLeft="@dimen/element_spacing_default"
+			android:paddingRight="@dimen/element_spacing_default"
+			android:paddingTop="@dimen/element_spacing_small">
 
 			<ImageView
 				android:id="@+id/activity_profile_image_1"
@@ -202,6 +205,16 @@
 				android:layout_margin="2dp"
 				android:contentDescription="@string/profile_image"
 				android:scaleType="fitCenter"/>
+
+			<TextView
+				android:id="@+id/activity_profile_image_more_number"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_margin="2dp"
+				android:layout_weight="1"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:textColor="?android:attr/textColorPrimary"
+				android:textStyle="bold"/>
 		</LinearLayout>
 	</org.mariotaku.twidere.view.CardItemLinearLayout>
 

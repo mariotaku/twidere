@@ -101,7 +101,7 @@ public class TabPageIndicator extends HorizontalScrollView implements PagerIndic
 		setHorizontalScrollBarEnabled(false);
 		mShouldApplyColorFilterToTabIcons = ThemeUtils.shouldApplyColorFilterToTabIcons(context);
 		mTabHighlightColor = isInEditMode() ? 0 : ThemeUtils.getUserThemeColor(context);
-		mTabIconColor = isInEditMode() ? 0 : ThemeUtils.getTabIconColor(context);
+		mTabIconColor = isInEditMode() ? 0 : ThemeUtils.getActionIconColor(context);
 		mInflater = LayoutInflater.from(context);
 		mTabLayout = new LinearLayout(context);
 		mTabLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);

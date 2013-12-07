@@ -113,6 +113,25 @@ public class ThemeUtils implements Constants {
 
 	}
 
+	public static int getActionIconColor(final Context context) {
+		return getActionIconColor(getThemeResource(context));
+	}
+
+	public static int getActionIconColor(final int themeRes) {
+		switch (themeRes) {
+			case R.style.Theme_Twidere_Light:
+			case R.style.Theme_Twidere_Light_SolidBackground:
+			case R.style.Theme_Twidere_Light_Transparent:
+			case R.style.Theme_Twidere_Light_Compose:
+			case R.style.Theme_Twidere_Colored:
+			case R.style.Theme_Twidere_Colored_SolidBackground:
+			case R.style.Theme_Twidere_Colored_Transparent:
+			case R.style.Theme_Twidere_Colored_Compose:
+				return 0xC0333333;
+		}
+		return Color.WHITE;
+	}
+
 	public static Drawable getCardItemBackground(final Context context) {
 		final TypedArray a = context.obtainStyledAttributes(new int[] { R.attr.cardItemBackground });
 		final Drawable d = a.getDrawable(0);
@@ -189,25 +208,6 @@ public class ThemeUtils implements Constants {
 		a.recycle();
 		if (d == null) return context.getResources().getDrawable(R.drawable.item_background_holo_dark);
 		return d;
-	}
-
-	public static int getTabIconColor(final Context context) {
-		return getTabIconColor(getThemeResource(context));
-	}
-
-	public static int getTabIconColor(final int themeRes) {
-		switch (themeRes) {
-			case R.style.Theme_Twidere_Light:
-			case R.style.Theme_Twidere_Light_SolidBackground:
-			case R.style.Theme_Twidere_Light_Transparent:
-			case R.style.Theme_Twidere_Light_Compose:
-			case R.style.Theme_Twidere_Colored:
-			case R.style.Theme_Twidere_Colored_SolidBackground:
-			case R.style.Theme_Twidere_Colored_Transparent:
-			case R.style.Theme_Twidere_Colored_Compose:
-				return 0xC0333333;
-		}
-		return Color.WHITE;
 	}
 
 	public static int getTextAppearanceLarge(final Context context) {

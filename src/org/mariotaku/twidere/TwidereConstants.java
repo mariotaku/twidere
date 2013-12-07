@@ -375,7 +375,6 @@ public interface TwidereConstants {
 	public static final String BROADCAST_USER_LIST_UNSUBSCRIBED = INTENT_PACKAGE_PREFIX + "USER_LIST_UNSUBSCRIBED";
 	public static final String BROADCAST_USER_LIST_CREATED = INTENT_PACKAGE_PREFIX + "USER_LIST_CREATED";
 	public static final String BROADCAST_USER_LIST_DELETED = INTENT_PACKAGE_PREFIX + "USER_LIST_DELETED";
-	public static final String BROADCAST_TABS_UPDATED = INTENT_PACKAGE_PREFIX + "TABS_UPDATED";
 	public static final String BROADCAST_FILTERS_UPDATED = INTENT_PACKAGE_PREFIX + "FILTERS_UPDATED";
 	public static final String BROADCAST_REFRESH_HOME_TIMELINE = INTENT_PACKAGE_PREFIX + "REFRESH_HOME_TIMELINE";
 	public static final String BROADCAST_REFRESH_MENTIONS = INTENT_PACKAGE_PREFIX + "REFRESH_MENTIONS";
@@ -483,6 +482,7 @@ public interface TwidereConstants {
 	public static final String EXTRA_ALPHA_SLIDER = "alpha_slider";
 	public static final String EXTRA_OPEN_ACCOUNTS_DRAWER = "open_accounts_drawer";
 	public static final String EXTRA_RECIPIENT_ID = "recipient_id";
+	public static final String EXTRA_OFFICIAL_KEY_ONLY = "official_key_only";
 
 	public static final int MENU_GROUP_STATUS_EXTENSION = 10;
 	public static final int MENU_GROUP_COMPOSE_EXTENSION = 11;

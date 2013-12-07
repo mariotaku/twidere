@@ -135,7 +135,7 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 		builder.refreshOnUp(true);
 		builder.scrollDistance(DEFAULT_PULL_TO_REFRESH_SCROLL_DISTANCE);
 		builder.headerTransformer(new TwidereHeaderTransformer());
-		if (!isDetached()) {
+		if (!isDetached() && getActivity() != null) {
 			final SetupWizard wizard = ActionBarPullToRefresh.from(getActivity());
 			wizard.allChildrenArePullable();
 			wizard.listener(this);

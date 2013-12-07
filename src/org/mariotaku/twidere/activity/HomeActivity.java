@@ -992,8 +992,9 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			if (!(lp instanceof WindowManager.LayoutParams)) return;
 			final WindowManager.LayoutParams wlp = (WindowManager.LayoutParams) lp;
 			wlp.y = mY;
-			mWindowManager.updateViewLayout(mView, wlp);
-
+			if (mView.getWindowToken() != null) {
+				mWindowManager.updateViewLayout(mView, wlp);
+			}
 		}
 
 	}

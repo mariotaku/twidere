@@ -73,8 +73,8 @@ public class TwidereQueryBuilder {
 							DirectMessages.IS_OUTGOING), new Column(ConversationEntries.NAME), new Column(
 							ConversationEntries.SCREEN_NAME), new Column(ConversationEntries.PROFILE_IMAGE_URL),
 					new Column(ConversationEntries.TEXT_HTML), new Column(ConversationEntries.CONVERSATION_ID)));
-			final SQLSelectQuery.Builder entry_ids = new SQLSelectQuery.Builder();
-			entry_ids.select(new Columns(new Column(DirectMessages._ID), new Column(
+			final SQLSelectQuery.Builder entryIds = new SQLSelectQuery.Builder();
+			entryIds.select(new Columns(new Column(DirectMessages._ID), new Column(
 					ConversationEntries.MESSAGE_TIMESTAMP), new Column(DirectMessages.MESSAGE_ID), new Column(
 					DirectMessages.ACCOUNT_ID), new Column("0", DirectMessages.IS_OUTGOING), new Column(
 					DirectMessages.SENDER_NAME, ConversationEntries.NAME), new Column(
@@ -82,9 +82,9 @@ public class TwidereQueryBuilder {
 					DirectMessages.SENDER_PROFILE_IMAGE_URL, ConversationEntries.PROFILE_IMAGE_URL), new Column(
 					ConversationEntries.TEXT_HTML), new Column(DirectMessages.SENDER_ID,
 					ConversationEntries.CONVERSATION_ID)));
-			entry_ids.from(new Tables(Inbox.TABLE_NAME));
-			entry_ids.union();
-			entry_ids.select(new Columns(new Column(DirectMessages._ID), new Column(
+			entryIds.from(new Tables(Inbox.TABLE_NAME));
+			entryIds.union();
+			entryIds.select(new Columns(new Column(DirectMessages._ID), new Column(
 					ConversationEntries.MESSAGE_TIMESTAMP), new Column(DirectMessages.MESSAGE_ID), new Column(
 					DirectMessages.ACCOUNT_ID), new Column("1", DirectMessages.IS_OUTGOING), new Column(
 					DirectMessages.RECIPIENT_NAME, ConversationEntries.NAME), new Column(
@@ -92,30 +92,29 @@ public class TwidereQueryBuilder {
 					DirectMessages.RECIPIENT_PROFILE_IMAGE_URL, ConversationEntries.PROFILE_IMAGE_URL), new Column(
 					ConversationEntries.TEXT_HTML), new Column(DirectMessages.RECIPIENT_ID,
 					ConversationEntries.CONVERSATION_ID)));
-			entry_ids.from(new Tables(Outbox.TABLE_NAME));
-			qb.from(entry_ids.build());
+			entryIds.from(new Tables(Outbox.TABLE_NAME));
+			qb.from(entryIds.build());
 			final SQLSelectQuery.Builder recent_inbox_msg_ids = SQLQueryBuilder
 					.select(new Column("MAX(" + DirectMessages.MESSAGE_ID + ")")).from(new Tables(Inbox.TABLE_NAME))
 					.groupBy(new Column(DirectMessages.SENDER_ID));
 			final SQLSelectQuery.Builder recent_outbox_msg_ids = SQLQueryBuilder
 					.select(new Column("MAX(" + DirectMessages.MESSAGE_ID + ")")).from(new Tables(Outbox.TABLE_NAME))
 					.groupBy(new Column(DirectMessages.RECIPIENT_ID));
-			final SQLSelectQuery.Builder conversation_ids = new SQLSelectQuery.Builder();
-			conversation_ids.select(new Columns(new Column(DirectMessages.MESSAGE_ID), new Column(
+			final SQLSelectQuery.Builder conversationIds = new SQLSelectQuery.Builder();
+			conversationIds.select(new Columns(new Column(DirectMessages.MESSAGE_ID), new Column(
 					DirectMessages.SENDER_ID, ConversationEntries.CONVERSATION_ID)));
-			conversation_ids.from(new Tables(Inbox.TABLE_NAME));
-			conversation_ids.where(Where.in(new Column(DirectMessages.MESSAGE_ID), recent_inbox_msg_ids.build()));
-			conversation_ids.union();
-			conversation_ids.select(new Columns(new Column(DirectMessages.MESSAGE_ID), new Column(
+			conversationIds.from(new Tables(Inbox.TABLE_NAME));
+			conversationIds.where(Where.in(new Column(DirectMessages.MESSAGE_ID), recent_inbox_msg_ids.build()));
+			conversationIds.union();
+			conversationIds.select(new Columns(new Column(DirectMessages.MESSAGE_ID), new Column(
 					DirectMessages.RECIPIENT_ID, ConversationEntries.CONVERSATION_ID)));
-			conversation_ids.from(new Tables(Outbox.TABLE_NAME));
-			conversation_ids.where(Where.in(new Column(DirectMessages.MESSAGE_ID), recent_outbox_msg_ids.build()));
-			final SQLSelectQuery.Builder grouped_message_conversation_ids = new SQLSelectQuery.Builder();
-			grouped_message_conversation_ids.select(new Column(DirectMessages.MESSAGE_ID));
-			grouped_message_conversation_ids.from(conversation_ids.build());
-			grouped_message_conversation_ids.groupBy(new Column(ConversationEntries.CONVERSATION_ID));
-			final Where groupedWhere = Where.in(new Column(DirectMessages.MESSAGE_ID),
-					grouped_message_conversation_ids.build());
+			conversationIds.from(new Tables(Outbox.TABLE_NAME));
+			conversationIds.where(Where.in(new Column(DirectMessages.MESSAGE_ID), recent_outbox_msg_ids.build()));
+			final SQLSelectQuery.Builder groupedConversationIds = new SQLSelectQuery.Builder();
+			groupedConversationIds.select(new Column(DirectMessages.MESSAGE_ID));
+			groupedConversationIds.from(conversationIds.build());
+			groupedConversationIds.groupBy(new Column(ConversationEntries.CONVERSATION_ID));
+			final Where groupedWhere = Where.in(new Column(DirectMessages.MESSAGE_ID), groupedConversationIds.build());
 			final Where where;
 			if (selection != null) {
 				where = Where.and(groupedWhere, new Where(selection));

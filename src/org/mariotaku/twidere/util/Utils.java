@@ -140,6 +140,7 @@ import org.mariotaku.twidere.fragment.support.UserMentionsFragment;
 import org.mariotaku.twidere.fragment.support.UserProfileFragment;
 import org.mariotaku.twidere.fragment.support.UserTimelineFragment;
 import org.mariotaku.twidere.fragment.support.UsersListFragment;
+import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.model.AccountPreferences;
 import org.mariotaku.twidere.model.CursorStatusIndices;
 import org.mariotaku.twidere.model.DirectMessageCursorIndices;
@@ -2222,6 +2223,30 @@ public final class Utils implements Constants {
 		return 0;
 	}
 
+	public static boolean hasAccountSignedWithOfficialKeys(final Context context) {
+		if (context == null) return false;
+		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI,
+				Accounts.COLUMNS, null, null, null);
+		if (cur == null) return false;
+		final String[] keySecrets = context.getResources().getStringArray(R.array.values_consumer_key_secret);
+		final Account.Indices indices = new Account.Indices(cur);
+		cur.moveToFirst();
+		try {
+			while (!cur.isAfterLast()) {
+				final String consumerKey = cur.getString(indices.consumer_key);
+				final String consumerSecret = cur.getString(indices.consumer_secret);
+				for (final String keySecret : keySecrets) {
+					final String[] pair = keySecret.split(";");
+					if (pair[0].equals(consumerKey) && pair[1].equals(consumerSecret)) return true;
+				}
+				cur.moveToNext();
+			}
+		} finally {
+			cur.close();
+		}
+		return false;
+	}
+
 	public static boolean hasAutoRefreshAccounts(final Context context) {
 		final long[] accountIds = getAccountIds(context);
 		final long[] refreshIds = AccountPreferences.getAutoRefreshEnabledAccountIds(context, accountIds);
@@ -2415,6 +2440,17 @@ public final class Utils implements Constants {
 		for (final String key_secret : key_secrets) {
 			final String[] pair = key_secret.split(";");
 			if (pair[0].equals(consumer_key) && pair[1].equals(consumer_secret)) return true;
+		}
+		return false;
+	}
+
+	public static boolean isOfficialConsumerKeySecret(final Context context, final String consumerKey,
+			final String consumerSecret) {
+		if (context == null) return false;
+		final String[] keySecrets = context.getResources().getStringArray(R.array.values_consumer_key_secret);
+		for (final String keySecret : keySecrets) {
+			final String[] pair = keySecret.split(";");
+			if (pair[0].equals(consumerKey) && pair[1].equals(consumerSecret)) return true;
 		}
 		return false;
 	}
