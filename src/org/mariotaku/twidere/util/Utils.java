@@ -421,33 +421,35 @@ public final class Utils implements Constants {
 		}
 		builder.append(Statuses._ID + " NOT IN ( ");
 		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table);
-		builder.append(" WHERE " + table + "." + Statuses.USER_ID + " IN ( SELECT " + TABLE_FILTERED_USERS + "."
-				+ Filters.Users.USER_ID + " FROM " + TABLE_FILTERED_USERS + " )");
+		builder.append(" WHERE " + table + "." + Statuses.USER_ID + " IN ( SELECT " + Filters.Users.TABLE_NAME + "."
+				+ Filters.Users.USER_ID + " FROM " + Filters.Users.TABLE_NAME + " )");
 		if (enable_in_rts) {
 			builder.append(" OR " + table + "." + Statuses.RETWEETED_BY_USER_ID + " IN ( SELECT "
-					+ TABLE_FILTERED_USERS + "." + Filters.Users.USER_ID + " FROM " + TABLE_FILTERED_USERS + " )");
+					+ Filters.Users.TABLE_NAME + "." + Filters.Users.USER_ID + " FROM " + Filters.Users.TABLE_NAME
+					+ " )");
 		}
 		builder.append(" AND " + table + "." + Statuses.IS_GAP + " IS NULL");
 		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
 		builder.append(" UNION ");
 		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table + ", "
-				+ TABLE_FILTERED_SOURCES);
-		builder.append(" WHERE " + table + "." + Statuses.SOURCE + " LIKE '%>'||" + TABLE_FILTERED_SOURCES + "."
+				+ Filters.Sources.TABLE_NAME);
+		builder.append(" WHERE " + table + "." + Statuses.SOURCE + " LIKE '%>'||" + Filters.Sources.TABLE_NAME + "."
 				+ Filters.Sources.VALUE + "||'</a>%'");
 		builder.append(" AND " + table + "." + Statuses.IS_GAP + " IS NULL");
 		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
 		builder.append(" UNION ");
 		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table + ", "
-				+ TABLE_FILTERED_KEYWORDS);
-		builder.append(" WHERE " + table + "." + Statuses.TEXT_PLAIN + " LIKE '%'||" + TABLE_FILTERED_KEYWORDS + "."
-				+ Filters.Keywords.VALUE + "||'%'");
+				+ Filters.Keywords.TABLE_NAME);
+		builder.append(" WHERE " + table + "." + Statuses.TEXT_PLAIN + " LIKE '%'||" + Filters.Keywords.TABLE_NAME
+				+ "." + Filters.Keywords.VALUE + "||'%'");
 		builder.append(" AND " + table + "." + Statuses.IS_GAP + " IS NULL");
 		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
 		builder.append(" UNION ");
-		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table + ", " + TABLE_FILTERED_LINKS);
-		builder.append(" WHERE " + table + "." + Statuses.TEXT_HTML + " LIKE '%<a href=\"%'||" + TABLE_FILTERED_LINKS
-				+ "." + Filters.Links.VALUE + "||'%\">%'");
-		builder.append(" OR " + table + "." + Statuses.TEXT_HTML + " LIKE '%>%'||" + TABLE_FILTERED_LINKS + "."
+		builder.append("SELECT DISTINCT " + table + "." + Statuses._ID + " FROM " + table + ", "
+				+ Filters.Links.TABLE_NAME);
+		builder.append(" WHERE " + table + "." + Statuses.TEXT_HTML + " LIKE '%<a href=\"%'||"
+				+ Filters.Links.TABLE_NAME + "." + Filters.Links.VALUE + "||'%\">%'");
+		builder.append(" OR " + table + "." + Statuses.TEXT_HTML + " LIKE '%>%'||" + Filters.Links.TABLE_NAME + "."
 				+ Filters.Links.VALUE + "||'%</a>%'");
 		builder.append(" AND " + table + "." + Statuses.IS_GAP + " IS NULL");
 		builder.append(" OR " + table + "." + Statuses.IS_GAP + " == 0");
@@ -1147,7 +1149,7 @@ public final class Utils implements Constants {
 		final Integer cached = sAccountColors.get(account_id);
 		if (cached != null) return cached;
 		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI,
-				new String[] { Accounts.USER_COLOR }, Accounts.ACCOUNT_ID + " = " + account_id, null, null);
+				new String[] { Accounts.COLOR }, Accounts.ACCOUNT_ID + " = " + account_id, null, null);
 		if (cur == null) return Color.TRANSPARENT;
 		try {
 			if (cur.getCount() > 0 && cur.moveToFirst()) {
@@ -1163,7 +1165,7 @@ public final class Utils implements Constants {
 
 	public static int[] getAccountColors(final Context context, final long[] account_ids) {
 		if (context == null || account_ids == null) return new int[0];
-		final String[] cols = new String[] { Accounts.USER_COLOR };
+		final String[] cols = new String[] { Accounts.COLOR };
 		final String where = Where.in(new Column(Accounts.ACCOUNT_ID), new RawItemArray(account_ids)).getSQL();
 		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI, cols, where,
 				null, null);
@@ -1993,21 +1995,21 @@ public final class Utils implements Constants {
 	public static String getTableNameById(final int id) {
 		switch (id) {
 			case TABLE_ID_ACCOUNTS:
-				return TABLE_ACCOUNTS;
+				return Accounts.TABLE_NAME;
 			case TABLE_ID_STATUSES:
-				return TABLE_STATUSES;
+				return Statuses.TABLE_NAME;
 			case TABLE_ID_MENTIONS:
-				return TABLE_MENTIONS;
+				return Mentions.TABLE_NAME;
 			case TABLE_ID_DRAFTS:
-				return TABLE_DRAFTS;
+				return Drafts.TABLE_NAME;
 			case TABLE_ID_FILTERED_USERS:
-				return TABLE_FILTERED_USERS;
+				return Filters.Users.TABLE_NAME;
 			case TABLE_ID_FILTERED_KEYWORDS:
-				return TABLE_FILTERED_KEYWORDS;
+				return Filters.Keywords.TABLE_NAME;
 			case TABLE_ID_FILTERED_SOURCES:
-				return TABLE_FILTERED_SOURCES;
+				return Filters.Sources.TABLE_NAME;
 			case TABLE_ID_FILTERED_LINKS:
-				return TABLE_FILTERED_LINKS;
+				return Filters.Links.TABLE_NAME;
 			case TABLE_ID_DIRECT_MESSAGES_INBOX:
 				return DirectMessages.Inbox.TABLE_NAME;
 			case TABLE_ID_DIRECT_MESSAGES_OUTBOX:
@@ -2166,17 +2168,16 @@ public final class Utils implements Constants {
 							cb.setOAuthConsumerKey(TWITTER_CONSUMER_KEY);
 							cb.setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET);
 						}
-						final String oauth_token = c.getString(c.getColumnIndexOrThrow(Accounts.OAUTH_TOKEN));
-						final String token_secret = c.getString(c.getColumnIndexOrThrow(Accounts.TOKEN_SECRET));
-						if (isEmpty(oauth_token) || isEmpty(token_secret)) return null;
-						return new TwitterFactory(cb.build()).getInstance(new AccessToken(oauth_token, token_secret));
+						final String token = c.getString(c.getColumnIndexOrThrow(Accounts.OAUTH_TOKEN));
+						final String tokenSecret = c.getString(c.getColumnIndexOrThrow(Accounts.OAUTH_TOKEN_SECRET));
+						if (isEmpty(token) || isEmpty(tokenSecret)) return null;
+						return new TwitterFactory(cb.build()).getInstance(new AccessToken(token, tokenSecret));
 					}
 					case Accounts.AUTH_TYPE_BASIC: {
-						final String screen_name = c.getString(c.getColumnIndexOrThrow(Accounts.SCREEN_NAME));
+						final String screenName = c.getString(c.getColumnIndexOrThrow(Accounts.SCREEN_NAME));
 						final String password = c.getString(c.getColumnIndexOrThrow(Accounts.BASIC_AUTH_PASSWORD));
-						if (isEmpty(screen_name) || isEmpty(password)) return null;
-						return new TwitterFactory(cb.build())
-								.getInstance(new BasicAuthorization(screen_name, password));
+						if (isEmpty(screenName) || isEmpty(password)) return null;
+						return new TwitterFactory(cb.build()).getInstance(new BasicAuthorization(screenName, password));
 					}
 					case Accounts.AUTH_TYPE_TWIP_O_MODE: {
 						return new TwitterFactory(cb.build()).getInstance(new TwipOModeAuthorization());
@@ -2256,9 +2257,9 @@ public final class Utils implements Constants {
 	public static void initAccountColor(final Context context) {
 		if (context == null) return;
 		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI, new String[] {
-				Accounts.ACCOUNT_ID, Accounts.USER_COLOR }, null, null, null);
+				Accounts.ACCOUNT_ID, Accounts.COLOR }, null, null, null);
 		if (cur == null) return;
-		final int id_idx = cur.getColumnIndex(Accounts.ACCOUNT_ID), color_idx = cur.getColumnIndex(Accounts.USER_COLOR);
+		final int id_idx = cur.getColumnIndex(Accounts.ACCOUNT_ID), color_idx = cur.getColumnIndex(Accounts.COLOR);
 		cur.moveToFirst();
 		while (!cur.isAfterLast()) {
 			sAccountColors.put(cur.getLong(id_idx), cur.getInt(color_idx));
@@ -2325,38 +2326,38 @@ public final class Utils implements Constants {
 		builder.append("SELECT NULL WHERE");
 		if (text_plain != null) {
 			selection_args.add(text_plain);
-			builder.append("(SELECT 1 IN (SELECT ? LIKE '%'||" + TABLE_FILTERED_KEYWORDS + "." + Filters.VALUE
-					+ "||'%' FROM " + TABLE_FILTERED_KEYWORDS + "))");
+			builder.append("(SELECT 1 IN (SELECT ? LIKE '%'||" + Filters.Keywords.TABLE_NAME + "." + Filters.VALUE
+					+ "||'%' FROM " + Filters.Keywords.TABLE_NAME + "))");
 		}
 		if (text_html != null) {
 			if (!selection_args.isEmpty()) {
 				builder.append(" OR ");
 			}
 			selection_args.add(text_html);
-			builder.append("(SELECT 1 IN (SELECT ? LIKE '%<a href=\"%'||" + TABLE_FILTERED_LINKS + "." + Filters.VALUE
-					+ "||'%\">%' FROM " + TABLE_FILTERED_LINKS + "))");
+			builder.append("(SELECT 1 IN (SELECT ? LIKE '%<a href=\"%'||" + Filters.Links.TABLE_NAME + "."
+					+ Filters.VALUE + "||'%\">%' FROM " + Filters.Links.TABLE_NAME + "))");
 		}
 		if (user_id > 0) {
 			if (!selection_args.isEmpty()) {
 				builder.append(" OR ");
 			}
 			builder.append("(SELECT " + user_id + " IN (SELECT " + Filters.Users.USER_ID + " FROM "
-					+ TABLE_FILTERED_USERS + "))");
+					+ Filters.Users.TABLE_NAME + "))");
 		}
 		if (retweeted_by_id > 0) {
 			if (!selection_args.isEmpty()) {
 				builder.append(" OR ");
 			}
 			builder.append("(SELECT " + retweeted_by_id + " IN (SELECT " + Filters.Users.USER_ID + " FROM "
-					+ TABLE_FILTERED_USERS + "))");
+					+ Filters.Users.TABLE_NAME + "))");
 		}
 		if (source != null) {
 			if (!selection_args.isEmpty()) {
 				builder.append(" OR ");
 			}
 			selection_args.add(source);
-			builder.append("(SELECT 1 IN (SELECT ? LIKE '%>'||" + TABLE_FILTERED_SOURCES + "." + Filters.VALUE
-					+ "||'</a>%' FROM " + TABLE_FILTERED_SOURCES + "))");
+			builder.append("(SELECT 1 IN (SELECT ? LIKE '%>'||" + Filters.Sources.TABLE_NAME + "." + Filters.VALUE
+					+ "||'</a>%' FROM " + Filters.Sources.TABLE_NAME + "))");
 		}
 		final Cursor cur = database.rawQuery(builder.toString(),
 				selection_args.toArray(new String[selection_args.size()]));

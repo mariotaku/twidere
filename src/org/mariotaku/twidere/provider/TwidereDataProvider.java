@@ -488,7 +488,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				// permission level.
 				if (projection == null
 						|| ArrayUtils.contains(projection, Accounts.BASIC_AUTH_PASSWORD, Accounts.OAUTH_TOKEN,
-								Accounts.TOKEN_SECRET, Accounts.CONSUMER_KEY, Accounts.CONSUMER_SECRET)
+								Accounts.OAUTH_TOKEN_SECRET, Accounts.CONSUMER_KEY, Accounts.CONSUMER_SECRET)
 						&& !checkPermission(PERMISSION_ACCOUNTS))
 					throw new SecurityException("Access column " + ArrayUtils.toString(projection, ',', true)
 							+ " in database accounts requires level PERMISSION_LEVEL_ACCOUNTS");

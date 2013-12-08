@@ -95,7 +95,7 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 			case REQUEST_SET_COLOR: {
 				if (resultCode == Activity.RESULT_OK && data != null) {
 					final ContentValues values = new ContentValues();
-					values.put(Accounts.USER_COLOR, data.getIntExtra(EXTRA_COLOR, Color.WHITE));
+					values.put(Accounts.COLOR, data.getIntExtra(EXTRA_COLOR, Color.WHITE));
 					final String where = Accounts.ACCOUNT_ID + " = " + mAdapter.getSelectedAccountId();
 					mResolver.update(Accounts.CONTENT_URI, values, where, null);
 				}

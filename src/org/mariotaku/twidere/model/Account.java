@@ -174,7 +174,7 @@ public class Account implements Parcelable {
 			account_id = cursor.getColumnIndex(Accounts.ACCOUNT_ID);
 			profile_image_url = cursor.getColumnIndex(Accounts.PROFILE_IMAGE_URL);
 			profile_banner_url = cursor.getColumnIndex(Accounts.PROFILE_BANNER_URL);
-			user_color = cursor.getColumnIndex(Accounts.USER_COLOR);
+			user_color = cursor.getColumnIndex(Accounts.COLOR);
 			is_activated = cursor.getColumnIndex(Accounts.IS_ACTIVATED);
 			consumer_key = cursor.getColumnIndex(Accounts.CONSUMER_KEY);
 			consumer_secret = cursor.getColumnIndex(Accounts.CONSUMER_SECRET);

@@ -25,7 +25,8 @@ public class NyanDaydreamView extends View {
 
 	public NyanDaydreamView(final Context context, final AttributeSet attrs, final int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
-		mNyanDrawingHelper = new DreamViewNyanDrawingHelper(context);
+		setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+		mNyanDrawingHelper = new DreamViewNyanDrawingHelper(this);
 		mInvalidateRunnable = new InvalidateRunnable(this);
 	}
 
@@ -60,9 +61,11 @@ public class NyanDaydreamView extends View {
 	private static final class DreamViewNyanDrawingHelper extends NyanDrawingHelper {
 
 		private final int mDisplayHeight;
+		private final NyanDaydreamView mView;
 
-		public DreamViewNyanDrawingHelper(final Context context) {
-			super(context);
+		public DreamViewNyanDrawingHelper(final NyanDaydreamView view) {
+			super(view.getContext());
+			mView = view;
 			final Resources res = getResources();
 			final DisplayMetrics dm = res.getDisplayMetrics();
 			mDisplayHeight = dm.heightPixels;
@@ -70,6 +73,8 @@ public class NyanDaydreamView extends View {
 
 		@Override
 		protected int getRainbowYOffset() {
+			final int visibility = mView.getSystemUiVisibility();
+			if ((visibility & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) != 0) return 0;
 			return mDisplayHeight - getHeight();
 		}
 

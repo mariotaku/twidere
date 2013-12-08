@@ -101,7 +101,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 	private TextView mListNameView, mCreatedByView, mDescriptionView, mErrorMessageView;
 	private View mListContainer, mErrorRetryContainer;
 	private ColorLabelRelativeLayout mProfileContainer;
-	private View mNameContainer, mDescriptionContainer, mMoreOptionsButton;
+	private View mDescriptionContainer, mMoreOptionsButton;
 	private Button mRetryButton;
 	private ListView mListView;
 	private View mHeaderView;
@@ -154,6 +154,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		mDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
 		mProfileImageLoader.displayProfileImage(mProfileImageView, user_list.user_profile_image_url);
 		mAdapter.notifyDataSetChanged();
+		invalidateOptionsMenu();
 	}
 
 	public void getUserListInfo(final boolean omit_intent_extra) {
@@ -181,7 +182,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		mAdapter.add(new ListMembersAction(2));
 		mAdapter.add(new ListSubscribersAction(3));
 		mProfileImageView.setOnClickListener(this);
-		mNameContainer.setOnClickListener(this);
+		mProfileContainer.setOnClickListener(this);
 		mMoreOptionsButton.setOnClickListener(this);
 		mRetryButton.setOnClickListener(this);
 		setListAdapter(null);
@@ -262,8 +263,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		mHeaderView = inflater.inflate(R.layout.user_list_details_header, null);
-		mProfileContainer = (ColorLabelRelativeLayout) mHeaderView.findViewById(R.id.profile_name_container);
-		mNameContainer = mHeaderView.findViewById(R.id.name_container);
+		mProfileContainer = (ColorLabelRelativeLayout) mHeaderView.findViewById(R.id.profile);
 		mListNameView = (TextView) mHeaderView.findViewById(R.id.list_name);
 		mCreatedByView = (TextView) mHeaderView.findViewById(R.id.created_by);
 		mDescriptionView = (TextView) mHeaderView.findViewById(R.id.description);
@@ -333,8 +333,10 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 	public boolean onMenuItemClick(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_ADD: {
+				if (mUserList == null || mUserList.user_id != mUserList.account_id) return false;
 				final Intent intent = new Intent(INTENT_ACTION_SELECT_USER);
 				intent.setClass(getActivity(), UserListSelectorActivity.class);
+				intent.putExtra(EXTRA_ACCOUNT_ID, mUserList.account_id);
 				startActivityForResult(intent, REQUEST_SELECT_USER);
 				break;
 			}

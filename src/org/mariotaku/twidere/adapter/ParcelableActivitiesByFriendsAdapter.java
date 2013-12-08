@@ -43,6 +43,9 @@ public class ParcelableActivitiesByFriendsAdapter extends BaseParcelableActiviti
 		holder.name.setSingleLine(false);
 		holder.screen_name.setVisibility(View.GONE);
 		holder.reply_retweet_status.setVisibility(View.GONE);
+		if (holder.divider != null) {
+			holder.divider.setVisibility(View.VISIBLE);
+		}
 		if (sourcesLength > 0) {
 			final ParcelableUser firstSource = sources[0];
 			final String firstSourceName = getName(firstSource);
@@ -128,6 +131,9 @@ public class ParcelableActivitiesByFriendsAdapter extends BaseParcelableActiviti
 							holder.text.setVisibility(View.VISIBLE);
 							holder.text.setText(userList.description);
 						} else {
+							if (holder.divider != null) {
+								holder.divider.setVisibility(View.GONE);
+							}
 							holder.text.setVisibility(View.GONE);
 						}
 						holder.name.setText(context.getString(R.string.activity_by_friends_list_created,

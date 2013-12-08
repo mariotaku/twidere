@@ -33,9 +33,11 @@ public class ActivityViewHolder extends StatusViewHolder {
 	public final ImageView[] activity_profile_images;
 	public final ViewGroup activity_profile_images_container;
 	public final TextView activity_profile_image_more_number;
+	public final View divider;
 
 	public ActivityViewHolder(final View view) {
 		super(view);
+		divider = findViewById(R.id.divider);
 		activity_profile_images_container = (ViewGroup) findViewById(R.id.activity_profile_image_container);
 		activity_profile_image_1 = (ImageView) findViewById(R.id.activity_profile_image_1);
 		activity_profile_image_2 = (ImageView) findViewById(R.id.activity_profile_image_2);

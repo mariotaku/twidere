@@ -462,7 +462,11 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	@Override
 	public void onWindowFocusChanged(final boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
-		mHandler.postDelayed(new FixPullToRefreshScrollRunnable(this), 100);
+		if (mSlidingMenu != null && mSlidingMenu.isMenuShowing()) {
+			updatePullToRefreshLayoutScroll(1, false);
+		} else {
+			updatePullToRefreshLayoutScroll(0, false);
+		}
 	}
 
 	public void openSearchView(final Account account) {
@@ -789,12 +793,12 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 
 	private void setPullToRefreshLayoutScroll(final WindowManager wm, final Fragment f, final int scrollX,
 			final int statusBarHeight, final boolean horizontalScroll) {
-		if (f == null) return;
+		if (f == null || f.isDetached() || f.getActivity() == null) return;
 		final View headerView = getPullToRefreshHeaderView(f);
 		if (headerView != null) {
 			headerView.setScrollX(scrollX);
 			if (!horizontalScroll) {
-				headerView.post(new UpdatePullToRefreshYRunnable(wm, headerView, statusBarHeight));
+				updatePullToRefreshY(wm, headerView, statusBarHeight);
 			}
 		}
 	}
@@ -917,6 +921,15 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mSlidingMenu.setTouchModeAbove(mode);
 	}
 
+	private static void updatePullToRefreshY(final WindowManager wm, final View view, final int y) {
+		if (view == null || wm == null || view.getWindowToken() == null) return;
+		final ViewGroup.LayoutParams lp = view.getLayoutParams();
+		if (!(lp instanceof WindowManager.LayoutParams)) return;
+		final WindowManager.LayoutParams wlp = (WindowManager.LayoutParams) lp;
+		wlp.y = y;
+		wm.updateViewLayout(view, wlp);
+	}
+
 	private static final class AccountChangeObserver extends ContentObserver {
 		private final HomeActivity mActivity;
 
@@ -937,25 +950,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		}
 	}
 
-	private static class FixPullToRefreshScrollRunnable implements Runnable {
-		private final HomeActivity mActivity;
-
-		FixPullToRefreshScrollRunnable(final HomeActivity activity) {
-			mActivity = activity;
-		}
-
-		@Override
-		public void run() {
-			final SlidingMenu slidingMenu = mActivity.getSlidingMenu();
-			if (slidingMenu != null && slidingMenu.isMenuShowing()) {
-				mActivity.updatePullToRefreshLayoutScroll(1, false);
-			} else {
-				mActivity.updatePullToRefreshLayoutScroll(0, false);
-			}
-		}
-
-	}
-
 	private static class ListenerCanvasTransformer implements CanvasTransformer {
 		private final HomeActivity mHomeActivity;
 
@@ -966,35 +960,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		@Override
 		public void transformCanvas(final Canvas canvas, final float percentOpen) {
 			mHomeActivity.updatePullToRefreshLayoutScroll(percentOpen, true);
-		}
-
-	}
-
-	private class UpdatePullToRefreshYRunnable implements Runnable {
-		private final WindowManager mWindowManager;
-		private final View mView;
-		private final int mY;
-
-		UpdatePullToRefreshYRunnable(final WindowManager wm, final View view, final int y) {
-			mWindowManager = wm;
-			mView = view;
-			mY = y;
-		}
-
-		@Override
-		public void run() {
-			if (mView == null || mWindowManager == null) return;
-			if (mView.getWindowToken() == null) {
-				mView.post(this);
-				return;
-			}
-			final ViewGroup.LayoutParams lp = mView.getLayoutParams();
-			if (!(lp instanceof WindowManager.LayoutParams)) return;
-			final WindowManager.LayoutParams wlp = (WindowManager.LayoutParams) lp;
-			wlp.y = mY;
-			if (mView.getWindowToken() != null) {
-				mWindowManager.updateViewLayout(mView, wlp);
-			}
 		}
 
 	}

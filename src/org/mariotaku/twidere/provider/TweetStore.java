@@ -23,16 +23,16 @@ import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-public final class TweetStore {
+public interface TweetStore {
 
 	public static final String AUTHORITY = "twidere";
 
-	private static final String TYPE_PRIMARY_KEY = "INTEGER PRIMARY KEY AUTOINCREMENT";
-	private static final String TYPE_INT = "INTEGER";
-	private static final String TYPE_INT_UNIQUE = "INTEGER UNIQUE";
-	private static final String TYPE_BOOLEAN = "INTEGER(1)";
-	private static final String TYPE_TEXT = "TEXT";
-	private static final String TYPE_TEXT_NOT_NULL = "TEXT NOT NULL";
+	public static final String TYPE_PRIMARY_KEY = "INTEGER PRIMARY KEY AUTOINCREMENT";
+	public static final String TYPE_INT = "INTEGER";
+	public static final String TYPE_INT_UNIQUE = "INTEGER UNIQUE";
+	public static final String TYPE_BOOLEAN = "INTEGER(1)";
+	public static final String TYPE_TEXT = "TEXT";
+	public static final String TYPE_TEXT_NOT_NULL = "TEXT NOT NULL";
 
 	public static final String CONTENT_PATH_NULL = "null_content";
 
@@ -105,7 +105,7 @@ public final class TweetStore {
 		 * Token Secret of the account.<br>
 		 * Type: TEXT
 		 */
-		public static final String TOKEN_SECRET = "token_secret";
+		public static final String OAUTH_TOKEN_SECRET = "oauth_token_secret";
 
 		public static final String REST_BASE_URL = "rest_base_url";
 
@@ -115,7 +115,7 @@ public final class TweetStore {
 
 		public static final String SIGNING_OAUTH_BASE_URL = "signing_oauth_base_url";
 
-		public static final String USER_COLOR = "user_color";
+		public static final String COLOR = "color";
 
 		/**
 		 * Set to a non-zero integer if the account is activated. <br>
@@ -136,9 +136,9 @@ public final class TweetStore {
 		public static final String PROFILE_BANNER_URL = "profile_banner_url";
 
 		public static final String[] COLUMNS = new String[] { _ID, NAME, SCREEN_NAME, ACCOUNT_ID, AUTH_TYPE,
-				BASIC_AUTH_PASSWORD, OAUTH_TOKEN, TOKEN_SECRET, CONSUMER_KEY, CONSUMER_SECRET, REST_BASE_URL,
+				BASIC_AUTH_PASSWORD, OAUTH_TOKEN, OAUTH_TOKEN_SECRET, CONSUMER_KEY, CONSUMER_SECRET, REST_BASE_URL,
 				SIGNING_REST_BASE_URL, OAUTH_BASE_URL, SIGNING_OAUTH_BASE_URL, PROFILE_IMAGE_URL, PROFILE_BANNER_URL,
-				USER_COLOR, IS_ACTIVATED };
+				COLOR, IS_ACTIVATED };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT_NOT_NULL, TYPE_TEXT_NOT_NULL,
 				TYPE_INT_UNIQUE, TYPE_INT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,

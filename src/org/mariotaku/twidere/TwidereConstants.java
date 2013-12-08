@@ -19,18 +19,6 @@
 package org.mariotaku.twidere;
 
 import org.mariotaku.twidere.annotation.PreferenceType;
-import org.mariotaku.twidere.provider.TweetStore;
-import org.mariotaku.twidere.provider.TweetStore.Accounts;
-import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
-import org.mariotaku.twidere.provider.TweetStore.CachedStatuses;
-import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
-import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
-import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
-import org.mariotaku.twidere.provider.TweetStore.Drafts;
-import org.mariotaku.twidere.provider.TweetStore.Filters;
-import org.mariotaku.twidere.provider.TweetStore.Mentions;
-import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.provider.TweetStore.Tabs;
 
 /**
  * Public constants for both Twidere app and its extensions
@@ -507,29 +495,6 @@ public interface TwidereConstants {
 	public static final int REQUEST_SELECT_USER = 16;
 	public static final int REQUEST_SELECT_USER_LIST = 17;
 	public static final int REQUEST_SWIPEBACK_ACTIVITY = 101;
-
-	public static final String TABLE_ACCOUNTS = Accounts.TABLE_NAME;
-	public static final String TABLE_STATUSES = Statuses.TABLE_NAME;
-	public static final String TABLE_MENTIONS = Mentions.TABLE_NAME;
-	public static final String TABLE_DRAFTS = Drafts.TABLE_NAME;
-	public static final String TABLE_CACHED_HASHTAGS = CachedHashtags.TABLE_NAME;
-	public static final String TABLE_CACHED_USERS = CachedUsers.TABLE_NAME;
-	public static final String TABLE_CACHED_STATUSES = CachedStatuses.TABLE_NAME;
-	public static final String TABLE_FILTERED_USERS = Filters.Users.TABLE_NAME;
-	public static final String TABLE_FILTERED_KEYWORDS = Filters.Keywords.TABLE_NAME;
-	public static final String TABLE_FILTERED_SOURCES = Filters.Sources.TABLE_NAME;
-	public static final String TABLE_FILTERED_LINKS = Filters.Links.TABLE_NAME;
-	public static final String TABLE_DIRECT_MESSAGES_INBOX = DirectMessages.Inbox.TABLE_NAME;
-	public static final String TABLE_DIRECT_MESSAGES_OUTBOX = DirectMessages.Outbox.TABLE_NAME;
-	public static final String TABLE_DIRECT_MESSAGE = DirectMessages.TABLE_NAME;
-	public static final String TABLE_TRENDS_LOCAL = CachedTrends.Local.TABLE_NAME;
-	public static final String TABLE_TABS = Tabs.TABLE_NAME;
-	public static final String TABLE_NOTIFICATIONS = TweetStore.Notifications.TABLE_NAME;
-	public static final String TABLE_PREFERENCES = TweetStore.Preferences.TABLE_NAME;
-	public static final String TABLE_PERMISSIONS = TweetStore.Permissions.TABLE_NAME;
-	public static final String TABLE_DNS = TweetStore.DNS.TABLE_NAME;
-	public static final String TABLE_CACHED_IMAGES = TweetStore.CachedImages.TABLE_NAME;
-	public static final String TABLE_CACHE_FILES = TweetStore.CacheFiles.TABLE_NAME;
 
 	public static final int TABLE_ID_ACCOUNTS = 1;
 	public static final int TABLE_ID_STATUSES = 12;

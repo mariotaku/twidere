@@ -306,7 +306,7 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 		outState.putInt(Accounts.AUTH_TYPE, mAuthType);
 		outState.putLong(EXTRA_API_LAST_CHANGE, mAPIChangeTimestamp);
 		if (mUserColor != null) {
-			outState.putInt(Accounts.USER_COLOR, mUserColor);
+			outState.putInt(Accounts.COLOR, mUserColor);
 		}
 		super.onSaveInstanceState(outState);
 	}
@@ -338,8 +338,8 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 			mUsername = savedInstanceState.getString(Accounts.SCREEN_NAME);
 			mPassword = savedInstanceState.getString(Accounts.PASSWORD);
 			mAuthType = savedInstanceState.getInt(Accounts.AUTH_TYPE);
-			if (savedInstanceState.containsKey(Accounts.USER_COLOR)) {
-				mUserColor = savedInstanceState.getInt(Accounts.USER_COLOR, Color.TRANSPARENT);
+			if (savedInstanceState.containsKey(Accounts.COLOR)) {
+				mUserColor = savedInstanceState.getInt(Accounts.COLOR, Color.TRANSPARENT);
 			}
 			mAPIChangeTimestamp = savedInstanceState.getLong(EXTRA_API_LAST_CHANGE);
 		}

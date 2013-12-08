@@ -27,14 +27,35 @@
 
 package org.mariotaku.querybuilder;
 
+import org.mariotaku.querybuilder.query.SQLAlterTableQuery;
+import org.mariotaku.querybuilder.query.SQLCreateTableQuery;
 import org.mariotaku.querybuilder.query.SQLCreateViewQuery;
 import org.mariotaku.querybuilder.query.SQLDropQuery;
+import org.mariotaku.querybuilder.query.SQLInsertIntoQuery;
+import org.mariotaku.querybuilder.query.SQLInsertIntoQuery.OnConflict;
 import org.mariotaku.querybuilder.query.SQLSelectQuery;
 
 public class SQLQueryBuilder {
 
 	private SQLQueryBuilder() {
 		throw new AssertionError("You can't create instance for this class");
+	}
+
+	public static SQLAlterTableQuery.Builder alterTable(final String table) {
+		return new SQLAlterTableQuery.Builder().alterTable(table);
+	}
+
+	public static SQLCreateTableQuery.Builder createTable(final boolean temporary, final boolean createIfNotExists,
+			final String name) {
+		return new SQLCreateTableQuery.Builder().createTable(temporary, createIfNotExists, name);
+	}
+
+	public static SQLCreateTableQuery.Builder createTable(final boolean createIfNotExists, final String name) {
+		return createTable(false, createIfNotExists, name);
+	}
+
+	public static SQLCreateTableQuery.Builder createTable(final String name) {
+		return createTable(false, false, name);
 	}
 
 	public static SQLCreateViewQuery.Builder createView(final boolean temporary, final boolean createIfNotExists,
@@ -46,8 +67,20 @@ public class SQLQueryBuilder {
 		return createView(false, createIfNotExists, name);
 	}
 
+	public static SQLCreateViewQuery.Builder createView(final String name) {
+		return createView(false, false, name);
+	}
+
 	public static SQLDropQuery drop(final String table) {
 		return new SQLDropQuery(table);
+	}
+
+	public static SQLInsertIntoQuery.Builder insertInto(final OnConflict onConflict, final String table) {
+		return new SQLInsertIntoQuery.Builder().insertInto(onConflict, table);
+	}
+
+	public static SQLInsertIntoQuery.Builder insertInto(final String table) {
+		return insertInto(null, table);
 	}
 
 	public static SQLSelectQuery.Builder select(final boolean distinct, final Selectable select) {
