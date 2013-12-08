@@ -131,7 +131,6 @@ public final class TwidereSQLiteOpenHelper extends SQLiteOpenHelper implements C
 		accountsAlias.put(Accounts.SIGNING_OAUTH_BASE_URL, "oauth_rest_base_url");
 		accountsAlias.put(Accounts.COLOR, "user_color");
 		accountsAlias.put(Accounts.OAUTH_TOKEN_SECRET, "token_secret");
-		filtersAlias.put(Filters.VALUE, "text");
 		draftsAlias.put(Drafts.MEDIA_URI, "image_uri");
 		draftsAlias.put(Drafts.MEDIA_TYPE, "attached_image_type");
 		safeUpgrade(db, Accounts.TABLE_NAME, Accounts.COLUMNS, Accounts.TYPES, false, accountsAlias);
@@ -141,7 +140,7 @@ public final class TwidereSQLiteOpenHelper extends SQLiteOpenHelper implements C
 		safeUpgrade(db, CachedUsers.TABLE_NAME, CachedUsers.COLUMNS, CachedUsers.TYPES, true, null);
 		safeUpgrade(db, CachedStatuses.TABLE_NAME, CachedStatuses.COLUMNS, CachedStatuses.TYPES, true, null);
 		safeUpgrade(db, CachedHashtags.TABLE_NAME, CachedHashtags.COLUMNS, CachedHashtags.TYPES, true, null);
-		safeUpgrade(db, Filters.Users.TABLE_NAME, Filters.Users.COLUMNS, Filters.Users.TYPES, false, filtersAlias);
+		safeUpgrade(db, Filters.Users.TABLE_NAME, Filters.Users.COLUMNS, Filters.Users.TYPES, true, null);
 		safeUpgrade(db, Filters.Keywords.TABLE_NAME, Filters.Keywords.COLUMNS, Filters.Keywords.TYPES, false,
 				filtersAlias);
 		safeUpgrade(db, Filters.Sources.TABLE_NAME, Filters.Sources.COLUMNS, Filters.Sources.TYPES, false, filtersAlias);
