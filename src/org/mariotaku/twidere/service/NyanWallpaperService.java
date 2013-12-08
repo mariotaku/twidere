@@ -18,6 +18,7 @@ import org.mariotaku.twidere.util.NyanSurfaceHelper;
 public class NyanWallpaperService extends WallpaperService implements Constants, OnSharedPreferenceChangeListener {
 
 	private NyanSurfaceHelper mHelper;
+
 	private SharedPreferences mPreferences;
 	private final BroadcastReceiver mScreenReceiver = new BroadcastReceiver() {
 
@@ -48,7 +49,7 @@ public class NyanWallpaperService extends WallpaperService implements Constants,
 
 	@Override
 	public Engine onCreateEngine() {
-		final Engine engine = new Engine();
+		final Engine engine = new NyanWallpaperEngine();
 		final SurfaceHolder holder = engine.getSurfaceHolder();
 		mHelper = new NyanSurfaceHelper(this);
 		holder.addCallback(mHelper);
@@ -80,6 +81,18 @@ public class NyanWallpaperService extends WallpaperService implements Constants,
 		} else {
 			mHelper.stop();
 		}
+	}
+
+	private final class NyanWallpaperEngine extends Engine {
+
+		@Override
+		public void onVisibilityChanged(final boolean visible) {
+			super.onVisibilityChanged(visible);
+			if (mHelper != null) {
+				mHelper.setSkipDrawing(!visible);
+			}
+		}
+
 	}
 
 }

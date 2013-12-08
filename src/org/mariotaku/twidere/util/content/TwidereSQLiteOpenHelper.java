@@ -28,7 +28,9 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import org.mariotaku.querybuilder.NewColumn;
 import org.mariotaku.querybuilder.SQLQueryBuilder;
+import org.mariotaku.querybuilder.query.SQLCreateTableQuery;
 import org.mariotaku.querybuilder.query.SQLCreateViewQuery;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
@@ -59,23 +61,24 @@ public final class TwidereSQLiteOpenHelper extends SQLiteOpenHelper implements C
 	@Override
 	public void onCreate(final SQLiteDatabase db) {
 		db.beginTransaction();
-		db.execSQL(createTable(TABLE_ACCOUNTS, Accounts.COLUMNS, Accounts.TYPES, true));
-		db.execSQL(createTable(TABLE_STATUSES, Statuses.COLUMNS, Statuses.TYPES, true));
-		db.execSQL(createTable(TABLE_MENTIONS, Mentions.COLUMNS, Mentions.TYPES, true));
-		db.execSQL(createTable(TABLE_DRAFTS, Drafts.COLUMNS, Drafts.TYPES, true));
-		db.execSQL(createTable(TABLE_CACHED_USERS, CachedUsers.COLUMNS, CachedUsers.TYPES, true));
-		db.execSQL(createTable(TABLE_CACHED_STATUSES, CachedStatuses.COLUMNS, CachedStatuses.TYPES, true));
-		db.execSQL(createTable(TABLE_CACHED_HASHTAGS, CachedHashtags.COLUMNS, CachedHashtags.TYPES, true));
-		db.execSQL(createTable(TABLE_FILTERED_USERS, Filters.Users.COLUMNS, Filters.Users.TYPES, true));
-		db.execSQL(createTable(TABLE_FILTERED_KEYWORDS, Filters.Keywords.COLUMNS, Filters.Keywords.TYPES, true));
-		db.execSQL(createTable(TABLE_FILTERED_SOURCES, Filters.Sources.COLUMNS, Filters.Sources.TYPES, true));
-		db.execSQL(createTable(TABLE_FILTERED_LINKS, Filters.Links.COLUMNS, Filters.Links.TYPES, true));
-		db.execSQL(createTable(TABLE_DIRECT_MESSAGES_INBOX, DirectMessages.Inbox.COLUMNS, DirectMessages.Inbox.TYPES,
-				true));
-		db.execSQL(createTable(TABLE_DIRECT_MESSAGES_OUTBOX, DirectMessages.Outbox.COLUMNS,
+		db.execSQL(createTable(Accounts.TABLE_NAME, Accounts.COLUMNS, Accounts.TYPES, true));
+		db.execSQL(createTable(Statuses.TABLE_NAME, Statuses.COLUMNS, Statuses.TYPES, true));
+		db.execSQL(createTable(Mentions.TABLE_NAME, Mentions.COLUMNS, Mentions.TYPES, true));
+		db.execSQL(createTable(Drafts.TABLE_NAME, Drafts.COLUMNS, Drafts.TYPES, true));
+		db.execSQL(createTable(CachedUsers.TABLE_NAME, CachedUsers.COLUMNS, CachedUsers.TYPES, true));
+		db.execSQL(createTable(CachedStatuses.TABLE_NAME, CachedStatuses.COLUMNS, CachedStatuses.TYPES, true));
+		db.execSQL(createTable(CachedHashtags.TABLE_NAME, CachedHashtags.COLUMNS, CachedHashtags.TYPES, true));
+		db.execSQL(createTable(Filters.Users.TABLE_NAME, Filters.Users.COLUMNS, Filters.Users.TYPES, true));
+		db.execSQL(createTable(Filters.Keywords.TABLE_NAME, Filters.Keywords.COLUMNS, Filters.Keywords.TYPES, true));
+		db.execSQL(createTable(Filters.Sources.TABLE_NAME, Filters.Sources.COLUMNS, Filters.Sources.TYPES, true));
+		db.execSQL(createTable(Filters.Links.TABLE_NAME, Filters.Links.COLUMNS, Filters.Links.TYPES, true));
+		db.execSQL(createTable(DirectMessages.Inbox.TABLE_NAME, DirectMessages.Inbox.COLUMNS,
+				DirectMessages.Inbox.TYPES, true));
+		db.execSQL(createTable(DirectMessages.Outbox.TABLE_NAME, DirectMessages.Outbox.COLUMNS,
 				DirectMessages.Outbox.TYPES, true));
-		db.execSQL(createTable(TABLE_TRENDS_LOCAL, CachedTrends.Local.COLUMNS, CachedTrends.Local.TYPES, true));
-		db.execSQL(createTable(TABLE_TABS, Tabs.COLUMNS, Tabs.TYPES, true));
+		db.execSQL(createTable(CachedTrends.Local.TABLE_NAME, CachedTrends.Local.COLUMNS, CachedTrends.Local.TYPES,
+				true));
+		db.execSQL(createTable(Tabs.TABLE_NAME, Tabs.COLUMNS, Tabs.TYPES, true));
 		db.execSQL(createDirectMessagesView().getSQL());
 		db.execSQL(createDirectMessageConversationEntriesView().getSQL());
 		db.setTransactionSuccessful();
@@ -101,7 +104,7 @@ public final class TwidereSQLiteOpenHelper extends SQLiteOpenHelper implements C
 					.getString(PREFERENCE_KEY_CONSUMER_SECRET, TWITTER_CONSUMER_SECRET);
 			values.put(Accounts.CONSUMER_KEY, trim(pref_consumer_key));
 			values.put(Accounts.CONSUMER_SECRET, trim(pref_consumer_secret));
-			db.update(TABLE_ACCOUNTS, values, null, null);
+			db.update(Accounts.TABLE_NAME, values, null, null);
 		}
 	}
 
@@ -126,50 +129,38 @@ public final class TwidereSQLiteOpenHelper extends SQLiteOpenHelper implements C
 		accountsAlias.put(Accounts.NAME, "username");
 		accountsAlias.put(Accounts.ACCOUNT_ID, "user_id");
 		accountsAlias.put(Accounts.SIGNING_OAUTH_BASE_URL, "oauth_rest_base_url");
+		accountsAlias.put(Accounts.COLOR, "user_color");
+		accountsAlias.put(Accounts.OAUTH_TOKEN_SECRET, "token_secret");
 		filtersAlias.put(Filters.VALUE, "text");
 		draftsAlias.put(Drafts.MEDIA_URI, "image_uri");
 		draftsAlias.put(Drafts.MEDIA_TYPE, "attached_image_type");
-		safeUpgrade(db, Accounts.TABLE_NAME, Accounts.COLUMNS, Accounts.TYPES, true, false, accountsAlias);
-		safeUpgrade(db, Statuses.TABLE_NAME, Statuses.COLUMNS, Statuses.TYPES, true, true, null);
-		safeUpgrade(db, TABLE_MENTIONS, Mentions.COLUMNS, Mentions.TYPES, true, true, null);
-		safeUpgrade(db, TABLE_DRAFTS, Drafts.COLUMNS, Drafts.TYPES, true, false, draftsAlias);
-		safeUpgrade(db, TABLE_CACHED_USERS, CachedUsers.COLUMNS, CachedUsers.TYPES, true, true, null);
-		safeUpgrade(db, TABLE_CACHED_STATUSES, CachedStatuses.COLUMNS, CachedStatuses.TYPES, true, true, null);
-		safeUpgrade(db, TABLE_CACHED_HASHTAGS, CachedHashtags.COLUMNS, CachedHashtags.TYPES, true, true, null);
-		safeUpgrade(db, TABLE_FILTERED_USERS, Filters.Users.COLUMNS, Filters.Users.TYPES, true, false, filtersAlias);
-		safeUpgrade(db, TABLE_FILTERED_KEYWORDS, Filters.Keywords.COLUMNS, Filters.Keywords.TYPES, true, false,
+		safeUpgrade(db, Accounts.TABLE_NAME, Accounts.COLUMNS, Accounts.TYPES, false, accountsAlias);
+		safeUpgrade(db, Statuses.TABLE_NAME, Statuses.COLUMNS, Statuses.TYPES, true, null);
+		safeUpgrade(db, Mentions.TABLE_NAME, Mentions.COLUMNS, Mentions.TYPES, true, null);
+		safeUpgrade(db, Drafts.TABLE_NAME, Drafts.COLUMNS, Drafts.TYPES, false, draftsAlias);
+		safeUpgrade(db, CachedUsers.TABLE_NAME, CachedUsers.COLUMNS, CachedUsers.TYPES, true, null);
+		safeUpgrade(db, CachedStatuses.TABLE_NAME, CachedStatuses.COLUMNS, CachedStatuses.TYPES, true, null);
+		safeUpgrade(db, CachedHashtags.TABLE_NAME, CachedHashtags.COLUMNS, CachedHashtags.TYPES, true, null);
+		safeUpgrade(db, Filters.Users.TABLE_NAME, Filters.Users.COLUMNS, Filters.Users.TYPES, false, filtersAlias);
+		safeUpgrade(db, Filters.Keywords.TABLE_NAME, Filters.Keywords.COLUMNS, Filters.Keywords.TYPES, false,
 				filtersAlias);
-		safeUpgrade(db, TABLE_FILTERED_SOURCES, Filters.Sources.COLUMNS, Filters.Sources.TYPES, true, false,
-				filtersAlias);
-		safeUpgrade(db, TABLE_FILTERED_LINKS, Filters.Links.COLUMNS, Filters.Links.TYPES, true, false, filtersAlias);
-		safeUpgrade(db, TABLE_DIRECT_MESSAGES_INBOX, DirectMessages.Inbox.COLUMNS, DirectMessages.Inbox.TYPES, true,
+		safeUpgrade(db, Filters.Sources.TABLE_NAME, Filters.Sources.COLUMNS, Filters.Sources.TYPES, false, filtersAlias);
+		safeUpgrade(db, Filters.Links.TABLE_NAME, Filters.Links.COLUMNS, Filters.Links.TYPES, false, filtersAlias);
+		safeUpgrade(db, DirectMessages.Inbox.TABLE_NAME, DirectMessages.Inbox.COLUMNS, DirectMessages.Inbox.TYPES,
 				true, null);
-		safeUpgrade(db, TABLE_DIRECT_MESSAGES_OUTBOX, DirectMessages.Outbox.COLUMNS, DirectMessages.Outbox.TYPES, true,
+		safeUpgrade(db, DirectMessages.Outbox.TABLE_NAME, DirectMessages.Outbox.COLUMNS, DirectMessages.Outbox.TYPES,
 				true, null);
-		safeUpgrade(db, TABLE_TRENDS_LOCAL, CachedTrends.Local.COLUMNS, CachedTrends.Local.TYPES, true, true, null);
-		safeUpgrade(db, TABLE_TABS, Tabs.COLUMNS, Tabs.TYPES, true, false, null);
+		safeUpgrade(db, CachedTrends.Local.TABLE_NAME, CachedTrends.Local.COLUMNS, CachedTrends.Local.TYPES, true, null);
+		safeUpgrade(db, Tabs.TABLE_NAME, Tabs.COLUMNS, Tabs.TYPES, false, null);
 		db.execSQL(createDirectMessagesView().getSQL());
 		db.execSQL(createDirectMessageConversationEntriesView().getSQL());
 	}
 
 	private static String createTable(final String tableName, final String[] columns, final String[] types,
-			final boolean create_if_not_exists) {
-		if (tableName == null || columns == null || types == null || types.length != columns.length
-				|| types.length == 0)
-			throw new IllegalArgumentException("Invalid parameters for creating table " + tableName);
-		final StringBuilder stringBuilder = new StringBuilder(create_if_not_exists ? "CREATE TABLE IF NOT EXISTS "
-				: "CREATE TABLE ");
-
-		stringBuilder.append(tableName);
-		stringBuilder.append(" (");
-		final int length = columns.length;
-		for (int n = 0, i = length; n < i; n++) {
-			if (n > 0) {
-				stringBuilder.append(", ");
-			}
-			stringBuilder.append(columns[n]).append(' ').append(types[n]);
-		}
-		return stringBuilder.append(");").toString();
+			final boolean createIfNotExists) {
+		final SQLCreateTableQuery.Builder qb = SQLQueryBuilder.createTable(createIfNotExists, tableName);
+		qb.columns(NewColumn.createNewColumns(columns, types));
+		return qb.buildSQL();
 	}
 
 }

@@ -117,14 +117,19 @@ public class SQLSelectQuery implements Selectable {
 		initCurrentQuery();
 	}
 
-	public static final class Builder {
-
+	public static final class Builder implements IBuilder<SQLSelectQuery> {
 		private boolean buildCalled;
 		private final SQLSelectQuery query = new SQLSelectQuery();
 
+		@Override
 		public SQLSelectQuery build() {
 			buildCalled = true;
 			return query;
+		}
+
+		@Override
+		public String buildSQL() {
+			return build().getSQL();
 		}
 
 		public Builder from(final Selectable from) {

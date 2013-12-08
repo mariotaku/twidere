@@ -123,7 +123,7 @@ public class AccountsAdapter extends SimpleCursorAdapter implements Constants {
 	public Cursor swapCursor(final Cursor cursor) {
 		if (cursor != null) {
 			mAccountIdIdx = cursor.getColumnIndex(Accounts.ACCOUNT_ID);
-			mUserColorIdx = cursor.getColumnIndex(Accounts.USER_COLOR);
+			mUserColorIdx = cursor.getColumnIndex(Accounts.COLOR);
 			mProfileImageIdx = cursor.getColumnIndex(Accounts.PROFILE_IMAGE_URL);
 			mScreenNameIdx = cursor.getColumnIndex(Accounts.SCREEN_NAME);
 		}

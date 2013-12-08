@@ -19,18 +19,6 @@
 package org.mariotaku.twidere;
 
 import org.mariotaku.twidere.annotation.PreferenceType;
-import org.mariotaku.twidere.provider.TweetStore;
-import org.mariotaku.twidere.provider.TweetStore.Accounts;
-import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
-import org.mariotaku.twidere.provider.TweetStore.CachedStatuses;
-import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
-import org.mariotaku.twidere.provider.TweetStore.CachedUsers;
-import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
-import org.mariotaku.twidere.provider.TweetStore.Drafts;
-import org.mariotaku.twidere.provider.TweetStore.Filters;
-import org.mariotaku.twidere.provider.TweetStore.Mentions;
-import org.mariotaku.twidere.provider.TweetStore.Statuses;
-import org.mariotaku.twidere.provider.TweetStore.Tabs;
 
 /**
  * Public constants for both Twidere app and its extensions
@@ -375,7 +363,6 @@ public interface TwidereConstants {
 	public static final String BROADCAST_USER_LIST_UNSUBSCRIBED = INTENT_PACKAGE_PREFIX + "USER_LIST_UNSUBSCRIBED";
 	public static final String BROADCAST_USER_LIST_CREATED = INTENT_PACKAGE_PREFIX + "USER_LIST_CREATED";
 	public static final String BROADCAST_USER_LIST_DELETED = INTENT_PACKAGE_PREFIX + "USER_LIST_DELETED";
-	public static final String BROADCAST_TABS_UPDATED = INTENT_PACKAGE_PREFIX + "TABS_UPDATED";
 	public static final String BROADCAST_FILTERS_UPDATED = INTENT_PACKAGE_PREFIX + "FILTERS_UPDATED";
 	public static final String BROADCAST_REFRESH_HOME_TIMELINE = INTENT_PACKAGE_PREFIX + "REFRESH_HOME_TIMELINE";
 	public static final String BROADCAST_REFRESH_MENTIONS = INTENT_PACKAGE_PREFIX + "REFRESH_MENTIONS";
@@ -483,6 +470,7 @@ public interface TwidereConstants {
 	public static final String EXTRA_ALPHA_SLIDER = "alpha_slider";
 	public static final String EXTRA_OPEN_ACCOUNTS_DRAWER = "open_accounts_drawer";
 	public static final String EXTRA_RECIPIENT_ID = "recipient_id";
+	public static final String EXTRA_OFFICIAL_KEY_ONLY = "official_key_only";
 
 	public static final int MENU_GROUP_STATUS_EXTENSION = 10;
 	public static final int MENU_GROUP_COMPOSE_EXTENSION = 11;
@@ -507,29 +495,6 @@ public interface TwidereConstants {
 	public static final int REQUEST_SELECT_USER = 16;
 	public static final int REQUEST_SELECT_USER_LIST = 17;
 	public static final int REQUEST_SWIPEBACK_ACTIVITY = 101;
-
-	public static final String TABLE_ACCOUNTS = Accounts.TABLE_NAME;
-	public static final String TABLE_STATUSES = Statuses.TABLE_NAME;
-	public static final String TABLE_MENTIONS = Mentions.TABLE_NAME;
-	public static final String TABLE_DRAFTS = Drafts.TABLE_NAME;
-	public static final String TABLE_CACHED_HASHTAGS = CachedHashtags.TABLE_NAME;
-	public static final String TABLE_CACHED_USERS = CachedUsers.TABLE_NAME;
-	public static final String TABLE_CACHED_STATUSES = CachedStatuses.TABLE_NAME;
-	public static final String TABLE_FILTERED_USERS = Filters.Users.TABLE_NAME;
-	public static final String TABLE_FILTERED_KEYWORDS = Filters.Keywords.TABLE_NAME;
-	public static final String TABLE_FILTERED_SOURCES = Filters.Sources.TABLE_NAME;
-	public static final String TABLE_FILTERED_LINKS = Filters.Links.TABLE_NAME;
-	public static final String TABLE_DIRECT_MESSAGES_INBOX = DirectMessages.Inbox.TABLE_NAME;
-	public static final String TABLE_DIRECT_MESSAGES_OUTBOX = DirectMessages.Outbox.TABLE_NAME;
-	public static final String TABLE_DIRECT_MESSAGE = DirectMessages.TABLE_NAME;
-	public static final String TABLE_TRENDS_LOCAL = CachedTrends.Local.TABLE_NAME;
-	public static final String TABLE_TABS = Tabs.TABLE_NAME;
-	public static final String TABLE_NOTIFICATIONS = TweetStore.Notifications.TABLE_NAME;
-	public static final String TABLE_PREFERENCES = TweetStore.Preferences.TABLE_NAME;
-	public static final String TABLE_PERMISSIONS = TweetStore.Permissions.TABLE_NAME;
-	public static final String TABLE_DNS = TweetStore.DNS.TABLE_NAME;
-	public static final String TABLE_CACHED_IMAGES = TweetStore.CachedImages.TABLE_NAME;
-	public static final String TABLE_CACHE_FILES = TweetStore.CacheFiles.TABLE_NAME;
 
 	public static final int TABLE_ID_ACCOUNTS = 1;
 	public static final int TABLE_ID_STATUSES = 12;

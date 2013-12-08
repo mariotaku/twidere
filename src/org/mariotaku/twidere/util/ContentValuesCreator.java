@@ -56,7 +56,7 @@ public final class ContentValuesCreator implements TwidereConstants {
 				if (access_token == null) return null;
 				if (user.getId() != access_token.getUserId()) return null;
 				values.put(Accounts.OAUTH_TOKEN, access_token.getToken());
-				values.put(Accounts.TOKEN_SECRET, access_token.getTokenSecret());
+				values.put(Accounts.OAUTH_TOKEN_SECRET, access_token.getTokenSecret());
 				values.put(Accounts.CONSUMER_KEY, conf.getOAuthConsumerKey());
 				values.put(Accounts.CONSUMER_SECRET, conf.getOAuthConsumerSecret());
 				break;
@@ -68,7 +68,7 @@ public final class ContentValuesCreator implements TwidereConstants {
 		values.put(Accounts.NAME, user.getName());
 		values.put(Accounts.PROFILE_IMAGE_URL, ParseUtils.parseString(user.getProfileImageUrlHttps()));
 		values.put(Accounts.PROFILE_BANNER_URL, ParseUtils.parseString(user.getProfileBannerImageUrl()));
-		values.put(Accounts.USER_COLOR, color);
+		values.put(Accounts.COLOR, color);
 		values.put(Accounts.IS_ACTIVATED, 1);
 		values.put(Accounts.REST_BASE_URL, conf.getRestBaseURL());
 		values.put(Accounts.SIGNING_REST_BASE_URL, conf.getSigningRestBaseURL());

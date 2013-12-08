@@ -24,6 +24,7 @@ import org.mariotaku.jsonserializer.JSONParcelable;
 
 import twitter4j.Activity;
 
+import java.util.Arrays;
 import java.util.Date;
 
 public class ParcelableActivity implements Comparable<ParcelableActivity>, JSONParcelable {
@@ -144,6 +145,17 @@ public class ParcelableActivity implements Comparable<ParcelableActivity>, JSONP
 		if (!(that instanceof ParcelableActivity)) return false;
 		final ParcelableActivity activity = (ParcelableActivity) that;
 		return max_position == activity.max_position && min_position == activity.min_position;
+	}
+
+	@Override
+	public String toString() {
+		return "ParcelableActivity{account_id=" + account_id + ", activity_timestamp=" + activity_timestamp
+				+ ", max_position=" + max_position + ", min_position=" + min_position + ", action=" + action
+				+ ", sources=" + Arrays.toString(sources) + ", target_users=" + Arrays.toString(target_users)
+				+ ", target_statuses=" + Arrays.toString(target_statuses) + ", target_user_lists="
+				+ Arrays.toString(target_user_lists) + ", target_object_user_lists="
+				+ Arrays.toString(target_object_user_lists) + ", target_object_statuses="
+				+ Arrays.toString(target_object_statuses) + "}";
 	}
 
 	@Override

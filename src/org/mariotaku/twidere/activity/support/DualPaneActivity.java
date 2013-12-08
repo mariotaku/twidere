@@ -95,41 +95,30 @@ public class DualPaneActivity extends BaseSupportActivity implements OnBackStack
 
 	@Override
 	public void onBackStackChanged() {
-		if (isDualPaneMode()) {
-			final FragmentManager fm = getSupportFragmentManager();
-			final int count = fm.getBackStackEntryCount();
-			final Fragment left_pane_fragment = fm.findFragmentById(PANE_LEFT);
-			final Fragment right_pane_fragment = fm.findFragmentById(PANE_RIGHT);
-			final View main_view = findViewById(getMainViewId());
-			final boolean left_pane_used = left_pane_fragment != null && left_pane_fragment.isAdded();
-			final boolean right_pane_used = right_pane_fragment != null && right_pane_fragment.isAdded();
-			if (count > 0) {
-				final BackStackEntry entry = fm.getBackStackEntryAt(count - 1);
-				if (entry == null) return;
-				final Fragment fragment = BackStackEntryTrojan.getFragmentInBackStackRecord(entry);
-				if (fragment instanceof Panes.Right) {
-					showRightPane();
-				} else if (fragment instanceof Panes.Left) {
-					showLeftPane();
-				}
-			} else {
-				if (fm.findFragmentById(getMainViewId()) != null || left_pane_used) {
-					showLeftPane();
-				} else if (right_pane_used) {
-					showRightPane();
-				}
+		if (!isDualPaneMode()) return;
+		final FragmentManager fm = getSupportFragmentManager();
+		final int count = fm.getBackStackEntryCount();
+		final Fragment leftPaneFragment = fm.findFragmentById(PANE_LEFT);
+		final Fragment rightPaneFragment = fm.findFragmentById(PANE_RIGHT);
+		final boolean leftPaneUsed = leftPaneFragment != null && leftPaneFragment.isAdded();
+		final boolean rightPaneUsed = rightPaneFragment != null && rightPaneFragment.isAdded();
+		if (count > 0) {
+			final BackStackEntry entry = fm.getBackStackEntryAt(count - 1);
+			if (entry == null) return;
+			final Fragment fragment = BackStackEntryTrojan.getFragmentInBackStackRecord(entry);
+			if (fragment instanceof Panes.Right) {
+				showRightPane();
+			} else if (fragment instanceof Panes.Left) {
+				showLeftPane();
 			}
-			if (main_view != null) {
-				final int visibility = left_pane_used ? View.GONE : View.VISIBLE;
-				// Visibility changed, so start animation.
-				if (main_view.getVisibility() != visibility) {
-					final Animation anim = AnimationUtils.loadAnimation(this, left_pane_used ? android.R.anim.fade_out
-							: android.R.anim.fade_in);
-					main_view.startAnimation(anim);
-				}
-				main_view.setVisibility(visibility);
+		} else {
+			if (fm.findFragmentById(getMainViewId()) != null || leftPaneUsed) {
+				showLeftPane();
+			} else if (rightPaneUsed) {
+				showRightPane();
 			}
 		}
+		updateMainViewVisibility();
 	}
 
 	@Override
@@ -231,13 +220,7 @@ public class DualPaneActivity extends BaseSupportActivity implements OnBackStack
 		final FragmentManager fm = getSupportFragmentManager();
 		fm.addOnBackStackChangedListener(this);
 		if (savedInstanceState != null) {
-			final Fragment left_pane_fragment = fm.findFragmentById(PANE_LEFT);
-			final View main_view = findViewById(R.id.main);
-			final boolean left_pane_used = left_pane_fragment != null && left_pane_fragment.isAdded();
-			if (main_view != null) {
-				final int visibility = left_pane_used ? View.GONE : View.VISIBLE;
-				main_view.setVisibility(visibility);
-			}
+			updateMainViewVisibility();
 		}
 	}
 
@@ -275,5 +258,23 @@ public class DualPaneActivity extends BaseSupportActivity implements OnBackStack
 
 	protected boolean shouldForceEnableDualPaneMode() {
 		return false;
+	}
+
+	private void updateMainViewVisibility() {
+		if (!isDualPaneMode()) return;
+		final FragmentManager fm = getSupportFragmentManager();
+		final Fragment leftPaneFragment = fm.findFragmentById(PANE_LEFT);
+		final boolean leftPaneUsed = leftPaneFragment != null && leftPaneFragment.isAdded();
+		final View mainView = findViewById(getMainViewId());
+		if (mainView != null) {
+			final int visibility = leftPaneUsed ? View.GONE : View.VISIBLE;
+			// Visibility changed, so start animation.
+			if (mainView.getVisibility() != visibility) {
+				final Animation anim = AnimationUtils.loadAnimation(this, leftPaneUsed ? android.R.anim.fade_out
+						: android.R.anim.fade_in);
+				mainView.startAnimation(anim);
+			}
+			mainView.setVisibility(visibility);
+		}
 	}
 }

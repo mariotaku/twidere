@@ -4,12 +4,15 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
 import android.service.dreams.DreamService;
+import android.view.View;
+import android.view.View.OnSystemUiVisibilityChangeListener;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.view.NyanDaydreamView;
 
-public class NyanDaydreamService extends DreamService implements Constants, OnSharedPreferenceChangeListener {
+public class NyanDaydreamService extends DreamService implements Constants, OnSharedPreferenceChangeListener,
+		OnSystemUiVisibilityChangeListener {
 
 	private NyanDaydreamView mNyanDaydreamView;
 	private SharedPreferences mPreferences;
@@ -18,6 +21,7 @@ public class NyanDaydreamService extends DreamService implements Constants, OnSh
 	public void onAttachedToWindow() {
 		super.onAttachedToWindow();
 		setContentView(R.layout.nyan_daydream);
+		mNyanDaydreamView.setOnSystemUiVisibilityChangeListener(this);
 		updateView();
 	}
 
@@ -40,6 +44,13 @@ public class NyanDaydreamService extends DreamService implements Constants, OnSh
 	public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
 		if (PREFERENCE_KEY_LIVE_WALLPAPER_SCALE.equals(key)) {
 			updateView();
+		}
+	}
+
+	@Override
+	public void onSystemUiVisibilityChange(final int visibility) {
+		if ((visibility & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) == 0) {
+			finish();
 		}
 	}
 

@@ -18,6 +18,12 @@ public final class NyanSurfaceHelper implements SurfaceHolder.Callback {
 		mNyanDrawingHelper.setScale(scale);
 	}
 
+	public void setSkipDrawing(final boolean skipDrawing) {
+		if (mThread != null) {
+			mThread.setSkipDrawing(skipDrawing);
+		}
+	}
+
 	public void start() {
 		if (mThread != null || mHolder == null) return;
 		mThread = new DrawingThread(mHolder, mNyanDrawingHelper);
@@ -53,6 +59,7 @@ public final class NyanSurfaceHelper implements SurfaceHolder.Callback {
 		private final SurfaceHolder mHolder;
 		private final NyanDrawingHelper mHelper;
 		private boolean mCancelled;
+		private boolean mSkipDrawing;
 
 		DrawingThread(final SurfaceHolder holder, final NyanDrawingHelper helper) {
 			mHolder = holder;
@@ -77,7 +84,12 @@ public final class NyanSurfaceHelper implements SurfaceHolder.Callback {
 			}
 		}
 
+		public void setSkipDrawing(final boolean skipDrawing) {
+			mSkipDrawing = skipDrawing;
+		}
+
 		private void drawFrame() {
+			if (mSkipDrawing) return;
 			final Canvas c = mHolder.lockCanvas();
 			if (c == null) return;
 			if (mHelper != null) {

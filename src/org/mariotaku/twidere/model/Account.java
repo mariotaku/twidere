@@ -26,6 +26,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.util.content.ContentResolverUtils;
 
 import java.util.ArrayList;
@@ -130,18 +131,31 @@ public class Account implements Parcelable {
 		return null;
 	}
 
-	public static List<Account> getAccounts(final Context context, final boolean activated_only) {
+	public static List<Account> getAccounts(final Context context, final boolean activatedOnly) {
+		return getAccounts(context, activatedOnly, false);
+	}
+
+	public static List<Account> getAccounts(final Context context, final boolean activatedOnly,
+			final boolean officialKeyOnly) {
 		if (context == null) {
 			Collections.emptyList();
 		}
 		final ArrayList<Account> accounts = new ArrayList<Account>();
 		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI,
-				Accounts.COLUMNS, activated_only ? Accounts.IS_ACTIVATED + " = 1" : null, null, null);
+				Accounts.COLUMNS, activatedOnly ? Accounts.IS_ACTIVATED + " = 1" : null, null, null);
 		if (cur != null) {
 			final Indices indices = new Indices(cur);
 			cur.moveToFirst();
 			while (!cur.isAfterLast()) {
-				accounts.add(new Account(cur, indices));
+				if (!officialKeyOnly) {
+					accounts.add(new Account(cur, indices));
+				} else {
+					final String consumerKey = cur.getString(indices.consumer_key);
+					final String consumerSecret = cur.getString(indices.consumer_secret);
+					if (Utils.isOfficialConsumerKeySecret(context, consumerKey, consumerSecret)) {
+						accounts.add(new Account(cur, indices));
+					}
+				}
 				cur.moveToNext();
 			}
 			cur.close();
@@ -149,10 +163,10 @@ public class Account implements Parcelable {
 		return accounts;
 	}
 
-	public static class Indices {
+	public static final class Indices {
 
 		public final int screen_name, name, account_id, profile_image_url, profile_banner_url, user_color,
-				is_activated;
+				is_activated, consumer_key, consumer_secret;
 
 		public Indices(final Cursor cursor) {
 			screen_name = cursor.getColumnIndex(Accounts.SCREEN_NAME);
@@ -160,8 +174,10 @@ public class Account implements Parcelable {
 			account_id = cursor.getColumnIndex(Accounts.ACCOUNT_ID);
 			profile_image_url = cursor.getColumnIndex(Accounts.PROFILE_IMAGE_URL);
 			profile_banner_url = cursor.getColumnIndex(Accounts.PROFILE_BANNER_URL);
-			user_color = cursor.getColumnIndex(Accounts.USER_COLOR);
+			user_color = cursor.getColumnIndex(Accounts.COLOR);
 			is_activated = cursor.getColumnIndex(Accounts.IS_ACTIVATED);
+			consumer_key = cursor.getColumnIndex(Accounts.CONSUMER_KEY);
+			consumer_secret = cursor.getColumnIndex(Accounts.CONSUMER_SECRET);
 		}
 
 		@Override

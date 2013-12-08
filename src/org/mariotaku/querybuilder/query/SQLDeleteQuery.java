@@ -22,14 +22,19 @@ public class SQLDeleteQuery implements SQLLang {
 		this.where = where;
 	}
 
-	public static final class Builder {
-
+	public static final class Builder implements IBuilder<SQLDeleteQuery> {
 		private boolean buildCalled;
 		private final SQLDeleteQuery query = new SQLDeleteQuery();
 
+		@Override
 		public SQLDeleteQuery build() {
 			buildCalled = true;
 			return query;
+		}
+
+		@Override
+		public String buildSQL() {
+			return build().getSQL();
 		}
 
 		public Builder from(final String table) {

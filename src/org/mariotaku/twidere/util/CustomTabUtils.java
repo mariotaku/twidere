@@ -69,11 +69,9 @@ public class CustomTabUtils implements Constants {
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_ACTIVITIES_ABOUT_ME, new CustomTabConfiguration(
 				ActivitiesAboutMeFragment.class, R.string.activities_about_me, R.drawable.ic_tab_person,
 				CustomTabConfiguration.ACCOUNT_REQUIRED, CustomTabConfiguration.FIELD_TYPE_NONE, 8));
-		if (Utils.isDebugBuild()) {
-			CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_ACTIVITIES_BY_FRIENDS, new CustomTabConfiguration(
-					ActivitiesByFriendsFragment.class, R.string.activities_by_friends, R.drawable.ic_tab_accounts,
-					CustomTabConfiguration.ACCOUNT_REQUIRED, CustomTabConfiguration.FIELD_TYPE_NONE, 9));
-		}
+		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_ACTIVITIES_BY_FRIENDS, new CustomTabConfiguration(
+				ActivitiesByFriendsFragment.class, R.string.activities_by_friends, R.drawable.ic_tab_accounts,
+				CustomTabConfiguration.ACCOUNT_REQUIRED, CustomTabConfiguration.FIELD_TYPE_NONE, 9));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_STAGGERED_HOME_TIMELINE, new CustomTabConfiguration(
 				MultiColumnHomeTimelineFragment.class, R.string.staggered_home_timeline, R.drawable.ic_tab_staggered,
 				CustomTabConfiguration.ACCOUNT_OPTIONAL, CustomTabConfiguration.FIELD_TYPE_NONE, 10, false));

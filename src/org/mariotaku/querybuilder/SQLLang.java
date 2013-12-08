@@ -29,5 +29,10 @@ package org.mariotaku.querybuilder;
 
 public interface SQLLang extends Cloneable {
 
+	/**
+	 * Build SQL query string
+	 * 
+	 * @return SQL query
+	 */
 	public String getSQL();
 }

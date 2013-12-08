@@ -26,20 +26,18 @@ import static org.mariotaku.twidere.util.CustomTabUtils.getTabTypeName;
 import static org.mariotaku.twidere.util.CustomTabUtils.isTabAdded;
 import static org.mariotaku.twidere.util.CustomTabUtils.isTabTypeValid;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
-import static org.mariotaku.twidere.util.Utils.isOfficialConsumerKeySecret;
 
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
-import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.Loader;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -69,6 +67,8 @@ import org.mariotaku.twidere.model.CustomTabConfiguration;
 import org.mariotaku.twidere.model.CustomTabConfiguration.CustomTabConfigurationComparator;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.provider.TweetStore.Tabs;
+import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.view.holder.TwoLineWithIconViewHolder;
 
 import java.util.ArrayList;
@@ -87,20 +87,6 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 	private PopupMenu mPopupMenu;
 
 	private CustomTabsAdapter mAdapter;
-
-	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(final Context context, final Intent intent) {
-			if (getActivity() == null || !isAdded() || isDetached()) return;
-			final String action = intent.getAction();
-			if (BROADCAST_TABS_UPDATED.equals(action)) {
-				getLoaderManager().restartLoader(0, null, CustomTabsFragment.this);
-				invalidateOptionsMenu();
-			}
-		}
-
-	};
 
 	@Override
 	public boolean onActionItemClicked(final ActionMode mode, final MenuItem item) {
@@ -242,7 +228,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 	@Override
 	public void onPrepareOptionsMenu(final Menu menu) {
 		final Resources res = getResources();
-		final boolean is_official_key_secret = isOfficialConsumerKeySecret(getActivity());
+		final boolean hasOfficialKeyAccounts = Utils.hasAccountSignedWithOfficialKeys(getActivity());
 		final long[] account_ids = getAccountIds(getActivity());
 		final MenuItem itemAdd = menu.findItem(R.id.add_submenu);
 		if (itemAdd != null && itemAdd.hasSubMenu()) {
@@ -252,31 +238,36 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 			final List<Entry<String, CustomTabConfiguration>> tabs = new ArrayList<Entry<String, CustomTabConfiguration>>(
 					map.entrySet());
 			Collections.sort(tabs, CustomTabConfigurationComparator.SINGLETON);
+			final boolean isLightActionBar = ThemeUtils.isLightActionBar(getActivity());
+			final int actionIconColor = ThemeUtils.getActionIconColor(getActivity());
 			for (final Entry<String, CustomTabConfiguration> entry : tabs) {
 				final String type = entry.getKey();
 				final CustomTabConfiguration conf = entry.getValue();
+
+				final boolean isOfficiakKeyAccountRequired = TAB_TYPE_ACTIVITIES_ABOUT_ME.equals(type)
+						|| TAB_TYPE_ACTIVITIES_BY_FRIENDS.equals(type);
+				final boolean accountIdRequired = conf.getAccountRequirement() == CustomTabConfiguration.ACCOUNT_REQUIRED;
+
 				final Intent intent = new Intent(INTENT_ACTION_ADD_TAB);
 				intent.setClass(getActivity(), CustomTabEditorActivity.class);
 				intent.putExtra(EXTRA_TYPE, type);
+				intent.putExtra(EXTRA_OFFICIAL_KEY_ONLY, isOfficiakKeyAccountRequired);
+
 				final MenuItem subItem = subMenu.add(conf.getDefaultTitle());
-				final boolean is_activities_tab = TAB_TYPE_ACTIVITIES_ABOUT_ME.equals(type)
-						|| TAB_TYPE_ACTIVITIES_BY_FRIENDS.equals(type);
-				final boolean account_id_required = conf.getAccountRequirement() == CustomTabConfiguration.ACCOUNT_REQUIRED;
-				final boolean should_disable = conf.isSingleTab() && isTabAdded(getActivity(), type)
-						|| is_activities_tab && !is_official_key_secret || account_id_required
+				final boolean shouldDisable = conf.isSingleTab() && isTabAdded(getActivity(), type)
+						|| isOfficiakKeyAccountRequired && !hasOfficialKeyAccounts || accountIdRequired
 						&& account_ids.length == 0;
-				subItem.setVisible(!should_disable);
-				subItem.setEnabled(!should_disable);
-				subItem.setIcon(new DropShadowDrawable(res, res.getDrawable(conf.getDefaultIcon()), 2, 0x80000000));
+				subItem.setVisible(!shouldDisable);
+				subItem.setEnabled(!shouldDisable);
+				final Drawable icon = res.getDrawable(conf.getDefaultIcon());
+				if (icon != null && isLightActionBar) {
+					icon.mutate();
+					icon.setColorFilter(actionIconColor, PorterDuff.Mode.SRC_ATOP);
+				}
+				subItem.setIcon(icon);
 				subItem.setIntent(intent);
 			}
 		}
-	}
-
-	@Override
-	public void onStart() {
-		super.onStart();
-		registerReceiver(mStateReceiver, new IntentFilter(BROADCAST_TABS_UPDATED));
 	}
 
 	@Override
@@ -284,7 +275,11 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 		if (mPopupMenu != null) {
 			mPopupMenu.dismiss();
 		}
-		unregisterReceiver(mStateReceiver);
+		saveTabPositions();
+		super.onStop();
+	}
+
+	private void saveTabPositions() {
 		final ArrayList<Integer> positions = mAdapter.getCursorPositions();
 		final Cursor c = mAdapter.getCursor();
 		if (positions != null && c != null && !c.isClosed()) {
@@ -298,7 +293,6 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 				mResolver.update(Tabs.CONTENT_URI, values, where, null);
 			}
 		}
-		super.onStop();
 	}
 
 	private void updateTitle(final ActionMode mode) {
@@ -314,7 +308,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 		private CursorIndices mIndices;
 
 		public CustomTabsAdapter(final Context context) {
-			super(context, R.layout.custom_tab_list_item, null, new String[0], new int[0], 0);
+			super(context, R.layout.list_item_custom_tab, null, new String[0], new int[0], 0);
 			mContext = context;
 		}
 

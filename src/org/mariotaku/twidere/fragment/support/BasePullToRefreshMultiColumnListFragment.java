@@ -134,12 +134,14 @@ public abstract class BasePullToRefreshMultiColumnListFragment extends BaseSuppo
 		final Options.Builder builder = new Options.Builder();
 		builder.scrollDistance(DEFAULT_PULL_TO_REFRESH_SCROLL_DISTANCE);
 		builder.headerTransformer(new TwidereHeaderTransformer());
-		final SetupWizard wizard = ActionBarPullToRefresh.from(getActivity());
-		wizard.allChildrenArePullable();
-		wizard.useViewDelegate(MultiColumnListView.class, new PLAAbsListViewDelegate());
-		wizard.listener(this);
-		wizard.options(builder.build());
-		wizard.setup(mPullToRefreshLayout);
+		if (!isDetached() && getActivity() != null) {
+			final SetupWizard wizard = ActionBarPullToRefresh.from(getActivity());
+			wizard.allChildrenArePullable();
+			wizard.useViewDelegate(MultiColumnListView.class, new PLAAbsListViewDelegate());
+			wizard.listener(this);
+			wizard.options(builder.build());
+			wizard.setup(mPullToRefreshLayout);
+		}
 		// ViewCompat.setOverScrollMode(lv, ViewCompat.OVER_SCROLL_NEVER);
 		lframe.addView(plv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.MATCH_PARENT));

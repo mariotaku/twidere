@@ -147,14 +147,15 @@ public class StatusViewHolder extends CardViewHolder {
 		time.setCompoundDrawablesWithIntrinsicBounds(0, 0, res, 0);
 	}
 
-	public void setTextSize(final float text_size) {
-		if (this.text_size == text_size) return;
+	public boolean setTextSize(final float text_size) {
+		if (this.text_size == text_size) return false;
 		this.text_size = text_size;
 		text.setTextSize(text_size);
 		name.setTextSize(text_size);
 		screen_name.setTextSize(text_size * 0.75f);
 		time.setTextSize(text_size * 0.65f);
 		reply_retweet_status.setTextSize(text_size * 0.65f);
+		return true;
 	}
 
 	public void setUserColor(final int color) {

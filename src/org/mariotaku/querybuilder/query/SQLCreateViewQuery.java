@@ -45,7 +45,7 @@ public class SQLCreateViewQuery implements SQLLang {
 		this.temporary = temporary;
 	}
 
-	public static final class Builder {
+	public static final class Builder implements IBuilder<SQLCreateViewQuery> {
 
 		private boolean buildCalled;
 
@@ -57,8 +57,14 @@ public class SQLCreateViewQuery implements SQLLang {
 			return this;
 		}
 
+		@Override
 		public SQLCreateViewQuery build() {
 			return query;
+		}
+
+		@Override
+		public String buildSQL() {
+			return build().getSQL();
 		}
 
 		public Builder createTemporaryView(final boolean createIfNotExists, final String name) {
