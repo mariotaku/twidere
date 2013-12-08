@@ -78,7 +78,9 @@ public final class DatabaseUpgradeHelper {
 		final SQLInsertIntoQuery.Builder qb = insertInto(OnConflict.REPLACE, table);
 		final List<String> newInsertColsList = new ArrayList<String>();
 		for (final String newCol : newCols) {
-			if (ArrayUtils.contains(oldCols, newCol) || colAliases.containsKey(newCol)) {
+			final String oldAliasedCol = colAliases.get(newCol);
+			if (ArrayUtils.contains(oldCols, newCol) || oldAliasedCol != null
+					&& ArrayUtils.contains(oldCols, oldAliasedCol)) {
 				newInsertColsList.add(newCol);
 			}
 		}
@@ -86,12 +88,12 @@ public final class DatabaseUpgradeHelper {
 		qb.columns(newInsertCols);
 		final Columns.Column[] oldDataCols = new Columns.Column[newInsertCols.length];
 		for (int i = 0, j = oldDataCols.length; i < j; i++) {
-			final String newColName = newInsertCols[i];
-			final String oldAliasedCol = colAliases.get(newColName);
+			final String newCol = newInsertCols[i];
+			final String oldAliasedCol = colAliases.get(newCol);
 			if (oldAliasedCol != null && ArrayUtils.contains(oldCols, oldAliasedCol)) {
-				oldDataCols[i] = new Columns.Column(oldAliasedCol, newColName);
+				oldDataCols[i] = new Columns.Column(oldAliasedCol, newCol);
 			} else {
-				oldDataCols[i] = new Columns.Column(newColName);
+				oldDataCols[i] = new Columns.Column(newCol);
 			}
 		}
 		final SQLSelectQuery.Builder selectOldBuilder = select(new Columns(oldDataCols));
