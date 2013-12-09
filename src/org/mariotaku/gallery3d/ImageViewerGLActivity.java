@@ -144,7 +144,7 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_image_viewer, menu);
 		// Locate MenuItem with ShareActionProvider
-		final MenuItem item = menu.findItem(R.id.share);
+		final MenuItem item = menu.findItem(MENU_SHARE);
 		// Fetch and store ShareActionProvider
 		mShareActionProvider = (ShareActionProvider) item.getActionProvider();
 		return true;
@@ -197,18 +197,17 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 			}
 			mImageFile = data.file;
 			mImageLoaded = true;
-			invalidateOptionsMenu();
 		} else {
 			mImageFile = null;
 			mImageLoaded = false;
-			invalidateOptionsMenu();
 			if (data != null) {
 				Utils.showErrorMessage(this, null, data.exception, true);
 			}
 		}
-		updateShareIntent();
 		mProgress.setVisibility(View.GONE);
 		mProgress.setProgress(0);
+		invalidateOptionsMenu();
+		updateShareIntent();
 	}
 
 	@Override

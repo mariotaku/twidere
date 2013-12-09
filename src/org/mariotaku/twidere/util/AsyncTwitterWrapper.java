@@ -753,7 +753,13 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		@Override
 		protected void onPostExecute(final SingleResponse<User> result) {
 			if (result != null && result.data != null) {
-				final String message = mContext.getString(R.string.followed_user, getUserName(mContext, result.data));
+				final User user = result.data;
+				final String message;
+				if (user.isProtected()) {
+					message = mContext.getString(R.string.sent_follow_request_to_user, getUserName(mContext, user));
+				} else {
+					message = mContext.getString(R.string.followed_user, getUserName(mContext, user));
+				}
 				mMessagesManager.showOkMessage(message, false);
 			} else {
 				mMessagesManager.showErrorMessage(R.string.action_following, result.exception, false);
@@ -2083,12 +2089,11 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 				}
 
 				// Delete all rows conflicting before new data inserted.
-				final StringBuilder deleteWhere = new StringBuilder();
-				deleteWhere.append(String.format("%s = %d", Statuses.ACCOUNT_ID, account_id));
-				deleteWhere.append(" AND ");
-				deleteWhere.append(Where.in(new Column(Statuses.STATUS_ID), new RawItemArray(statusIds)).getSQL());
+				final Where accountWhere = Where.equals(Statuses.ACCOUNT_ID, account_id);
+				final Where statusWhere = Where.in(new Column(Statuses.STATUS_ID), new RawItemArray(statusIds));
+				final String deleteWhere = Where.and(accountWhere, statusWhere).getSQL();
 				final Uri deleteUri = appendQueryParameters(uri, new NameValuePairImpl(QUERY_PARAM_NOTIFY, false));
-				final int rowsDeleted = mResolver.delete(deleteUri, deleteWhere.toString(), null);
+				final int rowsDeleted = mResolver.delete(deleteUri, deleteWhere, null);
 				// UCD
 				ProfilingUtil.profile(mContext, account_id,
 						"Download tweets, " + ArrayUtils.toString(statusIds, ',', true));

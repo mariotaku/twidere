@@ -137,7 +137,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 					final ContentValues values = new ContentValues();
 					values.put(Tabs.NAME, data.getStringExtra(EXTRA_NAME));
 					values.put(Tabs.ICON, data.getStringExtra(EXTRA_ICON));
-					final String where = String.format("%s = %d", Tabs._ID, data.getLongExtra(EXTRA_ID, -1));
+					final String where = Where.equals(Tabs._ID, data.getLongExtra(EXTRA_ID, -1)).getSQL();
 					mResolver.update(Tabs.CONTENT_URI, values, where, null);
 				}
 				break;

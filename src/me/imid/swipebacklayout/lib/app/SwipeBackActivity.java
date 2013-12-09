@@ -1,11 +1,13 @@
 package me.imid.swipebacklayout.lib.app;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
 
+@SuppressLint("Registered")
 public class SwipeBackActivity extends FragmentActivity implements SwipeBackActivityBase {
 	private SwipeBackActivityHelper mHelper;
 

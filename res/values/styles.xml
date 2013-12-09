@@ -160,9 +160,9 @@
 
 	<style name="SwipeBackLayout">
 		<item name="edgeSize">16dip</item>
-		<item name="shadowLeft">@drawable/shadow_left</item>
-		<item name="shadowRight">@drawable/shadow_right</item>
-		<item name="shadowBottom">@drawable/shadow_bottom</item>
+		<item name="shadowLeft">@drawable/swipeback_shadow_left</item>
+		<item name="shadowRight">@drawable/swipeback_shadow_right</item>
+		<item name="shadowBottom">@drawable/swipeback_shadow_bottom</item>
 		<item name="scalePercent">@fraction/swipeback_scale_exit</item>
 		<item name="scrimAlpha">0.75</item>
 	</style>

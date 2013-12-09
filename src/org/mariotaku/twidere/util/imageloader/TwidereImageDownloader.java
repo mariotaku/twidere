@@ -51,6 +51,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
+import java.util.Locale;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -110,7 +111,7 @@ public class TwidereImageDownloader implements ImageDownloader, Constants {
 					&& !uri_string.contains("_normal."))
 				return getStream(replaceLast(uri_string, "_" + TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES, "_normal"),
 						extras);
-			throw new IOException(String.format("Error downloading image %s, error code: %d", uri_string, status_code));
+			throw new IOException(String.format(Locale.US, "Error downloading image %s, error code: %d", uri_string, status_code));
 		}
 	}
 

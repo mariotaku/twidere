@@ -49,6 +49,7 @@ import org.mariotaku.twidere.util.ParseUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map.Entry;
 
 public class UserHashtagAutoCompleteAdapter extends SimpleCursorAdapter implements Constants {
@@ -57,6 +58,7 @@ public class UserHashtagAutoCompleteAdapter extends SimpleCursorAdapter implemen
 	private static final int[] TO = new int[0];
 	private static final String[] CACHED_USERS_COLUMNS = new String[] { CachedUsers._ID, CachedUsers.USER_ID,
 			CachedUsers.NAME, CachedUsers.SCREEN_NAME, CachedUsers.PROFILE_IMAGE_URL };
+	private final Locale mLocale;
 
 	private final ContentResolver mResolver;
 	private final SQLiteDatabase mDatabase;
@@ -86,6 +88,7 @@ public class UserHashtagAutoCompleteAdapter extends SimpleCursorAdapter implemen
 		mDisplayProfileImage = mPreferences != null
 				&& mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
 		mNicknameOnly = mPreferences != null && mPreferences.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false);
+		mLocale = context.getResources().getConfiguration().locale;
 	}
 
 	public UserHashtagAutoCompleteAdapter(final EditText view) {
@@ -203,7 +206,7 @@ public class UserHashtagAutoCompleteAdapter extends SimpleCursorAdapter implemen
 			if (key == -1 || TextUtils.isEmpty(value)) {
 				continue;
 			}
-			if (value.toLowerCase().startsWith(str.toLowerCase())) {
+			if (value.toLowerCase(mLocale).startsWith(str.toLowerCase(mLocale))) {
 				list.add(key);
 			}
 		}

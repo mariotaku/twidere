@@ -165,9 +165,9 @@ public class TwitterException extends Exception implements TwitterResponse, Http
 	@Override
 	public String getMessage() {
 		if (errorMessage != null && errorCode != -1)
-			return String.format(Locale.getDefault(), "Error %d: %s", errorCode, errorMessage);
+			return String.format(Locale.US, "Error %d: %s", errorCode, errorMessage);
 		else if (statusCode != -1)
-			return String.format(Locale.getDefault(), "Error %d", statusCode);
+			return String.format(Locale.US, "Error %d", statusCode);
 		else
 			return super.getMessage();
 	}

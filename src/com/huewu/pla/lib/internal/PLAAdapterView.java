@@ -16,6 +16,7 @@
 
 package com.huewu.pla.lib.internal;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.os.Parcelable;
@@ -563,6 +564,7 @@ public abstract class PLAAdapterView<T extends Adapter> extends AdapterView<T> {
 	 * sure that the listview is VISIBLE and that the empty view is GONE (if
 	 * it's not null).
 	 */
+	@SuppressLint("WrongCall")
 	private void updateEmptyStatus(boolean empty) {
 		if (isInFilterModePLA()) {
 			empty = false;

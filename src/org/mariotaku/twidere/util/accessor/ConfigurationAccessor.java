@@ -19,12 +19,14 @@
 
 package org.mariotaku.twidere.util.accessor;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.res.Configuration;
 import android.os.Build;
 
 public class ConfigurationAccessor {
 
+	@SuppressLint("InlinedApi")
 	public static int getLayoutDirection(final Configuration conf) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
 			return GetLayoutDirectionAccessorJB.getLayoutDirection(conf);

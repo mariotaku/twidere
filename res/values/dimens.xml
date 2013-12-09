@@ -26,9 +26,6 @@
 	<dimen name="accounts_drawer_default_indicator_size">12sp</dimen>
 	<dimen name="accounts_drawer_switch_label_size">16sp</dimen>
 	<dimen name="accounts_drawer_child_size">16sp</dimen>
-	<dimen name="nyan_star_dot_size">4dp</dimen>
-	<dimen name="actionbar_item_width">52dp</dimen>
-	<dimen name="home_actions_item_width">60dp</dimen>
 	<dimen name="home_actions_button_size">56dp</dimen>
 
 	<!-- Size of icons in the top-level of settings -->
@@ -39,13 +36,6 @@
 	<dimen name="line_indicator_line_width_wizard">24dp</dimen>
 	<dimen name="line_indicator_stroke_width_wizard">3dp</dimen>
 
-	<!-- Size of the fastscroll hint letter -->
-	<dimen name="fastscroll_overlay_size">104dp</dimen>
-	<!-- Width of the fastscroll thumb -->
-	<dimen name="fastscroll_thumb_width">64dp</dimen>
-	<!-- Height of the fastscroll thumb -->
-	<dimen name="fastscroll_thumb_height">52dp</dimen>
-
 	<!-- Size of the item menu -->
 	<dimen name="item_menu_width_default">32dp</dimen>
 	<dimen name="item_menu_height_default">40dp</dimen>
@@ -55,20 +45,12 @@
 	<dimen name="item_menu_padding_end_default">10dp</dimen>
 	<dimen name="item_menu_card_padding_compact">20dp</dimen>
 
-	<!-- Size of activity preview -->
-	<dimen name="theme_preview_width">260dp</dimen>
-	<dimen name="theme_preview_height">400dp</dimen>
-
 	<!-- Dimensions for color picker -->
 	<dimen name="color_button_width">36dp</dimen>
 
 	<!-- Dimensions for compose dialog -->
 	<dimen name="compose_min_width">400dp</dimen>
 	<dimen name="compose_min_height">320dp</dimen>
-
-	<!-- Dimensions for Browser sign in dialog -->
-	<dimen name="browser_sign_in_min_width">320dp</dimen>
-	<dimen name="browser_sign_in_min_height">480dp</dimen>
 
 	<!-- Dimensions for Tab indicator -->
 	<dimen name="tab_item_minwidth_vpi">64dp</dimen>

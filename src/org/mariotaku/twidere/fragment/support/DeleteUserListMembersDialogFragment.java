@@ -42,9 +42,9 @@ public class DeleteUserListMembersDialogFragment extends BaseSupportDialogFragme
 		if (users == null || userList == null) throw new NullPointerException();
 		if (users.length == 1) {
 			final ParcelableUser user = users[0];
-			final String display_name = Utils.getDisplayName(getActivity(), user.id, user.name, user.screen_name);
-			builder.setTitle(getString(R.string.delete_user, display_name));
-			builder.setMessage(getString(R.string.delete_user_confirm_message, display_name));
+			final String displayName = Utils.getDisplayName(getActivity(), user.id, user.name, user.screen_name);
+			builder.setTitle(getString(R.string.delete_user, displayName));
+			builder.setMessage(getString(R.string.delete_user_from_list_confirm, displayName, userList.name));
 		} else {
 			builder.setTitle(R.string.delete_users);
 			final Resources res = getResources();

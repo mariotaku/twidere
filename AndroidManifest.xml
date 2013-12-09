@@ -473,7 +473,7 @@
 			android:settingsActivity=".activity.SettingsActivity"/>
 		<service
 			android:name=".service.BackgroundOperationService"
-			android:label="@string/label_refresh_service"/>
+			android:label="@string/label_background_operation_service"/>
 		<service
 			android:name="edu.ucdavis.earlybird.UCDService"
 			android:settingsActivity=".activity.DataProfilingSettingsActivity"/>

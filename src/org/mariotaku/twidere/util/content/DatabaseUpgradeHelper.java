@@ -38,6 +38,7 @@ import org.mariotaku.twidere.util.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public final class DatabaseUpgradeHelper {
@@ -63,7 +64,7 @@ public final class DatabaseUpgradeHelper {
 			db.endTransaction();
 			return;
 		}
-		final String tempTable = String.format("temp_%s_%d", table, System.currentTimeMillis());
+		final String tempTable = String.format(Locale.US, "temp_%s_%d", table, System.currentTimeMillis());
 		db.beginTransaction();
 		db.execSQL(alterTable(table).renameTo(tempTable).buildSQL());
 		db.execSQL(createTable(true, table).columns(NewColumn.createNewColumns(newCols, newTypes)).buildSQL());
