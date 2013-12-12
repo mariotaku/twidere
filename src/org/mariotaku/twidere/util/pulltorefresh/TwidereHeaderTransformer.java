@@ -16,11 +16,13 @@ public class TwidereHeaderTransformer extends DefaultHeaderTransformer {
 	public void onViewCreated(final Activity activity, final View headerView) {
 		super.onViewCreated(activity, headerView);
 		setProgressBarStyle(PROGRESS_BAR_STYLE_INSIDE);
-		if (ThemeUtils.isColoredActionBar(activity)) {
-			setProgressBarColor(Color.WHITE);
-		} else {
-			setProgressBarColor(ThemeUtils.getUserThemeColor(activity));
-		}
+		setProgressBarHeight(Math.round(activity.getResources().getDisplayMetrics().density * 2));
+		setProgressBarColor(Color.WHITE);
+		// if (ThemeUtils.isColoredActionBar(activity)) {
+		// setProgressBarColor(ThemeUtils.getUserThemeColor(activity));
+		// } else {
+		// setProgressBarColor(Color.WHITE);
+		// }
 	}
 
 	@Override

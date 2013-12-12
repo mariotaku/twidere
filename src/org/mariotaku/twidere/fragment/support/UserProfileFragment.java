@@ -97,6 +97,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.mariotaku.popupmenu.PopupMenu;
+import org.mariotaku.querybuilder.Where;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.support.ColorPickerDialogActivity;
 import org.mariotaku.twidere.activity.support.UserListSelectorActivity;
@@ -660,8 +661,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 			}
 			case MENU_MUTE_USER: {
 				final ContentResolver resolver = getContentResolver();
-				resolver.delete(Filters.Users.CONTENT_URI, String.format("%s = %d", Filters.Users.USER_ID, mUser.id),
-						null);
+				resolver.delete(Filters.Users.CONTENT_URI, Where.equals(Filters.Users.USER_ID, mUser.id).getSQL(), null);
 				resolver.insert(Filters.Users.CONTENT_URI, makeFilterdUserContentValues(mUser));
 				showInfoMessage(getActivity(), R.string.user_muted, false);
 				break;

@@ -46,6 +46,7 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
+import org.mariotaku.twidere.util.collection.NoDuplicatesArrayList;
 
 import java.util.ArrayList;
 import java.util.Arrays;

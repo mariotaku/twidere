@@ -45,7 +45,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.activity.HomeActivity;
+import org.mariotaku.twidere.activity.support.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.iface.IBaseFragment;
 import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;

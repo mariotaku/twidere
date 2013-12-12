@@ -26,7 +26,7 @@ import android.support.v4.content.AsyncTaskLoader;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableUserList;
-import org.mariotaku.twidere.util.NoDuplicatesArrayList;
+import org.mariotaku.twidere.util.collection.NoDuplicatesArrayList;
 
 import twitter4j.CursorSupport;
 import twitter4j.PagableResponseList;

@@ -61,6 +61,7 @@ import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.PositionManager;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.TwitterWrapper;
+import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
 import java.util.Collections;
@@ -88,7 +89,10 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 
 	private MultiSelectManager mMultiSelectManager;
 	private PositionManager mPositionManager;
+
 	private int mFirstVisibleItem;
+	private int mSelectedPosition;
+
 	private final Map<Long, Set<Long>> mUnreadCountsToRemove = Collections
 			.synchronizedMap(new HashMap<Long, Set<Long>>());
 	private final Set<Integer> mReadPositions = Collections.synchronizedSet(new HashSet<Integer>());
@@ -149,13 +153,18 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 	public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 		final Object tag = view.getTag();
 		if (tag instanceof StatusViewHolder) {
+			final StatusViewHolder holder = (StatusViewHolder) tag;
 			final ParcelableStatus status = mAdapter.getStatus(position - mListView.getHeaderViewsCount());
 			final AsyncTwitterWrapper twitter = getTwitterWrapper();
 			if (twitter != null) {
 				TwitterWrapper.removeUnreadCounts(getActivity(), getTabPosition(), status.account_id, status.id);
 			}
-			if (((StatusViewHolder) tag).show_as_gap) return false;
-			setItemSelected(status, position, !mMultiSelectManager.isSelected(status));
+			if (holder.show_as_gap) return false;
+			if (mPreferences.getBoolean(PREFERENCE_KEY_LONG_CLICK_TO_OPEN_MENU, false)) {
+				openMenu(holder.item_menu, status, position);
+			} else {
+				setItemSelected(status, position, !mMultiSelectManager.isSelected(status));
+			}
 			return true;
 		}
 		return false;
@@ -251,7 +260,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		if (mMultiSelectManager.isActive()) return;
 		final ParcelableStatus status = mAdapter.getStatus(position);
 		if (status == null) return;
-		openMenu(button, status);
+		openMenu(button, status, position);
 	}
 
 	@Override
@@ -315,6 +324,11 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 			}
 			case MENU_ADD_TO_FILTER: {
 				AddStatusFilterDialogFragment.show(getFragmentManager(), status);
+				break;
+			}
+			case MENU_MULTI_SELECT: {
+				final boolean isSelected = mMultiSelectManager.isSelected(status);
+				setItemSelected(status, mSelectedPosition, isSelected);
 				break;
 			}
 			default: {
@@ -486,8 +500,9 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		}
 	}
 
-	private void openMenu(final View view, final ParcelableStatus status) {
+	private void openMenu(final View view, final ParcelableStatus status, final int position) {
 		mSelectedStatus = status;
+		mSelectedPosition = position;
 		if (view == null || status == null) return;
 		final AsyncTwitterWrapper twitter = getTwitterWrapper();
 		if (twitter != null) {
@@ -499,22 +514,18 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		final int activated_color = ThemeUtils.getUserThemeColor(getActivity());
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_status);
-		final boolean separate_retweet_action = mPreferences.getBoolean(PREFERENCE_KEY_SEPARATE_RETWEET_ACTION,
+		final boolean separateRetweetAction = mPreferences.getBoolean(PREFERENCE_KEY_SEPARATE_RETWEET_ACTION,
 				PREFERENCE_DEFAULT_SEPARATE_RETWEET_ACTION);
+		final boolean longclickToOpenMenu = mPreferences.getBoolean(PREFERENCE_KEY_LONG_CLICK_TO_OPEN_MENU, false);
 		final Menu menu = mPopupMenu.getMenu();
 		setMenuForStatus(getActivity(), menu, status);
-		final MenuItem retweet_submenu = menu.findItem(R.id.retweet_submenu);
-		if (retweet_submenu != null) {
-			retweet_submenu.setVisible(!separate_retweet_action);
-		}
-		final MenuItem direct_quote = menu.findItem(R.id.direct_quote);
-		if (direct_quote != null) {
-			direct_quote.setVisible(separate_retweet_action);
-		}
+		Utils.setMenuItemAvailability(menu, R.id.retweet_submenu, !separateRetweetAction);
+		Utils.setMenuItemAvailability(menu, R.id.direct_quote, separateRetweetAction);
+		Utils.setMenuItemAvailability(menu, MENU_MULTI_SELECT, longclickToOpenMenu);
 		final MenuItem direct_retweet = menu.findItem(R.id.direct_retweet);
 		if (direct_retweet != null) {
 			final Drawable icon = direct_retweet.getIcon().mutate();
-			direct_retweet.setVisible(separate_retweet_action && (!status.user_is_protected || isMyRetweet(status)));
+			direct_retweet.setVisible(separateRetweetAction && (!status.user_is_protected || isMyRetweet(status)));
 			if (isMyRetweet(status)) {
 				icon.setColorFilter(activated_color, PorterDuff.Mode.MULTIPLY);
 				direct_retweet.setTitle(R.string.cancel_retweet);

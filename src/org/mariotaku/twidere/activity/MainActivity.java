@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.activity.support.HomeActivity;
 import org.mariotaku.twidere.util.StrictModeUtils;
 import org.mariotaku.twidere.util.Utils;
 

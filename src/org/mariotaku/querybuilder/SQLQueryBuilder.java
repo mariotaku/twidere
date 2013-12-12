@@ -30,7 +30,8 @@ package org.mariotaku.querybuilder;
 import org.mariotaku.querybuilder.query.SQLAlterTableQuery;
 import org.mariotaku.querybuilder.query.SQLCreateTableQuery;
 import org.mariotaku.querybuilder.query.SQLCreateViewQuery;
-import org.mariotaku.querybuilder.query.SQLDropQuery;
+import org.mariotaku.querybuilder.query.SQLDropTableQuery;
+import org.mariotaku.querybuilder.query.SQLDropViewQuery;
 import org.mariotaku.querybuilder.query.SQLInsertIntoQuery;
 import org.mariotaku.querybuilder.query.SQLInsertIntoQuery.OnConflict;
 import org.mariotaku.querybuilder.query.SQLSelectQuery;
@@ -71,8 +72,12 @@ public class SQLQueryBuilder {
 		return createView(false, false, name);
 	}
 
-	public static SQLDropQuery drop(final String table) {
-		return new SQLDropQuery(table);
+	public static SQLDropTableQuery dropTable(final boolean dropIfExists, final String table) {
+		return new SQLDropTableQuery(dropIfExists, table);
+	}
+
+	public static SQLDropViewQuery dropView(final boolean dropIfExists, final String table) {
+		return new SQLDropViewQuery(dropIfExists, table);
 	}
 
 	public static SQLInsertIntoQuery.Builder insertInto(final OnConflict onConflict, final String table) {

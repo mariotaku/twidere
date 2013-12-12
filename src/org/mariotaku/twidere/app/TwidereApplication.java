@@ -78,6 +78,7 @@ import twitter4j.http.HostAddressResolver;
 
 import java.io.File;
 import java.util.Date;
+import java.util.Locale;
 
 @ReportsCrashes(formKey = "", sharedPreferencesMode = Context.MODE_PRIVATE,
 	sharedPreferencesName = Constants.SHARED_PREFERENCES_NAME)
@@ -179,7 +180,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 	public SwipebackScreenshotManager getSwipebackScreenshotManager() {
 		if (mSwipebackScreenshotManager != null) return mSwipebackScreenshotManager;
-		return mSwipebackScreenshotManager = new SwipebackScreenshotManager();
+		return mSwipebackScreenshotManager = new SwipebackScreenshotManager(this);
 	}
 
 	public AsyncTwitterWrapper getTwitterWrapper() {
@@ -297,13 +298,13 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		private String buildBody(final CrashReportData errorContent) {
 			final String stack_trace = errorContent.getProperty(ReportField.STACK_TRACE);
 			final StringBuilder builder = new StringBuilder();
-			builder.append(String.format("Report date: %s\n", new Date(System.currentTimeMillis())));
-			builder.append(String.format("Android version: %s\n", Build.VERSION.RELEASE));
-			builder.append(String.format("API version: %d\n", Build.VERSION.SDK_INT));
-			builder.append(String.format("App version name: %s\n", getAppVersionName()));
-			builder.append(String.format("App version code: %d\n", getAppVersionCode()));
-			builder.append(String.format("Configuration: %s\n", mContext.getResources().getConfiguration()));
-			builder.append(String.format("Stack trace:\n%s\n", stack_trace));
+			builder.append(String.format(Locale.US, "Report date: %s\n", new Date(System.currentTimeMillis())));
+			builder.append(String.format(Locale.US, "Android version: %s\n", Build.VERSION.RELEASE));
+			builder.append(String.format(Locale.US, "API version: %d\n", Build.VERSION.SDK_INT));
+			builder.append(String.format(Locale.US, "App version name: %s\n", getAppVersionName()));
+			builder.append(String.format(Locale.US, "App version code: %d\n", getAppVersionCode()));
+			builder.append(String.format(Locale.US, "Configuration: %s\n", mContext.getResources().getConfiguration()));
+			builder.append(String.format(Locale.US, "Stack trace:\n%s\n", stack_trace));
 			return builder.toString();
 		}
 

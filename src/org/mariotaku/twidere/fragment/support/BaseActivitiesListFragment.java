@@ -29,14 +29,11 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.widget.ListView;
 
-import org.mariotaku.jsonserializer.JSONSerializer;
 import org.mariotaku.twidere.adapter.BaseParcelableActivitiesAdapter;
 import org.mariotaku.twidere.model.ParcelableActivity;
 import org.mariotaku.twidere.util.ArrayUtils;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 
 public abstract class BaseActivitiesListFragment extends BasePullToRefreshListFragment implements
@@ -44,8 +41,6 @@ public abstract class BaseActivitiesListFragment extends BasePullToRefreshListFr
 
 	private BaseParcelableActivitiesAdapter mAdapter;
 	private SharedPreferences mPreferences;
-
-	private boolean mIsActivitiesSaved;
 
 	private List<ParcelableActivity> mData;
 
@@ -67,18 +62,6 @@ public abstract class BaseActivitiesListFragment extends BasePullToRefreshListFr
 		lv.setSelector(android.R.color.transparent);
 		getLoaderManager().initLoader(0, getArguments(), this);
 		setListShown(false);
-	}
-
-	@Override
-	public void onDestroy() {
-		saveActivities();
-		super.onDestroy();
-	}
-
-	@Override
-	public void onDestroyView() {
-		saveActivities();
-		super.onDestroyView();
 	}
 
 	@Override
@@ -130,31 +113,5 @@ public abstract class BaseActivitiesListFragment extends BasePullToRefreshListFr
 	}
 
 	protected abstract Object[] getSavedActivitiesFileArgs();
-
-	protected void saveActivities() {
-		if (getActivity() == null || getView() == null || mIsActivitiesSaved) return;
-		if (saveActivitiesInternal()) {
-			mIsActivitiesSaved = true;
-		}
-	}
-
-	protected final boolean saveActivitiesInternal() {
-		if (mIsActivitiesSaved) return true;
-		try {
-			final List<ParcelableActivity> data = getData();
-			if (data == null) return false;
-			final int items_limit = mPreferences.getInt(PREFERENCE_KEY_DATABASE_ITEM_LIMIT,
-					PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
-			final List<ParcelableActivity> activities = data.subList(0, Math.min(items_limit, data.size()));
-			final File file = JSONSerializer.getSerializationFile(getActivity(), getSavedActivitiesFileArgs());
-			JSONSerializer.toFile(file, activities.toArray(new ParcelableActivity[activities.size()]));
-		} catch (final IOException e) {
-			return false;
-		} catch (final ConcurrentModificationException e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-	}
 
 }

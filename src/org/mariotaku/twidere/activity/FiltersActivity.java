@@ -48,6 +48,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 
+import org.mariotaku.querybuilder.Where;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.support.UserListSelectorActivity;
 import org.mariotaku.twidere.adapter.SourceAutoCompleteAdapter;
@@ -202,8 +203,7 @@ public class FiltersActivity extends BaseActivity implements TabListener, OnPage
 				final ParcelableUser user = data.getParcelableExtra(EXTRA_USER);
 				final ContentValues values = makeFilterdUserContentValues(user);
 				final ContentResolver resolver = getContentResolver();
-				resolver.delete(Filters.Users.CONTENT_URI, String.format("%s  = %d", Filters.Users.USER_ID, user.id),
-						null);
+				resolver.delete(Filters.Users.CONTENT_URI, Where.equals(Filters.Users.USER_ID, user.id).getSQL(), null);
 				resolver.insert(Filters.Users.CONTENT_URI, values);
 				break;
 			}

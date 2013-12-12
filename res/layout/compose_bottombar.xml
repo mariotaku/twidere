@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/compose_bottombar"
+	style="?android:actionBarSplitStyle"
+	android:layout_width="match_parent"
+	android:layout_height="?android:actionBarSize"
+	android:baselineAligned="false"
+	android:gravity="center_vertical"
+	android:orientation="horizontal">
+
+	<com.scvngr.levelup.views.gallery.Gallery
+		android:id="@+id/account_selector"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_weight="1"/>
+
+	<View
+		android:layout_width="0.2dp"
+		android:layout_height="match_parent"
+		android:layout_margin="@dimen/element_spacing_default"
+		android:background="#80808080"/>
+
+	<org.mariotaku.menubar.MenuBar
+		android:id="@+id/menu_bar"
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
+		android:layout_weight="0"
+		android:background="@null"
+		android:max="@integer/max_action_buttons"/>
+
+	<include layout="@layout/action_item_compose"/>
+
+</LinearLayout>

@@ -218,7 +218,7 @@ public class DraftsActivity extends BaseSupportActivity implements LoaderCallbac
 		final Bundle bundle = new Bundle();
 		bundle.putParcelable(EXTRA_DRAFT, draft);
 		intent.putExtras(bundle);
-		mResolver.delete(Drafts.CONTENT_URI, Drafts._ID + " = " + draft._id, null);
+		mResolver.delete(Drafts.CONTENT_URI, Where.equals(Drafts._ID, draft._id).getSQL(), null);
 		startActivityForResult(intent, REQUEST_COMPOSE);
 	}
 

@@ -25,6 +25,7 @@ public class ColorView extends View {
 		mPaint = new Paint();
 		final TypedArray a = context.obtainStyledAttributes(attrs, new int[] { android.R.attr.color });
 		setColor(a.getColor(0, Color.TRANSPARENT));
+		a.recycle();
 	}
 
 	public int getColor() {

@@ -68,6 +68,11 @@ public abstract class BaseParcelableActivitiesAdapter extends BaseArrayAdapter<P
 	public abstract void bindView(final int position, final ActivityViewHolder holder, final ParcelableActivity item);
 
 	@Override
+	public ImageLoaderWrapper getImageLoader() {
+		return mImageLoader;
+	}
+
+	@Override
 	public long getItemId(final int position) {
 		final Object obj = getItem(position);
 		return obj != null ? obj.hashCode() : 0;
@@ -165,10 +170,6 @@ public abstract class BaseParcelableActivitiesAdapter extends BaseArrayAdapter<P
 
 	protected Context getContext() {
 		return mContext;
-	}
-
-	protected ImageLoaderWrapper getImageLoader() {
-		return mImageLoader;
 	}
 
 	protected String getName(final ParcelableStatus status) {

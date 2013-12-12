@@ -111,8 +111,8 @@ import org.mariotaku.twidere.BuildConfig;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.CameraCropActivity;
-import org.mariotaku.twidere.activity.MapViewerActivity;
 import org.mariotaku.twidere.activity.support.DualPaneActivity;
+import org.mariotaku.twidere.activity.support.MapViewerActivity;
 import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
 import org.mariotaku.twidere.adapter.iface.IBaseCardAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
@@ -1687,7 +1687,8 @@ public final class Utils implements Constants {
 
 	public static String getMapStaticImageUri(final double lat, final double lng, final int zoom, final int w,
 			final int h, final Locale locale) {
-		return String.format(MAPS_STATIC_IMAGE_URI_TEMPLATE, zoom, w, h, locale.toString(), lat, lng, lat, lng);
+		return String.format(Locale.US, MAPS_STATIC_IMAGE_URI_TEMPLATE, zoom, w, h, locale.toString(), lat, lng, lat,
+				lng);
 	}
 
 	public static String getMapStaticImageUri(final double lat, final double lng, final View v) {
@@ -2198,23 +2199,17 @@ public final class Utils implements Constants {
 
 	public static String getUserName(final Context context, final ParcelableStatus status) {
 		if (context == null || status == null) return null;
-		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final boolean display_name = prefs.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
-		return display_name ? status.user_name : "@" + status.user_screen_name;
+		return getDisplayName(context, status.user_id, status.user_name, status.user_screen_name);
 	}
 
 	public static String getUserName(final Context context, final ParcelableUser user) {
 		if (context == null || user == null) return null;
-		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final boolean display_name = prefs.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
-		return display_name ? user.name : "@" + user.screen_name;
+		return getDisplayName(context, user.id, user.name, user.screen_name);
 	}
 
 	public static String getUserName(final Context context, final User user) {
 		if (context == null || user == null) return null;
-		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final boolean display_name = prefs.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
-		return display_name ? user.getName() : "@" + user.getScreenName();
+		return getDisplayName(context, user.getId(), user.getName(), user.getScreenName());
 	}
 
 	public static int getUserTypeIconRes(final boolean is_verified, final boolean is_protected) {

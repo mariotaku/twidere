@@ -33,10 +33,10 @@ import android.widget.ExpandableListView.OnGroupCollapseListener;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.FiltersActivity;
-import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.activity.SettingsActivity;
 import org.mariotaku.twidere.activity.support.ColorPickerDialogActivity;
 import org.mariotaku.twidere.activity.support.DraftsActivity;
+import org.mariotaku.twidere.activity.support.HomeActivity;
 import org.mariotaku.twidere.activity.support.SignInActivity;
 import org.mariotaku.twidere.activity.support.UserProfileEditorActivity;
 import org.mariotaku.twidere.adapter.AccountsDrawerAdapter;
@@ -170,7 +170,7 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 					}
 					case MENU_SET_COLOR: {
 						final Intent intent = new Intent(getActivity(), ColorPickerDialogActivity.class);
-						intent.putExtra(EXTRA_COLOR, account.user_color);
+						intent.putExtra(EXTRA_COLOR, account.color);
 						intent.putExtra(EXTRA_ALPHA_SLIDER, false);
 						startActivityForResult(intent, REQUEST_SET_COLOR);
 						break;

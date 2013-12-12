@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Yusuke Yamamoto - yusuke at mac.com
@@ -170,7 +171,7 @@ public final class OEmbedRequest implements Serializable {
 		params.add(new HttpParameter("hide_media", hideMedia));
 		params.add(new HttpParameter("hide_thread", hideThread));
 		params.add(new HttpParameter("omit_script", omitScript));
-		params.add(new HttpParameter("align", align.name().toLowerCase()));
+		params.add(new HttpParameter("align", align.name().toLowerCase(Locale.US)));
 		if (related.length > 0) {
 			appendParameter("related", InternalStringUtil.join(related), params);
 		}

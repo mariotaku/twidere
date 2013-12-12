@@ -33,7 +33,7 @@ public class AccountNotificationSettingsFragment extends BaseAccountPreferenceFr
 		final Preference preference = findPreference(PREFERENCE_KEY_NOTIFICATION_LIGHT_COLOR);
 		final Account account = getAccount();
 		if (preference != null && account != null) {
-			preference.setDefaultValue(account.user_color);
+			preference.setDefaultValue(account.color);
 		}
 	}
 

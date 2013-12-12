@@ -24,7 +24,7 @@ import android.support.v4.content.AsyncTaskLoader;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.model.ParcelableUser;
-import org.mariotaku.twidere.util.NoDuplicatesArrayList;
+import org.mariotaku.twidere.util.collection.NoDuplicatesArrayList;
 
 import java.util.Collections;
 import java.util.List;

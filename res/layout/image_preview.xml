@@ -10,10 +10,11 @@
 		android:layout_height="match_parent"
 		android:visibility="gone">
 
-		<Gallery
+		<com.scvngr.levelup.views.gallery.Gallery
 			android:id="@+id/preview_gallery"
 			android:layout_width="match_parent"
-			android:layout_height="match_parent"/>
+			android:layout_height="match_parent"
+			android:spacing="0dp"/>
 
 		<org.mariotaku.twidere.view.NavigationArrowButton
 			android:id="@+id/prev_image"

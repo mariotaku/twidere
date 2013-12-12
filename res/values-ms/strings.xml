@@ -21,7 +21,6 @@
   <string name="mute_user">Bisukan pengguna</string>
   <string name="user_muted">Pengguna ditambah ke dalam senarai tapis. Anda tidak akan melihat tweet dari pengguna ini di dalam senarai garis masa/sebutan anda.</string>
   <string name="load_images">Memuatkan gambar</string>
-  <string name="solid_color_background_summary">Ini mungkin berguna jika skrin peranti anda ialah AMOLED.</string>
   <string name="image_uploader_default">Lalai (Twitter)</string>
   <string name="error_message_image_upload_failed">Gagal memuat naik imej.</string>
   <string name="error_message_image_uploader_not_found">Pemuat naik imej tidak ditemui, mungkin telah dibuang.</string>
@@ -32,13 +31,10 @@
   <string name="error_message_tweet_shortener_not_found">Penyingkat tweet tidak ditemui, mungkin telah dibuang.</string>
   <string name="show_absolute_time">Tunjukkan masa mutlak</string>
   <string name="show_absolute_time_summary">Tunjukkan masa mutlak di tweet</string>
-  <string name="mute_source">Bisukan sumber</string>
-  <string name="source_muted">Menambah \"<xliff:g id="source">%s</xliff:g>\" ke dalam senarai tapisan. Anda tidak akan melihat tweets daripada sumber ini pada senarai garis masa/sebutan anda.</string>
   <string name="user_mentions">Sebutan pengguna</string>
   <string name="host">Hos</string>
   <string name="address">Alamat (Boleh jadi sebagai alamat host yang lain)</string>
   <string name="add_host_mapping">Tambah pemetaan hos</string>
   <string name="tcp_dns_query">TCP DNS Query</string>
   <string name="dns_server_summary">Tetapkan pelayan DNS untuk permintaan API.</string>
-  <string name="loading">Memuatkan</string>
 </resources>

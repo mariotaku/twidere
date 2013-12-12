@@ -19,14 +19,13 @@ package org.mariotaku.gallery3d.util;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.util.FloatMath;
 
 public class BitmapUtils {
 
 	// Find the max x that 1 / x <= scale.
 	public static int computeSampleSize(final float scale) {
 		if (scale <= 0) return 1;
-		final int initialSize = Math.max(1, (int) FloatMath.ceil(1 / scale));
+		final int initialSize = Math.max(1, (int) Math.ceil(1 / scale));
 		return initialSize <= 8 ? GalleryUtils.nextPowerOf2(initialSize) : (initialSize + 7) / 8 * 8;
 	}
 

@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 import javax.crypto.Mac;
@@ -454,7 +455,7 @@ public class OAuthAuthorization implements Authorization, OAuthSupport {
 			url = url.substring(0, index);
 		}
 		final int slashIndex = url.indexOf("/", 8);
-		String baseURL = url.substring(0, slashIndex).toLowerCase();
+		String baseURL = url.substring(0, slashIndex).toLowerCase(Locale.US);
 		final int colonIndex = baseURL.indexOf(":", 8);
 		if (-1 != colonIndex) {
 			// url contains port number

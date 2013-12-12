@@ -388,8 +388,8 @@ public class BackgroundOperationService extends IntentService implements Constan
 							int percent;
 
 							@Override
-							public void onRead(final int length, final int available) {
-								final int percent = length > 0 ? (length - available) * 100 / length : 0;
+							public void onRead(final long length, final long position) {
+								final int percent = length > 0 ? (int) (position * 100 / length) : 0;
 								if (this.percent != percent) {
 									mNotificationManager.notify(NOTIFICATION_ID_UPDATE_STATUS,
 											updateUpdateStatusNotificaion(percent, pstatus));

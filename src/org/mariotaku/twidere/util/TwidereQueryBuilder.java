@@ -23,7 +23,7 @@ public class TwidereQueryBuilder {
 			final Selectable select = Utils.getColumnsFromProjection(projection);
 			final SQLSelectQuery.Builder qb = SQLQueryBuilder.select(select);
 			qb.from(new Tables(DirectMessages.TABLE_NAME));
-			final Where accountIdWhere = new Where(String.format("%s = %d", DirectMessages.ACCOUNT_ID, account_id));
+			final Where accountIdWhere = Where.equals(DirectMessages.ACCOUNT_ID, account_id);
 			final Where incomingWhere = Where.and(Where.notEquals(DirectMessages.IS_OUTGOING, 1),
 					Where.equals(DirectMessages.SENDER_ID, conversationId));
 			final Where outgoingWhere = Where.and(Where.equals(DirectMessages.IS_OUTGOING, 1),
@@ -44,11 +44,11 @@ public class TwidereQueryBuilder {
 			final SQLSelectQuery.Builder qb = SQLQueryBuilder.select(select);
 			qb.select(select);
 			qb.from(new Tables(DirectMessages.TABLE_NAME));
-			final Where accountIdWhere = new Where(String.format("%s = %d", DirectMessages.ACCOUNT_ID, account_id));
+			final Where accountIdWhere = Where.equals(DirectMessages.ACCOUNT_ID, account_id);
 			final Where incomingWhere = Where.and(Where.notEquals(DirectMessages.IS_OUTGOING, 1),
-					Where.equals(DirectMessages.SENDER_SCREEN_NAME, screen_name));
+					Where.equals(new Column(DirectMessages.SENDER_SCREEN_NAME), screen_name));
 			final Where outgoingWhere = Where.and(Where.equals(DirectMessages.IS_OUTGOING, 1),
-					Where.equals(DirectMessages.RECIPIENT_SCREEN_NAME, screen_name));
+					Where.equals(new Column(DirectMessages.RECIPIENT_SCREEN_NAME), screen_name));
 			if (selection != null) {
 				qb.where(Where.and(accountIdWhere, incomingWhere, outgoingWhere, new Where(selection)));
 			} else {

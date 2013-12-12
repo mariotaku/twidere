@@ -42,14 +42,13 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 import org.mariotaku.popupmenu.PopupMenu;
-import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.ParcelableUsersAdapter;
 import org.mariotaku.twidere.adapter.iface.IBaseCardAdapter.MenuButtonClickListener;
 import org.mariotaku.twidere.loader.DummyParcelableUsersLoader;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.MultiSelectManager;
-import org.mariotaku.twidere.util.NoDuplicatesArrayList;
+import org.mariotaku.twidere.util.collection.NoDuplicatesArrayList;
 
 import java.util.Collections;
 import java.util.List;
@@ -247,7 +246,7 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 	}
 
 	protected int getUserMenuResource() {
-		return R.menu.action_user_list;
+		return 0;
 	}
 
 	protected abstract Loader<List<ParcelableUser>> newLoaderInstance(Context context, Bundle args);
@@ -286,7 +285,10 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 			mPopupMenu.dismiss();
 		}
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
-		mPopupMenu.inflate(getUserMenuResource());
+		final int menuRes = getUserMenuResource();
+		if (menuRes != 0) {
+			mPopupMenu.inflate(menuRes);
+		}
 		final Menu menu = mPopupMenu.getMenu();
 		final Intent extensions_intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER);
 		final Bundle extensions_extras = new Bundle();

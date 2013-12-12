@@ -48,7 +48,7 @@ public class ImageLoadingHandler implements ImageLoadingListener {
 		if (view == null) return;
 		if (view instanceof ImageView) {
 			((ImageView) view).setImageDrawable(null);
-			view.setBackgroundResource(R.drawable.image_preview_error);
+			view.setBackgroundResource(R.drawable.image_preview_refresh);
 		}
 		mLoadingUris.remove(view);
 		final View parent = (View) view.getParent();

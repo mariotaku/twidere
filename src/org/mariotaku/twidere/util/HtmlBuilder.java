@@ -29,6 +29,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Locale;
 
 public class HtmlBuilder {
 
@@ -58,14 +59,14 @@ public class HtmlBuilder {
 	public boolean addLink(final String link, final String display, final int start, final int end,
 			final boolean display_is_html) {
 		if (start < 0 || end < 0 || start > end || end > string_length) {
-			final String message = String.format("text:%s, length:%d, start:%d, end:%d", orig, string_length, start,
-					end);
+			final String message = String.format(Locale.US, "text:%s, length:%d, start:%d, end:%d", orig,
+					string_length, start, end);
 			if (throw_exceptions) throw new StringIndexOutOfBoundsException(message);
 			Log.e(LOGTAG, message);
 			return false;
 		}
 		if (hasLink(start, end)) {
-			final String message = String.format(
+			final String message = String.format(Locale.US,
 					"link already added in this range! text:%s, link:%s, display:%s, start:%d, end:%d", orig, link,
 					display, start, end);
 			if (throw_exceptions) throw new IllegalArgumentException(message);

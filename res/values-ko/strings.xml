@@ -58,9 +58,7 @@
   <string name="statuses">트윗</string>
   <string name="followers">팔로워</string>
   <string name="about">정보</string>
-  <string name="about_summary">Twidere에 대해서</string>
   <string name="open_source_license">오픈 소스 라이센스</string>
-  <string name="license_summary">Twidere의 라이센스는 GPLv3을 따릅니다.</string>
   <string name="api">API</string>
   <string name="default_api_settings">기본 API 설정</string>
   <string name="consumer_key">컨슈머 키</string>
@@ -74,8 +72,6 @@
   <string name="clear_databases">데이터베이스 지우기</string>
   <string name="clear_databases_summary">모든 트윗,프로필,메시지를 삭제합니다. 당신의 계정 상태는 그대로입니다.</string>
   <string name="look_and_feel">모양</string>
-  <string name="dark_theme">어두운 테마 사용</string>
-  <string name="dark_theme_summary">Twidere에 어두운 테마를 적용합니다.</string>
   <string name="display_profile_image">프로필 이미지 표시</string>
   <string name="in_reply_to"><xliff:g id="user_name">%s</xliff:g> 님의 트윗에 대한 답에서.</string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g>이(가) 리트윗함</string>
@@ -86,7 +82,6 @@
   <string name="quote_user"><xliff:g id="user_name">%s</xliff:g>를 인용</string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, <xliff:g id="source">%2$s</xliff:g>를 통해</string>
   <string name="source"><xliff:g id="source"> %s </xliff:g>을(를) 통해</string>
-  <string name="filter">필터</string>
   <string name="filters">필터</string>
   <string name="users">사용자</string>
   <string name="user">유저</string>
@@ -109,12 +104,10 @@
   <string name="load_more_automatically_summary">추가적인 컨텐츠(사진,지도 등)을 자동으로 로드</string>
   <string name="quote">인용</string>
   <string name="add_rule">규칙 추가</string>
-  <string name="longclick_to_delete">삭제하려면 길게 누르세요.</string>
   <string name="text_size">글자 크기</string>
   <string name="text_size_summary">상태 글꼴 크기</string>
   <string name="cannot_get_location">위치를 찾을 수 없습니다.</string>
   <string name="drafts">보관</string>
-  <string name="delete_all">모두 삭제</string>
   <string name="description">설명</string>
   <string name="location">위치</string>
   <string name="url">URL</string>
@@ -158,21 +151,13 @@
   <string name="inbox">받음</string>
   <string name="load_images">이미지 로드</string>
   <string name="other_settings">기타 설정</string>
-  <string name="refresh_and_notifications">새로고침 및 알림</string>
   <string name="auto_refresh">자동 새로고침</string>
   <string name="refresh_interval">새로고침 간격</string>
-  <string name="refresh_interval_summary">새로고침 간격이 작을수록 배터리와 데이터를 더 많이 소모합니다!</string>
   <string name="content_to_refresh">새로고침할 콘텐츠</string>
-  <string name="content_to_notify">콘텐츠 알림</string>
   <string name="notifications_type">알림 유형</string>
-  <string name="notifications_type_summary">이 옵션은 시스템 설정을 무시하지 않습니다.</string>
   <string name="sound">소리</string>
   <string name="vibration">진동</string>
-  <string name="light">조명</string>
   <string name="notifications">알림</string>
-  <string name="new_notifications">새로운 알림</string>
-  <string name="screen_name">사용자명</string>
-  <string name="sort_timeline_by_time">타임라인을 시간 순으로 정렬</string>
   <string name="refresh_on_start">시작할 때 새로고침</string>
   <string name="refresh_on_start_summary">시작할 때 타임라인과 멘션 새로고침.</string>
   <string name="refresh_after_status_updated">트윗이 전송된 후 새로고침하기</string>
@@ -183,8 +168,6 @@
   <string name="type_to_compose">작성 유형</string>
   <string name="users_lists">사용자 리스트</string>
   <string name="lists_following_user">이 리스트를 팔로잉 하는 사용자</string>
-  <string name="you_have_N_new_statuses_quantity_one">새로운 트윗이 있습니다.</string>
-  <string name="item_1_minute">1분</string>
   <string name="item_3_minutes">3분</string>
   <string name="item_5_minutes">5분</string>
   <string name="item_10_minutes">10분</string>
@@ -193,8 +176,6 @@
   <string name="item_1_hour">1시간</string>
   <string name="item_2_hours">2시간</string>
   <string name="item_4_hours">4시간</string>
-  <string name="solid_color_background">단색 배경</string>
-  <string name="solid_color_background_summary">당신의 디바이스가 AMOLED를 사용중이라면 이 기능이 유용할 수 있습니다.</string>
   <string name="following_you">당신을 팔로잉 합니다.</string>
   <string name="trends_location">동향 위치</string>
   <string name="trends_location_summary">지역 동향에 대한 위치를 설정합니다.</string>
@@ -208,14 +189,9 @@
   <string name="is_public">공공의</string>
   <string name="send_direct_message">DM 보내기</string>
   <string name="extensions">플러그인</string>
-  <string name="open_with_extensions">플러그인으로 열기</string>
   <string name="uninstall">제거</string>
   <string name="saved_searches">저장된 검색어</string>
-  <string name="default_tabs">기본 탭</string>
   <string name="add_tab">탭 추가</string>
-  <string name="tab_type">탭 유형</string>
-  <string name="unused">사용되지 않음</string>
-  <string name="list_name">목록 이름</string>
   <string name="edit_tab">탭 편집</string>
   <string name="move_up">위로 이동</string>
   <string name="move_down">아래로 이동</string>
@@ -246,8 +222,6 @@
   <string name="multimedia_contents">멀티미디어 콘텐츠</string>
   <string name="show_absolute_time">절대시간 표시 </string>
   <string name="show_absolute_time_summary">트윗에 절대시간 표시</string>
-  <string name="mute_source">음소거 소스</string>
-  <string name="source_muted">필터 목록에 \"<xliff:g id="source">%s</xliff:g>\" 가 추가됩니다. 필터된 리스트에 추가하면 그 소스에 해당하는 트윗은 당신의 타임라인과 멘션에 보이지 않습니다.</string>
   <string name="user_mentions">유저 멘션</string>
   <string name="dual_pane_layout">듀얼 패널 레이아웃</string>
   <string name="landscape">풍경</string>
@@ -255,12 +229,9 @@
   <string name="quick_send">Enter 키를 눌러 전송하기</string>
   <string name="quick_send_summary">Enter키를 쳐서 트윗을 보내세요. </string>
   <string name="discard">지우기</string>
-  <string name="multi_select">여러항목 선택</string>
   <string name="Nitems_selected_quantity_one">1개의 항목 선택</string>
   <string name="Nitems_selected_quantity_other"><xliff:g id="items">%d</xliff:g> 항목선택</string>
   <string name="view">보기</string>
-  <string name="hardware_acceleration">하드웨어 가속</string>
-  <string name="hardware_acceleration_summary">일부 장치에서는 기능 사용 후 부드러워질 것입니다. 일부 장치에서는 작동하지 않을 것입니다. 안드로이드 3.0 이상의 버전에서만 작동하며, 이것은 시스템 설정을 무시하지 않을 것입니다!</string>
   <string name="host">호스트</string>
   <string name="tcp_dns_query">TCP DNS 쿼리</string>
   <string name="dns_server">DNS 서버</string>
@@ -280,21 +251,15 @@
   <string name="activity_by_friends_follow_multi"><xliff:g id="user">%1$s</xliff:g> 님이 <xliff:g id="target">%2$s</xliff:g> 외 <xliff:g id="count">%3$d</xliff:g> 명을 팔로우합니다.</string>
   <string name="activity_by_friends_retweet"><xliff:g id="user">%1$s</xliff:g> 님이 <xliff:g id="target">%2$s</xliff:g> 님의 트윗을 리트윗했습니다.</string>
   <string name="activity_by_friends_list_member_added"><xliff:g id="user">%1$s</xliff:g> 님이 <xliff:g id="target">%2$s</xliff:g> 님을 리스트에 추가했습니다.</string>
-  <string name="cannot_get_callback_url">회신을 받을 수 없습니다. 유저 네임과 비밀번호를 확인해 주시기 바랍니다.</string>
   <string name="status_not_updated">트윗이 전송되지 않았습니다.</string>
   <string name="status_not_updated_summary">트윗이 전송되지 않아 보관함에 저장되었습니다.</string>
   <string name="incoming_friendships">받은 팔로우 요청</string>
-  <string name="click_to_open_menu">항목을 열려면 메뉴를 누르세요</string>
-  <string name="click_to_open_menu_summary">클릭하면 아이템 메뉴를 열며, 길게 누르면 다중선택이 가능합니다.</string>
   <string name="send_follow_request">팔로우 요청 보내기</string>
   <string name="follow_request_sent">팔로우 요청을 보냄</string>
   <string name="separate_retweet_action">리트윗 활동 분리</string>
   <string name="separate_retweet_action_summary">트윗 메뉴에서 리트윗과 인용 메뉴를 따로 표시합니다.</string>
   <string name="preview">미리보기</string>
-  <string name="api_upgrade_notice_title">매우 중요합니다!</string>
-  <string name="api_upgrade_notice_message">트위터가 API 1.1버젼을 공개하였습니다.\n\n Twidere는 이번 버젼부터 API 1.1버젼을 사용합니다.\n\n 지금 그대로 사용하시면 많은 오류가 발생할 수 있으므로, *반드시*다시 로그인하시길 바랍니다.\n\n&lt;API 1.1에서의 변경점&gt;\n*사용 제한 기준이 강화되었습니다. 대표적으로,이제는 15분동안 단 15번만 타임라인 새로고침이 가능합니다.\n누가 당신의 트윗을 리트윗했는지 볼 수 없으며,당신에게 리트윗된 트윗 역시 볼 수 없습니다.\n*Twidere를 StatusNet 클라이언트로 사용중이시라면, API 변경으로 많은 기능들이 없어질 것입니다. \m\n불편을 드려 죄송합니다. 하지만 트위터가 서드파티 앱을 죽이려 하고 있어서, 저는 아무것도 할 수 없습니다.</string>
   <string name="connection_timeout">연결시간 초과</string>
-  <string name="name_display_option">화면 이름 옵션</string>
   <string name="both">둘 다</string>
   <string name="browser_sign_in">브라우저로 로그인 하기</string>
   <string name="stop_auto_refresh_when_battery_low">배터리가 부족할 때 자동 새로고침 멈춤</string>
@@ -309,10 +274,7 @@
   <string name="silent_notifications">조용한 알림</string>
   <string name="silent_notifications_summary">알림시 벨소리/진동 해제</string>
   <string name="disable_background_service">백그라운드 서비스 사용 안함</string>
-  <string name="pull_to_load_conversation_label">당겨서 대화 불러오기...</string>
-  <string name="pull_to_load_conversation_release_label">놓아서 대화 불러오기...</string>
   <string name="text_copied">클립보드로 복사되었습니다.</string>
-  <string name="load_from_here">여기서 불러옵니다</string>
   <string name="amount_usd">가격 (미국 달러)</string>
   <string name="donate">기부</string>
   <string name="hashtag">해시태그</string>
@@ -323,7 +285,6 @@
   <string name="sensitive_content_warning">이 트윗은 민감한 컨텐츠를 포함하고 있을 수 있습니다, 진행 하시겠습니까?</string>
   <string name="mark_as_sensitive">민감한 컨텐츠로 등록</string>
   <string name="remove_sensitive_mark">민감한 컨텐츠 등록 해제</string>
-  <string name="loading">로딩중…</string>
   <string name="none">없음</string>
   <string name="large">큰</string>
   <string name="small">작은</string>
@@ -340,10 +301,6 @@
   <string name="no_thanks">아뇨, 괜찮습니다</string>
   <string name="revoke_permissions">권한을 취소</string>
   <string name="fast_scroll_thumb">빠른 손가락 스크롤</string>
-  <string name="link_highlighting">링크 하이라이팅</string>
-  <string name="fast_timeline_processing">빠른 타임라인 처리</string>
-  <string name="fast_timeline_processing_summary">타임라인의 모든 세부사항을 무시합니다.
-이 기능을 켜면 좀 더 좋은 퍼포먼스를 얻을 수 있습니다.</string>
   <string name="indicate_my_status">내 트윗 보이기</string>
   <string name="default_ringtone">기본 벨소리</string>
   <string name="phishing_link_warning">해킹 경고</string>

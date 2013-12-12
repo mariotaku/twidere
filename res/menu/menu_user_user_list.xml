@@ -11,13 +11,13 @@
 		android:id="@id/follow"
 		android:icon="@drawable/ic_menu_follow"
 		android:showAsAction="always"
-		android:title="@string/follow"
+		android:title="@string/subscribe"
 		android:visible="false"/>
 	<item
 		android:id="@id/unfollow"
 		android:icon="@drawable/ic_menu_unfollow"
 		android:showAsAction="always"
-		android:title="@string/unfollow"
+		android:title="@string/unsubscribe"
 		android:visible="false"/>
 
 </menu>

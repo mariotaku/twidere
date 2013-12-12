@@ -28,9 +28,10 @@ import java.io.InputStream;
 public class ContentLengthInputStream extends InputStream {
 
 	private final InputStream stream;
-	private final int length;
-	private int available;
+	private final long length;
 	private ReadListener readListener;
+
+	private long pos;
 
 	public ContentLengthInputStream(final File file) throws FileNotFoundException {
 		this(new FileInputStream(file), file.length());
@@ -38,12 +39,12 @@ public class ContentLengthInputStream extends InputStream {
 
 	public ContentLengthInputStream(final InputStream stream, final long length) {
 		this.stream = stream;
-		this.length = available = (int) length;
+		this.length = length;
 	}
 
 	@Override
 	public synchronized int available() {
-		return available;
+		return (int) (length - pos);
 	}
 
 	@Override
@@ -51,25 +52,57 @@ public class ContentLengthInputStream extends InputStream {
 		stream.close();
 	}
 
-	public int length() {
+	public long length() {
 		return length;
 	}
 
 	@Override
+	public void mark(final int readlimit) {
+		pos = readlimit;
+		stream.mark(readlimit);
+	}
+
+	@Override
 	public int read() throws IOException {
-		available--;
+		pos++;
 		if (readListener != null) {
-			readListener.onRead(length, available);
+			readListener.onRead(length, pos);
 		}
 		return stream.read();
+	}
+
+	@Override
+	public int read(final byte[] buffer) throws IOException {
+		return read(buffer, 0, buffer.length);
+	}
+
+	@Override
+	public int read(final byte[] buffer, final int byteOffset, final int byteCount) throws IOException {
+		pos += byteCount;
+		if (readListener != null) {
+			readListener.onRead(length, pos);
+		}
+		return stream.read(buffer, byteOffset, byteCount);
+	}
+
+	@Override
+	public synchronized void reset() throws IOException {
+		pos = 0;
+		stream.reset();
 	}
 
 	public void setReadListener(final ReadListener readListener) {
 		this.readListener = readListener;
 	}
 
+	@Override
+	public long skip(final long byteCount) throws IOException {
+		pos += byteCount;
+		return stream.skip(byteCount);
+	}
+
 	public interface ReadListener {
-		void onRead(int length, int available);
+		void onRead(long length, long position);
 	}
 
 }

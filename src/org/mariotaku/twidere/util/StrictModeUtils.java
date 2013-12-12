@@ -5,6 +5,8 @@ import android.os.StrictMode.ThreadPolicy;
 import android.os.StrictMode.VmPolicy;
 import android.util.Log;
 
+import java.util.Locale;
+
 public class StrictModeUtils {
 
 	public static final String LOGTAG = "Twidere.StrictMode";
@@ -25,7 +27,7 @@ public class StrictModeUtils {
 				final int line = stackFrame.getLineNumber();
 				final String nonEmptyFile = file != null ? file : "Unknown";
 				final String template = (log_counter == 0 ? "Disk IO on main thread:\n\t" : "\t") + "at %s.%s(%s:%d)";
-				Log.w(LOGTAG, String.format(template, className, method, nonEmptyFile, line));
+				Log.w(LOGTAG, String.format(Locale.US, template, className, method, nonEmptyFile, line));
 				if (++log_counter == 3) return;
 			} else if (CLASS_NAME.equals(className) && log_counter == -1) {
 				log_counter = 0;

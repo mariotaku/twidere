@@ -61,9 +61,9 @@ public abstract class CursorSupportUsersListFragment extends BaseUsersListFragme
 	@Override
 	public void onLoadFinished(final Loader<List<ParcelableUser>> loader, final List<ParcelableUser> data) {
 		super.onLoadFinished(loader, data);
-		final BaseCursorSupportUsersLoader c_loader = (BaseCursorSupportUsersLoader) loader;
-		mNextCursor = c_loader.getNextCursor();
-		mPrevCursor = c_loader.getPrevCursor();
+		final BaseCursorSupportUsersLoader cursorLoader = (BaseCursorSupportUsersLoader) loader;
+		mNextCursor = cursorLoader.getNextCursor();
+		mPrevCursor = cursorLoader.getPrevCursor();
 		// TODO
 		// setEnabled(mNextCursor > 0 ? "from_end" : "disabled");
 	}

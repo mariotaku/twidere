@@ -4,6 +4,7 @@
 	<item
 		android:id="@id/center"
 		android:icon="@android:drawable/ic_menu_mylocation"
-		android:showAsAction="always"/>
+		android:showAsAction="always"
+		android:title="@string/center"/>
 
 </menu>

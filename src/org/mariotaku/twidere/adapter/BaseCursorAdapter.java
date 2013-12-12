@@ -28,6 +28,8 @@ import android.database.Cursor;
 import android.support.v4.widget.SimpleCursorAdapter;
 
 import org.mariotaku.twidere.adapter.iface.IBaseAdapter;
+import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.TwidereLinkify;
 
@@ -42,6 +44,7 @@ public class BaseCursorAdapter extends SimpleCursorAdapter implements IBaseAdapt
 	private boolean mDisplayProfileImage, mNicknameOnly, mDisplayNameFirst, mShowAccountColor;
 
 	private final SharedPreferences mNicknamePrefs, mColorPrefs;
+	private final ImageLoaderWrapper mImageLoader;
 
 	public BaseCursorAdapter(final Context context, final int layout, final Cursor c, final String[] from,
 			final int[] to) {
@@ -51,11 +54,18 @@ public class BaseCursorAdapter extends SimpleCursorAdapter implements IBaseAdapt
 	public BaseCursorAdapter(final Context context, final int layout, final Cursor c, final String[] from,
 			final int[] to, final int flags) {
 		super(context, layout, c, from, to, flags);
+		final TwidereApplication app = TwidereApplication.getInstance(context);
 		mLinkify = new TwidereLinkify(new OnLinkClickHandler(context));
+		mImageLoader = app.getImageLoaderWrapper();
 		mNicknamePrefs = context.getSharedPreferences(USER_NICKNAME_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mColorPrefs = context.getSharedPreferences(USER_COLOR_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mNicknamePrefs.registerOnSharedPreferenceChangeListener(this);
 		mColorPrefs.registerOnSharedPreferenceChangeListener(this);
+	}
+
+	@Override
+	public ImageLoaderWrapper getImageLoader() {
+		return mImageLoader;
 	}
 
 	@Override

@@ -55,11 +55,10 @@
 			</FrameLayout>
 		</org.mariotaku.twidere.view.ColorLabelRelativeLayout>
 
-		<org.mariotaku.menubar.MenuBar
-			android:id="@+id/menu_bar"
+		<org.mariotaku.twidere.view.ActionBarSplitThemedContainer
 			android:layout_width="match_parent"
-			android:layout_height="?android:actionBarSize"
-			android:max="@integer/max_action_buttons_bottom"/>
+			android:layout_height="wrap_content"
+			android:layout="@layout/compose_bottombar"/>
 	</LinearLayout>
 
 </LinearLayout>

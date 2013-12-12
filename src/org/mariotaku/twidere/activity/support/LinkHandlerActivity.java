@@ -179,11 +179,11 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnC
 		if (uri == null || fragment == null) return false;
 		switch (matchLinkId(uri)) {
 			case LINK_ID_STATUS: {
-				setTitle(R.string.view_status);
+				setTitle(R.string.status);
 				break;
 			}
 			case LINK_ID_USER: {
-				setTitle(R.string.view_user_profile);
+				setTitle(R.string.user);
 				break;
 			}
 			case LINK_ID_USER_TIMELINE: {

@@ -62,9 +62,7 @@
   <string name="followers">Pengikut</string>
   <string name="following">Mengikuti</string>
   <string name="about">Tentang</string>
-  <string name="about_summary">Tentang Twidere</string>
   <string name="open_source_license">Lisensi Open Source</string>
-  <string name="license_summary">Twidere berlisensi GPLv3.</string>
   <string name="api">API</string>
   <string name="default_api_settings">Pengaturan API default</string>
   <string name="consumer_key">Kode Consumer Key</string>
@@ -81,12 +79,9 @@
   <string name="clear_databases">Bersihkan database</string>
   <string name="clear_databases_summary">Bersihkan seluruh tweet, profil, pesan. Data akun anda tidak akan hilang.</string>
   <string name="look_and_feel">Tampilan dan nuansa</string>
-  <string name="dark_theme">Gunakan tema gelap</string>
-  <string name="dark_theme_summary">Gunakan tema gelap untuk Twidere.</string>
   <string name="display_profile_image">Tampilkan gambar profil</string>
   <string name="image_load_summary">Mematikan fitur ini akan meningkatkan kecepatan menggulung daftar dan mengurangi beban data.</string>
   <string name="in_reply_to">Balasan untuk <xliff:g id="username">%s</xliff:g></string>
-  <string name="in_reply_to_pull_to_load_conversation">Sebagai balasan untuk <xliff:g id="user_name">%s</xliff:g>, tarik untuk memuat percakapan</string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> retweet ini</string>
   <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> dan <xliff:g id="retweet_count">%2$d</xliff:g> lainnya me-retweet ini</string>
   <string name="retweeted_by_count"><xliff:g id="retweet_count">%d</xliff:g> pengguna me-retweet ini</string>
@@ -95,7 +90,6 @@
   <string name="quote_user">Mengutip <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>
   <string name="source">melalui <xliff:g id="source">%s</xliff:g></string>
-  <string name="filter">Filter</string>
   <string name="filters">Saringan</string>
   <string name="users">Pengguna</string>
   <string name="user">Pengguna</string>
@@ -117,12 +111,10 @@
   <string name="load_more_automatically_summary">Muat lebih banyak konten (gambar, peta, status) secara otomatis</string>
   <string name="quote">Kutip</string>
   <string name="add_rule">Tambah aturan</string>
-  <string name="longclick_to_delete">Tekan yang lama untuk menghapus.</string>
   <string name="text_size">Ukuran teks</string>
   <string name="text_size_summary">Ukuran teks status.</string>
   <string name="cannot_get_location">Tidak bisa mendapatkan lokasi anda.</string>
   <string name="drafts">Konsep</string>
-  <string name="delete_all">Hapus semua</string>
   <string name="description">Deskripsi</string>
   <string name="location">Lokasi</string>
   <string name="url">URL</string>
@@ -166,22 +158,13 @@
   <string name="inbox">Kotak masuk</string>
   <string name="load_images">Memuat gambar</string>
   <string name="other_settings">Pengaturan lainnya</string>
-  <string name="refresh_and_notifications">Refresh &amp; Notifikasi</string>
   <string name="auto_refresh">Refresh otomatis</string>
   <string name="refresh_interval">Interval refresh</string>
-  <string name="refresh_interval_summary">Rentang waktu muat ulang yang kecil memerlukan banyak daya dan data!</string>
   <string name="content_to_refresh">Konten yang di-refresh</string>
-  <string name="content_to_notify">Konten untuk diberitahukan</string>
   <string name="notifications_type">Jenis pemberitahuan</string>
-  <string name="notifications_type_summary">Pilihan ini TIDAK akan menimpa pengaturan sistem.</string>
   <string name="sound">Suara</string>
   <string name="vibration">Getaran</string>
-  <string name="light">Lampu</string>
   <string name="notifications">Notifikasi</string>
-  <string name="new_notifications">Notifikasi baru</string>
-  <string name="screen_name">Nama pengguna</string>
-  <string name="sort_timeline_by_time">Urutkan timeline berdasarkan waktu</string>
-  <string name="sort_timeline_by_time_summary">Ini mungkin akan membuat retweet ditampilkan pada lokasi yang salah atau berguna apabila layanan lain seperti Identi.ca digunakan.</string>
   <string name="refresh_on_start">Muat ulang di awal</string>
   <string name="refresh_on_start_summary">Muat ulang lini massa dan mention untuk memulai.</string>
   <string name="refresh_after_status_updated">Segarkan setelah twit terkirim</string>
@@ -192,9 +175,6 @@
   <string name="type_to_compose">Ketik untuk membuat baru</string>
   <string name="users_lists">Daftar pengguna ini</string>
   <string name="lists_following_user">Daftar mengikuti pengguna ini</string>
-  <string name="you_have_N_new_statuses_quantity_one">Anda mempunyai twit baru.</string>
-  <string name="you_have_N_new_statuses_quantity_other">Anda memiliki <xliff:g id="items">%d</xliff:g> twit baru.</string>
-  <string name="item_1_minute">1 menit</string>
   <string name="item_3_minutes">3 menit</string>
   <string name="item_5_minutes">5 menit</string>
   <string name="item_10_minutes">10 menit</string>
@@ -204,8 +184,6 @@
   <string name="item_2_hours">2 jam</string>
   <string name="item_4_hours">4 jam</string>
   <string name="display_image_preview">Menampilkan preview gambar</string>
-  <string name="solid_color_background">Warna latar penuh</string>
-  <string name="solid_color_background_summary">Ini mungkin hanya akan berguna pada layar AMOLED.</string>
   <string name="following_you">Mengikuti Anda</string>
   <string name="user_list">Daftar</string>
   <string name="trends_location">Lokasi tren</string>
@@ -221,16 +199,10 @@
   <string name="is_public">Publik</string>
   <string name="send_direct_message">Kirim DM</string>
   <string name="extensions">Ekstensi</string>
-  <string name="open_with_extensions">Buka dengan ekstensi</string>
-  <string name="view_user_list">Lihat daftar</string>
   <string name="uninstall">Hapus</string>
   <string name="saved_searches">Pencarian yang tersimpan</string>
   <string name="tabs">Tab</string>
-  <string name="default_tabs">Tab default</string>
   <string name="add_tab">Tambah tab</string>
-  <string name="tab_type">Jenis tab</string>
-  <string name="unused">Tak terpakai</string>
-  <string name="list_name">Daftar nama</string>
   <string name="edit_tab">Sunting tab</string>
   <string name="move_up">Gerak atas</string>
   <string name="move_down">Gerak ke bawah</string>
@@ -261,8 +233,6 @@
   <string name="multimedia_contents">Isi multimedia</string>
   <string name="show_absolute_time">Tampilkan waktu absolut</string>
   <string name="show_absolute_time_summary">Tampilkan waktu absulut di tweet</string>
-  <string name="mute_source">Bisukan sumber</string>
-  <string name="source_muted">Menambahkan \"<xliff:g id="source">%s</xliff:g>\" untuk menyaring daftar. Anda tidak akan melihat kicauan dari sumber ini di timeline/mentions anda.</string>
   <string name="user_mentions">Mention pengguna</string>
   <string name="dual_pane_layout">Tata Letak Kotak Ganda</string>
   <string name="landscape">Lanskap</string>
@@ -271,12 +241,9 @@
   <string name="quick_send_summary">Kirim tweet saat menekan \"Enter\".</string>
   <string name="unsaved_status">Twit tidak terkirim atau belum tersimpan.</string>
   <string name="discard">Buang</string>
-  <string name="multi_select">Pilih banyak</string>
   <string name="Nitems_selected_quantity_one">1 item terpilih</string>
   <string name="Nitems_selected_quantity_other"><xliff:g id="items">%d</xliff:g> item terpilih</string>
   <string name="view">Lihat</string>
-  <string name="hardware_acceleration">Akselerasi perangkat keras</string>
-  <string name="hardware_acceleration_summary">Beberapa perangkat akan menjadi lebih lancar, SEBAGIAN TIDAK. Untuk Android 3.0+ saja. Ini tidak akan menimpa pengaturan sistem!</string>
   <string name="custom_host_mapping">Kustom host mapping</string>
   <string name="custom_host_mapping_summary">Host pemetaan sperti /etc/hosts, tanpa butuh permisi tambahan.</string>
   <string name="host">Host</string>
@@ -304,35 +271,27 @@
   <string name="activity_by_friends_list_member_added"><xliff:g id="user">%1$s</xliff:g> menambahkan <xliff:g id="target">%2$s</xliff:g> ke daftar.</string>
   <string name="activity_by_friends_list_created"><xliff:g id="user">%1$s</xliff:g> membuat daftar <xliff:g id="target">%2$s</xliff:g>.</string>
   <string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g> membuat daftar <xliff:g id="target">%2$s</xliff:g> dan <xliff:g id="count">%3$d</xliff:g> lagi.</string>
-  <string name="cannot_get_callback_url">Tidak dapat panggilan balik, harap periksa nama dan kata sandi anda.</string>
   <string name="status_not_updated">Twit tidak terkirim.</string>
   <string name="status_not_updated_summary">Twit tidak terkirim, dan disimpan di draf.</string>
   <string name="incoming_friendships">Permintaan mengikuti ditahan</string>
-  <string name="click_to_open_menu">Klik untuk membuka menu item</string>
-  <string name="click_to_open_menu_summary">Klik untuk membuka menu item, Tahan untuk memilih lebih.</string>
   <string name="send_follow_request">Kirim permintaan mengikuti</string>
   <string name="follow_request_sent">Permintaan mengikuti terkirim</string>
   <string name="separate_retweet_action">Pisahkan aksi kicauan ulang</string>
   <string name="separate_retweet_action_summary">Tampilkan kedua aksi kicauan ulang dan kutip di menu kicauan</string>
   <string name="status">Twit</string>
   <string name="preview">Pratinjau</string>
-  <string name="api_upgrade_notice_title">SANGAT PENTING!</string>
-  <string name="api_upgrade_notice_message">  Twitter mengumumkan versi baru dari API (1.1) mereka.\n\n  Sejak versi ini, Twidere menggunakan API versi 1.1 mereka.\n\n  SANGAT DISARANKAN untuk masuk ulang, atau Anda akan mengalami masalah saat menggunakannnya.\n\n  Apa yang berubah di versi API 1.1?\n  *Keketatan mengingkat, misalnya, anda hanya dapat kembali ke home timeline 15 kali per 15 menit.\n  *Anda tidak dapat melihat orang yang me-retweet Anda, tidak dapat melihat tweet yang Anda retweet.\n  *Jika Anda menggukanan Twidere sebagai StatusNet client anda, banyak fitur yang menghilang karna perubahan API.\n\n  Maaf untuk ketidaknyamanannya, tapi Anda tahu - Twitter ingin menghilangkan klien aplikasi pihak ke-tiga, saya tidak dapat melakukan apa-apa.</string>
   <string name="connection_timeout">Waktu koneksi habis</string>
-  <string name="name_display_option">Pengaturan nama tampilan</string>
   <string name="both">Keduanya</string>
   <string name="browser_sign_in">Masuk melalui browser</string>
   <string name="stop_auto_refresh_when_battery_low">Hentikan segar otomatis ketika baterai mulai habis</string>
   <string name="notification_mention"><xliff:g id="user">%s</xliff:g> menyebut Anda.</string>
+  <string name="notification_mention_multiple"><xliff:g id="user">%1$s</xliff:g> dan <xliff:g id="count">%2$d</xliff:g> lainnya menyebut Anda.</string>
   <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> mengirim Anda pesan langsung.</string>
   <string name="notification_direct_message_multiple_messages"><xliff:g id="user">%1$s</xliff:g> mengirimkan <xliff:g id="messages_count">%2$d</xliff:g> pesan langsung.</string>
-  <string name="notification_mention_multiple"><xliff:g id="user">%1$s</xliff:g> dan <xliff:g id="count">%2$d</xliff:g> lainnya menyebut Anda.</string>
   <string name="notification_direct_message_multiple_users"><xliff:g id="user">%1$s</xliff:g> dan <xliff:g id="users_count">%2$d</xliff:g> lainnya mengirimkan <xliff:g id="messages_count">%3$d</xliff:g> pesan langsung.</string>
   <string name="action_getting_status">mendapatkan twit</string>
-  <string name="action_getting_statuses">mendapatkan twit</string>
   <string name="action_updating_status">mengirim tweet</string>
   <string name="action_sending_direct_message">Mengirim pesan langsung</string>
-  <string name="action_refreshing_timelines">menyegarkan linimassa</string>
   <string name="action_refreshing_home_timeline">menyegarkan beranda linimassa</string>
   <string name="action_refreshing_mentions">menyegarkan mention</string>
   <string name="action_refreshing_direct_messages">menyegarkan pesan langsung</string>
@@ -366,10 +325,7 @@
   <string name="silent_notifications_summary">Matikan nada dering/getar untuk notifikasi</string>
   <string name="disable_background_service">Matikan layanan background</string>
   <string name="disable_background_service_summary">Twidere tak memiliki layanan latar belakang jika anda mematikan pembaruan otomatis (auto refresh) dan pemrofilan data (data profiling), jangan bercanda!</string>
-  <string name="pull_to_load_conversation_label">Tarik untuk memuat percakapan…</string>
-  <string name="pull_to_load_conversation_release_label">Lepaskan untuk memuat percakapan…</string>
   <string name="text_copied">Teks telah dikopi ke clipboard.</string>
-  <string name="load_from_here">Memuat dari sini</string>
   <string name="amount_usd">Jumlah (Dollar AS)</string>
   <string name="donate">Donasi</string>
   <string name="hashtag">tanda pagar</string>
@@ -380,7 +336,6 @@
   <string name="sensitive_content_warning">Tweet ini mungkin berisi konten yang sensitif, mau melanjutkan?</string>
   <string name="mark_as_sensitive">Tandai sebagai konten sensitif</string>
   <string name="remove_sensitive_mark">Hilangkan tanda konten sensitif</string>
-  <string name="loading">Tunggu</string>
   <string name="none">Tidak ada</string>
   <string name="large">Banyak</string>
   <string name="small">Sedikit</string>
@@ -399,9 +354,6 @@
   <string name="no_thanks">Tidak, terima kasih</string>
   <string name="revoke_permissions">Cabut ijin yang diberikan</string>
   <string name="fast_scroll_thumb">Menggulung dengan cepat</string>
-  <string name="link_highlighting">Link penyorotan</string>
-  <string name="fast_timeline_processing">Pengolahan waktu cepat</string>
-  <string name="fast_timeline_processing_summary">Abaikan SEMUA detail dalam timeline, nyalakan ini untuk mendapatkan kinerja yang lebih baik.</string>
   <string name="indicate_my_status">Tunjukkan kicuan saya</string>
   <string name="default_ringtone">Nada dering default</string>
   <string name="phishing_link_warning">Peringatan tautan phishing</string>
@@ -412,7 +364,6 @@
   <string name="profile_images">Gambar Profil </string>
   <string name="preview_images">Pratinjau gambar</string>
   <string name="preload_wifi_only">Preload menggunakan Wi-Fi saja</string>
-  <string name="re_sign_in_needed">Anda mungkin perlu untuk memasukkan akun Anda lagi.</string>
   <string name="disable_tab_swipe">Nonaktifkan tab menggesek</string>
   <string name="sign_in_method_introduction_title">Bagaimana cara kerjanya?</string>
   <string name="sign_in_method_introduction">Kebanyakan klien seperti twicca membuka browser meminta Anda untuk mengetik nama user dan sandi, dan kemudian membawa Anda kembali ke klien mereka. Kadang-kadang ini bisa menjadi sangat nyaman.\nTwidere menggunakan langkah-langkah yang lebih sederhana untuk masuk, tanpa membuka browser. Jangan khawatir tentang sandi Anda, Twidere tidak akan pernah menyimpannya, itu benar-benar aman!</string>
@@ -491,7 +442,6 @@
   <string name="keyword_filter_name">Kata kunci: <xliff:g id="name">%s</xliff:g></string>
   <string name="source_filter_name">Sumber: <xliff:g id="name">%s</xliff:g></string>
   <string name="block_user">Blok <xliff:g id="name">%s</xliff:g></string>
-  <string name="block_user_confirm_message">Apakah Anda yakin memblokir <xliff:g id="name">%s</xliff:g>?</string>
   <string name="donate_via_paypal">Donasi via PayPal</string>
   <string name="donate_via_alipay">Donasi via Alipay</string>
   <string name="donators">Donatur</string>

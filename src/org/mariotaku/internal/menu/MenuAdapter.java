@@ -6,6 +6,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 
 import org.mariotaku.twidere.R;
@@ -34,9 +35,12 @@ public final class MenuAdapter extends ArrayAdapter<MenuItem> {
 	public View getView(final int position, final View convertView, final ViewGroup parent) {
 		final View view = super.getView(position, convertView, parent);
 		final ImageView icon = (ImageView) view.findViewById(android.R.id.icon);
+		final CheckBox checkBox = (CheckBox) view.findViewById(android.R.id.checkbox);
 		final MenuItem item = getItem(position);
 		icon.setImageDrawable(item.getIcon());
 		icon.setVisibility(item.getIcon() != null ? View.VISIBLE : View.GONE);
+		checkBox.setVisibility(item.isCheckable() ? View.VISIBLE : View.GONE);
+		checkBox.setChecked(item.isChecked());
 		return view;
 	}
 

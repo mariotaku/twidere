@@ -29,7 +29,7 @@ import org.mariotaku.jsonserializer.JSONSerializer;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableActivity;
-import org.mariotaku.twidere.util.NoDuplicatesArrayList;
+import org.mariotaku.twidere.util.collection.NoDuplicatesArrayList;
 
 import twitter4j.Activity;
 import twitter4j.Paging;
@@ -48,39 +48,36 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Par
 	private final List<ParcelableActivity> mData = Collections
 			.synchronizedList(new NoDuplicatesArrayList<ParcelableActivity>());
 	private final boolean mIsFirstLoad;
-	private final int mTabPosition, mLoadItemLimit;
+	private final int mTabPosition, mLoadItemLimit, mDatabaseItemLimit;
 
 	private final boolean mHiResProfileImage;
 
 	private final Object[] mSavedActivitiesFileArgs;
 
 	public Twitter4JActivitiesLoader(final Context context, final long account_id, final List<ParcelableActivity> data,
-			final String[] save_file_args, final int tab_position) {
+			final String[] save_file_args, final int tabPosition) {
 		super(context);
 		mContext = context;
 		mAccountId = account_id;
 		mIsFirstLoad = data == null;
-		mTabPosition = tab_position;
+		mTabPosition = tabPosition;
 		mSavedActivitiesFileArgs = save_file_args;
 		mHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mLoadItemLimit = Math
 				.min(100, prefs.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT));
+		mDatabaseItemLimit = prefs.getInt(PREFERENCE_KEY_DATABASE_ITEM_LIMIT, PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
 	}
 
 	@Override
 	public List<ParcelableActivity> loadInBackground() {
-		if (mIsFirstLoad && mTabPosition >= 0 && mSavedActivitiesFileArgs != null) {
-			try {
-				final File file = JSONSerializer.getSerializationFile(mContext, mSavedActivitiesFileArgs);
-				final List<ParcelableActivity> cached = JSONSerializer.listFromFile(file);
-				if (cached != null) {
-					mData.addAll(cached);
-					Collections.sort(mData);
-					return mData;
-				}
-			} catch (final IOException e) {
-				e.printStackTrace();
+		final File file = getSerializationFile();
+		if (mIsFirstLoad && mTabPosition >= 0 && mSavedActivitiesFileArgs != null && file != null) {
+			final List<ParcelableActivity> cached = getCachedData(file);
+			if (cached != null) {
+				mData.addAll(cached);
+				Collections.sort(mData);
+				return mData;
 			}
 		}
 		final List<Activity> activities;
@@ -98,6 +95,7 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Par
 			mData.add(new ParcelableActivity(activity, mAccountId, mHiResProfileImage));
 		}
 		Collections.sort(mData);
+		saveCachedData(file, mData);
 		return mData;
 	}
 
@@ -118,6 +116,36 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Par
 	@Override
 	protected void onStartLoading() {
 		forceLoad();
+	}
+
+	private List<ParcelableActivity> getCachedData(final File file) {
+		if (file == null) return null;
+		try {
+			return JSONSerializer.listFromFile(file);
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private File getSerializationFile() {
+		if (mSavedActivitiesFileArgs == null) return null;
+		try {
+			return JSONSerializer.getSerializationFile(mContext, mSavedActivitiesFileArgs);
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private void saveCachedData(final File file, final List<ParcelableActivity> data) {
+		if (file == null || data == null) return;
+		try {
+			final List<ParcelableActivity> activities = data.subList(0, Math.min(mDatabaseItemLimit, data.size()));
+			JSONSerializer.toFile(file, activities.toArray(new ParcelableActivity[activities.size()]));
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

@@ -403,6 +403,7 @@ public interface TweetStore {
 
 		public static final int ACTION_UPDATE_STATUS = 1;
 		public static final int ACTION_SEND_DIRECT_MESSAGE = 2;
+		public static final int ACTION_CREATE_FRIENDSHIP = 3;
 
 		public static final String TABLE_NAME = "drafts";
 		public static final String CONTENT_PATH = TABLE_NAME;

@@ -62,15 +62,11 @@
   <string name="followers">Seguidors</string>
   <string name="following">Seguidors</string>
   <string name="about">Quant al</string>
-  <string name="about_summary">Quant a Twidere</string>
   <string name="open_source_license">Llicència de codi obert</string>
-  <string name="license_summary">El Twidere està llicenciat sota la GPLv3.</string>
   <string name="api">API</string>
   <string name="default_api_settings">Paràmetres per defecte de l\'API</string>
   <string name="consumer_key">Clau del consumidor</string>
-  <string name="consumer_key_summary">Clau de consumidor per a nous comptes en el mode OAuth/xAuth</string>
   <string name="consumer_secret">Clau secreta de consumidor</string>
-  <string name="consumer_secret_summary">Secret de consumidor per a nous comptes en el mode OAuth/xAuth</string>
   <string name="ignore_ssl_error">Ignora error d\'SSL</string>
   <string name="ignore_ssl_error_summary">Ignora els errors d\'SSL. Activeu-ho si teniu problemes amb servidors API personalitzats.</string>
   <string name="gzip_compressing">Compressió Gzip</string>
@@ -83,12 +79,9 @@
   <string name="clear_databases">Buida les bases de dades</string>
   <string name="clear_databases_summary">Buida totes les piulades, perfils i missatges. Les dades credencials del teu compte no es perdran.</string>
   <string name="look_and_feel">Entorn i comportament</string>
-  <string name="dark_theme">Utilitzar tema fosc</string>
-  <string name="dark_theme_summary">Utilitza el tema fosc a Twidere.</string>
   <string name="display_profile_image">Mostra la imatge del perfil</string>
   <string name="image_load_summary">Desactivant aquesta opció s\'incrementarà la velocitat del desplaçament i es reduirà l\'ús de dades.</string>
   <string name="in_reply_to">En resposta a <xliff:g id="user_name">%s</xliff:g></string>
-  <string name="in_reply_to_pull_to_load_conversation">En resposta a <xliff:g id="user_name">%s</xliff:g>, desplaça cap a baix per carregar la conversa</string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> ho ha repiulat</string>
   <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> i <xliff:g id="retweet_count">%2$d</xliff:g> més ho han repiulat</string>
   <string name="retweeted_by_count"><xliff:g id="retweet_count">%d</xliff:g> usuaris ho han repiulat</string>
@@ -97,7 +90,6 @@
   <string name="quote_user">Cita a <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>
   <string name="source">mitjançant <xliff:g id="source">%s</xliff:g></string>
-  <string name="filter">Filtre</string>
   <string name="filters">Filtres</string>
   <string name="users">Usuaris</string>
   <string name="user">Usuari</string>
@@ -122,12 +114,10 @@
   <string name="load_more_automatically_summary">Carrega més continguts (ex. fotos, mapes, estats) automàticament</string>
   <string name="quote">Cita</string>
   <string name="add_rule">Afegeix una regla</string>
-  <string name="longclick_to_delete">Mantingues premut per esborrar.</string>
   <string name="text_size">Tamany del text</string>
   <string name="text_size_summary">Mida del text dels estats.</string>
   <string name="cannot_get_location">No es pot obtenir la vostra localització.</string>
   <string name="drafts">Esborranys</string>
-  <string name="delete_all">Esborra-ho tot</string>
   <string name="description">Descripció</string>
   <string name="location">Ubicació</string>
   <string name="url">URL</string>
@@ -171,22 +161,13 @@
   <string name="inbox">Safata d\'entrada</string>
   <string name="load_images">Carrega imatges</string>
   <string name="other_settings">Altres configuracions</string>
-  <string name="refresh_and_notifications">Actualització i notificacions</string>
   <string name="auto_refresh">Actualització automàtica</string>
   <string name="refresh_interval">Interval d\'actualizació</string>
-  <string name="refresh_interval_summary">Els intervals de refresc curts utilitzen més bateria i ús de dades.</string>
   <string name="content_to_refresh">Contingut per actualitzar</string>
-  <string name="content_to_notify">Contingut per notificar</string>
   <string name="notifications_type">Tipus de notificacions</string>
-  <string name="notifications_type_summary">Aquesta opció NO modificarà configuracions del sistema.</string>
   <string name="sound">So</string>
   <string name="vibration">Vibració</string>
-  <string name="light">Llums</string>
   <string name="notifications">Notificacions</string>
-  <string name="new_notifications">Noves notificacions</string>
-  <string name="screen_name">Nom d\'usuari</string>
-  <string name="sort_timeline_by_time">Ordena la cronologia per antiguitat</string>
-  <string name="sort_timeline_by_time_summary">Això pot fer que les repiulades es mostrin en una posició incorrecta, però pot us pot ajudar si utilitzeu altres serveis com Identi.ca.</string>
   <string name="refresh_on_start">Actualitzar a l\'inici</string>
   <string name="refresh_on_start_summary">Actualitza la cronologia i mencions a l\'inici.</string>
   <string name="refresh_after_status_updated">Actualitza quan s\'hagi enviat una piulada</string>
@@ -197,9 +178,6 @@
   <string name="type_to_compose">Escriu per redactar</string>
   <string name="users_lists">Llistes de l\'usuari</string>
   <string name="lists_following_user">Llistes que segueixen a aquest usuari</string>
-  <string name="you_have_N_new_statuses_quantity_one">Tens una nova piulada.</string>
-  <string name="you_have_N_new_statuses_quantity_other">Tens <xliff:g id="items">%d</xliff:g> piulades noves.</string>
-  <string name="item_1_minute">1 minut</string>
   <string name="item_3_minutes">3 minuts</string>
   <string name="item_5_minutes">5 minuts</string>
   <string name="item_10_minutes">10 minuts</string>
@@ -209,8 +187,6 @@
   <string name="item_2_hours">2 hores</string>
   <string name="item_4_hours">4 hores</string>
   <string name="display_image_preview">Mostra una vista de la imatge</string>
-  <string name="solid_color_background">Color de fons sòlid</string>
-  <string name="solid_color_background_summary">Això pot ser útil si la pantalla del dispositiu és AMOLED.</string>
   <string name="following_you">Seguint-te</string>
   <string name="user_list">Llistat</string>
   <string name="trends_location">Ubicació de les tendències</string>
@@ -226,16 +202,10 @@
   <string name="is_public">Públic</string>
   <string name="send_direct_message">Enviar Missatge Directe</string>
   <string name="extensions">Extensions</string>
-  <string name="open_with_extensions">Obrir amb les extensions</string>
-  <string name="view_user_list">Mostrar llista</string>
   <string name="uninstall">Desinstal·la</string>
   <string name="saved_searches">Cerques desades</string>
   <string name="tabs">Pestanyes</string>
-  <string name="default_tabs">Pestanyes per defecte</string>
   <string name="add_tab">Afegeix una pestanya</string>
-  <string name="tab_type">Tipus de pestanya</string>
-  <string name="unused">Inutilitzat</string>
-  <string name="list_name">Nom de la llista</string>
   <string name="edit_tab">Edita la pestanya</string>
   <string name="move_up">Mou amunt</string>
   <string name="move_down">Mou avall</string>
@@ -266,8 +236,6 @@
   <string name="multimedia_contents">Contingut multimèdia</string>
   <string name="show_absolute_time">Mostra l\'hora absoluta</string>
   <string name="show_absolute_time_summary">Mostra data i hora absoluts a les piulades</string>
-  <string name="mute_source">Silenciar font</string>
-  <string name="source_muted">S\'ha afegit \"<xliff:g id="source">%s</xliff:g>\" al filtre. No veuràs piulades d\'aquesta font a la teva cronologia ni a la teva llista de mencions.</string>
   <string name="user_mentions">Mencions de l\'usuari</string>
   <string name="dual_pane_layout">Visualitzar amb panell doble</string>
   <string name="landscape">Horitzontal</string>
@@ -276,12 +244,9 @@
   <string name="quick_send_summary">Envia la piulada quan es premi \"Retorn\".</string>
   <string name="unsaved_status">No s\'ha desat o enviat la piulada.</string>
   <string name="discard">Descarta</string>
-  <string name="multi_select">Selecció multiple</string>
   <string name="Nitems_selected_quantity_one">1 element seleccionat</string>
   <string name="Nitems_selected_quantity_other"><xliff:g id="items">%d</xliff:g> elements seleccionats</string>
   <string name="view">Mostra</string>
-  <string name="hardware_acceleration">Acceleració per maquinari</string>
-  <string name="hardware_acceleration_summary">Alguns dispositius funcionaran millor després d\'activar-ho, ALTRES NO. Solament per Android 3.0+. NO MODIFICARÀ LA CONFIGURACIÓ DEL SISTEMA!</string>
   <string name="custom_host_mapping">Associacions de servidors personalitzades</string>
   <string name="custom_host_mapping_summary">Associa servidors com el fitxer /etc/hosts sense requerir permisos addicionals.</string>
   <string name="host">Servidor</string>
@@ -309,35 +274,27 @@
   <string name="activity_by_friends_list_member_added"><xliff:g id="user">%1$s</xliff:g> ha afegit a <xliff:g id="target">%2$s</xliff:g> a una llista.</string>
   <string name="activity_by_friends_list_created"><xliff:g id="user">%1$s</xliff:g> ha creat la llista <xliff:g id="target">%2$s</xliff:g>.</string>
   <string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g> ha creat la llista <xliff:g id="target">%2$s</xliff:g> i <xliff:g id="count">%3$d</xliff:g> més.</string>
-  <string name="cannot_get_callback_url">No s\'ha rebut cap resposta. Comproveu el vostre nom d\'usuari i contrasenya.</string>
   <string name="status_not_updated">Piulada no enviada.</string>
   <string name="status_not_updated_summary">No s\'ha enviat la piulada, però s\'ha desat a Esborranys.</string>
   <string name="incoming_friendships">Peticions de seguiment pendents</string>
-  <string name="click_to_open_menu">Toqueu per obrir el menú</string>
-  <string name="click_to_open_menu_summary">Toqueu per obrir el menú, i mantingueu el toc per fer una selecció múltiple.</string>
   <string name="send_follow_request">Envia una petició de seguiment</string>
   <string name="follow_request_sent">S\'ha enviat la petició de seguiment</string>
   <string name="separate_retweet_action">Separa l\'acció de repiular</string>
   <string name="separate_retweet_action_summary">Mostra les accions de repiular i citar en el menú de piulada</string>
   <string name="status">Piulada</string>
   <string name="preview">Previsualització</string>
-  <string name="api_upgrade_notice_title">MOLT IMPORTANT!</string>
-  <string name="api_upgrade_notice_message">Des que Twitter va treure la nova versió de la seva API (1.1)\n\n Twidere l\'està utilitzant.\n\n És MOLT RECOMANABLE tancar i tornar obrir la sessió o tindràs alguns problemes utilitzant aquesta versió.\n\n Els canvis en aquesta versió de l\'API:\n *Una freqüència més restringida d\'actualització de la cronologia. Ara només es pot actualitzar 15 cops cada 15 minuts.\n *No es pot veure qui t\'ha repiulat ni qui t\'ha enviat repiulades.\n *Si fas servir Twidere com un client d\'StatusNet, has perdut algunes funcions pels canvis a l\'API.\n\n Disculpeu pels inconvenients però, com sabeu, Twitter està intentant d\'eliminar les aplicacions de tercers i no puc fer-hi res.</string>
   <string name="connection_timeout">Temps màxim de connexió exhaurit</string>
-  <string name="name_display_option">Opcions per mostrar el nom</string>
   <string name="both">Ambdós</string>
   <string name="browser_sign_in">Connectar amb el navegador</string>
   <string name="stop_auto_refresh_when_battery_low">Atura l\'actualització automàtica amb poca bateria</string>
   <string name="notification_mention"><xliff:g id="user">%s</xliff:g> t\'ha mencionat.</string>
+  <string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> i altres <xliff:g id="count">%d</xliff:g> t\'han mencionat.</string>
   <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> t\'ha enviat un missatge directe.</string>
   <string name="notification_direct_message_multiple_messages"><xliff:g id="user">%1$s</xliff:g> t\'ha enviat <xliff:g id="messages_count">%2$d</xliff:g> missatges directes.</string>
-  <string name="notification_mention_multiple"><xliff:g id="user">%s</xliff:g> i altres <xliff:g id="count">%d</xliff:g> t\'han mencionat.</string>
   <string name="notification_direct_message_multiple_users"><xliff:g id="user">%1$s</xliff:g> i altres <xliff:g id="users_count">%2$d</xliff:g> t\'han enviat <xliff:g id="messages_count">%3$d</xliff:g> missatges directes.</string>
   <string name="action_getting_status">Rebent la piulada</string>
-  <string name="action_getting_statuses">Obtenint les piulades</string>
   <string name="action_updating_status">Enviant la piulada</string>
   <string name="action_sending_direct_message">Enviant missatge directe</string>
-  <string name="action_refreshing_timelines">Actualitzant les cronologies</string>
   <string name="action_refreshing_home_timeline">Actualitzant la cronologia</string>
   <string name="action_refreshing_mentions">Actualitzant els esments</string>
   <string name="action_refreshing_direct_messages">S\'està actualitzant els missatges directes</string>
@@ -367,10 +324,7 @@
   <string name="silent_notifications_summary">Desactiva el to/vibració de les notificacions</string>
   <string name="disable_background_service">Desactivar el servei en segon pla</string>
   <string name="disable_background_service_summary">El Twidere no opera en rerefons si desactives l‘actualització automàtica i la recollida de dades, no siguis ruc!</string>
-  <string name="pull_to_load_conversation_label">Desplaça cap a baix per carregar la conversa...</string>
-  <string name="pull_to_load_conversation_release_label">Solta per carregar la conversa...</string>
   <string name="text_copied">Text copia al porta-retalls.</string>
-  <string name="load_from_here">Carrega des d\'aquí</string>
   <string name="amount_usd">Quantitat (USD)</string>
   <string name="donate">Donar</string>
   <string name="hashtag">Etiqueta</string>
@@ -381,7 +335,6 @@
   <string name="sensitive_content_warning">Aquesta piulada pot contenir continguts sensibles. Voleu continuar?</string>
   <string name="mark_as_sensitive">Marca com a sensible</string>
   <string name="remove_sensitive_mark">Elimina la marca de sensible</string>
-  <string name="loading">S\'està carregant.</string>
   <string name="none">Cap</string>
   <string name="large">Gran</string>
   <string name="small">Petit</string>
@@ -400,9 +353,6 @@
   <string name="no_thanks">No, gràcies</string>
   <string name="revoke_permissions">Revoca els permisos</string>
   <string name="fast_scroll_thumb">Desplaçament ràpid amb el polze</string>
-  <string name="link_highlighting">Remarca els enllaços</string>
-  <string name="fast_timeline_processing">Procés ràpid de la cronologia</string>
-  <string name="fast_timeline_processing_summary">Ignora tots els detalls de la cronologia. Activeu-ho per aconseguir millor rendiment.</string>
   <string name="indicate_my_status">Indica la meva piulada</string>
   <string name="default_ringtone">To per defecte</string>
   <string name="phishing_link_warning">Avís de phishing en l\'enllaç</string>
@@ -413,7 +363,6 @@
   <string name="profile_images">Imatges de perfil</string>
   <string name="preview_images">Previsualització d\'imatges</string>
   <string name="preload_wifi_only">Precarrega només a través de Wi-Fi</string>
-  <string name="re_sign_in_needed">S\'han tancat totes les sessions. Has de tornar a obrir-les.</string>
   <string name="disable_tab_swipe">Desactiva la navegació entre pestanyes fent lliscar el dit</string>
   <string name="sign_in_method_introduction_title">Com funciona, això?</string>
   <string name="sign_in_method_introduction">La majoria de clients, com twicca, fan servir un navegador per introduir el nom i la contrasenya d\'usuari, però això pot ser molt molest.\nEl Twidere fa el mateix d\'una manera més senzilla, sense obrir el navegador. Així que no et preocupis per la teva contrasenya, no la desarem enlloc, és completament segur!</string>
@@ -464,21 +413,17 @@
   <string name="add_to_list">Afegeix a la llista</string>
   <string name="account_delete_confirm_title">Esborra el compte</string>
   <string name="account_delete_confirm_message">Esteu apunt d\'esborrar aquest compte del Twidere.</string>
-  <string name="for_advanced_users_only">NOMÉS PER A USUARIS AVANÇATS!</string>
   <string name="theme">Tema</string>
   <string name="theme_dark">Fosc</string>
   <string name="theme_light">Clar</string>
-  <string name="theme_light_darkactionbar">Clar amb «ActionBar» fosca</string>
   <string name="settings_interface">Interfície</string>
   <string name="no_rule">Sense normes</string>
   <string name="enable_in_mentions">Habilita en les mencions</string>
   <string name="enable_in_home_timeline">Habilita en la cronologia</string>
   <string name="delete_user_list">Eliminant llista <xliff:g id="name">%s</xliff:g></string>
-  <string name="delete_user_list_confirm_message">¿Està segur que vol eliminar la llista <xliff:g id="name">%s</xliff:g>?</string>
   <string name="signing_in_error_browser_sign_in_hint">Error mentre s\'accedia, potser necessites fer us d\'un navegador. 
 (Això no farà cas de la configuració d\'API personalitzades a sessió)</string>
   <string name="report_user">Reportar <xliff:g id="name">%s</xliff:g></string>
-  <string name="report_user_confirm_message">¿Està segur que vol reportar  <xliff:g id="name">%s</xliff:g> a brossa?</string>
   <string name="twidere_test">Prova Twidere </string>
   <string name="donate_via_paypal">Fes una donació via PayPal</string>
   <string name="donate_via_alipay">Fes una donació via Alipay</string>

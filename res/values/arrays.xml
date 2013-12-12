@@ -37,31 +37,6 @@
 		<item>@string/inbox</item>
 		<item>@string/trends</item>
 	</string-array>
-	<string-array name="entries_notification_type">
-		<item>@string/sound</item>
-		<item>@string/vibration</item>
-		<item>@string/light</item>
-	</string-array>
-	<string-array name="entries_name_display_option">
-		<item>@string/both</item>
-		<item>@string/name</item>
-		<item>@string/screen_name</item>
-	</string-array>
-	<string-array name="values_name_display_option">
-		<item>both</item>
-		<item>name</item>
-		<item>screen_name</item>
-	</string-array>
-	<string-array name="entries_image_preview_display_option">
-		<item>@string/none</item>
-		<item>@string/large</item>
-		<item>@string/small</item>
-	</string-array>
-	<string-array name="values_image_preview_display_option">
-		<item>none</item>
-		<item>large</item>
-		<item>small</item>
-	</string-array>
 	<string-array name="entries_image_preload_option">
 		<item>@string/profile_images</item>
 		<item>@string/preview_images</item>
@@ -105,12 +80,6 @@
 		<item>twidere</item>
 		<item>light</item>
 		<item>dark</item>
-	</string-array>
-	<string-array name="entries_link_highlight_option">
-		<item>@string/none</item>
-		<item>@string/highlight</item>
-		<item>@string/underline</item>
-		<item>@string/both</item>
 	</string-array>
 	<string-array name="values_theme_background">
 		<item>default</item>

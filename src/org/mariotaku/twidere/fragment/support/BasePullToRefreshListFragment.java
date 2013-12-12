@@ -131,14 +131,14 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 		lv.setId(android.R.id.list);
 		lv.setDrawSelectorOnTop(false);
 		plv.addView(lv, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-		final Options.Builder builder = new Options.Builder();
-		builder.refreshOnUp(true);
-		builder.scrollDistance(DEFAULT_PULL_TO_REFRESH_SCROLL_DISTANCE);
-		builder.headerTransformer(new TwidereHeaderTransformer());
 		if (!isDetached() && getActivity() != null) {
 			final SetupWizard wizard = ActionBarPullToRefresh.from(getActivity());
 			wizard.allChildrenArePullable();
 			wizard.listener(this);
+			final Options.Builder builder = new Options.Builder();
+			builder.refreshOnUp(true);
+			builder.scrollDistance(DEFAULT_PULL_TO_REFRESH_SCROLL_DISTANCE);
+			builder.headerTransformer(new TwidereHeaderTransformer());
 			wizard.options(builder.build());
 			wizard.setup(mPullToRefreshLayout);
 		}

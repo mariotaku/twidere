@@ -61,14 +61,10 @@
   <string name="statuses">Твиты</string>
   <string name="followers">Читатели</string>
   <string name="about">О программе</string>
-  <string name="about_summary">О программе Twidere</string>
-  <string name="license_summary">Twidere использует лицензию GPLv3.</string>
   <string name="api">API</string>
   <string name="default_api_settings">Настройки API по-умолчанию</string>
   <string name="consumer_key">Ключ авторизации пользователя</string>
-  <string name="consumer_key_summary">Ключ авторизации для новых учетных записей в режиме OAuth/xAuth</string>
   <string name="consumer_secret">Секретный ключ пользователя</string>
-  <string name="consumer_secret_summary">Секретный ключ для новых учетных записей в режиме OAuth/xAuth</string>
   <string name="ignore_ssl_error">Игнорировать ошибки SSL</string>
   <string name="ignore_ssl_error_summary">Игнорировать ошибки SSL, включите если у вас проблемы с собственным сервером API.</string>
   <string name="gzip_compressing">Сжатие GZip</string>
@@ -81,12 +77,9 @@
   <string name="clear_databases">Очистить базы данных</string>
   <string name="clear_databases_summary">Очистить все твиты, профили, сообщения. Данные аккаунта не будут потеряны.</string>
   <string name="look_and_feel">Внешний вид</string>
-  <string name="dark_theme">Использовать темную тему</string>
-  <string name="dark_theme_summary">Использовать темную тему для Twidere.</string>
   <string name="display_profile_image">Изображение для профиля</string>
   <string name="image_load_summary">Отключение позволит увеличить скорость прокрутки и уменьшить расходуемый трафик.</string>
   <string name="in_reply_to">В ответ на <xliff:g id="user_name">%s</xliff:g></string>
-  <string name="in_reply_to_pull_to_load_conversation">В ответ <xliff:g id="user_name">%s</xliff:g>, потяните для загрузки беседы</string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> ретвитнул это</string>
   <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> и <xliff:g id="retweet_count">%2$d</xliff:g> других ретвитнули этот твит</string>
   <string name="retweeted_by_count"><xliff:g id="retweet_count">%d</xliff:g>пользователь ретвитнул это</string>
@@ -95,7 +88,6 @@
   <string name="quote_user">Цитата <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, через <xliff:g id="source">%2$s</xliff:g></string>
   <string name="source">через <xliff:g id="source">%s</xliff:g></string>
-  <string name="filter">Фильтр</string>
   <string name="filters">Фильтры</string>
   <string name="users">Пользователи</string>
   <string name="user">Пользователь</string>
@@ -120,12 +112,10 @@
   <string name="load_more_automatically_summary">Загружать остальной контент (фотографии, карты, статусы)</string>
   <string name="quote">Цитировать</string>
   <string name="add_rule">Добавить правило</string>
-  <string name="longclick_to_delete">Длинное нажатие для удаления.</string>
   <string name="text_size">Размер текста</string>
   <string name="text_size_summary">Размер текста для статусов.</string>
   <string name="cannot_get_location">Не удается получить ваше местоположение.</string>
   <string name="drafts">Черновики</string>
-  <string name="delete_all">Удалить все</string>
   <string name="description">Описание</string>
   <string name="location">Местоположение</string>
   <string name="url">URL</string>
@@ -169,22 +159,13 @@
   <string name="inbox">Входящие</string>
   <string name="load_images">Загрузить изображения</string>
   <string name="other_settings">Другие настройки</string>
-  <string name="refresh_and_notifications">Обновления &amp; уведомления</string>
   <string name="auto_refresh">Автоматическое обновление</string>
   <string name="refresh_interval">Интервал обновления</string>
-  <string name="refresh_interval_summary">Уменьшение интервала обновления увеличивает расход заряда батареи и трафика!</string>
   <string name="content_to_refresh">Контент для обновления</string>
-  <string name="content_to_notify">Контент для уведомлений</string>
   <string name="notifications_type">Тип уведомления</string>
-  <string name="notifications_type_summary">Этот параметр НЕ будет переопределять настройки системы.</string>
   <string name="sound">Звук</string>
   <string name="vibration">Вибрация</string>
-  <string name="light">Светодиод</string>
   <string name="notifications">Уведомления</string>
-  <string name="new_notifications">Новые уведомления</string>
-  <string name="screen_name">Имя пользователя</string>
-  <string name="sort_timeline_by_time">Сортировать по времени добавления</string>
-  <string name="sort_timeline_by_time_summary">Это может вызвать появление ретвитов в неправильном месте, но может быть полезным, если вы используете другие сервисы, такие как Identi.ca.</string>
   <string name="refresh_on_start">Обновлять при запуске</string>
   <string name="refresh_on_start_summary">Обновить ленту и упоминания при запуске.</string>
   <string name="refresh_after_status_updated">Обновить после отправки</string>
@@ -195,7 +176,6 @@
   <string name="type_to_compose">Напишите сообщение</string>
   <string name="users_lists">Листы пользователей</string>
   <string name="lists_following_user">Списки читающих</string>
-  <string name="item_1_minute">1 минута</string>
   <string name="item_3_minutes">3 минуты</string>
   <string name="item_5_minutes">5 минут</string>
   <string name="item_10_minutes">10 минут</string>
@@ -204,8 +184,6 @@
   <string name="item_1_hour">1 час</string>
   <string name="item_2_hours">2 часа</string>
   <string name="item_4_hours">4 часа</string>
-  <string name="solid_color_background">Сплошной цвет фона</string>
-  <string name="solid_color_background_summary">Включите эту опцию, если у вашего устройства AMOLED экран.</string>
   <string name="following_you">Ваши подписчики</string>
   <string name="trends_location">Местоположение трендов</string>
   <string name="trends_location_summary">Задать местоположение для местных трендов.</string>
@@ -219,14 +197,9 @@
   <string name="is_public">Общедоступный</string>
   <string name="send_direct_message">Послать ЛС</string>
   <string name="extensions">Расширения</string>
-  <string name="open_with_extensions">﻿Открыть расширением</string>
   <string name="uninstall">Удалить</string>
   <string name="saved_searches">Сохраненные поиски</string>
-  <string name="default_tabs">Таб по-умолчанию</string>
   <string name="add_tab">Добавить вкладку</string>
-  <string name="tab_type">Тип вкладки</string>
-  <string name="unused">Не используется</string>
-  <string name="list_name">Имя списка</string>
   <string name="edit_tab">Редактировать вкладку</string>
   <string name="move_up">Переместить вверх</string>
   <string name="move_down">Переместить вниз</string>
@@ -257,8 +230,6 @@
   <string name="multimedia_contents">Мультимедиа контент</string>
   <string name="show_absolute_time">Показывать абсолютное время</string>
   <string name="show_absolute_time_summary">Показывать абсолютное время в твитах</string>
-  <string name="mute_source">Приглушить</string>
-  <string name="source_muted">Добавлен \"<xliff:g id="source">%s</xliff:g>\" в фильтр. Вы не будете получать твиты от этого источника в ленте и упоминаниях.</string>
   <string name="user_mentions">Упоминания пользователя</string>
   <string name="dual_pane_layout">Двухпанельный интерфейс</string>
   <string name="landscape">Ландшафтный</string>
@@ -267,12 +238,9 @@
   <string name="quick_send_summary">Отправлять твит по нажатию «Enter».</string>
   <string name="unsaved_status">Твит еще не отправлен или не сохранен.</string>
   <string name="discard">Выйти</string>
-  <string name="multi_select">Выбрать несколько</string>
   <string name="Nitems_selected_quantity_one">Выбран 1 элемент</string>
   <string name="Nitems_selected_quantity_other"><xliff:g id="items">%d</xliff:g> элементов выбрано</string>
   <string name="view">Вид</string>
-  <string name="hardware_acceleration">Аппаратное ускорение</string>
-  <string name="hardware_acceleration_summary">На некоторых устройствах работа станет плавнее, НО НЕ НА ВСЕХ. Только для Android 3.0 и выше. Не перекрывает системные настройки!</string>
   <string name="custom_host_mapping">Перенаправление узлов</string>
   <string name="custom_host_mapping_summary">Перенаправление узлов, как с помощью /etc/hosts, но не требующее дополнительных разрешений.</string>
   <string name="host">Хост</string>
@@ -300,19 +268,13 @@
   <string name="activity_by_friends_list_member_added"><xliff:g id="user">%1$s</xliff:g> добавлен <xliff:g id="target">%2$s</xliff:g> в список.</string>
   <string name="activity_by_friends_list_created"><xliff:g id="user">%1$s</xliff:g> созданный список <xliff:g id="target">%2$s</xliff:g>.</string>
   <string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g> созданный список <xliff:g id="target">%2$s</xliff:g> и <xliff:g id="count">%3$d</xliff:g> более.</string>
-  <string name="cannot_get_callback_url">Нет отклика, проверьте ваши логин и пароль.</string>
   <string name="incoming_friendships">Ожидание запросов на подписку</string>
-  <string name="click_to_open_menu">Нажмите, чтобы открыть пункт меню</string>
-  <string name="click_to_open_menu_summary">Нажмите, чтобы открыть пункт меню; долгое нажатие для выбора нескольких пунктов.</string>
   <string name="send_follow_request">Послать запрос на подписку</string>
   <string name="follow_request_sent">Запрос на подписку послан</string>
   <string name="separate_retweet_action">Различные виды ретвита</string>
   <string name="separate_retweet_action_summary">Показывает в меню оба действия: ретвит и цитировать</string>
   <string name="preview">Предпросмотр</string>
-  <string name="api_upgrade_notice_title">Очень важно!</string>
-  <string name="api_upgrade_notice_message">  Twitter анонсировал новую версию своего API (вер.1.1).\n\n  Начиная с этой версии Twidere, будет использоваться именно данный API версии 1.1.\n\n  НАСТОЯТЕЛЬНО РЕКОМЕНДУЕТСЯ перелогиниться, чтобы избежать возможных проблем, связанных с переходом на новый API.\n\n  Что изменилось в Twitter API версии 1.1?\n  *Ограничения по скорости обновления. Например, возможность обновления вашей Ленты ограничена 15-ю запросами в течении 15 минут.\n  *Вы не можете увидеть, кто ретвитнул ваше сообщение, Вы не можете видеть твиты, ретвитнутые вам другими.\n  *Если вы используете Twidere как ваш StatusNet-клиент, большинство возможностей будет потеряно в связи с изменениями в API.\n\n  Извините за неудобства, но я ничего не могу с этим поделать. Политика Twitter направлена против сторонних программ-клиентов.</string>
   <string name="connection_timeout">Таймаут соединения</string>
-  <string name="name_display_option">Настройки отображения имени</string>
   <string name="both">Оба</string>
   <string name="browser_sign_in">Войти через браузер</string>
   <string name="notification_mention"><xliff:g id="user">%s</xliff:g> упомянул вас.</string>
@@ -328,10 +290,7 @@
   <string name="silent_notifications_summary">Выключить звук/вибрацию для уведомления</string>
   <string name="disable_background_service">Выключить фоновый режим</string>
   <string name="disable_background_service_summary">Twidere не использует фоновый сервис при отключенном автообновлении.</string>
-  <string name="pull_to_load_conversation_label">Потяните, чтобы показать беседу…</string>
-  <string name="pull_to_load_conversation_release_label">Отпустите, чтобы показать беседу…</string>
   <string name="text_copied">Текст скопирован в буфер обмена.</string>
-  <string name="load_from_here">Загрузить отсюда</string>
   <string name="amount_usd">Количество(USD)</string>
   <string name="donate">Пожертвования</string>
   <string name="hashtag">Хэштег</string>
@@ -342,7 +301,6 @@
   <string name="sensitive_content_warning">Этот твит содержит особый контент, продолжить?</string>
   <string name="mark_as_sensitive">Пометить его как особый контент</string>
   <string name="remove_sensitive_mark">Удалить отметку особого контента</string>
-  <string name="loading">Загрузка...</string>
   <string name="none">Пусто</string>
   <string name="large">Большой</string>
   <string name="small">Маленький</string>
@@ -361,9 +319,6 @@
   <string name="no_thanks">Нет, спасибо</string>
   <string name="revoke_permissions">Перераспределить права</string>
   <string name="fast_scroll_thumb">Быстрая прокрутка эскизов</string>
-  <string name="link_highlighting">Подсветка ссылок</string>
-  <string name="fast_timeline_processing">Быстрая обработка ленты</string>
-  <string name="fast_timeline_processing_summary">Опустить все детали в ленте. Включите, чтобы повысить производительность.</string>
   <string name="indicate_my_status">Отображать мой твит</string>
   <string name="default_ringtone">Рингтон по-умолчанию</string>
   <string name="phishing_link_warning">Предупреждение о мошеннической ссылке</string>
@@ -374,7 +329,6 @@
   <string name="profile_images">Изображения профиля</string>
   <string name="preview_images">Предпросмотр изображений</string>
   <string name="preload_wifi_only">Предварительно загружать только при Wi-Fi-подключении</string>
-  <string name="re_sign_in_needed">Может понадобиться повторный вход в ваш аккаунт.</string>
   <string name="disable_tab_swipe">Отключить свайп между табами</string>
   <string name="sign_in_method_introduction_title">Как это работает?</string>
   <string name="sign_in_method_introduction">Большинство программ-клиентов, таких как twicca, открывает запрос логина и пароля через браузер, а затем возвращает вас обратно в программу-клиент. Иногда это очень неудобно.\nTwidere использует другой, более простой механизм входа без перехода в браузер. Не переживайте за ваши пароли, Twidere нигде их не хранит, это абсолютно безопасно!</string>
@@ -425,5 +379,4 @@
   <string name="add_to_list">Добавить к списку</string>
   <string name="account_delete_confirm_title">Удалить учетную запись</string>
   <string name="account_delete_confirm_message">Эта учетная запись будет удалена из Twidere.</string>
-  <string name="for_advanced_users_only">ТОЛЬКО ДЛЯ ПРОДВИНУТЫХ ПОЛЬЗОВАТЕЛЕЙ!</string>
 </resources>

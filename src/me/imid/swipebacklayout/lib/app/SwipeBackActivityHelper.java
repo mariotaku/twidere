@@ -44,6 +44,15 @@ public class SwipeBackActivityHelper implements TwidereConstants {
 		mSwipeBackLayout = (SwipeBackLayout) LayoutInflater.from(mActivity).inflate(R.layout.swipeback_layout, null);
 	}
 
+	public void onDestroy() {
+		if (mActivity.isFinishing()) {
+			final Intent intent = mActivity.getIntent();
+			final TwidereApplication app = TwidereApplication.getInstance(mActivity);
+			final SwipebackScreenshotManager sm = app.getSwipebackScreenshotManager();
+			sm.remove(intent.getLongExtra(EXTRA_ACTIVITY_SCREENSHOT_ID, -1));
+		}
+	}
+
 	public void onPostCreate() {
 		mSwipeBackLayout.attachToActivity(mActivity);
 		final Intent intent = mActivity.getIntent();

@@ -28,6 +28,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
@@ -146,8 +147,8 @@ public class GLCanvasImpl implements GLCanvas {
 
 	@Override
 	public void dumpStatisticsAndClear() {
-		final String line = String.format("MESH:%d, TEX_OES:%d, TEX_RECT:%d, FILL_RECT:%d, LINE:%d", mCountDrawMesh,
-				mCountTextureRect, mCountTextureOES, mCountFillRect, mCountDrawLine);
+		final String line = String.format(Locale.US, "MESH:%d, TEX_OES:%d, TEX_RECT:%d, FILL_RECT:%d, LINE:%d",
+				mCountDrawMesh, mCountTextureRect, mCountTextureOES, mCountFillRect, mCountDrawLine);
 		mCountDrawMesh = 0;
 		mCountTextureRect = 0;
 		mCountTextureOES = 0;
