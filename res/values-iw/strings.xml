@@ -40,9 +40,5 @@
   <string name="followers">עוקבים</string>
   <string name="following">נעקבים</string>
   <string name="about">אודות</string>
-  <string name="about_summary">אודות טווידר</string>
   <string name="open_source_license">רשיון קוד פתוח</string>
-  <string name="license_summary">Twidere מופץ ברשיון GPL גרסה 3.</string>
-  <string name="screen_name">שם משתמש</string>
-  <string name="loading">טוען</string>
 </resources>

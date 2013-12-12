@@ -39,6 +39,10 @@
 		android:defaultValue="@bool/default_display_tab_label"
 		android:key="display_tab_label"
 		android:title="@string/display_tab_label"/>
+	<CheckBoxPreference
+		android:defaultValue="false"
+		android:key="long_click_to_open_menu"
+		android:title="@string/long_click_to_open_menu"/>
 
 	<PreferenceCategory
 		android:key="cat_dual_pane_layout"

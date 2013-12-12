@@ -63,15 +63,11 @@
   <string name="followers">关注者</string>
   <string name="following">关注</string>
   <string name="about">关于</string>
-  <string name="about_summary">关于 Twidere</string>
   <string name="open_source_license">开源许可</string>
-  <string name="license_summary">Twidere 以 GPLv3 许可发布</string>
   <string name="api">API</string>
   <string name="default_api_settings">默认API设定</string>
   <string name="consumer_key">Consumer key</string>
-  <string name="consumer_key_summary">OAuth/xAuth认证时默认的consumer key</string>
   <string name="consumer_secret">Consumer secret</string>
-  <string name="consumer_secret_summary">OAuth/xAuth认证时默认的consumer secret</string>
   <string name="ignore_ssl_error">忽略SSL错误</string>
   <string name="ignore_ssl_error_summary">忽略SSL证书错误，如果你使用支持SSL的自定义API登录时发生问题，请启用此项</string>
   <string name="gzip_compressing">GZip 压缩</string>
@@ -84,12 +80,9 @@
   <string name="clear_databases">清除数据库</string>
   <string name="clear_databases_summary">清除数据库中的推文、私信等。不必担心，你的帐号信息不会丢失</string>
   <string name="look_and_feel">观感</string>
-  <string name="dark_theme">使用暗色主题</string>
-  <string name="dark_theme_summary">为 Twidere 使用暗色主题</string>
   <string name="display_profile_image">显示个人资料图片</string>
   <string name="image_load_summary">关闭可以加快列表的滚动速度，以及减少数据流量</string>
   <string name="in_reply_to">回复<xliff:g id="user_name">%s</xliff:g></string>
-  <string name="in_reply_to_pull_to_load_conversation">回复 <xliff:g id="user_name">%s</xliff:g>，下拉加载对话</string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g>转推了这个</string>
   <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g>和其他<xliff:g id="retweet_count">%2$d</xliff:g>人转推了这个</string>
   <string name="retweeted_by_count"><xliff:g id="retweet_count">%d</xliff:g>人转推了这条推文</string>
@@ -98,7 +91,6 @@
   <string name="quote_user">引用<xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>，来自<xliff:g id="source">%2$s</xliff:g></string>
   <string name="source">来自<xliff:g id="source">%s</xliff:g></string>
-  <string name="filter">过滤</string>
   <string name="filters">过滤</string>
   <string name="users">用户</string>
   <string name="user">用户</string>
@@ -123,12 +115,10 @@
   <string name="load_more_automatically_summary">自动载入更多内容，如照片、地图、推文等</string>
   <string name="quote">引用</string>
   <string name="add_rule">添加规则</string>
-  <string name="longclick_to_delete">长按以删除</string>
   <string name="text_size">文字尺寸</string>
   <string name="text_size_summary">推文的文字尺寸</string>
   <string name="cannot_get_location">不能获得你的位置</string>
   <string name="drafts">草稿</string>
-  <string name="delete_all">全部删除</string>
   <string name="description">简介</string>
   <string name="location">位置</string>
   <string name="url">网址</string>
@@ -172,23 +162,17 @@
   <string name="inbox">收件箱</string>
   <string name="load_images">载入图片</string>
   <string name="other_settings">其他设定</string>
-  <string name="refresh_and_notifications">刷新与通知</string>
   <string name="auto_refresh">自动刷新</string>
   <string name="refresh_interval">刷新间隔</string>
-  <string name="refresh_interval_summary">更小的刷新间隔将消耗更多的电量及数据流量！</string>
   <string name="content_to_refresh">刷新的内容</string>
   <string name="content_to_notify">通知的内容</string>
   <string name="notifications_type">通知类型</string>
-  <string name="notifications_type_summary">这个选项将不会覆盖系统的声音/震动设置</string>
   <string name="sound">声音</string>
   <string name="ringtone">铃声</string>
   <string name="vibration">震动</string>
   <string name="light">灯光</string>
   <string name="notifications">通知</string>
-  <string name="new_notifications">新通知</string>
   <string name="screen_name">用户名</string>
-  <string name="sort_timeline_by_time">按时间顺序排序时间线</string>
-  <string name="sort_timeline_by_time_summary">这可能使得被转推的推文显示在错误的位置，不过如果你使用其他服务（比如Identi.ca），这个选项会有不少帮助</string>
   <string name="refresh_on_start">启动时刷新</string>
   <string name="refresh_on_start_summary">启动时刷新时间线和提及</string>
   <string name="refresh_after_status_updated">发送推文后刷新</string>
@@ -199,9 +183,6 @@
   <string name="type_to_compose">键入信息</string>
   <string name="users_lists">列表</string>
   <string name="lists_following_user">关注这个用户的列表</string>
-  <string name="you_have_N_new_statuses_quantity_one">你有一条新推文</string>
-  <string name="you_have_N_new_statuses_quantity_other">你有 <xliff:g id="items">%d</xliff:g> 条新推文</string>
-  <string name="item_1_minute">1分钟</string>
   <string name="item_3_minutes">3分钟</string>
   <string name="item_5_minutes">5分钟</string>
   <string name="item_10_minutes">10分钟</string>
@@ -211,8 +192,6 @@
   <string name="item_2_hours">2小时</string>
   <string name="item_4_hours">4小时</string>
   <string name="display_image_preview">显示图片预览</string>
-  <string name="solid_color_background">纯色背景</string>
-  <string name="solid_color_background_summary">如果你的设备是AMOLED屏幕的话，启用这个会有所帮助</string>
   <string name="following_you">正在关注你</string>
   <string name="user_list">列表</string>
   <string name="user_lists">列表</string>
@@ -229,16 +208,10 @@
   <string name="is_public">公开</string>
   <string name="send_direct_message">发送私信</string>
   <string name="extensions">扩展</string>
-  <string name="open_with_extensions">使用扩展打开</string>
-  <string name="view_user_list">查看列表</string>
   <string name="uninstall">卸载</string>
   <string name="saved_searches">已保存的搜索</string>
   <string name="tabs">标签页</string>
-  <string name="default_tabs">默认标签页</string>
   <string name="add_tab">添加标签页</string>
-  <string name="tab_type">标签页类型</string>
-  <string name="unused">未用设定</string>
-  <string name="list_name">列表名称</string>
   <string name="edit_tab">编辑标签页</string>
   <string name="move_up">上移</string>
   <string name="move_down">下移</string>
@@ -269,8 +242,6 @@
   <string name="multimedia_contents">多媒体内容</string>
   <string name="show_absolute_time">显示绝对时间</string>
   <string name="show_absolute_time_summary">在推文等列表里显示绝对时间</string>
-  <string name="mute_source">过滤来源</string>
-  <string name="source_muted">将 \"<xliff:g id="source">%s</xliff:g>\" 添加到了过滤列表。你将不会在主页时间线/提及中看到这个来源的推文</string>
   <string name="user_mentions">提及用户的推文</string>
   <string name="dual_pane_layout">双栏布局</string>
   <string name="landscape">横向模式</string>
@@ -279,12 +250,9 @@
   <string name="quick_send_summary">按“回车”发送推文</string>
   <string name="unsaved_status">推文还没有发送或保存</string>
   <string name="discard">舍弃</string>
-  <string name="multi_select">多选</string>
   <string name="Nitems_selected_quantity_one">已选择 1 项</string>
   <string name="Nitems_selected_quantity_other">已选择 <xliff:g id="items">%d</xliff:g> 项</string>
   <string name="view">查看</string>
-  <string name="hardware_acceleration">硬件加速</string>
-  <string name="hardware_acceleration_summary">一些设备启用将更流畅，另一些则相反。仅在Android 3.0以上有效，并且不会覆盖系统设定！</string>
   <string name="custom_host_mapping">自定义主机映射</string>
   <string name="custom_host_mapping_summary">如同/etc/hosts的主机映射，但不需要任何额外的权限</string>
   <string name="host">主机名</string>
@@ -303,6 +271,7 @@
   <string name="activity_about_me_retweet"><xliff:g id="user">%s</xliff:g> 转推了你的推文</string>
   <string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> 和其他 <xliff:g id="count">%d</xliff:g> 人转推了你的推文</string>
   <string name="activity_about_me_list_member_added"><xliff:g id="user">%s</xliff:g> 把你添加到了列表</string>
+  <string name="activity_about_me_list_member_added_with_name"><xliff:g id="user">%1$s</xliff:g>把你添加到了列表“<xliff:g id="list">%2$s</xliff:g>”</string>
   <string name="activity_about_me_list_member_added_multi"><xliff:g id="user">%s</xliff:g>和其他<xliff:g id="count">%d</xliff:g>人把你加到了他们的列表</string>
   <string name="activity_by_friends_favorite"><xliff:g id="user">%1$s</xliff:g>收藏了<xliff:g id="target">%2$s</xliff:g>的推文</string>
   <string name="activity_by_friends_favorite_multi"><xliff:g id="user">%1$s</xliff:g>收藏了<xliff:g id="target">%2$s</xliff:g>和其他<xliff:g id="count">%3$d</xliff:g>人的推文</string>
@@ -312,22 +281,16 @@
   <string name="activity_by_friends_list_member_added"><xliff:g id="user">%1$s</xliff:g>把<xliff:g id="target">%2$s</xliff:g>加入了列表</string>
   <string name="activity_by_friends_list_created"><xliff:g id="user">%1$s</xliff:g> 创建了列表 <xliff:g id="target">%2$s</xliff:g></string>
   <string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g> 创建了 <xliff:g id="target">%2$s</xliff:g> 和其他<xliff:g id="count">%3$d</xliff:g>个列表</string>
-  <string name="cannot_get_callback_url">请检查你的用户名和密码是否正确</string>
   <string name="status_not_updated">推文未发送</string>
   <string name="status_not_updated_summary">推文未发送，并被保存到草稿箱</string>
   <string name="incoming_friendships">待定的关注请求</string>
-  <string name="click_to_open_menu">点击打开推文菜单</string>
-  <string name="click_to_open_menu_summary">点击打开推文菜单，长按以多选，如果你习惯twicca式的操作方式，这个选项会有所帮助</string>
   <string name="send_follow_request">发送关注请求</string>
   <string name="follow_request_sent">已发送关注请求</string>
   <string name="separate_retweet_action">分离的转推操作</string>
   <string name="separate_retweet_action_summary">在推文菜单中同时显示“转推”和“引用”</string>
   <string name="status">推文</string>
   <string name="preview">预览</string>
-  <string name="api_upgrade_notice_title">非常重要！</string>
-  <string name="api_upgrade_notice_message">　　Twitter宣布了他们的新API及政策。自从这个版本起，Twidere开始使用Twitter的API版本1.1，以及在部分设计上遵守了Twitter设计规范。\n\n　　强烈建议你重新登录，否则可能会遇到很多问题，如无法查看收藏/搜索/趋势等。\n\n　　API的更改会带来什么影响？\n\n　　*由于twip使用旧的API版本，将不能与这个版本的Twidere正常工作\n　　*JTAPI和GTAP需要将之前的末尾的“/1/”修改成“/1.1/”\n　　*更多API限制，在15分钟内你只能更新15次左右时间线或发送15条推文\n　　*如果你使用Twidere作为其他微博客服务的客户端，更多功能可能不可用，例如查看收藏/阻止的用户等\n\n　　对于带来的不便，我深表歉意。但是你应该知道——Twitter正试图对三方客户端赶尽杀绝。我尽最大可能保证你使用Twidere正常，也尽可能“违反”一些荒谬的设计规范，但是对于Twitter在API上的更加严苛的政策，我无能为力。对于遇到的各种不属于应用本身的问题，请不要埋怨我，那不是我的错。</string>
   <string name="connection_timeout">连接超时</string>
-  <string name="name_display_option">名字显示选项</string>
   <string name="both">两者兼有</string>
   <string name="browser_sign_in">浏览器登录</string>
   <string name="stop_auto_refresh_when_battery_low">电量低时停止自动刷新</string>
@@ -339,10 +302,8 @@
   <string name="notification_direct_message_multiple_messages"><xliff:g id="user">%1$s</xliff:g>给你发了<xliff:g id="messages_count">%2$d</xliff:g>条私信</string>
   <string name="notification_direct_message_multiple_users"><xliff:g id="user">%1$s</xliff:g>和其他<xliff:g id="users_count">%2$d</xliff:g>人给你发了<xliff:g id="messages_count">%3$d</xliff:g>条私信</string>
   <string name="action_getting_status">获取推文</string>
-  <string name="action_getting_statuses">获取推文</string>
   <string name="action_updating_status">发送推文</string>
   <string name="action_sending_direct_message">发送私信</string>
-  <string name="action_refreshing_timelines">刷新时间线</string>
   <string name="action_refreshing_home_timeline">刷新主页</string>
   <string name="action_refreshing_mentions">刷新提及</string>
   <string name="action_refreshing_direct_messages">刷新私信</string>
@@ -377,10 +338,7 @@
   <string name="silent_notifications_summary">在特定时间为通知禁用铃声和震动</string>
   <string name="disable_background_service">禁用后台服务</string>
   <string name="disable_background_service_summary">别傻了，Twidere在关闭自动刷新和数据统计之后是没有后台服务的。</string>
-  <string name="pull_to_load_conversation_label">下拉并释放以加载对话…</string>
-  <string name="pull_to_load_conversation_release_label">释放加载对话…</string>
   <string name="text_copied">文本已复制到剪贴板</string>
-  <string name="load_from_here">从这里加载</string>
   <string name="amount_usd">总额（美元）</string>
   <string name="donate">捐助</string>
   <string name="hashtag">话题标签</string>
@@ -391,7 +349,6 @@
   <string name="sensitive_content_warning">这条推文可能有敏感内容，继续？</string>
   <string name="mark_as_sensitive">标记为敏感</string>
   <string name="remove_sensitive_mark">删除敏感标记</string>
-  <string name="loading">正在载入…</string>
   <string name="none">无</string>
   <string name="large">大尺寸</string>
   <string name="small">小尺寸</string>
@@ -410,9 +367,6 @@
   <string name="no_thanks">不用了，谢谢</string>
   <string name="revoke_permissions">撤销授权</string>
   <string name="fast_scroll_thumb">快速滚动条</string>
-  <string name="link_highlighting">链接高亮</string>
-  <string name="fast_timeline_processing">快速时间线处理</string>
-  <string name="fast_timeline_processing_summary">忽略时间线中的所有细节，启用可以使列表更加流畅</string>
   <string name="indicate_my_status">区别我的推文</string>
   <string name="default_ringtone">默认铃声</string>
   <string name="phishing_link_warning">钓鱼链接警告</string>
@@ -423,7 +377,6 @@
   <string name="profile_images">个人资料图片</string>
   <string name="preview_images">推文预览图片</string>
   <string name="preload_wifi_only">仅使用Wi-Fi预加载</string>
-  <string name="re_sign_in_needed">你可能需要重新登录你的帐号</string>
   <string name="disable_tab_swipe">禁用滑动切换标签页</string>
   <string name="sign_in_method_introduction_title">输入密码登录是怎样工作的？</string>
   <string name="sign_in_method_introduction">大多数客户端（例如twicca）通过打开浏览器验证登录Twitter，然后浏览器再将你引导回客户端。有时这会导致许多不便，因为一些第三方浏览器不会引导你回客户端。\nTwidere使用更加简便的步骤代替浏览器登录到Twitter，不必担心你会泄露你的密码，这个方式非常安全！\nTwidere不会保存密码，仅在登录时发送给Twitter，只要网络足够安全，你的密码永远不会被第三方获取！</string>
@@ -450,6 +403,7 @@
   <string name="import_from">导入自…</string>
   <string name="link_to_quoted_status">链接到引用的推文</string>
   <string name="followed_user">关注了<xliff:g id="user">%s</xliff:g></string>
+  <string name="sent_follow_request_to_user">向<xliff:g id="user">%s</xliff:g>发送了关注请求</string>
   <string name="unfollowed_user">取消关注了<xliff:g id="user">%s</xliff:g></string>
   <string name="blocked_user">阻止了<xliff:g id="user">%s</xliff:g></string>
   <string name="unblocked_user">取消阻止了<xliff:g id="user">%s</xliff:g></string>
@@ -461,11 +415,12 @@
   <string name="updated_list_details">更新了列表\"<xliff:g id="list">%s</xliff:g>\"的详细信息</string>
   <string name="subscribed_to_list">订阅了列表\"<xliff:g id="list">%s</xliff:g>\"</string>
   <string name="unsubscribed_from_list">取消订阅了列表\"<xliff:g id="list">%s</xliff:g>\"</string>
-  <string name="added_N_users_to_list_quantity_one">将<xliff:g id="items">%1$d</xliff:g>个用户添加到了列表“<xliff:g id="list">%2$s</xliff:g>”</string>
-  <string name="added_N_users_to_list_quantity_other">将<xliff:g id="items">%1$d</xliff:g>个用户添加到了列表“<xliff:g id="list">%2$s</xliff:g>”</string>
-  <string name="deleted_user_from_list">将<xliff:g id="user">%1$s</xliff:g>从列表“<xliff:g id="list">%2$s</xliff:g>”中移除</string>
-  <string name="deleted_N_users_from_list_quantity_one">将<xliff:g id="items">%1$d</xliff:g>个用户从列表“<xliff:g id="list">%2$s</xliff:g>”中移除</string>
-  <string name="deleted_N_users_from_list_quantity_other">将<xliff:g id="items">%1$d</xliff:g>个用户从列表“<xliff:g id="list">%2$s</xliff:g>”中移除</string>
+  <string name="added_N_users_to_list_quantity_one"><xliff:g id="items">%1$d</xliff:g>个用户被添加到了列表“<xliff:g id="list">%2$s</xliff:g>”</string>
+  <string name="added_N_users_to_list_quantity_other"><xliff:g id="items">%1$d</xliff:g>个用户被添加到了列表“<xliff:g id="list">%2$s</xliff:g>”</string>
+  <string name="added_user_to_list"><xliff:g id="user">%1$s</xliff:g>被添加到了列表“<xliff:g id="list">%2$s</xliff:g>”</string>
+  <string name="deleted_user_from_list"><xliff:g id="user">%1$s</xliff:g>被从列表“<xliff:g id="list">%2$s</xliff:g>”中移除</string>
+  <string name="deleted_N_users_from_list_quantity_one"><xliff:g id="items">%1$d</xliff:g>个用户被从列表“<xliff:g id="list">%2$s</xliff:g>”中移除</string>
+  <string name="deleted_N_users_from_list_quantity_other"><xliff:g id="items">%1$d</xliff:g>个用户被从列表“<xliff:g id="list">%2$s</xliff:g>”中移除</string>
   <string name="delete_user_from_list_confirm">将<xliff:g id="user">%1$s</xliff:g>从列表“<xliff:g id="list">%2$s</xliff:g>”中移除吗？</string>
   <string name="delete_N_users_from_list_confirm_quantity_one">将<xliff:g id="items">%1$d</xliff:g>个用户从列表“<xliff:g id="list">%2$s</xliff:g>”中移除吗？</string>
   <string name="delete_N_users_from_list_confirm_quantity_other">将<xliff:g id="items">%1$d</xliff:g>个用户从列表“<xliff:g id="list">%2$s</xliff:g>”中移除吗？</string>
@@ -490,11 +445,9 @@
   <string name="add_to_list">添加到列表</string>
   <string name="account_delete_confirm_title">删除帐号</string>
   <string name="account_delete_confirm_message">这个帐号将会从Twidere中删除</string>
-  <string name="for_advanced_users_only">仅限高级用户更改！</string>
   <string name="theme">主题</string>
   <string name="theme_dark">暗色</string>
   <string name="theme_light">亮色</string>
-  <string name="theme_light_darkactionbar">亮色背景，黑色ActionBar</string>
   <string name="settings_interface">界面</string>
   <string name="no_rule">没有规则</string>
   <string name="enable_in_mentions">在提及启用</string>
@@ -536,16 +489,16 @@
   <string name="keyword_filter_name">关键词：<xliff:g id="name">%s</xliff:g></string>
   <string name="source_filter_name">来源<xliff:g id="name">%s</xliff:g></string>
   <string name="block_user">阻止<xliff:g id="name">%s</xliff:g></string>
-  <string name="block_user_confirm_message">你确定要阻止<xliff:g id="name">%s</xliff:g>吗？</string>
+  <string name="block_user_confirm_message">屏蔽 <xliff:g id="name">%s</xliff:g>? 你不会再见到这家伙了。</string>
   <string name="unfollow_user">取消关注<xliff:g id="name">%s</xliff:g></string>
-  <string name="unfollow_user_confirm_message">你确定取消关注<xliff:g id="name">%s</xliff:g>吗？</string>
+  <string name="unfollow_user_confirm_message">取消关注<xliff:g id="name">%s</xliff:g>吗？你将不会在时间线中看到这个用户的推文。</string>
   <string name="delete_user_list">删除列表<xliff:g id="name">%s</xliff:g></string>
-  <string name="delete_user_list_confirm_message">你确定删除列表<xliff:g id="name">%s</xliff:g>吗？</string>
+  <string name="delete_user_list_confirm_message">删除列表<xliff:g id="name">%s</xliff:g>吗？这个操作不能撤销。</string>
   <string name="unsubscribe_from_user_list">从列表<xliff:g id="name">%s</xliff:g>退订</string>
-  <string name="unsubscribe_from_user_list_confirm_message">你确定要退订列表<xliff:g id="name">%s</xliff:g>吗？</string>
+  <string name="unsubscribe_from_user_list_confirm_message">取消订阅列表<xliff:g id="name">%s</xliff:g>吗？你稍后可以重新订阅这个列表。</string>
   <string name="signing_in_error_browser_sign_in_hint">登录时发生问题，你可能需要使用“浏览器登录”。（这将在登录时暂时忽略自定义API设定）</string>
   <string name="report_user">报告<xliff:g id="name">%s</xliff:g></string>
-  <string name="report_user_confirm_message">你确定报告<xliff:g id="name">%s</xliff:g>发送垃圾信息吗？</string>
+  <string name="report_user_confirm_message">报告<xliff:g id="name">%s</xliff:g>发送垃圾信息吗？你将同时阻止这个用户。</string>
   <string name="twidere_test">Twidere 测试</string>
   <string name="donate_via_paypal">通过PayPal捐助</string>
   <string name="pay_via_paypal">直接通过PayPal付款</string>
@@ -567,7 +520,7 @@
   <string name="no_tab_hint">没有标签页</string>
   <string name="delete_user">删除用户<xliff:g id="name">%s</xliff:g></string>
   <string name="delete_users">删除用户</string>
-  <string name="delete_user_confirm_message">你确定删除<xliff:g id="name">%s</xliff:g>吗？</string>
+  <string name="delete_user_confirm_message">删除<xliff:g id="name">%s</xliff:g>吗？这个操作不能撤销。</string>
   <string name="toggle">切换</string>
   <string name="general">通用</string>
   <string name="hints">提示</string>
@@ -576,8 +529,34 @@
   <string name="theme_background_default">默认</string>
   <string name="theme_background_solid">纯白/纯黑</string>
   <string name="theme_background_transparent">透明</string>
+  <string name="theme_dark_actionbar">暗色 ActionBar</string>
   <string name="wizard_hint_compose_select_account">在写推文时点击这个图标选择帐号</string>
   <string name="wizard_hint_quote_format">在“设定”-“内容与存储”设定你喜欢的引用格式</string>
   <string name="wizard_hint_filters">你可以通过使用“过滤”功能隐藏不想看到的推文和通知</string>
   <string name="replies">回复</string>
+  <string name="compact_cards">紧凑卡片视图</string>
+  <string name="compact_cards_summary">在屏幕中显示更多卡片</string>
+  <string name="dashclock_home_unread_count_name">Twidere主页未读条数</string>
+  <string name="dashclock_home_unread_count_description">主页未读条数</string>
+  <string name="dashclock_mentions_unread_count_name">Twidere提及未读条数</string>
+  <string name="dashclock_mentions_unread_count_description">提及未读条数</string>
+  <string name="dashclock_messages_unread_count_name">Twidere私信未读条数</string>
+  <string name="dashclock_messages_unread_count_description">私信未读条数</string>
+  <string name="N_new_statuses_quantity_one"><xliff:g id="items">%d</xliff:g>条新推文</string>
+  <string name="N_new_statuses_quantity_other"><xliff:g id="items">%d</xliff:g>条新推文</string>
+  <string name="N_new_mentions_quantity_one"><xliff:g id="items">%d</xliff:g>条提及</string>
+  <string name="N_new_mentions_quantity_other"><xliff:g id="items">%d</xliff:g>条提及</string>
+  <string name="N_new_messages_quantity_one"><xliff:g id="items">%d</xliff:g>个新对话</string>
+  <string name="N_new_messages_quantity_other"><xliff:g id="items">%d</xliff:g>个新对话</string>
+  <string name="share_subject_format"><xliff:g id="name">%1$s</xliff:g>（@<xliff:g id="screen_name">%2$s</xliff:g>），写于<xliff:g id="time">%3$s</xliff:g></string>
+  <string name="rate_limit">调用限制</string>
+  <string name="wizard_hint_rate_limit">如果你遇到调用限制问题，请不要埋怨我，那是Twitter的政策所限</string>
+  <string name="preparing_database">正在准备数据库</string>
+  <string name="preparing_database_toast">正在准备数据库，请稍等。</string>
+  <string name="action_name_saved_at_time"><xliff:g id="action">%1$s</xliff:g>，保存于<xliff:g id="time">%2$s</xliff:g></string>
+  <string name="update_status">发送推文</string>
+  <string name="sending_direct_message">发送私信</string>
+  <string name="display_tab_label">显示标签页名称</string>
+  <string name="livewp_daydream_enabled_message">我有一份小礼物给你，去系统设置看看吧 :)</string>
+  <string name="center">居中</string>
 </resources>

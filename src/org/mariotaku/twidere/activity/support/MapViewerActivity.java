@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.activity;
+package org.mariotaku.twidere.activity.support;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -31,7 +31,6 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.support.TwidereSwipeBackActivity;
 import org.mariotaku.twidere.fragment.support.NativeMapFragment;
 import org.mariotaku.twidere.fragment.support.WebMapFragment;
 import org.mariotaku.twidere.util.MapInterface;

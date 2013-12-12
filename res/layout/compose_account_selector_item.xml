@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.mariotaku.twidere.view.SquareFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content"
+	android:layout_height="match_parent"
+	android:padding="@dimen/element_spacing_small">
+
+	<org.mariotaku.twidere.view.ForegroundImageView
+		android:id="@android:id/icon"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="?android:activatedBackgroundIndicator"
+		android:foreground="?android:selectableItemBackground"
+		android:padding="@dimen/element_spacing_small"/>
+
+</org.mariotaku.twidere.view.SquareFrameLayout>

@@ -65,7 +65,7 @@ import android.util.Log;
 import org.mariotaku.jsonserializer.JSONSerializer;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.HomeActivity;
+import org.mariotaku.twidere.activity.support.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.AccountPreferences;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
@@ -87,6 +87,7 @@ import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.PermissionsManager;
 import org.mariotaku.twidere.util.TwidereQueryBuilder;
 import org.mariotaku.twidere.util.Utils;
+import org.mariotaku.twidere.util.collection.NoDuplicatesArrayList;
 
 import twitter4j.http.HostAddressResolver;
 
@@ -121,9 +122,9 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	private final List<ParcelableStatus> mNewMentions = new ArrayList<ParcelableStatus>();
 	private final List<ParcelableDirectMessage> mNewMessages = new ArrayList<ParcelableDirectMessage>();
 
-	private final Set<UnreadItem> mUnreadStatuses = new HashSet<UnreadItem>();
-	private final Set<UnreadItem> mUnreadMentions = new HashSet<UnreadItem>();
-	private final Set<UnreadItem> mUnreadMessages = new HashSet<UnreadItem>();
+	private final List<UnreadItem> mUnreadStatuses = new NoDuplicatesArrayList<UnreadItem>();
+	private final List<UnreadItem> mUnreadMentions = new NoDuplicatesArrayList<UnreadItem>();
+	private final List<UnreadItem> mUnreadMessages = new NoDuplicatesArrayList<UnreadItem>();
 
 	private boolean mHomeActivityInBackground;
 
@@ -654,7 +655,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	}
 
 	private void displayMessagesNotification(final int notifiedCount, final AccountPreferences accountPrefs,
-			final int notificationType, final List<ParcelableDirectMessage> messages) {
+			final int notificationType, final int icon, final List<ParcelableDirectMessage> messages) {
 		if (notifiedCount == 0 || accountPrefs == null || messages.isEmpty()) return;
 		final long accountId = accountPrefs.getAccountId();
 		final Context context = getContext();
@@ -730,7 +731,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 
 	private void displayStatusesNotification(final int notifiedCount, final AccountPreferences accountPreferences,
 			final int notificationType, final int notificationId, final List<ParcelableStatus> statuses,
-			final int titleSingle, final int titleMutiple) {
+			final int titleSingle, final int titleMutiple, final int icon) {
 		if (notifiedCount == 0 || accountPreferences == null || statuses.isEmpty()) return;
 		final long accountId = accountPreferences.getAccountId();
 		final Context context = getContext();
@@ -772,7 +773,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		}
 		notifBuilder.setLargeIcon(getProfileImageForNotification(firstItem.user_profile_image_url));
 		buildNotification(notifBuilder, accountPreferences, notificationType, title, title, firstItem.text_plain,
-				firstItem.timestamp, R.drawable.ic_stat_mention, null, contentIntent, deleteIntent);
+				firstItem.timestamp, icon, null, contentIntent, deleteIntent);
 		final NotificationCompat.Style notifStyle;
 		if (statusesSize > 1) {
 			final NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle(notifBuilder);
@@ -1061,7 +1062,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 						final long accountId = pref.getAccountId();
 						displayStatusesNotification(notifiedCount, pref, pref.getHomeTimelineNotificationType(),
 								NOTIFICATION_ID_HOME_TIMELINE, getStatusesForAccounts(items, accountId),
-								R.string.notification_status, R.string.notification_status_multiple);
+								R.string.notification_status, R.string.notification_status_multiple,
+								R.drawable.ic_stat_twitter);
 					}
 				}
 				notifyUnreadCountChanged(NOTIFICATION_ID_HOME_TIMELINE);
@@ -1078,7 +1080,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 						final long accountId = pref.getAccountId();
 						displayStatusesNotification(notifiedCount, pref, pref.getMentionsNotificationType(),
 								NOTIFICATION_ID_MENTIONS, getStatusesForAccounts(items, accountId),
-								R.string.notification_mention, R.string.notification_mention_multiple);
+								R.string.notification_mention, R.string.notification_mention_multiple,
+								R.drawable.ic_stat_mention);
 					}
 				}
 				notifyUnreadCountChanged(NOTIFICATION_ID_MENTIONS);
@@ -1094,7 +1097,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 					if (pref.isDirectMessagesNotificationEnabled()) {
 						final long accountId = pref.getAccountId();
 						displayMessagesNotification(notifiedCount, pref, pref.getDirectMessagesNotificationType(),
-								getMessagesForAccounts(items, accountId));
+								R.drawable.ic_stat_mention, getMessagesForAccounts(items, accountId));
 					}
 				}
 				notifyUnreadCountChanged(NOTIFICATION_ID_DIRECT_MESSAGES);
@@ -1201,7 +1204,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		mNickOnly = mPreferences.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false);
 	}
 
-	private static int clearUnreadCount(final Set<UnreadItem> set, final long[] accountIds) {
+	private static int clearUnreadCount(final List<UnreadItem> set, final long[] accountIds) {
 		int count = 0;
 		for (final UnreadItem item : set.toArray(new UnreadItem[set.size()])) {
 			if (ArrayUtils.contains(accountIds, item.account_id) && set.remove(item)) {
@@ -1267,7 +1270,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		return result;
 	}
 
-	private static int getUnreadCount(final Set<UnreadItem> set, final long... accountIds) {
+	private static int getUnreadCount(final List<UnreadItem> set, final long... accountIds) {
 		int count = 0;
 		for (final UnreadItem item : set.toArray(new UnreadItem[set.size()])) {
 			if (ArrayUtils.contains(accountIds, item.account_id)) {

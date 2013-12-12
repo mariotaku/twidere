@@ -46,9 +46,9 @@ public class TwidereQueryBuilder {
 			qb.from(new Tables(DirectMessages.TABLE_NAME));
 			final Where accountIdWhere = Where.equals(DirectMessages.ACCOUNT_ID, account_id);
 			final Where incomingWhere = Where.and(Where.notEquals(DirectMessages.IS_OUTGOING, 1),
-					Where.equals(DirectMessages.SENDER_SCREEN_NAME, screen_name));
+					Where.equals(new Column(DirectMessages.SENDER_SCREEN_NAME), screen_name));
 			final Where outgoingWhere = Where.and(Where.equals(DirectMessages.IS_OUTGOING, 1),
-					Where.equals(DirectMessages.RECIPIENT_SCREEN_NAME, screen_name));
+					Where.equals(new Column(DirectMessages.RECIPIENT_SCREEN_NAME), screen_name));
 			if (selection != null) {
 				qb.where(Where.and(accountIdWhere, incomingWhere, outgoingWhere, new Where(selection)));
 			} else {

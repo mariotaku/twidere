@@ -64,7 +64,6 @@ public abstract class BaseActivitiesListFragment extends BasePullToRefreshListFr
 		setListShown(false);
 	}
 
-
 	@Override
 	public void onLoaderReset(final Loader<List<ParcelableActivity>> loader) {
 		mAdapter.setData(null);
@@ -114,7 +113,5 @@ public abstract class BaseActivitiesListFragment extends BasePullToRefreshListFr
 	}
 
 	protected abstract Object[] getSavedActivitiesFileArgs();
-
-
 
 }

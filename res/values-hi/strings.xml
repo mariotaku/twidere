@@ -52,8 +52,6 @@
   <string name="pick_from_gallery">गैलरी से चुनें</string>
   <string name="followers">फ़ॉलोअर</string>
   <string name="about">विवरण</string>
-  <string name="about_summary">ट्विदेर के बारे में।</string>
-  <string name="license_summary">ट्विदेर GPLv3 के अंतर्गत लाइसेंस है|</string>
   <string name="api">API</string>
   <string name="consumer_key">उपभोक्ता कुंजी</string>
   <string name="consumer_secret">उपभोक्ता रहस्य</string>
@@ -64,8 +62,6 @@
   <string name="clear_cache_summary">संग्रहीत प्रोफाइल छवि को मिटाए|</string>
   <string name="clear_databases">डेटाबेस साफ़ करे</string>
   <string name="look_and_feel">रूप और फील</string>
-  <string name="dark_theme">अंधेरे थीम का प्रयोग करे</string>
-  <string name="dark_theme_summary">ट्विदेर का अंधेरे थीम का प्रयोग करे |</string>
   <string name="display_profile_image">प्रोफ़ाइल छवि प्रदर्शित करें</string>
   <string name="in_reply_to">के विषय में उत्तर दें <xliff:g id="username">%s</xliff:g></string>
   <string name="retweeted_by"><xliff:g id="user_name"> %s </xliff:g> यह रीट्वीट किया</string>
@@ -74,7 +70,6 @@
   <string name="quote_user">उद्धरण <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, द्वारा <xliff:g id="source">%2$s</xliff:g></string>
   <string name="source"><xliff:g id="source">%s</xliff:g> के द्वारा</string>
-  <string name="filter">फ़िल्टर</string>
   <string name="users">उपयोगकर्ता</string>
   <string name="keywords">खोजशब्दों</string>
   <string name="sources">स्रोत</string>
@@ -94,7 +89,6 @@
   <string name="text_size_summary">स्थितियों के टेक्स्ट का माप |</string>
   <string name="cannot_get_location">आपके स्थान को प्राप्त नहीं कर सकते.</string>
   <string name="drafts">ड्राफ्ट्स</string>
-  <string name="delete_all">सभी मिटाए</string>
   <string name="description">विवरण</string>
   <string name="location">स्थान</string>
   <string name="url">URL</string>
@@ -128,26 +122,18 @@
   <string name="inbox">इनबॉक्स</string>
   <string name="load_images">छवियों को लोड</string>
   <string name="other_settings">अन्य सेटिंग्स</string>
-  <string name="refresh_and_notifications">ताज़ा करें; सूचनाएँ</string>
   <string name="auto_refresh">ऑटो ताज़ा करें</string>
   <string name="refresh_interval">रीफ़्रेश अंतराल</string>
   <string name="content_to_refresh">ताज़ा सामग्री</string>
-  <string name="content_to_notify">सूचित करने के लिए सामग्री</string>
   <string name="notifications_type">सूचना प्रकार</string>
-  <string name="notifications_type_summary">यह विकल्प सिस्टम सेटिंग की अवहेलना नहीं करेगा।</string>
   <string name="sound">आवाज़</string>
   <string name="vibration">कंपन</string>
-  <string name="light">बत्ती</string>
   <string name="notifications">सूचनाएँ</string>
-  <string name="new_notifications">नई सूचनाएँ</string>
-  <string name="screen_name">यूज़रनेम</string>
-  <string name="sort_timeline_by_time">मुख्यपृष्ठ को समय से भेद किजीये</string>
   <string name="refresh_on_start">शुरू करने पर ताज़ा करें</string>
   <string name="list_timeline">मुख्य पृष्ठ सूचीबद्ध करे</string>
   <string name="list_members">सदस्यों सूचीबद्ध करें</string>
   <string name="list_subscribers">ग्राहकों सूचीबद्ध करें</string>
   <string name="type_to_compose">रचना करने के लिये टाइप करे</string>
-  <string name="item_1_minute">1 मिनट</string>
   <string name="item_5_minutes">5 मिनट</string>
   <string name="item_10_minutes">10 मिनट</string>
   <string name="item_15_minutes">15 मिनट</string>
@@ -155,7 +141,6 @@
   <string name="item_1_hour">1 घंटा</string>
   <string name="item_2_hours">2 घंटे</string>
   <string name="item_4_hours">4 घंटे</string>
-  <string name="solid_color_background">ठोस रंग पृष्ठभूमि</string>
   <string name="trends_location">रुझान स्थान</string>
   <string name="trends_location_summary">स्थानीय रुझान के लिए स्थान निर्धारित करें।</string>
   <string name="trends">रुझान</string>
@@ -166,7 +151,5 @@
   <string name="is_public">सार्वजनिक</string>
   <string name="send_direct_message">DM भेजें</string>
   <string name="extensions">एक्सटेंशन</string>
-  <string name="open_with_extensions">एक्सटेंशन के साथ खोले</string>
   <string name="uninstall">अनइनस्टाल</string>
-  <string name="loading">लोड हो रहा है...</string>
 </resources>

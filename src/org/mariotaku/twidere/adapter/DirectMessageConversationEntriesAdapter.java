@@ -123,15 +123,21 @@ public class DirectMessageConversationEntriesAdapter extends BaseCursorAdapter i
 	}
 
 	public long getAccountId(final int position) {
-		return ((Cursor) getItem(position)).getLong(IDX_ACCOUNT_ID);
+		final Cursor c = getCursor();
+		if (c == null || c.isClosed() || !c.moveToPosition(position)) return -1;
+		return c.getLong(IDX_ACCOUNT_ID);
 	}
 
 	public long getConversationId(final int position) {
-		return ((Cursor) getItem(position)).getLong(IDX_CONVERSATION_ID);
+		final Cursor c = getCursor();
+		if (c == null || c.isClosed() || !c.moveToPosition(position)) return -1;
+		return c.getLong(IDX_CONVERSATION_ID);
 	}
 
 	public String getScreenName(final int position) {
-		return ((Cursor) getItem(position)).getString(IDX_SCREEN_NAME);
+		final Cursor c = getCursor();
+		if (c == null || c.isClosed() || !c.moveToPosition(position)) return null;
+		return c.getString(IDX_SCREEN_NAME);
 	}
 
 	@Override

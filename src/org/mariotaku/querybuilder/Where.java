@@ -47,12 +47,16 @@ public class Where implements SQLLang {
 		return new Where(toExpr(expressions, "AND"));
 	}
 
-	public static Where equals(final String l, final long r) {
-		return new Where(String.format(Locale.US, "%s = %d", l, r));
+	public static Where equals(final Column l, final Column r) {
+		return new Where(String.format("%s = %s", l.getSQL(), r.getSQL()));
 	}
 
-	public static Where equals(final String l, final String r) {
-		return new Where(String.format("%s = %s", l, r));
+	public static Where equals(final Column l, final String r) {
+		return new Where(String.format("%s = '%s'", l.getSQL(), r));
+	}
+
+	public static Where equals(final String l, final long r) {
+		return new Where(String.format(Locale.US, "%s = %d", l, r));
 	}
 
 	public static Where in(final Column column, final Selectable in) {

@@ -79,10 +79,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AbsSpinner;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -90,6 +86,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.scvngr.levelup.views.gallery.AdapterView;
+import com.scvngr.levelup.views.gallery.AdapterView.OnItemClickListener;
+import com.scvngr.levelup.views.gallery.AdapterView.OnItemSelectedListener;
+import com.scvngr.levelup.views.gallery.Gallery;
 
 import edu.ucdavis.earlybird.ProfilingUtil;
 
@@ -157,7 +158,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private ColorLabelRelativeLayout mProfileView;
 	private MenuBar mMenuBar;
 	private ProgressBar mStatusLoadProgress, mFollowInfoProgress;
-	private AbsSpinner mImagePreviewGallery;
+	private Gallery mImagePreviewGallery;
 	private ImageButton mPrevImage, mNextImage;
 	private View mHeaderView;
 	private View mLoadImagesIndicator;
@@ -560,7 +561,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mFollowIndicator = mHeaderView.findViewById(R.id.follow_indicator);
 		mFollowInfoProgress = (ProgressBar) mHeaderView.findViewById(R.id.follow_info_progress);
 		mProfileView = (ColorLabelRelativeLayout) mHeaderView.findViewById(R.id.profile);
-		mImagePreviewGallery = (AbsSpinner) mHeaderView.findViewById(R.id.preview_gallery);
+		mImagePreviewGallery = (Gallery) mHeaderView.findViewById(R.id.preview_gallery);
 		mGalleryContainer = mHeaderView.findViewById(R.id.gallery_container);
 		mPrevImage = (ImageButton) mHeaderView.findViewById(R.id.prev_image);
 		mNextImage = (ImageButton) mHeaderView.findViewById(R.id.next_image);

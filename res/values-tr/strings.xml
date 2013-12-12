@@ -48,8 +48,6 @@
   <string name="pick_from_gallery">Galeriden seç</string>
   <string name="followers">Takipçilerin</string>
   <string name="about">Hakkında</string>
-  <string name="about_summary">Twidere hakkında</string>
-  <string name="license_summary">Twidere GPLv3 altında lisanslıdır.</string>
   <string name="gzip_compressing">GZip sıkıştırması</string>
   <string name="gzip_compressing_summary">Tüm API isteklerini sıkıştırır, veri kullanımını azaltabilir, fakat tüm API sunucularında çalışmayabilir.</string>
   <string name="storage">Depolama</string>
@@ -60,19 +58,15 @@
   <string name="clear_databases">Veritabanlarını temizle</string>
   <string name="clear_databases_summary">Tüm tweetleri, profilleri, mesajları sil. Hesabınızdaki veriler silinmez.</string>
   <string name="look_and_feel">Görünüş ve kullanışlılık</string>
-  <string name="dark_theme">Siyah temayi kullan</string>
-  <string name="dark_theme_summary">Twidere için siyah temayi kullan.</string>
   <string name="display_profile_image">Profil resmini göster</string>
   <string name="image_load_summary">Bunu pasif yapmak listenin kaydırılma hızını artırır ve kullanılan veri miktarını azaltır.</string>
   <string name="in_reply_to"><xliff:g id="user_name">%s</xliff:g>\'e cevap olarak</string>
-  <string name="in_reply_to_pull_to_load_conversation"><xliff:g id="user_name">%s</xliff:g>\'e cevap olarak. Diyaloğu yüklemek için çekin</string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> bunu retweet etti</string>
   <string name="users_retweeted_this">Kullanıcılar bunu retweetledi</string>
   <string name="reply_to"><xliff:g id="user_name">%s</xliff:g> adlı kişiye cevap ver</string>
   <string name="quote_user">Alıntı yap <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, <xliff:g id="source">%2$s</xliff:g> kullanılarak</string>
   <string name="source"><xliff:g id="source">%s</xliff:g> kullanılarak</string>
-  <string name="filter">Filtre</string>
   <string name="users">Kullanıcılar</string>
   <string name="keywords">Anahtar kelimeler</string>
   <string name="sources">Kaynaklar</string>
@@ -95,7 +89,6 @@
   <string name="text_size_summary">\'Durum\'lar yazı boyutu.</string>
   <string name="cannot_get_location">Konumunuz alınamıyor.</string>
   <string name="drafts">Taslaklar</string>
-  <string name="delete_all">Hepsini Sil</string>
   <string name="description">Açıklama</string>
   <string name="location">Konum</string>
   <string name="url">URL</string>
@@ -132,22 +125,13 @@
   <string name="inbox">Gelen kutusu</string>
   <string name="load_images">Resimleri yükle</string>
   <string name="other_settings">Diğer ayarlar</string>
-  <string name="refresh_and_notifications">Yenile &amp; Bildirimler</string>
   <string name="auto_refresh">Otomatik yenile</string>
   <string name="refresh_interval">Yenileme aralığı</string>
-  <string name="refresh_interval_summary">Dar yenileme aralıkları daha çok pil ve ağ verisi kullanır!</string>
   <string name="content_to_refresh">Yenilenecek içerik</string>
-  <string name="content_to_notify">Bildirimi yapılacak içerik</string>
   <string name="notifications_type">Bildirim şekli</string>
-  <string name="notifications_type_summary">Bu seçenek sistem ayarlarının yerine geçMEyecek.</string>
   <string name="sound">Ses</string>
   <string name="vibration">Titreşim</string>
-  <string name="light">Işıklar</string>
   <string name="notifications">Bildirimler</string>
-  <string name="new_notifications">Yeni bildirimler</string>
-  <string name="screen_name">Kullanıcı adı</string>
-  <string name="sort_timeline_by_time">Zaman akışını zaman sırasına koy</string>
-  <string name="sort_timeline_by_time_summary">Bu, tweetlerin yanlış yerde görünmesine sebep olabilir, fakat Identi.ca gibi başka hizmetler kullanıyorsanız yardımcı olabilir.</string>
   <string name="refresh_on_start">Başlangıçta yenile</string>
   <string name="refresh_on_start_summary">Zaman akışını ve bahsedenleri yenile.</string>
   <string name="list_timeline">Zaman akışını listele</string>
@@ -156,7 +140,6 @@
   <string name="type_to_compose">Tweet yazınız</string>
   <string name="users_lists">Kullanıcının listeleri</string>
   <string name="lists_following_user">Bu kullanıcıyı takip eden listeler</string>
-  <string name="item_1_minute">1 dakika</string>
   <string name="item_3_minutes">3 dakika</string>
   <string name="item_5_minutes">5 dakika</string>
   <string name="item_10_minutes">10 dakika</string>
@@ -165,8 +148,6 @@
   <string name="item_1_hour">1 saat</string>
   <string name="item_2_hours">2 saat</string>
   <string name="item_4_hours">4 saat</string>
-  <string name="solid_color_background">Düz renk arkaplan</string>
-  <string name="solid_color_background_summary">Ekranınız AMOLED ise, işe yarayabilir.</string>
   <string name="following_you">Sizi takip ediyor</string>
   <string name="trends_location">Gündem konumu</string>
   <string name="trends_location_summary">Yerel gündem için konum belirler.</string>
@@ -180,14 +161,9 @@
   <string name="is_public">Herkese açık</string>
   <string name="send_direct_message">DM gönder</string>
   <string name="extensions">Eklentiler</string>
-  <string name="open_with_extensions">Eklentilerle aç</string>
   <string name="uninstall">Kaldır</string>
   <string name="saved_searches">Kayıtlı aramalar</string>
-  <string name="default_tabs">Varsayılan sekmeler</string>
   <string name="add_tab">Sekme ekle</string>
-  <string name="tab_type">Sekme tipi</string>
-  <string name="unused">Kullanılmamış</string>
-  <string name="list_name">Liste adı</string>
   <string name="edit_tab">Sekmeyi düzenle</string>
   <string name="move_up">Yukarı taşı</string>
   <string name="move_down">Aşağı taşı</string>
@@ -217,8 +193,6 @@
   <string name="multimedia_contents">Multimedya içeriği</string>
   <string name="show_absolute_time">Tam saati göster</string>
   <string name="show_absolute_time_summary">Tweetlerdeki tam zamanı gösterir</string>
-  <string name="mute_source">Kaynağı görme</string>
-  <string name="source_muted">\"<xliff:g id="source">%s</xliff:g>\" filtre listenize eklendi. Bu kaynaktan gelen tweetleri zaman akışınızda veya bahsedenler listenizde görmeyeceksiniz.</string>
   <string name="user_mentions">Adının geçtikleri</string>
   <string name="dual_pane_layout">Çift Sütun Görünümü</string>
   <string name="landscape">Yatay</string>
@@ -226,12 +200,9 @@
   <string name="quick_send">Göndermek İçin \"Enter\"a Basın</string>
   <string name="quick_send_summary">\"Enter\"a basıldığında tweet\'i gönder.</string>
   <string name="discard">Yoksay</string>
-  <string name="multi_select">Çoklu seçim</string>
   <string name="Nitems_selected_quantity_one">1 nesne seçildi</string>
   <string name="Nitems_selected_quantity_other"><xliff:g id="items">%d</xliff:g> nesne seçildi</string>
   <string name="view">Görüntüle</string>
-  <string name="hardware_acceleration">Donanımsal hızlandırıcı</string>
-  <string name="hardware_acceleration_summary">Bazı cihazlar, bu aktivasyondan sonra daha akıcı hissedilir, bazıları hissedilmez. Yalnız Android 3.0+. BU, SİSTEM AYARLARININ ÜSTÜNE GEÇMEZ!</string>
   <string name="activities_about_me">Etkileşimler</string>
   <string name="activities_by_friends">Arkadaşların hareketleri</string>
   <string name="activity_about_me_favorite"><xliff:g id="user">%s</xliff:g> senin tweetini kendi favorilerine ekledi.</string>
@@ -242,19 +213,13 @@
   <string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> ve <xliff:g id="count">%d</xliff:g> kişi daha senin tweetini favorilerine ekledi.</string>
   <string name="activity_about_me_list_member_added"><xliff:g id="user">%s</xliff:g> seni listesine ekledi.</string>
   <string name="activity_about_me_list_member_added_multi"><xliff:g id="user">%s</xliff:g> ve <xliff:g id="count">%d</xliff:g> kişi daha seni listesine ekledi.</string>
-  <string name="cannot_get_callback_url">Geridönüş alınamıyor, lütfen kullanıcı adınızı ve şifrenizi kontrol ediniz.</string>
   <string name="incoming_friendships">Beklemedeki takip istekleri</string>
-  <string name="click_to_open_menu">Nesne menüsünü açmak için bas</string>
-  <string name="click_to_open_menu_summary">Nesne menüsünü açmak için bas, çoklu seçim için basılı tut.</string>
   <string name="send_follow_request">Takip isteği gönder</string>
   <string name="follow_request_sent">Takip isteği gönderildi</string>
   <string name="separate_retweet_action">Retweet butonu ayrı</string>
   <string name="separate_retweet_action_summary">tweet menüsünde retweet ve alıntı butonlarının ikisini de göster</string>
   <string name="preview">Önizleme</string>
-  <string name="api_upgrade_notice_title">ÇOK ÖNEMLİ!</string>
-  <string name="api_upgrade_notice_message">  Twitter API\'nin yeni versiyonunu (1.1) çıkardı.\n\n  Bu versiyondan itibaren, Twidere onların API versiyonunu kullanıyor.\n\n  Tekrar giriş yapmanız ISRARLA TAVSİYE EDİLİR, yoksa kullanırken bir çok problemle karşılaşırsınız.\n\n  1.1 versiyonu ile API\'de ne değişti?\n  *Daha sıkı sorgu limitleri, mesela, zaman akışınızı 15 dakikada ancak 15 kez alabileceksiniz.\n  *Sizi kimlerini retweet ettiğini de, size retweet edilen tweetleri de göremeyeceksiniz.\n  *StatusNet istemcisi olarak Twidere kullanırsanız, API değişiklikleri nedeniyle pek çok özellik kaybedilecek.\n\n  Bu sıkıntıdan ötürü üzgünüz, fakat malum - Twitter diğer twit programlarını ortadan kaldırmaya niyetli, bu konuda yapabileceğim birşey yok.</string>
   <string name="connection_timeout">Bağlantı zaman aşımı</string>
-  <string name="name_display_option">İsim görünüm ayarı</string>
   <string name="both">Her ikisi</string>
   <string name="browser_sign_in">Tarayıcıdan giriş</string>
   <string name="notification_mention"><xliff:g id="user">%s</xliff:g> senden bahsetti.</string>
@@ -267,10 +232,7 @@
   <string name="silent_notifications">Sessiz bildirimler</string>
   <string name="silent_notifications_summary">Bildirimler için ses/titreşim kapat</string>
   <string name="disable_background_service">Arkaplan hizmetini kapat</string>
-  <string name="pull_to_load_conversation_label">Sohbeti görmek için çek…</string>
-  <string name="pull_to_load_conversation_release_label">Sohbeti görmek için bırak…</string>
   <string name="text_copied">Metin panoya kopyalandı.</string>
-  <string name="load_from_here">Buradan yükle</string>
   <string name="amount_usd">Miktar (USD)</string>
   <string name="donate">Bağış yap</string>
   <string name="hashtag">Etiket</string>
@@ -281,7 +243,6 @@
   <string name="sensitive_content_warning">Bu tweet hassas içeriğe sahip olabilir, devam edilsin mi?</string>
   <string name="mark_as_sensitive">Hassas olarak işaretle</string>
   <string name="remove_sensitive_mark">Hassas işaretini kaldır</string>
-  <string name="loading">Yükleniyor…</string>
   <string name="none">Hiçbiri</string>
   <string name="large">Büyük</string>
   <string name="small">Küçük</string>
@@ -300,9 +261,6 @@
   <string name="no_thanks">Hayır, teşekkürler</string>
   <string name="revoke_permissions">İzinleri kaldır</string>
   <string name="fast_scroll_thumb">Hızlı kaydırma butonu</string>
-  <string name="link_highlighting">Kısayol vurgulama</string>
-  <string name="fast_timeline_processing">Hızlı zaman akışı işleme</string>
-  <string name="fast_timeline_processing_summary">Zaman akışındaki tüm ayrıntıları yoksayar, daha yüksek performans için bunu aktifleştirin.</string>
   <string name="indicate_my_status">Tweetimi göster</string>
   <string name="default_ringtone">Varsayılan zil sesi</string>
   <string name="phishing_link_warning">Sahte adres linki uyarısı</string>
@@ -313,7 +271,6 @@
   <string name="profile_images">Profil resimleri</string>
   <string name="preview_images">Resim önizleme</string>
   <string name="preload_wifi_only">Yalnız Wi-Fi kullanarak önyükleme yap</string>
-  <string name="re_sign_in_needed">Hesaplarınıza tekrar giriş yapmanız gerekebilir.</string>
   <string name="disable_tab_swipe">Sekme kaydırmayı iptal et</string>
   <string name="sign_in_method_introduction_title">Nasıl çalışıyor?</string>
   <string name="edit_draft">Taslağı düzenle</string>

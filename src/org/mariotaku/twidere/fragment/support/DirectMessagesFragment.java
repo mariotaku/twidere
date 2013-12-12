@@ -49,7 +49,7 @@ import org.mariotaku.querybuilder.Columns.Column;
 import org.mariotaku.querybuilder.RawItemArray;
 import org.mariotaku.querybuilder.Where;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.HomeActivity;
+import org.mariotaku.twidere.activity.support.HomeActivity;
 import org.mariotaku.twidere.adapter.DirectMessageConversationEntriesAdapter;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;

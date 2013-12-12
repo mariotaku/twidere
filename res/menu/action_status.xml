@@ -59,5 +59,9 @@
 				android:title="@android:string/cancel"/>
 		</menu>
 	</item>
+	<item
+		android:id="@id/multi_select"
+		android:icon="@drawable/ic_menu_mark"
+		android:title="@string/multi_select"/>
 
 </menu>

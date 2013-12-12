@@ -56,8 +56,6 @@
   <string name="pick_from_gallery">เลือกจากคลังภาพ</string>
   <string name="followers">ผู้ติดตาม</string>
   <string name="about">เกี่ยวกับ</string>
-  <string name="about_summary">เกี่ยวกับ Twidere</string>
-  <string name="license_summary">Twidere แจกจ่ายภายใต้สัญญาอนุญาต GPLv3</string>
   <string name="api">API</string>
   <string name="consumer_key">Consumer key</string>
   <string name="consumer_secret">Consumer secret</string>
@@ -73,19 +71,15 @@
   <string name="clear_databases">ล้างฐานข้อมูล</string>
   <string name="clear_databases_summary">ล้างทวีต, ข้อมูลส่วนตัว, และข้อความทั้งหมด แต่บัญชีของคุณจะยังคงอยู่</string>
   <string name="look_and_feel">รูปร่างหน้าตา</string>
-  <string name="dark_theme">ใช้โทนสีดำ</string>
-  <string name="dark_theme_summary">ให้ Twidere ใช้โทนสีดำ</string>
   <string name="display_profile_image">แสดงรูปโปรไฟล์</string>
   <string name="image_load_summary">ปิดตัวเลือกนี้จะช่วยเพิ่มความเร็วการเลื่อนหน้า และลดการใช้ปริมาณข้อมูล</string>
   <string name="in_reply_to">ในการตอบกลับถึง <xliff:g id="user_name">%s</xliff:g></string>
-  <string name="in_reply_to_pull_to_load_conversation">ในการตอบกลับถึง <xliff:g id="user_name">%s</xliff:g> ลากเพื่อดูการสนทนา</string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> รีทวีตข้อความนี้</string>
   <string name="users_retweeted_this">ผู้ใช้ที่รีทวีตข้อความนี้</string>
   <string name="reply_to">ตอบกลับหา <xliff:g id="user_name">%s</xliff:g></string>
   <string name="quote_user">อ้างอิง <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, ผ่าน <xliff:g id="source">%2$s</xliff:g></string>
   <string name="source">ผ่าน <xliff:g id="source">%s</xliff:g></string>
-  <string name="filter">ฟิลเตอร์</string>
   <string name="users">ผู้ใช้</string>
   <string name="keywords">คำค้น</string>
   <string name="sources">ที่มา</string>
@@ -108,7 +102,6 @@
   <string name="text_size_summary">ขนาดข้อความของสถานะ</string>
   <string name="cannot_get_location">ไม่สามารถรับที่อยู่ได้</string>
   <string name="drafts">แบบร่าง</string>
-  <string name="delete_all">ลบทั้งหมด</string>
   <string name="description">คำอธิบาย</string>
   <string name="location">ที่อยู่</string>
   <string name="url">URL</string>
@@ -150,22 +143,13 @@
   <string name="inbox">กล่องขาเข้า</string>
   <string name="load_images">โหลดภาพ</string>
   <string name="other_settings">การตั้งค่าอื่นๆ</string>
-  <string name="refresh_and_notifications">การแจ้งเตือนและการโหลดข้อมูลใหม่</string>
   <string name="auto_refresh">โหลดใหม่อัตโนมัติ</string>
   <string name="refresh_interval">ความถี่การโหลด</string>
-  <string name="refresh_interval_summary">ยิ่งโหลดข้อมูลถี่ จะยิ่งกินแบตเตอรี่และปริมาณข้อมูล</string>
   <string name="content_to_refresh">เนื้อหาที่จะโหลดใหม่</string>
-  <string name="content_to_notify">เนื้อหาที่จะแจ้งเตือน</string>
   <string name="notifications_type">รูปแบบการแจ้งเตือน</string>
-  <string name="notifications_type_summary">ตัวเลือกนี้จะไม่ทับค่าของระบบ</string>
   <string name="sound">เสียง</string>
   <string name="vibration">การสั่น</string>
-  <string name="light">สว่าง</string>
   <string name="notifications">การแจ้งเตือน</string>
-  <string name="new_notifications">การแจ้งเตือนใหม่</string>
-  <string name="screen_name">ชื่อผู้ใช้</string>
-  <string name="sort_timeline_by_time">เรียงไทม์ไลน์ตามเวลา</string>
-  <string name="sort_timeline_by_time_summary">ตัวเลือกนี้อาจจะทำให้ข้อความที่ถูกรีทวีตแสดงผลผิดลำดับ  แต่จะมีประโยชน์เมื่อคุณใช้กับบริการอื่นเช่น identi.ca</string>
   <string name="refresh_on_start">โหลดใหม่เมื่อเริ่ม</string>
   <string name="refresh_on_start_summary">โหลดไทม์ไลน์และเม็นชั่นเมื่อเริ่มทำงาน</string>
   <string name="list_timeline">ไทม์ไลน์ของรายการ</string>
@@ -174,7 +158,6 @@
   <string name="type_to_compose">พิมพ์เพื่อเริ่มทวีต</string>
   <string name="users_lists">รายการของผู้ใช้</string>
   <string name="lists_following_user">รายการที่ติดตามผู้ใช้นี้</string>
-  <string name="item_1_minute">1 นาที</string>
   <string name="item_3_minutes">3 นาที</string>
   <string name="item_5_minutes">5 นาที</string>
   <string name="item_10_minutes">10 นาที</string>
@@ -183,8 +166,6 @@
   <string name="item_1_hour">1 ชั่วโมง</string>
   <string name="item_2_hours">2 ชั่วโมง</string>
   <string name="item_4_hours">4 ชั่วโมง</string>
-  <string name="solid_color_background">ไม่ไล่สีพื้นหลัง</string>
-  <string name="solid_color_background_summary">ตัวเลือกนี้อาจมีประโยชน์ ถ้าหากอุปกรณ์ของคุณใช้จอแบบ AMOLED</string>
   <string name="following_you">กำลังติดตามคุณ</string>
   <string name="trends_location">ตำแหน่งเทรนด์</string>
   <string name="trends_location_summary">เลือกตำแหน่งสำหรับเทรนด์ท้องถิ่น</string>
@@ -198,14 +179,9 @@
   <string name="is_public">สาธารณะ</string>
   <string name="send_direct_message">ส่งข้อความส่วนตัว</string>
   <string name="extensions">ส่วนขยาย</string>
-  <string name="open_with_extensions">เปิดด้วยส่วนขยาย</string>
   <string name="uninstall">ถอนการติดตั้ง</string>
   <string name="saved_searches">คำค้นที่บันทึกไว้</string>
-  <string name="default_tabs">แท็บเริ่มต้น</string>
   <string name="add_tab">เพิ่มแท็บ</string>
-  <string name="tab_type">ประเภทแท็บ</string>
-  <string name="unused">ไม่ถูกใช้</string>
-  <string name="list_name">รายการชื่อ</string>
   <string name="edit_tab">แก้ไขแท็บ</string>
   <string name="move_up">ย้ายขึ้น</string>
   <string name="move_down">ย้ายลง</string>
@@ -235,5 +211,4 @@
   <string name="multimedia_contents">เนื้อหามัลติมีเดีย</string>
   <string name="show_absolute_time">แสดงเวลาจริง</string>
   <string name="show_absolute_time_summary">แสดงเวลาจริงในทวีต</string>
-  <string name="loading">กำลังโหลด</string>
 </resources>

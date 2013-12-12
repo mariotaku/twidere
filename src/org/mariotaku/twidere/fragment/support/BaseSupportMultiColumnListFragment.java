@@ -36,7 +36,7 @@ import com.huewu.pla.lib.internal.PLAAbsListView;
 import com.huewu.pla.lib.internal.PLAAbsListView.OnScrollListener;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.activity.HomeActivity;
+import org.mariotaku.twidere.activity.support.HomeActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.iface.IBaseFragment;
 import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;

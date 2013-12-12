@@ -22,8 +22,11 @@ package org.mariotaku.twidere.adapter.iface;
 import android.widget.ListAdapter;
 
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.util.ImageLoaderWrapper;
 
 public interface IBaseAdapter extends Constants, ListAdapter {
+
+	public ImageLoaderWrapper getImageLoader();
 
 	public int getLinkHighlightColor();
 

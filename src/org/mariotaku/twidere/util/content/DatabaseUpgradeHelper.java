@@ -21,7 +21,7 @@ package org.mariotaku.twidere.util.content;
 
 import static org.mariotaku.querybuilder.SQLQueryBuilder.alterTable;
 import static org.mariotaku.querybuilder.SQLQueryBuilder.createTable;
-import static org.mariotaku.querybuilder.SQLQueryBuilder.drop;
+import static org.mariotaku.querybuilder.SQLQueryBuilder.dropTable;
 import static org.mariotaku.querybuilder.SQLQueryBuilder.insertInto;
 import static org.mariotaku.querybuilder.SQLQueryBuilder.select;
 
@@ -58,7 +58,7 @@ public final class DatabaseUpgradeHelper {
 		if (oldCols == null || ArrayUtils.contentMatch(newCols, oldCols)) return;
 		if (dropDirectly) {
 			db.beginTransaction();
-			db.execSQL(drop(table).getSQL());
+			db.execSQL(dropTable(true, table).getSQL());
 			db.execSQL(createTable(false, table).columns(NewColumn.createNewColumns(newCols, newTypes)).buildSQL());
 			db.setTransactionSuccessful();
 			db.endTransaction();
@@ -69,7 +69,7 @@ public final class DatabaseUpgradeHelper {
 		db.execSQL(alterTable(table).renameTo(tempTable).buildSQL());
 		db.execSQL(createTable(true, table).columns(NewColumn.createNewColumns(newCols, newTypes)).buildSQL());
 		db.execSQL(createInsertDataQuery(table, tempTable, newCols, oldCols, colAliases));
-		db.execSQL(drop(tempTable).getSQL());
+		db.execSQL(dropTable(true, tempTable).getSQL());
 		db.setTransactionSuccessful();
 		db.endTransaction();
 	}
@@ -79,7 +79,7 @@ public final class DatabaseUpgradeHelper {
 		final SQLInsertIntoQuery.Builder qb = insertInto(OnConflict.REPLACE, table);
 		final List<String> newInsertColsList = new ArrayList<String>();
 		for (final String newCol : newCols) {
-			final String oldAliasedCol = colAliases.get(newCol);
+			final String oldAliasedCol = colAliases != null ? colAliases.get(newCol) : null;
 			if (ArrayUtils.contains(oldCols, newCol) || oldAliasedCol != null
 					&& ArrayUtils.contains(oldCols, oldAliasedCol)) {
 				newInsertColsList.add(newCol);
@@ -90,7 +90,7 @@ public final class DatabaseUpgradeHelper {
 		final Columns.Column[] oldDataCols = new Columns.Column[newInsertCols.length];
 		for (int i = 0, j = oldDataCols.length; i < j; i++) {
 			final String newCol = newInsertCols[i];
-			final String oldAliasedCol = colAliases.get(newCol);
+			final String oldAliasedCol = colAliases != null ? colAliases.get(newCol) : null;
 			if (oldAliasedCol != null && ArrayUtils.contains(oldCols, oldAliasedCol)) {
 				oldDataCols[i] = new Columns.Column(oldAliasedCol, newCol);
 			} else {

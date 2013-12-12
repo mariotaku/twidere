@@ -33,6 +33,7 @@
 	<string name="error_occurred">An error occurred, please try again.</string>
 	<string name="error_already_logged_in">You are already logged in.</string>
 	<string name="no_account_selected">No account selected.</string>
+	<string name="empty_account_selection_disallowed">Please select at least one account.</string>
 	<string name="error_unknown_error">Error: Unknown error, this is probably a bug.</string>
 	<string name="error_message">Error: <xliff:g id="message">%s</xliff:g></string>
 	<string name="error_message_with_action">Error while <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
@@ -560,5 +561,7 @@
 	<string name="display_tab_label">Display tab label</string>
 	<string name="livewp_daydream_enabled_message">Here\'s a little present for you, find it in your system settings :)</string>
 	<string name="center">Center</string>
+	<string name="multi_select">Multi select</string>
+	<string name="long_click_to_open_menu">Long click to open menu</string>
 
 </resources>

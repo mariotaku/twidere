@@ -29,7 +29,7 @@ import org.mariotaku.jsonserializer.JSONSerializer;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableActivity;
-import org.mariotaku.twidere.util.NoDuplicatesArrayList;
+import org.mariotaku.twidere.util.collection.NoDuplicatesArrayList;
 
 import twitter4j.Activity;
 import twitter4j.Paging;

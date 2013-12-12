@@ -157,7 +157,7 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 				toggle.setTag(account);
 				toggle.setOnCheckedChangeListener(this);
 				view.setActivated(account.account_id == mSelectedAccountId);
-				((IColorLabelView) view).drawEnd(account.user_color);
+				((IColorLabelView) view).drawEnd(account.color);
 				break;
 			}
 			case GROUP_ID_ACCOUNT_OPTIONS:

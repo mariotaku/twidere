@@ -24,8 +24,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.activity.HomeActivity;
 import org.mariotaku.twidere.activity.support.BaseSupportActivity;
+import org.mariotaku.twidere.activity.support.HomeActivity;
 
 import java.util.Collections;
 import java.util.HashSet;

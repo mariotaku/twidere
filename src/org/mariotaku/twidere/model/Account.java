@@ -50,7 +50,7 @@ public class Account implements Parcelable {
 
 	public final String screen_name, name, profile_image_url, profile_banner_url;
 	public final long account_id;
-	public final int user_color;
+	public final int color;
 	public final boolean is_activated;
 	public final boolean is_dummy;
 
@@ -61,7 +61,7 @@ public class Account implements Parcelable {
 		account_id = indices.account_id != -1 ? cursor.getLong(indices.account_id) : -1;
 		profile_image_url = indices.profile_image_url != -1 ? cursor.getString(indices.profile_image_url) : null;
 		profile_banner_url = indices.profile_banner_url != -1 ? cursor.getString(indices.profile_banner_url) : null;
-		user_color = indices.user_color != -1 ? cursor.getInt(indices.user_color) : Color.TRANSPARENT;
+		color = indices.color != -1 ? cursor.getInt(indices.color) : Color.TRANSPARENT;
 		is_activated = indices.is_activated != -1 ? cursor.getInt(indices.is_activated) == 1 : false;
 	}
 
@@ -73,7 +73,7 @@ public class Account implements Parcelable {
 		screen_name = source.readString();
 		profile_image_url = source.readString();
 		profile_banner_url = source.readString();
-		user_color = source.readInt();
+		color = source.readInt();
 	}
 
 	private Account() {
@@ -83,7 +83,7 @@ public class Account implements Parcelable {
 		account_id = -1;
 		profile_image_url = null;
 		profile_banner_url = null;
-		user_color = 0;
+		color = 0;
 		is_activated = false;
 	}
 
@@ -95,8 +95,8 @@ public class Account implements Parcelable {
 	@Override
 	public String toString() {
 		return "Account{screen_name=" + screen_name + ", name=" + name + ", profile_image_url=" + profile_image_url
-				+ ", profile_banner_url=" + profile_banner_url + ", account_id=" + account_id + ", user_color="
-				+ user_color + ", is_activated=" + is_activated + "}";
+				+ ", profile_banner_url=" + profile_banner_url + ", account_id=" + account_id + ", user_color=" + color
+				+ ", is_activated=" + is_activated + "}";
 	}
 
 	@Override
@@ -108,7 +108,7 @@ public class Account implements Parcelable {
 		out.writeString(screen_name);
 		out.writeString(profile_image_url);
 		out.writeString(profile_banner_url);
-		out.writeInt(user_color);
+		out.writeInt(color);
 	}
 
 	public static Account dummyInstance() {
@@ -165,8 +165,8 @@ public class Account implements Parcelable {
 
 	public static final class Indices {
 
-		public final int screen_name, name, account_id, profile_image_url, profile_banner_url, user_color,
-				is_activated, consumer_key, consumer_secret;
+		public final int screen_name, name, account_id, profile_image_url, profile_banner_url, color, is_activated,
+				consumer_key, consumer_secret;
 
 		public Indices(final Cursor cursor) {
 			screen_name = cursor.getColumnIndex(Accounts.SCREEN_NAME);
@@ -174,7 +174,7 @@ public class Account implements Parcelable {
 			account_id = cursor.getColumnIndex(Accounts.ACCOUNT_ID);
 			profile_image_url = cursor.getColumnIndex(Accounts.PROFILE_IMAGE_URL);
 			profile_banner_url = cursor.getColumnIndex(Accounts.PROFILE_BANNER_URL);
-			user_color = cursor.getColumnIndex(Accounts.COLOR);
+			color = cursor.getColumnIndex(Accounts.COLOR);
 			is_activated = cursor.getColumnIndex(Accounts.IS_ACTIVATED);
 			consumer_key = cursor.getColumnIndex(Accounts.CONSUMER_KEY);
 			consumer_secret = cursor.getColumnIndex(Accounts.CONSUMER_SECRET);
@@ -184,7 +184,7 @@ public class Account implements Parcelable {
 		public String toString() {
 			return "Indices{screen_name=" + screen_name + ", name=" + name + ", account_id=" + account_id
 					+ ", profile_image_url=" + profile_image_url + ", profile_banner_url=" + profile_banner_url
-					+ ", user_color=" + user_color + ", is_activated=" + is_activated + "}";
+					+ ", user_color=" + color + ", is_activated=" + is_activated + "}";
 		}
 	}
 }

@@ -27,7 +27,7 @@ public class AccountPreferences implements Constants {
 
 	public int getDefaultNotificationLightColor() {
 		final Account a = Account.getAccount(mContext, mAccountId);
-		return a != null ? a.user_color : HOLO_BLUE_LIGHT;
+		return a != null ? a.color : HOLO_BLUE_LIGHT;
 	}
 
 	public int getDirectMessagesNotificationType() {

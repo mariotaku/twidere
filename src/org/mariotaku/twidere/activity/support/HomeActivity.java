@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.activity;
+package org.mariotaku.twidere.activity.support;
 
 import static org.mariotaku.twidere.util.CompareUtils.classEquals;
 import static org.mariotaku.twidere.util.CustomTabUtils.getAddedTabPosition;
@@ -81,8 +81,8 @@ import com.readystatesoftware.viewbadger.BadgeView;
 import edu.ucdavis.earlybird.ProfilingUtil;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.support.DualPaneActivity;
-import org.mariotaku.twidere.activity.support.SignInActivity;
+import org.mariotaku.twidere.activity.DataProfilingSettingsActivity;
+import org.mariotaku.twidere.activity.SettingsWizardActivity;
 import org.mariotaku.twidere.adapter.support.SupportTabsAdapter;
 import org.mariotaku.twidere.fragment.iface.IBaseFragment;
 import org.mariotaku.twidere.fragment.iface.IBasePullToRefreshFragment;
@@ -389,9 +389,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 				return true;
 			}
 			case MENU_SEARCH: {
-				if (mSearchItem != null) {
-					mSearchItem.expandActionView();
-				}
+				openSearchView(mSelectedAccountToSearch);
 				return true;
 			}
 		}
@@ -476,7 +474,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	public void openSearchView(final Account account) {
-		if (mSearchItem == null || !mSearchItem.isVisible()) {
+		if (mSearchItem == null) {
 			onSearchRequested();
 			return;
 		}
@@ -609,12 +607,13 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mHomeActionsActionView.setOnLongClickListener(this);
 		mActionsButtonLayout.setOnClickListener(this);
 		initTabs();
-		final boolean tabs_not_empty = mPagerAdapter.getCount() != 0;
-		mEmptyTabHint.setVisibility(tabs_not_empty ? View.GONE : View.VISIBLE);
-		mActionBar.setDisplayShowHomeEnabled(displayIcon || !tabs_not_empty);
-		mActionBar.setHomeButtonEnabled(displayIcon || !tabs_not_empty);
-		mActionBar.setDisplayShowTitleEnabled(!tabs_not_empty);
-		mActionBar.setDisplayShowCustomEnabled(tabs_not_empty);
+		final boolean tabsNotEmpty = mPagerAdapter.getCount() > 0;
+		mEmptyTabHint.setVisibility(tabsNotEmpty ? View.GONE : View.VISIBLE);
+		mViewPager.setVisibility(tabsNotEmpty ? View.VISIBLE : View.GONE);
+		mActionBar.setDisplayShowHomeEnabled(displayIcon || !tabsNotEmpty);
+		mActionBar.setHomeButtonEnabled(displayIcon || !tabsNotEmpty);
+		mActionBar.setDisplayShowTitleEnabled(!tabsNotEmpty);
+		mActionBar.setDisplayShowCustomEnabled(tabsNotEmpty);
 		setTabPosition(initialTabPosition);
 		setupSlidingMenu();
 		showDataProfilingRequest();
