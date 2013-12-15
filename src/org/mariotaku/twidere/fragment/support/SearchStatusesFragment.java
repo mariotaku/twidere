@@ -39,18 +39,13 @@ public class SearchStatusesFragment extends ParcelableStatusesListFragment {
 	@Override
 	public Loader<List<ParcelableStatus>> newLoaderInstance(final Context context, final Bundle args) {
 		if (args == null) return null;
-		long account_id = -1, max_id = -1, since_id = -1;
-		String query = null;
-		int tab_position = -1;
-		if (args != null) {
-			account_id = args.getLong(EXTRA_ACCOUNT_ID);
-			max_id = args.getLong(EXTRA_MAX_ID, -1);
-			since_id = args.getLong(EXTRA_SINCE_ID, -1);
-			query = args.getString(EXTRA_QUERY);
-			tab_position = args.getInt(EXTRA_TAB_POSITION, -1);
-		}
-		return new TweetSearchLoader(getActivity(), account_id, query, max_id, since_id, getData(),
-				getSavedStatusesFileArgs(), tab_position);
+		final long accountId = args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
+		final long maxId = args != null ? args.getLong(EXTRA_MAX_ID, -1) : -1;
+		final long sinceId = args != null ? args.getLong(EXTRA_SINCE_ID, -1) : -1;
+		final String query = args != null ? args.getString(EXTRA_QUERY) : null;
+		final int tabPosition = args != null ? args.getInt(EXTRA_TAB_POSITION, -1) : -1;
+		return new TweetSearchLoader(getActivity(), accountId, query, maxId, sinceId, getData(),
+				getSavedStatusesFileArgs(), tabPosition);
 	}
 
 	@Override

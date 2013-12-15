@@ -7,52 +7,48 @@
 		android:showAsAction="always"
 		android:title="@string/reply"/>
 	<item
-		android:id="@+id/more_submenu"
-		android:icon="@drawable/ic_menu_more"
-		android:title="@string/more">
+		android:id="@+id/mute_submenu"
+		android:icon="@drawable/ic_menu_mute"
+		android:showAsAction="ifRoom"
+		android:title="@string/mute_user">
 		<menu>
 			<item
-				android:id="@+id/mute_submenu"
+				android:id="@id/mute_user"
 				android:icon="@drawable/ic_menu_mute"
-				android:title="@string/mute_user">
-				<menu>
-					<item
-						android:id="@id/mute_user"
-						android:icon="@drawable/ic_menu_mute"
-						android:title="@string/mute_user"/>
-					<item
-						android:icon="@android:drawable/ic_menu_close_clear_cancel"
-						android:title="@android:string/cancel"/>
-				</menu>
-			</item>
+				android:title="@string/mute_user"/>
 			<item
-				android:id="@+id/block_submenu"
+				android:icon="@android:drawable/ic_menu_close_clear_cancel"
+				android:title="@android:string/cancel"/>
+		</menu>
+	</item>
+	<item
+		android:id="@+id/block_submenu"
+		android:icon="@drawable/ic_menu_block"
+		android:showAsAction="ifRoom"
+		android:title="@string/block">
+		<menu>
+			<item
+				android:id="@id/block"
 				android:icon="@drawable/ic_menu_block"
-				android:title="@string/block">
-				<menu>
-					<item
-						android:id="@id/block"
-						android:icon="@drawable/ic_menu_block"
-						android:title="@string/block"/>
-					<item
-						android:icon="@android:drawable/ic_menu_close_clear_cancel"
-						android:title="@android:string/cancel"/>
-				</menu>
-			</item>
+				android:title="@string/block"/>
 			<item
-				android:id="@+id/report_spam_submenu"
+				android:icon="@android:drawable/ic_menu_close_clear_cancel"
+				android:title="@android:string/cancel"/>
+		</menu>
+	</item>
+	<item
+		android:id="@+id/report_spam_submenu"
+		android:icon="@drawable/ic_menu_report_user"
+		android:showAsAction="ifRoom"
+		android:title="@string/report_for_spam">
+		<menu>
+			<item
+				android:id="@id/report_spam"
 				android:icon="@drawable/ic_menu_report_user"
-				android:title="@string/report_for_spam">
-				<menu>
-					<item
-						android:id="@id/report_spam"
-						android:icon="@drawable/ic_menu_report_user"
-						android:title="@string/report_for_spam"/>
-					<item
-						android:icon="@android:drawable/ic_menu_close_clear_cancel"
-						android:title="@android:string/cancel"/>
-				</menu>
-			</item>
+				android:title="@string/report_for_spam"/>
+			<item
+				android:icon="@android:drawable/ic_menu_close_clear_cancel"
+				android:title="@android:string/cancel"/>
 		</menu>
 	</item>
 

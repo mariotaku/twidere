@@ -28,24 +28,10 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 	public static final int GROUP_ID_MENU = 2;
 
 	private static final GroupItem[] GROUPS = new GroupItem[3];
-	private static final OptionItem[] DEFAULT_ACCOUNT_OPTIONS = new OptionItem[9];
 	private static final OptionItem[] ACCOUNT_OPTIONS = new OptionItem[10];
 	private static final OptionItem[] MORE_OPTION_ITEMS = new OptionItem[4];
 
 	static {
-		DEFAULT_ACCOUNT_OPTIONS[0] = new OptionItem(R.string.view_user_profile, R.drawable.ic_menu_profile,
-				MENU_VIEW_PROFILE);
-		DEFAULT_ACCOUNT_OPTIONS[1] = new OptionItem(android.R.string.search_go, android.R.drawable.ic_menu_search,
-				MENU_SEARCH);
-		DEFAULT_ACCOUNT_OPTIONS[2] = new OptionItem(R.string.statuses, R.drawable.ic_menu_quote, MENU_STATUSES);
-		DEFAULT_ACCOUNT_OPTIONS[3] = new OptionItem(R.string.favorites, R.drawable.ic_menu_star, MENU_FAVORITES);
-		DEFAULT_ACCOUNT_OPTIONS[4] = new OptionItem(R.string.users_lists, R.drawable.ic_menu_list, MENU_LISTS);
-		DEFAULT_ACCOUNT_OPTIONS[5] = new OptionItem(R.string.lists_following_user, R.drawable.ic_menu_list,
-				MENU_LIST_MEMBERSHIPS);
-		DEFAULT_ACCOUNT_OPTIONS[6] = new OptionItem(R.string.edit_profile, android.R.drawable.ic_menu_edit, MENU_EDIT);
-		DEFAULT_ACCOUNT_OPTIONS[7] = new OptionItem(R.string.set_color, R.drawable.ic_menu_color_palette,
-				MENU_SET_COLOR);
-		DEFAULT_ACCOUNT_OPTIONS[8] = new OptionItem(R.string.delete, android.R.drawable.ic_menu_delete, MENU_DELETE);
 		ACCOUNT_OPTIONS[0] = new OptionItem(R.string.view_user_profile, R.drawable.ic_menu_profile, MENU_VIEW_PROFILE);
 		ACCOUNT_OPTIONS[1] = new OptionItem(android.R.string.search_go, android.R.drawable.ic_menu_search, MENU_SEARCH);
 		ACCOUNT_OPTIONS[2] = new OptionItem(R.string.statuses, R.drawable.ic_menu_quote, MENU_STATUSES);
@@ -95,7 +81,7 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 				return new Account(mCursor, mIndices);
 			}
 			case GROUP_ID_ACCOUNT_OPTIONS: {
-				return getOptionsForAccount()[childPosition];
+				return ACCOUNT_OPTIONS[childPosition];
 			}
 			case GROUP_ID_MENU: {
 				return MORE_OPTION_ITEMS[childPosition];
@@ -117,7 +103,7 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 				return mCursor != null && !mCursor.isClosed() ? mCursor.getCount() : 0;
 			}
 			case GROUP_ID_ACCOUNT_OPTIONS: {
-				if (mSelectedAccountId > 0) return getOptionsForAccount().length;
+				if (mSelectedAccountId > 0) return ACCOUNT_OPTIONS.length;
 				return 0;
 			}
 			case GROUP_ID_MENU: {
@@ -160,7 +146,24 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 				((IColorLabelView) view).drawEnd(account.color);
 				break;
 			}
-			case GROUP_ID_ACCOUNT_OPTIONS:
+			case GROUP_ID_ACCOUNT_OPTIONS: {
+				final OptionItem option = (OptionItem) getChild(groupPosition, childPosition);
+				final TextView text1 = (TextView) view.findViewById(android.R.id.text1);
+				final ImageView icon = (ImageView) view.findViewById(android.R.id.icon);
+				icon.setImageResource(option.getIcon());
+				if (option.getId() == MENU_SET_AS_DEFAULT) {
+					if (mDefaultAccountId != mSelectedAccountId) {
+						text1.setAlpha(1);
+						text1.setText(R.string.set_as_default);
+					} else {
+						text1.setAlpha(0.5f);
+						text1.setText(R.string.default_account);
+					}
+				} else {
+					text1.setText(option.getName());
+				}
+				break;
+			}
 			case GROUP_ID_MENU: {
 				final OptionItem option = (OptionItem) getChild(groupPosition, childPosition);
 				final TextView text1 = (TextView) view.findViewById(android.R.id.text1);
@@ -237,9 +240,16 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 	@Override
 	public boolean isChildSelectable(final int groupPosition, final int childPosition) {
 		final GroupItem groupItem = getGroup(groupPosition);
-		if (groupItem.getId() == GROUP_ID_ACCOUNTS) {
-			final Account account = (Account) getChild(groupPosition, childPosition);
-			return account.account_id != mSelectedAccountId;
+		final int groupId = groupItem.getId();
+		switch (groupId) {
+			case GROUP_ID_ACCOUNTS: {
+				final Account account = (Account) getChild(groupPosition, childPosition);
+				return account.account_id != mSelectedAccountId;
+			}
+			case GROUP_ID_ACCOUNT_OPTIONS: {
+				final OptionItem option = (OptionItem) getChild(groupPosition, childPosition);
+				if (option.getId() == MENU_SET_AS_DEFAULT) return mDefaultAccountId != mSelectedAccountId;
+			}
 		}
 		return true;
 	}
@@ -273,11 +283,6 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 		if (mSelectedAccountId == account_id) return;
 		mSelectedAccountId = account_id;
 		notifyDataSetChanged();
-	}
-
-	private OptionItem[] getOptionsForAccount() {
-		final boolean is_default = mSelectedAccountId == mDefaultAccountId;
-		return is_default ? DEFAULT_ACCOUNT_OPTIONS : ACCOUNT_OPTIONS;
 	}
 
 	public static class GroupItem {

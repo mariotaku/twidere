@@ -97,6 +97,7 @@ import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 import edu.ucdavis.earlybird.UCDService;
 
 import org.apache.http.NameValuePair;
+import org.json.JSONException;
 import org.mariotaku.gallery3d.ImageViewerGLActivity;
 import org.mariotaku.querybuilder.AllColumns;
 import org.mariotaku.querybuilder.Columns;
@@ -307,11 +308,9 @@ public final class Utils implements Constants {
 		LINK_HANDLER_URI_MATCHER.addURI(AUTHORITY_SEARCH, null, LINK_ID_SEARCH);
 
 	}
-
 	private static LongSparseArray<Integer> sAccountColors = new LongSparseArray<Integer>();
 	private static LongSparseArray<String> sAccountScreenNames = new LongSparseArray<String>();
 	private static LongSparseArray<String> sAccountNames = new LongSparseArray<String>();
-
 	static final String MAPS_STATIC_IMAGE_URI_TEMPLATE = "https://maps.googleapis.com/maps/api/staticmap?zoom=%d&size=%dx%d&sensor=false&language=%s&center=%f,%f&markers=%f,%f";
 
 	private Utils() {
@@ -2077,6 +2076,8 @@ public final class Utils implements Constants {
 				return getErrorMessage(context, action, context.getString(R.string.network_error));
 		} else if (te.getCause() instanceof IOException)
 			return getErrorMessage(context, action, context.getString(R.string.network_error));
+		else if (te.getCause() instanceof JSONException)
+			return getErrorMessage(context, action, context.getString(R.string.api_data_corrupted));
 		else
 			return getErrorMessage(context, action, trimLineBreak(te.getMessage()));
 	}
@@ -3476,15 +3477,13 @@ public final class Utils implements Constants {
 				favorite.setTitle(R.string.favorite);
 			}
 		}
-		final MenuItem moreItem = menu.findItem(R.id.more_submenu);
-		final Menu moreSubmenu = moreItem != null && moreItem.hasSubMenu() ? moreItem.getSubMenu() : menu;
-		moreSubmenu.removeGroup(MENU_GROUP_STATUS_EXTENSION);
+		menu.removeGroup(MENU_GROUP_STATUS_EXTENSION);
 		final Intent extensionIntent = new Intent(INTENT_ACTION_EXTENSION_OPEN_STATUS);
 		extensionIntent.setExtrasClassLoader(context.getClassLoader());
 		extensionIntent.putExtra(EXTRA_STATUS, status);
-		addIntentToMenu(context, moreSubmenu, extensionIntent, MENU_GROUP_STATUS_EXTENSION);
-		final MenuItem share_item = menu.findItem(R.id.share_submenu);
-		final Menu shareSubmenu = share_item != null && share_item.hasSubMenu() ? share_item.getSubMenu() : null;
+		addIntentToMenu(context, menu, extensionIntent, MENU_GROUP_STATUS_EXTENSION);
+		final MenuItem shareItem = menu.findItem(R.id.share_submenu);
+		final Menu shareSubmenu = shareItem != null && shareItem.hasSubMenu() ? shareItem.getSubMenu() : null;
 		if (shareSubmenu != null) {
 			final Intent shareIntent = createStatusShareIntent(context, status);
 			shareSubmenu.removeGroup(MENU_GROUP_STATUS_SHARE);
@@ -3758,6 +3757,28 @@ public final class Utils implements Constants {
 	public static String trimLineBreak(final String orig) {
 		if (orig == null) return null;
 		return orig.replaceAll("\\n+", "\n");
+	}
+
+	public static boolean truncateMessages(final List<DirectMessage> in, final List<DirectMessage> out,
+			final long since_id) {
+		for (final DirectMessage message : in) {
+			if (since_id > 0 && message.getId() <= since_id) {
+				continue;
+			}
+			out.add(message);
+		}
+		return in.size() != out.size();
+	}
+
+	public static boolean truncateStatuses(final List<twitter4j.Status> in, final List<twitter4j.Status> out,
+			final long since_id) {
+		for (final twitter4j.Status status : in) {
+			if (since_id > 0 && status.getId() <= since_id) {
+				continue;
+			}
+			out.add(status);
+		}
+		return in.size() != out.size();
 	}
 
 	private static void parseEntities(final HtmlBuilder builder, final EntitySupport entities) {

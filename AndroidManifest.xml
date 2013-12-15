@@ -371,7 +371,7 @@
 			android:name=".activity.support.FileSelectorActivity"
 			android:exported="false"
 			android:label="@string/pick_file"
-			android:theme="@style/Theme.Blank"
+			android:theme="@style/Theme.Blank.Dialog"
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.PICK_FILE"/>

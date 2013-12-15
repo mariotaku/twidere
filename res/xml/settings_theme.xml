@@ -5,6 +5,7 @@
 
 	<PreferenceCategory
 		android:key="cat_theme_preview"
+		android:order="11"
 		android:title="@string/preview">
 		<org.mariotaku.twidere.preference.ThemePreviewPreference android:key="theme_preview"/>
 	</PreferenceCategory>
@@ -14,6 +15,7 @@
 		android:entries="@array/entries_theme"
 		android:entryValues="@array/values_theme"
 		android:key="theme"
+		android:order="21"
 		android:summary="%s"
 		android:title="@string/theme"/>
 	<org.mariotaku.twidere.preference.AutoInvalidateListPreference
@@ -21,12 +23,14 @@
 		android:entries="@array/entries_theme_background"
 		android:entryValues="@array/values_theme_background"
 		android:key="theme_background"
+		android:order="22"
 		android:summary="%s"
 		android:title="@string/theme_background"/>
 
 	<org.mariotaku.twidere.preference.ValueDependencyCheckBoxPreference
 		android:defaultValue="true"
 		android:key="theme_dark_actionbar"
+		android:order="23"
 		android:title="@string/theme_dark_actionbar"
 		app:dependencyKey="theme"
 		app:dependencyValueDefault="twidere"
@@ -35,6 +39,7 @@
 	<org.mariotaku.twidere.preference.ColorPickerPreference
 		android:defaultValue="@android:color/holo_blue_dark"
 		android:key="theme_color"
+		android:order="24"
 		android:title="@string/theme_color"/>
 
 </PreferenceScreen>

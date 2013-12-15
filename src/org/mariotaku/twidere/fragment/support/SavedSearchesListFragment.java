@@ -29,7 +29,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -44,7 +44,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 public class SavedSearchesListFragment extends BasePullToRefreshListFragment implements
-		LoaderCallbacks<ResponseList<SavedSearch>>, OnItemClickListener, Panes.Left {
+		LoaderCallbacks<ResponseList<SavedSearch>>, OnItemLongClickListener, Panes.Left {
 
 	private SavedSearchesAdapter mAdapter;
 
@@ -65,7 +65,7 @@ public class SavedSearchesListFragment extends BasePullToRefreshListFragment imp
 		mAdapter = new SavedSearchesAdapter(getActivity());
 		setListAdapter(mAdapter);
 		mListView = getListView();
-		mListView.setOnItemClickListener(this);
+		mListView.setOnItemLongClickListener(this);
 		final Bundle args = getArguments();
 		mAccountId = args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
 		getLoaderManager().initLoader(0, null, this);
@@ -78,7 +78,15 @@ public class SavedSearchesListFragment extends BasePullToRefreshListFragment imp
 	}
 
 	@Override
-	public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+	public boolean onItemLongClick(final AdapterView<?> view, final View child, final int position, final long id) {
+		final SavedSearch item = mAdapter.findItem(id);
+		if (item == null) return false;
+		DestroySavedSearchDialogFragment.show(getFragmentManager(), mAccountId, item.getId(), item.getName());
+		return true;
+	}
+
+	@Override
+	public void onListItemClick(final ListView view, final View child, final int position, final long id) {
 		final SavedSearch item = mAdapter.findItem(id);
 		if (item == null) return;
 		openTweetSearch(getActivity(), mAccountId, item.getQuery());

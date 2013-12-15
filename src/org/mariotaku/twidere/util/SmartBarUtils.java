@@ -1,5 +1,6 @@
 package org.mariotaku.twidere.util;
 
+import android.app.ActionBar;
 import android.os.Build;
 
 import java.lang.reflect.Method;
@@ -9,7 +10,7 @@ public final class SmartBarUtils {
 	public static boolean hasSmartBar() {
 		try {
 			// Invoke Build.hasSmartBar()
-			final Method method = Class.forName("android.os.Build").getMethod("hasSmartBar");
+			final Method method = Build.class.getMethod("hasSmartBar");
 			return ((Boolean) method.invoke(null)).booleanValue();
 		} catch (final Exception e) {
 		}
@@ -20,4 +21,12 @@ public final class SmartBarUtils {
 		return false;
 	}
 
+	public static void setActionModeHeaderHidden(final ActionBar actionbar, final boolean hidden) {
+		try {
+			final Method method = ActionBar.class.getMethod("setActionModeHeaderHidden", new Class[] { boolean.class });
+			method.invoke(actionbar, hidden);
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

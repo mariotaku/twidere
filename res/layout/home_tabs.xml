@@ -31,6 +31,4 @@
 		android:layout_weight="1"
 		class="org.mariotaku.twidere.view.TabPageIndicator"/>
 
-	<include layout="@layout/action_item_home_actions"/>
-
 </LinearLayout>

@@ -329,6 +329,7 @@
 	<string name="action_subscribing_to_list">subscribing to list</string>
 	<string name="action_unsubscribing_from_list">unsubscribing from list</string>
 	<string name="action_saving_search">saving search</string>
+	<string name="action_deleting_search">deleting search</string>
 	<string name="status_is_duplicate">Your tweet is a duplicate.</string>
 	<string name="data_profiling_summary">Twidere took part in a research on predicting user\'s social behavior to pre-caching content started by students in UC Davis.\n\nHere are the data we wanted to collect and why:\nCollected data:\n1. User\'s twitter ID\n2. User\'s home timeline (prediction based on user\'s interest and social interaction)\n3. User\'s click on a tweet (prediction based on user\'s interest and social interaction)\n4. Coarse location (which is good predictor when user will access twitter)\n\nTwidere will upload collected data only when Wifi available and your device connected to charger, so It will not cost you extra bandwidth fee or drain your battery power.</string>
 	<string name="data_profiling">Usage Statistics</string>
@@ -391,6 +392,7 @@
 	<string name="wrong_url_format">Wrong URL format.</string>
 	<string name="wrong_username_password">Wrong username/password.</string>
 	<string name="network_error">Network error.</string>
+	<string name="api_data_corrupted">API data corrupted.</string>
 	<string name="ssl_error">SSL error, you may need to enable \"Ignore SSL error\" option.</string>
 	<string name="wrong_api_key">Incorrect API url or consumer key/secret, please check them again.</string>
 	<string name="status_updated">Tweet sent.</string>
@@ -402,6 +404,9 @@
 	<string name="direct_message_sent">Direct message sent.</string>
 	<string name="direct_message_deleted">Direct message deleted.</string>
 	<string name="search_saved">Search saved.</string>
+	<string name="search_name_saved">Search \"<xliff:g id="name">%s</xliff:g>\" saved.</string>
+	<string name="search_deleted">Search deleted.</string>
+	<string name="search_name_deleted">Search \"<xliff:g id="name">%s</xliff:g>\" deleted.</string>
 	<string name="import_from">Import from…</string>
 	<string name="link_to_quoted_status">Link to quoted tweet</string>
 	<string name="followed_user">Followed <xliff:g id="user">%s</xliff:g>.</string>
@@ -436,7 +441,7 @@
 	<string name="no_close_after_status_updated">Keep \"Compose\" open after tweet sent</string>
 	<string name="no_close_after_status_updated_summary">A little gift for chatterbox</string>
 	<string name="status_saved_to_draft">Tweet saved to draft.</string>
-	<string name="default_account">Default</string>
+	<string name="default_account">Default account</string>
 	<string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g> (<xliff:g id="daily_tweet">%2$d</xliff:g> tweet(s) per day)</string>
 	<string name="empty_content">Empty content</string>
 	<string name="fast_image_loading">Fast image loading</string>
@@ -498,6 +503,8 @@
 	<string name="delete_user_list_confirm_message">Delete list <xliff:g id="name">%s</xliff:g>? This can\' be undone.</string>
 	<string name="unsubscribe_from_user_list">Unsubscribe from list <xliff:g id="name">%s</xliff:g></string>
 	<string name="unsubscribe_from_user_list_confirm_message">Unsubscribe from list <xliff:g id="name">%s</xliff:g>? You can re-subscribe this list later.</string>
+	<string name="delete_saved_search">Delete saved search \"<xliff:g id="name">%s</xliff:g>\"</string>
+	<string name="delete_saved_search_confirm_message">Delete saved search \"<xliff:g id="name">%s</xliff:g>\"? You can re-save this search shortly.</string>
 	<string name="signing_in_error_browser_sign_in_hint">Error while signing in, you may need to use browser sign in method. (This will ignore custom API settings during sign in)</string>
 	<string name="report_user">Report <xliff:g id="name">%s</xliff:g></string>
 	<string name="report_user_confirm_message">Report <xliff:g id="name">%s</xliff:g> for spam? You\'ll also block this user.</string>

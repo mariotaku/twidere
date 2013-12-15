@@ -44,7 +44,12 @@ public final class ArrayUtils {
 		return false;
 	}
 
-	public static boolean contains(final Object[] array, final Object... values) {
+	public static boolean contains(final Object[] array, final Object value) {
+		if (array == null || value == null) return false;
+		return contains(array, new Object[] { value });
+	}
+
+	public static boolean contains(final Object[] array, final Object[] values) {
 		if (array == null || values == null) return false;
 		for (final Object item : array) {
 			for (final Object value : values) {

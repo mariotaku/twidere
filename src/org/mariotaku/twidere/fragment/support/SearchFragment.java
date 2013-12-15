@@ -11,6 +11,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
@@ -27,6 +30,7 @@ import org.mariotaku.twidere.fragment.iface.SupportFragmentCallback;
 import org.mariotaku.twidere.graphic.DropShadowDrawable;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.provider.RecentSearchProvider;
+import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.view.ExtendedViewPager;
 import org.mariotaku.twidere.view.SquareImageView;
@@ -56,6 +60,7 @@ public class SearchFragment extends BaseSupportFragment implements Panes.Left, O
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		setHasOptionsMenu(true);
 		final Bundle args = getArguments();
 		mThemeColor = ThemeUtils.getUserThemeColor(getActivity());
 		mAdapter = new SupportTabsAdapter(getActivity(), getChildFragmentManager(), null);
@@ -95,6 +100,11 @@ public class SearchFragment extends BaseSupportFragment implements Panes.Left, O
 	}
 
 	@Override
+	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
+		inflater.inflate(R.menu.menu_search, menu);
+	}
+
+	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.search, container, false);
 	}
@@ -102,6 +112,23 @@ public class SearchFragment extends BaseSupportFragment implements Panes.Left, O
 	@Override
 	public void onDetachFragment(final Fragment fragment) {
 
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_SAVE: {
+				final AsyncTwitterWrapper twitter = getTwitterWrapper();
+				final Bundle args = getArguments();
+				if (twitter != null && args != null) {
+					final long accountId = args.getLong(EXTRA_ACCOUNT_ID, -1);
+					final String query = args.getString(EXTRA_QUERY);
+					twitter.createSavedSearchAsync(accountId, query);
+				}
+				return true;
+			}
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override

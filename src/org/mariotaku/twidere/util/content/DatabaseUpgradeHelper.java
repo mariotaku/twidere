@@ -43,23 +43,24 @@ import java.util.Map;
 
 public final class DatabaseUpgradeHelper {
 
-	public static void safeUpgrade(final SQLiteDatabase db, final String table, final String[] newCols,
-			final String[] newTypes, final boolean dropDirectly, final Map<String, String> colAliases) {
+	public static void safeUpgrade(final SQLiteDatabase db, final String table, final String[] newColNames,
+			final String[] newColTypes, final boolean dropDirectly, final Map<String, String> colAliases) {
 
-		if (newCols == null || newTypes == null || newCols.length != newTypes.length)
+		if (newColNames == null || newColTypes == null || newColNames.length != newColTypes.length)
 			throw new IllegalArgumentException("Invalid parameters for upgrading table " + table
 					+ ", length of columns and types not match.");
 
 		// First, create the table if not exists.
-		db.execSQL(createTable(true, table).columns(NewColumn.createNewColumns(newCols, newTypes)).buildSQL());
+		final NewColumn[] newCols = NewColumn.createNewColumns(newColNames, newColTypes);
+		db.execSQL(createTable(true, table).columns(newCols).buildSQL());
 
 		// We need to get all data from old table.
 		final String[] oldCols = getColumnNames(db, table);
-		if (oldCols == null || ArrayUtils.contentMatch(newCols, oldCols)) return;
+		if (oldCols == null || ArrayUtils.contentMatch(newColNames, oldCols)) return;
 		if (dropDirectly) {
 			db.beginTransaction();
 			db.execSQL(dropTable(true, table).getSQL());
-			db.execSQL(createTable(false, table).columns(NewColumn.createNewColumns(newCols, newTypes)).buildSQL());
+			db.execSQL(createTable(false, table).columns(newCols).buildSQL());
 			db.setTransactionSuccessful();
 			db.endTransaction();
 			return;
@@ -67,15 +68,20 @@ public final class DatabaseUpgradeHelper {
 		final String tempTable = String.format(Locale.US, "temp_%s_%d", table, System.currentTimeMillis());
 		db.beginTransaction();
 		db.execSQL(alterTable(table).renameTo(tempTable).buildSQL());
-		db.execSQL(createTable(true, table).columns(NewColumn.createNewColumns(newCols, newTypes)).buildSQL());
-		db.execSQL(createInsertDataQuery(table, tempTable, newCols, oldCols, colAliases));
+		db.execSQL(createTable(true, table).columns(newCols).buildSQL());
+		final String[] notNullCols = getNotNullColumns(newCols);
+		final String insertQuery = createInsertDataQuery(table, tempTable, newColNames, oldCols, colAliases,
+				notNullCols);
+		if (insertQuery != null) {
+			db.execSQL(insertQuery);
+		}
 		db.execSQL(dropTable(true, tempTable).getSQL());
 		db.setTransactionSuccessful();
 		db.endTransaction();
 	}
 
 	private static String createInsertDataQuery(final String table, final String tempTable, final String[] newCols,
-			final String[] oldCols, final Map<String, String> colAliases) {
+			final String[] oldCols, final Map<String, String> colAliases, final String[] notNullCols) {
 		final SQLInsertIntoQuery.Builder qb = insertInto(OnConflict.REPLACE, table);
 		final List<String> newInsertColsList = new ArrayList<String>();
 		for (final String newCol : newCols) {
@@ -86,6 +92,7 @@ public final class DatabaseUpgradeHelper {
 			}
 		}
 		final String[] newInsertCols = newInsertColsList.toArray(new String[newInsertColsList.size()]);
+		if (!ArrayUtils.contains(newInsertCols, notNullCols)) return null;
 		qb.columns(newInsertCols);
 		final Columns.Column[] oldDataCols = new Columns.Column[newInsertCols.length];
 		for (int i = 0, j = oldDataCols.length; i < j; i++) {
@@ -111,6 +118,18 @@ public final class DatabaseUpgradeHelper {
 		} finally {
 			cur.close();
 		}
+	}
+
+	private static String[] getNotNullColumns(final NewColumn[] newCols) {
+		if (newCols == null) return null;
+		final String[] notNullCols = new String[newCols.length];
+		int count = 0;
+		for (final NewColumn column : newCols) {
+			if (column.getType().endsWith(" NOT NULL")) {
+				notNullCols[count++] = column.getName();
+			}
+		}
+		return ArrayUtils.subArray(notNullCols, 0, count);
 	}
 
 }

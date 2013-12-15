@@ -327,7 +327,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 				break;
 			}
 			case MENU_MULTI_SELECT: {
-				final boolean isSelected = mMultiSelectManager.isSelected(status);
+				final boolean isSelected = !mMultiSelectManager.isSelected(status);
 				setItemSelected(status, mSelectedPosition, isSelected);
 				break;
 			}

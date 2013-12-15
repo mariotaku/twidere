@@ -124,7 +124,7 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnC
 		final Intent intent = getIntent();
 		final Uri data = intent.getData();
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		setUiOptions(data);
+		setUiOptions(getWindow(), data);
 		super.onCreate(savedInstanceState);
 		mActionBar = getActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
@@ -161,14 +161,11 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnC
 		mTitleView.setText(title);
 	}
 
-	private void setUiOptions(final Uri data) {
-		switch (matchLinkId(data)) {
-			case LINK_ID_STATUS: {
-				if (SmartBarUtils.hasSmartBar()) {
-					getWindow().setUiOptions(ActivityInfo.UIOPTION_SPLIT_ACTION_BAR_WHEN_NARROW);
-				}
-				break;
-			}
+	private void setUiOptions(final Window window, final Uri data) {
+		if (SmartBarUtils.hasSmartBar()) {
+			window.setUiOptions(ActivityInfo.UIOPTION_SPLIT_ACTION_BAR_WHEN_NARROW);
+		} else {
+			window.setUiOptions(0);
 		}
 	}
 

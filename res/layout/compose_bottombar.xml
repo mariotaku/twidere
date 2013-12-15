@@ -15,9 +15,11 @@
 		android:layout_weight="1"/>
 
 	<View
+		android:id="@+id/account_selector_divider"
 		android:layout_width="0.2dp"
 		android:layout_height="match_parent"
 		android:layout_margin="@dimen/element_spacing_default"
+		android:layout_weight="0"
 		android:background="#80808080"/>
 
 	<org.mariotaku.menubar.MenuBar
@@ -27,6 +29,14 @@
 		android:layout_weight="0"
 		android:background="@null"
 		android:max="@integer/max_action_buttons"/>
+
+	<View
+		android:id="@+id/bottom_send_divider"
+		android:layout_width="0.2dp"
+		android:layout_height="match_parent"
+		android:layout_margin="@dimen/element_spacing_default"
+		android:layout_weight="0"
+		android:background="#80808080"/>
 
 	<include layout="@layout/action_item_compose"/>
 

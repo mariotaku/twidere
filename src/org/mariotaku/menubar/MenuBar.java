@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -108,26 +109,38 @@ public class MenuBar extends LinearLayout implements MenuItem.OnMenuItemClickLis
 		final ArrayList<MenuItem> itemsNotShowing = new ArrayList<MenuItem>();
 		for (int i = 0, j = mMenu.size(); i < j; i++) {
 			final MenuItem item = mMenu.getItem(i);
-			final LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-					ViewGroup.LayoutParams.MATCH_PARENT);
-			params.weight = 1;
 			final int showAsActionFlags = MenuUtils.getShowAsActionFlags(item);
 			final boolean showIfRoom = (showAsActionFlags & MenuItem.SHOW_AS_ACTION_IF_ROOM) != 0;
 			final boolean showAlways = (showAsActionFlags & MenuItem.SHOW_AS_ACTION_ALWAYS) != 0;
 			if (showIfRoom && actionButtonCount < mMaxItemsShown || showAlways) {
 				if (item.isVisible()) {
-					addView(createViewForMenuItem(item), params);
+					addViewToMenuBar(createViewForMenuItem(item));
+					actionButtonCount++;
 				}
-				actionButtonCount++;
 			} else {
 				itemsNotShowing.add(item);
 			}
 		}
 		if (!itemsNotShowing.isEmpty()) {
-			final LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-					ViewGroup.LayoutParams.MATCH_PARENT);
-			params.weight = 1.05f;
-			addView(createMoreOverflowButton(itemsNotShowing), params);
+			addViewToMenuBar(createMoreOverflowButton(itemsNotShowing));
+		}
+		for (int i = 0, childCount = getChildCount(); i < childCount; i++) {
+			final LinearLayout child = (LinearLayout) getChildAt(i);
+			final View itemView = child.getChildAt(0);
+			final LinearLayout.LayoutParams lp = (LayoutParams) itemView.getLayoutParams();
+			if (childCount < 2) {
+				lp.weight = 0;
+			} else if (childCount == 2 || childCount == 3) {
+				if (i == 0) {
+					child.setGravity(Gravity.LEFT);
+				} else if (i == childCount - 1) {
+					child.setGravity(Gravity.RIGHT);
+				}
+				lp.weight = 0;
+			} else {
+				lp.weight = 1;
+			}
+			itemView.setLayoutParams(lp);
 		}
 		invalidate();
 	}
@@ -138,6 +151,19 @@ public class MenuBar extends LinearLayout implements MenuItem.OnMenuItemClickLis
 			mPopupMenu.dismiss();
 		}
 		super.onDetachedFromWindow();
+	}
+
+	private void addViewToMenuBar(final View itemView) {
+		final LinearLayout itemContainer = new LinearLayout(mContext);
+		final LayoutParams itemContainerParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+				ViewGroup.LayoutParams.MATCH_PARENT);
+		itemContainerParams.weight = 1;
+		final LayoutParams itemViewParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+				ViewGroup.LayoutParams.MATCH_PARENT);
+		itemViewParams.weight = 0;
+		itemContainer.addView(itemView, itemViewParams);
+		itemContainer.setGravity(Gravity.CENTER);
+		addView(itemContainer, itemContainerParams);
 	}
 
 	private View createMoreOverflowButton(final ArrayList<MenuItem> itemsNotShowing) {

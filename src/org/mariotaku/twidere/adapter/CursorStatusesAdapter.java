@@ -425,14 +425,13 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 
 	private void rebuildFilterInfo() {
 		final Cursor c = getCursor();
-		if (c != null && !c.isClosed() && mIndices != null && c.getCount() > 0) {
-			c.moveToLast();
-			final long user_id = mFilterIgnoreUser ? -1 : c.getLong(mIndices.user_id);
-			final String text_plain = mFilterIgnoreTextPlain ? null : c.getString(mIndices.text_plain);
-			final String text_html = mFilterIgnoreTextHtml ? null : c.getString(mIndices.text_html);
+		if (mIndices != null && c != null && !c.isClosed() && c.getCount() > 0 && c.moveToLast()) {
+			final long userId = mFilterIgnoreUser ? -1 : c.getLong(mIndices.user_id);
+			final String textPlain = mFilterIgnoreTextPlain ? null : c.getString(mIndices.text_plain);
+			final String textHtml = mFilterIgnoreTextHtml ? null : c.getString(mIndices.text_html);
 			final String source = mFilterIgnoreSource ? null : c.getString(mIndices.source);
-			final long retweeted_by_id = mFilterRetweetedById ? -1 : c.getLong(mIndices.retweeted_by_user_id);
-			mIsLastItemFiltered = isFiltered(mDatabase, user_id, text_plain, text_html, source, retweeted_by_id);
+			final long retweetedById = mFilterRetweetedById ? -1 : c.getLong(mIndices.retweeted_by_user_id);
+			mIsLastItemFiltered = isFiltered(mDatabase, userId, textPlain, textHtml, source, retweetedById);
 		} else {
 			mIsLastItemFiltered = false;
 		}

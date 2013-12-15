@@ -127,7 +127,7 @@ public class ThemeUtils implements Constants {
 			case R.style.Theme_Twidere_Colored_SolidBackground:
 			case R.style.Theme_Twidere_Colored_Transparent:
 			case R.style.Theme_Twidere_Colored_Compose:
-				return 0xC0333333;
+				return 0xc0333333;
 		}
 		return Color.WHITE;
 	}
