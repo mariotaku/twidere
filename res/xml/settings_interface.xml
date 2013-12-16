@@ -21,12 +21,14 @@
 		android:key="bottom_compose_button"
 		android:summary="@string/bottom_compose_button_summary"
 		android:title="@string/bottom_compose_button"/>
-	<CheckBoxPreference
+
+	<org.mariotaku.twidere.preference.LeftsideComposeButtonPreference
 		android:defaultValue="false"
 		android:dependency="bottom_compose_button"
 		android:key="leftside_compose_button"
 		android:summary="@string/leftside_compose_button_summary"
 		android:title="@string/leftside_compose_button"/>
+
 	<CheckBoxPreference
 		android:defaultValue="false"
 		android:key="fast_scroll_thumb"
@@ -35,10 +37,15 @@
 		android:defaultValue="false"
 		android:key="disable_tab_swipe"
 		android:title="@string/disable_tab_swipe"/>
-	<CheckBoxPreference
-		android:defaultValue="@bool/default_display_tab_label"
-		android:key="display_tab_label"
-		android:title="@string/display_tab_label"/>
+
+	<org.mariotaku.twidere.preference.AutoInvalidateListPreference
+		android:defaultValue="@string/default_tab_display_option"
+		android:entries="@array/entries_tab_display_option"
+		android:entryValues="@array/values_tab_display_option"
+		android:key="tab_display_option"
+		android:summary="%s"
+		android:title="@string/tab_display_option"/>
+
 	<CheckBoxPreference
 		android:defaultValue="false"
 		android:key="long_click_to_open_menu"

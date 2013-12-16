@@ -26,6 +26,7 @@ import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.util.accessor.ViewAccessor;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MenuBar extends LinearLayout implements MenuItem.OnMenuItemClickListener {
 
@@ -121,7 +122,7 @@ public class MenuBar extends LinearLayout implements MenuItem.OnMenuItemClickLis
 				itemsNotShowing.add(item);
 			}
 		}
-		if (!itemsNotShowing.isEmpty()) {
+		if (hasVisibleItems(itemsNotShowing)) {
 			addViewToMenuBar(createMoreOverflowButton(itemsNotShowing));
 		}
 		for (int i = 0, childCount = getChildCount(); i < childCount; i++) {
@@ -220,6 +221,13 @@ public class MenuBar extends LinearLayout implements MenuItem.OnMenuItemClickLis
 		return false;
 	}
 
+	private static boolean hasVisibleItems(final List<MenuItem> menuItems) {
+		for (final MenuItem item : menuItems) {
+			if (item.isVisible()) return true;
+		}
+		return false;
+	}
+
 	private static class ActionViewOnClickListener implements OnClickListener {
 		private final MenuItem menuItem;
 		private final MenuBar menuBar;
@@ -257,12 +265,13 @@ public class MenuBar extends LinearLayout implements MenuItem.OnMenuItemClickLis
 
 		@Override
 		public void onClick(final View actionView) {
-			if (menuItems.isEmpty()) return;
+			if (!hasVisibleItems(menuItems)) return;
 			final PopupMenu popupMenu = PopupMenu.getInstance(actionView.getContext(), actionView);
 			popupMenu.setOnMenuItemClickListener(menuBar);
 			popupMenu.setMenu(MenuUtils.createMenu(menuBar.getContext(), menuItems));
 			menuBar.showPopupMenu(popupMenu);
 		}
+
 	}
 
 	private static class OnActionItemLongClickListener implements OnLongClickListener {

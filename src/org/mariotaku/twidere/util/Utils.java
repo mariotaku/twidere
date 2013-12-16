@@ -1975,6 +1975,24 @@ public final class Utils implements Constants {
 		return 0;
 	}
 
+	public static String getTabDisplayOption(final Context context) {
+		if (context == null) return null;
+		final String defaultOption = context.getString(R.string.default_tab_display_option);
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		return prefs.getString(PREFERENCE_KEY_TAB_DISPLAY_OPTION, defaultOption);
+	}
+
+	public static int getTabDisplayOptionInt(final Context context) {
+		return getTabDisplayOptionInt(getTabDisplayOption(context));
+	}
+
+	public static int getTabDisplayOptionInt(final String option) {
+		if (TAB_DIPLAY_OPTION_ICON.equals(option))
+			return TAB_DIPLAY_OPTION_CODE_ICON;
+		else if (TAB_DIPLAY_OPTION_LABEL.equals(option)) return TAB_DIPLAY_OPTION_CODE_LABEL;
+		return TAB_DIPLAY_OPTION_CODE_BOTH;
+	}
+
 	public static Bitmap getTabIconFromFile(final File file, final Resources res) {
 		if (file == null || !file.exists()) return null;
 		final String path = file.getPath();

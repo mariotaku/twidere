@@ -565,10 +565,13 @@
 	<string name="action_name_saved_at_time"><xliff:g id="action">%1$s</xliff:g>, saved at <xliff:g id="time">%2$s</xliff:g></string>
 	<string name="update_status">Send tweet</string>
 	<string name="sending_direct_message">Sending direct message</string>
-	<string name="display_tab_label">Display tab label</string>
+	<string name="tab_display_option">Tab display option</string>
 	<string name="livewp_daydream_enabled_message">Here\'s a little present for you, find it in your system settings :)</string>
 	<string name="center">Center</string>
 	<string name="multi_select">Multi select</string>
 	<string name="long_click_to_open_menu">Long click to open menu</string>
+	<string name="tab_display_option_icon">Icon</string>
+	<string name="tab_display_option_label">Label</string>
+	<string name="tab_display_option_both">Both</string>
 
 </resources>

@@ -160,6 +160,7 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 						text1.setText(R.string.default_account);
 					}
 				} else {
+					text1.setAlpha(1);
 					text1.setText(option.getName());
 				}
 				break;

@@ -99,23 +99,36 @@ public class SwipebackActivityUtils implements TwidereConstants {
 		public Bitmap get(final long id) {
 			final File f = new File(mCacheDir, String.valueOf(id));
 			if (!f.exists()) return null;
-			return BitmapFactory.decodeFile(f.getAbsolutePath());
-		}
-
-		public void put(final long id, final Bitmap bitmap, final boolean alphaChannel) {
-			if (bitmap == null) return;
 			try {
-				final OutputStream os = new FileOutputStream(new File(mCacheDir, String.valueOf(id)));
-				bitmap.compress(alphaChannel ? COMPRESS_FORMAT_TRANSPARENT : COMPRESS_FORMAT, 75, os);
-			} catch (final IOException e) {
-				e.printStackTrace();
+				return BitmapFactory.decodeFile(f.getAbsolutePath());
+			} catch (final OutOfMemoryError e) {
+				return null;
+			} finally {
+				System.gc();
 			}
 		}
 
-		public void remove(final long id) {
+		public void put(final long id, final Bitmap bitmap, final boolean alphaChannel) {
+			if (bitmap == null || bitmap.isRecycled()) return;
+			try {
+				final OutputStream os = new FileOutputStream(new File(mCacheDir, String.valueOf(id)));
+				bitmap.compress(alphaChannel ? COMPRESS_FORMAT_TRANSPARENT : COMPRESS_FORMAT, 75, os);
+				bitmap.recycle();
+			} catch (final IOException e) {
+				e.printStackTrace();
+			} finally {
+				System.gc();
+			}
+		}
+
+		public boolean remove(final long id) {
 			final File f = new File(mCacheDir, String.valueOf(id));
-			if (!f.exists()) return;
-			f.delete();
+			if (!f.exists()) return false;
+			try {
+				return f.delete();
+			} finally {
+				System.gc();
+			}
 		}
 
 	}

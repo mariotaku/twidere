@@ -26,8 +26,11 @@ import static org.mariotaku.twidere.util.Utils.cleanDatabasesByItemLimit;
 import static org.mariotaku.twidere.util.Utils.createFragmentForIntent;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
+import static org.mariotaku.twidere.util.Utils.getTabDisplayOptionInt;
+import static org.mariotaku.twidere.util.Utils.isDatabaseReady;
 import static org.mariotaku.twidere.util.Utils.openDirectMessagesConversation;
 import static org.mariotaku.twidere.util.Utils.openSearch;
+import static org.mariotaku.twidere.util.Utils.showMenuItemToast;
 
 import android.app.ActionBar;
 import android.app.NotificationManager;
@@ -97,7 +100,6 @@ import org.mariotaku.twidere.util.SmartBarUtils;
 import org.mariotaku.twidere.util.SwipebackActivityUtils;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.UnreadCountUtils;
-import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.util.accessor.ViewAccessor;
 import org.mariotaku.twidere.view.ExtendedViewPager;
 import org.mariotaku.twidere.view.LeftDrawerFrameLayout;
@@ -156,7 +158,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 
 	private final Rect mRect = new Rect();
 
-	private boolean mTabDisplayLabel;
+	private int mTabDisplayOption;
 
 	private boolean mBottomComposeButton;
 
@@ -292,7 +294,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	public boolean onLongClick(final View v) {
 		switch (v.getId()) {
 			case R.id.home_actions_item: {
-				Utils.showMenuItemToast(v, v.getContentDescription(), false);
+				showMenuItemToast(v, v.getContentDescription(), false);
 				return true;
 			}
 		}
@@ -453,7 +455,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mBottomComposeButton = isBottomComposeButton();
 		setUiOptions(getWindow());
 		super.onCreate(savedInstanceState);
-		if (!Utils.isDatabaseReady(this)) {
+		if (!isDatabaseReady(this)) {
 			Toast.makeText(this, R.string.preparing_database_toast, Toast.LENGTH_SHORT).show();
 			finish();
 			return;
@@ -482,8 +484,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		}
 		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONCREATE));
 		final boolean refreshOnStart = mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_ON_START, false);
-		final boolean defDisplayLabel = res.getBoolean(R.bool.default_display_tab_label);
-		mTabDisplayLabel = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_TAB_LABEL, defDisplayLabel);
+		mTabDisplayOption = getTabDisplayOptionInt(this);
 		final int initialTabPosition = handleIntent(intent, savedInstanceState == null);
 		mActionBar = getActionBar();
 		if (SmartBarUtils.hasSmartBar()) {
@@ -499,7 +500,13 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mViewPager.setOffscreenPageLimit(3);
 		mIndicator.setViewPager(mViewPager);
 		mIndicator.setOnPageChangeListener(this);
-		mIndicator.setDisplayLabel(mTabDisplayLabel);
+		if (mTabDisplayOption != 0) {
+			mIndicator.setDisplayLabel((mTabDisplayOption & TAB_DIPLAY_OPTION_CODE_LABEL) != 0);
+			mIndicator.setDisplayIcon((mTabDisplayOption & TAB_DIPLAY_OPTION_CODE_ICON) != 0);
+		} else {
+			mIndicator.setDisplayLabel(false);
+			mIndicator.setDisplayIcon(true);
+		}
 		mActionsButtonLayout.setOnClickListener(this);
 		initTabs();
 		final boolean tabsNotEmpty = mPagerAdapter.getCount() > 0;
@@ -563,7 +570,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		filter.addAction(BROADCAST_UNREAD_COUNT_UPDATED);
 		registerReceiver(mStateReceiver, filter);
 		if (isTabsChanged(getHomeTabs(this)) || mBottomComposeButton != isBottomComposeButton()
-				|| mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_TAB_LABEL, mTabDisplayLabel) != mTabDisplayLabel) {
+				|| getTabDisplayOptionInt(this) != mTabDisplayOption) {
 			restart();
 		}
 		// UCD

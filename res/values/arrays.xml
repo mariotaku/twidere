@@ -101,5 +101,15 @@
 	<string-array name="dependency_values_false">
 		<item>false</item>
 	</string-array>
+	<string-array name="values_tab_display_option">
+		<item>icon</item>
+		<item>label</item>
+		<item>both</item>
+	</string-array>
+	<string-array name="entries_tab_display_option">
+		<item>@string/tab_display_option_icon</item>
+		<item>@string/tab_display_option_label</item>
+		<item>@string/tab_display_option_both</item>
+	</string-array>
 
 </resources>

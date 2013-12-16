@@ -107,12 +107,12 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 			final String top_domain = host_segments[host_segments_length - 2] + "."
 					+ host_segments[host_segments_length - 1];
 			if (mHostMapping.contains(top_domain)) {
-				final String host_addr = mHostMapping.getString(top_domain, null);
-				mHostCache.put(top_domain, host_addr);
+				final String hostAddr = mHostMapping.getString(top_domain, null);
+				mHostCache.put(host, hostAddr);
 				if (Utils.isDebugBuild()) {
-					Log.d(RESOLVER_LOGTAG, "Got mapped address (top domain) " + host_addr + " for host " + host);
+					Log.d(RESOLVER_LOGTAG, "Got mapped address (top domain) " + hostAddr + " for host " + host);
 				}
-				return host_addr;
+				return hostAddr;
 			}
 		}
 		initDns();

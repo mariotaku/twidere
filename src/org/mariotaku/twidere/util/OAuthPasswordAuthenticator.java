@@ -57,6 +57,7 @@ public class OAuthPasswordAuthenticator implements Constants {
 
 	public synchronized AccessToken getOAuthAccessToken(final String username, final String password)
 			throws AuthenticationException {
+		if (twitter == null) return null;
 		final RequestToken request_token;
 		try {
 			request_token = twitter.getOAuthRequestToken(OAUTH_CALLBACK_OOB);

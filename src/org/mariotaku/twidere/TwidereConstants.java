@@ -122,10 +122,11 @@ public interface TwidereConstants {
 	public static final String LINK_HIGHLIGHT_OPTION_HIGHLIGHT = "highlight";
 	public static final String LINK_HIGHLIGHT_OPTION_UNDERLINE = "underline";
 	public static final String LINK_HIGHLIGHT_OPTION_BOTH = "both";
-	public static final int LINK_HIGHLIGHT_OPTION_CODE_NONE = 0;
-	public static final int LINK_HIGHLIGHT_OPTION_CODE_HIGHLIGHT = 1;
-	public static final int LINK_HIGHLIGHT_OPTION_CODE_UNDERLINE = 2;
-	public static final int LINK_HIGHLIGHT_OPTION_CODE_BOTH = 3;
+	public static final int LINK_HIGHLIGHT_OPTION_CODE_NONE = 0x0;
+	public static final int LINK_HIGHLIGHT_OPTION_CODE_HIGHLIGHT = 0x1;
+	public static final int LINK_HIGHLIGHT_OPTION_CODE_UNDERLINE = 0x2;
+	public static final int LINK_HIGHLIGHT_OPTION_CODE_BOTH = LINK_HIGHLIGHT_OPTION_CODE_HIGHLIGHT
+			| LINK_HIGHLIGHT_OPTION_CODE_UNDERLINE;
 
 	public static final int NOTIFICATION_FLAG_NONE = 0x0;
 	public static final int NOTIFICATION_FLAG_RINGTONE = 0x1;
@@ -135,6 +136,13 @@ public interface TwidereConstants {
 	public static final String COMPOSE_QUIT_ACTION_ASK = "ask";
 	public static final String COMPOSE_QUIT_ACTION_SAVE = "save";
 	public static final String COMPOSE_QUIT_ACTION_DISCARD = "discard";
+
+	public static final String TAB_DIPLAY_OPTION_ICON = "icon";
+	public static final String TAB_DIPLAY_OPTION_LABEL = "label";
+	public static final String TAB_DIPLAY_OPTION_BOTH = "both";
+	public static final int TAB_DIPLAY_OPTION_CODE_ICON = 0x1;
+	public static final int TAB_DIPLAY_OPTION_CODE_LABEL = 0x2;
+	public static final int TAB_DIPLAY_OPTION_CODE_BOTH = TAB_DIPLAY_OPTION_CODE_ICON | TAB_DIPLAY_OPTION_CODE_LABEL;
 
 	@PreferenceType(PreferenceType.INT)
 	public static final String PREFERENCE_KEY_DATABASE_ITEM_LIMIT = "database_item_limit";
@@ -269,7 +277,7 @@ public interface TwidereConstants {
 	public static final String PREFERENCE_KEY_NOTIFICATION_TYPE_MENTIONS = "notification_type_mentions";
 	public static final String PREFERENCE_KEY_NOTIFICATION_TYPE_DIRECT_MESSAGES = "notification_type_direct_messages";
 	public static final String PREFERENCE_KEY_COMPACT_CARDS = "compact_cards";
-	public static final String PREFERENCE_KEY_DISPLAY_TAB_LABEL = "display_tab_label";
+	public static final String PREFERENCE_KEY_TAB_DISPLAY_OPTION = "tab_display_option";
 	public static final String PREFERENCE_KEY_LIVE_WALLPAPER_SCALE = "live_wallpaper_scale";
 	public static final String PREFERENCE_KEY_LONG_CLICK_TO_OPEN_MENU = "long_click_to_open_menu";
 
