@@ -338,7 +338,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 				getUserTypeIconRes(status.user_is_verified, status.user_is_protected), 0);
 		mScreenNameView.setText("@" + status.user_screen_name);
 		mTextView.setText(Html.fromHtml(status.text_html));
-		final TwidereLinkify linkify = new TwidereLinkify(new OnLinkClickHandler(getActivity()));
+		final TwidereLinkify linkify = new TwidereLinkify(
+				new OnLinkClickHandler(getActivity(), getMultiSelectManager()));
 		linkify.setHighlightColor(mPreferences.getInt(PREFERENCE_KEY_THEME_COLOR, new TextPaint().linkColor));
 		linkify.applyAllLinks(mTextView, status.account_id, status.is_possibly_sensitive);
 		mTextView.setMovementMethod(StatusContentMovementMethod.getInstance());

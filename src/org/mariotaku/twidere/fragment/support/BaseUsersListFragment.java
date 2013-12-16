@@ -48,6 +48,7 @@ import org.mariotaku.twidere.loader.DummyParcelableUsersLoader;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.MultiSelectManager;
+import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.util.collection.NoDuplicatesArrayList;
 
 import java.util.Collections;
@@ -230,6 +231,16 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 	public void onStart() {
 		super.onStart();
 		mMultiSelectManager.registerCallback(this);
+		final int choiceMode = mListView.getChoiceMode();
+		if (mMultiSelectManager.isActive()) {
+			if (choiceMode != ListView.CHOICE_MODE_MULTIPLE) {
+				mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+			}
+		} else {
+			if (choiceMode != ListView.CHOICE_MODE_NONE) {
+				Utils.clearListViewChoices(mListView);
+			}
+		}
 	}
 
 	@Override

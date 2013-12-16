@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.activity.support;
 
 import android.annotation.SuppressLint;
+import android.content.res.Resources;
 import android.os.Bundle;
 
 import org.mariotaku.twidere.Constants;
@@ -32,6 +33,21 @@ public class BaseSupportDialogActivity extends BaseSupportThemedActivity impleme
 
 	private boolean mInstanceStateSaved;
 
+	@Override
+	public Resources getResources() {
+		return getDefaultResources();
+	}
+
+	@Override
+	public int getThemeColor() {
+		return ThemeUtils.getThemeColor(this);
+	}
+
+	@Override
+	public int getThemeResource() {
+		return ThemeUtils.getDialogThemeResource(this);
+	}
+
 	public TwidereApplication getTwidereApplication() {
 		return (TwidereApplication) getApplication();
 	}
@@ -40,16 +56,6 @@ public class BaseSupportDialogActivity extends BaseSupportThemedActivity impleme
 	public final boolean shouldOverrideActivityAnimation() {
 		// Dialog theme should never use custom animations
 		return false;
-	}
-
-	@Override
-	protected int getThemeColor() {
-		return ThemeUtils.getThemeColor(this);
-	}
-
-	@Override
-	protected int getThemeResource() {
-		return ThemeUtils.getDialogThemeResource(this);
 	}
 
 	protected boolean isStateSaved() {

@@ -39,6 +39,11 @@ import org.mariotaku.twidere.util.ThemeUtils;
 public class MapViewerActivity extends TwidereSwipeBackActivity implements Constants {
 
 	@Override
+	public int getThemeResource() {
+		return ThemeUtils.getViewerThemeResource(this);
+	}
+
+	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_map_viewer, menu);
 		return true;
@@ -61,11 +66,6 @@ public class MapViewerActivity extends TwidereSwipeBackActivity implements Const
 			}
 		}
 		return true;
-	}
-
-	@Override
-	protected int getThemeResource() {
-		return ThemeUtils.getViewerThemeResource(this);
 	}
 
 	@Override

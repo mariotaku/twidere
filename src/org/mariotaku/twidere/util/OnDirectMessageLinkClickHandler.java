@@ -34,13 +34,13 @@ public class OnDirectMessageLinkClickHandler extends OnLinkClickHandler {
 	private static final String[] SHORT_LINK_SERVICES = new String[] { "bit.ly", "ow.ly", "tinyurl.com", "goo.gl",
 			"k6.kz", "is.gd", "tr.im", "x.co", "weepp.ru" };
 
-	public OnDirectMessageLinkClickHandler(final Context context) {
-		super(context);
+	public OnDirectMessageLinkClickHandler(final Context context, final MultiSelectManager manager) {
+		super(context, manager);
 	}
 
 	@Override
 	protected void openLink(final String link) {
-		if (link == null) return;
+		if (link == null || activity == null || manager.isActive()) return;
 		if (!hasShortenedLinks(link)) {
 			super.openLink(link);
 			return;

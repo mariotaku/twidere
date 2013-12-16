@@ -42,6 +42,16 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 		return getTwidereApplication() != null ? getTwidereApplication().getMessagesManager() : null;
 	}
 
+	@Override
+	public int getThemeColor() {
+		return ThemeUtils.getUserThemeColor(this);
+	}
+
+	@Override
+	public int getThemeResource() {
+		return ThemeUtils.getThemeResource(this);
+	}
+
 	public TwidereApplication getTwidereApplication() {
 		return (TwidereApplication) getApplication();
 	}
@@ -70,16 +80,6 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 
 	protected IBasePullToRefreshFragment getCurrentPullToRefreshFragment() {
 		return null;
-	}
-
-	@Override
-	protected int getThemeColor() {
-		return ThemeUtils.getUserThemeColor(this);
-	}
-
-	@Override
-	protected int getThemeResource() {
-		return ThemeUtils.getThemeResource(this);
 	}
 
 	protected boolean isStateSaved() {

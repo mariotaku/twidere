@@ -487,9 +487,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mTabDisplayOption = getTabDisplayOptionInt(this);
 		final int initialTabPosition = handleIntent(intent, savedInstanceState == null);
 		mActionBar = getActionBar();
-		if (SmartBarUtils.hasSmartBar()) {
-			SmartBarUtils.setActionModeHeaderHidden(mActionBar, true);
-		}
 		mActionBar.setCustomView(R.layout.home_tabs);
 
 		final View view = mActionBar.getCustomView();

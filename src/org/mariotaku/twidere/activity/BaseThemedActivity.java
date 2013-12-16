@@ -22,6 +22,7 @@ package org.mariotaku.twidere.activity;
 import static org.mariotaku.twidere.util.Utils.restartActivity;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 
@@ -46,6 +47,27 @@ public abstract class BaseThemedActivity extends Activity implements IThemedActi
 	}
 
 	@Override
+	public final Resources getDefaultResources() {
+		return super.getResources();
+	}
+
+	@Override
+	public Resources getResources() {
+		return getThemedResources();
+	}
+
+	@Override
+	public abstract int getThemeColor();
+
+	@Override
+	public final Resources getThemedResources() {
+		return super.getResources();
+	}
+
+	@Override
+	public abstract int getThemeResource();
+
+	@Override
 	public void navigateUpFromSameTask() {
 		NavUtils.navigateUpFromSameTask(this);
 		overrideCloseAnimationIfNeeded();
@@ -65,10 +87,6 @@ public abstract class BaseThemedActivity extends Activity implements IThemedActi
 		return true;
 	}
 
-	protected abstract int getThemeColor();
-
-	protected abstract int getThemeResource();
-
 	protected final boolean isThemeChanged() {
 		return getThemeResource() != mCurrentThemeResource || getThemeColor() != mCurrentThemeColor;
 	}
@@ -79,6 +97,7 @@ public abstract class BaseThemedActivity extends Activity implements IThemedActi
 			StrictModeUtils.detectAllVmPolicy();
 			StrictModeUtils.detectAllThreadPolicy();
 		}
+
 		if (shouldOverrideActivityAnimation()) {
 			ThemeUtils.overrideActivityOpenAnimation(this);
 		}

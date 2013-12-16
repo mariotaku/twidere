@@ -8,6 +8,8 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.content.res.Resources.Theme;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.iface.IThemedActivity;
 import org.mariotaku.twidere.util.accessor.ViewAccessor;
 import org.mariotaku.twidere.view.CardItemLinearLayout;
 import org.mariotaku.twidere.view.ForegroundImageView;
@@ -81,7 +84,8 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static Drawable getActionBarBackground(final Context context, final boolean applyAlpha) {
-		final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.background },
+		final Theme theme = getTheme(context, getResources(context));
+		final TypedArray a = theme.obtainStyledAttributes(null, new int[] { android.R.attr.background },
 				android.R.attr.actionBarStyle, 0);
 		final Drawable d = a.getDrawable(0);
 		a.recycle();
@@ -89,7 +93,8 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static Context getActionBarContext(final Context context) {
-		final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.actionBarWidgetTheme });
+		final Theme theme = getTheme(context, getResources(context));
+		final TypedArray a = theme.obtainStyledAttributes(new int[] { android.R.attr.actionBarWidgetTheme });
 		final int resId = a.getResourceId(0, 0);
 		a.recycle();
 		if (resId == 0) return context;
@@ -97,7 +102,8 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static Drawable getActionBarSplitBackground(final Context context, final boolean applyAlpha) {
-		final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.backgroundSplit },
+		final Theme theme = getTheme(context, getResources(context));
+		final TypedArray a = theme.obtainStyledAttributes(null, new int[] { android.R.attr.backgroundSplit },
 				android.R.attr.actionBarStyle, 0);
 		final Drawable d = a.getDrawable(0);
 		a.recycle();
@@ -105,7 +111,8 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static Drawable getActionBarStackedBackground(final Context context, final boolean applyAlpha) {
-		final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.backgroundStacked },
+		final Theme theme = getTheme(context, getResources(context));
+		final TypedArray a = theme.obtainStyledAttributes(null, new int[] { android.R.attr.backgroundStacked },
 				android.R.attr.actionBarStyle, 0);
 		final Drawable d = a.getDrawable(0);
 		a.recycle();
@@ -133,7 +140,8 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static Drawable getCardItemBackground(final Context context) {
-		final TypedArray a = context.obtainStyledAttributes(new int[] { R.attr.cardItemBackground });
+		final Theme theme = getTheme(context, getResources(context));
+		final TypedArray a = theme.obtainStyledAttributes(new int[] { R.attr.cardItemBackground });
 		final Drawable d = a.getDrawable(0);
 		a.recycle();
 		return d;
@@ -186,11 +194,12 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static Drawable getListMenuOverflowButtonDrawable(final Context context) {
-		final TypedArray a = context.obtainStyledAttributes(new int[] { R.attr.listMenuOverflowButton });
+		final Resources res = getResources(context);
+		final Theme theme = getTheme(context, res);
+		final TypedArray a = theme.obtainStyledAttributes(new int[] { R.attr.listMenuOverflowButton });
 		final Drawable d = a.getDrawable(0);
 		a.recycle();
-		if (d == null)
-			return context.getResources().getDrawable(R.drawable.ic_list_menu_moreoverflow_normal_holo_light);
+		if (d == null) return res.getDrawable(R.drawable.ic_list_menu_moreoverflow_normal_holo_light);
 		return d;
 	}
 
@@ -202,33 +211,56 @@ public class ThemeUtils implements Constants {
 		return R.style.Theme_Twidere_Light_NoDisplay;
 	}
 
+	public static Resources getResources(final Context context) {
+		if (context instanceof IThemedActivity) {
+			final Resources defRes = ((IThemedActivity) context).getDefaultResources();
+			return defRes;
+		}
+		return context.getResources();
+	}
+
 	public static Drawable getSelectableItemBackgroundDrawable(final Context context) {
-		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.selectableItemBackground });
+		final Resources res = getResources(context);
+		final Theme theme = getTheme(context, res);
+		final TypedArray a = theme.obtainStyledAttributes(new int[] { android.R.attr.selectableItemBackground });
 		final Drawable d = a.getDrawable(0);
 		a.recycle();
-		if (d == null) return context.getResources().getDrawable(R.drawable.item_background_holo_dark);
+		if (d == null) return res.getDrawable(R.drawable.item_background_holo_dark);
 		return d;
 	}
 
 	public static int getTextAppearanceLarge(final Context context) {
-		final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.textAppearanceLarge });
+		final Theme theme = getTheme(context, getResources(context));
+		final TypedArray a = theme.obtainStyledAttributes(new int[] { android.R.attr.textAppearanceLarge });
 		final int textAppearance = a.getResourceId(0, android.R.style.TextAppearance_Holo_Large);
 		a.recycle();
 		return textAppearance;
 	}
 
 	public static int getTextColorPrimary(final Context context) {
-		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.textColorPrimary });
+		final Theme theme = getTheme(context, getResources(context));
+		final TypedArray a = theme.obtainStyledAttributes(new int[] { android.R.attr.textColorPrimary });
 		final int color = a.getColor(0, Color.TRANSPARENT);
 		a.recycle();
 		return color;
 	}
 
 	public static int getTextColorSecondary(final Context context) {
-		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.textColorSecondary });
+		final Theme theme = getTheme(context, getResources(context));
+		final TypedArray a = theme.obtainStyledAttributes(new int[] { android.R.attr.textColorSecondary });
 		final int color = a.getColor(0, Color.TRANSPARENT);
 		a.recycle();
 		return color;
+	}
+
+	public static Theme getTheme(final Context context, final Resources res) {
+		if (context instanceof IThemedActivity) {
+			final int resId = ((IThemedActivity) context).getThemeResource();
+			final Theme theme = res.newTheme();
+			theme.applyStyle(resId, true);
+			return theme;
+		}
+		return context.getTheme();
 	}
 
 	public static int getThemeAlpha(final Context context) {
@@ -255,8 +287,10 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static int getThemeColor(final Context context) {
-		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.colorActivatedHighlight });
-		final int def = context.getResources().getColor(android.R.color.holo_blue_light);
+		final Resources res = getResources(context);
+		final Theme theme = getTheme(context, res);
+		final TypedArray a = theme.obtainStyledAttributes(new int[] { android.R.attr.colorActivatedHighlight });
+		final int def = res.getColor(android.R.color.holo_blue_light);
 		final int color = a.getColor(0, def);
 		a.recycle();
 		return color;
@@ -301,7 +335,8 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static int getTitleTextAppearance(final Context context) {
-		final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.titleTextStyle },
+		final Theme theme = getTheme(context, getResources(context));
+		final TypedArray a = theme.obtainStyledAttributes(null, new int[] { android.R.attr.titleTextStyle },
 				android.R.attr.actionBarStyle, android.R.style.Widget_Holo_ActionBar);
 		final int textAppearance = a.getResourceId(0, android.R.style.TextAppearance_Holo);
 		a.recycle();
@@ -310,8 +345,9 @@ public class ThemeUtils implements Constants {
 
 	public static int getUserThemeColor(final Context context) {
 		if (context == null) return Color.TRANSPARENT;
+		final Resources res = getResources(context);
 		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final int def = context.getResources().getColor(android.R.color.holo_blue_light);
+		final int def = res.getColor(android.R.color.holo_blue_light);
 		return pref.getInt(PREFERENCE_KEY_THEME_COLOR, def);
 	}
 
@@ -321,14 +357,16 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static Drawable getWindowBackground(final Context context) {
-		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.windowBackground });
+		final Theme theme = getTheme(context, getResources(context));
+		final TypedArray a = theme.obtainStyledAttributes(new int[] { android.R.attr.windowBackground });
 		final Drawable d = a.getDrawable(0);
 		a.recycle();
 		return d;
 	}
 
 	public static Drawable getWindowBackground(final Context context, final int themeRes) {
-		final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.windowBackground }, 0,
+		final Theme theme = getTheme(context, getResources(context));
+		final TypedArray a = theme.obtainStyledAttributes(null, new int[] { android.R.attr.windowBackground }, 0,
 				themeRes);
 		final Drawable d = a.getDrawable(0);
 		a.recycle();
@@ -336,7 +374,8 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static Drawable getWindowContentOverlay(final Context context) {
-		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.windowContentOverlay });
+		final Theme theme = getTheme(context, getResources(context));
+		final TypedArray a = theme.obtainStyledAttributes(new int[] { android.R.attr.windowContentOverlay });
 		final Drawable d = a.getDrawable(0);
 		a.recycle();
 		return d;
@@ -383,7 +422,8 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static boolean isFloatingWindow(final Context context) {
-		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.windowIsFloating });
+		final Theme theme = getTheme(context, getResources(context));
+		final TypedArray a = theme.obtainStyledAttributes(new int[] { android.R.attr.windowIsFloating });
 		final boolean b = a.getBoolean(0, false);
 		a.recycle();
 		return b;
@@ -429,13 +469,14 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static void overrideActivityCloseAnimation(final Activity activity) {
-		TypedArray activityStyle = activity.obtainStyledAttributes(new int[] { android.R.attr.windowAnimationStyle });
+		final Theme theme = getTheme(activity, getResources(activity));
+		TypedArray activityStyle = theme.obtainStyledAttributes(new int[] { android.R.attr.windowAnimationStyle });
 		final int windowAnimationStyleResId = activityStyle.getResourceId(0, 0);
 		activityStyle.recycle();
 		// Now retrieve the resource ids of the actual animations used in the
 		// animation style pointed to by
 		// the window animation resource id.
-		activityStyle = activity.obtainStyledAttributes(windowAnimationStyleResId, ANIM_CLOSE_STYLE_ATTRS);
+		activityStyle = theme.obtainStyledAttributes(windowAnimationStyleResId, ANIM_CLOSE_STYLE_ATTRS);
 		final int activityCloseEnterAnimation = activityStyle.getResourceId(0, 0);
 		final int activityCloseExitAnimation = activityStyle.getResourceId(1, 0);
 		activityStyle.recycle();
@@ -443,13 +484,14 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static void overrideActivityOpenAnimation(final Activity activity) {
-		TypedArray activityStyle = activity.obtainStyledAttributes(new int[] { android.R.attr.windowAnimationStyle });
+		final Theme theme = getTheme(activity, getResources(activity));
+		TypedArray activityStyle = theme.obtainStyledAttributes(new int[] { android.R.attr.windowAnimationStyle });
 		final int windowAnimationStyleResId = activityStyle.getResourceId(0, 0);
 		activityStyle.recycle();
 		// Now retrieve the resource ids of the actual animations used in the
 		// animation style pointed to by
 		// the window animation resource id.
-		activityStyle = activity.obtainStyledAttributes(windowAnimationStyleResId, ANIM_OPEN_STYLE_ATTRS);
+		activityStyle = theme.obtainStyledAttributes(windowAnimationStyleResId, ANIM_OPEN_STYLE_ATTRS);
 		final int activityOpenEnterAnimation = activityStyle.getResourceId(0, 0);
 		final int activityOpenExitAnimation = activityStyle.getResourceId(1, 0);
 		activityStyle.recycle();
@@ -457,8 +499,9 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static void overrideNormalActivityCloseAnimation(final Activity activity) {
-		TypedArray a = activity.obtainStyledAttributes(new int[] { android.R.attr.windowAnimationStyle });
-		a = activity.obtainStyledAttributes(android.R.style.Animation_Activity, ANIM_CLOSE_STYLE_ATTRS);
+		final Theme theme = getTheme(activity, getResources(activity));
+		TypedArray a = theme.obtainStyledAttributes(new int[] { android.R.attr.windowAnimationStyle });
+		a = theme.obtainStyledAttributes(android.R.style.Animation_Activity, ANIM_CLOSE_STYLE_ATTRS);
 		final int activityCloseEnterAnimation = a.getResourceId(0, 0);
 		final int activityCloseExitAnimation = a.getResourceId(1, 0);
 		a.recycle();

@@ -149,7 +149,8 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		final String description = user_list.description;
 		mDescriptionContainer.setVisibility(is_myself || !isEmpty(description) ? View.VISIBLE : View.GONE);
 		mDescriptionView.setText(description);
-		final TwidereLinkify linkify = new TwidereLinkify(new OnLinkClickHandler(getActivity()));
+		final TwidereLinkify linkify = new TwidereLinkify(
+				new OnLinkClickHandler(getActivity(), getMultiSelectManager()));
 		linkify.applyAllLinks(mDescriptionView, user_list.account_id, false);
 		mDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
 		mProfileImageLoader.displayProfileImage(mProfileImageView, user_list.user_profile_image_url);

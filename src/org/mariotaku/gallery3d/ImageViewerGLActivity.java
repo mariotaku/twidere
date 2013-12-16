@@ -102,6 +102,11 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 		return mGLRootView;
 	}
 
+	@Override
+	public int getThemeResource() {
+		return ThemeUtils.getViewerThemeResource(this);
+	}
+
 	public ThreadPool getThreadPool() {
 		if (mThreadPool != null) return mThreadPool;
 		return mThreadPool = new ThreadPool();
@@ -300,11 +305,6 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 	public void showProgress() {
 		mProgress.setVisibility(View.VISIBLE);
 		mProgress.setIndeterminate(true);
-	}
-
-	@Override
-	protected int getThemeResource() {
-		return ThemeUtils.getViewerThemeResource(this);
 	}
 
 	@Override

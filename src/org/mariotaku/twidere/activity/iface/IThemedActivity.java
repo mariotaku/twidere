@@ -27,6 +27,12 @@ public interface IThemedActivity {
 
 	public Resources getDefaultResources();
 
+	public int getThemeColor();
+
+	public Resources getThemedResources();
+
+	public int getThemeResource();
+
 	public void navigateUpFromSameTask();
 
 	public void overrideCloseAnimationIfNeeded();

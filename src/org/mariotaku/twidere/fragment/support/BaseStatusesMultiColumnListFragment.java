@@ -377,6 +377,16 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 	public void onStart() {
 		super.onStart();
 		mMultiSelectManager.registerCallback(this);
+		final int choiceMode = mListView.getChoiceMode();
+		if (mMultiSelectManager.isActive()) {
+			if (choiceMode != ListView.CHOICE_MODE_MULTIPLE) {
+				mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+			}
+		} else {
+			if (choiceMode != ListView.CHOICE_MODE_NONE) {
+				Utils.clearListViewChoices(mListView);
+			}
+		}
 	}
 
 	@Override
