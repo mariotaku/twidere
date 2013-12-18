@@ -86,7 +86,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -168,6 +167,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 	private ProgressBar mProgress;
 	private Gallery mAccountSelector;
 	private View mAccountSelectorDivider, mBottomSendDivider;
+	private View mBottomMenuContainer;
 
 	private AccountSelectorAdapter mAccountSelectorAdapter;
 
@@ -407,7 +407,8 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		mTitleView = (TextView) findViewById(R.id.actionbar_title);
 		mSubtitleView = (TextView) findViewById(R.id.actionbar_subtitle);
 		mImageThumbnailPreview = (ImageView) findViewById(R.id.image_thumbnail_preview);
-		mBottomMenuBar = (MenuBar) findViewById(R.id.menu_bar);
+		mBottomMenuBar = (MenuBar) findViewById(R.id.bottom_menu);
+		mBottomMenuContainer = findViewById(R.id.bottom_menu_container);
 		mActionMenuBar = (MenuBar) findViewById(R.id.action_menu);
 		mProgress = (ProgressBar) findViewById(R.id.actionbar_progress_indeterminate);
 		mAccountSelectorDivider = findViewById(R.id.account_selector_divider);
@@ -624,26 +625,28 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 			final Intent image_extensions_intent = new Intent(INTENT_ACTION_EXTENSION_EDIT_IMAGE);
 			addIntentToMenu(this, showingMenu, image_extensions_intent, MENU_GROUP_IMAGE_EXTENSION);
 		}
-		final LinearLayout.LayoutParams bottomMenuParams = (LayoutParams) mBottomMenuBar.getLayoutParams();
-		final LinearLayout.LayoutParams accountSelectorParams = (LayoutParams) mAccountSelector.getLayoutParams();
+		final LinearLayout.LayoutParams bottomMenuContainerParams = (LinearLayout.LayoutParams) mBottomMenuContainer
+				.getLayoutParams();
+		final LinearLayout.LayoutParams accountSelectorParams = (LinearLayout.LayoutParams) mAccountSelector
+				.getLayoutParams();
 		final int maxItemsShown;
 		final Resources res = getResources();
 		if (isSingleAccount()) {
 			accountSelectorParams.weight = 0;
 			accountSelectorParams.width = ViewGroup.LayoutParams.WRAP_CONTENT;
-			bottomMenuParams.weight = 1;
-			bottomMenuParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+			bottomMenuContainerParams.weight = 1;
+			bottomMenuContainerParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
 			maxItemsShown = res.getInteger(R.integer.max_compose_menu_buttons_bottom_singleaccount);
 			mAccountSelectorDivider.setVisibility(View.VISIBLE);
 		} else {
 			accountSelectorParams.weight = 1;
 			accountSelectorParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-			bottomMenuParams.weight = 0;
-			bottomMenuParams.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+			bottomMenuContainerParams.weight = 0;
+			bottomMenuContainerParams.width = ViewGroup.LayoutParams.WRAP_CONTENT;
 			maxItemsShown = res.getInteger(R.integer.max_compose_menu_buttons_bottom);
 			mAccountSelectorDivider.setVisibility(bottomSendButton ? View.GONE : View.VISIBLE);
 		}
-		mBottomMenuBar.setLayoutParams(bottomMenuParams);
+		mBottomMenuContainer.setLayoutParams(bottomMenuContainerParams);
 		mBottomMenuBar.setMaxItemsShown(maxItemsShown);
 		setMenu();
 		updateAccountSelection();

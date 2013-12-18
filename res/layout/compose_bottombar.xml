@@ -22,13 +22,20 @@
 		android:layout_weight="0"
 		android:background="#80808080"/>
 
-	<org.mariotaku.menubar.MenuBar
-		android:id="@+id/menu_bar"
+	<HorizontalScrollView
+		android:id="@+id/bottom_menu_container"
 		android:layout_width="wrap_content"
 		android:layout_height="match_parent"
-		android:layout_weight="0"
-		android:background="@null"
-		android:max="@integer/max_action_buttons"/>
+		android:layout_weight="0">
+
+		<org.mariotaku.menubar.MenuBar
+			android:id="@+id/bottom_menu"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:layout_gravity="right"
+			android:background="@null"
+			android:max="@integer/max_action_buttons"/>
+	</HorizontalScrollView>
 
 	<View
 		android:id="@+id/bottom_send_divider"
