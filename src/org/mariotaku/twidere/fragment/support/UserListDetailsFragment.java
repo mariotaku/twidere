@@ -149,7 +149,8 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		final String description = user_list.description;
 		mDescriptionContainer.setVisibility(is_myself || !isEmpty(description) ? View.VISIBLE : View.GONE);
 		mDescriptionView.setText(description);
-		final TwidereLinkify linkify = new TwidereLinkify(new OnLinkClickHandler(getActivity()));
+		final TwidereLinkify linkify = new TwidereLinkify(
+				new OnLinkClickHandler(getActivity(), getMultiSelectManager()));
 		linkify.applyAllLinks(mDescriptionView, user_list.account_id, false);
 		mDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
 		mProfileImageLoader.displayProfileImage(mProfileImageView, user_list.user_profile_image_url);
@@ -198,7 +199,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 	public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		switch (requestCode) {
 			case REQUEST_SELECT_USER: {
-				if (resultCode != Activity.RESULT_OK || data.hasExtra(EXTRA_USER) || mTwitterWrapper == null
+				if (resultCode != Activity.RESULT_OK || !data.hasExtra(EXTRA_USER) || mTwitterWrapper == null
 						|| mUserList == null) return;
 				final ParcelableUser user = data.getParcelableExtra(EXTRA_USER);
 				mTwitterWrapper.addUserListMembersAsync(mUserList.account_id, mUserList.id, user);

@@ -213,6 +213,7 @@ public final class HttpParameter implements Comparable<HttpParameter> {
 		try {
 			encoded = URLEncoder.encode(value, "UTF-8");
 		} catch (final UnsupportedEncodingException ignore) {
+			return null;
 		}
 		final StringBuffer buf = new StringBuffer(encoded.length());
 		char focus;

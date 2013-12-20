@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
-	android:versionCode="86"
-	android:versionName="0.2.9.7-update1">
+	android:versionCode="87"
+	android:versionName="0.2.9.7-update2">
 
 	<uses-sdk
 		android:minSdkVersion="14"
@@ -371,7 +371,7 @@
 			android:name=".activity.support.FileSelectorActivity"
 			android:exported="false"
 			android:label="@string/pick_file"
-			android:theme="@style/Theme.Blank"
+			android:theme="@style/Theme.Blank.Dialog"
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.PICK_FILE"/>

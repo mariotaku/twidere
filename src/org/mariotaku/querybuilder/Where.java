@@ -75,6 +75,10 @@ public class Where implements SQLLang {
 		return new Where(String.format("%s NOT IN(%s)", column.getSQL(), in.getSQL()));
 	}
 
+	public static Where notNull(final Column column) {
+		return new Where(String.format("%s NOT NULL", column.getSQL()));
+	}
+
 	public static Where or(final Where... expressions) {
 		return new Where(toExpr(expressions, "OR"));
 	}

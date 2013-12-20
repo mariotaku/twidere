@@ -25,7 +25,8 @@
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Dark</item>
 		<item name="android:actionButtonStyle">@style/Widget.Twidere.ActionButton</item>
 		<item name="android:actionBarItemBackground">@drawable/item_background_holo_dark</item>
-		<item name="android:actionBarTabStyle">@style/Widget.Twidere.Dark.ActionBar.TabView</item>
+		<!-- <item name="android:actionBarTabStyle">@style/Widget.Twidere.Dark.ActionBar.TabView</item> -->
+
 
 		<!-- Custom view styles -->
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
@@ -43,11 +44,12 @@
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_dark</item>
 
 		<!-- Text styles -->
+		<!--
 		<item name="android:textColorHighlight">@color/highlighted_text_holo_dark</item>
 		<item name="android:textColorHighlightInverse">@color/highlighted_text_holo_light</item>
 		<item name="android:textColorLink">@color/text_link_holo_dark</item>
 		<item name="android:textColorLinkInverse">@color/text_link_holo_light</item>
-
+		-->
 		<!-- Button styles -->
 		<item name="android:selectableItemBackground">@drawable/item_background_holo_dark</item>
 
@@ -76,7 +78,8 @@
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Light</item>
 		<item name="android:actionButtonStyle">@style/Widget.Twidere.Light.ActionButton</item>
 		<item name="android:actionBarItemBackground">@drawable/item_background_holo_light</item>
-		<item name="android:actionBarTabStyle">@style/Widget.Twidere.Light.ActionBar.TabView</item>
+		<!-- <item name="android:actionBarTabStyle">@style/Widget.Twidere.Light.ActionBar.TabView</item> -->
+
 
 		<!-- Custom view styles -->
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
@@ -94,11 +97,12 @@
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_light</item>
 
 		<!-- Text styles -->
+		<!--
 		<item name="android:textColorHighlight">@color/highlighted_text_holo_light</item>
 		<item name="android:textColorHighlightInverse">@color/highlighted_text_holo_dark</item>
 		<item name="android:textColorLink">@color/text_link_holo_light</item>
 		<item name="android:textColorLinkInverse">@color/text_link_holo_dark</item>
-
+		-->
 		<!-- Button styles -->
 		<item name="android:selectableItemBackground">@drawable/item_background_holo_light</item>
 
@@ -127,7 +131,8 @@
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Light.DarkActionBar</item>
 		<item name="android:actionButtonStyle">@style/Widget.Twidere.ActionButton</item>
 		<item name="android:actionBarItemBackground">@drawable/item_background_holo_dark</item>
-		<item name="android:actionBarTabStyle">@style/Widget.Twidere.Light.ActionBar.TabView.Inverse</item>
+		<!-- <item name="android:actionBarTabStyle">@style/Widget.Twidere.Light.ActionBar.TabView.Inverse</item> -->
+
 
 		<!-- Custom view styles -->
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
@@ -145,11 +150,12 @@
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_light</item>
 
 		<!-- Text styles -->
+		<!--
 		<item name="android:textColorHighlight">@color/highlighted_text_holo_light</item>
 		<item name="android:textColorHighlightInverse">@color/highlighted_text_holo_dark</item>
 		<item name="android:textColorLink">@color/text_link_holo_light</item>
 		<item name="android:textColorLinkInverse">@color/text_link_holo_dark</item>
-
+		-->
 		<!-- Button styles -->
 		<item name="android:selectableItemBackground">@drawable/item_background_holo_light</item>
 
@@ -165,7 +171,7 @@
 		<item name="android:dropDownSpinnerStyle">@style/Widget.Twidere.Light.Spinner.DropDown</item>
 	</style>
 
-	<style name="Theme.Twidere.Colored" parent="Theme.Twidere.Light">
+	<style name="Theme.Twidere.Colored" parent="android:Theme.Holo.Light">
 
 		<!-- ActionBar styles -->
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Colored</item>
@@ -181,11 +187,12 @@
 	<style name="Theme.Twidere.ActionBar.Colored.Dark" parent="android:Theme.Holo">
 
 		<!-- Text styles -->
+		<!--
 		<item name="android:textColorHighlight">@color/highlighted_text_holo_dark</item>
 		<item name="android:textColorHighlightInverse">@color/highlighted_text_holo_light</item>
 		<item name="android:textColorLink">@color/text_link_holo_dark</item>
 		<item name="android:textColorLinkInverse">@color/text_link_holo_light</item>
-
+		-->
 		<!-- Button styles -->
 		<item name="android:selectableItemBackground">@drawable/item_background_holo_dark</item>
 

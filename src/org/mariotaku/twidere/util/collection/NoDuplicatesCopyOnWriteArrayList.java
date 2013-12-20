@@ -21,21 +21,22 @@ package org.mariotaku.twidere.util.collection;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-public class NoDuplicatesArrayList<E> extends ArrayList<E> {
+public class NoDuplicatesCopyOnWriteArrayList<E> extends CopyOnWriteArrayList<E> {
 
 	private static final long serialVersionUID = -7277301117508689125L;
 
-	public NoDuplicatesArrayList() {
+	public NoDuplicatesCopyOnWriteArrayList() {
 		super();
 	}
 
-	public NoDuplicatesArrayList(final Collection<? extends E> collection) {
+	public NoDuplicatesCopyOnWriteArrayList(final Collection<? extends E> collection) {
 		super(collection);
 	}
 
-	public NoDuplicatesArrayList(final int capacity) {
-		super(capacity);
+	public NoDuplicatesCopyOnWriteArrayList(final E[] array) {
+		super(array);
 	}
 
 	@Override

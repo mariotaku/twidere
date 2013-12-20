@@ -47,6 +47,12 @@ public class ValueDependencyDialogPreference extends DialogPreference implements
 	}
 
 	@Override
+	protected void notifyHierarchyChanged() {
+		super.notifyHierarchyChanged();
+		updateEnableState();
+	}
+
+	@Override
 	protected void onAttachedToHierarchy(final PreferenceManager preferenceManager) {
 		super.onAttachedToHierarchy(preferenceManager);
 		final SharedPreferences prefs = getSharedPreferences();

@@ -87,7 +87,7 @@ import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.PermissionsManager;
 import org.mariotaku.twidere.util.TwidereQueryBuilder;
 import org.mariotaku.twidere.util.Utils;
-import org.mariotaku.twidere.util.collection.NoDuplicatesArrayList;
+import org.mariotaku.twidere.util.collection.NoDuplicatesCopyOnWriteArrayList;
 
 import twitter4j.http.HostAddressResolver;
 
@@ -103,6 +103,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class TwidereDataProvider extends ContentProvider implements Constants, OnSharedPreferenceChangeListener {
 
@@ -118,13 +119,13 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	private ImagePreloader mImagePreloader;
 	private HostAddressResolver mHostAddressResolver;
 
-	private final List<ParcelableStatus> mNewStatuses = new ArrayList<ParcelableStatus>();
-	private final List<ParcelableStatus> mNewMentions = new ArrayList<ParcelableStatus>();
-	private final List<ParcelableDirectMessage> mNewMessages = new ArrayList<ParcelableDirectMessage>();
+	private final List<ParcelableStatus> mNewStatuses = new CopyOnWriteArrayList<ParcelableStatus>();
+	private final List<ParcelableStatus> mNewMentions = new CopyOnWriteArrayList<ParcelableStatus>();
+	private final List<ParcelableDirectMessage> mNewMessages = new CopyOnWriteArrayList<ParcelableDirectMessage>();
 
-	private final List<UnreadItem> mUnreadStatuses = new NoDuplicatesArrayList<UnreadItem>();
-	private final List<UnreadItem> mUnreadMentions = new NoDuplicatesArrayList<UnreadItem>();
-	private final List<UnreadItem> mUnreadMessages = new NoDuplicatesArrayList<UnreadItem>();
+	private final List<UnreadItem> mUnreadStatuses = new NoDuplicatesCopyOnWriteArrayList<UnreadItem>();
+	private final List<UnreadItem> mUnreadMentions = new NoDuplicatesCopyOnWriteArrayList<UnreadItem>();
+	private final List<UnreadItem> mUnreadMessages = new NoDuplicatesCopyOnWriteArrayList<UnreadItem>();
 
 	private boolean mHomeActivityInBackground;
 
@@ -487,9 +488,9 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				// Reading some infomation like user_id, screen_name etc is
 				// okay, but reading columns like password requires higher
 				// permission level.
-				if (projection == null
-						|| ArrayUtils.contains(projection, Accounts.BASIC_AUTH_PASSWORD, Accounts.OAUTH_TOKEN,
-								Accounts.OAUTH_TOKEN_SECRET, Accounts.CONSUMER_KEY, Accounts.CONSUMER_SECRET)
+				final String[] credentialsCols = { Accounts.BASIC_AUTH_PASSWORD, Accounts.OAUTH_TOKEN,
+						Accounts.OAUTH_TOKEN_SECRET, Accounts.CONSUMER_KEY, Accounts.CONSUMER_SECRET };
+				if (projection == null || ArrayUtils.contains(projection, credentialsCols)
 						&& !checkPermission(PERMISSION_ACCOUNTS))
 					throw new SecurityException("Access column " + ArrayUtils.toString(projection, ',', true)
 							+ " in database accounts requires level PERMISSION_LEVEL_ACCOUNTS");
@@ -1132,7 +1133,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		return removeUnreadItems(tab_position, items);
 	}
 
-	private int removeUnreadItems(final int tab_position, final UnreadItem... items) {
+	private synchronized int removeUnreadItems(final int tab_position, final UnreadItem... items) {
 		if (tab_position < 0 || items == null || items.length == 0) return 0;
 		final int result;
 		final String type = CustomTabUtils.getAddedTabTypeAt(getContext(), tab_position);
@@ -1271,9 +1272,10 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	}
 
 	private static int getUnreadCount(final List<UnreadItem> set, final long... accountIds) {
+		if (set == null || set.isEmpty()) return 0;
 		int count = 0;
 		for (final UnreadItem item : set.toArray(new UnreadItem[set.size()])) {
-			if (ArrayUtils.contains(accountIds, item.account_id)) {
+			if (item != null && ArrayUtils.contains(accountIds, item.account_id)) {
 				count++;
 			}
 		}

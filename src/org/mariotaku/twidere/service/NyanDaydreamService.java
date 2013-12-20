@@ -38,6 +38,7 @@ public class NyanDaydreamService extends DreamService implements Constants, OnSh
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
 		setInteractive(false);
 		setFullscreen(true);
+		setScreenBright(false);
 	}
 
 	@Override

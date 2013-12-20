@@ -202,7 +202,7 @@ public final class ContentValuesCreator implements TwidereConstants {
 	}
 
 	public static ContentValues makeStatusContentValues(final Status orig, final long account_id,
-			final boolean large_profile_image) {
+			final boolean largeProfileImage) {
 		if (orig == null || orig.getId() <= 0) return null;
 		final ContentValues values = new ContentValues();
 		values.put(Statuses.ACCOUNT_ID, account_id);
@@ -223,17 +223,17 @@ public final class ContentValuesCreator implements TwidereConstants {
 		}
 		final User user = status.getUser();
 		if (user != null) {
-			final long user_id = user.getId();
-			final String profile_image_url = ParseUtils.parseString(user.getProfileImageUrlHttps());
-			final String name = user.getName(), screen_name = user.getScreenName();
-			values.put(Statuses.USER_ID, user_id);
+			final long userId = user.getId();
+			final String profileImageUrl = ParseUtils.parseString(user.getProfileImageUrlHttps());
+			final String name = user.getName(), screenName = user.getScreenName();
+			values.put(Statuses.USER_ID, userId);
 			values.put(Statuses.USER_NAME, name);
-			values.put(Statuses.USER_SCREEN_NAME, screen_name);
+			values.put(Statuses.USER_SCREEN_NAME, screenName);
 			values.put(Statuses.IS_PROTECTED, user.isProtected());
 			values.put(Statuses.IS_VERIFIED, user.isVerified());
 			values.put(Statuses.USER_PROFILE_IMAGE_URL,
-					large_profile_image ? Utils.getBiggerTwitterProfileImage(profile_image_url) : profile_image_url);
-			values.put(CachedUsers.IS_FOLLOWING, user != null ? user.isFollowing() : false);
+					largeProfileImage ? Utils.getBiggerTwitterProfileImage(profileImageUrl) : profileImageUrl);
+			values.put(CachedUsers.IS_FOLLOWING, user.isFollowing());
 		}
 		if (status.getCreatedAt() != null) {
 			values.put(Statuses.STATUS_TIMESTAMP, status.getCreatedAt().getTime());

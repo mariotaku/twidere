@@ -433,7 +433,6 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 
 	@Override
 	public void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
-		if (intent == null) return;
 		switch (requestCode) {
 			case REQUEST_SET_COLOR: {
 				if (resultCode == Activity.RESULT_OK && intent != null) {

@@ -4,9 +4,11 @@
 
 	<org.mariotaku.twidere.preference.WizardPageNavPreference
 		android:key="edit_custom_tabs"
+		android:order="11"
 		android:title="@string/edit"/>
 	<org.mariotaku.twidere.preference.WizardPageNavPreference
 		android:key="use_defaults"
+		android:order="12"
 		android:title="@string/wizard_page_welcome_use_default_settings"/>
 
 </PreferenceScreen>

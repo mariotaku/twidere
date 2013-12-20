@@ -191,6 +191,7 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 				if (mUserColor != null) {
 					intent.putExtra(EXTRA_COLOR, mUserColor);
 				}
+				intent.putExtra(EXTRA_ALPHA_SLIDER, false);
 				startActivityForResult(intent, REQUEST_SET_COLOR);
 				break;
 			}

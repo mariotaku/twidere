@@ -2,11 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item
-		android:id="@id/search"
-		android:actionLayout="@layout/action_item_home_search"
-		android:icon="@android:drawable/ic_menu_search"
-		android:showAsAction="never|collapseActionView"
-		android:title="@android:string/search_go"
-		android:visible="false"/>
+		android:id="@id/actions"
+		android:actionLayout="@layout/action_item_home_actions"
+		android:icon="@drawable/ic_menu_tweet"
+		android:showAsAction="always"
+		android:title="@string/compose"/>
 
 </menu>

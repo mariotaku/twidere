@@ -338,7 +338,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 				getUserTypeIconRes(status.user_is_verified, status.user_is_protected), 0);
 		mScreenNameView.setText("@" + status.user_screen_name);
 		mTextView.setText(Html.fromHtml(status.text_html));
-		final TwidereLinkify linkify = new TwidereLinkify(new OnLinkClickHandler(getActivity()));
+		final TwidereLinkify linkify = new TwidereLinkify(
+				new OnLinkClickHandler(getActivity(), getMultiSelectManager()));
 		linkify.setHighlightColor(mPreferences.getInt(PREFERENCE_KEY_THEME_COLOR, new TextPaint().linkColor));
 		linkify.applyAllLinks(mTextView, status.account_id, status.is_possibly_sensitive);
 		mTextView.setMovementMethod(StatusContentMovementMethod.getInstance());
@@ -463,17 +464,15 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	@Override
 	public void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
-		if (intent == null || mStatus == null) return;
 		switch (requestCode) {
 			case REQUEST_SET_COLOR: {
-				if (resultCode == Activity.RESULT_OK && intent != null) {
+				if (resultCode == Activity.RESULT_OK && intent != null && mStatus != null) {
 					final int color = intent.getIntExtra(EXTRA_COLOR, Color.TRANSPARENT);
 					setUserColor(getActivity(), mStatus.user_id, color);
 				}
 				break;
 			}
 		}
-
 	}
 
 	@Override
@@ -1093,7 +1092,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		protected void onPostExecute(final SingleResponse<Boolean> data) {
 			fragment.setProgressBarIndeterminateVisibility(false);
 			fragment.updateConversationInfo();
-			if (data == null || data.data == null || !data.data) {
+			if (data.data == null || !data.data) {
 				showErrorMessage(context, context.getString(R.string.action_getting_status), data.exception, true);
 			}
 		}

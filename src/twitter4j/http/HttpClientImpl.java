@@ -187,8 +187,10 @@ public class HttpClientImpl extends HttpClientBase implements HttpClient, HttpRe
 					}
 				} finally {
 					try {
-						os.close();
-					} catch (final Exception ignore) {
+						if (os != null) {
+							os.close();
+						}
+					} catch (final IOException ignore) {
 					}
 				}
 			} catch (final IOException ioe) {

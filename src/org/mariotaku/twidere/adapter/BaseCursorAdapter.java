@@ -55,7 +55,7 @@ public class BaseCursorAdapter extends SimpleCursorAdapter implements IBaseAdapt
 			final int[] to, final int flags) {
 		super(context, layout, c, from, to, flags);
 		final TwidereApplication app = TwidereApplication.getInstance(context);
-		mLinkify = new TwidereLinkify(new OnLinkClickHandler(context));
+		mLinkify = new TwidereLinkify(new OnLinkClickHandler(context, app.getMultiSelectManager()));
 		mImageLoader = app.getImageLoaderWrapper();
 		mNicknamePrefs = context.getSharedPreferences(USER_NICKNAME_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mColorPrefs = context.getSharedPreferences(USER_COLOR_PREFERENCES_NAME, Context.MODE_PRIVATE);

@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.loader;
 
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
+import static org.mariotaku.twidere.util.Utils.truncateStatuses;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -87,6 +88,7 @@ public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 			}
 		}
 		final List<Status> statuses;
+		final boolean truncated;
 		final Context context = getContext();
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final int load_item_limit = prefs.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
@@ -97,24 +99,24 @@ public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 				paging.setMaxId(mMaxId);
 			}
 			if (mSinceId > 0) {
-				paging.setSinceId(mSinceId);
+				paging.setSinceId(mSinceId - 1);
 			}
-			statuses = getStatuses(getTwitter(), paging);
+			statuses = new ArrayList<Status>();
+			truncated = truncateStatuses(getStatuses(getTwitter(), paging), statuses, mSinceId);
 		} catch (final TwitterException e) {
 			// mHandler.post(new ShowErrorRunnable(e));
 			e.printStackTrace();
 			return data;
 		}
-		if (statuses != null) {
-			final Status min_status = statuses.size() > 0 ? Collections.min(statuses) : null;
-			final long min_status_id = min_status != null ? min_status.getId() : -1;
-			final boolean insert_gap = min_status_id > 0 && load_item_limit <= statuses.size() && data.size() > 0;
-			mHandler.post(CacheUsersStatusesTask.getRunnable(context, new StatusListResponse(mAccountId, statuses)));
-			for (final Status status : statuses) {
-				final long id = status.getId();
-				deleteStatus(id);
-				data.add(new ParcelableStatus(status, mAccountId, min_status_id == id && insert_gap, mHiResProfileImage));
-			}
+		final Status min_status = statuses.size() > 0 ? Collections.min(statuses) : null;
+		final long min_status_id = min_status != null ? min_status.getId() : -1;
+		final boolean insert_gap = min_status_id > 0 && statuses.size() > 1 && data.size() > 0 && !truncated;
+		mHandler.post(CacheUsersStatusesTask.getRunnable(context, new StatusListResponse(mAccountId, statuses)));
+		for (final Status status : statuses) {
+			final long id = status.getId();
+			final boolean deleted = deleteStatus(id);
+			data.add(new ParcelableStatus(status, mAccountId, min_status_id == id && insert_gap && !deleted,
+					mHiResProfileImage));
 		}
 		try {
 			Collections.sort(data);

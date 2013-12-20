@@ -67,7 +67,7 @@ public class ImageMemoryCache implements MemoryCacheAware<String, Bitmap> {
 		try {
 			synchronized (mHardCache) {
 				final Bitmap bitmap = mHardCache.get(key);
-				if (bitmap != null && key != null) {
+				if (bitmap != null) {
 					// Put bitmap on top of cache so it's purged last.
 					mHardCache.remove(key);
 					mHardCache.put(key, bitmap);

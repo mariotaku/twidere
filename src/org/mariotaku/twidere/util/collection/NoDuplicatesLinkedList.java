@@ -25,6 +25,14 @@ import java.util.LinkedList;
 public class NoDuplicatesLinkedList<E> extends LinkedList<E> {
 	private static final long serialVersionUID = 4295241536597752001L;
 
+	public NoDuplicatesLinkedList() {
+		super();
+	}
+
+	public NoDuplicatesLinkedList(final Collection<? extends E> collection) {
+		super(collection);
+	}
+
 	@Override
 	public boolean add(final E e) {
 		if (contains(e))

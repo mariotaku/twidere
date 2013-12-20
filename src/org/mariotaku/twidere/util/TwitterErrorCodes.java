@@ -42,6 +42,7 @@ public class TwitterErrorCodes {
 		ERROR_CODE_MESSAGES.put(130, R.string.error_130);
 		ERROR_CODE_MESSAGES.put(131, R.string.error_131);
 		ERROR_CODE_MESSAGES.put(135, R.string.error_135);
+		ERROR_CODE_MESSAGES.put(162, R.string.error_162);
 		ERROR_CODE_MESSAGES.put(172, R.string.error_172);
 		ERROR_CODE_MESSAGES.put(NOT_AUTHORIZED, R.string.error_179);
 		ERROR_CODE_MESSAGES.put(STATUS_IS_DUPLICATE, R.string.error_187);

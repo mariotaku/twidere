@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -59,9 +58,10 @@ public class SwipeBackActivityHelper implements TwidereConstants {
 		final TwidereApplication app = TwidereApplication.getInstance(mActivity);
 		final SwipebackScreenshotManager sm = app.getSwipebackScreenshotManager();
 		final Bitmap b = sm.get(intent.getLongExtra(EXTRA_ACTIVITY_SCREENSHOT_ID, -1));
-		final Drawable d = b != null ? new BitmapDrawable(mActivity.getResources(), b) : new ColorDrawable(0);
-		mSwipeBackLayout.setWindowBackgroundDrawable(d);
-		mSwipeBackLayout.setEnableGesture(d != null);
+		if (b != null) {
+			mSwipeBackLayout.setWindowBackgroundDrawable(new BitmapDrawable(mActivity.getResources(), b));
+		}
+		mSwipeBackLayout.setEnableGesture(b != null);
 	}
 
 }

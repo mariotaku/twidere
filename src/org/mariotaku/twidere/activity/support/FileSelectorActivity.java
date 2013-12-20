@@ -21,15 +21,18 @@ package org.mariotaku.twidere.activity.support;
 
 import static android.os.Environment.getExternalStorageDirectory;
 
+import android.app.ActionBar;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.res.Resources;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils.TruncateAt;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +44,7 @@ import android.widget.TextView;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.ArrayAdapter;
 import org.mariotaku.twidere.util.ArrayUtils;
+import org.mariotaku.twidere.util.ThemeUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -50,7 +54,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-public class FileSelectorActivity extends BaseSupportActivity implements OnItemClickListener,
+public class FileSelectorActivity extends BaseSupportDialogActivity implements OnItemClickListener,
 		LoaderCallbacks<List<File>> {
 
 	private File mCurrentDirectory;
@@ -58,29 +62,9 @@ public class FileSelectorActivity extends BaseSupportActivity implements OnItemC
 	private FilesAdapter mAdapter;
 
 	@Override
-	public void onBackPressed() {
-		if (mCurrentDirectory != null) {
-			final File parent = mCurrentDirectory.getParentFile();
-			if (parent != null) {
-				mCurrentDirectory = parent;
-				getLoaderManager().restartLoader(0, getIntent().getExtras(), this);
-				return;
-			}
-		}
-		setResult(RESULT_CANCELED);
-		finish();
-	}
-
-	@Override
 	public Loader<List<File>> onCreateLoader(final int id, final Bundle args) {
 		final String[] extensions = args != null ? args.getStringArray(EXTRA_FILE_EXTENSIONS) : null;
 		return new FilesLoader(this, mCurrentDirectory, extensions);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(final Menu menu) {
-		getMenuInflater().inflate(R.menu.menu_file_picker, menu);
-		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
@@ -100,15 +84,18 @@ public class FileSelectorActivity extends BaseSupportActivity implements OnItemC
 
 	@Override
 	public void onLoaderReset(final Loader<List<File>> loader) {
-		mAdapter.setData(null);
-
+		mAdapter.setData(null, null);
 	}
 
 	@Override
 	public void onLoadFinished(final Loader<List<File>> loader, final List<File> data) {
-		mAdapter.setData(data);
+		mAdapter.setData(mCurrentDirectory, data);
 		if (mCurrentDirectory != null) {
-			getActionBar().setTitle(mCurrentDirectory.getName());
+			if (mCurrentDirectory.getParent() == null) {
+				setTitle("/");
+			} else {
+				setTitle(mCurrentDirectory.getName());
+			}
 		}
 	}
 
@@ -116,12 +103,9 @@ public class FileSelectorActivity extends BaseSupportActivity implements OnItemC
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_HOME: {
-				onBackPressed();
-				break;
-			}
-			case MENU_CANCEL: {
 				setResult(RESULT_CANCELED);
 				finish();
+				break;
 			}
 		}
 		return super.onOptionsItemSelected(item);
@@ -142,7 +126,10 @@ public class FileSelectorActivity extends BaseSupportActivity implements OnItemC
 			return;
 		}
 		setContentView(android.R.layout.list_content);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		final ActionBar actionBar = getActionBar();
+		if (actionBar != null) {
+			actionBar.setDisplayHomeAsUpEnabled(true);
+		}
 
 		mAdapter = new FilesAdapter(this);
 		mListView = (ListView) findViewById(android.R.id.list);
@@ -160,13 +147,19 @@ public class FileSelectorActivity extends BaseSupportActivity implements OnItemC
 		return INTENT_ACTION_PICK_DIRECTORY.equals(getIntent().getAction());
 	}
 
-	static class FilesAdapter extends ArrayAdapter<File> {
+	private static class FilesAdapter extends ArrayAdapter<File> {
 
 		private final int mPadding;
+		private final int mActionIconColor;
+		private final Resources mResources;
 
-		public FilesAdapter(final Context context) {
-			super(context, android.R.layout.simple_list_item_1);
-			mPadding = (int) (4 * context.getResources().getDisplayMetrics().density);
+		private File mCurrentPath;
+
+		public FilesAdapter(final FileSelectorActivity activity) {
+			super(activity, android.R.layout.simple_list_item_1);
+			mResources = activity.getResources();
+			mActionIconColor = ThemeUtils.isDarkTheme(activity.getCurrentThemeResource()) ? 0xffffffff : 0xc0333333;
+			mPadding = (int) (4 * mResources.getDisplayMetrics().density);
 		}
 
 		@Override
@@ -180,16 +173,24 @@ public class FileSelectorActivity extends BaseSupportActivity implements OnItemC
 			final TextView text = (TextView) (view instanceof TextView ? view : view.findViewById(android.R.id.text1));
 			final File file = getItem(position);
 			if (file == null || text == null) return view;
-			text.setText(file.getName());
+			if (mCurrentPath != null && file.equals(mCurrentPath.getParentFile())) {
+				text.setText("..");
+			} else {
+				text.setText(file.getName());
+			}
 			text.setSingleLine(true);
 			text.setEllipsize(TruncateAt.MARQUEE);
 			text.setPadding(mPadding, mPadding, position, mPadding);
-			text.setCompoundDrawablesWithIntrinsicBounds(
-					file.isDirectory() ? R.drawable.ic_folder : R.drawable.ic_file, 0, 0, 0);
+			final Drawable icon = mResources
+					.getDrawable(file.isDirectory() ? R.drawable.ic_folder : R.drawable.ic_file);
+			icon.mutate();
+			icon.setColorFilter(mActionIconColor, PorterDuff.Mode.MULTIPLY);
+			text.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null);
 			return view;
 		}
 
-		public void setData(final List<File> data) {
+		public void setData(final File current, final List<File> data) {
+			mCurrentPath = current;
 			clear();
 			if (data != null) {
 				addAll(data);
@@ -198,7 +199,7 @@ public class FileSelectorActivity extends BaseSupportActivity implements OnItemC
 
 	}
 
-	static class FilesLoader extends AsyncTaskLoader<List<File>> {
+	private static class FilesLoader extends AsyncTaskLoader<List<File>> {
 
 		private final File path;
 		private final String[] extensions;
@@ -244,7 +245,12 @@ public class FileSelectorActivity extends BaseSupportActivity implements OnItemC
 			}
 			Collections.sort(dirs, NAME_COMPARATOR);
 			Collections.sort(files, NAME_COMPARATOR);
-			final List<File> list = new ArrayList<File>(dirs);
+			final List<File> list = new ArrayList<File>();
+			final File parent = path.getParentFile();
+			if (path.getParentFile() != null) {
+				list.add(parent);
+			}
+			list.addAll(dirs);
 			list.addAll(files);
 			return list;
 		}

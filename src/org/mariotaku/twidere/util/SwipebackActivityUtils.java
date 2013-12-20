@@ -3,6 +3,7 @@ package org.mariotaku.twidere.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
@@ -27,6 +28,8 @@ public class SwipebackActivityUtils implements TwidereConstants {
 
 	public static void setActivityScreenshot(final Activity activity, final Intent target) {
 		if (activity == null || target == null) return;
+		final SharedPreferences prefs = activity.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		if (!prefs.getBoolean(PREFERENCE_KEY_SWIPE_BACK, true)) return;
 		final TwidereApplication app = TwidereApplication.getInstance(activity);
 		final SwipebackScreenshotManager sm = app.getSwipebackScreenshotManager();
 		final long key = System.currentTimeMillis();
@@ -99,23 +102,36 @@ public class SwipebackActivityUtils implements TwidereConstants {
 		public Bitmap get(final long id) {
 			final File f = new File(mCacheDir, String.valueOf(id));
 			if (!f.exists()) return null;
-			return BitmapFactory.decodeFile(f.getAbsolutePath());
-		}
-
-		public void put(final long id, final Bitmap bitmap, final boolean alphaChannel) {
-			if (bitmap == null) return;
 			try {
-				final OutputStream os = new FileOutputStream(new File(mCacheDir, String.valueOf(id)));
-				bitmap.compress(alphaChannel ? COMPRESS_FORMAT_TRANSPARENT : COMPRESS_FORMAT, 75, os);
-			} catch (final IOException e) {
-				e.printStackTrace();
+				return BitmapFactory.decodeFile(f.getAbsolutePath());
+			} catch (final OutOfMemoryError e) {
+				return null;
+			} finally {
+				System.gc();
 			}
 		}
 
-		public void remove(final long id) {
+		public void put(final long id, final Bitmap bitmap, final boolean alphaChannel) {
+			if (bitmap == null || bitmap.isRecycled()) return;
+			try {
+				final OutputStream os = new FileOutputStream(new File(mCacheDir, String.valueOf(id)));
+				bitmap.compress(alphaChannel ? COMPRESS_FORMAT_TRANSPARENT : COMPRESS_FORMAT, 75, os);
+				bitmap.recycle();
+			} catch (final IOException e) {
+				e.printStackTrace();
+			} finally {
+				System.gc();
+			}
+		}
+
+		public boolean remove(final long id) {
 			final File f = new File(mCacheDir, String.valueOf(id));
-			if (!f.exists()) return;
-			f.delete();
+			if (!f.exists()) return false;
+			try {
+				return f.delete();
+			} finally {
+				System.gc();
+			}
 		}
 
 	}

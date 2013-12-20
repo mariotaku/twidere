@@ -195,9 +195,9 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 				holder.profile_image.setVisibility(View.GONE);
 				holder.my_profile_image.setVisibility(View.GONE);
 			}
-			final boolean has_preview = mDisplayImagePreview && hasMedia;
-			holder.image_preview_container.setVisibility(has_preview ? View.VISIBLE : View.GONE);
-			if (has_preview) {
+			final boolean hasPreview = mDisplayImagePreview && hasMedia;
+			holder.image_preview_container.setVisibility(hasPreview ? View.VISIBLE : View.GONE);
+			if (hasPreview) {
 				if (possiblySensitive && !mDisplaySensitiveContents) {
 					holder.image_preview.setImageDrawable(null);
 					holder.image_preview.setBackgroundResource(R.drawable.image_preview_nsfw);
@@ -425,14 +425,13 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 
 	private void rebuildFilterInfo() {
 		final Cursor c = getCursor();
-		if (c != null && !c.isClosed() && mIndices != null && c.getCount() > 0) {
-			c.moveToLast();
-			final long user_id = mFilterIgnoreUser ? -1 : c.getLong(mIndices.user_id);
-			final String text_plain = mFilterIgnoreTextPlain ? null : c.getString(mIndices.text_plain);
-			final String text_html = mFilterIgnoreTextHtml ? null : c.getString(mIndices.text_html);
+		if (mIndices != null && c != null && !c.isClosed() && c.getCount() > 0 && c.moveToLast()) {
+			final long userId = mFilterIgnoreUser ? -1 : c.getLong(mIndices.user_id);
+			final String textPlain = mFilterIgnoreTextPlain ? null : c.getString(mIndices.text_plain);
+			final String textHtml = mFilterIgnoreTextHtml ? null : c.getString(mIndices.text_html);
 			final String source = mFilterIgnoreSource ? null : c.getString(mIndices.source);
-			final long retweeted_by_id = mFilterRetweetedById ? -1 : c.getLong(mIndices.retweeted_by_user_id);
-			mIsLastItemFiltered = isFiltered(mDatabase, user_id, text_plain, text_html, source, retweeted_by_id);
+			final long retweetedById = mFilterRetweetedById ? -1 : c.getLong(mIndices.retweeted_by_user_id);
+			mIsLastItemFiltered = isFiltered(mDatabase, userId, textPlain, textHtml, source, retweetedById);
 		} else {
 			mIsLastItemFiltered = false;
 		}
