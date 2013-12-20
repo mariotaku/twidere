@@ -36,10 +36,10 @@ public abstract class BaseAccountPreferenceFragment extends PreferenceFragment i
 		addPreferencesFromResource(getPreferencesResource());
 		final SharedPreferences prefs = pm.getSharedPreferences();
 		prefs.registerOnSharedPreferenceChangeListener(this);
-		final String name = getDisplayName(getActivity(), account.account_id, account.name, account.screen_name);
 		final Activity activity = getActivity();
 		final Intent intent = activity.getIntent();
 		if (account != null && intent.hasExtra(PreferenceActivity.EXTRA_SHOW_FRAGMENT)) {
+			final String name = getDisplayName(getActivity(), account.account_id, account.name, account.screen_name);
 			activity.setTitle(name);
 		}
 		updatePreferenceScreen();

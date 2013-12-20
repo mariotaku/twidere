@@ -503,7 +503,7 @@ public final class Query {
 		}
 	}
 
-	/* package */HttpParameter[] asHttpParameterArray(final HttpParameter... extra_params) {
+	/* package */HttpParameter[] asHttpParameterArray(final HttpParameter... extraParams) {
 		final ArrayList<HttpParameter> params = new ArrayList<HttpParameter>();
 		appendParameter("q", query, params);
 		appendParameter("lang", lang, params);
@@ -517,8 +517,8 @@ public final class Query {
 		appendParameter("until", until, params);
 		appendParameter("result_type", resultType, params);
 		params.add(WITH_TWITTER_USER_ID);
-		if (params != null) {
-			for (final HttpParameter param : extra_params) {
+		if (extraParams != null) {
+			for (final HttpParameter param : extraParams) {
 				params.add(param);
 			}
 		}

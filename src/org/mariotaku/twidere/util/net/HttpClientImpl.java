@@ -124,21 +124,21 @@ public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCo
 
 			final HostAddressResolver resolver = conf.getHostAddressResolver();
 			final String url_string = req.getURL();
-			final URI url_orig;
+			final URI urlOrig;
 			try {
-				url_orig = new URI(url_string);
+				urlOrig = new URI(url_string);
 			} catch (final URISyntaxException e) {
 				throw new TwitterException(e);
 			}
-			final String host = url_orig.getHost(), authority = url_orig.getAuthority();
-			final String resolved_host = resolver != null ? resolver.resolve(host) : null;
-			final String resolved_url = !isEmpty(resolved_host) ? url_string.replace("://" + host, "://"
-					+ resolved_host) : url_string;
+			final String host = urlOrig.getHost(), authority = urlOrig.getAuthority();
+			final String resolvedHost = resolver != null ? resolver.resolve(host) : null;
+			final String resolvedUrl = !isEmpty(resolvedHost) ? url_string.replace("://" + host, "://" + resolvedHost)
+					: url_string;
 
 			if (req.getMethod() == RequestMethod.GET) {
-				commonsRequest = new HttpGet(resolved_url);
+				commonsRequest = new HttpGet(resolvedUrl);
 			} else if (req.getMethod() == RequestMethod.POST) {
-				final HttpPost post = new HttpPost(resolved_url);
+				final HttpPost post = new HttpPost(resolvedUrl);
 				// parameter has a file?
 				boolean hasFile = false;
 				final HttpParameter[] params = req.getParameters();
@@ -177,11 +177,11 @@ public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCo
 				post.getParams().setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
 				commonsRequest = post;
 			} else if (req.getMethod() == RequestMethod.DELETE) {
-				commonsRequest = new HttpDelete(resolved_url);
+				commonsRequest = new HttpDelete(resolvedUrl);
 			} else if (req.getMethod() == RequestMethod.HEAD) {
-				commonsRequest = new HttpHead(resolved_url);
+				commonsRequest = new HttpHead(resolvedUrl);
 			} else if (req.getMethod() == RequestMethod.PUT) {
-				commonsRequest = new HttpPut(resolved_url);
+				commonsRequest = new HttpPut(resolvedUrl);
 			} else
 				throw new TwitterException("Unsupported request method " + req.getMethod());
 			final Map<String, String> headers = req.getRequestHeaders();
@@ -193,7 +193,7 @@ public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCo
 					&& (authorizationHeader = req.getAuthorization().getAuthorizationHeader(req)) != null) {
 				commonsRequest.addHeader("Authorization", authorizationHeader);
 			}
-			if (!isEmpty(resolved_host) && !resolved_host.equals(host)) {
+			if (!isEmpty(resolvedHost) && !resolvedHost.equals(host)) {
 				commonsRequest.addHeader("Host", authority);
 			}
 

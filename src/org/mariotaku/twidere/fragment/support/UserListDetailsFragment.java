@@ -199,7 +199,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 	public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		switch (requestCode) {
 			case REQUEST_SELECT_USER: {
-				if (resultCode != Activity.RESULT_OK || data.hasExtra(EXTRA_USER) || mTwitterWrapper == null
+				if (resultCode != Activity.RESULT_OK || !data.hasExtra(EXTRA_USER) || mTwitterWrapper == null
 						|| mUserList == null) return;
 				final ParcelableUser user = data.getParcelableExtra(EXTRA_USER);
 				mTwitterWrapper.addUserListMembersAsync(mUserList.account_id, mUserList.id, user);

@@ -254,10 +254,15 @@ public interface TwidereConstants {
 	public static final String PREFERENCE_KEY_DISABLE_TAB_SWIPE = "disable_tab_swipe";
 	public static final String PREFERENCE_KEY_DARK_THEME_COLOR = "dark_theme_color";
 	public static final String PREFERENCE_KEY_LIGHT_THEME_COLOR = "light_theme_color";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_LINK_TO_QUOTED_TWEET = "link_to_quoted_tweet";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_BACKGROUND_TOAST_NOTIFICATION = "background_toast_notification";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_COMPOSE_QUIT_ACTION = "compose_quit_action";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_NO_CLOSE_AFTER_TWEET_SENT = "no_close_after_tweet_sent";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_FAST_IMAGE_LOADING = "fast_image_loading";
 	public static final String PREFERENCE_KEY_REST_BASE_URL = "rest_base_url";
 	public static final String PREFERENCE_KEY_OAUTH_BASE_URL = "oauth_base_url";
@@ -276,10 +281,14 @@ public interface TwidereConstants {
 	public static final String PREFERENCE_KEY_NOTIFICATION_TYPE_HOME = "notification_type_home";
 	public static final String PREFERENCE_KEY_NOTIFICATION_TYPE_MENTIONS = "notification_type_mentions";
 	public static final String PREFERENCE_KEY_NOTIFICATION_TYPE_DIRECT_MESSAGES = "notification_type_direct_messages";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_COMPACT_CARDS = "compact_cards";
 	public static final String PREFERENCE_KEY_TAB_DISPLAY_OPTION = "tab_display_option";
 	public static final String PREFERENCE_KEY_LIVE_WALLPAPER_SCALE = "live_wallpaper_scale";
+	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_LONG_CLICK_TO_OPEN_MENU = "long_click_to_open_menu";
+	@PreferenceType(PreferenceType.BOOLEAN)
+	public static final String PREFERENCE_KEY_SWIPE_BACK = "swipe_back";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;

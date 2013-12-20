@@ -137,9 +137,7 @@ public class Account implements Parcelable {
 
 	public static List<Account> getAccounts(final Context context, final boolean activatedOnly,
 			final boolean officialKeyOnly) {
-		if (context == null) {
-			Collections.emptyList();
-		}
+		if (context == null) return Collections.emptyList();
 		final ArrayList<Account> accounts = new ArrayList<Account>();
 		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI,
 				Accounts.COLUMNS, activatedOnly ? Accounts.IS_ACTIVATED + " = 1" : null, null, null);

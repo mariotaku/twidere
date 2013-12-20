@@ -464,17 +464,15 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	@Override
 	public void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
-		if (intent == null || mStatus == null) return;
 		switch (requestCode) {
 			case REQUEST_SET_COLOR: {
-				if (resultCode == Activity.RESULT_OK && intent != null) {
+				if (resultCode == Activity.RESULT_OK && intent != null && mStatus != null) {
 					final int color = intent.getIntExtra(EXTRA_COLOR, Color.TRANSPARENT);
 					setUserColor(getActivity(), mStatus.user_id, color);
 				}
 				break;
 			}
 		}
-
 	}
 
 	@Override
@@ -1094,7 +1092,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		protected void onPostExecute(final SingleResponse<Boolean> data) {
 			fragment.setProgressBarIndeterminateVisibility(false);
 			fragment.updateConversationInfo();
-			if (data == null || data.data == null || !data.data) {
+			if (data.data == null || !data.data) {
 				showErrorMessage(context, context.getString(R.string.action_getting_status), data.exception, true);
 			}
 		}

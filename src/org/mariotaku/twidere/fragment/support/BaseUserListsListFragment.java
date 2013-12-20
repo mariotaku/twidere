@@ -117,7 +117,7 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 		mTwitterWrapper = getTwitterWrapper();
 		mMultiSelectManager = getMultiSelectManager();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final Bundle args = getArguments() != null ? getArguments() : new Bundle();
+		final Bundle args = getArguments();
 		if (args != null) {
 			mAccountId = args.getLong(EXTRA_ACCOUNT_ID, -1);
 			mUserId = args.getLong(EXTRA_USER_ID, -1);
@@ -128,12 +128,12 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 		mListView.setDivider(null);
 		mListView.setSelector(android.R.color.transparent);
 		mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB, false));
-		final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
-		if (mAccountId != account_id) {
-			mAdapter.clear();
-			mData.clear();
-		}
-		mAccountId = account_id;
+		// final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
+		// if (mAccountId != account_id) {
+		// mAdapter.clear();
+		// mData.clear();
+		// }
+		// mAccountId = account_id;
 		setListAdapter(mAdapter);
 		mAdapter.setMenuButtonClickListener(this);
 		getLoaderManager().initLoader(0, getArguments(), this);

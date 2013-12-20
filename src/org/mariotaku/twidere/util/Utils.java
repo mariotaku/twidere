@@ -847,9 +847,7 @@ public final class Utils implements Constants {
 				}
 			}
 		}
-		if (fragment != null) {
-			fragment.setArguments(args);
-		}
+		fragment.setArguments(args);
 		return fragment;
 	}
 
@@ -3457,7 +3455,7 @@ public final class Utils implements Constants {
 
 	public static void setMenuForStatus(final Context context, final Menu menu, final ParcelableStatus status) {
 		if (context == null || menu == null || status == null) return;
-		final int activated_color = ThemeUtils.getUserThemeColor(context);
+		final int activatedColor = ThemeUtils.getUserThemeColor(context);
 		final boolean isMyRetweet = isMyRetweet(status);
 		final MenuItem delete = menu.findItem(R.id.delete_submenu);
 		if (delete != null) {
@@ -3468,7 +3466,7 @@ public final class Utils implements Constants {
 			final Drawable icon = retweet.getIcon().mutate();
 			retweet.setVisible(!status.user_is_protected || isMyRetweet);
 			if (isMyRetweet) {
-				icon.setColorFilter(activated_color, Mode.MULTIPLY);
+				icon.setColorFilter(activatedColor, Mode.MULTIPLY);
 				retweet.setTitle(R.string.cancel_retweet);
 			} else {
 				icon.clearColorFilter();
@@ -3477,9 +3475,9 @@ public final class Utils implements Constants {
 		}
 		final MenuItem itemRetweetSubmenu = menu.findItem(R.id.retweet_submenu);
 		if (itemRetweetSubmenu != null) {
-			final Drawable icon = retweet.getIcon().mutate();
+			final Drawable icon = itemRetweetSubmenu.getIcon().mutate();
 			if (isMyRetweet) {
-				icon.setColorFilter(activated_color, Mode.MULTIPLY);
+				icon.setColorFilter(activatedColor, Mode.MULTIPLY);
 			} else {
 				icon.clearColorFilter();
 			}
@@ -3488,7 +3486,7 @@ public final class Utils implements Constants {
 		if (favorite != null) {
 			final Drawable icon = favorite.getIcon().mutate();
 			if (status.is_favorite) {
-				icon.setColorFilter(activated_color, Mode.MULTIPLY);
+				icon.setColorFilter(activatedColor, Mode.MULTIPLY);
 				favorite.setTitle(R.string.unfavorite);
 			} else {
 				icon.clearColorFilter();

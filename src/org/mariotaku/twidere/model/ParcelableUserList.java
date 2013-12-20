@@ -119,8 +119,7 @@ public class ParcelableUserList implements Parcelable, JSONParcelable, Comparabl
 		user_id = user.getId();
 		user_name = user.getName();
 		user_screen_name = user.getScreenName();
-		final String user_profile_image_url_orig = user != null ? ParseUtils
-				.parseString(user.getProfileImageUrlHttps()) : null;
+		final String user_profile_image_url_orig = ParseUtils.parseString(user.getProfileImageUrlHttps());
 		user_profile_image_url = large_profile_image ? getBiggerTwitterProfileImage(user_profile_image_url_orig)
 				: user_profile_image_url_orig;
 		members_count = list.getMemberCount();

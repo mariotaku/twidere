@@ -32,8 +32,7 @@ public final class ParseUtils implements Constants {
 				} else if (value instanceof String) {
 					json.put(key, args.getString(key));
 				} else {
-					Log.w(LOGTAG, "Unknown type " + (value != null ? value.getClass().getSimpleName() : null)
-							+ " in arguments key " + key);
+					Log.w(LOGTAG, "Unknown type " + value.getClass().getSimpleName() + " in arguments key " + key);
 				}
 			} catch (final JSONException e) {
 				e.printStackTrace();

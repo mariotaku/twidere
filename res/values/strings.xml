@@ -570,6 +570,7 @@
 	<string name="center">Center</string>
 	<string name="multi_select">Multi select</string>
 	<string name="long_click_to_open_menu">Long click to open menu</string>
+	<string name="swipe_back">Swipe to close</string>
 	<string name="tab_display_option_icon">Icon</string>
 	<string name="tab_display_option_label">Label</string>
 	<string name="tab_display_option_both">Both</string>

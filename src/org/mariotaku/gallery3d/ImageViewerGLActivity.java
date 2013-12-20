@@ -189,7 +189,7 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 
 	@Override
 	public void onLoadFinished(final Loader<GLImageLoader.Result> loader, final GLImageLoader.Result data) {
-		if (data.decoder != null || data.bitmap != null) {
+		if (data != null && (data.decoder != null || data.bitmap != null)) {
 			if (data.decoder != null) {
 				mGLRootView.setVisibility(View.VISIBLE);
 				mImageViewer.setVisibility(View.GONE);

@@ -42,8 +42,9 @@ public class UserFollowersFragment extends CursorSupportUsersListFragment {
 				final long account_id = intent.getLongExtra(EXTRA_ACCOUNT_ID, -1);
 				final String screen_name = getAccountScreenName(getActivity(), account_id);
 				final Bundle args = getArguments();
-				if (args != null && account_id > 0 && args.getLong(EXTRA_USER_ID, -1) == account_id
-						|| screen_name != null && screen_name.equalsIgnoreCase(args.getString(EXTRA_SCREEN_NAME))) {
+				if (args == null) return;
+				if (account_id > 0 && args.getLong(EXTRA_USER_ID, -1) == account_id || screen_name != null
+						&& screen_name.equalsIgnoreCase(args.getString(EXTRA_SCREEN_NAME))) {
 					removeUsers(intent.getLongArrayExtra(EXTRA_USER_IDS));
 				}
 			}

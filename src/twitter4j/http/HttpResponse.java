@@ -67,7 +67,6 @@ public abstract class HttpResponse {
 	 */
 	public JSONArray asJSONArray() throws TwitterException {
 		if (jsonArray == null) {
-			final Reader reader = null;
 			try {
 				if (responseAsString == null) {
 					responseAsString = asString();
@@ -84,12 +83,6 @@ public abstract class HttpResponse {
 				else
 					throw new TwitterException(jsone.getMessage(), jsone);
 			} finally {
-				if (reader != null) {
-					try {
-						reader.close();
-					} catch (final IOException ignore) {
-					}
-				}
 				disconnectForcibly();
 			}
 		}
@@ -105,7 +98,6 @@ public abstract class HttpResponse {
 	 */
 	public JSONObject asJSONObject() throws TwitterException {
 		if (json == null) {
-			final Reader reader = null;
 			try {
 				if (responseAsString == null) {
 					responseAsString = asString();
@@ -122,12 +114,6 @@ public abstract class HttpResponse {
 				else
 					throw new TwitterException(jsone.getMessage() + ":" + responseAsString, jsone);
 			} finally {
-				if (reader != null) {
-					try {
-						reader.close();
-					} catch (final IOException ignore) {
-					}
-				}
 				disconnectForcibly();
 			}
 		}
