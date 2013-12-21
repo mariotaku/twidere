@@ -62,7 +62,7 @@ public class CardPreviewPreference extends Preference implements Constants, OnSh
 		super(context, attrs, defStyle);
 		mInflater = LayoutInflater.from(context);
 		mLinkify = new TwidereLinkify(null);
-		mLinkify.setHighlightColor(ThemeUtils.getUserThemeColor(context));
+		mLinkify.setLinkTextColor(ThemeUtils.getUserLinkTextColor(context));
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
 	}

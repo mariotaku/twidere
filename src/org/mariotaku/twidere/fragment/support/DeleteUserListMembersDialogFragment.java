@@ -2,6 +2,7 @@ package org.mariotaku.twidere.fragment.support;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.Utils;
 
 public class DeleteUserListMembersDialogFragment extends BaseSupportDialogFragment implements
@@ -36,13 +38,14 @@ public class DeleteUserListMembersDialogFragment extends BaseSupportDialogFragme
 
 	@Override
 	public Dialog onCreateDialog(final Bundle savedInstanceState) {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		final Context wrapped = ThemeUtils.getDialogThemedContext(getActivity());
+		final AlertDialog.Builder builder = new AlertDialog.Builder(wrapped);
 		final ParcelableUser[] users = getUsers();
 		final ParcelableUserList userList = getUserList();
 		if (users == null || userList == null) throw new NullPointerException();
 		if (users.length == 1) {
 			final ParcelableUser user = users[0];
-			final String displayName = Utils.getDisplayName(getActivity(), user.id, user.name, user.screen_name);
+			final String displayName = Utils.getDisplayName(wrapped, user.id, user.name, user.screen_name);
 			builder.setTitle(getString(R.string.delete_user, displayName));
 			builder.setMessage(getString(R.string.delete_user_from_list_confirm, displayName, userList.name));
 		} else {

@@ -69,7 +69,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.util.LongSparseArray;
 import android.support.v4.view.accessibility.AccessibilityEventCompat;
-import android.text.TextPaint;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.text.format.Time;
@@ -571,7 +570,7 @@ public final class Utils implements Constants {
 		adapter.setDisplayProfileImage(pref.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true));
 		adapter.setDisplayNameFirst(pref.getBoolean(PREFERENCE_KEY_NAME_FIRST, true));
 		adapter.setLinkHighlightOption(pref.getString(PREFERENCE_KEY_LINK_HIGHLIGHT_OPTION, LINK_HIGHLIGHT_OPTION_NONE));
-		adapter.setLinkHighlightColor(pref.getInt(PREFERENCE_KEY_THEME_COLOR, new TextPaint().linkColor));
+		adapter.setLinkHighlightColor(ThemeUtils.getUserLinkTextColor(context));
 		adapter.setNicknameOnly(pref.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false));
 		adapter.setTextSize(pref.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(context)));
 	}

@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.mariotaku.twidere.view.SquareFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<org.mariotaku.twidere.view.SquareRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:foreground="?android:selectableItemBackground">
+	android:layout_height="wrap_content">
 
-	<org.mariotaku.twidere.view.SquareImageView
+	<org.mariotaku.twidere.view.HighlightImageView
 		android:id="@+id/image_preview_item"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="match_parent"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentTop="true"
+		android:layout_centerInParent="true"
 		android:scaleType="centerCrop"/>
 
 	<ProgressBar
@@ -15,7 +17,9 @@
 		style="?android:attr/progressBarStyleHorizontal"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_gravity="center"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentRight="true"
+		android:layout_centerInParent="true"
 		android:layout_margin="16dp"/>
 
-</org.mariotaku.twidere.view.SquareFrameLayout>
+</org.mariotaku.twidere.view.SquareRelativeLayout>

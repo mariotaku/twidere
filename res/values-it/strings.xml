@@ -354,7 +354,6 @@
   <string name="background_toast_notification_summary">Mostra le notifiche Toast quando si passa in background</string>
   <string name="original_status">Tweet originale</string>
   <string name="ask">Chiedi</string>
-  <string name="default_account">Predefinito</string>
   <string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g> (<xliff:g id="daily_tweet">%2$d</xliff:g>tweet al giorno)</string>
   <string name="empty_content">Contenuto vuoto</string>
   <string name="fast_image_loading">Caricamento veloce immagini</string>

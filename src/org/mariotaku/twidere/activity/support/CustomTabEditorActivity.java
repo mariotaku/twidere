@@ -57,6 +57,7 @@ import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.ParseUtils;
+import org.mariotaku.twidere.util.ThemeUtils;
 
 import java.text.Collator;
 import java.util.Comparator;
@@ -369,7 +370,8 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 		@Override
 		public Dialog onCreateDialog(final Bundle savedInstanceState) {
 			final Bundle args = getArguments();
-			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			final Context wrapped = ThemeUtils.getDialogThemedContext(getActivity());
+			final AlertDialog.Builder builder = new AlertDialog.Builder(wrapped);
 			builder.setTitle(args.getString(EXTRA_TITLE));
 			builder.setPositiveButton(android.R.string.ok, this);
 			builder.setNegativeButton(android.R.string.cancel, null);

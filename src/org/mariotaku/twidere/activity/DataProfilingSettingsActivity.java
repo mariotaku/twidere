@@ -25,7 +25,7 @@ import android.view.MenuItem;
 
 import org.mariotaku.twidere.fragment.DataProfilingSettingsFragment;
 
-public class DataProfilingSettingsActivity extends BaseActivity {
+public class DataProfilingSettingsActivity extends BasePreferenceActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {

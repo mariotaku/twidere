@@ -26,11 +26,11 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.ArrowKeyMovementMethod;
 import android.util.AttributeSet;
-import android.widget.MultiAutoCompleteTextView;
 
 import org.mariotaku.twidere.adapter.UserHashtagAutoCompleteAdapter;
+import org.mariotaku.twidere.view.themed.ThemedMultiAutoCompleteTextView;
 
-public class StatusComposeEditText extends MultiAutoCompleteTextView implements InputType {
+public class StatusComposeEditText extends ThemedMultiAutoCompleteTextView implements InputType {
 
 	private UserHashtagAutoCompleteAdapter mAdapter;
 

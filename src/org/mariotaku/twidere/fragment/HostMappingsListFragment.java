@@ -56,6 +56,7 @@ import org.mariotaku.twidere.adapter.ArrayAdapter;
 import org.mariotaku.twidere.task.AsyncTask;
 import org.mariotaku.twidere.util.HostsFileParser;
 import org.mariotaku.twidere.util.ParseUtils;
+import org.mariotaku.twidere.util.ThemeUtils;
 
 import java.util.Map;
 
@@ -218,7 +219,8 @@ public class HostMappingsListFragment extends BaseListFragment implements MultiC
 
 		@Override
 		public Dialog onCreateDialog(final Bundle savedInstanceState) {
-			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			final Context wrapped = ThemeUtils.getDialogThemedContext(getActivity());
+			final AlertDialog.Builder builder = new AlertDialog.Builder(wrapped);
 			final View view = LayoutInflater.from(getActivity()).inflate(R.layout.host_mapping_dialog_view, null);
 			builder.setView(view);
 			mEditHost = (EditText) view.findViewById(R.id.host);

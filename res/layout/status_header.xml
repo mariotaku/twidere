@@ -40,14 +40,14 @@
 				android:paddingLeft="8dp"
 				android:paddingRight="4dp">
 
-				<TextView
+				<org.mariotaku.twidere.view.themed.ThemedTextView
 					android:id="@+id/name"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:singleLine="true"
 					android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-				<TextView
+				<org.mariotaku.twidere.view.themed.ThemedTextView
 					android:id="@+id/screen_name"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
@@ -91,7 +91,7 @@
 			layout="@layout/image_preview"
 			android:visibility="gone"/>
 
-		<TextView
+		<org.mariotaku.twidere.view.themed.ThemedTextView
 			android:id="@+id/text"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -126,7 +126,7 @@
 				android:alpha="0.5"
 				android:background="?cardItemBackgroundColor"/>
 
-			<TextView
+			<org.mariotaku.twidere.view.themed.ThemedTextView
 				android:id="@+id/location_view"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
@@ -142,7 +142,7 @@
 				android:textAppearance="?android:attr/textAppearanceSmall"/>
 		</RelativeLayout>
 
-		<TextView
+		<org.mariotaku.twidere.view.themed.ThemedTextView
 			android:id="@+id/time_source"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -152,7 +152,7 @@
 			android:padding="@dimen/element_spacing_default"
 			android:textAppearance="?android:attr/textAppearanceSmall"/>
 
-		<TextView
+		<org.mariotaku.twidere.view.themed.ThemedTextView
 			android:id="@+id/retweet_view"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -166,7 +166,7 @@
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:visibility="visible"/>
 
-		<TextView
+		<org.mariotaku.twidere.view.themed.ThemedTextView
 			android:id="@+id/replies_view"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -177,10 +177,10 @@
 			android:gravity="center_vertical"
 			android:padding="@dimen/element_spacing_default"
 			android:singleLine="true"
-			android:text="@string/replies"
+			android:text="@string/view_replies"
 			android:textAppearance="?android:attr/textAppearanceSmall"/>
 
-		<TextView
+		<org.mariotaku.twidere.view.themed.ThemedTextView
 			android:id="@+id/in_reply_to"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"

@@ -66,7 +66,6 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.text.Html;
-import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -94,7 +93,7 @@ import com.scvngr.levelup.views.gallery.Gallery;
 
 import edu.ucdavis.earlybird.ProfilingUtil;
 
-import org.mariotaku.menubar.MenuBar;
+import org.mariotaku.menucomponent.widget.MenuBar;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.support.ColorPickerDialogActivity;
 import org.mariotaku.twidere.activity.support.LinkHandlerActivity;
@@ -340,7 +339,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mTextView.setText(Html.fromHtml(status.text_html));
 		final TwidereLinkify linkify = new TwidereLinkify(
 				new OnLinkClickHandler(getActivity(), getMultiSelectManager()));
-		linkify.setHighlightColor(mPreferences.getInt(PREFERENCE_KEY_THEME_COLOR, new TextPaint().linkColor));
+		linkify.setLinkTextColor(ThemeUtils.getUserLinkTextColor(getActivity()));
 		linkify.applyAllLinks(mTextView, status.account_id, status.is_possibly_sensitive);
 		mTextView.setMovementMethod(StatusContentMovementMethod.getInstance());
 		final String timeString = formatToLongTimeString(getActivity(), status.timestamp);

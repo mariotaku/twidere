@@ -101,7 +101,7 @@ public class ProfileImageBannerLayout extends ExtendedFrameLayout {
 			mPaddings = padding;
 			if (isInEditMode()) return;
 			setPadding(padding, padding, padding, padding);
-			setForeground(ThemeUtils.getSelectableItemBackgroundDrawable(context));
+			setForeground(ThemeUtils.getImageHighlightDrawable(context));
 		}
 
 		@Override

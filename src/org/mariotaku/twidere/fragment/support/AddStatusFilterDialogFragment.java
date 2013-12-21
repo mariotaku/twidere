@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
@@ -23,6 +24,7 @@ import org.mariotaku.twidere.model.ParcelableUserMention;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.util.HtmlEscapeHelper;
 import org.mariotaku.twidere.util.ParseUtils;
+import org.mariotaku.twidere.util.ThemeUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -93,7 +95,8 @@ public class AddStatusFilterDialogFragment extends BaseSupportDialogFragment imp
 
 	@Override
 	public Dialog onCreateDialog(final Bundle savedInstanceState) {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		final Context wrapped = ThemeUtils.getDialogThemedContext(getActivity());
+		final AlertDialog.Builder builder = new AlertDialog.Builder(wrapped);
 		mFilterItems = getFilterItemsInfo();
 		final String[] entries = new String[mFilterItems.length];
 		for (int i = 0, j = entries.length; i < j; i++) {

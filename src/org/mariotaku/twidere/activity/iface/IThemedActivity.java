@@ -23,7 +23,7 @@ import android.content.res.Resources;
 
 public interface IThemedActivity {
 
-	public int getCurrentThemeResource();
+	public int getCurrentThemeResourceId();
 
 	public Resources getDefaultResources();
 
@@ -31,7 +31,7 @@ public interface IThemedActivity {
 
 	public Resources getThemedResources();
 
-	public int getThemeResource();
+	public int getThemeResourceId();
 
 	public void navigateUpFromSameTask();
 

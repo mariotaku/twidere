@@ -44,7 +44,7 @@ public class BaseSupportDialogActivity extends BaseSupportThemedActivity impleme
 	}
 
 	@Override
-	public int getThemeResource() {
+	public int getThemeResourceId() {
 		return ThemeUtils.getDialogThemeResource(this);
 	}
 

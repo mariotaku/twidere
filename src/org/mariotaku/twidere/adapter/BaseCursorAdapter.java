@@ -130,7 +130,7 @@ public class BaseCursorAdapter extends SimpleCursorAdapter implements IBaseAdapt
 	public final void setLinkHighlightColor(final int color) {
 		if (color == mLinkHighlightColor) return;
 		mLinkHighlightColor = color;
-		mLinkify.setHighlightColor(color);
+		mLinkify.setLinkTextColor(color);
 		notifyDataSetChanged();
 	}
 

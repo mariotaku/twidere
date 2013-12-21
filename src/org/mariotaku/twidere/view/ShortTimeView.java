@@ -9,11 +9,11 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.AttributeSet;
-import android.widget.TextView;
 
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.view.themed.ThemedTextView;
 
-public class ShortTimeView extends TextView implements Constants, OnSharedPreferenceChangeListener {
+public class ShortTimeView extends ThemedTextView implements Constants, OnSharedPreferenceChangeListener {
 
 	private static final long TICKER_DURATION = 5000L;
 

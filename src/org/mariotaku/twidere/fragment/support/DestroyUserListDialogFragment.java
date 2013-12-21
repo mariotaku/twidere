@@ -2,6 +2,7 @@ package org.mariotaku.twidere.fragment.support;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -9,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.ThemeUtils;
 
 public class DestroyUserListDialogFragment extends BaseSupportDialogFragment implements DialogInterface.OnClickListener {
 
@@ -30,11 +32,12 @@ public class DestroyUserListDialogFragment extends BaseSupportDialogFragment imp
 
 	@Override
 	public Dialog onCreateDialog(final Bundle savedInstanceState) {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		final ParcelableUserList user_list = getUserList();
-		if (user_list != null) {
-			builder.setTitle(getString(R.string.delete_user_list, user_list.name));
-			builder.setMessage(getString(R.string.delete_user_list_confirm_message, user_list.name));
+		final Context wrapped = ThemeUtils.getDialogThemedContext(getActivity());
+		final AlertDialog.Builder builder = new AlertDialog.Builder(wrapped);
+		final ParcelableUserList userList = getUserList();
+		if (userList != null) {
+			builder.setTitle(getString(R.string.delete_user_list, userList.name));
+			builder.setMessage(getString(R.string.delete_user_list_confirm_message, userList.name));
 		}
 		builder.setPositiveButton(android.R.string.ok, this);
 		builder.setNegativeButton(android.R.string.cancel, null);

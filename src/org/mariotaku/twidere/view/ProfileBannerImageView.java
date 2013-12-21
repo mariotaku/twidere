@@ -59,7 +59,7 @@ public class ProfileBannerImageView extends ForegroundImageView implements IExte
 		ViewCompat.setLayerType(this, LAYER_TYPE_SOFTWARE, null);
 		final boolean is_dark_theme = ThemeUtils.isDarkTheme(context);
 		COLORS_REVERSED[1] = is_dark_theme ? 0xFF000000 : 0xFFFFFFFF;
-		setForeground(ThemeUtils.getSelectableItemBackgroundDrawable(context));
+		setForeground(ThemeUtils.getImageHighlightDrawable(context));
 	}
 
 	@Override

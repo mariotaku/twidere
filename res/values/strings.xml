@@ -475,12 +475,12 @@
 	<string name="users_statuses">User\'s tweets</string>
 	<string name="card_animation">Card animation</string>
 	<string name="name_first">Display name first</string>
+	<string name="next">Next</string>
 	<string name="settings_wizard">Settings wizard</string>
 	<string name="wizard_page_welcome_title">Welcome</string>
 	<string name="wizard_page_welcome_text">Thanks for choosing Twidere.\nWould you like to config it now?</string>
 	<string name="wizard_page_welcome_yes">Yes</string>
-	<string name="next">Next</string>
-	<string name="wizard_page_welcome_use_default_settings">Use default settings</string>
+	<string name="wizard_page_welcome_not_now">Not now</string>
 	<string name="wizard_page_welcome_import_settings">Import settings</string>
 	<string name="wizard_page_theme_text">Pick a theme you like.</string>
 	<string name="wizard_page_tabs_text">Add some tabs to Twidere.\nKeep track of people or things you care about.</string>
@@ -542,7 +542,7 @@
 	<string name="wizard_hint_compose_select_account">Click this icon to select account when writing a tweet.</string>
 	<string name="wizard_hint_quote_format">Set your favorite quote format in &quot;Settings&quot; - &quot;Content &amp; Storage&quot;</string>
 	<string name="wizard_hint_filters">You can hide unwanted tweet from timeline and notifications by using &quot;Filters&quot;.</string>
-	<string name="replies">Replies</string>
+	<string name="view_replies">View Replies</string>
 	<string name="compact_cards">Compact cards</string>
 	<string name="compact_cards_summary">Display more cards on screen</string>
 	<string name="dashclock_home_unread_count_name">Twidere home unread count</string>

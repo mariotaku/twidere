@@ -271,6 +271,7 @@
   <string name="activity_about_me_retweet"><xliff:g id="user">%s</xliff:g> uudelleentwiittasi viestisi.</string>
   <string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> ja <xliff:g id="count">%d</xliff:g> muuta käyttäjää uudelleentwiittasivat viestisi.</string>
   <string name="activity_about_me_list_member_added"><xliff:g id="user">%s</xliff:g> lisäsi sinut listaansa.</string>
+  <string name="activity_about_me_list_member_added_with_name"><xliff:g id="user">%1$s</xliff:g> lisäsi sinut listalle "<xliff:g id="list">%2$s</xliff:g>\"\".</string>
   <string name="activity_about_me_list_member_added_multi"><xliff:g id="user">%s</xliff:g> ja <xliff:g id="count">%d</xliff:g> muuta käyttäjää lisäsivät sinut listoihinsa.</string>
   <string name="activity_by_friends_favorite"><xliff:g id="user">%1$s</xliff:g> lisäsi suosikkeihinsa twiitin käyttäjältä <xliff:g id="target">%2$s</xliff:g>.</string>
   <string name="activity_by_friends_favorite_multi"><xliff:g id="user">%1$s</xliff:g> lisäsi kohteen <xliff:g id="target">%2$s</xliff:g> ja <xliff:g id="count">%3$d</xliff:g> muun käyttäjän twiitin suosikkeihinsa.</string>
@@ -402,6 +403,7 @@
   <string name="import_from">Tuo kohteesta…</string>
   <string name="link_to_quoted_status">Linkki lainattuun twiittiin</string>
   <string name="followed_user">Seurataan käyttäjää <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="sent_follow_request_to_user">Seurauspyyntö lähetetty käyttäjälle <xliff:g id="user">%s</xliff:g>.</string>
   <string name="unfollowed_user">Lopetettiin käyttäjän <xliff:g id="user">%s</xliff:g> seuraus.</string>
   <string name="blocked_user"><xliff:g id="user">%s</xliff:g> estetty.</string>
   <string name="unblocked_user"><xliff:g id="user">%s</xliff:g> ei ole estetty.</string>
@@ -432,7 +434,6 @@
   <string name="no_close_after_status_updated">Pidä Kirjoita-näkymä auki twiitin lähettämisen jälkeen</string>
   <string name="no_close_after_status_updated_summary">Pieni lisä chatterboxiin</string>
   <string name="status_saved_to_draft">Twiitti tallennettu luonnoksiin.</string>
-  <string name="default_account">Oletus</string>
   <string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g> (<xliff:g id="daily_tweet">%2$d</xliff:g> twiittiä päivää kohden)</string>
   <string name="empty_content">Tyhjennä sisältö</string>
   <string name="fast_image_loading">Kuvien nopea lataus</string>
@@ -527,8 +528,32 @@
   <string name="theme_background_default">Oletus</string>
   <string name="theme_background_solid">Pelkkä valkoinen/musta</string>
   <string name="theme_background_transparent">Läpinäkyvä</string>
+  <string name="theme_dark_actionbar">Tumma ActionBar</string>
   <string name="wizard_hint_compose_select_account">Valitse tili tästä kuvakkeesta silloin, kun kirjoitat twiittiä.</string>
   <string name="wizard_hint_quote_format">Määritä haluamasi lainausmuoto kohdasta \"Asetukset\" - \"Sisältö &amp; säilytys\"</string>
   <string name="wizard_hint_filters">Suodattimilla voit piilottaa aikajanasta ja ilmoituksista twiitit, joita et halua nähdä.</string>
-  <string name="replies">Vastaukset</string>
+  <string name="compact_cards">Tiiviit kortit</string>
+  <string name="compact_cards_summary">Näytä ruudulla enemmän kortteja</string>
+  <string name="dashclock_home_unread_count_name">Kodin lukemattomien viestien määrä</string>
+  <string name="dashclock_home_unread_count_description">Kodin lukemattomien viestien määrä</string>
+  <string name="dashclock_mentions_unread_count_name">Mainintojen lukumäärä</string>
+  <string name="dashclock_mentions_unread_count_description">Mainintojen lukumäärä</string>
+  <string name="dashclock_messages_unread_count_name">Lukemattomien viestien määrä</string>
+  <string name="dashclock_messages_unread_count_description">Lukemattomien viestien määrä</string>
+  <string name="N_new_statuses_quantity_one"><xliff:g id="items">%d</xliff:g> uusi twiitti</string>
+  <string name="N_new_statuses_quantity_other"><xliff:g id="items">%d</xliff:g> uutta twiittiä</string>
+  <string name="N_new_mentions_quantity_one"><xliff:g id="items">%d</xliff:g> uusi maininta</string>
+  <string name="N_new_mentions_quantity_other"><xliff:g id="items">%d</xliff:g> uutta mainintaa</string>
+  <string name="N_new_messages_quantity_one"><xliff:g id="items">%d</xliff:g> uusi keskustelu</string>
+  <string name="N_new_messages_quantity_other"><xliff:g id="items">%d</xliff:g> uutta keskustelua</string>
+  <string name="share_subject_format"><xliff:g id="name">%1$s</xliff:g> (@<xliff:g id="screen_name">%2$s</xliff:g>), <xliff:g id="time">%3$s</xliff:g></string>
+  <string name="rate_limit">Määrärajoitus</string>
+  <string name="wizard_hint_rate_limit">Jos törmäsit määrärajoitukseen liittyvään ongelmaan, älä syytä meitä. Rajoitukset kuuluvat Twitterin toimintatapoihin.</string>
+  <string name="preparing_database">Valmistellaan tietokantaa</string>
+  <string name="preparing_database_toast">Valmistellaan tietokantaa. Odota hetki.</string>
+  <string name="action_name_saved_at_time"><xliff:g id="action">%1$s</xliff:g>, tallennettu <xliff:g id="time">%2$s</xliff:g></string>
+  <string name="update_status">Lähetä twiitti</string>
+  <string name="sending_direct_message">Lähetetään yksityisviestiä</string>
+  <string name="livewp_daydream_enabled_message">Sinulle on pieni yllätys. Etsi se järjestelmäasetuksista :)</string>
+  <string name="center">Keskus</string>
 </resources>

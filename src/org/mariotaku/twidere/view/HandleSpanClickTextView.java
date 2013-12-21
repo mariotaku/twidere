@@ -27,9 +27,10 @@ import android.text.SpannableString;
 import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.widget.TextView;
 
-public class HandleSpanClickTextView extends TextView {
+import org.mariotaku.twidere.view.themed.ThemedTextView;
+
+public class HandleSpanClickTextView extends ThemedTextView {
 
 	public HandleSpanClickTextView(final Context context) {
 		super(context);
@@ -60,10 +61,11 @@ public class HandleSpanClickTextView extends TextView {
 			final Layout layout = getLayout();
 			final int line = layout.getLineForVertical(y);
 			final int off = layout.getOffsetForHorizontal(line, x);
+			final float lineWidth = layout.getLineWidth(line);
 
 			final ClickableSpan[] links = buffer.getSpans(off, off, ClickableSpan.class);
 
-			if (links.length != 0) {
+			if (links.length != 0 && x <= lineWidth) {
 				final ClickableSpan link = links[0];
 				if (action == MotionEvent.ACTION_UP) {
 					link.onClick(this);

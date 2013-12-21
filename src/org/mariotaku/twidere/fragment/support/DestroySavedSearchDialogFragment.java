@@ -2,12 +2,14 @@ package org.mariotaku.twidere.fragment.support;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.ThemeUtils;
 
 public class DestroySavedSearchDialogFragment extends BaseSupportDialogFragment implements
 		DialogInterface.OnClickListener {
@@ -31,7 +33,8 @@ public class DestroySavedSearchDialogFragment extends BaseSupportDialogFragment 
 
 	@Override
 	public Dialog onCreateDialog(final Bundle savedInstanceState) {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		final Context wrapped = ThemeUtils.getDialogThemedContext(getActivity());
+		final AlertDialog.Builder builder = new AlertDialog.Builder(wrapped);
 		final String name = getSearchName();
 		if (name != null) {
 			builder.setTitle(getString(R.string.delete_saved_search, name));

@@ -31,7 +31,7 @@ import org.mariotaku.twidere.util.ThemeUtils;
 public class ColorPickerDialogActivity extends BaseSupportDialogActivity implements OnColorSelectedListener {
 
 	@Override
-	public int getThemeResource() {
+	public int getThemeResourceId() {
 		return ThemeUtils.getNoDisplayThemeResource(this);
 	}
 

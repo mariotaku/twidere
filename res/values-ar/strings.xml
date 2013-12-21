@@ -400,7 +400,6 @@
   <string name="ask">سأل</string>
   <string name="no_close_after_status_updated">ترك \"كتابة التغريدة\" مفتوح بعد إرسال التغريدة</string>
   <string name="status_saved_to_draft">تم حفض التغربدة كمسودة.</string>
-  <string name="default_account">إفتراضي</string>
   <string name="empty_content">محتوى فارغ</string>
   <string name="fast_image_loading">تحميل سريع للصور</string>
   <string name="fast_image_loading_summary">فعل كي تشحن الصور بسرعة، عطل هذا إذا تعذر إضهار بعض الصور.</string>
@@ -486,5 +485,6 @@
   <string name="wizard_hint_compose_select_account">إضغط على هذه اﻷيقونة لاختيار الحساب عند كتابة تغريدة.</string>
   <string name="wizard_hint_quote_format">حدد شكل الإقتباس اامفضل لديك في \"الإعدادات تاء\" - \"اامحتوي و التخزين\"</string>
   <string name="wizard_hint_filters">يمكنك كتم التغريدات الغير مرغوب فيها من الخط الزمني والإخطارات باستعمال \"قواعد الكتم\".</string>
-  <string name="replies">الردود</string>
+  <string name="update_status">إرسال التغريدة</string>
+  <string name="sending_direct_message">جارِ إرسال رسالة مباشرة</string>
 </resources>

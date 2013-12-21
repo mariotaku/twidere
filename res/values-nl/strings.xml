@@ -433,7 +433,6 @@
   <string name="no_close_after_status_updated">Hou \"Componeren\" open na versturen van een tweet</string>
   <string name="no_close_after_status_updated_summary">Een klein cadeau voor chatterbox</string>
   <string name="status_saved_to_draft">Tweet opgeslagen als ontwerp.</string>
-  <string name="default_account">Standaard</string>
   <string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g>(<xliff:g id="daily_tweet">%2$d</xliff:g> tweet(s) per dag)</string>
   <string name="empty_content">Lege inhoud</string>
   <string name="fast_image_loading">Snel foto\'s laden</string>
@@ -532,7 +531,6 @@
   <string name="wizard_hint_compose_select_account">Klik op dit icoon om een account te selecteren bij het typen van een tweet.</string>
   <string name="wizard_hint_quote_format">Stel je favoriete citaat formaat in via \'\'Instellingen\'\' - \'\'Inhoud &amp; Opslag\'\'</string>
   <string name="wizard_hint_filters">Je kunt ongewenste tweets verbergen van de tijdlijn en meldingen via \'\'Filters\'\'.</string>
-  <string name="replies">Reacties</string>
   <string name="compact_cards">Compacte kaarten</string>
   <string name="compact_cards_summary">Toon meer kaarten op het scherm</string>
   <string name="dashclock_home_unread_count_name">Twidere aantal ongelezen tijdlijn tweets</string>
@@ -555,6 +553,5 @@
   <string name="action_name_saved_at_time"><xliff:g id="action">%1$s</xliff:g> opgeslagen op <xliff:g id="time">%2$s</xliff:g></string>
   <string name="update_status">Verstuur tweet</string>
   <string name="sending_direct_message">Direct message aan het verzenden</string>
-  <string name="display_tab_label">Toon tabblad etiket</string>
   <string name="livewp_daydream_enabled_message">Hier is een klein cadeautje voor je, vind het in je systeeminstellingen :)</string>
 </resources>

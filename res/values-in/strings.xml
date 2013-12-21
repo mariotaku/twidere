@@ -32,6 +32,7 @@
   <string name="error_occurred">Terjadi kesalahan, silahkan coba lagi.</string>
   <string name="error_already_logged_in">Anda sudah login.</string>
   <string name="no_account_selected">Tak ada akun yang dipilih.</string>
+  <string name="empty_account_selection_disallowed">Silahkan pilih setidaknya satu akun.</string>
   <string name="error_unknown_error">Kesalahan: Kesalahan tidak diketahui, ini mungkin adalah bug.</string>
   <string name="error_message">Kesalahan: <xliff:g id="message">%s</xliff:g></string>
   <string name="error_message_with_action">Kesalahan saat <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
@@ -42,6 +43,7 @@
   <string name="password">Kata Sandi</string>
   <string name="label_tweetstore_provider">Penyedia database Twidere</string>
   <string name="label_refresh_service">Segarkan layanan</string>
+  <string name="label_background_operation_service">Latar Belakang layanan operasi</string>
   <string name="open_in_browser">Buka di Browser</string>
   <string name="tap_to_load_more">Ketuk untuk memuat lebih</string>
   <string name="delete">Hapus</string>
@@ -103,8 +105,11 @@
   <string name="pick_color">Pilih warna</string>
   <string name="follow">Follow</string>
   <string name="unfollow">Unfollow</string>
+  <string name="bottom_compose_button">Tombol \"Menulis\" di bawah</string>
+  <string name="bottom_compose_button_summary">Taruh tombol menulis di bawah, kamu bisa aktifkan ini jika layarmu besar.</string>
   <string name="leftside_compose_button">Tombol susun di sebelah kiri</string>
   <string name="leftside_compose_button_summary">Taruh tombol compose di kiri.</string>
+  <string name="bottom_send_button">Tombol \"kirim\" di bawah</string>
   <string name="load_item_limit">Memuat batas item</string>
   <string name="load_item_limit_summary">Tetapkan batas item per pengambilan.</string>
   <string name="load_more_automatically">Muat konten selanjutnya secara otomatis</string>
@@ -161,10 +166,14 @@
   <string name="auto_refresh">Refresh otomatis</string>
   <string name="refresh_interval">Interval refresh</string>
   <string name="content_to_refresh">Konten yang di-refresh</string>
+  <string name="content_to_notify">Notifikasi konten</string>
   <string name="notifications_type">Jenis pemberitahuan</string>
   <string name="sound">Suara</string>
+  <string name="ringtone">Nada Dering</string>
   <string name="vibration">Getaran</string>
+  <string name="light">Lampu</string>
   <string name="notifications">Notifikasi</string>
+  <string name="screen_name">Nama pengguna</string>
   <string name="refresh_on_start">Muat ulang di awal</string>
   <string name="refresh_on_start_summary">Muat ulang lini massa dan mention untuk memulai.</string>
   <string name="refresh_after_status_updated">Segarkan setelah twit terkirim</string>
@@ -186,6 +195,7 @@
   <string name="display_image_preview">Menampilkan preview gambar</string>
   <string name="following_you">Mengikuti Anda</string>
   <string name="user_list">Daftar</string>
+  <string name="user_lists">Daftar</string>
   <string name="trends_location">Lokasi tren</string>
   <string name="trends_location_summary">Tentukan lokasi untuk tren lokal</string>
   <string name="trends">Tren</string>
@@ -262,6 +272,7 @@
   <string name="activity_about_me_retweet"><xliff:g id="user">%s</xliff:g> me-retweet tweet Anda.</string>
   <string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> dan <xliff:g id="count">%d</xliff:g> lainnya me-retweet tweet Anda.</string>
   <string name="activity_about_me_list_member_added"><xliff:g id="user">%s</xliff:g> menambahkan Anda ke dalam daftar.</string>
+  <string name="activity_about_me_list_member_added_with_name"><xliff:g id="user">%1$s</xliff:g> menambahkan kamu ke dalam daftar "<xliff:g id="list">%2$s</xliff:g>\"\".</string>
   <string name="activity_about_me_list_member_added_multi"><xliff:g id="user">%s</xliff:g> dan <xliff:g id="count">%d</xliff:g> lainnya menambahkan Anda ke dalam daftar mereka.</string>
   <string name="activity_by_friends_favorite"><xliff:g id="user">%1$s</xliff:g> memfavoritkan tweet<xliff:g id="target">%2$s</xliff:g>.</string>
   <string name="activity_by_friends_favorite_multi"><xliff:g id="user">%1$s</xliff:g> memfavoritkan twit <xliff:g id="target">%2$s</xliff:g> dan juga <xliff:g id="count">%3$d</xliff:g> twit lagi.</string>
@@ -284,6 +295,8 @@
   <string name="both">Keduanya</string>
   <string name="browser_sign_in">Masuk melalui browser</string>
   <string name="stop_auto_refresh_when_battery_low">Hentikan segar otomatis ketika baterai mulai habis</string>
+  <string name="notification_status">Tweet baru oleh <xliff:g id="user">%s</xliff:g></string>
+  <string name="notification_status_multiple">Tweet baru oleh <xliff:g id="user">%1$s</xliff:g> dan <xliff:g id="count">%2$d</xliff:g> lainnya</string>
   <string name="notification_mention"><xliff:g id="user">%s</xliff:g> menyebut Anda.</string>
   <string name="notification_mention_multiple"><xliff:g id="user">%1$s</xliff:g> dan <xliff:g id="count">%2$d</xliff:g> lainnya menyebut Anda.</string>
   <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> mengirim Anda pesan langsung.</string>
@@ -314,6 +327,8 @@
   <string name="action_reporting_for_spam">laporkan sebagai spam</string>
   <string name="action_subscribing_to_list">berlangganan daftar</string>
   <string name="action_unsubscribing_from_list">berhenti berlangganan dari daftar</string>
+  <string name="action_saving_search">menyimpan pencarian</string>
+  <string name="action_deleting_search">menghapus pencarian</string>
   <string name="status_is_duplicate">Kicauan Anda duplikat.</string>
   <string name="data_profiling_summary">Twidere mengambil bagian sebuah penelitian dalam memprediksi pengguna sosial untuk pra-caching konten dimulai mahasiswa di UC Davis.\n\nBerikut adalah data yang berhasil kamu kumpulkan dan mengapa:\nMengumpulkan data:\n1. ID pengguna twitter\n2. Pengguna home timeline (prediksi berdasarkan ketertarikan pengguna dan interaksi sosial)\n3. Pengguna yang mengklik sebuah tweet (prediksi berdasarkan ketertarikan pengguna dan interaksi sosial)\n4. Lokasi mentah (merupakan prediksi yang bagus saat pengguna akan menggunakan twitter)\n\nTwidere akan mengunggah data yang terkumpul hanya saat dalam jangkauan WIFI dan perangkat anda terkoneksi ke charger, jadi tidak akan menggunakan biaya bandwidth lebih atau mengkonsumsi daya baterai anda.</string>
   <string name="data_profiling">Statistik penggunaan</string>
@@ -376,7 +391,9 @@
   <string name="wrong_url_format">Format URL salah.</string>
   <string name="wrong_username_password">Nama/kata sandi salah.</string>
   <string name="network_error">Masalah Jaringan.</string>
+  <string name="api_data_corrupted">API data rusak.</string>
   <string name="ssl_error">Masalah SSL, Anda mungkin harus mengaktifkan opsi \"Abaikan masalah SSL\".</string>
+  <string name="wrong_api_key">Kesalahan pada API url atau consumer key/secret, coba cek kembali.</string>
   <string name="status_updated">Twit terkirim.</string>
   <string name="status_deleted">Twit dihapus.</string>
   <string name="status_favorited">Twit difavoritkan.</string>
@@ -385,8 +402,14 @@
   <string name="retweet_cancelled">Reetweet digagalkan.</string>
   <string name="direct_message_sent">Direct meesage terkirim.</string>
   <string name="direct_message_deleted">Direct message dihapus.</string>
+  <string name="search_saved">Pencarian tersimpan.</string>
+  <string name="search_name_saved">Pencarian \"<xliff:g id="name">%s</xliff:g>\" tersimpan.</string>
+  <string name="search_deleted">Pencarian terhapus.</string>
+  <string name="search_name_deleted">Pencarian \"<xliff:g id="name">%s</xliff:g>\" terhapus.</string>
   <string name="import_from">Impor dari…</string>
+  <string name="link_to_quoted_status">Link ke tweet kutipan</string>
   <string name="followed_user"><xliff:g id="user">%s</xliff:g> diikuti.</string>
+  <string name="sent_follow_request_to_user">Mengirim permintaan mengikuti ke <xliff:g id="user">%s</xliff:g>.</string>
   <string name="unfollowed_user">Batal mengikuti <xliff:g id="user">%s</xliff:g>.</string>
   <string name="blocked_user">Mengeblok <xliff:g id="user">%s</xliff:g>.</string>
   <string name="unblocked_user">Batal memblokir <xliff:g id="user">%s</xliff:g>.</string>
@@ -398,16 +421,31 @@
   <string name="updated_list_details">Perbarui detil daftar \"<xliff:g id="list">%s</xliff:g>\"\'.</string>
   <string name="subscribed_to_list">Berlangganan ke daftar \"<xliff:g id="list">%s</xliff:g>\".</string>
   <string name="unsubscribed_from_list">Berhenti berlangganan dari daftar \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="added_N_users_to_list_quantity_one">Menambahkan <xliff:g id="items">%1$d</xliff:g> pengguna ke dalam daftar "<xliff:g id="list">%2$s</xliff:g>\".</string>
+  <string name="added_N_users_to_list_quantity_other">Menambahkan <xliff:g id="items">%1$d</xliff:g> pengguna ke dalam daftar "<xliff:g id="list">%2$s</xliff:g>\".</string>
+  <string name="added_user_to_list">Menambahkan <xliff:g id="user">%1$s</xliff:g> ke daftar "<xliff:g id="list">%2$s</xliff:g>\".</string>
+  <string name="deleted_user_from_list">Menghapus <xliff:g id="user">%1$s</xliff:g> dari daftar "<xliff:g id="list">%2$s</xliff:g>\".</string>
+  <string name="deleted_N_users_from_list_quantity_one">Menghapus <xliff:g id="items">%1$d</xliff:g> pengguna dari daftar "<xliff:g id="list">%2$s</xliff:g>\".</string>
+  <string name="deleted_N_users_from_list_quantity_other">Menghapus <xliff:g id="items">%1$d</xliff:g> pengguna dari daftar "<xliff:g id="list">%2$s</xliff:g>\".</string>
+  <string name="delete_user_from_list_confirm">Menghapus <xliff:g id="user">%1$s</xliff:g> dari daftar "<xliff:g id="list">%2$s</xliff:g>\"?</string>
+  <string name="delete_N_users_from_list_confirm_quantity_one">Menghapus <xliff:g id="items">%1$d</xliff:g> pengguna dari daftar "<xliff:g id="list">%2$s</xliff:g>\"?</string>
+  <string name="delete_N_users_from_list_confirm_quantity_other">Menghapus <xliff:g id="items">%1$d</xliff:g> pengguna dari daftar "<xliff:g id="list">%2$s</xliff:g>\"?</string>
   <string name="subscribe">Ikuti</string>
   <string name="unsubscribe">Batal ikuti</string>
   <string name="background_toast_notification">Notifikasi Toast latar belakang</string>
   <string name="background_toast_notification_summary">Tampilkan notifikasi Toast saat diset ke latar belakang</string>
   <string name="original_status">Tweet asli</string>
+  <string name="compose_quit_action">Dalam membatalkan \"menulis\"</string>
   <string name="ask">Bertanya</string>
+  <string name="no_close_after_status_updated">Tetap \"Menulis\" terbuka setelah tweet terkirim</string>
+  <string name="no_close_after_status_updated_summary">Pemberian kecil untuk chatterbox</string>
   <string name="status_saved_to_draft">Twit disimpan di draf.</string>
-  <string name="default_account">Dasar</string>
+  <string name="default_account">Pengguna utama</string>
   <string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g> (<xliff:g id="daily_tweet">%2$d</xliff:g> tweet per hari)</string>
   <string name="empty_content">Konten kosong</string>
+  <string name="fast_image_loading">Memuat gambar dengan cepat</string>
+  <string name="fast_image_loading_summary">Aktifkan untuk membuat gambar dimuat dengan cepat, nonaktifkan ini jika beberapa gambar tidak bisa ditampilkan.</string>
+  <string name="select_user_list">Memilih daftar pengguna</string>
   <string name="select_user">Pilih pengguna</string>
   <string name="created_by">Dibuat oleh <xliff:g id="created_by">%s</xliff:g></string>
   <string name="add_to_list">Masukkan ke daftar</string>
@@ -418,14 +456,25 @@
   <string name="theme_light">Terang</string>
   <string name="settings_interface">Antarmuka</string>
   <string name="no_rule">Tak ada aturan</string>
+  <string name="enable_in_mentions">Aktifkan di mentions</string>
+  <string name="enable_in_home_timeline">Aktifkan di Beranda timeline</string>
+  <string name="enable_for_rts">Aktifkan untuk RTs</string>
   <string name="safety">Keamanan</string>
   <string name="updating_status_notification">Mengirim tweet…</string>
   <string name="name_with_nickname"><xliff:g id="name">%1$s</xliff:g> (<xliff:g id="nickname">%2$s</xliff:g>)</string>
+  <string name="query">Menanyakan</string>
+  <string name="nickname_only">Hanya nama panggilan</string>
+  <string name="nickname_only_summary">Mengganti nama pengguna dengan nama panggilan ketika tersedia</string>
   <string name="input_text">Masukkan teks</string>
   <string name="users_lists_with_name">Daftar <xliff:g id="name">%s</xliff:g></string>
   <string name="lists_following_user_with_name">Daftar mengikuti <xliff:g id="name">%s</xliff:g></string>
+  <string name="highlight">Menyoroti</string>
   <string name="underline">Garis bawah</string>
+  <string name="link_highlight_option">Opsi menyoroti link</string>
   <string name="users_statuses">Twit pengguna</string>
+  <string name="card_animation">Animasi kartu</string>
+  <string name="name_first">Tampilkan nama depan</string>
+  <string name="settings_wizard">Pengaturan</string>
   <string name="wizard_page_welcome_title">Selamat datang</string>
   <string name="wizard_page_welcome_text">Terima kasih telah memilih Twidere.\nAnda mau konfigurasi sekarang?</string>
   <string name="wizard_page_welcome_yes">Ya</string>
@@ -435,15 +484,58 @@
   <string name="wizard_page_theme_text">Pilih tema yang Anda suka.</string>
   <string name="wizard_page_tabs_text">Tambah beberapa tab ke Twidere.\nTetap terhubung dengan orang atau sesuatu yang kamu perhatikan.</string>
   <string name="wizard_page_tabs_unchanged_message">Anda dapat menambah tab di \"Pengaturan\" - \"Tab\"</string>
+  <string name="wizard_page_cards_text">Konfigurasi item kartu.</string>
+  <string name="wizard_page_hints_text">Disini ada berbagai petunjuk berguna.</string>
   <string name="wizard_page_finished_title">Selesai</string>
   <string name="wizard_page_finished_text">Twidere sudah dapat digunakan.</string>
+  <string name="invalid_tab">Salah tab</string>
   <string name="send_crash_report">Kirip laporan kerusakan ke Twidere</string>
+  <string name="add_to_filter">Tambahkan ke penyaringan</string>
   <string name="user_filter_name">Pengguna: <xliff:g id="name">%s</xliff:g></string>
   <string name="keyword_filter_name">Kata kunci: <xliff:g id="name">%s</xliff:g></string>
   <string name="source_filter_name">Sumber: <xliff:g id="name">%s</xliff:g></string>
   <string name="block_user">Blok <xliff:g id="name">%s</xliff:g></string>
+  <string name="block_user_confirm_message">Blokir <xliff:g id="name">%s</xliff:g>? Pengguna ini tidak akan bisa mengikuti, mention, atau mengirim pesan pribadi padamu.</string>
+  <string name="unfollow_user">Batal mengikuti <xliff:g id="name">%s</xliff:g></string>
+  <string name="unfollow_user_confirm_message">Batal mengikuti <xliff:g id="name">%s</xliff:g>? Kamu tidak akan bisa melihat tweet dari pengguna ini.</string>
+  <string name="delete_user_list">Hapus daftar <xliff:g id="name">%s</xliff:g></string>
+  <string name="delete_user_list_confirm_message">Hapus daftar <xliff:g id="name">%s</xliff:g>? Hal ini tidak bisa di kembalikan.</string>
+  <string name="unsubscribe_from_user_list">Berhenti berlangganan dari daftar <xliff:g id="name">%s</xliff:g></string>
+  <string name="unsubscribe_from_user_list_confirm_message">Berhenti berlangganan dari daftar <xliff:g id="name">%s</xliff:g>? Kamu bisa berlangganan kembali lain waktu.</string>
+  <string name="delete_saved_search">Hapus pencarian yang tersimpan \"<xliff:g id="name">%s</xliff:g>\"</string>
+  <string name="delete_saved_search_confirm_message">Hapus pencarian yang tersimpan \"<xliff:g id="name">%s</xliff:g>\"? Kamu bisa menyimpan kembali pencarian.</string>
+  <string name="signing_in_error_browser_sign_in_hint">Kesalahan saat masuk, Anda mungkin perlu menggunakan browser untuk masuk. (Ini akan mengabaikan pengaturan kustom API selama masuk)</string>
+  <string name="report_user">Laporkan <xliff:g id="name">%s</xliff:g></string>
+  <string name="report_user_confirm_message">Laporkan <xliff:g id="name">%s</xliff:g> karena spam? Kamu juga bisa blokir pengguna ini.</string>
+  <string name="twidere_test">Uji Twidere</string>
   <string name="donate_via_paypal">Donasi via PayPal</string>
+  <string name="pay_via_paypal">Bayar langsung lewat Paypal</string>
+  <string name="pay_via_paypal_summary">Bila Anda melihat \"Penerima ini tidak memenuhi syarat untuk menerima dana\"</string>
   <string name="donate_via_alipay">Donasi via Alipay</string>
+  <string name="staggered_home_timeline">Staggered Home Timeline</string>
+  <string name="unread_count">Belum terbaca</string>
+  <string name="developed_by">Dikelola oleh</string>
   <string name="donators">Donatur</string>
   <string name="translators">Penerjemah</string>
+  <string name="dashclock_mentions_unread_count_description">Mentions belum terbaca</string>
+  <string name="dashclock_messages_unread_count_name">Pesan Twidere belum terbaca</string>
+  <string name="dashclock_messages_unread_count_description">Pesan belum terbaca</string>
+  <string name="N_new_statuses_quantity_one"><xliff:g id="items">%d</xliff:g> tweet baru</string>
+  <string name="N_new_statuses_quantity_other"><xliff:g id="items">%d</xliff:g> tweets baru</string>
+  <string name="N_new_mentions_quantity_one"><xliff:g id="items">%d</xliff:g> mention baru</string>
+  <string name="N_new_mentions_quantity_other"><xliff:g id="items">%d</xliff:g> mentions baru</string>
+  <string name="N_new_messages_quantity_one"><xliff:g id="items">%d</xliff:g> percakapan baru</string>
+  <string name="N_new_messages_quantity_other"><xliff:g id="items">%d</xliff:g> percakapan-percakapan baru</string>
+  <string name="share_subject_format"><xliff:g id="name">%1$s</xliff:g> (@<xliff:g id="screen_name">%2$s</xliff:g>), pada <xliff:g id="time">%3$s</xliff:g></string>
+  <string name="rate_limit">Batasan Rate</string>
+  <string name="wizard_hint_rate_limit">Jika Anda mengalami batasan rate, jangan salahkan saya, itu kebijakan Twitter.</string>
+  <string name="preparing_database">Menyiapkan database</string>
+  <string name="preparing_database_toast">Menyiapkan database, silahkan tunggu beberapa saat.</string>
+  <string name="action_name_saved_at_time"><xliff:g id="action">%1$s</xliff:g>, tersimpan pada <xliff:g id="time">%2$s</xliff:g></string>
+  <string name="update_status">Kirim tweet</string>
+  <string name="sending_direct_message">Kirim pesan pribadi</string>
+  <string name="livewp_daydream_enabled_message">Ini sedikit hadiah untukmu, temukan sendiri di Pengaturan Sistem :)</string>
+  <string name="center">Pusat</string>
+  <string name="multi_select">Pemilihan banyak</string>
+  <string name="long_click_to_open_menu">Click lama untuk membuka menu</string>
 </resources>
