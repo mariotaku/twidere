@@ -68,6 +68,7 @@ import org.mariotaku.twidere.util.OAuthPasswordAuthenticator.AuthenticationExcep
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator.AuthenticityTokenException;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator.WrongUserPassException;
 import org.mariotaku.twidere.util.ParseUtils;
+import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.net.HttpClientImpl;
 import org.mariotaku.twidere.view.ColorPickerView;
 
@@ -608,7 +609,8 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 
 		@Override
 		public Dialog onCreateDialog(final Bundle savedInstanceState) {
-			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			final Context wrapped = ThemeUtils.getDialogThemedContext(getActivity());
+			final AlertDialog.Builder builder = new AlertDialog.Builder(wrapped);
 			builder.setTitle(R.string.sign_in_method_introduction_title);
 			builder.setMessage(R.string.sign_in_method_introduction);
 			builder.setPositiveButton(android.R.string.ok, null);

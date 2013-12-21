@@ -32,6 +32,7 @@
   <string name="error_occurred">Произошла ошибка, пожалуйста, попробуйте еще раз.</string>
   <string name="error_already_logged_in">Вы уже вошли.</string>
   <string name="no_account_selected">Профиль не выбран.</string>
+  <string name="empty_account_selection_disallowed">Theme</string>
   <string name="error_unknown_error">Ошибка: Это неизвестная ошибка, скорее всего - баг.</string>
   <string name="error_message">Ошибка: <xliff:g id="message">%s</xliff:g></string>
   <string name="error_message_with_action">Ошибка <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
@@ -42,6 +43,7 @@
   <string name="password">Пароль</string>
   <string name="label_tweetstore_provider">Провайдер базы данных Twitter</string>
   <string name="label_refresh_service">Обновить сервис</string>
+  <string name="label_background_operation_service">Справочная служба</string>
   <string name="open_in_browser">Открыть в браузере</string>
   <string name="tap_to_load_more">Нажмите, чтобы загрузить еще</string>
   <string name="delete">Удалить</string>
@@ -60,7 +62,9 @@
   <string name="pick_from_gallery">Выбрать из галереи</string>
   <string name="statuses">Твиты</string>
   <string name="followers">Читатели</string>
+  <string name="following">Читаемые</string>
   <string name="about">О программе</string>
+  <string name="open_source_license">Лицензия открытого исходного кода</string>
   <string name="api">API</string>
   <string name="default_api_settings">Настройки API по-умолчанию</string>
   <string name="consumer_key">Ключ авторизации пользователя</string>
@@ -164,8 +168,11 @@
   <string name="content_to_refresh">Контент для обновления</string>
   <string name="notifications_type">Тип уведомления</string>
   <string name="sound">Звук</string>
+  <string name="ringtone">Рингтон</string>
   <string name="vibration">Вибрация</string>
+  <string name="light">Светлый</string>
   <string name="notifications">Уведомления</string>
+  <string name="screen_name">Имя</string>
   <string name="refresh_on_start">Обновлять при запуске</string>
   <string name="refresh_on_start_summary">Обновить ленту и упоминания при запуске.</string>
   <string name="refresh_after_status_updated">Обновить после отправки</string>
@@ -184,7 +191,10 @@
   <string name="item_1_hour">1 час</string>
   <string name="item_2_hours">2 часа</string>
   <string name="item_4_hours">4 часа</string>
+  <string name="display_image_preview">Предварительное изображение</string>
   <string name="following_you">Ваши подписчики</string>
+  <string name="user_list">Список</string>
+  <string name="user_lists">Списки</string>
   <string name="trends_location">Местоположение трендов</string>
   <string name="trends_location_summary">Задать местоположение для местных трендов.</string>
   <string name="trends">Тренды</string>
@@ -194,11 +204,13 @@
   <string name="signing_in_please_wait">Выполняется вход. Пожалуйста, подождите или нажмите НАЗАД, чтобы закрыть программу.</string>
   <string name="connectivity">Соединение</string>
   <string name="add_member">Добавить пользователя</string>
+  <string name="new_user_list">Новый список</string>
   <string name="is_public">Общедоступный</string>
   <string name="send_direct_message">Послать ЛС</string>
   <string name="extensions">Расширения</string>
   <string name="uninstall">Удалить</string>
   <string name="saved_searches">Сохраненные поиски</string>
+  <string name="tabs">Вкладки</string>
   <string name="add_tab">Добавить вкладку</string>
   <string name="edit_tab">Редактировать вкладку</string>
   <string name="move_up">Переместить вверх</string>
@@ -259,6 +271,7 @@
   <string name="activity_about_me_retweet"><xliff:g id="user">%s</xliff:g> ретвитнул ваш твит.</string>
   <string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> и <xliff:g id="count">%d</xliff:g> других ретвитнули ваш твит.</string>
   <string name="activity_about_me_list_member_added"><xliff:g id="user">%s</xliff:g> добавил(а) вас в свой список.</string>
+  <string name="activity_about_me_list_member_added_with_name">Добавить в ваш лист</string>
   <string name="activity_about_me_list_member_added_multi"><xliff:g id="user">%s</xliff:g> и <xliff:g id="count">%d</xliff:g> других добавили вас в свои списки.</string>
   <string name="activity_by_friends_favorite"><xliff:g id="user">%1$s</xliff:g> понравился твит <xliff:g id="target">%2$s</xliff:g>.</string>
   <string name="activity_by_friends_favorite_multi"><xliff:g id="user">%1$s</xliff:g> понравились твиты <xliff:g id="target">%2$s</xliff:g> и <xliff:g id="count">%3$d</xliff:g> других пользователей.</string>
@@ -268,15 +281,20 @@
   <string name="activity_by_friends_list_member_added"><xliff:g id="user">%1$s</xliff:g> добавлен <xliff:g id="target">%2$s</xliff:g> в список.</string>
   <string name="activity_by_friends_list_created"><xliff:g id="user">%1$s</xliff:g> созданный список <xliff:g id="target">%2$s</xliff:g>.</string>
   <string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g> созданный список <xliff:g id="target">%2$s</xliff:g> и <xliff:g id="count">%3$d</xliff:g> более.</string>
+  <string name="status_not_updated">Твит не отправлен</string>
+  <string name="status_not_updated_summary">Твит не отправлен,и сохранен в черновиках.</string>
   <string name="incoming_friendships">Ожидание запросов на подписку</string>
   <string name="send_follow_request">Послать запрос на подписку</string>
   <string name="follow_request_sent">Запрос на подписку послан</string>
   <string name="separate_retweet_action">Различные виды ретвита</string>
   <string name="separate_retweet_action_summary">Показывает в меню оба действия: ретвит и цитировать</string>
+  <string name="status">Твит</string>
   <string name="preview">Предпросмотр</string>
   <string name="connection_timeout">Таймаут соединения</string>
   <string name="both">Оба</string>
   <string name="browser_sign_in">Войти через браузер</string>
+  <string name="stop_auto_refresh_when_battery_low">Отключить автообновление при разрядке батареи</string>
+  <string name="notification_status">Новый твит для </string>
   <string name="notification_mention"><xliff:g id="user">%s</xliff:g> упомянул вас.</string>
   <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> отправил вам личное сообщение.</string>
   <string name="status_is_duplicate">Этот твит уже опубликован.</string>
@@ -369,7 +387,6 @@
   <string name="original_status">Исходный твит</string>
   <string name="compose_quit_action">При выходе из диалога написания</string>
   <string name="ask">Спросить</string>
-  <string name="default_account">По умолчанию</string>
   <string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g>(<xliff:g id="daily_tweet">%2$d</xliff:g>твитов за день)</string>
   <string name="empty_content">Пустое содержимое</string>
   <string name="fast_image_loading">Быстрая загрузка изображений</string>

@@ -320,7 +320,8 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 
 		@Override
 		public Dialog onCreateDialog(final Bundle savedInstanceState) {
-			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			final Context wrapped = ThemeUtils.getDialogThemedContext(getActivity());
+			final AlertDialog.Builder builder = new AlertDialog.Builder(wrapped);
 			builder.setNegativeButton(android.R.string.cancel, null);
 			builder.setPositiveButton(android.R.string.ok, this);
 			builder.setTitle(R.string.account_delete_confirm_title);

@@ -256,7 +256,7 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnC
 				break;
 			}
 			case LINK_ID_STATUS_REPLIES: {
-				setTitle(R.string.replies);
+				setTitle(R.string.view_replies);
 				break;
 			}
 			case LINK_ID_SEARCH: {

@@ -158,7 +158,7 @@ public class FileSelectorActivity extends BaseSupportDialogActivity implements O
 		public FilesAdapter(final FileSelectorActivity activity) {
 			super(activity, android.R.layout.simple_list_item_1);
 			mResources = activity.getResources();
-			mActionIconColor = ThemeUtils.isDarkTheme(activity.getCurrentThemeResource()) ? 0xffffffff : 0xc0333333;
+			mActionIconColor = ThemeUtils.isDarkTheme(activity.getCurrentThemeResourceId()) ? 0xffffffff : 0xc0333333;
 			mPadding = (int) (4 * mResources.getDisplayMetrics().density);
 		}
 

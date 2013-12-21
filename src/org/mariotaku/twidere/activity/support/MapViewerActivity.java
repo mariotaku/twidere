@@ -39,7 +39,7 @@ import org.mariotaku.twidere.util.ThemeUtils;
 public class MapViewerActivity extends TwidereSwipeBackActivity implements Constants {
 
 	@Override
-	public int getThemeResource() {
+	public int getThemeResourceId() {
 		return ThemeUtils.getViewerThemeResource(this);
 	}
 

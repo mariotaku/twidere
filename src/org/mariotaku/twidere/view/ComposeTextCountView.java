@@ -6,15 +6,15 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.util.AttributeSet;
-import android.widget.TextView;
 
 import com.twitter.Validator;
 
 import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.view.themed.ThemedTextView;
 
 import java.util.Locale;
 
-public class ComposeTextCountView extends TextView {
+public class ComposeTextCountView extends ThemedTextView {
 
 	private final int mTextColor;
 	private final Locale mLocale;

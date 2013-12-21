@@ -35,7 +35,7 @@
 			android:paddingRight="@dimen/item_menu_card_padding_compact"
 			android:paddingTop="@dimen/element_spacing_default">
 
-			<org.mariotaku.twidere.view.ForegroundImageView
+			<org.mariotaku.twidere.view.HighlightImageView
 				android:id="@+id/profile_image"
 				android:layout_width="@dimen/icon_size_card_list_item"
 				android:layout_height="@dimen/icon_size_card_list_item"
@@ -43,7 +43,6 @@
 				android:layout_alignParentTop="true"
 				android:layout_marginRight="@dimen/element_spacing_default"
 				android:contentDescription="@string/profile_image"
-				android:foreground="?android:selectableItemBackground"
 				android:scaleType="fitCenter"/>
 
 			<FrameLayout

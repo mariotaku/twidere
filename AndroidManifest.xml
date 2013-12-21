@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
-	android:versionCode="87"
-	android:versionName="0.2.9.7-update2">
+	android:versionCode="88"
+	android:versionName="0.2.9.8">
 
 	<uses-sdk
 		android:minSdkVersion="14"
@@ -179,6 +179,7 @@
 		<activity
 			android:name=".activity.SettingsActivity"
 			android:label="@string/settings"
+			android:theme="@style/Theme.Twidere.Settings"
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
 				<action android:name="android.intent.action.MANAGE_NETWORK_USAGE"/>
@@ -394,7 +395,7 @@
 		<activity
 			android:name=".activity.CustomTabsActivity"
 			android:label="@string/tabs"
-			android:theme="@style/Theme.Blank"/>
+			android:theme="@style/Theme.Twidere.Settings"/>
 		<activity
 			android:name=".activity.support.CustomTabEditorActivity"
 			android:exported="false"
@@ -421,7 +422,7 @@
 			android:name=".activity.DataProfilingSettingsActivity"
 			android:exported="false"
 			android:label="@string/data_profiling"
-			android:theme="@style/Theme.Blank"/>
+			android:theme="@style/Theme.Twidere.Settings"/>
 		<activity
 			android:name=".activity.support.RequestPermissionsActivity"
 			android:label="@string/permissions_request"
@@ -459,7 +460,7 @@
 		<activity
 			android:name=".activity.TestActivity"
 			android:launchMode="singleTop"
-			android:theme="@style/Theme.Test"
+			android:theme="@style/Theme.Twidere.Settings"
 			android:windowSoftInputMode="adjustResize"/>
 		<activity
 			android:name=".activity.NyanActivity"

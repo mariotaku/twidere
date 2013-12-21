@@ -452,8 +452,9 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 			mName = bundle != null ? bundle.getString(EXTRA_LIST_NAME) : null;
 			mDescription = bundle != null ? bundle.getString(EXTRA_DESCRIPTION) : null;
 			mIsPublic = bundle != null ? bundle.getBoolean(EXTRA_IS_PUBLIC, true) : true;
-			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			final View view = LayoutInflater.from(getActivity()).inflate(R.layout.edit_user_list_detail, null);
+			final Context wrapped = ThemeUtils.getDialogThemedContext(getActivity());
+			final AlertDialog.Builder builder = new AlertDialog.Builder(wrapped);
+			final View view = LayoutInflater.from(wrapped).inflate(R.layout.edit_user_list_detail, null);
 			builder.setView(view);
 			mEditName = (EditText) view.findViewById(R.id.name);
 			mEditDescription = (EditText) view.findViewById(R.id.description);

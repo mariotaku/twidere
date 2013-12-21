@@ -2,6 +2,7 @@ package org.mariotaku.twidere.fragment.support;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -9,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.Utils;
 
 public class CreateUserBlockDialogFragment extends BaseSupportDialogFragment implements DialogInterface.OnClickListener {
@@ -31,10 +33,11 @@ public class CreateUserBlockDialogFragment extends BaseSupportDialogFragment imp
 
 	@Override
 	public Dialog onCreateDialog(final Bundle savedInstanceState) {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		final Context wrapped = ThemeUtils.getDialogThemedContext(getActivity());
+		final AlertDialog.Builder builder = new AlertDialog.Builder(wrapped);
 		final ParcelableUser user = getUser();
 		if (user != null) {
-			final String display_name = Utils.getDisplayName(getActivity(), user.id, user.name, user.screen_name);
+			final String display_name = Utils.getDisplayName(wrapped, user.id, user.name, user.screen_name);
 			builder.setTitle(getString(R.string.block_user, display_name));
 			builder.setMessage(getString(R.string.block_user_confirm_message, display_name));
 		}

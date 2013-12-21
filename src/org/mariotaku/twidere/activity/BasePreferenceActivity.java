@@ -21,18 +21,14 @@ package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.Utils.restartActivity;
 
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.support.v4.app.NavUtils;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.activity.iface.IThemedActivity;
 import org.mariotaku.twidere.util.ThemeUtils;
 
-public abstract class BaseThemedPreferenceActivity extends PreferenceActivity implements Constants, IThemedActivity {
-
-	private int mCurrentThemeResource, mCurrentThemeColor;
+public abstract class BasePreferenceActivity extends PreferenceActivity implements Constants {
 
 	@Override
 	public void finish() {
@@ -40,39 +36,11 @@ public abstract class BaseThemedPreferenceActivity extends PreferenceActivity im
 		overrideCloseAnimationIfNeeded();
 	}
 
-	@Override
-	public final int getCurrentThemeResource() {
-		return mCurrentThemeResource;
-	}
-
-	@Override
-	public Resources getDefaultResources() {
-		return super.getResources();
-	}
-
-	@Override
-	public Resources getResources() {
-		return getThemedResources();
-	}
-
-	@Override
-	public abstract int getThemeColor();
-
-	@Override
-	public final Resources getThemedResources() {
-		return super.getResources();
-	}
-
-	@Override
-	public abstract int getThemeResource();
-
-	@Override
 	public void navigateUpFromSameTask() {
 		NavUtils.navigateUpFromSameTask(this);
 		overrideCloseAnimationIfNeeded();
 	}
 
-	@Override
 	public void overrideCloseAnimationIfNeeded() {
 		if (shouldOverrideActivityAnimation()) {
 			ThemeUtils.overrideActivityCloseAnimation(this);
@@ -81,13 +49,8 @@ public abstract class BaseThemedPreferenceActivity extends PreferenceActivity im
 		}
 	}
 
-	@Override
 	public boolean shouldOverrideActivityAnimation() {
 		return true;
-	}
-
-	protected final boolean isThemeChanged() {
-		return getThemeResource() != mCurrentThemeResource || getThemeColor() != mCurrentThemeColor;
 	}
 
 	@Override
@@ -95,35 +58,16 @@ public abstract class BaseThemedPreferenceActivity extends PreferenceActivity im
 		if (shouldOverrideActivityAnimation()) {
 			ThemeUtils.overrideActivityOpenAnimation(this);
 		}
-		setTheme();
 		super.onCreate(savedInstanceState);
 		setActionBarBackground();
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		if (shouldRestartWhenThemeChanged() && isThemeChanged()) {
-			restart();
-		}
 	}
 
 	protected final void restart() {
 		restartActivity(this);
 	}
 
-	protected boolean shouldRestartWhenThemeChanged() {
-		return true;
-	}
-
 	private final void setActionBarBackground() {
 		ThemeUtils.applyActionBarBackground(getActionBar(), this);
-	}
-
-	private final void setTheme() {
-		mCurrentThemeResource = getThemeResource();
-		mCurrentThemeColor = getThemeColor();
-		setTheme(mCurrentThemeResource);
 	}
 
 }

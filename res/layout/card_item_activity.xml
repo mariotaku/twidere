@@ -37,14 +37,13 @@
 			android:paddingRight="24dp"
 			android:paddingTop="@dimen/element_spacing_default">
 
-			<org.mariotaku.twidere.view.ForegroundImageView
+			<org.mariotaku.twidere.view.HighlightImageView
 				android:id="@+id/profile_image"
 				android:layout_width="@dimen/icon_size_card_list_item"
 				android:layout_height="@dimen/icon_size_card_list_item"
 				android:layout_marginRight="@dimen/element_spacing_default"
 				android:layout_weight="0"
 				android:contentDescription="@string/profile_image"
-				android:foreground="?android:selectableItemBackground"
 				android:scaleType="fitCenter"/>
 
 			<LinearLayout
@@ -93,14 +92,13 @@
 					android:textColor="?android:attr/textColorSecondary"/>
 			</LinearLayout>
 
-			<org.mariotaku.twidere.view.ForegroundImageView
+			<org.mariotaku.twidere.view.HighlightImageView
 				android:id="@+id/my_profile_image"
 				android:layout_width="@dimen/icon_size_card_list_item"
 				android:layout_height="@dimen/icon_size_card_list_item"
 				android:layout_marginLeft="@dimen/element_spacing_default"
 				android:layout_weight="0"
 				android:contentDescription="@string/my_profile_image"
-				android:foreground="?android:selectableItemBackground"
 				android:scaleType="fitCenter"/>
 		</LinearLayout>
 

@@ -310,7 +310,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		mDescriptionContainer.setVisibility(user_is_me || !isEmpty(user.description_html) ? View.VISIBLE : View.GONE);
 		mDescriptionView.setText(user.description_html != null ? Html.fromHtml(user.description_html) : null);
 		final TwidereLinkify linkify = new TwidereLinkify(this);
-		linkify.setHighlightColor(ThemeUtils.getUserThemeColor(getActivity()));
+		linkify.setLinkTextColor(ThemeUtils.getUserLinkTextColor(getActivity()));
 		linkify.applyAllLinks(mDescriptionView, user.account_id, false);
 		mDescriptionView.setMovementMethod(null);
 		mLocationContainer.setVisibility(user_is_me || !isEmpty(user.location) ? View.VISIBLE : View.GONE);

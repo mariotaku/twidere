@@ -48,7 +48,7 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 	}
 
 	@Override
-	public int getThemeResource() {
+	public int getThemeResourceId() {
 		return ThemeUtils.getThemeResource(this);
 	}
 

@@ -125,7 +125,7 @@ public class BaseArrayAdapter<T> extends ArrayAdapter<T> implements IBaseAdapter
 
 	@Override
 	public final void setLinkHighlightColor(final int color) {
-		mLinkify.setHighlightColor(color);
+		mLinkify.setLinkTextColor(color);
 		if (color == mLinkHighlightColor) return;
 		mLinkHighlightColor = color;
 		notifyDataSetChanged();

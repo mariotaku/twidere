@@ -423,7 +423,6 @@
   <string name="no_close_after_status_updated">Manter a tela de edição aberta após o tweet ser enviado</string>
   <string name="no_close_after_status_updated_summary">Um presentinho para os tagarelas</string>
   <string name="status_saved_to_draft">Tweet salvo como rascunho.</string>
-  <string name="default_account">Padrão</string>
   <string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g> (<xliff:g id="daily_tweet">%2$d</xliff:g> tweet(s) por dia)</string>
   <string name="empty_content">Nenhum conteúdo</string>
   <string name="fast_image_loading">Carregamento rápido de imagens</string>

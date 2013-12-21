@@ -92,7 +92,7 @@
 			android:textAppearance="?android:textAppearanceMedium"
 			android:textSize="@dimen/accounts_drawer_switch_label_size"/>
 
-		<Switch
+		<com.negusoft.holoaccent.widget.AccentSwitch
 			android:id="@+id/toggle"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"

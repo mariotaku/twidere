@@ -9,7 +9,7 @@
 	<org.mariotaku.twidere.preference.WizardPageNavPreference
 		android:key="use_defaults"
 		android:order="12"
-		android:title="@string/wizard_page_welcome_use_default_settings"/>
+		android:title="@string/wizard_page_welcome_not_now"/>
 	<!--
 	<org.mariotaku.twidere.preference.WizardPageNavPreference
 		android:key="import_settings"

@@ -31,6 +31,7 @@ import android.os.Bundle;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.ParseUtils;
+import org.mariotaku.twidere.util.ThemeUtils;
 
 public class SensitiveContentWarningDialogFragment extends BaseSupportDialogFragment implements OnClickListener {
 
@@ -51,7 +52,8 @@ public class SensitiveContentWarningDialogFragment extends BaseSupportDialogFrag
 
 	@Override
 	public Dialog onCreateDialog(final Bundle savedInstanceState) {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		final Context wrapped = ThemeUtils.getDialogThemedContext(getActivity());
+		final AlertDialog.Builder builder = new AlertDialog.Builder(wrapped);
 		builder.setTitle(android.R.string.dialog_alert_title);
 		builder.setMessage(R.string.sensitive_content_warning);
 		builder.setPositiveButton(android.R.string.ok, this);

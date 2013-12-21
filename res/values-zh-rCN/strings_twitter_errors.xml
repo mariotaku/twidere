@@ -9,6 +9,7 @@
   <string name="error_130">Twitter临时处于超载状态，请稍后再试</string>
   <string name="error_131">Twitter的服务器可能宕机了，请稍后再试</string>
   <string name="error_135">请检查你的系统时间设定</string>
+  <string name="error_162">你被这个用户阻止了</string>
   <string name="error_172">你已经保存这个搜索了</string>
   <string name="error_179">你不能查看这个受保护用户的推文</string>
   <string name="error_187">你已经发送过这条推了</string>

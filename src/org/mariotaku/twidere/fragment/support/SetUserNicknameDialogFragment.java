@@ -5,6 +5,7 @@ import static org.mariotaku.twidere.util.UserColorNicknameUtils.setUserNickname;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.FrameLayout;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.ParseUtils;
+import org.mariotaku.twidere.util.ThemeUtils;
 
 public class SetUserNicknameDialogFragment extends BaseSupportDialogFragment implements OnClickListener {
 
@@ -37,12 +39,13 @@ public class SetUserNicknameDialogFragment extends BaseSupportDialogFragment imp
 	@Override
 	public Dialog onCreateDialog(final Bundle savedInstanceState) {
 		final Bundle args = getArguments();
-		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		final Context wrapped = ThemeUtils.getDialogThemedContext(getActivity());
+		final AlertDialog.Builder builder = new AlertDialog.Builder(wrapped);
 		builder.setTitle(R.string.set_nickname);
 		builder.setPositiveButton(android.R.string.ok, this);
 		builder.setNegativeButton(android.R.string.cancel, null);
-		final FrameLayout view = new FrameLayout(getActivity());
-		mEditText = new EditText(getActivity());
+		final FrameLayout view = new FrameLayout(wrapped);
+		mEditText = new EditText(wrapped);
 		final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
 				FrameLayout.LayoutParams.WRAP_CONTENT);
 		lp.leftMargin = lp.topMargin = lp.bottomMargin = lp.rightMargin = getResources().getDimensionPixelSize(

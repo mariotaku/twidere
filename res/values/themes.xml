@@ -12,7 +12,11 @@
 
 	<style name="Theme.Blank.Dialog" parent="android:Theme.Holo.Dialog"/>
 
-	<style name="Theme.Twidere.Dark" parent="android:Theme.Holo">
+	<style name="Theme.Twidere.Dark" parent="Theme.HoloAccent">
+
+		<!-- Accent Colors -->
+		<item name="accentColor">#ff0099cc</item>
+		<item name="accentColorTranslucent">#660099cc</item>
 
 		<!-- Colors -->
 		<item name="android:colorBackgroundCacheHint">@color/bg_color_dark</item>
@@ -23,10 +27,6 @@
 
 		<!-- ActionBar styles -->
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Dark</item>
-		<item name="android:actionButtonStyle">@style/Widget.Twidere.ActionButton</item>
-		<item name="android:actionBarItemBackground">@drawable/item_background_holo_dark</item>
-		<!-- <item name="android:actionBarTabStyle">@style/Widget.Twidere.Dark.ActionBar.TabView</item> -->
-
 
 		<!-- Custom view styles -->
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
@@ -43,20 +43,6 @@
 		<item name="cardItemMessageProfileImageOutgoingBackground">@drawable/bg_card_item_message_profile_image_outgoing_dark</item>
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_dark</item>
 
-		<!-- Text styles -->
-		<!--
-		<item name="android:textColorHighlight">@color/highlighted_text_holo_dark</item>
-		<item name="android:textColorHighlightInverse">@color/highlighted_text_holo_light</item>
-		<item name="android:textColorLink">@color/text_link_holo_dark</item>
-		<item name="android:textColorLinkInverse">@color/text_link_holo_light</item>
-		-->
-		<!-- Button styles -->
-		<item name="android:selectableItemBackground">@drawable/item_background_holo_dark</item>
-
-		<!-- List attributes -->
-		<item name="android:listChoiceBackgroundIndicator">@drawable/list_selector_holo_dark</item>
-		<item name="android:activatedBackgroundIndicator">@drawable/activated_background_holo_dark</item>
-
 		<!-- Widget styles -->
 		<item name="android:textViewStyle">@style/Widget.Twidere.TextView</item>
 		<item name="android:radioButtonStyle">@style/Widget.Twidere.CompoundButton.RadioButton</item>
@@ -65,7 +51,11 @@
 		<item name="android:dropDownSpinnerStyle">@style/Widget.Twidere.Spinner.DropDown</item>
 	</style>
 
-	<style name="Theme.Twidere.Light" parent="android:Theme.Holo.Light">
+	<style name="Theme.Twidere.Light" parent="Theme.HoloAccent.Light">
+
+		<!-- Accent Colors -->
+		<item name="accentColor">#ff0099cc</item>
+		<item name="accentColorTranslucent">#660099cc</item>
 
 		<!-- Colors -->
 		<item name="android:colorBackgroundCacheHint">@color/bg_color_light</item>
@@ -96,20 +86,6 @@
 		<item name="cardItemMessageProfileImageOutgoingBackground">@drawable/bg_card_item_message_profile_image_outgoing_light</item>
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_light</item>
 
-		<!-- Text styles -->
-		<!--
-		<item name="android:textColorHighlight">@color/highlighted_text_holo_light</item>
-		<item name="android:textColorHighlightInverse">@color/highlighted_text_holo_dark</item>
-		<item name="android:textColorLink">@color/text_link_holo_light</item>
-		<item name="android:textColorLinkInverse">@color/text_link_holo_dark</item>
-		-->
-		<!-- Button styles -->
-		<item name="android:selectableItemBackground">@drawable/item_background_holo_light</item>
-
-		<!-- List attributes -->
-		<item name="android:listChoiceBackgroundIndicator">@drawable/list_selector_holo_light</item>
-		<item name="android:activatedBackgroundIndicator">@drawable/activated_background_holo_light</item>
-
 		<!-- Widget styles -->
 		<item name="android:textViewStyle">@style/Widget.Twidere.Light.TextView</item>
 		<item name="android:radioButtonStyle">@style/Widget.Twidere.Light.CompoundButton.RadioButton</item>
@@ -118,7 +94,11 @@
 		<item name="android:dropDownSpinnerStyle">@style/Widget.Twidere.Light.Spinner.DropDown</item>
 	</style>
 
-	<style name="Theme.Twidere.Light.DarkActionBar" parent="android:Theme.Holo.Light.DarkActionBar">
+	<style name="Theme.Twidere.Light.DarkActionBar" parent="Theme.HoloAccent.Light.DarkActionBar">
+
+		<!-- Accent Colors -->
+		<item name="accentColor">#ff0099cc</item>
+		<item name="accentColorTranslucent">#660099cc</item>
 
 		<!-- Colors -->
 		<item name="android:colorBackgroundCacheHint">@color/bg_color_light</item>
@@ -149,20 +129,6 @@
 		<item name="cardItemMessageProfileImageOutgoingBackground">@drawable/bg_card_item_message_profile_image_outgoing_light</item>
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_light</item>
 
-		<!-- Text styles -->
-		<!--
-		<item name="android:textColorHighlight">@color/highlighted_text_holo_light</item>
-		<item name="android:textColorHighlightInverse">@color/highlighted_text_holo_dark</item>
-		<item name="android:textColorLink">@color/text_link_holo_light</item>
-		<item name="android:textColorLinkInverse">@color/text_link_holo_dark</item>
-		-->
-		<!-- Button styles -->
-		<item name="android:selectableItemBackground">@drawable/item_background_holo_light</item>
-
-		<!-- List attributes -->
-		<item name="android:listChoiceBackgroundIndicator">@drawable/list_selector_holo_light</item>
-		<item name="android:activatedBackgroundIndicator">@drawable/activated_background_holo_light</item>
-
 		<!-- Widget styles -->
 		<item name="android:textViewStyle">@style/Widget.Twidere.Light.TextView</item>
 		<item name="android:radioButtonStyle">@style/Widget.Twidere.Light.CompoundButton.RadioButton</item>
@@ -171,7 +137,7 @@
 		<item name="android:dropDownSpinnerStyle">@style/Widget.Twidere.Light.Spinner.DropDown</item>
 	</style>
 
-	<style name="Theme.Twidere.Colored" parent="android:Theme.Holo.Light">
+	<style name="Theme.Twidere.Colored" parent="Theme.Twidere.Light">
 
 		<!-- ActionBar styles -->
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Colored</item>
@@ -184,21 +150,11 @@
 		<item name="android:actionBarWidgetTheme">@style/Theme.Twidere.ActionBar.Colored.Dark</item>
 	</style>
 
-	<style name="Theme.Twidere.ActionBar.Colored.Dark" parent="android:Theme.Holo">
+	<style name="Theme.Twidere.ActionBar.Colored.Dark" parent="Theme.HoloAccent">
 
-		<!-- Text styles -->
-		<!--
-		<item name="android:textColorHighlight">@color/highlighted_text_holo_dark</item>
-		<item name="android:textColorHighlightInverse">@color/highlighted_text_holo_light</item>
-		<item name="android:textColorLink">@color/text_link_holo_dark</item>
-		<item name="android:textColorLinkInverse">@color/text_link_holo_light</item>
-		-->
-		<!-- Button styles -->
-		<item name="android:selectableItemBackground">@drawable/item_background_holo_dark</item>
-
-		<!-- List attributes -->
-		<item name="android:listChoiceBackgroundIndicator">@drawable/list_selector_holo_dark</item>
-		<item name="android:activatedBackgroundIndicator">@drawable/activated_background_holo_dark</item>
+		<!-- Accent Colors -->
+		<item name="accentColor">#ff0099cc</item>
+		<item name="accentColorTranslucent">#660099cc</item>
 
 		<!-- Widget styles -->
 		<item name="android:textViewStyle">@style/Widget.Twidere.TextView</item>
@@ -401,7 +357,7 @@
 		<item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>
 	</style>
 
-	<style name="Theme.Twidere.Viewer" parent="android:Theme.Holo">
+	<style name="Theme.Twidere.Viewer" parent="Theme.HoloAccent">
 
 		<!-- Window attributes -->
 		<item name="android:windowActionBarOverlay">true</item>
@@ -421,13 +377,6 @@
 		<item name="cardItemMessageProfileImageOutgoingBackground">@drawable/bg_card_item_message_profile_image_outgoing_dark</item>
 		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_dark</item>
 
-		<!-- Button styles -->
-		<item name="android:selectableItemBackground">@drawable/item_background_holo_dark</item>
-
-		<!-- List attributes -->
-		<item name="android:listChoiceBackgroundIndicator">@drawable/list_selector_holo_dark</item>
-		<item name="android:activatedBackgroundIndicator">@drawable/activated_background_holo_dark</item>
-
 		<!-- Widget styles -->
 		<item name="android:textViewStyle">@style/Widget.Twidere.TextView</item>
 		<item name="android:radioButtonStyle">@style/Widget.Twidere.CompoundButton.RadioButton</item>
@@ -442,11 +391,6 @@
 		<!-- Window attributes -->
 		<item name="android:windowBackground">@color/bg_color_transparent_light</item>
 		<item name="android:windowShowWallpaper">true</item>
-	</style>
-
-	<style name="Theme.Twidere.Wizard" parent="Theme.Twidere.Colored.DarkActionBar">
-		<item name="android:windowNoTitle">true</item>
-		<item name="android:windowActionBar">false</item>
 	</style>
 
 	<style name="Theme.Twidere.Drawer.Dark" parent="Theme.Twidere.Dark">
@@ -483,6 +427,39 @@
 
 	<style name="Theme.Nyan" parent="android:Theme.Holo.NoActionBar">
 		<item name="android:windowBackground">@color/nyan_background</item>
+	</style>
+
+	<style name="Theme.Twidere.Settings" parent="android:Theme.Holo.Light">
+
+		<!-- Window attributes -->
+		<item name="android:windowAnimationStyle">@style/Animation.Twidere.Activity</item>
+
+		<!-- Custom view styles -->
+		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
+		<item name="tabItemContentStyle">@style/Widget.TabPageIndicator.TabItem.Content</item>
+		<item name="tabItemTextStyle">@style/Widget.TabPageIndicator.TabItem.TextView.Light</item>
+
+		<!-- Card UI styles -->
+		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
+		<item name="cardItemBackgroundColor">#f8f8f8</item>
+		<item name="cardItemSelector">@drawable/card_item_selector_activated_holo_light</item>
+		<item name="cardItemMessageIncomingBackground">@drawable/bg_card_item_message_incoming_light</item>
+		<item name="cardItemMessageOutgoingBackground">@drawable/bg_card_item_message_outgoing_light</item>
+		<item name="cardItemMessageProfileImageIncomingBackground">@drawable/bg_card_item_message_profile_image_incoming_light</item>
+		<item name="cardItemMessageProfileImageOutgoingBackground">@drawable/bg_card_item_message_profile_image_outgoing_light</item>
+		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_light</item>
+
+		<!-- Widget styles -->
+		<item name="android:textViewStyle">@style/Widget.Twidere.Light.TextView</item>
+		<item name="android:radioButtonStyle">@style/Widget.Twidere.Light.CompoundButton.RadioButton</item>
+		<item name="android:checkboxStyle">@style/Widget.Twidere.Light.CompoundButton.CheckBox</item>
+		<item name="android:spinnerStyle">?android:dropDownSpinnerStyle</item>
+		<item name="android:dropDownSpinnerStyle">@style/Widget.Twidere.Light.Spinner.DropDown</item>
+	</style>
+
+	<style name="Theme.Twidere.Wizard" parent="Theme.Twidere.Settings">
+		<item name="android:windowNoTitle">true</item>
+		<item name="android:windowActionBar">false</item>
 	</style>
 
 </resources>

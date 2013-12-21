@@ -46,6 +46,13 @@ public class LeftDrawerFrameLayout extends FrameLayout {
 		}
 	}
 
+	@Override
+	public void setLayerType(final int layerType, final Paint paint) {
+		final int currLayerType = getLayerType();
+		if (layerType == currLayerType) return;
+		super.setLayerType(layerType, paint);
+	}
+
 	public void setPercentOpen(final float percentOpen) {
 		if (mPercentOpen == percentOpen) return;
 		mPercentOpen = percentOpen;

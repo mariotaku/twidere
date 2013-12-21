@@ -122,6 +122,7 @@ import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ContentValuesCreator;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.ParseUtils;
+import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.util.accessor.ViewAccessor;
 import org.mariotaku.twidere.view.ComposeTextCountView;
@@ -152,15 +153,15 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 	private AsyncTwitterWrapper mTwitterWrapper;
 	private LocationManager mLocationManager;
 	private SharedPreferences mPreferences;
-
 	private ParcelableLocation mRecentLocation;
+
 	private ContentResolver mResolver;
 	private ImageLoaderWrapper mImageLoader;
 	private AsyncTask<Void, Void, ?> mTask;
 	private PopupMenu mPopupMenu;
 	private TextView mTitleView, mSubtitleView;
-
 	private ImageView mImageThumbnailPreview;
+
 	private MenuBar mBottomMenuBar, mActionMenuBar;
 	private IColorLabelView mColorIndicator;
 	private EditText mEditText;
@@ -168,22 +169,21 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 	private Gallery mAccountSelector;
 	private View mAccountSelectorDivider, mBottomSendDivider;
 	private View mBottomMenuContainer;
-
 	private AccountSelectorAdapter mAccountSelectorAdapter;
 
 	private boolean mIsPossiblySensitive, mShouldSaveAccounts;
 
 	private long[] mAccountIds, mSendAccountIds;
+
 	private int mMediaType;
 	private Uri mMediaUri, mTempPhotoUri;
-
 	private boolean mImageUploaderUsed, mTweetShortenerUsed;
+
 	private ParcelableStatus mInReplyToStatus;
 	private ParcelableUser mMentionUser;
 	private DraftItem mDraftItem;
 	private long mInReplyToStatusId;
 	private String mOriginalText;
-
 	private View mSendView, mBottomSendView;
 
 	@Override
@@ -202,7 +202,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 	}
 
 	@Override
-	public int getThemeResource() {
+	public int getThemeResourceId() {
 		return getComposeThemeResource(this);
 	}
 
@@ -1115,7 +1115,8 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 
 		@Override
 		public Dialog onCreateDialog(final Bundle savedInstanceState) {
-			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			final Context wrapped = ThemeUtils.getDialogThemedContext(getActivity());
+			final AlertDialog.Builder builder = new AlertDialog.Builder(wrapped);
 			builder.setMessage(R.string.unsaved_status);
 			builder.setPositiveButton(R.string.save, this);
 			builder.setNegativeButton(R.string.discard, this);
