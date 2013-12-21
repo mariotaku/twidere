@@ -39,7 +39,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
 
-import org.mariotaku.popupmenu.PopupMenu;
+import org.mariotaku.menucomponent.widget.PopupMenu;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.ParcelableUserListsAdapter;
 import org.mariotaku.twidere.adapter.iface.IBaseCardAdapter.MenuButtonClickListener;
@@ -254,9 +254,9 @@ abstract class BaseUserListsListFragment extends BasePullToRefreshListFragment i
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_user_list);
 		final Menu menu = mPopupMenu.getMenu();
-		final boolean is_my_list = user_list.user_id == user_list.account_id;
-		setMenuItemAvailability(menu, MENU_ADD, is_my_list);
-		setMenuItemAvailability(menu, MENU_DELETE_SUBMENU, is_my_list);
+		final boolean isMyList = user_list.user_id == user_list.account_id;
+		setMenuItemAvailability(menu, MENU_ADD, isMyList);
+		setMenuItemAvailability(menu, MENU_DELETE_SUBMENU, isMyList);
 		final Intent extensions_intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER_LIST);
 		final Bundle extensions_extras = new Bundle();
 		extensions_extras.putParcelable(EXTRA_USER_LIST, mSelectedUserList);

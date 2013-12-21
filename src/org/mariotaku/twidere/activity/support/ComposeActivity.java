@@ -102,8 +102,8 @@ import com.twitter.Validator;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.CroutonStyle;
 
-import org.mariotaku.menubar.MenuBar;
-import org.mariotaku.popupmenu.PopupMenu;
+import org.mariotaku.menucomponent.widget.MenuBar;
+import org.mariotaku.menucomponent.widget.PopupMenu;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.BaseArrayAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;

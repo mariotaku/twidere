@@ -18,8 +18,10 @@ public class ThemedAutoCompleteTextView extends AutoCompleteTextView {
 
 	public ThemedAutoCompleteTextView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		setLinkTextColor(ThemeUtils.getUserLinkTextColor(context));
-		setHighlightColor(ThemeUtils.getUserHighlightColor(context));
+		if (!isInEditMode()) {
+			setLinkTextColor(ThemeUtils.getUserLinkTextColor(context));
+			setHighlightColor(ThemeUtils.getUserHighlightColor(context));
+		}
 	}
 
 }

@@ -429,10 +429,49 @@
 		<item name="android:windowBackground">@color/nyan_background</item>
 	</style>
 
-	<style name="Theme.Twidere.Settings" parent="android:Theme.Holo.Light">
+	<style name="Theme.Twidere.Settings.Dark" parent="android:Theme.Holo">
+
+		<!-- Colors -->
+		<item name="android:colorBackgroundCacheHint">@color/bg_color_dark</item>
 
 		<!-- Window attributes -->
 		<item name="android:windowAnimationStyle">@style/Animation.Twidere.Activity</item>
+		<item name="android:windowBackground">@color/bg_color_dark</item>
+
+		<!-- ActionBar styles -->
+		<item name="android:actionBarStyle">@android:style/Widget.Holo.ActionBar.Solid</item>
+
+		<!-- Custom view styles -->
+		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
+		<item name="tabItemContentStyle">@style/Widget.TabPageIndicator.TabItem.Content</item>
+		<item name="tabItemTextStyle">@style/Widget.TabPageIndicator.TabItem.TextView.Dark</item>
+
+		<!-- Card UI styles -->
+		<item name="cardItemBackground">@drawable/bg_card_item_dark</item>
+		<item name="cardItemBackgroundColor">#1a1a1a</item>
+		<item name="cardItemSelector">@drawable/card_item_selector_activated_holo_dark</item>
+		<item name="cardItemMessageIncomingBackground">@drawable/bg_card_item_message_incoming_dark</item>
+		<item name="cardItemMessageOutgoingBackground">@drawable/bg_card_item_message_outgoing_dark</item>
+		<item name="cardItemMessageProfileImageIncomingBackground">@drawable/bg_card_item_message_profile_image_incoming_dark</item>
+		<item name="cardItemMessageProfileImageOutgoingBackground">@drawable/bg_card_item_message_profile_image_outgoing_dark</item>
+		<item name="listMenuOverflowButton">@drawable/ic_list_menu_moreoverflow_normal_holo_dark</item>
+
+		<!-- Widget styles -->
+		<item name="android:textViewStyle">@style/Widget.Twidere.TextView</item>
+		<item name="android:radioButtonStyle">@style/Widget.Twidere.CompoundButton.RadioButton</item>
+		<item name="android:checkboxStyle">@style/Widget.Twidere.CompoundButton.CheckBox</item>
+		<item name="android:spinnerStyle">?android:dropDownSpinnerStyle</item>
+		<item name="android:dropDownSpinnerStyle">@style/Widget.Twidere.Spinner.DropDown</item>
+	</style>
+
+	<style name="Theme.Twidere.Settings.Light" parent="android:Theme.Holo.Light">
+
+		<!-- Colors -->
+		<item name="android:colorBackgroundCacheHint">@color/bg_color_light</item>
+
+		<!-- Window attributes -->
+		<item name="android:windowAnimationStyle">@style/Animation.Twidere.Activity</item>
+		<item name="android:windowBackground">@color/bg_color_light</item>
 
 		<!-- Custom view styles -->
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
@@ -457,7 +496,7 @@
 		<item name="android:dropDownSpinnerStyle">@style/Widget.Twidere.Light.Spinner.DropDown</item>
 	</style>
 
-	<style name="Theme.Twidere.Wizard" parent="Theme.Twidere.Settings">
+	<style name="Theme.Twidere.Wizard" parent="Theme.Twidere.Settings.Light">
 		<item name="android:windowNoTitle">true</item>
 		<item name="android:windowActionBar">false</item>
 	</style>

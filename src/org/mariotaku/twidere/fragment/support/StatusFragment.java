@@ -93,7 +93,7 @@ import com.scvngr.levelup.views.gallery.Gallery;
 
 import edu.ucdavis.earlybird.ProfilingUtil;
 
-import org.mariotaku.menubar.MenuBar;
+import org.mariotaku.menucomponent.widget.MenuBar;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.support.ColorPickerDialogActivity;
 import org.mariotaku.twidere.activity.support.LinkHandlerActivity;

@@ -242,6 +242,11 @@ public class ThemeUtils implements Constants {
 		return d;
 	}
 
+	public static int getSettingsThemeResource(final Context context) {
+		if (isDarkTheme(context)) return R.style.Theme_Twidere_Settings_Dark;
+		return R.style.Theme_Twidere_Settings_Light;
+	}
+
 	public static int getTextAppearanceLarge(final Context context) {
 		final Context wrapped = getThemedContext(context, getResources(context));
 		final TypedArray a = wrapped.obtainStyledAttributes(new int[] { android.R.attr.textAppearanceLarge });

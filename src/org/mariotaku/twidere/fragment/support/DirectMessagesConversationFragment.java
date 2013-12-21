@@ -61,7 +61,7 @@ import android.widget.TextView.OnEditorActionListener;
 
 import com.twitter.Validator;
 
-import org.mariotaku.popupmenu.PopupMenu;
+import org.mariotaku.menucomponent.widget.PopupMenu;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.support.UserListSelectorActivity;
 import org.mariotaku.twidere.adapter.AccountsSpinnerAdapter;

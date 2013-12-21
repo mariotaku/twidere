@@ -30,10 +30,16 @@ import org.mariotaku.twidere.util.ThemeUtils;
 
 public abstract class BasePreferenceActivity extends PreferenceActivity implements Constants {
 
+	private int mCurrentThemeResource;
+
 	@Override
 	public void finish() {
 		super.finish();
 		overrideCloseAnimationIfNeeded();
+	}
+
+	public int getThemeResourceId() {
+		return ThemeUtils.getSettingsThemeResource(this);
 	}
 
 	public void navigateUpFromSameTask() {
@@ -53,13 +59,26 @@ public abstract class BasePreferenceActivity extends PreferenceActivity implemen
 		return true;
 	}
 
+	protected final boolean isThemeChanged() {
+		return getThemeResourceId() != mCurrentThemeResource;
+	}
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		if (shouldOverrideActivityAnimation()) {
 			ThemeUtils.overrideActivityOpenAnimation(this);
 		}
+		setTheme(mCurrentThemeResource = getThemeResourceId());
 		super.onCreate(savedInstanceState);
 		setActionBarBackground();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (isThemeChanged()) {
+			restart();
+		}
 	}
 
 	protected final void restart() {
