@@ -562,7 +562,6 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		mAccountSelector.setOnItemClickListener(this);
 		mAccountSelector.setOnItemLongClickListener(this);
 		mAccountSelector.setScrollAfterItemClickEnabled(false);
-		mAccountSelector.setScrollWhenChildsLesserThanItems(false);
 		mAccountSelector.setScrollRightSpacingEnabled(false);
 
 		final Intent intent = getIntent();

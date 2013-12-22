@@ -144,8 +144,10 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 				break;
 			}
 			case REQUEST_SET_COLOR: {
-				if (resultCode == BaseSupportActivity.RESULT_OK && data != null) {
-					mUserColor = data.getIntExtra(EXTRA_COLOR, Color.TRANSPARENT);
+				if (resultCode == BaseSupportActivity.RESULT_OK) {
+					mUserColor = data != null ? data.getIntExtra(EXTRA_COLOR, Color.TRANSPARENT) : null;
+				} else if (resultCode == ColorPickerDialogActivity.RESULT_CLEARED) {
+					mUserColor = null;
 				}
 				setUserColorButton();
 				break;
@@ -193,6 +195,7 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 					intent.putExtra(EXTRA_COLOR, mUserColor);
 				}
 				intent.putExtra(EXTRA_ALPHA_SLIDER, false);
+				intent.putExtra(EXTRA_CLEAR_BUTTON, true);
 				startActivityForResult(intent, REQUEST_SET_COLOR);
 				break;
 			}

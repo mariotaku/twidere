@@ -68,16 +68,17 @@ public class HandleSpanClickTextView extends ThemedTextView {
 			if (links.length != 0 && x <= lineWidth) {
 				final ClickableSpan link = links[0];
 				if (action == MotionEvent.ACTION_UP) {
-					link.onClick(this);
+					Selection.removeSelection(buffer);
 					setClickable(false);
+					link.onClick(this);
 					return true;
 				} else if (action == MotionEvent.ACTION_DOWN) {
 					Selection.setSelection(buffer, buffer.getSpanStart(link), buffer.getSpanEnd(link));
 					setClickable(true);
 				}
 			} else {
-				setClickable(false);
 				Selection.removeSelection(buffer);
+				setClickable(false);
 			}
 		}
 		return super.onTouchEvent(event);

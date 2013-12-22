@@ -465,9 +465,13 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	public void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
 		switch (requestCode) {
 			case REQUEST_SET_COLOR: {
-				if (resultCode == Activity.RESULT_OK && intent != null && mStatus != null) {
+				if (mStatus == null) return;
+				if (resultCode == Activity.RESULT_OK) {
+					if (intent == null) return;
 					final int color = intent.getIntExtra(EXTRA_COLOR, Color.TRANSPARENT);
 					setUserColor(getActivity(), mStatus.user_id, color);
+				} else if (resultCode == ColorPickerDialogActivity.RESULT_CLEARED) {
+					clearUserColor(getActivity(), mStatus.user_id);
 				}
 				break;
 			}
@@ -735,14 +739,13 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			}
 			case MENU_SET_COLOR: {
 				final Intent intent = new Intent(getActivity(), ColorPickerDialogActivity.class);
-				intent.putExtra(EXTRA_COLOR, getUserColor(getActivity(), mStatus.user_id, true));
+				final int color = getUserColor(getActivity(), mStatus.user_id, true);
+				if (color != 0) {
+					intent.putExtra(EXTRA_COLOR, color);
+				}
+				intent.putExtra(EXTRA_CLEAR_BUTTON, color != 0);
 				intent.putExtra(EXTRA_ALPHA_SLIDER, false);
 				startActivityForResult(intent, REQUEST_SET_COLOR);
-				break;
-			}
-			case MENU_CLEAR_COLOR: {
-				clearUserColor(getActivity(), mStatus.user_id);
-				displayStatus(mStatus);
 				break;
 			}
 			case MENU_CLEAR_NICKNAME: {

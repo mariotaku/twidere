@@ -1,28 +1,54 @@
 package org.mariotaku.twidere.view;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.widget.ImageView;
+import android.view.View;
 
 import org.mariotaku.twidere.view.iface.IForegroundView;
 
-public class ForegroundImageView extends ImageView implements IForegroundView {
+public class ForegroundColorView extends View implements IForegroundView {
 
 	private final ForegroundViewHelper mForegroundViewHelper;
 
-	public ForegroundImageView(final Context context) {
+	private final Rect mAlphaRect, mColorRect;
+	private final Paint mPaint;
+
+	private boolean mAlphaPattern;
+
+	private int mNumRectanglesHorizontal;
+
+	private int mNumRectanglesVertical;
+
+	private final int mAlphaPatternSize;
+
+	public ForegroundColorView(final Context context) {
 		this(context, null);
 	}
 
-	public ForegroundImageView(final Context context, final AttributeSet attrs) {
+	public ForegroundColorView(final Context context, final AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
 
-	public ForegroundImageView(final Context context, final AttributeSet attrs, final int defStyle) {
+	public ForegroundColorView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		mForegroundViewHelper = new ForegroundViewHelper(this, context, attrs, defStyle);
+		mAlphaPatternSize = Math.round(getResources().getDisplayMetrics().density * 4);
+		mAlphaRect = new Rect();
+		mColorRect = new Rect();
+		mPaint = new Paint();
+		final TypedArray a = context.obtainStyledAttributes(attrs, new int[] { android.R.attr.color });
+		setColor(a.getColor(0, Color.TRANSPARENT));
+		a.recycle();
+	}
+
+	public int getColor() {
+		return mPaint.getColor();
 	}
 
 	@Override
@@ -34,6 +60,17 @@ public class ForegroundImageView extends ImageView implements IForegroundView {
 	public void jumpDrawablesToCurrentState() {
 		super.jumpDrawablesToCurrentState();
 		mForegroundViewHelper.jumpDrawablesToCurrentState();
+	}
+
+	public void setAlphaPatternEnable(final boolean alphaPattern) {
+		if (mAlphaPattern == alphaPattern) return;
+		mAlphaPattern = alphaPattern;
+		invalidate();
+	}
+
+	public void setColor(final int color) {
+		mPaint.setColor(color);
+		invalidate();
 	}
 
 	/**
@@ -71,7 +108,8 @@ public class ForegroundImageView extends ImageView implements IForegroundView {
 
 	@Override
 	protected void onDraw(final Canvas canvas) {
-		super.onDraw(canvas);
+		drawAlphaPattern(canvas);
+		canvas.drawRect(mColorRect, mPaint);
 		mForegroundViewHelper.onDraw(canvas);
 	}
 
@@ -85,11 +123,34 @@ public class ForegroundImageView extends ImageView implements IForegroundView {
 	protected void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
 		mForegroundViewHelper.onSizeChanged(w, h, oldw, oldh);
+		mColorRect.set(getPaddingLeft(), getPaddingTop(), w - getPaddingRight(), h - getPaddingBottom());
+		mNumRectanglesHorizontal = (int) Math.ceil(w / mAlphaPatternSize);
+		mNumRectanglesVertical = (int) Math.ceil(h / mAlphaPatternSize);
 	}
 
 	@Override
 	protected boolean verifyDrawable(final Drawable who) {
 		return super.verifyDrawable(who) || mForegroundViewHelper.verifyDrawable(who);
+	}
+
+	private void drawAlphaPattern(final Canvas canvas) {
+		if (!mAlphaPattern) return;
+		boolean verticalStartWhite = true;
+		for (int i = 0; i <= mNumRectanglesVertical; i++) {
+			boolean horizontalStartWhite = verticalStartWhite;
+			for (int j = 0; j <= mNumRectanglesHorizontal; j++) {
+				mAlphaRect.top = i * mAlphaPatternSize + getTop();
+				mAlphaRect.left = j * mAlphaPatternSize + getLeft();
+				mAlphaRect.bottom = Math.min(mAlphaRect.top + mAlphaPatternSize, getBottom());
+				mAlphaRect.right = Math.min(mAlphaRect.left + mAlphaPatternSize, getRight());
+
+				mPaint.setColor(horizontalStartWhite ? Color.WHITE : Color.GRAY);
+				canvas.drawRect(mAlphaRect, mPaint);
+
+				horizontalStartWhite = !horizontalStartWhite;
+			}
+			verticalStartWhite = !verticalStartWhite;
+		}
 	}
 
 }

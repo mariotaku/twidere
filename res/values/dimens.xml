@@ -47,7 +47,8 @@
 	<dimen name="item_menu_card_padding_compact">20dp</dimen>
 
 	<!-- Dimensions for color picker -->
-	<dimen name="color_button_width">36dp</dimen>
+	<dimen name="color_button_width">48dp</dimen>
+	<dimen name="color_button_height">48dp</dimen>
 
 	<!-- Dimensions for compose dialog -->
 	<dimen name="compose_min_width">400dp</dimen>
@@ -55,5 +56,8 @@
 
 	<!-- Dimensions for Tab indicator -->
 	<dimen name="tab_item_minwidth_vpi">64dp</dimen>
+
+	<!-- Dimensions for alert dialog -->
+	<dimen name="icon_size_alert_dialog">32dp</dimen>
 
 </resources>

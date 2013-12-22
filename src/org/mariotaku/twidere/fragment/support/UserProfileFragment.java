@@ -435,9 +435,12 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 	public void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
 		switch (requestCode) {
 			case REQUEST_SET_COLOR: {
-				if (resultCode == Activity.RESULT_OK && intent != null) {
+				if (resultCode == Activity.RESULT_OK) {
+					if (intent == null) return;
 					final int color = intent.getIntExtra(EXTRA_COLOR, Color.TRANSPARENT);
 					setUserColor(getActivity(), mUserId, color);
+				} else if (resultCode == ColorPickerDialogActivity.RESULT_CLEARED) {
+					clearUserColor(getActivity(), mUserId);
 				}
 				break;
 			}
@@ -686,11 +689,8 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				final Intent intent = new Intent(getActivity(), ColorPickerDialogActivity.class);
 				intent.putExtra(EXTRA_COLOR, getUserColor(getActivity(), mUser.id, true));
 				intent.putExtra(EXTRA_ALPHA_SLIDER, false);
+				intent.putExtra(EXTRA_CLEAR_BUTTON, true);
 				startActivityForResult(intent, REQUEST_SET_COLOR);
-				break;
-			}
-			case MENU_CLEAR_COLOR: {
-				clearUserColor(getActivity(), mUserId);
 				break;
 			}
 			case MENU_CLEAR_NICKNAME: {

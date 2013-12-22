@@ -490,6 +490,7 @@ public interface TwidereConstants {
 	public static final String EXTRA_RECIPIENT_ID = "recipient_id";
 	public static final String EXTRA_OFFICIAL_KEY_ONLY = "official_key_only";
 	public static final String EXTRA_SEARCH_ID = "search_id";
+	public static final String EXTRA_CLEAR_BUTTON = "clear_button";
 
 	public static final int MENU_GROUP_STATUS_EXTENSION = 10;
 	public static final int MENU_GROUP_COMPOSE_EXTENSION = 11;
