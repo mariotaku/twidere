@@ -48,4 +48,12 @@ public class HomeActionsActionView extends FrameLayout {
 		mIconView.setVisibility(showProgress ? View.GONE : View.VISIBLE);
 	}
 
+	public void setTitle(final CharSequence title) {
+		setContentDescription(title);
+	}
+
+	public void setTitle(final int title) {
+		setTitle(getResources().getText(title));
+	}
+
 }
