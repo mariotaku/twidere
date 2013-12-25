@@ -33,7 +33,7 @@
 			android:paddingRight="@dimen/item_menu_card_padding_compact"
 			android:paddingTop="@dimen/element_spacing_default">
 
-			<org.mariotaku.twidere.view.HighlightImageView
+			<org.mariotaku.twidere.view.ProfileImageView
 				android:id="@+id/profile_image"
 				android:layout_width="@dimen/icon_size_card_list_item"
 				android:layout_height="@dimen/icon_size_card_list_item"
@@ -43,7 +43,7 @@
 				android:contentDescription="@string/profile_image"
 				android:scaleType="fitCenter"/>
 
-			<org.mariotaku.twidere.view.HighlightImageView
+			<org.mariotaku.twidere.view.ProfileImageView
 				android:id="@+id/my_profile_image"
 				android:layout_width="@dimen/icon_size_card_list_item"
 				android:layout_height="@dimen/icon_size_card_list_item"

@@ -10,7 +10,8 @@ import org.mariotaku.twidere.text.TwidereHighLightStyle;
 
 public class LinkHighlightPreference extends AutoInvalidateListPreference implements Constants {
 
-	private static final int[] ENTRIES_RES = { R.string.none, R.string.highlight, R.string.underline, R.string.both };
+	private static final int[] ENTRIES_RES = { R.string.none, R.string.highlight, R.string.underline,
+			R.string.highlight_and_underline };
 	private static final String[] VALUES = { LINK_HIGHLIGHT_OPTION_NONE, LINK_HIGHLIGHT_OPTION_HIGHLIGHT,
 			LINK_HIGHLIGHT_OPTION_UNDERLINE, LINK_HIGHLIGHT_OPTION_BOTH };
 

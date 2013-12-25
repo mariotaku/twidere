@@ -62,11 +62,13 @@ import org.mariotaku.twidere.util.PositionManager;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.util.Utils;
+import org.mariotaku.twidere.util.collection.NoDuplicatesCopyOnWriteArrayList;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -95,7 +97,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 
 	private final Map<Long, Set<Long>> mUnreadCountsToRemove = Collections
 			.synchronizedMap(new HashMap<Long, Set<Long>>());
-	private final Set<Integer> mReadPositions = Collections.synchronizedSet(new HashSet<Integer>());
+	private final List<Integer> mReadPositions = new NoDuplicatesCopyOnWriteArrayList<Integer>();
 
 	private RemoveUnreadCountsTask<Data> mRemoveUnreadCountsTask;
 
@@ -555,12 +557,12 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 	}
 
 	static class RemoveUnreadCountsTask<T> extends AsyncTask<Void, Void, Void> {
-		private final Set<Integer> read_positions;
+		private final List<Integer> read_positions;
 		private final IStatusesAdapter<T> adapter;
 		private final BaseStatusesListFragment<T> fragment;
 
-		RemoveUnreadCountsTask(final Set<Integer> read_positions, final BaseStatusesListFragment<T> fragment) {
-			this.read_positions = Collections.synchronizedSet(new HashSet<Integer>(read_positions));
+		RemoveUnreadCountsTask(final List<Integer> read_positions, final BaseStatusesListFragment<T> fragment) {
+			this.read_positions = read_positions;
 			this.fragment = fragment;
 			this.adapter = fragment.getListAdapter();
 		}

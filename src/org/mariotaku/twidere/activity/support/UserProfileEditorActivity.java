@@ -67,6 +67,7 @@ import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.view.ProfileImageBannerLayout;
+import org.mariotaku.twidere.view.ProfileImageView;
 import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
 
 import java.io.File;
@@ -84,7 +85,8 @@ public class UserProfileEditorActivity extends BaseSupportActivity implements On
 	private AsyncTask<Void, Void, ?> mTask;
 
 	private ProfileImageBannerLayout mProfileImageBannerLayout;
-	private ImageView mProfileImageView, mProfileBannerView;
+	private ProfileImageView mProfileImageView;
+	private ImageView mProfileBannerView;
 	private EditText mEditName, mEditDescription, mEditLocation, mEditUrl;
 	private View mProgress, mContent;
 
@@ -529,7 +531,7 @@ public class UserProfileEditorActivity extends BaseSupportActivity implements On
 		@Override
 		protected void onPostExecute(final SingleResponse<Boolean> result) {
 			super.onPostExecute(result);
-			if (result != null && result.data != null && result.data) {
+			if (result.data != null && result.data) {
 				getUserInfo();
 				Toast.makeText(UserProfileEditorActivity.this, R.string.profile_banner_image_updated,
 						Toast.LENGTH_SHORT).show();

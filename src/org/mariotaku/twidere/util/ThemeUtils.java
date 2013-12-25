@@ -148,6 +148,15 @@ public class ThemeUtils implements Constants {
 		return d;
 	}
 
+	public static int getColorBackgroundCacheHint(final Context context) {
+		final Resources res = getResources(context);
+		final Context wrapped = getThemedContext(context, res);
+		final TypedArray a = wrapped.obtainStyledAttributes(new int[] { android.R.attr.colorBackgroundCacheHint });
+		final int color = a.getColor(0, Color.TRANSPARENT);
+		a.recycle();
+		return color;
+	}
+
 	public static int getComposeThemeResource(final Context context) {
 		return getComposeThemeResource(getThemeNameOption(context), getDarkActionBarOption(context));
 	}
@@ -384,9 +393,6 @@ public class ThemeUtils implements Constants {
 		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final int def = res.getColor(android.R.color.holo_blue_light);
 		return pref.getInt(PREFERENCE_KEY_THEME_COLOR, def);
-		// final int red = Color.red(color), green = Color.green(color), blue =
-		// Color.blue(color);
-		// return Color.argb(getThemeAlpha(context), red, green, blue);
 	}
 
 	public static int getViewerThemeResource(final Context context) {

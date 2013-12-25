@@ -159,6 +159,7 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 		final boolean showGap = status.is_gap && !mGapDisallowed && position != getCount() - 1;
 
 		holder.setShowAsGap(showGap);
+		holder.setDisplayProfileImage(isDisplayProfileImage());
 
 		if (!showGap) {
 			final TwidereLinkify linkify = getLinkify();

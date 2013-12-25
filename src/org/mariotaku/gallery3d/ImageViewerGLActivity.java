@@ -104,7 +104,7 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 
 	@Override
 	public int getThemeResourceId() {
-		return ThemeUtils.getViewerThemeResource(this);
+		return ThemeUtils.getThemeResource(this);
 	}
 
 	public ThreadPool getThreadPool() {
@@ -317,6 +317,10 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 		mHandler = new MyHandler(this);
 		mPhotoView = new PhotoView(this);
 		mPhotoView.setListener(this);
+		final int bgColor = ThemeUtils.getColorBackgroundCacheHint(this);
+		final int r = Color.red(bgColor), g = Color.green(bgColor), b = Color.blue(bgColor);
+		final float[] rootBg = { r / 255f, g / 255f, b / 255f, 1 };
+		mRootPane.setBackgroundColor(rootBg);
 		mRootPane.addComponent(mPhotoView);
 		mAdapter = new PhotoViewAdapter(mPhotoView);
 		mPhotoView.setModel(mAdapter);
@@ -414,7 +418,7 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 	private void hideBars() {
 		if (!mShowBars || isSwiping()) return;
 		mShowBars = false;
-		mActionBar.hide();
+		// mActionBar.hide();
 		mHandler.removeMessages(MSG_HIDE_BARS);
 	}
 
@@ -438,7 +442,7 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 	private void showBars() {
 		if (mShowBars) return;
 		mShowBars = true;
-		mActionBar.show();
+		// mActionBar.show();
 	}
 
 	private void toggleBars() {

@@ -30,24 +30,19 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
-import org.mariotaku.jsonserializer.JSONSerializer;
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.loader.DummyParcelableStatusesLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.ArrayUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 
 public abstract class ParcelableStatusesListFragment extends BaseStatusesListFragment<List<ParcelableStatus>> {
 
 	protected SharedPreferences mPreferences;
-
-	private boolean mIsStatusesSaved;
 
 	private boolean mStatusesRestored;
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
@@ -125,18 +120,6 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 			return new DummyParcelableStatusesLoader(getActivity(), data);
 		final Loader<List<ParcelableStatus>> loader = newLoaderInstance(getActivity(), args);
 		return loader != null ? loader : new DummyParcelableStatusesLoader(getActivity());
-	}
-
-	@Override
-	public void onDestroy() {
-		saveStatuses();
-		super.onDestroy();
-	}
-
-	@Override
-	public void onDestroyView() {
-		saveStatuses();
-		super.onDestroyView();
 	}
 
 	@Override
@@ -220,32 +203,6 @@ public abstract class ParcelableStatusesListFragment extends BaseStatusesListFra
 	}
 
 	protected abstract Loader<List<ParcelableStatus>> newLoaderInstance(Context context, Bundle args);
-
-	protected void saveStatuses() {
-		if (getActivity() == null || getView() == null || mIsStatusesSaved) return;
-		if (saveStatusesInternal()) {
-			mIsStatusesSaved = true;
-		}
-	}
-
-	protected final boolean saveStatusesInternal() {
-		if (mIsStatusesSaved) return true;
-		try {
-			final List<ParcelableStatus> data = getData();
-			if (data == null) return false;
-			final int items_limit = mPreferences.getInt(PREFERENCE_KEY_DATABASE_ITEM_LIMIT,
-					PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
-			final List<ParcelableStatus> statuses = data.subList(0, Math.min(items_limit, data.size()));
-			final File file = JSONSerializer.getSerializationFile(getActivity(), getSavedStatusesFileArgs());
-			JSONSerializer.toFile(file, statuses.toArray(new ParcelableStatus[statuses.size()]));
-		} catch (final IOException e) {
-			return false;
-		} catch (final ConcurrentModificationException e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-	}
 
 	@Override
 	protected void updateRefreshState() {

@@ -37,7 +37,7 @@
 		app:dependencyValues="@array/dependency_values_actionbar_theme"/>
 
 	<org.mariotaku.twidere.preference.ColorPickerPreference
-		android:defaultValue="@android:color/holo_blue_dark"
+		android:defaultValue="@android:color/holo_blue_light"
 		android:key="theme_color"
 		android:order="24"
 		android:title="@string/theme_color"/>

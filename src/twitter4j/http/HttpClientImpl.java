@@ -126,7 +126,7 @@ public class HttpClientImpl extends HttpClientBase implements HttpClient, HttpRe
 								if (param.isFile()) {
 									write(out, boundary + "\r\n");
 									write(out, "Content-Disposition: form-data; name=\"" + param.getName()
-											+ "\"; filename=\"" + param.getFile().getName() + "\"\r\n");
+											+ "\"; filename=\"" + param.getFileName() + "\"\r\n");
 									write(out, "Content-Type: " + param.getContentType() + "\r\n\r\n");
 									final BufferedInputStream in = new BufferedInputStream(
 											param.hasFileBody() ? param.getFileBody() : new FileInputStream(
@@ -201,6 +201,7 @@ public class HttpClientImpl extends HttpClientBase implements HttpClient, HttpRe
 					throw new TwitterException(ioe.getMessage(), req, res);
 			} catch (final NullPointerException e) {
 				// This exception will be thown when URL is invalid.
+				e.printStackTrace();
 				throw new TwitterException("The URL requested is invalid.", e);
 			} catch (final OutOfMemoryError e) {
 				throw new TwitterException(e.getMessage(), e);

@@ -25,7 +25,11 @@ import static org.mariotaku.twidere.util.Utils.getNonEmptyString;
 import static org.mariotaku.twidere.util.Utils.isValidUrl;
 import static org.mariotaku.twidere.util.Utils.trim;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -39,7 +43,9 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.fragment.BaseDialogFragment;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
+import org.mariotaku.twidere.util.ThemeUtils;
 
 import twitter4j.TwitterConstants;
 
@@ -88,29 +94,16 @@ public class APIEditorActivity extends BaseSupportDialogActivity implements Twit
 		final String consumer_key = getNonEmptyString(pref, PREFERENCE_KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY_2);
 		final String consumer_secret = getNonEmptyString(pref, PREFERENCE_KEY_CONSUMER_SECRET,
 				TWITTER_CONSUMER_SECRET_2);
-		final String rest_base_url = getNonEmptyString(pref, PREFERENCE_KEY_REST_BASE_URL, DEFAULT_REST_BASE_URL);
-		final String oauth_base_url = getNonEmptyString(pref, PREFERENCE_KEY_OAUTH_BASE_URL, DEFAULT_OAUTH_BASE_URL);
-		final String signing_rest_base_url = getNonEmptyString(pref, PREFERENCE_KEY_SIGNING_REST_BASE_URL,
-				DEFAULT_SIGNING_REST_BASE_URL);
-		final String signing_oauth_base_url = getNonEmptyString(pref, PREFERENCE_KEY_SIGNING_OAUTH_BASE_URL,
-				DEFAULT_SIGNING_OAUTH_BASE_URL);
-		final int auth_type = pref.getInt(PREFERENCE_KEY_AUTH_TYPE, Accounts.AUTH_TYPE_OAUTH);
+
 		switch (v.getId()) {
 			case R.id.save: {
 				saveEditedText();
 				if (checkUrlErrors()) return;
-				final Intent intent = new Intent();
-				intent.putExtra(Accounts.REST_BASE_URL, isEmpty(mRestBaseURL) ? rest_base_url : mRestBaseURL);
-				intent.putExtra(Accounts.OAUTH_BASE_URL, isEmpty(mOAuthBaseURL) ? oauth_base_url : mOAuthBaseURL);
-				intent.putExtra(Accounts.SIGNING_REST_BASE_URL, isEmpty(mSigningRestBaseURL) ? signing_rest_base_url
-						: mSigningRestBaseURL);
-				intent.putExtra(Accounts.SIGNING_OAUTH_BASE_URL, isEmpty(mSigningOAuthBaseURL) ? signing_oauth_base_url
-						: mSigningOAuthBaseURL);
-				intent.putExtra(Accounts.CONSUMER_KEY, isEmpty(mConsumerKey) ? consumer_key : mConsumerKey);
-				intent.putExtra(Accounts.CONSUMER_SECRET, isEmpty(mConsumerSecret) ? consumer_secret : mConsumerSecret);
-				intent.putExtra(Accounts.AUTH_TYPE, mAuthType != 0 ? mAuthType : auth_type);
-				setResult(RESULT_OK, intent);
-				finish();
+				if (mAuthType == Accounts.AUTH_TYPE_TWIP_O_MODE && !mRestBaseURL.endsWith("/1.1/")) {
+					new TWIPNoticeDialogFragment().show(getFragmentManager(), "twip_o_mode_bug_notice");
+					return;
+				}
+				saveAndFinish();
 				break;
 			}
 			case R.id.advanced_api_config_label: {
@@ -172,6 +165,31 @@ public class APIEditorActivity extends BaseSupportDialogActivity implements Twit
 		outState.putString(Accounts.CONSUMER_SECRET, mConsumerSecret);
 		outState.putInt(Accounts.AUTH_TYPE, mAuthType);
 		super.onSaveInstanceState(outState);
+	}
+
+	public void saveAndFinish() {
+		final SharedPreferences pref = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final String consumerKey = getNonEmptyString(pref, PREFERENCE_KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY_2);
+		final String consumerSecret = getNonEmptyString(pref, PREFERENCE_KEY_CONSUMER_SECRET, TWITTER_CONSUMER_SECRET_2);
+		final String restBaseUrl = getNonEmptyString(pref, PREFERENCE_KEY_REST_BASE_URL, DEFAULT_REST_BASE_URL);
+		final String oauthBaseUrl = getNonEmptyString(pref, PREFERENCE_KEY_OAUTH_BASE_URL, DEFAULT_OAUTH_BASE_URL);
+		final String signingRestBaseUrl = getNonEmptyString(pref, PREFERENCE_KEY_SIGNING_REST_BASE_URL,
+				DEFAULT_SIGNING_REST_BASE_URL);
+		final String signingOAuthBaseUrl = getNonEmptyString(pref, PREFERENCE_KEY_SIGNING_OAUTH_BASE_URL,
+				DEFAULT_SIGNING_OAUTH_BASE_URL);
+		final int authType = pref.getInt(PREFERENCE_KEY_AUTH_TYPE, Accounts.AUTH_TYPE_OAUTH);
+		final Intent intent = new Intent();
+		intent.putExtra(Accounts.REST_BASE_URL, isEmpty(mRestBaseURL) ? restBaseUrl : mRestBaseURL);
+		intent.putExtra(Accounts.OAUTH_BASE_URL, isEmpty(mOAuthBaseURL) ? oauthBaseUrl : mOAuthBaseURL);
+		intent.putExtra(Accounts.SIGNING_REST_BASE_URL, isEmpty(mSigningRestBaseURL) ? signingRestBaseUrl
+				: mSigningRestBaseURL);
+		intent.putExtra(Accounts.SIGNING_OAUTH_BASE_URL, isEmpty(mSigningOAuthBaseURL) ? signingOAuthBaseUrl
+				: mSigningOAuthBaseURL);
+		intent.putExtra(Accounts.CONSUMER_KEY, isEmpty(mConsumerKey) ? consumerKey : mConsumerKey);
+		intent.putExtra(Accounts.CONSUMER_SECRET, isEmpty(mConsumerSecret) ? consumerSecret : mConsumerSecret);
+		intent.putExtra(Accounts.AUTH_TYPE, mAuthType != 0 ? mAuthType : authType);
+		setResult(RESULT_OK, intent);
+		finish();
 	}
 
 	@Override
@@ -251,5 +269,34 @@ public class APIEditorActivity extends BaseSupportDialogActivity implements Twit
 		if (mEditConsumerSecret != null) {
 			mConsumerSecret = parseString(mEditConsumerSecret.getText());
 		}
+	}
+
+	public static class TWIPNoticeDialogFragment extends BaseDialogFragment implements DialogInterface.OnClickListener {
+
+		@Override
+		public void onClick(final DialogInterface dialog, final int which) {
+			switch (which) {
+				case DialogInterface.BUTTON_POSITIVE: {
+					final Activity a = getActivity();
+					if (a instanceof APIEditorActivity) {
+						((APIEditorActivity) a).saveAndFinish();
+					}
+					break;
+				}
+			}
+
+		}
+
+		@Override
+		public Dialog onCreateDialog(final Bundle savedInstanceState) {
+			final Context wrapped = ThemeUtils.getThemedContext(getActivity());
+			final AlertDialog.Builder builder = new AlertDialog.Builder(wrapped);
+			builder.setTitle(android.R.string.dialog_alert_title);
+			builder.setMessage(R.string.twip_api_version_notice_message);
+			builder.setPositiveButton(R.string.save, this);
+			builder.setNegativeButton(android.R.string.cancel, this);
+			return builder.create();
+		}
+
 	}
 }

@@ -803,6 +803,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	@Override
 	protected void setListHeaderFooters(final ListView list) {
+		if (getActivity() == null || isDetached()) return;
 		list.addHeaderView(mHeaderView, null, true);
 	}
 

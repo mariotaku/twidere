@@ -293,7 +293,7 @@ public class RefreshService extends Service implements Constants {
 
 		@Override
 		public boolean isRefreshable(final AccountPreferences pref) {
-			return pref.isAutoRefreshHomeTimelineEnabled();
+			return pref.isAutoRefreshMentionsEnabled();
 		}
 
 	}

@@ -37,7 +37,7 @@
 			android:paddingRight="24dp"
 			android:paddingTop="@dimen/element_spacing_default">
 
-			<org.mariotaku.twidere.view.HighlightImageView
+			<org.mariotaku.twidere.view.ProfileImageView
 				android:id="@+id/profile_image"
 				android:layout_width="@dimen/icon_size_card_list_item"
 				android:layout_height="@dimen/icon_size_card_list_item"
@@ -92,7 +92,7 @@
 					android:textColor="?android:attr/textColorSecondary"/>
 			</LinearLayout>
 
-			<org.mariotaku.twidere.view.HighlightImageView
+			<org.mariotaku.twidere.view.ProfileImageView
 				android:id="@+id/my_profile_image"
 				android:layout_width="@dimen/icon_size_card_list_item"
 				android:layout_height="@dimen/icon_size_card_list_item"

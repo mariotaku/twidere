@@ -76,7 +76,8 @@
 			android:icon="@drawable/ic_launcher"
 			android:label="@string/app_name"
 			android:launchMode="singleTop"
-			android:theme="@style/Theme.Launcher">
+			android:theme="@style/Theme.Launcher"
+			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 
@@ -91,7 +92,8 @@
 			android:icon="@drawable/ic_launcher_hondajojo"
 			android:label="@string/app_name"
 			android:launchMode="singleTop"
-			android:theme="@style/Theme.Launcher">
+			android:theme="@style/Theme.Launcher"
+			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 
@@ -340,7 +342,7 @@
 			android:hardwareAccelerated="true"
 			android:label="@string/view_image"
 			android:launchMode="singleTop"
-			android:theme="@style/Theme.Twidere.Viewer">
+			android:theme="@style/Theme.Blank">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.VIEW_IMAGE"/>
 
@@ -356,7 +358,7 @@
 			android:name=".activity.support.MapViewerActivity"
 			android:exported="false"
 			android:label="@string/view_map"
-			android:theme="@style/Theme.Twidere.Viewer">
+			android:theme="@style/Theme.Blank">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW"/>
 

@@ -46,8 +46,7 @@
 				android:layout_height="@dimen/icon_size_card_list_item"
 				android:layout_weight="0"
 				android:contentDescription="@string/profile_image"
-				android:scaleType="fitCenter"
-				android:src="@drawable/ic_profile_image_default"/>
+				android:scaleType="fitCenter"/>
 
 			<LinearLayout
 				android:layout_width="wrap_content"

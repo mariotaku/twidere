@@ -458,7 +458,8 @@ public final class Utils implements Constants {
 	public static int calculateInSampleSize(final int width, final int height, final int preferredWidth,
 			final int preferredHeight) {
 		if (preferredHeight > height && preferredWidth > width) return 1;
-		return Math.round(Math.max(width, height) / (float) Math.max(preferredWidth, preferredHeight));
+		final int result = Math.round(Math.max(width, height) / (float) Math.max(preferredWidth, preferredHeight));
+		return Math.max(1, result);
 	}
 
 	public static int cancelRetweet(final AsyncTwitterWrapper wrapper, final ParcelableStatus status) {
@@ -932,6 +933,8 @@ public final class Utils implements Constants {
 				return false;
 			} catch (final FileNotFoundException e) {
 				// This shouldn't happen.
+			} catch (final IllegalArgumentException e) {
+				return false;
 			}
 		} else if (imageFile.length() > TWITTER_MAX_IMAGE_SIZE) {
 			// The file size is larger than Twitter's limit.
@@ -3776,6 +3779,7 @@ public final class Utils implements Constants {
 
 	public static boolean truncateMessages(final List<DirectMessage> in, final List<DirectMessage> out,
 			final long since_id) {
+		if (in == null) return false;
 		for (final DirectMessage message : in) {
 			if (since_id > 0 && message.getId() <= since_id) {
 				continue;
@@ -3787,6 +3791,7 @@ public final class Utils implements Constants {
 
 	public static boolean truncateStatuses(final List<twitter4j.Status> in, final List<twitter4j.Status> out,
 			final long since_id) {
+		if (in == null) return false;
 		for (final twitter4j.Status status : in) {
 			if (since_id > 0 && status.getId() <= since_id) {
 				continue;
