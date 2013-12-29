@@ -46,7 +46,7 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Par
 	private final Context mContext;
 
 	private final long mAccountId;
-	private final List<ParcelableActivity> mData = new ArrayList<ParcelableActivity>();
+	private final List<ParcelableActivity> mData;
 	private final boolean mIsFirstLoad;
 	private final int mTabPosition;
 
@@ -59,6 +59,7 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Par
 		super(context);
 		mContext = context;
 		mAccountId = account_id;
+		mData = data;
 		mIsFirstLoad = data == null;
 		mTabPosition = tabPosition;
 		mSavedActivitiesFileArgs = save_file_args;
@@ -68,12 +69,11 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Par
 	@Override
 	public final List<ParcelableActivity> loadInBackground() {
 		final File serializationFile = getSerializationFile();
-		if (mIsFirstLoad && mTabPosition >= 0 && mSavedActivitiesFileArgs != null && serializationFile != null) {
+		if (mIsFirstLoad && mTabPosition >= 0 && serializationFile != null) {
 			final List<ParcelableActivity> cached = getCachedData(serializationFile);
 			if (cached != null) {
-				mData.addAll(cached);
-				Collections.sort(mData);
-				return new CopyOnWriteArrayList<ParcelableActivity>(mData);
+				Collections.sort(cached);
+				return new CopyOnWriteArrayList<ParcelableActivity>(cached);
 			}
 		}
 		final SharedPreferences prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -85,16 +85,21 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Par
 			activities = getActivities(getTwitter(), paging);
 		} catch (final TwitterException e) {
 			e.printStackTrace();
+			final List<ParcelableActivity> cached = getCachedData(serializationFile);
+			if (cached == null) return Collections.emptyList();
+			return new CopyOnWriteArrayList<ParcelableActivity>(cached);
+		}
+		if (activities == null) {
+			if (mData == null) return Collections.emptyList();
 			return new CopyOnWriteArrayList<ParcelableActivity>(mData);
 		}
-		if (activities == null) return new CopyOnWriteArrayList<ParcelableActivity>(mData);
-		mData.clear();
+		final List<ParcelableActivity> result = new ArrayList<ParcelableActivity>();
 		for (final Activity activity : activities) {
-			mData.add(new ParcelableActivity(activity, mAccountId, mHiResProfileImage));
+			result.add(new ParcelableActivity(activity, mAccountId, mHiResProfileImage));
 		}
-		Collections.sort(mData);
-		saveCachedData(serializationFile, mData);
-		return new CopyOnWriteArrayList<ParcelableActivity>(mData);
+		Collections.sort(result);
+		saveCachedData(serializationFile, result);
+		return new CopyOnWriteArrayList<ParcelableActivity>(result);
 	}
 
 	protected final long getAccountId() {
@@ -102,10 +107,6 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Par
 	}
 
 	protected abstract List<Activity> getActivities(Twitter twitter, Paging paging) throws TwitterException;
-
-	protected final List<ParcelableActivity> getData() {
-		return mData;
-	}
 
 	protected final Twitter getTwitter() {
 		return getTwitterInstance(mContext, mAccountId, true);

@@ -3,9 +3,9 @@ package org.mariotaku.twidere.text;
 import android.text.TextPaint;
 import android.text.style.CharacterStyle;
 
-import org.mariotaku.twidere.preference.LinkHighlightPreference;
+import org.mariotaku.twidere.Constants;
 
-public class TwidereHighLightStyle extends CharacterStyle {
+public class TwidereHighLightStyle extends CharacterStyle implements Constants {
 
 	private final int option;
 
@@ -15,19 +15,11 @@ public class TwidereHighLightStyle extends CharacterStyle {
 
 	@Override
 	public void updateDrawState(final TextPaint ds) {
-		switch (option) {
-			case LinkHighlightPreference.LINK_HIGHLIGHT_OPTION_CODE_BOTH:
-				ds.setUnderlineText(true);
-				ds.setColor(ds.linkColor);
-				break;
-			case LinkHighlightPreference.LINK_HIGHLIGHT_OPTION_CODE_UNDERLINE:
-				ds.setUnderlineText(true);
-				break;
-			case LinkHighlightPreference.LINK_HIGHLIGHT_OPTION_CODE_HIGHLIGHT:
-				ds.setColor(ds.linkColor);
-				break;
-			default:
-				break;
+		if ((option & LINK_HIGHLIGHT_OPTION_CODE_UNDERLINE) != 0) {
+			ds.setUnderlineText(true);
+		}
+		if ((option & LINK_HIGHLIGHT_OPTION_CODE_HIGHLIGHT) != 0) {
+			ds.setColor(ds.linkColor);
 		}
 	}
 }

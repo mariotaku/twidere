@@ -4,13 +4,15 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content">
 
-	<LinearLayout
+	<org.mariotaku.twidere.view.CardItemLinearLayout
 		android:id="@+id/card"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_margin="8dp"
-		android:background="?cardItemBackground"
-		android:orientation="vertical">
+		android:orientation="vertical"
+		android:paddingBottom="4dp"
+		android:paddingLeft="8dp"
+		android:paddingRight="8dp"
+		android:paddingTop="4dp">
 
 		<org.mariotaku.twidere.view.ColorLabelRelativeLayout
 			android:id="@+id/profile"
@@ -193,6 +195,6 @@
 			android:singleLine="true"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:visibility="gone"/>
-	</LinearLayout>
+	</org.mariotaku.twidere.view.CardItemLinearLayout>
 
 </FrameLayout>

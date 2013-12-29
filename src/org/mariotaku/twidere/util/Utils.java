@@ -2312,7 +2312,8 @@ public final class Utils implements Constants {
 	}
 
 	public static boolean isDebugBuild() {
-		return BuildConfig.DEBUG;
+//		return BuildConfig.DEBUG;
+		return false;
 	}
 
 	public static boolean isDebuggable(final Context context) {

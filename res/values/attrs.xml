@@ -12,6 +12,17 @@
 		<attr name="listMenuOverflowButton" format="reference"/>
 		<attr name="ignorePadding" format="boolean"/>
 		<attr name="linePageIndicatorStyle" format="reference"/>
+		<attr name="cardItemViewStyle" format="reference"/>
+	</declare-styleable>
+	<declare-styleable name="CardItemView">
+		<attr name="cardBackground" format="reference"/>
+		<attr name="cardSelector" format="reference"/>
+		<attr name="cardActivatedIndicator" format="reference"/>
+		<attr name="cardOverflowIcon" format="reference"/>
+		<attr name="cardGapHeight" format="dimension"/>
+		<attr name="cardGapText" format="string"/>
+		<attr name="cardGapTextColor" format="color"/>
+		<attr name="cardGapTextSize" format="dimension"/>
 	</declare-styleable>
 	<declare-styleable name="TabPagerIndicator">
 		<attr name="tabItemStyle" format="reference"/>
@@ -22,6 +33,10 @@
 		<attr name="dependencyKey" format="string"/>
 		<attr name="dependencyValues" format="reference"/>
 		<attr name="dependencyValueDefault" format="string"/>
+	</declare-styleable>
+	<declare-styleable name="AccountsListPreference">
+		<attr name="switchKey" format="string"/>
+		<attr name="switchDefault" format="boolean"/>
 	</declare-styleable>
 	<declare-styleable name="LinePageIndicator">
 

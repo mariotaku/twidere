@@ -127,6 +127,12 @@ public interface TwidereConstants {
 	public static final int LINK_HIGHLIGHT_OPTION_CODE_UNDERLINE = 0x2;
 	public static final int LINK_HIGHLIGHT_OPTION_CODE_BOTH = LINK_HIGHLIGHT_OPTION_CODE_HIGHLIGHT
 			| LINK_HIGHLIGHT_OPTION_CODE_UNDERLINE;
+	
+
+	public static final String FONT_FAMILY_REGULAR = "sans-serif";
+	public static final String FONT_FAMILY_CONDENSED = "sans-serif-condensed";
+	public static final String FONT_FAMILY_LIGHT = "sans-serif-light";
+	public static final String FONT_FAMILY_THIN = "sans-serif-thin";
 
 	public static final int NOTIFICATION_FLAG_NONE = 0x0;
 	public static final int NOTIFICATION_FLAG_RINGTONE = 0x1;
@@ -158,6 +164,8 @@ public interface TwidereConstants {
 	public static final String PREFERENCE_KEY_THEME_DARK_ACTIONBAR = "theme_dark_actionbar";
 	@PreferenceType(PreferenceType.INT)
 	public static final String PREFERENCE_KEY_THEME_COLOR = "theme_color";
+	@PreferenceType(PreferenceType.STRING)
+	public static final String PREFERENCE_KEY_THEME_FONT_FAMILY = "theme_font_family";
 	@PreferenceType(PreferenceType.NULL)
 	public static final String PREFERENCE_KEY_CLEAR_DATABASES = "clear_databases";
 	@PreferenceType(PreferenceType.NULL)

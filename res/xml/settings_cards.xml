@@ -48,7 +48,6 @@
 		android:defaultValue="none"
 		android:key="link_highlight_option"
 		android:order="26"
-		android:summary="%s"
 		android:title="@string/link_highlight_option"/>
 
 	<CheckBoxPreference

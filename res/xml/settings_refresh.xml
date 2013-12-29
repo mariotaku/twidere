@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:title="@string/refresh">
 
 	<org.mariotaku.twidere.preference.AutoRefreshAccountsListPreference
 		android:key="cat_auto_refresh"
-		android:title="@string/auto_refresh"/>
+		android:title="@string/auto_refresh"
+		app:switchDefault="true"
+		app:switchKey="auto_refresh"/>
 
 	<PreferenceCategory
 		android:key="cat_general"

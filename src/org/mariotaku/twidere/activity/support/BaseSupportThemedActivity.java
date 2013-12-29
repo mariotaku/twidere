@@ -11,6 +11,7 @@ import com.negusoft.holoaccent.AccentHelper;
 
 import org.mariotaku.twidere.activity.iface.IThemedActivity;
 import org.mariotaku.twidere.theme.TwidereAccentHelper;
+import org.mariotaku.twidere.util.CompareUtils;
 import org.mariotaku.twidere.util.StrictModeUtils;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.Utils;
@@ -18,6 +19,9 @@ import org.mariotaku.twidere.util.Utils;
 public abstract class BaseSupportThemedActivity extends FragmentActivity implements IThemedActivity {
 
 	private int mCurrentThemeResource, mCurrentThemeColor;
+
+	private String mCurrentThemeFontFamily;
+
 	private AccentHelper mAccentHelper;
 
 	@Override
@@ -53,6 +57,11 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 	}
 
 	@Override
+	public String getThemeFontFamily() {
+		return ThemeUtils.getThemeFontFamily(this);
+	}
+
+	@Override
 	public abstract int getThemeResourceId();
 
 	@Override
@@ -75,8 +84,9 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 		return true;
 	}
 
-	protected final boolean isThemeChanged() {
-		return getThemeResourceId() != mCurrentThemeResource || getThemeColor() != mCurrentThemeColor;
+	protected boolean isThemeChanged() {
+		return getThemeResourceId() != mCurrentThemeResource || getThemeColor() != mCurrentThemeColor
+				|| !CompareUtils.objectEquals(getThemeFontFamily(), mCurrentThemeFontFamily);
 	}
 
 	@Override
@@ -113,6 +123,7 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 	private final void setTheme() {
 		mCurrentThemeResource = getThemeResourceId();
 		mCurrentThemeColor = getThemeColor();
+		mCurrentThemeFontFamily = getThemeFontFamily();
 		setTheme(mCurrentThemeResource);
 	}
 }

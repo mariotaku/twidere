@@ -2,21 +2,23 @@ package org.mariotaku.twidere.view.themed;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.TextView;
+
+import com.negusoft.holoaccent.R;
+import com.negusoft.holoaccent.widget.AccentSwitch;
 
 import org.mariotaku.twidere.util.ThemeUtils;
 
-public class ThemedTextView extends TextView {
+public class ThemedSwitch extends AccentSwitch {
 
-	public ThemedTextView(final Context context) {
+	public ThemedSwitch(final Context context) {
 		this(context, null);
 	}
 
-	public ThemedTextView(final Context context, final AttributeSet attrs) {
-		this(context, attrs, android.R.attr.textViewStyle);
+	public ThemedSwitch(final Context context, final AttributeSet attrs) {
+		this(context, attrs, R.attr.accentSwitchStyle);
 	}
 
-	public ThemedTextView(final Context context, final AttributeSet attrs, final int defStyle) {
+	public ThemedSwitch(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		if (!isInEditMode()) {
 			setLinkTextColor(ThemeUtils.getUserLinkTextColor(context));

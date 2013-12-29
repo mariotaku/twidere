@@ -163,7 +163,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 			}
 			if (holder.show_as_gap) return false;
 			if (mPreferences.getBoolean(PREFERENCE_KEY_LONG_CLICK_TO_OPEN_MENU, false)) {
-				openMenu(holder.item_menu, status, position);
+				openMenu(holder.content.getFakeOverflowButton(), status, position);
 			} else {
 				setItemSelected(status, position, !mMultiSelectManager.isSelected(status));
 			}

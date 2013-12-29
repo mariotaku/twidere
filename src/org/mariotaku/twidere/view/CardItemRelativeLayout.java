@@ -10,19 +10,19 @@ import android.view.View;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.view.iface.ICardItemView;
 
-public class CardItemFrameLayout extends ColorLabelFrameLayout implements ICardItemView {
+public class CardItemRelativeLayout extends ColorLabelRelativeLayout implements ICardItemView {
 
 	private final DrawingHelper mDrawingHelper;
 
-	public CardItemFrameLayout(final Context context) {
+	public CardItemRelativeLayout(final Context context) {
 		this(context, null);
 	}
 
-	public CardItemFrameLayout(final Context context, final AttributeSet attrs) {
+	public CardItemRelativeLayout(final Context context, final AttributeSet attrs) {
 		this(context, attrs, R.attr.cardItemViewStyle);
 	}
 
-	public CardItemFrameLayout(final Context context, final AttributeSet attrs, final int defStyleAttr) {
+	public CardItemRelativeLayout(final Context context, final AttributeSet attrs, final int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
 		mDrawingHelper = new DrawingHelper(this, context, attrs, defStyleAttr);
 	}
@@ -112,5 +112,4 @@ public class CardItemFrameLayout extends ColorLabelFrameLayout implements ICardI
 	protected boolean verifyDrawable(final Drawable who) {
 		return super.verifyDrawable(who) || mDrawingHelper.verifyDrawable(who);
 	}
-
 }

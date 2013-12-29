@@ -43,19 +43,11 @@ public class TwidereURLSpan extends URLSpan implements Constants {
 
 	@Override
 	public void updateDrawState(final TextPaint ds) {
-		switch (highlightStyle) {
-			case LINK_HIGHLIGHT_OPTION_CODE_BOTH:
-				ds.setUnderlineText(true);
-				ds.setColor(highlightColor != 0 ? highlightColor : ds.linkColor);
-				break;
-			case LINK_HIGHLIGHT_OPTION_CODE_UNDERLINE:
-				ds.setUnderlineText(true);
-				break;
-			case LINK_HIGHLIGHT_OPTION_CODE_HIGHLIGHT:
-				ds.setColor(highlightColor != 0 ? highlightColor : ds.linkColor);
-				break;
-			default:
-				break;
+		if ((highlightStyle & LINK_HIGHLIGHT_OPTION_CODE_UNDERLINE) != 0) {
+			ds.setUnderlineText(true);
+		}
+		if ((highlightStyle & LINK_HIGHLIGHT_OPTION_CODE_HIGHLIGHT) != 0) {
+			ds.setColor(highlightColor != 0 ? highlightColor : ds.linkColor);
 		}
 	}
 }

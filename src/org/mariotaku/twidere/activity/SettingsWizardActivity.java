@@ -170,8 +170,8 @@ public class SettingsWizardActivity extends Activity implements Constants {
 			final int nextPageTitle = getNextPageTitle();
 			if (nextPageTitle != 0) {
 				final Preference nextPage = new WizardPageNavPreference(context);
+				nextPage.setOrder(999);
 				nextPage.setKey(WIZARD_PREFERENCE_KEY_NEXT_PAGE);
-				nextPage.setOrder(screen.getPreferenceCount());
 				nextPage.setTitle(nextPageTitle);
 				nextPage.setOnPreferenceClickListener(this);
 				screen.addPreference(nextPage);
