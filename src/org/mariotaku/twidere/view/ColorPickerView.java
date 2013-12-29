@@ -88,15 +88,11 @@ public class ColorPickerView extends View {
 
 	private float mDensity = 1f;
 
-	private OnColorChangedListener mListener;
+	private OnColorChangedListener mOnColorChangedListener;
 
-	private Paint mSatValPaint;
+	private Paint mHuePaint, mSatValPaint;
 
-	private Paint mSatValTrackerPaint;
-
-	private Paint mHuePaint;
-
-	private Paint mHueTrackerPaint;
+	private Paint mHueTrackerPaint, mSatValTrackerPaint;
 
 	private Paint mAlphaPaint;
 
@@ -104,26 +100,17 @@ public class ColorPickerView extends View {
 
 	private Paint mBorderPaint;
 
-	private Shader mValShader;
-
-	private Shader mSatShader;
-
-	private Shader mHueShader;
-
 	private Shader mAlphaShader;
+
+	private Shader mValShader, mSatShader, mHueShader;
 
 	private int mAlpha = 0xff;
 
-	private float mHue = 360f;
-
-	private float mSat = 0f;
-
-	private float mVal = 0f;
+	private float mHue = 360f, mSat = 0f, mVal = 0f;
 
 	private String mAlphaSliderText = "";
 
 	private int mSliderTrackerColor = 0xff1c1c1c;
-
 	private int mBorderColor = 0xff6E6E6E;
 
 	private boolean mShowAlphaPanel = false;
@@ -190,7 +177,8 @@ public class ColorPickerView extends View {
 	 * @return the current color.
 	 */
 	public int getColor() {
-		return Color.HSVToColor(mAlpha, new float[] { mHue, mSat, mVal });
+		if (mShowAlphaPanel) return Color.HSVToColor(mAlpha, new float[] { mHue, mSat, mVal });
+		return Color.HSVToColor(new float[] { mHue, mSat, mVal });
 	}
 
 	/**
@@ -231,8 +219,14 @@ public class ColorPickerView extends View {
 		}
 
 		if (update) {
-			if (mListener != null) {
-				mListener.onColorChanged(Color.HSVToColor(mAlpha, new float[] { mHue, mSat, mVal }));
+			if (mOnColorChangedListener != null) {
+				final int color;
+				if (mShowAlphaPanel) {
+					color = Color.HSVToColor(mAlpha, new float[] { mHue, mSat, mVal });
+				} else {
+					color = Color.HSVToColor(new float[] { mHue, mSat, mVal });
+				}
+				mOnColorChangedListener.onColorChanged(color);
 			}
 			invalidate();
 			return true;
@@ -242,87 +236,69 @@ public class ColorPickerView extends View {
 
 	@Override
 	public boolean onTrackballEvent(final MotionEvent event) {
-
-		final float x = event.getX();
-		final float y = event.getY();
-
+		final float x = event.getX(), y = event.getY();
 		boolean update = false;
-
 		if (event.getAction() == MotionEvent.ACTION_MOVE) {
 			switch (mLastTouchedPanel) {
-
-				case PANEL_SAT_VAL:
-
-					float sat,
-					val;
-
+				case PANEL_SAT_VAL: {
+					float sat, val;
 					sat = mSat + x / 50f;
 					val = mVal - y / 50f;
-
 					if (sat < 0f) {
 						sat = 0f;
 					} else if (sat > 1f) {
 						sat = 1f;
 					}
-
 					if (val < 0f) {
 						val = 0f;
 					} else if (val > 1f) {
 						val = 1f;
 					}
-
 					mSat = sat;
 					mVal = val;
-
 					update = true;
-
 					break;
-
-				case PANEL_HUE:
-
+				}
+				case PANEL_HUE: {
 					float hue = mHue - y * 10f;
-
 					if (hue < 0f) {
 						hue = 0f;
 					} else if (hue > 360f) {
 						hue = 360f;
 					}
-
 					mHue = hue;
-
 					update = true;
-
 					break;
-
-				case PANEL_ALPHA:
-
+				}
+				case PANEL_ALPHA: {
 					if (!mShowAlphaPanel || mAlphaRect == null) {
 						update = false;
 					} else {
-
 						int alpha = (int) (mAlpha - x * 10);
-
 						if (alpha < 0) {
 							alpha = 0;
 						} else if (alpha > 0xff) {
 							alpha = 0xff;
 						}
-
 						mAlpha = alpha;
-
 						update = true;
 					}
 
 					break;
+				}
 			}
 		}
 
 		if (update) {
-
-			if (mListener != null) {
-				mListener.onColorChanged(Color.HSVToColor(mAlpha, new float[] { mHue, mSat, mVal }));
+			final int color;
+			if (mShowAlphaPanel) {
+				color = Color.HSVToColor(mAlpha, new float[] { mHue, mSat, mVal });
+			} else {
+				color = Color.HSVToColor(new float[] { mHue, mSat, mVal });
 			}
-
+			if (mOnColorChangedListener != null) {
+				mOnColorChangedListener.onColorChanged(color);
+			}
 			invalidate();
 			return true;
 		}
@@ -373,7 +349,6 @@ public class ColorPickerView extends View {
 			mSatShader = null;
 			mHueShader = null;
 			mAlphaShader = null;
-			;
 
 			requestLayout();
 		}
@@ -411,21 +386,24 @@ public class ColorPickerView extends View {
 	public void setColor(final int color, final boolean callback) {
 
 		final int alpha = Color.alpha(color);
-		final int red = Color.red(color);
-		final int blue = Color.blue(color);
-		final int green = Color.green(color);
 
 		final float[] hsv = new float[3];
 
-		Color.RGBToHSV(red, green, blue, hsv);
+		Color.colorToHSV(color, hsv);
 
-		mAlpha = alpha;
+		if (mShowAlphaPanel) {
+			mAlpha = alpha;
+		} else {
+			mAlpha = 0xff;
+		}
 		mHue = hsv[0];
 		mSat = hsv[1];
 		mVal = hsv[2];
 
-		if (callback && mListener != null) {
-			mListener.onColorChanged(Color.HSVToColor(mAlpha, new float[] { mHue, mSat, mVal }));
+		if (callback) {
+			if (mOnColorChangedListener != null) {
+				mOnColorChangedListener.onColorChanged(color);
+			}
 		}
 
 		invalidate();
@@ -438,8 +416,7 @@ public class ColorPickerView extends View {
 	 * @param listener
 	 */
 	public void setOnColorChangedListener(final OnColorChangedListener listener) {
-
-		mListener = listener;
+		mOnColorChangedListener = listener;
 	}
 
 	public void setSliderTrackerColor(final int color) {
@@ -968,5 +945,4 @@ public class ColorPickerView extends View {
 
 		public void onColorChanged(int color);
 	}
-
 }

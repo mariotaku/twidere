@@ -15,35 +15,13 @@
 		android:icon="@android:drawable/ic_menu_add"
 		android:title="@string/add_to_list"/>
 	<item
-		android:id="@+id/set_color_submenu"
+		android:id="@id/set_color"
 		android:icon="@drawable/ic_menu_color_palette"
-		android:title="@string/set_color">
-		<menu>
-			<item
-				android:id="@id/set_color"
-				android:icon="@drawable/ic_menu_color_palette"
-				android:title="@string/set_color"/>
-			<item
-				android:id="@id/clear_color"
-				android:icon="@android:drawable/ic_menu_close_clear_cancel"
-				android:title="@string/clear"/>
-		</menu>
-	</item>
+		android:title="@string/set_color"/>
 	<item
-		android:id="@+id/set_nickname_submenu"
+		android:id="@id/set_nickname"
 		android:icon="@android:drawable/ic_menu_edit"
-		android:title="@string/set_nickname">
-		<menu>
-			<item
-				android:id="@id/set_nickname"
-				android:icon="@android:drawable/ic_menu_edit"
-				android:title="@string/set_nickname"/>
-			<item
-				android:id="@id/clear_nickname"
-				android:icon="@android:drawable/ic_menu_close_clear_cancel"
-				android:title="@string/clear"/>
-		</menu>
-	</item>
+		android:title="@string/set_nickname"/>
 	<item
 		android:id="@id/mute_user"
 		android:icon="@drawable/ic_menu_mute"

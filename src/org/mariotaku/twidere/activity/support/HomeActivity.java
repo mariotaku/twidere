@@ -68,8 +68,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
@@ -102,6 +100,7 @@ import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.UnreadCountUtils;
 import org.mariotaku.twidere.util.accessor.ViewAccessor;
 import org.mariotaku.twidere.view.ExtendedViewPager;
+import org.mariotaku.twidere.view.HomeActionsActionView;
 import org.mariotaku.twidere.view.LeftDrawerFrameLayout;
 import org.mariotaku.twidere.view.TabPageIndicator;
 
@@ -150,7 +149,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private TabPageIndicator mIndicator;
 	private SlidingMenu mSlidingMenu;
 
-	private View mActionsActionView, mActionsButtonLayout, mEmptyTabHint;
+	private View mEmptyTabHint;
+	private HomeActionsActionView mActionsActionView, mActionsButton, mBottomActionsButton;
 	private LeftDrawerFrameLayout mLeftDrawerContainer;
 	private Fragment mCurrentVisibleFragment;
 
@@ -220,8 +220,9 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	@Override
 	public void onClick(final View v) {
 		switch (v.getId()) {
-			case R.id.home_actions_item:
-			case R.id.home_actions_button: {
+			case R.id.actions:
+			case R.id.actions_button:
+			case R.id.actions_button_bottom: {
 				if (mViewPager == null || mPagerAdapter == null) return;
 				final int position = mViewPager.getCurrentItem();
 				final SupportTabSpec tab = mPagerAdapter.getTab(position);
@@ -251,7 +252,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		super.onContentChanged();
 		mViewPager = (ExtendedViewPager) findViewById(R.id.main_pager);
 		mEmptyTabHint = findViewById(R.id.empty_tab_hint);
-		mActionsButtonLayout = findViewById(R.id.home_actions_button);
+		mBottomActionsButton = (HomeActionsActionView) findViewById(R.id.actions_button_bottom);
 		if (mSlidingMenu == null) {
 			mSlidingMenu = new SlidingMenu(this);
 		}
@@ -261,8 +262,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_home, menu);
 		final MenuItem actionsItem = menu.findItem(MENU_ACTIONS);
-		actionsItem.setVisible(SmartBarUtils.hasSmartBar() || !isBottomComposeButton());
-		mActionsActionView = actionsItem.getActionView();
+		actionsItem.setVisible(SmartBarUtils.hasSmartBar() && isBottomComposeButton());
+		mActionsActionView = (HomeActionsActionView) actionsItem.getActionView();
 		mActionsActionView.setOnClickListener(this);
 		mActionsActionView.setOnLongClickListener(this);
 		updateActionsButton();
@@ -293,8 +294,13 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	@Override
 	public boolean onLongClick(final View v) {
 		switch (v.getId()) {
-			case R.id.home_actions_item: {
-				showMenuItemToast(v, v.getContentDescription(), false);
+			case R.id.actions:
+			case R.id.actions_button: {
+				showMenuItemToast(v, v.getContentDescription());
+				return true;
+			}
+			case R.id.actions_button_bottom: {
+				showMenuItemToast(v, v.getContentDescription(), true);
 				return true;
 			}
 		}
@@ -354,6 +360,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 
 	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu) {
+		final MenuItem actionsItem = menu.findItem(MENU_ACTIONS);
+		actionsItem.setVisible(SmartBarUtils.hasSmartBar() && isBottomComposeButton());
 		return true;
 	}
 
@@ -491,6 +499,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 
 		final View view = mActionBar.getCustomView();
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
+		mActionsButton = (HomeActionsActionView) view.findViewById(R.id.actions_button);
 		ThemeUtils.applyBackground(mIndicator);
 		mPagerAdapter = new SupportTabsAdapter(this, getSupportFragmentManager(), mIndicator);
 		mViewPager.setAdapter(mPagerAdapter);
@@ -504,7 +513,10 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			mIndicator.setDisplayLabel(false);
 			mIndicator.setDisplayIcon(true);
 		}
-		mActionsButtonLayout.setOnClickListener(this);
+		mActionsButton.setOnClickListener(this);
+		mActionsButton.setOnLongClickListener(this);
+		mBottomActionsButton.setOnClickListener(this);
+		mBottomActionsButton.setOnLongClickListener(this);
 		initTabs();
 		final boolean tabsNotEmpty = mPagerAdapter.getCount() > 0;
 		mEmptyTabHint.setVisibility(tabsNotEmpty ? View.GONE : View.VISIBLE);
@@ -705,17 +717,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		return true;
 	}
 
-	private void setActionsView(final View view, final int title, final int icon) {
-		if (view == null) return;
-		final boolean hasActivatedTask = hasActivatedTask();
-		final ImageView actionsIcon = (ImageView) view.findViewById(R.id.actions_icon);
-		final ProgressBar progress = (ProgressBar) view.findViewById(R.id.progress);
-		view.setContentDescription(getString(title));
-		actionsIcon.setImageResource(icon);
-		actionsIcon.setVisibility(hasActivatedTask ? View.GONE : View.VISIBLE);
-		progress.setVisibility(hasActivatedTask ? View.VISIBLE : View.GONE);
-	}
-
 	private void setPullToRefreshLayoutScroll(final WindowManager wm, final Fragment f, final int scrollX,
 			final int statusBarHeight, final boolean horizontalScroll) {
 		if (f == null || f.isDetached() || f.getActivity() == null) return;
@@ -809,18 +810,34 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 				title = R.string.compose;
 			}
 		}
-		setActionsView(mActionsButtonLayout, title, icon);
-		setActionsView(mActionsActionView, title, icon);
+		final boolean hasActivatedTask = hasActivatedTask();
+		if (mActionsActionView != null) {
+			mActionsActionView.setIcon(icon);
+			mActionsActionView.setTitle(title);
+			mActionsActionView.setShowProgress(hasActivatedTask);
+		}
+		if (mActionsButton != null) {
+			mActionsButton.setIcon(icon);
+			mActionsButton.setTitle(title);
+			mActionsButton.setShowProgress(hasActivatedTask);
+		}
+		if (mBottomActionsButton != null) {
+			mBottomActionsButton.setIcon(icon);
+			mBottomActionsButton.setTitle(title);
+			mBottomActionsButton.setShowProgress(hasActivatedTask);
+		}
 	}
 
 	private void updateActionsButtonStyle() {
-		if (mActionsButtonLayout == null) return;
-		final boolean showBottomActionsButton = !SmartBarUtils.hasSmartBar() && isBottomComposeButton();
+		if (mActionsButton == null || mBottomActionsButton == null) return;
+		final boolean isBottomActionsButton = isBottomComposeButton();
+		final boolean showBottomActionsButton = !SmartBarUtils.hasSmartBar() && isBottomActionsButton;
 		final boolean leftsideComposeButton = mPreferences.getBoolean(PREFERENCE_KEY_LEFTSIDE_COMPOSE_BUTTON, false);
-		mActionsButtonLayout.setVisibility(showBottomActionsButton ? View.VISIBLE : View.GONE);
-		final FrameLayout.LayoutParams compose_lp = (LayoutParams) mActionsButtonLayout.getLayoutParams();
+		mActionsButton.setVisibility(isBottomActionsButton ? View.GONE : View.VISIBLE);
+		mBottomActionsButton.setVisibility(showBottomActionsButton ? View.VISIBLE : View.GONE);
+		final FrameLayout.LayoutParams compose_lp = (LayoutParams) mBottomActionsButton.getLayoutParams();
 		compose_lp.gravity = Gravity.BOTTOM | (leftsideComposeButton ? Gravity.LEFT : Gravity.RIGHT);
-		mActionsButtonLayout.setLayoutParams(compose_lp);
+		mBottomActionsButton.setLayoutParams(compose_lp);
 	}
 
 	private void updatePullToRefreshLayoutScroll(final float percentOpen, final boolean horizontalScroll) {

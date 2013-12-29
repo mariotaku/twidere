@@ -79,7 +79,6 @@ public interface Constants extends TwidereConstants {
 	public static final int MENU_UP = R.id.up;
 	public static final int MENU_DOWN = R.id.down;
 	public static final int MENU_MULTI_SELECT = R.id.multi_select;
-	public static final int MENU_CLEAR_COLOR = R.id.clear_color;
 	public static final int MENU_COPY = R.id.copy;
 	public static final int MENU_TOGGLE_SENSITIVE = R.id.toggle_sensitive;
 	public static final int MENU_REVOKE = R.id.revoke;
@@ -97,6 +96,7 @@ public interface Constants extends TwidereConstants {
 	public static final int MENU_ADD_TO_FILTER = R.id.add_to_filter;
 	public static final int MENU_FOLLOW = R.id.follow;
 	public static final int MENU_UNFOLLOW = R.id.unfollow;
+	public static final int MENU_BACK = R.id.back;
 
 	public static final int LINK_ID_STATUS = 1;
 	public static final int LINK_ID_USER = 2;

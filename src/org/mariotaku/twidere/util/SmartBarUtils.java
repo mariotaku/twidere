@@ -7,6 +7,8 @@ import java.lang.reflect.Method;
 
 public final class SmartBarUtils {
 
+	private static String[] SMARTBAR_SUPPORTED_DEVICES = { "mx2", "mx3" };
+
 	public static boolean hasSmartBar() {
 		try {
 			// Invoke Build.hasSmartBar()
@@ -15,9 +17,14 @@ public final class SmartBarUtils {
 		} catch (final Exception e) {
 		}
 		// Detect by Build.DEVICE
-		if (Build.DEVICE.equals("mx2"))
-			return true;
-		else if (Build.DEVICE.equals("mx") || Build.DEVICE.equals("m9")) return false;
+		if (isDeviceWithSmartBar(Build.DEVICE)) return true;
+		return false;
+	}
+
+	public static boolean isDeviceWithSmartBar(final String buildDevice) {
+		for (final String dev : SMARTBAR_SUPPORTED_DEVICES) {
+			if (dev.equals(buildDevice)) return true;
+		}
 		return false;
 	}
 

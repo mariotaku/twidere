@@ -93,7 +93,8 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 	public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		switch (requestCode) {
 			case REQUEST_SET_COLOR: {
-				if (resultCode == Activity.RESULT_OK && data != null) {
+				if (resultCode == Activity.RESULT_OK) {
+					if (data == null) return;
 					final ContentValues values = new ContentValues();
 					values.put(Accounts.COLOR, data.getIntExtra(EXTRA_COLOR, Color.WHITE));
 					final String where = Accounts.ACCOUNT_ID + " = " + mAdapter.getSelectedAccountId();

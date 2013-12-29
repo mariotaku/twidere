@@ -46,6 +46,7 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
 import twitter4j.TwitterException;
+import twitter4j.auth.Authorization;
 import twitter4j.http.HostAddressResolver;
 import twitter4j.http.HttpClientConfiguration;
 import twitter4j.http.HttpParameter;
@@ -96,9 +97,9 @@ public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCo
 		final HttpParams params = new BasicHttpParams();
 		final ThreadSafeClientConnManager cm = new ThreadSafeClientConnManager(params, registry);
 		final DefaultHttpClient client = new DefaultHttpClient(cm, params);
-		final HttpParams client_params = client.getParams();
-		HttpConnectionParams.setConnectionTimeout(client_params, conf.getHttpConnectionTimeout());
-		HttpConnectionParams.setSoTimeout(client_params, conf.getHttpReadTimeout());
+		final HttpParams clientParams = client.getParams();
+		HttpConnectionParams.setConnectionTimeout(clientParams, conf.getHttpConnectionTimeout());
+		HttpConnectionParams.setSoTimeout(clientParams, conf.getHttpReadTimeout());
 
 		if (conf.getHttpProxyHost() != null && !conf.getHttpProxyHost().equals("")) {
 			final HttpHost proxy = new HttpHost(conf.getHttpProxyHost(), conf.getHttpProxyPort());
@@ -123,28 +124,29 @@ public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCo
 			HttpRequestBase commonsRequest;
 
 			final HostAddressResolver resolver = conf.getHostAddressResolver();
-			final String url_string = req.getURL();
+			final String urlString = req.getURL();
 			final URI urlOrig;
 			try {
-				urlOrig = new URI(url_string);
+				urlOrig = new URI(urlString);
 			} catch (final URISyntaxException e) {
 				throw new TwitterException(e);
 			}
 			final String host = urlOrig.getHost(), authority = urlOrig.getAuthority();
 			final String resolvedHost = resolver != null ? resolver.resolve(host) : null;
-			final String resolvedUrl = !isEmpty(resolvedHost) ? url_string.replace("://" + host, "://" + resolvedHost)
-					: url_string;
+			final String resolvedUrl = !isEmpty(resolvedHost) ? urlString.replace("://" + host, "://" + resolvedHost)
+					: urlString;
 
-			if (req.getMethod() == RequestMethod.GET) {
+			final RequestMethod method = req.getMethod();
+			if (method == RequestMethod.GET) {
 				commonsRequest = new HttpGet(resolvedUrl);
-			} else if (req.getMethod() == RequestMethod.POST) {
+			} else if (method == RequestMethod.POST) {
 				final HttpPost post = new HttpPost(resolvedUrl);
 				// parameter has a file?
 				boolean hasFile = false;
 				final HttpParameter[] params = req.getParameters();
 				if (params != null) {
-					for (final HttpParameter parameter : params) {
-						if (parameter.isFile()) {
+					for (final HttpParameter param : params) {
+						if (param.isFile()) {
 							hasFile = true;
 							break;
 						}
@@ -155,20 +157,20 @@ public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCo
 						}
 					} else {
 						final MultipartEntity me = new MultipartEntity();
-						for (final HttpParameter parameter : params) {
-							if (parameter.isFile()) {
+						for (final HttpParameter param : params) {
+							if (param.isFile()) {
 								final ContentBody body;
-								if (parameter.getFile() != null) {
-									body = new FileBody(parameter.getFile(), parameter.getContentType());
+								if (param.getFile() != null) {
+									body = new FileBody(param.getFile(), param.getContentType());
 								} else {
-									body = new InputStreamBody(parameter.getFileBody(), parameter.getFileName(),
-											parameter.getContentType());
+									body = new InputStreamBody(param.getFileBody(), param.getFileName(),
+											param.getContentType());
 								}
-								me.addPart(parameter.getName(), body);
+								me.addPart(param.getName(), body);
 							} else {
-								final ContentBody body = new StringBody(parameter.getValue(),
-										"text/plain; charset=UTF-8", Charset.forName("UTF-8"));
-								me.addPart(parameter.getName(), body);
+								final ContentBody body = new StringBody(param.getValue(), "text/plain; charset=UTF-8",
+										Charset.forName("UTF-8"));
+								me.addPart(param.getName(), body);
 							}
 						}
 						post.setEntity(me);
@@ -176,21 +178,21 @@ public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCo
 				}
 				post.getParams().setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
 				commonsRequest = post;
-			} else if (req.getMethod() == RequestMethod.DELETE) {
+			} else if (method == RequestMethod.DELETE) {
 				commonsRequest = new HttpDelete(resolvedUrl);
-			} else if (req.getMethod() == RequestMethod.HEAD) {
+			} else if (method == RequestMethod.HEAD) {
 				commonsRequest = new HttpHead(resolvedUrl);
-			} else if (req.getMethod() == RequestMethod.PUT) {
+			} else if (method == RequestMethod.PUT) {
 				commonsRequest = new HttpPut(resolvedUrl);
 			} else
-				throw new TwitterException("Unsupported request method " + req.getMethod());
+				throw new TwitterException("Unsupported request method " + method);
 			final Map<String, String> headers = req.getRequestHeaders();
 			for (final String headerName : headers.keySet()) {
 				commonsRequest.addHeader(headerName, headers.get(headerName));
 			}
-			String authorizationHeader;
-			if (req.getAuthorization() != null
-					&& (authorizationHeader = req.getAuthorization().getAuthorizationHeader(req)) != null) {
+			final Authorization authorization = req.getAuthorization();
+			final String authorizationHeader = authorization != null ? authorization.getAuthorizationHeader(req) : null;
+			if (authorizationHeader != null) {
 				commonsRequest.addHeader("Authorization", authorizationHeader);
 			}
 			if (!isEmpty(resolvedHost) && !resolvedHost.equals(host)) {

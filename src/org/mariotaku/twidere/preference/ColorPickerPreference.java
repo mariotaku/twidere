@@ -16,28 +16,23 @@
 
 package org.mariotaku.twidere.preference;
 
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.preference.DialogPreference;
+import android.preference.Preference;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.view.ColorPickerPresetsView;
-import org.mariotaku.twidere.view.ColorPickerPresetsView.OnColorClickListener;
+import org.mariotaku.twidere.fragment.dialog.ColorPickerDialog;
 import org.mariotaku.twidere.view.ColorPickerView;
-import org.mariotaku.twidere.view.ColorPickerView.OnColorChangedListener;
 
-public class ColorPickerPreference extends DialogPreference implements DialogInterface.OnClickListener,
-		OnColorChangedListener, OnColorClickListener {
+public class ColorPickerPreference extends Preference implements DialogInterface.OnClickListener, Constants {
 
 	private View mView;
 	protected int mDefaultValue = Color.WHITE;
@@ -48,8 +43,9 @@ public class ColorPickerPreference extends DialogPreference implements DialogInt
 	private static final String ATTR_DEFAULTVALUE = "defaultValue";
 	private static final String ATTR_ALPHASLIDER = "alphaSlider";
 
-	private ColorPickerView mColorPicker;
-	private ColorPickerPresetsView mColorPresets;
+	private final Resources mResources;
+
+	private ColorPickerDialog mDialog;
 
 	public ColorPickerPreference(final Context context, final AttributeSet attrs) {
 		this(context, attrs, android.R.attr.preferenceStyle);
@@ -57,15 +53,22 @@ public class ColorPickerPreference extends DialogPreference implements DialogInt
 
 	public ColorPickerPreference(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		mDensity = context.getResources().getDisplayMetrics().density;
+		mResources = context.getResources();
+		mDensity = mResources.getDisplayMetrics().density;
 		init(context, attrs);
+	}
+
+	public void onActivityDestroy() {
+		if (mDialog == null || !mDialog.isShowing()) return;
+		mDialog.dismiss();
 	}
 
 	@Override
 	public void onClick(final DialogInterface dialog, final int which) {
 		switch (which) {
 			case DialogInterface.BUTTON_POSITIVE:
-				final int color = mColorPicker.getColor();
+				if (mDialog == null) return;
+				final int color = mDialog.getColor();
 				if (isPersistent()) {
 					persistInt(color);
 				}
@@ -76,20 +79,6 @@ public class ColorPickerPreference extends DialogPreference implements DialogInt
 				}
 				break;
 		}
-	}
-
-	@Override
-	public void onColorChanged(final int color) {
-		final AlertDialog dialog = (AlertDialog) getDialog();
-		if (dialog == null) return;
-		final Context context = getContext();
-		dialog.setIcon(new BitmapDrawable(context.getResources(), ColorPickerView.getColorPreviewBitmap(context, color)));
-	}
-
-	@Override
-	public void onColorClick(final int color) {
-		if (mColorPicker == null) return;
-		mColorPicker.setColor(color, true);
 	}
 
 	@Override
@@ -126,25 +115,13 @@ public class ColorPickerPreference extends DialogPreference implements DialogInt
 	}
 
 	@Override
-	protected void onPrepareDialogBuilder(final Builder builder) {
-		super.onPrepareDialogBuilder(builder);
-		final Context context = getContext();
-		final LayoutInflater inflater = LayoutInflater.from(getContext());
-		final View view = inflater.inflate(R.layout.color_picker, null);
-
-		final int val = getValue();
-
-		mColorPicker = (ColorPickerView) view.findViewById(R.id.color_picker);
-		mColorPresets = (ColorPickerPresetsView) view.findViewById(R.id.color_presets);
-		mColorPicker.setOnColorChangedListener(this);
-		mColorPresets.setOnColorClickListener(this);
-
-		mColorPicker.setColor(val, true);
-		mColorPicker.setAlphaSliderVisible(mAlphaSliderEnabled);
-		builder.setView(view);
-		builder.setIcon(new BitmapDrawable(context.getResources(), ColorPickerView.getColorPreviewBitmap(context, val)));
-		builder.setPositiveButton(android.R.string.ok, this);
-		builder.setNegativeButton(android.R.string.cancel, null);
+	protected void onClick() {
+		if (mDialog != null && mDialog.isShowing()) return;
+		mDialog = new ColorPickerDialog(getContext(), getValue(), mAlphaSliderEnabled);
+		mDialog.setButton(DialogInterface.BUTTON_POSITIVE, mResources.getString(android.R.string.ok), this);
+		mDialog.setButton(DialogInterface.BUTTON_NEGATIVE, mResources.getString(android.R.string.cancel), this);
+		mDialog.show();
+		return;
 	}
 
 	@Override
@@ -165,17 +142,24 @@ public class ColorPickerPreference extends DialogPreference implements DialogInt
 
 	private void setPreviewColor() {
 		if (mView == null) return;
-		final View widget_frame_view = mView.findViewById(android.R.id.widget_frame);
-		if (!(widget_frame_view instanceof ViewGroup)) return;
-		final ViewGroup widget_frame = (ViewGroup) widget_frame_view;
-		widget_frame.setVisibility(View.VISIBLE);
-		widget_frame.setPadding(widget_frame.getPaddingLeft(), widget_frame.getPaddingTop(), (int) (mDensity * 8),
-				widget_frame.getPaddingBottom());
+		final View widgetFrameView = mView.findViewById(android.R.id.widget_frame);
+		if (!(widgetFrameView instanceof ViewGroup)) return;
+		final ViewGroup widgetFrame = (ViewGroup) widgetFrameView;
+		widgetFrame.setVisibility(View.VISIBLE);
+		widgetFrame.setPadding(widgetFrame.getPaddingLeft(), widgetFrame.getPaddingTop(), (int) (mDensity * 8),
+				widgetFrame.getPaddingBottom());
 		// remove preview image that is already created
-		widget_frame.removeAllViews();
-		widget_frame.setAlpha(isEnabled() ? 1 : 0.25f);
-		final ImageView imageView = new ImageView(getContext());
-		widget_frame.addView(imageView);
+		widgetFrame.setAlpha(isEnabled() ? 1 : 0.25f);
+		final View foundView = widgetFrame.findViewById(R.id.color);
+		final ImageView imageView;
+		if (foundView instanceof ImageView) {
+			imageView = (ImageView) foundView;
+		} else {
+			imageView = new ImageView(getContext());
+			widgetFrame.removeAllViews();
+			imageView.setId(R.id.color);
+			widgetFrame.addView(imageView);
+		}
 		imageView.setImageBitmap(ColorPickerView.getColorPreviewBitmap(getContext(), getValue()));
 	}
 

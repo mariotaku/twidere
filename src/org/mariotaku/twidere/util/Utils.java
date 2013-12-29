@@ -107,7 +107,6 @@ import org.mariotaku.querybuilder.Selectable;
 import org.mariotaku.querybuilder.Tables;
 import org.mariotaku.querybuilder.Where;
 import org.mariotaku.querybuilder.query.SQLSelectQuery;
-import org.mariotaku.twidere.BuildConfig;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.CameraCropActivity;
@@ -458,7 +457,8 @@ public final class Utils implements Constants {
 	public static int calculateInSampleSize(final int width, final int height, final int preferredWidth,
 			final int preferredHeight) {
 		if (preferredHeight > height && preferredWidth > width) return 1;
-		return Math.round(Math.max(width, height) / (float) Math.max(preferredWidth, preferredHeight));
+		final int result = Math.round(Math.max(width, height) / (float) Math.max(preferredWidth, preferredHeight));
+		return Math.max(1, result);
 	}
 
 	public static int cancelRetweet(final AsyncTwitterWrapper wrapper, final ParcelableStatus status) {
@@ -932,6 +932,8 @@ public final class Utils implements Constants {
 				return false;
 			} catch (final FileNotFoundException e) {
 				// This shouldn't happen.
+			} catch (final IllegalArgumentException e) {
+				return false;
 			}
 		} else if (imageFile.length() > TWITTER_MAX_IMAGE_SIZE) {
 			// The file size is larger than Twitter's limit.
@@ -2309,7 +2311,8 @@ public final class Utils implements Constants {
 	}
 
 	public static boolean isDebugBuild() {
-		return BuildConfig.DEBUG;
+		// return BuildConfig.DEBUG;
+		return false;
 	}
 
 	public static boolean isDebuggable(final Context context) {
@@ -3618,6 +3621,16 @@ public final class Utils implements Constants {
 		showInfoMessage(context, context.getText(resId), long_message);
 	}
 
+	public static void showMenuItemToast(final View v, final CharSequence text) {
+		final int[] screenPos = new int[2];
+		final Rect displayFrame = new Rect();
+		v.getLocationOnScreen(screenPos);
+		v.getWindowVisibleDisplayFrame(displayFrame);
+		final int height = v.getHeight();
+		final int midy = screenPos[1] + height / 2;
+		showMenuItemToast(v, text, midy >= displayFrame.height());
+	}
+
 	public static void showMenuItemToast(final View v, final CharSequence text, final boolean isBottomBar) {
 		final int[] screenPos = new int[2];
 		final Rect displayFrame = new Rect();
@@ -3625,10 +3638,9 @@ public final class Utils implements Constants {
 		v.getWindowVisibleDisplayFrame(displayFrame);
 		final int width = v.getWidth();
 		final int height = v.getHeight();
-		final int midy = screenPos[1] + height / 2;
 		final int screenWidth = v.getResources().getDisplayMetrics().widthPixels;
 		final Toast cheatSheet = Toast.makeText(v.getContext(), text, Toast.LENGTH_SHORT);
-		if (midy >= displayFrame.height() || isBottomBar) {
+		if (isBottomBar) {
 			// Show along the bottom center
 			cheatSheet.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, height);
 		} else {
@@ -3776,6 +3788,7 @@ public final class Utils implements Constants {
 
 	public static boolean truncateMessages(final List<DirectMessage> in, final List<DirectMessage> out,
 			final long since_id) {
+		if (in == null) return false;
 		for (final DirectMessage message : in) {
 			if (since_id > 0 && message.getId() <= since_id) {
 				continue;
@@ -3787,6 +3800,7 @@ public final class Utils implements Constants {
 
 	public static boolean truncateStatuses(final List<twitter4j.Status> in, final List<twitter4j.Status> out,
 			final long since_id) {
+		if (in == null) return false;
 		for (final twitter4j.Status status : in) {
 			if (since_id > 0 && status.getId() <= since_id) {
 				continue;

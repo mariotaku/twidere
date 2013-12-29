@@ -1,27 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/home_actions_button"
+<org.mariotaku.twidere.view.HomeActionsActionView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/actions_button_bottom"
 	style="?android:imageButtonStyle"
 	android:layout_width="@dimen/home_actions_button_size"
 	android:layout_height="@dimen/home_actions_button_size"
 	android:layout_gravity="bottom|right"
-	android:visibility="visible">
-
-	<ProgressBar
-		android:id="@+id/progress"
-		style="?android:attr/progressBarStyle"
-		android:layout_width="32dp"
-		android:layout_height="32dp"
-		android:layout_gravity="center"
-		android:visibility="gone"/>
-
-	<ImageView
-		android:id="@+id/actions_icon"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:layout_gravity="center"
-		android:contentDescription="@string/compose"
-		android:scaleType="center"
-		android:src="@drawable/ic_menu_status_compose"/>
-
-</FrameLayout>
+	android:visibility="visible"/>

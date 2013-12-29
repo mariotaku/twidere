@@ -31,6 +31,8 @@ public interface IThemedActivity {
 
 	public Resources getThemedResources();
 
+	public String getThemeFontFamily();
+
 	public int getThemeResourceId();
 
 	public void navigateUpFromSameTask();

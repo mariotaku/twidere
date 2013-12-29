@@ -36,7 +36,7 @@ public class MapViewerActivity extends TwidereSwipeBackActivity implements Const
 
 	@Override
 	public int getThemeResourceId() {
-		return ThemeUtils.getViewerThemeResource(this);
+		return ThemeUtils.getThemeResource(this);
 	}
 
 	@Override

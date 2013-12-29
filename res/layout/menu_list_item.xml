@@ -15,7 +15,7 @@
 		android:layout_weight="0"
 		android:scaleType="centerInside"/>
 
-	<TextView
+	<org.mariotaku.twidere.view.themed.ThemedTextView
 		android:id="@android:id/text1"
 		android:layout_width="match_parent"
 		android:layout_height="48dp"

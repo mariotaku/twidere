@@ -238,6 +238,6 @@ public final class StatusUpdate implements Serializable {
 	}
 
 	/* package */boolean isWithMedia() {
-		return mediaFile != null || mediaName != null;
+		return mediaFile != null || mediaName != null && mediaBody != null;
 	}
 }

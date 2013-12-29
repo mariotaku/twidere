@@ -58,6 +58,8 @@ public class UserListTimelineLoader extends Twitter4JStatusesLoader {
 		if (twitter == null) return null;
 		if (mListId > 0)
 			return twitter.getUserListStatuses(mListId, paging);
+		else if (mListName == null)
+			return null;
 		else if (mUserId > 0)
 			return twitter.getUserListStatuses(mListName.replace(' ', '-'), mUserId, paging);
 		else if (mScreenName != null)

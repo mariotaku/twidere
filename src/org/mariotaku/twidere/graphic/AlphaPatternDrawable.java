@@ -32,30 +32,30 @@ import android.graphics.drawable.Drawable;
  */
 public class AlphaPatternDrawable extends Drawable {
 
-	private final int mRectangleSize;
+	private final int mAlphaPatternSize;
 
-	private int numRectanglesHorizontal;
-	private int numRectanglesVertical;
+	private int mNumRectanglesHorizontal;
+	private int mNumRectanglesVertical;
 
 	private final Rect mRect = new Rect(), mBounds = new Rect();
 	private final Paint mPaint = new Paint();
 
-	public AlphaPatternDrawable(final int rectangleSize) {
-		mRectangleSize = rectangleSize;
+	public AlphaPatternDrawable(final int alphaPatternSize) {
+		mAlphaPatternSize = alphaPatternSize;
 	}
 
 	@Override
 	public void draw(final Canvas canvas) {
 
 		boolean verticalStartWhite = true;
-		for (int i = 0; i <= numRectanglesVertical; i++) {
+		for (int i = 0; i <= mNumRectanglesVertical; i++) {
 			boolean horizontalStartWhite = verticalStartWhite;
-			for (int j = 0; j <= numRectanglesHorizontal; j++) {
+			for (int j = 0; j <= mNumRectanglesHorizontal; j++) {
 				mRect.setEmpty();
-				mRect.top = i * mRectangleSize + mBounds.top;
-				mRect.left = j * mRectangleSize + mBounds.left;
-				mRect.bottom = Math.min(mRect.top + mRectangleSize, mBounds.bottom);
-				mRect.right = Math.min(mRect.left + mRectangleSize, mBounds.right);
+				mRect.top = i * mAlphaPatternSize + mBounds.top;
+				mRect.left = j * mAlphaPatternSize + mBounds.left;
+				mRect.bottom = Math.min(mRect.top + mAlphaPatternSize, mBounds.bottom);
+				mRect.right = Math.min(mRect.left + mAlphaPatternSize, mBounds.right);
 
 				mPaint.setColor(horizontalStartWhite ? Color.WHITE : Color.GRAY);
 				canvas.drawRect(mRect, mPaint);
@@ -87,8 +87,8 @@ public class AlphaPatternDrawable extends Drawable {
 		mBounds.set(bounds);
 		final int height = bounds.height();
 		final int width = bounds.width();
-		numRectanglesHorizontal = (int) Math.ceil(width / mRectangleSize);
-		numRectanglesVertical = (int) Math.ceil(height / mRectangleSize);
+		mNumRectanglesHorizontal = (int) Math.ceil(width / mAlphaPatternSize);
+		mNumRectanglesVertical = (int) Math.ceil(height / mAlphaPatternSize);
 		invalidateSelf();
 	}
 

@@ -36,7 +36,6 @@ import static org.mariotaku.twidere.util.Utils.getErrorMessage;
 import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
 import static org.mariotaku.twidere.util.Utils.getOriginalTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
-import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.openIncomingFriendships;
@@ -120,6 +119,7 @@ import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
 import org.mariotaku.twidere.view.ColorLabelLinearLayout;
 import org.mariotaku.twidere.view.ProfileImageBannerLayout;
+import org.mariotaku.twidere.view.ProfileImageView;
 import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
 
 import twitter4j.Relationship;
@@ -138,7 +138,8 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 	private ImageLoaderWrapper mProfileImageLoader;
 	private SharedPreferences mPreferences;
 
-	private ImageView mProfileImageView, mProfileBannerView;
+	private ProfileImageView mProfileImageView;
+	private ImageView mProfileBannerView;
 	private TextView mNameView, mScreenNameView, mDescriptionView, mLocationView, mURLView, mCreatedAtView,
 			mTweetCount, mFollowersCount, mFriendsCount, mErrorMessageView;
 	private View mDescriptionContainer, mLocationContainer, mURLContainer, mTweetsContainer, mFollowersContainer,
@@ -304,8 +305,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		final String nick = getUserNickname(getActivity(), user.id, true);
 		mNameView
 				.setText(TextUtils.isEmpty(nick) ? user.name : getString(R.string.name_with_nickname, user.name, nick));
-		mNameView.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-				getUserTypeIconRes(user.is_verified, user.is_protected), 0);
+		mProfileImageView.setUserType(user.is_verified, user.is_protected);
 		mScreenNameView.setText("@" + user.screen_name);
 		mDescriptionContainer.setVisibility(user_is_me || !isEmpty(user.description_html) ? View.VISIBLE : View.GONE);
 		mDescriptionView.setText(user.description_html != null ? Html.fromHtml(user.description_html) : null);
@@ -435,9 +435,12 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 	public void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
 		switch (requestCode) {
 			case REQUEST_SET_COLOR: {
-				if (resultCode == Activity.RESULT_OK && intent != null) {
+				if (resultCode == Activity.RESULT_OK) {
+					if (intent == null) return;
 					final int color = intent.getIntExtra(EXTRA_COLOR, Color.TRANSPARENT);
 					setUserColor(getActivity(), mUserId, color);
+				} else if (resultCode == ColorPickerDialogActivity.RESULT_CLEARED) {
+					clearUserColor(getActivity(), mUserId);
 				}
 				break;
 			}
@@ -686,11 +689,8 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				final Intent intent = new Intent(getActivity(), ColorPickerDialogActivity.class);
 				intent.putExtra(EXTRA_COLOR, getUserColor(getActivity(), mUser.id, true));
 				intent.putExtra(EXTRA_ALPHA_SLIDER, false);
+				intent.putExtra(EXTRA_CLEAR_BUTTON, true);
 				startActivityForResult(intent, REQUEST_SET_COLOR);
-				break;
-			}
-			case MENU_CLEAR_COLOR: {
-				clearUserColor(getActivity(), mUserId);
 				break;
 			}
 			case MENU_CLEAR_NICKNAME: {

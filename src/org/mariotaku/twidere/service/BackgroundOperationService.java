@@ -333,24 +333,24 @@ public class BackgroundOperationService extends IntentService implements Constan
 			if (mUseUploader && mUploader == null) throw new ImageUploaderNotFoundException(this);
 			if (mUseShortener && mShortener == null) throw new TweetShortenerNotFoundException(this);
 
-			final String image_path = getImagePathFromUri(this, pstatus.media_uri);
-			final File image_file = image_path != null ? new File(image_path) : null;
+			final String imagePath = getImagePathFromUri(this, pstatus.media_uri);
+			final File imageFile = imagePath != null ? new File(imagePath) : null;
 
-			final Uri upload_result_uri;
+			final Uri uploadResultUri;
 			try {
 				if (mUploader != null) {
 					mUploader.waitForService();
 				}
-				upload_result_uri = image_file != null && image_file.exists() && mUploader != null ? mUploader.upload(
-						Uri.fromFile(image_file), pstatus.text) : null;
+				uploadResultUri = imageFile != null && imageFile.exists() && mUploader != null ? mUploader.upload(
+						Uri.fromFile(imageFile), pstatus.text) : null;
 			} catch (final Exception e) {
 				throw new ImageUploadException(this);
 			}
-			if (mUseUploader && image_file != null && image_file.exists() && upload_result_uri == null)
+			if (mUseUploader && imageFile != null && imageFile.exists() && uploadResultUri == null)
 				throw new ImageUploadException(this);
 
-			final String unshortened_content = mUseUploader && upload_result_uri != null ? getImageUploadStatus(this,
-					upload_result_uri.toString(), pstatus.text) : pstatus.text;
+			final String unshortened_content = mUseUploader && uploadResultUri != null ? getImageUploadStatus(this,
+					uploadResultUri.toString(), pstatus.text) : pstatus.text;
 
 			final boolean should_shorten = mValidator.getTweetLength(unshortened_content) > Validator.MAX_TWEET_LENGTH;
 			final String screen_name = getAccountScreenName(this, pstatus.account_ids[0]);
@@ -370,8 +370,8 @@ public class BackgroundOperationService extends IntentService implements Constan
 					throw new StatusTooLongException(this);
 				else if (unshortened_content == null) throw new TweetShortenException(this);
 			}
-			if (!mUseUploader && image_file != null && image_file.exists()) {
-				Utils.downscaleImageIfNeeded(image_file, 95);
+			if (!mUseUploader && imageFile != null && imageFile.exists()) {
+				Utils.downscaleImageIfNeeded(imageFile, 95);
 			}
 			for (final long account_id : pstatus.account_ids) {
 				final StatusUpdate status = new StatusUpdate(should_shorten && mUseShortener ? shortened_content
@@ -380,9 +380,9 @@ public class BackgroundOperationService extends IntentService implements Constan
 				if (pstatus.location != null) {
 					status.setLocation(ParcelableLocation.toGeoLocation(pstatus.location));
 				}
-				if (!mUseUploader && image_file != null && image_file.exists()) {
+				if (!mUseUploader && imageFile != null && imageFile.exists()) {
 					try {
-						final ContentLengthInputStream is = new ContentLengthInputStream(image_file);
+						final ContentLengthInputStream is = new ContentLengthInputStream(imageFile);
 						is.setReadListener(new ReadListener() {
 
 							int percent;
@@ -397,9 +397,9 @@ public class BackgroundOperationService extends IntentService implements Constan
 								this.percent = percent;
 							}
 						});
-						status.setMedia(image_file.getAbsolutePath(), is);
+						status.setMedia(imageFile.getName(), is);
 					} catch (final FileNotFoundException e) {
-						status.setMedia(image_file);
+						status.setMedia(imageFile);
 					}
 				}
 				status.setPossiblySensitive(pstatus.is_possibly_sensitive);

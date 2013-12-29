@@ -1610,13 +1610,13 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	abstract class GetStatusesTask extends ManagedAsyncTask<Void, Void, List<StatusListResponse>> {
 
-		private final long[] account_ids, max_ids, since_ids;
+		private final long[] mAccountIds, mMaxIds, mSinceIds;
 
 		public GetStatusesTask(final long[] account_ids, final long[] max_ids, final long[] since_ids, final String tag) {
 			super(mContext, mAsyncTaskManager, tag);
-			this.account_ids = account_ids;
-			this.max_ids = max_ids;
-			this.since_ids = since_ids;
+			mAccountIds = account_ids;
+			mMaxIds = max_ids;
+			mSinceIds = since_ids;
 		}
 
 		public abstract ResponseList<twitter4j.Status> getStatuses(Twitter twitter, Paging paging)
@@ -1627,29 +1627,33 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 			final List<StatusListResponse> result = new ArrayList<StatusListResponse>();
 
-			if (account_ids == null) return result;
+			if (mAccountIds == null) return result;
 
 			int idx = 0;
 			final int load_item_limit = mPreferences.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT,
 					PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
-			for (final long account_id : account_ids) {
+			for (final long account_id : mAccountIds) {
 				final Twitter twitter = getTwitterInstance(mContext, account_id, true);
 				if (twitter != null) {
 					try {
 						final Paging paging = new Paging();
 						paging.setCount(load_item_limit);
-						long max_id = -1, sinceId = -1;
-						if (isMaxIdsValid() && max_ids[idx] > 0) {
-							max_id = max_ids[idx];
-							paging.setMaxId(max_id);
+						final long maxId, sinceId;
+						if (isMaxIdsValid() && mMaxIds[idx] > 0) {
+							maxId = mMaxIds[idx];
+							paging.setMaxId(maxId);
+						} else {
+							maxId = -1;
 						}
-						if (isSinceIdsValid() && since_ids[idx] > 0) {
-							sinceId = since_ids[idx];
+						if (isSinceIdsValid() && mSinceIds[idx] > 0) {
+							sinceId = mSinceIds[idx];
 							paging.setSinceId(sinceId - 1);
+						} else {
+							sinceId = -1;
 						}
 						final List<twitter4j.Status> statuses = new ArrayList<twitter4j.Status>();
 						final boolean truncated = truncateStatuses(getStatuses(twitter, paging), statuses, sinceId);
-						result.add(new StatusListResponse(account_id, max_id, sinceId, load_item_limit, statuses,
+						result.add(new StatusListResponse(account_id, maxId, sinceId, load_item_limit, statuses,
 								truncated));
 					} catch (final TwitterException e) {
 						result.add(new StatusListResponse(account_id, e));
@@ -1661,11 +1665,11 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		}
 
 		final boolean isMaxIdsValid() {
-			return max_ids != null && max_ids.length == account_ids.length;
+			return mMaxIds != null && mMaxIds.length == mAccountIds.length;
 		}
 
 		final boolean isSinceIdsValid() {
-			return since_ids != null && since_ids.length == account_ids.length;
+			return mSinceIds != null && mSinceIds.length == mAccountIds.length;
 		}
 
 	}

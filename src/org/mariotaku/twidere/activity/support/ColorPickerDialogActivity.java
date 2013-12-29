@@ -25,14 +25,22 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import org.mariotaku.twidere.fragment.support.ColorPickerDialogFragment;
-import org.mariotaku.twidere.fragment.support.ColorPickerDialogFragment.OnColorSelectedListener;
+import org.mariotaku.twidere.fragment.support.ColorPickerDialogFragment.Callback;
 import org.mariotaku.twidere.util.ThemeUtils;
 
-public class ColorPickerDialogActivity extends BaseSupportDialogActivity implements OnColorSelectedListener {
+public class ColorPickerDialogActivity extends BaseSupportDialogActivity implements Callback {
+
+	public static final int RESULT_CLEARED = -2;
 
 	@Override
 	public int getThemeResourceId() {
 		return ThemeUtils.getNoDisplayThemeResource(this);
+	}
+
+	@Override
+	public void onColorCleared() {
+		setResult(RESULT_CLEARED);
+		finish();
 	}
 
 	@Override
@@ -51,6 +59,7 @@ public class ColorPickerDialogActivity extends BaseSupportDialogActivity impleme
 			final InternalColorPickerDialogFragment f = new InternalColorPickerDialogFragment();
 			final Bundle args = new Bundle();
 			args.putInt(EXTRA_COLOR, intent.getIntExtra(EXTRA_COLOR, Color.WHITE));
+			args.putBoolean(EXTRA_CLEAR_BUTTON, intent.getBooleanExtra(EXTRA_CLEAR_BUTTON, false));
 			args.putBoolean(EXTRA_ALPHA_SLIDER, intent.getBooleanExtra(EXTRA_ALPHA_SLIDER, true));
 			f.setArguments(args);
 			f.show(getSupportFragmentManager(), "color_picker_dialog");

@@ -25,20 +25,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.view.iface.IColorLabelView;
 
 public class UserViewHolder extends CardViewHolder {
 
 	public final ImageView profile_image;
 	public final TextView name, screen_name, description, location, url, statuses_count, followers_count,
 			friends_count;
-	private final IColorLabelView content;
 	private boolean account_color_enabled;
 	private float text_size;
+	public int position;
 
 	public UserViewHolder(final View view) {
 		super(view);
-		content = (IColorLabelView) findViewById(R.id.content);
 		profile_image = (ImageView) findViewById(R.id.profile_image);
 		name = (TextView) findViewById(R.id.name);
 		screen_name = (TextView) findViewById(R.id.screen_name);

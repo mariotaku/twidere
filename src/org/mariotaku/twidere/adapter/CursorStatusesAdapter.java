@@ -52,8 +52,10 @@ import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
+import org.mariotaku.twidere.view.iface.ICardItemView.OnOverflowIconClickListener;
 
-public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatusesAdapter<Cursor>, OnClickListener {
+public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatusesAdapter<Cursor>, OnClickListener,
+		OnOverflowIconClickListener {
 
 	public static final String[] CURSOR_COLS = Statuses.COLUMNS;
 
@@ -99,6 +101,8 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 		final boolean showGap = isGap && !mGapDisallowed && position != getCount() - 1;
 
 		holder.setShowAsGap(showGap);
+		holder.position = position;
+		holder.setDisplayProfileImage(isDisplayProfileImage());
 
 		if (!showGap) {
 
@@ -197,7 +201,7 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 			}
 			final boolean hasPreview = mDisplayImagePreview && hasMedia;
 			holder.image_preview_container.setVisibility(hasPreview ? View.VISIBLE : View.GONE);
-			if (hasPreview) {
+			if (hasPreview && mediaLink != null) {
 				if (possiblySensitive && !mDisplaySensitiveContents) {
 					holder.image_preview.setImageDrawable(null);
 					holder.image_preview.setBackgroundResource(R.drawable.image_preview_nsfw);
@@ -208,7 +212,6 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 				}
 				holder.image_preview.setTag(position);
 			}
-			holder.item_menu.setTag(position);
 		}
 	}
 
@@ -298,7 +301,7 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 			holder.profile_image.setOnClickListener(this);
 			holder.my_profile_image.setOnClickListener(this);
 			holder.image_preview.setOnClickListener(this);
-			holder.item_menu.setOnClickListener(this);
+			holder.content.setOnOverflowIconClickListener(this);
 			view.setTag(holder);
 		}
 		return view;
@@ -326,11 +329,17 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 				}
 				break;
 			}
-			case R.id.item_menu: {
-				if (position == -1 || mListener == null) return;
-				mListener.onMenuButtonClick(view, position, getItemId(position));
-				break;
-			}
+		}
+	}
+
+	@Override
+	public void onOverflowIconClick(final View view) {
+		final Object tag = view.getTag();
+		if (tag instanceof StatusViewHolder) {
+			final StatusViewHolder holder = (StatusViewHolder) tag;
+			final int position = holder.position;
+			if (position == -1 || mListener == null) return;
+			mListener.onMenuButtonClick(view, position, getItemId(position));
 		}
 	}
 

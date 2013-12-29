@@ -176,10 +176,11 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 	private long[] mAccountIds, mSendAccountIds;
 
 	private int mMediaType;
+
 	private Uri mMediaUri, mTempPhotoUri;
 	private boolean mImageUploaderUsed, mTweetShortenerUsed;
-
 	private ParcelableStatus mInReplyToStatus;
+
 	private ParcelableUser mMentionUser;
 	private DraftItem mDraftItem;
 	private long mInReplyToStatusId;
@@ -199,6 +200,11 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 	@Override
 	public Resources getResources() {
 		return getThemedResources();
+	}
+
+	@Override
+	public int getThemeColor() {
+		return ThemeUtils.getUserThemeColor(this);
 	}
 
 	@Override
@@ -367,11 +373,11 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) return;
 		final String option = mPreferences.getString(PREFERENCE_KEY_COMPOSE_QUIT_ACTION, COMPOSE_QUIT_ACTION_ASK);
 		final String text = mEditText != null ? ParseUtils.parseString(mEditText.getText()) : null;
-		final boolean text_changed = !isEmpty(text) && !text.equals(mOriginalText);
-		final boolean is_editing_draft = INTENT_ACTION_EDIT_DRAFT.equals(getIntent().getAction());
+		final boolean textChanged = !isEmpty(text) && !text.equals(mOriginalText);
+		final boolean isEditingDraft = INTENT_ACTION_EDIT_DRAFT.equals(getIntent().getAction());
 		if (COMPOSE_QUIT_ACTION_DISCARD.equals(option)) {
 			mTask = new DiscardTweetTask(this).execute();
-		} else if (text_changed || hasMedia() || is_editing_draft) {
+		} else if (textChanged || hasMedia() || isEditingDraft) {
 			if (COMPOSE_QUIT_ACTION_SAVE.equals(option)) {
 				saveToDrafts();
 				Toast.makeText(this, R.string.status_saved_to_draft, Toast.LENGTH_SHORT).show();
@@ -562,7 +568,6 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		mAccountSelector.setOnItemClickListener(this);
 		mAccountSelector.setOnItemLongClickListener(this);
 		mAccountSelector.setScrollAfterItemClickEnabled(false);
-		mAccountSelector.setScrollWhenChildsLesserThanItems(false);
 		mAccountSelector.setScrollRightSpacingEnabled(false);
 
 		final Intent intent = getIntent();

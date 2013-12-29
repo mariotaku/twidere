@@ -31,8 +31,9 @@ public abstract class BaseAccountPreferenceFragment extends PreferenceFragment i
 		setHasOptionsMenu(true);
 		final PreferenceManager pm = getPreferenceManager();
 		final Account account = getArguments().getParcelable(EXTRA_ACCOUNT);
-		final String pName = ACCOUNT_PREFERENCES_NAME_PREFIX + (account != null ? account.account_id : "unknown");
-		pm.setSharedPreferencesName(pName);
+		final String preferenceName = ACCOUNT_PREFERENCES_NAME_PREFIX
+				+ (account != null ? account.account_id : "unknown");
+		pm.setSharedPreferencesName(preferenceName);
 		addPreferencesFromResource(getPreferencesResource());
 		final SharedPreferences prefs = pm.getSharedPreferences();
 		prefs.registerOnSharedPreferenceChangeListener(this);

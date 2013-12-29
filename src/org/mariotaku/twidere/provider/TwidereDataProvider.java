@@ -909,25 +909,25 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		final MatrixCursor c = new MatrixCursor(TweetStore.UnreadCounts.MATRIX_COLUMNS);
 		final Context context = getContext();
 		final SupportTabSpec tab = CustomTabUtils.getAddedTabAt(context, position);
-		final String type = tab != null ? tab.type : null;
+		if (tab == null) return c;
 		final int count;
-		if (TAB_TYPE_HOME_TIMELINE.equals(type) || TAB_TYPE_STAGGERED_HOME_TIMELINE.equals(type)) {
+		if (TAB_TYPE_HOME_TIMELINE.equals(tab.type) || TAB_TYPE_STAGGERED_HOME_TIMELINE.equals(tab.type)) {
 			final long account_id = tab.args != null ? tab.args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
 			final long[] account_ids = account_id > 0 ? new long[] { account_id } : getActivatedAccountIds(context);
 			count = getUnreadCount(mUnreadStatuses, account_ids);
-		} else if (TAB_TYPE_MENTIONS_TIMELINE.equals(type)) {
+		} else if (TAB_TYPE_MENTIONS_TIMELINE.equals(tab.type)) {
 			final long account_id = tab.args != null ? tab.args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
 			final long[] account_ids = account_id > 0 ? new long[] { account_id } : getActivatedAccountIds(context);
 			count = getUnreadCount(mUnreadMentions, account_ids);
-		} else if (TAB_TYPE_DIRECT_MESSAGES.equals(type)) {
+		} else if (TAB_TYPE_DIRECT_MESSAGES.equals(tab.type)) {
 			final long account_id = tab.args != null ? tab.args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
 			final long[] account_ids = account_id > 0 ? new long[] { account_id } : getActivatedAccountIds(context);
 			count = getUnreadCount(mUnreadMessages, account_ids);
 		} else {
 			count = 0;
 		}
-		if (type != null) {
-			c.addRow(new Object[] { position, type, count });
+		if (tab.type != null) {
+			c.addRow(new Object[] { position, tab.type, count });
 		}
 		return c;
 	}
@@ -1206,9 +1206,10 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	}
 
 	private static int clearUnreadCount(final List<UnreadItem> set, final long[] accountIds) {
+		if (accountIds == null) return 0;
 		int count = 0;
 		for (final UnreadItem item : set.toArray(new UnreadItem[set.size()])) {
-			if (ArrayUtils.contains(accountIds, item.account_id) && set.remove(item)) {
+			if (item != null && ArrayUtils.contains(accountIds, item.account_id) && set.remove(item)) {
 				count++;
 			}
 		}

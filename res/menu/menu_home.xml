@@ -3,7 +3,7 @@
 
 	<item
 		android:id="@id/actions"
-		android:actionLayout="@layout/action_item_home_actions"
+		android:actionViewClass="org.mariotaku.twidere.view.HomeActionsActionView"
 		android:icon="@drawable/ic_menu_tweet"
 		android:showAsAction="always"
 		android:title="@string/compose"/>

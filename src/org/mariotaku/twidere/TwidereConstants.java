@@ -128,6 +128,11 @@ public interface TwidereConstants {
 	public static final int LINK_HIGHLIGHT_OPTION_CODE_BOTH = LINK_HIGHLIGHT_OPTION_CODE_HIGHLIGHT
 			| LINK_HIGHLIGHT_OPTION_CODE_UNDERLINE;
 
+	public static final String FONT_FAMILY_REGULAR = "sans-serif";
+	public static final String FONT_FAMILY_CONDENSED = "sans-serif-condensed";
+	public static final String FONT_FAMILY_LIGHT = "sans-serif-light";
+	public static final String FONT_FAMILY_THIN = "sans-serif-thin";
+
 	public static final int NOTIFICATION_FLAG_NONE = 0x0;
 	public static final int NOTIFICATION_FLAG_RINGTONE = 0x1;
 	public static final int NOTIFICATION_FLAG_VIBRATION = 0x2;
@@ -158,6 +163,8 @@ public interface TwidereConstants {
 	public static final String PREFERENCE_KEY_THEME_DARK_ACTIONBAR = "theme_dark_actionbar";
 	@PreferenceType(PreferenceType.INT)
 	public static final String PREFERENCE_KEY_THEME_COLOR = "theme_color";
+	@PreferenceType(PreferenceType.STRING)
+	public static final String PREFERENCE_KEY_THEME_FONT_FAMILY = "theme_font_family";
 	@PreferenceType(PreferenceType.NULL)
 	public static final String PREFERENCE_KEY_CLEAR_DATABASES = "clear_databases";
 	@PreferenceType(PreferenceType.NULL)
@@ -490,6 +497,7 @@ public interface TwidereConstants {
 	public static final String EXTRA_RECIPIENT_ID = "recipient_id";
 	public static final String EXTRA_OFFICIAL_KEY_ONLY = "official_key_only";
 	public static final String EXTRA_SEARCH_ID = "search_id";
+	public static final String EXTRA_CLEAR_BUTTON = "clear_button";
 
 	public static final int MENU_GROUP_STATUS_EXTENSION = 10;
 	public static final int MENU_GROUP_COMPOSE_EXTENSION = 11;
