@@ -39,17 +39,17 @@ public class ImageLoaderWrapper implements Constants {
 
 	public ImageLoaderWrapper(final ImageLoader loader) {
 		mImageLoader = loader;
-		final DisplayImageOptions.Builder profile_opts_builder = new DisplayImageOptions.Builder();
-		profile_opts_builder.cacheInMemory(true);
-		profile_opts_builder.cacheOnDisc(true);
-		profile_opts_builder.showStubImage(R.drawable.ic_profile_image_default);
-		profile_opts_builder.bitmapConfig(Bitmap.Config.ARGB_8888);
-		profile_opts_builder.resetViewBeforeLoading(true);
-		final DisplayImageOptions.Builder image_opts_builder = new DisplayImageOptions.Builder();
-		image_opts_builder.cacheInMemory(true);
-		image_opts_builder.cacheOnDisc(true);
-		image_opts_builder.bitmapConfig(Bitmap.Config.RGB_565);
-		image_opts_builder.resetViewBeforeLoading(true);
+		final DisplayImageOptions.Builder profileOptsNuilder = new DisplayImageOptions.Builder();
+		profileOptsNuilder.cacheInMemory(true);
+		profileOptsNuilder.cacheOnDisc(true);
+		profileOptsNuilder.showStubImage(R.drawable.ic_profile_image_default);
+		profileOptsNuilder.bitmapConfig(Bitmap.Config.ARGB_8888);
+		profileOptsNuilder.resetViewBeforeLoading(true);
+		final DisplayImageOptions.Builder imageOptsBuilder = new DisplayImageOptions.Builder();
+		imageOptsBuilder.cacheInMemory(true);
+		imageOptsBuilder.cacheOnDisc(true);
+		imageOptsBuilder.bitmapConfig(Bitmap.Config.RGB_565);
+		imageOptsBuilder.resetViewBeforeLoading(true);
 		final DisplayImageOptions.Builder banner_opts_builder = new DisplayImageOptions.Builder();
 		banner_opts_builder.cacheInMemory(true);
 		banner_opts_builder.cacheOnDisc(true);
@@ -57,8 +57,8 @@ public class ImageLoaderWrapper implements Constants {
 		banner_opts_builder.resetViewBeforeLoading(true);
 		banner_opts_builder.showStubImage(android.R.color.transparent);
 
-		mProfileImageDisplayOptions = profile_opts_builder.build();
-		mImageDisplayOptions = image_opts_builder.build();
+		mProfileImageDisplayOptions = profileOptsNuilder.build();
+		mImageDisplayOptions = imageOptsBuilder.build();
 		mBannerDisplayOptions = banner_opts_builder.build();
 	}
 
@@ -74,8 +74,8 @@ public class ImageLoaderWrapper implements Constants {
 		mImageLoader.displayImage(url, view, mImageDisplayOptions);
 	}
 
-	public void displayPreviewImage(final ImageView view, final String url, final ImageLoadingListener listener) {
-		mImageLoader.displayImage(url, view, mImageDisplayOptions, listener);
+	public void displayPreviewImage(final ImageView view, final String url, final ImageLoadingHandler loadingHandler) {
+		mImageLoader.displayImage(url, view, mImageDisplayOptions, loadingHandler, loadingHandler);
 	}
 
 	public void displayProfileBanner(final ImageView view, final String base_url, final int width) {

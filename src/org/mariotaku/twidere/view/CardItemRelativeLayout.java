@@ -58,6 +58,11 @@ public class CardItemRelativeLayout extends ColorLabelRelativeLayout implements 
 	}
 
 	@Override
+	public void setItemBackground(final Drawable itemBackground) {
+		mDrawingHelper.setItemBackground(itemBackground);
+	}
+
+	@Override
 	public void setItemSelector(final Drawable itemSelector) {
 		mDrawingHelper.setItemSelector(itemSelector);
 	}

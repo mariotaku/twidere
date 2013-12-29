@@ -7,13 +7,14 @@ import android.widget.ProgressBar;
 
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.assist.ImageLoadingProgressListener;
 
 import org.mariotaku.twidere.R;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ImageLoadingHandler implements ImageLoadingListener {
+public class ImageLoadingHandler implements ImageLoadingListener, ImageLoadingProgressListener {
 
 	private final Map<View, String> mLoadingUris = new HashMap<View, String>();
 
@@ -59,17 +60,6 @@ public class ImageLoadingHandler implements ImageLoadingListener {
 	}
 
 	@Override
-	public void onLoadingProgressChanged(final String imageUri, final View view, final int current, final int total) {
-		if (total == 0 || view == null) return;
-		final View parent = (View) view.getParent();
-		final ProgressBar progress = (ProgressBar) parent.findViewById(R.id.image_preview_progress);
-		if (progress != null) {
-			progress.setIndeterminate(false);
-			progress.setProgress(100 * current / total);
-		}
-	}
-
-	@Override
 	public void onLoadingStarted(final String imageUri, final View view) {
 		if (view == null || imageUri == null || imageUri.equals(mLoadingUris.get(view))) return;
 		mLoadingUris.put(view, imageUri);
@@ -79,6 +69,17 @@ public class ImageLoadingHandler implements ImageLoadingListener {
 			progress.setVisibility(View.VISIBLE);
 			progress.setIndeterminate(true);
 			progress.setMax(100);
+		}
+	}
+
+	@Override
+	public void onProgressUpdate(final String imageUri, final View view, final int current, final int total) {
+		if (total == 0 || view == null) return;
+		final View parent = (View) view.getParent();
+		final ProgressBar progress = (ProgressBar) parent.findViewById(R.id.image_preview_progress);
+		if (progress != null) {
+			progress.setIndeterminate(false);
+			progress.setProgress(100 * current / total);
 		}
 	}
 }

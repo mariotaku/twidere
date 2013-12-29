@@ -25,7 +25,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.view.iface.IColorLabelView;
 
 public class UserViewHolder extends CardViewHolder {
 

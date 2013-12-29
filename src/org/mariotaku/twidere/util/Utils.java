@@ -107,7 +107,6 @@ import org.mariotaku.querybuilder.Selectable;
 import org.mariotaku.querybuilder.Tables;
 import org.mariotaku.querybuilder.Where;
 import org.mariotaku.querybuilder.query.SQLSelectQuery;
-import org.mariotaku.twidere.BuildConfig;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.CameraCropActivity;
@@ -2312,7 +2311,7 @@ public final class Utils implements Constants {
 	}
 
 	public static boolean isDebugBuild() {
-//		return BuildConfig.DEBUG;
+		// return BuildConfig.DEBUG;
 		return false;
 	}
 

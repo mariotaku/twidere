@@ -322,6 +322,14 @@ public class ThemeUtils implements Constants {
 		return new TwidereContextWrapper(context, res);
 	}
 
+	public static String getThemeFontFamily(final Context context) {
+		if (context == null) return FONT_FAMILY_REGULAR;
+		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final String fontFamily = pref.getString(PREFERENCE_KEY_THEME_FONT_FAMILY, FONT_FAMILY_REGULAR);
+		if (!TextUtils.isEmpty(fontFamily)) return fontFamily;
+		return FONT_FAMILY_REGULAR;
+	}
+
 	public static String getThemeNameOption(final Context context) {
 		if (context == null) return THEME_NAME_TWIDERE;
 		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -394,14 +402,6 @@ public class ThemeUtils implements Constants {
 		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final int def = res.getColor(android.R.color.holo_blue_light);
 		return pref.getInt(PREFERENCE_KEY_THEME_COLOR, def);
-	}
-
-	public static String getThemeFontFamily(final Context context) {
-		if (context == null) return FONT_FAMILY_REGULAR;
-		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final String fontFamily = pref.getString(PREFERENCE_KEY_THEME_FONT_FAMILY, FONT_FAMILY_REGULAR);
-		if (!TextUtils.isEmpty(fontFamily)) return fontFamily;
-		return FONT_FAMILY_REGULAR;
 	}
 
 	public static Typeface getUserTypeface(final Context context, final Typeface defTypeface) {
@@ -594,7 +594,6 @@ public class ThemeUtils implements Constants {
 		if (statusListPane != null) {
 			final CardItemLinearLayout statusListItemContent = (CardItemLinearLayout) statusListPane
 					.findViewById(R.id.content);
-			statusListItemContent.setItemSelector(null);
 
 			final ForegroundImageView profileImageView = (ForegroundImageView) statusListItemContent
 					.findViewById(R.id.profile_image);
@@ -603,9 +602,9 @@ public class ThemeUtils implements Constants {
 			final TextView textView = (TextView) statusListItemContent.findViewById(R.id.text);
 			final ShortTimeView timeSourceView = (ShortTimeView) statusListItemContent.findViewById(R.id.time);
 			final TextView replyRetweetView = (TextView) statusListItemContent.findViewById(R.id.reply_retweet_status);
-			final Drawable cardItemBackground = getCardItemBackground(theme);
-			applyThemeAlphaToDrawable(theme, cardItemBackground);
-			ViewAccessor.setBackground(statusListItemContent, cardItemBackground);
+
+			statusListItemContent.setItemSelector(null);
+			statusListItemContent.setItemBackground(getCardItemBackground(theme));
 
 			replyRetweetView.setVisibility(View.GONE);
 
@@ -642,6 +641,7 @@ public class ThemeUtils implements Constants {
 			final TextView repliesView = (TextView) statusContentView.findViewById(R.id.replies_view);
 
 			cardView.setItemSelector(null);
+			cardView.setItemBackground(getCardItemBackground(theme));
 
 			nameView.setTextColor(textColorPrimary);
 			screenNameView.setTextColor(textColorSecondary);

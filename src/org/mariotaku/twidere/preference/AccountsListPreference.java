@@ -118,11 +118,6 @@ public abstract class AccountsListPreference extends PreferenceCategory implemen
 		}
 
 		@Override
-		public void onLoadingProgressChanged(final String imageUri, final View view, final int current, final int total) {
-
-		}
-
-		@Override
 		public void onLoadingStarted(final String imageUri, final View view) {
 			setIcon(R.drawable.ic_profile_image_default);
 		}

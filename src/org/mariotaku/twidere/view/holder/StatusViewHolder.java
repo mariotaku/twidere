@@ -36,7 +36,6 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.view.ProfileImageView;
 import org.mariotaku.twidere.view.ShortTimeView;
-import org.mariotaku.twidere.view.iface.ICardItemView;
 
 public class StatusViewHolder extends CardViewHolder {
 

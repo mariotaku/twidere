@@ -127,7 +127,6 @@ public interface TwidereConstants {
 	public static final int LINK_HIGHLIGHT_OPTION_CODE_UNDERLINE = 0x2;
 	public static final int LINK_HIGHLIGHT_OPTION_CODE_BOTH = LINK_HIGHLIGHT_OPTION_CODE_HIGHLIGHT
 			| LINK_HIGHLIGHT_OPTION_CODE_UNDERLINE;
-	
 
 	public static final String FONT_FAMILY_REGULAR = "sans-serif";
 	public static final String FONT_FAMILY_CONDENSED = "sans-serif-condensed";
