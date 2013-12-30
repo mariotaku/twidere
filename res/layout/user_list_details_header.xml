@@ -47,14 +47,14 @@
 				android:orientation="vertical"
 				android:paddingLeft="@dimen/element_spacing_default">
 
-				<TextView
+				<org.mariotaku.twidere.view.themed.ThemedTextView
 					android:id="@+id/list_name"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:singleLine="true"
 					android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-				<TextView
+				<org.mariotaku.twidere.view.themed.ThemedTextView
 					android:id="@+id/created_by"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
@@ -77,13 +77,13 @@
 			android:orientation="vertical"
 			android:padding="@dimen/element_spacing_small">
 
-			<TextView
+			<org.mariotaku.twidere.view.themed.ThemedTextView
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:text="@string/description"
 				android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-			<TextView
+			<org.mariotaku.twidere.view.themed.ThemedTextView
 				android:id="@+id/description"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"

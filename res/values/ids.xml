@@ -67,5 +67,6 @@
 	<item name="follow" type="id"/>
 	<item name="unfollow" type="id"/>
 	<item name="back" type="id"/>
+	<item name="translate" type="id"/>
 
 </resources>

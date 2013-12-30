@@ -30,6 +30,7 @@ public class UserListViewHolder extends CardViewHolder {
 	public final ImageView profile_image;
 	public final TextView name, description, created_by, members_count, subscribers_count;
 	private float text_size;
+	public int position;
 
 	public UserListViewHolder(final View view) {
 		super(view);

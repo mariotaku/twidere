@@ -128,7 +128,7 @@
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:textColor="?android:attr/textColorSecondary"/>
 
-		<TextView
+		<org.mariotaku.twidere.view.themed.ThemedTextView
 			android:id="@+id/reply_retweet_status"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -193,7 +193,7 @@
 				android:contentDescription="@string/profile_image"
 				android:scaleType="fitCenter"/>
 
-			<TextView
+			<org.mariotaku.twidere.view.themed.ThemedTextView
 				android:id="@+id/activity_profile_image_more_number"
 				android:layout_width="0dp"
 				android:layout_height="wrap_content"

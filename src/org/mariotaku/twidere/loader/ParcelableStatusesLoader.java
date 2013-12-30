@@ -24,13 +24,13 @@ import android.support.v4.content.AsyncTaskLoader;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.model.ParcelableStatus;
+import org.mariotaku.twidere.util.collection.NoDuplicatesArrayList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ParcelableStatusesLoader extends AsyncTaskLoader<List<ParcelableStatus>> implements Constants {
 
-	private final List<ParcelableStatus> mData = new ArrayList<ParcelableStatus>();
+	private final List<ParcelableStatus> mData = new NoDuplicatesArrayList<ParcelableStatus>();
 	private final boolean mFirstLoad;
 	private final int mTabPosition;
 

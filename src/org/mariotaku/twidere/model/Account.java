@@ -161,10 +161,40 @@ public class Account implements Parcelable {
 		return accounts;
 	}
 
+	public static AccountWithCredentials getAccountWithCredentials(final Context context, final long account_id) {
+		if (context == null) return null;
+		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI,
+				Accounts.COLUMNS, Accounts.ACCOUNT_ID + " = " + account_id, null, null);
+		if (cur != null) {
+			try {
+				final Indices indices = new Indices(cur);
+				cur.moveToFirst();
+				return new AccountWithCredentials(cur, indices);
+			} finally {
+				cur.close();
+			}
+		}
+		return null;
+	}
+
+	public static class AccountWithCredentials extends Account {
+
+		public int auth_type;
+		public String consumer_key, consumer_secret;
+
+		public AccountWithCredentials(final Cursor cursor, final Indices indices) {
+			super(cursor, indices);
+			auth_type = cursor.getInt(indices.auth_type);
+			consumer_key = cursor.getString(indices.consumer_key);
+			consumer_secret = cursor.getString(indices.consumer_secret);
+		}
+
+	}
+
 	public static final class Indices {
 
 		public final int screen_name, name, account_id, profile_image_url, profile_banner_url, color, is_activated,
-				consumer_key, consumer_secret;
+				auth_type, consumer_key, consumer_secret;
 
 		public Indices(final Cursor cursor) {
 			screen_name = cursor.getColumnIndex(Accounts.SCREEN_NAME);
@@ -174,6 +204,7 @@ public class Account implements Parcelable {
 			profile_banner_url = cursor.getColumnIndex(Accounts.PROFILE_BANNER_URL);
 			color = cursor.getColumnIndex(Accounts.COLOR);
 			is_activated = cursor.getColumnIndex(Accounts.IS_ACTIVATED);
+			auth_type = cursor.getColumnIndex(Accounts.AUTH_TYPE);
 			consumer_key = cursor.getColumnIndex(Accounts.CONSUMER_KEY);
 			consumer_secret = cursor.getColumnIndex(Accounts.CONSUMER_SECRET);
 		}

@@ -168,11 +168,11 @@ public class DirectMessageConversationEntriesAdapter extends BaseCursorAdapter i
 				}
 				break;
 			}
-			case R.id.item_menu: {
-				if (position == -1 || mListener == null) return;
-				mListener.onMenuButtonClick(view, position, getItemId(position));
-				break;
-			}
+			// case R.id.item_menu: {
+			// if (position == -1 || mListener == null) return;
+			// mListener.onMenuButtonClick(view, position, getItemId(position));
+			// break;
+			// }
 		}
 	}
 

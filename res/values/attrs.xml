@@ -3,7 +3,6 @@
 
 	<declare-styleable name="Twidere">
 		<attr name="cardItemBackground" format="reference"/>
-		<attr name="cardItemSelector" format="reference"/>
 		<attr name="cardItemBackgroundColor" format="color"/>
 		<attr name="cardItemMessageIncomingBackground" format="reference"/>
 		<attr name="cardItemMessageOutgoingBackground" format="reference"/>
@@ -19,6 +18,7 @@
 		<attr name="cardSelector" format="reference"/>
 		<attr name="cardActivatedIndicator" format="reference"/>
 		<attr name="cardOverflowIcon" format="reference"/>
+		<attr name="cardBackgroundAlpha" format="fraction"/>
 		<attr name="cardGapHeight" format="dimension"/>
 		<attr name="cardGapText" format="string"/>
 		<attr name="cardGapTextColor" format="color"/>

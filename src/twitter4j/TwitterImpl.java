@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -552,17 +553,21 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 
 	@Override
 	public ResponseList<Status> getHomeTimeline() throws TwitterException {
-		ensureAuthorizationEnabled();
-		return factory.createStatusList(get(conf.getRestBaseURL() + ENDPOINT_STATUSES_HOME_TIMELINE,
-				conf.getSigningRestBaseURL() + ENDPOINT_STATUSES_HOME_TIMELINE, INCLUDE_MY_RETWEET, INCLUDE_ENTITIES));
+		return getHomeTimeline(null);
 	}
 
 	@Override
 	public ResponseList<Status> getHomeTimeline(final Paging paging) throws TwitterException {
 		ensureAuthorizationEnabled();
-		return factory.createStatusList(get(conf.getRestBaseURL() + ENDPOINT_STATUSES_HOME_TIMELINE,
-				conf.getSigningRestBaseURL() + ENDPOINT_STATUSES_HOME_TIMELINE,
-				mergeParameters(paging.asPostParameterArray(), INCLUDE_ENTITIES, INCLUDE_MY_RETWEET)));
+		final String url = conf.getRestBaseURL() + ENDPOINT_STATUSES_HOME_TIMELINE;
+		final String signUrl = conf.getSigningRestBaseURL() + ENDPOINT_STATUSES_HOME_TIMELINE;
+		final List<HttpParameter> paramsList = new ArrayList<HttpParameter>();
+		paramsList.add(INCLUDE_ENTITIES);
+		paramsList.add(INCLUDE_MY_RETWEET);
+		if (paging != null) {
+			paramsList.addAll(paging.asPostParameterList());
+		}
+		return factory.createStatusList(get(url, signUrl, paramsList.toArray(new HttpParameter[paramsList.size()])));
 	}
 
 	@Override
@@ -584,6 +589,65 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	}
 
 	@Override
+	public ResponseList<Status> getMediaTimeline() throws TwitterException {
+		return getMediaTimeline(new Paging());
+	}
+
+	@Override
+	public ResponseList<Status> getMediaTimeline(final long userId) throws TwitterException {
+		return getMediaTimeline(userId, null);
+	}
+
+	@Override
+	public ResponseList<Status> getMediaTimeline(final long userId, final Paging paging) throws TwitterException {
+		ensureAuthorizationEnabled();
+		final String url = conf.getRestBaseURL() + ENDPOINT_STATUSES_MEDIA_TIMELINE;
+		final String signUrl = conf.getSigningRestBaseURL() + ENDPOINT_STATUSES_MEDIA_TIMELINE;
+		final List<HttpParameter> paramsList = new ArrayList<HttpParameter>();
+		paramsList.add(INCLUDE_ENTITIES);
+		paramsList.add(INCLUDE_MY_RETWEET);
+		paramsList.add(new HttpParameter("user_id", userId));
+		if (paging != null) {
+			paramsList.addAll(paging.asPostParameterList());
+		}
+		return factory.createStatusList(get(url, signUrl, paramsList.toArray(new HttpParameter[paramsList.size()])));
+	}
+
+	@Override
+	public ResponseList<Status> getMediaTimeline(final Paging paging) throws TwitterException {
+		ensureAuthorizationEnabled();
+		final String url = conf.getRestBaseURL() + ENDPOINT_STATUSES_MEDIA_TIMELINE;
+		final String signUrl = conf.getSigningRestBaseURL() + ENDPOINT_STATUSES_MEDIA_TIMELINE;
+		final List<HttpParameter> paramsList = new ArrayList<HttpParameter>();
+		paramsList.add(INCLUDE_ENTITIES);
+		paramsList.add(INCLUDE_MY_RETWEET);
+		if (paging != null) {
+			paramsList.addAll(paging.asPostParameterList());
+		}
+		return factory.createStatusList(get(url, signUrl, paramsList.toArray(new HttpParameter[paramsList.size()])));
+	}
+
+	@Override
+	public ResponseList<Status> getMediaTimeline(final String screenName) throws TwitterException {
+		return getMediaTimeline(screenName, null);
+	}
+
+	@Override
+	public ResponseList<Status> getMediaTimeline(final String screenName, final Paging paging) throws TwitterException {
+		ensureAuthorizationEnabled();
+		final String url = conf.getRestBaseURL() + ENDPOINT_STATUSES_MEDIA_TIMELINE;
+		final String signUrl = conf.getSigningRestBaseURL() + ENDPOINT_STATUSES_MEDIA_TIMELINE;
+		final List<HttpParameter> paramsList = new ArrayList<HttpParameter>();
+		paramsList.add(INCLUDE_ENTITIES);
+		paramsList.add(INCLUDE_MY_RETWEET);
+		paramsList.add(new HttpParameter("screen_name", screenName));
+		if (paging != null) {
+			paramsList.addAll(paging.asPostParameterList());
+		}
+		return factory.createStatusList(get(url, signUrl, paramsList.toArray(new HttpParameter[paramsList.size()])));
+	}
+
+	@Override
 	public ResponseList<User> getMemberSuggestions(final String categorySlug) throws TwitterException {
 		final HttpResponse res = get(conf.getRestBaseURL() + "users/suggestions/" + categorySlug + "/members.json",
 				conf.getSigningRestBaseURL() + "users/suggestions/" + categorySlug + "/members.json");
@@ -593,16 +657,21 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	@Override
 	public ResponseList<Status> getMentionsTimeline() throws TwitterException {
 		ensureAuthorizationEnabled();
-		return factory.createStatusList(get(conf.getRestBaseURL() + ENDPOINT_STATUSES_MENTIONS_TIMELINE,
-				conf.getSigningRestBaseURL() + ENDPOINT_STATUSES_MENTIONS_TIMELINE, INCLUDE_ENTITIES, INCLUDE_RTS));
+		return getMentionsTimeline(null);
 	}
 
 	@Override
 	public ResponseList<Status> getMentionsTimeline(final Paging paging) throws TwitterException {
 		ensureAuthorizationEnabled();
-		return factory.createStatusList(get(conf.getRestBaseURL() + ENDPOINT_STATUSES_MENTIONS_TIMELINE,
-				conf.getSigningRestBaseURL() + ENDPOINT_STATUSES_MENTIONS_TIMELINE,
-				mergeParameters(paging.asPostParameterArray(), INCLUDE_RTS, INCLUDE_ENTITIES)));
+		final String url = conf.getRestBaseURL() + ENDPOINT_STATUSES_MENTIONS_TIMELINE;
+		final String signUrl = conf.getSigningRestBaseURL() + ENDPOINT_STATUSES_MENTIONS_TIMELINE;
+		final List<HttpParameter> paramsList = new ArrayList<HttpParameter>();
+		paramsList.add(INCLUDE_ENTITIES);
+		paramsList.add(INCLUDE_MY_RETWEET);
+		if (paging != null) {
+			paramsList.addAll(paging.asPostParameterList());
+		}
+		return factory.createStatusList(get(url, signUrl, paramsList.toArray(new HttpParameter[paramsList.size()])));
 	}
 
 	@Override
@@ -730,6 +799,14 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 		return factory.createSimilarPlaces(get(conf.getRestBaseURL() + ENDPOINT_GEO_SIMILAR_PLACES,
 				conf.getSigningRestBaseURL() + ENDPOINT_GEO_SIMILAR_PLACES,
 				params.toArray(new HttpParameter[params.size()])));
+	}
+
+	@Override
+	public StatusActivitySummary getStatusActivitySummary(final long statusId) throws TwitterException {
+		final String endpoint = String.format(Locale.US, "statuses/%d/activity/summary.json", statusId);
+		final String url = conf.getRestBaseURL() + endpoint;
+		final String sign_url = conf.getSigningRestBaseURL() + endpoint;
+		return factory.createStatusActivitySummary(get(url, sign_url, INCLUDE_ENTITIES));
 	}
 
 	@Override
@@ -922,21 +999,31 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 
 	@Override
 	public ResponseList<Status> getUserTimeline(final long userId, final Paging paging) throws TwitterException {
-		return factory.createStatusList(get(
-				conf.getRestBaseURL() + ENDPOINT_STATUSES_USER_TIMELINE,
-				conf.getSigningRestBaseURL() + ENDPOINT_STATUSES_USER_TIMELINE,
-				mergeParameters(paging != null ? paging.asPostParameterArray() : null, new HttpParameter("user_id",
-						userId), INCLUDE_RTS, INCLUDE_ENTITIES, INCLUDE_MY_RETWEET)));
+		ensureAuthorizationEnabled();
+		final String url = conf.getRestBaseURL() + ENDPOINT_STATUSES_USER_TIMELINE;
+		final String signUrl = conf.getSigningRestBaseURL() + ENDPOINT_STATUSES_USER_TIMELINE;
+		final List<HttpParameter> paramsList = new ArrayList<HttpParameter>();
+		paramsList.add(INCLUDE_ENTITIES);
+		paramsList.add(INCLUDE_MY_RETWEET);
+		paramsList.add(new HttpParameter("user_id", userId));
+		if (paging != null) {
+			paramsList.addAll(paging.asPostParameterList());
+		}
+		return factory.createStatusList(get(url, signUrl, paramsList.toArray(new HttpParameter[paramsList.size()])));
 	}
 
 	@Override
 	public ResponseList<Status> getUserTimeline(final Paging paging) throws TwitterException {
 		ensureAuthorizationEnabled();
-		return factory.createStatusList(get(
-				conf.getRestBaseURL() + ENDPOINT_STATUSES_USER_TIMELINE,
-				conf.getSigningRestBaseURL() + ENDPOINT_STATUSES_USER_TIMELINE,
-				mergeParameters(paging != null ? paging.asPostParameterArray() : null, INCLUDE_RTS, INCLUDE_ENTITIES,
-						INCLUDE_MY_RETWEET)));
+		final String url = conf.getRestBaseURL() + ENDPOINT_STATUSES_USER_TIMELINE;
+		final String signUrl = conf.getSigningRestBaseURL() + ENDPOINT_STATUSES_USER_TIMELINE;
+		final List<HttpParameter> paramsList = new ArrayList<HttpParameter>();
+		paramsList.add(INCLUDE_ENTITIES);
+		paramsList.add(INCLUDE_MY_RETWEET);
+		if (paging != null) {
+			paramsList.addAll(paging.asPostParameterList());
+		}
+		return factory.createStatusList(get(url, signUrl, paramsList.toArray(new HttpParameter[paramsList.size()])));
 	}
 
 	@Override
@@ -946,11 +1033,17 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 
 	@Override
 	public ResponseList<Status> getUserTimeline(final String screenName, final Paging paging) throws TwitterException {
-		return factory.createStatusList(get(
-				conf.getRestBaseURL() + ENDPOINT_STATUSES_USER_TIMELINE,
-				conf.getSigningRestBaseURL() + ENDPOINT_STATUSES_USER_TIMELINE,
-				mergeParameters(paging != null ? paging.asPostParameterArray() : null, new HttpParameter("screen_name",
-						screenName), INCLUDE_RTS, INCLUDE_ENTITIES, INCLUDE_MY_RETWEET)));
+		ensureAuthorizationEnabled();
+		final String url = conf.getRestBaseURL() + ENDPOINT_STATUSES_USER_TIMELINE;
+		final String signUrl = conf.getSigningRestBaseURL() + ENDPOINT_STATUSES_USER_TIMELINE;
+		final List<HttpParameter> paramsList = new ArrayList<HttpParameter>();
+		paramsList.add(INCLUDE_ENTITIES);
+		paramsList.add(INCLUDE_MY_RETWEET);
+		paramsList.add(new HttpParameter("screen_name", screenName));
+		if (paging != null) {
+			paramsList.addAll(paging.asPostParameterList());
+		}
+		return factory.createStatusList(get(url, signUrl, paramsList.toArray(new HttpParameter[paramsList.size()])));
 	}
 
 	@Override
@@ -1072,11 +1165,31 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	}
 
 	@Override
+	public ResponseList<Status> showConversation(final long statusId) throws TwitterException {
+		return showConversation(statusId, null);
+	}
+
+	@Override
+	public ResponseList<Status> showConversation(final long statusId, final Paging paging) throws TwitterException {
+		ensureAuthorizationEnabled();
+		final String url = conf.getRestBaseURL() + ENDPOINT_CONVERSATION_SHOW;
+		final String sign_url = conf.getSigningRestBaseURL() + ENDPOINT_CONVERSATION_SHOW;
+		final List<HttpParameter> paramsList = new ArrayList<HttpParameter>();
+		paramsList.add(INCLUDE_ENTITIES);
+		paramsList.add(INCLUDE_MY_RETWEET);
+		paramsList.add(new HttpParameter("id", statusId));
+		if (paging != null) {
+			paramsList.addAll(paging.asPostParameterList());
+		}
+		return factory.createStatusList(get(url, sign_url, paramsList.toArray(new HttpParameter[paramsList.size()])));
+	}
+
+	@Override
 	public DirectMessage showDirectMessage(final long id) throws TwitterException {
 		ensureAuthorizationEnabled();
-		return factory.createDirectMessage(get(conf.getRestBaseURL() + ENDPOINT_DIRECT_MESSAGES_SHOW,
-				conf.getSigningRestBaseURL() + ENDPOINT_DIRECT_MESSAGES_SHOW, new HttpParameter("id", id),
-				INCLUDE_ENTITIES));
+		final String url = conf.getRestBaseURL() + ENDPOINT_DIRECT_MESSAGES_SHOW;
+		final String sign_url = conf.getSigningRestBaseURL() + ENDPOINT_DIRECT_MESSAGES_SHOW;
+		return factory.createDirectMessage(get(url, sign_url, new HttpParameter("id", id), INCLUDE_ENTITIES));
 	}
 
 	@Override
@@ -1102,9 +1215,20 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	}
 
 	@Override
-	public Status showStatus(final long id) throws TwitterException {
-		return factory.createStatus(get(conf.getRestBaseURL() + ENDPOINT_STATUSES_SHOW, conf.getSigningRestBaseURL()
-				+ ENDPOINT_STATUSES_SHOW, new HttpParameter("id", id), INCLUDE_ENTITIES, INCLUDE_MY_RETWEET));
+	public Status showStatus(final long statusId) throws TwitterException {
+		final String url = conf.getRestBaseURL() + ENDPOINT_STATUSES_SHOW;
+		final String signUrl = conf.getSigningRestBaseURL() + ENDPOINT_STATUSES_SHOW;
+		final HttpParameter paramStatus = new HttpParameter("id", statusId);
+		return factory.createStatus(get(url, signUrl, paramStatus, INCLUDE_ENTITIES, INCLUDE_MY_RETWEET));
+	}
+
+	@Override
+	public TranslationResult showTranslation(final long statusId, final String dest) throws TwitterException {
+		final String url = conf.getRestBaseURL() + ENDPOINT_TRANSLATIONS_SHOW;
+		final String signUrl = conf.getSigningRestBaseURL() + ENDPOINT_TRANSLATIONS_SHOW;
+		final HttpParameter paramStatus = new HttpParameter("id", statusId);
+		final HttpParameter paramDest = new HttpParameter("dest", dest);
+		return factory.createTranslationResult(get(url, signUrl, paramStatus, paramDest));
 	}
 
 	@Override

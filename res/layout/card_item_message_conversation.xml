@@ -49,7 +49,7 @@
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:textColor="?android:attr/textColorSecondary"/>
 
-				<TextView
+				<org.mariotaku.twidere.view.themed.ThemedTextView
 					android:id="@+id/incoming_time"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
@@ -63,11 +63,7 @@
 			android:layout_height="@dimen/item_menu_height_default"
 			android:layout_alignRight="@+id/incoming_message_content_frame"
 			android:layout_alignTop="@+id/incoming_message_content_frame"
-			android:clickable="true"
-			android:paddingBottom="@dimen/item_menu_padding_bottom_default"
-			android:paddingLeft="@dimen/item_menu_padding_end_default"
-			android:paddingRight="@dimen/item_menu_padding_start_default"
-			android:paddingTop="@dimen/item_menu_padding_top_default"/>
+			android:clickable="true"/>
 	</RelativeLayout>
 
 	<RelativeLayout
@@ -114,7 +110,7 @@
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:textColor="?android:attr/textColorSecondary"/>
 
-				<TextView
+				<org.mariotaku.twidere.view.themed.ThemedTextView
 					android:id="@+id/outgoing_time"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
@@ -128,11 +124,7 @@
 			android:layout_height="@dimen/item_menu_height_default"
 			android:layout_alignLeft="@+id/outgoing_message_content_container"
 			android:layout_alignTop="@+id/outgoing_message_content_container"
-			android:clickable="true"
-			android:paddingBottom="@dimen/item_menu_padding_bottom_default"
-			android:paddingLeft="@dimen/item_menu_padding_start_default"
-			android:paddingRight="@dimen/item_menu_padding_end_default"
-			android:paddingTop="@dimen/item_menu_padding_top_default"/>
+			android:clickable="true"/>
 	</RelativeLayout>
 
 </FrameLayout>

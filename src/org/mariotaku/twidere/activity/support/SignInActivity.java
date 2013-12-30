@@ -559,13 +559,23 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 		}
 
 		int analyseUserProfileColor(final User user) throws TwitterException {
+			if (user == null) throw new TwitterException("Unable to get user info");
 			final HttpClientWrapper client = new HttpClientWrapper(conf);
-			final String profile_image_url = user != null ? ParseUtils.parseString(user.getProfileImageUrlHttps())
-					: null;
-			final HttpResponse conn = profile_image_url != null ? client.get(profile_image_url, null) : null;
+			final String profileImageUrl = ParseUtils.parseString(user.getProfileImageURL());
+			final HttpResponse conn = profileImageUrl != null ? client.get(profileImageUrl, null) : null;
 			final Bitmap bm = conn != null ? BitmapFactory.decodeStream(conn.asStream()) : null;
-			if (bm == null) throw new TwitterException("Can't get profile image");
-			return ColorAnalyser.analyse(bm);
+			if (bm == null) {
+				try {
+					return Color.parseColor(user.getProfileBackgroundColor());
+				} catch (final IllegalArgumentException e) {
+					throw new TwitterException("Can't get profile image");
+				}
+			}
+			try {
+				return ColorAnalyser.analyse(bm);
+			} finally {
+				bm.recycle();
+			}
 		}
 
 	}

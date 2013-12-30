@@ -334,6 +334,7 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 
 	@Override
 	public void onOverflowIconClick(final View view) {
+		if (mMultiSelectManager.isActive()) return;
 		final Object tag = view.getTag();
 		if (tag instanceof StatusViewHolder) {
 			final StatusViewHolder holder = (StatusViewHolder) tag;

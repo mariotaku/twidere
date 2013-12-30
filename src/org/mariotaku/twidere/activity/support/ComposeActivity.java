@@ -870,16 +870,16 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 	private void setCommonMenu(final Menu menu) {
 		final boolean hasMedia = hasMedia();
 		final int activatedColor = getUserThemeColor(this);
-		// final MenuItem itemAddImageSubmenu =
-		// menu.findItem(R.id.add_image_submenu);
-		// if (itemAddImageSubmenu != null) {
-		// final Drawable iconAddImage = itemAddImageSubmenu.getIcon().mutate();
-		// if (hasMedia) {
-		// iconAddImage.setColorFilter(activatedColor, Mode.MULTIPLY);
-		// } else {
-		// iconAddImage.clearColorFilter();
-		// }
-		// }
+		final MenuItem itemAddImageSubmenu = menu.findItem(R.id.add_image_submenu);
+		if (itemAddImageSubmenu != null) {
+			final Drawable iconAddImage = itemAddImageSubmenu.getIcon();
+			iconAddImage.mutate();
+			if (hasMedia) {
+				iconAddImage.setColorFilter(activatedColor, Mode.MULTIPLY);
+			} else {
+				iconAddImage.clearColorFilter();
+			}
+		}
 		final MenuItem itemAddImage = menu.findItem(MENU_ADD_IMAGE);
 		if (itemAddImage != null) {
 			final Drawable iconAddImage = itemAddImage.getIcon().mutate();
@@ -1152,6 +1152,9 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 			mHolder.setShowAsGap(false);
 			mHolder.setAccountColorEnabled(true);
 			mHolder.setTextSize(prefs.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(getActivity())));
+			((View) mHolder.content).setPadding(0, 0, 0, 0);
+			mHolder.content.setItemBackground(null);
+			mHolder.content.setItemSelector(null);
 			mHolder.text.setText(status.text_unescaped);
 			mHolder.name.setText(status.user_name);
 			mHolder.screen_name.setText("@" + status.user_screen_name);
@@ -1207,14 +1210,14 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 
 		@Override
 		public View onCreateView(final LayoutInflater inflater, final ViewGroup parent, final Bundle savedInstanceState) {
-			final ScrollView view = (ScrollView) inflater.inflate(R.layout.compose_view_status, parent, false);
+			final ScrollView view = (ScrollView) inflater.inflate(R.layout.dialog_scrollable_status, parent, false);
 			mHolder = new StatusViewHolder(view.getChildAt(0));
 			return view;
 		}
 
 	}
 
-	static class AccountSelectorAdapter extends BaseArrayAdapter<Account> {
+	private static class AccountSelectorAdapter extends BaseArrayAdapter<Account> {
 
 		private final LongSparseArray<Boolean> mAccountSelectStates = new LongSparseArray<Boolean>();
 
@@ -1256,7 +1259,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 
 	}
 
-	static class CopyImageTask extends AsyncTask<Void, Void, Boolean> {
+	private static class CopyImageTask extends AsyncTask<Void, Void, Boolean> {
 
 		private final ComposeActivity activity;
 		private final int image_type;
@@ -1309,7 +1312,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		}
 	}
 
-	static class DeleteImageTask extends AsyncTask<Uri, Void, Boolean> {
+	private static class DeleteImageTask extends AsyncTask<Uri, Void, Boolean> {
 
 		final ComposeActivity activity;
 
@@ -1358,7 +1361,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		}
 	}
 
-	static class DiscardTweetTask extends AsyncTask<Void, Void, Void> {
+	private static class DiscardTweetTask extends AsyncTask<Void, Void, Void> {
 
 		final ComposeActivity activity;
 

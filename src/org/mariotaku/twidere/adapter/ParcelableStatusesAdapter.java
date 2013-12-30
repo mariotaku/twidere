@@ -159,6 +159,7 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 
 		final boolean showGap = status.is_gap && !mGapDisallowed && position != getCount() - 1;
 
+		holder.position = position;
 		holder.setShowAsGap(showGap);
 		holder.setDisplayProfileImage(isDisplayProfileImage());
 
@@ -243,7 +244,6 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 				}
 				holder.image_preview.setTag(position);
 			}
-			// holder.item_menu.setTag(position);
 		}
 		if (position > mMaxAnimationPosition) {
 			if (mAnimationEnabled) {
@@ -286,6 +286,7 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 
 	@Override
 	public void onOverflowIconClick(final View view) {
+		if (mMultiSelectManager.isActive()) return;
 		final Object tag = view.getTag();
 		if (tag instanceof StatusViewHolder) {
 			final StatusViewHolder holder = (StatusViewHolder) tag;

@@ -296,6 +296,7 @@ public interface TwidereConstants {
 	public static final String PREFERENCE_KEY_LONG_CLICK_TO_OPEN_MENU = "long_click_to_open_menu";
 	@PreferenceType(PreferenceType.BOOLEAN)
 	public static final String PREFERENCE_KEY_SWIPE_BACK = "swipe_back";
+	public static final String PREFERENCE_KEY_TRANSLATION_DESTINATION = "translation_destination";
 
 	public static final String PREFERENCE_DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": "
 			+ FORMAT_PATTERN_TEXT;

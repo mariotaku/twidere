@@ -37,8 +37,7 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 		ACCOUNT_OPTIONS[2] = new OptionItem(R.string.statuses, R.drawable.ic_menu_quote, MENU_STATUSES);
 		ACCOUNT_OPTIONS[3] = new OptionItem(R.string.favorites, R.drawable.ic_menu_star, MENU_FAVORITES);
 		ACCOUNT_OPTIONS[4] = new OptionItem(R.string.users_lists, R.drawable.ic_menu_list, MENU_LISTS);
-		ACCOUNT_OPTIONS[5] = new OptionItem(R.string.lists_following_user, R.drawable.ic_menu_list,
-				MENU_LIST_MEMBERSHIPS);
+		ACCOUNT_OPTIONS[5] = new OptionItem(R.string.lists_following_me, R.drawable.ic_menu_list, MENU_LIST_MEMBERSHIPS);
 		ACCOUNT_OPTIONS[6] = new OptionItem(R.string.edit_profile, android.R.drawable.ic_menu_edit, MENU_EDIT);
 		ACCOUNT_OPTIONS[7] = new OptionItem(R.string.set_color, R.drawable.ic_menu_color_palette, MENU_SET_COLOR);
 		ACCOUNT_OPTIONS[8] = new OptionItem(R.string.set_as_default, R.drawable.ic_menu_mark, MENU_SET_AS_DEFAULT);

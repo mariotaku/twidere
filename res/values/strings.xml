@@ -185,6 +185,7 @@
 	<string name="type_to_compose">Type to compose</string>
 	<string name="users_lists">User\'s lists</string>
 	<string name="lists_following_user">Lists following this user</string>
+	<string name="lists_following_me">Lists following me</string>
 	<string name="item_3_minutes">3 minutes</string>
 	<string name="item_5_minutes">5 minutes</string>
 	<string name="item_10_minutes">10 minutes</string>
@@ -582,5 +583,6 @@
 	<string name="font_family_condensed">Condensed</string>
 	<string name="font_family_light">Light</string>
 	<string name="font_family_thin">Thin</string>
+	<string name="translation_destination">Translation destination</string>
 
 </resources>

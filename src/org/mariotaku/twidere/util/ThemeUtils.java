@@ -242,13 +242,12 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static Drawable getSelectableItemBackgroundDrawable(final Context context) {
-		final Resources res = getResources(context);
-		// final Context wrapped = getThemedContext(context, res);
 		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.selectableItemBackground });
-		final Drawable d = a.getDrawable(0);
-		a.recycle();
-		if (d == null) return res.getDrawable(R.drawable.item_background_holo_dark);
-		return d;
+		try {
+			return a.getDrawable(0);
+		} finally {
+			a.recycle();
+		}
 	}
 
 	public static int getSettingsThemeResource(final Context context) {
@@ -266,19 +265,21 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static int getTextColorPrimary(final Context context) {
-
 		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.textColorPrimary });
-		final int color = a.getColor(0, Color.TRANSPARENT);
-		a.recycle();
-		return color;
+		try {
+			return a.getColor(0, Color.TRANSPARENT);
+		} finally {
+			a.recycle();
+		}
 	}
 
 	public static int getTextColorSecondary(final Context context) {
-
 		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.textColorSecondary });
-		final int color = a.getColor(0, Color.TRANSPARENT);
-		a.recycle();
-		return color;
+		try {
+			return a.getColor(0, Color.TRANSPARENT);
+		} finally {
+			a.recycle();
+		}
 	}
 
 	public static int getThemeAlpha(final Context context) {
@@ -308,10 +309,11 @@ public class ThemeUtils implements Constants {
 		final Resources res = getResources(context);
 		final Context wrapped = getThemedContext(context, res);
 		final TypedArray a = wrapped.obtainStyledAttributes(new int[] { android.R.attr.colorActivatedHighlight });
-		final int def = res.getColor(android.R.color.holo_blue_light);
-		final int color = a.getColor(0, def);
-		a.recycle();
-		return color;
+		try {
+			return a.getColor(0, res.getColor(android.R.color.holo_blue_light));
+		} finally {
+			a.recycle();
+		}
 	}
 
 	public static Context getThemedContext(final Context context) {

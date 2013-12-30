@@ -132,7 +132,7 @@
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:textColor="?android:attr/textColorSecondary"/>
 
-		<TextView
+		<org.mariotaku.twidere.view.themed.ThemedTextView
 			android:id="@+id/reply_retweet_status"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"

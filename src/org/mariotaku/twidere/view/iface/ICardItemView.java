@@ -65,6 +65,8 @@ public interface ICardItemView extends IColorLabelView {
 
 		private final FakeOverflowButton mFakeOverflowButton;
 
+		private float mBackgroundAlpha;
+
 		public DrawingHelper(final View view, final Context context, final AttributeSet attrs, final int defStyleAttr) {
 			mView = view;
 			final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CardItemView, defStyleAttr,
@@ -78,6 +80,7 @@ public interface ICardItemView extends IColorLabelView {
 			mThemeColor = ThemeUtils.getUserThemeColor(context);
 			mOverflowIconGestureDetector = new GestureDetector(context, new OverflowIconGestureListener(this));
 			mFakeOverflowButton = new FakeOverflowButton(this);
+			mBackgroundAlpha = a.getFraction(R.styleable.CardItemView_cardBackgroundAlpha, 1, 1, 1.0f);
 			setItemBackground(a.getDrawable(R.styleable.CardItemView_cardBackground));
 			setItemSelector(a.getDrawable(R.styleable.CardItemView_cardSelector));
 			setActivatedIndicator(a.getDrawable(R.styleable.CardItemView_cardActivatedIndicator));
@@ -203,10 +206,13 @@ public interface ICardItemView extends IColorLabelView {
 		public void setItemBackground(final Drawable itemBackground) {
 			preSetDrawable(mBackground);
 			mBackground = itemBackground;
-			if (itemBackground != null) {
-				itemBackground.setAlpha(0x80);
-			}
+			updateBackgroundAlpha();
 			postSetDrawable(itemBackground);
+		}
+
+		public void setItemBackgroundAlpha(final float alpha) {
+			mBackgroundAlpha = alpha;
+			updateBackgroundAlpha();
 		}
 
 		public void setItemSelector(final Drawable itemSelector) {
@@ -249,6 +255,12 @@ public interface ICardItemView extends IColorLabelView {
 			if (prev != null) {
 				mView.unscheduleDrawable(prev);
 				prev.setCallback(null);
+			}
+		}
+
+		private void updateBackgroundAlpha() {
+			if (mBackground != null) {
+				mBackground.setAlpha(Math.round(mBackgroundAlpha * 0xff));
 			}
 		}
 

@@ -140,6 +140,7 @@ import org.mariotaku.twidere.fragment.support.UserProfileFragment;
 import org.mariotaku.twidere.fragment.support.UserTimelineFragment;
 import org.mariotaku.twidere.fragment.support.UsersListFragment;
 import org.mariotaku.twidere.model.Account;
+import org.mariotaku.twidere.model.Account.AccountWithCredentials;
 import org.mariotaku.twidere.model.AccountPreferences;
 import org.mariotaku.twidere.model.CursorStatusIndices;
 import org.mariotaku.twidere.model.DirectMessageCursorIndices;
@@ -2461,7 +2462,7 @@ public final class Utils implements Constants {
 
 	public static boolean isOfficialConsumerKeySecret(final Context context, final String consumerKey,
 			final String consumerSecret) {
-		if (context == null) return false;
+		if (context == null || consumerKey == null || consumerSecret == null) return false;
 		final String[] keySecrets = context.getResources().getStringArray(R.array.values_consumer_key_secret);
 		for (final String keySecret : keySecrets) {
 			final String[] pair = keySecret.split(";");
@@ -3494,6 +3495,15 @@ public final class Utils implements Constants {
 				icon.clearColorFilter();
 				favorite.setTitle(R.string.favorite);
 			}
+		}
+		final MenuItem translate = menu.findItem(MENU_TRANSLATE);
+		if (translate != null) {
+			final AccountWithCredentials account = Account.getAccountWithCredentials(context, status.account_id);
+			final boolean isOAuth = account.auth_type == Accounts.AUTH_TYPE_OAUTH
+					|| account.auth_type == Accounts.AUTH_TYPE_XAUTH;
+			final String consumerKey = account.consumer_key, consumerSecret = account.consumer_secret;
+			final boolean isOfficialKey = isOAuth && isOfficialConsumerKeySecret(context, consumerKey, consumerSecret);
+			setMenuItemAvailability(menu, MENU_TRANSLATE, isOfficialKey);
 		}
 		menu.removeGroup(MENU_GROUP_STATUS_EXTENSION);
 		final Intent extensionIntent = new Intent(INTENT_ACTION_EXTENSION_OPEN_STATUS);

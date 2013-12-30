@@ -42,6 +42,8 @@ import twitter4j.ResponseList;
 import twitter4j.SavedSearch;
 import twitter4j.SimilarPlaces;
 import twitter4j.Status;
+import twitter4j.StatusActivitySummary;
+import twitter4j.TranslationResult;
 import twitter4j.Trends;
 import twitter4j.TwitterAPIConfiguration;
 import twitter4j.TwitterException;
@@ -218,8 +220,18 @@ public class InternalJSONFactoryImpl implements InternalJSONFactory {
 	}
 
 	@Override
+	public StatusActivitySummary createStatusActivitySummary(final HttpResponse res) throws TwitterException {
+		return new StatusActivitySummaryJSONImpl(res, conf);
+	}
+
+	@Override
 	public ResponseList<Status> createStatusList(final HttpResponse res) throws TwitterException {
 		return StatusJSONImpl.createStatusList(res, conf);
+	}
+
+	@Override
+	public TranslationResult createTranslationResult(final HttpResponse res) throws TwitterException {
+		return new TranslationResultJSONImpl(res, conf);
 	}
 
 	@Override

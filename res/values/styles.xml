@@ -122,6 +122,7 @@
 
 	<style name="Widget.CardItemView" parent="android:Widget.Holo">
 		<item name="cardBackground">?cardItemBackground</item>
+		<item name="cardBackgroundAlpha">50%p</item>
 		<item name="cardSelector">?android:selectableItemBackground</item>
 		<item name="cardActivatedIndicator">?android:activatedBackgroundIndicator</item>
 		<item name="cardOverflowIcon">?listMenuOverflowButton</item>
