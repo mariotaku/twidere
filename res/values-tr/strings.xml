@@ -257,7 +257,6 @@
   <string name="permission_description_preferences">Ayarları oku</string>
   <string name="permissions_request">İzin isteği</string>
   <string name="permissions_request_message">Eklenti aşağıdaki izinleri istiyor</string>
-  <string name="accept">Kabul Et</string>
   <string name="no_thanks">Hayır, teşekkürler</string>
   <string name="revoke_permissions">İzinleri kaldır</string>
   <string name="fast_scroll_thumb">Hızlı kaydırma butonu</string>
@@ -280,4 +279,5 @@
   <string name="theme_color">Tema rengi</string>
   <string name="wrong_url_format">Yanlış URL biçimi.</string>
   <string name="wrong_username_password">Yanlış kullanıcı adı / şifre.</string>
+  <string name="accept">Kabul Et</string>
 </resources>

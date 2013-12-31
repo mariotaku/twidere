@@ -301,7 +301,6 @@
   <string name="permission_description_preferences">Leggi le impostazioni</string>
   <string name="permissions_request">Richiesta di permessi</string>
   <string name="permissions_request_message">L\'estensione sta richiedendo i permessi seguenti</string>
-  <string name="accept">Accetta</string>
   <string name="no_thanks">No, grazie</string>
   <string name="revoke_permissions">Revoca permessi</string>
   <string name="fast_scroll_thumb">Scroll veloce</string>
@@ -317,7 +316,6 @@
   <string name="preload_wifi_only">Precarica solo se in Wi-Fi</string>
   <string name="disable_tab_swipe">Disabilita swipe delle tab</string>
   <string name="sign_in_method_introduction_title">Come funziona?</string>
-  <string name="sign_in_method_introduction">Molti clients come twicca aprono una finestra che richiede nome utente e password, per poi riportarti al client. Alcune volte questo può causare inconvenienti.\nTwidere usa dei passaggi semplificati per accedere, senza necessità di aprire il browser. Non preoccuparti per la password, Twidere non la salva, è sicuro al massimo!</string>
   <string name="edit_draft">Modifica bozza</string>
   <string name="profile_image">Immagine del profilo</string>
   <string name="my_profile_image">La mia immagine del profilo</string>
@@ -363,4 +361,5 @@
   <string name="add_to_list">Aggiungi alla lista</string>
   <string name="account_delete_confirm_title">Elimina account</string>
   <string name="account_delete_confirm_message">Questo account verrà eliminato da Twidere.</string>
+  <string name="accept">Accetta</string>
 </resources>

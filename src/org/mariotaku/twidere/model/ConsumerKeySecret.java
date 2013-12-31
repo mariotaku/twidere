@@ -68,8 +68,8 @@ public class ConsumerKeySecret {
 	public static ConsumerKeySecret[] getAllOffcialKeys(final Context context) {
 		if (context == null) return new ConsumerKeySecret[0];
 		final Resources res = context.getResources();
-		final String[] entries = res.getStringArray(R.array.entries_consumer_key_secret);
-		final String[] values = res.getStringArray(R.array.values_consumer_key_secret);
+		final String[] entries = res.getStringArray(R.array.entries_official_consumer_key_secret);
+		final String[] values = res.getStringArray(R.array.values_official_consumer_key_secret);
 		final int length = entries.length;
 		final ConsumerKeySecret[] keys = new ConsumerKeySecret[length];
 		for (int i = 0; i < length; i++) {

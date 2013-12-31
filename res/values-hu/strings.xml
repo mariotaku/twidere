@@ -258,7 +258,7 @@
   <string name="permission_description_accounts">Fiók információ olvasása</string>
   <string name="permissions_request">Engedély kérése</string>
   <string name="permissions_request_message">A kiegészítőhöz szükségesek a következő jogosultságok</string>
-  <string name="accept">Elfogadom</string>
   <string name="no_thanks">Köszönöm, nem</string>
   <string name="revoke_permissions">Engedély visszavonása</string>
+  <string name="accept">Elfogadom</string>
 </resources>

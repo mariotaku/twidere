@@ -5,7 +5,7 @@ import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.TwitterException;
 
-public interface ActivityResources extends UndocumentedResources {
+public interface UndocumentedActivityResources extends UndocumentedResources {
 	public ResponseList<Activity> getActivitiesAboutMe() throws TwitterException;
 
 	public ResponseList<Activity> getActivitiesAboutMe(Paging paging) throws TwitterException;

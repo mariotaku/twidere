@@ -36,7 +36,6 @@ public class ColorPickerPreference extends Preference implements DialogInterface
 
 	private View mView;
 	protected int mDefaultValue = Color.WHITE;
-	private final float mDensity;
 	private boolean mAlphaSliderEnabled = false;
 
 	private static final String ANDROID_NS = "http://schemas.android.com/apk/res/android";
@@ -54,7 +53,6 @@ public class ColorPickerPreference extends Preference implements DialogInterface
 	public ColorPickerPreference(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		mResources = context.getResources();
-		mDensity = mResources.getDisplayMetrics().density;
 		init(context, attrs);
 	}
 
@@ -146,8 +144,6 @@ public class ColorPickerPreference extends Preference implements DialogInterface
 		if (!(widgetFrameView instanceof ViewGroup)) return;
 		final ViewGroup widgetFrame = (ViewGroup) widgetFrameView;
 		widgetFrame.setVisibility(View.VISIBLE);
-		widgetFrame.setPadding(widgetFrame.getPaddingLeft(), widgetFrame.getPaddingTop(), (int) (mDensity * 8),
-				widgetFrame.getPaddingBottom());
 		// remove preview image that is already created
 		widgetFrame.setAlpha(isEnabled() ? 1 : 0.25f);
 		final View foundView = widgetFrame.findViewById(R.id.color);

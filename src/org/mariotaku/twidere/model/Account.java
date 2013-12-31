@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.model;
 
+import static org.mariotaku.twidere.util.Utils.isOfficialConsumerKeySecret;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -189,6 +191,13 @@ public class Account implements Parcelable {
 			consumer_secret = cursor.getString(indices.consumer_secret);
 		}
 
+		public static final boolean isOfficialCredentials(final Context context, final AccountWithCredentials account) {
+			if (account == null) return false;
+			final boolean isOAuth = account.auth_type == Accounts.AUTH_TYPE_OAUTH
+					|| account.auth_type == Accounts.AUTH_TYPE_XAUTH;
+			final String consumerKey = account.consumer_key, consumerSecret = account.consumer_secret;
+			return isOAuth && isOfficialConsumerKeySecret(context, consumerKey, consumerSecret);
+		}
 	}
 
 	public static final class Indices {

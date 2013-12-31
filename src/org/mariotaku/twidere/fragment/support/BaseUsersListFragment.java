@@ -262,6 +262,10 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 
 	protected abstract Loader<List<ParcelableUser>> newLoaderInstance(Context context, Bundle args);
 
+	protected void onPrepareItemMenu(final Menu menu) {
+
+	}
+
 	@Override
 	protected void onPullUp() {
 		if (mLoadMoreAutomatically) return;
@@ -301,11 +305,12 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 			mPopupMenu.inflate(menuRes);
 		}
 		final Menu menu = mPopupMenu.getMenu();
-		final Intent extensions_intent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER);
-		final Bundle extensions_extras = new Bundle();
-		extensions_extras.putParcelable(EXTRA_USER, user);
-		extensions_intent.putExtras(extensions_extras);
-		addIntentToMenu(getActivity(), menu, extensions_intent);
+		onPrepareItemMenu(menu);
+		final Intent extensionsIntent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER);
+		final Bundle extensionsExtras = new Bundle();
+		extensionsExtras.putParcelable(EXTRA_USER, user);
+		extensionsIntent.putExtras(extensionsExtras);
+		addIntentToMenu(getActivity(), menu, extensionsIntent);
 		mPopupMenu.setOnMenuItemClickListener(this);
 		mPopupMenu.show();
 	}

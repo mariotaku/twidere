@@ -333,7 +333,6 @@
   <string name="permission_description_preferences">Читать настройки</string>
   <string name="permissions_request">Запрос на доступ</string>
   <string name="permissions_request_message">Расширение запрашивает правда на доступ к</string>
-  <string name="accept">Да</string>
   <string name="no_thanks">Нет, спасибо</string>
   <string name="revoke_permissions">Перераспределить права</string>
   <string name="fast_scroll_thumb">Быстрая прокрутка эскизов</string>
@@ -349,7 +348,6 @@
   <string name="preload_wifi_only">Предварительно загружать только при Wi-Fi-подключении</string>
   <string name="disable_tab_swipe">Отключить свайп между табами</string>
   <string name="sign_in_method_introduction_title">Как это работает?</string>
-  <string name="sign_in_method_introduction">Большинство программ-клиентов, таких как twicca, открывает запрос логина и пароля через браузер, а затем возвращает вас обратно в программу-клиент. Иногда это очень неудобно.\nTwidere использует другой, более простой механизм входа без перехода в браузер. Не переживайте за ваши пароли, Twidere нигде их не хранит, это абсолютно безопасно!</string>
   <string name="edit_draft">Редактировать черновик</string>
   <string name="profile_image">Изображение в профиле</string>
   <string name="my_profile_image">Мое изображение в профиле</string>
@@ -396,4 +394,5 @@
   <string name="add_to_list">Добавить к списку</string>
   <string name="account_delete_confirm_title">Удалить учетную запись</string>
   <string name="account_delete_confirm_message">Эта учетная запись будет удалена из Twidere.</string>
+  <string name="accept">Да</string>
 </resources>

@@ -344,7 +344,6 @@
   <string name="permission_description_preferences">إعدادات القراءة</string>
   <string name="permissions_request">طلب الصلاحيات</string>
   <string name="permissions_request_message">التمديد يطلب الصلاحيات التالية</string>
-  <string name="accept">الموافقة</string>
   <string name="no_thanks">لا، شكرا</string>
   <string name="revoke_permissions">إبطال الإستئذانات</string>
   <string name="fast_scroll_thumb">تنقل الإبهام السريع</string>
@@ -429,12 +428,11 @@
   <string name="users_statuses">تغريدات المستخدم</string>
   <string name="card_animation">حركة البطاقات</string>
   <string name="name_first">إضهار الإسم أولا</string>
+  <string name="next">التالي</string>
   <string name="settings_wizard">مساعد الخيارات</string>
   <string name="wizard_page_welcome_title">مرحبا</string>
   <string name="wizard_page_welcome_text">شكر ﻹختياكك تويدر.\nهل ترغب في إعداده الأن ؟</string>
   <string name="wizard_page_welcome_yes">نعم</string>
-  <string name="next">التالي</string>
-  <string name="wizard_page_welcome_use_default_settings">إستعمال الإعدادات الافتراضية</string>
   <string name="wizard_page_welcome_import_settings">إستيراد الإعدادات</string>
   <string name="wizard_page_theme_text">اختر ثيم يُعجبك.</string>
   <string name="wizard_page_tabs_text">أضف بعض للتبويبات إلى تويدر.\nتتبع الأشخاص أو الأشياء التي تهتم بشأنها.</string>
@@ -487,4 +485,5 @@
   <string name="wizard_hint_filters">يمكنك كتم التغريدات الغير مرغوب فيها من الخط الزمني والإخطارات باستعمال \"قواعد الكتم\".</string>
   <string name="update_status">إرسال التغريدة</string>
   <string name="sending_direct_message">جارِ إرسال رسالة مباشرة</string>
+  <string name="accept">الموافقة</string>
 </resources>

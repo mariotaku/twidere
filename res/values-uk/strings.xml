@@ -355,7 +355,6 @@
   <string name="permission_description_preferences">Налаштування читання</string>
   <string name="permissions_request">Запит на дозволи</string>
   <string name="permissions_request_message">Розширення запитує наступні дозволи</string>
-  <string name="accept">Прийняти</string>
   <string name="no_thanks">Ні, дякую</string>
   <string name="revoke_permissions">Перерозподілити права</string>
   <string name="fast_scroll_thumb">Швидка прокрутка пальцем</string>
@@ -371,7 +370,6 @@
   <string name="preload_wifi_only">Попереднє завантаження лише через wi-fi</string>
   <string name="disable_tab_swipe">Вимкнути ковзання по вкладках</string>
   <string name="sign_in_method_introduction_title">Як це працює?</string>
-  <string name="sign_in_method_introduction">Більшість клієнтів на кшталт twicca відкривають браузер і просять вас ввести ім\'я користувача та пароль і тоді повертаються назад до своїх оболонок. Інколи це може стати дуже незручно.\n Twidere використовує простіші кроки для входу, не відкриваючи браузер. Не турбуйтеся про пароль, Twidere ніколи не зберігатиме його, це повністю безпечно!</string>
   <string name="quote_protected_status_notice">Не рекомендується цитувати захищений твіт. </string>
   <string name="edit_draft">Редагувати чернетку</string>
   <string name="profile_image">Зображення профілю</string>
@@ -456,12 +454,11 @@
   <string name="users_statuses">Твіти користувача</string>
   <string name="card_animation">Анімація картки</string>
   <string name="name_first">Відображати спершу ім\'я</string>
+  <string name="next">Далі</string>
   <string name="settings_wizard">Параметри майстра</string>
   <string name="wizard_page_welcome_title">Ласкаво просимо</string>
   <string name="wizard_page_welcome_text">Дякуємо за вибір Twidere.\nВи б хотіли налаштувати його зараз?</string>
   <string name="wizard_page_welcome_yes">Так</string>
-  <string name="next">Далі</string>
-  <string name="wizard_page_welcome_use_default_settings">Використовувати типові налаштування</string>
   <string name="wizard_page_welcome_import_settings">Імпорт налаштувань</string>
   <string name="wizard_page_theme_text">Виберіть вподобану вами тему.</string>
   <string name="wizard_page_tabs_text">Додайте деякі вкладки до Twidere.\nЗберігайте шлях людей або речі, які вас турбують.</string>
@@ -507,4 +504,5 @@
   <string name="theme_background">Тло теми</string>
   <string name="theme_background_solid">Суцільно біле/чорне</string>
   <string name="theme_background_transparent">Прозоре</string>
+  <string name="accept">Прийняти</string>
 </resources>

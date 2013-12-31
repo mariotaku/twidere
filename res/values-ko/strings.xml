@@ -62,7 +62,7 @@
   <string name="pick_from_gallery">갤러리에서 선택</string>
   <string name="statuses">트윗</string>
   <string name="followers">팔로워</string>
-  <string name="following">팔로잉 중</string>
+  <string name="following">팔로잉</string>
   <string name="about">정보</string>
   <string name="open_source_license">오픈 소스 라이센스</string>
   <string name="api">API</string>
@@ -243,7 +243,7 @@
   <string name="multimedia_contents">멀티미디어 콘텐츠</string>
   <string name="show_absolute_time">절대시간 표시</string>
   <string name="show_absolute_time_summary">트윗에 절대시간 표시</string>
-  <string name="user_mentions">사용자 멘션</string>
+  <string name="user_mentions">멘션</string>
   <string name="dual_pane_layout">듀얼 패널 레이아웃</string>
   <string name="landscape">가로</string>
   <string name="portrait">세로</string>
@@ -365,7 +365,6 @@
   <string name="permission_description_preferences">불러오기 설정</string>
   <string name="permissions_request">권한 요청</string>
   <string name="permissions_request_message">플러그인이 팔로우 권한을 요청합니다</string>
-  <string name="accept">동의</string>
   <string name="no_thanks">아뇨, 괜찮습니다</string>
   <string name="revoke_permissions">권한 취소</string>
   <string name="fast_scroll_thumb">빠른 손가락 스크롤</string>
@@ -381,7 +380,6 @@
   <string name="preload_wifi_only">와이파이에서만 미리 불러오기</string>
   <string name="disable_tab_swipe">탭 스와이프를 사용하지 않습니다.</string>
   <string name="sign_in_method_introduction_title">어떻게 동작하나요?</string>
-  <string name="sign_in_method_introduction">twicca 같은 대부분의 클라이언트는 브라우저를 열어 사용자 이름과 비밀번호를 입력시킨 뒤 클라이언트로 돌아갑니다.\nTwidere에서는 그런 복잡한 과정을 거치지 않고 로그인할 수 있습니다. 비밀번호를 저장하지 않습니다. 안전합니다!</string>
   <string name="quote_protected_status_notice">비공개 트위트를 인용하는 것은 적절하지 않습니다.</string>
   <string name="edit_draft">보관된 트윗 편집</string>
   <string name="profile_image">프로필 이미지</string>
@@ -467,19 +465,18 @@
   <string name="nickname_only_summary">별명이 있다면 사용자 이름 대신 표시</string>
   <string name="input_text">입력</string>
   <string name="users_lists_with_name"><xliff:g id="name">%s</xliff:g>님의 리스트</string>
-  <string name="lists_following_user_with_name"><xliff:g id="name">%s</xliff:g>님이 추가된 있는 리스트</string>
+  <string name="lists_following_user_with_name"><xliff:g id="name">%s</xliff:g>님이 추가된 리스트</string>
   <string name="highlight">강조색</string>
   <string name="underline">믿줄</string>
   <string name="link_highlight_option">링크 강조 옵션</string>
   <string name="users_statuses">사용자 트윗</string>
   <string name="card_animation">카드 애니메이션</string>
   <string name="name_first">이름 먼저 표시</string>
+  <string name="next">다음</string>
   <string name="settings_wizard">설정 마법사</string>
   <string name="wizard_page_welcome_title">환영합니다.</string>
   <string name="wizard_page_welcome_text">Twidere를 선택한 것에 감사 드립니다.\n바로 설정하겠습니까?</string>
   <string name="wizard_page_welcome_yes">예</string>
-  <string name="next">다음</string>
-  <string name="wizard_page_welcome_use_default_settings">기본 설정 사용</string>
   <string name="wizard_page_welcome_import_settings">설정 불러오기</string>
   <string name="wizard_page_theme_text">원하시는 테마를 선택하세요.</string>
   <string name="wizard_page_tabs_text">Twidere는 탭을 추가하세요.\n친구를 지켜보거나 관심사를 살펴 보십시오.</string>
@@ -572,5 +569,5 @@
   <string name="swipe_back">스와이프하여 닫기</string>
   <string name="tab_display_option_icon">아이콘</string>
   <string name="tab_display_option_label">라벨</string>
-  <string name="tab_display_option_both">모두</string>
+  <string name="accept">동의</string>
 </resources>

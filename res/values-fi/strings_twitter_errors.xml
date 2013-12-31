@@ -9,6 +9,7 @@
   <string name="error_130">Twitter on tilapäisesti ylittänyt kapasiteettinsa.</string>
   <string name="error_131">Twitterin palvelin voi olla tilapäisesti nurin. Yritä myöhemmin uudelleen.</string>
   <string name="error_135">Tarkista järjestelmäsi kello.</string>
+  <string name="error_162">Käyttäjä on estänyt sinut.</string>
   <string name="error_172">Olet jo tallentanut tämän haun.</string>
   <string name="error_179">Et näe tämän suojatun käyttäjän twiittejä.</string>
   <string name="error_187">Olet jo lähettänyt tämän twiitin.</string>

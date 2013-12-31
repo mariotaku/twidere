@@ -214,6 +214,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			showLeftPane();
 		}
 		updateActionsButton();
+		updateActionsButtonStyle();
 		updateSlidingMenuTouchMode();
 	}
 
@@ -833,8 +834,9 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		final boolean isBottomActionsButton = isBottomComposeButton();
 		final boolean showBottomActionsButton = !SmartBarUtils.hasSmartBar() && isBottomActionsButton;
 		final boolean leftsideComposeButton = mPreferences.getBoolean(PREFERENCE_KEY_LEFTSIDE_COMPOSE_BUTTON, false);
+		final boolean isPaneUsed = isDualPaneMode() && isRightPaneUsed();
 		mActionsButton.setVisibility(isBottomActionsButton ? View.GONE : View.VISIBLE);
-		mBottomActionsButton.setVisibility(showBottomActionsButton ? View.VISIBLE : View.GONE);
+		mBottomActionsButton.setVisibility(showBottomActionsButton && !isPaneUsed ? View.VISIBLE : View.GONE);
 		final FrameLayout.LayoutParams compose_lp = (LayoutParams) mBottomActionsButton.getLayoutParams();
 		compose_lp.gravity = Gravity.BOTTOM | (leftsideComposeButton ? Gravity.LEFT : Gravity.RIGHT);
 		mBottomActionsButton.setLayoutParams(compose_lp);

@@ -9,6 +9,7 @@
   <string name="error_130">Twitter est temporairement surchargé.</string>
   <string name="error_131">Les serveurs de Twitter peuvent temporairement être hors-ligne, merci d\'essayer plus tard.</string>
   <string name="error_135">Veuillez vérifier l\'horloge de votre système.</string>
+  <string name="error_162">Vous avez été bloqué par cet utilisateur.</string>
   <string name="error_172">Vous avez déjà sauvegardé une recherche identique.</string>
   <string name="error_179">Les tweets de cet utilisateur sont protégés.</string>
   <string name="error_187">Vous avez déjà envoyé ce tweet.</string>

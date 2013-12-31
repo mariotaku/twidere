@@ -2243,7 +2243,7 @@ public final class Utils implements Constants {
 		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI,
 				Accounts.COLUMNS, null, null, null);
 		if (cur == null) return false;
-		final String[] keySecrets = context.getResources().getStringArray(R.array.values_consumer_key_secret);
+		final String[] keySecrets = context.getResources().getStringArray(R.array.values_official_consumer_key_secret);
 		final Account.Indices indices = new Account.Indices(cur);
 		cur.moveToFirst();
 		try {
@@ -2450,7 +2450,7 @@ public final class Utils implements Constants {
 	public static boolean isOfficialConsumerKeySecret(final Context context) {
 		if (context == null) return false;
 		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final String[] key_secrets = context.getResources().getStringArray(R.array.values_consumer_key_secret);
+		final String[] key_secrets = context.getResources().getStringArray(R.array.values_official_consumer_key_secret);
 		final String consumer_key = getNonEmptyString(pref, PREFERENCE_KEY_CONSUMER_KEY, null);
 		final String consumer_secret = getNonEmptyString(pref, PREFERENCE_KEY_CONSUMER_SECRET, null);
 		for (final String key_secret : key_secrets) {
@@ -2463,7 +2463,7 @@ public final class Utils implements Constants {
 	public static boolean isOfficialConsumerKeySecret(final Context context, final String consumerKey,
 			final String consumerSecret) {
 		if (context == null || consumerKey == null || consumerSecret == null) return false;
-		final String[] keySecrets = context.getResources().getStringArray(R.array.values_consumer_key_secret);
+		final String[] keySecrets = context.getResources().getStringArray(R.array.values_official_consumer_key_secret);
 		for (final String keySecret : keySecrets) {
 			final String[] pair = keySecret.split(";");
 			if (pair[0].equals(consumerKey) && pair[1].equals(consumerSecret)) return true;
@@ -3499,10 +3499,7 @@ public final class Utils implements Constants {
 		final MenuItem translate = menu.findItem(MENU_TRANSLATE);
 		if (translate != null) {
 			final AccountWithCredentials account = Account.getAccountWithCredentials(context, status.account_id);
-			final boolean isOAuth = account.auth_type == Accounts.AUTH_TYPE_OAUTH
-					|| account.auth_type == Accounts.AUTH_TYPE_XAUTH;
-			final String consumerKey = account.consumer_key, consumerSecret = account.consumer_secret;
-			final boolean isOfficialKey = isOAuth && isOfficialConsumerKeySecret(context, consumerKey, consumerSecret);
+			final boolean isOfficialKey = AccountWithCredentials.isOfficialCredentials(context, account);
 			setMenuItemAvailability(menu, MENU_TRANSLATE, isOfficialKey);
 		}
 		menu.removeGroup(MENU_GROUP_STATUS_EXTENSION);

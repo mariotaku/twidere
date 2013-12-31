@@ -72,19 +72,19 @@ public class ForegroundImageView extends ImageView implements IForegroundView {
 	@Override
 	protected void onDraw(final Canvas canvas) {
 		super.onDraw(canvas);
-		mForegroundViewHelper.onDraw(canvas);
+		mForegroundViewHelper.dispatchOnDraw(canvas);
 	}
 
 	@Override
 	protected void onLayout(final boolean changed, final int left, final int top, final int right, final int bottom) {
-		mForegroundViewHelper.onLayout(changed, left, top, right, bottom);
+		mForegroundViewHelper.dispatchOnLayout(changed, left, top, right, bottom);
 		super.onLayout(changed, left, top, right, bottom);
 	}
 
 	@Override
 	protected void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
-		mForegroundViewHelper.onSizeChanged(w, h, oldw, oldh);
+		mForegroundViewHelper.dispatchOnSizeChanged(w, h, oldw, oldh);
 	}
 
 	@Override

@@ -60,6 +60,20 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	}
 
 	@Override
+	public User acceptFriendship(final long userId) throws TwitterException {
+		final String url = conf.getRestBaseURL() + ENDPOINT_FRIENDSHIPS_ACCEPT;
+		final String signUrl = conf.getSigningRestBaseURL() + ENDPOINT_FRIENDSHIPS_ACCEPT;
+		return factory.createUser(post(url, signUrl, new HttpParameter("user_id", userId)));
+	}
+
+	@Override
+	public User acceptFriendship(final String screenName) throws TwitterException {
+		final String url = conf.getRestBaseURL() + ENDPOINT_FRIENDSHIPS_ACCEPT;
+		final String signUrl = conf.getSigningRestBaseURL() + ENDPOINT_FRIENDSHIPS_ACCEPT;
+		return factory.createUser(post(url, signUrl, new HttpParameter("screen_name", screenName)));
+	}
+
+	@Override
 	public UserList addUserListMember(final int listId, final long userId) throws TwitterException {
 		ensureAuthorizationEnabled();
 		return factory.createAUserList(post(conf.getRestBaseURL() + ENDPOINT_LISTS_MEMBERS_CREATE,
@@ -116,8 +130,9 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	@Override
 	public User createFriendship(final long userId) throws TwitterException {
 		ensureAuthorizationEnabled();
-		return factory.createUser(post(conf.getRestBaseURL() + ENDPOINT_FRIENDSHIPS_CREATE,
-				conf.getSigningRestBaseURL() + ENDPOINT_FRIENDSHIPS_CREATE, new HttpParameter("user_id", userId)));
+		final String url = conf.getRestBaseURL() + ENDPOINT_FRIENDSHIPS_CREATE;
+		final String signUrl = conf.getSigningRestBaseURL() + ENDPOINT_FRIENDSHIPS_CREATE;
+		return factory.createUser(post(url, signUrl, new HttpParameter("user_id", userId)));
 	}
 
 	@Override
@@ -218,6 +233,20 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 				conf.getSigningRestBaseURL() + ENDPOINT_LISTS_MEMBERS_DESTROY_ALL,
 				new HttpParameter("list_id", listId),
 				new HttpParameter("screen_name", InternalStringUtil.join(screenNames))));
+	}
+
+	@Override
+	public User denyFriendship(final long userId) throws TwitterException {
+		final String url = conf.getRestBaseURL() + ENDPOINT_FRIENDSHIPS_DENY;
+		final String signUrl = conf.getSigningRestBaseURL() + ENDPOINT_FRIENDSHIPS_DENY;
+		return factory.createUser(post(url, signUrl, new HttpParameter("user_id", userId)));
+	}
+
+	@Override
+	public User denyFriendship(final String screenName) throws TwitterException {
+		final String url = conf.getRestBaseURL() + ENDPOINT_FRIENDSHIPS_DENY;
+		final String signUrl = conf.getSigningRestBaseURL() + ENDPOINT_FRIENDSHIPS_DENY;
+		return factory.createUser(post(url, signUrl, new HttpParameter("screen_name", screenName)));
 	}
 
 	@Override

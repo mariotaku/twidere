@@ -19,7 +19,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -187,11 +186,14 @@ public class BackgroundOperationService extends IntentService implements Constan
 			builder.setContentIntent(PendingIntent.getActivity(this, 0, content_intent,
 					PendingIntent.FLAG_UPDATE_CURRENT));
 		}
-		final Uri defRingtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-		final String path = mPreferences.getString(PREFERENCE_KEY_NOTIFICATION_RINGTONE, "");
-		builder.setSound(isEmpty(path) ? defRingtone : Uri.parse(path), Notification.STREAM_DEFAULT);
-		builder.setLights(HOLO_BLUE_LIGHT, 1000, 2000);
-		builder.setDefaults(Notification.DEFAULT_VIBRATE);
+		// final Uri defRingtone =
+		// RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+		// final String path =
+		// mPreferences.getString(PREFERENCE_KEY_NOTIFICATION_RINGTONE, "");
+		// builder.setSound(isEmpty(path) ? defRingtone : Uri.parse(path),
+		// Notification.STREAM_DEFAULT);
+		// builder.setLights(HOLO_BLUE_LIGHT, 1000, 2000);
+		// builder.setDefaults(Notification.DEFAULT_VIBRATE);
 		return builder.build();
 	}
 

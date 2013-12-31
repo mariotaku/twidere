@@ -55,7 +55,7 @@
   <string name="discard">Zahodit</string>
   <string name="preview">Náhled</string>
   <string name="ask">Dotaz</string>
-  <string name="wizard_page_welcome_yes">Ano</string>
   <string name="next">Další</string>
+  <string name="wizard_page_welcome_yes">Ano</string>
   <string name="wizard_page_finished_title">Dokončeno</string>
 </resources>

@@ -73,6 +73,8 @@ public interface TwitterConstants {
 	static final String ENDPOINT_FRIENDSHIPS_OUTGOING = "friendships/outgoing.json";
 	static final String ENDPOINT_FRIENDSHIPS_SHOW = "friendships/show.json";
 	static final String ENDPOINT_FRIENDSHIPS_UPDATE = "friendships/update.json";
+	static final String ENDPOINT_FRIENDSHIPS_ACCEPT = "friendships/accept.json";
+	static final String ENDPOINT_FRIENDSHIPS_DENY = "friendships/deny.json";
 
 	static final String ENDPOINT_HELP_CONFIGURATION = "help/configuration.json";
 	static final String ENDPOINT_HELP_LANGUAGES = "help/languages.json";

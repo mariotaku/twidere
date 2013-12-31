@@ -363,7 +363,6 @@
   <string name="permission_description_preferences">Leer configuraciones</string>
   <string name="permissions_request">Petición de permisos</string>
   <string name="permissions_request_message">Una extensión necesita los siguientes permisos</string>
-  <string name="accept">Aceptar</string>
   <string name="no_thanks">No, gracias</string>
   <string name="revoke_permissions">Quitar permisos</string>
   <string name="fast_scroll_thumb">Deslizador rápido</string>
@@ -379,7 +378,6 @@
   <string name="preload_wifi_only">Precargar solo con Wi-Fi</string>
   <string name="disable_tab_swipe">Desactivar el cambio de pestañas deslizando el dedo por la pantalla</string>
   <string name="sign_in_method_introduction_title">¿Cómo funciona?</string>
-  <string name="sign_in_method_introduction">La mayoría de los clientes como twicca abren un navegador solicitando que escribas el nombre de usuario y la contraseña y luego el navegador te devuelve al cliente. A veces esto puede llegar a ser muy inconveniente. \n Twidere usa unos pasos más simples para iniciar sesión, sin abrir el navegador. No te preocupes por tu contraseña, Twidere nunca la almacenará, ¡es totalmente seguro!</string>
   <string name="quote_protected_status_notice">No se recomienda citar un tuit protegido.</string>
   <string name="edit_draft">Editar borrador</string>
   <string name="profile_image">Imagen de perfil</string>
@@ -467,12 +465,11 @@
   <string name="users_statuses">Tuits de los usuarios</string>
   <string name="card_animation">Tarjeta animada</string>
   <string name="name_first">Nombre primero</string>
+  <string name="next">Siguiente</string>
   <string name="settings_wizard">Asistente de configuración</string>
   <string name="wizard_page_welcome_title">Bienvenido</string>
   <string name="wizard_page_welcome_text">Gracias por escoger Twidere.\n¿Quieres configurarlo ahora?</string>
   <string name="wizard_page_welcome_yes">Si</string>
-  <string name="next">Siguiente</string>
-  <string name="wizard_page_welcome_use_default_settings">Usa configuración predeterminada</string>
   <string name="wizard_page_welcome_import_settings">Importar configuración</string>
   <string name="wizard_page_theme_text">Selecciona el tema que te gusta.</string>
   <string name="wizard_page_tabs_text">Añade algunas pestañas a Twidere.\nLleva un registro de las personas o las cosas que te importan.</string>
@@ -556,4 +553,5 @@
   <string name="sending_direct_message">Enviando mensaje directo</string>
   <string name="livewp_daydream_enabled_message">Un regalito para ti, encontralo en la configuraciones del sistema :)</string>
   <string name="center">Centro</string>
+  <string name="accept">Aceptar</string>
 </resources>

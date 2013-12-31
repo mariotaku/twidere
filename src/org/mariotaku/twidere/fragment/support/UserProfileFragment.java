@@ -294,7 +294,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		final LoaderManager lm = getLoaderManager();
 		lm.destroyLoader(LOADER_ID_USER);
 		lm.destroyLoader(LOADER_ID_FRIENDSHIP);
-		final boolean user_is_me = user.account_id == user.id;
+		final boolean userIsMe = user.account_id == user.id;
 		mErrorRetryContainer.setVisibility(View.GONE);
 		mAccountId = user.account_id;
 		mUser = user;
@@ -307,15 +307,15 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				.setText(TextUtils.isEmpty(nick) ? user.name : getString(R.string.name_with_nickname, user.name, nick));
 		mProfileImageView.setUserType(user.is_verified, user.is_protected);
 		mScreenNameView.setText("@" + user.screen_name);
-		mDescriptionContainer.setVisibility(user_is_me || !isEmpty(user.description_html) ? View.VISIBLE : View.GONE);
+		mDescriptionContainer.setVisibility(userIsMe || !isEmpty(user.description_html) ? View.VISIBLE : View.GONE);
 		mDescriptionView.setText(user.description_html != null ? Html.fromHtml(user.description_html) : null);
 		final TwidereLinkify linkify = new TwidereLinkify(this);
 		linkify.setLinkTextColor(ThemeUtils.getUserLinkTextColor(getActivity()));
 		linkify.applyAllLinks(mDescriptionView, user.account_id, false);
 		mDescriptionView.setMovementMethod(null);
-		mLocationContainer.setVisibility(user_is_me || !isEmpty(user.location) ? View.VISIBLE : View.GONE);
+		mLocationContainer.setVisibility(userIsMe || !isEmpty(user.location) ? View.VISIBLE : View.GONE);
 		mLocationView.setText(user.location);
-		mURLContainer.setVisibility(user_is_me || !isEmpty(user.url) || !isEmpty(user.url_expanded) ? View.VISIBLE
+		mURLContainer.setVisibility(userIsMe || !isEmpty(user.url) || !isEmpty(user.url_expanded) ? View.VISIBLE
 				: View.GONE);
 		mURLView.setText(isEmpty(user.url_expanded) ? user.url : user.url_expanded);
 		mURLView.setMovementMethod(null);
@@ -350,7 +350,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		mAdapter.add(new UserMentionsAction(2));
 		mAdapter.add(new UserListsAction(3));
 		mAdapter.add(new UserListMembershipsAction(4));
-		if (user_is_me) {
+		if (userIsMe) {
 			mAdapter.add(new SavedSearchesAction(11));
 			if (user.is_protected) {
 				mAdapter.add(new IncomingFriendshipsAction(12));

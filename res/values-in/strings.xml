@@ -365,7 +365,6 @@
   <string name="permission_description_preferences">Baca pengaturan</string>
   <string name="permissions_request">Permintaan ijin</string>
   <string name="permissions_request_message">Ekstensi meminta ijin berikut ini</string>
-  <string name="accept">Setuju</string>
   <string name="no_thanks">Tidak, terima kasih</string>
   <string name="revoke_permissions">Cabut ijin yang diberikan</string>
   <string name="fast_scroll_thumb">Menggulung dengan cepat</string>
@@ -381,7 +380,7 @@
   <string name="preload_wifi_only">Preload menggunakan Wi-Fi saja</string>
   <string name="disable_tab_swipe">Nonaktifkan tab menggesek</string>
   <string name="sign_in_method_introduction_title">Bagaimana cara kerjanya?</string>
-  <string name="sign_in_method_introduction">Kebanyakan klien seperti twicca membuka browser meminta Anda untuk mengetik nama user dan sandi, dan kemudian membawa Anda kembali ke klien mereka. Kadang-kadang ini bisa menjadi sangat nyaman.\nTwidere menggunakan langkah-langkah yang lebih sederhana untuk masuk, tanpa membuka browser. Jangan khawatir tentang sandi Anda, Twidere tidak akan pernah menyimpannya, itu benar-benar aman!</string>
+  <string name="sign_in_method_introduction">Umumnya aplikasi pihak ke-3 seperti twicca perlu membuka peramban untuk memasukkan nama pengguna dan sandi, kemudian akan kembali ke aplikasi tersebut. Terkadang hal ini sangat menggangu. \n\nTwidere menggunakan langkah-langkah yang lebih sederhana untuk masuk ke twitter tanpa perlu membuka peramban. Tidak perlu khawatir dengan sandi anda, Twidere tidak akan pernah menyimpannya, ini benar-benar aman!</string>
   <string name="quote_protected_status_notice">Tidak direkomendasikan untuk mengutip twit terproteksi.</string>
   <string name="edit_draft">Ubah draf</string>
   <string name="profile_image">Gambar Profil</string>
@@ -474,12 +473,12 @@
   <string name="users_statuses">Twit pengguna</string>
   <string name="card_animation">Animasi kartu</string>
   <string name="name_first">Tampilkan nama depan</string>
+  <string name="next">Lanjut</string>
   <string name="settings_wizard">Pengaturan</string>
   <string name="wizard_page_welcome_title">Selamat datang</string>
   <string name="wizard_page_welcome_text">Terima kasih telah memilih Twidere.\nAnda mau konfigurasi sekarang?</string>
   <string name="wizard_page_welcome_yes">Ya</string>
-  <string name="next">Lanjut</string>
-  <string name="wizard_page_welcome_use_default_settings">Gunakan pengaturan default</string>
+  <string name="wizard_page_welcome_not_now">Tidak untuk saat ini</string>
   <string name="wizard_page_welcome_import_settings">Impor pengaturan</string>
   <string name="wizard_page_theme_text">Pilih tema yang Anda suka.</string>
   <string name="wizard_page_tabs_text">Tambah beberapa tab ke Twidere.\nTetap terhubung dengan orang atau sesuatu yang kamu perhatikan.</string>
@@ -515,8 +514,37 @@
   <string name="staggered_home_timeline">Staggered Home Timeline</string>
   <string name="unread_count">Belum terbaca</string>
   <string name="developed_by">Dikelola oleh</string>
+  <string name="project_account">Akun proyek</string>
   <string name="donators">Donatur</string>
   <string name="translators">Penerjemah</string>
+  <string name="translate">Terjemahkan</string>
+  <string name="sponsored_by">Di sponsori oleh</string>
+  <string name="special_thanks_to">Terima kasih sebesar-besarnya untuk</string>
+  <string name="contributors_list_summary">Jika tidak terdapat nama anda, harap beritahukan akun proyek.</string>
+  <string name="account_options">Pilihan akun</string>
+  <string name="show_in_timeline">Tunjukkan di linimasa</string>
+  <string name="cards">Kartu</string>
+  <string name="no_tab_hint">Tidak terdapat tab</string>
+  <string name="delete_user">Hapus user <xliff:g id="name">%s</xliff:g></string>
+  <string name="delete_users">Hapus beberapa user</string>
+  <string name="delete_user_confirm_message">Hapus <xliff:g id="name">%s</xliff:g>? Tidak dapat dilaksanakan.</string>
+  <string name="toggle">Beralih</string>
+  <string name="general">Umum</string>
+  <string name="hints">Petunjuk</string>
+  <string name="finish">Selesai</string>
+  <string name="theme_background">Gambar latar tema</string>
+  <string name="theme_background_default">Awal</string>
+  <string name="theme_background_solid">Putih/hitam murni</string>
+  <string name="theme_background_transparent">Transparan</string>
+  <string name="theme_dark_actionbar">Bar aksi gelap</string>
+  <string name="wizard_hint_compose_select_account">Klik gambar ini untuk memilih akun saat menulis twit.</string>
+  <string name="wizard_hint_quote_format">Atur format kutipan anda di \"Pengaturan\" - \"Isi &amp; Penyimpanan\"</string>
+  <string name="wizard_hint_filters">Anda dapat menyembunyikan twit yang tidak diinginkan pada linimasa dan pemberitahuan dengan menggunakan \"Filters\".</string>
+  <string name="view_replies">Lihat balasan</string>
+  <string name="compact_cards_summary">Tampilkan kartu lebih banyak</string>
+  <string name="dashclock_home_unread_count_name">Beranda Twidere belum terbaca</string>
+  <string name="dashclock_home_unread_count_description">Belum terbaca pada beranda</string>
+  <string name="dashclock_mentions_unread_count_name">Sebutan Twidere belum terbaca</string>
   <string name="dashclock_mentions_unread_count_description">Mentions belum terbaca</string>
   <string name="dashclock_messages_unread_count_name">Pesan Twidere belum terbaca</string>
   <string name="dashclock_messages_unread_count_description">Pesan belum terbaca</string>
@@ -534,8 +562,15 @@
   <string name="action_name_saved_at_time"><xliff:g id="action">%1$s</xliff:g>, tersimpan pada <xliff:g id="time">%2$s</xliff:g></string>
   <string name="update_status">Kirim tweet</string>
   <string name="sending_direct_message">Kirim pesan pribadi</string>
+  <string name="tab_display_option">Pilihan tampilan tab</string>
   <string name="livewp_daydream_enabled_message">Ini sedikit hadiah untukmu, temukan sendiri di Pengaturan Sistem :)</string>
   <string name="center">Pusat</string>
   <string name="multi_select">Pemilihan banyak</string>
   <string name="long_click_to_open_menu">Click lama untuk membuka menu</string>
+  <string name="swipe_back">Geser untuk menutup</string>
+  <string name="tab_display_option_icon">Gambar</string>
+  <string name="tab_display_option_label">Tanda</string>
+  <string name="tab_display_option_icon_and_label">Gambar dan tanda</string>
+  <string name="highlight_and_underline">Sorot dan garis bawah</string>
+  <string name="accept">Setuju</string>
 </resources>
