@@ -1,20 +1,20 @@
 /*
- *				Twidere - Twitter client for Android
+ * 				Twidere - Twitter client for Android
  * 
- * Copyright (C) 2012 Mariotaku Lee <mariotaku.lee@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.mariotaku.twidere.activity.support;
@@ -177,7 +177,7 @@ public class BrowserSignInActivity extends BaseSupportDialogActivity implements 
 
 		@Override
 		public void onReceivedSslError(final WebView view, final SslErrorHandler handler, final SslError error) {
-			if (mActivity.mPreferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false)) {
+			if (mActivity.mPreferences.getBoolean(KEY_IGNORE_SSL_ERROR, false)) {
 				handler.proceed();
 			} else {
 				handler.cancel();
@@ -224,12 +224,11 @@ public class BrowserSignInActivity extends BaseSupportDialogActivity implements 
 		@Override
 		protected RequestToken doInBackground(final Void... params) {
 			final ConfigurationBuilder cb = new ConfigurationBuilder();
-			final boolean enable_gzip_compressing = mPreferences.getBoolean(PREFERENCE_KEY_GZIP_COMPRESSING, false);
-			final boolean ignore_ssl_error = mPreferences.getBoolean(PREFERENCE_KEY_IGNORE_SSL_ERROR, false);
-			final boolean enable_proxy = mPreferences.getBoolean(PREFERENCE_KEY_ENABLE_PROXY, false);
-			final String consumer_key = getNonEmptyString(mPreferences, PREFERENCE_KEY_CONSUMER_KEY,
-					TWITTER_CONSUMER_KEY_2);
-			final String consumer_secret = getNonEmptyString(mPreferences, PREFERENCE_KEY_CONSUMER_SECRET,
+			final boolean enable_gzip_compressing = mPreferences.getBoolean(KEY_GZIP_COMPRESSING, false);
+			final boolean ignore_ssl_error = mPreferences.getBoolean(KEY_IGNORE_SSL_ERROR, false);
+			final boolean enable_proxy = mPreferences.getBoolean(KEY_ENABLE_PROXY, false);
+			final String consumer_key = getNonEmptyString(mPreferences, KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY_2);
+			final String consumer_secret = getNonEmptyString(mPreferences, KEY_CONSUMER_SECRET,
 					TWITTER_CONSUMER_SECRET_2);
 			cb.setHostAddressResolver(mApplication.getHostAddressResolver());
 			cb.setHttpClientImplementation(HttpClientImpl.class);
@@ -248,8 +247,8 @@ public class BrowserSignInActivity extends BaseSupportDialogActivity implements 
 			cb.setGZIPEnabled(enable_gzip_compressing);
 			cb.setIgnoreSSLError(ignore_ssl_error);
 			if (enable_proxy) {
-				final String proxy_host = mPreferences.getString(PREFERENCE_KEY_PROXY_HOST, null);
-				final int proxy_port = ParseUtils.parseInt(mPreferences.getString(PREFERENCE_KEY_PROXY_PORT, "-1"));
+				final String proxy_host = mPreferences.getString(KEY_PROXY_HOST, null);
+				final int proxy_port = ParseUtils.parseInt(mPreferences.getString(KEY_PROXY_PORT, "-1"));
 				if (!isEmpty(proxy_host) && proxy_port > 0) {
 					cb.setHttpProxyHost(proxy_host);
 					cb.setHttpProxyPort(proxy_port);

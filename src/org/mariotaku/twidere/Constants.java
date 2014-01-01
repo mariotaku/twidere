@@ -1,21 +1,22 @@
 /*
- *				Twidere - Twitter client for Android
- *
- * Copyright (C) 2012-2013 Mariotaku Lee <mariotaku.lee@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 				Twidere - Twitter client for Android
+ * 
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.mariotaku.twidere;
 
 /**
@@ -32,6 +33,11 @@ public interface Constants extends TwidereConstants {
 
 	public static final String GOOGLE_MAPS_API_KEY_RELEASE = "0kjPwJOe_zwYjzGc9uYak7vhm_Sf3eob-2L3Xzw";
 	public static final String GOOGLE_MAPS_API_KEY_DEBUG = "0kjPwJOe_zwY9p6kT-kygu4mxwysyOOpfkaXqTA";
+
+	public static final int MENU_GROUP_STATUS_EXTENSION = 10;
+	public static final int MENU_GROUP_COMPOSE_EXTENSION = 11;
+	public static final int MENU_GROUP_IMAGE_EXTENSION = 12;
+	public static final int MENU_GROUP_STATUS_SHARE = 20;
 
 	public static final int MENU_HOME = android.R.id.home;
 	public static final int MENU_SEARCH = R.id.search;
@@ -100,6 +106,8 @@ public interface Constants extends TwidereConstants {
 	public static final int MENU_TRANSLATE = R.id.translate;
 	public static final int MENU_ACCEPT = R.id.accept;
 	public static final int MENU_DENY = R.id.deny;
+	public static final int MENU_IMPORT_SETTINGS = R.id.import_settings;
+	public static final int MENU_EXPORT_SETTINGS = R.id.export_settings;
 
 	public static final int LINK_ID_STATUS = 1;
 	public static final int LINK_ID_USER = 2;
@@ -157,5 +165,15 @@ public interface Constants extends TwidereConstants {
 	public static final int HOLO_BLUE_LIGHT = 0xff33b5e5;
 	public static final int HOLO_PURPLE_DARK = 0xff9933cc;
 	public static final int HOLO_PURPLE_LIGHT = 0xffaa66cc;
+
+	public static final String ENTRY_PREFERENCES = "preferences.json";
+	public static final String ENTRY_NICKNAMES = "nicknames.json";
+	public static final String ENTRY_USER_COLORS = "user_colors.json";
+
+	public static final int FLAG_PREFERENCES = 0x1;
+	public static final int FLAG_NICKNAMES = 0x2;
+	public static final int FLAG_USER_COLORS = 0x4;
+
+	public static final int FLAG_ALL = FLAG_PREFERENCES | FLAG_NICKNAMES | FLAG_USER_COLORS;
 
 }

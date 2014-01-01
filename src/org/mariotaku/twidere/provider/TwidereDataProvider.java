@@ -1,20 +1,20 @@
 /*
- *				Twidere - Twitter client for Android
+ * 				Twidere - Twitter client for Android
  * 
- * Copyright (C) 2012 Mariotaku Lee <mariotaku.lee@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.mariotaku.twidere.provider;
@@ -62,7 +62,7 @@ import android.support.v4.app.NotificationCompat;
 import android.text.Html;
 import android.util.Log;
 
-import org.mariotaku.jsonserializer.JSONSerializer;
+import org.mariotaku.jsonserializer.JSONFileIO;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.support.HomeActivity;
@@ -989,8 +989,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		if (values == null || values.length == 0) return 0;
 		// Add statuses that not filtered to list for future use.
 		int result = 0;
-		final boolean enabled = mPreferences.getBoolean(PREFERENCE_KEY_FILTERS_IN_MENTIONS, true);
-		final boolean filtersForRts = mPreferences.getBoolean(PREFERENCE_KEY_FILTERS_FOR_RTS, true);
+		final boolean enabled = mPreferences.getBoolean(KEY_FILTERS_IN_MENTIONS, true);
+		final boolean filtersForRts = mPreferences.getBoolean(KEY_FILTERS_FOR_RTS, true);
 		for (final ContentValues value : values) {
 			final ParcelableStatus status = new ParcelableStatus(value);
 			if (!enabled || !isFiltered(mDatabaseWrapper.getSQLiteDatabase(), status, filtersForRts)) {
@@ -1010,8 +1010,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		if (values == null || values.length == 0) return 0;
 		// Add statuses that not filtered to list for future use.
 		int result = 0;
-		final boolean enabled = mPreferences.getBoolean(PREFERENCE_KEY_FILTERS_IN_HOME_TIMELINE, true);
-		final boolean filtersForRts = mPreferences.getBoolean(PREFERENCE_KEY_FILTERS_FOR_RTS, true);
+		final boolean enabled = mPreferences.getBoolean(KEY_FILTERS_IN_HOME_TIMELINE, true);
+		final boolean filtersForRts = mPreferences.getBoolean(KEY_FILTERS_FOR_RTS, true);
 		for (final ContentValues value : values) {
 			final ParcelableStatus status = new ParcelableStatus(value);
 			if (!enabled || !isFiltered(mDatabaseWrapper.getSQLiteDatabase(), status, filtersForRts)) {
@@ -1110,12 +1110,12 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	private void preloadImages(final ContentValues... values) {
 		if (values == null) return;
 		for (final ContentValues v : values) {
-			if (mPreferences.getBoolean(PREFERENCE_KEY_PRELOAD_PROFILE_IMAGES, false)) {
+			if (mPreferences.getBoolean(KEY_PRELOAD_PROFILE_IMAGES, false)) {
 				mImagePreloader.preloadImage(v.getAsString(Statuses.USER_PROFILE_IMAGE_URL));
 				mImagePreloader.preloadImage(v.getAsString(DirectMessages.SENDER_PROFILE_IMAGE_URL));
 				mImagePreloader.preloadImage(v.getAsString(DirectMessages.RECIPIENT_PROFILE_IMAGE_URL));
 			}
-			if (mPreferences.getBoolean(PREFERENCE_KEY_PRELOAD_PREVIEW_IMAGES, false)) {
+			if (mPreferences.getBoolean(KEY_PRELOAD_PREVIEW_IMAGES, false)) {
 				final String text_html = v.getAsString(Statuses.TEXT_HTML);
 				for (final PreviewMedia spec : MediaPreviewUtils.getImagesInStatus(text_html, false)) {
 					mImagePreloader.preloadImage(spec.url);
@@ -1175,8 +1175,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	private void restoreUnreadItemsFile(final Collection<UnreadItem> items, final String name) {
 		if (items == null || name == null) return;
 		try {
-			final File file = JSONSerializer.getSerializationFile(getContext(), name);
-			final List<UnreadItem> restored = JSONSerializer.listFromFile(file);
+			final File file = JSONFileIO.getSerializationFile(getContext(), name);
+			final List<UnreadItem> restored = JSONFileIO.readArrayList(file);
 			if (restored != null) {
 				items.addAll(restored);
 			}
@@ -1188,8 +1188,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	private void saveUnreadItemsFile(final Collection<UnreadItem> items, final String name) {
 		if (items == null || name == null) return;
 		try {
-			final File file = JSONSerializer.getSerializationFile(getContext(), name);
-			JSONSerializer.toFile(file, items.toArray(new UnreadItem[items.size()]));
+			final File file = JSONFileIO.getSerializationFile(getContext(), name);
+			JSONFileIO.writeArray(file, items.toArray(new UnreadItem[items.size()]));
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
@@ -1201,8 +1201,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	}
 
 	private void updatePreferences() {
-		mNameFirst = mPreferences.getBoolean(PREFERENCE_KEY_NAME_FIRST, false);
-		mNickOnly = mPreferences.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false);
+		mNameFirst = mPreferences.getBoolean(KEY_NAME_FIRST, false);
+		mNickOnly = mPreferences.getBoolean(KEY_NICKNAME_ONLY, false);
 	}
 
 	private static int clearUnreadCount(final List<UnreadItem> set, final long[] accountIds) {

@@ -107,5 +107,18 @@
 		<item>@string/tab_display_option_label</item>
 		<item>@string/tab_display_option_icon_and_label</item>
 	</string-array>
+	<string-array name="entries_settings_export">
+
+		<!--
+        <item>@string/accounts</item>
+		<item>@string/drafts</item>
+		-->
+		<item>@string/settings</item>
+		<item>@string/tabs</item>
+		<item>@string/filters</item>
+		<item>@string/nicknames</item>
+		<item>@string/user_colors</item>
+		<item>@string/custom_host_mapping</item>
+	</string-array>
 
 </resources>

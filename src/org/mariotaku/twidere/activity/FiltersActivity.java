@@ -1,20 +1,20 @@
 /*
- *				Twidere - Twitter client for Android
+ * 				Twidere - Twitter client for Android
  * 
- * Copyright (C) 2012 Mariotaku Lee <mariotaku.lee@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.mariotaku.twidere.activity;
@@ -133,19 +133,19 @@ public class FiltersActivity extends BaseActivity implements TabListener, OnPage
 			}
 			case R.id.enable_in_home_timeline: {
 				final SharedPreferences.Editor editor = mPreferences.edit();
-				editor.putBoolean(PREFERENCE_KEY_FILTERS_IN_HOME_TIMELINE, !item.isChecked());
+				editor.putBoolean(KEY_FILTERS_IN_HOME_TIMELINE, !item.isChecked());
 				editor.apply();
 				break;
 			}
 			case R.id.enable_in_mentions: {
 				final SharedPreferences.Editor editor = mPreferences.edit();
-				editor.putBoolean(PREFERENCE_KEY_FILTERS_IN_MENTIONS, !item.isChecked());
+				editor.putBoolean(KEY_FILTERS_IN_MENTIONS, !item.isChecked());
 				editor.apply();
 				break;
 			}
 			case R.id.enable_for_rts: {
 				final SharedPreferences.Editor editor = mPreferences.edit();
-				editor.putBoolean(PREFERENCE_KEY_FILTERS_FOR_RTS, !item.isChecked());
+				editor.putBoolean(KEY_FILTERS_FOR_RTS, !item.isChecked());
 				editor.apply();
 				break;
 			}
@@ -170,9 +170,9 @@ public class FiltersActivity extends BaseActivity implements TabListener, OnPage
 
 	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu) {
-		final boolean enable_in_home_timeline = mPreferences.getBoolean(PREFERENCE_KEY_FILTERS_IN_HOME_TIMELINE, true);
-		final boolean enable_in_mentions = mPreferences.getBoolean(PREFERENCE_KEY_FILTERS_IN_MENTIONS, true);
-		final boolean enable_for_rts = mPreferences.getBoolean(PREFERENCE_KEY_FILTERS_FOR_RTS, true);
+		final boolean enable_in_home_timeline = mPreferences.getBoolean(KEY_FILTERS_IN_HOME_TIMELINE, true);
+		final boolean enable_in_mentions = mPreferences.getBoolean(KEY_FILTERS_IN_MENTIONS, true);
+		final boolean enable_for_rts = mPreferences.getBoolean(KEY_FILTERS_FOR_RTS, true);
 		menu.findItem(R.id.enable_in_home_timeline).setChecked(enable_in_home_timeline);
 		menu.findItem(R.id.enable_in_mentions).setChecked(enable_in_mentions);
 		menu.findItem(R.id.enable_for_rts).setChecked(enable_for_rts);

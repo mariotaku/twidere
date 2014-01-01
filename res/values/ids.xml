@@ -70,5 +70,7 @@
 	<item name="translate" type="id"/>
 	<item name="accept" type="id"/>
 	<item name="deny" type="id"/>
+	<item name="import_settings" type="id"/>
+	<item name="export_settings" type="id"/>
 
 </resources>

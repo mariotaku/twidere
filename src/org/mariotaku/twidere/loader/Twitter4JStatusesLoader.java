@@ -1,20 +1,20 @@
 /*
- *				Twidere - Twitter client for Android
+ * 				Twidere - Twitter client for Android
  * 
- * Copyright (C) 2012 Mariotaku Lee <mariotaku.lee@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.mariotaku.twidere.loader;
@@ -27,7 +27,7 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 
-import org.mariotaku.jsonserializer.JSONSerializer;
+import org.mariotaku.jsonserializer.JSONFileIO;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -87,7 +87,7 @@ public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 		final boolean truncated;
 		final Context context = getContext();
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final int loadItemLimit = prefs.getInt(PREFERENCE_KEY_LOAD_ITEM_LIMIT, PREFERENCE_DEFAULT_LOAD_ITEM_LIMIT);
+		final int loadItemLimit = prefs.getInt(KEY_LOAD_ITEM_LIMIT, DEFAULT_LOAD_ITEM_LIMIT);
 		try {
 			final Paging paging = new Paging();
 			paging.setCount(loadItemLimit);
@@ -136,7 +136,7 @@ public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 	private List<ParcelableStatus> getCachedData(final File file) {
 		if (file == null) return null;
 		try {
-			return JSONSerializer.listFromFile(file);
+			return JSONFileIO.readArrayList(file);
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
@@ -146,7 +146,7 @@ public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 	private File getSerializationFile() {
 		if (mSavedStatusesFileArgs == null) return null;
 		try {
-			return JSONSerializer.getSerializationFile(mContext, mSavedStatusesFileArgs);
+			return JSONFileIO.getSerializationFile(mContext, mSavedStatusesFileArgs);
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
@@ -156,11 +156,10 @@ public abstract class Twitter4JStatusesLoader extends ParcelableStatusesLoader {
 	private void saveCachedData(final File file, final List<ParcelableStatus> data) {
 		if (file == null || data == null) return;
 		final SharedPreferences prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final int databaseItemLimit = prefs.getInt(PREFERENCE_KEY_DATABASE_ITEM_LIMIT,
-				PREFERENCE_DEFAULT_DATABASE_ITEM_LIMIT);
+		final int databaseItemLimit = prefs.getInt(KEY_DATABASE_ITEM_LIMIT, DEFAULT_DATABASE_ITEM_LIMIT);
 		try {
 			final List<ParcelableStatus> activities = data.subList(0, Math.min(databaseItemLimit, data.size()));
-			JSONSerializer.toFile(file, activities.toArray(new ParcelableStatus[activities.size()]));
+			JSONFileIO.writeArray(file, activities.toArray(new ParcelableStatus[activities.size()]));
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}

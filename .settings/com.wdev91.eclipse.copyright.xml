@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project>
+	<owner>Mariotaku Lee</owner>
+	<copyright><![CDATA[				Twidere - Twitter client for Android
+
+ Copyright (C) 2012-${year} Mariotaku Lee <mariotaku.lee@gmail.com>
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.]]></copyright>
+	<header contentId="org.eclipse.pde.fragmentManifest" excluded="true" />
+	<header contentId="org.eclipse.pde.pluginProperties" excluded="true" />
+	<header contentId="org.eclipse.pde.productFile" excluded="true" />
+	<header contentId="org.eclipse.jst.j2ee.appclientDD" excluded="true" />
+	<header contentId="org.eclipse.ant.core.antBuildFile" excluded="true" />
+	<header contentId="org.eclipse.pde.simpleCheatSheet" excluded="true" />
+	<header contentId="org.eclipse.core.runtime.xml" postBlankLines="0" lineFormat="false" preserveFirstLine="true">
+		<beginLine><![CDATA[<!--]]></beginLine>
+		<linePrefix><![CDATA[  ]]></linePrefix>
+		<endLine><![CDATA[-->]]></endLine>
+		<firstLinePattern><![CDATA[<\?xml version=.*\?>]]></firstLinePattern>
+	</header>
+	<header contentId="org.eclipse.jst.j2ee.webDD" excluded="true" />
+	<header contentId="org.eclipse.pde.compositeCheatSheet" excluded="true" />
+	<header contentId="org.eclipse.pde.schema" excluded="true" />
+	<header contentId="org.eclipse.pde.tocFile" excluded="true" />
+	<header contentId="org.eclipse.jst.j2ee.earDD" excluded="true" />
+	<header contentId="org.eclipse.pde.ctxHelpFile" excluded="true" />
+	<header contentId="org.eclipse.pde.categoryManifest" excluded="true" />
+	<header contentId="org.eclipse.jdt.core.JARManifest" excluded="true" />
+	<header contentId="org.eclipse.pde.buildProperties" excluded="true" />
+	<header contentId="org.eclipse.ui.views.log.log" excluded="true" />
+	<header contentId="org.eclipse.pde.siteManifest" excluded="true" />
+	<header contentId="org.eclipse.pde.targetFile" excluded="true" />
+	<header contentId="org.eclipse.pde.bundleManifest" excluded="true" />
+	<header contentId="org.eclipse.jst.j2ee.connectorDD" excluded="true" />
+	<header contentId="org.eclipse.pde.pluginManifest" excluded="true" />
+	<header contentId="org.eclipse.core.runtime.text" postBlankLines="0" lineFormat="true" preserveFirstLine="false">
+		<beginLine><![CDATA[#-------------------------------------------------------------------------------]]></beginLine>
+		<linePrefix><![CDATA[# ]]></linePrefix>
+		<endLine><![CDATA[#-------------------------------------------------------------------------------]]></endLine>
+	</header>
+	<header contentId="org.eclipse.jst.j2ee.ejbDD" excluded="true" />
+	<header contentId="org.eclipse.pde.featureManifest" excluded="true" />
+	<header contentId="org.eclipse.jdt.core.javaSource" postBlankLines="1" lineFormat="false" preserveFirstLine="false">
+		<beginLine><![CDATA[/*]]></beginLine>
+		<linePrefix><![CDATA[ * ]]></linePrefix>
+		<endLine><![CDATA[ */]]></endLine>
+	</header>
+</project>

@@ -1,20 +1,20 @@
 /*
- *				Twidere - Twitter client for Android
+ * 				Twidere - Twitter client for Android
  * 
- * Copyright (C) 2012 Mariotaku Lee <mariotaku.lee@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.mariotaku.twidere.preference;
@@ -82,7 +82,7 @@ public class TranslationDestinationPreference extends Preference implements Cons
 		if (editor == null) return;
 		final Language item = mAdapter.getItem(which);
 		if (item != null) {
-			editor.putString(PREFERENCE_KEY_TRANSLATION_DESTINATION, item.getCode());
+			editor.putString(KEY_TRANSLATION_DESTINATION, item.getCode());
 			editor.commit();
 		}
 		if (mDialog != null && mDialog.isShowing()) {
@@ -172,13 +172,13 @@ public class TranslationDestinationPreference extends Preference implements Cons
 		@Override
 		protected ResponseList<Language> doInBackground(final Void... args) {
 			final Twitter twitter = getDefaultTwitterInstance(getContext(), false);
-			final String pref = mPreferences.getString(PREFERENCE_KEY_TRANSLATION_DESTINATION, null);
+			final String pref = mPreferences.getString(KEY_TRANSLATION_DESTINATION, null);
 			if (twitter == null) return null;
 			try {
 				if (pref == null) {
 					mSelectedLanguageCode = twitter.getAccountSettings().getLanguage();
 					final Editor editor = mPreferences.edit();
-					editor.putString(PREFERENCE_KEY_TRANSLATION_DESTINATION, mSelectedLanguageCode);
+					editor.putString(KEY_TRANSLATION_DESTINATION, mSelectedLanguageCode);
 					editor.apply();
 				} else {
 					mSelectedLanguageCode = pref;

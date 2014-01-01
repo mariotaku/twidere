@@ -40,7 +40,7 @@
 		android:title="@android:string/copy"/>
 	<item
 		android:id="@id/translate"
-		android:icon="@drawable/ic_menu_browser"
+		android:icon="@drawable/ic_menu_translate"
 		android:title="@string/translate"/>
 	<item
 		android:id="@id/add_to_filter"

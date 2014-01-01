@@ -1,3 +1,22 @@
+/*
+ * 				Twidere - Twitter client for Android
+ * 
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere.service;
 
 import static android.text.TextUtils.isEmpty;
@@ -101,8 +120,8 @@ public class BackgroundOperationService extends IntentService implements Constan
 		mTwitter = app.getTwitterWrapper();
 		mBuilder = new NotificationCompat.Builder(this);
 		mMessagesManager = app.getMessagesManager();
-		final String uploader_component = mPreferences.getString(PREFERENCE_KEY_IMAGE_UPLOADER, null);
-		final String shortener_component = mPreferences.getString(PREFERENCE_KEY_TWEET_SHORTENER, null);
+		final String uploader_component = mPreferences.getString(KEY_IMAGE_UPLOADER, null);
+		final String shortener_component = mPreferences.getString(KEY_TWEET_SHORTENER, null);
 		mUseUploader = !isEmpty(uploader_component);
 		mUseShortener = !isEmpty(shortener_component);
 		mUploader = mUseUploader ? ImageUploaderInterface.getInstance(app, uploader_component) : null;
@@ -281,7 +300,7 @@ public class BackgroundOperationService extends IntentService implements Constan
 					}
 				}
 			}
-			if (mPreferences.getBoolean(PREFERENCE_KEY_REFRESH_AFTER_TWEET, false)) {
+			if (mPreferences.getBoolean(KEY_REFRESH_AFTER_TWEET, false)) {
 				mTwitter.refreshAll();
 			}
 		}

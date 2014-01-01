@@ -1,3 +1,22 @@
+/*
+ * 				Twidere - Twitter client for Android
+ * 
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere.util;
 
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
@@ -38,14 +57,6 @@ public class ThemeUtils implements Constants {
 			android.R.attr.activityOpenExitAnimation };
 	private static final int[] ANIM_CLOSE_STYLE_ATTRS = { android.R.attr.activityCloseEnterAnimation,
 			android.R.attr.activityCloseExitAnimation };
-
-	private static final String THEME_BACKGROUND_DEFAULT = "default";
-	private static final String THEME_BACKGROUND_SOLID = "solid";
-	private static final String THEME_BACKGROUND_TRANSPARENT = "transparent";
-
-	private static final String THEME_NAME_TWIDERE = "twidere";
-	private static final String THEME_NAME_DARK = "dark";
-	private static final String THEME_NAME_LIGHT = "light";
 
 	private ThemeUtils() {
 		throw new AssertionError();
@@ -163,20 +174,20 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static int getComposeThemeResource(final String name, final boolean darkActionBar) {
-		if (THEME_NAME_TWIDERE.equals(name))
+		if (VALUE_THEME_NAME_TWIDERE.equals(name))
 			return darkActionBar ? R.style.Theme_Twidere_Colored_DarkActionBar_Compose
 					: R.style.Theme_Twidere_Colored_Compose;
-		else if (THEME_NAME_LIGHT.equals(name))
+		else if (VALUE_THEME_NAME_LIGHT.equals(name))
 			return darkActionBar ? R.style.Theme_Twidere_Light_DarkActionBar_Compose
 					: R.style.Theme_Twidere_Light_Compose;
-		else if (THEME_NAME_DARK.equals(name)) return R.style.Theme_Twidere_Dark_Compose;
+		else if (VALUE_THEME_NAME_DARK.equals(name)) return R.style.Theme_Twidere_Dark_Compose;
 		return R.style.Theme_Twidere_Colored_Compose;
 	}
 
 	public static boolean getDarkActionBarOption(final Context context) {
 		if (context == null) return true;
 		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		return pref == null || pref.getBoolean(PREFERENCE_KEY_THEME_DARK_ACTIONBAR, true);
+		return pref == null || pref.getBoolean(KEY_THEME_DARK_ACTIONBAR, true);
 	}
 
 	public static Context getDialogThemedContext(final Context context) {
@@ -188,7 +199,7 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static int getDialogThemeResource(final String name) {
-		if (THEME_NAME_DARK.equals(name)) return R.style.Theme_Twidere_Dark_Dialog;
+		if (VALUE_THEME_NAME_DARK.equals(name)) return R.style.Theme_Twidere_Dark_Dialog;
 		return R.style.Theme_Twidere_Light_Dialog;
 	}
 
@@ -228,8 +239,8 @@ public class ThemeUtils implements Constants {
 	public static int getNoDisplayThemeResource(final Context context) {
 		if (context == null) return R.style.Theme_Twidere_Dark_NoDisplay;
 		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final String theme = pref.getString(PREFERENCE_KEY_THEME, THEME_NAME_TWIDERE);
-		if (THEME_NAME_DARK.equals(theme)) return R.style.Theme_Twidere_Dark_NoDisplay;
+		final String theme = pref.getString(KEY_THEME, VALUE_THEME_NAME_TWIDERE);
+		if (VALUE_THEME_NAME_DARK.equals(theme)) return R.style.Theme_Twidere_Dark_NoDisplay;
 		return R.style.Theme_Twidere_Light_NoDisplay;
 	}
 
@@ -299,10 +310,10 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static String getThemeBackgroundOption(final Context context) {
-		if (context == null) return THEME_BACKGROUND_DEFAULT;
+		if (context == null) return VALUE_THEME_BACKGROUND_DEFAULT;
 		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		if (pref == null) return THEME_BACKGROUND_DEFAULT;
-		return pref.getString(PREFERENCE_KEY_THEME_BACKGROUND, THEME_BACKGROUND_DEFAULT);
+		if (pref == null) return VALUE_THEME_BACKGROUND_DEFAULT;
+		return pref.getString(KEY_THEME_BACKGROUND, VALUE_THEME_BACKGROUND_DEFAULT);
 	}
 
 	public static int getThemeColor(final Context context) {
@@ -325,17 +336,17 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static String getThemeFontFamily(final Context context) {
-		if (context == null) return FONT_FAMILY_REGULAR;
+		if (context == null) return VALUE_THEME_FONT_FAMILY_REGULAR;
 		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final String fontFamily = pref.getString(PREFERENCE_KEY_THEME_FONT_FAMILY, FONT_FAMILY_REGULAR);
+		final String fontFamily = pref.getString(KEY_THEME_FONT_FAMILY, VALUE_THEME_FONT_FAMILY_REGULAR);
 		if (!TextUtils.isEmpty(fontFamily)) return fontFamily;
-		return FONT_FAMILY_REGULAR;
+		return VALUE_THEME_FONT_FAMILY_REGULAR;
 	}
 
 	public static String getThemeNameOption(final Context context) {
-		if (context == null) return THEME_NAME_TWIDERE;
+		if (context == null) return VALUE_THEME_NAME_TWIDERE;
 		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		return pref != null ? pref.getString(PREFERENCE_KEY_THEME, THEME_NAME_TWIDERE) : THEME_NAME_TWIDERE;
+		return pref != null ? pref.getString(KEY_THEME, VALUE_THEME_NAME_TWIDERE) : VALUE_THEME_NAME_TWIDERE;
 	}
 
 	public static int getThemeResource(final Context context) {
@@ -344,27 +355,28 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static int getThemeResource(final String name, final String background, final boolean darkActionBar) {
-		if (THEME_NAME_TWIDERE.equals(name)) {
-			if (THEME_BACKGROUND_SOLID.equals(background))
+		if (VALUE_THEME_NAME_TWIDERE.equals(name)) {
+			if (VALUE_THEME_BACKGROUND_SOLID.equals(background))
 				return darkActionBar ? R.style.Theme_Twidere_Colored_DarkActionBar_SolidBackground
 						: R.style.Theme_Twidere_Colored_SolidBackground;
-			else if (THEME_BACKGROUND_TRANSPARENT.equals(background))
+			else if (VALUE_THEME_BACKGROUND_TRANSPARENT.equals(background))
 				return darkActionBar ? R.style.Theme_Twidere_Colored_DarkActionBar_Transparent
 						: R.style.Theme_Twidere_Colored_Transparent;
 			return darkActionBar ? R.style.Theme_Twidere_Colored_DarkActionBar : R.style.Theme_Twidere_Colored;
-		} else if (THEME_NAME_LIGHT.equals(name)) {
-			if (THEME_BACKGROUND_SOLID.equals(background))
+		} else if (VALUE_THEME_NAME_LIGHT.equals(name)) {
+			if (VALUE_THEME_BACKGROUND_SOLID.equals(background))
 				return darkActionBar ? R.style.Theme_Twidere_Light_DarkActionBar_SolidBackground
 						: R.style.Theme_Twidere_Light_SolidBackground;
-			else if (THEME_BACKGROUND_TRANSPARENT.equals(background))
+			else if (VALUE_THEME_BACKGROUND_TRANSPARENT.equals(background))
 				return darkActionBar ? R.style.Theme_Twidere_Light_DarkActionBar_Transparent
 						: R.style.Theme_Twidere_Light_Transparent;
 			return darkActionBar ? R.style.Theme_Twidere_Light_DarkActionBar : R.style.Theme_Twidere_Light;
 
-		} else if (THEME_NAME_DARK.equals(name)) {
-			if (THEME_BACKGROUND_SOLID.equals(background))
+		} else if (VALUE_THEME_NAME_DARK.equals(name)) {
+			if (VALUE_THEME_BACKGROUND_SOLID.equals(background))
 				return R.style.Theme_Twidere_Dark_SolidBackground;
-			else if (THEME_BACKGROUND_TRANSPARENT.equals(background)) return R.style.Theme_Twidere_Dark_Transparent;
+			else if (VALUE_THEME_BACKGROUND_TRANSPARENT.equals(background))
+				return R.style.Theme_Twidere_Dark_Transparent;
 			return R.style.Theme_Twidere_Dark;
 		}
 		return R.style.Theme_Twidere_Colored_DarkActionBar;
@@ -403,7 +415,7 @@ public class ThemeUtils implements Constants {
 		final Resources res = getResources(context);
 		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final int def = res.getColor(android.R.color.holo_blue_light);
-		return pref.getInt(PREFERENCE_KEY_THEME_COLOR, def);
+		return pref.getInt(KEY_THEME_COLOR, def);
 	}
 
 	public static Typeface getUserTypeface(final Context context, final Typeface defTypeface) {
@@ -416,7 +428,7 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static int getViewerThemeResource(final Context context) {
-		final boolean isTransparent = THEME_BACKGROUND_TRANSPARENT.equals(getThemeBackgroundOption(context));
+		final boolean isTransparent = VALUE_THEME_BACKGROUND_TRANSPARENT.equals(getThemeBackgroundOption(context));
 		return isTransparent ? R.style.Theme_Twidere_Viewer_Transparent : R.style.Theme_Twidere_Viewer;
 	}
 
@@ -513,7 +525,7 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static boolean isSolidBackground(final Context context) {
-		return THEME_BACKGROUND_SOLID.equals(getThemeBackgroundOption(context));
+		return VALUE_THEME_BACKGROUND_SOLID.equals(getThemeBackgroundOption(context));
 	}
 
 	public static boolean isTransparentBackground(final Context context) {

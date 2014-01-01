@@ -591,5 +591,11 @@
 	<string name="deny">Deny</string>
 	<string name="accepted_users_follow_request">Accepted <xliff:g id="user">%s</xliff:g>\'s follow request.</string>
 	<string name="denied_users_follow_request">Denied <xliff:g id="user">%s</xliff:g>\'s follow request.</string>
+	<string name="import_settings">Import settings</string>
+	<string name="export_settings">Export settings</string>
+	<string name="export_settings_type_dialog_title">Export settings…</string>
+	<string name="import_settings_type_dialog_title">Import settings…</string>
+	<string name="nicknames">Nicknames</string>
+	<string name="user_colors">User colors</string>
 
 </resources>
