@@ -39,12 +39,16 @@ public class FileSelectorActivity extends BaseSupportDialogActivity implements F
 
 	@Override
 	public void onCancelled() {
-		finish();
+		if (!isFinishing()) {
+			finish();
+		}
 	}
 
 	@Override
 	public void onDismissed() {
-		finish();
+		if (!isFinishing()) {
+			finish();
+		}
 	}
 
 	@Override

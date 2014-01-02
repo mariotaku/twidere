@@ -61,10 +61,33 @@ public class DataImportExportUtils implements Constants {
 		if (hasFlag(flags, FLAG_USER_COLORS)) {
 			writeRawSharedPreferencesData(zos, context, USER_COLOR_PREFERENCES_NAME, ENTRY_USER_COLORS);
 		}
+		if (hasFlag(flags, FLAG_HOST_MAPPING)) {
+			writeRawSharedPreferencesData(zos, context, HOST_MAPPING_PREFERENCES_NAME, ENTRY_HOST_MAPPING);
+		}
 		zos.finish();
 		zos.flush();
 		Utils.closeSilently(zos);
 		Utils.closeSilently(fos);
+	}
+
+	public static int getImportedSettingsFlags(final File src) throws IOException {
+		if (src == null) return 0;
+		final ZipFile zipFile = new ZipFile(src);
+		int flags = 0;
+		if (zipFile.getEntry(ENTRY_PREFERENCES) != null) {
+			flags |= FLAG_PREFERENCES;
+		}
+		if (zipFile.getEntry(ENTRY_NICKNAMES) != null) {
+			flags |= FLAG_NICKNAMES;
+		}
+		if (zipFile.getEntry(ENTRY_USER_COLORS) != null) {
+			flags |= FLAG_USER_COLORS;
+		}
+		if (zipFile.getEntry(ENTRY_HOST_MAPPING) != null) {
+			flags |= FLAG_HOST_MAPPING;
+		}
+		Utils.closeSilently(zipFile);
+		return flags;
 	}
 
 	public static HashMap<String, Preference> getSupportedPreferencesMap() {
@@ -88,16 +111,16 @@ public class DataImportExportUtils implements Constants {
 		if (src == null) throw new FileNotFoundException();
 		final ZipFile zipFile = new ZipFile(src);
 		if (hasFlag(flags, FLAG_PREFERENCES)) {
-			final ZipEntry entry = zipFile.getEntry(ENTRY_PREFERENCES);
-			if (entry != null) {
-				final JSONObject json = JSONFileIO.convertJSONObject(zipFile.getInputStream(entry));
-				final SharedPreferencesData data = JSONSerializer
-						.createObject(SharedPreferencesData.JSON_CREATOR, json);
-				if (data != null) {
-					data.writeToSharedPreferences(context.getSharedPreferences(SHARED_PREFERENCES_NAME,
-							Context.MODE_PRIVATE));
-				}
-			}
+			readSharedPreferencesData(zipFile, context, SHARED_PREFERENCES_NAME, ENTRY_PREFERENCES);
+		}
+		if (hasFlag(flags, FLAG_NICKNAMES)) {
+			readRawSharedPreferencesData(zipFile, context, USER_NICKNAME_PREFERENCES_NAME, ENTRY_NICKNAMES);
+		}
+		if (hasFlag(flags, FLAG_USER_COLORS)) {
+			readRawSharedPreferencesData(zipFile, context, USER_COLOR_PREFERENCES_NAME, ENTRY_USER_COLORS);
+		}
+		if (hasFlag(flags, FLAG_HOST_MAPPING)) {
+			readRawSharedPreferencesData(zipFile, context, HOST_MAPPING_PREFERENCES_NAME, ENTRY_HOST_MAPPING);
 		}
 		Utils.closeSilently(zipFile);
 	}
@@ -114,6 +137,28 @@ public class DataImportExportUtils implements Constants {
 
 	private static boolean hasFlag(final int flags, final int flag) {
 		return (flags & flag) != 0;
+	}
+
+	private static void readRawSharedPreferencesData(final ZipFile zipFile, final Context context,
+			final String preferencesName, final String entryName) throws IOException {
+		final ZipEntry entry = zipFile.getEntry(entryName);
+		if (entry == null) return;
+		final JSONObject json = JSONFileIO.convertJSONObject(zipFile.getInputStream(entry));
+		final RawSharedPreferencesData data = JSONSerializer.createObject(RawSharedPreferencesData.JSON_CREATOR, json);
+		if (data != null) {
+			data.writeToSharedPreferences(context.getSharedPreferences(preferencesName, Context.MODE_PRIVATE));
+		}
+	}
+
+	private static void readSharedPreferencesData(final ZipFile zipFile, final Context context,
+			final String preferencesName, final String entryName) throws IOException {
+		final ZipEntry entry = zipFile.getEntry(entryName);
+		if (entry == null) return;
+		final JSONObject json = JSONFileIO.convertJSONObject(zipFile.getInputStream(entry));
+		final SharedPreferencesData data = JSONSerializer.createObject(SharedPreferencesData.JSON_CREATOR, json);
+		if (data != null) {
+			data.writeToSharedPreferences(context.getSharedPreferences(preferencesName, Context.MODE_PRIVATE));
+		}
 	}
 
 	private static void writeRawSharedPreferencesData(final ZipOutputStream zos, final Context context,

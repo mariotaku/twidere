@@ -21,6 +21,7 @@ package org.mariotaku.twidere.fragment.support;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
@@ -28,18 +29,23 @@ import android.content.DialogInterface.OnShowListener;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.SparseBooleanArray;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.adapter.ArrayAdapter;
 import org.mariotaku.twidere.fragment.iface.IDialogFragmentCallback;
 
 public final class DataExportImportTypeSelectorDialogFragment extends BaseSupportDialogFragment implements
-		OnMultiChoiceClickListener, OnClickListener, OnShowListener {
+		OnMultiChoiceClickListener, OnClickListener, OnShowListener, OnItemClickListener {
 
-	private static final int[] ALL_FLAGS = { FLAG_PREFERENCES, FLAG_NICKNAMES, FLAG_USER_COLORS };
-
-	private static final int[] ENTRIES_RES = { R.string.settings, R.string.nicknames, R.string.user_colors };
+	private TypeAdapter mAdapter;
+	private ListView mListView;
 
 	@Override
 	public void onCancel(final DialogInterface dialog) {
@@ -54,7 +60,7 @@ public final class DataExportImportTypeSelectorDialogFragment extends BaseSuppor
 	public final void onClick(final DialogInterface dialog, final int which) {
 		switch (which) {
 			case DialogInterface.BUTTON_POSITIVE: {
-				final int flags = getCheckedFlags(dialog);
+				final int flags = getCheckedFlags();
 				onPositiveButtonClicked(flags);
 				break;
 			}
@@ -68,9 +74,23 @@ public final class DataExportImportTypeSelectorDialogFragment extends BaseSuppor
 
 	@Override
 	public final Dialog onCreateDialog(final Bundle savedInstanceState) {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		final Context context = getActivity();
+		final int flags = getEnabledFlags();
+		mAdapter = new TypeAdapter(context, flags);
+		mListView = new ListView(context);
+		mAdapter.add(new Type(R.string.settings, FLAG_PREFERENCES));
+		mAdapter.add(new Type(R.string.nicknames, FLAG_NICKNAMES));
+		mAdapter.add(new Type(R.string.user_colors, FLAG_USER_COLORS));
+		mAdapter.add(new Type(R.string.custom_host_mapping, FLAG_HOST_MAPPING));
+		mListView.setAdapter(mAdapter);
+		mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+		mListView.setOnItemClickListener(this);
+		for (int i = 0, j = mAdapter.getCount(); i < j; i++) {
+			mListView.setItemChecked(i, mAdapter.isEnabled(i));
+		}
+		final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle(getTitle());
-		builder.setMultiChoiceItems(getEntries(), null, this);
+		builder.setView(mListView);
 		builder.setPositiveButton(android.R.string.ok, this);
 		builder.setNegativeButton(android.R.string.cancel, null);
 		final AlertDialog dialog = builder.create();
@@ -88,30 +108,31 @@ public final class DataExportImportTypeSelectorDialogFragment extends BaseSuppor
 	}
 
 	@Override
+	public void onItemClick(final AdapterView<?> view, final View child, final int position, final long id) {
+		updatePositiveButton(getDialog());
+	}
+
+	@Override
 	public final void onShow(final DialogInterface dialog) {
 		updatePositiveButton(dialog);
 	}
 
-	private int getCheckedFlags(final DialogInterface dialog) {
-		if (!(dialog instanceof AlertDialog)) return 0;
-		final AlertDialog alertDialog = (AlertDialog) dialog;
-		final ListView listView = alertDialog.getListView();
-		final SparseBooleanArray checked = listView.getCheckedItemPositions();
+	private int getCheckedFlags() {
+		final SparseBooleanArray checked = mListView.getCheckedItemPositions();
 		int flags = 0;
 		for (int i = 0, j = checked.size(); i < j; i++) {
+			final Type type = (Type) mListView.getItemAtPosition(i);
 			if (checked.valueAt(i)) {
-				flags |= ALL_FLAGS[i];
+				flags |= type.flag;
 			}
 		}
 		return flags;
 	}
 
-	private String[] getEntries() {
-		final String[] entries = new String[ENTRIES_RES.length];
-		for (int i = 0, j = ENTRIES_RES.length; i < j; i++) {
-			entries[i] = getString(ENTRIES_RES[i]);
-		}
-		return entries;
+	private int getEnabledFlags() {
+		final Bundle args = getArguments();
+		if (args == null) return FLAG_ALL;
+		return args.getInt(EXTRA_FLAGS, FLAG_ALL);
 	}
 
 	private CharSequence getTitle() {
@@ -134,11 +155,50 @@ public final class DataExportImportTypeSelectorDialogFragment extends BaseSuppor
 		if (!(dialog instanceof AlertDialog)) return;
 		final AlertDialog alertDialog = (AlertDialog) dialog;
 		final Button positiveButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
-		positiveButton.setEnabled(getCheckedFlags(dialog) != 0);
+		positiveButton.setEnabled(getCheckedFlags() != 0);
 	}
 
 	public static interface Callback extends IDialogFragmentCallback {
 		void onPositiveButtonClicked(String path, int flags);
+	}
+
+	private static class Type {
+		private final int title, flag;
+
+		Type(final int title, final int flag) {
+			this.title = title;
+			this.flag = flag;
+		}
+	}
+
+	private static class TypeAdapter extends ArrayAdapter<Type> {
+
+		private final int mEnabledFlags;
+
+		public TypeAdapter(final Context context, final int enabledFlags) {
+			super(context, android.R.layout.simple_list_item_multiple_choice);
+			mEnabledFlags = enabledFlags;
+		}
+
+		@Override
+		public boolean areAllItemsEnabled() {
+			return false;
+		}
+
+		@Override
+		public View getView(final int position, final View convertView, final ViewGroup parent) {
+			final View view = super.getView(position, convertView, parent);
+			final TextView text1 = (TextView) view.findViewById(android.R.id.text1);
+			text1.setText(getItem(position).title);
+			view.setEnabled(isEnabled(position));
+			return view;
+		}
+
+		@Override
+		public boolean isEnabled(final int position) {
+			return (mEnabledFlags & getItem(position).flag) != 0;
+		}
+
 	}
 
 }

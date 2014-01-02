@@ -247,6 +247,7 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 				break;
 			}
 			case MENU_SETTINGS: {
+				if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) return false;
 				final Intent intent = new Intent(this, SettingsActivity.class);
 				startActivity(intent);
 				break;

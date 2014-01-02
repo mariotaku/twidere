@@ -169,11 +169,13 @@ public interface Constants extends TwidereConstants {
 	public static final String ENTRY_PREFERENCES = "preferences.json";
 	public static final String ENTRY_NICKNAMES = "nicknames.json";
 	public static final String ENTRY_USER_COLORS = "user_colors.json";
+	public static final String ENTRY_HOST_MAPPING = "host_mapping.json";
 
 	public static final int FLAG_PREFERENCES = 0x1;
 	public static final int FLAG_NICKNAMES = 0x2;
 	public static final int FLAG_USER_COLORS = 0x4;
+	public static final int FLAG_HOST_MAPPING = 0x8;
 
-	public static final int FLAG_ALL = FLAG_PREFERENCES | FLAG_NICKNAMES | FLAG_USER_COLORS;
+	public static final int FLAG_ALL = FLAG_PREFERENCES | FLAG_NICKNAMES | FLAG_USER_COLORS | FLAG_HOST_MAPPING;
 
 }

@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 import org.mariotaku.twidere.R;
@@ -20,7 +21,8 @@ import java.io.IOException;
 public class DataImportActivity extends BaseSupportActivity implements FileSelectorDialogFragment.Callback,
 		DataExportImportTypeSelectorDialogFragment.Callback {
 
-	private ImportSettingsTask mTask;
+	private ImportSettingsTask mImportSettingsTask;
+	private OpenImportTypeTask mOpenImportTypeTask;
 
 	@Override
 	public Resources getResources() {
@@ -34,12 +36,13 @@ public class DataImportActivity extends BaseSupportActivity implements FileSelec
 
 	@Override
 	public void onCancelled() {
-		finish();
+		if (!isFinishing()) {
+			finish();
+		}
 	}
 
 	@Override
 	public void onDismissed() {
-		finish();
 	}
 
 	@Override
@@ -48,12 +51,11 @@ public class DataImportActivity extends BaseSupportActivity implements FileSelec
 			finish();
 			return;
 		}
-		final DialogFragment df = new DataExportImportTypeSelectorDialogFragment();
-		final Bundle args = new Bundle();
-		args.putString(EXTRA_PATH, file.getAbsolutePath());
-		args.putString(EXTRA_TITLE, getString(R.string.export_settings_type_dialog_title));
-		df.setArguments(args);
-		df.show(getSupportFragmentManager(), "select_import_type");
+		final String path = file.getAbsolutePath();
+		if (mOpenImportTypeTask == null || mOpenImportTypeTask.getStatus() != AsyncTask.Status.RUNNING) {
+			mOpenImportTypeTask = new OpenImportTypeTask(this, path);
+			mOpenImportTypeTask.execute();
+		}
 	}
 
 	@Override
@@ -62,10 +64,25 @@ public class DataImportActivity extends BaseSupportActivity implements FileSelec
 			finish();
 			return;
 		}
-		if (mTask == null || mTask.getStatus() != AsyncTask.Status.RUNNING) {
-			mTask = new ImportSettingsTask(this, path, flags);
-			mTask.execute();
+		if (mImportSettingsTask == null || mImportSettingsTask.getStatus() != AsyncTask.Status.RUNNING) {
+			mImportSettingsTask = new ImportSettingsTask(this, path, flags);
+			mImportSettingsTask.execute();
 		}
+	}
+
+	public void showImportTypeDialog(final String path, final Integer flags) {
+		final DialogFragment df = new DataExportImportTypeSelectorDialogFragment();
+		final Bundle args = new Bundle();
+		args.putString(EXTRA_PATH, path);
+		args.putString(EXTRA_TITLE, getString(R.string.export_settings_type_dialog_title));
+		if (flags != null) {
+			args.putInt(EXTRA_FLAGS, flags);
+		} else {
+			args.putInt(EXTRA_FLAGS, 0);
+		}
+		df.setArguments(args);
+		df.show(getSupportFragmentManager(), "select_import_type");
+
 	}
 
 	@Override
@@ -98,7 +115,9 @@ public class DataImportActivity extends BaseSupportActivity implements FileSelec
 
 		@Override
 		protected Boolean doInBackground(final Void... params) {
+			if (mPath == null) return false;
 			final File file = new File(mPath);
+			if (!file.isFile()) return false;
 			try {
 				DataImportExportUtils.importData(mActivity, file, mFlags);
 				return true;
@@ -111,9 +130,9 @@ public class DataImportActivity extends BaseSupportActivity implements FileSelec
 		@Override
 		protected void onPostExecute(final Boolean result) {
 			final FragmentManager fm = mActivity.getSupportFragmentManager();
-			final DialogFragment f = (DialogFragment) fm.findFragmentByTag(FRAGMENT_TAG);
-			if (f != null) {
-				f.dismiss();
+			final Fragment f = fm.findFragmentByTag(FRAGMENT_TAG);
+			if (f instanceof DialogFragment) {
+				((DialogFragment) f).dismiss();
 			}
 			if (result != null && result) {
 				mActivity.setResult(RESULT_OK);
@@ -121,6 +140,57 @@ public class DataImportActivity extends BaseSupportActivity implements FileSelec
 				mActivity.setResult(RESULT_CANCELED);
 			}
 			mActivity.finish();
+		}
+
+		@Override
+		protected void onPreExecute() {
+			ProgressDialogFragment.show(mActivity, FRAGMENT_TAG).setCancelable(false);
+		}
+
+	}
+
+	static class OpenImportTypeTask extends AsyncTask<Void, Void, Integer> {
+
+		private static final String FRAGMENT_TAG = "read_settings_data_dialog";
+
+		private final DataImportActivity mActivity;
+		private final String mPath;
+
+		OpenImportTypeTask(final DataImportActivity activity, final String path) {
+			mActivity = activity;
+			mPath = path;
+		}
+
+		@Override
+		protected Integer doInBackground(final Void... params) {
+			if (mPath == null) return 0;
+			final File file = new File(mPath);
+			if (!file.isFile()) return 0;
+			try {
+				return DataImportExportUtils.getImportedSettingsFlags(file);
+			} catch (final IOException e) {
+				return 0;
+			}
+		}
+
+		@Override
+		protected void onPostExecute(final Integer flags) {
+			final FragmentManager fm = mActivity.getSupportFragmentManager();
+			final Fragment f = fm.findFragmentByTag(FRAGMENT_TAG);
+			if (f instanceof DialogFragment) {
+				((DialogFragment) f).dismiss();
+			}
+			final DialogFragment df = new DataExportImportTypeSelectorDialogFragment();
+			final Bundle args = new Bundle();
+			args.putString(EXTRA_PATH, mPath);
+			args.putString(EXTRA_TITLE, mActivity.getString(R.string.import_settings_type_dialog_title));
+			if (flags != null) {
+				args.putInt(EXTRA_FLAGS, flags);
+			} else {
+				args.putInt(EXTRA_FLAGS, 0);
+			}
+			df.setArguments(args);
+			df.show(mActivity.getSupportFragmentManager(), "select_import_type");
 		}
 
 		@Override

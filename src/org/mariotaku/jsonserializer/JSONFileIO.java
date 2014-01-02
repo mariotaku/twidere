@@ -34,7 +34,7 @@ public class JSONFileIO extends JSONSerializer {
 		try {
 			return new JSONArray(string);
 		} catch (final JSONException e) {
-			throw new IOException();
+			throw new IOException(e);
 		}
 	}
 
@@ -43,7 +43,7 @@ public class JSONFileIO extends JSONSerializer {
 		try {
 			return new JSONObject(string);
 		} catch (final JSONException e) {
-			throw new IOException();
+			throw new IOException(e);
 		}
 	}
 
@@ -82,7 +82,7 @@ public class JSONFileIO extends JSONSerializer {
 			final JSONParcelable.Creator<T> creator = getCreator(json.getString(KEY_CLASS));
 			return createArray(creator, json.getJSONArray(KEY_OBJECT));
 		} catch (final JSONException e) {
-			throw new IOException();
+			throw new IOException(e);
 		}
 	}
 
@@ -97,7 +97,7 @@ public class JSONFileIO extends JSONSerializer {
 			final JSONParcelable.Creator<T> creator = getCreator(json.getString(KEY_CLASS));
 			return createArrayList(creator, json.getJSONArray(KEY_OBJECT));
 		} catch (final JSONException e) {
-			throw new IOException();
+			throw new IOException(e);
 		}
 	}
 
@@ -112,7 +112,7 @@ public class JSONFileIO extends JSONSerializer {
 			final JSONParcelable.Creator<T> creator = getCreator(json.optString(KEY_CLASS));
 			return createObject(creator, json.optJSONObject(KEY_OBJECT));
 		} catch (final JSONException e) {
-			throw new IOException();
+			throw new IOException(e);
 		}
 	}
 
@@ -131,7 +131,7 @@ public class JSONFileIO extends JSONSerializer {
 			writer.write(jsonToString(json));
 			writer.flush();
 		} catch (final JSONException e) {
-			throw new IOException();
+			throw new IOException(e);
 		} finally {
 			writer.close();
 		}
@@ -152,7 +152,7 @@ public class JSONFileIO extends JSONSerializer {
 			writer.write(jsonToString(json));
 			writer.flush();
 		} catch (final JSONException e) {
-			throw new IOException(e.getMessage());
+			throw new IOException(e);
 		} finally {
 			Utils.closeSilently(writer);
 		}
@@ -165,7 +165,7 @@ public class JSONFileIO extends JSONSerializer {
 			final Class<?> cls = Class.forName(name);
 			return (JSONParcelable.Creator<T>) cls.getField("JSON_CREATOR").get(null);
 		} catch (final Exception e) {
-			throw new IOException();
+			throw new IOException(e);
 		}
 	}
 }
