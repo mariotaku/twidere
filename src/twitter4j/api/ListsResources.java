@@ -296,6 +296,13 @@ public interface ListsResources {
 	PagableResponseList<UserList> getUserListMemberships(String listMemberScreenName, long cursor,
 			boolean filterToOwnedLists) throws TwitterException;
 
+	PagableResponseList<UserList> getUserListOwnerships(long cursor) throws TwitterException;
+
+	PagableResponseList<UserList> getUserListOwnerships(long listMemberId, long cursor) throws TwitterException;
+
+	PagableResponseList<UserList> getUserListOwnerships(String listMemberScreenName, long cursor)
+			throws TwitterException;
+
 	/**
 	 * List the lists of the specified user. Private lists will be included if
 	 * the authenticated users is the same as the user whose lists are being

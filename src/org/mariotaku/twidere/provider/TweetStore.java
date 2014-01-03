@@ -454,6 +454,12 @@ public interface TweetStore {
 
 		public static final String VALUE = "value";
 
+		public static final String ENABLE_IN_HOME_TIMELINE = "enable_in_home_timeline";
+
+		public static final String ENABLE_IN_MENTIONS = "enable_in_mentions";
+
+		public static final String ENABLE_FOR_RETWEETS = "enable_for_retweets";
+
 		public static final String[] COLUMNS = new String[] { _ID, VALUE };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT_NOT_NULL };

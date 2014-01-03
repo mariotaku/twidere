@@ -835,7 +835,17 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 		final String endpoint = String.format(Locale.US, "statuses/%d/activity/summary.json", statusId);
 		final String url = conf.getRestBaseURL() + endpoint;
 		final String sign_url = conf.getSigningRestBaseURL() + endpoint;
-		return factory.createStatusActivitySummary(get(url, sign_url, INCLUDE_ENTITIES));
+		return factory.createStatusActivitySummary(get(url, sign_url));
+	}
+
+	@Override
+	public StatusActivitySummary getStatusActivitySummary(final long statusId, final boolean includeUserEntities)
+			throws TwitterException {
+		final String endpoint = String.format(Locale.US, "statuses/%d/activity/summary.json", statusId);
+		final String url = conf.getRestBaseURL() + endpoint;
+		final String signUrl = conf.getSigningRestBaseURL() + endpoint;
+		final HttpParameter paramIncludeUserEntities = new HttpParameter("include_user_entities", includeUserEntities);
+		return factory.createStatusActivitySummary(get(url, signUrl, paramIncludeUserEntities));
 	}
 
 	@Override
@@ -926,6 +936,35 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 				conf.getSigningRestBaseURL() + ENDPOINT_LISTS_MEMBERSHIPS, new HttpParameter("screen_name",
 						listMemberScreenName), new HttpParameter("cursor", cursor), new HttpParameter(
 						"filter_to_owned_lists", filterToOwnedLists)));
+	}
+
+	@Override
+	public PagableResponseList<UserList> getUserListOwnerships(final long cursor) throws TwitterException {
+		ensureAuthorizationEnabled();
+		final String url = conf.getRestBaseURL() + ENDPOINT_LISTS_OWNERSHIPS;
+		final String signUrl = conf.getSigningRestBaseURL() + ENDPOINT_LISTS_OWNERSHIPS;
+		return factory.createPagableUserListList(get(url, signUrl, new HttpParameter("cursor", cursor)));
+
+	}
+
+	@Override
+	public PagableResponseList<UserList> getUserListOwnerships(final long listMemberId, final long cursor)
+			throws TwitterException {
+		ensureAuthorizationEnabled();
+		final String url = conf.getRestBaseURL() + ENDPOINT_LISTS_OWNERSHIPS;
+		final String signUrl = conf.getSigningRestBaseURL() + ENDPOINT_LISTS_OWNERSHIPS;
+		return factory.createPagableUserListList(get(url, signUrl, new HttpParameter("user_id", listMemberId),
+				new HttpParameter("cursor", cursor)));
+	}
+
+	@Override
+	public PagableResponseList<UserList> getUserListOwnerships(final String listMemberScreenName, final long cursor)
+			throws TwitterException {
+		ensureAuthorizationEnabled();
+		final String url = conf.getRestBaseURL() + ENDPOINT_LISTS_OWNERSHIPS;
+		final String signUrl = conf.getSigningRestBaseURL() + ENDPOINT_LISTS_OWNERSHIPS;
+		return factory.createPagableUserListList(get(url, signUrl, new HttpParameter("screen_name",
+				listMemberScreenName), new HttpParameter("cursor", cursor)));
 	}
 
 	@Override

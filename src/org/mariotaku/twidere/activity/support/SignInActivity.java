@@ -434,8 +434,8 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 	}
 
 	private void setDefaultAPI() {
-		final long api_last_change = mPreferences.getLong(KEY_API_LAST_CHANGE, mAPIChangeTimestamp);
-		final boolean default_api_changed = api_last_change != mAPIChangeTimestamp;
+		final long apiLastChange = mPreferences.getLong(KEY_API_LAST_CHANGE, mAPIChangeTimestamp);
+		final boolean defaultApiChanged = apiLastChange != mAPIChangeTimestamp;
 		final String consumer_key = getNonEmptyString(mPreferences, KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY_2);
 		final String consumer_secret = getNonEmptyString(mPreferences, KEY_CONSUMER_SECRET, TWITTER_CONSUMER_SECRET_2);
 		final String rest_base_url = getNonEmptyString(mPreferences, KEY_REST_BASE_URL, DEFAULT_REST_BASE_URL);
@@ -445,29 +445,29 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 		final String signing_oauth_base_url = getNonEmptyString(mPreferences, KEY_SIGNING_OAUTH_BASE_URL,
 				DEFAULT_SIGNING_OAUTH_BASE_URL);
 		final int auth_type = mPreferences.getInt(KEY_AUTH_TYPE, Accounts.AUTH_TYPE_OAUTH);
-		if (isEmpty(mConsumerKey) || default_api_changed) {
+		if (isEmpty(mConsumerKey) || defaultApiChanged) {
 			mConsumerKey = consumer_key;
 		}
-		if (isEmpty(mConsumerSecret) || default_api_changed) {
+		if (isEmpty(mConsumerSecret) || defaultApiChanged) {
 			mConsumerSecret = consumer_secret;
 		}
-		if (isEmpty(mRestBaseURL) || default_api_changed) {
+		if (isEmpty(mRestBaseURL) || defaultApiChanged) {
 			mRestBaseURL = rest_base_url;
 		}
-		if (isEmpty(mOAuthBaseURL) || default_api_changed) {
+		if (isEmpty(mOAuthBaseURL) || defaultApiChanged) {
 			mOAuthBaseURL = oauth_base_url;
 		}
-		if (isEmpty(mSigningRestBaseURL) || default_api_changed) {
+		if (isEmpty(mSigningRestBaseURL) || defaultApiChanged) {
 			mSigningRestBaseURL = signing_rest_base_url;
 		}
-		if (isEmpty(mSigningOAuthBaseURL) || default_api_changed) {
+		if (isEmpty(mSigningOAuthBaseURL) || defaultApiChanged) {
 			mSigningOAuthBaseURL = signing_oauth_base_url;
 		}
-		if (mAuthType == 0 || default_api_changed) {
+		if (mAuthType == 0 || defaultApiChanged) {
 			mAuthType = auth_type;
 		}
-		if (default_api_changed) {
-			mAPIChangeTimestamp = api_last_change;
+		if (defaultApiChanged) {
+			mAPIChangeTimestamp = apiLastChange;
 		}
 	}
 

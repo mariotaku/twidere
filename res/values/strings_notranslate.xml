@@ -7,5 +7,9 @@
 	<string name="kuma_union">熊孩子联盟</string>
 	<string name="developer_name">Mariotaku Lee</string>
 	<string name="project_name">Twidere Project</string>
+	<string name="font_family_regular">Regular</string>
+	<string name="font_family_condensed">Condensed</string>
+	<string name="font_family_light">Light</string>
+	<string name="font_family_thin">Thin</string>
 
 </resources>

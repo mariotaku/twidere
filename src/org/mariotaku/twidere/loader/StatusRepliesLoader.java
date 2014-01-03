@@ -19,6 +19,8 @@
 
 package org.mariotaku.twidere.loader;
 
+import static org.mariotaku.twidere.util.Utils.isOfficialTwitterInstance;
+
 import android.content.Context;
 
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -44,14 +46,25 @@ public class StatusRepliesLoader extends UserMentionsLoader {
 
 	@Override
 	public List<Status> getStatuses(final Twitter twitter, final Paging paging) throws TwitterException {
-		final List<Status> statuses = super.getStatuses(twitter, paging);
-		final List<Status> result = new ArrayList<Status>();
-		for (final Status status : statuses) {
-			if (status.getInReplyToStatusId() == mInReplyToStatusId) {
-				result.add(status);
+		if (isOfficialTwitterInstance(getContext(), twitter)) {
+			final List<Status> statuses = twitter.showConversation(mInReplyToStatusId, paging);
+			final List<Status> result = new ArrayList<Status>();
+			for (final Status status : statuses) {
+				if (status.getId() > mInReplyToStatusId) {
+					result.add(status);
+				}
 			}
+			return result;
+		} else {
+			final List<Status> statuses = super.getStatuses(twitter, paging);
+			final List<Status> result = new ArrayList<Status>();
+			for (final Status status : statuses) {
+				if (status.getInReplyToStatusId() == mInReplyToStatusId) {
+					result.add(status);
+				}
+			}
+			return result;
 		}
-		return result;
 	}
 
 }

@@ -94,10 +94,10 @@ public class DefaultAPIPreference extends DialogPreference implements Constants,
 
 	@Override
 	public void onClick(final View v) {
-		final View stub_view = mAdvancedAPIConfigContainer.findViewById(R.id.stub_advanced_api_config);
-		final View inflated_view = mAdvancedAPIConfigContainer.findViewById(R.id.advanced_api_config);
-		if (stub_view != null) {
-			stub_view.setVisibility(View.VISIBLE);
+		final View stubView = mAdvancedAPIConfigContainer.findViewById(R.id.stub_advanced_api_config);
+		final View inflatedView = mAdvancedAPIConfigContainer.findViewById(R.id.advanced_api_config);
+		if (stubView != null) {
+			stubView.setVisibility(View.VISIBLE);
 			mAdvancedAPIConfigLabel.setCompoundDrawablesWithIntrinsicBounds(R.drawable.expander_open_holo, 0, 0, 0);
 			mEditSigningRESTBaseURL = (EditText) mAdvancedAPIConfigContainer.findViewById(R.id.signing_rest_base_url);
 			mEditOAuthBaseURL = (EditText) mAdvancedAPIConfigContainer.findViewById(R.id.oauth_base_url);
@@ -112,11 +112,11 @@ public class DefaultAPIPreference extends DialogPreference implements Constants,
 					: mSigningOAuthBaseURL);
 			mEditConsumerKey.setText(isEmpty(mConsumerKey) ? TWITTER_CONSUMER_KEY_2 : mConsumerKey);
 			mEditConsumerSecret.setText(isEmpty(mConsumerSecret) ? TWITTER_CONSUMER_SECRET_2 : mConsumerSecret);
-		} else if (inflated_view != null) {
-			final boolean is_visible = inflated_view.getVisibility() == View.VISIBLE;
+		} else if (inflatedView != null) {
+			final boolean is_visible = inflatedView.getVisibility() == View.VISIBLE;
 			final int compound_res = is_visible ? R.drawable.expander_close_holo : R.drawable.expander_open_holo;
 			mAdvancedAPIConfigLabel.setCompoundDrawablesWithIntrinsicBounds(compound_res, 0, 0, 0);
-			inflated_view.setVisibility(is_visible ? View.GONE : View.VISIBLE);
+			inflatedView.setVisibility(is_visible ? View.GONE : View.VISIBLE);
 		}
 	}
 

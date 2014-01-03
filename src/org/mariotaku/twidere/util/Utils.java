@@ -186,8 +186,12 @@ import twitter4j.URLEntity;
 import twitter4j.User;
 import twitter4j.UserMentionEntity;
 import twitter4j.auth.AccessToken;
+import twitter4j.auth.Authorization;
 import twitter4j.auth.BasicAuthorization;
+import twitter4j.auth.OAuthAuthorization;
 import twitter4j.auth.TwipOModeAuthorization;
+import twitter4j.auth.XAuthAuthorization;
+import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 import twitter4j.http.HostAddressResolver;
 import twitter4j.http.HttpClientWrapper;
@@ -2469,6 +2473,15 @@ public final class Utils implements Constants {
 			if (pair[0].equals(consumerKey) && pair[1].equals(consumerSecret)) return true;
 		}
 		return false;
+	}
+
+	public static boolean isOfficialTwitterInstance(final Context context, final Twitter twitter) {
+		if (context == null || twitter == null) return false;
+		final Configuration conf = twitter.getConfiguration();
+		final Authorization auth = twitter.getAuthorization();
+		final boolean isOAuth = auth instanceof OAuthAuthorization || auth instanceof XAuthAuthorization;
+		final String consumerKey = conf.getOAuthConsumerKey(), consumerSecret = conf.getOAuthConsumerSecret();
+		return isOAuth && isOfficialConsumerKeySecret(context, consumerKey, consumerSecret);
 	}
 
 	public static boolean isOnWifi(final Context context) {

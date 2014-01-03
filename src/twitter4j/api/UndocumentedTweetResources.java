@@ -11,6 +11,8 @@ public interface UndocumentedTweetResources extends UndocumentedResources {
 
 	StatusActivitySummary getStatusActivitySummary(long statusId) throws TwitterException;
 
+	StatusActivitySummary getStatusActivitySummary(long statusId, boolean includeUserEntities) throws TwitterException;
+
 	ResponseList<Status> showConversation(long statusId) throws TwitterException;
 
 	ResponseList<Status> showConversation(long statusId, Paging paging) throws TwitterException;

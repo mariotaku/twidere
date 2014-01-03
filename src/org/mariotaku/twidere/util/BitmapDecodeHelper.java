@@ -68,6 +68,7 @@ public class BitmapDecodeHelper {
 	public static Bitmap decode(final String path, final BitmapFactory.Options opts) {
 		if (path == null || opts == null) return null;
 		final Bitmap bm = BitmapFactory.decodeFile(path, opts);
+		if (bm == null) return null;
 		final Matrix m = new Matrix();
 		final int orientation = Exif.getOrientation(path);
 		switch (orientation) {

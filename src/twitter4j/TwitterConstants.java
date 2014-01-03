@@ -99,6 +99,7 @@ public interface TwitterConstants {
 	static final String ENDPOINT_LISTS_SUBSCRIBERS_DESTROY = "lists/subscribers/destroy.json";
 	static final String ENDPOINT_LISTS_SUBSCRIBERS_SHOW = "lists/subscribers/show.json";
 	static final String ENDPOINT_LISTS_UPDATE = "lists/update.json";
+	static final String ENDPOINT_LISTS_OWNERSHIPS = "lists/ownerships.json";
 
 	static final String ENDPOINT_RATE_LIMIT_STATUS = "application/rate_limit_status.json";
 
