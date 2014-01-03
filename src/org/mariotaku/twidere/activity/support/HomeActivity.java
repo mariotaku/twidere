@@ -86,6 +86,7 @@ import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;
 import org.mariotaku.twidere.fragment.iface.SupportFragmentCallback;
 import org.mariotaku.twidere.fragment.support.DirectMessagesFragment;
 import org.mariotaku.twidere.fragment.support.TrendsSuggectionsFragment;
+import org.mariotaku.twidere.graphic.EmptyDrawable;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.model.SupportTabSpec;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
@@ -766,8 +767,12 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mLeftDrawerContainer.setClipEnabled(isTransparentBackground);
 		mLeftDrawerContainer.setScrollScale(mSlidingMenu.getBehindScrollScale());
 		mSlidingMenu.setBehindCanvasTransformer(new ListenerCanvasTransformer(this));
+		final Window window = getWindow();
 		if (isTransparentBackground) {
 			ViewAccessor.setBackground(mSlidingMenu.getContent(), null);
+			window.setBackgroundDrawable(new EmptyDrawable());
+		} else {
+			window.setBackgroundDrawable(null);
 		}
 		if (isDualPaneMode()) {
 			mSlidingMenu.addIgnoredView(getSlidingPane().getRightPaneContainer());

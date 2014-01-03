@@ -380,7 +380,7 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 	public void setFiltersEnabled(final boolean enabled) {
 		if (mFiltersEnabled == enabled) return;
 		mFiltersEnabled = enabled;
-		rebuildFilterInfo();
+		rebuildFilterInfo(getCursor(), mIndices);
 		notifyDataSetChanged();
 	}
 
@@ -398,7 +398,7 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 		mFilterIgnoreTextHtml = text_html;
 		mFilterIgnoreUser = user;
 		mFilterIgnoreSource = source;
-		rebuildFilterInfo();
+		rebuildFilterInfo(getCursor(), mIndices);
 		notifyDataSetChanged();
 	}
 
@@ -429,13 +429,12 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 	@Override
 	public Cursor swapCursor(final Cursor cursor) {
 		mIndices = cursor != null ? new CursorStatusIndices(cursor) : null;
-		rebuildFilterInfo();
+		rebuildFilterInfo(cursor, mIndices);
 		return super.swapCursor(cursor);
 	}
 
-	private void rebuildFilterInfo() {
-		final Cursor c = getCursor();
-		if (mIndices != null && c != null && !c.isClosed() && c.getCount() > 0 && c.moveToLast()) {
+	private void rebuildFilterInfo(final Cursor c, final CursorStatusIndices i) {
+		if (i != null && c != null && moveCursorToLast(c)) {
 			final long userId = mFilterIgnoreUser ? -1 : c.getLong(mIndices.user_id);
 			final String textPlain = mFilterIgnoreTextPlain ? null : c.getString(mIndices.text_plain);
 			final String textHtml = mFilterIgnoreTextHtml ? null : c.getString(mIndices.text_html);
@@ -449,5 +448,14 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 
 	private static int getItemResource(final boolean compactCards) {
 		return compactCards ? R.layout.card_item_status_compact : R.layout.card_item_status;
+	}
+
+	private static boolean moveCursorToLast(final Cursor c) {
+		if (c == null || c.isClosed()) return false;
+		try {
+			return c.moveToNext();
+		} catch (final Exception e) {
+			return false;
+		}
 	}
 }

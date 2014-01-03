@@ -67,6 +67,7 @@
   <string name="open_source_license">開放原始碼許可</string>
   <string name="api">API</string>
   <string name="default_api_settings">預設API設定</string>
+  <string name="default_api_settings_summary">這些設定只會套用到新登入的帳號</string>
   <string name="consumer_key">Consumer key</string>
   <string name="consumer_secret">Consumer secret</string>
   <string name="ignore_ssl_error">忽略SSL錯誤</string>
@@ -184,6 +185,7 @@
   <string name="type_to_compose">輸入訊息</string>
   <string name="users_lists">列表</string>
   <string name="lists_following_user">關注這個用戶的列表</string>
+  <string name="lists_following_me">關注我的列表</string>
   <string name="item_3_minutes">3分鐘</string>
   <string name="item_5_minutes">5分鐘</string>
   <string name="item_10_minutes">10分鐘</string>
@@ -329,6 +331,8 @@
   <string name="action_unsubscribing_from_list">退訂列表</string>
   <string name="action_saving_search">保存搜索</string>
   <string name="action_deleting_search">刪除搜尋</string>
+  <string name="action_accepting_follow_request">同意關注請求</string>
+  <string name="action_denying_follow_request">拒絕關注請求</string>
   <string name="status_is_duplicate">您發送了重複的推文</string>
   <string name="data_profiling_summary">Twidere 參與了一個由UC Davis大學的學生發起的，為了通過預測使用者在社交網絡中的行為來為一些應用預先載入內容（便于在地鐵等沒有信號的地方閲讀）的非盈利性質的研究。\n\n以下是我們想要收集到的你的信息，以及收集它們的原因：\n收集到的信息\n1. 你的ID（人類不可讀）\n2. 你更新主頁時間綫的推文ID（預測你的興趣以及行為）\n3. 你點擊了哪些推文，以及它們所含有的連結\n4. 粗略位置（統計使用者的來源）\n\nTwidere 只會在Wifi可用，並且充電時上傳這些信息，所以它並不會花費額外的數據費用和電量。</string>
   <string name="data_profiling">使用信息統計</string>
@@ -365,6 +369,7 @@
   <string name="permission_description_preferences">讀取設定</string>
   <string name="permissions_request">授權請求</string>
   <string name="permissions_request_message">擴展程序正在請求以下權限</string>
+  <string name="accept_permission_request">同意</string>
   <string name="no_thanks">不用了，謝謝</string>
   <string name="revoke_permissions">撤銷授權</string>
   <string name="fast_scroll_thumb">快速捲動條</string>
@@ -380,6 +385,7 @@
   <string name="preload_wifi_only">僅使用 Wi-Fi 預加載</string>
   <string name="disable_tab_swipe">禁用滑動切換標籤頁</string>
   <string name="sign_in_method_introduction_title">輸入密碼登錄是怎樣工作的？</string>
+  <string name="sign_in_method_introduction">大多數客戶端（例如twicca）通過打開瀏覽器驗證登錄Twitter，然後瀏覽器再將你引導回客戶端。有時這會導致許多不便，因為一些第三方瀏覽器不會引導你回客戶端。\n\nnTwidere使用更加簡便的步驟代替瀏覽器登錄到Twitter，不必擔心你會泄露你的密碼，這個方式非常安全！\n\nTwidere不會保存密碼，僅在登錄時發送給Twitter，只要網絡足夠安全，你的密碼永遠不會被第三方獲取！</string>
   <string name="quote_protected_status_notice">不建議引用受保護的推文</string>
   <string name="edit_draft">編輯草稿</string>
   <string name="profile_image">個人資料圖片</string>
@@ -477,6 +483,7 @@
   <string name="wizard_page_welcome_title">歡迎</string>
   <string name="wizard_page_welcome_text">感謝您選擇 Twidere。\n您想現在設定它嗎？</string>
   <string name="wizard_page_welcome_yes">是的</string>
+  <string name="wizard_page_welcome_not_now">暫時不</string>
   <string name="wizard_page_welcome_import_settings">匯入設定</string>
   <string name="wizard_page_theme_text">選擇一個您喜歡的主題。</string>
   <string name="wizard_page_tabs_text">新增一些標籤頁到Twidere。\n即時關注您在意的人和事。</string>
@@ -569,5 +576,13 @@
   <string name="swipe_back">滑動關閉</string>
   <string name="tab_display_option_icon">圖示</string>
   <string name="tab_display_option_label">標籤</string>
+  <string name="tab_display_option_icon_and_label">圖標和標籤</string>
+  <string name="highlight_and_underline">高亮和下劃線</string>
+  <string name="back">返回</string>
+  <string name="theme_font_family">主題字體族</string>
+  <string name="translation_destination">翻譯結果語言</string>
   <string name="accept">同意並授權</string>
+  <string name="deny">拒絕</string>
+  <string name="nicknames">昵稱</string>
+  <string name="user_colors">用戶顏色標籤</string>
 </resources>

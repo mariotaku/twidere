@@ -41,11 +41,6 @@
 		<item name="cardItemMessageProfileImageIncomingBackground">@drawable/bg_card_item_message_profile_image_incoming_dark</item>
 		<item name="cardItemMessageProfileImageOutgoingBackground">@drawable/bg_card_item_message_profile_image_outgoing_dark</item>
 		<item name="listMenuOverflowButton">@drawable/ic_menu_moreoverflow_card_dark</item>
-
-		<!-- Widget styles -->
-		<item name="android:textViewStyle">@style/Widget.Twidere.TextView</item>
-		<item name="android:radioButtonStyle">@style/Widget.Twidere.CompoundButton.RadioButton</item>
-		<item name="android:checkboxStyle">@style/Widget.Twidere.CompoundButton.CheckBox</item>
 	</style>
 
 	<style name="Theme.Twidere.Light" parent="Theme.HoloAccent.Light">
@@ -77,11 +72,6 @@
 		<item name="cardItemMessageProfileImageIncomingBackground">@drawable/bg_card_item_message_profile_image_incoming_light</item>
 		<item name="cardItemMessageProfileImageOutgoingBackground">@drawable/bg_card_item_message_profile_image_outgoing_light</item>
 		<item name="listMenuOverflowButton">@drawable/ic_menu_moreoverflow_card_light</item>
-
-		<!-- Widget styles -->
-		<item name="android:textViewStyle">@style/Widget.Twidere.Light.TextView</item>
-		<item name="android:radioButtonStyle">@style/Widget.Twidere.Light.CompoundButton.RadioButton</item>
-		<item name="android:checkboxStyle">@style/Widget.Twidere.Light.CompoundButton.CheckBox</item>
 	</style>
 
 	<style name="Theme.Twidere.Light.DarkActionBar" parent="Theme.HoloAccent.Light.DarkActionBar">
@@ -113,11 +103,6 @@
 		<item name="cardItemMessageProfileImageIncomingBackground">@drawable/bg_card_item_message_profile_image_incoming_light</item>
 		<item name="cardItemMessageProfileImageOutgoingBackground">@drawable/bg_card_item_message_profile_image_outgoing_light</item>
 		<item name="listMenuOverflowButton">@drawable/ic_menu_moreoverflow_card_light</item>
-
-		<!-- Widget styles -->
-		<item name="android:textViewStyle">@style/Widget.Twidere.Light.TextView</item>
-		<item name="android:radioButtonStyle">@style/Widget.Twidere.Light.CompoundButton.RadioButton</item>
-		<item name="android:checkboxStyle">@style/Widget.Twidere.Light.CompoundButton.CheckBox</item>
 	</style>
 
 	<style name="Theme.Twidere.Colored" parent="Theme.Twidere.Light">
@@ -138,11 +123,6 @@
 		<!-- Accent Colors -->
 		<item name="accentColor">#ff0099cc</item>
 		<item name="accentColorTranslucent">#660099cc</item>
-
-		<!-- Widget styles -->
-		<item name="android:textViewStyle">@style/Widget.Twidere.TextView</item>
-		<item name="android:radioButtonStyle">@style/Widget.Twidere.CompoundButton.RadioButton</item>
-		<item name="android:checkboxStyle">@style/Widget.Twidere.CompoundButton.CheckBox</item>
 	</style>
 
 	<style name="Theme.Twidere.Colored.DarkActionBar.Transparent">
@@ -242,11 +222,6 @@
 		<item name="cardItemMessageProfileImageIncomingBackground">@drawable/bg_card_item_message_profile_image_incoming_dark</item>
 		<item name="cardItemMessageProfileImageOutgoingBackground">@drawable/bg_card_item_message_profile_image_outgoing_dark</item>
 		<item name="listMenuOverflowButton">@drawable/ic_menu_moreoverflow_card_dark</item>
-
-		<!-- Widget styles -->
-		<item name="android:textViewStyle">@style/Widget.Twidere.TextView</item>
-		<item name="android:radioButtonStyle">@style/Widget.Twidere.CompoundButton.RadioButton</item>
-		<item name="android:checkboxStyle">@style/Widget.Twidere.CompoundButton.CheckBox</item>
 	</style>
 
 	<style name="Theme.Twidere.Light.Dialog" parent="android:Theme.Holo.Light.Dialog">
@@ -264,11 +239,6 @@
 		<item name="cardItemMessageProfileImageIncomingBackground">@drawable/bg_card_item_message_profile_image_incoming_light</item>
 		<item name="cardItemMessageProfileImageOutgoingBackground">@drawable/bg_card_item_message_profile_image_outgoing_light</item>
 		<item name="listMenuOverflowButton">@drawable/ic_menu_moreoverflow_card_light</item>
-
-		<!-- Widget styles -->
-		<item name="android:textViewStyle">@style/Widget.Twidere.Light.TextView</item>
-		<item name="android:radioButtonStyle">@style/Widget.Twidere.Light.CompoundButton.RadioButton</item>
-		<item name="android:checkboxStyle">@style/Widget.Twidere.Light.CompoundButton.CheckBox</item>
 	</style>
 
 	<style name="Theme.Twidere.Dark.Compose">
@@ -354,11 +324,6 @@
 		<item name="cardItemMessageProfileImageIncomingBackground">@drawable/bg_card_item_message_profile_image_incoming_dark</item>
 		<item name="cardItemMessageProfileImageOutgoingBackground">@drawable/bg_card_item_message_profile_image_outgoing_dark</item>
 		<item name="listMenuOverflowButton">@drawable/ic_menu_moreoverflow_card_dark</item>
-
-		<!-- Widget styles -->
-		<item name="android:textViewStyle">@style/Widget.Twidere.TextView</item>
-		<item name="android:radioButtonStyle">@style/Widget.Twidere.CompoundButton.RadioButton</item>
-		<item name="android:checkboxStyle">@style/Widget.Twidere.CompoundButton.CheckBox</item>
 	</style>
 
 	<style name="Theme.Twidere.Viewer.Transparent">
@@ -432,11 +397,6 @@
 		<item name="cardItemMessageProfileImageIncomingBackground">@drawable/bg_card_item_message_profile_image_incoming_dark</item>
 		<item name="cardItemMessageProfileImageOutgoingBackground">@drawable/bg_card_item_message_profile_image_outgoing_dark</item>
 		<item name="listMenuOverflowButton">@drawable/ic_menu_moreoverflow_card_dark</item>
-
-		<!-- Widget styles -->
-		<item name="android:textViewStyle">@style/Widget.Twidere.TextView</item>
-		<item name="android:radioButtonStyle">@style/Widget.Twidere.CompoundButton.RadioButton</item>
-		<item name="android:checkboxStyle">@style/Widget.Twidere.CompoundButton.CheckBox</item>
 	</style>
 
 	<style name="Theme.Twidere.Settings.Light" parent="android:Theme.Holo.Light">
@@ -461,11 +421,30 @@
 		<item name="cardItemMessageProfileImageIncomingBackground">@drawable/bg_card_item_message_profile_image_incoming_light</item>
 		<item name="cardItemMessageProfileImageOutgoingBackground">@drawable/bg_card_item_message_profile_image_outgoing_light</item>
 		<item name="listMenuOverflowButton">@drawable/ic_menu_moreoverflow_card_light</item>
+	</style>
 
-		<!-- Widget styles -->
-		<item name="android:textViewStyle">@style/Widget.Twidere.Light.TextView</item>
-		<item name="android:radioButtonStyle">@style/Widget.Twidere.Light.CompoundButton.RadioButton</item>
-		<item name="android:checkboxStyle">@style/Widget.Twidere.Light.CompoundButton.CheckBox</item>
+	<style name="Theme.Twidere.Settings.Light.DarkActionBar" parent="android:Theme.Holo.Light.DarkActionBar">
+
+		<!-- Colors -->
+		<item name="android:colorBackgroundCacheHint">@color/bg_color_light</item>
+
+		<!-- Window attributes -->
+		<item name="android:windowAnimationStyle">@style/Animation.Twidere.Activity</item>
+		<item name="android:windowBackground">@color/bg_color_light</item>
+
+		<!-- Custom view styles -->
+		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
+		<item name="tabItemContentStyle">@style/Widget.TabPageIndicator.TabItem.Content</item>
+		<item name="tabItemTextStyle">@style/Widget.TabPageIndicator.TabItem.TextView.Light</item>
+
+		<!-- Card UI styles -->
+		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
+		<item name="cardItemBackgroundColor">#f8f8f8</item>
+		<item name="cardItemMessageIncomingBackground">@drawable/bg_card_item_message_incoming_light</item>
+		<item name="cardItemMessageOutgoingBackground">@drawable/bg_card_item_message_outgoing_light</item>
+		<item name="cardItemMessageProfileImageIncomingBackground">@drawable/bg_card_item_message_profile_image_incoming_light</item>
+		<item name="cardItemMessageProfileImageOutgoingBackground">@drawable/bg_card_item_message_profile_image_outgoing_light</item>
+		<item name="listMenuOverflowButton">@drawable/ic_menu_moreoverflow_card_light</item>
 	</style>
 
 	<style name="Theme.Twidere.Wizard" parent="Theme.Twidere.Settings.Light">

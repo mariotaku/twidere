@@ -67,6 +67,7 @@
   <string name="open_source_license">オープンソースライセンス</string>
   <string name="api">API</string>
   <string name="default_api_settings">デフォルトAPI設定</string>
+  <string name="default_api_settings_summary">この設定はログインし直さないと反映されません。</string>
   <string name="consumer_key">Consumer key</string>
   <string name="consumer_secret">Consumer secret</string>
   <string name="ignore_ssl_error">SSLエラーを無視</string>
@@ -330,6 +331,8 @@
   <string name="action_unsubscribing_from_list">リストの保存解除</string>
   <string name="action_saving_search">検索の保存</string>
   <string name="action_deleting_search">検索の削除</string>
+  <string name="action_accepting_follow_request">フォローリクエストに応答</string>
+  <string name="action_denying_follow_request">フォローリクエスト拒否</string>
   <string name="status_is_duplicate">既にあなたは同じツイートを送信済みです。</string>
   <string name="data_profiling_summary">Twidereはカリフォルニア大学デービス校でのSNSでの行動調査に協力しています。\n\n必要としているデータとその理由は以下の通りです:\n収集するデータ:\n1. ユーザーのTwitter ID\n2. ユーザーのタイムライン (ユーザーとソーシャルの動向を調べる目的のため)\n3. ユーザーのツイート上でのタップ (ユーザーとソーシャルの動向を調べる目的のため)\n4. 大まかな位置情報 (いつユーザーがTwitterにアクセスするのか調べるため)\n\nTwidereはWi-fiに接続され充電している時にのみデータを送信するので無駄な通信をしたりバッテリーを消費することはありません。</string>
   <string name="data_profiling">匿名利用状況データ</string>
@@ -366,6 +369,7 @@
   <string name="permission_description_preferences">設定の読み込み</string>
   <string name="permissions_request">権限の要求</string>
   <string name="permissions_request_message">拡張アプリは下記にアクセスする場合があります</string>
+  <string name="accept_permission_request">許可</string>
   <string name="no_thanks">拒否</string>
   <string name="revoke_permissions">許可を取り消す</string>
   <string name="fast_scroll_thumb">スクロールつまみ</string>
@@ -577,10 +581,15 @@
   <string name="twip_api_version_notice_message">TWIPは\"/1.1/\"で終わっていないRest Base URLを正しく扱えません。\n\n 画像のアップロードの問題を解決するためには\"/1.1/\"をRest Base URLの最後に追記してください。</string>
   <string name="back">戻る</string>
   <string name="theme_font_family">使用するフォント</string>
-  <string name="font_family_regular">Regular</string>
-  <string name="font_family_condensed">Condensed</string>
-  <string name="font_family_light">Light</string>
-  <string name="font_family_thin">Thin</string>
   <string name="translation_destination">翻訳先</string>
   <string name="accept">同意</string>
+  <string name="deny">拒否</string>
+  <string name="accepted_users_follow_request"><xliff:g id="user">%s</xliff:g>さんのフォローリクエストを許可しました。</string>
+  <string name="denied_users_follow_request"><xliff:g id="user">%s</xliff:g>さんのフォローリクエストを拒否しました。</string>
+  <string name="import_settings">設定のインポート</string>
+  <string name="export_settings">設定のエクスポート</string>
+  <string name="export_settings_type_dialog_title">設定をエクスポート中…</string>
+  <string name="import_settings_type_dialog_title">設定のインポート…</string>
+  <string name="nicknames">ニックネーム</string>
+  <string name="user_colors">ユーザー色</string>
 </resources>

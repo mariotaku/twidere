@@ -593,5 +593,6 @@
 	<string name="import_settings_type_dialog_title">Import settings…</string>
 	<string name="nicknames">Nicknames</string>
 	<string name="user_colors">User colors</string>
+	<string name="import_export">Import/Export</string>
 
 </resources>

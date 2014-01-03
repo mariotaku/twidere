@@ -262,8 +262,15 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static int getSettingsThemeResource(final Context context) {
-		if (isDarkTheme(context)) return R.style.Theme_Twidere_Settings_Dark;
-		return R.style.Theme_Twidere_Settings_Light;
+		return getSettingsThemeResource(getThemeNameOption(context), getDarkActionBarOption(context));
+	}
+
+	public static int getSettingsThemeResource(final String name, final boolean darkActionBar) {
+		if (VALUE_THEME_NAME_TWIDERE.equals(name) || VALUE_THEME_NAME_LIGHT.equals(name))
+			return darkActionBar ? R.style.Theme_Twidere_Settings_Light_DarkActionBar
+					: R.style.Theme_Twidere_Settings_Light;
+		else if (VALUE_THEME_NAME_DARK.equals(name)) return R.style.Theme_Twidere_Settings_Dark;
+		return R.style.Theme_Twidere_Settings_Light_DarkActionBar;
 	}
 
 	public static int getTextAppearanceLarge(final Context context) {
@@ -383,7 +390,6 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static int getTitleTextAppearance(final Context context) {
-
 		final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.titleTextStyle },
 				android.R.attr.actionBarStyle, android.R.style.Widget_Holo_ActionBar);
 		final int textAppearance = a.getResourceId(0, android.R.style.TextAppearance_Holo);
@@ -433,7 +439,6 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static Drawable getWindowBackground(final Context context) {
-
 		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.windowBackground });
 		final Drawable d = a.getDrawable(0);
 		a.recycle();
@@ -441,7 +446,6 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static Drawable getWindowBackground(final Context context, final int themeRes) {
-
 		final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.windowBackground }, 0,
 				themeRes);
 		final Drawable d = a.getDrawable(0);
@@ -450,7 +454,6 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static Drawable getWindowContentOverlay(final Context context) {
-
 		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.windowContentOverlay });
 		final Drawable d = a.getDrawable(0);
 		a.recycle();
@@ -545,7 +548,6 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static void overrideActivityCloseAnimation(final Activity activity) {
-
 		TypedArray a = activity.obtainStyledAttributes(new int[] { android.R.attr.windowAnimationStyle });
 		final int windowAnimationStyleResId = a.getResourceId(0, 0);
 		a.recycle();

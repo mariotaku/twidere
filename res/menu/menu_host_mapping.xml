@@ -8,8 +8,8 @@
 		android:title="@string/add_host_mapping"/>
 	<item
 		android:id="@+id/import_from"
-		android:icon="@drawable/ic_menu_download"
+		android:icon="@drawable/ic_menu_import"
 		android:showAsAction="always"
 		android:title="@string/import_from"/>
-	
+
 </menu>

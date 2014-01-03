@@ -67,6 +67,7 @@
   <string name="open_source_license">开源许可</string>
   <string name="api">API</string>
   <string name="default_api_settings">默认API设定</string>
+  <string name="default_api_settings_summary">这些设定只会应用到新登录的帐号</string>
   <string name="consumer_key">Consumer key</string>
   <string name="consumer_secret">Consumer secret</string>
   <string name="ignore_ssl_error">忽略SSL错误</string>
@@ -482,7 +483,7 @@
   <string name="wizard_page_welcome_title">欢迎</string>
   <string name="wizard_page_welcome_text">感谢你选择Twidere。\n你想现在设定它吗？</string>
   <string name="wizard_page_welcome_yes">是的</string>
-  <string name="wizard_page_welcome_not_now">否</string>
+  <string name="wizard_page_welcome_not_now">暂时不</string>
   <string name="wizard_page_welcome_import_settings">导入设定</string>
   <string name="wizard_page_theme_text">选择一个你喜欢的主题。</string>
   <string name="wizard_page_tabs_text">添加一些标签页到Twidere。\n时刻关注你在意的人和事。</string>
@@ -580,13 +581,16 @@
   <string name="twip_api_version_notice_message">TWIP无法正确处理没有以\"/1.1/\"结尾的Rest Base URL。\n\n你可能需要在Rest Base URL的结尾加上\"/1.1/\"以避免上传图片时发生问题。</string>
   <string name="back">返回</string>
   <string name="theme_font_family">主题字体族</string>
-  <string name="font_family_regular">Regular</string>
-  <string name="font_family_condensed">Condensed</string>
-  <string name="font_family_light">Light</string>
-  <string name="font_family_thin">Thin</string>
   <string name="translation_destination">翻译结果语言</string>
   <string name="accept">同意并授权</string>
   <string name="deny">拒绝</string>
   <string name="accepted_users_follow_request">同意了<xliff:g id="user">%s</xliff:g>的关注请求</string>
   <string name="denied_users_follow_request">拒绝了<xliff:g id="user">%s</xliff:g>的关注请求</string>
+  <string name="import_settings">导入设定</string>
+  <string name="export_settings">导出设定</string>
+  <string name="export_settings_type_dialog_title">导出设定…</string>
+  <string name="import_settings_type_dialog_title">导入设定…</string>
+  <string name="nicknames">昵称</string>
+  <string name="user_colors">用户颜色标签</string>
+  <string name="import_export">导入/导出</string>
 </resources>

@@ -41,30 +41,6 @@
 		<item name="android:background">?android:attr/selectableItemBackground</item>
 	</style>
 
-	<style name="Widget.Twidere.TextView" parent="android:Widget.Holo.TextView">
-		<!-- <item name="android:fontFamily">sans-serif-light</item> -->
-	</style>
-
-	<style name="Widget.Twidere.Light.TextView" parent="android:Widget.Holo.Light.TextView">
-		<!-- <item name="android:fontFamily">sans-serif-light</item> -->
-	</style>
-
-	<style name="Widget.Twidere.CompoundButton.RadioButton" parent="android:Widget.Holo.CompoundButton.RadioButton">
-		<!-- <item name="android:fontFamily">sans-serif-light</item> -->
-	</style>
-
-	<style name="Widget.Twidere.Light.CompoundButton.RadioButton" parent="android:Widget.Holo.Light.CompoundButton.RadioButton">
-		<!-- <item name="android:fontFamily">sans-serif-light</item> -->
-	</style>
-
-	<style name="Widget.Twidere.CompoundButton.CheckBox" parent="android:Widget.Holo.CompoundButton.CheckBox">
-		<!-- <item name="android:fontFamily">sans-serif-light</item> -->
-	</style>
-
-	<style name="Widget.Twidere.Light.CompoundButton.CheckBox" parent="android:Widget.Holo.Light.CompoundButton.CheckBox">
-		<!-- <item name="android:fontFamily">sans-serif-light</item> -->
-	</style>
-
 	<style name="Animation.Twidere.Activity" parent="android:Animation.Activity">
 		<item name="android:activityOpenEnterAnimation">@anim/activity_open_enter</item>
 		<item name="android:activityOpenExitAnimation">@anim/activity_open_exit</item>

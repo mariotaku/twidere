@@ -62,7 +62,6 @@ import org.mariotaku.querybuilder.RawItemArray;
 import org.mariotaku.querybuilder.Where;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.support.CustomTabEditorActivity;
-import org.mariotaku.twidere.graphic.DropShadowDrawable;
 import org.mariotaku.twidere.model.CustomTabConfiguration;
 import org.mariotaku.twidere.model.CustomTabConfiguration.CustomTabConfigurationComparator;
 import org.mariotaku.twidere.model.Panes;
@@ -307,9 +306,12 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 
 		private CursorIndices mIndices;
 
+		private final int mActionIconColor;
+
 		public CustomTabsAdapter(final Context context) {
 			super(context, R.layout.list_item_custom_tab, null, new String[0], new int[0], 0);
 			mContext = context;
+			mActionIconColor = ThemeUtils.isDarkTheme(context) ? 0xffffffff : 0xc0333333;
 		}
 
 		@Override
@@ -323,22 +325,28 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 			final String type = cursor.getString(mIndices.type);
 			final String name = cursor.getString(mIndices.name);
 			if (isTabTypeValid(type)) {
-				final String type_name = getTabTypeName(context, type);
-				final String icon = cursor.getString(mIndices.icon);
-				holder.text1.setText(TextUtils.isEmpty(name) ? type_name : name);
+				final String typeName = getTabTypeName(context, type);
+				final String iconKey = cursor.getString(mIndices.icon);
+				holder.text1.setText(TextUtils.isEmpty(name) ? typeName : name);
 				holder.text2.setVisibility(View.VISIBLE);
-				holder.text2.setText(type_name);
-				final Drawable d = getTabIconDrawable(mContext, getTabIconObject(icon));
+				holder.text2.setText(typeName);
+				final Drawable icon = getTabIconDrawable(mContext, getTabIconObject(iconKey));
 				holder.icon.setVisibility(View.VISIBLE);
-				if (d != null) {
-					holder.icon.setImageDrawable(new DropShadowDrawable(context.getResources(), d, 2, 0x80000000));
+				if (icon != null) {
+					icon.mutate();
+					icon.setColorFilter(mActionIconColor, PorterDuff.Mode.MULTIPLY);
+					holder.icon.setImageDrawable(icon);
 				} else {
-					holder.icon.setImageDrawable(new DropShadowDrawable(context.getResources(), R.drawable.ic_tab_list,
-							2, 0x80000000));
+					final Drawable fallback = context.getResources().getDrawable(R.drawable.ic_tab_list);
+					fallback.mutate();
+					fallback.setColorFilter(mActionIconColor, PorterDuff.Mode.MULTIPLY);
+					holder.icon.setImageDrawable(fallback);
 				}
 			} else {
-				holder.icon.setImageDrawable(new DropShadowDrawable(context.getResources(), R.drawable.ic_tab_invalid,
-						2, 0x80000000));
+				final Drawable fallback = context.getResources().getDrawable(R.drawable.ic_tab_list);
+				fallback.mutate();
+				fallback.setColorFilter(mActionIconColor, PorterDuff.Mode.MULTIPLY);
+				holder.icon.setImageDrawable(fallback);
 				holder.text1.setText(name);
 				holder.text2.setText(R.string.invalid_tab);
 			}
