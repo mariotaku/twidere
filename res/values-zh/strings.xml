@@ -483,7 +483,7 @@
   <string name="wizard_page_welcome_title">歡迎</string>
   <string name="wizard_page_welcome_text">感謝您選擇 Twidere。\n您想現在設定它嗎？</string>
   <string name="wizard_page_welcome_yes">是的</string>
-  <string name="wizard_page_welcome_not_now">暫時不</string>
+  <string name="wizard_page_welcome_not_now">暫時不要</string>
   <string name="wizard_page_welcome_import_settings">匯入設定</string>
   <string name="wizard_page_theme_text">選擇一個您喜歡的主題。</string>
   <string name="wizard_page_tabs_text">新增一些標籤頁到Twidere。\n即時關注您在意的人和事。</string>
@@ -576,13 +576,21 @@
   <string name="swipe_back">滑動關閉</string>
   <string name="tab_display_option_icon">圖示</string>
   <string name="tab_display_option_label">標籤</string>
-  <string name="tab_display_option_icon_and_label">圖標和標籤</string>
-  <string name="highlight_and_underline">高亮和下劃線</string>
+  <string name="tab_display_option_icon_and_label">圖示和標籤</string>
+  <string name="highlight_and_underline">高亮和底線</string>
+  <string name="twip_api_version_notice_message">TWIP 無法處理非以 \"/1.1/\" 結尾的 Rest Base URL。\n\n 您可能需要在 Rest Base URL 結尾上加上 \"/1.1/\" 來避免遇到一些圖片上傳的問題。</string>
   <string name="back">返回</string>
-  <string name="theme_font_family">主題字體族</string>
+  <string name="theme_font_family">主題字型</string>
   <string name="translation_destination">翻譯結果語言</string>
   <string name="accept">同意並授權</string>
   <string name="deny">拒絕</string>
-  <string name="nicknames">昵稱</string>
+  <string name="accepted_users_follow_request">已接受來自 <xliff:g id="user">%s</xliff:g> 的關注請求。</string>
+  <string name="denied_users_follow_request">已拒絕來自 <xliff:g id="user">%s</xliff:g> 的關注請求。</string>
+  <string name="import_settings">匯入設定</string>
+  <string name="export_settings">匯出設定</string>
+  <string name="export_settings_type_dialog_title">匯出設定⋯</string>
+  <string name="import_settings_type_dialog_title">匯入設定⋯</string>
+  <string name="nicknames">暱稱</string>
   <string name="user_colors">用戶顏色標籤</string>
+  <string name="import_export">匯入/匯出</string>
 </resources>

@@ -35,7 +35,7 @@
   <string name="empty_account_selection_disallowed">Veuillez choisir au moins un compte.</string>
   <string name="error_unknown_error">Erreur inconnue. Il y a probablement un bug.</string>
   <string name="error_message">Erreur : <xliff:g id="message">%s</xliff:g></string>
-  <string name="error_message_with_action">Erreur lors de <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
+  <string name="error_message_with_action">Erreur lors de <xliff:g id="action">%1$s</xliff:g> : <xliff:g id="message">%2$s</xliff:g></string>
   <string name="error_message_rate_limit">Limite de rafraichissement de Twitter dépassée, essayer à nouveau de <xliff:g id="time">%s</xliff:g></string>
   <string name="error_message_rate_limit_with_action">Limite de rafraichissement de Twitter dépassée lors de <xliff:g id="action">%1$s</xliff:g>, essayer à nouveau dans <xliff:g id="time">%2$s</xliff:g></string>
   <string name="select_account">Sélectionner un compte</string>
@@ -67,6 +67,7 @@
   <string name="open_source_license">Licence open source</string>
   <string name="api">API</string>
   <string name="default_api_settings">Paramètres API par défaut</string>
+  <string name="default_api_settings_summary">Ces paramètres s\'appliquent uniquement aux nouveaux comptes connectés</string>
   <string name="consumer_key">Clé client</string>
   <string name="consumer_secret">Mot de passe client</string>
   <string name="ignore_ssl_error">Ignorer les erreurs SSL</string>
@@ -184,6 +185,7 @@
   <string name="type_to_compose">Tapez pour composer</string>
   <string name="users_lists">Listes de l\'utilisateur</string>
   <string name="lists_following_user">Liste dont cet utilisateur est membre</string>
+  <string name="lists_following_me">Listes me suivant</string>
   <string name="item_3_minutes">3 minutes</string>
   <string name="item_5_minutes">5 minutes</string>
   <string name="item_10_minutes">10 minutes</string>
@@ -329,8 +331,10 @@
   <string name="action_unsubscribing_from_list">désabonnement à la liste</string>
   <string name="action_saving_search">sauvegarde de la recherche</string>
   <string name="action_deleting_search">suppression de la recherche</string>
+  <string name="action_accepting_follow_request">accepter la demande de suivi</string>
+  <string name="action_denying_follow_request">refuser la demande de suivi</string>
   <string name="status_is_duplicate">Vous avez déjà tweeté ça.</string>
-  <string name="data_profiling_summary">Twidere a participé à une recherche sur la prévision du comportement social de l\'utilisateur au contenu de pré-caching commencé par des étudiants de UC Davis.\n\nVoici les données que nous souhaitons collecter et pourquoi:\n1. Identifiant Twitter de l\'utilisateur\n2. Fil d\'actualité de l\'utilisateur (prévisions basées sur l\'intéret de l\'utilisateur et les interactions sociales)\n3. Le clic de l\'utilisateur sur un tweet (prévisions basées sur l\'intéret de l\'utilisateur et les interactions sociales)\n4. Position géographique (ce qui est bon indicateur lorsque l\'utilisateur accèdera à Twitter)\n\nTwidere n\'envoi les informations collectées seulement quand le Wi-Fi est activé et que l\'appareil est connecté à un chargeur, cela n\'affectera pas votre bande passante et ne videra aps votre batterie.</string>
+  <string name="data_profiling_summary">Twidere a participé à une recherche sur la prévision du comportement social de l\'utilisateur pour mettre en cache les contenus commencé par des étudiants de UC Davis.\n\nVoici les données que nous souhaitons collecter et pourquoi:\n1. Identifiant Twitter de l\'utilisateur\n2. Fil d\'actualité de l\'utilisateur (prévisions basées sur l’intérêt de l\'utilisateur et les interactions sociales)\n3. Le clic de l\'utilisateur sur un tweet (prévisions basées sur l’intérêt de l\'utilisateur et les interactions sociales)\n4. Position géographique (ce qui est bon indicateur lorsque l\'utilisateur accédera à Twitter)\n\nTwidere envoie les informations collectées seulement quand le Wi-Fi est activé et quand l\'appareil est connecté à un chargeur, ainsi cela n\'affectera pas votre bande passante et ne videra pas votre batterie.</string>
   <string name="data_profiling">Statistiques d\'utilisation</string>
   <string name="enable_data_profiling">Activer les rapports</string>
   <string name="data_profiling_notification_ticker">Statistiques Opt in</string>
@@ -365,6 +369,7 @@
   <string name="permission_description_preferences">Lire les paramètres</string>
   <string name="permissions_request">Demande d\'autorisation</string>
   <string name="permissions_request_message">L\'xtension sollicite permissions suivantes</string>
+  <string name="accept_permission_request">Accepter</string>
   <string name="no_thanks">Non, merci</string>
   <string name="revoke_permissions">Révoquer les autorisations</string>
   <string name="fast_scroll_thumb">Curseur de défilement plus rapide</string>
@@ -380,6 +385,7 @@
   <string name="preload_wifi_only">Précharger seulement en Wi-Fi</string>
   <string name="disable_tab_swipe">Désactiver l\'option glisser de l\'onglet</string>
   <string name="sign_in_method_introduction_title">Comment ça marche ?</string>
+  <string name="sign_in_method_introduction">La plupart des clients comme twicca ouvrent un navigateur vous demandant d\'entre votre nom d\'utilisateur et votre mot de passe, pour ensuite vous ramener à l\'application. Parfois cela peut être très gênant.\n\nTwidere utilise des moyens plus simple pour se connecter, sans ouvrir de navigateur. Ne vous inquiétez pas pour votre mot de passe, Twidere ne l\'enregistrera jamais, c\'est totalement sûr !</string>
   <string name="quote_protected_status_notice">Il n\'est pas recommandé de citer un tweet protégé.</string>
   <string name="edit_draft">Modifier brouillons</string>
   <string name="profile_image">Photo de profil</string>
@@ -542,6 +548,12 @@
   <string name="view_replies">Voir les réponses</string>
   <string name="compact_cards">Cartes compactes</string>
   <string name="compact_cards_summary">Afficher plus de cartes à l\'écran</string>
+  <string name="dashclock_home_unread_count_name">Décompte de tweets non-lus dans Twidere</string>
+  <string name="dashclock_home_unread_count_description">Décompte de tweets non-lus</string>
+  <string name="dashclock_mentions_unread_count_name">Décompte de mentions non-lues dans Twidere</string>
+  <string name="dashclock_mentions_unread_count_description">Décompte de mentions non-lues</string>
+  <string name="dashclock_messages_unread_count_name">Décompte de messages privés non-lus dans Twidere</string>
+  <string name="dashclock_messages_unread_count_description">Décompte de messages privés non-lus</string>
   <string name="N_new_statuses_quantity_one"><xliff:g id="items">%d</xliff:g> nouveau tweet</string>
   <string name="N_new_statuses_quantity_other"><xliff:g id="items">%d</xliff:g> nouveaux tweets</string>
   <string name="N_new_mentions_quantity_one"><xliff:g id="items">%d</xliff:g> nouvelle mention</string>
@@ -556,6 +568,7 @@
   <string name="action_name_saved_at_time"><xliff:g id="action">%1$s</xliff:g>, sauvegardé à <xliff:g id="time">%2$s</xliff:g></string>
   <string name="update_status">Tweeter</string>
   <string name="sending_direct_message">Envoi du message privé</string>
+  <string name="tab_display_option">Option d\'affichage de l\'onglet</string>
   <string name="livewp_daydream_enabled_message">Voici un petit cadeau pour vous, trouvez le dans vos paramètres du système :)</string>
   <string name="center">Centre</string>
   <string name="multi_select">Sélection multiple</string>
@@ -563,5 +576,21 @@
   <string name="swipe_back">Glisser pour fermer</string>
   <string name="tab_display_option_icon">Icône</string>
   <string name="tab_display_option_label">Label</string>
+  <string name="tab_display_option_icon_and_label">Icône et étiquette</string>
+  <string name="highlight_and_underline">Mettre en évidence et souligner</string>
+  <string name="twip_api_version_notice_message">TWIP ne gère pas les URL REST qui ne terminant pas par \"/1.1/3.\n\n Vous devriez ajouter \"/1.1/\" à la fin de l\'URL REST pour éviter les problèmes en téléversant des images.</string>
+  <string name="back">Retour</string>
+  <string name="theme_font_family">Famille de polices du thème</string>
+  <string name="translation_destination">Langue de traduction</string>
   <string name="accept">Accepter</string>
+  <string name="deny">Refuser</string>
+  <string name="accepted_users_follow_request">Demande de suivi de <xliff:g id="user">%s</xliff:g> acceptée.</string>
+  <string name="denied_users_follow_request">Demande de suivi de <xliff:g id="user">%s</xliff:g> refusée.</string>
+  <string name="import_settings">Importation des paramètres</string>
+  <string name="export_settings">Exportation des paramètres</string>
+  <string name="export_settings_type_dialog_title">Exportation des paramètres…</string>
+  <string name="import_settings_type_dialog_title">Importation des paramètres…</string>
+  <string name="nicknames">Surnoms</string>
+  <string name="user_colors">Couleurs utilisateur</string>
+  <string name="import_export">Importer / Exporter</string>
 </resources>

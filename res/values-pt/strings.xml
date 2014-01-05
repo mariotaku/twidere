@@ -32,6 +32,7 @@
   <string name="error_occurred">Ocorreu um erro, por favor tente novamente.</string>
   <string name="error_already_logged_in">Você já fez login.</string>
   <string name="no_account_selected">Nenhuma conta selecionada.</string>
+  <string name="empty_account_selection_disallowed">Por favor, selecione pelo menos uma conta.</string>
   <string name="error_unknown_error">Erro: Erro desconhecido, isto é provavelmente um bug.</string>
   <string name="error_message">Erro: <xliff:g id="message">%s</xliff:g></string>
   <string name="error_message_with_action">Erro <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
@@ -66,6 +67,7 @@
   <string name="open_source_license">Licença de código aberto</string>
   <string name="api">API</string>
   <string name="default_api_settings">Configurações padrão da API</string>
+  <string name="default_api_settings_summary">Essas configurações só se aplicam a novas contas registradas</string>
   <string name="consumer_key">Chave de consumidor</string>
   <string name="consumer_secret">Segredo de consumidor</string>
   <string name="ignore_ssl_error">Ignorar Erro SSL</string>
@@ -165,10 +167,14 @@
   <string name="auto_refresh">Atualização automática</string>
   <string name="refresh_interval">Intervalo de atualização</string>
   <string name="content_to_refresh">Conteúdo para atualizar</string>
+  <string name="content_to_notify">Conteúdo para notificar</string>
   <string name="notifications_type">Tipo de notificações</string>
   <string name="sound">Som</string>
+  <string name="ringtone">Toque</string>
   <string name="vibration">Vibração</string>
+  <string name="light">Claro</string>
   <string name="notifications">Notificações</string>
+  <string name="screen_name">Nome de Usuário</string>
   <string name="refresh_on_start">Atualizar ao iniciar</string>
   <string name="refresh_on_start_summary">Atualizar linha do tempo e menções ao iniciar.</string>
   <string name="refresh_after_status_updated">Atualizar ao tweetar</string>
@@ -179,6 +185,7 @@
   <string name="type_to_compose">Toque para compor</string>
   <string name="users_lists">Listas do usuário</string>
   <string name="lists_following_user">Listas seguindo este usuário</string>
+  <string name="lists_following_me">Lista de meus seguidores</string>
   <string name="item_3_minutes">3 minutos</string>
   <string name="item_5_minutes">5 minutos</string>
   <string name="item_10_minutes">10 minutos</string>
@@ -267,6 +274,8 @@
   <string name="activity_about_me_retweet"><xliff:g id="user">%s</xliff:g> retweetou seu tweet.</string>
   <string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> e <xliff:g id="count">%d</xliff:g> outros retweetaram seu tweet.</string>
   <string name="activity_about_me_list_member_added"><xliff:g id="user">%s</xliff:g> adicionou você à lista.</string>
+  <string name="activity_about_me_list_member_added_with_name"><xliff:g id="user">%1$s</xliff:g> adicionado a sua lista "<xliff:g id="list">%2$s</xliff:g>\"\".
+</string>
   <string name="activity_about_me_list_member_added_multi"><xliff:g id="user">%s</xliff:g> e <xliff:g id="count">%d</xliff:g> te adicionaram à listas.</string>
   <string name="activity_by_friends_favorite"><xliff:g id="user">%1$s</xliff:g> favoritou o tweet de <xliff:g id="target">%2$s</xliff:g>.</string>
   <string name="activity_by_friends_favorite_multi"><xliff:g id="user">%1$s</xliff:g> favoritou o tweet de <xliff:g id="target">%2$s</xliff:g> e de outros <xliff:g id="count">%3$d</xliff:g> usuários.</string>
@@ -289,6 +298,9 @@
   <string name="both">Ambos</string>
   <string name="browser_sign_in">Autenticação via navegador</string>
   <string name="stop_auto_refresh_when_battery_low">Parar de atualizar automaticamente quando a bateria estiver fraca</string>
+  <string name="notification_status">Novo tweet de <xliff:g id="user">%s</xliff:g></string>
+  <string name="notification_status_multiple">Novo Tweet de <xliff:g id="user">%1$s</xliff:g> e <xliff:g id="count">%2$d</xliff:g>  outros
+</string>
   <string name="notification_mention"><xliff:g id="user">%s</xliff:g> mencionou você.</string>
   <string name="notification_mention_multiple"><xliff:g id="user">%1$s</xliff:g> e outros <xliff:g id="count">%2$d</xliff:g> mencionaram você.</string>
   <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> lhe enviou uma mensagem direta.</string>
@@ -319,6 +331,10 @@
   <string name="action_reporting_for_spam">denunciando como spam</string>
   <string name="action_subscribing_to_list">ao se inscrever na lista</string>
   <string name="action_unsubscribing_from_list">ao remover inscrição</string>
+  <string name="action_saving_search">salvando pesquisa</string>
+  <string name="action_deleting_search">descartando pesquisa</string>
+  <string name="action_accepting_follow_request">aceitando solicitação de seguidor</string>
+  <string name="action_denying_follow_request">recusando solicitação de seguidor</string>
   <string name="status_is_duplicate">Seu tweet está duplicado.</string>
   <string name="data_profiling_summary">Twidere participa de uma pesquisa sobre comportamento social de usuários pela UC Davis.\n\nOs dados que nós coletamos e porque:\nDados coletados:\n1. Twitter ID\n2. Timeline do usuário (predição baseada nos interesses e interações)\n3. Cliques do usuário num tweet (predição baseada nos interesses e interações sociais)\n4. Localização genérica (um bom indicador de quando o usuário irá acessar o Twitter)\n\nO Twidere vai enviar estes dados apenas quando seu aparelho estiver com o Wi-Fi  ligado e o carregador conectado, assim não afetará seu pacote de dados nem drenar sua bateria.</string>
   <string name="data_profiling">Estatísticas de Uso</string>
@@ -355,6 +371,7 @@
   <string name="permission_description_preferences">Configurações de leitura</string>
   <string name="permissions_request">Permissões requeridas</string>
   <string name="permissions_request_message">A extensão está pedindo as seguintes permissões</string>
+  <string name="accept_permission_request">Aceitar</string>
   <string name="no_thanks">Não, obrigado</string>
   <string name="revoke_permissions">Remover permissões</string>
   <string name="fast_scroll_thumb">Rolagem rápida</string>
@@ -370,6 +387,7 @@
   <string name="preload_wifi_only">Pré-Carregar apenas em Wi-Fi</string>
   <string name="disable_tab_swipe">Desativar deslize de abas</string>
   <string name="sign_in_method_introduction_title">Como isso funciona?</string>
+  <string name="sign_in_method_introduction">Muitos clientes, como Twicca, abrem o navegador solicitando que você digite seu nome de usuário e senha, e redirecionam você de volta. As vezes isso pode ser muito inconveniente.\n\n Usuários do Twidere tem passos simples para logar, sem abrir o navegador. Não se preocupe com sua senha, Twidere jamais a armazenará, é totalmente seguro.</string>
   <string name="quote_protected_status_notice">Não é recomendado citar tweets de perfis protegidos.</string>
   <string name="edit_draft">Editar rascunho</string>
   <string name="profile_image">Imagem do perfil</string>

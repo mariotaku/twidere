@@ -365,6 +365,7 @@
   <string name="permission_description_preferences">Einstellungen einlesen</string>
   <string name="permissions_request">Bitte um Berechtigung</string>
   <string name="permissions_request_message">Die Erweiterung benötigt die folgenden Berechtigungen</string>
+  <string name="accept_permission_request">Akzeptieren</string>
   <string name="no_thanks">Nein, danke</string>
   <string name="revoke_permissions">Berechtigungen entziehen</string>
   <string name="fast_scroll_thumb">Schnelldurchlauf Vorschaubild</string>
@@ -574,5 +575,12 @@
   <string name="tab_display_option_icon_and_label">Icon und Label</string>
   <string name="highlight_and_underline">Hervorheben und unterstreichen</string>
   <string name="twip_api_version_notice_message">TWIP kann keine Rest Bade URL bearbeiten, die nicht mit \"/1.1/\" endet.\n\nSie müssen evtl. \"/1.1/\" an die Rest Base URL anhängen, um Probleme beim hochladen von Bildern zu vermeiden.</string>
+  <string name="back">Zurück</string>
   <string name="accept">Akzeptieren</string>
+  <string name="deny">Ablehnen</string>
+  <string name="import_settings">Einstellungen importieren</string>
+  <string name="export_settings">Einstellungen exportieren</string>
+  <string name="export_settings_type_dialog_title">Einstellungen exportieren…</string>
+  <string name="import_settings_type_dialog_title">Einstellungen importieren…</string>
+  <string name="nicknames">Spitznamen</string>
 </resources>
