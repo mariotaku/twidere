@@ -32,6 +32,7 @@
   <string name="error_occurred">Hiba lépett fel, kérem próbálja újra.</string>
   <string name="error_already_logged_in">Ön már be van jelentkezve.</string>
   <string name="no_account_selected">Nincs profil kiválasztva.</string>
+  <string name="empty_account_selection_disallowed">Kérlek válasz egy hozzáférést.</string>
   <string name="error_unknown_error">Hiba: Ismeretlen hiba - valószínűleg egy bug.</string>
   <string name="error_message">Hiba: <xliff:g id="message">%s</xliff:g></string>
   <string name="error_message_with_action"><xliff:g id="action">%1$s</xliff:g> művelet közben a következő hiba történt: <xliff:g id="message">%2$s</xliff:g></string>
@@ -41,6 +42,8 @@
   <string name="username">Felhasználónév</string>
   <string name="password">Jelszó</string>
   <string name="label_tweetstore_provider">Twidere adatbázis szolgáltató</string>
+  <string name="label_refresh_service">Szolgáltatások frissítése</string>
+  <string name="label_background_operation_service">Háttér szolgáltatás</string>
   <string name="open_in_browser">Megnyitás böngészőben</string>
   <string name="tap_to_load_more">Érintse meg ha többet szeretne</string>
   <string name="delete">Törlés</string>
@@ -59,10 +62,12 @@
   <string name="pick_from_gallery">Választás a Galériából</string>
   <string name="statuses">Tweetek</string>
   <string name="followers">Követők</string>
+  <string name="following">Következő</string>
   <string name="about">Általános infó</string>
   <string name="open_source_license">Nyílt forrású licensz</string>
   <string name="api">API</string>
   <string name="default_api_settings">Alapértelmezett API beállítások</string>
+  <string name="default_api_settings_summary">Ezek a beállítások csak az újra belépés után lesznek érvényesek</string>
   <string name="consumer_key">Felhasználói kulcs</string>
   <string name="consumer_secret">Felhasználói kulcs</string>
   <string name="ignore_ssl_error">SSL hibák figyelmen kívül hagyása</string>
@@ -124,16 +129,20 @@
   <string name="retry">Újrapróbál</string>
   <string name="more">Tovább</string>
   <string name="quote_format">Idézet formátuma</string>
+  <string name="direct_messages">Üzenetek</string>
   <string name="blocked_users">Blokkolt felhasználók</string>
   <string name="set_as_default">Beállítás alapértelmezettként</string>
   <string name="search_users">Keresés felhasználók között</string>
+  <string name="search_statuses">Tweetek keresése</string>
   <string name="created_at">Létrehozva:</string>
   <string name="search_hint">Keresés tweetek és felhasználók között</string>
   <string name="remember_position">Pozíció megjegyzése</string>
   <string name="remember_position_summary">Lista/fül pozíció megjegyzése a Twidere bezárása előtt</string>
   <string name="user_blocked">Felhasználó blokkolva.</string>
+  <string name="users_blocked">Blokkolja a következő felhasználókat.</string>
   <string name="user_unblocked">Felhasználó blokkolás feloldva.</string>
   <string name="reported_user_for_spam">Felhasználó megjelölve spammerként.</string>
+  <string name="reported_users_for_spam">Jelentse spammerként a következő felhasználókat.</string>
   <string name="filename_hint">Fájlnév</string>
   <string name="overwrite_confirm">A file létezik. Felülírjam?</string>
   <string name="save_as">Mentés mint</string>
@@ -147,6 +156,7 @@
   <string name="block">Blokkol</string>
   <string name="unblock">Engedélyez</string>
   <string name="report_for_spam">Spam jelentése</string>
+  <string name="mute_user">Felhasználó némítása</string>
   <string name="inbox">Beérkezett üzenetek</string>
   <string name="load_images">Képek betöltése</string>
   <string name="other_settings">Egyéb beállítások</string>
@@ -205,8 +215,13 @@
   <string name="error_message_status_too_long">Tweet túl hosszú.</string>
   <string name="error_message_tweet_shorten_failed">Tweet rövidítés sikertelen.</string>
   <string name="error_message_tweet_shortener_not_found">Tweet rövidítő nem található, talán el lett távolítva.</string>
+  <string name="user_mentions">Felhasználó említései</string>
+  <string name="dual_pane_layout">Két paneles nézet</string>
   <string name="landscape">Fekvő</string>
   <string name="portrait">Álló</string>
+  <string name="quick_send">Nyomj \"Enter\"-t az elküldéshez</string>
+  <string name="quick_send_summary">Tweet elküldése, ha \"Enter\"-t nyomsz.</string>
+  <string name="unsaved_status">Tweet nincs sem elküldve, sem elmentve.</string>
   <string name="discard">Elvetés</string>
   <string name="Nitems_selected_quantity_one">1 elem kiválasztva</string>
   <string name="Nitems_selected_quantity_other"><xliff:g id="items">%d</xliff:g> elem kiválasztva</string>
@@ -217,9 +232,11 @@
   <string name="address">Cím (Lehet egy másik host címe)</string>
   <string name="add_host_mapping">Host hozzárendelés hozzáadása</string>
   <string name="tcp_dns_query">TCP DNS lekérdezés</string>
+  <string name="tcp_dns_query_summary">DNS lekérdezések TCP protokoll felett, ezzel elkerülhető a DNS gyorsítótár mérgezés.</string>
   <string name="dns_server">DNS kiszolgáló</string>
   <string name="dns_server_summary">DNS szerver beállítása az API elérésekhez.</string>
   <string name="activities_about_me">Tevékenységeim</string>
+  <string name="activities_by_friends">Barátok tevékenységei</string>
   <string name="activity_about_me_favorite"><xliff:g id="user">%s</xliff:g> kedvencek közé rakta a tweeted.</string>
   <string name="activity_about_me_favorite_multi"><xliff:g id="user">%s</xliff:g> és még <xliff:g id="count">%d</xliff:g> személy kedvencnek jelölte a tweeted.</string>
   <string name="activity_about_me_follow"><xliff:g id="user">%s</xliff:g> követ téged.</string>
@@ -258,7 +275,7 @@
   <string name="permission_description_accounts">Fiók információ olvasása</string>
   <string name="permissions_request">Engedély kérése</string>
   <string name="permissions_request_message">A kiegészítőhöz szükségesek a következő jogosultságok</string>
-  <string name="accept">Elfogadom</string>
   <string name="no_thanks">Köszönöm, nem</string>
   <string name="revoke_permissions">Engedély visszavonása</string>
+  <string name="accept">Elfogadom</string>
 </resources>

@@ -1,3 +1,22 @@
+/*
+ * 				Twidere - Twitter client for Android
+ * 
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere.view.iface;
 
 import android.content.Context;
@@ -65,6 +84,8 @@ public interface ICardItemView extends IColorLabelView {
 
 		private final FakeOverflowButton mFakeOverflowButton;
 
+		private float mBackgroundAlpha;
+
 		public DrawingHelper(final View view, final Context context, final AttributeSet attrs, final int defStyleAttr) {
 			mView = view;
 			final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CardItemView, defStyleAttr,
@@ -78,6 +99,7 @@ public interface ICardItemView extends IColorLabelView {
 			mThemeColor = ThemeUtils.getUserThemeColor(context);
 			mOverflowIconGestureDetector = new GestureDetector(context, new OverflowIconGestureListener(this));
 			mFakeOverflowButton = new FakeOverflowButton(this);
+			mBackgroundAlpha = a.getFraction(R.styleable.CardItemView_cardBackgroundAlpha, 1, 1, 1.0f);
 			setItemBackground(a.getDrawable(R.styleable.CardItemView_cardBackground));
 			setItemSelector(a.getDrawable(R.styleable.CardItemView_cardSelector));
 			setActivatedIndicator(a.getDrawable(R.styleable.CardItemView_cardActivatedIndicator));
@@ -203,10 +225,13 @@ public interface ICardItemView extends IColorLabelView {
 		public void setItemBackground(final Drawable itemBackground) {
 			preSetDrawable(mBackground);
 			mBackground = itemBackground;
-			if (itemBackground != null) {
-				itemBackground.setAlpha(0x80);
-			}
+			updateBackgroundAlpha();
 			postSetDrawable(itemBackground);
+		}
+
+		public void setItemBackgroundAlpha(final float alpha) {
+			mBackgroundAlpha = alpha;
+			updateBackgroundAlpha();
 		}
 
 		public void setItemSelector(final Drawable itemSelector) {
@@ -249,6 +274,12 @@ public interface ICardItemView extends IColorLabelView {
 			if (prev != null) {
 				mView.unscheduleDrawable(prev);
 				prev.setCallback(null);
+			}
+		}
+
+		private void updateBackgroundAlpha() {
+			if (mBackground != null) {
+				mBackground.setAlpha(Math.round(mBackgroundAlpha * 0xff));
 			}
 		}
 

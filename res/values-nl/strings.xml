@@ -32,11 +32,12 @@
   <string name="error_occurred">Er is iets misgegaan, probeer opnieuw.</string>
   <string name="error_already_logged_in">U bent al ingelogd.</string>
   <string name="no_account_selected">Geen account geselecteerd.</string>
+  <string name="empty_account_selection_disallowed">Selecteer tenminste één account.</string>
   <string name="error_unknown_error">Fout: onbekend, waarschijnlijk een bug.</string>
   <string name="error_message">Fout: <xliff:g id="message">%s</xliff:g></string>
   <string name="error_message_with_action">Fout bij actie <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
-  <string name="error_message_rate_limit">Twitter\'s vernieuw limiet overschreden, probeer overnieuw na <xliff:g id="time">%s</xliff:g></string>
-  <string name="error_message_rate_limit_with_action">Twitter\'s vernieuw limiet overschreden, terwijl <xliff:g id="action">%1$s</xliff:g>, probeer overnieuw na <xliff:g id="time">%2$s</xliff:g></string>
+  <string name="error_message_rate_limit">Twitters vernieuwlimiet overschreden, probeer opnieuw na <xliff:g id="time">%s</xliff:g></string>
+  <string name="error_message_rate_limit_with_action">Twitters vernieuwlimiet overschreden, terwijl <xliff:g id="action">%1$s</xliff:g>, probeer opnieuw na <xliff:g id="time">%2$s</xliff:g></string>
   <string name="select_account">Selecteer account</string>
   <string name="username">Gebruikersnaam</string>
   <string name="password">Wachtwoord</string>
@@ -66,6 +67,7 @@
   <string name="open_source_license">Open source licentie</string>
   <string name="api">API</string>
   <string name="default_api_settings">Standaard API instellingen</string>
+  <string name="default_api_settings_summary">Deze instellingen worden alleen toegepast op nieuwe ingelogde accounts</string>
   <string name="consumer_key">Consumenten sleutel</string>
   <string name="consumer_secret">Consumenten geheim</string>
   <string name="ignore_ssl_error">SLL-fout negeren</string>
@@ -183,6 +185,7 @@
   <string name="type_to_compose">Typ om op te stellen</string>
   <string name="users_lists">Gebruikers lijst</string>
   <string name="lists_following_user">Lijsten die deze gebruiker volgt</string>
+  <string name="lists_following_me">Lijst volgt mij</string>
   <string name="item_3_minutes">3 minuten</string>
   <string name="item_5_minutes">5 minuten</string>
   <string name="item_10_minutes">10 minuten</string>
@@ -327,6 +330,9 @@
   <string name="action_subscribing_to_list">Abonneren op lijst</string>
   <string name="action_unsubscribing_from_list">Afmelden van lijst</string>
   <string name="action_saving_search">Bezig met opslaan van zoekopdracht</string>
+  <string name="action_deleting_search">zoekopdracht aan het verwijderen</string>
+  <string name="action_accepting_follow_request">accepteer volg verzoek</string>
+  <string name="action_denying_follow_request">weiger volg verzoek</string>
   <string name="status_is_duplicate">Jouw tweet is dubbel.</string>
   <string name="data_profiling_summary">Twidere nam deel aan een onderzoek naar het voorspellen van sociaal gedrag van de gebruiker voor een pre-caching inhoud gestart door studenten in UC Davis.\n\nHier zijn de gegevens die we wilden verzamelen en waarom:\nVerzamelde gegevens:\n1. Gebruikers twitter ID\n2. Gebruikers thuis tijdlijn (voorspelling op basis van gebruikers interesses en sociale interactie)\n3. Klik van de gebruiker op een tweet (voorspelling op basis van gebruikers interesses en sociale interactie)\n4. Grof locatie (dat een goede voorspeller is wanneer de gebruiker toegang verkrijgt tot twitter)\n\nTwidere zal alleen verzamelde gegevens uploaden als Wifi beschikbaar is en je apparaat is aangesloten op de lader, zodat het niet extra bandbreedte kost of afvoer van je batterij.</string>
   <string name="data_profiling">Gebruiksstatistieken</string>
@@ -363,7 +369,7 @@
   <string name="permission_description_preferences">Lees instellingen</string>
   <string name="permissions_request">Toestemmings- verzoek</string>
   <string name="permissions_request_message">Uitbreiding vraagt ​​volgende machtigingen</string>
-  <string name="accept">Accepteer</string>
+  <string name="accept_permission_request">Accepteer</string>
   <string name="no_thanks">Nee, bedankt</string>
   <string name="revoke_permissions">Machtigingen in trekken</string>
   <string name="fast_scroll_thumb">Snel schuifknop</string>
@@ -379,7 +385,7 @@
   <string name="preload_wifi_only">Preload alleen via Wi-Fi</string>
   <string name="disable_tab_swipe">Schakel schuiven tussen tabbladen uit</string>
   <string name="sign_in_method_introduction_title">Hoe werkt het?</string>
-  <string name="sign_in_method_introduction">In de meeste applicaties zoals Twicca wordt er een browser geopend waarin je wordt gevraagd om je gebruikersnaam en wachtwoord in te voeren, en daarna ga je terug naar de applicatie. Soms kan dit erg lastig worden.\nTwidere gebruikt een aantal eenvoudige stappen om je aan te melden, zonder het openen van de browser. Maak je geen zorgen over je wachtwoord, deze zal Twidere nooit opslaan, het is volkomen veilig!</string>
+  <string name="sign_in_method_introduction">De meeste cliënten zoals twicca openen een browser en vragen je je gebruikersnaam en wachtwoord te typen, en daarna brengen ze je terug naar hun cliënten. Soms kan dit erg lastig worden.\n\nTwidere gebruikt gemakkelijkere stappen om in te loggen, zonder de browser te openen. Maak je geen zorgen over je wachtwoord, Twidere zal het nooit opslaan, het is geheel veilig!</string>
   <string name="quote_protected_status_notice">Het is niet aangeraden om beschermde tweets te citeren.</string>
   <string name="edit_draft">Wijzig concept</string>
   <string name="profile_image">Profielfoto</string>
@@ -389,6 +395,7 @@
   <string name="wrong_url_format">Verkeerde URL-indeling.</string>
   <string name="wrong_username_password">Verkeerde gebruikersnaam/wachtwoord.</string>
   <string name="network_error">Netwerkfout</string>
+  <string name="api_data_corrupted">API gegevens beschadigd.</string>
   <string name="ssl_error">SSL error, misschien moet je de \'\'Negeer SSL fout\'\' optie inschakelen.</string>
   <string name="wrong_api_key">Onjuiste API url of consument sleutel/geheim, controleer ze nog een keer.</string>
   <string name="status_updated">Tweet verzonden.</string>
@@ -400,9 +407,13 @@
   <string name="direct_message_sent">Bericht verzonden.</string>
   <string name="direct_message_deleted">Bericht verwijderd.</string>
   <string name="search_saved">Zoekopdracht opgeslagen.</string>
+  <string name="search_name_saved">Zoekopdracht \"<xliff:g id="name">%s</xliff:g>\" opgeslagen.</string>
+  <string name="search_deleted">Zoekopdracht verwijderd.</string>
+  <string name="search_name_deleted">Zoekopdracht \"<xliff:g id="name">%s</xliff:g>\" verwijderd.</string>
   <string name="import_from">Importeren uit…</string>
   <string name="link_to_quoted_status">Link naar geciteerde tweet</string>
   <string name="followed_user"><xliff:g id="user">%s</xliff:g> gevolgt.</string>
+  <string name="sent_follow_request_to_user">Verstuur volg verzoek naar <xliff:g id="user">%s</xliff:g>.</string>
   <string name="unfollowed_user"><xliff:g id="user">%s</xliff:g> ontvolgt.</string>
   <string name="blocked_user"><xliff:g id="user">%s</xliff:g> Geblokkeerd.</string>
   <string name="unblocked_user"><xliff:g id="user">%s</xliff:g> Gedeblokkeerd.</string>
@@ -433,6 +444,7 @@
   <string name="no_close_after_status_updated">Hou \"Componeren\" open na versturen van een tweet</string>
   <string name="no_close_after_status_updated_summary">Een klein cadeau voor chatterbox</string>
   <string name="status_saved_to_draft">Tweet opgeslagen als ontwerp.</string>
+  <string name="default_account">Standaard account</string>
   <string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g>(<xliff:g id="daily_tweet">%2$d</xliff:g> tweet(s) per dag)</string>
   <string name="empty_content">Lege inhoud</string>
   <string name="fast_image_loading">Snel foto\'s laden</string>
@@ -466,12 +478,12 @@
   <string name="users_statuses">Gebruikers tweets</string>
   <string name="card_animation">Kaart animatie</string>
   <string name="name_first">Toon naam eerst</string>
+  <string name="next">Volgende</string>
   <string name="settings_wizard">Instellingen tovenaar</string>
   <string name="wizard_page_welcome_title">Welkom</string>
   <string name="wizard_page_welcome_text">Bedankt voor het kiezen van Twidere!\nWil je het nu configureren?</string>
   <string name="wizard_page_welcome_yes">Ja</string>
-  <string name="next">Volgende</string>
-  <string name="wizard_page_welcome_use_default_settings">Gebruik standaard instellingen</string>
+  <string name="wizard_page_welcome_not_now">Niet nu</string>
   <string name="wizard_page_welcome_import_settings">Importeer instellingen</string>
   <string name="wizard_page_theme_text">Kies een thema dat je leuk vind.</string>
   <string name="wizard_page_tabs_text">Voeg een paar tabbladen toe aan Twidere.\nHoud belangrijke mensen en dingen bij.</string>
@@ -494,6 +506,8 @@
   <string name="delete_user_list_confirm_message">Verwijder lijst <xliff:g id="name">%s</xliff:g>? Dit kan niet worden hersteld.</string>
   <string name="unsubscribe_from_user_list">Afmelden van lijst <xliff:g id="name">%s</xliff:g></string>
   <string name="unsubscribe_from_user_list_confirm_message">Afmelden van lijst <xliff:g id="name">%s</xliff:g>? Je kan je later weer abonneren op deze lijst.</string>
+  <string name="delete_saved_search">Opgeslagen zoekopdracht \"<xliff:g id="name">%s</xliff:g>\" verwijderd</string>
+  <string name="delete_saved_search_confirm_message">Opgeslagen zoekopdracht \"<xliff:g id="name">%s</xliff:g>\" verwijderen? Je kunt deze zoekopdracht binnenkort opnieuw opslaan.</string>
   <string name="signing_in_error_browser_sign_in_hint">Fout bij het ​​aanmelden, misschien moet je de browser inlog methode gebruiken. (Dit zal aangepaste API instellingen negeren tijdens aanmelden)</string>
   <string name="report_user">Rapporteer <xliff:g id="name">%s</xliff:g></string>
   <string name="report_user_confirm_message">Rapporteer <xliff:g id="name">%s</xliff:g> voor spam? Je zult deze gebruiker ook blokkeren.</string>
@@ -531,6 +545,7 @@
   <string name="wizard_hint_compose_select_account">Klik op dit icoon om een account te selecteren bij het typen van een tweet.</string>
   <string name="wizard_hint_quote_format">Stel je favoriete citaat formaat in via \'\'Instellingen\'\' - \'\'Inhoud &amp; Opslag\'\'</string>
   <string name="wizard_hint_filters">Je kunt ongewenste tweets verbergen van de tijdlijn en meldingen via \'\'Filters\'\'.</string>
+  <string name="view_replies">Bekijk Reacties</string>
   <string name="compact_cards">Compacte kaarten</string>
   <string name="compact_cards_summary">Toon meer kaarten op het scherm</string>
   <string name="dashclock_home_unread_count_name">Twidere aantal ongelezen tijdlijn tweets</string>
@@ -553,5 +568,29 @@
   <string name="action_name_saved_at_time"><xliff:g id="action">%1$s</xliff:g> opgeslagen op <xliff:g id="time">%2$s</xliff:g></string>
   <string name="update_status">Verstuur tweet</string>
   <string name="sending_direct_message">Direct message aan het verzenden</string>
+  <string name="tab_display_option">Tab weergave optie</string>
   <string name="livewp_daydream_enabled_message">Hier is een klein cadeautje voor je, vind het in je systeeminstellingen :)</string>
+  <string name="center">Centrum</string>
+  <string name="multi_select">Selecteer meerdere</string>
+  <string name="long_click_to_open_menu">Lang indrukken om menu te openen</string>
+  <string name="swipe_back">Swipe om te sluiten</string>
+  <string name="tab_display_option_icon">Icoon</string>
+  <string name="tab_display_option_label">Label</string>
+  <string name="tab_display_option_icon_and_label">Icoon en label</string>
+  <string name="highlight_and_underline">Benadrukken en onderstrepen</string>
+  <string name="twip_api_version_notice_message">TWIP kan REST basisurls die niet eindigen op \"/1.1/\" niet correct behandelen.\n\nHet kan dat je \"/1.1/\" moet toevoegen aan het einde van de REST basisurl om problemen bij het uploaden van afbeeldingen te vermijden.</string>
+  <string name="back">Terug</string>
+  <string name="theme_font_family">Lettertypefamilie thema</string>
+  <string name="translation_destination">Doeltaal vertaling</string>
+  <string name="accept">Accepteer</string>
+  <string name="deny">Weigeren</string>
+  <string name="accepted_users_follow_request">Volgaanvraag van <xliff:g id="user">%s</xliff:g> aanvaard.</string>
+  <string name="denied_users_follow_request">Volgaanvraag van <xliff:g id="user">%s</xliff:g> geweigerd.</string>
+  <string name="import_settings">Importeer instellingen</string>
+  <string name="export_settings">Exporteer instellingen</string>
+  <string name="export_settings_type_dialog_title">Exporteer instellingen…</string>
+  <string name="import_settings_type_dialog_title">Importeer instellingen…</string>
+  <string name="nicknames">Bijnamen</string>
+  <string name="user_colors">Gebruikerskleuren</string>
+  <string name="import_export">Importeren/exporteren</string>
 </resources>

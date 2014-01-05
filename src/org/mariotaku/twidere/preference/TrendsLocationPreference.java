@@ -1,20 +1,20 @@
 /*
- *				Twidere - Twitter client for Android
+ * 				Twidere - Twitter client for Android
  * 
- * Copyright (C) 2012 Mariotaku Lee <mariotaku.lee@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.mariotaku.twidere.preference;
@@ -30,7 +30,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.Preference;
-import android.preference.Preference.OnPreferenceClickListener;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,8 +49,7 @@ import java.text.Collator;
 import java.util.Comparator;
 import java.util.List;
 
-public class TrendsLocationPreference extends Preference implements Constants, OnPreferenceClickListener,
-		OnClickListener {
+public class TrendsLocationPreference extends Preference implements Constants, OnClickListener {
 
 	private SharedPreferences mPreferences;
 
@@ -61,7 +59,7 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 
 	private final AvailableTrendsAdapter mAdapter;
 
-	private AlertDialog mDialog;;
+	private AlertDialog mDialog;
 
 	public TrendsLocationPreference(final Context context) {
 		this(context, null);
@@ -74,7 +72,6 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 	public TrendsLocationPreference(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		mAdapter = new AvailableTrendsAdapter(context);
-		setOnPreferenceClickListener(this);
 	}
 
 	@Override
@@ -83,7 +80,7 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 		if (editor == null) return;
 		final Location item = mAdapter.getItem(which);
 		if (item != null) {
-			editor.putInt(PREFERENCE_KEY_LOCAL_TRENDS_WOEID, item.getWoeid());
+			editor.putInt(KEY_LOCAL_TRENDS_WOEID, item.getWoeid());
 			editor.commit();
 		}
 		if (mDialog != null && mDialog.isShowing()) {
@@ -92,16 +89,15 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 	}
 
 	@Override
-	public boolean onPreferenceClick(final Preference preference) {
+	protected void onClick() {
 		mPreferences = getSharedPreferences();
-		if (mPreferences == null) return false;
-		mCheckedWoeId = mPreferences.getInt(PREFERENCE_KEY_LOCAL_TRENDS_WOEID, 1);
+		if (mPreferences == null) return;
+		mCheckedWoeId = mPreferences.getInt(KEY_LOCAL_TRENDS_WOEID, 1);
 		if (mGetAvailableTrendsTask != null) {
 			mGetAvailableTrendsTask.cancel(false);
 		}
 		mGetAvailableTrendsTask = new GetAvailableTrendsTask(getContext());
 		mGetAvailableTrendsTask.execute();
-		return true;
 	}
 
 	private static class AvailableTrendsAdapter extends ArrayAdapter<Location> {
@@ -192,12 +188,12 @@ public class TrendsLocationPreference extends Preference implements Constants, O
 			}
 			mAdapter.setData(result);
 			if (result == null) return;
-			final AlertDialog.Builder selector_builder = new AlertDialog.Builder(getContext());
-			selector_builder.setTitle(getTitle());
-			selector_builder.setSingleChoiceItems(mAdapter, mAdapter.findItemPosition(mCheckedWoeId),
+			final AlertDialog.Builder selectorBuilder = new AlertDialog.Builder(getContext());
+			selectorBuilder.setTitle(getTitle());
+			selectorBuilder.setSingleChoiceItems(mAdapter, mAdapter.findItemPosition(mCheckedWoeId),
 					TrendsLocationPreference.this);
-			selector_builder.setNegativeButton(android.R.string.cancel, null);
-			mDialog = selector_builder.create();
+			selectorBuilder.setNegativeButton(android.R.string.cancel, null);
+			mDialog = selectorBuilder.create();
 			final ListView lv = mDialog.getListView();
 			if (lv != null) {
 				lv.setFastScrollEnabled(true);

@@ -1,20 +1,20 @@
 /*
- *				Twidere - Twitter client for Android
+ * 				Twidere - Twitter client for Android
  * 
- * Copyright (C) 2012 Mariotaku Lee <mariotaku.lee@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.mariotaku.twidere.fragment.support;
@@ -294,7 +294,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		final LoaderManager lm = getLoaderManager();
 		lm.destroyLoader(LOADER_ID_USER);
 		lm.destroyLoader(LOADER_ID_FRIENDSHIP);
-		final boolean user_is_me = user.account_id == user.id;
+		final boolean userIsMe = user.account_id == user.id;
 		mErrorRetryContainer.setVisibility(View.GONE);
 		mAccountId = user.account_id;
 		mUser = user;
@@ -307,15 +307,15 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				.setText(TextUtils.isEmpty(nick) ? user.name : getString(R.string.name_with_nickname, user.name, nick));
 		mProfileImageView.setUserType(user.is_verified, user.is_protected);
 		mScreenNameView.setText("@" + user.screen_name);
-		mDescriptionContainer.setVisibility(user_is_me || !isEmpty(user.description_html) ? View.VISIBLE : View.GONE);
+		mDescriptionContainer.setVisibility(userIsMe || !isEmpty(user.description_html) ? View.VISIBLE : View.GONE);
 		mDescriptionView.setText(user.description_html != null ? Html.fromHtml(user.description_html) : null);
 		final TwidereLinkify linkify = new TwidereLinkify(this);
 		linkify.setLinkTextColor(ThemeUtils.getUserLinkTextColor(getActivity()));
 		linkify.applyAllLinks(mDescriptionView, user.account_id, false);
 		mDescriptionView.setMovementMethod(null);
-		mLocationContainer.setVisibility(user_is_me || !isEmpty(user.location) ? View.VISIBLE : View.GONE);
+		mLocationContainer.setVisibility(userIsMe || !isEmpty(user.location) ? View.VISIBLE : View.GONE);
 		mLocationView.setText(user.location);
-		mURLContainer.setVisibility(user_is_me || !isEmpty(user.url) || !isEmpty(user.url_expanded) ? View.VISIBLE
+		mURLContainer.setVisibility(userIsMe || !isEmpty(user.url) || !isEmpty(user.url_expanded) ? View.VISIBLE
 				: View.GONE);
 		mURLView.setText(isEmpty(user.url_expanded) ? user.url : user.url_expanded);
 		mURLView.setMovementMethod(null);
@@ -326,7 +326,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		mTweetCount.setText(getLocalizedNumber(mLocale, user.statuses_count));
 		mFollowersCount.setText(getLocalizedNumber(mLocale, user.followers_count));
 		mFriendsCount.setText(getLocalizedNumber(mLocale, user.friends_count));
-		if (mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true)) {
+		if (mPreferences.getBoolean(KEY_DISPLAY_PROFILE_IMAGE, true)) {
 			mProfileImageLoader.displayProfileImage(mProfileImageView, user.profile_image_url);
 			final int def_width = getResources().getDisplayMetrics().widthPixels;
 			final int width = mBannerWidth > 0 ? mBannerWidth : def_width;
@@ -350,7 +350,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		mAdapter.add(new UserMentionsAction(2));
 		mAdapter.add(new UserListsAction(3));
 		mAdapter.add(new UserListMembershipsAction(4));
-		if (user_is_me) {
+		if (userIsMe) {
 			mAdapter.add(new SavedSearchesAction(11));
 			if (user.is_protected) {
 				mAdapter.add(new IncomingFriendshipsAction(12));

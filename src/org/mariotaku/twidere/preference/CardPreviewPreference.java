@@ -1,20 +1,20 @@
 /*
- *				Twidere - Twitter client for Android
+ * 				Twidere - Twitter client for Android
  * 
- * Copyright (C) 2012 Mariotaku Lee <mariotaku.lee@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.mariotaku.twidere.preference;
@@ -76,7 +76,7 @@ public class CardPreviewPreference extends Preference implements Constants, OnSh
 	@Override
 	public void onSharedPreferenceChanged(final SharedPreferences preferences, final String key) {
 		if (mHolder == null) return;
-		if (PREFERENCE_KEY_COMPACT_CARDS.equals(key)) {
+		if (KEY_COMPACT_CARDS.equals(key)) {
 			mCompactModeChanged = true;
 		}
 		notifyChanged();
@@ -88,17 +88,17 @@ public class CardPreviewPreference extends Preference implements Constants, OnSh
 		mCompactModeChanged = false;
 		final Context context = getContext();
 		final int highlightOption = getLinkHighlightOptionInt(context);
-		final boolean nameFirst = mPreferences.getBoolean(PREFERENCE_KEY_NAME_FIRST, true);
-		final boolean display_image_preview = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_IMAGE_PREVIEW, false);
-		final boolean display_profile_image = mPreferences.getBoolean(PREFERENCE_KEY_DISPLAY_PROFILE_IMAGE, true);
-		final boolean nickname_only = mPreferences.getBoolean(PREFERENCE_KEY_NICKNAME_ONLY, false);
+		final boolean nameFirst = mPreferences.getBoolean(KEY_NAME_FIRST, true);
+		final boolean display_image_preview = mPreferences.getBoolean(KEY_DISPLAY_IMAGE_PREVIEW, false);
+		final boolean display_profile_image = mPreferences.getBoolean(KEY_DISPLAY_PROFILE_IMAGE, true);
+		final boolean nickname_only = mPreferences.getBoolean(KEY_NICKNAME_ONLY, false);
 		mHolder = new StatusViewHolder(view);
 		mLinkify.setHighlightOption(highlightOption);
 		mHolder.setDisplayNameFirst(nameFirst);
 		mHolder.setNicknameOnly(nickname_only);
 		mHolder.setShowAsGap(false);
 		mHolder.setIsMyStatus(false);
-		mHolder.setTextSize(mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(context)));
+		mHolder.setTextSize(mPreferences.getInt(KEY_TEXT_SIZE, getDefaultTextSize(context)));
 		mHolder.image_preview_container.setVisibility(display_image_preview ? View.VISIBLE : View.GONE);
 		mHolder.profile_image.setVisibility(display_profile_image ? View.VISIBLE : View.GONE);
 		mHolder.image_preview_progress.setVisibility(View.GONE);
@@ -117,7 +117,7 @@ public class CardPreviewPreference extends Preference implements Constants, OnSh
 		mHolder.name.setText(nickname_only ? TWIDERE_PREVIEW_NICKNAME : context.getString(R.string.name_with_nickname,
 				TWIDERE_PREVIEW_NAME, TWIDERE_PREVIEW_NICKNAME));
 		mHolder.screen_name.setText("@" + TWIDERE_PREVIEW_SCREEN_NAME);
-		if (highlightOption != LINK_HIGHLIGHT_OPTION_CODE_NONE) {
+		if (highlightOption != VALUE_LINK_HIGHLIGHT_OPTION_CODE_NONE) {
 			mHolder.text.setText(Html.fromHtml(TWIDERE_PREVIEW_TEXT_HTML));
 			mLinkify.applyAllLinks(mHolder.text, 0, false);
 			mLinkify.applyUserProfileLinkNoHighlight(mHolder.name, 0, 0, TWIDERE_PREVIEW_SCREEN_NAME);
@@ -135,7 +135,7 @@ public class CardPreviewPreference extends Preference implements Constants, OnSh
 
 	@Override
 	protected View onCreateView(final ViewGroup parent) {
-		if (mPreferences != null && mPreferences.getBoolean(PREFERENCE_KEY_COMPACT_CARDS, false))
+		if (mPreferences != null && mPreferences.getBoolean(KEY_COMPACT_CARDS, false))
 			return mInflater.inflate(R.layout.card_item_status_compact, parent, false);
 		return mInflater.inflate(R.layout.card_item_status, parent, false);
 	}

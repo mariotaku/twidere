@@ -1,3 +1,22 @@
+/*
+ * 				Twidere - Twitter client for Android
+ * 
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere.view;
 
 import android.content.Context;
@@ -110,19 +129,19 @@ public class ForegroundColorView extends View implements IForegroundView {
 	protected void onDraw(final Canvas canvas) {
 		drawAlphaPattern(canvas);
 		canvas.drawRect(mColorRect, mPaint);
-		mForegroundViewHelper.onDraw(canvas);
+		mForegroundViewHelper.dispatchOnDraw(canvas);
 	}
 
 	@Override
 	protected void onLayout(final boolean changed, final int left, final int top, final int right, final int bottom) {
-		mForegroundViewHelper.onLayout(changed, left, top, right, bottom);
+		mForegroundViewHelper.dispatchOnLayout(changed, left, top, right, bottom);
 		super.onLayout(changed, left, top, right, bottom);
 	}
 
 	@Override
 	protected void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
-		mForegroundViewHelper.onSizeChanged(w, h, oldw, oldh);
+		mForegroundViewHelper.dispatchOnSizeChanged(w, h, oldw, oldh);
 		mColorRect.set(getPaddingLeft(), getPaddingTop(), w - getPaddingRight(), h - getPaddingBottom());
 		mNumRectanglesHorizontal = (int) Math.ceil(w / mAlphaPatternSize);
 		mNumRectanglesVertical = (int) Math.ceil(h / mAlphaPatternSize);

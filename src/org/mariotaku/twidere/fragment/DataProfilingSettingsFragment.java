@@ -1,20 +1,20 @@
 /*
- *				Twidere - Twitter client for Android
+ * 				Twidere - Twitter client for Android
  * 
- * Copyright (C) 2012 Mariotaku Lee <mariotaku.lee@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.mariotaku.twidere.fragment;
@@ -54,8 +54,8 @@ public class DataProfilingSettingsFragment extends BaseFragment implements OnCli
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		if (mPreferences.contains(PREFERENCE_KEY_UCD_DATA_PROFILING)) {
-			mCheckBox.setChecked(mPreferences.getBoolean(PREFERENCE_KEY_UCD_DATA_PROFILING, false));
+		if (mPreferences.contains(KEY_UCD_DATA_PROFILING)) {
+			mCheckBox.setChecked(mPreferences.getBoolean(KEY_UCD_DATA_PROFILING, false));
 		}
 		mSaveButton.setOnClickListener(this);
 		mPreviewButton.setOnClickListener(this);
@@ -66,8 +66,8 @@ public class DataProfilingSettingsFragment extends BaseFragment implements OnCli
 		switch (v.getId()) {
 			case R.id.save: {
 				final SharedPreferences.Editor editor = mPreferences.edit();
-				editor.putBoolean(PREFERENCE_KEY_UCD_DATA_PROFILING, mCheckBox.isChecked());
-				editor.putBoolean(PREFERENCE_KEY_SHOW_UCD_DATA_PROFILING_REQUEST, false);
+				editor.putBoolean(KEY_UCD_DATA_PROFILING, mCheckBox.isChecked());
+				editor.putBoolean(KEY_SHOW_UCD_DATA_PROFILING_REQUEST, false);
 				editor.commit();
 				getActivity().onBackPressed();
 				break;

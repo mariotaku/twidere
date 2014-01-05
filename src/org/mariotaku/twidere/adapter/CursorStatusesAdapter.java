@@ -1,20 +1,20 @@
 /*
- *				Twidere - Twitter client for Android
+ * 				Twidere - Twitter client for Android
  * 
- * Copyright (C) 2012 Mariotaku Lee <mariotaku.lee@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.mariotaku.twidere.adapter;
@@ -123,7 +123,7 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 
 			final String retweetedByName = cursor.getString(mIndices.retweeted_by_user_name);
 			final String retweetedByScreenName = cursor.getString(mIndices.retweeted_by_user_screen_name);
-			final String text = getLinkHighlightOption() != LINK_HIGHLIGHT_OPTION_CODE_NONE ? cursor
+			final String text = getLinkHighlightOption() != VALUE_LINK_HIGHLIGHT_OPTION_CODE_NONE ? cursor
 					.getString(mIndices.text_html) : cursor.getString(mIndices.text_unescaped);
 			final String screen_name = cursor.getString(mIndices.user_screen_name);
 			final String name = cursor.getString(mIndices.user_name);
@@ -159,7 +159,7 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 			holder.setTextSize(getTextSize());
 
 			holder.setIsMyStatus(isMyStatus && !mIndicateMyStatusDisabled);
-			if (getLinkHighlightOption() != LINK_HIGHLIGHT_OPTION_CODE_NONE) {
+			if (getLinkHighlightOption() != VALUE_LINK_HIGHLIGHT_OPTION_CODE_NONE) {
 				holder.text.setText(Html.fromHtml(text));
 				linkify.applyAllLinks(holder.text, accountId, possiblySensitive);
 				holder.text.setMovementMethod(null);
@@ -173,7 +173,7 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 			holder.name.setText(TextUtils.isEmpty(nick) ? name : isNicknameOnly() ? nick : context.getString(
 					R.string.name_with_nickname, name, nick));
 			holder.screen_name.setText("@" + screen_name);
-			if (getLinkHighlightOption() != LINK_HIGHLIGHT_OPTION_CODE_NONE) {
+			if (getLinkHighlightOption() != VALUE_LINK_HIGHLIGHT_OPTION_CODE_NONE) {
 				linkify.applyUserProfileLinkNoHighlight(holder.name, accountId, userId, screen_name);
 				linkify.applyUserProfileLinkNoHighlight(holder.screen_name, accountId, userId, screen_name);
 				holder.name.setMovementMethod(null);
@@ -334,6 +334,7 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 
 	@Override
 	public void onOverflowIconClick(final View view) {
+		if (mMultiSelectManager.isActive()) return;
 		final Object tag = view.getTag();
 		if (tag instanceof StatusViewHolder) {
 			final StatusViewHolder holder = (StatusViewHolder) tag;
@@ -379,7 +380,7 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 	public void setFiltersEnabled(final boolean enabled) {
 		if (mFiltersEnabled == enabled) return;
 		mFiltersEnabled = enabled;
-		rebuildFilterInfo();
+		rebuildFilterInfo(getCursor(), mIndices);
 		notifyDataSetChanged();
 	}
 
@@ -397,7 +398,7 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 		mFilterIgnoreTextHtml = text_html;
 		mFilterIgnoreUser = user;
 		mFilterIgnoreSource = source;
-		rebuildFilterInfo();
+		rebuildFilterInfo(getCursor(), mIndices);
 		notifyDataSetChanged();
 	}
 
@@ -428,13 +429,12 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 	@Override
 	public Cursor swapCursor(final Cursor cursor) {
 		mIndices = cursor != null ? new CursorStatusIndices(cursor) : null;
-		rebuildFilterInfo();
+		rebuildFilterInfo(cursor, mIndices);
 		return super.swapCursor(cursor);
 	}
 
-	private void rebuildFilterInfo() {
-		final Cursor c = getCursor();
-		if (mIndices != null && c != null && !c.isClosed() && c.getCount() > 0 && c.moveToLast()) {
+	private void rebuildFilterInfo(final Cursor c, final CursorStatusIndices i) {
+		if (i != null && c != null && moveCursorToLast(c)) {
 			final long userId = mFilterIgnoreUser ? -1 : c.getLong(mIndices.user_id);
 			final String textPlain = mFilterIgnoreTextPlain ? null : c.getString(mIndices.text_plain);
 			final String textHtml = mFilterIgnoreTextHtml ? null : c.getString(mIndices.text_html);
@@ -448,5 +448,14 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 
 	private static int getItemResource(final boolean compactCards) {
 		return compactCards ? R.layout.card_item_status_compact : R.layout.card_item_status;
+	}
+
+	private static boolean moveCursorToLast(final Cursor c) {
+		if (c == null || c.isClosed()) return false;
+		try {
+			return c.moveToNext();
+		} catch (final Exception e) {
+			return false;
+		}
 	}
 }

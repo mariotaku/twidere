@@ -1,20 +1,20 @@
 /*
- *				Twidere - Twitter client for Android
+ * 				Twidere - Twitter client for Android
  * 
- * Copyright (C) 2012 Mariotaku Lee <mariotaku.lee@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.mariotaku.twidere.activity.support;
@@ -170,7 +170,7 @@ public class DraftsActivity extends BaseSupportActivity implements LoaderCallbac
 		super.onCreate(savedInstanceState);
 		mResolver = getContentResolver();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		mTextSize = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(this));
+		mTextSize = mPreferences.getInt(KEY_TEXT_SIZE, getDefaultTextSize(this));
 		setContentView(android.R.layout.list_content);
 		// setOverrideExitAniamtion(false);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -188,7 +188,7 @@ public class DraftsActivity extends BaseSupportActivity implements LoaderCallbac
 	@Override
 	protected void onResume() {
 		super.onResume();
-		final float text_size = mPreferences.getInt(PREFERENCE_KEY_TEXT_SIZE, getDefaultTextSize(this));
+		final float text_size = mPreferences.getInt(KEY_TEXT_SIZE, getDefaultTextSize(this));
 		mAdapter.setTextSize(text_size);
 		if (mTextSize != text_size) {
 			mTextSize = text_size;

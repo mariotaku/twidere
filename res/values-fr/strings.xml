@@ -35,7 +35,7 @@
   <string name="empty_account_selection_disallowed">Veuillez choisir au moins un compte.</string>
   <string name="error_unknown_error">Erreur inconnue. Il y a probablement un bug.</string>
   <string name="error_message">Erreur : <xliff:g id="message">%s</xliff:g></string>
-  <string name="error_message_with_action">Erreur lors de <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
+  <string name="error_message_with_action">Erreur lors de <xliff:g id="action">%1$s</xliff:g> : <xliff:g id="message">%2$s</xliff:g></string>
   <string name="error_message_rate_limit">Limite de rafraichissement de Twitter dépassée, essayer à nouveau de <xliff:g id="time">%s</xliff:g></string>
   <string name="error_message_rate_limit_with_action">Limite de rafraichissement de Twitter dépassée lors de <xliff:g id="action">%1$s</xliff:g>, essayer à nouveau dans <xliff:g id="time">%2$s</xliff:g></string>
   <string name="select_account">Sélectionner un compte</string>
@@ -67,6 +67,7 @@
   <string name="open_source_license">Licence open source</string>
   <string name="api">API</string>
   <string name="default_api_settings">Paramètres API par défaut</string>
+  <string name="default_api_settings_summary">Ces paramètres s\'appliquent uniquement aux nouveaux comptes connectés</string>
   <string name="consumer_key">Clé client</string>
   <string name="consumer_secret">Mot de passe client</string>
   <string name="ignore_ssl_error">Ignorer les erreurs SSL</string>
@@ -184,6 +185,7 @@
   <string name="type_to_compose">Tapez pour composer</string>
   <string name="users_lists">Listes de l\'utilisateur</string>
   <string name="lists_following_user">Liste dont cet utilisateur est membre</string>
+  <string name="lists_following_me">Listes me suivant</string>
   <string name="item_3_minutes">3 minutes</string>
   <string name="item_5_minutes">5 minutes</string>
   <string name="item_10_minutes">10 minutes</string>
@@ -320,8 +322,19 @@
   <string name="action_unblocking">débloquer</string>
   <string name="action_following">abonnement</string>
   <string name="action_unfollowing">désabonnement</string>
+  <string name="action_creating_list">création de liste</string>
+  <string name="action_adding_member">ajout de membre</string>
+  <string name="action_signing_in">connexion</string>
+  <string name="action_retweeting">retweet</string>
+  <string name="action_reporting_for_spam">signalisation comme spam</string>
+  <string name="action_subscribing_to_list">abonnement à la liste</string>
+  <string name="action_unsubscribing_from_list">désabonnement à la liste</string>
+  <string name="action_saving_search">sauvegarde de la recherche</string>
+  <string name="action_deleting_search">suppression de la recherche</string>
+  <string name="action_accepting_follow_request">accepter la demande de suivi</string>
+  <string name="action_denying_follow_request">refuser la demande de suivi</string>
   <string name="status_is_duplicate">Vous avez déjà tweeté ça.</string>
-  <string name="data_profiling_summary">Twidere a participé à une recherche sur la prévision du comportement social de l\'utilisateur au contenu de pré-caching commencé par des étudiants de UC Davis.\n\nVoici les données que nous souhaitons collecter et pourquoi:\n1. Identifiant Twitter de l\'utilisateur\n2. Fil d\'actualité de l\'utilisateur (prévisions basées sur l\'intéret de l\'utilisateur et les interactions sociales)\n3. Le clic de l\'utilisateur sur un tweet (prévisions basées sur l\'intéret de l\'utilisateur et les interactions sociales)\n4. Position géographique (ce qui est bon indicateur lorsque l\'utilisateur accèdera à Twitter)\n\nTwidere n\'envoi les informations collectées seulement quand le Wi-Fi est activé et que l\'appareil est connecté à un chargeur, cela n\'affectera pas votre bande passante et ne videra aps votre batterie.</string>
+  <string name="data_profiling_summary">Twidere a participé à une recherche sur la prévision du comportement social de l\'utilisateur pour mettre en cache les contenus commencé par des étudiants de UC Davis.\n\nVoici les données que nous souhaitons collecter et pourquoi:\n1. Identifiant Twitter de l\'utilisateur\n2. Fil d\'actualité de l\'utilisateur (prévisions basées sur l’intérêt de l\'utilisateur et les interactions sociales)\n3. Le clic de l\'utilisateur sur un tweet (prévisions basées sur l’intérêt de l\'utilisateur et les interactions sociales)\n4. Position géographique (ce qui est bon indicateur lorsque l\'utilisateur accédera à Twitter)\n\nTwidere envoie les informations collectées seulement quand le Wi-Fi est activé et quand l\'appareil est connecté à un chargeur, ainsi cela n\'affectera pas votre bande passante et ne videra pas votre batterie.</string>
   <string name="data_profiling">Statistiques d\'utilisation</string>
   <string name="enable_data_profiling">Activer les rapports</string>
   <string name="data_profiling_notification_ticker">Statistiques Opt in</string>
@@ -356,7 +369,7 @@
   <string name="permission_description_preferences">Lire les paramètres</string>
   <string name="permissions_request">Demande d\'autorisation</string>
   <string name="permissions_request_message">L\'xtension sollicite permissions suivantes</string>
-  <string name="accept">Accepter</string>
+  <string name="accept_permission_request">Accepter</string>
   <string name="no_thanks">Non, merci</string>
   <string name="revoke_permissions">Révoquer les autorisations</string>
   <string name="fast_scroll_thumb">Curseur de défilement plus rapide</string>
@@ -367,21 +380,22 @@
   <string name="phishing_link_warning_message_1">Vous avez ouvert un lien dans un message qui pourrait vous conduire vers un site d\'hameçonnage.\n\nVérifier l\'adresse du site deux fois avant de fournir des informations personnelles.</string>
   <string name="phishing_link_warning_message_2">Êtes-vous sûr de continuer ?</string>
   <string name="image_preload_options">Options de précharge de l\'image</string>
-  <string name="profile_images">Photo de profile</string>
+  <string name="profile_images">Photos de profil</string>
   <string name="preview_images">Prévisualisation des images</string>
   <string name="preload_wifi_only">Précharger seulement en Wi-Fi</string>
   <string name="disable_tab_swipe">Désactiver l\'option glisser de l\'onglet</string>
   <string name="sign_in_method_introduction_title">Comment ça marche ?</string>
-  <string name="sign_in_method_introduction">La plupart des clients comme twicca ouvrent un naviguateur vous demandant nom d\'utilisateur et mot de passe et vous reviennent ensuite revenir à leurs clients. Quelque fois cela peut devenir très gênant.\nTwidere utilise des étapes plus simples pour se connecter, sans ouvrir un naviguateur. Ne vous inquiétez pas pour votre mot de passe, Twidere ne le sauvegarde jamais, c\'est totalement sûr!</string>
+  <string name="sign_in_method_introduction">La plupart des clients comme twicca ouvrent un navigateur vous demandant d\'entre votre nom d\'utilisateur et votre mot de passe, pour ensuite vous ramener à l\'application. Parfois cela peut être très gênant.\n\nTwidere utilise des moyens plus simple pour se connecter, sans ouvrir de navigateur. Ne vous inquiétez pas pour votre mot de passe, Twidere ne l\'enregistrera jamais, c\'est totalement sûr !</string>
   <string name="quote_protected_status_notice">Il n\'est pas recommandé de citer un tweet protégé.</string>
   <string name="edit_draft">Modifier brouillons</string>
-  <string name="profile_image">Photo de profile</string>
-  <string name="my_profile_image">Ma photo de profile</string>
+  <string name="profile_image">Photo de profil</string>
+  <string name="my_profile_image">Ma photo de profil</string>
   <string name="mention_user">Mention <xliff:g id="user">%s</xliff:g></string>
   <string name="theme_color">Couleur du thème</string>
   <string name="wrong_url_format">Format d\'URL érroné.</string>
   <string name="wrong_username_password">Mauvais nom d\'utilisateur/mot de passe.</string>
   <string name="network_error">Erreur réseau.</string>
+  <string name="api_data_corrupted">Données API corrompues.</string>
   <string name="ssl_error">Erreur SSL, vous pouvez avoir besoin d\'activer l\'option \"Ignorer les erreurs SSL\".</string>
   <string name="wrong_api_key">URL de l\'API ou clé client/mot de passe incorrect, merci de vérifier à nouveau.</string>
   <string name="status_updated">Tweet envoyé.</string>
@@ -393,6 +407,9 @@
   <string name="direct_message_sent">Message envoyé.</string>
   <string name="direct_message_deleted">Message supprimé.</string>
   <string name="search_saved">Recherche sauvegardée.</string>
+  <string name="search_name_saved">Recherche \"<xliff:g id="name">%s</xliff:g>\" sauvegardée.</string>
+  <string name="search_deleted">Recherche supprimée.</string>
+  <string name="search_name_deleted">Recherche \"<xliff:g id="name">%s</xliff:g>\" supprimée.</string>
   <string name="import_from">Importer depuis…</string>
   <string name="link_to_quoted_status">Lien vers le tweet cité</string>
   <string name="followed_user">S\'abonner à <xliff:g id="user">%s</xliff:g>.</string>
@@ -408,6 +425,15 @@
   <string name="updated_list_details">Met à jour les détails des listes \"<xliff:g id="list">%s</xliff:g>\".</string>
   <string name="subscribed_to_list">S\'abonne à la liste \"<xliff:g id="list">%s</xliff:g>\".</string>
   <string name="unsubscribed_from_list">Se désabonne de la liste \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="added_N_users_to_list_quantity_one"><xliff:g id="items">%1$d</xliff:g> utilisateur ajouté à la liste "<xliff:g id="list">%2$s</xliff:g>\".</string>
+  <string name="added_N_users_to_list_quantity_other"><xliff:g id="items">%1$d</xliff:g> utilisateurs ajoutés à la liste "<xliff:g id="list">%2$s</xliff:g>\".</string>
+  <string name="added_user_to_list">Utilisateur <xliff:g id="user">%1$s</xliff:g> ajouté à la liste "<xliff:g id="list">%2$s</xliff:g>\".</string>
+  <string name="deleted_user_from_list">Utilisateur <xliff:g id="user">%1$s</xliff:g> supprimé de la liste "<xliff:g id="list">%2$s</xliff:g>\".</string>
+  <string name="deleted_N_users_from_list_quantity_one"><xliff:g id="items">%1$d</xliff:g> utilisateur supprimés de la liste "<xliff:g id="list">%2$s</xliff:g>\".</string>
+  <string name="deleted_N_users_from_list_quantity_other"><xliff:g id="items">%1$d</xliff:g> utilisateurs supprimés de la liste "<xliff:g id="list">%2$s</xliff:g>\".</string>
+  <string name="delete_user_from_list_confirm">Supprimer <xliff:g id="user">%1$s</xliff:g> de la liste "<xliff:g id="list">%2$s</xliff:g>\" ?</string>
+  <string name="delete_N_users_from_list_confirm_quantity_one">Supprimer <xliff:g id="items">%1$d</xliff:g> utilisateur de la liste "<xliff:g id="list">%2$s</xliff:g>\" ?</string>
+  <string name="delete_N_users_from_list_confirm_quantity_other">Supprimer <xliff:g id="items">%1$d</xliff:g> utilisateurs de la liste "<xliff:g id="list">%2$s</xliff:g>\" ?</string>
   <string name="subscribe">S\'abonner</string>
   <string name="unsubscribe">Se désabonner</string>
   <string name="background_toast_notification">Notification de fond</string>
@@ -418,6 +444,7 @@
   <string name="no_close_after_status_updated">Gardez « Composer » ouvert après avoir envoyé le tweet</string>
   <string name="no_close_after_status_updated_summary">Un petit cadeau pour Chatterbox</string>
   <string name="status_saved_to_draft">Tweet sauvegardé dans les brouillons.</string>
+  <string name="default_account">Compte par défault</string>
   <string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g> (<xliff:g id="daily_tweet">%2$d</xliff:g> tweet(s) par jour)</string>
   <string name="empty_content">Contenu vide</string>
   <string name="fast_image_loading">Chargement de l\'image rapide</string>
@@ -434,7 +461,7 @@
   <string name="settings_interface">Interface</string>
   <string name="no_rule">Aucune règle</string>
   <string name="enable_in_mentions">Activer dans les mentions</string>
-  <string name="enable_in_home_timeline">Activer dans le fil d\'actualités</string>
+  <string name="enable_in_home_timeline">Activer dans le fil d\'actualité</string>
   <string name="enable_for_rts">Activer pour les RT</string>
   <string name="safety">Sécurité</string>
   <string name="updating_status_notification">Envoi du tweet…</string>
@@ -451,16 +478,17 @@
   <string name="users_statuses">Tweets de l\'utilisateur</string>
   <string name="card_animation">Animation de la carte</string>
   <string name="name_first">Afficher le nom en premier</string>
+  <string name="next">Suivant</string>
   <string name="settings_wizard">Assistant de configuration</string>
   <string name="wizard_page_welcome_title">Bienvenue</string>
   <string name="wizard_page_welcome_text">Merci d\'avoir choisi Twidere.\nVoulez-vous le configurer maintenant ?</string>
   <string name="wizard_page_welcome_yes">Oui</string>
-  <string name="next">Suivant</string>
-  <string name="wizard_page_welcome_use_default_settings">Utiliser les paramètres par défaut</string>
+  <string name="wizard_page_welcome_not_now">Pas maintenant</string>
   <string name="wizard_page_welcome_import_settings">Importer des paramètres</string>
   <string name="wizard_page_theme_text">Choisissez un thème que vous aimez.</string>
   <string name="wizard_page_tabs_text">Ajouter des onglets à Twidere.\nGarder un œil sur les personnes ou les choses qui vous intéressent.</string>
   <string name="wizard_page_tabs_unchanged_message">Vous pouvez ajouter des onglets dans \"Paramètres\" - \"Onglets personnalisés\"</string>
+  <string name="wizard_page_cards_text">Configurer les objets de la carte.</string>
   <string name="wizard_page_hints_text">Voici quelques conseils utiles.</string>
   <string name="wizard_page_finished_title">Terminé</string>
   <string name="wizard_page_finished_text">Maintenant Twidere est prêt à être utilisé.</string>
@@ -478,12 +506,17 @@
   <string name="delete_user_list_confirm_message">Souhaitez-vous effectivement supprimer la liste <xliff:g id="name">%s</xliff:g> ? Cette opération ne peut pas être annulée.</string>
   <string name="unsubscribe_from_user_list">Se désabonner de la liste <xliff:g id="name">%s</xliff:g></string>
   <string name="unsubscribe_from_user_list_confirm_message">Souhaitez-vous effectivement vous désabonner de la liste <xliff:g id="name">%s</xliff:g> ? Vous pourrez toujours vous réabonner ultérieurement.</string>
+  <string name="delete_saved_search">Supprimer la recherche sauvegardée \"<xliff:g id="name">%s</xliff:g>\"</string>
+  <string name="delete_saved_search_confirm_message">Supprimer la recherche sauvegardée \"<xliff:g id="name">%s</xliff:g>\" ? Vous pouvez la sauvegarder à nouveau d\'ici peu.</string>
+  <string name="signing_in_error_browser_sign_in_hint">Erreur de connexion, vous devriez peut-être utiliser la méthode de connexion par navigateur. (Cela ignorera les préférences d\'API personnalisée pendant la connexion)</string>
   <string name="report_user">Signaler <xliff:g id="name">%s</xliff:g></string>
+  <string name="report_user_confirm_message">Signaler <xliff:g id="name">%s</xliff:g>comme spam ? Vous bloquerez aussi cet utilisateur.</string>
   <string name="twidere_test">Test de Twidere</string>
   <string name="donate_via_paypal">Faire un don via PayPal</string>
   <string name="pay_via_paypal">Payer avec PayPal</string>
   <string name="pay_via_paypal_summary">Quand vous voyez « Ce destinataire n\'a pas le droit recevoir des fonds »</string>
   <string name="donate_via_alipay">Faire un don via Alipay</string>
+  <string name="staggered_home_timeline">Fil d\'actualité décalé</string>
   <string name="unread_count">Messages non-lus</string>
   <string name="developed_by">Développé par</string>
   <string name="project_account">Compte du projet</string>
@@ -494,7 +527,7 @@
   <string name="special_thanks_to">Remerciements spéciaux à</string>
   <string name="contributors_list_summary">Si vous n\'avez pas trouvé votre nom, merci de le signaler au compte du projet.</string>
   <string name="account_options">Options du compte</string>
-  <string name="show_in_timeline">Montrer dans le fil d\'actualités</string>
+  <string name="show_in_timeline">Montrer dans le fil d\'actualité</string>
   <string name="cards">Cartes</string>
   <string name="no_tab_hint">Aucun onglet</string>
   <string name="delete_user">Supprimer l\'utilisateur <xliff:g id="name">%s</xliff:g></string>
@@ -502,6 +535,7 @@
   <string name="delete_user_confirm_message">Souhaitez-vous effectivement supprimer <xliff:g id="name">%s</xliff:g> ? Cette opération ne peut pas être annulée.</string>
   <string name="toggle">Basculer</string>
   <string name="general">Général</string>
+  <string name="hints">Indices</string>
   <string name="finish">Terminer</string>
   <string name="theme_background">Thème de l\'arrière-plan</string>
   <string name="theme_background_default">Par défaut</string>
@@ -509,6 +543,17 @@
   <string name="theme_background_transparent">Transparent</string>
   <string name="theme_dark_actionbar">«ActionBar» sombre</string>
   <string name="wizard_hint_compose_select_account">Cliquer ce cette icône lorsque vous écrivez un tweet pour séléctionner le compte.</string>
+  <string name="wizard_hint_quote_format">Configurer le format de citation favori dans \"Paramètres\" - \"Contenu &amp; Stockage\"</string>
+  <string name="wizard_hint_filters">Vous pouvez cacher les tweets indésirables du fil d\'actualité et des notifications en utilisant les \"Filtres\".</string>
+  <string name="view_replies">Voir les réponses</string>
+  <string name="compact_cards">Cartes compactes</string>
+  <string name="compact_cards_summary">Afficher plus de cartes à l\'écran</string>
+  <string name="dashclock_home_unread_count_name">Décompte de tweets non-lus dans Twidere</string>
+  <string name="dashclock_home_unread_count_description">Décompte de tweets non-lus</string>
+  <string name="dashclock_mentions_unread_count_name">Décompte de mentions non-lues dans Twidere</string>
+  <string name="dashclock_mentions_unread_count_description">Décompte de mentions non-lues</string>
+  <string name="dashclock_messages_unread_count_name">Décompte de messages privés non-lus dans Twidere</string>
+  <string name="dashclock_messages_unread_count_description">Décompte de messages privés non-lus</string>
   <string name="N_new_statuses_quantity_one"><xliff:g id="items">%d</xliff:g> nouveau tweet</string>
   <string name="N_new_statuses_quantity_other"><xliff:g id="items">%d</xliff:g> nouveaux tweets</string>
   <string name="N_new_mentions_quantity_one"><xliff:g id="items">%d</xliff:g> nouvelle mention</string>
@@ -517,13 +562,35 @@
   <string name="N_new_messages_quantity_other"><xliff:g id="items">%d</xliff:g> nouvelles conversations</string>
   <string name="share_subject_format"><xliff:g id="name">%1$s</xliff:g> (@<xliff:g id="screen_name">%2$s</xliff:g>), à <xliff:g id="time">%3$s</xliff:g></string>
   <string name="rate_limit">Taux limite</string>
+  <string name="wizard_hint_rate_limit">Si vous avez rencontré des problèmes de limite, ne me blâmez pas mais la politique de Twitter.</string>
   <string name="preparing_database">Préparation de la base de données</string>
   <string name="preparing_database_toast">Préparation de la base de données, merci de patienter quelques instants.</string>
   <string name="action_name_saved_at_time"><xliff:g id="action">%1$s</xliff:g>, sauvegardé à <xliff:g id="time">%2$s</xliff:g></string>
   <string name="update_status">Tweeter</string>
   <string name="sending_direct_message">Envoi du message privé</string>
+  <string name="tab_display_option">Option d\'affichage de l\'onglet</string>
+  <string name="livewp_daydream_enabled_message">Voici un petit cadeau pour vous, trouvez le dans vos paramètres du système :)</string>
   <string name="center">Centre</string>
   <string name="multi_select">Sélection multiple</string>
+  <string name="long_click_to_open_menu">Pression longue pour ouvrir le menu</string>
+  <string name="swipe_back">Glisser pour fermer</string>
   <string name="tab_display_option_icon">Icône</string>
-  <string name="tab_display_option_both">Les deux</string>
+  <string name="tab_display_option_label">Label</string>
+  <string name="tab_display_option_icon_and_label">Icône et étiquette</string>
+  <string name="highlight_and_underline">Mettre en évidence et souligner</string>
+  <string name="twip_api_version_notice_message">TWIP ne gère pas les URL REST qui ne terminant pas par \"/1.1/3.\n\n Vous devriez ajouter \"/1.1/\" à la fin de l\'URL REST pour éviter les problèmes en téléversant des images.</string>
+  <string name="back">Retour</string>
+  <string name="theme_font_family">Famille de polices du thème</string>
+  <string name="translation_destination">Langue de traduction</string>
+  <string name="accept">Accepter</string>
+  <string name="deny">Refuser</string>
+  <string name="accepted_users_follow_request">Demande de suivi de <xliff:g id="user">%s</xliff:g> acceptée.</string>
+  <string name="denied_users_follow_request">Demande de suivi de <xliff:g id="user">%s</xliff:g> refusée.</string>
+  <string name="import_settings">Importation des paramètres</string>
+  <string name="export_settings">Exportation des paramètres</string>
+  <string name="export_settings_type_dialog_title">Exportation des paramètres…</string>
+  <string name="import_settings_type_dialog_title">Importation des paramètres…</string>
+  <string name="nicknames">Surnoms</string>
+  <string name="user_colors">Couleurs utilisateur</string>
+  <string name="import_export">Importer / Exporter</string>
 </resources>

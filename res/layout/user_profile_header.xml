@@ -4,13 +4,12 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content">
 
-	<LinearLayout
+	<org.mariotaku.twidere.view.CardItemLinearLayout
 		android:id="@+id/card"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_margin="8dp"
-		android:background="?cardItemBackground"
 		android:orientation="vertical"
+		android:padding="@dimen/element_spacing_default"
 		android:splitMotionEvents="false">
 
 		<FrameLayout
@@ -258,7 +257,7 @@
 					android:textColor="?android:textColorSecondary"/>
 			</LinearLayout>
 		</LinearLayout>
-	</LinearLayout>
+	</org.mariotaku.twidere.view.CardItemLinearLayout>
 
 	<org.mariotaku.twidere.view.ListMenuOverflowButton
 		android:id="@+id/more_options"

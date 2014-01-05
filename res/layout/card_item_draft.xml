@@ -37,7 +37,7 @@
 			android:background="#40808080"/>
 	</org.mariotaku.twidere.view.ImagePreviewContainer>
 
-	<TextView
+	<org.mariotaku.twidere.view.themed.ThemedTextView
 		android:id="@+id/text"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
@@ -49,7 +49,7 @@
 		android:textAppearance="?android:textAppearanceSmall"
 		android:textColor="?android:textColorPrimary"/>
 
-	<TextView
+	<org.mariotaku.twidere.view.themed.ThemedTextView
 		android:id="@+id/time"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"

@@ -32,6 +32,7 @@
   <string name="error_occurred">A ocurrido un error, inténtelo de nuevo.</string>
   <string name="error_already_logged_in">Ya estás logeado.</string>
   <string name="no_account_selected">No se seleccionó ninguna cuenta.</string>
+  <string name="empty_account_selection_disallowed">Selecciona al menos una cuenta.</string>
   <string name="error_unknown_error">Error: Error desconocido, esto es probablemente un bug.</string>
   <string name="error_message">Error: <xliff:g id="message">%s</xliff:g></string>
   <string name="error_message_with_action">Error durante <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
@@ -66,6 +67,7 @@
   <string name="open_source_license">Licencia de código abierto</string>
   <string name="api">API</string>
   <string name="default_api_settings">Configuración predeterminada de la IPA (API)</string>
+  <string name="default_api_settings_summary">La configuración afecta sólo a nuevas cuentas en las que inicies sesión</string>
   <string name="consumer_key">Clave del consumidor</string>
   <string name="consumer_secret">Secreto de consumidor</string>
   <string name="ignore_ssl_error">Ignorar Error SSL</string>
@@ -183,6 +185,7 @@
   <string name="type_to_compose">Escriba para componer</string>
   <string name="users_lists">Listas del usuario</string>
   <string name="lists_following_user">Listas que siguen a este usuario</string>
+  <string name="lists_following_me">Listas en las que estoy</string>
   <string name="item_3_minutes">3 minutos</string>
   <string name="item_5_minutes">5 minutos</string>
   <string name="item_10_minutes">10 minutos</string>
@@ -215,7 +218,7 @@
   <string name="edit_tab">Editar pestaña</string>
   <string name="move_up">Desplazar hacia arriba</string>
   <string name="move_down">Desplazar hacia abajo</string>
-  <string name="unsaved_change_back_pressed">Tiene cambios sin guardar, presione atrás nuevamente para salir.</string>
+  <string name="unsaved_change_back_pressed">Tiene cambios sin guardar, presione ATRÁS nuevamente para descartar.</string>
   <string name="invalid_settings">Se encontraron ajustes no válidos.</string>
   <string name="icon">Icono</string>
   <string name="pick_file">Selecciona el archivo</string>
@@ -327,6 +330,9 @@
   <string name="action_subscribing_to_list">suscribiéndose a la lista</string>
   <string name="action_unsubscribing_from_list">Darse de baja de la lista</string>
   <string name="action_saving_search">Guardando búsqueda</string>
+  <string name="action_deleting_search">borrando búsqueda</string>
+  <string name="action_accepting_follow_request">aceptando solicitud de seguimiento</string>
+  <string name="action_denying_follow_request">rechazando petición de seguimiento</string>
   <string name="status_is_duplicate">Tu tuit está duplicado.</string>
   <string name="data_profiling_summary">Twidere participó en una investigación sobre predicción del comportamiento social de los usuarios para pre-cachear contenido compartido por los estudiantes de la UC Davis.\n\nEstos son los datos que queríamos recopilar y el por qué:\nDatos recopilados:\n1. ID de usuario de Twitter\n2. Timeline principal del usuario (predicción basada en los intereses del usuario e interacción social)\n3. Clicks de usuario en un tweet (predicción basada en los intereseses del usuario e interacción social)\n4. Localización básica (buena para predecir cuándo un usuario accederá a Twitter)\n\nTwidere subirá los datos recopilados sólo cuando una conexión WiFi esté disponible y tu dispositivo esté conectado a la corriente, de manera que no te supondrá costes adicionales por consumo extra de ancho de banda o consumo de batería.</string>
   <string name="data_profiling">Estadísticas de uso</string>
@@ -363,7 +369,7 @@
   <string name="permission_description_preferences">Leer configuraciones</string>
   <string name="permissions_request">Petición de permisos</string>
   <string name="permissions_request_message">Una extensión necesita los siguientes permisos</string>
-  <string name="accept">Aceptar</string>
+  <string name="accept_permission_request">Aceptar</string>
   <string name="no_thanks">No, gracias</string>
   <string name="revoke_permissions">Quitar permisos</string>
   <string name="fast_scroll_thumb">Deslizador rápido</string>
@@ -379,7 +385,7 @@
   <string name="preload_wifi_only">Precargar solo con Wi-Fi</string>
   <string name="disable_tab_swipe">Desactivar el cambio de pestañas deslizando el dedo por la pantalla</string>
   <string name="sign_in_method_introduction_title">¿Cómo funciona?</string>
-  <string name="sign_in_method_introduction">La mayoría de los clientes como twicca abren un navegador solicitando que escribas el nombre de usuario y la contraseña y luego el navegador te devuelve al cliente. A veces esto puede llegar a ser muy inconveniente. \n Twidere usa unos pasos más simples para iniciar sesión, sin abrir el navegador. No te preocupes por tu contraseña, Twidere nunca la almacenará, ¡es totalmente seguro!</string>
+  <string name="sign_in_method_introduction">La mayoría de los clientes como twicca abren un navegador solicitando que escribas el nombre de usuario y la contraseña, después el navegador te devuelve al cliente. A veces esto puede llegar a ser muy inconveniente. \n\n Twidere usa unos pasos más simples para iniciar sesión, sin abrir el navegador. No te preocupes por tu contraseña, Twidere nunca la almacenará, ¡es totalmente seguro!</string>
   <string name="quote_protected_status_notice">No se recomienda citar un tuit protegido.</string>
   <string name="edit_draft">Editar borrador</string>
   <string name="profile_image">Imagen de perfil</string>
@@ -389,6 +395,7 @@
   <string name="wrong_url_format">El formato del URL es incorrecto.</string>
   <string name="wrong_username_password">Usuario/contraseña incorrectos.</string>
   <string name="network_error">Error de red.</string>
+  <string name="api_data_corrupted">datos de la API dañados.</string>
   <string name="ssl_error">Error de SSL. Posiblemente necesites activar la opción \"Ignorar errores SSL\".</string>
   <string name="wrong_api_key">API url incorrecta o clave de consumidor/secreta, por favor, compruébalo de nuevo.</string>
   <string name="status_updated">Tuit enviado.</string>
@@ -467,12 +474,11 @@
   <string name="users_statuses">Tuits de los usuarios</string>
   <string name="card_animation">Tarjeta animada</string>
   <string name="name_first">Nombre primero</string>
+  <string name="next">Siguiente</string>
   <string name="settings_wizard">Asistente de configuración</string>
   <string name="wizard_page_welcome_title">Bienvenido</string>
   <string name="wizard_page_welcome_text">Gracias por escoger Twidere.\n¿Quieres configurarlo ahora?</string>
   <string name="wizard_page_welcome_yes">Si</string>
-  <string name="next">Siguiente</string>
-  <string name="wizard_page_welcome_use_default_settings">Usa configuración predeterminada</string>
   <string name="wizard_page_welcome_import_settings">Importar configuración</string>
   <string name="wizard_page_theme_text">Selecciona el tema que te gusta.</string>
   <string name="wizard_page_tabs_text">Añade algunas pestañas a Twidere.\nLleva un registro de las personas o las cosas que te importan.</string>
@@ -532,6 +538,7 @@
   <string name="wizard_hint_compose_select_account">Cliquear este icono para seleccionar una cuenta al escribir un tweet.</string>
   <string name="wizard_hint_quote_format">Configure su cita favorita en \"Configuración\" - \"Contenido &amp; Almacenamiento\"</string>
   <string name="wizard_hint_filters">Puede ocultar tweet indeseados de su timeline y notificaciones usando \"Filtros\".</string>
+  <string name="view_replies">Ver respuestas</string>
   <string name="compact_cards">Tarjetas compactas</string>
   <string name="compact_cards_summary">Visualizar en pantalla más tarjetas</string>
   <string name="dashclock_home_unread_count_name">Cantidad en inicio de Twidere sin leer</string>
@@ -556,4 +563,20 @@
   <string name="sending_direct_message">Enviando mensaje directo</string>
   <string name="livewp_daydream_enabled_message">Un regalito para ti, encontralo en la configuraciones del sistema :)</string>
   <string name="center">Centro</string>
+  <string name="multi_select">Selección múltiple</string>
+  <string name="tab_display_option_icon">Icono</string>
+  <string name="tab_display_option_label">Etiqueta</string>
+  <string name="tab_display_option_icon_and_label">Icono y etiqueta</string>
+  <string name="highlight_and_underline">Resaltar y subrayar</string>
+  <string name="theme_font_family">Familia tipográfica del tema</string>
+  <string name="translation_destination">Destino de la traducción</string>
+  <string name="accept">Aceptar</string>
+  <string name="deny">Denegar</string>
+  <string name="import_settings">Importar ajustes</string>
+  <string name="export_settings">Exportar ajustes</string>
+  <string name="export_settings_type_dialog_title">Exportar ajustes…</string>
+  <string name="import_settings_type_dialog_title">Importar ajustes…</string>
+  <string name="nicknames">Apodos</string>
+  <string name="user_colors">Colores de usuario</string>
+  <string name="import_export">Importar/exportar</string>
 </resources>

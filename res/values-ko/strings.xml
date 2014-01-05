@@ -14,10 +14,10 @@
   <string name="status_hint">무슨 일이 일어나고 있나요?</string>
   <string name="sign_up">가입</string>
   <string name="sign_in">로그인</string>
-  <string name="rest_base_url">REST을 기반 URL</string>
+  <string name="rest_base_url">REST 기반 URL</string>
   <string name="oauth_base_url">OAuth 기반 URL</string>
-  <string name="signing_oauth_base_url">OAuth 기반 URL에 서명</string>
-  <string name="signing_rest_base_url">REST 기반 URL에 서명</string>
+  <string name="signing_oauth_base_url">OAuth 기반 URL에 로그인</string>
+  <string name="signing_rest_base_url">REST 기반 URL에 로그인</string>
   <string name="auth_type">인증 유형</string>
   <string name="oauth">OAuth</string>
   <string name="xauth">xAuth</string>
@@ -31,7 +31,7 @@
   <string name="mentions">멘션</string>
   <string name="error_occurred">다시 실행해 주세요. 오류가 발생했습니다.</string>
   <string name="error_already_logged_in">이미 로그인 했습니다.</string>
-  <string name="no_account_selected">선택된 계정이 없습니다.</string>
+  <string name="no_account_selected">계정이 선택되지 않았습니다.</string>
   <string name="empty_account_selection_disallowed">최소한 1개의 계정을 선택해 주십시오.</string>
   <string name="error_unknown_error">오류: 버그로 추정되는 알 수 없는 오류입니다.</string>
   <string name="error_message">오류: <xliff:g id="message">%s</xliff:g></string>
@@ -42,7 +42,7 @@
   <string name="username">사용자명</string>
   <string name="password">패스워드</string>
   <string name="label_tweetstore_provider">Twidere 데이터베이스 공급자</string>
-  <string name="label_refresh_service">서비스 새로 고침</string>
+  <string name="label_refresh_service">서비스 새로고침</string>
   <string name="label_background_operation_service">백그라운드 동작 서비스</string>
   <string name="open_in_browser">브라우저에서 열기</string>
   <string name="tap_to_load_more">더 보기</string>
@@ -62,17 +62,18 @@
   <string name="pick_from_gallery">갤러리에서 선택</string>
   <string name="statuses">트윗</string>
   <string name="followers">팔로워</string>
-  <string name="following">팔로잉 중</string>
+  <string name="following">팔로잉</string>
   <string name="about">정보</string>
   <string name="open_source_license">오픈 소스 라이센스</string>
   <string name="api">API</string>
   <string name="default_api_settings">기본 API 설정</string>
+  <string name="default_api_settings_summary">이 설정은 다시 로그인해야만 적용됩니다.</string>
   <string name="consumer_key">컨슈머 키</string>
   <string name="consumer_secret">컨슈머 시크릿</string>
   <string name="ignore_ssl_error">SSL 오류 무시</string>
   <string name="ignore_ssl_error_summary">SSL 에러를 무시합니다. 커스텀 API 서버에 문제가 있을 경우 체크해 주십시오.</string>
   <string name="gzip_compressing">GZip 압축</string>
-  <string name="gzip_compressing_summary">모든 API 요청을 압축하여 데이터 사용량을 적게 할 수 있지만, 일부 API가 동작하지 않을 수 있습니다.</string>
+  <string name="gzip_compressing_summary">모든 API 요청을 압축하여 데이터 사용량을 줄일 수 있지만, 일부 API가 동작하지 않을 수 있습니다.</string>
   <string name="storage">저장소</string>
   <string name="database_item_limit">데이터베이스 크기 제한</string>
   <string name="database_item_limit_summary">각 계정의 데이터 베이스에 저장하는 항목의 제한 제한 개수입니다. 작은 값으로 설정하면 읽어들이는 속도를 빠르게 합니다.</string>
@@ -88,7 +89,7 @@
   <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g>님 외 <xliff:g id="retweet_count">%2$d</xliff:g>명이 리트윗했습니다.</string>
   <string name="retweeted_by_count"><xliff:g id="retweet_count">%d</xliff:g>명이 리트윗했습니다.</string>
   <string name="users_retweeted_this">리트윗한 사용자</string>
-  <string name="reply_to"><xliff:g id="user_name">%s</xliff:g>님에게 답글</string>
+  <string name="reply_to"><xliff:g id="user_name">%s</xliff:g>님에게 답하기</string>
   <string name="quote_user"><xliff:g id="user_name">%s</xliff:g>님을 인용하기</string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, <xliff:g id="source">%2$s</xliff:g>에서</string>
   <string name="source"><xliff:g id="source"> %s </xliff:g>을(를) 통해</string>
@@ -109,9 +110,9 @@
   <string name="bottom_compose_button_summary">작성 버튼을 아래로 옮깁니다. 화면이 크다면 설정하십시오.</string>
   <string name="leftside_compose_button">좌측 작성 버튼</string>
   <string name="leftside_compose_button_summary">작성 버튼을 왼쪽으로 옮깁니다.</string>
-  <string name="bottom_send_button">전송 버튼 아래에 두기</string>
-  <string name="load_item_limit">로드 항목 제한</string>
-  <string name="load_item_limit_summary">로드할 항목의 제한을 설정합니다.</string>
+  <string name="bottom_send_button">\"전송\" 버튼 아래에 두기</string>
+  <string name="load_item_limit">읽어들일 항목 제한</string>
+  <string name="load_item_limit_summary">읽어들일 개수를 설정합니다.</string>
   <string name="load_more_automatically">더 많은 콘텐츠를 자동으로 로드</string>
   <string name="load_more_automatically_summary">추가적인 컨텐츠(사진,지도 등)을 자동으로 로드</string>
   <string name="quote">인용</string>
@@ -165,7 +166,7 @@
   <string name="other_settings">기타 설정</string>
   <string name="auto_refresh">자동 새로고침</string>
   <string name="refresh_interval">새로고침 간격</string>
-  <string name="content_to_refresh">새로고침할 콘텐츠</string>
+  <string name="content_to_refresh">새로고칠 콘텐츠</string>
   <string name="content_to_notify">알림할 내용</string>
   <string name="notifications_type">알림 유형</string>
   <string name="sound">소리</string>
@@ -176,14 +177,15 @@
   <string name="screen_name">사용자 이름</string>
   <string name="refresh_on_start">시작할 때 새로고침</string>
   <string name="refresh_on_start_summary">시작할 때 타임라인과 멘션 새로고침.</string>
-  <string name="refresh_after_status_updated">트윗을 보낸 후 새로고침하기</string>
-  <string name="refresh_after_status_updated_summary">트윗을 보낸 후 타임라인과 멘션을 새로고침합니다.</string>
+  <string name="refresh_after_status_updated">트윗을 보낸 후 새로고침</string>
+  <string name="refresh_after_status_updated_summary">트윗을 보낸 후 타임라인과 멘션을 새로고칩니다.</string>
   <string name="list_timeline">타임라인 목록</string>
   <string name="list_members">멤버 목록</string>
   <string name="list_subscribers">구독자 목록</string>
   <string name="type_to_compose">작성 유형</string>
-  <string name="users_lists">구독중 리스트</string>
+  <string name="users_lists">사용자 리스트</string>
   <string name="lists_following_user">멤버인 리스트</string>
+  <string name="lists_following_me">멤버인 리스트</string>
   <string name="item_3_minutes">3분</string>
   <string name="item_5_minutes">5분</string>
   <string name="item_10_minutes">10분</string>
@@ -193,7 +195,7 @@
   <string name="item_2_hours">2시간</string>
   <string name="item_4_hours">4시간</string>
   <string name="display_image_preview">이미지 미리보기 표시</string>
-  <string name="following_you">당신을 팔로우하고 있습니다.</string>
+  <string name="following_you">당신을 팔로우합니다.</string>
   <string name="user_list">리스트</string>
   <string name="user_lists">리스트</string>
   <string name="trends_location">관심사 위치</string>
@@ -229,29 +231,29 @@
   <string name="content_and_storage">콘텐츠 및 저장</string>
   <string name="image_uploader">이미지 업로더</string>
   <string name="image_uploader_default">기본 (Twitter)</string>
-  <string name="home_refresh">타임라인 에서 새로고침</string>
+  <string name="home_refresh">타임라인에서 새로고침</string>
   <string name="error_message_image_upload_failed">이미지 업로드 실패.</string>
-  <string name="error_message_image_uploader_not_found">이미지 업로더를 찾을 수 없습니다. 아마도 그건 삭제 되었을껍니다.</string>
-  <string name="image_upload_format">트윗 양식과 이미지</string>
-  <string name="image_upload_format_summary">\"[LINK]\" = 이미지 주소\n\"[TEXT]\" = 트윗할 내용\n(Extension only)</string>
-  <string name="tweet_shortener">트윗 축약서비스</string>
+  <string name="error_message_image_uploader_not_found">이미지 업로더를 찾을 수 없습니다. 아마도 삭제되었을겁니다.</string>
+  <string name="image_upload_format">이미지를 올릴 때 양식</string>
+  <string name="image_upload_format_summary">\"[LINK]\" = 이미지 주소\n\"[TEXT]\" = 트윗할 내용\n(플러그인에서만)</string>
+  <string name="tweet_shortener">트윗 축약 서비스</string>
   <string name="tweet_shortener_default">없음 (전송 취소)</string>
   <string name="error_message_status_too_long">트윗이 너무 깁니다. </string>
   <string name="error_message_no_content">내용 없음</string>
-  <string name="error_message_tweet_shorten_failed">트윗 축소 실패.</string>
-  <string name="error_message_tweet_shortener_not_found">트윗 축약 서비스를 찾을 수 없습니다. 아마도 그건 삭제 되었을껍니다.</string>
+  <string name="error_message_tweet_shorten_failed">트윗 축약 실패.</string>
+  <string name="error_message_tweet_shortener_not_found">트윗 축약 서비스를 찾을 수 없습니다. 아마도 삭제 되었을겁니다.</string>
   <string name="multimedia_contents">멀티미디어 콘텐츠</string>
   <string name="show_absolute_time">절대시간 표시</string>
   <string name="show_absolute_time_summary">트윗에 절대시간 표시</string>
-  <string name="user_mentions">사용자 멘션</string>
+  <string name="user_mentions">멘션</string>
   <string name="dual_pane_layout">듀얼 패널 레이아웃</string>
   <string name="landscape">가로</string>
   <string name="portrait">세로</string>
-  <string name="quick_send">\"Enter\" 키를 눌러 전송하기</string>
+  <string name="quick_send">\"Enter\" 키를 눌러 보내기</string>
   <string name="quick_send_summary">\"Enter\" 키를 눌러 트윗을 보내세요.</string>
   <string name="unsaved_status">트윗이 전송되지 않았거나 이미 저장되어 있습니다.</string>
   <string name="discard">지우기</string>
-  <string name="Nitems_selected_quantity_one">1개의 항목 선택</string>
+  <string name="Nitems_selected_quantity_one">1개 항목 선택</string>
   <string name="Nitems_selected_quantity_other">선택된 항목 <xliff:g id="items">%d</xliff:g></string>
   <string name="view">보기</string>
   <string name="custom_host_mapping">커스텀 호스트 매핑</string>
@@ -263,37 +265,37 @@
   <string name="tcp_dns_query_summary">TCP 프로토콜로 DNS 요청을 통신하고 DNS 캐시의 오염을 막습니다.</string>
   <string name="dns_server">DNS 서버</string>
   <string name="dns_server_summary">API 요청을 위해 DNS 서버를 설정합니다.</string>
-  <string name="activities_about_me">내게 보인 활동</string>
-  <string name="activities_by_friends">친구의 활동</string>
+  <string name="activities_about_me">내게 보인 반응</string>
+  <string name="activities_by_friends">친구의 반응</string>
   <string name="activity_about_me_favorite"><xliff:g id="user">%s</xliff:g>님이 당신의 트윗을 관심글로 지정하였습니다.</string>
   <string name="activity_about_me_favorite_multi"><xliff:g id="user">%s</xliff:g> 외 <xliff:g id="count">%d</xliff:g> 명이 당신의 트윗을 관심글로 지정하였습니다.</string>
   <string name="activity_about_me_follow"><xliff:g id="user">%s</xliff:g>님이 당신을 팔로우합니다.</string>
-  <string name="activity_about_me_follow_multi"><xliff:g id="user">%s</xliff:g> 외 <xliff:g id="count">%d</xliff:g> 명이 당신을 팔로우합니다.</string>
+  <string name="activity_about_me_follow_multi"><xliff:g id="user">%s</xliff:g> 외 <xliff:g id="count">%d</xliff:g>명이 당신을 팔로우합니다.</string>
   <string name="activity_about_me_retweet"><xliff:g id="user">%s</xliff:g>님이 당신의 트윗을 리트윗하였습니다.</string>
   <string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g>님 외 <xliff:g id="count">%d</xliff:g>명이 당신의 트윗을 리트윗하였습니다.</string>
   <string name="activity_about_me_list_member_added"><xliff:g id="user">%s</xliff:g>님이 당신을 리스트에 추가하였습니다.</string>
   <string name="activity_about_me_list_member_added_with_name"><xliff:g id="user">%1$s</xliff:g>님이 당신을 "<xliff:g id="list">%2$s</xliff:g>\"\" 리스트에 추가했습니다.</string>
   <string name="activity_about_me_list_member_added_multi"><xliff:g id="user">%s</xliff:g>님 외 <xliff:g id="count">%d</xliff:g>님이 당신을 리스트에 추가하였습니다.</string>
   <string name="activity_by_friends_favorite"><xliff:g id="user">%1$s</xliff:g>님이 <xliff:g id="target">%2$s</xliff:g>님의 트윗을 관심글로 지정하였습니다.</string>
-  <string name="activity_by_friends_favorite_multi"><xliff:g id="user">%1$s</xliff:g>님이 <xliff:g id="target">%2$s</xliff:g> 외 <xliff:g id="count">%3$d</xliff:g> 명의 트윗을 관심글로 지정하였습니다.</string>
-  <string name="activity_by_friends_follow"><xliff:g id="user">%1$s</xliff:g>님이 <xliff:g id="target">%2$s</xliff:g> 님을 팔로우합니다.</string>
-  <string name="activity_by_friends_follow_multi"><xliff:g id="user">%1$s</xliff:g>님이 <xliff:g id="target">%2$s</xliff:g> 외 <xliff:g id="count">%3$d</xliff:g> 명을 팔로우합니다.</string>
-  <string name="activity_by_friends_retweet"><xliff:g id="user">%1$s</xliff:g>님이 <xliff:g id="target">%2$s</xliff:g> 님의 트윗을 리트윗했습니다.</string>
+  <string name="activity_by_friends_favorite_multi"><xliff:g id="user">%1$s</xliff:g>님이 <xliff:g id="target">%2$s</xliff:g> 외 <xliff:g id="count">%3$d</xliff:g>명의 트윗을 관심글로 지정하였습니다.</string>
+  <string name="activity_by_friends_follow"><xliff:g id="user">%1$s</xliff:g>님이 <xliff:g id="target">%2$s</xliff:g>님을 팔로우합니다.</string>
+  <string name="activity_by_friends_follow_multi"><xliff:g id="user">%1$s</xliff:g>님이 <xliff:g id="target">%2$s</xliff:g> 외 <xliff:g id="count">%3$d</xliff:g>명을 팔로우합니다.</string>
+  <string name="activity_by_friends_retweet"><xliff:g id="user">%1$s</xliff:g>님이 <xliff:g id="target">%2$s</xliff:g>님의 트윗을 리트윗했습니다.</string>
   <string name="activity_by_friends_list_member_added"><xliff:g id="user">%1$s</xliff:g>님이 <xliff:g id="target">%2$s</xliff:g> 님을 리스트에 추가했습니다.</string>
   <string name="activity_by_friends_list_created"><xliff:g id="user">%1$s</xliff:g>님이 <xliff:g id="target">%2$s</xliff:g> 리스트를 만들었습니다.</string>
-  <string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g>님이 <xliff:g id="target">%2$s</xliff:g> 리스트 등 <xliff:g id="count">%3$d</xliff:g> 개를 만들었습니다.</string>
-  <string name="status_not_updated">트윗이 전송되지 않았습니다.</string>
-  <string name="status_not_updated_summary">트윗이 전송되지 않아 보관함에 저장되었습니다.</string>
-  <string name="incoming_friendships">받은 팔로우 요청</string>
+  <string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g>님이 <xliff:g id="target">%2$s</xliff:g> 리스트 등 <xliff:g id="count">%3$d</xliff:g>개를 만들었습니다.</string>
+  <string name="status_not_updated">트윗이 보내지지 않았습니다.</string>
+  <string name="status_not_updated_summary">트윗이 보내지지 않아 보관함에 저장되었습니다.</string>
+  <string name="incoming_friendships">보류한 팔로우 요청</string>
   <string name="send_follow_request">팔로우 요청 보내기</string>
   <string name="follow_request_sent">팔로우 요청을 보냄</string>
   <string name="separate_retweet_action">리트윗 활동 분리</string>
-  <string name="separate_retweet_action_summary">리트윗과 인용 모두를 트윗 메뉴에 표시합니다.</string>
+  <string name="separate_retweet_action_summary">트윗 메뉴에서 리트윗과 인용 메뉴를 함께 표시합니다.</string>
   <string name="status">트윗</string>
   <string name="preview">미리보기</string>
   <string name="connection_timeout">연결시간 초과</string>
   <string name="both">모두</string>
-  <string name="browser_sign_in">브라우저로 로그인하기</string>
+  <string name="browser_sign_in">브라우저로 로그인</string>
   <string name="stop_auto_refresh_when_battery_low">배터리가 부족할 때 자동 새로고침 멈춤</string>
   <string name="notification_status"><xliff:g id="user">%s</xliff:g>님의 새로운 트윗</string>
   <string name="notification_status_multiple"><xliff:g id="user">%1$s</xliff:g>님과 <xliff:g id="count">%2$d</xliff:g>님 등의 새로운 트윗</string>
@@ -301,7 +303,7 @@
   <string name="notification_mention_multiple"><xliff:g id="user">%1$s</xliff:g>님 등 <xliff:g id="count">%2$d</xliff:g>명이 멘션을 보냈습니다.</string>
   <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g>님이 쪽지를 보냈습니다.</string>
   <string name="notification_direct_message_multiple_messages"><xliff:g id="user">%1$s</xliff:g>님 등 <xliff:g id="messages_count">%2$d</xliff:g>명이 쪽지를 보냈습니다.</string>
-  <string name="notification_direct_message_multiple_users"><xliff:g id="user">%1$s</xliff:g> 님등 <xliff:g id="users_count">%2$d</xliff:g>명이 <xliff:g id="messages_count">%3$d</xliff:g>개 쪽지를 보냈습니다.</string>
+  <string name="notification_direct_message_multiple_users"><xliff:g id="user">%1$s</xliff:g>님 등 <xliff:g id="users_count">%2$d</xliff:g>명이 <xliff:g id="messages_count">%3$d</xliff:g>개 쪽지를 보냈습니다.</string>
   <string name="action_getting_status">트윗을 불러오는 중</string>
   <string name="action_updating_status">트윗을 보내는 중</string>
   <string name="action_sending_direct_message">쪽지를 보내는 중</string>
@@ -329,6 +331,8 @@
   <string name="action_unsubscribing_from_list">리스트  구독 취소하는 중</string>
   <string name="action_saving_search">검색어 저장하는 중</string>
   <string name="action_deleting_search">검색어 삭제 중</string>
+  <string name="action_accepting_follow_request">팔로우 요청 수락하는 중</string>
+  <string name="action_denying_follow_request">팔로우 요청 거부하는 중</string>
   <string name="status_is_duplicate">이미 올린 트윗입니다.</string>
   <string name="data_profiling_summary">Twidere 는 캘리포니아 대학 데비스 캠퍼스에서 SNS 상의 행동 조사에 협력하고 있습니다.\n\n필요한 데이터와 그 이유는 다음과 같습니다.\n수집 데이터:\n1. 사용자 트위터 ID\n2. 사용자 타임라인(사용자와 소셜 동향을 조사하는 목적).\n3. 유저 트윗 상의 탭(사용자와 소셜 동향을 조사하는 목적).\n4. 대략적인 위치 정보(언제 사용자가 트위터에 접속하는가 조사하기 위해)\n\nTwidere는 와이파이에 접속되고 충전하고 있을 때만 데이터를 보내므로 쓸데없는 통신을 하거나 배터리를 소비하지 않습니다.</string>
   <string name="data_profiling">사용 통계</string>
@@ -337,7 +341,7 @@
   <string name="data_profiling_notification_title">사용 통계</string>
   <string name="data_profiling_notification_desc">사용 통계 켬/끔</string>
   <string name="silent_notifications">조용한 알림</string>
-  <string name="silent_notifications_summary">알림시 알림 소리/진동 해제</string>
+  <string name="silent_notifications_summary">알림시 소리/진동 해제</string>
   <string name="disable_background_service">백그라운드 서비스 사용 안함</string>
   <string name="disable_background_service_summary">자동 갱신과 익명 데이터 전송을 사용하지 않으면 Twidere는 백그라운드 서비스를 수행하지 않습니다. 주의하세요!</string>
   <string name="text_copied">클립보드로 복사되었습니다.</string>
@@ -348,7 +352,7 @@
   <string name="edit_profile">프로필 수정</string>
   <string name="display_sensitive_contents">민감한 컨텐츠 표시</string>
   <string name="display_sensitive_contents_summary">타임라인에서 경고 없이 민감한 컨텐츠 표시</string>
-  <string name="sensitive_content_warning">이 트윗은 민감한 컨텐츠를 포함하고 있을 수 있습니다, 진행 하시겠습니까?</string>
+  <string name="sensitive_content_warning">이 트윗은 민감한 컨텐츠를 포함하고 있을 수 있습니다. 진행 하시겠습니까?</string>
   <string name="mark_as_sensitive">민감한 컨텐츠로 등록</string>
   <string name="remove_sensitive_mark">민감한 컨텐츠 등록 해제</string>
   <string name="none">없음</string>
@@ -362,10 +366,10 @@
   <string name="permission_description_write">데이터베이스에 기록, 상태 업데이트</string>
   <string name="permission_description_direct_messages">쪽지 읽기/쓰기/보내기</string>
   <string name="permission_description_accounts">계정 정보 불러오기</string>
-  <string name="permission_description_preferences">불러오기 설정</string>
+  <string name="permission_description_preferences">읽기 설정</string>
   <string name="permissions_request">권한 요청</string>
   <string name="permissions_request_message">플러그인이 팔로우 권한을 요청합니다</string>
-  <string name="accept">동의</string>
+  <string name="accept_permission_request">수락</string>
   <string name="no_thanks">아뇨, 괜찮습니다</string>
   <string name="revoke_permissions">권한 취소</string>
   <string name="fast_scroll_thumb">빠른 손가락 스크롤</string>
@@ -381,7 +385,7 @@
   <string name="preload_wifi_only">와이파이에서만 미리 불러오기</string>
   <string name="disable_tab_swipe">탭 스와이프를 사용하지 않습니다.</string>
   <string name="sign_in_method_introduction_title">어떻게 동작하나요?</string>
-  <string name="sign_in_method_introduction">twicca 같은 대부분의 클라이언트는 브라우저를 열어 사용자 이름과 비밀번호를 입력시킨 뒤 클라이언트로 돌아갑니다.\nTwidere에서는 그런 복잡한 과정을 거치지 않고 로그인할 수 있습니다. 비밀번호를 저장하지 않습니다. 안전합니다!</string>
+  <string name="sign_in_method_introduction">대부분의 클라이언트는 브라우저를 열어 사용자 이름과 패스워드를 입력한 뒤 클라이언트로 돌아갑니다. 때로는 이것이 매우 불편합니다.\n\nTwidere는 브라우저를 열지 않고 간단하게 로그인할 수 있습니다. 패스워드를 보관하지 않으므로 안전합니다!</string>
   <string name="quote_protected_status_notice">비공개 트위트를 인용하는 것은 적절하지 않습니다.</string>
   <string name="edit_draft">보관된 트윗 편집</string>
   <string name="profile_image">프로필 이미지</string>
@@ -467,19 +471,19 @@
   <string name="nickname_only_summary">별명이 있다면 사용자 이름 대신 표시</string>
   <string name="input_text">입력</string>
   <string name="users_lists_with_name"><xliff:g id="name">%s</xliff:g>님의 리스트</string>
-  <string name="lists_following_user_with_name"><xliff:g id="name">%s</xliff:g>님이 추가된 있는 리스트</string>
+  <string name="lists_following_user_with_name"><xliff:g id="name">%s</xliff:g>님이 멤버인 리스트</string>
   <string name="highlight">강조색</string>
   <string name="underline">믿줄</string>
   <string name="link_highlight_option">링크 강조 옵션</string>
   <string name="users_statuses">사용자 트윗</string>
   <string name="card_animation">카드 애니메이션</string>
   <string name="name_first">이름 먼저 표시</string>
+  <string name="next">다음</string>
   <string name="settings_wizard">설정 마법사</string>
   <string name="wizard_page_welcome_title">환영합니다.</string>
-  <string name="wizard_page_welcome_text">Twidere를 선택한 것에 감사 드립니다.\n바로 설정하겠습니까?</string>
+  <string name="wizard_page_welcome_text">Twidere를 선택한 것에 감사 드립니다.\n지금 설정하겠습니까?</string>
   <string name="wizard_page_welcome_yes">예</string>
-  <string name="next">다음</string>
-  <string name="wizard_page_welcome_use_default_settings">기본 설정 사용</string>
+  <string name="wizard_page_welcome_not_now">지금은 하지 않음</string>
   <string name="wizard_page_welcome_import_settings">설정 불러오기</string>
   <string name="wizard_page_theme_text">원하시는 테마를 선택하세요.</string>
   <string name="wizard_page_tabs_text">Twidere는 탭을 추가하세요.\n친구를 지켜보거나 관심사를 살펴 보십시오.</string>
@@ -504,7 +508,7 @@
   <string name="unsubscribe_from_user_list_confirm_message"><xliff:g id="name">%s</xliff:g> 리스트를 구독취소하겠습니까? 나중에 다시 구독할 수 있습니다.</string>
   <string name="delete_saved_search">저장된 \"<xliff:g id="name">%s</xliff:g>\" 검색어 삭제</string>
   <string name="delete_saved_search_confirm_message">저장된 \"<xliff:g id="name">%s</xliff:g>\" 검색어를 삭제하겠습니까? 한 동안 재저장을 할 수 없게 됩니다.</string>
-  <string name="signing_in_error_browser_sign_in_hint">로그인 오류입니다. 브라우저로 로그인하는 방법을 시도해 주십시오. (커스텀 API 설정은 무시됩니다)</string>
+  <string name="signing_in_error_browser_sign_in_hint">로그인 오류입니다. 브라우저로 로그인하여 주십시오. (커스텀 API 설정은 무시됩니다)</string>
   <string name="report_user"><xliff:g id="name">%s</xliff:g>님을 스팸 신고하기</string>
   <string name="report_user_confirm_message"><xliff:g id="name">%s</xliff:g>님을 스팸 신고하겠습니까? 이 사용자를 차단하게 됩니다.</string>
   <string name="twidere_test">Twidere 테스트</string>
@@ -572,5 +576,23 @@
   <string name="swipe_back">스와이프하여 닫기</string>
   <string name="tab_display_option_icon">아이콘</string>
   <string name="tab_display_option_label">라벨</string>
-  <string name="tab_display_option_both">모두</string>
+  <string name="tab_display_option_icon_and_label">아이콘과 라벨</string>
+  <string name="highlight_and_underline">하이라이트와 언더라인</string>
+  <string name="twip_api_version_notice_message">TWIP는 \"/1.1/\"로 끝나지 않는 REST 기반 URL을 완전하게 다룰 수 없습니다.\n\n이미지 업로드 문제를 해결하기 위해서는 \"/1.1/\"을 REST 기반 URL 마지막에 추가하여 주십시오.</string>
+  <string name="back">돌아가기</string>
+  <string name="theme_font_family">폰트 테마</string>
+  <string name="translation_destination">번역 대상</string>
+  <string name="accept">동의</string>
+  <string name="deny">거부</string>
+  <string name="accepted_users_follow_request"><xliff:g id="user">%s</xliff:g>님의 팔로우 요청을 수락하였습니다.
+</string>
+  <string name="denied_users_follow_request"><xliff:g id="user">%s</xliff:g>님의 팔로우 요청을 거부하였습니다.
+</string>
+  <string name="import_settings">설정 불러오기</string>
+  <string name="export_settings">설정 내보내기</string>
+  <string name="export_settings_type_dialog_title">설정을 내보내는 중...</string>
+  <string name="import_settings_type_dialog_title">설정을 불러는 중..</string>
+  <string name="nicknames">별명</string>
+  <string name="user_colors">사용자 색상</string>
+  <string name="import_export">불러오기/내보내기</string>
 </resources>

@@ -68,6 +68,7 @@
 	<string name="open_source_license">Open source license</string>
 	<string name="api">API</string>
 	<string name="default_api_settings">Default API settings</string>
+	<string name="default_api_settings_summary">These settings only applies to new logged accounts</string>
 	<string name="consumer_key">Consumer key</string>
 	<string name="consumer_secret">Consumer secret</string>
 	<string name="ignore_ssl_error">Ignore SSL Error</string>
@@ -185,6 +186,7 @@
 	<string name="type_to_compose">Type to compose</string>
 	<string name="users_lists">User\'s lists</string>
 	<string name="lists_following_user">Lists following this user</string>
+	<string name="lists_following_me">Lists following me</string>
 	<string name="item_3_minutes">3 minutes</string>
 	<string name="item_5_minutes">5 minutes</string>
 	<string name="item_10_minutes">10 minutes</string>
@@ -330,6 +332,8 @@
 	<string name="action_unsubscribing_from_list">unsubscribing from list</string>
 	<string name="action_saving_search">saving search</string>
 	<string name="action_deleting_search">deleting search</string>
+	<string name="action_accepting_follow_request">accepting follow request</string>
+	<string name="action_denying_follow_request">denying follow request</string>
 	<string name="status_is_duplicate">Your tweet is a duplicate.</string>
 	<string name="data_profiling_summary">Twidere took part in a research on predicting user\'s social behavior to pre-caching content started by students in UC Davis.\n\nHere are the data we wanted to collect and why:\nCollected data:\n1. User\'s twitter ID\n2. User\'s home timeline (prediction based on user\'s interest and social interaction)\n3. User\'s click on a tweet (prediction based on user\'s interest and social interaction)\n4. Coarse location (which is good predictor when user will access twitter)\n\nTwidere will upload collected data only when Wifi available and your device connected to charger, so It will not cost you extra bandwidth fee or drain your battery power.</string>
 	<string name="data_profiling">Usage Statistics</string>
@@ -366,7 +370,7 @@
 	<string name="permission_description_preferences">Read settings</string>
 	<string name="permissions_request">Permissions request</string>
 	<string name="permissions_request_message">Extension is requesting following permissions</string>
-	<string name="accept">Accept</string>
+	<string name="accept_permission_request">Accept</string>
 	<string name="no_thanks">No, thanks</string>
 	<string name="revoke_permissions">Revoke permissions</string>
 	<string name="fast_scroll_thumb">Fast scroll thumb</string>
@@ -578,9 +582,17 @@
 	<string name="twip_api_version_notice_message">TWIP can\'t handle Rest Base URL that not ends with \"/1.1/\" correctly.\n\n You may need to add \"/1.1/\" at the end of Rest Base URL to avoid issues when uploading image.</string>
 	<string name="back">Back</string>
 	<string name="theme_font_family">Theme font family</string>
-	<string name="font_family_regular">Regular</string>
-	<string name="font_family_condensed">Condensed</string>
-	<string name="font_family_light">Light</string>
-	<string name="font_family_thin">Thin</string>
+	<string name="translation_destination">Translation destination</string>
+	<string name="accept">Accept</string>
+	<string name="deny">Deny</string>
+	<string name="accepted_users_follow_request">Accepted <xliff:g id="user">%s</xliff:g>\'s follow request.</string>
+	<string name="denied_users_follow_request">Denied <xliff:g id="user">%s</xliff:g>\'s follow request.</string>
+	<string name="import_settings">Import settings</string>
+	<string name="export_settings">Export settings</string>
+	<string name="export_settings_type_dialog_title">Export settings…</string>
+	<string name="import_settings_type_dialog_title">Import settings…</string>
+	<string name="nicknames">Nicknames</string>
+	<string name="user_colors">User colors</string>
+	<string name="import_export">Import/Export</string>
 
 </resources>

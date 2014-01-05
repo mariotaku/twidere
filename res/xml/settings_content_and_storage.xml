@@ -80,6 +80,10 @@
 			android:key="trends_location"
 			android:summary="@string/trends_location_summary"
 			android:title="@string/trends_location"/>
+
+		<org.mariotaku.twidere.preference.TranslationDestinationPreference
+			android:key="translation_destination"
+			android:title="@string/translation_destination"/>
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="category_storage"
@@ -89,8 +93,8 @@
 			android:key="database_item_limit"
 			android:summary="@string/database_item_limit_summary"
 			android:title="@string/database_item_limit"
-			app:min="50"
-			app:max="500"/>
+			app:max="500"
+			app:min="50"/>
 
 		<org.mariotaku.twidere.preference.ClearSearchHistoryPreference
 			android:key="clear_search_history"

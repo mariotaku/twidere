@@ -32,6 +32,7 @@
   <string name="error_occurred">Tapahtui virhe, yritä uudelleen.</string>
   <string name="error_already_logged_in">Olet jo kirjautunut sisään.</string>
   <string name="no_account_selected">Tiliä ei ole valittu.</string>
+  <string name="empty_account_selection_disallowed">Valitse vähintään yksi tili.</string>
   <string name="error_unknown_error">Virhe: Tuntematon virhe, joka on todennäköisesti ohjelmavirhe.</string>
   <string name="error_message">Virhe: <xliff:g id="message">%s</xliff:g></string>
   <string name="error_message_with_action">Virhe toiminnossa <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
@@ -59,13 +60,14 @@
   <string name="view_user_profile">Käyttäjäprofiili</string>
   <string name="browser">Selain</string>
   <string name="pick_from_gallery">Valitse galleriasta</string>
-  <string name="statuses">Twiittiä</string>
+  <string name="statuses">Twiitit</string>
   <string name="followers">Seuraajaa</string>
-  <string name="following">Seurataan</string>
+  <string name="following">Seurattua</string>
   <string name="about">Tietoja</string>
   <string name="open_source_license">Avoimen lähdekoodin lisenssi</string>
   <string name="api">API</string>
   <string name="default_api_settings">API:n oletusasetukset</string>
+  <string name="default_api_settings_summary">Nämä asetukset ovat voimassa vain uuden kirjautumisen jälkeen</string>
   <string name="consumer_key">Kuluttaja-avain</string>
   <string name="consumer_secret">Kuluttajasalaus</string>
   <string name="ignore_ssl_error">Ohita SSL-virhe</string>
@@ -86,7 +88,7 @@
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> uudelleentwiittasi tämän</string>
   <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> ja <xliff:g id="retweet_count">%2$d</xliff:g> muuta uudelleentwiittasivat tämän</string>
   <string name="retweeted_by_count"><xliff:g id="retweet_count">%d</xliff:g> käyttäjää uudelleentwiittasivat tämän</string>
-  <string name="users_retweeted_this">Käyttäjät uudelleentwiittasivat tämän</string>
+  <string name="users_retweeted_this">Uudelleentwiitanneet käyttäjät</string>
   <string name="reply_to">Vastaa käyttäjälle <xliff:g id="user_name">%s</xliff:g></string>
   <string name="quote_user">Lainaa käyttäjää <xliff:g id="user_name">%s</xliff:g></string>
   <string name="time_source"><xliff:g id="time">%1$s</xliff:g>, via <xliff:g id="source">%2$s</xliff:g></string>
@@ -182,7 +184,8 @@
   <string name="list_subscribers">Listan tilaajat</string>
   <string name="type_to_compose">Kirjoita</string>
   <string name="users_lists">Käyttäjän listat</string>
-  <string name="lists_following_user">Listat, joissa seurataan käyttäjää</string>
+  <string name="lists_following_user">Käyttäjää seuraavat listat</string>
+  <string name="lists_following_me">Minua seuraavat listat</string>
   <string name="item_3_minutes">3 minuuttia</string>
   <string name="item_5_minutes">5 minuuttia</string>
   <string name="item_10_minutes">10 minuuttia</string>
@@ -327,6 +330,9 @@
   <string name="action_subscribing_to_list">tilataan listaa</string>
   <string name="action_unsubscribing_from_list">poistetaan listan tilausta</string>
   <string name="action_saving_search">tallennetaan haku</string>
+  <string name="action_deleting_search">poistetaan hakua</string>
+  <string name="action_accepting_follow_request">hyväksytään seurauspyyntöä</string>
+  <string name="action_denying_follow_request">hylätään seurauspyyntöä</string>
   <string name="status_is_duplicate">Twiittisi on kaksoiskappale.</string>
   <string name="data_profiling_summary">Twidere osallistuu UC Davisin oppilaiden tutkimukseen. Aiheena on käyttäjän käyttäytymisen ennustaminen ja sisällön siirtäminen etukäteen välimuistiin.\n\nHaluamme kerätä seuraavia asioita:\nKerätty tieto:\n1. Käyttäjän Twitter ID\n2. Käyttäjän aikajana (ennustus perustuu käyttäjän kiinnostuksen kohteisiin ja sosiaaliseen kanssakäymiseen)\n3. Käyttäjän napsauttamat twiitit (ennustus perustuu käyttäjän kiinnostuksen kohteisiin ja sosiaaliseen kanssakäymiseen)\n4. Karkea arvio sijainnista (joka ennakoi hyvin käyttöaikoja)\n\nTwidere lataa kerätyn tiedon vain silloin, kun WiFi-yhteys on käytössä ja laitteesi on latauksessa. Tällöin tilastointi ei kasvata verkkokustannuksia tai vähennä akun kestoa.</string>
   <string name="data_profiling">Käyttötilasto</string>
@@ -363,7 +369,7 @@
   <string name="permission_description_preferences">Katso asetuksia</string>
   <string name="permissions_request">Oikeuksien pyyntö</string>
   <string name="permissions_request_message">Laajennus pyytää seuraavia oikeuksia</string>
-  <string name="accept">Salli</string>
+  <string name="accept_permission_request">Hyväksy</string>
   <string name="no_thanks">Ei kiitos</string>
   <string name="revoke_permissions">Kumoa oikeudet</string>
   <string name="fast_scroll_thumb">Peukalon nopea vieritys</string>
@@ -379,7 +385,7 @@
   <string name="preload_wifi_only">Lataa etukäteen vain Wi-Fi-yhteydellä</string>
   <string name="disable_tab_swipe">Ota välilehtien pyyhkäisy pois käytöstä</string>
   <string name="sign_in_method_introduction_title">Kuinka se toimii?</string>
-  <string name="sign_in_method_introduction">Useimmat asiakasohjelmat, kuten Twicca, avaa selaimen, johon kirjoitetaan käyttäjätunnus ja salasana. Tunnuksen syöttämisen jälkeen käyttäjä ohjataan takaisin asiakasohjelmaan. Tämä voi olla hyvinkin epäkäytännöllistä.\nTwidere käyttää yksinkertaisempaa tapaa, jossa ei tarvitse avata selainta. Älä murehdi salasanasta. Twidere ei säilytä sitä ja salasana on täysin turvassa!</string>
+  <string name="sign_in_method_introduction">Useimmat asiakasohjelmat, kuten Twicca, avaavat selaimen, johon kirjoitetaan käyttäjätunnus ja salasana. Tunnuksen syöttämisen jälkeen käyttäjä ohjataan takaisin asiakasohjelmaan. Tämä voi olla hyvinkin epäkäytännöllistä.\n\nTwidere käyttää yksinkertaisempaa tapaa, jossa ei tarvitse avata selainta. Älä murehdi salasanasta: Twidere ei säilytä sitä ja salasana on täysin turvassa!</string>
   <string name="quote_protected_status_notice">Ei ole suositeltavaa lainata suojattua twiittiä.</string>
   <string name="edit_draft">Muokkaa luonnosta</string>
   <string name="profile_image">Profiilikuva</string>
@@ -389,6 +395,7 @@
   <string name="wrong_url_format">Virheellinen URL-muoto.</string>
   <string name="wrong_username_password">Väärä käyttäjänimi/salasana.</string>
   <string name="network_error">Verkkovirhe.</string>
+  <string name="api_data_corrupted">API-data on vioittunut.</string>
   <string name="ssl_error">SSL-virhe. Sinun täytyy ehkä ottaa käyttöön \'Ohita SSL-virhe\' -valinta.</string>
   <string name="wrong_api_key">Virheellinen API-osoite tai kulutusavain/salaus. Tarkista vielä kyseiset kentät.</string>
   <string name="status_updated">Twiitti lähetetty.</string>
@@ -400,6 +407,9 @@
   <string name="direct_message_sent">Yksityisviesti lähetetty.</string>
   <string name="direct_message_deleted">Yksityisviesti poistettu.</string>
   <string name="search_saved">Haku tallennettu.</string>
+  <string name="search_name_saved">Haku \"<xliff:g id="name">%s</xliff:g>\" tallennettu.</string>
+  <string name="search_deleted">Haku poistettu.</string>
+  <string name="search_name_deleted">Haku \"<xliff:g id="name">%s</xliff:g>\" poistettu.</string>
   <string name="import_from">Tuo kohteesta…</string>
   <string name="link_to_quoted_status">Linkki lainattuun twiittiin</string>
   <string name="followed_user">Seurataan käyttäjää <xliff:g id="user">%s</xliff:g>.</string>
@@ -434,13 +444,14 @@
   <string name="no_close_after_status_updated">Pidä Kirjoita-näkymä auki twiitin lähettämisen jälkeen</string>
   <string name="no_close_after_status_updated_summary">Pieni lisä chatterboxiin</string>
   <string name="status_saved_to_draft">Twiitti tallennettu luonnoksiin.</string>
+  <string name="default_account">Oletustili</string>
   <string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g> (<xliff:g id="daily_tweet">%2$d</xliff:g> twiittiä päivää kohden)</string>
   <string name="empty_content">Tyhjennä sisältö</string>
   <string name="fast_image_loading">Kuvien nopea lataus</string>
   <string name="fast_image_loading_summary">Ota käyttöön, jotta kuvat latautuvat nopeammin. Ota pois käytöstä, jos jotkin kuvat eivät näy.</string>
   <string name="select_user_list">Valitse käyttäjälista</string>
   <string name="select_user">Valitse käyttäjä</string>
-  <string name="created_by">Luotu <xliff:g id="created_by">%s</xliff:g>lla</string>
+  <string name="created_by">Luoja <xliff:g id="created_by">%s</xliff:g></string>
   <string name="add_to_list">Lisää listaan</string>
   <string name="account_delete_confirm_title">Poista tili</string>
   <string name="account_delete_confirm_message">Tämä tili poistetaan Twideresta.</string>
@@ -467,12 +478,12 @@
   <string name="users_statuses">Käyttäjän twiitit</string>
   <string name="card_animation">Korttianimaatio</string>
   <string name="name_first">Näytä ensin nimi</string>
+  <string name="next">Seuraava</string>
   <string name="settings_wizard">Ohjatut asetukset</string>
   <string name="wizard_page_welcome_title">Tervetuloa</string>
   <string name="wizard_page_welcome_text">Kiitos, että valitsit Twideren\nHaluatko määrittää asetukset heti?</string>
   <string name="wizard_page_welcome_yes">Kyllä</string>
-  <string name="next">Seuraava</string>
-  <string name="wizard_page_welcome_use_default_settings">Käytä oletusasetuksia</string>
+  <string name="wizard_page_welcome_not_now">Ei nyt</string>
   <string name="wizard_page_welcome_import_settings">Tuo asetukset</string>
   <string name="wizard_page_theme_text">Valitse haluamasi teema.</string>
   <string name="wizard_page_tabs_text">Lisää välilehtiä Twidereen\nSeuraa ihmisiä ja asioita, joista olet kiinnostunut.</string>
@@ -495,13 +506,15 @@
   <string name="delete_user_list_confirm_message">Poistetaanko lista <xliff:g id="name">%s</xliff:g>? Toimintoa ei voi kumota.</string>
   <string name="unsubscribe_from_user_list">Poista listan <xliff:g id="name">%s</xliff:g> tilaus</string>
   <string name="unsubscribe_from_user_list_confirm_message">Lopetetaanko listan <xliff:g id="name">%s</xliff:g> tilaus? Voit tilata listan myöhemmin uudelleen.</string>
+  <string name="delete_saved_search">Poista tallennettu haku \"<xliff:g id="name">%s</xliff:g>\"</string>
+  <string name="delete_saved_search_confirm_message">Poistetaanko tallennettu haku \"<xliff:g id="name">%s</xliff:g>\"? Voit kohta tallentaa tämän haun uudelleen.</string>
   <string name="signing_in_error_browser_sign_in_hint">Kirjautumisessa ilmeni virhe. Sinun täytyy ehkä käyttää selainkirjautumista (tämä vaihtoehto ohittaa API-asetukset kirjautumisvaiheessa).</string>
   <string name="report_user">Ilmianna <xliff:g id="name">%s</xliff:g></string>
   <string name="report_user_confirm_message">Ilmiannetaanko käyttäjä <xliff:g id="name">%s</xliff:g> roskapostittamisesta? Tulet myös estämään tämän käyttäjän.</string>
   <string name="twidere_test">Twideren testi</string>
   <string name="donate_via_paypal">Lahjoita PayPalilla</string>
   <string name="pay_via_paypal">Maksa suoraan PayPalilla</string>
-  <string name="pay_via_paypal_summary">Kun näet viestin: \"This recipient is not eligible to receive funds\"</string>
+  <string name="pay_via_paypal_summary">Valitse, jos näet viestin: \"This recipient is not eligible to receive funds\"</string>
   <string name="donate_via_alipay">Lahjoita Alipaylla</string>
   <string name="staggered_home_timeline">Ryhmitelty aikajana</string>
   <string name="unread_count">Lukemattomat</string>
@@ -532,6 +545,7 @@
   <string name="wizard_hint_compose_select_account">Valitse tili tästä kuvakkeesta silloin, kun kirjoitat twiittiä.</string>
   <string name="wizard_hint_quote_format">Määritä haluamasi lainausmuoto kohdasta \"Asetukset\" - \"Sisältö &amp; säilytys\"</string>
   <string name="wizard_hint_filters">Suodattimilla voit piilottaa aikajanasta ja ilmoituksista twiitit, joita et halua nähdä.</string>
+  <string name="view_replies">Näytä vastaukset</string>
   <string name="compact_cards">Tiiviit kortit</string>
   <string name="compact_cards_summary">Näytä ruudulla enemmän kortteja</string>
   <string name="dashclock_home_unread_count_name">Kodin lukemattomien viestien määrä</string>
@@ -554,6 +568,29 @@
   <string name="action_name_saved_at_time"><xliff:g id="action">%1$s</xliff:g>, tallennettu <xliff:g id="time">%2$s</xliff:g></string>
   <string name="update_status">Lähetä twiitti</string>
   <string name="sending_direct_message">Lähetetään yksityisviestiä</string>
+  <string name="tab_display_option">Välilehden näyttöasetus</string>
   <string name="livewp_daydream_enabled_message">Sinulle on pieni yllätys. Etsi se järjestelmäasetuksista :)</string>
   <string name="center">Keskus</string>
+  <string name="multi_select">Monivalinta</string>
+  <string name="long_click_to_open_menu">Valikon avaus pitkällä painalluksella</string>
+  <string name="swipe_back">Sulje pyyhkäisemällä</string>
+  <string name="tab_display_option_icon">Kuvake</string>
+  <string name="tab_display_option_label">Nimike</string>
+  <string name="tab_display_option_icon_and_label">Kuvake ja nimike</string>
+  <string name="highlight_and_underline">Korosta ja alleviivaa</string>
+  <string name="twip_api_version_notice_message">TWIPissä ei toimi Rest Base URL, jonka lopussa ei ole \"/1.1/\".\n\n Sinun täytyy ehkä lisätä pääte \"/1.1/\" Rest Base URL:n loppuun, jotta kuvien siirrossa ei olisi jatkossa ongelmia.</string>
+  <string name="back">Takaisin</string>
+  <string name="theme_font_family">Teeman kirjasinperhe</string>
+  <string name="translation_destination">Käännöksen sijainti</string>
+  <string name="accept">Hyväksy</string>
+  <string name="deny">Hylkää</string>
+  <string name="accepted_users_follow_request">Käyttäjän <xliff:g id="user">%s</xliff:g> seurauspyyntö on hyväksytty.</string>
+  <string name="denied_users_follow_request">Käyttäjän <xliff:g id="user">%s</xliff:g> seurauspyyntö on hylätty.</string>
+  <string name="import_settings">Tuo asetukset</string>
+  <string name="export_settings">Vie asetukset</string>
+  <string name="export_settings_type_dialog_title">Vie asetukset…</string>
+  <string name="import_settings_type_dialog_title">Tuo asetukset…</string>
+  <string name="nicknames">Kutsumanimet</string>
+  <string name="user_colors">Käyttäjän värit</string>
+  <string name="import_export">Tuo/Vie</string>
 </resources>

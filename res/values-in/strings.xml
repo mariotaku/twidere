@@ -11,7 +11,7 @@
   <string name="remove_location">Hapus lokasi</string>
   <string name="remove_image">Hapus gambar</string>
   <string name="remove_photo">Hapus gambar</string>
-  <string name="status_hint">Apa yang terjadi ?</string>
+  <string name="status_hint">Apa yang sedang terjadi ?</string>
   <string name="sign_up">Daftar</string>
   <string name="sign_in">Masuk</string>
   <string name="rest_base_url">Pusat REST URL</string>
@@ -31,12 +31,12 @@
   <string name="mentions">Menyebutkan</string>
   <string name="error_occurred">Terjadi kesalahan, silahkan coba lagi.</string>
   <string name="error_already_logged_in">Anda sudah login.</string>
-  <string name="no_account_selected">Tak ada akun yang dipilih.</string>
+  <string name="no_account_selected">Tidak ada akun yang dipilih.</string>
   <string name="empty_account_selection_disallowed">Silahkan pilih setidaknya satu akun.</string>
   <string name="error_unknown_error">Kesalahan: Kesalahan tidak diketahui, ini mungkin adalah bug.</string>
   <string name="error_message">Kesalahan: <xliff:g id="message">%s</xliff:g></string>
   <string name="error_message_with_action">Kesalahan saat <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
-  <string name="error_message_rate_limit">Laju kicauan terlampaui, mohon diulangi <xliff:g id="time">%s</xliff:g></string>
+  <string name="error_message_rate_limit">Laju kicauan melewati batasan, mohon diulangi <xliff:g id="time">%s</xliff:g></string>
   <string name="error_message_rate_limit_with_action">Laju kicauan melebihi batas saat <xliff:g id="action">%1$s</xliff:g>, silakan coba lagi setelah <xliff:g id="time">%2$s</xliff:g></string>
   <string name="select_account">Pilih akun</string>
   <string name="username">Nama pengguna</string>
@@ -99,7 +99,7 @@
   <string name="sources">Sumber</string>
   <string name="content">Konten</string>
   <string name="customize">Sesuaikan</string>
-  <string name="set_nickname">Tentukan nickname</string>
+  <string name="set_nickname">Tentukan nama panggilan</string>
   <string name="set_color">Tetapkan warna</string>
   <string name="clear">Bersihkan</string>
   <string name="pick_color">Pilih warna</string>
@@ -134,7 +134,7 @@
   <string name="blocked_users">Pengguna diblokir</string>
   <string name="set_as_default">Tetapkan sebagai default</string>
   <string name="search_users">Pencarian pengguna</string>
-  <string name="search_statuses">Pencarian twit</string>
+  <string name="search_statuses">Pencarian kicauan</string>
   <string name="created_at">Dibuat pada</string>
   <string name="search_hint">Pencarian tweets atau pengguna</string>
   <string name="remember_position">Ingat posisi</string>
@@ -171,19 +171,20 @@
   <string name="sound">Suara</string>
   <string name="ringtone">Nada Dering</string>
   <string name="vibration">Getaran</string>
-  <string name="light">Lampu</string>
+  <string name="light">Terang</string>
   <string name="notifications">Notifikasi</string>
   <string name="screen_name">Nama pengguna</string>
   <string name="refresh_on_start">Muat ulang di awal</string>
   <string name="refresh_on_start_summary">Muat ulang lini massa dan mention untuk memulai.</string>
-  <string name="refresh_after_status_updated">Segarkan setelah twit terkirim</string>
-  <string name="refresh_after_status_updated_summary">Segarkan linimassa dan mention setelah mengirim twit.</string>
+  <string name="refresh_after_status_updated">Segarkan setelah kicauan terkirim</string>
+  <string name="refresh_after_status_updated_summary">Segarkan linimassa dan mention setelah mengirim kicauan.</string>
   <string name="list_timeline">Daftarkan timeline</string>
   <string name="list_members">Daftarkan anggota</string>
   <string name="list_subscribers">Daftarkan pelanggan</string>
   <string name="type_to_compose">Ketik untuk membuat baru</string>
   <string name="users_lists">Daftar pengguna ini</string>
   <string name="lists_following_user">Daftar mengikuti pengguna ini</string>
+  <string name="lists_following_me">Daftar mengikuti saya</string>
   <string name="item_3_minutes">3 menit</string>
   <string name="item_5_minutes">5 menit</string>
   <string name="item_10_minutes">10 menit</string>
@@ -195,14 +196,14 @@
   <string name="display_image_preview">Menampilkan preview gambar</string>
   <string name="following_you">Mengikuti Anda</string>
   <string name="user_list">Daftar</string>
-  <string name="user_lists">Daftar</string>
+  <string name="user_lists">Daftar-dafar</string>
   <string name="trends_location">Lokasi tren</string>
   <string name="trends_location_summary">Tentukan lokasi untuk tren lokal</string>
   <string name="trends">Tren</string>
   <string name="accounts">Akun</string>
   <string name="account">Akun</string>
   <string name="mention_this_user">Mention pengguna ini</string>
-  <string name="signing_in_please_wait">Sign in, silakan menunggu atau tekan KEMBALI untuk berhenti.</string>
+  <string name="signing_in_please_wait">Mendaftarkan masuk, silakan menunggu atau tekan KEMBALI untuk berhenti.</string>
   <string name="connectivity">Konektifitas</string>
   <string name="add_member">Tambah Anggota</string>
   <string name="new_user_list">Daftar baru</string>
@@ -211,7 +212,7 @@
   <string name="extensions">Ekstensi</string>
   <string name="uninstall">Hapus</string>
   <string name="saved_searches">Pencarian yang tersimpan</string>
-  <string name="tabs">Tab</string>
+  <string name="tabs">Tab-tab</string>
   <string name="add_tab">Tambah tab</string>
   <string name="edit_tab">Sunting tab</string>
   <string name="move_up">Gerak atas</string>
@@ -223,7 +224,7 @@
   <string name="user_timeline">Timeline pengguna</string>
   <string name="notification_ringtone">Nada dering</string>
   <string name="notification_light_color">Warna cahaya</string>
-  <string name="share_format">Format bagikan</string>
+  <string name="share_format">Bagikan format</string>
   <string name="share_format_summary">\"[TITLE]\" = Konten title\n\"[TEXT]\" = Teks konten</string>
   <string name="network">Jaringan</string>
   <string name="content_and_storage">Konten &amp; Penyimpanan</string>
@@ -329,6 +330,7 @@
   <string name="action_unsubscribing_from_list">berhenti berlangganan dari daftar</string>
   <string name="action_saving_search">menyimpan pencarian</string>
   <string name="action_deleting_search">menghapus pencarian</string>
+  <string name="action_accepting_follow_request">menyetujui permintaa mengikuti</string>
   <string name="status_is_duplicate">Kicauan Anda duplikat.</string>
   <string name="data_profiling_summary">Twidere mengambil bagian sebuah penelitian dalam memprediksi pengguna sosial untuk pra-caching konten dimulai mahasiswa di UC Davis.\n\nBerikut adalah data yang berhasil kamu kumpulkan dan mengapa:\nMengumpulkan data:\n1. ID pengguna twitter\n2. Pengguna home timeline (prediksi berdasarkan ketertarikan pengguna dan interaksi sosial)\n3. Pengguna yang mengklik sebuah tweet (prediksi berdasarkan ketertarikan pengguna dan interaksi sosial)\n4. Lokasi mentah (merupakan prediksi yang bagus saat pengguna akan menggunakan twitter)\n\nTwidere akan mengunggah data yang terkumpul hanya saat dalam jangkauan WIFI dan perangkat anda terkoneksi ke charger, jadi tidak akan menggunakan biaya bandwidth lebih atau mengkonsumsi daya baterai anda.</string>
   <string name="data_profiling">Statistik penggunaan</string>
@@ -365,7 +367,6 @@
   <string name="permission_description_preferences">Baca pengaturan</string>
   <string name="permissions_request">Permintaan ijin</string>
   <string name="permissions_request_message">Ekstensi meminta ijin berikut ini</string>
-  <string name="accept">Setuju</string>
   <string name="no_thanks">Tidak, terima kasih</string>
   <string name="revoke_permissions">Cabut ijin yang diberikan</string>
   <string name="fast_scroll_thumb">Menggulung dengan cepat</string>
@@ -381,7 +382,7 @@
   <string name="preload_wifi_only">Preload menggunakan Wi-Fi saja</string>
   <string name="disable_tab_swipe">Nonaktifkan tab menggesek</string>
   <string name="sign_in_method_introduction_title">Bagaimana cara kerjanya?</string>
-  <string name="sign_in_method_introduction">Kebanyakan klien seperti twicca membuka browser meminta Anda untuk mengetik nama user dan sandi, dan kemudian membawa Anda kembali ke klien mereka. Kadang-kadang ini bisa menjadi sangat nyaman.\nTwidere menggunakan langkah-langkah yang lebih sederhana untuk masuk, tanpa membuka browser. Jangan khawatir tentang sandi Anda, Twidere tidak akan pernah menyimpannya, itu benar-benar aman!</string>
+  <string name="sign_in_method_introduction">Umumnya aplikasi pihak ke-3 seperti twicca perlu membuka peramban untuk memasukkan nama pengguna dan sandi, kemudian akan kembali ke aplikasi tersebut. Terkadang hal ini sangat menggangu. \n\nTwidere menggunakan langkah-langkah yang lebih sederhana untuk masuk ke twitter tanpa perlu membuka peramban. Tidak perlu khawatir dengan sandi anda, Twidere tidak akan pernah menyimpannya, ini benar-benar aman!</string>
   <string name="quote_protected_status_notice">Tidak direkomendasikan untuk mengutip twit terproteksi.</string>
   <string name="edit_draft">Ubah draf</string>
   <string name="profile_image">Gambar Profil</string>
@@ -474,12 +475,12 @@
   <string name="users_statuses">Twit pengguna</string>
   <string name="card_animation">Animasi kartu</string>
   <string name="name_first">Tampilkan nama depan</string>
+  <string name="next">Lanjut</string>
   <string name="settings_wizard">Pengaturan</string>
   <string name="wizard_page_welcome_title">Selamat datang</string>
   <string name="wizard_page_welcome_text">Terima kasih telah memilih Twidere.\nAnda mau konfigurasi sekarang?</string>
   <string name="wizard_page_welcome_yes">Ya</string>
-  <string name="next">Lanjut</string>
-  <string name="wizard_page_welcome_use_default_settings">Gunakan pengaturan default</string>
+  <string name="wizard_page_welcome_not_now">Tidak untuk saat ini</string>
   <string name="wizard_page_welcome_import_settings">Impor pengaturan</string>
   <string name="wizard_page_theme_text">Pilih tema yang Anda suka.</string>
   <string name="wizard_page_tabs_text">Tambah beberapa tab ke Twidere.\nTetap terhubung dengan orang atau sesuatu yang kamu perhatikan.</string>
@@ -515,8 +516,37 @@
   <string name="staggered_home_timeline">Staggered Home Timeline</string>
   <string name="unread_count">Belum terbaca</string>
   <string name="developed_by">Dikelola oleh</string>
+  <string name="project_account">Akun proyek</string>
   <string name="donators">Donatur</string>
   <string name="translators">Penerjemah</string>
+  <string name="translate">Terjemahkan</string>
+  <string name="sponsored_by">Di sponsori oleh</string>
+  <string name="special_thanks_to">Terima kasih sebesar-besarnya untuk</string>
+  <string name="contributors_list_summary">Jika tidak terdapat nama anda, harap beritahukan akun proyek.</string>
+  <string name="account_options">Pilihan akun</string>
+  <string name="show_in_timeline">Tunjukkan di linimasa</string>
+  <string name="cards">Kartu</string>
+  <string name="no_tab_hint">Tidak terdapat tab</string>
+  <string name="delete_user">Hapus user <xliff:g id="name">%s</xliff:g></string>
+  <string name="delete_users">Hapus beberapa user</string>
+  <string name="delete_user_confirm_message">Hapus <xliff:g id="name">%s</xliff:g>? Tidak dapat dilaksanakan.</string>
+  <string name="toggle">Beralih</string>
+  <string name="general">Umum</string>
+  <string name="hints">Petunjuk</string>
+  <string name="finish">Selesai</string>
+  <string name="theme_background">Gambar latar tema</string>
+  <string name="theme_background_default">Awal</string>
+  <string name="theme_background_solid">Putih/hitam murni</string>
+  <string name="theme_background_transparent">Transparan</string>
+  <string name="theme_dark_actionbar">Bar aksi gelap</string>
+  <string name="wizard_hint_compose_select_account">Klik gambar ini untuk memilih akun saat menulis twit.</string>
+  <string name="wizard_hint_quote_format">Atur format kutipan anda di \"Pengaturan\" - \"Isi &amp; Penyimpanan\"</string>
+  <string name="wizard_hint_filters">Anda dapat menyembunyikan twit yang tidak diinginkan pada linimasa dan pemberitahuan dengan menggunakan \"Filters\".</string>
+  <string name="view_replies">Lihat balasan</string>
+  <string name="compact_cards_summary">Tampilkan kartu lebih banyak</string>
+  <string name="dashclock_home_unread_count_name">Beranda Twidere belum terbaca</string>
+  <string name="dashclock_home_unread_count_description">Belum terbaca pada beranda</string>
+  <string name="dashclock_mentions_unread_count_name">Sebutan Twidere belum terbaca</string>
   <string name="dashclock_mentions_unread_count_description">Mentions belum terbaca</string>
   <string name="dashclock_messages_unread_count_name">Pesan Twidere belum terbaca</string>
   <string name="dashclock_messages_unread_count_description">Pesan belum terbaca</string>
@@ -534,8 +564,15 @@
   <string name="action_name_saved_at_time"><xliff:g id="action">%1$s</xliff:g>, tersimpan pada <xliff:g id="time">%2$s</xliff:g></string>
   <string name="update_status">Kirim tweet</string>
   <string name="sending_direct_message">Kirim pesan pribadi</string>
+  <string name="tab_display_option">Pilihan tampilan tab</string>
   <string name="livewp_daydream_enabled_message">Ini sedikit hadiah untukmu, temukan sendiri di Pengaturan Sistem :)</string>
   <string name="center">Pusat</string>
   <string name="multi_select">Pemilihan banyak</string>
   <string name="long_click_to_open_menu">Click lama untuk membuka menu</string>
+  <string name="swipe_back">Geser untuk menutup</string>
+  <string name="tab_display_option_icon">Gambar</string>
+  <string name="tab_display_option_label">Tanda</string>
+  <string name="tab_display_option_icon_and_label">Gambar dan tanda</string>
+  <string name="highlight_and_underline">Sorot dan garis bawah</string>
+  <string name="accept">Setuju</string>
 </resources>

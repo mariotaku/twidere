@@ -1,20 +1,20 @@
 /*
- *				Twidere - Twitter client for Android
+ * 				Twidere - Twitter client for Android
  * 
- * Copyright (C) 2012 Mariotaku Lee <mariotaku.lee@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.mariotaku.twidere.adapter;
@@ -39,12 +39,13 @@ import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.view.holder.UserListViewHolder;
+import org.mariotaku.twidere.view.iface.ICardItemView.OnOverflowIconClickListener;
 
 import java.util.List;
 import java.util.Locale;
 
 public class ParcelableUserListsAdapter extends BaseArrayAdapter<ParcelableUserList> implements IBaseCardAdapter,
-		OnClickListener {
+		OnClickListener, OnOverflowIconClickListener {
 
 	private final Context mContext;
 	private final ImageLoaderWrapper mProfileImageLoader;
@@ -89,10 +90,11 @@ public class ParcelableUserListsAdapter extends BaseArrayAdapter<ParcelableUserL
 		} else {
 			holder = new UserListViewHolder(view);
 			holder.profile_image.setOnClickListener(this);
-			// holder.item_menu.setOnClickListener(this);
+			holder.content.setOnOverflowIconClickListener(this);
 			view.setTag(holder);
 		}
 
+		holder.position = position;
 		// Clear images in prder to prevent images in recycled view shown.
 		holder.profile_image.setImageDrawable(null);
 
@@ -111,7 +113,6 @@ public class ParcelableUserListsAdapter extends BaseArrayAdapter<ParcelableUserL
 			mProfileImageLoader.displayProfileImage(holder.profile_image, user_list.user_profile_image_url);
 		}
 		holder.profile_image.setTag(position);
-		// holder.item_menu.setTag(position);
 		if (position > mMaxAnimationPosition) {
 			if (mAnimationEnabled) {
 				view.startAnimation(holder.item_animation);
@@ -135,11 +136,18 @@ public class ParcelableUserListsAdapter extends BaseArrayAdapter<ParcelableUserL
 				}
 				break;
 			}
-			case R.id.item_menu: {
-				if (position == -1 || mListener == null) return;
-				mListener.onMenuButtonClick(view, position, getItemId(position));
-				break;
-			}
+		}
+	}
+
+	@Override
+	public void onOverflowIconClick(final View view) {
+		if (mMultiSelectManager.isActive()) return;
+		final Object tag = view.getTag();
+		if (tag instanceof UserListViewHolder) {
+			final UserListViewHolder holder = (UserListViewHolder) tag;
+			final int position = holder.position;
+			if (position == -1 || mListener == null) return;
+			mListener.onMenuButtonClick(view, position, getItemId(position));
 		}
 	}
 

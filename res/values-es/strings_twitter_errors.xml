@@ -10,7 +10,7 @@
   <string name="error_131">El servidor de Twitter está caído temporalmente, inténtelo de nuevo más tarde.</string>
   <string name="error_135">Por favor verifique el reloj del sistema.</string>
   <string name="error_172">Ya ha grabado esta búsqueda.</string>
-  <string name="error_179">No puede ver este tuits protegido por el ususario.</string>
+  <string name="error_179">No puedes ver este tuit protegido por el usuario.</string>
   <string name="error_187">Ya ha enviado este tuit.</string>
   <string name="error_193">La foto que quieres cargar es demasiado grande.</string>
   <string name="error_215">Es necesario iniciar sesión nuevamente.</string>

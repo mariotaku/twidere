@@ -365,7 +365,7 @@
   <string name="permission_description_preferences">Einstellungen einlesen</string>
   <string name="permissions_request">Bitte um Berechtigung</string>
   <string name="permissions_request_message">Die Erweiterung benötigt die folgenden Berechtigungen</string>
-  <string name="accept">Akzeptieren</string>
+  <string name="accept_permission_request">Akzeptieren</string>
   <string name="no_thanks">Nein, danke</string>
   <string name="revoke_permissions">Berechtigungen entziehen</string>
   <string name="fast_scroll_thumb">Schnelldurchlauf Vorschaubild</string>
@@ -381,7 +381,7 @@
   <string name="preload_wifi_only">Vorrausladen nur mit WLan</string>
   <string name="disable_tab_swipe">Deaktiviere wischen für Reiter</string>
   <string name="sign_in_method_introduction_title">Wie funktioniert es?</string>
-  <string name="sign_in_method_introduction">Die meisten Twitter Apps wie twicca öffnen einen Browser, um den Benutzernamen und das Password einzugeben und kommen dann wieder Zurück zur App. Manchmal ist dieses sehr umständlich.\nTwidere  verwendet einfachere Schritte zum  anmelden, ohne Verwendung eines Browsers. Keine Sorge um das Password, Twidere speichert es niemals. Es ist sicher!</string>
+  <string name="sign_in_method_introduction">Die meisten Anwendungen öffnen einen externen Browser, um dort nach Benutzernamen und Passwort zu fragen. Dies ist manchmal sehr umständlich.\n\nTwidere öffnen keinen externen Browser, sondern verwendet einfacherere Methoden, um sich anzumelden. Twidere speichert niemals das Passwort, es ist daher völlig sicher!</string>
   <string name="quote_protected_status_notice">Es ist nicht empfohlen einen geschützten Tweet zu zitieren.</string>
   <string name="edit_draft">Bearbeite Entwurf</string>
   <string name="profile_image">Profilbild</string>
@@ -474,12 +474,12 @@
   <string name="users_statuses">Tweets des Nutzers</string>
   <string name="card_animation">Karten Animationen</string>
   <string name="name_first">Name zuerst anzeigen</string>
+  <string name="next">Weiter</string>
   <string name="settings_wizard">Einstellungsdialog</string>
   <string name="wizard_page_welcome_title">Willkomen</string>
   <string name="wizard_page_welcome_text">Danke dass Sie sich für Twidere entschieden haben.\nWollen Sie es jetzt konfigurieren?</string>
   <string name="wizard_page_welcome_yes">Ja</string>
-  <string name="next">Weiter</string>
-  <string name="wizard_page_welcome_use_default_settings">Standardeinstellungen benutzen</string>
+  <string name="wizard_page_welcome_not_now">Nicht jetzt</string>
   <string name="wizard_page_welcome_import_settings">Einstellungen importieren</string>
   <string name="wizard_page_theme_text">Theme auswählen.</string>
   <string name="wizard_page_tabs_text">Neue Tabs hinzufügen.\nInteressensgebiete hinterlegen.</string>
@@ -541,6 +541,7 @@
   <string name="wizard_hint_compose_select_account">Klick das Icon um den Account beim Tweet schreiben zu wechseln.</string>
   <string name="wizard_hint_quote_format">Stell das Zitat-Format in \"Einstellungen\" - \"Inhalt &amp; Speicher\" ein</string>
   <string name="wizard_hint_filters">Du kannst ungewünschte Tweets aus Deiner Timeline mit einem \"Filter\" entfernen.</string>
+  <string name="view_replies">Antworten ansehen</string>
   <string name="compact_cards">Kärtchen schrumpfen</string>
   <string name="compact_cards_summary">Mehr Kärtchen anzeigen</string>
   <string name="dashclock_home_unread_count_name">Anzahl ungelesene anzeigen</string>
@@ -563,8 +564,23 @@
   <string name="action_name_saved_at_time"><xliff:g id="action">%1$s</xliff:g>, gespeichert um <xliff:g id="time">%2$s</xliff:g></string>
   <string name="update_status">Tweet senden</string>
   <string name="sending_direct_message">Direktnachricht senden</string>
+  <string name="tab_display_option">Tab Anzeigeoptionen</string>
   <string name="livewp_daydream_enabled_message">Ich hab ein kleines Geschenk für Dich in den System Einstellungen versteckt :)</string>
   <string name="center">Mitte</string>
   <string name="multi_select">Mehrfachauswahl</string>
   <string name="long_click_to_open_menu">Langer Klick um das Menü zu öffnen</string>
+  <string name="swipe_back">Zum schließen wischen</string>
+  <string name="tab_display_option_icon">Symbol</string>
+  <string name="tab_display_option_label">Label</string>
+  <string name="tab_display_option_icon_and_label">Icon und Label</string>
+  <string name="highlight_and_underline">Hervorheben und unterstreichen</string>
+  <string name="twip_api_version_notice_message">TWIP kann keine Rest Bade URL bearbeiten, die nicht mit \"/1.1/\" endet.\n\nSie müssen evtl. \"/1.1/\" an die Rest Base URL anhängen, um Probleme beim hochladen von Bildern zu vermeiden.</string>
+  <string name="back">Zurück</string>
+  <string name="accept">Akzeptieren</string>
+  <string name="deny">Ablehnen</string>
+  <string name="import_settings">Einstellungen importieren</string>
+  <string name="export_settings">Einstellungen exportieren</string>
+  <string name="export_settings_type_dialog_title">Einstellungen exportieren…</string>
+  <string name="import_settings_type_dialog_title">Einstellungen importieren…</string>
+  <string name="nicknames">Spitznamen</string>
 </resources>

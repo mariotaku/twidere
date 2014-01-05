@@ -1,23 +1,25 @@
 /*
- *				Twidere - Twitter client for Android
+ * 				Twidere - Twitter client for Android
  * 
- * Copyright (C) 2012 Mariotaku Lee <mariotaku.lee@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.mariotaku.twidere.model;
+
+import static org.mariotaku.twidere.util.Utils.isOfficialConsumerKeySecret;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -121,9 +123,11 @@ public class Account implements Parcelable {
 				Accounts.COLUMNS, Accounts.ACCOUNT_ID + " = " + account_id, null, null);
 		if (cur != null) {
 			try {
-				final Indices indices = new Indices(cur);
-				cur.moveToFirst();
-				return new Account(cur, indices);
+				if (cur.getCount() > 0 && cur.moveToFirst()) {
+					final Indices indices = new Indices(cur);
+					cur.moveToFirst();
+					return new Account(cur, indices);
+				}
 			} finally {
 				cur.close();
 			}
@@ -161,10 +165,49 @@ public class Account implements Parcelable {
 		return accounts;
 	}
 
+	public static AccountWithCredentials getAccountWithCredentials(final Context context, final long account_id) {
+		if (context == null) return null;
+		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI,
+				Accounts.COLUMNS, Accounts.ACCOUNT_ID + " = " + account_id, null, null);
+		if (cur != null) {
+			try {
+				if (cur.getCount() > 0 && cur.moveToFirst()) {
+					final Indices indices = new Indices(cur);
+					cur.moveToFirst();
+					return new AccountWithCredentials(cur, indices);
+				}
+			} finally {
+				cur.close();
+			}
+		}
+		return null;
+	}
+
+	public static class AccountWithCredentials extends Account {
+
+		public int auth_type;
+		public String consumer_key, consumer_secret;
+
+		public AccountWithCredentials(final Cursor cursor, final Indices indices) {
+			super(cursor, indices);
+			auth_type = cursor.getInt(indices.auth_type);
+			consumer_key = cursor.getString(indices.consumer_key);
+			consumer_secret = cursor.getString(indices.consumer_secret);
+		}
+
+		public static final boolean isOfficialCredentials(final Context context, final AccountWithCredentials account) {
+			if (account == null) return false;
+			final boolean isOAuth = account.auth_type == Accounts.AUTH_TYPE_OAUTH
+					|| account.auth_type == Accounts.AUTH_TYPE_XAUTH;
+			final String consumerKey = account.consumer_key, consumerSecret = account.consumer_secret;
+			return isOAuth && isOfficialConsumerKeySecret(context, consumerKey, consumerSecret);
+		}
+	}
+
 	public static final class Indices {
 
 		public final int screen_name, name, account_id, profile_image_url, profile_banner_url, color, is_activated,
-				consumer_key, consumer_secret;
+				auth_type, consumer_key, consumer_secret;
 
 		public Indices(final Cursor cursor) {
 			screen_name = cursor.getColumnIndex(Accounts.SCREEN_NAME);
@@ -174,6 +217,7 @@ public class Account implements Parcelable {
 			profile_banner_url = cursor.getColumnIndex(Accounts.PROFILE_BANNER_URL);
 			color = cursor.getColumnIndex(Accounts.COLOR);
 			is_activated = cursor.getColumnIndex(Accounts.IS_ACTIVATED);
+			auth_type = cursor.getColumnIndex(Accounts.AUTH_TYPE);
 			consumer_key = cursor.getColumnIndex(Accounts.CONSUMER_KEY);
 			consumer_secret = cursor.getColumnIndex(Accounts.CONSUMER_SECRET);
 		}

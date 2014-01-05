@@ -16,7 +16,6 @@
 
 package twitter4j;
 
-import twitter4j.api.ActivityResources;
 import twitter4j.api.DirectMessagesResources;
 import twitter4j.api.FavoritesResources;
 import twitter4j.api.FriendsFollowersResources;
@@ -29,6 +28,10 @@ import twitter4j.api.SpamReportingResources;
 import twitter4j.api.TimelinesResources;
 import twitter4j.api.TrendsResources;
 import twitter4j.api.TweetResources;
+import twitter4j.api.UndocumentedActivityResources;
+import twitter4j.api.UndocumentedFriendsFollowersResources;
+import twitter4j.api.UndocumentedTimelinesResources;
+import twitter4j.api.UndocumentedTweetResources;
 import twitter4j.api.UsersResources;
 import twitter4j.auth.OAuthSupport;
 
@@ -39,5 +42,6 @@ import twitter4j.auth.OAuthSupport;
 public interface Twitter extends OAuthSupport, TwitterConstants, TwitterBase, SearchResource, TimelinesResources,
 		TweetResources, UsersResources, ListsResources, DirectMessagesResources, FriendsFollowersResources,
 		FavoritesResources, SpamReportingResources, SavedSearchesResources, TrendsResources, PlacesGeoResources,
-		HelpResources, ActivityResources {
+		HelpResources, UndocumentedActivityResources, UndocumentedTweetResources, UndocumentedTimelinesResources,
+		UndocumentedFriendsFollowersResources {
 }

@@ -20,6 +20,7 @@
 package com.scvngr.levelup.views.gallery;
 
 // CHECKSTYLE:OFF
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.os.Handler;
@@ -687,6 +688,7 @@ public abstract class AdapterView<T extends Adapter> extends ViewGroup {
 	 * 
 	 */
 	// CHECKSTYLE:OFF unmodifed
+	@SuppressLint("WrongCall")
 	private void updateEmptyStatus(boolean empty) {
 		if (isInFilterMode()) {
 			empty = false;

@@ -1,3 +1,22 @@
+/*
+ * 				Twidere - Twitter client for Android
+ * 
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere.view.iface;
 
 import android.content.Context;
@@ -72,6 +91,44 @@ public interface IForegroundView {
 			a.recycle();
 		}
 
+		public void dispatchOnDraw(final Canvas canvas) {
+			if (mForeground != null) {
+				final Drawable foreground = mForeground;
+
+				if (mForegroundBoundsChanged) {
+					mForegroundBoundsChanged = false;
+					final Rect selfBounds = mSelfBounds;
+					final Rect overlayBounds = mOverlayBounds;
+
+					final int w = mView.getRight() - mView.getLeft();
+					final int h = mView.getBottom() - mView.getTop();
+
+					if (mForegroundInPadding) {
+						selfBounds.set(0, 0, w, h);
+					} else {
+						selfBounds.set(mView.getPaddingLeft(), mView.getPaddingTop(), w - mView.getPaddingRight(), h
+								- mView.getPaddingBottom());
+					}
+
+					final int layoutDirection = ViewCompat.getLayoutDirection(mView);
+					GravityCompat.apply(mForegroundGravity, foreground.getIntrinsicWidth(),
+							foreground.getIntrinsicHeight(), selfBounds, overlayBounds, layoutDirection);
+					foreground.setBounds(overlayBounds);
+				}
+
+				foreground.draw(canvas);
+			}
+		}
+
+		public void dispatchOnLayout(final boolean changed, final int left, final int top, final int right,
+				final int bottom) {
+			mForegroundBoundsChanged = true;
+		}
+
+		public void dispatchOnSizeChanged(final int w, final int h, final int oldw, final int oldh) {
+			mForegroundBoundsChanged = true;
+		}
+
 		public void draw(final Canvas canvas) {
 			if (mForeground != null) {
 				final Drawable foreground = mForeground;
@@ -115,43 +172,6 @@ public interface IForegroundView {
 			if (mForeground != null) {
 				mForeground.jumpToCurrentState();
 			}
-		}
-
-		public void onDraw(final Canvas canvas) {
-			if (mForeground != null) {
-				final Drawable foreground = mForeground;
-
-				if (mForegroundBoundsChanged) {
-					mForegroundBoundsChanged = false;
-					final Rect selfBounds = mSelfBounds;
-					final Rect overlayBounds = mOverlayBounds;
-
-					final int w = mView.getRight() - mView.getLeft();
-					final int h = mView.getBottom() - mView.getTop();
-
-					if (mForegroundInPadding) {
-						selfBounds.set(0, 0, w, h);
-					} else {
-						selfBounds.set(mView.getPaddingLeft(), mView.getPaddingTop(), w - mView.getPaddingRight(), h
-								- mView.getPaddingBottom());
-					}
-
-					final int layoutDirection = ViewCompat.getLayoutDirection(mView);
-					GravityCompat.apply(mForegroundGravity, foreground.getIntrinsicWidth(),
-							foreground.getIntrinsicHeight(), selfBounds, overlayBounds, layoutDirection);
-					foreground.setBounds(overlayBounds);
-				}
-
-				foreground.draw(canvas);
-			}
-		}
-
-		public void onLayout(final boolean changed, final int left, final int top, final int right, final int bottom) {
-			mForegroundBoundsChanged = true;
-		}
-
-		public void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
-			mForegroundBoundsChanged = true;
 		}
 
 		public void setForeground(final Drawable drawable) {

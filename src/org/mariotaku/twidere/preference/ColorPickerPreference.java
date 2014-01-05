@@ -1,17 +1,20 @@
 /*
- * Copyright (C) 2011 Sergey Margaritov
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * 				Twidere - Twitter client for Android
+ * 
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.mariotaku.twidere.preference;
@@ -29,14 +32,13 @@ import android.widget.ImageView;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.fragment.dialog.ColorPickerDialog;
+import org.mariotaku.twidere.dialog.ColorPickerDialog;
 import org.mariotaku.twidere.view.ColorPickerView;
 
 public class ColorPickerPreference extends Preference implements DialogInterface.OnClickListener, Constants {
 
 	private View mView;
 	protected int mDefaultValue = Color.WHITE;
-	private final float mDensity;
 	private boolean mAlphaSliderEnabled = false;
 
 	private static final String ANDROID_NS = "http://schemas.android.com/apk/res/android";
@@ -54,7 +56,6 @@ public class ColorPickerPreference extends Preference implements DialogInterface
 	public ColorPickerPreference(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		mResources = context.getResources();
-		mDensity = mResources.getDisplayMetrics().density;
 		init(context, attrs);
 	}
 
@@ -146,8 +147,6 @@ public class ColorPickerPreference extends Preference implements DialogInterface
 		if (!(widgetFrameView instanceof ViewGroup)) return;
 		final ViewGroup widgetFrame = (ViewGroup) widgetFrameView;
 		widgetFrame.setVisibility(View.VISIBLE);
-		widgetFrame.setPadding(widgetFrame.getPaddingLeft(), widgetFrame.getPaddingTop(), (int) (mDensity * 8),
-				widgetFrame.getPaddingBottom());
 		// remove preview image that is already created
 		widgetFrame.setAlpha(isEnabled() ? 1 : 0.25f);
 		final View foundView = widgetFrame.findViewById(R.id.color);

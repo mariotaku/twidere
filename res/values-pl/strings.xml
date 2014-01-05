@@ -345,7 +345,6 @@
   <string name="permission_description_accounts">Pokaż informację o koncie</string>
   <string name="permissions_request">Żądanie pozwoleń</string>
   <string name="permissions_request_message">Rozszerzenie wymaga następujących pozwoleń</string>
-  <string name="accept">Akceptuj</string>
   <string name="no_thanks">Nie, dziękuję</string>
   <string name="revoke_permissions">Odwołaj pozwolenia</string>
   <string name="fast_scroll_thumb">Szybkie przewijanie palcem</string>
@@ -421,12 +420,11 @@
   <string name="users_statuses">Ćwierki użytkownika</string>
   <string name="card_animation">Animacja kart</string>
   <string name="name_first">Najpierw wyświetlana nazwa</string>
+  <string name="next">Dalej</string>
   <string name="settings_wizard">Kreator ustawień</string>
   <string name="wizard_page_welcome_title">Witamy</string>
   <string name="wizard_page_welcome_text">Dziękujemy za wybranie Twidere.\nCzy chcesz go skonfigurować teraz?</string>
   <string name="wizard_page_welcome_yes">Tak</string>
-  <string name="next">Dalej</string>
-  <string name="wizard_page_welcome_use_default_settings">Ustawienia domyślne</string>
   <string name="wizard_page_welcome_import_settings">Zaimportuj ustawienia</string>
   <string name="wizard_page_theme_text">Wybierz swój motyw.</string>
   <string name="wizard_page_tabs_text">Dodaj karty do Twidere.\nŚledź ludzi bądź rzeczy na których Ci zależy.</string>
@@ -470,4 +468,5 @@
   <string name="theme_background_default">Domyślne</string>
   <string name="theme_background_solid">Czyste biało-czarne</string>
   <string name="theme_background_transparent">Przezroczyste</string>
+  <string name="accept">Akceptuj</string>
 </resources>

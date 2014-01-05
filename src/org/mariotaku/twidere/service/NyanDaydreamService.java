@@ -1,3 +1,22 @@
+/*
+ * 				Twidere - Twitter client for Android
+ * 
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere.service;
 
 import android.content.SharedPreferences;
@@ -43,7 +62,7 @@ public class NyanDaydreamService extends DreamService implements Constants, OnSh
 
 	@Override
 	public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
-		if (PREFERENCE_KEY_LIVE_WALLPAPER_SCALE.equals(key)) {
+		if (KEY_LIVE_WALLPAPER_SCALE.equals(key)) {
 			updateView();
 		}
 	}
@@ -59,7 +78,7 @@ public class NyanDaydreamService extends DreamService implements Constants, OnSh
 		if (mPreferences == null) return;
 		final Resources res = getResources();
 		final int def = res.getInteger(R.integer.default_live_wallpaper_scale);
-		mNyanDaydreamView.setScale(mPreferences.getInt(PREFERENCE_KEY_LIVE_WALLPAPER_SCALE, def));
+		mNyanDaydreamView.setScale(mPreferences.getInt(KEY_LIVE_WALLPAPER_SCALE, def));
 	}
 
 }

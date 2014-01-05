@@ -67,6 +67,7 @@
   <string name="open_source_license">オープンソースライセンス</string>
   <string name="api">API</string>
   <string name="default_api_settings">デフォルトAPI設定</string>
+  <string name="default_api_settings_summary">この設定はログインし直さないと反映されません。</string>
   <string name="consumer_key">Consumer key</string>
   <string name="consumer_secret">Consumer secret</string>
   <string name="ignore_ssl_error">SSLエラーを無視</string>
@@ -132,7 +133,7 @@
   <string name="quote_format_summary">\"[TEXT]\" = ツイート内容\n\"[NAME]\" = ユーザー名</string>
   <string name="direct_messages">メッセージ</string>
   <string name="blocked_users">ブロックしたユーザー</string>
-  <string name="set_as_default">デフォルトとして設定</string>
+  <string name="set_as_default">デフォルトに設定</string>
   <string name="search_users">ユーザーの検索</string>
   <string name="search_statuses">ツイートの検索</string>
   <string name="created_at">作成日</string>
@@ -184,6 +185,7 @@
   <string name="type_to_compose">メッセージを入力</string>
   <string name="users_lists">保存したリスト</string>
   <string name="lists_following_user">追加されたリスト</string>
+  <string name="lists_following_me">フォロワーリスト</string>
   <string name="item_3_minutes">3分</string>
   <string name="item_5_minutes">5分</string>
   <string name="item_10_minutes">10分</string>
@@ -329,10 +331,12 @@
   <string name="action_unsubscribing_from_list">リストの保存解除</string>
   <string name="action_saving_search">検索の保存</string>
   <string name="action_deleting_search">検索の削除</string>
+  <string name="action_accepting_follow_request">フォローリクエストに応答</string>
+  <string name="action_denying_follow_request">フォローリクエスト拒否</string>
   <string name="status_is_duplicate">既にあなたは同じツイートを送信済みです。</string>
   <string name="data_profiling_summary">Twidereはカリフォルニア大学デービス校でのSNSでの行動調査に協力しています。\n\n必要としているデータとその理由は以下の通りです:\n収集するデータ:\n1. ユーザーのTwitter ID\n2. ユーザーのタイムライン (ユーザーとソーシャルの動向を調べる目的のため)\n3. ユーザーのツイート上でのタップ (ユーザーとソーシャルの動向を調べる目的のため)\n4. 大まかな位置情報 (いつユーザーがTwitterにアクセスするのか調べるため)\n\nTwidereはWi-fiに接続され充電している時にのみデータを送信するので無駄な通信をしたりバッテリーを消費することはありません。</string>
   <string name="data_profiling">匿名利用状況データ</string>
-  <string name="enable_data_profiling">報告を有効にします</string>
+  <string name="enable_data_profiling">統計調査に協力する</string>
   <string name="data_profiling_notification_ticker">オプトインします</string>
   <string name="data_profiling_notification_title">匿名利用状況データ</string>
   <string name="data_profiling_notification_desc">匿名利用状況データの報告を有効/無効にする</string>
@@ -365,7 +369,7 @@
   <string name="permission_description_preferences">設定の読み込み</string>
   <string name="permissions_request">権限の要求</string>
   <string name="permissions_request_message">拡張アプリは下記にアクセスする場合があります</string>
-  <string name="accept">同意</string>
+  <string name="accept_permission_request">許可</string>
   <string name="no_thanks">拒否</string>
   <string name="revoke_permissions">許可を取り消す</string>
   <string name="fast_scroll_thumb">スクロールつまみ</string>
@@ -381,7 +385,7 @@
   <string name="preload_wifi_only">Wi-Fi接続時のみ先読み</string>
   <string name="disable_tab_swipe">タブのスワイプ操作を無効化</string>
   <string name="sign_in_method_introduction_title">どんなふうに動作するの?</string>
-  <string name="sign_in_method_introduction">"twiccaのようなほとんどのクライアントではブラウザを開いてユーザー名とパスワードを入力させた後クライアントに戻ります。\nTwidereではそんな面倒なことをせずにログインできます。パスワードの保管などはしていないのでご安心ください。"</string>
+  <string name="sign_in_method_introduction">ほとんどのクライアントではブラウザを開いてユーザー名とパスワードを入力させた後クライアントに戻ります。\n\nTTwidereではそんな面倒なことをせずにログインできます。パスワードの保管などはしていないのでご安心ください。</string>
   <string name="quote_protected_status_notice">非公開ツイートを引用するのはおすすめできません。</string>
   <string name="edit_draft">下書きを編集</string>
   <string name="profile_image">プロフィール画像</string>
@@ -440,7 +444,7 @@
   <string name="no_close_after_status_updated">編集画面をツイート送信後に開いたままにする</string>
   <string name="no_close_after_status_updated_summary">ツイート編集画面の動作を変更します。</string>
   <string name="status_saved_to_draft">ツイートは下書きに保存されました。</string>
-  <string name="default_account">デフォルトアカウント</string>
+  <string name="default_account">デフォルト</string>
   <string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g> (一日に平均<xliff:g id="daily_tweet">%2$d</xliff:g>回ツイート)</string>
   <string name="empty_content">コンテンツなし</string>
   <string name="fast_image_loading">高速画像読み込み</string>
@@ -474,12 +478,12 @@
   <string name="users_statuses">ユーザーのツイート</string>
   <string name="card_animation">カードアニメーション</string>
   <string name="name_first">名前を先に表示</string>
+  <string name="next">次へ</string>
   <string name="settings_wizard">設定ウィザード</string>
   <string name="wizard_page_welcome_title">ようこそ</string>
   <string name="wizard_page_welcome_text">Twidereを選んで頂きありがとうございます。\n初期設定をしますか?</string>
   <string name="wizard_page_welcome_yes">はい</string>
-  <string name="next">次へ</string>
-  <string name="wizard_page_welcome_use_default_settings">デフォルト設定を使用</string>
+  <string name="wizard_page_welcome_not_now">今はしない</string>
   <string name="wizard_page_welcome_import_settings">設定をインポート</string>
   <string name="wizard_page_theme_text">好きなテーマを選んでください。</string>
   <string name="wizard_page_tabs_text">タブを追加します。\n気になるキーワードを含むツイートやユーザーの検索をするタブも追加出来ます。</string>
@@ -541,7 +545,7 @@
   <string name="wizard_hint_compose_select_account">ツイート編集時にこのアイコンをタップするとアカウントを選択できます。</string>
   <string name="wizard_hint_quote_format">引用の書式は\"設定\" - \"コンテンツ &amp; ストレージ\"で設定できます。</string>
   <string name="wizard_hint_filters">\"フィルタ\"を使うとみたくないツイートをTLや通知で表示しないように出来ます。</string>
-  <string name="view_replies">会話を表示</string>
+  <string name="view_replies">返信を表示</string>
   <string name="compact_cards">カードのコンパクト化</string>
   <string name="compact_cards_summary">画面あたりのカード表示数を増やせます。</string>
   <string name="dashclock_home_unread_count_name">Twidere ホームTL未読数表示</string>
@@ -572,5 +576,21 @@
   <string name="swipe_back">スワイプで閉じる</string>
   <string name="tab_display_option_icon">アイコン</string>
   <string name="tab_display_option_label">ラベル</string>
-  <string name="tab_display_option_both">両方</string>
+  <string name="tab_display_option_icon_and_label">アイコンとラベル</string>
+  <string name="highlight_and_underline">ハイライトと下線</string>
+  <string name="twip_api_version_notice_message">TWIPは\"/1.1/\"で終わっていないRest Base URLを正しく扱えません。\n\n 画像のアップロードの問題を解決するためには\"/1.1/\"をRest Base URLの最後に追記してください。</string>
+  <string name="back">戻る</string>
+  <string name="theme_font_family">使用するフォント</string>
+  <string name="translation_destination">翻訳先</string>
+  <string name="accept">同意</string>
+  <string name="deny">拒否</string>
+  <string name="accepted_users_follow_request"><xliff:g id="user">%s</xliff:g>さんのフォローリクエストを許可しました。</string>
+  <string name="denied_users_follow_request"><xliff:g id="user">%s</xliff:g>さんのフォローリクエストを拒否しました。</string>
+  <string name="import_settings">設定のインポート</string>
+  <string name="export_settings">設定のエクスポート</string>
+  <string name="export_settings_type_dialog_title">設定をエクスポート中…</string>
+  <string name="import_settings_type_dialog_title">設定のインポート…</string>
+  <string name="nicknames">ニックネーム</string>
+  <string name="user_colors">ユーザー色</string>
+  <string name="import_export">インポート/エクスポート</string>
 </resources>

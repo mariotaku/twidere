@@ -32,6 +32,7 @@
   <string name="error_occurred">حدث خطأ، يرجى إعادة المحاولة لاحقاً</string>
   <string name="error_already_logged_in">انت بالفعل قمت بتسجيل الدخول مسبقاً.</string>
   <string name="no_account_selected">لم يتم إختيارات أي حساب.</string>
+  <string name="empty_account_selection_disallowed">من فضلك إختر حسابا واحدا على الأقل.</string>
   <string name="error_unknown_error">خطأ: خطأ غير معروف, ربما أنه خلل.</string>
   <string name="error_message">خطأ: <xliff:g id="message">%s</xliff:g></string>
   <string name="error_message_with_action">خطأ عند <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
@@ -66,6 +67,7 @@
   <string name="open_source_license">رخصة المصدر المفتوح</string>
   <string name="api">API</string>
   <string name="default_api_settings">إعدادات الAPI الإفترادية</string>
+  <string name="default_api_settings_summary">هذه الإعدادات تنطبق فقط على الحسابات المسجلة جديدا</string>
   <string name="consumer_key">شفرة الـConsumer key</string>
   <string name="consumer_secret">شفرة الـConsumer secret</string>
   <string name="ignore_ssl_error">تجاهل أخطاء الـSSL</string>
@@ -185,6 +187,7 @@
   <string name="type_to_compose">اكتب للإرسال</string>
   <string name="users_lists">قوائم المستخدم</string>
   <string name="lists_following_user">القوائم المتتبعة لهذا المستخدم</string>
+  <string name="lists_following_me">القوائم التي تُتابعني</string>
   <string name="item_3_minutes">ثلاث دقائق</string>
   <string name="item_5_minutes">5 دقائق</string>
   <string name="item_10_minutes">10 دقائق</string>
@@ -344,7 +347,7 @@
   <string name="permission_description_preferences">إعدادات القراءة</string>
   <string name="permissions_request">طلب الصلاحيات</string>
   <string name="permissions_request_message">التمديد يطلب الصلاحيات التالية</string>
-  <string name="accept">الموافقة</string>
+  <string name="accept_permission_request">الموافقة</string>
   <string name="no_thanks">لا، شكرا</string>
   <string name="revoke_permissions">إبطال الإستئذانات</string>
   <string name="fast_scroll_thumb">تنقل الإبهام السريع</string>
@@ -429,12 +432,11 @@
   <string name="users_statuses">تغريدات المستخدم</string>
   <string name="card_animation">حركة البطاقات</string>
   <string name="name_first">إضهار الإسم أولا</string>
+  <string name="next">التالي</string>
   <string name="settings_wizard">مساعد الخيارات</string>
   <string name="wizard_page_welcome_title">مرحبا</string>
   <string name="wizard_page_welcome_text">شكر ﻹختياكك تويدر.\nهل ترغب في إعداده الأن ؟</string>
   <string name="wizard_page_welcome_yes">نعم</string>
-  <string name="next">التالي</string>
-  <string name="wizard_page_welcome_use_default_settings">إستعمال الإعدادات الافتراضية</string>
   <string name="wizard_page_welcome_import_settings">إستيراد الإعدادات</string>
   <string name="wizard_page_theme_text">اختر ثيم يُعجبك.</string>
   <string name="wizard_page_tabs_text">أضف بعض للتبويبات إلى تويدر.\nتتبع الأشخاص أو الأشياء التي تهتم بشأنها.</string>
@@ -487,4 +489,5 @@
   <string name="wizard_hint_filters">يمكنك كتم التغريدات الغير مرغوب فيها من الخط الزمني والإخطارات باستعمال \"قواعد الكتم\".</string>
   <string name="update_status">إرسال التغريدة</string>
   <string name="sending_direct_message">جارِ إرسال رسالة مباشرة</string>
+  <string name="accept">الموافقة</string>
 </resources>

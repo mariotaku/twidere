@@ -38,6 +38,8 @@ import twitter4j.ResponseList;
 import twitter4j.SavedSearch;
 import twitter4j.SimilarPlaces;
 import twitter4j.Status;
+import twitter4j.StatusActivitySummary;
+import twitter4j.TranslationResult;
 import twitter4j.Trends;
 import twitter4j.TwitterAPIConfiguration;
 import twitter4j.TwitterException;
@@ -107,7 +109,11 @@ public interface InternalJSONFactory {
 
 	Status createStatus(JSONObject json) throws TwitterException;
 
+	StatusActivitySummary createStatusActivitySummary(HttpResponse res) throws TwitterException;
+
 	ResponseList<Status> createStatusList(HttpResponse res) throws TwitterException;
+
+	TranslationResult createTranslationResult(HttpResponse res) throws TwitterException;
 
 	Trends createTrends(HttpResponse res) throws TwitterException;
 

@@ -9,6 +9,7 @@
   <string name="error_130">Twitter is tijdelijk overbelast.</string>
   <string name="error_131">Twitter\'s server is misschien tijdelijk uit de lucht, probeer het later nog eens.</string>
   <string name="error_135">Controleer je systeemklok.</string>
+  <string name="error_162">Je bent geblokkeerd door deze gebruiker.</string>
   <string name="error_172">Je hebt deze zoekopdracht al opgeslagen.</string>
   <string name="error_179">Je kan deze beschermde gebruiker\'s tweet niet zien.</string>
   <string name="error_187">Je hebt deze tweet al verzonden.</string>

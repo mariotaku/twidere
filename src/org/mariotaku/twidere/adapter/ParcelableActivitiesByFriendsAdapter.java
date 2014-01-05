@@ -1,3 +1,22 @@
+/*
+ * 				Twidere - Twitter client for Android
+ * 
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere.adapter;
 
 import android.content.Context;
@@ -55,7 +74,7 @@ public class ParcelableActivitiesByFriendsAdapter extends BaseParcelableActiviti
 					final ParcelableStatus status = target_statuses[0];
 					if (targetStatusesLength == 1) {
 						holder.text.setVisibility(View.VISIBLE);
-						if (highlightOption != LINK_HIGHLIGHT_OPTION_CODE_NONE) {
+						if (highlightOption != VALUE_LINK_HIGHLIGHT_OPTION_CODE_NONE) {
 							holder.text.setText(Html.fromHtml(status.text_html));
 							linkify.applyAllLinks(holder.text, status.account_id, status.is_possibly_sensitive);
 							holder.text.setMovementMethod(null);
@@ -91,7 +110,7 @@ public class ParcelableActivitiesByFriendsAdapter extends BaseParcelableActiviti
 					holder.text.setVisibility(View.VISIBLE);
 					if (target_object_statuses != null && target_object_statuses.length > 0) {
 						final ParcelableStatus status = target_object_statuses[0];
-						if (highlightOption != LINK_HIGHLIGHT_OPTION_CODE_NONE) {
+						if (highlightOption != VALUE_LINK_HIGHLIGHT_OPTION_CODE_NONE) {
 							holder.text.setText(Html.fromHtml(status.text_html));
 							linkify.applyAllLinks(holder.text, status.account_id, status.is_possibly_sensitive);
 							holder.text.setMovementMethod(null);

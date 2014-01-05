@@ -1,3 +1,22 @@
+/*
+ * 				Twidere - Twitter client for Android
+ * 
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.CompareUtils.classEquals;
@@ -25,6 +44,7 @@ import android.view.ViewGroup;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.support.DataImportActivity;
 import org.mariotaku.twidere.activity.support.HomeActivity;
 import org.mariotaku.twidere.adapter.TabsAdapter;
 import org.mariotaku.twidere.fragment.BaseDialogFragment;
@@ -55,10 +75,15 @@ public class SettingsWizardActivity extends Activity implements Constants {
 	public static final String WIZARD_PREFERENCE_KEY_NEXT_PAGE = "next_page";
 	public static final String WIZARD_PREFERENCE_KEY_USE_DEFAULTS = "use_defaults";
 	public static final String WIZARD_PREFERENCE_KEY_EDIT_CUSTOM_TABS = "edit_custom_tabs";
-	private ViewPager mViewPager;
-	private LinePageIndicator mIndicator;
+	public static final String WIZARD_PREFERENCE_KEY_IMPORT_SETTINGS = "import_settings";
 
+	private static final int REQUEST_IMPORT_SETTINGS = 201;
+
+	private ViewPager mViewPager;
+
+	private LinePageIndicator mIndicator;
 	private TabsAdapter mAdapter;
+
 	private AbsInitialSettingsTask mTask;
 
 	public void applyInitialSettings() {
@@ -75,7 +100,7 @@ public class SettingsWizardActivity extends Activity implements Constants {
 
 	public void exitWizard() {
 		final SharedPreferences prefs = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-		prefs.edit().putBoolean(PREFERENCE_KEY_SETTINGS_WIZARD_COMPLETED, true).apply();
+		prefs.edit().putBoolean(KEY_SETTINGS_WIZARD_COMPLETED, true).apply();
 		final Intent intent = new Intent(this, HomeActivity.class);
 		intent.putExtra(EXTRA_OPEN_ACCOUNTS_DRAWER, true);
 		startActivity(intent);
@@ -113,6 +138,24 @@ public class SettingsWizardActivity extends Activity implements Constants {
 	}
 
 	@Override
+	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		switch (requestCode) {
+			case REQUEST_IMPORT_SETTINGS: {
+				if (resultCode == RESULT_OK) {
+					gotoLastPage();
+				} else {
+					gotoNextPage();
+				}
+				break;
+			}
+			default: {
+				break;
+			}
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.settings_wizard);
@@ -130,6 +173,11 @@ public class SettingsWizardActivity extends Activity implements Constants {
 		mAdapter.addTab(WizardPageCardsFragment.class, null, getString(R.string.cards), null, 0);
 		mAdapter.addTab(WizardPageHintsFragment.class, null, getString(R.string.hints), null, 0);
 		mAdapter.addTab(WizardPageFinishedFragment.class, null, getString(R.string.wizard_page_finished_title), null, 0);
+	}
+
+	private void openImportSettingsDialog() {
+		final Intent intent = new Intent(this, DataImportActivity.class);
+		startActivityForResult(intent, REQUEST_IMPORT_SETTINGS);
 	}
 
 	public static abstract class BaseWizardPageFragment extends BasePreferenceFragment implements
@@ -386,14 +434,18 @@ public class SettingsWizardActivity extends Activity implements Constants {
 			super.onActivityCreated(savedInstanceState);
 			findPreference(WIZARD_PREFERENCE_KEY_NEXT_PAGE).setOnPreferenceClickListener(this);
 			findPreference(WIZARD_PREFERENCE_KEY_USE_DEFAULTS).setOnPreferenceClickListener(this);
+			findPreference(WIZARD_PREFERENCE_KEY_IMPORT_SETTINGS).setOnPreferenceClickListener(this);
 		}
 
 		@Override
 		public boolean onPreferenceClick(final Preference preference) {
-			if (WIZARD_PREFERENCE_KEY_NEXT_PAGE.equals(preference.getKey())) {
+			final String key = preference.getKey();
+			if (WIZARD_PREFERENCE_KEY_NEXT_PAGE.equals(key)) {
 				gotoNextPage();
-			} else if (WIZARD_PREFERENCE_KEY_USE_DEFAULTS.equals(preference.getKey())) {
+			} else if (WIZARD_PREFERENCE_KEY_USE_DEFAULTS.equals(key)) {
 				applyInitialSettings();
+			} else if (WIZARD_PREFERENCE_KEY_IMPORT_SETTINGS.equals(key)) {
+				openImportSettingsDialog();
 			}
 			return true;
 		}
@@ -417,9 +469,16 @@ public class SettingsWizardActivity extends Activity implements Constants {
 		protected int getPreferenceResource() {
 			return R.xml.settings_wizard_page_welcome;
 		}
+
+		private void openImportSettingsDialog() {
+			final Activity a = getActivity();
+			if (a instanceof SettingsWizardActivity) {
+				((SettingsWizardActivity) a).openImportSettingsDialog();
+			}
+		}
 	}
 
-	static abstract class AbsInitialSettingsTask extends AsyncTask<Void, Void, Void> {
+	static abstract class AbsInitialSettingsTask extends AsyncTask<Void, Void, Boolean> {
 
 		private static final String FRAGMENT_TAG = "initial_settings_dialog";
 
@@ -433,10 +492,10 @@ public class SettingsWizardActivity extends Activity implements Constants {
 		}
 
 		@Override
-		protected Void doInBackground(final Void... params) {
+		protected Boolean doInBackground(final Void... params) {
 			final ContentResolver resolver = mActivity.getContentResolver();
 			final List<SupportTabSpec> tabs = CustomTabUtils.getHomeTabs(mActivity);
-			if (wasConfigured(tabs)) return null;
+			if (wasConfigured(tabs)) return true;
 			Collections.sort(tabs);
 			int i = 0;
 			final List<ContentValues> values_list = new ArrayList<ContentValues>();
@@ -466,7 +525,7 @@ public class SettingsWizardActivity extends Activity implements Constants {
 			}
 			resolver.delete(Tabs.CONTENT_URI, null, null);
 			resolver.bulkInsert(Tabs.CONTENT_URI, values_list.toArray(new ContentValues[values_list.size()]));
-			return null;
+			return true;
 		}
 
 		protected SettingsWizardActivity getActivity() {
@@ -476,7 +535,7 @@ public class SettingsWizardActivity extends Activity implements Constants {
 		protected abstract void nextStep();
 
 		@Override
-		protected void onPostExecute(final Void result) {
+		protected void onPostExecute(final Boolean result) {
 			final FragmentManager fm = mActivity.getFragmentManager();
 			final DialogFragment f = (DialogFragment) fm.findFragmentByTag(FRAGMENT_TAG);
 			if (f != null) {

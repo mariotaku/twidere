@@ -1,3 +1,22 @@
+/*
+ * 				Twidere - Twitter client for Android
+ * 
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere.fragment.support;
 
 import static org.mariotaku.twidere.util.Utils.openUserFavorites;
@@ -177,7 +196,7 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 						break;
 					}
 					case MENU_SET_AS_DEFAULT: {
-						mPreferences.edit().putLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, account.account_id).commit();
+						mPreferences.edit().putLong(KEY_DEFAULT_ACCOUNT_ID, account.account_id).commit();
 						break;
 					}
 					case MENU_DELETE: {
@@ -264,13 +283,13 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 	@Override
 	public void onResume() {
 		super.onResume();
-		mAdapter.setDefaultAccountId(mPreferences.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1));
+		mAdapter.setDefaultAccountId(mPreferences.getLong(KEY_DEFAULT_ACCOUNT_ID, -1));
 	}
 
 	@Override
 	public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
-		if (PREFERENCE_KEY_DEFAULT_ACCOUNT_ID.equals(key)) {
-			mAdapter.setDefaultAccountId(mPreferences.getLong(PREFERENCE_KEY_DEFAULT_ACCOUNT_ID, -1));
+		if (KEY_DEFAULT_ACCOUNT_ID.equals(key)) {
+			mAdapter.setDefaultAccountId(mPreferences.getLong(KEY_DEFAULT_ACCOUNT_ID, -1));
 		}
 	}
 

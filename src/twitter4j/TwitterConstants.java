@@ -38,6 +38,10 @@ public interface TwitterConstants {
 	static final String ENDPOINT_ACTIVITY_ABOUT_ME = "activity/about_me.json";
 	static final String ENDPOINT_ACTIVITY_BY_FRIENDS = "activity/by_friends.json";
 
+	static final String ENDPOINT_CONVERSATION_SHOW = "conversation/show.json";
+
+	static final String ENDPOINT_TRANSLATIONS_SHOW = "translations/show.json";
+
 	static final String ENDPOINT_BLOCKS_CREATE = "blocks/create.json";
 	static final String ENDPOINT_BLOCKS_DESTROY = "blocks/destroy.json";
 	static final String ENDPOINT_BLOCKS_LIST = "blocks/list.json";
@@ -69,6 +73,8 @@ public interface TwitterConstants {
 	static final String ENDPOINT_FRIENDSHIPS_OUTGOING = "friendships/outgoing.json";
 	static final String ENDPOINT_FRIENDSHIPS_SHOW = "friendships/show.json";
 	static final String ENDPOINT_FRIENDSHIPS_UPDATE = "friendships/update.json";
+	static final String ENDPOINT_FRIENDSHIPS_ACCEPT = "friendships/accept.json";
+	static final String ENDPOINT_FRIENDSHIPS_DENY = "friendships/deny.json";
 
 	static final String ENDPOINT_HELP_CONFIGURATION = "help/configuration.json";
 	static final String ENDPOINT_HELP_LANGUAGES = "help/languages.json";
@@ -93,6 +99,7 @@ public interface TwitterConstants {
 	static final String ENDPOINT_LISTS_SUBSCRIBERS_DESTROY = "lists/subscribers/destroy.json";
 	static final String ENDPOINT_LISTS_SUBSCRIBERS_SHOW = "lists/subscribers/show.json";
 	static final String ENDPOINT_LISTS_UPDATE = "lists/update.json";
+	static final String ENDPOINT_LISTS_OWNERSHIPS = "lists/ownerships.json";
 
 	static final String ENDPOINT_RATE_LIMIT_STATUS = "application/rate_limit_status.json";
 
@@ -110,6 +117,7 @@ public interface TwitterConstants {
 	static final String ENDPOINT_STATUSES_UPDATE = "statuses/update.json";
 	static final String ENDPOINT_STATUSES_UPDATE_WITH_MEDIA = "statuses/update_with_media.json";
 	static final String ENDPOINT_STATUSES_USER_TIMELINE = "statuses/user_timeline.json";
+	static final String ENDPOINT_STATUSES_MEDIA_TIMELINE = "statuses/media_timeline.json";
 
 	static final String ENDPOINT_TRENDS_AVAILABLE = "trends/available.json";
 	static final String ENDPOINT_TRENDS_CLOSEST = "trends/closest.json";

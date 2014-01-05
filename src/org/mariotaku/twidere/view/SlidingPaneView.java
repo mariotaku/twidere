@@ -1,30 +1,31 @@
 /*
  * 				Twidere - Twitter client for Android
- *
- *  Copyright (C) 2012-2013 Mariotaku Lee <mariotaku.lee@gmail.com>
- *
+ * 
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- *
+ * 
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *
+ * 
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.mariotaku.twidere.view;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Build;
+import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -109,6 +110,8 @@ public class SlidingPaneView extends ViewGroup {
 	private boolean mForceRefresh = false;
 
 	private boolean mShadowSlidable;
+
+	private final Handler mHandler = new Handler();
 
 	public SlidingPaneView(final Context context) {
 		this(context, null);
@@ -252,6 +255,23 @@ public class SlidingPaneView extends ViewGroup {
 		return mViewShadow.getVisibility() == VISIBLE;
 	}
 
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	public void manageLayers(final float percentOpen) {
+		if (Build.VERSION.SDK_INT < 11) return;
+
+		final boolean layer = percentOpen > 0.0f && percentOpen < 1.0f;
+		final int layerType = layer ? View.LAYER_TYPE_HARDWARE : View.LAYER_TYPE_NONE;
+		if (layerType != mRightPaneLayout.getLayerType()) {
+			mHandler.post(new Runnable() {
+				@Override
+				public void run() {
+					mRightPaneLayout.setLayerType(layerType, null);
+					mLeftPaneLayout.setLayerType(layerType, null);
+				}
+			});
+		}
+	}
+
 	@Override
 	public void onRestoreInstanceState(final Parcelable state) {
 		if (!(state instanceof SavedState)) {
@@ -301,19 +321,19 @@ public class SlidingPaneView extends ViewGroup {
 		mFadeType = type;
 	}
 
+	// @Override
+	// public void setLayerType(final int layerType, final Paint paint) {
+	// final int currLayerType = getLayerType();
+	// if (layerType == currLayerType) return;
+	// super.setLayerType(layerType, paint);
+	// }
+
 	public void setFadeValue(final int value) {
 		mFadeMax = limit(value, 0x00, 0xFF);
 	}
 
 	public void setFlingDuration(final int duration) {
 		mFlingDuration = duration;
-	}
-
-	@Override
-	public void setLayerType(final int layerType, final Paint paint) {
-		final int currLayerType = getLayerType();
-		if (layerType == currLayerType) return;
-		super.setLayerType(layerType, paint);
 	}
 
 	public void setRightPaneBackground(final int resId) {
@@ -794,10 +814,15 @@ public class SlidingPaneView extends ViewGroup {
 
 	private static class RightPaneLayout extends ExtendedLinearLayout {
 
+		private final ContentScrollController mController;
+		private final SlidingPaneView mParent;
+
 		private OnSwipeListener mOnSwipeListener;
 
 		public RightPaneLayout(final SlidingPaneView parent) {
 			super(parent.getContext());
+			mParent = parent;
+			mController = parent.getController();
 			ViewAccessor.enableHwAccelIfNecessary(this);
 			setOrientation(LinearLayout.HORIZONTAL);
 		}
@@ -819,6 +844,7 @@ public class SlidingPaneView extends ViewGroup {
 			if (mOnSwipeListener != null) {
 				mOnSwipeListener.onSwipe(-getScrollX());
 			}
+			mParent.manageLayers(mController.getScrollFactor());
 		}
 
 		public static interface OnSwipeListener {

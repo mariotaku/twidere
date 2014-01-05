@@ -39,6 +39,10 @@
 		android:icon="@drawable/ic_menu_copy"
 		android:title="@android:string/copy"/>
 	<item
+		android:id="@id/translate"
+		android:icon="@drawable/ic_menu_translate"
+		android:title="@string/translate"/>
+	<item
 		android:id="@id/add_to_filter"
 		android:icon="@drawable/ic_menu_mute"
 		android:title="@string/add_to_filter"/>

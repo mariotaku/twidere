@@ -1,3 +1,22 @@
+/*
+ * 				Twidere - Twitter client for Android
+ * 
+ *  Copyright (C) 2012-2014 Mariotaku Lee <mariotaku.lee@gmail.com>
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ * 
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.mariotaku.twidere.adapter;
 
 import android.content.Context;
@@ -28,7 +47,7 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 	public static final int GROUP_ID_MENU = 2;
 
 	private static final GroupItem[] GROUPS = new GroupItem[3];
-	private static final OptionItem[] ACCOUNT_OPTIONS = new OptionItem[10];
+	private static final OptionItem[] ACCOUNT_OPTIONS = new OptionItem[9];
 	private static final OptionItem[] MORE_OPTION_ITEMS = new OptionItem[4];
 
 	static {
@@ -37,12 +56,10 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 		ACCOUNT_OPTIONS[2] = new OptionItem(R.string.statuses, R.drawable.ic_menu_quote, MENU_STATUSES);
 		ACCOUNT_OPTIONS[3] = new OptionItem(R.string.favorites, R.drawable.ic_menu_star, MENU_FAVORITES);
 		ACCOUNT_OPTIONS[4] = new OptionItem(R.string.users_lists, R.drawable.ic_menu_list, MENU_LISTS);
-		ACCOUNT_OPTIONS[5] = new OptionItem(R.string.lists_following_user, R.drawable.ic_menu_list,
-				MENU_LIST_MEMBERSHIPS);
-		ACCOUNT_OPTIONS[6] = new OptionItem(R.string.edit_profile, android.R.drawable.ic_menu_edit, MENU_EDIT);
-		ACCOUNT_OPTIONS[7] = new OptionItem(R.string.set_color, R.drawable.ic_menu_color_palette, MENU_SET_COLOR);
-		ACCOUNT_OPTIONS[8] = new OptionItem(R.string.set_as_default, R.drawable.ic_menu_mark, MENU_SET_AS_DEFAULT);
-		ACCOUNT_OPTIONS[9] = new OptionItem(R.string.delete, android.R.drawable.ic_menu_delete, MENU_DELETE);
+		ACCOUNT_OPTIONS[5] = new OptionItem(R.string.lists_following_me, R.drawable.ic_menu_list, MENU_LIST_MEMBERSHIPS);
+		ACCOUNT_OPTIONS[6] = new OptionItem(R.string.set_color, R.drawable.ic_menu_color_palette, MENU_SET_COLOR);
+		ACCOUNT_OPTIONS[7] = new OptionItem(R.string.set_as_default, R.drawable.ic_menu_mark, MENU_SET_AS_DEFAULT);
+		ACCOUNT_OPTIONS[8] = new OptionItem(R.string.delete, android.R.drawable.ic_menu_delete, MENU_DELETE);
 		MORE_OPTION_ITEMS[0] = new OptionItem(R.string.add_account, android.R.drawable.ic_menu_add, MENU_ADD_ACCOUNT);
 		MORE_OPTION_ITEMS[1] = new OptionItem(R.string.drafts, android.R.drawable.ic_menu_save, MENU_DRAFTS);
 		MORE_OPTION_ITEMS[2] = new OptionItem(R.string.filters, R.drawable.ic_menu_mute, MENU_FILTERS);

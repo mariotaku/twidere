@@ -76,7 +76,9 @@
 			android:summary="@string/gzip_compressing_summary"
 			android:title="@string/gzip_compressing"/>
 
-		<org.mariotaku.twidere.preference.DefaultAPIPreference android:title="@string/default_api_settings"/>
+		<org.mariotaku.twidere.preference.DefaultAPIPreference
+			android:summary="@string/default_api_settings_summary"
+			android:title="@string/default_api_settings"/>
 	</PreferenceCategory>
 
 </PreferenceScreen>
