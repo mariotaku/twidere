@@ -594,5 +594,6 @@
 	<string name="nicknames">Nicknames</string>
 	<string name="user_colors">User colors</string>
 	<string name="import_export">Import/Export</string>
+	<string name="theme_background_alpha">Theme background alpha</string>
 
 </resources>

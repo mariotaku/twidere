@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Parcel;
@@ -336,8 +337,8 @@ public class SlidingPaneView extends ViewGroup {
 		mFlingDuration = duration;
 	}
 
-	public void setRightPaneBackground(final int resId) {
-		mRightPaneBackgroundView.setBackgroundResource(resId);
+	public void setRightPaneBackground(final Drawable background) {
+		ViewAccessor.setBackground(mRightPaneBackgroundView, background);
 	}
 
 	public void setShadowSlidable(final boolean slidable) {

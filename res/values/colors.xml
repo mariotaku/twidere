@@ -4,8 +4,8 @@
 	<color name="nyan_background">#003366</color>
 	<color name="bg_color_light">#e5e5e5</color>
 	<color name="bg_color_dark">#101010</color>
-	<color name="bg_color_transparent_dark">#a0000000</color>
-	<color name="bg_color_transparent_light">#a0ffffff</color>
+	<color name="bg_color_transparent_dark">#ff000000</color>
+	<color name="bg_color_transparent_light">#ffffffff</color>
 	<color name="bg_color_drawer_dark">#1a1a1a</color>
 	<color name="bg_color_drawer_transparent_dark">#c01a1a1a</color>
 	<color name="highlighted_text_holo_dark">#66b0b0b0</color>

@@ -425,7 +425,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		mSendView = composeActionBar.findViewById(R.id.send);
 		mBottomSendView = composeBottomBar.findViewById(R.id.send);
 		ViewAccessor.setBackground(findViewById(R.id.compose_content), getWindowContentOverlayForCompose(this));
-		ViewAccessor.setBackground(composeActionBar, getActionBarBackground(this, false));
+		ViewAccessor.setBackground(composeActionBar, getActionBarBackground(this, getCurrentThemeResourceId()));
 	}
 
 	@Override

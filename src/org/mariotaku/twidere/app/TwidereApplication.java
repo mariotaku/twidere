@@ -262,9 +262,9 @@ public class TwidereApplication extends Application implements Constants, OnShar
 		ACRA.getErrorReporter().setReportSender(new EmailIntentSender(this));
 	}
 
-	private DiscCacheAware getDiscCache(final String dir_name) {
-		final File cache_dir = getBestCacheDir(this, dir_name);
-		return new UnlimitedDiscCache(cache_dir, new URLFileNameGenerator());
+	private DiscCacheAware getDiscCache(final String dirName) {
+		final File cacheDir = getBestCacheDir(this, dirName);
+		return new UnlimitedDiscCache(cacheDir, new URLFileNameGenerator());
 	}
 
 	private void initializeAsyncTask() {

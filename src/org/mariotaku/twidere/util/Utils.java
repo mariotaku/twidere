@@ -79,6 +79,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.MeasureSpec;
+import android.view.Window;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.webkit.MimeTypeMap;
@@ -2271,6 +2272,14 @@ public final class Utils implements Constants {
 		final long[] accountIds = getAccountIds(context);
 		final long[] refreshIds = AccountPreferences.getAutoRefreshEnabledAccountIds(context, accountIds);
 		return refreshIds != null && refreshIds.length > 0;
+	}
+
+	public static int inferStatusBarHeight(final Activity activity) {
+		final Window w = activity.getWindow();
+		final View decorView = w.getDecorView();
+		final Rect rect = new Rect();
+		decorView.getWindowVisibleDisplayFrame(rect);
+		return rect.top;
 	}
 
 	public static void initAccountColor(final Context context) {

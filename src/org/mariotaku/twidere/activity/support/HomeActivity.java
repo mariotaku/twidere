@@ -47,6 +47,7 @@ import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -132,8 +133,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private final ContentObserver mAccountChangeObserver = new AccountChangeObserver(this, mHandler);
 
 	private final ArrayList<SupportTabSpec> mCustomTabs = new ArrayList<SupportTabSpec>();
-	private final SparseArray<Fragment> mAttachedFragments = new SparseArray<Fragment>();
 
+	private final SparseArray<Fragment> mAttachedFragments = new SparseArray<Fragment>();
 	private Account mSelectedAccountToSearch;
 
 	private SharedPreferences mPreferences;
@@ -143,18 +144,18 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private NotificationManager mNotificationManager;
 
 	private MultiSelectEventHandler mMultiSelectHandler;
+
 	private ActionBar mActionBar;
 	private SupportTabsAdapter mPagerAdapter;
 	private ExtendedViewPager mViewPager;
-
 	private TabPageIndicator mIndicator;
-	private SlidingMenu mSlidingMenu;
 
+	private SlidingMenu mSlidingMenu;
 	private View mEmptyTabHint;
+
 	private HomeActionsActionView mActionsActionView, mActionsButton, mBottomActionsButton;
 	private LeftDrawerFrameLayout mLeftDrawerContainer;
 	private Fragment mCurrentVisibleFragment;
-
 	private UpdateUnreadCountTask mUpdateUnreadCountTask;
 
 	private final Rect mRect = new Rect();
@@ -610,6 +611,11 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		}
 	}
 
+	@Override
+	protected boolean shouldSetWindowBackground() {
+		return false;
+	}
+
 	private LeftDrawerFrameLayout getLeftDrawerContainer() {
 		return mLeftDrawerContainer;
 	}
@@ -769,7 +775,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mSlidingMenu.setBehindCanvasTransformer(new ListenerCanvasTransformer(this));
 		final Window window = getWindow();
 		if (isTransparentBackground) {
-			ViewAccessor.setBackground(mSlidingMenu.getContent(), null);
+			final Drawable windowBackground = ThemeUtils.getWindowBackground(this, getCurrentThemeResourceId());
+			ViewAccessor.setBackground(mSlidingMenu.getContent(), windowBackground);
 			window.setBackgroundDrawable(new EmptyDrawable());
 		} else {
 			window.setBackgroundDrawable(null);

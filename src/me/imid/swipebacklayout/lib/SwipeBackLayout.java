@@ -18,6 +18,8 @@ import android.widget.ImageView.ScaleType;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.MathUtils;
+import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.util.accessor.ViewAccessor;
 
 public class SwipeBackLayout extends FrameLayout {
 	/**
@@ -134,6 +136,7 @@ public class SwipeBackLayout extends FrameLayout {
 
 	public SwipeBackLayout(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs);
+		setFitsSystemWindows(true);
 		mDragHelper = ViewDragHelper.create(this, new ViewDragCallback());
 
 		final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SwipeBackLayout, defStyle,
@@ -170,20 +173,19 @@ public class SwipeBackLayout extends FrameLayout {
 
 	public void attachToActivity(final Activity activity) {
 		mActivity = activity;
-		final TypedArray a = activity.getTheme().obtainStyledAttributes(new int[] { android.R.attr.windowBackground });
-		final int background = a.getResourceId(0, 0);
-		a.recycle();
+		final Drawable background = ThemeUtils.getWindowBackground(activity);
 
 		final ViewGroup decor = (ViewGroup) activity.getWindow().getDecorView();
 		final ViewGroup decorChild = (ViewGroup) decor.getChildAt(0);
 		final ImageView backgroundChild = new ImageView(activity);
 		backgroundChild.setScaleType(ScaleType.CENTER_CROP);
-		decorChild.setBackgroundResource(background);
+		ViewAccessor.setBackground(decorChild, background);
 		decor.removeView(decorChild);
 		setBackgroundView(backgroundChild);
 		setContentView(decorChild);
 		addView(decorChild, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		final FrameLayout frame = new FrameLayout(activity);
+		frame.setFitsSystemWindows(true);
 		frame.addView(backgroundChild, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		frame.addView(this);
 		decor.addView(frame);

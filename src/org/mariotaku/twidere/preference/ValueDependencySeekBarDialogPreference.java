@@ -24,7 +24,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.preference.DialogPreference;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 
@@ -34,20 +33,21 @@ import org.mariotaku.twidere.util.ParseUtils;
 
 import java.util.Map;
 
-public class ValueDependencyDialogPreference extends DialogPreference implements OnSharedPreferenceChangeListener {
+public class ValueDependencySeekBarDialogPreference extends SeekBarDialogPreference implements
+		OnSharedPreferenceChangeListener {
 
 	private final String mDependencyKey, mDependencyValueDefault;
 	private final String[] mDependencyValues;
 
-	public ValueDependencyDialogPreference(final Context context) {
+	public ValueDependencySeekBarDialogPreference(final Context context) {
 		this(context, null);
 	}
 
-	public ValueDependencyDialogPreference(final Context context, final AttributeSet attrs) {
+	public ValueDependencySeekBarDialogPreference(final Context context, final AttributeSet attrs) {
 		this(context, attrs, android.R.attr.dialogPreferenceStyle);
 	}
 
-	public ValueDependencyDialogPreference(final Context context, final AttributeSet attrs, final int defStyle) {
+	public ValueDependencySeekBarDialogPreference(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		final Resources res = context.getResources();
 		final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ValueDependencyPreference, defStyle, 0);

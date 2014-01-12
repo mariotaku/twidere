@@ -104,7 +104,7 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 
 	@Override
 	public int getThemeResourceId() {
-		return ThemeUtils.getThemeResource(this);
+		return ThemeUtils.getViewerThemeResource(this);
 	}
 
 	public ThreadPool getThreadPool() {
@@ -147,7 +147,7 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
-		getMenuInflater().inflate(R.menu.menu_image_viewer, menu);
+		getMenuInflater().inflate(R.menu.menu_image_viewer_action_bar, menu);
 		// Locate MenuItem with ShareActionProvider
 		final MenuItem item = menu.findItem(MENU_SHARE);
 		// Fetch and store ShareActionProvider
