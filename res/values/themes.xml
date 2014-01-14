@@ -33,6 +33,7 @@
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
 		<item name="tabItemContentStyle">@style/Widget.TabPageIndicator.TabItem.Content</item>
 		<item name="tabItemTextStyle">@style/Widget.TabPageIndicator.TabItem.TextView.Dark</item>
+		<item name="staggeredGridViewStyle">@style/Widget.StaggeredGridView</item>
 
 		<!-- Card UI styles -->
 		<item name="cardItemBackground">@drawable/bg_card_item_dark</item>
@@ -65,6 +66,7 @@
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
 		<item name="tabItemContentStyle">@style/Widget.TabPageIndicator.TabItem.Content</item>
 		<item name="tabItemTextStyle">@style/Widget.TabPageIndicator.TabItem.TextView.Light</item>
+		<item name="staggeredGridViewStyle">@style/Widget.StaggeredGridView</item>
 
 		<!-- Card UI styles -->
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
@@ -97,6 +99,7 @@
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
 		<item name="tabItemContentStyle">@style/Widget.TabPageIndicator.TabItem.Content</item>
 		<item name="tabItemTextStyle">@style/Widget.TabPageIndicator.TabItem.TextView.Light.DarkActionBar</item>
+		<item name="staggeredGridViewStyle">@style/Widget.StaggeredGridView</item>
 
 		<!-- Card UI styles -->
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
@@ -216,6 +219,7 @@
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
 		<item name="tabItemContentStyle">@style/Widget.TabPageIndicator.TabItem.Content</item>
 		<item name="tabItemTextStyle">@style/Widget.TabPageIndicator.TabItem.TextView</item>
+		<item name="staggeredGridViewStyle">@style/Widget.StaggeredGridView</item>
 
 		<!-- Card UI styles -->
 		<item name="cardItemBackground">@drawable/bg_card_item_dark</item>
@@ -233,6 +237,7 @@
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
 		<item name="tabItemContentStyle">@style/Widget.TabPageIndicator.TabItem.Content</item>
 		<item name="tabItemTextStyle">@style/Widget.TabPageIndicator.TabItem.TextView</item>
+		<item name="staggeredGridViewStyle">@style/Widget.StaggeredGridView</item>
 
 		<!-- Card UI styles -->
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>

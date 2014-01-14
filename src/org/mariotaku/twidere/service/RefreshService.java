@@ -37,7 +37,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -48,12 +47,13 @@ import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.SharedPreferencesWrapper;
 
 import java.util.Arrays;
 
 public class RefreshService extends Service implements Constants {
 
-	private SharedPreferences mPreferences;
+	private SharedPreferencesWrapper mPreferences;
 
 	private AlarmManager mAlarmManager;
 	private AsyncTwitterWrapper mTwitterWrapper;
@@ -136,7 +136,7 @@ public class RefreshService extends Service implements Constants {
 		mAlarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 		final TwidereApplication app = TwidereApplication.getInstance(this);
 		mTwitterWrapper = app.getTwitterWrapper();
-		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+		mPreferences = SharedPreferencesWrapper.getInstance(app, SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		mPendingRefreshHomeTimelineIntent = PendingIntent.getBroadcast(this, 0, new Intent(
 				BROADCAST_REFRESH_HOME_TIMELINE), 0);
 		mPendingRefreshMentionsIntent = PendingIntent.getBroadcast(this, 0, new Intent(BROADCAST_REFRESH_MENTIONS), 0);

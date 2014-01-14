@@ -109,4 +109,9 @@
 		<item name="cardGapTextSize">18sp</item>
 	</style>
 
+	<style name="Widget.StaggeredGridView" parent="android:Widget.Holo">
+		<item name="column_count_portrait">@integer/staggered_grid_columns_port</item>
+		<item name="column_count_landscape">@integer/staggered_grid_columns_land</item>
+	</style>
+
 </resources>

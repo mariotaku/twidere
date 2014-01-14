@@ -160,7 +160,7 @@ public interface SharedPreferenceConstants {
 	public static final String KEY_REFRESH_AFTER_TWEET = "refresh_after_tweet";
 	@Preference(type = BOOLEAN)
 	public static final String KEY_AUTO_REFRESH = "auto_refresh";
-	@Preference(type = INT)
+	@Preference(type = STRING)
 	public static final String KEY_REFRESH_INTERVAL = "refresh_interval";
 	@Preference(type = BOOLEAN)
 	public static final String KEY_AUTO_REFRESH_HOME_TIMELINE = "auto_refresh_home_timeline";

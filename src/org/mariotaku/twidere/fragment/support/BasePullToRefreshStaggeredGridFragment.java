@@ -19,15 +19,13 @@
 
 package org.mariotaku.twidere.fragment.support;
 
-import static android.support.v4.app.ListFragmentTrojan.INTERNAL_EMPTY_ID;
-import static android.support.v4.app.ListFragmentTrojan.INTERNAL_LIST_CONTAINER_ID;
-import static android.support.v4.app.ListFragmentTrojan.INTERNAL_PROGRESS_CONTAINER_ID;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -36,11 +34,14 @@ import android.widget.TextView;
 
 import org.mariotaku.refreshnow.widget.OnRefreshListener;
 import org.mariotaku.refreshnow.widget.RefreshMode;
+import org.mariotaku.refreshnow.widget.RefreshNowProgressIndicator;
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.iface.IBasePullToRefreshFragment;
-import org.mariotaku.twidere.view.RefreshNowMultiColumnListView;
+import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.view.RefreshNowStaggeredGridView;
 
-public abstract class BasePullToRefreshMultiColumnListFragment extends BaseSupportMultiColumnListFragment implements
-		IBasePullToRefreshFragment {
+public abstract class BasePullToRefreshStaggeredGridFragment extends BaseSupportStaggeredGridFragment implements
+		IBasePullToRefreshFragment, OnTouchListener {
 
 	@Override
 	public boolean canOverScroll() {
@@ -48,17 +49,24 @@ public abstract class BasePullToRefreshMultiColumnListFragment extends BaseSuppo
 	}
 
 	@Override
-	public RefreshNowMultiColumnListView getListView() {
-		return (RefreshNowMultiColumnListView) super.getListView();
+	public RefreshNowStaggeredGridView getListView() {
+		return (RefreshNowStaggeredGridView) super.getListView();
 	}
 
 	@Override
 	public RefreshMode getRefreshMode() {
+		if (getView() == null) return RefreshMode.NONE;
 		return getListView().getRefreshMode();
 	}
 
 	@Override
+	public boolean isOverScrolling() {
+		return false;
+	}
+
+	@Override
 	public boolean isRefreshing() {
+		if (getView() == null) return false;
 		return getListView().isRefreshing();
 	}
 
@@ -108,11 +116,22 @@ public abstract class BasePullToRefreshMultiColumnListFragment extends BaseSuppo
 		lframe.addView(tv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.MATCH_PARENT));
 
-		final RefreshNowMultiColumnListView lv = new RefreshNowMultiColumnListView(getActivity());
+		final RefreshNowStaggeredGridView lv = (RefreshNowStaggeredGridView) inflater.inflate(
+				R.layout.refreshnow_staggered_gridview, lframe, false);
 		lv.setId(android.R.id.list);
 		lv.setDrawSelectorOnTop(false);
+		lv.setOnRefreshListener(this);
+		lv.setOnTouchListener(this);
 		lframe.addView(lv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.MATCH_PARENT));
+
+		final RefreshNowProgressIndicator indicator = new RefreshNowProgressIndicator(context);
+		indicator.setProgressColor(ThemeUtils.getUserThemeColor(context));
+		final int indicatorHeight = Math.round(3 * getResources().getDisplayMetrics().density);
+		lframe.addView(indicator, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, indicatorHeight,
+				Gravity.TOP));
+
+		lv.setRefreshIndicatorView(indicator);
 
 		root.addView(lframe, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.MATCH_PARENT));
@@ -126,7 +145,7 @@ public abstract class BasePullToRefreshMultiColumnListFragment extends BaseSuppo
 	}
 
 	@Override
-	public final void onRefreshComplete() {
+	public void onRefreshComplete() {
 
 	}
 
@@ -140,34 +159,54 @@ public abstract class BasePullToRefreshMultiColumnListFragment extends BaseSuppo
 	}
 
 	@Override
+	public final boolean onTouch(final View v, final MotionEvent event) {
+		switch (event.getAction()) {
+			case MotionEvent.ACTION_DOWN: {
+				onListTouched();
+				break;
+			}
+		}
+		return false;
+	}
+
+	@Override
 	public void setOnRefreshListener(final OnRefreshListener listener) {
 
 	}
 
 	@Override
 	public void setRefreshComplete() {
+		if (getView() == null) return;
 		getListView().setRefreshComplete();
 	}
 
 	@Override
 	public void setRefreshIndicatorView(final View view) {
+		if (getView() == null) return;
 		getListView().setRefreshIndicatorView(view);
 	}
 
 	@Override
 	public void setRefreshing(final boolean refresh) {
+		if (getView() == null) return;
 		getListView().setRefreshing(refresh);
 	}
 
 	@Override
 	public void setRefreshMode(final RefreshMode mode) {
+		if (getView() == null) return;
 		getListView().setRefreshMode(mode);
 	}
 
 	@Override
 	public boolean triggerRefresh() {
-		onRefreshStart(RefreshMode.START);
+		onRefreshFromStart();
+		setRefreshing(true);
 		return true;
+	}
+
+	protected void onListTouched() {
+
 	}
 
 }

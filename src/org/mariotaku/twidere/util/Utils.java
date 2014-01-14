@@ -83,13 +83,13 @@ import android.view.Window;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.webkit.MimeTypeMap;
+import android.widget.AbsListView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.huewu.pla.lib.MultiColumnListView;
-import com.huewu.pla.lib.internal.PLAListView;
+import com.etsy.android.grid.StaggeredGridView;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.CroutonConfiguration;
@@ -531,12 +531,12 @@ public final class Utils implements Constants {
 		sAccountScreenNames.clear();
 	}
 
-	public static void clearListViewChoices(final ListView view) {
+	public static void clearListViewChoices(final AbsListView view) {
 		if (view == null) return;
 		final ListAdapter adapter = view.getAdapter();
 		if (adapter == null) return;
 		view.clearChoices();
-		view.setChoiceMode(ListView.CHOICE_MODE_NONE);
+		view.setChoiceMode(AbsListView.CHOICE_MODE_NONE);
 		// Workaround for Android bug
 		// http://stackoverflow.com/questions/9754170/listview-selection-remains-persistent-after-exiting-choice-mode
 		final int position = view.getFirstVisiblePosition(), offset = Utils.getFirstChildOffset(view);
@@ -544,12 +544,12 @@ public final class Utils implements Constants {
 		Utils.scrollListToPosition(view, position, offset);
 	}
 
-	public static void clearListViewChoices(final MultiColumnListView view) {
+	public static void clearListViewChoices(final StaggeredGridView view) {
 		if (view == null) return;
 		final ListAdapter adapter = view.getAdapter();
 		if (adapter == null) return;
 		view.clearChoices();
-		view.setChoiceMode(MultiColumnListView.CHOICE_MODE_NONE);
+		view.setChoiceMode(AbsListView.CHOICE_MODE_NONE);
 		view.invalidateViews();
 		// Workaround for Android bug
 		// http://stackoverflow.com/questions/9754170/listview-selection-remains-persistent-after-exiting-choice-mode
@@ -1558,7 +1558,7 @@ public final class Utils implements Constants {
 		return t.getMessage();
 	}
 
-	public static int getFirstChildOffset(final ListView list) {
+	public static int getFirstChildOffset(final AbsListView list) {
 		if (list == null || list.getChildCount() == 0) return 0;
 		return list.getChildAt(0).getTop();
 	}
@@ -3105,44 +3105,30 @@ public final class Utils implements Constants {
 		activity.overridePendingTransition(enter_anim, exit_anim);
 	}
 
-	public static void scrollListToPosition(final ListView list, final int position) {
+	public static void scrollListToPosition(final AbsListView list, final int position) {
 		scrollListToPosition(list, position, 0);
 	}
 
-	public static void scrollListToPosition(final ListView list, final int position, final int offset) {
+	public static void scrollListToPosition(final AbsListView list, final int position, final int offset) {
 		if (list == null) return;
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-			list.setSelectionFromTop(position, offset);
+			if (list instanceof ListView) {
+				((ListView) list).setSelectionFromTop(position, offset);
+			} else {
+				list.setSelection(position);
+			}
 			stopListView(list);
 		} else {
 			stopListView(list);
-			list.setSelectionFromTop(position, offset);
+			if (list instanceof ListView) {
+				((ListView) list).setSelectionFromTop(position, offset);
+			} else {
+				list.setSelection(position);
+			}
 		}
 	}
 
-	public static void scrollListToPosition(final PLAListView list, final int position) {
-		if (list == null) return;
-		// if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-		list.setSelection(position);
-		list.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(),
-				MotionEvent.ACTION_CANCEL, 0, 0, 0));
-		// } else {
-		// list.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(),
-		// SystemClock.uptimeMillis(),
-		// MotionEvent.ACTION_DOWN, 0, 0, 0));
-		// list.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(),
-		// SystemClock.uptimeMillis(),
-		// MotionEvent.ACTION_UP, 0, 0, 0));
-		// list.setSelection(position);
-		// }
-	}
-
-	public static void scrollListToTop(final ListView list) {
-		if (list == null) return;
-		scrollListToPosition(list, 0);
-	}
-
-	public static void scrollListToTop(final PLAListView list) {
+	public static void scrollListToTop(final AbsListView list) {
 		if (list == null) return;
 		scrollListToPosition(list, 0);
 	}
@@ -3462,7 +3448,7 @@ public final class Utils implements Constants {
 		context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)));
 	}
 
-	public static void stopListView(final ListView list) {
+	public static void stopListView(final AbsListView list) {
 		if (list == null) return;
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
 			list.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(),

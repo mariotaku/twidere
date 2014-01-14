@@ -12,6 +12,7 @@
 		<attr name="ignorePadding" format="boolean"/>
 		<attr name="linePageIndicatorStyle" format="reference"/>
 		<attr name="cardItemViewStyle" format="reference"/>
+		<attr name="staggeredGridViewStyle" format="reference"/>
 	</declare-styleable>
 	<declare-styleable name="CardItemView">
 		<attr name="cardBackground" format="reference"/>

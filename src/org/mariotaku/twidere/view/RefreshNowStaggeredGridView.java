@@ -5,25 +5,25 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.huewu.pla.lib.MultiColumnListView;
+import com.etsy.android.grid.StaggeredGridView;
 
 import org.mariotaku.refreshnow.widget.OnRefreshListener;
 import org.mariotaku.refreshnow.widget.RefreshMode;
 import org.mariotaku.refreshnow.widget.iface.IRefreshNowView;
 
-public class RefreshNowMultiColumnListView extends MultiColumnListView implements IRefreshNowView {
+public class RefreshNowStaggeredGridView extends StaggeredGridView implements IRefreshNowView {
 
 	private final Helper mHelper;
 
-	public RefreshNowMultiColumnListView(final Context context) {
+	public RefreshNowStaggeredGridView(final Context context) {
 		this(context, null);
 	}
 
-	public RefreshNowMultiColumnListView(final Context context, final AttributeSet attrs) {
-		this(context, attrs, android.R.attr.listViewStyle);
+	public RefreshNowStaggeredGridView(final Context context, final AttributeSet attrs) {
+		this(context, attrs, 0);
 	}
 
-	public RefreshNowMultiColumnListView(final Context context, final AttributeSet attrs, final int defStyle) {
+	public RefreshNowStaggeredGridView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		mHelper = new Helper(this, context, attrs, defStyle);
 	}
@@ -44,6 +44,12 @@ public class RefreshNowMultiColumnListView extends MultiColumnListView implement
 	@Override
 	public RefreshMode getRefreshMode() {
 		return mHelper.getRefreshMode();
+	}
+
+	@Override
+	public boolean isOverScrolling() {
+		if (!canOverScroll()) return false;
+		return getScrollY() != 0;
 	}
 
 	@Override
@@ -80,12 +86,6 @@ public class RefreshNowMultiColumnListView extends MultiColumnListView implement
 	@Override
 	public void setRefreshMode(final RefreshMode mode) {
 		mHelper.setRefreshMode(mode);
-	}
-
-	@Override
-	protected void onOverScrolled(final int scrollX, final int scrollY, final boolean clampedX, final boolean clampedY) {
-		super.onOverScrolled(scrollX, scrollY, clampedX, clampedY);
-		mHelper.afterOnOverScrolled(scrollX, scrollY, clampedX, clampedY);
 	}
 
 	@Override
