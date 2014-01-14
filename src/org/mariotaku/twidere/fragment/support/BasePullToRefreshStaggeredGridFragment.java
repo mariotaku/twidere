@@ -126,7 +126,8 @@ public abstract class BasePullToRefreshStaggeredGridFragment extends BaseSupport
 				ViewGroup.LayoutParams.MATCH_PARENT));
 
 		final RefreshNowProgressIndicator indicator = new RefreshNowProgressIndicator(context);
-		indicator.setProgressColor(ThemeUtils.getUserThemeColor(context));
+		final RefreshNowProgressIndicator.Config config = ThemeUtils.buildRefreshIndicatorConfig(context);
+		indicator.setConfig(config);
 		final int indicatorHeight = Math.round(3 * getResources().getDisplayMetrics().density);
 		lframe.addView(indicator, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, indicatorHeight,
 				Gravity.TOP));
