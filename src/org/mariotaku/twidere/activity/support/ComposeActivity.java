@@ -133,7 +133,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.Collection;
 
 public class ComposeActivity extends BaseSupportDialogActivity implements TextWatcher, LocationListener,
 		OnMenuItemClickListener, OnClickListener, OnEditorActionListener, OnItemClickListener, OnItemLongClickListener,
@@ -804,7 +804,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		if (!isEmpty(status.retweeted_by_screen_name)) {
 			mEditText.append("@" + status.retweeted_by_screen_name + " ");
 		}
-		final Set<String> mentions = mExtractor.extractMentionedScreennames(status.text_plain);
+		final Collection<String> mentions = mExtractor.extractMentionedScreennames(status.text_plain);
 		for (final String mention : mentions) {
 			if (mention.equalsIgnoreCase(status.user_screen_name) || mention.equalsIgnoreCase(myScreenName)
 					|| mention.equalsIgnoreCase(status.retweeted_by_screen_name)) {
