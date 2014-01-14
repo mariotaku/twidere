@@ -61,9 +61,8 @@ public class ParcelableActivitiesAboutMeAdapter extends BaseParcelableActivities
 	public void bindView(final int position, final ActivityViewHolder holder, final ParcelableActivity item) {
 		if (item == null) return;
 		final ParcelableUser[] sources = item.sources;
-		final ParcelableStatus[] target_statuses = item.target_statuses;
-		final int sources_length = sources != null ? sources.length : 0;
-		final int target_statuses_length = target_statuses != null ? target_statuses.length : 0;
+		if (sources == null || sources.length == 0) return;
+		final ParcelableStatus[] targetStatuses = item.target_statuses;
 		final int action = item.action;
 		final boolean displayProfileImage = shouldDisplayProfileImage();
 
@@ -71,133 +70,130 @@ public class ParcelableActivitiesAboutMeAdapter extends BaseParcelableActivities
 		final int highlightOption = getLinkHighlightOption();
 
 		final Context context = getContext();
-		if (sources_length > 0) {
-			final ParcelableUser firstSource = sources[0];
-			final ParcelableStatus[] target_objects = item.target_object_statuses;
-			final String sourceName = getName(firstSource);
-			switch (action) {
-				case ParcelableActivity.ACTION_FAVORITE: {
-					holder.name.setVisibility(View.VISIBLE);
-					holder.screen_name.setVisibility(View.GONE);
-					holder.profile_image.setVisibility(View.GONE);
-					holder.my_profile_image.setVisibility(View.GONE);
-					holder.text.setVisibility(View.VISIBLE);
-					holder.reply_retweet_status.setVisibility(View.GONE);
-					holder.activity_profile_images_container.setVisibility(displayProfileImage ? View.VISIBLE
-							: View.GONE);
+		final ParcelableUser firstSource = sources[0];
+		final ParcelableStatus[] targetObjects = item.target_object_statuses;
+		final String sourceName = getName(firstSource);
+		switch (action) {
+			case ParcelableActivity.ACTION_FAVORITE: {
+				holder.name.setVisibility(View.VISIBLE);
+				holder.screen_name.setVisibility(View.GONE);
+				holder.profile_image.setVisibility(View.GONE);
+				holder.my_profile_image.setVisibility(View.GONE);
+				holder.text.setVisibility(View.VISIBLE);
+				holder.reply_retweet_status.setVisibility(View.GONE);
+				holder.activity_profile_images_container.setVisibility(displayProfileImage ? View.VISIBLE : View.GONE);
 
-					holder.name.setSingleLine(false);
+				holder.name.setSingleLine(false);
 
-					if (target_statuses_length > 0) {
-						final ParcelableStatus status = target_statuses[0];
-						if (highlightOption != VALUE_LINK_HIGHLIGHT_OPTION_CODE_NONE) {
-							holder.text.setText(Html.fromHtml(status.text_html));
-							linkify.applyAllLinks(holder.text, status.account_id, status.is_possibly_sensitive);
-							holder.text.setMovementMethod(null);
-						} else {
-							holder.text.setText(status.text_unescaped);
-						}
-					}
-					if (sources_length == 1) {
-						holder.name.setText(context.getString(R.string.activity_about_me_favorite, sourceName));
+				if (targetStatuses != null && targetStatuses.length > 0) {
+					final ParcelableStatus status = targetStatuses[0];
+					if (highlightOption != VALUE_LINK_HIGHLIGHT_OPTION_CODE_NONE) {
+						holder.text.setText(Html.fromHtml(status.text_html));
+						linkify.applyAllLinks(holder.text, status.account_id, status.is_possibly_sensitive);
+						holder.text.setMovementMethod(null);
 					} else {
-						holder.name.setText(context.getString(R.string.activity_about_me_favorite_multi, sourceName,
-								sources_length - 1));
+						holder.text.setText(status.text_unescaped);
 					}
-					displayActivityUserProfileImages(holder, sources);
-					break;
 				}
-				case ParcelableActivity.ACTION_FOLLOW: {
-					holder.name.setVisibility(View.VISIBLE);
-					holder.screen_name.setVisibility(View.GONE);
-					holder.profile_image.setVisibility(View.GONE);
-					holder.my_profile_image.setVisibility(View.GONE);
-					holder.text.setVisibility(View.GONE);
-					holder.reply_retweet_status.setVisibility(View.GONE);
+				if (sources.length == 1) {
+					holder.name.setText(context.getString(R.string.activity_about_me_favorite, sourceName));
+				} else {
+					holder.name.setText(context.getString(R.string.activity_about_me_favorite_multi, sourceName,
+							sources.length - 1));
+				}
+				displayActivityUserProfileImages(holder, sources);
+				break;
+			}
+			case ParcelableActivity.ACTION_FOLLOW: {
+				holder.name.setVisibility(View.VISIBLE);
+				holder.screen_name.setVisibility(View.GONE);
+				holder.profile_image.setVisibility(View.GONE);
+				holder.my_profile_image.setVisibility(View.GONE);
+				holder.text.setVisibility(View.GONE);
+				holder.reply_retweet_status.setVisibility(View.GONE);
 
-					holder.name.setSingleLine(false);
+				holder.name.setSingleLine(false);
 
-					if (sources_length == 1) {
-						holder.name.setText(context.getString(R.string.activity_about_me_follow, sourceName));
+				if (sources.length == 1) {
+					holder.name.setText(context.getString(R.string.activity_about_me_follow, sourceName));
+				} else {
+					holder.name.setText(context.getString(R.string.activity_about_me_follow_multi, sourceName,
+							sources.length - 1));
+				}
+				displayActivityUserProfileImages(holder, sources);
+				break;
+			}
+			case ParcelableActivity.ACTION_MENTION: {
+				if (targetObjects != null && targetObjects.length > 0) {
+					final ParcelableStatus status = targetObjects[0];
+					displayStatus(status, holder, position);
+				}
+				break;
+			}
+			case ParcelableActivity.ACTION_REPLY: {
+				if (targetStatuses != null && targetStatuses.length > 0) {
+					final ParcelableStatus status = targetStatuses[0];
+					displayStatus(status, holder, position);
+				}
+				break;
+			}
+			case ParcelableActivity.ACTION_RETWEET: {
+
+				holder.name.setVisibility(View.VISIBLE);
+				holder.screen_name.setVisibility(View.GONE);
+				holder.profile_image.setVisibility(View.GONE);
+				holder.my_profile_image.setVisibility(View.GONE);
+				holder.text.setVisibility(View.VISIBLE);
+				holder.reply_retweet_status.setVisibility(View.GONE);
+
+				holder.name.setSingleLine(false);
+
+				if (targetObjects != null && targetObjects.length > 0) {
+					final ParcelableStatus status = targetObjects[0];
+					if (highlightOption != VALUE_LINK_HIGHLIGHT_OPTION_CODE_NONE) {
+						holder.text.setText(Html.fromHtml(status.text_html));
+						linkify.applyAllLinks(holder.text, status.account_id, status.is_possibly_sensitive);
+						holder.text.setMovementMethod(null);
 					} else {
-						holder.name.setText(context.getString(R.string.activity_about_me_follow_multi, sourceName,
-								sources_length - 1));
+						holder.text.setText(status.text_unescaped);
 					}
-					displayActivityUserProfileImages(holder, sources);
-					break;
 				}
-				case ParcelableActivity.ACTION_MENTION: {
-					if (target_objects != null && target_objects.length > 0) {
-						final ParcelableStatus status = target_objects[0];
-						displayStatus(status, holder, position);
-					}
-					break;
+
+				if (sources.length == 1) {
+					holder.name.setText(context.getString(R.string.activity_about_me_retweet, sourceName));
+				} else {
+					holder.name.setText(context.getString(R.string.activity_about_me_retweet_multi, sourceName,
+							sources.length - 1));
 				}
-				case ParcelableActivity.ACTION_REPLY: {
-					if (target_statuses_length > 0) {
-						final ParcelableStatus status = target_statuses[0];
-						displayStatus(status, holder, position);
-					}
-					break;
-				}
-				case ParcelableActivity.ACTION_RETWEET: {
+				holder.activity_profile_images_container.setVisibility(View.VISIBLE);
+				displayActivityUserProfileImages(holder, sources);
+				break;
+			}
+			case ParcelableActivity.ACTION_LIST_MEMBER_ADDED: {
+				holder.name.setVisibility(View.VISIBLE);
+				holder.screen_name.setVisibility(View.GONE);
+				holder.profile_image.setVisibility(View.GONE);
+				holder.my_profile_image.setVisibility(View.GONE);
+				holder.text.setVisibility(View.GONE);
+				holder.reply_retweet_status.setVisibility(View.GONE);
 
-					holder.name.setVisibility(View.VISIBLE);
-					holder.screen_name.setVisibility(View.GONE);
-					holder.profile_image.setVisibility(View.GONE);
-					holder.my_profile_image.setVisibility(View.GONE);
-					holder.text.setVisibility(View.VISIBLE);
-					holder.reply_retweet_status.setVisibility(View.GONE);
+				holder.name.setSingleLine(false);
 
-					holder.name.setSingleLine(false);
-
-					if (target_objects != null && target_objects.length > 0) {
-						final ParcelableStatus status = target_objects[0];
-						if (highlightOption != VALUE_LINK_HIGHLIGHT_OPTION_CODE_NONE) {
-							holder.text.setText(Html.fromHtml(status.text_html));
-							linkify.applyAllLinks(holder.text, status.account_id, status.is_possibly_sensitive);
-							holder.text.setMovementMethod(null);
-						} else {
-							holder.text.setText(status.text_unescaped);
-						}
-					}
-
-					if (sources_length == 1) {
-						holder.name.setText(context.getString(R.string.activity_about_me_retweet, sourceName));
+				if (sources.length == 1) {
+					if (item.target_object_user_lists != null && item.target_object_user_lists.length > 0) {
+						final ParcelableUserList list = item.target_object_user_lists[0];
+						holder.name.setText(context.getString(R.string.activity_about_me_list_member_added_with_name,
+								sourceName, list.name));
 					} else {
-						holder.name.setText(context.getString(R.string.activity_about_me_retweet_multi, sourceName,
-								sources_length - 1));
+						holder.name
+								.setText(context.getString(R.string.activity_about_me_list_member_added, sourceName));
 					}
-					holder.activity_profile_images_container.setVisibility(View.VISIBLE);
-					displayActivityUserProfileImages(holder, sources);
-					break;
+				} else {
+					holder.name.setText(context.getString(R.string.activity_about_me_list_member_added_multi,
+							sourceName, sources.length - 1));
 				}
-				case ParcelableActivity.ACTION_LIST_MEMBER_ADDED: {
-					holder.name.setVisibility(View.VISIBLE);
-					holder.screen_name.setVisibility(View.GONE);
-					holder.profile_image.setVisibility(View.GONE);
-					holder.my_profile_image.setVisibility(View.GONE);
-					holder.text.setVisibility(View.GONE);
-					holder.reply_retweet_status.setVisibility(View.GONE);
-
-					holder.name.setSingleLine(false);
-
-					if (sources_length == 1) {
-						if (item.target_object_user_lists != null && item.target_object_user_lists.length > 0) {
-							final ParcelableUserList list = item.target_object_user_lists[0];
-							holder.name.setText(context.getString(
-									R.string.activity_about_me_list_member_added_with_name, sourceName, list.name));
-						} else {
-							holder.name.setText(context.getString(R.string.activity_about_me_list_member_added,
-									sourceName));
-						}
-					} else {
-						holder.name.setText(context.getString(R.string.activity_about_me_list_member_added_multi,
-								sourceName, sources_length - 1));
-					}
-					displayActivityUserProfileImages(holder, sources);
-					break;
-				}
+				displayActivityUserProfileImages(holder, sources);
+				break;
 			}
 		}
 	}

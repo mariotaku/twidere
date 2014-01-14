@@ -135,9 +135,6 @@ public interface Constants extends TwidereConstants {
 	public static final String DIR_NAME_IMAGE_CACHE = "image_cache";
 	public static final String DIR_NAME_FULL_IMAGE_CACHE = "full_image_cache";
 
-	public static final int PANE_LEFT = R.id.fragment_container_left;
-	public static final int PANE_RIGHT = R.id.fragment_container_right;
-
 	public static final String FRAGMENT_TAG_API_UPGRADE_NOTICE = "api_upgrade_notice";
 
 	public static final String TWIDERE_PREVIEW_NICKNAME = "Twidere";

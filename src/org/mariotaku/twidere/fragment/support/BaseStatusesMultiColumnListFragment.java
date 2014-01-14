@@ -339,6 +339,12 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 	}
 
 	@Override
+	public void onRefreshFromEnd() {
+		if (mLoadMoreAutomatically) return;
+		loadMoreStatuses();
+	}
+
+	@Override
 	public void onResume() {
 		super.onResume();
 		// mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB,
@@ -430,12 +436,6 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 	protected abstract void loadMoreStatuses();
 
 	protected abstract IStatusesAdapter<Data> newAdapterInstance();
-
-	@Override
-	protected void onPullUp() {
-		if (mLoadMoreAutomatically) return;
-		loadMoreStatuses();
-	}
 
 	@Override
 	protected void onReachedBottom() {

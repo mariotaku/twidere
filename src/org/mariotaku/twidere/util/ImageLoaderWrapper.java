@@ -42,7 +42,9 @@ public class ImageLoaderWrapper implements Constants {
 		final DisplayImageOptions.Builder profileOptsNuilder = new DisplayImageOptions.Builder();
 		profileOptsNuilder.cacheInMemory(true);
 		profileOptsNuilder.cacheOnDisc(true);
-		profileOptsNuilder.showStubImage(R.drawable.ic_profile_image_default);
+		profileOptsNuilder.showImageForEmptyUri(R.drawable.ic_profile_image_default);
+		profileOptsNuilder.showImageOnFail(R.drawable.ic_profile_image_default);
+		profileOptsNuilder.showImageOnLoading(R.drawable.ic_profile_image_default);
 		profileOptsNuilder.bitmapConfig(Bitmap.Config.ARGB_8888);
 		profileOptsNuilder.resetViewBeforeLoading(true);
 		final DisplayImageOptions.Builder imageOptsBuilder = new DisplayImageOptions.Builder();
@@ -50,16 +52,15 @@ public class ImageLoaderWrapper implements Constants {
 		imageOptsBuilder.cacheOnDisc(true);
 		imageOptsBuilder.bitmapConfig(Bitmap.Config.RGB_565);
 		imageOptsBuilder.resetViewBeforeLoading(true);
-		final DisplayImageOptions.Builder banner_opts_builder = new DisplayImageOptions.Builder();
-		banner_opts_builder.cacheInMemory(true);
-		banner_opts_builder.cacheOnDisc(true);
-		banner_opts_builder.bitmapConfig(Bitmap.Config.RGB_565);
-		banner_opts_builder.resetViewBeforeLoading(true);
-		banner_opts_builder.showStubImage(android.R.color.transparent);
+		final DisplayImageOptions.Builder bannerOptsBuilder = new DisplayImageOptions.Builder();
+		bannerOptsBuilder.cacheInMemory(true);
+		bannerOptsBuilder.cacheOnDisc(true);
+		bannerOptsBuilder.bitmapConfig(Bitmap.Config.RGB_565);
+		bannerOptsBuilder.resetViewBeforeLoading(true);
 
 		mProfileImageDisplayOptions = profileOptsNuilder.build();
 		mImageDisplayOptions = imageOptsBuilder.build();
-		mBannerDisplayOptions = banner_opts_builder.build();
+		mBannerDisplayOptions = bannerOptsBuilder.build();
 	}
 
 	public void clearFileCache() {

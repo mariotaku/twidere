@@ -94,6 +94,7 @@ import com.scvngr.levelup.views.gallery.Gallery;
 import edu.ucdavis.earlybird.ProfilingUtil;
 
 import org.mariotaku.menucomponent.widget.MenuBar;
+import org.mariotaku.refreshnow.widget.RefreshMode;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.support.ColorPickerDialogActivity;
 import org.mariotaku.twidere.activity.support.LinkHandlerActivity;
@@ -428,7 +429,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		setPullToRefreshEnabled(shouldEnablePullToRefresh());
+		setRefreshMode(shouldEnablePullToRefresh() ? RefreshMode.BOTH : RefreshMode.NONE);
 		setHasOptionsMenu(shouldUseNativeMenu());
 		setListShownNoAnimation(true);
 		mHandler = new Handler();

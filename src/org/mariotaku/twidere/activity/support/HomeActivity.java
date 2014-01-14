@@ -23,7 +23,6 @@ import static org.mariotaku.twidere.util.CompareUtils.classEquals;
 import static org.mariotaku.twidere.util.CustomTabUtils.getAddedTabPosition;
 import static org.mariotaku.twidere.util.CustomTabUtils.getHomeTabs;
 import static org.mariotaku.twidere.util.Utils.cleanDatabasesByItemLimit;
-import static org.mariotaku.twidere.util.Utils.createFragmentForIntent;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
 import static org.mariotaku.twidere.util.Utils.getTabDisplayOptionInt;
@@ -53,7 +52,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.SparseArray;
@@ -106,12 +104,10 @@ import org.mariotaku.twidere.view.HomeActionsActionView;
 import org.mariotaku.twidere.view.LeftDrawerFrameLayout;
 import org.mariotaku.twidere.view.TabPageIndicator;
 
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeActivity extends DualPaneActivity implements OnClickListener, OnPageChangeListener,
+public class HomeActivity extends BaseSupportActivity implements OnClickListener, OnPageChangeListener,
 		SupportFragmentCallback, SlidingMenu.OnOpenedListener, SlidingMenu.OnClosedListener, OnLongClickListener {
 
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
@@ -205,20 +201,20 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		super.onBackPressed();
 	}
 
-	@Override
-	public void onBackStackChanged() {
-		super.onBackStackChanged();
-		if (!isDualPaneMode()) return;
-		final FragmentManager fm = getSupportFragmentManager();
-		setPagingEnabled(!isLeftPaneUsed());
-		final int count = fm.getBackStackEntryCount();
-		if (count == 0) {
-			showLeftPane();
-		}
-		updateActionsButton();
-		updateActionsButtonStyle();
-		updateSlidingMenuTouchMode();
-	}
+	// @Override
+	// public void onBackStackChanged() {
+	// super.onBackStackChanged();
+	// if (!isDualPaneMode()) return;
+	// final FragmentManager fm = getSupportFragmentManager();
+	// setPagingEnabled(!isLeftPaneUsed());
+	// final int count = fm.getBackStackEntryCount();
+	// if (count == 0) {
+	// showLeftPane();
+	// }
+	// updateActionsButton();
+	// updateActionsButtonStyle();
+	// updateSlidingMenuTouchMode();
+	// }
 
 	@Override
 	public void onClick(final View v) {
@@ -329,10 +325,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 					mSlidingMenu.showMenu();
 					return true;
 				}
-				if (isDualPaneMode() && !FragmentManagerTrojan.isStateSaved(fm)) {
-					fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-					updateActionsButton();
-				}
 				return true;
 			}
 			case MENU_SEARCH: {
@@ -434,21 +426,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	@Override
-	protected int getDualPaneLayoutRes() {
-		return R.layout.home_dual_pane;
-	}
-
-	@Override
-	protected int getMainViewId() {
-		return R.id.main_pager;
-	}
-
-	@Override
-	protected int getNormalLayoutRes() {
-		return R.layout.home;
-	}
-
-	@Override
 	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		switch (requestCode) {
 			case REQUEST_SWIPEBACK_ACTIVITY: {
@@ -492,6 +469,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			finish();
 			return;
 		}
+		setContentView(R.layout.home);
 		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONCREATE));
 		final boolean refreshOnStart = mPreferences.getBoolean(KEY_REFRESH_ON_START, false);
 		mTabDisplayOption = getTabDisplayOptionInt(this);
@@ -503,7 +481,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		mActionsButton = (HomeActionsActionView) view.findViewById(R.id.actions_button);
 		ThemeUtils.applyBackground(mIndicator);
-		mPagerAdapter = new SupportTabsAdapter(this, getSupportFragmentManager(), mIndicator);
+		mPagerAdapter = new SupportTabsAdapter(this, getSupportFragmentManager(), mIndicator, 1);
 		mViewPager.setAdapter(mPagerAdapter);
 		mViewPager.setOffscreenPageLimit(3);
 		mIndicator.setViewPager(mViewPager);
@@ -621,11 +599,14 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	private View getPullToRefreshHeaderView(final Fragment f) {
-		if (f.getActivity() == null || !(f instanceof IBasePullToRefreshFragment)) return null;
-		final IBasePullToRefreshFragment ptrf = (IBasePullToRefreshFragment) f;
-		final PullToRefreshLayout l = ptrf.getPullToRefreshLayout();
-		if (l == null) return null;
-		return l.getHeaderView();
+		return null;
+		// if (f.getActivity() == null || !(f instanceof
+		// IBasePullToRefreshFragment)) return null;
+		// final IBasePullToRefreshFragment ptrf = (IBasePullToRefreshFragment)
+		// f;
+		// final PullToRefreshLayout l = ptrf.getPullToRefreshLayout();
+		// if (l == null) return null;
+		// return l.getHeaderView();
 	}
 
 	private int handleIntent(final Intent intent, final boolean firstCreate) {
@@ -662,11 +643,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		final Intent extraIntent = intent.getParcelableExtra(EXTRA_EXTRA_INTENT);
 		if (extraIntent != null && firstCreate) {
 			extraIntent.setExtrasClassLoader(getClassLoader());
-			if (isTwidereLink(extraIntent.getData()) && isDualPaneMode()) {
-				showFragment(createFragmentForIntent(this, extraIntent), true);
-			} else {
-				SwipebackActivityUtils.startSwipebackActivity(this, extraIntent);
-			}
+			SwipebackActivityUtils.startSwipebackActivity(this, extraIntent);
 		}
 		return initialTab;
 	}
@@ -706,10 +683,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			if (!mCustomTabs.get(i).equals(tabs.get(i))) return true;
 		}
 		return false;
-	}
-
-	private boolean isTwidereLink(final Uri data) {
-		return data != null && SCHEME_TWIDERE.equals(data.getScheme());
 	}
 
 	private void openAccountsDrawer() {
@@ -781,9 +754,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		} else {
 			window.setBackgroundDrawable(null);
 		}
-		if (isDualPaneMode()) {
-			mSlidingMenu.addIgnoredView(getSlidingPane().getRightPaneContainer());
-		}
 	}
 
 	private void showDataProfilingRequest() {
@@ -844,9 +814,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		final boolean isBottomActionsButton = isBottomComposeButton();
 		final boolean showBottomActionsButton = !SmartBarUtils.hasSmartBar() && isBottomActionsButton;
 		final boolean leftsideComposeButton = mPreferences.getBoolean(KEY_LEFTSIDE_COMPOSE_BUTTON, false);
-		final boolean isPaneUsed = isDualPaneMode() && isRightPaneUsed();
 		mActionsButton.setVisibility(isBottomActionsButton ? View.GONE : View.VISIBLE);
-		mBottomActionsButton.setVisibility(showBottomActionsButton && !isPaneUsed ? View.VISIBLE : View.GONE);
+		mBottomActionsButton.setVisibility(showBottomActionsButton ? View.VISIBLE : View.GONE);
 		final FrameLayout.LayoutParams compose_lp = (LayoutParams) mBottomActionsButton.getLayoutParams();
 		compose_lp.gravity = Gravity.BOTTOM | (leftsideComposeButton ? Gravity.LEFT : Gravity.RIGHT);
 		mBottomActionsButton.setLayoutParams(compose_lp);
@@ -866,14 +835,12 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			final Fragment f = mAttachedFragments.valueAt(i);
 			setPullToRefreshLayoutScroll(wm, f, scrollX, statusBarHeight, horizontalScroll);
 		}
-		setPullToRefreshLayoutScroll(wm, getLeftPaneFragment(), scrollX, statusBarHeight, horizontalScroll);
-		setPullToRefreshLayoutScroll(wm, getRightPaneFragment(), scrollX, statusBarHeight, horizontalScroll);
 	}
 
 	private void updateSlidingMenuTouchMode() {
 		if (mViewPager == null || mSlidingMenu == null) return;
 		final int position = mViewPager.getCurrentItem();
-		final int mode = !mViewPager.isEnabled() || position == 0 && !isLeftPaneUsed() ? SlidingMenu.TOUCHMODE_FULLSCREEN
+		final int mode = !mViewPager.isEnabled() || position == 0 ? SlidingMenu.TOUCHMODE_FULLSCREEN
 				: SlidingMenu.TOUCHMODE_MARGIN;
 		mSlidingMenu.setTouchModeAbove(mode);
 	}

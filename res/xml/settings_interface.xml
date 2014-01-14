@@ -55,17 +55,4 @@
 		android:key="swipe_back"
 		android:title="@string/swipe_back"/>
 
-	<PreferenceCategory
-		android:key="cat_dual_pane_layout"
-		android:title="@string/dual_pane_layout">
-		<CheckBoxPreference
-			android:defaultValue="@bool/is_large_screen"
-			android:key="dual_pane_in_portrait"
-			android:title="@string/portrait"/>
-		<CheckBoxPreference
-			android:defaultValue="@bool/is_large_screen"
-			android:key="dual_pane_in_landscape"
-			android:title="@string/landscape"/>
-	</PreferenceCategory>
-
 </PreferenceScreen>

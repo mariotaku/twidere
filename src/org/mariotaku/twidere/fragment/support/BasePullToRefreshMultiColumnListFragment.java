@@ -25,58 +25,41 @@ import static android.support.v4.app.ListFragmentTrojan.INTERNAL_PROGRESS_CONTAI
 
 import android.content.Context;
 import android.os.Bundle;
-import android.view.GestureDetector;
-import android.view.GestureDetector.OnGestureListener;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.huewu.pla.lib.MultiColumnListView;
-
+import org.mariotaku.refreshnow.widget.OnRefreshListener;
+import org.mariotaku.refreshnow.widget.RefreshMode;
 import org.mariotaku.twidere.fragment.iface.IBasePullToRefreshFragment;
-import org.mariotaku.twidere.util.pulltorefresh.TwidereHeaderTransformer;
-import org.mariotaku.twidere.util.pulltorefresh.viewdelegates.PLAAbsListViewDelegate;
-
-import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
-import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh.SetupWizard;
-import uk.co.senab.actionbarpulltorefresh.library.Options;
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
-import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
+import org.mariotaku.twidere.view.RefreshNowMultiColumnListView;
 
 public abstract class BasePullToRefreshMultiColumnListFragment extends BaseSupportMultiColumnListFragment implements
-		IBasePullToRefreshFragment, OnRefreshListener, OnTouchListener, OnGestureListener {
-
-	private GestureDetector mGestureDector;
-	private boolean mPulledUp;
-	private PullToRefreshLayout mPullToRefreshLayout;
+		IBasePullToRefreshFragment {
 
 	@Override
-	public PullToRefreshLayout getPullToRefreshLayout() {
-		return mPullToRefreshLayout;
+	public boolean canOverScroll() {
+		return false;
 	}
 
 	@Override
-	public boolean isPullToRefreshEnabled() {
-		return mPullToRefreshLayout != null && mPullToRefreshLayout.isEnabled();
+	public RefreshNowMultiColumnListView getListView() {
+		return (RefreshNowMultiColumnListView) super.getListView();
+	}
+
+	@Override
+	public RefreshMode getRefreshMode() {
+		return getListView().getRefreshMode();
 	}
 
 	@Override
 	public boolean isRefreshing() {
-		return mPullToRefreshLayout != null && mPullToRefreshLayout.isRefreshing();
-	}
-
-	@Override
-	public void onActivityCreated(final Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		getListView().setOnTouchListener(this);
-		mGestureDector = new GestureDetector(getActivity(), this);
+		return getListView().isRefreshing();
 	}
 
 	/**
@@ -96,6 +79,7 @@ public abstract class BasePullToRefreshMultiColumnListFragment extends BaseSuppo
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		final Context context = getActivity();
+
 		final FrameLayout root = new FrameLayout(context);
 
 		// ------------------------------------------------------------------
@@ -124,26 +108,10 @@ public abstract class BasePullToRefreshMultiColumnListFragment extends BaseSuppo
 		lframe.addView(tv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.MATCH_PARENT));
 
-		final PullToRefreshLayout plv = new PullToRefreshLayout(context);
-		mPullToRefreshLayout = plv;
-
-		final MultiColumnListView lv = createMultiColumnListView(context, inflater);
+		final RefreshNowMultiColumnListView lv = new RefreshNowMultiColumnListView(getActivity());
 		lv.setId(android.R.id.list);
 		lv.setDrawSelectorOnTop(false);
-		plv.addView(lv, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-		final Options.Builder builder = new Options.Builder();
-		builder.scrollDistance(DEFAULT_PULL_TO_REFRESH_SCROLL_DISTANCE);
-		builder.headerTransformer(new TwidereHeaderTransformer());
-		if (!isDetached() && getActivity() != null) {
-			final SetupWizard wizard = ActionBarPullToRefresh.from(getActivity());
-			wizard.allChildrenArePullable();
-			wizard.useViewDelegate(MultiColumnListView.class, new PLAAbsListViewDelegate());
-			wizard.listener(this);
-			wizard.options(builder.build());
-			wizard.setup(mPullToRefreshLayout);
-		}
-		// ViewCompat.setOverScrollMode(lv, ViewCompat.OVER_SCROLL_NEVER);
-		lframe.addView(plv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+		lframe.addView(lv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.MATCH_PARENT));
 
 		root.addView(lframe, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -158,87 +126,48 @@ public abstract class BasePullToRefreshMultiColumnListFragment extends BaseSuppo
 	}
 
 	@Override
-	public boolean onDown(final MotionEvent e) {
-		return true;
-	}
-
-	@Override
-	public boolean onFling(final MotionEvent e1, final MotionEvent e2, final float velocityX, final float velocityY) {
-		return true;
-	}
-
-	@Override
-	public void onLongPress(final MotionEvent e) {
+	public final void onRefreshComplete() {
 
 	}
 
 	@Override
-	public void onRefreshStarted() {
-	}
-
-	@Override
-	public final void onRefreshStarted(final View view) {
-		onRefreshStarted();
-	}
-
-	@Override
-	public boolean onScroll(final MotionEvent e1, final MotionEvent e2, final float distanceX, final float distanceY) {
-		if (isReachedBottom() && distanceY > 0 && !mPulledUp && !isRefreshing()) {
-			mPulledUp = true;
-			onPullUp();
-			return true;
+	public final void onRefreshStart(final RefreshMode mode) {
+		if (mode.hasStart()) {
+			onRefreshFromStart();
+		} else if (mode.hasEnd()) {
+			onRefreshFromEnd();
 		}
-		if (distanceY < 0) {
-			mPulledUp = false;
-		}
-		return true;
 	}
 
 	@Override
-	public void onShowPress(final MotionEvent e) {
+	public void setOnRefreshListener(final OnRefreshListener listener) {
 
-	}
-
-	@Override
-	public boolean onSingleTapUp(final MotionEvent e) {
-		return true;
-	}
-
-	@Override
-	public final boolean onTouch(final View v, final MotionEvent event) {
-		mGestureDector.onTouchEvent(event);
-		return false;
-	}
-
-	@Override
-	public void setPullToRefreshEnabled(final boolean enabled) {
-		if (mPullToRefreshLayout == null) return;
-		mPullToRefreshLayout.setEnabled(enabled);
 	}
 
 	@Override
 	public void setRefreshComplete() {
-		mPulledUp = false;
-		mPullToRefreshLayout.setRefreshComplete();
+		getListView().setRefreshComplete();
 	}
 
 	@Override
-	public void setRefreshing(final boolean refreshing) {
-		if (!refreshing) {
-			mPulledUp = false;
-		}
-		if (mPullToRefreshLayout != null) {
-			mPullToRefreshLayout.setRefreshing(refreshing);
-		}
+	public void setRefreshIndicatorView(final View view) {
+		getListView().setRefreshIndicatorView(view);
+	}
+
+	@Override
+	public void setRefreshing(final boolean refresh) {
+		getListView().setRefreshing(refresh);
+	}
+
+	@Override
+	public void setRefreshMode(final RefreshMode mode) {
+		getListView().setRefreshMode(mode);
 	}
 
 	@Override
 	public boolean triggerRefresh() {
-		onRefreshStarted(getListView());
+		onRefreshStart(RefreshMode.START);
 		return true;
-	}
-
-	protected void onPullUp() {
 	}
 
 }

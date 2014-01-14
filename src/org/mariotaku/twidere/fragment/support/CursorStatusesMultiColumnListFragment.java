@@ -99,8 +99,8 @@ public abstract class CursorStatusesMultiColumnListFragment extends BaseStatuses
 	}
 
 	@Override
-	public void onRefreshStarted() {
-		super.onRefreshStarted();
+	public void onRefreshFromStart() {
+		if (isRefreshing()) return;
 		savePosition();
 		new AsyncTask<Void, Void, long[][]>() {
 

@@ -47,10 +47,14 @@ public class SupportTabsAdapter extends SupportFixedFragmentStatePagerAdapter im
 	private final Context mContext;
 	private final TabPageIndicator mIndicator;
 
-	public SupportTabsAdapter(final Context context, final FragmentManager fm, final TabPageIndicator indicator) {
+	private final int mColumns;
+
+	public SupportTabsAdapter(final Context context, final FragmentManager fm, final TabPageIndicator indicator,
+			final int columns) {
 		super(fm);
 		mContext = context;
 		mIndicator = indicator;
+		mColumns = columns;
 		clear();
 	}
 
@@ -96,6 +100,11 @@ public class SupportTabsAdapter extends SupportFixedFragmentStatePagerAdapter im
 		return mTabs.get(position).name;
 	}
 
+	@Override
+	public float getPageWidth(final int position) {
+		return 1.0f / mColumns;
+	}
+
 	public SupportTabSpec getTab(final int position) {
 		return position >= 0 && position < mTabs.size() ? mTabs.get(position) : null;
 	}
@@ -131,9 +140,4 @@ public class SupportTabsAdapter extends SupportFixedFragmentStatePagerAdapter im
 		if (f instanceof RefreshScrollTopInterface) return ((RefreshScrollTopInterface) f).triggerRefresh();
 		return false;
 	}
-
-	// @Override
-	// public float getPageWidth(int position) {
-	// return 0.5f;
-	// }
 }

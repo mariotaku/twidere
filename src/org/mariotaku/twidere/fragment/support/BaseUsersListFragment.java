@@ -67,9 +67,9 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 	private boolean mLoadMoreAutomatically;
 	private ListView mListView;
 	private long mAccountId;
+
 	private final List<ParcelableUser> mData = Collections
 			.synchronizedList(new NoDuplicatesArrayList<ParcelableUser>());
-
 	private ParcelableUser mSelectedUser;
 
 	public long getAccountId() {
@@ -215,8 +215,14 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 	}
 
 	@Override
-	public void onRefreshStarted() {
-		super.onRefreshStarted();
+	public void onRefreshFromEnd() {
+		if (mLoadMoreAutomatically) return;
+		loadMoreUsers();
+	}
+
+	@Override
+	public void onRefreshFromStart() {
+		if (isRefreshing()) return;
 		getLoaderManager().restartLoader(0, getArguments(), this);
 	}
 
@@ -264,12 +270,6 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 
 	protected void onPrepareItemMenu(final Menu menu) {
 
-	}
-
-	@Override
-	protected void onPullUp() {
-		if (mLoadMoreAutomatically) return;
-		loadMoreUsers();
 	}
 
 	protected final void removeUsers(final long... user_ids) {
