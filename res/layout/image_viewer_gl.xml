@@ -21,7 +21,6 @@
 		android:id="@+id/menu_bar"
 		android:layout_width="match_parent"
 		android:layout_height="?android:actionBarSize"
-		android:layout_gravity="bottom"
-		android:src="@menu/menu_image_viewer"/>
+		android:layout_gravity="bottom"/>
 
 </merge>

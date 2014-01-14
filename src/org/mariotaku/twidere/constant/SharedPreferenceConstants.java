@@ -188,7 +188,7 @@ public interface SharedPreferenceConstants {
 	public static final String KEY_IMAGE_UPLOAD_FORMAT = "image_upload_format";
 	public static final String KEY_TWEET_SHORTENER = "tweet_shortener";
 	public static final String KEY_SHOW_ABSOLUTE_TIME = "show_absolute_time";
-	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean=false)
+	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = false)
 	public static final String KEY_QUICK_SEND = "quick_send";
 	@Preference(type = STRING, exportable = false)
 	public static final String KEY_COMPOSE_ACCOUNTS = "compose_accounts";

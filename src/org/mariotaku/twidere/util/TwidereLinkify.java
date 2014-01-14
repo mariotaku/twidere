@@ -174,11 +174,11 @@ public final class TwidereLinkify implements Constants {
 	private final boolean addCashtagLinks(final Spannable spannable, final long account_id,
 			final OnLinkClickListener listener, final int highlightOption, final int highlightColor) {
 		boolean hasMatches = false;
-		for (Entity entity : mExtractor.extractCashtagsWithIndices(spannable.toString())) {
+		for (final Entity entity : mExtractor.extractCashtagsWithIndices(spannable.toString())) {
 			final int start = entity.getStart();
 			final int end = entity.getEnd();
-			applyLink(entity.getValue(), start, end, spannable, account_id, LINK_TYPE_HASHTAG, false, listener, highlightOption,
-					highlightColor);
+			applyLink(entity.getValue(), start, end, spannable, account_id, LINK_TYPE_HASHTAG, false, listener,
+					highlightOption, highlightColor);
 			hasMatches = true;
 		}
 		return hasMatches;
@@ -188,11 +188,11 @@ public final class TwidereLinkify implements Constants {
 			final OnLinkClickListener listener, final int highlightOption, final int highlightColor) {
 		boolean hasMatches = false;
 		final Matcher matcher = Regex.VALID_HASHTAG.matcher(spannable);
-		for (Entity entity : mExtractor.extractHashtagsWithIndices(spannable.toString())) {
+		for (final Entity entity : mExtractor.extractHashtagsWithIndices(spannable.toString())) {
 			final int start = entity.getStart();
 			final int end = entity.getEnd();
-			applyLink(entity.getValue(), start, end, spannable, account_id, LINK_TYPE_HASHTAG, false, listener, highlightOption,
-					highlightColor);
+			applyLink(entity.getValue(), start, end, spannable, account_id, LINK_TYPE_HASHTAG, false, listener,
+					highlightOption, highlightColor);
 			hasMatches = true;
 		}
 		return hasMatches;
@@ -252,15 +252,18 @@ public final class TwidereLinkify implements Constants {
 					applyLink(span.getURL(), start, end, string, account_id, LINK_TYPE_LINK, sensitive, listener,
 							highlightOption, highlightColor);
 				}
-//				for (final Extractor.Entity entity : mExtractor.extractURLsWithIndices(ParseUtils.parseString(string))) {
-//					final int start = entity.getStart(), end = entity.getEnd();
-//					if (entity.getType() != Extractor.Entity.Type.URL
-//							|| string.getSpans(start, end, URLSpan.class).length > 0) {
-//						continue;
-//					}
-//					applyLink(entity.getValue(), start, end, string, account_id, LINK_TYPE_LINK, sensitive, listener,
-//							highlightOption, highlightColor);
-//				}
+				// for (final Extractor.Entity entity :
+				// mExtractor.extractURLsWithIndices(ParseUtils.parseString(string)))
+				// {
+				// final int start = entity.getStart(), end = entity.getEnd();
+				// if (entity.getType() != Extractor.Entity.Type.URL
+				// || string.getSpans(start, end, URLSpan.class).length > 0) {
+				// continue;
+				// }
+				// applyLink(entity.getValue(), start, end, string, account_id,
+				// LINK_TYPE_LINK, sensitive, listener,
+				// highlightOption, highlightColor);
+				// }
 				break;
 			}
 			case LINK_TYPE_ALL_AVAILABLE_IMAGE: {

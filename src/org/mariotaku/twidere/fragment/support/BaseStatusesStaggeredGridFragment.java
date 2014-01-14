@@ -74,9 +74,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-abstract class BaseStatusesStaggeredGridFragment<Data> extends BasePullToRefreshStaggeredGridFragment implements LoaderCallbacks<Data>,
-		OnItemLongClickListener, OnMenuItemClickListener, Panes.Left, MultiSelectManager.Callback,
-		MenuButtonClickListener {
+abstract class BaseStatusesStaggeredGridFragment<Data> extends BasePullToRefreshStaggeredGridFragment implements
+		LoaderCallbacks<Data>, OnItemLongClickListener, OnMenuItemClickListener, Panes.Left,
+		MultiSelectManager.Callback, MenuButtonClickListener {
 
 	private AsyncTaskManager mAsyncTaskManager;
 	private SharedPreferences mPreferences;
@@ -264,7 +264,7 @@ abstract class BaseStatusesStaggeredGridFragment<Data> extends BasePullToRefresh
 		final int position = mAdapter.findPositionByStatusId(statusId);
 		if (position > -1 && position < mListView.getCount()) {
 			mAdapter.setMaxAnimationPosition(mListView.getLastVisiblePosition());
-//			mListView.setSelectionFromTop(position, mListScrollOffset);
+			// mListView.setSelectionFromTop(position, mListScrollOffset);
 			mListView.setSelection(position);
 			mListScrollOffset = 0;
 		}
