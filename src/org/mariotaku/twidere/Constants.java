@@ -108,6 +108,7 @@ public interface Constants extends TwidereConstants {
 	public static final int MENU_DENY = R.id.deny;
 	public static final int MENU_IMPORT_SETTINGS = R.id.import_settings;
 	public static final int MENU_EXPORT_SETTINGS = R.id.export_settings;
+	public static final int MENU_PROGRESS = R.id.progress;
 
 	public static final int LINK_ID_STATUS = 1;
 	public static final int LINK_ID_USER = 2;

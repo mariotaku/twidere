@@ -29,6 +29,7 @@ import static org.mariotaku.twidere.util.Utils.getTabDisplayOptionInt;
 import static org.mariotaku.twidere.util.Utils.isDatabaseReady;
 import static org.mariotaku.twidere.util.Utils.openDirectMessagesConversation;
 import static org.mariotaku.twidere.util.Utils.openSearch;
+import static org.mariotaku.twidere.util.Utils.setMenuItemAvailability;
 import static org.mariotaku.twidere.util.Utils.showMenuItemToast;
 
 import android.app.ActionBar;
@@ -67,6 +68,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
@@ -143,14 +145,15 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 
 	private ActionBar mActionBar;
 	private SupportTabsAdapter mPagerAdapter;
+
 	private ExtendedViewPager mViewPager;
 	private TabPageIndicator mIndicator;
-
 	private SlidingMenu mSlidingMenu;
 	private View mEmptyTabHint;
-
-	private HomeActionsActionView mActionsActionView, mActionsButton, mBottomActionsButton;
+	private ProgressBar mSmartBarProgress;
+	private HomeActionsActionView mActionsButton, mBottomActionsButton;
 	private LeftDrawerFrameLayout mLeftDrawerContainer;
+
 	private Fragment mCurrentVisibleFragment;
 	private UpdateUnreadCountTask mUpdateUnreadCountTask;
 
@@ -222,20 +225,7 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 			case R.id.actions:
 			case R.id.actions_button:
 			case R.id.actions_button_bottom: {
-				if (mViewPager == null || mPagerAdapter == null) return;
-				final int position = mViewPager.getCurrentItem();
-				final SupportTabSpec tab = mPagerAdapter.getTab(position);
-				if (tab == null) {
-					startActivity(new Intent(INTENT_ACTION_COMPOSE));
-				} else {
-					if (classEquals(DirectMessagesFragment.class, tab.cls)) {
-						openDirectMessagesConversation(this, -1, -1);
-					} else if (classEquals(TrendsSuggectionsFragment.class, tab.cls)) {
-						openSearchView(null);
-					} else {
-						startActivity(new Intent(INTENT_ACTION_COMPOSE));
-					}
-				}
+				triggerActionsClick();
 				break;
 			}
 		}
@@ -260,11 +250,8 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_home, menu);
-		final MenuItem actionsItem = menu.findItem(MENU_ACTIONS);
-		actionsItem.setVisible(SmartBarUtils.hasSmartBar() && isBottomComposeButton());
-		mActionsActionView = (HomeActionsActionView) actionsItem.getActionView();
-		mActionsActionView.setOnClickListener(this);
-		mActionsActionView.setOnLongClickListener(this);
+		final MenuItem itemProgress = menu.findItem(MENU_PROGRESS);
+		mSmartBarProgress = (ProgressBar) itemProgress.getActionView().findViewById(android.R.id.progress);
 		updateActionsButton();
 		return true;
 	}
@@ -331,6 +318,10 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 				openSearchView(mSelectedAccountToSearch);
 				return true;
 			}
+			case MENU_ACTIONS: {
+				triggerActionsClick();
+				return true;
+			}
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -355,8 +346,33 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 
 	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu) {
-		final MenuItem actionsItem = menu.findItem(MENU_ACTIONS);
-		actionsItem.setVisible(SmartBarUtils.hasSmartBar() && isBottomComposeButton());
+		if (mViewPager == null || mPagerAdapter == null) return false;
+		final boolean useBottomActionItems = SmartBarUtils.hasSmartBar() && isBottomComposeButton();
+		setMenuItemAvailability(menu, MENU_ACTIONS, useBottomActionItems);
+		setMenuItemAvailability(menu, MENU_PROGRESS, useBottomActionItems);
+		if (useBottomActionItems) {
+			final int icon, title;
+			final int position = mViewPager.getCurrentItem();
+			final SupportTabSpec tab = mPagerAdapter.getTab(position);
+			if (tab == null) {
+				title = R.string.compose;
+				icon = R.drawable.ic_menu_status_compose;
+			} else {
+				if (classEquals(DirectMessagesFragment.class, tab.cls)) {
+					icon = R.drawable.ic_menu_compose;
+					title = R.string.compose;
+				} else if (classEquals(TrendsSuggectionsFragment.class, tab.cls)) {
+					icon = android.R.drawable.ic_menu_search;
+					title = android.R.string.search_go;
+				} else {
+					icon = R.drawable.ic_menu_status_compose;
+					title = R.string.compose;
+				}
+			}
+			final MenuItem actionsItem = menu.findItem(MENU_ACTIONS);
+			actionsItem.setIcon(icon);
+			actionsItem.setTitle(title);
+		}
 		return true;
 	}
 
@@ -771,6 +787,23 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 		}
 	}
 
+	private void triggerActionsClick() {
+		if (mViewPager == null || mPagerAdapter == null) return;
+		final int position = mViewPager.getCurrentItem();
+		final SupportTabSpec tab = mPagerAdapter.getTab(position);
+		if (tab == null) {
+			startActivity(new Intent(INTENT_ACTION_COMPOSE));
+		} else {
+			if (classEquals(DirectMessagesFragment.class, tab.cls)) {
+				openDirectMessagesConversation(this, -1, -1);
+			} else if (classEquals(TrendsSuggectionsFragment.class, tab.cls)) {
+				openSearchView(null);
+			} else {
+				startActivity(new Intent(INTENT_ACTION_COMPOSE));
+			}
+		}
+	}
+
 	private void updateActionsButton() {
 		if (mViewPager == null || mPagerAdapter == null) return;
 		final int icon, title;
@@ -792,11 +825,6 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 			}
 		}
 		final boolean hasActivatedTask = hasActivatedTask();
-		if (mActionsActionView != null) {
-			mActionsActionView.setIcon(icon);
-			mActionsActionView.setTitle(title);
-			mActionsActionView.setShowProgress(hasActivatedTask);
-		}
 		if (mActionsButton != null) {
 			mActionsButton.setIcon(icon);
 			mActionsButton.setTitle(title);
@@ -806,6 +834,13 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 			mBottomActionsButton.setIcon(icon);
 			mBottomActionsButton.setTitle(title);
 			mBottomActionsButton.setShowProgress(hasActivatedTask);
+		}
+		if (mSmartBarProgress != null) {
+			mSmartBarProgress.setVisibility(hasActivatedTask ? View.VISIBLE : View.INVISIBLE);
+		}
+		final boolean useBottomActionItems = SmartBarUtils.hasSmartBar() && isBottomComposeButton();
+		if (useBottomActionItems) {
+			invalidateOptionsMenu();
 		}
 	}
 
