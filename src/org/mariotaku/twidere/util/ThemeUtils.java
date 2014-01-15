@@ -112,9 +112,13 @@ public class ThemeUtils implements Constants {
 
 	public static IndicatorConfig buildRefreshIndicatorConfig(final Context context) {
 		final IndicatorConfig.Builder builder = new IndicatorConfig.Builder(context);
+		final Resources res = context.getResources();
+		final float width = 3 * res.getDisplayMetrics().density;
 		final int themeColor = getUserThemeColor(context);
 		builder.progressColor(themeColor);
 		builder.indeterminateColor(themeColor);
+		builder.progressStrokeWidth(width);
+		builder.indeterminateStrokeWidth(width);
 		return builder.build();
 	}
 
