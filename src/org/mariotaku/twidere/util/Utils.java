@@ -2462,19 +2462,6 @@ public final class Utils implements Constants {
 		return prefs.getBoolean("silent_notifications_at_" + now.get(Calendar.HOUR_OF_DAY), false);
 	}
 
-	public static boolean isOfficialConsumerKeySecret(final Context context) {
-		if (context == null) return false;
-		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		final String[] key_secrets = context.getResources().getStringArray(R.array.values_official_consumer_key_secret);
-		final String consumer_key = getNonEmptyString(pref, KEY_CONSUMER_KEY, null);
-		final String consumer_secret = getNonEmptyString(pref, KEY_CONSUMER_SECRET, null);
-		for (final String key_secret : key_secrets) {
-			final String[] pair = key_secret.split(";");
-			if (pair[0].equals(consumer_key) && pair[1].equals(consumer_secret)) return true;
-		}
-		return false;
-	}
-
 	public static boolean isOfficialConsumerKeySecret(final Context context, final String consumerKey,
 			final String consumerSecret) {
 		if (context == null || consumerKey == null || consumerSecret == null) return false;
@@ -2499,7 +2486,6 @@ public final class Utils implements Constants {
 		if (context == null) return false;
 		final ConnectivityManager conn = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		final NetworkInfo networkInfo = conn.getActiveNetworkInfo();
-
 		return networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI
 				&& networkInfo.isConnected();
 	}
@@ -3240,6 +3226,12 @@ public final class Utils implements Constants {
 		if (context == null) return false;
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		return prefs.getBoolean(KEY_FILTERS_FOR_RTS, true);
+	}
+
+	public static boolean shouldForceUsingPrivateAPIs(final Context context) {
+		if (context == null) return false;
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		return prefs.getBoolean(KEY_FORCE_USING_PRIVATE_APIS, false);
 	}
 
 	public static boolean shouldStopAutoRefreshOnBatteryLow(final Context context) {

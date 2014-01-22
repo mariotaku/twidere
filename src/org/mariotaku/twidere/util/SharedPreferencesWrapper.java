@@ -11,6 +11,10 @@ public class SharedPreferencesWrapper {
 		mPreferences = preferences;
 	}
 
+	public SharedPreferences.Editor edit() {
+		return mPreferences.edit();
+	}
+
 	public boolean getBoolean(final String key, final boolean defValue) {
 		try {
 			return mPreferences.getBoolean(key, defValue);

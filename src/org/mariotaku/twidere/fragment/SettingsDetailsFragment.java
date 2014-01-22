@@ -34,8 +34,15 @@ public class SettingsDetailsFragment extends BasePreferenceFragment {
 			screen.removeAll();
 		}
 		final Bundle args = getArguments();
-		final String rawResId = args != null ? args.getString(EXTRA_RESID) : null;
-		final int resId = Utils.getResId(getActivity(), rawResId);
+		final Object rawResId = args.get(EXTRA_RESID);
+		final int resId;
+		if (rawResId instanceof Integer) {
+			resId = (Integer) rawResId;
+		} else if (rawResId instanceof String) {
+			resId = Utils.getResId(getActivity(), (String) rawResId);
+		} else {
+			resId = 0;
+		}
 		if (resId != 0) {
 			addPreferencesFromResource(resId);
 		}

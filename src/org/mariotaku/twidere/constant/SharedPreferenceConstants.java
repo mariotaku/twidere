@@ -187,6 +187,7 @@ public interface SharedPreferenceConstants {
 	public static final String KEY_HOME_REFRESH_TRENDS = "home_refresh_trends";
 	public static final String KEY_IMAGE_UPLOAD_FORMAT = "image_upload_format";
 	public static final String KEY_TWEET_SHORTENER = "tweet_shortener";
+	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = false)
 	public static final String KEY_SHOW_ABSOLUTE_TIME = "show_absolute_time";
 	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = false)
 	public static final String KEY_QUICK_SEND = "quick_send";
@@ -224,7 +225,7 @@ public interface SharedPreferenceConstants {
 	public static final String KEY_LINK_TO_QUOTED_TWEET = "link_to_quoted_tweet";
 	@Preference(type = BOOLEAN)
 	public static final String KEY_BACKGROUND_TOAST_NOTIFICATION = "background_toast_notification";
-	@Preference(type = BOOLEAN)
+	@Preference(type = STRING)
 	public static final String KEY_COMPOSE_QUIT_ACTION = "compose_quit_action";
 	@Preference(type = BOOLEAN)
 	public static final String KEY_NO_CLOSE_AFTER_TWEET_SENT = "no_close_after_tweet_sent";
@@ -263,6 +264,10 @@ public interface SharedPreferenceConstants {
 	public static final String KEY_LONG_CLICK_TO_OPEN_MENU = "long_click_to_open_menu";
 	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = true)
 	public static final String KEY_SWIPE_BACK = "swipe_back";
+	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = false)
+	public static final String KEY_FORCE_USING_PRIVATE_APIS = "force_using_private_apis";
+	@Preference(type = INT, hasDefault = true, defaultInt = 140)
+	public static final String KEY_STATUS_TEXT_LIMIT = "status_text_limit";
 
 	@Preference(type = STRING)
 	public static final String KEY_TRANSLATION_DESTINATION = "translation_destination";
