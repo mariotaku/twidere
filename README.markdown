@@ -79,7 +79,7 @@ PayPal: "mariotaku.lee#gmail.com".replace("#", "@");
 
 AliPay: http://me.alipay.com/mariotaku
 
-Bitcoin: 1BaBZ5fueY7SgRVsPqYANuYiB4EVg72oBG
+Bitcoin: 1FHAVAzge7cj1LfCTMfnLL49DgA3mVUCuW
 
 **Donators**
 
