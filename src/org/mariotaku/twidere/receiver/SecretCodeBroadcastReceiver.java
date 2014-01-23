@@ -25,7 +25,7 @@ import android.content.Intent;
 
 import org.mariotaku.twidere.activity.TestActivity;
 
-public class TestBroadcastReceiver extends BroadcastReceiver {
+public class SecretCodeBroadcastReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(final Context context, final Intent intent) {
