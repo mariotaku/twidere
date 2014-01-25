@@ -326,6 +326,23 @@ public interface ICardItemView extends IColorLabelView {
 				mHelper.mView.getWindowVisibleDisplayFrame(outRect);
 			}
 
+			@Override
+			protected void onLayout(final boolean changed, final int left, final int top, final int right,
+					final int bottom) {
+				final Rect bounds = mHelper.mOverflowIconBounds;
+				layout(bounds.left, bounds.top, bounds.right, bounds.bottom);
+			}
+
+			@Override
+			protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
+				final int width = mHelper.mOverflowIconBounds.width();
+				final int height = mHelper.mOverflowIconBounds.height();
+				final int wSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.getMode(widthMeasureSpec));
+				final int hSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.getMode(heightMeasureSpec));
+				setMeasuredDimension(width, height);
+				super.onMeasure(wSpec, hSpec);
+			}
+
 		}
 
 		static class OverflowIconGestureListener extends SimpleOnGestureListener {

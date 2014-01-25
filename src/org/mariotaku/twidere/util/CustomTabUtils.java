@@ -37,9 +37,10 @@ import org.mariotaku.twidere.fragment.support.ActivitiesAboutMeFragment;
 import org.mariotaku.twidere.fragment.support.ActivitiesByFriendsFragment;
 import org.mariotaku.twidere.fragment.support.DirectMessagesFragment;
 import org.mariotaku.twidere.fragment.support.HomeTimelineFragment;
+import org.mariotaku.twidere.fragment.support.InvalidTabFragment;
 import org.mariotaku.twidere.fragment.support.MentionsFragment;
-import org.mariotaku.twidere.fragment.support.MultiColumnHomeTimelineFragment;
 import org.mariotaku.twidere.fragment.support.SearchStatusesFragment;
+import org.mariotaku.twidere.fragment.support.StaggeredHomeTimelineFragment;
 import org.mariotaku.twidere.fragment.support.TrendsSuggectionsFragment;
 import org.mariotaku.twidere.fragment.support.UserFavoritesFragment;
 import org.mariotaku.twidere.fragment.support.UserListTimelineFragment;
@@ -91,9 +92,11 @@ public class CustomTabUtils implements Constants {
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_ACTIVITIES_BY_FRIENDS, new CustomTabConfiguration(
 				ActivitiesByFriendsFragment.class, R.string.activities_by_friends, R.drawable.ic_tab_accounts,
 				CustomTabConfiguration.ACCOUNT_REQUIRED, CustomTabConfiguration.FIELD_TYPE_NONE, 9));
-		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_STAGGERED_HOME_TIMELINE, new CustomTabConfiguration(
-				MultiColumnHomeTimelineFragment.class, R.string.staggered_home_timeline, R.drawable.ic_tab_staggered,
-				CustomTabConfiguration.ACCOUNT_OPTIONAL, CustomTabConfiguration.FIELD_TYPE_NONE, 10, false));
+		if (Utils.hasStaggeredTimeline()) {
+			CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_STAGGERED_HOME_TIMELINE, new CustomTabConfiguration(
+					StaggeredHomeTimelineFragment.class, R.string.staggered_home_timeline, R.drawable.ic_tab_staggered,
+					CustomTabConfiguration.ACCOUNT_OPTIONAL, CustomTabConfiguration.FIELD_TYPE_NONE, 10, false));
+		}
 
 		CUSTOM_TABS_ICON_NAME_MAP.put("accounts", R.drawable.ic_tab_accounts);
 		CUSTOM_TABS_ICON_NAME_MAP.put("fire", R.drawable.ic_tab_fire);
@@ -114,7 +117,6 @@ public class CustomTabUtils implements Constants {
 		CUSTOM_TABS_ICON_NAME_MAP.put("trends", R.drawable.ic_tab_trends);
 		CUSTOM_TABS_ICON_NAME_MAP.put("twidere", R.drawable.ic_tab_twidere);
 		CUSTOM_TABS_ICON_NAME_MAP.put("twitter", R.drawable.ic_tab_twitter);
-		// CUSTOM_TABS_ICON_NAME_MAP.put(ICON_SPECIAL_TYPE_CUSTOMIZE, -1);
 	}
 
 	public static String findTabIconKey(final int iconRes) {
@@ -216,22 +218,20 @@ public class CustomTabUtils implements Constants {
 		if (cur == null) return Collections.emptyList();
 		final ArrayList<SupportTabSpec> tabs = new ArrayList<SupportTabSpec>();
 		cur.moveToFirst();
-		final int idx_name = cur.getColumnIndex(Tabs.NAME), idx_icon = cur.getColumnIndex(Tabs.ICON), idx_type = cur
-				.getColumnIndex(Tabs.TYPE), idx_arguments = cur.getColumnIndex(Tabs.ARGUMENTS), idx_position = cur
+		final int idx_name = cur.getColumnIndex(Tabs.NAME), idxIcon = cur.getColumnIndex(Tabs.ICON), idxType = cur
+				.getColumnIndex(Tabs.TYPE), idxArguments = cur.getColumnIndex(Tabs.ARGUMENTS), idxPosition = cur
 				.getColumnIndex(Tabs.POSITION);
 		while (!cur.isAfterLast()) {
-			final String type = cur.getString(idx_type);
+			final String type = cur.getString(idxType);
+			final int position = cur.getInt(idxPosition);
+			final String iconType = cur.getString(idxIcon);
+			final String name = cur.getString(idx_name);
+			final Bundle args = ParseUtils.jsonToBundle(cur.getString(idxArguments));
+			args.putInt(EXTRA_TAB_POSITION, position);
 			final CustomTabConfiguration conf = getTabConfiguration(type);
-			if (conf != null) {
-				final int position = cur.getInt(idx_position);
-				final String icon_type = cur.getString(idx_icon);
-				final String name = cur.getString(idx_name);
-				final Bundle args = ParseUtils.jsonToBundle(cur.getString(idx_arguments));
-				args.putInt(EXTRA_TAB_POSITION, position);
-				final Class<? extends Fragment> fragment = conf.getFragmentClass();
-				tabs.add(new SupportTabSpec(name != null ? name : getTabTypeName(context, type),
-						getTabIconObject(icon_type), type, fragment, args, position));
-			}
+			final Class<? extends Fragment> cls = conf != null ? conf.getFragmentClass() : InvalidTabFragment.class;
+			tabs.add(new SupportTabSpec(name != null ? name : getTabTypeName(context, type),
+					getTabIconObject(iconType), type, cls, args, position));
 			cur.moveToNext();
 		}
 		cur.close();

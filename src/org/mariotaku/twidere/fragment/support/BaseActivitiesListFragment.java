@@ -81,8 +81,13 @@ public abstract class BaseActivitiesListFragment extends BasePullToRefreshListFr
 	}
 
 	@Override
-	public void onRefreshStarted() {
-		super.onRefreshStarted();
+	public void onRefreshFromEnd() {
+
+	}
+
+	@Override
+	public void onRefreshFromStart() {
+		if (isRefreshing()) return;
 		getLoaderManager().restartLoader(0, getArguments(), this);
 	}
 

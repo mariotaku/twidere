@@ -37,6 +37,7 @@ import android.content.Intent;
 import android.content.Loader;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -318,37 +319,31 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 		public void bindView(final View view, final Context context, final Cursor cursor) {
 			super.bindView(view, context, cursor);
 			final TwoLineWithIconViewHolder holder = (TwoLineWithIconViewHolder) view.getTag();
-			// holder.checkbox.setVisibility(View.VISIBLE);
-			// holder.checkbox.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-			// R.drawable.ic_menu_refresh, 0);
-			// holder.checkbox.setOnClickListener(this);
 			final String type = cursor.getString(mIndices.type);
 			final String name = cursor.getString(mIndices.name);
+			final String iconKey = cursor.getString(mIndices.icon);
 			if (isTabTypeValid(type)) {
 				final String typeName = getTabTypeName(context, type);
-				final String iconKey = cursor.getString(mIndices.icon);
 				holder.text1.setText(TextUtils.isEmpty(name) ? typeName : name);
+				holder.text1.setPaintFlags(holder.text1.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
 				holder.text2.setVisibility(View.VISIBLE);
 				holder.text2.setText(typeName);
-				final Drawable icon = getTabIconDrawable(mContext, getTabIconObject(iconKey));
-				holder.icon.setVisibility(View.VISIBLE);
-				if (icon != null) {
-					icon.mutate();
-					icon.setColorFilter(mActionIconColor, PorterDuff.Mode.MULTIPLY);
-					holder.icon.setImageDrawable(icon);
-				} else {
-					final Drawable fallback = context.getResources().getDrawable(R.drawable.ic_tab_list);
-					fallback.mutate();
-					fallback.setColorFilter(mActionIconColor, PorterDuff.Mode.MULTIPLY);
-					holder.icon.setImageDrawable(fallback);
-				}
+			} else {
+				holder.text1.setText(name);
+				holder.text1.setPaintFlags(holder.text1.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+				holder.text2.setText(R.string.invalid_tab);
+			}
+			final Drawable icon = getTabIconDrawable(mContext, getTabIconObject(iconKey));
+			holder.icon.setVisibility(View.VISIBLE);
+			if (icon != null) {
+				icon.mutate();
+				icon.setColorFilter(mActionIconColor, PorterDuff.Mode.MULTIPLY);
+				holder.icon.setImageDrawable(icon);
 			} else {
 				final Drawable fallback = context.getResources().getDrawable(R.drawable.ic_tab_list);
 				fallback.mutate();
 				fallback.setColorFilter(mActionIconColor, PorterDuff.Mode.MULTIPLY);
 				holder.icon.setImageDrawable(fallback);
-				holder.text1.setText(name);
-				holder.text2.setText(R.string.invalid_tab);
 			}
 		}
 

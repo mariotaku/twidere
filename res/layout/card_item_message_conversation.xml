@@ -8,7 +8,8 @@
 	<RelativeLayout
 		android:id="@+id/incoming_message_container"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
+		android:layout_height="wrap_content"
+		android:layout_gravity="left">
 
 		<FrameLayout
 			android:id="@+id/incoming_profile_image_container"
@@ -30,6 +31,7 @@
 			android:id="@+id/incoming_message_content_frame"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			android:layout_alignWithParentIfMissing="true"
 			android:layout_toRightOf="@+id/incoming_profile_image_container"
 			android:background="?cardItemMessageIncomingBackground">
 
@@ -69,7 +71,8 @@
 	<RelativeLayout
 		android:id="@+id/outgoing_message_container"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
+		android:layout_height="wrap_content"
+		android:layout_gravity="right">
 
 		<FrameLayout
 			android:id="@+id/outgoing_profile_image_container"
@@ -91,6 +94,7 @@
 			android:id="@+id/outgoing_message_content_container"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			android:layout_alignWithParentIfMissing="true"
 			android:layout_toLeftOf="@+id/outgoing_profile_image_container"
 			android:background="?cardItemMessageOutgoingBackground">
 

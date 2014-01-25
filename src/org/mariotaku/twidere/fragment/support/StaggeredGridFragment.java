@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.huewu.pla.lib;
+package org.mariotaku.twidere.fragment.support;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -32,6 +32,10 @@ import android.widget.ListAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.etsy.android.grid.StaggeredGridView;
+
+import org.mariotaku.twidere.R;
+
 /**
  * Static library support version of the framework's
  * {@link android.app.ListFragment}. Used to write apps that run on platforms
@@ -39,7 +43,7 @@ import android.widget.TextView;
  * implementation is still used; it does not try to switch to the framework's
  * implementation. See the framework SDK documentation for a class overview.
  */
-public class MultiColumnListFragment extends Fragment {
+public class StaggeredGridFragment extends Fragment {
 	static final int INTERNAL_EMPTY_ID = 0x00ff0001;
 	static final int INTERNAL_PROGRESS_CONTAINER_ID = 0x00ff0002;
 	static final int INTERNAL_LIST_CONTAINER_ID = 0x00ff0003;
@@ -56,12 +60,12 @@ public class MultiColumnListFragment extends Fragment {
 	final private AdapterView.OnItemClickListener mOnClickListener = new AdapterView.OnItemClickListener() {
 		@Override
 		public void onItemClick(final AdapterView<?> parent, final View v, final int position, final long id) {
-			onListItemClick((MultiColumnListView) parent, v, position, id);
+			onListItemClick((StaggeredGridView) parent, v, position, id);
 		}
 	};
 
 	ListAdapter mAdapter;
-	MultiColumnListView mList;
+	StaggeredGridView mList;
 	View mEmptyView;
 	TextView mStandardEmptyView;
 	View mProgressContainer;
@@ -69,7 +73,7 @@ public class MultiColumnListFragment extends Fragment {
 	CharSequence mEmptyText;
 	boolean mListShown;
 
-	public MultiColumnListFragment() {
+	public StaggeredGridFragment() {
 	}
 
 	/**
@@ -82,7 +86,7 @@ public class MultiColumnListFragment extends Fragment {
 	/**
 	 * Get the activity's list view widget.
 	 */
-	public MultiColumnListView getListView() {
+	public StaggeredGridView getListView() {
 		ensureList();
 		return mList;
 	}
@@ -150,7 +154,7 @@ public class MultiColumnListFragment extends Fragment {
 		lframe.addView(tv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.MATCH_PARENT));
 
-		final MultiColumnListView lv = createMultiColumnListView(context, inflater);
+		final StaggeredGridView lv = (StaggeredGridView) inflater.inflate(R.layout.staggered_gridview, lframe, false);
 		lv.setId(android.R.id.list);
 		lv.setDrawSelectorOnTop(false);
 		lframe.addView(lv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -191,7 +195,7 @@ public class MultiColumnListFragment extends Fragment {
 	 * @param position The position of the view in the list
 	 * @param id The row id of the item that was clicked
 	 */
-	public void onListItemClick(final MultiColumnListView l, final View v, final int position, final long id) {
+	public void onListItemClick(final StaggeredGridView l, final View v, final int position, final long id) {
 	}
 
 	/**
@@ -273,16 +277,12 @@ public class MultiColumnListFragment extends Fragment {
 		mList.setSelection(position);
 	}
 
-	protected MultiColumnListView createMultiColumnListView(final Context context, final LayoutInflater inflater) {
-		return new MultiColumnListView(context);
-	}
-
 	private void ensureList() {
 		if (mList != null) return;
 		final View root = getView();
 		if (root == null) throw new IllegalStateException("Content view not yet created");
-		if (root instanceof MultiColumnListView) {
-			mList = (MultiColumnListView) root;
+		if (root instanceof StaggeredGridView) {
+			mList = (StaggeredGridView) root;
 		} else {
 			mStandardEmptyView = (TextView) root.findViewById(INTERNAL_EMPTY_ID);
 			if (mStandardEmptyView == null) {
@@ -293,14 +293,14 @@ public class MultiColumnListFragment extends Fragment {
 			mProgressContainer = root.findViewById(INTERNAL_PROGRESS_CONTAINER_ID);
 			mListContainer = root.findViewById(INTERNAL_LIST_CONTAINER_ID);
 			final View rawListView = root.findViewById(android.R.id.list);
-			if (!(rawListView instanceof MultiColumnListView)) {
+			if (!(rawListView instanceof StaggeredGridView)) {
 				if (rawListView == null)
-					throw new RuntimeException("Your content must have a MultiColumnListView whose id attribute is "
+					throw new RuntimeException("Your content must have a StaggeredGridView whose id attribute is "
 							+ "'android.R.id.list'");
 				throw new RuntimeException("Content has view with id attribute 'android.R.id.list' "
-						+ "that is not a MultiColumnListView class");
+						+ "that is not a StaggeredGridView class");
 			}
-			mList = (MultiColumnListView) rawListView;
+			mList = (StaggeredGridView) rawListView;
 			if (mEmptyView != null) {
 				mList.setEmptyView(mEmptyView);
 			} else if (mEmptyText != null) {

@@ -24,6 +24,7 @@
 		<!-- Window attributes -->
 		<item name="android:windowAnimationStyle">@style/Animation.Twidere.Activity</item>
 		<item name="android:windowBackground">@color/bg_color_dark</item>
+		<item name="android:fitsSystemWindows">true</item>
 
 		<!-- ActionBar styles -->
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Dark</item>
@@ -32,6 +33,7 @@
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
 		<item name="tabItemContentStyle">@style/Widget.TabPageIndicator.TabItem.Content</item>
 		<item name="tabItemTextStyle">@style/Widget.TabPageIndicator.TabItem.TextView.Dark</item>
+		<item name="staggeredGridViewStyle">@style/Widget.StaggeredGridView</item>
 
 		<!-- Card UI styles -->
 		<item name="cardItemBackground">@drawable/bg_card_item_dark</item>
@@ -55,6 +57,7 @@
 		<!-- Window attributes -->
 		<item name="android:windowAnimationStyle">@style/Animation.Twidere.Activity</item>
 		<item name="android:windowBackground">@color/bg_color_light</item>
+		<item name="android:fitsSystemWindows">true</item>
 
 		<!-- ActionBar styles -->
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Light</item>
@@ -63,6 +66,7 @@
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
 		<item name="tabItemContentStyle">@style/Widget.TabPageIndicator.TabItem.Content</item>
 		<item name="tabItemTextStyle">@style/Widget.TabPageIndicator.TabItem.TextView.Light</item>
+		<item name="staggeredGridViewStyle">@style/Widget.StaggeredGridView</item>
 
 		<!-- Card UI styles -->
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
@@ -86,6 +90,7 @@
 		<!-- Window attributes -->
 		<item name="android:windowAnimationStyle">@style/Animation.Twidere.Activity</item>
 		<item name="android:windowBackground">@color/bg_color_light</item>
+		<item name="android:fitsSystemWindows">true</item>
 
 		<!-- ActionBar styles -->
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Light.DarkActionBar</item>
@@ -94,6 +99,7 @@
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
 		<item name="tabItemContentStyle">@style/Widget.TabPageIndicator.TabItem.Content</item>
 		<item name="tabItemTextStyle">@style/Widget.TabPageIndicator.TabItem.TextView.Light.DarkActionBar</item>
+		<item name="staggeredGridViewStyle">@style/Widget.StaggeredGridView</item>
 
 		<!-- Card UI styles -->
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>
@@ -213,6 +219,7 @@
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
 		<item name="tabItemContentStyle">@style/Widget.TabPageIndicator.TabItem.Content</item>
 		<item name="tabItemTextStyle">@style/Widget.TabPageIndicator.TabItem.TextView</item>
+		<item name="staggeredGridViewStyle">@style/Widget.StaggeredGridView</item>
 
 		<!-- Card UI styles -->
 		<item name="cardItemBackground">@drawable/bg_card_item_dark</item>
@@ -230,6 +237,7 @@
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
 		<item name="tabItemContentStyle">@style/Widget.TabPageIndicator.TabItem.Content</item>
 		<item name="tabItemTextStyle">@style/Widget.TabPageIndicator.TabItem.TextView</item>
+		<item name="staggeredGridViewStyle">@style/Widget.StaggeredGridView</item>
 
 		<!-- Card UI styles -->
 		<item name="cardItemBackground">@drawable/bg_card_item_light</item>

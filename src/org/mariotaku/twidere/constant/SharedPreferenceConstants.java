@@ -78,6 +78,7 @@ public interface SharedPreferenceConstants {
 	public static final String DEFAULT_THEME = VALUE_THEME_NAME_TWIDERE;
 	public static final String DEFAULT_THEME_BACKGROUND = VALUE_THEME_BACKGROUND_DEFAULT;
 	public static final String DEFAULT_THEME_FONT_FAMILY = VALUE_THEME_FONT_FAMILY_REGULAR;
+	public static final int DEFAULT_THEME_BACKGROUND_ALPHA = 160;
 
 	public static final String DEFAULT_QUOTE_FORMAT = "RT @" + FORMAT_PATTERN_NAME + ": " + FORMAT_PATTERN_TEXT;
 	public static final String DEFAULT_SHARE_FORMAT = FORMAT_PATTERN_TITLE + " - " + FORMAT_PATTERN_TEXT;
@@ -115,6 +116,8 @@ public interface SharedPreferenceConstants {
 	public static final String KEY_THEME = "theme";
 	@Preference(type = STRING, hasDefault = true, defaultString = DEFAULT_THEME_BACKGROUND)
 	public static final String KEY_THEME_BACKGROUND = "theme_background";
+	@Preference(type = INT, hasDefault = true, defaultInt = DEFAULT_THEME_BACKGROUND_ALPHA)
+	public static final String KEY_THEME_BACKGROUND_ALPHA = "theme_background_alpha";
 	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = true)
 	public static final String KEY_THEME_DARK_ACTIONBAR = "theme_dark_actionbar";
 	@Preference(type = INT)
@@ -157,7 +160,7 @@ public interface SharedPreferenceConstants {
 	public static final String KEY_REFRESH_AFTER_TWEET = "refresh_after_tweet";
 	@Preference(type = BOOLEAN)
 	public static final String KEY_AUTO_REFRESH = "auto_refresh";
-	@Preference(type = INT)
+	@Preference(type = STRING)
 	public static final String KEY_REFRESH_INTERVAL = "refresh_interval";
 	@Preference(type = BOOLEAN)
 	public static final String KEY_AUTO_REFRESH_HOME_TIMELINE = "auto_refresh_home_timeline";
@@ -184,36 +187,45 @@ public interface SharedPreferenceConstants {
 	public static final String KEY_HOME_REFRESH_TRENDS = "home_refresh_trends";
 	public static final String KEY_IMAGE_UPLOAD_FORMAT = "image_upload_format";
 	public static final String KEY_TWEET_SHORTENER = "tweet_shortener";
+	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = false)
 	public static final String KEY_SHOW_ABSOLUTE_TIME = "show_absolute_time";
-	public static final String KEY_DUAL_PANE_IN_LANDSCAPE = "dual_pane_in_landscape";
-	public static final String KEY_DUAL_PANE_IN_PORTRAIT = "dual_pane_in_portrait";
+	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = false)
 	public static final String KEY_QUICK_SEND = "quick_send";
 	@Preference(type = STRING, exportable = false)
 	public static final String KEY_COMPOSE_ACCOUNTS = "compose_accounts";
+	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = false)
 	public static final String KEY_TCP_DNS_QUERY = "tcp_dns_query";
 	public static final String KEY_DNS_SERVER = "dns_server";
+	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = DEFAULT_SEPARATE_RETWEET_ACTION)
 	public static final String KEY_SEPARATE_RETWEET_ACTION = "separate_retweet_action";
 	public static final String KEY_CONNECTION_TIMEOUT = "connection_timeout";
+	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = true)
 	public static final String KEY_NAME_FIRST = "name_first";
 	public static final String KEY_STOP_AUTO_REFRESH_WHEN_BATTERY_LOW = "stop_auto_refresh_when_battery_low";
 	@Preference(type = BOOLEAN, exportable = false)
 	public static final String KEY_UCD_DATA_PROFILING = "ucd_data_profiling";
 	@Preference(type = BOOLEAN, exportable = false)
 	public static final String KEY_SHOW_UCD_DATA_PROFILING_REQUEST = "show_ucd_data_profiling_request";
+	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = false)
 	public static final String KEY_DISPLAY_SENSITIVE_CONTENTS = "display_sensitive_contents";
+	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = true)
 	public static final String KEY_PHISHING_LINK_WARNING = "phishing_link_warning";
+	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = false)
 	public static final String KEY_FAST_SCROLL_THUMB = "fast_scroll_thumb";
 	public static final String KEY_LINK_HIGHLIGHT_OPTION = "link_highlight_option";
+	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = true)
 	public static final String KEY_INDICATE_MY_STATUS = "indicate_my_status";
 	public static final String KEY_PRELOAD_PROFILE_IMAGES = "preload_profile_images";
 	public static final String KEY_PRELOAD_PREVIEW_IMAGES = "preload_preview_images";
+	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = true)
 	public static final String KEY_PRELOAD_WIFI_ONLY = "preload_wifi_only";
+	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = true)
 	public static final String KEY_DISABLE_TAB_SWIPE = "disable_tab_swipe";
 	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = true)
 	public static final String KEY_LINK_TO_QUOTED_TWEET = "link_to_quoted_tweet";
 	@Preference(type = BOOLEAN)
 	public static final String KEY_BACKGROUND_TOAST_NOTIFICATION = "background_toast_notification";
-	@Preference(type = BOOLEAN)
+	@Preference(type = STRING)
 	public static final String KEY_COMPOSE_QUIT_ACTION = "compose_quit_action";
 	@Preference(type = BOOLEAN)
 	public static final String KEY_NO_CLOSE_AFTER_TWEET_SENT = "no_close_after_tweet_sent";
@@ -236,8 +248,10 @@ public interface SharedPreferenceConstants {
 	public static final String KEY_FILTERS_IN_HOME_TIMELINE = "filters_in_home_timeline";
 	public static final String KEY_FILTERS_IN_MENTIONS = "filters_in_mentions";
 	public static final String KEY_FILTERS_FOR_RTS = "filters_for_rts";
+	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = false)
 	public static final String KEY_NICKNAME_ONLY = "nickname_only";
 	public static final String KEY_SETTINGS_WIZARD_COMPLETED = "settings_wizard_completed";
+	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = true)
 	public static final String KEY_CARD_ANIMATION = "card_animation";
 	public static final String KEY_UNREAD_COUNT = "unread_count";
 	public static final String KEY_NOTIFICATION = "notification";
@@ -250,6 +264,10 @@ public interface SharedPreferenceConstants {
 	public static final String KEY_LONG_CLICK_TO_OPEN_MENU = "long_click_to_open_menu";
 	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = true)
 	public static final String KEY_SWIPE_BACK = "swipe_back";
+	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = false)
+	public static final String KEY_FORCE_USING_PRIVATE_APIS = "force_using_private_apis";
+	@Preference(type = INT, hasDefault = true, defaultInt = 140)
+	public static final String KEY_STATUS_TEXT_LIMIT = "status_text_limit";
 
 	@Preference(type = STRING)
 	public static final String KEY_TRANSLATION_DESTINATION = "translation_destination";

@@ -34,13 +34,10 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
@@ -49,7 +46,6 @@ import org.mariotaku.querybuilder.Columns.Column;
 import org.mariotaku.querybuilder.RawItemArray;
 import org.mariotaku.querybuilder.Where;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.support.HomeActivity;
 import org.mariotaku.twidere.adapter.DirectMessageConversationEntriesAdapter;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
@@ -137,15 +133,6 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 	}
 
 	@Override
-	public boolean onDown(final MotionEvent e) {
-		final AsyncTwitterWrapper twitter = getTwitterWrapper();
-		if (twitter != null) {
-			twitter.clearNotificationAsync(NOTIFICATION_ID_DIRECT_MESSAGES, getAccountId());
-		}
-		return super.onDown(e);
-	}
-
-	@Override
 	public void onListItemClick(final ListView l, final View v, final int position, final long id) {
 		if (mMultiSelectManager.isActive()) return;
 		final int pos = position - l.getHeaderViewsCount();
@@ -184,8 +171,13 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 	}
 
 	@Override
-	public void onRefreshStarted() {
-		super.onRefreshStarted();
+	public void onRefreshFromEnd() {
+		if (mLoadMoreAutomatically) return;
+		loadMoreMessages();
+	}
+
+	@Override
+	public void onRefreshFromStart() {
 		new AsyncTask<Void, Void, long[][]>() {
 
 			@Override
@@ -260,18 +252,9 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 	@Override
 	public boolean scrollToStart() {
 		final AsyncTwitterWrapper twitter = getTwitterWrapper();
-		final int tab_position = getTabPosition();
-		if (twitter != null && tab_position >= 0) {
-			twitter.clearUnreadCountAsync(tab_position);
-		}
-		final FragmentActivity activity = getActivity();
-		if (activity instanceof HomeActivity) {
-			final HomeActivity home = (HomeActivity) activity;
-			if (home.isDualPaneMode() && home.isRightPaneUsed() && home.isRightPaneOpened()) {
-				final Fragment right_pane = home.getRightPaneFragment();
-				if (right_pane instanceof DirectMessagesConversationFragment)
-					return ((DirectMessagesConversationFragment) right_pane).scrollToStart();
-			}
+		final int tabPosition = getTabPosition();
+		if (twitter != null && tabPosition >= 0) {
+			twitter.clearUnreadCountAsync(tabPosition);
 		}
 		return super.scrollToStart();
 	}
@@ -290,9 +273,11 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 	}
 
 	@Override
-	protected void onPullUp() {
-		if (mLoadMoreAutomatically) return;
-		loadMoreMessages();
+	protected void onListTouched() {
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		if (twitter != null) {
+			twitter.clearNotificationAsync(NOTIFICATION_ID_DIRECT_MESSAGES, getAccountId());
+		}
 	}
 
 	@Override
@@ -384,4 +369,5 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 		}
 
 	}
+
 }

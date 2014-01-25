@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.mariotaku.twidere"
 	android:installLocation="auto"
-	android:versionCode="91"
-	android:versionName="0.2.9.9">
+	android:versionCode="92"
+	android:versionName="0.2.9.10">
 
 	<uses-sdk
 		android:minSdkVersion="14"
@@ -593,7 +593,7 @@
 			</intent-filter>
 		</receiver>
 		<receiver
-			android:name=".receiver.TestBroadcastReceiver"
+			android:name=".receiver.SecretCodeBroadcastReceiver"
 			android:label="@string/twidere_test">
 			<intent-filter>
 				<action android:name="android.provider.Telephony.SECRET_CODE"/>

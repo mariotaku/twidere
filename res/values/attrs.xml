@@ -12,6 +12,7 @@
 		<attr name="ignorePadding" format="boolean"/>
 		<attr name="linePageIndicatorStyle" format="reference"/>
 		<attr name="cardItemViewStyle" format="reference"/>
+		<attr name="staggeredGridViewStyle" format="reference"/>
 	</declare-styleable>
 	<declare-styleable name="CardItemView">
 		<attr name="cardBackground" format="reference"/>
@@ -58,45 +59,12 @@
 	<declare-styleable name="NotificationTypePreference">
 		<attr name="notificationType"/>
 	</declare-styleable>
-	<declare-styleable name="SlidingPaneView">
-
-		<!-- Spacing value. -->
-		<attr name="paneSpacingRight" format="dimension"/>
-		<!-- Spacing value for actions container. -->
-		<attr name="paneSpacingLeft" format="dimension"/>
-		<!-- Actions layout ID to link at view creation time. -->
-		<attr name="paneLayoutLeft" format="reference"/>
-		<!-- Content layout ID to link at view creation time. -->
-		<attr name="paneLayoutRight" format="reference"/>
-		<!-- Drawable to be used to draw shadow dropped by content view to actions one. -->
-		<attr name="paneShadowDrawable" format="reference"/>
-		<!-- Shadow width. -->
-		<attr name="paneShadowWidth" format="dimension"/>
-		<attr name="paneShadowSlidable" format="boolean"/>
-		<!-- Fade type. -->
-		<attr name="paneFadeType"/>
-		<!-- Max fade value. -->
-		<attr name="paneFadeMax" format="integer"/>
-		<!-- Indicates how long flinging will take time in milliseconds. -->
-		<attr name="paneFlingDuration" format="integer"/>
-	</declare-styleable>
 	<declare-styleable name="SeekBarDialogPreference">
 		<attr name="max" format="integer"/>
 		<attr name="min" format="integer"/>
 		<attr name="progressTextSuffix" format="string"/>
 	</declare-styleable>
-	<!-- Default fade types. -->
-	<attr name="paneFadeType">
 
-		<!-- Fade is disabled. -->
-		<enum name="none" value="0"/>
-		<!-- Fade applies to actions container. -->
-		<enum name="left" value="1"/>
-		<!-- Fade applies to content container. -->
-		<enum name="right" value="2"/>
-		<!-- Fade applies to every container. -->
-		<enum name="both" value="3"/>
-	</attr>
 	<attr name="notificationType">
 		<flag name="none" value="0"/>
 		<flag name="ringtone" value="1"/>

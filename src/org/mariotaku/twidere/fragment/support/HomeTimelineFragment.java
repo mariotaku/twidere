@@ -91,7 +91,7 @@ public class HomeTimelineFragment extends CursorStatusesListFragment {
 	@Override
 	protected void updateRefreshState() {
 		final AsyncTwitterWrapper twitter = getTwitterWrapper();
-		if (twitter == null || !getUserVisibleHint()) return;
+		if (twitter == null || !getUserVisibleHint() || getActivity() == null) return;
 		setRefreshing(twitter.isHomeTimelineRefreshing());
 	}
 

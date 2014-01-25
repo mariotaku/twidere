@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	android:title="@string/hidden_settings">
+
+	<Preference android:layout="@layout/hidden_settings_header"/>
+
+	<CheckBoxPreference
+		android:defaultValue="false"
+		android:key="force_using_private_apis"
+		android:title="@string/force_using_private_apis"/>
+
+	<EditTextPreference
+		android:defaultValue="140"
+		android:inputType="number"
+		android:key="status_text_limit"
+		android:title="@string/status_text_limit"/>
+
+</PreferenceScreen>

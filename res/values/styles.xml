@@ -23,6 +23,7 @@
 
 	<style name="Widget.Twidere.Viewer.ActionBar" parent="android:Widget.Holo.ActionBar">
 		<item name="android:background">#80000000</item>
+		<item name="android:backgroundSplit">#80000000</item>
 	</style>
 
 	<style name="Widget.Twidere.ImageButton.Borderless" parent="android:Widget.Holo.ImageButton">
@@ -106,6 +107,11 @@
 		<item name="cardGapText">@string/tap_to_load_more</item>
 		<item name="cardGapTextColor">?android:textColorPrimary</item>
 		<item name="cardGapTextSize">18sp</item>
+	</style>
+
+	<style name="Widget.StaggeredGridView" parent="android:Widget.Holo">
+		<item name="column_count_portrait">@integer/staggered_grid_columns_port</item>
+		<item name="column_count_landscape">@integer/staggered_grid_columns_land</item>
 	</style>
 
 </resources>

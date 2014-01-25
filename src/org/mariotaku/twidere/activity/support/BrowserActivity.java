@@ -50,7 +50,6 @@ public class BrowserActivity extends BaseSupportActivity {
 	protected void onCreate(final Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.base);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		mUri = getIntent().getData();
 		if (mUri == null) {
@@ -63,7 +62,7 @@ public class BrowserActivity extends BaseSupportActivity {
 		final Bundle bundle = new Bundle();
 		bundle.putString(EXTRA_URI, mUri.toString());
 		fragment.setArguments(bundle);
-		ft.replace(R.id.main, fragment);
+		ft.replace(android.R.id.content, fragment);
 		ft.commit();
 	}
 }

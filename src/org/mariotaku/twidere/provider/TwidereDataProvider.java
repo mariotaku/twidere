@@ -463,6 +463,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			}
 			if (AccountPreferences.isNotificationHasVibration(notificationType)) {
 				defaults |= Notification.DEFAULT_VIBRATE;
+			} else {
+				defaults &= ~Notification.DEFAULT_VIBRATE;
 			}
 		}
 		if (AccountPreferences.isNotificationHasLight(notificationType)) {

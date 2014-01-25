@@ -8,5 +8,7 @@
 	<integer name="default_multi_column_list_count">2</integer>
 	<integer name="theme_preview_pane_space_weight">2</integer>
 	<integer name="default_live_wallpaper_scale">3</integer>
+	<integer name="staggered_grid_columns_port">2</integer>
+	<integer name="staggered_grid_columns_land">3</integer>
 
 </resources>

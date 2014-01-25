@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.loader;
 
 import static org.mariotaku.twidere.util.Utils.isOfficialTwitterInstance;
+import static org.mariotaku.twidere.util.Utils.shouldForceUsingPrivateAPIs;
 
 import android.content.Context;
 
@@ -46,7 +47,8 @@ public class StatusRepliesLoader extends UserMentionsLoader {
 
 	@Override
 	public List<Status> getStatuses(final Twitter twitter, final Paging paging) throws TwitterException {
-		if (isOfficialTwitterInstance(getContext(), twitter)) {
+		final Context context = getContext();
+		if (shouldForceUsingPrivateAPIs(context) || isOfficialTwitterInstance(context, twitter)) {
 			final List<Status> statuses = twitter.showConversation(mInReplyToStatusId, paging);
 			final List<Status> result = new ArrayList<Status>();
 			for (final Status status : statuses) {

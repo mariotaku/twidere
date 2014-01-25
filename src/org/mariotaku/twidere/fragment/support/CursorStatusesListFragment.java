@@ -33,7 +33,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.view.MotionEvent;
 import android.widget.AbsListView;
 
 import org.mariotaku.querybuilder.Columns.Column;
@@ -91,17 +90,8 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	}
 
 	@Override
-	public boolean onDown(final MotionEvent e) {
-		final AsyncTwitterWrapper twitter = getTwitterWrapper();
-		if (twitter != null) {
-			twitter.clearNotificationAsync(getNotificationType(), getAccountId());
-		}
-		return super.onDown(e);
-	}
-
-	@Override
-	public void onRefreshStarted() {
-		super.onRefreshStarted();
+	public void onRefreshFromStart() {
+		if (isRefreshing()) return;
 		savePosition();
 		new AsyncTask<Void, Void, long[][]>() {
 
@@ -206,6 +196,14 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	@Override
 	protected CursorStatusesAdapter newAdapterInstance() {
 		return new CursorStatusesAdapter(getActivity());
+	}
+
+	@Override
+	protected void onListTouched() {
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		if (twitter != null) {
+			twitter.clearNotificationAsync(getNotificationType(), getAccountId());
+		}
 	}
 
 	@Override

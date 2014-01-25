@@ -12,11 +12,6 @@
 	<dimen name="icon_size_card_details">56dp</dimen>
 	<dimen name="icon_size_wizard_large">240dp</dimen>
 	<dimen name="profile_image_size_activity_small">32dp</dimen>
-	<dimen name="pane_spacing_left">0dp</dimen>
-	<dimen name="pane_spacing_right">0dp</dimen>
-	<dimen name="default_dualpane_spacing_left">@dimen/pane_spacing_left</dimen>
-	<dimen name="default_dualpane_spacing_right">@dimen/pane_spacing_right</dimen>
-	<dimen name="default_dualpane_shadow_width">4dp</dimen>
 	<dimen name="default_sliding_menu_shadow_width">8dp</dimen>
 	<dimen name="default_sliding_menu_margin_threshold">16dp</dimen>
 	<dimen name="button_bar_height">52dp</dimen>
