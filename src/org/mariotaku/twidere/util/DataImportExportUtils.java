@@ -86,7 +86,7 @@ public class DataImportExportUtils implements Constants {
 		if (zipFile.getEntry(ENTRY_HOST_MAPPING) != null) {
 			flags |= FLAG_HOST_MAPPING;
 		}
-		Utils.closeSilently(zipFile);
+		zipFile.close();
 		return flags;
 	}
 

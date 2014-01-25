@@ -72,5 +72,6 @@
 	<item name="deny" type="id"/>
 	<item name="import_settings" type="id"/>
 	<item name="export_settings" type="id"/>
+	<item name="progress" type="id"/>
 
 </resources>

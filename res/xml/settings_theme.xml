@@ -27,10 +27,21 @@
 		android:summary="%s"
 		android:title="@string/theme_background"/>
 
+	<org.mariotaku.twidere.preference.ValueDependencySeekBarDialogPreference
+		android:defaultValue="160"
+		android:key="theme_background_alpha"
+		android:order="23"
+		android:title="@string/theme_background_alpha"
+		app:dependencyKey="theme_background"
+		app:dependencyValueDefault="default"
+		app:dependencyValues="@array/dependency_values_theme_background_alpha"
+		app:max="255"
+		app:min="0"/>
+
 	<org.mariotaku.twidere.preference.ValueDependencyCheckBoxPreference
 		android:defaultValue="true"
 		android:key="theme_dark_actionbar"
-		android:order="23"
+		android:order="24"
 		android:title="@string/theme_dark_actionbar"
 		app:dependencyKey="theme"
 		app:dependencyValueDefault="twidere"
@@ -39,13 +50,13 @@
 	<org.mariotaku.twidere.preference.ColorPickerPreference
 		android:defaultValue="@android:color/holo_blue_light"
 		android:key="theme_color"
-		android:order="24"
+		android:order="25"
 		android:title="@string/theme_color"/>
 
 	<org.mariotaku.twidere.preference.ThemeFontFamilyPreference
 		android:defaultValue="sans-serif-light"
 		android:key="theme_font_family"
-		android:order="25"
+		android:order="26"
 		android:title="@string/theme_font_family"/>
 
 </PreferenceScreen>

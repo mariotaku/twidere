@@ -91,6 +91,9 @@
 		<item>twidere</item>
 		<item>light</item>
 	</string-array>
+	<string-array name="dependency_values_theme_background_alpha">
+		<item>transparent</item>
+	</string-array>
 	<string-array name="dependency_values_true">
 		<item>true</item>
 	</string-array>

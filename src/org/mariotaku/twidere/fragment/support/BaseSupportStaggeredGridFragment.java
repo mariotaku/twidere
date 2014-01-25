@@ -29,11 +29,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 
-import com.huewu.pla.lib.MultiColumnListFragment;
-import com.huewu.pla.lib.MultiColumnListView;
-import com.huewu.pla.lib.internal.PLAAbsListView;
-import com.huewu.pla.lib.internal.PLAAbsListView.OnScrollListener;
+import com.etsy.android.grid.StaggeredGridView;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.activity.support.HomeActivity;
@@ -45,7 +44,7 @@ import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.Utils;
 
-public class BaseSupportMultiColumnListFragment extends MultiColumnListFragment implements IBaseFragment, Constants,
+public class BaseSupportStaggeredGridFragment extends StaggeredGridFragment implements IBaseFragment, Constants,
 		OnScrollListener, RefreshScrollTopInterface {
 
 	private boolean mActivityFirstCreated;
@@ -111,7 +110,7 @@ public class BaseSupportMultiColumnListFragment extends MultiColumnListFragment 
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mIsInstanceStateSaved = savedInstanceState != null;
-		final MultiColumnListView lv = getListView();
+		final StaggeredGridView lv = getListView();
 		lv.setOnScrollListener(this);
 	}
 
@@ -154,7 +153,7 @@ public class BaseSupportMultiColumnListFragment extends MultiColumnListFragment 
 	}
 
 	@Override
-	public void onScroll(final PLAAbsListView view, final int firstVisibleItem, final int visibleItemCount,
+	public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
 			final int totalItemCount) {
 		final boolean reached = firstVisibleItem + visibleItemCount >= totalItemCount
 				&& totalItemCount >= visibleItemCount;
@@ -173,7 +172,7 @@ public class BaseSupportMultiColumnListFragment extends MultiColumnListFragment 
 	}
 
 	@Override
-	public void onScrollStateChanged(final PLAAbsListView view, final int scrollState) {
+	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
 
 	}
 

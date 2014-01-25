@@ -3,19 +3,20 @@
 
 	<item
 		android:id="@id/share"
-		android:actionProviderClass="android.widget.ShareActionProvider"
 		android:icon="@android:drawable/ic_menu_share"
 		android:showAsAction="always"
-		android:title="@string/share"/>
-	<item
-		android:id="@id/actions"
-		android:icon="@drawable/ic_menu_refresh"
-		android:showAsAction="always"
-		android:title="@string/refresh"/>
+		android:title="@string/share">
+		<menu/>
+	</item>
 	<item
 		android:id="@id/open_in_browser"
 		android:icon="@drawable/ic_menu_web"
-		android:showAsAction="ifRoom"
+		android:showAsAction="always"
 		android:title="@string/open_in_browser"/>
+	<item
+		android:id="@id/save"
+		android:icon="@android:drawable/ic_menu_save"
+		android:showAsAction="always"
+		android:title="@string/save"/>
 
 </menu>

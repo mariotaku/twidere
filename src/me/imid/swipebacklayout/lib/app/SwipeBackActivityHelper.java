@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -14,6 +13,7 @@ import me.imid.swipebacklayout.lib.SwipeBackLayout;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.TwidereConstants;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.graphic.EmptyDrawable;
 import org.mariotaku.twidere.util.SwipebackActivityUtils.SwipebackScreenshotManager;
 
 /**
@@ -39,7 +39,7 @@ public class SwipeBackActivityHelper implements TwidereConstants {
 
 	public void onActivtyCreate() {
 		final Window w = mActivity.getWindow();
-		w.setBackgroundDrawable(new ColorDrawable(0));
+		w.setBackgroundDrawable(new EmptyDrawable());
 		mSwipeBackLayout = (SwipeBackLayout) LayoutInflater.from(mActivity).inflate(R.layout.swipeback_layout, null);
 	}
 

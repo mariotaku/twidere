@@ -30,7 +30,7 @@ public final class HttpRequest {
 
 	private final RequestMethod method;
 
-	private final String url, sign_url;
+	private final String url, signUrl;
 
 	private final HttpParameter[] parameters;
 
@@ -49,18 +49,18 @@ public final class HttpRequest {
 	 *            NullAuthentication are supported.
 	 * @param requestHeaders
 	 */
-	public HttpRequest(final RequestMethod method, final String url, final String sign_url,
+	public HttpRequest(final RequestMethod method, final String url, final String signUrl,
 			final HttpParameter[] parameters, final Authorization authorization,
 			final Map<String, String> requestHeaders) {
 		this.method = method;
 		if (method != RequestMethod.POST && parameters != null && parameters.length != 0) {
-			final String param_string = HttpParameter.encodeParameters(parameters);
-			this.url = url + "?" + param_string;
-			this.sign_url = sign_url + "?" + param_string;
+			final String paramString = HttpParameter.encodeParameters(parameters);
+			this.url = url + "?" + paramString;
+			this.signUrl = signUrl + "?" + paramString;
 			this.parameters = NULL_PARAMETERS;
 		} else {
 			this.url = url;
-			this.sign_url = sign_url;
+			this.signUrl = signUrl;
 			this.parameters = parameters;
 		}
 		this.authorization = authorization;
@@ -102,7 +102,7 @@ public final class HttpRequest {
 	}
 
 	public String getSignURL() {
-		return sign_url != null ? sign_url : url;
+		return signUrl != null ? signUrl : url;
 	}
 
 	public String getURL() {
@@ -113,7 +113,7 @@ public final class HttpRequest {
 	public int hashCode() {
 		int result = method != null ? method.hashCode() : 0;
 		result = 31 * result + (url != null ? url.hashCode() : 0);
-		result = 31 * result + (sign_url != null ? sign_url.hashCode() : 0);
+		result = 31 * result + (signUrl != null ? signUrl.hashCode() : 0);
 		result = 31 * result + (parameters != null ? Arrays.hashCode(parameters) : 0);
 		result = 31 * result + (authorization != null ? authorization.hashCode() : 0);
 		result = 31 * result + (requestHeaders != null ? requestHeaders.hashCode() : 0);
@@ -122,7 +122,7 @@ public final class HttpRequest {
 
 	@Override
 	public String toString() {
-		return "HttpRequest{" + "requestMethod=" + method + ", url='" + url + '\'' + ", sign_url='" + sign_url + '\''
+		return "HttpRequest{" + "requestMethod=" + method + ", url='" + url + '\'' + ", signUrl='" + signUrl + '\''
 				+ ", postParams=" + (parameters == null ? null : Arrays.asList(parameters)) + ", authentication="
 				+ authorization + ", requestHeaders=" + requestHeaders + '}';
 	}

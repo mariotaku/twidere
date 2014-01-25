@@ -134,7 +134,10 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 
 	@Override
 	public long getStatusId(final int position) {
-		if (position >= 0 && position < getCount()) return getItem(position).id;
+		if (position >= 0 && position < getCount()) {
+			final ParcelableStatus status = getItem(position);
+			return status != null ? status.id : -1;
+		}
 		return -1;
 	}
 

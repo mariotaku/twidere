@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.model;
 
 import static org.mariotaku.twidere.util.Utils.isOfficialConsumerKeySecret;
+import static org.mariotaku.twidere.util.Utils.shouldForceUsingPrivateAPIs;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -28,7 +29,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
-import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.util.content.ContentResolverUtils;
 
 import java.util.ArrayList;
@@ -154,7 +154,8 @@ public class Account implements Parcelable {
 				} else {
 					final String consumerKey = cur.getString(indices.consumer_key);
 					final String consumerSecret = cur.getString(indices.consumer_secret);
-					if (Utils.isOfficialConsumerKeySecret(context, consumerKey, consumerSecret)) {
+					if (shouldForceUsingPrivateAPIs(context)
+							|| isOfficialConsumerKeySecret(context, consumerKey, consumerSecret)) {
 						accounts.add(new Account(cur, indices));
 					}
 				}

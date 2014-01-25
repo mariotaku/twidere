@@ -594,5 +594,12 @@
 	<string name="nicknames">Nicknames</string>
 	<string name="user_colors">User colors</string>
 	<string name="import_export">Import/Export</string>
+	<string name="theme_background_alpha">Theme background alpha</string>
+	<string name="progress">Progress</string>
+	<string name="hidden_settings">Hidden settings</string>
+	<string name="hidden_settings_warning_title">WARNING: These settings may harm!</string>
+	<string name="hidden_settings_warning_message">NEVER change these settings if you don\'t know what it is, or it\'ll:\n * Kill your cat\n * Detonate ALL nuclear weapon in North Korea\n * Turn ALL Mahou Shoujo into Majo\n * Destroy the universe</string>
+	<string name="force_using_private_apis">Force using private APIs</string>
+	<string name="status_text_limit">Tweet text limit</string>
 
 </resources>

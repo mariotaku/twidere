@@ -44,7 +44,7 @@ public class ValueDependencyDialogPreference extends DialogPreference implements
 	}
 
 	public ValueDependencyDialogPreference(final Context context, final AttributeSet attrs) {
-		this(context, attrs, android.R.attr.checkBoxPreferenceStyle);
+		this(context, attrs, android.R.attr.dialogPreferenceStyle);
 	}
 
 	public ValueDependencyDialogPreference(final Context context, final AttributeSet attrs, final int defStyle) {

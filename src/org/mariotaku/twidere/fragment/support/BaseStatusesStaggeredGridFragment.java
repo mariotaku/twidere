@@ -26,6 +26,7 @@ import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.openStatus;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 import static org.mariotaku.twidere.util.Utils.showOkMessage;
+import static org.mariotaku.twidere.util.Utils.startStatusShareChooser;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -37,17 +38,16 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
-import com.huewu.pla.lib.MultiColumnListView;
-import com.huewu.pla.lib.internal.PLAAbsListView;
+import com.etsy.android.grid.StaggeredGridView;
 
 import org.mariotaku.menucomponent.widget.PopupMenu;
 import org.mariotaku.twidere.R;
@@ -64,22 +64,24 @@ import org.mariotaku.twidere.util.PositionManager;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.util.Utils;
+import org.mariotaku.twidere.util.collection.NoDuplicatesCopyOnWriteArrayList;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefreshMultiColumnListFragment implements
+abstract class BaseStatusesStaggeredGridFragment<Data> extends BasePullToRefreshStaggeredGridFragment implements
 		LoaderCallbacks<Data>, OnItemLongClickListener, OnMenuItemClickListener, Panes.Left,
 		MultiSelectManager.Callback, MenuButtonClickListener {
 
 	private AsyncTaskManager mAsyncTaskManager;
 	private SharedPreferences mPreferences;
 
-	private MultiColumnListView mListView;
+	private StaggeredGridView mListView;
 	private IStatusesAdapter<Data> mAdapter;
 	private PopupMenu mPopupMenu;
 
@@ -90,14 +92,14 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 	private int mListScrollOffset;
 
 	private MultiSelectManager mMultiSelectManager;
-
 	private PositionManager mPositionManager;
-	private final Map<Long, Set<Long>> mUnreadCountsToRemove = Collections
-			.synchronizedMap(new HashMap<Long, Set<Long>>());
 
 	private int mFirstVisibleItem;
+	private int mSelectedPosition;
 
-	private final Set<Integer> mReadPositions = Collections.synchronizedSet(new HashSet<Integer>());
+	private final Map<Long, Set<Long>> mUnreadCountsToRemove = Collections
+			.synchronizedMap(new HashMap<Long, Set<Long>>());
+	private final List<Integer> mReadPositions = new NoDuplicatesCopyOnWriteArrayList<Integer>();
 
 	private RemoveUnreadCountsTask<Data> mRemoveUnreadCountsTask;
 
@@ -141,7 +143,6 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 		setListAdapter(null);
 		setListHeaderFooters(mListView);
 		setListAdapter(mAdapter);
-		mListView.setDivider(null);
 		mListView.setSelector(android.R.color.transparent);
 		mListView.setOnItemLongClickListener(this);
 		setListShown(false);
@@ -156,9 +157,17 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 		final Object tag = view.getTag();
 		if (tag instanceof StatusViewHolder) {
 			final StatusViewHolder holder = (StatusViewHolder) tag;
-			if (holder.show_as_gap) return false;
 			final ParcelableStatus status = mAdapter.getStatus(position - mListView.getHeaderViewsCount());
-			setItemSelected(status, position, !mMultiSelectManager.isSelected(status));
+			final AsyncTwitterWrapper twitter = getTwitterWrapper();
+			if (twitter != null) {
+				TwitterWrapper.removeUnreadCounts(getActivity(), getTabPosition(), status.account_id, status.id);
+			}
+			if (holder.show_as_gap) return false;
+			if (mPreferences.getBoolean(KEY_LONG_CLICK_TO_OPEN_MENU, false)) {
+				openMenu(holder.content.getFakeOverflowButton(), status, position);
+			} else {
+				setItemSelected(status, position, !mMultiSelectManager.isSelected(status));
+			}
 			return true;
 		}
 		return false;
@@ -179,18 +188,19 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 	}
 
 	@Override
-	public void onListItemClick(final MultiColumnListView l, final View v, final int position, final long id) {
+	public void onListItemClick(final StaggeredGridView l, final View v, final int position, final long id) {
 		final Object tag = v.getTag();
 		if (tag instanceof StatusViewHolder) {
-			final ParcelableStatus status = mAdapter.getStatus(position - l.getHeaderViewsCount());
+			final int pos = position - l.getHeaderViewsCount();
+			final ParcelableStatus status = mAdapter.getStatus(pos);
 			if (status == null) return;
 			final AsyncTwitterWrapper twitter = getTwitterWrapper();
 			if (twitter != null) {
 				TwitterWrapper.removeUnreadCounts(getActivity(), getTabPosition(), status.account_id, status.id);
 			}
-			final StatusViewHolder holder = (StatusViewHolder) tag;
-			if (holder.show_as_gap) {
-				getStatuses(new long[] { status.account_id }, new long[] { status.id }, null);
+			if (((StatusViewHolder) tag).show_as_gap) {
+				final long since_id = position + 1 < mAdapter.getActualCount() ? mAdapter.getStatus(pos + 1).id : -1;
+				getStatuses(new long[] { status.account_id }, new long[] { status.id }, new long[] { since_id });
 				mListView.setItemChecked(position, false);
 			} else {
 				if (mMultiSelectManager.isActive()) {
@@ -210,41 +220,52 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 	@Override
 	public final void onLoadFinished(final Loader<Data> loader, final Data data) {
 		if (getActivity() == null || getView() == null) return;
-		setData(data);
-		mFirstVisibleItem = -1;
-		mReadPositions.clear();
-		final int first_visible_position = mListView.getFirstVisiblePosition();
-		if (mListView.getChildCount() > 0) {
-			final View first_child = mListView.getChildAt(0);
-			mListScrollOffset = first_child != null ? first_child.getTop() : 0;
-		}
-		final long last_viewed_id = mAdapter.getStatusId(first_visible_position);
-		mAdapter.setData(data);
 		setListShown(true);
 		setRefreshComplete();
 		setProgressBarIndeterminateVisibility(false);
-		mAdapter.setShowAccountColor(shouldShowAccountColor());
-		final boolean remember_position = mPreferences.getBoolean(KEY_REMEMBER_POSITION, true);
-		final int curr_first_visible_position = mListView.getFirstVisiblePosition();
-		final long curr_viewed_id = mAdapter.getStatusId(curr_first_visible_position);
-		final long status_id;
-		if (last_viewed_id <= 0) {
-			if (!remember_position) return;
-			status_id = mPositionManager.getPosition(getPositionKey());
-		} else if ((first_visible_position > 0 || remember_position) && curr_viewed_id > 0
-				&& last_viewed_id != curr_viewed_id) {
-			status_id = last_viewed_id;
+		setData(data);
+		mFirstVisibleItem = -1;
+		mReadPositions.clear();
+		final int listVisiblePosition, savedChildIndex;
+		final boolean rememberPosition = mPreferences.getBoolean(KEY_REMEMBER_POSITION, true);
+		if (rememberPosition) {
+			listVisiblePosition = mListView.getLastVisiblePosition();
+			final int childCount = mListView.getChildCount();
+			savedChildIndex = childCount - 1;
+			if (childCount > 0) {
+				final View lastChild = mListView.getChildAt(savedChildIndex);
+				mListScrollOffset = lastChild != null ? lastChild.getTop() : 0;
+			}
 		} else {
-			if (first_visible_position == 0 && mAdapter.getStatusId(0) != last_viewed_id) {
+			listVisiblePosition = mListView.getFirstVisiblePosition();
+			savedChildIndex = 0;
+			if (mListView.getChildCount() > 0) {
+				final View firstChild = mListView.getChildAt(savedChildIndex);
+				mListScrollOffset = firstChild != null ? firstChild.getTop() : 0;
+			}
+		}
+		final long lastViewedId = mAdapter.getStatusId(listVisiblePosition);
+		mAdapter.setData(data);
+		mAdapter.setShowAccountColor(shouldShowAccountColor());
+		final int currFirstVisiblePosition = mListView.getFirstVisiblePosition();
+		final long currViewedId = mAdapter.getStatusId(currFirstVisiblePosition);
+		final long statusId;
+		if (lastViewedId <= 0) {
+			if (!rememberPosition) return;
+			statusId = mPositionManager.getPosition(getPositionKey());
+		} else if ((listVisiblePosition > 0 || rememberPosition) && currViewedId > 0 && lastViewedId != currViewedId) {
+			statusId = lastViewedId;
+		} else {
+			if (listVisiblePosition == 0 && mAdapter.getStatusId(0) != lastViewedId) {
 				mAdapter.setMaxAnimationPosition(mListView.getLastVisiblePosition());
 			}
 			return;
 		}
-		final int position = mAdapter.findPositionByStatusId(status_id);
+		final int position = mAdapter.findPositionByStatusId(statusId);
 		if (position > -1 && position < mListView.getCount()) {
 			mAdapter.setMaxAnimationPosition(mListView.getLastVisiblePosition());
 			// mListView.setSelectionFromTop(position, mListScrollOffset);
-			Utils.scrollListToPosition(mListView, position);
+			mListView.setSelection(position);
 			mListScrollOffset = 0;
 		}
 	}
@@ -254,7 +275,7 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 		if (mMultiSelectManager.isActive()) return;
 		final ParcelableStatus status = mAdapter.getStatus(position);
 		if (status == null) return;
-		openMenu(button, status);
+		openMenu(button, status, position);
 	}
 
 	@Override
@@ -268,10 +289,7 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 				break;
 			}
 			case MENU_SHARE: {
-				final Intent intent = new Intent(Intent.ACTION_SEND);
-				intent.setType("text/plain");
-				intent.putExtra(Intent.EXTRA_TEXT, "@" + status.user_screen_name + ": " + status.text_plain);
-				startActivity(Intent.createChooser(intent, getString(R.string.share)));
+				startStatusShareChooser(getActivity(), status);
 				break;
 			}
 			case MENU_COPY: {
@@ -323,6 +341,11 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 				AddStatusFilterDialogFragment.show(getFragmentManager(), status);
 				break;
 			}
+			case MENU_MULTI_SELECT: {
+				final boolean isSelected = !mMultiSelectManager.isSelected(status);
+				setItemSelected(status, mSelectedPosition, isSelected);
+				break;
+			}
 			default: {
 				if (item.getIntent() != null) {
 					try {
@@ -339,10 +362,15 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 	}
 
 	@Override
+	public void onRefreshFromEnd() {
+		if (mLoadMoreAutomatically) return;
+		loadMoreStatuses();
+	}
+
+	@Override
 	public void onResume() {
 		super.onResume();
-		// mListView.setFastScrollEnabled(mPreferences.getBoolean(PREFERENCE_KEY_FAST_SCROLL_THUMB,
-		// false));
+		mListView.setFastScrollEnabled(mPreferences.getBoolean(KEY_FAST_SCROLL_THUMB, false));
 		configBaseCardAdapter(getActivity(), mAdapter);
 		final boolean display_image_preview = mPreferences.getBoolean(KEY_DISPLAY_IMAGE_PREVIEW, false);
 		final boolean display_sensitive_contents = mPreferences.getBoolean(KEY_DISPLAY_SENSITIVE_CONTENTS, false);
@@ -354,17 +382,20 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 	}
 
 	@Override
-	public void onScroll(final PLAAbsListView view, final int firstVisibleItem, final int visibleItemCount,
+	public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
 			final int totalItemCount) {
 		super.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
 		addReadPosition(firstVisibleItem);
 	}
 
 	@Override
-	public void onScrollStateChanged(final PLAAbsListView view, final int scrollState) {
+	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
 		super.onScrollStateChanged(view, scrollState);
 		switch (scrollState) {
 			case SCROLL_STATE_IDLE:
+				for (int i = mListView.getFirstVisiblePosition(), j = mListView.getLastVisiblePosition(); i < j; i++) {
+					mReadPositions.add(i);
+				}
 				removeUnreadCounts();
 				break;
 			default:
@@ -409,8 +440,9 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 	}
 
 	@Override
-	protected MultiColumnListView createMultiColumnListView(final Context context, final LayoutInflater inflater) {
-		return (MultiColumnListView) inflater.inflate(R.layout.base_multi_column_list, null, false);
+	public void setUserVisibleHint(final boolean isVisibleToUser) {
+		super.setUserVisibleHint(isVisibleToUser);
+		updateRefreshState();
 	}
 
 	protected final int getListScrollOffset() {
@@ -430,12 +462,6 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 	protected abstract void loadMoreStatuses();
 
 	protected abstract IStatusesAdapter<Data> newAdapterInstance();
-
-	@Override
-	protected void onPullUp() {
-		if (mLoadMoreAutomatically) return;
-		loadMoreStatuses();
-	}
 
 	@Override
 	protected void onReachedBottom() {
@@ -468,8 +494,12 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 		}
 	}
 
-	protected void setListHeaderFooters(final MultiColumnListView list) {
+	protected void setListHeaderFooters(final StaggeredGridView list) {
 
+	}
+
+	protected boolean shouldEnablePullToRefresh() {
+		return true;
 	}
 
 	protected abstract boolean shouldShowAccountColor();
@@ -494,31 +524,32 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 		}
 	}
 
-	private void openMenu(final View view, final ParcelableStatus status) {
+	private void openMenu(final View view, final ParcelableStatus status, final int position) {
 		mSelectedStatus = status;
+		mSelectedPosition = position;
 		if (view == null || status == null) return;
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		if (twitter != null) {
+			TwitterWrapper.removeUnreadCounts(getActivity(), getTabPosition(), status.account_id, status.id);
+		}
 		if (mPopupMenu != null && mPopupMenu.isShowing()) {
 			mPopupMenu.dismiss();
 		}
 		final int activated_color = ThemeUtils.getUserThemeColor(getActivity());
 		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
 		mPopupMenu.inflate(R.menu.action_status);
-		final boolean separate_retweet_action = mPreferences.getBoolean(KEY_SEPARATE_RETWEET_ACTION,
+		final boolean separateRetweetAction = mPreferences.getBoolean(KEY_SEPARATE_RETWEET_ACTION,
 				DEFAULT_SEPARATE_RETWEET_ACTION);
+		final boolean longclickToOpenMenu = mPreferences.getBoolean(KEY_LONG_CLICK_TO_OPEN_MENU, false);
 		final Menu menu = mPopupMenu.getMenu();
 		setMenuForStatus(getActivity(), menu, status);
-		final MenuItem retweet_submenu = menu.findItem(R.id.retweet_submenu);
-		if (retweet_submenu != null) {
-			retweet_submenu.setVisible(!separate_retweet_action);
-		}
-		final MenuItem direct_quote = menu.findItem(R.id.direct_quote);
-		if (direct_quote != null) {
-			direct_quote.setVisible(separate_retweet_action);
-		}
+		Utils.setMenuItemAvailability(menu, R.id.retweet_submenu, !separateRetweetAction);
+		Utils.setMenuItemAvailability(menu, R.id.direct_quote, separateRetweetAction);
+		Utils.setMenuItemAvailability(menu, MENU_MULTI_SELECT, longclickToOpenMenu);
 		final MenuItem direct_retweet = menu.findItem(R.id.direct_retweet);
 		if (direct_retweet != null) {
 			final Drawable icon = direct_retweet.getIcon().mutate();
-			direct_retweet.setVisible(separate_retweet_action && (!status.user_is_protected || isMyRetweet(status)));
+			direct_retweet.setVisible(separateRetweetAction && (!status.user_is_protected || isMyRetweet(status)));
 			if (isMyRetweet(status)) {
 				icon.setColorFilter(activated_color, PorterDuff.Mode.MULTIPLY);
 				direct_retweet.setTitle(R.string.cancel_retweet);
@@ -538,12 +569,12 @@ abstract class BaseStatusesMultiColumnListFragment<Data> extends BasePullToRefre
 	}
 
 	static class RemoveUnreadCountsTask<T> extends AsyncTask<Void, Void, Void> {
-		private final Set<Integer> read_positions;
+		private final List<Integer> read_positions;
 		private final IStatusesAdapter<T> adapter;
-		private final BaseStatusesMultiColumnListFragment<T> fragment;
+		private final BaseStatusesStaggeredGridFragment<T> fragment;
 
-		RemoveUnreadCountsTask(final Set<Integer> read_positions, final BaseStatusesMultiColumnListFragment<T> fragment) {
-			this.read_positions = Collections.synchronizedSet(new HashSet<Integer>(read_positions));
+		RemoveUnreadCountsTask(final List<Integer> read_positions, final BaseStatusesStaggeredGridFragment<T> fragment) {
+			this.read_positions = read_positions;
 			this.fragment = fragment;
 			this.adapter = fragment.getListAdapter();
 		}

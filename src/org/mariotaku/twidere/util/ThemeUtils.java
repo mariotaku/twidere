@@ -41,14 +41,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.mariotaku.refreshnow.widget.RefreshNowProgressIndicator.IndicatorConfig;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.iface.IThemedActivity;
 import org.mariotaku.twidere.theme.TwidereContextWrapper;
 import org.mariotaku.twidere.util.accessor.ViewAccessor;
-import org.mariotaku.twidere.view.CardItemLinearLayout;
-import org.mariotaku.twidere.view.ForegroundImageView;
-import org.mariotaku.twidere.view.ShortTimeView;
 import org.mariotaku.twidere.view.iface.ICardItemView;
 
 public class ThemeUtils implements Constants {
@@ -62,16 +60,25 @@ public class ThemeUtils implements Constants {
 		throw new AssertionError();
 	}
 
+	@Deprecated
 	public static void applyActionBarBackground(final ActionBar actionBar, final Context context) {
 		applyActionBarBackground(actionBar, context, true);
 	}
 
+	@Deprecated
 	public static void applyActionBarBackground(final ActionBar actionBar, final Context context,
 			final boolean applyAlpha) {
 		if (actionBar == null || context == null) return;
 		actionBar.setBackgroundDrawable(getActionBarBackground(context, applyAlpha));
 		actionBar.setSplitBackgroundDrawable(getActionBarSplitBackground(context, applyAlpha));
 		actionBar.setStackedBackgroundDrawable(getActionBarStackedBackground(context, applyAlpha));
+	}
+
+	public static void applyActionBarBackground(final ActionBar actionBar, final Context context, final int themeRes) {
+		if (actionBar == null || context == null) return;
+		actionBar.setBackgroundDrawable(getActionBarBackground(context, themeRes));
+		actionBar.setSplitBackgroundDrawable(getActionBarSplitBackground(context, themeRes));
+		actionBar.setStackedBackgroundDrawable(getActionBarStackedBackground(context, themeRes));
 	}
 
 	public static void applyBackground(final View view) {
@@ -98,8 +105,25 @@ public class ThemeUtils implements Constants {
 		d.setAlpha(getThemeAlpha(getThemeResource(context)));
 	}
 
-	public static Drawable getActionBarBackground(final Context context, final boolean applyAlpha) {
+	public static void applyThemeBackgroundAlphaToDrawable(final Context context, final Drawable d) {
+		if (context == null || d == null) return;
+		d.setAlpha(getUserThemeBackgroundAlpha(context));
+	}
 
+	public static IndicatorConfig buildRefreshIndicatorConfig(final Context context) {
+		final IndicatorConfig.Builder builder = new IndicatorConfig.Builder(context);
+		final Resources res = context.getResources();
+		final float width = 3 * res.getDisplayMetrics().density;
+		final int themeColor = getUserThemeColor(context);
+		builder.progressColor(themeColor);
+		builder.indeterminateColor(themeColor);
+		builder.progressStrokeWidth(width);
+		builder.indeterminateStrokeWidth(width);
+		return builder.build();
+	}
+
+	@Deprecated
+	public static Drawable getActionBarBackground(final Context context, final boolean applyAlpha) {
 		final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.background },
 				android.R.attr.actionBarStyle, 0);
 		final Drawable d = a.getDrawable(0);
@@ -107,8 +131,15 @@ public class ThemeUtils implements Constants {
 		return applyActionBarDrawable(context, d, applyAlpha);
 	}
 
-	public static Context getActionBarContext(final Context context) {
+	public static Drawable getActionBarBackground(final Context context, final int themeRes) {
+		final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.background },
+				android.R.attr.actionBarStyle, themeRes);
+		final Drawable d = a.getDrawable(0);
+		a.recycle();
+		return applyActionBarDrawable(context, d, isTransparentBackground(themeRes));
+	}
 
+	public static Context getActionBarContext(final Context context) {
 		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.actionBarWidgetTheme });
 		final int resId = a.getResourceId(0, 0);
 		a.recycle();
@@ -116,8 +147,8 @@ public class ThemeUtils implements Constants {
 		return new ContextThemeWrapper(context, resId);
 	}
 
+	@Deprecated
 	public static Drawable getActionBarSplitBackground(final Context context, final boolean applyAlpha) {
-
 		final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.backgroundSplit },
 				android.R.attr.actionBarStyle, 0);
 		final Drawable d = a.getDrawable(0);
@@ -125,14 +156,29 @@ public class ThemeUtils implements Constants {
 		return applyActionBarDrawable(context, d, applyAlpha);
 	}
 
-	public static Drawable getActionBarStackedBackground(final Context context, final boolean applyAlpha) {
+	public static Drawable getActionBarSplitBackground(final Context context, final int themeRes) {
+		final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.backgroundSplit },
+				android.R.attr.actionBarStyle, themeRes);
+		final Drawable d = a.getDrawable(0);
+		a.recycle();
+		return applyActionBarDrawable(context, d, isTransparentBackground(themeRes));
+	}
 
+	@Deprecated
+	public static Drawable getActionBarStackedBackground(final Context context, final boolean applyAlpha) {
 		final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.backgroundStacked },
 				android.R.attr.actionBarStyle, 0);
 		final Drawable d = a.getDrawable(0);
 		a.recycle();
 		return applyActionBarDrawable(context, d, applyAlpha);
+	}
 
+	public static Drawable getActionBarStackedBackground(final Context context, final int themeRes) {
+		final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.backgroundStacked },
+				android.R.attr.actionBarStyle, themeRes);
+		final Drawable d = a.getDrawable(0);
+		a.recycle();
+		return applyActionBarDrawable(context, d, isTransparentBackground(themeRes));
 	}
 
 	public static int getActionIconColor(final Context context) {
@@ -416,6 +462,12 @@ public class ThemeUtils implements Constants {
 		return Color.HSVToColor(hsv);
 	}
 
+	public static int getUserThemeBackgroundAlpha(final Context context) {
+		if (context == null) return DEFAULT_THEME_BACKGROUND_ALPHA;
+		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		return pref.getInt(KEY_THEME_BACKGROUND_ALPHA, DEFAULT_THEME_BACKGROUND_ALPHA);
+	}
+
 	public static int getUserThemeColor(final Context context) {
 		if (context == null) return Color.TRANSPARENT;
 		final Resources res = getResources(context);
@@ -442,6 +494,9 @@ public class ThemeUtils implements Constants {
 		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.windowBackground });
 		final Drawable d = a.getDrawable(0);
 		a.recycle();
+		if (isTransparentBackground(context)) {
+			applyThemeBackgroundAlphaToDrawable(context, d);
+		}
 		return d;
 	}
 
@@ -450,6 +505,9 @@ public class ThemeUtils implements Constants {
 				themeRes);
 		final Drawable d = a.getDrawable(0);
 		a.recycle();
+		if (isTransparentBackground(themeRes)) {
+			applyThemeBackgroundAlphaToDrawable(context, d);
+		}
 		return d;
 	}
 
@@ -594,7 +652,6 @@ public class ThemeUtils implements Constants {
 		final TextView actionBarTitleView = (TextView) view.findViewById(R.id.actionbar_title);
 		final View actionBarSplitView = view.findViewById(R.id.actionbar_split);
 		final View statusContentView = view.findViewById(R.id.theme_preview_status_content);
-		final View statusListPane = view.findViewById(R.id.theme_preview_list_pane);
 
 		final int defaultTextSize = getDefaultTextSize(context);
 		final int textColorPrimary = getTextColorPrimary(theme);
@@ -607,42 +664,6 @@ public class ThemeUtils implements Constants {
 		ViewAccessor.setBackground(actionBarSplitView, getActionBarSplitBackground(theme, true));
 
 		actionBarTitleView.setTextAppearance(theme, titleTextAppearance);
-		if (statusListPane != null) {
-			final CardItemLinearLayout statusListItemContent = (CardItemLinearLayout) statusListPane
-					.findViewById(R.id.content);
-
-			final ForegroundImageView profileImageView = (ForegroundImageView) statusListItemContent
-					.findViewById(R.id.profile_image);
-			final TextView nameView = (TextView) statusListItemContent.findViewById(R.id.name);
-			final TextView screenNameView = (TextView) statusListItemContent.findViewById(R.id.screen_name);
-			final TextView textView = (TextView) statusListItemContent.findViewById(R.id.text);
-			final ShortTimeView timeSourceView = (ShortTimeView) statusListItemContent.findViewById(R.id.time);
-			final TextView replyRetweetView = (TextView) statusListItemContent.findViewById(R.id.reply_retweet_status);
-
-			statusListItemContent.setItemSelector(null);
-			statusListItemContent.setItemBackground(getCardItemBackground(theme));
-
-			replyRetweetView.setVisibility(View.GONE);
-
-			nameView.setTextColor(textColorPrimary);
-			screenNameView.setTextColor(textColorSecondary);
-			textView.setTextColor(textColorPrimary);
-			timeSourceView.setTextColor(textColorSecondary);
-
-			nameView.setTextSize(defaultTextSize);
-			textView.setTextSize(defaultTextSize);
-			screenNameView.setTextSize(defaultTextSize * 0.75f);
-			timeSourceView.setTextSize(defaultTextSize * 0.65f);
-			textView.setTextIsSelectable(false);
-
-			profileImageView.setImageResource(R.drawable.ic_launcher);
-			profileImageView.setForeground(null);
-			nameView.setText(TWIDERE_PREVIEW_NAME);
-			screenNameView.setText("@" + TWIDERE_PREVIEW_SCREEN_NAME);
-			textView.setText(toPlainText(TWIDERE_PREVIEW_TEXT_HTML));
-
-			timeSourceView.setTime(System.currentTimeMillis());
-		}
 		if (statusContentView != null) {
 			ViewAccessor.setBackground(statusContentView, getWindowBackground(theme));
 

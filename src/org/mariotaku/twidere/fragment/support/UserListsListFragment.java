@@ -112,10 +112,6 @@ public class UserListsListFragment extends BaseUserListsListFragment {
 		super.onStop();
 	}
 
-	@Override
-	protected void onPullUp() {
-	}
-
 	private void removeUserList(final int id) {
 		final ParcelableUserListsAdapter adapter = getListAdapter();
 		final int lists_idx = adapter.findItemPosition(id);
@@ -123,4 +119,5 @@ public class UserListsListFragment extends BaseUserListsListFragment {
 			adapter.remove(lists_idx);
 		}
 	}
+
 }

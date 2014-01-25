@@ -37,7 +37,7 @@ import org.mariotaku.twidere.util.Utils;
 
 public abstract class BaseThemedActivity extends Activity implements IThemedActivity {
 
-	private int mCurrentThemeResource, mCurrentThemeColor;
+	private int mCurrentThemeResource, mCurrentThemeColor, mCurrentThemeBackgroundAlpha;
 
 	private String mCurrentThemeFontFamily;
 
@@ -62,6 +62,11 @@ public abstract class BaseThemedActivity extends Activity implements IThemedActi
 	@Override
 	public Resources getResources() {
 		return getThemedResources();
+	}
+
+	@Override
+	public int getThemeBackgroundAlpha() {
+		return ThemeUtils.isTransparentBackground(this) ? ThemeUtils.getUserThemeBackgroundAlpha(this) : 0xff;
 	}
 
 	@Override
@@ -105,7 +110,8 @@ public abstract class BaseThemedActivity extends Activity implements IThemedActi
 
 	protected final boolean isThemeChanged() {
 		return getThemeResourceId() != mCurrentThemeResource || getThemeColor() != mCurrentThemeColor
-				|| !CompareUtils.objectEquals(getThemeFontFamily(), mCurrentThemeFontFamily);
+				|| !CompareUtils.objectEquals(getThemeFontFamily(), mCurrentThemeFontFamily)
+				|| getThemeBackgroundAlpha() != mCurrentThemeBackgroundAlpha;
 	}
 
 	@Override
@@ -136,13 +142,17 @@ public abstract class BaseThemedActivity extends Activity implements IThemedActi
 	}
 
 	private final void setActionBarBackground() {
-		ThemeUtils.applyActionBarBackground(getActionBar(), this);
+		ThemeUtils.applyActionBarBackground(getActionBar(), this, mCurrentThemeResource);
 	}
 
 	private final void setTheme() {
 		mCurrentThemeResource = getThemeResourceId();
 		mCurrentThemeColor = getThemeColor();
 		mCurrentThemeFontFamily = getThemeFontFamily();
+		mCurrentThemeBackgroundAlpha = getThemeBackgroundAlpha();
 		setTheme(mCurrentThemeResource);
+		if (ThemeUtils.isTransparentBackground(mCurrentThemeResource)) {
+			getWindow().setBackgroundDrawable(ThemeUtils.getWindowBackground(this));
+		}
 	}
 }

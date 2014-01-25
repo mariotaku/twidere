@@ -56,7 +56,11 @@ public class SeekBarDialogPreference extends DialogPreference {
 	}
 
 	public SeekBarDialogPreference(final Context context, final AttributeSet attrs) {
-		super(context, attrs);
+		this(context, attrs, android.R.attr.dialogPreferenceStyle);
+	}
+
+	public SeekBarDialogPreference(final Context context, final AttributeSet attrs, final int defStyle) {
+		super(context, attrs, defStyle);
 
 		// get attributes specified in XML
 		final TypedArray a = context.getTheme()

@@ -23,13 +23,13 @@ import static org.mariotaku.twidere.util.CompareUtils.classEquals;
 import static org.mariotaku.twidere.util.CustomTabUtils.getAddedTabPosition;
 import static org.mariotaku.twidere.util.CustomTabUtils.getHomeTabs;
 import static org.mariotaku.twidere.util.Utils.cleanDatabasesByItemLimit;
-import static org.mariotaku.twidere.util.Utils.createFragmentForIntent;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getDefaultAccountId;
 import static org.mariotaku.twidere.util.Utils.getTabDisplayOptionInt;
 import static org.mariotaku.twidere.util.Utils.isDatabaseReady;
 import static org.mariotaku.twidere.util.Utils.openDirectMessagesConversation;
 import static org.mariotaku.twidere.util.Utils.openSearch;
+import static org.mariotaku.twidere.util.Utils.setMenuItemAvailability;
 import static org.mariotaku.twidere.util.Utils.showMenuItemToast;
 
 import android.app.ActionBar;
@@ -47,12 +47,12 @@ import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentManagerTrojan;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.SparseArray;
@@ -68,6 +68,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
@@ -105,12 +106,10 @@ import org.mariotaku.twidere.view.HomeActionsActionView;
 import org.mariotaku.twidere.view.LeftDrawerFrameLayout;
 import org.mariotaku.twidere.view.TabPageIndicator;
 
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeActivity extends DualPaneActivity implements OnClickListener, OnPageChangeListener,
+public class HomeActivity extends BaseSupportActivity implements OnClickListener, OnPageChangeListener,
 		SupportFragmentCallback, SlidingMenu.OnOpenedListener, SlidingMenu.OnClosedListener, OnLongClickListener {
 
 	private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
@@ -132,8 +131,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private final ContentObserver mAccountChangeObserver = new AccountChangeObserver(this, mHandler);
 
 	private final ArrayList<SupportTabSpec> mCustomTabs = new ArrayList<SupportTabSpec>();
-	private final SparseArray<Fragment> mAttachedFragments = new SparseArray<Fragment>();
 
+	private final SparseArray<Fragment> mAttachedFragments = new SparseArray<Fragment>();
 	private Account mSelectedAccountToSearch;
 
 	private SharedPreferences mPreferences;
@@ -143,18 +142,19 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	private NotificationManager mNotificationManager;
 
 	private MultiSelectEventHandler mMultiSelectHandler;
+
 	private ActionBar mActionBar;
 	private SupportTabsAdapter mPagerAdapter;
-	private ExtendedViewPager mViewPager;
 
+	private ExtendedViewPager mViewPager;
 	private TabPageIndicator mIndicator;
 	private SlidingMenu mSlidingMenu;
-
 	private View mEmptyTabHint;
-	private HomeActionsActionView mActionsActionView, mActionsButton, mBottomActionsButton;
+	private ProgressBar mSmartBarProgress;
+	private HomeActionsActionView mActionsButton, mBottomActionsButton;
 	private LeftDrawerFrameLayout mLeftDrawerContainer;
-	private Fragment mCurrentVisibleFragment;
 
+	private Fragment mCurrentVisibleFragment;
 	private UpdateUnreadCountTask mUpdateUnreadCountTask;
 
 	private final Rect mRect = new Rect();
@@ -204,20 +204,20 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		super.onBackPressed();
 	}
 
-	@Override
-	public void onBackStackChanged() {
-		super.onBackStackChanged();
-		if (!isDualPaneMode()) return;
-		final FragmentManager fm = getSupportFragmentManager();
-		setPagingEnabled(!isLeftPaneUsed());
-		final int count = fm.getBackStackEntryCount();
-		if (count == 0) {
-			showLeftPane();
-		}
-		updateActionsButton();
-		updateActionsButtonStyle();
-		updateSlidingMenuTouchMode();
-	}
+	// @Override
+	// public void onBackStackChanged() {
+	// super.onBackStackChanged();
+	// if (!isDualPaneMode()) return;
+	// final FragmentManager fm = getSupportFragmentManager();
+	// setPagingEnabled(!isLeftPaneUsed());
+	// final int count = fm.getBackStackEntryCount();
+	// if (count == 0) {
+	// showLeftPane();
+	// }
+	// updateActionsButton();
+	// updateActionsButtonStyle();
+	// updateSlidingMenuTouchMode();
+	// }
 
 	@Override
 	public void onClick(final View v) {
@@ -225,20 +225,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			case R.id.actions:
 			case R.id.actions_button:
 			case R.id.actions_button_bottom: {
-				if (mViewPager == null || mPagerAdapter == null) return;
-				final int position = mViewPager.getCurrentItem();
-				final SupportTabSpec tab = mPagerAdapter.getTab(position);
-				if (tab == null) {
-					startActivity(new Intent(INTENT_ACTION_COMPOSE));
-				} else {
-					if (classEquals(DirectMessagesFragment.class, tab.cls)) {
-						openDirectMessagesConversation(this, -1, -1);
-					} else if (classEquals(TrendsSuggectionsFragment.class, tab.cls)) {
-						openSearchView(null);
-					} else {
-						startActivity(new Intent(INTENT_ACTION_COMPOSE));
-					}
-				}
+				triggerActionsClick();
 				break;
 			}
 		}
@@ -263,11 +250,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_home, menu);
-		final MenuItem actionsItem = menu.findItem(MENU_ACTIONS);
-		actionsItem.setVisible(SmartBarUtils.hasSmartBar() && isBottomComposeButton());
-		mActionsActionView = (HomeActionsActionView) actionsItem.getActionView();
-		mActionsActionView.setOnClickListener(this);
-		mActionsActionView.setOnLongClickListener(this);
+		final MenuItem itemProgress = menu.findItem(MENU_PROGRESS);
+		mSmartBarProgress = (ProgressBar) itemProgress.getActionView().findViewById(android.R.id.progress);
 		updateActionsButton();
 		return true;
 	}
@@ -328,14 +312,14 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 					mSlidingMenu.showMenu();
 					return true;
 				}
-				if (isDualPaneMode() && !FragmentManagerTrojan.isStateSaved(fm)) {
-					fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-					updateActionsButton();
-				}
 				return true;
 			}
 			case MENU_SEARCH: {
 				openSearchView(mSelectedAccountToSearch);
+				return true;
+			}
+			case MENU_ACTIONS: {
+				triggerActionsClick();
 				return true;
 			}
 		}
@@ -362,8 +346,33 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 
 	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu) {
-		final MenuItem actionsItem = menu.findItem(MENU_ACTIONS);
-		actionsItem.setVisible(SmartBarUtils.hasSmartBar() && isBottomComposeButton());
+		if (mViewPager == null || mPagerAdapter == null) return false;
+		final boolean useBottomActionItems = SmartBarUtils.hasSmartBar() && isBottomComposeButton();
+		setMenuItemAvailability(menu, MENU_ACTIONS, useBottomActionItems);
+		setMenuItemAvailability(menu, MENU_PROGRESS, useBottomActionItems);
+		if (useBottomActionItems) {
+			final int icon, title;
+			final int position = mViewPager.getCurrentItem();
+			final SupportTabSpec tab = mPagerAdapter.getTab(position);
+			if (tab == null) {
+				title = R.string.compose;
+				icon = R.drawable.ic_menu_status_compose;
+			} else {
+				if (classEquals(DirectMessagesFragment.class, tab.cls)) {
+					icon = R.drawable.ic_menu_compose;
+					title = R.string.compose;
+				} else if (classEquals(TrendsSuggectionsFragment.class, tab.cls)) {
+					icon = android.R.drawable.ic_menu_search;
+					title = android.R.string.search_go;
+				} else {
+					icon = R.drawable.ic_menu_status_compose;
+					title = R.string.compose;
+				}
+			}
+			final MenuItem actionsItem = menu.findItem(MENU_ACTIONS);
+			actionsItem.setIcon(icon);
+			actionsItem.setTitle(title);
+		}
 		return true;
 	}
 
@@ -433,21 +442,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 	}
 
 	@Override
-	protected int getDualPaneLayoutRes() {
-		return R.layout.home_dual_pane;
-	}
-
-	@Override
-	protected int getMainViewId() {
-		return R.id.main_pager;
-	}
-
-	@Override
-	protected int getNormalLayoutRes() {
-		return R.layout.home;
-	}
-
-	@Override
 	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		switch (requestCode) {
 			case REQUEST_SWIPEBACK_ACTIVITY: {
@@ -491,6 +485,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			finish();
 			return;
 		}
+		setContentView(R.layout.home);
 		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONCREATE));
 		final boolean refreshOnStart = mPreferences.getBoolean(KEY_REFRESH_ON_START, false);
 		mTabDisplayOption = getTabDisplayOptionInt(this);
@@ -502,7 +497,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mIndicator = (TabPageIndicator) view.findViewById(android.R.id.tabs);
 		mActionsButton = (HomeActionsActionView) view.findViewById(R.id.actions_button);
 		ThemeUtils.applyBackground(mIndicator);
-		mPagerAdapter = new SupportTabsAdapter(this, getSupportFragmentManager(), mIndicator);
+		mPagerAdapter = new SupportTabsAdapter(this, getSupportFragmentManager(), mIndicator, 1);
 		mViewPager.setAdapter(mPagerAdapter);
 		mViewPager.setOffscreenPageLimit(3);
 		mIndicator.setViewPager(mViewPager);
@@ -610,16 +605,24 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		}
 	}
 
+	@Override
+	protected boolean shouldSetWindowBackground() {
+		return false;
+	}
+
 	private LeftDrawerFrameLayout getLeftDrawerContainer() {
 		return mLeftDrawerContainer;
 	}
 
 	private View getPullToRefreshHeaderView(final Fragment f) {
-		if (f.getActivity() == null || !(f instanceof IBasePullToRefreshFragment)) return null;
-		final IBasePullToRefreshFragment ptrf = (IBasePullToRefreshFragment) f;
-		final PullToRefreshLayout l = ptrf.getPullToRefreshLayout();
-		if (l == null) return null;
-		return l.getHeaderView();
+		return null;
+		// if (f.getActivity() == null || !(f instanceof
+		// IBasePullToRefreshFragment)) return null;
+		// final IBasePullToRefreshFragment ptrf = (IBasePullToRefreshFragment)
+		// f;
+		// final PullToRefreshLayout l = ptrf.getPullToRefreshLayout();
+		// if (l == null) return null;
+		// return l.getHeaderView();
 	}
 
 	private int handleIntent(final Intent intent, final boolean firstCreate) {
@@ -656,11 +659,7 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		final Intent extraIntent = intent.getParcelableExtra(EXTRA_EXTRA_INTENT);
 		if (extraIntent != null && firstCreate) {
 			extraIntent.setExtrasClassLoader(getClassLoader());
-			if (isTwidereLink(extraIntent.getData()) && isDualPaneMode()) {
-				showFragment(createFragmentForIntent(this, extraIntent), true);
-			} else {
-				SwipebackActivityUtils.startSwipebackActivity(this, extraIntent);
-			}
+			SwipebackActivityUtils.startSwipebackActivity(this, extraIntent);
 		}
 		return initialTab;
 	}
@@ -700,10 +699,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			if (!mCustomTabs.get(i).equals(tabs.get(i))) return true;
 		}
 		return false;
-	}
-
-	private boolean isTwidereLink(final Uri data) {
-		return data != null && SCHEME_TWIDERE.equals(data.getScheme());
 	}
 
 	private void openAccountsDrawer() {
@@ -769,13 +764,11 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		mSlidingMenu.setBehindCanvasTransformer(new ListenerCanvasTransformer(this));
 		final Window window = getWindow();
 		if (isTransparentBackground) {
-			ViewAccessor.setBackground(mSlidingMenu.getContent(), null);
+			final Drawable windowBackground = ThemeUtils.getWindowBackground(this, getCurrentThemeResourceId());
+			ViewAccessor.setBackground(mSlidingMenu.getContent(), windowBackground);
 			window.setBackgroundDrawable(new EmptyDrawable());
 		} else {
 			window.setBackgroundDrawable(null);
-		}
-		if (isDualPaneMode()) {
-			mSlidingMenu.addIgnoredView(getSlidingPane().getRightPaneContainer());
 		}
 	}
 
@@ -791,6 +784,23 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			builder.setContentText(getString(R.string.data_profiling_notification_desc));
 			builder.setContentIntent(content_intent);
 			mNotificationManager.notify(NOTIFICATION_ID_DATA_PROFILING, builder.build());
+		}
+	}
+
+	private void triggerActionsClick() {
+		if (mViewPager == null || mPagerAdapter == null) return;
+		final int position = mViewPager.getCurrentItem();
+		final SupportTabSpec tab = mPagerAdapter.getTab(position);
+		if (tab == null) {
+			startActivity(new Intent(INTENT_ACTION_COMPOSE));
+		} else {
+			if (classEquals(DirectMessagesFragment.class, tab.cls)) {
+				openDirectMessagesConversation(this, -1, -1);
+			} else if (classEquals(TrendsSuggectionsFragment.class, tab.cls)) {
+				openSearchView(null);
+			} else {
+				startActivity(new Intent(INTENT_ACTION_COMPOSE));
+			}
 		}
 	}
 
@@ -815,11 +825,6 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			}
 		}
 		final boolean hasActivatedTask = hasActivatedTask();
-		if (mActionsActionView != null) {
-			mActionsActionView.setIcon(icon);
-			mActionsActionView.setTitle(title);
-			mActionsActionView.setShowProgress(hasActivatedTask);
-		}
 		if (mActionsButton != null) {
 			mActionsButton.setIcon(icon);
 			mActionsButton.setTitle(title);
@@ -830,6 +835,13 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			mBottomActionsButton.setTitle(title);
 			mBottomActionsButton.setShowProgress(hasActivatedTask);
 		}
+		if (mSmartBarProgress != null) {
+			mSmartBarProgress.setVisibility(hasActivatedTask ? View.VISIBLE : View.INVISIBLE);
+		}
+		final boolean useBottomActionItems = SmartBarUtils.hasSmartBar() && isBottomComposeButton();
+		if (useBottomActionItems) {
+			invalidateOptionsMenu();
+		}
 	}
 
 	private void updateActionsButtonStyle() {
@@ -837,9 +849,8 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 		final boolean isBottomActionsButton = isBottomComposeButton();
 		final boolean showBottomActionsButton = !SmartBarUtils.hasSmartBar() && isBottomActionsButton;
 		final boolean leftsideComposeButton = mPreferences.getBoolean(KEY_LEFTSIDE_COMPOSE_BUTTON, false);
-		final boolean isPaneUsed = isDualPaneMode() && isRightPaneUsed();
 		mActionsButton.setVisibility(isBottomActionsButton ? View.GONE : View.VISIBLE);
-		mBottomActionsButton.setVisibility(showBottomActionsButton && !isPaneUsed ? View.VISIBLE : View.GONE);
+		mBottomActionsButton.setVisibility(showBottomActionsButton ? View.VISIBLE : View.GONE);
 		final FrameLayout.LayoutParams compose_lp = (LayoutParams) mBottomActionsButton.getLayoutParams();
 		compose_lp.gravity = Gravity.BOTTOM | (leftsideComposeButton ? Gravity.LEFT : Gravity.RIGHT);
 		mBottomActionsButton.setLayoutParams(compose_lp);
@@ -859,14 +870,12 @@ public class HomeActivity extends DualPaneActivity implements OnClickListener, O
 			final Fragment f = mAttachedFragments.valueAt(i);
 			setPullToRefreshLayoutScroll(wm, f, scrollX, statusBarHeight, horizontalScroll);
 		}
-		setPullToRefreshLayoutScroll(wm, getLeftPaneFragment(), scrollX, statusBarHeight, horizontalScroll);
-		setPullToRefreshLayoutScroll(wm, getRightPaneFragment(), scrollX, statusBarHeight, horizontalScroll);
 	}
 
 	private void updateSlidingMenuTouchMode() {
 		if (mViewPager == null || mSlidingMenu == null) return;
 		final int position = mViewPager.getCurrentItem();
-		final int mode = !mViewPager.isEnabled() || position == 0 && !isLeftPaneUsed() ? SlidingMenu.TOUCHMODE_FULLSCREEN
+		final int mode = !mViewPager.isEnabled() || position == 0 ? SlidingMenu.TOUCHMODE_FULLSCREEN
 				: SlidingMenu.TOUCHMODE_MARGIN;
 		mSlidingMenu.setTouchModeAbove(mode);
 	}

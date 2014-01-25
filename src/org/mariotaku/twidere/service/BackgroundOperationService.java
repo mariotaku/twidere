@@ -81,9 +81,9 @@ import twitter4j.UserMentionEntity;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 public class BackgroundOperationService extends IntentService implements Constants {
 
@@ -332,7 +332,7 @@ public class BackgroundOperationService extends IntentService implements Constan
 
 	private List<SingleResponse<ParcelableStatus>> updateStatus(final ParcelableStatusUpdate pstatus) {
 		final ArrayList<ContentValues> hashtag_values = new ArrayList<ContentValues>();
-		final Set<String> hashtags = extractor.extractHashtags(pstatus.text);
+		final Collection<String> hashtags = extractor.extractHashtags(pstatus.text);
 		for (final String hashtag : hashtags) {
 			final ContentValues values = new ContentValues();
 			values.put(CachedHashtags.NAME, hashtag);

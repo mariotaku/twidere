@@ -33,8 +33,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-
-import com.huewu.pla.lib.internal.PLAAbsListView;
+import android.widget.AbsListView;
 
 import org.mariotaku.querybuilder.Columns.Column;
 import org.mariotaku.querybuilder.RawItemArray;
@@ -49,7 +48,7 @@ import org.mariotaku.twidere.task.AsyncTask;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.content.SupportFragmentReloadCursorObserver;
 
-public abstract class CursorStatusesMultiColumnListFragment extends BaseStatusesMultiColumnListFragment<Cursor> {
+public abstract class CursorStatusesStaggeredGridFragment extends BaseStatusesStaggeredGridFragment<Cursor> {
 
 	private final SupportFragmentReloadCursorObserver mReloadContentObserver = new SupportFragmentReloadCursorObserver(
 			this, 0, this);
@@ -74,9 +73,8 @@ public abstract class CursorStatusesMultiColumnListFragment extends BaseStatuses
 		final long account_id = getAccountId();
 		final long[] account_ids = account_id > 0 ? new long[] { account_id } : getActivatedAccountIds(getActivity());
 		final boolean no_account_selected = account_ids.length == 0;
-		if (no_account_selected) {
-			setEmptyText(getString(R.string.no_account_selected));
-		} else {
+		setEmptyText(no_account_selected ? getString(R.string.no_account_selected) : null);
+		if (!no_account_selected) {
 			getListView().setEmptyView(null);
 		}
 		final Where accountWhere = Where.in(new Column(Statuses.ACCOUNT_ID), new RawItemArray(account_ids));
@@ -92,15 +90,8 @@ public abstract class CursorStatusesMultiColumnListFragment extends BaseStatuses
 	}
 
 	@Override
-	public void onPostStart() {
-		if (!isActivityFirstCreated()) {
-			getLoaderManager().restartLoader(0, null, this);
-		}
-	}
-
-	@Override
-	public void onRefreshStarted() {
-		super.onRefreshStarted();
+	public void onRefreshFromStart() {
+		if (isRefreshing()) return;
 		savePosition();
 		new AsyncTask<Void, Void, long[][]>() {
 
@@ -122,20 +113,17 @@ public abstract class CursorStatusesMultiColumnListFragment extends BaseStatuses
 	}
 
 	@Override
-	public void onScrollStateChanged(final PLAAbsListView view, final int scrollState) {
+	public void onScrollStateChanged(final AbsListView view, final int scrollState) {
 		super.onScrollStateChanged(view, scrollState);
 		switch (scrollState) {
 			case SCROLL_STATE_FLING:
 			case SCROLL_STATE_TOUCH_SCROLL: {
-				final AsyncTwitterWrapper twitter = getTwitterWrapper();
-				if (twitter != null) {
-					twitter.clearNotificationAsync(getNotificationType(), getAccountId());
-				}
 				break;
 			}
-			case SCROLL_STATE_IDLE:
+			case SCROLL_STATE_IDLE: {
 				savePosition();
 				break;
+			}
 		}
 	}
 
@@ -166,14 +154,18 @@ public abstract class CursorStatusesMultiColumnListFragment extends BaseStatuses
 
 	@Override
 	protected long[] getNewestStatusIds() {
-		return getNewestStatusIdsFromDatabase(getActivity(), getContentUri());
+		final long account_id = getAccountId();
+		final long[] account_ids = account_id > 0 ? new long[] { account_id } : getActivatedAccountIds(getActivity());
+		return getNewestStatusIdsFromDatabase(getActivity(), getContentUri(), account_ids);
 	}
 
 	protected abstract int getNotificationType();
 
 	@Override
 	protected long[] getOldestStatusIds() {
-		return getOldestStatusIdsFromDatabase(getActivity(), getContentUri());
+		final long account_id = getAccountId();
+		final long[] account_ids = account_id > 0 ? new long[] { account_id } : getActivatedAccountIds(getActivity());
+		return getOldestStatusIdsFromDatabase(getActivity(), getContentUri(), account_ids);
 	}
 
 	protected abstract boolean isFiltersEnabled();
@@ -207,8 +199,15 @@ public abstract class CursorStatusesMultiColumnListFragment extends BaseStatuses
 	}
 
 	@Override
+	protected void onListTouched() {
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		if (twitter != null) {
+			twitter.clearNotificationAsync(getNotificationType(), getAccountId());
+		}
+	}
+
+	@Override
 	protected boolean shouldShowAccountColor() {
 		return getAccountId() <= 0 && getActivatedAccountIds(getActivity()).length > 1;
 	}
-
 }

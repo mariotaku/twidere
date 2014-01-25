@@ -225,31 +225,42 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		setData(data);
 		mFirstVisibleItem = -1;
 		mReadPositions.clear();
-		final int first_visible_position = mListView.getFirstVisiblePosition();
-		if (mListView.getChildCount() > 0) {
-			final View first_child = mListView.getChildAt(0);
-			mListScrollOffset = first_child != null ? first_child.getTop() : 0;
+		final int listVisiblePosition, savedChildIndex;
+		final boolean rememberPosition = mPreferences.getBoolean(KEY_REMEMBER_POSITION, true);
+		if (rememberPosition) {
+			listVisiblePosition = mListView.getLastVisiblePosition();
+			final int childCount = mListView.getChildCount();
+			savedChildIndex = childCount - 1;
+			if (childCount > 0) {
+				final View lastChild = mListView.getChildAt(savedChildIndex);
+				mListScrollOffset = lastChild != null ? lastChild.getTop() : 0;
+			}
+		} else {
+			listVisiblePosition = mListView.getFirstVisiblePosition();
+			savedChildIndex = 0;
+			if (mListView.getChildCount() > 0) {
+				final View firstChild = mListView.getChildAt(savedChildIndex);
+				mListScrollOffset = firstChild != null ? firstChild.getTop() : 0;
+			}
 		}
-		final long last_viewed_id = mAdapter.getStatusId(first_visible_position);
+		final long lastViewedId = mAdapter.getStatusId(listVisiblePosition);
 		mAdapter.setData(data);
 		mAdapter.setShowAccountColor(shouldShowAccountColor());
-		final boolean remember_position = mPreferences.getBoolean(KEY_REMEMBER_POSITION, true);
-		final int curr_first_visible_position = mListView.getFirstVisiblePosition();
-		final long curr_viewed_id = mAdapter.getStatusId(curr_first_visible_position);
-		final long status_id;
-		if (last_viewed_id <= 0) {
-			if (!remember_position) return;
-			status_id = mPositionManager.getPosition(getPositionKey());
-		} else if ((first_visible_position > 0 || remember_position) && curr_viewed_id > 0
-				&& last_viewed_id != curr_viewed_id) {
-			status_id = last_viewed_id;
+		final int currFirstVisiblePosition = mListView.getFirstVisiblePosition();
+		final long currViewedId = mAdapter.getStatusId(currFirstVisiblePosition);
+		final long statusId;
+		if (lastViewedId <= 0) {
+			if (!rememberPosition) return;
+			statusId = mPositionManager.getPosition(getPositionKey());
+		} else if ((listVisiblePosition > 0 || rememberPosition) && currViewedId > 0 && lastViewedId != currViewedId) {
+			statusId = lastViewedId;
 		} else {
-			if (first_visible_position == 0 && mAdapter.getStatusId(0) != last_viewed_id) {
+			if (listVisiblePosition == 0 && mAdapter.getStatusId(0) != lastViewedId) {
 				mAdapter.setMaxAnimationPosition(mListView.getLastVisiblePosition());
 			}
 			return;
 		}
-		final int position = mAdapter.findPositionByStatusId(status_id);
+		final int position = mAdapter.findPositionByStatusId(statusId);
 		if (position > -1 && position < mListView.getCount()) {
 			mAdapter.setMaxAnimationPosition(mListView.getLastVisiblePosition());
 			mListView.setSelectionFromTop(position, mListScrollOffset);
@@ -349,6 +360,12 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 	}
 
 	@Override
+	public void onRefreshFromEnd() {
+		if (mLoadMoreAutomatically) return;
+		loadMoreStatuses();
+	}
+
+	@Override
 	public void onResume() {
 		super.onResume();
 		mListView.setFastScrollEnabled(mPreferences.getBoolean(KEY_FAST_SCROLL_THUMB, false));
@@ -443,12 +460,6 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 	protected abstract void loadMoreStatuses();
 
 	protected abstract IStatusesAdapter<Data> newAdapterInstance();
-
-	@Override
-	protected void onPullUp() {
-		if (mLoadMoreAutomatically) return;
-		loadMoreStatuses();
-	}
 
 	@Override
 	protected void onReachedBottom() {

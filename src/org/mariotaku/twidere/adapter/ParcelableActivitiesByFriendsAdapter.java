@@ -42,13 +42,13 @@ public class ParcelableActivitiesByFriendsAdapter extends BaseParcelableActiviti
 	public void bindView(final int position, final ActivityViewHolder holder, final ParcelableActivity item) {
 		if (item == null) return;
 		final ParcelableUser[] sources = item.sources;
-		final ParcelableStatus[] target_statuses = item.target_statuses;
+		final ParcelableStatus[] targetStatuses = item.target_statuses;
 		final ParcelableUser[] targetUsers = item.target_users;
 		final ParcelableStatus[] target_object_statuses = item.target_object_statuses;
 		final ParcelableUserList[] targetUserLists = item.target_user_lists;
 		final ParcelableUserList[] target_object_user_lists = item.target_object_user_lists;
 		final int sourcesLength = sources != null ? sources.length : 0;
-		final int targetStatusesLength = target_statuses != null ? target_statuses.length : 0;
+		final int targetStatusesLength = targetStatuses != null ? targetStatuses.length : 0;
 		final int target_users_length = targetUsers != null ? targetUsers.length : 0;
 		final int target_object_user_lists_length = target_object_user_lists != null ? target_object_user_lists.length
 				: 0;
@@ -65,13 +65,13 @@ public class ParcelableActivitiesByFriendsAdapter extends BaseParcelableActiviti
 		if (holder.divider != null) {
 			holder.divider.setVisibility(View.VISIBLE);
 		}
-		if (sourcesLength > 0) {
+		if (sources != null && sources.length != 0) {
 			final ParcelableUser firstSource = sources[0];
 			final String firstSourceName = getName(firstSource);
 			switch (action) {
 				case ParcelableActivity.ACTION_FAVORITE: {
-					if (targetStatusesLength == 0) return;
-					final ParcelableStatus status = target_statuses[0];
+					if (targetStatuses == null || targetStatuses.length == 0) return;
+					final ParcelableStatus status = targetStatuses[0];
 					if (targetStatusesLength == 1) {
 						holder.text.setVisibility(View.VISIBLE);
 						if (highlightOption != VALUE_LINK_HIGHLIGHT_OPTION_CODE_NONE) {
@@ -89,13 +89,13 @@ public class ParcelableActivitiesByFriendsAdapter extends BaseParcelableActiviti
 								firstSourceName, getName(status), targetStatusesLength - 1));
 					}
 					displayProfileImage(holder.profile_image, firstSource);
-					displayActivityUserProfileImages(holder, target_statuses);
+					displayActivityUserProfileImages(holder, targetStatuses);
 					break;
 				}
 				case ParcelableActivity.ACTION_FOLLOW: {
 					holder.text.setVisibility(View.GONE);
-					if (target_users_length == 0) return;
-					if (target_users_length == 1) {
+					if (targetUsers == null || targetUsers.length == 0) return;
+					if (targetUsers.length == 1) {
 						holder.name.setText(context.getString(R.string.activity_by_friends_follow, firstSourceName,
 								getName(targetUsers[0])));
 					} else {
@@ -120,7 +120,7 @@ public class ParcelableActivitiesByFriendsAdapter extends BaseParcelableActiviti
 					}
 					if (sourcesLength == 1) {
 						holder.name.setText(context.getString(R.string.activity_by_friends_retweet, firstSourceName,
-								getName(target_statuses[0])));
+								getName(targetStatuses[0])));
 					} else {
 						holder.name.setText(context.getString(R.string.activity_about_me_retweet_multi,
 								firstSourceName, sourcesLength - 1));

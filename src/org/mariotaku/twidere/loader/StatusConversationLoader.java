@@ -20,6 +20,7 @@
 package org.mariotaku.twidere.loader;
 
 import static org.mariotaku.twidere.util.Utils.isOfficialConsumerKeySecret;
+import static org.mariotaku.twidere.util.Utils.shouldForceUsingPrivateAPIs;
 
 import android.content.Context;
 
@@ -50,11 +51,13 @@ public class StatusConversationLoader extends UserMentionsLoader {
 
 	@Override
 	public List<Status> getStatuses(final Twitter twitter, final Paging paging) throws TwitterException {
+		final Context context = getContext();
 		final Configuration conf = twitter.getConfiguration();
 		final Authorization auth = twitter.getAuthorization();
 		final boolean isOAuth = auth instanceof OAuthAuthorization || auth instanceof XAuthAuthorization;
 		final String consumerKey = conf.getOAuthConsumerKey(), consumerSecret = conf.getOAuthConsumerSecret();
-		if (isOAuth && isOfficialConsumerKeySecret(getContext(), consumerKey, consumerSecret))
+		if (shouldForceUsingPrivateAPIs(context) || isOAuth
+				&& isOfficialConsumerKeySecret(context, consumerKey, consumerSecret))
 			return twitter.showConversation(mInReplyToStatusId, paging);
 		return Collections.emptyList();
 	}

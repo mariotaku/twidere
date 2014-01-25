@@ -195,7 +195,7 @@ public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCo
 			if (authorizationHeader != null) {
 				commonsRequest.addHeader("Authorization", authorizationHeader);
 			}
-			if (!isEmpty(resolvedHost) && !resolvedHost.equals(host)) {
+			if (resolvedHost != null && !resolvedHost.isEmpty() && !resolvedHost.equals(host)) {
 				commonsRequest.addHeader("Host", authority);
 			}
 

@@ -122,6 +122,7 @@ import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ContentValuesCreator;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.ParseUtils;
+import org.mariotaku.twidere.util.SharedPreferencesWrapper;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.util.accessor.ViewAccessor;
@@ -133,7 +134,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.Collection;
 
 public class ComposeActivity extends BaseSupportDialogActivity implements TextWatcher, LocationListener,
 		OnMenuItemClickListener, OnClickListener, OnEditorActionListener, OnItemClickListener, OnItemLongClickListener,
@@ -152,7 +153,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 
 	private AsyncTwitterWrapper mTwitterWrapper;
 	private LocationManager mLocationManager;
-	private SharedPreferences mPreferences;
+	private SharedPreferencesWrapper mPreferences;
 	private ParcelableLocation mRecentLocation;
 
 	private ContentResolver mResolver;
@@ -373,7 +374,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) return;
 		final String option = mPreferences.getString(KEY_COMPOSE_QUIT_ACTION, VALUE_COMPOSE_QUIT_ACTION_ASK);
 		final String text = mEditText != null ? ParseUtils.parseString(mEditText.getText()) : null;
-		final boolean textChanged = !isEmpty(text) && !text.equals(mOriginalText);
+		final boolean textChanged = text != null && !text.isEmpty() && !text.equals(mOriginalText);
 		final boolean isEditingDraft = INTENT_ACTION_EDIT_DRAFT.equals(getIntent().getAction());
 		if (VALUE_COMPOSE_QUIT_ACTION_DISCARD.equals(option)) {
 			mTask = new DiscardTweetTask(this).execute();
@@ -425,7 +426,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		mSendView = composeActionBar.findViewById(R.id.send);
 		mBottomSendView = composeBottomBar.findViewById(R.id.send);
 		ViewAccessor.setBackground(findViewById(R.id.compose_content), getWindowContentOverlayForCompose(this));
-		ViewAccessor.setBackground(composeActionBar, getActionBarBackground(this, false));
+		ViewAccessor.setBackground(composeActionBar, getActionBarBackground(this, getCurrentThemeResourceId()));
 	}
 
 	@Override
@@ -543,7 +544,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		// requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mPreferences = SharedPreferencesWrapper.getInstance(this, SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mTwitterWrapper = getTwidereApplication().getTwitterWrapper();
 		mResolver = getContentResolver();
 		mImageLoader = getTwidereApplication().getImageLoaderWrapper();
@@ -804,7 +805,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		if (!isEmpty(status.retweeted_by_screen_name)) {
 			mEditText.append("@" + status.retweeted_by_screen_name + " ");
 		}
-		final Set<String> mentions = mExtractor.extractMentionedScreennames(status.text_plain);
+		final Collection<String> mentions = mExtractor.extractMentionedScreennames(status.text_plain);
 		for (final String mention : mentions) {
 			if (mention.equalsIgnoreCase(status.user_screen_name) || mention.equalsIgnoreCase(myScreenName)
 					|| mention.equalsIgnoreCase(status.retweeted_by_screen_name)) {

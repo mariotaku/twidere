@@ -17,4 +17,10 @@
 		android:layout_gravity="center"
 		android:layout_margin="32dp"/>
 
+	<org.mariotaku.twidere.view.TwidereMenuBar
+		android:id="@+id/menu_bar"
+		android:layout_width="match_parent"
+		android:layout_height="?android:actionBarSize"
+		android:layout_gravity="bottom"/>
+
 </merge>

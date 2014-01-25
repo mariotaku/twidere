@@ -86,7 +86,8 @@ public abstract class BasePreferenceActivity extends PreferenceActivity implemen
 	}
 
 	private final void setActionBarBackground() {
-		ThemeUtils.applyActionBarBackground(getActionBar(), this);
+		// ThemeUtils.applyActionBarBackground(getActionBar(), this,
+		// mCurrentThemeResource);
 	}
 
 }

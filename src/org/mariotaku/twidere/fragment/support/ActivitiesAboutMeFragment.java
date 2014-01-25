@@ -60,50 +60,48 @@ public class ActivitiesAboutMeFragment extends BaseActivitiesListFragment {
 		final ParcelableActivity item = getListAdapter().getItem(adapter_pos);
 		if (item == null) return;
 		final ParcelableUser[] sources = item.sources;
+		if (sources == null || sources.length == 0) return;
 		final ParcelableStatus[] target_statuses = item.target_statuses;
-		final int sources_length = sources != null ? sources.length : 0;
-		if (sources_length > 0) {
-			final ParcelableStatus[] target_objects = item.target_object_statuses;
-			switch (item.action) {
-				case ParcelableActivity.ACTION_FAVORITE: {
-					if (sources_length == 1) {
-						openUserProfile(getActivity(), sources[0]);
-					} else {
-						final List<ParcelableUser> users = Arrays.asList(sources);
-						openUsers(getActivity(), users);
-					}
-					break;
+		final ParcelableStatus[] target_objects = item.target_object_statuses;
+		switch (item.action) {
+			case ParcelableActivity.ACTION_FAVORITE: {
+				if (sources.length == 1) {
+					openUserProfile(getActivity(), sources[0]);
+				} else {
+					final List<ParcelableUser> users = Arrays.asList(sources);
+					openUsers(getActivity(), users);
 				}
-				case ParcelableActivity.ACTION_FOLLOW: {
-					if (sources_length == 1) {
-						openUserProfile(getActivity(), sources[0]);
-					} else {
-						final List<ParcelableUser> users = Arrays.asList(sources);
-						openUsers(getActivity(), users);
-					}
-					break;
+				break;
+			}
+			case ParcelableActivity.ACTION_FOLLOW: {
+				if (sources.length == 1) {
+					openUserProfile(getActivity(), sources[0]);
+				} else {
+					final List<ParcelableUser> users = Arrays.asList(sources);
+					openUsers(getActivity(), users);
 				}
-				case ParcelableActivity.ACTION_MENTION: {
-					if (target_objects != null && target_objects.length > 0) {
-						openStatus(getActivity(), target_objects[0]);
-					}
-					break;
+				break;
+			}
+			case ParcelableActivity.ACTION_MENTION: {
+				if (target_objects != null && target_objects.length > 0) {
+					openStatus(getActivity(), target_objects[0]);
 				}
-				case ParcelableActivity.ACTION_REPLY: {
-					if (target_statuses != null && target_statuses.length > 0) {
-						openStatus(getActivity(), target_statuses[0]);
-					}
-					break;
+				break;
+			}
+			case ParcelableActivity.ACTION_REPLY: {
+				if (target_statuses != null && target_statuses.length > 0) {
+					openStatus(getActivity(), target_statuses[0]);
 				}
-				case ParcelableActivity.ACTION_RETWEET: {
-					if (sources_length == 1) {
-						openUserProfile(getActivity(), sources[0]);
-					} else {
-						final List<ParcelableUser> users = Arrays.asList(sources);
-						openUsers(getActivity(), users);
-					}
-					break;
+				break;
+			}
+			case ParcelableActivity.ACTION_RETWEET: {
+				if (sources.length == 1) {
+					openUserProfile(getActivity(), sources[0]);
+				} else {
+					final List<ParcelableUser> users = Arrays.asList(sources);
+					openUsers(getActivity(), users);
 				}
+				break;
 			}
 		}
 	}

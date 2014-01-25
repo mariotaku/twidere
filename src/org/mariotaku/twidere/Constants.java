@@ -108,6 +108,7 @@ public interface Constants extends TwidereConstants {
 	public static final int MENU_DENY = R.id.deny;
 	public static final int MENU_IMPORT_SETTINGS = R.id.import_settings;
 	public static final int MENU_EXPORT_SETTINGS = R.id.export_settings;
+	public static final int MENU_PROGRESS = R.id.progress;
 
 	public static final int LINK_ID_STATUS = 1;
 	public static final int LINK_ID_USER = 2;
@@ -134,9 +135,6 @@ public interface Constants extends TwidereConstants {
 
 	public static final String DIR_NAME_IMAGE_CACHE = "image_cache";
 	public static final String DIR_NAME_FULL_IMAGE_CACHE = "full_image_cache";
-
-	public static final int PANE_LEFT = R.id.fragment_container_left;
-	public static final int PANE_RIGHT = R.id.fragment_container_right;
 
 	public static final String FRAGMENT_TAG_API_UPGRADE_NOTICE = "api_upgrade_notice";
 

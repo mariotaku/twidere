@@ -564,7 +564,9 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 			final Bitmap bm = conn != null ? BitmapFactory.decodeStream(conn.asStream()) : null;
 			if (bm == null) {
 				try {
-					return Color.parseColor(user.getProfileBackgroundColor());
+					final String profileBackgroundColor = user.getProfileBackgroundColor();
+					if (isEmpty(profileBackgroundColor)) throw new TwitterException("Can't get profile image");
+					return Color.parseColor(profileBackgroundColor);
 				} catch (final IllegalArgumentException e) {
 					throw new TwitterException("Can't get profile image");
 				}

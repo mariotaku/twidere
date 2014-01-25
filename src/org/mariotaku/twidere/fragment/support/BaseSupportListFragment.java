@@ -261,6 +261,7 @@ public class BaseSupportListFragment extends ListFragment implements IBaseFragme
 
 	@Override
 	public void setSelection(final int position) {
+		if (getView() == null) return;
 		Utils.scrollListToPosition(getListView(), position);
 	}
 

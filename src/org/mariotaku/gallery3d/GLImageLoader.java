@@ -80,16 +80,23 @@ public class GLImageLoader extends AsyncTaskLoader<GLImageLoader.Result> impleme
 		if ("http".equals(scheme) || "https".equals(scheme)) {
 			final String url = ParseUtils.parseString(mUri.toString());
 			if (url == null) return Result.nullInstance();
-			final File cache_file = mDiscCache.get(url);
+			final File cacheFile = mDiscCache.get(url);
+			if (cacheFile != null) {
+				final File cacheDir = cacheFile.getParentFile();
+				if (cacheDir != null && !cacheDir.exists()) {
+					cacheDir.mkdirs();
+				}
+			} else
+				return Result.nullInstance();
 			try {
 				// from SD cache
-				if (ImageValidator.checkImageValidity(cache_file)) return decodeImageInternal(cache_file);
+				if (ImageValidator.checkImageValidity(cacheFile)) return decodeImageInternal(cacheFile);
 
 				final InputStream is = mDownloader.getStream(url, null);
 				if (is == null) return Result.nullInstance();
 				final long length = is.available();
 				mHandler.post(new DownloadStartRunnable(this, mListener, length));
-				final OutputStream os = new FileOutputStream(cache_file);
+				final OutputStream os = new FileOutputStream(cacheFile);
 				try {
 					dump(is, os);
 					mHandler.post(new DownloadFinishRunnable(this, mListener));
@@ -97,19 +104,19 @@ public class GLImageLoader extends AsyncTaskLoader<GLImageLoader.Result> impleme
 					GalleryUtils.closeSilently(is);
 					GalleryUtils.closeSilently(os);
 				}
-				if (!ImageValidator.checkImageValidity(cache_file)) {
+				if (!ImageValidator.checkImageValidity(cacheFile)) {
 					// The file is corrupted, so we remove it from
 					// cache.
-					final Result result = decodeBitmapOnly(cache_file);
-					if (cache_file.isFile()) {
-						cache_file.delete();
+					final Result result = decodeBitmapOnly(cacheFile);
+					if (cacheFile.isFile()) {
+						cacheFile.delete();
 					}
 					return result;
 				}
-				return decodeImageInternal(cache_file);
+				return decodeImageInternal(cacheFile);
 			} catch (final Exception e) {
 				mHandler.post(new DownloadErrorRunnable(this, mListener, e));
-				return Result.getInstance(cache_file, e);
+				return Result.getInstance(cacheFile, e);
 			}
 		} else if (ContentResolver.SCHEME_FILE.equals(scheme)) {
 			final File file = new File(mUri.getPath());
