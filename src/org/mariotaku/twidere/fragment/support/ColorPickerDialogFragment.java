@@ -27,9 +27,19 @@ import android.support.v4.app.FragmentActivity;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.dialog.ColorPickerDialog;
+import org.mariotaku.twidere.fragment.iface.IDialogFragmentCallback;
 
 public final class ColorPickerDialogFragment extends BaseSupportDialogFragment implements
 		DialogInterface.OnClickListener {
+
+	@Override
+	public void onCancel(final DialogInterface dialog) {
+		super.onCancel(dialog);
+		final FragmentActivity a = getActivity();
+		if (a instanceof Callback) {
+			((Callback) a).onCancelled();
+		}
+	}
 
 	@Override
 	public void onClick(final DialogInterface dialog, final int which) {
@@ -69,6 +79,15 @@ public final class ColorPickerDialogFragment extends BaseSupportDialogFragment i
 	}
 
 	@Override
+	public void onDismiss(final DialogInterface dialog) {
+		super.onDismiss(dialog);
+		final FragmentActivity a = getActivity();
+		if (a instanceof Callback) {
+			((Callback) a).onDismissed();
+		}
+	}
+
+	@Override
 	public void onSaveInstanceState(final Bundle outState) {
 		final Dialog d = getDialog();
 		if (d instanceof ColorPickerDialog) {
@@ -77,15 +96,11 @@ public final class ColorPickerDialogFragment extends BaseSupportDialogFragment i
 		super.onSaveInstanceState(outState);
 	}
 
-	public static interface Callback {
-
-		public void onCancelled();
+	public static interface Callback extends IDialogFragmentCallback {
 
 		public void onColorCleared();
 
 		public void onColorSelected(int color);
-
-		public void onDismissed();
 
 	}
 
