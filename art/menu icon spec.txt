@@ -1,2 +1,0 @@
-1. Apply 60% alpha mask
-2. Erase 33% of black color
