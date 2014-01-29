@@ -225,20 +225,23 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		setData(data);
 		mFirstVisibleItem = -1;
 		mReadPositions.clear();
+		final int firstVisiblePosition = mListView.getFirstVisiblePosition();
+		final int lastVisiblePosition = mListView.getLastVisiblePosition();
 		final int listVisiblePosition, savedChildIndex;
 		final boolean rememberPosition = mPreferences.getBoolean(KEY_REMEMBER_POSITION, true);
-		if (rememberPosition) {
-			listVisiblePosition = mListView.getLastVisiblePosition();
-			final int childCount = mListView.getChildCount();
+		final boolean loadMoreFromTop = mPreferences.getBoolean(KEY_LOAD_MORE_FROM_TOP, false);
+		final int childCount = mListView.getChildCount();
+		if (firstVisiblePosition != 0 && lastVisiblePosition != mListView.getCount() - 1 && loadMoreFromTop) {
+			listVisiblePosition = lastVisiblePosition;
 			savedChildIndex = childCount - 1;
 			if (childCount > 0) {
 				final View lastChild = mListView.getChildAt(savedChildIndex);
 				mListScrollOffset = lastChild != null ? lastChild.getTop() : 0;
 			}
 		} else {
-			listVisiblePosition = mListView.getFirstVisiblePosition();
+			listVisiblePosition = firstVisiblePosition;
 			savedChildIndex = 0;
-			if (mListView.getChildCount() > 0) {
+			if (childCount > 0) {
 				final View firstChild = mListView.getChildAt(savedChildIndex);
 				mListScrollOffset = firstChild != null ? firstChild.getTop() : 0;
 			}

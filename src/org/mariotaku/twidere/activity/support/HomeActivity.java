@@ -119,6 +119,7 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 			final String action = intent.getAction();
 			if (BROADCAST_TASK_STATE_CHANGED.equals(action)) {
 				updateActionsButton();
+				updateSmartBar();
 			} else if (BROADCAST_UNREAD_COUNT_UPDATED.equals(action)) {
 				updateUnreadCount();
 			}
@@ -253,6 +254,7 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 		final MenuItem itemProgress = menu.findItem(MENU_PROGRESS);
 		mSmartBarProgress = (ProgressBar) itemProgress.getActionView().findViewById(android.R.id.progress);
 		updateActionsButton();
+		updateSmartBar();
 		return true;
 	}
 
@@ -342,6 +344,7 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 		}
 		updateSlidingMenuTouchMode();
 		updateActionsButton();
+		updateSmartBar();
 	}
 
 	@Override
@@ -526,6 +529,7 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 		showDataProfilingRequest();
 		initUnreadCount();
 		updateActionsButton();
+		updateSmartBar();
 		updateSlidingMenuTouchMode();
 
 		if (savedInstanceState == null) {
@@ -561,6 +565,7 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 		invalidateOptionsMenu();
 		updateActionsButtonStyle();
 		updateActionsButton();
+		updateSmartBar();
 		updateSlidingMenuTouchMode();
 	}
 
@@ -838,10 +843,6 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 		if (mSmartBarProgress != null) {
 			mSmartBarProgress.setVisibility(hasActivatedTask ? View.VISIBLE : View.INVISIBLE);
 		}
-		final boolean useBottomActionItems = SmartBarUtils.hasSmartBar() && isBottomComposeButton();
-		if (useBottomActionItems) {
-			invalidateOptionsMenu();
-		}
 	}
 
 	private void updateActionsButtonStyle() {
@@ -878,6 +879,13 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 		final int mode = !mViewPager.isEnabled() || position == 0 ? SlidingMenu.TOUCHMODE_FULLSCREEN
 				: SlidingMenu.TOUCHMODE_MARGIN;
 		mSlidingMenu.setTouchModeAbove(mode);
+	}
+
+	private void updateSmartBar() {
+		final boolean useBottomActionItems = SmartBarUtils.hasSmartBar() && isBottomComposeButton();
+		if (useBottomActionItems) {
+			invalidateOptionsMenu();
+		}
 	}
 
 	private static void updatePullToRefreshY(final WindowManager wm, final View view, final int y) {

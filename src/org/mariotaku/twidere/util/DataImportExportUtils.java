@@ -122,7 +122,7 @@ public class DataImportExportUtils implements Constants {
 		if (hasFlag(flags, FLAG_HOST_MAPPING)) {
 			readRawSharedPreferencesData(zipFile, context, HOST_MAPPING_PREFERENCES_NAME, ENTRY_HOST_MAPPING);
 		}
-		Utils.closeSilently(zipFile);
+		zipFile.close();
 	}
 
 	private static byte[] getSerializedRawSharedPreferencesData(final Context context, final String name) {

@@ -75,6 +75,11 @@
 			android:key="remember_position"
 			android:summary="@string/remember_position_summary"
 			android:title="@string/remember_position"/>
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="load_more_from_top"
+			android:summary="@string/load_more_from_top_summary"
+			android:title="@string/load_more_from_top"/>
 
 		<org.mariotaku.twidere.preference.TrendsLocationPreference
 			android:key="trends_location"
